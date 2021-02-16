@@ -280,31 +280,7 @@ void ByteCodeWriter :: declareBlock(CommandTape& tape)
 
 void ByteCodeWriter :: allocateStack(CommandTape& tape, int count)
 {
-   // NOTE : due to implementation the prefered way to push 0, is to use pushr nil
-   // NOTE : { pushr }n is preferred over alloci, for small n
-   switch (count) {
-      case 1:
-         tape.write(bcPushR);
-         break;
-      case 2:
-         tape.write(bcPushR);
-         tape.write(bcPushR);
-         break;
-      case 3:
-         tape.write(bcPushR);
-         tape.write(bcPushR);
-         tape.write(bcPushR);
-         break;
-      case 4:
-         tape.write(bcPushR);
-         tape.write(bcPushR);
-         tape.write(bcPushR);
-         tape.write(bcPushR);
-         break;
-      default:
-         tape.write(bcAllocI, count);
-         break;
-   }
+   tape.write(bcAllocI, count);
 }
 
 ////void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
@@ -3162,9 +3138,6 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
 //      // if message target can be used directly or it has no arguments - direct mode is allowed
 //      directMode = true;
 //   }
-//   else if (!directMode) {
-//      allocateStack(tape, functionMode && isFirstDirect ? argCount - 1 : argCount);
-//   }
 
    // the function target can be loaded at the end
    size_t startIndex = 0;
@@ -4532,42 +4505,24 @@ void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool wi
    }
 }
 
-//void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message)
-//{
-//   tape.write(bcMTRedirect, operationList | mskConstArray, message);
-//}
-//
-//void ByteCodeWriter :: doSealedMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message)
-//{
-//   tape.write(bcXMTRedirect, operationList | mskConstArray, message);
-//}
-//
-//void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, mssg_t message)
-//{
-//   if (node.type == lxSealedMultiDispatching) {
-//      doSealedMultiDispatch(tape, node.argument, message);
-//   }
-//   else doMultiDispatch(tape, node.argument, message);
-//
-////   SNode current = node.findChild(lxDispatching, /*lxResending, */lxCalling);
-////   switch (current.type) {
-////      case lxDispatching:
-////         generateResending(tape, current);
-////         break;
-////      //case lxResending:
-////      //   // if there is an ambiguity with open argument list handler
-////      //   tape.write(bcCopyM, current.findChild(lxOvreriddenMessage).argument);
-////      //   generateResendingExpression(tape, current);
-////      //   break;
-////      case lxCalling:
-////         // if it is a multi-method conversion
-////         generateCallExpression(tape, current);
-////         break;
-////      default:
-////         break;
-////   }
-//}
-//
+void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message)
+{
+   tape.write(bcMTRedirect, operationList | mskConstArray, message);
+}
+
+void ByteCodeWriter :: doSealedMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message)
+{
+   tape.write(bcXMTRedirect, operationList | mskConstArray, message);
+}
+
+void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, mssg_t message)
+{
+   if (node.type == lxSealedMultiDispatching) {
+      doSealedMultiDispatch(tape, node.argument, message);
+   }
+   else doMultiDispatch(tape, node.argument, message);
+}
+
 void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
    doGenericHandler(tape);
@@ -4750,24 +4705,16 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
             }
             generateDispatching(tape, current, scope);
             break;
-//         case lxMultiDispatching:
-//         case lxSealedMultiDispatching:
-//            if (!open) {
-//               declareIdleMethod(tape, node.argument, sourcePathRef);
-//               exitLabel = false;
-//               open = true;
-//            }
-//
-//            generateMultiDispatching(tape, current, node.argument);
-//            break;
-//         //         case lxYieldStop:
-//         //            generateYieldStop(tape, current);
-//         //            break;
-//         //         case lxNil:
-//         //            // idle body;
-//                  // open = true;
-//         //            declareIdleMethod(tape, node.argument, sourcePathRef);
-//         //            break;
+         case lxMultiDispatching:
+         case lxSealedMultiDispatching:
+            if (!open) {
+               declareIdleMethod(tape, node.argument, sourcePathRef);
+               exitLabel = false;
+               open = true;
+            }
+
+            generateMultiDispatching(tape, current, node.argument);
+            break;
          case lxImporting:
             if (!open) {
                open = true;

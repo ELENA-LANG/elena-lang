@@ -154,9 +154,9 @@ class DerivationWriter : public _DerivationWriter
    void flushTypeAttribute(SyntaxWriter& writer, SNode terminal, ref_t typeRef/*, int dimensionCounter*/, 
       Scope& derivationScope);
    void flushAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
-//   void generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
-   void flushExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory/*, 
-      int dimensionCounter, bool templateArgMode = false*/);
+   void flushTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
+   void flushExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory, 
+      /*int dimensionCounter, */bool templateArgMode = false);
    void flushExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
    void flushExpressionNode(SyntaxWriter& writer, SNode& current,/*bool& first, bool& expressionExpected, */Scope& derivationScope);
 //   void generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
@@ -255,10 +255,10 @@ class TemplateGenerator
       bool importModuleInfo, int bookmark);
 
 public:
-//   ref_t declareTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
-//   ref_t generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters,
-//                           bool importModuleInfo, bool importMode);
-//
+   ref_t declareTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
+   ref_t generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters,
+                           bool importModuleInfo, bool importMode);
+
 //   void generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
    void generateTemplateProperty(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, 
       List<SNode>& parameters, int bookmark, bool inlineMode);

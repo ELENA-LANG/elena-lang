@@ -75,8 +75,8 @@ public:
 
    virtual bool isSignatureCompatible(_ModuleScope& scope, mssg_t targetMessage, mssg_t sourceMessage);
 
-//   virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, mssg_t targetMessage,
-//      ref_t* sourceSignatures, size_t len, int& stackSafeAttr);
+   virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, mssg_t targetMessage,
+      ref_t* sourceSignatures, size_t len, int& stackSafeAttr);
 
    virtual int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, ChechMethodInfo& result, bool resolveProtected);
    virtual int checkMethod(ClassInfo& info, mssg_t message, ChechMethodInfo& result, bool resolveProtected);
@@ -91,9 +91,7 @@ public:
    virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable);
    virtual int __fastcall defineStructSize(ClassInfo& info, bool& variable);
 
-////   virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info);
-//
-//   virtual mssg_t resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, mssg_t message);
+   virtual mssg_t resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, mssg_t message);
 
    virtual int __fastcall resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t message, ChechMethodInfo& result);
 //   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
@@ -136,7 +134,7 @@ public:
 //   virtual bool isMethodAbstract(ClassInfo& info, mssg_t message);
 //   virtual bool isMethodYieldable(ClassInfo& info, mssg_t message);
 ////   virtual bool isMethodInternal(ClassInfo& info, ref_t message);
-//   virtual bool isMethodPrivate(ClassInfo& info, mssg_t message);
+   virtual bool __fastcall isMethodPrivate(ClassInfo& info, mssg_t message);
    virtual bool __fastcall isMultiMethod(ClassInfo& info, mssg_t message);
    virtual bool __fastcall isMultiMethod(_ModuleScope& scope, ref_t reference, mssg_t message);
 ////   virtual bool isFunction(ClassInfo& info, ref_t message);
@@ -209,12 +207,12 @@ public:
 ////   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode);
 //   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node);
 //   virtual bool optimizeBranchingOp(_ModuleScope& scope, SNode node);
-//
-//   virtual mssg_t resolveMultimethod(_ModuleScope& scope, mssg_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef,
-//      int& stackSafeAttr, bool selfCall);
+
+   virtual mssg_t resolveMultimethod(_ModuleScope& scope, mssg_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef,
+      int& stackSafeAttr, bool selfCall);
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<mssg_t>& implicitMultimethods);
-//   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, 
-//      ref_t signatureRef, ident_t ns, ExtensionMap* outerExtensionList);
+   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, 
+      ref_t signatureRef, ident_t ns, ExtensionMap* outerExtensionList);
 //   virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference);
 
    CompilerLogic();

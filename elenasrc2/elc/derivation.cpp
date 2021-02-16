@@ -22,14 +22,14 @@ constexpr auto MODE_ROOT                  = 0x01;
 
 constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
 
-inline void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//inline void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- DerivationWriter ---
 
@@ -341,6 +341,7 @@ void DerivationWriter :: generateTemplateTree(SNode node, ScopeType templateType
    name.appendInt(paramCounter);
 
    identNode.setStrArgument(name.c_str());
+   argsNode.set(lxNameAttr, INVALID_REF); // to indicate a template name
 
    if (templateType == ScopeType::stExtensionTemplate) {
       _output.newNode(lxExtensionTemplate);
@@ -924,26 +925,26 @@ void DerivationWriter :: flushClassTree(SyntaxWriter& writer, SNode node, Scope&
    writer.closeNode();
 }
 
-//void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode current, Scope& derivationScope)
-//{
-//   ref_t attributeCategory = 0u;
-//   while (current != lxNone) {
-//      if (current == lxToken) {
-//         int dimensionCounter = 0;
-//         SNode dimNode = current.nextNode();
-//         while (dimNode.compare(lxTemplateArgs, lxDynamicSizeDecl)) {
-//            if (dimNode == lxDynamicSizeDecl) {
-//               dimensionCounter++;
-//            }
-//
-//            dimNode = dimNode.nextNode();
-//         }
-//
-//         generateExpressionAttribute(writer, current, derivationScope, attributeCategory, dimensionCounter, true);
-//      }
-//      current = current.nextNode();
-//   }
-//}
+void DerivationWriter :: flushTemplateAttributes(SyntaxWriter& writer, SNode current, Scope& derivationScope)
+{
+   ref_t attributeCategory = 0u;
+   while (current != lxNone) {
+      if (current.compare(lxToken, lxTokenArgs)) {
+         //int dimensionCounter = 0;
+         //SNode dimNode = current.nextNode();
+         //while (dimNode.compare(lxTemplateArgs, lxDynamicSizeDecl)) {
+         //   if (dimNode == lxDynamicSizeDecl) {
+         //      dimensionCounter++;
+         //   }
+
+         //   dimNode = dimNode.nextNode();
+         //}
+
+         flushExpressionAttribute(writer, current, derivationScope, attributeCategory/*, dimensionCounter*/, true);
+      }
+      current = current.nextNode();
+   }
+}
 
 void DerivationWriter :: flushTypeAttribute(SyntaxWriter& writer, SNode node, ref_t typeRef/*, int dimensionCounter*/, 
    Scope& derivationScope)
@@ -954,29 +955,29 @@ void DerivationWriter :: flushTypeAttribute(SyntaxWriter& writer, SNode node, re
 
    SNode terminal = node.firstChild(lxTerminalMask);
 
-//   if (typeRef == V_TEMPLATE) {
-//      writer.newNode(lxType, V_TEMPLATE);
-//      copyIdentifier(writer, terminal, derivationScope.ignoreTerminalInfo);
-//      generateTemplateAttributes(writer, node.nextNode().firstChild(), derivationScope);
-//      writer.closeNode();
-//   }
-//   else {
+   if (typeRef == V_TEMPLATE) {
+      writer.newNode(lxType, V_TEMPLATE);
+      copyIdentifier(writer, terminal, derivationScope.ignoreTerminalInfo);
+      flushTemplateAttributes(writer, node.firstChild(), derivationScope);
+      writer.closeNode();
+   }
+   else {
       LexicalType targetType = lxType;
       int targetArgument = typeRef;
-//      if (derivationScope.withTypeParameters()) {
-//         // check template parameter if required
-//         int index = derivationScope.parameters.get(terminal.identifier());
-//         if (index != 0) {
-//            targetType = lxTemplateParam;
-//            targetArgument = index + derivationScope.nestedLevel;
-//         }
-//      }
+      if (derivationScope.withTypeParameters()) {
+         // check template parameter if required
+         int index = derivationScope.parameters.get(terminal.identifier());
+         if (index != 0) {
+            targetType = lxTemplateParam;
+            targetArgument = index + derivationScope.nestedLevel;
+         }
+      }
 
       writer.newNode(targetType, targetArgument);
       copyIdentifier(writer, terminal, derivationScope.ignoreTerminalInfo);
       writer.closeNode();
-//   }
-//
+   }
+
 //   for (int i = 0; i < dimensionCounter; i++) {
 //      writer.closeNode();
 //   }
@@ -1287,8 +1288,6 @@ void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope
 
 void DerivationWriter :: flushCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
 {
-   test2(node);
-
    writer.newNode(node.type, node.argument);
 
    SNode current = node.firstChild();
@@ -1626,12 +1625,12 @@ void DerivationWriter :: flushInlineTemplateTree(SyntaxWriter&, SNode node, SNod
 //}
 
 void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode current, Scope& derivationScope, 
-   ref_t& previousCategory/*, int dimensionCounter, bool templateArgMode*/)
+   ref_t& previousCategory/*, int dimensionCounter*/, bool templateArgMode)
 {
    bool allowType = false;
    //bool allowProperty = false;
 
-   //if (!templateArgMode) {
+   if (!templateArgMode) {
       SNode assignNode = current.nextNode().nextNode();
       //// HOTFIX : skip the dimension token
       //for (int i = 0; i < dimensionCounter; i++) {
@@ -1639,17 +1638,17 @@ void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode cu
       //}
 
       allowType = assignNode != lxToken;
-   //}
-   //else allowType = true;
+   }
+   else allowType = true;
    
 //   if (dimensionCounter && !allowType)
 //      _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
 
-   //if (current.nextNode() == lxTemplateArgs) {
-   //   // if it is a template based type
-   //   generateTypeAttribute(writer, current, V_TEMPLATE, dimensionCounter, derivationScope);
-   //}
-   //else {
+   if (current == lxTokenArgs) {
+      // if it is a template based type
+      flushTypeAttribute(writer, current, V_TEMPLATE/*, dimensionCounter*/, derivationScope);
+   }
+   else {
       ref_t attrRef = mapAttribute(current, allowType, /*allowProperty, */previousCategory);
       if (isPrimitiveRef(attrRef)) {
          SNode identNode = current.firstChild(lxTerminalMask);
@@ -1659,7 +1658,7 @@ void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode cu
          writer.closeNode();
       }
       else flushTypeAttribute(writer, current, /*dimensionCounter, */attrRef, /*dimensionCounter, */derivationScope);
-//   }
+   }
 }
 
 void DerivationWriter :: flushIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope)
@@ -1714,7 +1713,7 @@ void DerivationWriter :: flushTokenExpression(SyntaxWriter& writer, SNode& node,
    SNode lastNode = node;
    node = node.nextNode();   
 //   int dimensionCounter = 0;
-   while (node/*.compare(*/ == lxToken/*, lxTemplateArgs, lxDynamicSizeDecl)*/) {
+   while (node.compare(lxToken, lxTokenArgs/*, lxDynamicSizeDecl*/)) {
 //      if (node == lxDynamicSizeDecl)
 //         dimensionCounter++;
 
@@ -1736,9 +1735,11 @@ void DerivationWriter :: flushTokenExpression(SyntaxWriter& writer, SNode& node,
 //   }
    /*else */node = lastNode;
 
+   if (lastNode == lxTokenArgs)
+      lastNode = lastNode.nextNode();
+
    while (current != lastNode) {
-      if (current == lxToken)
-         // skip template args
+      if (current.compare(lxToken, lxTokenArgs))
          flushExpressionAttribute(writer, current, derivationScope, attributeCategory/*, dimensionCounter, false*/);
 
       current = current.nextNode();
@@ -1903,6 +1904,7 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
 //         first = false;
 //         break;
       case lxToken:
+      case lxTokenArgs:
          flushTokenExpression(writer, current, derivationScope/*, true*/);
          break;
 //      case lxPropertyParam:
@@ -2390,41 +2392,41 @@ bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& 
 //      current = current.nextNode();
 //   }
 //}
-//
-//ref_t TemplateGenerator :: declareTemplate(SyntaxWriter&, _ModuleScope& scope, ref_t reference, List<SNode>& parameters)
-//{
-//   TemplateScope templateScope(&scope, reference, NULL, NULL);
-//   templateScope.sourcePath = "compiling template...";
-//
-//   for (auto it = parameters.start(); !it.Eof(); it++) {
-//      // HOTFIX : ignore template source parameter
-//      if ((*it) != lxTemplateSource)
-//         templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
-//   }
-//
-//   templateScope.generateClassName();
-//
-//   return templateScope.reference;
-//}
-//
-//ref_t TemplateGenerator :: generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters, bool importModuleInfo, bool importMode)
-//{
-//   TemplateScope templateScope(&scope, reference, NULL, NULL);
-//   templateScope.sourcePath = "compiling template...";
-//
-//   for (auto it = parameters.start(); !it.Eof(); it++) {
-//      // HOTFIX : ignore template source parameter
-//      if ((*it) != lxTemplateSource)
-//         templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
-//   }
-//
-//   // NOTE : for the import mode, no need to declare a new class
-//   if (generateTemplate(writer, templateScope, !importMode, importModuleInfo, 0)) {
-//      return templateScope.reference;
-//   }
-//   else return 0;   
-//}
-//
+
+ref_t TemplateGenerator :: declareTemplate(SyntaxWriter&, _ModuleScope& scope, ref_t reference, List<SNode>& parameters)
+{
+   TemplateScope templateScope(&scope, reference, NULL, NULL);
+   templateScope.sourcePath = "compiling template...";
+
+   for (auto it = parameters.start(); !it.Eof(); it++) {
+      // HOTFIX : ignore template source parameter
+      if ((*it) != lxTemplateSource)
+         templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
+   }
+
+   templateScope.generateClassName();
+
+   return templateScope.reference;
+}
+
+ref_t TemplateGenerator :: generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters, bool importModuleInfo, bool importMode)
+{
+   TemplateScope templateScope(&scope, reference, NULL, NULL);
+   templateScope.sourcePath = "compiling template...";
+
+   for (auto it = parameters.start(); !it.Eof(); it++) {
+      // HOTFIX : ignore template source parameter
+      if ((*it) != lxTemplateSource)
+         templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
+   }
+
+   // NOTE : for the import mode, no need to declare a new class
+   if (generateTemplate(writer, templateScope, !importMode, importModuleInfo, 0)) {
+      return templateScope.reference;
+   }
+   else return 0;   
+}
+
 //void TemplateGenerator :: generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters)
 //{
 //   TemplateScope templateScope(&scope, reference, NULL, NULL);

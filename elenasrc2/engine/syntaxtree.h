@@ -141,6 +141,8 @@ enum LexicalType
    lxGenericResending         = 0x031361,   // resending a generic message
    lxDirectResending          = 0x031362,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
    lxSDirectResending         = 0x031363,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
+   lxMultiDispatching         = 0x031370,
+   lxSealedMultiDispatching   = 0x031371,
 
    lxCalling_0                = 0x0303A0,   // calling a method, arg - message
    lxCalling_1                = 0x0303A1,
@@ -216,8 +218,6 @@ enum LexicalType
 //   lxNotLessN                 = 0x058167,
 //   lxGreaterN                 = 0x058168,
 //   lxNotGreaterN              = 0x058169,
-//   lxMultiDispatching         = 0x058180,
-//   lxSealedMultiDispatching   = 0x058181,
 //   lxMessageConstant          = 0x0181A7, // arg - rererence
 //   lxExtMessageConstant       = 0x0181A9, // arg -reference
 //   lxOp                       = 0x0581B0,
@@ -1205,45 +1205,45 @@ public:
    static void copyNode(Node source, Node destination);
 //   static Node insertNodeCopy(Node source, Node destination);
    static void saveNode(Node node, _Memory* dump, bool includingNode = false);
-//
-//   static int countNodeMask(Node current, LexicalType mask)
-//   {
-//      int counter = 0;
-//      while (current != lxNone) {
-//         if (test(current.type, mask))
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
-//
-//   static int countNode(Node current, LexicalType type)
-//   {
-//      int counter = 0;
-//      while (current != lxNone) {
-//         if (current == type)
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
-//
-//   static int countNode(Node current, LexicalType type1, LexicalType type2)
-//   {
-//      int counter = 0;
-//      while (current != lxNone) {
-//         if (current == type1 || current == type2)
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
+
+   static int countNodeMask(Node current, LexicalType mask)
+   {
+      int counter = 0;
+      while (current != lxNone) {
+         if (test(current.type, mask))
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
+   static int countNode(Node current, LexicalType type)
+   {
+      int counter = 0;
+      while (current != lxNone) {
+         if (current == type)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
+   static int countNode(Node current, LexicalType type1, LexicalType type2)
+   {
+      int counter = 0;
+      while (current != lxNone) {
+         if (current == type1 || current == type2)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
 
    static int countChild(Node node, LexicalType type)
    {

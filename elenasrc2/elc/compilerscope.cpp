@@ -539,47 +539,47 @@ void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t referen
 ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode, 
    ExtensionMap* outerExtensionList)
 {
-//   SyntaxTree templateTree;
-//
-//   TemplateGenerator transformer(templateTree);
-//   SyntaxWriter writer(templateTree);
-//   writer.newNode(lxRoot);
-//   
-//   copyTemplateSourceInfo(writer, parameters);
-//
-//   writer.newNode(lxNamespace, ns ? ns : "");
+   SyntaxTree templateTree;
+
+   TemplateGenerator transformer;
+   SyntaxWriter writer(templateTree);
+   writer.newNode(lxRoot);
+   
+   copyTemplateSourceInfo(writer, parameters);
+
+   writer.newNode(lxNamespace, ns ? ns : "");
 
    ref_t generatedReference = 0;
 
-//   if (declarationMode) {
-//      generatedReference = transformer.declareTemplate(writer, *this, reference, parameters);
-//
-//      writer.closeNode();
-//      writer.closeNode();
-//   }
-//   else {
-//      generatedReference = transformer.generateTemplate(writer, *this, reference, parameters, true, false);
-//
-//      writer.closeNode();
-//      writer.closeNode();
-//
-//      if (generatedReference) {
-//         IdentifierString path;
-//         path.copy("compiling ");
-//         path.append(resolveFullName(generatedReference));
-//         path.append(" template...");
-//         //writer.insertChild(0, lxSourcePath, path.c_str());
-//
-//         try
-//         {
-//            compile(templateTree, path.c_str(), outerExtensionList);
-//         }
-//         catch (_Exception&)
-//         {
-//            return 0;
-//         }
-//      }
-//   }
+   if (declarationMode) {
+      generatedReference = transformer.declareTemplate(writer, *this, reference, parameters);
+
+      writer.closeNode();
+      writer.closeNode();
+   }
+   else {
+      generatedReference = transformer.generateTemplate(writer, *this, reference, parameters, true, false);
+
+      writer.closeNode();
+      writer.closeNode();
+
+      if (generatedReference) {
+         IdentifierString path;
+         path.copy("compiling ");
+         path.append(resolveFullName(generatedReference));
+         path.append(" template...");
+         //writer.insertChild(0, lxSourcePath, path.c_str());
+
+         try
+         {
+            compile(templateTree, path.c_str(), outerExtensionList);
+         }
+         catch (_Exception&)
+         {
+            return 0;
+         }
+      }
+   }
 
    return generatedReference;
 }

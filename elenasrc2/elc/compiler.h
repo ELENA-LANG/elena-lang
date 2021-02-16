@@ -155,6 +155,7 @@ public:
       okMetaField,                    // param - meta attribute id
       okInternalSelf,
       okNewOp,
+      okCastOp,
 
       okExternal,
       okInternal,
@@ -402,9 +403,9 @@ private:
          loadExtensions(fullName.c_str());
       }
 
-//      ref_t resolveExtensionTarget(ref_t reference);
-//
-//      void saveExtension(mssg_t message, ref_t extRef, mssg_t strongMessage, bool internalOne);
+      ref_t resolveExtensionTarget(ref_t reference);
+
+      void saveExtension(mssg_t message, ref_t extRef, mssg_t strongMessage, bool internalOne);
       void saveExtensionTemplate(mssg_t message, ident_t pattern);
 
       void loadModuleInfo(ident_t name)
@@ -442,7 +443,7 @@ private:
       bool        abstractMode;
       bool        abstractBaseMode;
       bool        withInitializers;
-//      bool        extensionDispatcher;
+      bool        extensionDispatcher;
 
       ObjectInfo mapField(ident_t identifier, EAttr scopeMode);
 
@@ -562,7 +563,7 @@ private:
    {
       mssg_t       message;
       LocalMap     parameters;
-//      EAttr        scopeMode;
+      EAttr        scopeMode;
       int          reserved1;             // defines managed frame size
       int          reserved2;             // defines unmanaged frame size (excluded from GC frame chain)
       int          hints;
@@ -875,9 +876,9 @@ private:
 //            codeScope->withRetStatement = true;
 //         }
 //      }
-//
-//      ObjectInfo mapGlobal(ident_t identifier);
-//      ObjectInfo mapMember(ident_t identifier);
+
+      ObjectInfo mapGlobal(ident_t identifier);
+      ObjectInfo mapMember(ident_t identifier);
 
       ExprScope(CodeScope* parent);
       ExprScope(SourceScope* parent);
@@ -1003,7 +1004,7 @@ private:
 
    bool loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silentMode);
 
-//   ObjectInfo mapClassSymbol(Scope& scope, int classRef);
+   ObjectInfo mapClassSymbol(Scope& scope, int classRef);
 
    ref_t __fastcall resolveMultimethod(ClassScope& scope, mssg_t messageRef);
 
@@ -1024,9 +1025,8 @@ private:
    ref_t resolveConstant(ObjectInfo retVal, ref_t& parentRef);
    ref_t generateConstant(_CompileScope& scope, ObjectInfo retVal);
 
-//   void saveExtension(ClassScope& scope, mssg_t message, bool internalOne);
-////   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
-//   ref_t mapExtension(Scope& scope, mssg_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
+   void saveExtension(ClassScope& scope, mssg_t message, bool internalOne);
+   ref_t mapExtension(Scope& scope, mssg_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
 
    void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ref_t reference, mssg_t message);
 
@@ -1057,18 +1057,15 @@ private:
    void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
    void declareVMT(SNode member, ClassScope& scope, bool& withConstructors, bool& withDefaultConstructor);
 
-////   ref_t mapTypeAttribute(SNode member, Scope& scope);
-//   ref_t mapTemplateAttribute(SNode node, Scope& scope);
+   ref_t mapTemplateAttribute(SNode node, Scope& scope);
    void declareMethodAttributes(SNode member, MethodScope& scope);
 
 //   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, ExprScope& scope);
-//
-////   bool isTemplateParameterDeclared(SNode node, Scope& scope);
-////
-//   mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
+
+   mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
 //   ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, size_t paramCount);
-//   ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, mssg_t generalMessageRef, ref_t implicitSignatureRef,
-//                                     bool withExtension, int& stackSafeAttr);
+   ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, mssg_t generalMessageRef, ref_t implicitSignatureRef,
+                                     bool withExtension, int& stackSafeAttr);
    mssg_t mapMessage(SNode node, ExprScope& scope/*, bool extensionCall*/, bool newOpCall);
    mssg_t mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags,
       IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
@@ -1077,7 +1074,6 @@ private:
 //   size_t resolveArraySize(SNode node, Scope& scope);
 
    ref_t resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode, bool allowRole);
-   //ref_t resolveTemplateDeclarationUnsafe(SNode node, Scope& scope, bool declarationMode);
    ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
 
 //   void compileSwitch(SNode node, ExprScope& scope);
@@ -1123,12 +1119,13 @@ private:
       bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments);
 
    ObjectInfo compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, /*ref_t exptectedRef, */EAttr mode);
+   ObjectInfo compileMessageOperation(SyntaxWriter& writer, SNode current, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
+      ref_t expectedSignRef, EAttr mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
       ArgumentsInfo* arguments/*, EAttr mode*/, int stackSafeAttr/*, bool& embeddableRet*/);
-//////   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
-//
-//   SNode injectAttributeIdentidier(SNode current, Scope& scope);
-//   void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
+
+   SNode injectAttributeIdentidier(SNode current, Scope& scope);
+   void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
    EAttr recognizeExpressionAttributes(SNode& current, Scope& scope, ref_t& typeRef, bool& newVariable);
    EAttr declareExpressionAttributes(SyntaxWriter& writer, SNode& node, ExprScope& scope, EAttr mode);
 //
@@ -1147,8 +1144,8 @@ private:
    ObjectInfo compileObject(SyntaxWriter& writer, SNode& node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, EAttr mode);
-//
-//   ObjectInfo compileCastingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
+
+   ObjectInfo compileCastingExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileReferenceExpression(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode);
@@ -1188,7 +1185,7 @@ private:
 //   void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, 
 //      bool& withFrame);
 //   void compileConstructorDispatchExpression(SNode node, CodeScope& scope, bool isDefault);
-   void compileResendExpression(SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
+   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool withGenericMethods);
    void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
 
@@ -1238,7 +1235,7 @@ private:
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 
 //   void compileModuleExtensionDispatcher(NamespaceScope& scope);
-//   ref_t compileExtensionDispatcher(NamespaceScope& scope, mssg_t genericMessageRef);
+   ref_t compileExtensionDispatcher(NamespaceScope& scope, mssg_t genericMessageRef);
 
    void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
    void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isStatic, 
@@ -1378,8 +1375,8 @@ public:
       LexicalType methodType, ClassInfo& info);
    void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
       mssg_t resendMessage, bool privateOne, ref_t callTargetRef);
-//   bool injectVirtualStrongTypedMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
-//      mssg_t resendMessage, bool privateOne);
+   bool injectVirtualStrongTypedMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
+      mssg_t resendMessage, bool privateOne);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef);
 //   virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument);
 //   virtual void injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex);
@@ -1391,8 +1388,8 @@ public:
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
 
 //   //virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef);
-//   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, 
-//      ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList);
+   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, 
+      ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList);
 
    static bool __fastcall boxingRequired(ObjectInfo& info);
 

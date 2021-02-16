@@ -188,8 +188,8 @@ class ByteCodeWriter
    void callResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode, bool withValidattion = true*/);
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode*/);
 
-//   void doMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message);
-//   void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message);
+   void doMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message);
+   void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message);
    void doGenericHandler(CommandTape& tape);
    void unboxMessage(CommandTape& tape);
    void changeMessageCounter(CommandTape& tape, int arg, int paramCount, int flags);
@@ -306,8 +306,7 @@ class ByteCodeWriter
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateDispatching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-////   void generateResending(CommandTape& tape, SyntaxTree::Node node);
-//   void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, mssg_t message);
+   void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, mssg_t message);
 //   void generateYieldDispatch(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateYieldReturn(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 ////   void generateYieldStop(CommandTape& tape, SyntaxTree::Node node);

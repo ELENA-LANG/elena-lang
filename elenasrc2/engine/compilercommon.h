@@ -407,7 +407,6 @@ public:
       ClassInfo& info) = 0;
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef) = 0;
 //   virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument) = 0;
-//////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message) = 0;
 //   virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne) = 0;
 //   virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op, 
 //      int opArg, ref_t reference) = 0;
@@ -419,10 +418,8 @@ public:
    virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
-//   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, 
-//      ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList) = 0;
-//
-////   virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef) = 0;
+   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, 
+      ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList) = 0;
 
    virtual void declareModuleIdentifiers(SyntaxTree& tree, _ModuleScope& scope) = 0;
    virtual bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forcedDeclaration, 
@@ -471,16 +468,16 @@ public:
       eaIntern             = 0x00000000004,
       eaModuleScope        = 0x00000000008,
       eaNewOp              = 0x00000000010,
-//      eaSilent             = 0x00000000020,
+      eaSilent             = 0x00000000020,
       eaRootSymbol         = 0x000000000C0,
       eaRoot               = 0x00000000080,
 //      eaInlineExpr         = 0x00000000100,
-//      eaCast               = 0x00000000200,
+      eaCast               = 0x00000000200,
 //      eaNoPrimitives       = 0x00000000400,
 //      eaDynamicObject      = 0x00000000800,
 //      eaNoUnboxing         = 0x00000002000,
 //      eaNoBoxing           = 0x00000003000,
-//      eaMember             = 0x00000004000,
+      eaMember             = 0x00000004000,
 //      eaRef                = 0x00000008000,
 //      eaPropExpr           = 0x00000010000,
       eaMetaField          = 0x00000020000,
@@ -686,8 +683,8 @@ public:
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
    virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
-//   virtual ref_t generateOverloadList(_ModuleScope& scope, _Compiler& compiler, mssg_t message,
-//      ClassInfo::CategoryInfoMap& list, void* param, ref_t(*resolve)(void*, ref_t), int flags) = 0;
+   virtual ref_t generateOverloadList(_ModuleScope& scope, _Compiler& compiler, mssg_t message,
+      ClassInfo::CategoryInfoMap& list, void* param, ref_t(*resolve)(void*, ref_t), int flags) = 0;
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
       List<mssg_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<mssg_t>& implicitMultimethods) = 0;
@@ -719,14 +716,12 @@ public:
    virtual bool validateMessage(_ModuleScope& scope, mssg_t message, int hints) = 0;
    virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;
 
-//   virtual bool isSignatureCompatible(_ModuleScope& scope, mssg_t targetMessage, mssg_t sourceMessage) = 0;
-//   virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, mssg_t targetMessage,
-//      ref_t* sourceSignatures, size_t len, int& stackSafeAttr) = 0;
-//
-////   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
-//
-//   virtual mssg_t resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, mssg_t message) = 0;
-//
+   virtual bool isSignatureCompatible(_ModuleScope& scope, mssg_t targetMessage, mssg_t sourceMessage) = 0;
+   virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, mssg_t targetMessage,
+      ref_t* sourceSignatures, size_t len, int& stackSafeAttr) = 0;
+
+   virtual mssg_t resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, mssg_t message) = 0;
+
 //   virtual mssg_t resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
 //      mssg_t message, ref_t expectedRef) = 0 ;
 //
@@ -738,11 +733,11 @@ public:
 ////   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode) = 0;
 //   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
 //   virtual bool optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
-//
-//   virtual mssg_t resolveMultimethod(_ModuleScope& scope, mssg_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef,
-//      int& stackSafeAttr, bool selfCall) = 0;
-//   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, 
-//      ref_t signatureRef, ident_t ns, ExtensionMap* outerExtensionList) = 0;
+
+   virtual mssg_t resolveMultimethod(_ModuleScope& scope, mssg_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef,
+      int& stackSafeAttr, bool selfCall) = 0;
+   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, 
+      ref_t signatureRef, ident_t ns, ExtensionMap* outerExtensionList) = 0;
 };
 
 typedef _CompilerLogic::ExpressionAttributes EAttrs;

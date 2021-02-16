@@ -290,17 +290,17 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, mssg_t me
    else return tpUnknown;
 }
 
-//mssg_t CompilerLogic :: resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, mssg_t message)
-//{
-//   if (!reference)
-//      return 0;
-//
-//   ClassInfo info;
-//   if (defineClassInfo(scope, info, reference)) {
-//      return info.methodHints.get(Attribute(message, maSingleMultiDisp));
-//   }
-//   else return 0;
-//}
+mssg_t CompilerLogic :: resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, mssg_t message)
+{
+   if (!reference)
+      return 0;
+
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference)) {
+      return info.methodHints.get(Attribute(message, maSingleMultiDisp));
+   }
+   else return 0;
+}
 
 int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t messageRef, ChechMethodInfo& result)
 {
@@ -596,16 +596,11 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpEmbeddable);
 //}
-//
-////bool CompilerLogic :: isMethodInternal(ClassInfo& info, ref_t message)
-////{
-////   return test(info.methodHints.get(Attribute(message, maHint)), tpInternal);
-////}
-//
-//bool CompilerLogic :: isMethodPrivate(ClassInfo& info, mssg_t message)
-//{
-//   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpPrivate;
-//}
+
+bool CompilerLogic :: isMethodPrivate(ClassInfo& info, mssg_t message)
+{
+   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpPrivate;
+}
 
 bool CompilerLogic :: isMixinMethod(ClassInfo& info, mssg_t message)
 {
@@ -1073,21 +1068,21 @@ int CompilerLogic :: defineStackSafeAttrs(_ModuleScope& scope, mssg_t message)
    return stackSafeAttr;
 }
 
-//bool CompilerLogic :: isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, mssg_t targetMessage,
-//   ref_t* sourceSignatures, size_t len, int& stackSafeAttr)
-//{
-//   ref_t targetSignRef = getSignature(scope, targetMessage);
-//
-//   if (isSignatureCompatible(scope, targetSignRef, sourceSignatures, len)) {
-//      if (isStacksafeArg(scope, targetRef))
-//         stackSafeAttr |= 1;
-//
-//      setSignatureStacksafe(scope, targetSignRef, stackSafeAttr);
-//
-//      return true;
-//   }
-//   else return false;
-//}
+bool CompilerLogic :: isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, mssg_t targetMessage,
+   ref_t* sourceSignatures, size_t len, int& stackSafeAttr)
+{
+   ref_t targetSignRef = getSignature(scope, targetMessage);
+
+   if (isSignatureCompatible(scope, targetSignRef, sourceSignatures, len)) {
+      if (isStacksafeArg(scope, targetRef))
+         stackSafeAttr |= 1;
+
+      setSignatureStacksafe(scope, targetSignRef, stackSafeAttr);
+
+      return true;
+   }
+   else return false;
+}
 
 void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr)
 {
@@ -1778,9 +1773,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_AUTO:
          newVariable = true;
          return true;
-//      case V_CONVERSION:
-//         attributes.include(EAttr::eaCast);
-//         return true;
+      case V_CONVERSION:
+         attributes.include(EAttr::eaCast);
+         return true;
       case V_NEWOP:
          attributes.include(EAttr::eaNewOp);
          return true;
@@ -1802,9 +1797,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      case V_LOOP:
 //         attributes.include(EAttr::eaLoop);
 //         return true;
-//      case V_MEMBER:
-//         attributes.include(EAttr::eaMember);
-//         return true;
+      case V_MEMBER:
+         attributes.include(EAttr::eaMember);
+         return true;
       case V_META:
          attributes.include(EAttr::eaMetaField);
          return true;
@@ -2200,275 +2195,275 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //   }
 //   return false;
 //}
-//
-//inline mssg_t resolveNonpublic(ClassInfo& info, _Module* module, mssg_t publicMessage, ref_t& visibility)
-//{
-//   for (auto it = info.methodHints.start(); !it.Eof(); it++) {
-//      Attribute key = it.key();
-//      if (key.value1 == publicMessage && (key.value2 == maPrivate || key.value2 == maProtected || key.value2 == maInternal)) {
-//         visibility = key.value2;
-//
-//         // get multi method
-//         size_t argCount = 0;
-//         ref_t actionRef = 0, flags = 0, signRef = 0;
-//         decodeMessage(*it, actionRef, argCount, flags);
-//
-//         ident_t actionStr = module->resolveAction(actionRef, signRef);
-//
-//         if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
-//            // COMPILER MAGIC : for variadic message - use the most general message
-//            ref_t genericActionRef = module->mapAction(actionStr, 0, false);
-//            mssg_t genericMessage = encodeMessage(genericActionRef, 2, flags);
-//
-//            return genericMessage;
-//         }
-//         else if (signRef) {
-//            ref_t genericActionRef = module->mapAction(actionStr, 0, false);
-//            mssg_t genericMessage = encodeMessage(genericActionRef, argCount, flags);
-//
-//            return genericMessage;
-//         }
-//         else return *it;
-//      }
-//   }
-//
-//   return 0;
-//}
-//
-//mssg_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, mssg_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef,
-//   int& stackSafeAttr, bool selfCall)
-//{
-//   if (!targetRef)
-//      return 0;
-//
-//   ClassInfo info;
-//   if (defineClassInfo(scope, info, targetRef)) {
-//      if (isStacksafeArg(info))
-//         stackSafeAttr |= 1;
-//
-//      // check if it is non public message
-//      ref_t type = 0;
-//      mssg_t nonPublicMultiMessage = resolveNonpublic(info, scope.module, multiMessage, type);
-//      if (nonPublicMultiMessage != 0) {
-//         // if it is an internal
-//         mssg_t resolved = 0;
-//         if (type == maInternal && scope.isInteralOp(targetRef)) {
-//            resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
-//            if (!resolved) {
-//               return nonPublicMultiMessage;
-//            }
-//            else return resolved;
-//         }
-//         else if ((type == maPrivate || type == maProtected) && selfCall) {
-//            resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
-//            if (!resolved) {
-//               return nonPublicMultiMessage;
-//            }
-//            else return resolved;
-//         }
-//      }
-//
-//      if (!implicitSignatureRef)
-//         return 0;
-//
-//      ref_t signatures[ARG_COUNT];
-//      size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
-//
-//      ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
-//      if (listRef == 0 && isMethodPrivate(info, multiMessage))
-//         listRef = info.methodHints.get(Attribute(multiMessage | STATIC_MESSAGE, maOverloadlist));
-//
-//      if (listRef) {
-//         _Module* argModule = scope.loadReferenceModule(listRef, listRef);
-//
-//         _Memory* section = argModule->mapSection(listRef | mskRDataRef, true);
-//         if (!section || section->Length() < 4)
-//            return 0;
-//
-//         MemoryReader reader(section);
-//         pos_t position = section->Length() - 4;
-//         mssg_t foundMessage = 0;
-//         while (position != 0) {
-//            reader.seek(position - 8);
-//            mssg_t argMessage = reader.getDWord();
-//            ref_t argSign = 0;
-//            argModule->resolveAction(getAction(argMessage), argSign);
-//
-//            if (argModule == scope.module) {
-//               if (isSignatureCompatible(scope, argSign, signatures, signatureLen)) {
-//                  setSignatureStacksafe(scope, argSign, stackSafeAttr);
-//
-//                  foundMessage = argMessage;
-//               }                  
-//            }
-//            else {
-//               if (isSignatureCompatible(scope, argModule, argSign, signatures, signatureLen)) {
-//                  setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
-//
-//                  foundMessage = importMessage(argModule, argMessage, scope.module);
-//               }                  
-//            }
-//
-//            position -= 8;
-//         }
-//
-//         return foundMessage;
-//      }
-//   }
-//
-//   return 0;
-//}
-//
-//inline size_t readSignatureMember(ident_t signature, size_t index)
-//{
-//   int level = 0;
-//   size_t len = getlength(signature);
-//   for (size_t i = index; i < len; i++) {
-//      if (signature[i] == '&') {
-//         if (level == 0) {
-//            return i;
-//         }
-//         else level--;
-//      }
-//      else if (signature[i] == '#') {
-//         String<char, 5> tmp;
-//         size_t numEnd = signature.find(i, '&', NOTFOUND_POS);
-//         tmp.copy(signature.c_str() + i + 1, numEnd - i - 1);
-//         level += ident_t(tmp).toInt();
-//      }
-//   }
-//
-//   return len;
-//}
-//
-//inline void decodeClassName(IdentifierString& signature)
-//{
-//   ident_t ident = signature.ident();
-//
-//   if (ident.startsWith(TEMPLATE_PREFIX_NS_ENCODED)) {
-//      // if it is encodeded weak reference - decode only the prefix
-//      signature[0] = '\'';
-//      signature[strlen(TEMPLATE_PREFIX_NS_ENCODED) - 1] = '\'';
-//   }
-//   else if (ident.startsWith(TEMPLATE_PREFIX_NS)) {
-//      // if it is weak reference - do nothing
-//   }
-//   else signature.replaceAll('@', '\'', 0);
-//}
-//
-//ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, 
-//   ref_t implicitSignatureRef, ident_t ns, ExtensionMap* outerExtensionList)
-//{
-//   size_t argumentLen = 0;
-//   ref_t parameters[ARG_COUNT] = { 0 };
-//   ref_t signatures[ARG_COUNT];
-//   /*size_t signatureLen = */scope.module->resolveSignature(implicitSignatureRef, signatures);
-//
-//   // matching pattern with the provided signature
-//   size_t i = pattern.find('.') + 2;
-//
-//   IdentifierString templateName(pattern, i - 2);
-//   ref_t templateRef = scope.mapFullReference(templateName.ident(), true);
-//
-//   size_t len = getlength(pattern);
-//   bool matched = true;
-//   size_t signIndex = 0;
-//   while (matched && i < len) {
-//      if (pattern[i] == '{') {
-//         size_t end = pattern.find(i, '}', 0);
-//
-//         String<char, 5> tmp;
-//         tmp.copy(pattern + i + 1, end - i - 1);
-//
-//         size_t index = ident_t(tmp).toInt();
-//
-//         parameters[index - 1] = signatures[signIndex];
-//         if (argumentLen < index)
-//            argumentLen = index;
-//
-//         i = end + 2;
-//      }
-//      else {
-//         size_t end = pattern.find(i, '/', getlength(pattern));
-//         IdentifierString argType;
-//         argType.copy(pattern + i, end - i);
-//
-//         if (argType.ident().find('{') != NOTFOUND_POS) {
-//            ref_t argRef = signatures[signIndex];
-//            // bad luck : if it is a template based argument
-//            ident_t signType;
-//            while (argRef) {
-//               // try to find the template based signature argument
-//               signType = scope.module->resolveReference(argRef);
-//               if (!isTemplateWeakReference(signType)) {
-//                  ClassInfo info;
-//                  defineClassInfo(scope, info, argRef, true);
-//                  argRef = info.header.parentRef;
-//               }
-//               else break;
-//            }
-//
-//            if (argRef) {
-//               size_t argLen = getlength(argType);
-//               size_t start = 0;
-//               size_t argIndex = argType.ident().find('{');
-//               while (argIndex < argLen && matched) {
-//                  if (argType.ident().compare(signType, start, argIndex - start)) {
-//                     size_t paramEnd = argType.ident().find(argIndex, '}', 0);
-//
-//                     String<char, 5> tmp;
-//                     tmp.copy(argType.c_str() + argIndex + 1, paramEnd - argIndex - 1);
-//
-//                     IdentifierString templateArg;
-//                     size_t nextArg = readSignatureMember(signType, argIndex - start);
-//                     templateArg.copy(signType + argIndex - start, nextArg - argIndex + start);
-//                     decodeClassName(templateArg);                     
-//
-//                     signType = signType + nextArg + 1;
-//
-//                     size_t index = ident_t(tmp).toInt();
-//                     ref_t templateArgRef = scope.mapFullReference(templateArg);
-//                     if (!parameters[index - 1]) {
-//                        parameters[index - 1] = templateArgRef;
-//                     }
-//                     else if (parameters[index - 1] != templateArgRef) {
-//                        matched = false;
-//                        break;
-//                     }
-//                     
-//                     if (argumentLen < index)
-//                        argumentLen = index;
-//
-//                     start = paramEnd + 2;
-//                     argIndex = argType.ident().find(start, '{', argLen);
-//                  }
-//                  else matched = false;
-//               }
-//
-//               if (matched && start < argLen) {
-//                  // validate the rest part
-//                  matched = argType.ident().compare(signType, start, argIndex - start);
-//               }
-//            }
-//            else matched = false;
-//         }
-//         else {
-//            ref_t argRef = scope.mapFullReference(argType.ident(), true);
-//            matched = isCompatible(scope, argRef, signatures[signIndex], true);
-//         }
-//
-//         i = end + 1;
-//      }
-//
-//      signIndex++;
-//   }
-//
-//   if (matched) {
-//      return compiler.generateExtensionTemplate(scope, templateRef, argumentLen, parameters, ns, outerExtensionList);
-//   }
-//   
-//   return 0;
-//}
+
+inline mssg_t resolveNonpublic(ClassInfo& info, _Module* module, mssg_t publicMessage, ref_t& visibility)
+{
+   for (auto it = info.methodHints.start(); !it.Eof(); it++) {
+      Attribute key = it.key();
+      if (key.value1 == publicMessage && (key.value2 == maPrivate || key.value2 == maProtected || key.value2 == maInternal)) {
+         visibility = key.value2;
+
+         // get multi method
+         size_t argCount = 0;
+         ref_t actionRef = 0, flags = 0, signRef = 0;
+         decodeMessage(*it, actionRef, argCount, flags);
+
+         ident_t actionStr = module->resolveAction(actionRef, signRef);
+
+         if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
+            // COMPILER MAGIC : for variadic message - use the most general message
+            ref_t genericActionRef = module->mapAction(actionStr, 0, false);
+            mssg_t genericMessage = encodeMessage(genericActionRef, 2, flags);
+
+            return genericMessage;
+         }
+         else if (signRef) {
+            ref_t genericActionRef = module->mapAction(actionStr, 0, false);
+            mssg_t genericMessage = encodeMessage(genericActionRef, argCount, flags);
+
+            return genericMessage;
+         }
+         else return *it;
+      }
+   }
+
+   return 0;
+}
+
+mssg_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, mssg_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef,
+   int& stackSafeAttr, bool selfCall)
+{
+   if (!targetRef)
+      return 0;
+
+   ClassInfo info;
+   if (defineClassInfo(scope, info, targetRef)) {
+      if (isStacksafeArg(info))
+         stackSafeAttr |= 1;
+
+      // check if it is non public message
+      ref_t type = 0;
+      mssg_t nonPublicMultiMessage = resolveNonpublic(info, scope.module, multiMessage, type);
+      if (nonPublicMultiMessage != 0) {
+         // if it is an internal
+         mssg_t resolved = 0;
+         if (type == maInternal && scope.isInteralOp(targetRef)) {
+            resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
+            if (!resolved) {
+               return nonPublicMultiMessage;
+            }
+            else return resolved;
+         }
+         else if ((type == maPrivate || type == maProtected) && selfCall) {
+            resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
+            if (!resolved) {
+               return nonPublicMultiMessage;
+            }
+            else return resolved;
+         }
+      }
+
+      if (!implicitSignatureRef)
+         return 0;
+
+      ref_t signatures[ARG_COUNT];
+      size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
+
+      ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
+      if (listRef == 0 && isMethodPrivate(info, multiMessage))
+         listRef = info.methodHints.get(Attribute(multiMessage | STATIC_MESSAGE, maOverloadlist));
+
+      if (listRef) {
+         _Module* argModule = scope.loadReferenceModule(listRef, listRef);
+
+         _Memory* section = argModule->mapSection(listRef | mskRDataRef, true);
+         if (!section || section->Length() < 4)
+            return 0;
+
+         MemoryReader reader(section);
+         pos_t position = section->Length() - 4;
+         mssg_t foundMessage = 0;
+         while (position != 0) {
+            reader.seek(position - 8);
+            mssg_t argMessage = reader.getDWord();
+            ref_t argSign = 0;
+            argModule->resolveAction(getAction(argMessage), argSign);
+
+            if (argModule == scope.module) {
+               if (isSignatureCompatible(scope, argSign, signatures, signatureLen)) {
+                  setSignatureStacksafe(scope, argSign, stackSafeAttr);
+
+                  foundMessage = argMessage;
+               }                  
+            }
+            else {
+               if (isSignatureCompatible(scope, argModule, argSign, signatures, signatureLen)) {
+                  setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
+
+                  foundMessage = importMessage(argModule, argMessage, scope.module);
+               }                  
+            }
+
+            position -= 8;
+         }
+
+         return foundMessage;
+      }
+   }
+
+   return 0;
+}
+
+inline size_t __fastcall readSignatureMember(ident_t signature, size_t index)
+{
+   int level = 0;
+   size_t len = getlength(signature);
+   for (size_t i = index; i < len; i++) {
+      if (signature[i] == '&') {
+         if (level == 0) {
+            return i;
+         }
+         else level--;
+      }
+      else if (signature[i] == '#') {
+         String<char, 5> tmp;
+         size_t numEnd = signature.find(i, '&', NOTFOUND_POS);
+         tmp.copy(signature.c_str() + i + 1, numEnd - i - 1);
+         level += ident_t(tmp).toInt();
+      }
+   }
+
+   return len;
+}
+
+inline void __fastcall decodeClassName(IdentifierString& signature)
+{
+   ident_t ident = signature.ident();
+
+   if (ident.startsWith(TEMPLATE_PREFIX_NS_ENCODED)) {
+      // if it is encodeded weak reference - decode only the prefix
+      signature[0] = '\'';
+      signature[strlen(TEMPLATE_PREFIX_NS_ENCODED) - 1] = '\'';
+   }
+   else if (ident.startsWith(TEMPLATE_PREFIX_NS)) {
+      // if it is weak reference - do nothing
+   }
+   else signature.replaceAll('@', '\'', 0);
+}
+
+ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, 
+   ref_t implicitSignatureRef, ident_t ns, ExtensionMap* outerExtensionList)
+{
+   size_t argumentLen = 0;
+   ref_t parameters[ARG_COUNT] = { 0 };
+   ref_t signatures[ARG_COUNT];
+   /*size_t signatureLen = */scope.module->resolveSignature(implicitSignatureRef, signatures);
+
+   // matching pattern with the provided signature
+   size_t i = pattern.find('.') + 2;
+
+   IdentifierString templateName(pattern, i - 2);
+   ref_t templateRef = scope.mapFullReference(templateName.ident(), true);
+
+   size_t len = getlength(pattern);
+   bool matched = true;
+   size_t signIndex = 0;
+   while (matched && i < len) {
+      if (pattern[i] == '{') {
+         size_t end = pattern.find(i, '}', 0);
+
+         String<char, 5> tmp;
+         tmp.copy(pattern + i + 1, end - i - 1);
+
+         size_t index = ident_t(tmp).toInt();
+
+         parameters[index - 1] = signatures[signIndex];
+         if (argumentLen < index)
+            argumentLen = index;
+
+         i = end + 2;
+      }
+      else {
+         size_t end = pattern.find(i, '/', getlength(pattern));
+         IdentifierString argType;
+         argType.copy(pattern + i, end - i);
+
+         if (argType.ident().find('{') != NOTFOUND_POS) {
+            ref_t argRef = signatures[signIndex];
+            // bad luck : if it is a template based argument
+            ident_t signType;
+            while (argRef) {
+               // try to find the template based signature argument
+               signType = scope.module->resolveReference(argRef);
+               if (!isTemplateWeakReference(signType)) {
+                  ClassInfo info;
+                  defineClassInfo(scope, info, argRef, true);
+                  argRef = info.header.parentRef;
+               }
+               else break;
+            }
+
+            if (argRef) {
+               size_t argLen = getlength(argType);
+               size_t start = 0;
+               size_t argIndex = argType.ident().find('{');
+               while (argIndex < argLen && matched) {
+                  if (argType.ident().compare(signType, start, argIndex - start)) {
+                     size_t paramEnd = argType.ident().find(argIndex, '}', 0);
+
+                     String<char, 5> tmp;
+                     tmp.copy(argType.c_str() + argIndex + 1, paramEnd - argIndex - 1);
+
+                     IdentifierString templateArg;
+                     size_t nextArg = readSignatureMember(signType, argIndex - start);
+                     templateArg.copy(signType + argIndex - start, nextArg - argIndex + start);
+                     decodeClassName(templateArg);                     
+
+                     signType = signType + nextArg + 1;
+
+                     size_t index = ident_t(tmp).toInt();
+                     ref_t templateArgRef = scope.mapFullReference(templateArg);
+                     if (!parameters[index - 1]) {
+                        parameters[index - 1] = templateArgRef;
+                     }
+                     else if (parameters[index - 1] != templateArgRef) {
+                        matched = false;
+                        break;
+                     }
+                     
+                     if (argumentLen < index)
+                        argumentLen = index;
+
+                     start = paramEnd + 2;
+                     argIndex = argType.ident().find(start, '{', argLen);
+                  }
+                  else matched = false;
+               }
+
+               if (matched && start < argLen) {
+                  // validate the rest part
+                  matched = argType.ident().compare(signType, start, argIndex - start);
+               }
+            }
+            else matched = false;
+         }
+         else {
+            ref_t argRef = scope.mapFullReference(argType.ident(), true);
+            matched = isCompatible(scope, argRef, signatures[signIndex], true);
+         }
+
+         i = end + 1;
+      }
+
+      signIndex++;
+   }
+
+   if (matched) {
+      return compiler.generateExtensionTemplate(scope, templateRef, argumentLen, parameters, ns, outerExtensionList);
+   }
+   
+   return 0;
+}
 
 bool CompilerLogic :: validateMessage(_ModuleScope& scope, mssg_t message, int hints)
 {
