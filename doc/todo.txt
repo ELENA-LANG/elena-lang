@@ -3,11 +3,8 @@ In development:
 ------         
 
   [development]
-    * multi-method, single multi-method
+    * array types : variable, expression
 
-    * template based types : expressions, return type, arguments
-
-    * array types
     * extensions
     * template based extensions
     * parents / class import
@@ -21,6 +18,7 @@ In development:
     * embedable ret
     * multi ret
     * yield metods
+    * fixed arrays
 
     * uncomment all code
     * uncomment compileResendExpression, compileDispatchExpression, compileDispatcher, compileMultidispatch, matchTriePatterns,

@@ -190,6 +190,8 @@ void DerivationWriter :: newNode(LexicalType symbol)
    if (test(symbol, lxSubScopeEndMask)) {
       LexicalType injected = (LexicalType)((int)symbol & ~lxSubScopeEndMask);
       if (test(symbol, lxReplaceMask)) {
+         SNode bm = _cacheWriter.BookmarkNode().parentNode();
+
          if (test(symbol, lxPreviousMask)) {
             _cacheWriter.moveToPrevious();
             
@@ -199,7 +201,14 @@ void DerivationWriter :: newNode(LexicalType symbol)
             _last_bookmark = _level;
 
          }
-         else _cacheWriter.replace(injected);
+         else {
+            // PARSER MAGIC : a bookmark replaced or injected if similar
+            if (test(bm.type, lxReplaceMask)) {
+               bm.injectAndReplaceNode(injected);
+               _cacheWriter.moveToChild();
+            }
+            else _cacheWriter.replace(injected);
+         }
       }
       else _cacheWriter.inject(injected);
    }
@@ -652,17 +661,27 @@ void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalTyp
    }
 //   bool allowPropertyTemplate = test(mode, MODE_PROPERTYALLOWED);
    ref_t attributeCategory = V_CATEGORY_MAX;
-   while (current == lxToken) {
-      bool allowType = current.nextNode()/*.compare(*/ == nameNodeType/*, lxDynamicSizeDecl)*/;
-      ref_t attrRef = mapAttribute(current, allowType/*, allowPropertyTemplate*/, attributeCategory);
-      if (isPrimitiveRef(attrRef)) {
-         current.set(lxAttribute, attrRef);
+   while (current.compare(lxToken, lxTokenArgs, lxDynamicBrackets)) {
+      bool allowType = current.nextNode() == nameNodeType;
+      if (current == lxTokenArgs) {
+         if (allowType)
+            current.set(lxType, V_TEMPLATE);
       }
-      else if (attrRef != 0 || allowType) {
-         current.set(lxType, attrRef);
-         allowType = false;
+      else if (current == lxDynamicBrackets) {
+         if (allowType)
+            current.set(lxArrayType, 0);
       }
-      else raiseWarning(WARNING_LEVEL_2, wrnUnknownHint, current);
+      else {
+         ref_t attrRef = mapAttribute(current, allowType/*, allowPropertyTemplate*/, attributeCategory);
+         if (isPrimitiveRef(attrRef)) {
+            current.set(lxAttribute, attrRef);
+         }
+         else if (attrRef != 0 || allowType) {
+            current.set(lxType, attrRef);
+            allowType = false;
+         }
+         else raiseWarning(WARNING_LEVEL_2, wrnUnknownHint, current);
+      }
 
       current = current.nextNode();
    }
@@ -683,7 +702,7 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
    if (!templateMode)
       nameNode = lxNameAttr;
 
-   recognizeAttributes(goToFirstNode(nameNode.prevNode(), lxToken/*, lxDynamicSizeDecl*/, lxInlineAttribute, lxTokenArgs), 
+   recognizeAttributes(goToFirstNode(nameNode.prevNode(), lxToken, lxDynamicBrackets, lxInlineAttribute, lxTokenArgs), 
       mode, lxNameAttr);
 
    if (!templateMode && test(mode, MODE_ROOT)) {
@@ -930,29 +949,29 @@ void DerivationWriter :: flushTemplateAttributes(SyntaxWriter& writer, SNode cur
    ref_t attributeCategory = 0u;
    while (current != lxNone) {
       if (current.compare(lxToken, lxTokenArgs)) {
-         //int dimensionCounter = 0;
-         //SNode dimNode = current.nextNode();
-         //while (dimNode.compare(lxTemplateArgs, lxDynamicSizeDecl)) {
-         //   if (dimNode == lxDynamicSizeDecl) {
-         //      dimensionCounter++;
-         //   }
-
-         //   dimNode = dimNode.nextNode();
-         //}
-
-         flushExpressionAttribute(writer, current, derivationScope, attributeCategory/*, dimensionCounter*/, true);
+         flushExpressionAttribute(writer, current, derivationScope, attributeCategory, true);
       }
       current = current.nextNode();
    }
 }
 
-void DerivationWriter :: flushTypeAttribute(SyntaxWriter& writer, SNode node, ref_t typeRef/*, int dimensionCounter*/, 
-   Scope& derivationScope)
+void DerivationWriter :: flushArrayTypeAttribute(SyntaxWriter& writer, SNode node, ref_t typeRef, Scope& derivationScope)
 {
-//   for (int i = 0; i < dimensionCounter; i++) {
-//      writer.newNode(lxArrayType);
-//   }
+   writer.newNode(lxArrayType);
+   SNode current = node.firstChild();
+   if (current == lxArrayType) {
+      flushArrayTypeAttribute(writer, current, current.argument, derivationScope);
+   }
+   else if (current == lxTokenArgs) {
+      flushTypeAttribute(writer, current, V_TEMPLATE, derivationScope);
+   }
+   else flushTypeAttribute(writer, current, current.argument, derivationScope);
 
+   writer.closeNode();
+}
+
+void DerivationWriter :: flushTypeAttribute(SyntaxWriter& writer, SNode node, ref_t typeRef, Scope& derivationScope)
+{
    SNode terminal = node.firstChild(lxTerminalMask);
 
    if (typeRef == V_TEMPLATE) {
@@ -977,10 +996,6 @@ void DerivationWriter :: flushTypeAttribute(SyntaxWriter& writer, SNode node, re
       copyIdentifier(writer, terminal, derivationScope.ignoreTerminalInfo);
       writer.closeNode();
    }
-
-//   for (int i = 0; i < dimensionCounter; i++) {
-//      writer.closeNode();
-//   }
 }
 
 void DerivationWriter :: flushAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
@@ -990,26 +1005,20 @@ void DerivationWriter :: flushAttributes(SyntaxWriter& writer, SNode node, Scope
       // HOTFIX : skip template arguments
       current = current.prevNode();
 
-//   int dimensionCounter = 0;
    SNode nameNode;
    if (current == lxNameAttr) {
       nameNode = current;
 
       current = current.prevNode();
-//      while (current == lxDynamicSizeDecl) {
-//         dimensionCounter++;
-//
-//         current = current.prevNode();
-//      }
-//      if (current == lxTemplateArgs)
-//         current = current.prevNode();
-//
-      current = goToFirstNode(current, lxAttribute, lxType, lxInlineAttribute);
+      current = goToFirstNode(current, lxAttribute, lxType, lxArrayType, lxInlineAttribute);
    }
 
    while (true) {
       if (current == lxType || (current.argument == V_TEMPLATE && current == lxAttribute)) {
          flushTypeAttribute(writer, current, current.argument/*, dimensionCounter*/, derivationScope);
+      }
+      else if (current == lxArrayType) {
+         flushArrayTypeAttribute(writer, current, current.argument/*, dimensionCounter*/, derivationScope);
       }
       else if (current == lxInlineAttribute) {
          // COMPILER MAGIC : inject an attribute template

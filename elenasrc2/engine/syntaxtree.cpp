@@ -240,9 +240,6 @@ void SyntaxWriter :: moveToPrevious()
 {
    pos_t lastChild = _syntaxTree->getChild(_current);
 
-   auto n = _syntaxTree->read(lastChild);
-   auto n2 = _syntaxTree->read(_current);
-
    pos_t next = _syntaxTree->getNext(lastChild);
    while (next != INVALID_REF) {
       lastChild = next;
@@ -252,9 +249,25 @@ void SyntaxWriter :: moveToPrevious()
    _current = lastChild;
 }
 
+bool SyntaxWriter :: moveToChild()
+{
+   pos_t child = _syntaxTree->getChild(_current);
+   if (child != INVALID_REF) {
+      _current = child;
+
+      return true;
+   }
+   else return false;
+}
+
 SyntaxTree::Node SyntaxWriter :: CurrentNode()
 {
    return _syntaxTree->read(_current);
+}
+
+SyntaxTree::Node SyntaxWriter :: BookmarkNode()
+{
+   return _syntaxTree->read(_bookmarks.peek());
 }
 
 // --- SyntaxTree::Node ---

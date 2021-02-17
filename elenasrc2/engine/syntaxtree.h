@@ -136,13 +136,16 @@ enum LexicalType
    lxStaticField              = 0x010352,   // arg - reference   // - lxClassStaticField
    lxStaticConstField         = 0x010354,
    lxImporting                = 0x010360,
+   lxDynamicBracketsOp        = 0x601370,
+   lxExprDynamicBracketsOp    = 0x701370,
+   lxDynamicBrackets          = 0x201370,
 
-   lxResending                = 0x031360,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
-   lxGenericResending         = 0x031361,   // resending a generic message
-   lxDirectResending          = 0x031362,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
-   lxSDirectResending         = 0x031363,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
-   lxMultiDispatching         = 0x031370,
-   lxSealedMultiDispatching   = 0x031371,
+   lxResending                = 0x031380,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
+   lxGenericResending         = 0x031381,   // resending a generic message
+   lxDirectResending          = 0x031382,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
+   lxSDirectResending         = 0x031383,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
+   lxMultiDispatching         = 0x031390,
+   lxSealedMultiDispatching   = 0x031391,
 
    lxCalling_0                = 0x0303A0,   // calling a method, arg - message
    lxCalling_1                = 0x0303A1,
@@ -1101,8 +1104,10 @@ public:
       }
 
       void moveToPrevious();
+      bool moveToChild();
 
       Node CurrentNode();
+      Node BookmarkNode();
 
       Writer(SyntaxTree& tree)
       {
