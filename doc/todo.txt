@@ -3,7 +3,10 @@ In development:
 ------         
 
   [development]
-    * array types : variable, expression
+    * several operations in row
+
+    * token args - expression, variable, type, output type
+    * array args - expression, variable, type, output type
 
     * extensions
     * template based extensions

@@ -18,9 +18,8 @@ enum LexicalType
 {
    // key attributes
    lxTerminalMask             = 0x002000,
-   lxSubScopeMask             = 0x800000,   // indicates that the bookmark should be created 
    lxSubScopeEndMask          = 0x400000,   // indicates that the special node should be inserted at the bookmark
-   lxPreviousMask             = 0x100000,
+   lxInjectMask               = 0x200000,
    lxObjectMask               = 0x010000,
    lxOpScopeMask              = 0x030000,
    lxReplaceMask              = 0x200000,
@@ -50,7 +49,8 @@ enum LexicalType
    //   lxVirtualReference         = 0x00201F,
 
    // NOTE : low word should be unique for every key
-   lxToken                    = 0x801010,
+   lxInjectMark               = 0x001000,
+   lxToken                    = 0x001010,
    lxScope                    = 0x001020,
    //   lxAttributeDecl            = 0x001030,
 //   lxSizeDecl                 = 0x001040,
@@ -83,10 +83,10 @@ enum LexicalType
 //   lxInlineArgs               = 0x0011E0,
 //   lxCollection               = 0x0211F0,
 //   lxSubMessage               = 0x021200,
-   lxExpression               = 0x831210,
-   lxSeqExpression            = 0x831211,
-   lxFieldExpression          = 0x831213,
-   lxCodeExpression           = 0x831215,
+   lxExpression               = 0x031210,
+   lxSeqExpression            = 0x031211,
+   lxFieldExpression          = 0x031213,
+   lxCodeExpression           = 0x031215,
    lxNil                      = 0x010220,
    lxResult                   = 0x010230,   // arg - offset
    lxMessageOp                = 0x431230,
@@ -125,7 +125,6 @@ enum LexicalType
    lxAssigningOp              = 0x431300,
    lxAssigningExpression      = 0x031300,   
    lxTokenOp                  = 0x601310,
-   lxExprTokenArgs            = 0x701310,
    lxTokenArgs                = 0x201310,
    lxResendExpression         = 0x031320,
    lxDispatching              = 0x031321,   // dispatching a message, optional arg - message
@@ -137,7 +136,6 @@ enum LexicalType
    lxStaticConstField         = 0x010354,
    lxImporting                = 0x010360,
    lxDynamicBracketsOp        = 0x601370,
-   lxExprDynamicBracketsOp    = 0x701370,
    lxDynamicBrackets          = 0x201370,
 
    lxResending                = 0x031380,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
@@ -1208,8 +1206,10 @@ public:
    static void copyNode(Writer& writer, LexicalType type, Node owner);
    static void copyNode(Writer& writer, Node node);
    static void copyNode(Node source, Node destination);
-//   static Node insertNodeCopy(Node source, Node destination);
+   static Node insertNodeCopy(Node source, Node destination);
    static void saveNode(Node node, _Memory* dump, bool includingNode = false);
+
+   static void moveSiblingNodes(Node source, Node destination);
 
    static int countNodeMask(Node current, LexicalType mask)
    {

@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -4191,7 +4191,19 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
       //   else paramsMode = paramsMode | HINT_EXTERNALOP;
    }
 
-   return compileMessageOperation(writer, current, scope, target, messageRef, expectedSignRef, paramsMode);
+   ObjectInfo retVal = compileMessageOperation(writer, current, scope, target, messageRef, expectedSignRef, paramsMode);
+
+   if (EAttrs::test(mode, HINT_PARAMETER)) {
+      int tempLocal = scope.newTempLocal();
+      writer.newNode(lxAssigning);
+      writer.appendNode(lxTempLocal, tempLocal);
+      writer.appendNode(lxResult);
+      writer.closeNode();
+
+      retVal = ObjectInfo(okTempLocal, tempLocal, resolveObjectReference(scope, retVal, false));
+   }
+
+   return retVal;
 }
 
 //void Compiler :: inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, ref_t targetRef)
@@ -6419,34 +6431,23 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
    ObjectInfo retVal;
 
    bool rootMode = EAttrs::test(mode, HINT_ROOT);
-   bool paramMode = EAttrs::test(mode, HINT_PARAMETER);
    if (rootMode) {
       writer.newNode(lxSeqExpression);
       mode = EAttrs::exclude(mode, HINT_ROOT);
    }
       
-   SNode current = node.firstChild();
-   switch (current.type) {
+   switch (node.type) {
       case lxExpression:
-         retVal = compileExpression(writer, current, scope, 0, mode);
+         retVal = compileExpression(writer, node.firstChild(), scope, 0, mode);
          break;
       case lxMessageExpression:
-         if (paramMode) {
-            int tempLocal = scope.newTempLocal();
-            writer.newNode(lxAssigning);
-            writer.appendNode(lxTempLocal, tempLocal);
-            retVal = compileMessageExpression(writer, current, scope, EAttrs::exclude(mode, HINT_PARAMETER));
-            writer.closeNode();
-
-            retVal = ObjectInfo(okTempLocal, tempLocal, resolveObjectReference(scope, retVal, false));
-         }
-         else retVal = compileMessageExpression(writer, current, scope, mode);
+         retVal = compileMessageExpression(writer, node, scope, mode);
          break;
       case lxAssigningExpression:
-         retVal = compileAssigningExpression(writer, current, scope, mode);
+         retVal = compileAssigningExpression(writer, node, scope, mode);
          break;
       default:
-         retVal = compileObject(writer, current, scope, mode);
+         retVal = compileObject(writer, node, scope, mode);
          break;
    }
 
@@ -10122,6 +10123,8 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 //   if (scope.preloaded) {
 //      compilePreloadedCode(scope);
 //   }
+
+   test2(expressionTree.readRoot());
 
    pos_t sourcePathRef = scope.saveSourcePath(_writer);
    CommandTape tape;

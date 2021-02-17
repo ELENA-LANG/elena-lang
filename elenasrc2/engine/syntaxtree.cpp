@@ -672,23 +672,47 @@ void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
    }
 }
 
-//SyntaxTree::Node SyntaxTree::insertNodeCopy(SyntaxTree::Node source, SyntaxTree::Node destination)
-//{
-//   Node insertedNode;
-//   if (source.strArgument != INVALID_REF) {
-//      if (source.tree == destination.tree) {
-//         // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
-//         // so the special routine should be used
-//         insertedNode = destination.insertStrNode(source.type, source.strArgument);
-//      }
-//      else insertedNode = destination.insertNode(source.type, source.identifier());
-//   }
-//   else insertedNode = destination.insertNode(source.type, source.argument);
-//
-//   copyNode(source, insertedNode);
-//
-//   return insertedNode;
-//}
+SyntaxTree::Node SyntaxTree::insertNodeCopy(SyntaxTree::Node source, SyntaxTree::Node destination)
+{
+   Node insertedNode;
+   if (source.strArgument != INVALID_REF) {
+      if (source.tree == destination.tree) {
+         // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
+         // so the special routine should be used
+         insertedNode = destination.insertStrNode(source.type, source.strArgument);
+      }
+      else insertedNode = destination.insertNode(source.type, source.identifier());
+   }
+   else insertedNode = destination.insertNode(source.type, source.argument);
+
+   copyNode(source, insertedNode);
+
+   return insertedNode;
+}
+
+void SyntaxTree :: moveSiblingNodes(SyntaxTree::Node source, SyntaxTree::Node destination)
+{
+   SNode insertedNode;
+   while (source != lxNone) {
+      if (source != lxIdle) {
+         if (source.strArgument != INVALID_REF) {
+            if (source.tree == destination.tree) {
+               // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
+               // so the special routine should be used
+               insertedNode = destination.appendStrNode(source.type, source.strArgument);
+            }
+            else insertedNode = destination.appendNode(source.type, source.identifier());
+         }
+         else insertedNode = destination.appendNode(source.type, source.argument);
+
+         copyNode(source, insertedNode);
+
+         source = lxIdle;
+      }
+
+      source = source.nextNode();
+   }
+}
 
 void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destination)
 {

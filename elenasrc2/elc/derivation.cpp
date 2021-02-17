@@ -189,40 +189,39 @@ void DerivationWriter :: newNode(LexicalType symbol)
 
    if (test(symbol, lxSubScopeEndMask)) {
       LexicalType injected = (LexicalType)((int)symbol & ~lxSubScopeEndMask);
-      if (test(symbol, lxReplaceMask)) {
-         SNode bm = _cacheWriter.BookmarkNode().parentNode();
+      if (test(symbol, lxInjectMask)) {
+         // DERIVATION MAGIC : inject sub scope:
+         // - find a begining mark
+         SNode target;
+         SNode current = _cacheWriter.CurrentNode().parentNode();
+         current = goToFirstNode(current, lxInjectMark);
+         if (current != lxNone) {
+            // - if scope mark is found - inject the content to the previous node
+            target = current.prevNode();
+            target.injectAndReplaceNode(injected);
 
-         if (test(symbol, lxPreviousMask)) {
-            _cacheWriter.moveToPrevious();
-            
-            // PARSER MAGIC : a bookmark should be created
-            _cacheWriter.newBookmark();
-            _bookmarks.push(_level);
-            _last_bookmark = _level;
-
+            // copy the rest to the injected node
+            SyntaxTree::moveSiblingNodes(current.nextNode(), target);
          }
          else {
-            // PARSER MAGIC : a bookmark replaced or injected if similar
-            if (test(bm.type, lxReplaceMask)) {
-               bm.injectAndReplaceNode(injected);
-               _cacheWriter.moveToChild();
-            }
-            else _cacheWriter.replace(injected);
+            // - if scope mark is not found - inject the content to the parent
+            current = _cacheWriter.CurrentNode().parentNode();
+            target = current.parentNode();
+            current.injectAndReplaceNode(target.type);
          }
+         // copy the rest to the injected node
+         SyntaxTree::moveSiblingNodes(current.nextNode(), target);
       }
-      else _cacheWriter.inject(injected);
-   }
-   else {
-      _cacheWriter.newNode(symbol);
+      else {
+         SNode current = _cacheWriter.CurrentNode();
 
-      if (test(symbol, lxSubScopeMask)) {
-         // PARSER MAGIC : a bookmark should be created
-         _cacheWriter.newBookmark();
-         _bookmarks.push(_level);
-         _last_bookmark = _level;
+         current.injectNode(injected);
       }
+
+      if (!_cacheWriter.moveToChild())
+         _cacheWriter.newNode(lxIdle);
    }
-   
+   else _cacheWriter.newNode(symbol);
 }
 
 void DerivationWriter :: closeNode()
@@ -231,14 +230,6 @@ void DerivationWriter :: closeNode()
       _output.closeNode();
    }
    else {
-      if (_last_bookmark == _level) {
-         // PARSER MAGIC : a bookmark should be removed
-         _bookmarks.pop();
-         _last_bookmark = _bookmarks.peek();
-
-         _cacheWriter.removeBookmark();
-      }
-
       _level--;
 
       _cacheWriter.closeNode();
@@ -1634,7 +1625,7 @@ void DerivationWriter :: flushInlineTemplateTree(SyntaxWriter&, SNode node, SNod
 //}
 
 void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode current, Scope& derivationScope, 
-   ref_t& previousCategory/*, int dimensionCounter*/, bool templateArgMode)
+   ref_t& previousCategory, bool templateArgMode)
 {
    bool allowType = false;
    //bool allowProperty = false;
@@ -1656,6 +1647,10 @@ void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode cu
    if (current == lxTokenArgs) {
       // if it is a template based type
       flushTypeAttribute(writer, current, V_TEMPLATE/*, dimensionCounter*/, derivationScope);
+   }
+   else if (current == lxDynamicBrackets) {
+      // if it is a template based type
+      flushArrayTypeAttribute(writer, current, 0, derivationScope);
    }
    else {
       ref_t attrRef = mapAttribute(current, allowType, /*allowProperty, */previousCategory);
@@ -1721,11 +1716,7 @@ void DerivationWriter :: flushTokenExpression(SyntaxWriter& writer, SNode& node,
    // find the last token
    SNode lastNode = node;
    node = node.nextNode();   
-//   int dimensionCounter = 0;
-   while (node.compare(lxToken, lxTokenArgs/*, lxDynamicSizeDecl*/)) {
-//      if (node == lxDynamicSizeDecl)
-//         dimensionCounter++;
-
+   while (node.compare(lxToken, lxTokenArgs, lxDynamicBrackets)) {
       lastNode = node;
       node = node.nextNode();
    }
@@ -1744,12 +1735,12 @@ void DerivationWriter :: flushTokenExpression(SyntaxWriter& writer, SNode& node,
 //   }
    /*else */node = lastNode;
 
-   if (lastNode == lxTokenArgs)
+   if (lastNode.compare(lxTokenArgs, lxDynamicBrackets))
       lastNode = lastNode.nextNode();
 
    while (current != lastNode) {
-      if (current.compare(lxToken, lxTokenArgs))
-         flushExpressionAttribute(writer, current, derivationScope, attributeCategory/*, dimensionCounter, false*/);
+      if (current.compare(lxToken, lxTokenArgs, lxDynamicBrackets))
+         flushExpressionAttribute(writer, current, derivationScope, attributeCategory);
 
       current = current.nextNode();
    }
@@ -1914,6 +1905,7 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
 //         break;
       case lxToken:
       case lxTokenArgs:
+      case lxDynamicBrackets:
          flushTokenExpression(writer, current, derivationScope/*, true*/);
          break;
 //      case lxPropertyParam:

@@ -93,8 +93,6 @@ class DerivationWriter : public _DerivationWriter
    int           _cachingLevel;
    SyntaxTree    _cache;
    SyntaxWriter  _cacheWriter;
-   Stack<pos_t>  _bookmarks;
-   int           _last_bookmark;
 
    SyntaxWriter  _output;
 
@@ -186,7 +184,6 @@ public:
       :  _output(target), _cacheWriter(_cache)
    {
       _cachingLevel = _level = 0;
-      _last_bookmark = 0;
 
       _scope = scope;
 
