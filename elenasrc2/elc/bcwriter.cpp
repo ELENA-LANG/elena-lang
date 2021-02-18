@@ -3441,10 +3441,6 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
    SNode srcObj = /*source == lxExpression ? source.findSubNodeMask(lxObjectMask) : */source;
    SNode dstObj = target == lxExpression ? target.findSubNodeMask(lxObjectMask) : target;
 
-   if (srcObj.firstChild() == lxBreakpoint && !test(mode, NOBREAKPOINTS)) {
-      translateBreakpoint(tape, srcObj.firstChild(), scope);
-   }
-
    if (srcObj == lxLocalAddress && dstObj != lxFieldExpression) {
       loadObject(tape, target, scope);
       copyFromLocalAddress(tape, node.argument, srcObj.argument);

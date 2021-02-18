@@ -17,7 +17,6 @@ constexpr auto MODE_ROOT                  = 0x01;
 //constexpr auto MODE_PROPERTYALLOWED       = 0x40;
 //
 //constexpr auto MODE_FUNCTION              = -2;
-////constexpr auto MODE_COMPLEXMESSAGE  = -3;
 //constexpr auto MODE_PROPERTYMETHOD        = -4;
 
 constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
@@ -43,6 +42,15 @@ constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
 //
 //   return firstOne;
 //}
+
+inline SNode __fastcall goBacktoSibling(SNode current, LexicalType type)
+{
+   while (current != lxNone && current != type) {
+      current = current.prevNode();
+   }
+
+   return current;
+}
 
 inline SNode __fastcall goToFirstNode(SNode current, LexicalType type)
 {
@@ -192,25 +200,16 @@ void DerivationWriter :: newNode(LexicalType symbol)
       if (test(symbol, lxInjectMask)) {
          // DERIVATION MAGIC : inject sub scope:
          // - find a begining mark
-         SNode target;
-         SNode current = _cacheWriter.CurrentNode().parentNode();
-         current = goToFirstNode(current, lxInjectMark);
-         if (current != lxNone) {
-            // - if scope mark is found - inject the content to the previous node
-            target = current.prevNode();
-            target.injectAndReplaceNode(injected);
 
-            // copy the rest to the injected node
-            SyntaxTree::moveSiblingNodes(current.nextNode(), target);
+         SNode target = _cacheWriter.CurrentNode();
+         SNode current = goBacktoSibling(target.lastChild(), lxInjectMark);
+         if (current != lxNone) {
+            target = current.prevNode();
+            target = target.injectNode(injected);
+
+            SyntaxTree::moveSiblingNodes(current, target);
          }
-         else {
-            // - if scope mark is not found - inject the content to the parent
-            current = _cacheWriter.CurrentNode().parentNode();
-            target = current.parentNode();
-            current.injectAndReplaceNode(target.type);
-         }
-         // copy the rest to the injected node
-         SyntaxTree::moveSiblingNodes(current.nextNode(), target);
+         else target.injectNode(injected);
       }
       else {
          SNode current = _cacheWriter.CurrentNode();
@@ -295,7 +294,7 @@ void DerivationWriter :: loadTemplateParameters(Scope& scope, SNode node)
 {
    SNode current = node.findChild(lxToken);
    while (current == lxToken) {
-      if (current.existChild(lxToken))
+      if (current.existChild(lxTokenArgs, lxDynamicBrackets))
          raiseError(errInvalidSyntax, current);
       
       ident_t name = current.firstChild(lxTerminalMask).identifier();
@@ -330,7 +329,7 @@ void DerivationWriter :: generateTemplateTree(SNode node, ScopeType templateType
    Scope templateScope;
    templateScope.templateMode = templateType;
 
-   SNode argsNode = node.prevNode();
+   SNode argsNode = node.prevNode().firstChild();
    loadTemplateParameters(templateScope, argsNode);
    
    SNode identNode = argsNode.firstChild(lxTerminalMask);
@@ -341,7 +340,6 @@ void DerivationWriter :: generateTemplateTree(SNode node, ScopeType templateType
    name.appendInt(paramCounter);
 
    identNode.setStrArgument(name.c_str());
-   argsNode.set(lxNameAttr, INVALID_REF); // to indicate a template name
 
    if (templateType == ScopeType::stExtensionTemplate) {
       _output.newNode(lxExtensionTemplate);
@@ -361,7 +359,7 @@ void DerivationWriter :: recognizeDefinition(SNode scopeNode)
    /*else */if (bodyNode == lxExpression) {
       scopeNode = lxSymbol;
    }
-   else if (scopeNode.prevNode() == lxTokenArgs) {
+   else if (scopeNode.prevNode().firstChild() == lxTokenArgs) {
       scopeNode = lxClass;
 
       // validate the template type
@@ -384,6 +382,8 @@ void DerivationWriter :: recognizeDefinition(SNode scopeNode)
       scopeNode = lxClass;
 
       recognizeClassMembers(scopeNode);
+
+
    }
 }
 
@@ -652,7 +652,7 @@ void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalTyp
    }
 //   bool allowPropertyTemplate = test(mode, MODE_PROPERTYALLOWED);
    ref_t attributeCategory = V_CATEGORY_MAX;
-   while (current.compare(lxToken, lxTokenArgs, lxDynamicBrackets)) {
+   while (current == lxToken) {
       bool allowType = current.nextNode() == nameNodeType;
       if (current == lxTokenArgs) {
          if (allowType)
@@ -681,7 +681,7 @@ void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalTyp
 void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
 {
    bool templateMode = false;
-   if (current == lxTokenArgs) {
+   if (current.firstChild() == lxTokenArgs) {
       if (test(mode, MODE_ROOT)) {
          templateMode = true;
       }
@@ -690,11 +690,10 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
 
    // set name if it is not a template
    SNode nameNode = current;
-   if (!templateMode)
-      nameNode = lxNameAttr;
+   nameNode = templateMode ? lxTemplateNameAttr : lxNameAttr;
 
-   recognizeAttributes(goToFirstNode(nameNode.prevNode(), lxToken, lxDynamicBrackets, lxInlineAttribute, lxTokenArgs), 
-      mode, lxNameAttr);
+   recognizeAttributes(goToFirstNode(nameNode.prevNode(), lxToken, lxInlineAttribute), 
+      mode, templateMode ? lxTemplateNameAttr : lxNameAttr);
 
    if (!templateMode && test(mode, MODE_ROOT)) {
       SNode nameTerminal = nameNode.firstChild(lxTerminalMask);
@@ -939,25 +938,36 @@ void DerivationWriter :: flushTemplateAttributes(SyntaxWriter& writer, SNode cur
 {
    ref_t attributeCategory = 0u;
    while (current != lxNone) {
-      if (current.compare(lxToken, lxTokenArgs)) {
+      if (current == lxToken) {
          flushExpressionAttribute(writer, current, derivationScope, attributeCategory, true);
       }
       current = current.nextNode();
    }
 }
 
-void DerivationWriter :: flushArrayTypeAttribute(SyntaxWriter& writer, SNode node, ref_t typeRef, Scope& derivationScope)
+void DerivationWriter :: flushArrayTypeAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope)
 {
    writer.newNode(lxArrayType);
    SNode current = node.firstChild();
    if (current == lxArrayType) {
-      flushArrayTypeAttribute(writer, current, current.argument, derivationScope);
+      flushArrayTypeAttribute(writer, current, derivationScope);
    }
    else if (current == lxTokenArgs) {
-      flushTypeAttribute(writer, current, V_TEMPLATE, derivationScope);
+      flushTemplateTypeAttribute(writer, current, derivationScope);
    }
    else flushTypeAttribute(writer, current, current.argument, derivationScope);
 
+   writer.closeNode();
+}
+
+void DerivationWriter :: flushTemplateTypeAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope)
+{
+   SNode terminal = node.firstChild(lxTerminalMask);
+   SNode current = terminal.nextNode();
+
+   writer.newNode(lxType, V_TEMPLATE);
+   copyIdentifier(writer, terminal, derivationScope.ignoreTerminalInfo);
+   flushTemplateAttributes(writer, current, derivationScope);
    writer.closeNode();
 }
 
@@ -965,39 +975,28 @@ void DerivationWriter :: flushTypeAttribute(SyntaxWriter& writer, SNode node, re
 {
    SNode terminal = node.firstChild(lxTerminalMask);
 
-   if (typeRef == V_TEMPLATE) {
-      writer.newNode(lxType, V_TEMPLATE);
-      copyIdentifier(writer, terminal, derivationScope.ignoreTerminalInfo);
-      flushTemplateAttributes(writer, node.firstChild(), derivationScope);
-      writer.closeNode();
-   }
-   else {
-      LexicalType targetType = lxType;
-      int targetArgument = typeRef;
-      if (derivationScope.withTypeParameters()) {
-         // check template parameter if required
-         int index = derivationScope.parameters.get(terminal.identifier());
-         if (index != 0) {
-            targetType = lxTemplateParam;
-            targetArgument = index + derivationScope.nestedLevel;
-         }
+   LexicalType targetType = lxType;
+   int targetArgument = typeRef;
+   if (derivationScope.withTypeParameters()) {
+      // check template parameter if required
+      int index = derivationScope.parameters.get(terminal.identifier());
+      if (index != 0) {
+         targetType = lxTemplateParam;
+         targetArgument = index + derivationScope.nestedLevel;
       }
-
-      writer.newNode(targetType, targetArgument);
-      copyIdentifier(writer, terminal, derivationScope.ignoreTerminalInfo);
-      writer.closeNode();
    }
+
+   writer.newNode(targetType, targetArgument);
+   copyIdentifier(writer, terminal, derivationScope.ignoreTerminalInfo);
+   writer.closeNode();
 }
 
 void DerivationWriter :: flushAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
 {
    SNode current = node;
-   if (current == lxTokenArgs)
-      // HOTFIX : skip template arguments
-      current = current.prevNode();
 
    SNode nameNode;
-   if (current == lxNameAttr) {
+   if (current.compare(lxNameAttr, lxTemplateNameAttr)) {
       nameNode = current;
 
       current = current.prevNode();
@@ -1006,10 +1005,10 @@ void DerivationWriter :: flushAttributes(SyntaxWriter& writer, SNode node, Scope
 
    while (true) {
       if (current == lxType || (current.argument == V_TEMPLATE && current == lxAttribute)) {
-         flushTypeAttribute(writer, current, current.argument/*, dimensionCounter*/, derivationScope);
+         flushTypeAttribute(writer, current, current.argument, derivationScope);
       }
       else if (current == lxArrayType) {
-         flushArrayTypeAttribute(writer, current, current.argument/*, dimensionCounter*/, derivationScope);
+         flushArrayTypeAttribute(writer, current, derivationScope);
       }
       else if (current == lxInlineAttribute) {
          // COMPILER MAGIC : inject an attribute template
@@ -1027,7 +1026,7 @@ void DerivationWriter :: flushAttributes(SyntaxWriter& writer, SNode node, Scope
    }
 
    if (nameNode != lxNone) {
-      SNode terminal = nameNode.firstChild(lxTerminalMask);
+      SNode terminal = (nameNode == lxTemplateNameAttr ? nameNode.firstChild() : nameNode).firstChild(lxTerminalMask);
 
 //      LexicalType nameType = lxNameAttr;
 
@@ -1045,7 +1044,7 @@ inline bool isInitializerPrefix(SNode current)
 inline void checkFieldPropAttributes(SNode node, bool& isPropertyTemplate, bool& isInitializer)
 {
    SNode current = node.prevNode();
-   while (current.compare(lxAttribute, lxNameAttr, lxType/*, lxTokenArgs*/)) {
+   while (current.compare(lxAttribute, lxNameAttr, lxType)) {
       //if (current == lxAttribute && current.argument == V_PROPERTY) {
       //   isPropertyTemplate = true;
       //}
@@ -1624,44 +1623,59 @@ void DerivationWriter :: flushInlineTemplateTree(SyntaxWriter&, SNode node, SNod
 //      node = node.nextNode();
 //}
 
-void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode current, Scope& derivationScope, 
+inline SNode __fastcall findNextToken(SNode current)
+{
+   while (current != lxNone) {
+      if (current == lxIdle) {
+
+      }
+      else if (current == lxToken)
+      {
+         return current;
+      }
+      else break;
+
+      current = current.nextNode();
+   }
+
+   return SNode();
+}
+
+void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, 
    ref_t& previousCategory, bool templateArgMode)
 {
    bool allowType = false;
    //bool allowProperty = false;
 
    if (!templateArgMode) {
-      SNode assignNode = current.nextNode().nextNode();
-      //// HOTFIX : skip the dimension token
-      //for (int i = 0; i < dimensionCounter; i++) {
-      //   assignNode = assignNode.nextNode();
-      //}
-
-      allowType = assignNode != lxToken;
+      SNode nextNode = findNextToken(node.nextNode());
+      if (nextNode == lxToken) {
+         allowType = findNextToken(nextNode.nextNode()) != lxToken;
+      }
    }
    else allowType = true;
-   
-//   if (dimensionCounter && !allowType)
-//      _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
 
+   SNode current = node.firstChild();
    if (current == lxTokenArgs) {
       // if it is a template based type
-      flushTypeAttribute(writer, current, V_TEMPLATE/*, dimensionCounter*/, derivationScope);
+      flushTemplateTypeAttribute(writer, current, derivationScope);
    }
    else if (current == lxDynamicBrackets) {
+      //if (!allowType)
+      //   _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
       // if it is a template based type
-      flushArrayTypeAttribute(writer, current, 0, derivationScope);
+      flushArrayTypeAttribute(writer, current, derivationScope);
    }
    else {
-      ref_t attrRef = mapAttribute(current, allowType, /*allowProperty, */previousCategory);
+      ref_t attrRef = mapAttribute(node, allowType, /*allowProperty, */previousCategory);
       if (isPrimitiveRef(attrRef)) {
-         SNode identNode = current.firstChild(lxTerminalMask);
+         SNode identNode = node.firstChild(lxTerminalMask);
 
          writer.newNode(lxAttribute, attrRef);
          copyIdentifier(writer, identNode, derivationScope.ignoreTerminalInfo);
          writer.closeNode();
       }
-      else flushTypeAttribute(writer, current, /*dimensionCounter, */attrRef, /*dimensionCounter, */derivationScope);
+      else flushTypeAttribute(writer, node, attrRef, derivationScope);
    }
 }
 
@@ -1715,9 +1729,10 @@ void DerivationWriter :: flushTokenExpression(SyntaxWriter& writer, SNode& node,
 
    // find the last token
    SNode lastNode = node;
-   node = node.nextNode();   
-   while (node.compare(lxToken, lxTokenArgs, lxDynamicBrackets)) {
-      lastNode = node;
+   while (node.compare(lxToken, lxIdle)) {
+      if (node == lxToken)
+         lastNode = node;
+
       node = node.nextNode();
    }
 
@@ -1735,18 +1750,18 @@ void DerivationWriter :: flushTokenExpression(SyntaxWriter& writer, SNode& node,
 //   }
    /*else */node = lastNode;
 
-   if (lastNode.compare(lxTokenArgs, lxDynamicBrackets))
-      lastNode = lastNode.nextNode();
-
    while (current != lastNode) {
-      if (current.compare(lxToken, lxTokenArgs, lxDynamicBrackets))
+      if (current == lxToken)
          flushExpressionAttribute(writer, current, derivationScope, attributeCategory);
 
       current = current.nextNode();
    }
 
    if (lastNode == lxToken) {
-      flushIdentifier(writer, lastNode.firstChild(lxTerminalMask), derivationScope);
+      if (lastNode.firstChild() == lxTokenArgs) {
+         flushExpressionAttribute(writer, lastNode, derivationScope, attributeCategory);
+      }
+      else flushIdentifier(writer, lastNode.firstChild(lxTerminalMask), derivationScope);
 //         if (lastNode.nextNode().compare(lxClosureExpr, lxReturning, lxParameter)) {
 //            // COMPILER MAGIC : recognize the closure
 //            generateClosureTree(writer, current, derivationScope);
@@ -1904,8 +1919,8 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
 //         first = false;
 //         break;
       case lxToken:
-      case lxTokenArgs:
-      case lxDynamicBrackets:
+      //case lxTokenArgs:
+      //case lxDynamicBrackets:
          flushTokenExpression(writer, current, derivationScope/*, true*/);
          break;
 //      case lxPropertyParam:
@@ -1961,8 +1976,6 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
 
 void DerivationWriter :: flushExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode)
 {
-//   writer.newBookmark();
-//   
 //   bool first = true;
    bool expressionExpected = !test(mode, EXPRESSION_IMPLICIT_MODE);
    if (expressionExpected)
@@ -1978,8 +1991,6 @@ void DerivationWriter :: flushExpressionTree(SyntaxWriter& writer, SNode node, S
    if (expressionExpected) {
       writer.closeNode();
    }
-//
-//   writer.removeBookmark();
 }
 
 void DerivationWriter :: declareType(SNode node)

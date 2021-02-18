@@ -18,6 +18,7 @@ enum LexicalType
 {
    // key attributes
    lxTerminalMask             = 0x002000,
+   lxTokenMaks                = 0x004000,
    lxSubScopeEndMask          = 0x400000,   // indicates that the special node should be inserted at the bookmark
    lxInjectMask               = 0x200000,
    lxObjectMask               = 0x010000,
@@ -281,6 +282,7 @@ enum LexicalType
    lxTemplateParam            = 0x000F12,
    lxSize                     = 0x000F13,
    lxReserved                 = 0x000F14,
+   lxTemplateNameAttr         = 0x000F15,
    lxIntValue                 = 0x000F16,   // arg - integer value
    lxTemplateIdentParam       = 0x000F17,
    lxArrayType                = 0x000F18,
@@ -437,15 +439,25 @@ public:
          return current;
       }
 
-//      Node findNext(LexicalType mask) const
-//      {
-//         Node current = *this;
-//
-//         while (current != lxNone && !test(current.type, mask))
-//            current = current.nextNode();
-//
-//         return current;
-//      }
+      //Node findNextMask(LexicalType mask) const
+      //{
+      //   Node current = *this;
+
+      //   while (current != lxNone && !test(current.type, mask))
+      //      current = current.nextNode();
+
+      //   return current;
+      //}
+
+      Node findNext(LexicalType type) const
+      {
+         Node current = *this;
+
+         while (current != lxNone && current != type)
+            current = current.nextNode();
+
+         return current;
+      }
 
       Node firstSubNodeMask()
       {
@@ -927,10 +939,10 @@ public:
       {
          return findChild(type) == type;
       }
-//      bool existChild(LexicalType type1, LexicalType type2)
-//      {
-//         return findChild(type1, type2) != lxNone;
-//      }
+      bool existChild(LexicalType type1, LexicalType type2)
+      {
+         return findChild(type1, type2) != lxNone;
+      }
 //      bool existChild(LexicalType type1, LexicalType type2, LexicalType type3)
 //      {
 //         return findChild(type1, type2, type3) != lxNone;

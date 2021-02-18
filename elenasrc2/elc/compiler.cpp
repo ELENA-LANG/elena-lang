@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -3884,9 +3884,6 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
 
    current = current.nextNode();
 
-   writer.newNode(operationType, operand);
-   writeTerminal(writer, target, scope);   
-
    EAttr assignMode = EAttr::eaNone/*HINT_NOUNBOXING*//* | HINT_ASSIGNING_EXPR*/;
    ObjectInfo exprVal;
    ////   if (operand == 0)
@@ -3894,8 +3891,7 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
    ////
    ////   if (isPrimitiveArrRef(targetRef))
    ////      targetRef = resolvePrimitiveReference(scope, targetRef, target.element, false);
-   
-   writer.newNode(lxSeqExpression);
+
    //   if (current == lxOperator) {
    //      // COMPILER MAGIC : implementing assignment operators
    //      sourceNode.injectAndReplaceNode(lxExpression);
@@ -3932,11 +3928,6 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
    //      else operationType = lxIdle;
    //   }
    /*else */exprVal = compileExpression(writer, current, scope, targetRef, assignMode);
-   //
-   //   if (exprVal.kind == okExternal && operationType == lxCopying) {
-   //      noBoxing = true;
-   //      operationType = exprVal.param == -1 ? lxFloatSaving : lxSaving;
-   //   }
 
    if (!noBoxing && boxingRequired(exprVal)) {
       ObjectInfo boxedArg = boxArgumentInPlace(writer, node, exprVal, scope);
@@ -3944,8 +3935,16 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
       writeTerminal(writer, boxedArg, scope);
    }
 
+   writer.newNode(operationType, operand);
+   writeTerminal(writer, target, scope);   
+   writer.appendNode(lxResult);
    writer.closeNode();
-   writer.closeNode();
+
+   //
+   //   if (exprVal.kind == okExternal && operationType == lxCopying) {
+   //      noBoxing = true;
+   //      operationType = exprVal.param == -1 ? lxFloatSaving : lxSaving;
+   //   }
 
    return target;
 }
@@ -5188,9 +5187,8 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 
    writer.newNode(lxReturning);
 
-//   node.injectNode(lxExpression);
    ExprScope exprScope(&scope);
-   ObjectInfo retVal = compileExpression(writer, node, exprScope, targetRef, mode);
+   ObjectInfo retVal = compileExpression(writer, node.firstChild(), exprScope, targetRef, mode);
 
 //   if (autoMode) {
 //      targetRef = resolveObjectReference(exprScope, info, true);
@@ -10123,8 +10121,6 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 //   if (scope.preloaded) {
 //      compilePreloadedCode(scope);
 //   }
-
-   test2(expressionTree.readRoot());
 
    pos_t sourcePathRef = scope.saveSourcePath(_writer);
    CommandTape tape;

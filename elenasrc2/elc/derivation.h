@@ -150,7 +150,8 @@ class DerivationWriter : public _DerivationWriter
    void flushCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
    void flushTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope/*, bool rootMode*/);
    void flushTypeAttribute(SyntaxWriter& writer, SNode terminal, ref_t typeRef, Scope& derivationScope);
-   void flushArrayTypeAttribute(SyntaxWriter& writer, SNode terminal, ref_t typeRef, Scope& derivationScope);
+   void flushTemplateTypeAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope);
+   void flushArrayTypeAttribute(SyntaxWriter& writer, SNode terminal, Scope& derivationScope);
    void flushAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    void flushTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void flushExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory, 
