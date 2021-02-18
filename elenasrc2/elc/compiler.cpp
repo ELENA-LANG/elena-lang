@@ -5534,7 +5534,8 @@ ref_t Compiler :: mapTemplateAttribute(SNode node, Scope& scope)
       if (current.compare(lxType, lxTemplateParam)) {
          paramCounter++;
       }
-      else scope.raiseError(errInvalidOperation, node);
+      else if (current != lxClassRef) 
+         scope.raiseError(errInvalidOperation, node);
 
       current = current.nextNode();
    }
@@ -5563,32 +5564,19 @@ SNode Compiler :: injectAttributeIdentidier(SNode current, Scope& scope)
 
 void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode)
 {
-//   ExpressionAttributes attributes;
    while (current != lxNone) {
       if (current.compare(lxType, lxArrayType)) {
          ref_t typeRef = current.argument;
          if (!typeRef || typeRef == V_TEMPLATE) {
             typeRef = resolveTypeAttribute(current, scope, declarationMode, false);
-            current.set(lxType, typeRef);
+            if (!declarationMode) {
+               current.set(lxType, typeRef);
 
-            SNode terminalNode = injectAttributeIdentidier(current, scope);
+               SNode terminalNode = injectAttributeIdentidier(current, scope);
+            }
+            else current.appendNode(lxClassRef, typeRef);
          }
 
-//         SNode targetNode = current.firstChild();
-//         bool templateOne = targetNode.argument == V_TEMPLATE;
-//         targetNode.set(lxTarget, typeRef);
-
-//         // HOTFIX : inject the reference and comment the target nodes out
-//         if (templateOne) {
-//            do {
-//               terminalNode = terminalNode.nextNode();
-//               if (terminalNode == lxTypeAttribute) {
-//                  // NOTE : Type attributes should be removed to correctly compile the array of templates
-//                  terminalNode = lxIdle;
-//               }
-//            } while (terminalNode != lxNone);
-//         }
-//
          parameters.add(current);
       }
 

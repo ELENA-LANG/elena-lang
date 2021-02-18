@@ -205,6 +205,9 @@ void DerivationWriter :: newNode(LexicalType symbol)
          SNode current = goBacktoSibling(target.lastChild(), lxInjectMark);
          if (current != lxNone) {
             target = current.prevNode();
+            while (target == lxIdle)
+               target = target.prevNode();
+
             target = target.injectNode(injected);
 
             SyntaxTree::moveSiblingNodes(current, target);
@@ -382,8 +385,6 @@ void DerivationWriter :: recognizeDefinition(SNode scopeNode)
       scopeNode = lxClass;
 
       recognizeClassMembers(scopeNode);
-
-
    }
 }
 
@@ -654,11 +655,12 @@ void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalTyp
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current == lxToken) {
       bool allowType = current.nextNode() == nameNodeType;
-      if (current == lxTokenArgs) {
+      SNode child = current.firstChild();
+      if (child == lxTokenArgs) {
          if (allowType)
             current.set(lxType, V_TEMPLATE);
       }
-      else if (current == lxDynamicBrackets) {
+      else if (child == lxDynamicBrackets) {
          if (allowType)
             current.set(lxArrayType, 0);
       }
@@ -947,17 +949,25 @@ void DerivationWriter :: flushTemplateAttributes(SyntaxWriter& writer, SNode cur
 
 void DerivationWriter :: flushArrayTypeAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope)
 {
-   writer.newNode(lxArrayType);
    SNode current = node.firstChild();
    if (current == lxArrayType) {
+      writer.newNode(lxArrayType);
       flushArrayTypeAttribute(writer, current, derivationScope);
+      writer.closeNode();
    }
    else if (current == lxTokenArgs) {
+      writer.newNode(lxArrayType);
       flushTemplateTypeAttribute(writer, current, derivationScope);
+      writer.closeNode();
    }
-   else flushTypeAttribute(writer, current, current.argument, derivationScope);
-
-   writer.closeNode();
+   else if (current == lxDynamicBrackets) {
+      flushArrayTypeAttribute(writer, current, derivationScope);
+   }
+   else {
+      writer.newNode(lxArrayType);
+      flushTypeAttribute(writer, node, current.argument, derivationScope);
+      writer.closeNode();
+   }
 }
 
 void DerivationWriter :: flushTemplateTypeAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope)
@@ -1005,7 +1015,10 @@ void DerivationWriter :: flushAttributes(SyntaxWriter& writer, SNode node, Scope
 
    while (true) {
       if (current == lxType || (current.argument == V_TEMPLATE && current == lxAttribute)) {
-         flushTypeAttribute(writer, current, current.argument, derivationScope);
+         if (current.argument == V_TEMPLATE) {
+            flushTemplateTypeAttribute(writer, current.firstChild(), derivationScope);
+         }
+         else flushTypeAttribute(writer, current, current.argument, derivationScope);
       }
       else if (current == lxArrayType) {
          flushArrayTypeAttribute(writer, current, derivationScope);
@@ -2063,7 +2076,12 @@ bool TemplateGenerator::TemplateScope :: generateClassName()
    while (!it.Eof()) {
       name.append('&');
 
-      ident_t param = moduleScope->module->resolveReference((*it).argument);
+      // HOTFIX : in declaration mode, type is not defined - it should be taken from the classref attribute
+      ref_t typeRef = (*it).argument;
+      if (typeRef == V_TEMPLATE)
+         typeRef = (*it).findChild(lxClassRef).argument;
+
+      ident_t param = moduleScope->module->resolveReference(typeRef);
       if (isWeakReference(param) && !isTemplateWeakReference(param)) {
          name.append(moduleScope->module->Name());
          name.append(param);

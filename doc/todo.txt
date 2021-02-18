@@ -3,9 +3,6 @@ In development:
 ------         
 
   [development]
-    * several operations in row
-
-    * token args - expression, variable, type, output type
     * array args - expression, variable, type, output type
 
     * extensions
