@@ -487,15 +487,15 @@ void ModuleScope :: compile(SyntaxTree& derivationTree, ident_t greeting, Extens
 
 void ModuleScope :: importClassTemplate(SyntaxWriter& output, ref_t reference, List<SNode>& parameters)
 {
-   //SyntaxTree templateTree;
+   SyntaxTree templateTree;
 
-   //TemplateGenerator transformer(templateTree);
-   //SyntaxWriter writer(templateTree);
-   //writer.newNode(lxRoot);
-   //transformer.generateTemplate(writer, *this, reference, parameters, false, true);
-   //writer.closeNode();
+   TemplateGenerator transformer;
+   SyntaxWriter writer(templateTree);
+   writer.newNode(lxRoot);
+   transformer.generateTemplate(writer, *this, reference, parameters, false, true);
+   writer.closeNode();
 
-   //transformer.importClass(output, templateTree.readRoot());
+   transformer.importClass(output, templateTree.readRoot());
 }
 
 inline void copyTemplateSourceInfo(SyntaxWriter& writer, List<SNode>& parameters)

@@ -1066,7 +1066,7 @@ private:
 //   ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, size_t paramCount);
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, mssg_t generalMessageRef, ref_t implicitSignatureRef,
                                      bool withExtension, int& stackSafeAttr);
-   mssg_t mapMessage(SNode node, ExprScope& scope/*, bool extensionCall*/, bool newOpCall);
+   mssg_t mapMessage(SNode node, ExprScope& scope/*, bool extensionCall*/, bool newOpCall, bool propMode);
    mssg_t mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags,
       IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
       bool withoutWeakMessages, bool noSignature);
@@ -1150,7 +1150,7 @@ private:
 //   ObjectInfo compileReferenceExpression(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target, bool accumulateMode);
-//   ObjectInfo compilePropAssigning(SNode node, ExprScope& scope, ObjectInfo target);
+   ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, EAttr mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   void compileEmbeddableRetExpression(SNode node, ExprScope& scope);

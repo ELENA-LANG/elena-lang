@@ -4433,25 +4433,19 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
                scope.debugBlockStarted = false;
             }
             break;
-//         case lxReturning:
-//            scope.debugBlockStarted = false;
-//            generateReturnExpression(tape, current, scope);
-//
-//            if (scope.debugBlockStarted) {
-//               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//               scope.debugBlockStarted = false;
-//            }
-//            break;
-////         case lxExternFrame:
-////            generateExternFrame(tape, current);
-////            break;
+         case lxReturning:
+            scope.debugBlockStarted = false;
+            generateReturnExpression(tape, current, scope);
+
+            if (scope.debugBlockStarted) {
+               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+               scope.debugBlockStarted = false;
+            }
+            break;
          case lxBinarySelf:
             declareSelfStructInfo(tape, SELF_VAR, current.argument,
                current.findChild(lxClassName).identifier());
             break;
-////         case lxBreakpoint:
-////            translateBreakpoint(tape, current, false);
-////            break;
          case lxVariable:
          case lxIntVariable:
          case lxLongVariable:

@@ -479,7 +479,7 @@ public:
 //      eaNoBoxing           = 0x00000003000,
       eaMember             = 0x00000004000,
 //      eaRef                = 0x00000008000,
-//      eaPropExpr           = 0x00000010000,
+      eaPropExpr           = 0x00000010000,
       eaMetaField          = 0x00000020000,
 //      eaLoop               = 0x00000040000,
 //      eaExtern             = 0x00000080000,

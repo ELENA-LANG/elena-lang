@@ -3,13 +3,7 @@ In development:
 ------         
 
   [development]
-    * array args - expression, variable, type, output type
-
-    * extensions
-    * template based extensions
-    * parents / class import
-
-    * property explicit / implicit
+    * property implicit
     * property get
     * property set
     * operators
@@ -19,6 +13,8 @@ In development:
     * multi ret
     * yield metods
     * fixed arrays
+    * extensions
+    * template based extensions
 
     * uncomment all code
     * uncomment compileResendExpression, compileDispatchExpression, compileDispatcher, compileMultidispatch, matchTriePatterns,

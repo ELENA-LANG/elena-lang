@@ -60,7 +60,7 @@ enum LexicalType
    lxDispatchCode             = 0x001070,
    lxMessage                  = 0x001080,   
    lxEOP                      = 0x001090,   // end of the code block
-//   lxAssign                   = 0x0210A0,
+   lxResult                   = 0x0100A0,   // arg - offset
 //   lxTemplateArgs             = 0x0010B0,
 //   lxNestedClass              = 0x0010C0,
    lxParameter                = 0x0010D0,
@@ -70,7 +70,8 @@ enum LexicalType
 //   lxControlArgs              = 0x001110,
    lxFieldInit                = 0x001120,
    lxStaticFieldInit          = 0x001121,
-//   lxDynamicSizeDecl          = 0x001130,
+   lxPropertyOp               = 0x431130,
+   lxPropertyExpression       = 0x031130,
 //   lxClosureExpr              = 0x001140,
    lxInlineDecl               = 0x001150,
    lxInlineAttribute          = 0x001160,
@@ -89,7 +90,6 @@ enum LexicalType
    lxFieldExpression          = 0x031213,
    lxCodeExpression           = 0x031215,
    lxNil                      = 0x010220,
-   lxResult                   = 0x010230,   // arg - offset
    lxMessageOp                = 0x431230,
    lxMessageExpression        = 0x031230,
    lxReturning                = 0x031240,
