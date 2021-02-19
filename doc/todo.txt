@@ -3,11 +3,14 @@ In development:
 ------         
 
   [development]
-    * operators : l4, l5
-
     * arrays
     * operators : l6, l7, l8
+    * sub operators
+    * globals
     * declaration attributes
+    * nested classes
+    * closures
+    * lambda closures
     * embedable ret
     * multi ret
     * yield metods
