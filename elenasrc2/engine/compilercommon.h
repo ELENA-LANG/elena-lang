@@ -164,6 +164,13 @@ enum MethodHint
    tpMultiRetVal  = 0x8000000,
 };
 
+enum CovnersionResult
+{
+   crUncompatible = 0,
+   crCompatible,
+   crConverted
+};
+
 // --- _Project ---
 
 class _ProjectManager
@@ -394,13 +401,12 @@ struct _CompileScope
 class _Compiler
 {
 public:
-//   virtual ref_t resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode) = 0;
-//
+   virtual ref_t resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode) = 0;
+
 //   virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef, bool arrayMode = false) = 0;
-//   virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
-//      int stacksafeAttr, bool embeddableAttr) = 0;
-//
-////   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t subject) = 0;
+   virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
+      int stacksafeAttr, bool embeddableAttr) = 0;
+
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/) = 0;
 //   virtual void injectEmbeddableConstructor(SNode classNode, mssg_t message, ref_t privateRef) = 0;
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
@@ -408,9 +414,9 @@ public:
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef) = 0;
 //   virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument) = 0;
 //   virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne) = 0;
-//   virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op, 
-//      int opArg, ref_t reference) = 0;
-//
+   virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op, 
+      int opArg, ref_t reference) = 0;
+
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
 //
 //   virtual void injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex) = 0;
@@ -634,9 +640,8 @@ public:
    // retrieve the call type
    virtual int __fastcall resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t message, ChechMethodInfo& result) = 0;
 
-//   // retrieve the operation type
-//   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
-////   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
+   // retrieve the operation type
+   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand) = 0;
 //
 //   // retrieve the branching operation type
@@ -688,10 +693,10 @@ public:
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
       List<mssg_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<mssg_t>& implicitMultimethods) = 0;
-//   virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
-//      ref_t elementRef, int tempLocal) = 0;
-//   virtual bool injectImplicitConversion(_CompileScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
-//      ref_t elementRef, bool noUnboxing, int& stackSafeAttr, int fixedArraySize) = 0;
+   virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
+      ref_t elementRef, int tempLocal) = 0;
+   virtual CovnersionResult injectImplicitConversion(_CompileScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
+      ref_t elementRef/*, bool noUnboxing*/, int& stackSafeAttr/*, int fixedArraySize*/) = 0;
 ////   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod) = 0;
 //   virtual void injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
 //   virtual void injectInterfaceDispatch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;

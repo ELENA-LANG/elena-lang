@@ -211,10 +211,8 @@ class ByteCodeWriter
 
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
-//   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
-//   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
-//
-////   void freeVirtualStack(CommandTape& tape, int count);
+   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
+   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 
    void endTry(CommandTape& tape);
    void endCatch(CommandTape& tape);
@@ -237,30 +235,21 @@ class ByteCodeWriter
 
 //   void saveIntConstant(CommandTape& tape, LexicalType target, int targetArg, int value);
    void saveLength(CommandTape& tape, LexicalType target, int targetArg, int value);
-//   void doIntOperation(CommandTape& tape, int operator_id, int localOffset);
-//   void doIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue);
-//   void doIntBoolOperation(CommandTape& tape, int operator_id);
-//   void doLongOperation(CommandTape& tape, int operator_id, int localOffset);
-//   void doLongBoolOperation(CommandTape& tape, int operator_id);
-//   void doRealOperation(CommandTape& tape, int operator_id, int localOffset);
-//   void doRealIntOperation(CommandTape& tape, int operator_id, int localOffset);
-//   void doRealIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue);
-//   void doRealBoolOperation(CommandTape& tape, int operator_id);
-//   //   void doIntOperation(CommandTape& tape, int operator_id);
-////   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
-////   void doIndexOperation(CommandTape& tape, int operator_id);
-////   void doIndexOperation(CommandTape& tape, int operator_id, int immArg);
-////   void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg);
-////   void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
-////   void doRealOperation(CommandTape& tape, int operator_id);
-////   void doRealOperation(CommandTape& tape, int operator_id, int immArg);
-////   void doArrayOperation(CommandTape& tape, int operator_id);
-//   void doArgArrayOperation(CommandTape& tape, int operator_id, int rargument);
-//   void doArgArrayOperation(CommandTape& tape, int operator_id, int rargument, int immValue);
-//   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target);
-//   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target, int immValue);
-//   void doArrayImmOperation(CommandTape& tape, int operator_id, int target);
-//   void doArrayOperation(CommandTape& tape, int operator_id, int immValue);
+   void doIntOperation(CommandTape& tape, int operator_id, int localOffset);
+   void doIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue);
+   void doIntBoolOperation(CommandTape& tape, int operator_id);
+   void doLongOperation(CommandTape& tape, int operator_id, int localOffset);
+   void doLongBoolOperation(CommandTape& tape, int operator_id);
+   void doRealOperation(CommandTape& tape, int operator_id, int localOffset);
+   void doRealIntOperation(CommandTape& tape, int operator_id, int localOffset);
+   void doRealIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue);
+   void doRealBoolOperation(CommandTape& tape, int operator_id);
+   void doArgArrayOperation(CommandTape& tape, int operator_id, int rargument);
+   void doArgArrayOperation(CommandTape& tape, int operator_id, int rargument, int immValue);
+   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target);
+   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target, int immValue);
+   void doArrayImmOperation(CommandTape& tape, int operator_id, int target);
+   void doArrayOperation(CommandTape& tape, int operator_id, int immValue);
 
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope/*, bool ignoreBranching*/);
 
@@ -297,11 +286,11 @@ class ByteCodeWriter
 
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 
-//   void generateBoolLogicOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
-//   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
-//   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
-//   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
+   void generateBoolLogicOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
+   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
+   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
+   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
 //   void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
@@ -344,7 +333,7 @@ class ByteCodeWriter
    void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool fillMode);
-//   void generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
    void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef/*, bool extStackEvenMode*/);
    void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);

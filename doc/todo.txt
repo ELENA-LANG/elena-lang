@@ -3,11 +3,10 @@ In development:
 ------         
 
   [development]
-    * property implicit
-    * property get
-    * property set
-    * operators
+    * operators : l4, l5
+
     * arrays
+    * operators : l6, l7, l8
     * declaration attributes
     * embedable ret
     * multi ret
@@ -35,12 +34,15 @@ In development:
     * build new tree instead of modifying - simplify the tree - it should be easy to analize
     * minimize lookahead in compiler - it should be straight forward
 
-    * ELENA should support several calling convention (cdecl, stddecl, fastcall), by default - cdecl
+    * ELENA should support cdecl : review all internal code, get rid of quitn / quitm
     * tape should use cdecl with fixed size - no need to clear the stack
+    + optimiation : assinging int constant, 
+    + optimiation : freei 1 xalloc 1 => nop nop 
+    + no duplicate variable by boxing
 
     * symbol - do not use a frame if not requiered (e.g. it is a leaf call)
     * by default always allocate 4 variables, assigning argument list - could we do it only once for a whole statement?
-    * support 16 byte stack alignment for x86-64, get rid of current temporal solution
+    * support 16 byte stack alignment for x86-64, get rid of current temporal solution (review all cases of freei usage)
     * idle typecast method should simply return itself
     * optimize generated code : assigning, boxing, returning
 

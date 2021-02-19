@@ -17,7 +17,7 @@ constexpr auto MODE_ROOT                  = 0x01;
 //constexpr auto MODE_PROPERTYALLOWED       = 0x40;
 //
 //constexpr auto MODE_FUNCTION              = -2;
-//constexpr auto MODE_PROPERTYMETHOD        = -4;
+constexpr auto MODE_PROPERTYMETHOD        = -4;
 
 constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
 
@@ -750,11 +750,10 @@ void DerivationWriter :: recognizeClassMembers(SNode node)
             current = lxClassField;
             //mode = MODE_PROPERTYALLOWED;
          }
-//         else if (current.existChild(lxScope)) {
-//            // if it is a property
-//            current = lxClassProperty;
-//         }
-////         else raiseError(errInvalidSyntax, current);
+         else if (current.existChild(lxScope)) {
+            // if it is a property
+            current = lxClassProperty;
+         }
 
          recognizeScopeAttributes(current.prevNode(), mode);
       }
@@ -913,14 +912,14 @@ void DerivationWriter :: flushClassTree(SyntaxWriter& writer, SNode node, Scope&
             }
          }
          else if (current == lxClassMethod) {
-            flushMethodTree(writer, current, derivationScope, /*false, current.argument == MODE_PROPERTYMETHOD, */buffer);
+            flushMethodTree(writer, current, derivationScope, /*false, */current.argument == MODE_PROPERTYMETHOD, buffer);
          }
          else if (current.compare(lxClassField, lxFieldInit)) {
             flushFieldTree(writer, current, derivationScope, buffer);
          }
-//         else if (current == lxClassProperty) {
-//            generatePropertyTree(writer, current, derivationScope, buffer);
-//         }
+         else if (current == lxClassProperty) {
+            flushPropertyTree(writer, current, derivationScope, buffer);
+         }
          current = current.nextNode();
       }
 
@@ -1068,17 +1067,17 @@ inline void checkFieldPropAttributes(SNode node, bool& isPropertyTemplate, bool&
    }
 }
 
-//inline bool isFieldPlaceholder(SNode node, _ModuleScope* scope)
-//{
-//   if (node == lxToken && node.prevNode() != lxToken) {
-//      ref_t attr = scope->attributes.get(node.firstChild(lxTerminalMask).identifier());
-//      if (attr == V_FIELD)
-//         return true;
-//   }
-//
-//   return false;
-//}
-//
+inline bool isFieldPlaceholder(SNode node, _ModuleScope* scope)
+{
+   if (node == lxToken && node.prevNode() != lxToken) {
+      ref_t attr = scope->attributes.get(node.firstChild(lxTerminalMask).identifier());
+      if (attr == V_FIELD)
+         return true;
+   }
+
+   return false;
+}
+
 //inline void copyTemplateArgs(SNode src, SNode dst)
 //{
 //   SNode current = src.firstChild();
@@ -1094,55 +1093,66 @@ inline void checkFieldPropAttributes(SNode node, bool& isPropertyTemplate, bool&
 //      current = current.nextNode();
 //   }
 //}
-//
-//void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
-//{
-//   // inject property info
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxScope) {
-//         if (current.firstChild().compare(lxFieldInit, lxNone)) {
-//            if (isFieldPlaceholder(current.prevNode(), _scope)) {
-//               // HOTFIX : check if it is a field placeholder
-//               // and skip attribute info for it
-//               SNode prev = current;
-//               SNode nameNode = node.prevNode();
-//               while (nameNode.compare(lxNameAttr, lxType)) {
-//                  prev = prev.prependSibling(lxToken);
-//                  SyntaxTree::copyNode(nameNode, prev);
-//
-//                  nameNode = nameNode.prevNode();
-//               }
-//            }
-//         }
-//         else {
-//            SNode prev = current;
-//            SNode nameNode = node.prevNode();
-//            while (nameNode.compare(lxNameAttr, lxType, lxAttribute, lxTemplateArgs, lxDynamicSizeDecl)) {
-//               if (nameNode == lxTemplateArgs) {
-//                  prev = prev.prependSibling(lxTemplateArgs);
-//                  copyTemplateArgs(nameNode, prev);
-//               }
-//               else if (nameNode == lxDynamicSizeDecl) {
-//                  prev = prev.prependSibling(lxDynamicSizeDecl);
-//                  copyTemplateArgs(nameNode, prev);
-//               }
-//               else {
-//                  prev = prev.prependSibling(lxToken);
-//                  SyntaxTree::copyNode(nameNode, prev);
-//               }
-//
-//               nameNode = nameNode.prevNode();
-//            }
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//   
-//   recognizeClassMebers(node);
-//   
-//   generatePropertyBody(writer, node, derivationScope, /*nullptr, */buffer);
-//}
+
+void DerivationWriter :: flushPropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
+{
+   // inject property info
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxScope) {
+         if (current.firstChild().compare(lxFieldInit, lxNone)) {
+            if (isFieldPlaceholder(current.prevNode(), _scope)) {
+               // HOTFIX : check if it is a field placeholder
+               // and skip attribute info for it
+               SNode prev = current;
+               SNode nameNode = node.prevNode();
+               while (nameNode.compare(lxNameAttr, lxType)) {
+                  prev = prev.prependSibling(lxToken);
+                  SyntaxTree::copyNode(nameNode, prev);
+
+                  nameNode = nameNode.prevNode();
+               }
+            }
+         }
+         else {
+            SNode prev = current;
+            SNode nameNode = node.prevNode();
+            while (nameNode.compare(lxNameAttr, lxType, lxAttribute)) {
+               //if (nameNode == lxTemplateArgs) {
+               //   prev = prev.prependSibling(lxTemplateArgs);
+               //   copyTemplateArgs(nameNode, prev);
+               //}
+               //else if (nameNode == lxDynamicSizeDecl) {
+               //   prev = prev.prependSibling(lxDynamicSizeDecl);
+               //   copyTemplateArgs(nameNode, prev);
+               //}
+               if (nameNode == lxType) {
+                  // check if there is a parameter - copy to it, otherwise it is returning value
+                  if (current.existChild(lxParameter)) {
+                     SNode param = current.findChild(lxParameter);
+                     SyntaxTree::copyNode(nameNode, param.insertNode(lxToken));
+                  }
+                  else {
+                     prev = prev.prependSibling(lxToken);
+                     SyntaxTree::copyNode(nameNode, prev);
+                  }
+               }
+               else {
+                  prev = prev.prependSibling(lxToken);
+                  SyntaxTree::copyNode(nameNode, prev);
+               }
+
+               nameNode = nameNode.prevNode();
+            }
+         }
+      }
+      current = current.nextNode();
+   }
+   
+   recognizeClassMembers(node);
+   
+   flushPropertyBody(writer, node, derivationScope, buffer);
+}
 
 void DerivationWriter :: flushFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
 {   
@@ -1210,8 +1220,8 @@ void DerivationWriter :: flushFieldTree(SyntaxWriter& writer, SNode node, Scope&
    }
 }
 
-void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, /*bool functionMode, 
-   bool propertyMode, */SyntaxTree& buffer)
+void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, /*bool functionMode,*/ 
+   bool propertyMode, SyntaxTree& buffer)
 {
    writer.newNode(lxClassMethod);
    if (derivationScope.templateMode != stNormal) {
@@ -1223,10 +1233,10 @@ void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope
       writer.appendNode(lxSourcePath, fullPath.c_str());
    }
 
-//   if (propertyMode) {
-//      writer.appendNode(lxAttribute, V_GETACCESSOR);
-//   }
-//
+   if (propertyMode) {
+      writer.appendNode(lxAttribute, V_GETACCESSOR);
+   }
+
 //   if (functionMode) {
 //      writer.appendNode(lxAttribute, V_FUNCTION);
 //   }
@@ -1349,22 +1359,22 @@ void DerivationWriter :: flushCodeTree(SyntaxWriter& writer, SNode node, Scope& 
 //      writer.closeNode();
 //   //}
 //}
-//
-//void DerivationWriter :: generatePropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, 
-//   /*List<SNode>* parameters, */SyntaxTree& buffer)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxClassMethod) {
-//         generateMethodTree(writer, current, derivationScope, false, current.argument == MODE_PROPERTYMETHOD, buffer);
-//      }
-//      else if (current == lxClassField) {
-//         generateFieldTree(writer, current, derivationScope, buffer);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
+
+void DerivationWriter :: flushPropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, 
+   SyntaxTree& buffer)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         flushMethodTree(writer, current, derivationScope, /*false, */current.argument == MODE_PROPERTYMETHOD, buffer);
+      }
+      else if (current == lxClassField) {
+         flushFieldTree(writer, current, derivationScope, buffer);
+      }
+
+      current = current.nextNode();
+   }
+}
 
 void DerivationWriter :: flushInlineTemplateTree(SyntaxWriter&, SNode node, SNode, Scope& derivationScope, SyntaxTree& buffer)
 {
@@ -1895,17 +1905,17 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
          break;
 //      case lxArrOperator:
 //         current.argument = REFER_OPERATOR_ID;
-//      case lxOperator:
+      case lxOperator:
 //      case lxAssign:
 //         if (!first) {
 //            writer.inject(lxExpression);
 //            writer.closeNode();
 //         }
 //         else first = false;
-//         writer.newNode(current.type, current.argument);
-//         copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
-//         writer.closeNode();
-//         break;
+         writer.newNode(current.type, current.argument);
+         copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
+         writer.closeNode();
+         break;
 //      case lxTemplateOperator:
 //         // COMPILER MAGIC : recognize the operator template
 //         generateOperatorTemplateTree(writer, current, derivationScope);

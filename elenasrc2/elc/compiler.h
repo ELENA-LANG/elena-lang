@@ -146,6 +146,7 @@ public:
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
       okSuper,
+      okTempLocalAddress,             // param - local offset
       okLocalAddress,                 // param - local offset
       okParams,                       // param - local offset
       okConstantRole,                 // param - overridden message, reference - role reference
@@ -948,7 +949,7 @@ private:
 
    _CompilerLogic*   _logic;
    ByteCodeWriter    _writer;
-//   MessageMap        _operators;                        // list of operators
+   MessageMap        _operators;                        // list of operators
 
    // optimization rules
    int               _optFlag;
@@ -968,8 +969,8 @@ private:
 
    void validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared, bool allowType);
 
-//   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
-//   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
+   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
+   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
    bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool& isProtectedDefConst);
    bool __fastcall isSelfCall(ObjectInfo info);
@@ -1030,7 +1031,7 @@ private:
 
    void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ref_t reference, mssg_t message);
 
-//   int defineFieldSize(Scope& scope, int offset);
+   int defineFieldSize(Scope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed);
 //   void inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
@@ -1063,7 +1064,7 @@ private:
 //   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, ExprScope& scope);
 
    mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
-//   ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, size_t paramCount);
+   ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, pos_t paramCount);
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, mssg_t generalMessageRef, ref_t implicitSignatureRef,
                                      bool withExtension, int& stackSafeAttr);
    mssg_t mapMessage(SNode node, ExprScope& scope/*, bool extensionCall*/, bool newOpCall, bool propMode);
@@ -1101,17 +1102,16 @@ private:
 //
 //   ObjectInfo compileTypeSymbol(SNode node, ExprScope& scope, EAttr mode);
 //
-//   ObjectInfo compileOperator(SNode& node, ExprScope& scope, int operator_id, int paramCount, ObjectInfo loperand, 
-//      ObjectInfo roperand, ObjectInfo roperand2, EAttr mode);
-//   ObjectInfo compileOperator(SNode& node, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
-//   ObjectInfo compileOperator(SNode& node, ExprScope& scope, ObjectInfo target, EAttr mode);
+   ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
+      ArgumentsInfo* arguments/*, ObjectInfo roperand2, EAttr mode*/);
+   ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
+   ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileIsNilOperator(SNode node, ExprScope& scope, ObjectInfo loperand/*, ObjectInfo roperand*/);
 //   void compileBranchingNodes(SNode loperandNode, ExprScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
 //   void compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
 //   ObjectInfo compileBranchingOperator(SNode roperand, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
-//
-//   ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo info);
-//   ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo param1, ObjectInfo param2);
+
+   ref_t resolveStrongArgument(ExprScope& scope, ArgumentsInfo* arguments);
 
    ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
 
@@ -1172,10 +1172,10 @@ private:
    void importClassMembers(SNode classNode, SNode importNode, NamespaceScope& scope);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
-//   int allocateStructure(SNode node, int& size);
+   int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
-//   bool allocateTempStructure(ExprScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
-//
+   bool allocateTempStructure(ExprScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
+
 //   ObjectInfo compileExternalCall(SNode node, ExprScope& scope, ref_t expectedRef, EAttr mode);
 //   ObjectInfo compileInternalCall(SNode node, ExprScope& scope, mssg_t message, ref_t signature, ObjectInfo info);
 //
@@ -1262,7 +1262,7 @@ private:
    bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal/*, bool accumulatorMode, ref_t accumulatorRef*/);
    void compileSymbolAttribtes(_ModuleScope& scope, ref_t reference, bool publicAttr);
 
-//   ObjectInfo allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t targetRef, ref_t elementRef = 0);
+   ObjectInfo allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t targetRef, ref_t elementRef = 0);
 
    // NOTE : if the conversion is not possible - the methods return unknown result
    ObjectInfo convertObject(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
@@ -1285,8 +1285,8 @@ private:
 //   void analizeMethod(SNode node, NamespaceScope& scope);
 //   void analizeClassTree(SNode node, ClassScope& scope, bool(*cond)(LexicalType));
    void analizeSymbolTree(SNode node, Scope& scope);
-   ObjectInfo boxArgumentInPlace(SyntaxWriter& writer, SNode boxNode, ObjectInfo target, /*SNode objNode, */ExprScope& scope/*,
-      bool localBoxingMode, bool condBoxing*/);
+   ObjectInfo boxArgumentInPlace(SyntaxWriter& writer, SNode boxNode, ObjectInfo target, /*SNode objNode, */ExprScope& scope,
+      /*bool localBoxingMode, */bool condBoxing);
    void boxArgument(SyntaxWriter& writer, SNode boxNode, ObjectInfo& arg, ExprScope& scope/*, bool boxingMode,
       bool withoutLocalBoxing, bool inPlace, bool condBoxing*/);
 //   void analizeOperand(SNode& node, ExprScope& scope, bool boxingMode, bool withoutLocalBoxing, bool inPlace);
@@ -1359,16 +1359,12 @@ public:
    void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting, ExtensionMap* outerExtensionList);
 
    void initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo);
-//
-////////   void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
-////   void copyStaticFieldValues(SNode node, ClassScope& scope);
-//
-//   // _Compiler interface implementation
+
+   // _Compiler interface implementation
 //   virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef, bool arrayMode = false);
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
-//   virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
-//      ref_t targetClassRef, int stacksafeAttr, bool embeddableAttr);
-////   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
+   virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
+      ref_t targetClassRef, int stacksafeAttr, bool embeddableAttr);
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
 //   virtual void injectEmbeddableConstructor(SNode classNode, mssg_t message, ref_t privateRef);
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message,
@@ -1381,8 +1377,8 @@ public:
 //   virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument);
 //   virtual void injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex);
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne);
-//   virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,
-//      int opArg, ref_t reference);
+   virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,
+      int opArg, ref_t reference);
    virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
@@ -1392,6 +1388,7 @@ public:
       ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList);
 
    static bool __fastcall boxingRequired(ObjectInfo& info);
+   static bool __fastcall condBoxingRequired(ObjectInfo& info);
 
    Compiler(_CompilerLogic* logic);
 };

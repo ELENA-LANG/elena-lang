@@ -44,6 +44,7 @@ enum LexicalType
    lxStaticMethod             = 0x00001A,
    lxClassImport              = 0x00001D,
    lxForward                  = 0x00001B,
+   lxClassProperty            = 0x00001C,
    lxExtensionTemplate        = 0x00001F,
 
    lxTemplateSource           = 0x00201E,
@@ -61,11 +62,14 @@ enum LexicalType
    lxMessage                  = 0x001080,   
    lxEOP                      = 0x001090,   // end of the code block
    lxResult                   = 0x0100A0,   // arg - offset
-//   lxTemplateArgs             = 0x0010B0,
+   lxOperationOp              = 0x4310B0,
+   lxOperationExpression      = 0x0310B0,
+
 //   lxNestedClass              = 0x0010C0,
+
    lxParameter                = 0x0010D0,
 //   lxPropertyParam            = 0x0010E0, // !!
-//   lxOperator                 = 0x0210F0,
+   lxOperator                 = 0x0210F0,
 //   lxStatementDecl            = 0x001100,
 //   lxControlArgs              = 0x001110,
    lxFieldInit                = 0x001120,
@@ -145,11 +149,27 @@ enum LexicalType
    lxSDirectResending         = 0x031383,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
    lxMultiDispatching         = 0x031390,
    lxSealedMultiDispatching   = 0x031391,
-
    lxCalling_0                = 0x0303A0,   // calling a method, arg - message
    lxCalling_1                = 0x0303A1,
    lxDirectCalling            = 0x0303A2,
    lxSDirectCalling           = 0x0303A3,
+   lxNilOp                    = 0x0303B0,   // arg - operation id
+   lxIntOp                    = 0x0303B1,   // arg - operation id
+   lxIntBoolOp                = 0x0303B2,   // arg - operation id
+   lxLongOp                   = 0x0303B3,   // arg - operation id
+   lxLongBoolOp               = 0x0303B4,   // arg - operation id
+   lxRealOp                   = 0x0303B5,   // arg - operation id
+   lxRealBoolOp               = 0x0303B6,   // arg - operation id
+   lxRealIntOp                = 0x0303B7,   // arg - operation id
+   lxBoolOp                   = 0x0303B8,   // arg - operation id
+   lxArgArrOp                 = 0x0303C0,
+   lxIntArrOp                 = 0x0303C1,   // arg - operation id
+   lxShortArrOp               = 0x0303C2,
+   lxByteArrOp                = 0x0303C3,
+   lxArrOp                    = 0x0303C4,   // arg - operation id
+   lxBinArrOp                 = 0x0303C5,
+
+   lxCondBoxing               = 0x0303D0,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -186,7 +206,6 @@ enum LexicalType
 //
 //
 //   lxRedirect                 = 0x000017,
-//   lxClassProperty            = 0x00001C,
 //   lxFinalblock               = 0x00001E,
 //
 //   // derivation symbols
@@ -223,14 +242,6 @@ enum LexicalType
 //   lxMessageConstant          = 0x0181A7, // arg - rererence
 //   lxExtMessageConstant       = 0x0181A9, // arg -reference
 //   lxOp                       = 0x0581B0,
-//   lxIntOp                    = 0x0581B1,   // arg - operation id
-//   lxIntBoolOp                = 0x0581B2,   // arg - operation id
-//   lxLongOp                   = 0x0581B3,   // arg - operation id
-//   lxLongBoolOp               = 0x0581B4,   // arg - operation id
-//   lxRealOp                   = 0x0581B5,   // arg - operation id
-//   lxRealBoolOp               = 0x0581B6,   // arg - operation id
-//   lxNilOp                    = 0x0581B7,   // arg - operation id
-//   lxRealIntOp                = 0x0581B8,   // arg - operation id
 //   lxNewArrOp                 = 0x0581D0,
 //   lxInitializing             = 0x0581E0,
 //   lxCloning                  = 0x0581E1,
@@ -242,13 +253,6 @@ enum LexicalType
 //   lxExtIntArg                = 0x018211,
 //   lxTrying                   = 0x058220,   // try-catch expression
 //   lxAlt                      = 0x058221,   // alt-catch expression
-//   lxArgArrOp                 = 0x058230,
-//   lxIntArrOp                 = 0x058231,   // arg - operation id
-//   lxShortArrOp               = 0x058232,
-//   lxByteArrOp                = 0x058233,
-//   lxArrOp                    = 0x058234,   // arg - operation id
-//   lxBinArrOp                 = 0x058235,
-//   lxBoolOp                   = 0x058236,   // arg - operation id
 //   lxExternFrame              = 0x058240,
 //   lxOption                   = 0x058251,
 //   lxYieldDispatch            = 0x058260,
@@ -256,7 +260,6 @@ enum LexicalType
 //   lxYieldContext             = 0x018270,
 //   lxYieldLocals              = 0x018271,
 //   lxArgArray                 = 0x058280,
-//   lxCondBoxing               = 0x058290,
 //   lxIndexSaving              = 0x0582A0,
 //   lxIndexLoading             = 0x0582A1,
 
@@ -293,8 +296,8 @@ enum LexicalType
    lxBookmarkReference        = 0x000F1D,
 //   lxInternalRef              = 0x000F1E,
    lxClassName                = 0x000F1F, // arg - identifier
-//   lxIfValue                  = 0x000F20, // arg - reference
-//   lxElseValue                = 0x000F21, // arg - reference
+   lxIfValue                  = 0x000F20, // arg - reference
+   lxElseValue                = 0x000F21, // arg - reference
    lxTemplateNameParam        = 0x000F22,
 //   lxEmbeddableMssg           = 0x000F23,
    lxBinarySelf               = 0x000F24, // debug info only

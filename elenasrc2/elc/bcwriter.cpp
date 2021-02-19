@@ -15,7 +15,7 @@
 using namespace _ELENA_;
 
 constexpr auto STACKOP_MODE      = 0x0001;
-//constexpr auto BOOL_ARG_EXPR     = 0x0002;
+constexpr auto BOOL_ARG_EXPR     = 0x0002;
 constexpr auto NOBREAKPOINTS     = 0x0004;
 
 //void test2(SNode node)
@@ -1565,477 +1565,477 @@ void ByteCodeWriter :: saveLength(CommandTape& tape, LexicalType target, int tar
    else throw InternalError("Not yet implemented");
 }
 
-//void ByteCodeWriter :: doIntBoolOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id)
-//   {
-//      case EQUAL_OPERATOR_ID:
-//         tape.write(bcNEqual);
-//         break;
-//      case LESS_OPERATOR_ID:
-//         tape.write(bcNLess);
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doLongBoolOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id)
-//   {
-//      case EQUAL_OPERATOR_ID:
-//         tape.write(bcLEqual);
-//         break;
-//      case LESS_OPERATOR_ID:
-//         tape.write(bcLLess);
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doRealBoolOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id)
-//   {
-//      case EQUAL_OPERATOR_ID:
-//         tape.write(bcREqual);
-//         break;
-//      case LESS_OPERATOR_ID:
-//         tape.write(bcRLess);
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int localOffset)
-//{
-//   switch (operator_id) {
-//      case ADD_OPERATOR_ID:
-//         // naddf i
-//         tape.write(bcNAddF, localOffset << 2);
-//         break;
-//      case SUB_OPERATOR_ID:
-//         // nsubf i
-//         tape.write(bcNSubF, localOffset << 2);
-//         break;
-//      case MUL_OPERATOR_ID:
-//         // nmulf i
-//         tape.write(bcNMulF, localOffset << 2);
-//         break;
-//      case DIV_OPERATOR_ID:
-//         // ndivf i
-//         tape.write(bcNDivF, localOffset << 2);
-//         break;
-//      case SHIFTL_OPERATOR_ID:
-//         // nshlf i
-//         tape.write(bcNShlF, localOffset << 2);
-//         break;
-//      case SHIFTR_OPERATOR_ID:
-//         // nshrf i
-//         tape.write(bcNShrF, localOffset << 2);
-//         break;
-//      case AND_OPERATOR_ID:
-//         // nandf i
-//         tape.write(bcNAndF, localOffset << 2);
-//         break;
-//      case OR_OPERATOR_ID:
-//         // norf i
-//         tape.write(bcNOrF, localOffset << 2);
-//         break;
-//      case XOR_OPERATOR_ID:
-//         // nxorf i
-//         tape.write(bcNXorF, localOffset << 2);
-//         break;
-//      default:
-//         throw InternalError("not yet implemente"); // !! temporal
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue)
-//{
-//   switch (operator_id) {
-//      case SET_OPERATOR_ID:
-//         // xsavef i, v
-//         tape.write(bcXSaveF, localOffset << 2, immValue);
-//         break;
-//      case ADD_OPERATOR_ID:
-//         // xaddf i, v
-//         tape.write(bcXAddF, localOffset << 2, immValue);
-//         break;
-//      case SUB_OPERATOR_ID:
-//         // xaddf i, -v
-//         tape.write(bcXAddF, localOffset << 2, -immValue);
-//         break;
-//      case MUL_OPERATOR_ID:
-//         // loadf
-//         // mul v
-//         // savef
-//         tape.write(bcLoadF, localOffset << 2);
-//         tape.write(bcMul, immValue);
-//         tape.write(bcSaveF, localOffset << 2);
-//         break;
-//      case DIV_OPERATOR_ID:
-//         // loadf
-//         // div v
-//         // savef
-//         tape.write(bcLoadF, localOffset << 2);
-//         tape.write(bcDiv, immValue);
-//         tape.write(bcSaveF, localOffset << 2);
-//         break;
-//      case SHIFTL_OPERATOR_ID:
-//         // loadf
-//         // shl v
-//         // savef
-//         tape.write(bcLoadF, localOffset << 2);
-//         tape.write(bcShl, immValue);
-//         tape.write(bcSaveF, localOffset << 2);
-//         break;
-//      case SHIFTR_OPERATOR_ID:
-//         // loadf
-//         // shr v
-//         // savef
-//         tape.write(bcLoadF, localOffset << 2);
-//         tape.write(bcShr, immValue);
-//         tape.write(bcSaveF, localOffset << 2);
-//         break;
-//      case AND_OPERATOR_ID:
-//         // loadf
-//         // and v
-//         // savef
-//         tape.write(bcLoadF, localOffset << 2);
-//         tape.write(bcAnd, immValue);
-//         tape.write(bcSaveF, localOffset << 2);
-//         break;
-//      case OR_OPERATOR_ID:
-//         // loadf
-//         // or v
-//         // savef
-//         tape.write(bcLoadF, localOffset << 2);
-//         tape.write(bcOr, immValue);
-//         tape.write(bcSaveF, localOffset << 2);
-//         break;
-//      case XOR_OPERATOR_ID:
-//         // loadf
-//         // xor v
-//         // savef
-//         tape.write(bcLoadFI, localOffset);
-//         tape.write(bcXOr, immValue);
-//         tape.write(bcSaveF, localOffset << 2);
-//         break;
-//      default:
-//         throw InternalError("not yet implemente"); // !! temporal
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doRealIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue)
-//{
-//   switch (operator_id) {
-//      case SET_OPERATOR_ID:
-//         // xrsavef i, v
-//         tape.write(bcXRSaveF, localOffset << 2, immValue);
-//         break;
-//      default:
-//         throw InternalError("not yet implemente"); // !! temporal
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id, int localOffset)
-//{
-//   switch (operator_id) {
-//      case ADD_OPERATOR_ID:
-//         // laddf i
-//         tape.write(bcLAddF, localOffset << 2);
-//         break;
-//      case SUB_OPERATOR_ID:
-//         // lsubf i
-//         tape.write(bcLSubF, localOffset << 2);
-//         break;
-//      case MUL_OPERATOR_ID:
-//         // lmulf i
-//         tape.write(bcLMulF, localOffset << 2);
-//         break;
-//      case DIV_OPERATOR_ID:
-//         // ldivf i
-//         tape.write(bcLDivF, localOffset << 2);
-//         break;
-//      case SHIFTL_OPERATOR_ID:
-//         // lshlf i
-//         tape.write(bcLShlF, localOffset << 2);
-//         break;
-//      case SHIFTR_OPERATOR_ID:
-//         // lshrf i
-//         tape.write(bcLShrF, localOffset << 2);
-//         break;
-//      case AND_OPERATOR_ID:
-//         // landf i
-//         tape.write(bcLAndF, localOffset << 2);
-//         break;
-//      case OR_OPERATOR_ID:
-//         // lorf i
-//         tape.write(bcLOrF, localOffset << 2);
-//         break;
-//      case XOR_OPERATOR_ID:
-//         // lxorf i
-//         tape.write(bcLXorF, localOffset << 2);
-//         break;
-//      default:
-//         throw InternalError("not yet implemente"); // !! temporal
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id, int localOffset)
-//{
-//   switch (operator_id) {
-//      case ADD_OPERATOR_ID:
-//         // raddf i
-//         tape.write(bcRAddF, localOffset << 2);
-//         break;
-//      case SUB_OPERATOR_ID:
-//         // rsubf i
-//         tape.write(bcRSubF, localOffset << 2);
-//         break;
-//      case MUL_OPERATOR_ID:
-//         // rmulf i
-//         tape.write(bcRMulF, localOffset << 2);
-//         break;
-//      case DIV_OPERATOR_ID:
-//         // rdivf i
-//         tape.write(bcRDivF, localOffset << 2);
-//         break;
-//      default:
-//         throw InternalError("not yet implemente"); // !! temporal
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doRealIntOperation(CommandTape& tape, int operator_id, int localOffset)
-//{
-//   switch (operator_id) {
-//   case ADD_OPERATOR_ID:
-//      // raddnf i
-//      tape.write(bcRAddNF, localOffset << 2);
-//      break;
-//   case SUB_OPERATOR_ID:
-//      // rsubnf i
-//      tape.write(bcRSubNF, localOffset << 2);
-//      break;
-//   case MUL_OPERATOR_ID:
-//      // rmulnf i
-//      tape.write(bcRMulNF, localOffset << 2);
-//      break;
-//   case DIV_OPERATOR_ID:
-//      // rdivnf i
-//      tape.write(bcRDivNF, localOffset << 2);
-//      break;
-//   default:
-//      throw InternalError("not yet implemente"); // !! temporal
-//      break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, int argument)
-//{
-//   switch (operator_id) {
-//      case REFER_OPERATOR_ID:
-//         // get
-//         tape.write(bcGet);
-//         break;
-//      case LEN_OPERATOR_ID:
-//         // pusha
-//         // movn 0
-//         // labSearch
-//         // peeksi 0
-//         // get
-//         // inc 1
-//         // elser -1 labSearch
-//         // freei 1
-//         // savef arg
-//         tape.write(bcPushA);
-//         tape.write(bcMovN, 0);
-//         tape.newLabel();
-//         tape.setLabel(true);
-//         tape.write(bcPeekSI, 0);
-//         tape.write(bcGet);
-//         tape.write(bcInc, 1);
-//         tape.write(bcElseR, baCurrentLabel, -1);
-//         tape.releaseLabel();
-//         tape.write(bcFreeI, 1);
-//         tape.write(bcSaveF, argument << 2);
-//
-//         break;
-////      case SET_REFER_OPERATOR_ID:
-////         // xset
-////         tape.write(bcXSet);
-////         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, int, int immValue)
-//{
-//   switch (operator_id) {
-//      case REFER_OPERATOR_ID:
-//         // geti imm
-//         tape.write(bcGetI, immValue);
-//         break;
-//      //      case SET_REFER_OPERATOR_ID:
-//      //         // xset
-//      //         tape.write(bcXSet);
-//      //         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target, int immValue)
-//{
-//   switch (operator_id) {
-//      case REFER_OPERATOR_ID:
-//         // movn immValue
-//         tape.write(bcMovN, immValue);
-//         doBinaryArrayOperation(tape, operator_id, itemSize, target);
-//         break;
+void ByteCodeWriter :: doIntBoolOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id)
+   {
+      case EQUAL_OPERATOR_ID:
+         tape.write(bcNEqual);
+         break;
+      case LESS_OPERATOR_ID:
+         tape.write(bcNLess);
+         break;
+   }
+}
+
+void ByteCodeWriter :: doLongBoolOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id)
+   {
+      case EQUAL_OPERATOR_ID:
+         tape.write(bcLEqual);
+         break;
+      case LESS_OPERATOR_ID:
+         tape.write(bcLLess);
+         break;
+   }
+}
+
+void ByteCodeWriter :: doRealBoolOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id)
+   {
+      case EQUAL_OPERATOR_ID:
+         tape.write(bcREqual);
+         break;
+      case LESS_OPERATOR_ID:
+         tape.write(bcRLess);
+         break;
+   }
+}
+
+void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int localOffset)
+{
+   switch (operator_id) {
+      case ADD_OPERATOR_ID:
+         // naddf i
+         tape.write(bcNAddF, localOffset << 2);
+         break;
+      case SUB_OPERATOR_ID:
+         // nsubf i
+         tape.write(bcNSubF, localOffset << 2);
+         break;
+      case MUL_OPERATOR_ID:
+         // nmulf i
+         tape.write(bcNMulF, localOffset << 2);
+         break;
+      case DIV_OPERATOR_ID:
+         // ndivf i
+         tape.write(bcNDivF, localOffset << 2);
+         break;
+      case SHIFTL_OPERATOR_ID:
+         // nshlf i
+         tape.write(bcNShlF, localOffset << 2);
+         break;
+      case SHIFTR_OPERATOR_ID:
+         // nshrf i
+         tape.write(bcNShrF, localOffset << 2);
+         break;
+      case AND_OPERATOR_ID:
+         // nandf i
+         tape.write(bcNAndF, localOffset << 2);
+         break;
+      case OR_OPERATOR_ID:
+         // norf i
+         tape.write(bcNOrF, localOffset << 2);
+         break;
+      case XOR_OPERATOR_ID:
+         // nxorf i
+         tape.write(bcNXorF, localOffset << 2);
+         break;
+      default:
+         throw InternalError("not yet implemente"); // !! temporal
+         break;
+   }
+}
+
+void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue)
+{
+   switch (operator_id) {
+      case SET_OPERATOR_ID:
+         // xsavef i, v
+         tape.write(bcXSaveF, localOffset << 2, immValue);
+         break;
+      case ADD_OPERATOR_ID:
+         // xaddf i, v
+         tape.write(bcXAddF, localOffset << 2, immValue);
+         break;
+      case SUB_OPERATOR_ID:
+         // xaddf i, -v
+         tape.write(bcXAddF, localOffset << 2, -immValue);
+         break;
+      case MUL_OPERATOR_ID:
+         // loadf
+         // mul v
+         // savef
+         tape.write(bcLoadF, localOffset << 2);
+         tape.write(bcMul, immValue);
+         tape.write(bcSaveF, localOffset << 2);
+         break;
+      case DIV_OPERATOR_ID:
+         // loadf
+         // div v
+         // savef
+         tape.write(bcLoadF, localOffset << 2);
+         tape.write(bcDiv, immValue);
+         tape.write(bcSaveF, localOffset << 2);
+         break;
+      case SHIFTL_OPERATOR_ID:
+         // loadf
+         // shl v
+         // savef
+         tape.write(bcLoadF, localOffset << 2);
+         tape.write(bcShl, immValue);
+         tape.write(bcSaveF, localOffset << 2);
+         break;
+      case SHIFTR_OPERATOR_ID:
+         // loadf
+         // shr v
+         // savef
+         tape.write(bcLoadF, localOffset << 2);
+         tape.write(bcShr, immValue);
+         tape.write(bcSaveF, localOffset << 2);
+         break;
+      case AND_OPERATOR_ID:
+         // loadf
+         // and v
+         // savef
+         tape.write(bcLoadF, localOffset << 2);
+         tape.write(bcAnd, immValue);
+         tape.write(bcSaveF, localOffset << 2);
+         break;
+      case OR_OPERATOR_ID:
+         // loadf
+         // or v
+         // savef
+         tape.write(bcLoadF, localOffset << 2);
+         tape.write(bcOr, immValue);
+         tape.write(bcSaveF, localOffset << 2);
+         break;
+      case XOR_OPERATOR_ID:
+         // loadf
+         // xor v
+         // savef
+         tape.write(bcLoadFI, localOffset);
+         tape.write(bcXOr, immValue);
+         tape.write(bcSaveF, localOffset << 2);
+         break;
+      default:
+         throw InternalError("not yet implemente"); // !! temporal
+         break;
+   }
+}
+
+void ByteCodeWriter :: doRealIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue)
+{
+   switch (operator_id) {
+      case SET_OPERATOR_ID:
+         // xrsavef i, v
+         tape.write(bcXRSaveF, localOffset << 2, immValue);
+         break;
+      default:
+         throw InternalError("not yet implemente"); // !! temporal
+         break;
+   }
+}
+
+void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id, int localOffset)
+{
+   switch (operator_id) {
+      case ADD_OPERATOR_ID:
+         // laddf i
+         tape.write(bcLAddF, localOffset << 2);
+         break;
+      case SUB_OPERATOR_ID:
+         // lsubf i
+         tape.write(bcLSubF, localOffset << 2);
+         break;
+      case MUL_OPERATOR_ID:
+         // lmulf i
+         tape.write(bcLMulF, localOffset << 2);
+         break;
+      case DIV_OPERATOR_ID:
+         // ldivf i
+         tape.write(bcLDivF, localOffset << 2);
+         break;
+      case SHIFTL_OPERATOR_ID:
+         // lshlf i
+         tape.write(bcLShlF, localOffset << 2);
+         break;
+      case SHIFTR_OPERATOR_ID:
+         // lshrf i
+         tape.write(bcLShrF, localOffset << 2);
+         break;
+      case AND_OPERATOR_ID:
+         // landf i
+         tape.write(bcLAndF, localOffset << 2);
+         break;
+      case OR_OPERATOR_ID:
+         // lorf i
+         tape.write(bcLOrF, localOffset << 2);
+         break;
+      case XOR_OPERATOR_ID:
+         // lxorf i
+         tape.write(bcLXorF, localOffset << 2);
+         break;
+      default:
+         throw InternalError("not yet implemente"); // !! temporal
+         break;
+   }
+}
+
+void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id, int localOffset)
+{
+   switch (operator_id) {
+      case ADD_OPERATOR_ID:
+         // raddf i
+         tape.write(bcRAddF, localOffset << 2);
+         break;
+      case SUB_OPERATOR_ID:
+         // rsubf i
+         tape.write(bcRSubF, localOffset << 2);
+         break;
+      case MUL_OPERATOR_ID:
+         // rmulf i
+         tape.write(bcRMulF, localOffset << 2);
+         break;
+      case DIV_OPERATOR_ID:
+         // rdivf i
+         tape.write(bcRDivF, localOffset << 2);
+         break;
+      default:
+         throw InternalError("not yet implemente"); // !! temporal
+         break;
+   }
+}
+
+void ByteCodeWriter :: doRealIntOperation(CommandTape& tape, int operator_id, int localOffset)
+{
+   switch (operator_id) {
+   case ADD_OPERATOR_ID:
+      // raddnf i
+      tape.write(bcRAddNF, localOffset << 2);
+      break;
+   case SUB_OPERATOR_ID:
+      // rsubnf i
+      tape.write(bcRSubNF, localOffset << 2);
+      break;
+   case MUL_OPERATOR_ID:
+      // rmulnf i
+      tape.write(bcRMulNF, localOffset << 2);
+      break;
+   case DIV_OPERATOR_ID:
+      // rdivnf i
+      tape.write(bcRDivNF, localOffset << 2);
+      break;
+   default:
+      throw InternalError("not yet implemente"); // !! temporal
+      break;
+   }
+}
+
+void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, int argument)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // get
+         tape.write(bcGet);
+         break;
+      case LEN_OPERATOR_ID:
+         // pusha
+         // movn 0
+         // labSearch
+         // peeksi 0
+         // get
+         // inc 1
+         // elser -1 labSearch
+         // freei 1
+         // savef arg
+         tape.write(bcPushA);
+         tape.write(bcMovN, 0);
+         tape.newLabel();
+         tape.setLabel(true);
+         tape.write(bcPeekSI, 0);
+         tape.write(bcGet);
+         tape.write(bcInc, 1);
+         tape.write(bcElseR, baCurrentLabel, -1);
+         tape.releaseLabel();
+         tape.write(bcFreeI, 1);
+         tape.write(bcSaveF, argument << 2);
+
+         break;
 //      case SET_REFER_OPERATOR_ID:
-//         if ((itemSize & 3) == 0 && (immValue & 3) == 0) {
-//            // copytoai itemSize
-//            tape.write(bcCopyToAI, immValue >> 2, itemSize >> 2);
-//         }
-//         else {
-//            // movn immValue
-//            tape.write(bcMovN, immValue);
-//            doBinaryArrayOperation(tape, operator_id, itemSize, target);
-//         }
+//         // xset
+//         tape.write(bcXSet);
 //         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doArrayImmOperation(CommandTape& tape, int operator_id, int immValue)
-//{
-//   switch (operator_id) {
-//      case REFER_OPERATOR_ID:
-//         // geti imm
-//         tape.write(bcGetI, immValue);
-//         break;
-//      case SET_REFER_OPERATOR_ID:
-//         // seti imm
-//         tape.write(bcSetI, immValue);
-//         break;
-//   }
-//}
-//
-//inline void divIndex(CommandTape& tape, int itemSize)
-//{
-//   if (itemSize == 128) {
-//      tape.write(bcShr, 7);
-//   }
-//   else if (itemSize == 64) {
-//      tape.write(bcShr, 6);
-//   }
-//   else if (itemSize == 32) {
-//      tape.write(bcShr, 5);
-//   }
-//   else if (itemSize == 16) {
-//      tape.write(bcShr, 4);
-//   }
-//   else if (itemSize == 8) {
-//      tape.write(bcShr, 3);
-//   }
-//   else if (itemSize == 4) {
-//      tape.write(bcShr, 2);
-//   }
-//   else if (itemSize == 2) {
-//      tape.write(bcShr, 1);
-//   }
-//   else if (itemSize == 1) {
-//   }
-//   else tape.write(bcDiv, itemSize);
-//
-//}
-//
-//void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target)
-//{
-//   switch (operator_id) {
-//      case REFER_OPERATOR_ID:
-//         switch (itemSize) {
-//            case 1:
-//               // read
-//               // and 0FFh
-//               // savef target
-//               tape.write(bcRead);
-//               tape.write(bcAnd, 0xFF);
-//               tape.write(bcSaveF, target << 2);
-//               break;
-//            case 2:
-//               // read
-//               // and 0FFFFh
-//               // savef target
-//               tape.write(bcRead);
-//               tape.write(bcAnd, 0xFFFF);
-//               tape.write(bcSaveF, target << 2);
-//               break;
-//            case 4:
-//               // read
-//               // savef target
-//               tape.write(bcRead);
-//               tape.write(bcSaveF, target << 2);
-//               break;
-//            default:
-//               // NOTE : operations with the stack should always be aligned for efficiency
-//               // readtof target itemSize / 4
-//               tape.write(bcReadToF, target << 2, align(itemSize, 4) >> 2);
-//               break;
-//         }
-//         break;
-//      case SET_REFER_OPERATOR_ID:
-//         if ((itemSize & 3) == 0) {
-//            // copyto itemSize
-//            tape.write(bcCopyTo, itemSize >> 2);
-//         }
-//         // xwrite itemSize
-//         else tape.write(bcXWrite, itemSize);
-//         break;
-//      case LEN_OPERATOR_ID:
-//         // len
-//         // div itemSize
-//         // savef
-//         tape.write(bcLen);
-//         divIndex(tape, itemSize);
-//         tape.write(bcSaveF, target << 2);
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id, int target)
-//{
-//   switch (operator_id) {
-//      case REFER_OPERATOR_ID:
-//         // get
-//         tape.write(bcGet);
-//         break;
-//      case SET_REFER_OPERATOR_ID:
-//         // set
-//         tape.write(bcSet);
-//         break;
-//      case LEN_OPERATOR_ID:
-//         // count
-//         // savef target
-//         tape.write(bcCount);
-//         tape.write(bcSaveF, target << 2);
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
-//{
-//   tape.write(bcSelect, r1 | mskConstantRef, r2 | mskConstantRef);
-//}
-//
-//void ByteCodeWriter :: selectByAcc(CommandTape& tape, ref_t r1, ref_t r2)
-//{
-//   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
-//}
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, int, int immValue)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // geti imm
+         tape.write(bcGetI, immValue);
+         break;
+      //      case SET_REFER_OPERATOR_ID:
+      //         // xset
+      //         tape.write(bcXSet);
+      //         break;
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target, int immValue)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // movn immValue
+         tape.write(bcMovN, immValue);
+         doBinaryArrayOperation(tape, operator_id, itemSize, target);
+         break;
+      case SET_REFER_OPERATOR_ID:
+         if ((itemSize & 3) == 0 && (immValue & 3) == 0) {
+            // copytoai itemSize
+            tape.write(bcCopyToAI, immValue >> 2, itemSize >> 2);
+         }
+         else {
+            // movn immValue
+            tape.write(bcMovN, immValue);
+            doBinaryArrayOperation(tape, operator_id, itemSize, target);
+         }
+         break;
+   }
+}
+
+void ByteCodeWriter :: doArrayImmOperation(CommandTape& tape, int operator_id, int immValue)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // geti imm
+         tape.write(bcGetI, immValue);
+         break;
+      case SET_REFER_OPERATOR_ID:
+         // seti imm
+         tape.write(bcSetI, immValue);
+         break;
+   }
+}
+
+inline void divIndex(CommandTape& tape, int itemSize)
+{
+   if (itemSize == 128) {
+      tape.write(bcShr, 7);
+   }
+   else if (itemSize == 64) {
+      tape.write(bcShr, 6);
+   }
+   else if (itemSize == 32) {
+      tape.write(bcShr, 5);
+   }
+   else if (itemSize == 16) {
+      tape.write(bcShr, 4);
+   }
+   else if (itemSize == 8) {
+      tape.write(bcShr, 3);
+   }
+   else if (itemSize == 4) {
+      tape.write(bcShr, 2);
+   }
+   else if (itemSize == 2) {
+      tape.write(bcShr, 1);
+   }
+   else if (itemSize == 1) {
+   }
+   else tape.write(bcDiv, itemSize);
+
+}
+
+void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         switch (itemSize) {
+            case 1:
+               // read
+               // and 0FFh
+               // savef target
+               tape.write(bcRead);
+               tape.write(bcAnd, 0xFF);
+               tape.write(bcSaveF, target << 2);
+               break;
+            case 2:
+               // read
+               // and 0FFFFh
+               // savef target
+               tape.write(bcRead);
+               tape.write(bcAnd, 0xFFFF);
+               tape.write(bcSaveF, target << 2);
+               break;
+            case 4:
+               // read
+               // savef target
+               tape.write(bcRead);
+               tape.write(bcSaveF, target << 2);
+               break;
+            default:
+               // NOTE : operations with the stack should always be aligned for efficiency
+               // readtof target itemSize / 4
+               tape.write(bcReadToF, target << 2, align(itemSize, 4) >> 2);
+               break;
+         }
+         break;
+      case SET_REFER_OPERATOR_ID:
+         if ((itemSize & 3) == 0) {
+            // copyto itemSize
+            tape.write(bcCopyTo, itemSize >> 2);
+         }
+         // xwrite itemSize
+         else tape.write(bcXWrite, itemSize);
+         break;
+      case LEN_OPERATOR_ID:
+         // len
+         // div itemSize
+         // savef
+         tape.write(bcLen);
+         divIndex(tape, itemSize);
+         tape.write(bcSaveF, target << 2);
+         break;
+   }
+}
+
+void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id, int target)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // get
+         tape.write(bcGet);
+         break;
+      case SET_REFER_OPERATOR_ID:
+         // set
+         tape.write(bcSet);
+         break;
+      case LEN_OPERATOR_ID:
+         // count
+         // savef target
+         tape.write(bcCount);
+         tape.write(bcSaveF, target << 2);
+         break;
+   }
+}
+
+void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
+{
+   tape.write(bcSelect, r1 | mskConstantRef, r2 | mskConstantRef);
+}
+
+void ByteCodeWriter :: selectByAcc(CommandTape& tape, ref_t r1, ref_t r2)
+{
+   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
+}
 
 void ByteCodeWriter :: tryLock(CommandTape& tape)
 {
@@ -2385,24 +2385,24 @@ void __fastcall assignOpArguments(SNode node, SNode& larg, SNode& rarg)
    }
 }
 
-//void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         if (larg == lxNone) {
-//            larg = current;
-//         }
-//         else if (rarg == lxNone) {
-//            rarg = current;
-//         }
-//         else rarg2 = current;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+void __fastcall assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (larg == lxNone) {
+            larg = current;
+         }
+         else if (rarg == lxNone) {
+            rarg = current;
+         }
+         else rarg2 = current;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 //void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 //{
 //   generateObject(tape, node.firstChild(lxObjectMask), scope, STACKOP_MODE);
@@ -2436,394 +2436,377 @@ void __fastcall assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 //
 //   scope.clear();
 //}
-//
-//void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
-//{
-//   int freeArgs = 0;
-//   bool lenMode = node.argument == LEN_OPERATOR_ID;
-//   bool setMode = (node.argument == SET_REFER_OPERATOR_ID/* || node.argument == SETNIL_REFER_MESSAGE_ID*/);
-//   bool immIndex = false;
-////   //bool assignMode = node != lxArrOp/* && node != lxArgArrOp*/;
-//
-//   int argument = 0;
-//
-//   SNode larg, rarg, rarg2;
-//   assignOpArguments(node, larg, rarg, rarg2);
-//
-//   if (larg == lxExpression)
-//      larg = larg.findSubNodeMask(lxObjectMask);
-//   if (rarg == lxExpression)
-//      rarg = rarg.findSubNodeMask(lxObjectMask);
-//
-//   if (lenMode) {
-//      if (larg == lxLocalAddress) {
-//         argument = larg.argument;
-//
-//         generateObject(tape, rarg, scope);
-//      }
-//      else throw InternalError("Not yet implemented"); // !! temporal
-//   }
-//   else {
-//      immIndex = rarg == lxConstantInt;
-//
-//      if (setMode) {
-//         generateObject(tape, rarg2, scope, STACKOP_MODE);
-//         freeArgs = 1;
-//      }
-//      else if (rarg2 == lxLocalAddress) {
-//         argument = rarg2.argument;
-//      }
-//      // !! temporal
-//      else if (node.type == lxIntArrOp) {
-//         throw InternalError("Not yet implemented"); // !! temporal
-//      }
-//
-//      if (!test(larg.type, lxOpScopeMask)) {
-//         if (!immIndex) {
-//            generateObject(tape, rarg, scope);
-//            tape.write(bcLoad);
-//         }
-//
-//         loadObject(tape, larg.type, larg.argument, scope, 0);
-//      }
-//      //else if (larg.type == lxSeqExpression) {
-//      //   if (!immIndex) {
-//      //      generateObject(tape, larg, scope, STACKOP_MODE);
-//      //      generateObject(tape, rarg, scope);
-//      //      tape.write(bcLoad);
-//      //      tape.write(bcPopA);
-//      //   }
-//      //   else generateObject(tape, larg, scope);
-//      //}
-//      else throw InternalError("Not yet implemented"); // !! temporal
-//   }
-//
-//   if (immIndex) {
-//      int immValue = rarg.findChild(lxIntValue).argument;
-//      switch (node.type) {
-//         case lxIntArrOp:
-//            doBinaryArrayOperation(tape, node.argument, 4, argument, immValue * 4);
-//            break;
-//         case lxByteArrOp:
-//            doBinaryArrayOperation(tape, node.argument, 1, argument, immValue);
-//            break;
-//         case lxShortArrOp:
-//            doBinaryArrayOperation(tape, node.argument, 2, argument, immValue * 2);
-//            break;
-//         case lxBinArrOp:
-//         {
-//            int size = node.findChild(lxSize).argument;
-//            doBinaryArrayOperation(tape, node.argument, size, argument, immValue * size);
-//            break;
-//         }
-//         case lxArrOp:
-//            doArrayImmOperation(tape, node.argument, immValue);
-//            break;
-//         case lxArgArrOp:
-//            doArgArrayOperation(tape, node.argument, argument, immValue);
-//            break;
-//      }
-//   }
-//   else {
-//      switch (node.type) {
-//         case lxIntArrOp:
-//            if (!lenMode) {
-//               // shl 2
-//               tape.write(bcShl, 2);
-//            }
-//            doBinaryArrayOperation(tape, node.argument, 4, argument);
-//            break;
-//         case lxByteArrOp:
-//            doBinaryArrayOperation(tape, node.argument, 1, argument);
-//            break;
-//         case lxShortArrOp:
-//            if (!lenMode) {
-//               // shl 1
-//               tape.write(bcShl, 1);
-//            }
-//            doBinaryArrayOperation(tape, node.argument, 2, argument);
-//            break;
-//         case lxBinArrOp:
-//         {
-//            int size = node.findChild(lxSize).argument;
-//            if (!lenMode) {
-//               switch (size) {
-//                  case 1:
-//                     break;
-//                  case 2:
-//                     // shl 1
-//                     tape.write(bcShl, 1);
-//                     break;
-//                  case 4:
-//                     // shl 2
-//                     tape.write(bcShl, 2);
-//                     break;
-//                  case 8:
-//                     // shl 3
-//                     tape.write(bcShl, 3);
-//                     break;
-//                  case 16:
-//                     // shl 4
-//                     tape.write(bcShl, 4);
-//                     break;
-//                  case 32:
-//                     // shl 5
-//                     tape.write(bcShl, 5);
-//                     break;
-//                  case 64:
-//                     // shl 6
-//                     tape.write(bcShl, 6);
-//                     break;
-//                  case 128:
-//                     // shl 6
-//                     tape.write(bcShl, 128);
-//                     break;
-//                  default:
-//                     break;
-//               }
-//            }
-//            doBinaryArrayOperation(tape, node.argument, size, argument);
-//            break;
-//         }
-//         case lxArrOp:
-//            doArrayOperation(tape, node.argument, argument);
-//            break;
-//         case lxArgArrOp:
-//            doArgArrayOperation(tape, node.argument, argument);
-//            break;
-//      }
-//   }
-//   scope.clear();
-//
-//   if (freeArgs > 0)
-//      releaseStack(tape, freeArgs);
-//}
-//
-////void ByteCodeWriter :: unboxLocal(CommandTape& tape, SNode larg, SNode rarg)
-////{
-////   SNode assignNode = larg.findChild(lxAssigning);
-////   assignOpArguments(assignNode, larg, rarg);
-////
-////   loadBase(tape, rarg.type, 0, 0);
-////
-////   bool dummy = false;
-////   if (assignNode.argument == 4) {
-////      assignInt(tape, lxFieldAddress, rarg.argument, dummy);
-////   }
-////   else if (assignNode.argument == 2) {
-////      assignLong(tape, lxFieldAddress, rarg.argument, dummy);
-////   }
-////   else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
-////}
-//
-//void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
-//{
-//   SNode larg;
-//   SNode rarg;
-//   assignOpArguments(node, larg, rarg);
-//
-//   SNode largObj = larg == lxExpression ? larg.findSubNodeMask(lxObjectMask) : larg;
-//   if (largObj != lxLocalAddress)
-//      throw new InternalError("Not yet implemented"); // temporal
-//
-//   SNode rargObj = rarg == lxExpression ? rarg.findSubNodeMask(lxObjectMask) : rarg;
-//
-//   bool rargImm = rargObj == lxConstantInt;
-//   if (rargImm && node.type == lxIntOp) {
-//      int rargVal = rargObj.findChild(lxIntValue).argument;
-//
-//      if (rargObj.firstChild() == lxBreakpoint && !test(mode, NOBREAKPOINTS)) {
-//         translateBreakpoint(tape, rargObj.firstChild(), scope);
-//      }
-//
-//      doIntOperation(tape, node.argument, largObj.argument, rargVal);
-//   }
-//   else if (rargImm && node.type == lxRealIntOp && node.argument == SET_OPERATOR_ID) {
-//      int rargVal = rargObj.findChild(lxIntValue).argument;
-//
-//      doRealIntOperation(tape, node.argument, largObj.argument, rargVal);
-//   }
-//   else {
-//      generateObject(tape, rarg, scope);
-//
-//      if (node.type == lxIntOp) {
-//         doIntOperation(tape, node.argument, largObj.argument);
-//      }
-//      else if (node == lxLongOp) {
-//         doLongOperation(tape, node.argument, largObj.argument);
-//      }
-//      else if (node == lxRealOp) {
-//         doRealOperation(tape, node.argument, largObj.argument);
-//      }
-//      else if (node == lxRealIntOp) {
-//         doRealIntOperation(tape, node.argument, largObj.argument);
-//      }
-//   }
-//
-//}
-//
-//void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
-//{
-//   int operation = node.argument;
-//   bool invertSelectMode = false;
-//   bool invertMode = false;
-//
-//   switch (node.argument) {
-//      case NOTEQUAL_OPERATOR_ID:
-//         invertSelectMode = true;
-//         break;
-//      case GREATER_OPERATOR_ID:
-//         invertMode = true;
-//         operation = LESS_OPERATOR_ID;
-//         break;
-//   }
-//
-//   SNode larg;
-//   SNode rarg;
-//   if (invertMode) {
-//      assignOpArguments(node, rarg, larg);
-//   }
-//   else assignOpArguments(node, larg, rarg);
-//
-//   generateObject(tape, rarg, scope, STACKOP_MODE);
-//   generateObject(tape, larg, scope);
-//
-//   if (node.type == lxIntBoolOp) {
-//      doIntBoolOperation(tape, operation);
-//   }
-//   else if (node.type == lxLongBoolOp) {
-//      doLongBoolOperation(tape, operation);
-//   }
-//   else if (node.type == lxRealBoolOp) {
-//      doRealBoolOperation(tape, operation);
-//   }
-//
-//   if (invertSelectMode) {
-//      selectByIndex(tape,
-//         node.findChild(lxIfValue).argument,
-//         node.findChild(lxElseValue).argument);
-//   }
-//   else {
-//      selectByIndex(tape,
-//         node.findChild(lxElseValue).argument,
-//         node.findChild(lxIfValue).argument);
-//   }
-//
-//   scope.clear();
-//
-//   releaseStack(tape);
-//}
-//
-//void ByteCodeWriter :: generateBoolLogicOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
-//{
-//   SNode larg;
-//   SNode rarg;
-//   assignOpArguments(node, larg, rarg);
-//
-//   ref_t trueRef = node.findChild(lxIfValue).argument | mskConstantRef;
-//   ref_t falseRef = node.findChild(lxElseValue).argument | mskConstantRef;
-//
-//   if (!test(mode, BOOL_ARG_EXPR))
-//      tape.newLabel();
-//
-//   generateObject(tape, larg, scope, BOOL_ARG_EXPR);
-//
-//   switch (node.argument) {
-//      case AND_OPERATOR_ID:
-//         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
-//         tape.write(bcIfR, baCurrentLabel, falseRef);
-//         break;
-//      case OR_OPERATOR_ID:
-//         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
-//         tape.write(bcIfR, baCurrentLabel, trueRef);
-//         break;
-//   }
-//
-//   generateObject(tape, rarg, scope, BOOL_ARG_EXPR);
-//
-//   if (!test(mode, BOOL_ARG_EXPR))
-//      tape.setLabel();
-//}
-//
-//inline bool isConstant(LexicalType type)
-//{
-//   switch (type) {
-//      case _ELENA_::lxNil:
-//      case _ELENA_::lxClassSymbol:
-//      case _ELENA_::lxConstantSymbol:
-//      case _ELENA_::lxConstantInt:
-//      case _ELENA_::lxConstantString:
-//      case _ELENA_::lxConstantList:
-//      case _ELENA_::lxConstantWideStr:
-//      case _ELENA_::lxConstantChar:
-//         return true;
-//   default:
-//      return false;
-//   }
-//}
-//
-//void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
-//{
-//   if (node.argument == EQUAL_OPERATOR_ID) {
-//      SNode larg;
-//      SNode rarg;
-//      assignOpArguments(node, larg, rarg);
-//      if (larg == lxExpression)
-//         larg = larg.findSubNodeMask(lxObjectMask);
-//      if (rarg == lxExpression)
-//         rarg = rarg.findSubNodeMask(lxObjectMask);
-//
-//      if (larg == lxNil) {
-//         generateObject(tape, rarg, scope);
-//      }
-//      else if (rarg == lxNil) {
-//         generateObject(tape, larg, scope);
-//      }
-//      else throw new InternalError("Not yet implemented"); // temporal
-//      //else generateExpression(tape, node, ACC_REQUIRED); // ?? is this code reachable
-//
-//      SNode ifParam = node.findChild(lxIfValue);
-//      SNode elseParam = node.findChild(lxElseValue);
-//
-//      selectByAcc(tape, elseParam.argument, ifParam.argument);
-//   }
-//   else if (node.argument == ISNIL_OPERATOR_ID) {
-//
-//      SNode larg;
-//      SNode rarg;
-//      assignOpArguments(node, larg, rarg);
-//
-//      if (rarg == lxExpression)
-//         rarg = rarg.findSubNodeMask(lxObjectMask);
-//
-//      switch (rarg.type) {
-//         case lxConstantChar:
-//            //case lxConstantClass:
-//         case lxConstantInt:
-//         case lxConstantLong:
-//         case lxConstantList:
-//         case lxConstantReal:
-//         case lxConstantString:
-//         case lxConstantWideStr:
-//         case lxConstantSymbol:
-//            loadObject(tape, larg, scope);
-//            tape.write(bcCoalesceR, rarg.argument | defineConstantMask(rarg.type));
-//            break;
-//         case lxNil:
-//            loadObject(tape, larg, scope);
-//            tape.write(bcCoalesceR, 0);
-//            break;
-//         default:
-//            generateObject(tape, rarg, scope, STACKOP_MODE);
-//            loadObject(tape, larg, scope);
-//            tape.write(bcCoalesce);
-//            releaseStack(tape);
-//            break;
-//      }
-//   }
-//   else throw new InternalError("Not yet implemented"); // temporal
-//}
-//
+
+void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
+{
+   int freeArgs = 0;
+   bool lenMode = node.argument == LEN_OPERATOR_ID;
+   bool setMode = (node.argument == SET_REFER_OPERATOR_ID/* || node.argument == SETNIL_REFER_MESSAGE_ID*/);
+   bool immIndex = false;
+//   //bool assignMode = node != lxArrOp/* && node != lxArgArrOp*/;
+
+   int argument = 0;
+
+   SNode larg, rarg, rarg2;
+   assignOpArguments(node, larg, rarg, rarg2);
+
+   if (larg == lxExpression)
+      larg = larg.findSubNodeMask(lxObjectMask);
+   if (rarg == lxExpression)
+      rarg = rarg.findSubNodeMask(lxObjectMask);
+
+   if (lenMode) {
+      if (larg == lxLocalAddress) {
+         argument = larg.argument;
+
+         generateObject(tape, rarg, scope);
+      }
+      else throw InternalError("Not yet implemented"); // !! temporal
+   }
+   else {
+      immIndex = rarg == lxConstantInt;
+
+      if (setMode) {
+         generateObject(tape, rarg2, scope, STACKOP_MODE);
+         freeArgs = 1;
+      }
+      else if (rarg2 == lxLocalAddress) {
+         argument = rarg2.argument;
+      }
+      // !! temporal
+      else if (node.type == lxIntArrOp) {
+         throw InternalError("Not yet implemented"); // !! temporal
+      }
+
+      if (!test(larg.type, lxOpScopeMask)) {
+         if (!immIndex) {
+            generateObject(tape, rarg, scope);
+            tape.write(bcLoad);
+         }
+
+         loadObject(tape, larg.type, larg.argument, scope, 0);
+      }
+      //else if (larg.type == lxSeqExpression) {
+      //   if (!immIndex) {
+      //      generateObject(tape, larg, scope, STACKOP_MODE);
+      //      generateObject(tape, rarg, scope);
+      //      tape.write(bcLoad);
+      //      tape.write(bcPopA);
+      //   }
+      //   else generateObject(tape, larg, scope);
+      //}
+      else throw InternalError("Not yet implemented"); // !! temporal
+   }
+
+   if (immIndex) {
+      int immValue = rarg.findChild(lxIntValue).argument;
+      switch (node.type) {
+         case lxIntArrOp:
+            doBinaryArrayOperation(tape, node.argument, 4, argument, immValue * 4);
+            break;
+         case lxByteArrOp:
+            doBinaryArrayOperation(tape, node.argument, 1, argument, immValue);
+            break;
+         case lxShortArrOp:
+            doBinaryArrayOperation(tape, node.argument, 2, argument, immValue * 2);
+            break;
+         case lxBinArrOp:
+         {
+            int size = node.findChild(lxSize).argument;
+            doBinaryArrayOperation(tape, node.argument, size, argument, immValue * size);
+            break;
+         }
+         case lxArrOp:
+            doArrayImmOperation(tape, node.argument, immValue);
+            break;
+         case lxArgArrOp:
+            doArgArrayOperation(tape, node.argument, argument, immValue);
+            break;
+      }
+   }
+   else {
+      switch (node.type) {
+         case lxIntArrOp:
+            if (!lenMode) {
+               // shl 2
+               tape.write(bcShl, 2);
+            }
+            doBinaryArrayOperation(tape, node.argument, 4, argument);
+            break;
+         case lxByteArrOp:
+            doBinaryArrayOperation(tape, node.argument, 1, argument);
+            break;
+         case lxShortArrOp:
+            if (!lenMode) {
+               // shl 1
+               tape.write(bcShl, 1);
+            }
+            doBinaryArrayOperation(tape, node.argument, 2, argument);
+            break;
+         case lxBinArrOp:
+         {
+            int size = node.findChild(lxSize).argument;
+            if (!lenMode) {
+               switch (size) {
+                  case 1:
+                     break;
+                  case 2:
+                     // shl 1
+                     tape.write(bcShl, 1);
+                     break;
+                  case 4:
+                     // shl 2
+                     tape.write(bcShl, 2);
+                     break;
+                  case 8:
+                     // shl 3
+                     tape.write(bcShl, 3);
+                     break;
+                  case 16:
+                     // shl 4
+                     tape.write(bcShl, 4);
+                     break;
+                  case 32:
+                     // shl 5
+                     tape.write(bcShl, 5);
+                     break;
+                  case 64:
+                     // shl 6
+                     tape.write(bcShl, 6);
+                     break;
+                  case 128:
+                     // shl 6
+                     tape.write(bcShl, 128);
+                     break;
+                  default:
+                     break;
+               }
+            }
+            doBinaryArrayOperation(tape, node.argument, size, argument);
+            break;
+         }
+         case lxArrOp:
+            doArrayOperation(tape, node.argument, argument);
+            break;
+         case lxArgArrOp:
+            doArgArrayOperation(tape, node.argument, argument);
+            break;
+      }
+   }
+   scope.clear();
+
+   if (freeArgs > 0)
+      releaseStack(tape, freeArgs);
+}
+
+void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+{
+   SNode larg;
+   SNode rarg;
+   assignOpArguments(node, larg, rarg);
+
+   SNode largObj = larg == lxExpression ? larg.findSubNodeMask(lxObjectMask) : larg;
+   if (largObj != lxLocalAddress)
+      throw new InternalError("Not yet implemented"); // temporal
+
+   SNode rargObj = rarg == lxExpression ? rarg.findSubNodeMask(lxObjectMask) : rarg;
+
+   bool rargImm = rargObj == lxConstantInt;
+   if (rargImm && node.type == lxIntOp) {
+      int rargVal = rargObj.findChild(lxIntValue).argument;
+
+      if (rargObj.firstChild() == lxBreakpoint && !test(mode, NOBREAKPOINTS)) {
+         translateBreakpoint(tape, rargObj.firstChild(), scope);
+      }
+
+      doIntOperation(tape, node.argument, largObj.argument, rargVal);
+   }
+   else if (rargImm && node.type == lxRealIntOp && node.argument == SET_OPERATOR_ID) {
+      int rargVal = rargObj.findChild(lxIntValue).argument;
+
+      doRealIntOperation(tape, node.argument, largObj.argument, rargVal);
+   }
+   else {
+      generateObject(tape, rarg, scope);
+
+      if (node.type == lxIntOp) {
+         doIntOperation(tape, node.argument, largObj.argument);
+      }
+      else if (node == lxLongOp) {
+         doLongOperation(tape, node.argument, largObj.argument);
+      }
+      else if (node == lxRealOp) {
+         doRealOperation(tape, node.argument, largObj.argument);
+      }
+      else if (node == lxRealIntOp) {
+         doRealIntOperation(tape, node.argument, largObj.argument);
+      }
+   }
+
+}
+
+void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
+{
+   int operation = node.argument;
+   bool invertSelectMode = false;
+   bool invertMode = false;
+
+   switch (node.argument) {
+      case NOTEQUAL_OPERATOR_ID:
+         invertSelectMode = true;
+         break;
+      case GREATER_OPERATOR_ID:
+         invertMode = true;
+         operation = LESS_OPERATOR_ID;
+         break;
+   }
+
+   SNode larg;
+   SNode rarg;
+   if (invertMode) {
+      assignOpArguments(node, rarg, larg);
+   }
+   else assignOpArguments(node, larg, rarg);
+
+   generateObject(tape, rarg, scope, STACKOP_MODE);
+   generateObject(tape, larg, scope);
+
+   if (node.type == lxIntBoolOp) {
+      doIntBoolOperation(tape, operation);
+   }
+   else if (node.type == lxLongBoolOp) {
+      doLongBoolOperation(tape, operation);
+   }
+   else if (node.type == lxRealBoolOp) {
+      doRealBoolOperation(tape, operation);
+   }
+
+   if (invertSelectMode) {
+      selectByIndex(tape,
+         node.findChild(lxIfValue).argument,
+         node.findChild(lxElseValue).argument);
+   }
+   else {
+      selectByIndex(tape,
+         node.findChild(lxElseValue).argument,
+         node.findChild(lxIfValue).argument);
+   }
+
+   scope.clear();
+
+   releaseArg(tape);
+}
+
+void ByteCodeWriter :: generateBoolLogicOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+{
+   SNode larg;
+   SNode rarg;
+   assignOpArguments(node, larg, rarg);
+
+   ref_t trueRef = node.findChild(lxIfValue).argument | mskConstantRef;
+   ref_t falseRef = node.findChild(lxElseValue).argument | mskConstantRef;
+
+   if (!test(mode, BOOL_ARG_EXPR))
+      tape.newLabel();
+
+   generateObject(tape, larg, scope, BOOL_ARG_EXPR);
+
+   switch (node.argument) {
+      case AND_OPERATOR_ID:
+         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
+         tape.write(bcIfR, baCurrentLabel, falseRef);
+         break;
+      case OR_OPERATOR_ID:
+         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
+         tape.write(bcIfR, baCurrentLabel, trueRef);
+         break;
+   }
+
+   generateObject(tape, rarg, scope, BOOL_ARG_EXPR);
+
+   if (!test(mode, BOOL_ARG_EXPR))
+      tape.setLabel();
+}
+
+inline bool isConstant(LexicalType type)
+{
+   switch (type) {
+      case _ELENA_::lxNil:
+      case _ELENA_::lxClassSymbol:
+      case _ELENA_::lxConstantSymbol:
+      case _ELENA_::lxConstantInt:
+      case _ELENA_::lxConstantString:
+      case _ELENA_::lxConstantList:
+      case _ELENA_::lxConstantWideStr:
+      case _ELENA_::lxConstantChar:
+         return true;
+   default:
+      return false;
+   }
+}
+
+void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   if (node.argument == EQUAL_OPERATOR_ID) {
+      SNode larg;
+      SNode rarg;
+      assignOpArguments(node, larg, rarg);
+      if (larg == lxExpression)
+         larg = larg.findSubNodeMask(lxObjectMask);
+      if (rarg == lxExpression)
+         rarg = rarg.findSubNodeMask(lxObjectMask);
+
+      if (larg == lxNil) {
+         generateObject(tape, rarg, scope);
+      }
+      else if (rarg == lxNil) {
+         generateObject(tape, larg, scope);
+      }
+      else throw new InternalError("Not yet implemented"); // temporal
+      //else generateExpression(tape, node, ACC_REQUIRED); // ?? is this code reachable
+
+      SNode ifParam = node.findChild(lxIfValue);
+      SNode elseParam = node.findChild(lxElseValue);
+
+      selectByAcc(tape, elseParam.argument, ifParam.argument);
+   }
+   else if (node.argument == ISNIL_OPERATOR_ID) {
+
+      SNode larg;
+      SNode rarg;
+      assignOpArguments(node, larg, rarg);
+
+      if (rarg == lxExpression)
+         rarg = rarg.findSubNodeMask(lxObjectMask);
+
+      switch (rarg.type) {
+         case lxConstantChar:
+            //case lxConstantClass:
+         case lxConstantInt:
+         case lxConstantLong:
+         case lxConstantList:
+         case lxConstantReal:
+         case lxConstantString:
+         case lxConstantWideStr:
+         case lxConstantSymbol:
+            loadObject(tape, larg, scope);
+            tape.write(bcCoalesceR, rarg.argument | defineConstantMask(rarg.type));
+            break;
+         case lxNil:
+            loadObject(tape, larg, scope);
+            tape.write(bcCoalesceR, 0);
+            break;
+         default:
+            generateObject(tape, rarg, scope, STACKOP_MODE);
+            loadObject(tape, larg, scope);
+            tape.write(bcCoalesce);
+            releaseArg(tape);
+            break;
+      }
+   }
+   else throw new InternalError("Not yet implemented"); // temporal
+}
+
 //int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode)
 //{
 //   int paramCount = 0;
@@ -4076,47 +4059,47 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
    }
 }
 
-//void ByteCodeWriter :: generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
-//{
-//   SNode step1;
-//   SNode step2;
-//   assignOpArguments(node, step1, step2);
-//
-//   SNode tempLocal = step1.findSubNodeMask(lxObjectMask);
-//   if (step2 == lxCopying) {
-//      SNode local = step2.firstChild(lxObjectMask).nextNode(lxObjectMask);
-//
-//      tape.newLabel();
-//      generateObject(tape, local, scope);
-//      tape.write(bcIfHeap, baCurrentLabel);
-//
-//      generateObject(tape, step1, scope);
-//      generateObject(tape, step2, scope);
-//   }
-//   else if (step2 == lxNone) {
-//      SNode cloneNode = step1.findChild(lxCloning);
-//      if (cloneNode != lxNone) {
-//         SNode local = cloneNode.firstChild(lxObjectMask);
-//
-//         tape.newLabel();
-//         generateObject(tape, local, scope);
-//         tape.write(bcIfHeap, baCurrentLabel);
-//
-//         generateObject(tape, step1, scope);
-//      }
-//      else throw InternalError("Not yet implemented"); // !! temporal
-//   }
-//   else throw InternalError("Not yet implemented"); // !! temporal
-//
-//   scope.clear();
-//   generateObject(tape, tempLocal, scope);
-//   tape.setLabel();
-//
-//   if (tempLocal.compare(lxLocal, lxTempLocal)) {
-//      saveObject(tape, tempLocal.type, tempLocal.argument);
-//   }
-//   else throw InternalError("Not yet implemented"); // !! temporal
-//}
+void ByteCodeWriter :: generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   SNode step1;
+   SNode step2;
+   assignOpArguments(node, step1, step2);
+
+   SNode tempLocal = step1.findSubNodeMask(lxObjectMask);
+   if (step2 == lxCopying) {
+      SNode local = step2.firstChild(lxObjectMask).nextNode(lxObjectMask);
+
+      tape.newLabel();
+      generateObject(tape, local, scope);
+      tape.write(bcIfHeap, baCurrentLabel);
+
+      generateObject(tape, step1, scope);
+      generateObject(tape, step2, scope);
+   }
+   //else if (step2 == lxNone) {
+   //   SNode cloneNode = step1.findChild(lxCloning);
+   //   if (cloneNode != lxNone) {
+   //      SNode local = cloneNode.firstChild(lxObjectMask);
+
+   //      tape.newLabel();
+   //      generateObject(tape, local, scope);
+   //      tape.write(bcIfHeap, baCurrentLabel);
+
+   //      generateObject(tape, step1, scope);
+   //   }
+   //   else throw InternalError("Not yet implemented"); // !! temporal
+   //}
+   else throw InternalError("Not yet implemented"); // !! temporal
+
+   scope.clear();
+   generateObject(tape, tempLocal, scope);
+   tape.setLabel();
+
+   if (tempLocal.compare(lxLocal, lxTempLocal)) {
+      saveObject(tape, tempLocal.type, tempLocal.argument);
+   }
+   else throw InternalError("Not yet implemented"); // !! temporal
+}
 
 void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& scope, int mode)
 {
@@ -4182,12 +4165,6 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxAlt:
 //         generateAlt(tape, node, scope);
 //         break;
-//////      case lxReturning:
-//////         generateReturnExpression(tape, node);
-//////         break;
-//////      case lxThrowing:
-//////         generateThrowExpression(tape, node);
-//////         break;
 //      case lxCoreAPICall:
 //      case lxStdExternalCall:
 //      case lxExternalCall:
@@ -4196,15 +4173,6 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxInternalCall:
 //         generateInternalCall(tape, node, scope);
 //         break;
-////      case lxBoxing:
-////      case lxCondBoxing:
-////      case lxArgBoxing:
-////      case lxUnboxing:
-////         generateBoxingExpression(tape, node, mode);
-////         break;
-////      case lxCopying:
-////         generateCopying(tape, node, mode);
-////         break;
 //      case lxBranching:
 //         generateBranching(tape, node, scope);
 //         break;
@@ -4223,31 +4191,31 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxCloning:
 //         generateCloningExpression(tape, node, scope);
 //         break;
-//      case lxBoolOp:
-//         generateBoolLogicOperation(tape, node, scope, mode & ~STACKOP_MODE);
-//         break;
-//      case lxNilOp:
-//         generateNilOperation(tape, node, scope);
-//         break;
-//      case lxIntOp:
-//      case lxLongOp:
-//      case lxRealOp:
-//      case lxRealIntOp:
-//         generateOperation(tape, node, scope, mode & ~STACKOP_MODE);
-//         break;
-//      case lxIntBoolOp:
-//      case lxLongBoolOp:
-//      case lxRealBoolOp:
-//         generateBoolOperation(tape, node, scope, mode & ~STACKOP_MODE);
-//         break;
-//      case lxIntArrOp:
-//      case lxByteArrOp:
-//      case lxShortArrOp:
-//      case lxArrOp:
-//      case lxBinArrOp:
-//      case lxArgArrOp:
-//         generateArrOperation(tape, node, scope, mode);
-//         break;
+      case lxBoolOp:
+         generateBoolLogicOperation(tape, node, scope, mode & ~STACKOP_MODE);
+         break;
+      case lxNilOp:
+         generateNilOperation(tape, node, scope);
+         break;
+      case lxIntOp:
+      case lxLongOp:
+      case lxRealOp:
+      case lxRealIntOp:
+         generateOperation(tape, node, scope, mode & ~STACKOP_MODE);
+         break;
+      case lxIntBoolOp:
+      case lxLongBoolOp:
+      case lxRealBoolOp:
+         generateBoolOperation(tape, node, scope, mode & ~STACKOP_MODE);
+         break;
+      case lxIntArrOp:
+      case lxByteArrOp:
+      case lxShortArrOp:
+      case lxArrOp:
+      case lxBinArrOp:
+      case lxArgArrOp:
+         generateArrOperation(tape, node, scope, mode);
+         break;
 //      case lxNewArrOp:
 //         generateNewArrOperation(tape, node, scope);
 //         break;
@@ -4304,9 +4272,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxCodeExpression:
 //         generateCodeBlock(tape, node, scope);
 //         break;
-//      case lxCondBoxing:
-//         generateCondBoxing(tape, node, scope);
-//         break;
+      case lxCondBoxing:
+         generateCondBoxing(tape, node, scope);
+         break;
       default:
          if (stackOp) {
             pushObject(tape, node.type, node.argument, scope, mode);
