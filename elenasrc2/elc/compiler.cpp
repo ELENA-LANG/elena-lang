@@ -6452,6 +6452,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
       case lxAssigningExpression:
          retVal = compileAssigningExpression(writer, node, scope, mode);
          break;
+      case lxArrayExpression:
+         return compileOperation(writer, node, scope, mode, REFER_OPERATOR_ID);
+         break;
       default:
          retVal = compileObject(writer, node, scope, mode);
          break;
