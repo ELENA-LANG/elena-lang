@@ -899,53 +899,53 @@ private:
 //         consructionMode = withFrame = false;
 //      }
 //   };
-//
-//   // - InlineClassScope -
-//   struct InlineClassScope : public ClassScope
-//   {
-//      struct Outer
-//      {
-//         ref_t      reference;
-//         bool       preserved;
-//         ObjectInfo outerObject;
-//
-//         Outer()
-//         {
-//            reference = INVALID_REF;
-//            preserved = false;
-//         }
-//         Outer(int reference, ObjectInfo outerObject)
-//         {
-//            this->reference = reference;
-//            this->outerObject = outerObject;
-//            this->preserved = false;
-//         }
-//      };
-//
-////      bool                    returningMode;
-//      Map<ident_t, Outer>     outers;
-////      ClassInfo::FieldTypeMap outerFieldTypes;
-//
-//      Outer mapSelf();
-//      Outer mapOwner();
-//      Outer mapParent();
-//
-////      ObjectInfo allocateRetVar();
-//
-//      bool markAsPresaved(ObjectInfo object);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == ScopeLevel::slClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
-//
-//      InlineClassScope(ExprScope* owner, ref_t reference);
-//   };
+
+   // - InlineClassScope -
+   struct InlineClassScope : public ClassScope
+   {
+      struct Outer
+      {
+         ref_t      reference;
+         bool       preserved;
+         ObjectInfo outerObject;
+
+         Outer()
+         {
+            reference = INVALID_REF;
+            preserved = false;
+         }
+         Outer(int reference, ObjectInfo outerObject)
+         {
+            this->reference = reference;
+            this->outerObject = outerObject;
+            this->preserved = false;
+         }
+      };
+
+//      bool                    returningMode;
+      Map<ident_t, Outer>     outers;
+//      ClassInfo::FieldTypeMap outerFieldTypes;
+
+      Outer mapSelf();
+      Outer mapOwner();
+      Outer mapParent();
+
+//      ObjectInfo allocateRetVar();
+
+      bool markAsPresaved(ObjectInfo object);
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
+
+      InlineClassScope(ExprScope* owner, ref_t reference);
+   };
 
    _CompilerLogic*   _logic;
    ByteCodeWriter    _writer;
@@ -1083,8 +1083,8 @@ private:
                                     int& variableArg, ident_t& className);
    void declareVariable(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t typeRef, bool canBeIdle);
 
-//   ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, EAttr mode);
-//   ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode);
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, EAttr mode);
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode);
 //   ObjectInfo compileCollection(SNode objectNode, ExprScope& scope, ObjectInfo target, EAttr mode);
 //
 //   ObjectInfo compileMessageReference(SNode objectNode, ExprScope& scope);
@@ -1107,9 +1107,10 @@ private:
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
    ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileIsNilOperator(SNode node, ExprScope& scope, ObjectInfo loperand/*, ObjectInfo roperand*/);
-//   void compileBranchingNodes(SNode loperandNode, ExprScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
-//   void compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
-//   ObjectInfo compileBranchingOperator(SNode roperand, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
+   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, ExprScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/);
+   void compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id,
+      ObjectInfo loperand, ObjectInfo& retVal);
+   ObjectInfo compileBranchingOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
 
    ref_t resolveStrongArgument(ExprScope& scope, ArgumentsInfo* arguments);
 
@@ -1150,12 +1151,13 @@ private:
 //   ObjectInfo compileReferenceExpression(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target, bool accumulateMode);
+   ObjectInfo compileArrAssigning(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, EAttr mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   void compileEmbeddableRetExpression(SNode node, ExprScope& scope);
-//
-//   ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode, bool& withRetStatement);
+
+   ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode, bool& withRetStatement);
 
    bool recognizeCompileTimeAssigning(SNode node, ClassScope& scope);
    void compileCompileTimeAssigning(SNode node, ClassScope& scope);
@@ -1165,9 +1167,9 @@ private:
 
 //   ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, ref_t expectedRef,
 //      EAttr mode, bool propMode);
-//
-//   ObjectInfo compileCatchOperator(SNode roperand, ExprScope& scope, ref_t operator_id);
-//   ObjectInfo compileAltOperator(SNode node, ExprScope& scope, ObjectInfo objectInfo);
+
+   ObjectInfo compileCatchOperator(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t operator_id);
+   ObjectInfo compileAltOperator(SyntaxWriter& writer, SNode node, ExprScope& scope);
 
    void importClassMembers(SNode classNode, SNode importNode, NamespaceScope& scope);
 
@@ -1193,10 +1195,10 @@ private:
 
    void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
    void declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode);
-//   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
-//   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
-//
-//   void compileActionMethod(SNode member, MethodScope& scope);
+   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
+   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
+
+   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
 //   void compileExpressionMethod(SNode member, MethodScope& scope, bool lazyMode);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, LexicalType methodType,
       bool withGenericMethods = false, bool withOpenArgGenerics = false);
@@ -1227,7 +1229,7 @@ private:
 ////   void compilePreloadedCode(_ModuleScope& scope, SNode node);
    void compileSymbolCode(SyntaxTree& expressionTree, ClassScope& scope);
 
-//   void compileAction(SNode& node, ClassScope& scope, SNode argNode, EAttr mode);
+   void compileAction(SNode node, ClassScope& scope/*, SNode argNode*/, EAttr mode);
 //   void compileNestedVMT(SNode& node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope, bool exclusiveMode = false, 

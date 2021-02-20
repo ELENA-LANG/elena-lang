@@ -3,14 +3,14 @@ In development:
 ------         
 
   [development]
-    * arrays
-    * operators : l6, l7, l8
+    * statement templates
     * sub operators
     * globals
     * declaration attributes
     * nested classes
-    * closures
     * lambda closures
+    * branching
+    * loops
     * embedable ret
     * multi ret
     * yield metods
@@ -19,6 +19,7 @@ In development:
     * template based extensions
 
     * uncomment all code
+    * uncomment alt / try ops
     * uncomment compileResendExpression, compileDispatchExpression, compileDispatcher, compileMultidispatch, matchTriePatterns,
       resolveMetaConstant, generateDispatching
     * uncomment fieldinit routines, yield methods

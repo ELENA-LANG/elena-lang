@@ -285,7 +285,7 @@ struct _ModuleScope
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode,
                                  bool ignoreFields) = 0;
 
-//   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns) = 0;
+   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns) = 0;
 
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, Visibility visibility) = 0;
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
@@ -502,7 +502,7 @@ public:
 //      eaDirectCall         = 0x00040000000,
       eaParameter          = 0x00080000000,
       eaTarget             = 0x00080000040,
-//      eaLazy               = 0x00100000000,
+      eaLazy               = 0x00100000000,
 //      eaInlineArg          = 0x00200000000,
 //      eaConstExpr          = 0x00400000000,
 //      eaCallOp             = 0x00800000000,
@@ -643,14 +643,11 @@ public:
    // retrieve the operation type
    virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand) = 0;
-//
-//   // retrieve the branching operation type
-//   virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference) = 0;
-//
-////   virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info) = 0;
+
+   // retrieve the branching operation type
+   virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference) = 0;
+
 //   virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference) = 0;
-//
-////   virtual bool isDeclared(_ModuleScope& scope, ref_t reference) = 0;
 
    // check if the classes is compatible
    virtual bool __fastcall isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils) = 0;

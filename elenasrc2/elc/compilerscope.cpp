@@ -584,71 +584,66 @@ ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, 
    return generatedReference;
 }
 
-////void ModuleScope :: generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef)
-////{
-////   compiler->registerExtensionTemplate(tree, *this, ns, extensionRef);
-////}
-//
-//ref_t ModuleScope :: resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns)
-//{
-//   ref_t signRef = 0;
-//   module->resolveAction(getAction(closureMessage), signRef);
-//
-//   int paramCount = getArgCount(closureMessage);
-//
-//   IdentifierString closureName(module->resolveReference(closureTemplateReference));
-//   if (signRef == 0) {
-//      if (paramCount > 0) {
-//         closureName.appendInt(paramCount);
-//      }
-//
-//      if (isWeakReference(closureName)) {
-//         return module->mapReference(closureName, true);
-//      }
-//      else return mapFullReference(closureName, true);
-//   }
-//   else {   
-//      ref_t signatures[ARG_COUNT];
-//      size_t signLen = module->resolveSignature(signRef, signatures);
-//
-//      List<SNode> parameters;
-//      SyntaxTree dummyTree;
-//      SyntaxWriter dummyWriter(dummyTree);
-//      dummyWriter.newNode(lxRoot);
-//      
-//      for (size_t i = 0; i < signLen; i++) {
-//         dummyWriter.appendNode(lxType, signatures[i]);
-//      }
-//      if (outputRef) {
-//         dummyWriter.appendNode(lxType, outputRef);
-//      }
-//      // if the output signature is not provided - use the super class
-//      else dummyWriter.appendNode(lxType, superReference);
-//
-//      dummyWriter.closeNode();
-//
-//      SNode paramNode = dummyTree.readRoot().firstChild();
-//      while (paramNode != lxNone) {
-//         parameters.add(paramNode);
-//
-//         paramNode = paramNode.nextNode();
-//      }
-//
-//      closureName.append('#');
-//      closureName.appendInt(paramCount + 1);
-//
-//      ref_t templateReference = 0;
-//      if (isWeakReference(closureName)) {
-//         templateReference = module->mapReference(closureName, true);
-//      }
-//      else templateReference = mapFullReference(closureName, true);
-//
-//      if (templateReference) {
-//         return generateTemplate(templateReference, parameters, ns, false, nullptr);
-//      }
-//      else return superReference;
-//   }
-//}
+ref_t ModuleScope :: resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns)
+{
+   ref_t signRef = 0;
+   module->resolveAction(getAction(closureMessage), signRef);
+
+   int paramCount = getArgCount(closureMessage);
+
+   IdentifierString closureName(module->resolveReference(closureTemplateReference));
+   if (signRef == 0) {
+      if (paramCount > 0) {
+         closureName.appendInt(paramCount);
+      }
+
+      if (isWeakReference(closureName)) {
+         return module->mapReference(closureName, true);
+      }
+      else return mapFullReference(closureName, true);
+   }
+   else {   
+      ref_t signatures[ARG_COUNT];
+      size_t signLen = module->resolveSignature(signRef, signatures);
+
+      List<SNode> parameters;
+      SyntaxTree dummyTree;
+      SyntaxWriter dummyWriter(dummyTree);
+      dummyWriter.newNode(lxRoot);
+      
+      for (size_t i = 0; i < signLen; i++) {
+         dummyWriter.appendNode(lxType, signatures[i]);
+      }
+      if (outputRef) {
+         dummyWriter.appendNode(lxType, outputRef);
+      }
+      // if the output signature is not provided - use the super class
+      else dummyWriter.appendNode(lxType, superReference);
+
+      dummyWriter.closeNode();
+
+      SNode paramNode = dummyTree.readRoot().firstChild();
+      while (paramNode != lxNone) {
+         parameters.add(paramNode);
+
+         paramNode = paramNode.nextNode();
+      }
+
+      closureName.append('#');
+      closureName.appendInt(paramCount + 1);
+
+      ref_t templateReference = 0;
+      if (isWeakReference(closureName)) {
+         templateReference = module->mapReference(closureName, true);
+      }
+      else templateReference = mapFullReference(closureName, true);
+
+      if (templateReference) {
+         return generateTemplate(templateReference, parameters, ns, false, nullptr);
+      }
+      else return superReference;
+   }
+}
 
 void ModuleScope :: saveListMember(ident_t name, ident_t memberName)
 {

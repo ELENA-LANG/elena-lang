@@ -28,27 +28,27 @@ typedef ClassInfo::Attribute Attribute;
 //         return false;
 //   }
 //}
-//
-//inline bool IsInvertedOperator(int& operator_id)
-//{
-//   switch (operator_id)
-//   {
-//      case NOTEQUAL_OPERATOR_ID:
-//         operator_id = EQUAL_OPERATOR_ID;
-//
-//         return true;
-//      case NOTLESS_OPERATOR_ID:
-//         operator_id = LESS_OPERATOR_ID;
-//
-//         return true;
-//      case NOTGREATER_OPERATOR_ID:
-//         operator_id = GREATER_OPERATOR_ID;
-//
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
+
+inline bool __fastcall IsInvertedOperator(int& operator_id)
+{
+   switch (operator_id)
+   {
+      case NOTEQUAL_OPERATOR_ID:
+         operator_id = EQUAL_OPERATOR_ID;
+
+         return true;
+      case NOTLESS_OPERATOR_ID:
+         operator_id = LESS_OPERATOR_ID;
+
+         return true;
+      case NOTGREATER_OPERATOR_ID:
+         operator_id = GREATER_OPERATOR_ID;
+
+         return true;
+      default:
+         return false;
+   }
+}
 
 inline ident_t __fastcall findSourceRef(SNode node)
 {
@@ -362,20 +362,20 @@ int CompilerLogic :: resolveOperationType(_ModuleScope& scope, int operatorId, r
    return 0;
 }
 
-//bool CompilerLogic :: resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference)
-//{
-//   if (!loperand)
-//      return false;
-//
-//   if (!isCompatible(scope, scope.branchingInfo.reference, loperand, true)) {
-//      return false;
-//   }
-//
-//   reference = operatorId == IF_OPERATOR_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
-//
-//   return true;
-//}
-//
+bool CompilerLogic :: resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference)
+{
+   if (!loperand)
+      return false;
+
+   if (!isCompatible(scope, scope.branchingInfo.reference, loperand, true)) {
+      return false;
+   }
+
+   reference = operatorId == IF_OPERATOR_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
+
+   return true;
+}
+
 //int CompilerLogic :: resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand)
 //{
 //   if (isCompatible(scope, V_INT32, roperand, true)) {
@@ -922,42 +922,42 @@ void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compil
    int operationType, ref_t& reference, ref_t elementRef, int tempLocal)
 {
    int size = 0;
-//   if (operationType == lxBinArrOp) {
-//      // HOTFIX : define an item size for the binary array operations
-//      size = -defineStructSize(*scope.moduleScope, V_BINARYARRAY, elementRef);
-//   }
-//
-//   if (reference == V_BINARY && elementRef != 0) {
-//      reference = elementRef;
-//   }
-//   else if (reference == V_OBJECT && elementRef != 0) {
-//      reference = elementRef;
-//   }
-//
-//   bool inverting = IsInvertedOperator(operator_id);
-//
-//   if (reference == V_FLAG) {
-//      if (!scope.moduleScope->branchingInfo.reference) {
-//         // HOTFIX : resolve boolean symbols
-//         ref_t dummy;
-//         resolveBranchOperation(*scope.moduleScope, IF_OPERATOR_ID, scope.moduleScope->branchingInfo.reference, dummy);
-//      }
-//
-//      reference = scope.moduleScope->branchingInfo.reference;
-//      if (inverting) {
-//         node.appendNode(lxIfValue, scope.moduleScope->branchingInfo.falseRef);
-//         node.appendNode(lxElseValue, scope.moduleScope->branchingInfo.trueRef);
-//      }
-//      else {
-//         node.appendNode(lxIfValue, scope.moduleScope->branchingInfo.trueRef);
-//         node.appendNode(lxElseValue, scope.moduleScope->branchingInfo.falseRef);
-//      }
-//   }
-//
-//   if (size != 0) {
-//      // HOTFIX : inject an item size for the binary array operations
-//      node.appendNode(lxSize, size);
-//   }
+   if (operationType == lxBinArrOp) {
+      // HOTFIX : define an item size for the binary array operations
+      size = -defineStructSize(*scope.moduleScope, V_BINARYARRAY, elementRef);
+   }
+
+   if (reference == V_BINARY && elementRef != 0) {
+      reference = elementRef;
+   }
+   else if (reference == V_OBJECT && elementRef != 0) {
+      reference = elementRef;
+   }
+
+   bool inverting = IsInvertedOperator(operator_id);
+
+   if (reference == V_FLAG) {
+      if (!scope.moduleScope->branchingInfo.reference) {
+         // HOTFIX : resolve boolean symbols
+         ref_t dummy;
+         resolveBranchOperation(*scope.moduleScope, IF_OPERATOR_ID, scope.moduleScope->branchingInfo.reference, dummy);
+      }
+
+      reference = scope.moduleScope->branchingInfo.reference;
+      if (inverting) {
+         node.appendNode(lxIfValue, scope.moduleScope->branchingInfo.falseRef);
+         node.appendNode(lxElseValue, scope.moduleScope->branchingInfo.trueRef);
+      }
+      else {
+         node.appendNode(lxIfValue, scope.moduleScope->branchingInfo.trueRef);
+         node.appendNode(lxElseValue, scope.moduleScope->branchingInfo.falseRef);
+      }
+   }
+
+   if (size != 0) {
+      // HOTFIX : inject an item size for the binary array operations
+      node.appendNode(lxSize, size);
+   }
 
    if (IsExprOperator(operator_id) && operationType != lxBoolOp) {
       size = defineStructSize(*scope.moduleScope, reference, elementRef);

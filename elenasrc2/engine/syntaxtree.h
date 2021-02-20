@@ -45,6 +45,7 @@ enum LexicalType
    lxClassImport              = 0x00001D,
    lxForward                  = 0x00001B,
    lxClassProperty            = 0x00001C,
+   lxFinalblock               = 0x00001E,
    lxExtensionTemplate        = 0x00001F,
 
    lxTemplateSource           = 0x00201E,
@@ -169,8 +170,20 @@ enum LexicalType
    lxByteArrOp                = 0x0303C3,
    lxArrOp                    = 0x0303C4,   // arg - operation id
    lxBinArrOp                 = 0x0303C5,
-
    lxCondBoxing               = 0x0303D0,
+   lxInitializing             = 0x0303E0,
+   lxBranching                = 0x0303F0,   // branch expression      
+   lxIf                       = 0x030400,   // optional arg - reference
+   lxElse                     = 0x030401,   // optional arg - reference
+   lxIfN                      = 0x030402,
+   lxIfNotN                   = 0x030403,
+   lxIfNot                    = 0x030404,
+   lxLooping                  = 0x030405,
+   lxLessN                    = 0x030406,
+   lxNotLessN                 = 0x030407,
+   lxGreaterN                 = 0x030408,
+   lxNotGreaterN              = 0x030409,
+   lxTrying                   = 0x030410,   // try-catch expression
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -207,7 +220,6 @@ enum LexicalType
 //
 //
 //   lxRedirect                 = 0x000017,
-//   lxFinalblock               = 0x00001E,
 //
 //   // derivation symbols
 //   lxNewOperation             = 0x021081,
@@ -229,22 +241,10 @@ enum LexicalType
 //   lxCondCopying              = 0x058124,
 //   lxFloatSaving              = 0x058125,
 //   lxCondAssigning            = 0x058126,
-//   lxBranching                = 0x058150,   // branch expression      
-//   lxIf                       = 0x058160,   // optional arg - reference
-//   lxElse                     = 0x058161,   // optional arg - reference
-//   lxIfN                      = 0x058162,
-//   lxIfNotN                   = 0x058163,
-//   lxIfNot                    = 0x058164,
-//   lxLooping                  = 0x058165,
-//   lxLessN                    = 0x058166,
-//   lxNotLessN                 = 0x058167,
-//   lxGreaterN                 = 0x058168,
-//   lxNotGreaterN              = 0x058169,
 //   lxMessageConstant          = 0x0181A7, // arg - rererence
 //   lxExtMessageConstant       = 0x0181A9, // arg -reference
 //   lxOp                       = 0x0581B0,
 //   lxNewArrOp                 = 0x0581D0,
-//   lxInitializing             = 0x0581E0,
 //   lxCloning                  = 0x0581E1,
 //   lxInternalCall             = 0x0581F0,   // calling an internal function, arg - reference
 //   lxStdExternalCall          = 0x058200,   // calling an external function, arg - reference
@@ -252,7 +252,6 @@ enum LexicalType
 //   lxCoreAPICall              = 0x058202,   // calling an external function, arg - reference
 //   lxExtIntConst              = 0x018210,
 //   lxExtIntArg                = 0x018211,
-//   lxTrying                   = 0x058220,   // try-catch expression
 //   lxAlt                      = 0x058221,   // alt-catch expression
 //   lxExternFrame              = 0x058240,
 //   lxOption                   = 0x058251,

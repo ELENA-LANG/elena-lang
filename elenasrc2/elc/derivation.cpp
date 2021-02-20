@@ -1346,19 +1346,12 @@ void DerivationWriter :: flushCodeTree(SyntaxWriter& writer, SNode node, Scope& 
    writer.closeNode();
 }
 
-//void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode current, Scope& derivationScope, bool)
-//{
-//   /*if (closureMode) {
-//      generateCodeTree(writer, current, derivationScope);
-//      writer.inject(lxClosureExpr);
-//      writer.closeNode();
-//   }
-//   else {*/
-//      writer.newNode(lxExpression);
-//      generateCodeTree(writer, current, derivationScope);
-//      writer.closeNode();
-//   //}
-//}
+void DerivationWriter :: flushCodeExpression(SyntaxWriter& writer, SNode current, Scope& derivationScope)
+{
+   writer.newNode(lxExpression);
+   flushCodeTree(writer, current, derivationScope);
+   writer.closeNode();
+}
 
 void DerivationWriter :: flushPropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, 
    SyntaxTree& buffer)
@@ -1936,13 +1929,11 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
 //         generateClassTree(writer, current, derivationScope, true);
 //         first = false;
 //         break;
-//      case lxCode:
-//         generateCodeExpression(writer, current, derivationScope, first);
+      case lxCode:
+         flushCodeExpression(writer, current, derivationScope/*, first*/);
 //         first = false;
-//         break;
+         break;
       case lxToken:
-      //case lxTokenArgs:
-      //case lxDynamicBrackets:
          flushTokenExpression(writer, current, derivationScope/*, true*/);
          break;
 //      case lxPropertyParam:
