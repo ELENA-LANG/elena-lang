@@ -101,8 +101,8 @@ public:
 
    virtual bool __fastcall isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils);
    virtual bool __fastcall isEmbeddableArray(ClassInfo& info);
-//   virtual bool isVariable(_ModuleScope& scope, ref_t targetRef);
-//   virtual bool isVariable(ClassInfo& info);
+   virtual bool __fastcall isVariable(_ModuleScope& scope, ref_t targetRef);
+   virtual bool __fastcall isVariable(ClassInfo& info);
 //   virtual bool isArray(_ModuleScope& scope, ref_t targetRef);
 //   virtual bool isArray(ClassInfo& info);
    virtual bool __fastcall isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared, bool allowRole);

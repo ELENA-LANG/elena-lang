@@ -3,7 +3,6 @@ In development:
 ------         
 
   [development]
-    * optimization - duplicate assigning : external call, message call
 
     * internal routines
 
@@ -58,6 +57,8 @@ In development:
     + optimiation : freei 1 xalloc 1 => nop nop 
     + no duplicate variable by boxing
 
+    * do not save the external operation if the result is not assigned or passed as an argument
+    * optimization - duplicate assigning : external call, message call
     * symbol - do not use a frame if not requiered (e.g. it is a leaf call)
     * optimization : method returning constant
     * by default always allocate 4 variables, assigning argument list - could we do it only once for a whole statement?

@@ -458,20 +458,20 @@ bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
    return test(info.header.flags, elDynamicRole | elStructureRole | elWrapper);
 }
 
-//bool CompilerLogic :: isVariable(_ModuleScope& scope, ref_t classReference)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, classReference))
-//      return false;
-//
-//   return isVariable(info);
-//}
-//
-//bool CompilerLogic :: isVariable(ClassInfo& info)
-//{
-//   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
-//}
-//
+bool CompilerLogic :: isVariable(_ModuleScope& scope, ref_t classReference)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, classReference))
+      return false;
+
+   return isVariable(info);
+}
+
+bool CompilerLogic :: isVariable(ClassInfo& info)
+{
+   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
+}
+
 //bool CompilerLogic :: isSealedOrClosed(ClassInfo& info)
 //{
 //   return test(info.header.flags, elSealed | elClosed);

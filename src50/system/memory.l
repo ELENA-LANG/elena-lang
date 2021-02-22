@@ -1,10 +1,10 @@
-//
-//// --- Array template ---
-//
-//public sealed Array<T> : Indexable<T>
-//{
-//    embeddable __string T[] theArray;
-//
+
+// --- Array template ---
+
+public sealed Array<T> //: Indexable<T>
+{
+    embeddable __string T[] theArray;
+
 //    constructor allocate(int length)
 //        = new T[](length);
 //        
@@ -134,8 +134,8 @@
 //        
 //        ^ copy
 //    }
-//}
-//
+}
+
 //// --- Array template ---
 //
 //public sealed nonstructural VariadicArray<T> : Indexable<T>
@@ -685,14 +685,14 @@
 //        }
 //    };
 //}
-//
-//// --- String ---
-//
-///// A UTF-8 literal value
-//public sealed const struct String : BaseValue
-//{
-//    __string byte[] theArray;
-//
+
+// --- String ---
+
+[info:"A UTF-8 literal value"]
+public sealed const struct String : BaseValue
+{
+    __string byte[] theArray;
+
 //    /// Creates the empty literal
 //    const static string MinValue
 //        = "";
@@ -928,20 +928,20 @@
 //    
 //    /// Clones the value
 //    string clone() = String.copy(self);
-//}
-//
+}
+
 //// --- emptyString ---
 //
 ///// An empty literal value
 //public const string emptyString = String.MinValue;
-//
-//// --- WideString ---
-//
-///// A UTF-18 literal value
-//public sealed const struct WideString : BaseValue
-//{
-//    __string short[] theArray;
-//
+
+// --- WideString ---
+
+[info:"A UTF-18 literal value"]
+public sealed const struct WideString : BaseValue
+{
+    __string short[] theArray;
+
 //    /// Creates the empty literal
 //    const static wide MinValue
 //        = ""w;
@@ -1180,8 +1180,8 @@
 //    
 //    /// Clones the value
 //    wide clone() = WideString.copy(self);
-//}
-//
+}
+
 //// --- emptyWideString ---
 //
 ///// An empty wide literal value

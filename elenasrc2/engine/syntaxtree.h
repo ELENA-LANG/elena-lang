@@ -193,6 +193,7 @@ enum LexicalType
    lxExternalCall             = 0x030421,   // calling an external function, arg - reference
    lxCoreAPICall              = 0x030422,   // calling an external function, arg - reference
    lxExtIntConst              = 0x010430,
+   lxExtIntArg                = 0x010431,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -234,7 +235,6 @@ enum LexicalType
 //   lxNewArrOp                 = 0x0581D0,
 //   lxCloning                  = 0x0581E1,
 //   lxInternalCall             = 0x0581F0,   // calling an internal function, arg - reference
-//   lxExtIntArg                = 0x018211,
 //   lxExternFrame              = 0x058240,
 //   lxOption                   = 0x058251,
 //   lxYieldDispatch            = 0x058260,

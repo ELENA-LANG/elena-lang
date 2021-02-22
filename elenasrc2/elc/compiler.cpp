@@ -3272,6 +3272,10 @@ void Compiler :: appendCreating(SyntaxWriter& writer/*SNode& assigningNode, SNod
 
 ObjectInfo Compiler :: boxExternal(SyntaxWriter& writer, ObjectInfo target, ExprScope& scope)
 {
+   // HOTFIX : replace dword with an integer
+   if (target.reference == V_DWORD)
+      target.reference = scope.moduleScope->intReference;
+
    ref_t targetRef = resolveObjectReference(scope, target, true, false);
    bool variable = false;
    int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, target.element, variable);
@@ -6701,13 +6705,21 @@ void Compiler :: compileExternalArguments(SyntaxWriter& writer, SNode node, Expr
 {
    for (int i = 0; i < arguments->Length(); i++) {
       ObjectInfo param = (*arguments)[i];
+      ref_t typeRef = resolveObjectReference(scope, param, false, false);
 
       if (param.kind == okIntConstant) {
          writer.newNode(lxExtIntConst);
          writeTerminal(writer, param, scope);
          writer.closeNode();
       }
-      else scope.raiseError(errInvalidOperation, node); // !! temporal
+      else if (_logic->isCompatible(*scope.moduleScope, V_DWORD, typeRef, true)
+         && !_logic->isVariable(*scope.moduleScope, typeRef)) 
+      {
+         writer.newNode(lxExtIntArg);
+         writeTerminal(writer, param, scope);
+         writer.closeNode();
+      }
+      else writeTerminal(writer, param, scope);
    }
 //      else {
 //         if (objNode.compare(lxBoxableExpression, lxCondBoxableExpression)) {

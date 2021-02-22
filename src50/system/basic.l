@@ -139,13 +139,13 @@ public abstract class IntBaseNumber : BaseNumber
 //        = 0 != self.and:operand;
 }
 
-//// --- ByteNumber ---
-//
-//[info:"an unsigned 8 bit integer"]
-//public sealed const struct ByteNumber : IntBaseNumber
-//{
-//    embeddable __int theValue[1];
-//
+// --- ByteNumber ---
+
+[info:"an unsigned 8 bit integer"]
+public sealed const struct ByteNumber : IntBaseNumber
+{
+    embeddable __int theValue[1];
+
 //    [info:"returns the default value"]
 //    constructor()
 //        = 0;
@@ -429,15 +429,15 @@ public abstract class IntBaseNumber : BaseNumber
 //        
 //    [info:"clones the value"]
 //    byte clone() = new ByteNumber(self);
-//}
-//
-//// --- ShortNumber ---
-//
-//[info:"a signed 16 bit integer"]
-//public sealed const struct ShortNumber : IntBaseNumber
-//{
-//    embeddable __int theValue[2];
-//
+}
+
+// --- ShortNumber ---
+
+[info:"a signed 16 bit integer"]
+public sealed const struct ShortNumber : IntBaseNumber
+{
+    embeddable __int theValue[2];
+
 //    [info:"returns the minimal value (-32768)"]
 //    static short MinValue
 //        = -32768;
@@ -742,7 +742,7 @@ public abstract class IntBaseNumber : BaseNumber
 //
 //    [info:"Clones the value"]
 //    short clone() = new ShortNumber(self);
-//}
+}
 
 // --- IntNumber ---
 

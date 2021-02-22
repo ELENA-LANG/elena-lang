@@ -3,12 +3,12 @@
 [info:"a common ancestor"]
 public class Object
 {
-//    /// class constant - a class name 
-//    const string __className := @classname;
-//    
-//    /// class constant - a package info
-//    const __packageInfo      := @package; 
-//    
+    /// class constant - a class name 
+    const string __className := @classname;
+    
+    /// class constant - a package info
+    const __packageInfo      := @package; 
+    
 //    [info:"Creates the object"]
 //    constructor() {}
 //    

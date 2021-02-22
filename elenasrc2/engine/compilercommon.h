@@ -652,7 +652,7 @@ public:
    // check if the classes is compatible
    virtual bool __fastcall isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils) = 0;
 
-//   virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
+   virtual bool __fastcall isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
    virtual bool __fastcall isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared, bool allowRole) = 0;
    virtual bool __fastcall doesClassExist(_ModuleScope& scope, ref_t targetRef) = 0;
 //   virtual bool isArray(_ModuleScope& scope, ref_t targetRef) = 0;

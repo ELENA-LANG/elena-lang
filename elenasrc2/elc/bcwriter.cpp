@@ -2807,13 +2807,17 @@ int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
 {
    int paramCount = 0;
 
-   SNode current = node.lastChild();
+   SNode current = node.firstChild();
    int i = 0;
    while (current != lxNone) {
       if (test(current.type, lxObjectMask)) {
          if (!idleMode) {
             if (current == lxExtIntConst) {
                tape.write(bcXSaveSI, i, current.firstChild(lxObjectMask).findChild(lxIntValue).argument);
+            }
+            else if (current == lxExtIntArg) {
+               loadObject(tape, current.firstChild(lxObjectMask), scope);
+               tape.write(bcSaveSI, i);
             }
             else {
                generateObject(tape, current, scope);
@@ -2824,7 +2828,7 @@ int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
          paramCount++;
       }
 
-      current = current.prevNode();
+      current = current.nextNode();
       i++;
    }
 

@@ -65,7 +65,7 @@
 //#define previous    80001023h
 
 /// primitive types
-//#define __string    80000801h
+#define __string    80000801h
 //#define __float     80000802h
 #define __int       80000803h
 //#define __raw       80000804h
@@ -87,15 +87,15 @@
 //type bool       = BoolValue;
 
 // === basic type aliases ===
-//type byte       = ByteNumber;
-//type short      = ShortNumber;
+type byte       = ByteNumber;
+type short      = ShortNumber;
 type int        = IntNumber;
 //type uint       = UIntNumber;
 //type long       = LongNumber;
 //type real       = RealNumber;
 //type char       = CharValue;
-//type string     = String;
-//type wide       = WideString;
+type string     = String;
+type wide       = WideString;
 //type handle     = Handle;
 //type rt_ptr     = RTPointer;
 //type dirty_ptr  = UnsafePointer;
