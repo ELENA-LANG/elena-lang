@@ -241,20 +241,20 @@ inline void saveTerminal(SyntaxWriter& writer, TerminalInfo& terminal)
 //   if (terminal.symbol == lxGlobalReference) {
 //      writer.newNode(terminal.symbol, terminal.value + 1);
 //   }
-//   else if (terminal.symbol == lxLiteral || terminal == lxCharacter || terminal == lxWide) {
-//      // try to use local storage if the quote is not too big
-//      if (getlength(terminal.value) < 0x100) {
-//         QuoteTemplate<IdentifierString> quote(terminal.value);
-//      
-//         writer.newNode(terminal.symbol, quote.ident());
-//      }
-//      else {
-//         QuoteTemplate<DynamicString<char> > quote(terminal.value);
-//      
-//         writer.newNode(terminal.symbol, quote.ident());
-//      }
-//   }
-   /*else */writer.newNode(terminal.symbol, terminal.value);
+   /*else */if (terminal.symbol == lxLiteral || terminal == lxCharacter || terminal == lxWide) {
+      // try to use local storage if the quote is not too big
+      if (getlength(terminal.value) < 0x100) {
+         QuoteTemplate<IdentifierString> quote(terminal.value);
+      
+         writer.newNode(terminal.symbol, quote.ident());
+      }
+      else {
+         QuoteTemplate<DynamicString<char> > quote(terminal.value);
+      
+         writer.newNode(terminal.symbol, quote.ident());
+      }
+   }
+   else writer.newNode(terminal.symbol, terminal.value);
 
    writer.appendNode(lxCol, terminal.col);
    writer.appendNode(lxRow, terminal.row);
@@ -265,10 +265,10 @@ inline void saveTerminal(SyntaxWriter& writer, TerminalInfo& terminal)
 
 void DerivationWriter :: appendTerminal(TerminalInfo& terminal)
 {
-//   // HOT FIX : if there are several constants e.g. $10$13, it should be treated like literal terminal
-//   if (terminal == lxCharacter && terminal.value.findSubStr(1, '$', terminal.length, NOTFOUND_POS) != NOTFOUND_POS) {
-//      terminal.symbol = lxLiteral;
-//   }
+   // HOT FIX : if there are several constants e.g. $10$13, it should be treated like literal terminal
+   if (terminal == lxCharacter && terminal.value.findSubStr(1, '$', terminal.length, NOTFOUND_POS) != NOTFOUND_POS) {
+      terminal.symbol = lxLiteral;
+   }
 
    saveTerminal(_cacheWriter, terminal);
 }

@@ -42,23 +42,23 @@ symbol sta_start
 
   movfip   -1
   storesi  0
-  callextr extern : PrepareEM, 0301h
+  callextr extern : PrepareEM, 0201h
 
-  loadf    -4
-  savesi   0
-  callextr api : initProcess, 1
-
-  movr     entry : "$forwards'$program"
-  storesi  4
-  movr     api : veh_handler
-  storesi  3
-  movr     api : default_handler
-  storesi  2
-  loadenv
-  savesi   1
   movf     -4
   storesi  0
-  callextr extern : InitializeSTA, 0305h
+  callextr api : initProcess, 1
+
+  movf     -4
+  storesi  4
+  movr     entry : "$forwards'$program"
+  storesi  3
+  movr     api : veh_handler
+  storesi  2
+  movr     api : default_handler
+  storesi  1
+  loadenv
+  savesi   0
+  callextr extern : InitializeSTA, 0205h
 
   restore  sizeof ProgramHeader
   close
