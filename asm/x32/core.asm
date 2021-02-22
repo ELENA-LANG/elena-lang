@@ -3399,6 +3399,14 @@ inline % 0F8h
 
 end
 
+// ; xsavesi (__arg1 - index, __arg2 - n)
+inline % 0F9h
+
+  mov  eax, __arg2
+  mov  [esp + __arg1], eax
+
+end
+
 
 // callrm (edx contains message, __arg1 contains vmtentry)
 inline % 0FEh

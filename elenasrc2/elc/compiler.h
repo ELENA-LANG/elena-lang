@@ -1099,7 +1099,9 @@ private:
 //      int fixedSize, ref_t targetRef);
 //
 //   ObjectInfo compileTypeSymbol(SNode node, ExprScope& scope, EAttr mode);
-//
+
+   ObjectInfo saveToTempLocal(SyntaxWriter& writer, ExprScope& scope, ObjectInfo retVal);
+
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
       ArgumentsInfo* arguments/*, ObjectInfo roperand2, EAttr mode*/);
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
@@ -1118,7 +1120,7 @@ private:
       bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments);
 
    ObjectInfo compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, /*ref_t exptectedRef, */EAttr mode);
-   ObjectInfo compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, /*ref_t exptectedRef, */EAttr mode);
+   ObjectInfo compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileMessageOperation(SyntaxWriter& writer, SNode current, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
       ref_t expectedSignRef, EAttr mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
@@ -1177,9 +1179,10 @@ private:
    bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
    bool allocateTempStructure(ExprScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
 
-//   ObjectInfo compileExternalCall(SNode node, ExprScope& scope, ref_t expectedRef, EAttr mode);
+   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t expectedRef,  
+      ArgumentsInfo* arguments);
 //   ObjectInfo compileInternalCall(SNode node, ExprScope& scope, mssg_t message, ref_t signature, ObjectInfo info);
-//
+
 //   void warnOnUnresolvedDispatch(SNode node, Scope& scope, mssg_t message, bool errorMode);
    void warnOnUnassignedLocal(SNode node, Scope& scope, int offset);
 
@@ -1269,7 +1272,7 @@ private:
    ObjectInfo convertObject(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
    ObjectInfo sendTypecast(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source);
 
-//   void compileExternalArguments(SNode node, ExprScope& scope, SNode callNode);
+   void compileExternalArguments(SyntaxWriter& writer, SNode node, ExprScope& scope, ArgumentsInfo* arguments);
 
    void appendCopying(SyntaxWriter& writer, /*SNode& copyingNode, */int size/*, bool variadic, bool primArray*/, ObjectInfo target, 
       ExprScope& scope, int tempLocal);
@@ -1283,9 +1286,11 @@ private:
 //      ObjectInfo member, int memberIndex, int& oriTempLocal);
 //   void injectIndexBoxing(SNode node, SNode objNode, ExprScope& scope);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
-//   void analizeMethod(SNode node, NamespaceScope& scope);
-//   void analizeClassTree(SNode node, ClassScope& scope, bool(*cond)(LexicalType));
+   void analizeMethod(SNode node, NamespaceScope& scope);
+   void analizeClassTree(SNode node, ClassScope& scope, bool(*cond)(LexicalType));
    void analizeSymbolTree(SNode node, Scope& scope);
+
+   ObjectInfo boxExternal(SyntaxWriter& writer, ObjectInfo target, ExprScope& scope);
    ObjectInfo boxArgumentInPlace(SyntaxWriter& writer, SNode boxNode, ObjectInfo target, /*SNode objNode, */ExprScope& scope,
       /*bool localBoxingMode, */bool condBoxing);
    void boxArgument(SyntaxWriter& writer, SNode boxNode, ObjectInfo& arg, ExprScope& scope/*, bool boxingMode,
@@ -1296,7 +1301,7 @@ private:
    void unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprScope& scope);
    void unboxArguments(SyntaxWriter& writer, ExprScope& scope, ObjectInfo& target, ArgumentsInfo* arguments);
 
-//   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
+   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
 
    void createPackageInfo(_Module* module, _ProjectManager& project);
 
@@ -1315,12 +1320,12 @@ private:
    void registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature);
 
    bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
-//   bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
+   bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
 //   bool optimizeConstProperty(_ModuleScope& scope, SNode& node);
 //   bool optimizeEmbeddable(_ModuleScope& scope, SNode& node/*, bool argMode*/);
 //   bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
 //   bool optimizeCallDoubleAssigning(_ModuleScope& scope, SNode& node);
-//   bool optimizeConstantAssigning(_ModuleScope& scope, SNode& node);
+   bool optimizeConstantAssigning(_ModuleScope& scope, SNode& node);
 //   bool optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node);
 //   bool optimizeBranching(_ModuleScope& scope, SNode& node);
 //   bool optimizeDispatchingExpr(_ModuleScope& scope, SNode& node);

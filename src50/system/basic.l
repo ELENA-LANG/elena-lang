@@ -44,14 +44,14 @@
 //        
 //    dispatch() => value;
 //}
-//
-//// === basic data classes ===
-//
-//// --- BaseValue ---
-//
-//[info:"a base value"]
-//public abstract class BaseValue
-//{
+
+// === basic data classes ===
+
+// --- BaseValue ---
+
+[info:"a base value"]
+public abstract class BaseValue
+{
 //    [info:"Returns true if a value of var is equal to the object value; otherwise, false"]
 //    bool equal(BaseVariable var)
 //        <= equal(var.Value);
@@ -71,13 +71,13 @@
 //
 //    [info:"Returns true if the object value is not greater than o; otherwise, false;<br/>by default inverts the result of greater[2] operation"]
 //    bool notgreater(o) = self.greater(o).Inverted;
-//}
-//
-//// --- BaseNumber ---
-//
-//[info:"a base numeric value"]
-//public abstract class BaseNumber : BaseValue
-//{
+}
+
+// --- BaseNumber ---
+
+[info:"a base numeric value"]
+public abstract class BaseNumber : BaseValue
+{
 //    add(BaseVariable var)
 //        <= add(var.Value);
 //
@@ -105,13 +105,13 @@
 //    [info:"returns the negative value of a number"]
 //    Negative
 //        = 0 - self;
-//}
-//
-//// --- IntBaseNumber ---
-//
-//[info:"a base integer value"]
-//public abstract class IntBaseNumber : BaseNumber
-//{
+}
+
+// --- IntBaseNumber ---
+
+[info:"a base integer value"]
+public abstract class IntBaseNumber : BaseNumber
+{
 //    and(BaseVariable var)
 //        <= and(var.Value);
 //        
@@ -137,8 +137,8 @@
 //    [info:"returns true if any of the mask bits are set"]
 //    bool anyMask(operand)
 //        = 0 != self.and:operand;
-//}
-//
+}
+
 //// --- ByteNumber ---
 //
 //[info:"an unsigned 8 bit integer"]
@@ -743,14 +743,14 @@
 //    [info:"Clones the value"]
 //    short clone() = new ShortNumber(self);
 //}
-//
-//// --- IntNumber ---
-//
-//[info:"A signed 32 bit integer"]
-//public sealed const struct IntNumber : IntBaseNumber
-//{
-//    embeddable __int theValue[4];
-//    
+
+// --- IntNumber ---
+
+[info:"A signed 32 bit integer"]
+public sealed const struct IntNumber : IntBaseNumber
+{
+    embeddable __int theValue[4];
+    
 //    [info:"Creates the object with the minimal value"]
 //    static int MinValue
 //        = -2147483648;
@@ -1082,8 +1082,8 @@
 //        
 //        ^ v != 0
 //    }        
-//}
-//
+}
+
 //// --- UIntNumber ---
 //
 //[info:"A unsigned 32 bit integer"]

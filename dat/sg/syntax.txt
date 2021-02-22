@@ -13,7 +13,6 @@ __define SCOPE_FIELD_DECLARATION 4130
 __define ATTRIBUTE_DECLARATION   4144
 __define SIZE 			 4160
 __define BASE 			 4176
-__define BLOCK 		         4192
 __define DISPATCH		 4208
 __define MESSAGE	         4224
 __define BLOCK_END	         4240
@@ -31,6 +30,7 @@ __define L7_OPERATOR  	       135412
 __define L8_OPERATOR  	       135413
 __define L8b_OPERATOR  	       135414
 __define L8c_OPERATOR          135416
+__define BLOCK 		       200800
 __define RET_EXPRESSION	       201280
 __define OPERATOR_L3_END      4395184
 __define OPERATOR_L4_END      4395185

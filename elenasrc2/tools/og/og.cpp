@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -15,7 +15,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION   10
+#define BUILD_VERSION   11
 
 typedef Trie<ByteCodePattern>            ByteTrie;
 typedef MemoryTrie<ByteCodePattern>      MemoryByteTrie;

@@ -164,6 +164,8 @@ ELENA byte codes (or ecodes)
                                                                                                                
  xsaveai i,n                - acc[i] <= n
                                                                                                                
+ xsavesi i,n                - sp[i] <= n
+                                                                                                               
  xsavef n1,n2               - fp:n1 <= n2
                                                                                                                
  xaddf n1,n2                - fp:n1 += n2

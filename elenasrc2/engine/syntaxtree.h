@@ -57,7 +57,7 @@ enum LexicalType
    lxAttributeDecl            = 0x001030,
    lxSizeDecl                 = 0x001040,
    lxBaseDecl                 = 0x001050,
-   lxCode                     = 0x001060,
+   lxCode                     = 0x031060,
    lxDispatchCode             = 0x001070,
    lxMessage                  = 0x001080,   
    lxEOP                      = 0x001090,   // end of the code block
@@ -111,7 +111,7 @@ enum LexicalType
    lxConstantLong             = 0x010285,   // arg - reference
    lxConstantReal             = 0x010286,   // arg - reference
    lxSubjectConstant          = 0x010288, // arg - reference
-   lxNewFrame                 = 0x000290,   // if argument -1 - than with presaved message
+   lxNewFrame                 = 0x030290,   // if argument -1 - than with presaved message
    lxVariable                 = 0x0002A0,
    lxIntVariable              = 0x0002A1,
    lxIntsVariable             = 0x0002A2,
@@ -128,6 +128,10 @@ enum LexicalType
    lxCreatingStruct           = 0x0302D0,   // arg - size
    lxAssigning                = 0x0302E0,   // an assigning expression, arg - size
    lxCopying                  = 0x0302E1,
+   lxSaving                   = 0x0302E3,
+      //   lxCondCopying              = 0x058124,
+   lxFloatSaving              = 0x0302E5,
+      //   lxCondAssigning            = 0x058126,
    lxTempLocal                = 0x0102F0,
    lxAssigningOp              = 0x431300,
    lxAssigningExpression      = 0x031300,   
@@ -185,6 +189,10 @@ enum LexicalType
    lxNotGreaterN              = 0x030409,
    lxTrying                   = 0x030410,   // try-catch expression
    lxAlt                      = 0x030411,   // alt-catch expression
+   lxStdExternalCall          = 0x030420,   // calling an external function, arg - reference
+   lxExternalCall             = 0x030421,   // calling an external function, arg - reference
+   lxCoreAPICall              = 0x030422,   // calling an external function, arg - reference
+   lxExtIntConst              = 0x010430,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -201,24 +209,10 @@ enum LexicalType
    lxReal                     = 0x00201B,
    lxExplicitConst            = 0x00201C,
 
-//
-//
-//
-//
-//
-//
 //   lxSwitching = 0x059250,
-//
-//
 //
 //   lxStatementMask = 0x010000,
 //   lxOperatorMask = 0x020000,
-//
-//
-//
-//
-//
-//
 //
 //   lxRedirect                 = 0x000017,
 //
@@ -234,20 +228,12 @@ enum LexicalType
 //   lxInlineArgCall            = 0x0580A4,
 //   lxBlockLocalAddr           = 0x018114, // arg - offset
 //   lxByRefAssigning           = 0x058122,
-//   lxSaving                   = 0x058123,
-//   lxCondCopying              = 0x058124,
-//   lxFloatSaving              = 0x058125,
-//   lxCondAssigning            = 0x058126,
 //   lxMessageConstant          = 0x0181A7, // arg - rererence
 //   lxExtMessageConstant       = 0x0181A9, // arg -reference
 //   lxOp                       = 0x0581B0,
 //   lxNewArrOp                 = 0x0581D0,
 //   lxCloning                  = 0x0581E1,
 //   lxInternalCall             = 0x0581F0,   // calling an internal function, arg - reference
-//   lxStdExternalCall          = 0x058200,   // calling an external function, arg - reference
-//   lxExternalCall             = 0x058201,   // calling an external function, arg - reference
-//   lxCoreAPICall              = 0x058202,   // calling an external function, arg - reference
-//   lxExtIntConst              = 0x018210,
 //   lxExtIntArg                = 0x018211,
 //   lxExternFrame              = 0x058240,
 //   lxOption                   = 0x058251,
@@ -302,7 +288,7 @@ enum LexicalType
 //   lxRetEmbeddableAttr        = 0x000F27,
 //   lxElementType              = 0x000F28, // arg - reference
    lxSubjectRef               = 0x000F29, // arg - reference
-//   lxLongMode                 = 0x000F2A,
+   lxLongMode                 = 0x000F2A,
    lxDispatchMode             = 0x000F2B,
 };
 

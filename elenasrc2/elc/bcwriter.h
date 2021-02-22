@@ -71,7 +71,6 @@ class ByteCodeWriter
    {
       RegScope acc;
       bool     debugBlockStarted;
-      bool     stackEvenMode;
 
       void clear()
       {
@@ -81,7 +80,6 @@ class ByteCodeWriter
       FlowScope()
       {
          debugBlockStarted = false;
-         stackEvenMode = false;
       }
    };
 
@@ -195,9 +193,9 @@ class ByteCodeWriter
    void changeMessageCounter(CommandTape& tape, int arg, int paramCount, int flags);
    void resend(CommandTape& tape);
    void resendDirectResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message, bool sealedMode);
-//   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
-//   void callLongExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
-//   void callCore(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
+   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
+   void callLongExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
+   void callCore(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
 
    void jumpIfLess(CommandTape& tape, ref_t ref);
    void jumpIfNotLess(CommandTape& tape, ref_t ref);
@@ -264,17 +262,14 @@ class ByteCodeWriter
 
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
    void saveObject(CommandTape& tape, SNode node);
-////   void saveObjectIfChanged(CommandTape& tape, LexicalType type, ref_t argument, int checkLocal, int mode);
-//
-//   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode);
-////   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
-////   void unboxCallParameter(CommandTape& tape, SNode current);
+
+   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode);
 
    void pushObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode);
 //   void pushObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode);
    void loadObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
-//   void pushIntConstant(CommandTape& tape, int value);
+   void pushIntConstant(CommandTape& tape, int value);
 //   void pushIntValue(CommandTape& tape);
 //
 //   void saveIndexToFieldExpression(CommandTape& tape, SNode dstObj, SNode source, FlowScope& scope);
@@ -300,7 +295,7 @@ class ByteCodeWriter
 //   void generateYieldReturn(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 ////   void generateYieldStop(CommandTape& tape, SyntaxTree::Node node);
 ////   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
-//   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateCall(CommandTape& tape, SyntaxTree::Node node);
 
@@ -313,7 +308,7 @@ class ByteCodeWriter
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateByRefAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateCopyingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
-//   void generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
+   void generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateIndexLoadingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateIndexSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   //   void generateCopying(CommandTape& tape, SyntaxTree::Node node, int mode = 0);

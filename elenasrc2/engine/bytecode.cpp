@@ -60,7 +60,7 @@ const char* _fnOpcodes[256] =
    "mtredirect", "xmtredirect", "greatern", "notgreatern", "notlessn", "xrsavef", "xaddf", "xsavef",
 
    "new", "newn", "fillri", "xselectr", "vcallrm", "jumprm", "select", "lessn",
-   "allocn", OPCODE_UNKNOWN, "ifr", "elser", "ifn", "elsen", "callrm", "callextr",
+   "allocn", "xsavesi", "ifr", "elser", "ifn", "elsen", "callrm", "callextr",
 };
 
 using namespace _ELENA_;

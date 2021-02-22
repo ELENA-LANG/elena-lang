@@ -3,7 +3,9 @@ In development:
 ------         
 
   [development]
-    * fixed arrays
+    * optimization - duplicate assigning : external call, message call
+
+    * internal routines
 
     * statement templates
 
@@ -14,7 +16,6 @@ In development:
     * lambda closures
     * branching
     * loops
-    * external / internal routines
     * embedable ret
     * multi ret
     * yield metods
@@ -33,7 +34,7 @@ In development:
     * test try
     * test alt
     * uncomment compileResendExpression, compileDispatchExpression, compileMultidispatch, matchTriePatterns,
-      resolveMetaConstant, generateDispatching
+      resolveMetaConstant, generateDispatching, defineEmbeddableAttributes
     * uncomment fieldinit routines, yield methods
     * uncomment all code
 
@@ -58,6 +59,7 @@ In development:
     + no duplicate variable by boxing
 
     * symbol - do not use a frame if not requiered (e.g. it is a leaf call)
+    * optimization : method returning constant
     * by default always allocate 4 variables, assigning argument list - could we do it only once for a whole statement?
     * idle typecast method should simply return itself
     * optimize generated code : assigning, boxing, returning

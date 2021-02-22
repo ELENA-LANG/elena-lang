@@ -743,29 +743,29 @@ void ByteCodeWriter :: resend(CommandTape& tape)
    tape.write(bcJumpVI);
 }
 
-//void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed)
-//{
-//   int flags = (argsToBeFreed ? baReleaseArgs : 0) | baExternalCall;
-//
-//   // callextr ref, flags
-//   tape.write(bcCallExtR, functionReference | mskImportRef, paramCount | flags);
-//}
-//
-//void ByteCodeWriter :: callLongExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed)
-//{
-//   int flags = (argsToBeFreed ? baReleaseArgs : 0) | baExternalCall | baLongCall;
-//
-//   // callextr ref
-//   tape.write(bcCallExtR, functionReference | mskImportRef, paramCount | flags);
-//}
-//
-//void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed)
-//{
-//   int flags = (argsToBeFreed ? baReleaseArgs : 0);
-//
-//   // callextr ref, flags
-//   tape.write(bcCallExtR, functionReference | mskNativeCodeRef, paramCount | flags);
-//}
+void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed)
+{
+   int flags = (argsToBeFreed ? baReleaseArgs : 0) | baExternalCall;
+
+   // callextr ref, flags
+   tape.write(bcCallExtR, functionReference | mskImportRef, paramCount | flags);
+}
+
+void ByteCodeWriter :: callLongExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed)
+{
+   int flags = (argsToBeFreed ? baReleaseArgs : 0) | baExternalCall | baLongCall;
+
+   // callextr ref
+   tape.write(bcCallExtR, functionReference | mskImportRef, paramCount | flags);
+}
+
+void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed)
+{
+   int flags = (argsToBeFreed ? baReleaseArgs : 0);
+
+   // callextr ref, flags
+   tape.write(bcCallExtR, functionReference | mskNativeCodeRef, paramCount | flags);
+}
 
 void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode)
 {
@@ -2205,11 +2205,11 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
    }
 }
 
-//void ByteCodeWriter :: pushIntConstant(CommandTape& tape, int value)
-//{
-//   tape.write(bcPushN, value);
-//}
-//
+void ByteCodeWriter :: pushIntConstant(CommandTape& tape, int value)
+{
+   tape.write(bcPushN, value);
+}
+
 //void ByteCodeWriter :: pushIntValue(CommandTape& tape)
 //{
 //   // load
@@ -2803,64 +2803,60 @@ void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node 
    else throw new InternalError("Not yet implemented"); // temporal
 }
 
-//int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode)
-//{
-//   int paramCount = 0;
-//
-////   // save function parameters
-////   Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
-//   SNode current = node.lastChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         if (!idleMode)
-//            generateObject(tape, current, scope, STACKOP_MODE);
-//
-//         paramCount++;
-//      }
-//
-//      current = current.prevNode();
-//   }
-//
-//   return paramCount;
-//}
-//
-//void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node, FlowScope& scope)
-//{
-//   bool apiCall = (node == lxCoreAPICall);
-//   bool cleaned = (node == lxStdExternalCall);
-//
-//   int paramCount = 0;
-//   bool evenMode = false;
-//   if (!apiCall && scope.stackEvenMode) {
-//      paramCount = saveExternalParameters(tape, node, scope, true);
-//      // HOTFIX : for WIN64, first four arguments are passed in registers
-//      //          and 0x20 is reserved 
-//      if (paramCount > 4 && test(paramCount, 1)) {
-//         evenMode = true;
-//         tape.write(bcAllocI, 1);
-//      }
-//   }
-//
-//   // save function parameters
-//   paramCount = saveExternalParameters(tape, node, scope, false);
-//
-//   // call the function
-//   if (apiCall) {
-//      // if it is an API call
-//      // simply release parameters from the stack
-//      // without setting stack pointer directly - due to optimization
-//      callCore(tape, node.argument, paramCount, !cleaned);
-//   }
-//   else if (node.existChild(lxLongMode)) {
-//      callLongExternal(tape, node.argument, paramCount, !cleaned);
-//   }
-//   else {
-//      callExternal(tape, node.argument, paramCount, !cleaned);
-//   }
-//
-//   if (evenMode)
-//      tape.write(bcFreeI, 1);
-//}
+int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode)
+{
+   int paramCount = 0;
+
+   SNode current = node.lastChild();
+   int i = 0;
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (!idleMode) {
+            if (current == lxExtIntConst) {
+               tape.write(bcXSaveSI, i, current.firstChild(lxObjectMask).findChild(lxIntValue).argument);
+            }
+            else {
+               generateObject(tape, current, scope);
+               saveObject(tape, lxCurrent, i);
+            }
+         }
+
+         paramCount++;
+      }
+
+      current = current.prevNode();
+      i++;
+   }
+
+   return paramCount;
+}
+
+void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node, FlowScope& scope)
+{
+   bool apiCall = (node == lxCoreAPICall);
+   bool cleaned = (node == lxStdExternalCall);
+
+   // alloc space for parameters
+   int paramCount = saveExternalParameters(tape, node, scope, true);
+   tape.write(bcXAllocI, paramCount);
+
+   // save function parameters
+   paramCount = saveExternalParameters(tape, node, scope, false);
+
+   // call the function
+   if (apiCall) {
+      // if it is an API call
+      // simply release parameters from the stack
+      // without setting stack pointer directly - due to optimization
+      callCore(tape, node.argument, paramCount, !cleaned);
+   }
+   else if (node.existChild(lxLongMode)) {
+      callLongExternal(tape, node.argument, paramCount, !cleaned);
+   }
+   else {
+      callExternal(tape, node.argument, paramCount, !cleaned);
+   }
+}
 
 void ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 {
@@ -3474,53 +3470,45 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
 //   }
 //   else throw InternalError("Not yet implemented"); // !! temporal
 //}
-//
-//void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
-//{
-//   SNode target;
-//   SNode source;
-//   assignOpArguments(node, target, source);
-//
-//   SNode srcObj = source == lxExpression ? source.findSubNodeMask(lxObjectMask) : source;
-//   SNode dstObj = target == lxExpression ? target.findSubNodeMask(lxObjectMask) : target;
-//
-//   //if (srcObj == lxLocalAddress) {
-//   //   loadObject(tape, target, scope);
-//   //   copyFromLocalAddress(tape, node.argument, srcObj.argument);
-//   //}
-//   /*else */if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
-//      // !! never used???
-//      loadObject(tape, source, scope);
-//      saveToLocal(tape, 4, dstObj.argument);
-//   }
-//   else if (dstObj == lxLocalAddress) {
-//      // HOTFIX : to correctly retrieve the result size
-//      if (srcObj == lxSeqExpression)
-//         srcObj = srcObj.findSubNodeMask(lxObjectMask);
-//
-//      if (srcObj.compare(lxExternalCall, lxStdExternalCall, lxCoreAPICall)) {
-//         // NOTE : it should be the external operation
-//         loadObject(tape, source, scope);
-//
-//         if (node.argument == 8) {
-//            // HOTFIX : to support external op returning long
-//            tape.write(bcMovF, dstObj.argument << 2);
-//            tape.write(node == lxFloatSaving ? bcRSave : bcLSave);
-//            scope.clear();
-//         }
-//         else saveToLocalAddress(tape, node.argument, dstObj.argument);
-//      }
-//      else throw InternalError("not yet implemente"); // !! temporal
-//   }
-//   else if (dstObj == lxFieldExpression) {
-//      saveIndexToFieldExpression(tape, dstObj, srcObj, scope);
-//   }
-//   else if (dstObj == lxCreatingStruct) {
-//      saveIndexToObject(tape, dstObj, srcObj, scope, node.argument);
-//   }
-//   else throw InternalError("not yet implemente"); // !! temporal
-//}
-//
+
+void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
+{
+   SNode target;
+   SNode source;
+   assignOpArguments(node, target, source);
+
+   SNode dstObj = target == lxExpression ? target.findSubNodeMask(lxObjectMask) : target;
+
+   //if (srcObj == lxLocalAddress) {
+   //   loadObject(tape, target, scope);
+   //   copyFromLocalAddress(tape, node.argument, srcObj.argument);
+   //}
+   /*else *//*if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
+      // !! never used???
+      loadObject(tape, source, scope);
+      saveToLocal(tape, 4, dstObj.argument);
+   }
+   else */if (dstObj == lxLocalAddress) {
+      // NOTE : it should be the external operation
+      loadObject(tape, source, scope);
+
+      if (node.argument == 8) {
+         // HOTFIX : to support external op returning long
+         tape.write(bcMovF, dstObj.argument << 2);
+         tape.write(node == lxFloatSaving ? bcRSave : bcLSave);
+         scope.clear();
+      }
+      else saveToLocalAddress(tape, node.argument, dstObj.argument);
+   }
+   //else if (dstObj == lxFieldExpression) {
+   //   saveIndexToFieldExpression(tape, dstObj, srcObj, scope);
+   //}
+   //else if (dstObj == lxCreatingStruct) {
+   //   saveIndexToObject(tape, dstObj, srcObj, scope, node.argument);
+   //}
+   else throw InternalError("not yet implemente"); // !! temporal
+}
+
 //void ByteCodeWriter :: generateByRefAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 //{
 //   SNode target;
@@ -4136,10 +4124,10 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxCondCopying:
          generateCopyingExpression(tape, node, scope, mode);
          break;
-//      case lxSaving:
-//      case lxFloatSaving:
-//         generateSavingExpression(tape, node, scope);
-//         break;
+      case lxSaving:
+      case lxFloatSaving:
+         generateSavingExpression(tape, node, scope);
+         break;
 //      case lxIndexSaving:
 //         generateIndexSavingExpression(tape, node, scope);
 //         break;
@@ -4161,11 +4149,11 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxAlt:
          generateAlt(tape, node, scope);
          break;
-//      case lxCoreAPICall:
-//      case lxStdExternalCall:
-//      case lxExternalCall:
-//         generateExternalCall(tape, node, scope);
-//         break;
+      case lxCoreAPICall:
+      case lxStdExternalCall:
+      case lxExternalCall:
+         generateExternalCall(tape, node, scope);
+         break;
 //      case lxInternalCall:
 //         generateInternalCall(tape, node, scope);
 //         break;
@@ -4250,13 +4238,13 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxReturning:
          generateReturnExpression(tape, node, scope);
          break;
-//      case lxExtIntConst:
-//         if (stackOp) {
-//            pushIntConstant(tape, node.findChild(lxIntValue).argument);
-//            stackOp = false;
-//         }
-//         else throw InternalError("Not yet implemented"); // !! temporal
-//         break;
+      case lxExtIntConst:
+         if (stackOp) {
+            pushIntConstant(tape, node.findChild(lxIntValue).argument);
+            stackOp = false;
+         }
+         else throw InternalError("Not yet implemented"); // !! temporal
+         break;
 //      case lxExtIntArg:
 //         if (stackOp) {
 //            loadObject(tape, node.firstChild(lxObjectMask), scope);

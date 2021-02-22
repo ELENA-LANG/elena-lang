@@ -248,7 +248,8 @@ enum ByteCode
    bcJumpRM          = 0xF5,
    bcSelect          = 0xF6,
    bcLessN           = 0xF7,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
-   bcAllocN          = 0xF8,   
+   bcAllocN          = 0xF8,
+   bcXSaveSI         = 0xF9,
    bcIfR             = 0xFA,
    bcElseR           = 0xFB,   
    bcIfN             = 0xFC,

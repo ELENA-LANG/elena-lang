@@ -16,7 +16,7 @@
 
 /// property:
 #define sealed      80003001h
-//#define abstract    80003002h
+#define abstract    80003002h
 //#define closed      80003003h
 //#define predefined  80003005h
 //#define yieldable   80003006h
@@ -41,17 +41,17 @@
 //#define interface   80001007h
 //#define method      80001008h
 //#define field       80001009h
-//#define type        8000100Ah
+#define type        8000100Ah
 //#define generic     8000100Bh
 //#define function    8000100Ch
-//#define var         8000100Dh
+#define var         8000100Dh
 //#define this        8000100Eh
 //#define static      8000100Fh
 //#define cast        80001011h
 //#define new         80001012h
 #define dispatch    80001013h
 //#define params      80001014h
-//#define extern      80001015h
+#define extern      80001015h
 #define intern      80001016h
 //#define forward     80001017h
 //#define import      80001018h
@@ -67,7 +67,7 @@
 /// primitive types
 //#define __string    80000801h
 //#define __float     80000802h
-//#define __int       80000803h
+#define __int       80000803h
 //#define __raw       80000804h
 //#define __ptr       80000805h
 #define __mssg      80000806h
@@ -89,7 +89,7 @@
 // === basic type aliases ===
 //type byte       = ByteNumber;
 //type short      = ShortNumber;
-//type int        = IntNumber;
+type int        = IntNumber;
 //type uint       = UIntNumber;
 //type long       = LongNumber;
 //type real       = RealNumber;

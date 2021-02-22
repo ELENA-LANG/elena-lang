@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Syntax Tree class implementation
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -17,98 +17,98 @@ using namespace _ELENA_;
 
 void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
 {
-   tokens.add("root", lxRoot);
-   tokens.add("namespace", lxNamespace);
-   tokens.add("public_namespace", lxNamespace);
-   tokens.add("class", lxClass);
-   tokens.add("singleton", lxClass);
-   //tokens.add("nested", lxNestedClass);
-   tokens.add("script_method", lxClassMethod);
-   tokens.add("script_function", lxClassMethod);
-   tokens.add("method", lxClassMethod);
-   tokens.add("function", lxClassMethod);
-   tokens.add("get_method", lxClassMethod);
-   tokens.add("message", lxMessage);
-   tokens.add("code", lxCode);
-   tokens.add("expression", lxExpression);
-   tokens.add("returning", lxReturning);
-   tokens.add("symbol", lxSymbol);
-   tokens.add("preloaded_symbol", lxSymbol);
-   tokens.add("literal", lxLiteral);
-   tokens.add("identifier", lxIdentifier);
-   tokens.add("character", lxCharacter);
-   tokens.add("variable_identifier", lxIdentifier);
-   tokens.add("new_identifier", lxIdentifier);
-   tokens.add("prev_identifier", lxIdentifier);
-   tokens.add("integer", lxInteger);
-   tokens.add("parameter", lxMethodParameter);
-//   tokens.add("include", lxInclude);
-   //tokens.add("forward", lxForward);
-   tokens.add("reference", lxReference);
-   tokens.add("new_reference", lxReference);
-   tokens.add("variable", lxVariable);
-   //tokens.add("assign", lxAssign);
-   //tokens.add("operator", lxOperator);
-   tokens.add("nameattr", lxNameAttr);
-   //tokens.add("property_parameter", lxPropertyParam);
-   //tokens.add("import", lxImport);
-   tokens.add("loop_expression", lxExpression);
-
+//   tokens.add("root", lxRoot);
+//   tokens.add("namespace", lxNamespace);
+//   tokens.add("public_namespace", lxNamespace);
+//   tokens.add("class", lxClass);
+//   tokens.add("singleton", lxClass);
+//   //tokens.add("nested", lxNestedClass);
+//   tokens.add("script_method", lxClassMethod);
+//   tokens.add("script_function", lxClassMethod);
+//   tokens.add("method", lxClassMethod);
+//   tokens.add("function", lxClassMethod);
+//   tokens.add("get_method", lxClassMethod);
+//   tokens.add("message", lxMessage);
+//   tokens.add("code", lxCode);
+//   tokens.add("expression", lxExpression);
+//   tokens.add("returning", lxReturning);
+//   tokens.add("symbol", lxSymbol);
+//   tokens.add("preloaded_symbol", lxSymbol);
+//   tokens.add("literal", lxLiteral);
+//   tokens.add("identifier", lxIdentifier);
+//   tokens.add("character", lxCharacter);
+//   tokens.add("variable_identifier", lxIdentifier);
+//   tokens.add("new_identifier", lxIdentifier);
+//   tokens.add("prev_identifier", lxIdentifier);
+//   tokens.add("integer", lxInteger);
+//   tokens.add("parameter", lxMethodParameter);
+////   tokens.add("include", lxInclude);
+//   //tokens.add("forward", lxForward);
+//   tokens.add("reference", lxReference);
+//   tokens.add("new_reference", lxReference);
+//   tokens.add("variable", lxVariable);
+//   //tokens.add("assign", lxAssign);
+//   //tokens.add("operator", lxOperator);
+//   tokens.add("nameattr", lxNameAttr);
+//   //tokens.add("property_parameter", lxPropertyParam);
+//   //tokens.add("import", lxImport);
+//   tokens.add("loop_expression", lxExpression);
+//
    if (fullMode) {
-//      tokens.add("argarrop", lxArgArrOp);
-      //tokens.add("assigning", lxAssigning);
-      //tokens.add("copying", lxCopying);
-      //      tokens.add("boxing", lxBoxing);
-      tokens.add("call", lxCalling_0);
-//      tokens.add("condboxing", lxCondBoxing);
-      tokens.add("directcall", lxDirectCalling);
-      //tokens.add("embeddable", lxEmbeddableAttr);
-//      tokens.add("fieldaddress", lxFieldAddress);
-//      tokens.add("localaddress", lxLocalAddress);
-      tokens.add("sdirectcall", lxSDirectCalling);
-//      tokens.add("unboxing", lxUnboxing);
-      tokens.add("newframe", lxNewFrame);
-      //tokens.add("field_expr", lxFieldExpression);
-      //tokens.add("self_local", lxSelfLocal);
-      //tokens.add("generic_resend", lxGenericResending);
-
-      //tokens.add("constint", lxConstantInt);
-      //tokens.add("constreal", lxConstantReal);
-//      tokens.add("stacksafe", lxStacksafeAttr);
-//      tokens.add("boxable", lxBoxableAttr);
-      //tokens.add("intop", lxIntOp);
-      //tokens.add("intboolop", lxIntBoolOp);
-      //tokens.add("longop", lxLongOp);
-      //tokens.add("realop", lxRealOp);
-      //tokens.add("realintop", lxRealIntOp);
-      //      tokens.add("intarrop", lxIntArrOp);
-//      tokens.add("bytearrop", lxByteArrOp);
-//      tokens.add("shortarrop", lxShortArrOp);
-//      tokens.add("temp", lxTempAttr);
-//      tokens.add("stdextcall", lxStdExternalCall);
-//      tokens.add("extcall", lxExternalCall);
-//      tokens.add("corecall", lxCoreAPICall);
-//      tokens.add("extarg", lxExtArgument);
-//      tokens.add("intextarg", lxIntExtArgument);
-//      tokens.add("interncall", lxInternalCall);
-      //tokens.add("branching", lxBranching);
-      //tokens.add("looping", lxLooping);
-//      tokens.add("constlong", lxConstantLong);
-//      tokens.add("constsymbol", lxConstantSymbol);
-//      tokens.add("constmssg", lxMessageConstant);
-//      tokens.add("constsubj", lxSubjectConstant);
-//      tokens.add("argunboxing", lxArgUnboxing);
-//      tokens.add("argboxing", lxArgBoxing);
-//      tokens.add("byreftarget", lxByRefTarget);
-//      tokens.add("arrop", lxArrOp); 
-//      tokens.add("binarrop", lxBinArrOp);
-//      tokens.add("duplicateboxing", lxDuplicateBoxingAttr);
-//      tokens.add("newarrop", lxNewArrOp);
-//      tokens.add("nested_expr", lxNested);
-      //tokens.add("constattr", lxConstAttr);
-      tokens.add("seqexpression", lxSeqExpression);
-      //tokens.add("ret_embeddable", lxRetEmbeddableAttr);
-      //tokens.add("dispatch_mode", lxDispatchMode);
+////      tokens.add("argarrop", lxArgArrOp);
+//      //tokens.add("assigning", lxAssigning);
+      tokens.add("copying", lxCopying);
+//      //      tokens.add("boxing", lxBoxing);
+//      tokens.add("call", lxCalling_0);
+////      tokens.add("condboxing", lxCondBoxing);
+//      tokens.add("directcall", lxDirectCalling);
+//      //tokens.add("embeddable", lxEmbeddableAttr);
+////      tokens.add("fieldaddress", lxFieldAddress);
+////      tokens.add("localaddress", lxLocalAddress);
+//      tokens.add("sdirectcall", lxSDirectCalling);
+////      tokens.add("unboxing", lxUnboxing);
+//      tokens.add("newframe", lxNewFrame);
+//      //tokens.add("field_expr", lxFieldExpression);
+//      //tokens.add("self_local", lxSelfLocal);
+//      //tokens.add("generic_resend", lxGenericResending);
+//
+      tokens.add("constint", lxConstantInt);
+//      //tokens.add("constreal", lxConstantReal);
+////      tokens.add("stacksafe", lxStacksafeAttr);
+////      tokens.add("boxable", lxBoxableAttr);
+//      //tokens.add("intop", lxIntOp);
+//      //tokens.add("intboolop", lxIntBoolOp);
+//      //tokens.add("longop", lxLongOp);
+//      //tokens.add("realop", lxRealOp);
+//      //tokens.add("realintop", lxRealIntOp);
+//      //      tokens.add("intarrop", lxIntArrOp);
+////      tokens.add("bytearrop", lxByteArrOp);
+////      tokens.add("shortarrop", lxShortArrOp);
+////      tokens.add("temp", lxTempAttr);
+////      tokens.add("stdextcall", lxStdExternalCall);
+////      tokens.add("extcall", lxExternalCall);
+////      tokens.add("corecall", lxCoreAPICall);
+////      tokens.add("extarg", lxExtArgument);
+////      tokens.add("intextarg", lxIntExtArgument);
+////      tokens.add("interncall", lxInternalCall);
+//      //tokens.add("branching", lxBranching);
+//      //tokens.add("looping", lxLooping);
+////      tokens.add("constlong", lxConstantLong);
+////      tokens.add("constsymbol", lxConstantSymbol);
+////      tokens.add("constmssg", lxMessageConstant);
+////      tokens.add("constsubj", lxSubjectConstant);
+////      tokens.add("argunboxing", lxArgUnboxing);
+////      tokens.add("argboxing", lxArgBoxing);
+////      tokens.add("byreftarget", lxByRefTarget);
+////      tokens.add("arrop", lxArrOp); 
+////      tokens.add("binarrop", lxBinArrOp);
+////      tokens.add("duplicateboxing", lxDuplicateBoxingAttr);
+////      tokens.add("newarrop", lxNewArrOp);
+////      tokens.add("nested_expr", lxNested);
+//      //tokens.add("constattr", lxConstAttr);
+//      tokens.add("seqexpression", lxSeqExpression);
+//      //tokens.add("ret_embeddable", lxRetEmbeddableAttr);
+//      //tokens.add("dispatch_mode", lxDispatchMode);
    }
 }
 
