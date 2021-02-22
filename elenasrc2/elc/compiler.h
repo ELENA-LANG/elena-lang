@@ -686,8 +686,6 @@ private:
    // - CodeScope -
    struct CodeScope : public Scope
    {
-//      SNode       parentCallNode; // HOTFIX : used to implement closure unboxing, should refer to the closest message call
-
       // scope local variables
       LocalMap     locals;
 //      bool         genericMethod;
@@ -799,7 +797,7 @@ private:
 
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
-//      CodeScope(CodeScope* parent);
+      CodeScope(CodeScope* parent);
 //      CodeScope(YieldScope* parent);
    };
 
@@ -1119,6 +1117,7 @@ private:
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, /*ref_t expectedSignRef,
       bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments);
 
+   ObjectInfo compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, /*ref_t exptectedRef, */EAttr mode);
    ObjectInfo compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, /*ref_t exptectedRef, */EAttr mode);
    ObjectInfo compileMessageOperation(SyntaxWriter& writer, SNode current, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
       ref_t expectedSignRef, EAttr mode);
@@ -1157,7 +1156,7 @@ private:
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   void compileEmbeddableRetExpression(SNode node, ExprScope& scope);
 
-   ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode, bool& withRetStatement);
+   ObjectInfo compileSubCode(SyntaxWriter& writer, SNode thenNode, ExprScope& scope, bool branchingMode, bool& withRetStatement);
 
    bool recognizeCompileTimeAssigning(SNode node, ClassScope& scope);
    void compileCompileTimeAssigning(SNode node, ClassScope& scope);

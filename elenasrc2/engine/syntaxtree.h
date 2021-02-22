@@ -49,14 +49,13 @@ enum LexicalType
    lxExtensionTemplate        = 0x00001F,
 
    lxTemplateSource           = 0x00201E,
-   //   lxVirtualReference         = 0x00201F,
 
    // NOTE : low word should be unique for every key
    lxInjectMark               = 0x001000,
    lxToken                    = 0x001010,
    lxScope                    = 0x001020,
-   //   lxAttributeDecl            = 0x001030,
-//   lxSizeDecl                 = 0x001040,
+   lxAttributeDecl            = 0x001030,
+   lxSizeDecl                 = 0x001040,
    lxBaseDecl                 = 0x001050,
    lxCode                     = 0x001060,
    lxDispatchCode             = 0x001070,
@@ -71,8 +70,9 @@ enum LexicalType
    lxParameter                = 0x0010D0,
 //   lxPropertyParam            = 0x0010E0, // !!
    lxOperator                 = 0x0210F0,
-//   lxStatementDecl            = 0x001100,
-//   lxControlArgs              = 0x001110,
+   lxStatementDecl            = 0x001100,
+   lxStatementOp              = 0x431110,
+   lxStatementExpression      = 0x031110,
    lxFieldInit                = 0x001120,
    lxStaticFieldInit          = 0x001121,
    lxPropertyOp               = 0x431130,
@@ -184,6 +184,7 @@ enum LexicalType
    lxGreaterN                 = 0x030408,
    lxNotGreaterN              = 0x030409,
    lxTrying                   = 0x030410,   // try-catch expression
+   lxAlt                      = 0x030411,   // alt-catch expression
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -222,10 +223,6 @@ enum LexicalType
 //   lxRedirect                 = 0x000017,
 //
 //   // derivation symbols
-//   lxNewOperation             = 0x021081,
-//   lxCastOperation            = 0x021082,
-//
-//
 //   // expression nodes
 //   lxBoxableExpression        = 0x059032,
 //   lxArgBoxableExpression     = 0x059034,
@@ -252,7 +249,6 @@ enum LexicalType
 //   lxCoreAPICall              = 0x058202,   // calling an external function, arg - reference
 //   lxExtIntConst              = 0x018210,
 //   lxExtIntArg                = 0x018211,
-//   lxAlt                      = 0x058221,   // alt-catch expression
 //   lxExternFrame              = 0x058240,
 //   lxOption                   = 0x058251,
 //   lxYieldDispatch            = 0x058260,

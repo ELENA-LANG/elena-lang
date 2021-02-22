@@ -3,26 +3,39 @@ In development:
 ------         
 
   [development]
+    * fixed arrays
+
     * statement templates
+
     * sub operators
     * globals
-    * declaration attributes
+
     * nested classes
     * lambda closures
     * branching
     * loops
+    * external / internal routines
     * embedable ret
     * multi ret
     * yield metods
-    * fixed arrays
+    * local fixed arrays
     * extensions
     * template based extensions
 
-    * uncomment all code
-    * uncomment alt / try ops
-    * uncomment compileResendExpression, compileDispatchExpression, compileDispatcher, compileMultidispatch, matchTriePatterns,
+    * compile lib50
+    * get rid of push / pop operations in bcwriter, in most cases "xalloci, storesi, freei" should be used
+    * support 16 byte stack alignment for x86-64, get rid of current temporal solution (review all cases of freei usage)
+    * compile lib50_64
+
+    * docs - all code in docs should work
+    * test if with unknown object
+    * test if with bool
+    * test try
+    * test alt
+    * uncomment compileResendExpression, compileDispatchExpression, compileMultidispatch, matchTriePatterns,
       resolveMetaConstant, generateDispatching
     * uncomment fieldinit routines, yield methods
+    * uncomment all code
 
     * derivation template attributes
     * compiler template attributes
@@ -46,7 +59,6 @@ In development:
 
     * symbol - do not use a frame if not requiered (e.g. it is a leaf call)
     * by default always allocate 4 variables, assigning argument list - could we do it only once for a whole statement?
-    * support 16 byte stack alignment for x86-64, get rid of current temporal solution (review all cases of freei usage)
     * idle typecast method should simply return itself
     * optimize generated code : assigning, boxing, returning
 

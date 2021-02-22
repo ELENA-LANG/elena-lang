@@ -146,9 +146,9 @@ class ByteCodeWriter
    void declareTry(CommandTape& tape);
    int declareSafeTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
-//   void declareSafeCatch(CommandTape& tape, SyntaxTree::Node finallyNode, int retLabel, FlowScope& scope);
+   void declareSafeCatch(CommandTape& tape, SyntaxTree::Node finallyNode, int retLabel, FlowScope& scope);
    void doCatch(CommandTape& tape);
-//   void declareAlt(CommandTape& tape);
+   void declareAlt(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
    void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
@@ -172,8 +172,8 @@ class ByteCodeWriter
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
 //   void newDynamicObject(CommandTape& tape, ref_t reference);
-//
-//   void popObject(CommandTape& tape, LexicalType sourceType);
+
+   void popObject(CommandTape& tape, LexicalType sourceType);
 
    void clearObject(CommandTape& tape, int fieldCount);
 //   void clearDynamicObject(CommandTape& tape);
@@ -216,8 +216,8 @@ class ByteCodeWriter
 
    void endTry(CommandTape& tape);
    void endCatch(CommandTape& tape);
-//   void endSafeCatch(CommandTape& tape);
-//   void endAlt(CommandTape& tape);
+   void endSafeCatch(CommandTape& tape);
+   void endAlt(CommandTape& tape);
    void endThenBlock(CommandTape& tape);
 //   void endLoop(CommandTape& tape);
 //   void endLoop(CommandTape& tape, ref_t comparingRef);
@@ -306,7 +306,7 @@ class ByteCodeWriter
 
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateTrying(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateAlt(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateAlt(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateLooping(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateBranching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);

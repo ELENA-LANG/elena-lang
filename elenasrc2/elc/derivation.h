@@ -99,17 +99,17 @@ class DerivationWriter : public _DerivationWriter
    _ModuleScope* _scope;
 
    void loadTemplateParameters(Scope& scope, SNode node);
-//   void loadTemplateExprParameters(Scope& scope, SNode node);
+   void loadTemplateExprParameters(Scope& scope, SNode node);
 
    MetaScope recognizeMetaScope(SNode node);
 
    void saveScope(SyntaxWriter& writer);
 
-//   ref_t resolveTemplate(ident_t templateName);
+   ref_t resolveTemplate(ident_t templateName);
 
    ref_t mapAttribute(SNode terminal, bool allowType/*, bool& allowPropertyTemplate*/, ref_t& previusCategory);
    ref_t mapInlineAttribute(SNode terminal);
-//   void declareAttribute(SNode node);
+   void declareAttribute(SNode node);
    void declareStatement(SNode node, ScopeType templateType);
 
    void recognizeAttributes(SNode node, int mode, LexicalType nameType);
@@ -124,7 +124,7 @@ class DerivationWriter : public _DerivationWriter
 
    void declareNestedNamespace(SNode node, Scope& derivationScope);
 
-//   void saveTemplateParameters(SyntaxWriter& tempWriter, SNode current, Scope& derivationScope);
+   void saveTemplateParameters(SyntaxWriter& tempWriter, SNode current, Scope& derivationScope, bool rootMode);
 
    void copyScope(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 
@@ -133,9 +133,8 @@ class DerivationWriter : public _DerivationWriter
    void generateTemplateTree(SNode node, ScopeType templateType);
    void flushScope(SyntaxWriter& writer, SNode node, Scope& scope);
 //   void generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
-//   void generateStatementTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, 
-//      Scope& derivationScope);
-//   void generateStatementTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
+   void generateStatementTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, 
+      Scope& derivationScope);
    void flushPropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    void flushInlineTemplateTree(SyntaxWriter& writer, SNode node, SNode owner, Scope& derivationScope, SyntaxTree& buffer);
@@ -149,6 +148,7 @@ class DerivationWriter : public _DerivationWriter
    void flushFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    void flushCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
    void flushTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope/*, bool rootMode*/);
+   void flushStatement(SyntaxWriter& writer, SNode& node, Scope& derivationScope/*, bool rootMode*/);
    void flushTypeAttribute(SyntaxWriter& writer, SNode terminal, ref_t typeRef, Scope& derivationScope);
    void flushTemplateTypeAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void flushArrayTypeAttribute(SyntaxWriter& writer, SNode terminal, Scope& derivationScope);
@@ -257,7 +257,7 @@ public:
    ref_t generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters,
                            bool importModuleInfo, bool importMode);
 
-//   void generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
+   void generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
    void generateTemplateProperty(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, 
       List<SNode>& parameters, int bookmark, bool inlineMode);
 

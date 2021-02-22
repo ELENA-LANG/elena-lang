@@ -328,6 +328,7 @@ void ECodesAssembler::compileFCommand(ByteCode code, TokenInfo& token, MemoryWri
 void ECodesAssembler::compileFNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
 {
    int n1 = compileFArg(token, binary);
+   token.read(",", "comma expected (%d)");
    int n2 = token.readInteger(constants);
 
    writeCommand(ByteCommand(code, n1, n2), writer);
@@ -336,6 +337,7 @@ void ECodesAssembler::compileFNCommand(ByteCode code, TokenInfo& token, MemoryWr
 void ECodesAssembler :: compileRRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
 {
    size_t reference1 = compileRArg(token, binary);
+   token.read(",", "comma expected (%d)");
    size_t reference2 = compileRArg(token, binary);
 
    writeCommand(ByteCommand(code, reference1, reference2), writer);
@@ -345,6 +347,7 @@ void ECodesAssembler::compileRMCommand(ByteCode code, TokenInfo& token, MemoryWr
 {
    size_t reference1 = compileRArg(token, binary);
 
+   token.read(",", "comma expected (%d)");
    token.read();
    size_t reference2 = compileMessageArg(token, binary);
 
@@ -354,6 +357,8 @@ void ECodesAssembler::compileRMCommand(ByteCode code, TokenInfo& token, MemoryWr
 void ECodesAssembler::compileRNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
 {
    size_t reference1 = compileRArg(token, binary);
+
+   token.read(",", "comma expected (%d)");
 
    int n = token.readInteger(constants);
 
@@ -388,7 +393,8 @@ void ECodesAssembler :: compileVCommand(ByteCode code, TokenInfo& token, MemoryW
 void ECodesAssembler :: compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
 {
 	int n1 = token.readSignedInteger(constants, postfix);
-	int n2 = token.readInteger(constants);
+   token.read(",", "comma expected (%d)");
+   int n2 = token.readInteger(constants);
 
    writeCommand(ByteCommand(code, n1, n2), writer);
 }
@@ -396,7 +402,8 @@ void ECodesAssembler :: compileNNCommand(ByteCode code, TokenInfo& token, Memory
 void ECodesAssembler :: compileCreateCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
 {
    ref_t reference = compileRArg(token, binary);
-	int n = token.readInteger(constants);
+   token.read(",", "comma expected (%d)");
+   int n = token.readInteger(constants);
 
    writeCommand(ByteCommand(code, reference, n), writer);
 }
@@ -416,6 +423,8 @@ void ECodesAssembler :: compileExtNCommand(ByteCode code, TokenInfo& token, Memo
 
          size_t reference = binary->mapReference(function) | mskImportRef;
 
+         token.read(",", "comma expected (%d)");
+
          int flags = token.readInteger(constants);
          writeCommand(ByteCommand(code, reference, flags), writer);
 
@@ -427,6 +436,8 @@ void ECodesAssembler :: compileExtNCommand(ByteCode code, TokenInfo& token, Memo
          function.append(token.value);
 
          size_t reference = binary->mapReference(function) | mskImportRef;
+
+         token.read(",", "comma expected (%d)");
 
          int flags = token.readInteger(constants);
          writeCommand(ByteCommand(code, reference, flags), writer);
@@ -442,6 +453,8 @@ void ECodesAssembler :: compileExtNCommand(ByteCode code, TokenInfo& token, Memo
       functionName.combine(token.value);
 
       size_t reference = binary->mapReference(functionName) | mskNativeCodeRef;
+
+      token.read(",", "comma expected (%d)");
 
       int flags = token.readInteger(constants);
       writeCommand(ByteCommand(code, reference, flags), writer);
@@ -466,6 +479,8 @@ void ECodesAssembler :: compileNJump(ByteCode code, TokenInfo& token, MemoryWrit
       info.fwdJumps.add(token.value, writer.Position() + 4);
    }
 
+   token.read(",", "comma expected (%d)");
+
    int n = token.readInteger(constants);
 
    writer.writeDWord(n);
@@ -487,6 +502,7 @@ void ECodesAssembler :: compileRJump(ByteCode code, TokenInfo& token, MemoryWrit
    else {
       info.fwdJumps.add(token.value, writer.Position() + 4);
    }
+   token.read(",", "comma expected (%d)");
    size_t reference = compileRArg(token, binary);
 
    writer.writeDWord(reference);
@@ -622,6 +638,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcXRedirect:
          case bcXVRedirect:
          case bcMovFIP:
+         case bcXAllocI:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:

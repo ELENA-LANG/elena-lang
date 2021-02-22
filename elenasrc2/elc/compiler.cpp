@@ -797,17 +797,17 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 //   this->genericMethod = methodScope->generic;
 //   this->withRetStatement = false;
 //}
-//
-//Compiler::CodeScope :: CodeScope(CodeScope* parent)
-//   : Scope(parent), locals(Parameter(0))
-//{
-//   this->allocated1 = parent->allocated1;
-//   this->reserved1 = parent->reserved1;
-//   this->allocated2 = parent->allocated2;
-//   this->reserved2 = parent->reserved2;
-//   this->genericMethod = parent->genericMethod;
-//   this->withRetStatement = false;
-//}
+
+Compiler::CodeScope :: CodeScope(CodeScope* parent)
+   : Scope(parent), locals(Parameter(0))
+{
+   this->allocated1 = parent->allocated1;
+   this->reserved1 = parent->reserved1;
+   this->allocated2 = parent->allocated2;
+   this->reserved2 = parent->reserved2;
+   //this->genericMethod = parent->genericMethod;
+   this->withRetStatement = false;
+}
 
 void Compiler::CodeScope :: markAsAssigned(ObjectInfo object)
 {
@@ -2689,7 +2689,7 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprSco
       else writer.newNode(lxIf, ifReference);
 
       bool ifRetStatement = false;
-      compileSubCode(thenCode, scope, true, ifRetStatement);
+      compileSubCode(writer, thenCode, scope, true, ifRetStatement);
 
       writer.closeNode();
 
@@ -2710,7 +2710,7 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprSco
                elseCode = node;
 
             bool elseRetStatement = false;
-            compileSubCode(elseCode, scope, true, elseRetStatement);
+            compileSubCode(writer, elseCode, scope, true, elseRetStatement);
 //            scope.setCodeRetStatementFlag(ifRetStatement && elseRetStatement);
 
             writer.closeNode();
@@ -4154,6 +4154,32 @@ ObjectInfo Compiler :: compileMessageOperation(SyntaxWriter& writer, SNode curre
    return retVal;
 }
 
+ObjectInfo Compiler :: compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target/*, ref_t expectedRef*/, EAttr mode)
+{
+   ref_t expectedSignRef = 0; // contains the expected message signature if it there is only single method overloading
+   mssg_t messageRef = mapMessage(node, scope/*, target.kind == okExtension*/, false, false);
+
+   mssg_t resolvedMessage = _logic->resolveSingleMultiDisp(*scope.moduleScope,
+      resolveObjectReference(scope, target, false), messageRef);
+
+   if (resolvedMessage)
+      scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
+
+   ObjectInfo retVal = compileMessageOperation(writer, node.firstChild(), scope, target, messageRef, expectedSignRef, EAttr::eaNone);
+
+   if (EAttrs::test(mode, HINT_PARAMETER)) {
+      int tempLocal = scope.newTempLocal();
+      writer.newNode(lxAssigning);
+      writer.appendNode(lxTempLocal, tempLocal);
+      writer.appendNode(lxResult);
+      writer.closeNode();
+
+      retVal = ObjectInfo(okTempLocal, tempLocal, resolveObjectReference(scope, retVal, false));
+   }
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope/*, ref_t expectedRef*/, EAttr mode)
 {
    SNode current = node.firstChild();
@@ -5244,8 +5270,7 @@ ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, Ex
    SNode lnode = node.firstChild();
    SNode rnode = lnode.nextNode(lxObjectMask);
 
-   EAttrs objMode(HINT_TARGET/*, HINT_PROP_MODE*/);
-   ObjectInfo loperand = compileObject(writer, lnode, scope, objMode);
+   ObjectInfo loperand = compileObject(writer, lnode, scope, EAttr::eaNone);
 
 //   if (operator_id == FINALLY_OPERATOR_ID) {
 //      SNode finalExpr = node;
@@ -5258,41 +5283,31 @@ ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, Ex
 //      node = node.nextNode();
 //   }
 
-//   node.insertNode(lxResult);
-//   compileOperation(node, scope, ObjectInfo(okObject), 0, EAttr::eaNone, false);
+   writer.newNode(lxExpression);
+
+   ObjectInfo retVal = compileResendMessageOperation(writer, node, scope, ObjectInfo(okObject), EAttr::eaNone);
 
    writer.closeNode();
 
-   return ObjectInfo(okObject);
+   return retVal;
 }
 
 ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, ExprScope& scope)
 {
-//   SNode opNode = node.parentNode();
-//   SNode targetNode = opNode.firstChild(lxObjectMask);
-//   while (test(targetNode.type, lxOpScopeMask)) {
-//      targetNode = targetNode.firstChild(lxObjectMask);
-//   }
-//
-//   SNode altNode = node;
-//
-//   opNode.injectNode(lxAlt);
-//   opNode.set(lxSeqExpression, 0);
-//
-//   SNode assignNode = opNode.insertNode(lxAssigning);
-//   // allocate a temporal local
-//   int tempLocal = scope.newTempLocal();
-//   assignNode.appendNode(lxTempLocal, tempLocal);
-//   SyntaxTree::copyNode(assignNode.appendNode(targetNode.type, targetNode.argument), targetNode);
-//
-//   targetNode.set(lxTempLocal, tempLocal);
-//
-//   SNode op = node.firstChild(lxOperatorMask);
-//   altNode.insertNode(lxTempLocal, tempLocal);
-//
-//   compileMessage(op, scope, 0, target, EAttr::eaNone);
-//
-//   return ObjectInfo(okObject);
+   writer.newNode(lxAlt, 0);
+
+   SNode lnode = node.firstChild();
+   SNode rnode = lnode.nextNode(lxObjectMask);
+
+   ObjectInfo loperand = compileObject(writer, lnode, scope, HINT_PARAMETER);
+
+   writer.newNode(lxExpression);
+
+   ObjectInfo retVal = compileResendMessageOperation(writer, node, scope, loperand, EAttr::eaNone);
+
+   writer.closeNode();
+
+   return retVal;
 }
 
 ref_t Compiler :: resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode)
@@ -6540,25 +6555,24 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
 //   return retVal;
 //}
 
-ObjectInfo Compiler :: compileSubCode(SNode codeNode, ExprScope& scope, bool branchingMode, bool& withRetStatement)
+ObjectInfo Compiler :: compileSubCode(SyntaxWriter& writer, SNode codeNode, ExprScope& scope, bool branchingMode, bool& withRetStatement)
 {
-   //CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
+   CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
 
-   //CodeScope subScope(codeScope);
-   //subScope.parentCallNode = scope.callNode;
+   CodeScope subScope(codeScope);
 
-   //if (branchingMode && codeNode == lxExpression) {
-   //   //HOTFIX : inline branching operator
-   //   codeNode.injectAndReplaceNode(lxCode);
+   if (branchingMode && codeNode == lxExpression) {
+      //HOTFIX : inline branching operator
+      writer.newNode(lxCode);
+      compileRootExpression(writer, codeNode.firstChild(), subScope, 0, HINT_ROOT/* | HINT_DYNAMIC_OBJECT*/);
+      writer.closeNode();
+   }
+   else compileCode(writer, codeNode, subScope);
 
-   //   compileRootExpression(codeNode.firstChild(), subScope, 0, HINT_ROOT | HINT_DYNAMIC_OBJECT);
-   //}
-   //else compileCode(codeNode, subScope);
+   // preserve the allocated space
+   subScope.syncStack(codeScope);
 
-   //// preserve the allocated space
-   //subScope.syncStack(codeScope);
-
-   //withRetStatement = subScope.withRetStatement;
+   withRetStatement = subScope.withRetStatement;
 
    return ObjectInfo(okObject);
 }
@@ -7275,49 +7289,49 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, LexicalType methodType,
    bool withGenericMethods, bool withOpenArgGenerics)
 {
-   //writer.newNode(methodType, scope.message);
+   writer.newNode(methodType, scope.message);
 
-   //SNode dispatchNode = node.findChild(lxDispatchCode);
+   SNode dispatchNode = node.findChild(lxDispatchCode);
 
-   //if (dispatchNode != lxNone) {
-   //   CodeScope codeScope(&scope);
+   if (dispatchNode != lxNone) {
+      CodeScope codeScope(&scope);
 
-   //   compileDispatchExpression(writer, dispatchNode, codeScope, withGenericMethods);
-   //}
-   //else {
-   //   dispatchNode = node.appendNode(lxDispatching);
+      compileDispatchExpression(writer, dispatchNode, codeScope, withGenericMethods);
+   }
+   else {
+      dispatchNode = node.appendNode(lxDispatching);
 
-   //   SNode resendNode = dispatchNode.appendNode(lxResending, 0);
+      SNode resendNode = dispatchNode.appendNode(lxResending, 0);
 
-   //   // if it is generic handler without redirect statement
-   //   if (withGenericMethods) {
-   //      // !! temporally
-   //      if (withOpenArgGenerics)
-   //         scope.raiseError(errInvalidOperation, node);
+      // if it is generic handler without redirect statement
+      if (withGenericMethods) {
+         // !! temporally
+         if (withOpenArgGenerics)
+            scope.raiseError(errInvalidOperation, node);
 
-   //      resendNode.appendNode(lxMessage,
-   //         encodeMessage(scope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 1, 0));
+         resendNode.appendNode(lxMessage,
+            encodeMessage(scope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 1, 0));
 
-   //      resendNode
-   //         .appendNode(lxCallTarget, scope.moduleScope->superReference)
-   //         .appendNode(lxMessage, scope.moduleScope->dispatch_message);
-   //   }
-   //   // if it is open arg generic without redirect statement
-   //   else if (withOpenArgGenerics) {
-   //      // HOTFIX : an extension is a special case of a variadic function and a target should be included
-   //      int argCount = !scope.extensionMode && test(scope.message, FUNCTION_MESSAGE) ? 1 : 2;
+         resendNode
+            .appendNode(lxCallTarget, scope.moduleScope->superReference)
+            .appendNode(lxMessage, scope.moduleScope->dispatch_message);
+      }
+      // if it is open arg generic without redirect statement
+      else if (withOpenArgGenerics) {
+         // HOTFIX : an extension is a special case of a variadic function and a target should be included
+         int argCount = !scope.extensionMode && test(scope.message, FUNCTION_MESSAGE) ? 1 : 2;
 
-   //      resendNode.appendNode(lxMessage, encodeMessage(getAction(scope.moduleScope->dispatch_message),
-   //         argCount, VARIADIC_MESSAGE));
+         resendNode.appendNode(lxMessage, encodeMessage(getAction(scope.moduleScope->dispatch_message),
+            argCount, VARIADIC_MESSAGE));
 
-   //      resendNode
-   //         .appendNode(lxCallTarget, scope.moduleScope->superReference)
-   //         .appendNode(lxMessage, scope.moduleScope->dispatch_message);
-   //   }
-   //   else throw InternalError("Not yet implemented"); // !! temporal
-   //}
+         resendNode
+            .appendNode(lxCallTarget, scope.moduleScope->superReference)
+            .appendNode(lxMessage, scope.moduleScope->dispatch_message);
+      }
+      else throw InternalError("Not yet implemented"); // !! temporal
+   }
 
-   //writer.closeNode();
+   writer.closeNode();
 }
 
 void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
@@ -8629,9 +8643,6 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
          declareFieldAttributes(current, scope, attrs);
 
          if (attrs.isStaticField || attrs.isConstAttr) {
-            //if (!isValidAttributeType(scope, attrs))
-            //   scope.raiseError(errIllegalField, current);
-
             generateClassStaticField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.isStaticField, attrs.isConstAttr, attrs.isArray);
          }
          else if (!isClassClassMode)

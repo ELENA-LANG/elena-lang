@@ -1,3 +1,18 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 storefi := 0 peekfi := 0 => storefi nop;
 storefi := 1 peekfi := 1 => storefi nop;
 storefi := 2 peekfi := 2 => storefi nop;

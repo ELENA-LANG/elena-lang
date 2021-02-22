@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   96
+#define REVISION_VERSION   97
 
 using namespace _ELENA_;
 
@@ -588,7 +588,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcXSaveLenF:
          printCommand(command, opcode);
          printFArgument(command, argument);
-         command.append(" ");
+         command.append(", ");
          command.appendInt(argument2);
          break;
       case bcPushSIP:
@@ -613,7 +613,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCopyToFI:
          printCommand(command, opcode);
          printFPArgument(command, argument);
-         command.append(" ");
+         command.append(", ");
          command.appendInt(argument2);
          break;
       case bcJump:
@@ -634,7 +634,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcIfR:
          printCommand(command, opcode);
          printReference(command, module, argument);
-         command.append(' ');
+         command.append(", ");
          printLabel(command, position + argument2 + 9, labels);
          break;
       case bcIfN:
@@ -645,7 +645,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcNotGreaterN:
          printCommand(command, opcode);
          printLabel(command, position + argument2 + 9, labels);
-         command.append(' ');
+         command.append(", ");
          command.appendHex(argument);
          command.append('h');
          break;
@@ -670,7 +670,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCallExtR:
          printCommand(command, opcode);
          printExternReference(command, module, argument);
-         command.append(" ");
+         command.append(", ");
          command.appendHex(argument2);
          break;
       case bcReserve:
@@ -721,7 +721,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcNew:
          printCommand(command, opcode);
          printReference(command, module, argument);
-         command.append(" ");
+         command.append(", ");
          command.appendInt(argument2);
          break;
       case bcCallRM:
@@ -774,7 +774,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCopyAI:
          printCommand(command, opcode);
          command.appendInt(argument);
-         command.append(" ");
+         command.append(", ");
          command.appendInt(argument2);
          break;
       default:
