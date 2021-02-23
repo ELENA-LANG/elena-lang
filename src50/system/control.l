@@ -168,15 +168,15 @@
 //        get();
 //    }
 //}
-//
-//// --- base functions ---
-//
-///// A base action
-//public interface Func
-//{
-//    /// Executes the action
-//    abstract function();
-//    
+
+// --- base functions ---
+
+[info:"A base action"]
+public interface Func
+{
+    /// Executes the action
+    abstract function();
+    
 //    /// Executes the action while the condition is true
 //    sealed doWhile(b)
 //    {
@@ -197,8 +197,8 @@
 //        }
 //        until(b);
 //    }
-//}
-//
+}
+
 ///// A base function
 //public interface Func1
 //{

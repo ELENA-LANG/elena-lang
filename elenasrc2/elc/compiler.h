@@ -578,7 +578,7 @@ private:
       bool         functionMode;
 //      bool         nestedMode;
 ////      bool         subCodeMode;       
-//      bool         abstractMethod;
+      bool         abstractMethod;
 //      bool         yieldMethod;
 //      bool         embeddableRetMode;
       bool         targetSelfMode;        // used for script generated methods - self refers to __target
@@ -1212,7 +1212,7 @@ private:
    void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
 //   void compileEmbeddableMethod(SNode node, MethodScope& scope);
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
-//   void compileAbstractMethod(SNode node, MethodScope& scope);
+   void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
    void compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope);
 

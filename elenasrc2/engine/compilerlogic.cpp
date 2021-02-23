@@ -553,11 +553,11 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
    return test(info.header.flags, elAbstract);
 }
 
-//bool CompilerLogic :: isMethodAbstract(ClassInfo& info, mssg_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
-//}
-//
+bool CompilerLogic :: isMethodAbstract(ClassInfo& info, mssg_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
+}
+
 //bool CompilerLogic :: isMethodYieldable(ClassInfo& info, mssg_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpYieldable);

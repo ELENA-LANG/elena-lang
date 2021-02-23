@@ -4686,10 +4686,10 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
             generateMethodDebugInfo(tape, node);   // HOTFIX : debug info should be declared inside the frame body
             generateCodeBlock(tape, current, scope);
             break;
-//         case lxNoBody:
-//            declareAbstractMethod(tape, node.argument);
-//            open = true;
-//            break;
+         case lxNoBody:
+            declareAbstractMethod(tape, node.argument);
+            open = true;
+            break;
          default:
             if (test(current.type, lxObjectMask)) {
                if (!open) {

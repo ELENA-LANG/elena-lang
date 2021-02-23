@@ -1289,9 +1289,9 @@ void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope
       /*else */if (bodyNode == lxCode) {
          flushCodeTree(writer, bodyNode, derivationScope);
       }
-//      else if (bodyNode == lxNoBody) {
-//         writer.appendNode(lxNoBody);
-//      }
+      else if (bodyNode == lxNoBody) {
+         writer.appendNode(lxNoBody);
+      }
 //   }
 
    writer.closeNode();

@@ -130,7 +130,7 @@ public:
    virtual bool __fastcall isAbstract(ClassInfo& info);
    virtual bool __fastcall isMethodGeneric(ClassInfo& info, mssg_t message);
    virtual bool __fastcall isMixinMethod(ClassInfo& info, mssg_t message);
-//   virtual bool isMethodAbstract(ClassInfo& info, mssg_t message);
+   virtual bool __fastcall isMethodAbstract(ClassInfo& info, mssg_t message);
 //   virtual bool isMethodYieldable(ClassInfo& info, mssg_t message);
    virtual bool __fastcall isMethodPrivate(ClassInfo& info, mssg_t message);
    virtual bool __fastcall isMultiMethod(ClassInfo& info, mssg_t message);

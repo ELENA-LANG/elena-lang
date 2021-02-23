@@ -3,6 +3,13 @@ In development:
 ------         
 
   [development]
+    * nested closure - boxing / inboxing variable
+    * nested closure - boxing / inboxing struct variable
+
+    * branching
+    * comparision
+    * comparision with constants
+
 
     * internal routines
 
@@ -13,7 +20,6 @@ In development:
 
     * nested classes
     * lambda closures
-    * branching
     * loops
     * embedable ret
     * multi ret

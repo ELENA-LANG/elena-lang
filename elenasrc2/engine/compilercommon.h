@@ -666,7 +666,7 @@ public:
    virtual bool __fastcall isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
    virtual bool __fastcall isStacksafeArg(ClassInfo& info) = 0;
    virtual bool __fastcall isStacksafeArg(_ModuleScope& scope, ref_t reference) = 0;
-//   virtual bool isMethodAbstract(ClassInfo& info, mssg_t message) = 0;
+   virtual bool __fastcall isMethodAbstract(ClassInfo& info, mssg_t message) = 0;
 //   virtual bool isMethodYieldable(ClassInfo& info, mssg_t message) = 0;
    virtual bool __fastcall isMethodGeneric(ClassInfo& info, mssg_t message) = 0;
    virtual bool __fastcall isMixinMethod(ClassInfo& info, mssg_t message) = 0;

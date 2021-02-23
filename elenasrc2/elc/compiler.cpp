@@ -678,7 +678,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->functionMode = false;
 //   this->nestedMode = parent->getScope(Scope::ScopeLevel::slOwnerClass) != parent;
 ////   this->subCodeMode = false;
-//   this->abstractMethod = false;
+   this->abstractMethod = false;
    this->mixinFunction = false;
 //   this->embeddableRetMode = false;
    this->targetSelfMode = false;
@@ -3870,22 +3870,22 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
             else scope.raiseError(errInvalidOperation, current);
             break;
          }
-         //      case okOuter:
-         //      case okOuterSelf:
-         //      {
-         //         InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
-         //         //MethodScope* method = (MethodScope*)scope.getScope(Scope::slMethod);
-         //
-         //         if (/*!method->subCodeMode || */!closure->markAsPresaved(target))
-         //            scope.raiseError(errInvalidOperation, sourceNode);
-         //
-         //         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
-         //         if (size != 0 && target.kind == okOuter) {
-         //            operand = size;
-         //            //byRefAssigning = true;
-         //         }
-         //         break;
-         //      }
+         case okOuter:
+         //case okOuterSelf:
+         {
+            InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
+            //MethodScope* method = (MethodScope*)scope.getScope(Scope::slMethod);
+         
+            if (/*!method->subCodeMode || */!closure->markAsPresaved(target))
+               scope.raiseError(errInvalidOperation, node);
+         
+            size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
+            if (size != 0 && target.kind == okOuter) {
+               operand = size;
+               //byRefAssigning = true;
+            }
+            break;
+         }
          case okReadOnlyField:
          case okReadOnlyFieldAddress:
          case okOuterReadOnlyField:
@@ -4251,6 +4251,7 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
       else isParam = false;
    }
 
+   //ArgumentsInfo unboxingArgs;
    ObjectInfo retVal = compileMessageOperation(writer, current, scope, target, messageRef, expectedSignRef, paramsMode);
 
    if (isParam)
@@ -4987,6 +4988,16 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, ExprScop
    else {
       ObjectInfo retVal(okObject, 0, closureRef);
 
+      ArgumentsInfo members;
+      // first pass : box an argument if required
+      for (auto outer_it = scope.outers.start(); !outer_it.Eof(); outer_it++) {
+         ObjectInfo info = (*outer_it).outerObject;
+         if (boxingRequired(info)) {
+            boxArgument(writer, node, info, ownerScope);
+            members.add(info);
+         }
+      }
+
       writer.newNode(lxInitializing);
 
       // dynamic binary symbol
@@ -5000,21 +5011,21 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, ExprScop
       else {
          // dynamic normal symbol
          writer.newNode(lxCreatingClass, scope.info.fields.Count());
-         node.appendNode(lxType, closureRef);
+         writer.appendNode(lxType, closureRef);
       }
       writer.closeNode();
 
-      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
-      //int toFree = 0;
-      int tempLocal = 0;
-      while(!outer_it.Eof()) {
+      // second pass : fill members
+      int memberIndex = 0;
+      for (auto outer_it = scope.outers.start(); !outer_it.Eof(); outer_it++) {
          ObjectInfo info = (*outer_it).outerObject;
-
          writer.newNode(lxMember, (*outer_it).reference);
 
-         writeTerminal(writer, info, ownerScope);
-
-         //analizeOperand(objNode, ownerScope, true, false, false);
+         if (boxingRequired(info)) {
+            writeTerminal(writer, members[memberIndex], ownerScope);
+            memberIndex++;
+         }
+         else writeTerminal(writer, info, ownerScope);
 
          //if ((*outer_it).preserved && !noUnboxing) {
          //   if (!tempLocal) {
@@ -5043,9 +5054,8 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, ExprScop
          //   else if (!oriTempLocal && info.kind == okLocal) {
          //      ownerScope.originals.add(info.param, -1);
          //   }
-         //}
 
-         outer_it++;
+         writer.closeNode();
       }
 
       if (scope.info.methods.exist(scope.moduleScope->init_message)) {
@@ -7341,17 +7351,15 @@ void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodSco
 
    SNode body = node.findChild(lxCode, lxReturning);
 
-   if (body != lxCode) {
-      body.injectAndReplaceNode(lxNewFrame);
-      body = body.firstChild();
-   }
-   else body.set(lxNewFrame, 0);
+   writer.newNode(lxNewFrame);
 
    // new stack frame
    // stack already contains previous $self value
    codeScope.allocated1++;
 
    ObjectInfo retVal = compileCode(writer, body == lxReturning ? body.parentNode() : body, codeScope);
+
+   writer.closeNode();
 
    codeScope.syncStack(&scope);
 
@@ -8163,24 +8171,28 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 //      }
 //   }
 //}
-//
-//void Compiler :: compileAbstractMethod(SNode node, MethodScope& scope)
-//{
-//   SNode body = node.findChild(lxCode, lxNoBody);
-//   // abstract method should have an empty body
-//   if (body == lxNoBody) {
-//      // NOTE : abstract method should not have a body
-//   }
-//   else if (body != lxNone) {
-//      if (body.firstChild() == lxEOP) {
-//         scope.raiseWarning(WARNING_LEVEL_2, wrnAbstractMethodBody, body);
-//
-//         body.set(lxNoBody, 0);
-//      }
-//      else scope.raiseError(errAbstractMethodCode, node);
-//   }
-//   else scope.raiseError(errAbstractMethodCode, node);
-//}
+
+void Compiler :: compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   writer.newNode(lxClassMethod, scope.message);
+
+   SNode body = node.findChild(lxCode, lxNoBody);
+   // abstract method should have an empty body
+   if (body == lxNoBody) {
+      // NOTE : abstract method should not have a body
+   }
+   else if (body != lxNone) {
+      if (body.firstChild() == lxEOP) {
+         scope.raiseWarning(WARNING_LEVEL_2, wrnAbstractMethodBody, body);
+      }
+      else scope.raiseError(errAbstractMethodCode, node);
+   }
+   else scope.raiseError(errAbstractMethodCode, node);
+
+   writer.appendNode(lxNoBody);
+
+   writer.closeNode();
+}
 
 void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
@@ -8480,12 +8492,12 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
             else {
                declareArgumentList(current, methodScope, false, false);
 
-               //if (methodScope.abstractMethod) {
-               //   if (isMethodEmbeddable(methodScope, current)) {
-               //      compileEmbeddableMethod(current, methodScope);
-               //   }
-               //   else compileAbstractMethod(current, methodScope);
-               //}
+               if (methodScope.abstractMethod) {
+                  /*if (isMethodEmbeddable(methodScope, current)) {
+                     compileEmbeddableMethod(current, methodScope);
+                  }
+                  else */compileAbstractMethod(writer, current, methodScope);
+               }
                //else if (isMethodEmbeddable(methodScope, current)) {
                //   // COMPILER MAGIC : if the method retunging value can be passed as an extra argument
                //   compileEmbeddableMethod(current, methodScope);
@@ -8493,7 +8505,7 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
                //else if (methodScope.yieldMethod) {
                //   compileYieldableMethod(current, methodScope);
                //}
-               /*else */compileMethod(writer, current, methodScope);
+               else compileMethod(writer, current, methodScope);
             }
 
             break;
@@ -8774,7 +8786,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
 
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
-//   methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
+   methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
 //   methodScope.yieldMethod = _logic->isMethodYieldable(scope.info, methodScope.message);
 //   methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
    if (_logic->isMixinMethod(scope.info, methodScope.message)) {

@@ -53,6 +53,7 @@ __define L4_EXPRESSION         201236
 __define L5_EXPRESSION         201237
 __define L6_EXPRESSION         201238
 __define L8_EXPRESSION         201239
+__define NO_BODY               201536  
 
 __define eof            	 8208
 __define identifier 	 	 8209
@@ -153,6 +154,7 @@ METHOD_BODY ->
 	BLOCK
 	| = RET_EXPRESSION DECLARATION_END
 	| => DISPATCH DECLARATION_END
+	| NO_BODY
 
 DISPATCH ->
 	EXPRESSION
@@ -637,6 +639,9 @@ BASE ->
 SIZE ->
 	hex
 	| integer
+
+NO_BODY ->
+	DECLARATION_END
 
 OPENING_BRACKET ->
 	(
