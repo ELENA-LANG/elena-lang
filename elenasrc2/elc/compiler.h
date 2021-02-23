@@ -160,6 +160,8 @@ public:
 
       okExternal,
       okInternal,
+      okClosureInfo,
+      okMemberInfo,
       //okPrimitive,                    // param * 4 = size 
       //okPrimCollection                // param - length
    };
@@ -1081,8 +1083,10 @@ private:
                                     int& variableArg, ident_t& className);
    void declareVariable(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t typeRef, bool canBeIdle);
 
-   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, EAttr mode);
-   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode);
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, EAttr mode, 
+      ArgumentsInfo* preservedArgs);
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, InlineClassScope& scope, 
+      EAttr mode, ArgumentsInfo* preservedArgs);
 //   ObjectInfo compileCollection(SNode objectNode, ExprScope& scope, ObjectInfo target, EAttr mode);
 //
 //   ObjectInfo compileMessageReference(SNode objectNode, ExprScope& scope);
@@ -1105,26 +1109,28 @@ private:
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
       ArgumentsInfo* arguments/*, ObjectInfo roperand2, EAttr mode*/);
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
-   ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
+   ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, 
+      ArgumentsInfo* preservedArgs);
 //   ObjectInfo compileIsNilOperator(SNode node, ExprScope& scope, ObjectInfo loperand/*, ObjectInfo roperand*/);
    void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, ExprScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/);
    void compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id,
-      ObjectInfo loperand, ObjectInfo& retVal);
-   ObjectInfo compileBranchingOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
+      ObjectInfo loperand, ObjectInfo& retVal, ArgumentsInfo* preservedArgs);
+   ObjectInfo compileBranchingOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, 
+      int operator_id, ArgumentsInfo* preservedArgs);
 
    ref_t resolveStrongArgument(ExprScope& scope, ArgumentsInfo* arguments);
 
    ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
 
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, /*ref_t expectedSignRef,
-      bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments);
+      bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments, ArgumentsInfo* presavedArgs);
 
    ObjectInfo compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, /*ref_t exptectedRef, */EAttr mode);
    ObjectInfo compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileMessageOperation(SyntaxWriter& writer, SNode current, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
-      ref_t expectedSignRef, EAttr mode);
+      ref_t expectedSignRef, EAttr mode, ArgumentsInfo* presavedArgs);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
-      ArgumentsInfo* arguments/*, EAttr mode*/, int stackSafeAttr/*, bool& embeddableRet*/);
+      ArgumentsInfo* arguments/*, EAttr mode*/, int stackSafeAttr/*, bool& embeddableRet*/, ArgumentsInfo* presavedArgs);
 
    SNode injectAttributeIdentidier(SNode current, Scope& scope);
    void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
@@ -1143,9 +1149,11 @@ private:
 
    void writeTerminal(SyntaxWriter& writer, ObjectInfo objectInfo, ExprScope& scope);
 
-   ObjectInfo compileObject(SyntaxWriter& writer, SNode& node, ExprScope& scope, EAttr mode);
+   ObjectInfo compileObject(SyntaxWriter& writer, SNode& node, ExprScope& scope, 
+      EAttr mode, ArgumentsInfo* preservedArgs);
 //   ObjectInfo compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
-   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, EAttr mode);
+   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, 
+      EAttr mode, ArgumentsInfo* preservedArgs);
 
    ObjectInfo compileCastingExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
@@ -1300,6 +1308,7 @@ private:
       ObjectInfo& target, ArgumentsInfo* arguments/*, bool inPlace*/);
    void unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprScope& scope);
    void unboxArguments(SyntaxWriter& writer, ExprScope& scope, ObjectInfo& target, ArgumentsInfo* arguments);
+   void unboxPreservedArgs(SyntaxWriter& writer, ExprScope& scope, ArgumentsInfo* arguments);
 
    void defineEmbeddableAttributes(ClassScope& scope, SNode node);
 
