@@ -1378,17 +1378,17 @@ ref_t Compiler :: resolveObjectReference(_CompileScope& scope, ObjectInfo object
 
 }
 
-inline void writeClassNameInfo(SNode& node, _Module* module, ref_t reference)
+inline void writeClassNameInfo(SyntaxWriter& writer, _Module* module, ref_t reference)
 {
    ident_t className = module->resolveReference(reference);
    if (isTemplateWeakReference(className)) {
       // HOTFIX : save weak template-based class name directly
-      node.appendNode(lxClassName, className);
+      writer.appendNode(lxClassName, className);
    }
    else {
       IdentifierString fullName(module->Name(), className);
 
-      node.appendNode(lxClassName, fullName.c_str());
+      writer.appendNode(lxClassName, fullName.c_str());
    }
 }
 
@@ -1404,9 +1404,9 @@ void Compiler :: declareProcedureDebugInfo(SyntaxWriter& writer, SNode node, Met
    // declare built-in variables
    if (withSelf) {
       if (scope.classStacksafe) {
-         SNode selfNode = node.appendNode(lxBinarySelf, 1);
-
-         writeClassNameInfo(selfNode, scope.module, scope.getClassRef());
+         writer.newNode(lxBinarySelf, 1);
+         writeClassNameInfo(writer, scope.module, scope.getClassRef());
+         writer.closeNode();
       }
       else writer.appendNode(lxSelfVariable, 1);
    }
@@ -1447,7 +1447,7 @@ void Compiler :: declareProcedureDebugInfo(SyntaxWriter& writer, SNode node, Met
                   if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
 
                      writer.newNode(lxBinaryVariable);
-                     writeClassNameInfo(node, scope.module, classRef);
+                     writeClassNameInfo(writer, scope.module, classRef);
                   }
                   else writer.newNode(lxVariable);
                }
@@ -3199,17 +3199,26 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, ExprScop
    //   retVal = ns->defineObjectInfo(constRef, true);
    //}
 
+   bool withUnboxing = unboxingRequired(target);
    writeTerminal(writer, target, scope);
    if (arguments != nullptr) {
       for (unsigned int i = 0; i < arguments->Length(); i++) {
-         writeTerminal(writer, (*arguments)[i], scope);
+         ObjectInfo arg = (*arguments)[i];
+
+         writeTerminal(writer, arg, scope);
+
+         withUnboxing |= unboxingRequired(arg);
       }
    }
 
    writer.closeNode();
 
-   unboxArguments(writer, scope, target, arguments);
+   if (withUnboxing) {
+      retVal = saveToTempLocal(writer, scope, retVal);
 
+      unboxArguments(writer, scope, target, arguments);
+   }
+   
    return retVal;
 }
 
@@ -3798,11 +3807,20 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Exp
    return 0;
 }
 
-inline bool Compiler :: boxingRequired(ObjectInfo& info)
+bool Compiler :: unboxingRequired(ObjectInfo& info)
+{
+   if (info.kind == okTempLocal) {
+      return info.extraparam != 0;
+   }
+   else return false;
+}
+
+bool Compiler :: boxingRequired(ObjectInfo& info)
 {
    switch (info.kind) {
       case okLocalAddress:
       case okTempLocalAddress:
+      case okFieldAddress:
          return true;
       case okParam:
       case okSelfParam:
@@ -4187,14 +4205,11 @@ ObjectInfo Compiler :: compileResendMessageOperation(SyntaxWriter& writer, SNode
    ObjectInfo retVal = compileMessageOperation(writer, node.firstChild(), scope, target, messageRef, expectedSignRef, EAttr::eaNone);
 
    if (EAttrs::test(mode, HINT_PARAMETER)) {
-      int tempLocal = scope.newTempLocal();
-      writer.newNode(lxAssigning);
-      writer.appendNode(lxTempLocal, tempLocal);
-      writer.appendNode(lxResult);
-      writer.closeNode();
-
-      retVal = ObjectInfo(okTempLocal, tempLocal, resolveObjectReference(scope, retVal, false));
+      if (retVal.kind != okTempLocal)
+         retVal = saveToTempLocal(writer, scope, retVal);
    }
+   else if (retVal.kind == okTempLocal)
+      writeTerminal(writer, retVal, scope);
 
    return retVal;
 }
@@ -4254,8 +4269,12 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
    //ArgumentsInfo unboxingArgs;
    ObjectInfo retVal = compileMessageOperation(writer, current, scope, target, messageRef, expectedSignRef, paramsMode);
 
-   if (isParam)
-      retVal = saveToTempLocal(writer, scope, retVal);
+   if (isParam) {
+      if (retVal.kind != okTempLocal)
+         retVal = saveToTempLocal(writer, scope, retVal);
+   }
+   else if (retVal.kind == okTempLocal)
+      writeTerminal(writer, retVal, scope);
 
    return retVal;
 }
@@ -4720,14 +4739,11 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Ex
    ObjectInfo retVal = compileMessageOperation(writer, current, scope, target, messageRef, expectedSignRef, EAttr::eaNone);
 
    if (EAttrs::test(mode, HINT_PARAMETER)) {
-      int tempLocal = scope.newTempLocal();
-      writer.newNode(lxAssigning);
-      writer.appendNode(lxTempLocal, tempLocal);
-      writer.appendNode(lxResult);
-      writer.closeNode();
-
-      retVal = ObjectInfo(okTempLocal, tempLocal, resolveObjectReference(scope, retVal, false));
+      if (retVal.kind != okTempLocal)
+         retVal = saveToTempLocal(writer, scope, retVal);
    }
+   else if (retVal.kind == okTempLocal)
+      writeTerminal(writer, retVal, scope);
 
    return retVal;
 }
@@ -5263,10 +5279,8 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 //      }
    }
 
-   writer.newNode(lxReturning);
-
    ExprScope exprScope(&scope);
-   ObjectInfo retVal = compileExpression(writer, node.firstChild(), exprScope, targetRef, mode);
+   ObjectInfo retVal = compileExpression(writer, node.firstChild(), exprScope, targetRef, mode | HINT_PARAMETER);
 
 //   if (autoMode) {
 //      targetRef = resolveObjectReference(exprScope, info, true);
@@ -5289,10 +5303,13 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 //   analizeOperands(node, exprScope, stackSafeAttr, true);
    
    if ((retVal.kind != okSelfParam/* || !EAttrs::test(mode, HINT_DYNAMIC_OBJECT)*/) && boxingRequired(retVal)) {
+      writer.newNode(lxSeqExpression);
       retVal = boxArgumentInPlace(writer, node, retVal, exprScope, condBoxingRequired(retVal));
-
-      writeTerminal(writer, retVal, exprScope);
+      writer.closeNode();
    }
+
+   writer.newNode(lxReturning);
+   writeTerminal(writer, retVal, exprScope);
    writer.closeNode();
 
    return retVal;
@@ -8227,7 +8244,7 @@ void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScop
          if (sourceNode != lxNone)
             declareCodeDebugInfo(writer, sourceNode, scope);
 
-         compileRootExpression(writer, /*exprNode*/current, codeScope, 0, HINT_ROOT);
+         compileRootExpression(writer, current.firstChild(lxObjectMask), codeScope, 0, HINT_ROOT);
       }
 
       current = current.nextNode();

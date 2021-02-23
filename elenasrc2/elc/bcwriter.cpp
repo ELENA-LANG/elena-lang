@@ -1463,11 +1463,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             writeMessageInfo(scope, dsMessage, (const char*)_strings.get((*it).additional));
             break;
          case bdStruct:
-            /*if ((*it).predicate == bpFrame) {
-               // if it is a variable containing reference to the primitive value
-               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, frameLevel);
-            }
-            else */writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, 0);
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, 0);
 
             if (peekNext(it) == bdLocalInfo) {
                it++;

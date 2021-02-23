@@ -3,6 +3,8 @@ In development:
 ------         
 
   [development]
+    * struct - fields, boxing fields (e.g. short)
+
     * nested closure - boxing / inboxing variable
     * nested closure - boxing / inboxing struct variable
 

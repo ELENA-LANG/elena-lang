@@ -1395,6 +1395,7 @@ public:
 
    static bool __fastcall boxingRequired(ObjectInfo& info);
    static bool __fastcall condBoxingRequired(ObjectInfo& info);
+   static bool __fastcall unboxingRequired(ObjectInfo& info);
 
    Compiler(_CompilerLogic* logic);
 };
