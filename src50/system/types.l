@@ -3,10 +3,10 @@
 //
 ///// modificator:
 //#define __ignore_duplicates 80006001h 
-//
-///// scope_accessors:
-//#define get         80005001h
-//#define set         80005002h
+
+/// scope_accessors:
+#define get         80005001h
+#define set         80005002h
 
 /// visibility:
 #define public      80004001h
@@ -18,7 +18,7 @@
 #define sealed      80003001h
 #define abstract    80003002h
 //#define closed      80003003h
-//#define predefined  80003005h
+#define predefined  80003005h
 //#define yieldable   80003006h
 
 /// scope_prefix:

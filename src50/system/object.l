@@ -12,18 +12,18 @@ public class Object
     [info:"Creates the object"]
     constructor() {}
     
-//    [info:"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references."]
-//    bool equal(o) => intern system'core_routines'__object;
-//       
+    [info:"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references."]
+    bool equal(o) => intern system'core_routines'__object;
+       
 //    [info:"Returns true if the specified object is not equal to the current object; otherwise, false. By default it inverts the result of equal[2]."]
 //    bool notequal(o) = self.equal(o).Inverted;
-//    
-//    // virtual method declarations : forcing the output type                            
-//    predefined bool less(o) {}
-//    predefined bool greater(o) {}
-//    predefined bool notless(o) {}
-//    predefined bool notgreater(o) {}
-//                
+    
+    // virtual method declarations : forcing the output type                            
+    predefined bool less(o);
+    predefined bool greater(o);
+    predefined bool notless(o);
+    predefined bool notgreater(o);
+                
 //    [info:"Returns the string representation. By default it returns the class name."]
 //    string toPrintable() = /*self.__getClassName()*/__className;
                 
@@ -72,10 +72,10 @@ public interface BoolValue
 //    
 //        [info:"determines whether the specified object is equal to the current object boolean value."]
 //        bool equal(bool b) = b;
-//    
-//        [info:"always returns false."]
-//        bool Inverted = BoolValue.false;
-//    
+    
+        [info:"always returns false."]
+        bool Inverted = BoolValue.false;
+    
 //        [info:"returns literal representation."]
 //        string toPrintable() = "true";
     
@@ -123,10 +123,10 @@ public interface BoolValue
 //        {
 //            ^ f.Inverted
 //        }
-//    
-//        [info:"always returns true"]
-//        bool Inverted = BoolValue.true;
-//    
+    
+        [info:"always returns true"]
+        bool Inverted = BoolValue.true;
+    
 //        [info:"returns literal representation"]
 //        string toPrintable() = "false";
         
@@ -157,9 +157,9 @@ public interface BoolValue
 //
 //    [info:"executes logical XOR operation;<br/>has to be implemented"]
 //    abstract bool xor(expr);
-//
-//    [info:"inverts the value;<br/>has to be implemented"]
-//    get abstract bool Inverted();
+
+    [info:"inverts the value;<br/>has to be implemented"]
+    get abstract bool Inverted();
 
     [info:"clones the value;<br/>has to be implemented"]
     abstract bool clone();

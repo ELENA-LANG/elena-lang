@@ -1208,7 +1208,7 @@ Compiler :: Compiler(_CompilerLogic* logic)
 
    this->_logic = logic;
 
-   ByteCodeCompiler::loadOperators(_operators);
+   ByteCodeCompiler::loadOperators(_operators, _unaryOperators);
 }
 
 void Compiler :: writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, mssg_t messageRef)
@@ -2755,6 +2755,10 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, pos_t 
          return encodeMessage(scope.module->mapAction(REFER_MESSAGE, 0, false), argCount, 0);
       case SET_REFER_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(SET_REFER_MESSAGE, 0, false), argCount, 0);
+      case NEGATIVE_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(NEGATIVE_MESSAGE, 0, false), argCount, PROPERTY_MESSAGE);
+      case INVERTED_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(INVERTED_MESSAGE, 0, false), argCount, PROPERTY_MESSAGE);
       default:
          throw InternalError("Not supported operator");
          break;
@@ -3035,6 +3039,31 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
    return compileOperation(writer, node, scope, operator_id, loperand, &arguments/*, mode*/);
 }
 
+
+ObjectInfo Compiler :: compileUnaryOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id)
+{
+   SNode lnode = node.firstChild(lxObjectMask);
+
+   EAttrs objMode(mode | HINT_TARGET/*, HINT_PROP_MODE*/);
+   ObjectInfo loperand = compileExpression(writer, lnode, scope, 0, objMode, nullptr);
+
+   //   ObjectInfo retVal(okObject);
+   //   int argCount = 2;
+   //
+   //   ObjectInfo roperand;
+   //   ObjectInfo roperand2;
+   //   SNode roperandNode = node;
+   //   else {
+   //      if (test(roperandNode.type, lxTerminalMask)) {
+   //         roperand = mapTerminal(roperandNode, scope, EAttr::eaNone);
+   //      }
+   //      else roperand = compileExpression(roperandNode, scope, 0, EAttr::eaNone);
+   //   }
+
+   ArgumentsInfo arguments;
+   return compileOperation(writer, node, scope, operator_id, loperand, &arguments/*, mode*/);
+}
+
 inline ident_t __fastcall resolveOperatorName(SNode node)
 {
    SNode terminal = node.firstChild(lxTerminalMask);
@@ -3044,17 +3073,20 @@ inline ident_t __fastcall resolveOperatorName(SNode node)
    else return node.identifier();
 }
 
+ObjectInfo Compiler :: compileUnaryExpression(SyntaxWriter& writer, SNode node, ExprScope& scope,
+   EAttr mode)
+{
+   int operator_id = (int)node.argument > 0 ? node.argument : _unaryOperators.get(resolveOperatorName(node.findChild(lxOperator)));
+
+   return compileUnaryOperation(writer, node, scope, mode, operator_id);
+}
+
 ObjectInfo Compiler :: compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, 
    EAttr mode)
 {
    ArgumentsInfo preservedArgs;
 
-//   SNode current = node;
    int operator_id = (int)node.argument > 0 ? node.argument : _operators.get(resolveOperatorName(node.findChild(lxOperator)));
-//
-//   SNode roperand = node.nextNode();
-////   if (operatorNode.prevNode() == lxNone)
-////      roperand = roperand.nextNode(lxObjectMask);
 
    switch (operator_id) {
       case IF_OPERATOR_ID:
@@ -5929,10 +5961,6 @@ ObjectInfo Compiler :: compileRootExpression(SyntaxWriter& writer, SNode node, C
 //      case okUnknown:
 //         scope.raiseError(errUnknownObject, terminal);
 //         break;
-//      case okSymbol:
-////         scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
-//         terminal.set(lxSymbolReference, object.param);
-//         break;
 //      case okExtension:
 //         if (!EAttrs::test(mode, HINT_CALLOP)) {
 //            scope.raiseWarning(WARNING_LEVEL_3, wrnExplicitExtension, terminal);
@@ -6463,6 +6491,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
       case okObject:
          writer.newNode(lxResult);
          break;
+         case okSymbol:
+            writer.newNode(lxSymbolReference, object.param);
+            break;
       default:
          return;
    }
@@ -6641,6 +6672,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
          break;
       case lxOperationExpression:
          retVal = compileOperationExpression(writer, node, scope, mode);
+         break;
+      case lxUnaryExpression:
+         retVal = compileUnaryExpression(writer, node, scope, mode);
          break;
       case lxAssigningExpression:
          retVal = compileAssigningExpression(writer, node, scope, mode);
@@ -9397,8 +9431,10 @@ void Compiler :: saveExtension(ClassScope& scope, mssg_t message, bool internalO
 
 void Compiler :: predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope)
 {
-   SNode body = node.findChild(lxCode);
-   if (body != lxCode || body.firstChild() != lxEOP)
+   SNode body = node.findChild(lxCode, lxNoBody);
+   if (body == lxNoBody) {
+   }
+   else if (body != lxCode || body.firstChild() != lxEOP)
       scope.raiseError(errPedefineMethodCode, node);
 
    if (test(scope.hints, tpAbstract) || (scope.hints & tpMask) == tpPrivate)

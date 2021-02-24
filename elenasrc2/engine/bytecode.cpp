@@ -684,7 +684,7 @@ inline void addVerb(MessageMap& map, const char* verb, int id)
    map.add(verb, id);
 }
 
-void ByteCodeCompiler :: loadOperators(MessageMap& operators)
+void ByteCodeCompiler :: loadOperators(MessageMap& operators, MessageMap& unaryOperators)
 {
    addVerb(operators, ADD_OPERATOR, ADD_OPERATOR_ID);
    addVerb(operators, SUB_OPERATOR, SUB_OPERATOR_ID);
@@ -712,6 +712,9 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
    addVerb(operators, CATCH_OPERATOR, CATCH_OPERATOR_ID);
    addVerb(operators, ALT_OPERATOR, ALT_OPERATOR_ID);
    addVerb(operators, FINALLY_OPERATOR, FINALLY_OPERATOR_ID);
+
+   addVerb(unaryOperators, INVERTED_OPERATOR, INVERTED_OPERATOR_ID);
+   addVerb(unaryOperators, NEGATIVE_OPERATOR, NEGATIVE_OPERATOR_ID);
 }
 
 ByteCode ByteCodeCompiler :: code(ident_t s)

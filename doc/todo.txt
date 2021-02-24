@@ -3,6 +3,8 @@ In development:
 ------         
 
   [development]
+    * #530 : unary operator - Inverted or Negative
+
     * comparision
     * comparision with constants
 
@@ -56,6 +58,7 @@ In development:
     + optimiation : assinging int constant, 
     + optimiation : freei 1 xalloc 1 => nop nop 
     + no duplicate variable by boxing
+    + optimization - true.Inverted should return constant directly, without calling symbol
 
     * do not save the external operation if the result is not assigned or passed as an argument
     * optimization - duplicate assigning : external call, message call

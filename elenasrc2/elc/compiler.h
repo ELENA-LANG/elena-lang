@@ -950,6 +950,7 @@ private:
    _CompilerLogic*   _logic;
    ByteCodeWriter    _writer;
    MessageMap        _operators;                        // list of operators
+   MessageMap        _unaryOperators;                   
 
    // optimization rules
    int               _optFlag;
@@ -1109,8 +1110,10 @@ private:
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
       ArgumentsInfo* arguments/*, ObjectInfo roperand2, EAttr mode*/);
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
+   ObjectInfo compileUnaryOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
    ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
-//   ObjectInfo compileIsNilOperator(SNode node, ExprScope& scope, ObjectInfo loperand/*, ObjectInfo roperand*/);
+   ObjectInfo compileUnaryExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
+   //   ObjectInfo compileIsNilOperator(SNode node, ExprScope& scope, ObjectInfo loperand/*, ObjectInfo roperand*/);
    void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, ExprScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/);
    void compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id,
       ObjectInfo loperand, ObjectInfo& retVal, EAttr operationMode, ArgumentsInfo* preservedArgs);

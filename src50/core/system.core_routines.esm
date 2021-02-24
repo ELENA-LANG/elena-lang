@@ -31,6 +31,17 @@ procedure __object."#dispatch[1]"
 
 end
 
+procedure __object.equal[2]
+
+  peeksi 1
+  pushsi 2
+  equal
+  select const : false, const : true
+  pop
+  quit
+  
+end
+
 // ; system routines
 
 symbol sta_start

@@ -194,6 +194,7 @@ enum LexicalType
    lxNestedOp                 = 0x431440,
    lxNestedExpression         = 0x031440,
    lxSymbolReference          = 0x030450,
+   lxUnaryExpression          = 0x031460,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file

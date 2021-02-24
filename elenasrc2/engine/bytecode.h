@@ -389,7 +389,7 @@ class ByteCodeCompiler
 {
 public:
    //static void loadVerbs(MessageMap& verbs);
-   static void loadOperators(MessageMap& operators);
+   static void loadOperators(MessageMap& operators, MessageMap& unaryOperators);
 
    static ByteCode code(ident_t s);
 
