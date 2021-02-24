@@ -1,1 +1,2 @@
-copying, 		constint = 5;
+directcall,               constattr = 1;
+copying, 		  constint = 5;

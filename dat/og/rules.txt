@@ -1,5 +1,7 @@
 open alloci := 1 storefi := 1 close quit => nop nop nop nop quit;
+open alloci := 1 storefi := 1 movr close quit => nop nop nop movr nop quit;
 
+open movr close => nop movr nop;
 
 
 

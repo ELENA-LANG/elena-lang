@@ -1212,7 +1212,7 @@ private:
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, LexicalType methodType,
       bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
-   void beginMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void beginMethod(SyntaxWriter& writer, SNode node, MethodScope& scope, LexicalType type);
    void endMethod(SyntaxWriter& writer, MethodScope& scope);
    void compileMethodCode(SyntaxWriter& writer, SNode body, MethodScope& scope, CodeScope& codeScope);
 
@@ -1232,10 +1232,9 @@ private:
    void compileDefConvConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
 
    ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
-//   void compilePreloadedCode(SymbolScope& scope);
+   void compilePreloadedCode(SymbolScope& scope);
 //   void compilePreloadedExtensionCode(ClassScope& scope);
-//
-////   void compilePreloadedCode(_ModuleScope& scope, SNode node);
+
    void compileSymbolCode(SyntaxTree& expressionTree, ClassScope& scope);
 
    void compileAction(SNode node, ClassScope& scope/*, SNode argNode*/, EAttr mode);
@@ -1329,7 +1328,7 @@ private:
 
    bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
    bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
-//   bool optimizeConstProperty(_ModuleScope& scope, SNode& node);
+   bool optimizeConstProperty(_ModuleScope& scope, SNode& node);
 //   bool optimizeEmbeddable(_ModuleScope& scope, SNode& node/*, bool argMode*/);
 //   bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
 //   bool optimizeCallDoubleAssigning(_ModuleScope& scope, SNode& node);

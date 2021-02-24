@@ -280,7 +280,8 @@ void ByteCodeWriter :: declareBlock(CommandTape& tape)
 
 void ByteCodeWriter :: allocateStack(CommandTape& tape, int count)
 {
-   tape.write(bcAllocI, count);
+   if (count > 0)
+      tape.write(bcAllocI, count);
 }
 
 ////void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
@@ -2100,12 +2101,12 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
 {
    switch (type)
    {
-//      case lxSymbolReference:
-//         tape.write(bcCallR, argument | mskSymbolRef);
-//         tape.write(bcPushA);
-//
-//         scope.clear();
-//         break;
+      case lxSymbolReference:
+         tape.write(bcCallR, argument | mskSymbolRef);
+         tape.write(bcPushA);
+
+         scope.clear();
+         break;
       case lxConstantString:
       case lxConstantWideStr:
       case lxClassSymbol:
@@ -2225,11 +2226,11 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
    }
 
    switch (type) {
-//      case lxSymbolReference:
-//         tape.write(bcCallR, argument | mskSymbolRef);
-//         type = lxNone; // acc content is undefined
-//         scope.clear();
-//         break;
+      case lxSymbolReference:
+         tape.write(bcCallR, argument | mskSymbolRef);
+         type = lxNone; // acc content is undefined
+         scope.clear();
+         break;
       case lxConstantString:
       case lxConstantWideStr:
       case lxClassSymbol:

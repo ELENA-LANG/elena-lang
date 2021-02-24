@@ -42,6 +42,7 @@ constexpr auto HINT_CASTOP          = EAttr::eaCast;
 constexpr auto HINT_SILENT          = EAttr::eaSilent;
 constexpr auto HINT_ROOTSYMBOL      = EAttr::eaRootSymbol;
 constexpr auto HINT_ROOT            = EAttr::eaRoot;
+constexpr auto HINT_ROOTEXPR        = EAttr::eaRootExpr;
 //constexpr auto HINT_INLINE_EXPR     = EAttr::eaInlineExpr;
 constexpr auto HINT_NOPRIMITIVES    = EAttr::eaNoPrimitives;
 constexpr auto HINT_DYNAMIC_OBJECT  = EAttr::eaDynamicObject;  // indicates that the structure MUST be boxed
@@ -65,7 +66,7 @@ constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 constexpr auto HINT_PARAMETER       = EAttr::eaParameter;
 constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
 //constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
-//constexpr auto HINT_CONSTEXPR       = EAttr::eaConstExpr;
+constexpr auto HINT_CONSTEXPR       = EAttr::eaConstExpr;
 //constexpr auto HINT_CALLOP          = EAttr::eaCallOp;
 //constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
 constexpr auto HINT_CONVERSIONOP    = EAttr::eaConversionOp;
@@ -1356,14 +1357,7 @@ ref_t Compiler :: resolveObjectReference(_CompileScope& scope, ObjectInfo object
 {
    ref_t retVal = object.reference;
    ref_t elementRef = object.element;
-   /*if (object.kind == okSelfParam) {
-      if (object.extraparam == (ref_t)-2) {
-         // HOTFIX : to return the primitive array
-         retVal = object.reference;
-      }
-      else retVal = scope.getClassRefId(false);
-   }
-   else */if (unboxWapper && object.reference == V_WRAPPER) {
+   if (unboxWapper && object.reference == V_WRAPPER) {
       elementRef = 0;
       retVal = object.element;
    }
@@ -2799,6 +2793,8 @@ void Compiler :: compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope&
       // we are lucky : we can implement branching directly
       writer.newNode(/*loopMode ? lxLooping : */lxBranching, /*switchMode ? -1 : */0);
 
+      writeTerminal(writer, loperand, scope);
+
       compileBranchingNodes(writer, node, scope, ifReference/*, loopMode, switchMode*/);
 
       writer.closeNode();
@@ -3220,7 +3216,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, ExprScop
 
    writer.closeNode();
 
-   if (withUnboxing || presavedArgs) {
+   if (withUnboxing || (presavedArgs && presavedArgs->Length() > 0)) {
       retVal = saveToTempLocal(writer, scope, retVal);
 
       if (arguments)
@@ -5401,7 +5397,8 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
    }
 
    ExprScope exprScope(&scope);
-   ObjectInfo retVal = compileExpression(writer, node.firstChild(), exprScope, targetRef, mode | HINT_PARAMETER, nullptr);
+   ObjectInfo retVal = compileExpression(writer, node.firstChild(), exprScope, targetRef, 
+      mode | HINT_PARAMETER | HINT_ROOT, nullptr);
 
 //   if (autoMode) {
 //      targetRef = resolveObjectReference(exprScope, info, true);
@@ -5912,7 +5909,7 @@ EAttr Compiler :: declareExpressionAttributes(SyntaxWriter& writer, SNode& curre
 ObjectInfo Compiler :: compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, EAttr mode)
 {
    ExprScope exprScope(&scope);
-   ObjectInfo retVal = compileExpression(writer, node, exprScope, targetRef, mode, nullptr);
+   ObjectInfo retVal = compileExpression(writer, node, exprScope, targetRef, mode | HINT_ROOTEXPR, nullptr);
 
    return retVal;
 }
@@ -6625,10 +6622,10 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
 
    ObjectInfo retVal;
 
-   bool rootMode = EAttrs::test(mode, HINT_ROOT);
+   bool rootMode = EAttrs::test(mode, HINT_ROOTEXPR);
    if (rootMode) {
       writer.newNode(lxSeqExpression);
-      mode = EAttrs::exclude(mode, HINT_ROOT);
+      mode = EAttrs::exclude(mode, HINT_ROOTEXPR);
    }
       
    switch (node.type) {
@@ -6736,13 +6733,13 @@ ObjectInfo Compiler :: compileSubCode(SyntaxWriter& writer, SNode codeNode, Expr
 
    CodeScope subScope(codeScope);
 
+   writer.newNode(lxCode);
    if (branchingMode && codeNode == lxExpression) {
       //HOTFIX : inline branching operator
-      writer.newNode(lxCode);
       compileRootExpression(writer, codeNode.firstChild(), subScope, 0, HINT_ROOT/* | HINT_DYNAMIC_OBJECT*/);
-      writer.closeNode();
    }
    else compileCode(writer, codeNode, subScope);
+   writer.closeNode();
 
    // preserve the allocated space
    subScope.syncStack(codeScope);
@@ -7482,7 +7479,7 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
 
 void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
-   beginMethod(writer, node, scope);
+   beginMethod(writer, node, scope, lxClassMethod);
 
    CodeScope codeScope(&scope);
 
@@ -8009,9 +8006,9 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
 //   }
 //}
 
-void Compiler :: beginMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
+void Compiler :: beginMethod(SyntaxWriter& writer, SNode node, MethodScope& scope, LexicalType type)
 {
-   writer.newNode(lxClassMethod, scope.message);
+   writer.newNode(type, scope.message);
 
    declareProcedureDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elExtension));
 }
@@ -8205,7 +8202,7 @@ void Compiler :: compileMethodCode(SyntaxWriter& writer, SNode node, MethodScope
 
 void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
-   beginMethod(writer, node, scope);
+   beginMethod(writer, node, scope, node.type);
 
    CodeScope codeScope(&scope);
 
@@ -8334,7 +8331,7 @@ void Compiler :: compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodS
 void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
    SNode dummy;
-   beginMethod(writer, dummy, scope);
+   beginMethod(writer, dummy, scope, lxClassMethod);
 
    CodeScope codeScope(&scope);
 
@@ -8704,20 +8701,20 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
             compileConstructor(writer, current, methodScope, classClassScope);
             break;
          }
-         //case lxStaticMethod:
-         //{
-         //   MethodScope methodScope(&classClassScope);
-         //   methodScope.message = current.argument;
+         case lxStaticMethod:
+         {
+            MethodScope methodScope(&classClassScope);
+            methodScope.message = current.argument;
 
-         //   initialize(classClassScope, methodScope);
-         //   declareArgumentList(current, methodScope, false, false);
+            initialize(classClassScope, methodScope);
+            declareArgumentList(current, methodScope, false, false);
 
-         //   if (isMethodEmbeddable(methodScope, current)) {
-         //      compileEmbeddableMethod(current, methodScope);
-         //   }
-         //   else compileMethod(current, methodScope);
-         //   break;
-         //}
+            /*if (isMethodEmbeddable(methodScope, current)) {
+               compileEmbeddableMethod(current, methodScope);
+            }
+            else */compileMethod(writer, current, methodScope);
+            break;
+         }
       }
 
       current = current.nextNode();
@@ -8825,19 +8822,19 @@ void Compiler :: compileSymbolCode(SyntaxTree& tree, ClassScope& scope)
 //   // create byte code sections
 //   _writer.saveTape(tape, *scope.moduleScope);
 //}
-//
-//void Compiler :: compilePreloadedCode(SymbolScope& scope)
-//{
-//   _Module* module = scope.moduleScope->module;
-//
-//   IdentifierString sectionName("'", INITIALIZER_SECTION);
-//
-//   CommandTape tape;
-//   _writer.generateInitializer(tape, module->mapReference(sectionName), lxSymbolReference, scope.reference);
-//
-//   // create byte code sections
-//   _writer.saveTape(tape, *scope.moduleScope);
-//}
+
+void Compiler :: compilePreloadedCode(SymbolScope& scope)
+{
+   _Module* module = scope.moduleScope->module;
+
+   IdentifierString sectionName("'", INITIALIZER_SECTION);
+
+   CommandTape tape;
+   _writer.generateInitializer(tape, module->mapReference(sectionName), lxSymbolReference, scope.reference);
+
+   // create byte code sections
+   _writer.saveTape(tape, *scope.moduleScope);
+}
 
 ref_t Compiler :: compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node)
 {
@@ -10231,22 +10228,22 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 
    SNode expression = node.findChild(lxExpression);
 
-   EAttr exprMode = /*scope.info.type == SymbolExpressionInfo::Type::Constant ? HINT_CONSTEXPR : */EAttr::eaNone;
+   EAttr exprMode = scope.info.type == SymbolExpressionInfo::Type::Constant ? HINT_CONSTEXPR : EAttr::eaNone;
 
    CodeScope codeScope(&scope);
    ExprScope exprScope(&codeScope);
    // HOTFIX : due to implementation (compileSymbolConstant requires constant types) typecast should be done explicitly
-   ObjectInfo retVal = compileExpression(writer, expression, exprScope,
-      /*mapObject(expression, exprScope, HINT_ROOTSYMBOL),*/ 0, exprMode | HINT_ROOTSYMBOL, nullptr);
+   ObjectInfo retVal = compileExpression(writer, expression, exprScope, 0, 
+      exprMode | HINT_ROOTSYMBOL, nullptr);
 
-//   if (scope.info.exprRef == 0) {
-//      ref_t ref = resolveObjectReference(scope, retVal, true);
-//      if (ref != 0 && scope.info.type != SymbolExpressionInfo::Type::Normal) {
-//         // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
-//         scope.info.exprRef = ref;
-//      }
-//   }
-//   else retVal = convertObject(expression, exprScope, scope.info.exprRef, retVal, EAttr::eaNone);
+   if (scope.info.exprRef == 0) {
+      ref_t ref = resolveObjectReference(scope, retVal, true);
+      if (ref != 0 && scope.info.type != SymbolExpressionInfo::Type::Normal) {
+         // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
+         scope.info.exprRef = ref;
+      }
+   }
+   else retVal = convertObject(writer, expression, exprScope, scope.info.exprRef, retVal, EAttr::eaNone);
 
    writer.closeNode();
    writer.closeNode();
@@ -10258,23 +10255,23 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
       root.appendNode(lxReserved, codeScope.reserved2);
    }
 
-   analizeSymbolTree(expression, scope);
+   analizeSymbolTree(expressionTree.readRoot().firstChild(), scope);
 
-//   // create constant if required
-//   if (scope.info.type == SymbolExpressionInfo::Type::Constant) {
-//      // static symbol cannot be constant
-//      if (isStatic)
-//         scope.raiseError(errInvalidOperation, expression);
-//
-//      if (!compileSymbolConstant(scope, retVal, false, 0))
-//         scope.raiseError(errInvalidOperation, expression);
-//   }
-//
-//   scope.save();
-//
-//   if (scope.preloaded) {
-//      compilePreloadedCode(scope);
-//   }
+   // create constant if required
+   if (scope.info.type == SymbolExpressionInfo::Type::Constant) {
+      // static symbol cannot be constant
+      if (isStatic)
+         scope.raiseError(errInvalidOperation, expression);
+
+      if (!compileSymbolConstant(scope, retVal/*, false, 0*/))
+         scope.raiseError(errInvalidOperation, expression);
+   }
+
+   scope.save();
+
+   if (scope.preloaded) {
+      compilePreloadedCode(scope);
+   }
 
    pos_t sourcePathRef = scope.saveSourcePath(_writer);
    CommandTape tape;
@@ -10762,16 +10759,16 @@ bool Compiler :: optimizeConstantAssigning(_ModuleScope&, SNode& node)
 //{
 //   return _logic->optimizeBranchingOp(scope, node);
 //}
-//
-//bool Compiler :: optimizeConstProperty(_ModuleScope&, SNode& node)
-//{
-//   SNode callNode = node.parentNode();
-//
-//   callNode.set(lxConstantSymbol, node.argument);
-//
-//   return false;
-//}
-//
+
+bool Compiler :: optimizeConstProperty(_ModuleScope&, SNode& node)
+{
+   SNode callNode = node.parentNode();
+
+   callNode.set(lxConstantSymbol, node.argument);
+
+   return false;
+}
+
 //inline void commetNode(SNode& node)
 //{
 //   node = lxIdle;
@@ -10885,8 +10882,8 @@ bool Compiler :: optimizeConstantAssigning(_ModuleScope&, SNode& node)
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
-//      case 1:
-//         return optimizeConstProperty(scope, node);
+      case 1:
+         return optimizeConstProperty(scope, node);
 //      case 2:
 //         return optimizeEmbeddable(scope, node/*, false*/);
 //      case 3:

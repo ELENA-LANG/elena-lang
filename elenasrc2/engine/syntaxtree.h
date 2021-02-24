@@ -193,6 +193,7 @@ enum LexicalType
    lxExtIntArg                = 0x010431,
    lxNestedOp                 = 0x431440,
    lxNestedExpression         = 0x031440,
+   lxSymbolReference          = 0x030450,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -224,7 +225,6 @@ enum LexicalType
 //   lxPrimArrBoxableExpression = 0x059037,
 //   lxNestedSeqExpression      = 0x059038,
 //   lxStopper                  = 0x018041,   // used for variadic arguments as a last argument
-//   lxSymbolReference          = 0x058060,
 //   lxInlineArgCall            = 0x0580A4,
 //   lxBlockLocalAddr           = 0x018114, // arg - offset
 //   lxByRefAssigning           = 0x058122,

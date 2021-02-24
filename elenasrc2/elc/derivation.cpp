@@ -723,13 +723,13 @@ void DerivationWriter :: recognizeClassMembers(SNode node)
          SNode bodyNode = current.findChild(lxCode, lxDispatchCode, lxReturning, lxExpression/*, lxResendExpression*/, lxNoBody);
 
          int mode = 0;
-//         if (bodyNode == lxExpression) {
-//            // if it is a property, mark it as a get-property
-//            current.set(lxClassMethod, (ref_t)MODE_PROPERTYMETHOD);
-//
-//            recognizeMethodMebers(current);
-//         }
-         /*else */if (bodyNode != lxNone) {
+         if (bodyNode == lxExpression) {
+            // if it is a property, mark it as a get-property
+            current.set(lxClassMethod, (ref_t)MODE_PROPERTYMETHOD);
+
+            recognizeMethodMembers(current);
+         }
+         else if (bodyNode != lxNone) {
             // if it is a method
             current = lxClassMethod;
 
@@ -1259,12 +1259,12 @@ void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope
       current = current.nextNode();
    }
 
-//   if (propertyMode) {
-//      writer.newNode(lxReturning);
-//      generateExpressionTree(writer, node.findChild(lxExpression), derivationScope, 0);
-//      writer.closeNode();
-//   }
-//   else {
+   if (propertyMode) {
+      writer.newNode(lxReturning);
+      flushExpressionTree(writer, node.findChild(lxExpression), derivationScope, 0);
+      writer.closeNode();
+   }
+   else {
       SNode bodyNode = node.findChild(lxCode, lxDispatchCode, lxReturning/*, lxResendExpression*/, lxNoBody);
       if (bodyNode.compare(lxReturning, lxDispatchCode)) {
          writer.newNode(bodyNode.type);
@@ -1287,7 +1287,7 @@ void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope
       else if (bodyNode == lxNoBody) {
          writer.appendNode(lxNoBody);
       }
-//   }
+   }
 
    writer.closeNode();
 }

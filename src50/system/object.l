@@ -39,19 +39,19 @@ public interface BoolValue
 //    [info:"return the default value"]
 //    static bool MinValue
 //        = BoolValue.false;
-//
-//    [info:"returns true value."]
-//    const static true = BoolValue
-//    {
-//        [info:"executes trueAction."]
-//        if(trueAction) = trueAction();
-//    
-//        [info:"executes trueAction."]
-//        if(trueAction,falseAction) = trueAction();
-//    
-//        [info:"always returns nil."]
-//        ifnot(trueAction) = nil;
-//    
+
+    [info:"returns true value."]
+    const static true = BoolValue
+    {
+        [info:"executes trueAction."]
+        if(trueAction) = trueAction();
+    
+        [info:"executes trueAction."]
+        if(trueAction,falseAction) = trueAction();
+    
+        [info:"always returns nil."]
+        ifnot(trueAction) = nil;
+    
 //        [info:"always returns trueVal."]
 //        iif(object trueVal, object falseVal) = trueVal;
 //        
@@ -78,23 +78,23 @@ public interface BoolValue
 //    
 //        [info:"returns literal representation."]
 //        string toPrintable() = "true";
-//    
-//        [info:"Returns itself."]
-//        bool clone() = this self;        
-//    };
-//                        
-//    [info:"returns false value."]
-//    const static false = BoolValue
-//    {
-//        [info:"always returns nil"]
-//        if(trueAction) = nil;
-//        
-//        [info:"executes else-action"]
-//        if(trueAction,falseAction) = falseAction();
-//    
-//        [info:"executes the action"]
-//        ifnot(action) = action();
-//    
+    
+        [info:"Returns itself."]
+        bool clone() = this self;        
+    };
+                        
+    [info:"returns false value."]
+    const static false = BoolValue
+    {
+        [info:"always returns nil"]
+        if(trueAction) = nil;
+        
+        [info:"executes else-action"]
+        if(trueAction,falseAction) = falseAction();
+    
+        [info:"executes the action"]
+        ifnot(action) = action();
+    
 //        [info:"always returns falseVal."]
 //        iif(object trueVal, object falseVal) = falseVal;
 //    
@@ -129,23 +129,23 @@ public interface BoolValue
 //    
 //        [info:"returns literal representation"]
 //        string toPrintable() = "false";
-//        
-//        [info:"returns itself"]
-//        bool clone() = this self;        
-//    };
-//                        
+        
+        [info:"returns itself"]
+        bool clone() = this self;        
+    };
+                        
 //    [info:"determines whether the specified object is equal to the current object boolean value;<br/>has to be implemented"]
 //    abstract bool equal(bool f);
-//
-//    [info:"executes trueAction if the value is true;<br/>has to be implemented"]
-//    abstract if(trueAction);
-//
-//    [info:"executes trueAction if the value is true or falseAction otherwise;<br/>has to be implemented"]
-//    abstract if(trueAction,falseAction);
-//
-//    [info:"executes action if the value is false;<br/>has to be implemented"]
-//    abstract ifnot(action);
-//
+
+    [info:"executes trueAction if the value is true;<br/>has to be implemented"]
+    abstract if(trueAction);
+
+    [info:"executes trueAction if the value is true or falseAction otherwise;<br/>has to be implemented"]
+    abstract if(trueAction,falseAction);
+
+    [info:"executes action if the value is false;<br/>has to be implemented"]
+    abstract ifnot(action);
+
 //    [info:"returns trueVal if the value is true or falseVal otherwise;<br/>has to be implemented"]
 //    abstract iif(object trueVal, object falseVal);
 //
@@ -165,9 +165,9 @@ public interface BoolValue
     abstract bool clone();
 }
 
-//public const true = BoolValue.true;
-//public const false = BoolValue.false;
-//
+public const true = BoolValue.true;
+public const false = BoolValue.false;
+
 //public extension commonOp
 //{
 //    [info:"returns the parameter"]
