@@ -858,22 +858,20 @@ void DerivationWriter :: generateClassImport(SyntaxWriter& writer, SNode node, S
    writer.closeNode();
 }
 
-void DerivationWriter :: flushClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool nested*/)
+void DerivationWriter :: flushClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
 {
    SyntaxTree buffer((pos_t)0);
 
 //   bool functionMode = false;
-//   if (!nested) {
-      writer.newNode(lxClass);
+   writer.newNode(lxClass);
 
-      flushAttributes(writer, node.prevNode(), derivationScope, buffer);
+   flushAttributes(writer, node.prevNode(), derivationScope, buffer);
 //      if (node.argument == MODE_FUNCTION) {
 //         // if it is a single method singleton
 //         writer.appendNode(lxAttribute, V_SINGLETON);
 //
 //         functionMode = true;
 //      }
-//   }
 
    SNode current = node.firstChild();
 //   if (functionMode) {
@@ -917,9 +915,6 @@ void DerivationWriter :: flushClassTree(SyntaxWriter& writer, SNode node, Scope&
          SyntaxTree::copyNode(writer, buffer.readRoot());
       }
 //   }
-//
-//   if (nested)
-//      writer.inject(lxNestedClass);
 
    writer.closeNode();
 }
@@ -1747,7 +1742,7 @@ void DerivationWriter :: flushTokenExpression(SyntaxWriter& writer, SNode& node,
    }
 
 //   // NOTE : set the node back to the last one due to implementation
-//   if (node.compare(lxCollection, lxNestedClass, lxAttrExpression)) {
+//   if (node.compare(lxCollection, lxAttrExpression)) {
 //      // NOTE : nested class is considered as a last token
 //      node = lastNode;
 //      lastNode = node.nextNode();
@@ -1913,11 +1908,19 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
 //      case lxAttrExpression:
 //         generateExpressionTree(writer, current.findChild(lxExpression), derivationScope, 0);
 //         break;
-//      case lxNestedClass:
-//         recognizeClassMebers(current);
-//         generateClassTree(writer, current, derivationScope, true);
-//         first = false;
-//         break;
+      case lxNestedExpression:
+      {
+         SNode classNode = current.findChild(lxNestedClass);
+         recognizeAttributes(goToFirstNode(classNode.prevNode(), lxToken, lxInlineAttribute),
+            0, lxNestedClass);
+         recognizeClassMembers(classNode);
+
+         writer.newNode(lxNestedExpression);
+         flushClassTree(writer, classNode, derivationScope);
+         writer.closeNode();
+         //         first = false;
+         break;
+      }
       case lxCode:
          flushCodeExpression(writer, current, derivationScope/*, first*/);
 //         first = false;

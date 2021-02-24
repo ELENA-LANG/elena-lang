@@ -78,13 +78,13 @@
 //#define subjconst   80000807h
 //#define __symbol    80000808h
 //#define inlinearg   80000809h
-//
-///// Provides classes that describe the basic functionality
-//
-//type object     = Object;
-//
-//// === basic logical types ===
-//type bool       = BoolValue;
+
+/// Provides classes that describe the basic functionality
+
+type object     = Object;
+
+// === basic logical types ===
+type bool       = BoolValue;
 
 // === basic type aliases ===
 type byte       = ByteNumber;

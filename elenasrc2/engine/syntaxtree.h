@@ -64,9 +64,7 @@ enum LexicalType
    lxResult                   = 0x0100A0,   // arg - offset
    lxOperationOp              = 0x4310B0,
    lxOperationExpression      = 0x0310B0,
-
-//   lxNestedClass              = 0x0010C0,
-
+   lxNestedClass              = 0x0010C0,
    lxParameter                = 0x0010D0,
 //   lxPropertyParam            = 0x0010E0, // !!
    lxOperator                 = 0x0210F0,
@@ -148,7 +146,6 @@ enum LexicalType
    lxImporting                = 0x010360,
    lxDynamicBracketsOp        = 0x601370,
    lxDynamicBrackets          = 0x201370,
-
    lxResending                = 0x031380,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
    lxGenericResending         = 0x031381,   // resending a generic message
    lxDirectResending          = 0x031382,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
@@ -194,6 +191,8 @@ enum LexicalType
    lxCoreAPICall              = 0x030422,   // calling an external function, arg - reference
    lxExtIntConst              = 0x010430,
    lxExtIntArg                = 0x010431,
+   lxNestedOp                 = 0x431440,
+   lxNestedExpression         = 0x031440,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -263,7 +262,7 @@ enum LexicalType
    lxMessageVariable          = 0x000F0E,   // debug info only
    lxSelfVariable             = 0x000F0F,   // debug info only
    lxAutoMultimethod          = 0x000F10,
-//   lxConstAttr                = 0x000F11,
+   lxConstAttr                = 0x000F11,
    lxTemplateParam            = 0x000F12,
    lxSize                     = 0x000F13,
    lxReserved                 = 0x000F14,

@@ -1049,7 +1049,7 @@ private:
    void resolveMetaConstant(SNode node);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields = false);
-   void compileParentDeclaration(SNode node, ClassScope& scope, bool extensionMode);
+   void compileParentDeclaration(SNode node, ClassScope& scope, bool extensionMode, LexicalType parentType);
    void generateClassFields(SNode member, ClassScope& scope, bool singleField);
    void validateClassFields(SNode node, ClassScope& scope);
 
@@ -1109,12 +1109,11 @@ private:
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
       ArgumentsInfo* arguments/*, ObjectInfo roperand2, EAttr mode*/);
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
-   ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, 
-      ArgumentsInfo* preservedArgs);
+   ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileIsNilOperator(SNode node, ExprScope& scope, ObjectInfo loperand/*, ObjectInfo roperand*/);
    void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, ExprScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/);
    void compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id,
-      ObjectInfo loperand, ObjectInfo& retVal, ArgumentsInfo* preservedArgs);
+      ObjectInfo loperand, ObjectInfo& retVal, EAttr operationMode, ArgumentsInfo* preservedArgs);
    ObjectInfo compileBranchingOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, 
       int operator_id, ArgumentsInfo* preservedArgs);
 
@@ -1130,7 +1129,7 @@ private:
    ObjectInfo compileMessageOperation(SyntaxWriter& writer, SNode current, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
       ref_t expectedSignRef, EAttr mode, ArgumentsInfo* presavedArgs);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
-      ArgumentsInfo* arguments/*, EAttr mode*/, int stackSafeAttr/*, bool& embeddableRet*/, ArgumentsInfo* presavedArgs);
+      ArgumentsInfo* arguments, EAttr mode, int stackSafeAttr/*, bool& embeddableRet*/, ArgumentsInfo* presavedArgs);
 
    SNode injectAttributeIdentidier(SNode current, Scope& scope);
    void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
@@ -1240,7 +1239,7 @@ private:
    void compileSymbolCode(SyntaxTree& expressionTree, ClassScope& scope);
 
    void compileAction(SNode node, ClassScope& scope/*, SNode argNode*/, EAttr mode);
-//   void compileNestedVMT(SNode& node, InlineClassScope& scope);
+   void compileNestedVMT(SNode& node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope, bool exclusiveMode = false, 
       bool ignoreAutoMultimethods = false);
@@ -1389,7 +1388,7 @@ public:
    bool injectVirtualStrongTypedMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
       mssg_t resendMessage, bool privateOne);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef);
-//   virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument);
+   virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument);
 //   virtual void injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex);
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne);
    virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,

@@ -9,9 +9,9 @@ public class Object
     /// class constant - a package info
     const __packageInfo      := @package; 
     
-//    [info:"Creates the object"]
-//    constructor() {}
-//    
+    [info:"Creates the object"]
+    constructor() {}
+    
 //    [info:"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references."]
 //    bool equal(o) => intern system'core_routines'__object;
 //       
@@ -31,11 +31,11 @@ public class Object
     dispatch() => intern system'core_routines'__object;
 }
 
-//[info:"a common boolean value"]
-//public interface BoolValue
-//{
-//    private constructor() {}
-//    
+[info:"a common boolean value"]
+public interface BoolValue
+{
+    private constructor() {}
+    
 //    [info:"return the default value"]
 //    static bool MinValue
 //        = BoolValue.false;
@@ -160,11 +160,11 @@ public class Object
 //
 //    [info:"inverts the value;<br/>has to be implemented"]
 //    get abstract bool Inverted();
-//
-//    [info:"clones the value;<br/>has to be implemented"]
-//    abstract bool clone();
-//}
-//
+
+    [info:"clones the value;<br/>has to be implemented"]
+    abstract bool clone();
+}
+
 //public const true = BoolValue.true;
 //public const false = BoolValue.false;
 //

@@ -412,7 +412,7 @@ public:
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
       ClassInfo& info) = 0;
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef) = 0;
-//   virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument) = 0;
+   virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument) = 0;
 //   virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne) = 0;
    virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op, 
       int opArg, ref_t reference) = 0;
@@ -479,8 +479,8 @@ public:
       eaRoot               = 0x00000000080,
 //      eaInlineExpr         = 0x00000000100,
       eaCast               = 0x00000000200,
-//      eaNoPrimitives       = 0x00000000400,
-//      eaDynamicObject      = 0x00000000800,
+      eaNoPrimitives       = 0x00000000400,
+      eaDynamicObject      = 0x00000000800,
 //      eaNoUnboxing         = 0x00000002000,
 //      eaNoBoxing           = 0x00000003000,
       eaMember             = 0x00000004000,
@@ -508,7 +508,7 @@ public:
 //      eaCallOp             = 0x00800000000,
 //      eaRefExpr            = 0x01000000000,
       eaPreviousScope      = 0x02000000000,
-//      eaConversionOp       = 0x04000000000,
+      eaConversionOp       = 0x04000000000,
 
       eaScopeMask          = /*0x0300041400A*/eaNestedNs,
 //      eaObjectMask         = 0x008A821B2F4,
@@ -679,8 +679,8 @@ public:
    virtual bool __fastcall isRole(ClassInfo& info) = 0;
    virtual bool __fastcall isAbstract(ClassInfo& info) = 0;
 //   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference) = 0;
-//
-//   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node) = 0;
+
+   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node) = 0;
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
@@ -696,7 +696,7 @@ public:
       ref_t elementRef/*, bool noUnboxing*/, int& stackSafeAttr/*, int fixedArraySize*/) = 0;
 ////   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod) = 0;
 //   virtual void injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
-//   virtual void injectInterfaceDispatch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
+   virtual void injectInterfaceDispatch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
 //   virtual bool injectConstantConstructor(SNode& node, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, mssg_t messageRef) = 0;
 
    // auto generate class flags
