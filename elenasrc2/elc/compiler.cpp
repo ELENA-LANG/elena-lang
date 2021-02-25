@@ -3061,6 +3061,8 @@ ObjectInfo Compiler :: compileUnaryOperation(SyntaxWriter& writer, SNode node, E
    //   }
 
    ArgumentsInfo arguments;
+   // HOTFIX : to reuse existing code, let's assume the second operand is nil
+   arguments.add(ObjectInfo(okNil, 0, V_NIL));
    return compileOperation(writer, node, scope, operator_id, loperand, &arguments/*, mode*/);
 }
 
@@ -4404,10 +4406,10 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
       paramsMode, &presavedArgs);
 
    if (isParam) {
-      if (retVal.kind != okTempLocal)
+      if (retVal.kind == okObject)
          retVal = saveToTempLocal(writer, scope, retVal);
    }
-   else if (retVal.kind == okTempLocal)
+   else if (retVal.kind != okObject)
       writeTerminal(writer, retVal, scope);
 
    return retVal;
@@ -5428,6 +5430,8 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 //      }
    }
 
+   writer.newNode(lxSeqExpression);
+
    ExprScope exprScope(&scope);
    ObjectInfo retVal = compileExpression(writer, node.firstChild(), exprScope, targetRef, 
       mode | HINT_PARAMETER | HINT_ROOT, nullptr);
@@ -5453,10 +5457,10 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 //   analizeOperands(node, exprScope, stackSafeAttr, true);
    
    if ((retVal.kind != okSelfParam || EAttrs::test(mode, HINT_DYNAMIC_OBJECT)) && boxingRequired(retVal)) {
-      writer.newNode(lxSeqExpression);
       retVal = boxArgumentInPlace(writer, node, retVal, exprScope, condBoxingRequired(retVal));
-      writer.closeNode();
    }
+
+   writer.closeNode();
 
    writer.newNode(lxReturning);
    writeTerminal(writer, retVal, exprScope);

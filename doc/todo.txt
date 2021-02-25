@@ -3,6 +3,8 @@ In development:
 ------         
 
   [development]
+    * do not save the constant - local / singleton
+
     * #530 : unary operator - Inverted or Negative
 
     * comparision

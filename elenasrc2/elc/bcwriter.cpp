@@ -2699,26 +2699,35 @@ void ByteCodeWriter :: generateBoolLogicOperation(CommandTape& tape, SyntaxTree:
    ref_t trueRef = node.findChild(lxIfValue).argument | mskConstantRef;
    ref_t falseRef = node.findChild(lxElseValue).argument | mskConstantRef;
 
-   if (!test(mode, BOOL_ARG_EXPR))
-      tape.newLabel();
-
-   generateObject(tape, larg, scope, BOOL_ARG_EXPR);
-
-   switch (node.argument) {
-      case AND_OPERATOR_ID:
-         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
-         tape.write(bcIfR, baCurrentLabel, falseRef);
-         break;
-      case OR_OPERATOR_ID:
-         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
-         tape.write(bcIfR, baCurrentLabel, trueRef);
-         break;
+   if (node.argument == INVERTED_OPERATOR_ID) {
+      // NOTE : the second argument is dummy for unary operator
+      generateObject(tape, larg, scope, BOOL_ARG_EXPR);
+      tape.write(bcPushR, trueRef);
+      tape.write(bcSelect, trueRef, falseRef);
+      tape.write(bcPop);
    }
+   else {
+      if (!test(mode, BOOL_ARG_EXPR))
+         tape.newLabel();
 
-   generateObject(tape, rarg, scope, BOOL_ARG_EXPR);
+      generateObject(tape, larg, scope, BOOL_ARG_EXPR);
 
-   if (!test(mode, BOOL_ARG_EXPR))
-      tape.setLabel();
+      switch (node.argument) {
+         case AND_OPERATOR_ID:
+            tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
+            tape.write(bcIfR, baCurrentLabel, falseRef);
+            break;
+         case OR_OPERATOR_ID:
+            tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
+            tape.write(bcIfR, baCurrentLabel, trueRef);
+            break;
+      }
+
+      generateObject(tape, rarg, scope, BOOL_ARG_EXPR);
+
+      if (!test(mode, BOOL_ARG_EXPR))
+         tape.setLabel();
+   }
 }
 
 inline bool isConstant(LexicalType type)

@@ -193,6 +193,7 @@ CompilerLogic :: CompilerLogic()
    // boolean primitive operations
    operators.add(OperatorInfo(AND_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
    operators.add(OperatorInfo(OR_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
+   operators.add(OperatorInfo(INVERTED_OPERATOR_ID, V_FLAG, V_NIL, 0, lxBoolOp, V_FLAG));
 
    // pointer primitive operations
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntBoolOp, V_FLAG));
