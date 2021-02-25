@@ -720,7 +720,7 @@ void DerivationWriter :: recognizeClassMembers(SNode node)
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxScope) {
-         SNode bodyNode = current.findChild(lxCode, lxDispatchCode, lxReturning, lxExpression/*, lxResendExpression*/, lxNoBody);
+         SNode bodyNode = current.findChild(lxCode, lxDispatchCode, lxReturning, lxExpression, lxResendExpression, lxNoBody);
 
          int mode = 0;
          if (bodyNode == lxExpression) {
@@ -1265,23 +1265,23 @@ void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope
       writer.closeNode();
    }
    else {
-      SNode bodyNode = node.findChild(lxCode, lxDispatchCode, lxReturning/*, lxResendExpression*/, lxNoBody);
+      SNode bodyNode = node.findChild(lxCode, lxDispatchCode, lxReturning, lxResendExpression, lxNoBody);
       if (bodyNode.compare(lxReturning, lxDispatchCode)) {
          writer.newNode(bodyNode.type);
          flushExpressionTree(writer, bodyNode.firstChild(), derivationScope);
          writer.closeNode();
       }
-//      else if (bodyNode == lxResendExpression) {
-//         writer.newNode(bodyNode.type);
-//         generateExpressionTree(writer, bodyNode, derivationScope);
-//         SNode block = bodyNode.nextNode();
-//
-//         if (block == lxCode)
-//            generateCodeTree(writer, block, derivationScope);
-//
-//         writer.closeNode();
-//      }
-      /*else */if (bodyNode == lxCode) {
+      else if (bodyNode == lxResendExpression) {
+         writer.newNode(bodyNode.type);
+         flushExpressionTree(writer, bodyNode, derivationScope, EXPRESSION_IMPLICIT_MODE);
+         SNode block = bodyNode.nextNode();
+
+         if (block == lxCode)
+            flushCodeTree(writer, block, derivationScope);
+
+         writer.closeNode();
+      }
+      else if (bodyNode == lxCode) {
          flushCodeTree(writer, bodyNode, derivationScope);
       }
       else if (bodyNode == lxNoBody) {

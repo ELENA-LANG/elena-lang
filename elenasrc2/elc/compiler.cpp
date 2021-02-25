@@ -2759,6 +2759,8 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, pos_t 
          return encodeMessage(scope.module->mapAction(NEGATIVE_MESSAGE, 0, false), argCount, PROPERTY_MESSAGE);
       case INVERTED_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(INVERTED_MESSAGE, 0, false), argCount, PROPERTY_MESSAGE);
+      case VALUE_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(VALUE_MESSAGE, 0, false), argCount, PROPERTY_MESSAGE);
       default:
          throw InternalError("Not supported operator");
          break;
@@ -2951,7 +2953,9 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
 
    if (operationType != 0) {
       // if it is a primitive operation
-      if (IsExprOperator(operator_id) || IsArrExprOperator(operator_id, (LexicalType)operationType)) {
+      if ((IsExprOperator(operator_id) && (LexicalType)operationType != lxBoolOp)
+         || IsArrExprOperator(operator_id, (LexicalType)operationType)) 
+      {
          retVal = allocateResult(scope, /*false, */resultClassRef, loperand.element);
       }
       else retVal = ObjectInfo(okObject, 0, resultClassRef, loperand.element, 0);
@@ -3061,8 +3065,8 @@ ObjectInfo Compiler :: compileUnaryOperation(SyntaxWriter& writer, SNode node, E
    //   }
 
    ArgumentsInfo arguments;
-   // HOTFIX : to reuse existing code, let's assume the second operand is nil
-   arguments.add(ObjectInfo(okNil, 0, V_NIL));
+   // HOTFIX : to reuse existing code, let's assume the second operand is generic
+   arguments.add(ObjectInfo(okObject, 0, V_OBJECT));
    return compileOperation(writer, node, scope, operator_id, loperand, &arguments/*, mode*/);
 }
 
@@ -3780,14 +3784,15 @@ ObjectInfo Compiler :: convertObject(SyntaxWriter& writer, SNode node, ExprScope
          
             return ObjectInfo(okObject, 0, targetRef);
          }
-         else return sendTypecast(writer, node, scope, targetRef, source);
+         else return sendTypecast(writer, node, scope, targetRef, source, EAttrs::test(mode, HINT_SILENT));
       }
    }
 
    return source;
 }
 
-ObjectInfo Compiler :: sendTypecast(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source)
+ObjectInfo Compiler :: sendTypecast(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, 
+   ObjectInfo source, bool silentMode)
 {
    if (targetRef != 0 /*&& !isPrimitiveRef(targetRef)*/) {
       if (targetRef != scope.moduleScope->superReference) {
@@ -3800,8 +3805,10 @@ ObjectInfo Compiler :: sendTypecast(SyntaxWriter& writer, SNode node, ExprScope&
          //   node.injectAndReplaceNode(lxExpression);
 
          bool dummy;
+         EAttr mode = silentMode ? HINT_SILENT : EAttr::eaNone;
          compileMessage(writer, node, scope, source, encodeMessage(actionRef, 1, CONVERSION_MESSAGE), nullptr,
-            HINT_NODEBUGINFO | HINT_CONVERSIONOP, 0/*, dummy*/, nullptr);
+            mode | HINT_NODEBUGINFO | HINT_CONVERSIONOP, 0
+            /*, dummy*/, nullptr);
 
          return ObjectInfo(okObject, 0, targetRef);
       }
@@ -3864,13 +3871,16 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
    }
 }
 
-ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode/*, ref_t expectedSignRef, 
-   bool& variadicOne, bool& inlineArg*/, ArgumentsInfo& arguments, ArgumentsInfo* preservedArgs)
+ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, ref_t expectedSignRef, 
+   /*bool& variadicOne, bool& inlineArg, */ ArgumentsInfo& arguments, ArgumentsInfo* preservedArgs)
 {
 //   if (node != lxNone)
 //      scope.callNode = node.parentNode();
 //
    EAttr paramMode = HINT_PARAMETER;
+   if (EAttrs::test(mode, HINT_SILENT))
+      paramMode = paramMode | HINT_SILENT;
+
 //   bool externalMode = false;
 //   if (EAttrs::test(mode, HINT_EXTERNALOP)) {
 //      externalMode = true;
@@ -3881,8 +3891,8 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Exp
 
    // compile the message argument list
    ref_t signatures[ARG_COUNT] = {0};
-//   if (expectedSignRef)
-//      scope.module->resolveSignature(expectedSignRef, signatures);
+   if (expectedSignRef)
+      scope.module->resolveSignature(expectedSignRef, signatures);
 
    ref_t signatureLen = 0;
    while (/*current != lxMessage && */current != lxNone) {
@@ -4224,7 +4234,7 @@ ObjectInfo Compiler :: compileMessageOperation(SyntaxWriter& writer, SNode curre
    //   bool variadicOne = false;
    //   bool inlineArg = false;
    ArgumentsInfo arguments;
-   ref_t implicitSignatureRef = compileMessageParameters(writer, current, scope, paramsMode, /*expectedSignRef, variadicOne, inlineArg, */
+   ref_t implicitSignatureRef = compileMessageParameters(writer, current, scope, paramsMode, expectedSignRef, /*variadicOne, inlineArg, */
       arguments, presavedArgs);
 
    //   bool externalMode = false;
@@ -4366,13 +4376,14 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
 
    bool propMode = EAttrs::test(mode, HINT_PROP_MODE);   
    bool isParam = EAttrs::test(mode, HINT_PARAMETER);
+   bool silentMode = EAttrs::test(mode, HINT_SILENT);
 
    EAttrs objMode(mode | HINT_TARGET, HINT_PROP_MODE);
    ObjectInfo target = compileObject(writer, current, scope, objMode, &presavedArgs);
 
    ref_t expectedSignRef = 0; // contains the expected message signature if it there is only single method overloading
    mssg_t messageRef = 0;
-   EAttr paramsMode = EAttr::eaNone;
+   EAttr paramsMode = silentMode ? HINT_SILENT : EAttr::eaNone;
    if (target.kind == okNewOp) {
       messageRef = mapMessage(node, scope/*, false*/, true, propMode);
       if (getAction(messageRef) == getAction(scope.moduleScope->constructor_message)) {
@@ -5634,6 +5645,9 @@ ref_t Compiler :: resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef,
 
 ObjectInfo Compiler :: compileCastingExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, EAttr mode)
 {
+   bool isParam = EAttrs::test(mode, HINT_PARAMETER);
+   mode = EAttrs::exclude(mode, HINT_PARAMETER);
+
    ref_t targetRef = 0;
    if (target.kind == okClass || target.kind == okClassSelf) {
       targetRef = target.param;
@@ -5654,6 +5668,13 @@ ObjectInfo Compiler :: compileCastingExpression(SyntaxWriter& writer, SNode node
          scope.raiseError(errInvalidOperation, node);
    }
    else scope.raiseError(errInvalidOperation, node.parentNode());
+
+   if (isParam) {
+      if (retVal.kind == okObject)
+         retVal = saveToTempLocal(writer, scope, retVal);
+   }
+   else if (retVal.kind != okObject)
+      writeTerminal(writer, retVal, scope);
 
    return retVal;
 }
@@ -7981,9 +8002,11 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
       expr.insertNode(lxIdentifier, SELF_VAR);
       expr.insertNode(lxAttribute, V_MEMBER);
 
+      writer.newNode(lxSeqExpression);
       ExprScope scope(&codeScope);
       EAttr resendMode = silentMode ? EAttr::eaSilent : EAttr::eaNone;
       compileMessageExpression(writer, expr, scope, resendMode);
+      writer.closeNode();
 
       if (node.existChild(lxCode))
          scope.raiseError(errInvalidOperation, node);
@@ -11877,7 +11900,7 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(_ModuleScope& moduleScope, 
    SNode resendNode = methNode.appendNode(lxResendExpression);
 
    SNode resendExpr = resendNode.appendNode(lxMessageExpression);
-   SNode messageNode = resendExpr.appendNode(lxMessage);;
+   SNode messageNode = resendExpr.appendNode(lxMessage);
    if (!test(resendMessage, FUNCTION_MESSAGE)) {
       // NOTE : for a function message - ignore the message name
       messageNode.appendNode(lxIdentifier, actionName);

@@ -715,6 +715,7 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators, MessageMap& unaryO
 
    addVerb(unaryOperators, INVERTED_OPERATOR, INVERTED_OPERATOR_ID);
    addVerb(unaryOperators, NEGATIVE_OPERATOR, NEGATIVE_OPERATOR_ID);
+   addVerb(unaryOperators, VALUE_OPERATOR, VALUE_OPERATOR_ID);
 }
 
 ByteCode ByteCodeCompiler :: code(ident_t s)

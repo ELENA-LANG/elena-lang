@@ -66,6 +66,7 @@ namespace _ELENA_
    constexpr auto FINALLY_OPERATOR_ID     = 0x001E;
    constexpr auto INVERTED_OPERATOR_ID    = 0x001F;
    constexpr auto NEGATIVE_OPERATOR_ID    = 0x0020;
+   constexpr auto VALUE_OPERATOR_ID       = 0x0021;
 
    constexpr auto ISNIL_OPERATOR_ID       = 0x0022;
    constexpr auto CATCH_OPERATOR_ID       = 0x0023;
@@ -422,6 +423,7 @@ namespace _ELENA_
 //  // #define ISNIL_MESSAGE            "#isnil"
    constexpr auto NEGATIVE_MESSAGE        = "Negative";
    constexpr auto INVERTED_MESSAGE        = "Inverted";
+   constexpr auto VALUE_MESSAGE           = "Value";
 
    // ELENA verb operators
    constexpr auto EQUAL_OPERATOR          = "==";
@@ -453,6 +455,7 @@ namespace _ELENA_
 
    constexpr auto INVERTED_OPERATOR       = "!";
    constexpr auto NEGATIVE_OPERATOR       = "-";
+   constexpr auto VALUE_OPERATOR          = "*";
 
   // operator templates
    constexpr auto DOIFNOTNIL_OPERATOR        = "doIfNotNil#1#1";

@@ -115,8 +115,8 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
    operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
 
-   operators.add(OperatorInfo(NEGATIVE_OPERATOR_ID, V_INT32, V_NIL, lxIntOp, V_INT32));
-   operators.add(OperatorInfo(INVERTED_OPERATOR_ID, V_INT32, V_NIL, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(NEGATIVE_OPERATOR_ID, V_INT32, V_OBJECT, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(INVERTED_OPERATOR_ID, V_INT32, V_OBJECT, lxIntOp, V_INT32));
 
    // subject primitive operations
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntBoolOp, V_FLAG));
@@ -196,7 +196,7 @@ CompilerLogic :: CompilerLogic()
    // boolean primitive operations
    operators.add(OperatorInfo(AND_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
    operators.add(OperatorInfo(OR_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
-   operators.add(OperatorInfo(INVERTED_OPERATOR_ID, V_FLAG, V_NIL, 0, lxBoolOp, V_FLAG));
+   operators.add(OperatorInfo(INVERTED_OPERATOR_ID, V_FLAG, V_OBJECT, 0, lxBoolOp, V_FLAG));
 
    // pointer primitive operations
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntBoolOp, V_FLAG));
@@ -351,7 +351,14 @@ int CompilerLogic :: resolveOperationType(_ModuleScope& scope, int operatorId, r
                return info.operationType;
             }
          }
-         else if (isCompatible(scope, info.loperand, loperand, false) 
+         else if (info.loperand == V_FLAG && info.roperand == V_OBJECT) {
+            if (isBoolean(scope, loperand) && roperand == V_OBJECT) {
+               result = info.result;
+
+               return info.operationType;
+            }
+         }
+         else if (isCompatible(scope, info.loperand, loperand, false)
             && isCompatible(scope, info.roperand, roperand, false)) 
          {
             result = info.result;

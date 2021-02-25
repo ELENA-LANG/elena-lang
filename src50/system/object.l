@@ -15,8 +15,8 @@ public class Object
     [info:"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references."]
     bool equal(o) => intern system'core_routines'__object;
        
-//    [info:"Returns true if the specified object is not equal to the current object; otherwise, false. By default it inverts the result of equal[2]."]
-//    bool notequal(o) = self.equal(o).Inverted;
+    [info:"Returns true if the specified object is not equal to the current object; otherwise, false. By default it inverts the result of equal[2]."]
+    bool notequal(o) = !self.equal(o);
     
     // virtual method declarations : forcing the output type                            
     predefined bool less(o);
@@ -36,9 +36,9 @@ public interface BoolValue
 {
     private constructor() {}
     
-//    [info:"return the default value"]
-//    static bool MinValue
-//        = BoolValue.false;
+    [info:"return the default value"]
+    static bool MinValue
+        = BoolValue.false;
 
     [info:"returns true value."]
     const static true = BoolValue
@@ -66,12 +66,9 @@ public interface BoolValue
 //        {
 //            cast bool(expr) ? { ^ BoolValue.false };
 //        }
-//    
-//        [info:"determines whether the specified object is equal to the current object boolean value."]
-//        bool equal(expr) = expr;
-//    
-//        [info:"determines whether the specified object is equal to the current object boolean value."]
-//        bool equal(bool b) = b;
+    
+        [info:"determines whether the specified object is equal to the current object boolean value."]
+        bool equal(bool b) = b;
     
         [info:"always returns false."]
         bool Inverted = BoolValue.false;
@@ -111,18 +108,12 @@ public interface BoolValue
 //            
 //            ^ this self
 //        }
-//    
-//        [info:"determines whether the specified object is equal to the current object boolean value"]
-//        bool equal(expr)
-//        {
-//            cast bool(expr) ? { ^ this self } : { ^ BoolValue.true }
-//        }
-//    
-//        [info:"determines whether the specified object is equal to the current object boolean value"]
-//        bool equal(bool f)
-//        {
-//            ^ f.Inverted
-//        }
+    
+        [info:"determines whether the specified object is equal to the current object boolean value"]
+        bool equal(bool f)
+        {
+            ^ !f
+        }
     
         [info:"always returns true"]
         bool Inverted = BoolValue.true;
@@ -134,8 +125,8 @@ public interface BoolValue
         bool clone() = this self;        
     };
                         
-//    [info:"determines whether the specified object is equal to the current object boolean value;<br/>has to be implemented"]
-//    abstract bool equal(bool f);
+    [info:"determines whether the specified object is equal to the current object boolean value;<br/>has to be implemented"]
+    abstract bool equal(bool f);
 
     [info:"executes trueAction if the value is true;<br/>has to be implemented"]
     abstract if(trueAction);

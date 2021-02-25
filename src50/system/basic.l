@@ -1,13 +1,13 @@
-//[info:"variable base class"]
-//public abstract class BaseVariable
-//{
-//    [info:"returns the variable value;<br/>should be overridden"]
-//    get abstract Value();
-//    
-//    [info:"set the variable value;<br/>should be overridden"]
-//    set abstract Value(o);
-//}
-//
+[info:"variable base class"]
+public abstract class BaseVariable
+{
+    [info:"returns the variable value;<br/>should be overridden"]
+    get abstract Value();
+    
+    [info:"set the variable value;<br/>should be overridden"]
+    set abstract Value(o);
+}
+
 //[info:"a variable template"]
 //public sealed ref<T> : BaseVariable
 //{
@@ -59,7 +59,7 @@ public abstract class BaseValue
 //    [info:"Returns true if the object value is less than a value of var; otherwise, false"]
 //    bool less(BaseVariable var)
 //        <= less(var.Value);
-//    
+    
 //    [info:"Returns true if the object value is less than o; otherwise, false;<br/>should be overridden"]
 //    abstract bool less(o);
 //
@@ -67,10 +67,10 @@ public abstract class BaseValue
 //    bool greater(o) = o.less(self);
 //
 //    [info:"Returns true if the object value is not less than o; otherwise, false;<br/>by default inverts the result of less[2] operation"]
-//    bool notless(o) = self.less(o).Inverted;
+//    bool notless(o) = !self.less(o);
 //
 //    [info:"Returns true if the object value is not greater than o; otherwise, false;<br/>by default inverts the result of greater[2] operation"]
-//    bool notgreater(o) = self.greater(o).Inverted;
+//    bool notgreater(o) = !self.greater(o);
 }
 
 // --- BaseNumber ---

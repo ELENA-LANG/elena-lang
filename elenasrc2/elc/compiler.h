@@ -1124,8 +1124,8 @@ private:
 
    ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
 
-   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, /*ref_t expectedSignRef,
-      bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments, ArgumentsInfo* presavedArgs);
+   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, ref_t expectedSignRef,
+      /*bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments, ArgumentsInfo* presavedArgs);
 
    ObjectInfo compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, /*ref_t exptectedRef, */EAttr mode);
    ObjectInfo compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
@@ -1279,7 +1279,7 @@ private:
 
    // NOTE : if the conversion is not possible - the methods return unknown result
    ObjectInfo convertObject(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
-   ObjectInfo sendTypecast(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source);
+   ObjectInfo sendTypecast(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, bool silentMode);
 
    void compileExternalArguments(SyntaxWriter& writer, SNode node, ExprScope& scope, ArgumentsInfo* arguments);
 
