@@ -3556,7 +3556,7 @@ void Compiler :: analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& s
    ObjectInfo& target, ArgumentsInfo* arguments/*, bool inPlace*/)
 {
    int argBit = 1;
-   if (test(stackSafeAttr, argBit) && boxingRequired(target)) {
+   if (!test(stackSafeAttr, argBit) && boxingRequired(target)) {
       boxArgument(writer, node, target, scope);
    }
 
@@ -12186,16 +12186,40 @@ ref_t Compiler :: generateExtensionTemplate(_ModuleScope& moduleScope, ref_t tem
    return moduleScope.generateTemplate(templateRef, parameters, ns, false, outerExtensionList);
 }
 
+inline bool isUnaryOperation(int arg)
+{
+   switch (arg) {
+      case INVERTED_OPERATOR_ID:
+      case NEGATIVE_OPERATOR_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
 void Compiler :: injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,
    int opArg, ref_t reference)
 {
-   node.set(lxSeqExpression, 0);
+   if (isUnaryOperation(opArg)) {
+      SNode loperand = node.firstChild(lxObjectMask);
+      SNode roperand = loperand.nextNode(lxObjectMask);
 
-   SNode loperand = node.firstChild(lxObjectMask);
-   loperand.injectAndReplaceNode(lxCopying, size);
-   loperand.insertNode(lxLocalAddress, tempLocal);
+      // left argument should be result variable
+      // so we have to move our original larg to right
+      roperand.set(loperand.type, loperand.argument);
+      loperand.set(lxLocalAddress, tempLocal);
 
-   SNode roperand = loperand.nextNode(lxObjectMask);
-   roperand.injectAndReplaceNode(op, opArg);
-   roperand.insertNode(lxLocalAddress, tempLocal);
+      node.set(op, opArg);
+   }
+   else {
+      node.set(lxSeqExpression, 0);
+
+      SNode loperand = node.firstChild(lxObjectMask);
+      loperand.injectAndReplaceNode(lxCopying, size);
+      loperand.insertNode(lxLocalAddress, tempLocal);
+
+      SNode roperand = loperand.nextNode(lxObjectMask);
+      roperand.injectAndReplaceNode(op, opArg);
+      roperand.insertNode(lxLocalAddress, tempLocal);
+   }
 }

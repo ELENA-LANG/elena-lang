@@ -1636,6 +1636,15 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // nxorf i
          tape.write(bcNXorF, localOffset << 2);
          break;
+      case NEGATIVE_OPERATOR_ID:
+         tape.write(bcXSaveF, localOffset << 2, 0);
+         tape.write(bcNSubF, localOffset << 2);
+         break;
+      case INVERTED_OPERATOR_ID:
+         tape.write(bcLoad);
+         tape.write(bcNot);
+         tape.write(bcSaveF, localOffset << 2);
+         break;
       default:
          throw InternalError("not yet implemente"); // !! temporal
          break;

@@ -115,6 +115,9 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
    operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
 
+   operators.add(OperatorInfo(NEGATIVE_OPERATOR_ID, V_INT32, V_NIL, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(INVERTED_OPERATOR_ID, V_INT32, V_NIL, lxIntOp, V_INT32));
+
    // subject primitive operations
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntBoolOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntBoolOp, V_FLAG));
