@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) { 
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) { 
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -6653,9 +6653,11 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode& node, ExprScop
 
    if (test(node.type, lxTerminalMask) || node == lxType) {
       if (!EAttrs::test(mode, HINT_NODEBUGINFO) && test(node.type, lxTerminalMask)) {
-         writer.newNode(lxBreakpoint, dsStep);
-         SyntaxTree::copyNode(writer, node);
-         writer.closeNode();
+         if (node.existChild(lxRow)) {
+            writer.newNode(lxBreakpoint, dsStep);
+            SyntaxTree::copyNode(writer, node);
+            writer.closeNode();
+         }
       }
 
       if (!paramMode) {
@@ -11036,7 +11038,7 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
          applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
       }
 
-      test2(node);
+      //test2(node);
    }
 }
 

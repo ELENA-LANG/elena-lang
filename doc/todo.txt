@@ -3,11 +3,6 @@ In development:
 ------         
 
   [development]
-    * comparision with constants
-
-    * statement template : breakpoints
-    * debugging if statement
-
     * byref parameter
     * embedable ret
 
