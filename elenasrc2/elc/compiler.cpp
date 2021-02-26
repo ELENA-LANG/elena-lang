@@ -46,7 +46,7 @@ constexpr auto HINT_ROOTEXPR        = EAttr::eaRootExpr;
 //constexpr auto HINT_INLINE_EXPR     = EAttr::eaInlineExpr;
 constexpr auto HINT_NOPRIMITIVES    = EAttr::eaNoPrimitives;
 constexpr auto HINT_DYNAMIC_OBJECT  = EAttr::eaDynamicObject;  // indicates that the structure MUST be boxed
-//constexpr auto HINT_NOBOXING        = EAttr::eaNoBoxing;
+constexpr auto HINT_NOBOXING        = EAttr::eaNoBoxing;
 //constexpr auto HINT_NOUNBOXING      = EAttr::eaNoUnboxing;
 constexpr auto HINT_MEMBER          = EAttr::eaMember;
 //constexpr auto HINT_REFOP           = EAttr::eaRef;
@@ -2935,7 +2935,14 @@ inline bool IsArrExprOperator(int operator_id, LexicalType type)
 ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
    ArgumentsInfo* arguments/*, ObjectInfo roperand2, EAttr mode*/)
 {
-   ObjectInfo roperand = (*arguments)[0];
+   ObjectInfo roperand;
+   pos_t argCount = 1;
+   if (arguments) {
+      argCount += arguments->Length();
+      roperand = (*arguments)[0];
+   }
+   // assuming fake second operand for unary operation to reuse existing code
+   else roperand = ObjectInfo(okObject, 0, V_OBJECT);
 
    ObjectInfo retVal;
    if (loperand.kind == okIntConstant && roperand.kind == okIntConstant) {
@@ -2992,6 +2999,9 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
             writeTerminal(writer, (*arguments)[i], scope);
          }
       }
+      // add a second argument for an unary operation to reuse existing code
+      else writer.appendNode(lxNil);
+
       writer.closeNode();
 
       _logic->injectOperation(opNode, scope, *this, operator_id, operationType, resultClassRef, opElementRef, retVal.param);
@@ -3013,11 +3023,11 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
    // if not , replace with appropriate method call
    else {
       EAttr operationMode = HINT_NODEBUGINFO;
-      ref_t implicitSignatureRef = resolveStrongArgument(scope, arguments);
+      ref_t implicitSignatureRef = arguments ? resolveStrongArgument(scope, arguments) : 0;
 
       int stackSafeAttr = 0;
       int messageRef = resolveMessageAtCompileTime(loperand, scope, 
-         resolveOperatorMessage(scope, operator_id, arguments->Length() + 1), implicitSignatureRef, true, stackSafeAttr);
+         resolveOperatorMessage(scope, operator_id, argCount), implicitSignatureRef, true, stackSafeAttr);
 
       if (!test(stackSafeAttr, 1)) {
          operationMode = operationMode | HINT_DYNAMIC_OBJECT;
@@ -3081,10 +3091,7 @@ ObjectInfo Compiler :: compileUnaryOperation(SyntaxWriter& writer, SNode node, E
    //      else roperand = compileExpression(roperandNode, scope, 0, EAttr::eaNone);
    //   }
 
-   ArgumentsInfo arguments;
-   // HOTFIX : to reuse existing code, let's assume the second operand is generic
-   arguments.add(ObjectInfo(okObject, 0, V_OBJECT));
-   return compileOperation(writer, node, scope, operator_id, loperand, &arguments/*, mode*/);
+   return compileOperation(writer, node, scope, operator_id, loperand, nullptr/*, mode*/);
 }
 
 inline ident_t __fastcall resolveOperatorName(SNode node)
@@ -3799,7 +3806,10 @@ ObjectInfo Compiler :: convertObject(SyntaxWriter& writer, SNode node, ExprScope
             return source;
          }
          else if (result == CovnersionResult::crBoxingRequired) {
-            return boxArgumentInPlace(writer, node, source, targetRef, scope, false);
+            if (!EAttrs::test(mode, HINT_NOBOXING)) {
+               return boxArgumentInPlace(writer, node, source, targetRef, scope, false);
+            }
+            else return source;            
          }
          else if (result == CovnersionResult::crConverted){
             //if (node.compare(lxDirectCalling, lxSDirectCalling)) {
@@ -4040,6 +4050,7 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
       //
       //   EAttr assignMode = HINT_NOUNBOXING/* | HINT_ASSIGNING_EXPR*/;
       ref_t targetRef = resolveObjectReference(scope, target, false, false);
+      EAttr assignMode = HINT_PARAMETER/*|| HINT_NOUNBOXING*//* | HINT_ASSIGNING_EXPR*/;
       bool noBoxing = false;
       ////   bool byRefAssigning = false;
 
@@ -4061,9 +4072,9 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
                noBoxing = true;
                operationType = lxCopying;
                operand = size;
-               //            assignMode = assignMode | HINT_NOBOXING;
             }
             else scope.raiseError(errInvalidOperation, current);
+            assignMode = assignMode | HINT_NOBOXING;
             break;
          }
          case okOuter:
@@ -4108,7 +4119,6 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
 
       current = current.nextNode();
 
-      EAttr assignMode = HINT_PARAMETER/*|| HINT_NOUNBOXING*//* | HINT_ASSIGNING_EXPR*/;
       ObjectInfo exprVal;
 
       //   else if (targetRef == V_AUTO) {

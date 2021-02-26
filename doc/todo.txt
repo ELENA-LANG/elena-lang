@@ -3,8 +3,12 @@ In development:
 ------         
 
   [development]
+    * unary operator default implementation
+
     * comparision
     * comparision with constants
+    * byref parameter
+    * embedable ret
 
     * internal routines
 
@@ -15,7 +19,6 @@ In development:
 
     * lambda closures
     * loops
-    * embedable ret
     * multi ret
     * yield metods
     * local fixed arrays
@@ -57,6 +60,7 @@ In development:
     + optimiation : freei 1 xalloc 1 => nop nop 
     + no duplicate variable by boxing
     + optimization - true.Inverted should return constant directly, without calling symbol
+    + loading call argument in reverse order, so no need to load self once again
 
     * do not save the external operation if the result is not assigned or passed as an argument
     * optimization - duplicate assigning : external call, message call

@@ -60,8 +60,8 @@ public abstract class BaseValue
     bool less(BaseVariable var)
         <= less(var.Value);
     
-//    [info:"Returns true if the object value is less than o; otherwise, false;<br/>should be overridden"]
-//    abstract bool less(o);
+    [info:"Returns true if the object value is less than o; otherwise, false;<br/>should be overridden"]
+    abstract bool less(o);
 
     [info:"Returns true if the object value is greater than o; otherwise, false;<br/>by default sends less[2] to o with the object as an argument"]
     bool greater(o) = o.less(self);
@@ -142,7 +142,7 @@ public abstract class IntBaseNumber : BaseNumber
 // --- ByteNumber ---
 
 [info:"an unsigned 8 bit integer"]
-public sealed const struct ByteNumber : IntBaseNumber
+public sealed const struct ByteNumber //: IntBaseNumber
 {
     embeddable __int theValue[1];
 
@@ -166,12 +166,12 @@ public sealed const struct ByteNumber : IntBaseNumber
     constructor(int n)
         = n && 255;
 
-//    [info:"returns the value as a short integer"]
-//    short cast() = new ShortNumber(self);
-//
-//    [info:"returns the value as an integer"]
-//    int cast() = new IntNumber(self);
-//
+    [info:"returns the value as a short integer"]
+    short cast() = new ShortNumber(self);
+
+    [info:"returns the value as an integer"]
+    int cast() = new IntNumber(self);
+
 //    [info:"returns the value as an integer"]
 //    uint cast() = new UIntNumber(self);
 //
@@ -180,9 +180,9 @@ public sealed const struct ByteNumber : IntBaseNumber
 //
 //    [info:"returns the value as a real number"]
 //    real cast() = new RealNumber(self);
-//
+
 //    bool equal(BaseVariable v)
-//        <= equal(v.Value);
+//        <= equal(*v);
 
     bool equal(byte n)
         = theValue == n;
@@ -434,7 +434,7 @@ public sealed const struct ByteNumber : IntBaseNumber
 // --- ShortNumber ---
 
 [info:"a signed 16 bit integer"]
-public sealed const struct ShortNumber : IntBaseNumber
+public sealed const struct ShortNumber //: IntBaseNumber
 {
     embeddable __int theValue[2];
 
@@ -747,7 +747,7 @@ public sealed const struct ShortNumber : IntBaseNumber
 // --- IntNumber ---
 
 [info:"A signed 32 bit integer"]
-public sealed const struct IntNumber : IntBaseNumber
+public sealed const struct IntNumber //: IntBaseNumber
 {
     embeddable __int theValue[4];
     
