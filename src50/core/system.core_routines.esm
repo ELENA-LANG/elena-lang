@@ -42,6 +42,50 @@ procedure __object.equal[2]
   
 end
 
+procedure __literal."equal$system@String[2]"
+
+  pushsi 2
+  pushsi 2
+  callextr api : sequal, 2
+  freei 2
+  select const : false, const : true
+  quit
+  
+end
+
+procedure __literal."less$system@String[2]"
+
+  pushsi 2
+  pushsi 2
+  callextr api : sless, 2
+  freei 2
+  select const : false, const : true
+  quit
+  
+end
+
+procedure __wide."equal$system@WideString[2]"
+
+  pushsi 2
+  pushsi 2
+  callextr api : wequal, 2
+  freei 2
+  select const : false, const : true
+  quit
+  
+end
+
+procedure __wide."less$system@WideString[2]"
+
+  pushsi 2
+  pushsi 2
+  callextr api : wless, 2
+  freei 2
+  select const : false, const : true
+  quit
+  
+end
+
 // ; system routines
 
 symbol sta_start

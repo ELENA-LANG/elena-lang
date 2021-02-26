@@ -142,7 +142,7 @@ class DerivationWriter : public _DerivationWriter
 ////   //void generateMetaTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void flushSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void flushClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
-   void flushMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool functionMode*/, bool propertyMode, 
+   void flushMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool functionMode, bool propertyMode, 
       SyntaxTree& buffer);
    void flushPropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    void flushFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);

@@ -689,14 +689,14 @@ public sealed Array<T> //: Indexable<T>
 // --- String ---
 
 [info:"A UTF-8 literal value"]
-public sealed const struct String //: BaseValue
+public sealed const struct String : BaseValue
 {
     __string byte[] theArray;
 
-//    /// Creates the empty literal
-//    const static string MinValue
-//        = "";
-//                
+    /// Creates the empty literal
+    const static string MinValue
+        = "";
+                
 //    /// Creates the literal string with specified length        
 //    constructor allocate(int size)
 //        = new byte[](size + 1);
@@ -781,31 +781,31 @@ public sealed const struct String //: BaseValue
 //    Enumerable<char> cast() = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
 //
 //    string toPrintable() = self;
-//
-//    bool equal(o)
-//    {
-//        var s := cast string(o) ?? nil;
-//        (nil == s)
-//            ? { ^ false } : { ^ self.equal(s) }
-//    }
-//
-//    bool less(o)
-//        <= less(cast string(o));
-//        
+
+    bool equal(o)
+    {
+        var s := cast string(o) ?? nil;
+        (nil == s)
+            ? { ^ false } : { ^ self.equal(s) }
+    }
+
+    bool less(o)
+        <= less(cast string(o));
+        
 //    bool equal(BaseVariable v)
 //        <= equal(v.Value);
 //        
 //    bool less(BaseVariable v)
 //        <= less(v.Value);
-//        
-//    /// Compares the values
-//    bool equal(string s)
-//        => intern system'core_routines'__literal;
-//
-//    /// Compares the values
-//    bool less(string s)
-//        => intern system'core_routines'__literal;
-//
+        
+    /// Compares the values
+    bool equal(string s)
+        => intern system'core_routines'__literal;
+
+    /// Compares the values
+    bool less(string s)
+        => intern system'core_routines'__literal;
+
 //    /// Compares the values
 //    bool equal(wide s)
 //        = cast wide(self).equal(s);
@@ -938,14 +938,14 @@ public sealed const struct String //: BaseValue
 // --- WideString ---
 
 [info:"A UTF-18 literal value"]
-public sealed const struct WideString //: BaseValue
+public sealed const struct WideString : BaseValue
 {
     __string short[] theArray;
 
-//    /// Creates the empty literal
-//    const static wide MinValue
-//        = ""w;
-//        
+    /// Creates the empty literal
+    const static wide MinValue
+        = ""w;
+        
 //    /// Creates the literal string with specified length
 //    constructor allocate(int size)
 //        = new short[](size + 1);
@@ -1028,31 +1028,31 @@ public sealed const struct WideString //: BaseValue
 //    }
 //
 //    Enumerable<char> cast() = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
-//
-//    bool equal(o)
-//    {
-//        var s := cast wide(o) ?? nil;
-//        (nil == s)
-//            ? { ^ false } : { ^ self.equal(s) }
-//    }
-//
-//    bool less(o)
-//        <= less(cast wide(o));
-//        
+
+    bool equal(o)
+    {
+        var s := cast wide(o) ?? nil;
+        (nil == s)
+            ? { ^ false } : { ^ self.equal(s) }
+    }
+
+    bool less(o)
+        <= less(cast wide(o));
+        
 //    bool equal(BaseVariable v)
 //        <= equal(v.Value);
 //        
 //    bool less(BaseVariable v)
 //        <= less(v.Value);
-//
-//    /// Compares the values
-//    bool equal(wide s)
-//        => intern system'core_routines'__wide;
-//
-//    /// Compares the values
-//    bool less(wide s)
-//        => intern system'core_routines'__wide;
-//
+
+    /// Compares the values
+    bool equal(wide s)
+        => intern system'core_routines'__wide;
+
+    /// Compares the values
+    bool less(wide s)
+        => intern system'core_routines'__wide;
+
 //    /// Compares the values
 //    bool equal(char ch)
 //        <= equal(cast wide(ch));

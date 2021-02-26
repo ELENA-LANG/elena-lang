@@ -15,8 +15,8 @@ using namespace _ELENA_;
 
 constexpr auto MODE_ROOT                  = 0x01;
 //constexpr auto MODE_PROPERTYALLOWED       = 0x40;
-//
-//constexpr auto MODE_FUNCTION              = -2;
+
+constexpr auto MODE_FUNCTION              = -2;
 constexpr auto MODE_PROPERTYMETHOD        = -4;
 
 constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
@@ -346,11 +346,11 @@ void DerivationWriter :: generateTemplateTree(SNode node, ScopeType templateType
 void DerivationWriter :: recognizeDefinition(SNode scopeNode)
 {
    SNode bodyNode = scopeNode.firstChild();
-//   if (scopeNode.existChild(lxCode, lxReturning)) {
-//      // mark one method class declaration
-//      scopeNode.set(lxClass, (ref_t)MODE_FUNCTION);
-//   }
-   /*else */if (bodyNode == lxExpression) {
+   if (scopeNode.existChild(lxCode, lxReturning)) {
+      // mark one method class declaration
+      scopeNode.set(lxClass, (ref_t)MODE_FUNCTION);
+   }
+   else if (bodyNode == lxExpression) {
       scopeNode = lxSymbol;
    }
    else if (scopeNode.prevNode().firstChild() == lxTokenArgs) {
@@ -862,25 +862,25 @@ void DerivationWriter :: flushClassTree(SyntaxWriter& writer, SNode node, Scope&
 {
    SyntaxTree buffer((pos_t)0);
 
-//   bool functionMode = false;
+   bool functionMode = false;
    writer.newNode(lxClass);
 
    flushAttributes(writer, node.prevNode(), derivationScope, buffer);
-//      if (node.argument == MODE_FUNCTION) {
-//         // if it is a single method singleton
-//         writer.appendNode(lxAttribute, V_SINGLETON);
-//
-//         functionMode = true;
-//      }
+   if (node.argument == MODE_FUNCTION) {
+      // if it is a single method singleton
+      writer.appendNode(lxAttribute, V_SINGLETON);
+
+      functionMode = true;
+   }
 
    SNode current = node.firstChild();
-//   if (functionMode) {
-//      // HOTFIX : recognize method parameters
-//      recognizeMethodMebers(node);
-//
-//      generateMethodTree(writer, node, derivationScope, true, current.argument == MODE_PROPERTYMETHOD, buffer);
-//   }
-//   else {
+   if (functionMode) {
+      // HOTFIX : recognize method parameters
+      recognizeMethodMembers(node);
+
+      flushMethodTree(writer, node, derivationScope, true, current.argument == MODE_PROPERTYMETHOD, buffer);
+   }
+   else {
       bool firstParent = true;
       while (current != lxNone) {
          if (current == lxBaseDecl) {
@@ -900,7 +900,7 @@ void DerivationWriter :: flushClassTree(SyntaxWriter& writer, SNode node, Scope&
             }
          }
          else if (current == lxClassMethod) {
-            flushMethodTree(writer, current, derivationScope, /*false, */current.argument == MODE_PROPERTYMETHOD, buffer);
+            flushMethodTree(writer, current, derivationScope, false, current.argument == MODE_PROPERTYMETHOD, buffer);
          }
          else if (current.compare(lxClassField, lxFieldInit)) {
             flushFieldTree(writer, current, derivationScope, buffer);
@@ -914,7 +914,7 @@ void DerivationWriter :: flushClassTree(SyntaxWriter& writer, SNode node, Scope&
       if (!buffer.isEmpty()) {
          SyntaxTree::copyNode(writer, buffer.readRoot());
       }
-//   }
+   }
 
    writer.closeNode();
 }
@@ -1205,7 +1205,7 @@ void DerivationWriter :: flushFieldTree(SyntaxWriter& writer, SNode node, Scope&
    }
 }
 
-void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, /*bool functionMode,*/ 
+void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool functionMode, 
    bool propertyMode, SyntaxTree& buffer)
 {
    writer.newNode(lxClassMethod);
@@ -1222,10 +1222,10 @@ void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope
       writer.appendNode(lxAttribute, V_GETACCESSOR);
    }
 
-//   if (functionMode) {
-//      writer.appendNode(lxAttribute, V_FUNCTION);
-//   }
-   /*else */flushAttributes(writer, node.prevNode(), derivationScope, buffer);
+   if (functionMode) {
+      writer.appendNode(lxAttribute, V_FUNCTION);
+   }
+   else flushAttributes(writer, node.prevNode(), derivationScope, buffer);
 
    // copy method arguments
    SNode current = node.firstChild();
@@ -1344,7 +1344,7 @@ void DerivationWriter :: flushPropertyBody(SyntaxWriter& writer, SNode node, Sco
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
-         flushMethodTree(writer, current, derivationScope, /*false, */current.argument == MODE_PROPERTYMETHOD, buffer);
+         flushMethodTree(writer, current, derivationScope, false, current.argument == MODE_PROPERTYMETHOD, buffer);
       }
       else if (current == lxClassField) {
          flushFieldTree(writer, current, derivationScope, buffer);
@@ -1673,14 +1673,14 @@ inline void parseStatement(SNode current, IdentifierString& templateName, int& e
       if (root && current == lxMessageExpression) {
          parseStatement(current.firstChild(), templateName, exprCounters, blockCounters, false);
       }
+      else if (current == lxCode && root) {
+         blockCounters++;
+      }
       else if (test(current.type, lxObjectMask)) {
             if (blockCounters == 0) {
                exprCounters++;
             }
             else blockCounters++;
-      }
-      else if (current == lxCode && root) {
-         blockCounters++;
       }
       else if (current == lxToken && root) {
          // COMPILER MAGIC : if it is complex code template

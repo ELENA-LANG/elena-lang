@@ -3,18 +3,12 @@ In development:
 ------         
 
   [development]
-    * unary operator default implementation
-
-    * comparision
     * comparision with constants
     * byref parameter
     * embedable ret
 
     * internal routines
 
-    * statement templates
-
-    * sub operators
     * globals
 
     * lambda closures

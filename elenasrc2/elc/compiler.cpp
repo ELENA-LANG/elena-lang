@@ -2674,7 +2674,7 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprSco
 //      compileSubCode(thenCode, scope, true, dummy);
 //   }
 //   else {
-      SNode thenCode = node.findChild(lxCode);
+      SNode thenCode = node.findSubNode(lxCode);
       if (thenCode == lxNone) {
          //HOTFIX : inline branching operator
          writer.newNode(lxIf, ifReference);

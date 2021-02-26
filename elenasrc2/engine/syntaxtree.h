@@ -462,20 +462,20 @@ public:
          else return current;
       }
 
-//      Node findSubNode(LexicalType type)
-//      {
-//         Node current = firstChild();
-//         while (current != lxNone && current.type != type) {
-//            if (current == lxExpression) {
-//               Node subNode = current.findSubNode(type);
-//               if (subNode != lxNone)
-//                  return subNode;
-//            }
-//            current = current.nextNode();
-//         }
-//
-//         return current;
-//      }
+      Node findSubNode(LexicalType type)
+      {
+         Node current = firstChild();
+         while (current != lxNone && current.type != type) {
+            if (current == lxExpression) {
+               Node subNode = current.findSubNode(type);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            current = current.nextNode();
+         }
+
+         return current;
+      }
 //      Node findSubNode(LexicalType type1, LexicalType type2)
 //      {
 //         Node current = firstChild();

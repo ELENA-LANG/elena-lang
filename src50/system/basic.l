@@ -54,11 +54,11 @@ public abstract class BaseValue
 {
     [info:"Returns true if a value of var is equal to the object value; otherwise, false"]
     bool equal(BaseVariable var)
-        <= equal(var.Value);
+        <= equal(*var);
     
     [info:"Returns true if the object value is less than a value of var; otherwise, false"]
     bool less(BaseVariable var)
-        <= less(var.Value);
+        <= less(*var);
     
     [info:"Returns true if the object value is less than o; otherwise, false;<br/>should be overridden"]
     abstract bool less(o);
@@ -142,7 +142,7 @@ public abstract class IntBaseNumber : BaseNumber
 // --- ByteNumber ---
 
 [info:"an unsigned 8 bit integer"]
-public sealed const struct ByteNumber //: IntBaseNumber
+public sealed const struct ByteNumber : IntBaseNumber
 {
     embeddable __int theValue[1];
 
@@ -184,9 +184,11 @@ public sealed const struct ByteNumber //: IntBaseNumber
 //    bool equal(BaseVariable v)
 //        <= equal(*v);
 
+    [info:"compares the value"]
     bool equal(byte n)
         = theValue == n;
 
+    [info:"compares the value"]
     bool equal(short n)
         = new ShortNumber(self).equal(n);
         
@@ -198,30 +200,30 @@ public sealed const struct ByteNumber //: IntBaseNumber
 //    bool equal(real n)
 //        = new RealNumber(self).equal(n);
         
-//    bool equal(o)
-//    {
-//        var n := cast byte(o) ?? nil;
-//        (nil == n)
-//            ? { ^ false }
-//            : { ^ self.equal(n) }
-//    }
-//
-//    bool less(n)
-//        <= less(cast byte(n));
-//
+    bool equal(o)
+    {
+        var n := cast byte(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast byte(n));
+
 //    bool less(BaseVariable v)
 //        <= less(v.Value);
-//
-//    bool less(byte n)
-//        = theValue < n;
-//
-//    bool less(short n)
-//        = new ShortNumber(self).less(n);
-//
-//    [info:"compares the value"]
-//    bool less(int n)
-//        = new IntNumber(self).less(n);
-//        
+
+    bool less(byte n)
+        = theValue < n;
+
+    bool less(short n)
+        = new ShortNumber(self).less(n);
+
+    [info:"compares the value"]
+    bool less(int n)
+        = new IntNumber(self).less(n);
+        
 //    [info:"compares the value"]
 //    bool equal(long n)
 //        = new LongNumber(self).equal(n);
@@ -415,37 +417,33 @@ public sealed const struct ByteNumber //: IntBaseNumber
 //    {
 //        ^ theValue $shr val;
 //    }
-//    
-//    [info:"bitwise inversion"]
-//    get byte Inverted()
-//    {
-//        intern system'core_routines'__byte.readInvertedTo(self, ref byte retVal);
-//        
-//        ^ retVal
-//    }
-//
+    
+    [info:"bitwise inversion"]
+    get byte Inverted()
+        = !theValue;
+
 //    [info:"returns the literal presentation"]
 //    string toPrintable() = stringConvertor.convert(self);
-//        
-//    [info:"clones the value"]
-//    byte clone() = new ByteNumber(self);
+        
+    [info:"clones the value"]
+    byte clone() = new ByteNumber(self);
 }
 
 // --- ShortNumber ---
 
 [info:"a signed 16 bit integer"]
-public sealed const struct ShortNumber //: IntBaseNumber
+public sealed const struct ShortNumber : IntBaseNumber
 {
     embeddable __int theValue[2];
 
-//    [info:"returns the minimal value (-32768)"]
-//    static short MinValue
-//        = -32768;
-//
-//    [info:"returns the maxial value (32767)"]
-//    static short MaxValue
-//        = 32767;
-//
+    [info:"returns the minimal value (-32768)"]
+    static short MinValue
+        = -32768;
+
+    [info:"returns the maxial value (32767)"]
+    static short MaxValue
+        = 32767;
+
 //    constructor(int n)
 //    {
 //        (n < 0)
@@ -456,7 +454,7 @@ public sealed const struct ShortNumber //: IntBaseNumber
 //            }
 //            : { theValue := n && 0FFFFh }
 //    }
-//    
+    
 //    [info:"creates the object with specified value"]
 //    constructor(byte value)
 //        = shortConvertor.convert(value);
@@ -483,48 +481,48 @@ public sealed const struct ShortNumber //: IntBaseNumber
 //    
 //    [info:"returns the value as a real number"]
 //    real cast() = new RealNumber(self);
-//
-//    bool equal(o)
-//    {
-//        var n := cast short(o) ?? nil;
-//        (nil == n)
-//            ? { ^ false }
-//            : { ^ self.equal(n) }
-//    }
-//
-//    bool less(n)
-//        <= less(cast short(n));
-//
+
+    bool equal(o)
+    {
+        var n := cast short(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast short(n));
+
 //    bool equal(BaseVariable v)
 //        <= equal(v.Value);
 //                
 //    bool less(BaseVariable v)
 //        <= equal(v.Value);
-//
-//    [info:"compares the value"]
-//    bool equal(short n)
-//        = theValue == n;
-//        
-//    [info:"compares the value"]
-//    bool less(short n)
-//        = theValue < n;
-//        
-//    [info:"compares the value"]
-//    bool equal(int n)
-//        = new IntNumber(self).equal(n);
-//        
-//    [info:"compares the value"]
-//    bool less(int n)
-//        = new IntNumber(self).less(n);
-//    
-//    [info:"compares the value"]
-//    bool equal(byte n)
-//        = self.equal(new ShortNumber(n));
-//        
-//    [info:"compares the value"]
-//    bool less (byte n)
-//        = self.less(new ShortNumber(n));
-//    
+
+    [info:"compares the value"]
+    bool equal(short n)
+        = theValue == n;
+        
+    [info:"compares the value"]
+    bool less(short n)
+        = theValue < n;
+        
+    [info:"compares the value"]
+    bool equal(int n)
+        = new IntNumber(self).equal(n);
+        
+    [info:"compares the value"]
+    bool less(int n)
+        = new IntNumber(self).less(n);
+    
+    [info:"compares the value"]
+    bool equal(byte n)
+        = self.equal(new ShortNumber(n));
+        
+    [info:"compares the value"]
+    bool less (byte n)
+        = self.less(new ShortNumber(n));
+    
 //    [info:"compares the value"]
 //    bool equal(long n)
 //        = new LongNumber(self).equal(n);
@@ -720,62 +718,53 @@ public sealed const struct ShortNumber //: IntBaseNumber
 //    {
 //        ^ theValue $shr val
 //    }
-//    
-//    [info:"Bitwise inversion"]
-//    get short Inverted()
-//    {
-//        intern system'core_routines'__short.readInvertedTo(self, ref short retVal);
-//        
-//        ^ retVal
-//    }
-//    
-//    get short Negative()
-//    {
-//        short r := 0;
-//        r -= self;
-//        
-//        ^ r  
-//    }
-//
+    
+    [info:"Bitwise inversion"]
+    get short Inverted()
+        = !theValue;
+    
+    get short Negative()
+        = 0 - theValue;
+
 //    [info:"Returns the literal presentation"]
 //    string toPrintable() = stringConvertor.convert(self);
-//
-//    [info:"Clones the value"]
-//    short clone() = new ShortNumber(self);
+
+    [info:"Clones the value"]
+    short clone() = new ShortNumber(self);
 }
 
 // --- IntNumber ---
 
 [info:"A signed 32 bit integer"]
-public sealed const struct IntNumber //: IntBaseNumber
+public sealed const struct IntNumber : IntBaseNumber
 {
     embeddable __int theValue[4];
     
-//    [info:"Creates the object with the minimal value"]
-//    static int MinValue
-//        = -2147483648;
-//
-//    [info:"Creates the object with the maximal value"]
-//    static int MaxValue
-//        = 2147483647;
-//
-//    constructor(byte n)
-//    {
-//        theValue := n
-//    }
-//    
-//    constructor(short n)
-//    {
-//        theValue := n
-//    }
-//    
-//    constructor()
-//        = 0;
-//    
-//    [info:"Creates the object with specified value"]
-//    constructor(int value)
-//        = value;
-//
+    [info:"Creates the object with the minimal value"]
+    static int MinValue
+        = -2147483648;
+
+    [info:"Creates the object with the maximal value"]
+    static int MaxValue
+        = 2147483647;
+
+    constructor(byte n)
+    {
+        theValue := n
+    }
+    
+    constructor(short n)
+    {
+        theValue := n
+    }
+    
+    constructor()
+        = 0;
+    
+    [info:"Creates the object with specified value"]
+    constructor(int value)
+        = value;
+
 //    [info:"Creates the object with specified value"]
 //    constructor(uint value)
 //        = value;
@@ -794,31 +783,31 @@ public sealed const struct IntNumber //: IntBaseNumber
 //
 //    [info:"Returns the real number"]
 //    uint cast() = new UIntNumber(self);
-//    
-//    bool equal(o)
-//    {
-//        var n := cast int(o) ?? nil;
-//        (nil == n)
-//            ? { ^ false } : { ^ self.equal(n) }
-//    }
-//
-//    bool less(n)
-//        <= less(cast int(n));
-//        
+    
+    bool equal(o)
+    {
+        var n := cast int(o) ?? nil;
+        (nil == n)
+            ? { ^ false } : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast int(n));
+        
 //    bool equal(BaseVariable v)
 //        <= equal(v.Value);
 //        
 //    bool less(BaseVariable v)
 //        <= less(v.Value);
-//        
-//    [info:"Compares the value"]
-//    bool equal(int n)
-//        = theValue == n;
-//        
-//    [info:"Compares the value"]
-//    bool less(int n)
-//        = theValue < n;
-//        
+        
+    [info:"Compares the value"]
+    bool equal(int n)
+        = theValue == n;
+        
+    [info:"Compares the value"]
+    bool less(int n)
+        = theValue < n;
+        
 //    add(n)
 //        <= add(cast int(n));
 //
@@ -888,15 +877,15 @@ public sealed const struct IntNumber //: IntBaseNumber
 //    [info:"Returns the result of bitwise XOR operation"]
 //    int xor(int n)
 //        = theValue ^^ n;
-//
-//    [info:"Compares the integer value"]
-//    bool equal(short value)
-//        = self.equal(new IntNumber(value));
-//
-//    [info:"Compares the integer value"]
-//    bool equal(byte value)
-//        = self.equal(new IntNumber(value));
-//        
+
+    [info:"Compares the integer value"]
+    bool equal(short value)
+        = self.equal(new IntNumber(value));
+
+    [info:"Compares the integer value"]
+    bool equal(byte value)
+        = self.equal(new IntNumber(value));
+        
 //    [info:"Compares the integer value"]
 //    bool equal(long n)
 //        = new LongNumber(self).equal(n);
@@ -904,15 +893,15 @@ public sealed const struct IntNumber //: IntBaseNumber
 //    [info:"Compares the integer value"]
 //    bool equal(real n)
 //        = new RealNumber(self).equal(n);
-//
-//    [info:"Compares the integer value"]
-//    bool less(short value)
-//        = self.equal(new IntNumber(value));
-//
-//    [info:"Compares the integer value"]
-//    bool less(byte value)
-//        = self.less(new IntNumber(value));
-//        
+
+    [info:"Compares the integer value"]
+    bool less(short value)
+        = self.equal(new IntNumber(value));
+
+    [info:"Compares the integer value"]
+    bool less(byte value)
+        = self.less(new IntNumber(value));
+        
 //    [info:"Compares the integer value"]
 //    bool less(long n)
 //        = new LongNumber(self).less(n);
@@ -1031,10 +1020,10 @@ public sealed const struct IntNumber //: IntBaseNumber
 //        
 //        ^ String.fromByteArray(0, length, buffer)        
 //    }
-//
-//    [info:"Clones the value"]
-//    int clone() = new IntNumber(self);
-//
+
+    [info:"Clones the value"]
+    int clone() = new IntNumber(self);
+
 //    int shiftLeft(BaseVariable v)
 //        <= shiftLeft(v.Value);
 //
@@ -1050,22 +1039,13 @@ public sealed const struct IntNumber //: IntBaseNumber
 //    {
 //        ^ theValue $shr val
 //    }
-//    
-//    [info:"Bitwise inversion"]
-//    get int Inverted()
-//    {
-//        intern system'core_routines'__int.readInvertedTo(theValue, ref int retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    get int Negative()
-//    {
-//        int r := 0;
-//        r -= self;
-//        
-//        ^ r  
-//    }
+    
+    [info:"Bitwise inversion"]
+    get int Inverted()
+        = !theValue;
+        
+    get int Negative()
+        = -theValue;
 //        
 //    [info:"Returns true if all the mask bits are set"]
 //    bool allMask(int operand)
