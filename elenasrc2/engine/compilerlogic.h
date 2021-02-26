@@ -137,14 +137,14 @@ public:
    virtual bool __fastcall isMultiMethod(_ModuleScope& scope, ref_t reference, mssg_t message);
    virtual bool __fastcall isMethodEmbeddable(ClassInfo& info, mssg_t message);
    virtual bool __fastcall isMethodEmbeddable(_ModuleScope& scope, ref_t reference, mssg_t message);
-//   virtual bool isReadonly(ClassInfo& info);
-//   virtual bool isReadonly(_ModuleScope& scope, ref_t reference)
-//   {
-//      ClassInfo info;
-//      defineClassInfo(scope, info, reference, true);
-//
-//      return isReadonly(info);
-//   }
+   virtual bool __fastcall isReadonly(ClassInfo& info);
+   virtual bool __fastcall isReadonly(_ModuleScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      defineClassInfo(scope, info, reference, true);
+
+      return isReadonly(info);
+   }
    virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node);
 //   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference);
 //

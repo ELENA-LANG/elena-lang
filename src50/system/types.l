@@ -47,7 +47,7 @@
 #define var         8000100Dh
 #define this        8000100Eh
 #define static      8000100Fh
-//#define cast        80001011h
+#define cast        80001011h
 #define new         80001012h
 #define dispatch    80001013h
 //#define params      80001014h

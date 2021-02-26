@@ -978,10 +978,10 @@ void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compil
    else node.set((LexicalType)operationType, operator_id);
 }
 
-//bool CompilerLogic :: isReadonly(ClassInfo& info)
-//{
-//   return test(info.header.flags, elReadOnlyRole);
-//}
+bool CompilerLogic :: isReadonly(ClassInfo& info)
+{
+   return test(info.header.flags, elReadOnlyRole);
+}
 
 inline ref_t __fastcall getSignature(_ModuleScope& scope, mssg_t message)
 {
@@ -1200,11 +1200,7 @@ CovnersionResult CompilerLogic :: injectImplicitConversion(_CompileScope& scope,
       else compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef, true);
 
       if (compatible) {
-         //compiler.injectBoxingExpr(node, !isReadonly(info) && !noUnboxing,
-         //   test(info.header.flags, elStructureRole) ? info.size : 0, 
-         //   targetRef);
-
-         return CovnersionResult::crCompatible;
+         return CovnersionResult::crBoxingRequired;
       }
    }
 

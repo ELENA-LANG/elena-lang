@@ -2880,26 +2880,43 @@ ObjectInfo Compiler :: compileBranchingOperation(SyntaxWriter& writer, SNode nod
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileIsNilOperator(SNode current, ExprScope& scope, ObjectInfo loperand)
-//{
-//   SNode exprNode = current.parentNode();
-//   if (loperand.kind == okObject) {
-//      SNode firstNode = exprNode.firstChild(lxObjectMask);
-//      firstNode.injectAndReplaceNode(lxAlt);
-//      firstNode.appendNode(lxExpression).appendNode(lxNil);
-//   }
-//
-//   ObjectInfo roperand = compileExpression(current, scope, 0, EAttr::eaNone);
-//
-//   exprNode.set(lxNilOp, ISNIL_OPERATOR_ID);
-//
-//   ref_t loperandRef = resolveObjectReference(scope, loperand, false);
-//   ref_t roperandRef = resolveObjectReference(scope, roperand, false);
-//
-//   ref_t resultRef = _logic->isCompatible(*scope.moduleScope, loperandRef, roperandRef, false) ? loperandRef : 0;
-//
-//   return ObjectInfo(okObject, 0, resultRef);
-//}
+ObjectInfo Compiler :: compileIsNilOperator(SyntaxWriter& writer, SNode node, ExprScope& scope)
+{
+   SNode lnode = node.firstChild();
+   SNode rnode = lnode.nextNode(lxObjectMask);
+
+   bool altMode = lnode.compare(lxMessageExpression, lxPropertyExpression);
+
+   ObjectInfo loperand;
+   if (altMode) {
+      writer.newNode(lxAlt);
+
+      loperand = compileExpression(writer, lnode, scope, 0, EAttr::eaNone, nullptr);
+      writer.appendNode(lxNil);
+
+      writer.closeNode();
+
+      loperand = saveToTempLocal(writer, scope, ObjectInfo(okObject));
+   }
+   else {
+      EAttrs objMode(HINT_TARGET/*, HINT_PROP_MODE*/);
+      loperand = compileObject(writer, lnode, scope, objMode, nullptr);
+   }
+
+   ObjectInfo roperand = compileExpression(writer, rnode, scope, 0, HINT_PARAMETER, nullptr);
+
+   writer.newNode(lxNilOp, ISNIL_OPERATOR_ID);
+   writeTerminal(writer, loperand, scope);
+   writeTerminal(writer, roperand, scope);
+   writer.closeNode();
+
+   ref_t loperandRef = resolveObjectReference(scope, loperand, false);
+   ref_t roperandRef = resolveObjectReference(scope, roperand, false);
+
+   ref_t resultRef = _logic->isCompatible(*scope.moduleScope, loperandRef, roperandRef, false) ? loperandRef : 0;
+
+   return ObjectInfo(okObject, 0, resultRef);
+}
 
 inline bool IsArrExprOperator(int operator_id, LexicalType type)
 {
@@ -3104,8 +3121,8 @@ ObjectInfo Compiler :: compileOperationExpression(SyntaxWriter& writer, SNode no
          return compileCatchOperator(writer, node, scope, operator_id);
       case ALT_OPERATOR_ID:
          return compileAltOperator(writer, node, scope/*, mode, operator_id*/);
-//      case ISNIL_OPERATOR_ID:
-//         return compileIsNilOperator(roperand, scope, target);
+      case ISNIL_OPERATOR_ID:
+         return compileIsNilOperator(writer, node, scope);
 //      case APPEND_OPERATOR_ID:
 //         node.setArgument(ADD_OPERATOR_ID);
 //         return compileAssigning(node, scope, target, false);
@@ -3347,8 +3364,14 @@ ObjectInfo Compiler :: boxExternal(SyntaxWriter& writer, ObjectInfo target, Expr
    return retVal;
 }
 
-ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, ObjectInfo target/*, SNode objNode*/, ExprScope& scope,
+ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, ObjectInfo arg, ExprScope& scope,
    /*bool localBoxingMode, */bool condBoxing)
+{
+   return boxArgumentInPlace(writer, node, arg, resolveObjectReference(scope, arg, true, false), scope, condBoxing);
+}
+
+ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, ObjectInfo source, ref_t targetRef, 
+   ExprScope& scope, /*bool localBoxingMode, */bool condBoxing)
 {
    ObjectInfo boxedArg;
 
@@ -3361,9 +3384,8 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
 //      target = rootNode.findSubNodeMask(lxObjectMask);
 //   }
 
-   ref_t targetRef = resolveObjectReference(scope, target, true, false);
    bool variable = false;
-   int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, target.element, variable);
+   int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, source.element, variable);
    
    //   if (fixedSize)
    //      // use fixed size (for fixed-sized array fields)
@@ -3414,7 +3436,7 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
          appendCreating(writer/*, assignNode, objNode, scope, false*/, size, targetRef/*, variadic*/);
          writer.closeNode();
 
-         appendCopying(writer, /*copyingNode, */size/*, variadic, primArray*/, target, scope, tempLocal);
+         appendCopying(writer, /*copyingNode, */size/*, variadic, primArray*/, source, scope, tempLocal);
 
          if (condBoxing)
             writer.closeNode();
@@ -3770,11 +3792,14 @@ ObjectInfo Compiler :: convertObject(SyntaxWriter& writer, SNode node, ExprScope
          if (source.kind == okFieldAddress && isPrimitiveArrRef(sourceRef))
             fixedArraySize = defineFieldSize(scope, source.param);
 
-         auto result = _logic->injectImplicitConversion(scope, node, *this, targetRef, sourceRef,
+         auto result = _logic->injectImplicitConversion(scope, writer.CurrentNode(), *this, targetRef, sourceRef,
             source.element/*, noUnboxing*/, stackSafeAttrs/*, fixedArraySize*/);
 
          if (result == CovnersionResult::crCompatible) {
             return source;
+         }
+         else if (result == CovnersionResult::crBoxingRequired) {
+            return boxArgumentInPlace(writer, node, source, targetRef, scope, false);
          }
          else if (result == CovnersionResult::crConverted){
             //if (node.compare(lxDirectCalling, lxSDirectCalling)) {
@@ -4375,7 +4400,6 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
    SNode current = node.firstChild();
 
    bool propMode = EAttrs::test(mode, HINT_PROP_MODE);   
-   bool isParam = EAttrs::test(mode, HINT_PARAMETER);
    bool silentMode = EAttrs::test(mode, HINT_SILENT);
 
    EAttrs objMode(mode | HINT_TARGET, HINT_PROP_MODE);
@@ -4408,20 +4432,11 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
          if (resolvedMessage)
             scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
       }
-      // HOTFIX : for external operation - saving of the arguments happends later
-      else isParam = false;
    }
 
    //ArgumentsInfo unboxingArgs;
    ObjectInfo retVal = compileMessageOperation(writer, current, scope, target, messageRef, expectedSignRef, 
       paramsMode, &presavedArgs);
-
-   if (isParam) {
-      if (retVal.kind == okObject)
-         retVal = saveToTempLocal(writer, scope, retVal);
-   }
-   else if (retVal.kind != okObject)
-      writeTerminal(writer, retVal, scope);
 
    return retVal;
 }
@@ -5645,9 +5660,6 @@ ref_t Compiler :: resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef,
 
 ObjectInfo Compiler :: compileCastingExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, EAttr mode)
 {
-   bool isParam = EAttrs::test(mode, HINT_PARAMETER);
-   mode = EAttrs::exclude(mode, HINT_PARAMETER);
-
    ref_t targetRef = 0;
    if (target.kind == okClass || target.kind == okClassSelf) {
       targetRef = target.param;
@@ -5656,25 +5668,13 @@ ObjectInfo Compiler :: compileCastingExpression(SyntaxWriter& writer, SNode node
 
    ObjectInfo retVal(okObject, 0, targetRef);
 
-   int paramCount = SyntaxTree::countNodeMask(node.parentNode(), lxObjectMask);
+   SNode opNode = node.parentNode();
+   int paramCount = SyntaxTree::countNodeMask(opNode.firstChild(), lxObjectMask);
    if (paramCount == 1) {
       // if it is a cast expression
-      writeTerminal(writer, target, scope);
-
-      SNode opNode = node.parentNode();
-      retVal = convertObject(writer, opNode, scope, targetRef, target, mode);
-
-      if(retVal.kind == okUnknown)
-         scope.raiseError(errInvalidOperation, node);
+      retVal = compileExpression(writer, opNode.firstChild(lxObjectMask), scope, targetRef, mode, nullptr);
    }
    else scope.raiseError(errInvalidOperation, node.parentNode());
-
-   if (isParam) {
-      if (retVal.kind == okObject)
-         retVal = saveToTempLocal(writer, scope, retVal);
-   }
-   else if (retVal.kind != okObject)
-      writeTerminal(writer, retVal, scope);
 
    return retVal;
 }
@@ -6208,13 +6208,13 @@ ObjectInfo Compiler :: mapTerminal(SNode node, ExprScope& scope, EAttr mode)
       | HINT_MESSAGEREF | HINT_SUBJECTREF*/HINT_NEWOP | HINT_CASTOP))
    {
       bool invalid = false;
-      if (EAttrs::test(mode, HINT_NEWOP)) {
+      if (EAttrs::test(mode, HINT_NEWOP) || EAttrs::test(mode, HINT_CASTOP)) {
          if (EAttrs::test(mode, HINT_TARGET)) {
             if (node == lxType) {
                ref_t typeRef = resolveTypeAttribute(node, scope, false, false);
                object = mapClassSymbol(scope, typeRef);
             }
-            else object = scope.mapTerminal(token, node == lxReference, EAttrs::exclude(mode, HINT_NEWOP));
+            else object = scope.mapTerminal(token, node == lxReference, EAttrs::exclude(mode, HINT_NEWOP | HINT_CASTOP));
             //   ////      if (current == lxArrayType) {
             //   ////         // if it is an array creation
             //   ////         result.kind = okClass;
@@ -6227,23 +6227,11 @@ ObjectInfo Compiler :: mapTerminal(SNode node, ExprScope& scope, EAttr mode)
             //   ////      }
 
             if (object.kind == okClass) {
-               object.kind = okNewOp;
+               object.kind = EAttrs::test(mode, HINT_NEWOP) ? okNewOp : okCastOp;
             }
             else invalid = false;
          }
          else invalid = true;
-      }
-      else if (EAttrs::test(mode, HINT_CASTOP)) {
-         if (node == lxType) {
-            ref_t typeRef = resolveTypeAttribute(node, scope, false, false);
-            object = mapClassSymbol(scope, typeRef);
-
-            if (object.kind == okClass) {
-               object.kind = okCastOp;
-            }
-            else invalid = false;
-         }
-         else invalid = false;
       }
       else if (EAttrs::test(mode, HINT_INTERNALOP)) {
          if (node == lxReference) {
@@ -6516,9 +6504,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
       case okObject:
          writer.newNode(lxResult);
          break;
-         case okSymbol:
-            writer.newNode(lxSymbolReference, object.param);
-            break;
+      case okSymbol:
+         writer.newNode(lxSymbolReference, object.param);
+         break;
       default:
          return;
    }
@@ -6675,6 +6663,10 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
    EAttr mode, ArgumentsInfo* preservedArgs)
 {
    bool noPrimMode = EAttrs::test(mode, HINT_NOPRIMITIVES);
+   bool isParam = EAttrs::test(mode, HINT_PARAMETER);
+   bool conversionMode = targetRef != 0;
+   if (conversionMode)
+      mode = mode | HINT_PARAMETER;
 
    ObjectInfo retVal;
 
@@ -6686,17 +6678,16 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
       
    switch (node.type) {
       case lxExpression:
-         retVal = compileExpression(writer, node.firstChild(), scope, targetRef, mode, preservedArgs);
-         targetRef = 0; // the result should be typecasted in the sub call
+         retVal = compileExpression(writer, node.firstChild(), scope, 0, mode, preservedArgs);
          break;
       case lxMessageExpression:
-         retVal = compileMessageExpression(writer, node, scope, mode);
+         retVal = compileMessageExpression(writer, node, scope, EAttrs::exclude(mode, HINT_PARAMETER));
          break;
       case lxPropertyExpression:
-         retVal = compileMessageExpression(writer, node, scope, mode | HINT_PROP_MODE);
+         retVal = compileMessageExpression(writer, node, scope, EAttrs::exclude(mode, HINT_PARAMETER) | HINT_PROP_MODE);
          break;
       case lxOperationExpression:
-         retVal = compileOperationExpression(writer, node, scope, mode);
+         retVal = compileOperationExpression(writer, node, scope, EAttrs::exclude(mode, HINT_PARAMETER));
          break;
       case lxUnaryExpression:
          retVal = compileUnaryExpression(writer, node, scope, mode);
@@ -6749,6 +6740,13 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
          }
       }
    }
+
+   if (isParam) {
+      if (retVal.kind == okObject)
+         retVal = saveToTempLocal(writer, scope, retVal);
+   }
+   else if (conversionMode && retVal.kind != okObject)
+      writeTerminal(writer, retVal, scope);
 
    if (rootMode)
       writer.closeNode();
@@ -8579,7 +8577,12 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
       }
 
       if (retExpr) {
-         compileRootExpression(writer, bodyNode, codeScope, codeScope.getClassRefId(), HINT_DYNAMIC_OBJECT | HINT_NOPRIMITIVES);
+         ExprScope exprScope(&codeScope);
+         ObjectInfo retVal = compileExpression(writer, bodyNode.firstChild(), exprScope, codeScope.getClassRefId(),
+            HINT_DYNAMIC_OBJECT | HINT_NOPRIMITIVES | HINT_PARAMETER | HINT_ROOTEXPR, nullptr);
+
+         if (retVal.kind != okObject)
+            writeTerminal(writer, retVal, exprScope);
       }
       else {
          compileCode(writer, bodyNode, codeScope);
@@ -11720,23 +11723,6 @@ void Compiler :: generateSealedOverloadListMember(_ModuleScope& scope, ref_t lis
       metaWriter.Memory()->addReference(classRef | mskVMTMethodAddress, 4);
    }
 }
-
-//void Compiler :: injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef, bool arrayMode)
-//{
-//   node.injectAndReplaceNode(lxBoxableExpression, variable ? INVALID_REF : 0);
-//
-//   if (arrayMode && size == 0) {
-//      // HOTFIX : to indicate a primitive array boxing
-//      node = lxPrimArrBoxableExpression;
-//   }
-//
-//   node.appendNode(lxType, targetClassRef);
-//   node.appendNode(lxSize, size);
-//
-////   writer.inject(boxingType, argument);
-////   writer.appendNode(lxTarget, targetClassRef);
-////   writer.closeNode();
-//}
 
 void Compiler :: injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
    ref_t targetClassRef, int, bool embeddableAttr)

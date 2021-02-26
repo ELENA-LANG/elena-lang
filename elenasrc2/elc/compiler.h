@@ -1113,7 +1113,7 @@ private:
    ObjectInfo compileUnaryOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
    ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileUnaryExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
-   //   ObjectInfo compileIsNilOperator(SNode node, ExprScope& scope, ObjectInfo loperand/*, ObjectInfo roperand*/);
+   ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, ExprScope& scope);
    void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, ExprScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/);
    void compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id,
       ObjectInfo loperand, ObjectInfo& retVal, EAttr operationMode, ArgumentsInfo* preservedArgs);
@@ -1300,7 +1300,9 @@ private:
    void analizeSymbolTree(SNode node, Scope& scope);
 
    ObjectInfo boxExternal(SyntaxWriter& writer, ObjectInfo target, ExprScope& scope);
-   ObjectInfo boxArgumentInPlace(SyntaxWriter& writer, SNode boxNode, ObjectInfo target, /*SNode objNode, */ExprScope& scope,
+   ObjectInfo boxArgumentInPlace(SyntaxWriter& writer, SNode boxNode, ObjectInfo arg, ExprScope& scope,
+      /*bool localBoxingMode, */bool condBoxing);
+   ObjectInfo boxArgumentInPlace(SyntaxWriter& writer, SNode boxNode, ObjectInfo soource, ref_t targetRef, ExprScope& scope,
       /*bool localBoxingMode, */bool condBoxing);
    void boxArgument(SyntaxWriter& writer, SNode boxNode, ObjectInfo& arg, ExprScope& scope/*, bool boxingMode,
       bool withoutLocalBoxing, bool inPlace, bool condBoxing*/);
@@ -1377,7 +1379,6 @@ public:
    void initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo);
 
    // _Compiler interface implementation
-//   virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef, bool arrayMode = false);
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
    virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
       ref_t targetClassRef, int stacksafeAttr, bool embeddableAttr);

@@ -52,25 +52,25 @@ public abstract class BaseVariable
 [info:"a base value"]
 public abstract class BaseValue
 {
-//    [info:"Returns true if a value of var is equal to the object value; otherwise, false"]
-//    bool equal(BaseVariable var)
-//        <= equal(var.Value);
-//    
-//    [info:"Returns true if the object value is less than a value of var; otherwise, false"]
-//    bool less(BaseVariable var)
-//        <= less(var.Value);
+    [info:"Returns true if a value of var is equal to the object value; otherwise, false"]
+    bool equal(BaseVariable var)
+        <= equal(var.Value);
+    
+    [info:"Returns true if the object value is less than a value of var; otherwise, false"]
+    bool less(BaseVariable var)
+        <= less(var.Value);
     
 //    [info:"Returns true if the object value is less than o; otherwise, false;<br/>should be overridden"]
 //    abstract bool less(o);
-//
-//    [info:"Returns true if the object value is greater than o; otherwise, false;<br/>by default sends less[2] to o with the object as an argument"]
-//    bool greater(o) = o.less(self);
-//
-//    [info:"Returns true if the object value is not less than o; otherwise, false;<br/>by default inverts the result of less[2] operation"]
-//    bool notless(o) = !self.less(o);
-//
-//    [info:"Returns true if the object value is not greater than o; otherwise, false;<br/>by default inverts the result of greater[2] operation"]
-//    bool notgreater(o) = !self.greater(o);
+
+    [info:"Returns true if the object value is greater than o; otherwise, false;<br/>by default sends less[2] to o with the object as an argument"]
+    bool greater(o) = o.less(self);
+
+    [info:"Returns true if the object value is not less than o; otherwise, false;<br/>by default inverts the result of less[2] operation"]
+    bool notless(o) = !self.less(o);
+
+    [info:"Returns true if the object value is not greater than o; otherwise, false;<br/>by default inverts the result of greater[2] operation"]
+    bool notgreater(o) = !self.greater(o);
 }
 
 // --- BaseNumber ---
@@ -101,10 +101,10 @@ public abstract class BaseNumber : BaseValue
 //
 //    [info:"divides by the value;<br/>should be overridden"]
 //    abstract divide(o);
-//    
-//    [info:"returns the negative value of a number"]
-//    Negative
-//        = 0 - self;
+    
+    [info:"returns the negative value of a number"]
+    Negative
+        = 0 - self;
 }
 
 // --- IntBaseNumber ---
@@ -146,26 +146,26 @@ public sealed const struct ByteNumber : IntBaseNumber
 {
     embeddable __int theValue[1];
 
-//    [info:"returns the default value"]
-//    constructor()
-//        = 0;
-//
-//    [info:"returns the minimal value (0)"]
-//    static byte MinValue
-//        = 0;
-//
-//    [info:"returns the maxial value (255)"]
-//    static byte MaxValue
-//        = 255;
-//    
-//    [info:"creates the object with a specified value"]
-//    constructor(byte value)
-//        = value;
-//
-//    [info:"creates the object with a specified value"]
-//    constructor(int n)
-//        = n && 255;
-//
+    [info:"returns the default value"]
+    constructor()
+        = 0;
+
+    [info:"returns the minimal value (0)"]
+    static byte MinValue
+        = 0;
+
+    [info:"returns the maxial value (255)"]
+    static byte MaxValue
+        = 255;
+    
+    [info:"creates the object with a specified value"]
+    constructor(byte value)
+        = value;
+
+    [info:"creates the object with a specified value"]
+    constructor(int n)
+        = n && 255;
+
 //    [info:"returns the value as a short integer"]
 //    short cast() = new ShortNumber(self);
 //
@@ -183,21 +183,21 @@ public sealed const struct ByteNumber : IntBaseNumber
 //
 //    bool equal(BaseVariable v)
 //        <= equal(v.Value);
-//
-//    bool equal(byte n)
-//        = theValue == n;
-//
-//    bool equal(short n)
-//        = new ShortNumber(self).equal(n);
-//        
-//    [info:"compares the value"]
-//    bool equal(int n)
-//        = new IntNumber(self).less(n);
-//        
+
+    bool equal(byte n)
+        = theValue == n;
+
+    bool equal(short n)
+        = new ShortNumber(self).equal(n);
+        
+    [info:"compares the value"]
+    bool equal(int n)
+        = new IntNumber(self).less(n);
+        
 //    [info:"compares the value"]
 //    bool equal(real n)
 //        = new RealNumber(self).equal(n);
-//        
+        
 //    bool equal(o)
 //    {
 //        var n := cast byte(o) ?? nil;
