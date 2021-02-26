@@ -502,7 +502,6 @@ public:
 //      eaSubj               = 0x00020000000,
 //      eaDirectCall         = 0x00040000000,
       eaParameter          = 0x00080000000,
-      eaTarget             = 0x00080000040,
       eaLazy               = 0x00100000000,
 //      eaInlineArg          = 0x00200000000,
       eaConstExpr          = 0x00400000000,
@@ -510,6 +509,8 @@ public:
 //      eaRefExpr            = 0x01000000000,
       eaPreviousScope      = 0x02000000000,
       eaConversionOp       = 0x04000000000,
+      eaTarget             = 0x08080000000,
+      eaTargetExpr         = 0x08000000000,
 
       eaScopeMask          = /*0x0300041400A*/eaNestedNs,
 //      eaObjectMask         = 0x008A821B2F4,
@@ -735,7 +736,7 @@ public:
 //
 ////   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode) = 0;
 //   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
-//   virtual bool optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
+   virtual bool optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
 
    virtual mssg_t resolveMultimethod(_ModuleScope& scope, mssg_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef,
       int& stackSafeAttr, bool selfCall) = 0;

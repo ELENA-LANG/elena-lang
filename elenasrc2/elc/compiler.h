@@ -1339,7 +1339,7 @@ private:
 //   bool optimizeCallDoubleAssigning(_ModuleScope& scope, SNode& node);
    bool optimizeConstantAssigning(_ModuleScope& scope, SNode& node);
 //   bool optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node);
-//   bool optimizeBranching(_ModuleScope& scope, SNode& node);
+   bool optimizeBranching(_ModuleScope& scope, SNode& node);
 //   bool optimizeDispatchingExpr(_ModuleScope& scope, SNode& node);
 
    int saveMetaInfo(_ModuleScope& scope, ident_t info);

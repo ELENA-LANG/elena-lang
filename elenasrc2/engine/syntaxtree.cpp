@@ -77,7 +77,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
 ////      tokens.add("stacksafe", lxStacksafeAttr);
 ////      tokens.add("boxable", lxBoxableAttr);
 //      //tokens.add("intop", lxIntOp);
-//      //tokens.add("intboolop", lxIntBoolOp);
+      tokens.add("intboolop", lxIntBoolOp);
 //      //tokens.add("longop", lxLongOp);
 //      //tokens.add("realop", lxRealOp);
 //      //tokens.add("realintop", lxRealIntOp);
@@ -91,7 +91,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
 ////      tokens.add("extarg", lxExtArgument);
 ////      tokens.add("intextarg", lxIntExtArgument);
 ////      tokens.add("interncall", lxInternalCall);
-//      //tokens.add("branching", lxBranching);
+      tokens.add("branching", lxBranching);
 //      //tokens.add("looping", lxLooping);
 ////      tokens.add("constlong", lxConstantLong);
 ////      tokens.add("constsymbol", lxConstantSymbol);

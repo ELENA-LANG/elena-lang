@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) { 
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -2871,7 +2871,7 @@ ObjectInfo Compiler :: compileBranchingOperation(SyntaxWriter& writer, SNode nod
 
    SNode lnode = node.firstChild();
 
-   EAttrs objMode(mode | HINT_TARGET/*, HINT_PROP_MODE*/);
+   EAttrs objMode(mode | HINT_TARGET);
    ObjectInfo loperand = compileObject(writer, lnode, scope, objMode, preservedArgs);
 
    compileBranchingOp(writer, lnode.nextNode(lxObjectMask), scope, mode, operator_id, loperand, 
@@ -4428,7 +4428,7 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
    else if (target.kind == okCastOp) {
       target.kind = okClass;
 
-      return compileCastingExpression(writer, current, scope, target, mode);
+      return compileCastingExpression(writer, current, scope, target, EAttrs::exclude(mode, EAttr::eaTargetExpr));
    }
    else {
       current = current.nextNode(lxObjectMask);
@@ -6691,13 +6691,13 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
          retVal = compileExpression(writer, node.firstChild(), scope, 0, mode, preservedArgs);
          break;
       case lxMessageExpression:
-         retVal = compileMessageExpression(writer, node, scope, EAttrs::exclude(mode, HINT_PARAMETER));
+         retVal = compileMessageExpression(writer, node, scope, mode);
          break;
       case lxPropertyExpression:
-         retVal = compileMessageExpression(writer, node, scope, EAttrs::exclude(mode, HINT_PARAMETER) | HINT_PROP_MODE);
+         retVal = compileMessageExpression(writer, node, scope, mode | HINT_PROP_MODE);
          break;
       case lxOperationExpression:
-         retVal = compileOperationExpression(writer, node, scope, EAttrs::exclude(mode, HINT_PARAMETER));
+         retVal = compileOperationExpression(writer, node, scope, mode);
          break;
       case lxUnaryExpression:
          retVal = compileUnaryExpression(writer, node, scope, mode);
@@ -10830,11 +10830,11 @@ bool Compiler :: optimizeConstantAssigning(_ModuleScope&, SNode& node)
 //
 //   return applied;
 //}
-//
-//bool Compiler :: optimizeBranching(_ModuleScope& scope, SNode& node)
-//{
-//   return _logic->optimizeBranchingOp(scope, node);
-//}
+
+bool Compiler :: optimizeBranching(_ModuleScope& scope, SNode& node)
+{
+   return _logic->optimizeBranchingOp(scope, node);
+}
 
 bool Compiler :: optimizeConstProperty(_ModuleScope&, SNode& node)
 {
@@ -10964,8 +10964,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
 //         return optimizeEmbeddable(scope, node/*, false*/);
 //      case 3:
 //         return optimizeEmbeddableCall(scope, node);
-//      case 4:
-//         return optimizeBranching(scope, node);
+      case 4:
+         return optimizeBranching(scope, node);
       case 5:
          return optimizeConstantAssigning(scope, node);
 //      case 6:
@@ -11036,7 +11036,7 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
          applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
       }
 
-      //test2(node);
+      test2(node);
    }
 }
 

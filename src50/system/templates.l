@@ -99,14 +99,14 @@
 //{
 //    extern extern_block
 //}
-//
-//// --- if statement ---
-//
-//#declare if<expr>(if_block)
-//{
-//    cast bool(expr) ? if_block
-//}
-//
+
+// --- if statement ---
+
+#declare if<expr>(if_block)
+{
+    cast bool(expr) ? if_block
+}
+
 //// --- if-else statement ---
 //
 //#declare if:else<expr>(if_block,else_block)

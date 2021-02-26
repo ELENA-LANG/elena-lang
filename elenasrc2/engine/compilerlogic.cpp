@@ -2103,80 +2103,87 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //
 //   return false;
 //}
-//
-//bool CompilerLogic :: optimizeBranchingOp(_ModuleScope&, SNode node)
-//{
-//   SNode intOpNode = node.parentNode();
+
+bool CompilerLogic :: optimizeBranchingOp(_ModuleScope&, SNode node)
+{
+   SNode intOpNode = node.parentNode();
 //   while (intOpNode == lxExpression)
 //      intOpNode = intOpNode.parentNode();
-//
-//   SNode lnode = intOpNode.findSubNodeMask(lxObjectMask);
-//
-//   SNode opNode = intOpNode.parentNode();
+
+   SNode lnode = intOpNode.findSubNodeMask(lxObjectMask);
+
+   SNode assignNode = intOpNode.nextNode(lxObjectMask);
+   SNode opNode = assignNode.nextNode(lxObjectMask);
+
 //   while (opNode == lxExpression)
 //      opNode = opNode.parentNode();
-//
-//   if (intOpNode != lxNone) {
-//      int arg = node.findChild(lxIntValue).argument;
-//
-//      SNode ifNode = opNode.findChild(lxIf, lxElse);
-//      if (ifNode != lxNone) {
-//         SNode trueNode = intOpNode.findChild(ifNode == lxIf ? lxIfValue : lxElseValue);
-//
-//         if (lnode == lxConstantInt) {
-//            // if the numeric constant is the first operand
-//            if (intOpNode.argument == LESS_OPERATOR_ID) {
-//               intOpNode.argument = GREATER_OPERATOR_ID;
-//            }
-//            else if (intOpNode.argument == GREATER_OPERATOR_ID) {
-//               intOpNode.argument = LESS_OPERATOR_ID;
-//            }
-//         }
-//
-//         if (intOpNode.argument == EQUAL_OPERATOR_ID) {
-//            if (trueNode.argument == ifNode.argument) {
-//               ifNode.set(lxIfN, arg);
-//            }
-//            else if (trueNode.argument != ifNode.argument) {
-//               ifNode.set(lxIfNotN, arg);
-//            }
-//            else return false;
-//         }
-//         else if (intOpNode.argument == LESS_OPERATOR_ID) {
-//            if (trueNode.argument == ifNode.argument) {
-//               ifNode.set(lxLessN, arg);
-//            }
-//            else if (trueNode.argument != ifNode.argument) {
-//               ifNode.set(lxNotLessN, arg);
-//            }
-//            else return false;
-//         }
-//         else if (intOpNode.argument == GREATER_OPERATOR_ID) {
-//            if (trueNode.argument == ifNode.argument) {
-//               ifNode.set(lxGreaterN, arg);
-//            }
-//            else if (trueNode.argument != ifNode.argument) {
-//               ifNode.set(lxNotGreaterN, arg);
-//            }
-//            else return false;
-//         }
-//         else return false;
-//
-//         // comment out constant
-//         node = lxIdle;
-//         SNode parent = node.parentNode();
-//         while (parent == lxExpression) {
-//            parent = lxIdle;
-//            parent = parent.parentNode();
-//         } 
-//
-//         intOpNode = lxExpression;
-//
-//         return true;
-//      }
-//   }
-//   return false;
-//}
+
+   int operation_id = intOpNode.argument;
+   if (intOpNode != lxNone && opNode == lxBranching) {
+      int arg = node.findChild(lxIntValue).argument;
+
+      SNode ifNode = opNode.findChild(lxIf, lxElse);
+      if (ifNode != lxNone) {
+         SNode trueNode = intOpNode.findChild(ifNode == lxIf ? lxIfValue : lxElseValue);
+
+         if (lnode == lxConstantInt) {
+            // if the numeric constant is the first operand
+            if (intOpNode.argument == LESS_OPERATOR_ID) {
+               operation_id = GREATER_OPERATOR_ID;
+            }
+            else if (intOpNode.argument == GREATER_OPERATOR_ID) {
+               operation_id = LESS_OPERATOR_ID;
+            }
+         }
+
+         SNode targetNode = opNode.firstChild(lxObjectMask);
+         if (targetNode != lxLocal || assignNode != lxAssigning)
+            return false;
+
+         if (operation_id == EQUAL_OPERATOR_ID) {
+            if (trueNode.argument == ifNode.argument) {
+               ifNode.set(lxIfN, arg);
+            }
+            else if (trueNode.argument != ifNode.argument) {
+               ifNode.set(lxIfNotN, arg);
+            }
+            else return false; 
+         }
+         else if (operation_id == LESS_OPERATOR_ID) {
+            if (trueNode.argument == ifNode.argument) {
+               ifNode.set(lxLessN, arg);
+            }
+            else if (trueNode.argument != ifNode.argument) {
+               ifNode.set(lxNotLessN, arg);
+            }
+            else return false;
+         }
+         else if (operation_id == GREATER_OPERATOR_ID) {
+            if (trueNode.argument == ifNode.argument) {
+               ifNode.set(lxGreaterN, arg);
+            }
+            else if (trueNode.argument != ifNode.argument) {
+               ifNode.set(lxNotGreaterN, arg);
+            }
+            else return false;
+         }
+         else return false;
+
+         intOpNode.argument = operation_id;
+
+         targetNode.set(lxResult, 0);
+
+         // comment out constant
+         node = lxIdle;
+
+         assignNode = lxIdle;
+         intOpNode = lxExpression;
+
+         return true;
+      }
+   }
+   return false;
+}
 
 inline mssg_t resolveNonpublic(ClassInfo& info, _Module* module, mssg_t publicMessage, ref_t& visibility)
 {

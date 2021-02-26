@@ -1,2 +1,3 @@
 directcall,               constattr = 1;
-copying, 		  constint = 5;
+intboolop | branching,    constint  = 4; 
+copying, 		  constint  = 5;
