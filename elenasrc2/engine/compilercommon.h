@@ -511,20 +511,15 @@ public:
       eaConversionOp       = 0x04000000000,
       eaTarget             = 0x08080000000,
       eaTargetExpr         = 0x08000000000,
+      eaAssignTarget       = 0x10000000000,
 
-      eaScopeMask          = /*0x0300041400A*/eaNestedNs,
+      eaScopeMask          = /*0x0300041400A*/eaNestedNs | eaAssignTarget,
 //      eaObjectMask         = 0x008A821B2F4,
    };
 
    struct ExpressionAttributes
    {
       ExpressionAttribute attrs;
-
-    //  bool isExprAttr()
-    //  {
-    //     return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr |
-    //        classAttr | directAttr | lazyAttr | inlineArgAttr;
-    //  }
 
       bool test(ExpressionAttribute mask)
       {

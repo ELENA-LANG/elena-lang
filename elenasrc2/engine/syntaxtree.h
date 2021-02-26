@@ -126,6 +126,7 @@ enum LexicalType
    lxCreatingStruct           = 0x0302D0,   // arg - size
    lxAssigning                = 0x0302E0,   // an assigning expression, arg - size
    lxCopying                  = 0x0302E1,
+   lxByRefAssigning           = 0x0382E2,
    lxSaving                   = 0x0302E3,
       //   lxCondCopying              = 0x058124,
    lxFloatSaving              = 0x0302E5,
@@ -228,7 +229,6 @@ enum LexicalType
 //   lxStopper                  = 0x018041,   // used for variadic arguments as a last argument
 //   lxInlineArgCall            = 0x0580A4,
 //   lxBlockLocalAddr           = 0x018114, // arg - offset
-//   lxByRefAssigning           = 0x058122,
 //   lxMessageConstant          = 0x0181A7, // arg - rererence
 //   lxExtMessageConstant       = 0x0181A9, // arg -reference
 //   lxOp                       = 0x0581B0,

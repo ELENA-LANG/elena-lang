@@ -3528,17 +3528,17 @@ void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::N
    else throw InternalError("not yet implemente"); // !! temporal
 }
 
-//void ByteCodeWriter :: generateByRefAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
-//{
-//   SNode target;
-//   SNode source;
-//   assignOpArguments(node, target, source);
-//
-//   generateObject(tape, source, scope, STACKOP_MODE);
-//   loadObject(tape, target, scope);
-//   saveObject(tape, lxField, 0);
-//   releaseStack(tape);
-//}
+void ByteCodeWriter :: generateByRefAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   SNode target;
+   SNode source;
+   assignOpArguments(node, target, source);
+
+   generateObject(tape, source, scope, STACKOP_MODE);
+   loadObject(tape, target, scope);
+   saveObject(tape, lxField, 0);
+   releaseArg(tape);
+}
 
 void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
 {
@@ -4132,9 +4132,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxSDirectCalling:
          generateCallExpression(tape, node, scope);
          break;
-//      case lxByRefAssigning:
-//         generateByRefAssigningExpression(tape, node, scope);
-//         break;
+      case lxByRefAssigning:
+         generateByRefAssigningExpression(tape, node, scope);
+         break;
       case lxAssigning:
 //      case lxCondAssigning:
          generateAssigningExpression(tape, node, scope);

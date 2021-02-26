@@ -6,7 +6,7 @@
 //                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
-//#define FULL_OUTOUT_INFO 1
+#define FULL_OUTOUT_INFO 1
 
 #include "elena.h"
 // --------------------------------------------------------------------------
@@ -71,6 +71,7 @@ constexpr auto HINT_CONSTEXPR       = EAttr::eaConstExpr;
 //constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
 constexpr auto HINT_CONVERSIONOP    = EAttr::eaConversionOp;
 constexpr auto HINT_TARGET          = EAttr::eaTarget;
+constexpr auto HINT_ASSIGNTARGET    = EAttr::eaAssignTarget;
 
 // scope modes
 constexpr auto INITIALIZER_SCOPE    = EAttr::eaInitializerScope;   // indicates the constructor or initializer method
@@ -717,7 +718,7 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param, EAttr mode)
       // if the parameter may be stack-allocated
       return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, (ref_t)-1);
    }
-   else if (param.class_ref == V_WRAPPER && !EAttrs::testany(mode, HINT_PROP_MODE/* | HINT_REFEXPR*/)) {
+   else if (param.class_ref == V_WRAPPER && !EAttrs::testany(mode, HINT_ASSIGNTARGET/* | HINT_REFEXPR*/)) {
       return ObjectInfo(okParamField, prefix - param.offset, param.element_ref, 0, 0);
    }
    else return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, 0);
@@ -4042,7 +4043,8 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
       LexicalType operationType = lxAssigning;
       int operand = 0;
 
-      ObjectInfo target = compileObject(writer, current, scope, mode | HINT_PARAMETER | HINT_NODEBUGINFO, nullptr);
+      ObjectInfo target = compileObject(writer, current, scope, 
+         mode | HINT_PARAMETER | HINT_NODEBUGINFO | HINT_ASSIGNTARGET, nullptr);
 
       //   if (accumulateMode)
       //      // !! temporally
@@ -4098,20 +4100,20 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
          case okOuterReadOnlyField:
             scope.raiseError(errReadOnlyField, node.parentNode());
             break;
-         //case okParam:
-         //   if (targetRef == V_WRAPPER) {
-         //      //byRefAssigning = true;
-         //      targetRef = target.element;
-         //      size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
-         //      if (size != 0) {
-         //         operand = size;
-         //         operationType = lxCopying;
-         //         noBoxing = true;
-         //      }
-         //      else operationType = lxByRefAssigning;
-         //   
-         //      break;
-         //   }
+         case okParam:
+            if (targetRef == V_WRAPPER) {
+               //byRefAssigning = true;
+               targetRef = target.element;
+               size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
+               if (size != 0) {
+                  operand = size;
+                  operationType = lxCopying;
+                  noBoxing = true;
+               }
+               else operationType = lxByRefAssigning;
+            
+               break;
+            }
          default:
             scope.raiseError(errInvalidOperation, node.firstChild(lxObjectMask));
             break;
@@ -4897,7 +4899,7 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Ex
    else scope.raiseError(errInvalidOperation, node);
 
    ref_t expectedSignRef = 0;
-   EAttrs objMode(HINT_TARGET);
+   EAttrs objMode(HINT_TARGET | HINT_ASSIGNTARGET);
    ObjectInfo target = compileObject(writer, current.firstChild(), scope, objMode, nullptr);
 
    current = current.nextNode(lxObjectMask);
@@ -5554,33 +5556,31 @@ ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, Expr
 
 ref_t Compiler :: resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode)
 {
-//   if (!operandRef) {
-//      operandRef = scope.moduleScope->superReference;
-//   }
-//   else if (isPrimitiveRef(operandRef))
-//      operandRef = resolvePrimitiveReference(scope, operandRef, 0, declarationMode);
-//
-//   List<SNode> parameters;
-//
-//   // HOTFIX : generate a temporal template to pass the type
-//   SyntaxTree dummyTree;
-//   SyntaxWriter dummyWriter(dummyTree);
-//   dummyWriter.newNode(lxRoot);
-//   dummyWriter.newNode(lxType, operandRef);
-//   ident_t refName = scope.moduleScope->module->resolveReference(operandRef);
-//   if (isWeakReference(refName)) {
-//      dummyWriter.appendNode(lxReference, refName);
-//   }
-//   else dummyWriter.appendNode(lxGlobalReference, refName);
-//   dummyWriter.closeNode();
-//   dummyWriter.closeNode();
-//
-//   parameters.add(dummyTree.readRoot().firstChild());
-//
-//   return scope.moduleScope->generateTemplate(scope.moduleScope->refTemplateReference, parameters, scope.ns,
-//      declarationMode, nullptr);
+   if (!operandRef) {
+      operandRef = scope.moduleScope->superReference;
+   }
+   else if (isPrimitiveRef(operandRef))
+      operandRef = resolvePrimitiveReference(scope, operandRef, 0, declarationMode);
 
-   return 0; // !! temporal
+   List<SNode> parameters;
+
+   // HOTFIX : generate a temporal template to pass the type
+   SyntaxTree dummyTree;
+   SyntaxWriter dummyWriter(dummyTree);
+   dummyWriter.newNode(lxRoot);
+   dummyWriter.newNode(lxType, operandRef);
+   ident_t refName = scope.moduleScope->module->resolveReference(operandRef);
+   if (isWeakReference(refName)) {
+      dummyWriter.appendNode(lxReference, refName);
+   }
+   else dummyWriter.appendNode(lxGlobalReference, refName);
+   dummyWriter.closeNode();
+   dummyWriter.closeNode();
+
+   parameters.add(dummyTree.readRoot().firstChild());
+
+   return scope.moduleScope->generateTemplate(scope.moduleScope->refTemplateReference, parameters, scope.ns,
+      declarationMode, nullptr);
 }
 
 ref_t Compiler :: resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode)
