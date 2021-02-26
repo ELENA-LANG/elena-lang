@@ -680,7 +680,7 @@ public:
    // class is considered to be a role if it cannot be initiated
    virtual bool __fastcall isRole(ClassInfo& info) = 0;
    virtual bool __fastcall isAbstract(ClassInfo& info) = 0;
-//   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference) = 0;
+   virtual bool __fastcall validateAutoType(_ModuleScope& scope, ref_t& reference) = 0;
 
    virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node) = 0;
 

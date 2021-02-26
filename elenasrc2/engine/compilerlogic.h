@@ -146,8 +146,8 @@ public:
       return isReadonly(info);
    }
    virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node);
-//   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference);
-//
+   virtual bool __fastcall validateAutoType(_ModuleScope& scope, ref_t& reference);
+
 //   virtual bool isSealedOrClosed(ClassInfo& info);
 //   virtual bool isSealedOrClosed(_ModuleScope& scope, ref_t reference)
 //   {

@@ -717,10 +717,10 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param, EAttr mode)
       // if the parameter may be stack-allocated
       return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, (ref_t)-1);
    }
-   /*else if (param.class_ref == V_WRAPPER && !EAttrs::testany(mode, HINT_PROP_MODE | HINT_REFEXPR)) {
+   else if (param.class_ref == V_WRAPPER && !EAttrs::testany(mode, HINT_PROP_MODE/* | HINT_REFEXPR*/)) {
       return ObjectInfo(okParamField, prefix - param.offset, param.element_ref, 0, 0);
    }
-   else*/ return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, 0);
+   else return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, 0);
 }
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool referenceOne, EAttr mode)
@@ -853,26 +853,26 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool reference
    return Scope::mapTerminal(identifier, referenceOne, mode);
 }
 
-//bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
-//{
-//   if (info.kind == okLocal) {
-//      for (auto it = locals.start(); !it.Eof(); it++) {
-//         if ((*it).offset == (int)info.param) {
-//            if ((*it).class_ref == V_AUTO) {
-//               (*it).class_ref = reference;
-//               (*it).element_ref = element;
-//
-//               info.extraparam = reference;
-//               info.element = element;
-//
-//               return true;
-//            }
-//         }
-//      }
-//   }
-//
-//   return Scope::resolveAutoType(info, reference, element);
-//}
+bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
+{
+   if (info.kind == okLocal) {
+      for (auto it = locals.start(); !it.Eof(); it++) {
+         if ((*it).offset == (int)info.param) {
+            if ((*it).class_ref == V_AUTO) {
+               (*it).class_ref = reference;
+               (*it).element_ref = element;
+
+               info.extraparam = reference;
+               info.element = element;
+
+               return true;
+            }
+         }
+      }
+   }
+
+   return Scope::resolveAutoType(info, reference, element);
+}
 
 // --- Compiler::ExprScope ---
 
@@ -2502,10 +2502,10 @@ mssg_t Compiler :: mapMessage(SNode node, ExprScope& scope, /*bool extensionCall
       //   if (name == lxNone)
 
       messageStr.copy(name.identifier());
+
+      current = current.nextNode();
    }
    else current = node.firstChild(lxObjectMask);
-
-   current = current.nextNode();
 
    int argCount = 1;
    // if message has generic argument list
@@ -4098,20 +4098,20 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
          case okOuterReadOnlyField:
             scope.raiseError(errReadOnlyField, node.parentNode());
             break;
-            //      case okParam:
-            //         if (targetRef == V_WRAPPER) {
-            //            //byRefAssigning = true;
-            //            targetRef = target.element;
-            //            size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
-            //            if (size != 0) {
-            //               operand = size;
-            //               operationType = lxCopying;
-            //               noBoxing = true;
-            //            }
-            //            else operationType = lxByRefAssigning;
-            //
-            //            break;
-            //         }
+         //case okParam:
+         //   if (targetRef == V_WRAPPER) {
+         //      //byRefAssigning = true;
+         //      targetRef = target.element;
+         //      size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
+         //      if (size != 0) {
+         //         operand = size;
+         //         operationType = lxCopying;
+         //         noBoxing = true;
+         //      }
+         //      else operationType = lxByRefAssigning;
+         //   
+         //      break;
+         //   }
          default:
             scope.raiseError(errInvalidOperation, node.firstChild(lxObjectMask));
             break;
@@ -4121,16 +4121,16 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
 
       ObjectInfo exprVal;
 
-      //   else if (targetRef == V_AUTO) {
-      //      // support auto attribute
-      //      exprVal = compileExpression(sourceNode, scope, 0, assignMode);
-      //
-      //      if (resolveAutoType(exprVal, target, scope)) {
-      //         targetRef = resolveObjectReference(scope, exprVal, false);
-      //         retVal.reference = targetRef;
-      //      }
-      //      else scope.raiseError(errInvalidOperation, node);
-      //   }
+      if (targetRef == V_AUTO) {
+         // support auto attribute
+         exprVal = compileExpression(writer, current, scope, 0, assignMode, nullptr);
+      
+         if (resolveAutoType(exprVal, target, scope)) {
+            targetRef = resolveObjectReference(scope, exprVal, false);
+            target.reference = targetRef;
+         }
+         else scope.raiseError(errInvalidOperation, node);
+      }
       //   else if (sourceNode == lxYieldContext) {
       //      int size = scope.getAttribute(sourceNode.argument, maYieldContextLength);
       //
@@ -4147,7 +4147,7 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
       //      }
       //      else operationType = lxIdle;
       //   }
-      /*else */exprVal = compileExpression(writer, current, scope, targetRef, assignMode, nullptr);
+      else exprVal = compileExpression(writer, current, scope, targetRef, assignMode, nullptr);
 
       if (!noBoxing && boxingRequired(exprVal)) {
          exprVal = boxArgumentInPlace(writer, node, exprVal, scope, condBoxingRequired(exprVal));
@@ -4613,15 +4613,15 @@ void Compiler :: compileClassConstantAssigning(ObjectInfo target, SNode node, Cl
    else scope.raiseError(errInvalidOperation, node);
 }
 
-//bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, ExprScope& scope)
-//{
-//   ref_t sourceRef = resolveObjectReference(scope, source, true);
-//
-//   if (!_logic->validateAutoType(*scope.moduleScope, sourceRef))
-//      return false;
-//
-//   return scope.resolveAutoType(target, sourceRef, source.element);
-//}
+bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, ExprScope& scope)
+{
+   ref_t sourceRef = resolveObjectReference(scope, source, true);
+
+   if (!_logic->validateAutoType(*scope.moduleScope, sourceRef))
+      return false;
+
+   return scope.resolveAutoType(target, sourceRef, source.element);
+}
 
 inline ref_t __fastcall resolveSubjectVar(SNode current)
 {
@@ -6412,6 +6412,11 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
       case okTempLocal:
          //         setParamTerminal(terminal, scope, object, mode, lxLocal);
          writer.newNode(lxLocal, object.param);
+         break;
+      case okParamField:
+         writer.newNode(lxFieldExpression, 0);
+         writer.appendNode(lxLocal, object.param);
+         writer.appendNode(lxField, 0);
          break;
       case okSelfParam:
          //         setParamTerminal(terminal, scope, object, mode, lxSelfLocal);

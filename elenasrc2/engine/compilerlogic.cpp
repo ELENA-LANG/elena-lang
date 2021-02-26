@@ -520,21 +520,21 @@ bool CompilerLogic :: doesClassExist(_ModuleScope& scope, ref_t targetRef)
    return defineClassInfo(scope, info, targetRef, true);
 }
 
-//bool CompilerLogic :: validateAutoType(_ModuleScope& scope, ref_t& reference)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, reference))
-//      return false;
-//
-//   while (isRole(info)) {
-//      reference = info.header.parentRef;
-//
-//      if (!defineClassInfo(scope, info, reference))
-//         return false;
-//   }
-//
-//   return true;
-//}
+bool CompilerLogic :: validateAutoType(_ModuleScope& scope, ref_t& reference)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, reference))
+      return false;
+
+   while (isRole(info)) {
+      reference = info.header.parentRef;
+
+      if (!defineClassInfo(scope, info, reference))
+         return false;
+   }
+
+   return true;
+}
 
 bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
 {

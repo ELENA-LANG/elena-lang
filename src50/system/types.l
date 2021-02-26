@@ -1,6 +1,6 @@
-///// Attribute categories:
-///// scope_accessors? modificator? visibility? scope_prefix? scope? type?
-//
+/// Attribute categories:
+/// scope_accessors? modificator? visibility? scope_prefix? scope? type?
+
 ///// modificator:
 //#define __ignore_duplicates 80006001h 
 
@@ -24,7 +24,7 @@
 /// scope_prefix:
 #define const       80002001h
 #define embeddable  80002002h
-//#define ref         80002003h
+#define ref         80002003h
 //#define __weak      80002004h
 //#define __loop      80002005h
 //#define preloaded   80002006h
@@ -57,7 +57,7 @@
 //#define import      80001018h
 //#define mixin       80001019h
 //////#8000101B = nonstructural;
-//#define auto        8000101Ch
+#define auto        8000101Ch
 ////#define attribute   8000101Fh
 //#define yield       80001020h
 //#define namespace   80001021h

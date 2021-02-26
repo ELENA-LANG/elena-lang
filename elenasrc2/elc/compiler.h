@@ -261,13 +261,13 @@ private:
          return parent->saveSourcePath(writer, path);
       }
 
-//      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
-//      {
-//         if (parent) {
-//            return parent->resolveAutoType(info, reference, element);
-//         }
-//         else return false;
-//      }
+      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
+      {
+         if (parent) {
+            return parent->resolveAutoType(info, reference, element);
+         }
+         else return false;
+      }
 //      virtual bool resolveAutoOutput(ref_t reference)
 //      {
 //         if (parent) {
@@ -727,7 +727,7 @@ private:
       ObjectInfo mapLocal(ident_t identifier);
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
-//      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
+      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -1062,7 +1062,7 @@ private:
    ref_t mapTemplateAttribute(SNode node, Scope& scope);
    void declareMethodAttributes(SNode member, MethodScope& scope);
 
-//   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, ExprScope& scope);
+   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, ExprScope& scope);
 
    mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
    ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, pos_t paramCount);

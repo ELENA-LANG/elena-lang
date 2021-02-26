@@ -8,42 +8,42 @@ public abstract class BaseVariable
     set abstract Value(o);
 }
 
-//[info:"a variable template"]
-//public sealed ref<T> : BaseVariable
-//{
-//    embeddable T value;
-//    
-//    [info:"initializes a variable"]
-//    constructor(T val)
-//    {
-//        value := val
-//    }
-//    
-//    [info:"returns the variable value"]
-//    T cast() = value;
-//    
-//    [info:"returns the variable value"]
-//    get T Value()
-//    {
-//         ^ value
-//    }
-//    
-//    [info:"set the variable value"]
-//    set Value(T val)
-//    {
-//        value := val
-//    }
-//
-//    [info:"Returns true if o is equal to the variable value; otherwise, false"]
-//    bool equal(o)
-//        => value;
-//
+[info:"a variable template"]
+public sealed ref<T> : BaseVariable
+{
+    embeddable T value;
+    
+    [info:"initializes a variable"]
+    constructor(T val)
+    {
+        value := val
+    }
+    
+    [info:"returns the variable value"]
+    T cast() = value;
+    
+    [info:"returns the variable value"]
+    get T Value()
+    {
+         ^ value
+    }
+    
+    [info:"set the variable value"]
+    set Value(T val)
+    {
+        value := val
+    }
+
+    [info:"Returns true if o is equal to the variable value; otherwise, false"]
+    bool equal(o)
+        => value;
+
 //    [info:"Returns the value string representation"]
 //    string toPrintable()
 //        => value;
-//        
-//    dispatch() => value;
-//}
+        
+    dispatch() => value;
+}
 
 // === basic data classes ===
 
