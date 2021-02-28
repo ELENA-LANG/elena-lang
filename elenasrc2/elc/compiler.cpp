@@ -3609,9 +3609,11 @@ void Compiler :: analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& s
 
 void Compiler :: unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprScope& scope)
 {
+   bool refMode = false;
    if (target.extraparam == -1/* && !primArray*/) {
       // HOTFIX : if it is byref variable unboxing
       writer.newNode(lxAssigning, 0);
+      refMode = true;
    }
    else writer.newNode(lxCopying, target.extraparam);
    //         if (size < 0 || primArray) {
@@ -3627,7 +3629,13 @@ void Compiler :: unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprSco
          auto key = it.key();
 
          writeTerminal(writer, ObjectInfo((ObjectKind)key.value1, key.value2), scope);
-         writeTerminal(writer, target, scope);
+         if (refMode) {
+            writer.newNode(lxFieldExpression);
+            writeTerminal(writer, target, scope);
+            writer.appendNode(lxField, 0);
+            writer.closeNode();
+         }
+         else writeTerminal(writer, target, scope);
       }
    }
 
