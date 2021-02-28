@@ -140,6 +140,7 @@ public:
 //      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okTempLocal,
+      okBoxableLocal,
       okParam,                        // param - parameter offset, extraparam = class reference
       okParamField,
       okMessage,                      // param - parameter offset
@@ -1159,7 +1160,7 @@ private:
 
    ObjectInfo compileCastingExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
-//   ObjectInfo compileReferenceExpression(SNode node, ExprScope& scope, EAttr mode);
+   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target, bool accumulateMode);
    ObjectInfo compileArrAssigning(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);

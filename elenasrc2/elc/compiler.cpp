@@ -46,10 +46,10 @@ constexpr auto HINT_ROOTEXPR        = EAttr::eaRootExpr;
 //constexpr auto HINT_INLINE_EXPR     = EAttr::eaInlineExpr;
 constexpr auto HINT_NOPRIMITIVES    = EAttr::eaNoPrimitives;
 constexpr auto HINT_DYNAMIC_OBJECT  = EAttr::eaDynamicObject;  // indicates that the structure MUST be boxed
-constexpr auto HINT_NOBOXING        = EAttr::eaNoBoxing;
+//constexpr auto HINT_NOBOXING        = EAttr::eaNoBoxing;
 //constexpr auto HINT_NOUNBOXING      = EAttr::eaNoUnboxing;
 constexpr auto HINT_MEMBER          = EAttr::eaMember;
-//constexpr auto HINT_REFOP           = EAttr::eaRef;
+constexpr auto HINT_REFOP           = EAttr::eaRef;
 constexpr auto HINT_PROP_MODE       = EAttr::eaPropExpr;
 constexpr auto HINT_METAFIELD       = EAttr::eaMetaField;
 //constexpr auto HINT_LOOP            = EAttr::eaLoop;
@@ -68,7 +68,7 @@ constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
 //constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
 constexpr auto HINT_CONSTEXPR       = EAttr::eaConstExpr;
 //constexpr auto HINT_CALLOP          = EAttr::eaCallOp;
-//constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
+constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
 constexpr auto HINT_CONVERSIONOP    = EAttr::eaConversionOp;
 constexpr auto HINT_TARGET          = EAttr::eaTarget;
 constexpr auto HINT_ASSIGNTARGET    = EAttr::eaAssignTarget;
@@ -718,7 +718,7 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param, EAttr mode)
       // if the parameter may be stack-allocated
       return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, (ref_t)-1);
    }
-   else if (param.class_ref == V_WRAPPER && !EAttrs::testany(mode, HINT_ASSIGNTARGET/* | HINT_REFEXPR*/)) {
+   else if (param.class_ref == V_WRAPPER && !EAttrs::testany(mode, HINT_ASSIGNTARGET | HINT_REFEXPR)) {
       return ObjectInfo(okParamField, prefix - param.offset, param.element_ref, 0, 0);
    }
    else return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, 0);
@@ -3311,8 +3311,8 @@ void Compiler :: appendCopying(SyntaxWriter& writer, /*SNode& copyingNode, */int
    /*else */if (size != 0) {
       writer.newNode(lxCopying, size);
    }
-//   // otherwise consider it as a byref variable
-//   else copyingNode.injectAndReplaceNode(lxByRefAssigning);
+   // otherwise consider it as a byref variable
+   else writer.newNode(lxByRefAssigning);
 
    writer.appendNode(lxTempLocal, tempLocal);
    writeTerminal(writer, target, scope);
@@ -3323,9 +3323,11 @@ void Compiler :: appendCopying(SyntaxWriter& writer, /*SNode& copyingNode, */int
 void Compiler :: appendCreating(SyntaxWriter& writer/*SNode& assigningNode, SNode objNode, ExprScope& scope, bool insertMode*/, int size,
    ref_t typeRef/*, bool variadic*/)
 {
-//   // NOTE that objNode may be no longer valid, so only cached values are used!
-//
-   writer.newNode(lxCreatingStruct, size);
+   if (size == 0) {
+      // HOTFIX : recognize byref boxing
+      writer.newNode(lxCreatingClass, 1);
+   }
+   else writer.newNode(lxCreatingStruct, size);
 
 //   SNode newNode = insertMode ?
 //      assigningNode.insertNode(lxCreatingStruct, size) : assigningNode.appendNode(lxCreatingStruct, size);
@@ -3339,10 +3341,6 @@ void Compiler :: appendCreating(SyntaxWriter& writer/*SNode& assigningNode, SNod
 //      newNode.set(lxNewArrOp, typeRef);
 //      newNode.appendNode(lxSize, 0);
 //      newNode.appendNode(lxLocalAddress, tempSizeLocal);
-//   }
-//   else if (!size) {
-//      // HOTFIX : recognize byref boxing
-//      newNode.set(lxCreatingClass, 1);
 //   }
    writer.appendNode(lxType, typeRef);
 
@@ -3450,6 +3448,8 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
             writer.closeNode();
 
          boxedArg = ObjectInfo(okTempLocal, tempLocal, targetRef, 0, variable ? size : 0);
+         if (source.kind == okBoxableLocal && variable)
+            boxedArg.extraparam = -1;
 //
 //         if (size < 0 || primArray) {
 //            copyingNode.appendNode(lxType, typeRef);
@@ -3609,7 +3609,11 @@ void Compiler :: analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& s
 
 void Compiler :: unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprScope& scope)
 {
-   writer.newNode(lxCopying, target.extraparam);
+   if (target.extraparam == -1/* && !primArray*/) {
+      // HOTFIX : if it is byref variable unboxing
+      writer.newNode(lxAssigning, 0);
+   }
+   else writer.newNode(lxCopying, target.extraparam);
    //         if (size < 0 || primArray) {
    //            unboxing.set(lxCloning, 0);
    //         }
@@ -3629,8 +3633,6 @@ void Compiler :: unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprSco
 
    //         SyntaxTree::copyNode(objNode, unboxing.appendNode(objNode.type, objNode.argument));
    //         if (size == 0 && !primArray) {
-   //            // HOTFIX : if it is byref variable unboxing
-   //            unboxing.set(lxAssigning, 0);
    //
    //            SNode unboxingByRef = unboxing.appendNode(lxFieldExpression);
    //            unboxingByRef.appendNode(tempType, tempLocal);
@@ -3807,10 +3809,18 @@ ObjectInfo Compiler :: convertObject(SyntaxWriter& writer, SNode node, ExprScope
             return source;
          }
          else if (result == CovnersionResult::crBoxingRequired) {
-            if (!EAttrs::test(mode, HINT_NOBOXING)) {
-               return boxArgumentInPlace(writer, node, source, targetRef, scope, false);
+            switch (source.kind) {
+               case okLocalAddress:
+               case okTempLocalAddress:
+                  source.reference = targetRef;
+                  break;
+               case okLocal:
+                  source.kind = okBoxableLocal;
+                  source.reference = targetRef;
+                  break;
+               default:
+                  return boxArgumentInPlace(writer, node, source, targetRef, scope, false);
             }
-            else return source;            
          }
          else if (result == CovnersionResult::crConverted){
             //if (node.compare(lxDirectCalling, lxSDirectCalling)) {
@@ -4010,6 +4020,7 @@ bool Compiler :: boxingRequired(ObjectInfo& info)
       case okLocalAddress:
       case okTempLocalAddress:
       case okFieldAddress:
+      case okBoxableLocal:
          return true;
       case okParam:
       case okSelfParam:
@@ -4076,7 +4087,7 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
                operand = size;
             }
             else scope.raiseError(errInvalidOperation, current);
-            assignMode = assignMode | HINT_NOBOXING;
+            //assignMode = assignMode | HINT_NOBOXING;
             break;
          }
          case okOuter:
@@ -4785,20 +4796,6 @@ void Compiler :: compileCompileTimeAssigning(SNode node, ClassScope& classScope)
 //      case okOuterReadOnlyField:
 //         scope.raiseError(errReadOnlyField, node.parentNode());
 //         break;
-//      case okParam:
-//         if (targetRef == V_WRAPPER) {
-//            //byRefAssigning = true;
-//            targetRef = target.element;
-//            size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
-//            if (size != 0) {
-//               operand = size;
-//               operationType = lxCopying;
-//               noBoxing = true;
-//            }
-//            else operationType = lxByRefAssigning;
-//
-//            break;
-//         }
 //      default:
 //         scope.raiseError(errInvalidOperation, node.firstChild(lxObjectMask));
 //         break;
@@ -5611,40 +5608,45 @@ ref_t Compiler :: resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef,
    return moduleScope->generateTemplate(templateRef, parameters, scope.ns, declarationMode, nullptr);
 }
 
-//ObjectInfo Compiler :: compileReferenceExpression(SNode node, ExprScope& scope, EAttr mode)
-//{
-//   ObjectInfo objectInfo;
+ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode)
+{
+   bool paramMode = EAttrs::test(mode, HINT_PARAMETER);
+
+   ObjectInfo retVal;
+   ObjectInfo objectInfo = compileObject(writer, node, scope, HINT_PARAMETER | HINT_REFEXPR, nullptr);
 //   if (node == lxTempLocal) {
 //      // HOTFIX : to support return value dispatching
 //      objectInfo.kind = okLocal;
 //      objectInfo.param = node.argument;
 //      objectInfo.reference = node.findChild(lxType).argument;
 //   }
-//   else objectInfo = mapTerminal(node, scope, mode | HINT_REFEXPR);
-//
-//   ref_t operandRef = resolveObjectReference(scope, objectInfo, true, false);
-//   if (!operandRef)
-//      operandRef = scope.moduleScope->superReference;
-//
-//   ref_t targetRef = 0;
-//   if (objectInfo.reference == V_WRAPPER) {
-//      // if the reference is passed further - do nothing
-//      targetRef = operandRef;
-//   }
-//   else {
-//      // generate an reference class
-//      targetRef = resolveReferenceTemplate(scope, operandRef, false);
-//
-//      SNode opNode = node.parentNode();
-//      ObjectInfo retVal = convertObject(opNode, scope, targetRef, objectInfo, mode);
-//
-//      if (retVal.kind == okUnknown)
-//         scope.raiseError(errInvalidOperation, node);
-//   }
-//
-//   return ObjectInfo(okObject, 0, targetRef);
-//}
-//
+
+   ref_t operandRef = resolveObjectReference(scope, objectInfo, true, false);
+   if (!operandRef)
+      operandRef = scope.moduleScope->superReference;
+
+   ref_t targetRef = 0;
+   if (objectInfo.reference == V_WRAPPER) {
+      // if the reference is passed further - do nothing
+      retVal = objectInfo;
+   }
+   else {
+      // generate an reference class
+      targetRef = resolveReferenceTemplate(scope, operandRef, false);
+
+      retVal = convertObject(writer, node, scope, targetRef, objectInfo, mode);
+
+      if (retVal.kind == okUnknown)
+         scope.raiseError(errInvalidOperation, node);
+   }
+
+   if (!paramMode) {
+      writeTerminal(writer, retVal, scope);
+   }
+
+   return retVal;
+}
+
 //ObjectInfo Compiler :: compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode)
 //{
 //   ObjectInfo objectInfo = mapTerminal(node, scope, mode);
@@ -6378,7 +6380,6 @@ ObjectInfo Compiler :: mapTerminal(SNode node, ExprScope& scope, EAttr mode)
    /*else */if (object.kind == okUnknown) {
       scope.raiseError(errUnknownObject, node);
    }
-//   else recognizeTerminal(terminal, object, scope, mode);
 
    return object;
 }
@@ -6410,7 +6411,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
       case okParam:
       case okLocal:
       case okTempLocal:
-         //         setParamTerminal(terminal, scope, object, mode, lxLocal);
+      case okBoxableLocal:
          writer.newNode(lxLocal, object.param);
          break;
       case okParamField:
@@ -6574,9 +6575,6 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode& node, ExprScop
 //   ////
 //   ////      recognizeTerminal(current, result, scope, mode);
 //   ////   }
-//   ////   else if (mode.testAndExclude(HINT_REFOP)) {
-//   ////      result = compileReferenceExpression(current, scope, mode);
-//   ////   }
 //   ////   else if (mode.testAndExclude(HINT_PARAMSOP)) {
 //   ////	   result = compileVariadicUnboxing(current, scope, mode);
 //   ////   }
@@ -6649,7 +6647,11 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode& node, ExprScop
    ObjectInfo retVal;
    if (node.compare(lxAttribute, lxType, lxArrayType, lxBookmarkReference)) {
       mode = mode | declareExpressionAttributes(writer, node, scope, mode);
-      //
+      
+      if (EAttrs::test(mode, HINT_REFOP)) {
+         return compileReferenceExpression(writer, node, scope, EAttrs::exclude(mode, HINT_REFOP));
+      }
+
       //      //      if (targetMode.testAndExclude(HINT_INLINEARGMODE)) {
       //      //         noPrimMode = true;
       //      //         inlineArgMode = true;
