@@ -742,7 +742,7 @@ public sealed const struct String : BaseValue
 //    {
 //        intern system'core_routines'__literal.copy(self, index, size, buffer)
 //    }
-//    
+    
 //    /// Converts to UTF-16 literal
 //    wide cast()
 //    {
@@ -754,7 +754,7 @@ public sealed const struct String : BaseValue
 //        if (l < 256)
 //        {
 //            intern system'core_routines'__wideconvertor.convert(self, buffer, ref m);
-//
+
 //            ^ WideString.fromShortArray(0, m, buffer)
 //        };
 //
@@ -777,7 +777,7 @@ public sealed const struct String : BaseValue
 //        
 //        ^ retVal
 //    }
-//     
+     
 //    Enumerable<char> cast() = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
 //
 //    string toPrintable() = self;
@@ -902,17 +902,17 @@ public sealed const struct String : BaseValue
 //        ^ subs
 //    }
 
-//    int Length
-//    {
-//        /// Reads the literal length into an output parameter
-//        get()
-//        {
-//            intern system'core_routines'__literal.readLengthTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
-//
+    int Length
+    {
+        /// Reads the literal length into an output parameter
+        get()
+        {
+            intern system'core_routines'__literal.readLengthTo(self, ref int retVal);
+            
+            ^ retVal
+        }
+    }
+
 //    /// Saves the literal into a UTF-32 character array
 //    save(int index, char[] array, ref int retVal)
 //        => intern system'core_routines'__literal;

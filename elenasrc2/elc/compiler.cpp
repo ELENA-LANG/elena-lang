@@ -52,7 +52,7 @@ constexpr auto HINT_MEMBER          = EAttr::eaMember;
 constexpr auto HINT_REFOP           = EAttr::eaRef;
 constexpr auto HINT_PROP_MODE       = EAttr::eaPropExpr;
 constexpr auto HINT_METAFIELD       = EAttr::eaMetaField;
-//constexpr auto HINT_LOOP            = EAttr::eaLoop;
+constexpr auto HINT_LOOP            = EAttr::eaLoop;
 constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 //constexpr auto HINT_FORWARD         = EAttr::eaForward;
 //constexpr auto HINT_PARAMSOP		   = EAttr::eaParams;
@@ -2006,20 +2006,20 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
 //      //scope.level = subScope.level;
 //   }
 //}
-//
-//size_t Compiler :: resolveArraySize(SNode node, Scope& scope)
-//{
-//   if (isSingleStatement(node)) {
-//      SNode terminal = node.findSubNodeMask(lxTerminalMask);
-//      if (terminal.type == lxInteger) {
-//         return terminal.identifier().toInt();
-//      }
-//      else scope.raiseError(errInvalidSyntax, node);
-//   }
-//   else scope.raiseError(errInvalidSyntax, node);
-//
-//   return 0; // !! dummy returning statement, the code never reaches this point
-//}
+
+size_t Compiler :: resolveArraySize(SNode node, Scope& scope)
+{
+   if (isSingleStatement(node)) {
+      SNode terminal = node.findSubNodeMask(lxTerminalMask);
+      if (terminal.type == lxInteger) {
+         return terminal.identifier().toInt();
+      }
+      else scope.raiseError(errInvalidSyntax, node);
+   }
+   else scope.raiseError(errInvalidSyntax, node);
+
+   return 0; // !! dummy returning statement, the code never reaches this point
+}
 
 LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, 
    bool binaryArray, int& variableArg, ident_t& className)
@@ -2084,30 +2084,27 @@ inline void copyIdentInfo(SNode target, SNode terminal, ident_t identifier)
 
 void Compiler :: declareVariable(SyntaxWriter& writer, SNode terminal, ExprScope& scope, ref_t typeRef, bool canBeIdle)
 {
+   int variableArg = 0;
+   int size = 0;
+
+   // COMPILER MAGIC : if it is a fixed-sized array
+   if (terminal == lxArrayExpression) {
+      //      if (size && opNode.nextNode() != lxNone)
+      //         scope.raiseError(errInvalidSyntax, terminal);
+
+      SNode sizeExprNode = terminal.firstChild(lxObjectMask);
+
+      size = resolveArraySize(sizeExprNode, scope);
+
+      terminal = terminal.firstChild(lxTerminalMask);
+   }
+
    CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
 
    IdentifierString identifier(terminal.identifier());
    ident_t className = NULL;
    LexicalType variableType = lxVariable;
-   int variableArg = 0;
-   int size = 0;
 
-//   // COMPILER MAGIC : if it is a fixed-sized array
-//   SNode opNode = terminal.nextNode();
-//   if (opNode == lxArrOperator/* && opNode.argument == REFER_OPERATOR_ID*/) {
-//      if (size && opNode.nextNode() != lxNone)
-//         scope.raiseError(errInvalidSyntax, terminal);
-//
-//      SNode sizeExprNode = opNode.nextNode();
-//
-//      size = resolveArraySize(sizeExprNode, scope);
-//
-//      // HOTFIX : remove the size attribute
-//      opNode = lxIdle;
-//      sizeExprNode = lxIdle;
-//
-//      opNode = sizeExprNode.nextNode();
-//   }
    ObjectInfo variable;
    variable.reference = typeRef;
 
@@ -2659,22 +2656,24 @@ ref_t Compiler :: mapExtension(Scope& scope, mssg_t& messageRef, ref_t implicitS
    return 0;
 }
 
-void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/)
+void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t ifReference, bool loopMode/*, bool switchMode*/)
 {
-//   if (loopMode) {
-//      SNode thenCode = node.findSubNode(lxCode);
-//      if (thenCode == lxNone) {
-//         //HOTFIX : inline branching operator
-//         node.injectAndReplaceNode(lxElse, ifReference);
-//
-//         thenCode = node.firstChild();
-//      }
-//      else node.set(lxElse, ifReference);
-//
-//      bool dummy = false;
-//      compileSubCode(thenCode, scope, true, dummy);
-//   }
-//   else {
+   if (loopMode) {
+      SNode thenCode = node.findSubNode(lxCode);
+      if (thenCode == lxNone) {
+         //HOTFIX : inline branching operator
+         writer.newNode(lxIf, ifReference);
+
+         thenCode = node.firstChild();
+      }
+      else writer.newNode(lxElse, ifReference);
+
+      bool dummy = false;
+      compileSubCode(writer, thenCode, scope, true, dummy);
+
+      writer.closeNode();
+   }
+   else {
       SNode thenCode = node.findSubNode(lxCode);
       if (thenCode == lxNone) {
          //HOTFIX : inline branching operator
@@ -2712,7 +2711,7 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprSco
             writer.closeNode();
          }
       //}
-//   }
+   }
 }
 
 ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, pos_t argCount)
@@ -2781,15 +2780,15 @@ inline EAttr defineBranchingOperandMode(SNode node)
 void Compiler :: compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id,
    ObjectInfo loperand, ObjectInfo& retVal, EAttr operationMode, ArgumentsInfo* preservedArgs)
 {
-//   bool loopMode = EAttrs::test(mode, HINT_LOOP);
+   bool loopMode = EAttrs::test(mode, HINT_LOOP);
 //   bool switchMode = EAttrs::test(mode, HINT_SWITCH);
 
    // HOTFIX : in loop expression, else node is used to be similar with branching code
    // because of optimization rules
    ref_t original_id = operator_id;
-   //if (loopMode) {
-   //   operator_id = operator_id == IF_OPERATOR_ID ? IFNOT_OPERATOR_ID : IF_OPERATOR_ID;
-   //}
+   if (loopMode) {
+      operator_id = operator_id == IF_OPERATOR_ID ? IFNOT_OPERATOR_ID : IF_OPERATOR_ID;
+   }
 
    ref_t ifReference = 0;
    ref_t resolved_operator_id = operator_id;
@@ -2798,13 +2797,9 @@ void Compiler :: compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope&
       resolveObjectReference(scope, loperand, false), ifReference))
    {
       // we are lucky : we can implement branching directly
-      writer.newNode(/*loopMode ? lxLooping : */lxBranching, /*switchMode ? -1 : */0);
+      writer.CurrentNode().set(loopMode ? lxLooping : lxBranching, /*switchMode ? -1 : */0);
 
-      writeTerminal(writer, loperand, scope);
-
-      compileBranchingNodes(writer, node, scope, ifReference/*, loopMode, switchMode*/);
-
-      writer.closeNode();
+      compileBranchingNodes(writer, node, scope, ifReference, loopMode/*, switchMode*/);
 
 //      if (loopMode) {
 //         // check if the loop has root boxing operations
@@ -2833,13 +2828,15 @@ void Compiler :: compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope&
 //      }
    }
    else {
+      // bad luck : we have to create a closure
       operator_id = original_id;
 
-      // bad luck : we have to create a closure
       mssg_t message = resolveOperatorMessage(scope, operator_id, 2);
 
-      ArgumentsInfo arguments;
+      if (loperand.kind == okObject)
+         loperand = saveToTempLocal(writer, scope, loperand);
 
+      ArgumentsInfo arguments;
       ObjectInfo roperand = compileClosure(writer, node, scope, defineBranchingOperandMode(node) | HINT_PARAMETER,
          preservedArgs);
       arguments.add(roperand);
@@ -2872,11 +2869,15 @@ ObjectInfo Compiler :: compileBranchingOperation(SyntaxWriter& writer, SNode nod
 
    SNode lnode = node.firstChild();
 
-   EAttrs objMode(mode | HINT_TARGET);
+   writer.newNode(lxExpression);
+
+   EAttrs objMode(mode, HINT_LOOP);
    ObjectInfo loperand = compileObject(writer, lnode, scope, objMode, preservedArgs);
 
    compileBranchingOp(writer, lnode.nextNode(lxObjectMask), scope, mode, operator_id, loperand, 
       retVal, mode, preservedArgs);
+
+   writer.closeNode();
 
    return retVal;
 }
@@ -3980,10 +3981,10 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Exp
       paramMode = paramMode | HINT_SILENT;
 
 //   bool externalMode = false;
-//   if (EAttrs::test(mode, HINT_EXTERNALOP)) {
+   if (EAttrs::test(mode, HINT_EXTERNALOP)) {
 //      externalMode = true;
-//   }
-//   else paramMode = paramMode | HINT_NOPRIMITIVES;
+   }
+   else paramMode = paramMode | HINT_NOPRIMITIVES;
 
    SNode current = node;
 
@@ -4457,6 +4458,7 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
          if (resolvedMessage)
             scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
       }
+      else paramsMode = paramsMode | HINT_EXTERNALOP;
    }
 
    //ArgumentsInfo unboxingArgs;
@@ -5757,18 +5759,6 @@ ObjectInfo Compiler :: compileCastingExpression(SyntaxWriter& writer, SNode node
 //         objectInfo = compileCollection(current, scope, objectInfo, mode);
 //         break;
 //      case lxMessage:
-//         if (EAttrs::test(mode, HINT_LOOP)) {
-//            EAttrs subMode(mode, HINT_LOOP);
-//
-//            objectInfo = compileMessage(current, scope, expectedRef, objectInfo, subMode);
-//
-//            SNode parentNode = current.parentNode().parentNode();
-//            if (parentNode == lxSeqExpression) {
-//               // HOTFIX : to correctly unbox the arguments for every loop cycle
-//               parentNode.injectAndReplaceNode(lxLooping);
-//            }
-//            else current.parentNode().injectAndReplaceNode(lxLooping);
-//         }
 //         else if (propMode) {
 //            objectInfo = compilePropAssigning(current, scope, objectInfo);
 //         }
@@ -6654,6 +6644,10 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode& node, ExprScop
          return compileReferenceExpression(writer, node, scope, EAttrs::exclude(mode, HINT_REFOP));
       }
 
+      if (EAttrs::test(mode, HINT_LOOP))
+         // NOTE : ignore loop attribute for the object
+         mode = EAttrs::exclude(mode, HINT_LOOP);
+
       //      //      if (targetMode.testAndExclude(HINT_INLINEARGMODE)) {
       //      //         noPrimMode = true;
       //      //         inlineArgMode = true;
@@ -6680,6 +6674,34 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode& node, ExprScop
    else return compileExpression(writer, node, scope, 0, mode, preservedArgs);
 }
 
+bool Compiler :: isLoopExpression(SNode node)
+{
+   if (node.compare(lxExpression, lxMessageExpression, lxOperationExpression))
+   {
+      return isLoopExpression(node.firstChild());
+   }
+   else return node == lxAttribute && node.argument == V_LOOP;
+}
+
+bool Compiler :: isVariableDeclaration(SNode node, ExprScope& scope, ref_t& typeRef)
+{
+   SNode current = node.firstChild();
+   if (current == lxAttribute) {
+      if (current.argument != V_VARIABLE)
+         return false;
+
+      current = current.nextNode();
+   }
+
+   if (current.compare(lxType, lxArrayType) && test(current.nextNode(), lxTerminalMask)) {
+      typeRef = resolveTypeAttribute(current, scope, false, false);
+
+      return true;
+   }
+   
+   return false;
+}
+
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, 
    EAttr mode, ArgumentsInfo* preservedArgs)
 {
@@ -6695,6 +6717,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
    if (rootMode) {
       writer.newNode(lxSeqExpression);
       mode = EAttrs::exclude(mode, HINT_ROOTEXPR);
+
+      if (isLoopExpression(node.firstChild()))
+         mode = mode | HINT_LOOP;
    }
       
    switch (node.type) {
@@ -6702,7 +6727,14 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
          retVal = compileExpression(writer, node.firstChild(), scope, targetRef, mode, preservedArgs);
          break;
       case lxMessageExpression:
-         retVal = compileMessageExpression(writer, node, scope, targetRef, mode);
+         if (EAttrs::test(mode, HINT_LOOP)) {
+            writer.newNode(lxLooping);
+            compileMessageExpression(writer, node, scope, targetRef, EAttrs::exclude(mode, HINT_PARAMETER | HINT_LOOP));
+            writer.closeNode();
+
+            retVal = ObjectInfo(okObject);
+         }
+         else retVal = compileMessageExpression(writer, node, scope, targetRef, mode);
          break;
       case lxPropertyExpression:
          retVal = compileMessageExpression(writer, node, scope, targetRef, mode | HINT_PROP_MODE);
@@ -6717,8 +6749,17 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
          retVal = compileAssigningExpression(writer, node, scope, mode);
          break;
       case lxArrayExpression:
+      {
+         ref_t typeRef = 0;
+         // HOTFIX : recognize fixed-size array declaration
+         if (isVariableDeclaration(node, scope, typeRef)) {
+            declareVariable(writer, node, scope, typeRef, true);
+
+            return compileObject(writer, node.firstChild(lxTerminalMask), scope, mode, preservedArgs);
+         }
          return compileOperation(writer, node, scope, mode, REFER_OPERATOR_ID);
          break;
+      }
       case lxNestedExpression:
          retVal = compileClosure(writer, node, scope, mode/* & HINT_CLOSURE_MASK*/, preservedArgs);
          break;

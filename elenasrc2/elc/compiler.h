@@ -1074,12 +1074,15 @@ private:
       IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
       bool withoutWeakMessages, bool noSignature);
 
-//   size_t resolveArraySize(SNode node, Scope& scope);
+   size_t resolveArraySize(SNode node, Scope& scope);
 
    ref_t resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode, bool allowRole);
    ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
 
 //   void compileSwitch(SNode node, ExprScope& scope);
+
+   bool isVariableDeclaration(SNode node, ExprScope& scope, ref_t& typeReg);
+   bool __fastcall isLoopExpression(SNode node);
 
    LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray, 
                                     int& variableArg, ident_t& className);
@@ -1115,7 +1118,8 @@ private:
    ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileUnaryExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, ExprScope& scope);
-   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, ExprScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/);
+   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, ExprScope& scope, ref_t ifReference, 
+      bool loopMode/*, bool switchMode*/);
    void compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id,
       ObjectInfo loperand, ObjectInfo& retVal, EAttr operationMode, ArgumentsInfo* preservedArgs);
    ObjectInfo compileBranchingOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, 

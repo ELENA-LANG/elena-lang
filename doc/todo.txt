@@ -3,19 +3,16 @@ In development:
 ------         
 
   [development]
-    * internal routines
-
     * console
     * program exception handling
     * system tests : 86, 86-64
 
     * globals
 
+    * boxing fixed-sized array
     * lambda closures
-    * loops
     * multi ret
     * yield metods
-    * local fixed arrays
     * extensions
     * template based extensions
 
@@ -57,6 +54,7 @@ In development:
     + loading call argument in reverse order, so no need to load self once again
     + optimization : embeddable return - extra variable
     + optimization : dispatching to the primitive field (e.g. ref<byte>)
+    + optimization : branching - extra temporal variable
 
     * do not save the external operation if the result is not assigned or passed as an argument
     * optimization - duplicate assigning : external call, message call

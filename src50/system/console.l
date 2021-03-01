@@ -16,6 +16,7 @@
 public interface IConsoleWriter
 {
     abstract write(wide s);
+    abstract write(string s);
     
     abstract refresh();
 }
@@ -46,16 +47,16 @@ sealed class Console
 //    {
 //        self.write(o.toPrintable())
 //    }
-//
-//    /// Writes the specified literal value to the standard output stream.
-//    write(string s)
-//    {
-//        writer.write(s);
-//        
-//        writer.refresh();
-//    }
 
-    /// Writes the specified literal value to the standard output stream.
+    [info:"Writes the specified literal value to the standard output stream."]
+    write(string s)
+    {
+        writer.write(s);
+        
+        writer.refresh();
+    }
+
+    [info:"Writes the specified literal value to the standard output stream."]
     write(wide s)
     {
         writer.write(s);

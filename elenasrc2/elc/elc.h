@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x021E
+#define ELC_REVISION_NUMBER         0x021F
 
 // --- ELC default file names ---
 #ifdef _WINDOW

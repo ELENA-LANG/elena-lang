@@ -127,14 +127,14 @@
 //{
 //    cast bool(expr) ? else_block : ifnot_block
 //}
-//
-//// --- while statement ---
-//
-//#declare while<expr>(loop_block)
-//{
-//    __loop: cast bool(expr) ? loop_block
-//}    
-//
+
+// --- while statement ---
+
+#declare while<expr>(loop_block)
+{
+    __loop cast bool(expr) ? loop_block
+}    
+
 //// --- until statement ---
 //
 //#declare until<expr>(loop_block)

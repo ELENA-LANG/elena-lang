@@ -135,7 +135,7 @@ class ByteCodeWriter
 //   void includeFrame(CommandTape& tape, bool withThreadSafeNop);
 ////   void declareVariable(CommandTape& tape, int value);
    void allocateStack(CommandTape& tape, int count);
-//   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
+   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
    void declareThenBlock(CommandTape& tape);
    void declareThenElseBlock(CommandTape& tape);
    void declareElseBlock(CommandTape& tape);
@@ -217,9 +217,8 @@ class ByteCodeWriter
    void endSafeCatch(CommandTape& tape);
    void endAlt(CommandTape& tape);
    void endThenBlock(CommandTape& tape);
-//   void endLoop(CommandTape& tape);
-//   void endLoop(CommandTape& tape, ref_t comparingRef);
-//   //void endExternalBlock(CommandTape& tape, bool idle = false);
+   void endLoop(CommandTape& tape);
+   void endLoop(CommandTape& tape, ref_t comparingRef);
    void exitMethod(CommandTape& tape, int reserved, bool withFrame = true);
    void endMethod(CommandTape& tape, int reserved, bool withFrame = true);
    void endIdleMethod(CommandTape& tape);
@@ -303,7 +302,7 @@ class ByteCodeWriter
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateTrying(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateAlt(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateLooping(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateLooping(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateBranching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);

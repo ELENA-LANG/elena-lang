@@ -488,7 +488,7 @@ public:
       eaRef                = 0x00000008000,
       eaPropExpr           = 0x00000010000,
       eaMetaField          = 0x00000020000,
-//      eaLoop               = 0x00000040000,
+      eaLoop               = 0x00000040000,
       eaExtern             = 0x00000080000,
 //      eaForward            = 0x00000100000,
 //      eaParams             = 0x00000200000,

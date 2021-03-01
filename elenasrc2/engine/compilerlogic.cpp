@@ -15,19 +15,19 @@ using namespace _ELENA_;
 
 typedef ClassInfo::Attribute Attribute;
 
-//inline bool isPrimitiveArrayRef(ref_t classRef)
-//{
-//   switch (classRef) {
-//      case V_OBJARRAY:
-//      case V_INT32ARRAY:
-//      case V_INT16ARRAY:
-//      case V_INT8ARRAY:
-//      case V_BINARYARRAY:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
+inline bool __fastcall isPrimitiveArrayRef(ref_t classRef)
+{
+   switch (classRef) {
+      case V_OBJARRAY:
+      case V_INT32ARRAY:
+      case V_INT16ARRAY:
+      case V_INT8ARRAY:
+      case V_BINARYARRAY:
+         return true;
+      default:
+         return false;
+   }
+}
 
 inline bool __fastcall IsInvertedOperator(int& operator_id)
 {
@@ -1204,23 +1204,19 @@ CovnersionResult CompilerLogic :: injectImplicitConversion(_CompileScope& scope,
       }
    }
 
-//   // COMPILE MAGIC : trying to typecast primitive array
-//   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole)) {
-////      ref_t boxingArg = isEmbeddable(scope, elementRef) ? - 1 : 0;
-//
-//      if (isCompatible(*scope.moduleScope, info.fieldTypes.get(-1).value2, elementRef, true)) {
-//         int size = info.size;
-//         // if we boxing fixed-sized array field into an array
-//         if (size < 0 && fixedSize > 0)
-//            size = fixedSize;
-//
-//         compiler.injectBoxingExpr(node, !isReadonly(info) && !noUnboxing,
-//            test(info.header.flags, elStructureRole) ? size : 0,
-//            targetRef, true);
-//
-//         return true;
-//      }
-//   }
+   // COMPILE MAGIC : trying to typecast primitive array
+   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole)) {
+//      ref_t boxingArg = isEmbeddable(scope, elementRef) ? - 1 : 0;
+
+      if (isCompatible(*scope.moduleScope, info.fieldTypes.get(-1).value2, elementRef, true)) {
+         //int size = info.size;
+         //// if we boxing fixed-sized array field into an array
+         //if (size < 0 && fixedSize > 0)
+         //   size = fixedSize;
+
+         return CovnersionResult::crBoxingRequired;
+      }
+   }
 
    // HOTFIX : recognize primitive data except of a constant literal
    if (isPrimitiveRef(sourceRef)/* && sourceRef != V_STRCONSTANT*/)
@@ -1776,9 +1772,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
      case V_INTERN:
          attributes.include(EAttr::eaIntern);
          return true;
-//      case V_LOOP:
-//         attributes.include(EAttr::eaLoop);
-//         return true;
+      case V_LOOP:
+         attributes.include(EAttr::eaLoop);
+         return true;
       case V_MEMBER:
          attributes.include(EAttr::eaMember);
          return true;
