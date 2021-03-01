@@ -193,9 +193,9 @@ public:
    virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
       bool& disptacherNotAllowed, bool& emptyStructure);
 
-//   virtual mssg_t resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
-//      mssg_t message, ref_t expectedRef);
-//
+   virtual mssg_t resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
+      mssg_t message, ref_t expectedRef);
+
 //   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne);
 //   virtual bool recognizeEmbeddableMessageCall(SNode node, mssg_t& messageRef);
 //

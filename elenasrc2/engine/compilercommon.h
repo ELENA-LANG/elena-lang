@@ -721,9 +721,9 @@ public:
 
    virtual mssg_t resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, mssg_t message) = 0;
 
-//   virtual mssg_t resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
-//      mssg_t message, ref_t expectedRef) = 0 ;
-//
+   virtual mssg_t resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
+      mssg_t message, ref_t expectedRef) = 0 ;
+
 //   // optimization
 //   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
 //   virtual bool recognizeEmbeddableMessageCall(SNode node, mssg_t& messageRef) = 0;

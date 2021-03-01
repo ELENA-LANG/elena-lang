@@ -270,8 +270,9 @@ class ByteCodeWriter
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode);
    void loadObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
    void pushIntConstant(CommandTape& tape, int value);
-//   void pushIntValue(CommandTape& tape);
-//
+   void loadIntValue(CommandTape& tape);
+   //   void pushIntValue(CommandTape& tape);
+
 //   void saveIndexToFieldExpression(CommandTape& tape, SNode dstObj, SNode source, FlowScope& scope);
 //   void saveIndexToObject(CommandTape& tape, SNode dstObj, SNode source, FlowScope& scope, int size);
    void saveFieldExpression(CommandTape& tape, SNode dstObj, SNode source, int size, FlowScope& scope);
@@ -296,7 +297,7 @@ class ByteCodeWriter
 ////   void generateYieldStop(CommandTape& tape, SyntaxTree::Node node);
 ////   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void generateExternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateCall(CommandTape& tape, SyntaxTree::Node node);
 
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);

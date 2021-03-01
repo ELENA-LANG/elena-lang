@@ -583,7 +583,7 @@ private:
 ////      bool         subCodeMode;       
       bool         abstractMethod;
 //      bool         yieldMethod;
-//      bool         embeddableRetMode;
+      bool         embeddableRetMode;
       bool         targetSelfMode;        // used for script generated methods - self refers to __target
       bool         constMode;
 
@@ -766,12 +766,12 @@ private:
          return scope ? scope->info.header.flags : 0;
       }
 
-//      bool withEmbeddableRet()
-//      {
-//         MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
-//
-//         return scope ? scope->embeddableRetMode : false;
-//      }
+      bool withEmbeddableRet()
+      {
+         MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
+
+         return scope ? scope->embeddableRetMode : false;
+      }
 
       void syncStack(MethodScope* methodScope)
       {
@@ -977,7 +977,7 @@ private:
    bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool& isProtectedDefConst);
    bool __fastcall isSelfCall(ObjectInfo info);
 
-//   bool isMethodEmbeddable(MethodScope& scope, SNode node);
+   bool __fastcall isMethodEmbeddable(MethodScope& scope);
 
    ref_t retrieveImplicitIdentifier(NamespaceScope& scope, ident_t identifier, bool referenceOne, bool innermost);
 
@@ -1123,17 +1123,18 @@ private:
 
    ref_t resolveStrongArgument(ExprScope& scope, ArgumentsInfo* arguments);
 
+   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
    ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
 
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, ref_t expectedSignRef,
       /*bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments, ArgumentsInfo* presavedArgs);
 
-   ObjectInfo compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, /*ref_t exptectedRef, */EAttr mode);
-   ObjectInfo compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
+   ObjectInfo compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, ref_t exptectedRef, EAttr mode);
+   ObjectInfo compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t expectedRef, EAttr mode);
    ObjectInfo compileMessageOperation(SyntaxWriter& writer, SNode current, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
-      ref_t expectedSignRef, EAttr mode, ArgumentsInfo* presavedArgs);
+      ref_t expectedSignRef, EAttr mode, ArgumentsInfo* presavedArgs, ref_t expectedRef);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
-      ArgumentsInfo* arguments, EAttr mode, int stackSafeAttr/*, bool& embeddableRet*/, ArgumentsInfo* presavedArgs);
+      ArgumentsInfo* arguments, EAttr mode, int stackSafeAttr, ref_t expectedRef, ArgumentsInfo* presavedArgs);
 
    SNode injectAttributeIdentidier(SNode current, Scope& scope);
    void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
@@ -1167,7 +1168,7 @@ private:
    ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, EAttr mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
-//   void compileEmbeddableRetExpression(SNode node, ExprScope& scope);
+   void compileEmbeddableRetExpression(SyntaxWriter& writer, SNode node, ExprScope& scope);
 
    ObjectInfo compileSubCode(SyntaxWriter& writer, SNode thenNode, ExprScope& scope, bool branchingMode, bool& withRetStatement);
 
@@ -1192,7 +1193,8 @@ private:
 
    ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t expectedRef,  
       ArgumentsInfo* arguments);
-//   ObjectInfo compileInternalCall(SNode node, ExprScope& scope, mssg_t message, ref_t signature, ObjectInfo info);
+   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, ExprScope& scope, mssg_t message, 
+      ref_t signature, ObjectInfo info, ArgumentsInfo* arguments);
 
 //   void warnOnUnresolvedDispatch(SNode node, Scope& scope, mssg_t message, bool errorMode);
    void warnOnUnassignedLocal(SNode node, Scope& scope, int offset);
@@ -1221,7 +1223,7 @@ private:
    void compileMethodCode(SyntaxWriter& writer, SNode body, MethodScope& scope, CodeScope& codeScope);
 
    void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
-//   void compileEmbeddableMethod(SNode node, MethodScope& scope);
+   void compileEmbeddableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);

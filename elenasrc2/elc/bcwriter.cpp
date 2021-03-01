@@ -2216,14 +2216,12 @@ void ByteCodeWriter :: pushIntConstant(CommandTape& tape, int value)
    tape.write(bcPushN, value);
 }
 
-//void ByteCodeWriter :: pushIntValue(CommandTape& tape)
-//{
-//   // load
-//   // pushd
-//
-//   tape.write(bcLoad);
-//   tape.write(bcPushD);
-//}
+void ByteCodeWriter :: loadIntValue(CommandTape& tape)
+{
+   // load
+
+   tape.write(bcLoad);
+}
 
 void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int)
 {
@@ -2832,6 +2830,7 @@ int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
             }
             else if (current == lxExtIntArg) {
                loadObject(tape, current.firstChild(lxObjectMask), scope);
+               loadIntValue(tape);
                tape.write(bcSaveSI, i);
             }
             else {
@@ -2899,35 +2898,37 @@ void ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
    }
 }
 
-//void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node, FlowScope& scope)
-//{
-//   int paramCount = 0;
-//
-//   // analizing a sub tree
-//   SNode current = node.firstChild(lxObjectMask);
-//   while (current != lxNone) {
-//      paramCount++;
-//
-//      current = current.nextNode(lxObjectMask);
-//   }
-//
-//   allocateStack(tape, paramCount);
-//
-//   int index = 0;
-//   current = node.firstChild(lxObjectMask);
-//   while (current != lxNone) {
-//      generateObject(tape, current, scope);
-//
-//      saveObject(tape, lxCurrent, index);
-//      index++;
-//
-//      current = current.nextNode(lxObjectMask);
-//   }
-//
-//   tape.write(bcCallR, node.argument | mskInternalRef);
-//   scope.clear();
-//}
-//
+void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node, FlowScope& scope)
+{
+   int paramCount = 0;
+
+   // analizing a sub tree
+   SNode current = node.firstChild(lxObjectMask);
+   while (current != lxNone) {
+      paramCount++;
+
+      current = current.nextNode(lxObjectMask);
+   }
+
+   allocateStack(tape, paramCount);
+
+   int index = 0;
+   current = node.firstChild(lxObjectMask);
+   while (current != lxNone) {
+      generateObject(tape, current, scope);
+
+      saveObject(tape, lxCurrent, index);
+      index++;
+
+      current = current.nextNode(lxObjectMask);
+   }
+
+   tape.write(bcCallR, node.argument | mskInternalRef);
+   scope.clear();
+
+   releaseStack(tape, paramCount);
+}
+
 //void ByteCodeWriter :: generateInlineArgCallExpression(CommandTape& tape, SNode node, FlowScope& scope)
 //{
 //   SNode larg;
@@ -4173,9 +4174,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxExternalCall:
          generateExternalCall(tape, node, scope);
          break;
-//      case lxInternalCall:
-//         generateInternalCall(tape, node, scope);
-//         break;
+      case lxInternalCall:
+         generateInternalCall(tape, node, scope);
+         break;
       case lxBranching:
          generateBranching(tape, node, scope);
          break;
@@ -4739,7 +4740,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
    else endIdleMethod(tape);
 }
 
-void ByteCodeWriter :: generateClass(_ModuleScope&, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathRef, 
+void ByteCodeWriter :: generateClass(_ModuleScope& scope, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathRef, 
    bool(*cond)(LexicalType)/*, bool stackEvenMode*/)
 {
 #ifdef FULL_OUTOUT_INFO

@@ -60,7 +60,7 @@
 #define auto        8000101Ch
 ////#define attribute   8000101Fh
 //#define yield       80001020h
-//#define namespace   80001021h
+#define namespace   80001021h
 #define meta        80001022h
 //#define previous    80001023h
 

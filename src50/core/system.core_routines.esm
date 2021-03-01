@@ -86,6 +86,18 @@ procedure __wide."less$system@WideString[2]"
   
 end
 
+procedure __wide."readLengthTo$system@WideString$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  len
+  shr 1
+  dec 1
+  peeksi 2
+  save
+  quit
+
+end
+
 // ; system routines
 
 symbol sta_start

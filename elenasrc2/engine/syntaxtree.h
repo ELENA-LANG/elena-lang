@@ -196,6 +196,7 @@ enum LexicalType
    lxNestedExpression         = 0x031440,
    lxSymbolReference          = 0x030450,
    lxUnaryExpression          = 0x031460,
+   lxInternalCall             = 0x030470,   // calling an internal function, arg - reference
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -234,7 +235,6 @@ enum LexicalType
 //   lxOp                       = 0x0581B0,
 //   lxNewArrOp                 = 0x0581D0,
 //   lxCloning                  = 0x0581E1,
-//   lxInternalCall             = 0x0581F0,   // calling an internal function, arg - reference
 //   lxExternFrame              = 0x058240,
 //   lxOption                   = 0x058251,
 //   lxYieldDispatch            = 0x058260,

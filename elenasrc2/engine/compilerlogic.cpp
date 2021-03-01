@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class implementation.
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1976,49 +1976,49 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //
 //   return (node != lxNone);
 //}
-//
-//mssg_t CompilerLogic :: resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
-//   mssg_t message, ref_t expectedRef)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(*scope.moduleScope, info, target))
-//      return 0;
-//
-//   // take the main embeddable method
-//   Attribute key(message, maEmbeddableRet);
-//   mssg_t byRefMessageRef = info.methodHints.get(key);
-//   if (!byRefMessageRef)
-//      return 0;
-//
-//   ref_t signatures[ARG_COUNT];
-//   size_t len = scope.moduleScope->module->resolveSignature(getSignature(*scope.moduleScope, byRefMessageRef), signatures);
-//
-//   ref_t byRefArg = compiler.resolvePrimitiveReference(scope, V_WRAPPER, expectedRef, false);
-//
-//   if (signatures[len - 1] == byRefArg)
-//      return byRefMessageRef;
-//
-//   // COMPILER MAGIC : try to find alternative-returning method
-//   signatures[len - 1] = byRefArg;
-//
-//   ref_t signRef = scope.moduleScope->module->mapSignature(signatures, len, true);
-//   if (!signRef)
-//      return 0;
-//
-//   ref_t dummy = 0, actionRef = 0, flags = 0;
-//   size_t argCount = 0;
-//   decodeMessage(message, actionRef, argCount, flags);
-//   ident_t name = scope.moduleScope->module->resolveAction(actionRef, dummy);
-//
-//   byRefMessageRef = encodeMessage(scope.moduleScope->module->mapAction(name, signRef, true),
-//      argCount + 1, flags);
-//
-//   if (info.methods.exist(byRefMessageRef))
-//      return byRefMessageRef;
-//
-//   return 0;
-//}
-//
+
+mssg_t CompilerLogic :: resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
+   mssg_t message, ref_t expectedRef)
+{
+   ClassInfo info;
+   if (!defineClassInfo(*scope.moduleScope, info, target))
+      return 0;
+
+   // take the main embeddable method
+   Attribute key(message, maEmbeddableRet);
+   mssg_t byRefMessageRef = info.methodHints.get(key);
+   if (!byRefMessageRef)
+      return 0;
+
+   ref_t signatures[ARG_COUNT];
+   size_t len = scope.moduleScope->module->resolveSignature(getSignature(*scope.moduleScope, byRefMessageRef), signatures);
+
+   ref_t byRefArg = compiler.resolvePrimitiveReference(scope, V_WRAPPER, expectedRef, false);
+
+   if (signatures[len - 1] == byRefArg)
+      return byRefMessageRef;
+
+   // COMPILER MAGIC : try to find alternative-returning method
+   signatures[len - 1] = byRefArg;
+
+   ref_t signRef = scope.moduleScope->module->mapSignature(signatures, len, true);
+   if (!signRef)
+      return 0;
+
+   ref_t dummy = 0, actionRef = 0, flags = 0;
+   size_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+   ident_t name = scope.moduleScope->module->resolveAction(actionRef, dummy);
+
+   byRefMessageRef = encodeMessage(scope.moduleScope->module->mapAction(name, signRef, true),
+      argCount + 1, flags);
+
+   if (info.methods.exist(byRefMessageRef))
+      return byRefMessageRef;
+
+   return 0;
+}
+
 ////bool CompilerLogic :: optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode)
 ////{
 ////   // validate if it is a method
