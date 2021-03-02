@@ -7878,11 +7878,6 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    bool found = false;
 
    if (node.existChild(lxCode) || !isConstantArguments(expr)) {
-      //writer.newNode(lxAssigning);
-      //writer.appendNode(lxLocal, 1);
-      //writer.appendNode(lxResult);
-      //writer.closeNode();
-
       withFrame = true;
 
       // new stack frame
@@ -7956,6 +7951,13 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
       compileMessage(writer, expr, resendScope, target, messageRef, &arguments, EAttr::eaNone, stackSafeAttr, 0, nullptr);
    }
    else resendScope.raiseError(errUnknownMessage, node);
+
+   if (withFrame) {
+      writer.newNode(lxAssigning);
+      writer.appendNode(lxLocal, 1);
+      writer.appendNode(lxResult);
+      writer.closeNode();
+   }
 
    writer.closeNode();
 }

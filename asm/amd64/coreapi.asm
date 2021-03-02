@@ -13,12 +13,10 @@ define elObjectOffset        0010h
 procedure coreapi'wsubcopyz
 
   mov  rax, [rsp+32]
-  mov  rdx, [rsp+24]
+  mov  rcx, [rsp+24]
   mov  rsi, [rsp+8]
-  mov  ecx, dword ptr [rdx]
-  mov  rdi, [rsp+16]
+  mov  rbx, [rsp+16]
   test ecx, ecx
-  mov  ebx, dword ptr [rdi]
   jz   short labEnd
 
 labNext:
@@ -39,12 +37,10 @@ end
 procedure coreapi'core_subcopyz
 
   mov  rax, [rsp+32]
-  mov  rdx, [rsp+24]
+  mov  rcx, [rsp+24]
   mov  rsi, [rsp+8]
-  mov  ecx, dword ptr [rdx]
-  mov  rdi, [rsp+16]
+  mov  rbx, [rsp+16]
   test ecx, ecx
-  mov  ebx, dword ptr [edi]
   jz   short labEnd
 
 labNext:

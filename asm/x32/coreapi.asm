@@ -50,12 +50,10 @@ end
 procedure coreapi'core_wsubcopyz
 
   mov  eax, [esp+16]
-  mov  edx, [esp+12]
+  mov  ecx, [esp+12]
   mov  esi, [esp+4]
-  mov  ecx, [edx]
-  mov  edi, [esp+8]
+  mov  ebx, [esp+8]
   test ecx, ecx
-  mov  ebx, [edi]
   jz   short labEnd
 
 labNext:
@@ -76,12 +74,10 @@ end
 procedure coreapi'core_subcopyz
 
   mov  eax, [esp+16]
-  mov  edx, [esp+12]
+  mov  ecx, [esp+12]
   mov  esi, [esp+4]
-  mov  ecx, [edx]
-  mov  edi, [esp+8]
+  mov  ebx, [esp+8]
   test ecx, ecx
-  mov  ebx, [edi]
   jz   short labEnd
 
 labNext:
