@@ -387,17 +387,17 @@ bool CompilerLogic :: resolveBranchOperation(_ModuleScope& scope, int operatorId
    return true;
 }
 
-//int CompilerLogic :: resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand)
-//{
-//   if (isCompatible(scope, V_INT32, roperand, true)) {
-//      ClassInfo info;
-//      if (defineClassInfo(scope, info, loperand, true)) {
-//         return test(info.header.flags, elDynamicRole) ? lxNewArrOp : 0;
-//      }
-//   }
-//
-//   return 0;
-//}
+int CompilerLogic :: resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand)
+{
+   if (isCompatible(scope, V_INT32, roperand, true)) {
+      ClassInfo info;
+      if (defineClassInfo(scope, info, loperand, true)) {
+         return test(info.header.flags, elDynamicRole) ? lxNewArrOp : 0;
+      }
+   }
+
+   return 0;
+}
 
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 {

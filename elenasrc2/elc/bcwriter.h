@@ -166,15 +166,15 @@ class ByteCodeWriter
    void openFrame(CommandTape& tape, int reserved);
    void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage, bool withPresavedAcc);
    void newStructure(CommandTape& tape, int size, ref_t reference);
-//   void newDynamicStructure(CommandTape& tape, int itemSize, ref_t reference);
+   void newDynamicStructure(CommandTape& tape, int itemSize, ref_t reference);
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
-//   void newDynamicObject(CommandTape& tape, ref_t reference);
+   void newDynamicObject(CommandTape& tape, ref_t reference);
 
    void popObject(CommandTape& tape, LexicalType sourceType);
 
    void clearObject(CommandTape& tape, int fieldCount);
-//   void clearDynamicObject(CommandTape& tape);
+   void clearDynamicObject(CommandTape& tape);
 //   void unboxArgList(CommandTape& tape, bool arrayMode);
 
    void releaseStack(CommandTape& tape, int count);
@@ -286,7 +286,7 @@ class ByteCodeWriter
    void generateOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
    void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
    void generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
-//   void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateDispatching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);

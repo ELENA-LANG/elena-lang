@@ -1757,7 +1757,7 @@ void DerivationWriter :: flushTokenExpression(SyntaxWriter& writer, SNode& node,
    }
 
    if (lastNode == lxToken) {
-      if (lastNode.firstChild() == lxTokenArgs) {
+      if (lastNode.firstChild().compare(lxTokenArgs, lxDynamicBrackets)) {
          flushExpressionAttribute(writer, lastNode, derivationScope, attributeCategory);
       }
       else flushIdentifier(writer, lastNode.firstChild(lxTerminalMask), derivationScope);

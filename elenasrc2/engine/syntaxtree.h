@@ -197,6 +197,7 @@ enum LexicalType
    lxSymbolReference          = 0x030450,
    lxUnaryExpression          = 0x031460,
    lxInternalCall             = 0x030470,   // calling an internal function, arg - reference
+   lxNewArrOp                 = 0x030480,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -233,7 +234,6 @@ enum LexicalType
 //   lxMessageConstant          = 0x0181A7, // arg - rererence
 //   lxExtMessageConstant       = 0x0181A9, // arg -reference
 //   lxOp                       = 0x0581B0,
-//   lxNewArrOp                 = 0x0581D0,
 //   lxCloning                  = 0x0581E1,
 //   lxExternFrame              = 0x058240,
 //   lxOption                   = 0x058251,
@@ -1254,6 +1254,21 @@ public:
 
       while (current != lxNone) {
          if (current == type)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
+   static int countChildMask(Node node, LexicalType mask)
+   {
+      int counter = 0;
+      Node current = node.firstChild();
+
+      while (current != lxNone) {
+         if (test(current.type, mask))
             counter++;
 
          current = current.nextNode();

@@ -7,11 +7,63 @@ define elSizeOffset          0004h
 define elVMTOffset           0010h 
 define elObjectOffset        0010h
 
+// ; --- API ---
+
+// wsubcopyz(target,index,size,arr)
+procedure coreapi'wsubcopyz
+
+  mov  rax, [rsp+32]
+  mov  rdx, [rsp+24]
+  mov  rsi, [rsp+8]
+  mov  ecx, dword ptr [rdx]
+  mov  rdi, [rsp+16]
+  test ecx, ecx
+  mov  ebx, dword ptr [rdi]
+  jz   short labEnd
+
+labNext:
+  mov  edx, dword ptr [rax + rbx*2]
+  mov  word ptr [rsi], dx
+  add  ebx, 1
+  lea  rsi, [rsi + 2]
+  sub  ecx, 1
+  jnz  short labNext
+  mov  word ptr [rsi], cx
+
+labEnd:
+  ret
+
+end
+
+// subcopyz(target,index,size,arr)
+procedure coreapi'core_subcopyz
+
+  mov  rax, [rsp+32]
+  mov  rdx, [rsp+24]
+  mov  rsi, [rsp+8]
+  mov  ecx, dword ptr [rdx]
+  mov  rdi, [rsp+16]
+  test ecx, ecx
+  mov  ebx, dword ptr [edi]
+  jz   short labEnd
+
+labNext:
+  mov  edx, dword ptr [rax + rbx]
+  mov  byte ptr [rsi], dl
+  add  rbx, 1
+  add  rsi, 1
+  sub  ecx, 1
+  jnz  short labNext
+  mov  byte ptr [rsi], cl
+
+labEnd:
+  ret
+
+end
+
 // --- System Core API  --
 
 define CORE_ET_TABLE     2000Bh
-
-// ; --- API ---
 
 // ; initProcess(frameHeader)
 procedure coreapi'initProcess
@@ -647,32 +699,6 @@ labNext2:
   
 end
 
-// wsubcopyz(target,index,size,arr)
-procedure coreapi'wsubcopyz
-
-  mov  rax, [rsp+32]
-  mov  rdx, [rsp+24]
-  mov  rsi, [rsp+8]
-  mov  ecx, dword ptr [rdx]
-  mov  rdi, [rsp+16]
-  test ecx, ecx
-  mov  ebx, dword ptr [rdi]
-  jz   short labEnd
-
-labNext:
-  mov  edx, dword ptr [rax + rbx*2]
-  mov  word ptr [rsi], dx
-  add  ebx, 1
-  lea  rsi, [rsi + 2]
-  sub  ecx, 1
-  jnz  short labNext
-  mov  word ptr [rsi], cx
-
-labEnd:
-  ret
-
-end
-
 procedure coreapi'wstrtochararray
 
   mov  rdx, [rsp+32]
@@ -1246,32 +1272,6 @@ labNext2:
 
   ret
   
-end
-
-// subcopyz(target,index,size,arr)
-procedure coreapi'subcopyz
-
-  mov  rax, [rsp+32]
-  mov  rdx, [rsp+24]
-  mov  rsi, [rsp+8]
-  mov  ecx, dword ptr [rdx]
-  mov  rdi, [rsp+16]
-  test ecx, ecx
-  mov  ebx, dword ptr [edi]
-  jz   short labEnd
-
-labNext:
-  mov  edx, dword ptr [rax + rbx]
-  mov  byte ptr [rsi], dl
-  add  rbx, 1
-  add  rsi, 1
-  sub  ecx, 1
-  jnz  short labNext
-  mov  byte ptr [rsi], cl
-
-labEnd:
-  ret
-
 end
 
 // subcopyz(target,index,size,arr)

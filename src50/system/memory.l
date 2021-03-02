@@ -743,40 +743,40 @@ public sealed const struct String : BaseValue
 //        intern system'core_routines'__literal.copy(self, index, size, buffer)
 //    }
     
-//    /// Converts to UTF-16 literal
-//    wide cast()
-//    {
-//        int        i := 0;
-//        int        m := 0;
-//        int        page := 0;
-//        int        l := self.Length;
-//        short buffer[256];            
-//        if (l < 256)
-//        {
-//            intern system'core_routines'__wideconvertor.convert(self, buffer, ref m);
+    /// Converts to UTF-16 literal
+    wide cast()
+    {
+        int        i := 0;
+        int        m := 0;
+        int        page := 0;
+        int        l := self.Length;
+        short buffer[256];            
+        if (l < 256)
+        {
+            intern system'core_routines'__wideconvertor.convert(self, buffer, ref m);
 
-//            ^ WideString.fromShortArray(0, m, buffer)
-//        };
-//
-//        wide retVal := WideString.MinValue;
-//        while(l > 0)
-//        {
-//            page := l;
-//            if (page > 256)
-//            {
-//                page := 256
-//            };
-//            
-//            intern system'core_routines'__wideconvertor.convert(self.Substring(i,page), buffer, ref m);
-//            
-//            retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
-//            
-//            i := i + page;
-//            l := l - page
-//        };
-//        
-//        ^ retVal
-//    }
+            ^ WideString.fromShortArray(0, m, buffer)
+        };
+
+        wide retVal := WideString.MinValue;
+        while(l > 0)
+        {
+            page := l;
+            if (page > 256)
+            {
+                page := 256
+            };
+            
+            intern system'core_routines'__wideconvertor.convert(self.Substring(i,page), buffer, ref m);
+            
+            retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
+            
+            i := i + page;
+            l := l - page
+        };
+        
+        ^ retVal
+    }
      
 //    Enumerable<char> cast() = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
 //
@@ -891,16 +891,16 @@ public sealed const struct String : BaseValue
 //    /// Deletes the substring from the object and returns the new one
 //    string delete(int index, int length)
 //        => intern system'core_routines'__literal;
-//
-//    /// Returns the substring
-//    string Substring(int index, int length)
-//    {
-//        auto subs := String.allocate(length);
-//        
-//        intern system'core_routines'__literal.copy(subs, index, length, self);
-//        
-//        ^ subs
-//    }
+
+    [info:"Returns the substring"]
+    string Substring(int index, int length)
+    {
+        auto subs := String.allocate(length);
+        
+        extern elenart.core_subcopyz(subs, index, length, self);
+        
+        ^ subs
+    }
 
     int Length
     {
@@ -946,10 +946,10 @@ public sealed const struct WideString : BaseValue
     const static wide MinValue
         = ""w;
         
-//    /// Creates the literal string with specified length
-//    constructor allocate(int size)
-//        = new short[](size + 1);
-//
+    /// Creates the literal string with specified length
+    constructor allocate(int size)
+        = new short[](size + 1);
+
 //    /// Creates the literal string with specified length and copies the parameter value
 //    constructor copy(int size, wide s)
 //        <= allocate(size)
@@ -985,13 +985,15 @@ public sealed const struct WideString : BaseValue
 //    {
 //        intern system'core_routines'__wide.copy(self, index, length, array)
 //    }
-//
-//    internal constructor fromShortArray(int index, int size, short[] array)
-//        <= allocate(size)
-//    {
-//        intern system'core_routines'__wide.copy(self, index, size, array)
-//    }
-//
+
+    internal constructor fromShortArray(int index, int size, short[] array)
+        <= allocate(size)
+    {
+        extern elenart.core_wsubcopyz(self, index, size, array);
+        
+        // intern system'core_routines'__wide.copy(self, index, size, array)
+    }
+
 //    /// Converts to UTF-16 literal
 //    string cast()
 //    {

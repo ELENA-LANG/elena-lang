@@ -3,7 +3,10 @@ In development:
 ------         
 
   [development]
+    * constructor resend
+
     * console
+    * basic tests
     * program exception handling
     * system tests : 86, 86-64
 

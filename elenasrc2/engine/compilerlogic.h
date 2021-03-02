@@ -95,7 +95,7 @@ public:
 
    virtual int __fastcall resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t message, ChechMethodInfo& result);
    virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
-//   virtual int resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand);
+   virtual int resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand);
    virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference);
    virtual ref_t __fastcall definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne);
 

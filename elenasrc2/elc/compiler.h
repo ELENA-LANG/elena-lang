@@ -886,20 +886,20 @@ private:
       ExprScope(SourceScope* parent);
    };
 
-//   // --- ResendScope ---
-//   struct ResendScope : public ExprScope
-//   {
-//      bool withFrame;
-//      bool consructionMode;
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
-//
-//      ResendScope(CodeScope* parent)
-//         : ExprScope(parent)
-//      {
-//         consructionMode = withFrame = false;
-//      }
-//   };
+   // --- ResendScope ---
+   struct ResendScope : public ExprScope
+   {
+      bool withFrame;
+      bool constructionMode;
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
+
+      ResendScope(CodeScope* parent)
+         : ExprScope(parent)
+      {
+         constructionMode = withFrame = false;
+      }
+   };
 
    // - InlineClassScope -
    struct InlineClassScope : public ClassScope
@@ -994,16 +994,16 @@ private:
       return _logic->checkMethod(scope, reference, message, dummy, false);
    }
 
-//   int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, ref_t& protectedRef)
-//   {
-//      _CompilerLogic::ChechMethodInfo dummy;
-//
-//      int retVal = _logic->checkMethod(scope, reference, message, dummy, true);
-//
-//      protectedRef = dummy.protectedRef;
-//
-//      return retVal;
-//   }
+   int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, ref_t& protectedRef)
+   {
+      _CompilerLogic::ChechMethodInfo dummy;
+
+      int retVal = _logic->checkMethod(scope, reference, message, dummy, true);
+
+      protectedRef = dummy.protectedRef;
+
+      return retVal;
+   }
 
    bool loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silentMode);
 
@@ -1157,6 +1157,9 @@ private:
 
    void writeTerminal(SyntaxWriter& writer, ObjectInfo objectInfo, ExprScope& scope);
 
+   ObjectInfo compileNewArrOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo object,
+      ref_t expecteRef, EAttr mode);
+
    ObjectInfo compileObject(SyntaxWriter& writer, SNode& node, ExprScope& scope, 
       EAttr mode, ArgumentsInfo* preservedArgs);
 //   ObjectInfo compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
@@ -1164,7 +1167,6 @@ private:
       EAttr mode, ArgumentsInfo* preservedArgs);
 
    ObjectInfo compileCastingExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
-//   ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
    ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target, bool accumulateMode);
@@ -1203,8 +1205,8 @@ private:
 //   void warnOnUnresolvedDispatch(SNode node, Scope& scope, mssg_t message, bool errorMode);
    void warnOnUnassignedLocal(SNode node, Scope& scope, int offset);
 
-//   void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, 
-//      bool& withFrame);
+   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope,
+      bool& withFrame);
 //   void compileConstructorDispatchExpression(SNode node, CodeScope& scope, bool isDefault);
    void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool withGenericMethods);

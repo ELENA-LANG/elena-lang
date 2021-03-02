@@ -46,6 +46,58 @@ labEnd:
 
 end
 
+// core_wsubcopyz(target,index,size,arr)
+procedure coreapi'core_wsubcopyz
+
+  mov  eax, [esp+16]
+  mov  edx, [esp+12]
+  mov  esi, [esp+4]
+  mov  ecx, [edx]
+  mov  edi, [esp+8]
+  test ecx, ecx
+  mov  ebx, [edi]
+  jz   short labEnd
+
+labNext:
+  mov  edx, [eax + ebx*2]
+  mov  word ptr [esi], dx
+  add  ebx, 1
+  lea  esi, [esi + 2]
+  sub  ecx, 1
+  jnz  short labNext
+  mov  word ptr [esi], cx
+
+labEnd:
+  ret
+
+end
+
+// core_subcopyz(target,index,size,arr)
+procedure coreapi'core_subcopyz
+
+  mov  eax, [esp+16]
+  mov  edx, [esp+12]
+  mov  esi, [esp+4]
+  mov  ecx, [edx]
+  mov  edi, [esp+8]
+  test ecx, ecx
+  mov  ebx, [edi]
+  jz   short labEnd
+
+labNext:
+  mov  edx, [eax + ebx]
+  mov  byte ptr [esi], dl
+  add  ebx, 1
+  add  esi, 1
+  sub  ecx, 1
+  jnz  short labNext
+  mov  byte ptr [esi], cl
+
+labEnd:
+  ret
+
+end
+
 // ; === internal ===
 
 // strtowstr(target,source)
@@ -264,58 +316,6 @@ labEnd:
   mov  ebx, [esp+4]
   mov  edx, edi
   sub  edx, ebx
-  ret
-
-end
-
-// wsubcopyz(target,index,size,arr)
-procedure coreapi'wsubcopyz
-
-  mov  eax, [esp+16]
-  mov  edx, [esp+12]
-  mov  esi, [esp+4]
-  mov  ecx, [edx]
-  mov  edi, [esp+8]
-  test ecx, ecx
-  mov  ebx, [edi]
-  jz   short labEnd
-
-labNext:
-  mov  edx, [eax + ebx*2]
-  mov  word ptr [esi], dx
-  add  ebx, 1
-  lea  esi, [esi + 2]
-  sub  ecx, 1
-  jnz  short labNext
-  mov  word ptr [esi], cx
-
-labEnd:
-  ret
-
-end
-
-// subcopyz(target,index,size,arr)
-procedure coreapi'subcopyz
-
-  mov  eax, [esp+16]
-  mov  edx, [esp+12]
-  mov  esi, [esp+4]
-  mov  ecx, [edx]
-  mov  edi, [esp+8]
-  test ecx, ecx
-  mov  ebx, [edi]
-  jz   short labEnd
-
-labNext:
-  mov  edx, [eax + ebx]
-  mov  byte ptr [esi], dl
-  add  ebx, 1
-  add  esi, 1
-  sub  ecx, 1
-  jnz  short labNext
-  mov  byte ptr [esi], cl
-
-labEnd:
   ret
 
 end

@@ -484,10 +484,10 @@ void ByteCodeWriter :: closeFrame(CommandTape& tape, int reserved)
    tape.write(bcClose);
 }
 
-//void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize, ref_t reference)
-//{
-//   tape.write(bcCreateN, reference | mskVMTRef, itemSize);
-//}
+void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize, ref_t reference)
+{
+   tape.write(bcCreateN, reference | mskVMTRef, itemSize);
+}
 
 void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference)
 {
@@ -515,17 +515,17 @@ void ByteCodeWriter :: clearObject(CommandTape& tape, int fieldCount)
    }
 }
 
-//void ByteCodeWriter :: clearDynamicObject(CommandTape& tape)
-//{
-//   // fillr 0
-//   tape.write(bcFillR, 0);
-//}
-//
-//void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference)
-//{
-//   // create
-//   tape.write(bcCreate, reference | mskVMTRef);
-//}
+void ByteCodeWriter :: clearDynamicObject(CommandTape& tape)
+{
+   // fillr 0
+   tape.write(bcFillR, 0);
+}
+
+void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference)
+{
+   // create
+   tape.write(bcCreate, reference | mskVMTRef);
+}
 
 inline ref_t __fastcall defineConstantMask(LexicalType type)
 {
@@ -2389,39 +2389,34 @@ void __fastcall assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& r
    }
 }
 
-//void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
-//{
-//   generateObject(tape, node.firstChild(lxObjectMask), scope, STACKOP_MODE);
+void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   generateObject(tape, node.firstChild(lxObjectMask), scope, STACKOP_MODE);
+
+   if (node.argument != 0) {
+      int size = node.findChild(lxSize).argument;
 //
-//   if (node.argument != 0) {
-//      int size = node.findChild(lxSize).argument;
-////
-////      if ((int)node.argument < 0) {
-////         //HOTFIX : recognize primitive object
-////         loadObject(tape, lxNil, 0, 0);
-////      }
-////      else loadObject(tape, lxClassSymbol, node.argument, 0);
-//
-//      if (size < 0) {
-//         newDynamicStructure(tape, -size, node.argument);
-//         releaseStack(tape);
+//      if ((int)node.argument < 0) {
+//         //HOTFIX : recognize primitive object
+//         loadObject(tape, lxNil, 0, 0);
 //      }
-//      else if (size == 0) {
-//         newDynamicObject(tape, node.argument);
-//         clearDynamicObject(tape);
-//         releaseStack(tape);
-//      }
-//      else throw InternalError("not yet implemented"); // !! temporal
-//   }
-//   else throw InternalError("not yet implemented"); // !! temporal
-////   //else {
-////   //   loadObject(tape, lxSelfLocal, 1);
-////   //   // HOTFIX: -1 indicates the stack is not consumed by the constructor
-////   //   callMethod(tape, 1, -1);
-////   //}
-//
-//   scope.clear();
-//}
+//      else loadObject(tape, lxClassSymbol, node.argument, 0);
+
+      if (size < 0) {
+         newDynamicStructure(tape, -size, node.argument);
+         releaseArg(tape);
+      }
+      else if (size == 0) {
+         newDynamicObject(tape, node.argument);
+         clearDynamicObject(tape);
+         releaseArg(tape);
+      }
+      else throw InternalError("not yet implemented"); // !! temporal
+   }
+   else throw InternalError("not yet implemented"); // !! temporal
+
+   scope.clear();
+}
 
 void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
 {
@@ -4203,9 +4198,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxArgArrOp:
          generateArrOperation(tape, node, scope, mode);
          break;
-//      case lxNewArrOp:
-//         generateNewArrOperation(tape, node, scope);
-//         break;
+      case lxNewArrOp:
+         generateNewArrOperation(tape, node, scope);
+         break;
       case lxResending:
       case lxDirectResending:
       case lxSDirectResending:
