@@ -13,6 +13,7 @@ __define SCOPE_FIELD_DECLARATION 4130
 __define ATTRIBUTE_DECLARATION   4144
 __define SIZE 			 4160
 __define BASE 			 4176
+__define STATEMENT_BASE          4177
 __define DISPATCH		 4208
 __define MESSAGE	         4224
 __define BLOCK_END	         4240
@@ -736,6 +737,9 @@ NEXT_INLINE_PARAM ->
 
 BASE ->
 	SCOPE_TOKEN
+
+STATEMENT_BASE ->
+	TOKEN
 
 SIZE ->
 	hex

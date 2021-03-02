@@ -2692,7 +2692,7 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprSco
       //if (!switchMode) {
          node = node.nextNode(lxObjectMask);
          if (node != lxNone) {
-            SNode elseCode = node.findChild(lxCode);
+            SNode elseCode = node.findSubNode(lxCode);
             if (elseCode == lxNone) {
                writer.newNode(lxElse, ifReference);
 

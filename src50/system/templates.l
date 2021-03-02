@@ -107,20 +107,20 @@
     cast bool(expr) ? if_block
 }
 
-//// --- if-else statement ---
-//
+// --- if-else statement ---
+
 //#declare if:else<expr>(if_block,else_block)
 //{
 //    cast bool(expr) ? if_block : else_block
 //}
-//
-//// --- ifnot statement ---
-//
-//#declare ifnot<expr>(if_block)
-//{
-//    cast bool(expr) ! if_block
-//}
-//
+
+// --- ifnot statement ---
+
+#declare ifnot<expr>(if_block)
+{
+    cast bool(expr) ! if_block
+}
+
 //// --- ifnot-else statement ---
 //
 //#declare ifnot:else<expr>(ifnot_block,else_block)
