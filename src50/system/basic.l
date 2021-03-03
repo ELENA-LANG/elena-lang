@@ -78,29 +78,29 @@ public abstract class BaseValue
 [info:"a base numeric value"]
 public abstract class BaseNumber : BaseValue
 {
-//    add(BaseVariable var)
-//        <= add(var.Value);
-//
-//    subtract(BaseVariable var)
-//        <= subtract(var.Value);
-//    
-//    multiply(BaseVariable var)
-//        <= multiply(var.Value);
-//
-//    divide(BaseVariable var)
-//        <= divide(var.Value);
-//    
-//    [info:"adds the value;<br/>should be overridden"]
-//    abstract add(o);
-//
-//    [info:"subtracts the value;<br/>should be overridden"]
-//    abstract subtract(o);
-//
-//    [info:"multiplies by the value;<br/>should be overridden"]
-//    abstract multiply(o);
-//
-//    [info:"divides by the value;<br/>should be overridden"]
-//    abstract divide(o);
+    add(BaseVariable var)
+        <= add(var.Value);
+
+    subtract(BaseVariable var)
+        <= subtract(var.Value);
+    
+    multiply(BaseVariable var)
+        <= multiply(var.Value);
+
+    divide(BaseVariable var)
+        <= divide(var.Value);
+    
+    [info:"adds the value;<br/>should be overridden"]
+    abstract add(o);
+
+    [info:"subtracts the value;<br/>should be overridden"]
+    abstract subtract(o);
+
+    [info:"multiplies by the value;<br/>should be overridden"]
+    abstract multiply(o);
+
+    [info:"divides by the value;<br/>should be overridden"]
+    abstract divide(o);
     
     [info:"returns the negative value of a number"]
     Negative
@@ -235,19 +235,19 @@ public sealed const struct ByteNumber : IntBaseNumber
 //    [info:"compares the value"]
 //    bool less(real n)
 //        = new RealNumber(self).less(n);
-//
-//    add(n)
-//        <= add(cast byte(n));
-//
-//    subtract(n)
-//        <= subtract(cast byte(n));
-//
-//    multiply(n)
-//        <= multiply(cast byte(n));
-//
-//    divide(n)
-//        <= divide(cast byte(n));
-//
+
+    add(n)
+        <= add(cast byte(n));
+
+    subtract(n)
+        <= subtract(cast byte(n));
+
+    multiply(n)
+        <= multiply(cast byte(n));
+
+    divide(n)
+        <= divide(cast byte(n));
+
 //    byte add(BaseVariable v)
 //        <= add(v.Value);
 //
@@ -259,55 +259,55 @@ public sealed const struct ByteNumber : IntBaseNumber
 //
 //    byte divide(BaseVariable v)
 //        <= divide(v.Value);
-//
-//    [info:"returns the sum"]
-//    byte add(byte n)
-//        = theValue + n;
-//
-//    [info:"returns the difference"]
-//    byte subtract(byte n)
-//        = theValue - n;
-//
-//    [info:"returns the product"]
-//    byte multiply(byte n)
-//        = theValue * n;
-//
-//    [info:"returns the result of integer division"]
-//    byte divide(byte n)
-//        = theValue / n;
-//
-//    [info:"returns the sum"]
-//    short add(short n)
-//        = new ShortNumber(self).add(n);
-//
-//    [info:"returns the difference"]
-//    short subtract(short n)
-//        = new ShortNumber(self).subtract(n);
-//
-//    [info:"returns the product"]
-//    short multiply(short n)
-//        = new ShortNumber(self).multiply(n);
-//
-//    [info:"returns the result of integer division"]
-//    short divide(short n)
-//        = new ShortNumber(self).divide(n);
-//
-//    [info:"returns the sum"]
-//    int add(int n)
-//        = new IntNumber(self).add(n);
-//
-//    [info:"returns the difference"]
-//    int subtract(int n)
-//        = new IntNumber(self).subtract(n);
-//
-//    [info:"returns the product"]
-//    int multiply(int n)
-//        = new IntNumber(self).multiply(n);
-//
-//    [info:"returns the result of integer division"]
-//    int divide(int n)
-//        = new IntNumber(self).divide(n);
-//
+
+    [info:"returns the sum"]
+    byte add(byte n)
+        = theValue + n;
+
+    [info:"returns the difference"]
+    byte subtract(byte n)
+        = theValue - n;
+
+    [info:"returns the product"]
+    byte multiply(byte n)
+        = theValue * n;
+
+    [info:"returns the result of integer division"]
+    byte divide(byte n)
+        = theValue / n;
+
+    [info:"returns the sum"]
+    short add(short n)
+        = new ShortNumber(self).add(n);
+
+    [info:"returns the difference"]
+    short subtract(short n)
+        = new ShortNumber(self).subtract(n);
+
+    [info:"returns the product"]
+    short multiply(short n)
+        = new ShortNumber(self).multiply(n);
+
+    [info:"returns the result of integer division"]
+    short divide(short n)
+        = new ShortNumber(self).divide(n);
+
+    [info:"returns the sum"]
+    int add(int n)
+        = new IntNumber(self).add(n);
+
+    [info:"returns the difference"]
+    int subtract(int n)
+        = new IntNumber(self).subtract(n);
+
+    [info:"returns the product"]
+    int multiply(int n)
+        = new IntNumber(self).multiply(n);
+
+    [info:"returns the result of integer division"]
+    int divide(int n)
+        = new IntNumber(self).divide(n);
+
 //    [info:"returns the sum"]
 //    long add(long n)
 //        = new LongNumber(self).add(n);
@@ -538,19 +538,19 @@ public sealed const struct ShortNumber : IntBaseNumber
 //    [info:"compares the value"]
 //    bool less(real n)
 //        = new RealNumber(self).less(n);
-//
-//    add(n)
-//        <= add(cast short(n));
-//
-//    subtract(n)
-//        <= subtract(cast short(n));
-//
-//    multiply(n)
-//        <= multiply(cast short(n));
-//
-//    divide(n)
-//        <= divide(cast short(n));
-//
+
+    add(n)
+        <= add(cast short(n));
+
+    subtract(n)
+        <= subtract(cast short(n));
+
+    multiply(n)
+        <= multiply(cast short(n));
+
+    divide(n)
+        <= divide(cast short(n));
+
 //    short add(BaseVariable v)
 //        <= add(v.Value);
 //
@@ -562,55 +562,55 @@ public sealed const struct ShortNumber : IntBaseNumber
 //
 //    short divide(BaseVariable v)
 //        <= divide(v.Value);
-//
-//    [info:"returns the sum"]
-//    short add(short n)
-//        = theValue + n;
-//
-//    [info:"returns the sum"]
-//    short subtract(short n)
-//        = theValue - n;
-//
-//    [info:"returns the product"]
-//    short multiply(short n)
-//        = theValue * n;
-//
-//    [info:"returns the result of integer division"]
-//    short divide(short n)
-//        = theValue / n;
-//
-//    [info:"returns the sum"]
-//    add(byte n)
-//        = self.add(new ShortNumber(n));
-//
-//    [info:"returns the difference"]
-//    subtract(byte n)
-//        = self.subtract(new ShortNumber(n));
-//
-//    [info:"returns the product"]
-//    multiply(byte n)
-//        = self.multiply(new ShortNumber(n));
-//
-//    [info:"returns the result of integer division"]
-//    divide(byte n)
-//        = self.divide(new ShortNumber(n));
-//
-//    [info:"returns the sum"]
-//    add(int n)
-//        = new IntNumber(self).add(n);
-//
-//    [info:"returns the difference"]
-//    subtract(int n)
-//        = new IntNumber(self).subtract(n);
-//
-//    [info:"returns the product"]
-//    multiply(int n)
-//        = new IntNumber(self).multiply(n);
-//        
-//    [info:"returns the result of integer division"]
-//    divide(int n)
-//        = new IntNumber(self).divide(n);
-//
+
+    [info:"returns the sum"]
+    short add(short n)
+        = theValue + n;
+
+    [info:"returns the sum"]
+    short subtract(short n)
+        = theValue - n;
+
+    [info:"returns the product"]
+    short multiply(short n)
+        = theValue * n;
+
+    [info:"returns the result of integer division"]
+    short divide(short n)
+        = theValue / n;
+
+    [info:"returns the sum"]
+    add(byte n)
+        = self.add(new ShortNumber(n));
+
+    [info:"returns the difference"]
+    subtract(byte n)
+        = self.subtract(new ShortNumber(n));
+
+    [info:"returns the product"]
+    multiply(byte n)
+        = self.multiply(new ShortNumber(n));
+
+    [info:"returns the result of integer division"]
+    divide(byte n)
+        = self.divide(new ShortNumber(n));
+
+    [info:"returns the sum"]
+    add(int n)
+        = new IntNumber(self).add(n);
+
+    [info:"returns the difference"]
+    subtract(int n)
+        = new IntNumber(self).subtract(n);
+
+    [info:"returns the product"]
+    multiply(int n)
+        = new IntNumber(self).multiply(n);
+        
+    [info:"returns the result of integer division"]
+    divide(int n)
+        = new IntNumber(self).divide(n);
+
 //    [info:"returns the sum"]
 //    add(long n)
 //        = new LongNumber(self).add(n);
@@ -808,18 +808,18 @@ public sealed const struct IntNumber : IntBaseNumber
     bool less(int n)
         = theValue < n;
         
-//    add(n)
-//        <= add(cast int(n));
-//
-//    subtract(n)
-//        <= subtract(cast int(n));
-//
-//    multiply(n)
-//        <= multiply(cast int(n));
-//
-//    divide(n)
-//        <= divide(cast int(n));
-//        
+    add(n)
+        <= add(cast int(n));
+
+    subtract(n)
+        <= subtract(cast int(n));
+
+    multiply(n)
+        <= multiply(cast int(n));
+
+    divide(n)
+        <= divide(cast int(n));
+        
 //    int add(BaseVariable v)
 //        <= add(v.Value);
 //
@@ -831,23 +831,23 @@ public sealed const struct IntNumber : IntBaseNumber
 //
 //    int divide(BaseVariable v)
 //        <= divide(v.Value);
-//        
-//    [info:"Returns the sum"]
-//    int add(int n)
-//        = theValue + n;
-//
-//    [info:"Returns the sum"]
-//    int subtract(int n)
-//        = theValue - n;
-//
-//    [info:"Returns the product"]
-//    int multiply(int n)
-//        = theValue * n;
-//
-//    [info:"Returns the result of integer division"]
-//    int divide(int n)
-//        = theValue / n;
-//
+        
+    [info:"Returns the sum"]
+    int add(int n)
+        = theValue + n;
+
+    [info:"Returns the sum"]
+    int subtract(int n)
+        = theValue - n;
+
+    [info:"Returns the product"]
+    int multiply(int n)
+        = theValue * n;
+
+    [info:"Returns the result of integer division"]
+    int divide(int n)
+        = theValue / n;
+
 //    and(n)
 //        <= and(cast int(n));
 //        
@@ -909,15 +909,15 @@ public sealed const struct IntNumber : IntBaseNumber
 //    [info:"Compares the integer value"]
 //    bool less(real n)
 //        = new RealNumber(self).less(n);
-//
-//    [info:"Returns the sum of integers"]
-//    add(short value)
-//        = self.add(new IntNumber(value));
-//        
-//    [info:"Returns the sum of integers"]
-//    add(byte value)
-//        = self.add(new IntNumber(value));
-//
+
+    [info:"Returns the sum of integers"]
+    add(short value)
+        = self.add(new IntNumber(value));
+        
+    [info:"Returns the sum of integers"]
+    add(byte value)
+        = self.add(new IntNumber(value));
+
 //    [info:"Returns the sum of integers"]
 //    long add(long n)
 //        = new LongNumber(self).add(n);
@@ -925,15 +925,15 @@ public sealed const struct IntNumber : IntBaseNumber
 //    [info:"Returns the sum of integers"]
 //    real add(real n)
 //        = new RealNumber(self).add(n);
-//
-//    [info:"Returns the difference of integers"]
-//    subtract(short value)
-//        = self.subtract(new IntNumber(value));
-//
-//    [info:"Returns the difference of integers"]
-//    subtract(byte value)
-//        = self.subtract(new IntNumber(value));
-//
+
+    [info:"Returns the difference of integers"]
+    subtract(short value)
+        = self.subtract(new IntNumber(value));
+
+    [info:"Returns the difference of integers"]
+    subtract(byte value)
+        = self.subtract(new IntNumber(value));
+
 //    [info:"Returns the difference of integers"]
 //    long subtract(long n)
 //        = new LongNumber(self).subtract(n);
@@ -941,15 +941,15 @@ public sealed const struct IntNumber : IntBaseNumber
 //    [info:"Returns the difference of integers"]
 //    real subtract(real n)
 //        = new RealNumber(self).subtract(n);
-//
-//    [info:"Returns the product of integers"]
-//    multiply(short value)
-//        = self.multiply(new IntNumber(value));
-//
-//    [info:"Returns the product of integers"]
-//    multiply(byte value)
-//        = self.multiply(new IntNumber(value));
-//
+
+    [info:"Returns the product of integers"]
+    multiply(short value)
+        = self.multiply(new IntNumber(value));
+
+    [info:"Returns the product of integers"]
+    multiply(byte value)
+        = self.multiply(new IntNumber(value));
+
 //    [info:"Returns the product of integers"]
 //    long multiply(long n)
 //        = new LongNumber(self).multiply(n);
@@ -957,15 +957,15 @@ public sealed const struct IntNumber : IntBaseNumber
 //    [info:"Returns the product of integers"]
 //    real multiply(real n)
 //        = new RealNumber(self).multiply(n);
-//
-//    [info:"Returns the result of integer division"]
-//    divide(short value)
-//        = self.divide(new IntNumber(value));
-//
-//    [info:"Returns the result of integer division"]
-//    divide(byte value)
-//        = self.divide(new IntNumber(value));        
-//
+
+    [info:"Returns the result of integer division"]
+    divide(short value)
+        = self.divide(new IntNumber(value));
+
+    [info:"Returns the result of integer division"]
+    divide(byte value)
+        = self.divide(new IntNumber(value));        
+
 //    [info:"Returns the result of integer division"]
 //    long divide(long n)
 //        = new LongNumber(self).divide(n);

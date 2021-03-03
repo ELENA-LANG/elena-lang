@@ -2935,7 +2935,7 @@ inline bool IsArrExprOperator(int operator_id, LexicalType type)
 }
 
 ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
-   ArgumentsInfo* arguments/*, ObjectInfo roperand2, EAttr mode*/)
+   ArgumentsInfo* arguments/*, ObjectInfo roperand2, EAttr mode*/, bool assignMode)
 {
    ObjectInfo roperand;
    pos_t argCount = 1;
@@ -2979,7 +2979,10 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
 
    if (operationType != 0) {
       // if it is a primitive operation
-      if ((IsExprOperator(operator_id) && (LexicalType)operationType != lxBoolOp)
+      if (assignMode) {
+         retVal = loperand;
+      }
+      else if ((IsExprOperator(operator_id) && (LexicalType)operationType != lxBoolOp)
          || IsArrExprOperator(operator_id, (LexicalType)operationType)) 
       {
          retVal = allocateResult(scope, /*false, */resultClassRef, loperand.element);
@@ -3006,7 +3009,11 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
 
       writer.closeNode();
 
-      _logic->injectOperation(opNode, scope, *this, operator_id, operationType, resultClassRef, opElementRef, retVal.param);
+      if (assignMode) {
+         opNode.set((LexicalType)operationType, operator_id);
+      }
+      else _logic->injectOperation(opNode, scope, *this, operator_id, operationType, resultClassRef, opElementRef, retVal.param);
+
       // HOTFIX : update the result type
       retVal.reference = resultClassRef;
 
@@ -3022,7 +3029,7 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
 //            0, resolveObjectReference(scope, retVal, false));
 //      }
    }
-   // if not , replace with appropriate method call
+   // if not, replace with appropriate method call
    else {
       EAttr operationMode = HINT_NODEBUGINFO;
       ref_t implicitSignatureRef = arguments ? resolveStrongArgument(scope, arguments) : 0;
@@ -3044,7 +3051,8 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
    return retVal;
 }
 
-ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id)
+ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, 
+   int operator_id, bool assingMode)
 {
    SNode lnode = node.firstChild();
    SNode rnode = lnode.nextNode(lxObjectMask);
@@ -3070,9 +3078,8 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
    ArgumentsInfo arguments;
    arguments.add(roperand);
 
-   return compileOperation(writer, node, scope, operator_id, loperand, &arguments/*, mode*/);
+   return compileOperation(writer, node, scope, operator_id, loperand, &arguments/*, mode*/, assingMode);
 }
-
 
 ObjectInfo Compiler :: compileUnaryOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id)
 {
@@ -3094,7 +3101,7 @@ ObjectInfo Compiler :: compileUnaryOperation(SyntaxWriter& writer, SNode node, E
    //      else roperand = compileExpression(roperandNode, scope, 0, EAttr::eaNone);
    //   }
 
-   return compileOperation(writer, node, scope, operator_id, loperand, nullptr/*, mode*/);
+   return compileOperation(writer, node, scope, operator_id, loperand, nullptr/*, mode*/, false);
 }
 
 inline ident_t __fastcall resolveOperatorName(SNode node)
@@ -3133,20 +3140,17 @@ ObjectInfo Compiler :: compileOperationExpression(SyntaxWriter& writer, SNode no
          return compileAltOperator(writer, node, scope/*, mode, operator_id*/);
       case ISNIL_OPERATOR_ID:
          return compileIsNilOperator(writer, node, scope);
-//      case APPEND_OPERATOR_ID:
-//         node.setArgument(ADD_OPERATOR_ID);
-//         return compileAssigning(node, scope, target, false);
-//      case REDUCE_OPERATOR_ID:
-//         node.setArgument(SUB_OPERATOR_ID);
-//         return compileAssigning(node, scope, target, false);
-//      case INCREASE_OPERATOR_ID:
-//         node.setArgument(MUL_OPERATOR_ID);
-//         return compileAssigning(node, scope, target, false);
-//      case SEPARATE_OPERATOR_ID:
-//         node.setArgument(DIV_OPERATOR_ID);
-//         return compileAssigning(node, scope, target, false);
+      case APPEND_OPERATOR_ID:
+         return compileOperation(writer, node, scope, mode, ADD_OPERATOR_ID, true);
+      case REDUCE_OPERATOR_ID:
+         return compileOperation(writer, node, scope, mode, SUB_OPERATOR_ID, true);
+      case INCREASE_OPERATOR_ID:
+         return compileOperation(writer, node, scope, mode, MUL_OPERATOR_ID, true);
+      case SEPARATE_OPERATOR_ID:
+         node.setArgument(DIV_OPERATOR_ID);
+         return compileOperation(writer, node, scope, mode, DIV_OPERATOR_ID, true);
       default:
-         return compileOperation(writer, node, scope, mode, operator_id);
+         return compileOperation(writer, node, scope, mode, operator_id, false);
    }
 }
 
@@ -4891,7 +4895,7 @@ ObjectInfo Compiler :: compileArrAssigning(SyntaxWriter& writer, SNode node, Exp
    arguments.add(roperand);
    arguments.add(roperand2);
 
-   return compileOperation(writer, node, scope, SET_REFER_OPERATOR_ID, loperand, &arguments/*, mode*/);
+   return compileOperation(writer, node, scope, SET_REFER_OPERATOR_ID, loperand, &arguments/*, mode*/, false);
 }
 
 ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode)
@@ -6773,7 +6777,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
 
             return compileObject(writer, node.firstChild(lxTerminalMask), scope, mode, preservedArgs);
          }
-         return compileOperation(writer, node, scope, mode, REFER_OPERATOR_ID);
+         return compileOperation(writer, node, scope, mode, REFER_OPERATOR_ID, false);
          break;
       }
       case lxNestedExpression:

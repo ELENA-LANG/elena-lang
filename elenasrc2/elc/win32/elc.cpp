@@ -479,7 +479,7 @@ int main()
    catch(_ELENA_::_Exception&) {
       print(ELC_UNSUCCESSFUL);
       exitCode = -2;
-
+         
       project.cleanUp();
    }
    return exitCode;

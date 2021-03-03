@@ -2691,6 +2691,7 @@ void ByteCodeWriter :: generateBoolLogicOperation(CommandTape& tape, SyntaxTree:
       // NOTE : the second argument is dummy for unary operator
       generateObject(tape, larg, scope, BOOL_ARG_EXPR);
       tape.write(bcPushR, trueRef);
+      tape.write(bcEqual);
       tape.write(bcSelect, trueRef, falseRef);
       tape.write(bcPop);
    }
