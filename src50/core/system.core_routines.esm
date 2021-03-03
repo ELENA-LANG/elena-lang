@@ -42,6 +42,17 @@ procedure __object.equal[2]
   
 end
 
+procedure __object."equalReference$system@Object$system@Object[2]"
+
+  peeksi 1
+  pushsi 2
+  equal
+  select const : false, const : true
+  pop
+  quit
+  
+end
+
 procedure __literal."equal$system@String[2]"
 
   pushsi 2

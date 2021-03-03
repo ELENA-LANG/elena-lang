@@ -3,6 +3,8 @@ In development:
 ------         
 
   [development]
+    * extensions
+
     * basic tests
     * program exception handling
     * system tests : 86, 86-64
@@ -13,7 +15,6 @@ In development:
     * lambda closures
     * multi ret
     * yield metods
-    * extensions
     * template based extensions
 
     * compile lib50

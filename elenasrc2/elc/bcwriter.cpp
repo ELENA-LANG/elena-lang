@@ -3074,7 +3074,7 @@ void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node, FlowS
 
 void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, FlowScope& scope)
 {
-//   bool functionMode = test(node.argument, FUNCTION_MESSAGE);
+   bool functionMode = test(node.argument, FUNCTION_MESSAGE);
 //   bool argUnboxMode = false;
 //   bool openArg = false;
 
@@ -3117,9 +3117,9 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
 
    // the function target can be loaded at the end
    size_t startIndex = 0;
-//   if (functionMode && isFirstDirect) {
-//      startIndex = 1;
-//   }
+   if (functionMode/* && isFirstDirect*/) {
+      startIndex = 1;
+   }
 
    tape.write(bcXAllocI, argCount);
 
@@ -3138,14 +3138,14 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
 //      }
    }
 
-//   if (functionMode) {
+   if (functionMode) {
 //      // load a function target
 //      if (startIndex == 0) {
 //         popObject(tape, lxResult);
 //      }
-//      else generateObject(tape, getChild(node, 0), scope);
-//   }
-   /*else */tape.write(bcPeekSI, 0);
+      /*else */generateObject(tape, getChild(node, 0), scope);
+   }
+   else tape.write(bcPeekSI, 0);
 
    generateCall(tape, node/*, paramCount, presavedCount*/);
 

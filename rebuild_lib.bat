@@ -65,54 +65,54 @@ bin\elc src50\extensions\extensions.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\elc src50\net\net.prj
+rem bin\elc src50\net\net.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\elc src50\forms\forms.prj
+rem bin\elc src50\forms\forms.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\elc src50\xforms\xforms.prj
+rem bin\elc src50\xforms\xforms.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\elc src50\sqlite\sqlite.prj
+rem bin\elc src50\sqlite\sqlite.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\elc src50\cellular\cellular.prj
+rem bin\elc src50\cellular\cellular.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\elc src50\algorithms\algorithms.prj
+rem bin\elc src50\algorithms\algorithms.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 rem bin\elc src50\graphics\graphics.prj
 
-bin\elc src50\system\system_64.prj
+rem bin\elc src50\system\system_64.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\elc src50\extensions\extensions_64.prj
+rem bin\elc src50\extensions\extensions_64.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\elc tests\system\system_test.prj
+rem bin\elc tests\system\system_test.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-tests\system\system_test.exe
+rem tests\system\system_test.exe
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO TestError
 @echo on

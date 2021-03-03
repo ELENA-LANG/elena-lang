@@ -3028,8 +3028,9 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       ref_t implicitSignatureRef = arguments ? resolveStrongArgument(scope, arguments) : 0;
 
       int stackSafeAttr = 0;
+      ref_t dummy = 0;
       int messageRef = resolveMessageAtCompileTime(loperand, scope, 
-         resolveOperatorMessage(scope, operator_id, argCount), implicitSignatureRef, true, stackSafeAttr);
+         resolveOperatorMessage(scope, operator_id, argCount), implicitSignatureRef, false, stackSafeAttr, dummy);
 
       if (!test(stackSafeAttr, 1)) {
          operationMode = operationMode | HINT_DYNAMIC_OBJECT;
@@ -3294,11 +3295,6 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, ExprScop
    //if (result.embeddable) {
    //   node.appendNode(lxEmbeddableAttr);
    //}
-
-   // define the message target if required
-   if (target.kind == okConstantRole/* || target.kind == okSubject*/) {
-      writer.appendNode(lxConstantSymbol, target.reference);
-   }
 
    if (classReference)
       writer.appendNode(lxCallTarget, classReference);
@@ -4258,8 +4254,8 @@ bool Compiler :: isSelfCall(ObjectInfo target)
    }
 }
 
-mssg_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, mssg_t generalMessageRef, ref_t implicitSignatureRef,
-   bool withExtension, int& stackSafeAttr)
+mssg_t Compiler :: resolveMessageAtCompileTime(ObjectInfo target, ExprScope& scope, mssg_t generalMessageRef, ref_t implicitSignatureRef,
+   bool withExtension, int& stackSafeAttr, ref_t& resolvedExtensionRef)
 {
    int resolvedStackSafeAttr = 0;
    mssg_t resolvedMessageRef = 0;
@@ -4308,7 +4304,7 @@ mssg_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sc
          stackSafeAttr = resolvedStackSafeAttr;
 
          // if there is an extension to handle the compile-time resolved message - use it
-         target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
+         resolvedExtensionRef = extensionRef;         
 
          return resolvedMessageRef;
       }
@@ -4322,7 +4318,7 @@ mssg_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sc
          stackSafeAttr = resolvedStackSafeAttr;
 
          // if there is an extension to handle the compile-time resolved message - use it
-         target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
+         resolvedExtensionRef = extensionRef;
 
          return variadicMessage;
       }
@@ -4366,7 +4362,14 @@ ObjectInfo Compiler :: compileMessageOperation(SyntaxWriter& writer, SNode curre
       else {
          int stackSafeAttr = 0;
          //if (!EAttrs::test(mode, HINT_DIRECTCALL))
-            messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, stackSafeAttr);
+            ref_t extensionRef = 0;
+            messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, 
+                           stackSafeAttr, extensionRef);
+            if (extensionRef) {
+               // if extension was found - make it a operation target
+               arguments.insert(target);
+               target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
+            }
    
          if (!test(stackSafeAttr, 1)) {
             mode = mode | HINT_DYNAMIC_OBJECT;
@@ -5748,8 +5751,10 @@ ObjectInfo Compiler :: compileNewArrOperation(SyntaxWriter& writer, SNode node, 
    }
 
    int stackSafeAttr = 0;
+   ref_t dummy = 0;
    //if (!EAttrs::test(mode, HINT_DIRECTCALL))
-   messageRef = resolveMessageAtCompileTime(object, scope, messageRef, implicitSignatureRef, true, stackSafeAttr);
+   messageRef = resolveMessageAtCompileTime(object, scope, messageRef, implicitSignatureRef, false, 
+      stackSafeAttr, dummy);
 
    if (!test(stackSafeAttr, 1)) {
       mode = mode | HINT_DYNAMIC_OBJECT;
@@ -6407,6 +6412,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
          writer.newNode(lxClassSymbol, object.param);
          break;
       case okConstantSymbol:
+      case okConstantRole:
       case okSingleton:
          writer.newNode(lxConstantSymbol, object.param);
          break;
@@ -7901,7 +7907,8 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
 
    ObjectInfo target(okClassSelf, resendScope.getClassRefId(), classRef);
    int stackSafeAttr = 0;
-   messageRef = resolveMessageAtCompileTime(target, resendScope, messageRef, implicitSignatureRef, false, stackSafeAttr);
+   ref_t dummy = 0;
+   messageRef = resolveMessageAtCompileTime(target, resendScope, messageRef, implicitSignatureRef, false, stackSafeAttr, dummy);
 
    // find where the target constructor is declared in the current class
    // but it is not equal to the current method
@@ -7928,8 +7935,9 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
             found = true;
 
             target.reference = classRef;
+            ref_t dummy = 0;
             messageRef = resolveMessageAtCompileTime(target, resendScope, messageRef, implicitSignatureRef, 
-               false, stackSafeAttr);
+               false, stackSafeAttr, dummy);
 
             break;
          }
@@ -7938,8 +7946,9 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
             found = true;
 
             target.reference = classRef;
+            ref_t dummy = 0;
             messageRef = resolveMessageAtCompileTime(target, resendScope, protectedConstructor, implicitSignatureRef, 
-               false, stackSafeAttr);
+               false, stackSafeAttr, dummy);
 
             break;
          }
@@ -10526,9 +10535,9 @@ ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, mssg_t gener
    injectVirtualMultimethod(*scope.moduleScope, writer.CurrentNode(),
       genericMessageRef | FUNCTION_MESSAGE, lxClassMethod, genericMessageRef, false, 0);
 
-   writer.closeNode();
-
    SNode classNode = writer.CurrentNode();
+
+   writer.closeNode();
 
    // declare the extension
    compileParentDeclaration(classNode, classScope, scope.moduleScope->superReference);
@@ -10547,8 +10556,10 @@ ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, mssg_t gener
    // compile the extension
    // !!NOTE : we create paralel class node for the code tree generation
    writer.newNode(lxClass, extRef);
-   classNode = writer.CurrentNode();
    compileVMT(writer, classNode, classScope);
+
+   // keep the command tree node
+   classNode = writer.CurrentNode();
    writer.closeNode();
 
    generateClassImplementation(classNode, classScope);
