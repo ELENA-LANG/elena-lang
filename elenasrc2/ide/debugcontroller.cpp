@@ -1278,7 +1278,7 @@ inline int getInfo(DebugLineInfo* lineInfo, int index)
    if (lineInfo[index + 1].symbol == dsFrameOffset) {
       return lineInfo[index + 2].addresses.source.nameRef;
    }
-   else return 0;
+   else return lineInfo[index + 1].addresses.source.nameRef;
 }
 
 void DebugController :: readAutoContext(_DebuggerWatch* watch)
@@ -1378,7 +1378,8 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
             }
          }
          else if (lineInfo[index].symbol == dsLocalPtr) {
-            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
+            size_t localPtr = _debugger.Context()->readDWord(
+               _debugger.Context()->Local(lineInfo[index].addresses.local.level, getDisp(lineInfo, index)));
             ref_t classPtr = _classNames.get((const char*)unmapDebugPTR32(getInfo(lineInfo, index)));
 
             readObject(watch, localPtr, 

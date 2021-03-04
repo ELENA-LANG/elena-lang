@@ -54,6 +54,7 @@ In development:
     + optimization : embeddable return - extra variable
     + optimization : dispatching to the primitive field (e.g. ref<byte>)
     + optimization : branching - extra temporal variable
+    + (re)implement long invert op
 
     * do not save the external operation if the result is not assigned or passed as an argument
     * optimization - duplicate assigning : external call, message call

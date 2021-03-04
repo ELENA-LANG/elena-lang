@@ -98,11 +98,11 @@ public class Exception
 //    constructor new(string message)
 //        <= new(message);
 //}
-//
-//// --- OutOfRangeException ---
-//
-//public class OutOfRangeException : Exception
-//{
+
+// --- OutOfRangeException ---
+
+public class OutOfRangeException : Exception
+{
 //    /// Creates the exception
 //    constructor new()
 //        <= new("An index is out of range");
@@ -110,8 +110,8 @@ public class Exception
 //    /// Creates the exception
 //    constructor new(string message)
 //        <= new(message);
-//}
-//
+}
+
 //// --- InvalidArgumentException ---
 //
 //public class InvalidArgumentException : Exception

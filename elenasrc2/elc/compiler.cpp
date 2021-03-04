@@ -8637,12 +8637,19 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
       }
 
       if (retExpr) {
+         writer.newNode(lxSeqExpression);
+
          ExprScope exprScope(&codeScope);
          ObjectInfo retVal = compileExpression(writer, bodyNode.firstChild(), exprScope, codeScope.getClassRefId(),
             HINT_DYNAMIC_OBJECT | HINT_NOPRIMITIVES | HINT_PARAMETER | HINT_ROOTEXPR, nullptr);
 
+         if (boxingRequired(retVal))
+            retVal = boxArgumentInPlace(writer, node, retVal, exprScope, false);
+
          if (retVal.kind != okObject)
             writeTerminal(writer, retVal, exprScope);
+
+         writer.closeNode();
       }
       else {
          compileCode(writer, bodyNode, codeScope);
