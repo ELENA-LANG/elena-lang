@@ -4965,7 +4965,7 @@ bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScop
 //   }
 //}
 
-void Compiler :: compileAction(SNode node, ClassScope& scope/*, SNode argNode*/, EAttr mode)
+void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, EAttr mode)
 {
    SyntaxTree buffer;
    SyntaxWriter writer(buffer);   
@@ -4973,7 +4973,7 @@ void Compiler :: compileAction(SNode node, ClassScope& scope/*, SNode argNode*/,
    writer.newNode(lxClass, scope.reference);
 
    MethodScope methodScope(&scope);
-   bool lazyExpression = declareActionScope(scope, node.findChild(lxMethodParameter), methodScope, mode);
+   bool lazyExpression = declareActionScope(scope, argNode, methodScope, mode);
 //   bool inlineExpression = EAttrs::test(mode, HINT_INLINE_EXPR);
    methodScope.functionMode = true;
 
@@ -4994,9 +4994,8 @@ void Compiler :: compileAction(SNode node, ClassScope& scope/*, SNode argNode*/,
 //   }
 //   else {
       // inject a method
-      SNode current = node.findChild(lxCode, lxReturning);
-//      current.injectAndReplaceNode(lxClassMethod, methodScope.message);
-//
+//      SNode current = node.findSubNode(lxCode, lxReturning);
+
 //      //!!HOTFIX : copy method parameters to be used for debug info
 //      copyMethodParameters(current, argNode);
 
@@ -5341,21 +5340,18 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, ExprScop
 //      compileAction(node, scope, SNode(), mode);
 //   }
    /*else */if (argNode == lxCode) {
-      compileAction(node, scope/*, SNode()*/, mode);
+      compileAction(node, scope, SNode(), mode);
    }
-//   else if (node.existChild(lxCode, lxReturning)) {
+   else if (node.existSubChild(lxCode, lxReturning)) {
 //      //SNode codeNode = node.findChild(lxCode, lxReturning);
-//
-//      // if it is a closure / lambda function with a parameter
-//      EAttr actionMode = mode;
-////      //if (singleton)
-////      //   actionMode |= HINT_SINGLETON;
-//
-//      compileAction(node, scope, node.findChild(lxIdentifier, /*lxPrivate, */lxMethodParameter/*, lxClosureMessage*/), actionMode);
+
+      // if it is a closure / lambda function with a parameter
+      EAttr actionMode = mode;
+      compileAction(node, scope, node.findChild(lxIdentifier/*, lxMethodParameter*/), actionMode);
 //
 ////      // HOTFIX : hide code node because it is no longer required
 ////      codeNode = lxIdle;
-//   }
+   }
    // if it is a nested class
    else if (argNode == lxClass)
       compileNestedVMT(argNode, scope);
@@ -7169,11 +7165,11 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, bool 
    size_t signatureLen = 0;
 //   bool first = true;
    bool weakSingature = true;
-   while (arg == lxMethodParameter/* || arg == lxIdentifier || arg == lxPrivate*/) {
+   while (/*arg == lxMethodParameter/* || */arg == lxIdentifier/* || arg == lxPrivate*/) {
       SNode terminalNode = arg;
-      if (terminalNode == lxMethodParameter) {
-         terminalNode = terminalNode.firstChild(lxTerminalMask);
-      }
+      //if (terminalNode == lxMethodParameter) {
+      //   terminalNode = terminalNode.firstChild(lxTerminalMask);
+      //}
 
       ident_t terminal = terminalNode.identifier();
       int index = 1 + scope.parameters.Count();
@@ -7585,7 +7581,7 @@ void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodSco
 
    CodeScope codeScope(&scope);
 
-   SNode body = node.findChild(lxCode, lxReturning);
+   SNode body = node.findSubNode(lxCode, lxReturning);
 
    writer.newNode(lxNewFrame);
 

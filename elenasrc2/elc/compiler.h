@@ -1250,7 +1250,7 @@ private:
 
    void compileSymbolCode(SyntaxTree& expressionTree, ClassScope& scope);
 
-   void compileAction(SNode node, ClassScope& scope/*, SNode argNode*/, EAttr mode);
+   void compileAction(SNode node, ClassScope& scope, SNode argNode, EAttr mode);
    void compileNestedVMT(SNode& node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope, bool exclusiveMode = false, 

@@ -3,8 +3,6 @@ In development:
 ------         
 
   [development]
-    * lambda closures
-
     * basic tests
     * program exception handling
     * system tests : 86, 86-64

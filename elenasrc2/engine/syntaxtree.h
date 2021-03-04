@@ -477,23 +477,23 @@ public:
 
          return current;
       }
-//      Node findSubNode(LexicalType type1, LexicalType type2)
-//      {
-//         Node current = firstChild();
-//         while (current != lxNone && current.type != type1) {
-//            if (current == lxExpression) {
-//               Node subNode = current.findSubNode(type1, type2);
-//               if (subNode != lxNone)
-//                  return subNode;
-//            }
-//            else if (current == type2)
-//               break;
-//
-//            current = current.nextNode();
-//         }
-//
-//         return current;
-//      }
+      Node findSubNode(LexicalType type1, LexicalType type2)
+      {
+         Node current = firstChild();
+         while (current != lxNone && current.type != type1) {
+            if (current == lxExpression) {
+               Node subNode = current.findSubNode(type1, type2);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (current == type2)
+               break;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
 //      Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
 //      {
 //         Node current = firstChild();
@@ -933,10 +933,10 @@ public:
 //      {
 //         return findChild(type1, type2, type3) != lxNone;
 //      }
-//      bool existSubChild(LexicalType type1, LexicalType type2)
-//      {
-//         return findSubNode(type1, type2) != lxNone;
-//      }
+      bool existSubChild(LexicalType type1, LexicalType type2)
+      {
+         return findSubNode(type1, type2) != lxNone;
+      }
 //      //bool existSubChild(LexicalType type1)
 //      //{
 //      //   return findSubNode(type1) != lxNone;

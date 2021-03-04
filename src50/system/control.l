@@ -1,5 +1,5 @@
-//// === Basic prototypes ===
-//
+// === Basic prototypes ===
+
 //// --- Enumerator ---
 //
 ///// An enumerator prototype
@@ -199,12 +199,12 @@ public interface Func
 //    }
 }
 
-///// A base function
-//public interface Func1
-//{
-//    /// Executes the action
-//    abstract function(param);
-//    
+/// A base function
+public interface Func1
+{
+    /// Executes the action
+    abstract function(param);
+    
 //    /// Executes the function for every enumeration item
 //    run(Enumerator en)
 //    {
@@ -228,8 +228,8 @@ public interface Func
 //        
 //        ^ nil
 //    }
-//}
-//
+}
+
 //public interface Func<T, TResult>
 //{
 //    /// Executes the action
