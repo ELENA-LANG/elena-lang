@@ -5336,6 +5336,9 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, ExprScop
 
    // if it is a lazy expression / multi-statement closure without parameters
    SNode argNode = node.firstChild();
+   if (argNode == lxExpression)
+      argNode = argNode.firstChild();
+
 //   if (EAttrs::testany(mode, HINT_LAZY_EXPR | HINT_INLINE_EXPR)) {
 //      compileAction(node, scope, SNode(), mode);
 //   }
