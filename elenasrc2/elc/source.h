@@ -35,6 +35,7 @@ constexpr char dfaDotStart       = 'O';
 constexpr char dfaExplicitConst  = 'S';
 constexpr char dfaLong           = 'R';
 constexpr char dfaHexInteger     = 'T'; // should be kept for compatibility
+constexpr char dfaGenericReal    = 'P';
 constexpr char dfaReal           = 'Q';
 constexpr char dfaSignStart      = 'U';
 constexpr char dfaQuoteStart     = 'V';

@@ -66,7 +66,7 @@
 
 /// primitive types
 #define __string    80000801h
-//#define __float     80000802h
+#define __float     80000802h
 #define __int       80000803h
 #define __raw       80000804h
 //#define __ptr       80000805h
@@ -92,7 +92,7 @@ type short      = ShortNumber;
 type int        = IntNumber;
 //type uint       = UIntNumber;
 type long       = LongNumber;
-//type real       = RealNumber;
+type real       = RealNumber;
 //type char       = CharValue;
 type string     = String;
 type wide       = WideString;

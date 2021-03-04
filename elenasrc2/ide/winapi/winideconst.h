@@ -13,7 +13,7 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define IDE_REVISION_NUMBER                     35
+#define IDE_REVISION_NUMBER                     36
 
 // --- Command line arguments ---
 

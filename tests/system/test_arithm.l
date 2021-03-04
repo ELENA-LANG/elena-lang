@@ -367,11 +367,11 @@ realTest()
 {
     console.write("realTest..");
         
-    real n := 2.0r;
-    real m := 3.0r;
-    real k := 4.0r;
+    real n := 2.0;
+    real m := 3.0;
+    real k := 4.0;
 
-    Assert.ifTrue(n + m * k == 14.0r);
+    Assert.ifTrue(n + m * k == 14.0);
     
     Assert.ifFalse(n == m);            
     Assert.ifTrue(n != m);            
@@ -384,13 +384,13 @@ realTest()
     Assert.ifTrue(n < m);            
     Assert.ifTrue(m > n);            
     
-    real i := 1.0r;
-    i += 2.0r;
-    i -= 2.0r;
-    i *= 2.0r;
-    i /= 2.0r;
+    real i := 1.0;
+    i += 2.0;
+    i -= 2.0;
+    i *= 2.0;
+    i /= 2.0;
     
-    Assert.ifTrue(i == 1.0r);
+    Assert.ifTrue(i == 1.0);
         
     console.writeLine("done")        
 }

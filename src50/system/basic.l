@@ -178,8 +178,8 @@ public sealed const struct ByteNumber : IntBaseNumber
     [info:"returns the value as a long integer"]
     long cast() = new LongNumber(self);
 
-//    [info:"returns the value as a real number"]
-//    real cast() = new RealNumber(self);
+    [info:"returns the value as a real number"]
+    real cast() = new RealNumber(self);
 
 //    bool equal(BaseVariable v)
 //        <= equal(*v);
@@ -196,9 +196,9 @@ public sealed const struct ByteNumber : IntBaseNumber
     bool equal(int n)
         = new IntNumber(self).less(n);
         
-//    [info:"compares the value"]
-//    bool equal(real n)
-//        = new RealNumber(self).equal(n);
+    [info:"compares the value"]
+    bool equal(real n)
+        = new RealNumber(self).equal(n);
         
     bool equal(o)
     {
@@ -232,9 +232,9 @@ public sealed const struct ByteNumber : IntBaseNumber
     bool less(long n)
         = new LongNumber(self).less(n);
 
-//    [info:"compares the value"]
-//    bool less(real n)
-//        = new RealNumber(self).less(n);
+    [info:"compares the value"]
+    bool less(real n)
+        = new RealNumber(self).less(n);
 
     add(n)
         <= add(cast byte(n));
@@ -324,22 +324,22 @@ public sealed const struct ByteNumber : IntBaseNumber
     long divide(long n)
         = new LongNumber(self).divide(n);
 
-//    [info:"returns the sum"]
-//    real add(real n)
-//        = new RealNumber(self).add(n);
-//
-//    [info:"returns the difference"]
-//    real subtract(real n)
-//        = new RealNumber(self).subtract(n);
-//
-//    [info:"returns the product"]
-//    real multiply(real n)
-//        = new RealNumber(self).multiply(n);
-//
-//    [info:"returns the result of integer division"]
-//    real divide(real n)
-//        = new RealNumber(self).divide(n);
-//
+    [info:"returns the sum"]
+    real add(real n)
+        = new RealNumber(self).add(n);
+
+    [info:"returns the difference"]
+    real subtract(real n)
+        = new RealNumber(self).subtract(n);
+
+    [info:"returns the product"]
+    real multiply(real n)
+        = new RealNumber(self).multiply(n);
+
+    [info:"returns the result of integer division"]
+    real divide(real n)
+        = new RealNumber(self).divide(n);
+
 //    and(n)
 //        <= and(cast byte(n));
 //        
@@ -479,8 +479,8 @@ public sealed const struct ShortNumber : IntBaseNumber
     [info:"returns the long integer value"]
     long cast() = new LongNumber(self);
     
-//    [info:"returns the value as a real number"]
-//    real cast() = new RealNumber(self);
+    [info:"returns the value as a real number"]
+    real cast() = new RealNumber(self);
 
     bool equal(o)
     {
@@ -531,13 +531,13 @@ public sealed const struct ShortNumber : IntBaseNumber
     bool less(long n)
         = new LongNumber(self).less(n);
     
-//    [info:"compares the value"]
-//    bool equal(real n)
-//        = new RealNumber(self).equal(n);
-//        
-//    [info:"compares the value"]
-//    bool less(real n)
-//        = new RealNumber(self).less(n);
+    [info:"compares the value"]
+    bool equal(real n)
+        = new RealNumber(self).equal(n);
+        
+    [info:"compares the value"]
+    bool less(real n)
+        = new RealNumber(self).less(n);
 
     add(n)
         <= add(cast short(n));
@@ -627,22 +627,22 @@ public sealed const struct ShortNumber : IntBaseNumber
     divide(long n)
         = new LongNumber(self).divide(n);
 
-//    [info:"returns the sum"]
-//    add(real n)
-//        = new RealNumber(self).add(n);
-//
-//    [info:"returns the difference"]
-//    subtract(real n)
-//        = new RealNumber(self).subtract(n);
-//
-//    [info:"returns the product"]
-//    multipl(real n)
-//        = new RealNumber(self).multiply(n);
-//        
-//    [info:"Returns the result of integer division"]
-//    divide(real n)
-//        = new RealNumber(self).divide(n);
-//
+    [info:"returns the sum"]
+    add(real n)
+        = new RealNumber(self).add(n);
+
+    [info:"returns the difference"]
+    subtract(real n)
+        = new RealNumber(self).subtract(n);
+
+    [info:"returns the product"]
+    multipl(real n)
+        = new RealNumber(self).multiply(n);
+        
+    [info:"Returns the result of integer division"]
+    divide(real n)
+        = new RealNumber(self).divide(n);
+
 //    and(n)
 //        <= and(cast short(n));
 //        
@@ -778,9 +778,9 @@ public sealed const struct IntNumber : IntBaseNumber
     [info:"Returns the long integer"]
     long cast() = new LongNumber(self);
 
-//    [info:"Returns the real number"]
-//    real cast() = new RealNumber(self);
-//
+    [info:"Returns the real number"]
+    real cast() = new RealNumber(self);
+
 //    [info:"Returns the real number"]
 //    uint cast() = new UIntNumber(self);
     
@@ -891,8 +891,8 @@ public sealed const struct IntNumber : IntBaseNumber
         = new LongNumber(self).equal(n);
 
 //    [info:"Compares the integer value"]
-//    bool equal(real n)
-//        = new RealNumber(self).equal(n);
+    bool equal(real n)
+        = new RealNumber(self).equal(n);
 
     [info:"Compares the integer value"]
     bool less(short value)
@@ -906,9 +906,9 @@ public sealed const struct IntNumber : IntBaseNumber
     bool less(long n)
         = new LongNumber(self).less(n);
 
-//    [info:"Compares the integer value"]
-//    bool less(real n)
-//        = new RealNumber(self).less(n);
+    [info:"Compares the integer value"]
+    bool less(real n)
+        = new RealNumber(self).less(n);
 
     [info:"Returns the sum of integers"]
     add(short value)
@@ -922,9 +922,9 @@ public sealed const struct IntNumber : IntBaseNumber
     long add(long n)
         = new LongNumber(self).add(n);
 
-//    [info:"Returns the sum of integers"]
-//    real add(real n)
-//        = new RealNumber(self).add(n);
+    [info:"Returns the sum of integers"]
+    real add(real n)
+        = new RealNumber(self).add(n);
 
     [info:"Returns the difference of integers"]
     subtract(short value)
@@ -938,9 +938,9 @@ public sealed const struct IntNumber : IntBaseNumber
     long subtract(long n)
         = new LongNumber(self).subtract(n);
 
-//    [info:"Returns the difference of integers"]
-//    real subtract(real n)
-//        = new RealNumber(self).subtract(n);
+    [info:"Returns the difference of integers"]
+    real subtract(real n)
+        = new RealNumber(self).subtract(n);
 
     [info:"Returns the product of integers"]
     multiply(short value)
@@ -954,9 +954,9 @@ public sealed const struct IntNumber : IntBaseNumber
     long multiply(long n)
         = new LongNumber(self).multiply(n);
 
-//    [info:"Returns the product of integers"]
-//    real multiply(real n)
-//        = new RealNumber(self).multiply(n);
+    [info:"Returns the product of integers"]
+    real multiply(real n)
+        = new RealNumber(self).multiply(n);
 
     [info:"Returns the result of integer division"]
     divide(short value)
@@ -970,10 +970,10 @@ public sealed const struct IntNumber : IntBaseNumber
     long divide(long n)
         = new LongNumber(self).divide(n);
 
-//    [info:"Returns the result of integer division"]
-//    real divide(real n)
-//        = new RealNumber(self).divide(n);
-//
+    [info:"Returns the result of integer division"]
+    real divide(real n)
+        = new RealNumber(self).divide(n);
+
 //    [info:"Returns the result of bitwise AND operation"]
 //    and(short n)
 //        = self.and(new IntNumber(n));
@@ -1465,8 +1465,8 @@ public sealed const struct LongNumber : IntBaseNumber
     [info:"Returns the byte value"]
     byte cast() = byteConvertor.convert(self);
 
-//    [info:"Returns a real value"]
-//    real cast() = new RealNumber(self);
+    [info:"Returns a real value"]
+    real cast() = new RealNumber(self);
     
     bool equal(o)
     {
@@ -1575,9 +1575,9 @@ public sealed const struct LongNumber : IntBaseNumber
     bool equal(byte n)
         = self.equal(new LongNumber(n));
 
-//    [info:"Compares the integer value"]
-//    bool equal(real n)
-//        = new RealNumber(self).equal(n);
+    [info:"Compares the integer value"]
+    bool equal(real n)
+        = new RealNumber(self).equal(n);
 
     [info:"Compares the integer value"]
     bool less(int n)
@@ -1591,9 +1591,9 @@ public sealed const struct LongNumber : IntBaseNumber
     bool less(byte n)
         = self.less(new LongNumber(n));
 
-//    [info:"Compares the integer value"]
-//    bool less(real n)
-//        = new RealNumber(self).less(n);
+    [info:"Compares the integer value"]
+    bool less(real n)
+        = new RealNumber(self).less(n);
 
     [info:"Returns the sum of integers"]
     add(int n)
@@ -1607,9 +1607,9 @@ public sealed const struct LongNumber : IntBaseNumber
     add(byte n)
         = self.add(new LongNumber(n));
 
-//    [info:"Returns the sum of integers"]
-//    add(real n)
-//        = new RealNumber(self).add(n);
+    [info:"Returns the sum of integers"]
+    add(real n)
+        = new RealNumber(self).add(n);
 
     [info:"Returns the difference of integers"]
     subtract(int n)
@@ -1623,13 +1623,13 @@ public sealed const struct LongNumber : IntBaseNumber
     subtract(byte n)
         = self.subtract(new LongNumber(n));
 
-//    [info:"Returns the difference of integers"]
-//    subtract(real n)
-//        = new RealNumber(self).subtract(n);
-//
-//    [info:"Returns the product of integers"]
-//    multiply(real n)
-//        = new RealNumber(self).multiply(n);
+    [info:"Returns the difference of integers"]
+    subtract(real n)
+        = new RealNumber(self).subtract(n);
+
+    [info:"Returns the product of integers"]
+    multiply(real n)
+        = new RealNumber(self).multiply(n);
 
     [info:"Returns the product of integers"]
     multiply(int n)
@@ -1655,10 +1655,10 @@ public sealed const struct LongNumber : IntBaseNumber
     divide(byte n)
         = self.divide(new LongNumber(n));
 
-//    [info:"Returns the result of integer division"]
-//    divide(real n)
-//        = new RealNumber(self).divide(n);
-//        
+    [info:"Returns the result of integer division"]
+    divide(real n)
+        = new RealNumber(self).divide(n);
+        
 //    [info:"Returns the result of bitwise AND operation"]
 //    and(int n)
 //        = self.and(new LongNumber(n));
@@ -1729,98 +1729,98 @@ public sealed const struct LongNumber : IntBaseNumber
     }
 }
 
-//// --- realNumber ---
-//
-//[info:"A 64bit float numeric value"]
-//public sealed const struct RealNumber : BaseNumber
-//{
-//    embeddable __float theValue[8];
-//
-//    [info:"Returns the minimal value"]
-//    static real MinValue
-//        = -1.7976931348623157e+308r;
-//    
-//    [info:"Returns the maximal value"]
-//    static real MaxValue
-//        = 1.7976931348623157e+308r;
-//        
-//    [info:"Returns the negative infinity"]
-//    static real NegativeInfinity 
-//        = -1.0r / 0.0r;
-//        
-//    [info:"Returns the positive infinity"]
-//    static real PositiveInfinity 
-//        = 1.0r / 0.0r;
-//        
-//    [info:"returns the NaN"]
-//    static real NaN
-//        = 0.0r / 0.0r;
-//
+// --- realNumber ---
+
+[info:"A 64bit float numeric value"]
+public sealed const struct RealNumber : BaseNumber
+{
+    embeddable __float theValue[8];
+
+    [info:"Returns the minimal value"]
+    static real MinValue
+        = -1.7976931348623157e+308r;
+    
+    [info:"Returns the maximal value"]
+    static real MaxValue
+        = 1.7976931348623157e+308r;
+        
+    [info:"Returns the negative infinity"]
+    static real NegativeInfinity 
+        = -1.0r / 0.0r;
+        
+    [info:"Returns the positive infinity"]
+    static real PositiveInfinity 
+        = 1.0r / 0.0r;
+        
+    [info:"returns the NaN"]
+    static real NaN
+        = 0.0r / 0.0r;
+
 //    static real Pi
 //        = Pi_value;
-//
-//    constructor(int n)
-//        = realConvertor.convert(n);
-//            
-//    constructor(byte n)
-//        = realConvertor.convert(n);
-//            
-//    constructor(short n)
-//        = realConvertor.convert(n);
-//            
-//    [info:"Creates the object with a default value (0)"]
-//    constructor()
-//        = 0.0r;
-//
-//    [info:"Creates the object with specified value"]
-//    constructor(real value)
-//        = value;
-//  
+
+    constructor(int n)
+        = realConvertor.convert(n);
+            
+    constructor(byte n)
+        = realConvertor.convert(n);
+            
+    constructor(short n)
+        = realConvertor.convert(n);
+            
+    [info:"Creates the object with a default value (0)"]
+    constructor()
+        = 0.0r;
+
+    [info:"Creates the object with specified value"]
+    constructor(real value)
+        = value;
+  
 //    [info:"Creates the object with specified value"]
 //    constructor(uint value)
 //        = realConvertor.convert(value);
-//
-//    [info:"Creates the object with specified value"]
-//    constructor(long value)
-//        = realConvertor.convert(value);
-//        
-//    bool equal(o)
-//    {
-//        var n := cast real(o) ?? nil;
-//        (nil == n)
-//            ? { ^ false }
-//            : { ^ self.equal(n) }
-//    }
-//
-//    bool less(n)
-//        <= less(cast real(n));
-//        
+
+    [info:"Creates the object with specified value"]
+    constructor(long value)
+        = realConvertor.convert(value);
+        
+    bool equal(o)
+    {
+        var n := cast real(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast real(n));
+        
 //    bool equal(BaseVariable v)
 //        <= equal(v.Value);
 //        
 //    bool less(BaseVariable v)
 //        <= less(v.Value);
-//        
-//    [info:"Compares the value"]
-//    bool equal(real n)
-//        = theValue == n;
-//        
-//    [info:"Compares the value"]
-//    bool less(real n)
-//        = theValue < n;
-//        
-//    add(n)
-//        <= add(cast real(n));
-//
-//    subtract(n)
-//        <= subtract(cast real(n));
-//
-//    multiply(n)
-//        <= multiply(cast real(n));
-//
-//    divide(n)
-//        <= divide(cast real(n));
-//        
+        
+    [info:"Compares the value"]
+    bool equal(real n)
+        = theValue == n;
+        
+    [info:"Compares the value"]
+    bool less(real n)
+        = theValue < n;
+        
+    add(n)
+        <= add(cast real(n));
+
+    subtract(n)
+        <= subtract(cast real(n));
+
+    multiply(n)
+        <= multiply(cast real(n));
+
+    divide(n)
+        <= divide(cast real(n));
+        
 //    real add(BaseVariable v)
 //        <= add(v.Value);
 //
@@ -1832,142 +1832,142 @@ public sealed const struct LongNumber : IntBaseNumber
 //
 //    real divide(BaseVariable v)
 //        <= divide(v.Value);
-//        
-//    [info:"Returns the sum"]
-//    real add(real n)
-//        = theValue + n;
-//
-//    [info:"Returns the sum"]
-//    real subtract(real n)
-//        = theValue - n;
-//
-//    [info:"Returns the product"]
-//    real multiply(real n)
-//        = theValue * n;
-//
-//    [info:"Returns the result of integer division"]
-//    real divide(real n)
-//        = theValue / n;
-//        
-//    [info:"Compares the numeric values"]
-//    bool equal(int n)
-//        = self.equal(new RealNumber(n));
-//
-//    [info:"Compares the numeric values"]
-//    bool equal(byte n)
-//        = self.equal(new RealNumber(n));
-//
-//    [info:"Compares the numeric values"]
-//    bool equal(short n)
-//        = self.equal(new RealNumber(n));
-//
-//    [info:"Compares the numeric values"]
-//    bool equal(long n)
-//        = self.equal(new RealNumber(n));
-//
-//    [info:"Compares the numeric values"]
-//    bool less(int n)
-//        = self.less(new RealNumber(n));
-//
-//    [info:"Compares the numeric values"]
-//    bool less(byte n)
-//        = self.less(new RealNumber(n));
-//
-//    [info:"Compares the numeric values"]
-//    bool less(short n)
-//        = self.less(new RealNumber(n));
-//
-//    [info:"Compares the numeric values"]
-//    bool less(long n)
-//        = self.less(new RealNumber(n));
-//
-//    [info:"Returns the sum of numbers"]
-//    real add(int n)
-//    {
-//        real r := n;
-//        
-//        ^ self.add(r)
-//    }
-//    
-//    [info:"Returns the sum of numbers"]
-//    real add(byte n)
-//        = self.add(new RealNumber(n));
-//
-//    [info:"Returns the sum of numbers"]
-//    real add(short n)
-//        = self.add(new RealNumber(n));
-//
-//    [info:"Returns the sum of numbers"]
-//    real add(long n)
-//        = self.add(new RealNumber(n));
-//
-//    [info:"Returns the difference of numbers"]
-//    real subtract(int n)
-//        = self.subtract(new RealNumber(n));
-//
-//    [info:"Returns the difference of numbers"]
-//    real subtract(byte n)
-//        = self.subtract(new RealNumber(n));
-//
-//    [info:"Returns the difference of numbers"]
-//    real subtract(short n)
-//        = self.subtract(new RealNumber(n));
-//
-//    [info:"Returns the difference of numbers"]
-//    real subtract(long n)
-//        = self.subtract(new RealNumber(n));
-//
-//    [info:"Returns the product of numbers"]
-//    real multiply(int n)
-//    {
-//        real r := n;
-//        
-//        ^ self.multiply(r)
-//    }
-//
-//    [info:"Returns the product of numbers"]
-//    real multiply(byte n)
-//        = self.multiply(new RealNumber(n));
-//
-//    [info:"Returns the product of numbers"]
-//    real multiply(short n)
-//        = self.multiply(new RealNumber(n));
-//
-//    [info:"Returns the product of numbers"]
-//    real multiply(long n)
-//        = self.multiply(new RealNumber(n));
-//
-//    [info:"Returns the result of the division"]
-//    real divide(int n)
-//    {
-//        real r := n;
-//        
-//        ^ self.divide(r)
-//    }
-//
-//    [info:"Returns the result of the division"]
-//    real divide(byte n)
-//        = self.divide(new RealNumber(n));
-//        
-//    [info:"Returns the result of the division"]
-//    real divide(short n)
-//        = self.divide(new RealNumber(n));
-//
-//    [info:"Returns the result of the division"]
-//    real divide(long n)
-//        = self.divide(new RealNumber(n));
-//
+        
+    [info:"Returns the sum"]
+    real add(real n)
+        = theValue + n;
+
+    [info:"Returns the sum"]
+    real subtract(real n)
+        = theValue - n;
+
+    [info:"Returns the product"]
+    real multiply(real n)
+        = theValue * n;
+
+    [info:"Returns the result of integer division"]
+    real divide(real n)
+        = theValue / n;
+        
+    [info:"Compares the numeric values"]
+    bool equal(int n)
+        = self.equal(new RealNumber(n));
+
+    [info:"Compares the numeric values"]
+    bool equal(byte n)
+        = self.equal(new RealNumber(n));
+
+    [info:"Compares the numeric values"]
+    bool equal(short n)
+        = self.equal(new RealNumber(n));
+
+    [info:"Compares the numeric values"]
+    bool equal(long n)
+        = self.equal(new RealNumber(n));
+
+    [info:"Compares the numeric values"]
+    bool less(int n)
+        = self.less(new RealNumber(n));
+
+    [info:"Compares the numeric values"]
+    bool less(byte n)
+        = self.less(new RealNumber(n));
+
+    [info:"Compares the numeric values"]
+    bool less(short n)
+        = self.less(new RealNumber(n));
+
+    [info:"Compares the numeric values"]
+    bool less(long n)
+        = self.less(new RealNumber(n));
+
+    [info:"Returns the sum of numbers"]
+    real add(int n)
+    {
+        real r := n;
+        
+        ^ self.add(r)
+    }
+    
+    [info:"Returns the sum of numbers"]
+    real add(byte n)
+        = self.add(new RealNumber(n));
+
+    [info:"Returns the sum of numbers"]
+    real add(short n)
+        = self.add(new RealNumber(n));
+
+    [info:"Returns the sum of numbers"]
+    real add(long n)
+        = self.add(new RealNumber(n));
+
+    [info:"Returns the difference of numbers"]
+    real subtract(int n)
+        = self.subtract(new RealNumber(n));
+
+    [info:"Returns the difference of numbers"]
+    real subtract(byte n)
+        = self.subtract(new RealNumber(n));
+
+    [info:"Returns the difference of numbers"]
+    real subtract(short n)
+        = self.subtract(new RealNumber(n));
+
+    [info:"Returns the difference of numbers"]
+    real subtract(long n)
+        = self.subtract(new RealNumber(n));
+
+    [info:"Returns the product of numbers"]
+    real multiply(int n)
+    {
+        real r := n;
+        
+        ^ self.multiply(r)
+    }
+
+    [info:"Returns the product of numbers"]
+    real multiply(byte n)
+        = self.multiply(new RealNumber(n));
+
+    [info:"Returns the product of numbers"]
+    real multiply(short n)
+        = self.multiply(new RealNumber(n));
+
+    [info:"Returns the product of numbers"]
+    real multiply(long n)
+        = self.multiply(new RealNumber(n));
+
+    [info:"Returns the result of the division"]
+    real divide(int n)
+    {
+        real r := n;
+        
+        ^ self.divide(r)
+    }
+
+    [info:"Returns the result of the division"]
+    real divide(byte n)
+        = self.divide(new RealNumber(n));
+        
+    [info:"Returns the result of the division"]
+    real divide(short n)
+        = self.divide(new RealNumber(n));
+
+    [info:"Returns the result of the division"]
+    real divide(long n)
+        = self.divide(new RealNumber(n));
+
 //    [info:"Returns the literal presentation"]
 //    string toPrintable() = stringConvertor.convert(self);
-//
-//    [info:"Clones the value"]
-//    real clone = new RealNumber(self);
-//    
-//    [info:"Negates the value"]
-//    Negative
-//        = 0.0r - theValue;
-//}
-//
+
+    [info:"Clones the value"]
+    real clone = new RealNumber(self);
+    
+    [info:"Negates the value"]
+    Negative
+        = 0.0r - theValue;
+}
+
 //// --- CharValue ---
 //
 //[info:"An UTF-32 character symbol"]
@@ -2601,12 +2601,12 @@ public singleton longConvertor
         = cast long(n);
 }
 
-///// A real number convertor
-//public singleton realConvertor
-//{
-//    real convert(BaseVariable v)
-//        <= convert(v.Value);
-//        
+/// A real number convertor
+public singleton realConvertor
+{
+    real convert(BaseVariable v)
+        <= convert(v.Value);
+        
 //    /// Converts a literal string into a real number
 //    real convert(string s)
 //    {
@@ -2622,11 +2622,11 @@ public singleton longConvertor
 //        
 //        ^ retVal
 //    }
-//
-//    /// Returns a parameter
-//    real convert(real r)
-//        = new RealNumber(r);
-//        
+
+    /// Returns a parameter
+    real convert(real r)
+        = new RealNumber(r);
+        
 //    /// Converts an integer into a real number
 //    real convert(int n)
 //    {
@@ -2684,11 +2684,11 @@ public singleton longConvertor
 //        
 //        ^ retVal
 //    }
-//        
-//    real convert(o)
-//        = cast real(o);
-//}
-//
+        
+    real convert(o)
+        = cast real(o);
+}
+
 //// --- realOpController ---
 //
 //public singleton realOpController

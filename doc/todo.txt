@@ -358,7 +358,6 @@ Pipeline:
                  * optimize intOp.Absolute method
                  * variadic closure : correctly free argument list - using the code to free until the zero is encounter
                  * bool_expr ? 1 : 0 - the expression result should be strong-typed
-                 * support 2.2 syntax (without r postfix)
                  * optimize compiler : more efficient hash table, caching the results
                  * the following code should generate an error - lazy::(n < 5) - missing ^
                  * direct and, or, xor, shift, mul, div, equal, less

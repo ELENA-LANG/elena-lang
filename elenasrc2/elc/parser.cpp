@@ -125,6 +125,7 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
          else terminal.symbol = lxExplicitConst;
          break;
 	   case dfaReal:
+      case dfaGenericReal:
          terminal.symbol = lxReal;
          break;
       case dfaWideQuote:

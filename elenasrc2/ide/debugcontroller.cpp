@@ -1322,7 +1322,7 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          }
          else if (lineInfo[index].symbol == dsRealLocalPtr) {
             // write stack allocated local variable
-            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level, getDisp(lineInfo, index));
             readLocalReal(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsParamsLocal) {
