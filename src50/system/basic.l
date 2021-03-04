@@ -1968,74 +1968,74 @@ public sealed const struct RealNumber : BaseNumber
         = 0.0r - theValue;
 }
 
-//// --- CharValue ---
-//
-//[info:"An UTF-32 character symbol"]
-//public sealed const struct CharValue : BaseValue
-//{
-//    embeddable __raw theValue[4];
-//
-//    [info:"Returns the minimal possible character value (0)"]
-//    static char MinValue
-//        = $0;
-//
-//    [info:"Returns the maximal possible character value (010FFFFh)"]
-//    static char MaxValue
-//        = $010FFFFh;
-//
-//    [info:"Creates the object with a default value (0)"]
-//    constructor()
-//        = /*$0*/0;
-//
-//    [info:"Creates the object with specified value"]
-//    constructor(char value)
-//        = value;
-//
-//    [info:"Creates the object with specified numeric value"]
-//    constructor load(int n)
-//        = charConvertor.convert(n);
-//
-//    get internal Value()
-//    {
-//        int val := intConvertor.convert(self);
-//        
-//        ^ val
-//    }
-//
-//    bool equal(o)
-//    {
-//        var n := cast char(o) ?? nil;
-//        (nil == n)
-//            ? { ^ false }
-//            : { ^ self.equal(n) }
-//    }
-//
-//    bool less(n)
-//        <= less(cast char(n));
-//        
+// --- CharValue ---
+
+[info:"An UTF-32 character symbol"]
+public sealed const struct CharValue : BaseValue
+{
+    embeddable __raw theValue[4];
+
+    [info:"Returns the minimal possible character value (0)"]
+    static char MinValue
+        = $0;
+
+    [info:"Returns the maximal possible character value (010FFFFh)"]
+    static char MaxValue
+        = $010FFFFh;
+
+    [info:"Creates the object with a default value (0)"]
+    constructor()
+        = /*$0*/0;
+
+    [info:"Creates the object with specified value"]
+    constructor(char value)
+        = value;
+
+    [info:"Creates the object with specified numeric value"]
+    constructor load(int n)
+        = charConvertor.convert(n);
+
+    get internal Value()
+    {
+        int val := intConvertor.convert(self);
+        
+        ^ val
+    }
+
+    bool equal(o)
+    {
+        var n := cast char(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast char(n));
+        
 //    bool equal(BaseVariable v)
 //        <= equal(v.Value);
 //        
 //    bool less(BaseVariable v)
 //        <= less(v.Value);
-//        
-//    bool equal(int val)
-//        = theValue == val;
-//
-//    bool equal(string val)
-//    {
-//        int chLen := self.Length;        
-//        int ln := val.Length;
-//        (ln == chLen)?
-//        {
-//            char ch := val[0];
-//            
-//            ^ self == ch;
-//        };
-//        
-//        ^ false
-//    }
-//
+        
+    bool equal(int val)
+        = theValue == val;
+
+    bool equal(string val)
+    {
+        int chLen := self.Length;        
+        int ln := val.Length;
+        (ln == chLen)?
+        {
+            char ch := val[0];
+            
+            ^ self == ch;
+        };
+        
+        ^ false
+    }
+
 //    bool equal(wide val)
 //    {
 //        int chLen := self.WideLength;        
@@ -2049,24 +2049,24 @@ public sealed const struct RealNumber : BaseNumber
 //        
 //        ^ false
 //    }
-//
-//    bool equal(char val)
-//        = theValue == val;
-//
-//    bool less(char val)
-//    {
-//        ^ theValue < val;
-//    }
-//    
-//    bool less(string val)
-//        = val < (cast string(self));
-//
+
+    bool equal(char val)
+        = theValue == val;
+
+    bool less(char val)
+    {
+        ^ theValue < val;
+    }
+    
+    bool less(string val)
+        = val < (cast string(self));
+
 //    bool less(wide val)
 //        = val < (cast wide(self));
-//
-//    [info:"Clones the value"]
-//    char clone() = new CharValue(self);
-//
+
+    [info:"Clones the value"]
+    char clone() = new CharValue(self);
+
 //    [info:"Returns the literal value"]
 //    string toPrintable() = stringConvertor.convert(self);
 //
@@ -2075,15 +2075,15 @@ public sealed const struct RealNumber : BaseNumber
 //    
 //    [info:"Returns the wide literal value"]
 //    wide cast() = wideConvertor.convert(self);
-//
-//    [info:"Retuns the number of bytes to represent the symbol in UTF-8"]
-//    get int Length()
-//    {
-//        intern system'core_routines'__char.readLengthTo(self, ref int retVal);
-//        
-//        ^ retVal
-//    }
-//    
+
+    [info:"Retuns the number of bytes to represent the symbol in UTF-8"]
+    get int Length()
+    {
+        intern system'core_routines'__char.readLengthTo(self, ref int retVal);
+        
+        ^ retVal
+    }
+    
 //    [info:"Reads the number of bytes to represent the symbol in UTF-16"]
 //    get int WideLength()
 //    {
@@ -2094,8 +2094,8 @@ public sealed const struct RealNumber : BaseNumber
 //
 //        ^ length
 //    }
-//}
-//
+}
+
 //// --- nil constant ---
 //
 //[info:"A nil value"]

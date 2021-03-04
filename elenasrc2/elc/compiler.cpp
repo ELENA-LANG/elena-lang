@@ -6555,32 +6555,6 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode& node, ExprScop
 //   ////      //      }
 //   ////   }
 //   ////
-//   ////   if (mode.testAndExclude(HINT_NEWOP)) {
-//   ////      if (current == lxArrayType) {
-//   ////         // if it is an array creation
-//   ////         result.kind = okClass;
-//   ////         result.element = resolveTypeAttribute(current.firstChild(), scope, false, false);
-//   ////         result.param = resolvePrimitiveArray(scope,
-//   ////            scope.moduleScope->arrayTemplateReference, result.element, false);
-//   ////         result.reference = V_OBJARRAY;
-//   ////
-//   ////         recognizeTerminal(current, result, scope, mode);
-//   ////      }
-//   ////      else if (current == lxType) {
-//   ////         ref_t typeRef = resolveTypeAttribute(current, scope, false, false);
-//   ////         result = mapClassSymbol(scope, typeRef);
-//   ////
-//   ////         recognizeTerminal(current, result, scope, mode);
-//   ////      }
-//   ////      else result = mapTerminal(current, scope, mode);
-//   ////
-//   ////      SNode mssgNode = node.findChild(lxMessage, lxCollection);
-//   ////      if (mssgNode == lxMessage) {
-//   ////         mssgNode.set(lxNewOperation, CONSTRUCTOR_MESSAGE);
-//   ////      }
-//   ////      else if (mssgNode == lxNone)
-//   ////         scope.raiseError(errInvalidOperation, node);
-//   ////   }
 //   ////   else if (mode.testAndExclude(HINT_CLASSREF)) {
 //   ////      ref_t typeRef = resolveTypeAttribute(current, scope, false, false);
 //   ////      result = mapClassSymbol(scope, typeRef);
@@ -6628,26 +6602,11 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode& node, ExprScop
 //   //   //         case lxClosureExpr:
 //   //   //            result = compileClosure(current, scope, mode/* & HINT_CLOSURE_MASK*/);
 //   //   //            break;
-//      case lxExpression: 
-//         result = compileExpression(writer, node, scope, /*0, */mode);
-//         break;
 //   //   //         case lxSwitching:
 //   //   //            compileSwitch(current, scope);
 //   //   //
 //   //   //            result = ObjectInfo(okObject);
 //   //   //            break;
-//   //   //         case lxIdle:
-//   //   //            result = ObjectInfo(okUnknown);
-//   //   //            break;
-//      default:
-//         result = mapTerminal(node, scope, mode);
-//         if (!EAttrs::test(mode, HINT_PARAMETER)) {
-//            writeTerminal(writer, result);
-//         }         
-//         break;
-//   }
-//   //}
-//
 //   ////   if (mode.test(HINT_INLINEARGMODE)) {
 //   ////      result.element = result.reference;
 //   ////      result.reference = V_INLINEARG;
@@ -6781,6 +6740,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
          break;
       }
       case lxNestedExpression:
+      case lxClosureExpression:
          retVal = compileClosure(writer, node, scope, mode/* & HINT_CLOSURE_MASK*/, preservedArgs);
          break;
       default:

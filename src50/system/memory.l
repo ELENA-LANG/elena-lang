@@ -821,16 +821,21 @@ public sealed const struct String : BaseValue
 //    /// Compares the values
 //    bool less(char ch)
 //        <= less(cast string(ch));
-//
-//    /// Returns the character at the specified index
-//    char at(int n)
-//    {
-//        char ch := $0;
-//        self.read(n, ref ch);        
-//        
-//        ^ new CharValue(ch)
-//    }
 
+    [info:"Returns the character at the specified index"]
+    char at(int n)
+    {
+        int len := self.Length;
+        if (n < 0 || n >= len)
+        {
+            OutOfRangeException.raise()
+        };
+                
+        char ch := extern elenart.core_strtochar(n, self);
+        
+        ^ ch;
+    }
+    
     string add(o)
         <= add(cast string(o));
 
@@ -849,11 +854,6 @@ public sealed const struct String : BaseValue
     
         ^ ret; 
     }
-//        => intern system'core_routines'__literal;
-
-//    // Reads the character at the specified index and saves into an output parameter
-//    read(int index, ref char ch)
-//        => intern system'core_routines'__literal;
 
     [info:"Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1"]
     int indexOf(int index, string literal)
@@ -1720,13 +1720,13 @@ public sealed const struct WideString : BaseValue
 //    wide convert(o)
 //        = cast wide(o.toPrintable());
 //}
-//
-///// An Unicode character convertor
-//public singleton charConvertor
-//{
-//    char convert(BaseVariable v)
-//        <= convert(v.Value);
-//        
+
+/// An Unicode character convertor
+public singleton charConvertor
+{
+    char convert(BaseVariable v)
+        <= convert(v.Value);
+        
 //    internal save(char ch, int index, short[] charArray, ref int length)
 //    {
 //        intern system'core_routines'__charconvertor.save(ch,index,charArray,ref length);
@@ -1769,11 +1769,11 @@ public sealed const struct WideString : BaseValue
 //        
 //        ^ retVal
 //    }    
-//        
-//    /// Returns a parameter        
-//    char convert(char ch)
-//        = new CharValue(ch);
-//  
+        
+    /// Returns a parameter        
+    char convert(char ch)
+        = new CharValue(ch);
+  
 //    /// Converts a literal string into a character
 //    char convert(string s)
 //    {
@@ -1825,11 +1825,11 @@ public sealed const struct WideString : BaseValue
 //        
 //        ^ retVal
 //    }
-//        
-//    char convert(o)
-//        = cast char(o);
-//}
-//
+        
+    char convert(o)
+        = cast char(o);
+}
+
 //// === Enumerators / Indexers
 //
 //// --- StringEnumerator ---

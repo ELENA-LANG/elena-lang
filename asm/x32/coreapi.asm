@@ -193,6 +193,120 @@ labEnd2:
 
 end
 
+// ; strtochar(index,str; ebx = 0 if err ; edx - out)
+procedure coreapi'core_strtochar   
+
+  mov  ebx, [esp+4]
+  mov  eax, [esp+8]
+
+  xor  edx, edx
+  mov  dl, byte ptr [eax + ebx]
+  cmp  edx, 00000080h
+  jl   short lab1
+  cmp  edx, 000000C0h
+  jl   short err
+  cmp  edx, 000000E0h
+  jl   short lab2
+  cmp  edx, 000000F0h
+  jl   short lab3
+  cmp  edx, 000000F8h
+  jl   lab4
+
+err:
+  xor  ebx, ebx
+  ret 
+
+lab1:
+  mov  ebx, eax
+  ret
+
+lab2:  
+  mov  ecx, edx
+  mov  dl, byte ptr [eax + ebx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  shl  ecx, 6
+  add  edx, ecx
+  sub  edx, 3080h
+  mov  ebx, eax
+  ret
+  
+lab3:
+  mov  ecx, edx
+  mov  dl, byte ptr [eax + ebx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  cmp  ecx, 000000E0h
+  jnz  short lab3_1
+  cmp  ebx, 000000A0h
+  jl   short err
+
+lab3_1:
+  shl  ecx, 12
+  shl  edx, 6
+  add  ecx, edx
+  xor  edx, edx
+  mov  dl, byte ptr [eax + ebx + 2]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  add  edx, ecx
+  sub  edx, 0E2080h
+  mov  ebx, eax
+  ret
+  
+lab4:
+  mov  ecx, edx
+  mov  dl, byte ptr [eax + ebx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  cmp  ecx, 000000F0h
+  jnz  short lab4_1
+  cmp  edx, 00000090h
+  jl   short err
+
+lab4_1:
+  cmp  ecx, 000000F4h
+  jnz  short lab4_2
+  cmp  edx, 00000090h
+  jae  short err
+
+lab4_2:
+  shl  ecx, 18
+  shl  edx, 12
+  add  ecx, edx
+
+  xor  edx, edx
+  mov  dl, byte ptr [eax + ebx + 2]
+  mov  esi, edx
+  and  esi, 000000C0h
+  cmp  esi, 00000080h
+  jnz  err
+
+  shl  edx, 6
+  add  ecx, edx
+  
+  xor  edx, edx
+  mov  dl, byte ptr [eax + ebx + 3]
+  mov  esi, edx
+  and  esi, 000000C0h
+  cmp  esi, 00000080h
+  jnz  err
+
+  add  edx, ecx
+  sub  edx, 3C82080h
+  mov  ebx, eax
+  ret
+  
+end                                                       
+
 // ; === internal ===
 
 // strtowstr(target,source)
@@ -300,6 +414,103 @@ labEnd:
   ret
     
 end
+
+
+
+// strtochararray(src,index,dst,len)
+procedure coreapi'strtochararray
+
+  mov  edx, [esp+16]
+  mov  edi, [esp+12]
+  mov  ecx, [edx]
+  mov  esi, [esp+8]
+  mov  eax, [esp+4]
+  mov  ebx, [esi]
+
+  lea  edi, [edi + ebx * 4]
+
+labStart:
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  cmp  ebx, 00000080h
+  jl   short lab1
+  cmp  ebx, 000000E0h
+  jl   short lab2
+  cmp  ebx, 000000F0h
+  jl   short lab3
+  
+lab4:
+  mov  edx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  shl  edx, 18
+  shl  ebx, 12
+  add  edx, ebx
+
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  shl  ebx, 6
+  add  edx, ebx
+  
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  
+  add  edx, ebx
+  sub  edx, 3C82080h
+  sub  ecx, 3
+  jmp  labSave  
+
+lab2:  
+  mov  edx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+
+  shl  edx, 6
+  add  edx, ebx
+  sub  edx, 3080h
+  sub  ecx, 1
+  jmp  short labSave  
+  
+lab3:
+  mov  edx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  shl  edx, 12
+  shl  ebx, 6
+  add  edx, ebx
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  add  edx, ebx
+  sub  edx, 0E2080h
+  sub  ecx, 2
+  jmp  short labSave  
+  
+lab1:
+  mov  edx, ebx
+
+labSave:
+  mov  [edi], edx
+  add  edi, 4
+  sub  ecx, 1
+  jnz  labStart
+
+  mov  ecx, edi
+  mov  edi, [esp+12]
+  sub  ecx, edi
+  mov  esi, [esp+8]
+  shr  ecx, 2
+  sub  ecx, [esi]
+  mov  eax, [esp+16]
+  mov  [eax], ecx
+
+  ret
+
+end
+
 
 // strtowstr(target,source)
 procedure coreapi'wstrtostr
@@ -634,100 +845,6 @@ labEnd:
   pop  edi
   sub  ebx, edi
   shr  ebx, 1
-
-  ret
-
-end
-
-// strtochararray(src,index,dst,len)
-procedure coreapi'strtochararray
-
-  mov  edx, [esp+16]
-  mov  edi, [esp+12]
-  mov  ecx, [edx]
-  mov  esi, [esp+8]
-  mov  eax, [esp+4]
-  mov  ebx, [esi]
-
-  lea  edi, [edi + ebx * 4]
-
-labStart:
-  xor  ebx, ebx
-  mov  bl, byte ptr [eax]
-  add  eax, 1
-  cmp  ebx, 00000080h
-  jl   short lab1
-  cmp  ebx, 000000E0h
-  jl   short lab2
-  cmp  ebx, 000000F0h
-  jl   short lab3
-  
-lab4:
-  mov  edx, ebx
-  mov  bl, byte ptr [eax]
-  add  eax, 1
-  shl  edx, 18
-  shl  ebx, 12
-  add  edx, ebx
-
-  xor  ebx, ebx
-  mov  bl, byte ptr [eax]
-  add  eax, 1
-  shl  ebx, 6
-  add  edx, ebx
-  
-  xor  ebx, ebx
-  mov  bl, byte ptr [eax]
-  add  eax, 1
-  
-  add  edx, ebx
-  sub  edx, 3C82080h
-  sub  ecx, 3
-  jmp  labSave  
-
-lab2:  
-  mov  edx, ebx
-  mov  bl, byte ptr [eax]
-  add  eax, 1
-
-  shl  edx, 6
-  add  edx, ebx
-  sub  edx, 3080h
-  sub  ecx, 1
-  jmp  short labSave  
-  
-lab3:
-  mov  edx, ebx
-  mov  bl, byte ptr [eax]
-  add  eax, 1
-  shl  edx, 12
-  shl  ebx, 6
-  add  edx, ebx
-  xor  ebx, ebx
-  mov  bl, byte ptr [eax]
-  add  eax, 1
-  add  edx, ebx
-  sub  edx, 0E2080h
-  sub  ecx, 2
-  jmp  short labSave  
-  
-lab1:
-  mov  edx, ebx
-
-labSave:
-  mov  [edi], edx
-  add  edi, 4
-  sub  ecx, 1
-  jnz  labStart
-
-  mov  ecx, edi
-  mov  edi, [esp+12]
-  sub  ecx, edi
-  mov  esi, [esp+8]
-  shr  ecx, 2
-  sub  ecx, [esi]
-  mov  eax, [esp+16]
-  mov  [eax], ecx
 
   ret
 
@@ -1729,121 +1846,6 @@ procedure coreapi'longtoreal
   ret
 
 end
-
-// ; strtochar(index,str; ebx = 0 if err ; edx - out)
-procedure coreapi'strtochar   
-
-  mov  esi, [esp+4]
-  mov  eax, [esp+8]
-  mov  ebx, [esi]
-
-  xor  edx, edx
-  mov  dl, byte ptr [eax + ebx]
-  cmp  edx, 00000080h
-  jl   short lab1
-  cmp  edx, 000000C0h
-  jl   short err
-  cmp  edx, 000000E0h
-  jl   short lab2
-  cmp  edx, 000000F0h
-  jl   short lab3
-  cmp  edx, 000000F8h
-  jl   lab4
-
-err:
-  xor  ebx, ebx
-  ret 
-
-lab1:
-  mov  ebx, eax
-  ret
-
-lab2:  
-  mov  ecx, edx
-  mov  dl, byte ptr [eax + ebx + 1]
-  mov  esi, edx
-  and  esi, 0C0h
-  cmp  esi, 00000080h
-  jnz  err
-  shl  ecx, 6
-  add  edx, ecx
-  sub  edx, 3080h
-  mov  ebx, eax
-  ret
-  
-lab3:
-  mov  ecx, edx
-  mov  dl, byte ptr [eax + ebx + 1]
-  mov  esi, edx
-  and  esi, 0C0h
-  cmp  esi, 00000080h
-  jnz  err
-  cmp  ecx, 000000E0h
-  jnz  short lab3_1
-  cmp  ebx, 000000A0h
-  jl   short err
-
-lab3_1:
-  shl  ecx, 12
-  shl  edx, 6
-  add  ecx, edx
-  xor  edx, edx
-  mov  dl, byte ptr [eax + ebx + 2]
-  mov  esi, edx
-  and  esi, 0C0h
-  cmp  esi, 00000080h
-  jnz  err
-  add  edx, ecx
-  sub  edx, 0E2080h
-  mov  ebx, eax
-  ret
-  
-lab4:
-  mov  ecx, edx
-  mov  dl, byte ptr [eax + ebx + 1]
-  mov  esi, edx
-  and  esi, 0C0h
-  cmp  esi, 00000080h
-  jnz  err
-  cmp  ecx, 000000F0h
-  jnz  short lab4_1
-  cmp  edx, 00000090h
-  jl   short err
-
-lab4_1:
-  cmp  ecx, 000000F4h
-  jnz  short lab4_2
-  cmp  edx, 00000090h
-  jae  short err
-
-lab4_2:
-  shl  ecx, 18
-  shl  edx, 12
-  add  ecx, edx
-
-  xor  edx, edx
-  mov  dl, byte ptr [eax + ebx + 2]
-  mov  esi, edx
-  and  esi, 000000C0h
-  cmp  esi, 00000080h
-  jnz  err
-
-  shl  edx, 6
-  add  ecx, edx
-  
-  xor  edx, edx
-  mov  dl, byte ptr [eax + ebx + 3]
-  mov  esi, edx
-  and  esi, 000000C0h
-  cmp  esi, 00000080h
-  jnz  err
-
-  add  edx, ecx
-  sub  edx, 3C82080h
-  mov  ebx, eax
-  ret
-  
-end                                                       
 
 // ; wstrtochar(index,str; ebx = 0 if err ; edx - out)
 procedure coreapi'wstrtochar

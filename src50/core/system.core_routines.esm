@@ -120,6 +120,37 @@ procedure __wide."readLengthTo$system@WideString$@system@ref#1&system@IntNumber[
 
 end
 
+procedure __char."readLengthTo$system@CharValue$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  // ; < 80 - 1
+  lessn labEnd, 80h
+  // ; <= 800 - 2
+  lessn labEnd2, 800h 
+  lessn labEnd3, 10000h 
+  movn 4
+  peeksi 2
+  save  
+  quitn 2
+labEnd:
+  movn 1
+  peeksi 2
+  save  
+  quitn 2
+labEnd2:
+  movn 2
+  peeksi 2
+  save  
+  quitn 2
+labEnd3:
+  movn 3
+  peeksi 2
+  save  
+  quitn 2
+
+end
+
 procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
 
   pushsi 1

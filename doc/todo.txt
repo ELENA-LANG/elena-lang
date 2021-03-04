@@ -3,14 +3,16 @@ In development:
 ------         
 
   [development]
+    * lambda closures
+
     * basic tests
     * program exception handling
     * system tests : 86, 86-64
 
     * globals
 
+    * strong-typed lambda closures
     * boxing fixed-sized array
-    * lambda closures
     * multi ret
     * yield metods
     * template based extensions

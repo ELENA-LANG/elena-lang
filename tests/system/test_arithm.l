@@ -460,13 +460,13 @@ literalTest()
     Assert.ifTrue("ab" < "abc");
     Assert.ifTrue("abc" + "de" == "abcde");
 
-    Assert.ifTrue("abcd".indexOf(0, "bc")==2);
-    Assert.ifTrue("abcd".indexOf(0, "bac")==-1);
+    Assert.ifTrue("abcd".indexOf(0, "bc")==1);
+    Assert.ifTrue("abcd".indexOf(2, "bc")==-1);
 
     Assert.ifTrue("acd".insert(1,"b") == "abcd");
     Assert.ifTrue("abecd".delete(2,1) == "abcd");
     Assert.ifTrue("abcd".Substring(1,2) == "bc");
-    Assert.ifTrue("abc"[2] == "b");
+    Assert.ifTrue("abc"[1] == "b");
     
 //    "abc" getAt:(-1) |
 //        if &OutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
