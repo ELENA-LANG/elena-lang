@@ -697,10 +697,10 @@ public sealed const struct String : BaseValue
     const static string MinValue
         = "";
                 
-//    /// Creates the literal string with specified length        
-//    constructor allocate(int size)
-//        = new byte[](size + 1);
-//
+    /// Creates the literal string with specified length        
+    constructor allocate(int size)
+        = new byte[](size + 1);
+
 //    /// Creates the literal string with specified length and copies the parameter value
 //    constructor copy(int size, string s)
 //        <= allocate(size)
@@ -806,14 +806,14 @@ public sealed const struct String : BaseValue
     bool less(string s)
         => intern system'core_routines'__literal;
 
-//    /// Compares the values
-//    bool equal(wide s)
-//        = cast wide(self).equal(s);
-//
-//    /// Compares the values
-//    bool less(wide s)
-//        = cast wide(self).less(s);
-//
+    /// Compares the values
+    bool equal(wide s)
+        = cast wide(self).equal(s);
+
+    /// Compares the values
+    bool less(wide s)
+        = cast wide(self).less(s);
+
 //    /// Compares the values
 //    bool equal(char ch)
 //        <= equal(cast string(ch));
@@ -830,37 +830,46 @@ public sealed const struct String : BaseValue
 //        
 //        ^ new CharValue(ch)
 //    }
-//
-//    string add(o)
-//        <= add(cast string(o));
-//
-//    /// Concatinates the values
-//    string add(BaseVariable v)
-//        <= add(v.Value);
-//        
-//    /// Concatinates the values
-//    string add(string s)
+
+    string add(o)
+        <= add(cast string(o));
+
+    [info:"Concatinates the values"]
+    string add(BaseVariable v)
+        <= add(v.Value);
+        
+    [info:"Concatinates the values"]
+    string add(string s)
+    {
+        int len1 := self.Length;
+        int len2 := s.Length;
+        string ret := String.allocate(len1+len2);
+        extern elenart.core_insert(ret,self,0,len1);
+        extern elenart.core_insert(ret,s,len1,len2);
+    
+        ^ ret; 
+    }
 //        => intern system'core_routines'__literal;
-//
+
 //    // Reads the character at the specified index and saves into an output parameter
 //    read(int index, ref char ch)
 //        => intern system'core_routines'__literal;
-//
-//    /// Saves the index of the first occurence of the specified substring into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int index, string literal, ref int retVal)
-//        => intern system'core_routines'__literal;
-//
+
+    [info:"Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1"]
+    int indexOf(int index, string literal)
+    {
+        int retVal := extern elenart.core_sseek(self, literal, index);
+        
+        ^ retVal
+    }
+    //    => intern system'core_routines'__literal;
+
 //    /// Saves the index of the first occurence of the specified symbol into an output parameter.
 //    ///
 //    /// If the substring is not found. returns -1
 //    indexOf(int index, char ch, ref int retVal)
 //        => intern system'core_routines'__literal;
 //
-//    /// Returns the index of the first occurence of the specified symbol.
-//    /// 
-//    /// If the substring is not found. returns -1
 //    int indexOf(int index, char ch)
 //    {
 //        int retVal := 0;
@@ -868,28 +877,38 @@ public sealed const struct String : BaseValue
 //        
 //        ^ retVal
 //    }
-//
-//    /// Returns the index of the first occurence of the specified substring.
-//    ///
-//    /// If the substring is not found. returns -1
-//    int indexOf(int index, string s)
-//    {
-//        int retVal := 0;
-//        self.indexOf(index, s, ref retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Inserts the substring into and returns the new one
-//    string insert(int index, string s)
+
+    [info:"Inserts the substring into and returns the new one"]
+    string insert(int index, string s)
+    {
+        int len1 := self.Length;
+        int len2 := s.Length;
+        int dindex := index + len2;
+        string ret := String.allocate(len1+len2);
+        extern elenart.core_insert(ret,self,0,index);
+        extern elenart.core_insert(ret,s,index,len2);
+        extern elenart.core_sadd(ret,self,index,dindex);
+    
+        ^ ret;         
+    }
+    
 //        => intern system'core_routines'__literal;
 //
 //    /// Inserts a character into and returns the new one
 //    string insert(int index, char ch)
 //        = self.insert(index, cast string(ch));
-//
-//    /// Deletes the substring from the object and returns the new one
-//    string delete(int index, int length)
+
+    [info:"Deletes the substring from the object and returns the new one"]
+    string delete(int index, int length)
+    {
+        int len1 := self.Length;
+        int sindex := index + length;
+        string ret := String.allocate(len1-length);
+        extern elenart.core_insert(ret,self,0,index);
+        extern elenart.core_sadd(ret,self,sindex,index);
+    
+        ^ ret;         
+    }
 //        => intern system'core_routines'__literal;
 
     [info:"Returns the substring"]

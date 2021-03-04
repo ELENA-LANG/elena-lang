@@ -57,6 +57,105 @@ labEnd:
 
 end
 
+// ; insert(dest,sour,index,size)
+procedure coreapi'core_insert
+
+  mov  rcx, [rsp+32]
+  mov  rdi, [rsp+8]
+  mov  rbx, [rsp+24]
+  mov  rsi, [rsp+16]
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  edx, dword ptr [rsi]
+  mov  byte ptr [rdi + rbx], dl
+  add  ebx, 1
+  lea  rsi, [rsi + 1]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+end
+
+// ; sadd(dest,sour,sindex,dindex)
+procedure coreapi'sadd
+
+  mov  rcx, [rsp+24]
+  mov  rax, [rsp+16]
+  mov  rdx, [rsp+32]
+  mov  rdi, [rsp+8]
+
+  mov  esi, ecx         // ; src index
+  
+  mov  ebx, dword ptr[rax-elSizeOffset]
+  and  ebx, 0FFFFFh
+  add  edx, edi
+  sub  ecx, ebx
+  add  esi, eax
+  
+labNext2:
+  mov  ebx, dword ptr[rsi]
+  mov  byte ptr [rdx], bl
+  lea  rsi, [rsi+1]
+  lea  rdx, [rdx+1]
+  add  ecx, 1
+  jnz  short labNext2
+
+  ret
+  
+end
+
+// sseek(s,subs,index)
+procedure coreapi'core_sseek
+
+  mov  rdi, [rsp+8] // s
+  mov  rdx, [rsp+24]
+  mov  rsi, [rsp+16] // subs
+  
+  mov  ebx, dword ptr[rdi-elSizeOffset]   // get total length  
+  and  ebx, 0FFFFFh
+  
+  sub  ebx, edx
+  jbe  short labEnd
+
+  add  ebx, 1
+  sub  edx, 1
+
+labNext:
+  add  edx, 1
+  mov  rsi, [rsp+16]
+  mov  ecx, dword ptr [rsi-elSizeOffset]
+  sub  ebx, 1
+  lea  rcx, [rcx-1]
+  jz   short labEnd
+  and  ecx, 0FFFFFh
+  cmp  ebx, ecx
+  jb   short labEnd
+  mov  rdi, [rsp+8]
+  add  rdi, rdx
+
+labCheck:
+  mov  eax, dword ptr [rdi]
+  cmp  al, byte ptr [rsi]
+  jnz  short labNext
+  lea  rdi, [rdi+1]
+  lea  rsi, [rsi+1]
+  sub  ecx, 1
+  jnz  short labCheck
+  nop
+  nop
+  jmp  short labEnd2
+
+labEnd:
+  mov  edx, -1
+labEnd2:
+  ret
+
+end
+
 // --- System Core API  --
 
 define CORE_ET_TABLE     2000Bh
@@ -873,31 +972,6 @@ Lab1:
 
 end
 
-// ; insert(dest,sour,index,size)
-procedure coreapi'insert
-
-  mov  rcx, [rsp+32]
-  mov  rdi, [rsp+8]
-  mov  ecx, dword ptr [rcx]
-  mov  rax, [rsp+24]
-  mov  rsi, [rsp+16]
-  mov  ebx, dword ptr [rax]
-  test ecx, ecx
-  jz   short labEnd
-
-labNext:
-  mov  edx, dword ptr [rsi]
-  mov  byte ptr [rdi + rbx], dl
-  add  ebx, 1
-  lea  rsi, [rsi + 1]
-  sub  ecx, 1
-  jnz  short labNext
-
-labEnd:
-  ret
-
-end
-
 // strtochararray(src,index,dst,len)
 procedure coreapi'strtochararray
 
@@ -1107,54 +1181,6 @@ lab4_2:
   
 end                                                       
 
-// sseek(s,subs,index)
-procedure coreapi'sseek
-
-  mov  rdi, [rsp+8] // s
-  mov  rax, [rsp+24]
-  mov  rsi, [rsp+16] // subs
-  mov  edx, dword ptr [rax]
-  
-  mov  ebx, dword ptr[rdi-elSizeOffset]   // get total length  
-  and  ebx, 0FFFFFh
-  
-  sub  ebx, edx
-  jbe  short labEnd
-
-  add  ebx, 1
-  sub  edx, 1
-
-labNext:
-  add  edx, 1
-  mov  rsi, [rsp+16]
-  mov  ecx, dword ptr [rsi-elSizeOffset]
-  sub  ebx, 1
-  lea  rcx, [rcx-1]
-  jz   short labEnd
-  and  ecx, 0FFFFFh
-  cmp  ebx, ecx
-  jb   short labEnd
-  mov  rdi, [rsp+8]
-  add  rdi, rdx
-
-labCheck:
-  mov  eax, dword ptr [rdi]
-  cmp  al, byte ptr [rsi]
-  jnz  short labNext
-  lea  rdi, [rdi+1]
-  lea  rsi, [rsi+1]
-  sub  ecx, 1
-  jnz  short labCheck
-  nop
-  jmp  short labEnd2
-
-labEnd:
-  mov  edx, -1
-labEnd2:
-  ret
-
-end
-
 // ; chartostr (char,target, out edx - length)
 procedure coreapi'chartostr
 
@@ -1238,36 +1264,6 @@ lab3:
    mov  edx, 3
    ret
 
-end
-
-// ; sadd(dest,sour,sindex,dindex)
-procedure coreapi'sadd
-
-  mov  rcx, [rsp+24]
-  mov  rax, [rsp+16]
-  mov  ecx, dword ptr [rcx]
-  mov  rdx, [rsp+32]
-  mov  rdi, [rsp+8]
-
-  mov  edx, dword ptr[rdx]       // ; dst index
-  mov  esi, ecx         // ; src index
-  
-  mov  ebx, dword ptr[rax-elSizeOffset]
-  and  ebx, 0FFFFFh
-  add  edx, edi
-  sub  ecx, ebx
-  add  esi, eax
-  
-labNext2:
-  mov  ebx, dword ptr[rsi]
-  mov  byte ptr [rdx], bl
-  lea  rsi, [rsi+1]
-  lea  rdx, [rdx+1]
-  add  ecx, 1
-  jnz  short labNext2
-
-  ret
-  
 end
 
 // subcopyz(target,index,size,arr)

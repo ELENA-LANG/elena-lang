@@ -55,6 +55,7 @@ In development:
     + optimization : dispatching to the primitive field (e.g. ref<byte>)
     + optimization : branching - extra temporal variable
     + (re)implement long invert op
+    + warn if both a parameter and a local variable have the same name
 
     * do not save the external operation if the result is not assigned or passed as an argument
     * optimization - duplicate assigning : external call, message call
