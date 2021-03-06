@@ -3085,7 +3085,11 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    SNode current = node.firstChild(lxObjectMask);
 //   // check if the message target can be used directly
 //   bool isFirstDirect = !isSubOperation(current) && current != lxResult;
+   bool directOrder = false;
    while (current != lxNone) {
+      if (current == lxResult)
+         directOrder = true;
+
       //SNode argNode = current;
       //if (argNode == lxExpression)
       //   argNode = current.findSubNodeMask(lxObjectMask);
@@ -3123,14 +3127,27 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    }
 
    tape.write(bcXAllocI, argCount - startIndex);
+   
+   if (directOrder) {
+      for (int i = startIndex; i < argCount; i++) {
+         // get parameters in reverse order if required
+         current = getChild(node, i);
 
-   for (int i = argCount - 1; i >= startIndex; i--) {
-      // get parameters in reverse order if required
-      current = getChild(node, i);
-
-      generateObject(tape, current, scope);
-      saveObject(tape, lxCurrent, i - startIndex);
+         generateObject(tape, current, scope);
+         saveObject(tape, lxCurrent, i - startIndex);
+      }
    }
+   else
+   {
+      for (int i = argCount - 1; i >= startIndex; i--) {
+         // get parameters in reverse order if required
+         current = getChild(node, i);
+
+         generateObject(tape, current, scope);
+         saveObject(tape, lxCurrent, i - startIndex);
+      }
+   }
+
 
    if (functionMode) {
       generateObject(tape, getChild(node, 0), scope);

@@ -62,10 +62,10 @@ public class Exception
     
 //    /// Returns the message
 //    string Message = theMessage;
-//    
-//    on(handler)
-//        => intern system'core_routines'__exception;
-//
+
+    on(handler)
+        => intern system'core_routines'__exception;
+
     raise()
         => intern system'core_routines'__object;
     

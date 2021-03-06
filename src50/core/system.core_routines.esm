@@ -175,6 +175,44 @@ labEnd3:
 
 end
 
+
+procedure __exception."on[2]"
+
+  open 
+  hook   labNotFound
+  pusha
+  peekfi -2
+  movm   mssgconst : "#invoke[1]"
+
+  callvi 0
+
+labReturn:
+
+  unhook
+
+  close
+  quitn 2
+
+labNotFound:
+
+  // ; movs    9
+  // ; address labReturn
+  // ; else    labContinueError
+
+  restore 4
+
+  close
+  pushsi __temp_index
+
+labContinueError:
+
+  popa
+  unhook
+  pusha
+  throw
+
+end
+
 procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
 
   pushsi 1
