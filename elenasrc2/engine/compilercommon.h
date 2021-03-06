@@ -164,12 +164,38 @@ enum MethodHint
    tpMultiRetVal  = 0x8000000,
 };
 
-enum CovnersionResult
+enum ConversionResult
 {
    crUncompatible = 0,
    crCompatible,
    crConverted,
    crBoxingRequired
+};
+
+struct ConversionInfo
+{
+   ConversionResult result;
+   mssg_t           message;
+   ref_t            classRef;
+
+   ConversionInfo()
+   {
+      result = ConversionResult::crUncompatible;
+      message = 0;
+      classRef = 0;
+   }
+   ConversionInfo(ConversionResult result)
+   {
+      this->result = result;
+      message = 0;
+      classRef = 0;
+   }
+   ConversionInfo(ConversionResult result, mssg_t message, ref_t classRef)
+   {
+      this->result = result;
+      this->message = message;
+      this->classRef = classRef;
+   }
 };
 
 // --- _Project ---
@@ -404,11 +430,11 @@ class _Compiler
 public:
    virtual ref_t resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode) = 0;
 
-   virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
-      int stacksafeAttr, bool embeddableAttr) = 0;
+   //virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
+   //   int stacksafeAttr, bool embeddableAttr) = 0;
 
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/) = 0;
-//   virtual void injectEmbeddableConstructor(SNode classNode, mssg_t message, ref_t privateRef) = 0;
+   virtual void injectEmbeddableConstructor(SNode classNode, mssg_t message, mssg_t privateRef) = 0;
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
       ClassInfo& info) = 0;
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef) = 0;
@@ -500,7 +526,7 @@ public:
 //      eaMssg               = 0x00008000000,
 //      eaVirtualExpr        = 0x00010000000,
 //      eaSubj               = 0x00020000000,
-//      eaDirectCall         = 0x00040000000,
+      eaDirectCall         = 0x00040000000,
       eaParameter          = 0x00080000000,
       eaLazy               = 0x00100000000,
 //      eaInlineArg          = 0x00200000000,
@@ -689,9 +715,9 @@ public:
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<mssg_t>& implicitMultimethods) = 0;
    virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
       ref_t elementRef, int tempLocal) = 0;
-   virtual CovnersionResult injectImplicitConversion(_CompileScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
-      ref_t elementRef/*, bool noUnboxing*/, int& stackSafeAttr/*, int fixedArraySize*/) = 0;
-////   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod) = 0;
+   virtual ConversionInfo injectImplicitConversion(_CompileScope& scope, _Compiler& compiler, ref_t targetRef,
+      ref_t sourceRef, ref_t elementRef/*, bool noUnboxing, int fixedArraySize*/) = 0;
+   ////   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod) = 0;
 //   virtual void injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
    virtual void injectInterfaceDispatch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
 //   virtual bool injectConstantConstructor(SNode& node, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, mssg_t messageRef) = 0;

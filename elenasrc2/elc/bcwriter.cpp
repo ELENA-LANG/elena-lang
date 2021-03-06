@@ -3117,40 +3117,29 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
 //   }
 
    // the function target can be loaded at the end
-   size_t startIndex = 0;
-   if (functionMode/* && isFirstDirect*/) {
+   int startIndex = 0;
+   if (functionMode) {
       startIndex = 1;
    }
 
-   tape.write(bcXAllocI, argCount);
+   tape.write(bcXAllocI, argCount - startIndex);
 
-   for (size_t i = startIndex; i < argCount; i++) {
+   for (int i = argCount - 1; i >= startIndex; i--) {
       // get parameters in reverse order if required
       current = getChild(node, i);
-//      if (current == lxExpression)
-//         current = current.findSubNodeMask(lxObjectMask);
-//
-//      if (current == lxArgArray) {
-//         // argument list is already unboxed
-//      }
-//      else {
-         generateObject(tape, current, scope);
-         saveObject(tape, lxCurrent, i - startIndex);
-//      }
+
+      generateObject(tape, current, scope);
+      saveObject(tape, lxCurrent, i - startIndex);
    }
 
    if (functionMode) {
-//      // load a function target
-//      if (startIndex == 0) {
-//         popObject(tape, lxResult);
-//      }
-      /*else */generateObject(tape, getChild(node, 0), scope);
+      generateObject(tape, getChild(node, 0), scope);
    }
    else tape.write(bcPeekSI, 0);
 
    generateCall(tape, node/*, paramCount, presavedCount*/);
 
-   tape.write(bcFreeI, argCount);
+   tape.write(bcFreeI, argCount - startIndex);
 
    //   if (argUnboxMode) {
 //      releaseArgList(tape);
@@ -4139,12 +4128,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxInlineArgCall:
 //         generateInlineArgCallExpression(tape, node, scope);
 //         break;
-////      //case lxImplicitCall:
-////      //   callInitMethod(tape, node.findChild(lxTarget).argument, node.argument, false);
-////      //   break;
-//      case lxImplicitJump:
-//         resendDirectResolvedMethod(tape, node.findChild(lxCallTarget).argument, node.argument, true);
-//         break;
+      case lxImplicitJump:
+         resendDirectResolvedMethod(tape, node.findChild(lxCallTarget).argument, node.argument, true);
+         break;
       case lxTrying:
          generateTrying(tape, node, scope);
          break;

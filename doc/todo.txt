@@ -3,6 +3,10 @@ In development:
 ------         
 
   [development]
+    * toPrintable
+    * call stack
+    * exceptions
+
     * basic tests
     * program exception handling
     * system tests : 86, 86-64
@@ -56,6 +60,7 @@ In development:
     + optimization : branching - extra temporal variable
     + (re)implement long invert op
     + warn if both a parameter and a local variable have the same name
+    + hook x86-64 : should be 16 alignment
 
     * do not save the external operation if the result is not assigned or passed as an argument
     * optimization - duplicate assigning : external call, message call

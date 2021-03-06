@@ -785,13 +785,13 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
             current = current.nextNode();
          }
 
-         //if (found) {
-         //   for (auto it = generatedConstructors.start(); !it.Eof(); it++) {
-         //      mssg_t message = *it;
+         if (found) {
+            for (auto it = generatedConstructors.start(); !it.Eof(); it++) {
+               mssg_t message = *it;
 
-         //      compiler.injectEmbeddableConstructor(node, message, message | STATIC_MESSAGE);
-         //   }
-         //}
+               compiler.injectEmbeddableConstructor(node, message, message | STATIC_MESSAGE);
+            }
+         }
       }
    }
 }
@@ -1107,22 +1107,19 @@ bool CompilerLogic :: isMethodEmbeddable(_ModuleScope& scope, ref_t reference, m
    else return false;
 }
 
-bool CompilerLogic :: injectImplicitConstructor(_ModuleScope& scope, SNode& node, _Compiler& compiler, ClassInfo& info, ref_t targetRef, 
-   ref_t* signatures, size_t signLen, int& stackSafeAttr)
+ConversionInfo CompilerLogic :: injectImplicitConstructor(_ModuleScope& scope, _Compiler& compiler, ClassInfo& info, 
+   ref_t targetRef, ref_t* signatures, size_t signLen)
 {
    ref_t signRef = scope.module->mapSignature(signatures, signLen, false);
 
+   int stackSafeAttr = 0;
    mssg_t messageRef = resolveImplicitConstructor(scope, targetRef, signRef, signLen, stackSafeAttr, true);
    if (messageRef) {
       bool embeddableAttr = isMethodEmbeddable(scope, info.header.classRef, messageRef);
 
-      compiler.injectConverting(node, lxDirectCalling, messageRef, lxClassSymbol, targetRef, info.header.classRef, 
-         stackSafeAttr, embeddableAttr);
-
-      return true;
-
+      return ConversionInfo(ConversionResult::crConverted, messageRef, info.header.classRef);
    }
-   else return false;
+   else return ConversionInfo();
 }
 
 //bool CompilerLogic :: injectConstantConstructor(SNode& node, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, mssg_t messageRef)
@@ -1177,12 +1174,12 @@ mssg_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t ta
    return 0;
 }
 
-CovnersionResult CompilerLogic :: injectImplicitConversion(_CompileScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef,
-   ref_t sourceRef, ref_t elementRef, /*bool noUnboxing,*/ int& stackSafeAttr/*, int fixedSize*/)
+ConversionInfo CompilerLogic :: injectImplicitConversion(_CompileScope& scope, _Compiler& compiler, ref_t targetRef,
+   ref_t sourceRef, ref_t elementRef/*, bool noUnboxing, int fixedSize*/)
 {
    ClassInfo info;
    if (!defineClassInfo(*scope.moduleScope, info, targetRef))
-      return CovnersionResult::crUncompatible;
+      return ConversionInfo(ConversionResult::crUncompatible);
 
    // if the target class is wrapper around the source
    if (test(info.header.flags, elWrapper) && !test(info.header.flags, elDynamicRole)) {
@@ -1200,7 +1197,7 @@ CovnersionResult CompilerLogic :: injectImplicitConversion(_CompileScope& scope,
       else compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef, true);
 
       if (compatible) {
-         return CovnersionResult::crBoxingRequired;
+         return ConversionInfo(ConversionResult::crBoxingRequired);
       }
    }
 
@@ -1214,7 +1211,7 @@ CovnersionResult CompilerLogic :: injectImplicitConversion(_CompileScope& scope,
          //if (size < 0 && fixedSize > 0)
          //   size = fixedSize;
 
-         return CovnersionResult::crBoxingRequired;
+         return ConversionInfo(ConversionResult::crBoxingRequired);
       }
    }
 
@@ -1222,10 +1219,7 @@ CovnersionResult CompilerLogic :: injectImplicitConversion(_CompileScope& scope,
    if (isPrimitiveRef(sourceRef)/* && sourceRef != V_STRCONSTANT*/)
       sourceRef = compiler.resolvePrimitiveReference(scope, sourceRef, elementRef, false);
 
-   if (injectImplicitConstructor(*scope.moduleScope, node, compiler, info, targetRef, /*elementRef, */&sourceRef, 1, stackSafeAttr)) {
-      return CovnersionResult::crConverted;
-   }
-   else return CovnersionResult::crUncompatible;
+   return injectImplicitConstructor(*scope.moduleScope, compiler, info, targetRef, /*elementRef, */&sourceRef, 1);
 }
 
 //void CompilerLogic :: injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef)
@@ -1790,9 +1784,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      case V_CLASS:
 //         attributes.include(EAttr::eaClass);
 //         return true;
-//      case V_WEAKOP:
-//         attributes.include(EAttr::eaDirectCall);
-//         return true;
+      case V_WEAKOP:
+         attributes.include(EAttr::eaDirectCall);
+         return true;
 //      case V_LAZY:
 //         attributes.include(EAttr::eaLazy);
 //         return true;

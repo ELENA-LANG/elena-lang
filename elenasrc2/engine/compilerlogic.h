@@ -63,8 +63,8 @@ class CompilerLogic : public _CompilerLogic
    void setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr);
    void setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr);
 
-   bool injectImplicitConstructor(_ModuleScope& scope, SNode& node, _Compiler& compiler, ClassInfo& info, ref_t targetRef,
-      ref_t* signatures, size_t paramCount, int& stackSafeAttr);
+   ConversionInfo injectImplicitConstructor(_ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef,
+      ref_t* signatures, size_t paramCount);
 
    ref_t __fastcall getClassClassRef(_ModuleScope& scope, ref_t reference);
 
@@ -164,8 +164,8 @@ public:
    virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, 
       ref_t& reference, ref_t elementRef, int tempLocal);
 //   virtual bool injectConstantConstructor(SNode& node, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, mssg_t messageRef);
-   virtual CovnersionResult injectImplicitConversion(_CompileScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef,
-      ref_t sourceRef, ref_t elementRef, /*bool noUnboxing, */int& stackSafeAttr/*, int fixedArraySize*/);
+   virtual ConversionInfo injectImplicitConversion(_CompileScope& scope, _Compiler& compiler, ref_t targetRef,
+      ref_t sourceRef, ref_t elementRef/*, bool noUnboxing, int fixedArraySize*/);
    virtual mssg_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, size_t signLen, 
       int& stackSafeAttr, bool ignoreMultimethod);
 

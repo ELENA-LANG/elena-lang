@@ -1,13 +1,13 @@
-//// --- CallStack ---
-//
-///// A call stack
-//public sealed class CallStack
-//{
-//    int[] theStack;
-//    
-//    /// Creates a current call stack
-//    constructor()
-//    {
+// --- CallStack ---
+
+/// A call stack
+public sealed class CallStack
+{
+    int[] theStack;
+    
+    /// Creates a current call stack
+    constructor()
+    {
 //        int stack[64];
 //        int length := 0;
 //        
@@ -18,17 +18,17 @@
 //        {
 //            theStack[i] := stack[i]
 //        }
-//    }
-//    
-//    /// Generates the call stack literal representation
-//    string toPrintable()
-//    {
+    }
+    
+    /// Generates the call stack literal representation
+    string toPrintable()
+    {
 //        int    length := theStack.Length;
 //        int    bufferLength := 0;
 //        int    address := 0;
 //
 //        byte   buffer[512];
-//        string callStackText := emptyString;
+        string callStackText := emptyString;
 //        for (IntNumber i := 0, i < length, i += 1)
 //        {
 //            address := theStack[i];
@@ -39,53 +39,50 @@
 //                callStackText += String.fromByteArray(0, bufferLength, buffer).add(forward newLine)
 //            }
 //        };
-//        
-//        ^ callStackText
-//    }
-//}
+        
+        ^ callStackText
+    }
+}
 
 // --- Exception ---
 
 [info:"A basic exception"]
 public class Exception
 {
-//    string    theMessage;
-//    CallStack theCallstack;
-//
-//    /// Returns the message and the call stack
-//    string toPrintable()
-//    {
-//        string retVal := theMessage.add($10"Call stack:"$10).add(theCallstack.toPrintable());
-//        
-//        ^ retVal
-//    }
-//    
+    string    theMessage;
+    CallStack theCallstack;
+
+    /// Returns the message and the call stack
+    string toPrintable()
+    {
+        string retVal := theMessage.add($10"Call stack:"$10).add(theCallstack.toPrintable());
+        
+        ^ retVal
+    }
+    
 //    /// Returns the message
 //    string Message = theMessage;
 //    
 //    on(handler)
 //        => intern system'core_routines'__exception;
 //
-////    on(handler1,handler2)
-////        => system'core_routines'__exception;
-//
-//    raise()
-//        => intern system'core_routines'__object;
-//    
-//    /// Creates the exception with the provided message and error type
-//    constructor new(string message)
-//    {
-//        theMessage := message;
-//        theCallstack := new CallStack()
-//    }    
-//    
-//    sealed static raise()
-//    {
-//        (__weak: self.new()).raise()
-//    }
-//    
-//    constructor new()
-//        <= new(self.__getClassName());
+    raise()
+        => intern system'core_routines'__object;
+    
+    /// Creates the exception with the provided message and error type
+    constructor new(string message)
+    {
+        theMessage := message;
+        theCallstack := new CallStack()
+    }    
+    
+    sealed static raise()
+    {
+        __weak self.new().raise()
+    }
+    
+    constructor new()
+        <= new(self.__getClassName());
 }
 
 //// --- FormatException ---
@@ -103,13 +100,13 @@ public class Exception
 
 public class OutOfRangeException : Exception
 {
-//    /// Creates the exception
-//    constructor new()
-//        <= new("An index is out of range");
-//
-//    /// Creates the exception
-//    constructor new(string message)
-//        <= new(message);
+    /// Creates the exception
+    constructor new()
+        <= new("An index is out of range");
+
+    /// Creates the exception
+    constructor new(string message)
+        <= new(message);
 }
 
 //// --- InvalidArgumentException ---
@@ -169,19 +166,18 @@ public class OutOfRangeException : Exception
 
 public sealed class MethodNotFoundException : Exception
 {
-//    /// Creates the exception
-//    constructor new()
-//        <= new("Method not found");
-//
-//    constructor new(string message)
-//        <= new(message);
-//
-//    constructor new(Message missingMessage)
-////        <= ("Method " + missingMessage.Printable + " not found");
-//        <= new(cast string("Method " + missingMessage.toPrintable() + " not found"));
-//        
-//    constructor new(object object, Message missingMessage)
-//        <= new(object.__getClassName() + " : Method " + missingMessage.toPrintable() + " not found");
+    /// Creates the exception
+    constructor new()
+        <= new("Method not found");
+
+    constructor new(string message)
+        <= new(message);
+
+    constructor new(Message missingMessage)
+        <= new(cast string("Method " + missingMessage.toPrintable() + " not found"));
+
+    constructor new(object object, Message missingMessage)
+        <= new(object.__getClassName() + " : Method " + missingMessage.toPrintable() + " not found");
 }
 
 //// --- NotSupportedException ---

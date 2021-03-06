@@ -62,7 +62,7 @@ constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 //constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
 //constexpr auto HINT_VIRTUALEXPR     = EAttr::eaVirtualExpr;
 //constexpr auto HINT_SUBJECTREF      = EAttr::eaSubj;
-//constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
+constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
 constexpr auto HINT_PARAMETER       = EAttr::eaParameter;
 constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
 //constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
@@ -3168,12 +3168,12 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, ExprScop
 
 //   bool inlineArgCall = EAttrs::test(mode, HINT_INLINEARGMODE);
 ////   bool dispatchCall = false;
-//   bool directCall = EAttrs::test(mode, HINT_DIRECTCALL);
+   bool directCall = EAttrs::test(mode, HINT_DIRECTCALL);
    _CompilerLogic::ChechMethodInfo result;
    int callType = 0;
-//   if (!inlineArgCall && !directCall) {
+   if (/*!inlineArgCall && */!directCall) {
       callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
-//   }
+   }
 
    if (callType == tpPrivate) {
       if (isSelfCall(target)) {
@@ -3815,6 +3815,48 @@ void Compiler :: unboxArguments(SyntaxWriter& writer, ExprScope& scope, ObjectIn
    }
 }
 
+ObjectInfo Compiler :: injectImplicitConversion(SyntaxWriter& writer, SNode node, ExprScope& scope, 
+   ObjectInfo source, ref_t targetRef)
+{
+   ref_t sourceRef = resolveObjectReference(scope, source, false);
+
+   auto info = _logic->injectImplicitConversion(scope, *this, targetRef, sourceRef,
+      source.element/*, noUnboxing, fixedArraySize*/);
+
+   if (info.result == ConversionResult::crCompatible) {
+      return source;
+   }
+   else if (info.result == ConversionResult::crBoxingRequired) {
+      switch (source.kind) {
+         case okLocalAddress:
+         case okTempLocalAddress:
+            source.reference = targetRef;
+            return source;
+         case okLocal:
+            source.kind = okBoxableLocal;
+            source.reference = targetRef;
+            return source;
+         default:
+            return boxArgumentInPlace(writer, node, source, targetRef, scope, false);
+      }
+   }
+   else if (info.result == ConversionResult::crConverted) {
+      writer.newNode(lxDirectCalling, info.message);
+      writer.appendNode(lxCallTarget, info.classRef);
+      writer.appendNode(lxClassSymbol, targetRef);
+      writeTerminal(writer, source, scope);
+      writer.closeNode();
+
+      //if (node.compare(lxDirectCalling, lxSDirectCalling)) {
+      //   // HOTFIX : box arguments if required
+      //   analizeOperands(node, scope, stackSafeAttrs, false);
+      //}
+
+      return ObjectInfo(okObject, 0, targetRef);
+   }
+   else return ObjectInfo();
+}
+
 ObjectInfo Compiler :: convertObject(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode)
 {
 //   bool noUnboxing = EAttrs::test(mode, HINT_NOUNBOXING);
@@ -3857,35 +3899,11 @@ ObjectInfo Compiler :: convertObject(SyntaxWriter& writer, SNode node, ExprScope
          if (source.kind == okFieldAddress && isPrimitiveArrRef(sourceRef))
             fixedArraySize = defineFieldSize(scope, source.param);
 
-         auto result = _logic->injectImplicitConversion(scope, writer.CurrentNode(), *this, targetRef, sourceRef,
-            source.element/*, noUnboxing*/, stackSafeAttrs/*, fixedArraySize*/);
-
-         if (result == CovnersionResult::crCompatible) {
-            return source;
+         ObjectInfo retVal = injectImplicitConversion(writer, node, scope, source, targetRef);
+         if (retVal.kind == okUnknown) {
+            return sendTypecast(writer, node, scope, targetRef, source, EAttrs::test(mode, HINT_SILENT));
          }
-         else if (result == CovnersionResult::crBoxingRequired) {
-            switch (source.kind) {
-               case okLocalAddress:
-               case okTempLocalAddress:
-                  source.reference = targetRef;
-                  break;
-               case okLocal:
-                  source.kind = okBoxableLocal;
-                  source.reference = targetRef;
-                  break;
-               default:
-                  return boxArgumentInPlace(writer, node, source, targetRef, scope, false);
-            }
-         }
-         else if (result == CovnersionResult::crConverted){
-            //if (node.compare(lxDirectCalling, lxSDirectCalling)) {
-            //   // HOTFIX : box arguments if required
-            //   analizeOperands(node, scope, stackSafeAttrs, false);
-            //}
-         
-            return ObjectInfo(okObject, 0, targetRef);
-         }
-         else return sendTypecast(writer, node, scope, targetRef, source, EAttrs::test(mode, HINT_SILENT));
+         else return retVal;
       }
    }
 
@@ -4332,7 +4350,7 @@ mssg_t Compiler :: resolveMessageAtCompileTime(ObjectInfo target, ExprScope& sco
    return generalMessageRef;
 }
 
-ObjectInfo Compiler :: compileMessageOperation(SyntaxWriter& writer, SNode current, ExprScope& scope, ObjectInfo target, 
+ObjectInfo Compiler :: compileMessageOperation(SyntaxWriter& writer, SNode current, SNode opNode, ExprScope& scope, ObjectInfo target, 
    mssg_t messageRef, ref_t expectedSignRef, EAttr paramsMode, ArgumentsInfo* presavedArgs, ref_t expectedRef)
 {
    ObjectInfo retVal;
@@ -4346,7 +4364,7 @@ ObjectInfo Compiler :: compileMessageOperation(SyntaxWriter& writer, SNode curre
    if (target.kind == okExternal) {
    //      EAttr extMode = mode & HINT_ROOT;
    
-      retVal = compileExternalCall(writer, current.parentNode(), scope, expectedRef, &arguments);
+      retVal = compileExternalCall(writer, opNode, scope, expectedRef, &arguments);
    }
    else {
       EAttr mode = EAttr::eaNone;
@@ -4355,7 +4373,7 @@ ObjectInfo Compiler :: compileMessageOperation(SyntaxWriter& writer, SNode curre
 //         messageRef |= VARIADIC_MESSAGE;
 
       if (target.kind == okInternal) {
-         retVal = compileInternalCall(writer, current.parentNode(), scope, messageRef, implicitSignatureRef, target,
+         retVal = compileInternalCall(writer, opNode, scope, messageRef, implicitSignatureRef, target,
             &arguments);
       }
 //      else if (inlineArg) {
@@ -4365,15 +4383,17 @@ ObjectInfo Compiler :: compileMessageOperation(SyntaxWriter& writer, SNode curre
 //      }
       else {
          int stackSafeAttr = 0;
-         //if (!EAttrs::test(mode, HINT_DIRECTCALL))
+         if (!EAttrs::test(mode, HINT_DIRECTCALL)) {
             ref_t extensionRef = 0;
             messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, 
                            stackSafeAttr, extensionRef);
+            
             if (extensionRef) {
                // if extension was found - make it a operation target
                arguments.insert(target);
                target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
             }
+         }
    
          if (!test(stackSafeAttr, 1)) {
             mode = mode | HINT_DYNAMIC_OBJECT;
@@ -4381,7 +4401,7 @@ ObjectInfo Compiler :: compileMessageOperation(SyntaxWriter& writer, SNode curre
          else if (target.kind != okConstantRole)
             stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
    
-         retVal = compileMessage(writer, current, scope, target, messageRef, &arguments, mode, stackSafeAttr, 
+         retVal = compileMessage(writer, opNode, scope, target, messageRef, &arguments, mode, stackSafeAttr,
             expectedRef, presavedArgs);   
       }
    }
@@ -4401,7 +4421,7 @@ ObjectInfo Compiler :: compileResendMessageOperation(SyntaxWriter& writer, SNode
    if (resolvedMessage)
       scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
 
-   ObjectInfo retVal = compileMessageOperation(writer, node.firstChild(), scope, target, messageRef, expectedSignRef, 
+   ObjectInfo retVal = compileMessageOperation(writer, node.firstChild(), node, scope, target, messageRef, expectedSignRef, 
       EAttr::eaNone, nullptr, expectedRef);
 
    if (EAttrs::test(mode, HINT_PARAMETER)) {
@@ -4433,6 +4453,7 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
 
    bool propMode = EAttrs::test(mode, HINT_PROP_MODE);   
    bool silentMode = EAttrs::test(mode, HINT_SILENT);
+   bool directMode = EAttrs::test(mode, HINT_DIRECTCALL);
 
    EAttrs objMode(mode | HINT_TARGET, HINT_PROP_MODE);
    ObjectInfo target = compileObject(writer, current, scope, objMode, &presavedArgs);
@@ -4474,8 +4495,10 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
       else paramsMode = paramsMode | HINT_EXTERNALOP;
    }
 
-   //ArgumentsInfo unboxingArgs;
-   ObjectInfo retVal = compileMessageOperation(writer, current, scope, target, messageRef, expectedSignRef, 
+   if (directMode)
+      paramsMode = paramsMode | HINT_DIRECTCALL;
+
+   ObjectInfo retVal = compileMessageOperation(writer, current, node, scope, target, messageRef, expectedSignRef, 
       paramsMode, &presavedArgs, expectedRef);
 
    return retVal;
@@ -4924,7 +4947,7 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Ex
    if (resolvedMessage)
       scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
 
-   ObjectInfo retVal = compileMessageOperation(writer, current, scope, target, messageRef, expectedSignRef, EAttr::eaNone,
+   ObjectInfo retVal = compileMessageOperation(writer, current, node, scope, target, messageRef, expectedSignRef, EAttr::eaNone,
       nullptr, 0);
 
    if (EAttrs::test(mode, HINT_PARAMETER)) {
@@ -5526,6 +5549,8 @@ ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, Ex
 
    SNode lnode = node.firstChild();
    SNode rnode = lnode.nextNode(lxObjectMask);
+   if (rnode == lxExpression)
+      rnode = rnode.findSubNodeMask(lxObjectMask);
 
    ObjectInfo loperand = compileObject(writer, lnode, scope, EAttr::eaNone, nullptr);
 
@@ -5542,7 +5567,7 @@ ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, Ex
 
    writer.newNode(lxExpression);
 
-   ObjectInfo retVal = compileResendMessageOperation(writer, node, scope, ObjectInfo(okObject), 0, EAttr::eaNone);
+   ObjectInfo retVal = compileResendMessageOperation(writer, rnode, scope, ObjectInfo(okObject), 0, EAttr::eaNone);
 
    writer.closeNode();
 
@@ -5732,10 +5757,10 @@ ObjectInfo Compiler :: compileNewArrOperation(SyntaxWriter& writer, SNode node, 
 
          if (expecteRef) {
             int stackSafeAttrs = 0;
-            auto result = _logic->injectImplicitConversion(scope, writer.CurrentNode(), *this, expecteRef, object.reference,
-               object.element/*, noUnboxing*/, stackSafeAttrs/*, fixedArraySize*/);
+            auto info = _logic->injectImplicitConversion(scope, *this, expecteRef, object.reference,
+               object.element/*, noUnboxing, fixedArraySize*/);
 
-            if (result == CovnersionResult::crBoxingRequired)
+            if (info.result == ConversionResult::crBoxingRequired)
                object.reference = expecteRef;
          }
 
@@ -6617,14 +6642,13 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode& node, ExprScop
    ObjectInfo retVal;
    if (node.compare(lxAttribute, lxType, lxArrayType, lxBookmarkReference)) {
       mode = mode | declareExpressionAttributes(writer, node, scope, mode);
-      
+
+      // HOTFIX : ignore loop attribute for the object
+      mode = EAttrs::exclude(mode, HINT_LOOP | HINT_DIRECTCALL);
+
       if (EAttrs::test(mode, HINT_REFOP)) {
          return compileReferenceExpression(writer, node, scope, EAttrs::exclude(mode, HINT_REFOP));
       }
-
-      if (EAttrs::test(mode, HINT_LOOP))
-         // NOTE : ignore loop attribute for the object
-         mode = EAttrs::exclude(mode, HINT_LOOP);
 
       //      //      if (targetMode.testAndExclude(HINT_INLINEARGMODE)) {
       //      //         noPrimMode = true;
@@ -6652,13 +6676,23 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode& node, ExprScop
    else return compileExpression(writer, node, scope, 0, mode, preservedArgs);
 }
 
-bool Compiler :: isLoopExpression(SNode node)
+void Compiler :: recognizeExprAttrs(SNode node, EAttr& mode)
 {
-   if (node.compare(lxExpression, lxMessageExpression, lxOperationExpression))
-   {
-      return isLoopExpression(node.firstChild());
+   if (node.compare(lxExpression, lxMessageExpression, lxOperationExpression)) {
+      recognizeExprAttrs(node.firstChild(), mode);
    }
-   else return node == lxAttribute && node.argument == V_LOOP;
+   else if (node == lxAttribute) {
+      switch (node.argument) {
+         case V_LOOP:
+            mode = mode | HINT_LOOP;
+            break;
+         case V_WEAKOP:
+            mode = mode | HINT_DIRECTCALL;
+            break;
+         default:
+            break;
+      }
+   }
 }
 
 bool Compiler :: isVariableDeclaration(SNode node, ExprScope& scope, ref_t& typeRef)
@@ -6696,8 +6730,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
       writer.newNode(lxSeqExpression);
       mode = EAttrs::exclude(mode, HINT_ROOTEXPR);
 
-      if (isLoopExpression(node.firstChild()))
-         mode = mode | HINT_LOOP;
+      recognizeExprAttrs(node.firstChild(), mode);
    }
       
    switch (node.type) {
@@ -7934,32 +7967,34 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    writer.closeNode();
 }
 
-//void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& scope, bool isDefault)
-//{
-//   SNode redirect = node.findChild(lxRedirect);
-//   if (redirect != lxNone) {
-//      if (!isDefault) {
-//         SNode callNode = node.prependSibling(lxCalling_1, scope.moduleScope->constructor_message);
-//         callNode.appendNode(lxResult);
-//      }
-//      else {
-//         MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::ScopeLevel::slMethod);
-//
-//         compileDefConvConstructor(node.parentNode(), *methodScope);
-//      }
-//
-//      node.set(lxImplicitJump, redirect.argument);
-//      node.appendNode(lxCallTarget, scope.getClassRefId());
-//   }
-//   else {
-//      ExprScope exprScope(&scope);
-//      ObjectInfo target = mapObject(node, exprScope, EAttr::eaNone);
-//      if (target.kind == okInternal) {
-//         importCode(node, exprScope, target.param, exprScope.getMessageID());
-//      }
-//      else scope.raiseError(errInvalidOperation, node);
-//   }
-//}
+void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool isDefault)
+{
+   SNode redirect = node.findChild(lxRedirect);
+   if (redirect != lxNone) {
+      if (!isDefault) {
+         writer.newNode(lxCalling_1, scope.moduleScope->constructor_message);
+         writer.appendNode(lxResult);
+         writer.closeNode();
+      }
+      else {
+         MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::ScopeLevel::slMethod);
+
+         compileDefConvConstructor(writer, node.parentNode(), *methodScope);
+      }
+
+      writer.newNode(lxImplicitJump, redirect.argument);
+      writer.appendNode(lxCallTarget, scope.getClassRefId());
+      writer.closeNode();
+   }
+   else {
+      ExprScope exprScope(&scope);
+      ObjectInfo target = mapTerminal(node, exprScope, EAttr::eaNone);
+      if (target.kind == okInternal) {
+         importCode(writer, node, exprScope, target.param, exprScope.getMessageID());
+      }
+      else scope.raiseError(errInvalidOperation, node);
+   }
+}
 
 void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope)
 {
@@ -8534,13 +8569,15 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
    bool withFrame = false;
    int classFlags = codeScope.getClassFlags();
 
-   SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, /*lxDispatchCode, */lxNoBody);
-   //if (bodyNode == lxDispatchCode) {
-   //   compileConstructorDispatchExpression(bodyNode, codeScope, scope.message == defConstrMssg);
+   SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode, lxNoBody);
+   if (bodyNode == lxDispatchCode) {
+      compileConstructorDispatchExpression(writer, bodyNode, codeScope, scope.message == defConstrMssg);
 
-   //   return;
-   //}
-   /*else */if (bodyNode == lxResendExpression) {
+      codeScope.syncStack(&scope);
+      endMethod(writer, scope);
+      return;
+   }
+   else if (bodyNode == lxResendExpression) {
       if (scope.multiMethod && bodyNode.argument != 0) {
          compileMultidispatch(writer, bodyNode, codeScope, classClassScope);
 
@@ -11748,24 +11785,15 @@ void Compiler :: generateSealedOverloadListMember(_ModuleScope& scope, ref_t lis
       metaWriter.Memory()->addReference(classRef | mskVMTMethodAddress, 4);
    }
 }
-
-void Compiler :: injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
-   ref_t targetClassRef, int, bool embeddableAttr)
-{
-   if (node == lxExpression) {
-   }
-   else node.injectAndReplaceNode(lxExpression);
-
-   node.appendNode(lxCallTarget, targetClassRef);
-
-   //if (embeddableAttr)
-   //   node.appendNode(lxEmbeddableAttr);
-
-   node.set(convertOp, convertArg);
-   node.insertNode(targetOp, targetArg/*, lxTarget, targetClassRef*/);
-
-   //analizeOperands(node, stackSafeAttr);
-}
+//
+//void Compiler :: injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
+//   ref_t targetClassRef, int, bool embeddableAttr)
+//{
+//   SNode op = node.appendNode(convertOp, convertArg);
+//
+//   op.appendNode(lxCallTarget, targetClassRef);
+//   op.appendNode(targetOp, targetArg);
+//}
 
 //void Compiler :: injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/)
 //{
@@ -11843,17 +11871,17 @@ void Compiler :: injectConverting(SNode& node, LexicalType convertOp, int conver
 //
 //   return tempLocalNode;
 //}
-//
-//void Compiler :: injectEmbeddableConstructor(SNode classNode, mssg_t message, mssg_t embeddedMessageRef)
-//{
-//   SNode methNode = classNode.appendNode(lxConstructor, message);
-//   methNode.appendNode(lxEmbeddableMssg, embeddedMessageRef);
-//   methNode.appendNode(lxAttribute, tpEmbeddable);
-//   methNode.appendNode(lxAttribute, tpConstructor);
-//
-//   SNode codeNode = methNode.appendNode(lxDispatchCode);
-//   codeNode.appendNode(lxRedirect, embeddedMessageRef);
-//}
+
+void Compiler :: injectEmbeddableConstructor(SNode classNode, mssg_t message, mssg_t embeddedMessageRef)
+{
+   SNode methNode = classNode.appendNode(lxConstructor, message);
+   methNode.appendNode(lxEmbeddableMssg, embeddedMessageRef);
+   methNode.appendNode(lxAttribute, tpEmbeddable);
+   methNode.appendNode(lxAttribute, tpConstructor);
+
+   SNode codeNode = methNode.appendNode(lxDispatchCode);
+   codeNode.appendNode(lxRedirect, embeddedMessageRef);
+}
 
 inline SNode newVirtualMultimethod(SNode classNode, mssg_t message, LexicalType methodType, bool privateOne)
 {

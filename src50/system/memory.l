@@ -736,12 +736,12 @@ public sealed const struct String : BaseValue
 //    {
 //        intern system'core_routines'__literal.copy(self, index, length, array)
 //    }
-//
-//    internal constructor fromByteArray(int index, int size, byte[] buffer)
-//        <= allocate(size)
-//    {
-//        intern system'core_routines'__literal.copy(self, index, size, buffer)
-//    }
+
+    internal constructor fromByteArray(int index, int size, byte[] buffer)
+        <= allocate(size)
+    {
+        extern elenart.core_subcopyz(self, index, size, buffer);
+    }
     
     /// Converts to UTF-16 literal
     wide cast()
@@ -949,10 +949,10 @@ public sealed const struct String : BaseValue
 //    string clone() = String.copy(self);
 }
 
-//// --- emptyString ---
-//
-///// An empty literal value
-//public const string emptyString = String.MinValue;
+// --- emptyString ---
+
+/// An empty literal value
+public const string emptyString = String.MinValue;
 
 // --- WideString ---
 
@@ -1009,8 +1009,6 @@ public sealed const struct WideString : BaseValue
         <= allocate(size)
     {
         extern elenart.core_wsubcopyz(self, index, size, array);
-        
-        // intern system'core_routines'__wide.copy(self, index, size, array)
     }
 
 //    /// Converts to UTF-16 literal

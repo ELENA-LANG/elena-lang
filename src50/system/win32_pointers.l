@@ -45,31 +45,31 @@ public sealed const struct Handle
 //    free()
 //        => intern system'core_routines'__rtptr;
 //}
-//
-//// --- UnsafePointer ---
-//
-//public sealed const struct UnsafePointer
-//{
-//    embeddable __ptr thePointer[4];
-//
-//    embeddable constructor load(int ptr)
-//    {
-//        thePointer := ptr
-//    }
-//
-//    embeddable constructor()
-//    {
-//        thePointer := 0
-//    }
-//
-//    embeddable constructor(object ref)
-//    {
-//        self.setReference:ref
-//    }
-//    
-//    private setReference(o)
-//        => intern system'core_routines'__dptr;
-//                                         
+
+// --- UnsafePointer ---
+
+public sealed const struct UnsafePointer
+{
+    embeddable __ptr thePointer[4];
+
+    embeddable constructor load(int ptr)
+    {
+        thePointer := ptr
+    }
+
+    embeddable constructor()
+    {
+        thePointer := 0
+    }
+
+    embeddable constructor(object ref)
+    {
+        self.setReference:ref
+    }
+    
+    private setReference(o)
+        => intern system'core_routines'__dptr;
+
 //    dirty_ptr add(int offs)
 //    {
 //        intern system'core_routines'__dptr.readVal(self, ref int val);
@@ -133,8 +133,8 @@ public sealed const struct Handle
 //            
 //    bool isEmpty()
 //        = thePointer == 0;
-//}
-//
+}
+
 //// --- COORD ---
 //
 //public sealed struct COORD

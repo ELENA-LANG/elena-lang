@@ -39,6 +39,7 @@ enum LexicalType
    lxConstructor              = 0x000014,
    lxParent                   = 0x000015,
    lxClassField               = 0x000016,
+   lxRedirect                 = 0x000017,
    lxTemplate                 = 0x000018,
    lxMethodParameter          = 0x000019,
    lxStaticMethod             = 0x00001A,
@@ -220,7 +221,6 @@ enum LexicalType
 //   lxStatementMask = 0x010000,
 //   lxOperatorMask = 0x020000,
 //
-//   lxRedirect                 = 0x000017,
 //
 //   // derivation symbols
 //   // expression nodes
@@ -282,7 +282,7 @@ enum LexicalType
    lxIfValue                  = 0x000F20, // arg - reference
    lxElseValue                = 0x000F21, // arg - reference
    lxTemplateNameParam        = 0x000F22,
-//   lxEmbeddableMssg           = 0x000F23,
+   lxEmbeddableMssg           = 0x000F23,
    lxBinarySelf               = 0x000F24, // debug info only
    lxStatConstRef             = 0x000F25, 
    lxStatIndex                = 0x000F26,

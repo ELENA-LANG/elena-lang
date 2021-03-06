@@ -24,8 +24,8 @@ public class Object
     predefined bool notless(o);
     predefined bool notgreater(o);
                 
-//    [info:"Returns the string representation. By default it returns the class name."]
-//    string toPrintable() = /*self.__getClassName()*/__className;
+    [info:"Returns the string representation. By default it returns the class name."]
+    string toPrintable() = __className;
                 
     [info:"Implements a message dispatching in VMT"]
     dispatch() => intern system'core_routines'__object;
@@ -73,8 +73,8 @@ public interface BoolValue
         [info:"always returns false."]
         bool Inverted = BoolValue.false;
     
-//        [info:"returns literal representation."]
-//        string toPrintable() = "true";
+        [info:"returns literal representation."]
+        string toPrintable() = "true";
     
         [info:"Returns itself."]
         bool clone() = this self;        
@@ -118,8 +118,8 @@ public interface BoolValue
         [info:"always returns true"]
         bool Inverted = BoolValue.true;
     
-//        [info:"returns literal representation"]
-//        string toPrintable() = "false";
+        [info:"returns literal representation"]
+        string toPrintable() = "false";
         
         [info:"returns itself"]
         bool clone() = this self;        

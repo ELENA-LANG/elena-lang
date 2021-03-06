@@ -1082,11 +1082,14 @@ private:
 //   void compileSwitch(SNode node, ExprScope& scope);
 
    bool isVariableDeclaration(SNode node, ExprScope& scope, ref_t& typeReg);
-   bool __fastcall isLoopExpression(SNode node);
+   static void __fastcall recognizeExprAttrs(SNode node, EAttr& mode);
 
    LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray, 
                                     int& variableArg, ident_t& className);
    void declareVariable(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t typeRef, bool canBeIdle);
+
+   ObjectInfo injectImplicitConversion(SyntaxWriter& writer, SNode node, ExprScope& scope, 
+      ObjectInfo source, ref_t targetRef);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, EAttr mode, 
       ArgumentsInfo* preservedArgs);
@@ -1134,10 +1137,11 @@ private:
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, ref_t expectedSignRef,
       /*bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments, ArgumentsInfo* presavedArgs);
 
-   ObjectInfo compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, ref_t exptectedRef, EAttr mode);
+   ObjectInfo compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, 
+      ObjectInfo target, ref_t exptectedRef, EAttr mode);
    ObjectInfo compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t expectedRef, EAttr mode);
-   ObjectInfo compileMessageOperation(SyntaxWriter& writer, SNode current, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
-      ref_t expectedSignRef, EAttr mode, ArgumentsInfo* presavedArgs, ref_t expectedRef);
+   ObjectInfo compileMessageOperation(SyntaxWriter& writer, SNode current, SNode opNode, ExprScope& scope, ObjectInfo target, 
+      mssg_t messageRef, ref_t expectedSignRef, EAttr mode, ArgumentsInfo* presavedArgs, ref_t expectedRef);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
       ArgumentsInfo* arguments, EAttr mode, int stackSafeAttr, ref_t expectedRef, ArgumentsInfo* presavedArgs);
 
@@ -1208,7 +1212,7 @@ private:
 
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope,
       bool& withFrame);
-//   void compileConstructorDispatchExpression(SNode node, CodeScope& scope, bool isDefault);
+   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool isDefault);
    void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool withGenericMethods);
    void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
@@ -1390,10 +1394,10 @@ public:
 
    // _Compiler interface implementation
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
-   virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
-      ref_t targetClassRef, int stacksafeAttr, bool embeddableAttr);
+   //virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
+   //   ref_t targetClassRef, int stacksafeAttr, bool embeddableAttr);
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
-//   virtual void injectEmbeddableConstructor(SNode classNode, mssg_t message, ref_t privateRef);
+   virtual void injectEmbeddableConstructor(SNode classNode, mssg_t message, mssg_t privateRef);
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message,
       LexicalType methodType, ClassInfo& info);
    void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
