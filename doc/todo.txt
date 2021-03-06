@@ -3,11 +3,8 @@ In development:
 ------         
 
   [development]
-    * toPrintable
-    * call stack
-    * exceptions
-
     * basic tests
+    * call stack
     * program exception handling
     * system tests : 86, 86-64
 

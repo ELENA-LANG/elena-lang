@@ -474,6 +474,32 @@ literalTest()
     console.writeLine("done")        
 }
 
+// --- wideTest ---
+
+wideTest()
+{
+    console.write("wideTest..");
+    
+    Assert.ifTrue("abc"w == "abc"w);
+    Assert.ifFalse("ab"w == "abc"w);
+    Assert.ifTrue("ba"w > "ab"w);
+    Assert.ifTrue("ab"w < "abc"w);
+    Assert.ifTrue("abc"w + "de"w == "abcde"w);
+
+    Assert.ifTrue("abcd"w.indexOf(0, "bc"w)==1);
+    Assert.ifTrue("abcd"w.indexOf(2, "bc"w)==-1);
+
+    Assert.ifTrue("acd"w.insert(1,"b") == "abcd"w);
+    Assert.ifTrue("abecd"w.delete(2,1) == "abcd"w);
+    Assert.ifTrue("abcd"w.Substring(1,2) == "bc"w);
+    Assert.ifTrue("abc"w[1] == "b");
+
+    Assert.ifFailed({ "abc"w[-1] });
+    Assert.ifFailed({ "abc"w[4] });
+    
+    console.writeLine("done")        
+}
+
 ////// --- ArrayTest ---
 //////
 //////#symbol ArrayTest =

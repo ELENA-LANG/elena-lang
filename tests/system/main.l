@@ -13,7 +13,7 @@ public program()
     longTest();
     realTest();
     literalTest();
-//    wideTest();
+    wideTest();
 
 //    MultiDispatchTest eval.
 ////    MultySelectTest  eval.

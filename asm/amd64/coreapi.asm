@@ -80,6 +80,31 @@ labEnd:
 
 end
 
+// winsert(target,source,index,len)
+procedure coreapi'core_winsert
+
+  mov  rbx, [rsp+24]
+  mov  rcx, [rsp+32]
+  mov  rdi, [rsp+8]
+  mov  rsi, [rsp+16]
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  edx, dword ptr [rsi]
+  mov  word ptr [rdi + rbx*2], dx
+  add  ebx, 1
+  lea  rsi, [rsi + 2]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  mov  edx, ecx
+  mov  ebx, edi
+  ret
+
+end
+
 // ; sadd(dest,sour,sindex,dindex)
 procedure coreapi'sadd
 
@@ -102,6 +127,39 @@ labNext2:
   lea  rsi, [rsi+1]
   lea  rdx, [rdx+1]
   add  ecx, 1
+  jnz  short labNext2
+
+  ret
+  
+end
+
+// ; wadd(dest,sour,sindex,dindex)
+procedure coreapi'core_wadd
+
+  mov  rcx, [rsp+24]              // 
+  mov  rax, [rsp+16]              // ; src
+  mov  rbx, [rsp+32]              // ; dindex
+  mov  rdi, [rsp+8]               // ; dst
+  
+  shl  ebx, 1
+  shl  ecx, 1
+
+  mov  edx, ebx         // ; dst index
+  mov  esi, ecx         // ; src index
+  
+  mov  ebx, dword ptr [rax-elSizeOffset]
+  and  ebx, 0FFFFFh
+
+  add  rdx, rdi
+  sub  rcx, rbx
+  add  rsi, rax
+  
+labNext2:
+  mov  ebx, dword ptr [rsi]
+  mov  word ptr [rdx], bx
+  lea  rsi, [rsi+2]
+  lea  rdx, [rdx+2]
+  add  ecx, 2
   jnz  short labNext2
 
   ret
@@ -153,6 +211,160 @@ labEnd:
   mov  edx, -1
 labEnd2:
   ret
+
+end
+
+// ; strtochar(index,str; ebx = 0 if err ; edx - out)
+procedure coreapi'core_strtochar   
+
+  mov  rbx, [rsp+8]
+  mov  rax, [rsp+16]
+
+  xor  edx, edx
+  mov  dl, byte ptr [rax + rbx]
+  cmp  edx, 00000080h
+  jl   short lab1
+  cmp  edx, 000000C0h
+  jl   short err
+  cmp  edx, 000000E0h
+  jl   short lab2
+  cmp  edx, 000000F0h
+  jl   short lab3
+  cmp  edx, 000000F8h
+  jl   lab4
+
+err:
+  xor  ebx, ebx
+  ret 
+
+lab1:
+  mov  ebx, eax
+  ret
+
+lab2:  
+  mov  ecx, edx
+  mov  dl, byte ptr [rax + rbx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  shl  ecx, 6
+  add  edx, ecx
+  sub  edx, 3080h
+  mov  rbx, rax
+  ret
+  
+lab3:
+  mov  ecx, edx
+  mov  dl, byte ptr [rax + rbx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  cmp  ecx, 000000E0h
+  jnz  short lab3_1
+  cmp  ebx, 000000A0h
+  jl   short err
+
+lab3_1:
+  shl  ecx, 12
+  shl  edx, 6
+  add  ecx, edx
+  xor  edx, edx
+  mov  dl, byte ptr [rax + rbx + 2]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  add  edx, ecx
+  sub  edx, 0E2080h
+  mov  ebx, eax
+  ret
+  
+lab4:
+  mov  ecx, edx
+  mov  dl, byte ptr [rax + rbx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  cmp  ecx, 000000F0h
+  jnz  short lab4_1
+  cmp  edx, 00000090h
+  jl   short err
+
+lab4_1:
+  cmp  ecx, 000000F4h
+  jnz  short lab4_2
+  cmp  edx, 00000090h
+  jae  short err
+
+lab4_2:
+  shl  ecx, 18
+  shl  edx, 12
+  add  ecx, edx
+
+  xor  edx, edx
+  mov  dl, byte ptr [rax + rbx + 2]
+  mov  esi, edx
+  and  esi, 000000C0h
+  cmp  esi, 00000080h
+  jnz  err
+
+  shl  edx, 6
+  add  ecx, edx
+  
+  xor  edx, edx
+  mov  dl, byte ptr [rax + rbx + 3]
+  mov  esi, edx
+  and  esi, 000000C0h
+  cmp  esi, 00000080h
+  jnz  err
+
+  add  edx, ecx
+  sub  edx, 3C82080h
+  mov  ebx, eax
+  ret
+  
+end                                                       
+
+// ; wstrtochar(index,str; ebx = 0 if err ; edx - out)
+procedure coreapi'core_wstrtochar
+
+  mov  rbx, [rsp+8]
+  mov  rax, [rsp+16]
+
+  mov  esi, dword ptr [rax + rbx * 2]
+  and  esi, 0FFFFh
+  cmp  esi, 0D800h
+  jl   short lab1
+  cmp  esi, 0DBFFh
+  jg   short err
+
+  mov  ecx, esi
+  shl  ecx, 10
+  mov  esi, dword ptr [rax + rbx * 2 + 2]
+  and  esi, 0FFFFh
+  cmp  esi, 0DC00h
+  jl   short lab2
+  cmp  esi, 0DFFFh
+  jg   short err
+  
+lab2:
+  mov  edx, ecx
+  mov  rbx, [rsp+8]
+  add  edx, ebx
+  sub  edx, 35FDC00h
+  ret  
+
+lab1:
+  mov  rbx, [rsp+8]
+  mov  edx, esi
+  ret
+
+err:
+  xor  ebx, ebx
+  ret 
 
 end
 
@@ -598,74 +810,6 @@ LabEnd:
 
 end
 
-// winsert(target,source,index,len)
-procedure coreapi'winsert
-
-  mov  rdx, [rsp+24]
-  mov  rax, [rsp+32]
-  mov  rdi, [rsp+8]
-  mov  ecx, dword ptr [rax]
-  mov  rsi, [rsp+16]
-  mov  ebx, dword ptr [rdx]
-  test ecx, ecx
-  jz   short labEnd
-
-labNext:
-  mov  edx, dword ptr [rsi]
-  mov  word ptr [rdi + rbx*2], dx
-  add  ebx, 1
-  lea  rsi, [rsi + 2]
-  sub  ecx, 1
-  jnz  short labNext
-
-labEnd:
-  mov  edx, ecx
-  mov  ebx, edi
-  ret
-
-end
-
-// ; wstrtochar(index,str; ebx = 0 if err ; edx - out)
-procedure coreapi'wstrtochar
-
-  mov  rsi, [rsp+8]
-  mov  rax, [rsp+16]
-  mov  ebx, dword ptr [rsi]
-
-  mov  esi, dword ptr [rax + rbx * 2]
-  and  esi, 0FFFFh
-  cmp  esi, 0D800h
-  jl   short lab1
-  cmp  esi, 0DBFFh
-  jg   short err
-
-  mov  ecx, esi
-  shl  ecx, 10
-  mov  esi, dword ptr [rax + rbx * 2 + 2]
-  and  esi, 0FFFFh
-  cmp  esi, 0DC00h
-  jl   short lab2
-  cmp  esi, 0DFFFh
-  jg   short err
-  
-lab2:
-  mov  edx, ecx
-  mov  rbx, [rsp+8]
-  add  edx, ebx
-  sub  edx, 35FDC00h
-  ret  
-
-lab1:
-  mov  rbx, [rsp+8]
-  mov  edx, esi
-  ret
-
-err:
-  xor  ebx, ebx
-  ret 
-
-end
-
 // tempObject(ptr), eax - vmt, edx - value
 procedure coreapi'tempObject
 
@@ -756,42 +900,6 @@ lab1:
    mov  edx, 1
    ret
 
-end
-
-// ; wadd(dest,sour,sindex,dindex)
-procedure coreapi'wadd
-
-  mov  rcx, [rsp+24]              // 
-  mov  rax, [rsp+16]              // ; src
-  mov  ecx, dword ptr [ecx]       // ; sindex
-  mov  rdx, [rsp+32]              // ; dindex
-  mov  rdi, [rsp+8]               // ; dst
-
-  mov  ebx, dword ptr [rdx]       // ; dst index
-  
-  shl  ebx, 1
-  shl  ecx, 1
-
-  mov  edx, ebx         // ; dst index
-  mov  esi, ecx         // ; src index
-  
-  mov  ebx, dword ptr [rax-elSizeOffset]
-  and  ebx, 0FFFFFh
-
-  add  rdx, rdi
-  sub  rcx, rbx
-  add  rsi, rax
-  
-labNext2:
-  mov  ebx, dword ptr [rsi]
-  mov  word ptr [rdx], bx
-  lea  rsi, [rsi+2]
-  lea  rdx, [rdx+2]
-  add  ecx, 2
-  jnz  short labNext2
-
-  ret
-  
 end
 
 procedure coreapi'wstrtochararray
@@ -1065,121 +1173,6 @@ labSave:
   ret
 
 end
-
-// ; strtochar(index,str; ebx = 0 if err ; edx - out)
-procedure coreapi'strtochar   
-
-  mov  rsi, [rsp+8]
-  mov  rax, [rsp+16]
-  mov  ebx, dword ptr [rsi]
-
-  xor  edx, edx
-  mov  dl, byte ptr [rax + rbx]
-  cmp  edx, 00000080h
-  jl   short lab1
-  cmp  edx, 000000C0h
-  jl   short err
-  cmp  edx, 000000E0h
-  jl   short lab2
-  cmp  edx, 000000F0h
-  jl   short lab3
-  cmp  edx, 000000F8h
-  jl   lab4
-
-err:
-  xor  ebx, ebx
-  ret 
-
-lab1:
-  mov  ebx, eax
-  ret
-
-lab2:  
-  mov  ecx, edx
-  mov  dl, byte ptr [rax + rbx + 1]
-  mov  esi, edx
-  and  esi, 0C0h
-  cmp  esi, 00000080h
-  jnz  err
-  shl  ecx, 6
-  add  edx, ecx
-  sub  edx, 3080h
-  mov  rbx, rax
-  ret
-  
-lab3:
-  mov  ecx, edx
-  mov  dl, byte ptr [rax + rbx + 1]
-  mov  esi, edx
-  and  esi, 0C0h
-  cmp  esi, 00000080h
-  jnz  err
-  cmp  ecx, 000000E0h
-  jnz  short lab3_1
-  cmp  ebx, 000000A0h
-  jl   short err
-
-lab3_1:
-  shl  ecx, 12
-  shl  edx, 6
-  add  ecx, edx
-  xor  edx, edx
-  mov  dl, byte ptr [rax + rbx + 2]
-  mov  esi, edx
-  and  esi, 0C0h
-  cmp  esi, 00000080h
-  jnz  err
-  add  edx, ecx
-  sub  edx, 0E2080h
-  mov  ebx, eax
-  ret
-  
-lab4:
-  mov  ecx, edx
-  mov  dl, byte ptr [rax + rbx + 1]
-  mov  esi, edx
-  and  esi, 0C0h
-  cmp  esi, 00000080h
-  jnz  err
-  cmp  ecx, 000000F0h
-  jnz  short lab4_1
-  cmp  edx, 00000090h
-  jl   short err
-
-lab4_1:
-  cmp  ecx, 000000F4h
-  jnz  short lab4_2
-  cmp  edx, 00000090h
-  jae  short err
-
-lab4_2:
-  shl  ecx, 18
-  shl  edx, 12
-  add  ecx, edx
-
-  xor  edx, edx
-  mov  dl, byte ptr [rax + rbx + 2]
-  mov  esi, edx
-  and  esi, 000000C0h
-  cmp  esi, 00000080h
-  jnz  err
-
-  shl  edx, 6
-  add  ecx, edx
-  
-  xor  edx, edx
-  mov  dl, byte ptr [rax + rbx + 3]
-  mov  esi, edx
-  and  esi, 000000C0h
-  cmp  esi, 00000080h
-  jnz  err
-
-  add  edx, ecx
-  sub  edx, 3C82080h
-  mov  ebx, eax
-  ret
-  
-end                                                       
 
 // ; chartostr (char,target, out edx - length)
 procedure coreapi'chartostr

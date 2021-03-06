@@ -909,7 +909,6 @@ public sealed const struct String : BaseValue
     
         ^ ret;         
     }
-//        => intern system'core_routines'__literal;
 
     [info:"Returns the substring"]
     string Substring(int index, int length)
@@ -1072,42 +1071,55 @@ public sealed const struct WideString : BaseValue
     bool less(wide s)
         => intern system'core_routines'__wide;
 
-//    /// Compares the values
-//    bool equal(char ch)
-//        <= equal(cast wide(ch));
-//
-//    /// Compares the values
-//    bool less(char ch)
-//        <= less(cast wide(ch));
-//
-//    /// Returns the character at the specified index
-//    char at(int n)
-//    {
-//        char ch := $0;
-//        self.read(n, ref ch);
-//        
-//        ^ new CharValue(ch)
-//    }
-//
-//    wide add(o)
-//        <= add(cast wide(o));
-//
-//    /// Concatinates the values
-//    wide add(BaseVariable v)
-//        <= add(v.Value);
-//    
-//    /// Concatinates the values
-//    wide add(wide s)
-//        => intern system'core_routines'__wide;
-//
-//    /// Concatinates the values
-//    wide add(char ch)
-//        = self.add(wideConvertor.convert(ch));
-//
-//    /// Concatinates the values
-//    wide add(string s)
-//        = self.add(cast wide(s));
-//
+    /// Compares the values
+    bool equal(char ch)
+        <= equal(cast wide(ch));
+
+    /// Compares the values
+    bool less(char ch)
+        <= less(cast wide(ch));
+
+    [info:"Returns the character at the specified index"]
+    char at(int n)
+    {
+        int len := self.Length;
+        if (n < 0 || n >= len)
+        {
+            OutOfRangeException.raise()
+        };
+                
+        char ch := extern elenart.core_wstrtochar(n, self);
+        
+        ^ ch;
+    }
+
+    wide add(o)
+        <= add(cast wide(o));
+
+    /// Concatinates the values
+    wide add(BaseVariable v)
+        <= add(v.Value);
+    
+    [info:"Concatinates the values"]
+    wide add(wide s)
+    {
+        int len1 := self.Length;
+        int len2 := s.Length;
+        wide ret := WideString.allocate(len1+len2);
+        extern elenart.core_winsert(ret,self,0,len1);
+        extern elenart.core_winsert(ret,s,len1,len2);
+    
+        ^ ret; 
+    }
+       
+    /// Concatinates the values
+    wide add(char ch)
+        = self.add(wideConvertor.convert(ch));
+
+    /// Concatinates the values
+    wide add(string s)
+        = self.add(cast wide(s));
+
 //    // Reads the character at the specified index and saves into an output parameter
 //    read(int n, ref char ch)
 //        => intern system'core_routines'__wide;
@@ -1134,22 +1146,31 @@ public sealed const struct WideString : BaseValue
 //        
 //        ^ retVal
 //    }
-//
-//    /// Returns the index of the first occurence of the specified substring.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int index, wide s)
-//    {
-//        int retVal := 0;
-//        self.indexOf(index, s, ref retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Inserts the substring into and returns the new one
-//    wide insert(int index, wide s)
-//        => intern system'core_routines'__wide;
-//        
+
+    /// Returns the index of the first occurence of the specified substring.
+    ///
+    /// If the substring is not found. returns -1
+    int indexOf(int index, wide s)
+    {
+        int retVal := extern elenart.core_wseek(self, s, index);
+        
+        ^ retVal
+    }
+
+    [info:"Inserts the substring into and returns the new one"]
+    wide insert(int index, wide s)
+    {
+        int len1 := self.Length;
+        int len2 := s.Length;
+        int dindex := index + len2;
+        wide ret := WideString.allocate(len1+len2);
+        extern elenart.core_winsert(ret,self,0,index);
+        extern elenart.core_winsert(ret,s,index,len2);
+        extern elenart.core_wadd(ret,self,index,dindex);
+    
+        ^ ret;         
+    }
+        
 //    /// Inserts the substring into and returns the new one
 //    wide insert(int index, string s)
 //        = self.insert(index, cast wide(s));
@@ -1157,20 +1178,28 @@ public sealed const struct WideString : BaseValue
 //    /// Inserts a character into and returns the new one
 //    wide insert(int index, char ch)
 //        = self.insert(index, wideConvertor.convert(ch));
-//
-//    /// Deletes the substring from the object and returns the new one            
-//    wide delete(int index, int length)
-//        => intern system'core_routines'__wide;
-//
-//    /// Returns the substring
-//    wide Substring(int index, int length)
-//    {
-//        auto subs := WideString.allocate(length);
-//        
-//        intern system'core_routines'__wide.copy(subs, index, length, self);
-//        
-//        ^ subs
-//    }
+
+    [info:"Deletes the substring from the object and returns the new one"]
+    wide delete(int index, int length)
+    {
+        int len1 := self.Length;
+        int sindex := index + length;
+        wide ret := WideString.allocate(len1-length);
+        extern elenart.core_winsert(ret,self,0,index);
+        extern elenart.core_wadd(ret,self,sindex,index);
+    
+        ^ ret;         
+    }
+    
+    [info:"Returns the substring"]
+    wide Substring(int index, int length)
+    {
+        auto subs := WideString.allocate(length);
+        
+        extern elenart.core_wsubcopyz(subs, index, length, self);
+        
+        ^ subs
+    }
 
     /// Reads the literal length into an output parameter
     int Length
@@ -1378,14 +1407,14 @@ public sealed const struct WideString : BaseValue
 //    Array clone()
 //        = Array.copy(0, self.Length, self);
 //}
-//
-//// === Convertors ===
-//
-//// --- stringConvertor ---
-//
-///// A literal convertor
-//public singleton stringConvertor
-//{
+
+// === Convertors ===
+
+// --- stringConvertor ---
+
+/// A literal convertor
+public singleton stringConvertor
+{
 //    int getSubLength(int index, int length, char[] array)
 //    {
 //        int len;
@@ -1557,13 +1586,13 @@ public sealed const struct WideString : BaseValue
 //    /// Returns the literal presentation of the parameter
 //    string convert(o)
 //        = o.toPrintable();
-//}
-//
-//// --- wideConvertor ---
-//
-///// A wide literal convertor
-//public singleton wideConvertor
-//{
+}
+
+// --- wideConvertor ---
+
+/// A wide literal convertor
+public singleton wideConvertor
+{
 //    int getSubLength(int index, int length, char[] array)
 //    {
 //        int len;
@@ -1717,7 +1746,7 @@ public sealed const struct WideString : BaseValue
 //    /// Returns the literal presentation of the parameter
 //    wide convert(o)
 //        = cast wide(o.toPrintable());
-//}
+}
 
 /// An Unicode character convertor
 public singleton charConvertor
