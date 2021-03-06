@@ -40,13 +40,13 @@
 
 public class AssertException : Exception
 {
-//    constructor new(string message)
-//        <= new(message);
-//    
-//    static raise(string message)
-//    {
-//        AssertException.new(message).raise()
-//    }    
+    constructor new(string message)
+        <= new(message);
+    
+    static raise(string message)
+    {
+        AssertException.new(message).raise()
+    }    
 }
 
 public singleton Assert
@@ -59,17 +59,27 @@ public singleton Assert
         }
     }
     
-//    notFailed(Func f)
-//    {
-//        f()
-//            | on:(e)
-//            {
-//                console.writeLine(e.Message);
-//                
-//                AssertException.raise("Assertion failed")
-//            };
-//    }
+    notFailed(Func f)
+    {
+        f()
+            | on:(e)
+            {
+                AssertException.raise("Assertion failed")
+            };
+    }
     
+    ifFailed(Func f)
+    {
+        var failed := false;
+        f()
+            | on:(e)
+            {
+                failed := true;
+            };
+            
+        Assert.ifTrue(failed);
+    }
+
     ifTrue(b)
     {
         ifnot(b)

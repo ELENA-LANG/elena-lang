@@ -4412,6 +4412,8 @@ ObjectInfo Compiler :: compileMessageOperation(SyntaxWriter& writer, SNode curre
 ObjectInfo Compiler :: compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, 
    ref_t expectedRef, EAttr mode)
 {
+   ArgumentsInfo presavedArgs;
+
    ref_t expectedSignRef = 0; // contains the expected message signature if it there is only single method overloading
    mssg_t messageRef = mapMessage(node, scope/*, target.kind == okExtension*/, false, false);
 
@@ -4422,7 +4424,7 @@ ObjectInfo Compiler :: compileResendMessageOperation(SyntaxWriter& writer, SNode
       scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
 
    ObjectInfo retVal = compileMessageOperation(writer, node.firstChild(), node, scope, target, messageRef, expectedSignRef, 
-      EAttr::eaNone, nullptr, expectedRef);
+      EAttr::eaNone, &presavedArgs, expectedRef);
 
    if (EAttrs::test(mode, HINT_PARAMETER)) {
       if (retVal.kind != okTempLocal)
@@ -5565,10 +5567,13 @@ ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, Ex
 //      node = node.nextNode();
 //   }
 
-   writer.newNode(lxExpression);
+   writer.newNode(lxSeqExpression);
 
-   ObjectInfo retVal = compileResendMessageOperation(writer, rnode, scope, ObjectInfo(okObject), 0, EAttr::eaNone);
+   ObjectInfo info = saveToTempLocal(writer, scope, ObjectInfo(okObject));
 
+   ObjectInfo retVal = compileResendMessageOperation(writer, rnode, scope, info, 0, EAttr::eaNone);
+
+   writer.closeNode();
    writer.closeNode();
 
    return retVal;
@@ -8033,8 +8038,10 @@ void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScop
 void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& codeScope, bool multiMethod)
 {
    if (node.firstChild() == lxImplicitJump) {
-      // do nothing for redirect method
-      node = lxExpression;
+      SNode op = node.firstChild();
+      writer.newNode(op.type, op.argument);
+      writer.appendNode(lxCallTarget, op.findChild(lxCallTarget).argument);
+      writer.closeNode();
    }
    else if (node.argument != 0 && multiMethod) {
       ClassScope* classScope = (ClassScope*)codeScope.getScope(Scope::ScopeLevel::slClass);

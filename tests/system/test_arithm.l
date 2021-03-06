@@ -467,13 +467,10 @@ literalTest()
     Assert.ifTrue("abecd".delete(2,1) == "abcd");
     Assert.ifTrue("abcd".Substring(1,2) == "bc");
     Assert.ifTrue("abc"[1] == "b");
+
+    Assert.ifFailed({ "abc"[-1] });
+    Assert.ifFailed({ "abc"[4] });
     
-//    "abc" getAt:(-1) |
-//        if &OutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
-//
-//    "abc" getAt:4 |
-//        if &OutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
-        
     console.writeLine("done")        
 }
 
