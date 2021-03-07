@@ -56,10 +56,10 @@ constexpr auto HINT_LOOP            = EAttr::eaLoop;
 constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 //constexpr auto HINT_FORWARD         = EAttr::eaForward;
 //constexpr auto HINT_PARAMSOP		   = EAttr::eaParams;
-//constexpr auto HINT_SWITCH          = EAttr::eaSwitch;
+constexpr auto HINT_SWITCH          = EAttr::eaSwitch;
 //constexpr auto HINT_CLASSREF        = EAttr::eaClass;
 //constexpr auto HINT_YIELD_EXPR      = EAttr::eaYieldExpr;
-//constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
+constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
 //constexpr auto HINT_VIRTUALEXPR     = EAttr::eaVirtualExpr;
 //constexpr auto HINT_SUBJECTREF      = EAttr::eaSubj;
 constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
@@ -1928,68 +1928,52 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
    }
 }
 
-//void Compiler :: compileSwitch(SNode node, ExprScope& scope)
-//{
-//   SNode targetNode = node.firstChild();
-//
-//   bool immMode = true;
-//   int localOffs = 0;
-//   ObjectInfo loperand;
-//   if (targetNode == lxExpression) {
-//      immMode = false;
-//
-//      localOffs = scope.newTempLocal();
-//
-//      loperand = compileExpression(targetNode, scope, 0, EAttr::eaNone);
-//
-//      targetNode.injectAndReplaceNode(lxAssigning);
-//      targetNode.insertNode(lxLocal, localOffs);
-//   }
-//
-//   // HOTFIX : the argument should not be type-less
-//   //          to use the branching over sending IF message
-//   if (!loperand.reference)
-//      loperand.reference = scope.moduleScope->superReference;
-//
-//   SNode current = node.findChild(lxOption, lxElse);
-//   while (current == lxOption) {
-//      SNode optionNode = current.injectNode(lxExpression);
-//      SNode blockNode = optionNode.firstChild(lxObjectMask);
-//
-//      // find option value
+ObjectInfo Compiler :: compileSwitchExpression(SyntaxWriter& writer, SNode node, ExprScope& scope)
+{
+   SNode lnode = node.firstChild();
+   SNode rnode = lnode.nextNode(lxObjectMask);
+
+   ObjectInfo loperand = compileObject(writer, lnode, scope, HINT_PARAMETER, nullptr);
+
+   writer.newNode(lxSwitching);
+
+   // HOTFIX : the argument should not be type-less
+   //          to use the branching over sending IF message
+   if (!loperand.reference)
+      loperand.reference = scope.moduleScope->superReference;
+
+   SNode current = node.findChild(lxOption, lxElse);
+   ArgumentsInfo arguments;
+   while (current == lxOption) {
+      SNode blockNode = current.firstChild(lxObjectMask);
+
+      // find option value
 //      SNode exprNode = optionNode.firstChild();
-//      exprNode.injectAndReplaceNode(lxExpression);
-//
-//      int operator_id = current.argument;
-//
-//      if (!immMode) {
-//         exprNode.insertNode(lxLocal, localOffs);
-//      }
-//      else {
-//         SNode localNode = SyntaxTree::insertNodeCopy(targetNode, exprNode);
-//
-//         if (localNode != lxExpression) {
-//            localNode.injectAndReplaceNode(lxExpression);
-//         }
-//         loperand = compileExpression(localNode, scope, 0, EAttr::eaNone);
-//      }
-//
-//      // HOTFIX : the switch target should be typecasted (to prevent comparision operation from being )
-//      if (!loperand.reference)
-//         loperand.reference = scope.moduleScope->superReference;
-//
-//      ObjectInfo roperand = mapTerminal(exprNode.lastChild(), scope, EAttr::eaNone);
-//      ObjectInfo operationInfo = compileOperator(exprNode, scope, operator_id, 2, loperand, roperand, ObjectInfo(), EAttr::eaNone);
-//
-//      ObjectInfo retVal;
-//      compileBranchingOp(blockNode, scope, HINT_SWITCH, IF_OPERATOR_ID, operationInfo, retVal);
-//
-//      current = current.nextNode();
-//   }
-//
-//   if (current == lxElse) {
-//      bool withRetStatement = false;
-//      compileSubCode(current, scope, false, withRetStatement);
+
+      int operator_id = EQUAL_OPERATOR_ID;
+
+      writer.newNode(lxOption);
+
+      ObjectInfo roperand = mapTerminal(current.firstChild(), scope, EAttr::eaNone);
+      arguments.add(roperand);
+
+      writer.newNode(lxExpression);
+      ObjectInfo operationInfo = compileOperation(writer, current, scope, operator_id, loperand, &arguments, false);
+
+      ObjectInfo retVal;
+      compileBranchingOp(writer, blockNode, scope, HINT_SWITCH, IF_OPERATOR_ID, operationInfo, retVal, EAttr::eaNone, nullptr);
+
+      writer.closeNode();
+      writer.closeNode();
+
+      arguments.clear();
+
+      current = current.nextNode();
+   }
+
+   if (current == lxElse) {
+      bool withRetStatement = false;
+      compileSubCode(writer, current.firstChild(), scope, false, withRetStatement);
 //      //scope.setCodeRetStatementFlag(ifRetStatement && elseRetStatement);
 //
 //      //CodeScope subScope(&scope);
@@ -2004,8 +1988,12 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
 //
 //      //// preserve the allocated space
 //      //scope.level = subScope.level;
-//   }
-//}
+   }
+
+   writer.closeNode();
+
+   return ObjectInfo(okObject);
+}
 
 size_t Compiler :: resolveArraySize(SNode node, Scope& scope)
 {
@@ -2405,60 +2393,53 @@ ObjectInfo Compiler :: mapClassSymbol(Scope& scope, int classRef)
 //
 //   return retVal;
 //}
-//
-//ObjectInfo Compiler :: compileMessageReference(SNode terminal, ExprScope& scope)
-//{
-//   ObjectInfo retVal;
-//   IdentifierString message;
-//   int argCount = 0;
-//
-//   SNode paramNode = terminal.nextNode();
-//   bool invalid = true;
-//   if (paramNode == lxArrOperator && paramNode.argument == REFER_OPERATOR_ID) {
-//      if (isSingleStatement(paramNode.nextNode())) {
-//         ObjectInfo sizeInfo = mapTerminal(paramNode.nextNode().firstChild(lxTerminalMask), scope, HINT_VIRTUALEXPR);
-//         if (sizeInfo.kind == okIntConstant) {
-//            argCount = sizeInfo.extraparam;
-//            invalid = false;
-//         }
-//      }
-//   }
-//
-//   if (invalid)
-//      scope.raiseError(errNotApplicable, terminal);
-//
-//   // HOTFIX : prevent further compilation of the expression
-//   paramNode = lxIdle;
-//
-//   if (terminal == lxIdentifier) {
-//      message.append('0' + (char)argCount);
-//      message.append(terminal.identifier());
-//
-//      retVal.kind = okMessageConstant;
-//
-//      retVal.reference = V_MESSAGE;
-//   }
-//   else if (terminal == lxType) {
-//      SNode typeNode = terminal.findChild(lxType);
-//      if (typeNode.nextNode() != lxNone)
-//         scope.raiseError(errNotApplicable, terminal);
-//
-//      ref_t extensionRef = resolveTypeAttribute(typeNode, scope, false, true);
-//
-//      message.append(scope.moduleScope->module->resolveReference(extensionRef));
-//      message.append('.');
-//      message.append('0' + (char)argCount);
-//      message.append(terminal.firstChild(lxTerminalMask).identifier());
-//
-//      retVal.kind = okExtMessageConstant;
-//      retVal.param = scope.moduleScope->module->mapReference(message);
-//      retVal.reference = V_EXTMESSAGE;
-//   }
-//
-//   retVal.param = scope.moduleScope->module->mapReference(message);
-//
-//   return retVal;
-//}
+
+ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode terminal, SNode argNode, ExprScope& scope)
+{
+   ObjectInfo retVal;
+
+   IdentifierString message;
+   bool invalid = true;
+   int argCount = 0;
+   ObjectInfo roperand = compileExpression(writer, argNode, scope, 0, HINT_PARAMETER, nullptr);
+   if (roperand.kind == okIntConstant) {
+      argCount = roperand.extraparam;
+      invalid = false;
+   }
+
+   if (invalid)
+      scope.raiseError(errNotApplicable, terminal);
+
+   if (terminal == lxIdentifier) {
+      message.append('0' + (char)argCount);
+      message.append(terminal.identifier());
+
+      retVal.kind = okMessageConstant;
+
+      retVal.reference = V_MESSAGE;
+   }
+   else if (terminal == lxType) {
+      //SNode typeNode = terminal.findChild(lxType);
+      //if (typeNode.nextNode() != lxNone)
+         scope.raiseError(errNotApplicable, terminal);
+
+      //ref_t extensionRef = resolveTypeAttribute(typeNode, scope, false, true);
+
+      //message.append(scope.moduleScope->module->resolveReference(extensionRef));
+      //message.append('.');
+      //message.append('0' + (char)argCount);
+      //message.append(terminal.firstChild(lxTerminalMask).identifier());
+
+      //retVal.kind = okExtMessageConstant;
+      //retVal.param = scope.moduleScope->module->mapReference(message);
+      //retVal.reference = V_EXTMESSAGE;
+   }
+   else scope.raiseError(errNotApplicable, terminal);
+
+   retVal.param = scope.moduleScope->module->mapReference(message);
+
+   return retVal;
+}
 
 ObjectInfo Compiler :: compileSubjectReference(SNode terminal, ExprScope& scope, EAttr)
 {
@@ -2656,7 +2637,8 @@ ref_t Compiler :: mapExtension(Scope& scope, mssg_t& messageRef, ref_t implicitS
    return 0;
 }
 
-void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t ifReference, bool loopMode/*, bool switchMode*/)
+void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t ifReference, 
+   bool loopMode, bool switchMode)
 {
    if (loopMode) {
       SNode thenCode = node.findSubNode(lxCode);
@@ -2688,8 +2670,8 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprSco
 
       writer.closeNode();
 
-      //// HOTFIX : switch mode - ignore else
-      //if (!switchMode) {
+      // HOTFIX : switch mode - ignore else
+      if (!switchMode) {
          node = node.nextNode(lxObjectMask);
          if (node != lxNone) {
             SNode elseCode = node.findSubNode(lxCode);
@@ -2710,7 +2692,7 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprSco
 
             writer.closeNode();
          }
-      //}
+      }
    }
 }
 
@@ -2781,7 +2763,7 @@ void Compiler :: compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope&
    ObjectInfo loperand, ObjectInfo& retVal, EAttr operationMode, ArgumentsInfo* preservedArgs)
 {
    bool loopMode = EAttrs::test(mode, HINT_LOOP);
-//   bool switchMode = EAttrs::test(mode, HINT_SWITCH);
+   bool switchMode = EAttrs::test(mode, HINT_SWITCH);
 
    // HOTFIX : in loop expression, else node is used to be similar with branching code
    // because of optimization rules
@@ -2797,9 +2779,9 @@ void Compiler :: compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope&
       resolveObjectReference(scope, loperand, false), ifReference))
    {
       // we are lucky : we can implement branching directly
-      writer.CurrentNode().set(loopMode ? lxLooping : lxBranching, /*switchMode ? -1 : */0);
+      writer.CurrentNode().set(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
 
-      compileBranchingNodes(writer, node, scope, ifReference, loopMode/*, switchMode*/);
+      compileBranchingNodes(writer, node, scope, ifReference, loopMode, switchMode);
 
 //      if (loopMode) {
 //         // check if the loop has root boxing operations
@@ -3059,6 +3041,14 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
 
    EAttrs objMode(mode | HINT_TARGET/*, HINT_PROP_MODE*/);
    ObjectInfo loperand = compileObject(writer, lnode, scope, objMode, nullptr);
+
+   if (loperand.kind == okMessageRef) {
+      if (operator_id != REFER_OPERATOR_ID)
+         scope.raiseError(errInvalidOperation, lnode);
+
+      // HOTFIX : recognize message constant  
+      return compileMessageReference(writer, lnode, rnode, scope);
+   }
 
    ObjectInfo roperand = compileExpression(writer, rnode, scope, 0, HINT_PARAMETER, nullptr);
 
@@ -6171,9 +6161,6 @@ ObjectInfo Compiler :: compileRootExpression(SyntaxWriter& writer, SNode node, C
 //      case okMessage:
 //         setVariableTerminal(terminal, scope, object, mode, lxLocalAddress);
 //         break;
-//      case okMessageConstant:
-//         terminal.set(lxMessageConstant, object.param);
-//         break;
 //      case okExtMessageConstant:
 //         terminal.set(lxExtMessageConstant, object.param);
 //         break;
@@ -6258,8 +6245,8 @@ ObjectInfo Compiler :: mapTerminal(SNode node, ExprScope& scope, EAttr mode)
    ident_t token = node.identifier();
    ObjectInfo object;
 
-   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP | /*HINT_FORWARD
-      | HINT_MESSAGEREF | HINT_SUBJECTREF*/HINT_NEWOP | HINT_CASTOP))
+   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP | /*HINT_FORWARD*/ 
+      HINT_MESSAGEREF | /*HINT_SUBJECTREF | */HINT_NEWOP | HINT_CASTOP))
    {
       bool invalid = false;
       if (EAttrs::test(mode, HINT_NEWOP) || EAttrs::test(mode, HINT_CASTOP)) {
@@ -6303,14 +6290,13 @@ ObjectInfo Compiler :: mapTerminal(SNode node, ExprScope& scope, EAttr mode)
       else if (EAttrs::test(mode, HINT_METAFIELD)) {
          object = mapMetaField(token);
       }
+      else if (EAttrs::test(mode, HINT_MESSAGEREF)) {
+         object = ObjectInfo(okMessageRef);
+      }
 //      else if (EAttrs::test(mode, HINT_FORWARD)) {
 //         IdentifierString forwardName(FORWARD_MODULE, "'", token);
 //
 //         object = scope.mapTerminal(forwardName.ident(), true, EAttr::eaNone);
-//      }
-//      else if (EAttrs::test(mode, HINT_MESSAGEREF)) {
-//         // HOTFIX : if it is an extension message
-//         object = compileMessageReference(terminal, scope);
 //      }
 //      else if (EAttrs::test(mode, HINT_SUBJECTREF)) {
 //         object = compileSubjectReference(terminal, scope, mode);
@@ -6558,6 +6544,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
       case okMessageNameConstant:
          writer.newNode(lxSubjectConstant, object.param);
          break;
+      case okMessageConstant:
+         writer.newNode(lxMessageConstant, object.param);
+         break;
       case okObject:
          writer.newNode(lxResult);
          break;
@@ -6779,6 +6768,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
       case lxNestedExpression:
       case lxClosureExpression:
          retVal = compileClosure(writer, node, scope, mode/* & HINT_CLOSURE_MASK*/, preservedArgs);
+         break;
+      case lxSwitchExpression:
+         retVal = compileSwitchExpression(writer, node, scope);
          break;
       default:
          retVal = compileObject(writer, node, scope, mode, preservedArgs);

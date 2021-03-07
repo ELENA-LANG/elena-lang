@@ -159,7 +159,7 @@ class DerivationWriter : public _DerivationWriter
    void flushExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
    void flushExpressionNode(SyntaxWriter& writer, SNode& current,/*bool& first, bool& expressionExpected, */Scope& derivationScope);
 //   void generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
-//   void generateSwitchTree(SyntaxWriter& writer, SNode current, Scope& derivationScope);
+   void flushSwitchTree(SyntaxWriter& writer, SNode current, Scope& derivationScope);
    void flushCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool closureMode*/);
    void flushIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope);
    void flushMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);

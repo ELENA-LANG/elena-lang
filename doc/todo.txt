@@ -23,29 +23,14 @@ In development:
 
     * docs - all code in docs should work
     * test if with unknown object
-    * test if with bool
-    * test try
     * test alt
-    * uncomment compileResendExpression, compileDispatchExpression, compileMultidispatch, matchTriePatterns,
-      resolveMetaConstant, generateDispatching, defineEmbeddableAttributes
     * uncomment fieldinit routines, yield methods
     * uncomment all code
 
     * derivation template attributes
     * compiler template attributes
 
-    * template based classes
-    * arrays
-    * statement operands
-
-    * new symbol, new class, ops, templates, 		
-                                                       	
-    * compilation - simplify all major operations : message, property, new op, array set / get, nested class,
-      closure, array, operations, branching, alt / try ops, loops, attributes, field accumulators, ...
-    * build new tree instead of modifying - simplify the tree - it should be easy to analize
-    * minimize lookahead in compiler - it should be straight forward
-
-    * ELENA should support cdecl : review all internal code, get rid of quitn / quitm
+    * ELENA should support cdecl : review all internal code, get rid of quitn / quitm, review try/catch - use alloc / free . 
     * tape should use cdecl with fixed size - no need to clear the stack
     + optimiation : assinging int constant, 
     + optimiation : freei 1 xalloc 1 => nop nop 

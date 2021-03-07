@@ -1770,41 +1770,6 @@ void DerivationWriter :: flushTokenExpression(SyntaxWriter& writer, SNode& node,
    }
 }
 
-//void DerivationWriter :: generateSwitchTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current.type) {
-//         case lxSwitchOption:
-////         case lxBiggerSwitchOption:
-////         case lxLessSwitchOption:
-////            if (current.type == lxBiggerSwitchOption) {
-////               writer.newNode(lxOption, GREATER_MESSAGE_ID);
-////            }
-////            else if (current.type == lxLessSwitchOption) {
-////               writer.newNode(lxOption, LESS_MESSAGE_ID);
-////            }
-//            /*else */writer.newNode(lxOption, EQUAL_OPERATOR_ID);
-//            generateIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
-//            generateCodeExpression(writer, current.firstChild(lxCode), derivationScope, false);
-//            writer.closeNode();
-//            break;
-//         case lxLastSwitchOption:
-//            writer.newNode(lxElse);
-//            writer.newBookmark();
-//            generateCodeExpression(writer, current.firstChild(lxCode), derivationScope, false);
-//            writer.removeBookmark();
-//            writer.closeNode();
-//            break;
-////         default:
-////            scope.raiseError(errInvalidSyntax, current);
-////            break;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
 //void DerivationWriter :: generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
 //{
 //   writer.newNode(lxCollection);
@@ -1872,23 +1837,9 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
 {
    switch (current.type) {
       case lxMessage:
-//         if (!first) {
-//            writer.inject(lxExpression);
-//            writer.closeNode();
-//         }
-//         else first = false;
-
          flushMesage(writer, current, derivationScope);
          break;
-//      case lxArrOperator:
-//         current.argument = REFER_OPERATOR_ID;
       case lxOperator:
-//      case lxAssign:
-//         if (!first) {
-//            writer.inject(lxExpression);
-//            writer.closeNode();
-//         }
-//         else first = false;
          writer.newNode(current.type, current.argument);
          copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
          writer.closeNode();
@@ -1935,13 +1886,18 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
 //         // to indicate the get property call
 //         writer.appendNode(lxPropertyParam);
 //         break;
-//      case lxSwitching:
-//         generateSwitchTree(writer, current, derivationScope);
-//         writer.inject(lxSwitching);
-//         writer.closeNode();
-//         expressionExpected = true;
-//         break;
-//      case lxCollection:
+      case lxSwitchOption:
+         writer.newNode(lxOption, EQUAL_OPERATOR_ID);
+         flushIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
+         flushCodeExpression(writer, current.firstChild(lxCode), derivationScope);
+         writer.closeNode();
+         break;
+      case lxLastSwitchOption:
+         writer.newNode(lxElse);
+         flushCodeExpression(writer, current.firstChild(lxCode), derivationScope);
+         writer.closeNode();
+         break;
+         //      case lxCollection:
 //         generateCollectionTree(writer, current, derivationScope);
 //         first = false;
 //         break;

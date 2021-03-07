@@ -1,6 +1,14 @@
 //        ELENA Language 5.10
 //      inline system library
 
+// built-in constants
+// prop_mssg_mask - property message mask
+
+define ARG_MASK              0000001Fh
+define SPECIAL_MESSAGE       00000020h
+define VARIADIC_MESSAGE      00000080h
+define SPECIAL_MESSAGE_INV  0FFFFFFDFh
+
 // ; NOTE : __ indicates platform dependant constant!!
 define __rsrv_object_offset32        12      
 define __rsrv_object_offset64        20
@@ -211,6 +219,42 @@ labContinueError:
   pusha
   throw
 
+end
+
+procedure __message."#dispatch[1]"
+
+  pushd
+
+  // check if it is invoke
+  and     SPECIAL_MESSAGE
+  ifn     labDefault, 0 
+
+  load
+  storev
+
+  elsed   labDefault
+
+  popd
+  peeksi  1
+  jumpvi  0
+
+labDefault:
+  popd
+  bsredirect 
+
+  open
+  reserve  __page_size
+  pushf    -__rsrv_object_offset
+  pusha
+  pushf    -__rsrv_object_offset
+  movr     class : system'Message
+  callextr api : tempObject, 1 
+  movr     class : system'MethodNotFoundException
+  storesi  0
+  pushr    mssgconst : "new[3]"
+
+  throw
+  
 end
 
 procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"

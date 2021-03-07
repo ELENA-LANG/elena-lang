@@ -158,6 +158,7 @@ public:
       okInternalSelf,
       okNewOp,
       okCastOp,
+      okMessageRef,
 
       okExternal,
       okInternal,
@@ -1079,7 +1080,7 @@ private:
    ref_t resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode, bool allowRole);
    ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
 
-//   void compileSwitch(SNode node, ExprScope& scope);
+   ObjectInfo compileSwitchExpression(SyntaxWriter& writer, SNode node, ExprScope& scope);
 
    bool isVariableDeclaration(SNode node, ExprScope& scope, ref_t& typeReg);
    static void __fastcall recognizeExprAttrs(SNode node, EAttr& mode);
@@ -1096,8 +1097,8 @@ private:
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, InlineClassScope& scope, 
       EAttr mode, ArgumentsInfo* preservedArgs);
 //   ObjectInfo compileCollection(SNode objectNode, ExprScope& scope, ObjectInfo target, EAttr mode);
-//
-//   ObjectInfo compileMessageReference(SNode objectNode, ExprScope& scope);
+
+   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, SNode argNode, ExprScope& scope);
    ObjectInfo compileSubjectReference(SNode objectNode, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileYieldExpression(SNode objectNode, ExprScope& scope, EAttr mode);
 //
@@ -1123,7 +1124,7 @@ private:
    ObjectInfo compileUnaryExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, ExprScope& scope);
    void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, ExprScope& scope, ref_t ifReference, 
-      bool loopMode/*, bool switchMode*/);
+      bool loopMode, bool switchMode);
    void compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id,
       ObjectInfo loperand, ObjectInfo& retVal, EAttr operationMode, ArgumentsInfo* preservedArgs);
    ObjectInfo compileBranchingOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, 

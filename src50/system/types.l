@@ -72,8 +72,8 @@
 #define __ptr       80000805h
 #define __mssg      80000806h
 //#define __subj      80000807h
-//#define mssg        80000806h
-//#define mssgconst   80000806h
+#define mssg        80000806h
+#define mssgconst   80000806h
 //#define subj        80000807h
 //#define subjconst   80000807h
 //#define __symbol    80000808h

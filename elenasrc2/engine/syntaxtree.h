@@ -85,8 +85,8 @@ enum LexicalType
    lxArrayExpression          = 0x031180,
 //   lxAttrExpression           = 0x001190,
 //   lxPropertyDecl             = 0x0011A0,
-//   lxSwitchOption             = 0x0011B0,
-//   lxLastSwitchOption         = 0x0011C0,
+   lxSwitchOption             = 0x0011B0,
+   lxLastSwitchOption         = 0x0011C0,
 //   lxTemplateOperator         = 0x0011D0,
 //   lxInlineArgs               = 0x0011E0,
 //   lxCollection               = 0x0211F0,
@@ -110,7 +110,9 @@ enum LexicalType
    lxConstantChar             = 0x010284,   // arg - reference
    lxConstantLong             = 0x010285,   // arg - reference
    lxConstantReal             = 0x010286,   // arg - reference
+   lxMessageConstant          = 0x010287, // arg - rererenceﬂ
    lxSubjectConstant          = 0x010288, // arg - reference
+//   lxExtMessageConstant       = 0x010289, // arg -reference
    lxNewFrame                 = 0x030290,   // if argument -1 - than with presaved message
    lxVariable                 = 0x0002A0,
    lxIntVariable              = 0x0002A1,
@@ -200,6 +202,10 @@ enum LexicalType
    lxUnaryExpression          = 0x031460,
    lxInternalCall             = 0x030470,   // calling an internal function, arg - reference
    lxNewArrOp                 = 0x030480,
+   lxSwitchOp                 = 0x431490,
+   lxSwitchExpression         = 0x031490,
+   lxSwitching                = 0x031491,
+   lxOption                   = 0x031492,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -216,7 +222,6 @@ enum LexicalType
    lxReal                     = 0x00201B,
    lxExplicitConst            = 0x00201C,
 
-//   lxSwitching = 0x059250,
 //
 //   lxStatementMask = 0x010000,
 //   lxOperatorMask = 0x020000,
@@ -232,12 +237,9 @@ enum LexicalType
 //   lxStopper                  = 0x018041,   // used for variadic arguments as a last argument
 //   lxInlineArgCall            = 0x0580A4,
 //   lxBlockLocalAddr           = 0x018114, // arg - offset
-//   lxMessageConstant          = 0x0181A7, // arg - rererence
-//   lxExtMessageConstant       = 0x0181A9, // arg -reference
 //   lxOp                       = 0x0581B0,
 //   lxCloning                  = 0x0581E1,
 //   lxExternFrame              = 0x058240,
-//   lxOption                   = 0x058251,
 //   lxYieldDispatch            = 0x058260,
 //   lxYieldReturning           = 0x058261,
 //   lxYieldContext             = 0x018270,

@@ -32,24 +32,29 @@ import extensions;
 //////[
 //////    OpenArgTester testParamsCopy &args:(1,"a",3).
 //////].
-//////
-//////// --- MultiDispatchTest ---
-//////
-//////#symbol DispatchTester =
-//////{
-//////    eval &x:anX &y:anY
-//////    [
-//////        ^ anX + anY.
-//////    ]
-//////}.
-//////
-//////#symbol MultiDispatchTest =
-//////[
-//////    #var msg := %"x&y".
-//////    
-//////    DispatchTester::msg eval:1:2.
-//////].
-//////
+
+// --- mssgDispatchTest ---
+
+singleton DispatchTester
+{
+    mssgTest(x,y)
+    {
+        ^ x + y
+    }
+}
+
+mssgDispatchTest()
+{
+    console.write("mssgDispatchTest..");
+    
+    var mssg := mssg mssgTest[3];
+    var r := mssg(DispatchTester, 1, 2);
+    
+    Assert.ifTrue(r == 3);
+    
+    console.writeLine("done")
+}
+
 //////// --- MultySelectTest ---
 //////
 //////#symbol MultySelectTest =

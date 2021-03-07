@@ -321,26 +321,26 @@ void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
    //tape.write(bcRe tack);
 }
 
-//void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
-//{
-//   tape.newLabel();                  // declare end label
-//}
-//
-//void ByteCodeWriter :: declareSwitchOption(CommandTape& tape)
-//{
-//   tape.newLabel();                  // declare next option
-//}
-//
-//void ByteCodeWriter :: endSwitchOption(CommandTape& tape)
-//{
-//   tape.write(bcJump, baPreviousLabel);
-//   tape.setLabel();
-//}
-//
-//void ByteCodeWriter :: endSwitchBlock(CommandTape& tape)
-//{
-//   tape.setLabel();
-//}
+void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
+{
+   tape.newLabel();                  // declare end label
+}
+
+void ByteCodeWriter :: declareSwitchOption(CommandTape& tape)
+{
+   tape.newLabel();                  // declare next option
+}
+
+void ByteCodeWriter :: endSwitchOption(CommandTape& tape)
+{
+   tape.write(bcJump, baPreviousLabel);
+   tape.setLabel();
+}
+
+void ByteCodeWriter :: endSwitchBlock(CommandTape& tape)
+{
+   tape.setLabel();
+}
 
 void ByteCodeWriter :: declareTry(CommandTape& tape)
 {
@@ -544,8 +544,8 @@ inline ref_t __fastcall defineConstantMask(LexicalType type)
          return mskInt64Ref;
       case lxConstantReal:
          return mskRealRef;
-//      case lxMessageConstant:
-//         return mskMessage;
+      case lxMessageConstant:
+         return mskMessage;
 //      case lxExtMessageConstant:
 //         return mskExtMessage;
 //      case lxSubjectConstant:
@@ -2110,7 +2110,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantInt:
       case lxConstantLong:
       case lxConstantReal:
-//      case lxMessageConstant:
+      case lxMessageConstant:
 //      case lxExtMessageConstant:
 //      case lxSubjectConstant:
       case lxConstantList:
@@ -2232,7 +2232,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantInt:
       case lxConstantLong:
       case lxConstantReal:
-//      case lxMessageConstant:
+      case lxMessageConstant:
 //      case lxExtMessageConstant:
 //      case lxSubjectConstant:
       case lxConstantList:
@@ -3747,34 +3747,31 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node,
    scope.clear();
 }
 
-//void ByteCodeWriter :: generateSwitching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
-//{
-//   declareSwitchBlock(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      scope.clear();
-//
-//      if (current == lxAssigning) {
-//         generateObject(tape, current, scope);
-//      }
-//      else if (current == lxOption) {
-//         declareSwitchOption(tape);
-//
-//         generateExpression(tape, current, scope);
-//
-//         endSwitchOption(tape);
-//      }
-//      else if (current == lxElse) {
-//         generateObject(tape, current, scope);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   endSwitchBlock(tape);
-//   scope.clear();
-//}
+void ByteCodeWriter :: generateSwitching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   declareSwitchBlock(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      scope.clear();
+
+      if (current == lxOption) {
+         declareSwitchOption(tape);
+
+         generateExpression(tape, current, scope);
+
+         endSwitchOption(tape);
+      }
+      else if (current == lxElse) {
+         generateObject(tape, current, scope);
+      }
+
+      current = current.nextNode();
+   }
+
+   endSwitchBlock(tape);
+   scope.clear();
+}
 
 void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
@@ -4165,9 +4162,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxBranching:
          generateBranching(tape, node, scope);
          break;
-//      case lxSwitching:
-//         generateSwitching(tape, node, scope);
-//         break;
+      case lxSwitching:
+         generateSwitching(tape, node, scope);
+         break;
       case lxLooping:
          generateLooping(tape, node, scope);
          break;
@@ -4218,12 +4215,12 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 ////         jumpIfNotEqual(tape, node.argument, true);
 ////         generateCodeBlock(tape, node);
 ////         break;
-//      case lxElse:
-//         if (node.argument != 0)
-//            jumpIfEqual(tape, node.argument, true);
-//
-//         generateCodeBlock(tape, node, scope);
-//         break;
+      case lxElse:
+         if (node.argument != 0)
+            jumpIfEqual(tape, node.argument, true);
+
+         generateCodeBlock(tape, node, scope);
+         break;
       case lxCreatingClass:
       case lxCreatingStruct:
          generateCreating(tape, node, scope, true);
@@ -4812,7 +4809,7 @@ void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType 
       case lxConstantWideStr:
       case lxConstantSymbol:
       case lxClassSymbol:
-      //case lxMessageConstant:
+      case lxMessageConstant:
       //case lxExtMessageConstant:
       //case lxSubjectConstant:
          writer.writeRef(argument | defineConstantMask(type), 0);

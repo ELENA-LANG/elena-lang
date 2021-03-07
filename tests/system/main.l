@@ -15,8 +15,8 @@ public program()
     literalTest();
     wideTest();
 
-//    MultiDispatchTest eval.
-////    MultySelectTest  eval.
+    mssgDispatchTest();
+    multySelectTest();
 ////    EnumTest eval.    
 ////    TextBufferTest eval.
 ////    LoopTest eval.

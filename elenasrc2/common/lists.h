@@ -4212,6 +4212,11 @@ public:
 
    pos_t Length() const { return _length; }
 
+   void clear()
+   {
+      _length = 0;
+   }
+
    CachedList()
    {
       _allocated = nullptr;

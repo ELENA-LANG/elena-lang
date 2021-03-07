@@ -59,11 +59,11 @@ public sealed const struct Message
 //    {
 //        intern system'core_routines'__message.load(self, name)
 //    }
-//    
-//    /// Compares the values
-//    bool equal(Message mssg)
-//        = theValue == mssg;
-//    
+    
+    /// Compares the values
+    bool equal(Message mssg)
+        = theValue == mssg;
+    
 //    get MessageName MessageName()
 //    {
 //        intern system'core_routines'__message.getMessageName(self, ref MessageName retVal);
@@ -80,9 +80,9 @@ public sealed const struct Message
 //        
 //        ^ String.fromByteArray(0, len, buffer)
 //    }
-//
-//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    dispatch() => intern system'core_routines'__message;
+
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    dispatch() => intern system'core_routines'__message;
 }
 
 //// --- ExtensionMessage ---
