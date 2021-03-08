@@ -18,7 +18,7 @@ public program()
     mssgDispatchTest();
     multySelectTest();
     enumTest();
-////    TextBufferTest eval.
+    textBufferTest();
 ////    LoopTest eval.
 ////    ActionTest eval.
 ////    RoleTest eval.

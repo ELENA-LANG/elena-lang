@@ -642,16 +642,16 @@ exceptionTest()
     console.writeLine("done")
 }
 
-//////// --- TextBufferTest ---
-//////
-//////#symbol TextBufferTest =
-//////[
+// --- TextBufferTest ---
+
+textBufferTest()
+{
 //////    #var aBuffer := system'text'TextBuffer new.
 //////    aBuffer write:"abc".
 //////
 //////    #var anOutput := aBuffer literal.
-//////].
-//////
+}
+
 //////// --- DateTest ---
 //////
 //////#symbol DateTest =

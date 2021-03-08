@@ -5,9 +5,9 @@ public sealed Array<T> //: Indexable<T>
 {
     embeddable __string T[] theArray;
 
-//    constructor allocate(int length)
-//        = new T[](length);
-//        
+    constructor allocate(int length)
+        = new T[](length);
+        
 //    constructor copy(T[] array, int index, int length)
 //        <= allocate(length)
 //    {
@@ -49,18 +49,18 @@ public sealed Array<T> //: Indexable<T>
 //            self.setAt(theIndex, o)
 //        }
 //    };
-//
-//    int Length
-//    {
-//        get()
-//        {
-//            int len := 0;
-//            len $sizeof theArray;
-//            
-//            ^ len
-//        }
-//    }
-//
+
+    int Length
+    {
+        get()
+        {
+            int len := 0;
+            len $sizeof theArray;
+            
+            ^ len
+        }
+    }
+
 //    T at(int n)
 //    {
 //        if (n < 0)
@@ -80,7 +80,7 @@ public sealed Array<T> //: Indexable<T>
 //            ^ nil // !! never reached
 //        }
 //    }
-//
+
 //    setAt(int n, T item)
 //    {
 //        if (n < 0)
@@ -98,7 +98,7 @@ public sealed Array<T> //: Indexable<T>
 //            system'InvalidArgumentException.raise()
 //        }
 //    }
-//
+
 //    setAt(index, item)
 //        <= setAt(cast int(index), cast T(item));
 //
@@ -697,7 +697,7 @@ public sealed const struct String : BaseValue
     const static string MinValue
         = "";
                 
-    /// Creates the literal string with specified length        
+    [info:"Creates the literal string with specified length"]
     constructor allocate(int size)
         = new byte[](size + 1);
 
@@ -705,9 +705,9 @@ public sealed const struct String : BaseValue
 //    constructor copy(int size, string s)
 //        <= allocate(size)
 //    {
-//        intern system'core_routines'__literal.copy(self, s)
+//        extern elenart.core_subcopyz(self, 0, size, s);
 //    }
-//
+
 //    /// Creates the literal string with specified length fills with specified character value        
 //    constructor fill(int size, char ch)
 //        <= allocate(ch.Length * size)
@@ -729,13 +729,13 @@ public sealed const struct String : BaseValue
 //    /// Creates the literal string copy              
 //    constructor copy(string s)
 //        <= copy(s.Length, s);
-//        
-//    /// Creates the copy of a subarray        
-//    constructor copy(int index, int length, char[] array)
-//        <= allocate(stringConvertor.getSubLength(index, length, array))
-//    {
-//        intern system'core_routines'__literal.copy(self, index, length, array)
-//    }
+        
+    /// Creates the copy of a subarray        
+    constructor copy(int index, int length, char[] array)
+        <= allocate(stringConvertor.getSubLength(index, length, array))
+    {
+        extern elenart.core_scopychars(self, index, length, array);
+    }
 
     internal constructor fromByteArray(int index, int size, byte[] buffer)
         <= allocate(size)
@@ -1415,14 +1415,14 @@ public sealed const struct WideString : BaseValue
 [info:"A literal convertor"]
 public singleton stringConvertor
 {
-//    int getSubLength(int index, int length, char[] array)
-//    {
-//        int len;
-//        intern system'core_routines'__literal.sizeOf(index, length, array, ref len);
-//        
-//        ^ len
-//    }
-//    
+    int getSubLength(int index, int length, char[] array)
+    {
+        int len;
+        extern elenart.core_slen_ch(index, length, array, ref len);
+        
+        ^ len
+    }
+    
 //    string convert(BaseVariable v)
 //        <= convert(v.Value);
 //    

@@ -368,6 +368,164 @@ err:
 
 end
 
+// ; slen_ch - ecx - len, eax - charr, esi - result 
+procedure coreapi'core_slen_ch
+
+   mov  rax, [rsp+24]
+   mov  rcx, [rsp+16]
+   mov  rdx, [rsp+8]
+   mov  rdi, [rsp+32]
+   lea  rax, [rax+rdx*4]
+               
+   xor  ebx, ebx
+   test ecx, ecx
+   jz   short labEnd
+
+labNext:
+   mov  edx, dword ptr[rax]
+   cmp  edx, 00000080h
+   jl   short lab1
+   cmp  edx, 0800h
+   jl   short lab2
+   cmp  edx, 10000h
+   jl   short lab3
+   
+   add  ebx, 4
+   lea  rax, [rax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+labEnd:
+   mov  dword ptr[rdi], ebx
+   ret
+   
+lab1:
+   add  ebx, 1
+   lea  rax, [rax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   mov  dword ptr [rdi], ebx
+   ret
+
+lab2:
+   add  ebx, 2
+   lea  rax, [rax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   mov  dword ptr[rdi], ebx
+   ret
+
+lab3:
+   add  ebx, 3
+   lea  rax, [rax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   mov  dword ptr[rdi], ebx
+   ret
+
+end
+
+procedure coreapi'core_scopychars
+
+  mov  rax, [rsp+32]
+  mov  rcx, [rsp+24]
+  mov  rbx, [rsp+16]
+  mov  rdi, [rsp+8]
+
+  test ecx, ecx
+  jz   labEnd
+
+  lea  rsi, [rax + rbx * 4]
+
+labNext:
+  mov  ebx, dword ptr [rsi]
+  
+  cmp  ebx, 00000080h
+  jl   short labs1
+  cmp  ebx, 0800h
+  jl   short labs2
+  cmp  ebx, 10000h
+  jl   short labs3
+  
+  mov  edx, ebx
+  shr  edx, 18
+  add  edx, 000000F0h 
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+   
+  mov  edx, ebx
+  shr  edx, 12
+  and  edx, 0000003Fh
+  add  edx, 00000080h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+   
+  mov  edx, ebx
+  shr  edx, 6
+  and  edx, 0000003Fh
+  add  edx, 00000080h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+   
+  mov  edx, ebx
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+  jmp  labSave
+
+labs2:
+  mov  edx, ebx
+  shr  edx, 6
+  add  edx, 000000C0h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+  
+  mov  edx, ebx
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+  jmp  short labSave
+
+labs3:
+  mov  edx, ebx
+  shr  edx, 12
+  add  edx, 000000E0h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+
+  mov  edx, ebx
+  shr  edx, 6
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+  
+  mov  edx, ebx
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+  jmp  short labSave
+  
+labs1:
+  mov  byte ptr [rdi], bl
+  add  rdi, 1
+
+labSave:
+  lea  rsi, [rsi + 4]
+  sub  ecx, 1
+  jnz  labNext
+
+labEnd:
+  mov  rdx,  rdi
+  mov  rdi, [rsp+18]
+  sub  rdx, rdi
+
+  ret
+
+end
+
 // --- System Core API  --
 
 define CORE_ET_TABLE     2000Bh
@@ -1281,168 +1439,6 @@ labNext:
 
 labEnd:
   ret
-
-end
-
-procedure coreapi's_copychars
-
-  mov  rax, [rsp+32]
-  mov  rdx, [rsp+24]
-  mov  rsi, [rsp+16]
-  mov  ecx, dword ptr [rdx]
-  mov  rdi, [rsp+8]
-  mov  ebx, dword ptr [rsi]
-
-  test ecx, ecx
-  jz   labEnd
-
-  lea  rsi, [rax + rbx * 4]
-
-labNext:
-  mov  ebx, dword ptr [rsi]
-  
-  cmp  ebx, 00000080h
-  jl   short labs1
-  cmp  ebx, 0800h
-  jl   short labs2
-  cmp  ebx, 10000h
-  jl   short labs3
-  
-  mov  edx, ebx
-  shr  edx, 18
-  add  edx, 000000F0h 
-  mov  byte ptr [rdi], dl
-  add  rdi, 1
-   
-  mov  edx, ebx
-  shr  edx, 12
-  and  edx, 0000003Fh
-  add  edx, 00000080h
-  mov  byte ptr [rdi], dl
-  add  rdi, 1
-   
-  mov  edx, ebx
-  shr  edx, 6
-  and  edx, 0000003Fh
-  add  edx, 00000080h
-  mov  byte ptr [rdi], dl
-  add  rdi, 1
-   
-  mov  edx, ebx
-  and  edx, 03Fh
-  add  edx, 00000080h
-  mov  byte ptr [rdi], dl
-  add  rdi, 1
-  jmp  labSave
-
-labs2:
-  mov  edx, ebx
-  shr  edx, 6
-  add  edx, 000000C0h
-  mov  byte ptr [rdi], dl
-  add  rdi, 1
-  
-  mov  edx, ebx
-  and  edx, 03Fh
-  add  edx, 00000080h
-  mov  byte ptr [rdi], dl
-  add  rdi, 1
-  jmp  short labSave
-
-labs3:
-  mov  edx, ebx
-  shr  edx, 12
-  add  edx, 000000E0h
-  mov  byte ptr [rdi], dl
-  add  rdi, 1
-
-  mov  edx, ebx
-  shr  edx, 6
-  and  edx, 03Fh
-  add  edx, 00000080h
-  mov  byte ptr [rdi], dl
-  add  rdi, 1
-  
-  mov  edx, ebx
-  and  edx, 03Fh
-  add  edx, 00000080h
-  mov  byte ptr [rdi], dl
-  add  rdi, 1
-  jmp  short labSave
-  
-labs1:
-  mov  byte ptr [rdi], bl
-  add  rdi, 1
-
-labSave:
-  lea  rsi, [rsi + 4]
-  sub  ecx, 1
-  jnz  labNext
-
-labEnd:
-  mov  rdx,  rdi
-  mov  rdi, [rsp+18]
-  sub  rdx, rdi
-
-  ret
-
-end
-
-// ; slen_ch - ecx - len, eax - charr, esi - result 
-procedure coreapi'slen_ch
-
-   mov  rax, [rsp+24]
-   mov  rdi, [rsp+16]
-   mov  rsi, [rsp+8]
-   mov  ecx, dword ptr[rdi]
-   mov  edx, dword ptr[rsi]
-   mov  rdi, [rsp+32]
-   lea  rax, [rax+rdx*4]
-               
-   xor  ebx, ebx
-   test ecx, ecx
-   jz   short labEnd
-
-labNext:
-   mov  edx, dword ptr[rax]
-   cmp  edx, 00000080h
-   jl   short lab1
-   cmp  edx, 0800h
-   jl   short lab2
-   cmp  edx, 10000h
-   jl   short lab3
-   
-   add  ebx, 4
-   lea  rax, [rax + 4]
-   sub  ecx, 1
-   jnz  short labNext
-labEnd:
-   mov  dword ptr[rdi], ebx
-   ret
-   
-lab1:
-   add  ebx, 1
-   lea  rax, [rax + 4]
-   sub  ecx, 1
-   jnz  short labNext
-   mov  dword ptr [rdi], ebx
-   ret
-
-lab2:
-   add  ebx, 2
-   lea  rax, [rax + 4]
-   sub  ecx, 1
-   jnz  short labNext
-   mov  dword ptr[rdi], ebx
-   ret
-
-lab3:
-   add  ebx, 3
-   lea  rax, [rax + 4]
-   sub  ecx, 1
-   jnz  short labNext
-   mov  dword ptr[rdi], ebx
-   ret
 
 end
 

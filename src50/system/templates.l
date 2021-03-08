@@ -109,10 +109,10 @@
 
 // --- if-else statement ---
 
-//#declare if:else<expr>(if_block,else_block)
-//{
-//    cast bool(expr) ? if_block : else_block
-//}
+#declare if<expr>:else(if_block,else_block)
+{
+    cast bool(expr) ? if_block : else_block
+}
 
 // --- ifnot statement ---
 
