@@ -3416,6 +3416,10 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
 ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, ObjectInfo source, ref_t targetRef, 
    ExprScope& scope, /*bool localBoxingMode, */bool condBoxing)
 {
+   // if the source is the result of an operation - presave it
+   if (source.kind == okObject)
+      source = saveToTempLocal(writer, scope, source);
+
    ObjectInfo boxedArg;
 
 //   SNode rootNode = node.parentNode();

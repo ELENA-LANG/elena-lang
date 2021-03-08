@@ -167,17 +167,26 @@ multySelectTest()
 //////    #var s := aList safeSeek:"abc".
 //////    #var n2 := aList safeSeek:-1.
 //////].
-//////
-//////#symbol EnumTest =
-//////[
-//////    "abc" run &each: (:x)
-//////    [
-//////        console write:x.
-//////    ].
-//////        
-//////    console writeLine:".".
-//////].
-//////
+
+// --- enumTest ---
+
+enumTest()
+{
+    console.write("enumTest..");       
+    
+    var s := String.MinValue;
+    "123".forEach:(x)
+    {
+        console.write(x);
+        
+        s := x.toPrintable() + s;
+    };
+    
+    Assert.ifTrue(s == "321");
+        
+    console.writeLine("done")        
+}
+
 //////#symbol actionTester =
 //////{
 //////    testGeneric : anAction

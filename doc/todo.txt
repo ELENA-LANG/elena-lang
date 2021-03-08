@@ -3,6 +3,8 @@ In development:
 ------         
 
   [development]
+    * do not generate ref<ref<int>>
+
     * basic tests
     * call stack
     * program exception handling
