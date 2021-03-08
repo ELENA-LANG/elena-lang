@@ -41,12 +41,12 @@ sealed class Console
 //    {
 //        self.writeLine(o.toPrintable())
 //    }
-//
-//    /// Writes the specified literal value to the standard output stream.
-//    write(o)
-//    {
-//        self.write(o.toPrintable())
-//    }
+
+    [info:"Writes the specified literal value to the standard output stream."]
+    write(o)
+    {
+        self.write(o.toPrintable())
+    }
 
     [info:"Writes the specified literal value to the standard output stream."]
     write(string s)

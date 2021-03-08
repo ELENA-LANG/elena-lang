@@ -9,12 +9,12 @@ In development:
     * system tests : 86, 86-64
 
     * globals
-
     * strong-typed lambda closures
     * boxing fixed-sized array
     * multi ret
     * yield metods
     * template based extensions
+    * uncomment defineEmbeddableAttributes
 
     * compile lib50
     * get rid of push / pop operations in bcwriter, in most cases "xalloci, storesi, freei" should be used
@@ -26,9 +26,6 @@ In development:
     * test alt
     * uncomment fieldinit routines, yield methods
     * uncomment all code
-
-    * derivation template attributes
-    * compiler template attributes
 
     * ELENA should support cdecl : review all internal code, get rid of quitn / quitm, review try/catch - use alloc / free . 
     * tape should use cdecl with fixed size - no need to clear the stack
@@ -43,6 +40,12 @@ In development:
     + (re)implement long invert op
     + warn if both a parameter and a local variable have the same name
     + hook x86-64 : should be 16 alignment
+    + dispatcin : do not use frame if not nessesary
+    + optimization : do not use frame if not nessesary
+    + embeddable constructor
+    + * operator with object wrapper - sould be pass direct value, so no need for dispatcin in ref interface
+      e.g: theIndex.append(cast int(theDiff)); - should be written theIndex.append(*theDiff); and the stack-allocated
+     object should be passed as is
 
     * do not save the external operation if the result is not assigned or passed as an argument
     * optimization - duplicate assigning : external call, message call

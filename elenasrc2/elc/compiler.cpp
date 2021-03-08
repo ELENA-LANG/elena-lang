@@ -678,7 +678,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->extensionMode = false;
    this->multiMethod = false;
    this->functionMode = false;
-//   this->nestedMode = parent->getScope(Scope::ScopeLevel::slOwnerClass) != parent;
+   this->nestedMode = parent->getScope(Scope::ScopeLevel::slOwnerClass) != parent;
 ////   this->subCodeMode = false;
    this->abstractMethod = false;
    this->mixinFunction = false;
@@ -736,9 +736,9 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
             if (targetSelfMode) {
                return mapGroup();
             }
-            //else if (functionMode || nestedMode) {
-            //   return parent->mapTerminal(OWNER_VAR, false, mode | scopeMode);
-            //}
+            else if (functionMode || nestedMode) {
+               return parent->mapTerminal(OWNER_VAR, false, mode | scopeMode);
+            }
             else return mapSelf();
          }
          else if (!functionMode && (terminal.compare(GROUP_VAR))) {
@@ -7768,7 +7768,7 @@ ObjectInfo Compiler :: mapTarget(SNode node, ExprScope& scope)
 void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool withGenericMethods)
 {
    ExprScope exprScope(&scope);
-   ObjectInfo target = mapTarget(node.firstChild(), exprScope);
+   ObjectInfo target = mapTarget(node, exprScope);
 
    if (target.kind == okInternal) {
       importCode(writer, node, exprScope, target.param, exprScope.getMessageID());
@@ -8062,6 +8062,9 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
       writer.newNode(lxSeqExpression);
       ExprScope scope(&codeScope);
       EAttr resendMode = silentMode ? EAttr::eaSilent : EAttr::eaNone;
+      if (expr == lxPropertyExpression)
+         resendMode = resendMode | HINT_PROP_MODE;
+
       compileMessageExpression(writer, expr, scope, 0, resendMode);
       writer.closeNode();
 
@@ -9135,12 +9138,11 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
       current = current.nextNode();
    }
 
-   //// check if extension is qualified
-   //bool extensionMode = test(scope.info.header.flags, elExtension);
-   //if (extensionMode) {
-
-   //   scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(scope.extensionClassRef, 0));
-   //}
+   // check if extension is qualified
+   bool extensionMode = test(scope.info.header.flags, elExtension);
+   if (extensionMode) {
+      scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(scope.extensionClassRef, 0));
+   }
 }
 
 void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, FieldAttributes& attrs, bool singleField)
@@ -9795,7 +9797,6 @@ mssg_t Compiler :: resolveMultimethod(ClassScope& scope, mssg_t messageRef)
 void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool closed, LexicalType methodType,
    bool allowTypeAttribute)
 {
-   //bool extensionMode = scope.extensionClassRef != 0;
    bool templateMethods = false;
    List<mssg_t> implicitMultimethods;
 

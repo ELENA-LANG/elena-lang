@@ -2036,19 +2036,19 @@ public sealed const struct CharValue : BaseValue
         ^ false
     }
 
-//    bool equal(wide val)
-//    {
-//        int chLen := self.WideLength;        
-//        int ln := val.Length;
-//        (ln == chLen)?
-//        {
-//            char ch := val[0];
-//            
-//            ^ self == ch;
-//        };
-//        
-//        ^ false
-//    }
+    bool equal(wide val)
+    {
+        int chLen := self.WideLength;        
+        int ln := val.Length;
+        (ln == chLen)?
+        {
+            char ch := val[0];
+            
+            ^ self == ch;
+        };
+        
+        ^ false
+    }
 
     bool equal(char val)
         = theValue == val;
@@ -2061,20 +2061,20 @@ public sealed const struct CharValue : BaseValue
     bool less(string val)
         = val < (cast string(self));
 
-//    bool less(wide val)
-//        = val < (cast wide(self));
+    bool less(wide val)
+        = val < (cast wide(self));
 
     [info:"Clones the value"]
     char clone() = new CharValue(self);
 
-//    [info:"Returns the literal value"]
-//    string toPrintable() = stringConvertor.convert(self);
-//
-//    [info:"Returns the literal value"]
-//    string cast() = stringConvertor.convert(self);
-//    
-//    [info:"Returns the wide literal value"]
-//    wide cast() = wideConvertor.convert(self);
+    [info:"Returns the literal value"]
+    string toPrintable() = stringConvertor.convert(self);
+
+    [info:"Returns the literal value"]
+    string cast() = stringConvertor.convert(self);
+    
+    [info:"Returns the wide literal value"]
+    wide cast() = wideConvertor.convert(self);
 
     [info:"Retuns the number of bytes to represent the symbol in UTF-8"]
     get int Length()
@@ -2084,16 +2084,13 @@ public sealed const struct CharValue : BaseValue
         ^ retVal
     }
     
-//    [info:"Reads the number of bytes to represent the symbol in UTF-16"]
-//    get int WideLength()
-//    {
-//        int length := self.Length;
-//        
-//        length := length + 1;
-//        length := length / 2;
-//
-//        ^ length
-//    }
+    [info:"Reads the number of bytes to represent the symbol in UTF-16"]
+    get int WideLength()
+    {
+        intern system'core_routines'__char.readWideLengthTo(self, ref int retVal);
+
+        ^ retVal
+    }
 }
 
 //// --- nil constant ---
@@ -2390,14 +2387,14 @@ public singleton intConvertor
     int convert(BaseVariable v)
         <= convert(v.Value);
         
-//    /// Converts a literal string into an integer
-//    int convert(string s)
-//    {
-//        intern system'core_routines'__intconvertor.convert(s, 10, ref int retVal);
-//        
-//        ^ retVal
-//    }
-//        
+    /// Converts a literal string into an integer
+    int convert(string s)
+    {
+        intern system'core_routines'__intconvertor.convert(s, 10, ref int retVal);
+        
+        ^ retVal
+    }
+
 //    /// Converts a literal string into an integer
 //    int convert(string s, int base)
 //    {
@@ -2774,28 +2771,28 @@ public singleton realConvertor
 //public real Pi_value = realOpController.pi();
 //
 //public real E_value = realOpController.e();
-//
-//// === basic type extensions ===
-//
-//public extension intRefOp : ref<int>
-//{
-//    append(int n)
-//    {
-//        int v := self.Value;
-//        v := v + n;
-//        
-//        self.Value := v
-//    }
-//    
-//    reduce(int n)
-//    {
-//        int v := self.Value;
-//        v := v - n;
-//        
-//        self.Value := v
-//    }
-//}
-//
+
+// === basic type extensions ===
+
+public extension intRefOp : ref<int>
+{
+    append(int n)
+    {
+        int v := *self;
+        v := v + n;
+        
+        self.Value := v
+    }
+    
+    reduce(int n)
+    {
+        int v := *self;
+        v := v - n;
+        
+        self.Value := v
+    }
+}
+
 //public extension realRefOp : ref<real>
 //{
 //    append(real n)

@@ -580,8 +580,7 @@ private:
       bool         extensionMode;
       bool         multiMethod;
       bool         functionMode;
-//      bool         nestedMode;
-////      bool         subCodeMode;       
+      bool         nestedMode;
       bool         abstractMethod;
 //      bool         yieldMethod;
       bool         embeddableRetMode;

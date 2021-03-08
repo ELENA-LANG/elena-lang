@@ -55,18 +55,22 @@ mssgDispatchTest()
     console.writeLine("done")
 }
 
-//////// --- MultySelectTest ---
-//////
-//////#symbol MultySelectTest =
-//////[
-//////    #var n := 3.
-//////    
-//////    n =>
-//////        1 ? [ console writeLine:"=> operator fails". ]
-//////        2 ? [ console writeLine:"=> operator fails". ]
-//////        3 ? [ console writeLine:"=> operator works!". ].
-//////].
-//////
+// --- MultySelectTest ---
+
+multySelectTest()
+{
+    console.write("mssgDispatchTest..");       
+    
+    var n := 3;
+    
+    n =>
+        1 { Assert.ifTrue(n==1); }
+        2 { Assert.ifTrue(n==2); }
+        3 { Assert.ifTrue(n==3); };
+        
+    console.writeLine("done")        
+}
+
 //////// --- LocalTest ---
 //////
 //////#symbol LocalTester =

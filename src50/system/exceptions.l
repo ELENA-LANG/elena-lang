@@ -85,16 +85,16 @@ public class Exception
         <= new(self.__getClassName());
 }
 
-//// --- FormatException ---
-//
-//public class FormatException : Exception
-//{
-//    constructor new()
-//        <= new("A number is not in the correct format");
-//        
-//    constructor new(string message)
-//        <= new(message);
-//}
+// --- FormatException ---
+
+public class FormatException : Exception
+{
+    constructor new()
+        <= new("A number is not in the correct format");
+        
+    constructor new(string message)
+        <= new(message);
+}
 
 // --- OutOfRangeException ---
 

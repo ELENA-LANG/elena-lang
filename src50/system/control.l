@@ -1,44 +1,52 @@
 // === Basic prototypes ===
 
-//// --- Enumerator ---
-//
-///// An enumerator prototype
-//public interface Enumerator
-//{
-//    /// Returns the current object
-//    abstract get();
-//    
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    abstract bool next();
-//    
-//    /// Resets the enumerator
-//    abstract reset();
-//    
-//    /// returns the enumerator owner
-//    abstract enumerable();
-//    
-//    Enumerator enumerator() = self;
-//}
-//
-//// --- enumerator<> ---
-//
-//public interface Enumerator<T>
-//{
-//    abstract bool next();
-//    
-//    abstract T get();
-//    
-//    /// Resets the enumerator
-//    abstract reset();
-//    
-//    /// returns the enumerator owner
-//    abstract enumerable();
-//
-//    abstract Enumerator cast();
-//    
-//    Enumerator<T> enumerator() = self;
-//}
-//
+// --- Enumerator ---
+
+[info:"An enumerator prototype"]
+public interface Enumerator
+{
+    [info:"Returns the current object"]
+    get abstract Value();
+    
+    // obsolete
+    get()
+        <= Value; 
+
+    [info:"Goes to the next enumeration member and returns true if it is not the last member"]
+    abstract bool next();
+       
+    [info:"Resets the enumerator"]
+    abstract reset();
+    
+    [info:"returns the enumerator owner"]
+    abstract enumerable();
+    
+    Enumerator enumerator() = self;
+}
+
+// --- enumerator<> ---
+
+public interface Enumerator<T>
+{
+    abstract bool next();
+    
+    // obsolete
+    get()
+        <= Value; 
+
+    get abstract T Value();
+    
+    /// Resets the enumerator
+    abstract reset();
+    
+    /// returns the enumerator owner
+    abstract enumerable();
+
+    abstract Enumerator cast();
+    
+    Enumerator<T> enumerator() = self;
+}
+
 //public abstract Enumerable
 //{
 //    abstract Enumerator enumerator();
@@ -205,15 +213,15 @@ public interface Func1
     /// Executes the action
     abstract function(param);
     
-//    /// Executes the function for every enumeration item
-//    run(Enumerator en)
-//    {
-//        while(en.next())
-//        {
-//            self(en.get())
-//        }
-//    }
-//    
+    [info:"Executes the function for every enumeration item"]
+    run(Enumerator en)
+    {
+        while(en.next())
+        {
+            self(*en)
+        }
+    }
+    
 //    /// Executes the function for every enumeration item until it returns true
 //    retrieve(Enumerator en)
 //    {

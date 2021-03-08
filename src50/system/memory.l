@@ -937,10 +937,10 @@ public sealed const struct String : BaseValue
 //
 //    internal saveToByteArray(int index, byte[] array, int retVal)
 //        => intern system'core_routines'__literal;
-//
-//    /// Returns the string enumerator
-//    Enumerator<char> enumerator() = new StringEnumerator(self);
-//
+
+    [info:"Returns the string enumerator"]
+    Enumerator<char> enumerator() = new StringEnumerator(self);
+
 //    /// Returns the string indexer
 //    Indexer<char> indexer() = new StringIndexer(self);
 //    
@@ -1219,10 +1219,10 @@ public sealed const struct WideString : BaseValue
 //
 //    internal saveToShortArray(int index, short[] array, int length)
 //        => intern system'core_routines'__wide;
-//
-//    /// Returns the object enumerator
-//    Enumerator<char> enumerator() = new WideStringEnumerator(self);
-//    
+
+    /// Returns the object enumerator
+    Enumerator<char> enumerator() = new WideStringEnumerator(self);
+    
 //    /// Returns the object indexer
 //    Indexer<char> indexer() = new WideStringIndexer(self);
 //    
@@ -1412,7 +1412,7 @@ public sealed const struct WideString : BaseValue
 
 // --- stringConvertor ---
 
-/// A literal convertor
+[info:"A literal convertor"]
 public singleton stringConvertor
 {
 //    int getSubLength(int index, int length, char[] array)
@@ -1428,17 +1428,17 @@ public singleton stringConvertor
 //    
 //    string convert(BaseVariable v, int radix)
 //        <= convert(v.Value, radix);
-//    
-//    string convert(char ch)
-//    {
-//        byte buffer[4];
-//        int  length := 0;
-//
-//        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//    
+    
+    string convert(char ch)
+    {
+        byte buffer[4];
+        int  length := 0;
+
+        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+    
 //    /// Converts the parameter to the literal value
 //    string convert(int n)
 //    {
@@ -1590,7 +1590,7 @@ public singleton stringConvertor
 
 // --- wideConvertor ---
 
-/// A wide literal convertor
+[info:"A wide literal convertor"]
 public singleton wideConvertor
 {
 //    int getSubLength(int index, int length, char[] array)
@@ -1603,17 +1603,17 @@ public singleton wideConvertor
 //    
 //    wide convert(BaseVariable v)
 //        <= convert(v.Value);
-//    
-//    wide convert(char ch)
-//    {
-//        short buffer[2];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(ch, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }    
-//    
+    
+    wide convert(char ch)
+    {
+        short buffer[2];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(ch, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }    
+    
 //    /// Converts the parameter to the literal value
 //    wide convert(int n)
 //    {
@@ -1857,67 +1857,67 @@ public singleton charConvertor
         = cast char(o);
 }
 
-//// === Enumerators / Indexers
-//
-//// --- StringEnumerator ---
-//
-///// A string enumerator
-//class StringEnumerator : Enumerator<char>
-//{
-//    string   theLiteral;
-//    ref<int> theIndex;
-//    ref<int> theDiff;
-//    char     theChar;
-//    
-//    /// Creates an enumerator
-//    constructor(string s)
-//    {
-//        theLiteral := s;
-//        theIndex := -1;
-//        theDiff := 1;
-//        theChar := $0
-//    }
-//
-//    /// Resets the enumerator
-//    reset()
-//    {
-//        theIndex.Value := -1;
-//        theDiff.Value := 1
-//    }
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next()
-//    {
-//        int aLength := theLiteral.Length;
-//        
-//        theIndex.append(cast int(theDiff));
-//        
-//        if (theIndex < aLength)
-//            {
-//                theChar := theLiteral.at(cast int(theIndex));
-//                
-//                theDiff := theChar.Length;
-//                
-//                ^ true
-//            };
-//
-//        theDiff.Value := 0;
-//        theChar := $0;
-//
-//        ^ false
-//    }
-//    
-//    Enumerator cast() = new Enumerator
-//    {
-//        embeddable dispatch() => self;
-//    };
-//    
-//    enumerable() = theLiteral;
-//    
-//    /// Returns the current character
-//    char get() = theChar;
-//}
-//
+// === Enumerators / Indexers
+
+// --- StringEnumerator ---
+
+/// A string enumerator
+class StringEnumerator : Enumerator<char>
+{
+    string   theLiteral;
+    ref<int> theIndex;
+    ref<int> theDiff;
+    char     theChar;
+    
+    /// Creates an enumerator
+    constructor(string s)
+    {
+        theLiteral := s;
+        theIndex := -1;
+        theDiff := 1;
+        theChar := $0
+    }
+
+    /// Resets the enumerator
+    reset()
+    {
+        theIndex.Value := -1;
+        theDiff.Value := 1
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        int aLength := theLiteral.Length;
+        
+        theIndex.append(cast int(theDiff));
+        
+        if (theIndex < aLength)
+            {
+                theChar := theLiteral.at(cast int(theIndex));
+                
+                theDiff.Value := theChar.Length;
+                
+                ^ true
+            };
+
+        theDiff.Value := 0;
+        theChar := $0;
+
+        ^ false
+    }
+    
+    Enumerator cast() = new Enumerator
+    {
+        embeddable dispatch() => self;
+    };
+    
+    enumerable() = theLiteral;
+    
+    /// Returns the current character
+    char Value = theChar;
+}
+
 //// --- LiteralIndexer ---
 //
 ///// A literal value indexer
@@ -1992,69 +1992,69 @@ public singleton charConvertor
 //        
 //    Indexer cast() = new Indexer{ embeddable dispatch() => self; };
 //}
-//
-//// --- WideLiteralEnumerator ---
-//
-///// A literal enumerator
-//class WideStringEnumerator : Enumerator<char>
-//{
-//    wide      theLiteral;
-//    ref<int>  theIndex;
-//    ref<int>  theDiff;
-//    ref<char> theChar;
-//    
-//    /// Creates an enumerator
-//    constructor(wide s)
-//    {
-//        theLiteral := s;
-//        theIndex := -1;
-//        theDiff := 1;
-//        theChar := $0
-//    }
-//
-//    /// Resets the enumerator
-//    reset()
-//    {
-//        theIndex.Value := -1;
-//        theDiff.Value := 1
-//    }
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next()
-//    {
-//        int len := theLiteral.Length;
-//
-//        int diff := theDiff.Value;
-//        theIndex.append(diff);
-//        
-//        int index := theIndex.Value;
-//        if (index < len)
-//        {
-//            theChar := theLiteral.at(index);                
-//            //theDiff := theChar.WideLength;
-//            diff := theChar.WideLength;
-//            theDiff.Value := diff;
-//            
-//            ^ true
-//        };
-//
-//        theDiff.Value := 0;
-//        theChar := $0;
-//
-//        ^ false
-//    }
-//    
-//    Enumerator cast() = new Enumerator
-//    {
-//        embeddable dispatch() => self;
-//    };
-//    
-//    enumerable() = theLiteral;
-//    
-//    /// Returns the current character
-//    char get() = theChar;
-//}
-//
+
+// --- WideLiteralEnumerator ---
+
+/// A literal enumerator
+class WideStringEnumerator : Enumerator<char>
+{
+    wide      theLiteral;
+    ref<int>  theIndex;
+    ref<int>  theDiff;
+    ref<char> theChar;
+    
+    /// Creates an enumerator
+    constructor(wide s)
+    {
+        theLiteral := s;
+        theIndex := -1;
+        theDiff := 1;
+        theChar := $0
+    }
+
+    /// Resets the enumerator
+    reset()
+    {
+        theIndex.Value := -1;
+        theDiff.Value := 1
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        int len := theLiteral.Length;
+
+        int diff := theDiff.Value;
+        theIndex.append(diff);
+        
+        int index := theIndex.Value;
+        if (index < len)
+        {
+            theChar := theLiteral.at(index);                
+            //theDiff := theChar.WideLength;
+            diff := theChar.WideLength;
+            theDiff.Value := diff;
+            
+            ^ true
+        };
+
+        theDiff.Value := 0;
+        theChar := $0;
+
+        ^ false
+    }
+    
+    Enumerator cast() = new Enumerator
+    {
+        embeddable dispatch() => self;
+    };
+    
+    enumerable() = theLiteral;
+    
+    /// Returns the current character
+    char Value = theChar;
+}
+
 //// --- WideLiteralInexer ---
 //
 ///// A wide literal enumerator
