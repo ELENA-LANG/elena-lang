@@ -13,12 +13,33 @@
 #include "elena.h"
 #include "x86assembler.h"
 #include "amd64assembler.h"
+#include "ppc64assembler.h"
 #include "ecassembler.h"
 #include "source.h"
 #include "asm2binx.h"
 #include "assemblerException.h"
 #include "preprocessor.h"
 #include "preProcessorException.h"
+
+enum CPUType
+{
+   cpuX86 = 0,
+   cpuAMD64 = 1,
+   cpuPower64 = 2
+};
+
+bool defineType(_ELENA_::ident_t arg, CPUType& type)
+{
+   if (arg.compare("-amd64")) {
+      type = cpuAMD64;
+   }
+   if (arg.compare("-power64")) {
+      type = cpuPower64;
+   }
+   else return false;
+
+   return true;
+}
 
 int main(int argc, char* argv[])
 {
@@ -31,7 +52,7 @@ int main(int argc, char* argv[])
    _ELENA_::Path target;
    _ELENA_::IdentifierString postfix("32");
 
-   bool amd64Mode = false;
+   CPUType type = cpuX86;
 
    int fileIndex = 1;
    if (argc == 4) {
@@ -41,8 +62,8 @@ int main(int argc, char* argv[])
       target.copy(argv[3]);
       target.combine(name.c_str());
 
-      if (_ELENA_::ident_t(argv[1]).compare("-amd64")) {
-         amd64Mode = true;
+      if (defineType(_ELENA_::ident_t(argv[1]), type)) {
+
       }
       else if (_ELENA_::ident_t(argv[1]).startsWith("-p")) {
          postfix.copy(argv[1] + 2);
@@ -53,8 +74,7 @@ int main(int argc, char* argv[])
       }
    }
    else if (argc==3) {
-      if (_ELENA_::ident_t(argv[1]).compare("-amd64")) {
-         amd64Mode = true;
+      if (defineType(_ELENA_::ident_t(argv[1]), type)) {
          fileIndex = 2;
 
          target.copy(argv[2]);
@@ -110,8 +130,12 @@ int main(int argc, char* argv[])
 	      _ELENA_::ECodesAssembler assembler(postfix.c_str());
 		   assembler.compile(&reader, target.c_str());
       }
-      else if (amd64Mode) {
+      else if (type == cpuAMD64) {
          _ELENA_::AMD64Assembler	assembler;
+         assembler.compile(&reader, target.c_str());
+      }
+      else if (type == cpuPower64) {
+         _ELENA_::PPC64Assembler	assembler;
          assembler.compile(&reader, target.c_str());
       }
       else {

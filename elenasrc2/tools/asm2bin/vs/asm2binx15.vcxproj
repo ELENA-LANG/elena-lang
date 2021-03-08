@@ -107,6 +107,7 @@
     <ClCompile Include="..\..\..\common\altstrings.cpp" />
     <ClCompile Include="..\..\..\engine\amd64helper.cpp" />
     <ClCompile Include="..\..\..\engine\bytecode.cpp" />
+    <ClCompile Include="..\..\..\engine\ppc64helper.cpp" />
     <ClCompile Include="..\amd64jumphelper.cpp" />
     <ClCompile Include="..\asm2binx.cpp" />
     <ClCompile Include="..\..\..\common\xmlreader.cpp" />
@@ -118,6 +119,7 @@
     <ClCompile Include="..\..\..\elc\source.cpp" />
     <ClCompile Include="..\ecassembler.cpp" />
     <ClCompile Include="..\amd64assembler.cpp" />
+    <ClCompile Include="..\ppc64assembler.cpp" />
     <ClCompile Include="..\preprocessor.cpp" />
     <ClCompile Include="..\x86assembler.cpp" />
     <ClCompile Include="..\..\..\engine\x86helper.cpp" />
@@ -127,6 +129,7 @@
     <ClInclude Include="..\..\..\common\altstrings.h" />
     <ClInclude Include="..\..\..\engine\amd64helper.h" />
     <ClInclude Include="..\..\..\engine\bytecode.h" />
+    <ClInclude Include="..\..\..\engine\ppc64helper.h" />
     <ClInclude Include="..\amd64jumphelper.h" />
     <ClInclude Include="..\assembler.h" />
     <ClInclude Include="..\..\..\common\common.h" />
@@ -145,6 +148,7 @@
     <ClInclude Include="..\assemblerException.h" />
     <ClInclude Include="..\ecassembler.h" />
     <ClInclude Include="..\amd64assembler.h" />
+    <ClInclude Include="..\ppc64assembler.h" />
     <ClInclude Include="..\preprocessor.h" />
     <ClInclude Include="..\preProcessorException.h" />
     <ClInclude Include="..\x86assembler.h" />

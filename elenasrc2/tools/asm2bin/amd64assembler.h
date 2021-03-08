@@ -257,7 +257,7 @@ protected:
    bool compileCommandX(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
  //  bool compileCommandY(TokenInfo& token);
  //  bool compileCommandZ(TokenInfo& token);
-   bool compileCommand(/*PrefixInfo& prefix, */TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, 
+   bool compileCommand(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, 
 		AMD64JumpHelper& helper);
 
    virtual void compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned);

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Assembler Compiler
 //
-//		This file contains the implementation of ELENA ELENA coder opcode helper
+//		This file contains the implementation of ELENA AMD64 coder opcode helper
 //		classes.
 //                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
@@ -9,8 +9,6 @@
 #include "elena.h"
 //---------------------------------------------------------------------------
 #include "amd64helper.h"
-
-using namespace _ELENA_;
 
 using namespace _ELENA_;
 
