@@ -317,7 +317,7 @@ class ByteCodeWriter
 //   void generateInlineArgCallExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message, FlowScope& scope);
    void generateInitializingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateCloningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateCloningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
    void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);

@@ -3860,51 +3860,51 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
 //
 //   return current;
 //}
-//
-//void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
-//{
-//   SNode target;
-//   SNode source;
-//   assignOpArguments(node, target, source);
-//
-//   if (target == lxExpression)
-//      target = target.findSubNodeMask(lxObjectMask);
-//
-//   if (source == lxNone) {
-//      generateObject(tape, target, scope, STACKOP_MODE);
-//
-//      tape.write(bcXCreate, node.findChild(lxType).argument | mskVMTRef);
-//
-//      tape.write(bcClone);
-//      releaseStack(tape);
-//   }
-//   else {
-//      if (source == lxExpression)
-//         source = source.findSubNodeMask(lxObjectMask);
-//
-//      if (source.compare(lxLocalAddress, lxBlockLocalAddr)) {
-//         if (source.firstChild() == lxBreakpoint) {
-//            translateBreakpoint(tape, source.firstChild(), scope);
-//         }
-//
-//         generateObject(tape, target, scope);
-//
-//         tape.write(bcCloneF, source.argument << 2);
-//      }
-//      else if (source.compare(lxLocal, lxTempLocal)) {
-//         if (source.firstChild() == lxBreakpoint) {
-//            translateBreakpoint(tape, source.firstChild(), scope);
-//         }
-//
-//         generateObject(tape, source, scope, STACKOP_MODE);
-//         generateObject(tape, target, scope);
-//
-//         tape.write(bcClone);
-//         releaseStack(tape);
-//      }
-//      else throw InternalError("Not yet implemented"); // !! temporal
-//   }
-//}
+
+void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   SNode target;
+   SNode source;
+   assignOpArguments(node, target, source);
+
+   if (target == lxExpression)
+      target = target.findSubNodeMask(lxObjectMask);
+
+   if (source == lxNone) {
+      generateObject(tape, target, scope, STACKOP_MODE);
+
+      tape.write(bcXCreate, node.findChild(lxType).argument | mskVMTRef);
+
+      tape.write(bcClone);
+      releaseArg(tape);
+   }
+   else {
+      //if (source == lxExpression)
+      //   source = source.findSubNodeMask(lxObjectMask);
+
+      ////if (source.compare(lxLocalAddress, lxBlockLocalAddr)) {
+      ////   if (source.firstChild() == lxBreakpoint) {
+      ////      translateBreakpoint(tape, source.firstChild(), scope);
+      ////   }
+
+      ////   generateObject(tape, target, scope);
+
+      ////   tape.write(bcCloneF, source.argument << 2);
+      ////}
+      ///*else */if (source.compare(lxLocal, lxTempLocal)) {
+      //   if (source.firstChild() == lxBreakpoint) {
+      //      translateBreakpoint(tape, source.firstChild(), scope);
+      //   }
+
+      //   generateObject(tape, source, scope, STACKOP_MODE);
+      //   generateObject(tape, target, scope);
+
+      //   tape.write(bcClone);
+      //   releaseStack(tape);
+      //}
+      /*else */throw InternalError("Not yet implemented"); // !! temporal
+   }
+}
 
 void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
@@ -4171,9 +4171,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxInitializing:
          generateInitializingExpression(tape, node, scope);
          break;
-//      case lxCloning:
-//         generateCloningExpression(tape, node, scope);
-//         break;
+      case lxCloning:
+         generateCloningExpression(tape, node, scope);
+         break;
       case lxBoolOp:
          generateBoolLogicOperation(tape, node, scope, mode & ~STACKOP_MODE);
          break;

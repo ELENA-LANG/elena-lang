@@ -3,7 +3,8 @@ In development:
 ------         
 
   [development]
-    * do not generate ref<ref<int>>
+    * boxing fixed-sized array
+    * arrays
 
     * basic tests
     * call stack
@@ -12,7 +13,6 @@ In development:
 
     * globals
     * strong-typed lambda closures
-    * boxing fixed-sized array
     * multi ret
     * yield metods
     * template based extensions

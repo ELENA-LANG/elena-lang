@@ -33,7 +33,7 @@ bool defineType(_ELENA_::ident_t arg, CPUType& type)
    if (arg.compare("-amd64")) {
       type = cpuAMD64;
    }
-   if (arg.compare("-power64")) {
+   else if (arg.compare("-power64")) {
       type = cpuPower64;
    }
    else return false;

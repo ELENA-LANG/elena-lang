@@ -135,6 +135,7 @@ enum LexicalType
       //   lxCondCopying              = 0x058124,
    lxFloatSaving              = 0x0302E5,
       //   lxCondAssigning            = 0x058126,
+   lxCloning                  = 0x0302E7,
    lxTempLocal                = 0x0102F0,
    lxAssigningOp              = 0x431300,
    lxAssigningExpression      = 0x031300,   
@@ -238,7 +239,6 @@ enum LexicalType
 //   lxInlineArgCall            = 0x0580A4,
 //   lxBlockLocalAddr           = 0x018114, // arg - offset
 //   lxOp                       = 0x0581B0,
-//   lxCloning                  = 0x0581E1,
 //   lxExternFrame              = 0x058240,
 //   lxYieldDispatch            = 0x058260,
 //   lxYieldReturning           = 0x058261,

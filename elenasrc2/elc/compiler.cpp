@@ -2999,9 +2999,9 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       // HOTFIX : update the result type
       retVal.reference = resultClassRef;
 
-//      if (IsArrExprOperator(operator_id, (LexicalType)operationType)) {
-//         // inject to target for array operation
-//         node.appendNode(lxLocalAddress, retVal.param);
+      if (IsArrExprOperator(operator_id, (LexicalType)operationType)) {
+         // inject to target for array operation
+         opNode.appendNode(lxLocalAddress, retVal.param);
 //
 //         node.injectAndReplaceNode(lxSeqExpression);
 //
@@ -3009,7 +3009,7 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
 //         valExpr.appendNode(lxLocalAddress, retVal.param);
 //         appendBoxingInfo(valExpr, scope, retVal, EAttrs::test(mode, HINT_NOUNBOXING),
 //            0, resolveObjectReference(scope, retVal, false));
-//      }
+      }
    }
    // if not, replace with appropriate method call
    else {
@@ -3336,10 +3336,6 @@ void Compiler :: appendCopying(SyntaxWriter& writer, /*SNode& copyingNode, */int
 //      // NOTE : structure command is used to copy variadic argument list
 //      copyingNode.injectAndReplaceNode(lxCloning);
 //   }
-//   else if (size < 0) {
-//      // if it is a dynamic srtructure boxing
-//      copyingNode.injectAndReplaceNode(lxCloning);
-//   }
 //   else if (primArray) {
 //      // if it is a dynamic srtructure boxing
 //      copyingNode.injectAndReplaceNode(lxCloning);
@@ -3356,8 +3352,7 @@ void Compiler :: appendCopying(SyntaxWriter& writer, /*SNode& copyingNode, */int
    writer.closeNode();
 }
 
-void Compiler :: appendCreating(SyntaxWriter& writer/*SNode& assigningNode, SNode objNode, ExprScope& scope, bool insertMode*/, int size,
-   ref_t typeRef/*, bool variadic*/)
+void Compiler :: appendCreating(SyntaxWriter& writer, int size, ref_t typeRef)
 {
    if (size == 0) {
       // HOTFIX : recognize byref boxing
@@ -3365,19 +3360,6 @@ void Compiler :: appendCreating(SyntaxWriter& writer/*SNode& assigningNode, SNod
    }
    else writer.newNode(lxCreatingStruct, size);
 
-//   SNode newNode = insertMode ?
-//      assigningNode.insertNode(lxCreatingStruct, size) : assigningNode.appendNode(lxCreatingStruct, size);
-//
-//   if (variadic) {
-//      int tempSizeLocal = scope.newTempLocalAddress();
-//      SNode sizeSetNode = assigningNode.prependSibling(lxArgArrOp, LEN_OPERATOR_ID);
-//      sizeSetNode.appendNode(lxLocalAddress, tempSizeLocal);
-//      sizeSetNode.appendNode(objNode.type, objNode.argument);
-//
-//      newNode.set(lxNewArrOp, typeRef);
-//      newNode.appendNode(lxSize, 0);
-//      newNode.appendNode(lxLocalAddress, tempSizeLocal);
-//   }
    writer.appendNode(lxType, typeRef);
 
    writer.closeNode();
@@ -3434,6 +3416,9 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
    bool variable = false;
    int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, source.element, variable);
    
+   //if (source.kind == okFieldAddress && isPrimitiveArrRef(sourceRef))
+   //   fixedArraySize = defineFieldSize(scope, source.param);
+
    //   if (fixedSize)
    //      // use fixed size (for fixed-sized array fields)
    //      // note that we still need to execute defineStructSizeVariable to set variable bool value
@@ -3480,10 +3465,18 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
 
          writer.newNode(lxAssigning);
          writer.appendNode(lxTempLocal, tempLocal);
-         appendCreating(writer/*, assignNode, objNode, scope, false*/, size, targetRef/*, variadic*/);
+
+         if (size < 0) {
+            writer.newNode(lxCloning);
+            writer.appendNode(lxType, targetRef);
+            writeTerminal(writer, source, scope);
+            writer.closeNode();
+         }
+         else appendCreating(writer/*, assignNode, objNode, scope, false*/, size, targetRef/*, variadic*/);
          writer.closeNode();
 
-         appendCopying(writer, /*copyingNode, */size/*, variadic, primArray*/, source, scope, tempLocal);
+         if (size >= 0)
+            appendCopying(writer, /*copyingNode, */size/*, variadic, primArray*/, source, scope, tempLocal);
 
          if (condBoxing)
             writer.closeNode();
