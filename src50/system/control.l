@@ -238,14 +238,14 @@ public interface Func1
 //    }
 }
 
-//public interface Func<T, TResult>
-//{
-//    /// Executes the action
-//    abstract TResult function(T param);
-//    
-//    Func1 cast()
-//        = (x => self(x));
-//    
+public interface Func<T, TResult>
+{
+    /// Executes the action
+    abstract TResult function(T param);
+    
+    Func1 cast()
+        = (x => self(x));
+    
 //    run(Enumerator<T> e)
 //    {
 //        while(e.next())
@@ -253,14 +253,14 @@ public interface Func1
 //            self(e.get())
 //        }
 //    }
-//}
-//
-///// A base two variable function
-//public interface Func2
-//{
-//    /// Executes the action
-//    abstract function(param1, param2);
-//    
+}
+
+/// A base two variable function
+public interface Func2
+{
+    /// Executes the action
+    abstract function(param1, param2);
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run(object param, Enumerator enumerator)
 //    {
@@ -283,23 +283,23 @@ public interface Func1
 //        
 //        ^ nil
 //    }
-//}
-//
-//public interface Func<T1,T2,TResult>
-//{
-//    /// Executes the action
-//    abstract TResult function(T1 param1, T2 param2);
-//    
-//    Func2 cast()
-//        = (x,y => self(x,y));
-//}
-//
-///// A base three variable function
-//public interface Func3
-//{
-//    /// Executes the function
-//    abstract function(param1, param2, param3);
-//    
+}
+
+public interface Func<T1,T2,TResult>
+{
+    /// Executes the action
+    abstract TResult function(T1 param1, T2 param2);
+    
+    Func2 cast()
+        = (x,y => self(x,y));
+}
+
+/// A base three variable function
+public interface Func3
+{
+    /// Executes the function
+    abstract function(param1, param2, param3);
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run(object p1, object p2, Enumerator e)
 //    {
@@ -322,17 +322,17 @@ public interface Func1
 //        
 //        ^ nil
 //    }
-//}
-//
-//public interface Func<T1,T2,T3,TResult>
-//{
-//    /// Executes the action
-//    abstract TResult function(T1 param1, T2 param2, T3 param3);
-//    
-//    Func3 cast()
-//        = (x,y,z => self(x,y,z));
-//}
-//
+}
+
+public interface Func<T1,T2,T3,TResult>
+{
+    /// Executes the action
+    abstract TResult function(T1 param1, T2 param2, T3 param3);
+    
+    Func3 cast()
+        = (x,y,z => self(x,y,z));
+}
+
 ///// A base three variable function
 //public interface Func4
 //{

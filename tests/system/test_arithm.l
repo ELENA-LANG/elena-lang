@@ -400,17 +400,30 @@ realTest()
     console.writeLine("done")        
 }
 
-////// --- Action Test ---
-//////
-//////#symbol ActionTest =
-//////[
-//////    console write:"Generic ".
-//////    actionTester testGeneric: (:x:y) [ console write:x writeLine:y. ].
-//////    
-//////    console write:"Normal ".
-//////    actionTester testAction: (&line1:aLine1 &line2:aLine2) [ console write:aLine1 writeLine:aLine2. ].
-//////].
-//////
+// --- Action Test ---
+
+singleton ActionTester
+{
+    testWeak(Func1 f, arg)
+        = f(arg);
+    
+    testStrong(Func<int,int,int> f, int arg1, int arg2)
+        = f(arg1, arg2);
+}
+
+actionTest()
+{
+    console.write("actionTest...");
+    
+    var r := ActionTester.testWeak((x => x + 2), 1);
+    Assert.ifTrue(r == 3);
+    
+    var r2 := ActionTester.testStrong((int x, int y => x + y), 2, 3);
+    Assert.ifTrue(r2 == 5);
+
+    console.writeLine("done");
+}
+
 //////// --- Role Tests ---
 //////
 //////#symbol Role =

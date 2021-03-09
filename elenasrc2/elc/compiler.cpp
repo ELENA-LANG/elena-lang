@@ -4903,8 +4903,6 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, EAt
          methodScope.outputRef = scope.moduleScope->superReference;
       }
 
-//      if (methodScope.outputRef)
-//         current.insertNode(lxType, methodScope.outputRef);
 //   }
 
    // the parent is defined after the closure compilation to define correctly the output type
@@ -4942,7 +4940,15 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, EAt
 
       _logic->injectVirtualMultimethods(*scope.moduleScope, tempNode, *this, implicitMultimethods, lxClassMethod, scope.info);
 
-      generateMethodDeclaration(node, scope, false, test(scope.info.header.flags, elClosed), true);
+      // HOTFIX : inject a method to be declared
+      SNode methodDummy = tempNode.appendNode(lxClassMethod, methodScope.message);
+      if (methodScope.outputRef)      
+         methodDummy.appendNode(lxType, methodScope.outputRef);
+
+      generateMethodDeclaration(methodDummy, scope, false, test(scope.info.header.flags, elClosed), true);
+      // comment out the inject method to prevent double compilation
+      methodDummy = lxIdle;
+
       generateClassDeclaration(tempNode, scope);
 
       compileVMT(writer, tempNode, scope);
