@@ -4065,19 +4065,19 @@ void ByteCodeWriter :: generateCondBoxing(CommandTape& tape, SyntaxTree::Node no
       generateObject(tape, step1, scope);
       generateObject(tape, step2, scope);
    }
-   //else if (step2 == lxNone) {
-   //   SNode cloneNode = step1.findChild(lxCloning);
-   //   if (cloneNode != lxNone) {
-   //      SNode local = cloneNode.firstChild(lxObjectMask);
+   else if (step2 == lxNone) {
+      SNode cloneNode = step1.findChild(lxCloning);
+      if (cloneNode != lxNone) {
+         SNode local = cloneNode.firstChild(lxObjectMask);
 
-   //      tape.newLabel();
-   //      generateObject(tape, local, scope);
-   //      tape.write(bcIfHeap, baCurrentLabel);
+         tape.newLabel();
+         generateObject(tape, local, scope);
+         tape.write(bcIfHeap, baCurrentLabel);
 
-   //      generateObject(tape, step1, scope);
-   //   }
-   //   else throw InternalError("Not yet implemented"); // !! temporal
-   //}
+         generateObject(tape, step1, scope);
+      }
+      else throw InternalError("Not yet implemented"); // !! temporal
+   }
    else throw InternalError("Not yet implemented"); // !! temporal
 
    scope.clear();
@@ -4252,9 +4252,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //         }
 //         else throw InternalError("Not yet implemented"); // !! temporal
 //         break;
-//      case lxCodeExpression:
-//         generateCodeBlock(tape, node, scope);
-//         break;
+      case lxCode:
+         generateCodeBlock(tape, node, scope);
+         break;
       case lxCondBoxing:
          generateCondBoxing(tape, node, scope);
          break;

@@ -1873,8 +1873,7 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
          break;
       }
       case lxCode:
-         flushCodeExpression(writer, current, derivationScope/*, first*/);
-//         first = false;
+         flushCodeExpression(writer, current, derivationScope);
          break;
       case lxToken:
          flushTokenExpression(writer, current, derivationScope/*, true*/);
@@ -1895,6 +1894,11 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
       case lxLastSwitchOption:
          writer.newNode(lxElse);
          flushCodeExpression(writer, current.firstChild(lxCode), derivationScope);
+         writer.closeNode();
+         break;
+      case lxParameter:
+         writer.newNode(lxMethodParameter);
+         flushExpressionTree(writer, current, derivationScope, EXPRESSION_IMPLICIT_MODE);
          writer.closeNode();
          break;
          //      case lxCollection:

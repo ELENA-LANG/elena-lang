@@ -1508,12 +1508,12 @@ public extension objectOp
 //        ^ ch == 39
 //    }
 //}
-//
-//// --- byteArrayHelper ---
-//
-//public extension byteArrayHelper : Array<byte>
-//{
-//    /// Reads a short integer value at the specified position and saves it into an output variable
+
+// --- byteArrayHelper ---
+
+public extension byteArrayHelper : Array<byte>
+{
+    /// Reads a short integer value at the specified position and saves it into an output variable
 //    read(int index, ref short retVal)
 //        => intern system'core_routines'__bytearray;
 //
@@ -1577,16 +1577,16 @@ public extension objectOp
 //            i := i + 1
 //        }
 //    }
-//}
-//
-//// --- charArrayHelper ---
-//
-//public extension charArrayHelper : Array<char>
-//{
+}
+
+// --- charArrayHelper ---
+
+public extension charArrayHelper : Array<char>
+{
 //    move(int index, int length, int offset)
 //        => intern system'core_routines'__chararray;
-//
-//    /// Copies the array at the specified position    
-//    write(int index, int length, char[] array)
-//        => intern system'core_routines'__chararray;
-//}
+
+    [info:"Copies the array at the specified position"]    
+    write(int index, int length, char[] array)
+        => intern system'core_routines'__chararray;
+}

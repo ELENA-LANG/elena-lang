@@ -3,16 +3,15 @@ In development:
 ------         
 
   [development]
-    * boxing fixed-sized array
-    * arrays
+    * strong-typed lambda closures
 
     * basic tests
     * call stack
     * program exception handling
     * system tests : 86, 86-64
 
+    * boxing fixed-sized field array
     * globals
-    * strong-typed lambda closures
     * multi ret
     * yield metods
     * template based extensions

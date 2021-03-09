@@ -1781,9 +1781,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_MESSAGE:
          attributes.include(EAttr::eaMssg);
          return true;
-//      case V_CLASS:
-//         attributes.include(EAttr::eaClass);
-//         return true;
+      case V_CLASS:
+         attributes.include(EAttr::eaClass);
+         return true;
       case V_WEAKOP:
          attributes.include(EAttr::eaDirectCall);
          return true;

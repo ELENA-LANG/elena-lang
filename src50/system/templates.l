@@ -148,23 +148,23 @@
 //    
 //    __loop: cast bool(cond_expr) ! { loop_body; __ignore_duplicates step_expr }
 //}
-//    
-//// --- for statement ---
-//
+    
+// --- for statement ---
+
 //#declare for<step_expr, cond_expr>(loop_body)
 //{
 //    step_expr;
 //    
 //    __loop: cast bool(cond_expr) ? { loop_body; __ignore_duplicates step_expr }
 //}
-//
-//#declare for<init_expr, cond_expr, step_expr>(loop_body)
-//{
-//    init_expr;
-//    
-//    __loop: cast bool(cond_expr) ? { loop_body; step_expr }
-//}
-//
+
+#declare for<init_expr, cond_expr, step_expr>(loop_body)
+{
+    init_expr;
+    
+    __loop cast bool(cond_expr) ? { loop_body; step_expr }
+}
+
 //// --- for statement ---
 //
 //#declare for<init_expr, cond_expr, step_expr1, step_expr2>(loop_body)

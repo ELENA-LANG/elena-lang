@@ -270,13 +270,13 @@ private:
          }
          else return false;
       }
-//      virtual bool resolveAutoOutput(ref_t reference)
-//      {
-//         if (parent) {
-//            return parent->resolveAutoOutput(reference);
-//         }
-//         else return false;
-//      }
+      virtual bool resolveAutoOutput(ref_t reference)
+      {
+         if (parent) {
+            return parent->resolveAutoOutput(reference);
+         }
+         else return false;
+      }
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
       {
@@ -651,15 +651,15 @@ private:
          return scope ? scope->reference : 0;
       }
 
-//      virtual bool resolveAutoOutput(ref_t reference)
-//      {
-//         if (outputRef == V_AUTO) {
-//            outputRef = reference;
-//
-//            return true;
-//         }
-//         else return Scope::resolveAutoOutput(reference);
-//      }
+      virtual bool resolveAutoOutput(ref_t reference)
+      {
+         if (outputRef == V_AUTO) {
+            outputRef = reference;
+
+            return true;
+         }
+         else return Scope::resolveAutoOutput(reference);
+      }
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 

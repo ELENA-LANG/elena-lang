@@ -118,6 +118,21 @@ procedure __literal."readLengthTo$system@String$@system@ref#1&system@IntNumber[2
 
 end
 
+
+procedure __literal."save$system@IntNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+
+  callextr api : strtochararray, 4
+  
+  freei  4
+  quit
+
+end
+
 procedure __wide."equal$system@WideString[2]"
 
   pushsi 2
@@ -273,6 +288,28 @@ labDefault:
 
   throw
   
+end
+
+procedure __chararray."write$@system@Array#1&system@CharValue$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : ninsert, 4
+  ifn labErr, 0 
+
+  peeksi 0
+  freei  4
+  quit
+
+labErr:
+  open
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+
 end
 
 procedure __literalconvertor."convert$system@CharValue$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"

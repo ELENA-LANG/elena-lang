@@ -109,19 +109,19 @@ public class OutOfRangeException : Exception
         <= new(message);
 }
 
-//// --- InvalidArgumentException ---
-//
-//public class InvalidArgumentException : Exception
-//{
-//    /// Creates the exception
-//    constructor new()
-//        <= new("Invalid argument");
-//        
-//    /// Creates the exception
-//    constructor new(string message)
-//        <= new(message);
-//}
-//
+// --- InvalidArgumentException ---
+
+public class InvalidArgumentException : Exception
+{
+    [info:"Creates the exception"]
+    constructor new()
+        <= new("Invalid argument");
+        
+    [info:"Creates the exception"]
+    constructor new(string message)
+        <= new(message);
+}
+
 //// --- InvalidOperationException ---
 //
 //public class InvalidOperationException : Exception

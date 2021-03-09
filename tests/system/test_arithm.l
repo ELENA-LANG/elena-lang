@@ -187,19 +187,6 @@ enumTest()
     console.writeLine("done")        
 }
 
-//////#symbol actionTester =
-//////{
-//////    testGeneric : anAction
-//////    [
-//////        anAction eval:"Action Test":" passed".
-//////    ]
-//////    
-//////    testAction : anAction
-//////    [
-//////        anAction eval &line1:"Action Test" &line2:" passed".
-//////    ]
-//////}.
-
 class MyException : Exception
 {
     constructor new(s)
@@ -560,37 +547,33 @@ wideTest()
 //////        ]
 //////    }
 //////].
-//////
-//////// --- LoopTest ---
-//////
-//////#symbol LoopTest =
-//////[
-//////    #var i := 5.
-//////            
-//////    console writeLine:"Loop running...".
-//////    #loop (i > 0) ?
-//////    [
-//////        console writeLine:i.
-//////        
-//////        i := i - 1.
-//////    ].
-//////  
-//////    #var(vint)j := 0.
-//////    control while: [j < 5] &do:
-//////    [
-//////        console writeLine:j.
-//////        
-//////        j += 1.
-//////    ].
-//////    
-//////    control do:
-//////    [
-//////        console writeLine:j.
-//////        
-//////        j -= 1.
-//////    ]
-//////    &until:[j == 0].
-//////].
+
+// --- LoopTest ---
+
+loopTest()
+{
+    console.write("loopTest..");
+    
+    int sum := 0;
+    for(int i := 0, i < 5, i += 1)
+    {
+        sum += i;
+    };
+    
+    Assert.ifTrue(sum == 10);
+    
+    int i := 5;
+    while (i > 0)
+    {
+        i -= 1;
+        
+        sum := sum - i;         
+    };
+    
+    Assert.ifTrue(sum == 0);
+    
+    console.writeLine("done")
+}
 
 // --- ExceptionTest ---
 
@@ -646,10 +629,17 @@ exceptionTest()
 
 textBufferTest()
 {
-//////    #var aBuffer := system'text'TextBuffer new.
-//////    aBuffer write:"abc".
-//////
-//////    #var anOutput := aBuffer literal.
+    console.write("textBufferTest...");
+    
+    var buffer := new system'text'TextBuilder();
+    
+    buffer.write:"a";
+    buffer.write:"b";
+    buffer.write:"c";
+
+    Assert.ifTrue(*buffer == "abc");
+
+    console.writeLine("done");
 }
 
 //////// --- DateTest ---

@@ -61,43 +61,43 @@ public sealed Array<T> //: Indexable<T>
         }
     }
 
-//    T at(int n)
-//    {
-//        if (n < 0)
-//            { system'InvalidArgumentException.raise() };
-//        
-//        int len := 0;
-//        len $sizeof theArray;
-//
-//        if (n < len)
-//        { 
-//            ^ theArray[n] 
-//        }
-//        else
-//        {
-//            system'InvalidArgumentException.raise();
-//            
-//            ^ nil // !! never reached
-//        }
-//    }
+    T at(int n)
+    {
+        if (n < 0)
+            { system'InvalidArgumentException.raise() };
+        
+        int len := 0;
+        len $sizeof theArray;
 
-//    setAt(int n, T item)
-//    {
-//        if (n < 0)
-//            { system'InvalidArgumentException.raise() };
-//        
-//        int len := 0;
-//        len $sizeof theArray;
-//
-//        if (n < len)
-//        {
-//            theArray[n] := item
-//        }
-//        else
-//        {
-//            system'InvalidArgumentException.raise()
-//        }
-//    }
+        if (n < len)
+        { 
+            ^ theArray[n] 
+        }
+        else
+        {
+            system'InvalidArgumentException.raise();
+            
+            ^ nil // !! never reached
+        }
+    }
+
+    setAt(int n, T item)
+    {
+        if (n < 0)
+            { system'InvalidArgumentException.raise() };
+        
+        int len := 0;
+        len $sizeof theArray;
+
+        if (n < len)
+        {
+            theArray[n] := item
+        }
+        else
+        {
+            system'InvalidArgumentException.raise()
+        }
+    }
 
 //    setAt(index, item)
 //        <= setAt(cast int(index), cast T(item));
@@ -931,10 +931,10 @@ public sealed const struct String : BaseValue
         }
     }
 
-//    /// Saves the literal into a UTF-32 character array
-//    save(int index, char[] array, ref int retVal)
-//        => intern system'core_routines'__literal;
-//
+    [info:"Saves the literal into a UTF-32 character array"]
+    save(int index, char[] array, ref int retVal)
+        => intern system'core_routines'__literal;
+
 //    internal saveToByteArray(int index, byte[] array, int retVal)
 //        => intern system'core_routines'__literal;
 

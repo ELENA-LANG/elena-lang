@@ -19,8 +19,8 @@ public program()
     multySelectTest();
     enumTest();
     textBufferTest();
-////    LoopTest eval.
-////    ActionTest eval.
+    loopTest();
+    actionTest();
 ////    RoleTest eval.
     convertorTest();
 //    arrayTest();

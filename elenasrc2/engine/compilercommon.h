@@ -520,7 +520,7 @@ public:
 //      eaParams             = 0x00000200000,
       eaInitializerScope   = 0x00000400000,
       eaSwitch             = 0x00000800000,
-//      eaClass              = 0x00001000000,
+      eaClass              = 0x00001000000,
 //      eaYieldExpr          = 0x00002000000,
       eaIgnoreDuplicates   = 0x00004000000,
       eaMssg               = 0x00008000000,
