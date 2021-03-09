@@ -424,18 +424,6 @@ actionTest()
     console.writeLine("done");
 }
 
-//////// --- Role Tests ---
-//////
-//////#symbol Role =
-//////{
-//////    literal = "Role overriding works!".
-//////}.
-//////
-//////#symbol RoleTest =
-//////[
-//////    console writeLine:("Role overriding doesn't work!!"::Role literal).
-//////].
-
 // --- ConvertorTest ---
 
 convertorTest()
@@ -450,18 +438,18 @@ convertorTest()
     Assert.ifTrue("-123".toInt() == -123);
     Assert.ifTrue("-1234567890123456".toLong() == -1234567890123456l);
 
-    Assert.ifTrue("23".toReal() == 23.0r);
-    Assert.ifTrue("123.456789".toReal() == 123.456789r);
-    Assert.ifTrue("-123.456789".toReal() == -123.456789r);
+    Assert.ifTrue("23".toReal() == 23.0);
+    Assert.ifTrue("123.456789".toReal() == 123.456789);
+    Assert.ifTrue("-123.456789".toReal() == -123.456789);
     
     Assert.ifTrue(-2l.toInt() == -2);
     Assert.ifTrue(-2.toLong() == -2l);
     
-    Assert.ifTrue(-2.0r.toInt() == -2);
-    Assert.ifTrue(-2.toReal() == -2.0r);
+    Assert.ifTrue(-2.0.toInt() == -2);
+    Assert.ifTrue(-2.toReal() == -2.0);
         
-    Assert.ifTrue(-2.0r.toLong() == -2l);
-    Assert.ifTrue(-2l.toReal() == -2.0r);
+    Assert.ifTrue(-2.0.toLong() == -2l);
+    Assert.ifTrue(-2l.toReal() == -2.0);
     
     console.writeLine("done")        
 }

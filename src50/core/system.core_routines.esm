@@ -419,6 +419,36 @@ labNegative:
 
 end
 
+procedure __longconvertor."convert$system@String$system@IntNumber$@system@ref#1&system@LongNumber[3]"
+
+  pushn  0
+  pushsi 4
+  pushsi 4
+  pushsi 4  
+  callextr api : strtolong, 3
+  freei 4
+
+  ifr      labErr, 0
+  quit
+
+labErr:
+  open
+  pushr class : system'FormatException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __longconvertor."convert$system@RealNumber$@system@ref#1&system@LongNumber[2]"
+
+  peeksi 1
+  rload
+  peeksi 2
+  rsavel
+  quit
+
+end
+
 procedure __intconvertor."convert$system@LongNumber$@system@ref#1&system@IntNumber[2]"
 
   peeksi 1
@@ -463,6 +493,57 @@ labErr:
   pushr class : system'FormatException
   pushr mssgconst : "new[1]"
   throw
+
+end
+
+procedure __intconvertor."convert$system@RealNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  rload
+  peeksi 2  
+  rsaven
+  peeksi 1
+  quit
+
+end
+
+procedure __realconvertor."convert$system@String$system@IntNumber$@system@ref#1&system@RealNumber[3]"
+  
+  pushn    0
+  pushsi   4
+  pushsi   4
+  pushsi   4  
+  callextr api : strtoreal, 3
+  freei    4
+  ifr      labErr, 0
+  quit
+
+labErr:
+  open
+  pushr class : system'FormatException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __realconvertor."convert$system@IntNumber$@system@ref#1&system@RealNumber[2]"
+  
+  peeksi 1
+  load
+  rset
+  peeksi 2
+  rsave
+  quit
+
+end
+
+procedure __realconvertor."convert$system@LongNumber$@system@ref#1&system@RealNumber[2]"
+  
+  pushsi 2
+  pushsi 2  
+  callextr api : longtoreal, 2
+  freei 2
+  quit
 
 end
 

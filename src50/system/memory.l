@@ -1423,9 +1423,9 @@ public singleton stringConvertor
         ^ len
     }
     
-//    string convert(BaseVariable v)
-//        <= convert(v.Value);
-//    
+    string convert(BaseVariable v)
+        <= convert(v.Value);
+    
 //    string convert(BaseVariable v, int radix)
 //        <= convert(v.Value, radix);
     
@@ -1439,17 +1439,15 @@ public singleton stringConvertor
         ^ String.fromByteArray(0, length, buffer)
     }
     
-//    /// Converts the parameter to the literal value
-//    string convert(int n)
-//    {
-//        byte buffer[12];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, 10, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//    
+    /// Converts the parameter to the literal value
+    string convert(int n)
+    {
+        byte buffer[12];
+        extern elenart.core_inttostr(n, 10, buffer, ref int length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+    
 //    /// Converts the parameter to the literal value
 //    string convert(uint n)
 //    {

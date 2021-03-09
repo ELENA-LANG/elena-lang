@@ -657,6 +657,70 @@ labEnd:
 
 end
 
+// ; inttostr(s,b,t,out)
+procedure coreapi'core_inttostr
+
+   mov  esi, [esp+8]
+   mov  eax, [esp+4]
+   mov  edi, [esp+12]
+
+   push ebp
+   mov  ebp, esp
+   xor  ecx, ecx
+   push eax
+   // ; take sign into account only for the decimal representation
+   cmp  esi, 10        
+   jnz  short Lab6
+   cmp  eax, 0
+   jns  short Lab6
+   neg  eax
+Lab6:
+   cmp  eax, esi
+   jb   short Lab5
+Lab1:
+   xor  edx, edx
+   idiv esi
+   push edx
+   add  ecx, 1
+   cmp  eax, esi
+   jae  short Lab1
+Lab5:   
+   add  ecx, 2
+   push eax
+   cmp  esi, 10        
+   jnz  short Lab7
+   mov  eax, [ebp-4]
+   cmp  eax, 0
+   jns  short Lab7
+   push 0F6h      // to get "-" after adding 0x30
+   add  ecx, 1
+Lab7:
+   sub  ecx, 1
+   mov  esi, edi
+   mov  edx, 0FFh
+Lab2:
+   pop  eax
+   cmp  eax, 0Ah
+   jb   short Lab8
+   add  eax, 7
+Lab8:
+   add  eax, 30h
+   and  eax, edx
+   mov  byte ptr [esi], al
+   add  esi, 1
+   sub  ecx, 1
+   jnz  short Lab2
+   mov  edx, esi
+   sub  edx, edi
+   lea  esp, [esp+4]
+   pop  ebp
+   mov  edi, [esp+16]
+   mov  dword ptr[edi], edx
+
+   ret
+
+end
+
 // ; === internal ===
 
 // strtowstr(target,source)
@@ -1572,70 +1636,6 @@ Lab2:
   xor  ebx, ebx
 Lab3:
   ret
-
-end
-
-// ; inttostr(s,b,t)
-procedure coreapi'inttostr
-
-   mov  ebx, [esp+8]
-   mov  eax, [esp+4]
-   mov  esi, [ebx]
-   mov  edi, [esp+12]
-
-   push ebp
-   mov  eax, [eax]
-   mov  ebp, esp
-   xor  ecx, ecx
-   push eax
-   // ; take sign into account only for the decimal representation
-   cmp  esi, 10        
-   jnz  short Lab6
-   cmp  eax, 0
-   jns  short Lab6
-   neg  eax
-Lab6:
-   cmp  eax, esi
-   jb   short Lab5
-Lab1:
-   xor  edx, edx
-   idiv esi
-   push edx
-   add  ecx, 1
-   cmp  eax, esi
-   jae  short Lab1
-Lab5:   
-   add  ecx, 2
-   push eax
-   cmp  esi, 10        
-   jnz  short Lab7
-   mov  eax, [ebp-4]
-   cmp  eax, 0
-   jns  short Lab7
-   push 0F6h      // to get "-" after adding 0x30
-   add  ecx, 1
-Lab7:
-   sub  ecx, 1
-   mov  esi, edi
-   mov  edx, 0FFh
-Lab2:
-   pop  eax
-   cmp  eax, 0Ah
-   jb   short Lab8
-   add  eax, 7
-Lab8:
-   add  eax, 30h
-   and  eax, edx
-   mov  byte ptr [esi], al
-   add  esi, 1
-   sub  ecx, 1
-   jnz  short Lab2
-   mov  edx, esi
-   sub  edx, edi
-   lea  esp, [esp+4]
-   pop  ebp
-
-   ret
 
 end
 

@@ -526,6 +526,70 @@ labEnd:
 
 end
 
+// ; inttostr(s,b,t,out)
+procedure coreapi'inttostr
+
+   mov  rsi, [rsp+16]
+   mov  rax, [rsp+8]
+   mov  rdi, [rsp+24]
+
+   push rbp
+   mov  rbp, rsp
+   xor  ecx, ecx
+   push rax
+   // ; take sign into account only for the decimal representation
+   cmp  esi, 10        
+   jnz  short Lab6
+   cmp  eax, 0
+   jns  short Lab6
+   neg  eax
+Lab6:
+   cmp  eax, esi
+   jb   short Lab5
+Lab1:
+   xor  edx, edx
+   idiv esi
+   push rdx
+   add  ecx, 1
+   cmp  eax, esi
+   jae  short Lab1
+Lab5:   
+   add  ecx, 2
+   push rax
+   cmp  esi, 10        
+   jnz  short Lab7
+   mov  rax, [rbp-8]
+   cmp  eax, 0
+   jns  short Lab7
+   push 0F6h      // to get "-" after adding 0x30
+   add  ecx, 1
+Lab7:
+   sub  ecx, 1
+   mov  esi, edi
+   mov  edx, 0FFh
+Lab2:
+   pop  rax
+   cmp  eax, 0Ah
+   jb   short Lab8
+   add  eax, 7
+Lab8:
+   add  eax, 30h
+   and  eax, edx
+   mov  byte ptr [rsi], al
+   add  esi, 1
+   sub  ecx, 1
+   jnz  short Lab2
+   mov  edx, esi
+   sub  edx, edi
+   lea  rsp, [rsp+8]
+   pop  rbp
+   mov  rdi, [rsp+32]
+   mov  dword ptr [rdi], edx
+
+   ret
+
+end
+
 // --- System Core API  --
 
 define CORE_ET_TABLE     2000Bh
@@ -729,70 +793,6 @@ labEnd:
   shr  edx, 1
   ret
     
-end
-
-// ; inttostr(s,b,t)
-procedure coreapi'inttostr
-
-   mov  rbx, [rsp+16]
-   mov  rax, [rsp+8]
-   mov  esi, dword ptr [rbx]
-   mov  rdi, [rsp+24]
-
-   push rbp
-   mov  eax, dword ptr [rax]
-   mov  rbp, rsp
-   xor  ecx, ecx
-   push rax
-   // ; take sign into account only for the decimal representation
-   cmp  esi, 10        
-   jnz  short Lab6
-   cmp  eax, 0
-   jns  short Lab6
-   neg  eax
-Lab6:
-   cmp  eax, esi
-   jb   short Lab5
-Lab1:
-   xor  edx, edx
-   idiv esi
-   push rdx
-   add  ecx, 1
-   cmp  eax, esi
-   jae  short Lab1
-Lab5:   
-   add  ecx, 2
-   push rax
-   cmp  esi, 10        
-   jnz  short Lab7
-   mov  rax, [rbp-8]
-   cmp  eax, 0
-   jns  short Lab7
-   push 0F6h      // to get "-" after adding 0x30
-   add  ecx, 1
-Lab7:
-   sub  ecx, 1
-   mov  esi, edi
-   mov  edx, 0FFh
-Lab2:
-   pop  rax
-   cmp  eax, 0Ah
-   jb   short Lab8
-   add  eax, 7
-Lab8:
-   add  eax, 30h
-   and  eax, edx
-   mov  byte ptr [rsi], al
-   add  esi, 1
-   sub  ecx, 1
-   jnz  short Lab2
-   mov  edx, esi
-   sub  edx, edi
-   lea  rsp, [rsp+8]
-   pop  rbp
-
-   ret
-
 end
 
 // strtowstr(target,source)

@@ -2451,13 +2451,13 @@ public singleton intConvertor
         ^ retVal
     }
 
-//    /// Converts a long integer into an integer
-//    int convert(real n)
-//    {
-//        intern system'core_routines'__intconvertor.convert(n, ref int retVal);
-//        
-//        ^ retVal
-//    }
+    /// Converts a long integer into an integer
+    int convert(real n)
+    {
+        intern system'core_routines'__intconvertor.convert(n, ref int retVal);
+        
+        ^ retVal
+    }
 
     /// Returns a parameter                                    
     int convert(int n)
@@ -2541,15 +2541,15 @@ public singleton longConvertor
 //        
 //        ^ retVal
 //    }
-//
-//    /// Converts a real number into a long integer
-//    long convert(real val)
-//    {
-//        intern system'core_routines'__longconvertor.convert(val, ref long retVal);
-//        
-//        ^ retVal
-//    }
-//
+
+    /// Converts a real number into a long integer
+    long convert(real val)
+    {
+        intern system'core_routines'__longconvertor.convert(val, ref long retVal);
+        
+        ^ retVal
+    }
+
 //    /// Converts a character into a long integer
 //    long convert(char ch)
 //    {
@@ -2557,15 +2557,15 @@ public singleton longConvertor
 //        
 //        ^ retVal
 //    }
-//
-//    /// Converts a literal string into a long integer
-//    long convert(string s)
-//    {
-//        intern system'core_routines'__longconvertor.convert(s, 10, ref long retVal);
-//        
-//        ^ retVal
-//    }
-//
+
+    /// Converts a literal string into a long integer
+    long convert(string s)
+    {
+        intern system'core_routines'__longconvertor.convert(s, 10, ref long retVal);
+        
+        ^ retVal
+    }
+
 //    /// Converts a literal string into a long integer
 //    long convert(string s, int base)
 //    {
@@ -2604,14 +2604,14 @@ public singleton realConvertor
     real convert(BaseVariable v)
         <= convert(v.Value);
         
-//    /// Converts a literal string into a real number
-//    real convert(string s)
-//    {
-//        intern system'core_routines'__realconvertor.convert(s, 19, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//        
+    /// Converts a literal string into a real number
+    real convert(string s)
+    {
+        intern system'core_routines'__realconvertor.convert(s, 19, ref real retVal);
+        
+        ^ retVal
+    }
+        
 //    /// Converts a wide literal string into a real number
 //    real convert(wide s)
 //    {
@@ -2624,14 +2624,14 @@ public singleton realConvertor
     real convert(real r)
         = new RealNumber(r);
         
-//    /// Converts an integer into a real number
-//    real convert(int n)
-//    {
-//        intern system'core_routines'__realconvertor.convert(n, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//        
+    /// Converts an integer into a real number
+    real convert(int n)
+    {
+        intern system'core_routines'__realconvertor.convert(n, ref real retVal);
+        
+        ^ retVal
+    }
+        
 //    /// Converts an integer into a real number
 //    real convert(uint n)
 //    {
@@ -2657,15 +2657,15 @@ public singleton realConvertor
 //        
 //        ^ retVal
 //    }
-//
-//    /// Converts a long integer into a real number
-//    real convert(long n)
-//    {
-//        intern system'core_routines'__realconvertor.convert(n, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//
+
+    /// Converts a long integer into a real number
+    real convert(long n)
+    {
+        intern system'core_routines'__realconvertor.convert(n, ref real retVal);
+        
+        ^ retVal
+    }
+
 //    /// Converts a byte into a real number
 //    real convert(byte n)
 //    {

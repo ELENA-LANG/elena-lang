@@ -21,7 +21,6 @@ public program()
     textBufferTest();
     loopTest();
     actionTest();
-////    RoleTest eval.
     convertorTest();
 //    arrayTest();
 ////    OpenArgTest eval.
