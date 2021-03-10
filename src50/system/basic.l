@@ -112,24 +112,24 @@ public abstract class BaseNumber : BaseValue
 [info:"a base integer value"]
 public abstract class IntBaseNumber : BaseNumber
 {
-//    and(BaseVariable var)
-//        <= and(var.Value);
-//        
-//    or(BaseVariable var)
-//        <= or(var.Value);
-//        
-//    xor(BaseVariable var)
-//        <= xor(var.Value);
-//    
-//    [info:"executes bitwise AND operation;<br/>should be overridden"]
-//    abstract and(o);
-//
-//    [info:"executes bitwise OR operation;<br/>should be overridden"]
-//    abstract or(o);
-//    
-//    [info:"executes bitwise XOR operation;<br/>should be overridden"]
-//    abstract xor(o);
-//    
+    and(BaseVariable var)
+        <= and(var.Value);
+        
+    or(BaseVariable var)
+        <= or(var.Value);
+        
+    xor(BaseVariable var)
+        <= xor(var.Value);
+    
+    [info:"executes bitwise AND operation;<br/>should be overridden"]
+    abstract and(o);
+
+    [info:"executes bitwise OR operation;<br/>should be overridden"]
+    abstract or(o);
+    
+    [info:"executes bitwise XOR operation;<br/>should be overridden"]
+    abstract xor(o);
+    
 //    [info:"returns true if all the mask bits are set"]
 //    bool allMask(operand)
 //        = self.and:operand == operand;
@@ -172,7 +172,7 @@ public sealed const struct ByteNumber : IntBaseNumber
     [info:"returns the value as an integer"]
     int cast() = new IntNumber(self);
 
-    [info:"returns the value as an integer"]
+//    [info:"returns the value as an integer"]
 //    uint cast() = new UIntNumber(self);
 
     [info:"returns the value as a long integer"]
@@ -340,15 +340,15 @@ public sealed const struct ByteNumber : IntBaseNumber
     real divide(real n)
         = new RealNumber(self).divide(n);
 
-//    and(n)
-//        <= and(cast byte(n));
-//        
-//    or(n)
-//        <= or(cast byte(n));
-//        
-//    xor(n)
-//        <= xor(cast byte(n));
-//        
+    and(n)
+        <= and(cast byte(n));
+        
+    or(n)
+        <= or(cast byte(n));
+        
+    xor(n)
+        <= xor(cast byte(n));
+        
 //    byte and(BaseVariable v)
 //        <= and(v.Value);
 //        
@@ -357,55 +357,55 @@ public sealed const struct ByteNumber : IntBaseNumber
 //        
 //    byte xor(BaseVariable v)
 //        <= xor(v.Value);
-//        
-//    [info:"returns the result of bitwise AND operation"]
-//    byte and(byte n)
-//        = theValue && n;
-//
-//    [info:"returns the result of bitwise OR operation"]
-//    byte or(byte n)
-//        = theValue || n;
-//
-//    [info:"returns the result of bitwise XOR operation"]
-//    byte xor(byte n)
-//        = theValue ^^ n;
-//
-//    [info:"returns the result of bitwise AND operation"]
-//    short and(short n)
-//        = new ShortNumber(self).and(n);
-//
-//    [info:"returns the result of bitwise OR operation"]
-//    short or(short n)
-//        = new ShortNumber(self).or(n);
-//
-//    [info:"returns the result of bitwise XOR operation"]
-//    short xor(short n)
-//        = new ShortNumber(self).xor(n);
-//
-//    [info:"returns the result of bitwise AND operation"]
-//    int and(int n)
-//        = new IntNumber(self).and(n);
-//
-//    [info:"returns the result of bitwise OR operation"]
-//    int or(int n)
-//        = new IntNumber(self).or(n);
-//
-//    [info:"returns the result of bitwise XOR operation"]
-//    int xor(int n)
-//        = new IntNumber(self).xor(n);
-//
-//    [info:"returns the result of bitwise AND operation"]
-//    long and(long n)
-//        = new LongNumber(self).and(n);
-//
-//    [info:"returns the result of bitwise OR operation"]
-//    long or(long n)
-//        = new LongNumber(self).or(n);
-//
-//    [info:"returns the result of bitwise XOR operation"]
-//    long xor(long n)
-//        = new LongNumber(self).xor(n);
-//
+        
+    [info:"returns the result of bitwise AND operation"]
+    byte and(byte n)
+        = theValue && n;
+
+    [info:"returns the result of bitwise OR operation"]
+    byte or(byte n)
+        = theValue || n;
+
+    [info:"returns the result of bitwise XOR operation"]
+    byte xor(byte n)
+        = theValue ^^ n;
+
+    [info:"returns the result of bitwise AND operation"]
+    short and(short n)
+        = new ShortNumber(self).and(n);
+
+    [info:"returns the result of bitwise OR operation"]
+    short or(short n)
+        = new ShortNumber(self).or(n);
+
+    [info:"returns the result of bitwise XOR operation"]
+    short xor(short n)
+        = new ShortNumber(self).xor(n);
+
+    [info:"returns the result of bitwise AND operation"]
+    int and(int n)
+        = new IntNumber(self).and(n);
+
+    [info:"returns the result of bitwise OR operation"]
+    int or(int n)
+        = new IntNumber(self).or(n);
+
+    [info:"returns the result of bitwise XOR operation"]
+    int xor(int n)
+        = new IntNumber(self).xor(n);
+
+    [info:"returns the result of bitwise AND operation"]
+    long and(long n)
+        = new LongNumber(self).and(n);
+
+    [info:"returns the result of bitwise OR operation"]
+    long or(long n)
+        = new LongNumber(self).or(n);
+
+    [info:"returns the result of bitwise XOR operation"]
+    long xor(long n)
+        = new LongNumber(self).xor(n);
+
 //    [info:"shifts an integer value to the left by a specified number of bits"]
 //    byte shiftLeft(int val)
 //    {
@@ -422,8 +422,8 @@ public sealed const struct ByteNumber : IntBaseNumber
     get byte Inverted()
         = !theValue;
 
-//    [info:"returns the literal presentation"]
-//    string toPrintable() = stringConvertor.convert(self);
+    [info:"returns the literal presentation"]
+    string toPrintable() = stringConvertor.convert(self);
         
     [info:"clones the value"]
     byte clone() = new ByteNumber(self);
@@ -643,15 +643,15 @@ public sealed const struct ShortNumber : IntBaseNumber
     divide(real n)
         = new RealNumber(self).divide(n);
 
-//    and(n)
-//        <= and(cast short(n));
-//        
-//    or(n)
-//        <= divide(cast short(n));
-//        
-//    xor(n)
-//        <= xor(cast short(n));
-//        
+    and(n)
+        <= and(cast short(n));
+        
+    or(n)
+        <= divide(cast short(n));
+        
+    xor(n)
+        <= xor(cast short(n));
+        
 //    short and(BaseVariable v)
 //        <= and(v.Value);
 //        
@@ -660,55 +660,55 @@ public sealed const struct ShortNumber : IntBaseNumber
 //        
 //    short xor(BaseVariable v)
 //        <= xor(v.Value);
-//        
-//    [info:"Returns the result of bitwise AND operation"]
-//    short and(short n)
-//        = theValue && n;
-//
-//    [info:"Returns the result of bitwise OR operation"]
-//    short or(short n)
-//        = theValue || n;
-//
-//    [info:"Returns the result of bitwise XOR operation"]
-//    short xor(short n)
-//        = theValue ^^ n;
-//        
-//    [info:"Returns the result of bitwise AND operation"]
-//    and(byte n)
-//        = self.and(new ShortNumber(n));
-//
-//    [info:"Returns the result of bitwise OR operation"]
-//    or(byte n)
-//        = self.or(new ShortNumber(n));
-//
-//    [info:"Returns the result of bitwise XOR operation"]
-//    xor(byte n)
-//        = self.xor(new ShortNumber(n));
-//        
-//    [info:"Returns the result of bitwise AND operation"]
-//    and(int n)
-//        = new IntNumber(self).and(n);
-//        
-//    [info:"Returns the result of bitwise OR operation"]
-//    or(int n)
-//        = new IntNumber(self).or(n);
-//        
-//    [info:"Returns the result of bitwise XOR operation"]
-//    xor(int n)
-//        = new IntNumber(self).xor(n);
-//        
-//    [info:"Returns the result of bitwise AND operation"]
-//    and(long n)
-//        = new LongNumber(self).and(n);
-//        
-//    [info:"Returns the result of bitwise OR operation"]
-//    or(long n)
-//        = new LongNumber(self).or(n);
-//        
-//    [info:"Returns the result of bitwise XOR operation"]
-//    xor(long n)
-//        = new LongNumber(self).xor(n);
-//
+        
+    [info:"Returns the result of bitwise AND operation"]
+    short and(short n)
+        = theValue && n;
+
+    [info:"Returns the result of bitwise OR operation"]
+    short or(short n)
+        = theValue || n;
+
+    [info:"Returns the result of bitwise XOR operation"]
+    short xor(short n)
+        = theValue ^^ n;
+        
+    [info:"Returns the result of bitwise AND operation"]
+    and(byte n)
+        = self.and(new ShortNumber(n));
+
+    [info:"Returns the result of bitwise OR operation"]
+    or(byte n)
+        = self.or(new ShortNumber(n));
+
+    [info:"Returns the result of bitwise XOR operation"]
+    xor(byte n)
+        = self.xor(new ShortNumber(n));
+        
+    [info:"Returns the result of bitwise AND operation"]
+    and(int n)
+        = new IntNumber(self).and(n);
+        
+    [info:"Returns the result of bitwise OR operation"]
+    or(int n)
+        = new IntNumber(self).or(n);
+        
+    [info:"Returns the result of bitwise XOR operation"]
+    xor(int n)
+        = new IntNumber(self).xor(n);
+        
+    [info:"Returns the result of bitwise AND operation"]
+    and(long n)
+        = new LongNumber(self).and(n);
+        
+    [info:"Returns the result of bitwise OR operation"]
+    or(long n)
+        = new LongNumber(self).or(n);
+        
+    [info:"Returns the result of bitwise XOR operation"]
+    xor(long n)
+        = new LongNumber(self).xor(n);
+
 //    short shiftLeft(int val)
 //    {
 //        ^ theValue $shl val
@@ -726,8 +726,8 @@ public sealed const struct ShortNumber : IntBaseNumber
     get short Negative()
         = 0 - theValue;
 
-//    [info:"Returns the literal presentation"]
-//    string toPrintable() = stringConvertor.convert(self);
+    [info:"Returns the literal presentation"]
+    string toPrintable() = stringConvertor.convert(self);
 
     [info:"Clones the value"]
     short clone() = new ShortNumber(self);
@@ -848,35 +848,35 @@ public sealed const struct IntNumber : IntBaseNumber
     int divide(int n)
         = theValue / n;
 
-//    and(n)
-//        <= and(cast int(n));
-//        
-//    or(n)
-//        <= divide(cast int(n));
-//        
-//    xor(n)
-//        <= xor(cast int(n));
-//        
-//    int and(BaseVariable v)
-//        <= and(v.Value);
-//        
-//    int or(BaseVariable v)
-//        <= or(v.Value);
-//        
-//    int xor(BaseVariable v)
-//        <= xor(v.Value);
-//        
-//    [info:"Returns the result of bitwise AND operation"]
-//    int and(int n)
-//        = theValue && n;
-//
-//    [info:"Returns the result of bitwise OR operation"]
-//    int or(int n)
-//        = theValue || n;
-//
-//    [info:"Returns the result of bitwise XOR operation"]
-//    int xor(int n)
-//        = theValue ^^ n;
+    and(n)
+        <= and(cast int(n));
+        
+    or(n)
+        <= divide(cast int(n));
+        
+    xor(n)
+        <= xor(cast int(n));
+        
+    int and(BaseVariable v)
+        <= and(v.Value);
+        
+    int or(BaseVariable v)
+        <= or(v.Value);
+        
+    int xor(BaseVariable v)
+        <= xor(v.Value);
+        
+    [info:"Returns the result of bitwise AND operation"]
+    int and(int n)
+        = theValue && n;
+
+    [info:"Returns the result of bitwise OR operation"]
+    int or(int n)
+        = theValue || n;
+
+    [info:"Returns the result of bitwise XOR operation"]
+    int xor(int n)
+        = theValue ^^ n;
 
     [info:"Compares the integer value"]
     bool equal(short value)
@@ -890,7 +890,7 @@ public sealed const struct IntNumber : IntBaseNumber
     bool equal(long n)
         = new LongNumber(self).equal(n);
 
-//    [info:"Compares the integer value"]
+    [info:"Compares the integer value"]
     bool equal(real n)
         = new RealNumber(self).equal(n);
 
@@ -974,52 +974,45 @@ public sealed const struct IntNumber : IntBaseNumber
     real divide(real n)
         = new RealNumber(self).divide(n);
 
-//    [info:"Returns the result of bitwise AND operation"]
-//    and(short n)
-//        = self.and(new IntNumber(n));
-//
-//    [info:"Returns the result of bitwise AND operation"]
-//    and(byte n)
-//        = self.and(new IntNumber(n));
-//
-//    [info:"Returns the result of bitwise AND operation"]
-//    and(long n)
-//        = new LongNumber(self).and(n);
-//
-//    [info:"Returns the result of bitwise OR operation"]
-//    or(short n)
-//        = self.or(new IntNumber(n));
-//
-//    [info:"Returns the result of bitwise OR operation"]
-//    or(byte n)
-//        = self.or(new IntNumber(n));
-//
-//    [info:"Returns the result of bitwise OR operation"]
-//    or(long n)
-//        = new LongNumber(self).or(n);
-//
-//    [info:"Returns the result of bitwise XOR operation"]
-//    xor(short n)
-//        = self.xor(new IntNumber(n));
-//
-//    [info:"Returns the result of bitwise XOR operation"]
-//    xor(byte n)
-//        = self.xor(new IntNumber(n));
-//
-//    [info:"Returns the result of bitwise XOR operation"]
-//    xor(long n)
-//        = new LongNumber(self).xor(n);
-//
-//    [info:"Returns the literal presentation"]
-//    string toPrintable()
-//    {
-//        byte buffer[12];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(self, 10, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)        
-//    }
+    [info:"Returns the result of bitwise AND operation"]
+    and(short n)
+        = self.and(new IntNumber(n));
+
+    [info:"Returns the result of bitwise AND operation"]
+    and(byte n)
+        = self.and(new IntNumber(n));
+
+    [info:"Returns the result of bitwise AND operation"]
+    and(long n)
+        = new LongNumber(self).and(n);
+
+    [info:"Returns the result of bitwise OR operation"]
+    or(short n)
+        = self.or(new IntNumber(n));
+
+    [info:"Returns the result of bitwise OR operation"]
+    or(byte n)
+        = self.or(new IntNumber(n));
+
+    [info:"Returns the result of bitwise OR operation"]
+    or(long n)
+        = new LongNumber(self).or(n);
+
+    [info:"Returns the result of bitwise XOR operation"]
+    xor(short n)
+        = self.xor(new IntNumber(n));
+
+    [info:"Returns the result of bitwise XOR operation"]
+    xor(byte n)
+        = self.xor(new IntNumber(n));
+
+    [info:"Returns the result of bitwise XOR operation"]
+    xor(long n)
+        = new LongNumber(self).xor(n);
+
+    [info:"Returns the literal presentation"]
+    string toPrintable()
+        = stringConvertor.convert(self);
 
     [info:"Clones the value"]
     int clone() = new IntNumber(self);
@@ -1533,15 +1526,15 @@ public sealed const struct LongNumber : IntBaseNumber
     long divide(long n)
         = theValue / n;
 
-//    and(n)
-//        <= and(cast long(n));
-//        
-//    or(n)
-//        <= divide(cast long(n));
-//        
-//    xor(n)
-//        <= xor(cast long(n));
-//        
+    and(n)
+        <= and(cast long(n));
+        
+    or(n)
+        <= divide(cast long(n));
+        
+    xor(n)
+        <= xor(cast long(n));
+        
 //    long and(BaseVariable v)
 //        <= and(v.Value);
 //        
@@ -1659,44 +1652,44 @@ public sealed const struct LongNumber : IntBaseNumber
     divide(real n)
         = new RealNumber(self).divide(n);
         
-//    [info:"Returns the result of bitwise AND operation"]
-//    and(int n)
-//        = self.and(new LongNumber(n));
-//
-//    [info:"Returns the result of bitwise AND operation"]
-//    and(short n)
-//        = self.and(new LongNumber(n));
-//
-//    [info:"Returns the result of bitwise AND operation"]
-//    and(byte n)
-//        = self.and(new LongNumber(n));
-//
-//    [info:"Returns the result of bitwise OR operation"]
-//    or(int n)
-//        = self.or(new LongNumber(n));
-//
-//    [info:"Returns the result of bitwise OR operation"]
-//    or(short n)
-//        = self.or(new LongNumber(n));
-//
-//    [info:"Returns the result of bitwise OR operation"]
-//    or(byte n)
-//        = self.or(new LongNumber(n));  
-//
-//    [info:"Returns the result of bitwise XOR operation"]
-//    xor(int n)
-//        = self.xor(new LongNumber(n));
-//
-//    [info:"Returns the result of bitwise XOR operation"]
-//    xor(short n)
-//        = self.xor(new LongNumber(n));
-//
-//    [info:"Returns the result of bitwise XOR operation"]
-//    xor(byte n)
-//        = self.xor(new LongNumber(n));
-//
-//    [info:"Returns the literal presentation"]
-//    string toPrintable() = stringConvertor.convert(self);
+    [info:"Returns the result of bitwise AND operation"]
+    and(int n)
+        = self.and(new LongNumber(n));
+
+    [info:"Returns the result of bitwise AND operation"]
+    and(short n)
+        = self.and(new LongNumber(n));
+
+    [info:"Returns the result of bitwise AND operation"]
+    and(byte n)
+        = self.and(new LongNumber(n));
+
+    [info:"Returns the result of bitwise OR operation"]
+    or(int n)
+        = self.or(new LongNumber(n));
+
+    [info:"Returns the result of bitwise OR operation"]
+    or(short n)
+        = self.or(new LongNumber(n));
+
+    [info:"Returns the result of bitwise OR operation"]
+    or(byte n)
+        = self.or(new LongNumber(n));  
+
+    [info:"Returns the result of bitwise XOR operation"]
+    xor(int n)
+        = self.xor(new LongNumber(n));
+
+    [info:"Returns the result of bitwise XOR operation"]
+    xor(short n)
+        = self.xor(new LongNumber(n));
+
+    [info:"Returns the result of bitwise XOR operation"]
+    xor(byte n)
+        = self.xor(new LongNumber(n));
+
+    [info:"Returns the literal presentation"]
+    string toPrintable() = stringConvertor.convert(self);
 
     [info:"Clones the value"]
     long clone() = new LongNumber(self);

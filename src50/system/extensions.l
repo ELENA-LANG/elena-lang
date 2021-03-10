@@ -1511,8 +1511,8 @@ public extension objectOp
 
 // --- byteArrayHelper ---
 
-public extension byteArrayHelper : Array<byte>
-{
+//public extension byteArrayHelper : Array<byte>
+//{
     /// Reads a short integer value at the specified position and saves it into an output variable
 //    read(int index, ref short retVal)
 //        => intern system'core_routines'__bytearray;
@@ -1577,7 +1577,7 @@ public extension byteArrayHelper : Array<byte>
 //            i := i + 1
 //        }
 //    }
-}
+//}
 
 // --- charArrayHelper ---
 

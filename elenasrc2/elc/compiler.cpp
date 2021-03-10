@@ -1958,7 +1958,7 @@ ObjectInfo Compiler :: compileSwitchExpression(SyntaxWriter& writer, SNode node,
       arguments.add(roperand);
 
       writer.newNode(lxExpression);
-      ObjectInfo operationInfo = compileOperation(writer, current, scope, operator_id, loperand, &arguments, false);
+      ObjectInfo operationInfo = compileOperation(writer, current, scope, operator_id, loperand, &arguments, false, false);
 
       ObjectInfo retVal;
       compileBranchingOp(writer, blockNode, scope, HINT_SWITCH, IF_OPERATOR_ID, operationInfo, retVal, EAttr::eaNone, nullptr);
@@ -2917,16 +2917,28 @@ inline bool IsArrExprOperator(int operator_id, LexicalType type)
 }
 
 ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
-   ArgumentsInfo* arguments/*, ObjectInfo roperand2, EAttr mode*/, bool assignMode)
+   ArgumentsInfo* arguments, bool assignMode, bool shortCircuitMode)
 {
+   writer.newNode(lxExpression);
+   SNode opNode = writer.CurrentNode();
+
    ObjectInfo roperand;
    pos_t argCount = 1;
-   if (arguments) {
-      argCount += arguments->Length();
-      roperand = (*arguments)[0];
+   if (shortCircuitMode) {
+      argCount++;
+
+      writeTerminal(writer, loperand, scope);
+
+      roperand = compileExpression(writer, node.findChild(lxExpression), scope, 0, EAttr::eaNone, nullptr);
    }
-   // assuming fake second operand for unary operation to reuse existing code
-   else roperand = ObjectInfo(okObject, 0, V_OBJECT);
+   else {
+      if (arguments) {
+         argCount += arguments->Length();
+         roperand = (*arguments)[0];
+      }
+      // assuming fake second operand for unary operation to reuse existing code
+      else roperand = ObjectInfo(okObject, 0, V_OBJECT);
+   }
 
    ObjectInfo retVal;
    if (loperand.kind == okIntConstant && roperand.kind == okIntConstant) {
@@ -2978,18 +2990,16 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
 //      if (operator_id == LEN_OPERATOR_ID)
 //         opElementRef = roperand.element;
 
-      writer.newNode(lxExpression);
-      SNode opNode = writer.CurrentNode();
-      writeTerminal(writer, loperand, scope);
-      if (arguments != nullptr) {
-         for (unsigned int i = 0; i < arguments->Length(); i++) {
-            writeTerminal(writer, (*arguments)[i], scope);
+      if (!shortCircuitMode) {
+         writeTerminal(writer, loperand, scope);
+         if (arguments != nullptr) {
+            for (unsigned int i = 0; i < arguments->Length(); i++) {
+               writeTerminal(writer, (*arguments)[i], scope);
+            }
          }
+         // add a second argument for an unary operation to reuse existing code
+         else writer.appendNode(lxNil);
       }
-      // add a second argument for an unary operation to reuse existing code
-      else writer.appendNode(lxNil);
-
-      writer.closeNode();
 
       if (assignMode) {
          opNode.set((LexicalType)operationType, operator_id);
@@ -3002,17 +3012,13 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       if (IsArrExprOperator(operator_id, (LexicalType)operationType)) {
          // inject to target for array operation
          opNode.appendNode(lxLocalAddress, retVal.param);
-//
-//         node.injectAndReplaceNode(lxSeqExpression);
-//
-//         SNode valExpr = node.appendNode(lxBoxableExpression);
-//         valExpr.appendNode(lxLocalAddress, retVal.param);
-//         appendBoxingInfo(valExpr, scope, retVal, EAttrs::test(mode, HINT_NOUNBOXING),
-//            0, resolveObjectReference(scope, retVal, false));
       }
    }
    // if not, replace with appropriate method call
    else {
+      if (shortCircuitMode)
+         arguments->add(saveToTempLocal(writer, scope, roperand));
+
       EAttr operationMode = HINT_NODEBUGINFO;
       ref_t implicitSignatureRef = arguments ? resolveStrongArgument(scope, arguments) : 0;
 
@@ -3030,11 +3036,13 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       retVal = compileMessage(writer, node, scope, loperand, messageRef, arguments, operationMode, stackSafeAttr, 0, nullptr);
    }
 
+   writer.closeNode();
+
    return retVal;
 }
 
 ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, 
-   int operator_id, bool assingMode)
+   int operator_id, bool assingMode, bool shortCircuitMode)
 {
    SNode lnode = node.firstChild();
    SNode rnode = lnode.nextNode(lxObjectMask);
@@ -3050,25 +3058,14 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       return compileMessageReference(writer, lnode, rnode, scope);
    }
 
-   ObjectInfo roperand = compileExpression(writer, rnode, scope, 0, HINT_PARAMETER, nullptr);
-
-//   ObjectInfo retVal(okObject);
-//   int argCount = 2;
-//
-//   ObjectInfo roperand;
-//   ObjectInfo roperand2;
-//   SNode roperandNode = node;
-//   else {
-//      if (test(roperandNode.type, lxTerminalMask)) {
-//         roperand = mapTerminal(roperandNode, scope, EAttr::eaNone);
-//      }
-//      else roperand = compileExpression(roperandNode, scope, 0, EAttr::eaNone);
-//   }
-
    ArgumentsInfo arguments;
-   arguments.add(roperand);
+   if (!shortCircuitMode) {
+      ObjectInfo roperand = compileExpression(writer, rnode, scope, 0, HINT_PARAMETER, nullptr);
 
-   return compileOperation(writer, node, scope, operator_id, loperand, &arguments/*, mode*/, assingMode);
+      arguments.add(roperand);
+   }
+
+   return compileOperation(writer, node, scope, operator_id, loperand, &arguments/*, mode*/, assingMode, shortCircuitMode);
 }
 
 ObjectInfo Compiler :: compileUnaryOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id)
@@ -3078,20 +3075,7 @@ ObjectInfo Compiler :: compileUnaryOperation(SyntaxWriter& writer, SNode node, E
    EAttrs objMode(mode | HINT_TARGET/*, HINT_PROP_MODE*/);
    ObjectInfo loperand = compileExpression(writer, lnode, scope, 0, objMode, nullptr);
 
-   //   ObjectInfo retVal(okObject);
-   //   int argCount = 2;
-   //
-   //   ObjectInfo roperand;
-   //   ObjectInfo roperand2;
-   //   SNode roperandNode = node;
-   //   else {
-   //      if (test(roperandNode.type, lxTerminalMask)) {
-   //         roperand = mapTerminal(roperandNode, scope, EAttr::eaNone);
-   //      }
-   //      else roperand = compileExpression(roperandNode, scope, 0, EAttr::eaNone);
-   //   }
-
-   return compileOperation(writer, node, scope, operator_id, loperand, nullptr/*, mode*/, false);
+   return compileOperation(writer, node, scope, operator_id, loperand, nullptr, false, false);
 }
 
 inline ident_t __fastcall resolveOperatorName(SNode node)
@@ -3131,16 +3115,19 @@ ObjectInfo Compiler :: compileOperationExpression(SyntaxWriter& writer, SNode no
       case ISNIL_OPERATOR_ID:
          return compileIsNilOperator(writer, node, scope);
       case APPEND_OPERATOR_ID:
-         return compileOperation(writer, node, scope, mode, ADD_OPERATOR_ID, true);
+         return compileOperation(writer, node, scope, mode, ADD_OPERATOR_ID, true, false);
       case REDUCE_OPERATOR_ID:
-         return compileOperation(writer, node, scope, mode, SUB_OPERATOR_ID, true);
+         return compileOperation(writer, node, scope, mode, SUB_OPERATOR_ID, true, false);
       case INCREASE_OPERATOR_ID:
-         return compileOperation(writer, node, scope, mode, MUL_OPERATOR_ID, true);
+         return compileOperation(writer, node, scope, mode, MUL_OPERATOR_ID, true, false);
       case SEPARATE_OPERATOR_ID:
          node.setArgument(DIV_OPERATOR_ID);
-         return compileOperation(writer, node, scope, mode, DIV_OPERATOR_ID, true);
+         return compileOperation(writer, node, scope, mode, DIV_OPERATOR_ID, true, false);
+      case AND_OPERATOR_ID:
+      case OR_OPERATOR_ID:
+         return compileOperation(writer, node, scope, mode, operator_id, false, true);
       default:
-         return compileOperation(writer, node, scope, mode, operator_id, false);
+         return compileOperation(writer, node, scope, mode, operator_id, false, false);
    }
 }
 
@@ -4780,7 +4767,7 @@ ObjectInfo Compiler :: compileArrAssigning(SyntaxWriter& writer, SNode node, Exp
    arguments.add(roperand);
    arguments.add(roperand2);
 
-   return compileOperation(writer, node, scope, SET_REFER_OPERATOR_ID, loperand, &arguments/*, mode*/, false);
+   return compileOperation(writer, node, scope, SET_REFER_OPERATOR_ID, loperand, &arguments, false, false);
 }
 
 ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode)
@@ -6618,7 +6605,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
 
             return compileObject(writer, node.firstChild(lxTerminalMask), scope, mode, preservedArgs);
          }
-         return compileOperation(writer, node, scope, mode, REFER_OPERATOR_ID, false);
+         return compileOperation(writer, node, scope, mode, REFER_OPERATOR_ID, false, false);
          break;
       }
       case lxNestedExpression:

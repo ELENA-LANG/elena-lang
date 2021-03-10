@@ -1115,9 +1115,9 @@ private:
    ObjectInfo saveToTempLocal(SyntaxWriter& writer, ExprScope& scope, ObjectInfo retVal);
 
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
-      ArgumentsInfo* arguments/*, ObjectInfo roperand2, EAttr mode*/, bool assignMode);
+      ArgumentsInfo* arguments, bool assignMode, bool shortCircuitMode);
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id, 
-      bool assingMode);
+      bool assingMode, bool shortCircuitMode);
    ObjectInfo compileUnaryOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
    ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileUnaryExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);

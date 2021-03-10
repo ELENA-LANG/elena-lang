@@ -54,18 +54,18 @@ public interface BoolValue
     
 //        [info:"always returns trueVal."]
 //        iif(object trueVal, object falseVal) = trueVal;
-//        
-//        [info:"executes logical OR operation;<br/>Always return true"]
-//        bool or(expr) = this self;
-//    
-//        [info:"executes logical AND operation."]
-//        bool and(expr) = expr;
-//    
-//        [info:"executes logical XOR operation."]
-//        bool xor(expr)
-//        {
-//            cast bool(expr) ? { ^ BoolValue.false };
-//        }
+        
+        [info:"executes logical OR operation;<br/>Always return true"]
+        bool or(expr) = this self;
+    
+        [info:"executes logical AND operation."]
+        bool and(expr) = expr;
+    
+        [info:"executes logical XOR operation."]
+        bool xor(expr)
+        {
+            cast bool(expr) ? { ^ BoolValue.false };
+        }
     
         [info:"determines whether the specified object is equal to the current object boolean value."]
         bool equal(bool b) = b;
@@ -94,20 +94,20 @@ public interface BoolValue
     
 //        [info:"always returns falseVal."]
 //        iif(object trueVal, object falseVal) = falseVal;
-//    
-//        [info:"executes logical OR operation"]
-//        bool or(expr) = expr;
-//    
-//        [info:"executes logical AND operation;<br/>Always return false"]
-//        bool and(expr) = this self;
-//    
-//        [info:"executes logical XOR operation"]
-//        bool xor(expr)
-//        {
-//            cast bool(expr) ? { ^ BoolValue.true };
-//            
-//            ^ this self
-//        }
+    
+        [info:"executes logical OR operation"]
+        bool or(expr) = expr;
+    
+        [info:"executes logical AND operation;<br/>Always return false"]
+        bool and(expr) = this self;
+    
+        [info:"executes logical XOR operation"]
+        bool xor(expr)
+        {
+            cast bool(expr) ? { ^ BoolValue.true };
+            
+            ^ this self
+        }
     
         [info:"determines whether the specified object is equal to the current object boolean value"]
         bool equal(bool f)
@@ -139,15 +139,15 @@ public interface BoolValue
 
 //    [info:"returns trueVal if the value is true or falseVal otherwise;<br/>has to be implemented"]
 //    abstract iif(object trueVal, object falseVal);
-//
-//    [info:"executes logical OR operation<;br/>has to be implemented"]
-//    abstract bool or(expr);
-//
-//    [info:"executes logical AND operation;<br/>has to be implemented"]
-//    abstract bool and(expr);
-//
-//    [info:"executes logical XOR operation;<br/>has to be implemented"]
-//    abstract bool xor(expr);
+
+    [info:"executes logical OR operation<;br/>has to be implemented"]
+    abstract bool or(expr);
+
+    [info:"executes logical AND operation;<br/>has to be implemented"]
+    abstract bool and(expr);
+
+    [info:"executes logical XOR operation;<br/>has to be implemented"]
+    abstract bool xor(expr);
 
     [info:"inverts the value;<br/>has to be implemented"]
     get abstract bool Inverted();
