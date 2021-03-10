@@ -43,19 +43,6 @@ multySelectTest()
     console.writeLine("done")        
 }
 
-//////// --- OuterFieldTest ---
-//////
-//////#symbol OuterFieldTest =
-//////[
-//////    #var(int) i := 0.
-//////    
-//////    { eval : n [ i := n. ] } eval:3.
-//////    
-//////    (i == 3)
-//////        ? [ console writeLine:"OuterFieldTest works!!!". ]
-//////        ! [ console writeLine:"OuterFieldTest fails!!!". ].
-//////].
-
 // --- enumTest ---
 
 enumTest()
@@ -487,97 +474,6 @@ textBufferTest()
 
     console.writeLine("done");
 }
-
-////////// --- GetPropertyTest ---
-////////
-////////#symbol GetPropertyAgent =
-////////{
-////////    eval : aGetProperty
-////////    [
-////////        #var n := aGetProperty property.
-////////        
-////////        2 == aGetProperty property
-////////            ? [ console writeLine:"GetProperty works!". ]
-////////            ! [ console writeLine:"!! GetProperty does not work !!". ]
-////////    ]
-////////}.
-////////
-////////#symbol GetPropertyTest =
-////////[
-////////    GetPropertyAgent eval:%property[2].
-////////].
-////
-//////// --- ClassWithGeneric ---
-//////
-//////#class ClassWithGeneric
-//////{
-//////    #field theExtension.
-//////    
-//////    #constructor new : anExtension
-//////    [
-//////        theExtension := anExtension.
-//////    ]
-//////    
-//////    #method x = 2.
-//////    
-//////    #method(generic)get
-//////    [
-//////        ^ $nil.
-//////    ]
-//////    
-//////    #method => theExtension.
-//////}
-//////
-//////// --- GenericMethodTest --
-//////
-//////#symbol GenericMethodTest =
-//////[
-//////    #var o := ClassWithGeneric new:2.
-//////    
-//////    #var x := o x.
-//////    #var y := o y.
-//////    
-//////    #var s := o add:3.
-//////].
-//////
-//////#symbol ByRefTest =
-//////[
-//////    #var a := 2.
-//////    #var b := "hello".
-//////    
-//////    BoxerHelper new exchange &ref:a &ref:b.
-//////    
-//////    ((a == "hello")and:(b == 2))
-//////        ? [ console writeLine:"ByRef routine works". ].
-//////].
-//////
-//////#class Parent
-//////{
-//////    #method print
-//////    [
-//////        console writeLine:"Super works".
-//////    ]
-//////}
-//////
-//////#class Child :: Parent
-//////{
-//////    #method print
-//////    [
-//////        console writeLine:"Super does not work".
-//////    ]
-//////    
-//////    #method test
-//////    [
-//////        $super print.
-//////    ]
-//////}
-//////
-//////#symbol SuperTest =
-//////[
-//////    #var o := Child new.
-//////    
-//////    o test.
-//////].
 
 nestedFieldsTest()
 {

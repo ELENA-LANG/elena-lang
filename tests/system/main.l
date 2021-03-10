@@ -24,10 +24,6 @@ public program()
     convertorTest();
     arrayTest();
     exceptionTest();
-////    OuterFieldTest eval.
-////    GenericMethodTest eval.
-////    ByRefTest eval.
-////    SuperTest eval.
 
     nestedFieldsTest();
     shortCircuitBooleanOperation();
