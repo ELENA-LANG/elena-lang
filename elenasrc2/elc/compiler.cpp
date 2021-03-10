@@ -6000,13 +6000,6 @@ ObjectInfo Compiler :: compileRootExpression(SyntaxWriter& writer, SNode node, C
 //         }
 //         else throw InternalError("Not yet implemented"); // !! temporal
 //         break;
-//      case okOuterField:
-//      case okOuterReadOnlyField:
-//         terminal.set(lxFieldExpression, 0);
-//         terminal.appendNode(lxSelfLocal, 1);
-//         terminal.appendNode(lxField, object.param);
-//         terminal.appendNode(lxField, object.extraparam);
-//         break;
 ////      case okOuterStaticField:
 ////         writer.newNode(lxFieldExpression, 0);
 ////         writer.newNode(lxFieldExpression, 0);
@@ -6347,6 +6340,13 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
          writer.newNode(lxFieldExpression, 0);
          writer.appendNode(lxSelfLocal, 1);
          writer.appendNode(lxField, object.param);
+         break;
+      case okOuterField:
+      case okOuterReadOnlyField:
+         writer.newNode(lxFieldExpression, 0);
+         writer.appendNode(lxSelfLocal, 1);
+         writer.appendNode(lxField, object.param);
+         writer.appendNode(lxField, object.extraparam);
          break;
       case okLiteralConstant:
          writer.newNode(lxConstantString, object.param);
@@ -7696,7 +7696,12 @@ void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, Cod
 
          writer.newNode(lxSeqExpression);
 
-         SNode exprNode = node.firstChild(lxObjectMask);
+         SNode targetNode = node.firstChild();
+         if (target.kind == okUnknown)
+            // HOTFIX : if it was not recognized
+            target = compileObject(writer, targetNode, exprScope, HINT_TARGET, nullptr);
+
+         SNode exprNode = targetNode.nextNode(lxObjectMask);
 
          ArgumentsInfo arguments;
          EAttr mode = EAttr::eaNone;
