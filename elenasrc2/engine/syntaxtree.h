@@ -207,6 +207,8 @@ enum LexicalType
    lxSwitchExpression         = 0x031490,
    lxSwitching                = 0x031491,
    lxOption                   = 0x031492,
+   lxCollectionOp             = 0x4314A0,
+   lxCollectionExpression     = 0x0314A0,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file

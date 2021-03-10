@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "sg.h"
@@ -31,7 +31,7 @@ int _registerSymbol(ParserTable& table, ident_t symbol, int new_id)
       if (!test(id, mskTraceble)) {
          if (last_id < (id & ~mskAnySymbolMask)) last_id = id & ~mskAnySymbolMask;
 
-         if (last_id >= mskTraceble) {
+         if (last_id >= (mskTraceble - 1)) {
             printLine("WARNING: symbol id is overflown %d", last_id);
          }
       }

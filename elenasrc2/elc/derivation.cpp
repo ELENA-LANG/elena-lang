@@ -565,7 +565,7 @@ void DerivationWriter :: declareStatement(SNode node, ScopeType templateType)
 
    templateWriter.closeNode();
 
-   SNode nameTerminal = args.firstChild(lxTerminalMask);
+   SNode nameTerminal = args != lxNone ? args.firstChild(lxTerminalMask) : token.firstChild(lxTerminalMask);
    IdentifierString name(nameTerminal.identifier().c_str());
    // COMPILER MAGIC : if it is complex code template
    SNode subNameNode = node.findChild(lxBaseDecl);
@@ -1700,9 +1700,11 @@ void DerivationWriter :: flushStatement(SyntaxWriter& writer, SNode& node, Scope
 
    SNode token;
    SNode current = node.firstChild();
-   if (current == lxMessageExpression) {
-      token = current.firstChild();
+   if (current != lxMessageExpression) {
+      token = current;
+      current = current.nextNode();
    }
+   else token = current.firstChild();
 
    templateName.copy(token.firstChild(lxTerminalMask).identifier());
 

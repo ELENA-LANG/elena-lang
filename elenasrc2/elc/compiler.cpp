@@ -5294,79 +5294,78 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, ExprScop
 //
 //   return constant;
 //}
-//
-//ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode)
-//{
-//   if (target.reference == V_OBJARRAY) {
-//      target.reference = resolvePrimitiveArray(scope, scope.moduleScope->arrayTemplateReference, target.element, false);
-//   }
-//   else if (target.kind == okClass) {
-//      // HOTFIX : class class reference should be turned into class one
-//      IdentifierString className(scope.module->resolveReference(target.reference));
-//      className.cut(getlength(className) - getlength(CLASSCLASS_POSTFIX), getlength(CLASSCLASS_POSTFIX));
-//
-//      target.reference = scope.moduleScope->mapFullReference(className);
-//   }
-//   else scope.raiseError(errInvalidOperation, node);
-//
-//   int counter = 0;
-//   int size = _logic->defineStructSize(*scope.moduleScope, target.reference, 0);
-//
-//   // HOTFIX : comment out idle symbol
-//   SNode dummyNode = node.prevNode(lxObjectMask);
-//   if (dummyNode != lxNone)
-//      dummyNode = lxIdle;
-//
-//   node.set(lxInitializing, 0);
-//
-//   // all collection memebers should be created before the collection itself
-//   SNode current = node.findChild(lxExpression);
-//   int index = 0;
-//   while (current != lxNone) {
-//      current.injectAndReplaceNode(lxMember, index++);
-//
-//      SNode memberNode = current.firstChild();
-//      compileExpression(memberNode, scope, target.element, EAttr::eaNone);
-//      analizeOperand(memberNode, scope, true, true, true);
-//
-//      current = current.nextNode();
-//      counter++;
-//   }
-//
-//   target.kind = okObject;
-//   if (size < 0) {
-//      SNode op = node.insertNode(lxCreatingStruct, counter * (-size));
-//      op.appendNode(lxType, target.reference);
-//      op.appendNode(lxSize, -size);
-//      //      writer.appendNode(lxSize);
-//      //      writer.inject(lxStruct, counter * (-size));
-//   }
-//   else {
-//      if (EAttrs::test(mode, HINT_CONSTEXPR) && isConstantList(node)) {
-//         ref_t reference = 0;
-//         SymbolScope* owner = (SymbolScope*)scope.getScope(Scope::ScopeLevel::slSymbol);
-//         if (owner) {
-//            reference = mapConstant(scope.moduleScope, owner->reference);
-//         }
-//         else reference = scope.moduleScope->mapAnonymous();
-//
-//         node = lxConstantList;
-//         node.setArgument(reference | mskConstArray);
-//         node.appendNode(lxType, target.reference);
-//
-//         _writer.generateConstantList(node, scope.module, reference);
-//
-//         target.kind = okArrayConst;
-//         target.param = reference;
-//      }
-//      else {
-//         SNode op = node.insertNode(lxCreatingClass, counter);
-//         op.appendNode(lxType, target.reference);
-//      }
-//   }
-//
-//   return target;
-//}
+
+ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, ExprScope& scope/*, ObjectInfo target, EAttr mode*/)
+{
+   ObjectInfo target;
+
+   ObjectInfo typeInfo = compileObject(writer, node.firstChild(), scope, HINT_TARGET, nullptr);
+   if (typeInfo.kind == okNewOp) {
+      if (typeInfo.reference == V_OBJARRAY) {
+         typeInfo.reference = resolvePrimitiveArray(scope, scope.moduleScope->arrayTemplateReference, typeInfo.element, false);
+      }
+      else scope.raiseError(errInvalidOperation, node);
+   }
+   else scope.raiseError(errInvalidOperation, node);
+
+   int counter = 0;
+   int size = _logic->defineStructSize(*scope.moduleScope, typeInfo.reference, 0);
+
+   ArgumentsInfo members;
+   SNode current = node.firstChild(lxObjectMask);
+   while (current != lxNone) {
+      ObjectInfo member = compileExpression(writer, current, scope, 0, HINT_PARAMETER, nullptr);
+      members.add(member);
+      counter++;
+
+      current = current.nextNode(lxObjectMask);
+   }
+
+   writer.newNode(lxInitializing);
+
+   target.kind = okObject;
+   target.reference = typeInfo.reference;
+   if (size < 0) {
+      writer.newNode(lxCreatingStruct, counter * (-size));
+      writer.appendNode(lxType, target.reference);
+      writer.appendNode(lxSize, -size);
+      writer.closeNode();
+   }
+   else {
+      //      if (EAttrs::test(mode, HINT_CONSTEXPR) && isConstantList(node)) {
+      //         ref_t reference = 0;
+      //         SymbolScope* owner = (SymbolScope*)scope.getScope(Scope::ScopeLevel::slSymbol);
+      //         if (owner) {
+      //            reference = mapConstant(scope.moduleScope, owner->reference);
+      //         }
+      //         else reference = scope.moduleScope->mapAnonymous();
+      //
+      //         node = lxConstantList;
+      //         node.setArgument(reference | mskConstArray);
+      //         node.appendNode(lxType, target.reference);
+      //
+      //         _writer.generateConstantList(node, scope.module, reference);
+      //
+      //         target.kind = okArrayConst;
+      //         target.param = reference;
+      //      }
+      //      else {
+      writer.newNode(lxCreatingClass, counter);
+      writer.appendNode(lxType, target.reference);
+      writer.closeNode();
+      //      }
+   }
+
+   int index = 0;
+   for (int i = 0; i < members.Length(); i++) {
+      writer.newNode(lxMember, index++);
+      writeTerminal(writer, members[i], scope);
+      writer.closeNode();
+   }
+   writer.closeNode();
+
+   return target;
+}
 
 ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode)
 {
@@ -5679,9 +5678,6 @@ ObjectInfo Compiler :: compileNewArrOperation(SyntaxWriter& writer, SNode node, 
 //   SNode current = node.firstChild(lxOperatorMask);
 //
 //   switch (current.type) {
-//      case lxCollection:
-//         objectInfo = compileCollection(current, scope, objectInfo, mode);
-//         break;
 //      case lxMessage:
 //         else if (propMode) {
 //            objectInfo = compilePropAssigning(current, scope, objectInfo);
@@ -6474,9 +6470,6 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode& node, ExprScop
 //   ////   else {
 //   ObjectInfo result;
 //   switch (node.type) {
-//   //   ////         case lxCollection:
-//   //   ////            result = compileCollection(writer, node, scope, ObjectInfo(okObject, 0, V_OBJARRAY, scope.moduleScope->superReference, 0));
-//   //   ////            break;
 //   //   //         case lxCode:
 //   //   //            current = lxCodeExpression;
 //   //   //         case lxType:
@@ -6648,6 +6641,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
       //            scope.setCodeRetStatementFlag(withRetStatement);
          break;
       }
+      case lxCollectionExpression:
+         retVal = compileCollection(writer, node, scope);
+         break;
       default:
          retVal = compileObject(writer, node, scope, mode, preservedArgs);
          break;

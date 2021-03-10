@@ -5,34 +5,6 @@
 import extensions;
 ////#import extensions'dynamic.
 
-//////// --- OpenArgTest ---
-//////
-//////#symbol OpenArgTester =
-//////{
-//////    test : anIndex &args:aParams
-//////        = aParams @ (anIndex int).
-//////
-//////    testParamsCopy &args : aParams
-//////    [
-//////        #var aLength := aParams length.
-//////        
-//////        #var aSecond := aParams@1.
-//////        #var aFirst := $self test:0 &args:aParams.
-//////        
-//////        $self testBoxing:aParams.
-//////    ]
-//////    
-//////    testBoxing : anArray
-//////    [
-//////        #var b := anArray.
-//////    ]    
-//////}.
-//////
-//////#symbol OpenArgTest =
-//////[
-//////    OpenArgTester testParamsCopy &args:(1,"a",3).
-//////].
-
 // --- mssgDispatchTest ---
 
 singleton DispatchTester
@@ -71,37 +43,6 @@ multySelectTest()
     console.writeLine("done")        
 }
 
-//////// --- LocalTest ---
-//////
-//////#symbol LocalTester =
-//////{
-//////    do &int:n
-//////    [
-//////        #var o := n.
-//////    ]
-//////    
-//////    do:n
-//////    [
-//////        #var o := n.
-//////    ]
-//////}.
-//////
-//////#symbol LocalTest =
-//////[
-//////    #var(int)n := 3.    
-//////    n := n + 1.
-//////    
-//////    LocalTester do &int:n.
-//////    
-//////    LocalTester do:(n int).
-//////    
-//////    #var(long)l := 12345678901234566l.
-//////    l := l + 1l.
-//////    
-//////    #var o := n.
-//////    #var o2 := l.
-//////].
-//////
 //////// --- OuterFieldTest ---
 //////
 //////#symbol OuterFieldTest =
@@ -113,59 +54,6 @@ multySelectTest()
 //////    (i == 3)
 //////        ? [ console writeLine:"OuterFieldTest works!!!". ]
 //////        ! [ console writeLine:"OuterFieldTest fails!!!". ].
-//////].
-//////
-//////#symbol BoxingTester =
-//////{
-//////    add : aValue
-//////    [
-//////        ^ aValue.
-//////    ]
-//////    
-//////    #method(stacksafe) add &int:aValue
-//////    [
-//////        ^ aValue.
-//////    ]
-//////}.
-//////
-//////#symbol BoxingTest =
-//////[
-//////    #var n := 2 + 3 * 4.    // here should be all primitive operations and the result should be boxed
-//////    #var n2 := 2 + 3 * n.   // here should be no primitive operations at all.
-//////    
-//////    BoxingTester add:n.
-//////    BoxingTester add:2.
-//////    BoxingTester add &int:(n + 3 * 4).
-//////    BoxingTester add :(2 + 3).
-//////    BoxingTester add :(2 + n).
-//////    
-//////    #var n3 := BoxingTester add &int:(2 + 3 * 4).
-//////    BoxingTester add :(2 + 3 * 4).
-//////    
-//////].
-//////
-//////#symbol DictionaryTest =
-//////[
-//////    #var aList := Dictionary new.
-//////    
-//////    aList @ 1 := "1a".
-//////    aList @ 2 := "2".
-//////    
-//////    aList @ 1 := "1".
-//////    
-//////    #var anN1 := aList @ 1.
-//////    #var anN2 := aList @ 2.
-//////].
-//////
-//////#symbol ListTest =
-//////[
-//////    #var aList := List new append:1 append:2 append:4 append:"abc".
-//////
-//////    #var anArray := aList toArray.
-//////
-//////    #var n1 := aList safeSeek:2.
-//////    #var s := aList safeSeek:"abc".
-//////    #var n2 := aList safeSeek:-1.
 //////].
 
 // --- enumTest ---
@@ -506,49 +394,6 @@ wideTest()
     console.writeLine("done")        
 }
 
-////// --- ArrayTest ---
-//////
-//////#symbol ArrayTest =
-//////[
-//////    #var a1 := Array(1,2,3).
-//////    #var n := a1 @ 1.
-//////
-//////    #var(array) a4 := Array new:3.
-//////    a4 setAt:0:2.
-//////    a4 setAt:1:1.
-//////    a4 setAt:2:3.
-//////    
-//////    #var a2 := Array new:5 set &every: (&index:x) [ IntNumber new:x ].    
-//////    #var n2 := a2 @ 1.
-//////    a2 setAt:1:-1.
-//////    #var n3 := a2 @ 1.
-//////    
-//////    a2 setAt:0:2.
-//////        
-//////    a4 sort: (:aFormer:aNext)[ aFormer < aNext ].
-//////
-//////    a4 getAt:(-1) |
-//////        if &OutOfRangeError: e [ console writeLine:"Negative index is not allowed" ].
-//////
-//////    a4 getAt:3 |
-//////        if &OutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
-//////].
-////
-//////// --- MethodNotFoundTest ---
-//////
-//////symbol MethodNotFoundTest =
-//////[
-//////    var n := 2.
-//////    
-//////    try(n test)
-//////    {
-//////        on(MethodNotFoundException e)
-//////        [
-//////            console printLine(e message," works")
-//////        ]
-//////    }
-//////].
-
 // --- LoopTest ---
 
 loopTest()
@@ -643,22 +488,6 @@ textBufferTest()
     console.writeLine("done");
 }
 
-//////// --- DateTest ---
-//////
-//////#symbol DateTest =
-//////[
-//////    #var aDate := now.
-//////    
-//////    #var aYear := aDate year.
-//////    #var aMonth := aDate month.
-//////    #var aDay := aDate day.
-//////    #var anHour := aDate hour.
-//////    #var aMinute := aDate minute.
-//////    #var aSecond := aDate second.
-//////    
-//////    #var aRetVal := aDate literal.
-//////].
-//////
 ////////// --- GetPropertyTest ---
 ////////
 ////////#symbol GetPropertyAgent =
@@ -677,33 +506,6 @@ textBufferTest()
 ////////[
 ////////    GetPropertyAgent eval:%property[2].
 ////////].
-//////
-//////#symbol StructTest =
-//////[
-//////    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, %"tapeOp.var[]", system'console, %"writeLine[1]")). 
-//////
-//////    #var x := a x.
-//////
-//////    a print:"Struct method works".
-//////].
-////
-//////GroupMember1 =
-//////{
-//////    m1 : prm = "group 1 " + prm.
-//////}.
-//////
-//////GroupMember2 =
-//////{
-//////    m2 : prm : prm2 = "group 2 " + prm.
-//////}.
-//////
-//////GroupTest =
-//////[
-//////    var g := Group::(GroupMember1, GroupMember2).
-//////    
-//////    console printLine(g m1("called")).
-//////    console printLine(g m2("called",2)).
-//////].
 ////
 //////// --- ClassWithGeneric ---
 //////
@@ -736,89 +538,6 @@ textBufferTest()
 //////    #var y := o y.
 //////    
 //////    #var s := o add:3.
-//////].
-//////
-//////#class BaseClass
-//////{
-//////    #field theField1.
-//////                   
-//////    #constructor new [ theField1 := IntNumber new &int:1. ]
-//////}
-//////
-//////#class ChildClass :: BaseClass
-//////{
-//////    #field theField2.
-//////    
-//////    #constructor new <= ( %new ) [ theField2 := IntNumber new &int:2. ]
-//////}
-//////
-//////#symbol ConstructorTest =
-//////[
-//////    #var o := ChildClass new.
-//////].
-//////
-//////#symbol DTOToStructTest =
-//////[
-//////    #var aDTO := { X = 2. Y = 3. Z = 4. }.    
-//////    #var aProperties := MessageArray new &int:10.
-//////
-//////    #var(vint)aLength := 0.
-//////    aDTO readMatchedEntries &mssg:%"get[0]" &int:0 &mssgarray:aProperties &vint:aLength.
-//////
-//////    #var aCopy := DynamicStruct new.
-//////    aProperties top:aLength run &each:(:aSubject)
-//////    [
-//////        #var prop_value := aDTO::aSubject eval.
-//////        #var prop := aSubject subject.
-//////        
-//////        aCopy::prop set:prop_value.
-//////    ].
-//////    
-//////    #var x := aCopy X.
-//////    #var y := aCopy Y.
-//////    #var z := aCopy Z.
-//////].
-//////
-//////#class BoxerHelper
-//////{
-//////    #constructor new []
-//////    
-//////    #method init &vint:aRetVal
-//////    [
-//////        aRetVal := 2.
-//////    ]
-//////    
-//////    #method exchange &ref:anObject1 &ref:anObject2
-//////    [
-//////        #var tmp := anObject1 get.
-//////        anObject1 := anObject2 get.
-//////        anObject2 := tmp.
-//////    ]    
-//////}
-//////
-//////#symbol UnboxTest =
-//////[        
-//////    #var(int)n := 1.
-//////    
-//////    #var o := BoxerHelper new.
-//////    
-//////    o init &vint:n.
-//////            
-//////    (2 == n)
-//////        ? [ console writeLine:"Unboxing parameter works". ].
-////////
-////////    #var(byte:4)a.
-////////
-////////    a@0 := 070h.
-////////    a@1 := 080h.
-////////    a@2 := 0C0h.
-////////    a@3 := 0FFh.
-////////
-////////    #var(int)r.
-////////    a read &int:0 &vint:r.
-////////    
-////////    (0FFC08070h == r)
-////////        ? [ console writeLine:"Unboxing object works". ].
 //////].
 //////
 //////#symbol ByRefTest =
@@ -858,42 +577,6 @@ textBufferTest()
 //////    #var o := Child new.
 //////    
 //////    o test.
-//////].
-//////
-////////#subject(class:TestVar)test_var.
-////////#class(sealed,struct:embeddable) TestVar
-////////{
-////////    #field(type:int)theValue.
-////////    #field(type:int)theValue2.
-////////    
-////////    #constructor(stacksafe,embeddable) new &int:aValue
-////////    [
-////////        theValue := aValue.
-////////        theValue2 := 0.
-////////    ]
-////////}
-////////
-////////#symbol EmbedConstTest =
-////////[
-////////    #var(type:test_var)var := TestVar new &int:2.
-////////].
-//////
-//////#symbol jsonTest =
-//////[
-//////    #var dto := DTO{ X = 2. Y = "Value". }.
-//////    
-//////    #var(literal)json := dto toJson literal.
-//////    
-//////    #var ori := json fromJson.
-//////].
-//////
-//////subExpressionTest =
-//////[
-//////    var a := Array::(2,3).
-//////    var b := Array::(2).
-//////    var c := (2).
-//////    var d := (2,3).
-//////    var e := (1+2)*3.
 //////].
 
 nestedFieldsTest()
@@ -1223,3 +906,25 @@ templateExtensionTest()
     
     console.writeLine("done")    
 }  
+
+// --- ArrayTest ---
+
+arrayTest()
+{
+    console.write("arrayTest..");
+    
+    var a1 := new object[]{1,2,3};
+    Assert.ifTrue(a1[1] == 2);
+
+    Array a4 := Array.allocate(3);
+    a4[0] := 2;
+    a4[1] := 1;
+    a4[2] := 3;
+
+    Assert.ifTrue(a4[0] == 2);
+                            
+    Assert.ifFailed({ "abc"[-1] });
+    Assert.ifFailed({ "abc"[4] });
+
+    console.writeLine("done")    
+}

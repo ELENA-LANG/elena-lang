@@ -1095,7 +1095,7 @@ private:
       ArgumentsInfo* preservedArgs);
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, InlineClassScope& scope, 
       EAttr mode, ArgumentsInfo* preservedArgs);
-//   ObjectInfo compileCollection(SNode objectNode, ExprScope& scope, ObjectInfo target, EAttr mode);
+   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, ExprScope& scope/*, ObjectInfo target, EAttr mode*/);
 
    ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, SNode argNode, ExprScope& scope);
    ObjectInfo compileSubjectReference(SNode objectNode, ExprScope& scope, EAttr mode);

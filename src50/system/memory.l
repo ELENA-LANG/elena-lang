@@ -1334,22 +1334,22 @@ public sealed const struct WideString : BaseValue
 //    bool equal(p)
 //        = self.castValueTo(p).equal(p);
 //}
-//
-//// --- Array ---
-//
-///// An array
-//public sealed Array : Indexable
-//{
-//    __string object[] theArray;
-//    
-//    /// Creates an empty array
-//    constructor MinValue
-//        = new object[](0);
-//    
-//    /// Creates the array with the specified length
-//    constructor allocate(int len)
-//        = new object[](len);
-//
+
+// --- Array ---
+
+/// An array
+public sealed Array //: Indexable
+{
+    __string object[] theArray;
+    
+    /// Creates an empty array
+    constructor MinValue
+        = new object[](0);
+    
+    /// Creates the array with the specified length
+    constructor allocate(int len)
+        = new object[](len);
+
 //    /// Creates a copy of the provided sub array
 //    constructor copy(int index, int length, Array array)
 //        <= allocate(length)
@@ -1375,26 +1375,28 @@ public sealed const struct WideString : BaseValue
 //            
 //        ^ retVal
 //    }
-//
-//    int Length
-//    {
-//        /// Reads the array length into an output parameter
-//        get()
-//        {
-//            intern system'core_routines'__array.readLengthTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
-//
-//    /// Sets the specified array member
-//    setAt(int n, object o)
-//        => intern system'core_routines'__array;
-//
-//    /// Returns the specified array member
-//    object at(int n)
-//        => intern system'core_routines'__array;
-// 
+
+    int Length
+    {
+        /// Reads the array length into an output parameter
+        get()
+        {
+            intern system'core_routines'__array.readLengthTo(self, ref int retVal);
+            
+            ^ retVal
+        }
+    }
+
+    /// Sets the specified array member
+    setAt(int n, object o)
+    {
+        theArray[n] := o
+    }
+
+    /// Returns the specified array member
+    object at(int n)
+        = theArray[n];
+ 
 //    /// Returns the array enumerator
 //    Enumerator enumerator() = new ArrayEnumerator(self);
 //
@@ -1406,7 +1408,7 @@ public sealed const struct WideString : BaseValue
 //    /// Clones the array
 //    Array clone()
 //        = Array.copy(0, self.Length, self);
-//}
+}
 
 // === Convertors ===
 

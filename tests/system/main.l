@@ -22,31 +22,16 @@ public program()
     loopTest();
     actionTest();
     convertorTest();
-//    arrayTest();
-////    OpenArgTest eval.
-////    MethodNotFoundTest eval.
+    arrayTest();
     exceptionTest();
-////    DateTest eval.
-////    ListTest eval.
-////    DictionaryTest eval.
-////    BoxingTest eval.
 ////    OuterFieldTest eval.
-////    LocalTest eval.
-////    StructTest eval.
-////    GroupTest eval.
 ////    GenericMethodTest eval.
-////    ConstructorTest eval.
-////    DTOToStructTest eval.
-////    UnboxTest eval.
 ////    ByRefTest eval.
 ////    SuperTest eval.
-////    //EmbedConstTest eval.
-////    jsonTest eval.
-////    subExpressionTest eval.
 
     nestedFieldsTest();
     shortCircuitBooleanOperation();
-//    variadicTest();
+    variadicTest();
 ////    proberTest().
     nestedTest();
     nestetNestedTest();
