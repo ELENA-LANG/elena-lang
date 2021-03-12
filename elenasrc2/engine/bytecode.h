@@ -47,12 +47,13 @@ enum ByteCode
    bcCount           = 0x1C,
    bcUnhook          = 0x1D,
    bcRSin            = 0x1E,
+   bcAllocD          = 0x1F,
 
    bcRCos            = 0x20,
    bcRArcTan         = 0x21,
    bcPushD           = 0x22,
    bcPopD            = 0x23,
-//   bcXCopy           = 0x24,
+   bcXTrans          = 0x24,
    bcInclude         = 0x25,     // should immediately follow exclude (after callextr)
    bcExclude         = 0x26,   
    bcTryLock         = 0x27,
@@ -195,7 +196,7 @@ enum ByteCode
    bcStoreFI         = 0xC4,
    bcNAddF           = 0xC5,
    bcNMulF           = 0xC6,
-   bcXAllocI         = 0xC7,
+   bcXSetR           = 0xC7,
    bcNSubF           = 0xC8,
    bcNDivF           = 0xC9,
    bcLoadI           = 0xCA,

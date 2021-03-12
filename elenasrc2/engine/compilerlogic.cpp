@@ -1760,9 +1760,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_WRAPPER:
          attributes.include(EAttr::eaRef);
          return true;
-//	  case V_ARGARRAY:
-//         attributes.include(EAttr::eaParams);
-//			return true;
+	  //case V_ARGARRAY:
+   //      attributes.include(EAttr::eaParams);
+			//return true;
      case V_INTERN:
          attributes.include(EAttr::eaIntern);
          return true;

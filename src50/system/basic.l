@@ -1729,53 +1729,53 @@ public sealed const struct RealNumber : BaseNumber
 {
     embeddable __float theValue[8];
 
-    [info:"Returns the minimal value"]
-    static real MinValue
-        = -1.7976931348623157e+308r;
-    
-    [info:"Returns the maximal value"]
-    static real MaxValue
-        = 1.7976931348623157e+308r;
-        
-    [info:"Returns the negative infinity"]
-    static real NegativeInfinity 
-        = -1.0r / 0.0r;
-        
-    [info:"Returns the positive infinity"]
-    static real PositiveInfinity 
-        = 1.0r / 0.0r;
-        
-    [info:"returns the NaN"]
-    static real NaN
-        = 0.0r / 0.0r;
-
-//    static real Pi
-//        = Pi_value;
-
-    constructor(int n)
-        = realConvertor.convert(n);
-            
-    constructor(byte n)
-        = realConvertor.convert(n);
-            
-    constructor(short n)
-        = realConvertor.convert(n);
-            
-    [info:"Creates the object with a default value (0)"]
-    constructor()
-        = 0.0r;
-
-    [info:"Creates the object with specified value"]
-    constructor(real value)
-        = value;
-  
+//    [info:"Returns the minimal value"]
+//    static real MinValue
+//        = -1.7976931348623157e+308r;
+//    
+//    [info:"Returns the maximal value"]
+//    static real MaxValue
+//        = 1.7976931348623157e+308r;
+//        
+//    [info:"Returns the negative infinity"]
+//    static real NegativeInfinity 
+//        = -1.0r / 0.0r;
+//        
+//    [info:"Returns the positive infinity"]
+//    static real PositiveInfinity 
+//        = 1.0r / 0.0r;
+//        
+//    [info:"returns the NaN"]
+//    static real NaN
+//        = 0.0r / 0.0r;
+//
+////    static real Pi
+////        = Pi_value;
+//
+//    constructor(int n)
+//        = realConvertor.convert(n);
+//            
+//    constructor(byte n)
+//        = realConvertor.convert(n);
+//            
+//    constructor(short n)
+//        = realConvertor.convert(n);
+//            
+//    [info:"Creates the object with a default value (0)"]
+//    constructor()
+//        = 0.0r;
+//
 //    [info:"Creates the object with specified value"]
-//    constructor(uint value)
+//    constructor(real value)
+//        = value;
+//  
+////    [info:"Creates the object with specified value"]
+////    constructor(uint value)
+////        = realConvertor.convert(value);
+//
+//    [info:"Creates the object with specified value"]
+//    constructor(long value)
 //        = realConvertor.convert(value);
-
-    [info:"Creates the object with specified value"]
-    constructor(long value)
-        = realConvertor.convert(value);
         
     bool equal(o)
     {

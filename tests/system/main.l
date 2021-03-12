@@ -28,7 +28,6 @@ public program()
     nestedFieldsTest();
     shortCircuitBooleanOperation();
     variadicTest();
-////    proberTest().
     nestedTest();
     nestetNestedTest();
 //    duplicateStructBoxing();

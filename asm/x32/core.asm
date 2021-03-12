@@ -608,6 +608,19 @@ lReduce:
 
 end
 
+// ; allocd
+inline % 1Fh
+
+  mov  ecx, edx
+  mov  edi, edx
+  shl  edi, 2
+  sub  esp, edi
+  xor  eax, eax
+  mov  edi, esp
+  rep  stos
+
+end
+
 // ; rcos
 inline % 20h
 
@@ -626,6 +639,15 @@ inline % 21h
   fld1
   fpatan                  // i.e. arctan(Src/1)
   fstp  qword ptr [ebx]    // store result 
+
+end
+
+// ; xtrans
+inline % 24h
+
+  mov  eax, [esp]
+  mov  ecx, [eax+edx*4]
+  mov  [ebx+edx*4], ecx                                                   
 
 end
 
@@ -2090,6 +2112,13 @@ inline % 0C6h
   mov  eax, [ebp+__arg1]
   imul dword ptr [ebx]
   mov  [ebp+__arg1], eax
+
+end
+
+// ; xsetr
+inline % 0C7h
+            
+   mov  [ebx + edx * 4], __arg1
 
 end
 

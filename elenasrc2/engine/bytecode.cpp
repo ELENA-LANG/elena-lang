@@ -18,9 +18,9 @@ const char* _fnOpcodes[256] =
    "mcount", "push", "pusha", "popa", "xnew", "storev", "bsredirect", "setv",
 
    "not", "open", "pop", "sub", "swapd", "close", "rexp", "quit",
-   "get", "set", "swap", "mquit", "count", "unhook", "rsin", OPCODE_UNKNOWN,
+   "get", "set", "swap", "mquit", "count", "unhook", "rsin", "allocd",
 
-   "rcos", "rarctan", "pushd", "popd", OPCODE_UNKNOWN, "include", "exclude", "trylock",
+   "rcos", "rarctan", "pushd", "popd", "xtrans", "include", "exclude", "trylock",
    "freelock", OPCODE_UNKNOWN, "loadenv", OPCODE_UNKNOWN, "rln", "read", "clone", "xset",
 
    "rabs", "len", "rload", "flag", OPCODE_UNKNOWN, "parent", "class", "mindex",
@@ -50,7 +50,7 @@ const char* _fnOpcodes[256] =
    "pushn", "movn", "pushr", "equalfi", "pushai", "loadf", "pushfi", "loadfi",
    "loadsi", "savef", "pushsi", "savesi", "savefi", "pushf", "pushsip", "reserve",
 
-   "seti", "movfip", "pushfip", "storesi", "storefi", "naddf", "nmulf", "xalloci",
+   "seti", "movfip", "pushfip", "storesi", "storefi", "naddf", "nmulf", "xsetr",
    "nsubf", "ndivf", "loadi", "savei", "storer", "xor", "clonef", "xload",
 
    "freei", "alloci", "xcreate", "movv", "shl", "and", "inc", "or",

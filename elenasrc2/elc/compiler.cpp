@@ -711,10 +711,10 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param, EAttr mode)
 {
    int prefix = functionMode ? 0 : -1;
 
-   /*if (withOpenArg && param.class_ref == V_ARGARRAY) {
+   if (withOpenArg && param.class_ref == V_ARGARRAY) {
       return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref, 0);
    }
-   else*/ if (param.class_ref != 0 && param.size != 0) {
+   else if (param.class_ref != 0 && param.size != 0) {
       // if the parameter may be stack-allocated
       return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, (ref_t)-1);
    }
@@ -7435,9 +7435,8 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
       compileDispatchExpression(writer, dispatchNode, codeScope, withGenericMethods);
    }
    else {
-      dispatchNode = node.appendNode(lxDispatching);
-
-      SNode resendNode = dispatchNode.appendNode(lxResending, 0);
+      writer.newNode(lxDispatching);
+      writer.newNode(lxResending, 0);
 
       // if it is generic handler without redirect statement
       if (withGenericMethods) {
@@ -7445,26 +7444,29 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
          if (withOpenArgGenerics)
             scope.raiseError(errInvalidOperation, node);
 
-         resendNode.appendNode(lxMessage,
+         writer.appendNode(lxMessage,
             encodeMessage(scope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 1, 0));
 
-         resendNode
-            .appendNode(lxCallTarget, scope.moduleScope->superReference)
-            .appendNode(lxMessage, scope.moduleScope->dispatch_message);
+         writer.newNode(lxCallTarget, scope.moduleScope->superReference);
+         writer.appendNode(lxMessage, scope.moduleScope->dispatch_message);
+         writer.closeNode();
       }
       // if it is open arg generic without redirect statement
       else if (withOpenArgGenerics) {
          // HOTFIX : an extension is a special case of a variadic function and a target should be included
          int argCount = !scope.extensionMode && test(scope.message, FUNCTION_MESSAGE) ? 1 : 2;
 
-         resendNode.appendNode(lxMessage, encodeMessage(getAction(scope.moduleScope->dispatch_message),
+         writer.appendNode(lxMessage, encodeMessage(getAction(scope.moduleScope->dispatch_message),
             argCount, VARIADIC_MESSAGE));
 
-         resendNode
-            .appendNode(lxCallTarget, scope.moduleScope->superReference)
-            .appendNode(lxMessage, scope.moduleScope->dispatch_message);
+         writer.newNode(lxCallTarget, scope.moduleScope->superReference);
+         writer.appendNode(lxMessage, scope.moduleScope->dispatch_message);
+         writer.closeNode();
       }
       else throw InternalError("Not yet implemented"); // !! temporal
+
+      writer.closeNode();
+      writer.closeNode();
    }
 
    writer.closeNode();
@@ -8652,27 +8654,25 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
       compileInitializer(writer, node, methodScope);
    }
 
-//   // if the VMT conatains newly defined generic handlers, overrides default one
-//   if (testany(scope.info.header.flags, elWithGenerics | elWithVariadics)
-//      && scope.info.methods.exist(scope.moduleScope->dispatch_message, false))
-//   {
-//      MethodScope methodScope(&scope);
-//      methodScope.message = scope.moduleScope->dispatch_message;
-//
-//      scope.include(methodScope.message);
-//
-//      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
-//
-//      scope.info.header.flags |= elWithCustomDispatcher;
-//
-//      compileDispatcher(methodNode, methodScope,
-//         lxClassMethod,
-//         test(scope.info.header.flags, elWithGenerics),
-//         test(scope.info.header.flags, elWithVariadics));
-//
-//      // overwrite the class info
-//      scope.save();
-//   }
+   // if the VMT conatains newly defined generic handlers, overrides default one
+   if (testany(scope.info.header.flags, elWithGenerics | elWithVariadics)
+      && scope.info.methods.exist(scope.moduleScope->dispatch_message, false))
+   {
+      MethodScope methodScope(&scope);
+      methodScope.message = scope.moduleScope->dispatch_message;
+
+      scope.include(methodScope.message);
+
+      scope.info.header.flags |= elWithCustomDispatcher;
+
+      compileDispatcher(writer, SNode(), methodScope,
+         lxClassMethod,
+         test(scope.info.header.flags, elWithGenerics),
+         test(scope.info.header.flags, elWithVariadics));
+
+      // overwrite the class info
+      scope.save();
+   }
 }
 
 void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope)

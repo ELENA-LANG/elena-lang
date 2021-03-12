@@ -713,23 +713,40 @@ void ByteCodeWriter :: unboxMessage(CommandTape& tape)
 {
    // ; copy the call stack
    // mcount
-   //
-   // pushn  -1
-   // movfip -1
+   // inc     1
+   // allocd
+   // 
+   // movsip  0 
+   // pushfip -1
+   // dec     1
+   // xsetr   -1
+   // ifn     labSkip, 0 
    // labNextParam:
-   // dec 1
-   // push
-   // elsen labNextParam 0
+   // dec     1 
+   // xtrans
+   // elsen   labNextParam, 0
+   // labSkip:
+   // pop
 
    tape.write(bcMCount);
-   tape.write(bcPushN, -1);
-   tape.write(bcMovFIP, -1);
+   tape.write(bcInc, 1);
+   tape.write(bcAllocD);
+
+   tape.write(bcMovSIP, 0);
+   tape.write(bcPushFIP, -1);
+   tape.write(bcDec, 1);
+   tape.write(bcXSetR, -1);
+   tape.newLabel();
+   tape.write(bcIfN, baCurrentLabel, 0);
    tape.newLabel();
    tape.setLabel(true);
    tape.write(bcDec, 1);
-   tape.write(bcPush);
+   tape.write(bcXTrans);
    tape.write(bcElseN, baCurrentLabel, 0);
    tape.releaseLabel();
+
+   tape.setLabel();
+   tape.write(bcPop);
 }
 
 void ByteCodeWriter :: resend(CommandTape& tape)
@@ -2838,7 +2855,7 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node, FlowS
 
    // alloc space for parameters
    int paramCount = saveExternalParameters(tape, node, scope, true);
-   tape.write(bcXAllocI, paramCount);
+   tape.write(bcAllocI, paramCount);
 
    // save function parameters
    paramCount = saveExternalParameters(tape, node, scope, false);
@@ -3076,15 +3093,13 @@ void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node, FlowS
 void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, FlowScope& scope)
 {
    bool functionMode = test(node.argument, FUNCTION_MESSAGE);
-//   bool argUnboxMode = false;
-//   bool openArg = false;
+   bool argUnboxMode = false;
 
    size_t argCount = 0;
+   pos_t  extraArgs = 0;
 
    // analizing a sub tree
    SNode current = node.firstChild(lxObjectMask);
-//   // check if the message target can be used directly
-//   bool isFirstDirect = !isSubOperation(current) && current != lxResult;
    bool directOrder = false;
    while (current != lxNone) {
       if (current == lxResult)
@@ -3099,26 +3114,10 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
       //   generateExpression(tape, argNode, scope);
       //   unboxArgList(tape, argNode.argument != 0);
       //}
-      //else {
-         argCount++;
-
-         //if (isSubOperation(current) || current == lxResult)
-         //   directMode = false;
-      //}
+      /*else */argCount++;
 
       current = current.nextNode(lxObjectMask);
    }
-
-//   if (!argUnboxMode && isOpenArg(node.argument)) {
-//      // NOTE : do not add trailing nil for result of unboxing operation
-//      pushObject(tape, lxStopper, 0, scope, 0);
-//      openArg = true;
-//   }
-//
-//   if ((argCount == 2 && isFirstDirect) || argCount == 1) {
-//      // if message target can be used directly or it has no arguments - direct mode is allowed
-//      directMode = true;
-//   }
 
    // the function target can be loaded at the end
    int startIndex = 0;
@@ -3126,7 +3125,11 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
       startIndex = 1;
    }
 
-   tape.write(bcXAllocI, argCount - startIndex);
+   bool openArg = !argUnboxMode && isOpenArg(node.argument);
+   if (openArg)
+      extraArgs = 1;
+
+   tape.write(bcAllocI, argCount - startIndex + extraArgs);
    
    if (directOrder) {
       for (int i = startIndex; i < argCount; i++) {
@@ -3148,6 +3151,11 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
       }
    }
 
+   if (!argUnboxMode && isOpenArg(node.argument)) {
+      // NOTE : do not add trailing nil for result of unboxing operation
+      tape.write(bcXSaveSI, argCount, -1);
+   }
+
 
    if (functionMode) {
       generateObject(tape, getChild(node, 0), scope);
@@ -3156,17 +3164,10 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
 
    generateCall(tape, node/*, paramCount, presavedCount*/);
 
-   tape.write(bcFreeI, argCount - startIndex);
+   tape.write(bcFreeI, argCount - startIndex + extraArgs);
 
    //   if (argUnboxMode) {
 //      releaseArgList(tape);
-//   }
-//   else if (openArg) {
-//      // clear open argument list, including trailing nil and subtracting normal arguments
-//      if (functionMode) {
-//         releaseStack(tape, argCount - getArgCount(node.argument));
-//      }
-//      else releaseStack(tape, argCount - getArgCount(node.argument) + 1);
 //   }
 
    scope.clear();
@@ -3989,15 +3990,14 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
          tape.write(bcAllocI, 1);
 
          tape.write(bcSaveF, -4);
-         tape.write(bcSaveFI, -1);
+         tape.write(bcStoreFI, 1);
 
          unboxMessage(tape);
          changeMessageCounter(tape, -4, 2, VARIADIC_MESSAGE);
-         loadObject(tape, lxLocal, 1, scope, 0);
+         tape.write(bcPeekFI, 1);
 
          callResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument/*, false, false*/);
 
-         tape.write(bcLoadF, -4);
          closeFrame(tape, 1);
          tape.write(bcQuit);
       }
@@ -4208,9 +4208,6 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxGenericResending:
          generateResendingExpression(tape, node, scope);
          break;
-////      case lxDispatching:
-////         generateDispatching(tape, node);
-////         break;
 ////      case lxIf:
 ////         jumpIfNotEqual(tape, node.argument, true);
 ////         generateCodeBlock(tape, node);

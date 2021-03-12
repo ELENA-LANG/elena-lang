@@ -564,7 +564,7 @@ symbol sta_start
   open
   reserve  sizeof ProgramHeader
 
-  xalloci  5
+  alloci   5
 
   movfip   -1
   storesi  0

@@ -101,6 +101,8 @@ ELENA byte codes (or ecodes)
 
  xset                       - [sp] => acc[index]; direct operation
 
+ xsetr r                    - acc[index] <= r
+                                                                                                               
  seti i                     - [sp] => acc[i]         
 
  setv                       - acc[0].verb <= index
@@ -160,6 +162,8 @@ ELENA byte codes (or ecodes)
 
  readtof n1, n2             - copy acc[index] >> fp+n1, n2*4-bytes
  
+ xtrans                     - copy [sp][index] => acc[index]; direct operation
+
  xrsavef n1,n2              - real[fp:n1] <= n2
                                                                                                                
  xsaveai i,n                - acc[i] <= n
@@ -277,9 +281,11 @@ ELENA byte codes (or ecodes)
 
  Stack operations:
  -----------------                                           
- alloci i                   - sp+=i; reserve and fill with zeros; i is aligned to 2 in x86-64 mode
+ allocd                     - sp+=index; reserve and fill with zeros; new sp value is aligned to 2 in x86-64 mode
 
- freei i                    - sp-=i; i is aligned to 2 in x86-64 mode 
+ alloci i                   - sp+=i; reserve and fill with zeros; new sp value is aligned to 2 in x86-64 mode
+
+ freei i                    - sp-=i; new sp value is aligned to 2 in x86-64 mode
  
  pop                        - sp--
  
@@ -309,8 +315,6 @@ ELENA byte codes (or ecodes)
 
  pushsi i                   - [sp+i] => [sp+1] ; sp++
  
- xalloci i                   - sp+=i; ; reserve stack; i is aligned to 2 in x86-64 mode
-
 
  Frame operations:
  -----------------              
