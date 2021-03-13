@@ -2919,6 +2919,12 @@ inline bool IsArrExprOperator(int operator_id, LexicalType type)
 ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
    ArgumentsInfo* arguments, bool assignMode, bool shortCircuitMode)
 {
+   ObjectInfo lorigin = loperand;
+   // the operands should be locally boxed if reuqired
+   if (loperand.kind == okFieldAddress) {
+      boxArgument(writer, node, loperand, scope, true);
+   }
+
    writer.newNode(lxExpression);
    SNode opNode = writer.CurrentNode();
 
@@ -2935,6 +2941,10 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       if (arguments) {
          argCount += arguments->Length();
          roperand = (*arguments)[0];
+         if (roperand.kind == okFieldAddress && roperand.param > 0) {
+            boxArgument(writer, node, roperand, scope, true);
+            (*arguments)[0] = roperand;
+         }
       }
       // assuming fake second operand for unary operation to reuse existing code
       else roperand = ObjectInfo(okObject, 0, V_OBJECT);
@@ -2983,9 +2993,6 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       }
       else retVal = ObjectInfo(okObject, 0, resultClassRef, loperand.element, 0);
 
-//      // HOTFIX : remove boxing expressions
-//      analizeOperands(node, scope, -1, false);
-
       ref_t opElementRef = loperand.element;
 //      if (operator_id == LEN_OPERATOR_ID)
 //         opElementRef = roperand.element;
@@ -3016,6 +3023,9 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
    }
    // if not, replace with appropriate method call
    else {
+      // HOTFIX : to prevent double unboxing 
+      assignMode = false;
+
       if (shortCircuitMode)
          arguments->add(saveToTempLocal(writer, scope, roperand));
 
@@ -3037,6 +3047,9 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
    }
 
    writer.closeNode();
+
+   if (assignMode && lorigin.kind == okFieldAddress)
+      unboxArgument(writer, loperand, scope);
 
    return retVal;
 }
@@ -3377,13 +3390,14 @@ ObjectInfo Compiler :: boxExternal(SyntaxWriter& writer, ObjectInfo target, Expr
 }
 
 ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, ObjectInfo arg, ExprScope& scope,
-   /*bool localBoxingMode, */bool condBoxing)
+   bool localBoxingMode, bool condBoxing)
 {
-   return boxArgumentInPlace(writer, node, arg, resolveObjectReference(scope, arg, true, false), scope, condBoxing);
+   return boxArgumentInPlace(writer, node, arg, resolveObjectReference(scope, arg, true, false), scope, 
+      localBoxingMode, condBoxing);
 }
 
 ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, ObjectInfo source, ref_t targetRef, 
-   ExprScope& scope, /*bool localBoxingMode, */bool condBoxing)
+   ExprScope& scope, bool localBoxingMode, bool condBoxing)
 {
    // if the source is the result of an operation - presave it
    if (source.kind == okObject)
@@ -3415,34 +3429,35 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
 //   bool primArray = node == lxPrimArrBoxableExpression;
 
    if (targetRef != 0) {
-//      if (localBoxingMode) {
-//         bool fixedSizeArray = isPrimitiveArrRef(typeRef) && size > 0;
-//
+      if (localBoxingMode) {
+         bool fixedSizeArray = isPrimitiveArrRef(targetRef) && size > 0;
+
 //         SNode assignNode = objNode;
 //         assignNode.injectAndReplaceNode(lxAssigning);
-//
-//         // inject local boxed object
-//         ObjectInfo tempBuffer;
-//         allocateTempStructure(scope, size, fixedSizeArray, tempBuffer);
-//
-//         assignNode.insertNode(lxLocalAddress, tempBuffer.param);
-//         assignNode.set(lxCopying, size);
-//
-//         assignNode.injectAndReplaceNode(lxSeqExpression);
-//         assignNode.appendNode(lxLocalAddress, tempBuffer.param);
-//      }
-//      else {
-//         if (isPrimitiveRef(typeRef)) {
+
+         // inject local boxed object
+         ObjectInfo tempBuffer;
+         allocateTempStructure(scope, size, fixedSizeArray, tempBuffer);
+
+         writer.newNode(lxCopying, size);
+         writer.appendNode(lxLocalAddress, tempBuffer.param);
+         writeTerminal(writer, source, scope);
+         writer.closeNode();
+
+         boxedArg = ObjectInfo(okTempLocalAddress, tempBuffer.param, targetRef, 0, variable ? size : 0);
+      }
+      else {
+         int tempLocal = 0;
+         if (source.kind == lxTempLocal) {
+            tempLocal = source.param;
+         }
+         else tempLocal = scope.newTempLocal();
+
+         //         if (isPrimitiveRef(typeRef)) {
 //            ref_t elementRef = node.findChild(lxElementType).argument;
 //
 //            typeRef = resolvePrimitiveReference(scope, typeRef, elementRef, false);
 //         }
-
-         int tempLocal = 0;
-//         if (target == lxLocal) {
-//            tempLocal = target.argument;
-//         }
-         /*else */tempLocal = scope.newTempLocal();
 
 //         SNode seqNode= objNode;
 //         seqNode.injectAndReplaceNode(lxSeqExpression);
@@ -3494,34 +3509,26 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
 //            rootNode = lxExpression;
 //         }
 //         else seqNode.appendNode(lxTempLocal, tempLocal);
-//      }
+      }
    }
    else scope.raiseError(errInvalidBoxing, node);
 
    return boxedArg;
 }
 
-void Compiler :: boxArgument(SyntaxWriter& writer, SNode node, ObjectInfo& target/*SNode boxExprNode, SNode current*/, ExprScope& scope/*,
-   bool boxingMode, bool withoutLocalBoxing, bool inPlace, bool condBoxing*/)
+void Compiler :: boxArgument(SyntaxWriter& writer, SNode node, ObjectInfo& target, ExprScope& scope,
+   bool withLocalBoxing)
 {
    Attribute key(target.kind, target.param);
 
    int tempLocal = scope.tempLocals.get(key);
    if (tempLocal == NOTFOUND_POS) {
-      target = boxArgumentInPlace(writer, node, target, scope, condBoxingRequired(target));
+      target = boxArgumentInPlace(writer, node, target, scope, withLocalBoxing, condBoxingRequired(target));
 
       scope.tempLocals.add(key, target.param);
    }
    else target = ObjectInfo(okTempLocal, tempLocal);
 
-//   if (current == lxExpression) {
-//      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing,
-//         inPlace, condBoxing);
-//   }
-//   else if (current == lxSeqExpression) {
-//      boxArgument(boxExprNode, current.lastChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing,
-//         true, condBoxing);
-//   }
 //   else if (current.compare(lxBoxableExpression, lxCondBoxableExpression)) {
 //      // resolving double boxing
 //      current.set(lxExpression, 0);
@@ -3611,8 +3618,11 @@ void Compiler :: analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& s
    ObjectInfo& target, ArgumentsInfo* arguments/*, bool inPlace*/)
 {
    int argBit = 1;
-   if (!test(stackSafeAttr, argBit) && boxingRequired(target)) {
-      boxArgument(writer, node, target, scope);
+   if ((!test(stackSafeAttr, argBit) && boxingRequired(target))) {
+      boxArgument(writer, node, target, scope, false);
+   }
+   else if (target.kind == okFieldAddress && target.param > 0) {
+      boxArgument(writer, node, target, scope, true);
    }
 
    if (arguments) {
@@ -3620,7 +3630,12 @@ void Compiler :: analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& s
          argBit <<= 1;
          ObjectInfo arg = (*arguments)[i];
          if (!test(stackSafeAttr, argBit) && boxingRequired(arg)) {
-            boxArgument(writer, node, arg, scope);
+            boxArgument(writer, node, arg, scope, false);
+
+            (*arguments)[i] = arg;
+         }
+         else if (arg.kind == okFieldAddress && arg.param > 0) {
+            boxArgument(writer, node, arg, scope, true);
 
             (*arguments)[i] = arg;
          }
@@ -3636,6 +3651,12 @@ void Compiler :: unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprSco
       writer.newNode(lxAssigning, 0);
       refMode = true;
    }
+   else if (target.kind == okTempLocalAddress && !target.extraparam) {
+      pos_t size = _logic->defineStructSize(*scope.moduleScope, target.reference, target.element);
+
+      writer.newNode(lxCopying, size);
+   }
+
    else writer.newNode(lxCopying, target.extraparam);
    //         if (size < 0 || primArray) {
    //            unboxing.set(lxCloning, 0);
@@ -3811,7 +3832,7 @@ ObjectInfo Compiler :: injectImplicitConversion(SyntaxWriter& writer, SNode node
             source.reference = targetRef;
             return source;
          default:
-            return boxArgumentInPlace(writer, node, source, targetRef, scope, false);
+            return boxArgumentInPlace(writer, node, source, targetRef, scope, false, false);
       }
    }
    else if (info.result == ConversionResult::crConverted) {
@@ -4191,7 +4212,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode current, Exp
    else exprVal = compileExpression(writer, current, scope, targetRef, assignMode, nullptr);
 
    if (!noBoxing && boxingRequired(exprVal)) {
-      exprVal = boxArgumentInPlace(writer, current.parentNode(), exprVal, scope, condBoxingRequired(exprVal));
+      exprVal = boxArgumentInPlace(writer, current.parentNode(), exprVal, scope, false, condBoxingRequired(exprVal));
    }
 
    writer.newNode(operationType, operand);
@@ -5082,7 +5103,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, ExprScop
       for (auto outer_it = scope.outers.start(); !outer_it.Eof(); outer_it++) {
          ObjectInfo info = (*outer_it).outerObject;
          if (boxingRequired(info)) {
-            boxArgument(writer, node, info, ownerScope);
+            boxArgument(writer, node, info, ownerScope, false);
             members.add(info);
          }
       }
@@ -5389,11 +5410,9 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 ////         writer.closeNode();
 ////      }
 ////   }
-//
-//   analizeOperands(node, exprScope, stackSafeAttr, true);
-   
+
    if ((retVal.kind != okSelfParam || EAttrs::test(mode, HINT_DYNAMIC_OBJECT)) && boxingRequired(retVal)) {
-      retVal = boxArgumentInPlace(writer, node, retVal, exprScope, condBoxingRequired(retVal));
+      retVal = boxArgumentInPlace(writer, node, retVal, exprScope, false, condBoxingRequired(retVal));
    }
 
    writer.closeNode();
@@ -7659,7 +7678,7 @@ void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, Cod
          target = compileExpression(writer, node.firstChild(), exprScope, 0, HINT_PARAMETER, nullptr);
 
          if (boxingRequired(target)) {
-            target = boxArgumentInPlace(writer, node, target, exprScope, condBoxingRequired(target));
+            target = boxArgumentInPlace(writer, node, target, exprScope, false, condBoxingRequired(target));
          }
          if (target.kind != okObject)
             writeTerminal(writer, target, exprScope);
@@ -8511,7 +8530,7 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
             HINT_DYNAMIC_OBJECT | HINT_NOPRIMITIVES | HINT_PARAMETER | HINT_ROOTEXPR, nullptr);
 
          if (boxingRequired(retVal))
-            retVal = boxArgumentInPlace(writer, node, retVal, exprScope, false);
+            retVal = boxArgumentInPlace(writer, node, retVal, exprScope, false, false);
 
          if (retVal.kind != okObject)
             writeTerminal(writer, retVal, exprScope);

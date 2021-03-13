@@ -1315,11 +1315,11 @@ private:
 
    ObjectInfo boxExternal(SyntaxWriter& writer, ObjectInfo target, ExprScope& scope);
    ObjectInfo boxArgumentInPlace(SyntaxWriter& writer, SNode boxNode, ObjectInfo arg, ExprScope& scope,
-      /*bool localBoxingMode, */bool condBoxing);
+      bool localBoxingMode, bool condBoxing);
    ObjectInfo boxArgumentInPlace(SyntaxWriter& writer, SNode boxNode, ObjectInfo soource, ref_t targetRef, ExprScope& scope,
-      /*bool localBoxingMode, */bool condBoxing);
-   void boxArgument(SyntaxWriter& writer, SNode boxNode, ObjectInfo& arg, ExprScope& scope/*, bool boxingMode,
-      bool withoutLocalBoxing, bool inPlace, bool condBoxing*/);
+      bool localBoxingMode, bool condBoxing);
+   void boxArgument(SyntaxWriter& writer, SNode boxNode, ObjectInfo& arg, ExprScope& scope,
+      bool withLocalBoxing/*, bool inPlace, bool condBoxing*/);
 //   void analizeOperand(SNode& node, ExprScope& scope, bool boxingMode, bool withoutLocalBoxing, bool inPlace);
    void analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& scope, int stackSafeAttr, 
       ObjectInfo& target, ArgumentsInfo* arguments/*, bool inPlace*/);

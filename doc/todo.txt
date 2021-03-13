@@ -3,7 +3,7 @@ In development:
 ------         
 
   [development]
-    * variadic args
+    * local boxing
 
     * basic tests
     * call stack
@@ -21,7 +21,8 @@ In development:
     * get rid of push / pop operations in bcwriter, in most cases "xalloci, storesi, freei" should be used
     * support 16 byte stack alignment for x86-64, get rid of current temporal solution (review all cases of freei usage)
     * compile lib50_64
-    * uncomment arrayTest
+    * uncomment duplicateStructBoxing
+
 
     * docs - all code in docs should work
     * test if with unknown object
