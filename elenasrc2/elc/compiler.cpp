@@ -2916,13 +2916,38 @@ inline bool IsArrExprOperator(int operator_id, LexicalType type)
    }
 }
 
+inline bool isNumericOp(LexicalType type)
+{
+   switch (type) {
+      case lxIntOp:
+      case lxLongOp:
+      case lxRealOp:
+      case lxRealIntOp:
+         return true;
+      default:
+         return false;
+   }
+}
+
 ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
    ArgumentsInfo* arguments, bool assignMode, bool shortCircuitMode)
 {
+   bool withUnboxing = false;
    ObjectInfo lorigin = loperand;
    // the operands should be locally boxed if reuqired
-   if (loperand.kind == okFieldAddress) {
+   if (assignMode && loperand.kind == okFieldAddress) {
       boxArgument(writer, node, loperand, scope, true);
+      withUnboxing = true;
+   }
+   else if (assignMode && loperand.kind == okOuter) {
+      int size = _logic->defineStructSize(*scope.moduleScope, loperand.reference, loperand.element);
+      if (size != 0) {
+         boxArgument(writer, node, loperand, scope, true);
+
+         InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
+         closure->markAsPresaved(lorigin);
+      }
+      withUnboxing = true;
    }
 
    writer.newNode(lxExpression);
@@ -3048,7 +3073,7 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
 
    writer.closeNode();
 
-   if (assignMode && lorigin.kind == okFieldAddress)
+   if (withUnboxing)
       unboxArgument(writer, loperand, scope);
 
    return retVal;
@@ -3656,7 +3681,6 @@ void Compiler :: unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprSco
 
       writer.newNode(lxCopying, size);
    }
-
    else writer.newNode(lxCopying, target.extraparam);
    //         if (size < 0 || primArray) {
    //            unboxing.set(lxCloning, 0);
@@ -3723,12 +3747,21 @@ void Compiler :: unboxPreservedArgs(SyntaxWriter& writer, ExprScope& scope, Argu
          //   else current = injectRootSeqExpression(parent);
          //
          //   ref_t targetRef = resolveObjectReference(scope, member, false);
-         //
-         //   if (member.kind == okLocalAddress) {
-         //      // if the parameter may be stack-allocated
-         //      bool variable = false;
-         //      int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, member.element, variable);
-         //
+         
+         if (source.kind == okLocalAddress) {
+            // if the parameter may be stack-allocated
+            bool variable = false;
+            ref_t sourceRef = resolveObjectReference(scope, source, true);
+            int size = _logic->defineStructSizeVariable(*scope.moduleScope, sourceRef, source.element, variable);
+         
+            writer.newNode(lxCopying, size);
+            writeTerminal(writer, source, scope);
+            writer.newNode(lxFieldExpression);
+            writeTerminal(writer, target, scope);
+            writer.appendNode(lxField, info.param);
+            writer.closeNode();
+
+            writer.closeNode();
          //      SNode assignNode = current.appendNode(lxCopying, size);
          //      assignNode.appendNode(lxLocalAddress, member.param);
          //
@@ -3740,15 +3773,15 @@ void Compiler :: unboxPreservedArgs(SyntaxWriter& writer, ExprScope& scope, Argu
          //      int boxedLocal = scope.tempLocals.get(key);
          //      if (boxedLocal != NOTFOUND_POS) {
          //         // HOTFIX : check if the variable is used several times - modify the boxed argument as well
-         //         SNode assignBoxNode = current.appendNode(lxCopying, size);
+         //         SNode assignBoxNode = current.appendNode();
          //         assignBoxNode.appendNode(lxTempLocal, boxedLocal);
          //
          //         SNode fieldExpr = assignBoxNode.appendNode(lxFieldExpression);
          //         fieldExpr.appendNode(tempType, tempLocal);
          //         fieldExpr.appendNode(lxField, memberIndex);
          //      }
-         //   }
-         /*else */if (source.kind == okLocal) {
+         }
+         else if (source.kind == okLocal) {
             //      if (oriTempLocal == -1) {
             //         // HOTFIX : presave the original value
             //         oriTempLocal = scope.newTempLocal();
@@ -5146,7 +5179,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, ExprScop
                preservedArgs->add(ObjectInfo(okUnknown));
             }
 
-            preservedArgs->add(ObjectInfo(okMemberInfo, memberIndex));
+            preservedArgs->add(ObjectInfo(okMemberInfo, (*outer_it).reference));
             preservedArgs->add(info);
 
             //   if (!tempLocal) {

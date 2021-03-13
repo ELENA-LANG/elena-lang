@@ -4198,7 +4198,7 @@ public:
          _cached[_length] = item;
       }
       else {
-         if (_length - cacheSize < _allocatedSize) {
+         if (_length - cacheSize >= _allocatedSize) {
             _allocatedSize += 10;
 
             _allocated = (T*)realloc(_allocated, _allocatedSize * sizeof(T));
