@@ -23,7 +23,9 @@
        <include>dynamic.l</include>
        <include>extensions.l</include>
        <include>exceptions.l</include>
+       <include>events.l</include>
        <include>console.l</include>
+       <include>app.l</include>
        <include>text\encoder.l</include>
        <include>text\win32_encoder.l</include>
        <include>text\textbuffer.l</include>

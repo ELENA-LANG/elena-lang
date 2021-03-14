@@ -4,9 +4,11 @@ In development:
 
   [development]
     * basic tests
-    * call stack
-    * program exception handling
     * system tests : 86, 86-64
+
+    + call stack
+    + program exception handling
+    + uncomment finally part in program entry
 
     * boxing fixed-sized field array
     * globals
@@ -19,8 +21,7 @@ In development:
     * get rid of push / pop operations in bcwriter, in most cases "xalloci, storesi, freei" should be used
     * support 16 byte stack alignment for x86-64, get rid of current temporal solution (review all cases of freei usage)
     * compile lib50_64
-    * uncomment duplicateStructBoxing
-
+    * uncomment duplicateStructBoxing,duplicateBoxing,stackSafeExtensions,nilDispatcherTest,templateExtensionTest
 
     * docs - all code in docs should work
     * test if with unknown object
@@ -28,7 +29,6 @@ In development:
     * uncomment fieldinit routines, yield methods
     * uncomment all code
 
-    * ELENA should support cdecl : review all internal code, get rid of quitn / quitm, review try/catch - use alloc / free . 
     * tape should use cdecl with fixed size - no need to clear the stack
     + optimiation : assinging int constant, 
     + optimiation : freei 1 xalloc 1 => nop nop 

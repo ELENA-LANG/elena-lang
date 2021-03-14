@@ -84,7 +84,7 @@ enum LexicalType
    lxArrayOp                  = 0x431180,
    lxArrayExpression          = 0x031180,
 //   lxAttrExpression           = 0x001190,
-//   lxPropertyDecl             = 0x0011A0,
+   lxPropertyDecl             = 0x0011A0,
    lxSwitchOption             = 0x0011B0,
    lxLastSwitchOption         = 0x0011C0,
 //   lxTemplateOperator         = 0x0011D0,

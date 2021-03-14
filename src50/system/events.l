@@ -30,7 +30,7 @@ public sealed EventHandler<TF>
 {
     EventHandler<T> __name;
     
-    set(T f)
+    set(f)
     {
         if (nil == __name)
         {
@@ -40,11 +40,6 @@ public sealed EventHandler<TF>
         {
             __name.append(f);
         }
-    }
-    
-    set(o)
-    {
-        self.__name := cast T(o)
     }
 }
 

@@ -31,12 +31,12 @@ public program()
     nestedTest();
     nestetNestedTest();
 //    duplicateStructBoxing();
-    duplicateBoxing();
+//    duplicateBoxing();
 
-    stackSafeExtensions();
+//    stackSafeExtensions();
 
-    nilDispatcherTest();
-    templateExtensionTest();
+    //nilDispatcherTest();
+    //templateExtensionTest();
 
     console.writeLine:"--- Passed ---"
 }

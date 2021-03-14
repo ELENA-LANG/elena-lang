@@ -516,7 +516,7 @@ public:
       eaMetaField          = 0x00000020000,
       eaLoop               = 0x00000040000,
       eaExtern             = 0x00000080000,
-//      eaForward            = 0x00000100000,
+      eaForward            = 0x00000100000,
 //      eaParams             = 0x00000200000,
       eaInitializerScope   = 0x00000400000,
       eaSwitch             = 0x00000800000,

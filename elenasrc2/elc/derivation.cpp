@@ -14,7 +14,7 @@
 using namespace _ELENA_;
 
 constexpr auto MODE_ROOT                  = 0x01;
-//constexpr auto MODE_PROPERTYALLOWED       = 0x40;
+constexpr auto MODE_PROPERTYALLOWED       = 0x40;
 
 constexpr auto MODE_FUNCTION              = -2;
 constexpr auto MODE_PROPERTYMETHOD        = -4;
@@ -182,7 +182,7 @@ void DerivationWriter :: newNode(LexicalType symbol)
       }
       // otherwise it should be cached
    }
-   else if (symbol == lxAttributeDecl || symbol == lxStatementDecl || symbol == lxInlineDecl/* || symbol == lxPropertyDecl*/) {
+   else if (symbol == lxAttributeDecl || symbol == lxStatementDecl || symbol == lxInlineDecl || symbol == lxPropertyDecl) {
       _cachingLevel = _level;
    }
 
@@ -405,39 +405,39 @@ void DerivationWriter :: recognizeScope()
       // should be later skipped 
       node = lxIdle;
    }
-//   else if (node == lxPropertyDecl) {
-//      // NOTE : property template is saved as is
-//      declareStatement(node, ScopeType::stPropertyTemplate);
-//
-//      // should be later skipped 
-//      node = lxIdle;
-//   }
+   else if (node == lxPropertyDecl) {
+      // NOTE : property template is saved as is
+      declareStatement(node, ScopeType::stPropertyTemplate);
+
+      // should be later skipped 
+      node = lxIdle;
+   }
 }
 
-ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType/*, bool& allowPropertyTemplate*/, ref_t& previusCategory)
+ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, bool& allowPropertyTemplate, ref_t& previusCategory)
 {
    ref_t attrRef = 0;
 
    SNode terminal = node.firstChild(lxTerminalMask);
    ident_t token = terminal.identifier();
 
-   //if (allowPropertyTemplate) {
-   //   allowPropertyTemplate = false;
+   if (allowPropertyTemplate) {
+      allowPropertyTemplate = false;
 
-   //   // COMPILER MAGIC : recognize property template
-   //   IdentifierString templateName(token);
-   //   int paramCount = allowType ? 1 : 2;
+      // COMPILER MAGIC : recognize property template
+      IdentifierString templateName(token);
+      int paramCount = allowType ? 1 : 2;
 
-   //   templateName.append("#prop#");
-   //   templateName.appendInt(paramCount);
+      templateName.append("#prop#");
+      templateName.appendInt(paramCount);
 
-   //   ref_t templateRef = _scope->attributes.get(templateName.ident());
-   //   if (templateRef) {
-   //      return V_PROPERTY;
-   //   }
-   //}
+      ref_t templateRef = _scope->attributes.get(templateName.ident());
+      if (templateRef) {
+         return V_PROPERTY;
+      }
+   }
 
-//      allowPropertyTemplate = false;
+      allowPropertyTemplate = false;
 
    ref_t ref = _scope->attributes.get(token);      
    if (isPrimitiveRef(ref)) {
@@ -554,7 +554,7 @@ void DerivationWriter :: declareStatement(SNode node, ScopeType templateType)
 
    if (templateScope.templateMode == ScopeType::stPropertyTemplate) {
       // NOTE : property template body is copied as is
-      SNode current = args.nextNode();
+      SNode current = node.firstChild();
       while (current != lxNone) {
          copyScope(templateWriter, current, templateScope);
 
@@ -641,7 +641,7 @@ void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalTyp
    
       current = current.nextNode();
    }
-//   bool allowPropertyTemplate = test(mode, MODE_PROPERTYALLOWED);
+   bool allowPropertyTemplate = test(mode, MODE_PROPERTYALLOWED);
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current == lxToken) {
       bool allowType = current.nextNode() == nameNodeType;
@@ -655,7 +655,7 @@ void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalTyp
             current.set(lxArrayType, 0);
       }
       else {
-         ref_t attrRef = mapAttribute(current, allowType/*, allowPropertyTemplate*/, attributeCategory);
+         ref_t attrRef = mapAttribute(current, allowType, allowPropertyTemplate, attributeCategory);
          if (isPrimitiveRef(attrRef)) {
             current.set(lxAttribute, attrRef);
          }
@@ -738,7 +738,7 @@ void DerivationWriter :: recognizeClassMembers(SNode node)
          else if (current.firstChild().compare(lxSizeDecl, lxFieldInit, /*lxFieldAccum, */lxNone)) {
             // if it is a field
             current = lxClassField;
-            //mode = MODE_PROPERTYALLOWED;
+            mode = MODE_PROPERTYALLOWED;
          }
          else if (current.existChild(lxScope)) {
             // if it is a property
@@ -1041,10 +1041,10 @@ inline void checkFieldPropAttributes(SNode node, bool& isPropertyTemplate, bool&
 {
    SNode current = node.prevNode();
    while (current.compare(lxAttribute, lxNameAttr, lxType)) {
-      //if (current == lxAttribute && current.argument == V_PROPERTY) {
-      //   isPropertyTemplate = true;
-      //}
-      /*else */if (isInitializerPrefix(current)) {
+      if (current == lxAttribute && current.argument == V_PROPERTY) {
+         isPropertyTemplate = true;
+      }
+      else if (isInitializerPrefix(current)) {
          isInitializer = true;
       }
 
@@ -1146,11 +1146,11 @@ void DerivationWriter :: flushFieldTree(SyntaxWriter& writer, SNode node, Scope&
    bool isInitializer = false;
    checkFieldPropAttributes(node, isPropertyTemplate, isInitializer);
 
-   //if (isPropertyTemplate) {
-   //   // COMPILER MAGIC : inject a property template
-   //   generatePropertyTemplateTree(writer, node, derivationScope, buffer);
-   //}
-   /*else */if (!isInitializer) {
+   if (isPropertyTemplate) {
+      // COMPILER MAGIC : inject a property template
+      flushPropertyTemplateTree(writer, node, derivationScope, buffer);
+   }
+   else if (!isInitializer) {
       writer.newNode(lxClassField/*, templateMode ? -1 : 0*/);
       SNode sizeNode = node.findChild(lxSizeDecl);
       if (sizeNode != lxNone) {
@@ -1383,76 +1383,73 @@ void DerivationWriter :: flushInlineTemplateTree(SyntaxWriter&, SNode node, SNod
    _scope->generateTemplateProperty(bufferWriter, templateRef, parameters, derivationScope.bookmark, true);
 }
 
-//void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
-//{
-//   SyntaxTree paramTree;
-//   SyntaxWriter paramWriter(paramTree);
-//
-//   List<SNode> parameters;
-//   IdentifierString templateName;
-//
-//   SNode nameNode = node.prevNode();
-//   SNode current = nameNode.prevNode();
-//   // HOTFIX : skip the type argument
-//   if (current == lxTemplateArgs)
-//      current = current.prevNode();
-//
-//   if (current == lxType/* || (current == lxAttribute && current.argument == V_TEMPLATE)*/) {
-//      // generate property type
-//      //derivationScope.nestedLevel += 0x100;
-//      generateAttributes(paramWriter, current, derivationScope, buffer);
-//      //derivationScope.nestedLevel -= 0x100;
-//
-//      current = current.prevNode();
-//   }
-//
-//   while (current == lxAttribute) {
-//      if (current.argument == V_PROPERTY) {
-//         templateName.copy(current.firstChild(lxTerminalMask).identifier());
-//         // move to the next attribute to be copied later
-//         current = current.nextNode();
-//         break;
-//      }
-//
-//      current = current.prevNode();
-//   }
-//
-//   SNode param = paramTree.readRoot();
-//   if (param.compare(lxType, lxTemplateParam)) {
-//      parameters.add(param/*.findChild(lxTarget, lxTemplateParam)*/);
-//   }
-//
-//   SNode t = nameNode.firstChild(lxTerminalMask);
-//   ident_t s = t.identifier();
-//
-//   // name parameter is always the last parameter
-//   parameters.add(nameNode);
-//
-//   templateName.append("#prop#");
-//   templateName.appendInt(parameters.Count());
-//
-//   ref_t templateRef = _scope->attributes.get(templateName.c_str());
-//   if (!templateRef)
-//      raiseError(errInvalidSyntax, node.parentNode());
-//
-//   SyntaxTree tempTree;
-//   SyntaxWriter tempWriter(tempTree);
-//   tempWriter.newNode(lxRoot);
-//   // copy the property declaration
-//   while (current != node) {
-//      copyScope(tempWriter, current, derivationScope);
-//
-//      current = current.nextNode();
-//   }
-//
-//   tempWriter.newNode(lxClassProperty);
-//   _scope->generateTemplateProperty(tempWriter, templateRef, parameters, 0, false);
-//   tempWriter.closeNode();
-//   tempWriter.closeNode();
-//
-//   generatePropertyTree(writer, tempTree.readRoot().findChild(lxClassProperty), derivationScope, buffer);
-//}
-//
+void DerivationWriter :: flushPropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
+{
+   SyntaxTree paramTree;
+   SyntaxWriter paramWriter(paramTree);
+
+   List<SNode> parameters;
+   IdentifierString templateName;
+
+   SNode nameNode = node.prevNode();
+   SNode current = nameNode.prevNode();
+
+   if (current == lxType/* || (current == lxAttribute && current.argument == V_TEMPLATE)*/) {
+      // generate property type
+      //derivationScope.nestedLevel += 0x100;
+      flushAttributes(paramWriter, current, derivationScope, buffer);
+      //derivationScope.nestedLevel -= 0x100;
+
+      current = current.prevNode();
+   }
+
+   while (current == lxAttribute) {
+      if (current.argument == V_PROPERTY) {
+         templateName.copy(current.firstChild(lxTerminalMask).identifier());
+         // move to the next attribute to be copied later
+         current = current.nextNode();
+         break;
+      }
+
+      current = current.prevNode();
+   }
+
+   SNode param = paramTree.readRoot();
+   if (param.compare(lxType, lxTemplateParam)) {
+      parameters.add(param/*.findChild(lxTarget, lxTemplateParam)*/);
+   }
+
+   SNode t = nameNode.firstChild(lxTerminalMask);
+   ident_t s = t.identifier();
+
+   // name parameter is always the last parameter
+   parameters.add(nameNode);
+
+   templateName.append("#prop#");
+   templateName.appendInt(parameters.Count());
+
+   ref_t templateRef = _scope->attributes.get(templateName.c_str());
+   if (!templateRef)
+      raiseError(errInvalidSyntax, node.parentNode());
+
+   SyntaxTree tempTree;
+   SyntaxWriter tempWriter(tempTree);
+   tempWriter.newNode(lxRoot);
+   // copy the property declaration
+   while (current != node) {
+      copyScope(tempWriter, current, derivationScope);
+
+      current = current.nextNode();
+   }
+
+   tempWriter.newNode(lxClassProperty);
+   _scope->generateTemplateProperty(tempWriter, templateRef, parameters, 0, false);
+   tempWriter.closeNode();
+   tempWriter.closeNode();
+
+   flushPropertyTree(writer, tempTree.readRoot().findChild(lxClassProperty), derivationScope, buffer);
+}
+
 //void DerivationWriter :: generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope)
 //{
 ////   if (node == lxInlineClosure) {
@@ -1592,7 +1589,7 @@ void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode no
    ref_t& previousCategory, bool templateArgMode)
 {
    bool allowType = false;
-   //bool allowProperty = false;
+   bool allowProperty = false;
 
    if (!templateArgMode) {
       SNode nextNode = findNextToken(node.nextNode());
@@ -1614,7 +1611,7 @@ void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode no
       flushArrayTypeAttribute(writer, current, derivationScope);
    }
    else {
-      ref_t attrRef = mapAttribute(node, allowType, /*allowProperty, */previousCategory);
+      ref_t attrRef = mapAttribute(node, allowType, allowProperty, previousCategory);
       if (isPrimitiveRef(attrRef)) {
          SNode identNode = node.firstChild(lxTerminalMask);
 
@@ -2035,7 +2032,7 @@ bool TemplateGenerator::TemplateScope :: generateClassName()
 
       // HOTFIX : in declaration mode, type is not defined - it should be taken from the classref attribute
       ref_t typeRef = (*it).argument;
-      if (typeRef == V_TEMPLATE)
+      if (typeRef == V_TEMPLATE || !typeRef)
          typeRef = (*it).findChild(lxClassRef).argument;
 
       ident_t param = moduleScope->module->resolveReference(typeRef);

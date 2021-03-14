@@ -107,7 +107,7 @@ class DerivationWriter : public _DerivationWriter
 
    ref_t resolveTemplate(ident_t templateName);
 
-   ref_t mapAttribute(SNode terminal, bool allowType/*, bool& allowPropertyTemplate*/, ref_t& previusCategory);
+   ref_t mapAttribute(SNode terminal, bool allowType, bool& allowPropertyTemplate, ref_t& previusCategory);
    ref_t mapInlineAttribute(SNode terminal);
    void declareAttribute(SNode node);
    void declareStatement(SNode node, ScopeType templateType);
@@ -136,7 +136,7 @@ class DerivationWriter : public _DerivationWriter
    void generateStatementTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, 
       Scope& derivationScope);
    void flushPropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
-//   void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
+   void flushPropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    void flushInlineTemplateTree(SyntaxWriter& writer, SNode node, SNode owner, Scope& derivationScope, SyntaxTree& buffer);
 //   //void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 ////   //void generateMetaTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);

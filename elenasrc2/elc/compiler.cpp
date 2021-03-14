@@ -54,7 +54,7 @@ constexpr auto HINT_PROP_MODE       = EAttr::eaPropExpr;
 constexpr auto HINT_METAFIELD       = EAttr::eaMetaField;
 constexpr auto HINT_LOOP            = EAttr::eaLoop;
 constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
-//constexpr auto HINT_FORWARD         = EAttr::eaForward;
+constexpr auto HINT_FORWARD         = EAttr::eaForward;
 //constexpr auto HINT_PARAMSOP		   = EAttr::eaParams;
 constexpr auto HINT_SWITCH          = EAttr::eaSwitch;
 constexpr auto HINT_CLASSREF        = EAttr::eaClass;
@@ -6157,7 +6157,7 @@ ObjectInfo Compiler :: mapTerminal(SNode node, ExprScope& scope, EAttr mode)
    ident_t token = node.identifier();
    ObjectInfo object;
 
-   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP | /*HINT_FORWARD*/ 
+   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP | HINT_FORWARD |
       HINT_MESSAGEREF | /*HINT_SUBJECTREF | */HINT_NEWOP | HINT_CASTOP | HINT_CLASSREF))
    {
       bool invalid = false;
@@ -6205,11 +6205,11 @@ ObjectInfo Compiler :: mapTerminal(SNode node, ExprScope& scope, EAttr mode)
       else if (EAttrs::test(mode, HINT_MESSAGEREF)) {
          object = ObjectInfo(okMessageRef);
       }
-//      else if (EAttrs::test(mode, HINT_FORWARD)) {
-//         IdentifierString forwardName(FORWARD_MODULE, "'", token);
-//
-//         object = scope.mapTerminal(forwardName.ident(), true, EAttr::eaNone);
-//      }
+      else if (EAttrs::test(mode, HINT_FORWARD)) {
+         IdentifierString forwardName(FORWARD_MODULE, "'", token);
+
+         object = scope.mapTerminal(forwardName.ident(), true, EAttr::eaNone);
+      }
 //      else if (EAttrs::test(mode, HINT_SUBJECTREF)) {
 //         object = compileSubjectReference(terminal, scope, mode);
 //      }

@@ -192,50 +192,50 @@ public sealed class MethodNotFoundException : Exception
 //    constructor new(string message)
 //        <= new(message);
 //}
-//
-//// --- AbortException ---
-//
-///// An abort exception 
-//public class AbortException : Exception
-//{
-//    /// Creates the exception
-//    constructor new()
-//        <= new("The process terminated");
-//}
-//
-//// --- CriticalException ---
-//
-//public class CriticalException : Exception
-//{
-//    /// Creates the exception
-//    constructor new()
-//        <= new("Critical exception");
-//}
-//
-//// --- NilReferenceException ---
-//
-//public class NilReferenceException : CriticalException
-//{
-//    /// Creates the exception
-//    constructor new()
-//        <= new("Critical exception : an operation with nil");
-//}
-//
-//// --- DivisionByZeroException ---
-//
-//public class DivisionByZeroException : CriticalException
-//{
-//    /// Creates the exception
-//    constructor new()
-//        <= new("Critical exception : a division by zero");
-//}
-//
-//
-//// --- OutOfMemoryException ---
-//
-//public class OutOfMemoryException : CriticalException
-//{
-//    /// Creates the exception
-//    constructor new()
-//        <= new("Critical exception : out of memory");
-//}
+
+// --- AbortException ---
+
+/// An abort exception 
+public class AbortException : Exception
+{
+    /// Creates the exception
+    constructor new()
+        <= new("The process terminated");
+}
+
+// --- CriticalException ---
+
+public class CriticalException : Exception
+{
+    /// Creates the exception
+    constructor new()
+        <= new("Critical exception");
+}
+
+// --- NilReferenceException ---
+
+public class NilReferenceException : CriticalException
+{
+    /// Creates the exception
+    constructor new()
+        <= new("Critical exception : an operation with nil");
+}
+
+// --- DivisionByZeroException ---
+
+public class DivisionByZeroException : CriticalException
+{
+    /// Creates the exception
+    constructor new()
+        <= new("Critical exception : a division by zero");
+}
+
+
+// --- OutOfMemoryException ---
+
+public class OutOfMemoryException : CriticalException
+{
+    /// Creates the exception
+    constructor new()
+        <= new("Critical exception : out of memory");
+}

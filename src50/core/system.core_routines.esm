@@ -2,6 +2,11 @@
 //      inline system library
 
 // built-in constants
+
+define EXCEPTION_ACCESS_VIOLATION  101h
+define ELENA_ERR_DIVIDE_BY_ZERO    102h
+define ELENA_ERR_OUT_OF_MEMORY     103h
+
 // prop_mssg_mask - property message mask
 
 define ARG_MASK              0000001Fh
@@ -300,6 +305,74 @@ labDefault:
   
 end
 
+procedure __event."#dispatch[1]"
+
+  bsredirect  
+
+  open
+  reserve  8
+
+  savef    -8
+  xsavef   -4, 0
+
+  geti     0  // ; get the first field !! better to define a special array (like castover group object)
+  pusha
+
+  // ; define the message length
+  loadf    -8
+  and      ARG_MASK
+  ifn      labSkip, 0
+  
+  allocd
+
+  // ; copy message
+  movsip  0 
+  pushfip -1
+
+labNextParam:
+  dec      1
+  xtrans
+  elsen    labNextParam, 0
+
+labSkip:
+  pop
+
+  peekfi   1
+
+labNext:
+  count
+  movf     -4
+  if       labEnd
+
+  peekfi   1
+  loadf    -4
+  get
+  inc      1
+  savef    -4
+  
+  loadf    -8
+  callvi   0
+  
+  peekfi   1
+  jump     labNext
+
+labEnd:
+  loadfi  -1
+  restore  8
+  close
+  quit
+
+end
+
+procedure __exception.register[0]
+
+  movr intern : system'core_routines'critical_exception_handler
+  callextr api : register_critical_exception_handler, 0
+
+  quit
+
+end
+
 procedure __chararray."write$@system@Array#1&system@CharValue$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue[4]"
 
   pushsi 4
@@ -589,5 +662,33 @@ symbol sta_start
   restore  sizeof ProgramHeader
   close
   quit
+
+end
+
+procedure critical_exception_handler
+
+  open
+  ifn   labAccessViolation, EXCEPTION_ACCESS_VIOLATION
+  ifn   labDivisionByZero, ELENA_ERR_DIVIDE_BY_ZERO
+  ifn   labOutOfMemory, ELENA_ERR_OUT_OF_MEMORY
+
+  pushr class : system'CriticalException
+  pushr mssgconst : "new[1]"
+  throw
+
+labAccessViolation:
+  pushr class : system'NilReferenceException
+  pushr mssgconst : "new[1]"
+  throw
+
+labDivisionByZero:
+  pushr class : system'DivisionByZeroException
+  pushr mssgconst : "new[1]"
+  throw
+
+labOutOfMemory:
+  pushr class : system'OutOfMemoryException
+  pushr mssgconst : "new[1]"
+  throw
 
 end
