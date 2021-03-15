@@ -406,6 +406,9 @@ void _ELENA_::loadROp(int opcode, I64JITScope& scope)
          if (scope.argument == 0) {
             scope.code->writeDWord(0);
          }
+         else if (scope.argument == -1) {
+            scope.code->writeDWord(-1);
+         }
          else scope.writeReference(*scope.code, scope.argument, 0);
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
@@ -463,7 +466,7 @@ void _ELENA_::loadIndexNOp(int opcode, I64JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(scope.argument << 2);
+         scope.code->writeDWord(scope.argument << 3);
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -500,7 +503,7 @@ void _ELENA_::loadIndexN4OpX(int opcode, I64JITScope& scope, int prefix)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(scope.argument << 2);
+         scope.code->writeDWord(scope.argument << 3);
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -1784,7 +1787,7 @@ void _ELENA_::compileACopyS(int, I64JITScope& scope)
 {
    // lea ebx, [esp + index]
    AMD64Helper::leaRM64disp(
-      scope.code, AMD64Helper::otEBX, AMD64Helper::otRSP, scope.argument << 2);
+      scope.code, AMD64Helper::otEBX, AMD64Helper::otRSP, scope.argument << 3);
 }
 
 void _ELENA_::compileIfHeap(int opcode, I64JITScope& scope)
@@ -1935,7 +1938,7 @@ void _ELENA_::compileJumpN(int, I64JITScope& scope)
 {
    // jmp [rbx+i]
    scope.code->writeWord(0x63FF);
-   scope.code->writeByte(scope.argument << 2);
+   scope.code->writeByte(scope.argument << 3);
 }
 
 void _ELENA_::compileACopyF(int op, I64JITScope& scope)

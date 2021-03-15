@@ -3,7 +3,9 @@ In development:
 ------         
 
   [development]
-    * system tests : 86-64
+    * x86-64 : console output
+    + debugger : stack allocated int value 
+    * system tests : x86-64
 
     + test getClassName
     + (re)implement Message.toPrintable()
@@ -48,6 +50,8 @@ In development:
     + * operator with object wrapper - sould be pass direct value, so no need for dispatcin in ref interface
       e.g: theIndex.append(cast int(theDiff)); - should be written theIndex.append(*theDiff); and the stack-allocated
      object should be passed as is
+    + ide 64 : call stack
+    + elc 64 mode : 8 byte alignment for stack-allocated types
 
     * do not save the external operation if the result is not assigned or passed as an argument
     * optimization - duplicate assigning : external call, message call

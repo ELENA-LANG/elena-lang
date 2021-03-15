@@ -1,11 +1,11 @@
 <configuration>
     <project>
-        <executable>system_test.exe</executable>
+        <executable>system_test64.exe</executable>
         <arguments></arguments>
         <output></output>
         <options></options>
         <namespace>system_test</namespace>
-        <template>console</template>
+        <template>console_64</template>
         <debuginfo>-1</debuginfo>
     </project>
     <files>
