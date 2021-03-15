@@ -1,0 +1,17 @@
+<configuration>
+    <project>
+        <executable>system_test.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>system_test</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>test_arithm.l</include>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

@@ -99,12 +99,12 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 
 rem bin\elc src50\graphics\graphics.prj
 
-rem bin\elc src50\system\system_64.prj
+bin\elc src50\system\system_64.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc src50\extensions\extensions_64.prj
+bin\elc src50\extensions\extensions_64.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
@@ -115,6 +115,16 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 tests\system\system_test.exe
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO TestError
+@echo on
+
+bin\elc tests\system\system_test64.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+tests\system\system_test64.exe
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO TestError
 @echo on

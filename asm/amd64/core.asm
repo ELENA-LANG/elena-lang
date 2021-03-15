@@ -1,6 +1,3 @@
-// !! NOTE : ELENA 64 will not maintain 16 byte stack alignment due to the current call conventions 
-//           and some language features (like a command tape). 
-//           The alignment will be maintained only for external operations (inside exclude / include brackets)
 
 // !! NOTE : R15 register must be preserved
 
@@ -595,6 +592,21 @@ lReduce:
 
 end
 
+// ; allocd
+inline % 1Fh
+
+  add  edx, 1
+  and  edx, 0FFFFFFFEh
+  mov  rcx, rdx
+  mov  rdi, rdx
+  shl  rdi, 3
+  sub  rsp, rdi
+  xor  rax, rax
+  mov  rdi, rsp
+  rep  stos
+
+end
+
 // ; rcos
 inline % 20h
 
@@ -616,24 +628,28 @@ inline % 21h
 
 end
 
+// ; xtrans
+inline % 24h
+
+  mov  rax, [rsp]
+  mov  rcx, [rax+rdx*8]
+  mov  [rbx+rdx*8], rcx                                                   
+
+end
+
 // ; include
 inline % 25h
 
-  mov   rsp, r15
+  add  rsp, 16
 
 end
 
 // ; exclude
 inline % 26h
        
-  mov    r15, rsp
-  mov    eax, 8                                            
+  push   0
   push   rbp   
-  xor    ecx, ecx
   mov    [data : %CORE_GC_TABLE + gc_stack_frame], rsp
-  test   rsp, 0FH
-  cmovnz ecx, eax
-  sub    rsp, rcx
 
 end
 
@@ -1835,6 +1851,14 @@ inline % 0C6h
   mov  eax, dword ptr [rbp+__arg1]
   imul dword ptr [rbx]
   mov  dword ptr [rbp+__arg1], eax
+
+end
+
+// ; xsetr
+inline % 0C7h
+        
+   mov  eax, __arg1 
+   mov  [rbx + rdx * 8], rax
 
 end
 
@@ -3100,6 +3124,14 @@ inline % 0F8h
 	
   mov  ecx, __arg1
   call code : %GC_ALLOCPERM
+
+end
+
+// ; xsavesi (__arg1 - index, __arg2 - n)
+inline % 0F9h
+
+  mov  eax, __arg2
+  mov  [rsp + __arg1], rax
 
 end
 

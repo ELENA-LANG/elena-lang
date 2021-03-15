@@ -3,15 +3,17 @@ In development:
 ------         
 
   [development]
-    * system tests : 86, 86-64
-    * compile lib50
-    * support 16 byte stack alignment for x86-64, get rid of current temporal solution (review all cases of freei usage)
-    * compile lib50_64
+    * system tests : 86-64
+
+    + test getClassName
+    + (re)implement Message.toPrintable()
+    + (re)implement RealNumber constructors
 
     + call stack
     + program exception handling
     + uncomment finally part in program entry
 
+    * migrate console / files samples
     * boxing fixed-sized field array
     * globals
     * multi ret
@@ -21,6 +23,8 @@ In development:
 
     * uncomment duplicateStructBoxing,duplicateBoxing,stackSafeExtensions,nilDispatcherTest,templateExtensionTest
 
+    * migrate all samples
+    * migrate all rosetta samples
     * docs - all code in docs should work
     * test if with unknown object
     * test alt
@@ -38,7 +42,6 @@ In development:
     + optimization : branching - extra temporal variable
     + (re)implement long invert op
     + warn if both a parameter and a local variable have the same name
-    + hook x86-64 : should be 16 alignment
     + dispatcin : do not use frame if not nessesary
     + optimization : do not use frame if not nessesary
     + embeddable constructor

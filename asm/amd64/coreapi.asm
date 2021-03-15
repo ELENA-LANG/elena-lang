@@ -10,7 +10,7 @@ define elObjectOffset        0010h
 // ; --- API ---
 
 // wsubcopyz(target,index,size,arr)
-procedure coreapi'wsubcopyz
+procedure coreapi'core_wsubcopyz
 
   mov  rax, [rsp+32]
   mov  rcx, [rsp+24]
@@ -106,7 +106,7 @@ labEnd:
 end
 
 // ; sadd(dest,sour,sindex,dindex)
-procedure coreapi'sadd
+procedure coreapi'core_sadd
 
   mov  rcx, [rsp+24]
   mov  rax, [rsp+16]
@@ -205,6 +205,54 @@ labCheck:
   jnz  short labCheck
   nop
   nop
+  jmp  short labEnd2
+
+labEnd:
+  mov  edx, -1
+labEnd2:
+  ret
+
+end
+
+// wseek(s,subs,index)
+procedure coreapi'core_wseek
+
+  mov  rdi, [rsp+8] // s
+  mov  rdx, [rsp+24]
+  mov  rsi, [rsp+16] // subs
+  
+  mov  ebx, dword ptr [rdi-elSizeOffset]   // get total length  
+  and  ebx, 0FFFFFh
+
+  shl  edx, 1
+  sub  ebx, edx
+  jbe  short labEnd
+
+  add  ebx, 2
+  sub  edx, 2
+
+labNext:
+  add  edx, 2
+  mov  rsi, [rsp+16]
+  mov  ecx, dword ptr [rsi-elSizeOffset]
+  sub  ebx, 2
+  lea  rcx, [rcx-2]
+  jz   short labEnd
+  and  ecx, 0FFFFFh
+  cmp  ebx, ecx
+  jb   short labEnd
+  mov  rdi, [rsp+8]
+  add  rdi, rdx
+
+labCheck:
+  mov  eax, dword ptr [rdi]
+  cmp  ax, word ptr [rsi]
+  jnz  short labNext
+  lea  rdi, [rdi+2]
+  lea  rsi, [rsi+2]
+  sub  ecx, 2
+  jnz  short labCheck
+  shr  edx, 1
   jmp  short labEnd2
 
 labEnd:
@@ -527,7 +575,7 @@ labEnd:
 end
 
 // ; inttostr(s,b,t,out)
-procedure coreapi'inttostr
+procedure coreapi'core_inttostr
 
    mov  rsi, [rsp+16]
    mov  rax, [rsp+8]
@@ -975,55 +1023,6 @@ procedure coreapi'tempObject
   mov  [rax-elVMTOffset], rbx
   mov  qword ptr [rax], rdx
   mov  dword ptr [rax-elSizeOffset], 40000008h
-  ret
-
-end
-
-// wseek(s,subs,index)
-procedure coreapi'wseek
-
-  mov  rdi, [rsp+8] // s
-  mov  rax, [rsp+24]
-  mov  rsi, [rsp+16] // subs
-  mov  edx, dword ptr [rax]
-  
-  mov  ebx, dword ptr [rdi-elSizeOffset]   // get total length  
-  and  ebx, 0FFFFFh
-
-  shl  edx, 1
-  sub  ebx, edx
-  jbe  short labEnd
-
-  add  ebx, 2
-  sub  edx, 2
-
-labNext:
-  add  edx, 2
-  mov  rsi, [rsp+16]
-  mov  ecx, dword ptr [rsi-elSizeOffset]
-  sub  ebx, 2
-  lea  rcx, [rcx-2]
-  jz   short labEnd
-  and  ecx, 0FFFFFh
-  cmp  ebx, ecx
-  jb   short labEnd
-  mov  rdi, [rsp+8]
-  add  rdi, rdx
-
-labCheck:
-  mov  eax, dword ptr [rdi]
-  cmp  ax, word ptr [rsi]
-  jnz  short labNext
-  lea  rdi, [rdi+2]
-  lea  rsi, [rsi+2]
-  sub  ecx, 2
-  jnz  short labCheck
-  shr  edx, 1
-  jmp  short labEnd2
-
-labEnd:
-  mov  edx, -1
-labEnd2:
   ret
 
 end

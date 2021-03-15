@@ -2985,6 +2985,9 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
          retVal = mapIntConstant(scope, result);
          //node.set(lxConstantInt, retVal.param);
          //node.appendNode(lxIntValue, result);
+         
+         // closing open expression
+         writer.closeNode();
 
          return retVal;
       }
@@ -2997,6 +3000,9 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       if (calculateRealOp(operator_id, l, r, result)) {
          retVal = mapRealConstant(scope, result);
          //node.set(lxConstantReal, retVal.param);
+
+         // closing open expression
+         writer.closeNode();
 
          return retVal;
       }
@@ -3763,15 +3769,7 @@ void Compiler :: unboxPreservedArgs(SyntaxWriter& writer, ExprScope& scope, Argu
             writeTerminal(writer, target, scope);
             writer.appendNode(lxField, info.param);
             writer.closeNode();
-
             writer.closeNode();
-         //      SNode assignNode = current.appendNode(lxCopying, size);
-         //      assignNode.appendNode(lxLocalAddress, member.param);
-         //
-         //      SNode fieldAssignExpr = assignNode.appendNode(lxFieldExpression);
-         //      fieldAssignExpr.appendNode(tempType, tempLocal);
-         //      fieldAssignExpr.appendNode(lxField, memberIndex);
-         //
          //      Attribute key(lxLocalAddress, member.param);
          //      int boxedLocal = scope.tempLocals.get(key);
          //      if (boxedLocal != NOTFOUND_POS) {

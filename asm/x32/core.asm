@@ -3436,7 +3436,6 @@ inline % 0F9h
 
 end
 
-
 // callrm (edx contains message, __arg1 contains vmtentry)
 inline % 0FEh
 

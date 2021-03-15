@@ -160,7 +160,7 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
-   &compileCreateN, &compileNop, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &loadFunction,
+   &compileCreateN, &loadIndexNOp, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &loadFunction,
 };
 
 constexpr int FPOffset = 0xC;
@@ -1052,7 +1052,7 @@ void _ELENA_::compilePop(int, I64JITScope& scope)
 
 void _ELENA_::compilePopN(int, I64JITScope& scope)
 {
-   freeStack64(scope.argument << 3, scope.code);
+   freeStack64(align(scope.argument << 3, 16), scope.code);
 }
 
 void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
@@ -1139,7 +1139,7 @@ void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
    scope.code->seekEOF();
 
    if (argsToFree)
-      freeStack64(argsToFree << 3, scope.code);
+      freeStack64(align(argsToFree << 3, 16), scope.code);
 }
 
 void _ELENA_::loadNOp(int opcode, I64JITScope& scope)
@@ -1981,6 +1981,8 @@ void _ELENA_::compileDShiftN(int op, I64JITScope& scope)
 
 void _ELENA_::compileAllocI(int opcode, I64JITScope& scope)
 {
+   scope.argument = align(scope.argument, 2);
+
    switch (scope.argument) {
       case 0:
          break;
@@ -2026,7 +2028,7 @@ void _ELENA_::compileRestore(int op, I64JITScope& scope)
 {
    scope.argument += 16; // include EIP & EBP 
 
-   scope.argument = align(scope.argument, 8);
+   scope.argument = align(scope.argument, 16);
 
    loadNOp(op, scope);
 }
@@ -2045,10 +2047,10 @@ void _ELENA_::compileSetFrame(int, I64JITScope& scope)
 
 void _ELENA_::compileReserve(int op, I64JITScope& scope)
 {
-   scope.argument = align(scope.argument, 8);
+   scope.argument = align(scope.argument, 16);
 
    // include raw data frame header
-   scope.frameOffset += align(scope.argument + 16, 8);
+   scope.frameOffset += align(scope.argument + 16, 16);
 
    loadNOp(op, scope);
 }
