@@ -109,12 +109,12 @@ rem bin\elc src50\extensions\extensions_64.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc tests\system\system_test.prj
+bin\elc tests\system\system_test.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem tests\system\system_test.exe
+tests\system\system_test.exe
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO TestError
 @echo on

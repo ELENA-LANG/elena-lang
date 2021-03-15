@@ -2960,7 +2960,10 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
 
       writeTerminal(writer, loperand, scope);
 
-      roperand = compileExpression(writer, node.findChild(lxExpression), scope, 0, EAttr::eaNone, nullptr);
+      writer.newNode(lxSeqExpression);
+      roperand = compileExpression(writer, node.firstChild().nextNode(lxObjectMask), 
+         scope, 0, EAttr::eaNone, nullptr);
+      writer.closeNode();
    }
    else {
       if (arguments) {

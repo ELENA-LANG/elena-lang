@@ -86,35 +86,35 @@ namespace io
     sealed class ConsoleWriter : IConsoleWriter
     {
         handle handle;
-//        wide   newLine;
+        wide   newLine;
     
         constructor(handle h)
         {
             handle := h;
-            //newLine := forward newLine;
+            newLine := forward newLine;
         }
     
-//        writeLine(string s)
-//        {
-//            self.write(cast wide(s));
-//            self.write(newLine);
-//        }
+        writeLine(string s)
+        {
+            self.write(cast wide(s));
+            self.write(newLine);
+        }
     
         write(string s)
         {
             self.write(cast wide(s))
         }
     
-//        writeLine(wide s)
-//        {
-//            self.write(s);
-//            self.write(newLine);
-//        }
-//    
-//        writeLine()
-//        {
-//            self.write(newLine);
-//        }
+        writeLine(wide s)
+        {
+            self.write(s);
+            self.write(newLine);
+        }
+    
+        writeLine()
+        {
+            self.write(newLine);
+        }
     
         write(wide s)
         {

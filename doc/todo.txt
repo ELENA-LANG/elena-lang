@@ -3,8 +3,10 @@ In development:
 ------         
 
   [development]
-    * basic tests
     * system tests : 86, 86-64
+    * compile lib50
+    * support 16 byte stack alignment for x86-64, get rid of current temporal solution (review all cases of freei usage)
+    * compile lib50_64
 
     + call stack
     + program exception handling
@@ -17,10 +19,6 @@ In development:
     * template based extensions
     * uncomment defineEmbeddableAttributes
 
-    * compile lib50
-    * get rid of push / pop operations in bcwriter, in most cases "xalloci, storesi, freei" should be used
-    * support 16 byte stack alignment for x86-64, get rid of current temporal solution (review all cases of freei usage)
-    * compile lib50_64
     * uncomment duplicateStructBoxing,duplicateBoxing,stackSafeExtensions,nilDispatcherTest,templateExtensionTest
 
     * docs - all code in docs should work

@@ -17,6 +17,9 @@ public interface IConsoleWriter
 {
     abstract write(wide s);
     abstract write(string s);
+    abstract writeLine(wide s);
+    abstract writeLine(string s);
+    abstract writeLine();
     
     abstract refresh();
 }
@@ -36,11 +39,11 @@ sealed class Console
 //        this reader := reader
     }
 
-//    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
-//    writeLine(o)
-//    {
-//        self.writeLine(o.toPrintable())
-//    }
+    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
+    writeLine(o)
+    {
+        self.writeLine(o.toPrintable())
+    }
 
     [info:"Writes the specified literal value to the standard output stream."]
     write(o)
@@ -64,30 +67,30 @@ sealed class Console
         writer.refresh()
     }
 
-//    /// the current line terminator to the standard output stream.
-//    writeLine(string s)
-//    {
-//        writer.writeLine(s);
-//        
-//        writer.refresh();
-//    }
-//
-//    /// the current line terminator to the standard output stream.
-//    writeLine(wide s)
-//    {
-//        writer.writeLine(s);
-//        
-//        writer.refresh();
-//    }
-//    
-//    /// the current line terminator to the standard output stream.
-//    writeLine()
-//    {
-//        writer.writeLine();
-//        
-//        writer.refresh();
-//    }
-//
+    /// the current line terminator to the standard output stream.
+    writeLine(string s)
+    {
+        writer.writeLine(s);
+        
+        writer.refresh();
+    }
+
+    /// the current line terminator to the standard output stream.
+    writeLine(wide s)
+    {
+        writer.writeLine(s);
+        
+        writer.refresh();
+    }
+    
+    /// the current line terminator to the standard output stream.
+    writeLine()
+    {
+        writer.writeLine();
+        
+        writer.refresh();
+    }
+
 //    /// Clears the console
 //    clear()
 //        => writer;
