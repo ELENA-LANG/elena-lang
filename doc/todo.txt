@@ -3,7 +3,7 @@ In development:
 ------         
 
   [development]
-    * x86-64 : console output
+
     + debugger : stack allocated int value 
     * system tests : x86-64
 
@@ -65,6 +65,7 @@ In development:
     * compilerx - use cdelc calling convention
     * corex - edi should contain the thread TLS pointer
     + introduce inline attribute testOp so all marked function will be executed by Tester class (e.g extensions'tests)
+    + should we get rid of loadi / savei??
 
     * test all console & files samples
     * #206 : interpreter sample

@@ -1879,6 +1879,11 @@ void AMD64Assembler :: compileMUL(TokenInfo& token, ProcedureInfo& info, MemoryW
 	   code->writeByte(0xF7);
       AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 4), sour);
    }
+   else if (test(sour.type, AMD64Helper::otR64) || test(sour.type, AMD64Helper::otM64)) {
+      code->writeByte(0x48);
+      code->writeByte(0xF7);
+      AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR64 + 4), sour);
+   }
    else token.raiseErr("Invalid command (%d)");
 }
 

@@ -951,6 +951,17 @@ inline % 4Bh
 
 end
 
+// ; lload
+inline % 4Ch
+
+  mov  eax, edx
+  cdq
+  mov  dword ptr [rbx+4], edx
+  mov  dword ptr [rbx], eax
+  mov  edx, eax
+
+end
+
 // ; rint
 inline % 4Fh
 

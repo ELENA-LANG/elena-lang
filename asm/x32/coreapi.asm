@@ -4637,6 +4637,29 @@ lab4:
 
 end
 
+// ; longtoint(l)
+procedure coreapi'longtoint
+
+  mov  ebx, [esp+4]
+  mov  ecx, [ebx+4]
+  cmp  ecx, 0
+  jl   labNegative
+  nop
+  jnz  labErr
+  mov  edx, [ebx]
+  ret
+labNegative:
+  cmp  ecx, 0FFFFFFFFh
+  jnz  labErr
+  mov  edx, [ebx]
+  ret
+
+labErr:
+  xor  ebx, ebx
+  ret
+
+end
+
 // ; resolve_index (index)
 procedure coreapi'resolve_index
 

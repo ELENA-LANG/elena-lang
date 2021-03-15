@@ -93,7 +93,7 @@ enum ByteCode
    bcRSaveN          = 0x49,
    bcRSaveL          = 0x4A,
    bcLSave           = 0x4B,
-//   bcNXor            = 0x4C,
+   bcLLoad           = 0x4C,
 //   bcNShiftL         = 0x4D,
 //   bcNNot            = 0x4E,
    bcRInt            = 0x4F,

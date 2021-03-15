@@ -2,5 +2,5 @@ import extensions;
 
 public program()
 {
-    console.write("!!")
+    var l := -2.toLong();
 }

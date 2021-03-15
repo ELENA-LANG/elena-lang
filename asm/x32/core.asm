@@ -971,6 +971,17 @@ inline % 4Bh
 
 end
                
+// ; lload
+inline % 4Ch
+
+  mov  eax, edx
+  cdq
+  mov  [ebx+4], edx
+  mov  [ebx], eax
+  mov  edx, eax
+
+end
+               
 // ; rint
 inline % 4Fh
 

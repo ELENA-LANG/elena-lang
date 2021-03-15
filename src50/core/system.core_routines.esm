@@ -487,17 +487,7 @@ procedure __longconvertor."convert$system@IntNumber$@system@ref#1&system@LongNum
   peeksi 1
   load
   peeksi 2
-  save
-  lessn labNegative, 0
-  movn 0
-  savei 1
-  peeksi 1
-  quit
-
-labNegative:
-  movn 0FFFFFFFFh
-  savei 1
-  peeksi 1
+  lload
   quit
 
 end
@@ -534,21 +524,13 @@ end
 
 procedure __intconvertor."convert$system@LongNumber$@system@ref#1&system@IntNumber[2]"
 
-  peeksi 1
-  loadi 1
-  lessn labNegative, 0  
-  elsen labErr, 0  
+  peeksi   1
+  pusha
+  callextr api : longtoint, 1
+  pop
 
-  load
-  peeksi 2
-  save
-  quit  
-
-labNegative:
-  elsen labErr, 0FFFFFFFFh
-
-  load
-  peeksi 2
+  ifr      labErr, 0
+  peeksi   2
   save
   quit  
 

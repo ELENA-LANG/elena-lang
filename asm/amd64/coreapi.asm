@@ -2837,7 +2837,7 @@ end
 // ; rcopyl (eax:src, ecx : base, esi - result)
 procedure coreapi'strtolong
 
-  mov  rax, [rsp+16]                 // ; radix
+  mov  rax, [rsp+16]                // ; radix
   mov  rsi, [rsp+8]                 // ; get str
   mov  ecx, dword ptr [rax]
 
@@ -2856,12 +2856,12 @@ procedure coreapi'strtolong
 
 labStart:
   push rdx           // save sign flag
-  xor  edi, edi      // edi   - DHI
-  xor  ebx, ebx      // ebx   - DLO
+  xor  rax, rax      
 
 labConvert:
-  mov  rbx, [rsp+8]
-
+  mov  edx, dword ptr [rsp+8]
+  mul  rdx 
+  mov  rbx, rax
   xor  eax, eax
   lodsb
   cmp  eax, 3Ah
@@ -2870,39 +2870,33 @@ labConvert:
 lab11:
   sub  al, 30h
   jb   short labErr
-  mov  edx, dword ptr [rsp+4]
-  cmp  dl, al
+  mov  edx, dword ptr [rsp+8]
+  cmp  eax, edx
   ja   short labErr
-
-  add ebx, eax       // DLO + EAX
-  adc edi, 0         // DHI + CF
-
+  add  rax, rbx
   sub  ecx, 1
   jnz  short labConvert
 
+  mov  rbx, rax
   pop  rax           // restore flag
   test eax, eax
   jz   short labSave
-
-  not  edi           // invert number
-  neg  ebx
+  neg  rbx
 
 labSave:
-
-  mov  edx, edi
   pop  rsi
 
   mov  rax, [rsp+24]
   mov  [rax], rbx
   mov  rbx, [rsp+8]
 
-  jmp  short labEnd
+  jmp  short labQuit
 
 labErr:
   xor  ebx, ebx
   pop  rdx
 
-labEnd:
+labQuit:
   ret
 
 end
@@ -4568,6 +4562,29 @@ labNext2:
   add  esi, 4
   sub  ecx, 1
   jnz  short labNext2
+  ret
+
+end
+
+// ; longtoint(l)
+procedure coreapi'longtoint
+
+  mov  rbx, [rsp+8]
+  mov  ecx, dword ptr [rbx+4]
+  cmp  ecx, 0
+  jl   labNegative
+  nop
+  jnz  labErr
+  mov  edx, dword ptr [rbx]
+  ret
+labNegative:
+  cmp  ecx, 0FFFFFFFFh
+  jnz  labErr
+  mov  edx, dword ptr [rbx]
+  ret
+
+labErr:
+  xor  ebx, ebx
   ret
 
 end
