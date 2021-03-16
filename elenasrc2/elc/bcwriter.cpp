@@ -385,9 +385,11 @@ void ByteCodeWriter :: declareSafeCatch(CommandTape& tape, SyntaxTree::Node fina
       tape.write(bcUnhook);
 
       // generate finally
-      pushObject(tape, lxResult, 0, scope, 0);
+      tape.write(bcAllocI, 1);
+      tape.write(bcStoreSI, 0);
       generateCodeBlock(tape, finallyNode, scope);
-      popObject(tape, lxResult);
+      tape.write(bcPeekSI, 0);
+      tape.write(bcFreeI, 1);
 
       gotoEnd(tape, baFirstLabel);
    }
@@ -407,7 +409,7 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
 
 void ByteCodeWriter :: doCatch(CommandTape& tape)
 {
-   //   popa
+   //   peeksi 0
    //   flag
    //   and elMessage
    //   ifn labSkip
@@ -415,12 +417,13 @@ void ByteCodeWriter :: doCatch(CommandTape& tape)
    //   peeksi 0
    //   callvi 0
    // labSkip:
+   //   popa
    //   unhook
 
    tape.newLabel();
 
    // HOT FIX: to compensate the unpaired pop
-   tape.write(bcPopA);
+   tape.write(bcPeekSI, 0);
    tape.write(bcFlag);
    tape.write(bcAnd, elMessage);
    tape.write(bcIfN, baCurrentLabel, 0);
@@ -430,6 +433,7 @@ void ByteCodeWriter :: doCatch(CommandTape& tape)
 
    tape.setLabel();
 
+   tape.write(bcPopA);
    tape.write(bcUnhook);
 }
 
@@ -3622,9 +3626,11 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, 
             scope.clear();
 
             // generate finally
-            pushObject(tape, lxResult, 0, scope, 0);
+            tape.write(bcAllocI, 1);
+            tape.write(bcStoreSI, 0);
             generateCodeBlock(tape, finallyNode, scope);
-            popObject(tape, lxResult);
+            tape.write(bcPeekSI, 0);
+            tape.write(bcFreeI, 1);
          }
 
          // ...

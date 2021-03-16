@@ -3,6 +3,7 @@ In development:
 ------         
 
   [development]
+    * system tests
 
     + debugger : stack allocated int value 
     * system tests : x86-64
@@ -10,6 +11,8 @@ In development:
     + test getClassName
     + (re)implement Message.toPrintable()
     + (re)implement RealNumber constructors
+    + free 0 / alloc 0 - do nothing
+    + test finally block with locally allocated variables
 
     + call stack
     + program exception handling

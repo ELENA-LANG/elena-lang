@@ -20,8 +20,8 @@ define __rsrv_object_offset64        20
 define __page_size32                 16
 define __page_size64                 32
 
-define __temp_index32                4      
-define __temp_index64                4      
+define __temp_index32                1      
+define __temp_index64                1      
 
 // ; external methods
 
@@ -76,7 +76,7 @@ end
 
 procedure __object."raise[1]"
 
-  freei 1
+  pop
   peeksi 0
   throw
   
@@ -235,12 +235,13 @@ end
 procedure __exception."on[2]"
 
   open 
-  hook   labNotFound
-  pusha
-  peekfi -2
-  movm   mssgconst : "#invoke[1]"
+  hook    labNotFound
+  alloci  1
+  storesi 0 
+  peekfi  -2
+  movm    mssgconst : "#invoke[1]"
 
-  callvi 0
+  callvi  0
 
 labReturn:
 
@@ -251,14 +252,10 @@ labReturn:
 
 labNotFound:
 
-  // ; movs    9
-  // ; address labReturn
-  // ; else    labContinueError
-
-  restore 4
+  restore __page_size
 
   close
-  pushsi __temp_index
+  pushsi  __temp_index
 
 labContinueError:
 
