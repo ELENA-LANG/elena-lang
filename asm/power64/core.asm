@@ -1,4 +1,7 @@
 // r1 - stack frame pointer
+// r31 - base frame pointer
+
+
 // r2 - TOC
 // r31 - frame pointer
 
@@ -22,16 +25,34 @@ define GC_ALLOCPERM	    10031h
 //define VOID                 2000Dh
 //define VOIDPTR              2000Eh
 
-// --- GC_ALLOC ---
+
+
+// lis Rx,addr -> addis Rx,0,addr
+// mr Rx,Ry    -> or Rx, Ry, Ry
+// li Rx,val 
+
+// --- GC_ALLOC (r3 - size) ---
+
 procedure %GC_ALLOC
 
+  // ; r17 - gc_yg_current, r19 - gc_yg_end
+
   // ; mov  rax, [data : %CORE_GC_TABLE + gc_yg_current]
-  ld  r12, data : %TOC_GC_TABLE_INDEX(r2)
-  ld  r12, gc_yg_current(r12)
+  lis  r16, data : %CORE_GC_TABLE @ha
+  li   r15, gc_yg_current
+  ld   r12, data : %CORE_GC_TABLE @l (r16)
+  add  r17, r12, r15
 
   // mov  rdx, [data : %CORE_GC_TABLE + gc_yg_end]
+  li   r18, gc_yg_current
+  add  r19, r12, r15
+
   // add  rcx, rax
+  add   r20,r17,r3
+
   // cmp  rcx, rdx
+
+
   // jae  short labYGCollect
   // mov  [data : %CORE_GC_TABLE + gc_yg_current], rcx
   // lea  rbx, [rax + elObjectOffset]
