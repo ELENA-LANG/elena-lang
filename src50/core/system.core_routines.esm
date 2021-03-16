@@ -370,6 +370,59 @@ procedure __exception.register[0]
 
 end
 
+procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@system@ref#1&system@ShortNumber[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  load
+  lessn   labErr, 0
+ 
+  peeksi  2
+  load
+  peeksi  1
+  read
+  and     0FFFFh
+  peeksi  3
+  save
+
+  quit
+  
+labErr:
+  open
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+
+end
+
+procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@system@ref#1&system@IntNumber[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  load
+  lessn   labErr, 0
+
+  peeksi  2
+  load
+  peeksi  1
+  read
+  peeksi  3
+  save
+
+  quit
+  
+labErr:
+  open
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+
+end
+
 procedure __chararray."write$@system@Array#1&system@CharValue$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue[4]"
 
   pushsi 4
@@ -605,6 +658,44 @@ procedure __realconvertor."convert$system@LongNumber$@system@ref#1&system@RealNu
   pushsi 2  
   callextr api : longtoreal, 2
   freei 2
+  quit
+
+end
+
+procedure __charconvertor."convert$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@CharValue[3]"
+
+  pushsi   2
+  peeksi   2
+  load
+  pushd
+
+  callextr api : core_wstrtochar, 2
+  ifr      labErr, 0
+
+  freei    2
+  peeksi   3
+  save
+  quit
+
+labErr:
+  open
+  pushr    class : system'InvalidArgumentException
+  pushr    mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __charconvertor."save$system@CharValue$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushn  0   // ; HOTFIX : to support 16 byte alignment
+  pushsi 4
+  pushsi 4
+  pushsi 4  
+  callextr api : chartoshorts, 3
+  freei  4
+  peeksi 4
+  save
+  
   quit
 
 end

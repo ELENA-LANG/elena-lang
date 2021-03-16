@@ -793,7 +793,7 @@ pos_t JITCompiler64 :: copyParentVMTX(void* parentVMT, VMTXEntry* entries)
          entries[i] = parentEntries[i];
       }
 
-      return header->count;
+      return (pos_t)header->count;
    }
    else return 0;
 }

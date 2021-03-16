@@ -3870,6 +3870,11 @@ ObjectInfo Compiler :: injectImplicitConversion(SyntaxWriter& writer, SNode node
       }
    }
    else if (info.result == ConversionResult::crConverted) {
+      if (source.kind == okObject) {
+         // save the result of operation if required
+         source = saveToTempLocal(writer, scope, source);
+      }
+
       writer.newNode(lxDirectCalling, info.message);
       writer.appendNode(lxCallTarget, info.classRef);
       writer.appendNode(lxClassSymbol, targetRef);
@@ -6671,13 +6676,13 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
       case lxCodeExpression:
       case lxCode:
       {
-      //            if (EAttrs::test(exprMode, HINT_EXTERNALOP)) {
-      //               current.injectAndReplaceNode(lxExternFrame);
-      //
-      //               current = current.firstChild(lxObjectMask);
-      //            }
          bool withRetStatement = false;
-         retVal = compileSubCode(writer, node, scope, false, withRetStatement);
+         if (EAttrs::test(mode, HINT_EXTERNALOP)) {
+            writer.newNode(lxExternFrame);
+            retVal = compileSubCode(writer, node, scope, false, withRetStatement);
+            writer.closeNode();
+         }
+         else retVal = compileSubCode(writer, node, scope, false, withRetStatement);
       //            scope.setCodeRetStatementFlag(withRetStatement);
          break;
       }

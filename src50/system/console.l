@@ -1,15 +1,15 @@
-//// --- IConsoleReader ---
-//
-//public interface IConsoleReader
-//{
+// --- IConsoleReader ---
+
+public interface IConsoleReader
+{
 //    abstract string readLine();
 //    
 //    abstract wide readWideLine();
-//    
-//    abstract read(ref char retVal);
-//    
+    
+    abstract char read();
+    
 //    get abstract bool KeyAvailable();
-//}
+}
 
 // --- IConsoleWriter ---
 
@@ -30,13 +30,13 @@ public interface IConsoleWriter
 sealed class Console
 {
     IConsoleWriter writer;
-//    IConsoleReader reader;
+    IConsoleReader reader;
 
     /// Creates a console
-    constructor(/*reader, */writer)
+    constructor(reader, writer)
     {
         this writer := writer;
-//        this reader := reader
+        this reader := reader
     }
 
     /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
@@ -105,19 +105,19 @@ sealed class Console
 //    /// Reads the next line of characters from the standard input stream.
 //    wide readWideLine()
 //        = reader.readWideLine();
-//
-//    /// Reads the next character from the input stream
-//    char readChar()
-//    {
-//        reader.read(ref char retVal);
-//        
-//        ^ retVal
-//    }
-//
+
+    [info:"Reads the next character from the input stream"]
+    char readChar()
+    {
+        char retVal := reader.read();
+        
+        ^ retVal
+    }
+
 //    get bool KeyAvailable()
 //        => reader;
 }
 
 /// A standard console
-public static Console console = new Console(/*io'stdConsoleReader, */io'stdConsoleWriter);
+public static Console console = new Console(io'stdConsoleReader, io'stdConsoleWriter);
 

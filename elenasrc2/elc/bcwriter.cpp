@@ -180,17 +180,17 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, mssg_t message, ref_t so
    tape.newLabel();     // declare exit point
 }
 
-//void ByteCodeWriter :: excludeFrame(CommandTape& tape)
-//{
-//   tape.write(bcExclude);
-//}
-//
-//void ByteCodeWriter :: includeFrame(CommandTape& tape, bool withThreadSafeNop)
-//{
-//   tape.write(bcInclude);
-//   if (withThreadSafeNop)
-//      tape.write(bcSNop);
-//}
+void ByteCodeWriter :: excludeFrame(CommandTape& tape)
+{
+   tape.write(bcExclude);
+}
+
+void ByteCodeWriter :: includeFrame(CommandTape& tape, bool withThreadSafeNop)
+{
+   tape.write(bcInclude);
+   if (withThreadSafeNop)
+      tape.write(bcSNop);
+}
 
 void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
 {
@@ -3585,14 +3585,14 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
    }
 }
 
-//void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
-//{
-//   excludeFrame(tape);
-//
-//   generateCodeBlock(tape, node, scope);
-//
-//   includeFrame(tape, true);
-//}
+void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   excludeFrame(tape);
+
+   generateCodeBlock(tape, node.findChild(lxCode), scope);
+
+   includeFrame(tape, true);
+}
 
 void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
@@ -4282,10 +4282,10 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, FlowSco
 
    SNode current = node.firstChild(lxObjectMask);
    while (current != lxNone) {
-//      if (current == lxExternFrame) {
-//         generateExternFrame(tape, current, scope);
-//      }
-      /*else */generateObject(tape, current, scope, mode);
+      if (current == lxExternFrame) {
+         generateExternFrame(tape, current, scope);
+      }
+      else generateObject(tape, current, scope, mode);
 
       current = current.nextNode(lxObjectMask);
    }

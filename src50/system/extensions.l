@@ -1511,20 +1511,20 @@ public extension objectOp
 
 // --- byteArrayHelper ---
 
-//public extension byteArrayHelper : Array<byte>
-//{
-    /// Reads a short integer value at the specified position and saves it into an output variable
-//    read(int index, ref short retVal)
-//        => intern system'core_routines'__bytearray;
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    read(int index, ref int retVal)
-//        => intern system'core_routines'__bytearray;
-//
-//    /// Reads a character value at the specified position and saves it into an output variable
+public extension byteArrayHelper : Array<byte>
+{
+    [info:"Reads a short integer value at the specified position and saves it into an output variable"]
+    read(int index, ref short retVal)
+        => intern system'core_routines'__bytearray;
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    read(int index, ref int retVal)
+        => intern system'core_routines'__bytearray;
+
+//    [info:"Reads a character value at the specified position and saves it into an output variable"]
 //    read(int index, ref char retVal)
 //        => intern system'core_routines'__bytearray;                
-//        
+        
 //    move(int index, int length, int offset)
 //        => intern system'core_routines'__bytearray;
 //                
@@ -1577,7 +1577,7 @@ public extension objectOp
 //            i := i + 1
 //        }
 //    }
-//}
+}
 
 // --- charArrayHelper ---
 

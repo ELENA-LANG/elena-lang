@@ -130,10 +130,8 @@ class ByteCodeWriter
    void declareAbstractMethod(CommandTape& tape, mssg_t message);
    void declareMethod(CommandTape& tape, mssg_t message, ref_t sourcePathRef, int reserved, int allocated,
       bool withPresavedMessage, bool withNewFrame = true);
-//   //void declareExternalBlock(CommandTape& tape);
-//   void excludeFrame(CommandTape& tape);
-//   void includeFrame(CommandTape& tape, bool withThreadSafeNop);
-////   void declareVariable(CommandTape& tape, int value);
+   void excludeFrame(CommandTape& tape);
+   void includeFrame(CommandTape& tape, bool withThreadSafeNop);
    void allocateStack(CommandTape& tape, int count);
    int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
    void declareThenBlock(CommandTape& tape);
@@ -299,7 +297,7 @@ class ByteCodeWriter
    void generateInternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateCall(CommandTape& tape, SyntaxTree::Node node);
 
-//   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateTrying(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateAlt(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateLooping(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);

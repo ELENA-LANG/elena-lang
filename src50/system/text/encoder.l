@@ -1,12 +1,12 @@
-//// === basic interfaces ===
-//
-//namespace text
-//{
-//    
-//    // --- Encoder ---
-//    
-//    public interface Encoder
-//    {
+// === basic interfaces ===
+
+namespace text
+{
+    
+    // --- Encoder ---
+    
+    public interface Encoder
+    {
 //        abstract convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength);
 //    
 //        abstract convert(int index, ref int length, char[] charArray, byte[] output, ref int outputLength);
@@ -174,8 +174,8 @@
 //            
 //            ^ retVal
 //        }
-//    }
-//    
+    }
+    
 //    // --- UTF8Encoder ---
 //    
 //    public singleton UTF8Encoder : Encoder
@@ -218,18 +218,28 @@
 //        convert(int index, ref int length, string s, char[] output, ref int outputLength)
 //            => intern system'core_routines'__utf8encoder;
 //    }
-//    
-//    // --- UTF16Encoder ---
-//    
-//    public singleton UTF16Encoder : Encoder
-//    {
+    
+    // --- UTF16Encoder ---
+    
+    public singleton UTF16Encoder : Encoder
+    {
 //        convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength)
 //            => intern system'core_routines'__utf16encoder;
 //        
 //        convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
 //            => intern system'core_routines'__utf16encoder;
-//    }
-//
+
+        static char toChar(short w)
+        {
+            short buffer[2];
+            buffer[0] := w;
+            
+            charConvertor.convert(0, buffer, ref char retVal);
+            
+            ^ retVal 
+        }
+    }
+
 //    // --- UTF16Encoding ---
 //    
 //    public singleton UTF16Encoding
@@ -298,15 +308,6 @@
 //            ^ WideString.fromShortArray(index, length, array)
 //        }
 //        
-//        char toChar(short w)
-//        {
-//            short buffer[2];
-//            buffer[0] := w;
-//            
-//            charConvertor.convert(0, buffer, ref char retVal);
-//            
-//            ^ retVal 
-//        }
 //    }
 //    
-//}
+}

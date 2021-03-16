@@ -92,13 +92,13 @@
 //        __name := value
 //    }
 //}
-//
-//// --- extern statement ---
-//
-//#declare extern(extern_block)
-//{
-//    extern extern_block
-//}
+
+// --- extern statement ---
+
+#declare extern(extern_block)
+{
+    extern extern_block
+}
 
 // --- if statement ---
 
@@ -135,13 +135,13 @@
     __loop cast bool(expr) ? loop_block
 }    
 
-//// --- until statement ---
-//
-//#declare until<expr>(loop_block)
-//{
-//    __loop: cast bool(expr) ! loop_block
-//}
-//
+// --- until statement ---
+
+#declare until<expr>(loop_block)
+{
+    __loop cast bool(expr) ! loop_block
+}
+
 //#declare until<step_expr, cond_expr>(loop_body)
 //{
 //    step_expr;

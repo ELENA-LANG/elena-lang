@@ -114,6 +114,7 @@ enum LexicalType
    lxSubjectConstant          = 0x010288, // arg - reference
 //   lxExtMessageConstant       = 0x010289, // arg -reference
    lxNewFrame                 = 0x030290,   // if argument -1 - than with presaved message
+   lxExternFrame              = 0x030291,
    lxVariable                 = 0x0002A0,
    lxIntVariable              = 0x0002A1,
    lxIntsVariable             = 0x0002A2,
@@ -241,7 +242,6 @@ enum LexicalType
 //   lxInlineArgCall            = 0x0580A4,
 //   lxBlockLocalAddr           = 0x018114, // arg - offset
 //   lxOp                       = 0x0581B0,
-//   lxExternFrame              = 0x058240,
 //   lxYieldDispatch            = 0x058260,
 //   lxYieldReturning           = 0x058261,
 //   lxYieldContext             = 0x018270,

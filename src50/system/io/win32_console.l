@@ -261,52 +261,52 @@ namespace io
 //            extern KERNEL32.CloseHandle(theHandle)
 //        }
 //    }
-//
-//    // --- ConsoleReader ---
-//    
-//    sealed /*struct*/class ConsoleReader : Object, interface<IConsoleReader>
-//    {
-//        handle handle;
-//        
-//        constructor(handle h)
-//        {
-//            handle := h
-//        }
-//    
-//        read(ref char retVal)
-//        {
-//            byte  dump[20];
-//            int   numberRead := 0;
-//            short eventType := 0;
-//            short charCode := 0;
-//            int   keyDown := 0;
-//    
-//            bool found := false;
-//            until (found)
-//            {
-//                extern
-//                {
-//                    extern KERNEL32.ReadConsoleInputW(handle, dump, 1, ref numberRead);
-//                };
-//    
-//                dump.read(0, ref eventType);
-//                if (eventType == 1)
-//                {
-//                    dump.read(4, ref keyDown);
-//                    
-//                    found := keyDown == 1
-//                }
-//                else
-//                {
-//                    found := false 
-//                };
-//            };
-//    
-//            dump.read(14, ref charCode);
-//            
-//            retVal := system'text'UTF16Encoding.toChar(charCode)
-//        }
-//        
+
+    // --- ConsoleReader ---
+    
+    sealed /*struct*/class ConsoleReader : /*Object, interface<*/IConsoleReader//>
+    {
+        handle handle;
+        
+        constructor(handle h)
+        {
+            handle := h
+        }
+    
+        char read()
+        {
+            byte  dump[20];
+            int   numberRead := 0;
+            short eventType := 0;
+            short charCode := 0;
+            int   keyDown := 0;
+    
+            bool found := false;
+            until (found)
+            {
+                extern
+                {
+                    extern KERNEL32.ReadConsoleInputW(handle, dump, 1, ref numberRead);
+                };
+    
+                dump.read(0, ref eventType);
+                if (eventType == 1)
+                {
+                    dump.read(4, ref keyDown);
+                    
+                    found := keyDown == 1
+                }
+                else
+                {
+                    found := false 
+                };
+            };
+    
+            dump.read(14, ref charCode);
+            
+          //  ^ system'text'UTF16Encoder.toChar(charCode)
+        }
+        
 //        get bool KeyAvailable()
 //        {
 //            byte  dump[20];
@@ -389,11 +389,10 @@ namespace io
 //        {
 //            extern KERNEL32.CloseHandle(handle)
 //        }
-//    }
+    }
 
     // --- Console Standard Symbols    
     public symbol stdConsoleWriter = ConsoleHandleFactory.newWriter();
     
-//    public symbol stdConsoleReader = new ConsoleReader(ConsoleHandleFactory.new(0FFFFFFF6h));
-
+    public symbol stdConsoleReader = new ConsoleReader(ConsoleHandleFactory.new(0FFFFFFF6h));
 }

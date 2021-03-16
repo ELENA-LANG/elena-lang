@@ -1784,12 +1784,16 @@ public singleton charConvertor
 //        
 //        ^ retVal
 //    }
-//
-//    internal convert(int index, short[] buffer, ref char retVal)
-//    {
-//        intern system'core_routines'__charconvertor.convert(index, buffer, ref retVal);
-//    }    
-//        
+
+    internal convert(int index, short[] buffer, ref char retVal)
+    {
+        //intern system'core_routines'__charconvertor.convert(index, buffer, ref retVal);
+        
+        intern system'core_routines'__charconvertor.convert(index, buffer, ref char r);
+        
+        retVal := r
+    }    
+        
 //    internal char convert(int index, short[] buffer)
 //    {
 //        intern system'core_routines'__charconvertor.convert(index, buffer, ref char retVal);
