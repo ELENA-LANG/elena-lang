@@ -595,10 +595,10 @@ end
 // ; allocd
 inline % 1Fh
 
-  add  edx, 1
-  and  edx, 0FFFFFFFEh
-  mov  rcx, rdx
-  mov  rdi, rdx
+  mov  ecx, edx
+  add  ecx, 1
+  and  ecx, 0FFFFFFFEh
+  mov  rdi,  rcx
   shl  rdi, 3
   sub  rsp, rdi
   xor  rax, rax
@@ -1868,8 +1868,9 @@ end
 // ; xsetr
 inline % 0C7h
         
-   mov  eax, __arg1 
-   mov  [rbx + rdx * 8], rax
+   mov    ecx, __arg1
+   movsxd rax, ecx 
+   mov    [rbx + rdx * 8], rax
 
 end
 

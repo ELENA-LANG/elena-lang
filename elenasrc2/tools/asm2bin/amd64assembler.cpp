@@ -1812,7 +1812,7 @@ void AMD64Assembler :: compileMOVSXD(TokenInfo& token, ProcedureInfo& info, Memo
 
    Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
-   if (test(sour.type, AMD64Helper::otR64) && (test(dest.type, AMD64Helper::otM32))) {
+   if (test(sour.type, AMD64Helper::otR64) && (test(dest.type, AMD64Helper::otM32) || test(dest.type, AMD64Helper::otR32))) {
       code->writeByte(0x48);
       code->writeByte(0x63);
       AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR8 + (char)sour.type), dest);

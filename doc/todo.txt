@@ -3,8 +3,6 @@ In development:
 ------         
 
   [development]
-    * system tests
-
     + debugger : stack allocated int value 
     * system tests : x86-64
 

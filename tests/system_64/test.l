@@ -1,72 +1,49 @@
 import extensions;
 
-class MyException : Exception
+sealed class VariadicTested
 {
-    constructor new(s)
-        <= new(s);
-}
-
-class MyException2 : Exception
-{
-    constructor new(s)
-        <= new(s);
-}
-
-singleton ExecTester
-{
-//    do : anAction [ anAction eval. ]
-//
-//    do:x with:y
-//    [
-//    ]
-//            
-//    run : anAction
-//    [
-//        anAction eval x:"Eval Works!!".
-//    ]
+    bool test1Called := false;
+    bool test2Called := false;
     
-    break()
+    test1(params int[] others)
     {
-        MyException.new:"OnError handler works".raise()
+        test1Called := true
     }
     
-    break2()
+    test2(string s, params int[] others)
     {
-        MyException2.new("OnError2 handler works").raise()
-    }
+        test2Called := true
+    }    
     
-    break3()
+    validate()
     {
-        MyException2.new("Nested OnError2 handler works").raise()
+        Assert.ifTrue(test1Called).ifTrue(test2Called)
     }
 }
 
-exceptionTest()
-{
 
-    bool passed2 := false;
-    try
-    {
-        try
-        {
-            MyException2.new("Nested OnError2 handler works").raise()
-        }
-        catch(MyException e)
-        {
-            console.writeLine:"!!Wrong handler";
-            Assert.ifTrue(false)
-        }
-    }
-    catch(MyException2 e)
-    {
-        passed2 := true;
-    };
-    Assert.ifTrue(passed2);
+variadicTest()
+{
+//    console.write("variadicTest..");
     
-    console.writeLine("done")
+    // run-time
+    var tester := new VariadicTested();
+    tester.test1(1,3,3);
+//    tester.test2("hello",3,3);
+//    
+//    tester.validate();
+//    
+//    // compile-time
+//    auto tester2 := new VariadicTested();
+//    tester2.test1(1,3,3);
+//    tester2.test2("hello",3,3);
+//    
+//    tester2.validate();
+//    
+//    console.writeLine("done")
 }
 
 public program()
 {
-    exceptionTest()
+    variadicTest()
 }
