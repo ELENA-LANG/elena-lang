@@ -3,8 +3,6 @@ In development:
 ------         
 
   [development]
-    * vm hello world 64 bit
-
     * intsum / realsum
     * #206 : migrate console / files samples
     * #206 : interpreter sample

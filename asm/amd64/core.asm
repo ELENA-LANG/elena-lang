@@ -3170,7 +3170,7 @@ end
 inline % 1FFh
 
   mov  rcx, [rsp]
-  sub  rsp, 18h
+  sub  rsp, 20h
   call extern __arg1
   mov  rdx, rax
 
@@ -3193,7 +3193,7 @@ inline % 3FFh
   mov  rcx, [rsp]
   mov  rdx, [rsp+8]
   mov  r8,  [rsp+16]
-  sub  rsp, 08h
+  sub  rsp, 10h
   call extern __arg1
   mov  rdx, rax
 
