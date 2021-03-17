@@ -2153,10 +2153,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushf n
          tape.write(bcPushF, argument << 2);
          break;
-//      case lxBlockLocalAddr:
-//         // pushf n
-//         tape.write(bcPushFIP, argument);
-//         break;
+      case lxBlockLocalAddr:
+         // pushf n
+         tape.write(bcPushFIP, argument);
+         break;
       case lxCurrent:
          // pushsi index
          tape.write(bcPushSI, argument);
@@ -2310,10 +2310,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // class
          tape.write(bcClass);
          break;
-//      case lxBlockLocalAddr:
-//         // acopyf n
-//         tape.write(bcMovFIP, argument);
-//         break;
+      case lxBlockLocalAddr:
+         // acopyf n
+         tape.write(bcMovFIP, argument);
+         break;
       case lxResult:
          break;
       default:
@@ -3157,9 +3157,8 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
 
    if (!argUnboxMode && isOpenArg(node.argument)) {
       // NOTE : do not add trailing nil for result of unboxing operation
-      tape.write(bcXSaveSI, argCount, -1);
+      tape.write(bcXSaveSI, argCount - startIndex, -1);
    }
-
 
    if (functionMode) {
       generateObject(tape, getChild(node, 0), scope);

@@ -2266,16 +2266,6 @@ int Compiler :: defineFieldSize(Scope& scope, int offset)
 //
 //void Compiler :: setParamsTerminal(SNode& node, _CompileScope&, ObjectInfo object, EAttr, ref_t wrapRef)
 //{
-//   node.set(lxBlockLocalAddr, object.param);
-//
-//   node.injectAndReplaceNode(lxArgBoxableExpression);
-//   node.appendNode(lxType, wrapRef);
-//
-//   //         writer.newNode(lxArgBoxing, 0);
-//   //         writer.appendNode(lxBlockLocalAddr, object.param);
-//   //         writer.appendNode(lxTarget, r);
-//   //         if (EAttrs::test(mode, HINT_DYNAMIC_OBJECT))
-//   //            writer.appendNode(lxBoxingRequired);
 //}
 //
 //void Compiler :: setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, LexicalType type, int fixedSize)
@@ -6083,18 +6073,6 @@ ObjectInfo Compiler :: compileRootExpression(SyntaxWriter& writer, SNode node, C
 //      case okExtMessageConstant:
 //         terminal.set(lxExtMessageConstant, object.param);
 //         break;
-////////      case okBlockLocal:
-////////         terminal.set(lxBlockLocal, object.param);
-////////         break;
-//      case okParams:
-//      {
-//         ref_t r = resolvePrimitiveReference(scope, object.reference, object.element, false);
-//         if (!r)
-//            throw InternalError("Cannot resolve variadic argument template");
-//
-//         setParamsTerminal(terminal, scope, object, mode, r);
-//         break;
-//      }
 ////      case okObject:
 ////         writer.newNode(lxResult, 0);
 ////         break;
@@ -6484,6 +6462,17 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
       case okSymbol:
          writer.newNode(lxSymbolReference, object.param);
          break;
+      case okParams:
+      {
+         ref_t r = resolvePrimitiveReference(scope, object.reference, object.element, false);
+         if (!r)
+            throw InternalError("Cannot resolve variadic argument template");
+         
+         writer.newNode(lxBlockLocalAddr, object.param);
+         //   node.injectAndReplaceNode(lxArgBoxableExpression);
+         //   node.appendNode(lxType, wrapRef);
+         break;
+      }
       default:
          return;
    }

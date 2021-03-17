@@ -136,25 +136,25 @@ public sealed Array<T> //: Indexable<T>
 //    }
 }
 
-//// --- Array template ---
-//
-//public sealed nonstructural VariadicArray<T> : Indexable<T>
-//{
-//    embeddable __string T[] theArray;
-//
-//    readLengthTo(ref int retVal)
-//        => intern system'core_routines'__args;
-//
-//    int Length
-//    {
-//        get()
-//        {
-//            self.readLengthTo(ref int retVal);
-//            
-//            ^ retVal
-//        }            
-//    }
-//    
+// --- Array template ---
+
+public sealed nonstructural VariadicArray<T> //: Indexable<T>
+{
+    embeddable __string T[] theArray;
+
+    readLengthTo(ref int retVal)
+        => intern system'core_routines'__args;
+
+    int Length
+    {
+        get()
+        {
+            self.readLengthTo(ref int retVal);
+            
+            ^ retVal
+        }            
+    }
+    
 //    T[] cast()
 //    {
 //        int len := self.Length;
@@ -198,16 +198,16 @@ public sealed Array<T> //: Indexable<T>
 //            self.setAt(theIndex, o)
 //        }
 //    };    
-//    
-//    T at(int n)
-//        = theArray[n];
-//
-//    setAt(int n, T item)
-//    {
-//        theArray[n] := item;
-//    }    
-//}
-//
+    
+    T at(int n)
+        = theArray[n];
+
+    setAt(int n, T item)
+    {
+        theArray[n] := item;
+    }    
+}
+
 //// --- matrixof ---
 //
 //public sealed Matrix<T>
@@ -1578,14 +1578,14 @@ public singleton stringConvertor
 //    {
 //        intern system'core_routines'__literalconvertor.convert(n, 10, buffer, ref length)
 //    }
-//
-//    /// Returns a parameter                
-//    string convert(string s)
-//        = s;
-//        
-//    /// Returns the literal presentation of the parameter
-//    string convert(o)
-//        = o.toPrintable();
+
+    /// Returns a parameter                
+    string convert(string s)
+        = s;
+        
+    /// Returns the literal presentation of the parameter
+    string convert(o)
+        = o.toPrintable();
 }
 
 // --- wideConvertor ---
@@ -1734,18 +1734,18 @@ public singleton wideConvertor
 //        
 //        ^ WideString.fromShortArray(0, length, buffer)
 //    }
-//
-//    /// Converts UTF-8 literal to UTF-16e
-//    wide convert(string s)
-//        = s;
-//        
-//    /// Returns a parameter
-//    wide convert(wide s)
-//        = s;
-//
-//    /// Returns the literal presentation of the parameter
-//    wide convert(o)
-//        = cast wide(o.toPrintable());
+
+    /// Converts UTF-8 literal to UTF-16e
+    wide convert(string s)
+        = s;
+        
+    /// Returns a parameter
+    wide convert(wide s)
+        = s;
+
+    /// Returns the literal presentation of the parameter
+    wide convert(o)
+        = cast wide(o.toPrintable());
 }
 
 /// An Unicode character convertor

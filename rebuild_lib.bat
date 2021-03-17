@@ -55,7 +55,7 @@ bin\asm2binx -amd64 asm\amd64\coreapi.asm bin\amd64
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
-rem bin\asm2binx -ppc64le asm\power64\core.asm bin\power64
+rem bin\asm2binx -ppc64le asm\ppc64le\core.asm bin\ppc64le
 
 bin\elc src50\system\system.prj
 @echo off 

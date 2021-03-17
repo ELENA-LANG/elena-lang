@@ -110,8 +110,8 @@ enum LexicalType
    lxConstantChar             = 0x010284,   // arg - reference
    lxConstantLong             = 0x010285,   // arg - reference
    lxConstantReal             = 0x010286,   // arg - reference
-   lxMessageConstant          = 0x010287, // arg - rererenceﬂ
-   lxSubjectConstant          = 0x010288, // arg - reference
+   lxMessageConstant          = 0x010287,   // arg - rererenceﬂ
+   lxSubjectConstant          = 0x010288,   // arg - reference
 //   lxExtMessageConstant       = 0x010289, // arg -reference
    lxNewFrame                 = 0x030290,   // if argument -1 - than with presaved message
    lxExternFrame              = 0x030291,
@@ -127,6 +127,7 @@ enum LexicalType
    lxLocal                    = 0x0102B0,   // arg - offset
    lxSelfLocal                = 0x0102B1,
    lxLocalAddress             = 0x0102B2,   // arg - offset
+   lxBlockLocalAddr           = 0x0102B3,   // arg - offset
    lxCreatingClass            = 0x0302C0,   // arg - count
    lxCreatingStruct           = 0x0302D0,   // arg - size
    lxAssigning                = 0x0302E0,   // an assigning expression, arg - size
@@ -240,7 +241,6 @@ enum LexicalType
 //   lxNestedSeqExpression      = 0x059038,
 //   lxStopper                  = 0x018041,   // used for variadic arguments as a last argument
 //   lxInlineArgCall            = 0x0580A4,
-//   lxBlockLocalAddr           = 0x018114, // arg - offset
 //   lxOp                       = 0x0581B0,
 //   lxYieldDispatch            = 0x058260,
 //   lxYieldReturning           = 0x058261,

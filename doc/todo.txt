@@ -3,6 +3,8 @@ In development:
 ------         
 
   [development]
+    * variadic argument list
+
     * intsum / realsum
     * #206 : migrate console / files samples
     * #206 : interpreter sample
