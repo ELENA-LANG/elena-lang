@@ -228,8 +228,15 @@ namespace text
 //        
 //        convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
 //            => intern system'core_routines'__utf16encoder;
+    }
 
-        static char toChar(short w)
+    // --- UTF16Encoding ---
+    
+    public singleton UTF16Encoding
+    {
+        Encoder encoder = UTF16Encoder;
+        
+        char toChar(short w)
         {
             short buffer[2];
             buffer[0] := w;
@@ -238,14 +245,7 @@ namespace text
             
             ^ retVal 
         }
-    }
-
-//    // --- UTF16Encoding ---
-//    
-//    public singleton UTF16Encoding
-//    {
-//        Encoder encoder = UTF16Encoder;
-//        
+        
 //        charCount(wide s, ref int retVal)
 //            => intern system'core_routines'__utf16encoder;
 //            
@@ -308,6 +308,5 @@ namespace text
 //            ^ WideString.fromShortArray(index, length, array)
 //        }
 //        
-//    }
-//    
+    }    
 }

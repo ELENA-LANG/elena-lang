@@ -4,10 +4,13 @@ In development:
 
   [development]
     + passing ref argment further
+
     * hello world
     * #206 : migrate console / files samples
     * #206 : interpreter sample
     * #206 : samples, tutorials
+
+    + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
 
     + support output redirecting
     + debugger : stack allocated int value 

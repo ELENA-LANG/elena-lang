@@ -5593,6 +5593,7 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
    if (objectInfo.reference == V_WRAPPER) {
       // if the reference is passed further - do nothing
       retVal = objectInfo;
+      retVal.reference = operandRef;
    }
    else {
       // generate an reference class
@@ -6710,7 +6711,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
       retVal = boxExternal(writer, retVal, scope);
    }
    else {
-      ref_t sourceRef = resolveObjectReference(scope, retVal, false/*, exptectedRef*/);
+      ref_t sourceRef = resolveObjectReference(scope, retVal, false);
       if (!targetRef && isPrimitiveRef(sourceRef) && noPrimMode) {
          /*if (objectInfo.reference == V_INLINEARG && EAttrs::test(modeAttrs, HINT_PARAMETER)) {
             // HOTFIX : do not resolve inline argument

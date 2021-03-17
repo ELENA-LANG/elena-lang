@@ -304,7 +304,7 @@ namespace io
     
             dump.read(14, ref charCode);
             
-          //  ^ system'text'UTF16Encoder.toChar(charCode)
+            ^ system'text'UTF16Encoding.toChar(charCode)
         }
         
 //        get bool KeyAvailable()

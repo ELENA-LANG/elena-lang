@@ -443,7 +443,7 @@ lab2:
   ret  
 
 lab1:
-  mov  ebx, [esp+4]
+  mov  ebx, [esp+8]
   mov  edx, esi
   ret
 

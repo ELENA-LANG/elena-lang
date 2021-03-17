@@ -406,7 +406,7 @@ lab2:
   ret  
 
 lab1:
-  mov  rbx, [rsp+8]
+  mov  rbx, [rsp+16]
   mov  edx, esi
   ret
 
