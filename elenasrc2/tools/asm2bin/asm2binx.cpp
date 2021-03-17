@@ -25,7 +25,7 @@ enum CPUType
 {
    cpuX86 = 0,
    cpuAMD64 = 1,
-   cpuPower64 = 2
+   cpuPower64Le = 2
 };
 
 bool defineType(_ELENA_::ident_t arg, CPUType& type)
@@ -33,8 +33,8 @@ bool defineType(_ELENA_::ident_t arg, CPUType& type)
    if (arg.compare("-amd64")) {
       type = cpuAMD64;
    }
-   else if (arg.compare("-power64")) {
-      type = cpuPower64;
+   else if (arg.compare("-ppc64le")) {
+      type = cpuPower64Le;
    }
    else return false;
 
@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
          _ELENA_::AMD64Assembler	assembler;
          assembler.compile(&reader, target.c_str());
       }
-      else if (type == cpuPower64) {
+      else if (type == cpuPower64Le) {
          _ELENA_::PPC64Assembler	assembler;
          assembler.compile(&reader, target.c_str());
       }
