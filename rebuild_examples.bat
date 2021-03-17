@@ -18,6 +18,25 @@ bin\elc examples\console\helloworld\vm_helloworld64.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+rem bin\elc examples\console\sum\intsum.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+rem bin\elc examples\console\sum\intsum64.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+rem bin\elc examples\console\sum\realsum.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+rem bin\elc examples\console\sum\realsum64.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 @echo off 
 goto:eof

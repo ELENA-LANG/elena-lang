@@ -735,6 +735,41 @@ symbol sta_start
 
 end
 
+symbol vm_sta_start
+
+  open
+  reserve  sizeof ProgramHeader
+
+  alloci   5
+
+  movfip   -1
+  storesi  0
+  callextr extern : PrepareEM, 0201h
+
+  movf     -4
+  storesi  0
+  callextr api : initProcess, 1
+
+  movf     -4
+  storesi  5
+  movr     rdata : "$elena'@tapekey"
+  storesi  4
+  movr     api : veh_handler
+  storesi  3
+  movr     api : default_handler
+  storesi  2
+  loadenv
+  savesi   1
+  callextr api : get_seh_handler, 0
+  savesi   0
+  callextr extern : InitializeVMSTA, 0206h
+
+  restore  sizeof ProgramHeader
+  close
+  quit
+
+end
+
 procedure critical_exception_handler
 
   open

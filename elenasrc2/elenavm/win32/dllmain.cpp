@@ -35,7 +35,6 @@ EXTERN_DLL_EXPORT void PrepareEM(void* args)
 
 }
 
-
 EXTERN_DLL_EXPORT void InitializeVMSTA(void* sehTable, void* systemEnv, void* exceptionHandler, void* criticalHandler, void* vmTape, 
    ProgramHeader* header)
 {
