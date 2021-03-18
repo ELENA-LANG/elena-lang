@@ -3,7 +3,10 @@ In development:
 ------         
 
   [development]
-    * variadic argument list
+
+    + program exception handling
+    + call stack
+    + alt op - x86-64 check stack alignment
 
     * intsum / realsum
     * #206 : migrate console / files samples
@@ -15,12 +18,9 @@ In development:
     + support output redirecting
     + debugger : stack allocated int value 
     + (re)implement Message.toPrintable()
-    + (re)implement RealNumber constructors
     + free 0 / alloc 0 - do nothing
     + test finally block with locally allocated variables
 
-    + call stack
-    + program exception handling
     + uncomment finally part in program entry
 
     * boxing fixed-sized field array

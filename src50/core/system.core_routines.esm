@@ -31,9 +31,11 @@ procedure __object."#dispatch[1]"
 
   open
   reserve  __page_size
-  pushf    -__rsrv_object_offset
-  pusha
-  pushf    -__rsrv_object_offset
+  alloci   3
+  storesi  1
+  movf     -__rsrv_object_offset
+  storesi  2
+  storesi  0
   movr     class : system'Message
   callextr api : tempObject, 1 
   movr     class : system'MethodNotFoundException
@@ -289,9 +291,11 @@ labDefault:
 
   open
   reserve  __page_size
-  pushf    -__rsrv_object_offset
-  pusha
-  pushf    -__rsrv_object_offset
+  alloci   3
+  storesi  1
+  movf     -__rsrv_object_offset
+  storesi  2
+  storesi  0
   movr     class : system'Message
   callextr api : tempObject, 1 
   movr     class : system'MethodNotFoundException
@@ -406,8 +410,11 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
   
 labErr:
   open
-  pushr class : system'InvalidArgumentException
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
   pushr mssgconst : "new[1]"
+
   throw  
 
 end
@@ -432,8 +439,11 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
   
 labErr:
   open
-  pushr class : system'InvalidArgumentException
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
   pushr mssgconst : "new[1]"
+
   throw  
 
 end
@@ -454,8 +464,11 @@ procedure __chararray."write$@system@Array#1&system@CharValue$system@IntNumber$s
 
 labErr:
   open
-  pushr class : system'InvalidArgumentException
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
   pushr mssgconst : "new[1]"
+
   throw  
 
 end
@@ -480,6 +493,18 @@ labEmpty:
   peeksi 3
   save
   quit
+
+end
+
+procedure __literalconvertor."convert$system@WideString$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"
+
+  pushsi 1
+  pushsi 3
+  callextr api : wstrtostr, 2
+  freei 2
+  peeksi 3
+  save
+  quitn 3
 
 end
 
@@ -526,8 +551,12 @@ procedure __byteconvertor."convert$system@ShortNumber$@system@ref#1&system@ByteN
   lessn labCopy, 0FFh
 
 labErr:  
-  pushr class : system'OutOfRangeException
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
   pushr mssgconst : "new[1]"
+
   throw    
 
 labCopy:
@@ -571,8 +600,11 @@ procedure __longconvertor."convert$system@String$system@IntNumber$@system@ref#1&
 
 labErr:
   open
-  pushr class : system'FormatException
+  alloci  1
+  movr    class : system'FormatException
+  storesi 0
   pushr mssgconst : "new[1]"
+
   throw
 
 end
@@ -600,8 +632,12 @@ procedure __intconvertor."convert$system@LongNumber$@system@ref#1&system@IntNumb
   quit  
 
 labErr:
-  pushr class : system'OutOfRangeException
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
   pushr mssgconst : "new[1]"
+
   throw    
 
 end
@@ -620,8 +656,11 @@ procedure __intconvertor."convert$system@String$system@IntNumber$@system@ref#1&s
 
 labErr:
   open
-  pushr class : system'FormatException
+  alloci  1
+  movr    class : system'FormatException
+  storesi 0
   pushr mssgconst : "new[1]"
+
   throw
 
 end
@@ -650,8 +689,11 @@ procedure __realconvertor."convert$system@String$system@IntNumber$@system@ref#1&
 
 labErr:
   open
-  pushr class : system'FormatException
+  alloci  1
+  movr    class : system'FormatException
+  storesi 0
   pushr mssgconst : "new[1]"
+
   throw
 
 end
@@ -694,8 +736,11 @@ procedure __charconvertor."convert$system@IntNumber$@system@Array#1&system@Short
 
 labErr:
   open
-  pushr    class : system'InvalidArgumentException
-  pushr    mssgconst : "new[1]"
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
   throw
 
 end
@@ -788,27 +833,34 @@ end
 procedure critical_exception_handler
 
   open
-  ifn   labAccessViolation, EXCEPTION_ACCESS_VIOLATION
-  ifn   labDivisionByZero, ELENA_ERR_DIVIDE_BY_ZERO
-  ifn   labOutOfMemory, ELENA_ERR_OUT_OF_MEMORY
 
-  pushr class : system'CriticalException
-  pushr mssgconst : "new[1]"
+  alloci  1
+
+  ifn     labAccessViolation, EXCEPTION_ACCESS_VIOLATION
+  ifn     labDivisionByZero, ELENA_ERR_DIVIDE_BY_ZERO
+  ifn     labOutOfMemory, ELENA_ERR_OUT_OF_MEMORY
+
+  movr    class : system'CriticalException
+  storesi 0
+  pushr   mssgconst : "new[1]"
   throw
 
 labAccessViolation:
-  pushr class : system'NilReferenceException
-  pushr mssgconst : "new[1]"
+  movr    class : system'NilReferenceException
+  storesi 0
+  pushr   mssgconst : "new[1]"
   throw
 
 labDivisionByZero:
-  pushr class : system'DivisionByZeroException
+  movr    class : system'DivisionByZeroException
+  storesi 0
   pushr mssgconst : "new[1]"
   throw
 
 labOutOfMemory:
-  pushr class : system'OutOfMemoryException
-  pushr mssgconst : "new[1]"
+  movr    class : system'OutOfMemoryException
+  storesi 0
+  pushr   mssgconst : "new[1]"
   throw
 
 end

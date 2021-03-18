@@ -28,6 +28,7 @@ procedure % INVOKER
   // ; R8  - arg
                                             
   // ; save registers
+  push 0
   push rsi
   push rdi
   push rbx
@@ -56,6 +57,7 @@ procedure % INVOKER
   pop  rbx
   pop  rdi
   pop  rsi
+  add  rsp, 4
   ret
 
 end

@@ -1,9 +1,11 @@
 // r1 - stack frame pointer
+// r2 - TOC??
+
+// r4 - acc
+
 // r31 - base frame pointer
 
-
-// r2 - TOC
-// r31 - frame pointer
+compare - 79
 
 // --- Predefined References  --
 define GC_ALLOC	            10001h
@@ -51,11 +53,21 @@ procedure %GC_ALLOC
   add   r20,r17,r3
 
   // cmp  rcx, rdx
-
+  cmp   r20, r19
 
   // jae  short labYGCollect
+  bgt   labYGCollect
+
   // mov  [data : %CORE_GC_TABLE + gc_yg_current], rcx
+  add  r19, r12, r15
+  ld   r19, r20
+
   // lea  rbx, [rax + elObjectOffset]
+  addi  r4, r17, elObjectOffset
+
   // ret
+  blr
+
+labYGCollect:
 
 end

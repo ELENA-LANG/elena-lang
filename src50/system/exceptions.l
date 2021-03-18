@@ -60,8 +60,8 @@ public class Exception
         ^ retVal
     }
     
-//    /// Returns the message
-//    string Message = theMessage;
+    /// Returns the message
+    string Message = theMessage;
 
     on(handler)
         => intern system'core_routines'__exception;

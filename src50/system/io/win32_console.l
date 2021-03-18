@@ -343,48 +343,48 @@ namespace io
 //            
 //            ^ false
 //        }
-//
-//        read(short[] dump, ref int retVal)
-//        {
-//            int len := retVal;
-//            
-//            extern
-//            {
-//                extern KERNEL32.ReadConsoleW(handle, dump, len, ref retVal, 0)
-//            }
-//        }
-//    
-//        wide readWideLine()
-//        {
-//            short dump[127];
-//            int   len := 0;
-//            wide  output := emptyWideString;
-//            
-//            bool continue := true;
-//            while (continue)
-//            {
-//                len := 127;
-//                self.read(dump, ref len);
-//                
-//                short sh := dump[len - 1];
-//                if (sh == 0Ah)
-//                    {
-//                        len := len - 2;
-//                        
-//                        continue := false
-//                    };
-//                
-//                wide temp := WideString.fromShortArray(0, len, dump);
-//                
-//                output := output + temp;
-//            };
-//    
-//            ^ output
-//        }
-//    
-//        string readLine()
-//            = self.readWideLine();
-//    
+
+        private read(short[] dump, ref int retVal)
+        {
+            int len := retVal;
+            
+            extern
+            {
+                extern KERNEL32.ReadConsoleW(handle, dump, len, ref retVal, 0)
+            }
+        }
+    
+        wide readWideLine()
+        {
+            short dump[127];
+            int   len := 0;
+            wide  output := emptyWideString;
+            
+            bool continue := true;
+            while (continue)
+            {
+                len := 127;
+                self.read(dump, ref len);
+                
+                short sh := dump[len - 1];
+                if (sh == 0Ah)
+                    {
+                        len := len - 2;
+                        
+                        continue := false
+                    };
+                
+                wide temp := WideString.fromShortArray(0, len, dump);
+                
+                output := output + temp;
+            };
+    
+            ^ output
+        }
+    
+        string readLine()
+            = self.readWideLine();
+    
 //        close()
 //        {
 //            extern KERNEL32.CloseHandle(handle)

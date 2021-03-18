@@ -1010,41 +1010,41 @@ public sealed const struct WideString : BaseValue
         extern elenart.core_wsubcopyz(self, index, size, array);
     }
 
-//    /// Converts to UTF-16 literal
-//    string cast()
-//    {
-//        int  i := 0;
-//        int  m := 0;
-//        int  page := 0;
-//        int  l := self.Length;
-//        byte buffer[256];
-//        if (l < 128)
-//        {
-//            intern system'core_routines'__literalconvertor.convert(self, buffer, ref m);
-//            
-//            ^ String.fromByteArray(0, m, buffer)
-//        };
-//
-//        string retVal := String.MinValue;
-//        while(l > 0)
-//        {
-//            page := l;
-//            if (page > 127)
-//            {
-//               page := 127
-//            };
-//            
-//            intern system'core_routines'__literalconvertor.convert(self.Substring(i, page), buffer, ref m);
-//            
-//            retVal := retVal.add(String.fromByteArray(0, m, buffer));
-//            
-//            i := i + page;
-//            l := l - page
-//        };
-//        
-//        ^ retVal
-//    }
-//
+    /// Converts to UTF-16 literal
+    string cast()
+    {
+        int  i := 0;
+        int  m := 0;
+        int  page := 0;
+        int  l := self.Length;
+        byte buffer[256];
+        if (l < 128)
+        {
+            intern system'core_routines'__literalconvertor.convert(self, buffer, ref m);
+            
+            ^ String.fromByteArray(0, m, buffer)
+        };
+
+        string retVal := String.MinValue;
+        while(l > 0)
+        {
+            page := l;
+            if (page > 127)
+            {
+               page := 127
+            };
+            
+            intern system'core_routines'__literalconvertor.convert(self.Substring(i, page), buffer, ref m);
+            
+            retVal := retVal.add(String.fromByteArray(0, m, buffer));
+            
+            i := i + page;
+            l := l - page
+        };
+        
+        ^ retVal
+    }
+
 //    Enumerable<char> cast() = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
 
     bool equal(o)
@@ -1230,11 +1230,11 @@ public sealed const struct WideString : BaseValue
 //    wide clone() = WideString.copy(self);
 }
 
-//// --- emptyWideString ---
-//
-///// An empty wide literal value
-//public const wide emptyWideString = WideString.MinValue;
-//
+// --- emptyWideString ---
+
+/// An empty wide literal value
+public const wide emptyWideString = WideString.MinValue;
+
 //// --- Variant ---
 //
 ///// A basic type variant class

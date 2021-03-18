@@ -409,7 +409,7 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
 
 void ByteCodeWriter :: doCatch(CommandTape& tape)
 {
-   //   peeksi 0
+   //   popa
    //   flag
    //   and elMessage
    //   ifn labSkip
@@ -417,13 +417,12 @@ void ByteCodeWriter :: doCatch(CommandTape& tape)
    //   peeksi 0
    //   callvi 0
    // labSkip:
-   //   popa
    //   unhook
 
    tape.newLabel();
 
    // HOT FIX: to compensate the unpaired pop
-   tape.write(bcPeekSI, 0);
+   tape.write(bcPopA);
    tape.write(bcFlag);
    tape.write(bcAnd, elMessage);
    tape.write(bcIfN, baCurrentLabel, 0);
@@ -433,7 +432,6 @@ void ByteCodeWriter :: doCatch(CommandTape& tape)
 
    tape.setLabel();
 
-   tape.write(bcPopA);
    tape.write(bcUnhook);
 }
 

@@ -4384,14 +4384,15 @@ ObjectInfo Compiler :: compileMessageOperation(SyntaxWriter& writer, SNode curre
    ref_t implicitSignatureRef = compileMessageParameters(writer, current, scope, paramsMode, expectedSignRef, /*variadicOne, inlineArg, */
       arguments, presavedArgs);
 
-   //   bool externalMode = false;
+   //   bool externalMode = false
+   bool silentMode = EAttrs::test(paramsMode, HINT_SILENT);
    if (target.kind == okExternal) {
    //      EAttr extMode = mode & HINT_ROOT;
    
       retVal = compileExternalCall(writer, opNode, scope, expectedRef, &arguments);
    }
    else {
-      EAttr mode = EAttr::eaNone;
+      EAttr mode = paramsMode & HINT_SILENT;
 //      if (variadicOne)
 //         // HOTFIX : set variadic flag if required
 //         messageRef |= VARIADIC_MESSAGE;
