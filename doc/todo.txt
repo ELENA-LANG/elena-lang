@@ -3,7 +3,6 @@ In development:
 ------         
 
   [development]
-    + x86-64 : call stack
     + alt op - x86-64 check stack alignment
 
     * intsum / realsum
@@ -16,7 +15,6 @@ In development:
 
     + support output redirecting
     + debugger : stack allocated int value 
-    + (re)implement Message.toPrintable()
     + free 0 / alloc 0 - do nothing
     + test finally block with locally allocated variables
 

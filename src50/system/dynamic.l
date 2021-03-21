@@ -70,16 +70,16 @@ public sealed const struct Message
 //        
 //        ^ retVal
 //    }
-//
-//    string toPrintable()
-//    {
-//        intern system'core_routines'__message.getWeakMessage(self, ref Message retVal);
-//        
-//        byte buffer[256];
-//        int  len := extern elenart.LoadMessageName(retVal, buffer, 255);
-//        
-//        ^ String.fromByteArray(0, len, buffer)
-//    }
+
+    string toPrintable()
+    {
+        intern system'core_routines'__message.getWeakMessage(self, ref Message retVal);
+        
+        byte buffer[256];
+        int  len := extern elenart.LoadMessageName(retVal, buffer, 255);
+        
+        ^ String.fromByteArray(0, len, buffer)
+    }
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
     dispatch() => intern system'core_routines'__message;

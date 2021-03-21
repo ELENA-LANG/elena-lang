@@ -306,6 +306,25 @@ labDefault:
   
 end
 
+procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[2]"
+
+  peeksi 1
+  load
+
+  pushn  0
+  movsip 0
+  save
+  loadverb
+  setv
+  popd
+
+  peeksi 2
+  save
+
+  quit
+
+end
+
 procedure __event."#dispatch[1]"
 
   bsredirect  
