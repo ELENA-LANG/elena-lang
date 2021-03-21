@@ -2,5 +2,5 @@ import extensions;
 
 public program()
 {
-    2.fail()
+        2.fail()
 }

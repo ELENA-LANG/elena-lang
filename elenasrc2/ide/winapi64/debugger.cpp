@@ -408,59 +408,58 @@ void Debugger :: processEvent(DWORD timeout)
       dwCurrentThreadId = event.dwThreadId;
       dwCurrentProcessId = event.dwProcessId;
 
-      if (dwCurrentProcessId == dwDebugeeProcessId) {
-         switch (event.dwDebugEventCode) {
-            case CREATE_PROCESS_DEBUG_EVENT:
+      switch (event.dwDebugEventCode) {
+         case CREATE_PROCESS_DEBUG_EVENT:
+            current = new ThreadContext(event.u.CreateProcessInfo.hProcess, event.u.CreateProcessInfo.hThread);
+            current->refresh();
+
+            threads.add(dwCurrentThreadId, current);
+
+            if (dwDebugeeProcessId == dwCurrentProcessId) {
                baseAddress = event.u.CreateProcessInfo.lpBaseOfImage;
-
-               current = new ThreadContext(event.u.CreateProcessInfo.hProcess, event.u.CreateProcessInfo.hThread);
-               current->refresh();
-
-               threads.add(dwCurrentThreadId, current);
-
                breakpoints.setSoftwareBreakpoints(current);
+            }
 
-               ::CloseHandle(event.u.CreateProcessInfo.hFile);
-               break;
-            case EXIT_PROCESS_DEBUG_EVENT:
-               current = threads.get(dwCurrentThreadId);
-               if (current) {
-                  current->refresh();
-                  exitCheckPoint = proceedCheckPoint();
-               }
-               threads.clear();
-               current = NULL;
-               started = false;
-               break;
-            case CREATE_THREAD_DEBUG_EVENT:
-               current = new ThreadContext((*threads.start())->hProcess, event.u.CreateThread.hThread);
+            ::CloseHandle(event.u.CreateProcessInfo.hFile);
+            break;
+         case EXIT_PROCESS_DEBUG_EVENT:
+            current = threads.get(dwCurrentThreadId);
+            if (current) {
+               current->refresh();
+               exitCheckPoint = proceedCheckPoint();
+            }
+            threads.clear();
+            current = NULL;
+            started = false;
+            break;
+         case CREATE_THREAD_DEBUG_EVENT:
+            current = new ThreadContext((*threads.start())->hProcess, event.u.CreateThread.hThread);
+            current->refresh();
+
+            threads.add(dwCurrentThreadId, current);
+            break;
+         case EXIT_THREAD_DEBUG_EVENT:
+            threads.erase(event.dwThreadId);
+            current = NULL;
+            break;
+         case LOAD_DLL_DEBUG_EVENT:
+            ::CloseHandle(event.u.LoadDll.hFile);
+            break;
+         case UNLOAD_DLL_DEBUG_EVENT:
+            break;
+         case OUTPUT_DEBUG_STRING_EVENT:
+            break;
+         case RIP_EVENT:
+            started = false;
+            break;
+         case EXCEPTION_DEBUG_EVENT:
+            current = threads.get(dwCurrentThreadId);
+            if (current)
                current->refresh();
 
-               threads.add(dwCurrentThreadId, current);
-               break;
-            case EXIT_THREAD_DEBUG_EVENT:
-               threads.erase(event.dwThreadId);
-               current = NULL;
-               break;
-            case LOAD_DLL_DEBUG_EVENT:
-               ::CloseHandle(event.u.LoadDll.hFile);
-               break;
-            case UNLOAD_DLL_DEBUG_EVENT:
-               break;
-            case OUTPUT_DEBUG_STRING_EVENT:
-               break;
-            case RIP_EVENT:
-               started = false;
-               break;
-            case EXCEPTION_DEBUG_EVENT:
-               current = threads.get(dwCurrentThreadId);
-               if (current)
-                  current->refresh();
-
-               processException(&event.u.Exception);
-               current->refresh();
-               break;
-         }
+            processException(&event.u.Exception);
+            current->refresh();
+            break;
       }
    }
 }
@@ -473,7 +472,7 @@ void Debugger :: processException(EXCEPTION_DEBUG_INFO* exception)
             break;
 
          // stop if it is VM Hook mode
-         if (init_breakpoint == -1) {
+         if (init_breakpoint == INVALID_PTR) {
             init_breakpoint = current->context.Rip;
             trapped = true;
          }
@@ -491,7 +490,7 @@ void Debugger :: processException(EXCEPTION_DEBUG_INFO* exception)
             stepMode = false;
             current->setTrapFlag();
          }
-         else if (init_breakpoint != 0 && init_breakpoint != 0xFFFFFFFF) {
+         else if (init_breakpoint != 0 && init_breakpoint != INVALID_PTR) {
             trapped = true;
             init_breakpoint = current->context.Rip;
          }

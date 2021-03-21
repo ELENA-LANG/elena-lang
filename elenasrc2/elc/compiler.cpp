@@ -3018,8 +3018,8 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       else retVal = ObjectInfo(okObject, 0, resultClassRef, loperand.element, 0);
 
       ref_t opElementRef = loperand.element;
-//      if (operator_id == LEN_OPERATOR_ID)
-//         opElementRef = roperand.element;
+      if (operator_id == LEN_OPERATOR_ID)
+         opElementRef = roperand.element;
 
       if (!shortCircuitMode) {
          writeTerminal(writer, loperand, scope);

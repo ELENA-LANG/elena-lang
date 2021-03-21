@@ -1445,7 +1445,6 @@ procedure coreapi'core_callstack_load
 
   mov  rax, [rsp+8]
   mov  rcx, [rsp+16]
-  shr  rcx, 1     // ; NOTE size should be divided by 2 because commonality with x86 code (size in dwords) 
 
   mov  rdx, [rsp]                  
   xor  ebx, ebx

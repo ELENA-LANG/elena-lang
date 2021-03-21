@@ -92,9 +92,9 @@ EXTERN_DLL_EXPORT void Exit(int exitCode)
 //   return ((ELENARTMachine*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
 //}
 
-EXTERN_DLL_EXPORT int LoadAddressInfo(size_t retPoint, char* lineInfo, int length)
+EXTERN_DLL_EXPORT int LoadAddressInfo(uintptr_t retPoint, char* lineInfo, int length)
 {
-   return _Instance->loadAddressInfo(retPoint, lineInfo, length);
+   return _Instance->loadAddressInfo(*(long long*)retPoint, lineInfo, length);
 }
 
 EXTERN_DLL_EXPORT int LoadClassName(void* object, char* buffer, int length)

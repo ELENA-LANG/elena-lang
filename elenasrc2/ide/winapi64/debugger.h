@@ -107,8 +107,8 @@ public:
    size_t Frame() const { return context.Rbp; }
    size_t Local(int offset) { return context.Rbp - offset * 8; }
    size_t Local(int offset, int disp) { return context.Rbp - offset * 8 + disp; }
-   size_t Data(int offset) { return context.Rbp - offset * 4; }
-   size_t Data(int offset, int disp) { return context.Rbp - offset * 4 + disp; }
+   size_t Data(int offset) { return context.Rbp - offset * 8; }
+   size_t Data(int offset, int disp) { return context.Rbp - offset * 8 + disp; }
 
    size_t Current(int offset) { return context.Rsp + offset * 8; }
    size_t ClassVMT(size_t address);
@@ -261,7 +261,7 @@ public:
 
    void activate();
 
-   void initHook() { init_breakpoint = -1; }
+   void initHook() { init_breakpoint = INVALID_PTR; }
    bool initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr);
 
    size_t findEntryPoint(const wchar_t* programPath);

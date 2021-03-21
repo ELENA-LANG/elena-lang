@@ -15,7 +15,7 @@ class StartUpEvents
     internal handlingError(e)
     {
         ifnot (nil == OnError)
-            { OnError(e) }
+            {   OnError(e) }
     }
 }
 

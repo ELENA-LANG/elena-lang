@@ -313,11 +313,12 @@ procedure __event."#dispatch[1]"
   open
   reserve  8
 
+  alloci   1
+  geti     0
+  storefi  1
+  
   savef    -8
   xsavef   -4, 0
-
-  geti     0  // ; get the first field !! better to define a special array (like castover group object)
-  pusha
 
   // ; define the message length
   loadf    -8
