@@ -3,9 +3,7 @@ In development:
 ------         
 
   [development]
-    + alt op - x86-64 check stack alignment
-
-    * intsum / realsum
+    * realsum
     * #206 : migrate console / files samples
     * #206 : interpreter sample
     * #206 : samples, tutorials
@@ -38,6 +36,7 @@ In development:
     * uncomment all code
 
     * tape should use cdecl with fixed size - no need to clear the stack
+    + alt op - x86-64 check stack alignment
     + optimiation : assinging int constant, 
     + optimiation : freei 1 xalloc 1 => nop nop 
     + no duplicate variable by boxing

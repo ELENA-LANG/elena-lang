@@ -28,12 +28,12 @@ bin\elc examples\console\sum\intsum64.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc examples\console\sum\realsum.prj
+bin\elc examples\console\sum\realsum.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc examples\console\sum\realsum64.prj
+bin\elc examples\console\sum\realsum64.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

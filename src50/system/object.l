@@ -52,8 +52,8 @@ public interface BoolValue
         [info:"always returns nil."]
         ifnot(trueAction) = nil;
     
-//        [info:"always returns trueVal."]
-//        iif(object trueVal, object falseVal) = trueVal;
+        [info:"always returns trueVal."]
+        iif(object trueVal, object falseVal) = trueVal;
         
         [info:"executes logical OR operation;<br/>Always return true"]
         bool or(expr) = this self;
@@ -92,8 +92,8 @@ public interface BoolValue
         [info:"executes the action"]
         ifnot(action) = action();
     
-//        [info:"always returns falseVal."]
-//        iif(object trueVal, object falseVal) = falseVal;
+        [info:"always returns falseVal."]
+        iif(object trueVal, object falseVal) = falseVal;
     
         [info:"executes logical OR operation"]
         bool or(expr) = expr;
@@ -137,8 +137,8 @@ public interface BoolValue
     [info:"executes action if the value is false;<br/>has to be implemented"]
     abstract ifnot(action);
 
-//    [info:"returns trueVal if the value is true or falseVal otherwise;<br/>has to be implemented"]
-//    abstract iif(object trueVal, object falseVal);
+    [info:"returns trueVal if the value is true or falseVal otherwise;<br/>has to be implemented"]
+    abstract iif(object trueVal, object falseVal);
 
     [info:"executes logical OR operation<;br/>has to be implemented"]
     abstract bool or(expr);

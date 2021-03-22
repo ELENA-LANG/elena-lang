@@ -1426,7 +1426,7 @@ public singleton stringConvertor
     }
     
     string convert(BaseVariable v)
-        <= convert(v.Value);
+        <= convert(*v);
     
 //    string convert(BaseVariable v, int radix)
 //        <= convert(v.Value, radix);
@@ -1548,18 +1548,18 @@ public singleton stringConvertor
 //        
 //        ^ String.fromByteArray(0, length, buffer)
 //    }
-//
-//    /// Converts the parameter to the literal value
-//    string convert(real n)
-//    {
-//        byte buffer[32];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, 24, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
+
+    /// Converts the parameter to the literal value
+    string convert(real n)
+    {
+        byte buffer[32];
+        int  length := 0;
+        
+        intern system'core_routines'__literalconvertor.convert(n, 24, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
 //    string convert(wide w)
 //        = cast string(w);
 //    

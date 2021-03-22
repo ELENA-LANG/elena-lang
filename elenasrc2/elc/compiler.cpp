@@ -3645,7 +3645,9 @@ void Compiler :: analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& s
    if ((!test(stackSafeAttr, argBit) && boxingRequired(target))) {
       boxArgument(writer, node, target, scope, false);
    }
-   else if (target.kind == okFieldAddress && target.param > 0) {
+   else if (target.kind == okFieldAddress && (target.param > 0 
+      || (_logic->defineStructSize(*scope.moduleScope, target.reference, 0) & 3) != 0))
+   {
       boxArgument(writer, node, target, scope, true);
    }
 
@@ -3658,7 +3660,9 @@ void Compiler :: analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& s
 
             (*arguments)[i] = arg;
          }
-         else if (arg.kind == okFieldAddress && arg.param > 0) {
+         else if (arg.kind == okFieldAddress 
+            && (arg.param > 0 || (_logic->defineStructSize(*scope.moduleScope, arg.reference, 0) & 3) != 0))
+         {
             boxArgument(writer, node, arg, scope, true);
 
             (*arguments)[i] = arg;

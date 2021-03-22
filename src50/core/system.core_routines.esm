@@ -528,6 +528,23 @@ procedure __literalconvertor."convert$system@WideString$@system@Array#1&system@B
 
 end
 
+procedure __literalconvertor."convert$system@RealNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushn  0   // temporal to support x86-64 mode
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : realtostr, 3
+  freei 4
+
+  peeksi 4
+  save
+
+  quitn 4
+end
+
+
 procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
 
   pushsi 1

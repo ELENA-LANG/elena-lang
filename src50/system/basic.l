@@ -38,9 +38,9 @@ public sealed ref<T> : BaseVariable
     bool equal(o)
         => value;
 
-//    [info:"Returns the value string representation"]
-//    string toPrintable()
-//        => value;
+    [info:"Returns the value string representation"]
+    string toPrintable()
+        => value;
         
     dispatch() => value;
 }
@@ -130,13 +130,13 @@ public abstract class IntBaseNumber : BaseNumber
     [info:"executes bitwise XOR operation;<br/>should be overridden"]
     abstract xor(o);
     
-//    [info:"returns true if all the mask bits are set"]
-//    bool allMask(operand)
-//        = self.and:operand == operand;
-//        
-//    [info:"returns true if any of the mask bits are set"]
-//    bool anyMask(operand)
-//        = 0 != self.and:operand;
+    [info:"returns true if all the mask bits are set"]
+    bool allMask(operand)
+        = self.and:operand == operand;
+        
+    [info:"returns true if any of the mask bits are set"]
+    bool anyMask(operand)
+        = 0 != self.and:operand;
 }
 
 // --- ByteNumber ---
@@ -406,17 +406,17 @@ public sealed const struct ByteNumber : IntBaseNumber
     long xor(long n)
         = new LongNumber(self).xor(n);
 
-//    [info:"shifts an integer value to the left by a specified number of bits"]
-//    byte shiftLeft(int val)
-//    {
-//        ^ theValue $shl val;
-//    }
-//
-//    [info:"shifts an integer value to the right by a specified number of bits"]
-//    byte shiftRight(int val)
-//    {
-//        ^ theValue $shr val;
-//    }
+    [info:"shifts an integer value to the left by a specified number of bits"]
+    byte shiftLeft(int val)
+    {
+        ^ theValue $shl val;
+    }
+
+    [info:"shifts an integer value to the right by a specified number of bits"]
+    byte shiftRight(int val)
+    {
+        ^ theValue $shr val;
+    }
     
     [info:"bitwise inversion"]
     get byte Inverted()
@@ -709,15 +709,15 @@ public sealed const struct ShortNumber : IntBaseNumber
     xor(long n)
         = new LongNumber(self).xor(n);
 
-//    short shiftLeft(int val)
-//    {
-//        ^ theValue $shl val
-//    }
-//
-//    short shiftRight(int val)
-//    {
-//        ^ theValue $shr val
-//    }
+    short shiftLeft(int val)
+    {
+        ^ theValue $shl val
+    }
+
+    short shiftRight(int val)
+    {
+        ^ theValue $shr val
+    }
     
     [info:"Bitwise inversion"]
     get short Inverted()
@@ -1019,19 +1019,19 @@ public sealed const struct IntNumber : IntBaseNumber
 
 //    int shiftLeft(BaseVariable v)
 //        <= shiftLeft(v.Value);
-//
-//    int shiftLeft(int val)
-//    {
-//        ^ theValue $shl val
-//    }
-//
+
+    int shiftLeft(int val)
+    {
+        ^ theValue $shl val
+    }
+
 //    int shiftRight(BaseVariable v)
 //        <= shiftRight(v.Value);
-//
-//    int shiftRight(int val)
-//    {
-//        ^ theValue $shr val
-//    }
+
+    int shiftRight(int val)
+    {
+        ^ theValue $shr val
+    }
     
     [info:"Bitwise inversion"]
     get int Inverted()
@@ -1039,22 +1039,22 @@ public sealed const struct IntNumber : IntBaseNumber
         
     get int Negative()
         = -theValue;
-//        
-//    [info:"Returns true if all the mask bits are set"]
-//    bool allMask(int operand)
-//    {
-//        int v := operand && theValue;
-//        
-//        ^ v == operand
-//    }
-//        
-//    [info:"Returns true if any of the mask bits are set"]
-//    bool anyMask(int operand)
-//    {
-//        int v := operand && theValue;
-//        
-//        ^ v != 0
-//    }        
+        
+    [info:"Returns true if all the mask bits are set"]
+    bool allMask(int operand)
+    {
+        int v := operand && theValue;
+        
+        ^ v == operand
+    }
+        
+    [info:"Returns true if any of the mask bits are set"]
+    bool anyMask(int operand)
+    {
+        int v := operand && theValue;
+        
+        ^ v != 0
+    }        
 }
 
 //// --- UIntNumber ---
@@ -1694,15 +1694,15 @@ public sealed const struct LongNumber : IntBaseNumber
     [info:"Clones the value"]
     long clone() = new LongNumber(self);
     
-//    long shiftLeft(int val)
-//    {
-//        ^ theValue $shl val
-//    }
-//
-//    long shiftRight(int val)
-//    {
-//        ^ theValue $shr val
-//    }
+    long shiftLeft(int val)
+    {
+        ^ theValue $shl val
+    }
+
+    long shiftRight(int val)
+    {
+        ^ theValue $shr val
+    }
     
 //    [info:"Bitwise inversion"]
 //    get long Inverted()
@@ -1950,8 +1950,8 @@ public sealed const struct RealNumber : BaseNumber
     real divide(long n)
         = self.divide(new RealNumber(n));
 
-//    [info:"Returns the literal presentation"]
-//    string toPrintable() = stringConvertor.convert(self);
+    [info:"Returns the literal presentation"]
+    string toPrintable() = stringConvertor.convert(self);
 
     [info:"Clones the value"]
     real clone = new RealNumber(self);
