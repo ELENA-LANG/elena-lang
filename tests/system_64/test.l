@@ -2,5 +2,6 @@ import extensions;
 
 public program()
 {
-        2.fail()
+    var r := new Integer();
+    var s := /*console.readLine()*/"2".convertTo(r);
 }

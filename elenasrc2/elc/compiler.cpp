@@ -5463,7 +5463,9 @@ ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, Ex
    if (rnode == lxExpression)
       rnode = rnode.findSubNodeMask(lxObjectMask);
 
+   writer.newNode(lxSeqExpression);
    ObjectInfo loperand = compileObject(writer, lnode, scope, EAttr::eaNone, nullptr);
+   writer.closeNode();
 
 //   if (operator_id == FINALLY_OPERATOR_ID) {
 //      SNode finalExpr = node;
@@ -7703,7 +7705,9 @@ void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, Cod
 
          writer.newNode(lxNewFrame);
          writer.newNode(lxSeqExpression);
+         // NOTE : predefined in generic resending handler
          exprScope.tempAllocated1++;
+         exprScope.tempAllocated2++;
 
          target = compileExpression(writer, node.firstChild(), exprScope, 0, HINT_PARAMETER, nullptr);
 
@@ -7713,10 +7717,12 @@ void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, Cod
          if (target.kind != okObject)
             writeTerminal(writer, target, exprScope);
 
-         writer.appendNode(lxReserved, exprScope.tempAllocated1);
+         writer.closeNode();
 
+         writer.appendNode(lxReserved, exprScope.tempAllocated2);
+         writer.appendNode(lxAllocated, exprScope.tempAllocated1);
          writer.closeNode();
-         writer.closeNode();
+
          writer.closeNode();
          writer.closeNode();
       }

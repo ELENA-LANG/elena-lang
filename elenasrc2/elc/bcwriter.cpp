@@ -4015,10 +4015,11 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
       SNode current = node.firstChild();
       while (current != lxNone) {
          if (current == lxNewFrame) {
+            int allocated = current.findChild(lxAllocated).argument;
             int reserved = current.findChild(lxReserved).argument;
 
             // new frame
-            newFrame(tape, 1, reserved, false, true);
+            newFrame(tape, reserved, allocated, false, true);
 
             if (genericResending) {
                // save message

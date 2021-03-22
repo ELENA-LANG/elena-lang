@@ -1235,105 +1235,105 @@ public sealed const struct WideString : BaseValue
 /// An empty wide literal value
 public const wide emptyWideString = WideString.MinValue;
 
-//// --- Variant ---
-//
-///// A basic type variant class
-//public sealed class Variant
-//{
-//    object value;
-//    
-//    constructor(object)
-//    {
-//        value := object
-//    }
-//    
-//    /// Tries to convert the value to a byte number
-//    byte cast()
-//        = byteConvertor.convert(value);
-//
-//    /// Tries to convert the value to a short integer number
-//    short cast()
-//        = shortConvertor.convert(value);
-//
-//    /// Tries to convert the value to a character
-//    char cast()
-//        = charConvertor.convert(value);
-//
-//    /// Tries to convert the literal value to the integer number
-//    int cast()
-//        = intConvertor.convert(value);
-//
-//    /// Tries to convert the literal value to the long integer number
-//    long cast()
-//        = longConvertor.convert(value);
-//
-//    /// Tries to convert the literal value to the real number
-//    real cast()
-//        = realConvertor.convert(value);
-//
-//    /// Returns a literal value
-//    string cast()
-//        = stringConvertor.convert(value);
-//    
-//    /// Returns a wide literal value
-//    wide cast()
-//        = wideConvertor.convert(value);
-//
-//    string toPrintable()
-//        => value;
-//
-//    private castValueTo(target)
-//        = new{
-//            castTo(o)
-//                = o.toPrintable();
-//            
-//            castTo(BaseVariable v)
-//                = self.castValueTo(v.Value);
-//            
-//            castTo(int val)
-//                = cast int(self);
-//                
-//            castTo(byte val)
-//                = cast byte(self);
-//                
-//            castTo(short val)
-//                = cast short(self);
-//                
-//            castTo(long val)
-//                = cast long(self);
-//                
-//            castTo(real val)
-//                = cast real(self);
-//                
-//            castTo(string val)
-//                = cast string(self);
-//                
-//            castTo(wide val)
-//                = cast wide(self);
-//        }.castTo(target);
-//
-//    saveTo(target)
-//    {
-//        target.Value := self.castValueTo(target.Value);
-//        
-//        ^ target
-//    }
-//
-//    add(p)
-//        = p.add(self.castValueTo(p));
-//
-//    subtract(p)
-//        = self.castValueTo(p).subtract(p);
-//
-//    multiply(p)
-//        = self.castValueTo(p).multiply(p);
-//
-//    divide(p)
-//        = self.castValueTo(p).divide(p);
-//
-//    bool equal(p)
-//        = self.castValueTo(p).equal(p);
-//}
+// --- Variant ---
+
+[info:"A basic type variant class"]
+public sealed class Variant
+{
+    object value;
+    
+    constructor(object)
+    {
+        value := object
+    }
+    
+    /// Tries to convert the value to a byte number
+    byte cast()
+        = byteConvertor.convert(value);
+
+    /// Tries to convert the value to a short integer number
+    short cast()
+        = shortConvertor.convert(value);
+
+    /// Tries to convert the value to a character
+    char cast()
+        = charConvertor.convert(value);
+
+    /// Tries to convert the literal value to the integer number
+    int cast()
+        = intConvertor.convert(value);
+
+    /// Tries to convert the literal value to the long integer number
+    long cast()
+        = longConvertor.convert(value);
+
+    /// Tries to convert the literal value to the real number
+    real cast()
+        = realConvertor.convert(value);
+
+    /// Returns a literal value
+    string cast()
+        = stringConvertor.convert(value);
+    
+    /// Returns a wide literal value
+    wide cast()
+        = wideConvertor.convert(value);
+
+    string toPrintable()
+        => value;
+
+    private castValueTo(target)
+        = new{
+            castTo(o)
+                = o.toPrintable();
+            
+            castTo(BaseVariable v)
+                = self.castValueTo(v.Value);
+            
+            castTo(int val)
+                = cast int(self);
+                
+            castTo(byte val)
+                = cast byte(self);
+                
+            castTo(short val)
+                = cast short(self);
+                
+            castTo(long val)
+                = cast long(self);
+                
+            castTo(real val)
+                = cast real(self);
+                
+            castTo(string val)
+                = cast string(self);
+                
+            castTo(wide val)
+                = cast wide(self);
+        }.castTo(target);
+
+    saveTo(target)
+    {
+        target.Value := self.castValueTo(target.Value);
+        
+        ^ target
+    }
+
+    add(p)
+        = p.add(self.castValueTo(p));
+
+    subtract(p)
+        = self.castValueTo(p).subtract(p);
+
+    multiply(p)
+        = self.castValueTo(p).multiply(p);
+
+    divide(p)
+        = self.castValueTo(p).divide(p);
+
+    bool equal(p)
+        = self.castValueTo(p).equal(p);
+}
 
 // --- Array ---
 

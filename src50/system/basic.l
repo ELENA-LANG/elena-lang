@@ -79,16 +79,16 @@ public abstract class BaseValue
 public abstract class BaseNumber : BaseValue
 {
     add(BaseVariable var)
-        <= add(var.Value);
+        <= add(*var);
 
     subtract(BaseVariable var)
-        <= subtract(var.Value);
+        <= subtract(*var);
     
     multiply(BaseVariable var)
-        <= multiply(var.Value);
+        <= multiply(*var);
 
     divide(BaseVariable var)
-        <= divide(var.Value);
+        <= divide(*var);
     
     [info:"adds the value;<br/>should be overridden"]
     abstract add(o);
