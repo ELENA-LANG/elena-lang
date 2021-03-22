@@ -3,7 +3,6 @@ In development:
 ------         
 
   [development]
-    * realsum
     * #206 : migrate console / files samples
     * #206 : interpreter sample
     * #206 : samples, tutorials

@@ -142,12 +142,12 @@
     __loop cast bool(expr) ! loop_block
 }
 
-//#declare until<step_expr, cond_expr>(loop_body)
-//{
-//    step_expr;
-//    
-//    __loop: cast bool(cond_expr) ! { loop_body; __ignore_duplicates step_expr }
-//}
+#declare until<step_expr, cond_expr>(loop_body)
+{
+    step_expr;
+    
+    __loop cast bool(cond_expr) ! { loop_body; __ignore_duplicates step_expr }
+}
     
 // --- for statement ---
 

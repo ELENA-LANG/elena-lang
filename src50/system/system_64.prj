@@ -27,6 +27,7 @@
        <include>events.l</include>
        <include>console.l</include>
        <include>app.l</include>
+       <include>collections\list.l</include>
        <include>text\encoder.l</include>
        <include>text\win32_encoder.l</include>
        <include>text\textbuffer.l</include>

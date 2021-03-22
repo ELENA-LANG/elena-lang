@@ -8,10 +8,6 @@ public interface Enumerator
     [info:"Returns the current object"]
     get abstract Value();
     
-    // obsolete
-    get()
-        <= Value; 
-
     [info:"Goes to the next enumeration member and returns true if it is not the last member"]
     abstract bool next();
        
@@ -30,10 +26,6 @@ public interface Enumerator<T>
 {
     abstract bool next();
     
-    // obsolete
-    get()
-        <= Value; 
-
     get abstract T Value();
     
     /// Resets the enumerator
@@ -47,87 +39,87 @@ public interface Enumerator<T>
     Enumerator<T> enumerator() = self;
 }
 
-//public abstract Enumerable
-//{
-//    abstract Enumerator enumerator();
-//}
-//
-//public abstract Enumerable<T>
-//{
-//    abstract Enumerator<T> enumerator();
-//}
-//
-//// --- Indexer ---
-//
-///// An indexer prototype
-//public interface Indexer
-//{
-//    /// Returns false if the index out of range
-//    get abstract bool Available();
-//
-//    /// Returns the current member
-//    abstract get();
-//    
-//    /// Sets the current member
-//    abstract set(object);
-//    
-//    abstract int Index
-//    {
-//        /// Reads the current index
-//        get();
-//        
-//        /// Sets the index by specified value
-//        set(int retVal);
-//    }
-//
-//    abstract appendIndex(int anIndex);
-//   
-//    abstract int Length
-//    {
-//        get();
-//    }
-//}
-//
-//public interface Indexer<T>
-//{
-//    /// Returns false if the index out of range
-//    get abstract bool Available();
-//
-//    /// Returns the current member
-//    abstract T get();
-//    
-//    /// Sets the current member
-//    abstract set(T object);
-//
-//    abstract int Index
-//    {
-//        /// Reads the current index
-//        get();
-//        
-//        /// Sets the index by specified value
-//        set(int retVal);
-//    }
-//
-//    abstract appendIndex(int anIndex);
-//                                
-//    abstract int Length
-//    {
-//        get();
-//    }
-//    
-//    abstract Indexer cast();
-//}
-//
-//public abstract Indexable
-//{
-//   abstract Indexer indexer();
-//}
-//
-//public abstract Indexable<T>
-//{
-//   abstract Indexer<T> indexer();
-//}
-//
+public abstract Enumerable
+{
+    abstract Enumerator enumerator();
+}
+
+public abstract Enumerable<T>
+{
+    abstract Enumerator<T> enumerator();
+}
+
+// --- Indexer ---
+
+/// An indexer prototype
+public interface Indexer
+{
+    /// Returns false if the index out of range
+    get abstract bool Available();
+
+    /// Returns the current member
+    get abstract Value();
+    
+    /// Sets the current member
+    set abstract Value(object);
+    
+    abstract int Index
+    {
+        /// Reads the current index
+        get();
+        
+        /// Sets the index by specified value
+        set(retVal);
+    }
+
+    abstract appendIndex(int anIndex);
+   
+    abstract int Length
+    {
+        get();
+    }
+}
+
+public interface Indexer<T>
+{
+    /// Returns false if the index out of range
+    get abstract bool Available();
+
+    /// Returns the current member
+    get abstract T Value();
+    
+    /// Sets the current member
+    set abstract Value(T object);
+
+    abstract int Index
+    {
+        /// Reads the current index
+        get();
+        
+        /// Sets the index by specified value
+        set(retVal);
+    }
+
+    abstract appendIndex(int anIndex);
+                                
+    abstract int Length
+    {
+        get();
+    }
+    
+    abstract Indexer cast();
+}
+
+public abstract Indexable
+{
+   abstract Indexer indexer();
+}
+
+public abstract Indexable<T>
+{
+   abstract Indexer<T> indexer();
+}
+
 //// --- MatrixIndexer ---
 //
 ///// An indexer prototype
@@ -657,102 +649,101 @@ public interface Func<T1,T2,T3,TResult>
 //    
 //    dispatch() => intern system'core_routines'__lazyexpression;
 //}
-//
-//// --- BaseEnumerator<type> ---
-//
-//public abstract class BaseEnumerator<T> : Enumerator<T>
-//{
-//    ref<int> theIndex;
-//    int      theLength;
-//    
-//    bool next()
-//    {
-//        theIndex.append(1);
-//        
-//        ^ (cast int(theIndex)) < theLength
-//    }
-//    
-//    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
-//}
-//
-//// --- BaseIndexer ---
-//
-//public abstract class BaseIndexer : Indexer
-//{
-//    int theIndex;
-//    int theLength;
-//    
-//    /// Returns false if the index out of range
-//    bool Available = (theIndex < theLength);
-//
-//    int Index
-//    {
-//        /// Reads the current i-index into an output parameter
-//        get()
-//        {
-//            ^ theIndex
-//        }
-//        
-//        /// Sets the i-index by specified value
-//        set(int index)
-//        { 
-//            theIndex := index
-//        }
-//    }    
-//    
+
+// --- BaseEnumerator<type> ---
+
+public abstract class BaseEnumerator<T> : Enumerator<T>
+{
+    ref<int> theIndex;
+    int      theLength;
+    
+    bool next()
+    {
+        theIndex.append(1);
+        
+        ^ (cast int(theIndex)) < theLength
+    }
+    
+    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+}
+
+// --- BaseIndexer ---
+
+public abstract class BaseIndexer //: Indexer
+{
+    int theIndex;
+    int theLength;
+    
+    bool Available = (theIndex < theLength);
+
+    int Index
+    {
+        /// Reads the current i-index into an output parameter
+        get()
+        {
+            ^ theIndex
+        }
+        
+        /// Sets the i-index by specified value
+        set(index)
+        { 
+            theIndex := index
+        }
+    }    
+    
 //    appendIndex(int index)
 //    { 
 //        theIndex += index
 //    }
-//    
-//    int Length
-//    {
-//        get()
-//        {
-//            ^ theLength
-//        }
-//    }
-//}
-//
-//public abstract BaseIndexer<T> : Indexer<T>
-//{
-//    int theIndex;
-//    int theLength;
-//    
-//    /// Returns false if the index out of range
-//    bool Available = (theIndex < theLength);
-//
-//    int Index
-//    {    
-//        /// Reads the current i-index into an output parameter
-//        get()
-//        {
-//            ^ theIndex
-//        }    
-//        
-//        /// Sets the i-index by specified value
-//        set(int index)
-//        {
-//            theIndex := index
-//        }
-//    } 
-//    
-//    appendIndex(int anIndex)
-//    { 
-//        theIndex := theIndex + anIndex
-//    }     
-//    
-//    int Length
-//    {
-//        get()
-//        {
-//            ^ theLength;
-//        }
-//    }
-//    
-//    Indexer cast() = new Indexer { embeddable dispatch() => self; };
-//}
-//
+    
+    int Length
+    {
+        get()
+        {
+            ^ theLength
+        }
+    }
+}
+
+public abstract BaseIndexer<T> : Indexer<T>
+{
+    int theIndex;
+    int theLength;
+    
+    /// Returns false if the index out of range
+    bool Available = (theIndex < theLength);
+
+    int Index
+    {    
+        /// Reads the current i-index into an output parameter
+        get()
+        {
+            ^ theIndex
+        }    
+        
+        /// Sets the i-index by specified value
+        set(index)
+        {
+            theIndex := index
+        }
+    } 
+    
+    appendIndex(int anIndex)
+    { 
+        theIndex := theIndex + anIndex
+    }     
+    
+    int Length
+    {
+        get()
+        {
+            ^ theLength;
+        }
+    }
+    
+    Indexer cast() = new Indexer { embeddable dispatch() => self; };
+}
+
 //// --- Range --
 //
 //class IntRangeEnumerator : Enumerator<int>

@@ -96,6 +96,36 @@ inline SNode goToFirstNode(SNode current, LexicalType type1, LexicalType type2, 
    return firstOne;
 }
 
+inline SNode __fastcall goToNextNotIdleNode(SNode current)
+{
+   current = current.nextNode();
+   while (current != lxNone) {
+      if (current == lxIdle) {
+
+      }
+      else break;
+
+      current = current.nextNode();
+   }
+
+   return current;
+}
+
+inline SNode __fastcall goToPrevNotIdleNode(SNode current)
+{
+   current = current.prevNode();
+   while (current != lxNone) {
+      if (current == lxIdle) {
+
+      }
+      else break;
+
+      current = current.prevNode();
+   }
+
+   return current;
+}
+
 inline void copyIdentifier(SyntaxWriter& writer, SNode ident, bool ignoreTerminalInfo)
 {
    ident_t s = ident.identifier();
@@ -437,7 +467,7 @@ ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, bool& allowPr
       }
    }
 
-      allowPropertyTemplate = false;
+   allowPropertyTemplate = false;
 
    ref_t ref = _scope->attributes.get(token);      
    if (isPrimitiveRef(ref)) {
@@ -644,7 +674,8 @@ void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalTyp
    bool allowPropertyTemplate = test(mode, MODE_PROPERTYALLOWED);
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current == lxToken) {
-      bool allowType = current.nextNode() == nameNodeType;
+      // HOTFIX : skip idle nodes
+      bool allowType = goToNextNotIdleNode(current) == nameNodeType;
       SNode child = current.firstChild();
       if (child == lxTokenArgs) {
          if (allowType)
@@ -865,7 +896,8 @@ void DerivationWriter :: flushClassTree(SyntaxWriter& writer, SNode node, Scope&
    bool functionMode = false;
    writer.newNode(lxClass);
 
-   flushAttributes(writer, node.prevNode(), derivationScope, buffer);
+   // HOTFIX : skip idle nodes
+   flushAttributes(writer, goToPrevNotIdleNode(node), derivationScope, buffer);
    if (node.argument == MODE_FUNCTION) {
       // if it is a single method singleton
       writer.appendNode(lxAttribute, V_SINGLETON);
@@ -1861,7 +1893,7 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
       case lxNestedExpression:
       {
          SNode classNode = current.findChild(lxNestedClass);
-         recognizeAttributes(goToFirstNode(classNode.prevNode(), lxToken, lxInlineAttribute),
+         recognizeAttributes(goToFirstNode(classNode.prevNode(), lxToken, lxInlineAttribute, lxIdle),
             0, lxNestedClass);
          recognizeClassMembers(classNode);
 

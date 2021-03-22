@@ -8,47 +8,47 @@ public sealed Array<T> //: Indexable<T>
     constructor allocate(int length)
         = new T[](length);
         
-//    constructor copy(T[] array, int index, int length)
-//        <= allocate(length)
-//    {
-//        for(int i := 0 , i < length, i += 1)
-//        {
-//            theArray[i] := array[i + index]
-//        }
-//    }
-//
-//    Enumerator<T> enumerator() = new BaseEnumerator<T>
-//    {
-//        this theIndex := -1;
-//        
-//        this theLength := self.Length;
-//        
-//        T get() = self.at(this theIndex.Value);
-//        
-//        enumerable() = self;
-//        
-//        reset()
-//        {
-//            this theIndex := -1
-//        }
-//    };
-//
-//    Enumerable cast() = new Enumerable{ Enumerator enumerator() => self; };
-//
-//    Indexer<T> indexer() = new BaseIndexer<T>
-//    {
-//        this theIndex := 0;
-//        
-//        this theLength := self.Length;
-//        
-//        T get()
-//            = self.at(theIndex);
-//            
-//        set(T o)
-//        {
-//            self.setAt(theIndex, o)
-//        }
-//    };
+    constructor copy(T[] array, int index, int length)
+        <= allocate(length)
+    {
+        for(int i := 0 , i < length, i += 1)
+        {
+            theArray[i] := array[i + index]
+        }
+    }
+
+    Enumerator<T> enumerator() = new BaseEnumerator<T>
+    {
+        this theIndex := -1;
+        
+        this theLength := self.Length;
+        
+        get T Value() = self.at(this theIndex.Value);
+        
+        enumerable() = self;
+        
+        reset()
+        {
+            this theIndex := -1
+        }
+    };
+
+    Enumerable cast() = new Enumerable{ Enumerator enumerator() => self; };
+
+    Indexer<T> indexer() = new BaseIndexer<T>
+    {
+        this theIndex := 0;
+        
+        this theLength := self.Length;
+        
+        get T Value()
+            = self.at(theIndex);
+            
+        set Value(T o)
+        {
+            self.setAt(theIndex, o)
+        }
+    };
 
     int Length
     {
@@ -101,39 +101,39 @@ public sealed Array<T> //: Indexable<T>
 
 //    setAt(index, item)
 //        <= setAt(cast int(index), cast T(item));
-//
-//    /// Concatinates the arrays    
-//    T[] add(T[] a)
-//        <= add(a, a.Length);
-//                              
-//    T[] add(T[] a, int length)
-//    {
-//        int length1 := self.Length;
-//        int length2 := length;
-//        
-//        auto retVal := new T[](length1 + length2);
-//
-//        for (int i:=0, i < length1, i += 1) {
-//            retVal[i] := theArray[i]
-//        };
-//
-//        for (int i:=0, i < length2, i += 1) {
-//            retVal[length1 + i] := a[i]
-//        };
-//            
-//        ^ retVal
-//    }
-//                              
-//    T[] clone()
-//    {
-//        int len := self.Length;
-//        T[] copy := new T[](len);
-//        for(int i := 0, i < len, i+=1) {
-//            copy[i] := theArray[i]
-//        };
-//        
-//        ^ copy
-//    }
+
+    /// Concatinates the arrays    
+    T[] add(T[] a)
+        <= add(a, a.Length);
+                              
+    T[] add(T[] a, int length)
+    {
+        int length1 := self.Length;
+        int length2 := length;
+        
+        auto retVal := new T[](length1 + length2);
+
+        for (int i:=0, i < length1, i += 1) {
+            retVal[i] := theArray[i]
+        };
+
+        for (int i:=0, i < length2, i += 1) {
+            retVal[length1 + i] := a[i]
+        };
+            
+        ^ retVal
+    }
+                              
+    T[] clone()
+    {
+        int len := self.Length;
+        T[] copy := new T[](len);
+        for(int i := 0, i < len, i+=1) {
+            copy[i] := theArray[i]
+        };
+        
+        ^ copy
+    }
 }
 
 // --- Array template ---

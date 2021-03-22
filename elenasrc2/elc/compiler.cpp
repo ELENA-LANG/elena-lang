@@ -16,7 +16,7 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
+//inline void test2(SNode node)
 //{
 //   SNode current = node.firstChild();
 //   while (current != lxNone) { 
