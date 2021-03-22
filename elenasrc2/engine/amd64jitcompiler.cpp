@@ -90,7 +90,7 @@ const int gcCommands[gcCommandNumber] =
    bcXSaveSI, bcAllocD, bcXSetR, bcXTrans, bcLLoad
 };
 
-const int gcCommandExNumber = 57;
+const int gcCommandExNumber = 58;
 const int gcCommandExs[gcCommandExNumber] =
 {
    bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
@@ -108,7 +108,8 @@ const int gcCommandExs[gcCommandExNumber] =
    bcCopyToAI + 0x100, bcCopyToAI + 0x200, bcCopyToAI + 0x300, bcCopyToAI + 0x400,
    bcMove + 0x100, bcMove + 0x200, bcMove + 0x300, bcMove + 0x400,
    bcMoveTo + 0x100, bcMoveTo + 0x200, bcMoveTo + 0x300, bcMoveTo + 0x400,
-   bcCallExtR + 0x100, bcCallExtR + 0x200, bcCallExtR + 0x300
+   bcCallExtR + 0x100, bcCallExtR + 0x200, bcCallExtR + 0x300,
+   bcXSaveSI + 0x100  
 };
 
 // command table
@@ -452,6 +453,15 @@ void _ELENA_::loadIndexNOp(int opcode, I64JITScope& scope)
    int arg2 = scope.tape->getDWord();
 
    char* code = (char*)scope.compiler->_inlines[opcode];
+   if (arg2 == -1) {
+      for (int i = 0; i < gcCommandExNumber; i++) {
+         if (gcCommandExs[i] == opcode + 0x100) {
+            code = (char*)scope.compiler->_inlineExs[i];
+            break;
+         }
+      }
+   }
+
    pos_t position = scope.code->Position();
    pos_t length = *(pos_t*)(code - 4);
 
