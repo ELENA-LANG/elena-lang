@@ -234,6 +234,19 @@ procedure __array."readLengthTo$system@Array$@system@ref#1&system@IntNumber[2]"
 
 end
 
+procedure __array."copy$system@Array$system@IntNumber$system@IntNumber$system@Array[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4  
+  pushsi 4  
+
+  callextr api : nsubcopy, 4
+  freei 4
+  quit
+  
+end
+
 procedure __exception."on[2]"
 
   open 
@@ -524,7 +537,7 @@ procedure __literalconvertor."convert$system@WideString$@system@Array#1&system@B
   freei 2
   peeksi 3
   save
-  quitn 3
+  quit
 
 end
 
@@ -541,7 +554,7 @@ procedure __literalconvertor."convert$system@RealNumber$system@IntNumber$@system
   peeksi 4
   save
 
-  quitn 4
+  quit
 end
 
 

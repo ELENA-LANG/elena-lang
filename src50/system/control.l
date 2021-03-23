@@ -669,7 +669,7 @@ public abstract class BaseEnumerator<T> : Enumerator<T>
 
 // --- BaseIndexer ---
 
-public abstract class BaseIndexer //: Indexer
+public abstract class BaseIndexer : Indexer
 {
     int theIndex;
     int theLength;
@@ -691,10 +691,10 @@ public abstract class BaseIndexer //: Indexer
         }
     }    
     
-//    appendIndex(int index)
-//    { 
-//        theIndex += index
-//    }
+    appendIndex(int index)
+    { 
+        theIndex += index
+    }
     
     int Length
     {

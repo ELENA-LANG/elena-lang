@@ -2892,6 +2892,19 @@ ObjectInfo Compiler :: compileIsNilOperator(SyntaxWriter& writer, SNode node, Ex
    return ObjectInfo(okObject, 0, resultRef);
 }
 
+inline bool isLocalBoxingRequired(LexicalType type)
+{
+   switch (type) {
+      case lxIntOp:
+      case lxLongOp:
+      case lxRealOp:
+      case lxRealIntOp:
+         return true;
+      default:
+         return false;
+   }
+}
+
 inline bool IsArrExprOperator(int operator_id, LexicalType type)
 {
    switch (type) {
@@ -2925,7 +2938,7 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
    bool withUnboxing = false;
    ObjectInfo lorigin = loperand;
    // the operands should be locally boxed if reuqired
-   if (assignMode && loperand.kind == okFieldAddress) {
+   if (assignMode && (loperand.kind == okFieldAddress || loperand.kind == okField)) {
       boxArgument(writer, node, loperand, scope, true);
       withUnboxing = true;
    }
@@ -2956,6 +2969,11 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       writer.closeNode();
    }
    else {
+      //if (loperand.kind == okFieldAddress) {
+      //   boxArgument(writer, node, roperand, scope, true);
+      //   (*arguments)[0] = roperand;
+      //}
+
       if (arguments) {
          argCount += arguments->Length();
          roperand = (*arguments)[0];
@@ -3048,7 +3066,9 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
    // if not, replace with appropriate method call
    else {
       // HOTFIX : to prevent double unboxing 
-      assignMode = false;
+      if (assignMode) {
+         assignMode = false;
+      }      
 
       if (shortCircuitMode)
          arguments->add(saveToTempLocal(writer, scope, roperand));
@@ -3066,7 +3086,6 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       }
       else stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
 
-//      bool dummy = false;
       retVal = compileMessage(writer, node, scope, loperand, messageRef, arguments, operationMode, stackSafeAttr, 0, nullptr);
    }
 

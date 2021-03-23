@@ -545,7 +545,7 @@ namespace collections
     // --- ArrayList ---
     
     /// An array list object
-    public sealed class ArrayList //: Indexable
+    public sealed class ArrayList : Indexable
     {
         Array    theArray;
         ref<int> theLength;
@@ -575,7 +575,7 @@ namespace collections
             Enumerator e := o.enumerator();
             while (e.next())
             {
-                self.append(e.get())
+                self.append(*e)
             }
         }
         
@@ -728,133 +728,133 @@ namespace collections
             theLength.Value := pos
         }
         
-//        /// Returns the list enumerator
-//        Enumerator enumerator() = new ArrayListEnumerator(self);
-//        
-//        /// Returns the list indexer9
-//        Indexer indexer() = new ArrayListIndexer(self);
+        /// Returns the list enumerator
+        Enumerator enumerator() = new ArrayListEnumerator(self);
+        
+        /// Returns the list indexer9
+        Indexer indexer() = new ArrayListIndexer(self);
         
         /// Returns a list copy
         ArrayList clone()
-            = ArrayList.fromArray(theArray, theLength.Value);
+            = ArrayList.fromArray(theArray, *theLength);
             
         Array cast()
-            = Array.copy(0, theLength.Value, theArray);
+            = Array.copy(0, *theLength, theArray);
     
         get Array Value()
             = Array.copy(0, theLength.Value, theArray);
     }
 
-//    // --- ArrayListEnumerator ---
-//    
-//    /// A list enumerator
-//    class ArrayListEnumerator : Enumerator
-//    {
-//        ArrayList theList;
-//        ref<int>  theIndex;
-//        
-//        /// Creates a list enumerator
-//        constructor(ArrayList list)
-//        {
-//            theList := list;
-//            theIndex := -1;
-//        }
-//    
-//        /// Returns the current object
-//        get() = theList.at(cast int(theIndex));
-//        
-//        /// Resets the enumerator
-//        reset()
-//        {
-//            theIndex.Value := -1
-//        }
-//    
-//        /// Goes to the next enumeration member and returns true if it is not the last member
-//        bool next()
-//        {
-//            theIndex.append(1);
-//            
-//            int len := theList.Length;
-//            
-//            ^ len > (cast int(theIndex))
-//        }
-//        
-//        enumerable() = theList;
-//    }
-//
-//    // --- ArrayListIndexer ---
-//    
-//    /// A list indexer
-//    public class ArrayListIndexer : Indexer
-//    {
-//        ArrayList theList;
-//        ref<int>  theIndex;
-//        
-//        /// Creates a list indexer
-//        constructor(ArrayList list)
-//        {
-//            theList := list;
-//            theIndex := 0
-//        }
-//    
-//        /// Returns false if the index out of range
-//        get bool Available()
-//        {
-//            int length := theList.Length;
-//            int index := theIndex.Value;
-//            
-//            ^ length > index
-//        }
-//    
-//        /// Returns the current member
-//        get()
-//        {
-//            int index := theIndex.Value;
-//            
-//            ^ theList.at(index)
-//        }
-//        
-//        /// Sets the current member
-//        set(o)
-//        {
-//            int index := theIndex.Value;
-//            
-//            theList.setAt(index, o)
-//        }
-//        
-//        int Index
-//        {
-//            /// Reads the current index into an output parameter
-//            get()
-//            {
-//                int retVal := theIndex.Value;
-//                
-//                ^ retVal
-//            }
-//            
-//            /// Sets the index by specified value
-//            set(int n)
-//            {
-//                theIndex.Value := n
-//            }
-//        }
-//        
-//        appendIndex(int n)
-//        { 
-//            theIndex.append(n)
-//        } 
-//        
-//        int Length
-//        {
-//            get()
-//            {
-//                int retVal := theList.Length;
-//                
-//                ^ retVal
-//            }
-//        }
-//    }
-//
+    // --- ArrayListEnumerator ---
+    
+    /// A list enumerator
+    class ArrayListEnumerator : Enumerator
+    {
+        ArrayList theList;
+        ref<int>  theIndex;
+        
+        /// Creates a list enumerator
+        constructor(ArrayList list)
+        {
+            theList := list;
+            theIndex := -1;
+        }
+    
+        /// Returns the current object
+        get Value() = theList.at(cast int(theIndex));
+        
+        /// Resets the enumerator
+        reset()
+        {
+            theIndex.Value := -1
+        }
+    
+        /// Goes to the next enumeration member and returns true if it is not the last member
+        bool next()
+        {
+            theIndex.append(1);
+            
+            int len := theList.Length;
+            
+            ^ len > (cast int(theIndex))
+        }
+        
+        enumerable() = theList;
+    }
+
+    // --- ArrayListIndexer ---
+    
+    /// A list indexer
+    public class ArrayListIndexer : Indexer
+    {
+        ArrayList theList;
+        ref<int>  theIndex;
+        
+        /// Creates a list indexer
+        constructor(ArrayList list)
+        {
+            theList := list;
+            theIndex := 0
+        }
+    
+        /// Returns false if the index out of range
+        get bool Available()
+        {
+            int length := theList.Length;
+            int index := theIndex.Value;
+            
+            ^ length > index
+        }
+    
+        /// Returns the current member
+        get Value()
+        {
+            int index := theIndex.Value;
+            
+            ^ theList.at(index)
+        }
+        
+        /// Sets the current member
+        set Value(o)
+        {
+            int index := theIndex.Value;
+            
+            theList.setAt(index, o)
+        }
+        
+        int Index
+        {
+            /// Reads the current index into an output parameter
+            get()
+            {
+                int retVal := theIndex.Value;
+                
+                ^ retVal
+            }
+            
+            /// Sets the index by specified value
+            set(n)
+            {
+                theIndex.Value := n
+            }
+        }
+        
+        appendIndex(int n)
+        { 
+            theIndex.append(n)
+        } 
+        
+        int Length
+        {
+            get()
+            {
+                int retVal := theList.Length;
+                
+                ^ retVal
+            }
+        }
+    }
+
 //    // --- Dictionary ---
 //    
 //    /// Dictionary class
