@@ -17,6 +17,11 @@
             <include>convertors.l</include>
             <include>console.l</include>
             <include>basic.l</include>
+            <include>text\strings.l</include>
+            <include>text\words.l</include>
+        </module>
+        <module name="routines">
+            <include>routines\enumerating.l</include>
         </module>
     </files>
 </configuration>

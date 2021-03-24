@@ -239,7 +239,7 @@ namespace text
         {
             get() = theValue;
             
-            set(string val)
+            set(val)
             {
                 theValue := val
             }

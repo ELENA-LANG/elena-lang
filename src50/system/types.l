@@ -39,8 +39,8 @@
 #define extension   80001005h
 #define singleton   80001006h
 #define interface   80001007h
-//#define method      80001008h
-//#define field       80001009h
+#define method      80001008h
+#define field       80001009h
 #define type        8000100Ah
 //#define generic     8000100Bh
 #define function    8000100Ch

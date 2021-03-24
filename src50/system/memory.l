@@ -174,7 +174,7 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
         
         this theLength := self.Length;
         
-        T get() = self.at(this theIndex.Value);
+        get T Value() = self.at(this theIndex.Value);
         
         enumerable() = self;
         
@@ -190,10 +190,10 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
         
         this theLength := self.Length;
         
-        T get()
+        get T Value()
             = self.at(theIndex);
             
-        set(T o)
+        set Value(T o)
         {
             self.setAt(theIndex, o)
         }
@@ -858,25 +858,28 @@ public sealed const struct String : BaseValue
     [info:"Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1"]
     int indexOf(int index, string literal)
     {
-        int retVal := extern elenart.core_sseek(self, literal, index);
+        int sublen := literal.Length;
+        int retVal := extern elenart.core_sseek(self, literal, index, sublen);
         
         ^ retVal
     }
     //    => intern system'core_routines'__literal;
 
-//    /// Saves the index of the first occurence of the specified symbol into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
 //    indexOf(int index, char ch, ref int retVal)
 //        => intern system'core_routines'__literal;
-//
-//    int indexOf(int index, char ch)
-//    {
-//        int retVal := 0;
-//        self.indexOf(index, ch, ref retVal);
-//        
-//        ^ retVal
-//    }
+
+    /// Saves the index of the first occurence of the specified symbol into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    int indexOf(int index, char ch)
+    {
+        byte buffer[4];
+        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref int sublen);
+        
+        int retVal := extern elenart.core_sseek(self, buffer, index, sublen);
+        
+        ^ retVal
+    }
 
     [info:"Inserts the substring into and returns the new one"]
     string insert(int index, string s)
@@ -997,12 +1000,12 @@ public sealed const struct WideString : BaseValue
     constructor copy(wide s)
         <= copy(s.Length, s);
         
-//    /// Creates the copy of a subarray
-//    constructor copy(int index, int length, char[] array)
-//        <= allocate(wideConvertor.getSubLength(index, length, array))
-//    {
-//        intern system'core_routines'__wide.copy(self, index, length, array)
-//    }
+    /// Creates the copy of a subarray
+    constructor copy(int index, int length, char[] array)
+        <= allocate(wideConvertor.getSubLength(index, length, array))
+    {
+        extern elenart.core_wscopychars(self, index, length, array);
+    }
 
     internal constructor fromShortArray(int index, int size, short[] array)
         <= allocate(size)
@@ -1135,24 +1138,33 @@ public sealed const struct WideString : BaseValue
 //    /// If the substring is not found. returns -1
 //    indexOf(int index, char ch, ref int retVal)
 //        => intern system'core_routines'__wide;
-//
-//    /// Returns the index of the first occurence of the specified character.
-//    ///
-//    /// If the substring is not found. returns -1
-//    int indexOf(int index, char ch)
-//    {
+
+    /// Returns the index of the first occurence of the specified character.
+    ///
+    /// If the substring is not found. returns -1
+    int indexOf(int index, char ch)
+    {
+        short buffer[2];
+        intern system'core_routines'__wideconvertor.convert(ch, buffer, ref int sublen);
+        
+        int retVal := extern elenart.core_sseek(self, buffer, index, sublen);
+        
+        ^ retVal
+        
+        
 //        int retVal := 0;
 //        self.indexOf(index, ch, ref retVal);
 //        
 //        ^ retVal
-//    }
+    }
 
     /// Returns the index of the first occurence of the specified substring.
     ///
     /// If the substring is not found. returns -1
     int indexOf(int index, wide s)
     {
-        int retVal := extern elenart.core_wseek(self, s, index);
+        int sublen := s.Length;
+        int retVal := extern elenart.core_wseek(self, s, index, sublen);
         
         ^ retVal
     }
@@ -1593,14 +1605,14 @@ public singleton stringConvertor
 [info:"A wide literal convertor"]
 public singleton wideConvertor
 {
-//    int getSubLength(int index, int length, char[] array)
-//    {
-//        int len;
-//        intern system'core_routines'__wide.sizeOf(index, length, array, ref len);
-//        
-//        ^ len
-//    }
-//    
+    int getSubLength(int index, int length, char[] array)
+    {
+        int len;
+        extern elenart.core_wslen_ch(index, length, array, ref len);
+        
+        ^ len
+    }       
+    
 //    wide convert(BaseVariable v)
 //        <= convert(v.Value);
     

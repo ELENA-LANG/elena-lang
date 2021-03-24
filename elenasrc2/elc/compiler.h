@@ -1225,7 +1225,7 @@ private:
    bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
 
    void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-//   void compileExpressionMethod(SNode member, MethodScope& scope, bool lazyMode);
+   void compileExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope, bool lazyMode);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, LexicalType methodType,
       bool withGenericMethods = false, bool withOpenArgGenerics = false);
 

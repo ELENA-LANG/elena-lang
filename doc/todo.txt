@@ -3,6 +3,11 @@ In development:
 ------         
 
   [development]
+    * word sample : x86, x86-64
+
+    + build linux i386 project with cmake
+    + build linux ppc64le project with cmake
+
     * #206 : migrate console / files samples
     * #206 : interpreter sample
     * #206 : samples, tutorials
@@ -14,6 +19,7 @@ In development:
     + debugger : stack allocated int value 
     + free 0 / alloc 0 - do nothing
     + test finally block with locally allocated variables
+    + optimize a ? b : c - do not use branching
 
     + uncomment finally part in program entry
 
@@ -54,6 +60,7 @@ In development:
      object should be passed as is
     + ide 64 : call stack
     + elc 64 mode : 8 byte alignment for stack-allocated types
+    + QuckSorting : optimize the code - built-in branching should be used 
 
     * do not save the external operation if the result is not assigned or passed as an argument
     * optimization - duplicate assigning : external call, message call

@@ -1,15 +1,15 @@
 //import system'collections;
-//
-//// === actions ===
-//
-//public ifOrdered
-//    = (f,l => f < l);
-//
-//public ifDecrescent
-//    = (f,l => f > l);
-//
-//// --- literalSplitOp ---
-//
+
+// === actions ===
+
+public ifOrdered
+    = (f,l => f < l);
+
+public ifDecrescent
+    = (f,l => f > l);
+
+// --- literalSplitOp ---
+
 //public extension stringListOp : String
 //{
 //    Array split()
@@ -175,13 +175,13 @@ public extension enumerableOp
 //
 //    safeSeek(val)
 //        = (x => val.safeEqual(x)).retrieve(cast Enumerator(self.enumerator()));
-//
-//    seekFor(val)
-//        = (x => val.equal(x)).retrieve(cast Enumerator(self.enumerator()));
-//
-//    bool ifExists(val)
-//        = nil != self.seekFor(val);
-//
+
+    seekFor(val)
+        = (x => val.equal(x)).retrieve(cast Enumerator(self.enumerator()));
+
+    bool ifExists(val)
+        = nil != self.seekFor(val);
+
 //    bool sequenceEqual(Enumerable list)
 //    {
 //        Enumerator it1 := self.enumerator();
@@ -392,9 +392,9 @@ public extension enumerableOp
 //        }
 //    }    
 //}    
-//
-//public extension indexableOp
-//{
+
+public extension indexableOp
+{
 //    exchange(int i1, int i2)
 //    {
 //        Indexer indexer := self.indexer();
@@ -462,40 +462,40 @@ public extension enumerableOp
 //
 //    populate(action)
 //        = self.populate:(int n){ ^action(n) };
-//
-//    bool isSorted(Func2 compareFunc)
-//    {
-//        auto it := cast Indexer(self.indexer());
-//        if (it.Available)
-//        {
-//            var previous := it.get();
-//            it.appendIndex:1;
-//            while (it.Available)
-//            {
-//                ifnot (compareFunc(previous, it.get()))
-//                {
-//                    ^ false
-//                };
-//                
-//                previous := it.get();
-//                it.appendIndex:1
-//            }
-//        };
-//        
-//        ^ true
-//    }
-//
-//    sort(Func2 compareFunc)
-//    {
-//        QuickSorting.sort(new IndexerSortingAgent(self), compareFunc);
-//    }
-//    
-//    ascendant()
-//        = self.clone().sort(ifOrdered);
-//
-//    isAscendant()
-//        = self.isSorted(ifOrdered);
-//
+
+    bool isSorted(Func2 compareFunc)
+    {
+        auto it := cast Indexer(self.indexer());
+        if (it.Available)
+        {
+            var previous := *it;
+            it.appendIndex:1;
+            while (it.Available)
+            {
+                ifnot (compareFunc(previous, *it))
+                {
+                    ^ false
+                };
+                
+                previous := *it;
+                it.appendIndex:1
+            }
+        };
+        
+        ^ true
+    }
+
+    sort(Func2 compareFunc)
+    {
+        QuickSorting.sort(new IndexerSortingAgent(self), compareFunc);
+    }
+    
+    ascendant()
+        = self.clone().sort(ifOrdered);
+
+    isAscendant()
+        = self.isSorted(ifOrdered);
+
 //    Subarray(int index, int length)
 //    {
 //        auto it := cast Indexer(self.indexer());
@@ -551,4 +551,4 @@ public extension enumerableOp
 //        
 //        ^ self
 //    }    
-//}
+}

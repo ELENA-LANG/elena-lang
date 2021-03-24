@@ -36,16 +36,16 @@ namespace text
             }
         }
     
-//        clear()
-//        {
-//            theLength.Value := 0
-//        }
-//    
-//        char[] cast()
-//            = theBuffer;
-//    
-//        string cast()
-//            = String.copy(0, theLength.Value, theBuffer);
+        clear()
+        {
+            theLength.Value := 0
+        }
+    
+        char[] cast()
+            = theBuffer;
+    
+        string cast()
+            = String.copy(0, theLength.Value, theBuffer);
             
         string Value
             = String.copy(0, *theLength, theBuffer);
@@ -54,22 +54,22 @@ namespace text
 //        {
 //            r := WideString.copy(0, theLength.Value, theBuffer);
 //        }
-//    
-//        wide cast()
-//            = WideString.copy(0, theLength.Value, theBuffer);
-//            
-//        string toPrintable()
-//            = self.Value;
-//    
-//        writeLine()
-//        {
-//            self.write(forward newLine)
-//        }
-//    
-//        append(line)
-//        {
-//            self.write:line
-//        }
+    
+        wide cast()
+            = WideString.copy(0, theLength.Value, theBuffer);
+            
+        string toPrintable()
+            = self.Value;
+    
+        writeLine()
+        {
+            self.write(forward newLine)
+        }
+    
+        append(line)
+        {
+            self.write:line
+        }
                                         
         private reserve(int len)
         {

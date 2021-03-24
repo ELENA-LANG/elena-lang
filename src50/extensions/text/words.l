@@ -212,7 +212,7 @@ namespace text
             
             while (current < len)
             {
-                theLiteral.read(current, ref ch);
+                ch := theLiteral[current];
                 
                 if (theDFA.proceed(ch))
                 {
@@ -235,7 +235,7 @@ namespace text
             ^ theBuffer.isNonempty()
         }
         
-        string get() = theBuffer.Value;
+        get string Value() = *theBuffer;
     }
 
 }

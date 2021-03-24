@@ -507,7 +507,7 @@ public:
       eaCast               = 0x00000000200,
       eaNoPrimitives       = 0x00000000400,
       eaDynamicObject      = 0x00000000800,
-//      eaInlineExpr         = 0x00000001000,
+      eaInlineExpr         = 0x00000001000,
 //      eaNoUnboxing         = 0x00000002000,
 //      eaNoBoxing           = 0x00000003000,
       eaMember             = 0x00000004000,

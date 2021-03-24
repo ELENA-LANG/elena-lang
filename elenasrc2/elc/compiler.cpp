@@ -43,7 +43,7 @@ constexpr auto HINT_SILENT          = EAttr::eaSilent;
 constexpr auto HINT_ROOTSYMBOL      = EAttr::eaRootSymbol;
 constexpr auto HINT_ROOT            = EAttr::eaRoot;
 constexpr auto HINT_ROOTEXPR        = EAttr::eaRootExpr;
-//constexpr auto HINT_INLINE_EXPR     = EAttr::eaInlineExpr;
+constexpr auto HINT_INLINE_EXPR     = EAttr::eaInlineExpr;
 constexpr auto HINT_NOPRIMITIVES    = EAttr::eaNoPrimitives;
 constexpr auto HINT_DYNAMIC_OBJECT  = EAttr::eaDynamicObject;  // indicates that the structure MUST be boxed
 //constexpr auto HINT_NOBOXING        = EAttr::eaNoBoxing;
@@ -2648,12 +2648,10 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprSco
    else {
       SNode thenCode = node.findSubNode(lxCode);
       if (thenCode == lxNone) {
-         //HOTFIX : inline branching operator
-         writer.newNode(lxIf, ifReference);
-
-         thenCode = node.firstChild();
+         thenCode = node;
       }
-      else writer.newNode(lxIf, ifReference);
+
+      writer.newNode(lxIf, ifReference);
 
       bool ifRetStatement = false;
       compileSubCode(writer, thenCode, scope, true, ifRetStatement);
@@ -2668,7 +2666,7 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode node, ExprSco
             if (elseCode == lxNone) {
                writer.newNode(lxElse, ifReference);
 
-               elseCode = node.firstChild();
+               elseCode = node;
             }
             else writer.newNode(lxElse, 0);
 
@@ -2742,9 +2740,9 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, pos_t 
 inline EAttr defineBranchingOperandMode(SNode node)
 {
    EAttr mode = /*HINT_SUBCODE_CLOSURE | */HINT_NODEBUGINFO;
-   //if (node.firstChild() != lxCode) {
-   //   mode = mode | HINT_INLINE_EXPR;
-   //}
+   if (node.firstChild() != lxCode) {
+      mode = mode | HINT_INLINE_EXPR;
+   }
 
    return mode;
 }
@@ -2812,18 +2810,15 @@ void Compiler :: compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope&
       ObjectInfo roperand = compileClosure(writer, node, scope, defineBranchingOperandMode(node) | HINT_PARAMETER,
          preservedArgs);
       arguments.add(roperand);
-//      // HOTFIX : comment out the method code 
-//      roperandNode = lxIdle;
-//
-//      SNode elseNode = roperandNode.nextNode();
-//      if (elseNode != lxNone) {
-//         message = overwriteArgCount(message, 3);
-//
-//         compileClosure(elseNode, scope, defineBranchingOperandMode(elseNode));
-//         // HOTFIX : comment out the method code 
-//         elseNode = lxIdle;
-//      }
-//
+
+      SNode elseNode = node.nextNode();
+      if (elseNode != lxNone) {
+         message = overwriteArgCount(message, 3);
+
+         compileClosure(writer, elseNode, scope, defineBranchingOperandMode(elseNode) | HINT_PARAMETER,
+            preservedArgs);
+      }
+
 //      SNode parentNode = roperandNode.parentNode();
 
       retVal = compileMessage(writer, node, scope, loperand, message, &arguments, operationMode, 0, 0, preservedArgs);
@@ -2843,13 +2838,18 @@ ObjectInfo Compiler :: compileBranchingOperation(SyntaxWriter& writer, SNode nod
 
    writer.newNode(lxExpression);
 
-   EAttrs objMode(mode, HINT_LOOP);
+   EAttrs objMode(mode, HINT_LOOP | HINT_PARAMETER);
+   writer.newNode(lxExpression);
    ObjectInfo loperand = compileObject(writer, lnode, scope, objMode, preservedArgs);
+   writer.closeNode();
 
    compileBranchingOp(writer, lnode.nextNode(lxObjectMask), scope, mode, operator_id, loperand, 
       retVal, mode, preservedArgs);
 
    writer.closeNode();
+
+   if (EAttrs::test(mode, HINT_PARAMETER) && retVal.kind == okObject)
+      retVal = saveToTempLocal(writer, scope, retVal);
 
    return retVal;
 }
@@ -4925,7 +4925,7 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, EAt
 
    MethodScope methodScope(&scope);
    bool lazyExpression = declareActionScope(scope, argNode, methodScope, mode);
-//   bool inlineExpression = EAttrs::test(mode, HINT_INLINE_EXPR);
+   bool inlineExpression = EAttrs::test(mode, HINT_INLINE_EXPR);
    methodScope.functionMode = true;
 
    mssg_t multiMethod = resolveMultimethod(scope, methodScope.message);
@@ -4934,19 +4934,12 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, EAt
 //   if (EAttrs::test(mode, HINT_SUBCODE_CLOSURE))
 //      methodScope.subCodeMode = true;
 
-//   // if it is single expression
-//   if (inlineExpression || lazyExpression) {
-//      //inject a method
-//      node.injectAndReplaceNode(lxClass);
-//      SNode current = node.firstChild();
-//      current.injectAndReplaceNode(lxClassMethod, methodScope.message);
-//
-//      compileExpressionMethod(current, methodScope, lazyExpression);
-//   }
-//   else {
+   // if it is single expression
+   if (inlineExpression || lazyExpression) {
+      compileExpressionMethod(writer, node, methodScope, lazyExpression);
+   }
+   else {
       // inject a method
-//      SNode current = node.findSubNode(lxCode, lxReturning);
-
 //      //!!HOTFIX : copy method parameters to be used for debug info
 //      copyMethodParameters(current, argNode);
 
@@ -4963,8 +4956,7 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, EAt
       if (methodScope.outputRef == V_AUTO) {
          methodScope.outputRef = scope.moduleScope->superReference;
       }
-
-//   }
+   }
 
    // the parent is defined after the closure compilation to define correctly the output type
    ref_t parentRef = scope.info.header.parentRef;
@@ -5299,10 +5291,10 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, ExprScop
    if (argNode == lxExpression)
       argNode = argNode.firstChild();
 
-//   if (EAttrs::testany(mode, HINT_LAZY_EXPR | HINT_INLINE_EXPR)) {
-//      compileAction(node, scope, SNode(), mode);
-//   }
-   /*else */if (argNode == lxCode) {
+   if (EAttrs::testany(mode, HINT_LAZY_EXPR | HINT_INLINE_EXPR)) {
+      compileAction(node, scope, SNode(), mode);
+   }
+   else if (argNode == lxCode) {
       compileAction(node, scope, SNode(), mode);
    }
    else if (node.existSubChild(lxCode, lxReturning)) {
@@ -7569,21 +7561,19 @@ void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodSco
    endMethod(writer, scope);
 }
 
-//void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope, bool lazyMode)
-//{
-//   declareProcedureDebugInfo(node, scope, false/*, false*/);
-//
-//   CodeScope codeScope(&scope);
-//
-//   SNode current = node.findChild(lxExpression);
-//   current.injectAndReplaceNode(lxNewFrame);
-//   current = current.firstChild();
-//
-//   // new stack frame
-//   // stack already contains previous $self value
-//   codeScope.allocated1++;
+void Compiler :: compileExpressionMethod(SyntaxWriter& writer, SNode node, MethodScope& scope, bool lazyMode)
+{
+   beginMethod(writer, node, scope, lxClassMethod);
+
+   CodeScope codeScope(&scope);
+
+   writer.newNode(lxNewFrame);
+
+   // new stack frame
+   // stack already contains previous $self value
+   codeScope.allocated1++;
 //   scope.preallocated = codeScope.allocated1;
-//
+
 //   if (lazyMode) {
 //      int tempLocal = newLocalAddr(codeScope.allocated2++);
 //
@@ -7604,12 +7594,14 @@ void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodSco
 //      // HOTFIX : lazy expression should presave incoming message
 //      frameNode.appendNode(lxIndexLoading).appendNode(lxLocalAddress, tempLocal);;
 //   }
-//   else compileRetExpression(current, codeScope, EAttr::eaNone);
-//
-//   codeScope.syncStack(&scope);
-//
-//   endMethod(node, scope);
-//}
+   /*else */compileRetExpression(writer, node, codeScope, EAttr::eaNone);
+
+   writer.closeNode();
+
+   codeScope.syncStack(&scope);
+
+   endMethod(writer, scope);
+}
 
 void Compiler :: warnOnUnassignedLocal(SNode node, Scope& scope, int level)
 {

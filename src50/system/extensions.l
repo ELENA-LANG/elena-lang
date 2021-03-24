@@ -101,21 +101,21 @@ public extension objectOp
 //            ^ self.isInteger();
 //        }
 //    }
-//        
-//    bool isEmpty()
-//    {
-//        int len := self.Length;
-//        
-//        ^ len == 0;
-//    }
-//        
-//    bool isNonempty()
-//    {
-//        int len := self.Length;
-//        
-//        ^ len != 0;
-//    }
-//        
+        
+    bool isEmpty()
+    {
+        int len := self.Length;
+        
+        ^ len == 0;
+    }
+        
+    bool isNonempty()
+    {
+        int len := self.Length;
+        
+        ^ len != 0;
+    }
+        
 //    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
 //    bool safeEqual(o)
 //        = self.equal:o \ back:false;
@@ -948,11 +948,11 @@ public extension objectOp
 //        ^ self
 //    }
 //}
-//
-//// --- literalOp ---
-//
-//public extension stringOp : String
-//{
+
+// --- literalOp ---
+
+public extension stringOp : String
+{
 //    int Hashcode
 //    {
 //        /// Reads the object hash code into the output parameter
@@ -965,31 +965,31 @@ public extension objectOp
 //            ^ h
 //        }    
 //    }
-//
-//    int indexOf(string s)
-//        = self.indexOf(0, s);
-//
-//    int indexOf(char ch)
-//        = self.indexOf(0, ch);
-//        
+
+    int indexOf(string s)
+        = self.indexOf(0, s);
+
+    int indexOf(char ch)
+        = self.indexOf(0, ch);
+        
 //    string Substring(index)
 //        = self.Substring(cast int(index));
-//        
-//    string Substring(int index)
-//    {
-//        int len := self.Length;
-//        if (len > index)
-//        {
-//            len := len - index;
-//            
-//            ^ self.Substring(index, len)
-//        }
-//        else
-//        {
-//            ^ emptyString
-//        }        
-//    }        
-//    
+        
+    string Substring(int index)
+    {
+        int len := self.Length;
+        if (len > index)
+        {
+            len := len - index;
+            
+            ^ self.Substring(index, len)
+        }
+        else
+        {
+            ^ emptyString
+        }        
+    }        
+    
 //    string trimLeft(char ch)
 //    {
 //        int  index := 0;
@@ -1107,69 +1107,65 @@ public extension objectOp
 //        
 //        ^ n != -1
 //    }
-//
-//    string replaceFirst(string replacee, string replacer)
-//    {
-//        int replaceeLen := replacee.Length;
-//        int i := 0;
-//        
-//        self.indexOf(0, replacee, ref i);
-//        
-//        if (i != -1)
-//        { 
-//            ^ self.delete(i, replaceeLen).insert(i, replacee)
-//        }
-//        else
-//        {
-//            ^ self
-//        }    
-//    }    
-//    
+
+    string replaceFirst(string replacee, string replacer)
+    {
+        int replaceeLen := replacee.Length;
+        int i := self.indexOf(0, replacee);
+        
+        if (i != -1)
+        { 
+            ^ self.delete(i, replaceeLen).insert(i, replacee)
+        }
+        else
+        {
+            ^ self
+        }    
+    }    
+    
 //    string replace(replacee, replacer)
 //        = stringOp.replace(self, cast string(replacee), cast string(replacer));
-//    
-//    string replace(string replacee, string replacer)
-//    {
-//        string target := emptyString;
-//        int    start := 0;
-//        int    end := 0;
-//        int    replaceeLen := replacee.Length;
-//        
-//        self.indexOf(start, replacee, ref end);
-//        
-//        while (end != -1)
-//        {
-//            target := target
-//                .add(self.Substring(start, end - start))
-//                .add(replacer);
-//            
-//            start := end + replaceeLen;
-//            
-//            self.indexOf(start, replacee, ref end)
-//        };
-//    
-//        if(start != 0)
-//        {
-//            ^ target.add(self.Substring(start))
-//        }
-//        else
-//        {
-//            ^ self
-//        }
-//    }
-//    
-//    bool isEmpty()
-//    {
-//        int length := self.Length;
-//        
-//        ^ length == 0
-//    }
-//}
-//
-//// --- wideOp ---
-//
-//public extension wideOp : WideString
-//{
+    
+    string replace(string replacee, string replacer)
+    {
+        string target := emptyString;
+        int    start := 0;
+        int    end := self.indexOf(start, replacee);
+        int    replaceeLen := replacee.Length;
+        
+        while (end != -1)
+        {
+            target := target
+                .add(self.Substring(start, end - start))
+                .add(replacer);
+            
+            start := end + replaceeLen;
+            
+            end := self.indexOf(start, replacee)
+        };
+    
+        if(start != 0)
+        {
+            ^ target.add(self.Substring(start))
+        }
+        else
+        {
+            ^ self
+        }
+    }
+    
+    bool isEmpty()
+    {
+        int length := self.Length;
+        
+        ^ length == 0
+    }
+}
+
+// --- wideOp ---
+
+public extension wideOp : WideString
+{
 //    int Hashcode
 //    {
 //        get()
@@ -1181,25 +1177,25 @@ public extension objectOp
 //            ^ h
 //        }
 //    }
-//    
-//    indexOf(wide s)
-//        = self.indexOf(0, s);
-//
-//    indexOf(char ch)
-//        = self.indexOf(0, ch);
-//                
+    
+    indexOf(wide s)
+        = self.indexOf(0, s);
+
+    indexOf(char ch)
+        = self.indexOf(0, ch);
+                
 //    wide Substring(index)
 //        = self.Substring(cast int(index));
-//        
-//    wide Substring(int index)
-//    {
-//        int length := self.Length;
-//        
-//        length := length - index;
-//        
-//        ^ self.Substring(index, length)
-//    }
-//     
+        
+    wide Substring(int index)
+    {
+        int length := self.Length;
+        
+        length := length - index;
+        
+        ^ self.Substring(index, length)
+    }
+     
 //    wide trimLeft(char ch)
 //    {
 //        int  index := 0;
@@ -1302,62 +1298,58 @@ public extension objectOp
 //        
 //        ^ n != -1
 //    }
-//    
-//    wide replaceFirst(wide replacee, wide replacer)
-//    {
-//        int replaceeLen := replacee.Length;
-//        int i := 0;
-//        
-//        self.indexOf(0, replacee, ref i);
-//        
-//        if (i != -1)
-//        { 
-//            ^ self.delete(i, replaceeLen).insert(i, replacee)
-//        }
-//        else
-//        {
-//            ^ self
-//        }    
-//    }    
-//        
-//    replace(wide replacee, wide replacer)
-//    {
-//        wide target := emptyWideString;
-//        int  start := 0;
-//        int  end := 0;
-//        int  replaceeLen := replacee.Length;
-//        
-//        self.indexOf(start, replacee, ref end);
-//        
-//        while (end != -1)
-//        {
-//            target := target
-//                .add(self.Substring(start, end - start))
-//                .add:replacer;
-//            
-//            start := end + replaceeLen;
-//            
-//            self.indexOf(start, replacee, ref end)
-//        };
-//    
-//        if (start != 0)
-//        { 
-//            ^ target.add(self.Substring(start)) 
-//        }
-//        else
-//        { 
-//            ^ self 
-//        }
-//    }
-//
-//    bool isEmpty()
-//    {
-//        int length := self.Length;
-//        
-//        ^ length == 0
-//    }
-//}
-//
+    
+    wide replaceFirst(wide replacee, wide replacer)
+    {
+        int replaceeLen := replacee.Length;
+        int i := self.indexOf(0, replacee);
+        
+        if (i != -1)
+        { 
+            ^ self.delete(i, replaceeLen).insert(i, replacee)
+        }
+        else
+        {
+            ^ self
+        }    
+    }    
+        
+    replace(wide replacee, wide replacer)
+    {
+        wide target := emptyWideString;
+        int  start := 0;
+        int  end := self.indexOf(start, replacee);
+        int  replaceeLen := replacee.Length;
+        
+        while (end != -1)
+        {
+            target := target
+                .add(self.Substring(start, end - start))
+                .add:replacer;
+            
+            start := end + replaceeLen;
+            
+            end := self.indexOf(start, replacee)
+        };
+    
+        if (start != 0)
+        { 
+            ^ target.add(self.Substring(start)) 
+        }
+        else
+        { 
+            ^ self 
+        }
+    }
+
+    bool isEmpty()
+    {
+        int length := self.Length;
+        
+        ^ length == 0
+    }
+}
+
 //public extension stringWeakOp
 //{
 //    fillString(s, int counter)
@@ -1430,11 +1422,11 @@ public extension objectOp
 //        ^ self
 //    }    
 //}
-//
-//// --- charOp ---
-//
-//public extension charOp : CharValue
-//{
+
+// --- charOp ---
+
+public extension charOp : CharValue
+{
 //    int Hashcode
 //    {
 //        // Reads the object hash code into the output parameter
@@ -1445,69 +1437,69 @@ public extension objectOp
 //            ^ retVal
 //        }
 //    }
-//    
-//    bool isWhitespace()
-//    {
-//        self =>
-//            $9  { ^ true }
-//            $32 { ^ true }
-//            $10 { ^ true }
-//            $13 { ^ true }
-//            $12 { ^ true };
-//            
-//        ^ false
-//    }
-//    
-//    bool isDigit()
-//    {
-//        int ch := intConvertor.convert(self);
-//        
-//        ^ (ch >= 30h) && (ch <= 39h)
-//    }
-//    
-//    bool isNewLine()
-//    {
-//        ^ self == $10
-//    }
-//    
-//    bool isLetter()
-//    {
-//        int ch := intConvertor.convert(self);
-//        
-//        if (ch >= 41h && ch <= 5Ah)
-//            { ^ true };
-//        
-//        if (ch >= 61h && ch <= 7Ah)
-//            { ^ true };
-//        
-//        if (ch >= 3ACh && ch <= 3CEh)
-//            { ^ true };
-//            
-//        if (ch >= 400h && ch <= 42Fh)
-//            { ^ true };
-//            
-//        ^ false
-//    }
-//    
-//    bool isLToken()
-//    {
-//        int ch := intConvertor.convert(self);
-//        
-//        if (ch >= 41h && ch <= 5Ah)
-//            { ^ true };
-//        
-//        if (ch >= 61h && ch <= 7Ah)
-//            { ^ true };
-//        
-//        if (ch >= 3ACh && ch <= 3CEh)
-//            { ^ true };
-//            
-//        if (ch >= 400h && ch <= 42Fh)
-//            { ^ true };
-//            
-//        ^ ch == 39
-//    }
-//}
+    
+    bool isWhitespace()
+    {
+        self =>
+            $9  { ^ true }
+            $32 { ^ true }
+            $10 { ^ true }
+            $13 { ^ true }
+            $12 { ^ true };
+            
+        ^ false
+    }
+    
+    bool isDigit()
+    {
+        int ch := intConvertor.convert(self);
+        
+        ^ (ch >= 30h) && (ch <= 39h)
+    }
+    
+    bool isNewLine()
+    {
+        ^ self == $10
+    }
+    
+    bool isLetter()
+    {
+        int ch := intConvertor.convert(self);
+        
+        if (ch >= 41h && ch <= 5Ah)
+            { ^ true };
+        
+        if (ch >= 61h && ch <= 7Ah)
+            { ^ true };
+        
+        if (ch >= 3ACh && ch <= 3CEh)
+            { ^ true };
+            
+        if (ch >= 400h && ch <= 42Fh)
+            { ^ true };
+            
+        ^ false
+    }
+    
+    bool isLToken()
+    {
+        int ch := intConvertor.convert(self);
+        
+        if (ch >= 41h && ch <= 5Ah)
+            { ^ true };
+        
+        if (ch >= 61h && ch <= 7Ah)
+            { ^ true };
+        
+        if (ch >= 3ACh && ch <= 3CEh)
+            { ^ true };
+            
+        if (ch >= 400h && ch <= 42Fh)
+            { ^ true };
+            
+        ^ ch == 39
+    }
+}
 
 // --- byteArrayHelper ---
 

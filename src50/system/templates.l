@@ -1,11 +1,11 @@
-//public interface<T>
-//{
-//    T cast() = new T
-//    {
-//        embeddable dispatch() => self;
-//    };
-//}
-//
+public interface<T>
+{
+    T cast() = new T
+    {
+        embeddable dispatch() => self;
+    };
+}
+
 //#property prop<T, __name>
 //{
 //    field;
@@ -173,22 +173,22 @@
 //    
 //    __loop: cast bool(cond_expr) ? { loop_body; step_expr1; step_expr2 }
 //}
-//
-//// --- doUntil statement ---
-//
-//#declare do:until(loop_body,cond_expr)
-//{
-//    loop_body;
-//    
-//    __loop: cast bool(cond_expr) ! { loop_body }
-//}
-//
-//#declare do:while(loop_body,cond_expr)
-//{
-//    loop_body;
-//    
-//    __loop: cast bool(cond_expr) ? { loop_body }
-//}
+
+// --- doUntil statement ---
+
+#declare do:until(loop_body,cond_expr)
+{
+    loop_body;
+    
+    __loop cast bool(cond_expr) ! { loop_body }
+}
+
+#declare do:while(loop_body,cond_expr)
+{
+    loop_body;
+    
+    __loop cast bool(cond_expr) ? { loop_body }
+}
 
 // -- try-catch statement ---
 #declare try:catch(try_block,catch_block)
