@@ -42,7 +42,7 @@
 			<Add option="-fvisibility=hidden" />
 			<Add option="-fvisibility-inlines-hidden" />
 			<Add option="-Wno-switch" />
-			<Add option="-D_LINUX32" />
+			<Add option="-D_LINUX" />
 			<Add directory="../../common" />
 			<Add directory="../../engine" />
 			<Add directory="../linux32" />
@@ -82,10 +82,6 @@
 		<Unit filename="../elenartmachine.h" />
 		<Unit filename="../linux32/elenart.h" />
 		<Unit filename="../linux32/main.cpp" />
-		<Extensions>
-			<code_completion />
-			<debugger />
-			<envvars />
-		</Extensions>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

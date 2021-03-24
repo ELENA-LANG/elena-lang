@@ -160,14 +160,14 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, mssg_t message, ref_t so
    if (withNewFrame) {
       if (reserved > 0) {
          // to include new frame header
-         tape.write(bcOpen); 
+         tape.write(bcOpen);
          tape.write(bcReserve, reserved << 2);   // NOTE : converting to actual value
       }
       else tape.write(bcOpen);
 
       if (withPresavedMessage) {
          tape.write(bcSaveF, -4);
-      }         
+      }
 
       if (allocated > 0) {
          allocateStack(tape, allocated);
@@ -529,7 +529,7 @@ void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference)
    tape.write(bcCreate, reference | mskVMTRef);
 }
 
-inline ref_t __fastcall defineConstantMask(LexicalType type)
+inline ref_t defineConstantMask(LexicalType type)
 {
    switch (type) {
       case lxClassSymbol:
@@ -717,14 +717,14 @@ void ByteCodeWriter :: unboxMessage(CommandTape& tape)
    // mcount
    // inc     1
    // allocd
-   // 
-   // movsip  0 
+   //
+   // movsip  0
    // pushfip -1
    // dec     1
    // xsetr   -1
-   // ifn     labSkip, 0 
+   // ifn     labSkip, 0
    // labNextParam:
-   // dec     1 
+   // dec     1
    // xtrans
    // elsen   labNextParam, 0
    // labSkip:
@@ -1090,7 +1090,7 @@ void ByteCodeWriter :: writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug
    debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
-inline int __fastcall getNextOffset(ClassInfo::FieldMap::Iterator it)
+inline int getNextOffset(ClassInfo::FieldMap::Iterator it)
 {
    it++;
 
@@ -1498,7 +1498,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bcElseN:
          case bcLessN:
          case bcNotLess:
-         case bcNotGreater:         
+         case bcNotGreater:
          case bcNotLessN:
          case bcGreaterN:
          case bcNotGreaterN:
@@ -2372,7 +2372,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scop
 //   pushObject(tape, node.type, node.argument, scope, mode);
 //}
 
-void __fastcall assignOpArguments(SNode node, SNode& larg, SNode& rarg)
+void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -2390,7 +2390,7 @@ void __fastcall assignOpArguments(SNode node, SNode& larg, SNode& rarg)
    }
 }
 
-void __fastcall assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
+void __FASTCALL assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -3132,7 +3132,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
       extraArgs = 1;
 
    tape.write(bcAllocI, argCount - startIndex + extraArgs);
-   
+
    if (directOrder) {
       for (int i = startIndex; i < argCount; i++) {
          // get parameters in reverse order if required
@@ -3972,7 +3972,7 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
       while (current != lxNone) {
          if (current == lxMember) {
             SNode memberNode = current.findSubNodeMask(lxObjectMask);
-   
+
             tape.write(bcXSetFI, memberNode.argument, current.argument);
          }
          current = current.nextNode();
@@ -4024,7 +4024,7 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
             if (genericResending) {
                // save message
                tape.write(bcSaveF, -4);
-               
+
                generateExpression(tape, current, scope);
 
                // restore message
@@ -4560,7 +4560,7 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
 //void ByteCodeWriter :: generateYieldDispatch(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 //{
 //   generateExpression(tape, node, scope);
-//   
+//
 //   // ; jump if state is set
 //   // load
 //   // ifn labStart 0
@@ -4720,7 +4720,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
    else endIdleMethod(tape);
 }
 
-void ByteCodeWriter :: generateClass(_ModuleScope& scope, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathRef, 
+void ByteCodeWriter :: generateClass(_ModuleScope& scope, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathRef,
    bool(*cond)(LexicalType)/*, bool stackEvenMode*/)
 {
 #ifdef FULL_OUTOUT_INFO

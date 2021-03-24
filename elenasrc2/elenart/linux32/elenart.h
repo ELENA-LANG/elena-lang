@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //             Linux Shared Library Declaration
-//                                              (C)2009-2020, by Alexei Rakov
+//                                              (C)2009-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elenamachine.h"
@@ -37,7 +37,7 @@ extern "C"
 
    DLL_PUBLIC void* GCCollect(void* roots, size_t size);
 
-   DLL_PUBLIC int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
+   DLL_PUBLIC int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, void* buffer, size_t maxLength);
 
    DLL_PUBLIC int LoadAddressInfo(size_t retPoint, char* lineInfo, int length);
 
@@ -51,11 +51,11 @@ extern "C"
 
    DLL_PUBLIC int LoadSubjectName(void* subject, char* lineInfo, int length);
 
-   DLL_PUBLIC void* LoadSubject(void* subjectName);
+   DLL_PUBLIC int LoadSubject(void* subjectName);
 
    DLL_PUBLIC int LoadMessageName(void* message, char* lineInfo, int length);
 
-   DLL_PUBLIC void* LoadMessage(void* messageName);
+   DLL_PUBLIC int LoadMessage(void* messageName);
 
    DLL_PUBLIC void* LoadClassByString(void* systemEnv, void* referenceName);
 

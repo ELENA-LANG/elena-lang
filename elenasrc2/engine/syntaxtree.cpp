@@ -100,7 +100,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
 ////      tokens.add("argunboxing", lxArgUnboxing);
 ////      tokens.add("argboxing", lxArgBoxing);
 ////      tokens.add("byreftarget", lxByRefTarget);
-////      tokens.add("arrop", lxArrOp); 
+////      tokens.add("arrop", lxArrOp);
 ////      tokens.add("binarrop", lxBinArrOp);
 ////      tokens.add("duplicateboxing", lxDuplicateBoxingAttr);
 ////      tokens.add("newarrop", lxNewArrOp);
@@ -119,7 +119,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
 //   return (bookmark == 0) ? bookmarks.peek() : *bookmarks.get(bookmarks.Count() - bookmark);
 //}
 
-inline void __fastcall updateBookmarks(Stack<pos_t>& bookmarks, pos_t oldPos, pos_t newPos)
+inline void updateBookmarks(Stack<pos_t>& bookmarks, pos_t oldPos, pos_t newPos)
 {
    for (auto it = bookmarks.start(); !it.Eof(); it++) {
       if (*it == oldPos)
@@ -294,7 +294,7 @@ struct _NodeRecord
    pos_t       strArgument;
 };
 
-inline pos_t __fastcall newChild(_Memory& body, pos_t position, LexicalType type, int argument, pos_t strArgument)
+inline pos_t newChild(_Memory& body, pos_t position, LexicalType type, int argument, pos_t strArgument)
 {
    MemoryWriter writer(&body);
    pos_t child = writer.Position();
@@ -309,7 +309,7 @@ inline pos_t __fastcall newChild(_Memory& body, pos_t position, LexicalType type
    return child;
 }
 
-inline void __fastcall appendChild(_Memory& body, pos_t parent, pos_t child)
+inline void appendChild(_Memory& body, pos_t parent, pos_t child)
 {
    auto r = (_NodeRecord*)body.get(parent);
    if (r->child == INVALID_REF) {
@@ -325,7 +325,7 @@ inline void __fastcall appendChild(_Memory& body, pos_t parent, pos_t child)
    }
 }
 
-inline void __fastcall insertChild(_Memory& body, pos_t parent, pos_t child)
+inline void insertChild(_Memory& body, pos_t parent, pos_t child)
 {
    auto r = (_NodeRecord*)body.get(parent);
    if (r->child == INVALID_REF) {
@@ -338,7 +338,7 @@ inline void __fastcall insertChild(_Memory& body, pos_t parent, pos_t child)
    }
 }
 
-inline void __fastcall insertSibling(_Memory& body, pos_t prev, pos_t node)
+inline void insertSibling(_Memory& body, pos_t prev, pos_t node)
 {
    auto p = (_NodeRecord*)body.get(prev);
    auto nw = (_NodeRecord*)body.get(node);
@@ -347,7 +347,7 @@ inline void __fastcall insertSibling(_Memory& body, pos_t prev, pos_t node)
    p->next = node;
 }
 
-inline void __fastcall updateParents(_Memory& body, pos_t node)
+inline void updateParents(_Memory& body, pos_t node)
 {
    auto r = (_NodeRecord*)body.get(node);
    pos_t child = r->child;
@@ -359,7 +359,7 @@ inline void __fastcall updateParents(_Memory& body, pos_t node)
    }
 }
 
-inline void __fastcall injectChild(_Memory& body, pos_t parent, pos_t child)
+inline void injectChild(_Memory& body, pos_t parent, pos_t child)
 {
    auto r = (_NodeRecord*)body.get(parent);
    if (r->child == INVALID_REF) {
@@ -375,7 +375,7 @@ inline void __fastcall injectChild(_Memory& body, pos_t parent, pos_t child)
    }
 }
 
-inline void __fastcall injectSibling(_Memory& body, pos_t node, pos_t child)
+inline void injectSibling(_Memory& body, pos_t node, pos_t child)
 {
    auto r = (_NodeRecord*)body.get(node);
    auto nw = (_NodeRecord*)body.get(child);
@@ -398,28 +398,28 @@ inline void __fastcall injectSibling(_Memory& body, pos_t node, pos_t child)
 //   r->next = INVALID_REF;
 //}
 
-inline pos_t __fastcall readParent(_Memory& body, pos_t position)
+inline pos_t readParent(_Memory& body, pos_t position)
 {
    auto r = (_NodeRecord*)body.get(position);
 
    return r->parent;
 }
 
-inline pos_t __fastcall readChild(_Memory& body, pos_t position)
+inline pos_t readChild(_Memory& body, pos_t position)
 {
    auto r = (_NodeRecord*)body.get(position);
 
    return r->child;
 }
 
-inline pos_t __fastcall readNext(_Memory& body, pos_t position)
+inline pos_t readNext(_Memory& body, pos_t position)
 {
    auto r = (_NodeRecord*)body.get(position);
 
    return r->next;
 }
 
-inline bool __fastcall read(_Memory& body, pos_t position, LexicalType& type, ref_t& arg, pos_t& strArgRef)
+inline bool read(_Memory& body, pos_t position, LexicalType& type, ref_t& arg, pos_t& strArgRef)
 {
    auto r = (_NodeRecord*)body.get(position);
    if (r) {
@@ -450,7 +450,7 @@ pos_t SyntaxTree :: newRoot(LexicalType type, ref_t argument, pos_t strArgumentR
 pos_t SyntaxTree :: appendChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
 {
    pos_t child = ::newChild(_body, position, type, argument, strArgumentRef);
-   
+
    ::appendChild(_body, position, child);
 
    return child;
@@ -561,7 +561,7 @@ SyntaxTree::Node SyntaxTree :: read(pos_t position)
    ref_t arg;
    pos_t strArg;
    if (position != INVALID_REF && ::read(_body, position, type, arg, strArg)) {
-      return Node(this, position, type, arg, strArg);      
+      return Node(this, position, type, arg, strArg);
    }
    else return Node();
 }
@@ -774,7 +774,7 @@ void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destinatio
 //
 //         break;
 //      }
-//         
+//
 //   }
 //
 //   return nodes[0];

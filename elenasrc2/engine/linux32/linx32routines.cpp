@@ -12,7 +12,7 @@
 
 using namespace _ELENA_;
 
-void SystemRoutineProvider::InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler)
+void SystemRoutineProvider::InitCriticalStruct(uintptr_t criticalHandler)
 {
    //pos_t previousHeader = 0;
 

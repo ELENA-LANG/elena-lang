@@ -15,9 +15,12 @@
 				<Option projectResourceIncludeDirsRelation="1" />
 				<Compiler>
 					<Add option="-Wall" />
+					<Add option="-m32" />
+					<Add option="-D_LINUX" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-m32" />
 				</Linker>
 			</Target>
 			<Target title="debug">
@@ -45,7 +48,7 @@
 		</Compiler>
 		<Linker>
 			<Add option="-static-libgcc -static-libstdc++" />
-			<Add library="..\..\..\..\bin\libelenasm.a" />
+			<Add library="../../../../bin/libelenasm.a" />
 		</Linker>
 		<Unit filename="../../../common/altstrings.cpp" />
 		<Unit filename="../../../common/altstrings.h">
@@ -88,10 +91,6 @@
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="../elt.cpp" />
-		<Extensions>
-			<code_completion />
-			<debugger />
-			<envvars />
-		</Extensions>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

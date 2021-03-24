@@ -15,7 +15,7 @@ using namespace _ELENA_;
 
 typedef ClassInfo::Attribute Attribute;
 
-inline bool __fastcall isPrimitiveArrayRef(ref_t classRef)
+inline bool isPrimitiveArrayRef(ref_t classRef)
 {
    switch (classRef) {
       case V_OBJARRAY:
@@ -29,7 +29,7 @@ inline bool __fastcall isPrimitiveArrayRef(ref_t classRef)
    }
 }
 
-inline bool __fastcall IsInvertedOperator(int& operator_id)
+inline bool IsInvertedOperator(int& operator_id)
 {
    switch (operator_id)
    {
@@ -50,7 +50,7 @@ inline bool __fastcall IsInvertedOperator(int& operator_id)
    }
 }
 
-inline ident_t __fastcall findSourceRef(SNode node)
+inline ident_t findSourceRef(SNode node)
 {
    while (node != lxNone && node != lxNamespace) {
       if (node.compare(lxConstructor, lxStaticMethod, lxClassMethod) && node.existChild(lxSourcePath)) {
@@ -84,7 +84,7 @@ inline ident_t __fastcall findSourceRef(SNode node)
 ////   EmbeddableOp(maEmbeddableGetAt2, 3, READ_MESSAGE_ID),
 ////   EmbeddableOp(maEmbeddableEval, 2, EVAL_MESSAGE_ID),
 ////   EmbeddableOp(maEmbeddableEval2, 3, EVAL_MESSAGE_ID),
-//   EmbeddableOp(maEmbeddableNew, -1/*, 0*/) 
+//   EmbeddableOp(maEmbeddableNew, -1/*, 0*/)
 //};
 
 // --- CompilerLogic ---
@@ -271,7 +271,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, ChechMethodInf
 //   else return 0;
 //}
 
-int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, 
+int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message,
    ChechMethodInfo& result, bool resolveProtected)
 {
    ClassInfo info;
@@ -286,7 +286,7 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, mssg_t me
 
       int hint = checkMethod(info, message, result, resolveProtected);
 
-      result.withEmbeddableRet = info.methodHints.get(Attribute(message, maEmbeddableRet)) != 0; 
+      result.withEmbeddableRet = info.methodHints.get(Attribute(message, maEmbeddableRet)) != 0;
 
       return hint;
    }
@@ -359,7 +359,7 @@ int CompilerLogic :: resolveOperationType(_ModuleScope& scope, int operatorId, r
             }
          }
          else if (isCompatible(scope, info.loperand, loperand, false)
-            && isCompatible(scope, info.roperand, roperand, false)) 
+            && isCompatible(scope, info.roperand, roperand, false))
          {
             result = info.result;
 
@@ -677,7 +677,7 @@ void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _
          mssg_t message = it.key();
 
          // create a new overload list
-         ref_t listRef = generateOverloadList(scope, compiler, message, info.methodHints, (void*)classRef, 
+         ref_t listRef = generateOverloadList(scope, compiler, message, info.methodHints, (void*)classRef,
             paramFeedback, info.header.flags);
 
          info.methodHints.exclude(Attribute(message, maOverloadlist));
@@ -740,7 +740,7 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 {
    if (test(info.header.flags, elClassClass)) {
    }
-   else if (!test(info.header.flags, elNestedClass) && !test(info.header.flags, elRole)) 
+   else if (!test(info.header.flags, elNestedClass) && !test(info.header.flags, elRole))
    {
       if (test(info.header.flags, elDynamicRole)) {
          // HOTFIX : remove auto generated default constructor for a dynamic object
@@ -796,7 +796,7 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
    }
 }
 
-void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
+void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler,
    List<mssg_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info)
 {
    // generate implicit mutli methods
@@ -917,7 +917,7 @@ void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassI
                else if (!isCompatible(scope, outputRefMulti, outputRef, true)) {
                   scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
                }
-            }            
+            }
          }
       }
       current = current.nextNode();
@@ -929,7 +929,7 @@ bool CompilerLogic :: isBoolean(_ModuleScope& scope, ref_t reference)
    return isCompatible(scope, scope.branchingInfo.reference, reference, true);
 }
 
-void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operator_id, 
+void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operator_id,
    int operationType, ref_t& reference, ref_t elementRef, int tempLocal)
 {
    int size = 0;
@@ -983,7 +983,7 @@ bool CompilerLogic :: isReadonly(ClassInfo& info)
    return test(info.header.flags, elReadOnlyRole);
 }
 
-inline ref_t __fastcall getSignature(_ModuleScope& scope, mssg_t message)
+inline ref_t getSignature(_ModuleScope& scope, mssg_t message)
 {
    ref_t actionRef = getAction(message);
    ref_t signRef = 0;
@@ -1019,7 +1019,7 @@ bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetSig
    return true;
 }
 
-bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, 
+bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature,
    ref_t* sourceSignatures, size_t sourceLen)
 {
    ref_t targetSignatures[ARG_COUNT];
@@ -1107,7 +1107,7 @@ bool CompilerLogic :: isMethodEmbeddable(_ModuleScope& scope, ref_t reference, m
    else return false;
 }
 
-ConversionInfo CompilerLogic :: injectImplicitConstructor(_ModuleScope& scope, _Compiler& compiler, ClassInfo& info, 
+ConversionInfo CompilerLogic :: injectImplicitConstructor(_ModuleScope& scope, _Compiler& compiler, ClassInfo& info,
    ref_t targetRef, ref_t* signatures, size_t signLen)
 {
    ref_t signRef = scope.module->mapSignature(signatures, signLen, false);
@@ -1191,7 +1191,7 @@ ConversionInfo CompilerLogic :: injectImplicitConversion(_CompileScope& scope, _
             compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef, true);
          }
          // HOTFIX : the size should be taken into account as well (e.g. byte and int both V_INT32)
-         else compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef, true) 
+         else compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef, true)
             && info.size == defineStructSize(*scope.moduleScope, sourceRef, 0u);
       }
       else compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef, true);
@@ -1387,7 +1387,7 @@ int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t referen
 int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable)
 {
    variable = !test(info.header.flags, elReadOnlyRole);
-   
+
    if (isEmbeddable(info)) {
       return info.size;
    }
@@ -1810,7 +1810,7 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
    }
 }
 
-bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
+bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne,
    Visibility& visibility)
 {
    if (attrValue == (int)V_CONST) {
@@ -1845,7 +1845,7 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, boo
       visibility = Visibility::Internal;
 
       return true;
-   }   
+   }
    else return attrValue == 0;
 }
 
@@ -1913,7 +1913,7 @@ ref_t CompilerLogic :: definePrimitiveArray(_ModuleScope& scope, ref_t elementRe
    else return V_OBJARRAY;
 }
 
-void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
+void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods,
    bool& disptacherNotAllowed, bool& emptyStructure)
 {
    if (!isAbstract(info)) {
@@ -1923,7 +1923,7 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
             scope.printMessageInfo(infoAbstractMetod, key.value1);
 
             withAbstractMethods = true;
-         }            
+         }
       }
    }
 
@@ -2081,8 +2081,8 @@ mssg_t CompilerLogic :: resolveEmbeddableRetMessage(_CompileScope& scope, _Compi
 //      SNode callTarget = node.findChild(lxCallTarget);
 //
 //      ClassInfo info;
-//      if (defineClassInfo(scope, info, callTarget.argument) 
-//         && info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == INVALID_REF) 
+//      if (defineClassInfo(scope, info, callTarget.argument)
+//         && info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == INVALID_REF)
 //      {
 //         // if it is an idle call, remove it
 //         node = lxExpression;
@@ -2137,7 +2137,7 @@ bool CompilerLogic :: optimizeBranchingOp(_ModuleScope&, SNode node)
             else if (trueNode.argument != ifNode.argument) {
                ifNode.set(lxIfNotN, arg);
             }
-            else return false; 
+            else return false;
          }
          else if (operation_id == LESS_OPERATOR_ID) {
             if (trueNode.argument == ifNode.argument) {
@@ -2273,14 +2273,14 @@ mssg_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, mssg_t multiMess
                   setSignatureStacksafe(scope, argSign, stackSafeAttr);
 
                   foundMessage = argMessage;
-               }                  
+               }
             }
             else {
                if (isSignatureCompatible(scope, argModule, argSign, signatures, signatureLen)) {
                   setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
 
                   foundMessage = importMessage(argModule, argMessage, scope.module);
-               }                  
+               }
             }
 
             position -= 8;
@@ -2293,7 +2293,7 @@ mssg_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, mssg_t multiMess
    return 0;
 }
 
-inline size_t __fastcall readSignatureMember(ident_t signature, size_t index)
+inline size_t readSignatureMember(ident_t signature, size_t index)
 {
    int level = 0;
    size_t len = getlength(signature);
@@ -2315,7 +2315,7 @@ inline size_t __fastcall readSignatureMember(ident_t signature, size_t index)
    return len;
 }
 
-inline void __fastcall decodeClassName(IdentifierString& signature)
+inline void decodeClassName(IdentifierString& signature)
 {
    ident_t ident = signature.ident();
 
@@ -2330,7 +2330,7 @@ inline void __fastcall decodeClassName(IdentifierString& signature)
    else signature.replaceAll('@', '\'', 0);
 }
 
-ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, 
+ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern,
    ref_t implicitSignatureRef, ident_t ns, ExtensionMap* outerExtensionList)
 {
    size_t argumentLen = 0;
@@ -2396,7 +2396,7 @@ ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& 
                      IdentifierString templateArg;
                      size_t nextArg = readSignatureMember(signType, argIndex - start);
                      templateArg.copy(signType + argIndex - start, nextArg - argIndex + start);
-                     decodeClassName(templateArg);                     
+                     decodeClassName(templateArg);
 
                      signType = signType + nextArg + 1;
 
@@ -2409,7 +2409,7 @@ ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& 
                         matched = false;
                         break;
                      }
-                     
+
                      if (argumentLen < index)
                         argumentLen = index;
 
@@ -2440,7 +2440,7 @@ ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& 
    if (matched) {
       return compiler.generateExtensionTemplate(scope, templateRef, argumentLen, parameters, ns, outerExtensionList);
    }
-   
+
    return 0;
 }
 

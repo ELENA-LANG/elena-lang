@@ -43,7 +43,7 @@ constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
 //   return firstOne;
 //}
 
-inline SNode __fastcall goBacktoSibling(SNode current, LexicalType type)
+inline SNode goBacktoSibling(SNode current, LexicalType type)
 {
    while (current != lxNone && current != type) {
       current = current.prevNode();
@@ -52,7 +52,7 @@ inline SNode __fastcall goBacktoSibling(SNode current, LexicalType type)
    return current;
 }
 
-inline SNode __fastcall goToFirstNode(SNode current, LexicalType type)
+inline SNode goToFirstNode(SNode current, LexicalType type)
 {
    SNode firstOne = current;
    while (current != lxNone && current == type) {
@@ -96,7 +96,7 @@ inline SNode goToFirstNode(SNode current, LexicalType type1, LexicalType type2, 
    return firstOne;
 }
 
-inline SNode __fastcall goToNextNotIdleNode(SNode current)
+inline SNode goToNextNotIdleNode(SNode current)
 {
    current = current.nextNode();
    while (current != lxNone) {
@@ -111,7 +111,7 @@ inline SNode __fastcall goToNextNotIdleNode(SNode current)
    return current;
 }
 
-inline SNode __fastcall goToPrevNotIdleNode(SNode current)
+inline SNode goToPrevNotIdleNode(SNode current)
 {
    current = current.prevNode();
    while (current != lxNone) {
@@ -199,7 +199,7 @@ void DerivationWriter :: newNode(LexicalType symbol)
       if (scopeType == MetaScope::Namespace) {
          Scope scope;
          declareNestedNamespace(node, scope);
-         
+
          _cachingLevel = _level = 0;
 
          return;
@@ -275,12 +275,12 @@ inline void saveTerminal(SyntaxWriter& writer, TerminalInfo& terminal)
       // try to use local storage if the quote is not too big
       if (getlength(terminal.value) < 0x100) {
          QuoteTemplate<IdentifierString> quote(terminal.value);
-      
+
          writer.newNode(terminal.symbol, quote.ident());
       }
       else {
          QuoteTemplate<DynamicString<char> > quote(terminal.value);
-      
+
          writer.newNode(terminal.symbol, quote.ident());
       }
    }
@@ -289,7 +289,7 @@ inline void saveTerminal(SyntaxWriter& writer, TerminalInfo& terminal)
    writer.appendNode(lxCol, terminal.col);
    writer.appendNode(lxRow, terminal.row);
    writer.appendNode(lxLength, terminal.length);
-   
+
    writer.closeNode();
 }
 
@@ -320,9 +320,9 @@ void DerivationWriter :: loadTemplateParameters(Scope& scope, SNode node)
    while (current == lxToken) {
       if (current.existChild(lxTokenArgs, lxDynamicBrackets))
          raiseError(errInvalidSyntax, current);
-      
+
       ident_t name = current.firstChild(lxTerminalMask).identifier();
-      
+
       if(!scope.parameters.add(name, scope.parameters.Count() + 1, true))
          raiseError(errDuplicatedDefinition, current);
 
@@ -355,7 +355,7 @@ void DerivationWriter :: generateTemplateTree(SNode node, ScopeType templateType
 
    SNode argsNode = node.prevNode().firstChild();
    loadTemplateParameters(templateScope, argsNode);
-   
+
    SNode identNode = argsNode.firstChild(lxTerminalMask);
    IdentifierString name(identNode.identifier());
    int paramCounter = templateScope.parameters.Count();
@@ -423,7 +423,7 @@ void DerivationWriter :: recognizeScope()
 
       declareStatement(node, ScopeType::stCodeTemplate);
 
-      // should be later skipped 
+      // should be later skipped
       node = lxIdle;
    }
    else if (node == lxInlineDecl) {
@@ -432,14 +432,14 @@ void DerivationWriter :: recognizeScope()
 
       declareStatement(node, ScopeType::stInlineTemplate);
 
-      // should be later skipped 
+      // should be later skipped
       node = lxIdle;
    }
    else if (node == lxPropertyDecl) {
       // NOTE : property template is saved as is
       declareStatement(node, ScopeType::stPropertyTemplate);
 
-      // should be later skipped 
+      // should be later skipped
       node = lxIdle;
    }
 }
@@ -469,7 +469,7 @@ ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, bool& allowPr
 
    allowPropertyTemplate = false;
 
-   ref_t ref = _scope->attributes.get(token);      
+   ref_t ref = _scope->attributes.get(token);
    if (isPrimitiveRef(ref)) {
       // Compiler magic : check if the attribute have correct order
       if ((ref & V_CATEGORY_MASK) < previusCategory) {
@@ -618,7 +618,7 @@ void DerivationWriter :: declareStatement(SNode node, ScopeType templateType)
       name.appendInt(exprCounter);
       name.append('#');
       name.appendInt(templateScope.parameters.Count() - exprCounter);
-   }   
+   }
 
    // verify if there is an attribute with the same name
    if (_scope->attributes.exist(name))
@@ -666,9 +666,9 @@ void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalTyp
 {
    while (current == lxInlineAttribute) {
       ref_t inlineAttrRef = mapInlineAttribute(current);
-   
+
       current.setArgument(inlineAttrRef);
-   
+
       current = current.nextNode();
    }
    bool allowPropertyTemplate = test(mode, MODE_PROPERTYALLOWED);
@@ -709,13 +709,13 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
          templateMode = true;
       }
       else raiseError(errInvalidSyntax, current);
-   }      
+   }
 
    // set name if it is not a template
    SNode nameNode = current;
    nameNode = templateMode ? lxTemplateNameAttr : lxNameAttr;
 
-   recognizeAttributes(goToFirstNode(nameNode.prevNode(), lxToken, lxInlineAttribute), 
+   recognizeAttributes(goToFirstNode(nameNode.prevNode(), lxToken, lxInlineAttribute),
       mode, templateMode ? lxTemplateNameAttr : lxNameAttr);
 
    if (!templateMode && test(mode, MODE_ROOT)) {
@@ -856,7 +856,7 @@ void DerivationWriter :: declareNestedNamespace(SNode node, Scope& derivationSco
    _cacheWriter.clear();
    _cacheWriter.newNode(lxRoot);
 
-   // NOTE : the node should not be closed 
+   // NOTE : the node should not be closed
 }
 
 void DerivationWriter :: flushSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
@@ -881,7 +881,7 @@ void DerivationWriter :: generateClassImport(SyntaxWriter& writer, SNode node, S
    SNode terminalNode = node.firstChild().firstChild(lxTerminalMask);
 
    writer.newNode(lxClassImport, 0);
- 
+
    copyIdentifier(writer, terminalNode, derivationScope.ignoreTerminalInfo);
 
    flushTemplateAttributes(writer, terminalNode.nextNode(), derivationScope);
@@ -917,7 +917,7 @@ void DerivationWriter :: flushClassTree(SyntaxWriter& writer, SNode node, Scope&
       while (current != lxNone) {
          if (current == lxBaseDecl) {
             if (firstParent) {
-               writer.newNode(lxParent);               
+               writer.newNode(lxParent);
                flushAttributes(writer, current.firstChild(), derivationScope, buffer);
                writer.closeNode();
 
@@ -1165,14 +1165,14 @@ void DerivationWriter :: flushPropertyTree(SyntaxWriter& writer, SNode node, Sco
       }
       current = current.nextNode();
    }
-   
+
    recognizeClassMembers(node);
-   
+
    flushPropertyBody(writer, node, derivationScope, buffer);
 }
 
 void DerivationWriter :: flushFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
-{   
+{
    // COMPILER MAGIC : property template declaration
    bool isPropertyTemplate = false;
    bool isInitializer = false;
@@ -1230,14 +1230,14 @@ void DerivationWriter :: flushFieldTree(SyntaxWriter& writer, SNode node, Scope&
       }
 
       ::copyIdentifier(bufferWriter, nameNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
-      
+
       flushExpressionTree(bufferWriter, bodyNode.findChild(lxExpression), derivationScope);
       bufferWriter.closeNode();
       bufferWriter.closeNode();
    }
 }
 
-void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool functionMode, 
+void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool functionMode,
    bool propertyMode, SyntaxTree& buffer)
 {
    writer.newNode(lxClassMethod);
@@ -1370,7 +1370,7 @@ void DerivationWriter :: flushCodeExpression(SyntaxWriter& writer, SNode current
    writer.closeNode();
 }
 
-void DerivationWriter :: flushPropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, 
+void DerivationWriter :: flushPropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope,
    SyntaxTree& buffer)
 {
    SNode current = node.firstChild();
@@ -1533,7 +1533,7 @@ ref_t DerivationWriter :: resolveTemplate(ident_t templateName)
                IdentifierString fullName(current.identifier());
                fullName.append("'");
                fullName.append(templateName);
-               
+
                ref_t templateRef = 0;
                _Module* templateModule = _scope->loadReferenceModule(fullName.c_str(), templateRef);
                if (templateModule != nullptr && templateModule->mapSection(templateRef | mskSyntaxTreeRef, true) != nullptr) {
@@ -1599,7 +1599,7 @@ void DerivationWriter :: saveTemplateParameters(SyntaxWriter& tempWriter, SNode 
    }
 }
 
-inline SNode __fastcall findNextToken(SNode current)
+inline SNode findNextToken(SNode current)
 {
    while (current != lxNone) {
       if (current == lxIdle) {
@@ -1617,7 +1617,7 @@ inline SNode __fastcall findNextToken(SNode current)
    return SNode();
 }
 
-void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, 
+void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope,
    ref_t& previousCategory, bool templateArgMode)
 {
    bool allowType = false;
@@ -1658,8 +1658,8 @@ void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode no
 void DerivationWriter :: flushIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope)
 {
    ref_t argument = 0;
-   if (derivationScope.templateMode == ScopeType::stCodeTemplate 
-      || derivationScope.templateMode == ScopeType::stInlineTemplate) 
+   if (derivationScope.templateMode == ScopeType::stCodeTemplate
+      || derivationScope.templateMode == ScopeType::stInlineTemplate)
    {
       int paramIndex = derivationScope.parameters.get(current.identifier());
       if (paramIndex != 0) {
@@ -1863,7 +1863,7 @@ void DerivationWriter :: flushTokenExpression(SyntaxWriter& writer, SNode& node,
 //   current = node;
 //}
 
-void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& current/*, bool& first, bool& expressionExpected*/, 
+void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& current/*, bool& first, bool& expressionExpected*/,
    Scope& derivationScope)
 {
    switch (current.type) {
@@ -1938,7 +1938,7 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
 //         break;
 //      case lxClosureExpr:
 ////      case lxInlineClosure:
-//         // COMPILER MAGIC : recognize the closure without parameters, 
+//         // COMPILER MAGIC : recognize the closure without parameters,
 //         //                  the one with parameters should be handled in default case
 //         generateClosureTree(writer, current, derivationScope);
 //         break;
@@ -2171,7 +2171,7 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
             writer.closeNode();
          }
       }
-      else if (scope.type == TemplateScope::ttPropertyTemplate 
+      else if (scope.type == TemplateScope::ttPropertyTemplate
          || scope.type == TemplateScope::ttClassTemplate || scope.type == TemplateScope::ttInlineTemplate) {
          SNode nodeToInject = scope.parameterValues.get(current.argument);
          copyExpressionTree(writer, nodeToInject, scope);
@@ -2303,7 +2303,7 @@ void TemplateGenerator :: copyModuleInfo(SyntaxWriter& writer, SNode node, Templ
    }
 }
 
-bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool declaringClass, 
+bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool declaringClass,
    bool importModuleInfo, int bookmark)
 {
    _Memory* body = scope.loadTemplateTree();
@@ -2347,7 +2347,7 @@ bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& 
             //            // do not copy the property attributes
             //         }
             //         else /*if (!test(mode, MODE_IMPORTING))*/ {
-            //            // do not copy the class attributes in the import mode 
+            //            // do not copy the class attributes in the import mode
             writer.newNode(current.type, current.argument);
             SyntaxTree::copyNode(writer, current);
             writer.closeNode();
@@ -2403,7 +2403,7 @@ void TemplateGenerator :: importClass(SyntaxWriter& output, SNode classNode)
          output.appendNode(lxAutogenerated);
          SyntaxTree::copyNode(output, current);
          output.closeNode();
-      }      
+      }
 
       current = current.nextNode();
    }
@@ -2440,7 +2440,7 @@ ref_t TemplateGenerator :: generateTemplate(SyntaxWriter& writer, _ModuleScope& 
    if (generateTemplate(writer, templateScope, !importMode, importModuleInfo, 0)) {
       return templateScope.reference;
    }
-   else return 0;   
+   else return 0;
 }
 
 void TemplateGenerator :: generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters)
@@ -2457,7 +2457,7 @@ void TemplateGenerator :: generateTemplateCode(SyntaxWriter& writer, _ModuleScop
    generateTemplate(writer, templateScope, false, false, 0);
 }
 
-void TemplateGenerator :: generateTemplateProperty(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, 
+void TemplateGenerator :: generateTemplateProperty(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference,
    List<SNode>& parameters, int bookmark, bool inlineMode)
 {
    TemplateScope templateScope(&scope, reference, NULL, NULL/*, NULL*/);

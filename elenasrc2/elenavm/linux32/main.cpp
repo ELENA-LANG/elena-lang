@@ -87,7 +87,7 @@ void InitializeVMSTA(void* sehTable, void* systemEnv, void* exceptionHandler, vo
 
    // initialize the critical exception handler
    if (criticalHandler != nullptr)
-      __routineProvider.InitCriticalStruct(&header->root_critical_struct, (pos_t)criticalHandler);
+      __routineProvider.InitCriticalStruct((pos_t)criticalHandler);
 
    // initialize system env variable
    _SystemEnv = systemEnv;
@@ -251,7 +251,7 @@ void* LoadSubject(void* subjectName)
       return 0;
 
    try {
-      ref_t subj_id = instance->getSubjectRef((const char*)subjectName);
+      ref_t subj_id = instance->getSubjectRef((SystemEnv*)_SystemEnv, (const char*)subjectName);
 
       return (void*)subj_id;
    }
@@ -280,44 +280,7 @@ int LoadMessageName(void* message, char* buffer, int maxLength)
       return 0;
 
    try {
-      ref_t action, flags;
-      int count;
-      decodeMessage((ref_t)message, action, count, flags);
-
-      size_t used = 0;
-      //if (test((ref_t)message, encodeAction(SIGNATURE_FLAG))) {
-      //   ImageSection messageSection;
-      //   messageSection.init(_messageSection, 0x10000); // !! dummy size
-
-      //   ref_t verb = messageSection[action];
-      //   used += manager.readSubjectName(reader, verb, buffer + used, length - used);
-      //}
-      //else {
-         ident_t subjectName = instance->getSubject(action);
-         size_t length = getlength(subjectName);
-         if (length > 0) {
-            if (maxLength >= (int)(length + used)) {
-               Convertor::copy(buffer + used, subjectName, length, length);
-
-               used += length;
-            }
-            else buffer[used] = 0;
-         }
-      //}
-
-      if (count > 0) {
-         size_t dummy = 10;
-         String<char, 10>temp;
-         temp.appendInt(count);
-
-         buffer[used++] = '[';
-         Convertor::copy(buffer + used, temp, getlength(temp), dummy);
-         used += dummy;
-         buffer[used++] = ']';
-      }
-      buffer[used] = 0;
-
-      return used;
+      return instance->loadMessageName((mssg_t)message, buffer, maxLength);
    }
    catch (JITUnresolvedException& e)
    {
@@ -344,7 +307,7 @@ void* LoadMessage(void* messageName)
       return 0;
 
    try {
-      return (void*)(instance->getMessageRef((const char*)messageName));
+      return (void*)(instance->getMessageRef((SystemEnv*)_SystemEnv, (const char*)messageName));
    }
    catch (JITUnresolvedException& e)
    {
@@ -371,7 +334,7 @@ void* LoadSymbolByString(void* systemEnv, void* referenceName)
       return 0;
 
    try {
-      return instance->getSymbolRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
+      return (void*)instance->getSymbolRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
    }
    catch (JITUnresolvedException& e)
    {
@@ -419,7 +382,7 @@ void* LoadClassByString(void* systemEnv, void* referenceName)
       return 0;
 
    try {
-      return instance->getClassVMTRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
+      return (void*)instance->getClassVMTRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
    }
    catch (JITUnresolvedException& e)
    {
@@ -459,7 +422,7 @@ int LoadExtensionDispatcher(const char* moduleList, void* message, void* output)
    if (instance == NULL)
       return 0;
 
-   return instance->loadExtensionDispatcher(moduleList, (ref_t)message, output);
+   return instance->loadExtensionDispatcher((SystemEnv*)_SystemEnv, moduleList, (mssg_t)message, output);
 }
 
 int EvaluateTape(void* systemEnv, void* sehTable, void* tape)

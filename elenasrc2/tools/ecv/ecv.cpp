@@ -56,13 +56,16 @@ inline ident_t trim(ident_t s)
 
 void print(ident_t line)
 {
+#ifdef _WINDOW
    wprintf(WideString(line));
    if (_writer)
       _writer->writeLiteral(line);
+#endif
 }
 
 void printLine(ident_t line1, ident_t line2)
 {
+#ifdef _WINDOW
    wprintf(WideString(line1));
    wprintf(WideString(line2));
    printf("\n");
@@ -72,10 +75,12 @@ void printLine(ident_t line1, ident_t line2)
       _writer->writeLiteral(line2);
       _writer->writeNewLine();
    }
+#endif
 }
 
 void printLine(ident_t line1, ident_t line2, ident_t line3, ident_t line4)
 {
+#ifdef _WINDOW
    wprintf(WideString(line1));
    wprintf(WideString(line2));
    wprintf(WideString(line3));
@@ -89,6 +94,7 @@ void printLine(ident_t line1, ident_t line2, ident_t line3, ident_t line4)
       _writer->writeLiteral(line4);
       _writer->writeNewLine();
    }
+#endif
 }
 
 void printLine()
@@ -102,6 +108,8 @@ void printLine()
 
 void nextRow(int& row, int pageSize)
 {
+#ifdef _WINDOW
+
    row++;
    if (row == pageSize - 1 && !_noPaging) {
       print("Press any key to continue...");
@@ -110,6 +118,7 @@ void nextRow(int& row, int pageSize)
 
       row = 0;
    }
+#endif
 }
 
 void printLine(ident_t line1, ident_t line2, ident_t line3, ident_t line4, int& row, int pageSize)
@@ -434,7 +443,7 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
    else if (reference == -1) {
       command.append("terminal");
    }
-   
+
    if (reference == 0 || reference == -1) {
    }
    else if (literalConstant) {
@@ -801,7 +810,7 @@ void printByteCodes(_Module* module, _Memory* code, ref_t address, int indent, i
          print("\n");
 
          nextRow(row, pageSize);
-      }      
+      }
    }
 }
 
@@ -883,7 +892,7 @@ void printMethod(_Module* module, ident_t methodReference, int pageSize)
       message = resolveMessageByIndex(module, className.ident(), methodName.toInt());
    }
    else message = resolveMessage(module, methodName, test(header.flags, elExtension));
-   
+
    if (message == 0)
       return;
 
@@ -959,7 +968,7 @@ void listFields(_Module* module, ClassInfo& info, int& row, int pageSize)
          printLine("@field ", (const char*)it.key(), " of ", typeName, row, pageSize);
       }
       else printLine("@field ", (const char*)it.key(), row, pageSize);
-   
+
       it++;
    }
 }
@@ -968,41 +977,41 @@ void listFlags(int flags, int& row, int pageSize)
 {
    if (test(flags, elNestedClass)) {
       printLine("@flag ", "elNestedClass", row, pageSize);
-   }      
+   }
 
    if (test(flags, elDynamicRole)) {
       printLine("@flag ", "elDynamicRole", row, pageSize);
    }
-      
+
    if (test(flags, elStructureRole)) {
       printLine("@flag ", "elStructureRole", row, pageSize);
-   }      
+   }
 
    if (test(flags, elSealed)) {
       printLine("@flag ", "elSealed", row, pageSize);
-   }      
+   }
    else if (test(flags, elFinal)) {
       printLine("@flag ", "elFinal", row, pageSize);
-   }      
+   }
    else if (test(flags, elClosed)) {
       printLine("@flag ", "elClosed", row, pageSize);
-   }      
+   }
 
    if (test(flags, elWrapper)) {
       printLine("@flag ", "elWrapper", row, pageSize);
    }
-      
+
    if (test(flags, elStateless)) {
       printLine("@flag ", "elStateless", row, pageSize);
-   }      
+   }
 
    //if (test(flags, elGroup)) {
    //   printLine("@flag ", "elGroup", row, pageSize);
-   //}      
+   //}
 
    if (test(flags, elWithGenerics)) {
       printLine("@flag ", "elWithGenerics", row, pageSize);
-   }      
+   }
 
    if (test(flags, elWithVariadics))
       printLine("@flag ", "elWithVariadics", row, pageSize);
@@ -1109,7 +1118,7 @@ void printParents(_Module* module, ref_t reference)
             return;
       }
       else return;
-   }      
+   }
 
    MemoryReader vmtReader(vmt);
    // read tape record size
@@ -1177,7 +1186,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
          }
          else printLine("@parent ", module->resolveReference(info.header.parentRef));
          row++;
-      }         
+      }
 
       listFlags(info.header.flags, row, pageSize);
       listFields(module, info, row, pageSize);
@@ -1290,7 +1299,7 @@ inline bool isTemplateBased(ident_t reference)
 void printSymbolInfo(_Module* module, ident_t refName, ref_t ref)
 {
    IdentifierString name(refName);
-   
+
    _Memory* metaData = module->mapSection(ref | mskMetaRDataRef, true);
    if (metaData != NULL && metaData->Length() == sizeof(SymbolExpressionInfo)) {
       SymbolExpressionInfo info;
@@ -1434,7 +1443,7 @@ void runSession(_Module* module, int pageSize)
             printMethod(module, line, pageSize);
          }
          else listClassMethods(module, line, pageSize, true, false);
-      }      
+      }
    }
 }
 
@@ -1467,12 +1476,14 @@ void printManifest(_Module* module)
 
 void getAppPath(_ELENA_::Path& appPath)
 {
+#ifdef _WINDOW
    wchar_t path[MAX_PATH + 1];
 
    ::GetModuleFileName(NULL, path, MAX_PATH);
 
    appPath.copySubPath(path);
    appPath.lower();
+#endif
 }
 
 // === Main Program ===

@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Project routine functions
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef toolsH
@@ -17,7 +17,7 @@
 #define min(a, b)       ((a) < (b) ? (a) : (b))
 #endif
 
-#ifdef _LINUX32
+#ifdef _LINUX
 
 #include <ctype.h>
 
@@ -27,7 +27,7 @@
 namespace _ELENA_
 {
 
-inline static size_t wcslen(const unsigned short* s)
+inline size_t wcslen(const unsigned short* s)
 {
    const unsigned short* p = s;
 
@@ -96,7 +96,7 @@ inline bool emptystr(const unsigned short* s)
    return (s == NULL || s[0]==0);
 }
 
-inline static size_t getlength(const unsigned short* s)
+inline size_t getlength(const unsigned short* s)
 {
    return (s==NULL) ? 0 : wcslen(s);
 }
@@ -120,12 +120,12 @@ inline static pos_t __fastcall getlength(const wchar_t* s)
 
 // --- miscellaneous string routines ---
 
-inline bool __fastcall emptystr(const char* s)
+inline static bool emptystr(const char* s)
 {
    return (s == NULL || s[0] == 0);
 }
 
-inline static pos_t __fastcall getlength(const char* s)
+inline pos_t getlength(const char* s)
 {
    return (s == NULL) ? 0 : (pos_t)strlen(s);
 }
@@ -162,7 +162,7 @@ inline void freestr(unsigned short* s)
 
 // --- alignment routines ---
 
-inline unsigned int __fastcall align(unsigned int number, const unsigned int alignment)
+inline unsigned int align(unsigned int number, const unsigned int alignment)
 {
    if (number & (alignment - 1)) {
       return (number & ~(alignment - 1)) + alignment;
@@ -180,42 +180,42 @@ inline size_t alignSize(size_t number, size_t alignment)
 
 // --- miscellaneous routines ---
 
-inline bool __fastcall ifAny(int target, int value1, int value2)
+inline bool ifAny(int target, int value1, int value2)
 {
    return target == value1 || target == value2;
 }
 
-inline bool __fastcall test(int number, int mask)
+inline bool test(int number, int mask)
 {
    return ((number & mask) == mask);
 }
 
-inline bool __fastcall test(int number, int mask, int value)
+inline bool test(int number, int mask, int value)
 {
    return ((number & mask) == value);
 }
 
-inline bool __fastcall testLong(long long number, long long mask)
+inline bool testLong(long long number, long long mask)
 {
    return ((number & mask) == mask);
 }
 
-inline bool __fastcall testLong(long long number, long long mask, long long value)
+inline bool testLong(long long number, long long mask, long long value)
 {
    return ((number & mask) == value);
 }
 
-inline bool __fastcall testany(int number, int mask)
+inline bool testany(int number, int mask)
 {
    return ((number & mask) != 0);
 }
 
-inline bool __fastcall testanyLong(long long number, long long mask)
+inline bool testanyLong(long long number, long long mask)
 {
    return ((number & mask) != 0LL);
 }
 
-inline bool __fastcall isbetween(size_t starting, size_t len , size_t value)
+inline bool isbetween(size_t starting, size_t len , size_t value)
 {
    return (starting < value && value < starting + len);
 }

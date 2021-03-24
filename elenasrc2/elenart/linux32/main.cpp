@@ -115,7 +115,7 @@ void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandle
    header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
 
    // initialize the critical exception handler
-   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (pos_t)criticalHandler);
+   __routineProvider.InitCriticalStruct((pos_t)criticalHandler);
 
    // initialize system env variable
    _SystemEnv = systemEnv;
@@ -187,9 +187,9 @@ void StopThread(int exitCode)
 //   _Instance->ExitThread((SystemEnv*)_SystemEnv, exitCode);
 }
 
-int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
+int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, void* buffer, size_t maxLength)
 {
-   return ((ELENARTMachine*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
+   return ((ELENARTMachine*)instance)->readCallStack(framePosition, currentAddress, startLevel, (vaddr_t*)buffer, maxLength);
 }
 
 int LoadAddressInfo(size_t retPoint, char* lineInfo, int length)
@@ -224,7 +224,7 @@ int LoadSubjectName(void* subject, char* lineInfo, int length)
    return _Instance->loadSubjectName((size_t)subject, lineInfo, length);
 }
 
-void* LoadSubject(void* subjectName)
+int LoadSubject(void* subjectName)
 {
    return _Instance->loadSubject((const char*)subjectName);
 }
@@ -234,14 +234,14 @@ int LoadMessageName(void* message, char* lineInfo, int length)
    return _Instance->loadMessageName((ref_t)message, lineInfo, length);
 }
 
-void* LoadMessage(void* messageName)
+int LoadMessage(void* messageName)
 {
    return _Instance->loadMessage((const char*)messageName);
 }
 
 void* LoadClassByString(void* systemEnv, void* referenceName)
 {
-   return _Instance->loadMetaAttribute((const char*)referenceName, caSerializable);
+   return (void*)_Instance->loadMetaAttribute((const char*)referenceName, caSerializable);
 }
 
 int LoadExtensionDispatcher(const char* moduleList, void* message, void* output)
@@ -265,7 +265,7 @@ void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size
 
 void* LoadSymbolByString(void* systemEnv, void* referenceName)
 {
-   return _Instance->loadMetaAttribute((const char*)referenceName, caSymbolSerializable);
+   return (void*)_Instance->loadMetaAttribute((const char*)referenceName, caSymbolSerializable);
 }
 
 void* LoadSymbolByString2(void* systemEnv, void* ns, void* referenceName)

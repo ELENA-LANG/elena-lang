@@ -13,7 +13,7 @@
 
 #ifdef _WIN32
 #include "win32\syslibloader.h"
-#elif _LINUX32
+#elif _LINUX
 #include "linux32/syslibloader.h"
 #endif
 

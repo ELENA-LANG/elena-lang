@@ -36,13 +36,13 @@ struct ModuleScope : _ModuleScope
    }
 
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode, bool ignoreFields);
-   
-   virtual ref_t __fastcall loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
-   virtual ref_t __fastcall loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
+
+   virtual ref_t __FASTCALL loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
+   virtual ref_t __FASTCALL loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
    {
       return loadClassInfo(info, module->resolveReference(reference), headerOnly);
    }
-   virtual ref_t __fastcall loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName);
+   virtual ref_t __FASTCALL loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName);
 
    virtual ref_t mapWeakReference(ident_t referenceName, bool existing = false);
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false);
@@ -82,7 +82,7 @@ struct ModuleScope : _ModuleScope
          return project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
       }
       else return referenceName;
-   }   
+   }
    virtual ident_t resolveFullName(ident_t referenceName)
    {
       if (isTemplateWeakReference(referenceName)) {
@@ -96,7 +96,7 @@ struct ModuleScope : _ModuleScope
    virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode,
       ExtensionMap* outerExtensionList);
    virtual void generateStatementCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
-   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters, 
+   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters,
       int bookmark, bool inlineMode);
    virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
 

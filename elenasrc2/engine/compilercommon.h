@@ -291,14 +291,14 @@ struct _ModuleScope
 
    virtual void saveAttribute(ident_t typeName, ref_t classReference) = 0;
 
-   virtual ref_t __fastcall loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-   virtual ref_t __fastcall loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
-   virtual ref_t __fastcall loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName) = 0;
+   virtual ref_t __FASTCALL loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
+   virtual ref_t __FASTCALL loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
+   virtual ref_t __FASTCALL loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName) = 0;
 
    virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
    virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
 
-   bool __fastcall isDeclared(ref_t reference)
+   bool __FASTCALL isDeclared(ref_t reference)
    {
       if (!reference) {
          return false;
@@ -375,14 +375,14 @@ struct _ModuleScope
    virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode,
       ExtensionMap* outerExtensionList) = 0;
    virtual void generateStatementCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
-   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters, 
+   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters,
       int bookmark, bool inlineMode) = 0;
    virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 
    virtual void declareNamespace(ident_t name) = 0;
    virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
 
-   bool __fastcall isInteralOp(ref_t reference)
+   bool __FASTCALL isInteralOp(ref_t reference)
    {
       ident_t identName = resolveFullName(reference);
       if (isWeakReference(identName)) {
@@ -440,7 +440,7 @@ public:
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef) = 0;
    virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument) = 0;
 //   virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne) = 0;
-   virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op, 
+   virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,
       int opArg, ref_t reference) = 0;
 
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
@@ -450,13 +450,13 @@ public:
    virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
-   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, 
+   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen,
       ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList) = 0;
 
    virtual void declareModuleIdentifiers(SyntaxTree& tree, _ModuleScope& scope) = 0;
-   virtual bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forcedDeclaration, 
+   virtual bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forcedDeclaration,
       bool& repeatMode, ExtensionMap* outerExtensionList) = 0;
-   virtual void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, 
+   virtual void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope,
       ident_t greeting, ExtensionMap* outerExtensionList) = 0;
 };
 
@@ -579,17 +579,17 @@ public:
 
       operator const ExpressionAttribute () const { return attrs; }
 
-      static bool __fastcall test(ExpressionAttribute attrs, ExpressionAttribute mask)
+      static bool __FASTCALL test(ExpressionAttribute attrs, ExpressionAttribute mask)
       {
          return ((uint64_t)attrs & (uint64_t)mask) == (uint64_t)mask;
       }
 
-      static bool __fastcall testany(ExpressionAttribute attrs, ExpressionAttribute mask)
+      static bool __FASTCALL testany(ExpressionAttribute attrs, ExpressionAttribute mask)
       {
          return ((uint64_t)attrs & (uint64_t)mask) != (uint64_t)0;
       }
 
-      static ExpressionAttribute __fastcall exclude(ExpressionAttribute attrs, ExpressionAttribute mask)
+      static ExpressionAttribute __FASTCALL exclude(ExpressionAttribute attrs, ExpressionAttribute mask)
       {
          return (ExpressionAttribute)((uint64_t)attrs & ~(uint64_t)mask);
       }
@@ -644,7 +644,7 @@ public:
       }
    };
 
-   virtual int __fastcall defineStackSafeAttrs(_ModuleScope& scope, mssg_t message) = 0;
+   virtual int __FASTCALL defineStackSafeAttrs(_ModuleScope& scope, mssg_t message) = 0;
 
    virtual int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message,
       ChechMethodInfo& result, bool resolveProtected) = 0;
@@ -652,16 +652,16 @@ public:
       bool resolveProtected) = 0;
 
    // retrieve the class info / size
-   virtual bool __fastcall defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
+   virtual bool __FASTCALL defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 
    virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable) = 0;
-   virtual int __fastcall defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef) = 0;
-   virtual int __fastcall defineStructSize(ClassInfo& info, bool& variable) = 0;
+   virtual int __FASTCALL defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef) = 0;
+   virtual int __FASTCALL defineStructSize(ClassInfo& info, bool& variable) = 0;
 
-   virtual ref_t __fastcall definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne) = 0;
+   virtual ref_t __FASTCALL definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne) = 0;
 
    // retrieve the call type
-   virtual int __fastcall resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t message, ChechMethodInfo& result) = 0;
+   virtual int __FASTCALL resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t message, ChechMethodInfo& result) = 0;
 
    // retrieve the operation type
    virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
@@ -673,35 +673,35 @@ public:
 //   virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference) = 0;
 
    // check if the classes is compatible
-   virtual bool __fastcall isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils) = 0;
+   virtual bool __FASTCALL isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils) = 0;
 
-   virtual bool __fastcall isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
-   virtual bool __fastcall isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared, bool allowRole) = 0;
-   virtual bool __fastcall doesClassExist(_ModuleScope& scope, ref_t targetRef) = 0;
+   virtual bool __FASTCALL isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
+   virtual bool __FASTCALL isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared, bool allowRole) = 0;
+   virtual bool __FASTCALL doesClassExist(_ModuleScope& scope, ref_t targetRef) = 0;
 //   virtual bool isArray(_ModuleScope& scope, ref_t targetRef) = 0;
 //   virtual bool isSealedOrClosed(_ModuleScope& scope, ref_t targetRef) = 0;
 //
 ////   virtual bool isWrapper(ClassInfo& info) = 0;
 ////   virtual ref_t resolvePrimitive(ClassInfo& info, ref_t& element) = 0;
 ////   // check if the class can be used as a fixed-size embeddable array
-   virtual bool __fastcall isEmbeddableArray(ClassInfo& info) = 0;
-   virtual bool __fastcall isEmbeddable(ClassInfo& info) = 0;
-   virtual bool __fastcall isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
-   virtual bool __fastcall isStacksafeArg(ClassInfo& info) = 0;
-   virtual bool __fastcall isStacksafeArg(_ModuleScope& scope, ref_t reference) = 0;
-   virtual bool __fastcall isMethodAbstract(ClassInfo& info, mssg_t message) = 0;
+   virtual bool __FASTCALL isEmbeddableArray(ClassInfo& info) = 0;
+   virtual bool __FASTCALL isEmbeddable(ClassInfo& info) = 0;
+   virtual bool __FASTCALL isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
+   virtual bool __FASTCALL isStacksafeArg(ClassInfo& info) = 0;
+   virtual bool __FASTCALL isStacksafeArg(_ModuleScope& scope, ref_t reference) = 0;
+   virtual bool __FASTCALL isMethodAbstract(ClassInfo& info, mssg_t message) = 0;
 //   virtual bool isMethodYieldable(ClassInfo& info, mssg_t message) = 0;
-   virtual bool __fastcall isMethodGeneric(ClassInfo& info, mssg_t message) = 0;
-   virtual bool __fastcall isMixinMethod(ClassInfo& info, mssg_t message) = 0;
-   virtual bool __fastcall isMultiMethod(ClassInfo& info, mssg_t message) = 0;
+   virtual bool __FASTCALL isMethodGeneric(ClassInfo& info, mssg_t message) = 0;
+   virtual bool __FASTCALL isMixinMethod(ClassInfo& info, mssg_t message) = 0;
+   virtual bool __FASTCALL isMultiMethod(ClassInfo& info, mssg_t message) = 0;
 ////   virtual bool isFunction(ClassInfo& info, ref_t message) = 0;
 ////   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message) = 0;
 ////   //   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated
-   virtual bool __fastcall isRole(ClassInfo& info) = 0;
-   virtual bool __fastcall isAbstract(ClassInfo& info) = 0;
-   virtual bool __fastcall validateAutoType(_ModuleScope& scope, ref_t& reference) = 0;
+   virtual bool __FASTCALL isRole(ClassInfo& info) = 0;
+   virtual bool __FASTCALL isAbstract(ClassInfo& info) = 0;
+   virtual bool __FASTCALL validateAutoType(_ModuleScope& scope, ref_t& reference) = 0;
 
    virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node) = 0;
 
@@ -710,10 +710,10 @@ public:
    virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
    virtual ref_t generateOverloadList(_ModuleScope& scope, _Compiler& compiler, mssg_t message,
       ClassInfo::CategoryInfoMap& list, void* param, ref_t(*resolve)(void*, ref_t), int flags) = 0;
-   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
+   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler,
       List<mssg_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<mssg_t>& implicitMultimethods) = 0;
-   virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
+   virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference,
       ref_t elementRef, int tempLocal) = 0;
    virtual ConversionInfo injectImplicitConversion(_CompileScope& scope, _Compiler& compiler, ref_t targetRef,
       ref_t sourceRef, ref_t elementRef/*, bool noUnboxing, int fixedArraySize*/) = 0;
@@ -730,13 +730,13 @@ public:
       bool& disptacherNotAllowed, bool& emptyStructure) = 0;
 
    // attribute validations
-   virtual bool __fastcall validateNsAttribute(int attrValue, Visibility& visibility) = 0;
-   virtual bool __fastcall validateClassAttribute(int& attrValue, Visibility& visibility) = 0;
-   virtual bool __fastcall validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
-   virtual bool __fastcall validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
+   virtual bool __FASTCALL validateNsAttribute(int attrValue, Visibility& visibility) = 0;
+   virtual bool __FASTCALL validateClassAttribute(int& attrValue, Visibility& visibility) = 0;
+   virtual bool __FASTCALL validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
+   virtual bool __FASTCALL validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
    virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
-   virtual bool __fastcall validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
-   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
+   virtual bool __FASTCALL validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne,
       Visibility& visibility) = 0;
    virtual bool validateMessage(_ModuleScope& scope, mssg_t message, int hints) = 0;
    virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;
@@ -761,7 +761,7 @@ public:
 
    virtual mssg_t resolveMultimethod(_ModuleScope& scope, mssg_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef,
       int& stackSafeAttr, bool selfCall) = 0;
-   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, 
+   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern,
       ref_t signatureRef, ident_t ns, ExtensionMap* outerExtensionList) = 0;
 };
 

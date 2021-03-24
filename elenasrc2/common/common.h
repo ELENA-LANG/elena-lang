@@ -52,6 +52,9 @@ namespace _ELENA_
    enum FileEncoding { feAnsi = 0, feRaw = -1, feUTF8 = -2, feUTF16 = -3, feUTF32 = -4 };
 }
 
+#define __FASTCALL __fastcall
+#define __VECTORCALL __vectorcall
+
 #elif _LINUX
 
 #include <climits>
@@ -79,6 +82,10 @@ namespace _ELENA_
    // --- FileEncoding ---
    enum FileEncoding { feUTF8 = 0, feRaw = -1, feUTF16 = -2, feUTF32 = -3 };
 }
+
+// temporally fast call is supported only for MSC
+#define __FASTCALL
+#define __VECTORCALL
 
 #endif
 

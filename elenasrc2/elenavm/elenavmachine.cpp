@@ -36,7 +36,7 @@ using namespace _ELENA_;
 
 #define CONFIG_PATH "elenavm.cfg"
 
-#elif _LINUX32
+#elif _LINUX
 
 #define CONFIG_PATH "/etc/elena/elenavm.config"
 

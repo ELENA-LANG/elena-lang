@@ -29,6 +29,8 @@
 		<Compiler>
 			<Add option="-march=pentium2" />
 			<Add option="-O3" />
+			<Add option="-m32" />
+			<Add option="-D_LINUX" />
 			<Add directory=".." />
 			<Add directory="../../../common" />
 			<Add directory="../../../common/win32" />
@@ -37,6 +39,7 @@
 		</Compiler>
 		<Linker>
 			<Add option="-s" />
+			<Add option="-m32" />
 			<Add option="-static-libgcc -static-libstdc++" />
 		</Linker>
 		<Unit filename="../../../common/altstrings.cpp" />
@@ -96,10 +99,6 @@
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="../ecv.cpp" />
-		<Extensions>
-			<code_completion />
-			<debugger />
-			<envvars />
-		</Extensions>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

@@ -164,7 +164,7 @@ public:
       okInternal,
       okClosureInfo,
       okMemberInfo,
-      //okPrimitive,                    // param * 4 = size 
+      //okPrimitive,                    // param * 4 = size
       //okPrimCollection                // param - length
    };
 
@@ -237,7 +237,7 @@ private:
          slExpression,
          slOwnerClass,
       };
-   
+
       _Module*      module;
       Scope*        parent;
 
@@ -285,7 +285,7 @@ private:
          }
          else return ObjectInfo();
       }
-   
+
       virtual Scope* getScope(ScopeLevel level)
       {
          if (parent) {
@@ -293,7 +293,7 @@ private:
          }
          else return NULL;
       }
-   
+
       virtual void markAsAssigned(ObjectInfo object)
       {
          // by default is not implemented
@@ -392,7 +392,7 @@ private:
 
       ref_t mapNewTerminal(SNode terminal, Visibility visibility);
 
-      ObjectInfo __fastcall defineObjectInfo(ref_t reference, bool checkState = false);
+      ObjectInfo __FASTCALL defineObjectInfo(ref_t reference, bool checkState = false);
 
       void loadExtensions(ident_t ns);
       void loadExtensions(ident_t ns, ident_t subns, bool internalOne)
@@ -421,7 +421,7 @@ private:
 //      bool defineForward(ident_t forward, ident_t referenceName)
 //      {
 //         ObjectInfo info = mapTerminal(referenceName, true, EAttr::eaNone);
-//      
+//
 //         return forwards.add(forward, info.param, true);
 //      }
 
@@ -587,7 +587,7 @@ private:
       bool         targetSelfMode;        // used for script generated methods - self refers to __target
       bool         constMode;
 
-      ref_t __fastcall getAttribute(MethodAttribute attr, bool ownerClass = true)
+      ref_t __FASTCALL getAttribute(MethodAttribute attr, bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
 
@@ -608,7 +608,7 @@ private:
          scope->addAttribute(message, attr, argument);
       }
 
-      bool __fastcall isPrivate()
+      bool __FASTCALL isPrivate()
       {
          return (hints & tpMask) == tpPrivate;
       }
@@ -621,7 +621,7 @@ private:
          else return parent->getScope(level);
       }
 
-      ref_t __fastcall getReturningRef(bool ownerClass = true)
+      ref_t __FASTCALL getReturningRef(bool ownerClass = true)
       {
          if (outputRef == INVALID_REF) {
             ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
@@ -631,20 +631,20 @@ private:
          return outputRef;
       }
 
-      Visibility __fastcall getClassVisibility(bool ownerClass = true)
+      Visibility __FASTCALL getClassVisibility(bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
 
          return scope->visibility;
       }
 
-      ref_t __fastcall getClassFlags(bool ownerClass = true)
+      ref_t __FASTCALL getClassFlags(bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
 
          return scope ? scope->info.header.flags : 0;
       }
-      ref_t __fastcall getClassRef(bool ownerClass = true)
+      ref_t __FASTCALL getClassRef(bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
 
@@ -663,8 +663,8 @@ private:
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
-      ObjectInfo __fastcall mapSelf();
-      ObjectInfo __fastcall mapGroup();
+      ObjectInfo __FASTCALL mapSelf();
+      ObjectInfo __FASTCALL mapGroup();
       ObjectInfo mapParameter(Parameter param, EAttr mode);
 
       MethodScope(ClassScope* parent);
@@ -745,7 +745,7 @@ private:
          return scope ? scope->message : 0;
       }
 
-      ref_t __fastcall getReturningRef()
+      ref_t __FASTCALL getReturningRef()
       {
          MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
 
@@ -759,7 +759,7 @@ private:
          return scope ? scope->reference : 0;
       }
 
-      ref_t __fastcall getClassFlags(bool ownerClass = true)
+      ref_t __FASTCALL getClassFlags(bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
 
@@ -835,14 +835,14 @@ private:
       mssg_t getMessageID()
       {
          MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
-      
+
          return scope ? scope->message : 0;
       }
 
       ref_t getClassRefId(bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
-      
+
          return scope ? scope->reference : 0;
       }
 
@@ -951,7 +951,7 @@ private:
    _CompilerLogic*   _logic;
    ByteCodeWriter    _writer;
    MessageMap        _operators;                        // list of operators
-   MessageMap        _unaryOperators;                   
+   MessageMap        _unaryOperators;
 
    // optimization rules
    int               _optFlag;
@@ -975,9 +975,9 @@ private:
    bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
    bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool& isProtectedDefConst);
-   bool __fastcall isSelfCall(ObjectInfo info);
+   bool __FASTCALL isSelfCall(ObjectInfo info);
 
-   bool __fastcall isMethodEmbeddable(MethodScope& scope);
+   bool __FASTCALL isMethodEmbeddable(MethodScope& scope);
 
    ref_t retrieveImplicitIdentifier(NamespaceScope& scope, ident_t identifier, bool referenceOne, bool innermost);
 
@@ -1009,7 +1009,7 @@ private:
 
    ObjectInfo mapClassSymbol(Scope& scope, int classRef);
 
-   ref_t __fastcall resolveMultimethod(ClassScope& scope, mssg_t messageRef);
+   ref_t __FASTCALL resolveMultimethod(ClassScope& scope, mssg_t messageRef);
 
    virtual ref_t resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode);
 
@@ -1018,10 +1018,10 @@ private:
    ref_t resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode);
 
    ref_t resolveConstantObjectReference(_CompileScope& scope, ObjectInfo object);
-   ref_t __fastcall resolveObjectReference(_CompileScope& scope, ObjectInfo object, bool noPrimitivesMode, 
+   ref_t __FASTCALL resolveObjectReference(_CompileScope& scope, ObjectInfo object, bool noPrimitivesMode,
       bool unboxWrapper = true);
 
-   ref_t resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType terminalType, 
+   ref_t resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType terminalType,
       bool declarationMode, bool extensionAllowed);
    ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode, bool extensionAllowed);
 
@@ -1071,7 +1071,7 @@ private:
                                      bool withExtension, int& stackSafeAttr, ref_t& resolvedExtensionRef);
    mssg_t mapMessage(SNode node, ExprScope& scope/*, bool extensionCall*/, bool newOpCall, bool propMode);
    mssg_t mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags,
-      IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
+      IdentifierString& actionStr, ref_t* signature, size_t signatureLen,
       bool withoutWeakMessages, bool noSignature);
 
    size_t resolveArraySize(SNode node, Scope& scope);
@@ -1082,18 +1082,18 @@ private:
    ObjectInfo compileSwitchExpression(SyntaxWriter& writer, SNode node, ExprScope& scope);
 
    bool isVariableDeclaration(SNode node, ExprScope& scope, ref_t& typeReg);
-   static void __fastcall recognizeExprAttrs(SNode node, EAttr& mode);
+   static void __FASTCALL recognizeExprAttrs(SNode node, EAttr& mode);
 
-   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray, 
+   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray,
                                     int& variableArg, ident_t& className);
    void declareVariable(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t typeRef, bool canBeIdle);
 
-   ObjectInfo injectImplicitConversion(SyntaxWriter& writer, SNode node, ExprScope& scope, 
+   ObjectInfo injectImplicitConversion(SyntaxWriter& writer, SNode node, ExprScope& scope,
       ObjectInfo source, ref_t targetRef);
 
-   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, EAttr mode, 
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, EAttr mode,
       ArgumentsInfo* preservedArgs);
-   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, InlineClassScope& scope, 
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, InlineClassScope& scope,
       EAttr mode, ArgumentsInfo* preservedArgs);
    ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, ExprScope& scope/*, ObjectInfo target, EAttr mode*/);
 
@@ -1103,11 +1103,11 @@ private:
 //
 //   void setSuperTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
-//   void setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, 
+//   void setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode,
 //      LexicalType type, int fixedSize = 0);
 //   void setParamFieldTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void setParamsTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, ref_t wrapRef);
-//   void appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing, 
+//   void appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing,
 //      int fixedSize, ref_t targetRef);
 //
 //   ObjectInfo compileTypeSymbol(SNode node, ExprScope& scope, EAttr mode);
@@ -1116,17 +1116,17 @@ private:
 
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
       ArgumentsInfo* arguments, bool assignMode, bool shortCircuitMode);
-   ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id, 
+   ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id,
       bool assingMode, bool shortCircuitMode);
    ObjectInfo compileUnaryOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
    ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileUnaryExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, ExprScope& scope);
-   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, ExprScope& scope, ref_t ifReference, 
+   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, ExprScope& scope, ref_t ifReference,
       bool loopMode, bool switchMode);
    void compileBranchingOp(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id,
       ObjectInfo loperand, ObjectInfo& retVal, EAttr operationMode, ArgumentsInfo* preservedArgs);
-   ObjectInfo compileBranchingOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, 
+   ObjectInfo compileBranchingOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode,
       int operator_id, ArgumentsInfo* preservedArgs);
 
    ref_t resolveStrongArgument(ExprScope& scope, ArgumentsInfo* arguments);
@@ -1137,10 +1137,10 @@ private:
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, ref_t expectedSignRef,
       /*bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments, ArgumentsInfo* presavedArgs);
 
-   ObjectInfo compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, 
+   ObjectInfo compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope,
       ObjectInfo target, ref_t exptectedRef, EAttr mode);
    ObjectInfo compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t expectedRef, EAttr mode);
-   ObjectInfo compileMessageOperation(SyntaxWriter& writer, SNode current, SNode opNode, ExprScope& scope, ObjectInfo target, 
+   ObjectInfo compileMessageOperation(SyntaxWriter& writer, SNode current, SNode opNode, ExprScope& scope, ObjectInfo target,
       mssg_t messageRef, ref_t expectedSignRef, EAttr mode, ArgumentsInfo* presavedArgs, ref_t expectedRef);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
       ArgumentsInfo* arguments, EAttr mode, int stackSafeAttr, ref_t expectedRef, ArgumentsInfo* presavedArgs);
@@ -1165,10 +1165,10 @@ private:
    ObjectInfo compileNewArrOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo object,
       ref_t expecteRef, EAttr mode);
 
-   ObjectInfo compileObject(SyntaxWriter& writer, SNode& node, ExprScope& scope, 
+   ObjectInfo compileObject(SyntaxWriter& writer, SNode& node, ExprScope& scope,
       EAttr mode, ArgumentsInfo* preservedArgs);
 //   ObjectInfo compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
-   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, 
+   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef,
       EAttr mode, ArgumentsInfo* preservedArgs);
 
    ObjectInfo compileCastingExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
@@ -1202,9 +1202,9 @@ private:
    bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
    bool allocateTempStructure(ExprScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
 
-   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t expectedRef,  
+   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t expectedRef,
       ArgumentsInfo* arguments);
-   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, ExprScope& scope, mssg_t message, 
+   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, ExprScope& scope, mssg_t message,
       ref_t signature, ObjectInfo info, ArgumentsInfo* arguments);
 
 //   void warnOnUnresolvedDispatch(SNode node, Scope& scope, mssg_t message, bool errorMode);
@@ -1257,7 +1257,7 @@ private:
    void compileAction(SNode node, ClassScope& scope, SNode argNode, EAttr mode);
    void compileNestedVMT(SNode& node, InlineClassScope& scope);
 
-   void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope, bool exclusiveMode = false, 
+   void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope, bool exclusiveMode = false,
       bool ignoreAutoMultimethods = false);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 
@@ -1265,16 +1265,16 @@ private:
    ref_t compileExtensionDispatcher(NamespaceScope& scope, mssg_t genericMessageRef);
 
    void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
-   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isStatic, 
+   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isStatic,
       bool isConst, bool isArray);
 
    void generateClassFlags(ClassScope& scope, SNode node);
 //   void generateParamNameInfo(ClassScope& scope, SNode node, mssg_t message);
    void generateMethodAttributes(ClassScope& scope, SNode node, mssg_t message, bool allowTypeAttribute);
 
-   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, 
+   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed,
       bool allowTypeAttribute);
-   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType, 
+   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType,
       bool allowTypeAttribute);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool nestedDeclarationMode = false);
 
@@ -1297,7 +1297,7 @@ private:
 
    void compileExternalArguments(SyntaxWriter& writer, SNode node, ExprScope& scope, ArgumentsInfo* arguments);
 
-   void appendCopying(SyntaxWriter& writer, /*SNode& copyingNode, */int size/*, bool variadic, bool primArray*/, ObjectInfo target, 
+   void appendCopying(SyntaxWriter& writer, /*SNode& copyingNode, */int size/*, bool variadic, bool primArray*/, ObjectInfo target,
       ExprScope& scope, int tempLocal);
    void appendCreating(SyntaxWriter& writer/*SNode& assigningNode, SNode objNode, ExprScope& scope, bool insertMode*/, int size,
       ref_t typeRef/*, bool variadic*/);
@@ -1305,7 +1305,7 @@ private:
 //   void boxExpressionInRoot(SNode boxNode, SNode objNode, ExprScope& scope, LexicalType tempType,
 //      int tempLocal, bool localBoxingMode, bool condBoxing);
 //
-//   void injectMemberPreserving(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal, 
+//   void injectMemberPreserving(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal,
 //      ObjectInfo member, int memberIndex, int& oriTempLocal);
 //   void injectIndexBoxing(SNode node, SNode objNode, ExprScope& scope);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
@@ -1321,7 +1321,7 @@ private:
    void boxArgument(SyntaxWriter& writer, SNode boxNode, ObjectInfo& arg, ExprScope& scope,
       bool withLocalBoxing/*, bool inPlace, bool condBoxing*/);
 //   void analizeOperand(SNode& node, ExprScope& scope, bool boxingMode, bool withoutLocalBoxing, bool inPlace);
-   void analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& scope, int stackSafeAttr, 
+   void analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& scope, int stackSafeAttr,
       ObjectInfo& target, ArgumentsInfo* arguments/*, bool inPlace*/);
    void unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprScope& scope);
    void unboxArguments(SyntaxWriter& writer, ExprScope& scope, ObjectInfo& target, ArgumentsInfo* arguments);
@@ -1394,7 +1394,7 @@ public:
 
    // _Compiler interface implementation
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
-   //virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
+   //virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg,
    //   ref_t targetClassRef, int stacksafeAttr, bool embeddableAttr);
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
    virtual void injectEmbeddableConstructor(SNode classNode, mssg_t message, mssg_t privateRef);
@@ -1415,12 +1415,12 @@ public:
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
 
 //   //virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef);
-   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, 
+   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen,
       ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList);
 
-   static bool __fastcall boxingRequired(ObjectInfo& info);
-   static bool __fastcall condBoxingRequired(ObjectInfo& info);
-   static bool __fastcall unboxingRequired(ObjectInfo& info);
+   static bool __FASTCALL boxingRequired(ObjectInfo& info);
+   static bool __FASTCALL condBoxingRequired(ObjectInfo& info);
+   static bool __FASTCALL unboxingRequired(ObjectInfo& info);
 
    Compiler(_CompilerLogic* logic);
 };

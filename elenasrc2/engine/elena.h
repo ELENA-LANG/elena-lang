@@ -508,7 +508,7 @@ struct VMTXEntry
 
 // --- ClassHeader ---
 /// NOTE : ClassHeader is used for meta data
-struct ClassHeader 
+struct ClassHeader
 {
    pos_t  staticSize;      // static table size
    ref_t  classRef;        // class class reference
@@ -557,7 +557,7 @@ enum MethodAttribute
    maInternal           = 0x40C,
    maPrivate            = 0x40D,
    maProtected          = 0x40E,
-   maYieldContext       = 0x00F,   
+   maYieldContext       = 0x00F,
    maYieldLocals        = 0x010,
    maYieldContextLength = 0x011,
    maYieldLocalLength   = 0x012,
@@ -893,7 +893,7 @@ inline pos_t getArgCount(mssg_t message)
    return argCount;
 }
 
-inline ref_t __fastcall getAction(mssg_t message)
+inline ref_t getAction(mssg_t message)
 {
    pos_t argCount;
    ref_t action, flags;

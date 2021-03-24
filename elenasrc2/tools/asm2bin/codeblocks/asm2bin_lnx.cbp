@@ -37,7 +37,7 @@
 			<Add option="-march=pentium2" />
 			<Add option="-m32" />
 			<Add option="-Wno-conversion-null" />
-			<Add option="-D_LINUX32" />
+			<Add option="-D_LINUX" />
 			<Add directory=".." />
 			<Add directory="../../../common" />
 			<Add directory="../../../common/win32" />
@@ -115,6 +115,8 @@
 		</Unit>
 		<Unit filename="../amd64assembler.cpp" />
 		<Unit filename="../amd64assembler.h" />
+		<Unit filename="../amd64jumphelper.cpp" />
+		<Unit filename="../amd64jumphelper.h" />
 		<Unit filename="../asm2binx.cpp" />
 		<Unit filename="../assembler.h">
 			<Option compile="1" />
@@ -123,6 +125,8 @@
 		</Unit>
 		<Unit filename="../ecassembler.cpp" />
 		<Unit filename="../ecassembler.h" />
+		<Unit filename="../ppc64assembler.cpp" />
+		<Unit filename="../ppc64assembler.h" />
 		<Unit filename="../x86assembler.cpp" />
 		<Unit filename="../x86assembler.h">
 			<Option compile="1" />
@@ -135,10 +139,6 @@
 			<Option link="1" />
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
-		<Extensions>
-			<code_completion />
-			<debugger />
-			<envvars />
-		</Extensions>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

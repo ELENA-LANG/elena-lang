@@ -45,8 +45,7 @@
 			<Add option="-fvisibility=hidden" />
 			<Add option="-fvisibility-inlines-hidden" />
 			<Add option="-Wno-switch" />
-			<Add option="-D_LINUX32" />
-			<Add option="-DMINGW" />
+			<Add option="-D_LINUX" />
 			<Add directory="../../common" />
 			<Add directory="../../engine" />
 			<Add directory="../linux32" />
@@ -102,10 +101,6 @@
 		<Unit filename="../linux32/x86elenavmachine.h" />
 		<Unit filename="../linux32/x86process.cpp" />
 		<Unit filename="../linux32/x86process.h" />
-		<Extensions>
-			<code_completion />
-			<debugger />
-			<envvars />
-		</Extensions>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

@@ -57,7 +57,7 @@ void SystemRoutineProvider :: Init(SystemEnv* env)
    env->Table->gc_signal = 0;
 }
 
-inline void __vectorcall entryCriticalSection(void* tt_lock)
+inline void __VECTORCALL entryCriticalSection(void* tt_lock)
 {
 #ifdef _WIN32
    __asm {
@@ -73,7 +73,7 @@ inline void __vectorcall entryCriticalSection(void* tt_lock)
 #endif
 }
 
-inline void __vectorcall leaveCriticalSection(void* tt_lock)
+inline void __VECTORCALL leaveCriticalSection(void* tt_lock)
 {
 #ifdef _WIN32
    // ; free lock
