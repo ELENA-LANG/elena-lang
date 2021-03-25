@@ -12,7 +12,7 @@
 
 using namespace _ELENA_;
 
-#ifdef _WINDOW
+#ifdef _WIN32
 
 #define SCRIPTENGINE_LIB Path("elenasm.dll").str()
 

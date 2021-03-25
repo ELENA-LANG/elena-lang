@@ -735,7 +735,7 @@ double strToDouble(const char* s)
 //   }
 //}
 
-#ifdef _WINDOW
+#ifdef _MSC_VER
 
 wchar_t* StrFactory :: clone(const wchar_t* s)
 {

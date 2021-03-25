@@ -41,7 +41,7 @@ void printLine(const char* msg, ...)
    fflush(stdout);
 }
 
-#ifdef _WINDOW
+#ifdef _WIN32
 void printLine(const wchar_t* msg, ...)
 {
    va_list argptr;

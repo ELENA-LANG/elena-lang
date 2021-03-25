@@ -16,7 +16,7 @@ namespace _ELENA_
 
 // --- path_t ---
 
-#ifdef _WINDOW
+#ifdef _MSC_VER
 
 typedef wide_t path_t;
 
@@ -105,7 +105,7 @@ public:
       return getlength(_path) == 0;
    }
 
-#ifdef _WINDOW
+#ifdef _MSC_VER
    static bool checkExtension(path_t path, const char* extension)
    {
       Path ext(extension);
@@ -339,7 +339,7 @@ public:
    {
    }
 
-#ifdef _WINDOW
+#ifdef _MSC_VER
    Path(path_t rootPath, ident_t subPath)
       : _path(rootPath)
    {
@@ -427,7 +427,7 @@ public:
       copyName(path);
    }
 
-#ifdef _WINDOW
+#ifdef _MSC_VER
    FileName(const char* pathStr)
       : FileName(pathStr, false)
    {

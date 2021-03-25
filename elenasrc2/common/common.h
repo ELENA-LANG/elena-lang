@@ -16,7 +16,7 @@
 #include <string.h>
 #include <cstdint>
 
-#ifdef _WINDOW
+#ifdef _MSC_VER
 
 #include <wchar.h>
 

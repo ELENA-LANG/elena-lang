@@ -17,12 +17,12 @@
 #include "bytecode.h"
 #include "compilercommon.h"
 
-#ifdef _WINDOW
+#ifdef _WIN32
 
 #include "winapi/consolehelper.h"
 #include <windows.h>
 
-#endif // _WINDOW
+#endif // _WIN32
 
 #define PROJECT_SECTION "project"
 #define ROOTPATH_OPTION "libpath"
@@ -54,47 +54,44 @@ inline ident_t trim(ident_t s)
 
 // --- commands ---
 
+#ifdef _WIN32
 void print(ident_t line)
 {
-#ifdef _WINDOW
    wprintf(WideString(line));
    if (_writer)
       _writer->writeLiteral(line);
-#endif
 }
+#else
+void print(ident_t line)
+{
+   vprintf(line.c_str());
+   if (_writer)
+      _writer->writeLiteral(line);
+}
+#endif
 
 void printLine(ident_t line1, ident_t line2)
 {
-#ifdef _WINDOW
-   wprintf(WideString(line1));
-   wprintf(WideString(line2));
+   print(line1);
+   print(line2);
    printf("\n");
 
    if (_writer) {
-      _writer->writeLiteral(line1);
-      _writer->writeLiteral(line2);
       _writer->writeNewLine();
    }
-#endif
 }
 
 void printLine(ident_t line1, ident_t line2, ident_t line3, ident_t line4)
 {
-#ifdef _WINDOW
-   wprintf(WideString(line1));
-   wprintf(WideString(line2));
-   wprintf(WideString(line3));
-   wprintf(WideString(line4));
-   printf("\n");
+   print(line1);
+   print(line2);
+   print(line3);
+   print(line4);
 
+   printf("\n");
    if (_writer) {
-      _writer->writeLiteral(line1);
-      _writer->writeLiteral(line2);
-      _writer->writeLiteral(line3);
-      _writer->writeLiteral(line4);
       _writer->writeNewLine();
    }
-#endif
 }
 
 void printLine()
@@ -108,17 +105,18 @@ void printLine()
 
 void nextRow(int& row, int pageSize)
 {
-#ifdef _WINDOW
-
    row++;
    if (row == pageSize - 1 && !_noPaging) {
       print("Press any key to continue...");
+#ifdef _WIN32
       _fgetchar();
+#else
+      getchar();
+#endif
       printf("\n");
 
       row = 0;
    }
-#endif
 }
 
 void printLine(ident_t line1, ident_t line2, ident_t line3, ident_t line4, int& row, int pageSize)
@@ -1476,7 +1474,7 @@ void printManifest(_Module* module)
 
 void getAppPath(_ELENA_::Path& appPath)
 {
-#ifdef _WINDOW
+#ifdef _WIN32
    wchar_t path[MAX_PATH + 1];
 
    ::GetModuleFileName(NULL, path, MAX_PATH);

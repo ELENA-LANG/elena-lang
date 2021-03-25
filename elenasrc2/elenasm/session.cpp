@@ -12,7 +12,7 @@
 #include "treeparser.h"
 #include "transformer.h"
 
-#ifdef _WINDOW
+#ifdef _WIN32
 #elif _LINUX
 
 #define _MAX_PATH 256 // !! temporal

@@ -278,7 +278,7 @@ pos_t Instance :: getLinkerConstant(int id)
    }
 }
 
-#ifdef _WINDOW
+#ifdef _WIN32
 void Instance :: printInfo(const wchar_t* msg, ...)
 {
    va_list argptr;

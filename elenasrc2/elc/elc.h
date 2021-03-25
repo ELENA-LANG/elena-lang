@@ -21,7 +21,7 @@
 #define ELC_REVISION_NUMBER         0x0247
 
 // --- ELC default file names ---
-#ifdef _WINDOW
+#ifdef _WIN32
 
 constexpr auto SYNTAX_FILE          = "syntax.dat";
 constexpr auto RULES_FILE           = "rules.dat";
@@ -345,7 +345,7 @@ public:
    virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
    virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path);
 
-#ifdef _WINDOW
+#ifdef _WIN32
    virtual void addSource(_ELENA_::path_t path, _ELENA_::path_t wideNs)
    {
       _ELENA_::IdentifierString ns;
@@ -353,7 +353,7 @@ public:
 
       addSource(path, ns.c_str());
    }
-#endif // _WINDOW
+#endif // _WIN32
    virtual void addSource(_ELENA_::path_t path, _ELENA_::ident_t ns)
    {
       _ELENA_::Path modulePath;

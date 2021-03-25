@@ -101,7 +101,7 @@ inline size_t getlength(const unsigned short* s)
    return (s==NULL) ? 0 : wcslen(s);
 }
 
-#elif _WINDOW
+#elif _MSC_VER
 
 namespace _ELENA_
 {

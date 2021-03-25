@@ -9,7 +9,7 @@
 
 #include "common.h"
 
-#ifdef _WINDOW
+#ifdef _WIN32
 
 typedef const wchar_t* text_t;
 typedef wchar_t        text_c;

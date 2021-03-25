@@ -15,7 +15,7 @@
 constexpr auto ELENAVM_REVISION = 0x0012;
 
 // --- ELENAVM common constants ---
-#ifdef _WINDOW
+#ifdef _WIN32
 constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2021 by Alex Rakov";
 constexpr auto ELENAVM_INITIALIZING = L"Initializing...";
 constexpr auto ELENAVM_DEBUGINFO = L"Debug mode...";
@@ -309,7 +309,7 @@ protected:
 public:
    ident_t getStatus() { return emptystr(_status) ? NULL : (const char*)_status; }
 
-#ifdef _WINDOW
+#ifdef _WIN32
    void printInfo(const wchar_t* s, ...);
    void printInfo(const char* s)
    {

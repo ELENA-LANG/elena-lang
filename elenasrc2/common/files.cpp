@@ -10,7 +10,7 @@
 // -------------------------------------------------------
 #include "files.h"
 
-#ifdef _WINDOW
+#ifdef _WIN32
 
 #include <windows.h>
 #include <direct.h>
@@ -41,7 +41,7 @@ bool Path::comparePaths(path_t s1, path_t s2, size_t length)
    return true;
 }
 
-#ifdef _WINDOW
+#ifdef _MSC_VER
 
 inline int checkDir(const wchar_t* name, int mode)
 {

@@ -3,9 +3,8 @@ In development:
 ------         
 
   [development]
-    * word sample : x86, x86-64
-
     + build linux i386 project with cmake
+    * pi sample
     + build linux ppc64le project with cmake
 
     * #206 : migrate console / files samples
