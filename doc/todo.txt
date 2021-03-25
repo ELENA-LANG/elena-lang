@@ -3,9 +3,8 @@ In development:
 ------         
 
   [development]
-    * pi sample
-    + simplify make - make the names shorter
     + build linux i386 project with make
+    * pi sample
     + build linux ppc64le project with make
 
     * #206 : migrate console / files samples
