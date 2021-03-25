@@ -4,7 +4,9 @@ In development:
 
   [development]
     * pi sample
-    + build linux ppc64le project with cmake
+    + simplify make - make the names shorter
+    + build linux i386 project with make
+    + build linux ppc64le project with make
 
     * #206 : migrate console / files samples
     * #206 : interpreter sample
