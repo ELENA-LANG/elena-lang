@@ -9,7 +9,10 @@ MAKE = make
 all: elc_lnx32 elenart_lnx32 elenavm_lnx32 elenasm_lnx32 asm2bin_lnx32 ecv_lnx32 elt_lnx32 og_lnx32 sg_lnx32
 
 elc_lnx32: 
-	$(MAKE) -C elenasrc2/elc/codeblocks all -f elc_lnx32.cbp.mak
+	$(MAKE) -C elenasrc2/elc/codeblocks all -f elc_lnx32.mak
+
+elc_ppc64le: 
+	$(MAKE) -C elenasrc2/elc/codeblocks all -f elc_ppc64le.mak
 
 elenart_lnx32: 
 	$(MAKE) -C elenasrc2/elenart/codeblocks all -f elenart_lnx32.cbp.mak
