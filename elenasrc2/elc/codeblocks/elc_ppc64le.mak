@@ -12,7 +12,7 @@ LD = g++
 WINDRES = windres
 
 INC = -I../../common -I../../engine -I.. -I../win32
-CFLAGS = -march=pentium2 -Wall -std=c++11 -m32 -Wno-conversion-null -Wno-switch -D_LINUX
+CFLAGS = -march=native -Wall -std=c++11 -m64 -Wno-conversion-null -Wno-switch -D_LINUX
 RESINC = 
 LIBDIR = 
 LIB = 
