@@ -207,20 +207,20 @@ public extension outputOp
 //        self.writeLine();
 //    }
 //}
-//
-//// --- inputOp ---
-//
-//public extension inputOp
-//{
-//    loadLineTo(var)
-//    {
-//        var line := self.readLine();
-//        
-//        line.convertTo:var;
-//        
-//        ^ var
-//    }
-//    
+
+// --- inputOp ---
+
+public extension inputOp
+{
+    loadLineTo(var)
+    {
+        var line := self.readLine();
+        
+        line.convertTo:var;
+        
+        ^ var
+    }
+    
 //    loadLine(params object[] args)
 //    {
 //        string line := self.readLine();
@@ -235,4 +235,4 @@ public extension outputOp
 //        
 //        ^ self
 //    }
-//}
+}

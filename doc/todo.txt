@@ -3,6 +3,7 @@ In development:
 ------         
 
   [development]
+    * bsort
     + build linux ppc64le project with make
 
     * #206 : migrate console / files samples

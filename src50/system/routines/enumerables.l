@@ -445,23 +445,23 @@ public extension indexableOp
 //        
 //    populate(ExtensionMessage ext_mssg)
 //        = self.populate:(n => ext_mssg(n));
-//
-//    populate(Func1 f)
-//    {
-//        Indexer it := self.indexer();
-//
-//        while (it.Available)
-//        {
-//            int i := it.Index;
-//            
-//            it.set(f(i));
-//            
-//            it.appendIndex:1
-//        };
-//    }    
-//
-//    populate(action)
-//        = self.populate:(int n){ ^action(n) };
+
+    populate(Func1 f)
+    {
+        Indexer it := self.indexer();
+
+        while (it.Available)
+        {
+            int i := it.Index;
+            
+            it.Value := f(i);
+            
+            it.appendIndex:1
+        };
+    }    
+
+    populate(action)
+        = self.populate:(int n){ ^action(n) };
 
     bool isSorted(Func2 compareFunc)
     {
