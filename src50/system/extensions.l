@@ -151,12 +151,12 @@ public extension objectOp
 //    }
 }
 
-//// --- Operations ---
-//
-//// --- byteOp ---
-//
-//public extension byteOp : ByteNumber
-//{
+// --- Operations ---
+
+// --- byteOp ---
+
+public extension byteOp : ByteNumber
+{
 //    int Hashcode
 //    {
 //        // Reads the object hash code into the output parameter
@@ -176,27 +176,27 @@ public extension objectOp
 //                
 //        ^ new ByteNumber(n)
 //    }
-//    
-//    byte mod(operand)
-//    {
-//        var retVal := self / operand * operand;
-//        
-//        ^ byteConvertor.convert(retVal)
-//    }    
-//    
-//    byte power(int y)
-//    {
-//        byte x := self;
-//        byte r := 1;
-//        
-//        for (int i := 0, i < y, i += 1)
-//        {
-//            r := r * x
-//        };
-//        
-//        ^ new ByteNumber(r)
-//    }
-//    
+    
+    byte mod(operand)
+    {
+        var retVal := self / operand * operand;
+        
+        ^ byteConvertor.convert(retVal)
+    }    
+    
+    byte power(int y)
+    {
+        byte x := self;
+        byte r := 1;
+        
+        for (int i := 0, i < y, i += 1)
+        {
+            r := r * x
+        };
+        
+        ^ new ByteNumber(r)
+    }
+    
 //    byte sqr()
 //    {
 //        byte retVal := 0;
@@ -205,16 +205,16 @@ public extension objectOp
 //        
 //        ^ new ByteNumber(retVal)
 //    }
-//
-//    bool isOdd()
-//        = self.mod:2 != 0;
-//        
-//    bool isEven()
-//        = self.mod:2 == 0;
-//        
-//    bool isZero()
-//        = self.equal(0);
-//        
+
+    bool isOdd()
+        = self.mod:2 != 0;
+        
+    bool isEven()
+        = self.mod:2 == 0;
+        
+    bool isZero()
+        = self.equal(0);
+        
 //    bool isPositive()
 //        = self > 0;
 //        
@@ -223,12 +223,12 @@ public extension objectOp
 //        
 //    bool isNonnegative()
 //        = self <= 0;
-//}
-//
-//// --- shortOp ---
-//
-//public extension shortOp : ShortNumber
-//{
+}
+
+// --- shortOp ---
+
+public extension shortOp : ShortNumber
+{
 //    int Hashcode
 //    {
 //        // Reads the object hash code into the output parameter
@@ -248,27 +248,27 @@ public extension objectOp
 //                            
 //        ^ new ShortNumber(n)
 //    }
-//    
-//    short mod(operand)
-//    {
-//        var retVal := self / operand * operand;
-//        
-//        ^ shortConvertor.convert(retVal)
-//    }
-//    
-//    short power(int y)
-//    {
-//        short x := self;
-//        short r := 1;
-//        
-//        for (/*int*/IntNumber i := 0, i < y, i += 1)
-//        {
-//            r := r * x
-//        };
-//        
-//        ^ new ShortNumber(r)
-//    }
-//    
+    
+    short mod(operand)
+    {
+        var retVal := self / operand * operand;
+        
+        ^ shortConvertor.convert(retVal)
+    }
+    
+    short power(int y)
+    {
+        short x := self;
+        short r := 1;
+        
+        for (/*int*/IntNumber i := 0, i < y, i += 1)
+        {
+            r := r * x
+        };
+        
+        ^ new ShortNumber(r)
+    }
+    
 //    short sqr()
 //    {
 //        short n := self;
@@ -278,25 +278,25 @@ public extension objectOp
 //        
 //        ^ new ShortNumber(retVal)
 //    }
-//
-//    bool isOdd()
-//        = self.mod:2 != 0;
-//        
-//    bool isEven()
-//        = self.mod:2 == 0;
-//        
-//    bool isZero()
-//        = self.equal(0);
-//        
-//    bool isPositive()
-//        = self > 0;
-//        
-//    bool isNegative()
-//        = self < 0;
-//        
-//    bool isNonnegative()
-//        = self <= 0;
-//    
+
+    bool isOdd()
+        = self.mod:2 != 0;
+        
+    bool isEven()
+        = self.mod:2 == 0;
+        
+    bool isZero()
+        = self.equal(0);
+        
+    bool isPositive()
+        = self > 0;
+        
+    bool isNegative()
+        = self < 0;
+        
+    bool isNonnegative()
+        = self <= 0;
+    
 //    get byte High()
 //    {
 //        short w := self;
@@ -313,12 +313,12 @@ public extension objectOp
 //        
 //        ^ byteConvertor.convert(w)
 //    }
-//}
-//
-//// --- intOp ---
-//
-//public extension intOp : IntNumber
-//{
+}
+
+// --- intOp ---
+
+public extension intOp : IntNumber
+{
 //    int Hashcode
 //    {
 //        // Reads the object hash code into the output parameter
@@ -339,34 +339,34 @@ public extension objectOp
 //    
 //        ^ n
 //    }
-//
-//    int power(int y)
-//    {
-//        int x := self;
-//        int r := 1;
-//        if (x == 0)
-//            { r := 0 };
-//        
-//        for(int i := 0, i < y, i += 1)
-//        {
-//            r := r * x
-//        };
-//        
-//        ^ r
-//    }
-//  
-//    int mod(int y)
-//    {
-//        int x := self;
-//        
-//        int z := x / y;
-//        z := z * y;
-//        
-//        int retVal := x - z;
-//        
-//        ^ retVal
-//    }
-//
+
+    int power(int y)
+    {
+        int x := self;
+        int r := 1;
+        if (x == 0)
+            { r := 0 };
+        
+        for(int i := 0, i < y, i += 1)
+        {
+            r := r * x
+        };
+        
+        ^ r
+    }
+  
+    int mod(int y)
+    {
+        int x := self;
+        
+        int z := x / y;
+        z := z * y;
+        
+        int retVal := x - z;
+        
+        ^ retVal
+    }
+
 //    int mod(o)
 //    {
 //        int n := self;
@@ -408,25 +408,25 @@ public extension objectOp
 //
 //    power(n)
 //        = self.power(cast int(n));
-//                
-//    bool isOdd()
-//        = (self && 1) != 0;
-//        
-//    bool isEven()
-//        = self.and(1) == 0;
-//        
-//    bool isZero()
-//        = self.equal(0);
-//        
-//    bool isPositive()
-//        = self > 0;
-//        
-//    bool isNegative()
-//        = self < 0;
-//        
-//    bool isNonnegative()
-//        = self <= 0;
-//
+                
+    bool isOdd()
+        = (self && 1) != 0;
+        
+    bool isEven()
+        = self.and(1) == 0;
+        
+    bool isZero()
+        = self.equal(0);
+        
+    bool isPositive()
+        = self > 0;
+        
+    bool isNegative()
+        = self < 0;
+        
+    bool isNonnegative()
+        = self <= 0;
+
 //    get short High()
 //    {
 //        int w := self;
@@ -443,8 +443,8 @@ public extension objectOp
 //        
 //        ^ shortConvertor.convert(w)
 //    }
-//}
-//
+}
+
 //public extension uintOp : UIntNumber
 //{
 //    int Hashcode
@@ -458,11 +458,11 @@ public extension objectOp
 //        }
 //    }
 //}
-//    
-//// --- longOp ---
-//
-//public extension longOp : LongNumber
-//{
+    
+// --- longOp ---
+
+public extension longOp : LongNumber
+{
 //    int Hashcode
 //    {
 //        // Reads the object hash code into the output parameter
@@ -483,31 +483,31 @@ public extension objectOp
 //                
 //        ^ new LongNumber(n)
 //    }
-//    
-//    long mod(n)
-//    {
-//        long x := self;
-//        long y := cast long(n);
-//        
-//        long z := x / y;
-//        z := z * y;
-//        
-//        ^ new LongNumber(x - z)
-//    }
-//    
-//    long power(long y)
-//    {
-//        long x := self;
-//        long r := 1;
-//        
-//        for(long i := 0l, i < y, i += 1l)
-//        {
-//            r := r * x;
-//        };
-//        
-//        ^ new LongNumber(r)
-//    }
-//    
+    
+    long mod(n)
+    {
+        long x := self;
+        long y := cast long(n);
+        
+        long z := x / y;
+        z := z * y;
+        
+        ^ new LongNumber(x - z)
+    }
+    
+    long power(long y)
+    {
+        long x := self;
+        long r := 1;
+        
+        for(long i := 0l, i < y, i += 1l)
+        {
+            r := r * x;
+        };
+        
+        ^ new LongNumber(r)
+    }
+    
 //    long power(int y)
 //    {
 //        long x := self;
@@ -533,25 +533,25 @@ public extension objectOp
 //        
 //        ^ new LongNumber(retVal)
 //    }
-//
-//    bool isOdd()
-//        = self.mod:2l != 0;
-//        
-//    bool isEven()
-//        = self.mod:2l == 0;
-//        
-//    bool isZero()
-//        = self.equal(0l);
-//        
-//    bool isPositive()
-//        = self > 0l;
-//        
-//    bool isNegative()
-//        = self < 0l;
-//        
-//    bool isNonnegative()
-//        = self <= 0l;
-//
+
+    bool isOdd()
+        = self.mod:2l != 0;
+        
+    bool isEven()
+        = self.mod:2l == 0;
+        
+    bool isZero()
+        = self.equal(0l);
+        
+    bool isPositive()
+        = self > 0l;
+        
+    bool isNegative()
+        = self < 0l;
+        
+    bool isNonnegative()
+        = self <= 0l;
+
 //    get int High()
 //    {
 //        long w := self;
@@ -568,12 +568,12 @@ public extension objectOp
 //        
 //        ^ intConvertor.convert(w)
 //    }
-//}
-//
-//// --- realOp ---
-//
-//public extension realOp : RealNumber
-//{        
+}
+
+// --- realOp ---
+
+public extension realOp : RealNumber
+{        
 //    int Hashcode
 //    {
 //        // Reads the object hash code into the output parameter
@@ -616,61 +616,61 @@ public extension objectOp
 //        
 //        ^ retVal
 //    }
-//
-//    real power(real y)
-//    {
-//        real x := self;
-//        
-//        (x == 0.0r)
-//            ? { ^ 0.0r };
-//                        
-//        (y == 0.0r)
-//            ? { ^ 1.0r };
-//            
-//        x := realOpController.ln(x);
-//        
-//        x := x * y;
-//        
-//        x := realOpController.exp(x);
-//            
-//        ^ x            
-//    }
-//
-//    real power(int y)
-//    {
-//        real x := self;
-//
-//        (x == 0.0r)
-//            ? { ^ 0.0r };
-//                        
-//        (y == 0)
-//            ? { ^ 1.0r };
-//                        
-//        if (x < 0.0r)
-//        {
-//            x := x * -1.0r;
-//            
-//            x := realOpController.ln(x);
-//            
-//            x := x * y;
-//            
-//            x := realOpController.exp(x);
-//            
-//            (y.isOdd())
-//                ? { x := x * -1.0r }
-//        }
-//        else
-//        {
-//            x := realOpController.ln(x);
-//            
-//            x := x * y;
-//            
-//            x := realOpController.exp(x)
-//        };
-//        
-//        ^ x
-//    }
-//
+
+    real power(real y)
+    {
+        real x := self;
+        
+        (x == 0.0r)
+            ? { ^ 0.0r };
+                        
+        (y == 0.0r)
+            ? { ^ 1.0r };
+            
+        x := realOpController.ln(x);
+        
+        x := x * y;
+        
+        x := realOpController.exp(x);
+            
+        ^ x            
+    }
+
+    real power(int y)
+    {
+        real x := self;
+
+        (x == 0.0r)
+            ? { ^ 0.0r };
+                        
+        (y == 0)
+            ? { ^ 1.0r };
+                        
+        if (x < 0.0r)
+        {
+            x := x * -1.0r;
+            
+            x := realOpController.ln(x);
+            
+            x := x * y;
+            
+            x := realOpController.exp(x);
+            
+            (y.isOdd())
+                ? { x := x * -1.0r }
+        }
+        else
+        {
+            x := realOpController.ln(x);
+            
+            x := x * y;
+            
+            x := realOpController.exp(x)
+        };
+        
+        ^ x
+    }
+
 //    real sqr()
 //    {
 //        real n := self;        
@@ -851,8 +851,8 @@ public extension objectOp
 //        
 //    bool isNonnegative()
 //        = self <= 0.0r;
-//}
-//
+}
+
 //// --- intArrayOp ---
 //
 //public extension intArrayOp : Array<int>

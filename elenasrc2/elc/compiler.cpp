@@ -3888,10 +3888,15 @@ ObjectInfo Compiler :: injectImplicitConversion(SyntaxWriter& writer, SNode node
          source = saveToTempLocal(writer, scope, source);
       }
 
+      ArgumentsInfo arguments;
+      arguments.add(source);
+      analizeArguments(writer, node, scope, info.stackSafeAttr, ObjectInfo(okClass, targetRef), &arguments/*, false*/);
+
       writer.newNode(lxDirectCalling, info.message);
       writer.appendNode(lxCallTarget, info.classRef);
       writer.appendNode(lxClassSymbol, targetRef);
-      writeTerminal(writer, source, scope);
+
+      writeTerminal(writer, arguments[0], scope);
       writer.closeNode();
 
       //if (node.compare(lxDirectCalling, lxSDirectCalling)) {

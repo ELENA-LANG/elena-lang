@@ -177,24 +177,28 @@ struct ConversionInfo
    ConversionResult result;
    mssg_t           message;
    ref_t            classRef;
+   int              stackSafeAttr;
 
    ConversionInfo()
    {
       result = ConversionResult::crUncompatible;
       message = 0;
       classRef = 0;
+      stackSafeAttr = 0;
    }
    ConversionInfo(ConversionResult result)
    {
       this->result = result;
       message = 0;
       classRef = 0;
+      stackSafeAttr = 0;
    }
-   ConversionInfo(ConversionResult result, mssg_t message, ref_t classRef)
+   ConversionInfo(ConversionResult result, mssg_t message, ref_t classRef, int stackSafeAttr)
    {
       this->result = result;
       this->message = message;
       this->classRef = classRef;
+      this->stackSafeAttr = stackSafeAttr;
    }
 };
 

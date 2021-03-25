@@ -8,10 +8,10 @@ public program()
 {
     var started := now;
 
-    real pi := 0.0r;
+    real pi := 0.0;
     for(int i := 0, i < MAX, i += 1)
     {
-        pi += -1.0r.power(i) / (i*2+1) * 4
+        pi += -1.0.power(i) / (i*2+1) * 4
     };
 
     var ended := now;

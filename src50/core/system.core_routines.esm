@@ -338,6 +338,126 @@ procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[
 
 end
 
+procedure __real."exp$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rexp
+  pop
+
+  quit
+
+end
+
+procedure __real."ln$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rln
+  pop
+
+  quit
+
+end
+
+procedure __real."sqrt$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  callextr api : rsqrt, 2
+  pop
+
+  quit
+
+end
+
+procedure __real."sin$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rsin
+  pop
+
+  quit
+
+end
+
+procedure __real."cos$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rcos
+  pop
+
+  quit
+
+end
+
+procedure __real."arctan$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rarctan
+  pop
+
+  quit
+  
+end
+
+procedure __real."pi$@system@ref#1&system@RealNumber[1]"
+
+  peeksi 1
+  callextr api : rpi, 1
+
+  quit
+  
+end
+
+procedure __real."abs$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rabs
+  pop
+
+  quit
+
+end
+
+procedure __real."round$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rround
+  pop
+
+  quit
+
+end
+
+procedure __real."truncate$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rint
+  pop
+
+  quit
+
+end
+
+procedure __timest."empty$system@calendar@TimeStruct[1]"
+
+  peeksi  1
+  xsaveai 0, 0
+  xsaveai 1, 0
+  xsaveai 2, 0
+  xsaveai 3, 0
+
+  quit
+
+end
+
 procedure __event."#dispatch[1]"
 
   bsredirect  
@@ -557,6 +677,22 @@ procedure __literalconvertor."convert$system@RealNumber$system@IntNumber$@system
   quit
 end
 
+procedure __literalconvertor."convert$system@LongNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushn  0   // temporal to support x86-64 mode
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : longtostr, 3
+  freei 4
+
+  peeksi 4
+  save
+
+  quit
+
+end
 
 procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
 

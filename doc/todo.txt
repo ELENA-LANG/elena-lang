@@ -3,7 +3,6 @@ In development:
 ------         
 
   [development]
-    + build linux i386 project with make
     * pi sample
     + build linux ppc64le project with make
 
@@ -60,6 +59,8 @@ In development:
     + ide 64 : call stack
     + elc 64 mode : 8 byte alignment for stack-allocated types
     + QuckSorting : optimize the code - built-in branching should be used 
+
+    * #206 : linux i386 / amd64
 
     * do not save the external operation if the result is not assigned or passed as an argument
     * optimization - duplicate assigning : external call, message call

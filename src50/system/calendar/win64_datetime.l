@@ -84,7 +84,7 @@ namespace calendar
                 ^ val
             }
         
-            set(int value)
+            set(value)
             {
                 short n := value;
         
@@ -101,7 +101,7 @@ namespace calendar
                 ^ val
             }
             
-            set(int value)
+            set(value)
             {
                 short n := value;
                     
@@ -128,7 +128,7 @@ namespace calendar
                 ^ val
             }
         
-            set(int value)
+            set(value)
             {
                 short n := value;
                     
@@ -144,7 +144,7 @@ namespace calendar
                 
                 ^ val
             }
-            set(int value)
+            set(value)
             { 
                 short n := value;
                     
@@ -161,7 +161,7 @@ namespace calendar
                 ^ val
             }
         
-            set(int value)
+            set(value)
             {
                 short n := value;
                     
@@ -178,7 +178,7 @@ namespace calendar
                 ^ val
             }
         
-            set(int value)
+            set(value)
             { 
                 short n := value;
                     
@@ -195,7 +195,7 @@ namespace calendar
                 ^ val
             }
         
-            set(int value)
+            set(value)
             {
                 short n := value;
                     
