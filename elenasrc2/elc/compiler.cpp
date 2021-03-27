@@ -11943,7 +11943,7 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
    ref_t callTargetRef = 0;
 
    ref_t actionRef, flags;
-   size_t argCount;
+   pos_t argCount;
    decodeMessage(message, actionRef, argCount, flags);
    if (test(flags, STATIC_MESSAGE)) {
       privateOne = true;
