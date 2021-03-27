@@ -667,7 +667,13 @@ ref_t CompilerLogic :: generateOverloadList(_ModuleScope& scope, _Compiler& comp
 
 ref_t paramFeedback(void* param, ref_t)
 {
+#if defined(__LP64__)
+   size_t val = (size_t)val;
+
+   return (ref_t)val;
+#else
    return (ref_t)param;
+#endif
 }
 
 void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef)
