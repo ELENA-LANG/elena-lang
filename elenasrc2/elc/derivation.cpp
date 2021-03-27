@@ -2333,7 +2333,7 @@ bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& 
 
          ident_t fullName = scope.moduleScope->resolveFullName(scope.reference);
 
-         writer.newNode(lxClass, -1);
+         writer.newNode(lxClass, INVALID_REF);
          writer.appendNode(lxAttribute, V_TEMPLATEBASED);
          writer.newNode(lxNameAttr, scope.moduleScope->mapFullReference(fullName, true));
          //      writer.appendNode(lxReference, fullName);
@@ -2355,7 +2355,7 @@ bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& 
          }
          else if (current == lxParent && declaringClass) {
             // generate a parent node only for the template based class; it should be ignored for the template class import
-            writer.newNode(lxParent, -1);
+            writer.newNode(lxParent, INVALID_REF);
             copyChildren(writer, current, scope);
             writer.closeNode();
          }

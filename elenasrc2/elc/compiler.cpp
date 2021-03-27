@@ -3528,7 +3528,7 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
 
          boxedArg = ObjectInfo(okTempLocal, tempLocal, targetRef, 0, variable ? size : 0);
          if (source.kind == okBoxableLocal && variable)
-            boxedArg.extraparam = -1;
+            boxedArg.extraparam = (ref_t)-1;
 //
 //         if (size < 0 || primArray) {
 //            copyingNode.appendNode(lxType, typeRef);
@@ -3671,7 +3671,7 @@ void Compiler :: analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& s
    }
 
    if (arguments) {
-      for (int i = 0; i < arguments->Length(); i++) {
+      for (pos_t i = 0; i != arguments->Length(); i++) {
          argBit <<= 1;
          ObjectInfo arg = (*arguments)[i];
          if (!test(stackSafeAttr, argBit) && boxingRequired(arg)) {
@@ -3745,7 +3745,7 @@ void Compiler :: unboxPreservedArgs(SyntaxWriter& writer, ExprScope& scope, Argu
    // first argument is a closure
    ObjectInfo target;
 
-   for (int i = 0; i < arguments->Length(); i++) {
+   for (pos_t i = 0; i != arguments->Length(); i++) {
       ObjectInfo info = (*arguments)[i];
       if (info.kind == okClosureInfo) {
          target = (*arguments)[++i];
@@ -3848,7 +3848,7 @@ void Compiler :: unboxArguments(SyntaxWriter& writer, ExprScope& scope, ObjectIn
    }
 
    if (arguments) {
-      for (int i = 0; i < arguments->Length(); i++) {
+      for (pos_t i = 0; i != arguments->Length(); i++) {
          ObjectInfo arg = (*arguments)[i];
          if (arg.kind == okTempLocal && arg.extraparam != 0) {
             unboxArgument(writer, arg, scope);
@@ -3913,7 +3913,6 @@ ObjectInfo Compiler :: convertObject(SyntaxWriter& writer, SNode node, ExprScope
 {
 //   bool noUnboxing = EAttrs::test(mode, HINT_NOUNBOXING);
    ref_t sourceRef = resolveObjectReference(scope, source, false);
-   int stackSafeAttrs = 0;
    bool dynamicHint = EAttrs::test(mode, HINT_DYNAMIC_OBJECT);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef, false)) {
       if ((source.kind == okIntConstant || source.kind == okUIntConstant)
@@ -4413,7 +4412,6 @@ ObjectInfo Compiler :: compileMessageOperation(SyntaxWriter& writer, SNode curre
       arguments, presavedArgs);
 
    //   bool externalMode = false
-   bool silentMode = EAttrs::test(paramsMode, HINT_SILENT);
    if (target.kind == okExternal) {
    //      EAttr extMode = mode & HINT_ROOT;
 
@@ -5417,7 +5415,7 @@ ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, ExprS
    }
 
    int index = 0;
-   for (int i = 0; i < members.Length(); i++) {
+   for (pos_t i = 0; i != members.Length(); i++) {
       writer.newNode(lxMember, index++);
       writeTerminal(writer, members[i], scope);
       writer.closeNode();
@@ -5695,7 +5693,6 @@ ObjectInfo Compiler :: compileNewArrOperation(SyntaxWriter& writer, SNode node, 
          int size = _logic->defineStructSize(*scope.moduleScope, object.reference, object.element);
 
          if (expecteRef) {
-            int stackSafeAttrs = 0;
             auto info = _logic->injectImplicitConversion(scope, *this, expecteRef, object.reference,
                object.element/*, noUnboxing, fixedArraySize*/);
 
@@ -6903,7 +6900,7 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 
 void Compiler :: compileExternalArguments(SyntaxWriter& writer, SNode node, ExprScope& scope, ArgumentsInfo* arguments)
 {
-   for (int i = 0; i < arguments->Length(); i++) {
+   for (pos_t i = 0; i != arguments->Length(); i++) {
       ObjectInfo param = (*arguments)[i];
       ref_t typeRef = resolveObjectReference(scope, param, false, false);
 
@@ -7622,7 +7619,7 @@ void Compiler :: warnOnUnassignedLocal(SNode node, Scope& scope, int level)
          case lxLongVariable:
          {
             SNode levelNode = current.findChild(lxLevel);
-            if (levelNode.argument == level) {
+            if (levelNode.argument == (ref_t)level) {
                scope.raiseWarning(WARNING_LEVEL_3, wrnUnassignedVaiable, current.firstChild(lxTerminalMask));
                break;
             }
@@ -7875,7 +7872,6 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
             found = true;
 
             target.reference = classRef;
-            ref_t dummy = 0;
             messageRef = resolveMessageAtCompileTime(target, resendScope, messageRef, implicitSignatureRef,
                false, stackSafeAttr, dummy);
 
@@ -7886,7 +7882,6 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
             found = true;
 
             target.reference = classRef;
-            ref_t dummy = 0;
             messageRef = resolveMessageAtCompileTime(target, resendScope, protectedConstructor, implicitSignatureRef,
                false, stackSafeAttr, dummy);
 
@@ -12204,8 +12199,7 @@ inline bool isUnaryOperation(int arg)
    }
 }
 
-void Compiler :: injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,
-   int opArg, ref_t reference)
+void Compiler :: injectExprOperation(SNode& node, int size, int tempLocal, LexicalType op, int opArg)
 {
    if (isUnaryOperation(opArg)) {
       SNode loperand = node.firstChild(lxObjectMask);

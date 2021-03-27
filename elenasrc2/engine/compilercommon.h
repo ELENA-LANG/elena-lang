@@ -444,8 +444,7 @@ public:
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef) = 0;
    virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument) = 0;
 //   virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne) = 0;
-   virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,
-      int opArg, ref_t reference) = 0;
+   virtual void injectExprOperation(SNode& node, int size, int tempLocal, LexicalType op, int opArg) = 0;
 
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
 //

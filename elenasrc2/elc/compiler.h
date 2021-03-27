@@ -294,7 +294,7 @@ private:
          else return NULL;
       }
 
-      virtual void markAsAssigned(ObjectInfo object)
+      virtual void markAsAssigned(ObjectInfo)
       {
          // by default is not implemented
       }
@@ -1408,8 +1408,7 @@ public:
    virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument);
 //   virtual void injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex);
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne);
-   virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,
-      int opArg, ref_t reference);
+   virtual void injectExprOperation(SNode& node, int size, int tempLocal, LexicalType op, int opArg);
    virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);

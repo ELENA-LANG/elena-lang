@@ -2068,7 +2068,7 @@ void _ELENA_::compileReserve(int op, I64JITScope& scope)
    loadNOp(op, scope);
 }
 
-void _ELENA_::compileSaveLen(int op, I64JITScope& scope)
+void _ELENA_::compileSaveLen(int, I64JITScope& scope)
 {
    int arg2 = scope.tape->getDWord() | elStructMask64;
 

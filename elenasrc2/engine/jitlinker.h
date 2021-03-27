@@ -49,6 +49,7 @@ class JITLinker : _JITLoaderListener
       RefInfo()
       {
          reference = 0;
+         module = nullptr;
       }
       RefInfo(ref_t reference, _Module* module)
       {

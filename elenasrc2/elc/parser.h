@@ -43,10 +43,10 @@ struct TerminalInfo
 {
    LexicalType symbol;
 
-   size_t      disp;          // number of symbols (tab considered as a single char)
-   size_t      row;
-   size_t      col;           // virtual column
-   size_t      length;
+   pos_t       disp;          // number of symbols (tab considered as a single char)
+   pos_t       row;
+   pos_t       col;           // virtual column
+   pos_t       length;
    ident_t     value;
 
    operator ident_t() const { return value; }
@@ -79,6 +79,7 @@ struct TerminalInfo
    {
       this->symbol = lxNone;
       this->value = nullptr;
+      disp = row = col = length = 0;
    }
 };
 

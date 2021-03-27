@@ -2065,7 +2065,7 @@ void ByteCodeWriter :: freeLock(CommandTape& tape)
    tape.write(bcFreeLock);
 }
 
-inline SNode getChild(SNode node, size_t index)
+inline SNode getChild(SNode node, pos_t index)
 {
    SNode current = node.firstChild(lxObjectMask);
 
@@ -3097,8 +3097,8 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    bool functionMode = test(node.argument, FUNCTION_MESSAGE);
    bool argUnboxMode = false;
 
-   size_t argCount = 0;
-   pos_t  extraArgs = 0;
+   pos_t argCount = 0;
+   pos_t extraArgs = 0;
 
    // analizing a sub tree
    SNode current = node.firstChild(lxObjectMask);
@@ -3134,7 +3134,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    tape.write(bcAllocI, argCount - startIndex + extraArgs);
 
    if (directOrder) {
-      for (int i = startIndex; i < argCount; i++) {
+      for (pos_t i = startIndex; i != argCount; i++) {
          // get parameters in reverse order if required
          current = getChild(node, i);
 

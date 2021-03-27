@@ -35,7 +35,7 @@ namespace _ELENA_
    constexpr auto ARG_MASK                = 0x01Fu;
    constexpr auto ARGX_MASK               = 0x000000000000001Fu;
 
-   constexpr auto INVALID_REF             = 0xFFFFFFFFu;
+   constexpr auto INVALID_REF             = (ref_t)0xFFFFFFFFu;
    constexpr auto INVALID_PTR             = (uintptr_t)-1;
    constexpr auto INVALID_VADDR           = (vaddr_t)-1;
 

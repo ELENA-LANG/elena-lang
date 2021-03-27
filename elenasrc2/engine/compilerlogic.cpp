@@ -973,7 +973,7 @@ void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compil
    if (IsExprOperator(operator_id) && operationType != lxBoolOp) {
       size = defineStructSize(*scope.moduleScope, reference, elementRef);
 
-      compiler.injectExprOperation(scope, node, size, tempLocal, (LexicalType)operationType, operator_id, reference);
+      compiler.injectExprOperation(node, size, tempLocal, (LexicalType)operationType, operator_id);
    }
    else node.set((LexicalType)operationType, operator_id);
 }
