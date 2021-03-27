@@ -228,6 +228,11 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
    }
 
 #if defined(__LP64__)
+   bool operator ==(size_t key) const
+   {
+      return (this->key == key);
+   }
+
    bool operator !=(size_t key) const
    {
       return (this->key != key);
