@@ -9697,7 +9697,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
 mssg_t Compiler :: resolveMultimethod(ClassScope& scope, mssg_t messageRef)
 {
-   size_t argCount = 0;
+   pos_t argCount = 0;
    ref_t actionRef = 0, flags = 0, signRef = 0;
    decodeMessage(messageRef, actionRef, argCount, flags);
 
