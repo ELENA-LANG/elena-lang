@@ -3890,7 +3890,8 @@ ObjectInfo Compiler :: injectImplicitConversion(SyntaxWriter& writer, SNode node
 
       ArgumentsInfo arguments;
       arguments.add(source);
-      analizeArguments(writer, node, scope, info.stackSafeAttr, ObjectInfo(okClass, targetRef), &arguments/*, false*/);
+      ObjectInfo targetInfo(okClass, targetRef);
+      analizeArguments(writer, node, scope, info.stackSafeAttr, targetInfo, &arguments/*, false*/);
 
       writer.newNode(lxDirectCalling, info.message);
       writer.appendNode(lxCallTarget, info.classRef);
