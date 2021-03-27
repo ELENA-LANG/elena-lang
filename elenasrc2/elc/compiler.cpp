@@ -1215,7 +1215,7 @@ Compiler :: Compiler(_CompilerLogic* logic)
 void Compiler :: writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, mssg_t messageRef)
 {
    ref_t actionRef, flags;
-   size_t argCount;
+   pos_t argCount;
    decodeMessage(messageRef, actionRef, argCount, flags);
 
    IdentifierString name;
@@ -1483,7 +1483,7 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, ref_
    IdentifierString virtualReference(scope.module->resolveReference(functionRef));
    virtualReference.append('.');
 
-   size_t argCount;
+   pos_t argCount;
    ref_t actionRef, flags;
    decodeMessage(message, actionRef, argCount, flags);
 
@@ -4303,7 +4303,7 @@ ObjectInfo Compiler :: compileAssigningExpression(SyntaxWriter& writer, SNode no
 
 mssg_t Compiler :: resolveVariadicMessage(Scope& scope, mssg_t message)
 {
-   size_t argCount = 0;
+   pos_t argCount = 0;
    ref_t actionRef = 0, flags = 0, dummy = 0;
    decodeMessage(message, actionRef, argCount, flags);
 
@@ -9638,7 +9638,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
          if (embeddable) {
             ref_t dummy, flags;
-            size_t argCount;
+            pos_t argCount;
             decodeMessage(message, dummy, argCount, flags);
 
             // declare a method with an extra argument - retVal
@@ -9666,7 +9666,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          else if (multiret) {
             ref_t actionRef, flags;
             ref_t signRef = 0;
-            size_t argCount;
+            pos_t argCount;
             decodeMessage(message, actionRef, argCount, flags);
 
             ident_t actionName = scope.module->resolveAction(actionRef, signRef);
