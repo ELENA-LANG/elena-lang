@@ -76,7 +76,7 @@ namespace _ELENA_
    typedef unsigned int       mssg_t;
    typedef unsigned long long mssg64_t;
 
-   typedef unsigned long long uint64_t;
+   //typedef unsigned long long uint64_t;
 
    // --- FileEncoding ---
    enum FileEncoding { feUTF8 = 0, feRaw = -1, feUTF16 = -2, feUTF32 = -3 };
