@@ -1996,7 +1996,7 @@ mssg_t CompilerLogic :: resolveEmbeddableRetMessage(_CompileScope& scope, _Compi
       return 0;
 
    ref_t dummy = 0, actionRef = 0, flags = 0;
-   size_t argCount = 0;
+   pos_t argCount = 0;
    decodeMessage(message, actionRef, argCount, flags);
    ident_t name = scope.moduleScope->module->resolveAction(actionRef, dummy);
 
@@ -2183,7 +2183,7 @@ inline mssg_t resolveNonpublic(ClassInfo& info, _Module* module, mssg_t publicMe
          visibility = key.value2;
 
          // get multi method
-         size_t argCount = 0;
+         pos_t argCount = 0;
          ref_t actionRef = 0, flags = 0, signRef = 0;
          decodeMessage(*it, actionRef, argCount, flags);
 
