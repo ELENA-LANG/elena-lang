@@ -526,7 +526,7 @@ public:
 
    bool readText(wide_c* s, pos_t length, pos_t& wasread)
    {
-#ifdef _WIN64
+#if defined(_WIN64) || defined(__LP64__)
       size_t longLength = length;
       size_t longWasRead = wasread;
 
@@ -542,7 +542,7 @@ public:
 
    bool readText(char* s, pos_t length, pos_t& wasread)
    {
-#ifdef _WIN64
+#if defined(_WIN64) || defined(__LP64__)
       size_t longLength = length;
       size_t longWasRead = wasread;
 
@@ -558,7 +558,7 @@ public:
 
    bool readText(char* s, pos64_t length, pos64_t& wasread)
    {
-#ifdef _WIN64
+#if defined(_WIN64) || defined(__LP64__)
       return _file.readLiteral(s, length, wasread);
 #else
       size_t longLength = (size_t)length;
@@ -573,7 +573,7 @@ public:
    }
    bool readText(wide_c* s, pos64_t length, pos64_t& wasread)
    {
-#ifdef _WIN64
+#if defined(_WIN64) || defined(__LP64__)
       return _file.readLiteral(s, length, wasread);
 #else
       size_t longLength = (size_t)length;
@@ -629,7 +629,7 @@ public:
 
    bool writeText(const wide_c* s, pos64_t length)
    {
-#ifdef _WIN64
+#if defined(_WIN64) || defined(__LP64__)
       return _file.writeLiteral(s, length);
 #else
       if (length < INT_MAX) {
@@ -641,7 +641,7 @@ public:
 
    bool writeText(const char* s, pos64_t length)
    {
-#ifdef _WIN64
+#if defined(_WIN64) || defined(__LP64__)
       return _file.writeLiteral(s, length);
 #else
       if (length < INT_MAX) {
