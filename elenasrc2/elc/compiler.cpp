@@ -6679,7 +6679,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
             SNode terminalNode = node.firstChild(lxTerminalMask);
             return compileObject(writer, terminalNode, scope, mode, preservedArgs);
          }
-         return compileOperation(writer, node, scope, mode, REFER_OPERATOR_ID, false, false);
+         retVal = compileOperation(writer, node, scope, mode, REFER_OPERATOR_ID, false, false);
          break;
       }
       case lxNestedExpression:

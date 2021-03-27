@@ -358,26 +358,26 @@ public extension enumerableOp
 //        = JoinEnumerator.new(filter_f, select_f, cast Enumerator(self.enumerator()), cast Enumerator(list.enumerator()));        
 }
 
-//// --- indexableOp ---
-//
-//public extension indexableOp<T>
-//{
-//    populate(Func<int,T> f)
-//    {
-//        Indexer it := self.indexer();
-//
-//        while (it.Available)
-//        {
-//            int i := it.Index;
-//            
-//            it.set(f(i));
-//            
-//            it.appendIndex:1
-//        };
-//        
-//        ^ self
-//    }
-//        
+// --- indexableOp ---
+
+public extension indexableOp<T>
+{
+    populate(Func<int,T> f)
+    {
+        Indexer it := self.indexer();
+
+        while (it.Available)
+        {
+            int i := it.Index;
+            
+            it.Value := f(i);
+            
+            it.appendIndex:1
+        };
+        
+        ^ self
+    }
+        
 //    forEvery(Func<int,T> fn)
 //    {
 //        Indexer it := self.indexer();
@@ -391,27 +391,27 @@ public extension enumerableOp
 //            it.appendIndex:1
 //        }
 //    }    
-//}    
+}
 
 public extension indexableOp
 {
-//    exchange(int i1, int i2)
-//    {
-//        Indexer indexer := self.indexer();
-//        
-//        indexer.Index := i1;
-//        
-//        var o1 := indexer.get();
-//        
-//        indexer.Index := i2;
-//        var o2 := indexer.get();
-//        
-//        indexer.set:o1;
-//        
-//        indexer.Index := i1;
-//        indexer.set:o2
-//    }
-//    
+    exchange(int i1, int i2)
+    {
+        Indexer indexer := self.indexer();
+        
+        indexer.Index := i1;
+        
+        var o1 := *indexer;
+        
+        indexer.Index := i2;
+        var o2 := *indexer;
+        
+        indexer.Value := o1;
+        
+        indexer.Index := i1;
+        indexer.Value := o2
+    }
+    
 //    int indexOfElement(element)
 //    {
 //        Indexer it := self.indexer();

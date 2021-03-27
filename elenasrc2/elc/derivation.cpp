@@ -388,13 +388,13 @@ void DerivationWriter :: recognizeDefinition(SNode scopeNode)
 
       // validate the template type
       ScopeType type = ScopeType::stClassTemplate;
-      //SNode prevNode = scopeNode.prevNode();
-      //while (prevNode != lxNone) {
-      //   if (prevNode == lxAttribute && prevNode.argument == V_EXTENSION) {
-      //      type = ScopeType::stExtensionTemplate;
-      //   }
-      //   prevNode = prevNode.prevNode();
-      //}
+      SNode prevNode = scopeNode.prevNode();
+      while (prevNode != lxNone) {
+         if (prevNode == lxAttribute && prevNode.argument == V_EXTENSION) {
+            type = ScopeType::stExtensionTemplate;
+         }
+         prevNode = prevNode.prevNode();
+      }
 
       recognizeClassMembers(scopeNode);
 

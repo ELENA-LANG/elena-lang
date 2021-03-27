@@ -3,7 +3,6 @@ In development:
 ------         
 
   [development]
-    * bsort
     + build linux ppc64le project with make
 
     * #206 : migrate console / files samples
@@ -25,7 +24,6 @@ In development:
     * globals
     * multi ret
     * yield metods
-    * template based extensions
     * uncomment defineEmbeddableAttributes
 
     * uncomment duplicateStructBoxing,duplicateBoxing,stackSafeExtensions,nilDispatcherTest,templateExtensionTest
@@ -231,7 +229,7 @@ Pipeline:
                 * closures: race conditions
                 * closures: returning a value
                 * extension message - can be applied only to the generic extension?
-                * ifheap - is not correctly recognize data allocated classes
+                * ifheap - is not correctly recognize rdata allocated classes (constants are considered as stack allocated)
                 * if bug structure is allocated - it will be marked as root - will it work?
                 * do we need ENDFRAME?
                 * declaring several variables in a row?
