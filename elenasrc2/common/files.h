@@ -580,8 +580,15 @@ public:
    }
    bool readText(wide_c* s, pos64_t length, pos64_t& wasread)
    {
-#if defined(_WIN64) || defined(__LP64__)
+#if defined(_WIN64)
       return _file.readLiteral(s, length, wasread);
+#elif defined(__LP64__)
+      size_t tmp_wasread = 0;
+      bool retVal = _file.readLiteral(s, length, tmp_wasread);
+
+      wasread = tmp_wasread;
+
+      return retVal;
 #else
       size_t longLength = (size_t)length;
       size_t longWasRead = (size_t)wasread;
