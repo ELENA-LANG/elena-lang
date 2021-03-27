@@ -2098,7 +2098,7 @@ x86JITCompiler :: x86JITCompiler(bool debugMode)
    _debugMode = debugMode;
 }
 
-size_t x86JITCompiler :: getObjectHeaderSize() const
+pos_t x86JITCompiler :: getObjectHeaderSize() const
 {
    return elObjectOffset32;
 }

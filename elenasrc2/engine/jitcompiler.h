@@ -159,7 +159,7 @@ public:
    virtual ref_t findFlags(void* refVMT);
 
    virtual size_t findLength(void* refVMT);
-   virtual uintptr_t findMethodAddress(void* refVMT, mssg_t messageID, size_t vmtLength);
+   virtual vaddr_t findMethodAddress(void* refVMT, mssg_t messageID, size_t vmtLength);
    virtual pos_t findMethodIndex(void* refVMT, mssg_t messageID, size_t vmtLength);
    virtual vaddr_t findClassPtr(void* refVMT);
 
@@ -212,8 +212,8 @@ public:
 
    virtual ref_t findFlags(void* refVMT);
    virtual size_t findLength(void* refVMT);
-   virtual uintptr_t findMethodAddress(void* refVMT, mssg_t messageID, size_t vmtLength);
-   virtual uintptr_t findMethodAddressX(void* refVMT, mssg64_t messageID, size_t vmtLength);
+   virtual vaddr_t findMethodAddress(void* refVMT, mssg_t messageID, size_t vmtLength);
+   virtual vaddr_t findMethodAddressX(void* refVMT, mssg64_t messageID, size_t vmtLength);
    virtual pos_t findMethodIndex(void* refVMT, mssg_t messageID, size_t vmtLength);
    virtual pos_t findMethodIndexX(void* refVMT, mssg64_t messageID, size_t vmtLength);
    virtual vaddr_t findClassPtr(void* refVMT);

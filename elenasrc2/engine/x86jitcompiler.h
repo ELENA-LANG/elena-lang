@@ -175,7 +175,7 @@ protected:
 
 public:
    virtual bool isWithDebugInfo() const;
-   virtual size_t getObjectHeaderSize() const;
+   virtual pos_t getObjectHeaderSize() const;
 
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code);
 
