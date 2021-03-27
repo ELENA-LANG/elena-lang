@@ -310,6 +310,9 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
    void freeKey(int key) { key = 0; }
    void freeKey(unsigned int key) { key = 0; }
    void freeKey(unsigned long long key) { key = 0; }
+#if defined(__LP64__) 
+   void freeKey(size_t key) { key = 0; }
+#endif
    void freeKey(const wchar_t* key) { freestr((wchar_t*)key); }
    void freeKey(ident_t key) { const char* ptr = key; freestr((char*)ptr); }
    void freeKey(Pair<unsigned int, int> key) { key.value1 = 0; key.value2 = 0; }
