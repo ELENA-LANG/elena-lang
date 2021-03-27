@@ -227,6 +227,33 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       return (this->key > key);
    }
 
+#if defined(__LP64__)
+   bool operator !=(size_t key) const
+   {
+      return (this->key != key);
+   }
+
+   bool operator <=(size_t key) const
+   {
+      return (this->key <= key);
+   }
+
+   bool operator <(size_t key) const
+   {
+      return (this->key < key);
+   }
+
+   bool operator >=(size_t key) const
+   {
+      return (this->key >= key);
+   }
+
+   bool operator >(size_t key) const
+   {
+      return (this->key > key);
+   }
+#endif
+
    bool operator ==(const wchar_t* key) const
    {
       return wide_t(key).compare(this->key);
@@ -341,6 +368,14 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       this->item = item;
       this->next = next;
    }
+#if defined(__LP64__)
+   _MapItem(size_t key, T item, _MapItem* next)
+   {
+      this->key = key;
+      this->item = item;
+      this->next = next;
+   }
+#endif
    _MapItem(const wchar_t* key, T item, _MapItem* next)
    {
       if (KeyStored) {
