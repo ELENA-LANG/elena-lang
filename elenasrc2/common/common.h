@@ -73,9 +73,8 @@ namespace _ELENA_
    typedef unsigned int       vaddr_t;
    typedef unsigned long long ref64_t;
    typedef unsigned long long pos64_t;
-   typedef unsigned int        mssg_t;
+   typedef unsigned int       mssg_t;
    typedef unsigned long long mssg64_t;
-   typedef unsigned long long pos64_t;
 
    typedef unsigned long long uint64_t;
 
