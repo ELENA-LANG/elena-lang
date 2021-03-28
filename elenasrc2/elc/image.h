@@ -60,7 +60,7 @@ public:
 
    virtual ref_t getDebugEntryPoint();
 
-   virtual ReferenceMap::Iterator getExternalIt()
+   virtual VAddressMap::Iterator getExternalIt()
    {
       return _exportReferences.start();
    }

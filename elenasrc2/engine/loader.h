@@ -26,7 +26,7 @@ protected:
    VAddressMap  _constReferences, _numberReferences, _literalReferences, _characterReferences, _wideReferences;
    VAddressMap  _mssgReferences, _subjReferences;
    VAddressMap  _bssReferences;
-   ReferenceMap _exportReferences;
+   VAddressMap  _exportReferences;
 
    void mapReference(ident_t reference, lvaddr_t vaddress, ref_t mask);
    lvaddr_t resolveReference(ident_t reference, ref_t mask);
@@ -60,7 +60,7 @@ public:
       : _codeReferences(INVALID_VADDR), _dataReferences(INVALID_VADDR), _symbolReferences(INVALID_VADDR),
         _statReferences(INVALID_VADDR), _constReferences(INVALID_VADDR), _numberReferences(INVALID_VADDR), 
         _characterReferences(INVALID_VADDR), _literalReferences(INVALID_VADDR), _bssReferences(INVALID_VADDR), 
-        _exportReferences(INVALID_REF), _wideReferences(INVALID_VADDR), _mssgReferences(INVALID_VADDR), 
+        _exportReferences(INVALID_VADDR), _wideReferences(INVALID_VADDR), _mssgReferences(INVALID_VADDR),
         _subjReferences(INVALID_VADDR)
    {
    }
@@ -85,7 +85,7 @@ public:
    virtual Section* getMDataSection()  { return &_mdata; }
    virtual Section* getADataSection()  { return &_adata; }
 
-   virtual ReferenceMap::Iterator getExternalIt() = 0;
+   virtual VAddressMap::Iterator getExternalIt() = 0;
 
    virtual lvaddr_t getEntryPoint() = 0;
    virtual ref_t getDebugEntryPoint() = 0;
