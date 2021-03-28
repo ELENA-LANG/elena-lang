@@ -159,7 +159,7 @@ int Linker32 :: fillImportTable(ImageInfo& info)
 {
    int count = 0;
 
-   ReferenceMap::Iterator it = info.image->getExternalIt();
+   auto it = info.image->getExternalIt();
    while (!it.Eof()) {
       String<char, PATH_MAX> external(it.key());
 
