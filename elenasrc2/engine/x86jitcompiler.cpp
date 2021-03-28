@@ -2251,7 +2251,7 @@ void x86JITCompiler :: setStaticRootCounter(_JITLoader* loader, pos_t counter, b
    }
 }
 
-void x86JITCompiler :: setTLSKey(pos_t ptr)
+void x86JITCompiler :: setTLSKey(lvaddr_t ptr)
 {
    _preloaded.add(CORE_TLS_INDEX, ptr);
 }
