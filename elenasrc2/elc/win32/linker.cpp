@@ -149,7 +149,7 @@ int Linker :: fillImportTable(ImageInfo& info)
 {
    int count = 0;
 
-   ReferenceMap::Iterator it = info.image->getExternalIt();
+   auto it = info.image->getExternalIt();
    while (!it.Eof()) {
       ident_t external = it.key();
 

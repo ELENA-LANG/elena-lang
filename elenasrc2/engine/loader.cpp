@@ -80,13 +80,13 @@ void _ImageLoader :: mapReference(ReferenceInfo referenceInfo, lvaddr_t vaddress
 
 lvaddr_t _ImageLoader :: resolveExternal(ident_t external)
 {
-   lvaddr_t reference = _exportReferences.get(external);
+   ref_t reference = _exportReferences.get(external);
    if (reference == INVALID_VADDR) {
       reference = (_exportReferences.Count() + 1) | mskImportRef;
 
       _exportReferences.add(external, reference);
    }
-   return reference;
+   return (lvaddr_t)reference;
 }
 
 lvaddr_t _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
