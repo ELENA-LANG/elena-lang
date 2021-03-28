@@ -23,7 +23,7 @@ class AMD64Instance : public Instance
 
    AMD64Process     _codeProcess, _dataProcess, _bssProcess, _statProcess, _debugProcess, _messageProcess, _mattributeProcess;
 
-   virtual vaddr_t resolveExternal(ident_t reference);
+   virtual lvaddr_t resolveExternal(ident_t reference);
 
 protected:
    virtual _Memory* getTargetSection(pos_t mask);

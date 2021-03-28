@@ -3,10 +3,9 @@ In development:
 ------         
 
   [development]
-    + build linux ppc64le project with make
-
     * textview sample
     + compile lib50 / lib50_64 for linux i386 / ppc64le
+
     * #206 : migrate console / files samples
     * #206 : interpreter sample
     * #206 : samples, tutorials

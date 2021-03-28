@@ -88,9 +88,9 @@ _Memory* AMD64Instance :: getMetaAttributeSection()
    return &_mattributeProcess;
 }
 
-vaddr_t AMD64Instance :: resolveExternal(ident_t external)
+lvaddr_t AMD64Instance :: resolveExternal(ident_t external)
 {
-   vaddr_t reference = _exportReferences.get(external);
+   lvaddr_t reference = _exportReferences.get(external);
    if (reference == INVALID_VADDR) {
       ident_t function = external + external.findLast('.') + 1;
 
