@@ -63,30 +63,30 @@ namespace _ELENA_
 
 namespace _ELENA_
 {
-   typedef char               path_c;
-   typedef unsigned short     wide_c;
-   typedef unsigned int       unic_c;
+   typedef char                   path_c;
+   typedef unsigned short         wide_c;
+   typedef unsigned int           unic_c;
 
-   typedef unsigned char      uident_c;
-   typedef unsigned int       ref_t;
-   typedef unsigned int       pos_t;
+   typedef unsigned char          uident_c;
+   typedef unsigned int           ref_t;
+   typedef unsigned int           pos_t;
 
 #if defined(__LP64__)
 
-   typedef unsigned long long lvaddr_t;
+   typedef unsigned long long int lvaddr_t;
 
 #else
 
-   typedef unsigned int       lvaddr_t;
+   typedef unsigned int           lvaddr_t;
 
 #endif
 
-   typedef unsigned long long ref64_t;
-   typedef unsigned long long pos64_t;
-   typedef unsigned int       mssg_t;
-   typedef unsigned long long mssg64_t;
+   typedef unsigned long long int ref64_t;
+   typedef unsigned long long int pos64_t;
+   typedef unsigned int           mssg_t;
+   typedef unsigned long long int mssg64_t;
 
-   //typedef unsigned long long uint64_t;
+   //typedef unsigned long long int uint64_t;
 
    // --- FileEncoding ---
    enum FileEncoding { feUTF8 = 0, feRaw = -1, feUTF16 = -2, feUTF32 = -3 };
