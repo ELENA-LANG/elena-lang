@@ -16,9 +16,9 @@ constexpr ref_t SIGNATURE_MASK = 0x80000000;
 
 // --- resolveReference ---
 
-inline bool writeVAddr(_Memory* image, pos_t position, vaddr_t addr)
+inline bool writeVAddr(_Memory* image, pos_t position, lvaddr_t addr)
 {
-   return image->write(position, &addr, sizeof(vaddr_t));
+   return image->write(position, &addr, sizeof(lvaddr_t));
 }
 
 inline bool writeVAddrOffset(_Memory* image, pos_t position, pos_t addrOffset)
@@ -26,16 +26,16 @@ inline bool writeVAddrOffset(_Memory* image, pos_t position, pos_t addrOffset)
    return image->write(position, &addrOffset, 4);
 }
 
-inline bool updateVAddr(_Memory* image, pos_t position, vaddr_t addr)
+inline bool updateVAddr(_Memory* image, pos_t position, lvaddr_t addr)
 {
-   vaddr_t val = 0;
-   image->read(position, &val, sizeof(vaddr_t));
+   lvaddr_t val = 0;
+   image->read(position, &val, sizeof(lvaddr_t));
    addr += val;
 
-   return image->write(position, &addr, sizeof(vaddr_t));
+   return image->write(position, &addr, sizeof(lvaddr_t));
 }
 
-inline void resolveReference(_Memory* image, pos_t position, vaddr_t vaddress, ref_t mask, bool virtualMode)
+inline void resolveReference(_Memory* image, pos_t position, lvaddr_t vaddress, ref_t mask, bool virtualMode)
 {
    if (!virtualMode) {
       switch (mask & mskImageMask) {
@@ -43,12 +43,12 @@ inline void resolveReference(_Memory* image, pos_t position, vaddr_t vaddress, r
          case mskRelStatRef:
          case mskRelDataRef:
             // NOTE : the offset should be written
-            writeVAddrOffset(image, position, (pos_t)(vaddress - ((vaddr_t)image->get(0)) - position - 4));
+            writeVAddrOffset(image, position, (pos_t)(vaddress - ((lvaddr_t)image->get(0)) - position - 4));
             break;
          case mskRelExternakRef:
             // NOTE : the offset should be written
             vaddress &= ~mskRelImportRef;
-            writeVAddrOffset(image, position, (pos_t)(vaddress - ((vaddr_t)image->get(0)) - position - 4));
+            writeVAddrOffset(image, position, (pos_t)(vaddress - ((lvaddr_t)image->get(0)) - position - 4));
             break;
          default:
             updateVAddr(image, position, vaddress);
@@ -129,7 +129,7 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t re
    }
 
    // try to resolve immediately
-   vaddr_t vaddress = LOADER_NOTLOADED;
+   lvaddr_t vaddress = LOADER_NOTLOADED;
    switch (mask) {
       case mskPreloadCodeRef:
          vaddress = _owner->_compiler->getPreloadedReference(refID);
@@ -141,7 +141,7 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t re
          break;
       case mskCodeRef:
       case mskRelCodeRef:
-         vaddress = (vaddr_t)refID;
+         vaddress = (lvaddr_t)refID;
          break;
       default:
          vaddress = _owner->_loader->resolveReference(_owner->_loader->retrieveReference(module, refID, mask), mask);
@@ -174,7 +174,7 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t re
 //   else throw InternalError("64bit references are not supported");
 //}
 
-void JITLinker::ReferenceHelper :: writeVAddress(MemoryWriter& writer, vaddr_t vaddress, pos_t disp)
+void JITLinker::ReferenceHelper :: writeVAddress(MemoryWriter& writer, lvaddr_t vaddress, pos_t disp)
 {
    if (!_owner->_virtualMode) {
       ref_t address = vaddress;
@@ -184,11 +184,11 @@ void JITLinker::ReferenceHelper :: writeVAddress(MemoryWriter& writer, vaddr_t v
    else writer.writeRef(vaddress, disp);
 }
 
-void JITLinker::ReferenceHelper::writeRelVAddress(MemoryWriter& writer, vaddr_t vaddress, ref_t mask, pos_t disp)
+void JITLinker::ReferenceHelper::writeRelVAddress(MemoryWriter& writer, lvaddr_t vaddress, ref_t mask, pos_t disp)
 {
    if (!_owner->_virtualMode) {
       // calculate relative address
-      vaddress -= ((vaddr_t)writer.Address() + 4);
+      vaddress -= ((lvaddr_t)writer.Address() + 4);
 
       ref_t address = vaddress;
 
@@ -273,7 +273,7 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool varia
 
          // NOTE : indicate weak class reference, to be later resolved if required
          if (references) {
-            vaddr_t vaddress = _loader->resolveReference(
+            lvaddr_t vaddress = _loader->resolveReference(
                _loader->retrieveReference(info.module, typeClassRef, mskVMTRef), mskVMTRef);
 
             if (vaddress == LOADER_NOTLOADED)
@@ -334,25 +334,25 @@ mssg_t JITLinker :: resolveMessage(_Module* module, mssg_t message, References* 
    return encodeMessage(resolvedAction, argCount, flags);
 }
 
-vaddr_t JITLinker :: calculateVAddress(MemoryWriter* writer, ref_t mask)
+lvaddr_t JITLinker :: calculateVAddress(MemoryWriter* writer, ref_t mask)
 {
    return calculateVAddress(writer, mask, VA_ALIGNMENT);
 }
 
-vaddr_t JITLinker :: calculateVAddress(MemoryWriter* writer, ref_t mask, int alignment)
+lvaddr_t JITLinker :: calculateVAddress(MemoryWriter* writer, ref_t mask, int alignment)
 {
    // align the section
    _compiler->alignCode(writer, alignment, test(mask, mskCodeRef));
 
    // virtual address - real address in the memory of nonvirtual mode, or section relative address
-   return _virtualMode ? (writer->Position() | mask) : (vaddr_t)writer->Address();
+   return _virtualMode ? (writer->Position() | mask) : (lvaddr_t)writer->Address();
 }
 
-vaddr_t JITLinker :: resolveVMTMethodAddress(_Module* module, ref_t reference, mssg_t messageID)
+lvaddr_t JITLinker :: resolveVMTMethodAddress(_Module* module, ref_t reference, mssg_t messageID)
 {
-   vaddr_t refVAddress = resolve(_loader->retrieveReference(module, reference, mskVMTRef), mskVMTRef, false);
+   lvaddr_t refVAddress = resolve(_loader->retrieveReference(module, reference, mskVMTRef), mskVMTRef, false);
 
-   vaddr_t address = _staticMethods.get(MethodInfo(refVAddress, messageID));
+   lvaddr_t address = _staticMethods.get(MethodInfo(refVAddress, messageID));
    if (address == INVALID_VADDR) {
       address = getVMTMethodAddress(refVAddress, messageID);
 
@@ -382,21 +382,21 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
          pos_t offset = it.key();
          mssg_t messageID = (*image)[offset];
 
-         vaddr_t address = resolveVMTMethodAddress(current.module, currentRef, messageID);
+         lvaddr_t address = resolveVMTMethodAddress(current.module, currentRef, messageID);
          if (_virtualMode) {
             (*image)[offset] = (pos_t)address;
 
             image->addReference(mskRelCodeRef, (pos_t)offset);
          }
          else {
-            address -= ((vaddr_t)image->get(0)) + offset + 4;
+            address -= ((lvaddr_t)image->get(0)) + offset + 4;
 
             (*image)[offset] = (pos_t)address;
          }
       }
       // if it is a vmt message offset
       else if (currentMask == mskVMTEntryOffset) {
-         vaddr_t refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
+         lvaddr_t refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
 
          // message id should be replaced with an appropriate method address
          pos_t offset = it.key();
@@ -406,7 +406,7 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
       }
       // otherwise
       else {
-         vaddr_t refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, currentMask), currentMask, false);
+         lvaddr_t refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, currentMask), currentMask, false);
 
          // NOTE : check if it is a weak class reference (used for Message table generation)
          if (it.key() != INVALID_REF)
@@ -416,12 +416,12 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
    }
 }
 
-vaddr_t JITLinker :: getVMTAddress(_Module* module, ref_t reference, References& references)
+lvaddr_t JITLinker :: getVMTAddress(_Module* module, ref_t reference, References& references)
 {
    if (reference != 0) {
       ReferenceInfo referenceInfo = _loader->retrieveReference(module, reference, mskVMTRef);
 
-      vaddr_t vaddress = _loader->resolveReference(referenceInfo, mskVMTRef);
+      lvaddr_t vaddress = _loader->resolveReference(referenceInfo, mskVMTRef);
 
       if (vaddress==LOADER_NOTLOADED) {
          // create VMT table without resolving references to prevent circular reference
@@ -438,7 +438,7 @@ vaddr_t JITLinker :: getVMTAddress(_Module* module, ref_t reference, References&
 
 void* JITLinker :: getVMTReference(_Module* module, ref_t reference, References& references)
 {
-   vaddr_t vaddress = getVMTAddress(module, reference, references);
+   lvaddr_t vaddress = getVMTAddress(module, reference, references);
 
    if (vaddress != 0) {
       if (_virtualMode) {
@@ -451,20 +451,20 @@ void* JITLinker :: getVMTReference(_Module* module, ref_t reference, References&
    else return nullptr;
 }
 
-//vaddr_t JITLinker :: getVMTAddress(ref_t address)
+//lvaddr_t JITLinker :: getVMTAddress(ref_t address)
 //{
-//   vaddr_t vmtPtr;
+//   lvaddr_t vmtPtr;
 //   if (_virtualMode) {
 //      _Memory* image = _loader->getTargetSection(mskVMTRef);
 //
-//      vmtPtr = (vaddr_t)image->get(address & ~mskAnyRef);
+//      vmtPtr = (lvaddr_t)image->get(address & ~mskAnyRef);
 //   }
 //   else vmtPtr = address;
 //
 //   return vmtPtr;
 //}
 
-vaddr_t JITLinker :: getVMTMethodAddress(vaddr_t address, mssg_t messageID)
+lvaddr_t JITLinker :: getVMTMethodAddress(lvaddr_t address, mssg_t messageID)
 {
    void* entries;
    if (_virtualMode) {
@@ -477,7 +477,7 @@ vaddr_t JITLinker :: getVMTMethodAddress(vaddr_t address, mssg_t messageID)
    return _compiler->findMethodAddress(entries, messageID, _compiler->findLength(entries));
 }
 
-pos_t JITLinker :: getVMTMethodIndex(vaddr_t address, mssg_t messageID)
+pos_t JITLinker :: getVMTMethodIndex(lvaddr_t address, mssg_t messageID)
 {
    void* entries;
    if (_virtualMode) {
@@ -490,7 +490,7 @@ pos_t JITLinker :: getVMTMethodIndex(vaddr_t address, mssg_t messageID)
    return _compiler->findMethodIndex(entries, messageID, _compiler->findLength(entries));
 }
 
-ref_t JITLinker :: getVMTFlags(vaddr_t vaddress)
+ref_t JITLinker :: getVMTFlags(lvaddr_t vaddress)
 {
    if (_virtualMode) {
       _Memory* image = _loader->getTargetSection(mskVMTRef);
@@ -500,17 +500,17 @@ ref_t JITLinker :: getVMTFlags(vaddr_t vaddress)
    else return _compiler->findFlags((void*)vaddress);
 }
 
-vaddr_t JITLinker :: loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer)
+lvaddr_t JITLinker :: loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer)
 {
-   vaddr_t position = writer.Position();
+   lvaddr_t position = writer.Position();
 
    // method just in time compilation
    _compiler->compileProcedure(refHelper, reader, writer);
 
-   return _virtualMode ? position : (vaddr_t)writer.Memory()->get(position);
+   return _virtualMode ? position : (lvaddr_t)writer.Memory()->get(position);
 }
 
-vaddr_t JITLinker :: resolveNativeSection(ReferenceInfo referenceInfo, ref_t mask, SectionInfo sectionInfo)
+lvaddr_t JITLinker :: resolveNativeSection(ReferenceInfo referenceInfo, ref_t mask, SectionInfo sectionInfo)
 {
    if (sectionInfo.section == NULL)
       return LOADER_NOTLOADED;
@@ -519,7 +519,7 @@ vaddr_t JITLinker :: resolveNativeSection(ReferenceInfo referenceInfo, ref_t mas
    _Memory* image = _loader->getTargetSection(mask);
    MemoryWriter writer(image);
 
-   vaddr_t vaddress = calculateVAddress(&writer, mask & mskImageMask);
+   lvaddr_t vaddress = calculateVAddress(&writer, mask & mskImageMask);
    pos_t position = writer.Position();
 
    _loader->mapReference(referenceInfo, vaddress, mask);
@@ -549,7 +549,7 @@ vaddr_t JITLinker :: resolveNativeSection(ReferenceInfo referenceInfo, ref_t mas
          resolveReference(image, *it + position, (uintptr_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeRelCodeRef, _virtualMode);
       }
       else {
-         vaddr_t refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+         lvaddr_t refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
 
          resolveReference(image, *it + position, (uintptr_t)refVAddress, currentMask, _virtualMode);
       }
@@ -558,13 +558,13 @@ vaddr_t JITLinker :: resolveNativeSection(ReferenceInfo referenceInfo, ref_t mas
    return vaddress;
 }
 
-vaddr_t JITLinker :: resolveNativeVariable(ReferenceInfo referenceInfo, ref_t mask)
+lvaddr_t JITLinker :: resolveNativeVariable(ReferenceInfo referenceInfo, ref_t mask)
 {
    // get target image & resolve virtual address
    _Memory* image = _loader->getTargetSection((ref_t)mskDataRef);
    MemoryWriter writer(image);
 
-   vaddr_t vaddress = calculateVAddress(&writer, mskDataRef, 4);
+   lvaddr_t vaddress = calculateVAddress(&writer, mskDataRef, 4);
 
    _compiler->allocateVariable(writer);
 
@@ -588,7 +588,7 @@ vaddr_t JITLinker :: resolveNativeVariable(ReferenceInfo referenceInfo, ref_t ma
 //   return vaddress;
 //}
 
-vaddr_t JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t mask, SectionInfo sectionInfo)
+lvaddr_t JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t mask, SectionInfo sectionInfo)
 {
    if (sectionInfo.section == NULL)
       return LOADER_NOTLOADED;
@@ -597,7 +597,7 @@ vaddr_t JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t m
    _Memory* image = _loader->getTargetSection(mask);
    MemoryWriter writer(image);
 
-   vaddr_t vaddress = calculateVAddress(&writer, mask & mskImageMask);
+   lvaddr_t vaddress = calculateVAddress(&writer, mask & mskImageMask);
 
    _loader->mapReference(referenceInfo, vaddress, mask);
 
@@ -644,7 +644,7 @@ vaddr_t JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t m
    return vaddress;
 }
 
-vaddr_t JITLinker :: resolveClassName(ReferenceInfo referenceInfo)
+lvaddr_t JITLinker :: resolveClassName(ReferenceInfo referenceInfo)
 {
    IdentifierString relativeName;
    if (!referenceInfo.isRelative()) {
@@ -655,7 +655,7 @@ vaddr_t JITLinker :: resolveClassName(ReferenceInfo referenceInfo)
    return resolve(ReferenceInfo(relativeName.c_str()), mskLiteralRef, false);
 }
 
-vaddr_t JITLinker :: resolvePackage(_Module* module)
+lvaddr_t JITLinker :: resolvePackage(_Module* module)
 {
    ReferenceNs packageInfo("'", PACKAGE_SECTION);
 
@@ -676,7 +676,7 @@ void JITLinker :: resolveStaticValues(ReferenceInfo referenceInfo, MemoryReader&
       currentMask = *it & mskAnyRef;
       currentRef = *it & ~mskAnyRef;
 
-      vaddr_t refVAddress = 0;
+      lvaddr_t refVAddress = 0;
       if (currentMask == mskConstantRef && currentRef == 0) {
          // HOTFIX : ignore read-only sealed static field
       }
@@ -708,7 +708,7 @@ void JITLinker :: resolveStaticValues(ReferenceInfo referenceInfo, MemoryReader&
    createAttributes(referenceInfo, attributes);
 }
 
-vaddr_t JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t mask, ClassSectionInfo sectionInfo, 
+lvaddr_t JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t mask, ClassSectionInfo sectionInfo, 
    References& references)
 {
    if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
@@ -737,7 +737,7 @@ vaddr_t JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t
    // allocate space and make VTM offset
    _compiler->allocateVMT(vmtWriter, header.flags, header.count, header.staticSize);
 
-   vaddr_t vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
+   lvaddr_t vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
 
    _loader->mapReference(referenceInfo, vaddress, mask);
 
@@ -758,7 +758,7 @@ vaddr_t JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t
       MemoryWriter   codeWriter(codeImage);
       MemoryReader   codeReader(sectionInfo.codeSection);
 
-      vaddr_t        methodPosition;
+      lvaddr_t        methodPosition;
       VMTEntry       entry;
 
       size -= sizeof(ClassHeader);
@@ -789,8 +789,8 @@ vaddr_t JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t
          throw InternalError("VMT structure is corrupt");
 
       // load class class
-      vaddr_t classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
-      vaddr_t parentVAddress = 0;
+      lvaddr_t classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
+      lvaddr_t parentVAddress = 0;
       if (header.parentRef != 0)
          parentVAddress = resolve(_loader->retrieveReference(sectionInfo.module, header.parentRef, mskVMTRef), mskVMTRef, true);
 
@@ -808,7 +808,7 @@ vaddr_t JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t
    return vaddress;
 }
 
-void JITLinker :: generateMetaAttribute(int category, ident_t fullName, vaddr_t address)
+void JITLinker :: generateMetaAttribute(int category, ident_t fullName, lvaddr_t address)
 {
    SectionInfo tableInfo = _loader->getSectionInfo(ReferenceInfo(MATTRIBUTE_TABLE), mskRDataRef, false);
 
@@ -825,7 +825,7 @@ void JITLinker :: generateMetaAttribute(int category, ReferenceInfo& referenceIn
    }
    else fullName.copy(referenceInfo.referenceName);
 
-   vaddr_t address = resolve(referenceInfo, mask, false);
+   lvaddr_t address = resolve(referenceInfo, mask, false);
 
    generateMetaAttribute(category, fullName.ident(), address);
 }
@@ -856,7 +856,7 @@ void JITLinker :: generateOverloadListMetaAttribute(_Module* module, mssg_t mess
    ident_t referenceName = module->resolveReference(listRef & ~mskAnyRef);
 
    // resolve extension overloadlist
-   vaddr_t address = resolve(ReferenceInfo(module, referenceName), mskConstArray, false);
+   lvaddr_t address = resolve(ReferenceInfo(module, referenceName), mskConstArray, false);
 
    generateMetaAttribute(caExtOverloadlist, fullName.ident(), address);
 }
@@ -887,7 +887,7 @@ void JITLinker :: createAttributes(ReferenceInfo& referenceInfo, ClassInfo::Cate
    }
 }
 
-vaddr_t JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t mask, ClassSectionInfo sectionInfo)
+lvaddr_t JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t mask, ClassSectionInfo sectionInfo)
 {
    // HOTFIX : caching a reference name, the original string could be corrupted
    IdentifierString className(referenceInfo.referenceName);
@@ -896,7 +896,7 @@ vaddr_t JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, ref_
    References      references(RefInfo(0, NULL));
 
    // create VMT
-   vaddr_t vaddress = createBytecodeVMTSection(referenceInfo, mask, sectionInfo, references);
+   lvaddr_t vaddress = createBytecodeVMTSection(referenceInfo, mask, sectionInfo, references);
 
    //HOTFIX : resolve class symbol as well
    if (_classSymbolAutoLoadMode)
@@ -908,7 +908,7 @@ vaddr_t JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, ref_
    return vaddress;
 }
 
-void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image, pos_t position, vaddr_t &vmtVAddress,
+void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image, pos_t position, lvaddr_t &vmtVAddress,
    bool constArrayMode, References* messageReferences)
 {
    // resolve section references
@@ -925,7 +925,7 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
          (*image)[imageOffset] = resolveMessage(sectionInfo.module, (*sectionInfo.section)[*it], messageReferences);
       }
       else if (currentMask == mskVMTEntryOffset) {
-         vaddr_t refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, mskVMTRef), mskVMTRef, false);
+         lvaddr_t refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, mskVMTRef), mskVMTRef, false);
 
          // message id should be replaced with an appropriate method address
          pos_t offset = *it;
@@ -940,7 +940,7 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
          pos_t offset = *it;
          mssg_t messageID = resolveMessage(sectionInfo.module, (*sectionInfo.section)[offset], messageReferences);
 
-         //vaddr_t address = resolveVMTMethodAddress(sectionInfo.module, currentRef, messageID);
+         //lvaddr_t address = resolveVMTMethodAddress(sectionInfo.module, currentRef, messageID);
          //if (_virtualMode) {
          //   (*image)[imageOffset] = (pos_t)address;
          //   
@@ -961,7 +961,7 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
          (*image)[imageOffset] = parseAction(sectionInfo.module->resolveReference(currentRef));
       }
       else {
-         vaddr_t refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+         lvaddr_t refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
 
          if (*it == -4) {
             // resolve the constant vmt reference
@@ -974,7 +974,7 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
    }
 }
 
-vaddr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t mask, bool silentMode)
+lvaddr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t mask, bool silentMode)
 {
    if (referenceInfo.referenceName.find("rusLat") != NOTFOUND_POS)
       mask |= 0;
@@ -1011,10 +1011,10 @@ vaddr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t mask, bo
    else constantValue = false;
 
    // get constant VMT reference
-   vaddr_t vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
+   lvaddr_t vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
 
    // HOTFIX: if the constant is referred by iself it could be already resolved
-   vaddr_t vaddress = _loader->resolveReference(referenceInfo, mask);
+   lvaddr_t vaddress = _loader->resolveReference(referenceInfo, mask);
    if (vaddress != LOADER_NOTLOADED)
       return vaddress;
 
@@ -1107,12 +1107,12 @@ vaddr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t mask, bo
 //   return (void*)vaddress;
 //}
 
-vaddr_t JITLinker :: resolveStaticVariable(ReferenceInfo referenceInfo, ref_t mask)
+lvaddr_t JITLinker :: resolveStaticVariable(ReferenceInfo referenceInfo, ref_t mask)
 {
    // get target image & resolve virtual address
    MemoryWriter writer(_loader->getTargetSection(mask));
 
-   vaddr_t vaddress = _virtualMode ? writer.Position() | mask : (vaddr_t)writer.Address();
+   lvaddr_t vaddress = _virtualMode ? writer.Position() | mask : (lvaddr_t)writer.Address();
 
    _compiler->allocateVariable(writer);
 
@@ -1123,7 +1123,7 @@ vaddr_t JITLinker :: resolveStaticVariable(ReferenceInfo referenceInfo, ref_t ma
    return vaddress;
 }
 
-vaddr_t JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, ref_t mask)
+lvaddr_t JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, ref_t mask)
 {
    References      references(RefInfo(0, NULL));
 
@@ -1177,7 +1177,7 @@ vaddr_t JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, ref_t mask
    return 0; // !! should be resolved only once
 }
 
-vaddr_t JITLinker :: resolveMetaAttributeTable(ReferenceInfo, ref_t mask)
+lvaddr_t JITLinker :: resolveMetaAttributeTable(ReferenceInfo, ref_t mask)
 {
    _Memory* asection = _loader->getTargetSection(mask);
 
@@ -1233,7 +1233,7 @@ ref_t JITLinker :: parseAction(ident_t reference)
    return resolvedAction;
 }
 
-vaddr_t JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt)
+lvaddr_t JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt)
 {
    int dotPos = referenceInfo.referenceName.find('.');
 
@@ -1243,8 +1243,8 @@ vaddr_t JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_
    // HOTFIX : extension message should be a function one
    messageID |= FUNCTION_MESSAGE;
 
-   vaddr_t vmtExtVAddress = resolve(ReferenceInfo(referenceInfo.module, extensionName), mskVMTRef, false);
-   vaddr_t entryOffset = getVMTMethodAddress(vmtExtVAddress, messageID);;
+   lvaddr_t vmtExtVAddress = resolve(ReferenceInfo(referenceInfo.module, extensionName), mskVMTRef, false);
+   lvaddr_t entryOffset = getVMTMethodAddress(vmtExtVAddress, messageID);;
 
    // get target image & resolve virtual address
    _Memory* image = _loader->getTargetSection(mskRDataRef);
@@ -1253,7 +1253,7 @@ vaddr_t JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_
    // allocate object header
    pos_t vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
 
-   vaddr_t vaddress = calculateVAddress(&writer, mskRDataRef);
+   lvaddr_t vaddress = calculateVAddress(&writer, mskRDataRef);
 
    _loader->mapReference(referenceInfo, vaddress, mskMessage);
 
@@ -1263,7 +1263,7 @@ vaddr_t JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_
    else _compiler->compileMssgExtension(&writer, messageID, entryOffset);
 
    // get constant VMT reference
-   vaddr_t vmtVAddress = resolve(vmt, mskVMTRef, false);
+   lvaddr_t vmtVAddress = resolve(vmt, mskVMTRef, false);
 
    // fix object VMT reference
    resolveReference(image, vmtPosition, vmtVAddress, mskVMTRef, _virtualMode);
@@ -1271,7 +1271,7 @@ vaddr_t JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_
    return vaddress;
 }
 
-vaddr_t JITLinker :: resolveAction(ReferenceInfo referenceInfo, ident_t vmt)
+lvaddr_t JITLinker :: resolveAction(ReferenceInfo referenceInfo, ident_t vmt)
 {
    // get target image & resolve virtual address
    _Memory* image = _loader->getTargetSection(mskRDataRef);
@@ -1280,14 +1280,14 @@ vaddr_t JITLinker :: resolveAction(ReferenceInfo referenceInfo, ident_t vmt)
    // allocate object header
    pos_t vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
 
-   vaddr_t vaddress = calculateVAddress(&writer, mskRDataRef);
+   lvaddr_t vaddress = calculateVAddress(&writer, mskRDataRef);
 
    _loader->mapReference(referenceInfo, vaddress, mskMessage);
 
    _compiler->compileAction(&writer, parseAction(referenceInfo.referenceName));
 
    // get constant VMT reference
-   vaddr_t vmtVAddress = resolve(vmt, mskVMTRef, false);
+   lvaddr_t vmtVAddress = resolve(vmt, mskVMTRef, false);
 
    // fix object VMT reference
    resolveReference(image, vmtPosition, vmtVAddress, mskVMTRef, _virtualMode);
@@ -1295,7 +1295,7 @@ vaddr_t JITLinker :: resolveAction(ReferenceInfo referenceInfo, ident_t vmt)
    return vaddress;
 }
 
-vaddr_t JITLinker :: resolveMessage(ReferenceInfo referenceInfo, ident_t vmt)
+lvaddr_t JITLinker :: resolveMessage(ReferenceInfo referenceInfo, ident_t vmt)
 {
    // get target image & resolve virtual address
    _Memory* image = _loader->getTargetSection(mskRDataRef);
@@ -1304,14 +1304,14 @@ vaddr_t JITLinker :: resolveMessage(ReferenceInfo referenceInfo, ident_t vmt)
    // allocate object header
    pos_t vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
 
-   vaddr_t vaddress = calculateVAddress(&writer, mskRDataRef);
+   lvaddr_t vaddress = calculateVAddress(&writer, mskRDataRef);
 
    _loader->mapReference(referenceInfo, vaddress, mskMessage);
 
    _compiler->compileMessage(&writer, parseMessage(referenceInfo.referenceName));
 
    // get constant VMT reference
-   vaddr_t vmtVAddress = resolve(vmt, mskVMTRef, false);
+   lvaddr_t vmtVAddress = resolve(vmt, mskVMTRef, false);
 
    // fix object VMT reference
    resolveReference(image, vmtPosition, vmtVAddress, mskVMTRef, _virtualMode);
@@ -1343,10 +1343,10 @@ void JITLinker :: createNativeDebugInfo(ident_t reference, void* param, pos_t& s
    sizePtr = writer.Position();
    writer.writeDWord(0); // size place holder
 
-   writer.writeDWord((vaddr_t)param);
+   writer.writeDWord((lvaddr_t)param);
 }
 
-void JITLinker :: createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, vaddr_t address, pos_t& sizePtr)
+void JITLinker :: createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, lvaddr_t address, pos_t& sizePtr)
 {
    _Memory* debug = _loader->getTargetDebugSection();
 
@@ -1381,7 +1381,7 @@ void JITLinker :: createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, vaddr
    else writer.writeRef((ref_t)address, 0);
 }
 
-void JITLinker :: createNativeClassDebugInfo(ReferenceInfo referenceInfo, vaddr_t vaddress, pos_t& sizePtr)
+void JITLinker :: createNativeClassDebugInfo(ReferenceInfo referenceInfo, lvaddr_t vaddress, pos_t& sizePtr)
 {
    _Memory* debug = _loader->getTargetDebugSection();
 
@@ -1410,13 +1410,13 @@ void JITLinker :: endNativeDebugInfo(size_t sizePtr)
    (*debug)[sizePtr] = debug->Length() - sizePtr;
 }
 
-vaddr_t JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param)
+lvaddr_t JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param)
 {
    _Memory* image = _loader->getTargetSection(mskCodeRef);
 
    // map dynamic code
    MemoryWriter writer(image);
-   vaddr_t vaddress = calculateVAddress(&writer, mskCodeRef);
+   lvaddr_t vaddress = calculateVAddress(&writer, mskCodeRef);
 
    if (param && _withDebugInfo && !emptystr(reference)) {
       // it it is a debug mode a special debug record is created containing link to tape
@@ -1461,13 +1461,13 @@ void JITLinker :: generateInitTape(MemoryDump& tape)
       _Module* module = (*it).value1;
       ref_t initRef = (*it).value2;
 
-      vaddr_t initializer = resolveBytecodeSection(ReferenceInfo(module, initSymbol), mskCodeRef, helper.getSection(initRef | mskSymbolRef, module));
+      lvaddr_t initializer = resolveBytecodeSection(ReferenceInfo(module, initSymbol), mskCodeRef, helper.getSection(initRef | mskSymbolRef, module));
       if (initializer != LOADER_NOTLOADED) {
          if (!_virtualMode) {
             // HOTFIX : in VM mode - use relative address
             _Memory* image = _loader->getTargetSection(mskCodeRef);
 
-            _compiler->generateSymbolCall(tape, initializer - (vaddr_t)image->get(0));
+            _compiler->generateSymbolCall(tape, initializer - (lvaddr_t)image->get(0));
          }
          else _compiler->generateSymbolCall(tape, initializer);
       }
@@ -1478,7 +1478,7 @@ void JITLinker :: generateInitTape(MemoryDump& tape)
    _initializers.clear();
 }
 
-vaddr_t JITLinker :: resolveEntry(vaddr_t programEntry)
+lvaddr_t JITLinker :: resolveEntry(lvaddr_t programEntry)
 {
    MemoryDump   ecodes;
 
@@ -1495,7 +1495,7 @@ vaddr_t JITLinker :: resolveEntry(vaddr_t programEntry)
    ReferenceHelper refHelper(this, NULL, &references);
    MemoryReader reader(&ecodes);
 
-   vaddr_t entry = resolveTemporalByteCode(refHelper, reader, nullptr, nullptr);
+   lvaddr_t entry = resolveTemporalByteCode(refHelper, reader, nullptr, nullptr);
 
    // fix not loaded references
    fixReferences(references, _loader->getTargetSection(mskCodeRef));
@@ -1504,9 +1504,9 @@ vaddr_t JITLinker :: resolveEntry(vaddr_t programEntry)
 }
 
 // NOTE: reference should not be a forward one, otherwise there may be code duplication
-vaddr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t mask, bool silentMode)
+lvaddr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t mask, bool silentMode)
 {
-   vaddr_t vaddress = _loader->resolveReference(referenceInfo, mask);
+   lvaddr_t vaddress = _loader->resolveReference(referenceInfo, mask);
    if (vaddress==LOADER_NOTLOADED) {
       //printf("%s - %x\n", referenceInfo.referenceName.c_str(), mask);
 
@@ -1591,7 +1591,7 @@ vaddr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t mask, bool silen
    return vaddress;
 }
 
-vaddr_t JITLinker :: resolve(ident_t reference, ref_t mask, bool silentMode)
+lvaddr_t JITLinker :: resolve(ident_t reference, ref_t mask, bool silentMode)
 {
    return resolve(ReferenceInfo(reference), mask, silentMode);
 }
@@ -1621,7 +1621,7 @@ void JITLinker :: prepareCompiler()
 void JITLinker :: fixImage(ident_t superClass)
 {
    // HOTFIX : setting a reference to the super class class in VOID
-   vaddr_t superPtr = resolve(superClass, mskVMTRef, true);
+   lvaddr_t superPtr = resolve(superClass, mskVMTRef, true);
    //void* ptr = _compiler->findClassPtr(superPtr);
 
    _compiler->setVoidParent(_loader, superPtr, _virtualMode);

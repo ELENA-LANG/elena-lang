@@ -37,7 +37,7 @@ namespace _ELENA_
 
    constexpr auto INVALID_REF             = (ref_t)0xFFFFFFFFu;
    constexpr auto INVALID_PTR             = (uintptr_t)-1;
-   constexpr auto INVALID_VADDR           = (vaddr_t)-1;
+   constexpr auto INVALID_VADDR           = (lvaddr_t)-1;
 
    constexpr auto EQUAL_OPERATOR_ID       = 0x0004;
    constexpr auto SET_OPERATOR_ID         = 0x0007;

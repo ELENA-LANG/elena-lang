@@ -159,12 +159,12 @@ protected:
       virtual SectionInfo getCoreSection(ref_t reference) { return SectionInfo(); }
       virtual SectionInfo getSection(ref_t reference, _Module* module) { return SectionInfo(); }
 
-      virtual vaddr_t getVAddress(MemoryWriter& writer, ref_t mask) { return NULL; }
+      virtual lvaddr_t getVAddress(MemoryWriter& writer, ref_t mask) { return NULL; }
 
       virtual mssg_t resolveMessage(mssg_t reference, _Module* module) { return reference; }
 
-      virtual void writeVAddress(MemoryWriter& writer, vaddr_t vaddress, pos_t disp);
-      virtual void writeRelVAddress(MemoryWriter& writer, vaddr_t vaddress, ref_t mask, pos_t disp);
+      virtual void writeVAddress(MemoryWriter& writer, lvaddr_t vaddress, pos_t disp);
+      virtual void writeRelVAddress(MemoryWriter& writer, lvaddr_t vaddress, ref_t mask, pos_t disp);
 
       virtual void writeReference(MemoryWriter& writer, ref_t reference, pos_t disp, _Module* module);
       virtual void writeMTReference(MemoryWriter& writer);
@@ -176,7 +176,7 @@ protected:
 
       virtual void addBreakpoint(pos_t position);
 
-      void writeTape(MemoryWriter& tape, vaddr_t vaddress, int mask);
+      void writeTape(MemoryWriter& tape, lvaddr_t vaddress, int mask);
 
       ImageReferenceHelper(Instance* instance)
       {
@@ -275,9 +275,9 @@ protected:
 ////      _actions.write(writer);
 //   }
 
-   vaddr_t loadReference(SystemEnv* systemEnv, ident_t referenceName, int mask, bool silentMode)
+   lvaddr_t loadReference(SystemEnv* systemEnv, ident_t referenceName, int mask, bool silentMode)
    {
-      vaddr_t ref = 0;
+      lvaddr_t ref = 0;
       if (_debugMode) {
          //// remove subject list from the debug section
          _Memory* debugSection = getTargetDebugSection();
@@ -415,12 +415,12 @@ public:
 
    virtual ident_t getSubject(ref_t subjectRef);
 
-   virtual vaddr_t getClassVMTRef(SystemEnv* systemEnv, ident_t referenceName, bool silentMode)
+   virtual lvaddr_t getClassVMTRef(SystemEnv* systemEnv, ident_t referenceName, bool silentMode)
    {
       return loadReference(systemEnv, referenceName, mskVMTRef, silentMode);
    }
 
-   virtual vaddr_t getSymbolRef(SystemEnv* systemEnv, ident_t referenceName, bool silentMode)
+   virtual lvaddr_t getSymbolRef(SystemEnv* systemEnv, ident_t referenceName, bool silentMode)
    {
       return loadReference(systemEnv, referenceName, mskSymbolRef, silentMode);
    }
@@ -461,7 +461,7 @@ public:
 
    virtual bool initSymbolReference(void* object, ident_t referenceName)
    {
-      vaddr_t symbolAddress = loadSymbol(referenceName, mskSymbolRef, true);
+      lvaddr_t symbolAddress = loadSymbol(referenceName, mskSymbolRef, true);
       if (symbolAddress != LOADER_NOTLOADED) {
          *(int*)object = (int)symbolAddress;
 
@@ -476,7 +476,7 @@ public:
 
 //   bool init();
 
-   vaddr_t loadSymbol(ident_t reference, int mask, bool silentMode = false);
+   lvaddr_t loadSymbol(ident_t reference, int mask, bool silentMode = false);
 
    int interprete(SystemEnv* env, void* sehTable, void* tape, bool standAlone);
 

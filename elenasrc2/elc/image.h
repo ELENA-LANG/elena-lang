@@ -39,7 +39,7 @@ public:
 
 private:
    Project* _project;
-   vaddr_t  _entryPoint;
+   lvaddr_t  _entryPoint;
    pos_t    _objectHeaderSize;
 
    ident_t  _literal;
@@ -53,7 +53,7 @@ private:
    ident_t  _messageName;
 
 public:
-   virtual vaddr_t getEntryPoint()
+   virtual lvaddr_t getEntryPoint()
    {
       return (ref_t)_entryPoint & ~mskAnyRef;
    }

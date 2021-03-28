@@ -207,7 +207,7 @@ void JITCompiler32 :: compileCollection(MemoryWriter* writer, _Memory* binary)
    writer->align(4, 0);
 }
 
-void JITCompiler32 :: compileMAttribute(MemoryWriter& writer, int category, ident_t fullName, vaddr_t address, bool virtualMode)
+void JITCompiler32 :: compileMAttribute(MemoryWriter& writer, int category, ident_t fullName, lvaddr_t address, bool virtualMode)
 {
    writer.writeDWord(category);
    writer.writeDWord(getlength(fullName) + 9);
@@ -219,7 +219,7 @@ void JITCompiler32 :: compileMAttribute(MemoryWriter& writer, int category, iden
    else writer.writeRef((ref_t)address, 0);
 }
 
-vaddr_t JITCompiler32 :: findClassPtr(void* refVMT)
+lvaddr_t JITCompiler32 :: findClassPtr(void* refVMT)
 {
    VMTHeader* header = (VMTHeader*)((uintptr_t)refVMT - elVMTClassOffset32);
 
@@ -240,7 +240,7 @@ size_t JITCompiler32 :: findLength(void* refVMT)
    return header->count;
 }
 
-vaddr_t JITCompiler32 :: findMethodAddress(void* refVMT, mssg_t message, size_t count)
+lvaddr_t JITCompiler32 :: findMethodAddress(void* refVMT, mssg_t message, size_t count)
 {
    VMTEntry* entries = (VMTEntry*)refVMT;
 
@@ -339,7 +339,7 @@ pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, VMTEntry* entries)
    else return 0;
 }
 
-void JITCompiler32 :: addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& entryCount)
+void JITCompiler32 :: addVMTEntry(mssg_t message, lvaddr_t codePosition, VMTEntry* entries, pos_t& entryCount)
 {
    size_t index = 0;
 
@@ -359,7 +359,7 @@ void JITCompiler32 :: addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry
    entries[index].address = codePosition;
 }
 
-void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t parentVAddress, pos_t count,
+void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, lvaddr_t classClassVAddress, lvaddr_t parentVAddress, pos_t count,
    bool virtualMode, bool abstractMode)
 {
    _Memory* image = vmtWriter.Memory();
@@ -647,7 +647,7 @@ void JITCompiler64 :: compileCollection(MemoryWriter* writer, _Memory* binary)
    writer->align(8, 0);
 }
 
-void JITCompiler64 :: compileMAttribute(MemoryWriter& writer, int category, ident_t fullName, vaddr_t address, bool virtualMode)
+void JITCompiler64 :: compileMAttribute(MemoryWriter& writer, int category, ident_t fullName, lvaddr_t address, bool virtualMode)
 {
    writer.writeDWord(category);
    writer.writeDWord(getlength(fullName) + 9);
@@ -674,19 +674,19 @@ size_t JITCompiler64 :: findLength(void* refVMT)
    return (size_t)header->count;
 }
 
-vaddr_t JITCompiler64 :: findClassPtr(void* refVMT)
+lvaddr_t JITCompiler64 :: findClassPtr(void* refVMT)
 {
    VMTXHeader* header = (VMTXHeader*)((uintptr_t)refVMT - elVMTClassOffset64);
 
-   return (vaddr_t)header->parentRef;
+   return (lvaddr_t)header->parentRef;
 }
 
-vaddr_t JITCompiler64 :: findMethodAddress(void* refVMT, mssg_t message, size_t count)
+lvaddr_t JITCompiler64 :: findMethodAddress(void* refVMT, mssg_t message, size_t count)
 {
    return findMethodAddressX(refVMT, toMessage64(message), count);
 }
 
-vaddr_t JITCompiler64 :: findMethodAddressX(void* refVMT, mssg64_t messageID, size_t count)
+lvaddr_t JITCompiler64 :: findMethodAddressX(void* refVMT, mssg64_t messageID, size_t count)
 {
    VMTXEntry* entries = (VMTXEntry*)refVMT;
 
@@ -698,7 +698,7 @@ vaddr_t JITCompiler64 :: findMethodAddressX(void* refVMT, mssg64_t messageID, si
 
    // return the method address
    // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
-   return (i < count) ? (vaddr_t)entries[i].address : (vaddr_t)entries[0].address;
+   return (i < count) ? (lvaddr_t)entries[i].address : (lvaddr_t)entries[0].address;
 }
 
 pos_t JITCompiler64 :: findMethodIndex(void* refVMT, mssg_t message, size_t count)
@@ -798,13 +798,13 @@ pos_t JITCompiler64 :: copyParentVMTX(void* parentVMT, VMTXEntry* entries)
    else return 0;
 }
 
-void JITCompiler64 :: addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& entryCount)
+void JITCompiler64 :: addVMTEntry(mssg_t message, lvaddr_t codePosition, VMTEntry* entries, pos_t& entryCount)
 {
    // HOTFIX : 64bit compiler supports only VMTX
    addVMTXEntry(toMessage64(message), codePosition, (VMTXEntry*)entries, entryCount);
 }
 
-void JITCompiler64 :: addVMTXEntry(mssg64_t message, vaddr_t codePosition, VMTXEntry* entries, pos_t& entryCount)
+void JITCompiler64 :: addVMTXEntry(mssg64_t message, lvaddr_t codePosition, VMTXEntry* entries, pos_t& entryCount)
 {
    size_t index = 0;
 
@@ -824,7 +824,7 @@ void JITCompiler64 :: addVMTXEntry(mssg64_t message, vaddr_t codePosition, VMTXE
    entries[index].address = codePosition;
 }
 
-void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t parentVAddress,
+void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, lvaddr_t classClassVAddress, lvaddr_t parentVAddress,
    pos_t count, bool virtualMode, bool abstractMode)
 {
    _Memory* image = vmtWriter.Memory();

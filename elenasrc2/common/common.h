@@ -40,11 +40,11 @@ namespace _ELENA_
 
 #ifdef _WIN64
 
-   typedef unsigned __int64   vaddr_t;
+   typedef unsigned __int64   lvaddr_t;
 
 #elif _WIN32
 
-   typedef unsigned int       vaddr_t;
+   typedef unsigned int       lvaddr_t;
 
 #endif
 
@@ -73,11 +73,11 @@ namespace _ELENA_
 
 #if defined(__LP64__)
 
-   typedef unsigned long long vaddr_t;
+   typedef unsigned long long lvaddr_t;
 
 #else
 
-   typedef unsigned int       vaddr_t;
+   typedef unsigned int       lvaddr_t;
 
 #endif
 

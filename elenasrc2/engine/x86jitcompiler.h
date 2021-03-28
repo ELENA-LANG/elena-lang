@@ -169,7 +169,7 @@ protected:
    IntFixedMap<void*> _inlineExs;
 
    // preloaded references
-   IntFixedMap<vaddr_t> _preloaded;
+   IntFixedMap<lvaddr_t> _preloaded;
 
    void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
 
@@ -179,7 +179,7 @@ public:
 
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code);
 
-   virtual vaddr_t getPreloadedReference(ref_t reference);
+   virtual lvaddr_t getPreloadedReference(ref_t reference);
 
    virtual void prepareCore(_ReferenceHelper& helper, _JITLoader* loader);
 
@@ -193,15 +193,15 @@ public:
 //   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section);
 
    virtual void setStaticRootCounter(_JITLoader* loader, pos_t counter, bool virtualMode);
-   virtual void setTLSKey(vaddr_t ptr);
-   virtual void setThreadTable(vaddr_t ptr);
-   virtual void setEHTable(vaddr_t ptr);
-   virtual void setGCTable(vaddr_t ptr);
-   virtual void setVoidParent(_JITLoader* loader, vaddr_t ptr, bool virtualMode);
+   virtual void setTLSKey(lvaddr_t ptr);
+   virtual void setThreadTable(lvaddr_t ptr);
+   virtual void setEHTable(lvaddr_t ptr);
+   virtual void setGCTable(lvaddr_t ptr);
+   virtual void setVoidParent(_JITLoader* loader, lvaddr_t ptr, bool virtualMode);
 
-   virtual vaddr_t getInvoker();
+   virtual lvaddr_t getInvoker();
 
-   virtual void generateSymbolCall(MemoryDump& tape, vaddr_t address);
+   virtual void generateSymbolCall(MemoryDump& tape, lvaddr_t address);
    virtual void generateProgramEnd(MemoryDump& tape);
 //   virtual void generateArg(MemoryDump& tape, void* address);
 //   virtual void generateExternalCall(MemoryDump& tape, ref_t functionReference);

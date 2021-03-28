@@ -90,10 +90,10 @@ public:
    virtual const char* getLiteral(const char* def) = 0;
    virtual const wide_c* getLiteral(const wide_c* def) = 0;
 
-   vaddr_t getVAddress()
+   lvaddr_t getVAddress()
    {
-      vaddr_t value = 0;
-      read(&value, sizeof(vaddr_t));
+      lvaddr_t value = 0;
+      read(&value, sizeof(lvaddr_t));
 
       return value;
    }
@@ -285,9 +285,9 @@ public:
       return write((void*)&ch, 1);
    }
 
-   void writeVAddress(vaddr_t addr)
+   void writeVAddress(lvaddr_t addr)
    {
-      write(&addr, sizeof(vaddr_t));
+      write(&addr, sizeof(lvaddr_t));
    }
 
    virtual bool writeBytes(unsigned char ch, pos_t count)

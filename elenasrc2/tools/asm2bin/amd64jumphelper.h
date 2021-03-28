@@ -17,8 +17,8 @@ namespace _ELENA_
 class AMD64JumpHelper
 {
    AMD64LabelHelper      _helper;
-   Map<ident_t, vaddr_t> _labels;
-   Map<ident_t, vaddr_t> _declaredLabels;
+   Map<ident_t, lvaddr_t> _labels;
+   Map<ident_t, lvaddr_t> _declaredLabels;
 
 public:
    bool checkDeclaredLabel(ident_t label)

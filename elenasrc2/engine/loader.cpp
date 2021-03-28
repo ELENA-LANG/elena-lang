@@ -13,7 +13,7 @@ using namespace _ELENA_;
 
 // --- ImageLoader ---
 
-void _ImageLoader :: mapReference(ident_t reference, vaddr_t vaddress, pos_t mask)
+void _ImageLoader :: mapReference(ident_t reference, lvaddr_t vaddress, pos_t mask)
 {
    switch (mask) {
       case mskConstantRef:
@@ -68,7 +68,7 @@ void _ImageLoader :: mapReference(ident_t reference, vaddr_t vaddress, pos_t mas
    }
 }
 
-void _ImageLoader :: mapReference(ReferenceInfo referenceInfo, vaddr_t vaddress, ref_t mask)
+void _ImageLoader :: mapReference(ReferenceInfo referenceInfo, lvaddr_t vaddress, ref_t mask)
 {
    if (referenceInfo.isRelative()) {
       IdentifierString fullName(referenceInfo.module->Name(), referenceInfo.referenceName);
@@ -78,9 +78,9 @@ void _ImageLoader :: mapReference(ReferenceInfo referenceInfo, vaddr_t vaddress,
    else mapReference(referenceInfo.referenceName, vaddress, mask);
 }
 
-vaddr_t _ImageLoader :: resolveExternal(ident_t external)
+lvaddr_t _ImageLoader :: resolveExternal(ident_t external)
 {
-   vaddr_t reference = _exportReferences.get(external);
+   lvaddr_t reference = _exportReferences.get(external);
    if (reference == INVALID_VADDR) {
       reference = (_exportReferences.Count() + 1) | mskImportRef;
 
@@ -89,7 +89,7 @@ vaddr_t _ImageLoader :: resolveExternal(ident_t external)
    return reference;
 }
 
-vaddr_t _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
+lvaddr_t _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
 {
    if (mask != 0) {
       switch (mask) {
@@ -151,7 +151,7 @@ vaddr_t _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
    else throw InternalError("Unsupported");
 }
 
-vaddr_t _ImageLoader :: resolveReference(ReferenceInfo referenceInfo, ref_t mask)
+lvaddr_t _ImageLoader :: resolveReference(ReferenceInfo referenceInfo, ref_t mask)
 {
    if (referenceInfo.isRelative()) {
       IdentifierString fullName(referenceInfo.module->Name(), referenceInfo.referenceName);

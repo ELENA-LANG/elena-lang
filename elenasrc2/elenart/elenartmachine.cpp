@@ -166,7 +166,7 @@ void ELENARTMachine :: init(void* messageTable, void* mattributeTable, path_t co
    loadConfig(configPath);
 }
 
-int ELENARTMachine :: readCallStack(size_t framePosition, vaddr_t currentAddress, vaddr_t startLevel, vaddr_t* buffer, pos_t maxLength)
+int ELENARTMachine :: readCallStack(size_t framePosition, lvaddr_t currentAddress, lvaddr_t startLevel, lvaddr_t* buffer, pos_t maxLength)
 {
    RTManager manager;
 
@@ -176,7 +176,7 @@ int ELENARTMachine :: readCallStack(size_t framePosition, vaddr_t currentAddress
    return manager.readCallStack(reader, framePosition, currentAddress, startLevel, buffer, maxLength);
 }
 
-vaddr_t ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxLength)
+lvaddr_t ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxLength)
 {
    // lazy load of debug data
    if (_debugSection.Length() == 0 && !loadDebugSection())
@@ -194,7 +194,7 @@ vaddr_t ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t 
    return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
 }
 
-size_t ELENARTMachine :: loadClassName(vaddr_t classAddress, char* buffer, size_t length)
+size_t ELENARTMachine :: loadClassName(lvaddr_t classAddress, char* buffer, size_t length)
 {
    uintptr_t packagePtr = *(uintptr_t*)(classAddress - cnPackageOffset);
    uintptr_t namePtr = *(uintptr_t*)(classAddress - cnNameOffset);
@@ -267,7 +267,7 @@ size_t ELENARTMachine :: loadMessageName(mssg_t messageRef, char* buffer, size_t
    return prefixLen + used;
 }
 
-vaddr_t ELENARTMachine :: loadMetaAttribute(ident_t name, int category)
+lvaddr_t ELENARTMachine :: loadMetaAttribute(ident_t name, int category)
 {
    ImageSection mattrSection;
    mattrSection.init(_mattributesSection, 0x10000); // !! dummy size
@@ -280,7 +280,7 @@ vaddr_t ELENARTMachine :: loadMetaAttribute(ident_t name, int category)
    return manager.loadMetaAttribute(reader, name, category, len);
 }
 
-vaddr_t ELENARTMachine :: loadSignatureMember(mssg_t message, int index)
+lvaddr_t ELENARTMachine :: loadSignatureMember(mssg_t message, int index)
 {
    ImageSection messageSection;
    messageSection.init(_messageSection, 0x1000000); // !! dummy size
@@ -394,7 +394,7 @@ inline uintptr_t RetrievePackageVMT(uintptr_t ptr)
    return *(uintptr_t*)(str - elPageVMTOffset32);
 }
 
-vaddr_t ELENARTMachine :: inherit(SystemEnv* env, const char* name, VMTEntry* src, VMTEntry* base, size_t srcLength, 
+lvaddr_t ELENARTMachine :: inherit(SystemEnv* env, const char* name, VMTEntry* src, VMTEntry* base, size_t srcLength, 
    size_t baseLength, pos_t* addresses, size_t length, int flags)
 {
    static int nameIndex = 0;
@@ -404,7 +404,7 @@ vaddr_t ELENARTMachine :: inherit(SystemEnv* env, const char* name, VMTEntry* sr
    if (namedOne) {
       void* addr = _generated.get(name);
       if (addr)
-         return (vaddr_t)addr;
+         return (lvaddr_t)addr;
    }
 
    // TODO : check if the source class is stateless interface (and probably without static fields?)
@@ -434,7 +434,7 @@ vaddr_t ELENARTMachine :: inherit(SystemEnv* env, const char* name, VMTEntry* sr
    int staticSize = 2;
 
    size_t size = (srcLength * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset32 + staticSize * sizeof(uintptr_t);
-   vaddr_t ptr = (vaddr_t)SystemRoutineProvider::GCRoutinePerm(env->Table, size,
+   lvaddr_t ptr = (lvaddr_t)SystemRoutineProvider::GCRoutinePerm(env->Table, size,
       env->GCPERMSize);
 
    // HOTFIX : hard-codied copy build-in static variables
@@ -475,5 +475,5 @@ vaddr_t ELENARTMachine :: inherit(SystemEnv* env, const char* name, VMTEntry* sr
    if (namedOne)
       _generated.add(name, entries);
 
-   return (vaddr_t)entries;
+   return (lvaddr_t)entries;
 }

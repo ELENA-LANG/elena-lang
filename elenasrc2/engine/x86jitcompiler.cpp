@@ -2143,7 +2143,7 @@ inline void loadCoreData(_ReferenceHelper& helper, x86JITScope& dataScope, ref_t
 }
 
 inline void loadRoutines(int functionNumber, const int* functions, x86JITScope& scope,
-   IntFixedMap<vaddr_t>& preloaded)
+   IntFixedMap<lvaddr_t>& preloaded)
 {
    for (int i = 0; i < functionNumber; i++) {
       if (!preloaded.exist(functions[i])) {
@@ -2246,7 +2246,7 @@ void x86JITCompiler :: setStaticRootCounter(_JITLoader* loader, pos_t counter, b
       (*data)[offset] = (counter << 2);
    }
    else {
-      vaddr_t offset = _preloaded.get(SYSTEM_ENV);
+      lvaddr_t offset = _preloaded.get(SYSTEM_ENV);
  	   *(pos_t*)offset = (counter << 2);
    }
 }
@@ -2256,32 +2256,32 @@ void x86JITCompiler :: setTLSKey(pos_t ptr)
    _preloaded.add(CORE_TLS_INDEX, ptr);
 }
 
-void x86JITCompiler :: setThreadTable(vaddr_t ptr)
+void x86JITCompiler :: setThreadTable(lvaddr_t ptr)
 {
    _preloaded.add(CORE_THREADTABLE, ptr);
 }
 
-void x86JITCompiler :: setEHTable(vaddr_t ptr)
+void x86JITCompiler :: setEHTable(lvaddr_t ptr)
 {
    _preloaded.add(CORE_EH_TABLE, ptr);
 }
 
-void x86JITCompiler :: setGCTable(vaddr_t ptr)
+void x86JITCompiler :: setGCTable(lvaddr_t ptr)
 {
    _preloaded.add(CORE_GC_TABLE, ptr);
 }
 
-vaddr_t x86JITCompiler :: getPreloadedReference(ref_t reference)
+lvaddr_t x86JITCompiler :: getPreloadedReference(ref_t reference)
 {
    return _preloaded.get(reference);
 }
 
-vaddr_t x86JITCompiler :: getInvoker()
+lvaddr_t x86JITCompiler :: getInvoker()
 {
    return _preloaded.get(INVOKER);
 }
 
-void x86JITCompiler :: setVoidParent(_JITLoader* loader, vaddr_t ptr, bool virtualMode)
+void x86JITCompiler :: setVoidParent(_JITLoader* loader, lvaddr_t ptr, bool virtualMode)
 {
    if (virtualMode) {
       pos_t offset = ((size_t)_preloaded.get(VOIDOBJ) & ~mskAnyRef);
@@ -2388,7 +2388,7 @@ void x86JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& 
    alignCode(&codeWriter, 0x04, true);
 }
 
-void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, vaddr_t address)
+void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, lvaddr_t address)
 {
    MemoryWriter ecodes(&tape);
 

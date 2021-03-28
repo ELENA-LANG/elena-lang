@@ -157,11 +157,11 @@ public:
 
    virtual ReferenceInfo retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
 
-   virtual vaddr_t resolveReference(ReferenceInfo referenceInfo, ref_t mask) = 0;
+   virtual lvaddr_t resolveReference(ReferenceInfo referenceInfo, ref_t mask) = 0;
 
 //   //virtual void mapPredefinedAction(ident_t name, ref_t reference) = 0;
 
-   virtual void mapReference(ReferenceInfo referenceInfo, vaddr_t vaddress, ref_t mask) = 0;
+   virtual void mapReference(ReferenceInfo referenceInfo, lvaddr_t vaddress, ref_t mask) = 0;
 
    virtual void addListener(_JITLoaderListener* listener) = 0;
 
@@ -794,7 +794,7 @@ typedef List<char*>               IdentifierList;
 
 // --- Reference mapping types ---
 typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>   ReferenceMap;
-typedef Memory32HashTable<ident_t, vaddr_t, mapReferenceKey, 29> VAddressMap;
+typedef Memory32HashTable<ident_t, lvaddr_t, mapReferenceKey, 29> VAddressMap;
 typedef Memory32HashTable<ref64_t, ref_t, __map64Key, 64>        ActionMap;
 
 // --- Message mapping types ---

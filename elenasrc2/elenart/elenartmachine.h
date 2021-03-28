@@ -127,23 +127,23 @@ public:
    void Exit(int exitCode);
    void ExitThread(SystemEnv* env, int exitCode);
 
-   int readCallStack(size_t framePosition, vaddr_t currentAddress, vaddr_t startLevel, vaddr_t* buffer, pos_t maxLength);
+   int readCallStack(size_t framePosition, lvaddr_t currentAddress, lvaddr_t startLevel, lvaddr_t* buffer, pos_t maxLength);
 
-   vaddr_t loadAddressInfo(size_t retPoint, char* lineInfo, size_t length);
+   lvaddr_t loadAddressInfo(size_t retPoint, char* lineInfo, size_t length);
 
-   size_t loadClassName(vaddr_t classAddress, char* buffer, size_t length);
+   size_t loadClassName(lvaddr_t classAddress, char* buffer, size_t length);
    size_t loadSubjectName(ref_t subjectRef, char* buffer, size_t length);
    size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
 
-   vaddr_t loadMetaAttribute(ident_t name, int category);
+   lvaddr_t loadMetaAttribute(ident_t name, int category);
    ref_t loadSubject(ident_t name);
    mssg_t loadMessage(ident_t name);
    
-   vaddr_t loadSignatureMember(mssg_t message, int index);
+   lvaddr_t loadSignatureMember(mssg_t message, int index);
    
    uintptr_t createPermString(SystemEnv* env, ident_t s, uintptr_t classPtr);
 
-   vaddr_t inherit(SystemEnv* env, const char* name, VMTEntry* src, VMTEntry* base, size_t srcLength, size_t baseLength, 
+   lvaddr_t inherit(SystemEnv* env, const char* name, VMTEntry* src, VMTEntry* base, size_t srcLength, size_t baseLength, 
       pos_t* addresses, size_t length, int flags);
 
    int loadExtensionDispatcher(const char* moduleList, ref_t message, void* output);

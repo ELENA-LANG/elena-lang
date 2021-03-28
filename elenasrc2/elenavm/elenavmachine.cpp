@@ -148,7 +148,7 @@ void InstanceConfig :: init(path_t configPath, XmlConfigFile& config)
 
 // --- Instance::ImageReferenceHelper ---
 
-void Instance::ImageReferenceHelper :: writeTape(MemoryWriter& tape, vaddr_t vaddress, int mask)
+void Instance::ImageReferenceHelper :: writeTape(MemoryWriter& tape, lvaddr_t vaddress, int mask)
 {
    int ref = vaddress - (test(mask, mskRDataRef) ? _statBase : _codeBase);
 
@@ -164,14 +164,14 @@ void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, ref_
    else writer.writeDWord((test(reference, mskRDataRef) ? _statBase : _codeBase) + pos + disp);
 }
 
-void Instance::ImageReferenceHelper :: writeVAddress(MemoryWriter& writer, vaddr_t vaddress, pos_t disp)
+void Instance::ImageReferenceHelper :: writeVAddress(MemoryWriter& writer, lvaddr_t vaddress, pos_t disp)
 {
    ref_t address = (ref_t)vaddress;
 
    writer.writeDWord(address + disp);
 }
 
-void Instance::ImageReferenceHelper :: writeRelVAddress(MemoryWriter& writer, vaddr_t vaddress, ref_t, pos_t disp)
+void Instance::ImageReferenceHelper :: writeRelVAddress(MemoryWriter& writer, lvaddr_t vaddress, ref_t, pos_t disp)
 {
    ref_t address = (ref_t)vaddress;
 
@@ -533,7 +533,7 @@ ident_t Instance :: getSubject(ref_t subjectRef)
    return _linker->retrieveResolvedAction(subjectRef);
 }
 
-vaddr_t Instance :: loadSymbol(ident_t reference, int mask, bool silentMode)
+lvaddr_t Instance :: loadSymbol(ident_t reference, int mask, bool silentMode)
 {
    // reference should not be a forward one
    while (isForwardReference(reference)) {
@@ -735,9 +735,9 @@ bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode, bool wi
    }
 
    _compiler->setTLSKey(*env->TLSIndex);
-   _compiler->setThreadTable((vaddr_t)env->ThreadTable);
-   _compiler->setEHTable((vaddr_t)sehTable);
-   _compiler->setGCTable((vaddr_t)env->Table);
+   _compiler->setThreadTable((lvaddr_t)env->ThreadTable);
+   _compiler->setEHTable((lvaddr_t)sehTable);
+   _compiler->setGCTable((lvaddr_t)env->Table);
 
    // load predefined code
    _linker->prepareCompiler();
@@ -778,7 +778,7 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
 
    // resolve tape
    size_t command = reader.getDWord();
-   vaddr_t  extra_param = 0;
+   lvaddr_t  extra_param = 0;
    while (command != terminator) {
       ident_t arg = NULL;
       size_t param = reader.getDWord();
@@ -1037,7 +1037,7 @@ void Instance :: onNewInitializers(SystemEnv* env)
    // compile byte code
    MemoryReader reader(&ecodes);
 
-   vaddr_t vaddress = _linker->resolveTemporalByteCode(helper, reader, TAPE_SYMBOL, nullptr);
+   lvaddr_t vaddress = _linker->resolveTemporalByteCode(helper, reader, TAPE_SYMBOL, nullptr);
 
    // update debug section size if available
    if (_debugMode) {
@@ -1097,7 +1097,7 @@ int Instance :: interprete(SystemEnv* env, void* sehTable, void* tape, bool stan
    // compile byte code
    MemoryReader reader(&ecodes);
 
-   vaddr_t vaddress = _linker->resolveTemporalByteCode(helper, reader, TAPE_SYMBOL, tape);
+   lvaddr_t vaddress = _linker->resolveTemporalByteCode(helper, reader, TAPE_SYMBOL, tape);
 
    // update debug section size if available
    if (_debugMode) {

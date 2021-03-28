@@ -329,7 +329,7 @@ inline void loadCoreData(_ReferenceHelper& helper, I64JITScope& dataScope, ref_t
 }
 
 inline void loadRoutines(int functionNumber, const int* functions, I64JITScope& scope,
-   IntFixedMap<vaddr_t>& preloaded)
+   IntFixedMap<lvaddr_t>& preloaded)
 {
    for (int i = 0; i < functionNumber; i++) {
       if (!preloaded.exist(functions[i])) {
@@ -2244,12 +2244,12 @@ void I64JITCompiler :: setStaticRootCounter(_JITLoader* loader, pos_t counter, b
       (*data)[offset] = (counter << 3);
    }
    else {
-      vaddr_t offset = _preloaded.get(SYSTEM_ENV);
+      lvaddr_t offset = _preloaded.get(SYSTEM_ENV);
       *(pos_t*)offset = (counter << 3);
    }
 }
 
-vaddr_t I64JITCompiler :: getPreloadedReference(ref_t reference)
+lvaddr_t I64JITCompiler :: getPreloadedReference(ref_t reference)
 {
    return _preloaded.get(reference);
 }
@@ -2350,7 +2350,7 @@ void I64JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& 
 //   //writer.seekEOF();
 //}
 
-void I64JITCompiler :: generateSymbolCall(MemoryDump& tape, vaddr_t address)
+void I64JITCompiler :: generateSymbolCall(MemoryDump& tape, lvaddr_t address)
 {
    MemoryWriter ecodes(&tape);
 
@@ -2382,27 +2382,27 @@ int I64JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t lengt
    return position;
 }
 
-void I64JITCompiler :: setTLSKey(vaddr_t ptr)
+void I64JITCompiler :: setTLSKey(lvaddr_t ptr)
 {
    _preloaded.add(CORE_TLS_INDEX, ptr);
 }
 
-void I64JITCompiler :: setThreadTable(vaddr_t ptr)
+void I64JITCompiler :: setThreadTable(lvaddr_t ptr)
 {
    _preloaded.add(CORE_THREADTABLE, ptr);
 }
 
-void I64JITCompiler :: setEHTable(vaddr_t ptr)
+void I64JITCompiler :: setEHTable(lvaddr_t ptr)
 {
    _preloaded.add(CORE_EH_TABLE, ptr);
 }
 
-void I64JITCompiler :: setGCTable(vaddr_t ptr)
+void I64JITCompiler :: setGCTable(lvaddr_t ptr)
 {
    _preloaded.add(CORE_GC_TABLE, ptr);
 }
 
-void I64JITCompiler :: setVoidParent(_JITLoader* loader, vaddr_t ptr, bool virtualMode)
+void I64JITCompiler :: setVoidParent(_JITLoader* loader, lvaddr_t ptr, bool virtualMode)
 {
    if (virtualMode) {
       ref_t offset = ((ref_t)_preloaded.get(VOIDOBJ) & ~mskAnyRef);
@@ -2412,12 +2412,12 @@ void I64JITCompiler :: setVoidParent(_JITLoader* loader, vaddr_t ptr, bool virtu
       rdata->addReference((ref_t)ptr, offset);
    }
    else {
-      vaddr_t offset = _preloaded.get(VOIDOBJ);
-      *(vaddr_t*)offset = ptr;
+      lvaddr_t offset = _preloaded.get(VOIDOBJ);
+      *(lvaddr_t*)offset = ptr;
    }
 }
 
-vaddr_t I64JITCompiler :: getInvoker()
+lvaddr_t I64JITCompiler :: getInvoker()
 {
    return _preloaded.get(INVOKER);
 }

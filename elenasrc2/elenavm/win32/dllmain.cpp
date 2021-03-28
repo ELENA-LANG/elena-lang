@@ -114,8 +114,8 @@ EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, char* buffer, int maxLengt
    try {
       size_t length = maxLength;
 
-      uintptr_t packagePtr = *(uintptr_t*)((vaddr_t)vmtAddress - cnPackageOffset);
-      uintptr_t namePtr = *(uintptr_t*)((vaddr_t)vmtAddress - cnNameOffset);
+      uintptr_t packagePtr = *(uintptr_t*)((lvaddr_t)vmtAddress - cnPackageOffset);
+      uintptr_t namePtr = *(uintptr_t*)((lvaddr_t)vmtAddress - cnNameOffset);
 
       char* name = (char*)namePtr;
       char* ns = ((char**)packagePtr)[0];
