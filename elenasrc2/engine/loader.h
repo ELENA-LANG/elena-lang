@@ -86,7 +86,7 @@ public:
 
    virtual ReferenceMap::Iterator getExternalIt() = 0;
 
-   virtual ref_t getEntryPoint() = 0;
+   virtual lvaddr_t getEntryPoint() = 0;
    virtual ref_t getDebugEntryPoint() = 0;
 
    Image(bool standALone);
