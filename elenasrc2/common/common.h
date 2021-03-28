@@ -70,7 +70,17 @@ namespace _ELENA_
    typedef unsigned char      uident_c;
    typedef unsigned int       ref_t;
    typedef unsigned int       pos_t;
+
+#if defined(__LP64__)
+
+   typedef unsigned long long vaddr_t;
+
+#else
+
    typedef unsigned int       vaddr_t;
+
+#endif
+
    typedef unsigned long long ref64_t;
    typedef unsigned long long pos64_t;
    typedef unsigned int       mssg_t;
