@@ -155,7 +155,7 @@ class JITLinker : _JITLoaderListener
    void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, pos_t position, vaddr_t &vmtVAddress, 
       bool constArrayMode, References* messageReferences);
 
-   uintptr_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
+   vaddr_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
 
    ref_t mapAction(SectionInfo& messageTable, ident_t action, ref_t weakActionRef, ref_t signature);
    ref_t resolveWeakAction(SectionInfo& messageTable, ident_t action);

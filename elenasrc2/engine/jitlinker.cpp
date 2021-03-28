@@ -187,10 +187,10 @@ void JITLinker::ReferenceHelper :: writeVAddress(MemoryWriter& writer, vaddr_t v
 void JITLinker::ReferenceHelper::writeRelVAddress(MemoryWriter& writer, vaddr_t vaddress, ref_t mask, pos_t disp)
 {
    if (!_owner->_virtualMode) {
-      ref_t address = vaddress;
-
       // calculate relative address
-      address -= ((ref_t)writer.Address() + 4);
+      vaddress -= ((vaddr_t)writer.Address() + 4);
+
+      ref_t address = vaddress;
 
       writer.writeDWord(address + disp);
    }
