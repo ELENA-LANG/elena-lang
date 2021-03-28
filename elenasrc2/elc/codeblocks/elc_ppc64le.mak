@@ -16,7 +16,7 @@ CFLAGS = -mcpu=power8 -Wall -std=c++11 -m64 -Wno-conversion-null -Wno-switch -D_
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = -m32 -static-libgcc -static-libstdc++ -ldl
+LDFLAGS = -m64 -static-libgcc -static-libstdc++ -ldl
 
 INC_DEBUG = $(INC)
 CFLAGS_DEBUG = $(CFLAGS) -g
