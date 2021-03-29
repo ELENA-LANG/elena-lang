@@ -48,7 +48,10 @@ clean_lnx32: clean_elc_lnx32 clean_sg_lnx32
 clean_ppc64le: clean_elc_ppc64le clean_sg_ppc64le
 
 clean_elc_lnx32: 
-	$(MAKE) -C elenasrc2/elc/codeblocks clean -f elc_lnx32.cbp.mak
+	$(MAKE) -C elenasrc2/elc/codeblocks clean -f elc_lnx32.mak
+
+clean_elc_ppc64le: 
+	$(MAKE) -C elenasrc2/elc/codeblocks clean -f elc_ppc64le.mak
 
 clean_elenart_lnx32: 
 	$(MAKE) -C elenasrc2/elenart/codeblocks clean -f elenart_lnx32.cbp.mak
