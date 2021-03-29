@@ -96,72 +96,72 @@ namespace io
             = fileControl.delete(thePath);
     }
     
-    // --- Directory ---
-    
-    public sealed class Directory
-    {
-        string thePath;
-        
-        constructor assign(string path)
-        {
-            thePath := path
-        }
-    
-        string Printable = thePath;
-        
-        bool Available
-            = directoryControl.isAvailable(thePath);    
-            
-        create()
-        {
-            directoryControl.create(thePath);
-        }     
-           
-        delete()
-        {
-            directoryControl.delete(thePath)
-        }
-        
-        string[] getFiles()
-            <= getFiles("*.*");
-        
-        string[] getFiles(string mask)
-        {
-            auto l := new List<string>();
-            SearchFiles(thePath, mask, l);
-    //        auto e := FileEnumerator.assign(thePath + "\" + mask);
-    //        while (e.next())
-    //        {
-    //            auto ddf := e.get();
-    //            if (ddf.isFile())
-    //            {
-    //                string s := thePath + "\" + ddf.FileName;
-    //                
-    //                l.append(s);
-    //            }            
-    //        };
-            
-            ^l.Value;
-        }
-        
-        string[] getDirectories()
-        {
-            auto l := new List<string>();
-            SearchDirectories(thePath, "*.*", l);
-    //        auto e := FileEnumerator.assign(thePath + "\*.*");
-    //        while (e.next())
-    //        {
-    //            auto ddf := e.get();
-    //            if (ddf.isDirectory())
-    //            {
-    //                string s := thePath + "\" + ddf.FileName;
-    //                
-    //                l.append(s);
-    //            }            
-    //        };
-            
-            ^l.Value;
-        }
-    }
+//    // --- Directory ---
+//    
+//    public sealed class Directory
+//    {
+//        string thePath;
+//        
+//        constructor assign(string path)
+//        {
+//            thePath := path
+//        }
+//    
+//        string Printable = thePath;
+//        
+//        bool Available
+//            = directoryControl.isAvailable(thePath);    
+//            
+//        create()
+//        {
+//            directoryControl.create(thePath);
+//        }     
+//           
+//        delete()
+//        {
+//            directoryControl.delete(thePath)
+//        }
+//        
+//        string[] getFiles()
+//            <= getFiles("*.*");
+//        
+//        string[] getFiles(string mask)
+//        {
+//            auto l := new List<string>();
+//            SearchFiles(thePath, mask, l);
+//    //        auto e := FileEnumerator.assign(thePath + "\" + mask);
+//    //        while (e.next())
+//    //        {
+//    //            auto ddf := e.get();
+//    //            if (ddf.isFile())
+//    //            {
+//    //                string s := thePath + "\" + ddf.FileName;
+//    //                
+//    //                l.append(s);
+//    //            }            
+//    //        };
+//            
+//            ^l.Value;
+//        }
+//        
+//        string[] getDirectories()
+//        {
+//            auto l := new List<string>();
+//            SearchDirectories(thePath, "*.*", l);
+//    //        auto e := FileEnumerator.assign(thePath + "\*.*");
+//    //        while (e.next())
+//    //        {
+//    //            auto ddf := e.get();
+//    //            if (ddf.isDirectory())
+//    //            {
+//    //                string s := thePath + "\" + ddf.FileName;
+//    //                
+//    //                l.append(s);
+//    //            }            
+//    //        };
+//            
+//            ^l.Value;
+//        }
+//    }
 
 }

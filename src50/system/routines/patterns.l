@@ -442,37 +442,37 @@
 //    enumerable() => enumerator;
 //}
 //
-//// --- Selecting ---
-//
-//public class Selector : Enumerator
-//{
-//    Func1      theSelector;
-//    Enumerator theEnumerator;
-//
-//    constructor new(Func1 selector, Enumerator enumerator)
-//    {
-//        theSelector := selector;
-//        theEnumerator := enumerator
-//    }
-//    
-//    constructor new(ExtensionMessage extension, Enumerator enumerator)
-//    {
-//        theSelector := (x => extension(x));
-//        theEnumerator := enumerator
-//    }
-//    
-//    get() = theSelector(theEnumerator.get());
-//    
-//    bool next() = theEnumerator.next();
-//    
-//    reset()
-//    {
-//        theEnumerator.reset()
-//    }    
-//    
-//    enumerable() => theEnumerator;
-//}
-//
+// --- Selecting ---
+
+public class Selector : Enumerator
+{
+    Func1      theSelector;
+    Enumerator theEnumerator;
+
+    constructor new(Func1 selector, Enumerator enumerator)
+    {
+        theSelector := selector;
+        theEnumerator := enumerator
+    }
+    
+    constructor new(ExtensionMessage extension, Enumerator enumerator)
+    {
+        theSelector := (x => extension(x));
+        theEnumerator := enumerator
+    }
+    
+    get Value() = theSelector(*theEnumerator);
+    
+    bool next() = theEnumerator.next();
+    
+    reset()
+    {
+        theEnumerator.reset()
+    }    
+    
+    enumerable() => theEnumerator;
+}
+
 //// --- Repeater ---
 //
 //public class Repeater : Enumerator

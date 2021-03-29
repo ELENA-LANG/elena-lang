@@ -11,14 +11,14 @@ namespace io
         {
             get();
             
-            set(int retVal);
+            set(retVal);
         }
         
         abstract int Index
         {
             get();
             
-            set(int retVal);
+            set(retVal);
         }
     
         appendIndex(int offs)

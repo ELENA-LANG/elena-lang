@@ -338,6 +338,44 @@ procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[
 
 end
 
+procedure __extmessage."#dispatch[1]"
+
+  pushd
+
+  // check if it is invoke
+  and     SPECIAL_MESSAGE
+  ifn     labDefault, 0 
+
+  load
+  storev
+
+  elsed   labDefault
+  popd
+
+  jumpi   1
+
+labDefault:
+  popd
+  bsredirect 
+
+  open
+  reserve  __page_size
+  alloci   3
+  storesi  1
+  movf     -__rsrv_object_offset
+  storesi  2
+  storesi  0
+  movr     class : system'Message
+  callextr api : tempObject, 1 
+  movr     class : system'MethodNotFoundException
+  storesi  0
+  pushr    mssgconst : "new[3]"
+
+  throw
+  
+end
+
+
 procedure __real."exp$system@RealNumber$@system@ref#1&system@RealNumber[2]"
 
   pushsi 1
@@ -601,6 +639,32 @@ labErr:
 
 end
 
+procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$system@ShortNumber[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  load
+  lessn   labErr, 0
+
+  pushsi  3
+  peeksi  2
+  xwrite  2
+  pop
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw  
+
+end
+
 procedure __chararray."write$@system@Array#1&system@CharValue$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue[4]"
 
   pushsi 4
@@ -624,6 +688,31 @@ labErr:
 
   throw  
 
+end
+
+procedure __chararray."move$@system@Array#1&system@CharValue$system@IntNumber$system@IntNumber$system@IntNumber[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : nmove, 4
+  ifn labErr, 0 
+
+  peeksi 0
+  freei  4
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw  
+  
 end
 
 procedure __literalconvertor."convert$system@CharValue$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"
@@ -943,6 +1032,136 @@ procedure __charconvertor."save$system@CharValue$system@IntNumber$@system@Array#
   save
   
   quit
+
+end
+
+procedure __utf8encoder."convertFrom$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@ByteNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[6]"
+
+  pushn  0 // ; temporally
+  pushsi 7
+  pushsi 7
+  pushsi 7  
+  pushsi 7  
+  pushsi 7  
+  
+  callextr api : s_encode, 5
+  freei 6
+  ifr labErr, 0
+  
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+  
+end
+
+procedure __utf8encoder."convertTo$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@CharValue$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[6]"
+
+  pushn  0 // ; temporally
+  pushsi 7
+  pushsi 7
+  pushsi 7  
+  pushsi 7  
+  pushsi 7  
+  
+  callextr api : s_decode, 5
+  freei 6
+  ifr labErr, 0
+  
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+  
+end
+
+procedure __utf16encoder."convertFrom$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@ByteNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[6]"
+
+  pushn  0 // ; temporally
+  pushsi 7
+  pushsi 7
+  pushsi 7  
+  pushsi 7  
+  pushsi 7  
+
+  callextr api : ws_encode, 5
+  freei 6
+  ifr labErr, 0
+  
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+end
+
+procedure __utf16encoder."convertTo$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@CharValue$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[6]"
+
+  pushn  0 // ; temporally
+  pushsi 7
+  pushsi 7
+  pushsi 7  
+  pushsi 7  
+  pushsi 7  
+  
+  callextr api : ws_decode, 5
+  freei 6
+  ifr labErr, 0
+  
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+  
+end
+
+procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[6]"
+
+  pushn  0 // ; temporally
+  pushsi 7
+  pushsi 7
+  pushsi 7  
+  pushsi 7  
+  pushsi 7  
+  
+  callextr api : ws_encodew, 5
+  freei 6
+  ifr labErr, 0
+  
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
 
 end
 

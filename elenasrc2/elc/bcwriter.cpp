@@ -3895,18 +3895,18 @@ void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::
 
       ////   tape.write(bcCloneF, source.argument << 2);
       ////}
-      ///*else */if (source.compare(lxLocal, lxTempLocal)) {
-      //   if (source.firstChild() == lxBreakpoint) {
-      //      translateBreakpoint(tape, source.firstChild(), scope);
-      //   }
+      /*else */if (source.compare(lxLocal, lxTempLocal)) {
+         if (source.firstChild() == lxBreakpoint) {
+            translateBreakpoint(tape, source.firstChild(), scope);
+         }
 
-      //   generateObject(tape, source, scope, STACKOP_MODE);
-      //   generateObject(tape, target, scope);
+         generateObject(tape, source, scope, STACKOP_MODE);
+         generateObject(tape, target, scope);
 
-      //   tape.write(bcClone);
-      //   releaseStack(tape);
-      //}
-      /*else */throw InternalError("Not yet implemented"); // !! temporal
+         tape.write(bcClone);
+         releaseArg(tape);
+      }
+      else throw InternalError("Not yet implemented"); // !! temporal
    }
 }
 

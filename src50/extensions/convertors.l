@@ -1,5 +1,5 @@
-//import system'collections;
-//import system'routines;
+import system'collections;
+import system'routines;
 //import system'calendar;
 import system'text;
 
@@ -304,74 +304,74 @@ singleton stringExConvertor
 //        ^ output.Value
 //    }
 //}
-//
-//// --- arrayConvertorEx ---
-//
-//public singleton arrayConvertorEx
-//{
-//    Array convert(o)
-//    {
-//        var arr := cast Array(o) ?? nil;
-//        if (arr == nil)
-//        {
-//            var it := o.indexer();
-//            int len := it.Length;
-//            arr := Array.allocate(len);
-//            for (int i := 0, i < len, i += 1)
-//            {
-//                arr[i] := it.get();
-//                it.appendIndex(1)
-//            }
-//        };
-//        
-//        ^ arr
-//    }
-//    
-//    Array convert(Array arr)
-//        = arr;
-//
-//    Array convert(string s)
-//        <= convert(cast Enumerator(s.enumerator()));
-//
-//    Array convert(wide s)
-//        <= convert(cast Enumerator(s.enumerator()));
-//
-//    Array convert(Enumerator en)
-//    {
-//        ArrayList retVal := new ArrayList();
-//
-//        en.forEach:(x){ retVal.append:x };
-//
-//        ^ retVal
-//    }
-//
-//    Array convert(Indexer it)
-//    {
-//        ArrayList retVal := new ArrayList();
-//        while (it.Available)
-//        {
-//            retVal.append(it.get());
-//            
-//            it.appendIndex(1)
-//        };
-//
-//        ^ retVal
-//    }
-//
-//    Array convert(Enumerable v)
-//        <= convert(v.enumerator());
-//        
-//    Array convert(Indexable v)
-//        <= convert(v.indexer());
-//}
+
+// --- arrayConvertorEx ---
+
+public singleton arrayConvertorEx
+{
+    Array convert(o)
+    {
+        var arr := cast Array(o) ?? nil;
+        if (arr == nil)
+        {
+            var it := o.indexer();
+            int len := it.Length;
+            arr := Array.allocate(len);
+            for (int i := 0, i < len, i += 1)
+            {
+                arr[i] := *it;
+                it.appendIndex(1)
+            }
+        };
+        
+        ^ arr
+    }
+    
+    Array convert(Array arr)
+        = arr;
+
+    Array convert(string s)
+        <= convert(cast Enumerator(s.enumerator()));
+
+    Array convert(wide s)
+        <= convert(cast Enumerator(s.enumerator()));
+
+    Array convert(Enumerator en)
+    {
+        ArrayList retVal := new ArrayList();
+
+        en.forEach:(x){ retVal.append:x };
+
+        ^ retVal
+    }
+
+    Array convert(Indexer it)
+    {
+        ArrayList retVal := new ArrayList();
+        while (it.Available)
+        {
+            retVal.append(*it);
+            
+            it.appendIndex(1)
+        };
+
+        ^ retVal
+    }
+
+    Array convert(Enumerable v)
+        <= convert(v.enumerator());
+        
+    Array convert(Indexable v)
+        <= convert(v.indexer());
+}
 
 // --- convertorOp ---
 
 public extension convertorOp
 {
-//    Array toArray()
-//        = arrayConvertorEx.convert(self);
-//
+    Array toArray()
+        = arrayConvertorEx.convert(self);
+
 //    int[] toIntArray()
 //        = intArrayExConvertor.convert:self;
 //    

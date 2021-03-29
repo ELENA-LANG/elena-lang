@@ -138,27 +138,27 @@ public sealed const struct UnsafePointer
 //        
 //        ^ val
 //    }
-//
-//    // unsafe code
-//    string cast()
-//    {
-//        int  len := extern KERNEL32.lstrlenA(self);
-//        string s := String.allocate(len);
-//        extern KERNEL32.lstrcpyA(s, self);
-//        
-//        ^ s
-//    }        
-//
-//    // unsafe code
-//    wide cast()
-//    {
-//        int  len := extern KERNEL32.lstrlenW(self);
-//        wide s := WideString.allocate(len);
-//        extern KERNEL32.lstrcpyW(s, self);
-//        
-//        ^ s
-//    }
-//    
+
+    // unsafe code
+    string cast()
+    {
+        int  len := extern KERNEL32.lstrlenA(self);
+        string s := String.allocate(len);
+        extern KERNEL32.lstrcpyA(s, self);
+        
+        ^ s
+    }        
+
+    // unsafe code
+    wide cast()
+    {
+        int  len := extern KERNEL32.lstrlenW(self);
+        wide s := WideString.allocate(len);
+        extern KERNEL32.lstrcpyW(s, self);
+        
+        ^ s
+    }
+    
 //    saveTo(byte[] target, int offs)
 //    {
 //        intern system'core_routines'__dptr.readVal(self, ref int val);

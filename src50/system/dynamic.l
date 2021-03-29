@@ -85,21 +85,21 @@ public sealed const struct Message
     dispatch() => intern system'core_routines'__message;
 }
 
-//// --- ExtensionMessage ---
-//
-//[info:"An extended message constant"]
-//public sealed const struct ExtensionMessage
-//{
-//    embeddable __mssg theValue[8];
-//    
-//    [info:"Compares the values"]
-//    bool equal(ExtensionMessage ext_mssg)
-//        = theValue == ext_mssg;
-//
-//    [info:"Dequalifies incoming messages if they are equal to its value and redirects to the target"]
-//    dispatch() => intern system'core_routines'__extmessage;
-//}
-//
+// --- ExtensionMessage ---
+
+[info:"An extended message constant"]
+public sealed const struct ExtensionMessage
+{
+    embeddable __mssg theValue[8];
+    
+    [info:"Compares the values"]
+    bool equal(ExtensionMessage ext_mssg)
+        = theValue == ext_mssg;
+
+    [info:"Dequalifies incoming messages if they are equal to its value and redirects to the target"]
+    dispatch() => intern system'core_routines'__extmessage;
+}
+
 //// --- MessageName ---
 //
 ///// A dynamic message extender

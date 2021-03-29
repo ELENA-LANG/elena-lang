@@ -148,19 +148,19 @@ namespace text
 //        {
 //            self.write(object.toPrintable())
 //        }
-//    
-//        write(char[] array, int length)
-//        {
-//            ifnot (0 == length)
-//            {
-//                self.reserve(length);
-//    
-//                theBuffer.write(theLength.Value, length, array);
-//    
-//                theLength.append(length)
-//            }
-//        }
-//
+    
+        write(char[] array, int length)
+        {
+            ifnot (0 == length)
+            {
+                self.reserve(length);
+    
+                theBuffer.write(theLength.Value, length, array);
+    
+                theLength.append(length)
+            }
+        }
+
 //        private readIndex(string s, ref int i, ref int retVal)
 //        {
 //            char ch := $0;
@@ -300,81 +300,81 @@ namespace text
 //            
 //            theLength.append(1)
 //        }
-//
-//        indexOf(int position, char value, ref int retVal)
-//        {
-//            int  index := 0;
-//            char current := $0;
-//            
-//            while (index < theLength.Value)
-//            {
-//                theBuffer.read(index, ref current);
-//                
-//                if (current == value)
-//                    { retVal := index; ^self };
-//                    
-//                index += 1
-//            };
-//            
-//            retVal := -1
-//        }
-//    
-//        indexOf(int pos, string s, ref int retVal)
-//        {
-//            int  strLen := 0;
-//            int  index := 0;
-//            int  firstChLen := 0;
-//            char current := $0;
-//            char firstCh := $0;
-//            char nextCh := $0;
-//            
-//            strLen := s.Length;
-//            
-//            s.read(0, ref firstCh);
-//            firstChLen := firstCh.Length;
-//            
-//            int maxIndex := theLength;
-//            maxIndex := maxIndex - strLen;
-//            
-//            while (index <= maxIndex)
-//            {
-//                current := theBuffer[index];
-//                
-//                if (current == firstCh)
-//                {
-//                    int j := firstChLen;
-//                    int chLen := 0;
-//                    while (j < strLen)
-//                    {
-//                        current := theBuffer[index + j];
-//                        s.read(j, ref nextCh);
-//                        
-//                        if (nextCh == current)
-//                        { 
-//                            chLen := nextCh.Length
-//                        }
-//                        else
-//                        { 
-//                            j := strLen; 
-//                            chLen := 1 
-//                        };
-//                        
-//                        j := j + chLen
-//                    };
-//                    
-//                    if (j == strLen)
-//                    { 
-//                        retVal := index; 
-//                        ^ self 
-//                    }
-//                };
-//                    
-//                index += 1
-//            };
-//            
-//            retVal := -1
-//        }
-//
+
+        indexOf(int position, char value, ref int retVal)
+        {
+            int  index := 0;
+            char current := $0;
+            
+            while (index < theLength.Value)
+            {
+                theBuffer.read(index, ref current);
+                
+                if (current == value)
+                    { retVal := index; ^self };
+                    
+                index += 1
+            };
+            
+            retVal := -1
+        }
+    
+        indexOf(int pos, string s, ref int retVal)
+        {
+            int  strLen := 0;
+            int  index := 0;
+            int  firstChLen := 0;
+            char current := $0;
+            char firstCh := $0;
+            char nextCh := $0;
+            
+            strLen := s.Length;
+            
+            s.read(0, ref firstCh);
+            firstChLen := firstCh.Length;
+            
+            int maxIndex := theLength;
+            maxIndex := maxIndex - strLen;
+            
+            while (index <= maxIndex)
+            {
+                current := theBuffer[index];
+                
+                if (current == firstCh)
+                {
+                    int j := firstChLen;
+                    int chLen := 0;
+                    while (j < strLen)
+                    {
+                        current := theBuffer[index + j];
+                        s.read(j, ref nextCh);
+                        
+                        if (nextCh == current)
+                        { 
+                            chLen := nextCh.Length
+                        }
+                        else
+                        { 
+                            j := strLen; 
+                            chLen := 1 
+                        };
+                        
+                        j := j + chLen
+                    };
+                    
+                    if (j == strLen)
+                    { 
+                        retVal := index; 
+                        ^ self 
+                    }
+                };
+                    
+                index += 1
+            };
+            
+            retVal := -1
+        }
+
 //        indexOf(int pos, wide s, ref int retVal)
 //        {
 //            int  strLen := 0;
@@ -454,39 +454,39 @@ namespace text
 //            
 //            ^ retVal
 //        }
-//
-//        string Substring(int index, int length)
-//        {
-//            if (length == 0)
-//                { ^ emptyString };
-//                
-//            ^ String.copy(index, length, theBuffer)
-//        }
-//    
-//        wide WideSubstring(int index, int length)
-//        {
-//            if (length == 0)
-//                { ^ emptyWideString };
-//                
-//            ^ WideString.copy(index, length, theBuffer)
-//        }
-//
-//        delete(int index, int length)
-//        {
-//            int n := 0 - length;
-//            int l := theLength;
-//            l := l - index;
-//            l := l - length;
-//            
-//            theBuffer.move(index + length, l, n);
-//            
-//            theLength.reduce(length)
-//        }
-//    
-//        trim(int n)
-//        {
-//            theLength.reduce(n)
-//        }
+
+        string Substring(int index, int length)
+        {
+            if (length == 0)
+                { ^ emptyString };
+                
+            ^ String.copy(index, length, theBuffer)
+        }
+    
+        wide WideSubstring(int index, int length)
+        {
+            if (length == 0)
+                { ^ emptyWideString };
+                
+            ^ WideString.copy(index, length, theBuffer)
+        }
+
+        delete(int index, int length)
+        {
+            int n := 0 - length;
+            int l := theLength;
+            l := l - index;
+            l := l - length;
+            
+            theBuffer.move(index + length, l, n);
+            
+            theLength.reduce(length)
+        }
+    
+        trim(int n)
+        {
+            theLength.reduce(n)
+        }
     }
 
 }

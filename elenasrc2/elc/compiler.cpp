@@ -3529,29 +3529,10 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
          boxedArg = ObjectInfo(okTempLocal, tempLocal, targetRef, 0, variable ? size : 0);
          if (source.kind == okBoxableLocal && variable)
             boxedArg.extraparam = (ref_t)-1;
-//
-//         if (size < 0 || primArray) {
-//            copyingNode.appendNode(lxType, typeRef);
-//
-//            copyingNode.injectAndReplaceNode(lxAssigning);
-//            copyingNode.insertNode(lxTempLocal, tempLocal);
-//         }
-//         else {
-//
-//            SNode assignNode = boxExpr.insertNode(lxAssigning);
-//            assignNode.insertNode(lxTempLocal, tempLocal);
-//
-//            // !!NOTE: objNode is no longer valid, but injectCreating uses only
-//            //         cached values of a type and an argument
-//
-//         }
-//
-//         if (target == lxLocal) {
-//            // comment out double assigning
-//            target = lxIdle;
-//            rootNode = lxExpression;
-//         }
-//         else seqNode.appendNode(lxTempLocal, tempLocal);
+
+         if (size < 0 || isPrimitiveArrRef(source.reference)) {
+            boxedArg.element = source.element;
+         }
       }
    }
    else scope.raiseError(errInvalidBoxing, node);
@@ -3692,11 +3673,15 @@ void Compiler :: analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& s
 
 void Compiler :: unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprScope& scope)
 {
+   bool primArray = target.kind == okTempLocal && target.element != 0;
    bool refMode = false;
-   if (target.extraparam == -1/* && !primArray*/) {
+   if (target.extraparam == -1 && !primArray) {
       // HOTFIX : if it is byref variable unboxing
       writer.newNode(lxAssigning, 0);
       refMode = true;
+   }
+   else if (primArray) {
+      writer.newNode(lxCloning, 0);
    }
    else if (target.kind == okTempLocalAddress && !target.extraparam) {
       pos_t size = _logic->defineStructSize(*scope.moduleScope, target.reference, target.element);
@@ -3724,17 +3709,10 @@ void Compiler :: unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprSco
             writer.closeNode();
          }
          else writeTerminal(writer, target, scope);
+
+         break;
       }
    }
-
-   //         SyntaxTree::copyNode(objNode, unboxing.appendNode(objNode.type, objNode.argument));
-   //         if (size == 0 && !primArray) {
-   //
-   //            SNode unboxingByRef = unboxing.appendNode(lxFieldExpression);
-   //            unboxingByRef.appendNode(tempType, tempLocal);
-   //            unboxingByRef.appendNode(lxField);
-   //         }
-   //         else unboxing.appendNode(tempType, tempLocal);
 
    writer.closeNode();
 

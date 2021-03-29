@@ -990,69 +990,69 @@ public extension stringOp : String
         }        
     }        
     
-//    string trimLeft(char ch)
-//    {
-//        int  index := 0;
-//        int  len := self.Length;
-//        char current := $0;
-//        int  chLen := ch.Length;
-//        
-//        while(index < len)
-//        {
-//            self.read(index, ref current);
-//            
-//            ifnot(current == ch)
-//            { 
-//                if (index == 0)
-//                { 
-//                    ^ self 
-//                }
-//                else
-//                { 
-//                    ^ self.delete(0, index) 
-//                }
-//            };
-//            
-//            index += chLen
-//        };
-//        
-//        ^ emptyString
-//    }
-//    
-//    string trimLeft()
-//        = self.trimLeft($32);
-//       
-//    string trimRight(char ch)
-//    {
-//        int  len := self.Length;
-//        int  index := len - 1;
-//        int  prev := len;
-//        char current := $0;
-//        int  chLen := ch.Length;
-//        
-//        while (index >= 0)
-//        {
-//            self.read(index, ref current);
-//            
-//            ifnot (current == ch)
-//                { ^ self.delete(prev,len - prev) };
-//            
-//            prev := index;
-//            index -= chLen
-//        };
-//        
-//        ^ emptyString
-//    }
-//    
-//    string trimRight()
-//        = self.trimRight($32);
-//        
-//    string trim(char ch)
-//        = self.trimLeft(ch).trimRight(ch);
-//    
-//    string trim()
-//        = self.trimLeft($32).trimRight($32);
-//    
+    string trimLeft(char ch)
+    {
+        int  index := 0;
+        int  len := self.Length;
+        char current := $0;
+        int  chLen := ch.Length;
+        
+        while(index < len)
+        {
+            current := self[index];
+            
+            ifnot(current == ch)
+            { 
+                if (index == 0)
+                { 
+                    ^ self 
+                }
+                else
+                { 
+                    ^ self.delete(0, index) 
+                }
+            };
+            
+            index += chLen
+        };
+        
+        ^ emptyString
+    }
+    
+    string trimLeft()
+        = self.trimLeft($32);
+       
+    string trimRight(char ch)
+    {
+        int  len := self.Length;
+        int  index := len - 1;
+        int  prev := len;
+        char current := $0;
+        int  chLen := ch.Length;
+        
+        while (index >= 0)
+        {
+            current := self[index];
+            
+            ifnot (current == ch)
+                { ^ self.delete(prev,len - prev) };
+            
+            prev := index;
+            index -= chLen
+        };
+        
+        ^ emptyString
+    }
+    
+    string trimRight()
+        = self.trimRight($32);
+        
+    string trim(char ch)
+        = self.trimLeft(ch).trimRight(ch);
+    
+    string trim()
+        = self.trimLeft($32).trimRight($32);
+    
 //    string padLeft(int length)
 //        = self.padLeft($32, length);
 //    
@@ -1196,60 +1196,60 @@ public extension wideOp : WideString
         ^ self.Substring(index, length)
     }
      
-//    wide trimLeft(char ch)
-//    {
-//        int  index := 0;
-//        int  len := self.Length;
-//        char current := $0;
-//        int  chLen := ch.Length;
-//        
-//        while (index < len)
-//        {
-//            self.read(index, ref current);
-//            
-//            ifnot(current == ch)
-//                { ^ self.delete(0, index) };
-//            
-//            index += chLen
-//        };
-//        
-//        ^ emptyWideString
-//    }
-//    
-//    wide trimLeft()
-//        = self.trimLeft($32);
-//       
-//    wide trimRight(char ch)
-//    {
-//        int  len := self.Length;
-//        char current := $0;
-//        int  chLen := ch.Length;
-//                
-//        int  index := len - 1;
-//        int  prev := len;
-//        while (index >= 0)
-//        {
-//            self.read(index, ref current);
-//            
-//            ifnot (current == ch)
-//                { ^ self.delete(prev, len - prev) };
-//            
-//            prev := index;
-//            index -= chLen
-//        };
-//        
-//        ^ emptyWideString
-//    }
-//    
-//    wide trimRight()
-//        = self.trimRight($32);
-//       
-//    wide trim(char ch)
-//        = self.trimLeft(ch).trimRight(ch);
-//    
-//    wide trim()
-//        = self.trimLeft($32).trimRight($32);
-//    
+    wide trimLeft(char ch)
+    {
+        int  index := 0;
+        int  len := self.Length;
+        char current := $0;
+        int  chLen := ch.Length;
+        
+        while (index < len)
+        {
+            current := self[index];
+            
+            ifnot(current == ch)
+                { ^ self.delete(0, index) };
+            
+            index += chLen
+        };
+        
+        ^ emptyWideString
+    }
+    
+    wide trimLeft()
+        = self.trimLeft($32);
+       
+    wide trimRight(char ch)
+    {
+        int  len := self.Length;
+        char current := $0;
+        int  chLen := ch.Length;
+                
+        int  index := len - 1;
+        int  prev := len;
+        while (index >= 0)
+        {
+            current := self[index];
+            
+            ifnot (current == ch)
+                { ^ self.delete(prev, len - prev) };
+            
+            prev := index;
+            index -= chLen
+        };
+        
+        ^ emptyWideString
+    }
+    
+    wide trimRight()
+        = self.trimRight($32);
+       
+    wide trim(char ch)
+        = self.trimLeft(ch).trimRight(ch);
+    
+    wide trim()
+        = self.trimLeft($32).trimRight($32);
+    
 //    wide padLeft(char ch, int length)
 //    {
 //        int currentLength := self.Length;
@@ -1527,11 +1527,11 @@ public extension byteArrayHelper : Array<byte>
 //    /// Copies the byte array at the specified position
 //    write(int index, int length, byte[] dump)
 //        => intern system'core_routines'__bytearray;
-//        
-//    /// Copies the byte array at the specified position
-//    write(int index, short value)
-//        => intern system'core_routines'__bytearray;
-//        
+        
+    /// Copies the byte array at the specified position
+    write(int index, short value)
+        => intern system'core_routines'__bytearray;
+        
 //    /// Copies the byte array at the specified position
 //    write(int index, int value)
 //        => intern system'core_routines'__bytearray;
@@ -1575,8 +1575,8 @@ public extension byteArrayHelper : Array<byte>
 
 public extension charArrayHelper : Array<char>
 {
-//    move(int index, int length, int offset)
-//        => intern system'core_routines'__chararray;
+    move(int index, int length, int offset)
+        => intern system'core_routines'__chararray;
 
     [info:"Copies the array at the specified position"]    
     write(int index, int length, char[] array)

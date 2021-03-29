@@ -129,8 +129,8 @@ public extension enumeratorOp : Enumerator
     forEach(Func1 f)
         = f.run(self);
 
-//    selectBy(selector)
-//        = Selector.new(selector, self);
+    selectBy(selector)
+        = Selector.new(selector, self);
 }
 
 // --- enumerableOp ---
@@ -149,9 +149,9 @@ public extension enumerableOp
     forEach(fn)
         = self.forEach:(n){ fn(n) };
 
-//    selectBy(selector)
-//        = Selector.new(selector, cast Enumerator(self.enumerator()));
-//
+    selectBy(selector)
+        = Selector.new(selector, cast Enumerator(self.enumerator()));
+
 //    forEachPair(object object, ExtensionMessage extMessage)
 //        = self.forEachPair(object, (o,n => extMessage(o,n)));
 //    

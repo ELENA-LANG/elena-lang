@@ -91,7 +91,7 @@ namespace io
                 ^ ret
             } 
             
-            set(int index)
+            set(index)
             {
                 int ret := extern KERNEL32.SetFilePointer(
                     theHandle,
@@ -112,7 +112,7 @@ namespace io
                 ^ n 
             }
             
-            set(int length)
+            set(length)
             {
                 int pos := self.Index;
                 
@@ -123,7 +123,7 @@ namespace io
                     { self.Index := pos }
             }
         }
-        
+
         close()
         {
             extern KERNEL32.CloseHandle(theHandle)
@@ -188,7 +188,7 @@ namespace io
                     blockLength := 64 
                 };
                     
-                theEncoder.convert(offset, ref blockLength, input, buffer, ref bufferLength);
+                theEncoder.convertTo(offset, ref blockLength, input, buffer, ref bufferLength);
                 
                 theStream.write(buffer, bufferLength);
                 
@@ -248,7 +248,7 @@ namespace io
             {
                 int read := bufferLength;
     
-                theEncoder.convert(0, ref bufferLength, buffer, output, ref length);
+                theEncoder.convertFrom(0, ref bufferLength, buffer, output, ref length);
                 
                 if(read > bufferLength)
                     { theStream.reduceIndex(read - bufferLength) }
@@ -293,13 +293,13 @@ namespace io
     
     singleton fileControl
     {
-        BinaryReader openForRead(path) = FileStream.openForRead(path);
+        BinaryReader openForRead(path) = new BinaryStreamReader(FileStream.openForRead(path));
         
-        BinaryReader openForReWrite(path) = FileStream.openForReWrite(path);
+        BinaryReader openForReWrite(path) = new BinaryStreamReader(FileStream.openForReWrite(path));
         
-        BinaryReader openForEdit(path) = FileStream.openForEdit(path);
+        BinaryReader openForEdit(path) = new BinaryStreamReader(FileStream.openForEdit(path));
         
-        BinaryReader openForAppend(path) = FileStream.openForAppend(path);
+        BinaryReader openForAppend(path) = new BinaryStreamReader(FileStream.openForAppend(path));
             
         TextReader newReader(path) = StreamReader.new:path;
         

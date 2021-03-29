@@ -15,7 +15,7 @@ namespace calendar
             theValue := 0l
         }
     
-        static byte MinValue = new SystemTime(0l);
+        static Timespan MinValue = new SystemTime(0l);
     
         constructor(SystemTime val)
         {

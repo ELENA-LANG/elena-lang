@@ -58,6 +58,8 @@ In development:
     + ide 64 : call stack
     + elc 64 mode : 8 byte alignment for stack-allocated types
     + QuckSorting : optimize the code - built-in branching should be used 
+    + extension with primitive arrays - no need to box
+    + new attribute - constant operation - do indicate that the class itself is not changed
 
     * #206 : linux i386 / amd64
 

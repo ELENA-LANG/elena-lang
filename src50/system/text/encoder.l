@@ -7,10 +7,10 @@ namespace text
     
     public interface Encoder
     {
-//        abstract convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength);
-//    
-//        abstract convert(int index, ref int length, char[] charArray, byte[] output, ref int outputLength);
-//        
+        abstract convertFrom(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength);
+    
+        abstract convertTo(int index, ref int length, char[] charArray, byte[] output, ref int outputLength);
+        
 //        convert(int index, ref int length, string s, byte[] output, ref int outputLength)
 //        {
 //            char temp[64];
@@ -176,16 +176,16 @@ namespace text
 //        }
     }
     
-//    // --- UTF8Encoder ---
-//    
-//    public singleton UTF8Encoder : Encoder
-//    {
-//        convert(int index, ref int length, byte[] array, char[] output, ref int outputLength)
-//            => intern system'core_routines'__utf8encoder;
-//        
-//        convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
-//            => intern system'core_routines'__utf8encoder;
-//        
+    // --- UTF8Encoder ---
+    
+    public singleton UTF8Encoder : Encoder
+    {
+        convertFrom(int index, ref int length, byte[] array, char[] output, ref int outputLength)
+            => intern system'core_routines'__utf8encoder;
+        
+        convertTo(int index, ref int length, char[] array, byte[] output, ref int outputLength)
+            => intern system'core_routines'__utf8encoder;
+        
 //        convert(int index, ref int length, string s, byte[] output, ref int outputLength)
 //        {
 //            int l := length;
@@ -196,14 +196,14 @@ namespace text
 //        
 //        string toString(int index, int length, byte[] array)
 //            = UTF8Encoding.toString(index, length, array);
-//    }
-//    
-//    // --- UTF8Encoding ---
-//    
-//    public singleton UTF8Encoding
-//    {
-//        Encoder encoder() = UTF8Encoder;
-//        
+    }
+    
+    // --- UTF8Encoding ---
+    
+    public singleton UTF8Encoding
+    {
+        Encoder encoder() = UTF8Encoder;
+        
 //        charCount(string s, ref int retVal)
 //            => intern system'core_routines'__utf8encoder;
 //        
@@ -217,17 +217,17 @@ namespace text
 //            
 //        convert(int index, ref int length, string s, char[] output, ref int outputLength)
 //            => intern system'core_routines'__utf8encoder;
-//    }
+    }
     
     // --- UTF16Encoder ---
     
     public singleton UTF16Encoder : Encoder
     {
-//        convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength)
-//            => intern system'core_routines'__utf16encoder;
-//        
-//        convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
-//            => intern system'core_routines'__utf16encoder;
+        convertFrom(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength)
+            => intern system'core_routines'__utf16encoder;
+        
+        convertTo(int index, ref int length, char[] array, byte[] output, ref int outputLength)
+            => intern system'core_routines'__utf16encoder;
     }
 
     // --- UTF16Encoding ---
