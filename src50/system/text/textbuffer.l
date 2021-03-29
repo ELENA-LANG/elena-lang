@@ -330,7 +330,7 @@ namespace text
             
             strLen := s.Length;
             
-            s.read(0, ref firstCh);
+            firstCh := s[0];
             firstChLen := firstCh.Length;
             
             int maxIndex := theLength;
@@ -347,7 +347,7 @@ namespace text
                     while (j < strLen)
                     {
                         current := theBuffer[index + j];
-                        s.read(j, ref nextCh);
+                        nextCh := s[j];
                         
                         if (nextCh == current)
                         { 

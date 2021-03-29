@@ -1050,6 +1050,8 @@ public sealed const struct WideString : BaseValue
 
     Enumerable<char> cast() = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
 
+    string toPrintable() = self;
+
     bool equal(o)
     {
         var s := cast wide(o) ?? nil;
@@ -1150,12 +1152,6 @@ public sealed const struct WideString : BaseValue
         int retVal := extern elenart.core_sseek(self, buffer, index, sublen);
         
         ^ retVal
-        
-        
-//        int retVal := 0;
-//        self.indexOf(index, ch, ref retVal);
-//        
-//        ^ retVal
     }
 
     /// Returns the index of the first occurence of the specified substring.
