@@ -6,8 +6,10 @@ echo compiling data files
 cp ../bin/elena-lc /usr/bin/
 
 mkdir -p /etc/elena/
+mkdir -p /etc/elena/templates/
 
 cp ../bin/elc_ppc64le.config /etc/elena/elc.config
+cp ../bin/templates/*.config /etc/elena/templates/
 
 echo compiling lib50_64 files
 
