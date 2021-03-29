@@ -27,7 +27,7 @@ LIB_DEBUG = $(LIB)
 LDFLAGS_DEBUG = $(LDFLAGS)
 OBJDIR_DEBUG = ../temp
 DEP_DEBUG = 
-OUT_DEBUG = ../../../bin/elena-lc64
+OUT_DEBUG = ../../../bin/elena-lc
 
 INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -O2
@@ -38,7 +38,7 @@ LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE = $(LDFLAGS) -s
 OBJDIR_RELEASE = ../temp
 DEP_RELEASE = 
-OUT_RELEASE = ../../../bin/elena-lc64
+OUT_RELEASE = ../../../bin/elena-lc
 
 OBJ_DEBUG = $(OBJDIR_DEBUG)/__/derivation.o $(OBJDIR_DEBUG)/__/compilerscope.o $(OBJDIR_DEBUG)/__/compiler.o $(OBJDIR_DEBUG)/__/bcwriter.o $(OBJDIR_DEBUG)/__/__/engine/x86jitcompiler.o $(OBJDIR_DEBUG)/__/__/engine/x86helper.o $(OBJDIR_DEBUG)/__/__/engine/syntaxtree.o $(OBJDIR_DEBUG)/__/__/engine/section.o $(OBJDIR_DEBUG)/__/image.o $(OBJDIR_DEBUG)/__/linux32/elc.o $(OBJDIR_DEBUG)/__/linux32/linker.o $(OBJDIR_DEBUG)/__/linux32/syslibloader.o $(OBJDIR_DEBUG)/__/parser.o $(OBJDIR_DEBUG)/__/project.o $(OBJDIR_DEBUG)/__/separser.o $(OBJDIR_DEBUG)/__/source.o $(OBJDIR_DEBUG)/__/__/engine/bytecode.o $(OBJDIR_DEBUG)/__/__/common/xmlreader.o $(OBJDIR_DEBUG)/__/__/common/files.o $(OBJDIR_DEBUG)/__/__/common/dump.o $(OBJDIR_DEBUG)/__/__/common/config.o $(OBJDIR_DEBUG)/__/__/common/altstrings.o $(OBJDIR_DEBUG)/__/__/engine/compilerlogic.o $(OBJDIR_DEBUG)/__/__/engine/jitcompiler.o $(OBJDIR_DEBUG)/__/__/engine/jitlinker.o $(OBJDIR_DEBUG)/__/__/engine/libman.o $(OBJDIR_DEBUG)/__/__/engine/loader.o $(OBJDIR_DEBUG)/__/__/engine/module.o $(OBJDIR_DEBUG)/__/__/engine/parsertable.o
 

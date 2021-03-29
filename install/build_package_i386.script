@@ -5,6 +5,7 @@ echo compiling data files
 
 cp ../bin/elena-lc /usr/bin/
 
+mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
 
@@ -12,6 +13,18 @@ cp ../bin/elc.config /etc/elena/
 cp ../bin/templates/*.config /etc/elena/templates/
 
 echo compiling lib50 files
+
+../bin/elena-sg ../dat/sg/syntax.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+cp ../dat/sg/syntax.dat /usr/share/elena
 
 ../bin/elena-lc ../src50/system/system.project
 ret=$?

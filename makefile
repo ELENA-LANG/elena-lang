@@ -36,7 +36,10 @@ og_lnx32:
 	$(MAKE) -C elenasrc2/tools/og/codeblocks all -f og_lnx32.cbp.mak
 
 sg_lnx32: 
-	$(MAKE) -C elenasrc2/tools/sg/codeblocks all -f sg_lnx32.cbp.mak
+	$(MAKE) -C elenasrc2/tools/sg/codeblocks all -f sg_lnx32.mak
+
+sg_ppc64le: 
+	$(MAKE) -C elenasrc2/tools/sg/codeblocks all -f sg_ppc64le.mak
 
 clean: clean_elc_lnx32 clean_elenart_lnx32 clean_elenavm_lnx32 clean_elenasm_lnx32 clean_asm2bin_lnx32 clean_ecv_lnx32 clean_elt_lnx32 clean_og_lnx32 clean_sg_lnx32
 
@@ -65,6 +68,9 @@ clean_og_lnx32:
 	$(MAKE) -C elenasrc2/tools/og/codeblocks clean -f og_lnx32.cbp.mak
 
 clean_sg_lnx32: 
-	$(MAKE) -C elenasrc2/tools/sg/codeblocks clean -f sg_lnx32.cbp.mak
+	$(MAKE) -C elenasrc2/tools/sg/codeblocks clean -f sg_lnx32.mak
+
+clean_sg_ppc64le: 
+	$(MAKE) -C elenasrc2/tools/sg/codeblocks clean -f sg_ppc64le.mak
 
 .PHONY: clean_elc_lnx32 clean_elenart_lnx32 clean_elenavm_lnx32 clean_elenasm_lnx32 clean_asm2bin_lnx32 clean_ecv_lnx32 clean_elt_lnx32 clean_og_lnx32 clean_sg_lnx32
