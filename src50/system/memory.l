@@ -708,23 +708,23 @@ public sealed const struct String : BaseValue
         extern elenart.core_subcopyz(self, 0, size, s);
     }
 
-//    /// Creates the literal string with specified length fills with specified character value        
-//    constructor fill(int size, char ch)
-//        <= allocate(ch.Length * size)
-//    {
-//        byte buffer[4];
-//        int  length := 0;
-//        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length);
-//        
-//        int offs := 0;
-//        for (int i := 0, i < size, i := i + 1)
-//        {
-//            for (int j := 0, j < length, j := j + 1) {
-//                theArray[offs] := buffer[j];
-//                offs := offs + 1;
-//            }
-//        }
-//    }
+    /// Creates the literal string with specified length fills with specified character value        
+    constructor fill(int size, char ch)
+        <= allocate(ch.Length * size)
+    {
+        byte buffer[4];
+        int  length := 0;
+        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length);
+        
+        int offs := 0;
+        for (int i := 0, i < size, i := i + 1)
+        {
+            for (int j := 0, j < length, j := j + 1) {
+                theArray[offs] := buffer[j];
+                offs := offs + 1;
+            }
+        }
+    }
 
     /// Creates the literal string copy              
     constructor copy(string s)
@@ -1436,8 +1436,8 @@ public singleton stringConvertor
     string convert(BaseVariable v)
         <= convert(*v);
     
-//    string convert(BaseVariable v, int radix)
-//        <= convert(v.Value, radix);
+    string convert(BaseVariable v, int radix)
+        <= convert(*v, radix);
     
     string convert(char ch)
     {
@@ -1502,17 +1502,15 @@ public singleton stringConvertor
         ^ String.fromByteArray(0, length, buffer)
     }
 
-//    /// Converts the parameter to the literal value with the provided radix
-//    string convert(int n, int radix)
-//    {
-//        byte buffer[48];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(int n, int radix)
+    {
+        byte buffer[48];
+        extern elenart.core_inttostr(n, radix, buffer, ref int length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
 //    /// Converts the parameter to the literal value with the provided radix
 //    string convert(uint n, int radix)
 //    {
@@ -1609,8 +1607,8 @@ public singleton wideConvertor
         ^ len
     }       
     
-//    wide convert(BaseVariable v)
-//        <= convert(v.Value);
+    wide convert(BaseVariable v)
+        <= convert(*v);
     
     wide convert(char ch)
     {

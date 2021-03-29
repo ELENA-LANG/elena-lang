@@ -1053,32 +1053,32 @@ public extension stringOp : String
     string trim()
         = self.trimLeft($32).trimRight($32);
     
-//    string padLeft(int length)
-//        = self.padLeft($32, length);
-//    
-//    string padLeft(char ch, int length)
-//    {
-//        int currentLength := self.Length;
-//        
-//        if (currentLength < length)
-//            { ^ String.fill(length - currentLength, ch).add(self) };
-//            
-//        ^ self
-//    }
-//    
-//    string padRight(int length)
-//        = self.padRight($32, length);
-//    
-//    string padRight(char ch, int length)
-//    {
-//        int currentLength := self.Length;
-//
-//        if (currentLength < length)
-//            { ^ self.add(String.fill(length - currentLength, ch)) };
-//            
-//        ^ self
-//    }
-//
+    string padLeft(int length)
+        = self.padLeft($32, length);
+    
+    string padLeft(char ch, int length)
+    {
+        int currentLength := self.Length;
+        
+        if (currentLength < length)
+            { ^ String.fill(length - currentLength, ch).add(self) };
+            
+        ^ self
+    }
+    
+    string padRight(int length)
+        = self.padRight($32, length);
+    
+    string padRight(char ch, int length)
+    {
+        int currentLength := self.Length;
+
+        if (currentLength < length)
+            { ^ self.add(String.fill(length - currentLength, ch)) };
+            
+        ^ self
+    }
+
 //    bool startingWith(string s)
 //    {
 //        int n := 0;

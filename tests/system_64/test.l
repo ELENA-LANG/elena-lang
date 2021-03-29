@@ -2,5 +2,5 @@ import extensions;
 
 public program()
 {
-    console.printLine("a","b")
+    var s := String.fill(3,$48);
 }

@@ -3,6 +3,8 @@ In development:
 ------         
 
   [development]
+    * compile binary
+    + compile sg for linux i386 / ppc64le
     + compile lib50 / lib50_64 for linux i386 / ppc64le
 
     * #206 : migrate console / files samples

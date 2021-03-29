@@ -1867,7 +1867,7 @@ void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, i
          tape.write(bcInc, 1);
          tape.write(bcElseR, baCurrentLabel, -1);
          tape.releaseLabel();
-         tape.write(bcFreeI, 1);
+         tape.write(bcPop);
          tape.write(bcSaveF, argument << 2);
 
          break;
@@ -2439,7 +2439,7 @@ void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::No
 
 void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
 {
-   int freeArgs = 0;
+   bool freeStack = false;
    bool lenMode = node.argument == LEN_OPERATOR_ID;
    bool setMode = (node.argument == SET_REFER_OPERATOR_ID/* || node.argument == SETNIL_REFER_MESSAGE_ID*/);
    bool immIndex = false;
@@ -2468,7 +2468,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
 
       if (setMode) {
          generateObject(tape, rarg2, scope, STACKOP_MODE);
-         freeArgs = 1;
+         freeStack = true;
       }
       else if (rarg2 == lxLocalAddress) {
          argument = rarg2.argument;
@@ -2595,8 +2595,8 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
    }
    scope.clear();
 
-   if (freeArgs > 0)
-      releaseStack(tape, freeArgs);
+   if (freeStack)
+      releaseArg(tape);
 }
 
 void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
