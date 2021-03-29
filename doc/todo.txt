@@ -3,7 +3,6 @@ In development:
 ------         
 
   [development]
-    * textview sample
     + compile lib50 / lib50_64 for linux i386 / ppc64le
 
     * #206 : migrate console / files samples

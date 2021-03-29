@@ -1,10 +1,10 @@
 <configuration>
   <project>
-      <template>lib</template>
+      <template>lib_64</template>
       <namespace>system</namespace>
       <debuginfo>-1</debuginfo>
       <options>-w3</options>
-      <output>/usr/lib/elena/lib50</output>
+      <output>/usr/lib/elena/lib50_64</output>
   </project>
   <manifest>
      <name>ELENA Standard Library</name>

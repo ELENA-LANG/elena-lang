@@ -1,0 +1,21 @@
+#!/bin/bash
+RELEASE=elena-5.10.0.i386-linux
+
+echo compiling data files
+
+cp ../bin/elena-lc /usr/bin/
+
+
+echo compiling lib50 files
+
+../bin/elena-lc ../src50/system/system.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+exit 0
