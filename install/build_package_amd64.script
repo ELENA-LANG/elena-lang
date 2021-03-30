@@ -47,6 +47,16 @@ fi
 cp ../dat/og/*.dat /usr/share/elena/
 cp ../dat/sg/syntax.dat /usr/share/elena
 
+../bin/elena-asm2binx ../src50/core/system.core_routines.esm /usr/lib/elena/lib50
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
 ../bin/elena-lc ../src50/system/system_64.project
 ret=$?
 if [ $ret -eq -2 ]

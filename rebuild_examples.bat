@@ -108,6 +108,16 @@ bin\elc examples\console\goods\goods64.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elc examples\console\datetime\dtcalculator.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+bin\elc examples\console\datetime\dtcalculator64.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 @echo off 
 goto:eof
 @echo on

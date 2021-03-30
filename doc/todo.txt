@@ -3,7 +3,8 @@ In development:
 ------         
 
   [development]
-    * goods
+    + compile core_routines for linux i386 / ppc64le
+    * dtcalc
     + compile lib50 / lib50_64 for linux i386 / ppc64le
 
     * #206 : migrate console / files samples
@@ -128,6 +129,8 @@ In development:
     * do we need win64_pointers.l / win32_pointers.l and win64_strings.l / win32_strings.l or there is no difference?
     * #280 64bit tool set
     * #443 : power8
+  
+    + support run-time compilation
 
     * Lexi project:
         - load simple text and display it
