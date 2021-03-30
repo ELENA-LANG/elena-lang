@@ -12,7 +12,7 @@ LD = g++
 WINDRES = windres
 
 INC = -I.. -I../../../common -I../../../common/win32 -I../../../engine -I../linux32
-CFLAGS = -march=pentium2 -m64 -D_LINUX
+CFLAGS = -mcpu=power8 -m64 -D_LINUX
 RESINC = 
 LIBDIR = 
 LIB = 

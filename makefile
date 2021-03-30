@@ -6,9 +6,9 @@
 WRKDIR = `pwd`
 MAKE = make
 
-all_lnx32: elc_lnx32 sg_lnx32 og_lnx32
+all_lnx32: elc_lnx32 sg_lnx32 og_lnx32 asm2bin_lnx32
 
-all_ppc64le: elc_ppc64le sg_ppc64le og_ppc64le
+all_ppc64le: elc_ppc64le sg_ppc64le og_ppc64le asm2bin_ppc64le
 
 elc_lnx32: 
 	$(MAKE) -C elenasrc2/elc/codeblocks all -f elc_lnx32.mak
@@ -26,7 +26,10 @@ elenasm_lnx32:
 	$(MAKE) -C elenasrc2/elenasm/codeblocks all -f elenasm.cbp.mak
 
 asm2bin_lnx32: 
-	$(MAKE) -C elenasrc2/tools/asm2bin/codeblocks all -f asm2bin_lnx.cbp.mak
+	$(MAKE) -C elenasrc2/tools/asm2bin/codeblocks all -f asm2bin_lnx32.mak
+
+asm2bin_ppc64le: 
+	$(MAKE) -C elenasrc2/tools/asm2bin/codeblocks all -f asm2bin_ppc64le.mak
 
 ecv_lnx32: 
 	$(MAKE) -C elenasrc2/tools/ecv/codeblocks all -f ecv.cbp.mak
@@ -66,7 +69,10 @@ clean_elenasm_lnx32:
 	$(MAKE) -C elenasrc2/elenasm/codeblocks clean -f elenasm.cbp.mak
 
 clean_asm2bin_lnx32: 
-	$(MAKE) -C elenasrc2/tools/asm2bin/codeblocks clean -f asm2bin_lnx.cbp.mak
+	$(MAKE) -C elenasrc2/tools/asm2bin/codeblocks clean -f asm2bin_lnx32.mak
+
+clean_asm2bin_ppc64le: 
+	$(MAKE) -C elenasrc2/tools/asm2bin/codeblocks clean -f asm2bin_ppc64le.mak
 
 clean_ecv_lnx32: 
 	$(MAKE) -C elenasrc2/tools/ecv/codeblocks clean -f ecv.cbp.mak
