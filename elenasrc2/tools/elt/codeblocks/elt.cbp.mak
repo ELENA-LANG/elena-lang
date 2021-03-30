@@ -27,7 +27,7 @@ LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE = $(LDFLAGS) -s -m32
 OBJDIR_RELEASE = ../temp
 DEP_RELEASE = 
-OUT_RELEASE = ../../../../bin/elt.exe
+OUT_RELEASE = ../../../../bin/elena-lt
 
 INC_DEBUG = $(INC)
 CFLAGS_DEBUG = $(CFLAGS) -g
@@ -38,7 +38,7 @@ LIB_DEBUG = $(LIB)
 LDFLAGS_DEBUG = $(LDFLAGS)
 OBJDIR_DEBUG = ../temp
 DEP_DEBUG = 
-OUT_DEBUG = ../../../../bin/elt.exe
+OUT_DEBUG = ../../../../bin/elena-lt
 
 OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/altstrings.o $(OBJDIR_RELEASE)/__/__/__/common/config.o $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/elt.o
 
@@ -77,7 +77,7 @@ $(OBJDIR_RELEASE)/__/elt.o: ../elt.cpp
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
-	rm -rf ../../../../bin
+	rm ../../../../bin/elena-lt
 	rm -rf $(OBJDIR_RELEASE)/__/__/__/common
 	rm -rf $(OBJDIR_RELEASE)/__
 
@@ -110,7 +110,7 @@ $(OBJDIR_DEBUG)/__/elt.o: ../elt.cpp
 
 clean_debug: 
 	rm -f $(OBJ_DEBUG) $(OUT_DEBUG)
-	rm -rf ../../../../bin
+	rm ../../../../bin/elena-lt
 	rm -rf $(OBJDIR_DEBUG)/__/__/__/common
 	rm -rf $(OBJDIR_DEBUG)/__
 

@@ -6,9 +6,9 @@
 WRKDIR = `pwd`
 MAKE = make
 
-all_lnx32: elc_lnx32 sg_lnx32
+all_lnx32: elc_lnx32 sg_lnx32 og_lnx32
 
-all_ppc64le: elc_ppc64le sg_ppc64le
+all_ppc64le: elc_ppc64le sg_ppc64le og_ppc64le
 
 elc_lnx32: 
 	$(MAKE) -C elenasrc2/elc/codeblocks all -f elc_lnx32.mak
@@ -35,7 +35,10 @@ elt_lnx32:
 	$(MAKE) -C elenasrc2/tools/elt/codeblocks all -f elt.cbp.mak
 
 og_lnx32: 
-	$(MAKE) -C elenasrc2/tools/og/codeblocks all -f og_lnx32.cbp.mak
+	$(MAKE) -C elenasrc2/tools/og/codeblocks all -f og_lnx32.mak
+
+og_ppc64le: 
+	$(MAKE) -C elenasrc2/tools/og/codeblocks all -f og_ppc64le.mak
 
 sg_lnx32: 
 	$(MAKE) -C elenasrc2/tools/sg/codeblocks all -f sg_lnx32.mak
@@ -72,7 +75,7 @@ clean_elt_lnx32:
 	$(MAKE) -C elenasrc2/tools/elt/codeblocks clean -f elt.cbp.mak
 
 clean_og_lnx32: 
-	$(MAKE) -C elenasrc2/tools/og/codeblocks clean -f og_lnx32.cbp.mak
+	$(MAKE) -C elenasrc2/tools/og/codeblocks clean -f og_lnx32.mak
 
 clean_sg_lnx32: 
 	$(MAKE) -C elenasrc2/tools/sg/codeblocks clean -f sg_lnx32.mak

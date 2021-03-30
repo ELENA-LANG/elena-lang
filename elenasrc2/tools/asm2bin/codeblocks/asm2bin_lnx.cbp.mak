@@ -112,7 +112,7 @@ $(OBJDIR_DEBUG)/__/__/__/engine/module.o: ../../../engine/module.cpp
 
 clean_debug: 
 	rm -f $(OBJ_DEBUG) $(OUT_DEBUG)
-	rm -rf ../../../../bin
+	rm ../../../../bin/elena-asm2binx
 	rm -rf $(OBJDIR_DEBUG)/__
 	rm -rf $(OBJDIR_DEBUG)/__/__/__/engine
 	rm -rf $(OBJDIR_DEBUG)/__/__/__/elc
@@ -182,7 +182,7 @@ $(OBJDIR_RELEASE)/__/__/__/engine/module.o: ../../../engine/module.cpp
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
-	rm -rf ../../../../bin
+	rm ../../../../bin/elena-asm2binx
 	rm -rf $(OBJDIR_RELEASE)/__
 	rm -rf $(OBJDIR_RELEASE)/__/__/__/engine
 	rm -rf $(OBJDIR_RELEASE)/__/__/__/elc

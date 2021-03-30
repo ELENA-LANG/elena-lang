@@ -27,7 +27,7 @@ LIB_DEFAULT = $(LIB)
 LDFLAGS_DEFAULT = $(LDFLAGS) -s
 OBJDIR_DEFAULT = ../temp
 DEP_DEFAULT = 
-OUT_DEFAULT = ../../../../bin/elenacv.exe
+OUT_DEFAULT = ../../../../bin/elena-cv
 
 OBJ_DEFAULT = $(OBJDIR_DEFAULT)/__/ecv.o $(OBJDIR_DEFAULT)/__/__/__/engine/section.o $(OBJDIR_DEFAULT)/__/__/__/engine/module.o $(OBJDIR_DEFAULT)/__/__/__/engine/libman.o $(OBJDIR_DEFAULT)/__/__/__/engine/bytecode.o $(OBJDIR_DEFAULT)/__/__/__/common/altstrings.o $(OBJDIR_DEFAULT)/__/__/__/common/files.o $(OBJDIR_DEFAULT)/__/__/__/common/dump.o $(OBJDIR_DEFAULT)/__/__/__/common/config.o
 
@@ -77,7 +77,7 @@ $(OBJDIR_DEFAULT)/__/__/__/common/config.o: ../../../common/config.cpp
 
 clean_default: 
 	rm -f $(OBJ_DEFAULT) $(OUT_DEFAULT)
-	rm -rf ../../../../bin
+	rm ../../../../bin/elena-cv
 	rm -rf $(OBJDIR_DEFAULT)/__
 	rm -rf $(OBJDIR_DEFAULT)/__/__/__/engine
 	rm -rf $(OBJDIR_DEFAULT)/__/__/__/common

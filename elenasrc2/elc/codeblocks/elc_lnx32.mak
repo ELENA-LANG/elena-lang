@@ -151,7 +151,7 @@ $(OBJDIR_DEBUG)/__/__/engine/parsertable.o: ../../engine/parsertable.cpp
 
 clean_debug: 
 	rm -f $(OBJ_DEBUG) $(OUT_DEBUG)
-	rm -rf ../../../bin
+	rm ../../../bin/elena-lc
 	rm -rf $(OBJDIR_DEBUG)/__
 	rm -rf $(OBJDIR_DEBUG)/__/__/engine
 	rm -rf $(OBJDIR_DEBUG)/__/linux32
@@ -260,7 +260,7 @@ $(OBJDIR_RELEASE)/__/__/engine/parsertable.o: ../../engine/parsertable.cpp
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
-	rm -rf ../../../bin
+	rm ../../../bin/elena-lc
 	rm -rf $(OBJDIR_RELEASE)/__
 	rm -rf $(OBJDIR_RELEASE)/__/__/engine
 	rm -rf $(OBJDIR_RELEASE)/__/linux32

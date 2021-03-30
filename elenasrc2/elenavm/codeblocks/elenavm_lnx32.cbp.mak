@@ -132,7 +132,7 @@ $(OBJDIR_DEBUG)/__/__/engine/libman.o: ../../engine/libman.cpp
 
 clean_debug: 
 	rm -f $(OBJ_DEBUG) $(OUT_DEBUG)
-	rm -rf ../../../bin
+	rm ../../../bin/elenavm.so
 	rm -rf $(OBJDIR_DEBUG)/__/__/engine/linux32
 	rm -rf $(OBJDIR_DEBUG)/__/__/engine
 	rm -rf $(OBJDIR_DEBUG)/__/__/engine/x86
@@ -224,7 +224,7 @@ $(OBJDIR_RELEASE)/__/__/engine/libman.o: ../../engine/libman.cpp
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
-	rm -rf ../../../bin
+	rm ../../../bin/elenavm.so
 	rm -rf $(OBJDIR_RELEASE)/__/__/engine/linux32
 	rm -rf $(OBJDIR_RELEASE)/__/__/engine
 	rm -rf $(OBJDIR_RELEASE)/__/__/engine/x86

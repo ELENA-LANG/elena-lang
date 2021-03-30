@@ -12,11 +12,11 @@ LD = g++
 WINDRES = windres
 
 INC = -I.. -I../../../common -I../../../common/win32 -I../../../engine -I../linux32
-CFLAGS = -march=pentium2 -m32 -D_LINUX
+CFLAGS = -march=pentium2 -m64 -D_LINUX
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = -m32 -static-libgcc -static-libstdc++
+LDFLAGS = -s -m64 -static-libgcc -static-libstdc++
 
 INC_DEBUG = $(INC)
 CFLAGS_DEBUG = $(CFLAGS) -g
@@ -27,7 +27,7 @@ LIB_DEBUG = $(LIB)
 LDFLAGS_DEBUG = $(LDFLAGS)
 OBJDIR_DEBUG = ../temp
 DEP_DEBUG = 
-OUT_DEBUG = ../../../../bin/elena-sg
+OUT_DEBUG = ../../../../bin/elena-og
 
 INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -O2 -Wno-conversion-null
@@ -38,11 +38,11 @@ LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE = $(LDFLAGS) -s
 OBJDIR_RELEASE = ../temp
 DEP_RELEASE = 
-OUT_RELEASE = ../../../../bin/elena-sg
+OUT_RELEASE = ../../../../bin/elena-og
 
-OBJ_DEBUG = $(OBJDIR_DEBUG)/__/sg.o $(OBJDIR_DEBUG)/__/__/__/engine/textsource.o $(OBJDIR_DEBUG)/__/__/__/engine/parsertable.o $(OBJDIR_DEBUG)/__/__/__/common/xmlreader.o $(OBJDIR_DEBUG)/__/__/__/common/altstrings.o $(OBJDIR_DEBUG)/__/__/__/common/files.o $(OBJDIR_DEBUG)/__/__/__/common/dump.o $(OBJDIR_DEBUG)/__/__/__/common/config.o
+OBJ_DEBUG = $(OBJDIR_DEBUG)/__/og.o $(OBJDIR_DEBUG)/__/__/__/engine/textsource.o $(OBJDIR_DEBUG)/__/__/__/engine/syntaxtree.o $(OBJDIR_DEBUG)/__/__/__/engine/bytecode.o $(OBJDIR_DEBUG)/__/__/__/common/xmlreader.o $(OBJDIR_DEBUG)/__/__/__/common/altstrings.o $(OBJDIR_DEBUG)/__/__/__/common/files.o $(OBJDIR_DEBUG)/__/__/__/common/dump.o $(OBJDIR_DEBUG)/__/__/__/common/config.o
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/sg.o $(OBJDIR_RELEASE)/__/__/__/engine/textsource.o $(OBJDIR_RELEASE)/__/__/__/engine/parsertable.o $(OBJDIR_RELEASE)/__/__/__/common/xmlreader.o $(OBJDIR_RELEASE)/__/__/__/common/altstrings.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/config.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/og.o $(OBJDIR_RELEASE)/__/__/__/engine/textsource.o $(OBJDIR_RELEASE)/__/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/common/xmlreader.o $(OBJDIR_RELEASE)/__/__/__/common/altstrings.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/config.o
 
 all: debug release
 
@@ -61,14 +61,17 @@ debug: before_debug out_debug after_debug
 out_debug: before_debug $(OBJ_DEBUG) $(DEP_DEBUG)
 	$(LD) $(LIBDIR_DEBUG) -o $(OUT_DEBUG) $(OBJ_DEBUG)  $(LDFLAGS_DEBUG) $(LIB_DEBUG)
 
-$(OBJDIR_DEBUG)/__/sg.o: ../sg.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../sg.cpp -o $(OBJDIR_DEBUG)/__/sg.o
+$(OBJDIR_DEBUG)/__/og.o: ../og.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../og.cpp -o $(OBJDIR_DEBUG)/__/og.o
 
 $(OBJDIR_DEBUG)/__/__/__/engine/textsource.o: ../../../engine/textsource.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../../../engine/textsource.cpp -o $(OBJDIR_DEBUG)/__/__/__/engine/textsource.o
 
-$(OBJDIR_DEBUG)/__/__/__/engine/parsertable.o: ../../../engine/parsertable.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../../../engine/parsertable.cpp -o $(OBJDIR_DEBUG)/__/__/__/engine/parsertable.o
+$(OBJDIR_DEBUG)/__/__/__/engine/syntaxtree.o: ../../../engine/syntaxtree.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../../../engine/syntaxtree.cpp -o $(OBJDIR_DEBUG)/__/__/__/engine/syntaxtree.o
+
+$(OBJDIR_DEBUG)/__/__/__/engine/bytecode.o: ../../../engine/bytecode.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../../../engine/bytecode.cpp -o $(OBJDIR_DEBUG)/__/__/__/engine/bytecode.o
 
 $(OBJDIR_DEBUG)/__/__/__/common/xmlreader.o: ../../../common/xmlreader.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../../../common/xmlreader.cpp -o $(OBJDIR_DEBUG)/__/__/__/common/xmlreader.o
@@ -87,7 +90,7 @@ $(OBJDIR_DEBUG)/__/__/__/common/config.o: ../../../common/config.cpp
 
 clean_debug: 
 	rm -f $(OBJ_DEBUG) $(OUT_DEBUG)
-	rm ../../../../bin/elena-sg
+	rm ../../../../bin/elena-og
 	rm -rf $(OBJDIR_DEBUG)/__
 	rm -rf $(OBJDIR_DEBUG)/__/__/__/engine
 	rm -rf $(OBJDIR_DEBUG)/__/__/__/common
@@ -105,14 +108,17 @@ release: before_release out_release after_release
 out_release: before_release $(OBJ_RELEASE) $(DEP_RELEASE)
 	$(LD) $(LIBDIR_RELEASE) -o $(OUT_RELEASE) $(OBJ_RELEASE)  $(LDFLAGS_RELEASE) $(LIB_RELEASE)
 
-$(OBJDIR_RELEASE)/__/sg.o: ../sg.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../sg.cpp -o $(OBJDIR_RELEASE)/__/sg.o
+$(OBJDIR_RELEASE)/__/og.o: ../og.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../og.cpp -o $(OBJDIR_RELEASE)/__/og.o
 
 $(OBJDIR_RELEASE)/__/__/__/engine/textsource.o: ../../../engine/textsource.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/textsource.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/textsource.o
 
-$(OBJDIR_RELEASE)/__/__/__/engine/parsertable.o: ../../../engine/parsertable.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/parsertable.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/parsertable.o
+$(OBJDIR_RELEASE)/__/__/__/engine/syntaxtree.o: ../../../engine/syntaxtree.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/syntaxtree.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/syntaxtree.o
+
+$(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o: ../../../engine/bytecode.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/bytecode.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o
 
 $(OBJDIR_RELEASE)/__/__/__/common/xmlreader.o: ../../../common/xmlreader.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/xmlreader.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/xmlreader.o
@@ -131,7 +137,7 @@ $(OBJDIR_RELEASE)/__/__/__/common/config.o: ../../../common/config.cpp
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
-	rm ../../../../bin/elena-sg
+	rm ../../../../bin/elena-og
 	rm -rf $(OBJDIR_RELEASE)/__
 	rm -rf $(OBJDIR_RELEASE)/__/__/__/engine
 	rm -rf $(OBJDIR_RELEASE)/__/__/__/common
