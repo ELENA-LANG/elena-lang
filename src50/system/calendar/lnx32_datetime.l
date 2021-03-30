@@ -151,7 +151,7 @@ namespace calendar
                 ^ val
             }
         
-            set(int value)
+            set(value)
             {
                 int n := value - 1900;
         
@@ -169,7 +169,7 @@ namespace calendar
                 ^ val
             }
             
-            set(int value)
+            set(value)
             {
                 int n := value - 1;
                     
@@ -196,7 +196,7 @@ namespace calendar
                 ^ val
             }
         
-            set(int value)
+            set(value)
             {
                 int n := value;
                     
@@ -212,7 +212,7 @@ namespace calendar
                 
                 ^ val
             }
-            set(int value)
+            set(value)
             { 
                 int n := value;
                     
@@ -229,7 +229,7 @@ namespace calendar
                 ^ val
             }
         
-            set(int value)
+            set(value)
             {
                 int n := value;
                     
@@ -246,7 +246,7 @@ namespace calendar
                 ^ val
             }
         
-            set(int value)
+            set(value)
             { 
                 int n := value;
                     
@@ -264,7 +264,7 @@ namespace calendar
                 ^ val
             }
         
-            set(int value)
+            set(value)
             {
                 int n := value * 1000;
                     
