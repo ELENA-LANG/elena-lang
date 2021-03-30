@@ -63,7 +63,7 @@ namespace io
                 ^ ret
             } 
             
-            set(int index)
+            set(index)
             {
                 int ret := extern libc.lseek(
                     theHandle,
@@ -84,7 +84,7 @@ namespace io
                 ^ ret
             }
             
-            set(int length)
+            set(length)
             {
 //                int pos := self.Index;
 //                
@@ -265,13 +265,13 @@ namespace io
     
     singleton fileControl
     {
-        BinaryReader openForRead(path) = FileStream.openForRead(path);
+        BinaryReader openForRead(path) = new BinaryStreamReader(FileStream.openForRead(path));
         
-        BinaryReader openForReWrite(path) = FileStream.openForReWrite(path);
+        BinaryReader openForReWrite(path) = new BinaryStreamReader(FileStream.openForReWrite(path));
         
-        BinaryReader openForEdit(path) = FileStream.openForEdit(path);
+        BinaryReader openForEdit(path) = new BinaryStreamReader(FileStream.openForEdit(path));
         
-        BinaryReader openForAppend(path) = FileStream.openForAppend(path);
+        BinaryReader openForAppend(path) = new BinaryStreamReader(FileStream.openForAppend(path));
             
         TextReader newReader(path) = StreamReader.new:path;
         
