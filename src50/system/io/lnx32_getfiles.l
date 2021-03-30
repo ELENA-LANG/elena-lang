@@ -120,8 +120,8 @@ namespace io
 //        Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
 //    }
     
-    public SearchFiles(string path, string mask, List<string> output)
-    {
+//    public SearchFiles(string path, string mask, List<string> output)
+//    {
 //        WIN32_FIND_DATA ffd;
 //        handle          hFind;  
 //        
@@ -164,10 +164,10 @@ namespace io
 //                b := false
 //            }
 //        }
-    }
+//    }
     
-    public SearchDirectories(string path, string mask, List<string> output)
-    {
+//    public SearchDirectories(string path, string mask, List<string> output)
+//    {
 //        WIN32_FIND_DATA ffd;
 //        handle          hFind;  
 //        
@@ -210,5 +210,5 @@ namespace io
 //                b := false
 //            }
 //        }
-    }
+//    }
 }
