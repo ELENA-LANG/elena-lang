@@ -1815,53 +1815,58 @@ void DerivationWriter :: flushTokenExpression(SyntaxWriter& writer, SNode& node,
 //
 //   writer.closeNode();
 //}
-//
-//void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope)
-//{
+
+void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope)
+{
+   SNode exprNode = current.firstChild(lxObjectMask);
+
 //   // revert the first operand
 //   writer.trim();
 //
 //   current = lxIdle;
 //
 //   SNode node = goToFirstNode(current);
-//
-//   IdentifierString templateName;
-//   SNode operatorNode = current.firstChild(lxTerminalMask);
-//   if (operatorNode.identifier().compare(IF_OPERATOR)) {
-//      templateName.copy(DOIFNOTNIL_OPERATOR);
-//   }
-//   else if (operatorNode.identifier().compare(ALT_OPERATOR)) {
-//      templateName.copy(TRYORRETURN_OPERATOR);
-//   }
-//
-//   // generate members
-//   SyntaxTree tempTree;
-//   SyntaxWriter tempWriter(tempTree);
-//
-//   // generate loperand
-//   derivationScope.nestedLevel += 0x100;
-//   bool dummy1 = false, dummy2 = false;
-//   tempWriter.newNode(lxRoot);
-//
-//   tempWriter.newNode(lxExpression);
-//   generateExpressionNode(tempWriter, node, dummy1, dummy2, derivationScope);
-//   tempWriter.closeNode();
-//   derivationScope.nestedLevel -= 0x100;
-//
-//   // generate roperand
-//   derivationScope.nestedLevel += 0x100;
-//   generateExpressionTree(tempWriter, current.parentNode(), derivationScope);
-//   derivationScope.nestedLevel -= 0x100;
-//
-//   tempWriter.closeNode();
-//
-//   generateStatementTemplateTree(writer, node, tempTree, templateName.ident(), derivationScope);
-//
+
+   IdentifierString templateName("__inline");
+   SNode operatorNode = exprNode.findChild(lxOperator).firstChild();
+   if (operatorNode.identifier().compare(IF_OPERATOR)) {
+      templateName.append(IF_MESSAGE);
+   }
+   else if (operatorNode.identifier().compare(ALT_OPERATOR)) {
+      templateName.append(ALT_MESSAGE);
+   }
+
+   templateName.append("#1#1");
+
+   // generate members
+   SyntaxTree tempTree;
+   SyntaxWriter tempWriter(tempTree);
+
+   // generate loperand
+   derivationScope.nestedLevel += 0x100;
+   tempWriter.newNode(lxRoot);
+
+   tempWriter.newNode(lxExpression);
+   flushExpressionNode(tempWriter, exprNode.firstChild(), derivationScope);
+   tempWriter.closeNode();
+   derivationScope.nestedLevel -= 0x100;
+
+   // generate roperand
+   derivationScope.nestedLevel += 0x100;
+   tempWriter.newNode(lxExpression);
+   flushExpressionNode(tempWriter, current.firstChild(), derivationScope);
+   tempWriter.closeNode();
+   derivationScope.nestedLevel -= 0x100;
+
+   tempWriter.closeNode();
+
+   generateStatementTemplateTree(writer, current, tempTree, templateName.ident(), derivationScope);
+
 //   while (node.nextNode() != lxNone)
 //      node = node.nextNode();
 //
 //   current = node;
-//}
+}
 
 void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& current/*, bool& first, bool& expressionExpected*/,
    Scope& derivationScope)
@@ -1875,10 +1880,10 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
          copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
          writer.closeNode();
          break;
-//      case lxTemplateOperator:
-//         // COMPILER MAGIC : recognize the operator template
-//         generateOperatorTemplateTree(writer, current, derivationScope);
-//         break;
+      case lxInlineExpression:
+         // COMPILER MAGIC : recognize the operator template
+         generateOperatorTemplateTree(writer, current, derivationScope);
+         break;
 //      case lxExpression:
 //         generateExpressionTree(writer, current, derivationScope);
 //         break;

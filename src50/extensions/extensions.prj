@@ -18,6 +18,7 @@
             <include>console.l</include>
             <include>basic.l</include>
             <include>win32_args.l</include>                                                        
+            <include>app.l</include>
             <include>text\strings.l</include>
             <include>text\words.l</include>
         </module>

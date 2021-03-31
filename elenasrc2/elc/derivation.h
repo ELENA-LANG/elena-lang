@@ -128,7 +128,7 @@ class DerivationWriter : public _DerivationWriter
 
    void copyScope(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 
-//   void generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope);
+   void generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope);
    void generateClassImport(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    void generateTemplateTree(SNode node, ScopeType templateType);
    void flushScope(SyntaxWriter& writer, SNode node, Scope& scope);

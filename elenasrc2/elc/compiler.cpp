@@ -5495,12 +5495,14 @@ ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, Expr
 
    SNode lnode = node.firstChild();
    SNode rnode = lnode.nextNode(lxObjectMask);
+   if (rnode == lxExpression)
+      rnode = rnode.firstChild();
 
    ObjectInfo loperand = compileObject(writer, lnode, scope, HINT_PARAMETER, nullptr);
 
    writer.newNode(lxExpression);
 
-   ObjectInfo retVal = compileResendMessageOperation(writer, node, scope, loperand, 0, EAttr::eaNone);
+   ObjectInfo retVal = compileResendMessageOperation(writer, rnode, scope, loperand, 0, EAttr::eaNone);
 
    writer.closeNode();
 

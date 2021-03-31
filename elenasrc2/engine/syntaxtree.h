@@ -87,7 +87,6 @@ enum LexicalType
    lxPropertyDecl             = 0x0011A0,
    lxSwitchOption             = 0x0011B0,
    lxLastSwitchOption         = 0x0011C0,
-//   lxTemplateOperator         = 0x0011D0,
 //   lxInlineArgs               = 0x0011E0,
 //   lxCollection               = 0x0211F0,
 //   lxSubMessage               = 0x021200,
@@ -211,6 +210,8 @@ enum LexicalType
    lxOption                   = 0x031492,
    lxCollectionOp             = 0x4314A0,
    lxCollectionExpression     = 0x0314A0,
+   lxInlineOp                 = 0x4314B0,
+   lxInlineExpression         = 0x0314B0,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file

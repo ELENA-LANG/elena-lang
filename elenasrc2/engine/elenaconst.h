@@ -416,6 +416,7 @@ namespace _ELENA_
 //   constexpr auto WRITE_MESSAGE        = "write";
    constexpr auto IF_MESSAGE              = "if";
    constexpr auto IFNOT_MESSAGE           = "ifnot";
+   constexpr auto ALT_MESSAGE             = "alt";
    constexpr auto SHIFTL_MESSAGE          = "shiftLeft";
    constexpr auto SHIFTR_MESSAGE          = "shiftRight";
    //  // #define IF_ELSE_MESSAGE          "if:else"
@@ -458,7 +459,7 @@ namespace _ELENA_
    constexpr auto VALUE_OPERATOR          = "*";
 
   // operator templates
-   constexpr auto DOIFNOTNIL_OPERATOR        = "doIfNotNil#1#1";
+   constexpr auto DOIFNOTNIL_OPERATOR        = "if#1#1";
    constexpr auto TRYORRETURN_OPERATOR       = "tryOrReturn#1#1";
 
   // --- ELENA explicit variables ---

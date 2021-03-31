@@ -224,20 +224,20 @@ public interface<T>
 //        v.close()
 //    }
 //}
-//
-//// === operator templates ===
-//
-//// .?
-//#declare doIfNotNil<identifier>(expr)
-//{
-//    if (nil != identifier)
-//    {
-//        expr        
-//    }
-//}
-//
-//// .\
-//#declare tryOrReturn<identifier>(expr)
-//{
-//    expr \ back:identifier;
-//}
+
+// === inline operator templates ===
+
+// .?
+#declare __inlineif<identifier>(expr)
+{
+    if (nil != identifier)
+    {
+        expr        
+    }
+}
+
+// .\
+#declare __inlinealt<identifier>(expr)
+{
+    expr \ back:identifier;
+}
