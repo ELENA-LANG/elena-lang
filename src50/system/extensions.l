@@ -1350,78 +1350,78 @@ public extension wideOp : WideString
     }
 }
 
-//public extension stringWeakOp
-//{
-//    fillString(s, int counter)
-//    {
-//        for (int i := 0, i < counter, i += 1)
-//        {
-//            self.write(s)
-//        };
-//            
-//        ^ self
-//    }
-//
-//    writeCopies(line, counter)
-//        = self.fillString(line, cast int(counter));
-//
-//    writePaddingLeft(line, char ch, int width)
-//    {
-//        var paddedStr := line.padLeft(ch, width);
-//
-//        self.write(paddedStr);
-//            
-//        ^ self
-//    }
-//    
-//    writePaddingRight(line, char ch, int width)
-//    {
-//        var paddedStr := line.padRight(ch, width);
-//
-//        self.write(paddedStr);
-//            
-//        ^ self
-//    }
-//    
-//    writePaddingLeft(line, int width)
-//    {
-//        var paddedStr := line.padLeft($32, width);
-//
-//        self.write(paddedStr);
-//            
-//        ^ self
-//    }
-//    
-//    writePaddingRight(line, int width)
-//    {
-//        var paddedStr := line.padRight($32, width);
-//
-//        self.write(paddedStr);
-//            
-//        ^ self
-//    }
-//    
-//    writePadding(line, char ch, int width)
-//    {
-//        int length := line.Length;        
-//        
-//        if (length < width)
-//        {
-//            int len := width - length;
-//            int leftLen := len / 2;
-//            
-//            self.fillString(ch, leftLen);
-//            self.write(line);
-//            self.fillString(ch, len - leftLen)
-//        }
-//        else
-//        { 
-//            self.write(line)
-//        };
-//            
-//        ^ self
-//    }    
-//}
+public extension stringWeakOp
+{
+    fillString(s, int counter)
+    {
+        for (int i := 0, i < counter, i += 1)
+        {
+            self.write(s)
+        };
+            
+        ^ self
+    }
+
+    writeCopies(line, counter)
+        = self.fillString(line, cast int(counter));
+
+    writePaddingLeft(line, char ch, int width)
+    {
+        var paddedStr := line.padLeft(ch, width);
+
+        self.write(paddedStr);
+            
+        ^ self
+    }
+    
+    writePaddingRight(line, char ch, int width)
+    {
+        var paddedStr := line.padRight(ch, width);
+
+        self.write(paddedStr);
+            
+        ^ self
+    }
+    
+    writePaddingLeft(line, int width)
+    {
+        var paddedStr := line.padLeft($32, width);
+
+        self.write(paddedStr);
+            
+        ^ self
+    }
+    
+    writePaddingRight(line, int width)
+    {
+        var paddedStr := line.padRight($32, width);
+
+        self.write(paddedStr);
+            
+        ^ self
+    }
+    
+    writePadding(line, char ch, int width)
+    {
+        int length := line.Length;        
+        
+        if (length < width)
+        {
+            int len := width - length;
+            int leftLen := len / 2;
+            
+            self.fillString(ch, leftLen);
+            self.write(line);
+            self.fillString(ch, len - leftLen)
+        }
+        else
+        { 
+            self.write(line)
+        };
+            
+        ^ self
+    }    
+}
 
 // --- charOp ---
 
