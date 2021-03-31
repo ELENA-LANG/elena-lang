@@ -5501,8 +5501,8 @@ ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, Expr
    ObjectInfo loperand = compileObject(writer, lnode, scope, HINT_PARAMETER, nullptr);
 
    writer.newNode(lxExpression);
-
    ObjectInfo retVal = compileResendMessageOperation(writer, rnode, scope, loperand, 0, EAttr::eaNone);
+   writer.closeNode();
 
    writer.closeNode();
 

@@ -221,7 +221,7 @@ namespace calendar
             short buffer[127];
     
             int length := extern KERNEL32.GetDateFormatW(
-                0, flags,self,0,buffer,255,0);
+                0, flags,self,0,buffer,255);
                 
             if (length == 0)
                 { FormatException.new:"Invalid date".raise() };
@@ -234,7 +234,7 @@ namespace calendar
             short buffer[127];
     
             int length := extern KERNEL32.GetTimeFormatW(
-                0,flags,self,0,buffer,255,0);
+                0,flags,self,0,buffer,255);
                 
             if (length == 0)
                 { FormatException.new:"Invalid time".raise() };

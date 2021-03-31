@@ -1,6 +1,6 @@
 import system'collections;
 import system'routines;
-//import system'calendar;
+import system'calendar;
 import system'text;
 
 // --- convertors ---
@@ -443,13 +443,13 @@ public extension convertorOp
 //            ^ mssg(new ExtensionVariable(extensions'convertorOp, n))
 //        }
 //    };
-//
-//public extension dateFormatterOp : Date
-//{
-//    string toShortTimeString()
-//        = cast TimeStruct(self).toShortTime();
-//}
-//
+
+public extension dateFormatterOp : Date
+{
+    string toShortTimeString()
+        = cast TimeStruct(self).toShortTime();
+}
+
 //// --- enumerableConvertor ---
 //
 //singleton enumerableConvertor

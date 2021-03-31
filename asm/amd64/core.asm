@@ -2444,7 +2444,7 @@ inline % 4E5h
   mov  rax, [rbx]
   mov  [rdi], rax
   mov  rcx, [rbx+8]
-  mov  [rdi+8], rax
+  mov  [rdi+8], rcx
 
 end
 
@@ -2526,7 +2526,7 @@ inline % 03E7h
   mov  rax, [rsi]
   mov  [rbx], rax
   mov  rcx, [rsi+8]
-  mov  dword ptr[rbx+8], eax
+  mov  dword ptr[rbx+8], ecx
 
 end
 
