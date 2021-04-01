@@ -4502,7 +4502,7 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
       else {
          messageRef = mapMessage(node, scope/*, false*/, true, propMode);
          if (getAction(messageRef) == getAction(scope.moduleScope->constructor_message)) {
-            target.kind = okClass;
+            target.kind = okClass; 
          }
          else scope.raiseError(errInvalidOperation, node);
       }
@@ -5672,6 +5672,9 @@ ObjectInfo Compiler :: compileNewArrOperation(SyntaxWriter& writer, SNode node, 
       int operationType = _logic->resolveNewOperationType(*scope.moduleScope, object.reference, roperand);
       if (operationType != 0) {
          int size = _logic->defineStructSize(*scope.moduleScope, object.reference, object.element);
+   
+         if (!expecteRef || expecteRef == scope.moduleScope->superReference)
+            expecteRef = resolveObjectReference(scope, object, true);
 
          if (expecteRef) {
             auto info = _logic->injectImplicitConversion(scope, *this, expecteRef, object.reference,
