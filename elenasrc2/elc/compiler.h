@@ -979,6 +979,8 @@ private:
 
    bool __FASTCALL isMethodEmbeddable(MethodScope& scope);
 
+   bool __FASTCALL isConstantList(ArgumentsInfo& members);
+
    ref_t retrieveImplicitIdentifier(NamespaceScope& scope, ident_t identifier, bool referenceOne, bool innermost);
 
    void writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, mssg_t messageRef);
@@ -1095,7 +1097,7 @@ private:
       ArgumentsInfo* preservedArgs);
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, ExprScope& ownerScope, InlineClassScope& scope,
       EAttr mode, ArgumentsInfo* preservedArgs);
-   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, ExprScope& scope/*, ObjectInfo target, EAttr mode*/);
+   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, ExprScope& scope/*, ObjectInfo target*/, EAttr mode);
 
    ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, SNode argNode, ExprScope& scope);
    ObjectInfo compileSubjectReference(SNode objectNode, ExprScope& scope, EAttr mode);

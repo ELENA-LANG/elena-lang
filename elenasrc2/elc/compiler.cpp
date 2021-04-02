@@ -5297,41 +5297,31 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, ExprScop
    return compileClosure(writer, node, ownerScope, scope, mode, preservedArgs);
 }
 
-//inline bool isConstant(SNode current)
-//{
-//   switch (current.type) {
-//      case lxConstantString:
-//      case lxConstantWideStr:
-//      case lxConstantSymbol:
-//      case lxConstantInt:
-//      case lxClassSymbol:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
-//inline bool isConstantList(SNode node)
-//{
-//   bool constant = true;
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxMember) {
-//         SNode object = current.findSubNodeMask(lxObjectMask);
-//         if (!isConstant(object)) {
-//            constant = false;
-//            break;
-//         }
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   return constant;
-//}
+bool Compiler :: isConstantList(ArgumentsInfo& members)
+{
+   for (pos_t i = 0; i != members.Length(); i++) {
+      ObjectInfo info = members[i];
 
-ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, ExprScope& scope/*, ObjectInfo target, EAttr mode*/)
+      switch (info.kind) {
+         case okClass:
+         case okLiteralConstant:
+         case okWideLiteralConstant:
+         case okCharConstant:
+         case okIntConstant:
+         case okUIntConstant:
+         case okLongConstant:
+         case okRealConstant:
+         case okSingleton:
+            break;
+         default:
+            return false;
+      }
+   }
+
+   return true;
+}
+
+ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, ExprScope& scope/*, ObjectInfo target*/, EAttr mode)
 {
    ObjectInfo target;
 
@@ -5358,48 +5348,57 @@ ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, ExprS
       current = current.nextNode(lxObjectMask);
    }
 
-   writer.newNode(lxInitializing);
+   if (size >= 0 && EAttrs::test(mode, HINT_CONSTEXPR) && isConstantList(members)) {
+      ref_t reference = 0;
+      SymbolScope* owner = (SymbolScope*)scope.getScope(Scope::ScopeLevel::slSymbol);
+      if (owner) {
+         reference = mapConstant(scope.moduleScope, owner->reference);
+      }
+      else reference = scope.moduleScope->mapAnonymous();
 
-   target.kind = okObject;
-   target.reference = typeInfo.reference;
-   if (size < 0) {
-      writer.newNode(lxCreatingStruct, counter * (-size));
+      target.kind = okArrayConst;
+      target.param = reference;
+      target.reference = typeInfo.reference;
+
+      writer.newNode(lxConstantList, reference | mskConstArray);
       writer.appendNode(lxType, target.reference);
-      writer.appendNode(lxSize, -size);
+      
+      int index = 0;
+      for (pos_t i = 0; i != members.Length(); i++) {
+         writer.newNode(lxMember, index++);
+         writeTerminal(writer, members[i], scope);
+         writer.closeNode();
+      }
+
+      _writer.generateConstantList(writer.CurrentNode(), scope.module, reference);
+
       writer.closeNode();
    }
    else {
-      //      if (EAttrs::test(mode, HINT_CONSTEXPR) && isConstantList(node)) {
-      //         ref_t reference = 0;
-      //         SymbolScope* owner = (SymbolScope*)scope.getScope(Scope::ScopeLevel::slSymbol);
-      //         if (owner) {
-      //            reference = mapConstant(scope.moduleScope, owner->reference);
-      //         }
-      //         else reference = scope.moduleScope->mapAnonymous();
-      //
-      //         node = lxConstantList;
-      //         node.setArgument(reference | mskConstArray);
-      //         node.appendNode(lxType, target.reference);
-      //
-      //         _writer.generateConstantList(node, scope.module, reference);
-      //
-      //         target.kind = okArrayConst;
-      //         target.param = reference;
-      //      }
-      //      else {
-      writer.newNode(lxCreatingClass, counter);
-      writer.appendNode(lxType, target.reference);
-      writer.closeNode();
-      //      }
-   }
+      writer.newNode(lxInitializing);
 
-   int index = 0;
-   for (pos_t i = 0; i != members.Length(); i++) {
-      writer.newNode(lxMember, index++);
-      writeTerminal(writer, members[i], scope);
+      target.kind = okObject;
+      target.reference = typeInfo.reference;
+      if (size < 0) {
+         writer.newNode(lxCreatingStruct, counter * (-size));
+         writer.appendNode(lxType, target.reference);
+         writer.appendNode(lxSize, -size);
+         writer.closeNode();
+      }
+      else {
+         writer.newNode(lxCreatingClass, counter);
+         writer.appendNode(lxType, target.reference);
+         writer.closeNode();
+      }
+
+      int index = 0;
+      for (pos_t i = 0; i != members.Length(); i++) {
+         writer.newNode(lxMember, index++);
+         writeTerminal(writer, members[i], scope);
+         writer.closeNode();
+      }
       writer.closeNode();
    }
-   writer.closeNode();
 
    return target;
 }
@@ -6684,7 +6683,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
          break;
       }
       case lxCollectionExpression:
-         retVal = compileCollection(writer, node, scope);
+         retVal = compileCollection(writer, node, scope, mode);
          break;
       default:
          retVal = compileObject(writer, node, scope, mode, preservedArgs);

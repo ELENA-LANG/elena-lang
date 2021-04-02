@@ -116,10 +116,10 @@ public extension objectOp
         ^ len != 0;
     }
         
-//    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
-//    bool safeEqual(o)
-//        = self.equal:o \ back:false;
-//
+    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
+    bool safeEqual(o)
+        = self.equal:o \ back:false;
+
 //    doWith(action)
 //        = action(self);
 //

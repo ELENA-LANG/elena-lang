@@ -976,8 +976,8 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
 
 lvaddr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t mask, bool silentMode)
 {
-   if (referenceInfo.referenceName.find("rusLat") != NOTFOUND_POS)
-      mask |= 0;
+   //if (referenceInfo.referenceName.find("rusLat") != NOTFOUND_POS)
+   //   mask |= 0;
 
    References messageReferences(RefInfo(0, nullptr));
 

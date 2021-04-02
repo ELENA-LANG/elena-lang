@@ -128,6 +128,28 @@ bin\elc examples\console\random\random64.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+
+bin\elc examples\console\trans\tanslit.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+bin\elc examples\console\trans\tanslit64.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+
+bin\elc examples\console\matrix\matrix.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+bin\elc examples\console\matrix\matrix64.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 @echo off 
 goto:eof
 @echo on

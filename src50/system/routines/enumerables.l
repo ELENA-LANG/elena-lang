@@ -160,21 +160,21 @@ public extension enumerableOp
 //    
 //    forEachPair(object,f)
 //        = self.forEachPair(object, (o,n){ f(o,n) });
-//
-//    seekEach(Func1 f)
-//        = f.retrieve(cast Enumerator(self.enumerator()));
-//
-//    seekEach(ExtensionMessage extMessage)
-//        = self.seekEach:(n => extMessage(n));
-//        
-//    seekEach(fn)
-//        = self.seekEach:(n => fn(n));
-//
-//    seekEach(object param, Func2 f)
-//        = f.retrieve(param, cast Enumerator(self.enumerator()));
-//
-//    safeSeek(val)
-//        = (x => val.safeEqual(x)).retrieve(cast Enumerator(self.enumerator()));
+
+    seekEach(Func1 f)
+        = f.retrieve(cast Enumerator(self.enumerator()));
+
+    seekEach(ExtensionMessage extMessage)
+        = self.seekEach:(n => extMessage(n));
+        
+    seekEach(fn)
+        = self.seekEach:(n => fn(n));
+
+    seekEach(object param, Func2 f)
+        = f.retrieve(param, cast Enumerator(self.enumerator()));
+
+    safeSeek(val)
+        = (x => val.safeEqual(x)).retrieve(cast Enumerator(self.enumerator()));
 
     seekFor(val)
         = (x => val.equal(x)).retrieve(cast Enumerator(self.enumerator()));
