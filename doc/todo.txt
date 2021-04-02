@@ -4,6 +4,7 @@ In development:
 
   [development]
     * #206 : migrate console / files samples
+    * abortexception - translit - why is not reconized
 
     + compile lib50 / lib50_64 for linux i386 / ppc64le
     + compile hellowordl for linux i386 / amd64

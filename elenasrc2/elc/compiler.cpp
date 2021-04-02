@@ -2452,15 +2452,15 @@ ObjectInfo Compiler :: compileSubjectReference(SNode terminal, ExprScope& scope,
    return retVal;
 }
 
-mssg_t Compiler :: mapMessage(SNode node, ExprScope& scope, /*bool extensionCall, */ bool newOpCall, bool propMode)
+mssg_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool extensionCall, bool newOpCall, bool propMode)
 {
    ref_t actionFlags = 0;
    if (propMode)
       // COMPILER MAGIC : recognize the property get call
       actionFlags = PROPERTY_MESSAGE;
 
-//   if (extensionCall)
-//      actionFlags |= FUNCTION_MESSAGE;
+   if (extensionCall)
+      actionFlags |= FUNCTION_MESSAGE;
 
    IdentifierString messageStr;
 
@@ -4445,7 +4445,7 @@ ObjectInfo Compiler :: compileResendMessageOperation(SyntaxWriter& writer, SNode
    ArgumentsInfo presavedArgs;
 
    ref_t expectedSignRef = 0; // contains the expected message signature if it there is only single method overloading
-   mssg_t messageRef = mapMessage(node, scope/*, target.kind == okExtension*/, false, false);
+   mssg_t messageRef = mapMessage(node, scope, target.kind == okExtension, false, false);
 
    mssg_t resolvedMessage = _logic->resolveSingleMultiDisp(*scope.moduleScope,
       resolveObjectReference(scope, target, false), messageRef);
@@ -4500,7 +4500,7 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
          return compileNewArrOperation(writer, current, scope, target, expectedRef, mode);
       }
       else {
-         messageRef = mapMessage(node, scope/*, false*/, true, propMode);
+         messageRef = mapMessage(node, scope, false, true, propMode);
          if (getAction(messageRef) == getAction(scope.moduleScope->constructor_message)) {
             target.kind = okClass; 
          }
@@ -4516,7 +4516,7 @@ ObjectInfo Compiler :: compileMessageExpression(SyntaxWriter& writer, SNode node
       current = current.nextNode(lxObjectMask);
 
       if (target.kind != okExternal) {
-         messageRef = mapMessage(node, scope/*, target.kind == okExtension*/, false, propMode);
+         messageRef = mapMessage(node, scope, target.kind == okExtension, false, propMode);
 
          mssg_t resolvedMessage = _logic->resolveSingleMultiDisp(*scope.moduleScope,
             resolveObjectReference(scope, target, false), messageRef);
@@ -4831,7 +4831,7 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Ex
    SNode current = node.firstChild();
 
    // tranfer the message into the property set one
-   mssg_t messageRef = mapMessage(current, scope, /*false, */false, true);
+   mssg_t messageRef = mapMessage(current, scope, false, false, true);
    ref_t actionRef, flags;
    pos_t argCount;
    decodeMessage(messageRef, actionRef, argCount, flags);
@@ -5951,10 +5951,6 @@ ObjectInfo Compiler :: compileRootExpression(SyntaxWriter& writer, SNode node, C
 //      case okUnknown:
 //         scope.raiseError(errUnknownObject, terminal);
 //         break;
-//      case okExtension:
-//         if (!EAttrs::test(mode, HINT_CALLOP)) {
-//            scope.raiseWarning(WARNING_LEVEL_3, wrnExplicitExtension, terminal);
-//         }
 //      case okConstantSymbol:
 //      case okSingleton:
 //         terminal.set(lxConstantSymbol, object.param);
@@ -6143,7 +6139,6 @@ ObjectInfo Compiler :: mapMetaField(ident_t token)
 
 ObjectInfo Compiler :: mapTerminal(SNode node, ExprScope& scope, EAttr mode)
 {
-//   //   EAttrs mode(modeAttr);
    ident_t token = node.identifier();
    ObjectInfo object;
 
@@ -6337,6 +6332,10 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
       case okClassSelf:
          writer.newNode(lxClassSymbol, object.param);
          break;
+      case okExtension:
+      //   if (!EAttrs::test(mode, HINT_CALLOP)) {
+      //      scope.raiseWarning(WARNING_LEVEL_3, wrnExplicitExtension, terminal);
+      //   }
       case okConstantSymbol:
       case okConstantRole:
       case okSingleton:
@@ -6354,12 +6353,10 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
          writer.appendNode(lxField, 0);
          break;
       case okSelfParam:
-         //         setParamTerminal(terminal, scope, object, mode, lxSelfLocal);
          writer.newNode(lxSelfLocal, object.param);
          break;
       case okLocalAddress:
       case okTempLocalAddress:
-         //         setVariableTerminal(terminal, scope, object, mode, lxLocalAddress);
          writer.newNode(lxLocalAddress, object.param);
          break;
       case okReadOnlyField:
@@ -6474,8 +6471,6 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
             throw InternalError("Cannot resolve variadic argument template");
 
          writer.newNode(lxBlockLocalAddr, object.param);
-         //   node.injectAndReplaceNode(lxArgBoxableExpression);
-         //   node.appendNode(lxType, wrapRef);
          break;
       }
       default:
@@ -6488,45 +6483,6 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
 ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode& node, ExprScope& scope, EAttr mode,
    ArgumentsInfo* preservedArgs)
 {
-//   ////   SNode current = node.firstChild();
-//   ////   if (current.compare(lxAttribute, lxType, lxArrayType, lxBookmarkReference)) {
-//   ////      mode.include(declareExpressionAttributes(current, scope, exprMode));
-//   ////
-//   ////      //      if (targetMode.testAndExclude(HINT_INLINEARGMODE)) {
-//   ////      //         noPrimMode = true;
-//   ////      //         inlineArgMode = true;
-//   ////      //      }
-//   ////   }
-//   ////
-//   ////   else if (mode.testAndExclude(HINT_PARAMSOP)) {
-//   ////	   result = compileVariadicUnboxing(current, scope, mode);
-//   ////   }
-//   ////   else if (mode.testAndExclude(HINT_YIELD_EXPR)) {
-//   ////      compileYieldExpression(current, scope, mode);
-//   ////   }
-//   ////   else if (mode.test(HINT_LAZY_EXPR)) {
-//   ////      result = compileClosure(node, scope, mode);
-//   ////   }
-//   ////   else {
-//   ObjectInfo result;
-//   switch (node.type) {
-//   //   //         case lxCode:
-//   //   //            current = lxCodeExpression;
-//   //   //         case lxType:
-//   //   //            if (mode.testAndExclude(HINT_MESSAGEREF)) {
-//   //   //               // HOTFIX : if it is an extension message
-//   //   //               result = compileMessageReference(current, scope);
-//   //   //
-//   //   //               recognizeTerminal(current, result, scope, mode);
-//   //   //            }
-//   //   //            else result = compileTypeSymbol(current, scope, mode);
-//   //   //            break;
-//   ////   if (mode.test(HINT_INLINEARGMODE)) {
-//   ////      result.element = result.reference;
-//   ////      result.reference = V_INLINEARG;
-//   ////   }
-//
-//   return result;
    bool paramMode = EAttrs::test(mode, HINT_PARAMETER);
 
    ObjectInfo retVal;
@@ -7798,7 +7754,7 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    _ModuleScope* moduleScope = codeScope.moduleScope;
    MethodScope* methodScope = (MethodScope*)codeScope.getScope(Scope::ScopeLevel::slMethod);
 
-   mssg_t messageRef = mapMessage(expr, resendScope, false, false);
+   mssg_t messageRef = mapMessage(expr, resendScope, false, false, false);
 
    ref_t classRef = classClassScope.reference;
    bool found = false;

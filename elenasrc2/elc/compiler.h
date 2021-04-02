@@ -1071,7 +1071,7 @@ private:
    ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, pos_t paramCount);
    ref_t resolveMessageAtCompileTime(ObjectInfo target, ExprScope& scope, mssg_t generalMessageRef, ref_t implicitSignatureRef,
                                      bool withExtension, int& stackSafeAttr, ref_t& resolvedExtensionRef);
-   mssg_t mapMessage(SNode node, ExprScope& scope/*, bool extensionCall*/, bool newOpCall, bool propMode);
+   mssg_t mapMessage(SNode node, ExprScope& scope, bool extensionCall, bool newOpCall, bool propMode);
    mssg_t mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags,
       IdentifierString& actionStr, ref_t* signature, size_t signatureLen,
       bool withoutWeakMessages, bool noSignature);

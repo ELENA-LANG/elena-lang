@@ -208,153 +208,153 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
     }    
 }
 
-//// --- matrixof ---
-//
-//public sealed Matrix<T>
-//{
-//    T[] theArray;
-//    int theRows;
-//    int theColumns;
-//    
-//    constructor allocate(int rows, int columns)
-//    {
-//        theRows := rows;
-//        theColumns := columns;
-//        
-//        int len := theRows * theColumns;
-//        
-//        theArray := new T[](len)
-//    }
-//    
-//    constructor allocate(rows, columns)
-//        <= allocate(cast int(rows), cast int(columns));
-//    
-//    constructor load(params)
-//    {
-//        theRows := params.Rows;
-//        theColumns := params.Columns;
-//        
-//        int len := theRows * theColumns;
-//        
-//        theArray := new T[](/*theRows * theColumns*/len);
-//        
-//        int i := 0;
-//        int j := 0;
-//        
-//        while (i < theRows)
-//        {
-//            j := 0;
-//            while (j < theColumns)
-//            {
-//                T val := params.at(i,j);
-//                
-//                self.setAt(i, j, val);
-//                
-//                j := j + 1
-//            };
-//            
-//            i := i + 1
-//        }
-//    }    
-//    
-//    int Length
-//    {
-//        get()
-//        {
-//            ^ theRows
-//        }
-//    }    
-//
-//    int Columns
-//    {
-//        get()
-//        {
-//            ^ theColumns
-//        }
-//    }
-//
-//    int Rows
-//    {
-//        get()
-//        {
-//            ^ theRows
-//        }
-//    }
-//
-//    /// Writes an integer value at the specified position
-//    setAt(int i, int j, T v)
-//    {        
-//        int index := i * theColumns + j;
-//        
-//        theArray[index] := v
-//    }
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    read(int i, int j, ref T retVal)
-//    {
-//        int index := i * theColumns + j;
-//        
-//        retVal := theArray[index];
-//    }
-//
-//    T at(int i, int j)
-//    {
-//        self.read(i, j, ref T retVal);
-//        ^ retVal
-//    }
-//
-//    /// Returns a row
-//    at(i) = new
-//    {
-//        Length = theColumns;
-//        
-//        at(j)
-//            = self.at(i,j);
-//        
-//        setAt(j, v)
-//        {
-//            self.setAt(i,j,v)
-//        }
-//    };
-//
-//    Enumerator enumerator() 
-//    {
-//        int i := 0;
-//        int j := -1;
-//        int length1 := theRows;
-//        int length2 := theColumns;
-//        
-//        ^ new Enumerator
-//          {
-//              get() = self.at(i, j);
-//              
-//              enumerable() = self;
-//              
-//              reset() { i := 0; j := -1; }
-//              
-//              bool next()
-//              {
-//                  ifnot (i < length1)
-//                  {
-//                     ^ false
-//                  };
-//                  
-//                  j := j + 1;
-//                  
-//                  ifnot (j < length2)
-//                  {
-//                      j := -1;
-//                      i := i + 1;
-//                      
-//                      ^ false
-//                  };
-//                  
-//                  ^ true
-//              }
-//          }
-//    }
-//}
-//
+// --- matrixof ---
+
+public sealed Matrix<T>
+{
+    T[] theArray;
+    int theRows;
+    int theColumns;
+    
+    constructor allocate(int rows, int columns)
+    {
+        theRows := rows;
+        theColumns := columns;
+        
+        int len := theRows * theColumns;
+        
+        theArray := new T[](len)
+    }
+    
+    constructor allocate(rows, columns)
+        <= allocate(cast int(rows), cast int(columns));
+    
+    constructor load(params)
+    {
+        theRows := params.Rows;
+        theColumns := params.Columns;
+        
+        int len := theRows * theColumns;
+        
+        theArray := new T[](/*theRows * theColumns*/len);
+        
+        int i := 0;
+        int j := 0;
+        
+        while (i < theRows)
+        {
+            j := 0;
+            while (j < theColumns)
+            {
+                T val := params.at(i,j);
+                
+                self.setAt(i, j, val);
+                
+                j := j + 1
+            };
+            
+            i := i + 1
+        }
+    }    
+    
+    int Length
+    {
+        get()
+        {
+            ^ theRows
+        }
+    }    
+
+    int Columns
+    {
+        get()
+        {
+            ^ theColumns
+        }
+    }
+
+    int Rows
+    {
+        get()
+        {
+            ^ theRows
+        }
+    }
+
+    /// Writes an integer value at the specified position
+    setAt(int i, int j, T v)
+    {        
+        int index := i * theColumns + j;
+        
+        theArray[index] := v
+    }
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    read(int i, int j, ref T retVal)
+    {
+        int index := i * theColumns + j;
+        
+        retVal := theArray[index];
+    }
+
+    T at(int i, int j)
+    {
+        self.read(i, j, ref T retVal);
+        ^ retVal
+    }
+
+    /// Returns a row
+    at(i) = new
+    {
+        Length = theColumns;
+        
+        at(j)
+            = self.at(i,j);
+        
+        setAt(j, v)
+        {
+            self.setAt(i,j,v)
+        }
+    };
+
+    Enumerator enumerator() 
+    {
+        int i := 0;
+        int j := -1;
+        int length1 := theRows;
+        int length2 := theColumns;
+        
+        ^ new Enumerator
+          {
+              get() = self.at(i, j);
+              
+              enumerable() = self;
+              
+              reset() { i := 0; j := -1; }
+              
+              bool next()
+              {
+                  ifnot (i < length1)
+                  {
+                     ^ false
+                  };
+                  
+                  j := j + 1;
+                  
+                  ifnot (j < length2)
+                  {
+                      j := -1;
+                      i := i + 1;
+                      
+                      ^ false
+                  };
+                  
+                  ^ true
+              }
+          }
+    }
+}
+
 //// === basic memory classes ===
 //
 //// --- BitArray ---
@@ -481,210 +481,210 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 //    /// Returns the array indexer
 //    Indexer<bool> indexer() = new BitArray32Indexer(self);
 //}
-//
-//// --- IntMatrix ---
-//
-//public sealed class IntMatrix
-//{
-//    int[] theArray;
-//    int   theRows;
-//    int   theColumns;
-//    
-//    constructor allocate(int rows, int columns)
-//    {
-//        theRows := rows;
-//        theColumns := columns;
-//        
-//        theArray := new int[](columns * rows)
-//    }
-//        
-//    constructor allocate(rows,columns)
-//        <= allocate(cast int(rows), cast int(columns));
-//        
-//    /// Reads the matrix lengths to the output parameter
-//    readLengthsTo(ref int rows, ref int columns)
-//    {
-//        rows := theRows;
-//        columns := theColumns
-//    }
-//
-//    int Length
-//    {
-//        get()
-//        {
-//            ^ theRows
-//        }
-//    }    
-//
-//    int Columns
-//    {
-//        get()
-//        {
-//            ^ theColumns
-//        }
-//    }
-//
-//    int Rows
-//    {
-//        get()
-//        {
-//            ^ theRows
-//        }
-//    }
-//
-//    /// Writes an integer value at the specified position
-//    setAt(int i, int j, int v)
-//    {
-//        int index := i * theColumns + j;
-//        
-//        theArray[index] := v
-//    }
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    read(int i, int j, ref int retVal)
-//    {
-//        int index := i * theColumns + j;
-//        
-//        retVal := theArray[index];
-//    }
-//
-//    int at(int i, int j)
-//    {
-//        int index := i * theColumns + j;
-//        int retVal := theArray[index];
-//        
-//        ^ retVal
-//    }
-//
-//    /// Returns a row
-//    at(int i) = new Indexable<int>
-//    {
-//        Length = theColumns;
-//        
-//        Indexer<int> indexer() = new BaseIndexer<int>
-//        {
-//            this theIndex := 0;
-//            
-//            this theLength := self.Columns;
-//            
-//            int get()
-//                = self.at(i,theIndex);
-//                
-//            set(int o)
-//            {
-//                self.setAt(i,theIndex,o);
-//            }                        
-//        }; 
-//        
-//        int at(int j)
-//            = self.at(i,j);
-//        
-//        setAt(int j, int v)
-//        {
-//            self.setAt(i,j,v)
-//        }
-//    };
-//}
-//
-//// --- RealMatrix ---
-//
-//public sealed class RealMatrix
-//{
-//    real[] theArray;
-//    int    theRows;
-//    int    theColumns;
-//    
-//    constructor allocate(int rows, int columns)
-//    {
-//        theRows := rows;
-//        theColumns := columns;
-//        
-//        theArray := new real[](columns * rows)
-//    }
-//        
-//    /// Reads the matrix lengths to the output parameter
-//    readLengthsTo(ref int rows, ref int columns)
-//    {
-//        rows := theRows;
-//        columns := theColumns
-//    }
-//
-//    int Length
-//    {
-//        get()
-//        {
-//            ^ theRows
-//        }
-//    }    
-//
-//    int Columns
-//    {
-//        get()
-//        {
-//            ^ theColumns
-//        }
-//    }
-//
-//    int Rows
-//    {
-//        get()
-//        {
-//            ^ theRows
-//        }
-//    }
-//
-//    /// Writes a real value at the specified position
-//    setAt(int i, int j, real v)
-//    {
-//        int index := i * theColumns + j;
-//        
-//        theArray[index] := v
-//    }
-//
-//    /// Reads a real value at the specified position and saves it into an output variable
-//    read(int i, int j, ref real retVal)
-//    {
-//        int index := i * theColumns + j;
-//        
-//        retVal := theArray[index];
-//    }
-//
-//    real at(int i, int j)
-//    {
-//        int index := i * theColumns + j;
-//        real retVal := theArray[index];
-//        
-//        ^ retVal
-//    }
-//
-//    at(int i) = new Indexable<real>
-//    {
-//        Length = theColumns;
-//        
-//        Indexer<real> indexer() = new BaseIndexer<real>
-//        {
-//            this theIndex := 0;
-//            
-//            this theLength := self.Columns;
-//            
-//            real get()
-//                = self.at(i,theIndex);
-//                
-//            set(real o)
-//            {
-//                self.setAt(i,theIndex,o);
-//            }                        
-//        }; 
-//        
-//        real at(int j)
-//            = self.at(i,j);
-//        
-//        setAt(int j, real v)
-//        {
-//            self.setAt(i,j,v)
-//        }
-//    };
-//}
+
+// --- IntMatrix ---
+
+public sealed class IntMatrix
+{
+    int[] theArray;
+    int   theRows;
+    int   theColumns;
+    
+    constructor allocate(int rows, int columns)
+    {
+        theRows := rows;
+        theColumns := columns;
+        
+        theArray := new int[](columns * rows)
+    }
+        
+    constructor allocate(rows,columns)
+        <= allocate(cast int(rows), cast int(columns));
+        
+    /// Reads the matrix lengths to the output parameter
+    readLengthsTo(ref int rows, ref int columns)
+    {
+        rows := theRows;
+        columns := theColumns
+    }
+
+    int Length
+    {
+        get()
+        {
+            ^ theRows
+        }
+    }    
+
+    int Columns
+    {
+        get()
+        {
+            ^ theColumns
+        }
+    }
+
+    int Rows
+    {
+        get()
+        {
+            ^ theRows
+        }
+    }
+
+    /// Writes an integer value at the specified position
+    setAt(int i, int j, int v)
+    {
+        int index := i * theColumns + j;
+        
+        theArray[index] := v
+    }
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    read(int i, int j, ref int retVal)
+    {
+        int index := i * theColumns + j;
+        
+        retVal := theArray[index];
+    }
+
+    int at(int i, int j)
+    {
+        int index := i * theColumns + j;
+        int retVal := theArray[index];
+        
+        ^ retVal
+    }
+
+    /// Returns a row
+    at(int i) = new Indexable<int>
+    {
+        Length = theColumns;
+        
+        Indexer<int> indexer() = new BaseIndexer<int>
+        {
+            this theIndex := 0;
+            
+            this theLength := self.Columns;
+            
+            get int Value()
+                = self.at(i,theIndex);
+                
+            set Value(int o)
+            {
+                self.setAt(i,theIndex,o);
+            }                        
+        }; 
+        
+        int at(int j)
+            = self.at(i,j);
+        
+        setAt(int j, int v)
+        {
+            self.setAt(i,j,v)
+        }
+    };
+}
+
+// --- RealMatrix ---
+
+public sealed class RealMatrix
+{
+    real[] theArray;
+    int    theRows;
+    int    theColumns;
+    
+    constructor allocate(int rows, int columns)
+    {
+        theRows := rows;
+        theColumns := columns;
+        
+        theArray := new real[](columns * rows)
+    }
+        
+    /// Reads the matrix lengths to the output parameter
+    readLengthsTo(ref int rows, ref int columns)
+    {
+        rows := theRows;
+        columns := theColumns
+    }
+
+    int Length
+    {
+        get()
+        {
+            ^ theRows
+        }
+    }    
+
+    int Columns
+    {
+        get()
+        {
+            ^ theColumns
+        }
+    }
+
+    int Rows
+    {
+        get()
+        {
+            ^ theRows
+        }
+    }
+
+    /// Writes a real value at the specified position
+    setAt(int i, int j, real v)
+    {
+        int index := i * theColumns + j;
+        
+        theArray[index] := v
+    }
+
+    /// Reads a real value at the specified position and saves it into an output variable
+    read(int i, int j, ref real retVal)
+    {
+        int index := i * theColumns + j;
+        
+        retVal := theArray[index];
+    }
+
+    real at(int i, int j)
+    {
+        int index := i * theColumns + j;
+        real retVal := theArray[index];
+        
+        ^ retVal
+    }
+
+    at(int i) = new Indexable<real>
+    {
+        Length = theColumns;
+        
+        Indexer<real> indexer() = new BaseIndexer<real>
+        {
+            this theIndex := 0;
+            
+            this theLength := self.Columns;
+            
+            get real Value()
+                = self.at(i,theIndex);
+                
+            set Value(real o)
+            {
+                self.setAt(i,theIndex,o);
+            }                        
+        }; 
+        
+        real at(int j)
+            = self.at(i,j);
+        
+        setAt(int j, real v)
+        {
+            self.setAt(i,j,v)
+        }
+    };
+}
 
 // --- String ---
 

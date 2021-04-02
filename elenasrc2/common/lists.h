@@ -4216,7 +4216,7 @@ public:
          _cached[0] = item;
       }
       else {
-         if (_length - cacheSize < _allocatedSize) {
+         if (_length - cacheSize >= _allocatedSize) {
             _allocatedSize += 10;
 
             _allocated = (T*)realloc(_allocated, _allocatedSize * sizeof(T));
@@ -4226,7 +4226,7 @@ public:
             _allocated[i - cacheSize] = _allocated[i - cacheSize - 1];
 
          _allocated[0] = _cached[cacheSize - 1];
-         for (size_t i = cacheSize; i > 0; i--)
+         for (size_t i = cacheSize - 1; i > 0; i--)
             _cached[i] = _cached[i - 1];
 
          _cached[0] = item;

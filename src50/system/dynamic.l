@@ -149,23 +149,23 @@ public sealed const struct ExtensionMessage
 //    /// Qualifies incoming messages and redirects to the target
 //    dispatch() => intern system'core_routines'__signature;
 //}
-//
-//// --- Extension ---
-//
-//public mixin Extension
-//{
-//    object target;
-//    object extender;
-//    
-//    constructor(target, extender)
-//    {
-//        this target := target;
-//        this extender := extender;
-//    }
-//    
-//    dispatch() => intern system'core_routines'__extension;
-//}
-//
+
+// --- Extension ---
+
+public mixin Extension
+{
+    object target;
+    object extender;
+    
+    constructor(target, extender)
+    {
+        this target := target;
+        this extender := extender;
+    }
+    
+    dispatch() => intern system'core_routines'__extension;
+}
+
 //// --- ExplicitExtension ---
 //
 //public mixin ExtensionVariable

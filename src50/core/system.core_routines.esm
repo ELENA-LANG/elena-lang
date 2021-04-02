@@ -84,6 +84,18 @@ procedure __object."raise[1]"
   
 end
 
+procedure __extension."#dispatch[1]"
+
+  storesi 1
+  geti    1
+  bsredirect
+
+  peeksi  1
+  geti    0
+  jumpvi  0
+
+end
+
 procedure __dptr."system$setReference[2]"
 
   loadsi 2
@@ -948,6 +960,53 @@ procedure __intconvertor."convert$system@RealNumber$@system@ref#1&system@IntNumb
   rsaven
   peeksi 1
   quit
+
+end
+
+procedure __intconvertor."convertUnsigned$system@String$system@IntNumber$@system@ref#1&system@IntNumber[3]"
+  
+  pushsi 2
+  pushsi 2  
+  callextr api : strtouint, 2
+  freei 2
+
+  ifr      labErr, 0
+  peeksi 3
+  save
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'FormatException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw
+
+end
+
+procedure __uintconvertor."convert$system@LongNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  loadi  1
+  ifn    labNext, 0
+  elsen  labErr,  0FFFFFFFFh  
+
+labNext:
+  load
+  peeksi 2
+  save
+  quit  
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
 
 end
 
