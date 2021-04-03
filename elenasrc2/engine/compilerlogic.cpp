@@ -884,7 +884,7 @@ void CompilerLogic :: injectInterfaceDispatch(_ModuleScope& scope, _Compiler& co
    scope.loadClassInfo(info, parentRef);
    for (auto it = info.methodHints.start(); !it.Eof(); it++) {
       if (it.key().value2 == maHint && test(*it, tpAbstract)) {
-         compiler.injectVirtualDispatchMethod(node, it.key().value1, dispatchNode.type, dispatchNode.identifier());
+         compiler.injectVirtualDispatchMethod(scope, node, it.key().value1, dispatchNode.type, dispatchNode.identifier());
       }
    }
 

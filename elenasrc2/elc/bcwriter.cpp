@@ -387,7 +387,7 @@ void ByteCodeWriter :: declareSafeCatch(CommandTape& tape, SyntaxTree::Node fina
       // generate finally
       tape.write(bcAllocI, 1);
       tape.write(bcStoreSI, 0);
-      generateCodeBlock(tape, finallyNode, scope);
+      generateCodeBlock(tape, finallyNode, scope, false);
       tape.write(bcPeekSI, 0);
       tape.write(bcFreeI, 1);
 
@@ -3586,7 +3586,7 @@ void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node n
 {
    excludeFrame(tape);
 
-   generateCodeBlock(tape, node.findChild(lxCode), scope);
+   generateCodeBlock(tape, node.findChild(lxCode), scope, false);
 
    includeFrame(tape, true);
 }
@@ -3604,7 +3604,7 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, 
 
       if (first) {
          if (current == lxCode) {
-            generateCodeBlock(tape, current, scope);
+            generateCodeBlock(tape, current, scope, false);
          }
          else generateObject(tape, current, scope);
 
@@ -3614,7 +3614,7 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, 
 
             // generate finally
             pushObject(tape, lxResult, 0, scope, 0);
-            generateCodeBlock(tape, finallyNode, scope);
+            generateCodeBlock(tape, finallyNode, scope, false);
             popObject(tape, lxResult);
          }
          declareSafeCatch(tape, finallyNode, retLabel, scope);
@@ -3625,7 +3625,7 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, 
             // generate finally
             tape.write(bcAllocI, 1);
             tape.write(bcStoreSI, 0);
-            generateCodeBlock(tape, finallyNode, scope);
+            generateCodeBlock(tape, finallyNode, scope, false);
             tape.write(bcPeekSI, 0);
             tape.write(bcFreeI, 1);
          }
@@ -3681,49 +3681,49 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node,
       if (current == lxElse) {
          jumpIfEqual(tape, current.argument, true);
 
-         generateCodeBlock(tape, current.findSubNode(lxCode), scope);
+         generateCodeBlock(tape, current.findSubNode(lxCode), scope, false);
 
          repeatMode = false;
       }
       else if (current == lxIfN) {
          jumpIfNotEqual(tape, current.argument, false);
 
-         generateCodeBlock(tape, current.findSubNode(lxCode), scope);
+         generateCodeBlock(tape, current.findSubNode(lxCode), scope, false);
 
          repeatMode = false;
       }
       else if (current == lxIfNotN) {
          jumpIfEqual(tape, current.argument, false);
 
-         generateCodeBlock(tape, current.findSubNode(lxCode), scope);
+         generateCodeBlock(tape, current.findSubNode(lxCode), scope, false);
 
          repeatMode = false;
       }
       else if (current == lxLessN) {
          jumpIfNotLess(tape, current.argument);
 
-         generateCodeBlock(tape, current.findSubNode(lxCode), scope);
+         generateCodeBlock(tape, current.findSubNode(lxCode), scope, false);
 
          repeatMode = false;
       }
       else if (current == lxNotLessN) {
          jumpIfLess(tape, current.argument);
 
-         generateCodeBlock(tape, current.findSubNode(lxCode), scope);
+         generateCodeBlock(tape, current.findSubNode(lxCode), scope, false);
 
          repeatMode = false;
       }
       else if (current == lxGreaterN) {
          jumpIfNotGreater(tape, current.argument);
 
-         generateCodeBlock(tape, current.findSubNode(lxCode), scope);
+         generateCodeBlock(tape, current.findSubNode(lxCode), scope, false);
 
          repeatMode = false;
       }
       else if (current == lxNotGreaterN) {
          jumpIfGreater(tape, current.argument);
 
-         generateCodeBlock(tape, current.findSubNode(lxCode), scope);
+         generateCodeBlock(tape, current.findSubNode(lxCode), scope, false);
 
          repeatMode = false;
       }
@@ -3799,52 +3799,51 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
             jumpIfNotEqual(tape, current.argument, current == lxIf);
 
             //declareBlock(tape);
-            generateCodeBlock(tape, current.findChild(lxCode), scope);
+            generateCodeBlock(tape, current.findChild(lxCode), scope, true);
             break;
          case lxIfNot:
          case lxIfNotN:
             jumpIfEqual(tape, current.argument, current == lxIfNot);
 
             //declareBlock(tape);
-            generateCodeBlock(tape, current.findChild(lxCode), scope);
+            generateCodeBlock(tape, current.findChild(lxCode), scope, true);
             break;
          case lxLessN:
             jumpIfNotLess(tape, current.argument);
 
             //declareBlock(tape);
-            generateCodeBlock(tape, current.findChild(lxCode), scope);
+            generateCodeBlock(tape, current.findChild(lxCode), scope, true);
             break;
          case lxNotLessN:
             jumpIfLess(tape, current.argument);
 
             //declareBlock(tape);
-            generateCodeBlock(tape, current.findChild(lxCode), scope);
+            generateCodeBlock(tape, current.findChild(lxCode), scope, true);
             break;
          case lxGreaterN:
             jumpIfNotGreater(tape, current.argument);
 
             //declareBlock(tape);
-            generateCodeBlock(tape, current.findChild(lxCode), scope);
+            generateCodeBlock(tape, current.findChild(lxCode), scope, true);
             break;
          case lxNotGreaterN:
             jumpIfGreater(tape, current.argument);
 
             //declareBlock(tape);
-            generateCodeBlock(tape, current.findChild(lxCode), scope);
+            generateCodeBlock(tape, current.findChild(lxCode), scope, true);
             break;
          case lxElse:
             declareElseBlock(tape);
 
             //declareBlock(tape);
-            generateCodeBlock(tape, current.findChild(lxCode), scope);
+            generateCodeBlock(tape, current.findChild(lxCode), scope, true);
             break;
          default:
-//            if (test(current.type, lxObjectMask)) {
-//               //HOTFIX : breakpoint should be generated here for better debugging
-//               declareBlock(tape);
-               generateObject(tape, current, scope);
-//               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//            }
+            generateObject(tape, current, scope);
+            if (scope.debugBlockStarted) {
+               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+               scope.debugBlockStarted = false;
+            }
             break;
       }
 
@@ -4220,7 +4219,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          if (node.argument != 0)
             jumpIfEqual(tape, node.argument, true);
 
-         generateCodeBlock(tape, node, scope);
+         generateCodeBlock(tape, node, scope, false);
          break;
       case lxCreatingClass:
       case lxCreatingStruct:
@@ -4254,7 +4253,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //         else throw InternalError("Not yet implemented"); // !! temporal
 //         break;
       case lxCode:
-         generateCodeBlock(tape, node, scope);
+         generateCodeBlock(tape, node, scope, false);
          break;
       case lxCondBoxing:
          generateCondBoxing(tape, node, scope);
@@ -4368,7 +4367,7 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
    }
 }
 
-void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool ignoreEOP)
 {
    SNode current = node.firstChild(/*lxStatementMask*/);
    while (current != lxNone) {
@@ -4413,10 +4412,12 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //            generateYieldDispatch(tape, current, scope);
 //            break;
          case lxEOP:
-            scope.debugBlockStarted = /*false*/true;
-            if (current.firstChild() == lxBreakpoint)
-               translateBreakpoint(tape, current.findChild(lxBreakpoint), scope);
-            scope.debugBlockStarted = false;
+            if (!ignoreEOP) {
+               scope.debugBlockStarted = true;
+               if (current.firstChild() == lxBreakpoint)
+                  translateBreakpoint(tape, current.findChild(lxBreakpoint), scope);
+               scope.debugBlockStarted = false;
+            }
             break;
 //         case lxCode:
 //         case lxCodeExpression:
@@ -4680,7 +4681,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
             }
             exitLabel = true;
             generateMethodDebugInfo(tape, node);   // HOTFIX : debug info should be declared inside the frame body
-            generateCodeBlock(tape, current, scope);
+            generateCodeBlock(tape, current, scope, false);
             break;
          case lxNoBody:
             declareAbstractMethod(tape, node.argument);
@@ -4763,7 +4764,7 @@ void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, S
    FlowScope scope;
 
    declareInitializer(tape, reference);
-   generateCodeBlock(tape, root, scope);
+   generateCodeBlock(tape, root, scope, false);
    endInitializer(tape);
 }
 

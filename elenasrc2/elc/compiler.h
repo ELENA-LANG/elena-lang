@@ -1271,7 +1271,7 @@ private:
       bool isConst, bool isArray);
 
    void generateClassFlags(ClassScope& scope, SNode node);
-//   void generateParamNameInfo(ClassScope& scope, SNode node, mssg_t message);
+   void generateParamNameInfo(ClassScope& scope, SNode node, mssg_t message);
    void generateMethodAttributes(ClassScope& scope, SNode node, mssg_t message, bool allowTypeAttribute);
 
    void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed,
@@ -1407,7 +1407,7 @@ public:
    bool injectVirtualStrongTypedMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
       mssg_t resendMessage, bool privateOne);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef);
-   virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument);
+   virtual void injectVirtualDispatchMethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType type, ident_t argument);
 //   virtual void injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex);
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne);
    virtual void injectExprOperation(SNode& node, int size, int tempLocal, LexicalType op, int opArg);

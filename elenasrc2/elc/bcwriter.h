@@ -319,7 +319,7 @@ class ByteCodeWriter
    void generateObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
    void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
-   void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool ignoreEOP);
    void generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool fillMode);
    void generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
