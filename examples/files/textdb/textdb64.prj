@@ -1,0 +1,16 @@
+<configuration>
+    <project>
+        <executable>textdb64.exe</executable>
+        <arguments>db.txt</arguments>
+        <output></output>
+        <options></options>
+        <namespace>textdb</namespace>
+        <template>console_64</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>textdb.l</include>
+        </module>
+    </files>
+</configuration>

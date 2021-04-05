@@ -350,6 +350,118 @@ procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[
 
 end
 
+procedure __signature."#dispatch[1]"
+
+  pushd
+
+  // check if it is invoke
+  and      SPECIAL_MESSAGE
+  ifn      labDefault, 0 
+
+  load
+  movsip 0
+  setv
+  popd
+  and      SPECIAL_MESSAGE_INV
+  peeksi   1
+  jumpvi   0
+  
+labDefault:
+  popd
+  bsredirect 
+
+  open
+  reserve  __page_size
+  alloci   3
+  storesi  1
+  movf     -__rsrv_object_offset
+  storesi  2
+  storesi  0
+  movr     class : system'Message
+  callextr api : tempObject, 1 
+  movr     class : system'MethodNotFoundException
+  storesi  0
+  pushr    mssgconst : "new[3]"
+
+  throw
+  
+end
+
+procedure __signature."load$system@MessageName$system@String[2]"
+
+  peeksi   2
+  alloci   1
+  storesi  0
+  callextr extern : LoadSubject, 0201h
+  freei    1
+  ifn      labErr, 0
+  peeksi   1
+  save
+
+  quit
+ 
+labErr:
+  peeksi   2
+
+  open
+  alloci  2
+  storesi 1
+  movr    class : system'MessageLoaderException
+  storesi 0
+  pushr   mssgconst : "new[1]"
+
+  throw  
+
+end
+
+procedure __signature."getProperty$system@MessageName$@system@ref#1&system@Message[2]"
+
+  peeksi 1
+  load
+  pushn  1
+  movsip 0
+  setv
+  popd
+  or     prop_mssg_mask  
+  peeksi 2
+  save
+
+  quit
+
+end
+
+procedure __signature."setProperty$system@MessageName$@system@ref#1&system@Message[2]"
+
+  peeksi 1
+  load
+  pushn  2
+  movsip 0
+  setv
+  popd
+  or     prop_mssg_mask
+  peeksi 2
+  save
+
+  quit
+
+end
+
+procedure __signature."varidadic$system@MessageName$@system@ref#1&system@Message[2]"
+
+  peeksi 1
+  load
+  pushn  2
+  movsip 0
+  setv
+  popd
+  or     80h
+  peeksi 2
+  save
+
+  quit
+
+end
+
 procedure __extmessage."#dispatch[1]"
 
   pushd
@@ -1091,6 +1203,81 @@ procedure __charconvertor."save$system@CharValue$system@IntNumber$@system@Array#
   save
   
   quit
+
+end
+
+procedure __charconvertor."convert$system@ByteNumber$@system@ref#1&system@CharValue[2]"
+  
+  peeksi 1
+  load
+
+  lessn labErr, 0
+  lessn labCopy, 080h
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw
+
+labCopy:
+
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __charconvertor."convert$system@ShortNumber$@system@ref#1&system@CharValue[2]"
+  
+  peeksi 1
+  load
+
+  lessn labErr, 0
+  lessn labCopy, 010000h
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw
+
+labCopy:
+
+  peeksi 1
+  save
+  quit
+
+end
+
+procedure __charconvertor."convert$system@IntNumber$@system@ref#1&system@CharValue[2]"
+  
+  peeksi 1
+  load
+  
+  lessn labErr, 0
+  lessn labCopy, 110000h
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw
+
+labCopy:
+
+  peeksi 2
+  save
+  quitn 2
 
 end
 

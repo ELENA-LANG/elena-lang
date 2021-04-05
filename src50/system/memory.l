@@ -1834,30 +1834,30 @@ public singleton charConvertor
 //        
 //        ^ retVal
 //    }      
-//        
-//    /// Converts a byte value into a character
-//    char convert(byte n)
-//    {
-//        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
-//        
-//        ^ retVal
-//    }        
-//        
-//    /// Converts a short integer into a character
-//    char convert(short n)
-//    {
-//        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Converts an integer into a character
-//    char convert(int n)
-//    {
-//        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
-//        
-//        ^ retVal
-//    }
+        
+    /// Converts a byte value into a character
+    char convert(byte n)
+    {
+        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
+        
+        ^ retVal
+    }        
+        
+    /// Converts a short integer into a character
+    char convert(short n)
+    {
+        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
+        
+        ^ retVal
+    }
+        
+    /// Converts an integer into a character
+    char convert(int n)
+    {
+        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
+        
+        ^ retVal
+    }
         
     char convert(o)
         = cast char(o);

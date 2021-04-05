@@ -123,22 +123,22 @@ public singleton Assert
 //        ^ action()
 //    }
 //}
-//
-//// --- invoker ---
-//
-//public extension invokeOp : MessageName
-//{
-//    getPropertyValue(target)
-//    {
-//        Message mssg := self.getPropertyMessage();
-//        
-//        ^ mssg(target)
-//    
-//    }
-//    setPropertyValue(target,value)
-//    {
-//        Message mssg := self.setPropertyMessage();
-//        
-//        mssg(target, value)
-//    }
-//}
+
+// --- invoker ---
+
+public extension invokeOp : MessageName
+{
+    getPropertyValue(target)
+    {
+        Message mssg := self.getPropertyMessage();
+        
+        ^ mssg(target)
+    
+    }
+    setPropertyValue(target,value)
+    {
+        Message mssg := self.setPropertyMessage();
+        
+        mssg(target, value)
+    }
+}

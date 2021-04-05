@@ -106,15 +106,15 @@ public class InvalidArgumentException : Exception
 //    constructor new(string symbolName)
 //        <= new("Symbol " + symbolName + " cannot be loaded");
 //}
-//
-//// --- MessageLoaderException ---
-//
-//public class MessageLoaderException : Exception
-//{
-//    /// Creates the exception
-//    constructor new(string messageName)
-//        <= new("Message name " + messageName + " cannot be loaded");
-//}
+
+// --- MessageLoaderException ---
+
+public class MessageLoaderException : Exception
+{
+    /// Creates the exception
+    constructor new(string messageName)
+        <= new("Message name " + messageName + " cannot be loaded");
+}
 
 // --- MethodNotFound ---
 

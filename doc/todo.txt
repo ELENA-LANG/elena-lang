@@ -3,9 +3,6 @@ In development:
 ------         
 
   [development]
-    * #206 : migrate console / files samples
-    * abortexception - translit - why is not reconized
-
     + compile lib50 / lib50_64 for linux i386 / ppc64le
     + compile hellowordl for linux i386 / amd64
     + ppc64le : simplest proram
@@ -24,6 +21,7 @@ In development:
     + optimize a ? b : c - do not use branching
 
     + uncomment finally part in program entry
+    + abortexception - translit - why is not reconized
 
     * boxing fixed-sized field array
     * globals

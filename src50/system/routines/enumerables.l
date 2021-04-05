@@ -1,4 +1,4 @@
-//import system'collections;
+import system'collections;
 
 // === actions ===
 
@@ -10,117 +10,117 @@ public ifDecrescent
 
 // --- literalSplitOp ---
 
-//public extension stringListOp : String
-//{
-//    Array split()
-//        = self.splitBy($32);
-//    
-//    Array splitBy(char ch)
-//    {
-//        ArrayList list := new ArrayList();
-//        int       start := 0;
-//        int       index := 0;
-//        int       chLen := ch.Length;
-//        
-//        while (index >= 0)
-//        {
-//            self.indexOf(start, ch, ref index);
-//            if (-1 != index)
-//            {
-//                list.append(self.Substring(start,index - start));
-//                start := index + chLen
-//            }
-//            else
-//            {
-//                list.append(self.Substring(start))
-//            }
-//        };
-//        
-//        ^ list
-//    }
-//    
-//    Array splitBy(string value)
-//    {
-//        ArrayList list := new ArrayList();
-//        int       start := 0;
-//        int       index := 0;
-//        int       valueLen := value.Length;
-//        int       literalLen := self.Length;
-//        
-//        while (index >= 0)
-//        {
-//            self.indexOf(start, value, ref index);
-//            if (-1 != index)
-//            {
-//                list.append(self.Substring(start, index - start));
-//                start := index + valueLen
-//            }
-//            else
-//            {
-//                list.append(self.Substring(start, literalLen - start))
-//            }
-//        };
-//        
-//        ^ list
-//    }
-//}
-//
-//// --- wideListOp ---
-//
-//public extension wideListOp : WideString
-//{
-//    Array split()
-//        = self.splitBy($32);
-//
-//    Array splitBy(char ch)
-//    {
-//        ArrayList list := new ArrayList();
-//        int       start := 0;
-//        int       index := 0;
-//        int       chLen := ch.Length;
-//        
-//        while (index >= 0)
-//        {
-//            self.indexOf(start, ch, ref index);
-//            if (-1 != index)
-//            {
-//                list.append(self.Substring(start,index - start));
-//                start := index + chLen
-//            }
-//            else
-//            {
-//                list.append(self.Substring(start))
-//            }
-//        };
-//        
-//        ^ list
-//    }
-//        
-//    Array splitBy(wide value)
-//    {
-//        ArrayList list := new ArrayList();
-//        int       start := 0;
-//        int       index := 0;
-//        int       valueLen := value.Length;
-//        int       literalLen := self.Length;
-//        
-//        while (index >= 0)
-//        {
-//            self.indexOf(start, value, ref index);
-//            if (-1 != index)
-//            {
-//                list.append(self.Substring(start, index - start));
-//                start := index + valueLen
-//            }
-//            else
-//            {
-//                list.append(self.Substring(start, literalLen - start))
-//            }
-//        };
-//        
-//        ^ list
-//    }
-//}
+public extension stringListOp : String
+{
+    Array split()
+        = self.splitBy($32);
+    
+    Array splitBy(char ch)
+    {
+        ArrayList list := new ArrayList();
+        int       start := 0;
+        int       index := 0;
+        int       chLen := ch.Length;
+        
+        while (index >= 0)
+        {
+            index := self.indexOf(start, ch);
+            if (-1 != index)
+            {
+                list.append(self.Substring(start,index - start));
+                start := index + chLen
+            }
+            else
+            {
+                list.append(self.Substring(start))
+            }
+        };
+        
+        ^ list
+    }
+    
+    Array splitBy(string value)
+    {
+        ArrayList list := new ArrayList();
+        int       start := 0;
+        int       index := 0;
+        int       valueLen := value.Length;
+        int       literalLen := self.Length;
+        
+        while (index >= 0)
+        {
+            index := self.indexOf(start, value);
+            if (-1 != index)
+            {
+                list.append(self.Substring(start, index - start));
+                start := index + valueLen
+            }
+            else
+            {
+                list.append(self.Substring(start, literalLen - start))
+            }
+        };
+        
+        ^ list
+    }
+}
+
+// --- wideListOp ---
+
+public extension wideListOp : WideString
+{
+    Array split()
+        = self.splitBy($32);
+
+    Array splitBy(char ch)
+    {
+        ArrayList list := new ArrayList();
+        int       start := 0;
+        int       index := 0;
+        int       chLen := ch.Length;
+        
+        while (index >= 0)
+        {
+            index := self.indexOf(start, ch);
+            if (-1 != index)
+            {
+                list.append(self.Substring(start,index - start));
+                start := index + chLen
+            }
+            else
+            {
+                list.append(self.Substring(start))
+            }
+        };
+        
+        ^ list
+    }
+        
+    Array splitBy(wide value)
+    {
+        ArrayList list := new ArrayList();
+        int       start := 0;
+        int       index := 0;
+        int       valueLen := value.Length;
+        int       literalLen := self.Length;
+        
+        while (index >= 0)
+        {
+            index := self.indexOf(start, value);
+            if (-1 != index)
+            {
+                list.append(self.Substring(start, index - start));
+                start := index + valueLen
+            }
+            else
+            {
+                list.append(self.Substring(start, literalLen - start))
+            }
+        };
+        
+        ^ list
+    }
+}
 
 // --- enumeratorOp ---
 
@@ -257,18 +257,18 @@ public extension enumerableOp
 //        
 //        ^ maximal   
 //    }
-//    
-//    get LastMember()
-//    {
-//        auto   en := cast Enumerator(self.enumerator());
-//        object lastItem := nil;
-//        
-//        while (en.next())
-//            { lastItem := en.get() };
-//            
-//        ^ lastItem
-//    }
-//    
+    
+    get LastMember()
+    {
+        auto   en := cast Enumerator(self.enumerator());
+        object lastItem := nil;
+        
+        while (en.next())
+            { lastItem := *en };
+            
+        ^ lastItem
+    }
+    
 //    int countMembers()
 //    {
 //        auto   en := cast Enumerator(self.enumerator());

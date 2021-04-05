@@ -71,7 +71,7 @@
 #define __raw       80000804h
 #define __ptr       80000805h
 #define __mssg      80000806h
-//#define __subj      80000807h
+#define __subj      80000807h
 #define mssg        80000806h
 #define mssgconst   80000806h
 //#define subj        80000807h
