@@ -132,35 +132,35 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-%~dp0\output\bin\elc %~dp0\output\src50\cellular\cellular.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+rem %~dp0\output\bin\elc %~dp0\output\src50\cellular\cellular.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
 
-%~dp0\output\bin\elc %~dp0\output\src50\sqlite\sqlite.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+rem %~dp0\output\bin\elc %~dp0\output\src50\sqlite\sqlite.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
 
-%~dp0\output\bin\elc %~dp0\output\src50\forms\forms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+rem %~dp0\output\bin\elc %~dp0\output\src50\forms\forms.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
 
-%~dp0\output\bin\elc %~dp0\output\src50\xforms\xforms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+rem %~dp0\output\bin\elc %~dp0\output\src50\xforms\xforms.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
 
-%~dp0\output\bin\elc %~dp0\output\src50\net\net.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+rem %~dp0\output\bin\elc %~dp0\output\src50\net\net.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
 
-%~dp0\output\bin\elc %~dp0\output\src50\algorithms\algorithms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+rem %~dp0\output\bin\elc %~dp0\output\src50\algorithms\algorithms.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
 
 %~dp0\..\bin\asm2binx %~dp0\..\asm\x32\core.asm %~dp0\output\bin\x32
 @echo off 
