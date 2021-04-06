@@ -29,7 +29,7 @@
        <include>app.l</include>
        <include>lnx32_app.l</include>
        <include>collections/list.l</include>
-       <include>math\math.l</include>
+       <include>math/math.l</include>
        <include>calendar/lnx32_datetime.l</include>
        <include>calendar/dates.l</include>
        <include>text/encoder.l</include>
@@ -49,8 +49,8 @@
        <include>routines/sorting.l</include>
      </module>
      <module name="dynamic">
-       <include>dynamic\reflection.l</include>
-       <include>dynamic\groups.l</include>
+       <include>dynamic/reflection.l</include>
+       <include>dynamic/groups.l</include>
      </module>
   </files>
 </configuration>

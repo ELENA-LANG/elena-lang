@@ -49,7 +49,7 @@ sg_lnx32:
 sg_ppc64le: 
 	$(MAKE) -C elenasrc2/tools/sg/codeblocks all -f sg_ppc64le.mak
 
-clean_lnx32: elc_lnx32 sg_lnx32 og_lnx32 asm2bin_lnx32 elenart_lnx32
+clean_lnx32: clean_elc_lnx32 clean_sg_lnx32 clean_og_lnx32 clean_asm2bin_lnx32 clean_elenart_lnx32
 
 clean_ppc64le: clean_elc_ppc64le clean_sg_ppc64le
 
