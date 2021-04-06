@@ -1,18 +1,18 @@
 #!/bin/bash
 RELEASE=elena-5.10.0.i386-linux
 
-echo compiling data files
-
 cp ../bin/elena-lc /usr/bin/
 
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
+mkdir -p /usr/lib/elena/core/x32/
+mkdir -p /usr/lib/elena/lib50
 
 cp ../bin/elc.config /etc/elena/
 cp ../bin/templates/*.config /etc/elena/templates/
 
-echo compiling lib50 files
+echo compiling data files
 
 ../bin/elena-sg ../dat/sg/syntax.txt
 ret=$?
@@ -47,6 +47,41 @@ fi
 cp ../dat/og/*.dat /usr/share/elena/
 cp ../dat/sg/syntax.dat /usr/share/elena
 
+echo compiling assembly files
+
+../bin/elena-asm2binx ../asm/x32/core.asm /usr/lib/elena/core/x32
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+echo core_lnx
+../bin/elena-asm2binx ../asm/x32/core_lnx.asm /usr/lib/elena/core/x32
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../bin/elena-asm2binx ../asm/x32/coreapi.asm /usr/lib/elena/core/x32
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+echo compiling lib50 files
+
 ../bin/elena-asm2binx ../src50/core/system.core_routines.esm /usr/lib/elena/lib50
 ret=$?
 if [ $ret -eq 0 ]
@@ -58,6 +93,16 @@ else
 fi
 
 ../bin/elena-lc ../src50/system/system.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+../bin/elena-lc ../src50/extensions/extensions.project
 ret=$?
 if [ $ret -eq -2 ]
 then

@@ -1,0 +1,152 @@
+#!/bin/bash
+elena-lc console/helloworld/helloworld.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc console/helloworld/vm_helloworld.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc console/sum/intsum.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc console/sum/realsum.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc console/binary/binary.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc console/words/words.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc console/bsort/bsort.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc console/replace/replace.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc console/matrix/matrix.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc console/trans/tanslit.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc console/pi/pi.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc files/textfile/textfile.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc console/goods/goods.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc files/textdb/textdb.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+elena-lc console/datetime/dtcalculator.project
+ret=$?
+if [ $ret -eq -2 ]
+then
+  echo "Failure" >&2
+  exit 1
+else
+  echo .
+fi
+
+exit 0

@@ -862,6 +862,14 @@ labEmpty:
 
 end
 
+procedure __lazyexpression."#dispatch[1]"
+
+  vcallrm  system'BaseLazyExpression, mssgconst : "#invoke[0]"
+  storesi  1
+  jumpvi   0
+
+end
+
 procedure __literalconvertor."convert$system@WideString$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"
 
   pushsi 1

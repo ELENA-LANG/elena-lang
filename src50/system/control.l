@@ -120,54 +120,54 @@ public abstract Indexable<T>
    abstract Indexer<T> indexer();
 }
 
-//// --- MatrixIndexer ---
-//
-///// An indexer prototype
-//public interface Indexer2D
-//{
-//    /// Returns false if the index out of range
-//    get abstract bool Available();
-//
-//    /// Returns the current member
-//    abstract get();
-//    
-//    /// Sets the current member
-//    abstract set(object);
-//    
-//    abstract int Index1
-//    {
-//        /// Reads the current index
-//        get();
-//        
-//        /// Sets the index by specified value
-//        set(int retVal);
-//    }
-//    
-//    abstract int Index2
-//    {
-//        /// Reads the current index
-//        get();
-//        
-//        /// Sets the index by specified value
-//        set(int retVal);
-//    }
-//    
-//    /// Increaments the index by specified value
-//    abstract appendIndex1(int offs);
-//    
-//    /// Increaments the index by specified value
-//    abstract appendIndex2(int offs);
-//
-//    abstract int Length1
-//    {
-//        get();
-//    }
-//
-//    abstract int Length2
-//    {
-//        get();
-//    }
-//}
+// --- MatrixIndexer ---
+
+/// An indexer prototype
+public interface Indexer2D
+{
+    /// Returns false if the index out of range
+    get abstract bool Available();
+
+    /// Returns the current member
+    get abstract Value();
+    
+    /// Sets the current member
+    set abstract Value(object);
+    
+    abstract int Index1
+    {
+        /// Reads the current index
+        get();
+        
+        /// Sets the index by specified value
+        set(value);
+    }
+    
+    abstract int Index2
+    {
+        /// Reads the current index
+        get();
+        
+        /// Sets the index by specified value
+        set(value);
+    }
+    
+    /// Increaments the index by specified value
+    abstract appendIndex1(int offs);
+    
+    /// Increaments the index by specified value
+    abstract appendIndex2(int offs);
+
+    abstract int Length1
+    {
+        get();
+    }
+
+    abstract int Length2
+    {
+        get();
+    }
+}
 
 // --- base functions ---
 
@@ -642,14 +642,14 @@ public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,TResult>
         = (a,b,c,d,e,f,g,h,i,j,k => self(a,b,c,d,e,f,g,h,i,j,k));
 }
 
-//// --- base lazy expression ---
-//
-//public abstract BaseLazyExpression
-//{
-//    abstract function();
-//    
-//    dispatch() => intern system'core_routines'__lazyexpression;
-//}
+// --- base lazy expression ---
+
+public abstract BaseLazyExpression
+{
+    abstract function();
+    
+    dispatch() => intern system'core_routines'__lazyexpression;
+}
 
 // --- BaseEnumerator<type> ---
 
@@ -745,74 +745,74 @@ public abstract BaseIndexer<T> : Indexer<T>
     Indexer cast() = new Indexer { embeddable dispatch() => self; };
 }
 
-//// --- Range --
-//
-//class IntRangeEnumerator : Enumerator<int>
-//{
-//    int theIndex;
-//    int theStart;
-//    int theEnd;
-//
-//    constructor(IntNumber start, IntNumber end)
-//    {
-//        theStart := start;
-//        theEnd := end;
-//        
-//        self.reset();
-//    }
-//
-//    int get() = theIndex;
-//            
-//    /// Returns false if the index out of range
-//    bool next()
-//    {
-//        theIndex += 1;
-//        
-//        ^ theIndex < theEnd
-//    }
-//    
-//    /// Sets the i-index by specified value
-//    reset()
-//    {
-//        theIndex := theStart - 1;
-//    } 
-//    
-//    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
-//    
-//    enumerable() = new Range(theStart, theEnd - theStart);
-//}
-//
-//public sealed class Range : Enumerable<int>
-//{
-//    int theStart;
-//    int theEnd;
-//    
-//    constructor(int start, int count)
-//    {
-//        theStart := start;
-//        theEnd := start + count
-//    }
-//    
-//    constructor new(int start, int count)
-//    {
-//        theStart := start;
-//        theEnd := start + count
-//    }
-//    
-//    constructor for(int start, int end)
-//        <= new(start, end - start);
-//    
-//    int Length
-//    {
-//        get()
-//        {
-//            int l := theEnd - theStart;
-//            
-//            ^ l
-//        }
-//    }
-//    
-//    Enumerator<int> enumerator() = new IntRangeEnumerator(theStart, theEnd);
-//    
-//    Enumerable cast() = new Enumerable { Enumerator enumerator() => self; };
-//}
+// --- Range --
+
+class IntRangeEnumerator : Enumerator<int>
+{
+    int theIndex;
+    int theStart;
+    int theEnd;
+
+    constructor(IntNumber start, IntNumber end)
+    {
+        theStart := start;
+        theEnd := end;
+        
+        self.reset();
+    }
+
+    get int Value() = theIndex;
+            
+    /// Returns false if the index out of range
+    bool next()
+    {
+        theIndex += 1;
+        
+        ^ theIndex < theEnd
+    }
+    
+    /// Sets the i-index by specified value
+    reset()
+    {
+        theIndex := theStart - 1;
+    } 
+    
+    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+    
+    enumerable() = new Range(theStart, theEnd - theStart);
+}
+
+public sealed class Range : Enumerable<int>
+{
+    int theStart;
+    int theEnd;
+    
+    constructor(int start, int count)
+    {
+        theStart := start;
+        theEnd := start + count
+    }
+    
+    constructor new(int start, int count)
+    {
+        theStart := start;
+        theEnd := start + count
+    }
+    
+    constructor for(int start, int end)
+        <= new(start, end - start);
+    
+    int Length
+    {
+        get()
+        {
+            int l := theEnd - theStart;
+            
+            ^ l
+        }
+    }
+    
+    Enumerator<int> enumerator() = new IntRangeEnumerator(theStart, theEnd);
+    
+    Enumerable cast() = new Enumerable { Enumerator enumerator() => self; };
+}
