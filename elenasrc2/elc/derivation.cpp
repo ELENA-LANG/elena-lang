@@ -1847,14 +1847,16 @@ void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNod
    tempWriter.newNode(lxRoot);
 
    tempWriter.newNode(lxExpression);
-   flushExpressionNode(tempWriter, exprNode.firstChild(), derivationScope);
+   SNode lnode = exprNode.firstChild();
+   flushExpressionNode(tempWriter, lnode, derivationScope);
    tempWriter.closeNode();
    derivationScope.nestedLevel -= 0x100;
 
    // generate roperand
    derivationScope.nestedLevel += 0x100;
    tempWriter.newNode(lxExpression);
-   flushExpressionNode(tempWriter, current.firstChild(), derivationScope);
+   SNode rnode = current.firstChild();
+   flushExpressionNode(tempWriter, rnode, derivationScope);
    tempWriter.closeNode();
    derivationScope.nestedLevel -= 0x100;
 
