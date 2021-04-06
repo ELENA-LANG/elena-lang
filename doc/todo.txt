@@ -3,12 +3,16 @@ In development:
 ------         
 
   [development]
-    + compile lib50 / lib50_64 for linux i386 / ppc64le
+    + compile console / files samples for linux i386
+    * #206 : compile sqllite
+    * #206 : interpreter sample
+
+    + compile lib50_64 for linux i386 / ppc64le
+    + compile console / files samples for linux amd6
     + compile hellowordl for linux i386 / amd64
     + ppc64le : simplest proram
     + compile hellowordl for ppc64le
 
-    * #206 : interpreter sample
     * #206 : samples, tutorials
 
     + support s += s2 operation;
