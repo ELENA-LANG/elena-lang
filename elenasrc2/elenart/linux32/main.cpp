@@ -189,7 +189,7 @@ void StopThread(int exitCode)
 
 int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, void* buffer, size_t maxLength)
 {
-   return ((ELENARTMachine*)instance)->readCallStack(framePosition, currentAddress, startLevel, (vaddr_t*)buffer, maxLength);
+   return ((ELENARTMachine*)instance)->readCallStack(framePosition, currentAddress, startLevel, (lvaddr_t*)buffer, maxLength);
 }
 
 int LoadAddressInfo(size_t retPoint, char* lineInfo, int length)
