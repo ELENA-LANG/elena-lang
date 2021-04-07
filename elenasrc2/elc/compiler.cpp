@@ -4113,8 +4113,15 @@ bool Compiler :: unboxingRequired(ObjectInfo& info)
 
 bool Compiler :: localBoxingRequired(_ModuleScope& scope, ObjectInfo& info)
 {
-   return info.kind == okFieldAddress && (info.param > 0
-      || (_logic->defineStructSize(scope, info.reference, 0) & 3) != 0);
+   switch (info.kind){
+      case okFieldAddress:
+      case okReadOnlyFieldAddress:
+         if (info.param > 0 || (_logic->defineStructSize(scope, info.reference, 0) & 3) != 0) {
+            return true;
+         }
+      default:
+         return false;
+   }
 }
 
 bool Compiler :: boxingRequired(ObjectInfo& info)
