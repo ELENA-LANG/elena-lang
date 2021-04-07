@@ -1,13 +1,14 @@
 #!/bin/bash
 RELEASE=elena-5.10.0.i386-linux
 
-cp ../bin/elena-lc /usr/bin/
-
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
 mkdir -p /usr/lib/elena/core/x32/
 mkdir -p /usr/lib/elena/lib50
+
+cp ../bin/libelenart.so /usr/lib/elena/
+cp ../bin/elena-lc /usr/bin/
 
 cp ../bin/elc.config /etc/elena/
 cp ../bin/templates/*.config /etc/elena/templates/
