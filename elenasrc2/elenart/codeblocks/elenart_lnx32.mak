@@ -27,7 +27,7 @@ LIB_DEBUG = $(LIB)
 LDFLAGS_DEBUG = $(LDFLAGS)
 OBJDIR_DEBUG = ../temp
 DEP_DEBUG = 
-OUT_DEBUG = ../../../bin/elenart.so
+OUT_DEBUG = ../../../bin/libelenart.so
 
 INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -O2
@@ -38,7 +38,7 @@ LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE = $(LDFLAGS) -s
 OBJDIR_RELEASE = ../temp
 DEP_RELEASE = 
-OUT_RELEASE = ../../../bin/elenart.so
+OUT_RELEASE = ../../../bin/libelenart.so
 
 OBJ_DEBUG = $(OBJDIR_DEBUG)/__/linux32/main.o $(OBJDIR_DEBUG)/__/elenartmachine.o $(OBJDIR_DEBUG)/__/__/engine/x86/x86routines.o $(OBJDIR_DEBUG)/__/__/engine/section.o $(OBJDIR_DEBUG)/__/__/engine/rtman.o $(OBJDIR_DEBUG)/__/__/engine/module.o $(OBJDIR_DEBUG)/__/__/engine/linux32/linx32routines.o $(OBJDIR_DEBUG)/__/__/engine/linux32/elfhelper.o $(OBJDIR_DEBUG)/__/__/common/altstrings.o $(OBJDIR_DEBUG)/__/__/engine/libman.o $(OBJDIR_DEBUG)/__/__/engine/elenamachine.o $(OBJDIR_DEBUG)/__/__/engine/bytecode.o $(OBJDIR_DEBUG)/__/__/common/xmlreader.o $(OBJDIR_DEBUG)/__/__/common/files.o $(OBJDIR_DEBUG)/__/__/common/dump.o $(OBJDIR_DEBUG)/__/__/common/config.o
 
@@ -114,7 +114,7 @@ $(OBJDIR_DEBUG)/__/__/common/config.o: ../../common/config.cpp
 
 clean_debug: 
 	rm -f $(OBJ_DEBUG) $(OUT_DEBUG)
-	rm ../../../bin/elenart.so
+	rm ../../../bin/libelenart.so
 	rm -rf $(OBJDIR_DEBUG)/__/linux32
 	rm -rf $(OBJDIR_DEBUG)/__
 	rm -rf $(OBJDIR_DEBUG)/__/__/engine/x86
