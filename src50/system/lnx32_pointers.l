@@ -150,16 +150,16 @@ public sealed const struct UnsafePointer
 //        ^ ptr
 //    }
 
-    get int Value()
-        = cast int(self);
+//    get int Value()
+//        = cast int(self);
 
-    // unsafe code
-    int cast()
-    {
-        intern system'core_routines'__dptr.readVal(self, ref int val);
-        
-        ^ val
-    }
+//    // unsafe code
+//    int cast()
+//    {
+//        intern system'core_routines'__dptr.readVal(self, ref int val);
+//        
+//        ^ val
+//    }
 
 //    // unsafe code
 //    string cast()
@@ -181,24 +181,24 @@ public sealed const struct UnsafePointer
 //        ^ s
 //    }
     
-    saveTo(byte[] target, int offs)
-    {
-        intern system'core_routines'__dptr.readVal(self, ref int val);
-        
-        target.write(offs, val)
-    }
-    
-    savePtrTo(byte[] target, int offs)
-    {
-        intern system'core_routines'__dptr.read(self, ref int val);
-        
-        target.write(offs, val)
-    }
+//    saveTo(byte[] target, int offs)
+//    {
+//        intern system'core_routines'__dptr.readVal(self, ref int val);
+//        
+//        target.write(offs, val)
+//    }
+//    
+//    savePtrTo(byte[] target, int offs)
+//    {
+//        intern system'core_routines'__dptr.read(self, ref int val);
+//        
+//        target.write(offs, val)
+//    }
 
-    copyTo(byte[] target, int len)
-    {
-        intern system'core_routines'__dptr.copyTo(self, target, len);
-    }
+//    copyTo(byte[] target, int len)
+//    {
+//        intern system'core_routines'__dptr.copyTo(self, target, len);
+//    }
             
     bool isEmpty()
         = thePointer == 0;
