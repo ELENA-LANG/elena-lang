@@ -8,7 +8,7 @@
     </project>
     <manifest>
         <name>ELENA Extension Library</name>
-        <version>5.9.0</version>
+        <version>5.10.0</version>
         <author>Alex Rakov</author>
     </manifest>
     <files>
@@ -16,19 +16,17 @@
             <include>control.l</include>
             <include>convertors.l</include>
             <include>console.l</include>
-            <include>lnx32_args.l</include>                                                        
-            <include>app.l</include>
             <include>basic.l</include>
             <include>random.l</include>
-            <include>math/functions.l</include>
-            <include>math/matrix.l</include>
+            <include>lnx32_args.l</include>                                                        
+            <include>app.l</include>
             <include>text/strings.l</include>
             <include>text/words.l</include>
+            <include>math/functions.l</include>
+            <include>math/matrix.l</include>
         </module>
         <module name="routines">
             <include>routines/enumerating.l</include>
-            <include>routines/combinations.l</include>
-            <include>routines/compound.l</include>
         </module>
     </files>
 </configuration>
