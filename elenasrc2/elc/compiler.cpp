@@ -2892,18 +2892,18 @@ ObjectInfo Compiler :: compileIsNilOperator(SyntaxWriter& writer, SNode node, Ex
    return ObjectInfo(okObject, 0, resultRef);
 }
 
-inline bool isLocalBoxingRequired(LexicalType type)
-{
-   switch (type) {
-      case lxIntOp:
-      case lxLongOp:
-      case lxRealOp:
-      case lxRealIntOp:
-         return true;
-      default:
-         return false;
-   }
-}
+//inline bool isLocalBoxingRequiredForOp(LexicalType type)
+//{
+//   switch (type) {
+//      case lxIntOp:
+//      case lxLongOp:
+//      case lxRealOp:
+//      case lxRealIntOp:
+//         return true;
+//      default:
+//         return false;
+//   }
+//}
 
 inline bool IsArrExprOperator(int operator_id, LexicalType type)
 {
@@ -2969,10 +2969,9 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       writer.closeNode();
    }
    else {
-      //if (loperand.kind == okFieldAddress) {
-      //   boxArgument(writer, node, roperand, scope, true);
-      //   (*arguments)[0] = roperand;
-      //}
+      if (localBoxingRequired(*scope.moduleScope, loperand)) {
+         boxArgument(writer, node, loperand, scope, true);
+      }
 
       if (arguments) {
          argCount += arguments->Length();
@@ -3645,8 +3644,7 @@ void Compiler :: analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& s
    if ((!test(stackSafeAttr, argBit) && boxingRequired(target))) {
       boxArgument(writer, node, target, scope, false);
    }
-   else if (target.kind == okFieldAddress && (target.param > 0
-      || (_logic->defineStructSize(*scope.moduleScope, target.reference, 0) & 3) != 0))
+   else if (localBoxingRequired(*scope.moduleScope, target))
    {
       boxArgument(writer, node, target, scope, true);
    }
@@ -3660,9 +3658,7 @@ void Compiler :: analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& s
 
             (*arguments)[i] = arg;
          }
-         else if (arg.kind == okFieldAddress
-            && (arg.param > 0 || (_logic->defineStructSize(*scope.moduleScope, arg.reference, 0) & 3) != 0))
-         {
+         else if (localBoxingRequired(*scope.moduleScope, arg)) {
             boxArgument(writer, node, arg, scope, true);
 
             (*arguments)[i] = arg;
@@ -4113,6 +4109,12 @@ bool Compiler :: unboxingRequired(ObjectInfo& info)
       return info.extraparam != 0;
    }
    else return false;
+}
+
+bool Compiler :: localBoxingRequired(_ModuleScope& scope, ObjectInfo& info)
+{
+   return info.kind == okFieldAddress && (info.param > 0
+      || (_logic->defineStructSize(scope, info.reference, 0) & 3) != 0);
 }
 
 bool Compiler :: boxingRequired(ObjectInfo& info)

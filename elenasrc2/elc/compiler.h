@@ -1419,6 +1419,7 @@ public:
    virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen,
       ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList);
 
+   bool __FASTCALL localBoxingRequired(_ModuleScope& scope, ObjectInfo& info);
    static bool __FASTCALL boxingRequired(ObjectInfo& info);
    static bool __FASTCALL condBoxingRequired(ObjectInfo& info);
    static bool __FASTCALL unboxingRequired(ObjectInfo& info);
