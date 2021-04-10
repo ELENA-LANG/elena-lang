@@ -9,7 +9,7 @@
 #ifndef ELENART_H_INCLUDED
 #define ELENART_H_INCLUDED
 
-#if _LINUX32
+#if _LINUX
  #define DLL_PUBLIC __attribute__ ((visibility ("default")))
  #define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
 #else
