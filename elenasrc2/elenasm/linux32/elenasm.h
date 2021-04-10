@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA SM Engine
 //             Linux Shared Library Declaration
-//                                              (C)2009-2020, by Alexei Rakov
+//                                              (C)2009-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elenamachine.h"
@@ -9,7 +9,7 @@
 #ifndef ELENART_H_INCLUDED
 #define ELENART_H_INCLUDED
 
-#if _LINUX32
+#if _LINUX
  #define DLL_PUBLIC __attribute__ ((visibility ("default")))
  #define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
 #else
