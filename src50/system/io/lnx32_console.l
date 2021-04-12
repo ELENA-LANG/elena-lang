@@ -22,7 +22,7 @@ namespace io
 
     // --- ConsoleWriter ---
     
-    sealed class ConsoleWriter
+    sealed class ConsoleWriter : IConsoleWriter
     {
         handle handle;
         string newLine;
@@ -47,7 +47,7 @@ namespace io
             int l := s.Length;
             while(n < l)
             {
-                s.read(n, ref c);
+                c := s[n];
 
                 extern libc.putchar(c);
 
@@ -75,43 +75,39 @@ namespace io
             self.write(newLine);
         }
 
-//        #method clear
-//        [
-//        ]
-    
         refresh()
         {
             extern libc.fflush(handle)
         }
                 
-        close()
-        {
-        }
+        //close()
+        //{
+        //}
     }
 
     // --- ConsoleReader ---
     
-    sealed class ConsoleReader : Object, interface<IConsoleReader>
+    sealed class ConsoleReader : /*Object, interface<*/IConsoleReader//>
     {
         constructor()
         {
         }
     
-        read(ref char retVal)
+        char read()
         {
            self.read(ref byte ch);
     
-           retVal := charConvertor.convert(ch)
+           ^ charConvertor.convert(ch)
         }
               
-        read(ref byte retVal)
+        private read(ref byte retVal)
         {
            int ch := extern libc.getchar();
 
            retVal := byteConvertor.convert(ch)
         }
     
-        read(byte[] buffer, ref int retVal)
+        private read(byte[] buffer, ref int retVal)
         {
             int i;
             for (i := 0, i < retVal, i += 1)
