@@ -127,17 +127,17 @@ public sealed const struct UnsafePointer
 //        
 //        ^ ptr
 //    }
-//
-//    get int Value()
-//        = cast int(self);
-//
-//    // unsafe code
-//    int cast()
-//    {
-//        intern system'core_routines'__dptr.readVal(self, ref int val);
-//        
-//        ^ val
-//    }
+
+    get int Value()
+        = cast int(self);
+
+    // unsafe code
+    int cast()
+    {
+        intern system'core_routines'__dptr.readVal(self, ref int val);
+        
+        ^ val
+    }
 
     // unsafe code
     string cast()
