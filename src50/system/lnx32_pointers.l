@@ -110,17 +110,10 @@ public sealed const struct Handle
 
 // --- UnsafePointer ---
 
-// --- UnsafePointer ---
-
 public sealed const struct UnsafePointer
 {
     embeddable __ptr thePointer[4];
 
-//    #constructor new : anObject
-//    [
-//        $self set:anObject.
-//    ]
-    
     embeddable constructor load(int ptr)
     {
         thePointer := ptr
@@ -150,36 +143,36 @@ public sealed const struct UnsafePointer
 //        ^ ptr
 //    }
 
-//    get int Value()
-//        = cast int(self);
+    get int Value()
+        = cast int(self);
 
-//    // unsafe code
-//    int cast()
-//    {
-//        intern system'core_routines'__dptr.readVal(self, ref int val);
-//        
-//        ^ val
-//    }
+    // unsafe code
+    int cast()
+    {
+        intern system'core_routines'__dptr.readVal(self, ref int val);
+        
+        ^ val
+    }
 
-//    // unsafe code
-//    string cast()
-//    {
-//        int  len := extern KERNEL32.lstrlenA(self);
-//        string s := String.allocate(len);
-//        extern KERNEL32.lstrcpyA(s, self);
-//        
-//        ^ s
-//    }        
+    // unsafe code
+    string cast()
+    {
+        int  len := extern libc.strlen(self);
+        string s := String.allocate(len);
+        extern libc.strcpy(s, self);
+        
+        ^ s
+    }        
 
-//    // unsafe code
-//    wide cast()
-//    {
-//        int  len := extern KERNEL32.lstrlenW(self);
-//        wide s := WideString.allocate(len);
-//        extern KERNEL32.lstrcpyW(s, self);
-//        
-//        ^ s
-//    }
+    // unsafe code
+    wide cast()
+    {
+        int  len := extern libc.wcslen(self);
+        wide s := WideString.allocate(len);
+        extern libc.wcscpy(s, self);
+        
+        ^ s
+    }
     
 //    saveTo(byte[] target, int offs)
 //    {

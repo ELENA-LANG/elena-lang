@@ -2,5 +2,9 @@ import extensions;
 
 public program()
 {
-   console.printLine("Start").fail();
+   char ch := 33; // !
+   extern libc.putchar(c);
+
+
+   //console.printLine("Start").fail();
 }
