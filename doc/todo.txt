@@ -3,6 +3,7 @@ In development:
 ------         
 
   [development]
+    + linux : readchar, print cyrillic text
     + compile console / files samples for linux i386
     * #206 : compile sqllite
     * #206 : interpreter sample
