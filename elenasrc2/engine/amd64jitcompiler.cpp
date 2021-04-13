@@ -1065,7 +1065,8 @@ void _ELENA_::compilePop(int, I64JITScope& scope)
 
 void _ELENA_::compilePopN(int, I64JITScope& scope)
 {
-   freeStack64(align(scope.argument << 3, 16), scope.code);
+   if (scope.argument)
+      freeStack64(align(scope.argument << 3, 16), scope.code);
 }
 
 void _ELENA_::loadFunction(int opcode, I64JITScope& scope)

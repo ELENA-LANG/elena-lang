@@ -196,34 +196,34 @@ public interface<T>
     try_block | on(catch_block);
 }
 
-//// -- try-finally-catch statement ---
-//#declare try:finally:catch(try_block,finally_block,catch_block)
-//{
-//    try_block $fnl finally_block | on(catch_block);
-//}
+// -- try-finally-catch statement ---
+#declare try:finally:catch(try_block,finally_block,catch_block)
+{
+    try_block $fnl finally_block | on(catch_block);
+}
 
-//// -- finally statement ---
-//
-//#declare try:finally(try_block,finally_block)
-//{
-//    try_block $fnl finally_block | raise();
-//}
-//
-//// --- using statement ---
-//
-//#declare using<expr>(block)
-//{
-//    auto v := expr;
-//    
-//    try
-//    {
-//        block;
-//    }
-//    finally
-//    {
-//        v.close()
-//    }
-//}
+// -- finally statement ---
+
+#declare try:finally(try_block,finally_block)
+{
+    try_block $fnl finally_block | raise();
+}
+
+// --- using statement ---
+
+#declare using<expr>(block)
+{
+    auto v := expr;
+    
+    try
+    {
+        block;
+    }
+    finally
+    {
+        v.close()
+    }
+}
 
 // === inline operator templates ===
 

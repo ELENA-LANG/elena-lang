@@ -2069,10 +2069,10 @@ bool TemplateGenerator::TemplateScope :: generateClassName()
    while (!it.Eof()) {
       name.append('&');
 
-      // HOTFIX : in declaration mode, type is not defined - it should be taken from the classref attribute
+      // HOTFIX : in declaration mode, type is not defined - it should be taken from the declaredtype attribute
       ref_t typeRef = (*it).argument;
       if (typeRef == V_TEMPLATE || !typeRef)
-         typeRef = (*it).findChild(lxClassRef).argument;
+         typeRef = (*it).findChild(lxDeclaredType).argument;
 
       ident_t param = moduleScope->module->resolveReference(typeRef);
       if (isWeakReference(param) && !isTemplateWeakReference(param)) {

@@ -82,7 +82,7 @@ rem bin\elc src50\xforms\xforms.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc src50\sqlite\sqlite.prj
+bin\elc src50\sqlite\sqlite.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

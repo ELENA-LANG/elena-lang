@@ -1148,7 +1148,8 @@ void _ELENA_::compilePop(int, x86JITScope& scope)
 
 void _ELENA_::compilePopN(int, x86JITScope& scope)
 {
-   freeStack(scope.argument << 2, scope.code);
+   if (scope.argument)
+      freeStack(scope.argument << 2, scope.code);
 }
 
 void _ELENA_::loadFunction(int opcode, x86JITScope& scope)

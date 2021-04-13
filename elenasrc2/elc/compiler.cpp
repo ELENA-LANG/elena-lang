@@ -5467,27 +5467,30 @@ ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, Ex
 
    SNode lnode = node.firstChild();
    SNode rnode = lnode.nextNode(lxObjectMask);
-   if (rnode == lxExpression)
-      rnode = rnode.findSubNodeMask(lxObjectMask);
 
    writer.newNode(lxSeqExpression);
    ObjectInfo loperand = compileObject(writer, lnode, scope, EAttr::eaNone, nullptr);
    writer.closeNode();
 
-//   if (operator_id == FINALLY_OPERATOR_ID) {
-//      SNode finalExpr = node;
-//      finalExpr.injectAndReplaceNode(lxFinalblock);
-//
-//      SNode objNode = finalExpr.firstChild(lxObjectMask);
-//      compileExpression(objNode, scope, 0, EAttr::eaNone);
-//
-//      // catch operation follow the finally operation
-//      node = node.nextNode();
-//   }
+   if (operator_id == FINALLY_OPERATOR_ID) {
+      writer.newNode(lxFinalblock);
+
+      writer.newNode(lxSeqExpression);
+      compileExpression(writer, rnode, scope, 0, EAttr::eaNone, nullptr);
+      writer.closeNode();
+
+      // catch operation follow the finally operation
+      rnode = rnode.nextNode(lxObjectMask);
+
+      writer.closeNode();
+   }
 
    writer.newNode(lxSeqExpression);
 
    ObjectInfo info = saveToTempLocal(writer, scope, ObjectInfo(okObject));
+
+   if (rnode == lxExpression)
+      rnode = rnode.findSubNodeMask(lxObjectMask);
 
    ObjectInfo retVal = compileResendMessageOperation(writer, rnode, scope, info, 0, EAttr::eaNone);
 
@@ -5764,12 +5767,12 @@ ref_t Compiler :: mapTemplateAttribute(SNode node, Scope& scope)
    SNode terminalNode = node.firstChild(lxTerminalMask);
    IdentifierString templateName(terminalNode.identifier());
    int paramCounter = 0;
-   SNode current = node.findChild(lxType);
+   SNode current = node.findChild(lxType, lxArrayType);
    while (current != lxNone) {
-      if (current.compare(lxType, lxTemplateParam)) {
+      if (current.compare(lxType, lxTemplateParam, lxArrayType)) {
          paramCounter++;
       }
-      else if (current != lxClassRef)
+      else /*if (current != lxClassRef)*/
          scope.raiseError(errInvalidOperation, node);
 
       current = current.nextNode();
@@ -5803,13 +5806,17 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
       if (current.compare(lxType, lxArrayType)) {
          ref_t typeRef = current.argument;
          if (!typeRef || typeRef == V_TEMPLATE) {
-            typeRef = resolveTypeAttribute(current, scope, declarationMode, false);
-            if (!declarationMode) {
-               current.set(lxType, typeRef);
+            SNode classRefNode = current.findChild(lxDeclaredType);
+            if (!classRefNode.argument) {
+               typeRef = resolveTypeAttribute(current, scope, declarationMode, false);
+               if (!declarationMode) {
+                  current.set(lxType, typeRef);
 
-               SNode terminalNode = injectAttributeIdentidier(current, scope);
+                  SNode terminalNode = injectAttributeIdentidier(current, scope);
+               }
+               else current.appendNode(lxDeclaredType, typeRef);
             }
-            else current.appendNode(lxClassRef, typeRef);
+            else typeRef = classRefNode.argument;
          }
 
          parameters.add(current);

@@ -36,10 +36,10 @@ entry()
     {
         forward program()
     }
-//    finally
-//    {
-//       startUpEvents.stopping()
-//    }
+    finally
+    {
+       startUpEvents.stopping()
+    }
     catch::
     {
         function(AbortException e)

@@ -5,7 +5,6 @@ In development:
   [development]
     + linux : readchar, print cyrillic text
     + compile console / files samples for linux i386
-    * #206 : compile sqllite
     * #206 : interpreter sample
 
     + compile lib50_64 for linux i386 / ppc64le
@@ -14,6 +13,7 @@ In development:
     + ppc64le : simplest proram
     + compile hellowordl for ppc64le
 
+    * #206 : compile sqllite for 64bit
     * #206 : samples, tutorials
 
     + support s += s2 operation;
@@ -21,11 +21,9 @@ In development:
 
     + support output redirecting
     + debugger : stack allocated int value 
-    + free 0 / alloc 0 - do nothing
     + test finally block with locally allocated variables
     + optimize a ? b : c - do not use branching
 
-    + uncomment finally part in program entry
     + abortexception - translit - why is not reconized
 
     * boxing fixed-sized field array
@@ -46,7 +44,6 @@ In development:
     * tape should use cdecl with fixed size - no need to clear the stack
     + alt op - x86-64 check stack alignment
     + optimiation : assinging int constant, 
-    + optimiation : freei 1 xalloc 1 => nop nop 
     + no duplicate variable by boxing
     + optimization - true.Inverted should return constant directly, without calling symbol
     + loading call argument in reverse order, so no need to load self once again

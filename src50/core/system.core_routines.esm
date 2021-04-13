@@ -984,6 +984,216 @@ labCopy:
 
 end
 
+procedure __byteconvertor."convert$system@CharValue$@system@ref#1&system@ByteNumber[2]"
+
+  peeksi 1
+  load
+  
+  lessn labErr, 0  
+  lessn labCopy, 080h
+
+labErr:  
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+
+labCopy:
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __byteconvertor."convert$system@IntNumber$@system@ref#1&system@ByteNumber[2]"
+
+  peeksi 1
+  load
+  
+  lessn labErr, 0  
+  lessn labCopy, 100h
+
+labErr:  
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labCopy:
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __byteconvertor."convert$system@UIntNumber$@system@ref#1&system@ByteNumber[2]"
+
+  peeksi 1
+  load  
+
+  lessn labCopy, 100h
+
+labErr:  
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labCopy:
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __byteconvertor."convert$system@LongNumber$@system@ref#1&system@ByteNumber[2]"
+
+  peeksi   1
+  pusha
+  callextr api : longtoint, 1
+  pop
+
+  ifr      labErr, 0
+
+  lessn    labErr, 0  
+  lessn    labCopy, 0FFh
+
+labErr:  
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labCopy:
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __byteconvertor."convert$system@RealNumber$@system@ref#1&system@ByteNumber[2]"
+
+  peeksi   1
+  open
+  reserve  4
+
+  rintf    4
+  movf     4
+  rload
+  pushn    0
+  movsip   0
+  rsaven
+  popd
+
+  restore  4
+  close
+
+  lessn    labErr, 0  
+  lessn    labCopy, 0FFh
+
+labErr:  
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labCopy:
+  peeksi   2
+  save
+  quit
+
+end
+
+procedure __byteconvertor."convert$system@String$system@IntNumber$@system@ref#1&system@ByteNumber[3]"
+
+  pushsi 2
+  pushsi 2  
+  callextr api : strtoint, 2
+  freei 2
+
+  ifr      labErr, 0
+  peeksi 3
+  save
+
+  lessn labErr2, 0  
+  lessn labExit, 0FFh
+
+labErr2:  
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labExit:
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'FormatException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw
+
+end
+
+procedure __byteconvertor."convert$system@WideString$system@IntNumber$@system@ref#1&system@ByteNumber[3]"
+
+  pushsi 2
+  pushsi 2  
+  callextr api : wstrtoint, 2
+  freei 2
+
+  ifr      labErr, 0
+  peeksi 3
+  save
+
+  lessn labErr2, 0  
+  lessn labExit, 0FFh
+
+labErr2:  
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labExit:
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'FormatException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw
+
+end
+
 procedure __shortconvertor."convert$system@ByteNumber$@system@ref#1&system@ShortNumber[2]"
 
   peeksi 1

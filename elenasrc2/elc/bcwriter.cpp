@@ -3584,9 +3584,11 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, 
             scope.clear();
 
             // generate finally
-            pushObject(tape, lxResult, 0, scope, 0);
+            tape.write(bcAllocI, 1);
+            tape.write(bcStoreSI, 0);
             generateCodeBlock(tape, finallyNode, scope, false);
-            popObject(tape, lxResult);
+            tape.write(bcPeekSI, 0);
+            tape.write(bcFreeI, 1);
          }
          declareSafeCatch(tape, finallyNode, retLabel, scope);
          doCatch(tape);

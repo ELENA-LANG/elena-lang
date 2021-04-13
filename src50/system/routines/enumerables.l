@@ -412,21 +412,21 @@ public extension indexableOp
         indexer.Value := o2
     }
     
-//    int indexOfElement(element)
-//    {
-//        Indexer it := self.indexer();
-//        
-//        while (it.Available)
-//        {
-//            if (element == it.get())
-//                { ^ it.Index };
-//            
-//            it.appendIndex:1;
-//        };
-//        
-//        ^ -1
-//    }
-//    
+    int indexOfElement(element)
+    {
+        Indexer it := self.indexer();
+        
+        while (it.Available)
+        {
+            if (element == (*it))
+                { ^ it.Index };
+            
+            it.appendIndex:1;
+        };
+        
+        ^ -1
+    }
+    
 //    deepClone()
 //    {
 //        var copy := self.clone();

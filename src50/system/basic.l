@@ -2082,133 +2082,133 @@ public sealed const struct CharValue : BaseValue
     }
 }
 
-//// --- nil constant ---
-//
-//[info:"A nil value"]
-//public singleton nilValue
-//{
-//    [info:"Returns true if the specified object is nil."]
-//    bool equal(object)
-//    {
-//        (nil == object)
-//            ? { ^ true };
-//        
-//        (super.equal:object)
-//            ? { ^ true };
-//
-//        ^ false
-//    }
-//    
-//    [info:"Returns nil<br/>Any typecasting message will be handled and nil value returned"]
-//    cast generic() = nil;
-//}
-//
-//// === Basic Factory symbols ==
-//
-//public class BaseExtender
-//{
-//    object theObject;
-//    
-//    [info:"Returns true if the specified object is equal to the current object; otherwise, false."]
-//    bool equal(object)
-//        => theObject;
-//
-//    string toPrintable()
-//        => theObject;
-//                  
-//    dispatch() => theObject;
-//}
-//
-//[info:"A generic variable.<br/>Extends an assigned value"]
-//public sealed class Variable : BaseVariable, ref<object>
-//{
-//    [info:"Creates the empty variable"]
-//    constructor()
-//    {
-//    }        
-//        
-//    [info:"Creates the variable"]
-//    constructor(value)
-//    {
-//        this value := value
-//    }
-//    
-//    append(val)
-//    {
-//        (nil == value)
-//            ? { value := val }
-//            : { value := value + val }
-//    }
-//    
-//    reduce(val)
-//    {
-//        (nil == value)
-//            ? { system'InvalidOperationException.raise() }
-//            : { value := value - val }
-//    }
-//
-//    multiplyBy(val)
-//    {
-//        (nil == value)
-//            ? { system'InvalidOperationException.raise() }
-//            : { value := value * val }
-//    }
-//
-//    divideBy(val)
-//    {
-//        (nil == value)
-//            ? { system'InvalidOperationException.raise() }
-//            : { value := value / val }
-//    }
-//}
-//
-//// --- KeyValue ---
-//
-//[info:"A key - object pair<br/>Extends the object with a key property"]
-//public sealed class KeyValue
-//{
-//    object theKey;
-//    object theObject;
-//    
-//    [info:"Creates a new object"]
-//    constructor new(key, object)
-//    {
-//        theKey := key;
-//        theObject := object
-//    }
-//    
-//    [info:"Returns the key"]
-//    Key = theKey;
-//    
-//    [info:"Returns the key"]
-//    Value = theObject;
-//
-//    set Value(object)
-//    {
-//        theObject := object
-//    }
-//           
-//    bool equal(o)
-//        => theObject;
-//                                                                                      
-//    string toPrintable()
-//        => theObject;
-//                                                                                      
-//    [info:"Redirects the incoming messages to the object"]
-//    dispatch() => theObject;
-//}
-//
-//// --- DTO --
-//
-//public class DTO
-//{
-//    const MessageName[] __dto_properties;
-//    
-//    sealed static MessageName[] __dto_properties()
-//    {
-//        ^ __dto_properties
-//    }
-//}
+// --- nil constant ---
+
+[info:"A nil value"]
+public singleton nilValue
+{
+    [info:"Returns true if the specified object is nil."]
+    bool equal(object)
+    {
+        (nil == object)
+            ? { ^ true };
+        
+        (super.equal:object)
+            ? { ^ true };
+
+        ^ false
+    }
+    
+    [info:"Returns nil<br/>Any typecasting message will be handled and nil value returned"]
+    cast generic() = nil;
+}
+
+// === Basic Factory symbols ==
+
+public class BaseExtender
+{
+    object theObject;
+    
+    [info:"Returns true if the specified object is equal to the current object; otherwise, false."]
+    bool equal(object)
+        => theObject;
+
+    string toPrintable()
+        => theObject;
+                  
+    dispatch() => theObject;
+}
+
+[info:"A generic variable.<br/>Extends an assigned value"]
+public sealed class Variable : BaseVariable, ref<object>
+{
+    [info:"Creates the empty variable"]
+    constructor()
+    {
+    }        
+        
+    [info:"Creates the variable"]
+    constructor(value)
+    {
+        this value := value
+    }
+    
+    append(val)
+    {
+        (nil == value)
+            ? { value := val }
+            : { value := value + val }
+    }
+    
+    reduce(val)
+    {
+        (nil == value)
+            ? { system'InvalidOperationException.raise() }
+            : { value := value - val }
+    }
+
+    multiplyBy(val)
+    {
+        (nil == value)
+            ? { system'InvalidOperationException.raise() }
+            : { value := value * val }
+    }
+
+    divideBy(val)
+    {
+        (nil == value)
+            ? { system'InvalidOperationException.raise() }
+            : { value := value / val }
+    }
+}
+
+// --- KeyValue ---
+
+[info:"A key - object pair<br/>Extends the object with a key property"]
+public sealed class KeyValue
+{
+    object theKey;
+    object theObject;
+    
+    [info:"Creates a new object"]
+    constructor new(key, object)
+    {
+        theKey := key;
+        theObject := object
+    }
+    
+    [info:"Returns the key"]
+    Key = theKey;
+    
+    [info:"Returns the key"]
+    Value = theObject;
+
+    set Value(object)
+    {
+        theObject := object
+    }
+           
+    bool equal(o)
+        => theObject;
+                                                                                      
+    string toPrintable()
+        => theObject;
+                                                                                      
+    [info:"Redirects the incoming messages to the object"]
+    dispatch() => theObject;
+}
+
+// --- DTO --
+
+public class DTO
+{
+    const MessageName[] __dto_properties;
+    
+    sealed static MessageName[] __dto_properties()
+    {
+        ^ __dto_properties
+    }
+}
 
 // === Basic Convertors ===
 
@@ -2224,69 +2224,69 @@ public singleton byteConvertor
     byte convert(byte n)
         = n;
         
-//    /// Converts a character into a byte value
-//    byte convert(char val)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts a short integer into a byte value
-//    byte convert(short n)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(n, ref byte retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Converts an integer into a byte value
-//    byte convert(int val)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Converts an integer into a byte value
-//    byte convert(uint val)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts a long integer into a byte value
-//    byte convert(long val)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts a real number into a byte value
-//    byte convert(real val)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts a literal value into a byte value
-//    byte convert(string s)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(s, 10, ref byte retVal);
-//        
-//        ^ retVal
-//    }
-//                
-//    /// Converts a wide literal value into a byte value
-//    byte convert(wide s)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(s, 10, ref byte retVal);
-//        
-//        ^ retVal
-//    }
+    /// Converts a character into a byte value
+    byte convert(char val)
+    {
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts a short integer into a byte value
+    byte convert(short n)
+    {
+        intern system'core_routines'__byteconvertor.convert(n, ref byte retVal);
+        
+        ^ retVal
+    }
+        
+    /// Converts an integer into a byte value
+    byte convert(int val)
+    {
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
+        
+        ^ retVal
+    }
+        
+    /// Converts an integer into a byte value
+    byte convert(uint val)
+    {
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts a long integer into a byte value
+    byte convert(long val)
+    {
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts a real number into a byte value
+    byte convert(real val)
+    {
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts a literal value into a byte value
+    byte convert(string s)
+    {
+        intern system'core_routines'__byteconvertor.convert(s, 10, ref byte retVal);
+        
+        ^ retVal
+    }
+                
+    /// Converts a wide literal value into a byte value
+    byte convert(wide s)
+    {
+        intern system'core_routines'__byteconvertor.convert(s, 10, ref byte retVal);
+        
+        ^ retVal
+    }
 
     byte convert(o)
         = cast byte(o);

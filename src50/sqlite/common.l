@@ -84,7 +84,7 @@ public sealed class DBConnection
         {
             auto en := reader.enumerator();
             while (en.next()) {
-                table.appendRow(en.get())
+                table.appendRow(*en)
             }
         };
 

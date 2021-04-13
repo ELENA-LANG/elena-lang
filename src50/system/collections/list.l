@@ -139,7 +139,7 @@ namespace collections
         {
             while(e.next())
             {
-                self.append(e.get())
+                self.append(*e)
             }        
         }
     
@@ -201,7 +201,7 @@ namespace collections
             
             this theLength := self.Length;
             
-            T get() = self.at(this theIndex.Value);
+            get T Value() = self.at(this theIndex.Value);
             
             enumerable() = self;
             
@@ -217,10 +217,10 @@ namespace collections
             
             this theLength := self.Length;
             
-            T get()
+            get T Value()
                 = self.at(theIndex);
                 
-            set(T o)
+            set Value(T o)
             {
                 self.setAt(theIndex, o)
             }

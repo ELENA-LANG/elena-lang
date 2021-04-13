@@ -1,7 +1,15 @@
-open alloci := 1 storefi := 1 close quit => nop nop nop nop quit;
-open alloci := 1 storefi := 1 movr close quit => nop nop nop movr nop quit;
+freei := 1 alloci := 1                         => nop nop;
+freei := 2 alloci := 2                         => nop nop;
+freei := 3 alloci := 3                         => nop nop;
+freei := 4 alloci := 4                         => nop nop;
+freei := 5 alloci := 5                         => nop nop;
+freei := 6 alloci := 6                         => nop nop;
 
-open movr close => nop movr nop;
+open alloci := 1 storefi := 1 close quit       => nop nop nop nop quit;
+open alloci := 1 storefi := 1 movr close quit  => nop nop nop movr nop quit;
+
+open movr close                                => nop movr nop;
+
 
 
 

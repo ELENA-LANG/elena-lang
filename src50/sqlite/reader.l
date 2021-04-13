@@ -9,7 +9,7 @@ public sealed class DBEnumerator : Enumerator<object[]>
         this reader := reader
     }
     
-    object[] get() = reader.row();
+    get object[] Value() = reader.row();
 
     bool next() => reader;
     
