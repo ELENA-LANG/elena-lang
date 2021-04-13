@@ -2230,8 +2230,6 @@ void ByteCodeWriter :: loadIntValue(CommandTape& tape)
 
 void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int)
 {
-//   bool basePresaved = test(mode, BASE_PRESAVED);
-
    if (scope.acc.type == type && scope.acc.arg == argument) {
       // if the agument is already in the register - do nothing
       return;
@@ -3064,33 +3062,6 @@ void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node, FlowS
 //   // labEnd
 //   tape.setLabel();
 //}
-//
-////void ByteCodeWriter :: generateVariadicInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message)
-////{
-////}
-////
-////void ByteCodeWriter :: loadUnboxingVar(CommandTape& tape, SNode current, int paramCount, int& presavedCount)
-////{
-////   SNode tempLocal = current.findChild(lxTempLocal);
-////   if (tempLocal == lxNone) {
-////      loadObject(tape, lxCurrent, paramCount + presavedCount - 1, 0);
-////      presavedCount--;
-////   }
-////   else loadObject(tape, lxLocal, tempLocal.argument, 0);
-////}
-////
-////void ByteCodeWriter :: saveUnboxingVar(CommandTape& tape, SNode member, bool& accTarget, bool& accPresaving, int& presavedCount)
-////{
-////   if (accTarget) {
-////      pushObject(tape, lxResult);
-////      presavedCount++;
-////      accPresaving = true;
-////   }
-////
-////   generateObject(tape, member, ACC_REQUIRED);
-////   pushObject(tape, lxResult);
-////   presavedCount++;
-////}
 
 void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, FlowScope& scope)
 {

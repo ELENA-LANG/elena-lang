@@ -674,7 +674,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->outputRef = INVALID_REF; // to indicate lazy load
    this->withOpenArg = false;
    this->classStacksafe = false;
-//   this->generic = false;
+   this->generic = false;
    this->extensionMode = false;
    this->multiMethod = false;
    this->functionMode = false;
@@ -777,7 +777,7 @@ Compiler::CodeScope :: CodeScope(SourceScope* parent)
 {
    this->allocated1 = this->reserved1 = 0;
    this->allocated2 = this->reserved2 = 0;
-   this->withRetStatement = /*this->genericMethod = */false;
+   this->withRetStatement = this->genericMethod = false;
 }
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
@@ -785,7 +785,7 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 {
    this->allocated1 = this->reserved1 = 0;
    this->allocated2 = this->reserved2 = 0;
-   //this->genericMethod = parent->generic;
+   this->genericMethod = parent->generic;
    this->withRetStatement = false;
 }
 
@@ -807,7 +807,7 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
    this->reserved1 = parent->reserved1;
    this->allocated2 = parent->allocated2;
    this->reserved2 = parent->reserved2;
-   //this->genericMethod = parent->genericMethod;
+   this->genericMethod = parent->genericMethod;
    this->withRetStatement = false;
 }
 
@@ -829,10 +829,10 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-      /*if (genericMethod && identifier.compare(MESSAGE_VAR)) {
+      if (genericMethod && identifier.compare(MESSAGE_VAR)) {
          return ObjectInfo(okMessage, local.offset, V_MESSAGE);
       }
-      else*/ if (local.size != 0) {
+      else if (local.size != 0) {
          return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.element_ref, 0);
       }
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.element_ref, 0);
@@ -7989,18 +7989,18 @@ void Compiler :: compileMethodCode(SyntaxWriter& writer, SNode node, MethodScope
       compileMultidispatch(writer, node, codeScope, *classScope);
    }
 
-   int frameArg = /*scope.generic ? -1 : */0;
+   int frameArg = scope.generic ? -1 : 0;
    writer.newNode(lxNewFrame, frameArg);
 
    // new stack frame
    // stack already contains current self reference
    // the original message should be restored if it is a generic method
    codeScope.allocated1++;
-//   // declare the current subject for a generic method
-//   if (scope.generic) {
-//      codeScope.allocated2++;
-//      codeScope.mapLocal(MESSAGE_VAR, -1, V_MESSAGE, 0, 0);
-//   }
+   // declare the current subject for a generic method
+   if (scope.generic) {
+      codeScope.allocated2++;
+      codeScope.mapLocal(MESSAGE_VAR, -1, V_MESSAGE, 0, 0);
+   }
 
    if (node == lxReturning)
       node = node.parentNode();
@@ -8572,27 +8572,27 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
       current = current.nextNode();
    }
 
-   //// if the VMT conatains newly defined generic handlers, overrides default one
-   //if (testany(classClassScope.info.header.flags, elWithGenerics | elWithVariadics)
-   //   && classClassScope.info.methods.exist(classClassScope.moduleScope->dispatch_message, false))
-   //{
-   //   MethodScope methodScope(&classClassScope);
-   //   methodScope.message = classClassScope.moduleScope->dispatch_message;
+   // if the VMT conatains newly defined generic handlers, overrides default one
+   if (testany(classClassScope.info.header.flags, elWithGenerics | elWithVariadics)
+      && classClassScope.info.methods.exist(classClassScope.moduleScope->dispatch_message, false))
+   {
+      MethodScope methodScope(&classClassScope);
+      methodScope.message = classClassScope.moduleScope->dispatch_message;
 
-   //   classClassScope.include(methodScope.message);
+      classClassScope.include(methodScope.message);
 
-   //   SNode methodNode = node.appendNode(lxStaticMethod, methodScope.message);
-   //
-   //   classClassScope.info.header.flags |= elWithCustomDispatcher;
+      SNode methodNode = node.appendNode(lxStaticMethod, methodScope.message);
+   
+      classClassScope.info.header.flags |= elWithCustomDispatcher;
 
-   //   compileDispatcher(methodNode, methodScope,
-   //      lxStaticMethod,
-   //      test(classClassScope.info.header.flags, elWithGenerics),
-   //      test(classClassScope.info.header.flags, elWithVariadics));
+      compileDispatcher(writer, methodNode, methodScope,
+         lxStaticMethod,
+         test(classClassScope.info.header.flags, elWithGenerics),
+         test(classClassScope.info.header.flags, elWithVariadics));
 
-   //   // overwrite the class info
-   //   classClassScope.save();
-   //}
+      // overwrite the class info
+      classClassScope.save();
+   }
 }
 
 inline int countFields(SNode node)
@@ -8662,18 +8662,18 @@ void Compiler :: compileSymbolCode(SyntaxTree& tree, ClassScope& scope)
    compileSymbolAttribtes(*scope.moduleScope, scope.reference, publicAttr);
 }
 
-//void Compiler :: compilePreloadedExtensionCode(ClassScope& scope)
-//{
-//   _Module* module = scope.moduleScope->module;
-//
-//   IdentifierString sectionName("'", EXT_INITIALIZER_SECTION);
-//
-//   CommandTape tape;
-//   _writer.generateInitializer(tape, module->mapReference(sectionName), lxClassSymbol, scope.reference);
-//
-//   // create byte code sections
-//   _writer.saveTape(tape, *scope.moduleScope);
-//}
+void Compiler :: compilePreloadedExtensionCode(ClassScope& scope)
+{
+   _Module* module = scope.moduleScope->module;
+
+   IdentifierString sectionName("'", EXT_INITIALIZER_SECTION);
+
+   CommandTape tape;
+   _writer.generateInitializer(tape, module->mapReference(sectionName), lxClassSymbol, scope.reference);
+
+   // create byte code sections
+   _writer.saveTape(tape, *scope.moduleScope);
+}
 
 void Compiler :: compilePreloadedCode(SymbolScope& scope)
 {
@@ -8770,7 +8770,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
 //   methodScope.yieldMethod = _logic->isMethodYieldable(scope.info, methodScope.message);
-//   methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
+   methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
    if (_logic->isMixinMethod(scope.info, methodScope.message)) {
       if (methodScope.withOpenArg && methodScope.functionMode)
          methodScope.mixinFunction = true;
@@ -10163,75 +10163,78 @@ ref_t targetResolver(void* param, mssg_t mssg)
    return ((Map<ref_t, ref_t>*)param)->get(mssg);
 }
 
-//void Compiler :: compileModuleExtensionDispatcher(NamespaceScope& scope)
-//{
-//   List<mssg_t> genericMethods;
-//   ClassInfo::CategoryInfoMap methods(0);
-//   Map<ref_t, ref_t> taregts;
-//
-//   auto it = scope.declaredExtensions.start();
-//   while (!it.Eof()) {
-//      auto extInfo = *it;
-//      mssg_t genericMessageRef = it.key();
-//
-//      ident_t refName = scope.module->resolveReference(extInfo.value1);
-//      if (isWeakReference(refName)) {
-//         if (NamespaceName::compare(refName, scope.ns)) {
-//            // if the extension is declared in the module namespace
-//            // add it to the list to be generated
-//
-//            if (retrieveIndex(genericMethods.start(), genericMessageRef) == -1)
-//               genericMethods.add(genericMessageRef);
-//
-//            methods.add(Attribute(extInfo.value2, maMultimethod), genericMessageRef | FUNCTION_MESSAGE);
-//            taregts.add(extInfo.value2, extInfo.value1);
-//         }
-//      }
-//
-//      it++;
-//   }
-//
-//   if (genericMethods.Count() > 0) {
-//      // if there are extension methods in the namespace
-//      ref_t extRef = scope.moduleScope->mapAnonymous();
-//      ClassScope classScope(&scope, extRef, Visibility::Private);
-//      classScope.extensionDispatcher = true;
-//
-//      // declare the extension
-//      SyntaxTree classTree;
-//      SyntaxWriter writer(classTree);
-//
-//      // build the class tree
-//      writer.newNode(lxRoot);
-//      writer.newNode(lxClass, extRef);
-//      writer.closeNode();
-//      writer.closeNode();
-//
-//      SNode classNode = classTree.readRoot().firstChild();
-//      compileParentDeclaration(classNode, classScope, scope.moduleScope->superReference);
-//      classScope.info.header.flags |= (elExtension | elSealed);
-//      classScope.info.header.classRef = classScope.reference;
-//      classScope.extensionClassRef = scope.moduleScope->superReference;
-//      classScope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classScope.extensionClassRef, 0));
-//
-//      for (auto g_it = genericMethods.start(); !g_it.Eof(); g_it++) {
-//         mssg_t genericMessageRef = *g_it;
-//
-//         ref_t dispatchListRef = _logic->generateOverloadList(*scope.moduleScope, *this, genericMessageRef | FUNCTION_MESSAGE,
-//            methods, (void*)&taregts, targetResolver, elSealed);
-//
-//         classScope.info.mattributes.add(Attribute(caExtOverloadlist, genericMessageRef), dispatchListRef);
-//      }
-//
-//      classScope.save();
-//
-//      // compile the extension
-//      compileVMT(classNode, classScope);
-//      generateClassImplementation(classNode, classScope);
-//
-//      compilePreloadedExtensionCode(classScope);
-//   }
-//}
+void Compiler :: compileModuleExtensionDispatcher(NamespaceScope& scope)
+{
+   List<mssg_t> genericMethods;
+   ClassInfo::CategoryInfoMap methods(0);
+   Map<ref_t, ref_t> taregts;
+
+   auto it = scope.declaredExtensions.start();
+   while (!it.Eof()) {
+      auto extInfo = *it;
+      mssg_t genericMessageRef = it.key();
+
+      ident_t refName = scope.module->resolveReference(extInfo.value1);
+      if (isWeakReference(refName)) {
+         if (NamespaceName::compare(refName, scope.ns)) {
+            // if the extension is declared in the module namespace
+            // add it to the list to be generated
+
+            if (retrieveIndex(genericMethods.start(), genericMessageRef) == -1)
+               genericMethods.add(genericMessageRef);
+
+            methods.add(Attribute(extInfo.value2, maMultimethod), genericMessageRef | FUNCTION_MESSAGE);
+            taregts.add(extInfo.value2, extInfo.value1);
+         }
+      }
+
+      it++;
+   }
+
+   if (genericMethods.Count() > 0) {
+      // if there are extension methods in the namespace
+      ref_t extRef = scope.moduleScope->mapAnonymous();
+      ClassScope classScope(&scope, extRef, Visibility::Private);
+      classScope.extensionDispatcher = true;
+
+      // declare the extension
+      SyntaxTree classTree;
+      SyntaxWriter writer(classTree);
+
+      // build the class tree
+      writer.newNode(lxRoot);
+      writer.newNode(lxClass, extRef);
+      writer.closeNode();
+      writer.closeNode();
+
+      SNode classNode = classTree.readRoot().firstChild();
+      compileParentDeclaration(classNode, classScope, scope.moduleScope->superReference);
+      classScope.info.header.flags |= (elExtension | elSealed);
+      classScope.info.header.classRef = classScope.reference;
+      classScope.extensionClassRef = scope.moduleScope->superReference;
+      classScope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classScope.extensionClassRef, 0));
+
+      for (auto g_it = genericMethods.start(); !g_it.Eof(); g_it++) {
+         mssg_t genericMessageRef = *g_it;
+
+         ref_t dispatchListRef = _logic->generateOverloadList(*scope.moduleScope, *this, genericMessageRef | FUNCTION_MESSAGE,
+            methods, (void*)&taregts, targetResolver, elSealed);
+
+         classScope.info.mattributes.add(Attribute(caExtOverloadlist, genericMessageRef), dispatchListRef);
+      }
+
+      classScope.save();
+
+      // compile the extension
+      SyntaxTree buffer;
+      SyntaxWriter bufferWriter(buffer);
+
+      compileVMT(bufferWriter, classNode, classScope);
+      generateClassImplementation(buffer.readRoot(), classScope);
+
+      compilePreloadedExtensionCode(classScope);
+   }
+}
 
 ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, mssg_t genericMessageRef)
 {
@@ -11143,11 +11146,11 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
       current = current.nextNode();
    }
 
-//   if (scope.declaredExtensions.Count() > 0) {
-//      compileModuleExtensionDispatcher(scope);
-//
-//      scope.declaredExtensions.clear();
-//   }
+   if (scope.declaredExtensions.Count() > 0) {
+      compileModuleExtensionDispatcher(scope);
+
+      scope.declaredExtensions.clear();
+   }
 
    return declared;
 }

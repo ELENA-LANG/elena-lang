@@ -1745,8 +1745,8 @@ public sealed const struct RealNumber : BaseNumber
     static real NaN
         = 0.0r / 0.0r;
 
-//    static real Pi
-//        = Pi_value;
+    static real Pi
+        = Pi_value;
 
     constructor(int n)
         = realConvertor.convert(n);
@@ -1765,9 +1765,9 @@ public sealed const struct RealNumber : BaseNumber
     constructor(real value)
         = value;
   
-//    [info:"Creates the object with specified value"]
-//    constructor(uint value)
-//        = realConvertor.convert(value);
+    [info:"Creates the object with specified value"]
+    constructor(uint value)
+        = realConvertor.convert(value);
 
     [info:"Creates the object with specified value"]
     constructor(long value)

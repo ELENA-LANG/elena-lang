@@ -42,7 +42,7 @@
 #define method      80001008h
 #define field       80001009h
 #define type        8000100Ah
-//#define generic     8000100Bh
+#define generic     8000100Bh
 #define function    8000100Ch
 #define var         8000100Dh
 #define this        8000100Eh

@@ -575,7 +575,7 @@ private:
       ref_t        outputRef;
       bool         withOpenArg;
       bool         classStacksafe;
-//      bool         generic;
+      bool         generic;
       bool         mixinFunction;
       bool         extensionMode;
       bool         multiMethod;
@@ -691,7 +691,7 @@ private:
    {
       // scope local variables
       LocalMap     locals;
-//      bool         genericMethod;
+      bool         genericMethod;
       bool         withRetStatement;
 
       int reserved1, allocated1; // managed scope stack allocation
@@ -1252,7 +1252,7 @@ private:
 
    ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
    void compilePreloadedCode(SymbolScope& scope);
-//   void compilePreloadedExtensionCode(ClassScope& scope);
+   void compilePreloadedExtensionCode(ClassScope& scope);
 
    void compileSymbolCode(SyntaxTree& expressionTree, ClassScope& scope);
 
@@ -1263,7 +1263,7 @@ private:
       bool ignoreAutoMultimethods = false);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 
-//   void compileModuleExtensionDispatcher(NamespaceScope& scope);
+   void compileModuleExtensionDispatcher(NamespaceScope& scope);
    ref_t compileExtensionDispatcher(NamespaceScope& scope, mssg_t genericMessageRef);
 
    void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
