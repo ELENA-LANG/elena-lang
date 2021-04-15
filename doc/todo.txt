@@ -3,6 +3,9 @@ In development:
 ------         
 
   [development]
+    * #539 
+    * #538 : bitwise & boolean operations
+
     + linux : readchar, print cyrillic text
     + compile console / files samples for linux i386
     * #206 : interpreter sample

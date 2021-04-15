@@ -1663,6 +1663,10 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // xsavef i, v
          tape.write(bcXSaveF, localOffset << 2, immValue);
          break;
+      case INVERTED_OPERATOR_ID:
+         // xsavef i, v
+         tape.write(bcXSaveF, localOffset << 2, ~immValue);
+         break;
       case ADD_OPERATOR_ID:
          // xaddf i, v
          tape.write(bcXAddF, localOffset << 2, immValue);
@@ -1723,7 +1727,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // loadf
          // xor v
          // savef
-         tape.write(bcLoadFI, localOffset);
+         tape.write(bcLoadF, localOffset << 2);
          tape.write(bcXOr, immValue);
          tape.write(bcSaveF, localOffset << 2);
          break;

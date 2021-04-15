@@ -5509,15 +5509,26 @@ ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, Expr
    if (rnode == lxExpression)
       rnode = rnode.firstChild();
 
-   ObjectInfo loperand = compileObject(writer, lnode, scope, HINT_PARAMETER, nullptr);
+   ObjectInfo loperand;
+   if (lnode == lxMessageExpression) {
+      SNode objectNode = lnode.firstChild();
+      loperand = compileObject(writer, objectNode, scope, HINT_PARAMETER, nullptr);
+
+      writer.newNode(lxExpression);
+      compileResendMessageOperation(writer, objectNode.nextNode(lxObjectMask), scope, 
+         loperand, 0, EAttr::eaNone);
+      writer.closeNode();
+   }
+   // !! temporal terminator
+   else scope.raiseError(errInvalidOperation, node);
 
    writer.newNode(lxExpression);
-   ObjectInfo retVal = compileResendMessageOperation(writer, rnode, scope, loperand, 0, EAttr::eaNone);
+   compileResendMessageOperation(writer, rnode, scope, loperand, 0, EAttr::eaNone);
    writer.closeNode();
 
    writer.closeNode();
 
-   return retVal;
+   return ObjectInfo(okObject);
 }
 
 ref_t Compiler :: resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode)
