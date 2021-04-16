@@ -4454,7 +4454,7 @@ ObjectInfo Compiler :: compileResendMessageOperation(SyntaxWriter& writer, SNode
    ArgumentsInfo presavedArgs;
 
    ref_t expectedSignRef = 0; // contains the expected message signature if it there is only single method overloading
-   mssg_t messageRef = mapMessage(node, scope, target.kind == okExtension, false, false);
+   mssg_t messageRef = mapMessage(node.parentNode(), scope, target.kind == okExtension, false, false);
 
    mssg_t resolvedMessage = _logic->resolveSingleMultiDisp(*scope.moduleScope,
       resolveObjectReference(scope, target, false), messageRef);
@@ -4462,7 +4462,7 @@ ObjectInfo Compiler :: compileResendMessageOperation(SyntaxWriter& writer, SNode
    if (resolvedMessage)
       scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
 
-   ObjectInfo retVal = compileMessageOperation(writer, node.firstChild(), node, scope, target, messageRef, expectedSignRef,
+   ObjectInfo retVal = compileMessageOperation(writer, node, node, scope, target, messageRef, expectedSignRef,
       EAttr::eaNone, &presavedArgs, expectedRef);
 
    if (EAttrs::test(mode, HINT_PARAMETER)) {
@@ -5492,7 +5492,7 @@ ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, Ex
    if (rnode == lxExpression)
       rnode = rnode.findSubNodeMask(lxObjectMask);
 
-   ObjectInfo retVal = compileResendMessageOperation(writer, rnode, scope, info, 0, EAttr::eaNone);
+   ObjectInfo retVal = compileResendMessageOperation(writer, rnode.firstChild(), scope, info, 0, EAttr::eaNone);
 
    writer.closeNode();
    writer.closeNode();
@@ -5506,6 +5506,8 @@ ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, Expr
 
    SNode lnode = node.firstChild();
    SNode rnode = lnode.nextNode(lxObjectMask);
+   if (lnode == lxExpression)
+      lnode = lnode.firstChild();
    if (rnode == lxExpression)
       rnode = rnode.firstChild();
 
@@ -5515,7 +5517,7 @@ ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, Expr
       loperand = compileObject(writer, objectNode, scope, HINT_PARAMETER, nullptr);
 
       writer.newNode(lxExpression);
-      compileResendMessageOperation(writer, objectNode.nextNode(lxObjectMask), scope, 
+      compileResendMessageOperation(writer, objectNode.nextNode(), scope, 
          loperand, 0, EAttr::eaNone);
       writer.closeNode();
    }
@@ -5523,7 +5525,7 @@ ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, Expr
    else scope.raiseError(errInvalidOperation, node);
 
    writer.newNode(lxExpression);
-   compileResendMessageOperation(writer, rnode, scope, loperand, 0, EAttr::eaNone);
+   compileResendMessageOperation(writer, rnode.firstChild(), scope, loperand, 0, EAttr::eaNone);
    writer.closeNode();
 
    writer.closeNode();

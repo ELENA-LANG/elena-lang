@@ -450,7 +450,7 @@ namespace _ELENA_
    constexpr auto SHIFTR_OPERATOR         = "$shr";
    constexpr auto LEN_OPERATOR            = "$sizeof";
    constexpr auto ISNIL_OPERATOR          = "??";
-   constexpr auto CATCH_OPERATOR          = "|";
+   constexpr auto CATCH_OPERATOR          = "\\\\";
    constexpr auto ALT_OPERATOR            = "\\";
    constexpr auto FINALLY_OPERATOR        = "$fnl";
 

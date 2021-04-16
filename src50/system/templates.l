@@ -193,20 +193,20 @@ public interface<T>
 // -- try-catch statement ---
 #declare try:catch(try_block,catch_block)
 {
-    try_block | on(catch_block);
+    try_block \\ on(catch_block);
 }
 
 // -- try-finally-catch statement ---
 #declare try:finally:catch(try_block,finally_block,catch_block)
 {
-    try_block $fnl finally_block | on(catch_block);
+    try_block $fnl finally_block \\ on(catch_block);
 }
 
 // -- finally statement ---
 
 #declare try:finally(try_block,finally_block)
 {
-    try_block $fnl finally_block | raise();
+    try_block $fnl finally_block \\ raise();
 }
 
 // --- using statement ---

@@ -411,7 +411,7 @@ exceptionTest()
     console.write("exceptionTest..");
     
     bool raised := false;
-    ExecTester.break() | on:(e){ raised := true };
+    ExecTester.break() \\ on:(e){ raised := true };
     Assert.ifTrue(raised);
     
     bool passed := false;

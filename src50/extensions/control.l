@@ -61,8 +61,8 @@ public singleton Assert
     
     notFailed(Func f)
     {
-        f()
-            | on:(e)
+        f() \\ 
+            on:(e)
             {
                 AssertException.raise("Assertion failed")
             };
@@ -71,8 +71,8 @@ public singleton Assert
     ifFailed(Func f)
     {
         var failed := false;
-        f()
-            | on:(e)
+        f() \\ 
+            on:(e)
             {
                 failed := true;
             };

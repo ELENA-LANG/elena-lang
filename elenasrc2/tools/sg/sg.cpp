@@ -9,7 +9,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_NUMBER 2
+#define BUILD_NUMBER 3
 
 // !! code duplication (syntax.h)
 const int mskAnySymbolMask             = 0x07000;               // masks
