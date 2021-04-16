@@ -1297,13 +1297,13 @@ bool Compiler :: calculateIntOp(int operation_id, int arg1, int arg2, int& retVa
       case DIV_OPERATOR_ID:
          retVal = arg1 / arg2;
          break;
-      case AND_OPERATOR_ID:
+      case BAND_OPERATOR_ID:
          retVal = arg1 & arg2;
          break;
-      case OR_OPERATOR_ID:
+      case BOR_OPERATOR_ID:
          retVal = arg1 | arg2;
          break;
-      case XOR_OPERATOR_ID:
+      case BXOR_OPERATOR_ID:
          retVal = arg1 ^ arg2;
          break;
       case SHIFTR_OPERATOR_ID:
@@ -2717,6 +2717,12 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, pos_t 
          return encodeMessage(scope.module->mapAction(OR_MESSAGE, 0, false), argCount, 0);
       case XOR_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(XOR_MESSAGE, 0, false), argCount, 0);
+      case BAND_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(BAND_MESSAGE, 0, false), argCount, 0);
+      case BOR_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(BOR_MESSAGE, 0, false), argCount, 0);
+      case BXOR_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(BXOR_MESSAGE, 0, false), argCount, 0);
       case SHIFTR_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(SHIFTR_MESSAGE, 0, false), argCount, 0);
       case SHIFTL_OPERATOR_ID:
@@ -2729,6 +2735,8 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, pos_t 
          return encodeMessage(scope.module->mapAction(NEGATIVE_MESSAGE, 0, false), argCount, PROPERTY_MESSAGE);
       case INVERTED_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(INVERTED_MESSAGE, 0, false), argCount, PROPERTY_MESSAGE);
+      case BINVERTED_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(BINVERTED_MESSAGE, 0, false), argCount, PROPERTY_MESSAGE);
       case VALUE_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(VALUE_MESSAGE, 0, false), argCount, PROPERTY_MESSAGE);
       default:

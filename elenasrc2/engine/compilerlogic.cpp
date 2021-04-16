@@ -102,9 +102,9 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(SUB_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(MUL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(DIV_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-   operators.add(OperatorInfo(AND_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-   operators.add(OperatorInfo(OR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-   operators.add(OperatorInfo(XOR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(BAND_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(BOR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(BXOR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(SHIFTL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 
@@ -116,7 +116,7 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
 
    operators.add(OperatorInfo(NEGATIVE_OPERATOR_ID, V_INT32, V_OBJECT, lxIntOp, V_INT32));
-   operators.add(OperatorInfo(INVERTED_OPERATOR_ID, V_INT32, V_OBJECT, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(BINVERTED_OPERATOR_ID, V_INT32, V_OBJECT, lxIntOp, V_INT32));
 
    // subject primitive operations
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntBoolOp, V_FLAG));
@@ -130,9 +130,9 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(SUB_OPERATOR_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
    operators.add(OperatorInfo(MUL_OPERATOR_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
    operators.add(OperatorInfo(DIV_OPERATOR_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
-   operators.add(OperatorInfo(AND_OPERATOR_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
-   operators.add(OperatorInfo(OR_OPERATOR_ID,    V_INT64, V_INT64, lxLongOp, V_INT64));
-   operators.add(OperatorInfo(XOR_OPERATOR_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(BAND_OPERATOR_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(BOR_OPERATOR_ID,    V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(BXOR_OPERATOR_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
    operators.add(OperatorInfo(SHIFTR_OPERATOR_ID,  V_INT64, V_INT32, lxLongOp, V_INT64));
    operators.add(OperatorInfo(SHIFTL_OPERATOR_ID, V_INT64, V_INT32, lxLongOp, V_INT64));
 

@@ -1629,15 +1629,15 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // nshrf i
          tape.write(bcNShrF, localOffset << 2);
          break;
-      case AND_OPERATOR_ID:
+      case BAND_OPERATOR_ID:
          // nandf i
          tape.write(bcNAndF, localOffset << 2);
          break;
-      case OR_OPERATOR_ID:
+      case BOR_OPERATOR_ID:
          // norf i
          tape.write(bcNOrF, localOffset << 2);
          break;
-      case XOR_OPERATOR_ID:
+      case BXOR_OPERATOR_ID:
          // nxorf i
          tape.write(bcNXorF, localOffset << 2);
          break;
@@ -1645,7 +1645,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          tape.write(bcXSaveF, localOffset << 2, 0);
          tape.write(bcNSubF, localOffset << 2);
          break;
-      case INVERTED_OPERATOR_ID:
+      case BINVERTED_OPERATOR_ID:
          tape.write(bcLoad);
          tape.write(bcNot);
          tape.write(bcSaveF, localOffset << 2);
@@ -1663,7 +1663,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // xsavef i, v
          tape.write(bcXSaveF, localOffset << 2, immValue);
          break;
-      case INVERTED_OPERATOR_ID:
+      case BINVERTED_OPERATOR_ID:
          // xsavef i, v
          tape.write(bcXSaveF, localOffset << 2, ~immValue);
          break;
@@ -1707,7 +1707,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          tape.write(bcShr, immValue);
          tape.write(bcSaveF, localOffset << 2);
          break;
-      case AND_OPERATOR_ID:
+      case BAND_OPERATOR_ID:
          // loadf
          // and v
          // savef
@@ -1715,7 +1715,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          tape.write(bcAnd, immValue);
          tape.write(bcSaveF, localOffset << 2);
          break;
-      case OR_OPERATOR_ID:
+      case BOR_OPERATOR_ID:
          // loadf
          // or v
          // savef
@@ -1723,7 +1723,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          tape.write(bcOr, immValue);
          tape.write(bcSaveF, localOffset << 2);
          break;
-      case XOR_OPERATOR_ID:
+      case BXOR_OPERATOR_ID:
          // loadf
          // xor v
          // savef
@@ -1777,15 +1777,15 @@ void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id, int l
          // lshrf i
          tape.write(bcLShrF, localOffset << 2);
          break;
-      case AND_OPERATOR_ID:
+      case BAND_OPERATOR_ID:
          // landf i
          tape.write(bcLAndF, localOffset << 2);
          break;
-      case OR_OPERATOR_ID:
+      case BOR_OPERATOR_ID:
          // lorf i
          tape.write(bcLOrF, localOffset << 2);
          break;
-      case XOR_OPERATOR_ID:
+      case BXOR_OPERATOR_ID:
          // lxorf i
          tape.write(bcLXorF, localOffset << 2);
          break;

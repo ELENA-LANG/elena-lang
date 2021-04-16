@@ -410,10 +410,10 @@ public extension intOp : IntNumber
 //        = self.power(cast int(n));
                 
     bool isOdd()
-        = (self && 1) != 0;
+        = (self & 1) != 0;
         
     bool isEven()
-        = self.and(1) == 0;
+        = self.band(1) == 0;
         
     bool isZero()
         = self.equal(0);
@@ -430,7 +430,7 @@ public extension intOp : IntNumber
     get short High()
     {
         int w := self;
-        w := w && 0FFFF0000h;
+        w := w & 0FFFF0000h;
         w := w.shiftRight(16);
         
         ^ shortConvertor.convert(w)
@@ -439,7 +439,7 @@ public extension intOp : IntNumber
     get short Low()
     {
         int w := self;
-        w := w && 0FFFFh;
+        w := w & 0FFFFh;
         
         ^ shortConvertor.convert(w)
     }

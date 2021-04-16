@@ -12,7 +12,7 @@ extension EReader
 {
     loadFrom(output)
         = output.readLine().convertTo(self)
-            | on:(Exception e)
+            \\ on:(Exception e)
                 {
                     console.writeLine(e.Message).readChar();
                     

@@ -701,6 +701,9 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators, MessageMap& unaryO
    addVerb(operators, AND_OPERATOR, AND_OPERATOR_ID);
    addVerb(operators, OR_OPERATOR, OR_OPERATOR_ID);
    addVerb(operators, XOR_OPERATOR, XOR_OPERATOR_ID);
+   addVerb(operators, BAND_OPERATOR, BAND_OPERATOR_ID);
+   addVerb(operators, BOR_OPERATOR, BOR_OPERATOR_ID);
+   addVerb(operators, BXOR_OPERATOR, BXOR_OPERATOR_ID);
    addVerb(operators, APPEND_OPERATOR, APPEND_OPERATOR_ID);
    addVerb(operators, REDUCE_OPERATOR, REDUCE_OPERATOR_ID);
    addVerb(operators, INCREASE_OPERATOR, INCREASE_OPERATOR_ID);
@@ -714,6 +717,7 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators, MessageMap& unaryO
    addVerb(operators, FINALLY_OPERATOR, FINALLY_OPERATOR_ID);
 
    addVerb(unaryOperators, INVERTED_OPERATOR, INVERTED_OPERATOR_ID);
+   addVerb(unaryOperators, BINVERTED_OPERATOR, BINVERTED_OPERATOR_ID);
    addVerb(unaryOperators, NEGATIVE_OPERATOR, NEGATIVE_OPERATOR_ID);
    addVerb(unaryOperators, VALUE_OPERATOR, VALUE_OPERATOR_ID);
 }

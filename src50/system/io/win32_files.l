@@ -315,7 +315,7 @@ namespace io
             
             if(ret != 0FFFFFFFFh)
             {
-                ret := ret && FILE_ATTRIBUTE_DIRECTORY;
+                ret := ret & FILE_ATTRIBUTE_DIRECTORY;
                 
                 ^ ret == 0
             };
@@ -345,7 +345,7 @@ namespace io
          
             if(ret != 0FFFFFFFFh)
                 {
-                    ret := ret && FILE_ATTRIBUTE_DIRECTORY;
+                    ret := ret & FILE_ATTRIBUTE_DIRECTORY;
                     
                     ^ ret != 0
                 };

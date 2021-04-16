@@ -112,31 +112,33 @@ public abstract class BaseNumber : BaseValue
 [info:"a base integer value"]
 public abstract class IntBaseNumber : BaseNumber
 {
-    and(BaseVariable var)
-        <= and(var.Value);
+    band(BaseVariable var)
+        <= band(*var);
         
-    or(BaseVariable var)
-        <= or(var.Value);
+    bor(BaseVariable var)
+        <= bor(*var);
         
-    xor(BaseVariable var)
-        <= xor(var.Value);
+    bxor(BaseVariable var)
+        <= bxor(*var);
     
     [info:"executes bitwise AND operation;<br/>should be overridden"]
-    abstract and(o);
+    abstract band(o);
 
     [info:"executes bitwise OR operation;<br/>should be overridden"]
-    abstract or(o);
+    abstract bor(o);
     
     [info:"executes bitwise XOR operation;<br/>should be overridden"]
-    abstract xor(o);
+    abstract bxor(o);
     
     [info:"returns true if all the mask bits are set"]
     bool allMask(operand)
-        = self.and:operand == operand;
+        = self.band:operand == operand;
         
     [info:"returns true if any of the mask bits are set"]
     bool anyMask(operand)
-        = 0 != self.and:operand;
+        = 0 != self.band:operand;
+        
+    get abstract BInverted();
 }
 
 // --- ByteNumber ---
@@ -164,7 +166,7 @@ public sealed const struct ByteNumber : IntBaseNumber
 
     [info:"creates the object with a specified value"]
     constructor(int n)
-        = n && 255;
+        = n & 255;
 
     [info:"returns the value as a short integer"]
     short cast() = new ShortNumber(self);
@@ -340,14 +342,14 @@ public sealed const struct ByteNumber : IntBaseNumber
     real divide(real n)
         = new RealNumber(self).divide(n);
 
-    and(n)
-        <= and(cast byte(n));
+    band(n)
+        <= band(cast byte(n));
         
-    or(n)
-        <= or(cast byte(n));
+    bor(n)
+        <= bor(cast byte(n));
         
-    xor(n)
-        <= xor(cast byte(n));
+    bxor(n)
+        <= bxor(cast byte(n));
         
 //    byte and(BaseVariable v)
 //        <= and(v.Value);
@@ -359,52 +361,52 @@ public sealed const struct ByteNumber : IntBaseNumber
 //        <= xor(v.Value);
         
     [info:"returns the result of bitwise AND operation"]
-    byte and(byte n)
-        = theValue && n;
+    byte band(byte n)
+        = theValue & n;
 
     [info:"returns the result of bitwise OR operation"]
-    byte or(byte n)
-        = theValue || n;
+    byte bor(byte n)
+        = theValue | n;
 
     [info:"returns the result of bitwise XOR operation"]
-    byte xor(byte n)
-        = theValue ^^ n;
+    byte bxor(byte n)
+        = theValue ^ n;
 
     [info:"returns the result of bitwise AND operation"]
-    short and(short n)
-        = new ShortNumber(self).and(n);
+    short band(short n)
+        = new ShortNumber(self).band(n);
 
     [info:"returns the result of bitwise OR operation"]
-    short or(short n)
-        = new ShortNumber(self).or(n);
+    short bor(short n)
+        = new ShortNumber(self).bor(n);
 
     [info:"returns the result of bitwise XOR operation"]
-    short xor(short n)
-        = new ShortNumber(self).xor(n);
+    short bxor(short n)
+        = new ShortNumber(self).bxor(n);
 
     [info:"returns the result of bitwise AND operation"]
-    int and(int n)
-        = new IntNumber(self).and(n);
+    int band(int n)
+        = new IntNumber(self).band(n);
 
     [info:"returns the result of bitwise OR operation"]
-    int or(int n)
-        = new IntNumber(self).or(n);
+    int bor(int n)
+        = new IntNumber(self).bor(n);
 
     [info:"returns the result of bitwise XOR operation"]
-    int xor(int n)
-        = new IntNumber(self).xor(n);
+    int bxor(int n)
+        = new IntNumber(self).bxor(n);
 
     [info:"returns the result of bitwise AND operation"]
-    long and(long n)
-        = new LongNumber(self).and(n);
+    long band(long n)
+        = new LongNumber(self).band(n);
 
     [info:"returns the result of bitwise OR operation"]
-    long or(long n)
-        = new LongNumber(self).or(n);
+    long bor(long n)
+        = new LongNumber(self).bor(n);
 
     [info:"returns the result of bitwise XOR operation"]
-    long xor(long n)
-        = new LongNumber(self).xor(n);
+    long bxor(long n)
+        = new LongNumber(self).bxor(n);
 
     [info:"shifts an integer value to the left by a specified number of bits"]
     byte shiftLeft(int val)
@@ -419,8 +421,8 @@ public sealed const struct ByteNumber : IntBaseNumber
     }
     
     [info:"bitwise inversion"]
-    get byte Inverted()
-        = !theValue;
+    get byte BInverted()
+        = ~theValue;
 
     [info:"returns the literal presentation"]
     string toPrintable() = stringConvertor.convert(self);
@@ -448,11 +450,11 @@ public sealed const struct ShortNumber : IntBaseNumber
     {
         (n < 0)
             ? {
-                theValue := n && 0FFFFh;
+                theValue := n & 0FFFFh;
                 
-                theValue := theValue || 0FFFF0000h
+                theValue := theValue | 0FFFF0000h
             }
-            : { theValue := n && 0FFFFh }
+            : { theValue := n & 0FFFFh }
     }
     
     [info:"creates the object with specified value"]
@@ -643,71 +645,71 @@ public sealed const struct ShortNumber : IntBaseNumber
     divide(real n)
         = new RealNumber(self).divide(n);
 
-    and(n)
-        <= and(cast short(n));
+    band(n)
+        <= band(cast short(n));
         
-    or(n)
-        <= divide(cast short(n));
+    bor(n)
+        <= bor(cast short(n));
         
-    xor(n)
-        <= xor(cast short(n));
+    bxor(n)
+        <= bxor(cast short(n));
         
 //    short and(BaseVariable v)
 //        <= and(v.Value);
 //        
 //    short or(BaseVariable v)
-//        <= divide(v.Value);
+//        <= or(v.Value);
 //        
 //    short xor(BaseVariable v)
 //        <= xor(v.Value);
         
     [info:"Returns the result of bitwise AND operation"]
-    short and(short n)
-        = theValue && n;
+    short band(short n)
+        = theValue & n;
 
     [info:"Returns the result of bitwise OR operation"]
-    short or(short n)
-        = theValue || n;
+    short bor(short n)
+        = theValue | n;
 
     [info:"Returns the result of bitwise XOR operation"]
-    short xor(short n)
-        = theValue ^^ n;
+    short bxor(short n)
+        = theValue ^ n;
         
     [info:"Returns the result of bitwise AND operation"]
-    and(byte n)
-        = self.and(new ShortNumber(n));
+    band(byte n)
+        = self.band(new ShortNumber(n));
 
     [info:"Returns the result of bitwise OR operation"]
-    or(byte n)
-        = self.or(new ShortNumber(n));
+    bor(byte n)
+        = self.bor(new ShortNumber(n));
 
     [info:"Returns the result of bitwise XOR operation"]
-    xor(byte n)
-        = self.xor(new ShortNumber(n));
+    bxor(byte n)
+        = self.bxor(new ShortNumber(n));
         
     [info:"Returns the result of bitwise AND operation"]
-    and(int n)
-        = new IntNumber(self).and(n);
+    band(int n)
+        = new IntNumber(self).band(n);
         
     [info:"Returns the result of bitwise OR operation"]
-    or(int n)
-        = new IntNumber(self).or(n);
+    bor(int n)
+        = new IntNumber(self).bor(n);
         
     [info:"Returns the result of bitwise XOR operation"]
-    xor(int n)
-        = new IntNumber(self).xor(n);
+    bxor(int n)
+        = new IntNumber(self).bxor(n);
         
     [info:"Returns the result of bitwise AND operation"]
-    and(long n)
-        = new LongNumber(self).and(n);
+    band(long n)
+        = new LongNumber(self).band(n);
         
     [info:"Returns the result of bitwise OR operation"]
-    or(long n)
-        = new LongNumber(self).or(n);
+    bor(long n)
+        = new LongNumber(self).bor(n);
         
     [info:"Returns the result of bitwise XOR operation"]
-    xor(long n)
-        = new LongNumber(self).xor(n);
+    bxor(long n)
+        = new LongNumber(self).bxor(n);
 
     short shiftLeft(int val)
     {
@@ -720,8 +722,8 @@ public sealed const struct ShortNumber : IntBaseNumber
     }
     
     [info:"Bitwise inversion"]
-    get short Inverted()
-        = !theValue;
+    get short BInverted()
+        = ~theValue;
     
     get short Negative()
         = 0 - theValue;
@@ -848,35 +850,35 @@ public sealed const struct IntNumber : IntBaseNumber
     int divide(int n)
         = theValue / n;
 
-    and(n)
-        <= and(cast int(n));
+    band(n)
+        <= band(cast int(n));
         
-    or(n)
-        <= divide(cast int(n));
+    bor(n)
+        <= bor(cast int(n));
         
-    xor(n)
-        <= xor(cast int(n));
+    bxor(n)
+        <= bxor(cast int(n));
         
-    int and(BaseVariable v)
-        <= and(v.Value);
+    int band(BaseVariable v)
+        <= band(v.Value);
         
-    int or(BaseVariable v)
-        <= or(v.Value);
+    int bor(BaseVariable v)
+        <= bor(v.Value);
         
-    int xor(BaseVariable v)
-        <= xor(v.Value);
+    int bxor(BaseVariable v)
+        <= bxor(v.Value);
         
     [info:"Returns the result of bitwise AND operation"]
-    int and(int n)
-        = theValue && n;
+    int band(int n)
+        = theValue & n;
 
     [info:"Returns the result of bitwise OR operation"]
-    int or(int n)
-        = theValue || n;
+    int bor(int n)
+        = theValue | n;
 
     [info:"Returns the result of bitwise XOR operation"]
-    int xor(int n)
-        = theValue ^^ n;
+    int bxor(int n)
+        = theValue ^ n;
 
     [info:"Compares the integer value"]
     bool equal(short value)
@@ -975,40 +977,40 @@ public sealed const struct IntNumber : IntBaseNumber
         = new RealNumber(self).divide(n);
 
     [info:"Returns the result of bitwise AND operation"]
-    and(short n)
-        = self.and(new IntNumber(n));
+    band(short n)
+        = self.band(new IntNumber(n));
 
     [info:"Returns the result of bitwise AND operation"]
-    and(byte n)
-        = self.and(new IntNumber(n));
+    band(byte n)
+        = self.band(new IntNumber(n));
 
     [info:"Returns the result of bitwise AND operation"]
-    and(long n)
-        = new LongNumber(self).and(n);
+    band(long n)
+        = new LongNumber(self).band(n);
 
     [info:"Returns the result of bitwise OR operation"]
-    or(short n)
-        = self.or(new IntNumber(n));
+    bor(short n)
+        = self.bor(new IntNumber(n));
 
     [info:"Returns the result of bitwise OR operation"]
-    or(byte n)
-        = self.or(new IntNumber(n));
+    bor(byte n)
+        = self.bor(new IntNumber(n));
 
     [info:"Returns the result of bitwise OR operation"]
-    or(long n)
-        = new LongNumber(self).or(n);
+    bor(long n)
+        = new LongNumber(self).bor(n);
 
     [info:"Returns the result of bitwise XOR operation"]
-    xor(short n)
-        = self.xor(new IntNumber(n));
+    bxor(short n)
+        = self.bxor(new IntNumber(n));
 
     [info:"Returns the result of bitwise XOR operation"]
-    xor(byte n)
-        = self.xor(new IntNumber(n));
+    bxor(byte n)
+        = self.bxor(new IntNumber(n));
 
     [info:"Returns the result of bitwise XOR operation"]
-    xor(long n)
-        = new LongNumber(self).xor(n);
+    bxor(long n)
+        = new LongNumber(self).bxor(n);
 
     [info:"Returns the literal presentation"]
     string toPrintable()
@@ -1034,8 +1036,8 @@ public sealed const struct IntNumber : IntBaseNumber
     }
     
     [info:"Bitwise inversion"]
-    get int Inverted()
-        = !theValue;
+    get int BInverted()
+        = ~theValue;
         
     get int Negative()
         = -theValue;
@@ -1043,7 +1045,7 @@ public sealed const struct IntNumber : IntBaseNumber
     [info:"Returns true if all the mask bits are set"]
     bool allMask(int operand)
     {
-        int v := operand && theValue;
+        int v := operand & theValue;
         
         ^ v == operand
     }
@@ -1051,7 +1053,7 @@ public sealed const struct IntNumber : IntBaseNumber
     [info:"Returns true if any of the mask bits are set"]
     bool anyMask(int operand)
     {
-        int v := operand && theValue;
+        int v := operand & theValue;
         
         ^ v != 0
     }        
@@ -1187,14 +1189,14 @@ public sealed const struct UIntNumber : IntBaseNumber
     int divide(int n)
         = theValue / n;
 
-    and(n)
-        <= and(cast int(n));
+    band(n)
+        <= band(cast int(n));
         
-    or(n)
-        <= divide(cast int(n));
+    bor(n)
+        <= bor(cast int(n));
         
-    xor(n)
-        <= xor(cast int(n));
+    bxor(n)
+        <= bxor(cast int(n));
         
 //    int and(BaseVariable v)
 //        <= and(v.Value);
@@ -1206,16 +1208,16 @@ public sealed const struct UIntNumber : IntBaseNumber
 //        <= xor(v.Value);
         
     [info:"Returns the result of bitwise AND operation"]
-    int and(int n)
-        = theValue && n;
+    int band(int n)
+        = theValue & n;
 
     [info:"Returns the result of bitwise OR operation"]
-    int or(int n)
-        = theValue || n;
+    int bor(int n)
+        = theValue | n;
 
     [info:"Returns the result of bitwise XOR operation"]
-    int xor(int n)
-        = theValue ^^ n;
+    int bxor(int n)
+        = theValue ^ n;
 
     [info:"Compares the value"]
     bool equal(uint n)
@@ -1242,16 +1244,16 @@ public sealed const struct UIntNumber : IntBaseNumber
         = theValue / n;
 
     [info:"Returns the result of bitwise AND operation"]
-    uint and(uint n)
-        = theValue && n;
+    uint band(uint n)
+        = theValue & n;
 
     [info:"Returns the result of bitwise OR operation"]
-    uint or(uint n)
-        = theValue || n;
+    uint bor(uint n)
+        = theValue | n;
 
     [info:"Returns the result of bitwise XOR operation"]
-    uint xor(uint n)
-        = theValue ^^ n;
+    uint bxor(uint n)
+        = theValue ^ n;
 
     [info:"Compares the integer value"]
     bool equal(short value)
@@ -1350,40 +1352,40 @@ public sealed const struct UIntNumber : IntBaseNumber
         = new RealNumber(self).divide(n);
 
     [info:"Returns the result of bitwise AND operation"]
-    and(short value)
-        = self.and(cast uint(value));
+    band(short value)
+        = self.band(cast uint(value));
 
     [info:"Returns the result of bitwise AND operation"]
-    and(byte value)
-        = self.and(cast uint(value));
+    band(byte value)
+        = self.band(cast uint(value));
 
     [info:"Returns the result of bitwise AND operation"]
-    and(long value)
-        = new LongNumber(self).and(value);
+    band(long value)
+        = new LongNumber(self).band(value);
 
     [info:"Returns the result of bitwise OR operation"]
-    or(short value)
-        = self.or(cast uint(value));
+    bor(short value)
+        = self.bor(cast uint(value));
 
     [info:"Returns the result of bitwise OR operation"]
-    or(byte value)
-        = self.or(cast uint(value));
+    bor(byte value)
+        = self.bor(cast uint(value));
 
     [info:"Returns the result of bitwise OR operation"]
-    or(long value)
-        = new LongNumber(self).or(value);
+    bor(long value)
+        = new LongNumber(self).bor(value);
 
     [info:"Returns the result of bitwise XOR operation"]
-    xor(short value)
-        = self.xor(cast uint(value));
+    bxor(short value)
+        = self.bxor(cast uint(value));
 
     [info:"Returns the result of bitwise XOR operation"]
-    xor(byte value)
-        = self.xor(cast uint(value));
+    bxor(byte value)
+        = self.bxor(cast uint(value));
 
     [info:"Returns the result of bitwise XOR operation"]
-    xor(long n)
-        = new LongNumber(self).xor(n);
+    bxor(long n)
+        = new LongNumber(self).bxor(n);
 
     [info:"Clones the value"]
     uint clone = new UIntNumber(self);
@@ -1399,8 +1401,8 @@ public sealed const struct UIntNumber : IntBaseNumber
     }
     
     [info:"Bitwise inversion"]
-    get uint Inverted()
-        = !theValue;
+    get uint BInverted()
+        = ~theValue;
 }
 
 // --- LongNumber ---
@@ -1522,35 +1524,35 @@ public sealed const struct LongNumber : IntBaseNumber
     long divide(long n)
         = theValue / n;
 
-    and(n)
-        <= and(cast long(n));
+    band(n)
+        <= band(cast long(n));
         
-    or(n)
-        <= divide(cast long(n));
+    bor(n)
+        <= bor(cast long(n));
         
-    xor(n)
-        <= xor(cast long(n));
+    bxor(n)
+        <= bxor(cast long(n));
         
 //    long and(BaseVariable v)
 //        <= and(v.Value);
 //        
 //    long or(BaseVariable v)
-//        <= divide(v.Value);
+//        <= bor(v.Value);
 //        
 //    long xor(BaseVariable v)
 //        <= xor(v.Value);
         
     [info:"Returns the result of bitwise AND operation"]
-    long and(long n)
-        = theValue && n;
+    long band(long n)
+        = theValue & n;
 
     [info:"Returns the result of bitwise OR operation"]
-    long or(long n)
-        = theValue || n;
+    long bor(long n)
+        = theValue | n;
 
     [info:"Returns the result of bitwise XOR operation"]
-    long xor(long n)
-        = theValue ^^ n;
+    long bxor(long n)
+        = theValue ^ n;
 
     [info:"Compares the integer value"]
     bool equal(int n) 
@@ -1649,40 +1651,40 @@ public sealed const struct LongNumber : IntBaseNumber
         = new RealNumber(self).divide(n);
         
     [info:"Returns the result of bitwise AND operation"]
-    and(int n)
-        = self.and(new LongNumber(n));
+    band(int n)
+        = self.band(new LongNumber(n));
 
     [info:"Returns the result of bitwise AND operation"]
-    and(short n)
-        = self.and(new LongNumber(n));
+    band(short n)
+        = self.band(new LongNumber(n));
 
     [info:"Returns the result of bitwise AND operation"]
-    and(byte n)
-        = self.and(new LongNumber(n));
+    band(byte n)
+        = self.band(new LongNumber(n));
 
     [info:"Returns the result of bitwise OR operation"]
-    or(int n)
-        = self.or(new LongNumber(n));
+    bor(int n)
+        = self.bor(new LongNumber(n));
 
     [info:"Returns the result of bitwise OR operation"]
-    or(short n)
-        = self.or(new LongNumber(n));
+    bor(short n)
+        = self.bor(new LongNumber(n));
 
     [info:"Returns the result of bitwise OR operation"]
-    or(byte n)
-        = self.or(new LongNumber(n));  
+    bor(byte n)
+        = self.bor(new LongNumber(n));  
 
     [info:"Returns the result of bitwise XOR operation"]
-    xor(int n)
-        = self.xor(new LongNumber(n));
+    bxor(int n)
+        = self.bxor(new LongNumber(n));
 
     [info:"Returns the result of bitwise XOR operation"]
-    xor(short n)
-        = self.xor(new LongNumber(n));
+    bxor(short n)
+        = self.bxor(new LongNumber(n));
 
     [info:"Returns the result of bitwise XOR operation"]
-    xor(byte n)
-        = self.xor(new LongNumber(n));
+    bxor(byte n)
+        = self.bxor(new LongNumber(n));
 
     [info:"Returns the literal presentation"]
     string toPrintable() = stringConvertor.convert(self);
@@ -1700,13 +1702,15 @@ public sealed const struct LongNumber : IntBaseNumber
         ^ theValue $shr val
     }
     
-//    [info:"Bitwise inversion"]
-//    get long Inverted()
-//    {
+    [info:"Bitwise inversion"]
+    get long BInverted()
+    {
+        ^ ~theValue;
+        
 //        intern system'core_routines'__long.readInvertedTo(theValue, ref long retVal);
 //        
 //        ^ retVal
-//    }
+    }
 
     [info:"Negates the value"]
     get long Negative()

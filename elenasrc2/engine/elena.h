@@ -929,11 +929,11 @@ inline bool IsExprOperator(int operator_id)
       case DIV_OPERATOR_ID:
       case SHIFTR_OPERATOR_ID:
       case SHIFTL_OPERATOR_ID:
-      case AND_OPERATOR_ID:
-      case OR_OPERATOR_ID:
-      case XOR_OPERATOR_ID:
+      case BAND_OPERATOR_ID:
+      case BOR_OPERATOR_ID:
+      case BXOR_OPERATOR_ID:
       case NEGATIVE_OPERATOR_ID:
-      case INVERTED_OPERATOR_ID:
+      case BINVERTED_OPERATOR_ID:
          return true;
       default:
          return false;

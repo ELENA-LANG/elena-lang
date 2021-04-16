@@ -73,6 +73,11 @@ namespace _ELENA_
    constexpr auto ALT_OPERATOR_ID         = 0x0024;
    constexpr auto LEN_OPERATOR_ID         = 0x0025;
 
+   constexpr auto BAND_OPERATOR_ID        = 0x0026;
+   constexpr auto BOR_OPERATOR_ID         = 0x0027;
+   constexpr auto BXOR_OPERATOR_ID        = 0x0028;
+   constexpr auto BINVERTED_OPERATOR_ID   = 0x0029;
+
    // built-in class attributes values
    constexpr auto CLASSNAME_CONST         = 0x62000001u;
    constexpr auto PACKAGE_CONST           = 0x62000002u;
@@ -425,6 +430,10 @@ namespace _ELENA_
    constexpr auto NEGATIVE_MESSAGE        = "Negative";
    constexpr auto INVERTED_MESSAGE        = "Inverted";
    constexpr auto VALUE_MESSAGE           = "Value";
+   constexpr auto BAND_MESSAGE            = "band";
+   constexpr auto BOR_MESSAGE             = "bor";
+   constexpr auto BXOR_MESSAGE            = "bxor";
+   constexpr auto BINVERTED_MESSAGE       = "BInverted";
 
    // ELENA verb operators
    constexpr auto EQUAL_OPERATOR          = "==";
@@ -438,6 +447,9 @@ namespace _ELENA_
    constexpr auto AND_OPERATOR            = "&&";
    constexpr auto OR_OPERATOR             = "||";
    constexpr auto XOR_OPERATOR            = "^^";
+   constexpr auto BAND_OPERATOR           = "&";
+   constexpr auto BOR_OPERATOR            = "|";
+   constexpr auto BXOR_OPERATOR           = "^";
    constexpr auto ADD_OPERATOR            = "+";
    constexpr auto SUB_OPERATOR            = "-";
    constexpr auto MUL_OPERATOR            = "*";
@@ -457,6 +469,7 @@ namespace _ELENA_
    constexpr auto INVERTED_OPERATOR       = "!";
    constexpr auto NEGATIVE_OPERATOR       = "-";
    constexpr auto VALUE_OPERATOR          = "*";
+   constexpr auto BINVERTED_OPERATOR      = "~";
 
   // operator templates
    constexpr auto DOIFNOTNIL_OPERATOR        = "if#1#1";
