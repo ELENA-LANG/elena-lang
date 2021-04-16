@@ -12045,6 +12045,7 @@ inline bool isUnaryOperation(int arg)
    switch (arg) {
       case INVERTED_OPERATOR_ID:
       case NEGATIVE_OPERATOR_ID:
+      case BINVERTED_OPERATOR_ID:
          return true;
       default:
          return false;
