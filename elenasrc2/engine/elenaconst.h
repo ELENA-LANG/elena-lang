@@ -67,16 +67,16 @@ namespace _ELENA_
    constexpr auto INVERTED_OPERATOR_ID    = 0x001F;
    constexpr auto NEGATIVE_OPERATOR_ID    = 0x0020;
    constexpr auto VALUE_OPERATOR_ID       = 0x0021;
-
    constexpr auto ISNIL_OPERATOR_ID       = 0x0022;
    constexpr auto CATCH_OPERATOR_ID       = 0x0023;
    constexpr auto ALT_OPERATOR_ID         = 0x0024;
    constexpr auto LEN_OPERATOR_ID         = 0x0025;
-
    constexpr auto BAND_OPERATOR_ID        = 0x0026;
    constexpr auto BOR_OPERATOR_ID         = 0x0027;
    constexpr auto BXOR_OPERATOR_ID        = 0x0028;
    constexpr auto BINVERTED_OPERATOR_ID   = 0x0029;
+   constexpr auto BAPPEND_OPERATOR_ID     = 0x002A;
+   constexpr auto BINCREASE_OPERATOR_ID   = 0x002B;
 
    // built-in class attributes values
    constexpr auto CLASSNAME_CONST         = 0x62000001u;
@@ -455,8 +455,10 @@ namespace _ELENA_
    constexpr auto MUL_OPERATOR            = "*";
    constexpr auto DIV_OPERATOR            = "/";
    constexpr auto APPEND_OPERATOR         = "+=";
+   constexpr auto BAPPEND_OPERATOR        = "|=";
    constexpr auto REDUCE_OPERATOR         = "-=";
    constexpr auto INCREASE_OPERATOR       = "*=";
+   constexpr auto BINCREASE_OPERATOR      = "&=";
    constexpr auto SEPARATE_OPERATOR       = "/=";
    constexpr auto SHIFTL_OPERATOR         = "$shl";
    constexpr auto SHIFTR_OPERATOR         = "$shr";

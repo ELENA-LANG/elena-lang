@@ -705,8 +705,10 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators, MessageMap& unaryO
    addVerb(operators, BOR_OPERATOR, BOR_OPERATOR_ID);
    addVerb(operators, BXOR_OPERATOR, BXOR_OPERATOR_ID);
    addVerb(operators, APPEND_OPERATOR, APPEND_OPERATOR_ID);
+   addVerb(operators, BAPPEND_OPERATOR, BAPPEND_OPERATOR_ID);
    addVerb(operators, REDUCE_OPERATOR, REDUCE_OPERATOR_ID);
    addVerb(operators, INCREASE_OPERATOR, INCREASE_OPERATOR_ID);
+   addVerb(operators, BINCREASE_OPERATOR, BINCREASE_OPERATOR_ID);
    addVerb(operators, SEPARATE_OPERATOR, SEPARATE_OPERATOR_ID);
    addVerb(operators, SHIFTR_OPERATOR, SHIFTR_OPERATOR_ID);
    addVerb(operators, SHIFTL_OPERATOR, SHIFTL_OPERATOR_ID);

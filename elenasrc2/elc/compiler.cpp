@@ -3181,6 +3181,10 @@ ObjectInfo Compiler :: compileOperationExpression(SyntaxWriter& writer, SNode no
          return compileOperation(writer, node, scope, mode, ADD_OPERATOR_ID, true, false);
       case REDUCE_OPERATOR_ID:
          return compileOperation(writer, node, scope, mode, SUB_OPERATOR_ID, true, false);
+      case BAPPEND_OPERATOR_ID:
+         return compileOperation(writer, node, scope, mode, BOR_OPERATOR_ID, true, false);
+      case BINCREASE_OPERATOR_ID:
+         return compileOperation(writer, node, scope, mode, BAND_OPERATOR_ID, true, false);
       case INCREASE_OPERATOR_ID:
          return compileOperation(writer, node, scope, mode, MUL_OPERATOR_ID, true, false);
       case SEPARATE_OPERATOR_ID:
