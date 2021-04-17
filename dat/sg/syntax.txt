@@ -918,6 +918,7 @@ STATEMENT_BASE ->
 SIZE ->
 	hex
 	| integer
+	| identifier
 
 NO_BODY ->
 	DECLARATION_END

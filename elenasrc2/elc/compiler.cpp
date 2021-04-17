@@ -433,7 +433,12 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
 
             // if it is a constant
             if (symbolInfo.type == SymbolExpressionInfo::Type::Constant) {
-               return ObjectInfo(okConstantSymbol, reference, outputRef);
+               if (outputRef == moduleScope->intReference && intConstants.exist(reference)) {
+                  int value = intConstants.get(reference);
+
+                  return ObjectInfo(okIntConstant, ::mapIntConstant(*this, value), V_INT32, 0, value);
+               }
+               else return ObjectInfo(okConstantSymbol, reference, outputRef);
             }
             else if (symbolInfo.type == SymbolExpressionInfo::Type::ArrayConst) {
                return ObjectInfo(okArrayConst, outputRef, symbolInfo.typeRef);
@@ -1806,8 +1811,15 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool de
    }
 
    scope.info.exprRef = outputRef;
-   if (constant)
+   if (constant) {
       scope.info.type = SymbolExpressionInfo::Type::Constant;
+
+      SNode current = node.findChild(lxExpression).firstChild();
+      if (current == lxInteger) {
+         NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
+         nsScope->defineIntConstant(scope.reference, current.identifier().toInt());
+      }
+   }
 }
 
 int Compiler :: resolveSize(SNode node, Scope& scope)
@@ -1817,6 +1829,17 @@ int Compiler :: resolveSize(SNode node, Scope& scope)
    }
    else if (node == lxHexInteger) {
       return node.identifier().toInt(16);
+   }
+   else if (node == lxIdentifier) {
+      ObjectInfo constInfo = scope.mapTerminal(node.identifier(), false, EAttr::eaNone);
+      if (constInfo.kind == okIntConstant) {
+         return constInfo.extraparam;
+      }
+      else {
+         scope.raiseError(errInvalidSyntax, node);
+
+         return 0;
+      }
    }
    else {
       scope.raiseError(errInvalidSyntax, node);
