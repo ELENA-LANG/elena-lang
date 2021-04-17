@@ -378,6 +378,16 @@ ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal, Visibility visi
    else throw InternalError("Cannot map new terminal"); // !! temporal
 }
 
+inline ref_t mapIntConstant(_CompileScope& scope, int integer)
+{
+   String<char, 20> s;
+
+   // convert back to string as a decimal integer
+   s.appendHex(integer);
+
+   return scope.moduleScope->module->mapConstant((const char*)s);
+}
+
 ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool checkState)
 {
    // if reference is zero the symbol is unknown
@@ -386,7 +396,13 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
    }
    // check if symbol should be treated like constant one
    else if (constantHints.exist(reference)) {
-      return ObjectInfo(okConstantSymbol, reference, constantHints.get(reference));
+      ref_t classRef = constantHints.get(reference);
+      if (classRef == V_INT32 && intConstants.exist(reference)) {
+         int value = intConstants.get(reference);
+
+         return ObjectInfo(okIntConstant, ::mapIntConstant(*this, value), V_INT32, 0, value);
+      }
+      else return ObjectInfo(okConstantSymbol, reference, classRef);
    }
    else if (checkState) {
       ClassInfo info;
@@ -1311,6 +1327,12 @@ bool Compiler :: calculateIntOp(int operation_id, int arg1, int arg2, int& retVa
          break;
       case SHIFTL_OPERATOR_ID:
          retVal = arg1 << arg2;
+         break;
+      case BINVERTED_OPERATOR_ID:
+         retVal = ~arg1;
+         break;
+      case NEGATIVE_OPERATOR_ID:
+         retVal = -arg1;
          break;
       default:
          return false;
@@ -2940,12 +2962,24 @@ inline bool isNumericOp(LexicalType type)
    }
 }
 
+inline bool isUnaryOperation(int arg)
+{
+   switch (arg) {
+   case INVERTED_OPERATOR_ID:
+   case NEGATIVE_OPERATOR_ID:
+   case BINVERTED_OPERATOR_ID:
+      return true;
+   default:
+      return false;
+   }
+}
+
 ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
    ArgumentsInfo* arguments, bool assignMode, bool shortCircuitMode)
 {
    bool withUnboxing = false;
    ObjectInfo lorigin = loperand;
-   // the operands should be locally boxed if reuqired
+   // the operands should be locally boxed if required
    if (assignMode && (loperand.kind == okFieldAddress || loperand.kind == okField)) {
       boxArgument(writer, node, loperand, scope, true);
       withUnboxing = true;
@@ -2978,6 +3012,7 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
    }
    else {
       if (localBoxingRequired(*scope.moduleScope, loperand)) {
+         withUnboxing = (loperand.kind == okFieldAddress);
          boxArgument(writer, node, loperand, scope, true);
       }
 
@@ -2994,12 +3029,10 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
    }
 
    ObjectInfo retVal;
-   if (loperand.kind == okIntConstant && roperand.kind == okIntConstant) {
+   if (loperand.kind == okIntConstant && (roperand.kind == okIntConstant || isUnaryOperation(operator_id))) {
       int result = 0;
       if (calculateIntOp(operator_id, loperand.extraparam, roperand.extraparam, result)) {
          retVal = mapIntConstant(scope, result);
-         //node.set(lxConstantInt, retVal.param);
-         //node.appendNode(lxIntValue, result);
 
          // closing open expression
          writer.closeNode();
@@ -3098,8 +3131,10 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
 
    writer.closeNode();
 
-   if (withUnboxing)
+   if (withUnboxing) {
+      retVal = saveToTempLocal(writer, scope, retVal);
       unboxArgument(writer, loperand, scope);
+   }      
 
    return retVal;
 }
@@ -3471,23 +3506,17 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
    bool variable = false;
    int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, source.element, variable);
 
-   //if (source.kind == okFieldAddress && isPrimitiveArrRef(sourceRef))
-   //   fixedArraySize = defineFieldSize(scope, source.param);
+   if (source.kind == okFieldAddress && isPrimitiveArrRef(source.reference))
+      // use fixed size (for fixed-sized array fields)
+      // note that we still need to execute defineStructSizeVariable to set variable bool value
+      size = defineFieldSize(scope, source.param) * (-size);
 
-   //   if (fixedSize)
-   //      // use fixed size (for fixed-sized array fields)
-   //      // note that we still need to execute defineStructSizeVariable to set variable bool value
-   //      size = fixedSize;
-   //
 //   bool variadic = node == lxArgBoxableExpression;
 //   bool primArray = node == lxPrimArrBoxableExpression;
 
    if (targetRef != 0) {
       if (localBoxingMode) {
-         bool fixedSizeArray = isPrimitiveArrRef(targetRef) && size > 0;
-
-//         SNode assignNode = objNode;
-//         assignNode.injectAndReplaceNode(lxAssigning);
+         bool fixedSizeArray = isPrimitiveArrRef(source.reference) && size > 0;
 
          // inject local boxed object
          ObjectInfo tempBuffer;
@@ -5979,12 +6008,7 @@ ObjectInfo Compiler :: compileRootExpression(SyntaxWriter& writer, SNode node, C
 
 ObjectInfo Compiler :: mapIntConstant(ExprScope& scope, int integer)
 {
-   String<char, 20> s;
-
-   // convert back to string as a decimal integer
-   s.appendHex(integer);
-
-   return ObjectInfo(okIntConstant, scope.module->mapConstant((const char*)s), V_INT32, 0, integer);
+   return ObjectInfo(okIntConstant, ::mapIntConstant(scope, integer), V_INT32, 0, integer);
 }
 
 ObjectInfo Compiler :: mapRealConstant(ExprScope& scope, double val)
@@ -10015,6 +10039,8 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal/*, 
          return false;
 
       if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
+         nsScope->defineIntConstant(scope.reference, retVal.extraparam);
+
          size_t value = module->resolveConstant(retVal.param).toULong(16);
 
          dataWriter.writeDWord(value);
@@ -12042,18 +12068,6 @@ ref_t Compiler :: generateExtensionTemplate(_ModuleScope& moduleScope, ref_t tem
    }
 
    return moduleScope.generateTemplate(templateRef, parameters, ns, false, outerExtensionList);
-}
-
-inline bool isUnaryOperation(int arg)
-{
-   switch (arg) {
-      case INVERTED_OPERATOR_ID:
-      case NEGATIVE_OPERATOR_ID:
-      case BINVERTED_OPERATOR_ID:
-         return true;
-      default:
-         return false;
-   }
 }
 
 void Compiler :: injectExprOperation(SNode& node, int size, int tempLocal, LexicalType op, int opArg)

@@ -323,6 +323,7 @@ private:
 
       // symbol hints
       Map<ref_t, ref_t> constantHints;
+      Map<ref_t, int>   intConstants;
 
       // extensions
       Map<ref_t, ref_t> extensionDispatchers;
@@ -355,6 +356,11 @@ private:
       void defineConstantSymbol(ref_t reference, ref_t classReference)
       {
          constantHints.add(reference, classReference);
+      }
+
+      void defineIntConstant(ref_t reference, int value)
+      {
+         intConstants.add(reference, value);
       }
 
       virtual void raiseError(const char* message)

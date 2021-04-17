@@ -3,9 +3,6 @@ In development:
 ------         
 
   [development]
-    * #539 
-    * #538 : bitwise & boolean operations
-
     + linux : readchar, print cyrillic text
     + compile console / files samples for linux i386
     * #206 : interpreter sample
@@ -29,7 +26,8 @@ In development:
 
     + abortexception - translit - why is not reconized
 
-    * boxing fixed-sized field array
+    * introduce prop inline attribute - to add property wrapper around existing field;
+
     * globals
     * multi ret
     * yield metods
@@ -372,7 +370,6 @@ Pipeline:
                  * the following code should generate an error - lazy::(n < 5) - missing ^
                  * direct and, or, xor, shift, mul, div, equal, less
                  * pusha new bcopya popa => bcopya new bswap nop??
-                 * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
 
                  * debugger : display message name
