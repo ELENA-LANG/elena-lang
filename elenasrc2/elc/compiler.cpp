@@ -3517,15 +3517,6 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
 
    ObjectInfo boxedArg;
 
-//   SNode rootNode = node.parentNode();
-//   while (rootNode == lxExpression)
-//      rootNode = rootNode.parentNode();
-//
-//   SNode target;
-//   if (rootNode == lxAssigning) {
-//      target = rootNode.findSubNodeMask(lxObjectMask);
-//   }
-
    bool variable = false;
    int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, source.element, variable);
 
@@ -3544,6 +3535,12 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
          // inject local boxed object
          ObjectInfo tempBuffer;
          allocateTempStructure(scope, size, fixedSizeArray, tempBuffer);
+
+         if (fixedSizeArray) {
+            writer.newNode(lxTempBinaryArray, size);
+            writer.appendNode(lxLevel, tempBuffer.param);
+            writer.closeNode();
+         }
 
          writer.newNode(lxCopying, size);
          writer.appendNode(lxLocalAddress, tempBuffer.param);

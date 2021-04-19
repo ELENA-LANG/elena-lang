@@ -212,6 +212,7 @@ enum LexicalType
    lxCollectionExpression     = 0x0314A0,
    lxInlineOp                 = 0x4314B0,
    lxInlineExpression         = 0x0314B0,
+   lxTempBinaryArray          = 0x0114C0,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file

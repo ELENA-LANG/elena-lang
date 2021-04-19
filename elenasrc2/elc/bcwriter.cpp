@@ -4235,6 +4235,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxCondBoxing:
          generateCondBoxing(tape, node, scope);
          break;
+      case lxTempBinaryArray:
+         generateBinary(tape, node, node.findChild(lxLevel).argument);
+         break;
       default:
          if (stackOp) {
             pushObject(tape, node.type, node.argument, scope, mode);
