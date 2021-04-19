@@ -1705,6 +1705,7 @@ public sealed const struct LongNumber : IntBaseNumber
     [info:"Bitwise inversion"]
     get long BInverted()
     {
+        //!!TODO : implement op
         ^ ~theValue;
         
 //        intern system'core_routines'__long.readInvertedTo(theValue, ref long retVal);
@@ -2314,61 +2315,61 @@ public singleton shortConvertor
         ^ retVal
     }
 
-//    /// Converts an integer into a short integer value
-//    short convert(int n)
-//    {
-//        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts an integer into a short integer value
-//    short convert(uint n)
-//    {
-//        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts a long integer into a short integer value
-//    short convert(long n)
-//    {
-//        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Converts a real number into a short integer value
-//    short convert(real n)
-//    {
-//        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Converts a character into a short integer value
-//    short convert(char ch)
-//    {
-//        intern system'core_routines'__shortconvertor.convert(ch, ref short retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Converts a literal string into a short integer value
-//    short convert(string s)
-//    {
-//        intern system'core_routines'__shortconvertor.convert(s, 10, ref short retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Converts a wide literal string into a short integer value
-//    short convert(wide s)
-//    {
-//        intern system'core_routines'__shortconvertor.convert(s, 10, ref short retVal);
-//        
-//        ^ retVal
-//    }
+    /// Converts an integer into a short integer value
+    short convert(int n)
+    {
+        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts an integer into a short integer value
+    short convert(uint n)
+    {
+        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts a long integer into a short integer value
+    short convert(long n)
+    {
+        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
+        
+        ^ retVal
+    }
+        
+    /// Converts a real number into a short integer value
+    short convert(real n)
+    {
+        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
+        
+        ^ retVal
+    }
+        
+    /// Converts a character into a short integer value
+    short convert(char ch)
+    {
+        intern system'core_routines'__shortconvertor.convert(ch, ref short retVal);
+        
+        ^ retVal
+    }
+        
+    /// Converts a literal string into a short integer value
+    short convert(string s)
+    {
+        intern system'core_routines'__shortconvertor.convert(s, 10, ref short retVal);
+        
+        ^ retVal
+    }
+        
+    /// Converts a wide literal string into a short integer value
+    short convert(wide s)
+    {
+        intern system'core_routines'__shortconvertor.convert(s, 10, ref short retVal);
+        
+        ^ retVal
+    }
         
     short convert(o)
         = cast short(o);
@@ -2388,53 +2389,53 @@ public singleton intConvertor
         ^ retVal
     }
 
-//    /// Converts a literal string into an integer
-//    int convert(string s, int base)
-//    {
-//        intern system'core_routines'__intconvertor.convert(s, base, ref int retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Converts a wide literal string into an integer
-//    int convert(wide s)
-//    {
-//        intern system'core_routines'__intconvertor.convert(s, 10, ref int retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts a wide literal string into an integer
-//    int convert(wide s, int base)
-//    {
-//        intern system'core_routines'__intconvertor.convert(s, base, ref int retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Converts a character value into an integer
-//    int convert(char ch)
-//    {
-//        intern system'core_routines'__intconvertor.convert(ch, ref int retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Converts a byte value into an integer
-//    int convert(byte val)
-//    {
-//        intern system'core_routines'__intconvertor.convert(val, ref int retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Converts a short integer value into an integer
-//    int convert(short val)
-//    {
-//        intern system'core_routines'__intconvertor.convert(val, ref int retVal);
-//        
-//        ^ retVal
-//    }
+    /// Converts a literal string into an integer
+    int convert(string s, int base)
+    {
+        intern system'core_routines'__intconvertor.convert(s, base, ref int retVal);
+        
+        ^ retVal
+    }
+        
+    /// Converts a wide literal string into an integer
+    int convert(wide s)
+    {
+        intern system'core_routines'__intconvertor.convert(s, 10, ref int retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts a wide literal string into an integer
+    int convert(wide s, int base)
+    {
+        intern system'core_routines'__intconvertor.convert(s, base, ref int retVal);
+        
+        ^ retVal
+    }
+        
+    /// Converts a character value into an integer
+    int convert(char ch)
+    {
+        intern system'core_routines'__intconvertor.convert(ch, ref int retVal);
+        
+        ^ retVal
+    }
+        
+    /// Converts a byte value into an integer
+    int convert(byte val)
+    {
+        intern system'core_routines'__intconvertor.convert(val, ref int retVal);
+        
+        ^ retVal
+    }
+        
+    /// Converts a short integer value into an integer
+    int convert(short val)
+    {
+        intern system'core_routines'__intconvertor.convert(val, ref int retVal);
+        
+        ^ retVal
+    }
         
     /// Converts a long integer value into an integer and saves the result into an output parameter
     int convert(long val)
@@ -2456,8 +2457,8 @@ public singleton intConvertor
     int convert(int n)
         = new IntNumber(n);
 
-//    int convert(uint n)
-//        = new IntNumber(n);
+    int convert(uint n)
+        = new IntNumber(n);
                         
     int convert(o)
         = cast int(o);
@@ -2511,29 +2512,29 @@ public singleton longConvertor
         ^ retVal
     }
 
-//    /// Converts an integer value into a long integer
-//    long convert(uint val)
-//    {
-//        intern system'core_routines'__longconvertor.convert(val, ref long retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts an integer value into a long integer
-//    long convert(byte val)
-//    {
-//        intern system'core_routines'__longconvertor.convert(val, ref long retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts an integer value into a long integer
-//    long convert(short val)
-//    {
-//        intern system'core_routines'__longconvertor.convert(val, ref long retVal);
-//        
-//        ^ retVal
-//    }
+    /// Converts an integer value into a long integer
+    long convert(uint val)
+    {
+        intern system'core_routines'__longconvertor.convert(val, ref long retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts an integer value into a long integer
+    long convert(byte val)
+    {
+        intern system'core_routines'__longconvertor.convert(val, ref long retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts an integer value into a long integer
+    long convert(short val)
+    {
+        intern system'core_routines'__longconvertor.convert(val, ref long retVal);
+        
+        ^ retVal
+    }
 
     /// Converts a real number into a long integer
     long convert(real val)
@@ -2543,13 +2544,13 @@ public singleton longConvertor
         ^ retVal
     }
 
-//    /// Converts a character into a long integer
-//    long convert(char ch)
-//    {
-//        intern system'core_routines'__intconvertor.convert(ch, ref int retVal);
-//        
-//        ^ retVal
-//    }
+    /// Converts a character into a long integer
+    long convert(char ch)
+    {
+        intern system'core_routines'__intconvertor.convert(ch, ref int retVal);
+        
+        ^ retVal
+    }
 
     /// Converts a literal string into a long integer
     long convert(string s)
@@ -2559,29 +2560,29 @@ public singleton longConvertor
         ^ retVal
     }
 
-//    /// Converts a literal string into a long integer
-//    long convert(string s, int base)
-//    {
-//        intern system'core_routines'__longconvertor.convert(s, base, ref long retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts a wide literal string into a long integer
-//    long convert(wide s)
-//    {
-//        intern system'core_routines'__longconvertor.convert(s, 10, ref long retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts a wide literal string into a long integer
-//    long convert(wide s, int base)
-//    {
-//        intern system'core_routines'__longconvertor.convert(s, base, ref long retVal);
-//        
-//        ^ retVal
-//    }
+    /// Converts a literal string into a long integer
+    long convert(string s, int base)
+    {
+        intern system'core_routines'__longconvertor.convert(s, base, ref long retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts a wide literal string into a long integer
+    long convert(wide s)
+    {
+        intern system'core_routines'__longconvertor.convert(s, 10, ref long retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts a wide literal string into a long integer
+    long convert(wide s, int base)
+    {
+        intern system'core_routines'__longconvertor.convert(s, base, ref long retVal);
+        
+        ^ retVal
+    }
     
     /// Returns a parameter
     long convert(long n)

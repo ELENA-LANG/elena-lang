@@ -1194,6 +1194,149 @@ labErr:
 
 end
 
+procedure __shortconvertor."convert$system@UIntNumber$@system@ref#1&system@ShortNumber[2]"
+
+  peeksi 1
+  load
+
+  lessn labCopy, 8000h
+
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labCopy:
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __shortconvertor."convert$system@IntNumber$@system@ref#1&system@ShortNumber[2]"
+
+  peeksi 1
+
+  load
+  lessn labNegative, 0
+  lessn labCopy, 8000h
+
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labCopy:
+  peeksi 2
+  save
+  quit
+  
+labNegative:
+  not
+
+  lessn labCopyNeg, 8000h
+
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+  
+labCopyNeg:
+  not
+  peeksi 2
+  save
+  quit  
+
+end
+
+procedure __shortconvertor."convert$system@LongNumber$@system@ref#1&system@ShortNumber[2]"
+
+  peeksi   1
+  pusha
+  callextr api : longtoint, 1
+  pop
+
+  ifr      labErr, 0
+
+  lessn labNegative, 0  
+  elsen labErr, 0  
+
+  load
+  lessn labCopy, 8000h  
+  jump  labErr
+
+labCopy:
+  peeksi 2
+  save
+  quit
+
+labNegative:
+  load
+  not
+  lessn labCopyNegative, 8000h  
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labCopyNegative:
+  load
+  peeksi 2
+  save
+  quit  
+
+end
+
+procedure __shortconvertor."convert$system@RealNumber$@system@ref#1&system@ShortNumber[2]"
+
+  peeksi   1
+  open
+  reserve  4
+
+  rintf    4
+  movf     4
+  rload
+  pushn    0
+  movsip   0
+  rsaven
+  popd
+
+  restore  4
+  close
+  
+  lessn    labErr, 0FFFF8000h
+  lessn    labCopy, 08000h
+
+labErr:  
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labCopy:
+  peeksi   2 
+  save
+  quit
+
+end
+
 procedure __shortconvertor."convert$system@ByteNumber$@system@ref#1&system@ShortNumber[2]"
 
   peeksi 1
@@ -1201,6 +1344,105 @@ procedure __shortconvertor."convert$system@ByteNumber$@system@ref#1&system@Short
   peeksi 2
   save
   quit  
+
+end
+
+procedure __shortconvertor."convert$system@CharValue$@system@ref#1&system@ShortNumber[2]"
+
+  peeksi 1
+  load
+  
+  lessn labErr, 0  
+  lessn labCopy, 08000h
+
+labErr:  
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labCopy:
+  peeksi 2
+  save
+  quit
+
+end
+
+
+procedure __shortconvertor."convert$system@String$system@IntNumber$@system@ref#1&system@ShortNumber[3]"
+  
+  pushsi 2
+  pushsi 2  
+  callextr api : strtoint, 2
+  freei 2
+
+  ifr      labErr, 0
+  peeksi 3
+  save
+  
+  lessn labErr2, 0FFFF8000h
+  lessn labExit, 08000h
+  
+labErr2:  
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labExit:
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'FormatException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+end
+
+procedure __shortconvertor."convert$system@WideString$system@IntNumber$@system@ref#1&system@ShortNumber[3]"
+  
+  pushsi 2
+  pushsi 2  
+  callextr api : wstrtoint, 2
+  freei 2
+
+  ifr      labErr, 0
+  peeksi 3
+  save
+  
+  lessn labErr2, 0FFFF8000h
+  lessn labExit, 08000h
+  
+labErr2:  
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+
+labExit:
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'FormatException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
 
 end
 
@@ -1214,6 +1456,44 @@ procedure __longconvertor."convert$system@IntNumber$@system@ref#1&system@LongNum
 
 end
 
+procedure __longconvertor."convert$system@UIntNumber$@system@ref#1&system@LongNumber[2]"
+  
+  movn   0
+  peeksi 2
+  lload
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __longconvertor."convert$system@ShortNumber$@system@ref#1&system@LongNumber[2]"
+  
+  peeksi 1
+  load
+  peeksi 2
+  lload
+  quit
+
+end
+
+procedure __longconvertor."convert$system@ByteNumber$@system@ref#1&system@LongNumber[2]"
+  
+  movn   0
+  peeksi 2
+  lload
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quit
+
+end
+
 procedure __longconvertor."convert$system@String$system@IntNumber$@system@ref#1&system@LongNumber[3]"
 
   pushn  0
@@ -1221,6 +1501,29 @@ procedure __longconvertor."convert$system@String$system@IntNumber$@system@ref#1&
   pushsi 4
   pushsi 4  
   callextr api : strtolong, 3
+  freei 4
+
+  ifr      labErr, 0
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'FormatException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw
+
+end
+
+procedure __longconvertor."convert$system@WideString$system@IntNumber$@system@ref#1&system@LongNumber[3]"
+
+  pushn  0
+  pushsi 4
+  pushsi 4
+  pushsi 4  
+  callextr api : wstrtolong, 3
   freei 4
 
   ifr      labErr, 0
@@ -1293,6 +1596,30 @@ labErr:
 
 end
 
+procedure __intconvertor."convert$system@WideString$system@IntNumber$@system@ref#1&system@IntNumber[3]"
+  
+  pushsi 2
+  pushsi 2  
+  callextr api : wstrtoint, 2
+  freei 2
+
+  ifr      labErr, 0
+  peeksi 3
+  save
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'FormatException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw
+
+
+end
+
 procedure __intconvertor."convert$system@RealNumber$@system@ref#1&system@IntNumber[2]"
 
   peeksi 1
@@ -1300,6 +1627,36 @@ procedure __intconvertor."convert$system@RealNumber$@system@ref#1&system@IntNumb
   peeksi 2  
   rsaven
   peeksi 1
+  quit
+
+end
+
+procedure __intconvertor."convert$system@CharValue$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __intconvertor."convert$system@ShortNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __intconvertor."convert$system@ByteNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
   quit
 
 end
