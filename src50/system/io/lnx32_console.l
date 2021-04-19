@@ -1,5 +1,40 @@
 namespace io
 {    
+    const int STDIN_FILENO = 0;
+    const int NCCS = 32;
+    const int ICANON = 0000002;   /* Canonical input (erase and kill processing).  */
+    const int VMIN = 6;
+    const int TCSANOW = 0;
+    const int ECHO = 0000010;   /* Enable echo.  */
+
+    struct termios
+    {
+        int c_iflag;		/* input mode flags */
+        int c_oflag;		/* output mode flags */
+        int c_cflag;		/* control mode flags */
+        int c_lflag;		/* local mode flags */
+        int c_line;		/* line discipline */
+        byte c_cc[NCCS];		/* control characters */
+        int c_ispeed;		/* input speed */
+        int c_ospeed;		/* output speed */
+    
+        int LFlag
+        {
+            get()
+                = c_lflag;
+                
+            set(v)
+            {
+                c_lflag := v
+            }
+        }
+        
+        setAt(int index, byte value)
+        {
+            c_cc[index] := value
+        }
+    }
+
     // --- globalVariables ---
     
     singleton globalVariables
@@ -95,24 +130,40 @@ namespace io
     
         char read()
         {
-           self.read(ref byte ch);
+           self.readChar(ref char ch);
     
-           ^ charConvertor.convert(ch)
+           ^ ch
         }
               
-        private read(ref byte retVal)
-        {
-           int ch := extern libc.getchar();
+        private readChar(ref char retVal)
+        {            
+            termios savedState;   
+            termios newState;
 
-           retVal := byteConvertor.convert(ch)
+            extern libc.tcgetattr(STDIN_FILENO, savedState);
+
+            newState := savedState;
+
+            /* disable canonical input and disable echo.  set minimal input to 1. */
+            newState.LFlag := newState.LFlag & ~(ECHO | ICANON);
+            newState[VMIN] := 1;
+
+            extern libc.tcsetattr(STDIN_FILENO, TCSANOW, newState);
+
+            int ch := extern libc.getchar();      /* block (withot spinning) until we get a keypress */
+
+            /* restore the saved state */
+            extern libc.tcsetattr(STDIN_FILENO, TCSANOW, savedState);
+                        
+            retVal := ch;
         }
     
-        private read(byte[] buffer, ref int retVal)
+        private read(char[] buffer, ref int retVal)
         {
             int i;
             for (i := 0, i < retVal, i += 1)
             {
-                self.read(ref byte ch);
+                self.readChar(ref char ch);
     
                 buffer[i] := ch;
     
@@ -132,7 +183,7 @@ namespace io
     
         string readLine()
         {
-            byte buffer[127];
+            char buffer[127];
             int length := 0;
             var output := emptyString;
             
@@ -142,7 +193,7 @@ namespace io
                 length := 127;
                 self.read(buffer, ref length);
     
-                byte ch := buffer[length - 1];
+                char ch := buffer[length - 1];
     
                 if(ch == 0Ah)
                 {
@@ -151,7 +202,7 @@ namespace io
                     continue := false
                 };
                 
-                var temp := String.fromByteArray(0, length, buffer);
+                var temp := String.copy(0, length, buffer);
                 
                 output := output + temp;
             };
