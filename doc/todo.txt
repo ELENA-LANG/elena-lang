@@ -3,9 +3,9 @@ In development:
 ------         
 
   [development]
-    + linux : print cyrillic text
-    + compile console / files samples for linux i386
     * #206 : interpreter sample
+    + linux : compile virtual machine
+    + compile console / files samples for linux i386
 
     + compile lib50_64 for linux i386 / ppc64le
     + compile console / files samples for linux amd6
