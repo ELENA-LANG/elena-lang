@@ -1,6 +1,8 @@
 namespace io
 {    
     const int STDIN_FILENO = 0;
+    const int STDOUT_FILENO = 1;
+    
     const int NCCS = 32;
     const int ICANON = 0000002;   /* Canonical input (erase and kill processing).  */
     const int VMIN = 6;
@@ -75,20 +77,24 @@ namespace io
     
         write(string s)
         {
-            int  n  := 0;
-            int  cl := 0;
-            char c  := 0;
-            
             int l := s.Length;
-            while(n < l)
-            {
-                c := s[n];
-
-                extern libc.putchar(c);
-
-                cl := c.Length;
-                n := n + cl
-            }
+            extern libc.write(STDOUT_FILENO, s, l);
+            
+            
+//            int  n  := 0;
+//            int  cl := 0;
+//            char c  := 0;
+//            
+//            int l := s.Length;
+//            while(n < l)
+//            {
+//                c := s[n];
+//
+//                extern libc.putchar(c);
+//
+//                cl := c.Length;
+//                n := n + cl
+//            }
 
             // !!check the result of the operation
         }

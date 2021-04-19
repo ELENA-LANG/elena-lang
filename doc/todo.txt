@@ -3,7 +3,7 @@ In development:
 ------         
 
   [development]
-    + linux : readchar, print cyrillic text
+    + linux : print cyrillic text
     + compile console / files samples for linux i386
     * #206 : interpreter sample
 
