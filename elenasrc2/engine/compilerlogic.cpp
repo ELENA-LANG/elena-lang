@@ -1113,7 +1113,7 @@ bool CompilerLogic :: isMethodEmbeddable(_ModuleScope& scope, ref_t reference, m
    else return false;
 }
 
-ConversionInfo CompilerLogic :: injectImplicitConstructor(_ModuleScope& scope, _Compiler& compiler, ClassInfo& info,
+ConversionInfo CompilerLogic :: injectImplicitConstructor(_ModuleScope& scope, ClassInfo& info,
    ref_t targetRef, ref_t* signatures, size_t signLen)
 {
    ref_t signRef = scope.module->mapSignature(signatures, signLen, false);
@@ -1225,7 +1225,7 @@ ConversionInfo CompilerLogic :: injectImplicitConversion(_CompileScope& scope, _
    if (isPrimitiveRef(sourceRef)/* && sourceRef != V_STRCONSTANT*/)
       sourceRef = compiler.resolvePrimitiveReference(scope, sourceRef, elementRef, false);
 
-   return injectImplicitConstructor(*scope.moduleScope, compiler, info, targetRef, /*elementRef, */&sourceRef, 1);
+   return injectImplicitConstructor(*scope.moduleScope, info, targetRef, /*elementRef, */&sourceRef, 1);
 }
 
 //void CompilerLogic :: injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef)
@@ -1766,9 +1766,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_WRAPPER:
          attributes.include(EAttr::eaRef);
          return true;
-	  //case V_ARGARRAY:
-   //      attributes.include(EAttr::eaParams);
-			//return true;
+     case V_ARGARRAY:
+         attributes.include(EAttr::eaParams);
+   		return true;
      case V_INTERN:
          attributes.include(EAttr::eaIntern);
          return true;
@@ -1781,9 +1781,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_META:
          attributes.include(EAttr::eaMetaField);
          return true;
-//      case V_SUBJECT:
-//         attributes.include(EAttr::eaSubj);
-//         return true;
+      case V_SUBJECT:
+         attributes.include(EAttr::eaSubj);
+         return true;
       case V_MESSAGE:
          attributes.include(EAttr::eaMssg);
          return true;

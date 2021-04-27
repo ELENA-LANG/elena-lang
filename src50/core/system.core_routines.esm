@@ -96,6 +96,74 @@ procedure __extension."#dispatch[1]"
 
 end
 
+procedure __symbol."#dispatch[1]"
+
+  open 
+  reserve  4
+  savef    -4
+  calli    0
+  loadf    -4
+  restore  4
+  close
+  jumpvi   0
+
+end
+
+procedure __symbol."tryLoad$@system@ref#1&system@UnsafePointer$system@String$system@String[3]"
+
+  open
+
+  alloci   3
+
+  peekfi   -3   
+  savesi   2
+  peekfi   -2
+  savesi   1
+  loadenv
+  savesi   0
+  callextr extern : LoadSymbolByString2, 0203h
+  freei    3
+
+  peekfi   -1
+  save
+
+  close
+
+  quit
+
+end
+
+
+procedure __symbol."load$system@Symbol$system@String[2]"
+
+  peeksi   2
+  pusha
+  loadenv
+  pushd
+  callextr extern : LoadSymbolByString, 0202h
+  freei    2
+
+  ifn      labErr, 0
+  peeksi   1
+  save
+
+  quit
+ 
+labErr:
+  peeksi  2
+
+  open
+  alloci  2
+  storesi 1
+  movr    class : system'SymbolLoaderException
+  storesi 0
+  pushr   mssgconst : "new[2]"
+
+  throw  
+
+end
+
+
 procedure __dptr."system$setReference[2]"
 
   loadsi 2
@@ -108,6 +176,16 @@ procedure __dptr."readVal$system@UnsafePointer$@system@ref#1&system@IntNumber[2]
 
   peeksi 1
   geti   0
+  load
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __dptr."copyTo$system@UnsafePointer$system@Symbol[2]"
+
+  peeksi 1
   load
   peeksi 2
   save
@@ -361,6 +439,46 @@ procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[
 
 end
 
+procedure __message."getMessageName$system@Message$@system@ref#1&system@MessageName[2]"
+
+  peeksi  1
+  load
+  loadverb
+  peeksi  2
+  save
+
+  quit
+
+end
+
+
+procedure __message."load$system@Message$system@String[2]"
+
+  peeksi   2
+  open
+  alloci   1
+  storesi  0
+  callextr extern : LoadMessage, 0101h
+  freei    1
+
+  ifn      labErr, 0
+  close
+
+  peeksi   1
+  save
+
+  quit
+ 
+labErr:
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr   mssgconst : "new[1]"
+
+  throw  
+
+end
+
 procedure __signature."#dispatch[1]"
 
   pushd
@@ -510,6 +628,89 @@ labDefault:
   
 end
 
+procedure __closuretape."#dispatch[1]"
+
+  pushd
+
+  //; check if it is a closure call, otherwise handle it by default
+  and     SPECIAL_MESSAGE
+  ifn     labDefault, 0 
+
+  popd
+  mcount
+
+  open 
+  reserve 8
+  alloci  1
+  storesi 0 
+          
+  savef   -8
+  movn    0  
+  savef   -4  
+
+  // ; copy the call stack
+  loadf   -8
+  mcount
+  inc     1
+  allocd
+  
+  movsip  0
+  pushfip -1
+  dec     1
+  xsetr   terminal
+  ifn     labSkip, 0
+  labNextParam:
+  dec     1
+  xtrans
+  elsen   labNextParam, 0
+labSkip:
+  pop
+
+  peekfi  1
+
+labNext:
+  breakpoint
+
+  loadf   -4
+
+  ifcount labEnd
+
+  get
+  inc 1
+  savef   -4
+
+  vcallrm system'dynamic'TapeFunction, mssgconst : "params##invoke<system'Object>[0]"
+  peekfi  1
+  jump    labNext
+
+labEnd:
+  peeksi  0
+
+  restore 8
+  close
+
+  quit
+
+labDefault:
+  popd
+  bsredirect  
+
+  open
+  reserve  __page_size
+  alloci   3
+  storesi  1
+  movf     -__rsrv_object_offset
+  storesi  2
+  storesi  0
+  movr     class : system'Message
+  callextr api : tempObject, 1 
+  movr     class : system'MethodNotFoundException
+  storesi  0
+  pushr    mssgconst : "new[3]"
+
+  throw
+
+end
 
 procedure __real."exp$system@RealNumber$@system@ref#1&system@RealNumber[2]"
 
@@ -1863,7 +2064,7 @@ labCopy:
 
   peeksi 2
   save
-  quitn 2
+  quit
 
 end
 

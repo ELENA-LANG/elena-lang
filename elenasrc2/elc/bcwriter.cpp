@@ -550,8 +550,8 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskMessage;
 //      case lxExtMessageConstant:
 //         return mskExtMessage;
-//      case lxSubjectConstant:
-//         return mskMessageName;
+      case lxSubjectConstant:
+         return mskMessageName;
       case lxConstantList:
          return mskConstArray;
       default:
@@ -1860,7 +1860,7 @@ void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, i
          // get
          // inc 1
          // elser -1 labSearch
-         // freei 1
+         // pop
          // savef arg
          tape.write(bcPushA);
          tape.write(bcMovN, 0);
@@ -2135,7 +2135,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantReal:
       case lxMessageConstant:
 //      case lxExtMessageConstant:
-//      case lxSubjectConstant:
+      case lxSubjectConstant:
       case lxConstantList:
          // pushr reference
          tape.write(bcPushR, argument | defineConstantMask(type));
@@ -2255,7 +2255,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantReal:
       case lxMessageConstant:
 //      case lxExtMessageConstant:
-//      case lxSubjectConstant:
+      case lxSubjectConstant:
       case lxConstantList:
          // pushr reference
          tape.write(bcMovR, argument | defineConstantMask(type));
@@ -3086,12 +3086,12 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
       //if (argNode == lxExpression)
       //   argNode = current.findSubNodeMask(lxObjectMask);
 
-      //if (argNode == lxArgArray) {
+      //if (current == lxArgArray) {
       //   argUnboxMode = true;
-      //   generateExpression(tape, argNode, scope);
-      //   unboxArgList(tape, argNode.argument != 0);
+      ////   generateExpression(tape, argNode, scope);
+      ////   unboxArgList(tape, argNode.argument != 0);
       //}
-      /*else */argCount++;
+      /*else*/ argCount++;
 
       current = current.nextNode(lxObjectMask);
    }
@@ -3862,16 +3862,27 @@ void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::
       //if (source == lxExpression)
       //   source = source.findSubNodeMask(lxObjectMask);
 
-      ////if (source.compare(lxLocalAddress, lxBlockLocalAddr)) {
-      ////   if (source.firstChild() == lxBreakpoint) {
-      ////      translateBreakpoint(tape, source.firstChild(), scope);
-      ////   }
+      if (source == lxBlockLocalAddr) {
+         //   if (source.firstChild() == lxBreakpoint) {
+         //      translateBreakpoint(tape, source.firstChild(), scope);
+         //   }
 
-      ////   generateObject(tape, target, scope);
+         generateObject(tape, target, scope);
 
-      ////   tape.write(bcCloneF, source.argument << 2);
-      ////}
-      /*else */if (source.compare(lxLocal, lxTempLocal)) {
+         tape.write(bcPushFIP, source.argument);
+         tape.write(bcClone);
+         tape.write(bcPop);
+      }
+      else if (source == lxLocalAddress) {
+         //   if (source.firstChild() == lxBreakpoint) {
+         //      translateBreakpoint(tape, source.firstChild(), scope);
+         //   }
+
+         generateObject(tape, target, scope);
+
+         tape.write(bcCloneF, source.argument << 2);
+      }
+      else if (source.compare(lxLocal, lxTempLocal)) {
          if (source.firstChild() == lxBreakpoint) {
             translateBreakpoint(tape, source.firstChild(), scope);
          }
@@ -4793,7 +4804,7 @@ void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType 
       case lxClassSymbol:
       case lxMessageConstant:
       //case lxExtMessageConstant:
-      //case lxSubjectConstant:
+      case lxSubjectConstant:
          writer.writeRef(argument | defineConstantMask(type), 0);
          break;
       case lxNil:

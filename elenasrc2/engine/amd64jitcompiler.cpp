@@ -408,7 +408,7 @@ void _ELENA_::loadROp(int opcode, I64JITScope& scope)
             scope.code->writeDWord(0);
          }
          else if (scope.argument == -1) {
-            scope.code->writeDWord(-1);
+            scope.code->writeDWord(INVALID_REF);
          }
          else scope.writeReference(*scope.code, scope.argument, 0);
       }
@@ -1675,7 +1675,7 @@ void _ELENA_::compileXRedirect(int op, I64JITScope& scope)
 
 void _ELENA_::compileInvokeVMTOffset(int opcode, I64JITScope& scope)
 {
-   ref64_t message = scope.resolveMessage(scope.tape->getDWord());
+   mssg_t message = scope.resolveMessage(scope.tape->getDWord());
 
    char*  code = (char*)scope.compiler->_inlines[opcode];
    pos_t position = scope.code->Position();

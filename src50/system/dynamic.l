@@ -1,39 +1,39 @@
-//// --- Symbol ---
-//
-///// A dynamic symbol
-//public sealed const struct Symbol
-//{
-//    __symbol theValue;
-//    
-//    /// Loads a symbol
-//    constructor(string name)
-//    {
-//        intern system'core_routines'__symbol.load(self, name)
-//    }
-//    
-//    constructor(dirty_ptr ptr)
-//    {
-//        intern system'core_routines'__dptr.copyTo(ptr, self)
-//    }
-//    
-//    static Symbol tryLoad(string ns, string name)
-//    {
-//        intern system'core_routines'__symbol.tryLoad(ref dirty_ptr ptr, ns, name);
-//        
-//        ifnot (ptr.isEmpty())
-//        {
-//            ^ ptr
-//        }
-//        else
-//        {
-//            ^ nil
-//        }
-//    }    
-//                
-//    /// Redirects incoming messages to the symbol
-//    dispatch() => intern system'core_routines'__symbol;
-//}
-//
+// --- Symbol ---
+
+/// A dynamic symbol
+public sealed const struct Symbol
+{
+    __symbol theValue;
+    
+    /// Loads a symbol
+    constructor(string name)
+    {
+        intern system'core_routines'__symbol.load(self, name)
+    }
+    
+    constructor(dirty_ptr ptr)
+    {
+        intern system'core_routines'__dptr.copyTo(ptr, self)
+    }
+    
+    static Symbol tryLoad(string ns, string name)
+    {
+        intern system'core_routines'__symbol.tryLoad(ref dirty_ptr ptr, ns, name);
+        
+        ifnot (ptr.isEmpty())
+        {
+            ^ ptr
+        }
+        else
+        {
+            ^ nil
+        }
+    }    
+                
+    /// Redirects incoming messages to the symbol
+    dispatch() => intern system'core_routines'__symbol;
+}
+
 //public sealed const struct ClassReference
 //{
 //    embeddable __raw theValue[4];
@@ -55,21 +55,21 @@ public sealed const struct Message
 {
     embeddable __mssg theValue[4];
 
-//    constructor(string name)
-//    {
-//        intern system'core_routines'__message.load(self, name)
-//    }
+    constructor(string name)
+    {
+        intern system'core_routines'__message.load(self, name)
+    }
     
     /// Compares the values
     bool equal(Message mssg)
         = theValue == mssg;
     
-//    get MessageName MessageName()
-//    {
-//        intern system'core_routines'__message.getMessageName(self, ref MessageName retVal);
-//        
-//        ^ retVal
-//    }
+    get MessageName MessageName()
+    {
+        intern system'core_routines'__message.getMessageName(self, ref MessageName retVal);
+        
+        ^ retVal
+    }
 
     string toPrintable()
     {

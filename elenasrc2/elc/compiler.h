@@ -1143,7 +1143,7 @@ private:
    ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
 
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, ref_t expectedSignRef,
-      /*bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments, ArgumentsInfo* presavedArgs);
+      bool& variadicOne, /*bool& inlineArg, */ArgumentsInfo& arguments, ArgumentsInfo* presavedArgs);
 
    ObjectInfo compileResendMessageOperation(SyntaxWriter& writer, SNode node, ExprScope& scope,
       ObjectInfo target, ref_t exptectedRef, EAttr mode);
@@ -1181,7 +1181,7 @@ private:
 
    ObjectInfo compileCastingExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
    ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
-//   ObjectInfo compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode);
+   ObjectInfo compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target, bool accumulateMode);
    ObjectInfo compileArrAssigning(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
@@ -1305,10 +1305,9 @@ private:
 
    void compileExternalArguments(SyntaxWriter& writer, SNode node, ExprScope& scope, ArgumentsInfo* arguments);
 
-   void appendCopying(SyntaxWriter& writer, /*SNode& copyingNode, */int size/*, bool variadic, bool primArray*/, ObjectInfo target,
+   void appendCopying(SyntaxWriter& writer, int size, bool variadic, /*bool primArray, */ObjectInfo target,
       ExprScope& scope, int tempLocal);
-   void appendCreating(SyntaxWriter& writer/*SNode& assigningNode, SNode objNode, ExprScope& scope, bool insertMode*/, int size,
-      ref_t typeRef/*, bool variadic*/);
+   void appendCreating(SyntaxWriter& writer, int size, ref_t typeRef);
 
 //   void boxExpressionInRoot(SNode boxNode, SNode objNode, ExprScope& scope, LexicalType tempType,
 //      int tempLocal, bool localBoxingMode, bool condBoxing);

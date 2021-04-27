@@ -27,7 +27,7 @@
 #define ref         80002003h
 #define __weak      80002004h
 #define __loop      80002005h
-//#define preloaded   80002006h
+#define preloaded   80002006h
 //#define lazy        80002009h
 //#define multiret    8000200Ah
 
@@ -74,9 +74,9 @@
 #define __subj      80000807h
 #define mssg        80000806h
 #define mssgconst   80000806h
-//#define subj        80000807h
-//#define subjconst   80000807h
-//#define __symbol    80000808h
+#define subj        80000807h
+#define subjconst   80000807h
+#define __symbol    80000808h
 //#define inlinearg   80000809h
 
 /// Provides classes that describe the basic functionality

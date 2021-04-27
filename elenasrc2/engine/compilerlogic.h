@@ -63,7 +63,7 @@ class CompilerLogic : public _CompilerLogic
    void setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr);
    void setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr);
 
-   ConversionInfo injectImplicitConstructor(_ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef,
+   ConversionInfo injectImplicitConstructor(_ModuleScope& scope, ClassInfo& info, ref_t targetRef,
       ref_t* signatures, size_t paramCount);
 
    ref_t __FASTCALL getClassClassRef(_ModuleScope& scope, ref_t reference);

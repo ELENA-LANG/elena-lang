@@ -1,9 +1,9 @@
 //import system'collections;
-//
-//// --- classOp ---
-//
-//public extension classROp
-//{
+
+// --- classOp ---
+
+public extension classROp
+{
 //    setField(int index, object object)
 //        => intern system'core_routines'__object;
 //        
@@ -69,18 +69,18 @@
 //
 //        ^ list.Value
 //    }
-//    
-//    setFields(params object[] objects)
-//    {
-//        int l := objects.Length;
-//        for (int i := 0, i < l, i += 1) {
-//            self.setField(i, objects[i])
-//        };
-//        
-//        ^ self
-//    }
-//}
-//
+    
+    setFields(params object[] objects)
+    {
+        int l := objects.Length;
+        for (int i := 0, i < l, i += 1) {
+            self.setField(i, objects[i])
+        };
+        
+        ^ self
+    }
+}
+
 //public extension classExOp
 //{
 //    __newProxy(target)

@@ -97,15 +97,15 @@ public class InvalidArgumentException : Exception
 //    constructor new(string className)
 //        <= new("Type " + className + " cannot be loaded");
 //}
-//
-//// --- SymbolLoaderException ---
-//
-//public class SymbolLoaderException : Exception
-//{
-//    /// Creates the exception
-//    constructor new(string symbolName)
-//        <= new("Symbol " + symbolName + " cannot be loaded");
-//}
+
+// --- SymbolLoaderException ---
+
+public class SymbolLoaderException : Exception
+{
+    /// Creates the exception
+    constructor new(string symbolName)
+        <= new("Symbol " + symbolName + " cannot be loaded");
+}
 
 // --- MessageLoaderException ---
 

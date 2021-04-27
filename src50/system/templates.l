@@ -121,12 +121,12 @@ public interface<T>
     cast bool(expr) ! if_block
 }
 
-//// --- ifnot-else statement ---
-//
-//#declare ifnot:else<expr>(ifnot_block,else_block)
-//{
-//    cast bool(expr) ? else_block : ifnot_block
-//}
+// --- ifnot-else statement ---
+
+#declare ifnot<expr>:else(ifnot_block,else_block)
+{
+    cast bool(expr) ? else_block : ifnot_block
+}
 
 // --- while statement ---
 

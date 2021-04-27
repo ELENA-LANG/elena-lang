@@ -865,7 +865,7 @@ void _ELENA_::loadROp(int opcode, x86JITScope& scope)
             scope.code->writeDWord(0);
          }
          else if (scope.argument == -1) {
-            scope.code->writeDWord(-1);
+            scope.code->writeDWord(INVALID_REF);
          }
          else scope.writeReference(*scope.code, scope.argument, 0);
       }
