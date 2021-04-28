@@ -667,6 +667,16 @@ inline % 28h
 
 end
 
+
+// ; freed
+inline % 29h
+
+  mov  rdi, rdx
+  shl  rdi, 3
+  add  rsp, rdi
+
+end
+
 // ; loadenv
 inline % 2Ah
 

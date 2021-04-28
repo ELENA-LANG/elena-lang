@@ -21,7 +21,7 @@ const char* _fnOpcodes[256] =
    "get", "set", "swap", "mquit", "count", "unhook", "rsin", "allocd",
 
    "rcos", "rarctan", "pushd", "popd", "xtrans", "include", "exclude", "trylock",
-   "freelock", OPCODE_UNKNOWN, "loadenv", OPCODE_UNKNOWN, "rln", "read", "clone", "xset",
+   "freelock", "freed", "loadenv", OPCODE_UNKNOWN, "rln", "read", "clone", "xset",
 
    "rabs", "len", "rload", "flag", OPCODE_UNKNOWN, "parent", "class", "mindex",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "rround", "equal", OPCODE_UNKNOWN,

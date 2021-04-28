@@ -213,6 +213,7 @@ enum LexicalType
    lxInlineOp                 = 0x4314B0,
    lxInlineExpression         = 0x0314B0,
    lxTempBinaryArray          = 0x0114C0,
+   lxArgArray                 = 0x0314D0,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -248,7 +249,6 @@ enum LexicalType
 //   lxYieldReturning           = 0x058261,
 //   lxYieldContext             = 0x018270,
 //   lxYieldLocals              = 0x018271,
-//   lxArgArray                 = 0x058280,
 //   lxIndexSaving              = 0x0582A0,
 //   lxIndexLoading             = 0x0582A1,
 

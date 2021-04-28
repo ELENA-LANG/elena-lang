@@ -559,8 +559,8 @@ inline ref_t defineConstantMask(LexicalType type)
    }
 }
 
-//void ByteCodeWriter :: unboxArgList(CommandTape& tape, bool arrayMode)
-//{
+void ByteCodeWriter :: unboxArgList(CommandTape& tape, int fixedLen/*, bool arrayMode*/)
+{
 //   if (arrayMode) {
 //      // pushn -1
 //      // len
@@ -578,42 +578,52 @@ inline ref_t defineConstantMask(LexicalType type)
 //      tape.releaseLabel();
 //   }
 //   else {
-//      // pusha
-//      // movn 0
-//      // labSearch:
-//      // peek
-//      // inc 1
-//      // elser labSearch -1
-//      // popa
-//
-//      // dec 1
-//      // pushn -1
-//
-//      // labNext:
-//      // dec 1
-//      // push
-//      // elsen labNext 0
-//
-//      tape.write(bcPushA);
-//      tape.write(bcMovN, 0);
-//      tape.newLabel();
-//      tape.setLabel(true);
-//      tape.write(bcPeek);
-//      tape.write(bcInc, 1);
-//      tape.write(bcElseR, baCurrentLabel, -1);
-//      tape.releaseLabel();
-//      tape.write(bcPopA);
-//      tape.write(bcDec, 1);
-//      tape.write(bcPushN, -1);
-//
-//      tape.newLabel();
-//      tape.setLabel(true);
-//      tape.write(bcDec, 1);
-//      tape.write(bcPush);
-//      tape.write(bcElseN, baCurrentLabel, 0);
-//      tape.releaseLabel();
+      // pusha
+      // movn   0
+      // labSearch:
+      // peek
+      // inc    1
+      // elser labSearch -1
+      // popa
+      
+      // inc fixedLen
+      // allocd
+
+      // pusha
+      // movsip  fixedLen + 1
+      // labNextParam:
+      // dec     1
+      // xtrans
+      // elsen   labNextParam, 0
+      // pop
+
+      tape.write(bcPushA);
+      tape.write(bcMovN, 0);
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcPeek);
+      tape.write(bcInc, 1);
+      tape.write(bcElseR, baCurrentLabel, -1);
+      tape.releaseLabel();
+      tape.write(bcPopA);
+
+      if (fixedLen > 0)
+         tape.write(bcInc, fixedLen);
+
+      tape.write(bcAllocD);
+      tape.write(bcPushA);
+      tape.write(bcMovSIP, fixedLen + 1);
+
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcDec, 1);
+      tape.write(bcXTrans);
+      tape.write(bcElseN, baCurrentLabel, 0);
+
+      tape.write(bcPop);
+      tape.releaseLabel();
 //   }
-//}
+}
 
 void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType)
 {
@@ -640,24 +650,32 @@ void ByteCodeWriter :: releaseArg(CommandTape& tape)
    tape.write(bcPop);
 }
 
-//void ByteCodeWriter :: releaseArgList(CommandTape& tape)
-//{
-//   // pusha
-//   // labSearch:
-//   // popa
-//   // swap
-//   // elser labSearch -1
-//   // popa
-//
-//   tape.write(bcPushA);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcPopA);
-//   tape.write(bcSwap);
-//   tape.write(bcElseR, baCurrentLabel, -1);
-//   tape.releaseLabel();
-//   tape.write(bcPopA);
-//}
+void ByteCodeWriter :: releaseArgList(CommandTape& tape)
+{
+   // pusha
+   // pushsip 1
+   // movn    0
+   // labSearch:
+   // peek
+   // inc     1
+   // elser   labSearch -1
+   // pop
+   // popa
+   // freed
+
+   tape.write(bcPushA);
+   tape.write(bcPushSIP, 1);
+   tape.write(bcMovN, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcPeek);
+   tape.write(bcInc, 1);
+   tape.write(bcElseR, baCurrentLabel, -1);
+   tape.releaseLabel();
+   tape.write(bcPop);
+   tape.write(bcPopA);
+   tape.write(bcFreeD);
+}
 
 void ByteCodeWriter :: setSubject(CommandTape& tape, ref_t subject)
 {
@@ -3086,12 +3104,10 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
       //if (argNode == lxExpression)
       //   argNode = current.findSubNodeMask(lxObjectMask);
 
-      //if (current == lxArgArray) {
-      //   argUnboxMode = true;
-      ////   generateExpression(tape, argNode, scope);
-      ////   unboxArgList(tape, argNode.argument != 0);
-      //}
-      /*else*/ argCount++;
+      if (current == lxArgArray) {
+         argUnboxMode = true;
+      }
+      else argCount++;
 
       current = current.nextNode(lxObjectMask);
    }
@@ -3106,7 +3122,13 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    if (openArg)
       extraArgs = 1;
 
-   tape.write(bcAllocI, argCount - startIndex + extraArgs);
+   if (argUnboxMode) {
+      current = node.findChild(lxArgArray);
+
+      generateExpression(tape, current, scope);
+      unboxArgList(tape/*, argNode.argument != 0*/, argCount - startIndex + extraArgs);
+   }
+   else tape.write(bcAllocI, argCount - startIndex + extraArgs);   
 
    if (directOrder) {
       for (pos_t i = startIndex; i != argCount; i++) {
@@ -3139,12 +3161,11 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    else tape.write(bcPeekSI, 0);
 
    generateCall(tape, node/*, paramCount, presavedCount*/);
-
-   tape.write(bcFreeI, argCount - startIndex + extraArgs);
-
-   //   if (argUnboxMode) {
-//      releaseArgList(tape);
-//   }
+   
+   if (argUnboxMode) {
+      releaseArgList(tape);
+   }
+   else tape.write(bcFreeI, argCount - startIndex + extraArgs);
 
    scope.clear();
 }

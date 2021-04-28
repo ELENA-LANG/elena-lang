@@ -173,11 +173,11 @@ class ByteCodeWriter
 
    void clearObject(CommandTape& tape, int fieldCount);
    void clearDynamicObject(CommandTape& tape);
-//   void unboxArgList(CommandTape& tape, bool arrayMode);
+   void unboxArgList(CommandTape& tape, int fixedLen/*, bool arrayMode*/);
 
    void releaseStack(CommandTape& tape, int count);
    void releaseArg(CommandTape& tape);
-   //   void releaseArgList(CommandTape& tape);
+   void releaseArgList(CommandTape& tape);
 
    void setSubject(CommandTape& tape, ref_t subject);
 

@@ -680,6 +680,15 @@ inline % 28h
 
 end
 
+// ; freed
+inline % 29h
+
+  mov  edi, edx
+  shl  edi, 2
+  add  esp, edi
+
+end
+
 // ; loadenv
 inline % 2Ah
 

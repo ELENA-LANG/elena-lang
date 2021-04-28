@@ -58,7 +58,7 @@ enum ByteCode
    bcExclude         = 0x26,   
    bcTryLock         = 0x27,
    bcFreeLock        = 0x28,
-//   bcRethrow         = 0x29,
+   bcFreeD           = 0x29,
    bcLoadEnv         = 0x2A,
 //   bcSelect          = 0x2B,
    bcRLn             = 0x2C,

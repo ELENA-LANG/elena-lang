@@ -3,10 +3,6 @@ In development:
 ------         
 
   [development]
-    - passing variadic arg further
-
-    - support params
-
     * DynamicTape
     * #206 : interpreter sample
 

@@ -52,7 +52,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 164;
+const int gcCommandNumber = 165;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -87,7 +87,8 @@ const int gcCommands[gcCommandNumber] =
    bcMIndex, bcParent, bcCheckSI, bcLSave,
    bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF, bcXRSaveF,
    bcXRedirect, bcXVRedirect, bcVJumpRM, bcAllocN, bcXNew,
-   bcXSaveSI, bcAllocD, bcXSetR, bcXTrans, bcLLoad
+   bcXSaveSI, bcAllocD, bcXSetR, bcXTrans, bcLLoad,
+   bcFreeD
 };
 
 const int gcCommandExNumber = 58;
@@ -122,7 +123,7 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &loadOneByteOp, &loadOneByteOp, &compilePushD, &compilePopD, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
-   &loadOneByteOp, &compileNop, &loadOneByteOp, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
+   &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileNop,
@@ -662,7 +663,7 @@ void _ELENA_::loadSPOp(int opcode, I64JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument << 3, 0));
+         scope.code->writeDWord(scope.argument << 3);
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 

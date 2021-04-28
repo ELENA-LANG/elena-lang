@@ -4065,11 +4065,12 @@ bool Compiler :: boxingRequired(ObjectInfo& info)
       case okTempLocalAddress:
       case okFieldAddress:
       case okBoxableLocal:
-      case okParams:
          return true;
       case okParam:
       case okSelfParam:
          return info.extraparam == -1;
+      case okParams:
+         return info.reference != V_UNBOXEDARGS;
       default:
          return false;
    }
@@ -6252,11 +6253,18 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
          break;
       case okParams:
       {
-         ref_t r = resolvePrimitiveReference(scope, object.reference, object.element, false);
-         if (!r)
-            throw InternalError("Cannot resolve variadic argument template");
+         if (object.reference == V_UNBOXEDARGS) {
+            writer.newNode(lxArgArray);
+            writer.appendNode(lxBlockLocalAddr, object.param);
+         }
+         else {
+            ref_t r = resolvePrimitiveReference(scope, object.reference, object.element, false);
+            if (!r)
+               throw InternalError("Cannot resolve variadic argument template");
 
-         writer.newNode(lxBlockLocalAddr, object.param);
+            writer.newNode(lxBlockLocalAddr, object.param);
+         }
+
          break;
       }
       default:
