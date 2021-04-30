@@ -4,7 +4,58 @@ public interface TapeFunction
 {
     abstract mixin function(params object[] args);
 }
-//
+
+// --- AllocFunction ---
+
+public struct AllocFunction : TapeFunction
+{
+    int size;
+    
+    constructor(int size)
+    {
+        this size := size
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__alloc_closure;    
+}
+
+// --- ConstantFunction --- 
+
+public class ConstantFunction : TapeFunction
+{
+    object constant;
+    
+    constructor load(constant)
+    {
+        this constant := constant;
+    }
+    
+    mixin function(params object[] args)
+        = constant;
+}
+
+// --- MessageFunction ---
+
+public struct MessageFunction : TapeFunction
+{
+    embeddable Message theMessage;
+    
+    constructor(string message)
+        <= load(new Message(message));
+    
+    constructor load(string message)
+        <= load(new Message(message));
+    
+    constructor load(Message message)
+    {
+        theMessage := message
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__mssg_closure;
+}
+
 //// --- DynamicMessageFunction ---
 //
 //public singleton DynamicMessageFunction : TapeFunction
@@ -12,28 +63,7 @@ public interface TapeFunction
 //    mixin function(params object[] args)
 //        => intern system'core_routines'__dynamicmssg_closure;
 //}
-//
-//// --- MessageFunction ---
-//
-//public struct MessageFunction : TapeFunction
-//{
-//    embeddable Message theMessage;
-//    
-//    constructor(string message)
-//        <= load(new Message(message));
-//    
-//    constructor load(string message)
-//        <= load(new Message(message));
-//    
-//    constructor load(Message message)
-//    {
-//        theMessage := message
-//    }
-//    
-//    mixin function(params object[] args)
-//        => intern system'core_routines'__mssg_closure;
-//}
-//
+
 //// --- FuncFunction ---
 //
 //public struct FuncFunction : TapeFunction
@@ -53,21 +83,6 @@ public interface TapeFunction
 //    
 //    mixin function(params object[] args)
 //        => intern system'core_routines'__fun_closure;
-//}
-//
-//// --- ConstantFunction --- 
-//
-//public class ConstantFunction : TapeFunction
-//{
-//    object constant;
-//    
-//    constructor load(constant)
-//    {
-//        this constant := constant;
-//    }
-//    
-//    mixin function(params object[] args)
-//        = constant;
 //}
 //
 //// --- AssigningFunction ---

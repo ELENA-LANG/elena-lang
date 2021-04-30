@@ -4,9 +4,9 @@
 
 public extension classROp
 {
-//    setField(int index, object object)
-//        => intern system'core_routines'__object;
-//        
+    setField(int index, object object)
+        => intern system'core_routines'__object;
+        
 //    getField(int index)
 //        => intern system'core_routines'__object;
 //        

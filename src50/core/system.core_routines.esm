@@ -14,6 +14,8 @@ define SPECIAL_MESSAGE       00000020h
 define VARIADIC_MESSAGE      00000080h
 define SPECIAL_MESSAGE_INV  0FFFFFFDFh
 
+define elStructure            00000008h
+
 // ; NOTE : __ indicates platform dependant constant!!
 define __rsrv_object_offset32        12      
 define __rsrv_object_offset64        20
@@ -81,6 +83,34 @@ procedure __object."raise[1]"
   pop
   peeksi 0
   throw
+  
+end
+
+procedure __object."setField$system@Object$system@IntNumber$system@Object[3]"
+
+  peeksi  1
+  flag
+  and     elStructure
+  elsen   labErr, 0
+  len
+  peeksi  2
+  notless labErr
+  lessn   labErr, 0
+  load
+  peeksi  1
+  pushsi  3
+  set
+  pop
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
   
 end
 
@@ -680,6 +710,7 @@ labNext:
   savef   -4
 
   vcallrm system'dynamic'TapeFunction, mssgconst : "params##invoke<system'Object>[0]"
+  storesi 0
   peekfi  1
   jump    labNext
 
@@ -2195,6 +2226,25 @@ labErr:
   pushr mssgconst : "new[1]"
 
   throw    
+
+end
+
+procedure __alloc_closure."params##invoke$system@Object[0]"
+
+  load
+  popa
+  allocd
+  pusha
+  movr   0
+  quit
+
+end
+
+procedure __mssg_closure."params##invoke$system@Object[0]"
+
+  load
+  peeksi  1
+  jumpvi  0
 
 end
 

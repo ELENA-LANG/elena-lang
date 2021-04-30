@@ -106,7 +106,7 @@ public mixin DynamicTape
     constructor load(params TapeFunction[] args)
         <= allocate(args.Length)
     {
-        //self.setFields(params args)
+        self.setFields(params args)
     }
 
     constructor load(List<TapeFunction> list)        
