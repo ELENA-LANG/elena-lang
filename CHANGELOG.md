@@ -17,6 +17,7 @@
   - supporting real number literal without postfix (e.g. 2.2)
   - #539 : try-catch-finally opeator 
   - #538 : Bitwise operations 
+  - #540 : support typeof attribute 
 - ELC
   - a warning shown when an object cannot be converted into another one
   - a warning shown when an object does not handle a message (for strong-typed ones)

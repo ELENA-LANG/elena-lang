@@ -1835,6 +1835,9 @@ void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNod
    else if (operatorNode.identifier().compare(ALT_OPERATOR)) {
       templateName.append(ALT_MESSAGE);
    }
+   else if (operatorNode.identifier().compare(IFNOT_OPERATOR)) {
+      templateName.append(IFNOT_MESSAGE);
+   }
 
    templateName.append("#1#1");
 

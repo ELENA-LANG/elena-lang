@@ -889,6 +889,7 @@ LU2b_OPERATOR ->
 TEMPLATE_OPERATOR ->
 	?
 	| \
+	| !
 
 ASSIGNING_OPERATOR ->
 	+=

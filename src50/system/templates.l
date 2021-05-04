@@ -236,6 +236,17 @@ public interface<T>
     }
 }
 
+// .!
+#declare __inlineifnot<identifier>(expr)
+{
+    if (nil == identifier)
+    {
+        identifier := new __typeof identifier();
+    };
+    
+    expr
+}
+
 // .\
 #declare __inlinealt<identifier>(expr)
 {

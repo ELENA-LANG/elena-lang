@@ -3,14 +3,13 @@ In development:
 ------         
 
   [development]
-    - typeof
-    - support if(a>b) c := a;
     - template operation - allocate the variable if it is nil
 
     * Dynamic expressions
     + linux : compile virtual machine
     + linux : 64 bit mode
     - warn if class does not support static method
+    - support if(a>b) c := a;
 
     * #206 : interpreter sample
     + compile console / files samples for linux i386
