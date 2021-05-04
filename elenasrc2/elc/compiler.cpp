@@ -72,6 +72,7 @@ constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
 constexpr auto HINT_CONVERSIONOP    = EAttr::eaConversionOp;
 constexpr auto HINT_TARGET          = EAttr::eaTarget;
 constexpr auto HINT_ASSIGNTARGET    = EAttr::eaAssignTarget;
+constexpr auto HINT_TYPEOF          = EAttr::eaTypeOfOp;
 
 // scope modes
 constexpr auto INITIALIZER_SCOPE    = EAttr::eaInitializerScope;   // indicates the constructor or initializer method
@@ -866,8 +867,15 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool reference
    if (!referenceOne) {
       if (!EAttrs::testany(mode, HINT_MODULESCOPE | HINT_PREVSCOPE)) {
          ObjectInfo info = mapLocal(identifier);
-         if (info.kind != okUnknown)
-            return info;
+         if (info.kind != okUnknown) {
+            if (EAttrs::test(mode, HINT_TYPEOF)) {
+               if (info.reference) {
+                  return Compiler::mapClassSymbol(*this, info.reference);
+               }
+               else return ObjectInfo();
+            }
+            else return info;
+         }            
       }
       else mode = EAttrs::exclude(mode, HINT_PREVSCOPE);
    }

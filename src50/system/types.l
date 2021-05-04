@@ -78,6 +78,8 @@
 #define subjconst   80000807h
 #define __symbol    80000808h
 //#define inlinearg   80000809h
+#define __typeof   8000080Ah
+
 
 /// Provides classes that describe the basic functionality
 

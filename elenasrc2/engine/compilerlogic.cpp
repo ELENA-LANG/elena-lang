@@ -1799,6 +1799,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      case V_INLINEARG:
 //         attributes.include(EAttr::eaInlineArg);
 //         return true;
+      case V_TYPEOF:
+         attributes.include(EAttr::eaTypeOfOp);
+         return true;
       case V_IGNOREDUPLICATE:
          attributes.include(EAttr::eaIgnoreDuplicates);
          return true;

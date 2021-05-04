@@ -101,7 +101,7 @@ constexpr auto V_MESSAGE         = 0x80000806u;
 constexpr auto V_SUBJECT         = 0x80000807u;
 constexpr auto V_SYMBOL          = 0x80000808u;
 constexpr auto V_INLINEARG       = 0x80000809u;
-////constexpr auto V_INLINEATTRIBUTE = 0x8000080Au;
+constexpr auto V_TYPEOF          = 0x8000080Au;
 
 /// primitive types
 constexpr auto V_FLAG            = 0x80000001u;
@@ -543,8 +543,9 @@ public:
       eaTarget             = 0x08080000000,
       eaTargetExpr         = 0x08000000000,
       eaAssignTarget       = 0x10000000000,
+      eaTypeOfOp           = 0x20000000000,
 
-      eaScopeMask          = /*0x0300041400A*/eaNestedNs | eaAssignTarget,
+      eaScopeMask          = /*0x0300041400A*/eaNestedNs | eaAssignTarget | eaTypeOfOp,
 //      eaObjectMask         = 0x008A821B2F4,
    };
 

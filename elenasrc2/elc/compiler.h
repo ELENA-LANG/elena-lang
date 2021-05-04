@@ -1015,7 +1015,7 @@ private:
 
    bool loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silentMode);
 
-   ObjectInfo mapClassSymbol(Scope& scope, int classRef);
+   static ObjectInfo mapClassSymbol(Scope& scope, int classRef);
 
    ref_t __FASTCALL resolveMultimethod(ClassScope& scope, mssg_t messageRef);
 

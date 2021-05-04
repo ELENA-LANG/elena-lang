@@ -3,10 +3,16 @@ In development:
 ------         
 
   [development]
-    * DynamicTape
-    * #206 : interpreter sample
+    - typeof
+    - support if(a>b) c := a;
+    - template operation - allocate the variable if it is nil
 
+    * Dynamic expressions
     + linux : compile virtual machine
+    + linux : 64 bit mode
+    - warn if class does not support static method
+
+    * #206 : interpreter sample
     + compile console / files samples for linux i386
     + compile lib50_64 for linux i386 / ppc64le
     + compile console / files samples for linux amd64
