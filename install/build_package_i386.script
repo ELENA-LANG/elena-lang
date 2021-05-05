@@ -8,6 +8,7 @@ mkdir -p /usr/lib/elena/core/x32/
 mkdir -p /usr/lib/elena/lib50
 
 cp ../bin/libelenart.so /usr/lib/elena/
+cp ../bin/libelenavm.so /usr/lib/elena/
 cp ../bin/elena-lc /usr/bin/
 
 cp ../bin/elc.config /etc/elena/

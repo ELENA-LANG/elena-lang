@@ -188,7 +188,7 @@ $(OBJDIR_RELEASE)/__/__/common/config.o: ../../common/config.cpp
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
-	rm ../../../bin/elenart.so
+	rm ../../../bin/libelenart.so
 	rm -rf $(OBJDIR_RELEASE)/__/linux32
 	rm -rf $(OBJDIR_RELEASE)/__
 	rm -rf $(OBJDIR_RELEASE)/__/__/engine/x86
