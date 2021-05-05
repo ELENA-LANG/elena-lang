@@ -54,7 +54,7 @@
        <include>dynamic/groups.l</include>
        <include>dynamic/closures.l</include>
        <include>dynamic/tape.l</include>
-       <include>dynamic/expressions\expressions.l</include>
+       <include>dynamic/expressions/expressions.l</include>
      </module>
   </files>
 </configuration>
