@@ -3,20 +3,20 @@ In development:
 ------         
 
   [development]
-    - template operation - allocate the variable if it is nil
-
-    * Dynamic expressions
     + linux : compile virtual machine
     + linux : 64 bit mode
     - warn if class does not support static method
     - support if(a>b) c := a;
+    - debugger fine-tuning
 
+    * Building code at run-time in ELENA, Part 2
     * #206 : interpreter sample
     + compile console / files samples for linux i386
     + compile lib50_64 for linux i386 / ppc64le
     + compile console / files samples for linux amd64
     + ppc64le : simplest proram
     + compile hellowordl for ppc64le
+    - IDE : smart spaces
 
     * #206 : compile sqllite for 64bit
     * #206 : samples, tutorials
@@ -47,7 +47,6 @@ In development:
     * uncomment fieldinit routines, yield methods
     * uncomment all code
 
-    * tape should use cdecl with fixed size - no need to clear the stack
     + alt op - x86-64 check stack alignment
     + optimiation : assinging int constant, 
     + no duplicate variable by boxing

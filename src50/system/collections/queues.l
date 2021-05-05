@@ -406,7 +406,7 @@ namespace collections
             
             this theLength := self.Length;
             
-            T get() = theArray.at(this theIndex);
+            get T Value() = theArray.at(this theIndex);
             
             enumerable() = self;
             
@@ -453,7 +453,7 @@ namespace collections
             }
         }
             
-        get()
+        get Value()
             = theList[theIndex];
             
         reset()
@@ -496,7 +496,7 @@ namespace collections
             }    
         }
             
-        get()
+        get Value()
             = theList[theIndex];
             
         reset()

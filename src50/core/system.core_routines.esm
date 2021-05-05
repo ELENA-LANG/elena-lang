@@ -2248,6 +2248,42 @@ procedure __mssg_closure."params##invoke$system@Object[0]"
 
 end
 
+procedure __local_closure."params##invoke$system@Object[0]"
+
+  load
+  movfip 0
+  get
+
+  quit
+
+end
+
+procedure __assign_closure."params##invoke$system@Object[0]"
+
+  pushsi  1
+  load
+  movfip 0
+  xset
+  popa
+
+  quit
+
+end
+
+
+procedure __saving_closure."params##invoke$system@Object[0]"
+
+  pushsi 1
+
+  load
+  movsip 2
+  xset
+  popa
+
+  quit
+
+end
+
 // ; system routines
 
 symbol sta_start

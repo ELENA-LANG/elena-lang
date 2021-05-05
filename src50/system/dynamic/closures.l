@@ -84,52 +84,52 @@ public struct MessageFunction : TapeFunction
 //    mixin function(params object[] args)
 //        => intern system'core_routines'__fun_closure;
 //}
-//
-//// --- AssigningFunction ---
-//
-//public struct AssigningFunction : TapeFunction
-//{
-//    embeddable int index;
-//    
-//    constructor(int index)
-//    {
-//        this index := index
-//    }
-//    
-//    mixin function(params object[] args)
-//        => intern system'core_routines'__assign_closure;    
-//}
-//
-//// --- LocalFunction ---
-//
-//public struct LocalFunction : TapeFunction
-//{
-//    embeddable int index;
-//    
-//    constructor(int index)
-//    {
-//        this index := index
-//    }
-//    
-//    mixin function(params object[] args)
-//        => intern system'core_routines'__local_closure;    
-//}
-//
-//// --- SavingFunction ---
-//
-//public struct SavingFunction : TapeFunction
-//{
-//    embeddable int index;
-//    
-//    constructor(int index)
-//    {
-//        this index := index
-//    }
-//    
-//    mixin function(params object[] args)
-//        => intern system'core_routines'__saving_closure;    
-//}
-//
+
+// --- AssigningFunction ---
+
+public struct AssigningFunction : TapeFunction
+{
+    embeddable int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__assign_closure;    
+}
+
+// --- LocalFunction ---
+
+public struct LocalFunction : TapeFunction
+{
+    embeddable int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__local_closure;    
+}
+
+// --- SavingFunction ---
+
+public struct SavingFunction : TapeFunction
+{
+    embeddable int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__saving_closure;    
+}
+
 //// --- ReleaseFunction ---
 //
 //public struct ReleaseFunction : TapeFunction

@@ -29,6 +29,7 @@
        <include>app.l</include>
        <include>win32_app.l</include>
        <include>collections\list.l</include>
+       <include>collections\queues.l</include>
        <include>calendar\win32_datetime.l</include>
        <include>math\math.l</include>
        <include>calendar\dates.l</include>

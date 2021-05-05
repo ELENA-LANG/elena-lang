@@ -76,27 +76,27 @@ public class InvalidArgumentException : Exception
         <= new(message);
 }
 
-//// --- InvalidOperationException ---
-//
-//public class InvalidOperationException : Exception
-//{
-//    /// Creates the exception
-//    constructor new()
-//        <= new("Invalid operation");
-//
-//    /// Creates the exception
-//    constructor new(string message)
-//        <= new(message);
-//}
-//
-//// --- TypeLoaderException ---
-//
-//public class TypeLoaderException : Exception
-//{
-//    /// Creates the exception
-//    constructor new(string className)
-//        <= new("Type " + className + " cannot be loaded");
-//}
+// --- InvalidOperationException ---
+
+public class InvalidOperationException : Exception
+{
+    /// Creates the exception
+    constructor new()
+        <= new("Invalid operation");
+
+    /// Creates the exception
+    constructor new(string message)
+        <= new(message);
+}
+
+// --- TypeLoaderException ---
+
+public class TypeLoaderException : Exception
+{
+    /// Creates the exception
+    constructor new(string className)
+        <= new("Type " + className + " cannot be loaded");
+}
 
 // --- SymbolLoaderException ---
 

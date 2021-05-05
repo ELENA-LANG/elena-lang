@@ -24,9 +24,13 @@ namespace expressions
 //            Name := name
 //        }
 //    }
-//    
-//    public interface ExpressionScope
-//    {
+    
+    public interface ExpressionScope
+    {
+        abstract int allocTempVariable();
+
+        get abstract int Allocated();
+                        
 //        get abstract int ScopeLevel();
 //        
 //        get abstract ExpressionScope Previous();
@@ -36,10 +40,22 @@ namespace expressions
 //        abstract TapeFunction resolveExtension(Message message);
 //        
 //        abstract declare(ScopeVariable variable);
-//    }
-//
-//    public singleton IdleExpressionScope : ExpressionScope
-//    {
+    }
+
+    public class RootExpressionScope : ExpressionScope
+    {
+        ref<int> allocated := 0;
+        
+        int Allocated = *allocated;
+        
+        int allocTempVariable()
+        {
+            allocated.append(1);
+            
+            ^ *allocated;
+        }
+        
+        
 //        int ScopeLevel = 0;
 //        
 //        ExpressionScope Previous = nil;
@@ -56,7 +72,7 @@ namespace expressions
 //        {
 //            ^ nil
 //        }
-//    }
+    }
 
     public interface Expression
     {    
@@ -208,74 +224,58 @@ namespace expressions
 //            = new NestedExpression(expr);          
 //        
 
-        internal static saveMessageCallTo(List<TapeFunction> list, /*ExpressionScope scope, Expression target, 
-                                            Expression[] arguments, */TapeFunction operation)
+        internal static saveMessageCallTo(List<TapeFunction> list, ExpressionScope scope, Expression target, 
+                                            Expression[] arguments, TapeFunction operation)
         {
-//            int len := arguments.Length;
-//            List<TapeFunction> tempVariables := nil;
-//            
-//            if (target.IsOperation && len > 0) {
-//                int tempVar := scope.allocTempVariable();
-//                
-//                tempVariables := new List<TapeFunction>();
-//                tempVariables.append(new LocalFunction(tempVar));                
-//            }
-//            
-//            bool simpleMode := true;
-//            if (target.IsOperation && len > 0) 
-//            {
-//                simpleMode := false;
-//            }
-//            else {
-//                for (int i := 0, i < len, i += 1) {
-//                    if (arguments[i].IsOperation)
-//                        simpleMode := false;
-//                }
-//            };
-//            
-//            if (simpleMode) {
-//                int i := len;
-//                while(i > 0)
-//                {
-//                    i -= 1;
-//                    
-//                    arguments[i].saveTo(list, scope);
-//                };
-//                
-//                target.saveTo(list, scope);
-//                
-//                list.append(operation)
-//            }
-//            else {
-//                var nilConst := new ConstantExpression(nilValue);
-//                nilConst.saveTo(list, scope);
-//                for (int i := 0, i < len, i += 1) {
-//                    nilConst.saveTo(list, scope)
-//                };
-//                
-//                int saveIndex := 1;
-//                
-//                target.saveTo(list, scope);                
-//                list.append(new SavingFunction(saveIndex));
-//                
-//                for (int i := 0, i < len, i += 1) {
-//                    saveIndex += 1;
-//                    var f := new SavingFunction(saveIndex);
-//                    
-//                    arguments[i].saveTo(list, scope);
-//                    list.append(f);
-//                };
-//                
-//                list.append(operation)
-//            }                                                
+            int len := arguments.Length;
+            Queue<TapeFunction> tempVariables := nil;
+            
+            // first pass - preallocating sub expr 
+            if (target.IsOperation && len > 0) {
+                int tempVar := scope.allocTempVariable();
+                target.saveTo(list, scope, 0);
+                list.append(new AssigningFunction(tempVar));
+                
+                tempVariables.!push(new LocalFunction(tempVar));                
+            };
+            
+            for (int i := 0, i < len, i += 1) {
+                if (arguments[i].IsOperation) {
+                    int tempVar := scope.allocTempVariable();
+                    
+                    arguments[i].saveTo(list, scope, 0);
+                    list.append(new AssigningFunction(tempVar));
+                
+                    tempVariables.!push(new LocalFunction(tempVar));
+                }
+            };
+            
+            // second pass - the operation
+            if (target.IsOperation && len > 0) {
+                tempVariables.pop().saveTo(list, scope, 0)
+            }
+            else {
+                target.saveTo(list, scope, 0)
+            };
+            
+            for (int i := 0, i < len, i += 1) {
+                if (arguments[i].IsOperation) {
+                   tempVariables.pop().saveTo(list, scope, i + 1) 
+                }
+                else {
+                    arguments[i].saveTo(list, scope, i + 1) 
+                }
+            };
+            
+            list.append(operation);
         }
         
-//        get abstract bool IsOperation();
+        get abstract bool IsOperation();
                      
         [info:"Prepares the expression tree. Returns the maximal size of the preallocated stack"]                                                     
-        abstract int prepare(/*ExpressionScope scope*/);
+        abstract int prepare(ExpressionScope scope);
                                         
-        abstract saveTo(List<TapeFunction> list/*, ExpressionScope scope*/);
+        abstract saveTo(List<TapeFunction> list, ExpressionScope scope, int index);
     
 //        saveTo(List<Tuple<Message,DynamicTape>> list, ExpressionScope scope)
 //        {
@@ -285,18 +285,21 @@ namespace expressions
         // temporal generic solution
         eval()
         {
-            ^ (self.compile(/*IdleExpressionScope*/))();
+            var t := self.compile(new RootExpressionScope());
+            ^ t();
+            
+            //^ (self.compile(new RootExpressionScope()))();
         }
             
-        DynamicTape compile(/*ExpressionScope scope*/)
+        DynamicTape compile(ExpressionScope scope)
         {
             List<TapeFunction> list := new List<TapeFunction>(8);
             
-            int maxStackSize := self.prepare(/*scope*/);
+            int stackSize := self.prepare(scope) + scope.Allocated;
             
-            list.append(new AllocFunction(maxStackSize));
+            list.append(new AllocFunction(stackSize));
             
-            self.saveTo(list/*, scope*/);
+            self.saveTo(list, scope, 0);
 
             ^ DynamicTape.load(list)
         }
@@ -680,17 +683,20 @@ namespace expressions
             symbol := new Symbol(s)
         }
         
-//        bool IsOperation = false;
+        bool IsOperation = false;
         
         eval()
             = symbol;
 
-        int prepare(/*ExpressionScope scope*/)
+        int prepare(ExpressionScope scope)
             = 1;
                         
-        saveTo(List<TapeFunction> list/*, ExpressionScope scope*/)
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
         {
-            list.append(ConstantFunction.load(symbol));        
+            list.append(ConstantFunction.load(symbol));
+            if (index > 0) {
+                list.append(new SavingFunction(index));
+            }
         }                
     }
 
@@ -763,15 +769,15 @@ namespace expressions
                     Expression p11, Expression p12)
             <= new(new Message(message + "[13]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
         
-//        bool IsOperation = true;
+        bool IsOperation = true;
         
-        int prepare(/*ExpressionScope scope*/)
+        int prepare(ExpressionScope scope)
         {
-            int maxStackSize := _target.prepare(/*scope*/);
+            int maxStackSize := _target.prepare(scope);
             
             int len := _arguments.Length;
             for(int i := 0, i < len, i+=1) {
-                int argStackSize := _arguments[i].prepare(/*scope*/);
+                int argStackSize := _arguments[i].prepare(scope);
                 if (argStackSize > maxStackSize)
                     { maxStackSize := argStackSize; }
             };
@@ -779,9 +785,12 @@ namespace expressions
             ^ maxStackSize
         }
         
-        saveTo(List<TapeFunction> list/*, ExpressionScope scope*/)
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
         {
-            Expression.saveMessageCallTo(list, /*scope, _target, _arguments, */MessageFunction.load(_message))                                                            
+            Expression.saveMessageCallTo(list, scope, _target, _arguments, MessageFunction.load(_message));                                                            
+            if (index > 0) {
+                list.append(new SavingFunction(index));
+            }
         }
     }
 
