@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 0x0013;
+constexpr auto ELENAVM_REVISION = 0x0014;
 
 // --- ELENAVM common constants ---
 #ifdef _WIN32

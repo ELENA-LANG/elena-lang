@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  Linux32 ELENA System Routines
 //
-//                                              (C)2020, by Alexei Rakov
+//                                              (C)2020-21, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -12,20 +12,40 @@
 
 using namespace _ELENA_;
 
+static uintptr_t CriticalHandler = 0;
+
+static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
+{
+   ucontext* u = (ucontext*)unused;
+
+   switch (sig) {
+      case SIGFPE:
+         u->uc_mcontext.gregs[REG_EDX] = ExceptionInfo->ContextRecord->Eip;
+         u->uc_mcontext.gregs[REG_EAX] = ELENA_ERR_DIVIDE_BY_ZERO;
+         u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+         break;
+      case SIGSEGV:
+         u->uc_mcontext.gregs[REG_EDX] = ExceptionInfo->ContextRecord->Eip;
+         u->uc_mcontext.gregs[REG_EAX] = ELENA_ERR_ACCESS_VIOLATION;
+         u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+         break;
+      default:
+         u->uc_mcontext.gregs[REG_EDX] = ExceptionInfo->ContextRecord->Eip;
+         u->uc_mcontext.gregs[REG_EAX] = ELENA_ERR_CRITICAL;
+         u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+         break;
+   }
+}
+
 void SystemRoutineProvider::InitCriticalStruct(uintptr_t criticalHandler)
 {
-   //pos_t previousHeader = 0;
+   CriticalHandler = criticalHandler;
 
-   //// ; set SEH handler / frame / stack pointers
-   //__asm {
-   //   mov  eax, header
-   //   mov  ecx, fs: [0]
-   //   mov  previousHeader, ecx
-   //   mov  fs : [0] , eax
-   //}
-
-   //header->previousStruct = previousHeader;
-   //header->handler = criticalHandler;
+   sa.sa_flags = SA_SIGINFO;
+   sigemptyset(&sa.sa_mask);
+   sa.sa_sigaction = ELENASignalHandler;
+   if (sigaction(SIGSEGV, &sa, NULL) == -1)
+      throw EAbortException();
 }
 
 TLSEntry* SystemRoutineProvider::GetTLSEntry(pos_t tlsIndex)
@@ -55,15 +75,15 @@ void SystemRoutineProvider::InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, Prog
    //threadTable[threadIndex] = (pos_t)entry;
 }
 
-inline void printNumber(int value)
-{
-      IdentifierString s;
-      s.appendInt(value);
-
-      ident_t pstr = s;
-      for(int i = 0; i < getlength(s); i++)
-         putchar(pstr[i]);
-}
+//inline void printNumber(int value)
+//{
+//      IdentifierString s;
+//      s.appendInt(value);
+//
+//      ident_t pstr = s;
+//      for(int i = 0; i < getlength(s); i++)
+//         putchar(pstr[i]);
+//}
 
 pos_t SystemRoutineProvider::NewHeap(int totalSize, int committedSize)
 {
