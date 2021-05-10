@@ -3,7 +3,7 @@ In development:
 ------         
 
   [development]
-    + linux : compile virtual machine
+    + linux : exception handling
     + linux : 64 bit mode
     + ppc64le : simplest program
 
