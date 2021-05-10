@@ -70,6 +70,10 @@ extern "C"
 
    DLL_PUBLIC int LoadExtensionDispatcher(const char* moduleList, void* message, void* output);
 
+   DLL_PUBLIC void* GCCollect(void* roots, size_t size);
+
+   DLL_PUBLIC void* GCCollectPerm(size_t size);
+
    // == Linux specific routines ==
    DLL_PUBLIC int l_core_getargc();
 

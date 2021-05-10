@@ -95,9 +95,6 @@ void InitializeVMSTA(void* sehTable, void* systemEnv, void* exceptionHandler, vo
    if (_Machine == nullptr)
       initMachine("/usr/lib/elena");
 
-   putchar('?');
-   fflush(stdout);
-
    // start the system
    _Machine->startSTA(header, (SystemEnv*)systemEnv, sehTable, vmTape);
 }
@@ -473,4 +470,14 @@ const char* GetVMLastError()
    Instance* instance = _Machine->getInstance();
 
    return  instance ? instance->getStatus() : "Not initialized";
+}
+
+void* GCCollect(void* roots, size_t size)
+{
+   return SystemRoutineProvider::GCRoutine(((SystemEnv*)_SystemEnv)->Table, (GCRoot*)roots, size);
+}
+
+void* GCCollectPerm(size_t size)
+{
+   return SystemRoutineProvider::GCRoutinePerm(((SystemEnv*)_SystemEnv)->Table, size, ((SystemEnv*)_SystemEnv)->GCPERMSize);
 }
