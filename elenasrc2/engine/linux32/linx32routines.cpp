@@ -1,13 +1,15 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  Linux32 ELENA System Routines
 //
-//                                              (C)2020-21, by Alexei Rakov
+//                                              (C)2020-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
 #include <sys/mman.h>
+#include <signal.h>
+#include <ucontext.h>
 #include <errno.h>
 
 using namespace _ELENA_;
@@ -16,23 +18,23 @@ static uintptr_t CriticalHandler = 0;
 
 static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 {
-   ucontext* u = (ucontext*)unused;
+   ucontext_t* u = (ucontext_t*)unused;
 
    switch (sig) {
       case SIGFPE:
-         u->uc_mcontext.gregs[REG_EDX] = ExceptionInfo->ContextRecord->Eip;
+         u->uc_mcontext.gregs[REG_EDX] = u->uc_mcontext.gregs[REG_EIP];
          u->uc_mcontext.gregs[REG_EAX] = ELENA_ERR_DIVIDE_BY_ZERO;
-         u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+         u->uc_mcontext.gregs[REG_EIP] = CriticalHandler;
          break;
       case SIGSEGV:
-         u->uc_mcontext.gregs[REG_EDX] = ExceptionInfo->ContextRecord->Eip;
+         u->uc_mcontext.gregs[REG_EDX] = u->uc_mcontext.gregs[REG_EIP];
          u->uc_mcontext.gregs[REG_EAX] = ELENA_ERR_ACCESS_VIOLATION;
-         u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+         u->uc_mcontext.gregs[REG_EIP] = CriticalHandler;
          break;
       default:
-         u->uc_mcontext.gregs[REG_EDX] = ExceptionInfo->ContextRecord->Eip;
+         u->uc_mcontext.gregs[REG_EDX] = u->uc_mcontext.gregs[REG_EIP];
          u->uc_mcontext.gregs[REG_EAX] = ELENA_ERR_CRITICAL;
-         u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+         u->uc_mcontext.gregs[REG_EIP] = CriticalHandler;
          break;
    }
 }
@@ -41,6 +43,7 @@ void SystemRoutineProvider::InitCriticalStruct(uintptr_t criticalHandler)
 {
    CriticalHandler = criticalHandler;
 
+   struct sigaction sa;
    sa.sa_flags = SA_SIGINFO;
    sigemptyset(&sa.sa_mask);
    sa.sa_sigaction = ELENASignalHandler;
