@@ -12,6 +12,7 @@ cp ../bin/libelenavm.so /usr/lib/elena/
 cp ../bin/elena-lc /usr/bin/
 
 cp ../bin/elc.config /etc/elena/
+cp ../bin/elenavm.config /etc/elena/
 cp ../bin/templates/*.config /etc/elena/templates/
 
 echo compiling data files
