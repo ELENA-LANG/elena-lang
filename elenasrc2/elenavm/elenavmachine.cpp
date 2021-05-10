@@ -1217,11 +1217,15 @@ void ELENAVMMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void
       }
       catch(InternalError& e)
       {
+         _instance->printInfo("InternalError");
+
          retVal = -1;
          _instance->setStatus(e.message);
       }
       catch (EAbortException&)
       {
+         _instance->printInfo("EAbortException");
+
          retVal = -1;
       }
 

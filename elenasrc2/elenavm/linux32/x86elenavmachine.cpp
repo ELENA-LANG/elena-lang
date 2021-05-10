@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2019, by Alexei Rakov
+//                                              (C)2009-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -66,7 +66,7 @@ _Memory* x86Instance :: getTargetSection(size_t mask)
             return getMetaAttributeSection();
          }
       default:
-         return NULL;
+         return nullptr;
    }
 }
 

@@ -5,10 +5,10 @@
 
 using namespace _ELENA_;
 
-static x86ELENAVMMachine* _Machine = NULL;
+static x86ELENAVMMachine* _Machine = nullptr;
 //static Path rootPath;
-static void* _SystemEnv = NULL;
-static void* _Args = NULL;
+static void* _SystemEnv = nullptr;
+static void* _Args = nullptr;
 
 // --- initmachine ---
 
@@ -94,6 +94,9 @@ void InitializeVMSTA(void* sehTable, void* systemEnv, void* exceptionHandler, vo
 
    if (_Machine == nullptr)
       initMachine("/usr/lib/elena");
+
+   putchar('?');
+   fflush(stdout);
 
    // start the system
    _Machine->startSTA(header, (SystemEnv*)systemEnv, sehTable, vmTape);
