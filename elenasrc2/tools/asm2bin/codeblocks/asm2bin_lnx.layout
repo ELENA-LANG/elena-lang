@@ -2,36 +2,6 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="../../../common/streams.h" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="19112" topLine="962" />
-		</Cursor>
-	</File>
-	<File name="../../../common/altstrings.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4306" topLine="138" />
-		</Cursor>
-	</File>
-	<File name="../../../common/tools.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2323" topLine="110" />
-		</Cursor>
-	</File>
-	<File name="../../../engine/elena.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="15324" topLine="600" />
-		</Cursor>
-	</File>
-	<File name="../../../common/files.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1067" topLine="52" />
-		</Cursor>
-	</File>
-	<File name="../../../engine/section.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1481" topLine="48" />
-		</Cursor>
-	</File>
 	<File name="../../../common/altstrings.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="35256" topLine="1492" />
@@ -65,6 +35,36 @@
 	<File name="../../../common/lists.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="71690" topLine="3549" />
+		</Cursor>
+	</File>
+	<File name="../../../common/streams.h" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="19112" topLine="962" />
+		</Cursor>
+	</File>
+	<File name="../../../common/altstrings.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4306" topLine="138" />
+		</Cursor>
+	</File>
+	<File name="../../../common/tools.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2323" topLine="110" />
+		</Cursor>
+	</File>
+	<File name="../../../engine/elena.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="15324" topLine="600" />
+		</Cursor>
+	</File>
+	<File name="../../../common/files.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1067" topLine="52" />
+		</Cursor>
+	</File>
+	<File name="../../../engine/section.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1481" topLine="48" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

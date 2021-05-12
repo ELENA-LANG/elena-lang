@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
       if (platform == _ELENA_::ptLinux32Console) {
          print(ELC_LINKING);
 
-         _ELENA_::I386Linker32 linker;
+         _ELENA_::I386Linker linker;
          ImageHelper helper(true);
          _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
          linker.run(project, image/*, -1*/);
@@ -300,7 +300,7 @@ int main(int argc, char* argv[])
       else if (platform == _ELENA_::ptLinux64Console) {
          print(ELC_LINKING);
 
-         _ELENA_::I386Linker64 linker;
+         _ELENA_::AMD64Linker linker;
          ImageHelper helper(true);
          _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
          linker.run(project, image/*, -1*/);
@@ -322,7 +322,7 @@ int main(int argc, char* argv[])
       else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptVMLinux32Console) {
          print(ELC_LINKING);
 
-         _ELENA_::I386Linker32 linker;
+         _ELENA_::I386Linker linker;
          ImageHelper helper(/*&linker, */true, true);
          _ELENA_::ExecutableImage image(false, &project, project.createJITCompiler(), helper);
 

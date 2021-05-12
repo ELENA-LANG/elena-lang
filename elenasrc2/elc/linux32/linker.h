@@ -74,6 +74,8 @@ protected:
    void mapImage(ImageInfo& info);
    virtual void fixImage(ImageInfo& info) = 0;
 
+   virtual void createImportData(ImageInfo& info) = 0;
+
    void writeSection(FileWriter* file, Section* section, int alignment);
    void writeSegments(ImageInfo& info, FileWriter* file);
 
@@ -92,9 +94,9 @@ public:
 class Linker32 : public Linker
 {
    int fillImportTable(ImageInfo& info);
-   void createImportData(ImageInfo& info);
 
    virtual void fixImage(ImageInfo& info);
+   virtual void createImportData(ImageInfo& info);
 
 protected:
    virtual void writeELFHeader(ImageInfo& info, FileWriter* file);
@@ -116,7 +118,7 @@ protected:
    virtual size_t writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gofOffset, int entryIndex);
 
 public:
-   I386Linker32()
+   I386Linker()
    {
    }
 };
@@ -125,8 +127,15 @@ public:
 
 class Linker64 : public Linker
 {
+    virtual void fixImage(ImageInfo& info);
+    virtual void createImportData(ImageInfo& info);
+
 protected:
    virtual void writeELFHeader(ImageInfo& info, FileWriter* file);
+   virtual void writePHTable(ImageInfo& info, FileWriter* file);
+//
+//   virtual void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference) = 0;
+//   virtual size_t writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gofOffset, int entryIndex) = 0;
 
 public:
    Linker64()

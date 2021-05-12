@@ -23,8 +23,8 @@ namespace _ELENA_
 
    constexpr auto ACTION_MASK             = 0x1C0u;
    constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
-   
-   constexpr auto FUNCTION_MESSAGE        = 0x020u;         // indicates it is an invoke message (without target variable in the call stack)   
+
+   constexpr auto FUNCTION_MESSAGE        = 0x020u;         // indicates it is an invoke message (without target variable in the call stack)
    constexpr auto VARIADIC_MESSAGE        = 0x080u;
    constexpr auto CONVERSION_MESSAGE      = 0x040u;
    constexpr auto PROPERTY_MESSAGE        = 0x0C0u;
@@ -168,7 +168,7 @@ namespace _ELENA_
       mskStatSymbolRelRef    = 0x92000000u,
       mskEntryRef            = 0x24000000u,   // reference to the program entry
       mskEntryRelRef         = 0x34000000u,   // reference to the program entry
-      
+
       mskVMTMethodAddress    = 0x43000000u,   // the method address, where the reference offset is a message id, reference values is VMT
       mskMetaRDataRef        = 0x44000000u,   // meta data
       mskVMTEntryOffset      = 0x45000000u,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
@@ -293,6 +293,7 @@ namespace _ELENA_
 //      ptVMWin32GUI       = 0x01101,
       ptLinux32Console   = 0x00002,
       ptVMLinux32Console = 0x00102,
+      ptLinux64Console   = 0x00082,
    };
 
 //  // --- ELENA Debug Mode ---
