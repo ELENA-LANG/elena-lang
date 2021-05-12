@@ -3,12 +3,12 @@ In development:
 ------         
 
   [development]
-    + linux : exception handling
+    + linux : 64 bit linker
+    - support if(a>b) c := a;
+
     + linux : 64 bit mode
     + ppc64le : simplest program
 
-    - warn if class does not support static method
-    - support if(a>b) c := a;
     - debugger fine-tuning
 
     * Building code at run-time in ELENA, Part 2
@@ -24,6 +24,7 @@ In development:
 
     + support s += s2 operation;
     + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
+    + #319 : linux : MT
 
     + support output redirecting
     + debugger : stack allocated int value 

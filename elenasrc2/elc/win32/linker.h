@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive Linker class declaration
 //		Supported platforms: Win32
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef linkerH
@@ -25,7 +25,7 @@ struct ImageBaseMap
    RelocationFixMap importMapping;
 
    ImageBaseMap()
-      : importMapping((size_t)-1)
+      : importMapping(INVALID_REF)
    {
       base = code = adata = mdata = rdata = bss = stat = tls = import = 0;
    }

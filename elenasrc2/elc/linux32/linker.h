@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive Linker class declaration
 //		Supported platforms: Linux32
-//                                              (C)2015-2019, by Alexei Rakov
+//                                              (C)2015-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef linkerH
@@ -19,13 +19,13 @@ namespace _ELENA_
 
 struct ImageBaseMap
 {
-   int base;
-   int code, adata, mdata, rdata, bss, stat, /*tls,*/ import;
+   lvaddr_t base;
+   lvaddr_t code, adata, mdata, rdata, bss, stat, /*tls,*/ import;
 
    RelocationFixMap importMapping;
 
    ImageBaseMap()
-      : importMapping((size_t)-1)
+      : importMapping(INVALID_REF)
    {
       base = code = rdata = bss = stat /*= tls*/ = import = 0;
       adata = mdata = 0;
@@ -34,14 +34,15 @@ struct ImageBaseMap
 
 // --- Linker ---
 
-class Linker32
+class Linker
 {
+protected:
    typedef Map<const char*, ref_t, true> ImportReferences;
 
    struct ImageInfo
    {
-      Project*     project;
-      Image*       image;
+      Project* project;
+      Image* image;
       bool         withDebugInfo;
 
       // Import tables
@@ -70,34 +71,45 @@ class Linker32
       }
    };
 
-   int fillImportTable(ImageInfo& info);
-   void createImportData(ImageInfo& info);
-
    void mapImage(ImageInfo& info);
-   void fixImage(ImageInfo& info);
+   virtual void fixImage(ImageInfo& info) = 0;
 
    void writeSection(FileWriter* file, Section* section, int alignment);
-
-   void writeELFHeader(ImageInfo& info, FileWriter* file);
-   void writePHTable(ImageInfo& info, FileWriter* file);
    void writeSegments(ImageInfo& info, FileWriter* file);
+
+   virtual void writeELFHeader(ImageInfo& info, FileWriter* file) = 0;
+   virtual void writePHTable(ImageInfo& info, FileWriter* file) = 0;
 
    bool createExecutable(ImageInfo& info, const char* exePath/*, ref_t tls_directory*/);
    bool createDebugFile(ImageInfo& image, const char* debugFilePath);
 
+public:
+   void run(Project& project, Image& image/*, ref_t tls_directory*/);
+};
+
+// --- Linker32 ---
+
+class Linker32 : public Linker
+{
+   int fillImportTable(ImageInfo& info);
+   void createImportData(ImageInfo& info);
+
+   virtual void fixImage(ImageInfo& info);
+
 protected:
+   virtual void writeELFHeader(ImageInfo& info, FileWriter* file);
+   virtual void writePHTable(ImageInfo& info, FileWriter* file);
+
    virtual void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference) = 0;
    virtual size_t writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gofOffset, int entryIndex) = 0;
 
 public:
-   void run(Project& project, Image& image/*, ref_t tls_directory*/);
-
    Linker32()
    {
    }
 };
 
-class I386Linker32 : public Linker32
+class I386Linker : public Linker32
 {
 protected:
    virtual void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference);
@@ -105,6 +117,27 @@ protected:
 
 public:
    I386Linker32()
+   {
+   }
+};
+
+// --- Linker64 ---
+
+class Linker64 : public Linker
+{
+protected:
+   virtual void writeELFHeader(ImageInfo& info, FileWriter* file);
+
+public:
+   Linker64()
+   {
+   }
+};
+
+class AMD64Linker : public Linker64
+{
+public:
+   AMD64Linker()
    {
    }
 };

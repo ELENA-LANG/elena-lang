@@ -2,8 +2,8 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Executive Linker class implementation
-//		Supported platforms: Linux32
-//                                              (C)2015-2020, by Alexei Rakov
+//		Supported platforms: Linux32 / Linux64
+//                                              (C)2015-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -65,9 +65,6 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
       {
          int address = ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get(key);
 
-
-         int v = ((ImageBaseMap*)map)->import + address + disp;
-
          return ((ImageBaseMap*)map)->import + address + disp;
       }
       case mskMetaRef:
@@ -104,7 +101,7 @@ ref_t reallocateImport(ref_t pos, ref_t key, ref_t disp, void* map)
 
 // --- Linker ---
 
-void Linker32 :: mapImage(ImageInfo& info)
+void Linker :: mapImage(ImageInfo& info)
 {
    int alignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
 
@@ -149,11 +146,123 @@ void Linker32 :: mapImage(ImageInfo& info)
    info.map.stat = align(info.map.import + getSize(info.image->getImportSection()), FILE_ALIGNMENT);
    info.map.bss = align(info.map.stat + getSize(info.image->getStatSection()), FILE_ALIGNMENT);
 
-/*
-   info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
-   info.imageSize = align(info.map.debug + getSize(info.image->getDebugSection()), alignment);
-*/
+   /*
+      info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
+      info.imageSize = align(info.map.debug + getSize(info.image->getDebugSection()), alignment);
+   */
 }
+
+bool Linker :: createExecutable(ImageInfo& info, const char* exePath/*, ref_t tls_directory*/)
+{
+   // create a full path (including none existing directories)
+   Path dirPath;
+   dirPath.copySubPath(exePath);
+   Path::create(NULL, exePath);
+
+   FileWriter executable(exePath, feRaw, false);
+
+   if (!executable.isOpened())
+      return false;
+
+   writeELFHeader(info, &executable);
+   writePHTable(info, &executable);
+
+   //int p = executable.Position();
+
+   if (info.headerSize >= executable.Position()) {
+      executable.writeBytes(0, info.headerSize - executable.Position());
+   }
+   else throw InternalError(errFatalLinker);
+
+   writeSegments(info, &executable);
+
+   return true;
+}
+
+void Linker :: run(Project& project, Image& image/*, ref_t tls_directory*/)
+{
+   ImageInfo info(&project, &image);
+
+   info.entryPoint = image.getEntryPoint();
+
+   createImportData(info);
+   mapImage(info);
+   fixImage(info);
+
+   Path path(project.StrSetting(opTarget));
+
+   if (emptystr(path))
+      throw InternalError(errEmptyTarget);
+
+   if (!createExecutable(info, path/*, tls_directory*/))
+      project.raiseError(errCannotCreate, path.c_str());
+
+   chmod(path, S_IXOTH | S_IXUSR | S_IRUSR | S_IWUSR | S_IROTH | S_IWOTH);
+
+   if (info.withDebugInfo) {
+      Path debugPath(path);
+      debugPath.changeExtension("dn");
+
+      if (!createDebugFile(info, debugPath.c_str())) {
+         ident_t target = project.StrSetting(opTarget);
+
+         IdentifierString fileNameArg(target);
+         fileNameArg.truncate(target.findLast('.', fileNameArg.Length()));
+         fileNameArg.append(".dn");
+
+         project.raiseError(errCannotCreate, fileNameArg.c_str());
+      }
+   }
+}
+
+void Linker :: writeSection(FileWriter* file, Section* section, int alignment)
+{
+   MemoryReader reader(section);
+   file->read(&reader, section->Length());
+   file->align(alignment);
+}
+
+void Linker :: writeSegments(ImageInfo& info, FileWriter* file)
+{
+   // text section
+   writeSection(file, info.image->getTextSection(), FILE_ALIGNMENT);
+
+   // rdata section
+   writeSection(file, info.image->getADataSection(), 4);
+   writeSection(file, info.image->getMDataSection(), 4);
+   writeSection(file, info.image->getRDataSection(), FILE_ALIGNMENT);
+
+   // import section
+   writeSection(file, info.image->getImportSection(), FILE_ALIGNMENT);
+}
+
+bool Linker :: createDebugFile(ImageInfo& info, const char* debugFilePath)
+{
+   FileWriter	debugFile(debugFilePath, feRaw, false);
+
+   if (!debugFile.isOpened())
+      return false;
+
+   Section* debugInfo = info.image->getDebugSection();
+
+   // signature
+   debugFile.write(DEBUG_MODULE_SIGNATURE, strlen(DEBUG_MODULE_SIGNATURE));
+
+   // save entry point
+   ref_t imageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
+   ref_t entryPoint = info.map.code + info.map.base + info.image->getDebugEntryPoint();
+
+   debugFile.writeDWord(debugInfo->Length());
+   debugFile.writeDWord(entryPoint);
+
+   // save DebugInfo
+   MemoryReader reader(debugInfo);
+   debugFile.read(&reader, debugInfo->Length());
+
+   return true;
+}
+
+// --- Linker32 ---
 
 int Linker32 :: fillImportTable(ImageInfo& info)
 {
@@ -366,13 +475,6 @@ void Linker32 :: fixImage(ImageInfo& info)
    }
 }
 
-void Linker32 :: writeSection(FileWriter* file, Section* section, int alignment)
-{
-   MemoryReader reader(section);
-   file->read(&reader, section->Length());
-   file->align(alignment);
-}
-
 void Linker32 :: writeELFHeader(ImageInfo& info, FileWriter* file)
 {
    Elf32_Ehdr header;
@@ -474,112 +576,9 @@ void Linker32 :: writePHTable(ImageInfo& info, FileWriter* file)
    }
 }
 
-void Linker32 :: writeSegments(ImageInfo& info, FileWriter* file)
-{
-   // text section
-   writeSection(file, info.image->getTextSection(), FILE_ALIGNMENT);
+// --- I386Linker ---
 
-   // rdata section
-   writeSection(file, info.image->getADataSection(), 4);
-   writeSection(file, info.image->getMDataSection(), 4);
-   writeSection(file, info.image->getRDataSection(), FILE_ALIGNMENT);
-
-   // import section
-   writeSection(file, info.image->getImportSection(), FILE_ALIGNMENT);
-}
-
-bool Linker32 :: createExecutable(ImageInfo& info, const char* exePath/*, ref_t tls_directory*/)
-{
-   // create a full path (including none existing directories)
-   Path dirPath;
-   dirPath.copySubPath(exePath);
-   Path::create(NULL, exePath);
-
-   FileWriter executable(exePath, feRaw, false);
-
-   if (!executable.isOpened())
-      return false;
-
-   writeELFHeader(info, &executable);
-   writePHTable(info, &executable);
-
-   //int p = executable.Position();
-
-   if (info.headerSize >= executable.Position()) {
-      executable.writeBytes(0, info.headerSize - executable.Position());
-   }
-   else throw InternalError(errFatalLinker);
-
-   writeSegments(info, &executable);
-
-   return true;
-}
-
-bool Linker32 :: createDebugFile(ImageInfo& info, const char* debugFilePath)
-{
-   FileWriter	debugFile(debugFilePath, feRaw, false);
-
-   if (!debugFile.isOpened())
-      return false;
-
-   Section* debugInfo = info.image->getDebugSection();
-
-   // signature
-   debugFile.write(DEBUG_MODULE_SIGNATURE, strlen(DEBUG_MODULE_SIGNATURE));
-
-   // save entry point
-   ref_t imageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
-   ref_t entryPoint = info.map.code + info.map.base + info.image->getDebugEntryPoint();
-
-   debugFile.writeDWord(debugInfo->Length());
-   debugFile.writeDWord(entryPoint);
-
-   // save DebugInfo
-   MemoryReader reader(debugInfo);
-   debugFile.read(&reader, debugInfo->Length());
-
-   return true;
-}
-
-void Linker32 :: run(Project& project, Image& image/*, ref_t tls_directory*/)
-{
-   ImageInfo info(&project, &image);
-
-   info.entryPoint = image.getEntryPoint();
-
-   createImportData(info);
-   mapImage(info);
-   fixImage(info);
-
-   Path path(project.StrSetting(opTarget));
-
-   if (emptystr(path))
-      throw InternalError(errEmptyTarget);
-
-   if (!createExecutable(info, path/*, tls_directory*/))
-      project.raiseError(errCannotCreate, path.c_str());
-
-   chmod(path, S_IXOTH | S_IXUSR | S_IRUSR | S_IWUSR | S_IROTH | S_IWOTH);
-
-   if (info.withDebugInfo) {
-      Path debugPath(path);
-      debugPath.changeExtension("dn");
-
-      if (!createDebugFile(info, debugPath.c_str())) {
-         ident_t target = project.StrSetting(opTarget);
-
-         IdentifierString fileNameArg(target);
-         fileNameArg.truncate(target.findLast('.', fileNameArg.Length()));
-         fileNameArg.append(".dn");
-
-         project.raiseError(errCannotCreate, fileNameArg.c_str());
-      }
-   }
-}
-
-// --- I386Linjer32 ---
-
-void I386Linker32 :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference)
+void I386Linker :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference)
 {
    codeWriter.writeWord(0x35FF);
    codeWriter.writeRef(gotReference, 4);
@@ -588,7 +587,7 @@ void I386Linker32 :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotRefer
    codeWriter.writeDWord(0);
 }
 
-size_t I386Linker32 :: writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gotOffset, int entryIndex)
+size_t I386Linker :: writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gotOffset, int entryIndex)
 {
    codeWriter.writeWord(0x25FF);
    codeWriter.writeRef(gotReference, gotOffset);
@@ -601,4 +600,34 @@ size_t I386Linker32 :: writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, 
    codeWriter.writeDWord(0x10*(-1-entryIndex));
 
    return position;
+}
+
+// --- Linker64 ---
+
+void Linker64 :: writeELFHeader(ImageInfo& info, FileWriter* file)
+{
+   Elf64_Ehdr header;
+
+   //// e_ident
+   //memset(header.e_ident, 0, EI_NIDENT);
+   //memcpy(header.e_ident, MAGIC_NUMBER, 4);
+   //header.e_ident[EI_CLASS] = ELFCLASS32;
+   //header.e_ident[EI_DATA] = ELFDATA2LSB;
+   //header.e_ident[EI_VERSION] = EV_CURRENT;
+
+   //header.e_type = ET_EXEC;
+   //header.e_machine = EM_386;
+   //header.e_version = EV_CURRENT;
+   //header.e_entry = info.map.base + info.map.code + info.entryPoint;
+   //header.e_phoff = ELF_HEADER_SIZE;
+   //header.e_shoff = 0;
+   //header.e_flags = 0;
+   //header.e_ehsize = 0;
+   //header.e_phentsize = ELF_PH_SIZE;
+   //header.e_phnum = info.ph_length;
+   //header.e_shentsize = 0x28;
+   //header.e_shnum = 0;
+   //header.e_shstrndx = SHN_UNDEF;
+
+   //file->write((char*)&header, ELF_HEADER_SIZE);
 }

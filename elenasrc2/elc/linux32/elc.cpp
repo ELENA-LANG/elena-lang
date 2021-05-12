@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the Linux command-line compiler
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -297,7 +297,17 @@ int main(int argc, char* argv[])
 
          print(ELC_SUCCESSFUL_LINKING);
       }
-//      if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32ConsoleMT) {
+      else if (platform == _ELENA_::ptLinux64Console) {
+         print(ELC_LINKING);
+
+         _ELENA_::I386Linker64 linker;
+         ImageHelper helper(true);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
+         linker.run(project, image/*, -1*/);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
+      //      if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32ConsoleMT) {
 //         print(ELC_LINKING);
 //
 //         _ELENA_::ExecutableImage image(&project, project.createJITCompiler());
