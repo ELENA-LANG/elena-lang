@@ -71,6 +71,8 @@ protected:
       }
    };
 
+   int fillImportTable(ImageInfo& info);
+
    void mapImage(ImageInfo& info);
    virtual void fixImage(ImageInfo& info) = 0;
 
@@ -93,8 +95,6 @@ public:
 
 class Linker32 : public Linker
 {
-   int fillImportTable(ImageInfo& info);
-
    virtual void fixImage(ImageInfo& info);
    virtual void createImportData(ImageInfo& info);
 
@@ -127,15 +127,15 @@ public:
 
 class Linker64 : public Linker
 {
-    virtual void fixImage(ImageInfo& info);
-    virtual void createImportData(ImageInfo& info);
+   virtual void fixImage(ImageInfo& info);
+   virtual void createImportData(ImageInfo& info);
 
 protected:
    virtual void writeELFHeader(ImageInfo& info, FileWriter* file);
    virtual void writePHTable(ImageInfo& info, FileWriter* file);
-//
-//   virtual void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference) = 0;
-//   virtual size_t writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gofOffset, int entryIndex) = 0;
+
+   virtual void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference) = 0;
+   virtual size_t writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gofOffset, int entryIndex) = 0;
 
 public:
    Linker64()
@@ -145,6 +145,9 @@ public:
 
 class AMD64Linker : public Linker64
 {
+   virtual void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference);
+   virtual size_t writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gofOffset, int entryIndex);
+
 public:
    AMD64Linker()
    {

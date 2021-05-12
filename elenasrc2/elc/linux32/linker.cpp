@@ -37,6 +37,7 @@
 #define ELF64_PH_SIZE      0x38
 
 #define INTERPRETER_PATH   "/lib/ld-linux.so.2"
+#define INTERPRETER64_PATH "/lib64/ld-linux-x86-64.so.2"
 
 using namespace _ELENA_;
 
@@ -82,6 +83,36 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
    }
 }
 
+ref_t reallocateX(ref_t pos, ref_t key, ref_t disp, void* map)
+{
+   switch (key & mskAnyRef) {
+      case mskNativeRelDataRef:
+      case mskRelDataRef:
+      {
+         int tableAddress = ((ImageBaseMap*)map)->bss + disp + (key & ~mskAnyRef);
+         int codeAddress = ((ImageBaseMap*)map)->code + pos + 4;
+
+         return tableAddress - codeAddress;
+      }
+      case mskRelStatRef:
+      {
+         int tableAddress = ((ImageBaseMap*)map)->stat + disp + (key & ~mskAnyRef);
+         int codeAddress = ((ImageBaseMap*)map)->code + pos + 4;
+
+         return tableAddress - codeAddress;
+      }
+      case mskRelImportRef:
+      {
+         int tableAddress = ((ImageBaseMap*)map)->import + ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get((key & ~mskAnyRef) | mskImportRef);
+         int codeAddress = ((ImageBaseMap*)map)->code + ((ImageBaseMap*)map)->base + pos + 4;
+
+         return tableAddress - codeAddress;
+      }
+      default:
+         return reallocate(pos, key, disp, map);
+   }
+}
+
 ref_t reallocateImport(ref_t pos, ref_t key, ref_t disp, void* map)
 {
    if ((key & mskImageMask)==mskImportRef) {
@@ -103,6 +134,34 @@ ref_t reallocateImport(ref_t pos, ref_t key, ref_t disp, void* map)
 }
 
 // --- Linker ---
+
+int Linker :: fillImportTable(ImageInfo& info)
+{
+   int count = 0;
+
+   auto it = info.image->getExternalIt();
+   while (!it.Eof()) {
+      String<char, PATH_MAX> external(it.key());
+
+      int dotPos = ident_t(external).findLast('.') + 1;
+
+      ident_t function = external + dotPos;
+
+      IdentifierString dll(external + getlength(DLL_NAMESPACE) + 1, getlength(external) - getlength(DLL_NAMESPACE) - getlength(function) - 2);
+      if (dll.ident().compare(RTDLL_FORWARD)) {
+         dll.copy(info.project->resolvePrimitive(RTDLL_FORWARD));
+      }
+
+      info.functions.add(function.clone(), *it);
+      if (!retrieve(info.libraries.start(), dll.ident(), (char*)NULL)) {
+          info.libraries.add(dll.clone());
+      }
+
+      it++;
+      count++;
+   }
+   return count;
+}
 
 void Linker :: mapImage(ImageInfo& info)
 {
@@ -266,34 +325,6 @@ bool Linker :: createDebugFile(ImageInfo& info, const char* debugFilePath)
 }
 
 // --- Linker32 ---
-
-int Linker32 :: fillImportTable(ImageInfo& info)
-{
-   int count = 0;
-
-   auto it = info.image->getExternalIt();
-   while (!it.Eof()) {
-      String<char, PATH_MAX> external(it.key());
-
-      int dotPos = ident_t(external).findLast('.') + 1;
-
-      ident_t function = external + dotPos;
-
-      IdentifierString dll(external + getlength(DLL_NAMESPACE) + 1, getlength(external) - getlength(DLL_NAMESPACE) - getlength(function) - 2);
-      if (dll.ident().compare(RTDLL_FORWARD)) {
-         dll.copy(info.project->resolvePrimitive(RTDLL_FORWARD));
-      }
-
-      info.functions.add(function.clone(), *it);
-      if (!retrieve(info.libraries.start(), dll.ident(), (char*)NULL)) {
-          info.libraries.add(dll.clone());
-      }
-
-      it++;
-      count++;
-   }
-   return count;
-}
 
 void Linker32 :: createImportData(ImageInfo& info)
 {
@@ -637,256 +668,286 @@ void Linker64 :: writeELFHeader(ImageInfo& info, FileWriter* file)
 
 void Linker64 :: writePHTable(ImageInfo& info, FileWriter* file)
 {
-//   int alignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
-//
-//   Elf32_Phdr ph_header;
-//
-//   // Program header
-//   ph_header.p_type = PT_PHDR;
-//   ph_header.p_offset = ELF_HEADER_SIZE;
-//   ph_header.p_vaddr = info.map.base + ELF_HEADER_SIZE;
-//   ph_header.p_paddr = info.map.base + ELF_HEADER_SIZE;
-//   ph_header.p_filesz = info.ph_length * ELF_PH_SIZE;
-//   ph_header.p_memsz = info.ph_length * ELF_PH_SIZE;
-//   ph_header.p_flags = PF_R;
-//   ph_header.p_align = 4;
-//   file->write((char*)&ph_header, ELF_PH_SIZE);
-//
-//   if (info.interpreter > 0) {
-//      // Interpreter
-//      ph_header.p_type = PT_INTERP;
-//      ph_header.p_offset = info.textSize + info.headerSize + info.interpreter + info.rdataOffset;
-//      ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.rdata + info.interpreter;
-//      ph_header.p_memsz = ph_header.p_filesz = getlength(INTERPRETER_PATH) + 1;
-//      ph_header.p_flags = PF_R;
-//      ph_header.p_align = 1;
-//      file->write((char*)&ph_header, ELF_PH_SIZE);
-//   }
-//
-//   // Text Segment
-//   ph_header.p_type = PT_LOAD;
-//   ph_header.p_offset = 0;
-//   ph_header.p_vaddr = info.map.base;
-//   ph_header.p_paddr = info.map.base;
-//   ph_header.p_memsz = ph_header.p_filesz = info.headerSize + info.textSize;
-//   ph_header.p_flags = PF_R + PF_X;
-//   ph_header.p_align = alignment;
-//   file->write((char*)&ph_header, ELF_PH_SIZE);
-//
-//   // RData Segment
-//   ph_header.p_type = PT_LOAD;
-//   ph_header.p_offset = info.headerSize + info.textSize;
-//   ph_header.p_vaddr = info.map.base + info.map.adata;
-//   ph_header.p_paddr = info.map.base + info.map.adata;
-//   ph_header.p_memsz = ph_header.p_filesz = info.rdataSize;
-//   ph_header.p_flags = PF_R;
-//   ph_header.p_align = alignment;
-//   file->write((char*)&ph_header, ELF_PH_SIZE);
-//
-//   // Data Segment
-//   ph_header.p_type = PT_LOAD;
-//   if (info.importSize != 0) {
-//      ph_header.p_offset = info.headerSize + info.textSize + info.rdataSize;
-//   }
-//   else ph_header.p_offset = 0;
-//   ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.import;
-//   ph_header.p_memsz = info.importSize + info.bssSize;
-//   ph_header.p_filesz = info.importSize;
-//   ph_header.p_flags = PF_R + PF_W;
-//   ph_header.p_align = alignment;
-//   file->write((char*)&ph_header, ELF_PH_SIZE);
-//
-//  if (info.dynamic > 0) {
-//      // Dynamic
-//      ph_header.p_type = PT_DYNAMIC;
-//      ph_header.p_offset = info.headerSize + info.textSize + info.dynamic + info.rdataOffset;
-//      ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.rdata + info.dynamic;
-//      ph_header.p_filesz = ph_header.p_memsz = align(info.interpreter - info.dynamic, 8);
-//      ph_header.p_flags = PF_R;
-//      ph_header.p_align = 8;
-//      file->write((char*)&ph_header, ELF_PH_SIZE);
-//   }
+   int alignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
+
+   Elf64_Phdr ph_header;
+
+   // Program header
+   ph_header.p_type = PT_PHDR;
+   ph_header.p_offset = ELF64_HEADER_SIZE;
+   ph_header.p_vaddr = info.map.base + ELF64_HEADER_SIZE;
+   ph_header.p_paddr = info.map.base + ELF64_HEADER_SIZE;
+   ph_header.p_filesz = info.ph_length * ELF64_PH_SIZE;
+   ph_header.p_memsz = info.ph_length * ELF64_PH_SIZE;
+   ph_header.p_flags = PF_R;
+   ph_header.p_align = 4;
+   file->write((char*)&ph_header, ELF64_PH_SIZE);
+
+   if (info.interpreter > 0) {
+      // Interpreter
+      ph_header.p_type = PT_INTERP;
+      ph_header.p_offset = info.textSize + info.headerSize + info.interpreter + info.rdataOffset;
+      ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.rdata + info.interpreter;
+      ph_header.p_memsz = ph_header.p_filesz = getlength(INTERPRETER64_PATH) + 1;
+      ph_header.p_flags = PF_R;
+      ph_header.p_align = 1;
+      file->write((char*)&ph_header, ELF64_PH_SIZE);
+   }
+
+   // Text Segment
+   ph_header.p_type = PT_LOAD;
+   ph_header.p_offset = 0;
+   ph_header.p_vaddr = info.map.base;
+   ph_header.p_paddr = info.map.base;
+   ph_header.p_memsz = ph_header.p_filesz = info.headerSize + info.textSize;
+   ph_header.p_flags = PF_R + PF_X;
+   ph_header.p_align = alignment;
+   file->write((char*)&ph_header, ELF64_PH_SIZE);
+
+   // RData Segment
+   ph_header.p_type = PT_LOAD;
+   ph_header.p_offset = info.headerSize + info.textSize;
+   ph_header.p_vaddr = info.map.base + info.map.adata;
+   ph_header.p_paddr = info.map.base + info.map.adata;
+   ph_header.p_memsz = ph_header.p_filesz = info.rdataSize;
+   ph_header.p_flags = PF_R;
+   ph_header.p_align = alignment;
+   file->write((char*)&ph_header, ELF64_PH_SIZE);
+
+   // Data Segment
+   ph_header.p_type = PT_LOAD;
+   if (info.importSize != 0) {
+      ph_header.p_offset = info.headerSize + info.textSize + info.rdataSize;
+   }
+   else ph_header.p_offset = 0;
+   ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.import;
+   ph_header.p_memsz = info.importSize + info.bssSize;
+   ph_header.p_filesz = info.importSize;
+   ph_header.p_flags = PF_R + PF_W;
+   ph_header.p_align = alignment;
+   file->write((char*)&ph_header, ELF64_PH_SIZE);
+
+  if (info.dynamic > 0) {
+      // Dynamic
+      ph_header.p_type = PT_DYNAMIC;
+      ph_header.p_offset = info.headerSize + info.textSize + info.dynamic + info.rdataOffset;
+      ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.rdata + info.dynamic;
+      ph_header.p_filesz = ph_header.p_memsz = align(info.interpreter - info.dynamic, 8);
+      ph_header.p_flags = PF_R;
+      ph_header.p_align = 8;
+      file->write((char*)&ph_header, ELF64_PH_SIZE);
+   }
 }
 
 void Linker64 :: createImportData(ImageInfo& info)
 {
-//   size_t count = fillImportTable(info);
-//   if (count == 0)
-//      return;
-//
-//   Section* import = info.image->getImportSection();
-//
-//   // dynamic table
-//   MemoryWriter dynamicWriter(info.image->getRDataSection());
-//   dynamicWriter.align(FILE_ALIGNMENT, 0);
-//
-//   info.dynamic = dynamicWriter.Position();
-//
-//   // reference to GOT
-//   ref_t importRef = (count + 1) | mskImportRef;
-//   info.map.importMapping.add(importRef, 0);
-//
-//   // reserve got table
-//   MemoryWriter gotWriter(import);
-//   gotWriter.writeRef(mskRDataRef, info.dynamic);
-//   gotWriter.writeDWord(0);
-//   gotWriter.writeDWord(0);
-//   size_t gotStart = gotWriter.Position();
-//   gotWriter.writeBytes(0, count * 4);
-//   gotWriter.seek(gotStart);
-//
-//   // reserve relocation table
-//   MemoryWriter reltabWriter(import);
-//   size_t reltabOffset = reltabWriter.Position();
-//   reltabWriter.writeBytes(0, count * 8);
-//   reltabWriter.seek(reltabOffset);
-//
-//   // reserve symbol table
-//   MemoryWriter symtabWriter(import);
-//   size_t symtabOffset = symtabWriter.Position();
-//   symtabWriter.writeBytes(0, (count + 1) * 16);
-//   symtabWriter.seek(symtabOffset + 16);
-//
-//   // string table
-//   MemoryWriter strWriter(import);
-//   int strOffset = strWriter.Position();
-//   strWriter.writeChar('\0');
-//
-//   // code writer
-//   MemoryWriter codeWriter(info.image->getTextSection());
-//   writePLTStartEntry(codeWriter, importRef);
-//
-//   ImportReferences::Iterator fun = info.functions.start();
-//   int symbolIndex = 1;
-//   int pltIndex = 1;
-//   while (!fun.Eof()) {
-//      int gotPosition = gotWriter.Position();
-//
-//      // map import reference
-//      info.map.importMapping.add(*fun, gotWriter.Position());
-//
-//      int strIndex = strWriter.Position() - strOffset;
-//
-//      // symbol table entry
-//      symtabWriter.writeDWord(strIndex);
-//      symtabWriter.writeDWord(0);
-//      symtabWriter.writeDWord(0);
-//      symtabWriter.writeDWord(0x12);
-//
-//      // relocation table entry
-//      size_t relPosition = reltabWriter.Position() - reltabOffset;
-//      reltabWriter.writeRef(importRef, gotPosition);
-//      reltabWriter.writeDWord((symbolIndex << 8) + R_386_JMP_SLOT);
-//
-//      // string table entry
-//      strWriter.writeLiteral(fun.key());
-//
-//      // got / plt entry
-//      ref_t position = writePLTEntry(codeWriter, relPosition, importRef, gotPosition, pltIndex);
-//      gotWriter.writeRef(mskCodeRef, position);
-//
-//      fun++;
-//      symbolIndex++;
-//      pltIndex++;
-//   }
-//
-//   // write dynamic segment
-//
-//   // write libraries needed to be loaded
-//   List<char*>::Iterator dll = info.libraries.start();
-//   while (!dll.Eof()) {
-//      dynamicWriter.writeDWord(DT_NEEDED);
-//      dynamicWriter.writeDWord(strWriter.Position() - strOffset);
-//
-//      strWriter.writeLiteral(*dll);
-//
-//      dll++;
-//   }
-//   strWriter.writeChar('\0');
-//   int strLength = strWriter.Position() - strOffset;
-//
-//   dynamicWriter.writeDWord(DT_STRTAB);
-//   dynamicWriter.writeRef(importRef, strOffset);
-//
-//   dynamicWriter.writeDWord(DT_SYMTAB);
-//   dynamicWriter.writeRef(importRef, symtabOffset);
-//
-//   dynamicWriter.writeDWord(DT_STRSZ);
-//   dynamicWriter.writeDWord(strLength);
-//
-//   dynamicWriter.writeDWord(DT_SYMENT);
-//   dynamicWriter.writeDWord(16);
-//
-//   dynamicWriter.writeDWord(DT_PLTGOT);
-//   dynamicWriter.writeRef(importRef, /*gotStart*/0);
-//
-//   dynamicWriter.writeDWord(DT_PLTRELSZ);
-//   dynamicWriter.writeDWord(count * 8);
-//
-//   dynamicWriter.writeDWord(DT_PLTREL);
-//   dynamicWriter.writeDWord(DT_REL);
-//
-//   dynamicWriter.writeDWord(DT_JMPREL);
-//   dynamicWriter.writeRef(importRef, reltabOffset);
-//
-//   dynamicWriter.writeDWord(DT_REL);
-//   dynamicWriter.writeRef(importRef, reltabOffset);
-//
-//   dynamicWriter.writeDWord(DT_RELSZ);
-//   dynamicWriter.writeDWord(count * 8);
-//
-//   dynamicWriter.writeDWord(DT_RELENT);
-//   dynamicWriter.writeDWord(8);
-//
-//   dynamicWriter.writeDWord(0);
-//   dynamicWriter.writeDWord(0);
-//
-//   // write interpreter path
-//   dynamicWriter.align(FILE_ALIGNMENT, 0);
-//
-//   info.interpreter = dynamicWriter.Position();
-//   dynamicWriter.writeLiteral(INTERPRETER_PATH, getlength(INTERPRETER_PATH) + 1);
+   size_t count = fillImportTable(info);
+   if (count == 0)
+      return;
+
+   Section* import = info.image->getImportSection();
+
+   // dynamic table
+   MemoryWriter dynamicWriter(info.image->getRDataSection());
+   dynamicWriter.align(FILE_ALIGNMENT, 0);
+
+   info.dynamic = dynamicWriter.Position();
+
+   // reference to GOT
+   ref_t importRef = (count + 1) | mskImportRef;
+   info.map.importMapping.add(importRef, 0);
+
+   // reserve got table
+   MemoryWriter gotWriter(import);
+   gotWriter.writeRef(mskRDataRef, info.dynamic);
+   gotWriter.writeDWord(0);
+   gotWriter.writeDWord(0);
+   size_t gotStart = gotWriter.Position();
+   gotWriter.writeBytes(0, count * 4);
+   gotWriter.seek(gotStart);
+
+   // reserve relocation table
+   MemoryWriter reltabWriter(import);
+   size_t reltabOffset = reltabWriter.Position();
+   reltabWriter.writeBytes(0, count * 8);
+   reltabWriter.seek(reltabOffset);
+
+   // reserve symbol table
+   MemoryWriter symtabWriter(import);
+   size_t symtabOffset = symtabWriter.Position();
+   symtabWriter.writeBytes(0, (count + 1) * 16);
+   symtabWriter.seek(symtabOffset + 16);
+
+   // string table
+   MemoryWriter strWriter(import);
+   int strOffset = strWriter.Position();
+   strWriter.writeChar('\0');
+
+   // code writer
+   MemoryWriter codeWriter(info.image->getTextSection());
+   writePLTStartEntry(codeWriter, importRef);
+
+   ImportReferences::Iterator fun = info.functions.start();
+   int symbolIndex = 1;
+   int pltIndex = 1;
+   while (!fun.Eof()) {
+      int gotPosition = gotWriter.Position();
+
+      // map import reference
+      info.map.importMapping.add(*fun, gotWriter.Position());
+
+      int strIndex = strWriter.Position() - strOffset;
+
+      // symbol table entry
+      symtabWriter.writeDWord(strIndex);
+      symtabWriter.writeDWord(0);
+      symtabWriter.writeQWord(0);
+      symtabWriter.writeQWord(0x18);
+
+      // relocation table entry
+      size_t relPosition = reltabWriter.Position() - reltabOffset;
+      reltabWriter.writeRef(importRef, gotPosition);
+      reltabWriter.writeDWord((symbolIndex << 8) + R_386_JMP_SLOT);
+
+      // string table entry
+      strWriter.writeLiteral(fun.key());
+
+      // got / plt entry
+      ref_t position = writePLTEntry(codeWriter, relPosition, importRef, gotPosition, pltIndex);
+      gotWriter.writeRef(mskCodeRef, position);
+
+      fun++;
+      symbolIndex++;
+      pltIndex++;
+   }
+
+   // write dynamic segment
+
+   // write libraries needed to be loaded
+   List<char*>::Iterator dll = info.libraries.start();
+   while (!dll.Eof()) {
+      dynamicWriter.writeQWord(DT_NEEDED);
+      dynamicWriter.writeQWord(strWriter.Position() - strOffset);
+
+      strWriter.writeLiteral(*dll);
+
+      dll++;
+   }
+   strWriter.writeChar('\0');
+   int strLength = strWriter.Position() - strOffset;
+
+   dynamicWriter.writeQWord(DT_STRTAB);
+   dynamicWriter.writeRef(importRef, strOffset);
+
+   dynamicWriter.writeQWord(DT_SYMTAB);
+   dynamicWriter.writeRef(importRef, symtabOffset);
+   dynamicWriter.writeDWord(0);
+
+   dynamicWriter.writeQWord(DT_STRSZ);
+   dynamicWriter.writeQWord(strLength);
+
+   dynamicWriter.writeQWord(DT_SYMENT);
+   dynamicWriter.writeQWord(16);
+
+   dynamicWriter.writeQWord(DT_PLTGOT);
+   dynamicWriter.writeRef(importRef, /*gotStart*/0);
+   dynamicWriter.writeDWord(0);
+
+   dynamicWriter.writeQWord(DT_PLTRELSZ);
+   dynamicWriter.writeQWord(count * 16);
+
+   dynamicWriter.writeQWord(DT_PLTREL);
+   dynamicWriter.writeQWord(DT_REL);
+
+   dynamicWriter.writeQWord(DT_JMPREL);
+   dynamicWriter.writeRef(importRef, reltabOffset);
+   dynamicWriter.writeDWord(0);
+
+   dynamicWriter.writeQWord(DT_REL);
+   dynamicWriter.writeRef(importRef, reltabOffset);
+
+   dynamicWriter.writeQWord(DT_RELSZ);
+   dynamicWriter.writeQWord(count * 16);
+
+   dynamicWriter.writeQWord(DT_RELENT);
+   dynamicWriter.writeQWord(8);
+
+   dynamicWriter.writeQWord(0);
+   dynamicWriter.writeQWord(0);
+
+   // write interpreter path
+   dynamicWriter.align(FILE_ALIGNMENT, 0);
+
+   info.interpreter = dynamicWriter.Position();
+   dynamicWriter.writeLiteral(INTERPRETER64_PATH, getlength(INTERPRETER64_PATH) + 1);
 }
 
 void Linker64 :: fixImage(ImageInfo& info)
 {
-//   Section* text = info.image->getTextSection();
-//   Section* rdata = info.image->getRDataSection();
-//   Section* import = info.image->getImportSection();
-//   Section* stat = info.image->getStatSection();
-//   Section* bss = info.image->getBSSSection();
-//   Section* adata = info.image->getADataSection();
-//   Section* mdata = info.image->getMDataSection();
-////   Section* tls = info.image->getTLSSection();
-//
-//  // fix up text reallocate
-//   text->fixupReferences(&info.map, reallocate);
-//
-//  // fix up rdata section
-//   rdata->fixupReferences(&info.map, reallocate);
-//
-//   // fix up mdata section
-//   mdata->fixupReferences(&info.map, reallocate);
-//
-//   // fix up adata section
-//   adata->fixupReferences(&info.map, reallocate);
-//
-//  // fix up bss section
-//   bss->fixupReferences(&info.map, reallocate);
-//
-//  // fix up stat section
-//   stat->fixupReferences(&info.map, reallocate);
-//
-////  // fix up tls section
-////   tls->fixupReferences(&info.map, reallocate);
-//
-//  // fix up import section
-//   import->fixupReferences(&info.map, reallocateImport);
-//
-//  // fix up debug info if enabled
-//   if (info.withDebugInfo) {
-//      Section* debug = info.image->getDebugSection();
-//
-//      debug->fixupReferences(&info.map, reallocate);
-//   }
+   Section* text = info.image->getTextSection();
+   Section* rdata = info.image->getRDataSection();
+   Section* import = info.image->getImportSection();
+   Section* stat = info.image->getStatSection();
+   Section* bss = info.image->getBSSSection();
+   Section* adata = info.image->getADataSection();
+   Section* mdata = info.image->getMDataSection();
+//   Section* tls = info.image->getTLSSection();
+
+  // fix up text reallocate
+   text->fixupReferences(&info.map, reallocateX);
+
+  // fix up rdata section
+   rdata->fixupReferences(&info.map, reallocate);
+
+   // fix up mdata section
+   mdata->fixupReferences(&info.map, reallocate);
+
+   // fix up adata section
+   adata->fixupReferences(&info.map, reallocate);
+
+  // fix up bss section
+   bss->fixupReferences(&info.map, reallocate);
+
+  // fix up stat section
+   stat->fixupReferences(&info.map, reallocate);
+
+//  // fix up tls section
+//   tls->fixupReferences(&info.map, reallocate);
+
+  // fix up import section
+   import->fixupReferences(&info.map, reallocateImport);
+
+  // fix up debug info if enabled
+   if (info.withDebugInfo) {
+      Section* debug = info.image->getDebugSection();
+
+      debug->fixupReferences(&info.map, reallocate);
+   }
 }
+
+// --- AMD64Linker ---
+
+void AMD64Linker :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference)
+{
+   codeWriter.writeWord(0x35FF);
+   codeWriter.writeRef(gotReference, 4);
+   codeWriter.writeWord(0x25FF);
+   codeWriter.writeRef(gotReference, 8);
+   codeWriter.writeDWord(0);
+}
+
+size_t AMD64Linker :: writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, ref_t gotReference, int gotOffset, int entryIndex)
+{
+   codeWriter.writeWord(0x25FF);
+   codeWriter.writeRef(gotReference, gotOffset);
+
+   size_t position = codeWriter.Position();
+
+   codeWriter.writeByte(0x68);
+   codeWriter.writeDWord(symbolIndex);
+   codeWriter.writeByte(0xE9);
+   codeWriter.writeDWord(0x10*(-1-entryIndex));
+
+   return position;
+}
+

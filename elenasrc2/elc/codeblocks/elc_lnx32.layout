@@ -2,79 +2,14 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="../../engine/x86jitcompiler.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../common/altstrings.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2372" topLine="64" />
+			<Cursor1 position="14839" topLine="660" />
 		</Cursor>
 	</File>
-	<File name="../../engine/elenaconst.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../bcwriter.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="13861" topLine="276" />
-		</Cursor>
-	</File>
-	<File name="../../engine/module.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="6088" topLine="227" />
-		</Cursor>
-	</File>
-	<File name="../../engine/syntaxtree.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="13678" topLine="476" />
-		</Cursor>
-	</File>
-	<File name="../../engine/x86jitcompiler.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="65533" topLine="2113" />
-		</Cursor>
-	</File>
-	<File name="../../engine/compilercommon.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="9180" topLine="283" />
-		</Cursor>
-	</File>
-	<File name="../compiler.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="338512" topLine="9464" />
-		</Cursor>
-	</File>
-	<File name="../compiler.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="56745" topLine="1387" />
-		</Cursor>
-	</File>
-	<File name="../../common/tools.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="656" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../../engine/section.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="484" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../../common/files.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="7148" topLine="312" />
-		</Cursor>
-	</File>
-	<File name="../linux32/syslibloader.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="565" topLine="5" />
-		</Cursor>
-	</File>
-	<File name="../elc.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="15060" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../linux32/linker.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="20767" topLine="635" />
-		</Cursor>
-	</File>
-	<File name="../project.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="9975" topLine="341" />
+			<Cursor1 position="367" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="../../engine/syntaxtree.h" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -82,24 +17,114 @@
 			<Cursor1 position="22793" topLine="643" />
 		</Cursor>
 	</File>
+	<File name="../../common/common.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2128" topLine="72" />
+		</Cursor>
+	</File>
+	<File name="../compiler.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="56745" topLine="1387" />
+		</Cursor>
+	</File>
+	<File name="../derivation.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="48838" topLine="1593" />
+		</Cursor>
+	</File>
+	<File name="../../engine/module.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6088" topLine="227" />
+		</Cursor>
+	</File>
+	<File name="../project.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9975" topLine="341" />
+		</Cursor>
+	</File>
+	<File name="../../engine/compilercommon.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9180" topLine="283" />
+		</Cursor>
+	</File>
+	<File name="../../common/files.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="853" topLine="31" />
+		</Cursor>
+	</File>
+	<File name="../../engine/syntaxtree.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="13678" topLine="476" />
+		</Cursor>
+	</File>
+	<File name="../../common/streams.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="18069" topLine="909" />
+		</Cursor>
+	</File>
+	<File name="../../common/tools.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="656" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../linux32/linker.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="27800" topLine="847" />
+		</Cursor>
+	</File>
+	<File name="../linux32/syslibloader.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="565" topLine="5" />
+		</Cursor>
+	</File>
+	<File name="../image.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2836" topLine="49" />
+		</Cursor>
+	</File>
+	<File name="../../engine/x86jitcompiler.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2372" topLine="64" />
+		</Cursor>
+	</File>
 	<File name="../linux32/elc.cpp" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="9340" topLine="291" />
 		</Cursor>
 	</File>
-	<File name="../linux32/linker.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../errors.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3464" topLine="106" />
+			<Cursor1 position="248" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="../../engine/jitlinker.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../engine/module.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="50036" topLine="1445" />
+			<Cursor1 position="438" topLine="159" />
 		</Cursor>
 	</File>
-	<File name="../compilerscope.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../engine/elenaconst.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="18295" topLine="573" />
+			<Cursor1 position="13861" topLine="276" />
+		</Cursor>
+	</File>
+	<File name="../../engine/section.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="484" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../../engine/x86jitcompiler.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="65533" topLine="2113" />
+		</Cursor>
+	</File>
+	<File name="../../common/lists.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="490" topLine="1" />
+		</Cursor>
+	</File>
+	<File name="../compiler.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="338512" topLine="9464" />
 		</Cursor>
 	</File>
 	<File name="../separser.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -112,24 +137,34 @@
 			<Cursor1 position="5649" topLine="48" />
 		</Cursor>
 	</File>
-	<File name="../../common/lists.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../linux32/linker.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="490" topLine="1" />
+			<Cursor1 position="4038" topLine="118" />
 		</Cursor>
 	</File>
-	<File name="../../common/common.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../common/files.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2128" topLine="72" />
+			<Cursor1 position="7148" topLine="312" />
 		</Cursor>
 	</File>
-	<File name="../errors.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../engine/section.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="248" topLine="0" />
+			<Cursor1 position="1999" topLine="37" />
 		</Cursor>
 	</File>
-	<File name="../../common/streams.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../engine/jitcompiler.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="18069" topLine="909" />
+			<Cursor1 position="8176" topLine="312" />
+		</Cursor>
+	</File>
+	<File name="../../engine/jitlinker.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="50036" topLine="1445" />
+		</Cursor>
+	</File>
+	<File name="../elc.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="15060" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="../../engine/elena.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -142,49 +177,14 @@
 			<Cursor1 position="4303" topLine="117" />
 		</Cursor>
 	</File>
-	<File name="../../engine/jitcompiler.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../compilerscope.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="8176" topLine="312" />
-		</Cursor>
-	</File>
-	<File name="../../engine/section.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1999" topLine="37" />
-		</Cursor>
-	</File>
-	<File name="../bcwriter.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="367" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../derivation.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="48838" topLine="1593" />
-		</Cursor>
-	</File>
-	<File name="../image.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2836" topLine="49" />
+			<Cursor1 position="18295" topLine="573" />
 		</Cursor>
 	</File>
 	<File name="../linux32/syslibloader.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="449" topLine="6" />
-		</Cursor>
-	</File>
-	<File name="../../engine/module.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="438" topLine="159" />
-		</Cursor>
-	</File>
-	<File name="../../common/files.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="853" topLine="31" />
-		</Cursor>
-	</File>
-	<File name="../../common/altstrings.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="14839" topLine="660" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
