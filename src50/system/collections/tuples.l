@@ -33,10 +33,10 @@ namespace collections
             
             this theIndex := 0;
             
-            get()
+            get Value()
                 = self.at(theIndex);
                 
-            set(o)
+            set Value(o)
             {
                 self.setAt(theIndex, o)
             }
@@ -85,10 +85,10 @@ namespace collections
             
             this theIndex := 0;
             
-            get()
+            get Value()
                 = self.at(theIndex);
                 
-            set(o)
+            set Value(o)
             {
                 self.setAt(theIndex, o)
             }                        
@@ -132,10 +132,10 @@ namespace collections
             
             this theIndex := 0;
             
-            get()
+            get Value()
                 = self.at(theIndex);
                 
-            set(o)
+            set Value(o)
             {
                 self.setAt(theIndex, o)
             }                        
@@ -183,10 +183,10 @@ namespace collections
             
             this theIndex := 0;
             
-            get()
+            get Value()
                 = self.at(theIndex);
                 
-            set(o)
+            set Value(o)
             {
                 self.setAt(theIndex, o)
             }                        
@@ -238,10 +238,10 @@ namespace collections
             
             this theIndex := 0;
             
-            get()
+            get Value()
                 = self.at(theIndex);
                 
-            set(o)
+            set Value(o)
             {
                 self.setAt(theIndex, o)
             }                        
@@ -297,10 +297,10 @@ namespace collections
             
             this theIndex := 0;
             
-            get()
+            get Value()
                 = self.at(theIndex);
                 
-            set(o)
+            set Value(o)
             {
                 self.setAt(theIndex, o)
             }                        

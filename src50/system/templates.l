@@ -6,56 +6,56 @@ public interface<T>
     };
 }
 
-//#property prop<T, __name>
-//{
-//    field;
-//    
-//    get()
-//    {
-//        ^ __name
-//    }
-//    
-//    set(T value)
-//    {
-//        __name := value
-//    }
-//}
-//
-//#property prop<__name>
-//{
-//    field;
-//    
-//    get()
-//    {
-//        ^ __name
-//    }    
-//    
-//    set(value)
-//    {
-//        __name := value
-//    }
-//}
-//
-//#property rprop<T, __name>
-//{
-//    field;
-//    
-//    get()
-//    {
-//        ^ __name
-//    }    
-//}
-//
-//#property rprop<__name>
-//{
-//    field;
-//    
-//    get()
-//    {
-//        ^ __name
-//    }    
-//}
-//
+#property prop<T, __name>
+{
+    field;
+    
+    get()
+    {
+        ^ __name
+    }
+    
+    set(value)
+    {
+        __name := value
+    }
+}
+
+#property prop<__name>
+{
+    field;
+    
+    get()
+    {
+        ^ __name
+    }    
+    
+    set(value)
+    {
+        __name := value
+    }
+}
+
+#property rprop<T, __name>
+{
+    field;
+    
+    get()
+    {
+        ^ __name
+    }    
+}
+
+#property rprop<__name>
+{
+    field;
+    
+    get()
+    {
+        ^ __name
+    }    
+}
+
 //#inline dto
 //{
 //    this __dto_properties += @subject;

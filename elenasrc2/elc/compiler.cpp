@@ -5727,7 +5727,7 @@ ref_t Compiler :: mapTemplateAttribute(SNode node, Scope& scope)
       if (current.compare(lxType, lxTemplateParam, lxArrayType)) {
          paramCounter++;
       }
-      else /*if (current != lxClassRef)*/
+      else if (current != /*lxClassRef*/lxDeclaredType)
          scope.raiseError(errInvalidOperation, node);
 
       current = current.nextNode();
@@ -5762,12 +5762,12 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
          ref_t typeRef = current.argument;
          if (!typeRef || typeRef == V_TEMPLATE) {
             SNode classRefNode = current.findChild(lxDeclaredType);
-            if (!classRefNode.argument) {
+            if (!declarationMode || !classRefNode.argument) {
                typeRef = resolveTypeAttribute(current, scope, declarationMode, false);
                if (!declarationMode) {
                   current.set(lxType, typeRef);
 
-                  SNode terminalNode = injectAttributeIdentidier(current, scope);
+                  injectAttributeIdentidier(current, scope);
                }
                else current.appendNode(lxDeclaredType, typeRef);
             }

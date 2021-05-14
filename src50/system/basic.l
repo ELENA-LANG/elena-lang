@@ -2606,13 +2606,13 @@ public singleton realConvertor
         ^ retVal
     }
         
-//    /// Converts a wide literal string into a real number
-//    real convert(wide s)
-//    {
-//        intern system'core_routines'__realconvertor.convert(s, 19, ref real retVal);
-//        
-//        ^ retVal
-//    }
+    /// Converts a wide literal string into a real number
+    real convert(wide s)
+    {
+        intern system'core_routines'__realconvertor.convert(s, 19, ref real retVal);
+        
+        ^ retVal
+    }
 
     /// Returns a parameter
     real convert(real r)
@@ -2626,31 +2626,31 @@ public singleton realConvertor
         ^ retVal
     }
         
-//    /// Converts an integer into a real number
-//    real convert(uint n)
-//    {
-//        real retVal;
-//        (n < 0)?
-//        {
-//            // If the number is bigger than 2^31
-//            // than we are unlucky
-//            int odd := n && 1;
-//            int halfed := n $shl 1;
-//            
-//            real r := 0;
-//            intern system'core_routines'__realconvertor.convert(halfed, ref r);
-//            r := r * 2.0r;
-//            r := r + odd;
-//            
-//            retVal := r
-//        }
-//        : { 
-//            int number := n;
-//            intern system'core_routines'__realconvertor.convert(number, ref retVal);
-//        };
-//        
-//        ^ retVal
-//    }
+    /// Converts an integer into a real number
+    real convert(uint n)
+    {
+        real retVal;
+        (n < 0)?
+        {
+            // If the number is bigger than 2^31
+            // than we are unlucky
+            int odd := n & 1;
+            int halfed := n $shl 1;
+            
+            real r := 0;
+            intern system'core_routines'__realconvertor.convert(halfed, ref r);
+            r := r * 2.0r;
+            r := r + odd;
+            
+            retVal := r
+        }
+        : { 
+            int number := n;
+            intern system'core_routines'__realconvertor.convert(number, ref retVal);
+        };
+        
+        ^ retVal
+    }
 
     /// Converts a long integer into a real number
     real convert(long n)
@@ -2660,21 +2660,21 @@ public singleton realConvertor
         ^ retVal
     }
 
-//    /// Converts a byte into a real number
-//    real convert(byte n)
-//    {
-//        intern system'core_routines'__realconvertor.convert(n, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts a short integer into a real number
-//    real convert(short n)
-//    {
-//        intern system'core_routines'__realconvertor.convert(n, ref real retVal);
-//        
-//        ^ retVal
-//    }
+    /// Converts a byte into a real number
+    real convert(byte n)
+    {
+        intern system'core_routines'__realconvertor.convert(n, ref real retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts a short integer into a real number
+    real convert(short n)
+    {
+        intern system'core_routines'__realconvertor.convert(n, ref real retVal);
+        
+        ^ retVal
+    }
         
     real convert(o)
         = cast real(o);
@@ -2787,21 +2787,21 @@ public extension intRefOp : ref<int>
     }
 }
 
-//public extension realRefOp : ref<real>
-//{
-//    append(real n)
-//    {
-//        real v := self.Value;
-//        v := v + n;
-//        
-//        self.Value := v
-//    }
-//    
-//    reduce(real n)
-//    {
-//        real v := self.Value;
-//        v := v - n;
-//        
-//        self.Value := v
-//    }
-//}
+public extension realRefOp : ref<real>
+{
+    append(real n)
+    {
+        real v := *self;
+        v := v + n;
+        
+        self.Value := v
+    }
+    
+    reduce(real n)
+    {
+        real v := *self;
+        v := v - n;
+        
+        self.Value := v
+    }
+}

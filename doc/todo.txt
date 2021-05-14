@@ -3,7 +3,7 @@ In development:
 ------         
 
   [development]
-    + linux : 64 bit linker
+    * Building code at run-time in ELENA, Part 2
     - support if(a>b) c := a;
 
     + linux : 64 bit mode
@@ -11,7 +11,6 @@ In development:
 
     - debugger fine-tuning
 
-    * Building code at run-time in ELENA, Part 2
     * #206 : interpreter sample
     + compile console / files samples for linux i386
     + compile lib50_64 for linux i386 / ppc64le

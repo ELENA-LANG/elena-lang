@@ -1956,13 +1956,59 @@ labErr:
   alloci  1
   movr    class : system'FormatException
   storesi 0
-  pushr mssgconst : "new[1]"
+  pushr   mssgconst : "new[1]"
 
   throw
 
 end
 
+procedure __realconvertor."convert$system@WideString$system@IntNumber$@system@ref#1&system@RealNumber[3]"
+  
+  pushn    0
+  pushsi   4
+  pushsi   4
+  pushsi   4  
+  callextr api : wstrtoreal, 3
+  freei    4
+  ifr      labErr, 0
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'FormatException
+  storesi 0
+  pushr   mssgconst : "new[1]"
+
+  throw
+
+end
+
+
 procedure __realconvertor."convert$system@IntNumber$@system@ref#1&system@RealNumber[2]"
+  
+  peeksi 1
+  load
+  rset
+  peeksi 2
+  rsave
+  quit
+
+end
+
+
+procedure __realconvertor."convert$system@ByteNumber$@system@ref#1&system@RealNumber[2]"
+  
+  peeksi 1
+  load
+  rset
+  peeksi 2
+  rsave
+  quit
+
+end
+
+procedure __realconvertor."convert$system@ShortNumber$@system@ref#1&system@RealNumber[2]"
   
   peeksi 1
   load

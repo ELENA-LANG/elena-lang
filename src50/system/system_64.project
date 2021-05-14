@@ -29,8 +29,10 @@
        <include>app.l</include>
        <include>lnx32_app.l</include>
        <include>collections/list.l</include>
-       <include>collections\queues.l</include>
-       <include>math\math.l</include>
+       <include>collections/queues.l</include>
+       <include>collections/tuples.l</include>
+       <include>collections/maps.l</include>
+       <include>math/math.l</include>
        <include>calendar/lnx32_datetime.l</include>
        <include>calendar/dates.l</include>
        <include>text/encoder.l</include>
@@ -45,16 +47,16 @@
        <include>io/lnx32_getfiles.l</include>
      </module>
      <module name="routines">
-       <include>routines\enumerables.l</include>
-       <include>routines\patterns.l</include>
-       <include>routines\sorting.l</include>
+       <include>routines/enumerables.l</include>
+       <include>routines/patterns.l</include>
+       <include>routines/sorting.l</include>
      </module>
      <module name="dynamic">
-       <include>dynamic\reflection.l</include>
-       <include>dynamic\groups.l</include>
-       <include>dynamic\closures.l</include>
-       <include>dynamic\tape.l</include>
-       <include>dynamic\expressions\expressions.l</include>
+       <include>dynamic/reflection.l</include>
+       <include>dynamic/groups.l</include>
+       <include>dynamic/closures.l</include>
+       <include>dynamic/tape.l</include>
+       <include>dynamic/expressions/expressions.l</include>
      </module>
   </files>
 </configuration>
