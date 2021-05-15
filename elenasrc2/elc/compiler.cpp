@@ -5653,7 +5653,8 @@ ObjectInfo Compiler :: compileNewArrOperation(SyntaxWriter& writer, SNode node, 
          // if it is a primitive operation
          writer.newNode((LexicalType)operationType, object.reference);
 
-         if (size != 0)
+         //if (size != 0)
+         if (size < 0)
             writer.appendNode(lxSize, size);
 
          writeTerminal(writer, arguments[0], scope);

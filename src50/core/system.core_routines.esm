@@ -223,6 +223,66 @@ procedure __dptr."copyTo$system@UnsafePointer$system@Symbol[2]"
 
 end
 
+procedure __int."readHashCodeTo$system@IntNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quitn 2
+
+end
+
+procedure __int."readHashCodeTo$system@UIntNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quitn 2
+
+end
+
+procedure __int."readHashCodeTo$system@ByteNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __int."readHashCodeTo$system@ShortNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __int."readHashCodeTo$system@RealNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quit
+
+end
+
+procedure __int."readHashCodeTo$system@LongNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi  1
+  load
+  peeksi  2
+  save
+  quit
+
+end
+
 procedure __literal."equal$system@String[2]"
 
   pushsi 2

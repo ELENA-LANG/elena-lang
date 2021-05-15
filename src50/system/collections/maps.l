@@ -105,7 +105,7 @@ namespace collections
             auto it := theList.enumerator();
             while (it.next())
             {
-                list.append(it.get().Item2)
+                list.append(*it.Item2)
             };
             
             ^ list.Value
@@ -120,7 +120,7 @@ namespace collections
             auto it := theList.enumerator();
             while (it.next())
             {
-                var item := it.get();
+                var item := *it;
                 
                 list[item.Item1] := item.Item2;
             };

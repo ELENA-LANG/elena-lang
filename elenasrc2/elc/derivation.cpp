@@ -976,7 +976,12 @@ void DerivationWriter :: flushArrayTypeAttribute(SyntaxWriter& writer, SNode nod
       writer.closeNode();
    }
    else if (current == lxDynamicBrackets) {
-      flushArrayTypeAttribute(writer, current, derivationScope);
+      if (node == lxDynamicBrackets) {
+         writer.newNode(lxArrayType);
+         flushArrayTypeAttribute(writer, current, derivationScope);
+         writer.closeNode();
+      }
+      else flushArrayTypeAttribute(writer, current, derivationScope);
    }
    else {
       writer.newNode(lxArrayType);
@@ -1889,16 +1894,10 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
          // COMPILER MAGIC : recognize the operator template
          generateOperatorTemplateTree(writer, current, derivationScope);
          break;
-//      case lxExpression:
-//         generateExpressionTree(writer, current, derivationScope);
-//         break;
 //      case lxSubMessage:
 //         writer.newNode(lxSubMessage);
 //         copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
 //         writer.closeNode();
-//         break;
-//      case lxAttrExpression:
-//         generateExpressionTree(writer, current.findChild(lxExpression), derivationScope, 0);
 //         break;
       case lxNestedExpression:
       {
@@ -1945,12 +1944,6 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
          //      case lxCollection:
 //         generateCollectionTree(writer, current, derivationScope);
 //         first = false;
-//         break;
-//      case lxClosureExpr:
-////      case lxInlineClosure:
-//         // COMPILER MAGIC : recognize the closure without parameters,
-//         //                  the one with parameters should be handled in default case
-//         generateClosureTree(writer, current, derivationScope);
 //         break;
       case lxInteger:
       case lxHexInteger:
