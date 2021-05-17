@@ -626,6 +626,7 @@ public:
       bool  found;
       bool  directResolved;
       bool  withCustomDispatcher;
+      bool  withVariadicDispatcher;
       bool  stackSafe;
       bool  embeddable;
       bool  withEmbeddableRet;
@@ -642,7 +643,7 @@ public:
          outputReference = 0;
          constRef = 0;
          protectedRef = 0;
-         withCustomDispatcher = false;
+         withVariadicDispatcher = withCustomDispatcher = false;
          stackSafe = false;
          withEmbeddableRet = false;
 //         function = false;

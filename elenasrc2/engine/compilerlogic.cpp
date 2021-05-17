@@ -281,7 +281,10 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, mssg_t me
       if (testany(info.header.flags, elClosed | elClassClass))
          result.directResolved = true;
 
-      if (test(info.header.flags, elWithCustomDispatcher))
+      if (testany(info.header.flags, elWithVariadics)) {
+         result.withVariadicDispatcher = true;
+      }
+      else if (test(info.header.flags, elWithCustomDispatcher))
          result.withCustomDispatcher = true;
 
       int hint = checkMethod(info, message, result, resolveProtected);

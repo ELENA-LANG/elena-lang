@@ -3255,7 +3255,17 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, ExprScop
          // do nothing in silent mode
       }
       else if (result.found && !result.withCustomDispatcher && callType == tpUnknown) {
-         if (target.reference == scope.moduleScope->superReference || !target.reference) {
+         bool ignoreWarning = false;
+         if (result.withVariadicDispatcher) {
+            ref_t variadicMessage = resolveVariadicMessage(scope, messageRef);
+
+            _CompilerLogic::ChechMethodInfo variadicResult;
+            int variadicCallType = _logic->resolveCallType(*scope.moduleScope, classReference, variadicMessage, variadicResult);
+            if (variadicCallType)
+               ignoreWarning = true;
+         }
+
+         if (target.reference == scope.moduleScope->superReference || !target.reference || ignoreWarning) {
             // ignore warning for super class / type-less one
          }
          else if (EAttrs::test(mode, HINT_CONVERSIONOP)) {
