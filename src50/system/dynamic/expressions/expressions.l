@@ -126,13 +126,13 @@ namespace expressions
 //           
 //        static Expression DynamicMessageCall(Expression t)
 //            = DynamicMessageCallExpression.new(t);
-//            
-//        static Expression GetProperty(MessageName name, Expression t)
-//            = GetPropertyExpression.new(name, t);
-//            
-//        static Expression SetProperty(MessageName name, Expression t, Expression v)
-//            = SetPropertyExpression.new(name, t, v);
-//           
+            
+        static Expression GetProperty(MessageName name, Expression t)
+            = GetPropertyExpression.new(name, t);
+            
+        static Expression SetProperty(MessageName name, Expression t, Expression v)
+            = SetPropertyExpression.new(name, t, v);
+           
 //        static Expression GetDynamicProperty(Expression m, Expression t)
 //            = GetDynamicPropertyExpression.new(m, t);
 //            
@@ -1053,37 +1053,38 @@ namespace expressions
 //            Expression.saveMessageCallTo(list, scope, _arguments, DynamicMessageFunction)
 //        }
 //    }
-//
-//    public class GetPropertyExpression : Expression
-//    {
-//        MessageName _name;
-//        Expression  _target;
-//        
-//        constructor(Expression t, string message)
-//            <= new(new MessageName(message), t);
-//            
-//        constructor new(MessageName name, Expression t)
-//        {
-//            _name := name;
-//            _target := t
-//        }
-//                
-//        bool IsOperation = true;
-//
-//        prepare(ExpressionScope scope)
-//        {
-//            _target.prepare(scope);
-//        }
-//        
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {
-//            _target.saveTo(list, scope);
-//            
-//            auto mssg := _name.getPropertyMessage();
-//            list.append(MessageFunction.load(mssg))
-//        }
-//    }
-//
+
+    public class GetPropertyExpression : Expression
+    {
+        MessageName _name;
+        Expression  _target;
+        
+        constructor(Expression t, string message)
+            <= new(new MessageName(message), t);
+            
+        constructor new(MessageName name, Expression t)
+        {
+            _name := name;
+            _target := t
+        }
+                
+        bool IsOperation = true;
+
+        int prepare(ExpressionScope scope)
+            = _target.prepare(scope);
+        
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {
+            _target.saveTo(list, scope, 0);
+            
+            auto mssg := _name.getPropertyMessage();
+            list.append(MessageFunction.load(mssg));
+            if (index > 0) {
+                list.append(new SavingFunction(index));
+            }
+        }
+    }
+
 //    public class GetDynamicPropertyExpression : Expression
 //    {
 //        Expression _property;
@@ -1121,41 +1122,49 @@ namespace expressions
 //            list.append(DynamicMessageFunction)
 //        }
 //    }
-//
-//    public class SetPropertyExpression : Expression
-//    {
-//        MessageName _name;
-//        Expression  _target;
-//        Expression  _value;
-//        
-//        constructor(Expression t, string message, Expression v)
-//            <= new(new MessageName(message), t, v);
-//            
-//        constructor new(MessageName name, Expression t, Expression v)
-//        {
-//            _name := name;
-//            _target := t;
-//            _value := v
-//        }
-//        
-//        bool IsOperation = true;
-//        
-//        prepare(ExpressionScope scope)
-//        {
-//            _target.prepare(scope);
-//            _value.prepare(scope);
-//        }
-//        
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {
-//            _value.saveTo(list, scope);
-//            _target.saveTo(list, scope);
-//            
-//            auto mssg := _name.setPropertyMessage();
-//            list.append(MessageFunction.load(mssg))        
-//        }
-//    }
-//
+
+    public class SetPropertyExpression : Expression
+    {
+        MessageName _name;
+        Expression  _target;
+        Expression  _value;
+        
+        constructor(Expression t, string message, Expression v)
+            <= new(new MessageName(message), t, v);
+            
+        constructor new(MessageName name, Expression t, Expression v)
+        {
+            _name := name;
+            _target := t;
+            _value := v
+        }
+        
+        bool IsOperation = true;
+        
+        int prepare(ExpressionScope scope)
+        {
+            int level := _target.prepare(scope);
+            int vlevel := _value.prepare(scope);
+            
+            if (vlevel > level)
+                { level := vlevel; };
+            
+            ^ level;
+        }
+        
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {
+            _value.saveTo(list, scope, 0);
+            _target.saveTo(list, scope, 0);
+            
+            auto mssg := _name.setPropertyMessage();
+            list.append(MessageFunction.load(mssg));
+            if (index > 0) {
+                list.append(new SavingFunction(index));
+            }
+        }
+    }
+
 //    public class SetDynamicPropertyExpression : Expression
 //    {
 //        Expression _property;
