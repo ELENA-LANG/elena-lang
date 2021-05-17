@@ -2448,7 +2448,7 @@ mssg_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool extensionCall, 
    }
    else if (newOpCall) {
       // HOTFIX : skip the target
-      current = node.findChild(lxIdentifier, lxReference, lxExpression).nextNode();
+      current = node.findChild(lxIdentifier, lxReference, lxType, lxExpression).nextNode();
    }
    else current = node.firstChild(lxObjectMask);
 
