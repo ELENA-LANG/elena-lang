@@ -82,9 +82,9 @@ namespace expressions
 //        static Expression CodeBlock(Expression[] statements)
 //            = CodeblockExpression.new(statements);
 //        
-//        static Expression Constant(object o)
-//            = new ConstantExpression(o);
-//            
+        static Expression Constant(object o)
+            = new ConstantExpression(o);
+            
 //        static Expression IntConstant(string value)
 //            = new IntConstantExpression(value);
 //            
@@ -252,7 +252,7 @@ namespace expressions
             
             // second pass - the operation
             if (target.IsOperation && len > 0) {
-                tempVariables.pop().saveTo(list, scope, 0)
+                list.append(tempVariables.pop());
             }
             else {
                 target.saveTo(list, scope, 0)
@@ -260,7 +260,7 @@ namespace expressions
             
             for (int i := 0, i < len, i += 1) {
                 if (arguments[i].IsOperation) {
-                   tempVariables.pop().saveTo(list, scope, i + 1) 
+                   list.append(tempVariables.pop());
                 }
                 else {
                     arguments[i].saveTo(list, scope, i + 1) 
@@ -608,31 +608,30 @@ namespace expressions
 //            }        
 //        }
 //    }
-//
-//    public class ConstantExpression : Expression
-//    {
-//        object object;
-//        
-//        constructor(o)
-//        {
-//            this object := o
-//        }
-//        
-//        bool IsOperation = false;
-//        
-//        eval()
-//            = object;
-//        
-//        prepare(ExpressionScope scope)
-//        {
-//        }
-//        
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {
-//            list.append(ConstantFunction.load(object));
-//        }
-//    }
-//    
+
+    public class ConstantExpression : Expression
+    {
+        object object;
+        
+        constructor(o)
+        {
+            this object := o
+        }
+        
+        bool IsOperation = false;
+        
+        eval()
+            = object;
+        
+        int prepare(ExpressionScope scope)
+            = 1;
+        
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {
+            list.append(ConstantFunction.load(object));
+        }
+    }
+    
 //    public class IntConstantExpression : ConstantExpression
 //    {
 //        constructor(o)
