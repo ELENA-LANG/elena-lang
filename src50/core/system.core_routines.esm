@@ -2364,6 +2364,23 @@ procedure __local_closure."params##invoke$system@Object[0]"
 
 end
 
+procedure __copytostack_closure."params##invoke$system@Object[0]"
+
+  pusha
+  load
+  movfip 0
+  get
+
+  swap
+  xload  4
+  xset
+  pop
+
+  peeksi  1
+
+  quit
+end
+
 procedure __assign_closure."params##invoke$system@Object[0]"
 
   pushsi  1

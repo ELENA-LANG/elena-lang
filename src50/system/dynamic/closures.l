@@ -130,6 +130,23 @@ public struct SavingFunction : TapeFunction
         => intern system'core_routines'__saving_closure;    
 }
 
+// --- LocalFunction ---
+
+public struct CopyToStackFunction : TapeFunction
+{
+    int index;
+    int offs;
+    
+    constructor(int index, int offs)
+    {
+        this index := index;
+        this offs := offs;
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__copytostack_closure;    
+}
+
 //// --- ReleaseFunction ---
 //
 //public struct ReleaseFunction : TapeFunction

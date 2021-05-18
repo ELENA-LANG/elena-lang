@@ -153,16 +153,19 @@ namespace expressions
 //              
 //        static Expression DeclareAndAssigning(string variable, Expression expr)
 //            = new DeclaringAndAssigningExpression(new ScopeVariable(variable), expr);
-//              
+//
+        static Expression VariableByIndex(int index)
+            = new VariableByIndexExpression(index);
+                            
 //        static Expression Variable(ScopeVariable variable)
 //            = new VariableExpression(variable);
 //              
 //        static Expression Identifier(ScopeVariable variable)
 //            = new IdentifierExpression(variable);
-//              
+              
 //        static Expression Variable(string variable)
 //            = new VariableExpression(new ScopeVariable(variable));
-//
+
 //        static Expression PreviousVariable(ScopeVariable variable)
 //            = new PreviousVariableExpression(variable);
 //              
@@ -228,7 +231,7 @@ namespace expressions
                                             Expression[] arguments, TapeFunction operation)
         {
             int len := arguments.Length;
-            Queue<TapeFunction> tempVariables := nil;
+            Queue<Expression> tempVariables := nil;
             
             // first pass - preallocating sub expr 
             if (target.IsOperation && len > 0) {
@@ -236,7 +239,7 @@ namespace expressions
                 target.saveTo(list, scope, 0);
                 list.append(new AssigningFunction(tempVar));
                 
-                tempVariables.!push(new LocalFunction(tempVar));                
+                tempVariables.!push(Expression.VariableByIndex(tempVar));                
             };
             
             for (int i := 0, i < len, i += 1) {
@@ -246,27 +249,27 @@ namespace expressions
                     arguments[i].saveTo(list, scope, 0);
                     list.append(new AssigningFunction(tempVar));
                 
-                    tempVariables.!push(new LocalFunction(tempVar));
+                    tempVariables.!push(Expression.VariableByIndex(tempVar));
                 }
-            };
-            
-            // second pass - the operation
-            if (target.IsOperation && len > 0) {
-                list.append(tempVariables.pop());
-            }
-            else {
-                target.saveTo(list, scope, 0)
             };
             
             for (int i := 0, i < len, i += 1) {
                 if (arguments[i].IsOperation) {
-                   list.append(tempVariables.pop());
+                    tempVariables.pop().saveTo(list, scope, i + 1) 
                 }
                 else {
                     arguments[i].saveTo(list, scope, i + 1) 
                 }
             };
-            
+
+            // second pass - the operation
+            if (target.IsOperation && len > 0) {
+                tempVariables.pop().saveTo(list, scope, 0) 
+            }
+            else {
+                target.saveTo(list, scope, 0)
+            };
+                                    
             list.append(operation);
         }
         
@@ -629,6 +632,8 @@ namespace expressions
         saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
         {
             list.append(ConstantFunction.load(object));
+            if (index > 0)
+              { list.append(new SavingFunction(index)) };
         }
     }
     
@@ -772,11 +777,15 @@ namespace expressions
         
         int prepare(ExpressionScope scope)
         {
-            int maxStackSize := _target.prepare(scope);
-            
             int len := _arguments.Length;
+            int maxStackSize := len + 1;
+            
+            int argStackSize := _target.prepare(scope);
+            if (argStackSize > maxStackSize)
+                { maxStackSize := argStackSize; };
+            
             for(int i := 0, i < len, i+=1) {
-                int argStackSize := _arguments[i].prepare(scope);
+                argStackSize := _arguments[i].prepare(scope);
                 if (argStackSize > maxStackSize)
                     { maxStackSize := argStackSize; }
             };
@@ -1143,22 +1152,26 @@ namespace expressions
         
         int prepare(ExpressionScope scope)
         {
-            int level := _target.prepare(scope);
-            int vlevel := _value.prepare(scope);
+            int maxStackSize := 2;
+            int argStackSize := _target.prepare(scope);
+            if (argStackSize > maxStackSize)
+                { maxStackSize := argStackSize; };
             
-            if (vlevel > level)
-                { level := vlevel; };
+            argStackSize := _value.prepare(scope);            
+            if (argStackSize > maxStackSize)
+                { maxStackSize := argStackSize; };
             
-            ^ level;
+            ^ maxStackSize;
         }
         
         saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
         {
-            _value.saveTo(list, scope, 0);
+            _value.saveTo(list, scope, 1);
             _target.saveTo(list, scope, 0);
             
             auto mssg := _name.setPropertyMessage();
             list.append(MessageFunction.load(mssg));
+            
             if (index > 0) {
                 list.append(new SavingFunction(index));
             }
@@ -1317,7 +1330,33 @@ namespace expressions
 //            list.append(identifier);
 //        }
 //    }
-//
+
+    public struct VariableByIndexExpression : Expression
+    {
+        int varIndex;
+        
+        constructor(int index)
+        {
+            this varIndex := index
+        }
+        
+        bool IsOperation = false;
+        
+        int prepare(ExpressionScope scope) 
+            = 1;
+            
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {
+            if (index == 0) {
+                list.append(new LocalFunction(varIndex));
+            }
+            else {
+                list.append(new CopyToStackFunction(varIndex, index));
+            }
+        }
+        
+    }
+
 //    public class VariableExpression : Expression
 //    {
 //        ScopeVariable  variable;
@@ -1330,17 +1369,19 @@ namespace expressions
 //
 //        bool IsOperation = false;
 //
-//        prepare(ExpressionScope scope)
+//        int prepare(ExpressionScope scope)
 //        {
 //            local := scope.resolve(variable, mode_lcl);
+//            
+//            ^ 1
 //        }
-//                
+                
 //        saveTo(List<TapeFunction> list, ExpressionScope scope)
 //        {
 //            list.append(local);
 //        }
 //    }
-//
+
 //    public class PreviousVariableExpression : VariableExpression
 //    {
 //        constructor(ScopeVariable variable)
