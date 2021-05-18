@@ -4,26 +4,36 @@ namespace expressions
 //    import system'routines;
 //
 //    const int mode_non   = 0;
-//    const int mode_lcl   = 1;
+    const int mode_lcl   = 1;
 //    const int mode_asn   = 3;
 //    const int mode_class = 4;
 //
 //    preloaded used = new object[]{Expression,DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,DynamicImport};
 //    
-//    public class ScopeVariable
-//    {
-//        prop string Name;
-//        
-//        bool equal(ScopeVariable var)
-//        {
-//            ^ var.Name == Name
-//        }
-//        
-//        constructor(string name)
-//        {
-//            Name := name
-//        }
-//    }
+    public class ScopeIdentifier
+    {
+        prop string Name;
+        prop int Mode;
+        
+        static ScopeIdentifier Variable(string name)
+            = new ScopeIdentifier(name, mode_lcl);
+        
+        bool equal(ScopeIdentifier var)
+        {
+            if (var.Name == Name && var.Mode == Mode)
+            {
+                ^ true
+            };
+            
+            ^ false;
+        }
+        
+        constructor(string name, int mode)
+        {
+            Name := name;
+            Mode := mode
+        }
+    }
     
     public interface ExpressionScope
     {
@@ -34,9 +44,9 @@ namespace expressions
 //        get abstract int ScopeLevel();
 //        
 //        get abstract ExpressionScope Previous();
-//        
-//        abstract TapeFunction resolve(ScopeVariable variable, int mode);
-//        
+        
+        abstract TapeFunction resolve(ScopeIdentifier ident);
+
 //        abstract TapeFunction resolveExtension(Message message);
 //        
 //        abstract declare(ScopeVariable variable);
@@ -59,12 +69,12 @@ namespace expressions
 //        int ScopeLevel = 0;
 //        
 //        ExpressionScope Previous = nil;
-//        
-//        TapeFunction resolve(ScopeVariable variable, int mode) 
-//        {
-//            ^ nil
-//        }
-//    
+        
+        TapeFunction resolve(ScopeIdentifier variable) 
+        {
+            ^ nil
+        }
+    
 //        TapeFunction resolveExtension(Message message)
 //            = nil;
 //                
@@ -163,8 +173,8 @@ namespace expressions
 //        static Expression Identifier(ScopeVariable variable)
 //            = new IdentifierExpression(variable);
               
-//        static Expression Variable(string variable)
-//            = new VariableExpression(new ScopeVariable(variable));
+        static Expression Variable(string variable)
+            = new IdentifierExpression(ScopeIdentifier.Variable(variable));
 
 //        static Expression PreviousVariable(ScopeVariable variable)
 //            = new PreviousVariableExpression(variable);
@@ -207,11 +217,11 @@ namespace expressions
 //              
 //        static Expression Method(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
 //            = new MethodExpression(name, param1, param2, param3, body);        
-//              
-//        static Expression Closure(Expression body)
-//            = new ClosureExpression(body);        
-//              
-//        static Expression Closure(ScopeVariable param1, Expression body)
+              
+        static Expression Closure(Expression body)
+            = new ClosureExpression(body);        
+              
+//        static Expression Closure(Expression body, params ScopeIdentifier[] variables)
 //            = new ClosureExpression(param1, body);        
 //              
 //        static Expression Closure(ScopeVariable param1, ScopeVariable param2, Expression body)
@@ -298,7 +308,8 @@ namespace expressions
         {
             List<TapeFunction> list := new List<TapeFunction>(8);
             
-            int stackSize := self.prepare(scope) + scope.Allocated;
+            int stackSize := self.prepare(scope);
+            stackSize += scope.Allocated;
             
             list.append(new AllocFunction(stackSize));
             
@@ -426,8 +437,8 @@ namespace expressions
 //        }
 //    }
 //
-//    public class CodeblockExpression : Expression
-//    {
+    public class CodeblockExpression //: Expression
+    {
 //        Expression[]        statements;
 //        List<ScopeVariable> variables;
 //        
@@ -589,9 +600,9 @@ namespace expressions
 //                statements[i].prepare(codeScope);
 //            }
 //        }
-//        
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {       
+        
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {       
 //            var newLocal := new ConstantExpression(nilValue);
 //            int l := variables.Length;
 //            for (int i:=0, i < l, i+=1)
@@ -609,8 +620,8 @@ namespace expressions
 //            if (l != 0) {
 //                list.append(new ReleaseFunction(variables.Length))
 //            }        
-//        }
-//    }
+        }
+    }
 
     public class ConstantExpression : Expression
     {
@@ -1357,30 +1368,33 @@ namespace expressions
         
     }
 
-//    public class VariableExpression : Expression
-//    {
-//        ScopeVariable  variable;
-//        TapeFunction local;
-//        
-//        constructor(ScopeVariable variable)
-//        {
-//            this variable := variable
-//        }
-//
-//        bool IsOperation = false;
-//
-//        int prepare(ExpressionScope scope)
-//        {
-//            local := scope.resolve(variable, mode_lcl);
-//            
-//            ^ 1
-//        }
+    public class IdentifierExpression : Expression
+    {
+        ScopeIdentifier ident;
+        TapeFunction    local;
+        
+        constructor(ScopeIdentifier ident)
+        {
+            this ident := ident;
+        }
+
+        bool IsOperation = false;
+
+        int prepare(ExpressionScope scope)
+        {
+            local := scope.resolve(ident);
+            
+            ^ 1
+        }
                 
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {
-//            list.append(local);
-//        }
-//    }
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {
+            list.append(local);
+            if (index > 0) {
+                list.append(new SavingFunction(index));
+            }
+        }
+    }
 
 //    public class PreviousVariableExpression : VariableExpression
 //    {
@@ -1824,12 +1838,12 @@ namespace expressions
 //            this body := body;
 //        }
 //    }
-//
-//    public class ClosureExpression : Expression
-//    {
-//        ScopeVariable[] parameters;
-//        Expression      body;
-//        
+
+    public class ClosureExpression //: Expression
+    {
+        ScopeIdentifier[] parameters;
+        Expression        body;
+        
 //        constructor(Expression body)
 //        {
 //            this parameters := new ScopeVariable[](0);
@@ -1859,29 +1873,31 @@ namespace expressions
 //        }        
 //     
 //        bool IsOperation = true;
-//     
-//        prepare(ExpressionScope scope)
-//        {
-//            auto closureScope := new ExpressionScope
-//            {
+     
+        int prepare(ExpressionScope scope)
+        {
+            auto closureScope := new ExpressionScope
+            {
 //                int ScopeLevel = parameters.Length;
 //                
 //                ExpressionScope Previous = scope;
 //                
 //                TapeFunction resolveExtension(Message message)
 //                    => scope;
-//                
-//                TapeFunction resolve(ScopeVariable variable, int mode)
-//                {
-//                    int mode_mask := mode && mode_lcl;
-//                    
-//                    if (mode == 0 || mode_mask == mode_lcl)
-//                    {
-//                        int len := parameters.Length;
-//                        for(int i := 0, i < len, i+=1) {
-//                            if (parameters[i] == variable)
-//                            {
-//                                int index := i + 1;
+                
+                int allocTempVariable()
+                    = 0;
+                
+                int Allocated 
+                    = 0;
+                
+                TapeFunction resolve(ScopeIdentifier variable)
+                {
+                    int len := parameters.Length;
+                    for(int i := 0, i < len, i+=1) {
+                        if (variable == parameters[i])
+                        {
+                            int index := i + 1;
 //                                
 //                                if (mode == mode_asn) 
 //                                {
@@ -1889,29 +1905,28 @@ namespace expressions
 //                                }
 //                                else 
 //                                {
-//                                    ^ new LocalFunction(index)
+                                    ^ new LocalFunction(index)
 //                                };                                
-//                            }
-//                        }
-//                    };
-//                    
-//                    ^ scope.resolve(variable, mode)
-//                }
-//        
+                        }
+                    };
+                    
+                    ^ scope.resolve(variable)
+                }
+        
 //                declare(ScopeVariable variable)
 //                {
 //                }            
-//            };
-//            
-//            body.prepare(closureScope);
-//        }
-//     
+            };
+
+            ^ body.prepare(closureScope);
+        }
+     
 //        saveTo(List<TapeFunction> list, ExpressionScope scope)
 //        {    
 //            body.saveTo(list, scope);
 //        }    
-//    }
-//
+    }
+
 //    public class NestedExpression : Expression
 //    {
 //        DynamicSingleton singleton;
