@@ -9,6 +9,7 @@ In development:
     + linux : 64 bit mode
     + ppc64le : simplest program
 
+    - compileRootExpression - we probably could move the code here from compileExpression for topexpression
     - debugger fine-tuning
 
     * #206 : interpreter sample
@@ -394,8 +395,6 @@ Pipeline:
                  * implement correctly - a[i][j] += 1 (see World Cup group stage)
                  * modify quicksort to use insert selection for smaller amount (test on anagram)
 
-                 * embeddable returning value : do not duplicate the method code - the original method should call
-                   static one
                  * review RealNumber.#new<system'IntNumber>[1], is a new object created twice
 
                  * review if ref<int>.Value works correctly (it is embedded)

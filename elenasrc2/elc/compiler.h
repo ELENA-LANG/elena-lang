@@ -1420,6 +1420,8 @@ public:
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
 
+   void generateResendToEmbeddable(SyntaxTree& tree, MethodScope& scope, ref_t resendMessage, LexicalType methodType);
+
 //   //virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef);
    virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen,
       ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList);

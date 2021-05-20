@@ -128,6 +128,7 @@ namespace _ELENA_
    constexpr auto wrnInvalidHint          = "%s(%d:%d): warning 406: Attribute '%s' cannot be applied here\n";
    constexpr auto wrnUnknownMessage       = "%s(%d:%d): warning 407: Message '%s' does not handled by the object\n";
    constexpr auto wrnUnknownFunction      = "%s(%d:%d): warning 408: Function message does not handled by the object\n";
+   constexpr auto wrnUnknownDefConstructor= "%s(%d:%d): warning 409: Explicit constructor is not defined in the object\n";
    constexpr auto wrnUnknownModule        = "%s(%d:%d): warning 413: Unknown module '%s'\n";
 ////   #define wrnOuterAssignment       "%s(%d:%d): warning 414: Outer assignment; the change will not be seen outside the nested code\n"
 ////   #define wrnTypeMismatch          "%s(%d:%d): warning 415: Type mismatch, direct typecast is invoked\n"

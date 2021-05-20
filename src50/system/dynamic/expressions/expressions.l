@@ -18,6 +18,9 @@ namespace expressions
         static ScopeIdentifier Variable(string name)
             = new ScopeIdentifier(name, mode_lcl);
         
+        static ScopeIdentifier TempVariable(int index)
+            = new ScopeIdentifier(index.toPrintable(), mode_lcl);
+        
         bool equal(ScopeIdentifier var)
         {
             if (var.Name == Name && var.Mode == Mode)
@@ -439,19 +442,19 @@ namespace expressions
 //
     public class CodeblockExpression //: Expression
     {
-//        Expression[]        statements;
-//        List<ScopeVariable> variables;
-//        
-//        constructor new(params Expression[] statements)
-//        {
-//            this statements := statements
-//        }
-//        
-//        constructor new(Expression[] statements)
-//        {
-//            this statements := statements
-//        }
-//        
+        Expression[]          statements;
+        List<ScopeIdentifier> variables;
+        
+        constructor new(params Expression[] statements)
+        {
+            this statements := statements
+        }
+        
+        constructor new(Expression[] statements)
+        {
+            this statements := statements
+        }
+        
 //        constructor(Expression p1)
 //            <= new(p1);
 //        
@@ -546,13 +549,46 @@ namespace expressions
 //            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20);
 //        
 //        bool IsOperation = true;
-//        
-//        prepare(ExpressionScope scope)
-//        {
-//            variables := new List<ScopeVariable>();
-//            
-//            auto codeScope := new ExpressionScope
-//            {
+        
+        int prepare(ExpressionScope scope)
+        {
+            variables := new List<ScopeIdentifier>();
+            
+            auto codeScope := new ExpressionScope
+            {
+                int Allocated = variables.Length;
+                
+                int allocTempVariable()
+                {
+                    int index := variables.Length() + 1;
+                    variables.append(ScopeIdentifier.TempVariable(index));
+                    
+                    ^ index
+                }
+                
+                TapeFunction resolve(ScopeIdentifier variable)
+                {
+                    int len := variables.Length;
+                    for(int i := 0, i < len, i+=1) {
+                        if (variable == variables[i])
+                        {
+                            int index := i + 1;
+//                                
+//                                if (mode == mode_asn) 
+//                                {
+//                                    NotSupportedException.raise()
+//                                }
+//                                else 
+//                                {
+                                    ^ new LocalFunction(index)
+//                                };                                
+                        }
+                    };
+                    
+                    ^ scope.resolve(variable)
+                }
+                
+                
 //                ExpressionScope Previous = scope;
 //                
 //                int ScopeLevel = scope.ScopeLevel + variables.Length;
@@ -593,13 +629,18 @@ namespace expressions
 //                {
 //                    variables.append(variable)
 //                }            
-//            };
-//            
-//            int len := statements.Length;
-//            for(int i := 0, i < len, i+=1) {
-//                statements[i].prepare(codeScope);
-//            }
-//        }
+            };
+
+            int maxStackLevel := 0;
+            int len := statements.Length;
+            for(int i := 0, i < len, i+=1) {
+                int current := statements[i].prepare(codeScope);
+                if (current > maxStackLevel)
+                    { maxStackLevel := current }
+            };
+            
+            ^ maxStackLevel
+        }
         
         saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
         {       

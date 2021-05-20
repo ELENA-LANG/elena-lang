@@ -2300,6 +2300,11 @@ mssg_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, mssg_t multiMess
 
          return foundMessage;
       }
+      else if (getSignature(scope, multiMessage) == implicitSignatureRef) {
+         setSignatureStacksafe(scope, implicitSignatureRef, stackSafeAttr);
+
+         return multiMessage;
+      }
    }
 
    return 0;
