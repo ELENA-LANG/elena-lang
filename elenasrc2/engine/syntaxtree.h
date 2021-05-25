@@ -179,6 +179,7 @@ enum LexicalType
    lxArrOp                    = 0x0303C4,   // arg - operation id
    lxBinArrOp                 = 0x0303C5,
    lxCondBoxing               = 0x0303D0,
+   lxCondUnboxing             = 0x0303D8,
    lxInitializing             = 0x0303E0,
    lxBranching                = 0x0303F0,   // branch expression      
    lxIf                       = 0x030400,   // optional arg - reference

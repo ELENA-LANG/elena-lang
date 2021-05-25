@@ -1124,7 +1124,7 @@ ConversionInfo CompilerLogic :: injectImplicitConstructor(_ModuleScope& scope, C
    int stackSafeAttr = 0;
    mssg_t messageRef = resolveImplicitConstructor(scope, targetRef, signRef, signLen, stackSafeAttr, true);
    if (messageRef) {
-      bool embeddableAttr = isMethodEmbeddable(scope, info.header.classRef, messageRef);
+      //bool embeddableAttr = isMethodEmbeddable(scope, info.header.classRef, messageRef);
 
       return ConversionInfo(ConversionResult::crConverted, messageRef, info.header.classRef, stackSafeAttr);
    }

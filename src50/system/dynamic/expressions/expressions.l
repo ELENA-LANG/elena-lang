@@ -55,6 +55,18 @@ namespace expressions
 //        abstract declare(ScopeVariable variable);
     }
 
+    public class IdleExpressionScope : ExpressionScope
+    {
+        int allocTempVariable()
+            = 0;
+            
+        int Allocated
+            = 0;
+            
+        TapeFunction resolve(ScopeIdentifier ident)
+            = nil;            
+    }
+
     public class RootExpressionScope : ExpressionScope
     {
         ref<int> allocated := 0;
@@ -89,9 +101,9 @@ namespace expressions
 
     public interface Expression
     {    
-//        static Expression CodeBlock(params Expression[] statements)
-//            = CodeblockExpression.new(params statements);
-//        
+        static Expression CodeBlock(params Expression[] statements)
+            = CodeblockExpression.new(params statements);
+        
 //        static Expression CodeBlock(Expression[] statements)
 //            = CodeblockExpression.new(statements);
 //        
@@ -146,12 +158,12 @@ namespace expressions
         static Expression SetProperty(MessageName name, Expression t, Expression v)
             = SetPropertyExpression.new(name, t, v);
            
-//        static Expression GetDynamicProperty(Expression m, Expression t)
-//            = GetDynamicPropertyExpression.new(m, t);
-//            
-//        static Expression SetDynamicProperty(Expression m, Expression t, Expression v)
-//            = SetDynamicPropertyExpression.new(m, t, v);
-//           
+        static Expression GetDynamicProperty(Expression m, Expression t)
+            = GetDynamicPropertyExpression.new(m, t);
+            
+        static Expression SetDynamicProperty(Expression m, Expression t, Expression v)
+            = SetDynamicPropertyExpression.new(m, t, v);
+           
 //        static Declaration(ScopeVariable variable)
 //            = new DeclarationExpression(variable);
 //           
@@ -224,9 +236,9 @@ namespace expressions
         static Expression Closure(Expression body)
             = new ClosureExpression(body);        
               
-//        static Expression Closure(Expression body, params ScopeIdentifier[] variables)
-//            = new ClosureExpression(param1, body);        
-//              
+        static Expression Closure(Expression body, params ScopeIdentifier[] variables)
+            = ClosureExpression.new(body, params variables);        
+              
 //        static Expression Closure(ScopeVariable param1, ScopeVariable param2, Expression body)
 //            = new ClosureExpression(param1, param2, body);        
 //              
@@ -560,7 +572,7 @@ namespace expressions
                 
                 int allocTempVariable()
                 {
-                    int index := variables.Length() + 1;
+                    int index := variables.Length + 1;
                     variables.append(ScopeIdentifier.TempVariable(index));
                     
                     ^ index
@@ -1146,8 +1158,8 @@ namespace expressions
         }
     }
 
-//    public class GetDynamicPropertyExpression : Expression
-//    {
+    public class GetDynamicPropertyExpression //: Expression
+    {
 //        Expression _property;
 //        Expression _target;
 //        
@@ -1182,7 +1194,7 @@ namespace expressions
 //            
 //            list.append(DynamicMessageFunction)
 //        }
-//    }
+    }
 
     public class SetPropertyExpression : Expression
     {
@@ -1230,12 +1242,12 @@ namespace expressions
         }
     }
 
-//    public class SetDynamicPropertyExpression : Expression
-//    {
+    public class SetDynamicPropertyExpression //: Expression
+    {
 //        Expression _property;
 //        Expression  _target;
 //        Expression  _value;
-//        
+        
 //        constructor(Expression t, Expression p, Expression v)
 //            <= new(p, t, v);
 //            
@@ -1252,7 +1264,7 @@ namespace expressions
 //            _target := t;
 //            _value := v
 //        }
-//        
+        
 //        bool IsOperation = true;
 //        
 //        prepare(ExpressionScope scope)
@@ -1270,8 +1282,8 @@ namespace expressions
 //            
 //            list.append(DynamicMessageFunction)
 //        }
-//    }
-//
+    }
+
 //    public class DeclarationExpression : Expression
 //    {
 //        ScopeVariable  variable;
@@ -1885,19 +1897,26 @@ namespace expressions
         ScopeIdentifier[] parameters;
         Expression        body;
         
-//        constructor(Expression body)
-//        {
-//            this parameters := new ScopeVariable[](0);
-//            
-//            this body := body;
-//        } 
-//        
+        constructor(Expression body)
+        {
+            this parameters := new ScopeIdentifier[](0);
+            
+            this body := body;
+        } 
+        
+        constructor new(Expression body, params ScopeIdentifier[] params)
+        {
+            this parameters := params;
+            
+            this body := body;
+        } 
+        
 //        constructor(ScopeVariable param1, Expression body)
 //        {
-//            this parameters := new ScopeVariable[]{ param1 };
+//            this parameters := new ScopeVariable[]{ param2 }; // NOTE : it should be in reversed order
 //            
 //            this body := body;
-//        } 
+//        }
 //        
 //        constructor(ScopeVariable param1, ScopeVariable param2, Expression body)
 //        {

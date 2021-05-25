@@ -4102,6 +4102,27 @@ void ByteCodeWriter :: generateCondBoxing(CommandTape& tape, SyntaxTree::Node no
    else throw InternalError("Not yet implemented"); // !! temporal
 }
 
+void ByteCodeWriter :: generateCondUnBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   SNode current = node.firstChild(lxObjectMask);
+
+   SNode step1;
+   SNode step2;
+   assignOpArguments(node, step1, step2);
+
+   SNode local = step1.firstChild(lxObjectMask);
+   tape.newLabel();
+   generateObject(tape, local, scope);
+   //scope.clear();
+
+   tape.write(bcIfHeap, baCurrentLabel);
+
+   generateObject(tape, current, scope);
+   generateObject(tape, local, scope);
+
+   tape.setLabel();
+}
+
 void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& scope, int mode)
 {
    if (node.firstChild() == lxBreakpoint && !test(mode, NOBREAKPOINTS)) {
@@ -4266,6 +4287,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          break;
       case lxCondBoxing:
          generateCondBoxing(tape, node, scope);
+         break;
+      case lxCondUnboxing:
+         generateCondUnBoxing(tape, node, scope);
          break;
       case lxTempBinaryArray:
          generateBinary(tape, node, node.findChild(lxLevel).argument);

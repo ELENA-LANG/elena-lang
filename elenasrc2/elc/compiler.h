@@ -140,6 +140,7 @@ public:
 //      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okTempLocal,
+      okTempBoxableLocal,
       okBoxableLocal,
       okParam,                        // param - parameter offset, extraparam = class reference
       okParamField,
@@ -1123,11 +1124,11 @@ private:
    ObjectInfo saveToTempLocal(SyntaxWriter& writer, ExprScope& scope, ObjectInfo retVal);
 
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
-      ArgumentsInfo* arguments, bool assignMode, bool shortCircuitMode);
+      ArgumentsInfo* arguments, bool assignMode, bool shortCircuitMode, ref_t expectedRef);
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id,
-      bool assingMode, bool shortCircuitMode);
+      bool assingMode, bool shortCircuitMode, ref_t expectedRef);
    ObjectInfo compileUnaryOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id);
-   ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
+   ObjectInfo compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, ref_t expectedRef);
    ObjectInfo compileUnaryExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, ExprScope& scope);
    void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, ExprScope& scope, ref_t ifReference,

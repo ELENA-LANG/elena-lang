@@ -322,6 +322,7 @@ class ByteCodeWriter
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool ignoreEOP);
    void generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool fillMode);
    void generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateCondUnBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
    void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef/*, bool extStackEvenMode*/);
    void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);

@@ -2011,7 +2011,7 @@ ObjectInfo Compiler :: compileSwitchExpression(SyntaxWriter& writer, SNode node,
       arguments.add(roperand);
 
       writer.newNode(lxExpression);
-      ObjectInfo operationInfo = compileOperation(writer, current, scope, operator_id, loperand, &arguments, false, false);
+      ObjectInfo operationInfo = compileOperation(writer, current, scope, operator_id, loperand, &arguments, false, false, 0);
 
       ObjectInfo retVal;
       compileBranchingOp(writer, blockNode, scope, HINT_SWITCH, IF_OPERATOR_ID, operationInfo, retVal, EAttr::eaNone, nullptr);
@@ -2932,7 +2932,7 @@ inline bool isUnaryOperation(int arg)
 }
 
 ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, int operator_id, ObjectInfo loperand,
-   ArgumentsInfo* arguments, bool assignMode, bool shortCircuitMode)
+   ArgumentsInfo* arguments, bool assignMode, bool shortCircuitMode, ref_t expectedRef)
 {
    bool withUnboxing = false;
    ObjectInfo lorigin = loperand;
@@ -3083,7 +3083,8 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       }
       else stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
 
-      retVal = compileMessage(writer, node, scope, loperand, messageRef, arguments, operationMode, stackSafeAttr, 0, nullptr);
+      retVal = compileMessage(writer, node, scope, loperand, messageRef, arguments, operationMode, stackSafeAttr, 
+                  expectedRef, nullptr);
    }
 
    writer.closeNode();
@@ -3097,7 +3098,7 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
 }
 
 ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode,
-   int operator_id, bool assingMode, bool shortCircuitMode)
+   int operator_id, bool assingMode, bool shortCircuitMode, ref_t expectedRef)
 {
    SNode lnode = node.firstChild();
    SNode rnode = lnode.nextNode(lxObjectMask);
@@ -3120,7 +3121,8 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode node, ExprSc
       arguments.add(roperand);
    }
 
-   return compileOperation(writer, node, scope, operator_id, loperand, &arguments/*, mode*/, assingMode, shortCircuitMode);
+   return compileOperation(writer, node, scope, operator_id, loperand, &arguments/*, mode*/, assingMode, 
+      shortCircuitMode, expectedRef);
 }
 
 ObjectInfo Compiler :: compileUnaryOperation(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, int operator_id)
@@ -3130,7 +3132,7 @@ ObjectInfo Compiler :: compileUnaryOperation(SyntaxWriter& writer, SNode node, E
    EAttrs objMode(mode | HINT_TARGET/*, HINT_PROP_MODE*/);
    ObjectInfo loperand = compileExpression(writer, lnode, scope, 0, objMode, nullptr);
 
-   return compileOperation(writer, node, scope, operator_id, loperand, nullptr, false, false);
+   return compileOperation(writer, node, scope, operator_id, loperand, nullptr, false, false, 0);
 }
 
 inline ident_t resolveOperatorName(SNode node)
@@ -3151,7 +3153,7 @@ ObjectInfo Compiler :: compileUnaryExpression(SyntaxWriter& writer, SNode node, 
 }
 
 ObjectInfo Compiler :: compileOperationExpression(SyntaxWriter& writer, SNode node, ExprScope& scope,
-   EAttr mode)
+   EAttr mode, ref_t expectedRef)
 {
    ArgumentsInfo preservedArgs;
 
@@ -3170,23 +3172,23 @@ ObjectInfo Compiler :: compileOperationExpression(SyntaxWriter& writer, SNode no
       case ISNIL_OPERATOR_ID:
          return compileIsNilOperator(writer, node, scope);
       case APPEND_OPERATOR_ID:
-         return compileOperation(writer, node, scope, mode, ADD_OPERATOR_ID, true, false);
+         return compileOperation(writer, node, scope, mode, ADD_OPERATOR_ID, true, false, expectedRef);
       case REDUCE_OPERATOR_ID:
-         return compileOperation(writer, node, scope, mode, SUB_OPERATOR_ID, true, false);
+         return compileOperation(writer, node, scope, mode, SUB_OPERATOR_ID, true, false, expectedRef);
       case BAPPEND_OPERATOR_ID:
-         return compileOperation(writer, node, scope, mode, BOR_OPERATOR_ID, true, false);
+         return compileOperation(writer, node, scope, mode, BOR_OPERATOR_ID, true, false, expectedRef);
       case BINCREASE_OPERATOR_ID:
-         return compileOperation(writer, node, scope, mode, BAND_OPERATOR_ID, true, false);
+         return compileOperation(writer, node, scope, mode, BAND_OPERATOR_ID, true, false, expectedRef);
       case INCREASE_OPERATOR_ID:
-         return compileOperation(writer, node, scope, mode, MUL_OPERATOR_ID, true, false);
+         return compileOperation(writer, node, scope, mode, MUL_OPERATOR_ID, true, false, expectedRef);
       case SEPARATE_OPERATOR_ID:
          node.setArgument(DIV_OPERATOR_ID);
-         return compileOperation(writer, node, scope, mode, DIV_OPERATOR_ID, true, false);
+         return compileOperation(writer, node, scope, mode, DIV_OPERATOR_ID, true, false, expectedRef);
       case AND_OPERATOR_ID:
       case OR_OPERATOR_ID:
-         return compileOperation(writer, node, scope, mode, operator_id, false, true);
+         return compileOperation(writer, node, scope, mode, operator_id, false, true, expectedRef);
       default:
-         return compileOperation(writer, node, scope, mode, operator_id, false, false);
+         return compileOperation(writer, node, scope, mode, operator_id, false, false, expectedRef);
    }
 }
 
@@ -3524,8 +3526,9 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
             writer.closeNode();
 
          boxedArg = ObjectInfo(okTempLocal, tempLocal, targetRef, 0, variable ? size : 0);
-         if (source.kind == okBoxableLocal && variable)
-            boxedArg.extraparam = (ref_t)-1;
+         if (source.kind == okBoxableLocal && variable) {
+            boxedArg.kind = okTempBoxableLocal;
+         }
 
          if (size < 0 || isPrimitiveArrRef(source.reference)) {
             boxedArg.element = source.element;
@@ -3631,9 +3634,23 @@ void Compiler :: analizeArguments(SyntaxWriter& writer, SNode node, ExprScope& s
 
 void Compiler :: unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprScope& scope)
 {
+   ObjectInfo source;
+   for (auto it = scope.tempLocals.start(); !it.Eof(); it++) {
+      if (*it == (int)target.param) {
+         auto key = it.key();
+         source = ObjectInfo((ObjectKind)key.value1, key.value2);
+
+         break;
+      }
+   }
+
+   bool condBoxing = source.kind == okParam || source.kind == okSelfParam;
+   if (condBoxing)
+      writer.newNode(lxCondUnboxing);
+
    bool primArray = target.kind == okTempLocal && target.element != 0;
    bool refMode = false;
-   if (target.extraparam == -1 && !primArray) {
+   if (target.kind == okTempBoxableLocal) {
       // HOTFIX : if it is byref variable unboxing
       writer.newNode(lxAssigning, 0);
       refMode = true;
@@ -3646,34 +3663,28 @@ void Compiler :: unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprSco
 
       writer.newNode(lxCopying, size);
    }
+   else if ((int)target.extraparam < 0) {
+      writer.newNode(lxCloning, 0);
+   }
    else writer.newNode(lxCopying, target.extraparam);
-   //         if (size < 0 || primArray) {
-   //            unboxing.set(lxCloning, 0);
-   //         }
    //         else if (condBoxing)
    //            unboxing.set(lxCondCopying, size);
 
    //         SNode unboxing = current.appendNode(lxCopying, size);
 
-   for (auto it = scope.tempLocals.start(); !it.Eof(); it++) {
-      if (*it == (int)target.param) {
-         auto key = it.key();
-
-         writeTerminal(writer, ObjectInfo((ObjectKind)key.value1, key.value2), scope);
-         if (refMode) {
-            writer.newNode(lxFieldExpression);
-            writeTerminal(writer, target, scope);
-            writer.appendNode(lxField, 0);
-            writer.closeNode();
-         }
-         else writeTerminal(writer, target, scope);
-
-         break;
-      }
+   writeTerminal(writer, source, scope);
+   if (refMode) {
+      writer.newNode(lxFieldExpression);
+      writeTerminal(writer, target, scope);
+      writer.appendNode(lxField, 0);
+      writer.closeNode();
    }
+   else writeTerminal(writer, target, scope);
 
    writer.closeNode();
 
+   if (condBoxing)
+      writer.closeNode();
 }
 
 void Compiler :: unboxPreservedArgs(SyntaxWriter& writer, ExprScope& scope, ArgumentsInfo* arguments)
@@ -3779,14 +3790,14 @@ void Compiler :: unboxPreservedArgs(SyntaxWriter& writer, ExprScope& scope, Argu
 
 void Compiler :: unboxArguments(SyntaxWriter& writer, ExprScope& scope, ObjectInfo& target, ArgumentsInfo* arguments)
 {
-   if (target.kind == okTempLocal && target.extraparam != 0) {
+   if ((target.kind == okTempLocal && target.extraparam != 0) || target.kind == okTempBoxableLocal) {
       unboxArgument(writer, target, scope);
    }
 
    if (arguments) {
       for (pos_t i = 0; i != arguments->Length(); i++) {
          ObjectInfo arg = (*arguments)[i];
-         if (arg.kind == okTempLocal && arg.extraparam != 0) {
+         if ((arg.kind == okTempLocal && arg.extraparam != 0) || arg.kind == okTempBoxableLocal) {
             unboxArgument(writer, arg, scope);
          }
       }
@@ -4070,7 +4081,7 @@ bool Compiler :: unboxingRequired(ObjectInfo& info)
    if (info.kind == okTempLocal) {
       return info.extraparam != 0;
    }
-   else return false;
+   else return info.kind == okTempBoxableLocal;
 }
 
 bool Compiler :: localBoxingRequired(_ModuleScope& scope, ObjectInfo& info)
@@ -4796,7 +4807,7 @@ ObjectInfo Compiler :: compileArrAssigning(SyntaxWriter& writer, SNode node, Exp
    arguments.add(roperand);
    arguments.add(roperand2);
 
-   return compileOperation(writer, node, scope, SET_REFER_OPERATOR_ID, loperand, &arguments, false, false);
+   return compileOperation(writer, node, scope, SET_REFER_OPERATOR_ID, loperand, &arguments, false, false, 0);
 }
 
 ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode)
@@ -6164,6 +6175,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
       case okLocal:
       case okTempLocal:
       case okBoxableLocal:
+      case okTempBoxableLocal:
          writer.newNode(lxLocal, object.param);
          break;
       case okParamField:
@@ -6423,7 +6435,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
          retVal = compileMessageExpression(writer, node, scope, targetRef, mode | HINT_PROP_MODE);
          break;
       case lxOperationExpression:
-         retVal = compileOperationExpression(writer, node, scope, mode);
+         retVal = compileOperationExpression(writer, node, scope, mode, targetRef);
          break;
       case lxUnaryExpression:
          retVal = compileUnaryExpression(writer, node, scope, mode);
@@ -6441,7 +6453,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
             SNode terminalNode = node.firstChild(lxTerminalMask);
             return compileObject(writer, terminalNode, scope, mode, preservedArgs);
          }
-         retVal = compileOperation(writer, node, scope, mode, REFER_OPERATOR_ID, false, false);
+         retVal = compileOperation(writer, node, scope, mode, REFER_OPERATOR_ID, false, false, targetRef);
          break;
       }
       case lxNestedExpression:
@@ -8407,7 +8419,6 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
 
 #ifdef FULL_OUTOUT_INFO
             // info
-            int x = 0;
             scope.moduleScope->printMessageInfo("method %s", methodScope.message);
 #endif // FULL_OUTOUT_INFO
 
@@ -8499,7 +8510,6 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
 
 #ifdef FULL_OUTOUT_INFO
             // info
-            int x = 0;
             classClassScope.moduleScope->printMessageInfo("method %s", methodScope.message);
 #endif // FULL_OUTOUT_INFO
 
@@ -9405,6 +9415,8 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
                scope.include(embeddableMessage);
 
                scope.addAttribute(message, maEmbeddableRet, embeddableMessage);
+               if (_logic->isStacksafeArg(scope.info))
+                  scope.addHint(embeddableMessage, tpStackSafe);
             }
          }
          else if (multiret) {
