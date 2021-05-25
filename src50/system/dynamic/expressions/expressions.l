@@ -119,18 +119,18 @@ namespace expressions
         static Expression Symbol(string s)
             = new SymbolExpression(s);
             
-//        static Expression ClassReference(string s)
-//            = new ConstantExpression(new ClassReference(s));
-//            
+        static Expression ClassReference(string s)
+            = new ConstantExpression(new ClassReference(s));
+            
 //        static Expression ClassIdentifier(string s)
 //            = new ClassIdentifierExpression(s);
-//            
-//        static Expression New(Expression t)
-//            = new MessageCallExpression(t, "#constructor");
-//           
-//        static Expression New(Expression t, Expression p0)
-//            = new MessageCallExpression(t, "#constructor", p0);
-//           
+            
+        static Expression New(Expression t)
+            = new MessageCallExpression(t, "#constructor");
+           
+        static Expression New(Expression t, Expression p0)
+            = new MessageCallExpression(t, "#constructor", p0);
+           
 //        static Expression FunctionCall(params Expression[] arguments)
 //            = FunctionCallExpression.new(params arguments);
            
@@ -244,10 +244,10 @@ namespace expressions
 //              
 //        static Expression Closure(ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
 //            = new ClosureExpression(param1, param2, param3, body);        
-//              
-//        static Expression Return(Expression expr)
-//            = new ReturnExpression(expr);
-//    
+              
+        static Expression Return(Expression expr)
+            = new ReturnExpression(expr);
+    
 //        static Expression Nested(DynamicSingleton expr)
 //            = new NestedExpression(expr);          
 //        
@@ -452,7 +452,7 @@ namespace expressions
 //        }
 //    }
 //
-    public class CodeblockExpression //: Expression
+    public class CodeblockExpression : Expression
     {
         Expression[]          statements;
         List<ScopeIdentifier> variables;
@@ -559,8 +559,8 @@ namespace expressions
 //                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
 //                    Expression p17, Expression p18, Expression p19, Expression p20)
 //            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20);
-//        
-//        bool IsOperation = true;
+        
+        bool IsOperation = true;
         
         int prepare(ExpressionScope scope)
         {
@@ -655,24 +655,14 @@ namespace expressions
         }
         
         saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
-        {       
-//            var newLocal := new ConstantExpression(nilValue);
-//            int l := variables.Length;
-//            for (int i:=0, i < l, i+=1)
-//            {
-//                newLocal.saveTo(list, scope)
-//            };
-//            
-//            var eosClosure := new ReleaseFunction(1);
-//            int len := statements.Length;
-//            for(int i := 0, i < len, i+=1) {
-//                statements[i].saveTo(list, scope);
-//                list.append(eosClosure)
-//            };
-//            
-//            if (l != 0) {
-//                list.append(new ReleaseFunction(variables.Length))
-//            }        
+        {
+            int len := statements.Length;
+            for(int i := 0, i < len, i+=1) {
+                statements[i].saveTo(list, scope, 0);
+            };
+
+            if (index > 0)
+              { list.append(new SavingFunction(index)) };
         }
     }
 
@@ -1158,42 +1148,55 @@ namespace expressions
         }
     }
 
-    public class GetDynamicPropertyExpression //: Expression
+    public class GetDynamicPropertyExpression : Expression
     {
-//        Expression _property;
-//        Expression _target;
-//        
-//        constructor(Expression t, Expression p)
-//            <= new(p, t);
-//            
-//        constructor new(Expression p, Expression t)
-//        {
-//            _property := Expression.MessageCall( 
-//                            new Message("getPropertyMessage[1]"),
-//                            Expression.New(
-//                                Expression.ClassReference("system'MessageName"),
-//                                p
-//                            )
-//                         );
-//            
-//            _target := t
-//        }
-//        
-//        bool IsOperation = true;
-//        
-//        prepare(ExpressionScope scope)
-//        {
-//            _target.prepare(scope);
-//            _property.prepare(scope);
-//        }
-//        
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {
-//            _target.saveTo(list, scope);
-//            _property.saveTo(list, scope);
-//            
-//            list.append(DynamicMessageFunction)
-//        }
+        Expression   _property;
+        Expression   _target;
+        int          _tempVariable;  
+        
+        constructor(Expression t, Expression p)
+            <= new(p, t);
+            
+        constructor new(Expression p, Expression t)
+        {
+            _property := Expression.MessageCall( 
+                            new Message("getPropertyMessage[1]"),
+                            Expression.New(
+                                Expression.ClassReference("system'MessageName"),
+                                p
+                            )
+                         );
+            
+            _target := t
+        }
+        
+        bool IsOperation = true;
+        
+        int prepare(ExpressionScope scope)
+        {
+            _tempVariable := scope.allocTempVariable();
+            
+            int maxStackLevel := _property.prepare(scope);
+            int current := _target.prepare(scope);
+            if (current > maxStackLevel)
+                { maxStackLevel := current };
+            
+            ^ maxStackLevel;
+        }
+
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {
+            _property.saveTo(list, scope, 0);
+            list.append(new AssigningFunction(_tempVariable));                       
+            
+            _target.saveTo(list, scope, 0);
+
+            list.append(new DynamicMessageFunction(_tempVariable));
+            
+            if (index > 0) {
+                list.append(new SavingFunction(index));
+            }
+        }
     }
 
     public class SetPropertyExpression : Expression
@@ -1242,46 +1245,63 @@ namespace expressions
         }
     }
 
-    public class SetDynamicPropertyExpression //: Expression
+    public class SetDynamicPropertyExpression : Expression
     {
-//        Expression _property;
-//        Expression  _target;
-//        Expression  _value;
+        Expression _property;
+        Expression  _target;
+        Expression  _value;
+        int         _tempVariable;  
         
-//        constructor(Expression t, Expression p, Expression v)
-//            <= new(p, t, v);
-//            
-//        constructor new(Expression p, Expression t, Expression v)
-//        {
-//            _property := Expression.MessageCall( 
-//                            new Message("setPropertyMessage[1]"),
-//                            Expression.New(
-//                                Expression.ClassReference("system'MessageName"),
-//                                p
-//                            )
-//                         );
-//            
-//            _target := t;
-//            _value := v
-//        }
+        constructor(Expression t, Expression p, Expression v)
+            <= new(p, t, v);
+            
+        constructor new(Expression p, Expression t, Expression v)
+        {
+            _property := Expression.MessageCall( 
+                            new Message("setPropertyMessage[1]"),
+                            Expression.New(
+                                Expression.ClassReference("system'MessageName"),
+                                p
+                            )
+                         );
+            
+            _target := t;
+            _value := v
+        }
         
-//        bool IsOperation = true;
-//        
-//        prepare(ExpressionScope scope)
-//        {
-//            _property.prepare(scope);
-//            _target.prepare(scope);
-//            _value.prepare(scope);
-//        }
-//        
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {
-//            _value.saveTo(list, scope);
-//            _target.saveTo(list, scope);
-//            _property.saveTo(list, scope);
-//            
-//            list.append(DynamicMessageFunction)
-//        }
+        bool IsOperation = true;
+        
+        int prepare(ExpressionScope scope)
+        {
+            _tempVariable := scope.allocTempVariable();
+            
+            int maxStackLevel := _property.prepare(scope);
+
+            int current := _target.prepare(scope);
+            if (current > maxStackLevel)
+                { maxStackLevel := current };
+
+            current := _value.prepare(scope);
+            if (current > maxStackLevel)
+                { maxStackLevel := current };
+                                    
+            ^ maxStackLevel;
+        }
+        
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {
+            _property.saveTo(list, scope, 0);
+            list.append(new AssigningFunction(_tempVariable));                       
+            
+            _value.saveTo(list, scope, 1);
+            _target.saveTo(list, scope, 0);
+
+            list.append(new DynamicMessageFunction(_tempVariable));
+            
+            if (index > 0) {
+                list.append(new SavingFunction(index));
+            }
+        }
     }
 
 //    public class DeclarationExpression : Expression
@@ -1580,30 +1600,28 @@ namespace expressions
 //            };
 //        }
 //    }
-//
-//    public class ReturnExpression : Expression
-//    {
-//        Expression expr;
-//        
-//        constructor(Expression expr)
-//        {
-//            this expr := expr
-//        }
-//        
-//        bool IsOperation = true;
-//
-//        prepare(ExpressionScope scope)
-//        {
-//            expr.prepare(scope);
-//        }
-//        
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {
-//            expr.saveTo(list, scope);
-//            list.append(JumpToEnd)
-//        }
-//    }
-//
+
+    public class ReturnExpression : Expression
+    {
+        Expression expr;
+        
+        constructor(Expression expr)
+        {
+            this expr := expr
+        }
+        
+        bool IsOperation = false;
+
+        int prepare(ExpressionScope scope)
+            = expr.prepare(scope);
+
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {
+            expr.saveTo(list, scope, 0);
+            list.append(JumpToEnd)
+        }
+    }
+
 //    public class IfExpression : Expression
 //    {
 //        Expression condition;
@@ -1892,7 +1910,7 @@ namespace expressions
 //        }
 //    }
 
-    public class ClosureExpression //: Expression
+    public class ClosureExpression : Expression
     {
         ScopeIdentifier[] parameters;
         Expression        body;
@@ -1931,8 +1949,8 @@ namespace expressions
 //            
 //            this body := body;
 //        }        
-//     
-//        bool IsOperation = true;
+     
+        bool IsOperation = true;
      
         int prepare(ExpressionScope scope)
         {
@@ -1981,10 +1999,10 @@ namespace expressions
             ^ body.prepare(closureScope);
         }
      
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {    
-//            body.saveTo(list, scope);
-//        }    
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {    
+            body.saveTo(list, scope, index);
+        }    
     }
 
 //    public class NestedExpression : Expression

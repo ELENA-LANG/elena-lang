@@ -865,9 +865,6 @@ public sealed const struct String : BaseValue
     }
     //    => intern system'core_routines'__literal;
 
-//    indexOf(int index, char ch, ref int retVal)
-//        => intern system'core_routines'__literal;
-
     /// Saves the index of the first occurence of the specified symbol into an output parameter.
     ///
     /// If the substring is not found. returns -1
@@ -936,8 +933,8 @@ public sealed const struct String : BaseValue
     save(int index, char[] array, ref int retVal)
         => intern system'core_routines'__literal;
 
-//    internal saveToByteArray(int index, byte[] array, int retVal)
-//        => intern system'core_routines'__literal;
+    internal saveToByteArray(int index, byte[] array, int retVal)
+        => intern system'core_routines'__literal;
 
     [info:"Returns the string enumerator"]
     Enumerator<char> enumerator() = new StringEnumerator(self);
@@ -976,23 +973,23 @@ public sealed const struct WideString : BaseValue
         extern elenart.core_wsubcopyz(self, 0, size, s);
     }
 
-//    /// Creates the literal string with specified length fills with specified character value        
-//    constructor fill(int size, char ch)
-//        <= allocate(ch.WideLength * size)
-//    {
-//        short buffer[2];
-//        int   length := 0;
-//        intern system'core_routines'__wideconvertor.convert(ch, buffer, ref length);
-//        
-//        int offs := 0;
-//        for (int i := 0, i < size, i := i + 1)
-//        {
-//            for (int j := 0, j < length, j := j + 1) {
-//                theArray[offs] := buffer[j];
-//                offs := offs + 1;
-//            }
-//        }
-//    }
+    /// Creates the literal string with specified length fills with specified character value        
+    constructor fill(int size, char ch)
+        <= allocate(ch.WideLength * size)
+    {
+        short buffer[2];
+        int   length := 0;
+        intern system'core_routines'__wideconvertor.convert(ch, buffer, ref length);
+        
+        int offs := 0;
+        for (int i := 0, i < size, i := i + 1)
+        {
+            for (int j := 0, j < length, j := j + 1) {
+                theArray[offs] := buffer[j];
+                offs := offs + 1;
+            }
+        }
+    }
 
     /// Creates the literal string copy
     constructor copy(wide s)
@@ -1123,22 +1120,6 @@ public sealed const struct WideString : BaseValue
     wide add(string s)
         = self.add(cast wide(s));
 
-//    // Reads the character at the specified index and saves into an output parameter
-//    read(int n, ref char ch)
-//        => intern system'core_routines'__wide;
-//
-//    /// Saves the index of the first occurence of the specified substring into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int index, wide s, ref int aRetVal)
-//        => intern system'core_routines'__wide;
-//
-//    /// Saves the index of the first occurence of the specified character into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int index, char ch, ref int retVal)
-//        => intern system'core_routines'__wide;
-
     /// Returns the index of the first occurence of the specified character.
     ///
     /// If the substring is not found. returns -1
@@ -1177,13 +1158,13 @@ public sealed const struct WideString : BaseValue
         ^ ret;         
     }
         
-//    /// Inserts the substring into and returns the new one
-//    wide insert(int index, string s)
-//        = self.insert(index, cast wide(s));
-//
-//    /// Inserts a character into and returns the new one
-//    wide insert(int index, char ch)
-//        = self.insert(index, wideConvertor.convert(ch));
+    /// Inserts the substring into and returns the new one
+    wide insert(int index, string s)
+        = self.insert(index, cast wide(s));
+
+    /// Inserts a character into and returns the new one
+    wide insert(int index, char ch)
+        = self.insert(index, wideConvertor.convert(ch));
 
     [info:"Deletes the substring from the object and returns the new one"]
     wide delete(int index, int length)
@@ -1219,12 +1200,12 @@ public sealed const struct WideString : BaseValue
         }
     }
 
-//    /// Saves the literal into a UTF-32 character array
-//    save(int index, char[] array, ref int length)
-//        => intern system'core_routines'__wide;
-//
-//    internal saveToShortArray(int index, short[] array, int length)
-//        => intern system'core_routines'__wide;
+    /// Saves the literal into a UTF-32 character array
+    save(int index, char[] array, ref int length)
+        => intern system'core_routines'__wide;
+
+    internal saveToShortArray(int index, short[] array, int length)
+        => intern system'core_routines'__wide;
 
     /// Returns the object enumerator
     Enumerator<char> enumerator() = new WideStringEnumerator(self);
@@ -1363,24 +1344,24 @@ public sealed Array : Indexable
         intern system'core_routines'__array.copy(self, index, length, array)
     }
         
-//    /// Concatinates the arrays    
-//    add(Array a)
-//    {
-//        int length1 := self.Length;
-//        int length2 := a.Length;
-//        
-//        auto retVal := Array.allocate(length1 + length2);
-//
-//        for (int i:=0, i < length1, i += 1) {
-//            retVal[i] := theArray[i]
-//        };
-//
-//        for (int i:=0, i < length2, i += 1) {
-//            retVal[length1 + i] := a[i]
-//        };
-//            
-//        ^ retVal
-//    }
+    /// Concatinates the arrays    
+    add(Array a)
+    {
+        int length1 := self.Length;
+        int length2 := a.Length;
+        
+        auto retVal := Array.allocate(length1 + length2);
+
+        for (int i:=0, i < length1, i += 1) {
+            retVal[i] := theArray[i]
+        };
+
+        for (int i:=0, i < length2, i += 1) {
+            retVal[length1 + i] := a[i]
+        };
+            
+        ^ retVal
+    }
 
     int Length
     {
@@ -1456,38 +1437,32 @@ public singleton stringConvertor
         ^ String.fromByteArray(0, length, buffer)
     }
     
-//    /// Converts the parameter to the literal value
-//    string convert(uint n)
-//    {
-//        byte buffer[12];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, 10, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    string convert(short n)
-//    {
-//        byte buffer[12];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, 10, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    string convert(byte n)
-//    {
-//        byte buffer[4];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, 10, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
+    /// Converts the parameter to the literal value
+    string convert(uint n)
+    {
+        byte buffer[12];
+        extern elenart.core_uinttostr(n, 10, buffer, ref int length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    string convert(short n)
+    {
+        byte buffer[12];
+        extern elenart.core_uinttostr(n, 10, buffer, ref int length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    string convert(byte n)
+    {
+        byte buffer[4];
+        extern elenart.core_uinttostr(n, 10, buffer, ref int length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
 
     /// Converts the parameter to the literal value
     string convert(long n)
@@ -1509,49 +1484,43 @@ public singleton stringConvertor
         ^ String.fromByteArray(0, length, buffer)
     }
 
-//    /// Converts the parameter to the literal value with the provided radix
-//    string convert(uint n, int radix)
-//    {
-//        byte buffer[48];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    string convert(short n, int radix)
-//    {
-//        byte buffer[32];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    string convert(byte n, int radix)
-//    {
-//        byte buffer[8];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    string convert(long n, int radix)
-//    {
-//        byte buffer[64];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(uint n, int radix)
+    {
+        byte buffer[48];
+        extern elenart.core_uinttostr(n, radix, buffer, ref int length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(short n, int radix)
+    {
+        byte buffer[32];
+        extern elenart.core_inttostr(n, radix, buffer, ref int length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(byte n, int radix)
+    {
+        byte buffer[8];
+        extern elenart.core_uinttostr(n, radix, buffer, ref int length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    string convert(long n, int radix)
+    {
+        byte buffer[64];
+        int  length := 0;
+        
+        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
 
     /// Converts the parameter to the literal value
     string convert(real n)
@@ -1564,24 +1533,24 @@ public singleton stringConvertor
         ^ String.fromByteArray(0, length, buffer)
     }
 
-//    string convert(wide w)
-//        = cast string(w);
-//    
-//    /// Converts the parameter to the literal value
-//    convert(char ch, byte[] buffer, ref int length)
-//    {
-//        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length)
-//    }
-//
-//    convert(int n, byte[] buffer, ref int length)
-//    {
-//        intern system'core_routines'__literalconvertor.convert(n, 10, buffer, ref length)
-//    }
-//    
-//    convert(uint n, byte[] buffer, ref int length)
-//    {
-//        intern system'core_routines'__literalconvertor.convert(n, 10, buffer, ref length)
-//    }
+    string convert(wide w)
+        = cast string(w);
+    
+    /// Converts the parameter to the literal value
+    convert(char ch, byte[] buffer, ref int length)
+    {
+        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length)
+    }
+
+    convert(int n, byte[] buffer, ref int length)
+    {
+        extern elenart.core_inttostr(n, 10, buffer, ref int length);
+    }
+    
+    convert(uint n, byte[] buffer, ref int length)
+    {
+        extern elenart.core_uinttostr(n, 10, buffer, ref int length);
+    }
 
     /// Returns a parameter                
     string convert(string s)
@@ -1618,126 +1587,110 @@ public singleton wideConvertor
         ^ WideString.fromShortArray(0, length, buffer)
     }    
     
-//    /// Converts the parameter to the literal value
-//    wide convert(int n)
-//    {
-//        short buffer[12];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, 10, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(uint n)
-//    {
-//        short buffer[12];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, 10, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(short n)
-//    {
-//        short buffer[12];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, 10, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(byte n)
-//    {
-//        short buffer[12];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, 10, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(long n)
-//    {
-//        short buffer[64];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, 10, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(int n, int radix)
-//    {
-//        short buffer[32];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(uint n, int radix)
-//    {
-//        short buffer[32];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(short n, int radix)
-//    {
-//        short buffer[16];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(byte n, int radix)
-//    {
-//        short buffer[12];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(long n, int radix)
-//    {
-//        short buffer[64];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(real n)
-//    {
-//        short buffer[32];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, 24, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
+    /// Converts the parameter to the literal value
+    wide convert(int n)
+    {
+        short buffer[12];
+        extern elenart.core_inttowstr(n, 10, buffer, ref int length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    wide convert(uint n)
+    {
+        short buffer[12];
+        extern elenart.core_uinttowstr(n, 10, buffer, ref int length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    wide convert(short n)
+    {
+        short buffer[12];
+        extern elenart.core_inttostr(n, 10, buffer, ref int length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    wide convert(byte n)
+    {
+        short buffer[12];
+        extern elenart.core_inttowstr(n, 10, buffer, ref int length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    wide convert(long n)
+    {
+        short buffer[64];
+        int   length := 0;
+
+        intern system'core_routines'__wideconvertor.convert(n, 10, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(int n, int radix)
+    {
+        short buffer[32];
+        extern elenart.core_inttowstr(n, radix, buffer, ref int length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(uint n, int radix)
+    {
+        short buffer[32];
+        extern elenart.core_uinttowstr(n, radix, buffer, ref int length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(short n, int radix)
+    {
+        short buffer[16];
+        extern elenart.core_uinttowstr(n, radix, buffer, ref int length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(byte n, int radix)
+    {
+        short buffer[12];
+        extern elenart.core_uinttowstr(n, radix, buffer, ref int length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(long n, int radix)
+    {
+        short buffer[64];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    wide convert(real n)
+    {
+        short buffer[32];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, 24, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
 
     /// Converts UTF-8 literal to UTF-16e
     wide convert(string s)
@@ -1758,80 +1711,80 @@ public singleton charConvertor
     char convert(BaseVariable v)
         <= convert(v.Value);
         
-//    internal save(char ch, int index, short[] charArray, ref int length)
-//    {
-//        intern system'core_routines'__charconvertor.save(ch,index,charArray,ref length);
-//    }
-//    
-//    internal save(char ch, int index, byte[] charArray, ref int length)
-//    {
-//        intern system'core_routines'__charconvertor.save(ch,index,charArray,ref length);
-//    }
-//    
-//    internal char convert(int index, string s)
-//    {
-//        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    internal char convert(int index, byte[] s)
-//    {
-//        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
-//        
-//        ^ retVal
-//    }
-//  
-//    internal char convert(int index, wide s)
-//    {
-//        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
-//        
-//        ^ retVal
-//    }
+    internal save(char ch, int index, short[] charArray, ref int length)
+    {
+        intern system'core_routines'__charconvertor.save(ch,index,charArray,ref length);
+    }
+    
+    internal save(char ch, int index, byte[] charArray, ref int length)
+    {
+        intern system'core_routines'__charconvertor.save(ch,index,charArray,ref length);
+    }
+    
+    internal char convert(int index, string s)
+    {
+        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
+        
+        ^ retVal
+    }
+        
+    internal char convert(int index, byte[] s)
+    {
+        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
+        
+        ^ retVal
+    }
+  
+    internal char convert(int index, wide s)
+    {
+        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
+        
+        ^ retVal
+    }
 
     internal convert(int index, short[] buffer, ref char retVal)
     {
         intern system'core_routines'__charconvertor.convert(index, buffer, ref retVal);
     }    
         
-//    internal char convert(int index, short[] buffer)
-//    {
-//        intern system'core_routines'__charconvertor.convert(index, buffer, ref char retVal);
-//        
-//        ^ retVal
-//    }    
+    internal char convert(int index, short[] buffer)
+    {
+        intern system'core_routines'__charconvertor.convert(index, buffer, ref char retVal);
+        
+        ^ retVal
+    }    
         
     /// Returns a parameter        
     char convert(char ch)
         = new CharValue(ch);
   
-//    /// Converts a literal string into a character
-//    char convert(string s)
-//    {
-//        intern system'core_routines'__charconvertor.convert(0, s, ref char retVal);
-//        
-//        int l1 := retVal.Length;
-//        int l2 := s.Length;
-//        
-//        (l1 != l2)
-//            ? { InvalidArgumentException.new().raise() };
-//        
-//        ^ retVal
-//    }        
-//        
-//    /// Converts a wide literal string into a character                
-//    char convert(wide s)
-//    {
-//        intern system'core_routines'__charconvertor.convert(0, s, ref char retVal);
-//
-//        int l1 := retVal.Length;
-//        int l2 := s.Length;
-//                
-//        (l1 != l2)
-//            ? { InvalidArgumentException.new().raise() };
-//        
-//        ^ retVal
-//    }      
+    /// Converts a literal string into a character
+    char convert(string s)
+    {
+        intern system'core_routines'__charconvertor.convert(0, s, ref char retVal);
+        
+        int l1 := retVal.Length;
+        int l2 := s.Length;
+        
+        (l1 != l2)
+            ? { InvalidArgumentException.new().raise() };
+        
+        ^ retVal
+    }        
+        
+    /// Converts a wide literal string into a character                
+    char convert(wide s)
+    {
+        intern system'core_routines'__charconvertor.convert(0, s, ref char retVal);
+
+        int l1 := retVal.Length;
+        int l2 := s.Length;
+                
+        (l1 != l2)
+            ? { InvalidArgumentException.new().raise() };
+        
+        ^ retVal
+    }      
         
     /// Converts a byte value into a character
     char convert(byte n)
@@ -2473,52 +2426,52 @@ class BitArray32Enumerator : Enumerator<bool>
     Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
 }
 
-//// template test cases
-//T1 { static Default = nil; }
-//T2;
-//T3;
-//T4;
-//T5;
-//T6;
-//T7;
-//T8;
-//T9;
-//T10;
-//T11;
-//T12;
-//
-//template_test()
-//{
-//    ref<T1> o1;
-//    Enumerator<T1> o2;
-//    Enumerable<T1> o3;
-//    Indexer<T1> o4;
-//    Indexable<T1> o5;
-//    BaseEnumerator<T1> o6;
-//    BaseIndexer<T1> o7;
-//    Array<T1> o8;
-//    VariadicArray<T1> o9;
-//    Matrix<T1> o10;
-//    Func<T1,T2> f;
-//    Func<T1,T2,T3> f2;
-//    Func<T1,T2,T3,T4> f3;
-//    Func<T1,T2,T3,T4,T5> f4;
-//    Func<T1,T2,T3,T4,T5,T6> f5;
-//    Func<T1,T2,T3,T4,T5,T6,T7> f6;
-//    Func<T1,T2,T3,T4,T5,T6,T7,T8> f7;
-//    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9> f8;
-//    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10> f9;
-//    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11> f10;
-//    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12> f11;
-//    
-//    collections'List<T1> o11;
-//    collections'Stack<T1> o12;
-//    collections'Queue<T1> o13;
-//    collections'Tuple<T1> o14;
-//    collections'Tuple<T1,T2> o15;
-//    collections'Tuple<T1,T2,T3> o16;
-//    collections'Tuple<T1,T2,T3,T4> o17;
-//    collections'Tuple<T1,T2,T3,T4,T5> o18;
-//    collections'Tuple<T1,T2,T3,T4,T5,T6> o19;    
-//    collections'Map<T1,T2> o20;
-//}
+// template test cases
+T1 { static Default = nil; }
+T2;
+T3;
+T4;
+T5;
+T6;
+T7;
+T8;
+T9;
+T10;
+T11;
+T12;
+
+template_test()
+{
+    ref<T1> o1;
+    Enumerator<T1> o2;
+    Enumerable<T1> o3;
+    Indexer<T1> o4;
+    Indexable<T1> o5;
+    BaseEnumerator<T1> o6;
+    BaseIndexer<T1> o7;
+    Array<T1> o8;
+    VariadicArray<T1> o9;
+    Matrix<T1> o10;
+    Func<T1,T2> f;
+    Func<T1,T2,T3> f2;
+    Func<T1,T2,T3,T4> f3;
+    Func<T1,T2,T3,T4,T5> f4;
+    Func<T1,T2,T3,T4,T5,T6> f5;
+    Func<T1,T2,T3,T4,T5,T6,T7> f6;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8> f7;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9> f8;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10> f9;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11> f10;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12> f11;
+    
+    collections'List<T1> o11;
+    collections'Stack<T1> o12;
+    collections'Queue<T1> o13;
+    collections'Tuple<T1> o14;
+    collections'Tuple<T1,T2> o15;
+    collections'Tuple<T1,T2,T3> o16;
+    collections'Tuple<T1,T2,T3,T4> o17;
+    collections'Tuple<T1,T2,T3,T4,T5> o18;
+    collections'Tuple<T1,T2,T3,T4,T5,T6> o19;    
+    collections'Map<T1,T2> o20;
+}

@@ -712,6 +712,154 @@ Lab8:
 
 end
 
+procedure coreapi'core_inttowstr
+
+   mov  rsi, [rsp+16]
+   mov  rax, [rsp+8]
+   mov  rdi, [rsp+24]
+
+   push rbp
+   mov  rbp, rsp
+   xor  ecx, ecx
+   push rax
+   cmp  eax, 0
+   jns  short Lab6
+   neg  eax
+Lab6:
+   cmp  eax, ebx
+   jb   short Lab5
+Lab1:
+   xor  edx, edx
+   idiv ebx
+   push rdx
+   add  ecx, 2
+   cmp  eax, ebx
+   jae  short Lab1
+Lab5:   
+   add  ecx, 4
+   push rax
+   mov  eax, dword ptr[rbp-8]
+   cmp  eax, 0
+   jns  short Lab7
+   push 0F6h      // to get "-" after adding 0x30
+   add  ecx, 2
+Lab7:
+   mov  esi, edi
+   mov  edx, 0FFh
+   sub  ecx, 2             // to skip zero
+Lab2:
+   pop  rax
+   cmp  eax, 0Ah
+   jb   short Lab8
+   add  eax, 7
+Lab8:
+   add  eax, 30h
+   and  eax, edx
+   mov  word ptr [rsi], ax
+   add  esi, 2
+   sub  ecx, 2
+   jnz  short Lab2
+   mov  ecx, esi
+   sub  ecx, edi
+   shr  ecx, 1
+   lea  rsp, [rsp+8]
+   pop  rbp
+
+   ret
+   
+end
+
+// ; uinttostr(s,b,t)
+procedure coreapi'core_uinttostr
+
+   mov  rsi, [rsp+16]
+   mov  rax, [rsp+8]
+   mov  rdi, [rsp+24]
+
+   push rbp
+   mov  rbp, rsp
+   xor  ecx, ecx
+
+   cmp  eax, esi
+   jb   short Lab5
+Lab1:
+   xor  edx, edx
+   idiv esi
+   push rdx
+   add  ecx, 1
+   cmp  eax, esi
+   jae  short Lab1
+Lab5:   
+   add  ecx, 2
+   push rax
+   sub  ecx, 1
+   mov  esi, edi
+   mov  edx, 0FFh
+Lab2:
+   pop  rax
+   cmp  eax, 0Ah
+   jb   short Lab8
+   add  eax, 7
+Lab8:
+   add  eax, 30h
+   and  eax, edx
+   mov  byte ptr [rsi], al
+   add  rsi, 1
+   sub  ecx, 1
+   jnz  short Lab2
+   mov  rdx, rsi
+   sub  rdx, rdi
+   pop  rbp
+
+   ret
+
+end
+
+procedure coreapi'core_uinttowstr
+
+   mov  rsi, [rsp+16]
+   mov  rax, [rsp+8]
+   mov  rdi, [rsp+24]
+
+   push rbp
+   mov  rbp, rsp
+   xor  ecx, ecx
+   cmp  eax, ebx
+   jb   short Lab5
+Lab1:
+   xor  edx, edx
+   idiv ebx
+   push rdx
+   add  ecx, 2
+   cmp  eax, ebx
+   jae  short Lab1
+Lab5:   
+   add  ecx, 4
+   push rax
+   mov  esi, edi
+   mov  edx, 0FFh
+   sub  ecx, 2             // to skip zero
+Lab2:
+   pop  rax
+   cmp  eax, 0Ah
+   jb   short Lab8
+   add  eax, 7
+Lab8:
+   add  eax, 30h
+   and  eax, edx
+   mov  word ptr [rsi], ax
+   add  esi, 2
+   sub  ecx, 2
+   jnz  short Lab2
+   mov  ecx, esi
+   sub  ecx, edi
+   shr  ecx, 1
+   pop  rbp
+
+   ret
+   
+end
+
 // --- System Core API  --
 
 define CORE_ET_TABLE     2000Bh
@@ -1603,112 +1751,6 @@ Lab2:
 Lab3:
   ret
 
-end
-
-procedure coreapi'inttowstr
-
-   mov  rbx, [rsp+16]
-   mov  rax, [rsp+8]
-   mov  esi, dword ptr [rbx]
-   mov  rdi, [rsp+24]
-
-   push rbp
-   mov  eax, dword ptr[rax]
-   mov  rbp, rsp
-   xor  ecx, ecx
-   push rax
-   cmp  eax, 0
-   jns  short Lab6
-   neg  eax
-Lab6:
-   cmp  eax, ebx
-   jb   short Lab5
-Lab1:
-   xor  edx, edx
-   idiv ebx
-   push rdx
-   add  ecx, 2
-   cmp  eax, ebx
-   jae  short Lab1
-Lab5:   
-   add  ecx, 4
-   push rax
-   mov  eax, dword ptr[rbp-8]
-   cmp  eax, 0
-   jns  short Lab7
-   push 0F6h      // to get "-" after adding 0x30
-   add  ecx, 2
-Lab7:
-   mov  esi, edi
-   mov  edx, 0FFh
-   sub  ecx, 2             // to skip zero
-Lab2:
-   pop  rax
-   cmp  eax, 0Ah
-   jb   short Lab8
-   add  eax, 7
-Lab8:
-   add  eax, 30h
-   and  eax, edx
-   mov  word ptr [rsi], ax
-   add  esi, 2
-   sub  ecx, 2
-   jnz  short Lab2
-   mov  ecx, esi
-   sub  ecx, edi
-   shr  ecx, 1
-   lea  rsp, [rsp+8]
-   pop  rbp
-
-   ret
-   
-end
-
-procedure coreapi'uinttowstr
-
-   mov  rbx, [rsp+16]
-   mov  rax, [rsp+8]
-   mov  esi, dword ptr[rbx]
-   mov  rdi, [rsp+24]
-
-   push rbp
-   mov  eax, dword ptr[rax]
-   mov  rbp, rsp
-   xor  ecx, ecx
-   cmp  eax, ebx
-   jb   short Lab5
-Lab1:
-   xor  edx, edx
-   idiv ebx
-   push rdx
-   add  ecx, 2
-   cmp  eax, ebx
-   jae  short Lab1
-Lab5:   
-   add  ecx, 4
-   push rax
-   mov  esi, edi
-   mov  edx, 0FFh
-   sub  ecx, 2             // to skip zero
-Lab2:
-   pop  rax
-   cmp  eax, 0Ah
-   jb   short Lab8
-   add  eax, 7
-Lab8:
-   add  eax, 30h
-   and  eax, edx
-   mov  word ptr [rsi], ax
-   add  esi, 2
-   sub  ecx, 2
-   jnz  short Lab2
-   mov  ecx, esi
-   sub  ecx, edi
-   shr  ecx, 1
-   pop  rbp
-
-   ret
-   
 end
 
 procedure coreapi'longtowstr
@@ -3132,54 +3174,6 @@ labNext:
 
 labEnd:
   ret
-
-end
-
-// ; uinttostr(s,b,t)
-procedure coreapi'uinttostr
-
-   mov  rbx, [rsp+16]
-   mov  rax, [rsp+8]
-   mov  esi, dword ptr[rbx]
-   mov  rdi, [rsp+24]
-
-   push rbp
-   mov  eax, dword ptr[rax]
-   mov  rbp, rsp
-   xor  ecx, ecx
-
-   cmp  eax, esi
-   jb   short Lab5
-Lab1:
-   xor  edx, edx
-   idiv esi
-   push rdx
-   add  ecx, 1
-   cmp  eax, esi
-   jae  short Lab1
-Lab5:   
-   add  ecx, 2
-   push rax
-   sub  ecx, 1
-   mov  esi, edi
-   mov  edx, 0FFh
-Lab2:
-   pop  rax
-   cmp  eax, 0Ah
-   jb   short Lab8
-   add  eax, 7
-Lab8:
-   add  eax, 30h
-   and  eax, edx
-   mov  byte ptr [rsi], al
-   add  rsi, 1
-   sub  ecx, 1
-   jnz  short Lab2
-   mov  rdx, rsi
-   sub  rdx, rdi
-   pop  rbp
-
-   ret
 
 end
 

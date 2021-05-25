@@ -34,19 +34,19 @@ public sealed const struct Symbol
     dispatch() => intern system'core_routines'__symbol;
 }
 
-//public sealed const struct ClassReference
-//{
-//    embeddable __raw theValue[4];
-//    
-//    /// Loads a symbol
-//    constructor(string name)
-//    {
-//        intern system'core_routines'__class.load(self, name)
-//    }
-//        
-//    /// Redirects incoming messages to the symbol
-//    dispatch() => intern system'core_routines'__class;
-//}
+public sealed const struct ClassReference
+{
+    embeddable __raw theValue[4];
+    
+    /// Loads a symbol
+    constructor(string name)
+    {
+        intern system'core_routines'__class.load(self, name)
+    }
+        
+    /// Redirects incoming messages to the symbol
+    dispatch() => intern system'core_routines'__class;
+}
 
 // --- Message ---
 

@@ -179,7 +179,7 @@ namespace collections
             
             this theLength := self.Length;
             
-            T get() = theArray.at(cast int(theTop) - (this theIndex) - 1);
+            get T Value() = theArray.at(cast int(theTop) - (this theIndex) - 1);
             
             enumerable() = self;
             

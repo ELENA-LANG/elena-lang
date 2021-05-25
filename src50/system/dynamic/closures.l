@@ -56,13 +56,20 @@ public struct MessageFunction : TapeFunction
         => intern system'core_routines'__mssg_closure;
 }
 
-//// --- DynamicMessageFunction ---
-//
-//public singleton DynamicMessageFunction : TapeFunction
-//{
-//    mixin function(params object[] args)
-//        => intern system'core_routines'__dynamicmssg_closure;
-//}
+// --- DynamicMessageFunction ---
+
+public struct DynamicMessageFunction : TapeFunction
+{
+    embeddable int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }    
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__dynamicmssg_closure;
+}
 
 //// --- FuncFunction ---
 //
@@ -209,13 +216,13 @@ public struct CopyToStackFunction : TapeFunction
 //    mixin function(params object[] args)
 //        => intern system'core_routines'__jumpifnot_closure;
 //}
-//
-//public singleton JumpToEnd : TapeFunction
-//{
-//    mixin function(params object[] args)
-//        => intern system'core_routines'__exit_closure;
-//}
-//
+
+public singleton JumpToEnd : TapeFunction
+{
+    mixin function(params object[] args)
+        => intern system'core_routines'__exit_closure;
+}
+
 //// --- ExtensionMessageFunction ---
 //
 //public class ExtensionMessageFunction : TapeFunction

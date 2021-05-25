@@ -163,13 +163,13 @@ procedure __symbol."tryLoad$@system@ref#1&system@UnsafePointer$system@String$sys
 
 end
 
-
 procedure __symbol."load$system@Symbol$system@String[2]"
 
-  peeksi   2
-  pusha
+  alloci   2
+
+  storesi  2
   loadenv
-  pushd
+  savesi   0
   callextr extern : LoadSymbolByString, 0202h
   freei    2
 
@@ -193,6 +193,40 @@ labErr:
 
 end
 
+procedure __class."load$system@ClassReference$system@String[2]"
+
+  alloci   2
+  peeksi   2
+  storesi  1
+  loadenv
+  storesi  0
+  callextr extern : LoadClassByString, 0202h
+  ifn      labErr, 0
+  peeksi   1
+  save
+
+  quit
+ 
+labErr:
+  peeksi  2
+
+  open
+  alloci  2
+  storesi 1
+  movr    class : system'TypeLoaderException
+  storesi 0
+  pushr   mssgconst : "new[2]"
+
+  throw  
+
+end
+
+procedure __class."#dispatch[1]"
+
+  geti    0
+  jumpvi  0
+
+end
 
 procedure __dptr."system$setReference[2]"
 
@@ -229,7 +263,7 @@ procedure __int."readHashCodeTo$system@IntNumber$@system@ref#1&system@IntNumber[
   load
   peeksi 2
   save
-  quitn 2
+  quit
 
 end
 
@@ -239,7 +273,7 @@ procedure __int."readHashCodeTo$system@UIntNumber$@system@ref#1&system@IntNumber
   load
   peeksi 2
   save
-  quitn 2
+  quit
 
 end
 
@@ -331,6 +365,21 @@ procedure __literal."save$system@IntNumber$@system@Array#1&system@CharValue$@sys
 
 end
 
+procedure __literal."system$$saveToByteArray$system@IntNumber$@system@Array#1&system@ByteNumber$system@IntNumber[4]"
+
+  pushsi 1
+  pushsi 5
+  pushsi 4
+  pushsi 6
+
+  callextr api : subcopyto, 4
+  
+  peeksi 0
+  freei  4
+  quit
+
+end
+
 procedure __wide."equal$system@WideString[2]"
 
   pushsi 2
@@ -361,6 +410,36 @@ procedure __wide."readLengthTo$system@WideString$@system@ref#1&system@IntNumber[
   dec 1
   peeksi 2
   save
+  quit
+
+end
+
+procedure __wide."save$system@IntNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+
+  callextr api : wstrtochararray, 4
+                
+  freei  4
+  quit
+
+end
+
+procedure __wide."system$$saveToShortArray$system@IntNumber$@system@Array#1&system@ShortNumber$system@IntNumber[4]"
+
+  pushsi 1
+  pushsi 5
+  pushsi 4
+  pushsi 6
+
+  // ; wsubcopy(target,index,size,arr)
+  callextr api : wsubcopyto, 4
+  
+  peeksi 0
+  freei  4
   quit
 
 end
@@ -1252,6 +1331,40 @@ labEmpty:
 
 end
 
+procedure __wideconvertor."convert$system@LongNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushn  0   // temporal to support x86-64 mode
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : longtowstr, 3
+  freei 4
+
+  peeksi 4
+  save
+
+  quit
+
+end
+
+procedure __wideconvertor."convert$system@RealNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushn    0   // temporal to support x86-64 mode
+  pushsi   4
+  pushsi   4
+  pushsi   4
+  
+  callextr api : realtowstr, 3
+  freei    4
+
+  peeksi   4
+  save
+
+  quit
+
+end
+
 procedure __byteconvertor."convert$system@ShortNumber$@system@ref#1&system@ByteNumber[2]"
 
   peeksi 1
@@ -2130,6 +2243,21 @@ procedure __charconvertor."save$system@CharValue$system@IntNumber$@system@Array#
 
 end
 
+procedure __charconvertor."save$system@CharValue$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushn  0   // ; HOTFIX : to support 16 byte alignment
+  pushsi 4
+  pushsi 4
+  pushsi 4  
+  callextr api : chartobytes, 3
+  freei  4
+  peeksi 4
+  save
+  
+  quit
+
+end
+
 procedure __charconvertor."convert$system@ByteNumber$@system@ref#1&system@CharValue[2]"
   
   peeksi 1
@@ -2152,6 +2280,56 @@ labCopy:
   peeksi 2
   save
   quit
+
+end
+
+procedure __charconvertor."convert$system@IntNumber$system@String$@system@ref#1&system@CharValue[3]"
+  
+  pushsi   2
+  peeksi   2
+  load
+  pushd
+
+  callextr api : core_strtochar, 2
+  ifr      labErr, 0
+
+  freei    2
+  peeksi   3
+  save
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw
+
+end
+
+procedure __charconvertor."convert$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@CharValue[3]"
+  
+  pushsi 2
+  pushsi 2
+
+  callextr api : core_strtochar, 2
+  ifr   labErr, 0
+
+  freei 2
+  peeksi 3
+  save
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw
 
 end
 
@@ -2202,6 +2380,30 @@ labCopy:
   peeksi 2
   save
   quit
+
+end
+
+procedure __charconvertor."convert$system@IntNumber$system@WideString$@system@ref#1&system@CharValue[3]"
+  
+  pushsi 2
+  pushsi 2
+
+  callextr api : core_wstrtochar, 2
+  ifr   labErr, 0
+
+  freei 2
+  peeksi 3
+  save
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw
 
 end
 
@@ -2393,6 +2595,16 @@ procedure __assign_closure."params##invoke$system@Object[0]"
 
 end
 
+procedure __dynamicmssg_closure."params##invoke$system@Object[0]"
+
+  load
+  movfip 0
+  get
+  load
+  peeksi  1
+  jumpvi  0
+
+end
 
 procedure __saving_closure."params##invoke$system@Object[0]"
 
@@ -2403,6 +2615,17 @@ procedure __saving_closure."params##invoke$system@Object[0]"
   xset
   popa
 
+  quit
+
+end
+
+
+procedure __exit_closure."params##invoke$system@Object[0]"
+
+  peekfi  1
+  count
+  savef   -4
+  peeksi  1
   quit
 
 end
