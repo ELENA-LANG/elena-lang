@@ -165,14 +165,15 @@ public interface<T>
     __loop cast bool(cond_expr) ? { loop_body; step_expr }
 }
 
-//// --- for statement ---
-//
-//#declare for<init_expr, cond_expr, step_expr1, step_expr2>(loop_body)
-//{
-//    init_expr;
-//    
-//    __loop: cast bool(cond_expr) ? { loop_body; step_expr1; step_expr2 }
-//}
+// --- for statement ---
+
+#declare for<init_expr1, init_expr2, cond_expr, step_expr1, step_expr2>(loop_body)
+{
+    init_expr1;
+    init_expr2;
+    
+    __loop cast bool(cond_expr) ? { loop_body; step_expr1; step_expr2 }
+}
 
 // --- doUntil statement ---
 

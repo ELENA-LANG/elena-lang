@@ -336,6 +336,16 @@ procedure __int."readHashCodeTo$system@LongNumber$@system@ref#1&system@IntNumber
 
 end
 
+procedure __int."readHashCodeTo$system@CharValue$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quit
+
+end
+
 procedure __literal."equal$system@String[2]"
 
   pushsi 2

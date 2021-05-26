@@ -40,9 +40,11 @@ namespace expressions
     
     public interface ExpressionScope
     {
-        abstract int allocTempVariable();
+        abstract bool reserve(int level);
 
-        get abstract int Allocated();
+        get abstract int Reserved();
+                        
+        abstract int allocTempVariable();                        
                         
         get abstract int ScopeLevel();
         
@@ -57,19 +59,29 @@ namespace expressions
 
     public class RootExpressionScope : ExpressionScope
     {
-        ref<int> allocated := 0;
+        ref<int> reserved := 0;
         
-        int Allocated = *allocated;
+        int Reserved = *reserved;
+        
+        bool reserve(int level)
+        {
+            int current := *reserved;
+            if (current < level)
+            {
+                reserved.Value := level
+            };
+            
+            ^ true;
+        }        
         
         int allocTempVariable()
         {
-            allocated.append(1);
+            reserved.append(1);
             
-            ^ *allocated;
+            ^ *reserved;
         }
         
-        
-        int ScopeLevel = *allocated;
+        int ScopeLevel = *reserved;
         
 //        ExpressionScope Previous = nil;
         
@@ -310,7 +322,7 @@ namespace expressions
             List<TapeFunction> list := new List<TapeFunction>(8);
             
             int stackSize := self.prepare(scope);
-            stackSize += scope.Allocated;
+            stackSize += scope.Reserved;
             
             list.append(new AllocFunction(stackSize));
             
@@ -554,11 +566,16 @@ namespace expressions
             
             auto codeScope := new ExpressionScope
             {
-                int Allocated = variables.Length;
+                int Reserved = scope.Reserved;
+                
+                bool reserve(int level)
+                    = scope.reserve(level);
                 
                 int allocTempVariable()
                 {
                     int index := variables.Length + 1;
+                    scope.reserve(index);
+                                        
                     index := index + scope.ScopeLevel;
                     
                     variables.append(ScopeIdentifier.TempVariable(index));
@@ -1912,7 +1929,13 @@ namespace expressions
         
         constructor new(Expression body, params ScopeIdentifier[] params)
         {
-            this parameters := params;
+            // revese the order
+            int len := params.Length;
+            this parameters := new ScopeIdentifier[](len);
+            for (int i := 0, int j := len - 1, i < len, i += 1, j -= 1)
+            {
+                parameters[i] := params[j]
+            };
             
             this body := body;
         } 
@@ -1951,11 +1974,14 @@ namespace expressions
 //                TapeFunction resolveExtension(Message message)
 //                    => scope;
                 
-                int allocTempVariable()
-                    = 0;
+                bool reserve(int index)
+                    = scope.reserve(index);
                 
-                int Allocated 
-                    = 0;
+                int allocTempVariable()
+                    = scope.allocTempVariable();
+                
+                int Reserved 
+                    = scope.Reserved;
                 
                 TapeFunction resolve(ScopeIdentifier variable)
                 {
