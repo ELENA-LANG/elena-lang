@@ -114,6 +114,24 @@ labErr:
   
 end
 
+procedure __object."__getParentClass$system@Object[1]"
+
+  peeksi 1
+  class
+  parent
+  quit
+
+end
+
+procedure __object."instanceOf$system@Object$system@Object[2]"
+
+  peeksi  1
+  checksi 2
+  select  const : false, const : true
+  quit
+
+end
+
 procedure __extension."#dispatch[1]"
 
   storesi 1
@@ -195,12 +213,13 @@ end
 
 procedure __class."load$system@ClassReference$system@String[2]"
 
-  alloci   2
   peeksi   2
+  alloci   2
   storesi  1
   loadenv
   storesi  0
   callextr extern : LoadClassByString, 0202h
+  freei    2
   ifn      labErr, 0
   peeksi   1
   save
@@ -1071,6 +1090,18 @@ procedure __exception.register[0]
 
 end
 
+procedure __extensionvar."#dispatch[1]"
+
+  pusha
+  geti    1
+  storesi 2
+  popa
+  geti    0
+  or      SPECIAL_MESSAGE
+  jumpvi  0
+
+end
+
 procedure __args."readLengthTo$@system@ref#1&system@IntNumber[2]"
 
   movn   0
@@ -1158,6 +1189,31 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   peeksi  2
   xwrite  2
   pop
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw  
+
+end
+
+procedure __intarray."write$@system@Array#1&system@IntNumber$system@IntNumber$system@IntNumber$@system@Array#1&system@IntNumber[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : ninsert, 4
+  ifn labErr, 0 
+
+  peeksi 0
+  freei  4
   quit
 
 labErr:
@@ -2556,12 +2612,22 @@ procedure __mssg_closure."params##invoke$system@Object[0]"
 
 end
 
+
+procedure loadVArg
+
+  inc    1
+  not
+  movfip 0
+
+  quit
+
+end
+
 procedure __local_closure."params##invoke$system@Object[0]"
 
   load
-  movfip 0
+  callr intern : system'core_routines'loadVArg
   get
-
   quit
 
 end
@@ -2587,7 +2653,7 @@ procedure __assign_closure."params##invoke$system@Object[0]"
 
   pushsi  1
   load
-  movfip 0
+  callr intern : system'core_routines'loadVArg
   xset
   popa
 
@@ -2598,7 +2664,7 @@ end
 procedure __dynamicmssg_closure."params##invoke$system@Object[0]"
 
   load
-  movfip 0
+  callr intern : system'core_routines'loadVArg
   get
   load
   peeksi  1

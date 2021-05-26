@@ -51,8 +51,8 @@ public sealed const struct Handle
 {
     embeddable __raw theHandle[4];
 
-//    static Handle MinValue
-//        = 0;
+    static Handle MinValue
+        = 0;
 
     constructor(int n)
     {

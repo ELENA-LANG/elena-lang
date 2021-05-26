@@ -6,11 +6,11 @@ public extension objectOp
     __getClass()
         => intern system'core_routines'__object;
 
-//    __getParentClass()
-//        => intern system'core_routines'__object;
-//
-//    bool instanceOf(type)
-//        => intern system'core_routines'__object;
+    __getParentClass()
+        => intern system'core_routines'__object;
+
+    bool instanceOf(type)
+        => intern system'core_routines'__object;
 
     string __getClassName()
     {
@@ -29,78 +29,78 @@ public extension objectOp
     bool equalReference(o)
         => intern system'core_routines'__object;
         
-//    /// Returns true if the object is nil
-//    bool isNil()
-//        = nil == self;
-//        
-//    /// Returns true if the object is literal or character
-//    isLiteral()
-//    {
-//        var o := cast String(self) ?? nil;
-//        if (nil == o)
-//        {
-//            o := cast WideString(self) ?? nil;
-//            if (nil == o)
-//            {
-//                o := cast CharValue(self) ?? nil;
-//                
-//                if (nil == o)
-//                {
-//                    ^ false
-//                }
-//            }
-//        };
-//        
-//        ^ true
-//    }
-//    
-//    /// Returns true if the object is integer numereric
-//    isInteger()
-//    {
-//        var b := self.instanceOf(IntNumber);
-//        if (b)
-//        {
-//            ^ true
-//        };
-//        
-//        b := self.instanceOf(UIntNumber);
-//        if (b)
-//        {
-//            ^ true
-//        };
-//        
-//        b := self.instanceOf(LongNumber);
-//        if (b)
-//        {
-//            ^ true
-//        };
-//        
-//        b := self.instanceOf(ShortNumber);
-//        if (b)
-//        {
-//            ^ true
-//        };
-//        
-//        b := self.instanceOf(ByteNumber);
-//        if (b)
-//        {
-//            ^ true
-//        };  
-//        
-//        ^ false
-//     }
-//    
-//    /// Returns true if the object is numereric
-//    isNumeric()
-//    {
-//        if (self.instanceOf(RealNumber))
-//        {
-//            ^ true
-//        }
-//        else {
-//            ^ self.isInteger();
-//        }
-//    }
+    /// Returns true if the object is nil
+    bool isNil()
+        = nil == self;
+        
+    /// Returns true if the object is literal or character
+    isLiteral()
+    {
+        var o := cast String(self) ?? nil;
+        if (nil == o)
+        {
+            o := cast WideString(self) ?? nil;
+            if (nil == o)
+            {
+                o := cast CharValue(self) ?? nil;
+                
+                if (nil == o)
+                {
+                    ^ false
+                }
+            }
+        };
+        
+        ^ true
+    }
+    
+    /// Returns true if the object is integer numereric
+    isInteger()
+    {
+        var b := self.instanceOf(IntNumber);
+        if (b)
+        {
+            ^ true
+        };
+        
+        b := self.instanceOf(UIntNumber);
+        if (b)
+        {
+            ^ true
+        };
+        
+        b := self.instanceOf(LongNumber);
+        if (b)
+        {
+            ^ true
+        };
+        
+        b := self.instanceOf(ShortNumber);
+        if (b)
+        {
+            ^ true
+        };
+        
+        b := self.instanceOf(ByteNumber);
+        if (b)
+        {
+            ^ true
+        };  
+        
+        ^ false
+     }
+    
+    /// Returns true if the object is numereric
+    isNumeric()
+    {
+        if (self.instanceOf(RealNumber))
+        {
+            ^ true
+        }
+        else {
+            ^ self.isInteger();
+        }
+    }
         
     bool isEmpty()
     {
@@ -120,35 +120,35 @@ public extension objectOp
     bool safeEqual(o)
         = self.equal:o \ back:false;
 
-//    doWith(action)
-//        = action(self);
-//
-//    reallocate(int newLength)
-//    {
-//        int len := self.Length;
-//        
-//        var class := self.__getClass();
-//        var newArr := class.allocate(newLength);
-//        
-//        for(int i := 0, i < len, i += 1)
-//        {
-//            newArr[i] := self[i];
-//        };
-//        
-//        ^ newArr
-//    }
-//                
-//    shift(int n)
-//    {
-//        if (n < 0)
-//        { 
-//            ^ self.shiftLeft(n.Negative) 
-//        }
-//        else
-//        {
-//            ^ self.shiftRight(n)
-//        }
-//    }
+    doWith(action)
+        = action(self);
+
+    reallocate(int newLength)
+    {
+        int len := self.Length;
+        
+        var class := self.__getClass();
+        var newArr := class.allocate(newLength);
+        
+        for(int i := 0, i < len, i += 1)
+        {
+            newArr[i] := self[i];
+        };
+        
+        ^ newArr
+    }
+                
+    shift(int n)
+    {
+        if (n < 0)
+        { 
+            ^ self.shiftLeft(n.Negative) 
+        }
+        else
+        {
+            ^ self.shiftRight(n)
+        }
+    }
 }
 
 // --- Operations ---
@@ -197,14 +197,14 @@ public extension byteOp : ByteNumber
         ^ new ByteNumber(r)
     }
     
-//    byte sqr()
-//    {
-//        byte retVal := 0;
-//        
-//        retVal := self * self;
-//        
-//        ^ new ByteNumber(retVal)
-//    }
+    byte sqr()
+    {
+        byte retVal := 0;
+        
+        retVal := self * self;
+        
+        ^ new ByteNumber(retVal)
+    }
 
     bool isOdd()
         = self.mod:2 != 0;
@@ -215,14 +215,14 @@ public extension byteOp : ByteNumber
     bool isZero()
         = self.equal(0);
         
-//    bool isPositive()
-//        = self > 0;
-//        
-//    bool isNegative()
-//        = self < 0;
-//        
-//    bool isNonnegative()
-//        = self <= 0;
+    bool isPositive()
+        = self > 0;
+        
+    bool isNegative()
+        = self < 0;
+        
+    bool isNonnegative()
+        = self <= 0;
 }
 
 // --- shortOp ---
@@ -269,15 +269,15 @@ public extension shortOp : ShortNumber
         ^ new ShortNumber(r)
     }
     
-//    short sqr()
-//    {
-//        short n := self;
-//        short retVal := 0;
-//        
-//        retVal := n * n;
-//        
-//        ^ new ShortNumber(retVal)
-//    }
+    short sqr()
+    {
+        short n := self;
+        short retVal := 0;
+        
+        retVal := n * n;
+        
+        ^ new ShortNumber(retVal)
+    }
 
     bool isOdd()
         = self.mod:2 != 0;
@@ -297,22 +297,22 @@ public extension shortOp : ShortNumber
     bool isNonnegative()
         = self <= 0;
     
-//    get byte High()
-//    {
-//        short w := self;
-//        w := w && 0FF00h;
-//        w := w.shiftRight(8);
-//        
-//        ^ byteConvertor.convert(w)
-//    }
-//        
-//    get byte Low()
-//    {
-//        short w := self;
-//        w := w && 0FFh;
-//        
-//        ^ byteConvertor.convert(w)
-//    }
+    get byte High()
+    {
+        short w := self;
+        w := w & 0FF00h;
+        w := w.shiftRight(8);
+        
+        ^ byteConvertor.convert(w)
+    }
+        
+    get byte Low()
+    {
+        short w := self;
+        w := w & 0FFh;
+        
+        ^ byteConvertor.convert(w)
+    }
 }
 
 // --- intOp ---
@@ -406,9 +406,6 @@ public extension intOp : IntNumber
         ^ n
     }
 
-//    power(n)
-//        = self.power(cast int(n));
-                
     bool isOdd()
         = (self & 1) != 0;
         
@@ -508,31 +505,31 @@ public extension longOp : LongNumber
         ^ new LongNumber(r)
     }
     
-//    long power(int y)
-//    {
-//        long x := self;
-//        long r := 1;
-//        
-//        int i := 0;
-//        while (i < y)
-//        {
-//            r := r * x;
-//            
-//            i += 1;
-//        };
-//        
-//        ^ new LongNumber(r)
-//    }
-//    
-//    long sqr()
-//    {
-//        long n := self;        
-//        long retVal := 0l;
-//        
-//        retVal := n * n;
-//        
-//        ^ new LongNumber(retVal)
-//    }
+    long power(int y)
+    {
+        long x := self;
+        long r := 1;
+        
+        int i := 0;
+        while (i < y)
+        {
+            r := r * x;
+            
+            i += 1;
+        };
+        
+        ^ new LongNumber(r)
+    }
+    
+    long sqr()
+    {
+        long n := self;        
+        long retVal := 0l;
+        
+        retVal := n * n;
+        
+        ^ new LongNumber(retVal)
+    }
 
     bool isOdd()
         = self.mod:2l != 0;
@@ -552,22 +549,22 @@ public extension longOp : LongNumber
     bool isNonnegative()
         = self <= 0l;
 
-//    get int High()
-//    {
-//        long w := self;
-//        w := w && -4294967296l;
-//        w := w.shiftRight(32);
-//        
-//        ^ intConvertor.convert(w)
-//    }
-//
-//    get int Low()
-//    {
-//        long w := self;
-//        w := w && 4294967295l;
-//        
-//        ^ intConvertor.convert(w)
-//    }
+    get int High()
+    {
+        long w := self;
+        w := w & -4294967296l;
+        w := w.shiftRight(32);
+        
+        ^ intConvertor.convert(w)
+    }
+
+    get int Low()
+    {
+        long w := self;
+        w := w & 4294967295l;
+        
+        ^ intConvertor.convert(w)
+    }
 }
 
 // --- realOp ---
@@ -593,29 +590,29 @@ public extension realOp : RealNumber
         ^ retVal
     }
         
-//    real exp()
-//    {
-//        real n := self;        
-//        real retVal := realOpController.exp(n);
-//        
-//        ^ retVal
-//    }
-//    
-//    real ln()
-//    {
-//        real n := self;
-//        real retVal := realOpController.ln(n);
-//        
-//        ^ retVal
-//    }
-//    
-//    real sqrt()
-//    {
-//        real n := self;
-//        real retVal := realOpController.sqrt(n);
-//        
-//        ^ retVal
-//    }
+    real exp()
+    {
+        real n := self;        
+        real retVal := realOpController.exp(n);
+        
+        ^ retVal
+    }
+    
+    real ln()
+    {
+        real n := self;
+        real retVal := realOpController.ln(n);
+        
+        ^ retVal
+    }
+    
+    real sqrt()
+    {
+        real n := self;
+        real retVal := realOpController.sqrt(n);
+        
+        ^ retVal
+    }
 
     real power(real y)
     {
@@ -853,101 +850,101 @@ public extension realOp : RealNumber
         = self <= 0.0r;
 }
 
-//// --- intArrayOp ---
-//
-//public extension intArrayOp : Array<int>
-//{
-//    /// Copies the short array at the specified position
-//    write(int index, int length, int[] array)
-//        => intern system'core_routines'__intarray;
-//
-//    exchange(int i1, int i2)
-//    {
-//        int n1 := self[i1];
-//        int n2 := self[i2];
-//
-//        self[i1] := n2;
-//        self[i2] := n1;
-//    }
-//
-//    populate(Func<int,int> f)
-//    {
-//        int i := 0;
-//        int l := self.Length;
-//        
-//        while (i < l)
-//        {
-//            self[i] := f(i);
-//            
-//            i := i + 1
-//        };
-//        
-//        ^ self
-//    }
-//    
-//    populate(Func1 f)
-//        = self.populate:(int n){ ^cast int(f(n)) };
-//}
-//
-//// --- arrayOp ---
-//
-//public extension weakArrayOp
-//{
-//    Array Subarray(int index, int length)
-//    {
-//        auto it := self.indexer();
-//        it.Index := index;
-//        
-//        auto a := Array.allocate(length);
-//        for (int i := 0, i < length, i += 1)
-//        {
-//            a[i] := it.get();
-//            
-//            it.appendIndex(1)
-//        };
-//        
-//        ^ a;
-//    }
-//}
-//
-//public extension arrayOp<T> : Array<T>
-//{
-//    T[] Subarray(int index, int length)
-//    {
-//        ^ new Array<T>(self, index, length)
-//    }
-//}
-//
-//// --- intmatrixOp ---
-//
-//public extension intMatrixOp : IntMatrix
-//{
-//    populate(Func<int,int,int> fn)
-//    {
-//        int n := 0;
-//        int m := 0;
-//        self.readLengthsTo(ref n, ref m);
-//        
-//        int i := 0;
-//        int j := 0;
-//        while (i < n)
-//        {
-//            j := 0;
-//            while (j < m)
-//            {
-//                int v := fn(i, j);
-//                
-//                self.write(i, j, v);
-//                
-//                j := j + 1
-//            };
-//            
-//            i := i + 1
-//        };
-//        
-//        ^ self
-//    }
-//}
+// --- intArrayOp ---
+
+public extension intArrayOp : Array<int>
+{
+    /// Copies the short array at the specified position
+    write(int index, int length, int[] array)
+        => intern system'core_routines'__intarray;
+
+    exchange(int i1, int i2)
+    {
+        int n1 := self[i1];
+        int n2 := self[i2];
+
+        self[i1] := n2;
+        self[i2] := n1;
+    }
+
+    populate(Func<int,int> f)
+    {
+        int i := 0;
+        int l := self.Length;
+        
+        while (i < l)
+        {
+            self[i] := f(i);
+            
+            i := i + 1
+        };
+        
+        ^ self
+    }
+    
+    populate(Func1 f)
+        = self.populate:(int n){ ^cast int(f(n)) };
+}
+
+// --- arrayOp ---
+
+public extension weakArrayOp
+{
+    Array Subarray(int index, int length)
+    {
+        auto it := self.indexer();
+        it.Index := index;
+        
+        auto a := Array.allocate(length);
+        for (int i := 0, i < length, i += 1)
+        {
+            a[i] := it.get();
+            
+            it.appendIndex(1)
+        };
+        
+        ^ a;
+    }
+}
+
+public extension arrayOp<T> : Array<T>
+{
+    T[] Subarray(int index, int length)
+    {
+        ^ new Array<T>(self, index, length)
+    }
+}
+
+// --- intmatrixOp ---
+
+public extension intMatrixOp : IntMatrix
+{
+    populate(Func<int,int,int> fn)
+    {
+        int n := 0;
+        int m := 0;
+        self.readLengthsTo(ref n, ref m);
+        
+        int i := 0;
+        int j := 0;
+        while (i < n)
+        {
+            j := 0;
+            while (j < m)
+            {
+                int v := fn(i, j);
+                
+                self.write(i, j, v);
+                
+                j := j + 1
+            };
+            
+            i := i + 1
+        };
+        
+        ^ self
+    }
+}
 
 // --- literalOp ---
 
@@ -971,9 +968,6 @@ public extension stringOp : String
 
     int indexOf(char ch)
         = self.indexOf(0, ch);
-        
-//    string Substring(index)
-//        = self.Substring(cast int(index));
         
     string Substring(int index)
     {
@@ -1079,34 +1073,32 @@ public extension stringOp : String
         ^ self
     }
 
-//    bool startingWith(string s)
-//    {
-//        int n := 0;
-//        self.indexOf(0, s, ref n);
-//        
-//        ^ 0 == n
-//    }
-//        
-//    bool endingWith(string s)
-//    {
-//        int l1 := self.Length;
-//        int l2 := s.Length;
-//
-//        int n := 0;
-//        self.indexOf(l1 - l2, s, ref n);
-//        
-//        ^ n != -1
-//    }
-//        
-//    bool containing(string s)
-//    {
-//        int l1 := self.Length;
-//        int l2 := s.Length;
-//
-//        self.indexOf(0, s, ref int n);
-//        
-//        ^ n != -1
-//    }
+    bool startingWith(string s)
+    {
+        int n := self.indexOf(0, s);
+        
+        ^ 0 == n
+    }
+        
+    bool endingWith(string s)
+    {
+        int l1 := self.Length;
+        int l2 := s.Length;
+
+        int n := self.indexOf(l1 - l2, s);
+        
+        ^ n != -1
+    }
+        
+    bool containing(string s)
+    {
+        int l1 := self.Length;
+        int l2 := s.Length;
+
+        int n := self.indexOf(0, s);
+        
+        ^ n != -1
+    }
 
     string replaceFirst(string replacee, string replacer)
     {
@@ -1122,9 +1114,6 @@ public extension stringOp : String
             ^ self
         }    
     }    
-    
-//    string replace(replacee, replacer)
-//        = stringOp.replace(self, cast string(replacee), cast string(replacer));
     
     string replace(string replacee, string replacer)
     {
@@ -1184,9 +1173,6 @@ public extension wideOp : WideString
     indexOf(char ch)
         = self.indexOf(0, ch);
                 
-//    wide Substring(index)
-//        = self.Substring(cast int(index));
-        
     wide Substring(int index)
     {
         int length := self.Length;
@@ -1250,54 +1236,50 @@ public extension wideOp : WideString
     wide trim()
         = self.trimLeft($32).trimRight($32);
     
-//    wide padLeft(char ch, int length)
-//    {
-//        int currentLength := self.Length;
-//        
-//        if (currentLength < length)
-//            { ^ WideString.fill(length - currentLength, ch).add(self) };
-//            
-//        ^ self
-//    }
-//    
-//    wide padRight(char ch, int length)
-//    {
-//        int currentLength := self.Length;
-//
-//        if (currentLength < length)
-//            { ^ self.add(WideString.fill(length - currentLength, ch)) };
-//            
-//        ^ self
-//    }
-//
-//    bool startingWith(wide s)
-//    {
-//        int n := 0;
-//        self.indexOf(0, s, ref n);
-//        
-//        ^ 0 == n
-//    }
-//    
-//    bool endingWith(wide s)
-//    {
-//        int l1 := self.Length;
-//        int l2 := s.Length;
-//        int n := 0;
-//        self.indexOf(l1 - l2, s, ref n);
-//        
-//        ^ n != -1
-//    }
-//    
-//    bool containing(wide s)
-//    {
-//        int l1 := self.Length;
-//        int l2 := s.Length;
-//        int n := 0;
-//        
-//        self.indexOf(0, s, ref n);
-//        
-//        ^ n != -1
-//    }
+    wide padLeft(char ch, int length)
+    {
+        int currentLength := self.Length;
+        
+        if (currentLength < length)
+            { ^ WideString.fill(length - currentLength, ch).add(self) };
+            
+        ^ self
+    }
+    
+    wide padRight(char ch, int length)
+    {
+        int currentLength := self.Length;
+
+        if (currentLength < length)
+            { ^ self.add(WideString.fill(length - currentLength, ch)) };
+            
+        ^ self
+    }
+
+    bool startingWith(wide s)
+    {
+        int n := self.indexOf(0, s);
+        
+        ^ 0 == n
+    }
+    
+    bool endingWith(wide s)
+    {
+        int l1 := self.Length;
+        int l2 := s.Length;
+        int n := self.indexOf(l1 - l2, s);
+        
+        ^ n != -1
+    }
+    
+    bool containing(wide s)
+    {
+        int l1 := self.Length;
+        int l2 := s.Length;
+        int n := self.indexOf(0, s);
+        
+        ^ n != -1
+    }
     
     wide replaceFirst(wide replacee, wide replacer)
     {
@@ -1427,16 +1409,16 @@ public extension stringWeakOp
 
 public extension charOp : CharValue
 {
-//    int Hashcode
-//    {
-//        // Reads the object hash code into the output parameter
-//        get()
-//        {
-//            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
+    int Hashcode
+    {
+        // Reads the object hash code into the output parameter
+        get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
+    }
     
     bool isWhitespace()
     {

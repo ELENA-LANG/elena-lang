@@ -44,8 +44,8 @@ namespace expressions
 
         get abstract int Allocated();
                         
-//        get abstract int ScopeLevel();
-//        
+        get abstract int ScopeLevel();
+        
 //        get abstract ExpressionScope Previous();
         
         abstract TapeFunction resolve(ScopeIdentifier ident);
@@ -53,18 +53,6 @@ namespace expressions
 //        abstract TapeFunction resolveExtension(Message message);
 //        
 //        abstract declare(ScopeVariable variable);
-    }
-
-    public class IdleExpressionScope : ExpressionScope
-    {
-        int allocTempVariable()
-            = 0;
-            
-        int Allocated
-            = 0;
-            
-        TapeFunction resolve(ScopeIdentifier ident)
-            = nil;            
     }
 
     public class RootExpressionScope : ExpressionScope
@@ -81,8 +69,8 @@ namespace expressions
         }
         
         
-//        int ScopeLevel = 0;
-//        
+        int ScopeLevel = *allocated;
+        
 //        ExpressionScope Previous = nil;
         
         TapeFunction resolve(ScopeIdentifier variable) 
@@ -315,8 +303,6 @@ namespace expressions
         {
             var t := self.compile(new RootExpressionScope());
             ^ t();
-            
-            //^ (self.compile(new RootExpressionScope()))();
         }
             
         DynamicTape compile(ExpressionScope scope)
@@ -573,6 +559,8 @@ namespace expressions
                 int allocTempVariable()
                 {
                     int index := variables.Length + 1;
+                    index := index + scope.ScopeLevel;
+                    
                     variables.append(ScopeIdentifier.TempVariable(index));
                     
                     ^ index
@@ -602,9 +590,9 @@ namespace expressions
                 
                 
 //                ExpressionScope Previous = scope;
-//                
-//                int ScopeLevel = scope.ScopeLevel + variables.Length;
-//                
+                
+                int ScopeLevel = scope.ScopeLevel + variables.Length;
+                
 //                TapeFunction resolveExtension(Message message)
 //                    => scope;
 //                
@@ -1956,8 +1944,8 @@ namespace expressions
         {
             auto closureScope := new ExpressionScope
             {
-//                int ScopeLevel = parameters.Length;
-//                
+                int ScopeLevel = parameters.Length;
+                
 //                ExpressionScope Previous = scope;
 //                
 //                TapeFunction resolveExtension(Message message)
