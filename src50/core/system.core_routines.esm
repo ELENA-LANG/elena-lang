@@ -15,6 +15,7 @@ define VARIADIC_MESSAGE      00000080h
 define SPECIAL_MESSAGE_INV  0FFFFFFDFh
 
 define elStructure            00000008h
+define elMessage              00200000h
 
 // ; NOTE : __ indicates platform dependant constant!!
 define __rsrv_object_offset32        12      
@@ -911,6 +912,64 @@ labDefault:
 
 end
 
+procedure __closureclass."#dispatch[1]"
+
+  bsredirect
+
+  pusha
+  pushd
+  pushn    0
+
+labNext:
+  peeksi   2
+  loadsi   0
+  ifcount  labEnd
+  get
+  inc      1
+  savesi   0
+
+  flag
+  and      elMessage
+  ifn      labNext, 0
+
+  loadsi   1
+  else     labNext
+
+labCall:
+  peeksi   2 
+  popd
+  get
+  popd
+  pop
+  or       20h // ; set special flag
+  jumpvi   0
+
+labQuit:
+  quit
+  
+labEnd:
+  loadsi   1
+  pop         // ; note - cannot use freei 3, due to x86-64 alignment issue
+  pop
+  pop
+
+  open
+  reserve  __page_size
+  alloci   3
+  storesi  1
+  movf     -__rsrv_object_offset
+  storesi  2
+  storesi  0
+  movr     class : system'Message
+  callextr api : tempObject, 1 
+  movr     class : system'MethodNotFoundException
+  storesi  0
+  pushr    mssgconst : "new[3]"
+
+  throw
+
+end
+
 procedure __real."exp$system@RealNumber$@system@ref#1&system@RealNumber[2]"
 
   pushsi 1
@@ -1157,6 +1216,36 @@ labErr:
 
 end
 
+
+procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@system@ref#1&system@CharValue[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  load
+  lessn   labErr, 0
+
+  peeksi  2
+  load
+  peeksi  1
+  read
+  peeksi  3
+  save
+
+  quit
+  
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw  
+
+end
+
 procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@system@ref#1&system@IntNumber[3]"
 
   peeksi  1
@@ -1198,6 +1287,191 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   pushsi  3
   peeksi  2
   xwrite  2
+  pop
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw  
+
+end
+
+procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber[4]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  load
+  lessn   labErr, 0
+
+  pushsi 1
+  peeksi 4
+  pushai 0
+  peeksi 4
+  pushai 0
+  pushsi 7
+  // subcopy(target,index,size,arr)
+  callextr api : subcopy, 4
+  freei  4
+  quit
+  
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw  
+
+end
+
+procedure __bytearray."move$@system@Array#1&system@ByteNumber$system@IntNumber$system@IntNumber$system@IntNumber[4]"
+
+  pushsi   4
+  pushsi   4
+  pushsi   4
+  pushsi   4
+
+  // ; move(target,index,len,offs)
+  callextr api : move, 4
+
+  freei    4
+  quit
+  
+end
+
+procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber[4]"
+
+  peeksi   1
+  len
+  peeksi   2
+  notless  labErr
+  load
+  lessn    labErr, 0
+
+  //; insert(dest,sour,index,size)
+  peeksi   3
+  load 
+  pushd
+  pushsi   3
+  load 
+  pushd
+  pushsi   6
+  pushsi   4
+
+  callextr api : core_insert, 4
+  freei    4
+
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw  
+
+end
+
+procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$system@IntNumber[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  load
+  lessn   labErr, 0
+
+  pushsi  3
+  peeksi  2
+  xwrite  4
+  pop
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw  
+
+end
+
+procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$system@CharValue[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  load
+  lessn   labErr, 0
+
+  pushsi  3
+  peeksi  2
+  xwrite  4
+  pop
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw  
+
+end
+
+procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$system@LongNumber[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  load
+  lessn   labErr, 0
+
+  pushsi  3
+  peeksi  2
+  xwrite  8
+  pop
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'InvalidArgumentException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw  
+
+end
+
+procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$system@RealNumber[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  load
+  lessn   labErr, 0
+
+  pushsi  3
+  peeksi  2
+  xwrite  8
   pop
   quit
 

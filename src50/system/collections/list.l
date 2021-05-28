@@ -659,20 +659,20 @@ namespace collections
             }
         }
     
-//        appendRange(Indexable indexable)
-//        {
-//            if (nil != indexable)
-//            {
-//                Indexer it := indexable.indexer();
-//                
-//                while (it.Available)
-//                {       
-//                    self.append(it.get());
-//                    
-//                    it.appendIndex(1)
-//                }
-//            }
-//        }
+        appendRange(Indexable indexable)
+        {
+            if (nil != indexable)
+            {
+                Indexer it := indexable.indexer();
+                
+                while (it.Available)
+                {       
+                    self.append(*it);
+                    
+                    it.appendIndex(1)
+                }
+            }
+        }
                     
         /// Inserts a new object to the specified position
         insert(int index, object object)
@@ -855,239 +855,239 @@ namespace collections
         }
     }
 
-//    // --- Dictionary ---
-//    
-//    /// Dictionary class
-//    public sealed  class Dictionary //: Enumerable
-//    {
-//        ArrayList theList;
-//        Array     theHashTable;
-//        int       theHashMask;
-//        
-//        object    theDefault;
-//    
-//        /// Creates a dictionary
-//        constructor new()
-//            <= new(32, 32, nil);
-//    
-//        constructor new(object default)
-//            <= new(32, 32, default);
-//    
-//        constructor new(int capacity, object default)
-//            <= new(capacity, 32, default);
-//    
-//        /// Creates a dictionary
-//        constructor new(int capacity, int hashLength, object default)
-//        {
-//            int size := 32;
-//            while (size < hashLength)
-//            {
-//                size := size $shl 1;
-//            };
-//            
-//            size := size - 1;
-//            theHashMask := new IntNumber(size);
-//            
-//            theHashTable := Array.allocate(hashLength);
-//            theList := ArrayList.allocate(capacity);
-//            
-//            theDefault := default;
-//        }
-//        
-//        setAt(int key, object object)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            self.getItem(hashCode, key).Value := object
-//        }
-//            
-//        setAt(long key, object object)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            self.getItem(hashCode, key).Value := object
-//        }
-//            
-//        setAt(real key, object object)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            self.getItem(hashCode, key).Value := object
-//        }
-//            
-//        setAt(char key, object object)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            self.getItem(hashCode, key).Value := object
-//        }
-//            
-//        setAt(string key, object object)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            self.getItem(hashCode, key).Value := object
-//        }
-//            
-//        setAt(wide key, object object)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            self.getItem(hashCode, key).Value := object
-//        }
-//        
-//        private getItem(int code, object key)
-//        {
-//            int hashCode := code && theHashMask;
-//            
-//            var hashItem := theHashTable.at(hashCode);
-//            if (nil == hashItem)
-//            {
-//                hashItem := new int[](5);
-//                
-//                hashItem[0] := 1;
-//                
-//                theHashTable.setAt(hashCode, hashItem)
-//            };
-//            
-//            int[] backet := /*cast int[](*/hashItem/*)*/;
-//            int  length := backet[0];
-//            
-//            for (int i := 1, i < length, i += 1)
-//            {
-//                int itemIndex := backet[i];
-//                
-//                var item := theList.at(itemIndex);
-//                
-//                if(key.safeEqual(item.Key))
-//                    { ^ item }
-//            };
-//            
-//            var newItem := KeyValue.new(key, theDefault);
-//            
-//            int i := theList.Length;
-//            
-//            theList.append:newItem;
-//            
-//            // Extend a backet
-//            int capacity := backet.Length;
-//            if (capacity == length)
-//            {
-//                auto newBacket := new int[](capacity + 5);
-//                newBacket.write(0, capacity, backet);
-//    
-//                backet := newBacket;
-//                theHashTable.setAt(hashCode, newBacket)
-//            };
-//                
-//            backet[length] := i;
-//                
-//            length := length + 1;
-//            backet[0] := length;
-//            
-//            ^ newItem
-//        }    
-//            
-//        at(int key)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            ^ self.getItem(hashCode, key).Value
-//        }
-//            
-//        at(long key)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            ^ self.getItem(hashCode, key).Value
-//        }
-//            
-//        at(real key)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            ^ self.getItem(hashCode, key).Value
-//        }
-//            
-//        at(char key)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            ^ self.getItem(hashCode, key).Value
-//        }
-//            
-//        at(string key)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            ^ self.getItem(hashCode, key).Value
-//        }
-//            
-//        at(wide key)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            ^ self.getItem(hashCode, key).Value
-//        }
-//    
-//        bool containsKey(object key)
-//        {
-//            int hashCode := key.Hashcode;
-//            
-//            hashCode := hashCode && theHashMask;
-//            
-//            var hashItem := theHashTable.at(hashCode);
-//            if (nil == hashItem)
-//            {
-//                hashItem := new int[](5);
-//                
-//                hashItem[0] := 1;
-//                
-//                theHashTable.setAt(hashCode, hashItem)
-//             };
-//
-//            int[] backet := /*cast int[](*/hashItem/*)*/;
-//            int  length := backet[0];
-//            
-//            for (int i := 1, i < length, i += 1)
-//            {
-//                int itemIndex := backet[i];
-//                
-//                var item := theList.at(itemIndex);
-//                
-//                if(key.safeEqual(item.Key))
-//                    { ^ true }
-//            };
-//            
-//            ^ false
-//        }
-//    
-//        /// Returns a dictionary enumerator
-//        Enumerator enumerator() => theList;
-//        
-//        ArrayList Values = theList.clone();
-//    
-//        /// Clones a dictionary
-//        clone()
-//        {
-//            var list := Dictionary.new();
-//    
-//            Enumerator it := theList.enumerator();
-//            while (it.next())
-//            {
-//                var item := it.get();
-//                
-//                list[item.Key] := item.Value
-//            };
-//            
-//            ^ list
-//        }
-//    
-//        clear()
-//        {
-//            theHashTable := Array.allocate(theHashTable.Length);
-//            theList.clear()
-//        }
-//    }
+    // --- Dictionary ---
+    
+    /// Dictionary class
+    public sealed  class Dictionary //: Enumerable
+    {
+        ArrayList theList;
+        Array     theHashTable;
+        int       theHashMask;
+        
+        object    theDefault;
+    
+        /// Creates a dictionary
+        constructor new()
+            <= new(32, 32, nil);
+    
+        constructor new(object default)
+            <= new(32, 32, default);
+    
+        constructor new(int capacity, object default)
+            <= new(capacity, 32, default);
+    
+        /// Creates a dictionary
+        constructor new(int capacity, int hashLength, object default)
+        {
+            int size := 32;
+            while (size < hashLength)
+            {
+                size := size $shl 1;
+            };
+            
+            size := size - 1;
+            theHashMask := new IntNumber(size);
+            
+            theHashTable := Array.allocate(hashLength);
+            theList := ArrayList.allocate(capacity);
+            
+            theDefault := default;
+        }
+        
+        setAt(int key, object object)
+        {
+            int hashCode := key.Hashcode;
+            
+            self.getItem(hashCode, key).Value := object
+        }
+            
+        setAt(long key, object object)
+        {
+            int hashCode := key.Hashcode;
+            
+            self.getItem(hashCode, key).Value := object
+        }
+            
+        setAt(real key, object object)
+        {
+            int hashCode := key.Hashcode;
+            
+            self.getItem(hashCode, key).Value := object
+        }
+            
+        setAt(char key, object object)
+        {
+            int hashCode := key.Hashcode;
+            
+            self.getItem(hashCode, key).Value := object
+        }
+            
+        setAt(string key, object object)
+        {
+            int hashCode := key.Hashcode;
+            
+            self.getItem(hashCode, key).Value := object
+        }
+            
+        setAt(wide key, object object)
+        {
+            int hashCode := key.Hashcode;
+            
+            self.getItem(hashCode, key).Value := object
+        }
+        
+        private getItem(int code, object key)
+        {
+            int hashCode := code & theHashMask;
+            
+            var hashItem := theHashTable.at(hashCode);
+            if (nil == hashItem)
+            {
+                hashItem := new int[](5);
+                
+                hashItem[0] := 1;
+                
+                theHashTable.setAt(hashCode, hashItem)
+            };
+            
+            int[] backet := /*cast int[](*/hashItem/*)*/;
+            int  length := backet[0];
+            
+            for (int i := 1, i < length, i += 1)
+            {
+                int itemIndex := backet[i];
+                
+                var item := theList.at(itemIndex);
+                
+                if(key.safeEqual(item.Key))
+                    { ^ item }
+            };
+            
+            var newItem := KeyValue.new(key, theDefault);
+            
+            int i := theList.Length;
+            
+            theList.append:newItem;
+            
+            // Extend a backet
+            int capacity := backet.Length;
+            if (capacity == length)
+            {
+                auto newBacket := new int[](capacity + 5);
+                newBacket.write(0, capacity, backet);
+    
+                backet := newBacket;
+                theHashTable.setAt(hashCode, newBacket)
+            };
+                
+            backet[length] := i;
+                
+            length := length + 1;
+            backet[0] := length;
+            
+            ^ newItem
+        }    
+            
+        at(int key)
+        {
+            int hashCode := key.Hashcode;
+            
+            ^ self.getItem(hashCode, key).Value
+        }
+            
+        at(long key)
+        {
+            int hashCode := key.Hashcode;
+            
+            ^ self.getItem(hashCode, key).Value
+        }
+            
+        at(real key)
+        {
+            int hashCode := key.Hashcode;
+            
+            ^ self.getItem(hashCode, key).Value
+        }
+            
+        at(char key)
+        {
+            int hashCode := key.Hashcode;
+            
+            ^ self.getItem(hashCode, key).Value
+        }
+            
+        at(string key)
+        {
+            int hashCode := key.Hashcode;
+            
+            ^ self.getItem(hashCode, key).Value
+        }
+            
+        at(wide key)
+        {
+            int hashCode := key.Hashcode;
+            
+            ^ self.getItem(hashCode, key).Value
+        }
+    
+        bool containsKey(object key)
+        {
+            int hashCode := key.Hashcode;
+            
+            hashCode := hashCode & theHashMask;
+            
+            var hashItem := theHashTable.at(hashCode);
+            if (nil == hashItem)
+            {
+                hashItem := new int[](5);
+                
+                hashItem[0] := 1;
+                
+                theHashTable.setAt(hashCode, hashItem)
+             };
+
+            int[] backet := /*cast int[](*/hashItem/*)*/;
+            int  length := backet[0];
+            
+            for (int i := 1, i < length, i += 1)
+            {
+                int itemIndex := backet[i];
+                
+                var item := theList.at(itemIndex);
+                
+                if(key.safeEqual(item.Key))
+                    { ^ true }
+            };
+            
+            ^ false
+        }
+    
+        /// Returns a dictionary enumerator
+        Enumerator enumerator() => theList;
+        
+        ArrayList Values = theList.clone();
+    
+        /// Clones a dictionary
+        clone()
+        {
+            var list := Dictionary.new();
+    
+            Enumerator it := theList.enumerator();
+            while (it.next())
+            {
+                var item := *it;
+                
+                list[item.Key] := item.Value
+            };
+            
+            ^ list
+        }
+    
+        clear()
+        {
+            theHashTable := Array.allocate(theHashTable.Length);
+            theList.clear()
+        }
+    }
 
 }

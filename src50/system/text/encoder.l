@@ -11,169 +11,169 @@ namespace text
     
         abstract convertTo(int index, ref int length, char[] charArray, byte[] output, ref int outputLength);
         
-//        convert(int index, ref int length, string s, byte[] output, ref int outputLength)
-//        {
-//            char temp[64];
-//            int  temp_len := 64;
-//            if (temp_len > length)
-//            {
-//                temp_len := length
-//            }
-//            else
-//            {
-//                length := temp_len
-//            };
-//            
-//            s.Substring(index, length).save(0, temp, ref temp_len);
-//            
-//            self.convert(0, ref temp_len, temp, output, ref outputLength)
-//        }
-//        
-//        convert(int index, ref int length, wide s, byte[] output, ref int outputLength)
-//        {
-//            char temp[64];
-//            int  temp_len := 64;
-//            if (temp_len > length)
-//            {
-//                temp_len := length
-//            }
-//            else
-//            {
-//                length := temp_len
-//            };
-//            
-//            s.Substring(index, length).save(0, temp, ref temp_len);
-//            
-//            self.convert(0, ref temp_len, temp, output, ref outputLength)
-//        }
-//        
-//        toByteArray(int index, int length, string s)
-//        {
-//            int    i := index;
-//            byte[] retVal := nil;
-//            int    remaining := length;
-//            
-//            while (i < length)
-//            {
-//                byte tmp[64];
-//                int  tmp_len := 64;
-//                int  len := remaining;
-//                if (len > tmp_len)
-//                    { len := tmp_len };
-//                 
-//                self.convert(i, ref len, s, tmp, ref tmp_len);
-//                
-//                if (nil == retVal)
-//                { 
-//                    retVal := class Array<byte>.copy(tmp, 0, tmp_len)
-//                }
-//                else
-//                { 
-//                    retVal := retVal.add(tmp_len, tmp) 
-//                };
-//                
-//                i := i + len;
-//                remaining := remaining - len
-//            };
-//            
-//            ^ retVal
-//        }
-//        
-//        toByteArray(int index, int length, wide s)
-//        {
-//            int    i := index;
-//            byte[] retVal := nil;
-//            int    remaining := length;
-//            
-//            while (i < length)
-//            {
-//                byte tmp[64];
-//                int  tmp_len := 64;
-//                int  len := remaining;
-//                if (len > tmp_len)
-//                    { len := tmp_len };
-//                 
-//                self.convert(i, ref len, s, tmp, ref tmp_len);
-//                
-//                if (nil == retVal)
-//                { 
-//                    retVal := class Array<byte>.copy(tmp, 0, tmp_len)
-//                }
-//                else
-//                { 
-//                    retVal := retVal.add(tmp_len, tmp) 
-//                };
-//                
-//                i := i + len;
-//                remaining := remaining - len
-//            };
-//            
-//            ^ retVal
-//        }
-//        
-//        string toString(int index, int length, byte[] array)
-//        {
-//            int    i := index;
-//            string retVal := nil;
-//            int    remaining := length;
-//            
-//            while (i < length)
-//            {
-//                char tmp[64];
-//                int  tmp_len := 64;
-//                int  len := remaining;
-//                if (len > tmp_len)
-//                    { len := tmp_len };
-//                 
-//                self.convert(i, ref len, array, tmp, ref tmp_len);
-//                
-//                if (nil == retVal)
-//                { 
-//                    retVal := String.copy(0, tmp_len, tmp) 
-//                }
-//                else
-//                { 
-//                    retVal := retVal.add(String.copy(0, tmp_len, tmp)) 
-//                };
-//                
-//                i := i + len;
-//                remaining := remaining - len
-//            };
-//            
-//            ^ retVal
-//        }
-//        
-//        wide toWide(int index, int length, byte[] array)
-//        {
-//            int  i := index;
-//            wide retVal := nil;
-//            int  remaining := length;
-//            
-//            while (i < length)
-//            {
-//                char tmp[64];
-//                int  tmp_len := 64;
-//                int  len := remaining;
-//                if (len > tmp_len)
-//                    { len := tmp_len };
-//                 
-//                self.convert(i, ref len, array, tmp, ref tmp_len);
-//                
-//                if (nil == retVal)
-//                { 
-//                    retVal := WideString.copy(0, tmp_len, tmp) 
-//                }
-//                else
-//                { 
-//                    retVal := retVal.add(WideString.copy(0, tmp_len, tmp)) 
-//                };
-//                
-//                i := i + len;
-//                remaining := remaining - len
-//            };
-//            
-//            ^ retVal
-//        }
+        convert(int index, ref int length, string s, byte[] output, ref int outputLength)
+        {
+            char temp[64];
+            int  temp_len := 64;
+            if (temp_len > length)
+            {
+                temp_len := length
+            }
+            else
+            {
+                length := temp_len
+            };
+            
+            s.Substring(index, length).save(0, temp, ref temp_len);
+            
+            self.convert(0, ref temp_len, temp, output, ref outputLength)
+        }
+        
+        convert(int index, ref int length, wide s, byte[] output, ref int outputLength)
+        {
+            char temp[64];
+            int  temp_len := 64;
+            if (temp_len > length)
+            {
+                temp_len := length
+            }
+            else
+            {
+                length := temp_len
+            };
+            
+            s.Substring(index, length).save(0, temp, ref temp_len);
+            
+            self.convert(0, ref temp_len, temp, output, ref outputLength)
+        }
+        
+        toByteArray(int index, int length, string s)
+        {
+            int    i := index;
+            byte[] retVal := nil;
+            int    remaining := length;
+            
+            while (i < length)
+            {
+                byte tmp[64];
+                int  tmp_len := 64;
+                int  len := remaining;
+                if (len > tmp_len)
+                    { len := tmp_len };
+                 
+                self.convert(i, ref len, s, tmp, ref tmp_len);
+                
+                if (nil == retVal)
+                { 
+                    retVal := class Array<byte>.copy(tmp, 0, tmp_len)
+                }
+                else
+                { 
+                    retVal := retVal.add(tmp_len, tmp) 
+                };
+                
+                i := i + len;
+                remaining := remaining - len
+            };
+            
+            ^ retVal
+        }
+        
+        toByteArray(int index, int length, wide s)
+        {
+            int    i := index;
+            byte[] retVal := nil;
+            int    remaining := length;
+            
+            while (i < length)
+            {
+                byte tmp[64];
+                int  tmp_len := 64;
+                int  len := remaining;
+                if (len > tmp_len)
+                    { len := tmp_len };
+                 
+                self.convert(i, ref len, s, tmp, ref tmp_len);
+                
+                if (nil == retVal)
+                { 
+                    retVal := class Array<byte>.copy(tmp, 0, tmp_len)
+                }
+                else
+                { 
+                    retVal := retVal.add(tmp_len, tmp) 
+                };
+                
+                i := i + len;
+                remaining := remaining - len
+            };
+            
+            ^ retVal
+        }
+        
+        string toString(int index, int length, byte[] array)
+        {
+            int    i := index;
+            string retVal := nil;
+            int    remaining := length;
+            
+            while (i < length)
+            {
+                char tmp[64];
+                int  tmp_len := 64;
+                int  len := remaining;
+                if (len > tmp_len)
+                    { len := tmp_len };
+                 
+                self.convert(i, ref len, array, tmp, ref tmp_len);
+                
+                if (nil == retVal)
+                { 
+                    retVal := String.copy(0, tmp_len, tmp) 
+                }
+                else
+                { 
+                    retVal := retVal.add(String.copy(0, tmp_len, tmp)) 
+                };
+                
+                i := i + len;
+                remaining := remaining - len
+            };
+            
+            ^ retVal
+        }
+        
+        wide toWide(int index, int length, byte[] array)
+        {
+            int  i := index;
+            wide retVal := nil;
+            int  remaining := length;
+            
+            while (i < length)
+            {
+                char tmp[64];
+                int  tmp_len := 64;
+                int  len := remaining;
+                if (len > tmp_len)
+                    { len := tmp_len };
+                 
+                self.convert(i, ref len, array, tmp, ref tmp_len);
+                
+                if (nil == retVal)
+                { 
+                    retVal := WideString.copy(0, tmp_len, tmp) 
+                }
+                else
+                { 
+                    retVal := retVal.add(WideString.copy(0, tmp_len, tmp)) 
+                };
+                
+                i := i + len;
+                remaining := remaining - len
+            };
+            
+            ^ retVal
+        }
     }
     
     // --- UTF8Encoder ---
@@ -186,16 +186,16 @@ namespace text
         convertTo(int index, ref int length, char[] array, byte[] output, ref int outputLength)
             => intern system'core_routines'__utf8encoder;
         
-//        convert(int index, ref int length, string s, byte[] output, ref int outputLength)
-//        {
-//            int l := length;
-//            s.saveToByteArray(index, output, l);
-//    
-//            outputLength := length;
-//        }
-//        
-//        string toString(int index, int length, byte[] array)
-//            = UTF8Encoding.toString(index, length, array);
+        convert(int index, ref int length, string s, byte[] output, ref int outputLength)
+        {
+            int l := length;
+            s.saveToByteArray(index, output, l);
+    
+            outputLength := length;
+        }
+        
+        string toString(int index, int length, byte[] array)
+            = UTF8Encoding.toString(index, length, array);
     }
     
     // --- UTF8Encoding ---
@@ -211,10 +211,10 @@ namespace text
 //        {
 //            s.saveToByteArray(index, array, length)
 //        }
-//            
-//        string toString(int index, int length, byte[] array)
-//            = String.fromByteArray(index, length, array);
-//            
+            
+        string toString(int index, int length, byte[] array)
+            = String.fromByteArray(index, length, array);
+            
 //        convert(int index, ref int length, string s, char[] output, ref int outputLength)
 //            => intern system'core_routines'__utf8encoder;
     }

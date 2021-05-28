@@ -1495,62 +1495,62 @@ public extension byteArrayHelper : Array<byte>
     read(int index, ref int retVal)
         => intern system'core_routines'__bytearray;
 
-//    [info:"Reads a character value at the specified position and saves it into an output variable"]
-//    read(int index, ref char retVal)
-//        => intern system'core_routines'__bytearray;                
+    [info:"Reads a character value at the specified position and saves it into an output variable"]
+    read(int index, ref char retVal)
+        => intern system'core_routines'__bytearray;                
         
-//    move(int index, int length, int offset)
-//        => intern system'core_routines'__bytearray;
-//                
-//    /// Copies a sub array to the provided one at the specified position
-//    read(int index, int length, byte[] dump)
-//        => intern system'core_routines'__bytearray;
-//        
-//    /// Copies the byte array at the specified position
-//    write(int index, int length, byte[] dump)
-//        => intern system'core_routines'__bytearray;
+    move(int index, int length, int offset)
+        => intern system'core_routines'__bytearray;
+                
+    /// Copies a sub array to the provided one at the specified position
+    read(int index, int length, byte[] dump)
+        => intern system'core_routines'__bytearray;
+        
+    /// Copies the byte array at the specified position
+    write(int index, int length, byte[] dump)
+        => intern system'core_routines'__bytearray;
         
     /// Copies the byte array at the specified position
     write(int index, short value)
         => intern system'core_routines'__bytearray;
         
-//    /// Copies the byte array at the specified position
-//    write(int index, int value)
-//        => intern system'core_routines'__bytearray;
-//        
-//    /// Copies the byte array at the specified position
-//    write(int index, char value)
-//        => intern system'core_routines'__bytearray;
-//        
-//    /// Copies the byte array at the specified position
-//    write(int index, long value)
-//        => intern system'core_routines'__bytearray;
-//        
-//    /// Copies the byte array at the specified position
-//    write(int index, real value)
-//        => intern system'core_routines'__bytearray;
-//
-//    /// Fills the sub array with a specified value
-//    fill(int offset, int length, byte val)
-//    {
-//        int totalLength := self.Length;
-//        
-//        int i := offset;
-//        int m := offset + length;
-//        
-//        if (i > totalLength)
-//            { system'InvalidArgumentException.new().raise() };
-//        
-//        if (m > totalLength)
-//            { system'InvalidArgumentException.new().raise() };
-//            
-//        while(i < m)
-//        {
-//            self[i] :=  val;
-//            
-//            i := i + 1
-//        }
-//    }
+    /// Copies the byte array at the specified position
+    write(int index, int value)
+        => intern system'core_routines'__bytearray;
+        
+    /// Copies the byte array at the specified position
+    write(int index, char value)
+        => intern system'core_routines'__bytearray;
+        
+    /// Copies the byte array at the specified position
+    write(int index, long value)
+        => intern system'core_routines'__bytearray;
+        
+    /// Copies the byte array at the specified position
+    write(int index, real value)
+        => intern system'core_routines'__bytearray;
+
+    /// Fills the sub array with a specified value
+    fill(int offset, int length, byte val)
+    {
+        int totalLength := self.Length;
+        
+        int i := offset;
+        int m := offset + length;
+        
+        if (i > totalLength)
+            { system'InvalidArgumentException.new().raise() };
+        
+        if (m > totalLength)
+            { system'InvalidArgumentException.new().raise() };
+            
+        while(i < m)
+        {
+            self[i] :=  val;
+            
+            i := i + 1
+        }
+    }
 }
 
 // --- charArrayHelper ---

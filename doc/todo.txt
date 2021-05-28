@@ -3,8 +3,6 @@ In development:
 ------         
 
   [development]
-    - new op code : flen i =>  index += (fp-sp+i)   fsize i -> index := (fp-sp-i)
-
     * Building code at run-time in ELENA, Part 2
     - support if(a>b) c := a;
 

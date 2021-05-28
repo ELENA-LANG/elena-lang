@@ -108,46 +108,46 @@ namespace text
             }
         }
     
-//        write(wide s)
-//        {
-//            int length := s.Length;
-//            
-//            ifnot (0 == length)
-//            {
-//                self.reserve(length);
-//                
-//                s.save(theLength.Value, theBuffer, ref length);
-//                
-//                theLength.append(length)
-//            }
-//        }
-//    
-//        write(char ch)
-//        {
-//            self.reserve(1);
-//            
-//            theBuffer[theLength.Value] := ch;
-//            
-//            theLength.append(1)
-//        }
-//    
-//        write(int n)
-//        {
-//            byte tmp[16];
-//            char ch_tmp[16];
-//            int  len := 16;
-//            
-//            stringConvertor.convert(n, tmp, ref len);
-//            
-//            UTF8Encoder.convert(0, ref len, tmp, ch_tmp, ref len);
-//            
-//            self.write(ch_tmp, len)
-//        }
-//    
-//        write(object)
-//        {
-//            self.write(object.toPrintable())
-//        }
+        write(wide s)
+        {
+            int length := s.Length;
+            
+            ifnot (0 == length)
+            {
+                self.reserve(length);
+                
+                s.save(theLength.Value, theBuffer, ref length);
+                
+                theLength.append(length)
+            }
+        }
+    
+        write(char ch)
+        {
+            self.reserve(1);
+            
+            theBuffer[theLength.Value] := ch;
+            
+            theLength.append(1)
+        }
+    
+        write(int n)
+        {
+            byte tmp[16];
+            char ch_tmp[16];
+            int  len := 16;
+            
+            stringConvertor.convert(n, tmp, ref len);
+            
+            UTF8Encoder.convertFrom(0, ref len, tmp, ch_tmp, ref len);
+            
+            self.write(ch_tmp, len)
+        }
+    
+        write(object)
+        {
+            self.write(object.toPrintable())
+        }
     
         write(char[] array, int length)
         {

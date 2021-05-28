@@ -1544,12 +1544,12 @@ public singleton stringConvertor
 
     convert(int n, byte[] buffer, ref int length)
     {
-        extern elenart.core_inttostr(n, 10, buffer, ref int length);
+        extern elenart.core_inttostr(n, 10, buffer, ref length);
     }
     
     convert(uint n, byte[] buffer, ref int length)
     {
-        extern elenart.core_uinttostr(n, 10, buffer, ref int length);
+        extern elenart.core_uinttostr(n, 10, buffer, ref length);
     }
 
     /// Returns a parameter                

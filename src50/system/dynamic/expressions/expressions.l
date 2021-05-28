@@ -1,8 +1,9 @@
 namespace expressions
 {
     import system'collections;
-//    import system'routines;
-//
+    import system'text;
+    import system'routines;
+
 //    const int mode_non   = 0;
     const int mode_lcl   = 1;
 //    const int mode_asn   = 3;
@@ -57,9 +58,36 @@ namespace expressions
 //        abstract declare(ScopeVariable variable);
     }
 
+    public singleton IdleExpressionScope
+    {
+        bool reserve(int level)
+            = false;
+            
+        int Reserved = 0;
+        
+        int allocTempVariable()
+            = 0;
+            
+        int ScopeLevel
+            = 0;
+            
+        TapeFunction resolve(ScopeIdentifier ident)
+            = nil; 
+    }
+
     public class RootExpressionScope : ExpressionScope
     {
-        ref<int> reserved := 0;
+        ref<int>        reserved := 0;
+        ExpressionScope parent;
+        
+        constructor()
+        {
+        }
+        
+        constructor(ExpressionScope parent)
+        {
+            this parent := parent
+        } 
         
         int Reserved = *reserved;
         
@@ -87,7 +115,7 @@ namespace expressions
         
         TapeFunction resolve(ScopeIdentifier variable) 
         {
-            ^ nil
+            ^ parent.?resolve(variable)
         }
     
 //        TapeFunction resolveExtension(Message message)
@@ -223,27 +251,15 @@ namespace expressions
 //              
 //        static Expression Method(string name, Expression body)
 //            = new MethodExpression(name, body);        
-//              
-//        static Expression Method(string name, ScopeVariable param1, Expression body)
-//            = new MethodExpression(name, param1, body);        
-//              
-//        static Expression Method(string name, ScopeVariable param1, ScopeVariable param2, Expression body)
-//            = new MethodExpression(name, param1, param2, body);        
-//              
-//        static Expression Method(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
-//            = new MethodExpression(name, param1, param2, param3, body);        
+              
+        static Expression Method(string name, Expression body, params ScopeIdentifier[] variables)
+            = MethodExpression.new(name, body, params variables);        
               
         static Expression Closure(Expression body)
             = new ClosureExpression(body);        
               
         static Expression Closure(Expression body, params ScopeIdentifier[] variables)
             = ClosureExpression.new(body, params variables);        
-              
-//        static Expression Closure(ScopeVariable param1, ScopeVariable param2, Expression body)
-//            = new ClosureExpression(param1, param2, body);        
-//              
-//        static Expression Closure(ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
-//            = new ClosureExpression(param1, param2, param3, body);        
               
         static Expression Return(Expression expr)
             = new ReturnExpression(expr);
@@ -305,10 +321,10 @@ namespace expressions
                                         
         abstract saveTo(List<TapeFunction> list, ExpressionScope scope, int index);
     
-//        saveTo(List<Tuple<Message,DynamicTape>> list, ExpressionScope scope)
-//        {
-//            NotSupportedException.raise()
-//        }
+        saveTo(List<Tuple<Message,DynamicTape>> list, ExpressionScope scope)
+        {
+            NotSupportedException.raise()
+        }
                             
         // temporal generic solution
         eval()
@@ -1728,13 +1744,36 @@ namespace expressions
 //            list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
 //        }
 //    }
-//
-//    public class MethodExpression : Expression
-//    {
-//        Message         message;
-//        ScopeVariable[] parameters;
-//        Expression      body;
-//        
+
+    public class MethodExpression : Expression
+    {
+        Message           message;
+        ScopeIdentifier[] parameters;
+        Expression        body;
+
+        constructor new(string name, Expression body, params ScopeIdentifier[] params)
+        {
+            int len := params.Length;
+            
+            auto text := TextBuilder.load(name);
+            text.append("[");
+            text.append(len + 1);
+            text.append("]");
+            
+            this message := new Message(text.Value);
+            
+            // revese the order
+            this parameters := new ScopeIdentifier[](len + 1);
+            
+            parameters[0] := ScopeIdentifier.Variable("self");
+            for (int i := 0, int j := len - 1, i < len, i += 1, j -= 1)
+            {
+                parameters[i + 1] := params[j]
+            };
+            
+            this body := body;
+        }         
+                        
 //        constructor(Message message, Expression body)
 //        {
 //            this parameters := new ScopeVariable[]{ new ScopeVariable("self") };
@@ -1774,36 +1813,46 @@ namespace expressions
 //            
 //            this body := body;
 //        }        
-//     
-//        bool IsOperation = true;
-//
-//        saveTo(List<Tuple<Message,DynamicTape>> list, ExpressionScope scope)
-//        {
-//            list.append(new Tuple<Message,DynamicTape>(message, self.compile(scope)));
-//        }
-//
-//        prepare(ExpressionScope scope)
-//        {
-//            auto methodScope := new ExpressionScope
-//            {
-//                int ScopeLevel = parameters.Length;
-//                
+     
+        bool IsOperation = true;
+
+        saveTo(List<Tuple<Message,DynamicTape>> list, ExpressionScope scope)
+        {
+            list.append(new Tuple<Message,DynamicTape>(message, self.compile(scope)));
+        }
+
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {    
+            body.saveTo(list, scope, index);
+        }
+        
+        int prepare(ExpressionScope scope)
+        {
+            auto methodScope := new ExpressionScope
+            {
+                int ScopeLevel = parameters.Length;
+                
 //                ExpressionScope Previous = scope;
 //                
 //                TapeFunction resolveExtension(Message message)
 //                    => scope;
-//                
-//                TapeFunction resolve(ScopeVariable variable, int mode)
-//                {
-//                    int mode_mask := mode && mode_lcl;
-//                    
-//                    if (mode == 0 || mode_mask == mode_lcl)
-//                    {
-//                        int len := parameters.Length;
-//                        for(int i := 0, i < len, i+=1) {
-//                            if (parameters[i] == variable)
-//                            {
-//                                int index := i + 1;
+
+                bool reserve(int index)
+                    = scope.reserve(index);
+                
+                int allocTempVariable()
+                    = scope.allocTempVariable();
+                
+                int Reserved 
+                    = scope.Reserved;
+
+                TapeFunction resolve(ScopeIdentifier variable)
+                {
+                    int len := parameters.Length;
+                    for(int i := 0, i < len, i+=1) {
+                        if (variable == parameters[i])
+                        {
+                            int index := i + 1;
 //                                
 //                                if (mode == mode_asn) 
 //                                {
@@ -1811,29 +1860,27 @@ namespace expressions
 //                                }
 //                                else 
 //                                {
-//                                    ^ new LocalFunction(index)
+                                    ^ new LocalFunction(index)
 //                                };                                
-//                            }
-//                        }
-//                    };
-//                    
-//                    ^ scope.resolve(variable, mode)
-//                }
-//        
+                        }
+                    };
+                    
+                    ^ scope.resolve(variable)
+                }
+        
 //                declare(ScopeVariable variable)
 //                {
 //                }            
-//            };
-//    
-//            body.prepare(methodScope);        
-//        }
-//
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {
-//            body.saveTo(list, scope);        
-//        }    
-//    }
-//
+            };
+    
+            ^ body.prepare(methodScope);        
+        }
+
+        DynamicTape compile(ExpressionScope scope)
+            = super.compile(new RootExpressionScope(scope));
+
+    }
+
 //    public class GetMethodExpression : MethodExpression
 //    {
 //        constructor(string name, Expression body)
@@ -2041,12 +2088,12 @@ namespace expressions
 //            list.append(ConstantFunction.load(tape));
 //        }      
 //    }
-//
-//    public abstract DynamicSymbol
-//    {
-//        abstract compile(module, ExpressionScope scope);
-//    }
-// 
+
+    public abstract DynamicSymbol
+    {
+        abstract compile(module, ExpressionScope scope);
+    }
+ 
 //    public class DynamicImport : DynamicSymbol
 //    {
 //        ScopeVariable  import;
@@ -2081,11 +2128,11 @@ namespace expressions
 //            ^ expr.compile(scope)
 //        }        
 //    }
-//          
-//    public sealed class DynamicSingleton : DynamicSymbol
-//    {
-//        Expression[] methods;
-//    
+          
+    public sealed class DynamicSingleton : DynamicSymbol
+    {
+        Expression[] methods;
+    
 //        constructor()
 //        {
 //            this methods := new Expression[](0);
@@ -2136,24 +2183,24 @@ namespace expressions
 //        {
 //            this methods := methods;                
 //        }
-//        
-//        constructor new(params Expression[] methods)
-//        {
-//            this methods := methods;                
-//        }
-//                    
-//        compile()
-//            <= compile(nil, IdleExpressionScope);
-//
-//        compile(module, ExpressionScope scope)
-//        {
-//            auto list := new List<Tuple<Message,DynamicTape>>();
-//            methods.forEach:(m){m.saveTo(list, scope)};
-//            
-//            ^ DynamicClass.create(list);
-//        }
-//    }
-//    
+        
+        constructor new(params Expression[] methods)
+        {
+            this methods := methods;                
+        }
+                    
+        compile()
+            <= compile(nil, IdleExpressionScope);
+
+        compile(module, ExpressionScope scope)
+        {
+            auto list := new List<Tuple<Message,DynamicTape>>();
+            methods.forEach:(m){m.saveTo(list, scope)};
+            
+            ^ DynamicClass.create(list);
+        }
+    }
+    
 //    public class SymbolInfo
 //    {
 //        prop string Name;

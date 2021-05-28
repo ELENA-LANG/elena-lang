@@ -152,15 +152,15 @@ public mixin DynamicTape
     dispatch() => intern system'core_routines'__closuretape;
 }
 
-//// --- Class ---
-//
-//public mixin DynamicClass
-//{
-//    __string object[] items;
-//    
-//    internal constructor allocate(int n)
-//        = new object[](n);
-//    
+// --- Class ---
+
+public mixin DynamicClass
+{
+    __string object[] items;
+    
+    internal constructor allocate(int n)
+        = new object[](n);
+    
 //    constructor new(params object[] args)
 //        <= allocate(args.Length)
 //    {
@@ -181,31 +181,31 @@ public mixin DynamicTape
 //            items[i]:= list.at(n)
 //        }
 //    }
-//    
-//    constructor create(List<Tuple<Message,DynamicTape>> methods)
-//        <= allocate(methods.Length * 2)
-//    {
-//        int length := methods.Length;
-//        for (int i := 0, i < length, i += 1)
-//        {
-//            var t := methods[i];
-//            
-//            var o1 := t.Item1;
-//            var o2 := t.Item2;
-//
-//            items[i*2]:= o1;
-//            
-//            int k := i*2 + 1;
-//            items[k]:= o2;
-//                        
-////            items[i*2]:= methods[i].Item1;
-////            items[i*2 + 1]:= methods[i].Item2;
-//        }
-//    }
-//    
-//    dispatch() => intern system'core_routines'__closureclass;
-//}
-//
+    
+    constructor create(List<Tuple<Message,DynamicTape>> methods)
+        <= allocate(methods.Length * 2)
+    {
+        int length := methods.Length;
+        for (int i := 0, i < length, i += 1)
+        {
+            var t := methods[i];
+            
+            var o1 := t.Item1;
+            var o2 := t.Item2;
+
+            items[i*2]:= o1;
+            
+            int k := i*2 + 1;
+            items[k]:= o2;
+                        
+//            items[i*2]:= methods[i].Item1;
+//            items[i*2 + 1]:= methods[i].Item2;
+        }
+    }
+    
+    dispatch() => intern system'core_routines'__closureclass;
+}
+
 //// --- StreamTapeInterpreter ---
 //
 //singleton invoke0 { dispatch() => intern system'core_routines'__invoke0; }
