@@ -206,8 +206,8 @@ public mixin DynamicClass
     dispatch() => intern system'core_routines'__closureclass;
 }
 
-//// --- StreamTapeInterpreter ---
-//
+// --- StreamTapeInterpreter ---
+
 //singleton invoke0 { dispatch() => intern system'core_routines'__invoke0; }
 //singleton invoke1 { dispatch() => intern system'core_routines'__invoke1; }
 //singleton invoke2 { dispatch() => intern system'core_routines'__invoke2; }
@@ -250,9 +250,9 @@ public mixin DynamicClass
 //    invoke10,invoke11,invoke12,invoke13,invoke14,invoke15,invoke16,invoke17,invoke18,invoke19,
 //    invoke20,invoke21,invoke22,invoke23,invoke24,invoke25,invoke26,invoke27,invoke28,invoke29,
 //    invoke30,invoke31,invokeV1,loadString,freeVArg,loadTerminator};
-//
-//public singleton StreamTapeInterpreter
-//{
+
+public singleton StreamTapeInterpreter
+{
 //    build(byte[] buffer, int len)
 //        => intern system'core_routines'__tape;
-//}
+}

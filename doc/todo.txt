@@ -3,7 +3,8 @@ In development:
 ------         
 
   [development]
-    * Building code at run-time in ELENA, Part 2
+    * Building code at run-time in ELENA, Part 1 and 2 (both x86 and x86-64)
+
     - support if(a>b) c := a;
 
     + linux : 64 bit mode

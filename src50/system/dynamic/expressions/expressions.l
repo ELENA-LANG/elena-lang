@@ -1765,11 +1765,11 @@ namespace expressions
             // revese the order
             this parameters := new ScopeIdentifier[](len + 1);
             
-            parameters[0] := ScopeIdentifier.Variable("self");
             for (int i := 0, int j := len - 1, i < len, i += 1, j -= 1)
             {
-                parameters[i + 1] := params[j]
+                parameters[i] := params[j]
             };
+            parameters[len] := ScopeIdentifier.Variable("self");
             
             this body := body;
         }         
