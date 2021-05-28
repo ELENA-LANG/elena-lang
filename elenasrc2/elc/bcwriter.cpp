@@ -588,6 +588,7 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape, int fixedLen/*, bool arra
       
       // inc fixedLen
       // allocd
+      // dec fixedLen
 
       // pusha
       // movsip  fixedLen + 1
@@ -607,10 +608,13 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape, int fixedLen/*, bool arra
       tape.releaseLabel();
       tape.write(bcPopA);
 
-      if (fixedLen > 0)
+      if (fixedLen > 0) {
          tape.write(bcInc, fixedLen);
-
-      tape.write(bcAllocD);
+         tape.write(bcAllocD);
+         tape.write(bcDec, fixedLen);
+      }
+      else tape.write(bcAllocD);
+      
       tape.write(bcPushA);
       tape.write(bcMovSIP, fixedLen + 1);
 

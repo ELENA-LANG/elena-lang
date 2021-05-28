@@ -58,7 +58,7 @@ namespace expressions
 //        abstract declare(ScopeVariable variable);
     }
 
-    public singleton IdleExpressionScope
+    public singleton IdleExpressionScope : ExpressionScope
     {
         bool reserve(int level)
             = false;
