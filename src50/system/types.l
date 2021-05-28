@@ -17,7 +17,7 @@
 /// property:
 #define sealed      80003001h
 #define abstract    80003002h
-//#define closed      80003003h
+#define closed      80003003h
 #define predefined  80003005h
 //#define yieldable   80003006h
 

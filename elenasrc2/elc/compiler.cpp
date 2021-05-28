@@ -3644,7 +3644,7 @@ void Compiler :: unboxArgument(SyntaxWriter& writer, ObjectInfo& target, ExprSco
       }
    }
 
-   bool condBoxing = source.kind == okParam || source.kind == okSelfParam;
+   bool condBoxing = source.kind == okParam || source.kind == okSelfParam || source.kind == okSuper;
    if (condBoxing)
       writer.newNode(lxCondUnboxing);
 
@@ -4107,6 +4107,7 @@ bool Compiler :: boxingRequired(ObjectInfo& info)
          return true;
       case okParam:
       case okSelfParam:
+      case okSuper:
          return info.extraparam == -1;
       case okParams:
          return info.reference != V_UNBOXEDARGS;
@@ -4120,6 +4121,7 @@ inline bool Compiler :: condBoxingRequired(ObjectInfo& info)
    switch (info.kind) {
       case okParam:
       case okSelfParam:
+      case okSuper:
          return info.extraparam == -1;
       default:
          return false;
@@ -6184,6 +6186,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
          writer.appendNode(lxField, 0);
          break;
       case okSelfParam:
+         writer.newNode(lxSelfLocal, object.param);
+         break;
+      case okSuper:
          writer.newNode(lxSelfLocal, object.param);
          break;
       case okLocalAddress:
