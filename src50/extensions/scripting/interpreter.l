@@ -41,18 +41,21 @@ public class ScriptEngine
         byte temp[1024];        
         int len := tape;
         dirty_ptr current := tape + 4;
+        int allocated := current;
+        
+        current := current + 4;
                        
         if (len <= 1024) {
             current.copyTo(temp, len);
             
-            retVal := StreamTapeInterpreter.build(temp, len)
+            retVal := StreamTapeInterpreter.build(temp, len, allocated)
         }
         else {
             auto dump := new byte[](len);
             
             current.copyTo(dump, len);
             
-            retVal := StreamTapeInterpreter.build(dump, len);
+            retVal := StreamTapeInterpreter.build(dump, len, allocated);
         };
                                                                                                             
         extern elenasm.Release(tape);

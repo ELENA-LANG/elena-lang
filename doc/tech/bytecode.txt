@@ -111,6 +111,8 @@ ELENA byte codes (or ecodes)
  
  shr n                      - index >> n  => index
                        
+ store                      - [sp][index] <= acc
+
  storefi i                  - [fp+i] <= acc 
  
  storer r                   - [r] <= acc

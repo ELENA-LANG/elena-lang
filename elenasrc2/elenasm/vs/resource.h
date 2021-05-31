@@ -15,7 +15,7 @@
 #endif
 #endif
 
-#define ELENASM_REVISION_NUMBER        21
+#define ELENASM_REVISION_NUMBER        22
 
 #define STRINGIZE2(s) #s
 #define STRINGIZE(s) STRINGIZE2(s)

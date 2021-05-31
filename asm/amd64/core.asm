@@ -684,6 +684,14 @@ inline % 2Ah
 
 end
 
+// ; store
+inline % 2Bh
+
+  mov  rax, [rsp]
+  mov  [rax+rdx*8], rbx 
+
+end
+
 // ; rln
 inline % 2Ch
 

@@ -60,7 +60,7 @@ enum ByteCode
    bcFreeLock        = 0x28,
    bcFreeD           = 0x29,
    bcLoadEnv         = 0x2A,
-//   bcSelect          = 0x2B,
+   bcStore           = 0x2B,
    bcRLn             = 0x2C,
    bcRead            = 0x2D,
    bcClone           = 0x2E,           

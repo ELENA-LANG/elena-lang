@@ -44,7 +44,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 165;
+const int gcCommandNumber = 166;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -80,7 +80,7 @@ const int gcCommands[gcCommandNumber] =
    bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF, bcXRSaveF,
    bcXRedirect, bcXVRedirect, bcVJumpRM, bcAllocN, bcXNew,
    bcXSaveSI, bcAllocD, bcXSetR, bcXTrans, bcLLoad,
-   bcFreeD
+   bcFreeD, bcStore,
 };
 
 const int gcCommandExNumber = 55;
@@ -114,7 +114,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &loadOneByteOp, &loadOneByteOp, &compilePushD, &compilePopD, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
-   &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
+   &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileNop,

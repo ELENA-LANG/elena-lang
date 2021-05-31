@@ -94,7 +94,7 @@ void Transformer :: writeToken(ident_t token, Scope* scope, ScriptLog& log)
    }
    else {
       log.write(token);
-      if (!scope->appendMode)
+      if (!(scope->appendMode))
          log.write(" ");
    }
 }
@@ -181,8 +181,7 @@ void Transformer :: parse(_ScriptReader& reader, MemoryDump* output)
 
 constexpr auto invokeV1 = 32;
 constexpr auto loadStringCommand = 33;
-constexpr auto freeVArg = 34; 
-constexpr auto loadTerminator = 35;
+constexpr auto loadTerminator = 34;
 
 Builder :: Builder()
 {

@@ -267,12 +267,40 @@ procedure __dptr."readVal$system@UnsafePointer$@system@ref#1&system@IntNumber[2]
 
 end
 
+procedure __dptr."read$system@UnsafePointer$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quit
+
+end
+
 procedure __dptr."copyTo$system@UnsafePointer$system@Symbol[2]"
 
   peeksi 1
   load
   peeksi 2
   save
+  quit
+
+end
+
+procedure __dptr."copyTo$system@UnsafePointer$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
+
+  pushn  0
+  peeksi 2
+  pushai 0
+  pushsi 5
+  movsip 2
+  pusha
+  pushsi 6
+  // subcopy(target,index,size,arr)
+  callextr api : subcopy, 4
+  
+  peeksi 0
+  freei  5
   quit
 
 end
@@ -2976,6 +3004,723 @@ procedure __exit_closure."params##invoke$system@Object[0]"
   count
   savef   -4
   peeksi  1
+  quit
+
+end
+
+procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber$system@IntNumber[4]"
+
+  // ; i       : -04
+  // ; command : -08
+  // ; size    : -12
+  // ; ptr     : -16
+
+  open
+  reserve  16
+
+  alloci   1
+  storesi  0    
+
+  // ; alloc stack
+  peekfi   -4
+  load
+  allocd
+
+  // int i := 0;
+  xsavef   -4, 0
+  // byte command := 0;
+  xsavef   -8, 0
+  // int size := 0;
+  xsavef   -12, 0
+  // int ptr := 0;
+  xsavef   -16, 0
+  // while (i < len) {
+  Lab00:   nop
+  snop  
+  
+  peekfi   -3 // len
+  pusha      
+  movf     -4  // i
+  nless      
+  select   const : false, const : true
+  pop
+  ifr      Lab01, const : false 
+
+  //command := buffer[i];
+  peekfi   -2 // buffer
+  loadf    -4
+  read
+  and      0FFh
+  savef    -8
+
+  // i += 1;
+  xaddf    -4, 1
+
+  // size := buffer[i];
+  peekfi   -2
+  loadf    -4
+  read
+  savef    -12
+
+  // i += 4;
+  xaddf    -4, 4
+
+  // commands[command](size,buffer,i);
+  loadf    -8
+  movr     constarray : "system'dynamic'$private'commands#$inline0"
+  get
+  callvi   0
+
+  // ; store the result
+  storesi  0
+  loadf    -16
+  movfip   1
+  xset
+  xaddf    -16, 1
+
+  // i += size
+  movf     -12
+  naddf    -4
+
+  jump     Lab00
+  Lab01:   nop
+  popa
+  restore  16
+  close    
+  quit
+
+end
+
+procedure invokerError
+
+  setframe 4
+
+  // ; remove a return point
+  pop
+
+  // UTF8Encoding.toString(i,size,buffer)
+  pushfi   -12
+  pushf    -16
+  pushf    -8    
+  movr     const : system'text'UTF8Encoding
+  pusha  
+  movm     mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  callrm   system'text'UTF8Encoding, mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  freei    4
+
+  open
+  alloci  2
+  storesi 1
+  movr    class : system'TypeLoaderException
+  storesi 0
+  pushr   mssgconst : "new[2]"
+
+  throw  
+
+end
+
+procedure loadClass
+
+  setframe 4
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  loadf    -16
+  pushd
+  loadf    -8
+  pushd
+  pushfi   -2
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer, 0204h
+  ifn      labNotFound, 0
+  freei    4
+  
+  quit
+
+labNotFound:
+
+  callr intern : system'core_routines'invokerError
+
+end
+
+procedure __invoke0."#dispatch[1]"
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[1]"
+  jumpvi   0
+
+end
+
+procedure __invoke1."#dispatch[1]"
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  2
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[2]"
+  jumpvi   0
+
+end
+
+procedure __invoke2."#dispatch[1]"
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  3
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  2
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[3]"
+  jumpvi   0
+
+end
+
+procedure __invoke3."#dispatch[1]"
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  4
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  3
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  2
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[4]"
+  jumpvi   0
+
+end
+
+procedure __invoke4."#dispatch[1]"
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  5
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  4
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  3
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  2
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[5]"
+  jumpvi   0
+
+end
+
+procedure __invoke5."#dispatch[1]"
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  6
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  5
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  4
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  3
+
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+  storesi  2
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[6]"
+  jumpvi   0
+
+end
+
+procedure copyStack
+
+  savesi   2
+
+lab1:
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+
+  loadsi   2
+  dec      1
+  savesi   2
+  inc      3
+  store
+  dec      3
+  elsen    lab1, 0
+
+  quit
+
+end
+
+procedure copyVStack
+
+  loadf    -16
+
+lab2:
+  movfip   1
+  get
+  dec      1
+  elser    lab2, terminal
+
+  savesi   2
+
+lab1:
+  loadf    -16
+  movfip   1
+  get
+  xaddf    -16, -1
+
+  loadsi   2
+  dec      1
+  savesi   2
+  inc      3
+  store
+  dec      3
+  elsen    lab1, 0
+
+  quit
+
+end
+
+procedure __invoke6."#dispatch[1]"
+
+  movn 6
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[7]"
+  jumpvi   0
+
+end
+
+procedure __invoke7."#dispatch[1]"
+
+  movn 7
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[8]"
+  jumpvi   0
+
+end
+
+procedure __invoke8."#dispatch[1]"
+
+  movn 8
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[9]"
+  jumpvi   0
+
+end
+
+procedure __invoke9."#dispatch[1]"
+
+  movn 9
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[10]"
+  jumpvi   0
+
+end
+
+procedure __invoke10."#dispatch[1]"
+
+  movn     10
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[11]"
+  jumpvi   0
+
+end
+
+procedure __invoke11."#dispatch[1]"
+
+  movn     11
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[12]"
+  jumpvi   0
+
+end
+
+procedure __invoke12."#dispatch[1]"
+
+  movn     12
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[13]"
+  jumpvi   0
+
+end
+
+procedure __invoke13."#dispatch[1]"
+
+  movn     13
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[14]"
+  jumpvi   0
+
+end
+
+procedure __invoke14."#dispatch[1]"
+
+  movn     14
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[15]"
+  jumpvi   0
+
+end
+
+procedure __invoke15."#dispatch[1]"
+
+  movn     15
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[16]"
+  jumpvi   0
+
+end
+
+procedure __invoke16."#dispatch[1]"
+
+  movn     16
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[17]"
+  jumpvi   0
+
+end
+
+procedure __invoke17."#dispatch[1]"
+
+  movn     17
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[18]"
+  jumpvi   0
+
+end
+
+procedure __invoke18."#dispatch[1]"
+
+  movn     18
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[19]"
+  jumpvi   0
+
+end
+
+procedure __invoke19."#dispatch[1]"
+
+  movn     19
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[20]"
+  jumpvi   0
+
+end
+
+procedure __invoke20."#dispatch[1]"
+
+  movn     20
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[21]"
+  jumpvi   0
+
+end
+
+procedure __invoke21."#dispatch[1]"
+
+  movn     21
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[22]"
+  jumpvi   0
+
+end
+
+procedure __invoke22."#dispatch[1]"
+
+  movn     22
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[23]"
+  jumpvi   0
+
+end
+
+procedure __invoke23."#dispatch[1]"
+
+  movn     23
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[24]"
+  jumpvi   0
+
+end
+
+procedure __invoke24."#dispatch[1]"
+
+  movn     24
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[25]"
+  jumpvi   0
+
+end
+
+procedure __invoke25."#dispatch[1]"
+
+  movn     15
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[26]"
+  jumpvi   0
+
+end
+
+procedure __invoke26."#dispatch[1]"
+
+  movn     26
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[27]"
+  jumpvi   0
+
+end
+
+procedure __invoke27."#dispatch[1]"
+
+  movn     27
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[28]"
+  jumpvi   0
+
+end
+
+procedure __invoke28."#dispatch[1]"
+
+  movn     28
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[29]"
+  jumpvi   0
+
+end
+
+procedure __invoke29."#dispatch[1]"
+
+  movn     29
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[30]"
+  jumpvi   0
+
+end
+
+procedure __invoke30."#dispatch[1]"
+
+  movn     30
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "#constructor[31]"
+  jumpvi   0
+
+end
+
+procedure __invoke31."#dispatch[1]"
+
+  movn     32
+  movr  terminal
+  store
+
+  movn     31
+  callr    intern : system'core_routines'copyStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "params##constructor[2]"
+  jumpvi   0
+
+end
+
+procedure __invokeV1."#dispatch[1]"
+
+  callr    intern : system'core_routines'copyVStack
+
+  callr    intern : system'core_routines'loadClass
+  storesi  1
+
+  movm     mssgconst : "params##constructor[2]"
+  jumpvi   0
+
+end
+
+procedure __loadString."#dispatch[1]" // -4 - size, -2 - index, -12 - buffer
+
+  setframe 4
+
+  // UTF8Encoding.toString(i,size,buffer)
+  pushfi   -2
+  pushf    -16
+  pushf    -8    
+  movr     const : system'text'UTF8Encoding
+  pusha  
+  movm     mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  callrm   system'text'UTF8Encoding, mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  freei    4
+
+  quit
+
+end
+
+
+procedure __loadTerminator."#dispatch[1]"
+
+  movr  terminal
   quit
 
 end

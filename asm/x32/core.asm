@@ -696,6 +696,14 @@ inline % 2Ah
 
 end
 
+// ; store
+inline % 2Bh
+
+  mov  eax, [esp]
+  mov  dword ptr [eax+edx*4], ebx
+
+end
+
 // ; rln
 inline % 2Ch
 

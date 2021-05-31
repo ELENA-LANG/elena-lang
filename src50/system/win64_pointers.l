@@ -51,9 +51,6 @@ public sealed const struct Handle
 {
     embeddable __raw theHandle[4];
 
-//    static Handle MinValue
-//        = 0;
-
     constructor(int n)
     {
         theHandle := n
@@ -117,27 +114,27 @@ public sealed const struct UnsafePointer
     private setReference(o)
         => intern system'core_routines'__dptr;
 
-//    dirty_ptr add(int offs)
-//    {
-//        intern system'core_routines'__dptr.readVal(self, ref int val);
-//        
-//        val += offs;
-//        
-//        dirty_ptr ptr := UnsafePointer.load(val);
-//        
-//        ^ ptr
-//    }
-//
-//    get int Value()
-//        = cast int(self);
-//
-//    // unsafe code
-//    int cast()
-//    {
-//        intern system'core_routines'__dptr.readVal(self, ref int val);
-//        
-//        ^ val
-//    }
+    dirty_ptr add(int offs)
+    {
+        intern system'core_routines'__dptr.readVal(self, ref int val);
+        
+        val += offs;
+        
+        dirty_ptr ptr := UnsafePointer.load(val);
+        
+        ^ ptr
+    }
+
+    get int Value()
+        = cast int(self);
+
+    // unsafe code
+    int cast()
+    {
+        intern system'core_routines'__dptr.readVal(self, ref int val);
+        
+        ^ val
+    }
 
     // unsafe code
     string cast()
@@ -159,27 +156,27 @@ public sealed const struct UnsafePointer
         ^ s
     }
     
-//    saveTo(byte[] target, int offs)
-//    {
-//        intern system'core_routines'__dptr.readVal(self, ref int val);
-//        
-//        target.write(offs, val)
-//    }
-//    
-//    savePtrTo(byte[] target, int offs)
-//    {
-//        intern system'core_routines'__dptr.read(self, ref int val);
-//        
-//        target.write(offs, val)
-//    }
-//
-//    copyTo(byte[] target, int len)
-//    {
-//        intern system'core_routines'__dptr.copyTo(self, target, len);
-//    }
-//            
-//    bool isEmpty()
-//        = thePointer == 0;
+    saveTo(byte[] target, int offs)
+    {
+        intern system'core_routines'__dptr.readVal(self, ref int val);
+        
+        target.write(offs, val)
+    }
+    
+    savePtrTo(byte[] target, int offs)
+    {
+        intern system'core_routines'__dptr.read(self, ref int val);
+        
+        target.write(offs, val)
+    }
+
+    copyTo(byte[] target, int len)
+    {
+        intern system'core_routines'__dptr.copyTo(self, target, len);
+    }
+            
+    bool isEmpty()
+        = thePointer == 0;
 }
 
 //// --- COORD ---
