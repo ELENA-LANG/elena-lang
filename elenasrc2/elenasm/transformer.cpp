@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2020, by Alexei Rakov
+//                                              (C)2011-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -195,15 +195,18 @@ void Builder :: saveToken(MemoryWriter& writer, _ScriptReader& reader, ScriptBoo
    writer.writeLiteral(token, len);
 }
 
-void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack)
+void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack, int allocated,
+   int& maxAllocated, int& maxStackSize)
 {
    pos_t start = writer.Position();
    int counter = 0;
 
+   allocated++;
+
    ScriptBookmark bm = stack.pop();
    while (true) {
       if (bm.state == 0 || bm.state == -1) {
-         saveClass(writer, reader, stack);
+         saveClass(writer, reader, stack, allocated, maxAllocated, maxStackSize);
       }
       else if (bm.state == -1) {
          if (counter > ARG_COUNT) {
@@ -213,19 +216,23 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
             writer.writeByte(invokeV1);
             saveToken(writer, reader, bm);
 
-            writer.writeByte(freeVArg);
-            writer.writeDWord(0);
+            counter++;
          }
          else {
             writer.writeByte(counter);
             saveToken(writer, reader, bm);
          }
 
+         if (counter > maxStackSize)
+            maxStackSize = counter;
+
          counter = 1;
       }
       else if (bm.state == _ELENA_TOOL_::dfaQuote) {
          writer.writeByte(loadStringCommand);
          saveToken(writer, reader, bm);
+
+         allocated++;
       }
       else break;
 
@@ -233,36 +240,45 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
       bm = stack.pop();
    }
 
+   if (counter > maxStackSize)
+      maxStackSize = counter;
+
    if (counter > ARG_COUNT) {
       writer.insertDWord(start, 0);
       writer.insertByte(start, (char)loadTerminator);
 
       writer.writeByte(invokeV1);
       saveToken(writer, reader, bm);
-
-      writer.writeByte(freeVArg);
-      writer.writeDWord(0);
    }
    else {
       writer.writeByte(counter);
       saveToken(writer, reader, bm);
    }
+
+   if (allocated > maxAllocated)
+      maxAllocated = allocated;
 }
 
 void Builder :: flush(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack)
 {
    int sizePos = writer.Position();
    writer.writeDWord(0);
+   int allocPos = writer.Position();
+   writer.writeDWord(0);
 
    ScriptBookmark bm = stack.pop();
+   int allocated = 0;
+   int stackSize = 0;
    if (bm.state == 0) {
-      saveClass(writer, reader, stack);
+      saveClass(writer, reader, stack, 0, allocated, stackSize);
    }
 
    size_t len = writer.Position() - sizePos - 4;
 
    writer.seek(sizePos);
    writer.writeDWord(len);
+   writer.seek(allocPos);
+   writer.writeDWord(allocated + stackSize);
    writer.seekEOF();
 }
 

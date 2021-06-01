@@ -3074,7 +3074,7 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber$syste
   // ; store the result
   storesi  0
   loadf    -16
-  movfip   1
+  movfip   2
   xset
   xaddf    -16, 1
 
@@ -3099,9 +3099,9 @@ procedure invokerError
   pop
 
   // UTF8Encoding.toString(i,size,buffer)
-  pushfi   -12
-  pushf    -16
-  pushf    -8    
+  pushfi   -2
+  pushf    -12
+  pushf    -4
   movr     const : system'text'UTF8Encoding
   pusha  
   movm     mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
@@ -3124,9 +3124,9 @@ procedure loadClass
   setframe 4
 
   // extern elenart.LoadClassByBuffer(buffer, i, size)
-  loadf    -16
+  loadf    -12
   pushd
-  loadf    -8
+  loadf    -4
   pushd
   pushfi   -2
   loadenv
@@ -3155,8 +3155,10 @@ end
 
 procedure __invoke1."#dispatch[1]"
 
+  setframe 4
+
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  2
@@ -3171,14 +3173,16 @@ end
 
 procedure __invoke2."#dispatch[1]"
 
+  setframe 4
+
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  3
 
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  2
@@ -3193,20 +3197,22 @@ end
 
 procedure __invoke3."#dispatch[1]"
 
+  setframe 4
+
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  4
 
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  3
 
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  2
@@ -3221,26 +3227,28 @@ end
 
 procedure __invoke4."#dispatch[1]"
 
+  setframe 4
+
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  5
 
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  4
 
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  3
 
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  2
@@ -3255,32 +3263,34 @@ end
 
 procedure __invoke5."#dispatch[1]"
 
+  setframe 4
+
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  6
 
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  5
 
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  4
 
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  3
 
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
   storesi  2
@@ -3295,11 +3305,13 @@ end
 
 procedure copyStack
 
+  setframe 4
+
   savesi   2
 
 lab1:
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
 
@@ -3317,10 +3329,12 @@ end
 
 procedure copyVStack
 
+  setframe 4
+
   loadf    -16
 
 lab2:
-  movfip   1
+  movfip   2
   get
   dec      1
   elser    lab2, terminal
@@ -3329,7 +3343,7 @@ lab2:
 
 lab1:
   loadf    -16
-  movfip   1
+  movfip   2
   get
   xaddf    -16, -1
 
@@ -3347,6 +3361,8 @@ end
 
 procedure __invoke6."#dispatch[1]"
 
+  setframe 4
+
   movn 6
   callr    intern : system'core_routines'copyStack
 
@@ -3359,6 +3375,8 @@ procedure __invoke6."#dispatch[1]"
 end
 
 procedure __invoke7."#dispatch[1]"
+
+  setframe 4
 
   movn 7
   callr    intern : system'core_routines'copyStack
@@ -3373,6 +3391,8 @@ end
 
 procedure __invoke8."#dispatch[1]"
 
+  setframe 4
+
   movn 8
   callr    intern : system'core_routines'copyStack
 
@@ -3385,6 +3405,8 @@ procedure __invoke8."#dispatch[1]"
 end
 
 procedure __invoke9."#dispatch[1]"
+
+  setframe 4
 
   movn 9
   callr    intern : system'core_routines'copyStack
@@ -3705,8 +3727,8 @@ procedure __loadString."#dispatch[1]" // -4 - size, -2 - index, -12 - buffer
 
   // UTF8Encoding.toString(i,size,buffer)
   pushfi   -2
-  pushf    -16
-  pushf    -8    
+  pushf    -12
+  pushf    -4
   movr     const : system'text'UTF8Encoding
   pusha  
   movm     mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
@@ -3716,7 +3738,6 @@ procedure __loadString."#dispatch[1]" // -4 - size, -2 - index, -12 - buffer
   quit
 
 end
-
 
 procedure __loadTerminator."#dispatch[1]"
 

@@ -8,9 +8,9 @@ namespace expressions
     const int mode_lcl   = 1;
 //    const int mode_asn   = 3;
 //    const int mode_class = 4;
-//
-//    preloaded used = new object[]{Expression,DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,DynamicImport};
-//    
+
+    preloaded used = new object[]{Expression/*,DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,DynamicImport*/};
+
     public class ScopeIdentifier
     {
         prop string Name;
@@ -38,7 +38,31 @@ namespace expressions
             Mode := mode
         }
     }
-    
+
+    public class MethodParameterList
+    {
+        ScopeIdentifier[] parameters;
+        
+        constructor(params string[] variables) 
+        {
+            int len := variables.Length;
+            
+            this parameters := new ScopeIdentifier[](len + 1);
+            
+            for (int i := 0, int j := len - 1, i < len, i += 1, j -= 1)
+            {
+                parameters[i] := ScopeIdentifier.Variable(variables[j])
+            };
+            parameters[len] := ScopeIdentifier.Variable("self");
+        }
+         
+        get int Length()
+            => parameters;
+            
+        ScopeIdentifier[] Value
+            = parameters;
+    }
+            
     public interface ExpressionScope
     {
         abstract bool reserve(int level);
@@ -217,7 +241,7 @@ namespace expressions
 //            = new IdentifierExpression(variable);
               
         static Expression Variable(string variable)
-            = new IdentifierExpression(ScopeIdentifier.Variable(variable));
+            = new VariableExpression(variable);
 
 //        static Expression PreviousVariable(ScopeVariable variable)
 //            = new PreviousVariableExpression(variable);
@@ -1490,6 +1514,14 @@ namespace expressions
         }
     }
 
+    public class VariableExpression : IdentifierExpression
+    {
+        constructor(string name)
+        {
+            this ident := ScopeIdentifier.Variable(name)
+        }
+    }
+
 //    public class PreviousVariableExpression : VariableExpression
 //    {
 //        constructor(ScopeVariable variable)
@@ -1774,45 +1806,30 @@ namespace expressions
             this body := body;
         }         
                         
-//        constructor(Message message, Expression body)
-//        {
-//            this parameters := new ScopeVariable[]{ new ScopeVariable("self") };
-//            this message := message;
-//            
-//            this body := body;
-//        }
-//         
-//        constructor(string name, Expression body)
-//        {
-//            this parameters := new ScopeVariable[]{ new ScopeVariable("self") };
-//            this message := new Message(name + "[1]");
-//            
-//            this body := body;
-//        } 
-//        
-//        constructor(string name, ScopeVariable param1, Expression body)
-//        {
-//            this parameters := new ScopeVariable[]{ param1, new ScopeVariable("self") };
-//            this message := new Message(name + "[2]");
-//            
-//            this body := body;
-//        } 
-//        
-//        constructor(string name, ScopeVariable param1, ScopeVariable param2, Expression body)
-//        {
-//            this parameters := new ScopeVariable[]{ param2, param1, new ScopeVariable("self") };
-//            this message := new Message(name + "[3]");
-//            
-//            this body := body;
-//        }
-//        
-//        constructor(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
-//        {
-//            this parameters := new ScopeVariable[]{ param3, param2, param1, new ScopeVariable("self") };
-//            this message := new Message(name + "[4]");
-//            
-//            this body := body;
-//        }        
+        constructor(string name, MethodParameterList parameters, Expression body)
+        {
+            int len := parameters.Length;
+            
+            auto text := TextBuilder.load(name);
+            text.append("[");
+            text.append(len);
+            text.append("]");
+            
+            this body := body;
+            this message := new Message(*text);
+            this parameters := *parameters;
+        }
+                        
+        constructor(string name, Expression body)
+        {
+            this parameters := new ScopeIdentifier[]{ ScopeIdentifier.Variable("self") };
+            
+            auto text := TextBuilder.load(name);
+            text.append("[1]");
+            
+            this body := body;
+            this message := new Message(*text);
+        }
      
         bool IsOperation = true;
 

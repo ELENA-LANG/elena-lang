@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2011-2020, by Alexei Rakov
+//                                             (C)2011-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef transformerH
@@ -125,7 +125,8 @@ class Builder : public _Parser
 protected:
    void saveToken(MemoryWriter& writer, _ScriptReader& reader, ScriptBookmark bm);
 
-   void saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack);
+   void saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack, int allocated, 
+      int& maxAllocated, int& maxStackSize);
    void flush(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack);
 
 public:
