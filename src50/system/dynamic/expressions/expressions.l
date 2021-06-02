@@ -507,10 +507,10 @@ namespace expressions
         
 //        constructor(Expression p1)
 //            <= new(p1);
-//        
-//        constructor(params Expression[] statements)
-//            <= new(params statements);
-//        
+        
+        constructor(params Expression[] statements)
+            <= new(params statements);
+        
 //        constructor(Expression p1, Expression p2)
 //            <= new(p1, p2);
 //        

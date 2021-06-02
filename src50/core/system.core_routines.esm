@@ -3076,7 +3076,7 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber$syste
   loadf    -16
   movfip   2
   xset
-  xaddf    -16, 1
+  xaddf    -16, -1
 
   // i += size
   movf     -12
@@ -3133,6 +3133,8 @@ procedure loadClass
   pushd
   callextr extern : LoadClassByBuffer, 0204h
   ifn      labNotFound, 0
+  savesi   0
+  peeksi   0
   freei    4
   
   quit
@@ -3157,10 +3159,10 @@ procedure __invoke1."#dispatch[1]"
 
   setframe 4
 
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
+  loadf    -16
   get
-  xaddf    -16, -1
   storesi  2
 
   callr    intern : system'core_routines'loadClass
@@ -3175,17 +3177,17 @@ procedure __invoke2."#dispatch[1]"
 
   setframe 4
 
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
-  get
-  xaddf    -16, -1
-  storesi  3
-
   loadf    -16
-  movfip   2
   get
-  xaddf    -16, -1
   storesi  2
+
+  xaddf    -16, 1
+  movfip   2
+  loadf    -16
+  get
+  storesi  3
 
   callr    intern : system'core_routines'loadClass
   storesi  1
@@ -3199,23 +3201,23 @@ procedure __invoke3."#dispatch[1]"
 
   setframe 4
 
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
+  loadf    -16
   get
-  xaddf    -16, -1
-  storesi  4
+  storesi  2
 
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
+  loadf    -16
   get
-  xaddf    -16, -1
   storesi  3
 
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
+  loadf    -16
   get
-  xaddf    -16, -1
-  storesi  2
+  storesi  4
 
   callr    intern : system'core_routines'loadClass
   storesi  1
@@ -3229,29 +3231,29 @@ procedure __invoke4."#dispatch[1]"
 
   setframe 4
 
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
+  loadf    -16
   get
-  xaddf    -16, -1
-  storesi  5
+  storesi  2
 
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
-  get
-  xaddf    -16, -1
-  storesi  4
-
   loadf    -16
-  movfip   2
   get
-  xaddf    -16, -1
   storesi  3
 
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
+  loadf    -16
   get
-  xaddf    -16, -1
-  storesi  2
+  storesi  4
+
+  xaddf    -16, 1
+  movfip   2
+  loadf    -16
+  get
+  storesi  5
 
   callr    intern : system'core_routines'loadClass
   storesi  1
@@ -3265,35 +3267,35 @@ procedure __invoke5."#dispatch[1]"
 
   setframe 4
 
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
+  loadf    -16
   get
-  xaddf    -16, -1
-  storesi  6
+  storesi  2
 
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
-  get
-  xaddf    -16, -1
-  storesi  5
-
   loadf    -16
-  movfip   2
   get
-  xaddf    -16, -1
-  storesi  4
-
-  loadf    -16
-  movfip   2
-  get
-  xaddf    -16, -1
   storesi  3
 
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
+  loadf    -16
   get
-  xaddf    -16, -1
-  storesi  2
+  storesi  4
+
+  xaddf    -16, 1
+  movfip   2
+  loadf    -16
+  get
+  storesi  5
+
+  xaddf    -16, 1
+  movfip   2
+  loadf    -16
+  get
+  storesi  6
 
   callr    intern : system'core_routines'loadClass
   storesi  1
@@ -3308,20 +3310,21 @@ procedure copyStack
   setframe 4
 
   savesi   2
+  pushn    0
 
 lab1:
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
+  loadf    -16
   get
-  xaddf    -16, -1
 
-  loadsi   2
+  loadsi   0
   dec      1
-  savesi   2
-  inc      3
+  savesi   0
+  inc      2
   store
-  dec      3
-  elsen    lab1, 0
+  movsip   3
+  else     lab1
 
   quit
 
@@ -3336,24 +3339,25 @@ procedure copyVStack
 lab2:
   movfip   2
   get
-  dec      1
+  inc      1
   elser    lab2, terminal
 
   savesi   2
+  pushn    0
 
 lab1:
-  loadf    -16
+  xaddf    -16, 1
   movfip   2
+  loadf    -16
   get
-  xaddf    -16, -1
 
-  loadsi   2
+  loadsi   0
   dec      1
-  savesi   2
-  inc      3
+  savesi   0
+  inc      2
   store
-  dec      3
-  elsen    lab1, 0
+  movsip   3
+  else     lab1
 
   quit
 
