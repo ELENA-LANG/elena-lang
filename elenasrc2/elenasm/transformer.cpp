@@ -273,7 +273,7 @@ void Builder :: flush(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptB
       saveClass(writer, reader, stack, 0, allocated, stackSize);
    }
 
-   size_t len = writer.Position() - sizePos - 4;
+   size_t len = writer.Position() - sizePos - 8;
 
    writer.seek(sizePos);
    writer.writeDWord(len);

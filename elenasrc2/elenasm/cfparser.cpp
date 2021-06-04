@@ -1115,7 +1115,8 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
             // HOTFIX: to prevent too long line
             if (lineLen > 0) {
                log.write('\n');
-            }            
+            }
+            else log.write(' ');
 
             log.write(getBodyText(rule.postfix1Ptr));
          }

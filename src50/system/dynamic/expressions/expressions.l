@@ -9,7 +9,7 @@ namespace expressions
 //    const int mode_asn   = 3;
 //    const int mode_class = 4;
 
-    preloaded used = new object[]{Expression/*,DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,DynamicImport*/};
+    preloaded used = new object[]{Expression,DynamicSingleton/*,DynamicExpressionSymbol,SymbolCollection,DynamicImport*/};
 
     public class ScopeIdentifier
     {
@@ -2150,57 +2150,16 @@ namespace expressions
     {
         Expression[] methods;
     
-//        constructor()
-//        {
-//            this methods := new Expression[](0);
-//        }
-//            
-//        constructor(Expression method)
-//        {
-//            this methods := new Expression[]{method};
-//        }
-//        
-//        constructor(Expression method1, Expression method2)
-//        {
-//            this methods := new Expression[]{method1, method2};                
-//        }
-//        
-//        constructor(Expression method1, Expression method2, Expression method3)
-//        {
-//            this methods := new Expression[]{method1, method2, method3};                
-//        }
-//        
-//        constructor(Expression method1, Expression method2, Expression method3, Expression method4)
-//            <= new(method1, method2, method3, method4);
-//        
-//        constructor(Expression method1, Expression method2, Expression method3, Expression method4, Expression method5)
-//            <= new(method1, method2, method3, method4, method5);
-//        
-//        constructor(Expression method1, Expression method2, Expression method3, Expression method4, Expression method5,
-//                    Expression method6)
-//            <= new(method1, method2, method3, method4, method5, method6);
-//        
-//        constructor(Expression method1, Expression method2, Expression method3, Expression method4, Expression method5,
-//                    Expression method6, Expression method7)
-//            <= new(method1, method2, method3, method4, method5, method6, method7);
-//        
-//        constructor(Expression method1, Expression method2, Expression method3, Expression method4, Expression method5,
-//                    Expression method6, Expression method7, Expression method8)
-//            <= new(method1, method2, method3, method4, method5, method6, method7, method8);
-//        
-//        constructor(Expression method1, Expression method2, Expression method3, Expression method4, Expression method5,
-//                    Expression method6, Expression method7, Expression method8, Expression method9)
-//            <= new(method1, method2, method3, method4, method5, method6, method7, method8, method9);
-//        
-//        constructor(Expression method1, Expression method2, Expression method3, Expression method4, Expression method5,
-//                    Expression method6, Expression method7, Expression method8, Expression method9, Expression method10)
-//            <= new(method1, method2, method3, method4, method5, method6, method7, method8, method9, method10);
-//        
-//        constructor(params Expression[] methods)
-//        {
-//            this methods := methods;                
-//        }
-        
+        constructor()
+        {
+            this methods := new Expression[](0);
+        }
+            
+        constructor(params Expression[] methods)
+        {
+            this methods := methods;
+        }
+                
         constructor new(params Expression[] methods)
         {
             this methods := methods;                
