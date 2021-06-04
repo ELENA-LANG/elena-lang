@@ -289,7 +289,7 @@ end
 
 procedure __dptr."copyTo$system@UnsafePointer$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
 
-  pushn  0
+  pushn  0  // !! temporal
   peeksi 2
   pushai 0
   pushsi 5
@@ -300,7 +300,7 @@ procedure __dptr."copyTo$system@UnsafePointer$@system@Array#1&system@ByteNumber$
   callextr api : subcopy, 4
   
   peeksi 0
-  freei  5
+  freei  6
   quit
 
 end
@@ -2827,6 +2827,47 @@ labErr:
   
 end
 
+procedure __utf8encoder."charCount$system@String$@system@ref#1&system@IntNumber[3]"
+
+  peeksi   2
+  len
+  dec      1
+  pushd
+  pusha
+  callextr api : strcharlen, 2
+  freei    2
+  peeksi   3
+  save
+  quit
+
+end
+
+procedure __utf8encoder."convert$system@IntNumber$@system@ref#1&system@IntNumber$system@String$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[6]"
+
+  pushn  0 // ; temporally
+  pushsi 6
+  pushsi 6
+  pushsi 6  
+  pushsi 6  
+  pushsi 6  
+  
+  callextr api : s_encode, 5
+  freei 6
+  ifr labErr, 0
+  
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+  
+end
+
 procedure __utf16encoder."convertFrom$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@ByteNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[6]"
 
   pushn  0 // ; temporally
@@ -2903,6 +2944,47 @@ labErr:
 
   throw    
 
+end
+
+procedure __utf16encoder."charCount$system@WideString$@system@ref#1&system@IntNumber[3]"
+
+  peeksi   2
+  len
+  dec      1
+  pushd
+  pusha
+  callextr api : wstrcharlen, 2
+  freei    2
+  peeksi   3
+  save
+  quit
+
+end
+
+procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[6]"
+
+  pushn  0 // ; temporally
+  pushsi 6
+  pushsi 6
+  pushsi 6  
+  pushsi 6  
+  pushsi 6  
+  
+  callextr api : ws_decodew, 5
+  freei 6
+  ifr labErr, 0
+  
+  quit
+
+labErr:
+  open
+  alloci  1
+  movr    class : system'OutOfRangeException
+  storesi 0
+  pushr mssgconst : "new[1]"
+
+  throw    
+  
 end
 
 procedure __alloc_closure."params##invoke$system@Object[0]"
