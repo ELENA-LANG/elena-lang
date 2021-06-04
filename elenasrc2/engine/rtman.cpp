@@ -118,7 +118,7 @@ lvaddr_t RTManager :: loadMetaAttribute(StreamReader& reader, ident_t name, int 
    len += pos;
    while (pos < len) {
       int current = reader.getDWord();
-      int offset = 4 + reader.getDWord();
+      int offset = sizeof(lvaddr_t) + reader.getDWord();
       if (current == category) {
          ident_t currentName = reader.getLiteral(DEFAULT_STR);
          lvaddr_t ptr = 0;

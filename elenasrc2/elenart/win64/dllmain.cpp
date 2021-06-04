@@ -139,47 +139,50 @@ EXTERN_DLL_EXPORT int LoadMessage(void* messageName)
    return _Instance->loadMessage((const char*)messageName);
 }
 
-//EXTERN_DLL_EXPORT void* LoadClassByString(void* systemEnv, void* referenceName)
-//{
-//   throw InternalError("Not yet implemented"); // !! temporal 
-//
-//   //return _Instance->loadMetaAttribute((const char*)referenceName, caSerializable);
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
-//{
-//   if (length < 0x100) {
-//      IdentifierString str((const char*)referenceName, index, length);
-//
-//      return LoadClassByString(systemEnv, (void*)str.c_str());
-//   }
-//   else {
-//      DynamicString<char> str((const char*)referenceName, index, length);
-//
-//      return LoadClassByString(systemEnv, (void*)str.str());
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadSymbolByString(void* systemEnv, void* referenceName)
-//{
-//   throw InternalError("Not yet implemented"); // !! temporal 
-//
-//   //return _Instance->loadMetaAttribute((const char*)referenceName, caSymbolSerializable);
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
-//{
-//   if (length < 0x100) {
-//      IdentifierString str((const char*)referenceName, index, length);
-//
-//      return LoadSymbolByString(systemEnv, (void*)str.c_str());
-//   }
-//   else {
-//      DynamicString<char> str((const char*)referenceName, index, length);
-//
-//      return LoadSymbolByString(systemEnv, (void*)str.str());
-//   }
-//}
+EXTERN_DLL_EXPORT void* LoadClassByString(void* systemEnv, void* referenceName)
+{
+   return (void*)_Instance->loadMetaAttribute((const char*)referenceName, caSerializable);
+}
+
+EXTERN_DLL_EXPORT void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
+{
+   if (length < 0x100) {
+      IdentifierString str((const char*)referenceName, index, length);
+
+      return LoadClassByString(systemEnv, (void*)str.c_str());
+   }
+   else {
+      DynamicString<char> str((const char*)referenceName, index, length);
+
+      return LoadClassByString(systemEnv, (void*)str.str());
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadSymbolByString(void* systemEnv, void* referenceName)
+{
+   return (void*)_Instance->loadMetaAttribute((const char*)referenceName, caSymbolSerializable);
+}
+
+EXTERN_DLL_EXPORT void* LoadSymbolByString2(void* systemEnv, void* ns, void* referenceName)
+{
+   ReferenceNs str((const char*)ns, (const char*)referenceName);
+
+   return LoadSymbolByString(systemEnv, (void*)str.c_str());
+}
+
+EXTERN_DLL_EXPORT void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
+{
+   if (length < 0x100) {
+      IdentifierString str((const char*)referenceName, index, length);
+
+      return LoadSymbolByString(systemEnv, (void*)str.c_str());
+   }
+   else {
+      DynamicString<char> str((const char*)referenceName, index, length);
+
+      return LoadSymbolByString(systemEnv, (void*)str.str());
+   }
+}
 
 EXTERN_DLL_EXPORT void* GCCollect(void* roots, size_t size)
 {

@@ -1739,7 +1739,7 @@ inline % 0AFh
   mov  ecx, struct_mask_inv
   mov  eax, dword ptr [rbx-elSizeOffset]
   and  rax, rcx
-  shr  rax, 2
+  shr  rax, 3
   cmp  rax, rdx
 
 end

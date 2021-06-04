@@ -184,9 +184,9 @@ end
 
 procedure __symbol."load$system@Symbol$system@String[2]"
 
+  peeksi   2
   alloci   2
-
-  storesi  2
+  storesi  1
   loadenv
   savesi   0
   callextr extern : LoadSymbolByString, 0202h
@@ -685,7 +685,7 @@ procedure __message."load$system@Message$system@String[2]"
   open
   alloci   1
   storesi  0
-  callextr extern : LoadMessage, 0101h
+  callextr extern : LoadMessage, 0201h
   freei    1
 
   ifn      labErr, 0
@@ -869,7 +869,7 @@ procedure __closuretape."#dispatch[1]"
   open 
   reserve 8
   alloci  1
-  storesi 0 
+  storefi 1 
           
   savef   -8
   movn    0  

@@ -115,7 +115,7 @@ void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*&
          current.size = currentPage->size;
          if (!(current.size & gcCollectedMask)) {
             // ; copy object size
-            shadowHeap->size = current.size;
+            shadowHeap->size = (int)current.size;
 
             // ; copy object vmt
             shadowHeap->vmtPtr = currentPage->vmtPtr;
@@ -165,7 +165,7 @@ void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*&
    }
 }
 
-void __vectorcall MGCollect(GCRoot* root, size_t start, size_t end, int b)
+void __vectorcall MGCollect(GCRoot* root, size_t start, size_t end)
 {
    size_t* ptr = (size_t*)root->stackPtr;
    size_t  size = root->size;
@@ -186,7 +186,7 @@ void __vectorcall MGCollect(GCRoot* root, size_t start, size_t end, int b)
 
             // ; check if the object has fields
             if (current.size < struct_mask) {
-               MGCollect(&current, start, end, b);
+               MGCollect(&current, start, end);
             }
          }
       }
@@ -241,7 +241,7 @@ inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
    GCRoot* current = roots;
    while (current->stackPtr) {
       //   ; mark both yg and mg objects
-      MGCollect(current, yg_start, mg_end, table->gc_start);
+      MGCollect(current, yg_start, mg_end);
 
       current++;
    }
@@ -312,7 +312,7 @@ inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
    }
 
    // ; clear WBar
-   int size = (table->gc_end - table->gc_mg_start) >> page_size_order;
+   size_t size = (table->gc_end - table->gc_mg_start) >> page_size_order;
    memset((void*)table->gc_mg_wbar, 0, size);
 }
 

@@ -134,7 +134,7 @@ public:
 
    static uintptr_t NewHeap(int totalSize, int committedSize);
    static uintptr_t ExpandHeap(void* allocPtr, int newSize);
-   static uintptr_t ExpandPerm(void* allocPtr, int newSize);
+   static uintptr_t ExpandPerm(void* allocPtr, size_t newSize);
    static void CloseThreadHandle(TLSEntry* entry, bool withExit, pos_t exitCode);
    static TLSEntry* GetTLSEntry(pos_t tlsIndex);
 
