@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Parser table class implementation.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -16,21 +16,21 @@ typedef HashTable<int, int, simpleRule, cnHashSize> SymbolHash;
 
 // --- ParserTable's hash table auxiliary routines ---
 
-inline size_t tableKey(int nonterminal, int terminal)
+inline pos_t tableKey(int nonterminal, int terminal)
 {
    return (nonterminal << cnTablePower) + terminal;
 }
 
 inline void nextKey(SyntaxHash::Iterator& it)
 {
-   size_t key = it.key();
+   pos_t key = it.key();
    while (!it.Eof() && key == it.key())
       it++;
 }
 
 inline void add2stack(size_t key, TableHash::Iterator& it, Stack<int>& stack)
 {
-   size_t symbol = *it;
+   pos_t symbol = *it;
 
    it++;
    if (!it.Eof() && it.key()==key)
@@ -49,7 +49,7 @@ inline void copySubSet(SymbolHash& sour, SymbolHash& dest, int sourKey, int dest
    }
 }
 
-inline bool copySubSet(SyntaxHash& sour, TableHash& dest, size_t sourKey, size_t destKey)
+inline bool copySubSet(SyntaxHash& sour, TableHash& dest, pos_t sourKey, pos_t destKey)
 {
    // check if the rule is ambigous
    if (dest.exist(destKey))
@@ -138,8 +138,8 @@ int ParserTable :: generate()
       added = false;
 
       SyntaxHash::Iterator rule = _syntax.start();
-      size_t prevKey = 0;
-      size_t prev = 0;
+      pos_t prevKey = 0;
+      pos_t prev = 0;
       while (!rule.Eof()) {
          if ((prevKey == rule.key()) && !test(prev, mskTerminal)) {
             if (test(*rule, mskTerminal)) {

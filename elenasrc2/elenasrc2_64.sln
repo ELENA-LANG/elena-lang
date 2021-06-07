@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elide64", "ide\vs\elide_64.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenavm15_64", "elenavm\vs\elenavm15_64.vcxproj", "{7D64C701-DDAA-467C-96BA-513438A1DE42}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenasm15_64", "elenasm\vs\elenasm15_64.vcxproj", "{895D3762-6397-468A-8984-779C1A9E5C0D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -39,6 +41,12 @@ Global
 		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Release|x64.ActiveCfg = Release|x64
 		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Release|x64.Build.0 = Release|x64
 		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Release|x86.ActiveCfg = Release|x64
+		{895D3762-6397-468A-8984-779C1A9E5C0D}.Debug|x64.ActiveCfg = Debug|x64
+		{895D3762-6397-468A-8984-779C1A9E5C0D}.Debug|x64.Build.0 = Debug|x64
+		{895D3762-6397-468A-8984-779C1A9E5C0D}.Debug|x86.ActiveCfg = Debug|x64
+		{895D3762-6397-468A-8984-779C1A9E5C0D}.Release|x64.ActiveCfg = Release|x64
+		{895D3762-6397-468A-8984-779C1A9E5C0D}.Release|x64.Build.0 = Release|x64
+		{895D3762-6397-468A-8984-779C1A9E5C0D}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

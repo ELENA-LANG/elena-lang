@@ -190,7 +190,7 @@ Builder :: Builder()
 void Builder :: saveToken(MemoryWriter& writer, _ScriptReader& reader, ScriptBookmark bm)
 {
    ident_t token = reader.lookup(bm);
-   size_t len = getlength(token);
+   pos_t len = getlength(token);
    writer.writeDWord(len);
    writer.writeLiteral(token, len);
 }
@@ -261,9 +261,9 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
 
 void Builder :: flush(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack)
 {
-   int sizePos = writer.Position();
+   pos_t sizePos = writer.Position();
    writer.writeDWord(0);
-   int allocPos = writer.Position();
+   pos_t allocPos = writer.Position();
    writer.writeDWord(0);
 
    ScriptBookmark bm = stack.pop();
@@ -273,7 +273,7 @@ void Builder :: flush(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptB
       saveClass(writer, reader, stack, 0, allocated, stackSize);
    }
 
-   size_t len = writer.Position() - sizePos - 8;
+   pos_t len = writer.Position() - sizePos - 8;
 
    writer.seek(sizePos);
    writer.writeDWord(len);

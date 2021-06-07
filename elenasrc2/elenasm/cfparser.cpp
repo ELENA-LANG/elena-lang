@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  :  ELENA VM Script Engine
 //
-//                                              (C)2011-2020, by Alexei Rakov
+//                                              (C)2011-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -46,7 +46,7 @@ constexpr auto WITHFORWARD_MASK = 0x80000000;
 
 // --- CFParser ---
 
-inline size_t createKey(size_t id, int index)
+inline pos_t createKey(pos_t id, int index)
 {
    return (id << cnSyntaxPower) + index;
 }
@@ -97,7 +97,7 @@ bool normalCharacterApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader
 {
    if (bm.state == dfaPrivate) {
       ident_t value = reader.lookup(bm);
-      for (int i = 0; i < getlength(value); i++) {
+      for (pos_t i = 0; i < getlength(value); i++) {
          if (value[i] < '0' && value[i] > '9')
             return false;
       }
@@ -149,27 +149,27 @@ void saveLiteralContent(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr
    log.write(scriptReader.lookup(bm));
 }
 
-void CFParser :: readScriptBookmark(size_t ptr, ScriptBookmark& bm)
+void CFParser :: readScriptBookmark(pos_t ptr, ScriptBookmark& bm)
 {
    MemoryReader reader(&_body, ptr);
    reader.read(&bm, sizeof(ScriptBookmark));
 }
 
-size_t CFParser :: writeBodyText(ident_t text)
+pos_t CFParser :: writeBodyText(ident_t text)
 {
    MemoryWriter writer(&_body);
 
-   size_t position = writer.Position();
+   pos_t position = writer.Position();
    writer.writeLiteral(text);
 
    return position;
 }
 
-size_t CFParser :: writeRegExprBodyText(_ScriptReader& reader, int& mode)
+pos_t CFParser :: writeRegExprBodyText(_ScriptReader& reader, int& mode)
 {
    MemoryWriter writer(&_body);
 
-   size_t position = writer.Position();
+   pos_t position = writer.Position();
    bool inversionMode = false;
 
    ScriptBookmark bm = reader.read();
@@ -199,7 +199,7 @@ size_t CFParser :: writeRegExprBodyText(_ScriptReader& reader, int& mode)
    return position;
 }
 
-const char* CFParser :: getBodyText(size_t ptr)
+const char* CFParser :: getBodyText(pos_t ptr)
 {
    return (const char*)_body.get(ptr);
 }
@@ -293,7 +293,7 @@ void CFParser :: defineApplyRule(Rule& rule, int mode, bool forwardMode, bool bo
 
 void CFParser :: addRule(int ruleId, Rule& rule)
 {
-   size_t key = createKey(ruleId, 1);
+   pos_t key = createKey(ruleId, 1);
    while (_table.exist(key))
       key++;
 
@@ -303,16 +303,16 @@ void CFParser :: addRule(int ruleId, Rule& rule)
 void CFParser :: defineIdleGrammarRule(ref_t ruleId)
 {
    Rule rule;
-   rule.nonterminal = (size_t)-1;
-   rule.terminal = (size_t)-1;
+   rule.nonterminal = INVALID_REF;
+   rule.terminal = INVALID_REF;
    rule.type = rtNormal;
    defineApplyRule(rule, IDLE_MODE, false, false);
    addRule(ruleId, rule);
 }
 
-size_t CFParser :: defineChomskiGrammarRule(ref_t parentRuleId, size_t nonterminal, size_t terminal)
+pos_t CFParser :: defineChomskiGrammarRule(ref_t parentRuleId, pos_t nonterminal, pos_t terminal)
 {
-   size_t ruleId = autonameRule(parentRuleId);
+   pos_t ruleId = autonameRule(parentRuleId);
 
    // define C -> AB
    Rule recRule;
@@ -325,9 +325,9 @@ size_t CFParser :: defineChomskiGrammarRule(ref_t parentRuleId, size_t nontermin
    return ruleId;
 }
 
-size_t CFParser :: defineStarGrammarRule(ref_t parentRuleId, size_t nonterminal)
+pos_t CFParser :: defineStarGrammarRule(ref_t parentRuleId, pos_t nonterminal)
 {
-   size_t ruleId = autonameRule(parentRuleId);
+   pos_t ruleId = autonameRule(parentRuleId);
 
    // define B -> AB
    Rule recRule;
@@ -343,9 +343,9 @@ size_t CFParser :: defineStarGrammarRule(ref_t parentRuleId, size_t nonterminal)
    return ruleId;
 }
 
-size_t CFParser :: defineOptionalGrammarRule(ref_t parentRuleId, size_t nonterminal)
+pos_t CFParser :: defineOptionalGrammarRule(ref_t parentRuleId, pos_t nonterminal)
 {
-   size_t ruleId = autonameRule(parentRuleId);
+   pos_t ruleId = autonameRule(parentRuleId);
 
    // define B -> A
    Rule recRule;
@@ -361,9 +361,9 @@ size_t CFParser :: defineOptionalGrammarRule(ref_t parentRuleId, size_t nontermi
    return ruleId;
 }
 
-size_t CFParser :: definePlusGrammarRule(ref_t parentRuleId, size_t nonterminal)
+pos_t CFParser :: definePlusGrammarRule(ref_t parentRuleId, pos_t nonterminal)
 {
-   size_t ruleId = autonameRule(parentRuleId);
+   pos_t ruleId = autonameRule(parentRuleId);
 
    // define B -> AB
    Rule rule;
@@ -376,7 +376,7 @@ size_t CFParser :: definePlusGrammarRule(ref_t parentRuleId, size_t nonterminal)
    return ruleId;
 }
 
-size_t CFParser :: autonameRule(size_t parentRuleId)
+ref_t CFParser :: autonameRule(ref_t parentRuleId)
 {
    ReferenceNs ns;
    int   index = 0;
@@ -409,9 +409,9 @@ void CFParser :: setScriptPtr(ScriptBookmark& bm, Rule& rule, bool prefixMode)
    }
 }
 
-size_t CFParser :: defineGrammarBrackets(_ScriptReader& reader, ScriptBookmark& bm, size_t parentRuleId)
+pos_t CFParser :: defineGrammarBrackets(_ScriptReader& reader, ScriptBookmark& bm, pos_t parentRuleId)
 {
-   size_t ruleId = autonameRule(parentRuleId);
+   pos_t ruleId = autonameRule(parentRuleId);
 
    Rule rule;
    rule.type = rtNormal;
@@ -488,10 +488,10 @@ void CFParser :: defineGrammarRuleMemberPostfix(_ScriptReader& reader, ScriptBoo
    }
 }
 
-size_t CFParser :: defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& bm, size_t parentRuleId, 
-   size_t nonterminal, size_t terminal)
+pos_t CFParser :: defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& bm, pos_t parentRuleId,
+   pos_t nonterminal, pos_t terminal)
 {
-   size_t ruleId = autonameRule(parentRuleId);
+   ref_t ruleId = autonameRule(parentRuleId);
 
    Rule rule;
    rule.type = rtNormal;
@@ -527,31 +527,31 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode, bool f
             throw EParseError(bm.column, bm.row);
 
          if (reader.compare(REFERENCE_KEYWORD)) {
-            rule.terminal = (size_t)-1;
+            rule.terminal = INVALID_REF;
             rule.saveTo = saveReference;
 
             mode = REFERENCE_MODE;
          }
          else if (reader.compare(IDENTIFIER_KEYWORD)) {
-            rule.terminal = (size_t)-1;
+            rule.terminal = INVALID_REF;
             rule.saveTo = saveReference;
 
             mode = IDENTIFIER_MODE;
          }
          else if (reader.compare(CHARACTER_KEYWORD)) {
-            rule.terminal = (size_t)-1;
+            rule.terminal = INVALID_REF;
             rule.saveTo = saveLiteralContent;
 
             mode = CHARACTER_MODE;
          }
          else if (reader.compare(LITERAL_KEYWORD)) {
-            rule.terminal = (size_t)-1;
+            rule.terminal = INVALID_REF;
             rule.saveTo = saveLiteralContent;
 
             mode = LITERAL_MODE;
          }
          else if (reader.compare(NUMERIC_KEYWORD)) {
-            rule.terminal = (size_t)-1;
+            rule.terminal = INVALID_REF;
             rule.saveTo = saveReference;
 
             mode = NUMERIC_MODE;
@@ -570,7 +570,7 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode, bool f
          if (forwardMode)
             throw EParseError(bm.column, bm.row);
 
-         rule.terminal = (size_t)-1;
+         rule.terminal = INVALID_REF;
          rule.saveTo = saveLiteral;
 
          mode = REFERENCE_MODE;
@@ -582,7 +582,7 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode, bool f
          if (forwardMode)
             throw EParseError(bm.column, bm.row);
 
-         rule.terminal = (size_t)-1;
+         rule.terminal = INVALID_REF;
          rule.saveTo = saveLiteral;
 
          mode = IDENTIFIER_MODE;
@@ -594,7 +594,7 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode, bool f
          if (forwardMode)
             throw EParseError(bm.column, bm.row);
 
-         rule.terminal = (size_t)-1;
+         rule.terminal = INVALID_REF;
          rule.saveTo = saveLiteral;
 
          mode = LITERAL_MODE;
@@ -606,7 +606,7 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode, bool f
          if (forwardMode)
             throw EParseError(bm.column, bm.row);
 
-         rule.terminal = (size_t)-1;
+         rule.terminal = INVALID_REF;
          rule.saveTo = saveLiteral;
 
          mode = NUMERIC_MODE;
@@ -618,7 +618,7 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode, bool f
          if (forwardMode)
             throw EParseError(bm.column, bm.row);
 
-         rule.terminal = (size_t)-1;
+         rule.terminal = INVALID_REF;
          rule.saveTo = saveLiteral;
 
          mode = CHARACTER_MODE;
@@ -695,7 +695,7 @@ void CFParser :: defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& 
          rule.terminal = defineGrammarRuleMember(reader, bm, ruleId);
       }
       else {
-         rule.terminal = (size_t)-1;
+         rule.terminal = INVALID_REF;
          //            rule.prefixPtr = defineDSARule(token, reader);
 
          if (reader.compare(LITERAL_KEYWORD)) {
@@ -708,8 +708,8 @@ void CFParser :: defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& 
             if (rule.nonterminal)
                throw EParseError(bm.column, bm.row);
 
-            rule.nonterminal = (size_t)-1;
-            rule.terminal = (size_t)-1;
+            rule.nonterminal = INVALID_REF;
+            rule.terminal = INVALID_REF;
             applyMode = IDLE_MODE;
          }
          else if (reader.compare(EOF_KEYWORD)) {
@@ -806,7 +806,7 @@ bool CFParser :: parseGrammarRule(_ScriptReader& reader)
    if (bm.state != dfaIdentifier)
       throw EParseError(bm.column, bm.row);
 
-   size_t ruleId = mapRuleId(reader.lookup(bm));
+   ref_t ruleId = mapRuleId(reader.lookup(bm));
 
    reader.read();
    if (!reader.compare("::="))
@@ -905,7 +905,7 @@ void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptRea
 {
    ident_t keyName = retrieveKey(_names.start(), item.ruleId, DEFAULT_STR);
 
-   size_t key = createKey(item.ruleId, 1);
+   pos_t key = createKey(item.ruleId, 1);
    Rule rule = _table.get(key);
 
    while (rule.type != rtNone) {
@@ -938,7 +938,7 @@ void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptRea
    }
 }
 
-int CFParser :: buildDerivationTree(_ScriptReader& reader, size_t startRuleId, MemoryWriter& writer)
+int CFParser :: buildDerivationTree(_ScriptReader& reader, ref_t startRuleId, MemoryWriter& writer)
 {
    DerivationQueue predictions;
    predictions.push(DerivationItem(startRuleId, 0, -1));
@@ -1040,7 +1040,7 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
 
       // if forward declaration
       if (test(item.ruleKey, WITHFORWARD_MASK)) {
-         int key = (item.ruleKey & ~WITHFORWARD_MASK) >> 8;
+         //int key = (item.ruleKey & ~WITHFORWARD_MASK) >> 8;
          //ident_t keyName = retrieveKey(_names.start(), key, DEFAULT_STR);
 
          Rule rule = _table.get(item.ruleKey & ~WITHFORWARD_MASK);
@@ -1064,20 +1064,21 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
 
    // NOTE: reset level to -1 to match the backward calculated levels 
    level = -1;
-   Stack<size_t> postfixes;
+   Stack<pos_t> postfixes;
+   Stack<SaveToSign> functions;
    while (stack.Count() > 0) {
       item = stack.pop();
       if (item.ruleKey == 0) {
          level--;
 
-         size_t ptr = postfixes.pop();
+         pos_t ptr = postfixes.pop();
          if (ptr) {
             if (test(ptr, POSTFIXSAVE_MODE)) {
                ptr &= ~POSTFIXSAVE_MODE;
 
                log.write(getBodyText(ptr));
 
-               auto saveTo = (SaveToSign)postfixes.pop();
+               auto saveTo = functions.pop();
                int terminal = postfixes.pop();
 
                saveTo(scriptReader, this, terminal, log);
@@ -1105,7 +1106,7 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
          }
 
          if (rule.prefix1Ptr != 0) {
-            size_t lineLen = 0;
+            pos_t lineLen = 0;
             if (!test(rule.type, rtWithForward))
                lineLen += log.write(getBodyText(rule.prefix1Ptr));
 
@@ -1125,7 +1126,7 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
             postfixes.push(rule.postfix2Ptr);
 
             postfixes.push(item.terminal);
-            postfixes.push((int)rule.saveTo);
+            functions.push(rule.saveTo);
             postfixes.push(rule.prefix2Ptr | POSTFIXSAVE_MODE);
          }
          else postfixes.push(rule.prefix2Ptr);
@@ -1142,7 +1143,7 @@ void CFParser :: parse(_ScriptReader& reader, MemoryDump* output)
 
    ScriptLog log;
 
-   size_t startId = mapRuleId("start");
+   ref_t startId = mapRuleId("start");
    MemoryWriter writer(&_body);
 
    int trace = buildDerivationTree(reader, startId, writer);

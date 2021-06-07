@@ -1974,12 +1974,12 @@ template <class Key, class T, bool KeyStored = true> class MemoryMap
 {
    typedef _MemoryMapItem<Key, T, KeyStored> Item;
 
-   MemoryDump _buffer;
+   MemoryDump   _buffer;
 
-   unsigned int _tale;
+   uintptr_t    _tale;
    unsigned int _count;
 
-   T      _defaultItem;
+   T            _defaultItem;
 
 public:
    typedef _MemoryIterator<T, Item, MemoryMap<Key, T, KeyStored>, Key> Iterator;
@@ -2233,7 +2233,7 @@ public:
    {
       writer->writeDWord(_buffer.Length());
       writer->writeDWord(_count);
-      writer->writeDWord(_tale);
+      writer->writeIntPtr(_tale);
 
       MemoryReader reader(&_buffer);
       writer->read(&reader, _buffer.Length());
@@ -2245,7 +2245,7 @@ public:
       _buffer.reserve(length);
 
       _count = reader->getDWord();
-      _tale = reader->getDWord();
+      _tale = reader->getIntPtr();
 
       MemoryWriter writer(&_buffer);
       writer.read(reader, length);
@@ -2757,7 +2757,7 @@ template <class Key, class T, unsigned int(_scaleKey)(Key), unsigned int hashSiz
 
       const MemoryDump* _buffer;
       unsigned int      _position;
-      Item*       _current;
+      Item*             _current;
       unsigned int      _hashIndex;
 
       MemoryHashTableIterator(const MemoryDump* buffer, unsigned int hashIndex, unsigned int position, Item* current)

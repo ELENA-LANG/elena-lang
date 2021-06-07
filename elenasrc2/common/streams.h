@@ -98,6 +98,14 @@ public:
       return value;
    }
 
+   uintptr_t getIntPtr()
+   {
+      uintptr_t value = 0;
+      read(&value, sizeof(uintptr_t));
+
+      return value;
+   }
+
    unsigned long long getQWord()
    {
       unsigned long long value = 0;
@@ -288,6 +296,10 @@ public:
    void writeVAddress(lvaddr_t addr)
    {
       write(&addr, sizeof(lvaddr_t));
+   }
+   void writeIntPtr(uintptr_t addr)
+   {
+      write(&addr, sizeof(uintptr_t));
    }
 
    virtual bool writeBytes(unsigned char ch, pos_t count)
@@ -593,7 +605,7 @@ public:
          length = _length - _offset;
       }
       if (length > 0) {
-         size_t eol = StrHelper::findChar(_text + _offset, '\n', length);
+         pos_t eol = (pos_t)StrHelper::findChar(_text + _offset, '\n', length);
          if (eol == NOTFOUND_POS) {
             if (_length - _offset > length) {
                // if we are not lucky - try to find a whitespace
@@ -607,7 +619,10 @@ public:
          }
          else length = eol + 1;
 
-         Convertor::copy(s, _text + _offset, length, length);
+         size_t tmpLength = length;
+         Convertor::copy(s, _text + _offset, tmpLength, tmpLength);
+         length = (pos_t)tmpLength;
+
          s[length] = 0;
 
          _offset += length;

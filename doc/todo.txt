@@ -3,7 +3,8 @@ In development:
 ------         
 
   [development]
-    * x86 : Building code at run-time in ELENA, Part 2
+    - compile elenasm for 64 bit
+
     * x86-64 : Building code at run-time in ELENA, Part 2
 
     - support if(a>b) c := a;

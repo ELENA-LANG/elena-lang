@@ -440,7 +440,7 @@ public:
    {
       int mode = 0; // 1 - normal, 2 - character code
       int index = 0;
-      for (size_t i = 0 ; i <= getlength(string) ; i++) {
+      for (pos_t i = 0 ; i <= getlength(string) ; i++) {
          switch (mode) {
             case 0:
                if (string[i]=='"') {

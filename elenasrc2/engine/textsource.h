@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Text Reader class declaration.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textsourceH

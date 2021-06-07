@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Source Reader class declaration.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textparserH
@@ -17,9 +17,9 @@ namespace _ELENA_
 class LineTooLong : public _Exception
 {
 public:
-   size_t row;
+   pos_t row;
 
-   LineTooLong(size_t row)
+   LineTooLong(pos_t row)
    {
       this->row = row;
    }
@@ -90,11 +90,11 @@ protected:
    TextReader* _source;
    int         _tabSize;
    char*       _line;
-   size_t      _position;
-   size_t      _sourcePos;
-   size_t      _column, _row;
+   pos_t       _position;
+   pos_t       _sourcePos;
+   pos_t       _column, _row;
 
-   void nextColumn(size_t& position)
+   void nextColumn(pos_t& position)
    {
       if (_line[position]=='\t') {
          _column += calcTabShift(_column - 1, _tabSize);
