@@ -2828,8 +2828,9 @@ labNextBaseClass2:
   mov  r10, __arg1
   mov  rax, [r10 + r9 * 2 + 8]
   mov  rcx, [rbx - elVMTOffset]
+  lea  rax, [rax * 8]
   mov  rdx, [r10 + r9 * 2]
-  jmp  [rcx + rax * 8 + 8]
+  jmp  [rcx + rax * 2 + 8]
 
 labContinue2:
   mov  rdi, [rdi - elPackageOffset]

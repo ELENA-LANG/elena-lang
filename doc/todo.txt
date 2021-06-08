@@ -6,7 +6,6 @@ In development:
     * x86-64 : Building code at run-time in ELENA, Part 2
     * retest x86 / x86-64 : Building code at run-time in ELENA, Part 1 & Part 2
 
-
     - support if(a>b) c := a;
 
     + linux : 64 bit mode

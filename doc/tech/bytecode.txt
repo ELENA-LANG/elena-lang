@@ -7,19 +7,6 @@ ELENA byte codes (or ecodes)
 
  Register operations:
  --------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
    f(p)   - frame pointer     (positive values - pointing to the current frame, 
                                negative - to the previous frame)
    s(p)   - stack pointer     (only positive)
