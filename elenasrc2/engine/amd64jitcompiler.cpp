@@ -52,7 +52,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 166;
+const int gcCommandNumber = 167;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -88,7 +88,7 @@ const int gcCommands[gcCommandNumber] =
    bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF, bcXRSaveF,
    bcXRedirect, bcXVRedirect, bcVJumpRM, bcAllocN, bcXNew,
    bcXSaveSI, bcAllocD, bcXSetR, bcXTrans, bcLLoad,
-   bcFreeD, bcStore
+   bcFreeD, bcStore, bcMovFIPD,
 };
 
 const int gcCommandExNumber = 58;
@@ -131,7 +131,7 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteOp,
 
-   &loadFOp, &loadFOp, &loadFOp, &loadFOp, &loadFOp, &compileNop, &compileNop, &compileNop,
+   &loadFOp, &loadFOp, &loadFOp, &loadFOp, &loadFOp, &loadFPOp, &compileNop, &compileNop,
    &compileNop, &compileNop, &loadNOp, &loadNOp, &loadNOpX, &loadN4OpX, &loadFOp, &loadFOp,
 
    &loadNOp, &loadIndexOp, &compileXRedirect, &compileXRedirect, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -1976,8 +1976,9 @@ void _ELENA_::compileMovV(int, I64JITScope& scope)
 
 void _ELENA_::compileNot(int, I64JITScope& scope)
 {
-   // not rbx
-   scope.code->writeWord(0xD3F7);
+   // not rdx
+   scope.code->writeByte(0x48);
+   scope.code->writeWord(0xD2F7);
 }
 
 void _ELENA_::compileDShiftN(int op, I64JITScope& scope)

@@ -113,11 +113,11 @@ EXTERN_DLL_EXPORT int LoadClassName(void* object, char* buffer, int length)
 //   // !! terminator code
 //   return NULL;
 //}
-//
-//EXTERN_DLL_EXPORT void* GetVMLastError(void* retVal)
-//{
-//   return NULL;
-//}
+
+EXTERN_DLL_EXPORT void* GetVMLastError(void* retVal)
+{
+   return nullptr;
+}
 
 EXTERN_DLL_EXPORT int LoadSubjectName(void* subject, char* lineInfo, int length)
 {

@@ -881,7 +881,7 @@ procedure __closuretape."#dispatch[1]"
   inc     1
   allocd
   
-  movsip  0
+  movfipd  1
   pushfip -1
   dec     1
   xsetr   terminal

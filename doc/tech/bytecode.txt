@@ -3,6 +3,23 @@ ELENA byte codes (or ecodes)
 
  ELENA virtual machine registers:
  --------------------------------
+
+
+ Register operations:
+ --------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
    f(p)   - frame pointer     (positive values - pointing to the current frame, 
                                negative - to the previous frame)
    s(p)   - stack pointer     (only positive)
@@ -53,6 +70,8 @@ ELENA byte codes (or ecodes)
 
  movfip i                   - fp+i => acc
 
+ movfipd i                  - fp+i+index => acc  (if i < 0, index is inverted) , current only negative supported
+ 
  movr r                     - r => acc
            
  movsip i                   - sp+i => acc
@@ -186,6 +205,19 @@ ELENA byte codes (or ecodes)
 
  xnew                       - create the object with length=[esp], acc contains VMT reference, 
                               out : acc, index is affected
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
  Arithmeric operations:

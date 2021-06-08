@@ -615,6 +615,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcPeekFI:
       case bcPushFIP:
       case bcMovFIP:
+      case bcMovFIPD:
          printCommand(command, opcode);
          printFPArgument(command, argument);
          break;

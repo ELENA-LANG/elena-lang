@@ -36,4 +36,7 @@
             <include>scripting\tscript.l</include>
         </module>
     </files>
+  <externals>
+     <dll key="elenasm">elenasm64</dll>
+  </externals>
 </configuration>

@@ -1075,6 +1075,15 @@ inline % 54h
 
 end
 
+// ; movfipd
+inline % 55h
+
+  lea  ecx, [edx*4]
+  lea  ebx, [ebp+__arg1]
+  sub  ebx, ecx 
+
+end
+
 // ; div
 inline %05Bh
 

@@ -103,7 +103,7 @@ enum ByteCode
    bcNXorF           = 0x52,
    bcNOrF            = 0x53,
    bcNAndF           = 0x54,
-//   bcWRead           = 0x59,
+   bcMovFIPD         = 0x55,
    bcXSave           = 0x5A,
    bcDiv             = 0x5B,
    bcXWrite          = 0x5C,

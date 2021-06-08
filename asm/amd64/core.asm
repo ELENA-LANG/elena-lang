@@ -1056,6 +1056,15 @@ inline % 54h
 
 end
 
+// ; movfipd
+inline % 55h
+
+  lea  rcx, [rdx*8]
+  lea  rbx, [rbp+__arg1]
+  sub  rbx, rcx 
+
+end
+
 // ; xsave
 inline % 5Ah
 
