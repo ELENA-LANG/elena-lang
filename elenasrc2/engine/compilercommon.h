@@ -289,7 +289,10 @@ struct _ModuleScope
    // cached requests
    Map<ref_t, Pair<int, bool>> cachedSizes;
 
-   AttributeMap        attributes;
+   // compiler options
+   int               stackAlignment;
+
+   AttributeMap      attributes;
 
    virtual ref_t mapAnonymous(ident_t prefix = nullptr) = 0;
 
@@ -416,6 +419,9 @@ struct _ModuleScope
 
       init_message = dispatch_message = 0;
       protected_constructor_message = constructor_message = 0;
+
+      // default compiler settings
+      stackAlignment = 4;
    }
 };
 

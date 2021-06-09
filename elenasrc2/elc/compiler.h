@@ -1206,8 +1206,8 @@ private:
 
    void importClassMembers(SNode classNode, SNode importNode, NamespaceScope& scope);
 
-   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
-   int allocateStructure(SNode node, int& size);
+   int allocateStructure(bool bytearray, int alignment, int& allocatedSize, int& reserved);
+   int allocateStructure(SNode node, int alignment, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
    bool allocateTempStructure(ExprScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
 
@@ -1398,7 +1398,7 @@ public:
    bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forced, bool& repeatMode, ExtensionMap* outerExtensionList);
    void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting, ExtensionMap* outerExtensionList);
 
-   void initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo);
+   void initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo, int stackAlignment);
 
    // _Compiler interface implementation
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);

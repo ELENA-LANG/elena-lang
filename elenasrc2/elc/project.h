@@ -56,8 +56,7 @@ enum ProjectSetting
    opPlatform              = 0x002A,      // defines the project platform type
    opGCYGSize              = 0x002B,
    opGCPERMSize            = 0x002C,
-   opStackReservAlignment  = 0x002D,
-   opEvenStackMode         = 0x002E,
+   opOpStackAlignment      = 0x002D,
 
    // compiler engine options
    opWarnOnWeakUnresolved  = 0x0042,

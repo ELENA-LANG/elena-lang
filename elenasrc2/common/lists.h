@@ -2924,7 +2924,7 @@ public:
 
          _buffer.writeLiteral(keyPos, key);
 
-         return (const char*)((size_t)keyPos - position);
+         return (const char*)((pos_t)keyPos - position);
       }
       else return key;
    }
@@ -2944,8 +2944,8 @@ public:
       _buffer.write(tale, &item, sizeof(item));
       if (KeyStored) {
          // save stored key
-         size_t storedKey = (size_t)storeKey(tale, key);
-         _buffer.writeSize(tale + 4, storedKey);
+         pos_t storedKey = (pos_t)storeKey(tale, key);
+         _buffer.writeDWord(tale + 4, storedKey);
       }
 
       size_t beginning = (size_t)_buffer.get(0);

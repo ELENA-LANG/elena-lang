@@ -1065,7 +1065,7 @@ void DebugController::readByteArray(_DebuggerWatch* watch, size_t address, ident
    int  length = 0;
 
    // get bytearray size
-   getValue(address - 8, (char*)&length, 4);
+   getValue(address - 4, (char*)&length, 4);
    length &= 0xFFFFF;
 
    if (length > DEBUG_MAX_LIST_LENGTH)
@@ -1332,37 +1332,37 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          }
          else if (lineInfo[index].symbol == dsByteArrayLocal) {
             // write stack allocated local variable
-            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
+            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level - 1));
 
             readByteArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsByteArrayLocalPtr) {
             // write stack allocated local variable
-            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level - 1);
 
             readByteArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsShortArrayLocal) {
             // write stack allocated local variable
-            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
+            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level - 1));
 
             readShortArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsShortArrayLocalPtr) {
             // write stack allocated local variable
-            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level - 1);
 
             readShortArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsIntArrayLocal) {
             // write stack allocated local variable
-            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
+            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level - 1));
 
             readIntArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsIntArrayLocalPtr) {
             // write stack allocated local variable
-            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level - 4);
 
             readIntArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }

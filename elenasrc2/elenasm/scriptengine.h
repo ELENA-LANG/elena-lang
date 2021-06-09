@@ -312,17 +312,17 @@ public:
    static void writeQuote(MemoryWriter& writer, ident_t token)
    {
       writer.writeChar('\"');
-      pos_t start = 0;
+      size_t start = 0;
       while (true) {
-         pos_t quote_index = (pos_t)token.find(start, '"', NOTFOUND_POS);
+         size_t quote_index = token.find(start, '"', NOTFOUND_POS);
          if (quote_index != NOTFOUND_POS) {
-            writer.writeLiteral(token.c_str() + start, quote_index - start);
+            writer.writeLiteral(token.c_str() + start, (pos_t)(quote_index - start));
             writer.writeChar('\"');
             writer.writeChar('\"');
             start = quote_index + 1;
          }
          else {
-            writer.writeLiteral(token.c_str() + start, getlength(token) - start);
+            writer.writeLiteral(token.c_str() + start, getlength(token) - (pos_t)start);
 
             break;
          }

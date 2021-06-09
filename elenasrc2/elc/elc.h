@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x027C
+#define ELC_REVISION_NUMBER         0x027D
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -89,8 +89,7 @@ constexpr auto ELC_EXTDISPATCHER  = "configuration/project/extdispatcher";
 #define ELC_L0                      "configuration/compiler/l0"                // optimization: byte code optimization
 #define ELC_L1                      "configuration/compiler/l1"                // optimization: source code optimization
 #define ELC_PERM_SIZE               "configuration/linker/permsize"
-#define ELC_RESEVALIGN              "configuration/compiler/reservalign"       // reserved stack alignment (4,8)
-#define ELC_EVENSTACKMODE           "configuration/compiler/evenstack"         // even stack alignment mode - used for x86-64 mode
+#define ELC_OPSTACKALIGNMENT        "configuration/compiler/alignment"         // op code stack alignment mode - 4 or 8
 
 #define ELC_TARGET_NAME             "target"
 #define ELC_TYPE_NAME               "type"
@@ -217,10 +216,8 @@ class Project : public _ELENA_::Project
             return config.getSetting(ELC_L1);
             //   //   case _ELENA_::opL2:
             //   //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
-         case _ELENA_::opStackReservAlignment:
-            return config.getSetting(ELC_RESEVALIGN);
-         case _ELENA_::opEvenStackMode:
-            return config.getSetting(ELC_EVENSTACKMODE);
+         case _ELENA_::opOpStackAlignment:
+            return config.getSetting(ELC_OPSTACKALIGNMENT);
          case _ELENA_::opTemplate:
             return config.getSetting(ELC_PROJECT_TEMPLATE);
          case _ELENA_::opManifestName:
@@ -620,7 +617,7 @@ public:
          _ELENA_::ModuleScope scope(this, &compiler);
 
          _ELENA_::ident_t name = source->get(ELC_NAMESPACE_KEY);
-         compiler.initializeScope(name, scope, debugMode);
+         compiler.initializeScope(name, scope, debugMode, IntSetting(_ELENA_::opOpStackAlignment));
 
          printInfo("Parsing %s", name);
 

@@ -766,7 +766,7 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
    bool forwardMode = false;
    bool bookmarkMode = false;
 
-   while (!reader.compare(";") || bm.state == dfaQuote) {
+    while (!reader.compare(";") || bm.state == dfaQuote) {
       if (bm.state != dfaQuote && reader.compare("<=")) {
          saveScript(reader, rule, applyMode, forwardMode);
 

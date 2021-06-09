@@ -6812,22 +6812,28 @@ ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, Exp
    return ObjectInfo(okObject);
 }
 
-int Compiler :: allocateStructure(bool bytearray, int& allocatedSize, int& reserved)
+int Compiler :: allocateStructure(bool bytearray, int alignment, int& allocatedSize, int& reserved)
 {
+   allocatedSize = align(allocatedSize, alignment);
+
+   int sizeOffset = 0;
    if (bytearray) {
-      // plus space for size
-      allocatedSize = ((allocatedSize + 3) >> 2) + 1;
+      // reserve place for byte array header if required
+      sizeOffset = align(4, alignment);
+
+      allocatedSize += sizeOffset;
+
+      sizeOffset >>= 2;
+
+      reserved += sizeOffset;
    }
-   else allocatedSize = (allocatedSize + 3) >> 2;
+
+   allocatedSize = allocatedSize >> 2;
 
    int retVal = reserved;
-   reserved += allocatedSize;
+   reserved += (allocatedSize - sizeOffset);
 
    retVal = newLocalAddr(retVal);
-
-   // reserve place for byte array header if required
-   if (bytearray)
-      retVal -= 1;
 
    return retVal;
 }
@@ -6841,7 +6847,7 @@ bool Compiler :: allocateStructure(CodeScope& scope, int size, bool binaryArray,
    if (methodScope == NULL)
       return false;
 
-   int offset = allocateStructure(binaryArray, size, scope.allocated2);
+   int offset = allocateStructure(binaryArray, scope.moduleScope->stackAlignment, size, scope.allocated2);
 
    exprOperand.kind = okLocalAddress;
    exprOperand.param = offset;
@@ -6856,7 +6862,7 @@ bool Compiler :: allocateTempStructure(ExprScope& scope, int size, bool binaryAr
 
    CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
 
-   int offset = allocateStructure(binaryArray, size, scope.tempAllocated2);
+   int offset = allocateStructure(binaryArray, scope.moduleScope->stackAlignment, size, scope.tempAllocated2);
 
    if (scope.tempAllocated2 > codeScope->reserved2)
       codeScope->reserved2 = scope.tempAllocated2;
@@ -10299,7 +10305,7 @@ ObjectInfo Compiler :: allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t 
    }
 }
 
-int Compiler :: allocateStructure(SNode node, int& size)
+int Compiler :: allocateStructure(SNode node, int alignment, int& size)
 {
    // finding method's reserved attribute
    SNode methodNode = node.parentNode();
@@ -10313,7 +10319,7 @@ int Compiler :: allocateStructure(SNode node, int& size)
    }
 
    // allocating space
-   int offset = allocateStructure(false, size, reserved);
+   int offset = allocateStructure(false, alignment, size, reserved);
 
    // HOT FIX : size should be in bytes
    size *= 4;
@@ -11382,7 +11388,7 @@ bool Compiler :: loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* a
    else return false;
 }
 
-void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo)
+void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo, int stackAlignment)
 {
    scope.module = scope.project->createModule(name);
 
@@ -11427,6 +11433,10 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    }
 
    createPackageInfo(scope.module, *scope.project);
+
+   // compiler options
+   if (stackAlignment)
+      scope.stackAlignment = stackAlignment;
 }
 
 //void Compiler :: injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex)

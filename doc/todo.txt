@@ -6,6 +6,7 @@ In development:
     * x86-64 : Building code at run-time in ELENA, Part 2
     * retest x86 / x86-64 : Building code at run-time in ELENA, Part 1 & Part 2
 
+    - optimize char ch := 65 - no need to create a dynamic object
     - support if(a>b) c := a;
 
     + linux : 64 bit mode
@@ -52,7 +53,6 @@ In development:
     * uncomment fieldinit routines, yield methods
     * uncomment all code
 
-    + alt op - x86-64 check stack alignment
     + optimiation : assinging int constant, 
     + no duplicate variable by boxing
     + optimization - true.Inverted should return constant directly, without calling symbol
@@ -69,7 +69,6 @@ In development:
       e.g: theIndex.append(cast int(theDiff)); - should be written theIndex.append(*theDiff); and the stack-allocated
      object should be passed as is
     + ide 64 : call stack
-    + elc 64 mode : 8 byte alignment for stack-allocated types
     + QuckSorting : optimize the code - built-in branching should be used 
     + extension with primitive arrays - no need to box
     + new attribute - constant operation - do indicate that the class itself is not changed
