@@ -109,7 +109,8 @@ void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticRefere
    tape.write(bcPeekR, staticReference | mskStatSymbolRef);
    tape.write(bcElseR, baCurrentLabel, 0);
    tape.write(bcMovR, staticReference | mskLockVariable);
-   tape.write(bcPushA);
+   tape.write(bcAllocI, 1);
+   tape.write(bcStoreSI, 0);
 
    tryLock(tape);
    declareTry(tape);
@@ -974,7 +975,8 @@ void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
 
    tape.write(bcSwap);
    freeLock(tape);
-   tape.write(bcPopA);
+   tape.write(bcPeekSI, 0);
+   tape.write(bcFreeI, 1);
 
    // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol
    // storer static
