@@ -94,16 +94,16 @@ public sealed const struct Handle
 
 public sealed const struct UnsafePointer
 {
-    embeddable __ptr thePointer[4];
+    embeddable __ptr thePointer[8];
 
-    embeddable constructor load(int ptr)
+    embeddable constructor load(long ptr)
     {
         thePointer := ptr
     }
 
     embeddable constructor()
     {
-        thePointer := 0
+        thePointer := 0l
     }
 
     embeddable constructor(object ref)
@@ -176,7 +176,7 @@ public sealed const struct UnsafePointer
     }
             
     bool isEmpty()
-        = thePointer == 0;
+        = thePointer == 0l;
 }
 
 //// --- COORD ---

@@ -250,8 +250,9 @@ end
 
 procedure __dptr."system$setReference[2]"
 
-  loadsi 2
-  save
+  pushsi 2
+  xseti  0
+  pop
   quit
 
 end
@@ -289,18 +290,17 @@ end
 
 procedure __dptr."copyTo$system@UnsafePointer$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
 
-  pushn  0
-  peeksi 2
+  peeksi 1
   pushai 0
-  pushsi 5
-  movsip 2
+  pushsi 4
+  movsip 1
   pusha
-  pushsi 6
+  pushsi 5
   // subcopy(target,index,size,arr)
   callextr api : subcopy, 4
   
   peeksi 0
-  freei  5
+  freei  4
   quit
   
 end

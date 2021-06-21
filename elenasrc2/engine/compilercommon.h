@@ -119,6 +119,8 @@ constexpr auto V_INT16ARRAY      = 0x8000000Cu;
 constexpr auto V_INT8ARRAY       = 0x8000000Du;
 constexpr auto V_OBJECT          = 0x8000000Eu;
 constexpr auto V_UNBOXEDARGS     = 0x8000000Fu;
+constexpr auto V_PTR64           = 0x80000010u;
+constexpr auto V_QWORD           = 0x80000011u;
 
 enum class Visibility
 {

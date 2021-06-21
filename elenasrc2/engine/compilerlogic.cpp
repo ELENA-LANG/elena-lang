@@ -198,13 +198,21 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(OR_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
    operators.add(OperatorInfo(INVERTED_OPERATOR_ID, V_FLAG, V_OBJECT, 0, lxBoolOp, V_FLAG));
 
-   // pointer primitive operations
+   // 32bit pointer primitive operations
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntBoolOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntBoolOp, V_FLAG));
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_INT32, lxIntBoolOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR32, V_INT32, lxIntBoolOp, V_FLAG));
    operators.add(OperatorInfo(ADD_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_PTR32));
    operators.add(OperatorInfo(SUB_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_PTR32));
+
+   // 64bit pointer primitive operations
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR64, V_PTR64, lxLongBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR64, V_PTR64, lxLongBoolOp, V_FLAG));
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR64, V_INT64, lxLongBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR64, V_INT64, lxLongBoolOp, V_FLAG));
+   operators.add(OperatorInfo(ADD_OPERATOR_ID, V_PTR64, V_INT32, lxLongOp, V_PTR64));
+   operators.add(OperatorInfo(SUB_OPERATOR_ID, V_PTR64, V_INT32, lxLongOp, V_PTR64));
 
    // dword primitive operations
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_DWORD, V_DWORD, lxIntBoolOp, V_FLAG));
@@ -407,8 +415,12 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
    switch (targetRef) {
       case V_PTR32:
          return sourceRef == V_INT32;
+      case V_PTR64:
+         return sourceRef == V_INT64;
       case V_DWORD:
          return sourceRef == V_INT32 || sourceRef == V_PTR32 || sourceRef == V_MESSAGE || sourceRef == V_SUBJECT;
+      case V_QWORD:
+         return sourceRef == V_INT64 || sourceRef == V_PTR64;
       default:
          return false;
    }
@@ -1272,10 +1284,20 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
          info.header.flags = elStructureRole;
          info.size = 4;
          break;
+      case V_PTR64:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elStructureRole;
+         info.size = 8;
+         break;
       case V_DWORD:
          info.header.parentRef = scope.superReference;
          info.header.flags = elStructureRole | elReadOnlyRole;
          info.size = 4;
+         break;
+      case V_QWORD:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elStructureRole | elReadOnlyRole;
+         info.size = 8;
          break;
       case V_SUBJECT:
          info.header.parentRef = scope.superReference;
@@ -1871,6 +1893,7 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
             info.header.flags |= elDebugDWORD;
             break;
          case V_PTR32:
+         case V_PTR64:
             info.header.flags |= elDebugPTR;
             break;
          case V_INT64:

@@ -1955,6 +1955,10 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
             // treat it like dword
             attrs.fieldRef = V_PTR32;
             break;
+         case 8:
+            // treat it like qword
+            attrs.fieldRef = V_PTR64;
+            break;
          default:
             scope.raiseError(errInvalidHint, node);
             break;
@@ -4152,7 +4156,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode current, Exp
          scope.markAsAssigned(target);
       case okFieldAddress:
       {
-         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
+         int size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
          if (size != 0) {
             noBoxing = true;
             operationType = lxCopying;
@@ -4171,7 +4175,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode current, Exp
          if (/*!method->subCodeMode || */!closure->markAsPresaved(target))
             scope.raiseError(errInvalidOperation, current.parentNode());
 
-         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
+         int size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
          if (size != 0 && target.kind == okOuter) {
             operand = size;
             //byRefAssigning = true;
@@ -4187,7 +4191,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode current, Exp
          if (targetRef == V_WRAPPER) {
             //byRefAssigning = true;
             targetRef = target.element;
-            size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
+            int size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
             if (size != 0) {
                operand = size;
                operationType = lxCopying;
@@ -6490,17 +6494,22 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, ExprS
    }
 
    if (retVal.kind == okExternal) {
-      if (targetRef != 0 && _logic->isCompatible(*scope.moduleScope, V_DWORD, targetRef, true)) {
-         retVal.reference = targetRef;
+      retVal.reference = V_DWORD;
+      if (targetRef != 0) {
+         if (_logic->isCompatible(*scope.moduleScope, V_DWORD, targetRef, true)) {
+            retVal.reference = targetRef;
+         }
+         else if (_logic->isCompatible(*scope.moduleScope, V_REAL64, targetRef, true)) {
+            retVal.reference = targetRef;
+            retVal.param = (ref_t)-1;         // to indicate Float mode
+         }
+         else if (_logic->isCompatible(*scope.moduleScope, V_INT64, targetRef, true)) {
+            retVal.reference = targetRef;
+         }
+         else if (_logic->isCompatible(*scope.moduleScope, V_QWORD, targetRef, true)) {
+            retVal.reference = targetRef;
+         }
       }
-      else if (targetRef != 0 && _logic->isCompatible(*scope.moduleScope, V_REAL64, targetRef, true)) {
-         retVal.reference = targetRef;
-         retVal.param = (ref_t)-1;         // to indicate Float mode
-      }
-      else if (targetRef != 0 && _logic->isCompatible(*scope.moduleScope, V_INT64, targetRef, true)) {
-         retVal.reference = targetRef;
-      }
-      else retVal.reference = V_DWORD;
 
       retVal = boxExternal(writer, retVal, scope);
    }
