@@ -1780,21 +1780,21 @@ end
 // ; loadf
 inline % 0B5h
 
-  mov  edx, dword ptr [rbp + __arg1]
+  movsxd rdx, dword ptr [rbp + __arg1]
 
 end
 
 // ; loadfi
 inline % 0B7h
 
-  mov  edx, dword ptr [rbp + __arg1]
+  movsxd rdx, dword ptr [rbp + __arg1]
 
 end
 
 // ; dloadsi
 inline % 0B8h
 
-  mov  edx, dword ptr[rsp + __arg1]
+  movsxd rdx, dword ptr[rsp + __arg1]
 
 end
 

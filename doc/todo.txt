@@ -3,20 +3,15 @@ In development:
 ------         
 
   [development]
-    - x86-64 : int to ptr - should be extended to 8 byte
-    - x86-64 : ptr to int is not allowed
-
-    * x86-64 : Building code at run-time in ELENA, Part 2
     * retest x86 / x86-64 : Building code at run-time in ELENA, Part 1 & Part 2
 
     - optimize char ch := 65 - no need to create a dynamic object
     - support if(a>b) c := a;
 
-    + linux : 64 bit mode
-
     - support multiret
     - migrate the rest of system'text module
 
+    - test all samples - x86 / x86-64
     - op code refactoring
     + ppc64le : simplest program
 
@@ -35,7 +30,7 @@ In development:
 
     + support s += s2 operation;
     + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
-    + #319 : linux : MT
+
 
     + support output redirecting
     + debugger : stack allocated int value 
@@ -59,6 +54,9 @@ In development:
     * test if with unknown object
     * uncomment fieldinit routines, yield methods
     * uncomment all code
+
+    + linux : 64 bit mode
+    + #319 : linux : MT
 
     + optimiation : assinging int constant, 
     + no duplicate variable by boxing
