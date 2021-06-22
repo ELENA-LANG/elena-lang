@@ -2043,7 +2043,7 @@ void _ELENA_::compileOpen(int opcode, x86JITScope& scope)
 
 void _ELENA_::compileSetFrame(int, x86JITScope& scope)
 {
-   scope.frameOffset = (scope.argument << 2) + 12;
+   scope.frameOffset = scope.argument + 12;
 }
 
 void _ELENA_ :: compileReserve(int op, x86JITScope& scope)

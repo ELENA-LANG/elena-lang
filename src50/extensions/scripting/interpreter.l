@@ -87,7 +87,7 @@ public class ScriptEngine
             { ScriptEngineException.new(self.lastScriptError()).raise() };
 
         ^ self.buildTape(tape)             
-    }
+    }       
 
     string loadScriptFileAsText(string path, int encoding, int autoDetect)
     {

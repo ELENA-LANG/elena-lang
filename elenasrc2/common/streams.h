@@ -605,7 +605,7 @@ public:
          length = _length - _offset;
       }
       if (length > 0) {
-         pos_t eol = (pos_t)StrHelper::findChar(_text + _offset, '\n', length);
+         size_t eol = StrHelper::findChar(_text + _offset, '\n', length);
          if (eol == NOTFOUND_POS) {
             if (_length - _offset > length) {
                // if we are not lucky - try to find a whitespace
@@ -614,10 +614,10 @@ public:
                while (eol != 0 && _text[eol] != ' ')
                   eol--;
 
-               length = eol - _offset + 1;
+               length = (pos_t)eol - _offset + 1;
             }
          }
-         else length = eol + 1;
+         else length = (pos_t)eol + 1;
 
          size_t tmpLength = length;
          Convertor::copy(s, _text + _offset, tmpLength, tmpLength);

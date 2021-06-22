@@ -2058,7 +2058,7 @@ void _ELENA_::compileOpen(int opcode, I64JITScope& scope)
 
 void _ELENA_::compileSetFrame(int, I64JITScope& scope)
 {
-   scope.frameOffset = align((scope.argument << 2) + 24, 16);
+   scope.frameOffset = 8 + align(scope.argument + 16, 16);
 }
 
 void _ELENA_::compileReserve(int op, I64JITScope& scope)

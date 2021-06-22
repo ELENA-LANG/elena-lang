@@ -290,17 +290,19 @@ end
 
 procedure __dptr."copyTo$system@UnsafePointer$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
 
-  peeksi 1
+  pushn  0  // !! due to x86-64
+  pushn  0
+  peeksi 3
   pushai 0
-  pushsi 4
-  movsip 1
+  pushsi 6
+  movsip 2
   pusha
-  pushsi 5
+  pushsi 7
   // subcopy(target,index,size,arr)
   callextr api : subcopy, 4
   
   peeksi 0
-  freei  4
+  freei  6
   quit
   
 end
@@ -3175,7 +3177,7 @@ end
 
 procedure invokerError
 
-  setframe 4
+  setframe 16
 
   // ; remove a return point
   pop
@@ -3203,7 +3205,7 @@ end
 
 procedure loadClass
 
-  setframe 4
+  setframe 16
 
   // extern elenart.LoadClassByBuffer(buffer, i, size)
   loadf    -12
@@ -3239,7 +3241,7 @@ end
 
 procedure __invoke1."#dispatch[1]"
 
-  setframe 4
+  setframe 16
 
   xaddf    -16, 1
   movfip   2
@@ -3257,7 +3259,7 @@ end
 
 procedure __invoke2."#dispatch[1]"
 
-  setframe 4
+  setframe 16
 
   xaddf    -16, 1
   movfip   2
@@ -3281,7 +3283,7 @@ end
 
 procedure __invoke3."#dispatch[1]"
 
-  setframe 4
+  setframe 16
 
   xaddf    -16, 1
   movfip   2
@@ -3311,7 +3313,7 @@ end
 
 procedure __invoke4."#dispatch[1]"
 
-  setframe 4
+  setframe 16
 
   xaddf    -16, 1
   movfip   2
@@ -3347,7 +3349,7 @@ end
 
 procedure __invoke5."#dispatch[1]"
 
-  setframe 4
+  setframe 16
 
   xaddf    -16, 1
   movfip   2
@@ -3389,7 +3391,7 @@ end
 
 procedure copyStack
 
-  setframe 4
+  setframe 16
 
   savesi   2
   pushn    0
@@ -3414,7 +3416,7 @@ end
 
 procedure copyVStack
 
-  setframe 4
+  setframe 16
 
   loadf    -16
 
@@ -3447,7 +3449,7 @@ end
 
 procedure __invoke6."#dispatch[1]"
 
-  setframe 4
+  setframe 16
 
   movn 6
   callr    intern : system'core_routines'copyStack
@@ -3462,7 +3464,7 @@ end
 
 procedure __invoke7."#dispatch[1]"
 
-  setframe 4
+  setframe 16
 
   movn 7
   callr    intern : system'core_routines'copyStack
@@ -3477,7 +3479,7 @@ end
 
 procedure __invoke8."#dispatch[1]"
 
-  setframe 4
+  setframe 16
 
   movn 8
   callr    intern : system'core_routines'copyStack
@@ -3492,7 +3494,7 @@ end
 
 procedure __invoke9."#dispatch[1]"
 
-  setframe 4
+  setframe 16
 
   movn 9
   callr    intern : system'core_routines'copyStack
@@ -3809,7 +3811,7 @@ end
 
 procedure __loadString."#dispatch[1]" // -4 - size, -2 - index, -12 - buffer
 
-  setframe 4
+  setframe 16
 
   // UTF8Encoding.toString(i,size,buffer)
   pushfi   -2
