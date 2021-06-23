@@ -281,7 +281,7 @@ enum LexicalType
    lxArrayType                = 0x000F18,
    lxMember                   = 0x000F19,  // a collection member, arg - offset
    lxStaticAttr               = 0x000F1A,
-//   lxEmbeddableAttr           = 0x000F1B,
+   lxEmbeddableAttr           = 0x000F1B,
    lxBookmark                 = 0x000F1C,
    lxBookmarkReference        = 0x000F1D,
 //   lxInternalRef              = 0x000F1E,

@@ -1356,7 +1356,7 @@ private:
    bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
    bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
    bool optimizeConstProperty(_ModuleScope& scope, SNode& node);
-//   bool optimizeEmbeddable(_ModuleScope& scope, SNode& node/*, bool argMode*/);
+   bool optimizeEmbeddable(_ModuleScope& scope, SNode& node);
 //   bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
 //   bool optimizeCallDoubleAssigning(_ModuleScope& scope, SNode& node);
    bool optimizeConstantAssigning(_ModuleScope& scope, SNode& node);
@@ -1404,7 +1404,7 @@ public:
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
    //virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg,
    //   ref_t targetClassRef, int stacksafeAttr, bool embeddableAttr);
-//   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
+   virtual bool injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, SNode copyNode, ref_t subject, int paramCount);
    virtual void injectEmbeddableConstructor(SNode classNode, mssg_t message, mssg_t privateRef);
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message,
       LexicalType methodType, ClassInfo& info);

@@ -77,7 +77,8 @@ A: by default any parameter is passed by reference. But if the class is a consta
    It is possible to use ref attribute to return several parameters from the function - http://rosettacode.org/wiki/Return_multiple_values#Elena
  
 Q: GC 
-A: yes, it uses generational GC (two generations)
+A: it uses generational GC (two generations - young and old ones). It supports PERM as well (where objects allocated once 
+and never relocated).
 
 Q: Does the language support Duck typing?
 A: Yes, see https://www.reddit.com/r/elena_lang/comments/caxqms/duck_typing_in_elena_programming_language/
@@ -91,4 +92,5 @@ A: Yes, ELENA supports closures. See for example - http://rosettacode.org/wiki/N
 Q: Polimorphism?
 A: Yes, ELENA is a pure polymorphic object oriented language. All the methods (except sealed ones) are virtual.
  
- 
+Q: is elena pure object-oriented? 
+A: yes, ELENA is pure object-oriented. Everything is an object : numbers, functions, literals and so on

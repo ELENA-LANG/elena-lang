@@ -15,7 +15,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION   13
+#define BUILD_VERSION   14
 
 typedef Trie<ByteCodePattern>            ByteTrie;
 typedef MemoryTrie<ByteCodePattern>      MemoryByteTrie;
@@ -328,7 +328,7 @@ int parseSourceRules(Path& path)
 int main(int argc, char* argv[])
 {
    int retVal = 0;
-   printLine("ELENA command line optimization table generator %d.%d.%d (C)2012-20 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
+   printLine("ELENA command line optimization table generator %d.%d.%d (C)2012-21 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
    if (argc == 2) {
       Path path(argv[1]);
       retVal = parseOpcodeRule(path);

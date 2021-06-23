@@ -196,12 +196,12 @@ public:
    virtual mssg_t resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
       mssg_t message, ref_t expectedRef);
 
-//   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne);
-//   virtual bool recognizeEmbeddableMessageCall(SNode node, mssg_t& messageRef);
-//
+   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne);
+   virtual bool recognizeEmbeddableMessageCall(SNode node, mssg_t& messageRef);
+
 //   virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope);
 ////   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode);
-//   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node);
+   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node);
    virtual bool optimizeBranchingOp(_ModuleScope& scope, SNode node);
 
    virtual mssg_t resolveMultimethod(_ModuleScope& scope, mssg_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef,

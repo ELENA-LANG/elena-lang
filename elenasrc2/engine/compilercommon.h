@@ -180,6 +180,7 @@ struct ConversionInfo
    mssg_t           message;
    ref_t            classRef;
    int              stackSafeAttr;
+   bool             embeddable;
 
    ConversionInfo()
    {
@@ -187,6 +188,7 @@ struct ConversionInfo
       message = 0;
       classRef = 0;
       stackSafeAttr = 0;
+      embeddable = false;
    }
    ConversionInfo(ConversionResult result)
    {
@@ -194,13 +196,15 @@ struct ConversionInfo
       message = 0;
       classRef = 0;
       stackSafeAttr = 0;
+      embeddable = false;
    }
-   ConversionInfo(ConversionResult result, mssg_t message, ref_t classRef, int stackSafeAttr)
+   ConversionInfo(ConversionResult result, mssg_t message, ref_t classRef, int stackSafeAttr, bool embeddable)
    {
       this->result = result;
       this->message = message;
       this->classRef = classRef;
       this->stackSafeAttr = stackSafeAttr;
+      this->embeddable = embeddable;
    }
 };
 
@@ -445,7 +449,7 @@ public:
    //virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
    //   int stacksafeAttr, bool embeddableAttr) = 0;
 
-//   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/) = 0;
+   virtual bool injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, SNode copyNode, ref_t subject, int paramCount) = 0;
    virtual void injectEmbeddableConstructor(SNode classNode, mssg_t message, mssg_t privateRef) = 0;
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
       ClassInfo& info) = 0;
@@ -765,13 +769,13 @@ public:
    virtual mssg_t resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
       mssg_t message, ref_t expectedRef) = 0 ;
 
-//   // optimization
-//   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
-//   virtual bool recognizeEmbeddableMessageCall(SNode node, mssg_t& messageRef) = 0;
+   // optimization
+   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
+   virtual bool recognizeEmbeddableMessageCall(SNode node, mssg_t& messageRef) = 0;
 //   virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope) = 0;
 //
 ////   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode) = 0;
-//   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
+   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
    virtual bool optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
 
    virtual mssg_t resolveMultimethod(_ModuleScope& scope, mssg_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef,

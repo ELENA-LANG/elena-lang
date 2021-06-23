@@ -56,16 +56,16 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
 //
    if (fullMode) {
 ////      tokens.add("argarrop", lxArgArrOp);
-//      //tokens.add("assigning", lxAssigning);
+      tokens.add("assigning", lxAssigning);
       tokens.add("copying", lxCopying);
 //      //      tokens.add("boxing", lxBoxing);
 //      tokens.add("call", lxCalling_0);
 ////      tokens.add("condboxing", lxCondBoxing);
       tokens.add("directcall", lxDirectCalling);
-//      //tokens.add("embeddable", lxEmbeddableAttr);
+      tokens.add("embeddable", lxEmbeddableAttr);
 ////      tokens.add("fieldaddress", lxFieldAddress);
 ////      tokens.add("localaddress", lxLocalAddress);
-//      tokens.add("sdirectcall", lxSDirectCalling);
+      tokens.add("sdirectcall", lxSDirectCalling);
 ////      tokens.add("unboxing", lxUnboxing);
 //      tokens.add("newframe", lxNewFrame);
 //      //tokens.add("field_expr", lxFieldExpression);

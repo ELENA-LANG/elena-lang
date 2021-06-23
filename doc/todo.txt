@@ -3,8 +3,7 @@ In development:
 ------         
 
   [development]
-    * retest x86 / x86-64 : Building code at run-time in ELENA, Part 1 & Part 2
-
+    + idle call
     - optimize char ch := 65 - no need to create a dynamic object
     - support if(a>b) c := a;
 
@@ -44,7 +43,6 @@ In development:
     * globals
     * multi ret
     * yield metods
-    * uncomment defineEmbeddableAttributes
 
     * uncomment duplicateStructBoxing,duplicateBoxing,stackSafeExtensions,nilDispatcherTest,templateExtensionTest
 
@@ -69,7 +67,6 @@ In development:
     + warn if both a parameter and a local variable have the same name
     + dispatcin : do not use frame if not nessesary
     + optimization : do not use frame if not nessesary
-    + embeddable constructor
     + * operator with object wrapper - sould be pass direct value, so no need for dispatcin in ref interface
       e.g: theIndex.append(cast int(theDiff)); - should be written theIndex.append(*theDiff); and the stack-allocated
      object should be passed as is
