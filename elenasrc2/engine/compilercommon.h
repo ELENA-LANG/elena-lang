@@ -772,8 +772,8 @@ public:
    // optimization
    virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
    virtual bool recognizeEmbeddableMessageCall(SNode node, mssg_t& messageRef) = 0;
-//   virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope) = 0;
-//
+   virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope) = 0;
+
 ////   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode) = 0;
    virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
    virtual bool optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;

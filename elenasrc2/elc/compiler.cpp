@@ -10471,24 +10471,12 @@ bool Compiler :: optimizeEmbeddable(_ModuleScope& scope, SNode& node)
    if (callNode.compare(lxDirectCalling, lxSDirectCalling) && assignNode == lxAssigning && copyNode == lxCopying) {
       applied = _logic->optimizeEmbeddableOp(scope, *this, rootNode);
    }
-//
-//   if (applied)
-//      node = lxIdle;
+   else if (_logic->optimizeEmbeddable(callNode, scope)) {
+      applied = true;
+   }
 
    return applied;
 }
-
-//bool Compiler :: optimizeEmbeddableCall(_ModuleScope& scope, SNode& node)
-//{
-//   SNode rootNode = node.parentNode();
-//
-//   if (_logic->optimizeEmbeddable(rootNode, scope)) {
-//      node = lxIdle;
-//
-//      return true;
-//   }
-//   else return false;
-//}
 
 bool Compiler :: optimizeConstantAssigning(_ModuleScope&, SNode& node)
 {
@@ -10741,8 +10729,6 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeConstProperty(scope, node);
       case 2:
          return optimizeEmbeddable(scope, node);
-//      case 3:
-//         return optimizeEmbeddableCall(scope, node);
       case 4:
          return optimizeBranching(scope, node);
       case 5:

@@ -1357,7 +1357,6 @@ private:
    bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
    bool optimizeConstProperty(_ModuleScope& scope, SNode& node);
    bool optimizeEmbeddable(_ModuleScope& scope, SNode& node);
-//   bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
 //   bool optimizeCallDoubleAssigning(_ModuleScope& scope, SNode& node);
    bool optimizeConstantAssigning(_ModuleScope& scope, SNode& node);
 //   bool optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node);

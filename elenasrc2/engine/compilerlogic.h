@@ -199,7 +199,7 @@ public:
    virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne);
    virtual bool recognizeEmbeddableMessageCall(SNode node, mssg_t& messageRef);
 
-//   virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope);
+   virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope);
 ////   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode);
    virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node);
    virtual bool optimizeBranchingOp(_ModuleScope& scope, SNode node);

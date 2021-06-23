@@ -1974,6 +1974,9 @@ bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode, bool extensionOn
 {
    SNode frameNode = methodNode.findChild(lxNewFrame);
    SNode firstExpr = frameNode.firstChild(lxObjectMask);
+   if (firstExpr == lxSeqExpression && firstExpr.firstChild() == lxNone)
+      firstExpr = firstExpr.nextNode(lxObjectMask);
+
    if (firstExpr == lxReturning) {
       SNode retNode = firstExpr.findSubNodeMask(lxObjectMask);
 
@@ -2108,25 +2111,25 @@ bool CompilerLogic :: optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compi
    return false;
 }
 
-//bool CompilerLogic :: optimizeEmbeddable(SNode node, _ModuleScope& scope)
-//{
-//   // check if it is a virtual call
-//   if (node == lxDirectCalling && getArgCount(node.argument) == 1) {
-//      SNode callTarget = node.findChild(lxCallTarget);
-//
-//      ClassInfo info;
-//      if (defineClassInfo(scope, info, callTarget.argument)
-//         && info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == INVALID_REF)
-//      {
-//         // if it is an idle call, remove it
-//         node = lxExpression;
-//
-//         return true;
-//      }
-//   }
-//
-//   return false;
-//}
+bool CompilerLogic :: optimizeEmbeddable(SNode node, _ModuleScope& scope)
+{
+   // check if it is a virtual call
+   if (node == lxDirectCalling && getArgCount(node.argument) == 1) {
+      SNode callTarget = node.findChild(lxCallTarget);
+
+      ClassInfo info;
+      if (defineClassInfo(scope, info, callTarget.argument)
+         && info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == INVALID_REF)
+      {
+         // if it is an idle call, remove it
+         node = lxExpression;
+
+         return true;
+      }
+   }
+
+   return false;
+}
 
 bool CompilerLogic :: optimizeBranchingOp(_ModuleScope&, SNode node)
 {

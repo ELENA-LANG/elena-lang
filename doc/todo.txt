@@ -3,7 +3,6 @@ In development:
 ------         
 
   [development]
-    + idle call
     - optimize char ch := 65 - no need to create a dynamic object
     - support if(a>b) c := a;
 
@@ -13,9 +12,6 @@ In development:
     - test all samples - x86 / x86-64
     - op code refactoring
     + ppc64le : simplest program
-
-    - compileRootExpression - we probably could move the code here from compileExpression for topexpression
-    - debugger fine-tuning
 
     * #206 : interpreter sample
     + compile console / files samples for linux i386
@@ -30,6 +26,8 @@ In development:
     + support s += s2 operation;
     + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
 
+    - compileRootExpression - we probably could move the code here from compileExpression for topexpression
+    - debugger fine-tuning
 
     + support output redirecting
     + debugger : stack allocated int value 
