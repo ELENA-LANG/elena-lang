@@ -65,6 +65,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
       tokens.add("embeddable", lxEmbeddableAttr);
 ////      tokens.add("fieldaddress", lxFieldAddress);
 ////      tokens.add("localaddress", lxLocalAddress);
+      tokens.add("templocal", lxTempLocal);
       tokens.add("sdirectcall", lxSDirectCalling);
 ////      tokens.add("unboxing", lxUnboxing);
 //      tokens.add("newframe", lxNewFrame);

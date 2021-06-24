@@ -10598,6 +10598,34 @@ bool Compiler :: optimizeConstantAssigning(_ModuleScope&, SNode& node)
 //   return applied;
 //}
 
+bool Compiler :: optimizeTempAllocating(_ModuleScope& scope, SNode& node)
+{
+   SNode copyNode = node.parentNode();
+   SNode copy2Node = copyNode.nextNode(lxObjectMask);
+   SNode assignNode = copyNode.prevNode();
+
+   if (copyNode.type == copy2Node.type && copyNode.argument == copy2Node.argument) {
+      SNode temp = node;
+      SNode target = copy2Node.firstChild(lxObjectMask);
+      SNode temp2 = target.nextNode(lxObjectMask);
+      if (target == lxLocalAddress && temp2.compare(lxLocal, lxTempLocal) && temp2.argument == temp.argument) {
+         temp.set(target.type, target.argument);
+         copy2Node = lxIdle;
+
+         if (assignNode == lxAssigning) {
+            SNode assignTarget = assignNode.firstChild(lxObjectMask);
+            if (assignTarget == lxTempLocal && assignTarget.argument == temp2.argument) {
+               assignNode = lxIdle;
+            }
+         }
+
+         return true;
+      }
+   }
+
+   return false;
+}
+
 bool Compiler :: optimizeBranching(_ModuleScope& scope, SNode& node)
 {
    return _logic->optimizeBranchingOp(scope, node);
@@ -10729,6 +10757,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeConstProperty(scope, node);
       case 2:
          return optimizeEmbeddable(scope, node);
+      case 3:
+         return optimizeTempAllocating(scope, node);
       case 4:
          return optimizeBranching(scope, node);
       case 5:

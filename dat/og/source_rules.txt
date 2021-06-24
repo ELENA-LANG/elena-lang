@@ -1,6 +1,9 @@
-directcall,               constattr = 1;
-intboolop | branching,    constint  = 4; 
 copying, 		  constint  = 5;
+copying | copying,        templocal = 3;
 
+directcall,               constattr = 1;
 directcall,  embeddable             = 2;
+
+intboolop | branching,    constint  = 4; 
+
 sdirectcall, embeddable             = 2;

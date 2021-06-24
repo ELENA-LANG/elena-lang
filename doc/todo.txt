@@ -3,7 +3,6 @@ In development:
 ------         
 
   [development]
-    - optimize char ch := 65 - no need to create a dynamic object
     - support if(a>b) c := a;
 
     - support multiret
@@ -41,6 +40,7 @@ In development:
     * globals
     * multi ret
     * yield metods
+    * new feature : switch expression
 
     * uncomment duplicateStructBoxing,duplicateBoxing,stackSafeExtensions,nilDispatcherTest,templateExtensionTest
 
