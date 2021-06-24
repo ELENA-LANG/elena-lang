@@ -1711,10 +1711,10 @@ inline void parseStatement(SNode current, IdentifierString& templateName, int& e
          blockCounters++;
       }
       else if (test(current.type, lxObjectMask)) {
-            if (blockCounters == 0) {
-               exprCounters++;
-            }
-            else blockCounters++;
+         if (/*blockCounters == 0*/!root) {
+            exprCounters++;
+         }
+         else blockCounters++;
       }
       else if (current == lxToken && root) {
          // COMPILER MAGIC : if it is complex code template
