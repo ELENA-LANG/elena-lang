@@ -3,8 +3,6 @@ In development:
 ------         
 
   [development]
-    - support if(a>b) c := a;
-
     - support multiret
     - migrate the rest of system'text module
 
