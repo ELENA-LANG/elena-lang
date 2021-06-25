@@ -3,25 +3,27 @@ In development:
 ------         
 
   [development]
-    - support multiret
     - migrate the rest of system'text module
+
+    * #206 : interpreter sample
+
+    + support s += s2 operation;
+    + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
+
+    * globals
+    * yield metods
+    * #206 : compile sqllite for 64bit
+    * #206 : samples, tutorials
 
     - test all samples - x86 / x86-64
     - op code refactoring
     + ppc64le : simplest program
 
-    * #206 : interpreter sample
     + compile console / files samples for linux i386
     + compile lib50_64 for linux i386 / ppc64le
     + compile console / files samples for linux amd64
     + compile hellowordl for ppc64le
     - IDE : smart spaces
-
-    * #206 : compile sqllite for 64bit
-    * #206 : samples, tutorials
-
-    + support s += s2 operation;
-    + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
 
     - compileRootExpression - we probably could move the code here from compileExpression for topexpression
     - debugger fine-tuning
@@ -35,9 +37,6 @@ In development:
 
     * introduce prop inline attribute - to add property wrapper around existing field;
 
-    * globals
-    * multi ret
-    * yield metods
     * new feature : switch expression
 
     * uncomment duplicateStructBoxing,duplicateBoxing,stackSafeExtensions,nilDispatcherTest,templateExtensionTest
@@ -97,7 +96,6 @@ In development:
     * multi-theading
     * thread - make sure stack is correctly aligned to 16
 
-    + compiler option : raw stack alignment  
     + housekeeping - review pipeline
     + closure tape : review how it could be optimized (e.g interpreter.solution1)
     + bf interpreter optimization

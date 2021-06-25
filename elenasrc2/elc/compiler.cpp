@@ -3299,9 +3299,6 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, ExprScop
    analizeArguments(writer, node, scope, stackSafeAttr, target, arguments/*, false*/);
    //   scope.originals.clear();
 
-   // inserting calling expression
-   writer.newNode(operation, argument);
-
    if (expectedRef && result.withEmbeddableRet) {
       mssg_t byRefMessageRef = _logic->resolveEmbeddableRetMessage(
          scope, *this, resolveObjectReference(scope, target, true),
@@ -3309,18 +3306,28 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, ExprScop
 
       if (byRefMessageRef) {
          ObjectInfo tempVar = allocateResult(scope, expectedRef);
-         arguments->add(tempVar);
 
          if (tempVar.kind == okTempLocalAddress) {
-            writer.CurrentNode().setArgument(byRefMessageRef);
+            argument = byRefMessageRef;
 
-            //                  opNode.appendNode(lxRetEmbeddableAttr);
+            arguments->add(tempVar);
          }
-         else throw InternalError("Not yet implemented"); // !! temporal
+         else if (tempVar.kind == okLocal) {
+            ObjectInfo wrapper(okOutputBoxableLocal, tempVar.param, V_WRAPPER, tempVar.reference, 0);
+
+            boxArgument(writer, node, wrapper, scope, false);
+            arguments->add(wrapper);
+
+            argument = byRefMessageRef;
+         }
+         else throw InternalError("Not yet implemented"); // !! temporal         
 
          retVal = tempVar;
       }
    }
+
+   // inserting calling expression
+   writer.newNode(operation, argument);
 
    if (result.embeddable) {
       writer.appendNode(lxEmbeddableAttr);
@@ -3352,7 +3359,8 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, ExprScop
    writer.closeNode();
 
    if (withUnboxing || (presavedArgs && presavedArgs->Length() > 0)) {
-      retVal = saveToTempLocal(writer, scope, retVal);
+      if (retVal.kind == okObject)
+         retVal = saveToTempLocal(writer, scope, retVal);
 
       if (arguments)
          unboxArguments(writer, scope, target, arguments);
@@ -3475,10 +3483,11 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
       }
       else {
          int tempLocal = 0;
-         if (source.kind == lxTempLocal) {
-            tempLocal = source.param;
-         }
-         else tempLocal = scope.newTempLocal();
+         bool skipCopy = source.kind == okOutputBoxableLocal;
+         //if (source.kind == okTempLocal) {
+         //   tempLocal = source.param;
+         //}
+         /*else*/ tempLocal = scope.newTempLocal();
 
          //         if (isPrimitiveRef(typeRef)) {
 //            ref_t elementRef = node.findChild(lxElementType).argument;
@@ -3523,14 +3532,14 @@ ObjectInfo Compiler :: boxArgumentInPlace(SyntaxWriter& writer, SNode node, Obje
 
          writer.closeNode();
 
-         if (size >= 0)
+         if (size >= 0 && !skipCopy)
             appendCopying(writer, size, variadic/*, primArray*/, source, scope, tempLocal);
 
          if (condBoxing)
             writer.closeNode();
 
          boxedArg = ObjectInfo(okTempLocal, tempLocal, targetRef, 0, variable ? size : 0);
-         if (source.kind == okBoxableLocal && variable) {
+         if (variable && (source.kind == okBoxableLocal || source.kind == okOutputBoxableLocal)) {
             boxedArg.kind = okTempBoxableLocal;
          }
 
@@ -6185,6 +6194,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, ObjectInfo object, ExprScop
       case okTempLocal:
       case okBoxableLocal:
       case okTempBoxableLocal:
+      case okOutputBoxableLocal:
          writer.newNode(lxLocal, object.param);
          break;
       case okParamField:
@@ -11557,8 +11567,8 @@ bool Compiler :: injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode
       return false;
 
    if (paramCount == -1) {
-//      // if it is an embeddable constructor call
-//      SNode sourceNode = assignNode.findSubNodeMask(lxObjectMask);
+      //      // if it is an embeddable constructor call
+      //      SNode sourceNode = assignNode.findSubNodeMask(lxObjectMask);
 
       SNode callTargetNode = callNode.firstChild(lxObjectMask);
       callTargetNode.set(copyTarget.type, copyTarget.argument);
@@ -11586,19 +11596,22 @@ bool Compiler :: injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode
 
          callTargetNode = callTargetNode.firstChild(lxObjectMask);
       }
+
+      return true;
    }
-//   //else {
-//   //   // removing assinging operation
-//   //   assignNode = lxExpression;
-//
-//   //   // move assigning target into the call node
-//
-//   //   if (assignTarget != lxNone) {
-//   //      callNode.appendNode(assignTarget.type, assignTarget.argument);
-//   //      assignTarget = lxIdle;
-//   //      callNode.setArgument(encodeMessage(subject, paramCount));
-//   //   }
-//   //}
+   //   //else {
+   //   //   // removing assinging operation
+   //   //   assignNode = lxExpression;
+   //
+   //   //   // move assigning target into the call node
+   //
+   //   //   if (assignTarget != lxNone) {
+   //   //      callNode.appendNode(assignTarget.type, assignTarget.argument);
+   //   //      assignTarget = lxIdle;
+   //   //      callNode.setArgument(encodeMessage(subject, paramCount));
+   //   //   }
+   //   //}
+   else return false;
 }
 
 //SNode Compiler :: injectTempLocal(SNode node, int size, bool boxingMode)

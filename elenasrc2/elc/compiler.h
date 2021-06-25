@@ -142,6 +142,7 @@ public:
       okTempLocal,
       okTempBoxableLocal,
       okBoxableLocal,
+      okOutputBoxableLocal,
       okParam,                        // param - parameter offset, extraparam = class reference
       okParamField,
       okMessage,                      // param - parameter offset
