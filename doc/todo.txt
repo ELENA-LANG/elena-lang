@@ -3,12 +3,10 @@ In development:
 ------         
 
   [development]
-    - migrate the rest of system'text module
+    * #206 : interpreter sample - x86, x86-64
 
-    * #206 : interpreter sample
-
+    - migrate the rest of system'io module
     + support s += s2 operation;
-    + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
 
     * globals
     * yield metods
@@ -25,6 +23,7 @@ In development:
     + compile hellowordl for ppc64le
     - IDE : smart spaces
 
+    + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
     - compileRootExpression - we probably could move the code here from compileExpression for topexpression
     - debugger fine-tuning
 

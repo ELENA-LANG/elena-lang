@@ -151,7 +151,7 @@ namespace io
             int len := -1;
             while (len == -1)
             {
-                theOutput.indexOf(0, theNewLineConstant, ref len);
+                len := theOutput.indexOf(0, theNewLineConstant);
                 
                 if(len == -1)
                 {
@@ -193,7 +193,7 @@ namespace io
             int len := -1;
             while (len == -1)
             {
-                theOutput.indexOf(0, nl, ref len);
+                len := theOutput.indexOf(0, nl);
                 
                 if(len == -1)
                 {

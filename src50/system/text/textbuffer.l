@@ -50,10 +50,10 @@ namespace text
         string Value
             = String.copy(0, *theLength, theBuffer);
     
-//        get multiret Value(ref wide r)
-//        {
-//            r := WideString.copy(0, theLength.Value, theBuffer);
-//        }
+        get multiret Value(ref wide r)
+        {
+            r := WideString.copy(0, theLength.Value, theBuffer);
+        }
     
         wide cast()
             = WideString.copy(0, theLength.Value, theBuffer);
@@ -161,147 +161,147 @@ namespace text
             }
         }
 
-//        private readIndex(string s, ref int i, ref int retVal)
-//        {
-//            char ch := $0;
-//            int  n := 0;
-//            int  v := 0;
-//            
-//            int i_val := i;
-//            
-//            s.read(i_val, ref ch);
-//            while (ch != $125)
-//            {
-//                n := intConvertor.convert(ch);
-//                if(n >= 30h && n <= 39h)
-//                {               
-//                    n := n - 30h;
-//                    
-//                    v := v * 10;
-//                    v := v + n
-//                }
-//                else
-//                { 
-//                    InvalidArgumentException.raise()
-//                };
-//                    
-//                i := i + 1;
-//                i_val := i;
-//                s.read(i_val, ref ch)
-//            };
-//            
-//            retVal := v
-//        }
-//    
-//        writeFormatted(string s, params object[] args)
-//        {
-//            int  len := s.Length;
-//            int  i := 0;
-//            char ch := $0;
-//            int  chlen := 0;
-//            int  index := 0;
-//            
-//            while (i < len)
-//            {
-//                s.read(i, ref ch);
-//                
-//                if (ch == $123)
-//                { 
-//                    i := i + 1;
-//                    
-//                    self.readIndex(s, ref i, ref index);
-//                    self.write(args[index]);
-//                    
-//                    chlen := 1
-//                }
-//                else
-//                {
-//                    self.write(ch);
-//                    chlen := ch.Length
-//                };
-//                
-//                i := i + chlen
-//            }
-//        }
-//    
-//        fill(string s, int counter)
-//        {
-//            for (int i := 0, i < counter, i += 1)
-//            {
-//                self.write(s)
-//            }
-//        }
-//    
-//        fill(wide s, int counter)
-//        {
-//            for (int i := 0, i < counter, i += 1)
-//            {
-//                self.write(s)
-//            }
-//        }
-//    
-//        fill(char ch, int counter)
-//        {
-//            int i := 0;
-//            while (i < counter)
-//            {
-//                self.write(ch);
-//                
-//                i += 1
-//            }
-//        }
-//    
-//        insert(int index, int length, char[] array)
-//        {
-//            self.reserve(length);
-//            
-//            theBuffer.move(index, theLength.Value, length);
-//            
-//            theBuffer.write(index, length, array);
-//            
-//            theLength.append(length)
-//        }
-//
-//        insert(int index, string s)
-//        {
-//            int length := 0;
-//            UTF8Encoding.charCount(s, ref length);
-//    
-//            self.reserve(length);
-//            
-//            theBuffer.move(index, cast int(theLength), length);
-//            
-//            s.save(index, theBuffer, ref length);
-//            
-//            theLength.append(length)
-//        }
-//
-//        insert(int index, wide s)
-//        {
-//            int length := 0;
-//            UTF16Encoding.charCount(s, ref length);
-//    
-//            self.reserve(length);
-//            
-//            theBuffer.move(index, cast int(theLength), length);
-//            
-//            s.save(index, theBuffer, ref length);
-//            
-//            theLength.append(length)
-//        }
-//        
-//        insert(int index, char ch)
-//        {
-//            self.reserve(1);
-//            
-//            theBuffer.move(index, cast int(theLength), 1);
-//            
-//            theBuffer.write(index, ch);
-//            
-//            theLength.append(1)
-//        }
+        private readIndex(string s, ref int i, ref int retVal)
+        {
+            char ch := $0;
+            int  n := 0;
+            int  v := 0;
+            
+            int i_val := i;
+            
+            s.read(i_val, ref ch);
+            while (ch != $125)
+            {
+                n := intConvertor.convert(ch);
+                if(n >= 30h && n <= 39h)
+                {               
+                    n := n - 30h;
+                    
+                    v := v * 10;
+                    v := v + n
+                }
+                else
+                { 
+                    InvalidArgumentException.raise()
+                };
+                    
+                i := i + 1;
+                i_val := i;
+                s.read(i_val, ref ch)
+            };
+            
+            retVal := v
+        }
+    
+        writeFormatted(string s, params object[] args)
+        {
+            int  len := s.Length;
+            int  i := 0;
+            char ch := $0;
+            int  chlen := 0;
+            int  index := 0;
+            
+            while (i < len)
+            {
+                s.read(i, ref ch);
+                
+                if (ch == $123)
+                { 
+                    i := i + 1;
+                    
+                    self.readIndex(s, ref i, ref index);
+                    self.write(args[index]);
+                    
+                    chlen := 1
+                }
+                else
+                {
+                    self.write(ch);
+                    chlen := ch.Length
+                };
+                
+                i := i + chlen
+            }
+        }
+    
+        fill(string s, int counter)
+        {
+            for (int i := 0, i < counter, i += 1)
+            {
+                self.write(s)
+            }
+        }
+    
+        fill(wide s, int counter)
+        {
+            for (int i := 0, i < counter, i += 1)
+            {
+                self.write(s)
+            }
+        }
+    
+        fill(char ch, int counter)
+        {
+            int i := 0;
+            while (i < counter)
+            {
+                self.write(ch);
+                
+                i += 1
+            }
+        }
+    
+        insert(int index, int length, char[] array)
+        {
+            self.reserve(length);
+            
+            theBuffer.move(index, theLength.Value, length);
+            
+            theBuffer.write(index, length, array);
+            
+            theLength.append(length)
+        }
 
-        indexOf(int position, char value, ref int retVal)
+        insert(int index, string s)
+        {
+            int length := 0;
+            UTF8Encoding.charCount(s, ref length);
+    
+            self.reserve(length);
+            
+            theBuffer.move(index, cast int(theLength), length);
+            
+            s.save(index, theBuffer, ref length);
+            
+            theLength.append(length)
+        }
+
+        insert(int index, wide s)
+        {
+            int length := 0;
+            UTF16Encoding.charCount(s, ref length);
+    
+            self.reserve(length);
+            
+            theBuffer.move(index, cast int(theLength), length);
+            
+            s.save(index, theBuffer, ref length);
+            
+            theLength.append(length)
+        }
+        
+        insert(int index, char ch)
+        {
+            self.reserve(1);
+            
+            theBuffer.move(index, cast int(theLength), 1);
+            
+            theBuffer.write(index, ch);
+            
+            theLength.append(1)
+        }
+
+        int indexOf(int position, char value)
         {
             int  index := 0;
             char current := $0;
@@ -311,15 +311,15 @@ namespace text
                 theBuffer.read(index, ref current);
                 
                 if (current == value)
-                    { retVal := index; ^self };
+                    { ^ index };
                     
                 index += 1
             };
             
-            retVal := -1
+            ^ -1
         }
     
-        indexOf(int pos, string s, ref int retVal)
+        int indexOf(int pos, string s)
         {
             int  strLen := 0;
             int  index := 0;
@@ -364,96 +364,70 @@ namespace text
                     
                     if (j == strLen)
                     { 
-                        retVal := index; 
-                        ^ self 
+                        ^ index
                     }
                 };
                     
                 index += 1
             };
             
-            retVal := -1
+            ^ -1
         }
 
-//        indexOf(int pos, wide s, ref int retVal)
-//        {
-//            int  strLen := 0;
-//            int  index := 0;
-//            int  firstChLen := 0;
-//            char current := $0;
-//            char firstCh := $0;
-//            char nextCh := $0;
-//            
-//            strLen := s.Length;
-//            
-//            s.read(0, ref firstCh);
-//            firstChLen := firstCh.Length;
-//            
-//            int maxIndex := theLength;
-//            maxIndex := maxIndex - strLen;
-//            
-//            while (index <= maxIndex)
-//            {
-//                current := theBuffer[index];
-//                
-//                if (current == firstCh)
-//                {
-//                    int j := firstChLen;
-//                    int chLen := 0;
-//                    while (j < strLen)
-//                    {
-//                        current := theBuffer[index + j];
-//                        s.read(j, ref nextCh);
-//                        
-//                        if (nextCh == current)
-//                        { 
-//                            chLen := nextCh.Length
-//                        }
-//                        else
-//                        { 
-//                            j := strLen; 
-//                            chLen := 1 
-//                        };
-//                        
-//                        j := j + chLen
-//                    };
-//                    
-//                    if (j == strLen)
-//                    { 
-//                        retVal := index; 
-//                        ^ self 
-//                    }
-//                };
-//                    
-//                index += 1
-//            };
-//            
-//            retVal := -1
-//        }
-//
-//        int indexOf(int position, char value)
-//        {
-//            int retVal := 0;
-//            self.indexOf(position, value, ref retVal);
-//            
-//            ^ retVal
-//        }
-//        
-//        int indexOf(int position, string value)
-//        {
-//            int retVal := 0;
-//            self.indexOf(position, value, ref retVal);
-//            
-//            ^ retVal
-//        }
-//        
-//        int indexOf(int position, wide value)
-//        {
-//            int retVal := 0;
-//            self.indexOf(position, value, ref retVal);
-//            
-//            ^ retVal
-//        }
+        int indexOf(int pos, wide s)
+        {
+            int  strLen := 0;
+            int  index := 0;
+            int  firstChLen := 0;
+            char current := $0;
+            char firstCh := $0;
+            char nextCh := $0;
+            
+            strLen := s.Length;
+            
+            s.read(0, ref firstCh);
+            firstChLen := firstCh.Length;
+            
+            int maxIndex := theLength;
+            maxIndex := maxIndex - strLen;
+            
+            while (index <= maxIndex)
+            {
+                current := theBuffer[index];
+                
+                if (current == firstCh)
+                {
+                    int j := firstChLen;
+                    int chLen := 0;
+                    while (j < strLen)
+                    {
+                        current := theBuffer[index + j];
+                        s.read(j, ref nextCh);
+                        
+                        if (nextCh == current)
+                        { 
+                            chLen := nextCh.Length
+                        }
+                        else
+                        { 
+                            j := strLen; 
+                            chLen := 1 
+                        };
+                        
+                        j := j + chLen
+                    };
+                    
+                    if (j == strLen)
+                    { 
+                        ^ index; 
+                    }
+                };
+                    
+                index += 1
+            };
+            
+            ^ -1
+        }
 
         string Substring(int index, int length)
         {
