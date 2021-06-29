@@ -3081,13 +3081,38 @@ procedure __saving_closure."params##invoke$system@Object[0]"
 
 end
 
-
 procedure __exit_closure."params##invoke$system@Object[0]"
 
   peekfi  1
   count
   savef   -4
   peeksi  1
+  quit
+
+end
+
+procedure __jump_closure."params##invoke$system@Object[0]"
+
+  naddf   -4
+  peeksi  1
+  quit
+
+end
+
+
+procedure __jumpifnot_closure."params##invoke$system@Object[0]"
+
+  pusha
+
+  peeksi  2
+  elser   labSkip, const : false
+
+  peeksi 0 
+  naddf  -4
+
+labSkip:
+  freei   1
+  peeksi  2
   quit
 
 end

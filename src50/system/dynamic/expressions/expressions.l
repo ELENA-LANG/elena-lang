@@ -6,8 +6,9 @@ namespace expressions
 
 //    const int mode_non   = 0;
     const int mode_lcl   = 1;
-//    const int mode_asn   = 3;
 //    const int mode_class = 4;
+
+//    pub
 
     preloaded used = new object[]{Expression,DynamicSingleton/*,DynamicExpressionSymbol,SymbolCollection,DynamicImport*/};
 
@@ -75,11 +76,11 @@ namespace expressions
         
 //        get abstract ExpressionScope Previous();
         
-        abstract TapeFunction resolve(ScopeIdentifier ident);
+        abstract TapeFunction resolve(ScopeIdentifier ident, bool assignMode);
 
 //        abstract TapeFunction resolveExtension(Message message);
-//        
-//        abstract declare(ScopeVariable variable);
+        
+        abstract declare(ScopeIdentifier variable);
     }
 
     public singleton IdleExpressionScope : ExpressionScope
@@ -95,7 +96,12 @@ namespace expressions
         int ScopeLevel
             = 0;
             
-        TapeFunction resolve(ScopeIdentifier ident)
+        declare(ScopeIdentifier variable)
+        {
+            ^ nil
+        }
+        
+        TapeFunction resolve(ScopeIdentifier ident, bool assignMode)
             = nil; 
     }
 
@@ -137,18 +143,18 @@ namespace expressions
         
 //        ExpressionScope Previous = nil;
         
-        TapeFunction resolve(ScopeIdentifier variable) 
+        TapeFunction resolve(ScopeIdentifier variable, bool assignMode) 
         {
-            ^ parent.?resolve(variable)
+            ^ parent.?resolve(variable, assignMode)
         }
     
 //        TapeFunction resolveExtension(Message message)
 //            = nil;
-//                
-//        declare(ScopeVariable variable)
-//        {
-//            ^ nil
-//        }
+                
+        declare(ScopeIdentifier variable)
+        {
+            ^ nil
+        }
     }
 
     public interface Expression
@@ -224,25 +230,22 @@ namespace expressions
 //              
 //        static Expression Assigning(string variable, Expression expr)
 //            = new AssigningExpression(new ScopeVariable(variable), expr);
-//              
-//        static Expression DeclareAndAssigning(ScopeVariable variable, Expression expr)
-//            = new DeclaringAndAssigningExpression(variable, expr);
-//              
+              
+        static Expression DeclareAndAssigning(string variable, Expression expr)
+            = new DeclaringAndAssigningExpression(variable, expr);
+              
 //        static Expression DeclareAndAssigning(string variable, Expression expr)
 //            = new DeclaringAndAssigningExpression(new ScopeVariable(variable), expr);
 //
         static Expression VariableByIndex(int index)
             = new VariableByIndexExpression(index);
                             
-//        static Expression Variable(ScopeVariable variable)
-//            = new VariableExpression(variable);
-//              
+        static Expression Variable(string variable)
+            = new VariableExpression(variable);
+              
 //        static Expression Identifier(ScopeVariable variable)
 //            = new IdentifierExpression(variable);
               
-        static Expression Variable(string variable)
-            = new VariableExpression(variable);
-
 //        static Expression PreviousVariable(ScopeVariable variable)
 //            = new PreviousVariableExpression(variable);
 //              
@@ -260,10 +263,10 @@ namespace expressions
 //              
 //        static Expression If(Expression cond, Expression body, Expression elseBody)
 //            = new IfExpression(cond, body, elseBody);
-//              
-//        static Expression Loop(Expression cond, Expression body)
-//            = new LoopExpression(cond, body);
-//            
+              
+        static Expression Loop(Expression cond, Expression body)
+            = new LoopExpression(cond, body);
+            
 //        static Expression GetMethod(string name, Expression body)
 //            = new GetMethodExpression(name, body);        
 //              
@@ -623,26 +626,28 @@ namespace expressions
                     ^ index
                 }
                 
-                TapeFunction resolve(ScopeIdentifier variable)
+                TapeFunction resolve(ScopeIdentifier variable, bool assignMode)
                 {
+                    int prevLevel := scope.ScopeLevel;
                     int len := variables.Length;
                     for(int i := 0, i < len, i+=1) {
                         if (variable == variables[i])
                         {
                             int index := i + 1;
-//                                
-//                                if (mode == mode_asn) 
-//                                {
-//                                    NotSupportedException.raise()
-//                                }
-//                                else 
-//                                {
-                                    ^ new LocalFunction(index)
-//                                };                                
+                            index += prevLevel;
+
+                            if (assignMode) 
+                            {
+                                ^ new AssigningFunction(index)
+                            }
+                            else 
+                            {
+                                ^ new LocalFunction(index)
+                            };                                
                         }
                     };
                     
-                    ^ scope.resolve(variable)
+                    ^ scope.resolve(variable, assignMode)
                 }
                 
                 
@@ -681,11 +686,11 @@ namespace expressions
 //                    
 //                    ^ scope.resolve(variable, mode)
 //                }
-//        
-//                declare(ScopeVariable variable)
-//                {
-//                    variables.append(variable)
-//                }            
+        
+                declare(ScopeIdentifier variable)
+                {
+                    variables.append(variable)
+                }            
             };
 
             int maxStackLevel := 0;
@@ -1373,70 +1378,60 @@ namespace expressions
 //            list.append(local);        
 //        }    
 //    }
-//
-//    public class AssigningExpression : Expression
-//    {
-//        ScopeVariable  variable;
-//        Expression     expression;  
-//        TapeFunction assigning;
-//        
+
+    public class AssigningExpression : Expression
+    {
+        ScopeIdentifier variable;
+        Expression      expression;  
+        TapeFunction    assigning;
+        
+        constructor(ScopeIdentifier variable, Expression expression)
+        {
+            this variable := variable;
+            this expression := expression
+        }
+
+        bool IsOperation = false;
+
+        int prepare(ExpressionScope scope)
+        {
+            assigning := scope.resolve(variable, true);
+            
+            ^ expression.prepare(scope)
+        }
+                
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {
+            expression.saveTo(list, scope, 0);
+            list.append(assigning);
+            if (index > 0) {
+                list.append(new SavingFunction(index));
+            }
+        }
+    }
+
+    public class DeclaringAndAssigningExpression : AssigningExpression
+    {
 //        constructor(ScopeVariable variable, Expression expression)
 //        {
 //            this variable := variable;
 //            this expression := expression
 //        }
-//
-//        constructor(string variable, Expression expression)
-//        {
-//            this variable := new ScopeVariable(variable);
-//            this expression := expression
-//        }
-//
-//        bool IsOperation = false;
-//
-//        prepare(ExpressionScope scope)
-//        {
-//            assigning := scope.resolve(variable, mode_asn);
-//            
-//            expression.prepare(scope)
-//        }
-//                
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {
-//            expression.saveTo(list, scope);
-//            list.append(assigning);
-//        }
-//    }
-//
-//    public class DeclaringAndAssigningExpression : AssigningExpression
-//    {
-//        constructor(ScopeVariable variable, Expression expression)
-//        {
-//            this variable := variable;
-//            this expression := expression
-//        }
-//
-//        constructor(string variable, Expression expression)
-//        {
-//            this variable := new ScopeVariable(variable);
-//            this expression := expression
-//        }
-//
-//        prepare(ExpressionScope scope)
-//        {
-//            scope.declare(variable);
-//            
-//            super.prepare(scope);
-//        }
-//                
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {
-//            new ConstantExpression(nilValue).saveTo(list, scope);
-//            
-//            super.saveTo(list, scope);
-//        }
-//    }
-//
+
+        constructor(string variable, Expression expression)
+        {
+            this variable := ScopeIdentifier.Variable(variable);
+            this expression := expression
+        }
+
+        int prepare(ExpressionScope scope)
+        {
+            scope.declare(variable);
+            
+            ^ super.prepare(scope);
+        }
+    }
+
 //    public class IdentifierExpression : Expression
 //    {
 //        ScopeVariable  name;
@@ -1500,7 +1495,7 @@ namespace expressions
 
         int prepare(ExpressionScope scope)
         {
-            local := scope.resolve(ident);
+            local := scope.resolve(ident, false);
             
             ^ 1
         }
@@ -1734,48 +1729,57 @@ namespace expressions
 //            }            
 //        }
 //    }
-//
-//    public class LoopExpression : Expression
-//    {
-//        Expression condition;
-//        Expression body;
-//        
-//        constructor(Expression condition, Expression body)
-//        {
-//            this condition := condition;
-//            this body := body
-//        }
-//
-//        prepare(ExpressionScope scope)
-//        {
-//            condition.prepare(scope);
-//            body.prepare(scope);
-//        }
-//                
-//        bool IsOperation = true;
-//                
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {
-//            int top := list.Length;
-//            
-//            condition.saveTo(list, scope);
-//            int bookmark := list.Length;
-//            list.append(cast TapeFunction(nilValue));
-//            body.saveTo(list, scope);
-//            
-//            int offs := top - list.Length - 1;
-//            
-//            list.append(new GoToFunction(offs));
-//            
-//            //offs := list.Length - bookmark - 1;
-//            offs := list.Length - bookmark;
-//            offs := offs - 1;
-//            
-//            list[bookmark] := new JumpIfNotFunction(offs);
-//            
-//            list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
-//        }
-//    }
+
+    public class LoopExpression : Expression
+    {
+        Expression condition;
+        Expression body;
+        
+        constructor(Expression condition, Expression body)
+        {
+            this condition := condition;
+            this body := body
+        }
+
+        int prepare(ExpressionScope scope)
+        {
+            int stackLevel1 := condition.prepare(scope);
+            int stackLevel2 := body.prepare(scope);
+            
+            if (stackLevel1 > stackLevel2)
+            {
+                ^ stackLevel1
+            }
+            else
+            {
+                ^ stackLevel2
+            }
+        }
+                
+        bool IsOperation = true;
+                
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {
+            int top := list.Length;
+            
+            condition.saveTo(list, scope, 0);
+            int bookmark := list.Length;
+            list.append(cast TapeFunction(nilValue));
+            body.saveTo(list, scope, 0);
+            
+            int offs := top - list.Length - 1;
+            
+            list.append(new GoToFunction(offs));
+            
+            //offs := list.Length - bookmark - 1;
+            offs := list.Length - bookmark;
+            offs := offs - 1;
+            
+            list[bookmark] := new JumpIfNotFunction(offs);
+            
+            list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
+        }
+    }
 
     public class MethodExpression : Expression
     {
@@ -1863,31 +1867,31 @@ namespace expressions
                 int Reserved 
                     = scope.Reserved;
 
-                TapeFunction resolve(ScopeIdentifier variable)
+                TapeFunction resolve(ScopeIdentifier variable, bool assignMode)
                 {
                     int len := parameters.Length;
                     for(int i := 0, i < len, i+=1) {
                         if (variable == parameters[i])
                         {
                             int index := i + 1;
-//                                
-//                                if (mode == mode_asn) 
-//                                {
-//                                    NotSupportedException.raise()
-//                                }
-//                                else 
-//                                {
-                                    ^ new LocalFunction(index)
-//                                };                                
+                                
+                            if (assignMode) 
+                            {
+                                NotSupportedException.raise()
+                            }
+                            else 
+                            {
+                                ^ new LocalFunction(index)
+                            };                                
                         }
                     };
                     
-                    ^ scope.resolve(variable)
+                    ^ scope.resolve(variable, assignMode)
                 }
         
-//                declare(ScopeVariable variable)
-//                {
-//                }            
+                declare(ScopeIdentifier variable)
+                {
+                }            
             };
     
             ^ body.prepare(methodScope);        
@@ -2047,31 +2051,31 @@ namespace expressions
                 int Reserved 
                     = scope.Reserved;
                 
-                TapeFunction resolve(ScopeIdentifier variable)
+                TapeFunction resolve(ScopeIdentifier variable, bool assignMode)
                 {
                     int len := parameters.Length;
                     for(int i := 0, i < len, i+=1) {
                         if (variable == parameters[i])
                         {
                             int index := i + 1;
-//                                
-//                                if (mode == mode_asn) 
-//                                {
-//                                    NotSupportedException.raise()
-//                                }
-//                                else 
-//                                {
-                                    ^ new LocalFunction(index)
-//                                };                                
+                            
+                            if (assignMode) 
+                            {
+                                NotSupportedException.raise()
+                            }
+                            else 
+                            {
+                                ^ new LocalFunction(index)
+                            };                                
                         }
                     };
                     
-                    ^ scope.resolve(variable)
+                    ^ scope.resolve(variable, assignMode)
                 }
         
-//                declare(ScopeVariable variable)
-//                {
-//                }            
+                declare(ScopeIdentifier variable)
+                {
+                }            
             };
 
             ^ body.prepare(closureScope);

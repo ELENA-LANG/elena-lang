@@ -94,3 +94,9 @@ A: Yes, ELENA is a pure polymorphic object oriented language. All the methods (e
  
 Q: is elena pure object-oriented? 
 A: yes, ELENA is pure object-oriented. Everything is an object : numbers, functions, literals and so on
+
+Q: history
+A: I started the project back in 2000. In 2006 the first version was published at sourceforge. Since 2010 I have hosted it at GitHub. 
+Initially it had a syntax similar to Smalltalk. But I found out it was not very convenient, so from 2015 (3.0) its syntax was modified. 
+Currently I'm working on version 6.0, which will support both x86 and x86-64 and potentially ppc64le.
+The language was significantly modified during this time (probably more than 3 times).
