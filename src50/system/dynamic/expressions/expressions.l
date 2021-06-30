@@ -304,6 +304,7 @@ namespace expressions
             // first pass - preallocating sub expr 
             if (target.IsOperation && len > 0) {
                 int tempVar := scope.allocTempVariable();
+                tempVar += scope.ScopeLevel;
                 target.saveTo(list, scope, 0);
                 list.append(new AssigningFunction(tempVar));
                 
@@ -313,7 +314,8 @@ namespace expressions
             for (int i := 0, i < len, i += 1) {
                 if (arguments[i].IsOperation) {
                     int tempVar := scope.allocTempVariable();
-                    
+                    tempVar += scope.ScopeLevel;
+                                    
                     arguments[i].saveTo(list, scope, 0);
                     list.append(new AssigningFunction(tempVar));
                 

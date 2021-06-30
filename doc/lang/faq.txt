@@ -100,3 +100,4 @@ A: I started the project back in 2000. In 2006 the first version was published a
 Initially it had a syntax similar to Smalltalk. But I found out it was not very convenient, so from 2015 (3.0) its syntax was modified. 
 Currently I'm working on version 6.0, which will support both x86 and x86-64 and potentially ppc64le.
 The language was significantly modified during this time (probably more than 3 times).
+
