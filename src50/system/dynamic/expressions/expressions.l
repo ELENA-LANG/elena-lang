@@ -257,10 +257,10 @@ namespace expressions
 //                                          
 //        static Expression Statement(params Expression[] expressions)
 //            = StatementExpression.new(params expressions);
-//              
-//        static Expression If(Expression cond, Expression body)
-//            = new IfExpression(cond, body);
-//              
+              
+        static Expression If(Expression cond, Expression body)
+            = new IfExpression(cond, body);
+              
 //        static Expression If(Expression cond, Expression body, Expression elseBody)
 //            = new IfExpression(cond, body, elseBody);
               
@@ -1672,65 +1672,72 @@ namespace expressions
         }
     }
 
-//    public class IfExpression : Expression
-//    {
-//        Expression condition;
-//        Expression body;
-//        Expression elseBody;
-//        
-//        constructor(Expression condition, Expression body)
-//        {
-//            this condition := condition;
-//            this body := body;
-//        }
-//
-//        constructor(Expression condition, Expression body, Expression elseBody)
-//        {
-//            this condition := condition;
-//            this body := body;
-//            this elseBody := elseBody;
-//        }
-//
-//        prepare(ExpressionScope scope)
-//        {
-//            condition.prepare(scope);
-//            body.prepare(scope);            
-//            elseBody.?prepare(scope);
-//        }
-//                
-//        bool IsOperation = true;
-//
-//        saveTo(List<TapeFunction> list, ExpressionScope scope)
-//        {
-//            condition.saveTo(list, scope);
-//            int bookmark := list.Length;
-//            list.append(cast TapeFunction(nilValue));
-//            body.saveTo(list, scope);
-//            if (elseBody != nil) {
-//                int bookmark2 := list.Length;
-//                list.append(cast TapeFunction(nilValue));
-//                
-//                //int offs := list.Length - bookmark - 1;
-//                int offs := list.Length - bookmark;
-//                offs := offs - 1;
-//                list[bookmark] := new JumpIfNotFunction(offs);
-//                
-//                elseBody.saveTo(list, scope);
-//                
-//                offs := list.Length - bookmark2;
-//                offs := offs - 1;                
-//                list[bookmark2] := new GoToFunction(offs);
-//            }
-//            else {
-//                //int offs := list.Length - bookmark - 1;
-//                int offs := list.Length - bookmark;
-//                offs := offs - 1;
-//                
-//                list[bookmark] := new JumpIfNotFunction(offs);
-//                list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
-//            }            
-//        }
-//    }
+    public class IfExpression : Expression
+    {
+        Expression condition;
+        Expression body;
+        Expression elseBody;
+        
+        constructor(Expression condition, Expression body)
+        {
+            this condition := condition;
+            this body := body;
+        }
+
+        constructor(Expression condition, Expression body, Expression elseBody)
+        {
+            this condition := condition;
+            this body := body;
+            this elseBody := elseBody;
+        }
+
+        int prepare(ExpressionScope scope)
+        {
+            int max := condition.prepare(scope);
+            int current := body.prepare(scope);            
+            if (current > max)
+                max := current;
+                
+            current := elseBody.?prepare(scope) ?? 0;
+            if (current > max)
+                max := current;
+                
+            ^ max
+        }
+                
+        bool IsOperation = true;
+
+        saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+        {
+            condition.saveTo(list, scope, 0);
+            int bookmark := list.Length;
+            list.append(cast TapeFunction(nilValue));
+            body.saveTo(list, scope);
+            if (elseBody != nil) {
+                int bookmark2 := list.Length;
+                list.append(cast TapeFunction(nilValue));
+                
+                //int offs := list.Length - bookmark - 1;
+                int offs := list.Length - bookmark;
+                offs := offs - 1;
+                list[bookmark] := new JumpIfNotFunction(offs);
+                
+                elseBody.saveTo(list, scope);
+                
+                offs := list.Length - bookmark2;
+                offs := offs - 1;                
+                list[bookmark2] := new GoToFunction(offs);
+            }
+            else {
+                //int offs := list.Length - bookmark - 1;
+                int offs := list.Length - bookmark;
+                offs := offs - 1;
+                
+                list[bookmark] := new JumpIfNotFunction(offs);
+                list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
+            }
+        }
+    }
 
     public class LoopExpression : Expression
     {

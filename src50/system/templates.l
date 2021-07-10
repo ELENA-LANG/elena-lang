@@ -235,6 +235,7 @@ public interface<T>
     {
         expr        
     }
+    else nil
 }
 
 // .!
