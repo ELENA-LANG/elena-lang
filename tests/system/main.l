@@ -38,5 +38,7 @@ public program()
     //nilDispatcherTest();
     //templateExtensionTest();
 
+    ifExpressionTest();
+
     console.writeLine:"--- Passed ---"
 }

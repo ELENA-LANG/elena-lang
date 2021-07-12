@@ -261,8 +261,8 @@ namespace expressions
         static Expression If(Expression cond, Expression body)
             = new IfExpression(cond, body);
               
-//        static Expression If(Expression cond, Expression body, Expression elseBody)
-//            = new IfExpression(cond, body, elseBody);
+        static Expression If(Expression cond, Expression body, Expression elseBody)
+            = new IfExpression(cond, body, elseBody);
               
         static Expression Loop(Expression cond, Expression body)
             = new LoopExpression(cond, body);
@@ -1712,7 +1712,7 @@ namespace expressions
             condition.saveTo(list, scope, 0);
             int bookmark := list.Length;
             list.append(cast TapeFunction(nilValue));
-            body.saveTo(list, scope);
+            body.saveTo(list, scope, 0);
             if (elseBody != nil) {
                 int bookmark2 := list.Length;
                 list.append(cast TapeFunction(nilValue));
@@ -1722,7 +1722,7 @@ namespace expressions
                 offs := offs - 1;
                 list[bookmark] := new JumpIfNotFunction(offs);
                 
-                elseBody.saveTo(list, scope);
+                elseBody.saveTo(list, scope, 0);
                 
                 offs := list.Length - bookmark2;
                 offs := offs - 1;                
