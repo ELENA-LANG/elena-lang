@@ -39,6 +39,7 @@ public program()
     //templateExtensionTest();
 
     ifExpressionTest();
+    loopExpressionTest();
 
     console.writeLine:"--- Passed ---"
 }

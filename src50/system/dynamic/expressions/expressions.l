@@ -227,9 +227,9 @@ namespace expressions
 //           
 //        static Expression Assigning(ScopeVariable variable, Expression expr)
 //            = new AssigningExpression(variable, expr);
-//              
-//        static Expression Assigning(string variable, Expression expr)
-//            = new AssigningExpression(new ScopeVariable(variable), expr);
+
+        static Expression Assigning(string variable, Expression expr)
+            = new AssigningExpression(variable, expr);
               
         static Expression DeclareAndAssigning(string variable, Expression expr)
             = new DeclaringAndAssigningExpression(variable, expr);
@@ -691,6 +691,9 @@ namespace expressions
         
                 declare(ScopeIdentifier variable)
                 {
+                    int index := variables.Length + 1;
+                    scope.reserve(index);
+                    
                     variables.append(variable)
                 }            
             };
@@ -1390,6 +1393,12 @@ namespace expressions
         constructor(ScopeIdentifier variable, Expression expression)
         {
             this variable := variable;
+            this expression := expression
+        }
+
+        constructor(string variable, Expression expression)
+        {
+            this variable := ScopeIdentifier.Variable(variable);
             this expression := expression
         }
 

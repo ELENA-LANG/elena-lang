@@ -834,3 +834,58 @@ public ifExpressionTest()
 
     console.writeLine("done")    
 }
+
+public loopExpressionTest()
+{
+    console.write("loopExpressionTest..");
+    
+    auto c := DynamicSingleton.new(
+                Expression.Method(
+                   "eval",
+                   Expression.CodeBlock(      
+                      Expression.DeclareAndAssigning(
+                        "i",
+                        Expression.Constant(0)
+                      ),          
+                      Expression.DeclareAndAssigning(
+                        "k",
+                        Expression.Constant(0)
+                      ),          
+                      Expression.Loop(                      
+                          Expression.MessageCall(
+                            new Message("less[2]"),
+                            Expression.Variable("i"),
+                            Expression.Variable("n")
+                          ),                             
+                          Expression.CodeBlock(
+                            Expression.Assigning(
+                                "k",
+                                Expression.MessageCall(
+                                    new Message("add[2]"),                          
+                                    Expression.Variable("k"),
+                                    Expression.Constant(2)
+                                )
+                            ), 
+                            Expression.Assigning(
+                                "i",
+                                Expression.MessageCall(
+                                    new Message("add[2]"),                          
+                                    Expression.Variable("i"),
+                                    Expression.Constant(1)
+                                )
+                            ) 
+                          )                     
+                      ),
+                      Expression.Variable("k")
+                   ),
+                   ScopeIdentifier.Variable("n")
+                )
+             );
+
+    var o := c.compile();
+
+    Assert.ifEqual(o.eval(4), 8);
+    Assert.ifEqual(o.eval(0), 0);
+
+    console.writeLine("done")    
+}
