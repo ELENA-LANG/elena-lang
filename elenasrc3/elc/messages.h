@@ -1,0 +1,51 @@
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA command-Line Compiler
+//
+//		Copmpiler messages 
+//
+//                                             (C)2021-2022, by Aleksey Rakov
+//---------------------------------------------------------------------------
+
+namespace elena_lang
+{
+   constexpr auto MessageLength = 35;
+   const Pair<int, const char*> Messages[MessageLength] =
+   {
+      {errDuplicatedSymbol, errMsgDuplicatedSymbol},
+      {errDuplicatedDictionary, errMsgDuplicatedDictionary},
+      {errInvalidIntNumber, errMsgInvalidIntNumber},
+      {errCannotEval, errMsgCannotEval},
+      {errUnresovableLink, errMsgUnresovableLink},
+      {errCannotCreate, errMsgCannotCreate},
+      {errInvalidModule, errMsgInvalidModule},
+      {errUnknownModule, errMsgUnknownModule},
+      {errInvalidFile, errMsgInvalidFile},
+      {errInvalidModuleVersion, errMsgInvalidModuleVersion},
+      {errInvalidSyntax, errMsgInvalidSyntax},
+      {errEmptyTarget, errMsgEmptyTarget},
+      {errFatalError, errMsgFatalError},
+      {errFatalLinker, errMsgFatalLinkerError},
+      {errNotImplemented, errMsgNotImplemented},
+      {wrnSyntaxFileNotFound, wrnMsgSyntaxFileNotFound},
+      {wrnInvalidConfig, wrnMsgInvalidConfig},
+      {errParserNotInitialized, errMsgParserNotInitialized},
+      {errProjectAlreadyLoaded, errMsgProjectAlreadyLoaded},
+      {errCommandSetAbsent, errMsgCommandSetAbsent},
+      {errReadOnlyModule, errMsgReadOnlyModule},
+      {errReferenceOverflow, errMsgReferenceOverflow},
+      {errUnknownObject, errMsgUnknownObject},
+      {wrnUnknownHint, wrnMsgUnknownHint},
+      {wrnInvalidHint, wrnMsgInvalidHint},
+      {errInvalidHint, errMsgInvalidHint},
+      {errInvalidOperation, errMsgInvalidOperation},
+      {errNotDefinedBaseClass, errMsgNotDefinedBaseClass},
+      {errUnknownBaseClass, errMsgUnknownBaseClass},
+      {errIllegalMethod, errMsgIllegalMethod},
+      {errDuplicatedMethod, errMsgDuplicatedMethod},
+      {errNoBodyMethod, errMsgNoBodyMethod},
+      {errUnknownTemplate, errMsgUnknownTemplate},
+      {errDuplicatedDefinition, errMsgDuplicatedDefinition},
+      {errNoDispatcher, errMsgNoDispatcher}
+   };
+
+}

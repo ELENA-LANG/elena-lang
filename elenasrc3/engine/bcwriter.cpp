@@ -1,0 +1,274 @@
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler Engine
+//
+//		This file contains ELENA byte code compiler class implementation.
+//
+//                                             (C)2021-2022, by Aleksey Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "bcwriter.h"
+
+using namespace elena_lang;
+
+typedef ByteCodeWriter::TapeScope TapeScope;
+
+inline BuildKey operator | (const BuildKey& l, const BuildKey& r)
+{
+   return (BuildKey)((uint32_t)l | (uint32_t)r);
+}
+
+inline BuildKey operator & (const BuildKey& l, const BuildKey& r)
+{
+   return (BuildKey)((uint32_t)l & (uint32_t)r);
+}
+
+inline BuildKey operator ~ (BuildKey arg1)
+{
+   return (BuildKey)(~static_cast<unsigned int>(arg1));
+}
+
+inline bool testMask(BuildKey key, BuildKey mask)
+{
+   return (key & mask) == mask;
+}
+
+void openFrame(CommandTape& tape, BuildNode& node, TapeScope& scope)
+{
+   int reservedManaged = scope.reserved;
+   int reservedUnmanaged = scope.reservedN;
+
+   tape.write(ByteCode::OpenIN, reservedManaged, reservedUnmanaged);
+}
+
+void closeFrame(CommandTape& tape, BuildNode& node, TapeScope& scope)
+{
+   int reservedUnmanaged = scope.reservedN;
+
+   tape.write(ByteCode::CloseN, reservedUnmanaged);
+}
+
+void nilReference(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::SetR, 0);
+}
+
+void symbolCall(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::CallR, node.arg.reference | mskSymbolRef);
+}
+
+void classReference(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskVMTRef);
+}
+
+void sendOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int vmtIndex = node.findChild(BuildKey::Index).arg.value;
+
+   tape.write(ByteCode::MovM, node.arg.reference);
+   tape.write(ByteCode::CallVI, vmtIndex);
+}
+
+void exit(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::Quit);
+}
+
+void savingInStack(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::StoreSI, node.arg.value);
+}
+
+void assigningLocal(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::StoreFI, node.arg.value);
+}
+
+void getLocal(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::PeekFI, node.arg.value);
+}
+
+void creatingClass(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   ref_t typeRef = node.findChild(BuildKey::Type).arg.reference;
+
+   tape.write(ByteCode::NewIR, node.arg.value, typeRef | mskVMTRef);
+}
+
+ByteCodeWriter::Saver commands[12] =
+{
+   nullptr,
+   openFrame,
+   closeFrame,
+   nilReference,
+   symbolCall,
+   classReference,
+   sendOp,
+   exit,
+   savingInStack,
+   assigningLocal,
+   getLocal,
+   creatingClass
+};
+
+// --- ByteCodeWriter ---
+
+ByteCodeWriter :: ByteCodeWriter(LibraryLoaderBase* loader)
+{
+   _commands = commands;
+   _loader = loader;
+}
+
+//void ByteCodeWriter :: saveReversedTree(CommandTape& tape, BuildNode node)
+//{
+//   pos_t counter = BuildTree::countChildren(node, BuildKey::CommandMask);
+//   BuildNode current = node.firstChild(BuildKey::CommandMask);
+//   while (current != BuildKey::None) {
+//      counter--;
+//      _commands[(int)(current.key & ~BuildKey::CommandMask)](tape, current);
+//      tape.write(ByteCode::StoreSI, counter);
+//
+//      current = current.nextNode(BuildKey::CommandMask);
+//   }
+//}
+
+void ByteCodeWriter :: importTree(CommandTape& tape, BuildNode node, Scope& scope)
+{
+   ustr_t referenceName = scope.moduleScope->resolveFullName(node.arg.reference);
+   SectionInfo importInfo;
+   if (isWeakReference(referenceName)) {
+      importInfo = _loader->getSection(ReferenceInfo(scope.moduleScope->module, referenceName), mskProcedureRef, false);
+   }
+   else importInfo = _loader->getSection(ReferenceInfo(referenceName), mskProcedureRef, false);
+
+   tape.import(importInfo.module, importInfo.section, true, scope.moduleScope);
+}
+
+void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope)
+{
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      switch (current.key) {
+         case BuildKey::Import:
+            importTree(tape, current, *tapeScope.scope);
+            break;
+         default:
+            _commands[(int)current.key](tape, current, tapeScope);
+            break;
+      }
+   
+      current = current.nextNode();
+   }
+
+}
+
+void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope)
+{
+   auto section = moduleScope->mapSection(node.arg.reference | mskSymbolRef, false);
+   MemoryWriter writer(section);
+
+   Scope scope = { nullptr, &writer };
+
+   saveProcedure(node, scope);
+}
+
+void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope)
+{
+   TapeScope tapeScope = {};
+   tapeScope.reserved = node.findChild(BuildKey::Reserved).arg.value;
+   tapeScope.reservedN = node.findChild(BuildKey::ReservedN).arg.value;
+   tapeScope.scope = &scope;
+
+   CommandTape tape;
+   saveTape(tape, node.findChild(BuildKey::Tape), tapeScope);
+
+   //// optimize
+   //optimizeTape(tape);
+
+   MemoryWriter* code = scope.code;
+   pos_t sizePlaceholder = code->position();
+   code->writePos(0);
+
+   // create byte code sections
+   tape.saveTo(code);
+
+   pos_t endPosition = code->position();
+   pos_t size = endPosition - sizePlaceholder - sizeof(pos_t);
+
+   code->seek(sizePlaceholder);
+   code->writePos(size);
+   code->seek(endPosition);
+}
+
+void ByteCodeWriter :: saveVMT(BuildNode node, Scope& scope)
+{
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      if (current == BuildKey::Method) {
+         MethodEntry entry = { current.arg.reference, scope.code->position() };
+         scope.vmt->write(&entry, sizeof(MethodEntry));
+
+         saveProcedure(current, scope);
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope)
+{
+   // initialize bytecode writer
+   MemoryWriter codeWriter(moduleScope->mapSection(node.arg.reference | mskClassRef, false));
+
+   auto vmtSection = moduleScope->mapSection(node.arg.reference | mskVMTRef, false);
+   MemoryWriter vmtWriter(vmtSection);
+
+   vmtWriter.writeDWord(0);                     // save size place holder
+   pos_t classPosition = vmtWriter.position();
+
+   // copy class meta data header + vmt size
+   MemoryReader metaReader(moduleScope->mapSection(node.arg.reference | mskMetaClassInfoRef, true));
+   ClassInfo info;
+   info.load(&metaReader);
+
+   // reset VMT length
+   info.header.count = 0;
+   for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
+      ////NOTE : ingnore statically linked methods
+      //if (!test(m_it.key(), STATIC_MESSAGE))
+      info.header.count++;
+   }
+
+   vmtWriter.write(&info.header, sizeof(ClassHeader));  // header
+
+   Scope scope = { &vmtWriter, &codeWriter, moduleScope };
+   saveVMT(node, scope);
+
+   pos_t size = vmtWriter.position() - classPosition;
+   vmtSection->write(classPosition - 4, &size, sizeof(size));
+}
+
+void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope)
+{
+   BuildNode node = tree.readRoot();
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      switch (current.key) {
+         case BuildKey::Symbol:
+            saveSymbol(current, moduleScope);
+            break;
+         case BuildKey::Class:
+            saveClass(current, moduleScope);
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}

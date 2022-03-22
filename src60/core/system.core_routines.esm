@@ -1,0 +1,23 @@
+//        ELENA Language 6.0
+//      inline system library
+
+procedure __object_dispatcher
+
+  redirect
+
+end
+
+symbol sta_start
+
+  open header [arg1],[envptr]
+  
+  mov         env
+  save        dp:envptr
+  set         dp:envptr
+  store       fp:arg1
+
+  call extern:InitializeSTA (*arg1, marray:"$forwards'meta$startUpSymbols")
+
+  close       []
+
+end

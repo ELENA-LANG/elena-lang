@@ -49,6 +49,7 @@ procedure % INVOKER
 
   call eax
   add  esp, 12        // ; clear FrameHeader+arg
+  xor  eax, eax
 
   // ; restore registers
   pop  ebp

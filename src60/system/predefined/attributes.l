@@ -1,0 +1,19 @@
+#new attributesSymbols;
+
+/// visibility:
+#let attributesSymbols["public"]   := 80004001h;
+#let attributesSymbols["private"]  := 80004002h;
+
+/// scope:
+#let attributesSymbols["class"]       := 80001001h;
+#let attributesSymbols["symbol"]      := 80001003h;
+#let attributesSymbols["constructor"] := 80001004h;
+#let attributesSymbols["method"]      := 80001008h;
+#let attributesSymbols["static"]      := 8000100Fh;
+#let attributesSymbols["dispatch"]    := 80001013h;
+#let attributesSymbols["intern"]      := 80001016h;
+#let attributesSymbols["forward"]     := 80001017h;
+#let attributesSymbols["inline"]      := 80001025h;
+
+/// primitive types
+#let attributesSymbols["__string"]    := 80000801h;

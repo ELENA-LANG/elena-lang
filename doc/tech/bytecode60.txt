@@ -1,0 +1,101 @@
+ELENA byte codes (or ecodes)
+==============================
+
+ ELENA virtual machine registers:
+ --------------------------------
+   f(p)   - frame pointer     (positive values - pointing to the current frame, 
+                               negative - to the previous frame)
+   s(p)   - stack pointer     (only positive)
+
+   acc    - accumulator      
+
+   index  - data accumulator 
+
+   x86    : fp - ebp, sp - esp, acc - ebx, index - eax, sp[0] - esi, sp[1] - edx
+   x86_64 : fp - rbp, sp - rsp, acc - rbx, index - rax, sp[0] - r10, sp[1] - rdx, sp[2] - r8, sp[3] - r9, r15 - presaved
+   arm64  : fp - x29, sp - x31, index - x9, acc - x10, sp[0] - x0, sp[1] - x1, sp[2] - x2, sp[3] - x3
+   ppc64  : fp - r31, sp - r1, index - r14, acc - r15, sp[0] - r3, sp[1] - r4, sp[2] - r5, sp[3] - r6
+
+   NOTE : content of shadow stack is not defined after the call operations 
+   NOTE : the preallocared stack should contains at least two elements for some operations
+
+   prefix : array, marray
+
+
+ Frame operations:
+ -----------------              
+   open i, n                - save the last frame and open the new frame ; allocating both
+                              unmanaged (n) and managed stack (i * 4 / 8);
+                              should be used only in thr program main body; 
+                              mnemonic: open [a,b,c,...],[$a,$b,$c,...]
+
+   open header i, n         - init the frame header offset ; allocating both
+                              unmanaged (n) and managed stack (i * 4 / 8);
+                              it should be used only in thread program main body; 
+                              mnemonic: open header [a,b,c,...],[$a,$b,$c,...]
+
+   close n                  - restore the previous frame;
+                              should be paired with open;
+                              it should be only one command per procedure ; 
+
+   quit                     - terminates the procedure;
+                              acc / index are not affected
+
+
+ Register operations:
+ --------------------
+   load                     - index := [acc] 
+
+   mov env                  - %SYSTEM_ENV => index 
+
+   mov mssg:m               - index := m
+
+   set {prefix}:r           - r => acc
+
+   set dp:i                 - dp[i] => acc
+
+
+ Call operations:
+ ----------------
+   call extern:r, n         - call an external routine
+                              mnemonic: call {extern}:r args
+
+   call symbol:r            - calls the procedure;
+                              acc contains the result
+
+   call vt:i                - call acc::VMT[i] method
+
+
+ Stack operations:
+ -----------------                                           
+   alloc i                  - sp += i ; reserve and fill with zeros; 
+                              new sp value is aligned to 2 in x86-64 mode
+
+   free i                   - sp -= i ; release the stack; 
+                              new sp value is aligned to 2 in x86-64 mode
+
+   load fp:i                - index := fp[i]
+
+   mov sp:i1, fp:i2,        - sp[i1] := fp[i2] 
+
+   peek fp:i                - acc := fp[i]
+
+   save dp:disp             - dp[disp]  := index
+
+   save sp:disp             - sp[disp]  := index
+
+   store fp:i               - fp[i] := acc
+
+   store sp:i               - sp[i] := acc
+
+   xstore sp:i, {prefix:}r  - sp[i] := r
+
+
+ Object operations:
+ ------------------
+   redirect                 - search acc::VMT for the message in index;
+                              if found jumps to it; binary search is used ; index, acc presaved
+
+   new i, {prefix}:r        - create the object with the specified
+                              number of fields;
+                              out: acc contains the class instance, index - undefined

@@ -71,7 +71,7 @@ _ELENA_::pos_t defineStyle(text_c state, _ELENA_::pos_t style)
       case lexKeyword:
          return STYLE_KEYWORD;
       case lexMessage:
-         return STYLE_MESSAGE;
+         return STYLE_DEFAULT/*STYLE_MESSAGE*/;
       case lexOperator:
       case lexBrackets:
       case lexStick:

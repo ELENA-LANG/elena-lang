@@ -3,10 +3,85 @@ In development:
 ------         
 
   [development]
+    ### EPOCH: elena 6.0 - redux ###
+    === Sprint 3 ===
+    === Sprint 4 ===
+    --- elena redux ---
+    * singleton
+    * methods with argmuments list
+    * code in the method body
+    * print message using external routine
+    * for windows x86-64 allocate shadow memory
+    * for linux amd64 allocate shadow memory
+    * redirect handler : throw an exception on unhandled message
+    * hello world sample
+    --- ide redux ---
+    * editor - textview tab bar
+    * editor - correctly destroy tabbar / frame / view
+    * editor - open / close source files
+    * editor - scrollers
+    * ide debugger
+    === Sprint 5 ===
+    --- elena redux ---
+    * create an object (GC)
+    * create an object in sandbox - x86, x86-64, i386, amd64, ppc64le, arm64
+    === Sprint 6 ===
+    --- elena redux ---
+    * api documentation
+
+------                                                           
+Pipeline:
+------   
+    --- output redux ---
+    --- elena redux ---
+    --- ide redux ---
+    --- docs / tutorials ---
+    --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
+
+    * openin / openheaderin - should not affect index
+    * x86 redirect - saving edx - its value is undefined - special version for sending a message with zero or single 
+      argument
+    * compiler - calling a constructor method directly
+    * compiler - constructor - fill newly created object with zerros
+    * compiler - if the method has no call operarion, no need to set arg length
+
+    * asmc : duplicate inline command
+    * ide : editor
+    * ide : project view
+    * ide : compiling
+    * ide : save last open file / project
+    * ide : project settings
+    * ide : styling source code
+    * ide : font / size - to make it less blur
+    * iteration 3 : call a message / closure; debugger
+    * iteration 3 : test Win32, Win64, LinuxI386, LinuxAmd64, ppc64, arm64
+    * iteration 3 : introduce memoryhashmap instead of normal maps, replace all default maps with optimized ones
+    * iteration 4 : hello world sample
+    * iteration 5 : hello world vm client sample
+    * iteration 6 : support preloaded symbols
+    * ppc64 newir : save size as dword
+    * redux : add output convertion for the method without the explicit return statement
+    * redux : protected constructor
+
+    * optimization : openheader / open - there should be an optimized version for n < 4 - with reserved raw stack
+    * fix : for ppc64 / arm64 - there should be alternative version to deal with args more than 9 / 12 / 16 bits
+
+    * optimization - call method directly
+    * optimization - openin - increase number of optimization - open 4,0; open 1,n; open 2,n; open 3,n; open 4,n
+    * modules - add reference cache
+    * elenavm support : windows / linus, x86, ppc64le, arm64
+    * setr - 32 / 64 references (two addressing modes)
+
+    * win64 executable: 32bit opcodes for assigning can be used
+
+    * elena 6.0 cool features : compile type operator overriding
+
     * #206 : interpreter sample - x86, x86-64
 
     - migrate the rest of system'io module
     + support s += s2 operation;
+
+    * #386 : writeRef32Hi, writeRef32Hi - for non virtual mode - should offset the address to be correctly mapped to opcode
 
     * globals
     * yield metods
@@ -47,7 +122,6 @@ In development:
     * uncomment fieldinit routines, yield methods
     * uncomment all code
 
-    + linux : 64 bit mode
     + #319 : linux : MT
 
     + optimiation : assinging int constant, 
@@ -68,8 +142,6 @@ In development:
     + QuckSorting : optimize the code - built-in branching should be used 
     + extension with primitive arrays - no need to box
     + new attribute - constant operation - do indicate that the class itself is not changed
-
-    * #206 : linux i386 / amd64
 
     * do not save the external operation if the result is not assigned or passed as an argument
     * optimization - duplicate assigning : external call, message call
@@ -134,7 +206,6 @@ In development:
 
     * do we need win64_pointers.l / win32_pointers.l and win64_strings.l / win32_strings.l or there is no difference?
     * #280 64bit tool set
-    * #443 : power8
   
     + support run-time compilation
 
@@ -196,15 +267,6 @@ In development:
     * test why analog example need large stack size
     + optimization : merge several push 0, into single operation
 
-  [documentation]
-    * docs
-
-  [tutorials]
-    * multi-return
-
-------                                                           
-Pipeline:
-------   
     * linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
     * external ops: operation inside external call - see HMENU.append
     * chat
@@ -213,6 +275,9 @@ Pipeline:
     * upndown
     * refactoring : classROp.setField should be either internal or not available at all (because
                     it is not possible to enforce types)
+
+    * multi-return
+    * docs
 
     * api doc :  static method descriptions;
                  field descriptions;

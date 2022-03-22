@@ -1,0 +1,37 @@
+<configuration>
+  <platform key="Linux_I386">
+     <project>
+        <output>/usr/lib/elena/lib60</output>
+     </project>
+  </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <output>/usr/lib/elena/lib60_64</output>
+     </project>
+  </platform>
+  <platform key="Linux_PPC64le">
+     <project>
+        <output>/usr/lib/elena/lib60_64</output>
+     </project>
+  </platform>
+  <platform key="Linux_ARM64">
+     <project>
+        <output>/usr/lib/elena/lib60_64</output>
+     </project>
+  </platform>
+  <project>
+     <namespace>system</namespace>
+     <template>lib60</template>
+  </project>
+  <files>
+     <module name="predefined">
+        <include>predefined/attributes.l</include>
+        <include>predefined/predefined.l</include>
+     </module>
+     <module>
+        <include>base.l</include>
+        <include>object.l</include>
+        <include>app.l</include>
+     </module>
+  </files>
+</configuration>

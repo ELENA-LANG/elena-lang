@@ -1,0 +1,27 @@
+<configuration>
+  <platform key="Win_x86">
+     <project>
+        <output>..\..\lib60</output>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <output>..\..\lib60_64</output>
+     </project>
+  </platform>
+  <project>
+     <namespace>system</namespace>
+     <template>lib60</template>
+  </project>
+  <files>
+     <module name="predefined">
+        <include>predefined\attributes.l</include>
+        <include>predefined\predefined.l</include>
+     </module>
+     <module>
+        <include>base.l</include>
+        <include>object.l</include>
+        <include>app.l</include>
+     </module>
+  </files>
+</configuration>

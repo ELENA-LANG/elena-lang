@@ -1,0 +1,86 @@
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Common Library
+//
+//		This header contains the declaration of ELENA Engine Data Memory dump
+//		classes.
+//                                             (C)2021-2022, by Aleksey Rakov
+//---------------------------------------------------------------------------
+
+#ifndef DUMP_H
+#define DUMP_H
+
+namespace elena_lang
+{
+
+   // --- MemoryDump ---
+
+   class MemoryDump : public MemoryBase
+   {
+   protected:
+      void* _buffer;
+      pos_t _total;
+      pos_t _used;
+
+      void resize(pos_t size);
+
+   public:
+      void reserve(pos_t size);
+
+      pos_t length() const override { return _used; }
+
+      bool write(pos_t position, const void* s, pos_t length) override;
+
+      bool read(pos_t position, void* s, pos_t length) override;
+
+      void* get(pos_t position) const override;
+
+      ref_t getRef(pos_t position)
+      {
+         ref_t retVal = 0;
+         read(position, &retVal, sizeof(ref_t));
+
+         return retVal;
+      }
+
+      pos_t getPos(pos_t position)
+      {
+         pos_t retVal = 0;
+         read(position, &retVal, sizeof(pos_t));
+
+         return retVal;
+      }
+
+      void writePos(pos_t position, pos_t value)
+      {
+         write(position, &value, sizeof(pos_t));
+      }
+
+      void writeUInt(pos_t position, unsigned int value)
+      {
+         write(position, &value, sizeof(unsigned int));
+      }
+
+      void load(StreamReader& reader, pos_t length);
+
+      void clear()
+      {
+         _used = 0;
+      }
+
+      void trim(pos_t position)
+      {
+         if (position < _used) {
+            _used = position;
+         }
+      }
+
+      MemoryDump();
+      MemoryDump(const MemoryDump& copy);
+      virtual ~MemoryDump()
+      {
+         freestr((char*)_buffer);
+      }
+   };
+}
+
+#endif // DUMP_H

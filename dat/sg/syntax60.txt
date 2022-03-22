@@ -1,0 +1,170 @@
+__define eof                 8195;
+__define identifier         12292;
+__define integer            12293;
+__define string             12294;
+__define hexinteger         12295;
+__define reference          12296;
+
+__define DECLARATION         4096;
+__define BLOCK               7184;
+__define NO_BODY             7185;
+__define DICTIONARY          4128;
+__define META_STATEMENT      4129;
+__define INCLUDE_STATEMENT   4130;
+__define MESSAGE             4176;
+__define EXPRESSION          6192;
+__define OBJECT              4145;
+__define INDEXER_OPERATION   6209;
+__define ASSIGN_OPERATION    6210;
+__define ADDITION_ASSIGNMENT 6211;
+__define MESSAGE_OPERATION   6225;
+__define POSTFIX             4192;
+__define TEMPLATE_ARG        4208;
+
+START ::= 
+        NEXT_DECLARATION;
+
+NEXT_DECLARATION ::=
+        DECLARATION NEXT_DECLARATION
+        | "#new" DICTIONARY NEXT_DECLARATION
+        | "#let" META_STATEMENT NEXT_DECLARATION
+        | "#include" INCLUDE_STATEMENT NEXT_DECLARATION
+        | eof;
+
+SUB_DECLARATIONS ::=
+        DECLARATION SUB_DECLARATIONS
+        | "#new" DICTIONARY SUB_DECLARATIONS
+        | "#let" META_STATEMENT SUB_DECLARATIONS
+        | "#include" INCLUDE_STATEMENT SUB_DECLARATIONS
+	| eps;	
+
+DECLARATION ::=
+        identifier ISCOPE_R;
+
+ISCOPE_R ::=
+        identifier ISCOPE_R
+	| TEMPLATE_BRACKETS SCOPE_OPT
+        | SCOPE_OPT;
+
+DICTIONARY ::=
+        identifier IDICTIONARY_R DECLARATION_END;
+
+IDICTIONARY_R ::=
+        identifier IDICTIONARY_R
+        | eps;
+
+SCOPE ::=
+        "=" EXPRESSION DECLARATION_END
+	| "{" SUB_DECLARATIONS "}"
+	| "(" PARAMETERS ")" METHOD_BODY_OPT
+        | DECLARATION_END;
+
+SCOPE_OPT ::=
+	SCOPE
+	| ":" POSTFIX POSTFIXES SCOPE;
+
+POSTFIXES ::=
+	"," POSTFIX POSTFIXES
+	| eps;
+
+POSTFIX ::=
+	identifier IPOSTFIX_R;
+
+IPOSTFIX_R ::=
+	TEMPLATE_BRACKETS
+	| eps;
+
+METHOD_BODY_OPT ::=
+	METHOD_BODY
+	| ":" POSTFIX POSTFIXES METHOD_BODY;
+
+METHOD_BODY ::=
+	BLOCK
+	| NO_BODY;
+
+NO_BODY ::=
+	";";
+
+BLOCK ::= 
+	"{" STATEMENTS "}";
+
+STATEMENTS ::=
+	ROOT_EXPRESSION STATEMENTS
+	| "#include" INCLUDE_STATEMENT STATEMENTS
+	| eps;
+
+INCLUDE_STATEMENT ::=
+	INCLUDE_ARG INCLUDE_ARGS DECLARATION_END;
+
+INCLUDE_ARGS ::=
+	INCLUDE_ARG INCLUDE_ARGS
+	| eps;
+
+INCLUDE_ARG ::=
+	identifier
+	| reference;
+
+META_STATEMENT ::=
+        EXPRESSION DECLARATION_END;
+
+ROOT_EXPRESSION ::=
+	EXPRESSION DECLARATION_END;
+
+EXPRESSION ::=
+        identifier I_R
+        | integer ^OBJECT
+        | hexinteger ^OBJECT
+        | string ^OBJECT;
+
+I_R ::=
+        identifier I_R
+        | I_L0_R
+	| I_L2_R NEXT_L2_R
+        | eps ^OBJECT; 
+
+I_L0_R ::=
+        "[" ^OBJECT EXPRESSION "]" ^INDEXER_OPERATION INDEXER_R
+        | "+=" ^OBJECT EXPRESSION ^ADDITION_ASSIGNMENT;
+
+I_L2_R ::=
+	"." ^OBJECT MESSAGE MESSAGE_R;
+
+NEXT_L2_R ::=
+	"." MESSAGE MESSAGE_R NEXT_L2_R
+	| eps;
+
+L1_R ::=
+        ":=" EXPRESSION ^ASSIGN_OPERATION;
+
+INDEXER_R ::=
+        L1_R
+        | eps;
+
+MESSAGE_R ::=
+	"(" MESSAGE_PARAMETERS ")" ^ MESSAGE_OPERATION;
+
+MESSAGE_PARAMETERS ::=
+	eps;
+
+PARAMETERS ::=
+	eps;
+
+TEMPLATE_ARG ::=
+	identifier
+	| reference;
+
+MESSAGE ::=
+	identifier;
+
+TEMPLATE_BRACKETS ::=
+	"<" TEMPLATE_ARG TEMPLATE_ARGS;
+
+TEMPLATE_ARGS ::=
+	"," TEMPLATE_ARG TEMPLATE_ARGS
+	|  ">";
+
+ADDITION_ASSIGNMENT ::=
+        "+=";
+
+DECLARATION_END ::=
+	";";
