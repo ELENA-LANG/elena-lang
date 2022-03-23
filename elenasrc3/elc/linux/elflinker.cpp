@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive Linker class implementation
 //		Supported platforms: Linux
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elflinker.h"
@@ -66,6 +66,28 @@ bool ElfLinker :: createExecutable(ElfExecutableImage& image, path_t exePath)
    return true;
 }
 
+void ElfLinker :: createDebugFile(ImageProviderBase& provider, WinNtExecutableImage& image, path_t debugFilePath)
+{
+   FileWriter debugWriter(debugFilePath, FileEncoding::Raw, false);
+   if (!debugWriter.isOpen())
+      return false;
+
+   Section* debug = provider.getTargetDebugSection();
+
+   // signature
+   debugWriter.write(DEBUG_MODULE_SIGNATURE, getlength_pos(DEBUG_MODULE_SIGNATURE));
+
+   // save entry point
+   addr_t entryPoint = image.addressSpace.code + image.addressSpace.imageBase + provider.getDebugEntryPoint();
+
+   debugWriter.writePos(debug->length());
+   debugWriter.writePos((pos_t)entryPoint);
+
+   // save breakpoints
+   MemoryReader reader(debug);
+   debugWriter.copyFrom(&reader, debug->length());
+}
+
 void ElfLinker :: prepareElfImage(ImageProviderBase& provider, ElfExecutableImage& image, unsigned int headerSize)
 {
    if (!image.sectionAlignment)
@@ -76,12 +98,16 @@ void ElfLinker :: prepareElfImage(ImageProviderBase& provider, ElfExecutableImag
    image.addressMap.imageBase = IMAGE_BASE;
    image.addressMap.headerSize += align(headerSize, image.fileAlignment);
 
-   _imageFormatter->prepareImage(provider, image.addressMap, image.imageSections, image.sectionAlignment, image.fileAlignment);
+   _imageFormatter->prepareImage(provider, image.addressMap, image.imageSections, 
+      image.sectionAlignment, 
+      image.fileAlignment,
+      image.withDebugInfo);
 }
 
 void ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider)
 {
-   ElfExecutableImage image;
+   bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode);
+   ElfExecutableImage image(withDebugMode);
 
    image.addressMap.entryPoint = (pos_t)provider.getEntryPoint();
    prepareElfImage(provider, image, calcHeaderSize());
@@ -93,4 +119,13 @@ void ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider)
    }
 
    chmod(*exePath, S_IXOTH | S_IXUSR | S_IRUSR | S_IWUSR | S_IROTH | S_IWOTH);
+
+   if (withDebugMode) {
+      PathString debugFilePath(*exePath);
+      debugFilePath.changeExtension("dn");
+
+      if (!createDebugFile(provider, image, *debugFilePath)) {
+         _errorProcessor->raisePathError(errCannotCreate, *debugFilePath);
+      }
+   }
 }

@@ -290,11 +290,50 @@ void SyntaxTreeBuilder :: flushStatement(Scope& scope, SyntaxNode node)
    flushExpression(scope, node);
 }
 
-void SyntaxTreeBuilder :: flushMethod(SyntaxNode node)
+void SyntaxTreeBuilder :: flushMethodMember(Scope& scope, SyntaxNode node)
 {
    _writer.newNode(node.key);
 
+   flushDescriptor(scope, node);
+   flushImports(scope, node);
+
    _writer.closeNode();
+}
+
+void SyntaxTreeBuilder :: flushMethodCode(Scope& scope, SyntaxNode node)
+{
+   _writer.newNode(node.key);
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Expression) {
+         flushStatement(scope, current);
+      }
+
+      current = current.nextNode();
+   }
+
+   _writer.closeNode();
+}
+
+void SyntaxTreeBuilder :: flushMethod(Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Parameter:
+            flushMethodMember(scope, current);
+            break;
+         case SyntaxKey::CodeBlock:
+         case SyntaxKey::WithoutBody:
+            flushMethodCode(scope, current);
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
 }
 
 void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
@@ -309,7 +348,7 @@ void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
       case SyntaxKey::CodeBlock:
       case SyntaxKey::WithoutBody:
          _writer.CurrentNode().setKey(SyntaxKey::Method);
-         flushMethod(member);
+         flushMethod(scope, node);
          break;
       default:
          break;

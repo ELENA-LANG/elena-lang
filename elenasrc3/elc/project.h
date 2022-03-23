@@ -169,7 +169,7 @@ namespace elena_lang
 
       path_t PathSetting(ProjectOption option) const override;
       ustr_t StringSetting(ProjectOption option) const override;
-      bool BoolSetting(ProjectOption option) const override;
+      bool BoolSetting(ProjectOption option, bool defValue) const override;
       int IntSetting(ProjectOption option, int defValue) const override;
 
       ustr_t resolveForward(ustr_t weakReference) override;

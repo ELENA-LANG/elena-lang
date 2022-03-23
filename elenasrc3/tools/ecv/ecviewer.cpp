@@ -513,8 +513,12 @@ void ByteCodeViewer :: runSession()
          switch (buffer[1]) {
             case 'q':
                return;
+            case 'o':
+               _presenter->setOutputMode(buffer + 2);
+               break;
             default:
                printHelp();
+               break;
          }
       }
       else if (buffer[0] == '#') {

@@ -325,7 +325,7 @@ void Compiler::ClassScope :: save()
 // --- Compiler::MethodScope ---
 
 Compiler::MethodScope :: MethodScope(ClassScope* parent)
-   : Scope(parent)
+   : Scope(parent), parameters({})
 {
    message = 0;
    reserved1 = reserved2 = 0;
@@ -485,13 +485,17 @@ ref_t Compiler :: mapNewTerminal(Scope& scope, SyntaxNode nameNode, ustr_t prefi
    else throw InternalError(errFatalError);
 }
 
-mssg_t Compiler :: mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef, ref_t flags)
+mssg_t Compiler :: mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef, 
+   ref_t flags, ref_t* signature, size_t signatureLen)
 {
    if (actionRef != 0) {
       // HOTFIX : if the action was already resolved - do nothing
    }
    else if (actionName.length() > 0) {
       ref_t signatureRef = 0;
+      if (signatureLen > 0)
+         signatureRef = scope.moduleScope->module->mapSignature(signature, signatureLen, false);
+
       actionRef = scope.moduleScope->module->mapAction(actionName, signatureRef, false);
    }
    else return 0;
@@ -772,6 +776,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
          case SyntaxKey::Name:
          case SyntaxKey::Attribute:
          case SyntaxKey::CodeBlock:
+         case SyntaxKey::Parameter:
             break;
          case SyntaxKey::WithoutBody:
             withoutBody = true;
@@ -791,6 +796,10 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node)
    IdentifierString actionStr;
    ref_t            actionRef = 0;
    ref_t            flags = 0;
+
+   ref_t            signature[ARG_COUNT];
+   size_t           signatureLen = 0;
+
    bool             unnamedMessage = false;
 
    SyntaxNode nameNode = node.findChild(SyntaxKey::Name);
@@ -801,7 +810,42 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node)
    }
    else unnamedMessage = true;
 
+   bool weakSignature = true;
    pos_t paramCount = 0;
+
+   //bool noSignature = true; // NOTE : is similar to weakSignature except if withoutWeakMessages=true
+   // if method has an argument list
+   SyntaxNode current = node.findChild(SyntaxKey::Parameter);
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Parameter) {
+         int index = 1 + scope.parameters.count();
+         ref_t classRef = 0;
+         ref_t elementRef = 0;
+         int size = 0;
+
+         if (!classRef)
+            classRef = scope.moduleScope->buildins.superReference;
+
+         ustr_t terminal = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+         if (scope.parameters.exist(terminal))
+            scope.raiseError(errDuplicatedLocal, current);
+
+         paramCount++;
+         if (paramCount >= ARG_COUNT/* || (flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE*/)
+            scope.raiseError(errTooManyParameters, current);
+
+         signature[signatureLen++] = classRef;
+
+         scope.parameters.add(terminal, Parameter(index, classRef, elementRef, size));
+      }
+      else break;
+
+      current = current.nextNode();
+   }
+
+   // if the signature consists only of generic parameters - ignore it
+   if (weakSignature)
+      signatureLen = 0;
 
    // HOTFIX : do not overwrite the message on the second pass
    if (scope.message == 0) {
@@ -813,7 +857,8 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node)
          else scope.raiseError(errIllegalMethod, node);
       }
 
-      scope.message = mapMethodName(scope, paramCount, *actionStr, actionRef, flags);
+      scope.message = mapMethodName(scope, paramCount, *actionStr, actionRef, flags,
+         signature, signatureLen);
       if (unnamedMessage || !scope.message)
          scope.raiseError(errIllegalMethod, node);
    }
@@ -1379,9 +1424,12 @@ mssg_t Compiler :: mapMessage(ExprScope& scope, SyntaxNode current)
    return encodeMessage(actionRef, argCount, flags);
 }
 
-ref_t Compiler :: compileMessageArguments(SyntaxNode current, ArgumentsInfo& arguments)
+ref_t Compiler :: compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, ArgumentsInfo& arguments)
 {
    while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Expression) {
+         arguments.add(compileExpression(writer, scope, current, EAttr::Parameter));
+      }
 
       current = current.nextNode();
    }
@@ -1421,7 +1469,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    mssg_t messageReg = 0;
    messageReg = mapMessage(scope, current);
 
-   compileMessageArguments(current, arguments);
+   compileMessageArguments(writer, scope, current, arguments);
 
    ObjectInfo retVal = compileMessageOperation(writer, scope, messageReg, arguments);
 
@@ -1592,6 +1640,14 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
    return retVal;
 }
 
+ObjectInfo Compiler::compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+{
+   ExprScope scope(&codeScope);
+   auto retVal = compileExpression(writer, scope, node, EAttr::None);
+
+   return retVal;
+}
+
 void Compiler :: saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN)
 {
    reserved = align(reserved, scope.moduleScope->stackAlingment);
@@ -1660,6 +1716,19 @@ void Compiler :: endMethod(BuildTreeWriter& writer, MethodScope& scope)
 
 ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
 {
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+      case SyntaxKey::Expression:
+            compileRootExpression(writer, codeScope, current);
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
    return {};
 }
 
@@ -1678,7 +1747,16 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
    codeScope.mapLocal(*scope.moduleScope->selfVar, scope.selfLocal, scope.getClassRef(false));
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
-   ObjectInfo retVal = compileCode(writer, codeScope, node);
+   ObjectInfo retVal = { };
+
+   SyntaxNode bodyNode = node.firstChild(SyntaxKey::ScopeMask);
+   switch (bodyNode.key) {
+      case SyntaxKey::CodeBlock:
+         retVal = compileCode(writer, codeScope, bodyNode);
+         break;
+      default:
+         break;
+   }
 
    // if the method returns itself
    if (retVal.kind == ObjectKind::Unknown) {

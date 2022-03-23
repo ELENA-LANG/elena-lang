@@ -33,6 +33,7 @@ namespace elena_lang
    class TargetImage : public ReferenceMapper, public ImageProvider
    {
       pos_t _entryPoint;
+      pos_t _debugEntryPoint;
 
    public:
       AddressMap::Iterator externals() override;
@@ -40,6 +41,11 @@ namespace elena_lang
       addr_t getEntryPoint() override
       {
          return _entryPoint & ~mskAnyRef;
+      }
+
+      addr_t getDebugEntryPoint() override
+      {
+         return _debugEntryPoint;
       }
 
       TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loader, 

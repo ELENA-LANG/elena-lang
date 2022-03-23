@@ -31,6 +31,7 @@ namespace elena_lang
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE         = "ELENA.";          // the stand alone image
    constexpr auto MODULE_SIGNATURE        = "ELENA.0601";      // the module version
+   constexpr auto DEBUG_MODULE_SIGNATURE  = "ED.06";
 
   // --- ELENA core module names ---
    constexpr auto CORE_ALIAS              = "core";            // Core functionality
@@ -55,6 +56,7 @@ namespace elena_lang
    constexpr auto PREDEFINED_FORWARD      = "$forwards'meta$predefined";
    constexpr auto ATTRIBUTES_FORWARD      = "$forwards'meta$attributes";
    constexpr auto SYSTEM_ENTRY            = "$forwards'$system_entry";   // the system entry
+   constexpr auto PROGRAM_ENTRY           = "$forwards'$program";        // used by the linker to define the debug entry
 
    constexpr auto SUPER_FORWARD           = "$forwards'$super";          // the common class predecessor
 

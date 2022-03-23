@@ -4,11 +4,9 @@ In development:
 
   [development]
     ### EPOCH: elena 6.0 - redux ###
-    === Sprint 3 ===
     === Sprint 4 ===
     --- elena redux ---
-    * >methods with argmuments list
-    * code in the method body
+    * >generate debug info
     * variable
     * int
     * int literal
@@ -17,16 +15,17 @@ In development:
     * print message using external routine
     * print message using external routine - x86, x86-64, i386, amd64, ppc64le, arm64
     --- ide redux ---
-    * editor - textview tab bar
+    * ide debugger
     * editor - open / close / select source files
     * editor - scrollers
-    * ide debugger
-    * editor - correctly destroy tabbar / frame / view
     === Sprint 5 ===
     --- elena redux ---
     * strong typed method parameter
     * signature dispatch 
     * signature dispatch - x86, x86-64, i386, amd64, ppc64le, arm64 
+    --- ide redux ---
+    * editor - edit text
+    * editor - correctly destroy tabbar / frame / view
     === Sprint 6 ===
     * hello world sample
     === Sprint 7 ===

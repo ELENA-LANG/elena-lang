@@ -47,11 +47,11 @@ namespace elena_lang
 
       void mapImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections, pos_t sectionAlignment,
         pos_t fileAlignment, ElfData& elfData);
-      void fixImage(ImageProviderBase& provider, AddressSpace& map);
+      void fixImage(ImageProviderBase& provider, AddressSpace& map, bool withDebugInfo);
 
    public:
       void prepareImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections,
-         pos_t sectionAlignment, pos_t fileAlignment) override;
+         pos_t sectionAlignment, pos_t fileAlignment, bool withDebugInfo) override;
     };
 
    // --- Elf32ImageFormatter ---

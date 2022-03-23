@@ -18,7 +18,7 @@ using namespace elena_lang;
 
 CodeGenerator _codeGenerators[256] =
 {
-   loadNop, loadNop, loadNop, loadOp, loadOp, loadOp, loadOp, loadNop,
+   loadNop, compileBreakpoint, loadNop, loadOp, loadOp, loadOp, loadOp, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -1014,6 +1014,27 @@ void elena_lang::compileOpen(JITCompilerScope* scope)
    loadIndexNOp(scope);
 }
 
+void elena_lang::compileBreakpoint(JITCompilerScope* scope)
+{
+   if (scope->withDebugInfo)
+      scope->helper->addBreakpoint(*scope->codeWriter);
+}
+
+// --- JITCompiler ---
+
+JITCompilerScope :: JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, MemoryWriter* writer,
+   int indexPower, int dataOffset, int dataHeader)
+{
+   this->helper = helper;
+   this->compiler = compiler;
+   this->codeWriter = writer;
+   this->indexPower = indexPower;
+   this->frameOffset = 0;
+   this->dataOffset = dataOffset;
+   this->dataHeader = dataHeader;
+   this->withDebugInfo = compiler->isWithDebugInfo();
+}
+
 // --- JITCompiler ---
 
 void JITCompiler :: loadCoreRoutines(
@@ -1289,6 +1310,16 @@ int JITCompiler32 :: calcTotalSize(int numberOfFields)
    return align((numberOfFields << 2) + elObjectOffset32, gcPageSize32);
 }
 
+void JITCompiler32 :: addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode)
+{
+   if (!virtualMode) {
+      MemoryBase* image = codeWriter.Memory();
+
+      writer.writeDWord((unsigned int)image->get(codeWriter.position()));
+   }
+   else writer.writeDReference(mskCodeRef32, codeWriter.position());
+}
+
 // --- JITCompiler64 ---
 
 inline void insertVMTEntry64(VMTEntry64* entries, pos_t count, pos_t index)
@@ -1468,6 +1499,16 @@ pos_t JITCompiler64 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress
 
    return position;
 
+}
+
+void JITCompiler64 :: addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode)
+{
+   if (!virtualMode) {
+      MemoryBase* image = codeWriter.Memory();
+
+      writer.writeQWord((unsigned long long)image->get(codeWriter.position()));
+   }
+   else writer.writeQReference(mskCodeRef64, codeWriter.position());
 }
 
 int JITCompiler64 :: calcTotalSize(int numberOfFields)

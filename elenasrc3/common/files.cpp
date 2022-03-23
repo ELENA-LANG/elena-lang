@@ -18,6 +18,7 @@ using namespace elena_lang;
 #define file_open _wfopen
 
 #include <windows.h>
+#include <direct.h>
 
 #else
 
@@ -134,6 +135,106 @@ bool File :: readText(wide_c* s, FileEncoding encoding, size_t length, size_t& w
       default:
          return false;
 #endif
+   }
+}
+
+bool File :: writeText(const wide_c* s, FileEncoding encoding, size_t length)
+{
+   switch (encoding) {
+      case FileEncoding::UTF16:
+         return fwrite((const char*)s, 2, length, _file) == length;
+      case FileEncoding::UTF8:
+      {
+         char temp[TEMP_SIZE * 4];
+         size_t count;
+         while (length > 0) {
+            count = (length > TEMP_SIZE) ? TEMP_SIZE : length;
+
+            size_t utfCount = TEMP_SIZE * 4;
+            wstr_t(s).copyTo(temp, count, utfCount);
+
+            if (fwrite(temp, 1, utfCount, _file) <= 0)
+               return false;
+
+            length -= count;
+            s += count;
+         }
+         return true;
+      }
+   #ifdef _MSC_VER
+      case FileEncoding::Ansi:
+      default:
+      {
+         char temp[TEMP_SIZE];
+         int count;
+         while (length > 0) {
+            count = (length > TEMP_SIZE) ? TEMP_SIZE : (int)length;
+
+            BOOL withError = 0;
+            WideCharToMultiByte((UINT)encoding, WC_COMPOSITECHECK, s, count, 
+               temp, count, "?", &withError);
+
+            if (fwrite(temp, 1, count, _file) <= 0)
+               return false;
+
+            length -= count;
+            s += count;
+         }
+         return true;
+      }
+   #else
+      default:
+         return false;
+   #endif
+   }
+}
+
+bool File :: writeText(const char* s, FileEncoding encoding, size_t length)
+{
+   switch (encoding) {
+      case FileEncoding::UTF8:
+         return (fwrite(s, 1, length, _file) == length);
+      case FileEncoding::UTF16:
+      {
+         wide_c temp[TEMP_SIZE * 4];
+         size_t count;
+         while (length > 0) {
+            count = (length > TEMP_SIZE) ? TEMP_SIZE : length;
+
+            size_t utf16Count = TEMP_SIZE * 4;
+            ustr_t(s).copyTo(temp, count, utf16Count);
+
+            if (fwrite(temp, 2, utf16Count, _file) <= 0)
+               return false;
+
+            length -= count;
+            s += count;
+         }
+         return true;
+      }
+   #ifdef _MSC_VER
+      case FileEncoding::Ansi:
+      default:
+      {
+         wide_c temp[TEMP_SIZE];
+         int count;
+         while (length > 0) {
+            count = (length > TEMP_SIZE) ? TEMP_SIZE : (int)length;
+
+            count = MultiByteToWideChar((UINT)encoding, 0, s, (int)length, temp, TEMP_SIZE);
+
+            if (fwrite(temp, 2, count, _file) <= 0)
+               return false;
+
+            length -= count;
+            s += count;
+         }
+         return true;
+      }
+   #else
+      default:
+         return false;
+   #endif
    }
 }
 
@@ -264,4 +365,27 @@ bool TextFileReader :: read(char* s, pos_t length)
       default:
          return false;
    }
+}
+
+// --- TextFileWriter ---
+
+TextFileWriter :: TextFileWriter(path_t path, FileEncoding encoding, bool withBOM)
+   : _file(path, FileWBPlusMode)
+{
+   _encoding = encoding;
+   if (withBOM) {
+      if (encoding == FileEncoding::UTF16 && _file.isOpen()) {
+         unsigned short signature = 0xFEFF;
+         _file.write((void*)&signature, 2);
+      }
+      else if (encoding == FileEncoding::UTF8 && _file.isOpen()) {
+         int signature = 0xBFBBEF;
+         _file.write((void*)&signature, 3);
+      }
+   }
+}
+
+bool TextFileWriter :: write(const char* s, pos_t length)
+{
+   return _file.writeText(s, _encoding, length);
 }

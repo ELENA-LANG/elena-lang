@@ -128,3 +128,8 @@ Section* ImageProvider :: getMBDataSection()
 {
    return &_mbdata;
 }
+
+Section* ImageProvider :: getTargetDebugSection()
+{
+   return &_debug;
+}

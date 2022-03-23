@@ -15,6 +15,8 @@ using namespace elena_lang;
 
 class Presenter : public PresenterBase
 {
+   TextFileWriter* _writer;
+
 public:
    void readLine(char* buffer, size_t length) override
    {
@@ -24,12 +26,22 @@ public:
 
    void print(ustr_t message) override
    {
+      if (_writer)
+         _writer->writeText(message);
+
       WideMessage wmssg(message);
       wprintf(L"%s", wmssg.str());
    }
 
    void print(ustr_t message, ustr_t arg) override
    {
+      if (_writer) {
+         char tmp[0x200];
+         int len = sprintf(tmp, message.str(), arg.str());
+
+         _writer->write(tmp, len);
+      }
+
       WideMessage wmssg(message);
       WideMessage warg(arg);
 
@@ -40,6 +52,25 @@ public:
    {
       WideMessage wmssg(message);
       wprintf(wmssg.str(), arg.str());
+   }
+
+   void setOutputMode(ustr_t arg) override
+   {
+      if (_writer)
+         freeobj(_writer);
+
+      PathString path(arg);
+
+      _writer = new TextFileWriter(*path, FileEncoding::UTF8, false);
+   }
+
+   Presenter()
+   {
+      _writer = nullptr;
+   }
+   ~Presenter() override
+   {
+      freeobj(_writer);
    }
 };
 

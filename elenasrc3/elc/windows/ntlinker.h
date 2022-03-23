@@ -36,7 +36,8 @@ namespace elena_lang
       pos_t           imageSize;
 
       unsigned int    sectionAlignment;
-      unsigned int    fileAlignment;   
+      unsigned int    fileAlignment;
+      bool            withDebugInfo;
 
       AllocationInfo  stackInfo;
       AllocationInfo  heapInfo;
@@ -45,12 +46,14 @@ namespace elena_lang
 
       ImageSections   imageSections;
 
-      WinNtExecutableImage()
+      WinNtExecutableImage(bool withDebugInfo)
       {
          characteristics = 0;
          subsystem = machine = 0;
          headerSize = optionalHeaderSize = imageSize  = 0;
          sectionAlignment = fileAlignment = 0;
+
+         this->withDebugInfo = withDebugInfo;
       }
    };
 
@@ -67,6 +70,7 @@ namespace elena_lang
       void writeSections(WinNtExecutableImage& image, FileWriter& file);
 
       bool createExecutable(WinNtExecutableImage& image, path_t exePath, path_t basePath);
+      bool createDebugFile(ImageProviderBase& provider, WinNtExecutableImage& image, path_t debugFilePath);
 
    public:
       void run(ProjectBase& project, ImageProviderBase& code) override;

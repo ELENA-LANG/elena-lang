@@ -139,23 +139,28 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    sectionOffset += (fileOffset & (sectionAlignment - 1));
 }
 
-void ElfImageFormatter :: fixImage(ImageProviderBase& provider, AddressSpace& map)
+void ElfImageFormatter :: fixImage(ImageProviderBase& provider, AddressSpace& map, bool withDebugInfo)
 {
    fixSection(provider.getTextSection(), map);
    fixSection(provider.getRDataSection(), map);
    fixImportSection(provider.getImportSection(), map);
    fixSection(provider.getDataSection(), map);
+
+   // fix up debug info if enabled
+   if (withDebugInfo) {
+      fixSection(provider.getTargetDebugSection(), map);
+   }
 }
 
 void ElfImageFormatter :: prepareImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections,
-   pos_t sectionAlignment, pos_t fileAlignment)
+   pos_t sectionAlignment, pos_t fileAlignment, bool withDebugInfo)
 {
    ElfData elfData;
    fillElfData(provider, elfData, fileAlignment, map.importMapping);
 
    mapImage(provider, map, sections, sectionAlignment, fileAlignment, elfData);
 
-   fixImage(provider, map);
+   fixImage(provider, map, withDebugInfo);
 }
 
 // --- Elf32ImageFormatter ---

@@ -70,6 +70,7 @@ namespace elena_lang
       Section _rdata;
       Section _import;
       Section _data;
+      Section _debug;
 
    public:
       Section* getTextSection() override;
@@ -78,6 +79,8 @@ namespace elena_lang
       Section* getDataSection() override;
       Section* getMDataSection() override;
       Section* getMBDataSection() override;
+
+      Section* getTargetDebugSection() override;
 
       Section* getTargetSection(ref_t targetMask) override
       {
@@ -92,7 +95,7 @@ namespace elena_lang
       }
 
       ImageProvider()
-         : _text(), _mdata(), _mbdata(), _rdata(), _import()
+         : _text(), _mdata(), _mbdata(), _rdata(), _import(), _data(), _debug()
       {
       }
    };

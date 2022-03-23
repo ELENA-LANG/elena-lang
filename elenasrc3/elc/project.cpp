@@ -75,9 +75,11 @@ ustr_t Project :: StringSetting(ProjectOption option) const
    }
 }
 
-bool Project :: BoolSetting(ProjectOption option) const
+bool Project :: BoolSetting(ProjectOption option, bool defValue) const
 {
    ustr_t val = StringSetting(option);
+   if (val.empty())
+      return defValue;
 
    return val == "-1";
 }
@@ -375,6 +377,7 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
 
       copySetting(config, root, MGSIZE_PATH, ProjectOption::GCMGSize);
       copySetting(config, root, YGSIZE_PATH, ProjectOption::GCYGSize);
+      copySetting(config, root, DEBUGMODE_PATH, ProjectOption::DebugMode);
    }
 }
 

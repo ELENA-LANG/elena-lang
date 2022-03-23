@@ -126,8 +126,10 @@ namespace elena_lang
       virtual Section* getDataSection() = 0;
 
       virtual Section* getTargetSection(ref_t targetMask) = 0;
+      virtual Section* getTargetDebugSection() = 0;
 
       virtual addr_t getEntryPoint() = 0;
+      virtual addr_t getDebugEntryPoint() = 0;
 
       virtual ~ImageProviderBase() = default;
    };
@@ -304,6 +306,8 @@ namespace elena_lang
    class ReferenceHelperBase
    {
    public:
+      virtual void addBreakpoint(MemoryWriter& writer) = 0;
+
       virtual addr_t calculateVAddress(MemoryWriter& writer, ref_t addressMask) = 0;
 
       virtual void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
@@ -356,6 +360,8 @@ namespace elena_lang
       virtual void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
          ref_t flags, pos_t count, bool virtualMode) = 0;
       virtual pos_t copyParentVMT(void* parentVMT, void* targetVMT) = 0;
+
+      virtual void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) = 0;
 
       virtual pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, bool virtualMode) = 0;
       virtual pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, 

@@ -35,11 +35,11 @@ namespace elena_lang
       virtual void fixSection(Section* section, AddressSpace& map) = 0;
       virtual void fixImportSection(Section* section, AddressSpace& map) = 0;
 
-      void fixImage(ImageProviderBase& provider, AddressSpace& map);
+      void fixImage(ImageProviderBase& provider, AddressSpace& map, bool withDebugInfo);
 
    public:
       void prepareImage(ImageProviderBase& code, AddressSpace& map, ImageSections& sections,
-         pos_t sectionAlignment, pos_t fileAlignment) override;
+         pos_t sectionAlignment, pos_t fileAlignment, bool withDebugInfo) override;
    };
 
    // --- Win32NtImageFormatter ---

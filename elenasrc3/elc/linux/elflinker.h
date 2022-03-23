@@ -19,16 +19,18 @@ namespace elena_lang
       unsigned int    sectionAlignment;
       unsigned int    fileAlignment;
       unsigned int    flags;
+      bool            withDebugInfo;
 
       AddressSpace    addressMap;
 
       ImageSections   imageSections;
 
-      ElfExecutableImage()
+      ElfExecutableImage(bool withDebugInfo)
          : imageSections(ImageSections())
       {
-         fileAlignment = sectionAlignment = 0;
-         flags = 0;
+         this->fileAlignment = this->sectionAlignment = 0;
+         this->flags = 0;
+         this->withDebugInfo = withDebugInfo;
       }
    };
 
@@ -49,6 +51,7 @@ namespace elena_lang
       void writeSegments(ElfExecutableImage& image, FileWriter* file);
 
       bool createExecutable(ElfExecutableImage& image, path_t exePath);
+      bool createDebugFile(ImageProviderBase& provider, WinNtExecutableImage& image, path_t debugFilePath);
 
       virtual void prepareElfImage(ImageProviderBase& provider, ElfExecutableImage& image, unsigned int headerSize);
 

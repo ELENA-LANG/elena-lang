@@ -136,21 +136,26 @@ void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    map.imageSize = offset;
 }
 
-void WinNtImageFormatter :: fixImage(ImageProviderBase& provider, AddressSpace& map)
+void WinNtImageFormatter :: fixImage(ImageProviderBase& provider, AddressSpace& map, bool withDebugInfo)
 {
    fixSection(provider.getTextSection(), map);
    fixSection(provider.getRDataSection(), map);
    fixImportSection(provider.getImportSection(), map);
+
+   // fix up debug info if enabled
+   if (withDebugInfo) {
+      fixSection(provider.getTargetDebugSection(), map);
+   }
 }
 
 void WinNtImageFormatter :: prepareImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections,
-                                         pos_t sectionAlignment, pos_t fileAlignment)
+                                         pos_t sectionAlignment, pos_t fileAlignment, bool withDebugInfo)
 {
    createImportSection(provider, map.importMapping);
 
    mapImage(provider, map, sections, sectionAlignment, fileAlignment);
 
-   fixImage(provider, map);
+   fixImage(provider, map, withDebugInfo);
 }
 
 // --- Win32NtImageFormatter ---

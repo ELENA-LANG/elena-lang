@@ -79,8 +79,10 @@ namespace elena_lang
       void flushObject(Scope& scope, SyntaxNode node);
       void flushExpression(Scope& scope, SyntaxNode node);
       void flushStatement(Scope& scope, SyntaxNode node);
-      void flushMethod(SyntaxNode node);
+      void flushMethodCode(Scope& scope, SyntaxNode node);
       void flushClassMember(Scope& scope, SyntaxNode node);
+      void flushMethod(Scope& scope, SyntaxNode node);
+      void flushMethodMember(Scope& scope, SyntaxNode node);
       void flushTemplate(Scope& scope, SyntaxNode node);
       void flushAttribute(Scope& scope, SyntaxNode node, SyntaxNode nameNode, ref_t& previusCategory);
       void flushImports(Scope& scope, SyntaxNode node);

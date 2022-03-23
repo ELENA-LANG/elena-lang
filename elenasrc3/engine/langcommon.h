@@ -26,9 +26,11 @@ namespace elena_lang
 
    constexpr auto errDuplicatedSymbol     = 102;
    constexpr auto errDuplicatedMethod     = 103;
+   constexpr auto errDuplicatedLocal      = 105;
    constexpr auto errUnknownObject        = 106;
    constexpr auto errInvalidOperation     = 107;
    constexpr auto errDuplicatedDictionary = 108;
+   constexpr auto errTooManyParameters    = 113;
    constexpr auto errDuplicatedDefinition = 119;
    constexpr auto errInvalidIntNumber     = 130;
    constexpr auto errCannotEval           = 140;

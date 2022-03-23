@@ -55,9 +55,12 @@ namespace elena_lang
       {
          JITLinker*   _owner;
          ModuleBase*  _module;
+         MemoryBase*  _debug;
          VAddressMap* _references;
 
       public:
+         void addBreakpoint(MemoryWriter& writer) override;
+
          void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
             ref_t addressMask, ModuleBase* module) override;
 

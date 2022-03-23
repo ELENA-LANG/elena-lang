@@ -147,7 +147,7 @@ class ImageFormatter
 {
 public:
    virtual void prepareImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections,
-      pos_t sectionAlignment, pos_t fileAlignment) = 0;
+      pos_t sectionAlignment, pos_t fileAlignment, bool withDebugInfo) = 0;
 };
 
 // --- ProjectBase ---
@@ -183,6 +183,7 @@ enum class ProjectOption
    RawStackAlignment,
    GCMGSize,
    GCYGSize,
+   DebugMode,
 
    Key,
    Value,
@@ -249,7 +250,7 @@ public:
 
    virtual path_t PathSetting(ProjectOption option) const = 0;
    virtual ustr_t StringSetting(ProjectOption option) const = 0;
-   virtual bool BoolSetting(ProjectOption option) const = 0;
+   virtual bool BoolSetting(ProjectOption option, bool defValue = false) const = 0;
    virtual int IntSetting(ProjectOption option, int defValue = 0) const = 0;
 
    virtual void prepare() = 0;

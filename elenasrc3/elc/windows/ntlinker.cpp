@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Executive Linker base class body
-//                                              (C)2005-2021, by Alexei Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "clicommon.h"
@@ -132,6 +132,28 @@ bool WinNtLinker :: createExecutable(WinNtExecutableImage& image, path_t exePath
    return true;
 }
 
+bool WinNtLinker :: createDebugFile(ImageProviderBase& provider, WinNtExecutableImage& image, path_t debugFilePath)
+{
+   FileWriter debugWriter(debugFilePath, FileEncoding::Raw, false);
+   if (!debugWriter.isOpen())
+      return false;
+
+   Section* debug = provider.getTargetDebugSection();
+
+   // signature
+   debugWriter.write(DEBUG_MODULE_SIGNATURE, getlength_pos(DEBUG_MODULE_SIGNATURE));
+
+   // save entry point
+   addr_t entryPoint = image.addressSpace.code + image.addressSpace.imageBase + provider.getDebugEntryPoint();
+
+   debugWriter.writePos(debug->length());
+   debugWriter.writePos((pos_t)entryPoint);
+
+   // save breakpoints
+   MemoryReader reader(debug);
+   debugWriter.copyFrom(&reader, debug->length());
+}
+
 void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableImage& image)
 {
    // !! temporal
@@ -139,7 +161,10 @@ void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableI
    image.sectionAlignment = SECTION_ALIGNMENT;
    image.addressSpace.imageBase = 0x00400000;
 
-   _imageFormatter->prepareImage(provider, image.addressSpace, image.imageSections, image.sectionAlignment, image.fileAlignment);
+   _imageFormatter->prepareImage(provider, image.addressSpace, image.imageSections, 
+      image.sectionAlignment, 
+      image.fileAlignment,
+      image.withDebugInfo);
 
    image.characteristics = IMAGE_FILE_EXECUTABLE_IMAGE;
    image.characteristics |= IMAGE_FILE_LOCAL_SYMS_STRIPPED;
@@ -162,7 +187,9 @@ void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableI
 
 void WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider)
 {
-   WinNtExecutableImage image;
+   bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true); // !! temporally by default the debug mode is on
+
+   WinNtExecutableImage image(withDebugMode);
 
    image.addressSpace.entryPoint = (pos_t)provider.getEntryPoint();
    prepareNtImage(provider, image);
@@ -172,5 +199,14 @@ void WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider)
 
    if (!createExecutable(image, *exePath, project.PathSetting(ProjectOption::BasePath))) {
       _errorProcessor->raisePathError(errCannotCreate, project.PathSetting(ProjectOption::TargetPath));
-   }      
+   }
+
+   if (withDebugMode) {
+      PathString debugFilePath(*exePath);
+      debugFilePath.changeExtension("dn");
+
+      if (!createDebugFile(provider, image, *debugFilePath)) {
+         _errorProcessor->raisePathError(errCannotCreate, *debugFilePath);
+      }
+   }
 }

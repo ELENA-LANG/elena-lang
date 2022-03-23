@@ -151,6 +151,18 @@ JITLinker::JITLinkerReferenceHelper :: JITLinkerReferenceHelper(JITLinker* owner
    this->_owner = owner;
    this->_module = module;
    this->_references = references;
+   this->_debug = nullptr;
+
+}
+
+void JITLinker::JITLinkerReferenceHelper :: addBreakpoint(MemoryWriter& codeWriter)
+{
+   if (!_debug)
+      _debug = _owner->_imageProvider->getTargetDebugSection();
+
+   MemoryWriter writer(_debug);
+
+   _owner->_compiler->addBreakpoint(writer, codeWriter, _owner->_virtualMode);
 }
 
 void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,

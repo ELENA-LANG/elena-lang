@@ -2,7 +2,10 @@
 
 singleton B
 {
-    testB(a) {}
+    testB(a) 
+    {
+//       a.testA();
+    }
 }
 
 class A
@@ -14,5 +17,5 @@ class A
                                 
 
 //public symbol program = A.new().testA();
-public symbol program = B.testB(/*A.new()*/);
+public symbol program = B.testB(A.new());
 

@@ -29,23 +29,15 @@ namespace elena_lang
       int                  frameOffset;
       int                  dataOffset;
       int                  dataHeader;
+      bool                 withDebugInfo;
 
       unsigned char code() const
       {
          return (unsigned char)command.code;
       }
 
-      JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, MemoryWriter* writer, 
-         int indexPower, int dataOffset, int dataHeader)
-      {
-         this->helper = helper;
-         this->compiler = compiler;
-         this->codeWriter = writer;
-         this->indexPower = indexPower;
-         this->frameOffset = 0;
-         this->dataOffset = dataOffset;
-         this->dataHeader = dataHeader;
-      }
+      JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, MemoryWriter* writer,
+         int indexPower, int dataOffset, int dataHeader);
    };
 
    typedef void(*CodeGenerator)(JITCompilerScope*);
@@ -101,6 +93,7 @@ namespace elena_lang
       friend void loadIndexIndexOp(JITCompilerScope* scope);
       friend void loadNewOp(JITCompilerScope* scope);
 
+      friend void compileBreakpoint(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
       friend void compileOpen(JITCompilerScope* scope);
 
@@ -112,6 +105,13 @@ namespace elena_lang
          Map<ref_t, pos_t>& positions, bool declareMode);
 
    public:
+      bool isWithDebugInfo()
+      {
+         // in the current implementation, debug info (i.e. debug section)
+         // is always generated (to be used by RTManager)
+         return true;
+      }
+
       void prepare(
          LibraryLoaderBase* loader, 
          ImageProviderBase* imageProvider, 
@@ -173,6 +173,8 @@ namespace elena_lang
          ref_t weakActionRef, ref_t signature) override;
       pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, bool virtualMode) override;
 
+      void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) override;
+
       JITCompiler32()
          : JITCompiler()
       {
@@ -209,6 +211,8 @@ namespace elena_lang
          ref_t signature) override;
       pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, bool virtualMode) override;
 
+      void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) override;
+
       JITCompiler64()
          : JITCompiler()
       {
@@ -241,6 +245,7 @@ namespace elena_lang
 
    void compileClose(JITCompilerScope* scope);
    void compileOpen(JITCompilerScope* scope);
+   void compileBreakpoint(JITCompilerScope* scope);
 }
 
 #endif

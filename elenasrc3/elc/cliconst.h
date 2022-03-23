@@ -11,7 +11,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x0070
+   #define ELC_REVISION_NUMBER               0x0071
 
    // --- Information messages ---
    constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2022 by Aleksey Rakov\n";
@@ -51,6 +51,8 @@ namespace elena_lang
    constexpr auto OUTPUT_PATH                = "project/output";
    constexpr auto PROJECT_TEMPLATE           = "project/template";
    constexpr auto NAMESPACE_KEY              = "project/namespace";
+   constexpr auto DEBUGMODE_PATH             = "project/debuginfo";
+
    constexpr auto PLATFORMTYPE_KEY           = "system/platform";
 
    constexpr auto MGSIZE_PATH                = "linker/mgsize";

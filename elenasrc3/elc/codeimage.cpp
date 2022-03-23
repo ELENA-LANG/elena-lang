@@ -47,6 +47,13 @@ TargetImage :: TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loa
    if (_entryPoint == INVALID_POS)
       throw JITUnresolvedException(ReferenceInfo(SYSTEM_ENTRY));
 
+   // resolvethe debug entry
+   ustr_t debugEntryName = resolver->resolveForward(PROGRAM_ENTRY);
+   if (!debugEntryName)
+      debugEntryName = entryName;
+
+   _debugEntryPoint = resolveReference(debugEntryName, mskSymbolRef);
+
    linker.complete(compiler);
 
    freeobj(compiler);

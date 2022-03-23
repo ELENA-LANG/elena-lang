@@ -329,6 +329,8 @@ namespace elena_lang
       struct MethodScope : Scope
       {
          mssg_t       message;
+         LocalMap     parameters;
+
          int          selfLocal;
 
          MethodInfo   info;
@@ -445,7 +447,8 @@ namespace elena_lang
       void saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN);
 
       ref_t mapNewTerminal(Scope& scope, SyntaxNode nameNode, ustr_t prefix, Visibility visibility);
-      mssg_t mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef, ref_t flags);
+      mssg_t mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef, 
+         ref_t flags, ref_t* signature, size_t signatureLen);
       mssg_t mapMessage(ExprScope& scope, SyntaxNode node);
 
       ref_t resolveObjectReference(ObjectInfo info);
@@ -502,7 +505,7 @@ namespace elena_lang
 
       void writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info) ;
 
-      ref_t compileMessageArguments(SyntaxNode current, ArgumentsInfo& arguments);
+      ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, ArgumentsInfo& arguments);
 
       ObjectInfo saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object);
 
@@ -522,6 +525,7 @@ namespace elena_lang
       ObjectInfo compileObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
       ObjectInfo compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
          ExpressionAttribute mode);
+      ObjectInfo compileRootExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
 
       ObjectInfo compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
 

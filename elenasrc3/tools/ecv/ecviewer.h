@@ -18,11 +18,15 @@ namespace elena_lang
    class PresenterBase
    {
    public:
+      virtual void setOutputMode(ustr_t arg) = 0;
+
       virtual void readLine(char* buffer, size_t length) = 0;
 
       virtual void print(ustr_t message) = 0;
       virtual void print(ustr_t message, ustr_t arg) = 0;
       virtual void printPath(ustr_t message, path_t arg) = 0;
+
+      virtual ~PresenterBase() = default;
    };
 
    // --- ByteCodeViewer ---

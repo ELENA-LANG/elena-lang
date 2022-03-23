@@ -18,9 +18,11 @@ namespace elena_lang
 
    constexpr auto errMsgDuplicatedSymbol     = "%s(%d:%d): error 102: Class '%s' already exists\n";
    constexpr auto errMsgDuplicatedMethod     = "%s(%d:%d): error 103: Method '%s' already exists in the class\n";
+   constexpr auto errMsgDuplicatedLocal      = "%s(%d:%d): error 105: Variable '%s' already exists\n";
    constexpr auto errMsgUnknownObject        = "%s(%d:%d): error 106: Unknown object '%s'\n";
    constexpr auto errMsgInvalidOperation     = "%s(%d:%d): error 107: Invalid operation with '%s'\n";
    constexpr auto errMsgDuplicatedDictionary = "%s(%d:%d): error 108: Dictionary '%s' already exists\n";
+   constexpr auto errMsgTooManyParameters    = "%s(%d:%d): error 113: Too many parameters for '%s' message\n";
    constexpr auto errMsgDuplicatedDefinition = "%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n";
    constexpr auto errMsgInvalidIntNumber     = "%s(%d:%d): error 130: Invalid integer value %s\n";
    constexpr auto errMsgCannotEval           = "%s(%d:%d): error 140: Cannot evaluate the expression %s\n";

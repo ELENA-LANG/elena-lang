@@ -57,6 +57,9 @@ namespace elena_lang
       bool readText(char* s, FileEncoding encoding, size_t size, size_t& wasRead);
       bool readText(wide_c* s, FileEncoding encoding, size_t size, size_t& wasRead);
 
+      bool writeText(const wide_c* s, FileEncoding encoding, size_t size);
+      bool writeText(const char* s, FileEncoding encoding, size_t size);
+
       void rewind();
 
       File(path_t path, path_t mode);
@@ -132,6 +135,22 @@ namespace elena_lang
       bool read(char* s, pos_t length) override;
 
       TextFileReader(path_t path, FileEncoding encoding, bool withBOM);
+   };
+
+   // --- TextFileWriter ---
+   class TextFileWriter : public  TextWriter<char>
+   {
+      File         _file;
+      FileEncoding _encoding;
+
+   public:
+      //bool isOpen() const override { return _file.isOpen(); }
+
+      pos_t position() const override { return _file.position(); }
+
+      bool write(const char* s, pos_t length) override;
+
+      TextFileWriter(path_t path, FileEncoding encoding, bool withBOM);
    };
 
 }
