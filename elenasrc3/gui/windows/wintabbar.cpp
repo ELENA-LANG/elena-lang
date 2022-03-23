@@ -5,15 +5,61 @@
 //---------------------------------------------------------------------------
 
 #include "wintabbar.h"
+#include "wincanvas.h"
 
 using namespace elena_lang;
 
 // --- CustomTabBar ---
 
-CustomTabBar :: CustomTabBar()
+CustomTabBar :: CustomTabBar(bool withAbovescore)
    : ControlBase(nullptr)
 {
-   
+   _withAbovescore = withAbovescore;
+}
+
+void CustomTabBar :: onDrawItem(DRAWITEMSTRUCT* item)
+{
+   Canvas    canvas(item->hDC);
+   Rectangle rect(item->rcItem.left, item->rcItem.top, item->rcItem.right - item->rcItem.left + 1, item->rcItem.bottom - item->rcItem.top + 1);
+
+   // For some bizarre reason the rcItem you get extends above the actual
+   // drawing area. We have to workaround this "feature".
+   rect.bottomRight.y += ::GetSystemMetrics(SM_CYEDGE);
+
+   int  index = item->itemID;
+   bool isSelected = (index == getCurrentIndex());
+
+   wchar_t label[0x51];
+   TCITEM tci;
+   tci.mask = TCIF_TEXT;
+   tci.pszText = label;
+   tci.cchTextMax = 0x50;
+   ::SendMessage(_handle, TCM_GETITEM, index, (LPARAM)&tci);
+
+   //const wchar_t* label = getTabName(index);
+
+   canvas.fillRectangle(rect, Canvas::ButtonFace());
+   if (isSelected) {
+      if (_withAbovescore) {
+         Rectangle barRect(rect);
+         barRect.bottomRight.y = 6;
+
+         canvas.fillRectangle(barRect, Color(255, 190, 128));
+      }
+   }
+   else {
+      canvas.fillRectangle(rect, Color(220, 220, 220));
+   }
+
+   canvas.setTransparentMode(true);
+
+   if (isSelected) {
+      //rect.topLeft.y -= ::GetSystemMetrics(SM_CYEDGE);
+      rect.topLeft.y += 1;
+
+      canvas.drawText(rect, label, getlength_int(label), Color(0, 0, 0), true);
+   }
+   else canvas.drawText(rect, label, getlength_int(label), Color(128, 128, 128), true);
 }
 
 void CustomTabBar :: addTab(int index, wstr_t name, void* param)
@@ -32,12 +78,44 @@ int CustomTabBar :: getTabCount()
    return (int)::SendMessage(_handle, TCM_GETITEMCOUNT, 0, 0);
 }
 
+int CustomTabBar :: getCurrentIndex()
+{
+   return (int)::SendMessage(_handle, TCM_GETCURSEL, 0, 0);
+}
+
 // --- MultiTabControl ---
 
-MultiTabControl::MultiTabControl(ControlBase* child)
-   : CustomTabBar()
+MultiTabControl :: MultiTabControl(bool withAbovescore, ControlBase* child)
+   : CustomTabBar(withAbovescore)
 {
-   
+   _child = child;
+}
+
+void MultiTabControl :: setRectangle(Rectangle rec)
+{
+   CustomTabBar::setRectangle(rec);
+
+   if (_child) {
+      rec.topLeft.y += 32;
+      rec.topLeft.x += 4;
+      rec.setWidth(rec.width() - 8);
+      rec.setHeight(rec.height() - 32);
+      _child->setRectangle(rec);
+   }
+}
+
+void MultiTabControl :: onSetFocus()
+{
+   if (_child) {
+      _child->setFocus();
+   }
+}
+
+void MultiTabControl :: setFocus()
+{
+   if (_child->visible()) {
+      _child->setFocus();  
+   }
 }
 
 HWND MultiTabControl :: createControl(HINSTANCE instance, ControlBase* owner)

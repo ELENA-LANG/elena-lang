@@ -15,7 +15,7 @@ namespace elena_lang
    class TextViewFrame : public MultiTabControl
    {
    public:
-      TextViewFrame(ControlBase* view);
+      TextViewFrame(bool withAbovescore, ControlBase* view);
    };
 
 }

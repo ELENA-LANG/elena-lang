@@ -80,7 +80,7 @@ bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visib
    return true;
 }
 
-bool CompilerLogic :: validateClassAttribute(ref_t attribute, Visibility& visibility)
+bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility)
 {
    switch (attribute) {
       case V_PUBLIC:
@@ -90,6 +90,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, Visibility& visibi
          visibility = Visibility::Private;
          break;
       case V_CLASS:
+         break;
+      case V_SINGLETON:
+         flags = elRole | elSealed | elStateless;
          break;
       default:
          return false;
@@ -169,6 +172,20 @@ bool CompilerLogic :: validateMessage(mssg_t message)
 void CompilerLogic :: validateClassDeclaration()
 {
    
+}
+
+bool CompilerLogic :: isRole(ClassInfo& info)
+{
+   return test(info.header.flags, elRole);
+}
+
+void CompilerLogic :: tweakClassFlags(ClassInfo& info, bool classClassMode)
+{
+   if (classClassMode) {
+      // class class is always stateless and final
+      info.header.flags |= elStateless;
+      info.header.flags |= elSealed;
+   }
 }
 
 void CompilerLogic :: writeDictionaryEntry(MemoryBase* section, ustr_t key, int value)

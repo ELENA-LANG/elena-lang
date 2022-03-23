@@ -29,9 +29,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
    Text::TabSize = 4; // !! tempooral
 
+   GUISettinngs  settinngs = { true };
    IDEModel      ideModel;
    IDEController ideController;
-   IDEFactory    factory(hInstance, nCmdShow, &ideModel, &ideController);
+   IDEFactory    factory(hInstance, nCmdShow, &ideModel, &ideController, settinngs);
 
    GUIApp* app = factory.createApp();
    int retVal = app->run(factory.createMainWindow());

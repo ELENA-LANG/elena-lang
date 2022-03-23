@@ -2,16 +2,17 @@
 
 singleton B
 {
-    test() {}
+    testB(a) {}
 }
 
 class A
 {
-   test() {}
+   testA() {}
 
    constructor new() {}
 }
+                                
 
-//public symbol program = A.new().test();
-public symbol program = B.test();
+//public symbol program = A.new().testA();
+public symbol program = B.testB(/*A.new()*/);
 

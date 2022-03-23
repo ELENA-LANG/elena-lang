@@ -63,10 +63,13 @@ StyleInfo classicStyles[STYLE_MAX + 1] = {
 
 // --- IDEFactory ---
 
-IDEFactory :: IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideModel, IDEController* controller)
+IDEFactory :: IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideModel, 
+   IDEController* controller,
+   GUISettinngs   settings)
 {
    _schemes[0] = defaultStyles;
    _schemes[1] = classicStyles;
+   _settings = settings;
 
    _instance = instance;
    _cmdShow = cmdShow;
@@ -90,7 +93,7 @@ void IDEFactory :: registerClasses()
 ControlBase* IDEFactory :: createTextControl(WindowBase* owner)
 {
    TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_controller->sourceController);
-   TextViewFrame* frame = new TextViewFrame(view);
+   TextViewFrame* frame = new TextViewFrame(_settings.withTabAboverscore, view);
 
    view->create(_instance, szTextView, owner);
    frame->createControl(_instance, owner);
@@ -102,7 +105,7 @@ ControlBase* IDEFactory :: createTextControl(WindowBase* owner)
    view->showWindow(SW_SHOW);
    frame->showWindow(SW_SHOW);
 
-   return view;
+   return frame;
 }
 
 void IDEFactory :: initializeModel(IDEModel* ideView)

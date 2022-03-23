@@ -325,6 +325,15 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elClassClass)) {
       printLineAndCount("@flag ", "elClassClass", row, pageSize);
    }
+   if (test(flags, elRole)) {
+      printLineAndCount("@flag ", "elRole", row, pageSize);
+   }
+   if (test(flags, elSealed)) {
+      printLineAndCount("@flag ", "elSealed", row, pageSize);
+   }
+   if (test(flags, elStateless)) {
+      printLineAndCount("@flag ", "elStateless", row, pageSize);
+   }
 }
 
 void ByteCodeViewer::printMethod(ustr_t name)

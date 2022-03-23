@@ -10,8 +10,8 @@ using namespace elena_lang;
 
 // --- TextViewFrame ---
 
-TextViewFrame::TextViewFrame(ControlBase* view)
-   : MultiTabControl(view)
+TextViewFrame::TextViewFrame(bool withAbovescore, ControlBase* view)
+   : MultiTabControl(withAbovescore, view)
 {
    
 }

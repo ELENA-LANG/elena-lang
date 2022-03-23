@@ -36,18 +36,27 @@ namespace elena_lang
       HWND   _handle;
       wstr_t _title;
 
+      virtual void onSetFocus() {}
+      virtual void onLoseFocus() {}
+
    public:
       HWND handle() { return _handle; }
+      bool checkHandle(void* param) const
+      {
+         return (_handle == (HWND)param);
+      }
 
       bool visible() override;
 
       void showWindow(int cmdShow);
 
       Rectangle getRectangle();
-      void setRectangle(Rectangle rec);
+      virtual void setRectangle(Rectangle rec);
 
       virtual void setFocus();
       virtual void refresh();
+
+      virtual void onDrawItem(DRAWITEMSTRUCT* item) {}
 
       virtual HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner);
 
@@ -70,8 +79,6 @@ namespace elena_lang
       virtual LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam);
 
       virtual void onResize() {}
-      virtual void onSetFocus() {}
-      virtual void onLoseFocus() {}
       virtual bool onSetCursor() { return false; }
 
       virtual void setCursor(int type);

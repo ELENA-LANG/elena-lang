@@ -15,24 +15,37 @@ namespace elena_lang
    class CustomTabBar : public ControlBase
    {
    protected:
+      bool     _withAbovescore;
 
    public:
+      void onDrawItem(DRAWITEMSTRUCT* item) override;
+
+      int getCurrentIndex();
       int getTabCount();
 
       void addTab(int index, wstr_t title, void* param);
 
-      CustomTabBar();
+      CustomTabBar(bool withAbovescore);
    };
 
    // --- MultiTabControl ---
    class MultiTabControl : public CustomTabBar
    {
+   protected:
+      ControlBase* _child;
+
+      void onSetFocus() override;
+
    public:
+      void setRectangle(Rectangle rec) override;
+
       int addTabView(wstr_t title, void* param);
+
+      void setFocus() override;
 
       HWND createControl(HINSTANCE instance, ControlBase* owner);
 
-      MultiTabControl(ControlBase* child);
+      MultiTabControl(bool withAbovescore, ControlBase* child);
    };
 
 }

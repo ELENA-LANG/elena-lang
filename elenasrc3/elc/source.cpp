@@ -12,7 +12,7 @@
 
 using namespace elena_lang;
 
-const char* source_dfa[13] =
+const char* source_dfa[16] =
 {
         ".????????bb??b??????????????????b?fidd?ldd?dd?dheeeeeeeeeeddddd??ccccccccccccccccccccccccccd?d?c?ccccccccccccccccccccccccccd?d??",
         "*********bb*********************b***********************************************************************************************",
@@ -20,13 +20,16 @@ const char* source_dfa[13] =
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadaadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaeeeeeeeeeeaaaaaaakkkkkkaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaajaaaaaaaaaaaaaaaaaaaaaaa",
         "?fffffffffffffffffffffffffffffffffgfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "*hhhhhhhhh*hh*hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaoaaaanaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaiiiiiiiiiiiiiiiiiiiiiiiiiiaaaaiaiiiiiiiiiiiiiiiiiiiiiiiiiiaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "????????????????????????????????????????????????kkkkkkkkkk???????kkkkkk?????????????????????????????????j???????????????????????",
         "?????????????????????????????????????????????????????????????????mmmmmmmmmmmmmmmmmmmmmmmmmm????m?mmmmmmmmmmmmmmmmmmmmmmmmmm????m",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaalaaaaaaaammmmmmmmmmaaaaaaammmmmmmmmmmmmmmmmmmmmmmmmmaaaamammmmmmmmmmmmmmmmmmmmmmmmmmaaaam"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaalaaaaaaaammmmmmmmmmaaaaaaammmmmmmmmmmmmmmmmmmmmmmmmmaaaamammmmmmmmmmmmmmmmmmmmmmmmmmaaaam",
+        "*nnnnnnnnn*nn*nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+        "?ooooooooooooooooooooooooooooooooooooooooopooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
+        "?ooooooooooooooooooooooooooooooooooooooooooooooboooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
 };
 
 // --- SourceReader ---

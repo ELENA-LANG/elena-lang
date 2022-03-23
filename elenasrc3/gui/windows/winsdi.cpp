@@ -189,12 +189,25 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
             onActivate();
          }
          return 0;
+      case WM_DRAWITEM:
+         onDrawItem((DRAWITEMSTRUCT*)lParam);
+         return TRUE;
       default:
          return DefWindowProc(_handle, message, wParam, lParam);
    }
    return 0;
 
 }
+
+void SDIWindow :: onDrawItem(DRAWITEMSTRUCT* item)
+{
+   for (size_t i = 0; i < _childCounter; ++i) {
+      if (_children[i]->checkHandle(item->hwndItem)) {
+         _children[i]->onDrawItem(item);
+      }
+   }
+}
+
 //
 //void SDIWindow :: drawControls(HDC& hdc)
 //{

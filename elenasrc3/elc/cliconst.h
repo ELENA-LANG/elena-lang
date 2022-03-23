@@ -11,7 +11,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x006F
+   #define ELC_REVISION_NUMBER               0x0070
 
    // --- Information messages ---
    constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2022 by Aleksey Rakov\n";
@@ -91,33 +91,6 @@ namespace elena_lang
             return "undefined";
       }
    }
-
-   // === CLI Error codes ===
-   constexpr auto errInvalidSyntax        = 4;
-
-   constexpr auto errDuplicatedSymbol     = 102;
-   constexpr auto errDuplicatedMethod     = 103;
-   constexpr auto errUnknownObject        = 106;
-   constexpr auto errInvalidOperation     = 107;
-   constexpr auto errDuplicatedDictionary = 108;
-   constexpr auto errDuplicatedDefinition = 119;
-   constexpr auto errInvalidIntNumber     = 130;
-   constexpr auto errCannotEval           = 140;
-   constexpr auto errInvalidHint          = 147;
-   constexpr auto errIllegalMethod        = 152;
-   constexpr auto errNoBodyMethod         = 180;
-   constexpr auto errUnknownTemplate      = 181;
-
-   constexpr auto errParserNotInitialized = 300;
-   constexpr auto errProjectAlreadyLoaded = 301;
-
-   constexpr auto wrnUnknownHint          = 404;
-   constexpr auto wrnInvalidHint          = 406;
-
-   constexpr auto wrnSyntaxFileNotFound   = 500;
-   constexpr auto wrnInvalidConfig        = 501;
-
-   constexpr auto errNoDispatcher         = 605;
 }
 
 #endif

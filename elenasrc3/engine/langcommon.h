@@ -22,8 +22,23 @@ namespace elena_lang
    };
 
    // === ELENA Error codes ===
-   constexpr auto errNotDefinedBaseClass  = 602;
-   constexpr auto errUnknownBaseClass     = 604;
+   constexpr auto errInvalidSyntax        = 4;
+
+   constexpr auto errDuplicatedSymbol     = 102;
+   constexpr auto errDuplicatedMethod     = 103;
+   constexpr auto errUnknownObject        = 106;
+   constexpr auto errInvalidOperation     = 107;
+   constexpr auto errDuplicatedDictionary = 108;
+   constexpr auto errDuplicatedDefinition = 119;
+   constexpr auto errInvalidIntNumber     = 130;
+   constexpr auto errCannotEval           = 140;
+   constexpr auto errSealedParent         = 141;
+   constexpr auto errInvalidHint          = 147;
+   constexpr auto errIllegalConstructor   = 149;
+   constexpr auto errIllegalStaticMethod  = 151;
+   constexpr auto errIllegalMethod        = 152;
+   constexpr auto errNoBodyMethod         = 180;
+   constexpr auto errUnknownTemplate      = 181;
 
    constexpr auto errUnknownModule        = 201;
    constexpr auto errUnresovableLink      = 202;
@@ -32,6 +47,19 @@ namespace elena_lang
    constexpr auto errInvalidFile          = 205;
    constexpr auto errInvalidModuleVersion = 210;
    constexpr auto errEmptyTarget          = 212;
+
+   constexpr auto errParserNotInitialized = 300;
+   constexpr auto errProjectAlreadyLoaded = 301;
+
+   constexpr auto wrnUnknownHint          = 404;
+   constexpr auto wrnInvalidHint          = 406;
+
+   constexpr auto wrnSyntaxFileNotFound   = 500;
+   constexpr auto wrnInvalidConfig        = 501;
+
+   constexpr auto errNotDefinedBaseClass  = 602;
+   constexpr auto errUnknownBaseClass     = 604;
+   constexpr auto errNoDispatcher         = 605;
 
    // --- Project warning levels
    constexpr int WARNING_LEVEL_1          = 1;
@@ -57,6 +85,7 @@ namespace elena_lang
    constexpr auto V_CLASS                 = 0x80001001u;
    constexpr auto V_SYMBOLEXPR            = 0x80001003u;
    constexpr auto V_CONSTRUCTOR           = 0x80001004u;
+   constexpr auto V_SINGLETON             = 0x80001006u;
    constexpr auto V_METHOD                = 0x80001008u;
    constexpr auto V_STATIC                = 0x8000100Fu;
    constexpr auto V_DISPATCHER            = 0x80001013u;

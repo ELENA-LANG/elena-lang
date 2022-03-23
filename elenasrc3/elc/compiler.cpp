@@ -589,6 +589,20 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       scope.info.load(&reader, false);
    }
 
+   if (test(scope.info.header.flags, elFinal)) {
+      //// COMPILER MAGIC : if it is a unsealed nested class inheriting its owner
+      //if (!test(scope.info.header.flags, elSealed) && test(flagCopy, elNestedClass)) {
+      //   ClassScope* owner = (ClassScope*)scope.getScope(Scope::ScopeLevel::slOwnerClass);
+      //   if (owner->classClassMode && scope.info.header.classRef == owner->reference) {
+      //      // HOTFIX : if it is owner class class - allow it as well
+      //   }
+      //   else if (owner->reference != parentRef) {
+      //      return InheritResult::irSealed;
+      //   }
+      //}
+      /*else */return InheritResult::irSealed;
+   }
+
    // restore parent and flags
    scope.info.header.parentRef = parentRef;
    scope.info.header.classRef = classClassCopy;
@@ -643,7 +657,12 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
    }
 }
 
-void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node)
+void Compiler :: generateClassFlags(ClassScope& scope, ref_t declaredFlags)
+{
+   scope.info.header.flags |= declaredFlags;
+}
+
+void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags)
 {
    //_logic->injectVirtualCode(scope.info);
 
@@ -651,9 +670,16 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node)
       generateMethodDeclarations(scope, node, SyntaxKey::StaticMethod);
       generateMethodDeclarations(scope, node, SyntaxKey::Constructor);
    }
-   else generateMethodDeclarations(scope, node, SyntaxKey::Method);
+   else {
+      // HOTFIX : flags / fields should be compiled only for the class itself
+      generateClassFlags(scope, declaredFlags);
+
+      generateMethodDeclarations(scope, node, SyntaxKey::Method);
+   }
 
    _logic->validateClassDeclaration();
+
+   _logic->tweakClassFlags(scope.info, scope.isClassClass());
 }
 
 void Compiler :: declareSymbol(SymbolScope& scope, SyntaxNode node)
@@ -683,10 +709,10 @@ void Compiler :: declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNo
    //if (res == irInvalid) {
    //   scope.raiseError(errInvalidParent/*, baseNode*/);
    //}
-   //else if (res == InheritResult::irSealed) {
-   //   scope.raiseError(errSealedParent, baseNode);
-   //}
-   /*else */if (res == InheritResult::irUnsuccessfull)
+   /*else */if (res == InheritResult::irSealed) {
+      scope.raiseError(errSealedParent, baseNode);
+   }
+   else if (res == InheritResult::irUnsuccessfull)
       scope.raiseError(errUnknownBaseClass, baseNode);
 
 }
@@ -850,7 +876,8 @@ void Compiler :: declareClassClass(ClassScope& classClassScope, SyntaxNode node)
 
    declareClassParent(classClassScope.moduleScope->buildins.superReference, classClassScope, node);
 
-   generateClassDeclaration(classClassScope, node);
+   ref_t dummy = 0; // NOTE : do not set class flags for a class class
+   generateClassDeclaration(classClassScope, node, dummy);
 
    // save declaration
    classClassScope.save();
@@ -858,7 +885,8 @@ void Compiler :: declareClassClass(ClassScope& classClassScope, SyntaxNode node)
 
 void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
 {
-   declareClassAttributes(scope, node);
+   ref_t flags = scope.info.header.flags;
+   declareClassAttributes(scope, node, flags);
 
    SyntaxNode name = node.findChild(SyntaxKey::Name);
 
@@ -874,13 +902,19 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
 
    // NOTE : generateClassDeclaration should be called for the proper class before a class class one
    //        due to dynamic array implementation (auto-generated default constructor should be removed)
-   generateClassDeclaration(scope, node);
+   generateClassDeclaration(scope, node, flags);
 
-   // define class class name
-   IdentifierString classClassName(scope.moduleScope->resolveFullName(scope.reference));
-   classClassName.append(CLASSCLASS_POSTFIX);
+   if (_logic->isRole(scope.info)) {
+      // class is its own class class
+      scope.info.header.classRef = scope.reference;
+   }
+   else {
+      // define class class name
+      IdentifierString classClassName(scope.moduleScope->resolveFullName(scope.reference));
+      classClassName.append(CLASSCLASS_POSTFIX);
 
-   scope.info.header.classRef = scope.moduleScope->mapFullReference(*classClassName);
+      scope.info.header.classRef = scope.moduleScope->mapFullReference(*classClassName);
+   }
 
    // if it is a super class validate it, generate built-in attributes
    if (scope.reference == scope.moduleScope->buildins.superReference) {
@@ -891,7 +925,7 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
    scope.save();
 
    // declare class class if it available
-   if (scope.info.header.classRef != 0) {
+   if (scope.info.header.classRef != scope.reference && scope.info.header.classRef != 0) {
       ClassScope classClassScope((NamespaceScope*)scope.parent, scope.info.header.classRef, scope.visibility);
 
       // if default constructor has to be created
@@ -1110,13 +1144,13 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node)
    }
 }
 
-void Compiler :: declareClassAttributes(ClassScope& scope, SyntaxNode node)
+void Compiler :: declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& flags)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Attribute:
-            if (!_logic->validateClassAttribute(current.arg.value, scope.visibility))
+            if (!_logic->validateClassAttribute(current.arg.value, flags, scope.visibility))
             {
                current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
                scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
@@ -1624,7 +1658,7 @@ void Compiler :: endMethod(BuildTreeWriter& writer, MethodScope& scope)
    writer.closeNode();
 }
 
-ObjectInfo Compiler::compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
 {
    return {};
 }
@@ -1779,6 +1813,16 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
             compileMethod(writer, methodScope, current);
             break;
          }
+         case SyntaxKey::Constructor:
+            if (_logic->isRole(scope.info)) {
+               scope.raiseError(errIllegalConstructor, node);
+            }
+            break;
+         case SyntaxKey::StaticMethod:
+            if (_logic->isRole(scope.info)) {
+               scope.raiseError(errIllegalStaticMethod, node);
+            }
+            break;
          default:
             break;
       }
@@ -1857,7 +1901,7 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
             compileClass(writer, classScope, current);
 
             // compile class class if it available
-            if (classScope.info.header.classRef != 0) {
+            if (classScope.info.header.classRef != classScope.reference && classScope.info.header.classRef != 0) {
                ClassScope classClassScope(&ns, classScope.info.header.classRef, classScope.visibility);
                ns.moduleScope->loadClassInfo(classClassScope.info, classClassScope.reference, false);
 

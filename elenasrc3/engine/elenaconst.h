@@ -78,6 +78,11 @@ namespace elena_lang
    // --- ELENA VMT flags ---
    constexpr ref_t elStandartVMT = 0x00000001;
    constexpr ref_t elClassClass  = 0x00000002;
+   constexpr ref_t elStateless   = 0x00000004;
+   constexpr ref_t elFinal       = 0x00000008;
+   constexpr ref_t elClosed      = 0x00000010;
+   constexpr ref_t elSealed      = 0x00000038;
+   constexpr ref_t elRole        = 0x00000100;
 
    // --- LoadResult enum ---
    enum class LoadResult

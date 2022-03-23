@@ -9,10 +9,15 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                     5
+#define IDE_REVISION_NUMBER                     6
 
 namespace elena_lang
 {
+   struct GUISettinngs
+   {
+      bool withTabAboverscore;
+   };
+
    // --- GUIFactory ---
    class GUIFactoryBase
    {

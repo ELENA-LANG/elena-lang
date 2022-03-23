@@ -43,6 +43,7 @@ namespace elena_lang
       InlineTemplate     = 0x001007,
       TemplateCode       = 0x001008,
       Constructor        = 0x001009,
+      Parameter          = 0x00100A,
       CodeBlock          = 0x001C10,
       WithoutBody        = 0x001C11,
       Importing          = 0x001C12,

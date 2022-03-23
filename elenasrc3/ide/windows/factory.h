@@ -21,6 +21,7 @@ namespace elena_lang
    protected:
       FontFactory    _fontFactory;
       StyleInfo*     _schemes[2];
+      GUISettinngs   _settings;
 
       HINSTANCE      _instance;
       int            _cmdShow;
@@ -38,7 +39,9 @@ namespace elena_lang
       GUIApp* createApp() override;
       GUIControlBase* createMainWindow() override;
 
-      IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideView, IDEController* ideController);
+      IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideView, 
+         IDEController* ideController,
+         GUISettinngs   settings);
    };
 }
 

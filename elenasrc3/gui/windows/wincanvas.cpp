@@ -314,3 +314,8 @@ long Canvas :: Chrome()
 {
    return ::GetSysColor(COLOR_3DFACE);
 }
+
+long Canvas :: ButtonFace()
+{
+   return ::GetSysColor(COLOR_BTNFACE);
+}

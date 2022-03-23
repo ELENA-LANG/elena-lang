@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Win32 Common header
 //      Win32 graphic tools header
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CANVAS_H
@@ -63,6 +63,7 @@ namespace elena_lang
 
    public:
       static long Chrome();
+      static long ButtonFace();
 
       bool isReleased() const;
 

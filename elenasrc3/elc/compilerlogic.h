@@ -22,11 +22,15 @@ namespace elena_lang
 
       bool validateTemplateAttribute(ref_t attribute, Visibility& visibility, TemplateType& type);
       bool validateSymbolAttribute(ref_t attribute, Visibility& visibility);
-      bool validateClassAttribute(ref_t attribute, Visibility& visibility);
+      bool validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility);
       bool validateMethodAttribute(ref_t attribute, MethodHint& hint, bool& explicitMode);
       bool validateImplicitMethodAttribute(ref_t attribute, MethodHint& hint);
       bool validateDictionaryAttribute(ref_t attribute, ref_t& dictionaryType);
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
+
+      bool isRole(ClassInfo& info);
+
+      void tweakClassFlags(ClassInfo& info, bool classClassMode);
 
       bool validateMessage(mssg_t message);
       void validateClassDeclaration();

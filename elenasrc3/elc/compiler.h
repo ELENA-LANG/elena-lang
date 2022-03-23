@@ -156,7 +156,7 @@ namespace elena_lang
          irNone = 0,
          irSuccessfull,
          irUnsuccessfull,
-         //irSealed,
+         irSealed,
          //irInvalid,
    //      irObsolete
       };
@@ -460,7 +460,7 @@ namespace elena_lang
 
       void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node);
       void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node);
-      void declareClassAttributes(ClassScope& scope, SyntaxNode node);
+      void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& flags);
       void declareMethodAttributes(MethodScope& scope, SyntaxNode node);
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, ref_t& dictionaryType);
       void declareExpressionAttributes(Scope& scope, SyntaxNode node, ExpressionAttributes& mode);
@@ -474,9 +474,10 @@ namespace elena_lang
 
       InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreFields, bool ignoreSealed*/);
 
+      void generateClassFlags(ClassScope& scope, ref_t declaredFlags);
       void generateMethodDeclaration(ClassScope& scope, SyntaxNode node);
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey);
-      void generateClassDeclaration(ClassScope& scope, SyntaxNode node);
+      void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
       void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);
       void resolveClassParent(ClassScope& scope, SyntaxNode node);

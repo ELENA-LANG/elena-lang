@@ -8,7 +8,7 @@
 
 namespace elena_lang
 {
-   constexpr auto MessageLength = 35;
+   constexpr auto MessageLength = 36;
    const Pair<int, const char*> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -45,7 +45,8 @@ namespace elena_lang
       {errNoBodyMethod, errMsgNoBodyMethod},
       {errUnknownTemplate, errMsgUnknownTemplate},
       {errDuplicatedDefinition, errMsgDuplicatedDefinition},
-      {errNoDispatcher, errMsgNoDispatcher}
+      {errNoDispatcher, errMsgNoDispatcher},
+      {errSealedParent, errMsgSealedParent}
    };
 
 }
