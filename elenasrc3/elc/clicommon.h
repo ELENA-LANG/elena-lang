@@ -319,11 +319,13 @@ public:
       bool ignoreFields*/) = 0;
 
    ModuleScopeBase(ModuleBase* module,
+      ModuleBase* debugModule,
       pos_t stackAlingment, 
       pos_t rawStackAlingment)
       : predefined(0), attributes(0)
    {
       this->module = module;
+      this->debugModule = debugModule;
       this->stackAlingment = stackAlingment;
       this->rawStackAlingment = rawStackAlingment;
    }

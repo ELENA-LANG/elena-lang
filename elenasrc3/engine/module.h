@@ -69,6 +69,7 @@ namespace elena_lang
    public:
       ref_t mapReference(ustr_t referenceName) override;
       ref_t mapReference(ustr_t referenceName, bool existing) override;
+      void mapPredefinedReference(ustr_t referenceName, ref_t reference) override;
 
       ref_t mapSignature(ref_t* references, size_t length, bool existing) override;
       ref_t mapAction(ustr_t actionName, ref_t signature, bool existing) override;
@@ -149,6 +150,7 @@ namespace elena_lang
    public:
       ref_t mapReference(ustr_t referenceName) override;
       ref_t mapReference(ustr_t referenceName, bool existing) override;
+      void mapPredefinedReference(ustr_t referenceName, ref_t reference) override;
 
       ref_t mapSignature(ref_t* references, size_t length, bool existing) override;
       ref_t mapAction(ustr_t actionName, ref_t signature, bool existing) override;

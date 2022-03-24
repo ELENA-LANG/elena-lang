@@ -39,7 +39,8 @@ namespace elena_lang
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,
          pos_t stackAlingment,
-         pos_t rawStackAlingment);
+         pos_t rawStackAlingment,
+         bool withDebug);
 
       void configurate(ProjectBase& project);
       void compile(ProjectBase& project, pos_t defaultStackAlignment, pos_t defaultRawStackAlignment);

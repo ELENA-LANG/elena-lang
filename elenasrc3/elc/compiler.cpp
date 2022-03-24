@@ -1458,11 +1458,29 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    return retVal;
 }
 
+void Compiler :: addBreakpoint(BuildTreeWriter& writer, SyntaxNode node)
+{
+   SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
+   if (terminal != SyntaxKey::None) {
+      SyntaxNode row = terminal.findChild(SyntaxKey::Row);
+      SyntaxNode col = terminal.findChild(SyntaxKey::Column);
+
+      writer.newNode(BuildKey::Breakpoint);
+      writer.appendNode(BuildKey::Row, row.arg.value);
+      writer.appendNode(BuildKey::Column, col.arg.value);
+      writer.closeNode();
+   }
+}
+
 ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
 {
    ArgumentsInfo arguments;
 
    SyntaxNode current = node.firstChild();
+   if (current == SyntaxKey::Object) {
+      addBreakpoint(writer, current);
+   }
+
    arguments.add(compileObject(writer, scope, current));
 
    current = current.nextNode();
@@ -1643,7 +1661,10 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
 ObjectInfo Compiler::compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
 {
    ExprScope scope(&codeScope);
+
+   writer.appendNode(BuildKey::OpenStatement);
    auto retVal = compileExpression(writer, scope, node, EAttr::None);
+   writer.appendNode(BuildKey::EndStatement);
 
    return retVal;
 }

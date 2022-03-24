@@ -393,6 +393,13 @@ ModuleBase* LibraryProvider :: createModule(ustr_t name)
    return module;
 }
 
+ModuleBase* LibraryProvider :: createDebugModule(ustr_t name)
+{
+   auto module = new Module(name);
+
+   return module;
+}
+
 bool LibraryProvider :: saveModule(ModuleBase* module)
 {
    // resolving the module output path
@@ -407,6 +414,23 @@ bool LibraryProvider :: saveModule(ModuleBase* module)
    IdentifierString tmp(*path);
    printf("saving %s", tmp.str());
 
+   FileWriter writer(*path, FileEncoding::Raw, false);
+   return dynamic_cast<Module*>(module)->save(writer);
+}
+
+bool LibraryProvider::saveDebugModule(ModuleBase* module)
+{
+   // resolving the module output path
+   ustr_t name = module->name();
+   PathString path;
+   nameToPath(name, path);
+
+   path.changeExtension("dnl");
+
+   // re-creating path
+   PathUtil::recreatePath(*path);
+
+   // saving a module
    FileWriter writer(*path, FileEncoding::Raw, false);
    return dynamic_cast<Module*>(module)->save(writer);
 }

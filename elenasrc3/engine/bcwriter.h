@@ -19,9 +19,13 @@ namespace elena_lang
    public:
       struct Scope
       {
-         MemoryWriter* vmt;
-         MemoryWriter* code;
+         MemoryWriter*     vmt;
+         MemoryWriter*     code;
+
          SectionScopeBase* moduleScope;
+
+         MemoryWriter*     debug;
+         MemoryWriter*     debugStrings;
       };
 
       struct TapeScope
@@ -38,7 +42,10 @@ namespace elena_lang
       const Saver*       _commands;
       LibraryLoaderBase* _loader;
 
-      //void saveSendOp(CommandTape& tape, BuildNode node);
+      void openSymbolDebugInfo(Scope& scope, ustr_t symbolName);
+      void openClassDebugInfo(Scope& scope, ustr_t className, ref_t flags);
+      void openMethodDebugInfo(Scope& scope);
+      void endDebugInfo(Scope& scope);
 
       void importTree(CommandTape& tape, BuildNode node, Scope& scope);
 

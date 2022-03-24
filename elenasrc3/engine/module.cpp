@@ -160,6 +160,13 @@ ref_t Module :: mapReference(ustr_t referenceName, bool existing)
    else return mapReference(referenceName);
 }
 
+void Module :: mapPredefinedReference(ustr_t referenceName, ref_t reference)
+{
+   _resolvedReferences.clear();
+
+   _references.add(referenceName, reference);
+}
+
 ref_t Module::mapSignature(ref_t* references, size_t length, bool existing)
 {
    return retrieveSignature(references, length, existing);
@@ -377,6 +384,11 @@ ref_t ROModule :: mapReference(ustr_t referenceName, bool existing)
       throw InternalError(errReadOnlyModule);
    }
    else return _references.get(referenceName);
+}
+
+void ROModule :: mapPredefinedReference(ustr_t referenceName, ref_t reference)
+{
+   throw InternalError(errReadOnlyModule);
 }
 
 ref_t ROModule :: mapAction(ustr_t actionName, ref_t signature, bool existing)

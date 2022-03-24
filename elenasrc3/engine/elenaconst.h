@@ -132,6 +132,19 @@ namespace elena_lang
       Console        = 0x01000,
    };
 
+   // --- ELENA Debug symbol constants ---
+   enum class DebugSymbol
+   {
+      None           = 0x0000,
+
+      Symbol,
+      Class,
+      Procedure,
+      Statement,
+      Breakpoint,
+      End
+   };
+
    // === Reference constants ====
    constexpr ref_t mskAnyRef              = 0xFF000000u;
    constexpr ref_t mskRefType             = 0xF0000000u;
@@ -238,6 +251,10 @@ namespace elena_lang
    constexpr ref_t ARG64_2                = 0x0000001Eu;
    constexpr ref_t NARG16_1               = 0x0000001Fu;
 
+   // predefined debug module sections
+   constexpr ref_t DEBUG_LINEINFO_ID      = -1;
+   constexpr ref_t DEBUG_STRINGS_ID       = -2;
+
    // === ELENA Error codes ===
    constexpr auto errCommandSetAbsent     = 600;
    constexpr auto errReadOnlyModule       = 601;
@@ -248,7 +265,7 @@ namespace elena_lang
    constexpr auto errNotImplemented   = -3;
 
    // === Enginre settings ===
-   constexpr auto MINIMAL_ARG_LIST = 2;
+   constexpr auto MINIMAL_ARG_LIST        = 2;
 
 } // _ELENA_
 

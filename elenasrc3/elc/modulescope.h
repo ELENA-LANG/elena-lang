@@ -67,9 +67,10 @@ public:
    ModuleScope(LibraryLoaderBase* loader, 
       ForwardResolverBase* forwardResolver, 
       ModuleBase* module,
+      ModuleBase* debugModule,
       pos_t stackAlingment,
       pos_t rawStackAlingment)
-      : ModuleScopeBase(module, stackAlingment, rawStackAlingment)
+      : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment)
    {
       this->loader = loader;
       this->forwardResolver = forwardResolver;

@@ -99,7 +99,30 @@ void creatingClass(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::NewIR, node.arg.value, typeRef | mskVMTRef);
 }
 
-ByteCodeWriter::Saver commands[12] =
+void openStatement(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   DebugLineInfo symbolInfo = { DebugSymbol::Statement };
+   tapeScope.scope->debug->write(&symbolInfo, sizeof(DebugLineInfo));
+}
+
+void closeStatement(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   DebugLineInfo symbolInfo = { DebugSymbol::End };
+   tapeScope.scope->debug->write(&symbolInfo, sizeof(DebugLineInfo));
+}
+
+void addingBreakpoint(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   BuildNode row = node.findChild(BuildKey::Row);
+   BuildNode col = node.findChild(BuildKey::Column);
+
+   DebugLineInfo symbolInfo = { DebugSymbol::Breakpoint, col.arg.value, row.arg.value };
+   tapeScope.scope->debug->write(&symbolInfo, sizeof(DebugLineInfo));
+
+   tape.write(ByteCode::Breakpoint);
+}
+
+ByteCodeWriter::Saver commands[15] =
 {
    nullptr,
    openFrame,
@@ -112,7 +135,10 @@ ByteCodeWriter::Saver commands[12] =
    savingInStack,
    assigningLocal,
    getLocal,
-   creatingClass
+   creatingClass,
+   openStatement,
+   closeStatement,
+   addingBreakpoint
 };
 
 // --- ByteCodeWriter ---
@@ -123,18 +149,67 @@ ByteCodeWriter :: ByteCodeWriter(LibraryLoaderBase* loader)
    _loader = loader;
 }
 
-//void ByteCodeWriter :: saveReversedTree(CommandTape& tape, BuildNode node)
-//{
-//   pos_t counter = BuildTree::countChildren(node, BuildKey::CommandMask);
-//   BuildNode current = node.firstChild(BuildKey::CommandMask);
-//   while (current != BuildKey::None) {
-//      counter--;
-//      _commands[(int)(current.key & ~BuildKey::CommandMask)](tape, current);
-//      tape.write(ByteCode::StoreSI, counter);
-//
-//      current = current.nextNode(BuildKey::CommandMask);
-//   }
-//}
+void ByteCodeWriter :: openSymbolDebugInfo(Scope& scope, ustr_t symbolName)
+{
+   if (scope.debug->position() == 0)
+      scope.debug->writeDWord(0);
+
+   // map symbol debug info, starting the symbol with # to distinsuish from class
+   IdentifierString bookmark("#", symbolName + 1);
+   scope.moduleScope->debugModule->mapPredefinedReference(*bookmark, scope.debug->position());
+
+   pos_t namePosition = scope.debugStrings->position();
+
+   if (isWeakReference(symbolName)) {
+      IdentifierString fullName(scope.moduleScope->debugModule->name(), symbolName);
+
+      scope.debugStrings->writeString(*fullName);
+   }
+   else scope.debugStrings->writeString(symbolName);
+
+   DebugLineInfo symbolInfo = { DebugSymbol::Symbol };
+   symbolInfo.addresses.source.nameRef = namePosition;
+
+   scope.debug->write(&symbolInfo, sizeof(DebugLineInfo));
+}
+
+void ByteCodeWriter :: openClassDebugInfo(Scope& scope, ustr_t className, ref_t flags)
+{
+   if (scope.debug->position() == 0)
+      scope.debug->writeDWord(0);
+
+   scope.moduleScope->debugModule->mapPredefinedReference(className, scope.debug->position());
+
+   pos_t namePosition = scope.debugStrings->position();
+
+   if (isWeakReference(className)) {
+      IdentifierString fullName(scope.moduleScope->debugModule->name(), className);
+
+      scope.debugStrings->writeString(*fullName);
+   }
+   else scope.debugStrings->writeString(className);
+
+   DebugLineInfo symbolInfo = { DebugSymbol::Class };
+   symbolInfo.addresses.classSource.nameRef = namePosition;
+   symbolInfo.addresses.classSource.flags = flags;
+
+   scope.debug->write(&symbolInfo, sizeof(DebugLineInfo));
+}
+
+void ByteCodeWriter :: openMethodDebugInfo(Scope& scope)
+{
+   DebugLineInfo symbolInfo = { DebugSymbol::Procedure };
+   //symbolInfo.addresses.source.nameRef = sourceRef;
+
+   scope.debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+}
+
+void ByteCodeWriter :: endDebugInfo(Scope& scope)
+{
+   DebugLineInfo endInfo = { DebugSymbol::End };
+
+   scope.debug->write(&endInfo, sizeof(DebugLineInfo));
+}
 
 void ByteCodeWriter :: importTree(CommandTape& tape, BuildNode node, Scope& scope)
 {
@@ -171,9 +246,21 @@ void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope)
    auto section = moduleScope->mapSection(node.arg.reference | mskSymbolRef, false);
    MemoryWriter writer(section);
 
-   Scope scope = { nullptr, &writer };
+   Scope scope = { nullptr, &writer, moduleScope, nullptr, nullptr };
 
-   saveProcedure(node, scope);
+   if (moduleScope->debugModule) {
+      // initialize debug info writers
+      MemoryWriter debugWriter(moduleScope->debugModule->mapSection(DEBUG_LINEINFO_ID, false));
+      MemoryWriter debugStringWriter(moduleScope->debugModule->mapSection(DEBUG_STRINGS_ID, false));
+
+      scope.debug = &debugWriter;
+      scope.debugStrings = &debugStringWriter;
+
+      openSymbolDebugInfo(scope, moduleScope->module->resolveReference(node.arg.reference & ~mskAnyRef));
+      saveProcedure(node, scope);
+      endDebugInfo(scope);
+   }
+   else saveProcedure(node, scope);
 }
 
 void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope)
@@ -212,7 +299,12 @@ void ByteCodeWriter :: saveVMT(BuildNode node, Scope& scope)
          MethodEntry entry = { current.arg.reference, scope.code->position() };
          scope.vmt->write(&entry, sizeof(MethodEntry));
 
-         saveProcedure(current, scope);
+         if (scope.moduleScope->debugModule) {
+            openMethodDebugInfo(scope);
+            saveProcedure(current, scope);
+            endDebugInfo(scope);
+         }
+         else saveProcedure(current, scope);
       }
 
       current = current.nextNode();
@@ -245,8 +337,20 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope)
 
    vmtWriter.write(&info.header, sizeof(ClassHeader));  // header
 
-   Scope scope = { &vmtWriter, &codeWriter, moduleScope };
-   saveVMT(node, scope);
+   Scope scope = { &vmtWriter, &codeWriter, moduleScope, nullptr, nullptr };
+   if (moduleScope->debugModule) {
+      // initialize debug info writers
+      MemoryWriter debugWriter(moduleScope->debugModule->mapSection(DEBUG_LINEINFO_ID, false));
+      MemoryWriter debugStringWriter(moduleScope->debugModule->mapSection(DEBUG_STRINGS_ID, false));
+
+      scope.debug = &debugWriter;
+      scope.debugStrings = &debugStringWriter;
+
+      openClassDebugInfo(scope, moduleScope->module->resolveReference(node.arg.reference & ~mskAnyRef), info.header.flags);
+      saveVMT(node, scope);
+      endDebugInfo(scope);
+   }
+   else saveVMT(node, scope);
 
    pos_t size = vmtWriter.position() - classPosition;
    vmtSection->write(classPosition - 4, &size, sizeof(size));

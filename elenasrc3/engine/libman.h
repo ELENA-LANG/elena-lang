@@ -72,8 +72,10 @@ namespace elena_lang
          ForwardResolverBase* forwardResolver) override;
 
       ModuleBase* createModule(ustr_t name);
+      ModuleBase* createDebugModule(ustr_t name);
 
       bool saveModule(ModuleBase* module);
+      bool saveDebugModule(ModuleBase* module);
 
       LibraryProvider();
    };

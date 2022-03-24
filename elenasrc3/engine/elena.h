@@ -99,6 +99,8 @@ namespace elena_lang
       virtual ref_t mapReference(ustr_t referenceName) = 0;
       virtual ref_t mapReference(ustr_t referenceName, bool existing) = 0;
 
+      virtual void mapPredefinedReference(ustr_t referenceName, ref_t reference) = 0;
+
       virtual ref_t mapSignature(ref_t* references, size_t length, bool existing) = 0;
       virtual ref_t mapAction(ustr_t actionName, ref_t signature, bool existing) = 0;
       virtual ref_t mapConstant(ustr_t reference) = 0;
@@ -276,6 +278,7 @@ namespace elena_lang
    {
    public:
       ModuleBase* module;
+      ModuleBase* debugModule;
 
       virtual ustr_t resolveFullName(ref_t reference) = 0;
 
@@ -289,6 +292,7 @@ namespace elena_lang
       SectionScopeBase()
       {
          module = nullptr;
+         debugModule = nullptr;
       }
    };
 
@@ -627,6 +631,53 @@ namespace elena_lang
    {
       mssg_t message;
       pos_t  codeOffset;
+   };
+
+
+   // --- DebugLineInfo ---
+
+   struct DebugLineInfo
+   {
+      DebugSymbol symbol;
+      int         col, row/*, length*/;
+      union
+      {
+         struct Source { pos_t nameRef; } source;
+         struct Module { pos_t nameRef; int flags; } classSource;
+         struct Step { pos64_t address; } step;
+      //   struct Local { pos_t nameRef; int level; } local;
+      //   struct Field { pos_t nameRef; int size; } field;
+      //   struct Offset { pos_t disp; } offset;
+      } addresses;
+
+      DebugLineInfo()
+      {
+         symbol = DebugSymbol::None;
+         col = row = /*length = */0;
+
+         this->addresses.classSource.nameRef = 0;
+         this->addresses.classSource.flags = 0;
+      }
+      DebugLineInfo(DebugSymbol symbol)
+      {
+         this->symbol = symbol;
+         this->col = 0;
+         this->row = 0;
+         //this->length = length;
+
+         this->addresses.classSource.nameRef = 0;
+         this->addresses.classSource.flags = 0;
+      }
+      DebugLineInfo(DebugSymbol symbol, int col, int row/*, int length*/)
+      {
+         this->symbol = symbol;
+         this->col = col;
+         this->row = row;
+         //this->length = length;
+
+         this->addresses.classSource.nameRef = 0;
+         this->addresses.classSource.flags = 0;
+      }
    };
 #pragma pack(pop)
 

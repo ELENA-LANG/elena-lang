@@ -37,6 +37,9 @@ namespace elena_lang
       Assigning         = 0x0009,
       Local             = 0x000A,
       CreatingClass     = 0x000B,
+      OpenStatement     = 0x000C,
+      EndStatement      = 0x000D,
+      Breakpoint        = 0x000E,
 
       Import            = 0x0028,
       StrDictionaryOp   = 0x0029,
@@ -47,6 +50,8 @@ namespace elena_lang
       ReservedN         = 0x8003,      // reserved unmanaged
       Index             = 0x8004,
       Type              = 0x8005,
+      Column            = 0x8006,
+      Row               = 0x8007,
 
       //IntLiteral        = 0x0020,
       //StringLiteral     = 0x0021,

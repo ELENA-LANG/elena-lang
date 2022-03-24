@@ -110,17 +110,20 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    bcWriter.save(tree, &moduleScope);
 
    _libraryProvider.saveModule(moduleScope.module);
+   _libraryProvider.saveDebugModule(moduleScope.debugModule);
 }
 
 void CompilingProcess :: buildModule(ModuleIteratorBase& module_it, SyntaxTree* syntaxTree, 
    ForwardResolverBase* forwardResolver,
    pos_t stackAlingment,
-   pos_t rawStackAlingment)
+   pos_t rawStackAlingment,
+   bool withDebug)
 {
    ModuleScope moduleScope(
       &_libraryProvider, 
       forwardResolver, 
       _libraryProvider.createModule(module_it.name()),
+      withDebug ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
       stackAlingment, rawStackAlingment);
 
    _compiler->prepare(&moduleScope, forwardResolver);
@@ -191,7 +194,8 @@ void CompilingProcess :: compile(ProjectBase& project, pos_t defaultStackAlignme
    while (!module_it->eof()) {
       buildModule(*module_it, &syntaxTree, &project,
          project.IntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
-         project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment));
+         project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
+         project.BoolSetting(ProjectOption::DebugMode, true));
 
       ++(*module_it);
    }
