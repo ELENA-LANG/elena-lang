@@ -17,5 +17,6 @@
 *.aps
 *.user
 *.pdb
+*.filters
 /elenasrc3/temp
 .vs/

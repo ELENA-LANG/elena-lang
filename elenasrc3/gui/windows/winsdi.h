@@ -69,6 +69,7 @@ namespace elena_lang
       void onResize() override;
       virtual void onActivate();
       void onDrawItem(DRAWITEMSTRUCT* item) override;
+      virtual bool onCommand(int command) { return false; }
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 

@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------
 
 #include "factory.h"
-#include "windows/winsdi.h"
+#include "windows/winide.h"
 #include "windows/wintextview.h"
 #include "windows/wintextframe.h"
 #include "sourceformatter.h"
@@ -132,7 +132,7 @@ GUIApp* IDEFactory :: createApp()
 
 GUIControlBase* IDEFactory :: createMainWindow()
 {
-   SDIWindow* sdi = new SDIWindow(szTitle);
+   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model);
    sdi->create(_instance, szSDI, nullptr);
 
    ControlBase* children[1];

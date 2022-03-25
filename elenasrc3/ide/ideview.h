@@ -7,20 +7,28 @@
 #ifndef IDEVIEW_H
 #define IDEVIEW_H
 
-#include "view.h"
+#include "idecommon.h"
 #include "editframe.h"
+#include "project.h"
 
 namespace elena_lang
 {
-
+// --- IDEModel ---
 class IDEModel
 {
 public:
-   SourceViewModel _sourceViewModel;
+   IDEStatus       status;
 
-   SourceViewModel* viewModel() { return &_sourceViewModel; }
+   SourceViewModel sourceViewModel;
+   ProjectModel    projectModel;
 
-   IDEModel() = default;
+   SourceViewModel* viewModel() { return &sourceViewModel; }
+
+   IDEModel()
+      : projectModel(&status)
+   {
+      status = IDEStatus::None;
+   }
 };
 
 } // elena:lang

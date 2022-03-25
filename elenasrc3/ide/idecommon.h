@@ -13,6 +13,19 @@
 
 namespace elena_lang
 {
+   // --- IDEStatus ---
+   enum class IDEStatus
+   {
+      None            = 0,
+      Busy            = 1,
+      AutoRecompiling = 2,
+   };
+
+   inline bool testIDEStatus(IDEStatus value, IDEStatus mask)
+   {
+      return test((int)value, (int)mask);
+   }
+
    struct GUISettinngs
    {
       bool withTabAboverscore;

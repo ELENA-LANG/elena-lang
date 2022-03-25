@@ -8,6 +8,8 @@
 #define IDECONTROLLER_H
 
 #include "controller.h"
+#include "debugcontroller.h"
+#include "project.h"
 
 namespace elena_lang
 {
@@ -18,11 +20,35 @@ namespace elena_lang
    public:
    };
 
+   // --- DebugAction ---
+   enum class DebugAction
+   {
+      None,
+      Run
+   };
+
+   // --- ProjectController ---
+   class ProjectController
+   {
+      DebugController      debugController;
+
+      bool onDebugAction(ProjectModel& model, DebugAction action);
+      bool isOutaged(bool noWarning);
+
+      bool startDebugger(ProjectModel& model/*, bool stepMode*/);
+
+   public:
+      bool doCompileProject(ProjectModel& model, DebugAction postponedAction);
+
+      void doDebugAction(ProjectModel& model, DebugAction action);
+   };
+
    // --- IDEController ---
    class IDEController
    {
    public:
       SourceViewController sourceController;
+      ProjectController    projectController;
    };
 
 } // elena:lang

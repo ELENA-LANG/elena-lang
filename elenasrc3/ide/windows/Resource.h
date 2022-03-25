@@ -6,6 +6,11 @@
 
 #define IDM_ABOUT                   104
 #define IDM_EXIT                    105
+
+#define IDM_DEBUG_RUN               601
+#define IDM_DEBUG_STEPOVER          602
+#define IDM_DEBUG_STEPINTO          603
+
 #define IDI_IDE                     107
 #define IDI_SMALL                   108
 #define IDC_IDE                     109
@@ -21,8 +26,8 @@
 
 #define _APS_NO_MFC					130
 #define _APS_NEXT_RESOURCE_VALUE	129
-#define _APS_NEXT_COMMAND_VALUE		32771
-#define _APS_NEXT_CONTROL_VALUE		1000
+#define _APS_NEXT_COMMAND_VALUE	32771
+#define _APS_NEXT_CONTROL_VALUE	1000
 #define _APS_NEXT_SYMED_VALUE		110
 #endif
 #endif
