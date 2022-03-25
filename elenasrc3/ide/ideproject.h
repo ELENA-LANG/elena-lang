@@ -17,13 +17,14 @@ namespace elena_lang
       IDEStatus* status;
 
       bool       autoRecompile;
+      PathString projectPath;
 
-      ProjectModel(IDEStatus* status)
-      {
-         this->status = status;
+      ustr_t getTarget();
+      ustr_t getArguments();
 
-         this->autoRecompile = true;
-      }
+      bool getDebugMode();
+
+      ProjectModel(IDEStatus* status);
    };
 }
 

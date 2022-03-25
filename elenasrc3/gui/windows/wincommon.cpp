@@ -159,6 +159,11 @@ bool WindowApp :: initInstance(WindowBase* mainWindow)
    return TRUE;
 }
 
+void WindowApp :: notify(int messageCode)
+{
+   // !! temporal
+}
+
 int WindowApp :: run(GUIControlBase* mainWindow)
 {
    // Perform application initialization:

@@ -14,7 +14,41 @@ using namespace elena_lang;
 
 bool ProjectController :: startDebugger(ProjectModel& model)
 {
-   
+   ustr_t target = model.getTarget();
+   ustr_t arguments = model.getArguments();
+
+   if (!target.empty()) {
+      PathString exePath(*model.projectPath, target);
+
+      // provide the whole command line including the executable path and name
+      PathString commandLine(exePath);
+      commandLine.append(_T(" "));
+      commandLine.append(arguments);
+
+      bool debugMode = model.getDebugMode();
+      if (debugMode) {
+         if (!_debugController.start(exePath.str(), commandLine.str(), debugMode/*, _breakpoints */)) {
+            notify(ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
+
+            return false;
+         }
+
+      }
+      else {
+         if (!_debugController.start(exePath.str(), commandLine.str(), false/*, _breakpoints */)) {
+            notify(ERROR_RUN_NEED_RECOMPILE);
+
+            return false;
+         }
+      }
+
+      return true;
+   }
+   else {
+      notify(ERROR_RUN_NEED_TARGET);
+
+      return false;
+   }
 }
 
 bool ProjectController :: isOutaged(bool noWarning)
@@ -27,9 +61,9 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
    if (testIDEStatus(*model.status, IDEStatus::Busy))
       return false;
 
-   if (!debugController.isStarted()) {
+   if (!_debugController.isStarted()) {
       bool toRecompile = model.autoRecompile && !testIDEStatus(*model.status, IDEStatus::AutoRecompiling);
-      if (!isOutaged(toRecompile)) {
+      if (isOutaged(toRecompile)) {
          if (toRecompile) {
             if (!doCompileProject(model, action))
                return false;
@@ -48,7 +82,7 @@ void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
       if (onDebugAction(model, action)) {
          switch (action) {
             case DebugAction::Run:
-               debugController.run();
+               _debugController.run();
                break;
             default:
                break;

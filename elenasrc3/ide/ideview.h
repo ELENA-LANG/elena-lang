@@ -9,7 +9,7 @@
 
 #include "idecommon.h"
 #include "editframe.h"
-#include "project.h"
+#include "ideproject.h"
 
 namespace elena_lang
 {

@@ -8,12 +8,25 @@
 #ifndef DEBUGCONTROLLER_H
 #define DEBUGCONTROLLER_H
 
+#include "idecommon.h"
+
 namespace elena_lang
 {
    // --- DebugController ---
-   class DebugController
+   class DebugController : DebugControllerBase
    {
-      bool _started;
+      bool              _started;
+      bool              _running;
+      PathString        _debuggee;
+      PathString        _arguments;
+
+      DebugProcessBase* _process;
+      addr_t            _entryPoint;
+
+      void debugThread() override;
+      void processStep();
+
+      bool startThread();
 
    public:
       bool isStarted() const
@@ -21,9 +34,11 @@ namespace elena_lang
          return _started;
       }
 
+      bool start(path_t programPath, path_t arguments, bool debugMode);
+
       void run();
 
-      DebugController();
+      DebugController(DebugProcessBase* process);
    };
    
 }

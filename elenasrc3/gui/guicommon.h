@@ -196,8 +196,15 @@ namespace elena_lang
       virtual ~GUIControlBase() = default;
    };
 
+   // --- NotifierBase ---
+   class NotifierBase
+   {
+   public:
+      virtual void notify(int messageCode) = 0;
+   };
+
    // --- GUIApp ---
-   class GUIApp
+   class GUIApp : public NotifierBase
    {
    public:
       virtual int run(GUIControlBase* mainWindow) = 0;

@@ -118,6 +118,25 @@ namespace elena_lang
          combine(subPath);
       }
    #ifdef _MSC_VER
+      bool append(const path_c* s, size_t length)
+      {
+         return String::append(s, length);
+      }
+      bool append(const path_c* s)
+      {
+         return String::append(s);
+      }
+      bool append(path_c c)
+      {
+         return String::append(c);
+      }
+      void append(ustr_t s)
+      {
+         PathString tmp(s);
+
+         append(*tmp);
+      }
+
       void changeExtension(ustr_t extension)
       {
          PathString ext(extension);

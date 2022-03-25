@@ -9,10 +9,18 @@
 #include "ide.h"
 #include "ideview.h"
 #include "windows/wincommon.h"
+#include "windows/x86debugprocess.h"
 #include "Resource.h"
 #include "text.h"
 
 using namespace elena_lang;
+
+#ifdef _M_IX86
+
+typedef x86DebugProcess    DebugProcess;
+
+#else
+#endif
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -31,10 +39,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
    GUISettinngs  settinngs = { true };
    IDEModel      ideModel;
-   IDEController ideController;
+   DebugProcess  debugProcess;
+   IDEController ideController(&debugProcess);
    IDEFactory    factory(hInstance, nCmdShow, &ideModel, &ideController, settinngs);
 
    GUIApp* app = factory.createApp();
+
+   ideController.setNotifier(app);
+
    int retVal = app->run(factory.createMainWindow());
 
    delete app;
