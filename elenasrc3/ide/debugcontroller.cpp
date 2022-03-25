@@ -109,6 +109,11 @@ bool DebugController :: startThread()
    return _process->isStarted();
 }
 
+void DebugController :: clearBreakpoints()
+{
+   
+}
+
 bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode)
 {
    //_currentModule = NULL;
@@ -124,7 +129,7 @@ bool DebugController :: start(path_t programPath, path_t arguments, bool debugMo
       if (_entryPoint == INVALID_ADDR)
          return false;
 
-      _debugger.initHook();
+      _process->initHook();
    }
    else {
       _entryPoint = 0;

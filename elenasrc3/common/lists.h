@@ -843,6 +843,41 @@ namespace elena_lang
          return false;
       }
 
+      void erase(Key key)
+      {
+         Item* tmp = nullptr;
+         if (!_top);
+         else if (_top->key == key) {
+            tmp = _top;
+            if (_top == _tale)
+               _tale = nullptr;
+            _top = _top->next;
+         }
+         else {
+            Item* cur = _top;
+            while (cur->next) {
+               if (cur->next->key == key) {
+                  if (cur->next == _tale)
+                     _tale = cur;
+
+                  tmp = cur->next;
+                  cur->next = tmp->next;
+                  break;
+               }
+               cur = cur->next;
+            }
+         }
+         if (tmp) {
+            if (FreeT)
+               FreeT(tmp->item);
+
+            delete tmp;
+
+            _count--;
+         }
+
+      }
+
       void clear()
       {
          while (_top) {
@@ -1093,6 +1128,23 @@ namespace elena_lang
       return *keyPtr;
    }
 
+   inline pos_t Map_StoreAddr(MemoryDump* dump, addr_t addr)
+   {
+      pos_t position = dump->length();
+
+      dump->write(position, &addr, sizeof(addr));
+
+      return position;
+   }
+
+   inline addr_t Map_GetAddr(MemoryDump* dump, pos_t position)
+   {
+      addr_t addr = 0;
+      dump->read(position, &addr, sizeof(addr));
+
+      return addr;
+   }
+
    inline pos_t Map_StoreUStr(MemoryDump* dump, ustr_t s)
    {
       pos_t position = dump->length();
@@ -1223,6 +1275,14 @@ namespace elena_lang
             return true;
          }
          else return false;
+      }
+
+      void clear()
+      {
+         _buffer.clear();
+
+         _count = 0;
+         _tale = 0;
       }
 
       template<class SumT> SumT sum(SumT initValue, SumT(*lambda)(T item))

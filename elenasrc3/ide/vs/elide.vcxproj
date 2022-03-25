@@ -161,6 +161,7 @@
     <ClInclude Include="..\..\common\paths.h" />
     <ClInclude Include="..\..\common\streams.h" />
     <ClInclude Include="..\..\common\ustring.h" />
+    <ClInclude Include="..\..\engine\windows\pehelper.h" />
     <ClInclude Include="..\..\gui\controller.h" />
     <ClInclude Include="..\..\gui\document.h" />
     <ClInclude Include="..\..\gui\guicommon.h" />
@@ -186,13 +187,14 @@
     <ClInclude Include="..\windows\factory.h" />
     <ClInclude Include="..\windows\Resource.h" />
     <ClInclude Include="..\windows\winide.h" />
-    <ClInclude Include="..\windows\x86debugprocess.h" />
+    <ClInclude Include="..\windows\win32debugprocess.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\common\dump.cpp" />
     <ClCompile Include="..\..\common\files.cpp" />
     <ClCompile Include="..\..\common\paths.cpp" />
     <ClCompile Include="..\..\common\ustring.cpp" />
+    <ClCompile Include="..\..\engine\windows\pehelper.cpp" />
     <ClCompile Include="..\..\gui\controller.cpp" />
     <ClCompile Include="..\..\gui\document.cpp" />
     <ClCompile Include="..\..\gui\text.cpp" />
@@ -215,7 +217,7 @@
     <ClCompile Include="..\windows\factory.cpp" />
     <ClCompile Include="..\windows\main.cpp" />
     <ClCompile Include="..\windows\winide.cpp" />
-    <ClCompile Include="..\windows\x86debugprocess.cpp" />
+    <ClCompile Include="..\windows\win32debugprocess.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\windows\small.ico" />

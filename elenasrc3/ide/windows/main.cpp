@@ -9,18 +9,13 @@
 #include "ide.h"
 #include "ideview.h"
 #include "windows/wincommon.h"
-#include "windows/x86debugprocess.h"
+#include "windows/win32debugprocess.h"
 #include "Resource.h"
 #include "text.h"
 
 using namespace elena_lang;
 
-#ifdef _M_IX86
-
-typedef x86DebugProcess    DebugProcess;
-
-#else
-#endif
+typedef Win32DebugProcess    DebugProcess;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);

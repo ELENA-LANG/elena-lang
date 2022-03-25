@@ -46,7 +46,8 @@ namespace elena_lang
    // --- DebugProcessException ---
    struct DebugProcessException
    {
-
+      int   code;
+      addr_t address;
    };
 
    // --- DebugProcessBase ---
@@ -73,6 +74,9 @@ namespace elena_lang
       virtual void clearEvents() = 0;
 
       virtual bool isStarted() = 0;
+      virtual void initHook() = 0;
+
+      virtual addr_t findEntryPoint(path_t programPath) = 0;
 
       virtual ~DebugProcessBase() = default;
    };

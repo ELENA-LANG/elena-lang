@@ -36,6 +36,8 @@ namespace elena_lang
 
       bool start(path_t programPath, path_t arguments, bool debugMode);
 
+      void clearBreakpoints();
+
       void run();
 
       DebugController(DebugProcessBase* process);
