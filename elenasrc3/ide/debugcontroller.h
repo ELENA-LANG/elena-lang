@@ -76,9 +76,9 @@ namespace elena_lang
          _debugInfoSize = 0;
          _debugInfoPtr = 0;
 
-         //_classes.clear();
-         //_modules.clear();
-         //_classNames.clear();
+         _classes.clear();
+         _modules.clear();
+         _classNames.clear();
 
          //_tape.clear();
          //_tapeBookmarks.clear();
@@ -206,7 +206,8 @@ namespace elena_lang
       void loadDebugSection(StreamReader& reader, bool starting);
       bool loadDebugData(StreamReader& reader, bool setEntryAddress = false);
 
-      void showCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath);
+      void onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath);
+      void onStop();
 
    public:
       bool isStarted() const

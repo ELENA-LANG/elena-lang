@@ -350,7 +350,7 @@ void DebugController :: debugThread()
    //_currentModule = nullptr;
    _process->clearEvents();
 
-   //_listener->onStop(_process->proceedCheckPoint());
+   onStop();
 }
 
 void DebugController :: onInitBreakpoint()
@@ -444,7 +444,7 @@ void DebugController :: processStep()
          stepInto();
          //}
       }
-      else */showCurrentStep(lineInfo, moduleName, sourcePath);
+      else */onCurrentStep(lineInfo, moduleName, sourcePath);
    }
    //if (_debugger.Context()->checkFailed) {
    //   _listener->onCheckPoint(_T("Operation failed"));
@@ -456,7 +456,7 @@ void DebugController :: processStep()
    //}
 }
 
-void DebugController :: showCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath)
+void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath)
 {
    if (lineInfo) {
       _sourceModel->setTraceLine(lineInfo->row);
@@ -471,6 +471,12 @@ void DebugController :: showCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleNa
       //}
       //_listener->onStep(moduleName, sourcePath, lineInfo->row, lineInfo->col, lineInfo->length);
    }
+}
+
+void DebugController :: onStop()
+{
+   _sourceModel->clearTraceLine();
+   _notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
 }
 
 void DebugController :: run()
