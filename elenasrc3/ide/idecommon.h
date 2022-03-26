@@ -17,6 +17,9 @@ namespace elena_lang
    constexpr auto ERROR_DEBUG_FILE_NOT_FOUND_COMPILE  = 0x0002;
    constexpr auto ERROR_RUN_NEED_RECOMPILE            = 0x0003;
 
+   // --- Notification codes ---
+   constexpr auto NOTIFY_SOURCEMODEL                  = 1;
+
    // --- IDEStatus ---
    enum class IDEStatus
    {
@@ -63,6 +66,8 @@ namespace elena_lang
       virtual void stop() = 0;
       virtual void reset() = 0;
 
+      virtual void setStepMode() = 0;
+
       virtual DebugProcessException* Exception() = 0;
       virtual void resetException() = 0;
 
@@ -80,6 +85,7 @@ namespace elena_lang
       virtual void initHook() = 0;
 
       virtual addr_t getBaseAddress() = 0;
+      virtual void* getState() = 0;
 
       virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
 

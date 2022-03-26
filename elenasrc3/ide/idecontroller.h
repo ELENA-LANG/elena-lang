@@ -23,11 +23,13 @@ namespace elena_lang
    enum class DebugAction
    {
       None,
-      Run
+      Run,
+      StepInto,
+      StepOver
    };
 
    // --- ProjectController ---
-   class ProjectController
+   class ProjectController : public NotifierBase
    {
       DebugController      _debugController;
       NotifierBase*        _notifier;
@@ -47,14 +49,19 @@ namespace elena_lang
          _notifier = notifier;
       }
 
-      void notify(int messageCode)
+      void notifyMessage(int messageCode) override
       {
          if (_notifier)
-            _notifier->notify(messageCode);
+            _notifier->notifyMessage(messageCode);
+      }
+      void notifyModelChange(int modelCode) override
+      {
+         if (_notifier)
+            _notifier->notifyModelChange(modelCode);
       }
 
-      ProjectController(DebugProcessBase* process, ProjectModel* model)
-         : _debugController(process, model)
+      ProjectController(DebugProcessBase* process, ProjectModel* model, SourceViewModel* sourceModel)
+         : _debugController(process, model, sourceModel, this)
       {
          _notifier = nullptr;
       }
@@ -76,9 +83,10 @@ namespace elena_lang
          projectController.setNotifier(notifier);
       }
 
-      IDEController(DebugProcessBase* process, ProjectModel* model)
-         : projectController(process, model)
+      IDEController(DebugProcessBase* process, IDEModel* model)
+         : projectController(process, &model->projectModel, &model->sourceViewModel)
       {
+         _notifier = nullptr;
       }
    };
 

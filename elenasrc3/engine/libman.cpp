@@ -9,6 +9,9 @@
 #include "elena.h"
 // -------------------------------------------------------
 #include "libman.h"
+
+#include <utility>
+
 #include "module.h"
 #include "langcommon.h"
 
@@ -339,6 +342,7 @@ SectionInfo LibraryProvider :: getSection(ReferenceInfo referenceInfo, ref_t mas
    if (moduleInfo.module && moduleInfo.reference) {
       info.module = moduleInfo.module;
       info.section = moduleInfo.module->mapSection(moduleInfo.reference | mask, true);
+      info.reference = moduleInfo.reference;
    }
 
    if (info.section == nullptr && !silentMode)
@@ -356,6 +360,7 @@ ClassSectionInfo LibraryProvider :: getClassSections(ReferenceInfo referenceInfo
       info.module = moduleInfo.module;
       info.vmtSection = moduleInfo.module->mapSection(moduleInfo.reference | vmtMask, true);
       info.codeSection = moduleInfo.module->mapSection(moduleInfo.reference | codeMask, true);
+      info.reference = moduleInfo.reference;
    }
 
    if (info.vmtSection == nullptr && !silentMode)
@@ -376,6 +381,15 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
       else throw JITUnresolvedException(ReferenceInfo(referenceName));
    }
 
+   if (NamespaceString::compareNs(referenceName, ROOT_MODULE)) {
+      ReferenceName name;
+      ReferenceName::copyProperName(name, referenceName);
+
+      ReferenceName resolvedName(*_namespace, *name);
+
+      return retrieveReferenceInfo(*resolvedName, forwardResolver);
+   }
+
    if (isWeakReference(referenceName)) {
       if (isTemplateWeakReference(referenceName)) {
          referenceName = resolveTemplateWeakReference(referenceName, forwardResolver);
@@ -384,6 +398,33 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
       return ReferenceInfo(module, referenceName);
    }
    else return ReferenceInfo(referenceName);
+}
+
+ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ustr_t referenceName, ForwardResolverBase* forwardResolver)
+{
+   while (isForwardReference(referenceName)) {
+      ustr_t resolvedName = forwardResolver->resolveForward(referenceName);
+      if (!resolvedName.empty()) {
+         referenceName = resolvedName;
+      }
+      else throw JITUnresolvedException(ReferenceInfo(referenceName));
+   }
+
+   if (isWeakReference(referenceName)) {
+      if (isTemplateWeakReference(referenceName)) {
+         referenceName = resolveTemplateWeakReference(referenceName, forwardResolver);
+      }
+   }
+
+   ReferenceInfo referenceInfo;
+   ref_t reference = 0;
+   referenceInfo.module = resolveModule(referenceName, reference, true);
+   if (referenceInfo.module) {
+      referenceInfo.referenceName = referenceInfo.module->resolveReference(reference);
+
+      return referenceInfo;
+   }
+   return ReferenceInfo(referenceName);
 }
 
 ModuleBase* LibraryProvider :: createModule(ustr_t name)

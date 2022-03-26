@@ -28,7 +28,7 @@ bool ProjectController :: startDebugger(ProjectModel& model)
       bool debugMode = model.getDebugMode();
       if (debugMode) {
          if (!_debugController.start(exePath.str(), commandLine.str(), debugMode/*, _breakpoints */)) {
-            notify(ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
+            notifyMessage(ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
 
             return false;
          }
@@ -36,7 +36,7 @@ bool ProjectController :: startDebugger(ProjectModel& model)
       }
       else {
          if (!_debugController.start(exePath.str(), commandLine.str(), false/*, _breakpoints */)) {
-            notify(ERROR_RUN_NEED_RECOMPILE);
+            notifyMessage(ERROR_RUN_NEED_RECOMPILE);
 
             return false;
          }
@@ -45,7 +45,7 @@ bool ProjectController :: startDebugger(ProjectModel& model)
       return true;
    }
    else {
-      notify(ERROR_RUN_NEED_TARGET);
+      notifyMessage(ERROR_RUN_NEED_TARGET);
 
       return false;
    }
@@ -83,6 +83,12 @@ void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
          switch (action) {
             case DebugAction::Run:
                _debugController.run();
+               break;
+            case DebugAction::StepInto:
+               _debugController.stepInto();
+               break;
+            case DebugAction::StepOver:
+               _debugController.stepOver();
                break;
             default:
                break;

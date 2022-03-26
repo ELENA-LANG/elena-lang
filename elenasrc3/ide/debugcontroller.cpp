@@ -61,7 +61,6 @@ void DebugInfoProvider :: retrievePath(ustr_t name, PathString& path, path_t ext
    }
 }
 
-
 ModuleBase* DebugInfoProvider :: loadDebugModule(ustr_t reference)
 {
    NamespaceString name(reference);
@@ -88,7 +87,11 @@ ModuleBase* DebugInfoProvider :: loadDebugModule(ustr_t reference)
          FileReader reader(*path, FileRBMode, FileEncoding::Raw, false);
          LoadResult result = module->load(reader);
          if (result == LoadResult::Successful) {
-            if (module->mapReference(reference.str() + module->name().length(), true) != 0) {
+            ustr_t relativeName = reference.str() + module->name().length();
+            if (relativeName[0] == '#')
+               relativeName = relativeName + 1;
+
+            if (module->mapReference(relativeName, true) != 0) {
                _modules.add(*name, module);
             }
             else {
@@ -244,14 +247,55 @@ bool DebugInfoProvider :: load(StreamReader& reader, bool setEntryAddress, Debug
    return true;
 }
 
+ModuleBase* DebugInfoProvider :: getDebugModule(addr_t address)
+{
+   ModuleMap::Iterator it = _modules.start();
+   while (!it.eof()) {
+      MemoryBase* section = (*it)->mapSection(DEBUG_LINEINFO_ID, true);
+      if (section != nullptr) {
+         addr_t starting = (addr_t)section->get(0);
+         addr_t len = section->length();
+         if (starting <= address && (address - starting) < len) {
+            return *it;
+         }
+      }
+      ++it;
+   }
+   return nullptr;
+}
+
+DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, ustr_t& moduleName, ustr_t& sourcePath)
+{
+   ModuleBase* module = getDebugModule(lineInfoAddress);
+   if (module) {
+      moduleName = module->name();
+
+      //DebugLineInfo* current = (DebugLineInfo*)lineInfoAddress;
+      //while (current->symbol != DebugSymbol::Procedure/* && current->symbol != dsCodeInfo*/)
+      //   current = &current[-1];
+
+      //MemoryBase* section = module->mapSection(DEBUG_STRINGS_ID, true);
+
+      //if (section != NULL) {
+      //   sourcePath = (const char*)section->get(current->addresses.source.nameRef);
+      //}
+
+      return (DebugLineInfo*)lineInfoAddress;
+   }
+   else return nullptr;
+}
 
 // --- DebugController ---
 
-DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model)
+DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model, 
+   SourceViewModel* sourceModel, NotifierBase* notifier)
    : _provider(model)
 {
    _started = false;
    _process = process;
+   _running = false;
+   _sourceModel = sourceModel;
+   _notifier = notifier;
 }
 
 void DebugController :: debugThread()
@@ -313,7 +357,8 @@ void DebugController :: onInitBreakpoint()
 {
    bool starting = _provider.getDebugInfoSize() == 0;
    if (starting) {
-      DebugReader reader(_process, _process->getBaseAddress(), 0);
+      //HOTFIX : due to current implementation - setting position as a base address
+      DebugReader reader(_process, 0, (pos_t)_process->getBaseAddress());
 
       // define if it is a vm client or stand-alone
       char signature[0x10];
@@ -324,8 +369,8 @@ void DebugController :: onInitBreakpoint()
          debugDataPath.changeExtension(_T("dn"));
 
          FileReader reader(*debugDataPath, FileRBMode, FileEncoding::Raw, false);
-         char header[5];
-         reader.read(header, 5);
+         char header[8];
+         reader.read(header, 8);
          if (ustr_t(DEBUG_MODULE_SIGNATURE).compare(header, 5)) {
             _provider.setDebugInfo(reader.getDWord(), INVALID_ADDR);
 
@@ -355,21 +400,22 @@ void DebugController :: onInitBreakpoint()
       else _provider.setDebugInfoSize(4);
    }
 
+   addr_t entryAddr = _provider.getEntryPoint();
    if (_provider.getEntryPoint()) {
-      //if (_postponed.stepMode) {
-      //   // continue debugging
-      //   if (starting) {
-      //      _debugger.setBreakpoint(_entryPoint, false);
-      //   }
-      //   else _debugger.setStepMode();
+      if (_postponed.stepMode) {
+         // continue debugging
+         if (starting) {
+            _process->setBreakpoint(entryAddr, false);
+         }
+         else _process->setStepMode();
 
-      //   _events.setEvent(DEBUG_RESUME);
-      //}
+         _process->setEvent(DEBUG_RESUME);
+      }
       //else if (_postponed.gotoMode) {
       //   runToCursor(_postponed.source, _postponed.path.c_str(), _postponed.col, _postponed.row);
       //}
-      //// otherwise continue
-      /*else */run();
+      // otherwise continue
+      else run();
    }
    else _process->setEvent(DEBUG_RESUME);
 }
@@ -383,22 +429,22 @@ void DebugController :: processStep()
          return;
       }
 
-   //   ident_t moduleName = NULL;
-   //   ident_t sourcePath = NULL;
-   //   DebugLineInfo* lineInfo = seekDebugLineInfo((size_t)_debugger.Context()->State(), moduleName, sourcePath);
-   //   if (lineInfo->symbol == dsAssemblyStep) {
-   //      size_t objectPtr = _debugger.Context()->LocalPtr(1);
-   //      int flags = _debugger.Context()->VMTFlags(_debugger.Context()->ClassVMT(objectPtr));
-   //      //if (test(flags, elTapeGroup)) {
-   //      //   loadTapeDebugInfo(objectPtr);
-   //      //   _autoStepInto = true;
-   //      //}
-   //      //else {
-   //         // continue debugging if it is not a tape
-   //      stepInto();
-   //      //}
-   //   }
-   //   else showCurrentModule(lineInfo, moduleName, sourcePath);
+      ustr_t moduleName = nullptr;
+      ustr_t sourcePath = nullptr;
+      DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState(), moduleName, sourcePath);
+      /*if (lineInfo->symbol == dsAssemblyStep) {
+         size_t objectPtr = _debugger.Context()->LocalPtr(1);
+         int flags = _debugger.Context()->VMTFlags(_debugger.Context()->ClassVMT(objectPtr));
+         //if (test(flags, elTapeGroup)) {
+         //   loadTapeDebugInfo(objectPtr);
+         //   _autoStepInto = true;
+         //}
+         //else {
+            // continue debugging if it is not a tape
+         stepInto();
+         //}
+      }
+      else */showCurrentStep(lineInfo, moduleName, sourcePath);
    }
    //if (_debugger.Context()->checkFailed) {
    //   _listener->onCheckPoint(_T("Operation failed"));
@@ -410,6 +456,23 @@ void DebugController :: processStep()
    //}
 }
 
+void DebugController :: showCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath)
+{
+   if (lineInfo) {
+      _sourceModel->setTraceLine(lineInfo->row);
+
+      _notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
+
+      //if (!moduleName.compare(_currentModule) || !sourcePath.compare(_currentSource)) {
+      //   //!! do we need it at all?
+      //   //onLoadModule(moduleName, sourcePath);
+      //   _currentModule = moduleName;
+      //   _currentSource = sourcePath;
+      //}
+      //_listener->onStep(moduleName, sourcePath, lineInfo->row, lineInfo->col, lineInfo->length);
+   }
+}
+
 void DebugController :: run()
 {
    if (_running || !_process->isStarted())
@@ -417,13 +480,65 @@ void DebugController :: run()
 
    if (_provider.getDebugInfoPtr() == 0 && _provider.getEntryPoint() != 0) {
       _process->setBreakpoint(_provider.getEntryPoint(), false);
-      //_postponed.clear();
+      _postponed.clear();
    }
    _started = true;
 
    _process->setEvent(DEBUG_RESUME);
 
    _process->activate();
+}
+
+void DebugController :: stepInto()
+{
+   if (_running || !_process->isStarted())
+      return;
+
+   if (!_started) {
+      if (_provider.getDebugInfoPtr() == 0 && _provider.getEntryPoint() != 0) {
+         _process->setBreakpoint(_provider.getEntryPoint(), false);
+         _postponed.setStepMode();
+      }
+      _started = true;
+   }
+   else {
+      //DebugLineInfo* lineInfo = seekDebugLineInfo((size_t)_debugger.Context()->State());
+
+      //// if debugger should notify on the step result
+      //if (test(lineInfo->symbol, dsProcedureStep))
+      //   _debugger.setCheckMode();
+
+      //DebugLineInfo* nextStep = getNextStep(lineInfo, false);
+      //// if the address is the same perform the virtual step
+      //if (nextStep && nextStep->addresses.step.address == lineInfo->addresses.step.address) {
+      //   if (nextStep->symbol != dsVirtualEnd) {
+      //      _debugger.processVirtualStep(nextStep);
+      //      processStep();
+      //      return;
+      //   }
+      //   else _debugger.setStepMode();
+      //}
+      //else if (test(lineInfo->symbol, dsAtomicStep)) {
+      //   _debugger.setBreakpoint(nextStep->addresses.step.address, true);
+      //}
+      //// else set step mode
+      //else _debugger.setStepMode();
+   }
+
+   _process->setEvent(DEBUG_RESUME);
+}
+
+void DebugController :: stepOver()
+{
+   if (_running || !_process->isStarted())
+      return;
+
+   if (!_started) {
+      
+   }
+   else {
+
+   }
 }
 
 bool DebugController :: startThread()

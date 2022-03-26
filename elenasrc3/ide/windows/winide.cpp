@@ -15,6 +15,12 @@ bool IDEWindow :: onCommand(int command)
       case IDM_DEBUG_RUN:
          _controller->projectController.doDebugAction(_model->projectModel, DebugAction::Run);
          break;
+      case IDM_DEBUG_STEPOVER:
+         _controller->projectController.doDebugAction(_model->projectModel, DebugAction::StepOver);
+         break;
+      case IDM_DEBUG_STEPINTO:
+         _controller->projectController.doDebugAction(_model->projectModel, DebugAction::StepInto);
+         break;
       default:
          return false;
    }
@@ -22,3 +28,25 @@ bool IDEWindow :: onCommand(int command)
    return true;
 }
 
+void IDEWindow :: onModelChange(ExtNMHDR* hdr)
+{
+   switch (hdr->extParam) {
+      case NOTIFY_SOURCEMODEL:
+         _model->sourceViewModel.docView->notifyOnChange();
+         break;
+      default:
+         break;
+   }
+   
+}
+
+void IDEWindow :: onNotify(NMHDR* hdr)
+{
+   switch (hdr->code) {
+      case NMHDR_Model:
+         onModelChange((ExtNMHDR*)hdr);
+         break;
+      default:
+         break;
+   }
+}

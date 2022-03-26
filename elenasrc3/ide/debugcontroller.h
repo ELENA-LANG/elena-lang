@@ -36,6 +36,8 @@ namespace elena_lang
 
       void retrievePath(ustr_t name, PathString& path, path_t extension);
 
+      ModuleBase* getDebugModule(addr_t address);
+
    public:
       addr_t getEntryPoint()
       {
@@ -65,6 +67,8 @@ namespace elena_lang
       }
 
       bool load(StreamReader& reader, bool setEntryAddress, DebugProcessBase* process);
+
+      DebugLineInfo* seekDebugLineInfo(addr_t lineInfoAddress, ustr_t& moduleName, ustr_t& sourcePath);
 
       void clear()
       {
@@ -143,6 +147,44 @@ namespace elena_lang
          }
       };
 
+      struct PostponedStart
+      {
+         bool             stepMode;
+         bool             gotoMode;
+         int              col, row;
+         IdentifierString source;
+         PathString       path;
+
+         void clear()
+         {
+            stepMode = gotoMode = false;
+            col = row = -1;
+            source.clear();
+            path.clear();
+         }
+
+         void setStepMode()
+         {
+            clear();
+            stepMode = true;
+         }
+
+         void setGotoMode(int col, int row, ustr_t source, path_t path)
+         {
+            clear();
+            this->gotoMode = true;
+            this->col = col;
+            this->row = row;
+            this->source.copy(source);
+            this->path.copy(path);
+         }
+
+         PostponedStart()
+         {
+            clear();
+         }
+      };
+
       bool              _started;
       bool              _running;
       PathString        _debuggee;
@@ -150,6 +192,10 @@ namespace elena_lang
 
       DebugProcessBase* _process;
       DebugInfoProvider _provider;
+      PostponedStart    _postponed;
+
+      SourceViewModel*  _sourceModel;
+      NotifierBase*     _notifier;
 
       void debugThread() override;
       void processStep();
@@ -159,6 +205,8 @@ namespace elena_lang
       void onInitBreakpoint();
       void loadDebugSection(StreamReader& reader, bool starting);
       bool loadDebugData(StreamReader& reader, bool setEntryAddress = false);
+
+      void showCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath);
 
    public:
       bool isStarted() const
@@ -171,6 +219,8 @@ namespace elena_lang
       void clearBreakpoints();
 
       void run();
+      void stepOver();
+      void stepInto();
 
       virtual void clearDebugInfo()
       {
@@ -183,7 +233,8 @@ namespace elena_lang
          clearDebugInfo();
       }
 
-      DebugController(DebugProcessBase* process, ProjectModel* model);
+      DebugController(DebugProcessBase* process, ProjectModel* model, 
+         SourceViewModel* sourceModel, NotifierBase* notifier);
    };
    
 }

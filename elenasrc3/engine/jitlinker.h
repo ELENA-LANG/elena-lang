@@ -127,9 +127,10 @@ namespace elena_lang
       pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       void endNativeDebugInfo(pos_t position);
 
+      addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
+
    public:
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
-      addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
 
       void prepare(JITCompilerBase* compiler);
       void complete(JITCompilerBase* compiler);

@@ -70,6 +70,7 @@ namespace elena_lang
       virtual void onActivate();
       void onDrawItem(DRAWITEMSTRUCT* item) override;
       virtual bool onCommand(int command) { return false; }
+      virtual void onNotify(NMHDR* hdr);
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 

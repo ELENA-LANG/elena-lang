@@ -19,7 +19,7 @@ AddressMap::Iterator TargetImage :: externals()
    return _exportReferences.start();
 }
 
-TargetImage :: TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loader, 
+TargetImage :: TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loader,
    JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType),
    TargetImageInfo imageInfo)
 {
@@ -39,6 +39,9 @@ TargetImage :: TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loa
       dynamic_cast<ImageProviderBase*>(this), 
       &settings);
 
+   // add predefined values
+   prepareImage(imageInfo.ns);
+
    linker.prepare(compiler);
 
    // resolve the program entry
@@ -48,13 +51,40 @@ TargetImage :: TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loa
       throw JITUnresolvedException(ReferenceInfo(SYSTEM_ENTRY));
 
    // resolvethe debug entry
-   ustr_t debugEntryName = resolver->resolveForward(PROGRAM_ENTRY);
-   if (!debugEntryName)
-      debugEntryName = entryName;
-
-   _debugEntryPoint = resolveReference(debugEntryName, mskSymbolRef);
+   _debugEntryPoint = (pos_t)linker.resolve(PROGRAM_ENTRY, mskSymbolRef, true);
+   if (_debugEntryPoint == INVALID_ADDR) {
+      _debugEntryPoint = _entryPoint;
+   }
 
    linker.complete(compiler);
 
    freeobj(compiler);
+}
+
+void TargetImage :: prepareImage(ustr_t ns)
+{
+   MemoryWriter rdataWriter(getRDataSection());
+
+   // put SYSTEM_ENV reference place holder
+   addr_t envPtr = 0;
+   rdataWriter.write(&envPtr, sizeof(addr_t));
+
+   // put a signature
+   rdataWriter.write(ELENA_SIGNITURE, strlen(ELENA_SIGNITURE));
+
+   String<char, 4> number;
+   number.appendInt(ENGINE_MAJOR_VERSION);
+   rdataWriter.write(number.str(), number.length_pos());
+   rdataWriter.writeChar('.');
+
+   number.clear();
+   number.appendInt(ENGINE_MINOR_VERSION);
+   rdataWriter.write(number.str(), number.length_pos());
+
+   rdataWriter.align(4, 0);
+
+   // save root namespace
+   MemoryWriter debugWriter(getTargetDebugSection());
+   debugWriter.writeString(ns);
+
 }

@@ -145,6 +145,8 @@ namespace elena_lang
 
       Win32DebugProcessException exception;
 
+      bool startProcess(const wchar_t* exePath, const wchar_t* cmdLine);
+
       void continueProcess();
       void processEvent(size_t timeout);
       void processException(EXCEPTION_DEBUG_INFO* exception);
@@ -209,9 +211,12 @@ namespace elena_lang
       void reset() override;
       void activate() override;
 
+      void setStepMode() override;
+
       bool startThread(DebugControllerBase* controller) override;
 
       addr_t getBaseAddress() override;
+      void* getState() override;
 
       void setBreakpoint(addr_t address, bool withStackLevelControl) override;
 

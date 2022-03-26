@@ -155,7 +155,7 @@ void ByteCodeWriter :: openSymbolDebugInfo(Scope& scope, ustr_t symbolName)
       scope.debug->writeDWord(0);
 
    // map symbol debug info, starting the symbol with # to distinsuish from class
-   IdentifierString bookmark("#", symbolName + 1);
+   IdentifierString bookmark("'#", symbolName + 1);
    scope.moduleScope->debugModule->mapPredefinedReference(*bookmark, scope.debug->position());
 
    pos_t namePosition = scope.debugStrings->position();

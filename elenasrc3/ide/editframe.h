@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
-//                     EditFrame container File
+//                     SourceViewModel header File
 //                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
@@ -16,7 +16,13 @@ namespace elena_lang
    class SourceViewModel : public TextViewModel
    {
    protected:
+      int traceRow;
+
    public:
+      void setTraceLine(int row);
+      void clearTraceLine();
+
+      SourceViewModel();
    };
 }
 

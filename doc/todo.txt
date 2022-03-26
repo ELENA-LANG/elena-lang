@@ -18,6 +18,8 @@ In development:
     * >ide debugger
     * editor - open / close / select source files
     * editor - scrollers
+    * linux ide
+    * linux debugger
     === Sprint 5 ===
     --- elena redux ---
     * strong typed method parameter

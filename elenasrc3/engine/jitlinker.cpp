@@ -465,6 +465,9 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
    if (sectionInfo.vmtSection == nullptr || sectionInfo.codeSection == nullptr)
       return INVALID_ADDR;
 
+   referenceInfo.module = sectionInfo.module;
+   referenceInfo.referenceName = referenceInfo.module->resolveReference(sectionInfo.reference);
+
    JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
 
    // VMT just in time compilation
@@ -569,7 +572,7 @@ pos_t JITLinker :: createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr
 
          name.append(*ns);
       }
-      ReferenceName properName(referenceInfo.referenceName + 1);
+      ReferenceProperName properName(referenceInfo.referenceName);
 
       name.append("'#");
       name.append(*properName);
@@ -578,7 +581,7 @@ pos_t JITLinker :: createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr
    }
    else {
       NamespaceString ns(referenceInfo.referenceName);
-      ReferenceName properName(referenceInfo.referenceName);
+      ReferenceProperName properName(referenceInfo.referenceName);
 
       IdentifierString name(*ns, "'#", *properName);
       writer.writeString(*name);
@@ -723,7 +726,9 @@ void JITLinker :: complete(JITCompilerBase* compiler)
 
 addr_t JITLinker :: resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode)
 {
-   return resolve(ReferenceInfo(referenceName), sectionMask, silentMode);
+   ReferenceInfo referenceInfo = _loader->retrieveReferenceInfo(referenceName, _forwardResolver);
+
+   return resolve(referenceInfo, sectionMask, silentMode);
 }
 
 addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode)

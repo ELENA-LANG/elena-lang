@@ -213,11 +213,13 @@ namespace elena_lang
    {
       ModuleBase* module;
       MemoryBase* section;
+      ref_t       reference;
 
       SectionInfo()
       {
          module = nullptr;
          section = nullptr;
+         reference = 0;
       }
    };
 
@@ -226,12 +228,14 @@ namespace elena_lang
       ModuleBase* module;
       MemoryBase* vmtSection;
       MemoryBase* codeSection;
+      ref_t       reference;
 
       ClassSectionInfo()
       {
          module = nullptr;
          vmtSection = nullptr;
          codeSection = nullptr;
+         reference = 0;
       }
    };
 
@@ -262,6 +266,8 @@ namespace elena_lang
    {
    public:
       virtual ReferenceInfo retrieveReferenceInfo(ModuleBase* module, ref_t reference, 
+         ForwardResolverBase* forwardResolver) = 0;
+      virtual ReferenceInfo retrieveReferenceInfo(ustr_t referenceName,
          ForwardResolverBase* forwardResolver) = 0;
 
       virtual SectionInfo getCoreSection(ref_t reference, bool silentMode) = 0;
@@ -509,6 +515,19 @@ namespace elena_lang
       {
          size_t pos = referenceName.findLast('\'', 0);
          copy(referenceName, pos);
+      }
+   };
+
+   // --- ReferenceProperName ---
+   class ReferenceProperName : public String<char, IDENTIFIER_LEN>
+   {
+   public:
+      ustr_t operator*() const { return ustr_t(_string); }
+
+      ReferenceProperName(ustr_t referenceName)
+      {
+         size_t pos = referenceName.findLast('\'', 0);
+         copy(referenceName.str() + pos + 1);
       }
    };
 

@@ -878,6 +878,40 @@ namespace elena_lang
 
       }
 
+      void erase(Key key, T value)
+      {
+         Item* tmp = nullptr;
+         if (!_top);
+         else if (_top->key == key && _top->item == value) {
+            tmp = _top;
+            if (_top == _tale)
+               _tale = nullptr;
+            _top = _top->next;
+         }
+         else {
+            Item* cur = _top;
+            while (cur->next) {
+               if (cur->next->key == key && cur->next->item == value) {
+                  if (cur->next == _tale)
+                     _tale = cur;
+
+                  tmp = cur->next;
+                  cur->next = tmp->next;
+                  break;
+               }
+               cur = cur->next;
+            }
+         }
+         if (tmp) {
+            if (FreeT)
+               FreeT(tmp->item);
+
+            delete tmp;
+
+            _count--;
+         }
+      }
+
       void clear()
       {
          while (_top) {

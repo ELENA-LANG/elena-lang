@@ -147,9 +147,9 @@ LRESULT WindowBase :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 
 bool WindowApp :: initInstance(WindowBase* mainWindow)
 {
-   HWND hWnd = mainWindow->handle();
+   _hwnd = mainWindow->handle();
 
-   if (!hWnd)
+   if (!_hwnd)
    {
       return FALSE;
    }
@@ -159,9 +159,26 @@ bool WindowApp :: initInstance(WindowBase* mainWindow)
    return TRUE;
 }
 
-void WindowApp :: notify(int messageCode)
+void WindowApp :: notifyMessage(int messageCode)
 {
-   // !! temporal
+   ExtNMHDR notification;
+
+   notification.nmhrd.code = NMHDR_Message;
+   notification.nmhrd.hwndFrom = _hwnd;
+   notification.extParam = messageCode;
+
+   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
+}
+
+void WindowApp :: notifyModelChange(int modelCode)
+{
+   ExtNMHDR notification;
+
+   notification.nmhrd.code = NMHDR_Model;
+   notification.nmhrd.hwndFrom = _hwnd;
+   notification.extParam = modelCode;
+
+   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
 int WindowApp :: run(GUIControlBase* mainWindow)

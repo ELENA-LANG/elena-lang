@@ -70,9 +70,8 @@ void TextViewWindow :: resizeDocument()
       size.x = (client.width() - marginWidth) / style->avgCharWidth;
       size.y = client.height() / _model->getLineHeight();
 
-      _model->resize(size);
-
       _needToResize = false;
+      _model->resize(size);
    }
    _cached = false;
 
@@ -194,6 +193,11 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 
             x = clientRect.topLeft.x + marginWidth;
             y += lineHeight;
+         }
+         if (reader.bandStyle) {
+            canvas.fillRectangle(Rectangle(x, y, clientRect.bottomRight.x - x, lineHeight + 1), style);
+
+            reader.bandStyle = false;
          }
 
          width = canvas.TextWidth(style, buffer, length);

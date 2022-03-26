@@ -145,6 +145,11 @@ void SDIWindow :: onActivate()
 {
 }
 
+void SDIWindow :: onNotify(NMHDR* hdr)
+{
+   
+}
+
 LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
@@ -181,6 +186,9 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
       case WM_DRAWITEM:
          onDrawItem((DRAWITEMSTRUCT*)lParam);
          return TRUE;
+      case WM_NOTIFY:
+         onNotify((NMHDR*)lParam);
+         return 0;
       default:
          return DefWindowProc(_handle, message, wParam, lParam);
    }

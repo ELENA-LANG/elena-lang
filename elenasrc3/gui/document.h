@@ -32,7 +32,19 @@ namespace elena_lang
       int   row;
 
       bool  newLine;
+      bool  bandStyle;
    };
+
+   struct Marker
+   {
+      pos_t style;
+
+      bool operator ==(const Marker& m)
+      {
+         return style == m.style;
+      }
+   };
+   typedef Map<int, Marker>   MarkerList;
 
    // --- TextFormatterBase ---
    class TextFormatterBase
@@ -47,6 +59,7 @@ namespace elena_lang
    class LexicalFormatter : public TextWatcherBase
    {
       Text*                _text;
+      MarkerList*          _markers;
       MemoryDump           _indexes;
       MemoryDump           _lexical;
 
@@ -61,6 +74,7 @@ namespace elena_lang
          return reader.getPos();
       }
 
+      bool checkMarker(ReaderInfo& info);
       void format();
 
    public:
@@ -70,7 +84,7 @@ namespace elena_lang
 
       pos_t proceed(pos_t position, ReaderInfo& info);
 
-      LexicalFormatter(Text* text, TextFormatterBase* formatter);
+      LexicalFormatter(Text* text, TextFormatterBase* formatter, MarkerList* markers);
       virtual ~LexicalFormatter();
    };
 
@@ -106,6 +120,7 @@ namespace elena_lang
             this->step = this->style = 0;
             this->row = 0;
             this->newLine = false;
+            this->bandStyle = false;
 
             this->bm.invalidate();
          }
@@ -117,13 +132,14 @@ namespace elena_lang
          bool maxColChanged;
          bool frameChanged;
          bool selelectionChanged;
+         bool formatterChanged;
 
          bool isViewChanged(bool reset = true)
          {
-            bool flag = frameChanged | selelectionChanged;
+            bool flag = formatterChanged | frameChanged | selelectionChanged;
 
             if (reset)
-               frameChanged = selelectionChanged = false;
+               formatterChanged = frameChanged = selelectionChanged = false;
 
             return flag;
          }
@@ -134,6 +150,7 @@ namespace elena_lang
             maxColChanged = false;
             frameChanged = false;
             selelectionChanged = false;
+            formatterChanged = false;
          }
 
          Status()
@@ -155,6 +172,7 @@ namespace elena_lang
 
       int               _maxColumn;
 
+      MarkerList        _markers;
       DocumentNotifiers _notifiers;
 
       pos_t format(LexicalReader& reader);
@@ -170,6 +188,19 @@ namespace elena_lang
       void removeNotifier(DocumentNotifier* notifier)
       {
          _notifiers.cut(notifier);
+      }
+
+      void addMarker(int row, pos_t style)
+      {
+         _markers.add(row, { style });
+
+         status.formatterChanged = true;
+      }
+      void removeMarker(int row, pos_t style)
+      {
+         _markers.erase(row, { style });
+
+         status.formatterChanged = true;
       }
 
       virtual void resize(Point size);

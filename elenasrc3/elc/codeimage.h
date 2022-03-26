@@ -20,6 +20,7 @@ namespace elena_lang
       pos_t        codeAlignment;
       bool         autoClassSymbol;
       JITSettings  coreSettings;
+      ustr_t       ns;
 
       TargetImageInfo()
       {
@@ -35,6 +36,8 @@ namespace elena_lang
       pos_t _entryPoint;
       pos_t _debugEntryPoint;
 
+      void prepareImage(ustr_t ns);
+
    public:
       AddressMap::Iterator externals() override;
 
@@ -45,7 +48,7 @@ namespace elena_lang
 
       addr_t getDebugEntryPoint() override
       {
-         return _debugEntryPoint;
+         return _debugEntryPoint & ~mskAnyRef;
       }
 
       TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loader, 

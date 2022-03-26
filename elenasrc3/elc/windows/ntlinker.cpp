@@ -140,18 +140,21 @@ bool WinNtLinker :: createDebugFile(ImageProviderBase& provider, WinNtExecutable
 
    Section* debug = provider.getTargetDebugSection();
 
-   // signature
+   // signature - first 8 bytes
    debugWriter.write(DEBUG_MODULE_SIGNATURE, getlength_pos(DEBUG_MODULE_SIGNATURE));
+   debugWriter.align(8);
 
    // save entry point
    addr_t entryPoint = image.addressSpace.code + image.addressSpace.imageBase + provider.getDebugEntryPoint();
 
    debugWriter.writePos(debug->length());
-   debugWriter.writePos((pos_t)entryPoint);
+   debugWriter.write(&entryPoint, sizeof(addr_t));
 
    // save breakpoints
    MemoryReader reader(debug);
    debugWriter.copyFrom(&reader, debug->length());
+
+   return true;
 }
 
 void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableImage& image)

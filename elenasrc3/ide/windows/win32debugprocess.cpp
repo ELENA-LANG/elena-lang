@@ -312,7 +312,7 @@ Win32DebugProcess :: Win32DebugProcess()
    reset();
 }
 
-bool Win32DebugProcess :: startProgram(const wchar_t* exePath, const wchar_t* cmdLine)
+bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cmdLine)
 {
    PROCESS_INFORMATION pi = { nullptr, nullptr, 0, 0 };
    STARTUPINFO         si;
@@ -326,13 +326,13 @@ bool Win32DebugProcess :: startProgram(const wchar_t* exePath, const wchar_t* cm
    si.wShowWindow = SW_SHOWNORMAL;
 
    if (!CreateProcess(
-      exePath, 
-      (wchar_t*)cmdLine, 
-      nullptr, 
-      nullptr, 
+      exePath,
+      (wchar_t*)cmdLine,
+      nullptr,
+      nullptr,
       FALSE,
-      CREATE_NEW_CONSOLE | DEBUG_PROCESS, 
-      nullptr, 
+      CREATE_NEW_CONSOLE | DEBUG_PROCESS,
+      nullptr,
       currentPath.str(), &si, &pi))
    {
       return false;
@@ -349,6 +349,16 @@ bool Win32DebugProcess :: startProgram(const wchar_t* exePath, const wchar_t* cm
    needToHandle = false;
 
    return true;
+}
+
+bool Win32DebugProcess :: startProgram(const wchar_t* exePath, const wchar_t* cmdLine)
+{
+   if (startProcess(exePath, cmdLine)) {
+      processEvent(INFINITE);
+
+      return true;
+   }
+   else return false;
 }
 
 bool Win32DebugProcess :: startThread(DebugControllerBase* controller)
@@ -571,7 +581,7 @@ bool Win32DebugProcess :: findSignature(StreamReader& reader, char* signature, p
    PEHelper::seekSection(reader, ".rdata", rdata);
 
    // load Executable image
-   _current->readDump(rdata + 4, signature, length);
+   _current->readDump(rdata + sizeof(addr_t), signature, length);
 
    return true;
 
@@ -582,6 +592,15 @@ void Win32DebugProcess :: setBreakpoint(addr_t address, bool withStackLevelContr
    _breakpoints.setHardwareBreakpoint(address, _current, withStackLevelControl);
 }
 
+void Win32DebugProcess :: setStepMode()
+{
+   // !! temporal
+   _current->clearHardwareBreakpoint();
+
+   _current->setTrapFlag();
+   stepMode = true;
+}
+
 void Win32DebugProcess :: addStep(addr_t address, void* state)
 {
    steps.add(address, state);
@@ -590,4 +609,9 @@ void Win32DebugProcess :: addStep(addr_t address, void* state)
 
    if (address > maxAddress)
       maxAddress = address;
+}
+
+void* Win32DebugProcess :: getState()
+{
+   return _current ? _current->state : nullptr;
 }

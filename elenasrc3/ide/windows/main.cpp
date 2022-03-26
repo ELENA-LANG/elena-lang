@@ -35,7 +35,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    GUISettinngs  settinngs = { true };
    IDEModel      ideModel;
    DebugProcess  debugProcess;
-   IDEController ideController(&debugProcess, &ideModel.projectModel);
+   IDEController ideController(&debugProcess, &ideModel);
    IDEFactory    factory(hInstance, nCmdShow, &ideModel, &ideController, settinngs);
 
    GUIApp* app = factory.createApp();

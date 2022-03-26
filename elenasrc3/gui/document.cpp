@@ -15,9 +15,10 @@ constexpr auto OPERATORS = _T("(){}[]:=<>.,^@+-*/!~?;\"");
 
 // --- LexicalFormatter ---
 
-LexicalFormatter :: LexicalFormatter(Text* text, TextFormatterBase* formatter)
+LexicalFormatter :: LexicalFormatter(Text* text, TextFormatterBase* formatter, MarkerList* markers)
 {
    _text = text;
+   _markers = markers;
    _formatter = formatter;
 
    _text->attachWatcher(this);
@@ -68,13 +69,32 @@ void LexicalFormatter :: format()
    writer.writePos(reader.position() + length);
 }
 
+bool LexicalFormatter :: checkMarker(ReaderInfo& info)
+{
+   auto it = _markers->getIt(info.row + 1);
+   if (!it.eof()) {
+      auto marker = *it;
+
+      info.bandStyle = true;
+      info.style = marker.style;
+      info.step = 0;
+
+      return true;
+   }
+   return false;
+}
+
 pos_t LexicalFormatter :: proceed(pos_t position, ReaderInfo& info)
 {
+   pos_t count = 0;
+   if (info.newLine && checkMarker(info)) {
+      return INVALID_POS;
+   }
+
    if (info.step == 0) {
       info.step = retrievePosition(position);
    }
 
-   pos_t count = 0;
    MemoryReader reader(&_lexical, info.step);
    pos_t curStyle = 0;
    pos_t current = 0;
@@ -195,7 +215,7 @@ bool DocumentView::LexicalReader :: readNext(TextWriter<text_c>& writer, pos_t l
 // --- DocumentView ---
 
 DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter)
-   : _formatter(text, formatter), _notifiers(nullptr)
+   : _formatter(text, formatter, &_markers), _notifiers(nullptr), _markers({})
 {
    _text = text;
 

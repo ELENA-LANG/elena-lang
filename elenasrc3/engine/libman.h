@@ -70,6 +70,8 @@ namespace elena_lang
 
       ReferenceInfo retrieveReferenceInfo(ModuleBase* module, ref_t reference, 
          ForwardResolverBase* forwardResolver) override;
+      ReferenceInfo retrieveReferenceInfo(ustr_t referenceName, 
+         ForwardResolverBase* forwardResolver) override;
 
       ModuleBase* createModule(ustr_t name);
       ModuleBase* createDebugModule(ustr_t name);

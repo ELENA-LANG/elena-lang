@@ -18,7 +18,10 @@ namespace elena_lang
       IDEModel*      _model;
       IDEController* _controller;
 
+      void onModelChange(ExtNMHDR* hdr);
+
       bool onCommand(int command) override;
+      void onNotify(NMHDR* hdr) override;
 
    public:
       IDEWindow(wstr_t title, IDEController* controller, IDEModel* model)

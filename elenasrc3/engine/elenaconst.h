@@ -56,7 +56,7 @@ namespace elena_lang
    constexpr auto PREDEFINED_FORWARD      = "$forwards'meta$predefined";
    constexpr auto ATTRIBUTES_FORWARD      = "$forwards'meta$attributes";
    constexpr auto SYSTEM_ENTRY            = "$forwards'$system_entry";   // the system entry
-   constexpr auto PROGRAM_ENTRY           = "$forwards'$program";        // used by the linker to define the debug entry
+   constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 
    constexpr auto SUPER_FORWARD           = "$forwards'$super";          // the common class predecessor
 

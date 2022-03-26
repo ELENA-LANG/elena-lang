@@ -24,10 +24,20 @@
 namespace elena_lang
 {
    // --- Cursor types ---
-   constexpr int CURSOR_TEXT = 0;
-   constexpr int CURSOR_ARROW = 1;
-   constexpr int CURSOR_SIZEWE = 2;
-   constexpr int CURSOR_SIZENS = 3;
+   constexpr int CURSOR_TEXT     = 0;
+   constexpr int CURSOR_ARROW    = 1;
+   constexpr int CURSOR_SIZEWE   = 2;
+   constexpr int CURSOR_SIZENS   = 3;
+
+   constexpr int NMHDR_Message   = 0x101;
+   constexpr int NMHDR_Model     = 0x102;
+
+   // --- ExtNMHDR ---
+   struct ExtNMHDR
+   {
+      NMHDR nmhrd;
+      int   extParam;
+   };
 
    // --- ControlBase ---
    class ControlBase : public GUIControlBase
@@ -98,6 +108,8 @@ namespace elena_lang
    {
    protected:
       HINSTANCE _instance;
+      HWND      _hwnd;
+
       int       _cmdShow;
       wstr_t    _accelerators;
 
@@ -106,11 +118,13 @@ namespace elena_lang
    public:
       int run(GUIControlBase* mainWindow) override;
 
-      void notify(int messageCode) override;
+      void notifyMessage(int messageCode) override;
+      void notifyModelChange(int modelCode) override;
 
       WindowApp(HINSTANCE instance, int cmdShow, wstr_t accelerators)
       {
          _instance = instance;
+         _hwnd = nullptr;
          _cmdShow = cmdShow;
          _accelerators = accelerators;
       }

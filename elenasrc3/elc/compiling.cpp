@@ -215,6 +215,7 @@ void CompilingProcess :: link(ProjectBase& project, LinkerBase& linker)
    imageInfo.autoClassSymbol = project.BoolSetting(ProjectOption::ClassSymbolAutoLoad);
    imageInfo.coreSettings.mgSize = project.IntSetting(ProjectOption::GCMGSize, _defaultCoreSettings.mgSize);
    imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);
+   imageInfo.ns = project.StringSetting(ProjectOption::Namespace);
 
    TargetImage code(&project, &_libraryProvider, _jitCompilerFactory, 
       imageInfo);
