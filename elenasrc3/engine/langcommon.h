@@ -59,9 +59,17 @@ namespace elena_lang
    constexpr auto wrnSyntaxFileNotFound   = 500;
    constexpr auto wrnInvalidConfig        = 501;
 
+   constexpr auto errCommandSetAbsent     = 600;
+   constexpr auto errReadOnlyModule       = 601;
    constexpr auto errNotDefinedBaseClass  = 602;
+   constexpr auto errReferenceOverflow    = 603;
    constexpr auto errUnknownBaseClass     = 604;
    constexpr auto errNoDispatcher         = 605;
+
+   constexpr auto errFatalError       = -1;
+   constexpr auto errFatalLinker      = -2;
+   constexpr auto errNotImplemented   = -3;
+   constexpr auto errCorruptedVMT     = -4;
 
    // --- Project warning levels
    constexpr int WARNING_LEVEL_1          = 1;

@@ -9,6 +9,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "jitlinker.h"
+#include "langcommon.h"
 
 using namespace elena_lang;
 
@@ -494,6 +495,10 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
       addr_t parentAddress = getVMTAddress(sectionInfo.module, header.parentRef, references);
       pos_t count = _compiler->copyParentVMT(getVMTPtr(parentAddress), vmtImage->get(position));
 
+      pos_t debugPosition = INVALID_POS;
+      if (_withDebugInfo)
+         debugPosition = createNativeClassDebugInfo(referenceInfo, vaddress);
+
       // read and compile VMT entries
       MemoryWriter   codeWriter(codeImage);
       MemoryReader   codeReader(sectionInfo.codeSection);
@@ -517,6 +522,12 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
 
          size -= sizeof(MethodEntry);
       }
+
+      if (_withDebugInfo)
+         endNativeDebugInfo(debugPosition);
+
+      if (count != header.count)
+         throw InternalError(errCorruptedVMT);
 
       // load the class class
       addr_t classClassAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
@@ -545,6 +556,72 @@ addr_t JITLinker :: resolveVMTSection(ReferenceInfo referenceInfo, ClassSectionI
    return vaddress;
 }
 
+pos_t JITLinker :: createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress)
+{
+   MemoryBase* debug = _imageProvider->getTargetDebugSection();
+   MemoryWriter writer(debug);
+
+   // start with # to distinguish the symbol debug info from the class one
+   if (referenceInfo.isRelative()) {
+      IdentifierString name(referenceInfo.module->name());
+      if (referenceInfo.referenceName.findSub(1, '\'', NOTFOUND_POS) != NOTFOUND_POS) {
+         NamespaceString ns(referenceInfo.referenceName);
+
+         name.append(*ns);
+      }
+      ReferenceName properName(referenceInfo.referenceName + 1);
+
+      name.append("'#");
+      name.append(*properName);
+
+      writer.writeString(*name);
+   }
+   else {
+      NamespaceString ns(referenceInfo.referenceName);
+      ReferenceName properName(referenceInfo.referenceName);
+
+      IdentifierString name(*ns, "'#", *properName);
+      writer.writeString(*name);
+   }
+
+   pos_t position = writer.position();
+   writer.writePos(0); // size place holder
+
+   // save symbol address
+   _compiler->addBreakpoint(writer, vaddress, _virtualMode);
+
+   return position;
+}
+
+pos_t JITLinker :: createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress)
+{
+   MemoryBase* debug = _imageProvider->getTargetDebugSection();
+
+   MemoryWriter writer(debug);
+   if (referenceInfo.isRelative()) {
+      IdentifierString name(referenceInfo.module->name(), referenceInfo.referenceName);
+
+      writer.writeString(*name);
+   }
+   else writer.writeString(referenceInfo.referenceName);
+
+   pos_t position = writer.position();
+   writer.writePos(0); // size place holder
+
+   _compiler->addBreakpoint(writer, vaddress, _virtualMode);
+
+   return position;
+}
+
+
+void JITLinker :: endNativeDebugInfo(pos_t position)
+{
+   MemoryBase* debug = _imageProvider->getTargetDebugSection();
+
+   pos_t size = debug->length() - position;
+   debug->write(position, &size, sizeof(size));
+}
+
 addr_t JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo)
 {
    if (sectionInfo.section == nullptr)
@@ -561,7 +638,14 @@ addr_t JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t se
    JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
    MemoryReader bcReader(sectionInfo.section);
 
-   _compiler->compileSymbol(&helper, bcReader, writer);
+   if (_withDebugInfo) {
+      pos_t sizePosition = createNativeSymbolDebugInfo(referenceInfo, vaddress);
+
+      _compiler->compileSymbol(&helper, bcReader, writer);
+
+      endNativeDebugInfo(sizePosition);
+   }
+   else _compiler->compileSymbol(&helper, bcReader, writer);
 
    // fix not loaded references
    fixReferences(references, image);
@@ -596,6 +680,8 @@ addr_t JITLinker :: resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectio
 void JITLinker :: prepare(JITCompilerBase* compiler)
 {
    _compiler = compiler;
+
+   _withDebugInfo = _compiler->isWithDebugInfo();
 
    VAddressMap references(VAddressInfo(0, nullptr, 0, 0));
    JITLinkerReferenceHelper helper(this, nullptr, &references);

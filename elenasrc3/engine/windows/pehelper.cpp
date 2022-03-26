@@ -29,7 +29,7 @@ addr_t PEHelper :: findEntryPoint(path_t path)
    return inth.OptionalHeader.AddressOfEntryPoint + inth.OptionalHeader.ImageBase;
 }
 
-bool PEHelper :: seekSection(StreamReader& reader, char* name, size_t& address)
+bool PEHelper :: seekSection(StreamReader& reader, const char* name, addr_t& address)
 {
    size_t base = reader.position();
 
@@ -65,7 +65,7 @@ bool PEHelper :: seekSection(StreamReader& reader, char* name, size_t& address)
    return false;
 }
 
-bool PEHelper :: seekSection64(StreamReader& reader, char* name, size_t& address)
+bool PEHelper :: seekSection64(StreamReader& reader, const char* name, addr_t& address)
 {
    size_t base = reader.position();
 

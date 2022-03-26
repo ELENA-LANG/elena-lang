@@ -161,6 +161,8 @@
     <ClInclude Include="..\..\common\paths.h" />
     <ClInclude Include="..\..\common\streams.h" />
     <ClInclude Include="..\..\common\ustring.h" />
+    <ClInclude Include="..\..\engine\module.h" />
+    <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\windows\pehelper.h" />
     <ClInclude Include="..\..\gui\controller.h" />
     <ClInclude Include="..\..\gui\document.h" />
@@ -194,6 +196,8 @@
     <ClCompile Include="..\..\common\files.cpp" />
     <ClCompile Include="..\..\common\paths.cpp" />
     <ClCompile Include="..\..\common\ustring.cpp" />
+    <ClCompile Include="..\..\engine\module.cpp" />
+    <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\windows\pehelper.cpp" />
     <ClCompile Include="..\..\gui\controller.cpp" />
     <ClCompile Include="..\..\gui\document.cpp" />

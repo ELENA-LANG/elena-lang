@@ -16,11 +16,20 @@ namespace elena_lang
    {
       IDEStatus* status;
 
+      struct Paths
+      {
+         PathString libraryRoot;
+      } paths;
+
       bool       autoRecompile;
       PathString projectPath;
+      PathString outputPath;
 
       ustr_t getTarget();
       ustr_t getArguments();
+      ustr_t getPackage();
+
+      path_t getOutputPath();
 
       bool getDebugMode();
 

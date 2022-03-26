@@ -12,6 +12,10 @@
 
 using namespace elena_lang;
 
+#ifdef _M_IX86
+
+typedef unsigned long SIZE_T;
+
 inline addr_t getIP(CONTEXT& context)
 {
    return context.Eip;
@@ -22,10 +26,36 @@ inline addr_t getBP(CONTEXT& context)
    return context.Ebp;
 }
 
+inline void setIP(CONTEXT& context, addr_t address)
+{
+   context.Eip = address;
+}
+
+#elif _M_X64
+
+typedef size_t SIZE_T;
+
+inline void setIP(CONTEXT& context, addr_t address)
+{
+   context.Rip = address;
+}
+
+inline addr_t getIP(CONTEXT& context)
+{
+   return context.Rip;
+}
+
+inline addr_t getBP(CONTEXT& context)
+{
+   return context.Rbp;
+}
+
+#endif
+
 // --- setForegroundWindow() ---
 inline void setForegroundWindow(HWND hwnd)
 {
-   DWORD dwTimeoutMS;
+   size_t dwTimeoutMS = 0;
    // Get the current lock timeout.
    ::SystemParametersInfo(0x2000, 0, &dwTimeoutMS, 0);
 
@@ -111,7 +141,7 @@ Win32ThreadContext :: Win32ThreadContext(HANDLE hProcess, HANDLE hThread)
 
 bool Win32ThreadContext :: readDump(addr_t address, char* dump, size_t length)
 {
-   unsigned long   size = 0;
+   SIZE_T size = 0;
 
    ReadProcessMemory(hProcess, (void*)(address), dump, length, &size);
 
@@ -120,7 +150,7 @@ bool Win32ThreadContext :: readDump(addr_t address, char* dump, size_t length)
 
 void Win32ThreadContext :: writeDump(addr_t address, char* dump, size_t length)
 {
-   unsigned long   size = 0;
+   SIZE_T size = 0;
 
    WriteProcessMemory(hProcess, (void*)(address), dump, length, &size);
 }
@@ -137,7 +167,7 @@ void Win32ThreadContext :: refresh()
 
 unsigned char Win32ThreadContext :: setSoftwareBreakpoint(addr_t breakpoint)
 {
-   unsigned char code;
+   unsigned char code = 0;
    unsigned char terminator = 0xCC;
 
    readDump(breakpoint, (char*)&code, 1);
@@ -182,7 +212,7 @@ void Win32ThreadContext :: setIP(addr_t address)
 {
    context.ContextFlags = CONTEXT_CONTROL;
    GetThreadContext(hThread, &context);
-   context.Eip = address;
+   ::setIP(context, address);
    SetThreadContext(hThread, &context);
 }
 
@@ -251,6 +281,23 @@ bool Win32BreakpointContext :: processBreakpoint(Win32ThreadContext* context)
    else return false;
 
 }
+
+void Win32BreakpointContext :: setHardwareBreakpoint(addr_t address, Win32ThreadContext* context, bool withStackControl)
+{
+   if (address == getIP(context->context)) {
+      context->setTrapFlag();
+      context->breakpoint.next = address;
+   }
+   else {
+      context->setHardwareBreakpoint(address);
+   }
+
+   if (withStackControl) {
+      context->breakpoint.stackLevel = getBP(context->context);
+   }
+   else context->breakpoint.stackLevel = 0;
+}
+
 
 void Win32BreakpointContext :: clear()
 {
@@ -339,7 +386,7 @@ void Win32DebugProcess :: processEvent(size_t timeout)
 
       switch (event.dwDebugEventCode) {
          case CREATE_PROCESS_DEBUG_EVENT:
-            //baseAddress = event.u.CreateProcessInfo.lpBaseOfImage;
+            baseAddress = (addr_t)event.u.CreateProcessInfo.lpBaseOfImage;
 
             _current = new Win32ThreadContext(event.u.CreateProcessInfo.hProcess, event.u.CreateProcessInfo.hThread);
             _current->refresh();
@@ -490,6 +537,7 @@ void Win32DebugProcess :: reset()
 
    minAddress = INVALID_ADDR;
    maxAddress = 0;
+   baseAddress = 0;
 
    steps.clear();
    _breakpoints.clear();
@@ -505,4 +553,41 @@ void Win32DebugProcess :: reset()
 addr_t Win32DebugProcess :: findEntryPoint(path_t programPath)
 {
    return PEHelper::findEntryPoint(programPath);
+}
+
+bool Win32DebugProcess :: isInitBreakpoint()
+{
+   return _current ? init_breakpoint == getIP(_current->context) : false;
+}
+
+addr_t Win32DebugProcess :: getBaseAddress()
+{
+   return baseAddress;
+}
+
+bool Win32DebugProcess :: findSignature(StreamReader& reader, char* signature, pos_t length)
+{
+   size_t rdata = 0;
+   PEHelper::seekSection(reader, ".rdata", rdata);
+
+   // load Executable image
+   _current->readDump(rdata + 4, signature, length);
+
+   return true;
+
+}
+
+void Win32DebugProcess :: setBreakpoint(addr_t address, bool withStackLevelControl)
+{
+   _breakpoints.setHardwareBreakpoint(address, _current, withStackLevelControl);
+}
+
+void Win32DebugProcess :: addStep(addr_t address, void* state)
+{
+   steps.add(address, state);
+   if (address < minAddress)
+      minAddress = address;
+
+   if (address > maxAddress)
+      maxAddress = address;
 }

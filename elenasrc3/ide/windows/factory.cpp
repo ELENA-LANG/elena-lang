@@ -136,7 +136,7 @@ GUIControlBase* IDEFactory :: createMainWindow()
    sdi->create(_instance, szSDI, nullptr);
 
    ControlBase* children[1];
-   size_t counter = 0;
+   int counter = 0;
 
    int textIndex = counter++;
    children[textIndex] = createTextControl(sdi);

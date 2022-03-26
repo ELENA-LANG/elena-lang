@@ -16,11 +16,23 @@ ProjectModel :: ProjectModel(IDEStatus* status)
 
    this->autoRecompile = /*true*/false;// !! temporal
    this->projectPath.copy("C:\\Alex\\ELENA\\tests60\\sandbox\\"); // !! temporal
+   this->outputPath.copy("C:\\Alex\\ELENA\\tests60\\sandbox\\"); // !! temporal
+}
+
+path_t ProjectModel::getOutputPath()
+{
+   return *outputPath;
 }
 
 ustr_t ProjectModel :: getTarget()
 {
    return "sandbox.exe"; // !! temporal
+}
+
+ustr_t ProjectModel::getPackage()
+{
+   return "sandbox"; // !! temporal
+
 }
 
 ustr_t ProjectModel::getArguments()

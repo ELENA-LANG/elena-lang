@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                     6
+#define IDE_REVISION_NUMBER                     7
 
 namespace elena_lang
 {
@@ -74,9 +74,21 @@ namespace elena_lang
       virtual void clearEvents() = 0;
 
       virtual bool isStarted() = 0;
+      virtual bool isTrapped() = 0;
+      virtual bool isInitBreakpoint() = 0;
+
       virtual void initHook() = 0;
 
+      virtual addr_t getBaseAddress() = 0;
+
+      virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
+
+      virtual void addStep(addr_t address, void* current) = 0;
+
+      virtual bool readDump(addr_t address, char* s, pos_t length) = 0;
+
       virtual addr_t findEntryPoint(path_t programPath) = 0;
+      virtual bool findSignature(StreamReader& reader, char* signature, pos_t length) = 0;
 
       virtual ~DebugProcessBase() = default;
    };

@@ -105,7 +105,7 @@ namespace elena_lang
          Map<ref_t, pos_t>& positions, bool declareMode);
 
    public:
-      bool isWithDebugInfo()
+      bool isWithDebugInfo() override
       {
          // in the current implementation, debug info (i.e. debug section)
          // is always generated (to be used by RTManager)
@@ -174,6 +174,7 @@ namespace elena_lang
       pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, bool virtualMode) override;
 
       void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) override;
+      void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) override;
 
       JITCompiler32()
          : JITCompiler()
@@ -212,6 +213,7 @@ namespace elena_lang
       pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, bool virtualMode) override;
 
       void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) override;
+      void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) override;
 
       JITCompiler64()
          : JITCompiler()

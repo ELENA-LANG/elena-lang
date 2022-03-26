@@ -63,6 +63,7 @@ namespace elena_lang
    constexpr auto errMsgUnrecognizedError    = "Unknown error\n";
    constexpr auto errMsgFatalLinkerError     = "Fatal linker error\n";
    constexpr auto errMsgNotImplemented       = "Not implemented error\n";
+   constexpr auto errMsgCorruptedVMT         = "VMT structure is corrupt";
 
 } // _ELENA_
 

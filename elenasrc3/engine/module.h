@@ -126,18 +126,10 @@ namespace elena_lang
             return true;
          }
 
-         bool write(pos_t position, const void* s, pos_t length) override
-         {
-            // should never be called
-            throw InternalError(errReadOnlyModule);
-         }
+         bool write(pos_t position, const void* s, pos_t length) override;
 
-         void trim(pos_t)
-         {
-            // should never be called
-            throw InternalError(errReadOnlyModule);
-         }
-      };
+         void trim(pos_t) override;
+      }; 
 
       typedef FixedMemoryMap<ref_t, ROSection> ROSectionMap;
 

@@ -9,6 +9,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "x86_64compiler.h"
+#include "langcommon.h"
 
 using namespace elena_lang;
 

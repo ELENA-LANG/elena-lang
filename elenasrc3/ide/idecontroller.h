@@ -53,8 +53,8 @@ namespace elena_lang
             _notifier->notify(messageCode);
       }
 
-      ProjectController(DebugProcessBase* process)
-         : _debugController(process)
+      ProjectController(DebugProcessBase* process, ProjectModel* model)
+         : _debugController(process, model)
       {
          _notifier = nullptr;
       }
@@ -76,8 +76,8 @@ namespace elena_lang
          projectController.setNotifier(notifier);
       }
 
-      IDEController(DebugProcessBase* process)
-         : projectController(process)
+      IDEController(DebugProcessBase* process, ProjectModel* model)
+         : projectController(process, model)
       {
       }
    };

@@ -9,6 +9,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "module.h"
+#include "langcommon.h"
 
 using namespace elena_lang;
 
@@ -308,6 +309,20 @@ bool Module :: save(StreamWriter& writer)
    saveSections(writer);
 
    return true;
+}
+
+// --- ROModule::ROSection ---
+
+bool ROModule::ROSection :: write(pos_t position, const void* s, pos_t length)
+{
+   // should never be called
+   throw InternalError(errReadOnlyModule);
+}
+
+void ROModule::ROSection :: trim(pos_t)
+{
+   // should never be called
+   throw InternalError(errReadOnlyModule);
 }
 
 // --- ROModule ---

@@ -309,6 +309,16 @@ namespace elena_lang
       pos_t       _position;
 
    public:
+      MemoryBase* Memory()
+      {
+         return _memory;
+      }
+
+      void* address() const
+      {
+         return _memory->get(_position);
+      }
+
       bool eof() override
       {
          return _position >= _memory->length();

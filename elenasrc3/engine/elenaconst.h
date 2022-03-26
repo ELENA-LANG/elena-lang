@@ -255,15 +255,6 @@ namespace elena_lang
    constexpr ref_t DEBUG_LINEINFO_ID      = -1;
    constexpr ref_t DEBUG_STRINGS_ID       = -2;
 
-   // === ELENA Error codes ===
-   constexpr auto errCommandSetAbsent     = 600;
-   constexpr auto errReadOnlyModule       = 601;
-   constexpr auto errReferenceOverflow    = 603;
-
-   constexpr auto errFatalError       = -1;
-   constexpr auto errFatalLinker      = -2;
-   constexpr auto errNotImplemented   = -3;
-
    // === Enginre settings ===
    constexpr auto MINIMAL_ARG_LIST        = 2;
 

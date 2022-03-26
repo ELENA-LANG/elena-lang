@@ -99,6 +99,7 @@ namespace elena_lang
       JITSettings           _jitSettings;
       bool                  _virtualMode;
       bool                  _classSymbolAutoLoadMode;
+      bool                  _withDebugInfo;
          
       addr_t calculateVAddress(MemoryWriter& writer, ref_t targetMask);
 
@@ -122,6 +123,10 @@ namespace elena_lang
       addr_t resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
       addr_t resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
 
+      pos_t createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
+      pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
+      void endNativeDebugInfo(pos_t position);
+
    public:
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
       addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
@@ -144,6 +149,7 @@ namespace elena_lang
          _jitSettings = settings->jitSettings;
          _virtualMode = settings->virtualMode;
          _classSymbolAutoLoadMode = settings->autoLoadMode;
+         _withDebugInfo = false;
       }
    };
 

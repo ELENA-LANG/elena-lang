@@ -65,7 +65,7 @@ namespace elena_lang
    struct Win32ThreadContext
    {
       friend class Win32DebugProcess;
-      friend class Win32BreakpointContext;
+      friend struct Win32BreakpointContext;
 
    protected:
       void*   state;
@@ -100,7 +100,7 @@ namespace elena_lang
       //void addBreakpoint(size_t address, Win32ThreadContext* context, bool started);
       //void removeBreakpoint(size_t address, Win32ThreadContext* context, bool started);
       void setSoftwareBreakpoints(Win32ThreadContext* context);
-      //void setHardwareBreakpoint(size_t address, Win32ThreadContext* context, bool withStackLevelControl);
+      void setHardwareBreakpoint(addr_t address, Win32ThreadContext* context, bool withStackLevelControl);
 
       bool processStep(Win32ThreadContext* context, bool stepMode);
       bool processBreakpoint(Win32ThreadContext* context);
@@ -130,6 +130,7 @@ namespace elena_lang
 
       addr_t                     init_breakpoint;
       addr_t                     minAddress, maxAddress;
+      addr_t                     baseAddress;
 
       DWORD                      threadId;
       bool                       started;
@@ -187,9 +188,18 @@ namespace elena_lang
          return started;
       }
 
+      bool isTrapped() override
+      {
+         return trapped;
+      }
+
+      bool isInitBreakpoint() override;
+
       void initHook() override { init_breakpoint = INVALID_ADDR; }
 
       addr_t findEntryPoint(path_t programPath) override;
+
+      bool findSignature(StreamReader& reader, char* signature, pos_t length) override;
 
       bool startProgram(const wchar_t* exePath, const wchar_t* cmdLine) override;
 
@@ -200,6 +210,17 @@ namespace elena_lang
       void activate() override;
 
       bool startThread(DebugControllerBase* controller) override;
+
+      addr_t getBaseAddress() override;
+
+      void setBreakpoint(addr_t address, bool withStackLevelControl) override;
+
+      void addStep(addr_t address, void* current) override;
+
+      bool readDump(addr_t address, char* s, pos_t length) override
+      {
+         return _current->readDump(address, s, length);
+      }
 
       Win32DebugProcess();
    };

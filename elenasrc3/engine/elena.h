@@ -352,6 +352,8 @@ namespace elena_lang
          ReferenceHelperBase* helper,
          JITSettings settings) = 0;
 
+      virtual bool isWithDebugInfo() = 0;
+
       virtual void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) = 0;
 
       virtual void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter) = 0;
@@ -366,6 +368,7 @@ namespace elena_lang
       virtual pos_t copyParentVMT(void* parentVMT, void* targetVMT) = 0;
 
       virtual void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) = 0;
+      virtual void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) = 0;
 
       virtual pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, bool virtualMode) = 0;
       virtual pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, 
@@ -416,6 +419,13 @@ namespace elena_lang
          : String(s1)
       {
          append(s2);
+      }
+
+      IdentifierString(ustr_t s1, ustr_t s2, ustr_t s3)
+         : String(s1)
+      {
+         append(s2);
+         append(s3);
       }
 
       IdentifierString(wstr_t s)
@@ -644,7 +654,7 @@ namespace elena_lang
       {
          struct Source { pos_t nameRef; } source;
          struct Module { pos_t nameRef; int flags; } classSource;
-         struct Step { pos64_t address; } step;
+         struct Step { addr_t address; } step;
       //   struct Local { pos_t nameRef; int level; } local;
       //   struct Field { pos_t nameRef; int size; } field;
       //   struct Offset { pos_t disp; } offset;

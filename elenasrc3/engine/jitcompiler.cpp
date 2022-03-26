@@ -1320,6 +1320,14 @@ void JITCompiler32 :: addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWrit
    else writer.writeDReference(mskCodeRef32, codeWriter.position());
 }
 
+void JITCompiler32 :: addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode)
+{
+   if (!virtualMode) {
+      writer.writeDWord(vaddress);
+   }
+   else writer.writeDReference(vaddress, 0);
+}
+
 // --- JITCompiler64 ---
 
 inline void insertVMTEntry64(VMTEntry64* entries, pos_t count, pos_t index)
@@ -1509,6 +1517,14 @@ void JITCompiler64 :: addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWrit
       writer.writeQWord((unsigned long long)image->get(codeWriter.position()));
    }
    else writer.writeQReference(mskCodeRef64, codeWriter.position());
+}
+
+void JITCompiler64::addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode)
+{
+   if (!virtualMode) {
+      writer.writeQWord(vaddress);
+   }
+   else writer.writeQReference(vaddress, 0);
 }
 
 int JITCompiler64 :: calcTotalSize(int numberOfFields)
