@@ -421,10 +421,9 @@ void Compiler::ExprScope :: syncStack()
       SymbolScope* symbolScope = (SymbolScope*)getScope(ScopeLevel::Symbol);
       if (symbolScope != nullptr) {
          symbolScope->reservedArgs = max(symbolScope->reservedArgs, allocatedArgs);
+         if (symbolScope->reserved1 < tempAllocated1)
+            symbolScope->reserved1 = tempAllocated1;
       }
-
-      if (symbolScope->reserved1 < tempAllocated1)
-         symbolScope->reserved1 = tempAllocated1;
    }
 }
 
@@ -797,7 +796,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node)
    ref_t            actionRef = 0;
    ref_t            flags = 0;
 
-   ref_t            signature[ARG_COUNT];
+   ref_t            signature[ARG_COUNT] = {};
    size_t           signatureLen = 0;
 
    bool             unnamedMessage = false;
@@ -1458,14 +1457,14 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    return retVal;
 }
 
-void Compiler :: addBreakpoint(BuildTreeWriter& writer, SyntaxNode node)
+void Compiler :: addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey)
 {
    SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
    if (terminal != SyntaxKey::None) {
       SyntaxNode row = terminal.findChild(SyntaxKey::Row);
       SyntaxNode col = terminal.findChild(SyntaxKey::Column);
 
-      writer.newNode(BuildKey::Breakpoint);
+      writer.newNode(bpKey);
       writer.appendNode(BuildKey::Row, row.arg.value);
       writer.appendNode(BuildKey::Column, col.arg.value);
       writer.closeNode();
@@ -1478,7 +1477,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
    SyntaxNode current = node.firstChild();
    if (current == SyntaxKey::Object) {
-      addBreakpoint(writer, current);
+      addBreakpoint(writer, current, BuildKey::Breakpoint);
    }
 
    arguments.add(compileObject(writer, scope, current));
@@ -1740,8 +1739,11 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::Expression:
+         case SyntaxKey::Expression:
             compileRootExpression(writer, codeScope, current);
+            break;
+         case SyntaxKey::EOP:
+            addBreakpoint(writer, current, BuildKey::EOPBreakpoint);
             break;
          default:
             break;

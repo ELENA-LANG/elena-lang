@@ -306,8 +306,15 @@ void SyntaxTreeBuilder :: flushMethodCode(Scope& scope, SyntaxNode node)
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::Expression) {
-         flushStatement(scope, current);
+      switch (current.key) {
+         case SyntaxKey::Expression:
+            flushStatement(scope, current);
+            break;
+         case SyntaxKey::EOP:
+            flushNode(scope, current);
+            break;
+         default:
+            break;
       }
 
       current = current.nextNode();

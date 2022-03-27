@@ -30,6 +30,7 @@ namespace elena_lang
       string             = 0x003006,
       hexinteger         = 0x003007,
       reference          = 0x003008,
+      eop                = 0x003009,
 
       // NOTE : low word should be unique for every key
       Declaration        = 0x001000,
@@ -44,6 +45,7 @@ namespace elena_lang
       TemplateCode       = 0x001008,
       Constructor        = 0x001009,
       Parameter          = 0x00100A,
+      EOP                = 0x00100B,
       CodeBlock          = 0x001C10,
       WithoutBody        = 0x001C11,
       Importing          = 0x001C12,

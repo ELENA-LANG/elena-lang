@@ -122,7 +122,7 @@ void addingBreakpoint(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::Breakpoint);
 }
 
-ByteCodeWriter::Saver commands[15] =
+ByteCodeWriter::Saver commands[16] =
 {
    nullptr,
    openFrame,
@@ -138,6 +138,7 @@ ByteCodeWriter::Saver commands[15] =
    creatingClass,
    openStatement,
    closeStatement,
+   addingBreakpoint,
    addingBreakpoint
 };
 

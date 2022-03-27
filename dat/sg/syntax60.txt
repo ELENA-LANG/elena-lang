@@ -4,11 +4,13 @@ __define integer            12293;
 __define string             12294;
 __define hexinteger         12295;
 __define reference          12296;
+__defineterminal }          12297;
 
 __define DECLARATION         4096;
 __define BLOCK               7184;
 __define NO_BODY             7185;
 __define PARAMETER 	     4106;
+__define END_OF_BLOCK        4107;
 __define DICTIONARY          4128;
 __define META_STATEMENT      4129;
 __define INCLUDE_STATEMENT   4130;
@@ -56,7 +58,7 @@ IDICTIONARY_R ::=
 
 SCOPE ::=
         "=" EXPRESSION DECLARATION_END
-	| "{" SUB_DECLARATIONS "}"
+	| "{" SUB_DECLARATIONS END_OF_BLOCK
 	| "(" PARAMETERS ")" METHOD_BODY_OPT
         | DECLARATION_END;
 
@@ -87,7 +89,7 @@ NO_BODY ::=
 	";";
 
 BLOCK ::= 
-	"{" STATEMENTS "}";
+	"{" STATEMENTS END_OF_BLOCK;
 
 STATEMENTS ::=
 	ROOT_EXPRESSION STATEMENTS
@@ -188,3 +190,6 @@ ADDITION_ASSIGNMENT ::=
 
 DECLARATION_END ::=
 	";";
+
+END_OF_BLOCK ::=
+	"}";

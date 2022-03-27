@@ -69,6 +69,11 @@ namespace elena_lang
       bool load(StreamReader& reader, bool setEntryAddress, DebugProcessBase* process);
 
       DebugLineInfo* seekDebugLineInfo(addr_t lineInfoAddress, ustr_t& moduleName, ustr_t& sourcePath);
+      DebugLineInfo* seekDebugLineInfo(size_t lineInfoAddress)
+      {
+         return (DebugLineInfo*)lineInfoAddress;
+      }
+      DebugLineInfo* getNextStep(DebugLineInfo* step, bool stepOverMode);
 
       void clear()
       {

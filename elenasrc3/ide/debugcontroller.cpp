@@ -285,6 +285,43 @@ DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, us
    else return nullptr;
 }
 
+DebugLineInfo* DebugInfoProvider :: getNextStep(DebugLineInfo* step, bool stepOverMode)
+{
+   DebugLineInfo* next = step;
+   /*if (stepOverMode) {
+      int level = 1;
+      while (level > 0) {
+         next = &next[1];
+         switch (next->symbol) {
+            case dsVirtualBlock:
+               level++;
+               break;
+            case dsVirtualEnd:
+               level--;
+               break;
+            case dsEnd:
+               return nullptr;
+            case dsEOP:
+               level = 0;
+               break;
+            default:
+               break;
+         }
+
+      }
+   }
+   else*/ next = &next[1];
+
+   //while ((next->symbol & dsDebugMask) != dsStep) {
+   //   if (next->symbol == dsEnd)
+   //      return nullptr;
+
+   //   next = &next[1];
+   //}
+
+   return next;
+}
+
 // --- DebugController ---
 
 DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model, 
@@ -508,27 +545,27 @@ void DebugController :: stepInto()
       _started = true;
    }
    else {
-      //DebugLineInfo* lineInfo = seekDebugLineInfo((size_t)_debugger.Context()->State());
+      DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState());
 
       //// if debugger should notify on the step result
       //if (test(lineInfo->symbol, dsProcedureStep))
       //   _debugger.setCheckMode();
 
-      //DebugLineInfo* nextStep = getNextStep(lineInfo, false);
-      //// if the address is the same perform the virtual step
-      //if (nextStep && nextStep->addresses.step.address == lineInfo->addresses.step.address) {
-      //   if (nextStep->symbol != dsVirtualEnd) {
-      //      _debugger.processVirtualStep(nextStep);
-      //      processStep();
-      //      return;
-      //   }
-      //   else _debugger.setStepMode();
-      //}
-      //else if (test(lineInfo->symbol, dsAtomicStep)) {
-      //   _debugger.setBreakpoint(nextStep->addresses.step.address, true);
-      //}
-      //// else set step mode
-      //else _debugger.setStepMode();
+      DebugLineInfo* nextStep = _provider.getNextStep(lineInfo, false);
+      // if the address is the same perform the virtual step
+      if (nextStep && nextStep->addresses.step.address == lineInfo->addresses.step.address) {
+         /*if (nextStep->symbol != dsVirtualEnd) {
+            _debugger.processVirtualStep(nextStep);
+            processStep();
+            return;
+         }
+         else */_process->setStepMode();
+      }
+      /*else if (test(lineInfo->symbol, dsAtomicStep)) {
+         _debugger.setBreakpoint(nextStep->addresses.step.address, true);
+      }*/
+      // else set step mode
+      else _process->setStepMode();
    }
 
    _process->setEvent(DEBUG_RESUME);

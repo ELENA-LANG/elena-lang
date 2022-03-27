@@ -505,7 +505,7 @@ namespace elena_lang
 
       void writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info) ;
 
-      void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node);
+      void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey);
 
       ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, ArgumentsInfo& arguments);
 

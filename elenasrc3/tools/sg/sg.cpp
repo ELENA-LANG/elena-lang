@@ -101,6 +101,18 @@ int main(int argc, char* argv[])
             if (!token.compare(";"))
                throw SyntaxError(SG_INVALID_RULE, token.lineInfo);
          }
+         else if (token.compare("__defineterminal")) {
+            reader.read(token);
+
+            ScriptToken key;
+            reader.read(key);
+
+            registerSymbol(table, token.token.str(), key.token.toInt(), true);
+
+            reader.read(token);
+            if (!token.compare(";"))
+               throw SyntaxError(SG_INVALID_RULE, token.lineInfo);
+         }
          else if (token.compare("::=")) {
             if (rule_len != 1)
                throw SyntaxError(SG_INVALID_RULE, token.lineInfo);
