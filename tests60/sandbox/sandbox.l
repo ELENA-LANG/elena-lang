@@ -16,6 +16,5 @@ class A
 }
                                 
 
-//public symbol program = A.new().testA();
 public symbol program = B.testB(A.new());
 

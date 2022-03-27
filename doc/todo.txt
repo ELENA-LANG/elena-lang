@@ -6,8 +6,7 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 ===
     --- elena redux ---
-    * calling a method - fix
-    * parameter
+    * >parameter
     * variable
     * int
     * int literal
@@ -18,8 +17,11 @@ In development:
     --- ide redux ---
     * editor - do we need checkmode? it seems like not
     * editor - key accessors
-    * editor - open / close / select source files
+    * editor - compile
+    * editor - edit text
+    * editor - open / close / save / select source files
     * editor - scrollers
+    * editor - status bar
     * linux ide
     * linux debugger
     === Sprint 5 ===

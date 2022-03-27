@@ -1443,11 +1443,12 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    BuildKey operation = BuildKey::CallOp;
    ref_t argument = message;
 
-   for (unsigned int i = 0; i < arguments.count(); i++) {
-      ObjectInfo arg = arguments[i];
+   pos_t counter = arguments.count();
+   for (unsigned int i = counter; i > 0; i--) {
+      ObjectInfo arg = arguments[i - 1];
 
       writeObjectInfo(writer, arg);
-      writer.appendNode(BuildKey::SavingInStack, i);
+      writer.appendNode(BuildKey::SavingInStack, i - 1);
 
       //withUnboxing |= unboxingRequired(arg);
    }
