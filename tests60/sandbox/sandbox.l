@@ -4,7 +4,7 @@ singleton B
 {
     testB(a) 
     {
-//       a.testA();
+       a.testA();
     }
 }
 

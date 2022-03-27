@@ -196,7 +196,7 @@ int WindowApp :: run(GUIControlBase* mainWindow)
    // Main message loop:
    while (GetMessage(&msg, nullptr, 0, 0))
    {
-      if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+      if (!TranslateAccelerator(_hwnd, hAccelTable, &msg))
       {
          TranslateMessage(&msg);
          DispatchMessage(&msg);

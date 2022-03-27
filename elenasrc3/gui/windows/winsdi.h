@@ -21,6 +21,11 @@ namespace elena_lang
       ControlBase* _center;
 
    public:
+      ControlBase* getCenter()
+      {
+         return _center;
+      }
+
       void setTop(ControlBase* top)
       {
          _top = top;

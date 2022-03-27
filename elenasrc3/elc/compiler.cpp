@@ -341,6 +341,27 @@ ObjectInfo Compiler::MethodScope :: mapSelf()
    else return {};
 }
 
+ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier)
+{
+   int prefix = /*functionMode ? 0 : */-1;
+
+   Parameter local = parameters.get(identifier);
+   if (local.offset != -1) {
+      return { ObjectKind::Param, local.class_ref, prefix - local.offset };
+   }
+   else return {};
+}
+
+ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
+{
+   auto paramInfo = mapParameter(identifier);
+   if (paramInfo.kind != ObjectKind::Unknown) {
+      return paramInfo;
+   }
+
+   return Scope::mapIdentifier(identifier, referenceOne, attr);
+}
+
 // --- Compiler::CodeScope ---
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
@@ -355,6 +376,25 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
 {
    reserved1 = allocated1 = parent->allocated1;
    reserved2 = allocated2 = parent->allocated2;
+}
+
+ObjectInfo Compiler::CodeScope :: mapLocal(ustr_t identifier)
+{
+   Parameter local = locals.get(identifier);
+   if (local.offset != -1) {
+      return { ObjectKind::Local, local.class_ref, local.offset };
+   }
+   else return {};
+}
+
+ObjectInfo Compiler::CodeScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
+{
+   ObjectInfo info = mapLocal(identifier);
+   if (info.kind != ObjectKind::Unknown) {
+      return info;
+   }
+
+   return Scope::mapIdentifier(identifier, referenceOne, attr);
 }
 
 void Compiler::CodeScope :: syncStack(MethodScope* methodScope)
@@ -1145,6 +1185,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
       case ObjectKind::Class:
          writer.appendNode(BuildKey::ClassReference, info.reference);
          break;
+      case ObjectKind::Param:
       case ObjectKind::SelfParam:
       case ObjectKind::Local:
       case ObjectKind::TempLocal:
@@ -1768,7 +1809,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
    // stack should contains current self reference
    // the original message should be restored if it is a generic method
    scope.selfLocal = codeScope.newLocal();
-   codeScope.mapLocal(*scope.moduleScope->selfVar, scope.selfLocal, scope.getClassRef(false));
+   codeScope.mapNewLocal(*scope.moduleScope->selfVar, scope.selfLocal, scope.getClassRef(false));
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
    ObjectInfo retVal = { };
@@ -1912,6 +1953,7 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
             MethodScope methodScope(&scope);
             methodScope.message = current.arg.reference;
 
+            declareVMTMessage(methodScope, current);
             compileMethod(writer, methodScope, current);
             break;
          }

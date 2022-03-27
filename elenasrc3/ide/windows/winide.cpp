@@ -9,6 +9,13 @@
 
 using namespace elena_lang;
 
+void IDEWindow :: onActivate()
+{
+   auto center = _layoutManager.getCenter();
+   if (center)
+      center->setFocus();
+}
+
 bool IDEWindow :: onCommand(int command)
 {
    switch (command) {

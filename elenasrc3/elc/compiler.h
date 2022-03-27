@@ -30,6 +30,7 @@ namespace elena_lang
       Object,
       InternalProcedure,
       SelfParam,
+      Param,
       Local,
       TempLocal,
    };
@@ -63,6 +64,13 @@ namespace elena_lang
          this->kind = kind;
          this->type = type;
          this->reference = reference;
+         this->extra = 0;
+      }
+      ObjectInfo(ObjectKind kind, ref_t type, int value)
+      {
+         this->kind = kind;
+         this->type = type;
+         this->argument = value;
          this->extra = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t type, ref_t reference, int extra)
@@ -346,6 +354,8 @@ namespace elena_lang
             else return Scope::getScope(level);
          }
 
+         ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
+         ObjectInfo mapParameter(ustr_t identifier);
          ObjectInfo mapSelf();
 
          bool checkHint(MethodHint hint)
@@ -380,6 +390,8 @@ namespace elena_lang
             else return Scope::getScope(level);
          }
 
+         ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
+
          int newLocal()
          {
             allocated1++;
@@ -389,19 +401,21 @@ namespace elena_lang
             return allocated1;
          }
 
-         void mapLocal(ustr_t local, int level)
+         ObjectInfo mapLocal(ustr_t identifier);
+
+         void mapNewLocal(ustr_t local, int level)
          {
             locals.add(local, Parameter(level));
          }
-         void mapLocal(ustr_t local, int level, ref_t class_ref)
+         void mapNewLocal(ustr_t local, int level, ref_t class_ref)
          {
             locals.add(local, Parameter(level, class_ref));
          }
-         void mapLocal(ustr_t local, int level, ref_t class_ref, ref_t element_ref, int size)
+         void mapNewLocal(ustr_t local, int level, ref_t class_ref, ref_t element_ref, int size)
          {
             locals.add(local, Parameter(level, class_ref, element_ref, size));
          }
-         void mapLocal(ustr_t local, int level, ref_t class_ref, ref_t element_ref, int size, bool unassigned)
+         void mapNewLocal(ustr_t local, int level, ref_t class_ref, ref_t element_ref, int size, bool unassigned)
          {
             locals.add(local, Parameter(level, class_ref, element_ref, size, unassigned));
          }

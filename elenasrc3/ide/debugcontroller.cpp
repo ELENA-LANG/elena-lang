@@ -512,6 +512,10 @@ void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName
 
 void DebugController :: onStop()
 {
+   _started = false;
+   _process->reset();
+   _provider.clear();
+
    _sourceModel->clearTraceLine();
    _notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
 }
@@ -606,10 +610,6 @@ void DebugController :: clearBreakpoints()
 bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode)
 {
    //_currentModule = NULL;
-   _started = false;
-
-   _process->reset();
-
    _debuggee.copy(programPath);
    _arguments.copy(arguments);
 

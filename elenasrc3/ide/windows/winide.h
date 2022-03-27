@@ -22,6 +22,7 @@ namespace elena_lang
 
       bool onCommand(int command) override;
       void onNotify(NMHDR* hdr) override;
+      void onActivate() override;
 
    public:
       IDEWindow(wstr_t title, IDEController* controller, IDEModel* model)
