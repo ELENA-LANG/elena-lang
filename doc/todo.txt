@@ -6,7 +6,10 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 ===
     --- elena redux ---
-    * >parameter
+    * new opcodes : xstorefi
+    * on sending message clear arg0 / arg1 if required
+
+    * parameter
     * variable
     * int
     * int literal
@@ -56,9 +59,6 @@ Pipeline:
     * for windows x86-64 allocate shadow memory
     * for linux amd64 allocate shadow memory
 
-    * openin / openheaderin - should not affect index
-    * x86 redirect - saving edx/esi in the stack - their values are undefined for argCount < 2; 
-      the code should be redesigned
     * compiler - calling a constructor method directly
     * compiler - constructor - fill newly created object with zerros
     * compiler - if the method has no call operarion, no need to set arg length

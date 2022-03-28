@@ -67,12 +67,12 @@ end
 // ; in: ecx - size ; out: ebx - created object
 inline % GC_ALLOC
 
-  mov  edi, [data : %CORE_GC_TABLE + gc_yg_current]
-  add  ecx, edi
+  mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
+  add  ecx, eax
   cmp  ecx, [data : %CORE_GC_TABLE + gc_yg_end]
   jae  short labYGCollect
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
-  lea  ebx, [edi + elObjectOffset]
+  lea  ebx, [eax + elObjectOffset]
   ret
 
 labYGCollect:
@@ -84,12 +84,12 @@ end
 // ; ==== Command Set ==
 
 // ; redirect
-inline % 03h // (ebx - object, eax - message, esi - arg0, edx - arg1)
+inline % 03h // (ebx - object, edx - message, esi - arg0, edi - arg1)
 
+  mov   [esp+8], edi
+  xor   ecx, ecx
   mov   [esp+4], esi
   mov   edi, [ebx - elVMTOffset]
-  mov   [esp+8], edx
-  xor   ecx, ecx
   mov   esi, [edi - elVMTSizeOffset]
 
 labSplit:
@@ -99,18 +99,18 @@ labSplit:
 labStart:
   shr   esi, 1
   setnc cl
-  cmp   eax, [edi+esi*8]
+  cmp   edx, [edi+esi*8]
   je    short labFound
-  lea   edx, [edi+esi*8]
+  lea   eax, [edi+esi*8]
   jb    short labSplit
-  lea   edi, [edx+8]
+  lea   edi, [eax+8]
   sub   esi, ecx
   jmp   short labSplit
 labFound:
-  mov   edi, [edi+esi*8+4]
+  mov   eax, [edi+esi*8+4]
   mov   esi, [esp+4]
-  mov   edx, [esp+8]
-  jmp   edi
+  mov   edi, [esp+8]
+  jmp   eax
 
 labEnd:
                                                                 
@@ -126,14 +126,14 @@ end
 // ; movenv
 inline %5
 
-  mov  eax, rdata32 : %SYSTEM_ENV
+  mov  edx, rdata32 : %SYSTEM_ENV
 
 end
 
 // ; load
 inline %6
 
-  mov  eax, dword ptr [ebx]
+  mov  edx, dword ptr [ebx]
 
 end
 
@@ -160,7 +160,7 @@ end
 // ; movm
 inline %88h
 
-  mov  eax, __arg32_1
+  mov  edx, __arg32_1
 
 end
 
@@ -241,7 +241,7 @@ end
 // ; saveddisp
 inline %0A0h
 
-  mov  [ebp + __arg32_1], eax
+  mov  [ebp + __arg32_1], edx
 
 end
 
@@ -255,21 +255,21 @@ end
 // ; savesi
 inline %0A2h
 
-  mov [esp + __arg32_1], eax
+  mov [esp + __arg32_1], edx
 
 end 
 
 // ; savesi 0
 inline %1A2h
 
-  mov esi, eax
+  mov esi, edx
 
 end 
 
 // ; savesi 1
 inline %2A2h
 
-  mov edx, eax
+  mov edi, edx
 
 end 
 
@@ -290,7 +290,7 @@ end
 // ; storesi 1
 inline %2A3h
 
-  mov edx, ebx
+  mov edi, ebx
 
 end 
 
@@ -311,8 +311,8 @@ end
 // ; callvi
 inline %0B1h
 
-  mov  edx, [ebx - elVMTOffset]
-  call [edx + __arg32_1]
+  mov  eax, [ebx - elVMTOffset]
+  call [eax + __arg32_1]
 
 end
 
@@ -320,8 +320,10 @@ end
 inline %0F0h
 
   push ebp
-  xor  eax, eax
+  mov  [esp+8], esi
   mov  ebp, esp
+  mov  [esp+12], edi
+  xor  eax, eax
   sub  esp, __n_2
   push ebp
   push eax
@@ -338,6 +340,8 @@ inline %1F0h
 
   push ebp
   mov  ebp, esp
+  mov  [esp+8], esi
+  mov  [esp+12], edi
 
 end 
 
@@ -346,6 +350,8 @@ inline %2F0h
 
   push ebp
   mov  ebp, esp
+  mov  [esp+8], esi
+  mov  [esp+12], edi
   push 0
 
 end 
@@ -354,10 +360,12 @@ end
 inline %3F0h
 
   push ebp
-  xor  eax, eax
   mov  ebp, esp
-  push eax
-  push eax
+  xor  ecx, ecx
+  mov  [esp+8], esi
+  mov  [esp+12], edi
+  push ecx
+  push ecx
 
 end 
 
@@ -365,11 +373,13 @@ end
 inline %4F0h
 
   push ebp
-  xor  eax, eax
+  xor  ecx, ecx
   mov  ebp, esp
-  push eax
-  push eax
-  push eax
+  mov  [esp+8], esi
+  mov  [esp+12], edi
+  push ecx
+  push ecx
+  push ecx
 
 end 
 
@@ -377,11 +387,13 @@ end
 inline %5F0h
 
   push ebp
-  xor  eax, eax
   mov  ebp, esp
+  mov  [esp+8], esi
+  xor  ecx, ecx
+  mov  [esp+12], edi
   sub  esp, __n_2
   push ebp
-  push eax
+  push ecx
   mov  ebp, esp
 
 end 
@@ -390,8 +402,10 @@ end
 inline %6F0h
 
   push ebp
-  xor  eax, eax
   mov  ebp, esp
+  mov  [esp+8], esi
+  xor  eax, eax
+  mov  [esp+12], edi
   mov  ecx, __n_1
   sub  esp, __arg32_1
   mov  edi, esp
@@ -402,8 +416,8 @@ end
 // ; xstoresir
 inline %0F1h
 
-  mov  ecx, __ptr32_2
-  mov  [esp+__arg32_1], ecx
+  mov  eax, __ptr32_2
+  mov  [esp+__arg32_1], eax
 
 end
 
@@ -417,7 +431,7 @@ end
 // ; xstoresir :1, ...
 inline %2F1h
 
-  mov  edx, __ptr32_2
+  mov  edi, __ptr32_2
 
 end
 
@@ -507,8 +521,8 @@ end
 // ; movsifi
 inline %0F3h
 
-  mov  ecx, [ebp+__arg32_2]
-  mov  [esp+__arg32_1], ecx
+  mov  eax, [ebp+__arg32_2]
+  mov  [esp+__arg32_1], eax
 
 end
 
@@ -522,7 +536,7 @@ end
 // ; movsifi sp:1, fp:i2
 inline %2F3h
 
-  mov  edx, [ebp+__arg32_2]
+  mov  edi, [ebp+__arg32_2]
 
 end
 
@@ -533,9 +547,9 @@ inline %0F4h
   call %GC_ALLOC
 
   mov  ecx, __n_1
-  mov  edi, __ptr32_2
+  mov  eax, __ptr32_2
   mov  [ebx - elSizeOffset], ecx
-  mov  [ebx - elVMTOffset], edi
+  mov  [ebx - elVMTOffset], eax
 
 end
 
@@ -543,7 +557,7 @@ end
 inline %0FEh
 
   mov  [esp], esi
-  mov  [esp+4], edx
+  mov  [esp+4], edi
   call extern __ptr32_1
 
 end
@@ -562,4 +576,3 @@ inline %2FEh
   call extern __ptr32_1
 
 end
-

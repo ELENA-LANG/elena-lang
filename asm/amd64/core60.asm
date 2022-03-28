@@ -65,13 +65,13 @@ end
 // ; in: rcx - size ; out: ebx - created object
 inline % GC_ALLOC
 
-  mov  rdi, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  r11, [data : %CORE_GC_TABLE + gc_yg_end]
-  add  rcx, rdi
-  cmp  rcx, r11
+  mov  rax, [data : %CORE_GC_TABLE + gc_yg_current]
+  mov  r12, [data : %CORE_GC_TABLE + gc_yg_end]
+  add  rcx, rax
+  cmp  rcx, r12
   jae  short labYGCollect
   mov  [data : %CORE_GC_TABLE + gc_yg_current], rcx
-  lea  rbx, [rdi + elObjectOffset]
+  lea  rbx, [rax + elObjectOffset]
   ret
 
 labYGCollect:
@@ -83,7 +83,7 @@ end
 // ; ==== Command Set ==
 
 // ; redirect
-inline % 03h // (rbx - object, rax - message, esi - arg0, edx - arg1)
+inline % 03h // (rbx - object, rdx - message, r10 - arg0, r11 - arg1)
 
   mov  r14, [rbx - elVMTOffset]
   xor  ecx, ecx
@@ -99,9 +99,9 @@ labStart:
   setnc cl
   cmp   rax, [r14+r13*8]
   je    short labFound
-  lea   r11, [r14+r13*8]
+  lea   r12, [r14+r13*8]
   jb    short labSplit
-  lea   r14, [r11+16]
+  lea   r14, [r12+16]
   sub   esi, ecx
   jmp   labSplit
   nop
@@ -123,14 +123,14 @@ end
 // ; movenv
 inline %5
 
-  mov  rax, rdata64 : %SYSTEM_ENV
+  mov  rdx, rdata64 : %SYSTEM_ENV
 
 end
 
 // ; load
 inline %6
 
-  mov  eax, dword ptr [rbx]
+  mov  edx, dword ptr [rbx]
 
 end
 
@@ -158,7 +158,7 @@ end
 // ; movm
 inline %88h
 
-  mov  eax, __arg32_1
+  mov  edx, __arg32_1
 
 end
 
@@ -239,7 +239,7 @@ end
 // ; saveddisp
 inline %0A0h
 
-  mov  dword ptr[rbp + __arg32_1], eax
+  mov  dword ptr[rbp + __arg32_1], edx
 
 end
 
@@ -253,7 +253,7 @@ end
 // ; savesi
 inline %0A2h
 
-  mov dword ptr [rsp + __arg32_1], eax
+  mov dword ptr [rsp + __arg32_1], edx
 
 end 
 
@@ -267,7 +267,7 @@ end
 // ; savesi 1
 inline %2A2h
 
-  mov rdx, rax
+  mov r11, rax
 
 end 
 
@@ -288,21 +288,7 @@ end
 // ; storesi 1
 inline %2A3h
 
-  mov rdx, rbx
-
-end 
-
-// ; savesi 2
-inline %3A2h
-
-  mov r8, rax
-
-end 
-
-// ; savesi 3
-inline %4A2h
-
-  mov r9, rax
+  mov r11, rbx
 
 end 
 
@@ -323,8 +309,8 @@ end
 // ; callvi
 inline % 0B1h
 
-  mov  rdx, [rbx - elVMTOffset]
-  call [rdx + __arg32_1]
+  mov  rax, [rbx - elVMTOffset]
+  call [rax + __arg32_1]
 
 end
 
@@ -333,7 +319,9 @@ inline %0F0h
 
   push rbp
   xor  rax, rax
+  mov  [rsp+8], r10
   mov  rbp, rsp
+  mov  [rsp+12], r11
   sub  rsp, __n_2
   push rbp
   push rax
@@ -350,6 +338,8 @@ inline %1F0h
 
   push rbp
   mov  rbp, rsp
+  mov  [rsp+8], r10
+  mov  [rsp+12], r11
 
 end 
 
@@ -358,6 +348,8 @@ inline %2F0h
 
   push rbp
   mov  rbp, rsp
+  mov  [rsp+8], r10
+  mov  [rsp+12], r11
   push 0
 
 end 
@@ -368,6 +360,8 @@ inline %3F0h
   push rbp
   xor  rax, rax
   mov  rbp, rsp
+  mov  [rsp+8], r10
+  mov  [rsp+12], r11
   push rax
   push rax
 
@@ -379,6 +373,8 @@ inline %4F0h
   push rbp
   xor  rax, rax
   mov  rbp, rsp
+  mov  [rsp+8], r10
+  mov  [rsp+12], r11
   push rax
   push rax
   push rax
@@ -391,6 +387,8 @@ inline %5F0h
   push rbp
   xor  rax, rax
   mov  rbp, rsp
+  mov  [rsp+8], r10
+  mov  [rsp+12], r11
   sub  rsp, __n_2
   push rbp
   push rax
@@ -403,6 +401,8 @@ inline %6F0h
 
   push rbp
   xor  rax, rax
+  mov  [rsp+8], r10
+  mov  [rsp+12], r11
   mov  rbp, rsp
   mov  rcx, __n_1
   sub  rsp, __arg32_1
@@ -414,8 +414,8 @@ end
 // ; xstoresir
 inline %0F1h
 
-  mov  rcx, __ptr64_2
-  mov  qword ptr [rsp+__arg32_1], rcx
+  mov  rax, __ptr64_2
+  mov  qword ptr [rsp+__arg32_1], rax
 
 end
 
@@ -429,21 +429,7 @@ end
 // ; xstoresir :1, ...
 inline %2F1h
 
-  mov  rdx, __ptr64_2
-
-end
-
-// ; xstoresir :2, ...
-inline %3F1h
-
-  mov  r8, __ptr64_2
-
-end
-
-// ; xstoresir :3, ...
-inline %4F1h
-
-  mov  r9, __ptr64_2
+  mov  r11, __ptr64_2
 
 end
 
@@ -533,8 +519,8 @@ end
 // ; movsifi
 inline %0F3h
 
-  mov  rcx, qword ptr [rbp+__arg32_2]
-  mov  qword ptr [rsp+__arg32_1], rcx
+  mov  rax, qword ptr [rbp+__arg32_2]
+  mov  qword ptr [rsp+__arg32_1], rax
 
 end
 
@@ -548,21 +534,7 @@ end
 // ; movsifi sp:1, fp:i2
 inline %2F3h
 
-  mov  rdx, qword ptr [rbp+__arg32_2]
-
-end
-
-// ; movsifi sp:2, fp:i2
-inline %3F3h
-
-  mov  r8, qword ptr [rbp+__arg32_2]
-
-end
-
-// ; movsifi sp:3, fp:i2
-inline %4F3h
-
-  mov  r9, qword ptr [rbp+__arg32_2]
+  mov  r11, qword ptr [rbp+__arg32_2]
 
 end
 
@@ -573,9 +545,9 @@ inline %0F4h
   call %GC_ALLOC
 
   mov  ecx, __n_1
-  mov  rdi, __ptr64_2
+  mov  rax, __ptr64_2
   mov  dword ptr [rbx - elSizeOffset], ecx
-  mov  [rbx - elVMTOffset], rdi
+  mov  [rbx - elVMTOffset], rax
 
 end
 
@@ -583,6 +555,7 @@ end
 inline %0FEh
 
   mov  rcx, r10
+  mov  rdx, r11
   call extern __relptr32_1
 
 end

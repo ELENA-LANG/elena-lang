@@ -319,20 +319,6 @@ inline %2A2h
 
 end 
 
-// ; savesi 2
-inline %3A2h
-
-  mr      r5, r14
-
-end 
-
-// ; savesi 3
-inline %4A2h
-
-  mr      r6, r14
-
-end 
-
 // ; storesi
 inline %0A3h
 
@@ -351,20 +337,6 @@ end
 inline %2A3h
 
   mr      r4, r15
-
-end 
-
-// ; storesi 2
-inline %3A3h
-
-  mr      r5, r15
-
-end 
-
-// ; storesi 3
-inline %4A3h
-
-  mr      r6, r15
 
 end 
 
@@ -398,6 +370,9 @@ end
 
 // ; openin
 inline %0F0h
+
+  std     r3, 0(r1)     // ; save frame pointer
+  std     r4,  8(r1)    // ; save return address
 
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
@@ -434,6 +409,9 @@ end
 // ; openin 0, 0
 inline %1F0h
 
+  std     r3, 0(r1)     // ; save frame pointer
+  std     r4, 8(r1)    // ; save return address
+
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
   std     r0,  -08h(r1)  // ; save return address
@@ -445,6 +423,9 @@ end
 
 // ; openin 1, 0
 inline %2F0h
+
+  std     r3, 0(r1)     // ; save frame pointer
+  std     r4, 8(r1)    // ; save return address
 
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
@@ -461,6 +442,9 @@ end
 // ; openin 2, 0
 inline %3F0h
 
+  std     r3, 0(r1)     // ; save frame pointer
+  std     r4, 8(r1)    // ; save return address
+
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
   li      r16, 0
@@ -475,6 +459,9 @@ end
 
 // ; openin 3, 0
 inline %4F0h
+
+  std     r3, 0(r1)     // ; save frame pointer
+  std     r4, 8(r1)    // ; save return address
 
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
@@ -493,6 +480,9 @@ end
 // ; openin 0, n
 inline %5F0h
 
+  std     r3, 0(r1)     // ; save frame pointer
+  std     r4, 8(r1)    // ; save return address
+
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
   std     r0,  -08h(r1)  // ; save return address
@@ -510,6 +500,9 @@ end
 
 // ; openin i, 0
 inline %6F0h
+
+  std     r3, 0(r1)     // ; save frame pointer
+  std     r4, 8(r1)    // ; save return address
 
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
@@ -565,28 +558,6 @@ inline %2F1h
   addi    r16, r16, __disp32lo_2
 
   mr    r4, r16
-
-end
-
-// ; xstoresir :2, ...
-inline %3F1h
-
-  ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_2
-  addi    r14, r14, __disp32lo_2
-
-  mr    r5, r16
-
-end
-
-// ; xstoresir :3, ...
-inline %4F1h
-
-  ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_2
-  addi    r16, r16, __disp32lo_2
-
-  mr    r6, r16
 
 end
 
@@ -772,20 +743,6 @@ end
 inline %2F3h
 
   ld       r4, __arg16_2(r31)
-
-end
-
-// ; movsifi sp:2, fp:i2
-inline %3F3h
-
-  ld       r4, __arg16_2(r31)
-
-end
-
-// ; movsifi sp:3, fp:i2
-inline %4F3h
-
-  ld       r5, __arg16_2(r31)
 
 end
 

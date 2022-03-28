@@ -305,20 +305,6 @@ inline %2A2h
 
 end 
 
-// ; savesi 2
-inline %3A2h
-
-  mov     x2, x9
-
-end 
-
-// ; savesi 3
-inline %4A2h
-
-  mov     x3, x9
-
-end 
-
 // ; storesi
 inline %0A3h
 
@@ -338,20 +324,6 @@ end
 inline %2A3h
 
   mov     x1, x10
-
-end 
-
-// ; storesi 2
-inline %3A3h
-
-  mov     x2, x10
-
-end 
-
-// ; storesi 3
-inline %4A3h
-
-  mov     x3, x10
 
 end 
 
@@ -396,6 +368,9 @@ end
 // ; openin
 inline %0F0h
 
+  add     x11, sp, 16
+  stp     x0, x1, [x11]
+
   stp     x29, x30, [sp, #-16]! 
   mov     x29, sp
 
@@ -425,6 +400,9 @@ end
 // ; openin 0, 0
 inline %1F0h
 
+   add     x11, sp, 16
+   stp     x0, x1, [x11]
+
    stp     x29, x30, [sp, #-16]! 
    mov     x29, sp              // ; set frame pointer
 
@@ -432,6 +410,9 @@ end
 
 // ; openin 1, 0
 inline %2F0h
+
+   add     x11, sp, 16
+   stp     x0, x1, [x11]
 
    mov     x11, 0
    stp     x29, x30, [sp, #-16]! 
@@ -443,6 +424,9 @@ end
 // ; openin 2, 0
 inline %3F0h
 
+   add     x11, sp, 16
+   stp     x0, x1, [x11]
+
    mov     x11, 0
    stp     x29, x30, [sp, #-16]! 
    mov     x29, sp              // ; set frame pointer
@@ -453,16 +437,22 @@ end
 // ; openin 3, 0
 inline %4F0h
 
-   mov     x11, 0
-   stp     x29, x30, [sp, #-16]! 
-   mov     x29, sp              // ; set frame pointer
-   stp     x11, x11, [sp, #-16]! 
-   stp     x11, x11, [sp, #-16]! 
+  add     x11, sp, 16
+  stp     x0, x1, [x11]
+
+  mov     x11, 0
+  stp     x29, x30, [sp, #-16]! 
+  mov     x29, sp              // ; set frame pointer
+  stp     x11, x11, [sp, #-16]! 
+  stp     x11, x11, [sp, #-16]! 
 
 end 
 
 // ; openin 0, n
 inline %5F0h
+
+  add     x11, sp, 16
+  stp     x0, x1, [x11]
 
   stp     x29, x30, [sp, #-16]! 
   mov     x29, sp
@@ -478,6 +468,9 @@ end
 
 // ; openin i, 0
 inline %6F0h
+
+  add     x11, sp, 16
+  stp     x0, x1, [x11]
 
   stp     x29, x30, [sp, #-16]! 
   mov     x29, sp
@@ -522,22 +515,6 @@ inline %2F1h
 
   movz    x1,  __ptr32lo_2
   movk    x1,  __ptr32hi_2, lsl #16
-
-end
-
-// ; xstoresir :2, ...
-inline %3F1h
-
-  movz    x2,  __ptr32lo_1
-  movk    x2,  __ptr32hi_1, lsl #16
-
-end
-
-// ; xstoresir :3, ...
-inline %4F1h
-
-  movz    x3,  __ptr32lo_2
-  movk    x3,  __ptr32hi_2, lsl #16
 
 end
 
@@ -670,22 +647,6 @@ inline %2F3h
 
   add     x12, x29, __arg12_1
   ldr     x1, [x12]
-
-end
-
-// ; movsifi sp:2, fp:i2
-inline %3F3h
-
-  add     x12, x29, __arg12_1
-  ldr     x2, [x12]
-
-end
-
-// ; movsifi sp:3, fp:i2
-inline %4F3h
-
-  add     x12, x29, __arg12_1
-  ldr     x3, [x12]
 
 end
 
