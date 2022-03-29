@@ -88,10 +88,10 @@
 		<Unit filename="../../common/ustring.h" />
 		<Unit filename="../../common/xmltree.cpp" />
 		<Unit filename="../../common/xmltree.h" />
-		<Unit filename="../../engine/bytecode.cpp" />
-		<Unit filename="../../engine/bytecode.h" />
 		<Unit filename="../../engine/bcwriter.cpp" />
 		<Unit filename="../../engine/bcwriter.h" />
+		<Unit filename="../../engine/bytecode.cpp" />
+		<Unit filename="../../engine/bytecode.h" />
 		<Unit filename="../../engine/codescope.cpp" />
 		<Unit filename="../../engine/codescope.h" />
 		<Unit filename="../../engine/elena.h" />

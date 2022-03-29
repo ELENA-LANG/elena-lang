@@ -73,6 +73,12 @@
 			<Add directory="../../engine" />
 			<Add directory="../../common" />
 		</Compiler>
+		<Unit filename="../../gui/gtklinux/gtkcommon.cpp" />
+		<Unit filename="../../gui/gtklinux/gtkcommon.h" />
+		<Unit filename="../../gui/guicommon.h" />
+		<Unit filename="../gtklinux/factory.cpp" />
+		<Unit filename="../gtklinux/factory.h" />
+		<Unit filename="../gtklinux/main.cpp" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
