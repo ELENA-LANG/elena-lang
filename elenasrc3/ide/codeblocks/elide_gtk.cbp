@@ -72,6 +72,7 @@
 			<Add directory=".." />
 			<Add directory="../../engine" />
 			<Add directory="../../common" />
+			<Add directory="../../gui" />
 		</Compiler>
 		<Unit filename="../../gui/gtklinux/gtkcommon.cpp" />
 		<Unit filename="../../gui/gtklinux/gtkcommon.h" />
