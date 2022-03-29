@@ -89,6 +89,7 @@ namespace elena_lang
       friend void loadCallOp(JITCompilerScope* scope);
       friend void loadCallROp(JITCompilerScope* scope);
       friend void loadIndexROp(JITCompilerScope* scope);
+      friend void loadFrameIndexROp(JITCompilerScope* scope);
       friend void loadIndexNOp(JITCompilerScope* scope);
       friend void loadIndexIndexOp(JITCompilerScope* scope);
       friend void loadNewOp(JITCompilerScope* scope);
@@ -241,6 +242,7 @@ namespace elena_lang
    void loadCallOp(JITCompilerScope* scope);
    void loadCallROp(JITCompilerScope* scope);
    void loadIndexROp(JITCompilerScope* scope);
+   void loadFrameIndexROp(JITCompilerScope* scope);
    void loadIndexNOp(JITCompilerScope* scope);
    void loadIndexIndexOp(JITCompilerScope* scope);
    void loadNewOp(JITCompilerScope* scope);

@@ -1503,6 +1503,11 @@ bool X86_64Assembler :: compileMov(X86Operand source, X86Operand target, MemoryW
       writer.writeByte(0x8B);
       X86Helper::writeModRM(writer, source, target);
    }
+   else if (source.isM64() && target.isRX64()) {
+      writer.writeByte(0x49);
+      writer.writeByte(0x89);
+      X86Helper::writeModRM(writer, target, source);
+   }
    else if (source.isM64() && target.isR64()) {
       writer.writeByte(0x48);
       writer.writeByte(0x89);

@@ -4,11 +4,9 @@ In development:
 
   [development]
     ### EPOCH: elena 6.0 - redux ###
-    === Sprint 4 ===
+    === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
-    * >on sending message clear arg0 / arg1 if required
-
-    * parameter
+    * >parameter
     * variable
     * int
     * int literal

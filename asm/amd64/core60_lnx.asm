@@ -20,14 +20,14 @@ procedure % INVOKER
   push r14
   push r15
 
+  xor  rdi, rdi
   // declare new frame
   mov  rax, rdi
-  mov  r8, rsi
-  push 0              // ; FrameHeader.previousFrame
-  push 0              // ; FrameHeader.reserved
+  push rdi            // ; FrameHeader.previousFrame
+  push rdi            // ; FrameHeader.reserved
   mov  rbp, rsp       // ; FrameHeader
-  push 0
-  push r8             // ; arg
+  push rdi
+  push rsi            // ; arg
 
   call rax
   add  rsp, 32        // ; clear FrameHeader+arg
@@ -159,10 +159,10 @@ end
 // ; callext
 inline %0FEh
 
+  mov  rcx, [rsp+24]
+  mov  rdx, [rsp+16]
+  mov  rsi, r11
   mov  rdi, r10
-  mov  rsi, rdx
-  mov  rdx, r8
-  mov  rcx, r9
   call extern __relptr32_1
 
 end
@@ -178,8 +178,8 @@ end
 // ; callext
 inline %2FEh
 
+  mov  rsi, r11
   mov  rdi, r10
-  mov  rsi, rdx
   call extern __relptr32_1
 
 end
@@ -187,9 +187,9 @@ end
 // ; callext
 inline %3FEh
 
+  mov  rdx, [rsp+16]
+  mov  rsi, r11
   mov  rdi, r10
-  mov  rsi, rdx
-  mov  rdx, r8
   call extern __relptr32_1
 
 end

@@ -68,6 +68,17 @@ void sendOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int vmtIndex = node.findChild(BuildKey::Index).arg.value;
 
+   pos_t argCount = getArgCount(node.arg.reference);
+   switch (argCount) {
+      case 0:
+         tape.write(ByteCode::XStoreSIR, 0, 0);
+      case 1:
+         tape.write(ByteCode::XStoreSIR, 1, 0);
+         break;
+      default:
+         break;
+   }
+
    tape.write(ByteCode::MovM, node.arg.reference);
    tape.write(ByteCode::CallVI, vmtIndex);
 }

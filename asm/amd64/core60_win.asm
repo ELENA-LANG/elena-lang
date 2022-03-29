@@ -20,7 +20,8 @@ procedure % INVOKER
   push r14
   push r15
 
-  // declare new frame
+  // ; declare new frame
+  xor  rdi, rdi 
   mov  rax, rcx
   push 0              // ; FrameHeader.previousFrame
   push 0              // ; FrameHeader.reserved

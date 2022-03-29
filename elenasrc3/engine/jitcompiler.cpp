@@ -64,7 +64,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    compileOpen, loadIndexROp, compileOpen, loadIndexIndexOp, loadNewOp, loadNop, loadNop, loadNop,
-   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadCallOp, loadNop,
+   loadNop, loadFrameIndexROp, loadNop, loadNop, loadNop, loadNop, loadCallOp, loadNop,
 };
 
 // preloaded gc routines
@@ -735,6 +735,81 @@ void elena_lang::loadIndexROp(JITCompilerScope* scope)
             writer->writeDWord(scope->command.arg1 << scope->indexPower);
             break;
          case PTR32_2:
+            if (scope->command.arg2) {
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
+            }
+            else writer->writeDWord(0);
+            break;
+         case PTR64_2:
+            if (scope->command.arg2) {
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef64);
+            }
+            else writer->writeQWord(0);
+            break;
+         case DISP32HI_2:
+            if (scope->command.arg2) {
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskDisp32Hi);
+            }
+            else scope->compiler->writeImm16(writer, 0, 0);
+            break;
+         case DISP32LO_2:
+            if (scope->command.arg2) {
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskDisp32Lo);
+            }
+            else scope->compiler->writeImm16(writer, 0, 0);
+            break;
+         case PTR32HI_2:
+         {
+            if (scope->command.arg2) {
+               short disp = *(short*)((char*)code + entries->offset);
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Hi);
+            }
+            else scope->compiler->writeImm16(writer, 0, 0);
+            break;
+         }
+         case PTR32LO_2:
+         {
+            if (scope->command.arg2) {
+               short disp = *(short*)((char*)code + entries->offset);
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Lo);
+            }
+            else scope->compiler->writeImm16(writer, 0, 0);
+            break;
+         }
+         default:
+             writeCoreReference(scope, entries->reference, entries->offset, code);
+             break;
+      }
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
+void elena_lang::loadFrameIndexROp(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   void* code = retrieveCode(scope);
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case ARG32_1:
+            writer->writeDWord(getFPOffset(scope->command.arg1 << scope->indexPower, scope->frameOffset));
+            break;
+         case PTR32_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
             break;
          case PTR64_2:
@@ -759,8 +834,8 @@ void elena_lang::loadIndexROp(JITCompilerScope* scope)
             break;
          }
          default:
-             writeCoreReference(scope, entries->reference, entries->offset, code);
-             break;
+            writeCoreReference(scope, entries->reference, entries->offset, code);
+            break;
       }
 
       entries++;

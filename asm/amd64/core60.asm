@@ -64,7 +64,6 @@ end
 // ; --- GC_ALLOC ---
 // ; in: rcx - size ; out: ebx - created object
 inline % GC_ALLOC
-
   mov  rax, [data : %CORE_GC_TABLE + gc_yg_current]
   mov  r12, [data : %CORE_GC_TABLE + gc_yg_end]
   add  rcx, rax
