@@ -13,13 +13,13 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-std=c++20" />
-					<Add option="`pkg-config gtkmm-4.0 --cflags`" />
+					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
 					<Add option="-m32" />
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
 					<Add option="-m32" />
-					<Add option="`pkg-config gtkmm-4.0 --libs`" />
+					<Add option="`pkg-config gtkmm-3.0 --libs`" />
 				</Linker>
 			</Target>
 			<Target title="Release32">
@@ -29,7 +29,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-march=pentium3" />
-					<Add option="`pkg-config gtkmm-4.0 --cflags`" />
+					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
 					<Add option="-std=c++20" />
 					<Add option="-m32" />
 				</Compiler>
@@ -45,14 +45,14 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-std=c++20" />
 					<Add option="-m64" />
 					<Add option="-g" />
-					<Add option="`pkg-config gtkmm-4.0 --cflags`" />
+					<Add option="-std=c++20" />
+					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
 				</Compiler>
 				<Linker>
 					<Add option="-m64" />
-					<Add option="`pkg-config gtkmm-4.0 --libs`" />
+					<Add option="`pkg-config gtkmm-3.0 --libs`" />
 				</Linker>
 			</Target>
 			<Target title="Release64">
@@ -63,13 +63,13 @@
 				<Compiler>
 					<Add option="-march=pentium3" />
 					<Add option="-m64" />
-					<Add option="`pkg-config gtkmm-4.0 --cflags`" />
+					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
 				</Compiler>
 				<Linker>
 					<Add option="-O3" />
 					<Add option="-s" />
 					<Add option="-m64" />
-					<Add option="`pkg-config gtkmm-4.0 --libs`" />
+					<Add option="`pkg-config gtkmm-3.0 --libs`" />
 				</Linker>
 			</Target>
 		</Build>

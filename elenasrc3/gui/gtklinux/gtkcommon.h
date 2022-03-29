@@ -4,6 +4,13 @@
 //                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#ifndef GTKCOMMON_H
+#define GTKCOMMON_H
+
+#include <gtkmm.h>
+
 namespace elena_lang
 {
 }
+
+#endif // GTKCOMMON_H

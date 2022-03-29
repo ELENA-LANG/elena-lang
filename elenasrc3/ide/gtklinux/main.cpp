@@ -4,9 +4,9 @@
 //                                             (C)2021/2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#include "gtklinux\gtkcommon.h"
+#include "gtklinux/gtkcommon.h"
 
-int main(int args, char* argv[])
+int main(int argc, char* argv[])
 {
    Gtk::Main kit(argc, argv);
 

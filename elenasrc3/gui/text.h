@@ -129,7 +129,7 @@ namespace elena_lang
       bool nextChar(disp_t& disp)
       {
 #ifdef __GNUG__
-         if (_ELENA_::test((*_page).text[_offset], 0x80)) {
+         if (test((*_page).text[_offset], 0x80)) {
             if ((unsigned char)(*_page).text[_offset] >= 0xF0) {
                go(3);
                disp -= 3;
@@ -157,7 +157,7 @@ namespace elena_lang
       static size_t charLength(const text_c* s, size_t offset)
       {
 #ifdef __GNUG__
-         if (_ELENA_::test(s[offset], 0x80)) {
+         if (test(s[offset], 0x80)) {
             if ((unsigned char)s[offset] >= 0xF0) {
                return 4;
             }
