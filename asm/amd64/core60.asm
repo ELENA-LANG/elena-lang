@@ -551,6 +551,14 @@ inline %0F4h
 
 end
 
+// ; xstorefir
+inline %0F9h
+
+  mov  rax, __ptr64_2
+  mov  [rbp+__arg32_1], rax
+
+end
+
 // ; callext
 inline %0FEh
 

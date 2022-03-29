@@ -6,8 +6,7 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 ===
     --- elena redux ---
-    * new opcodes : xstorefi
-    * on sending message clear arg0 / arg1 if required
+    * >on sending message clear arg0 / arg1 if required
 
     * parameter
     * variable

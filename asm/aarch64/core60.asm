@@ -666,6 +666,16 @@ inline %0F4h
 
 end
 
+// ; xstorefir
+inline %0F9h
+
+  movz    x11,  __ptr32lo_2
+  movk    x11,  __ptr32hi_2, lsl #16
+  add     x12, x29, __arg12_1
+  str     x11, [x12]
+
+end
+
 // ; callext
 inline %0FEh
 

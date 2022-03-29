@@ -52,6 +52,7 @@ namespace elena_lang
       OpenHeaderIN   = 0xF2,
       MovSIFI        = 0xF3,
       NewIR          = 0xF4,
+      XStoreFIR      = 0xF9,
       CallExtR       = 0xFE,
 
       None           = 0x1000,
@@ -151,7 +152,8 @@ namespace elena_lang
       {
          switch (code) {
             case ByteCode::XStoreSIR:
-            case ByteCode::CallR:
+            case ByteCode::XStoreFIR:
+            case ByteCode::NewIR:
                return true;
             default:
                return false;

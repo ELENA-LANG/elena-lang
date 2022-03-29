@@ -763,6 +763,16 @@ inline %0F4h
 
 end
 
+// ; xstorefir
+inline %0F9h
+
+  ld      r16, toc_rdata(r2)
+  addis   r16, r16, __disp32hi_2
+  addi    r16, r16, __disp32lo_2
+  std      r16, __arg16_1(r1)
+
+end
+
 // ; callext
 inline %0FEh
 

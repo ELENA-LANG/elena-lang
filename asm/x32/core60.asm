@@ -553,6 +553,14 @@ inline %0F4h
 
 end
 
+// ; xstorefir
+inline %0F9h
+
+  mov  eax, __ptr32_2
+  mov  [ebp+__arg32_1], eax
+
+end
+
 // ; callext
 inline %0FEh
 
