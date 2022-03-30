@@ -318,9 +318,7 @@ inline %0F0h
 
   push rbp
   xor  rax, rax
-  mov  [rsp+8], r10
   mov  rbp, rsp
-  mov  [rsp+12], r11
   sub  rsp, __n_2
   push rbp
   push rax
@@ -337,8 +335,6 @@ inline %1F0h
 
   push rbp
   mov  rbp, rsp
-  mov  [rsp+8], r10
-  mov  [rsp+12], r11
 
 end 
 
@@ -347,8 +343,7 @@ inline %2F0h
 
   push rbp
   mov  rbp, rsp
-  mov  [rsp+8], r10
-  mov  [rsp+12], r11
+  push 0
   push 0
 
 end 
@@ -359,8 +354,6 @@ inline %3F0h
   push rbp
   xor  rax, rax
   mov  rbp, rsp
-  mov  [rsp+8], r10
-  mov  [rsp+12], r11
   push rax
   push rax
 
@@ -372,8 +365,7 @@ inline %4F0h
   push rbp
   xor  rax, rax
   mov  rbp, rsp
-  mov  [rsp+8], r10
-  mov  [rsp+12], r11
+  push rax
   push rax
   push rax
   push rax
@@ -386,8 +378,6 @@ inline %5F0h
   push rbp
   xor  rax, rax
   mov  rbp, rsp
-  mov  [rsp+8], r10
-  mov  [rsp+12], r11
   sub  rsp, __n_2
   push rbp
   push rax
@@ -400,8 +390,6 @@ inline %6F0h
 
   push rbp
   xor  rax, rax
-  mov  [rsp+8], r10
-  mov  [rsp+12], r11
   mov  rbp, rsp
   mov  rcx, __n_1
   sub  rsp, __arg32_1

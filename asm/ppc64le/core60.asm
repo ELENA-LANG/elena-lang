@@ -371,9 +371,6 @@ end
 // ; openin
 inline %0F0h
 
-  std     r3, 0(r1)     // ; save frame pointer
-  std     r4,  8(r1)    // ; save return address
-
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
   std     r0,  -08h(r1)  // ; save return address
@@ -409,9 +406,6 @@ end
 // ; openin 0, 0
 inline %1F0h
 
-  std     r3, 0(r1)     // ; save frame pointer
-  std     r4, 8(r1)    // ; save return address
-
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
   std     r0,  -08h(r1)  // ; save return address
@@ -423,9 +417,6 @@ end
 
 // ; openin 1, 0
 inline %2F0h
-
-  std     r3, 0(r1)     // ; save frame pointer
-  std     r4, 8(r1)    // ; save return address
 
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
@@ -442,9 +433,6 @@ end
 // ; openin 2, 0
 inline %3F0h
 
-  std     r3, 0(r1)     // ; save frame pointer
-  std     r4, 8(r1)    // ; save return address
-
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
   li      r16, 0
@@ -459,9 +447,6 @@ end
 
 // ; openin 3, 0
 inline %4F0h
-
-  std     r3, 0(r1)     // ; save frame pointer
-  std     r4, 8(r1)    // ; save return address
 
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
@@ -480,9 +465,6 @@ end
 // ; openin 0, n
 inline %5F0h
 
-  std     r3, 0(r1)     // ; save frame pointer
-  std     r4, 8(r1)    // ; save return address
-
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
   std     r0,  -08h(r1)  // ; save return address
@@ -500,9 +482,6 @@ end
 
 // ; openin i, 0
 inline %6F0h
-
-  std     r3, 0(r1)     // ; save frame pointer
-  std     r4, 8(r1)    // ; save return address
 
   mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer

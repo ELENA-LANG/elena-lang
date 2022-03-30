@@ -23,7 +23,7 @@ ELENA byte codes (or ecodes)
 
  Preserved registers
  -------------------
-   x86    :                edx, ebx, [esi, edi]
+   x86    :                edx, ebx, [esi]
    x86_64 : (r15)          rdx, rbx, [r10, r11]
    arm64  : (x29, x31),    x9, x10,  [x0, x1]
    ppc64  : (r13, r1, r2), r14, r15, [r3, r4]

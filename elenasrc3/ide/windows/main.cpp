@@ -32,11 +32,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
    Text::TabSize = 4; // !! temporal
 
-   GUISettinngs  settinngs = { true };
+   GUISettinngs  settings = { true };
    IDEModel      ideModel;
    DebugProcess  debugProcess;
    IDEController ideController(&debugProcess, &ideModel);
-   IDEFactory    factory(hInstance, nCmdShow, &ideModel, &ideController, settinngs);
+   IDEFactory    factory(hInstance, nCmdShow, &ideModel, &ideController, settings);
 
    GUIApp* app = factory.createApp();
 

@@ -15,16 +15,14 @@ procedure % INVOKER
   push ebx
   push ebp
 
-  xor  edi, edi 
   // ; declare new frame
-  push edi            // ; FrameHeader.previousFrame
-  push edi            // ; FrameHeader.reserved
+  push 0              // ; FrameHeader.previousFrame
+  push 0              // ; FrameHeader.reserved
   mov  ebp, esp       // ; FrameHeader
-  push edi   
   push esi            // ; arg
 
   call eax
-  add  esp, 16        // ; clear FrameHeader+arg
+  add  esp, 12        // ; clear FrameHeader+arg
   xor  eax, eax
 
   // ; restore registers

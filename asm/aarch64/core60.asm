@@ -368,9 +368,6 @@ end
 // ; openin
 inline %0F0h
 
-  add     x11, sp, 16
-  stp     x0, x1, [x11]
-
   stp     x29, x30, [sp, #-16]! 
   mov     x29, sp
 
@@ -400,9 +397,6 @@ end
 // ; openin 0, 0
 inline %1F0h
 
-   add     x11, sp, 16
-   stp     x0, x1, [x11]
-
    stp     x29, x30, [sp, #-16]! 
    mov     x29, sp              // ; set frame pointer
 
@@ -410,9 +404,6 @@ end
 
 // ; openin 1, 0
 inline %2F0h
-
-   add     x11, sp, 16
-   stp     x0, x1, [x11]
 
    mov     x11, 0
    stp     x29, x30, [sp, #-16]! 
@@ -424,9 +415,6 @@ end
 // ; openin 2, 0
 inline %3F0h
 
-   add     x11, sp, 16
-   stp     x0, x1, [x11]
-
    mov     x11, 0
    stp     x29, x30, [sp, #-16]! 
    mov     x29, sp              // ; set frame pointer
@@ -436,9 +424,6 @@ end
 
 // ; openin 3, 0
 inline %4F0h
-
-  add     x11, sp, 16
-  stp     x0, x1, [x11]
 
   mov     x11, 0
   stp     x29, x30, [sp, #-16]! 
@@ -450,9 +435,6 @@ end
 
 // ; openin 0, n
 inline %5F0h
-
-  add     x11, sp, 16
-  stp     x0, x1, [x11]
 
   stp     x29, x30, [sp, #-16]! 
   mov     x29, sp
@@ -468,9 +450,6 @@ end
 
 // ; openin i, 0
 inline %6F0h
-
-  add     x11, sp, 16
-  stp     x0, x1, [x11]
 
   stp     x29, x30, [sp, #-16]! 
   mov     x29, sp

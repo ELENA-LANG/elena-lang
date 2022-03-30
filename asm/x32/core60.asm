@@ -86,9 +86,8 @@ end
 // ; redirect
 inline % 03h // (ebx - object, edx - message, esi - arg0, edi - arg1)
 
-  mov   [esp+8], edi
+  mov   [esp+4], esi                      // ; saving arg0
   xor   ecx, ecx
-  mov   [esp+4], esi
   mov   edi, [ebx - elVMTOffset]
   mov   esi, [edi - elVMTSizeOffset]
 
@@ -109,7 +108,6 @@ labStart:
 labFound:
   mov   eax, [edi+esi*8+4]
   mov   esi, [esp+4]
-  mov   edi, [esp+8]
   jmp   eax
 
 labEnd:
@@ -266,13 +264,6 @@ inline %1A2h
 
 end 
 
-// ; savesi 1
-inline %2A2h
-
-  mov edi, edx
-
-end 
-
 // ; storesi
 inline %0A3h
 
@@ -284,13 +275,6 @@ end
 inline %1A3h
 
   mov esi, ebx
-
-end 
-
-// ; storesi 1
-inline %2A3h
-
-  mov edi, ebx
 
 end 
 
@@ -320,9 +304,7 @@ end
 inline %0F0h
 
   push ebp
-  mov  [esp+8], esi
   mov  ebp, esp
-  mov  [esp+12], edi
   xor  eax, eax
   sub  esp, __n_2
   push ebp
@@ -340,8 +322,6 @@ inline %1F0h
 
   push ebp
   mov  ebp, esp
-  mov  [esp+8], esi
-  mov  [esp+12], edi
 
 end 
 
@@ -350,8 +330,6 @@ inline %2F0h
 
   push ebp
   mov  ebp, esp
-  mov  [esp+8], esi
-  mov  [esp+12], edi
   push 0
 
 end 
@@ -362,8 +340,6 @@ inline %3F0h
   push ebp
   mov  ebp, esp
   xor  ecx, ecx
-  mov  [esp+8], esi
-  mov  [esp+12], edi
   push ecx
   push ecx
 
@@ -375,8 +351,6 @@ inline %4F0h
   push ebp
   xor  ecx, ecx
   mov  ebp, esp
-  mov  [esp+8], esi
-  mov  [esp+12], edi
   push ecx
   push ecx
   push ecx
@@ -388,9 +362,7 @@ inline %5F0h
 
   push ebp
   mov  ebp, esp
-  mov  [esp+8], esi
   xor  ecx, ecx
-  mov  [esp+12], edi
   sub  esp, __n_2
   push ebp
   push ecx
@@ -403,9 +375,7 @@ inline %6F0h
 
   push ebp
   mov  ebp, esp
-  mov  [esp+8], esi
   xor  eax, eax
-  mov  [esp+12], edi
   mov  ecx, __n_1
   sub  esp, __arg32_1
   mov  edi, esp
@@ -425,13 +395,6 @@ end
 inline %1F1h
 
   mov  esi, __ptr32_2
-
-end
-
-// ; xstoresir :1, ...
-inline %2F1h
-
-  mov  edi, __ptr32_2
 
 end
 
@@ -530,13 +493,6 @@ end
 inline %1F3h
 
   mov  esi, [ebp+__arg32_2]
-
-end
-
-// ; movsifi sp:1, fp:i2
-inline %2F3h
-
-  mov  edi, [ebp+__arg32_2]
 
 end
 
