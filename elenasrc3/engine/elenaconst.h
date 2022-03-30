@@ -255,9 +255,6 @@ namespace elena_lang
    constexpr ref_t DEBUG_LINEINFO_ID      = -1;
    constexpr ref_t DEBUG_STRINGS_ID       = -2;
 
-   // === Enginre settings ===
-   constexpr auto MINIMAL_ARG_LIST        = 2;
-
 } // _ELENA_
 
 #endif // ELENACONST_H

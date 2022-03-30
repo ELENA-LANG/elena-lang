@@ -15,11 +15,11 @@
 
 #endif // __GNUG__
 
-#if !defined(max)
+#if !defined(_max)
 #define _max(a, b)       ((a) > (b) ? (a) : (b))
 #endif
 
-#if !defined(min)
+#if !defined(_min)
 #define _min(a, b)       ((a) < (b) ? (a) : (b))
 #endif
 

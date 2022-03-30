@@ -40,15 +40,23 @@ namespace elena_lang
          ForwardResolverBase* forwardResolver,
          pos_t stackAlingment,
          pos_t rawStackAlingment,
+         int minimalArgList,
          bool withDebug);
 
       void configurate(ProjectBase& project);
-      void compile(ProjectBase& project, pos_t defaultStackAlignment, pos_t defaultRawStackAlignment);
+      void compile(ProjectBase& project, 
+         pos_t defaultStackAlignment, 
+         pos_t defaultRawStackAlignment,
+         int minimalArgList);
       void link(ProjectBase& project, LinkerBase& linker);
 
    public:
       void greeting();
-      int build(ProjectBase& project, LinkerBase& linker, pos_t defaultStackAlignment, pos_t defaultRawStackAlignment);
+      int build(ProjectBase& project, 
+         LinkerBase& linker, 
+         pos_t defaultStackAlignment, 
+         pos_t defaultRawStackAlignment,
+         int minimalArgList);
 
       CompilingProcess(PathString& appPath, PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,

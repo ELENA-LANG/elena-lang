@@ -39,6 +39,8 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86;
 constexpr int DEFAULT_MGSIZE              = 344064;
 constexpr int DEFAULT_YGSIZE              = 86016;
 
+constexpr int MINIMAL_ARG_LIST            = 1;
+
 typedef Win32NtLinker             WinLinker;
 typedef Win32NtImageFormatter     WinImageFormatter;
 
@@ -51,6 +53,8 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86_64;
 
 constexpr int DEFAULT_MGSIZE              = 688128;
 constexpr int DEFAULT_YGSIZE              = 204800;
+
+constexpr int MINIMAL_ARG_LIST            = 2;
 
 typedef Win64NtLinker             WinLinker;
 typedef Win64NtImageFormatter     WinImageFormatter;
@@ -233,7 +237,10 @@ int main()
       }
 
       // Building...
-      return process.build(project, linker, DEFAULT_STACKALIGNMENT, DEFAULT_RAW_STACKALIGNMENT);
+      return process.build(project, linker, 
+         DEFAULT_STACKALIGNMENT, 
+         DEFAULT_RAW_STACKALIGNMENT,
+         MINIMAL_ARG_LIST);
    }
    catch (CLIException)
    {

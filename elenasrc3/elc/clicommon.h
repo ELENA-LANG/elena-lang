@@ -297,6 +297,7 @@ public:
    IdentifierString   selfVar;
 
    pos_t              stackAlingment, rawStackAlingment;
+   int                minimalArgList;
 
    virtual bool isStandardOne() = 0;
 
@@ -321,13 +322,15 @@ public:
    ModuleScopeBase(ModuleBase* module,
       ModuleBase* debugModule,
       pos_t stackAlingment, 
-      pos_t rawStackAlingment)
+      pos_t rawStackAlingment,
+      int minimalArgList)
       : predefined(0), attributes(0)
    {
       this->module = module;
       this->debugModule = debugModule;
       this->stackAlingment = stackAlingment;
       this->rawStackAlingment = rawStackAlingment;
+      this->minimalArgList = minimalArgList;
    }
 };
 

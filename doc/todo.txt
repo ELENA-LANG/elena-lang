@@ -6,9 +6,7 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
-    * number of preallocate stack should be the project dependant (for x86 : 1, for others - 2)
-    * openin should be simplified
-    * introduce flushsi
+    * >introduce flushsi
 
     * pass a parameter, send a message to the parameter 
 

@@ -444,7 +444,7 @@ namespace elena_lang
 
          void reserveArgs(pos_t argsCount)
          {
-            allocatedArgs = max(allocatedArgs, argsCount);
+            allocatedArgs = _max(allocatedArgs, argsCount);
          }
 
          void syncStack();

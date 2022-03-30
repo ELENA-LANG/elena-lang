@@ -48,36 +48,55 @@ using namespace elena_lang;
 
 #if defined(__x86_64__)
 
-constexpr auto CURRENT_PLATFORM = PlatformType::Linux_x86_64;
+constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_x86_64;
+
+constexpr int MINIMAL_ARG_LIST            = 2;
+
+constexpr auto DEFAULT_STACKALIGNMENT     = 2;
+constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
 
 typedef ElfAmd64Linker           LinuxLinker;
 typedef ElfAmd64ImageFormatter   LinuxImageFormatter;
 
 #elif defined(__i386__)
 
-constexpr auto CURRENT_PLATFORM = PlatformType::Linux_x86;
+constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_x86;
+
+constexpr int MINIMAL_ARG_LIST            = 1;
+
+constexpr auto DEFAULT_STACKALIGNMENT     = 1;
+constexpr auto DEFAULT_RAW_STACKALIGNMENT = 4;
+
 
 typedef ElfI386Linker            LinuxLinker;
 typedef ElfI386ImageFormatter    LinuxImageFormatter;
 
 #elif defined(__PPC64__)
 
-constexpr auto CURRENT_PLATFORM = PlatformType::Linux_PPC64le;
+constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_PPC64le;
+
+constexpr int MINIMAL_ARG_LIST            = 2;
+
+constexpr auto DEFAULT_STACKALIGNMENT     = 2;
+constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
+
 
 typedef ElfPPC64leLinker         LinuxLinker;
 typedef ElfPPC64leImageFormatter LinuxImageFormatter;
 
 #elif defined(__aarch64__)
 
-constexpr auto CURRENT_PLATFORM = PlatformType::Linux_ARM64;
+constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
+
+constexpr int MINIMAL_ARG_LIST            = 2;
+
+constexpr auto DEFAULT_STACKALIGNMENT     = 2;
+constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
 
 typedef ElfARM64Linker         LinuxLinker;
 typedef ElfARM64ImageFormatter LinuxImageFormatter;
 
 #endif
-
-constexpr auto DEFAULT_STACKALIGNMENT = 2;
-constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
 
 constexpr int DEFAULT_MGSIZE = 688128;
 constexpr int DEFAULT_YGSIZE = 204800;
@@ -226,7 +245,10 @@ int main(int argc, char* argv[])
       }
 
       // Building...
-      return process.build(project, linker, DEFAULT_STACKALIGNMENT, DEFAULT_RAW_STACKALIGNMENT);
+      return process.build(project, linker, 
+         DEFAULT_STACKALIGNMENT, 
+         DEFAULT_RAW_STACKALIGNMENT, 
+         MINIMAL_ARG_LIST);
    }
    catch (CLIException e)
    {

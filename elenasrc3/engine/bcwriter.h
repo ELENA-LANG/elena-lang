@@ -26,6 +26,8 @@ namespace elena_lang
 
          MemoryWriter*     debug;
          MemoryWriter*     debugStrings;
+
+         int               minimalArgList;
       };
 
       struct TapeScope
@@ -55,11 +57,11 @@ namespace elena_lang
 
       void saveVMT(BuildNode node, Scope& scope);
 
-      void saveSymbol(BuildNode node, SectionScopeBase* moduleScope);
-      void saveClass(BuildNode node, SectionScopeBase* moduleScope);
+      void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList);
+      void saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList);
 
    public:
-      void save(BuildTree& tree, SectionScopeBase* moduleScope);
+      void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList);
 
       ByteCodeWriter(LibraryLoaderBase* loader);
    };

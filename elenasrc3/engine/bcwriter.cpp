@@ -64,19 +64,15 @@ void classReference(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SetR, node.arg.reference | mskVMTRef);
 }
 
-void sendOp(CommandTape& tape, BuildNode& node, TapeScope&)
+void sendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    int vmtIndex = node.findChild(BuildKey::Index).arg.value;
 
    pos_t argCount = getArgCount(node.arg.reference);
-   switch (argCount) {
-      case 0:
-         tape.write(ByteCode::XStoreSIR, 0, 0);
-      case 1:
-         tape.write(ByteCode::XStoreSIR, 1, 0);
-         break;
-      default:
-         break;
+   if (argCount < tapeScope.scope->minimalArgList) {
+      for (int i = 0; i < tapeScope.scope->minimalArgList; i++) {
+         tape.write(ByteCode::XStoreSIR, i, 0);
+      }
    }
 
    tape.write(ByteCode::MovM, node.arg.reference);
@@ -253,12 +249,12 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
 
 }
 
-void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope)
+void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList)
 {
    auto section = moduleScope->mapSection(node.arg.reference | mskSymbolRef, false);
    MemoryWriter writer(section);
 
-   Scope scope = { nullptr, &writer, moduleScope, nullptr, nullptr };
+   Scope scope = { nullptr, &writer, moduleScope, nullptr, nullptr, minimalArgList };
 
    if (moduleScope->debugModule) {
       // initialize debug info writers
@@ -323,7 +319,7 @@ void ByteCodeWriter :: saveVMT(BuildNode node, Scope& scope)
    }
 }
 
-void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope)
+void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList)
 {
    // initialize bytecode writer
    MemoryWriter codeWriter(moduleScope->mapSection(node.arg.reference | mskClassRef, false));
@@ -349,7 +345,7 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope)
 
    vmtWriter.write(&info.header, sizeof(ClassHeader));  // header
 
-   Scope scope = { &vmtWriter, &codeWriter, moduleScope, nullptr, nullptr };
+   Scope scope = { &vmtWriter, &codeWriter, moduleScope, nullptr, nullptr, minimalArgList };
    if (moduleScope->debugModule) {
       // initialize debug info writers
       MemoryWriter debugWriter(moduleScope->debugModule->mapSection(DEBUG_LINEINFO_ID, false));
@@ -368,17 +364,17 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope)
    vmtSection->write(classPosition - 4, &size, sizeof(size));
 }
 
-void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope)
+void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList)
 {
    BuildNode node = tree.readRoot();
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
       switch (current.key) {
          case BuildKey::Symbol:
-            saveSymbol(current, moduleScope);
+            saveSymbol(current, moduleScope, minimalArgList);
             break;
          case BuildKey::Class:
-            saveClass(current, moduleScope);
+            saveClass(current, moduleScope, minimalArgList);
             break;
          default:
             // to make compiler happy

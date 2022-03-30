@@ -107,7 +107,7 @@ void CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree&
 void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree)
 {
    ByteCodeWriter bcWriter(&_libraryProvider);
-   bcWriter.save(tree, &moduleScope);
+   bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList);
 
    _libraryProvider.saveModule(moduleScope.module);
    _libraryProvider.saveDebugModule(moduleScope.debugModule);
@@ -117,6 +117,7 @@ void CompilingProcess :: buildModule(ModuleIteratorBase& module_it, SyntaxTree* 
    ForwardResolverBase* forwardResolver,
    pos_t stackAlingment,
    pos_t rawStackAlingment,
+   int minimalArgList,
    bool withDebug)
 {
    ModuleScope moduleScope(
@@ -124,7 +125,7 @@ void CompilingProcess :: buildModule(ModuleIteratorBase& module_it, SyntaxTree* 
       forwardResolver, 
       _libraryProvider.createModule(module_it.name()),
       withDebug ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
-      stackAlingment, rawStackAlingment);
+      stackAlingment, rawStackAlingment, minimalArgList);
 
    _compiler->prepare(&moduleScope, forwardResolver);
 
@@ -182,7 +183,10 @@ void CompilingProcess :: configurate(ProjectBase& project)
    _libraryProvider.addPackage(project.Namespace(), project.PathSetting(ProjectOption::OutputPath));
 }
 
-void CompilingProcess :: compile(ProjectBase& project, pos_t defaultStackAlignment, pos_t defaultRawStackAlignment)
+void CompilingProcess :: compile(ProjectBase& project, 
+   pos_t defaultStackAlignment, 
+   pos_t defaultRawStackAlignment,
+   int minimalArgList)
 {
    if (_parser == nullptr) {
       _errorProcessor->raiseInternalError(errParserNotInitialized);
@@ -195,7 +199,8 @@ void CompilingProcess :: compile(ProjectBase& project, pos_t defaultStackAlignme
       buildModule(*module_it, &syntaxTree, &project,
          project.IntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
          project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
-         project.BoolSetting(ProjectOption::DebugMode, true));
+         project.BoolSetting(ProjectOption::DebugMode, true),
+         minimalArgList);
 
       ++(*module_it);
    }
@@ -231,7 +236,11 @@ void CompilingProcess :: greeting()
    _presenter->print(ELC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELC_REVISION_NUMBER);
 }
 
-int CompilingProcess :: build(ProjectBase& project, LinkerBase& linker, pos_t defaultStackAlignment, pos_t defaultRawStackAlignment)
+int CompilingProcess :: build(ProjectBase& project, 
+   LinkerBase& linker, 
+   pos_t defaultStackAlignment, 
+   pos_t defaultRawStackAlignment,
+   int minimalArgList)
 {
    try
    {
@@ -242,7 +251,7 @@ int CompilingProcess :: build(ProjectBase& project, LinkerBase& linker, pos_t de
       // Project Greetings
       _presenter->print(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()), getTargetTypeName(targetType));
 
-      compile(project, defaultStackAlignment, defaultRawStackAlignment);
+      compile(project, defaultStackAlignment, defaultRawStackAlignment, minimalArgList);
 
       // generating target when required
       switch (targetType) {

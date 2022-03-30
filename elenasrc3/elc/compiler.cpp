@@ -294,7 +294,7 @@ Compiler::SymbolScope :: SymbolScope(NamespaceScope* ns, ref_t reference, Visibi
    : SourceScope(ns, reference, visibility)
 {
    reserved1 = reserved2 = 0;
-   reservedArgs = MINIMAL_ARG_LIST;
+   reservedArgs = ns->moduleScope->minimalArgList;
 }
 
 // --- Compiler::TemplateScope ---
@@ -330,7 +330,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    message = 0;
    reserved1 = reserved2 = 0;
    selfLocal = 0;
-   reservedArgs = MINIMAL_ARG_LIST;
+   reservedArgs = parent->moduleScope->minimalArgList;
 }
 
 ObjectInfo Compiler::MethodScope :: mapSelf()
@@ -454,13 +454,13 @@ void Compiler::ExprScope :: syncStack()
 
       MethodScope* methodScope = (MethodScope*)getScope(ScopeLevel::Method);
       if (methodScope != nullptr) {
-         methodScope->reservedArgs = max(methodScope->reservedArgs, allocatedArgs);
+         methodScope->reservedArgs = _max(methodScope->reservedArgs, allocatedArgs);
       }
    }
    else {
       SymbolScope* symbolScope = (SymbolScope*)getScope(ScopeLevel::Symbol);
       if (symbolScope != nullptr) {
-         symbolScope->reservedArgs = max(symbolScope->reservedArgs, allocatedArgs);
+         symbolScope->reservedArgs = _max(symbolScope->reservedArgs, allocatedArgs);
          if (symbolScope->reserved1 < tempAllocated1)
             symbolScope->reserved1 = tempAllocated1;
       }
