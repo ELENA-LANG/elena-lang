@@ -5,10 +5,21 @@
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtkcommon.h"
+#include "factory.h"
 
 int main(int argc, char* argv[])
 {
    Gtk::Main kit(argc, argv);
 
-   return 0;
+   IDEFactory    factory;
+
+   //GUIApp* app = factory.createApp();
+
+   int retVal = 0; // !! temporal
+
+   Gtk::Main::run(*factory.createMainWindow());
+
+   //delete app;
+
+   return retVal;
 }

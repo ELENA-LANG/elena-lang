@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------
 
 #include "factory.h"
-//#include "windows/winide.h"
+#include "gtklinux/winide.h"
 //#include "windows/wintextview.h"
 //#include "windows/wintextframe.h"
 //#include "sourceformatter.h"
@@ -124,18 +124,13 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
 
 GUIApp* IDEFactory :: createApp()
 {
-//   WindowApp* app = new WindowApp(_instance, _cmdShow, MAKEINTRESOURCE(IDC_IDE));
-//
-//   registerClasses();
-//
-//   return app;
-
+   // !! temporal
    return nullptr;
 }
 
 GUIControlBase* IDEFactory :: createMainWindow()
 {
-//   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model);
+   SDIWindow* sdi = new GTKIDEWindow(/*szTitle, _controller, _model*/);
 //   sdi->create(_instance, szSDI, nullptr);
 //
 //   ControlBase* children[1];
@@ -146,8 +141,6 @@ GUIControlBase* IDEFactory :: createMainWindow()
 //
 //   sdi->populate(counter, children);
 //   sdi->setLayout(textIndex, -1, -1, -1, -1);
-//
-//   return sdi;
 
-   return nullptr;
+   return sdi;
 }

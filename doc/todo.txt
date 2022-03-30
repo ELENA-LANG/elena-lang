@@ -6,7 +6,8 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
-    * >parameter
+    * >pass a parameter, send a message to the parameter 
+
     * variable
     * int
     * int literal
@@ -15,7 +16,10 @@ In development:
     * print message using external routine
     * print message using external routine - x86, x86-64, i386, amd64, ppc64le, arm64
     --- ide redux ---
-    * >editor - do we need checkmode? it seems like not
+    * linux sdi 
+    * linux textview 
+    * linux debugger
+    * editor - do we need checkmode? it seems like not
     * editor - compile
     * editor - edit text
     * editor - open / close / save / select source files
