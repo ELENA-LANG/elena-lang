@@ -6,10 +6,7 @@
 
 #include "factory.h"
 #include "gtklinux/gtkide.h"
-//#include "windows/wintextview.h"
-//#include "windows/wintextframe.h"
-//#include "sourceformatter.h"
-//#include "Resource.h"
+#include "gtklinux/gtktextframe.h"
 
 using namespace elena_lang;
 
@@ -65,8 +62,8 @@ using namespace elena_lang;
 // --- IDEFactory ---
 
 IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
-   IDEController* controller,
-   GUISettinngs   settings*/)
+   IDEController* controller,*/
+   GUISettinngs   settings)
 {
 //   _schemes[0] = defaultStyles;
 //   _schemes[1] = classicStyles;
@@ -90,12 +87,16 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
 //   SDIWindow::registerSDIWindow(_instance, szSDI, LoadIcon(_instance, MAKEINTRESOURCE(IDI_IDE)), MAKEINTRESOURCEW(IDC_IDE), LoadIcon(_instance, MAKEINTRESOURCE(IDI_SMALL)));
 //   TextViewWindow::registerTextViewWindow(_instance, szTextView);
 //}
-//
-//ControlBase* IDEFactory :: createTextControl(WindowBase* owner)
-//{
+
+Gtk::Widget* IDEFactory :: createTextControl()
+{
 //   TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_controller->sourceController);
-//   TextViewFrame* frame = new TextViewFrame(_settings.withTabAboverscore, view);
-//
+   TextViewFrame* frame = new TextViewFrame(/*_settings.withTabAboverscore, view*/);
+
+   frame->addTab(_T("test"), nullptr);
+
+   frame->show(); // !! temporal?
+
 //   view->create(_instance, szTextView, owner);
 //   frame->createControl(_instance, owner);
 //
@@ -105,10 +106,10 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
 //   // !! temporal
 //   view->showWindow(SW_SHOW);
 //   frame->showWindow(SW_SHOW);
-//
-//   return frame;
-//}
-//
+
+   return frame;
+}
+
 //void IDEFactory :: initializeModel(IDEModel* ideView)
 //{
 //   auto viewModel = ideView->viewModel();
@@ -127,14 +128,14 @@ SDIWindow* IDEFactory :: createMainWindow()
    SDIWindow* sdi = new GTKIDEWindow(/*szTitle, _controller, _model*/);
 //   sdi->create(_instance, szSDI, nullptr);
 //
-//   ControlBase* children[1];
-//   int counter = 0;
-//
-//   int textIndex = counter++;
-//   children[textIndex] = createTextControl(sdi);
-//
-//   sdi->populate(counter, children);
-//   sdi->setLayout(textIndex, -1, -1, -1, -1);
+   Gtk::Widget* children[1];
+   int counter = 0;
+
+   int textIndex = counter++;
+   children[textIndex] = createTextControl();
+
+   sdi->populate(counter, children);
+   sdi->setLayout(textIndex, -1, -1, -1, -1);
 
    return sdi;
 }

@@ -13,7 +13,8 @@ int main(int argc, char* argv[])
 {
    Gtk::Main kit(argc, argv);
 
-   IDEFactory    factory;
+   GUISettinngs  settings = { true };
+   IDEFactory    factory(settings);
 
    //GUIApp* app = factory.createApp();
 

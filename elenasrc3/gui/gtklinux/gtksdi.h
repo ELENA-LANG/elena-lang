@@ -16,7 +16,18 @@ namespace elena_lang
 
 class SDIWindow : public Gtk::Window
 {
+protected:
+   Gtk::Box      _box;
+   Gtk::Box      _hbox;
+   Gtk::Box      _vbox;
+
+   int           _childCounter;
+   Gtk::Widget** _children;
+
 public:
+   void populate(int counter, Gtk::Widget** children);
+   void setLayout(int center, int top, int bottom, int right, int left);
+
    SDIWindow();
 };
 

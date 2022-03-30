@@ -20,7 +20,7 @@ namespace elena_lang
    protected:
       //FontFactory    _fontFactory;
       //StyleInfo*     _schemes[2];
-      //GUISettinngs   _settings;
+      GUISettinngs   _settings;
 
       //HINSTANCE      _instance;
       //int            _cmdShow;
@@ -30,7 +30,7 @@ namespace elena_lang
 
       //void registerClasses();
 
-      //ControlBase* createTextControl(WindowBase* owner);
+      Gtk::Widget* createTextControl();
 
       //void initializeModel(IDEModel* ideView);
 
@@ -38,8 +38,8 @@ namespace elena_lang
       SDIWindow* createMainWindow();
 
       IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideView,
-         IDEController* ideController,
-         GUISettinngs   settings*/);
+         IDEController* ideController,*/
+         GUISettinngs   settings);
    };
 }
 
