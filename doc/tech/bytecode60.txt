@@ -94,6 +94,8 @@ ELENA byte codes (or ecodes)
 
    store sp:i               - sp[i] := acc
 
+   xflush sp:i              - sp[i] := cached_sp[i];
+
    xstore fp:i, {prefix:}r  - sp[i] := r
 
    xstore sp:i, {prefix:}r  - sp[i] := r

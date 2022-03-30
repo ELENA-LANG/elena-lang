@@ -34,12 +34,19 @@ inline bool testMask(BuildKey key, BuildKey mask)
    return (key & mask) == mask;
 }
 
-void openFrame(CommandTape& tape, BuildNode& node, TapeScope& scope)
+void openFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
-   int reservedManaged = scope.reserved;
-   int reservedUnmanaged = scope.reservedN;
+   if (tapeScope.classMode) {
+      for (int i = 0; i < tapeScope.scope->minimalArgList; i++) {
+         tape.write(ByteCode::XFlushSI, i);
+      }
+   }
+
+   int reservedManaged = tapeScope.reserved;
+   int reservedUnmanaged = tapeScope.reservedN;
 
    tape.write(ByteCode::OpenIN, reservedManaged, reservedUnmanaged);
+
 }
 
 void closeFrame(CommandTape& tape, BuildNode& node, TapeScope& scope)
@@ -246,7 +253,6 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
    
       current = current.nextNode();
    }
-
 }
 
 void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList)

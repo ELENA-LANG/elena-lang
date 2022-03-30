@@ -291,6 +291,25 @@ inline %2A3h
 
 end 
 
+// ; xflushsi i
+inline %0A4h
+
+end 
+
+// ; xflushsi 0
+inline %1A4h
+
+  mov [rsp+8], r10
+
+end 
+
+// ; xflushsi 1
+inline %2A4h
+
+  mov [rsp+16], r11
+
+end 
+
 // ; peekfi
 inline %0A8h
 

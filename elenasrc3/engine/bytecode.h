@@ -39,6 +39,7 @@ namespace elena_lang
       StoreFI        = 0xA1,
       SaveSI         = 0xA2,
       StoreSI        = 0xA3,
+      XFlushSI       = 0xA4,
 
       PeekFI         = 0xA8,
 

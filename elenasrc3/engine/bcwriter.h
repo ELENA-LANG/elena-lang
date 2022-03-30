@@ -36,6 +36,8 @@ namespace elena_lang
 
          int    reserved;
          int    reservedN;
+
+         bool   classMode;
       };
 
       typedef void(*Saver)(CommandTape& tape, BuildNode& node, TapeScope& scope);

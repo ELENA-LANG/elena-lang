@@ -340,6 +340,25 @@ inline %2A3h
 
 end 
 
+// ; xflushsi i
+inline %0A4h
+
+end 
+
+// ; xflushsi 0
+inline %1A4h
+
+  std     r3, 8(r1)  
+
+end 
+
+// ; xflushsi 1
+inline %2A4h
+
+  std     r4, 16(r1)
+
+end 
+
 // ; peekfi
 inline %0A8h
 

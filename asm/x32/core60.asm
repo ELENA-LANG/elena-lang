@@ -278,6 +278,18 @@ inline %1A3h
 
 end 
 
+// ; xflushsi i
+inline %0A4h
+
+end 
+
+// ; xflushsi 0
+inline %1A4h
+
+  mov [esp+4], esi
+
+end 
+
 // ; peekfi
 inline %0A8h
 

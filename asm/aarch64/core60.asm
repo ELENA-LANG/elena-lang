@@ -327,6 +327,27 @@ inline %2A3h
 
 end 
 
+// ; xflushsi i
+inline %0A4h
+
+end 
+
+// ; xflushsi 0
+inline %1A4h
+
+  add     x11, sp, 8
+  str     x0, [x11]
+
+end 
+
+// ; xflushsi 1
+inline %2A4h
+
+  add     x11, sp, 16
+  str     x1, [x11]
+
+end 
+
 // ; peekfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0A8h
