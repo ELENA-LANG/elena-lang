@@ -7,6 +7,8 @@
 #include "gtklinux/gtkcommon.h"
 #include "factory.h"
 
+using namespace elena_lang;
+
 int main(int argc, char* argv[])
 {
    Gtk::Main kit(argc, argv);

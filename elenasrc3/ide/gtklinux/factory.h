@@ -8,15 +8,14 @@
 #define FACTORY_H
 
 #include "idecommon.h"
-//#include "windows/wincommon.h"
-//#include "windows/wincanvas.h"
+#include "gtklinux/gtksdi.h"
 #include "ideview.h"
 #include "idecontroller.h"
 
 namespace elena_lang
 {
    // --- IDEFactory ---
-   class IDEFactory : public GUIFactoryBase
+   class IDEFactory
    {
    protected:
       //FontFactory    _fontFactory;
@@ -36,8 +35,7 @@ namespace elena_lang
       //void initializeModel(IDEModel* ideView);
 
    public:
-      GUIApp* createApp() override;
-      GUIControlBase* createMainWindow() override;
+      SDIWindow* createMainWindow();
 
       IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideView,
          IDEController* ideController,

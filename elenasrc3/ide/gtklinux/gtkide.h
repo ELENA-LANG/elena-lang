@@ -7,7 +7,9 @@
 #ifndef GTKIDE_H
 #define GTKIDE_H
 
-namespace elena-lang
+#include "gtklinux/gtksdi.h"
+
+namespace elena_lang
 {
 // --- GTKIDEView ---
 

@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------
 
 #include "factory.h"
-#include "gtklinux/winide.h"
+#include "gtklinux/gtkide.h"
 //#include "windows/wintextview.h"
 //#include "windows/wintextframe.h"
 //#include "sourceformatter.h"
@@ -122,13 +122,7 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
 //   viewModel->setStyles(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
 //}
 
-GUIApp* IDEFactory :: createApp()
-{
-   // !! temporal
-   return nullptr;
-}
-
-GUIControlBase* IDEFactory :: createMainWindow()
+SDIWindow* IDEFactory :: createMainWindow()
 {
    SDIWindow* sdi = new GTKIDEWindow(/*szTitle, _controller, _model*/);
 //   sdi->create(_instance, szSDI, nullptr);

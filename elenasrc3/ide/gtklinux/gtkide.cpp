@@ -4,11 +4,11 @@
 //                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#include "gtklnux/winide.h"
+#include "gtklinux/gtkide.h"
 
 using namespace elena_lang;
 
 GTKIDEWindow :: GTKIDEWindow()
 {
-   
+
 }

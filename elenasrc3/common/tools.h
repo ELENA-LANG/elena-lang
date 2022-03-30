@@ -16,11 +16,11 @@
 #endif // __GNUG__
 
 #if !defined(max)
-#define max(a, b)       ((a) > (b) ? (a) : (b))
+#define _max(a, b)       ((a) > (b) ? (a) : (b))
 #endif
 
 #if !defined(min)
-#define min(a, b)       ((a) < (b) ? (a) : (b))
+#define _min(a, b)       ((a) < (b) ? (a) : (b))
 #endif
 
 namespace elena_lang
