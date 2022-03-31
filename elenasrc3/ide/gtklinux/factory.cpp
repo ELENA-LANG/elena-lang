@@ -7,6 +7,7 @@
 #include "factory.h"
 #include "gtklinux/gtkide.h"
 #include "gtklinux/gtktextframe.h"
+#include "gtklinux/gtktextview.h"
 
 using namespace elena_lang;
 
@@ -61,8 +62,8 @@ using namespace elena_lang;
 
 // --- IDEFactory ---
 
-IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
-   IDEController* controller,*/
+IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, */IDEModel* ideModel,
+   /*IDEController* controller,*/
    GUISettinngs   settings)
 {
 //   _schemes[0] = defaultStyles;
@@ -71,7 +72,7 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
 //
 //   _instance = instance;
 //   _cmdShow = cmdShow;
-//   _model = ideModel;
+   _model = ideModel;
 //   _controller = controller;
 //
 //   initializeModel(ideModel);
@@ -90,11 +91,13 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
 
 Gtk::Widget* IDEFactory :: createTextControl()
 {
-//   TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_controller->sourceController);
+   TextViewWindow* view = new TextViewWindow(_model->viewModel()/*, &_controller->sourceController*/);
    TextViewFrame* frame = new TextViewFrame(/*_settings.withTabAboverscore, view*/);
 
-   frame->addTab(_T("test"), nullptr);
+   // !! temporal
+   frame->addTab(_T("test"), view);
 
+   view->show(); // !! temporal?
    frame->show(); // !! temporal?
 
 //   view->create(_instance, szTextView, owner);
