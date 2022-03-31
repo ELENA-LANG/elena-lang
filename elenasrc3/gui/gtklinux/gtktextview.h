@@ -8,6 +8,7 @@
 #define GTKTEXTVIEW_H
 
 #include "gtklinux/gtkcommon.h"
+#include "gtklinux/gtkgraphic.h"
 #include "guieditor.h"
 
 namespace elena_lang
@@ -19,7 +20,9 @@ namespace elena_lang
       class TextDrawingArea : public Gtk::DrawingArea
       {
       protected:
-         Glib::RefPtr<Gdk::Window> _text_area;
+         Glib::RefPtr<Gdk::Window>  _text_area;
+
+         TextViewModelBase*         _model;
 
          //Overrides:
          Gtk::SizeRequestMode get_request_mode_vfunc() const override;
@@ -28,19 +31,26 @@ namespace elena_lang
          void get_preferred_height_vfunc(int& minimum_height, int& natural_height) const override;
          void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override;
          void on_size_allocate(Gtk::Allocation& allocation) override;
+         void on_map() override;
+         void on_unmap() override;
+         void on_realize() override;
+         void on_unrealize() override;
+         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
          void onResize(int x, int y, int width, int height);
 
+         int getLineNumberMargin();
          void resizeDocument(int width, int height);
+         void update(bool resized);
 
-         void paint();
+         void paint(Canvas& canvas, int viewWidth, int viewHeight);
 
-      public:s
-         TextDrawingArea(TextViewWindow* view);
+      public:
+         TextDrawingArea(TextViewWindow* view, TextViewModelBase* model);
       };
 
    protected:
-      TextDrawingArea _area;
+      TextDrawingArea    _area;
 
    public:
       TextViewWindow(TextViewModelBase* model);

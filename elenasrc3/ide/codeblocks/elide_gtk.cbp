@@ -85,6 +85,8 @@
 		<Unit filename="../../common/ustring.h" />
 		<Unit filename="../../gui/gtklinux/gtkcommon.cpp" />
 		<Unit filename="../../gui/gtklinux/gtkcommon.h" />
+		<Unit filename="../../gui/gtklinux/gtkgraphic.cpp" />
+		<Unit filename="../../gui/gtklinux/gtkgraphic.h" />
 		<Unit filename="../../gui/gtklinux/gtksdi.cpp" />
 		<Unit filename="../../gui/gtklinux/gtksdi.h" />
 		<Unit filename="../../gui/gtklinux/gtktabbar.cpp" />
