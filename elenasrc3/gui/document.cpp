@@ -229,7 +229,7 @@ pos_t DocumentView :: format(LexicalReader& reader)
    pos_t position = reader.bm.position();
 
    pos_t proceeded = _formatter.proceed(position, reader);
-   return min(length, proceeded);
+   return _min(length, proceeded);
 }
 
 void DocumentView :: resize(Point size)

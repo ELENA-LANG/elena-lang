@@ -150,7 +150,7 @@ namespace elena_lang
    protected:
       int calcFrameOffset(int argument) override
       {
-         return align(12 + argument, 4);
+         return 4 + argument > 0 ? align(argument + 8, 4) : 0;
       }
 
       int calcTotalSize(int numberOfFields) override;
@@ -189,7 +189,7 @@ namespace elena_lang
    protected:
       int calcFrameOffset(int argument) override
       {
-         return align(24 + argument, 16);
+         return 8 + argument > 0 ? align(argument + 16, 16) : 0;
       }
 
       int calcTotalSize(int numberOfFields) override;

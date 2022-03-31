@@ -55,7 +55,7 @@ namespace elena_lang
 
       void saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
 
-      void saveProcedure(BuildNode node, Scope& scope);
+      void saveProcedure(BuildNode node, Scope& scope, bool classMode);
 
       void saveVMT(BuildNode node, Scope& scope);
 

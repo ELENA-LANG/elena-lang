@@ -6,9 +6,7 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
-    * >pass a parameter, send a message to the parameter 
-
-    * variable
+    * >variable
     * int
     * int literal
     * string

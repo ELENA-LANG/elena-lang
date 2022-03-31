@@ -271,18 +271,20 @@ void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope,
       scope.debugStrings = &debugStringWriter;
 
       openSymbolDebugInfo(scope, moduleScope->module->resolveReference(node.arg.reference & ~mskAnyRef));
-      saveProcedure(node, scope);
+      saveProcedure(node, scope, false);
       endDebugInfo(scope);
    }
-   else saveProcedure(node, scope);
+   else saveProcedure(node, scope, false);
 }
 
-void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope)
+void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode)
 {
-   TapeScope tapeScope = {};
-   tapeScope.reserved = node.findChild(BuildKey::Reserved).arg.value;
-   tapeScope.reservedN = node.findChild(BuildKey::ReservedN).arg.value;
-   tapeScope.scope = &scope;
+   TapeScope tapeScope = {
+      &scope,
+      node.findChild(BuildKey::Reserved).arg.value,
+      node.findChild(BuildKey::ReservedN).arg.value,
+      classMode
+   };
 
    CommandTape tape;
    saveTape(tape, node.findChild(BuildKey::Tape), tapeScope);
@@ -315,10 +317,10 @@ void ByteCodeWriter :: saveVMT(BuildNode node, Scope& scope)
 
          if (scope.moduleScope->debugModule) {
             openMethodDebugInfo(scope);
-            saveProcedure(current, scope);
+            saveProcedure(current, scope, true);
             endDebugInfo(scope);
          }
-         else saveProcedure(current, scope);
+         else saveProcedure(current, scope, true);
       }
 
       current = current.nextNode();

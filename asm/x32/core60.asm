@@ -533,7 +533,6 @@ end
 inline %0FEh
 
   mov  [esp], esi
-  mov  [esp+4], edi
   call extern __ptr32_1
 
 end
@@ -541,14 +540,6 @@ end
 // ; callext
 inline %1FEh
 
-  call extern __ptr32_1
-
-end
-
-// ; callext
-inline %2FEh
-
-  mov  [esp], esi
   call extern __ptr32_1
 
 end
