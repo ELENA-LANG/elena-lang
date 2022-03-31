@@ -13,8 +13,9 @@ int main(int argc, char* argv[])
 {
    Gtk::Main kit(argc, argv);
 
+   IDEModel      ideModel;
    GUISettinngs  settings = { true };
-   IDEFactory    factory(settings);
+   IDEFactory    factory(&ideModel, settings);
 
    //GUIApp* app = factory.createApp();
 

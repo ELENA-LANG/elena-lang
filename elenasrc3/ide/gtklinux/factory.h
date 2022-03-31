@@ -25,7 +25,7 @@ namespace elena_lang
       //HINSTANCE      _instance;
       //int            _cmdShow;
 
-      //IDEModel*      _model;
+      IDEModel*      _model;
       //IDEController* _controller;
 
       //void registerClasses();
@@ -37,8 +37,8 @@ namespace elena_lang
    public:
       SDIWindow* createMainWindow();
 
-      IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideView,
-         IDEController* ideController,*/
+      IDEFactory(/*HINSTANCE instance, int cmdShow, */IDEModel* ideView,
+         /*IDEController* ideController,*/
          GUISettinngs   settings);
    };
 }

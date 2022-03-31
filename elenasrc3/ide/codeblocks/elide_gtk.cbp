@@ -81,6 +81,8 @@
 			<Add directory="../../common" />
 			<Add directory="../../gui" />
 		</Compiler>
+		<Unit filename="../../common/ustring.cpp" />
+		<Unit filename="../../common/ustring.h" />
 		<Unit filename="../../gui/gtklinux/gtkcommon.cpp" />
 		<Unit filename="../../gui/gtklinux/gtkcommon.h" />
 		<Unit filename="../../gui/gtklinux/gtksdi.cpp" />
@@ -92,11 +94,19 @@
 		<Unit filename="../../gui/gtklinux/gtktextview.cpp" />
 		<Unit filename="../../gui/gtklinux/gtktextview.h" />
 		<Unit filename="../../gui/guicommon.h" />
+		<Unit filename="../../gui/view.cpp" />
+		<Unit filename="../../gui/view.h" />
+		<Unit filename="../editframe.cpp" />
+		<Unit filename="../editframe.h" />
 		<Unit filename="../gtklinux/factory.cpp" />
 		<Unit filename="../gtklinux/factory.h" />
 		<Unit filename="../gtklinux/gtkide.cpp" />
 		<Unit filename="../gtklinux/gtkide.h" />
 		<Unit filename="../gtklinux/main.cpp" />
+		<Unit filename="../ideproject.cpp" />
+		<Unit filename="../ideproject.h" />
+		<Unit filename="../ideview.cpp" />
+		<Unit filename="../ideview.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
