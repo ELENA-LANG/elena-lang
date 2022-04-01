@@ -178,7 +178,8 @@ namespace elena_lang
             Class,
             OwnerClass,
             Method,
-            Code
+            Code,
+            Expr
          };
 
          ModuleBase*      module;
@@ -195,6 +196,8 @@ namespace elena_lang
                return nullptr;
             }
          }             
+
+         virtual void markAsAssigned(ObjectInfo object) {}
 
          virtual void raiseError(int message, SyntaxNode terminal)
          {
@@ -390,6 +393,8 @@ namespace elena_lang
             else return Scope::getScope(level);
          }
 
+         void markAsAssigned(ObjectInfo object) override;
+
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
 
          int newLocal()
@@ -439,6 +444,19 @@ namespace elena_lang
          pos_t allocatedArgs;
          pos_t tempAllocated1;
          pos_t tempAllocated2;
+
+         Scope* getScope(ScopeLevel level) override
+         {
+            if (level == ScopeLevel::Expr) {
+               return this;
+            }
+            else return Scope::getScope(level);
+         }
+
+         void markAsAssigned(ObjectInfo object) override
+         {
+            parent->markAsAssigned(object);
+         }
 
          int newTempLocal();
 
@@ -496,6 +514,8 @@ namespace elena_lang
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey);
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
+      void declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRef);
+
       void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);
       void resolveClassParent(ClassScope& scope, SyntaxNode node);
 
@@ -528,6 +548,8 @@ namespace elena_lang
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, /*SyntaxNode node, ObjectInfo target, */mssg_t message, ArgumentsInfo& arguments);
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
 
+      ObjectInfo compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand);
+
       ObjectInfo compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand, int operatorId);
       ObjectInfo compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
 
@@ -538,7 +560,8 @@ namespace elena_lang
 
       ObjectInfo mapObject(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
 
-      ObjectInfo compileObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
+      ObjectInfo compileObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
+         ExpressionAttribute mode);
       ObjectInfo compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
          ExpressionAttribute mode);
       ObjectInfo compileRootExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);

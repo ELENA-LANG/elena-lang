@@ -10,6 +10,7 @@
 #let attributesSymbols["constructor"] := 80001004h;
 #let attributesSymbols["singleton"]   := 80001006h;
 #let attributesSymbols["method"]      := 80001008h;
+#let attributesSymbols["var"]         := 8000100Dh;
 #let attributesSymbols["static"]      := 8000100Fh;
 #let attributesSymbols["dispatch"]    := 80001013h;
 #let attributesSymbols["intern"]      := 80001016h;

@@ -22,21 +22,66 @@ struct Op
    ref_t    ioperand;
 };
 
-constexpr auto OperationLength = 2;
+constexpr auto OperationLength = 3;
 constexpr Op Operations[OperationLength] =
 {
    { BuildKey::StrDictionaryOp, V_DICTIONARY, V_INT32, V_STRING },
-   { BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0 }
+   { BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0 },
+   { BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0 }
 };
 
 // --- CompilerLogic ---
 
-BuildKey CompilerLogic :: resolveOp(ref_t* arguments, size_t length)
+bool CompilerLogic :: isValidObjOp(int operatorId)
+{
+   switch (operatorId) {
+      default:
+         return false;
+   }
+}
+
+bool CompilerLogic :: isValidObjArrayOp(int operatorId)
+{
+   switch (operatorId) {
+      case ADD_ASSIGN_OPERATOR_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
+bool CompilerLogic :: isValidStrDictionaryOp(int operatorId)
+{
+   switch (operatorId) {
+      case SET_INDEXER_OPERATOR_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
+bool CompilerLogic :: isValidOp(int operatorId, BuildKey op)
+{
+   switch (op) {
+      case BuildKey::ObjOp:
+         return isValidObjOp(operatorId);
+      case BuildKey::StrDictionaryOp:
+         return isValidStrDictionaryOp(operatorId);
+      case BuildKey::ObjArrayOp:
+         return isValidObjArrayOp(operatorId);
+      default:
+         return false;
+   }
+}
+
+BuildKey CompilerLogic :: resolveOp(int operatorId, ref_t* arguments, size_t length)
 {
    for(size_t i = 0; i < OperationLength; i++) {
       if (arguments[0] == Operations[i].loperand && arguments[1] == Operations[i].roperand) {
-         if ((length == 2) || (arguments[2] == Operations[i].ioperand))
-            return Operations[i].operation;
+         if ((length == 2) || (arguments[2] == Operations[i].ioperand)) {
+            if (isValidOp(operatorId, Operations[i].operation))
+               return Operations[i].operation;
+         }
       }
    }
 
@@ -158,6 +203,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
          return true;
       case V_INTERN:
          attrs |= ExpressionAttribute::Intern;
+         return true;
+      case V_VARIABLE:
+         attrs |= ExpressionAttribute::NewVariable;
          return true;
       default:
          return false;

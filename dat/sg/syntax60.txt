@@ -125,6 +125,7 @@ EXPRESSION ::=
 I_R ::=
         identifier I_R
         | I_L0_R
+	| I_L1_R
 	| I_L2_R NEXT_L2_R
         | eps ^OBJECT; 
 
@@ -132,15 +133,18 @@ I_L0_R ::=
         "[" ^OBJECT EXPRESSION "]" ^INDEXER_OPERATION INDEXER_R
         | "+=" ^OBJECT EXPRESSION ^ADDITION_ASSIGNMENT;
 
+I_L1_R ::=
+        ":=" ^OBJECT EXPRESSION ^ASSIGN_OPERATION;
+
+L1_R ::=
+        ":=" EXPRESSION ^ASSIGN_OPERATION;
+
 I_L2_R ::=
 	"." ^OBJECT MESSAGE MESSAGE_R;
 
 NEXT_L2_R ::=
 	"." MESSAGE MESSAGE_R NEXT_L2_R
 	| eps;
-
-L1_R ::=
-        ":=" EXPRESSION ^ASSIGN_OPERATION;
 
 INDEXER_R ::=
         L1_R

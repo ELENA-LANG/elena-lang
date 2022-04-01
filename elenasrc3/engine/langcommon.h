@@ -97,6 +97,7 @@ namespace elena_lang
    constexpr auto V_CONSTRUCTOR           = 0x80001004u;
    constexpr auto V_SINGLETON             = 0x80001006u;
    constexpr auto V_METHOD                = 0x80001008u;
+   constexpr auto V_VARIABLE              = 0x8000100Du;
    constexpr auto V_STATIC                = 0x8000100Fu;
    constexpr auto V_DISPATCHER            = 0x80001013u;
    constexpr auto V_INTERN                = 0x80001016u;

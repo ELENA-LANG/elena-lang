@@ -18,7 +18,7 @@ namespace elena_lang
    class CompilerLogic
    {
    public:
-      BuildKey resolveOp(ref_t* arguments, size_t length);
+      BuildKey resolveOp(int operatorId, ref_t* arguments, size_t length);
 
       bool validateTemplateAttribute(ref_t attribute, Visibility& visibility, TemplateType& type);
       bool validateSymbolAttribute(ref_t attribute, Visibility& visibility);
@@ -29,6 +29,11 @@ namespace elena_lang
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
 
       bool isRole(ClassInfo& info);
+
+      bool isValidObjOp(int operatorId);
+      bool isValidStrDictionaryOp(int operatorId);
+      bool isValidObjArrayOp(int operatorId);
+      bool isValidOp(int operatorId, BuildKey op);
 
       void tweakClassFlags(ClassInfo& info, bool classClassMode);
 

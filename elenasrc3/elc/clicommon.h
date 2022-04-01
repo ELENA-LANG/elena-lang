@@ -346,6 +346,8 @@ enum class ExpressionAttribute : pos64_t
    NoTypeAllowed     = 0x00000010,
    Intern            = 0x00000020,
    Parameter         = 0x00000040,
+   NewVariable       = 0x00000080,
+   Local             = 0x00000100,
 };
 
 struct ExpressionAttributes

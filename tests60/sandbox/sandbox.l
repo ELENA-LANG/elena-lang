@@ -10,7 +10,10 @@ singleton B
 
 class A
 {
-   testA() {}
+   testA() 
+   {
+      var a := self;
+   }
 
    constructor new() {}
 }
