@@ -8,6 +8,7 @@
 #define GTKCOMMON_H
 
 #include <gtkmm.h>
+#include "guicommon.h"
 
 namespace elena_lang
 {

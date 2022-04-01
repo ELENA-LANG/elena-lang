@@ -8,6 +8,7 @@
 #include "gtklinux/gtkide.h"
 #include "gtklinux/gtktextframe.h"
 #include "gtklinux/gtktextview.h"
+#include "text.h"
 
 using namespace elena_lang;
 
@@ -17,16 +18,14 @@ using namespace elena_lang;
 //WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 //WCHAR szSDI[MAX_LOADSTRING];                    // the main window class name
 //WCHAR szTextView[MAX_LOADSTRING];               // the main window class name
-//
-//// !! temporally
-//#define IDE_CHARSET_ANSI                        ANSI_CHARSET
-//#define IDE_CHARSET_DEFAULT                     1
-//
+
+#define IDE_CHARSET_UTF8                     1 // !! dummy value
+
 //// --- Styles ---
 //StyleInfo defaultStyles[STYLE_MAX + 1] = {
-//   {Color(0), Color(0xFF, 0xFF, 0xFF), L"Courier New", IDE_CHARSET_ANSI, 10, false, false},
-//   {Color(0), Color(Canvas::Chrome()), L"Courier New", IDE_CHARSET_ANSI, 10, false, false},
-//   {Color(0x60, 0x60, 0x60), Color(0x0, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
+//   {Color(0), Color(0xFF, 0xFF, 0xFF), "Monospace", IDE_CHARSET_UTF8, 10, false, false},
+//   {Color(0), Color(1), "Monospace", IDE_CHARSET_UTF8, 10, false, false},
+//   {Color(0x60, 0x60, 0x60), Color(0x0, 0xFF, 0xFF), "Monospace", IDE_CHARSET_UTF8, 10, true, false},
 //   //{Colour(0), Colour(0xC0, 0xC0, 0xC0), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
 //   //{Colour(0, 0, 0xFF), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
 //   //{Colour(0, 0x80, 0), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
@@ -41,7 +40,7 @@ using namespace elena_lang;
 //   //{Colour(0xFF, 0xFF, 0xFF), Colour(0xFF, 0x0, 0x0), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
 //   //{Colour(0), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false}
 //};
-//
+
 //StyleInfo classicStyles[STYLE_MAX + 1] = {
 //   {Color(0xFF, 0xFF, 0), Color(0, 0, 0x80), L"Courier New", IDE_CHARSET_ANSI, 10, false, false},
 //   {Color(0), Color(Canvas::Chrome()), L"Courier New", IDE_CHARSET_ANSI, 10, false, false},
@@ -74,20 +73,9 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, */IDEModel* ideModel
 //   _cmdShow = cmdShow;
    _model = ideModel;
 //   _controller = controller;
-//
-//   initializeModel(ideModel);
-}
 
-//void IDEFactory :: registerClasses()
-//{
-//   // Initialize global strings
-//   LoadStringW(_instance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-//   LoadStringW(_instance, IDC_IDE, szSDI, MAX_LOADSTRING);
-//   LoadStringW(_instance, IDC_TEXTVIEW, szTextView, MAX_LOADSTRING);
-//
-//   SDIWindow::registerSDIWindow(_instance, szSDI, LoadIcon(_instance, MAKEINTRESOURCE(IDI_IDE)), MAKEINTRESOURCEW(IDC_IDE), LoadIcon(_instance, MAKEINTRESOURCE(IDI_SMALL)));
-//   TextViewWindow::registerTextViewWindow(_instance, szTextView);
-//}
+   initializeModel(ideModel);
+}
 
 Gtk::Widget* IDEFactory :: createTextControl()
 {
@@ -113,18 +101,18 @@ Gtk::Widget* IDEFactory :: createTextControl()
    return frame;
 }
 
-//void IDEFactory :: initializeModel(IDEModel* ideView)
-//{
-//   auto viewModel = ideView->viewModel();
-//
-//   Text* text = new Text(EOLMode::CRLF);
-//   PathString path("C:\\Alex\\ELENA\\tests60\\sandbox\\sandbox.l");
-//   text->load(*path, FileEncoding::UTF8, false);
-//
-//   viewModel->docView = new DocumentView(text, ELENADocFormatter::getInstance());
-//
-//   viewModel->setStyles(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
-//}
+void IDEFactory :: initializeModel(IDEModel* ideView)
+{
+   auto viewModel = ideView->viewModel();
+
+   Text* text = new Text(EOLMode::CRLF);
+   PathString path("/home/alex/elena-lang/tests60/sandbox/sandbox.l");
+   text->load(*path, FileEncoding::UTF8, false);
+
+   //viewModel->docView = new DocumentView(text, ELENADocFormatter::getInstance());
+
+   //viewModel->setStyles(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
+}
 
 SDIWindow* IDEFactory :: createMainWindow()
 {

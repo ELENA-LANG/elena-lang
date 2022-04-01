@@ -15,6 +15,7 @@ TextViewWindow::TextDrawingArea :: TextDrawingArea(TextViewWindow* view, TextVie
    Gtk::DrawingArea()
 {
    _model = model;
+   _needToResize = false;
 }
 
 Gtk::SizeRequestMode TextViewWindow::TextDrawingArea :: get_request_mode_vfunc() const
@@ -25,28 +26,28 @@ Gtk::SizeRequestMode TextViewWindow::TextDrawingArea :: get_request_mode_vfunc()
 
 void TextViewWindow::TextDrawingArea :: get_preferred_width_vfunc(int& minimum_width, int& natural_width) const
 {
-   minimum_width = 50;
-   natural_width = 0;
+   minimum_width = 200;
+   natural_width = 200;
 }
 
 void TextViewWindow::TextDrawingArea :: get_preferred_height_for_width_vfunc(int /* width */,
    int& minimum_height, int& natural_height) const
 {
-   minimum_height = 50;
-   natural_height = 0;
+   minimum_height = 200;
+   natural_height = 200;
 }
 
 void TextViewWindow::TextDrawingArea :: get_preferred_height_vfunc(int& minimum_height, int& natural_height) const
 {
-   minimum_height = 50;
-   natural_height = 0;
+   minimum_height = 200;
+   natural_height = 200;
 }
 
 void TextViewWindow::TextDrawingArea :: get_preferred_width_for_height_vfunc(int /* height */,
    int& minimum_width, int& natural_width) const
 {
-   minimum_width = 50;
-   natural_width = 0;
+   minimum_width = 200;
+   natural_width = 200;
 }
 
 void TextViewWindow::TextDrawingArea :: on_size_allocate(Gtk::Allocation& allocation)
@@ -157,6 +158,33 @@ void TextViewWindow::TextDrawingArea :: onResize(int x, int y, int width, int he
 
 void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, int viewHeight)
 {
+   auto docView = _model->docView;
+
+   Point caret = docView->getCaret(false) - docView->getFrame();
+
+   Style* defaultStyle = _model->getStyle(STYLE_DEFAULT);
+   Style* marginStyle = _model->getStyle(STYLE_MARGIN);
+   int lineHeight = _model->getLineHeight();
+   int marginWidth = _model->getMarginWidth() + getLineNumberMargin();
+
+   if (!defaultStyle->valid) {
+      _model->validate(&canvas);
+
+      lineHeight = _model->getLineHeight();
+      marginWidth = _model->getMarginWidth() + getLineNumberMargin();
+
+      _needToResize = true;
+   }
+   // if document size yet to be defined
+   if (_needToResize)
+      resizeDocument(viewWidth, viewHeight);
+
+   // Draw background
+   canvas.fillRectangle(0, 0, viewWidth, viewHeight, defaultStyle);
+
+   // Draw margin
+   canvas.fillRectangle(0, 0, marginWidth, viewHeight, marginStyle);
+
 }
 
 int TextViewWindow::TextDrawingArea :: getLineNumberMargin()
@@ -181,6 +209,8 @@ void TextViewWindow::TextDrawingArea :: resizeDocument(int width, int height)
       size.y = height / _model->getLineHeight();
 
       _model->resize(size);
+
+      _needToResize = false;
    }
 }
 

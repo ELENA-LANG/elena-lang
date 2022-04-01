@@ -23,6 +23,7 @@ namespace elena_lang
          Glib::RefPtr<Gdk::Window>  _text_area;
 
          TextViewModelBase*         _model;
+         bool                       _needToResize;
 
          //Overrides:
          Gtk::SizeRequestMode get_request_mode_vfunc() const override;

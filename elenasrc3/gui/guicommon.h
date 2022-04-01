@@ -123,6 +123,21 @@ namespace elena_lang
          _color = red | (green << 8) | (blue << 16);
       }
 
+      int red()
+      {
+         return _color & 0xFF;
+      }
+
+      int green()
+      {
+         return (_color >> 8) & 0xFF;
+      }
+
+      int blue()
+      {
+         return (_color >> 16) & 0xFF;
+      }
+
       Color(unsigned int red, unsigned int green, unsigned int blue)
       {
          set(red, green, blue);

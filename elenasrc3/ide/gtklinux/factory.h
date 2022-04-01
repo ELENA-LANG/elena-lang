@@ -32,7 +32,7 @@ namespace elena_lang
 
       Gtk::Widget* createTextControl();
 
-      //void initializeModel(IDEModel* ideView);
+      void initializeModel(IDEModel* ideView);
 
    public:
       SDIWindow* createMainWindow();

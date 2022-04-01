@@ -18,8 +18,11 @@ TabBar::TabBar()
 
 int TabBar :: addTab(const char* name, Gtk::Widget* control)
 {
+   if (!get_visible())
+      show();
+
    Gtk::HBox* hb = new Gtk::HBox(TRUE, 0);
-   //hb->pack_start(*control, TRUE, TRUE, 0);
+   hb->pack_start(*control, TRUE, TRUE, 0);
    hb->show_all();
 
    append_page(*hb, name); // !! temporal

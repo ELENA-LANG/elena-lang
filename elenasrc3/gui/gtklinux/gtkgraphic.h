@@ -141,13 +141,13 @@ namespace elena_lang
 
 // --- Canvas ---
 
-struct Canvas
+struct Canvas : public CanvasBase
 {
    const Cairo::RefPtr<Cairo::Context> cr;
    Glib::RefPtr<Pango::Layout>         layout;
 
-////   void fillRectangle(int x, int y, int width, int height, Style& style);
-//
+   void validateStyle(Style* style) override;
+
 //   void drawText(int x, int y, const char* s, Style& style);
 //   void drawCursor(int x, int y, Style& style);
 //   void drawOverwriteCursor(int x, int y, Style& style);
@@ -160,9 +160,9 @@ struct Canvas
 ////   PangoLayout* layout;
 //
 //   int TextWidth(Style* style, const char* s);
-//
-//   void fillRectangle(int x, int y, int width, int height, Style& style);
-//
+
+   void fillRectangle(int x, int y, int width, int height, Style* style);
+
 ////   void drawText(int x, int y, const TCHAR* s, int length, Style& style);
 ////   void drawCursor(GtkWidget* widget, int x, int y, Style& style);
 ////   void drawOverwriteCursor(GtkWidget* widget, int x, int y, Style& style);

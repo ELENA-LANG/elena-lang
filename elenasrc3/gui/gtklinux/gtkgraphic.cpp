@@ -130,6 +130,10 @@ Canvas :: Canvas(const Cairo::RefPtr<Cairo::Context>& context)
    this->layout = Pango::Layout::create (cr);
 }
 
+void Canvas :: validateStyle(Style* style)
+{
+}
+
 //////Canvas :: Canvas(DoubleBuffer& buffer)
 //////{
 //////   this->drawable = NULL;
@@ -149,14 +153,14 @@ Canvas :: Canvas(const Cairo::RefPtr<Cairo::Context>& context)
 ////   cairo_set_source_surface(cr, buffer.cs, x, y);
 ////   cairo_paint(cr);
 ////}
-//
-//void Canvas :: fillRectangle(int x, int y, int width, int height, Style& style)
-//{
-//   cr->rectangle (x, y, width, height);
-//   cr->set_source_rgb(style.background.red, style.background.green, style.background.blue);
-//   cr->fill();
-//}
-//
+
+void Canvas :: fillRectangle(int x, int y, int width, int height, Style* style)
+{
+   cr->rectangle (x, y, width, height);
+   cr->set_source_rgb(style->background.red(), style->background.green(), style->background.blue());
+   cr->fill();
+}
+
 //void Canvas :: drawText(int x, int y, const char* s, Style& style)
 //{
 //   cr->set_source_rgb(style.foreground.red, style.foreground.green, style.foreground.blue);
