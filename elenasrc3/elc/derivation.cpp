@@ -358,6 +358,7 @@ void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
          flushMethod(scope, node);
          break;
       default:
+         _writer.CurrentNode().setKey(SyntaxKey::Field);
          break;
    }
 

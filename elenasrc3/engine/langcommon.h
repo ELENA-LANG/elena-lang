@@ -30,6 +30,8 @@ namespace elena_lang
    constexpr auto errUnknownObject        = 106;
    constexpr auto errInvalidOperation     = 107;
    constexpr auto errDuplicatedDictionary = 108;
+   constexpr auto errDuplicatedField      = 109;
+   constexpr auto errIllegalField         = 111;
    constexpr auto errTooManyParameters    = 113;
    constexpr auto errDuplicatedDefinition = 119;
    constexpr auto errInvalidIntNumber     = 130;
@@ -97,6 +99,7 @@ namespace elena_lang
    constexpr auto V_CONSTRUCTOR           = 0x80001004u;
    constexpr auto V_SINGLETON             = 0x80001006u;
    constexpr auto V_METHOD                = 0x80001008u;
+   constexpr auto V_FIELD                 = 0x80001009u;
    constexpr auto V_VARIABLE              = 0x8000100Du;
    constexpr auto V_STATIC                = 0x8000100Fu;
    constexpr auto V_DISPATCHER            = 0x80001013u;

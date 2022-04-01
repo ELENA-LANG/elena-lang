@@ -10,6 +10,8 @@ singleton B
 
 class A
 {
+   b;
+
    testA() 
    {
       var a := self;

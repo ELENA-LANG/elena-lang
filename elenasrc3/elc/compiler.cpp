@@ -719,8 +719,56 @@ void Compiler :: generateClassFlags(ClassScope& scope, ref_t declaredFlags)
    scope.info.header.flags |= declaredFlags;
 }
 
+void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node)
+{
+   ustr_t name = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+
+   ref_t flags = scope.info.header.flags;
+   int offset = 0;
+
+   // a role cannot have fields
+   if (test(flags, elStateless))
+      scope.raiseError(errIllegalField, node);
+
+   if (scope.info.fields.exist(name)) {
+      scope.raiseError(errDuplicatedField, node);
+   }
+
+   scope.info.header.flags |= elNonStructureRole;
+
+   offset = scope.info.fields.count();
+   scope.info.fields.add(name, { offset });
+}
+
+void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node)
+{
+   bool isClassClassMode = scope.isClassClass();
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current.key == SyntaxKey::Field) {
+         FieldAttributes attrs;
+         declareFieldAttributes(scope, current, attrs);
+
+         if (!isClassClassMode) {
+            generateClassField(scope, current/*, attrs*//*, singleField*/);
+         }
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags)
 {
+   if (scope.isClassClass()) {
+      
+   }
+   else {
+      // generate fields
+      generateClassFields(scope, node);
+   }
+
    //_logic->injectVirtualCode(scope.info);
 
    if (scope.isClassClass()) {
@@ -1397,6 +1445,29 @@ void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, Expr
          case SyntaxKey::Type:
             /*if (!EAttrs::test(mode.attrs, EAttr::NoTypeAllowed)) {
                
+            }
+            else */scope.raiseError(errInvalidHint, current);
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Attribute:
+            if (!_logic->validateFieldAttribute(current.arg.reference, attrs))
+               scope.raiseError(errInvalidHint, current);
+            break;
+         case SyntaxKey::Type:
+            /*if (!EAttrs::test(mode.attrs, EAttr::NoTypeAllowed)) {
+
             }
             else */scope.raiseError(errInvalidHint, current);
             break;

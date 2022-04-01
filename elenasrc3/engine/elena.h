@@ -641,6 +641,12 @@ namespace elena_lang
    };
 
 #pragma pack(push, 1)
+   // --- FieldInfo ---
+   struct FieldInfo
+   {
+      int offset;
+   };
+
    // --- MethodInfo ---
    struct MethodInfo
    {
@@ -670,7 +676,6 @@ namespace elena_lang
       mssg_t message;
       pos_t  codeOffset;
    };
-
 
    // --- DebugLineInfo ---
 
@@ -723,10 +728,12 @@ namespace elena_lang
    struct ClassInfo
    {
       typedef MemoryMap<mssg_t, MethodInfo, Map_StoreUInt, Map_GetUInt> MethodMap;
+      typedef MemoryMap<ustr_t, FieldInfo, Map_StoreUStr, Map_GetUStr> FieldMap;
 
       ClassHeader     header;
       pos_t           size;           // Object size
       MethodMap       methods;
+      FieldMap        fields;
 
       void save(StreamWriter* writer, bool headerAndSizeOnly = false)
       {
@@ -737,6 +744,13 @@ namespace elena_lang
             methods.forEach<StreamWriter*>(writer, [](StreamWriter* writer, mssg_t message, MethodInfo info)
                {
                   writer->writeDWord(message);
+                  writer->write(&info, sizeof(info));
+               });
+
+            writer->writePos(fields.count());
+            fields.forEach<StreamWriter*>(writer, [](StreamWriter* writer, ustr_t name, FieldInfo info)
+               {
+                  writer->writeString(name);
                   writer->write(&info, sizeof(info));
                });
          }
@@ -755,11 +769,20 @@ namespace elena_lang
 
                methods.add(message, methodInfo);
             }
+            pos_t fieldCount = reader->getPos();
+            for (pos_t i = 0; i < fieldCount; i++) {
+               IdentifierString fieldName;
+               reader->readString(fieldName);
+               FieldInfo fieldInfo;
+               reader->read(&fieldInfo, sizeof(fieldInfo));
+
+               fields.add(*fieldName, fieldInfo);
+            }
          }
       }
 
       ClassInfo()
-         : methods({})
+         : methods({}), fields({})
       {
          header.staticSize = 0;
          header.parentRef = header.classRef = 0;

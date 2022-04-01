@@ -392,6 +392,12 @@ struct ExpressionAttributes
    }
 };
 
+// --- FieldAttributes ---
+struct FieldAttributes
+{
+   
+};
+
 // --- CompilerBase ---
 typedef Map<ustr_t, ref_t, allocUStr, freeUStr> ForwardMap;
 

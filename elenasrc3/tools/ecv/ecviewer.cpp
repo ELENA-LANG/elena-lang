@@ -334,6 +334,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elStateless)) {
       printLineAndCount("@flag ", "elStateless", row, pageSize);
    }
+   if (test(flags, elNonStructureRole)) {
+      printLineAndCount("@flag ", "elNonStructureRole", row, pageSize);
+   }
 }
 
 void ByteCodeViewer::printMethod(ustr_t name)

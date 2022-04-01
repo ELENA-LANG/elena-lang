@@ -46,6 +46,7 @@ namespace elena_lang
       Constructor        = 0x001009,
       Parameter          = 0x00100A,
       EOP                = 0x00100B,
+      Field              = 0x00100C,
       CodeBlock          = 0x001C10,
       WithoutBody        = 0x001C11,
       Importing          = 0x001C12,

@@ -146,6 +146,18 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
    return true;
 }
 
+bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& attrs)
+{
+   switch (attribute) {
+      case V_FIELD:
+         break;
+      default:
+         return false;
+   }
+
+   return true;
+}
+
 bool CompilerLogic :: validateMethodAttribute(ref_t attribute, MethodHint& hint, bool& explicitMode)
 {
    switch (attribute) {

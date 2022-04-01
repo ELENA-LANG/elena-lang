@@ -23,6 +23,7 @@ namespace elena_lang
       bool validateTemplateAttribute(ref_t attribute, Visibility& visibility, TemplateType& type);
       bool validateSymbolAttribute(ref_t attribute, Visibility& visibility);
       bool validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility);
+      bool validateFieldAttribute(ref_t attribute, FieldAttributes& attrs);
       bool validateMethodAttribute(ref_t attribute, MethodHint& hint, bool& explicitMode);
       bool validateImplicitMethodAttribute(ref_t attribute, MethodHint& hint);
       bool validateDictionaryAttribute(ref_t attribute, ref_t& dictionaryType);

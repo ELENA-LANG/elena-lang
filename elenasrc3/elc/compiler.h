@@ -496,6 +496,7 @@ namespace elena_lang
       void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node);
       void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node);
       void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& flags);
+      void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode);
       void declareMethodAttributes(MethodScope& scope, SyntaxNode node);
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, ref_t& dictionaryType);
       void declareExpressionAttributes(Scope& scope, SyntaxNode node, ExpressionAttributes& mode);
@@ -512,6 +513,8 @@ namespace elena_lang
       void generateClassFlags(ClassScope& scope, ref_t declaredFlags);
       void generateMethodDeclaration(ClassScope& scope, SyntaxNode node);
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey);
+      void generateClassField(ClassScope& scope, SyntaxNode node);
+      void generateClassFields(ClassScope& scope, SyntaxNode node);
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
       void declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRef);
