@@ -19,17 +19,28 @@ namespace elena_lang
    // --- JITCompilerScope ---
    class JITCompiler;
 
+   // --- JITConstants ---
+   struct JITConstants
+   {
+      // an offset to raw stack data
+      int          dataOffset;
+      int          dataHeader;
+      int          indexPower;
+      ref_t        inlineMask;
+      int          alignmentVA;
+      int          structMask;
+   };
+
    struct JITCompilerScope
    {
       ReferenceHelperBase* helper;
       JITCompiler*         compiler;
       MemoryWriter*        codeWriter;
       ByteCommand          command;
-      int                  indexPower;
-      int                  frameOffset;
-      int                  dataOffset;
-      int                  dataHeader;
+      JITConstants*        constants;
+
       bool                 withDebugInfo;
+      ref_t                frameOffset;
 
       unsigned char code() const
       {
@@ -37,7 +48,7 @@ namespace elena_lang
       }
 
       JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, MemoryWriter* writer,
-         int indexPower, int dataOffset, int dataHeader);
+         JITConstants* constants);
    };
 
    typedef void(*CodeGenerator)(JITCompilerScope*);
@@ -52,17 +63,13 @@ namespace elena_lang
       void*        _inlines[NumberOfInlines][0x100];
       PreloadedMap _preloaded;
 
-      // an offset to raw stack data
-      int          _dataOffset;
-      int          _dataHeader;
-      int          _indexPower;
-      ref_t        _inlineMask;
-      int          _alignmentVA;
+      JITConstants _constants;
 
       CodeGenerator* codeGenerators();
 
       virtual int calcFrameOffset(int argument) = 0;
       virtual int calcTotalSize(int numberOfFields) = 0;
+      virtual int calcTotalStructSize(int size) = 0;
 
       void writeArgAddress(JITCompilerScope* scope, arg_t arg, pos_t offset, ref_t addressMask);
 
@@ -93,6 +100,7 @@ namespace elena_lang
       friend void loadIndexNOp(JITCompilerScope* scope);
       friend void loadIndexIndexOp(JITCompilerScope* scope);
       friend void loadNewOp(JITCompilerScope* scope);
+      friend void loadNewNOp(JITCompilerScope* scope);
 
       friend void compileBreakpoint(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
@@ -137,10 +145,10 @@ namespace elena_lang
       JITCompiler()
          : _inlines{}, _preloaded(nullptr)
       {
-         _indexPower = 0;
-         _dataHeader = _dataOffset = 0;
-         _inlineMask = 0;
-         _alignmentVA = 8;
+         _constants.indexPower = 0;
+         _constants.dataHeader = _constants.dataOffset = 0;
+         _constants.inlineMask = 0;
+         _constants.alignmentVA = 8;
       }
    };
 
@@ -154,6 +162,7 @@ namespace elena_lang
       }
 
       int calcTotalSize(int numberOfFields) override;
+      int calcTotalStructSize(int size) override;
 
    public:
       void prepare(
@@ -193,6 +202,7 @@ namespace elena_lang
       }
 
       int calcTotalSize(int numberOfFields) override;
+      int calcTotalStructSize(int size) override;
 
    public:
       void prepare(
@@ -246,6 +256,7 @@ namespace elena_lang
    void loadIndexNOp(JITCompilerScope* scope);
    void loadIndexIndexOp(JITCompilerScope* scope);
    void loadNewOp(JITCompilerScope* scope);
+   void loadNewNOp(JITCompilerScope* scope);
 
    void compileClose(JITCompilerScope* scope);
    void compileOpen(JITCompilerScope* scope);

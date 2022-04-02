@@ -19,6 +19,8 @@ namespace elena_lang
    constexpr auto elVMTClassOffset32         = 0x0010;                // a VMT32 class offset
    constexpr auto elObjectOffset32           = 0x0008;                // object header / offset constant
 
+   constexpr int elStructMask32              = 0x800000;
+
    // --- 64bit ELENA Object constants ---
    constexpr int gcPageSize64                = 0x0020;                // a heap page size constant
    constexpr auto gcPageSizeOrder64          = 5;
@@ -27,6 +29,8 @@ namespace elena_lang
 
    constexpr auto elVMTClassOffset64         = 0x0020;                // a VMT64 class offset
    constexpr auto elObjectOffset64           = 0x0010;                // object header / offset constant
+
+   constexpr int elStructMask64              = 0x40000000;
 
    // --- ELENA CORE built-in routines
    constexpr ref_t INVOKER                   = 0x10001;

@@ -644,7 +644,8 @@ namespace elena_lang
    // --- FieldInfo ---
    struct FieldInfo
    {
-      int offset;
+      int   offset;
+      ref_t typeRef;
    };
 
    // --- MethodInfo ---

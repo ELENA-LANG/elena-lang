@@ -761,6 +761,25 @@ inline %0F4h
 
 end
 
+// ; newnr n, r
+inline %0F5h
+
+  li      r18, __arg16_1
+  ld      r12, toc_alloc(r2)
+  mtctr   r12            
+  bctrl                   
+
+  li      r18, __n16_1
+  addis   r18, __n16hi_1
+
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, __disp32hi_2 
+  addi    r17, r17, __disp32lo_2
+  std     r18, -elSizeOffset(r15)
+  std     r17, -elVMTOffset(r15)
+
+end
+
 // ; xstorefir
 inline %0F9h
 

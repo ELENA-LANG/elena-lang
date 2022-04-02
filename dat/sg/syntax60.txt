@@ -23,6 +23,7 @@ __define ADDITION_ASSIGNMENT 6211;
 __define MESSAGE_OPERATION   6225;
 __define POSTFIX             4192;
 __define TEMPLATE_ARG        4208;
+__define DIMENSION           4209;
 
 START ::= 
         NEXT_DECLARATION;
@@ -60,6 +61,7 @@ SCOPE ::=
         "=" EXPRESSION DECLARATION_END
 	| "{" SUB_DECLARATIONS END_OF_BLOCK
 	| "(" PARAMETERS ")" METHOD_BODY_OPT
+	| "[" DIMENSION "]" DECLARATION_END
         | DECLARATION_END;
 
 SCOPE_OPT ::=
@@ -174,6 +176,10 @@ PARAMETER ::=
 
 PARAMETER_R ::=
 	eps;
+
+DIMENSION ::=
+        integer
+        | hexinteger;	
 
 TEMPLATE_ARG ::=
 	identifier

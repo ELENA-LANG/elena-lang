@@ -113,6 +113,13 @@ void creatingClass(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::NewIR, node.arg.value, typeRef | mskVMTRef);
 }
 
+void creatingStruct(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   ref_t typeRef = node.findChild(BuildKey::Type).arg.reference;
+
+   tape.write(ByteCode::NewNR, node.arg.value, typeRef | mskVMTRef);
+}
+
 void openStatement(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    DebugLineInfo symbolInfo = { DebugSymbol::Statement };
@@ -136,7 +143,7 @@ void addingBreakpoint(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::Breakpoint);
 }
 
-ByteCodeWriter::Saver commands[16] =
+ByteCodeWriter::Saver commands[] =
 {
    nullptr,
    openFrame,
@@ -153,7 +160,8 @@ ByteCodeWriter::Saver commands[16] =
    openStatement,
    closeStatement,
    addingBreakpoint,
-   addingBreakpoint
+   addingBreakpoint,
+   creatingStruct,
 };
 
 // --- ByteCodeWriter ---

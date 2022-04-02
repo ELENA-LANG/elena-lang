@@ -28,6 +28,7 @@ namespace elena_lang
       Symbol,
       Class,
       Object,
+      Singleton,
       InternalProcedure,
       SelfParam,
       Param,
@@ -260,7 +261,7 @@ namespace elena_lang
          void raiseError(int message, SyntaxNode terminal) override;
          void raiseWarning(int level, int message, SyntaxNode terminal) override;
 
-         ObjectInfo defineObjectInfo(ref_t reference, ExpressionAttribute mode);
+         ObjectInfo defineObjectInfo(ref_t reference, ExpressionAttribute mode, bool checkMode);
          ObjectInfo definePredefined(ref_t reference, ExpressionAttribute mode);
 
          ref_t resolveImplicitIdentifier(ustr_t name, bool referenceOne, bool innnerMost);
@@ -485,6 +486,9 @@ namespace elena_lang
 
       ref_t resolveObjectReference(ObjectInfo info);
       ref_t resolvePrimitiveReference(ObjectInfo info);
+      ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type);
+
+      ref_t resolveTypeAttribute(Scope& scope, SyntaxNode node);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix); 
 
@@ -513,7 +517,7 @@ namespace elena_lang
       void generateClassFlags(ClassScope& scope, ref_t declaredFlags);
       void generateMethodDeclaration(ClassScope& scope, SyntaxNode node);
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey);
-      void generateClassField(ClassScope& scope, SyntaxNode node);
+      void generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs);
       void generateClassFields(ClassScope& scope, SyntaxNode node);
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
@@ -593,6 +597,7 @@ namespace elena_lang
 
       void validateScope(ModuleScopeBase* moduleScope);
       void validateSuperClass(ClassScope& scope, SyntaxNode node);
+      void validateType(Scope& scope, ref_t typeRef, SyntaxNode node);
 
       void injectDefaultConstructor(ModuleScopeBase* scope, SyntaxNode node);
 

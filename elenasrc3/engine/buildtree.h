@@ -41,6 +41,7 @@ namespace elena_lang
       EndStatement      = 0x000D,
       Breakpoint        = 0x000E,
       EOPBreakpoint     = 0x000F,
+      CreatingStruct    = 0x0010,
 
       Import            = 0x0028,
       StrDictionaryOp   = 0x0029,

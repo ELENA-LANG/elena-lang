@@ -85,6 +85,7 @@ namespace elena_lang
    constexpr ref_t elClosed            = 0x00000010;
    constexpr ref_t elSealed            = 0x00000038;
    constexpr ref_t elRole              = 0x00000100;
+   constexpr ref_t elStructureRole     = 0x00000838;
    constexpr ref_t elNonStructureRole  = 0x00002000;
 
    // --- LoadResult enum ---
@@ -251,6 +252,7 @@ namespace elena_lang
    constexpr ref_t ARG32LO_1              = 0x0000001Du;
    constexpr ref_t ARG64_2                = 0x0000001Eu;
    constexpr ref_t NARG16_1               = 0x0000001Fu;
+   constexpr ref_t NARGHI_1               = 0x00000020u;
 
    // predefined debug module sections
    constexpr ref_t DEBUG_LINEINFO_ID      = -1;

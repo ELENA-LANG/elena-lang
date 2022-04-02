@@ -63,7 +63,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   compileOpen, loadIndexROp, compileOpen, loadIndexIndexOp, loadNewOp, loadNop, loadNop, loadNop,
+   compileOpen, loadIndexROp, compileOpen, loadIndexIndexOp, loadNewOp, loadNewNOp, loadNop, loadNop,
    loadNop, loadFrameIndexROp, loadNop, loadNop, loadNop, loadNop, loadCallOp, loadNop,
 };
 
@@ -304,20 +304,20 @@ void elena_lang :: loadIndexOp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(scope->command.arg1 << scope->indexPower);
+            writer->writeDWord(scope->command.arg1 << scope->constants->indexPower);
             break;
          case NARG_1:
             writer->writeDWord(scope->command.arg1);
             break;
          case ARG16_1:
-            writer->writeWord((unsigned short)scope->command.arg1 << scope->indexPower);
+            writer->writeWord((unsigned short)scope->command.arg1 << scope->constants->indexPower);
             break;
          case INV_ARG16_1:
-            writer->writeWord((unsigned short)-(scope->command.arg1 << scope->indexPower));
+            writer->writeWord((unsigned short)-(scope->command.arg1 << scope->constants->indexPower));
             break;
          case ARG12_1:
             scope->compiler->writeImm12(writer,
-               scope->command.arg1 << scope->indexPower,
+               scope->command.arg1 << scope->constants->indexPower,
                0);
             break;
          default:
@@ -347,7 +347,7 @@ void elena_lang::loadVMTIndexOp(JITCompilerScope* scope)
    // resolve section references
    pos_t count = *(pos_t*)((char*)code + length);
    RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
-   arg_t addrOffs = ((scope->command.arg1 << 1) + 1) << scope->indexPower;
+   arg_t addrOffs = ((scope->command.arg1 << 1) + 1) << scope->constants->indexPower;
    while (count > 0) {
       // locate relocation position
       writer->seek(position + entries->offset);
@@ -400,27 +400,29 @@ void elena_lang::loadFrameIndexOp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(getFPOffset(scope->command.arg1 << scope->indexPower, scope->frameOffset));
+            writer->writeDWord(getFPOffset(
+               scope->command.arg1 << scope->constants->indexPower, scope->frameOffset));
             break;
          case ARG16_1:
-            writer->writeWord((unsigned short)getFPOffset(scope->command.arg1 << scope->indexPower, scope->frameOffset));
+            writer->writeWord((unsigned short)getFPOffset(
+               scope->command.arg1 << scope->constants->indexPower, scope->frameOffset));
             break;
          case NARG_1:
             writer->writeDWord(scope->command.arg1);
             break;
          case ARG12_1:
             scope->compiler->writeImm12(writer,
-               getFPOffset(arg1 << scope->indexPower, scope->frameOffset),
+               getFPOffset(arg1 << scope->constants->indexPower, scope->frameOffset),
                0);
             break;
          case INV_ARG12_1:
             scope->compiler->writeImm12(writer,
-               -getFPOffset(arg1 << scope->indexPower, scope->frameOffset),
+               -getFPOffset(arg1 << scope->constants->indexPower, scope->frameOffset),
                0);
             break;
          case ARG9_1:
             scope->compiler->writeImm9(writer, 
-               getFPOffset(scope->command.arg1 << scope->indexPower, scope->frameOffset),
+               getFPOffset(scope->command.arg1 << scope->constants->indexPower, scope->frameOffset),
                0);
             break;
          default:
@@ -455,16 +457,18 @@ void elena_lang::loadFrameDispOp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(getFPOffset(scope->command.arg1, scope->dataOffset));
+            writer->writeDWord(getFPOffset(scope->command.arg1, scope->constants->dataOffset));
             break;
          case ARG16_1:
-            writer->writeWord(getFPOffset(scope->command.arg1, scope->dataOffset));
+            writer->writeWord(getFPOffset(scope->command.arg1, scope->constants->dataOffset));
             break;
          case ARG12_1:
-            scope->compiler->writeImm12(writer, getFPOffset(scope->command.arg1, scope->dataOffset), 0);
+            scope->compiler->writeImm12(writer, getFPOffset(scope->command.arg1, 
+               scope->constants->dataOffset), 0);
             break;
          case ARG9_1:
-            scope->compiler->writeImm9(writer, getFPOffset(scope->command.arg1, scope->dataOffset), 0);
+            scope->compiler->writeImm9(writer, getFPOffset(scope->command.arg1, 
+               scope->constants->dataOffset), 0);
             break;
          default:
             // to make compiler happy
@@ -732,7 +736,7 @@ void elena_lang::loadIndexROp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(scope->command.arg1 << scope->indexPower);
+            writer->writeDWord(scope->command.arg1 << scope->constants->indexPower);
             break;
          case PTR32_2:
             if (scope->command.arg2) {
@@ -807,7 +811,8 @@ void elena_lang::loadFrameIndexROp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(getFPOffset(scope->command.arg1 << scope->indexPower, scope->frameOffset));
+            writer->writeDWord(getFPOffset(
+               scope->command.arg1 << scope->constants->indexPower, scope->frameOffset));
             break;
          case PTR32_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
@@ -893,10 +898,10 @@ void elena_lang::loadIndexNOp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(scope->command.arg1 << scope->indexPower);
+            writer->writeDWord(scope->command.arg1 << scope->constants->indexPower);
             break;
          case INV_ARG16_1:
-            writer->writeWord(-(scope->command.arg1 << scope->indexPower));
+            writer->writeWord(-(scope->command.arg1 << scope->constants->indexPower));
             break;
          case NARG_1:
             writer->writeDWord(scope->command.arg1);
@@ -908,10 +913,10 @@ void elena_lang::loadIndexNOp(JITCompilerScope* scope)
             scope->compiler->writeImm12(writer, scope->command.arg2, 0);
             break;
          case ARG12_1:
-            scope->compiler->writeImm12(writer, scope->command.arg1 << scope->indexPower, 0);
+            scope->compiler->writeImm12(writer, scope->command.arg1 << scope->constants->indexPower, 0);
             break;
          case ARG16_1:
-            scope->compiler->writeImm16(writer, scope->command.arg1 << scope->indexPower, 0);
+            scope->compiler->writeImm16(writer, scope->command.arg1 << scope->constants->indexPower, 0);
             break;
          case NARG16_2:
             scope->compiler->writeImm16(writer, scope->command.arg2, 0);
@@ -950,10 +955,10 @@ void elena_lang::loadIndexIndexOp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(scope->command.arg1 << scope->indexPower);
+            writer->writeDWord(scope->command.arg1 << scope->constants->indexPower);
             break;
          case ARG32_2:
-            writer->writeDWord(scope->command.arg2 << scope->indexPower);
+            writer->writeDWord(scope->command.arg2 << scope->constants->indexPower);
             break;
          default:
             writeCoreReference(scope, entries->reference, entries->offset, code);
@@ -996,6 +1001,77 @@ void elena_lang :: loadNewOp(JITCompilerScope* scope)
             break;
          case NARG16_1:
             scope->compiler->writeImm16(writer, (short)scope->command.arg1, 0);
+            break;
+         case PTR32_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
+            break;
+         case PTR64_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef64);
+            break;
+         case DISP32HI_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskDisp32Hi);
+            break;
+         case DISP32LO_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskDisp32Lo);
+            break;
+         case PTR32HI_2:
+         {
+            short disp = *(short*)((char*)code + entries->offset);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Hi);
+            break;
+         }
+         case PTR32LO_2:
+         {
+            short disp = *(short*)((char*)code + entries->offset);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Lo);
+            break;
+         }
+         default:
+            writeCoreReference(scope, entries->reference, entries->offset, code);
+            break;
+      }
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
+void elena_lang::loadNewNOp(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   void* code = retrieveCode(scope);
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   int narg = scope->command.arg1 | scope->constants->structMask;
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case ARG32_1:
+            writer->writeDWord(scope->compiler->calcTotalStructSize(scope->command.arg1));
+            break;
+         case ARG16_1:
+            scope->compiler->writeImm16(writer, (short)scope->compiler->calcTotalStructSize(scope->command.arg1), 0);
+            break;
+         case NARG_1:
+            writer->writeDWord(narg);
+            break;
+         case NARG16_1:
+            scope->compiler->writeImm16(writer, (short)narg, 0);
+            break;
+         case NARGHI_1:
+            scope->compiler->writeImm16(writer, (short)(narg >> 16), 0);
             break;
          case PTR32_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
@@ -1077,7 +1153,7 @@ inline void loadInline(ref_t index, void* inlines[][0x100], LibraryLoaderBase* l
 void elena_lang::compileClose(JITCompilerScope* scope)
 {
    if (scope->command.arg1 > 0)
-      scope->command.arg1 += scope->dataHeader;
+      scope->command.arg1 += scope->constants->dataHeader;
 
    loadNOp(scope);
 }
@@ -1098,15 +1174,14 @@ void elena_lang::compileBreakpoint(JITCompilerScope* scope)
 // --- JITCompiler ---
 
 JITCompilerScope :: JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, MemoryWriter* writer,
-   int indexPower, int dataOffset, int dataHeader)
+   JITConstants* constants)
 {
    this->helper = helper;
    this->compiler = compiler;
    this->codeWriter = writer;
-   this->indexPower = indexPower;
+   this->constants = constants;
+
    this->frameOffset = 0;
-   this->dataOffset = dataOffset;
-   this->dataHeader = dataHeader;
    this->withDebugInfo = compiler->isWithDebugInfo();
 }
 
@@ -1129,22 +1204,23 @@ void JITCompiler :: loadCoreRoutines(
    MemoryWriter dataWriter(data);
 
    // preload variables
-   JITCompilerScope dataScope(helper, this, &dataWriter, _indexPower, _dataOffset, _dataHeader);
+   JITCompilerScope dataScope(helper, this, &dataWriter, &_constants);
    loadPreloaded(
       dataScope, loader, coreVariableNumber, coreVariables, 
-      _preloaded, positions, _inlineMask, declareMode);
+      _preloaded, positions, _constants.inlineMask, declareMode);
 
    // preload core constants
-   JITCompilerScope rdataScope(helper, this, &rdataWriter, _indexPower, _dataOffset, _dataHeader);
+   JITCompilerScope rdataScope(helper, this, &rdataWriter, &_constants);
    loadPreloaded(rdataScope, loader, coreConstantNumber, coreConstants, 
-      _preloaded, positions, _inlineMask, declareMode);
+      _preloaded, positions, _constants.inlineMask, declareMode);
    // NOTE : SYSTEM_ENV table is tailed with GCMGSize,GCYGSize,GCPERMSize,MaxThread
    rdataWriter.writeDWord(settings.mgSize);
    rdataWriter.writeDWord(settings.ygSize);
 
    // preload core functions
-   JITCompilerScope scope(helper, this, &codeWriter, _indexPower, _dataOffset, _dataHeader);
-   loadPreloaded(scope, loader, coreFunctionNumber, coreFunctions, _preloaded, positions, _inlineMask, declareMode);
+   JITCompilerScope scope(helper, this, &codeWriter, &_constants);
+   loadPreloaded(scope, loader, coreFunctionNumber, coreFunctions, _preloaded, positions, 
+      _constants.inlineMask, declareMode);
 }
 
 void JITCompiler :: prepare(
@@ -1176,7 +1252,7 @@ void JITCompiler :: writeArgAddress(JITCompilerScope* scope, arg_t arg, pos_t of
 void JITCompiler :: compileTape(ReferenceHelperBase* helper, MemoryReader& bcReader, pos_t endPos, MemoryWriter& codeWriter)
 {
    CodeGenerator*   generators = codeGenerators();
-   JITCompilerScope scope(helper, this, &codeWriter, _indexPower, _dataOffset, _dataHeader);
+   JITCompilerScope scope(helper, this, &codeWriter, &_constants);
 
    while (bcReader.position() < endPos) {
       ByteCodeUtil::read(bcReader, scope.command);
@@ -1216,9 +1292,10 @@ void JITCompiler32 :: prepare(
    ReferenceHelperBase* helper,
    JITSettings settings)
 {
-   _indexPower = 2;
-   _dataOffset = 4;
-   _dataHeader = 8;
+   _constants.indexPower = 2;
+   _constants.dataOffset = 4;
+   _constants.dataHeader = 8;
+   _constants.structMask = elStructMask32;
 
    JITCompiler::prepare(loader, imageProvider, helper, settings);
 }
@@ -1239,7 +1316,7 @@ void JITCompiler32 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader&
 
 void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength)
 {
-   alignCode(vmtWriter, _alignmentVA, false);
+   alignCode(vmtWriter, _constants.alignmentVA, false);
 
    // create VMT header:
    VMTHeader32 header = { 0, flags, 0, vmtLength };
@@ -1385,6 +1462,11 @@ int JITCompiler32 :: calcTotalSize(int numberOfFields)
    return align((numberOfFields << 2) + elObjectOffset32, gcPageSize32);
 }
 
+int JITCompiler32 :: calcTotalStructSize(int size)
+{
+   return align(size + elObjectOffset32, gcPageSize32);
+}
+
 void JITCompiler32 :: addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode)
 {
    if (!virtualMode) {
@@ -1418,9 +1500,10 @@ void JITCompiler64 :: prepare(
    ReferenceHelperBase* helper,
    JITSettings settings)
 {
-   _indexPower = 3;
-   _dataOffset = 8;
-   _dataHeader = 16;
+   _constants.indexPower = 3;
+   _constants.dataOffset = 8;
+   _constants.dataHeader = 16;
+   _constants.structMask = elStructMask64;
 
    JITCompiler::prepare(loader, imageProvider, helper, settings);
 }
@@ -1441,7 +1524,7 @@ void JITCompiler64 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader&
 
 void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength)
 {
-   alignCode(vmtWriter, _alignmentVA, false);
+   alignCode(vmtWriter, _constants.alignmentVA, false);
 
    // create VMT header:
    VMTHeader64 header = { 0 };
@@ -1605,4 +1688,9 @@ void JITCompiler64::addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool vi
 int JITCompiler64 :: calcTotalSize(int numberOfFields)
 {
    return align((numberOfFields << 3) + elObjectOffset64, gcPageSize64);
+}
+
+int JITCompiler64 :: calcTotalStructSize(int size)
+{
+   return align(size + elObjectOffset64, gcPageSize64);
 }

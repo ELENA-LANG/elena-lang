@@ -39,7 +39,7 @@ namespace elena_lang
       X86_64JITCompiler()
          : JITCompiler64()
       {
-         _dataOffset = 0x0C;
+         _constants.dataOffset = 0x0C;
       }
    };
 

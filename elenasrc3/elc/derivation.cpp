@@ -357,6 +357,7 @@ void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
          _writer.CurrentNode().setKey(SyntaxKey::Method);
          flushMethod(scope, node);
          break;
+      case SyntaxKey::Dimension:
       default:
          _writer.CurrentNode().setKey(SyntaxKey::Field);
          break;

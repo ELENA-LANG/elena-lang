@@ -521,6 +521,19 @@ inline %0F4h
 
 end
 
+// ; newnr n, r
+inline %0F5h
+
+  mov  ecx, __arg32_1
+  call %GC_ALLOC
+
+  mov  ecx, __n_1
+  mov  eax, __ptr32_2
+  mov  [ebx - elVMTOffset], eax
+  mov  [ebx - elSizeOffset], ecx
+
+end
+
 // ; xstorefir
 inline %0F9h
 

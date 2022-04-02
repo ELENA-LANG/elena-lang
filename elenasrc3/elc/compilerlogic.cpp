@@ -136,6 +136,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
          break;
       case V_CLASS:
          break;
+   case V_STRUCT:
+         flags |= elStructureRole;
+         break;
       case V_SINGLETON:
          flags = elRole | elSealed | elStateless;
          break;
@@ -229,9 +232,11 @@ bool CompilerLogic :: validateMessage(mssg_t message)
    return true;
 }
 
-void CompilerLogic :: validateClassDeclaration()
+void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& emptyStructure)
 {
-   
+   // a structure class should contain fields
+   if (test(info.header.flags, elStructureRole) && info.size == 0)
+      emptyStructure = true;
 }
 
 bool CompilerLogic :: isRole(ClassInfo& info)

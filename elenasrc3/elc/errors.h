@@ -18,6 +18,7 @@ namespace elena_lang
 
    constexpr auto errMsgDuplicatedSymbol     = "%s(%d:%d): error 102: Class '%s' already exists\n";
    constexpr auto errMsgDuplicatedMethod     = "%s(%d:%d): error 103: Method '%s' already exists in the class\n";
+   constexpr auto errMsgUnknownClass         = "%s(%d:%d): error 104: Class '%s' doesn't exist\n";
    constexpr auto errMsgDuplicatedLocal      = "%s(%d:%d): error 105: Variable '%s' already exists\n";
    constexpr auto errMsgUnknownObject        = "%s(%d:%d): error 106: Unknown object '%s'\n";
    constexpr auto errMsgInvalidOperation     = "%s(%d:%d): error 107: Invalid operation with '%s'\n";
@@ -32,8 +33,8 @@ namespace elena_lang
    constexpr auto errMsgInvalidHint          = "%s(%d:%d): error 147: Invalid attribute '%s'\n";
    constexpr auto errMsgIllegalConstructor   = "%s(%d:%d): error 149: Constructor cannot be declared\n";
    constexpr auto errMsgIllegalStaticMethod  = "%s(%d:%d): error 151: Static method cannot be declared\n";
-
    constexpr auto errMsgIllegalMethod        = "%s(%d:%d): error 152: Illegal method declaration\n";
+   constexpr auto errMsgEmptyStructure       = "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
    constexpr auto errMsgNoBodyMethod         = "%s(%d:%d): error 180: Only abstract method can have no body\n";
    constexpr auto errMsgUnknownTemplate      = "%s(%d:%d): error 181: Unknown template %s\n";
 

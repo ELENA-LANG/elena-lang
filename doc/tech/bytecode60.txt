@@ -109,3 +109,7 @@ ELENA byte codes (or ecodes)
    new i, {prefix}:r        - create the object with the specified
                               number of fields;
                               out: acc contains the class instance, index - undefined
+
+   newn n {prefix}:r        - create the object with the specified
+                              size;
+                              out: acc contains the class instance, index - undefined

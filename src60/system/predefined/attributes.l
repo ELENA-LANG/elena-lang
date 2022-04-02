@@ -6,6 +6,7 @@
 
 /// scope:
 #let attributesSymbols["class"]       := 80001001h;
+#let attributesSymbols["struct"]      := 80001002h;
 #let attributesSymbols["symbol"]      := 80001003h;
 #let attributesSymbols["constructor"] := 80001004h;
 #let attributesSymbols["singleton"]   := 80001006h;

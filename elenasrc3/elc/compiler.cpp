@@ -125,7 +125,7 @@ void Compiler::NamespaceScope::raiseWarning(int level, int message, SyntaxNode t
    errorProcessor->raiseTerminalWarning(level, message, *sourcePath, terminal);
 }
 
-ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, ExpressionAttribute mode)
+ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, ExpressionAttribute mode, bool checkMode)
 {
    ObjectInfo info;
 
@@ -153,6 +153,21 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, Express
          info.reference = reference;
       }
       else {
+         if (checkMode) {
+            ClassInfo classInfo;
+            if (moduleScope->loadClassInfo(classInfo, reference, true) != 0) {
+               // if it is a stateless symbol
+               if (test(classInfo.header.flags, elStateless)) {
+                  return { ObjectKind::Singleton, reference, reference };
+               }
+               // if it is a normal class
+               // then the symbol is reference to the class class
+               else if (test(classInfo.header.flags, elStandartVMT) && classInfo.header.classRef != 0) {
+                  return {ObjectKind::Class, classInfo.header.classRef, reference };
+               }
+
+            }
+         }
          // otherwise it is a normal one
          info.kind = ObjectKind::Symbol;
          info.reference = reference;
@@ -207,7 +222,7 @@ ObjectInfo Compiler::NamespaceScope :: mapIdentifier(ustr_t identifier, bool ref
       reference = resolveImplicitIdentifier(identifier, referenceOne, !EAttrs::test(mode, EAttr::NestedNs));
 
    if (reference)
-      return defineObjectInfo(reference, mode);
+      return defineObjectInfo(reference, mode, true);
 
    if (parent == nullptr) {
       // outer most ns
@@ -232,16 +247,16 @@ ObjectInfo Compiler::NamespaceScope :: mapGlobal(ustr_t identifier, EAttr mode)
 {
    if (isForwardReference(identifier)) {
       // if it is a forward reference
-      return defineObjectInfo(moduleScope->mapFullReference(identifier, false), EAttr::None);
+      return defineObjectInfo(moduleScope->mapFullReference(identifier, false), EAttr::None, false);
    }
 
    // if it is an existing full reference
    ref_t reference = moduleScope->mapFullReference(identifier, true);
    if (reference) {
-      return defineObjectInfo(reference, mode);
+      return defineObjectInfo(reference, mode, true);
    }
    // if it is a forward reference
-   else return defineObjectInfo(moduleScope->mapFullReference(identifier, false), EAttr::Weak);
+   else return defineObjectInfo(moduleScope->mapFullReference(identifier, false), EAttr::Weak, false);
 }
 
 ObjectInfo Compiler::NamespaceScope :: mapWeakReference(ustr_t identifier, bool directResolved)
@@ -252,7 +267,7 @@ ObjectInfo Compiler::NamespaceScope :: mapWeakReference(ustr_t identifier, bool 
    }
    else reference = moduleScope->mapFullReference(identifier);
 
-   return defineObjectInfo(reference, EAttr::None);
+   return defineObjectInfo(reference, EAttr::None, false);
 }
 
 // --- Compiler::MetaScope ---
@@ -719,7 +734,7 @@ void Compiler :: generateClassFlags(ClassScope& scope, ref_t declaredFlags)
    scope.info.header.flags |= declaredFlags;
 }
 
-void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node)
+void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)
 {
    ustr_t name = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
 
@@ -737,7 +752,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node)
    scope.info.header.flags |= elNonStructureRole;
 
    offset = scope.info.fields.count();
-   scope.info.fields.add(name, { offset });
+   scope.info.fields.add(name, { offset, attrs.typeRef });
 }
 
 void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node)
@@ -747,11 +762,11 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node)
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current.key == SyntaxKey::Field) {
-         FieldAttributes attrs;
+         FieldAttributes attrs = {};
          declareFieldAttributes(scope, current, attrs);
 
          if (!isClassClassMode) {
-            generateClassField(scope, current/*, attrs*//*, singleField*/);
+            generateClassField(scope, current, attrs/*, singleField*/);
          }
       }
 
@@ -782,7 +797,10 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
       generateMethodDeclarations(scope, node, SyntaxKey::Method);
    }
 
-   _logic->validateClassDeclaration();
+   bool emptyStructure = false;
+   _logic->validateClassDeclaration(scope.info, emptyStructure);
+   if (emptyStructure)
+      scope.raiseError(errEmptyStructure, node.findChild(SyntaxKey::Name));
 
    _logic->tweakClassFlags(scope.info, scope.isClassClass());
 }
@@ -1245,6 +1263,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
          writer.appendNode(BuildKey::SymbolCall, info.reference);
          break;
       case ObjectKind::Class:
+      case ObjectKind::Singleton:
          writer.appendNode(BuildKey::ClassReference, info.reference);
          break;
       case ObjectKind::Param:
@@ -1456,6 +1475,47 @@ void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, Expr
    }
 }
 
+void Compiler :: validateType(Scope& scope, ref_t typeRef, SyntaxNode node)
+{
+   if (!typeRef)
+      scope.raiseError(errUnknownClass, node);
+}
+
+ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type)
+{
+   ObjectInfo identInfo;
+
+   NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::Namespace);
+
+   identInfo = ns->mapIdentifier(identifier, type == SyntaxKey::reference, EAttr::None);
+
+   switch (identInfo.kind) {
+      case ObjectKind::Class:
+         return identInfo.type;
+      default:
+         return 0;
+   }
+}
+
+ref_t Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node)
+{
+   ref_t typeRef = 0;
+   if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
+      typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key/*, declarationMode, allowRole*/);
+   }
+   else {
+      SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
+
+      typeRef = resolveTypeIdentifier(scope, 
+         terminal.identifier(), terminal.key/*, declarationMode, allowRole*/);
+   }
+
+   validateType(scope, typeRef, node);
+
+   return typeRef;
+}
+
+
 void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)
 {
    SyntaxNode current = node.firstChild();
@@ -1466,10 +1526,10 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                scope.raiseError(errInvalidHint, current);
             break;
          case SyntaxKey::Type:
-            /*if (!EAttrs::test(mode.attrs, EAttr::NoTypeAllowed)) {
-
-            }
-            else */scope.raiseError(errInvalidHint, current);
+            if (!attrs.typeRef) {
+               attrs.typeRef = resolveTypeAttribute(scope, current);
+            } 
+            else scope.raiseError(errInvalidHint, current);
             break;
          default:
             break;
@@ -1900,7 +1960,7 @@ void Compiler :: compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope)
 
    writer.newNode(BuildKey::Tape);
    writer.appendNode(BuildKey::OpenFrame);
-   ObjectInfo retVal(ObjectKind::Class, 0, scope.reference, 0);
+   ObjectInfo retVal(ObjectKind::Class, scope.info.header.classRef, scope.reference, 0);
    writeObjectInfo(writer, retVal);
    writer.appendNode(BuildKey::CloseFrame);
    writer.appendNode(BuildKey::Exit);
@@ -2031,7 +2091,10 @@ void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodSc
    //if (test(classScope->info.header.flags, elDynamicRole))
    //   throw InternalError("Invalid constructor");
 
-   writer.newNode(BuildKey::CreatingClass, classScope->info.size);
+   if (test(classScope->info.header.flags, elStructureRole)) {
+      writer.newNode(BuildKey::CreatingStruct, classScope->info.size);
+   }
+   else writer.newNode(BuildKey::CreatingClass, classScope->info.fields.count());
    writer.appendNode(BuildKey::Type, classScope->reference);
    writer.closeNode();
 

@@ -19,7 +19,7 @@ void X86JITCompiler :: prepare(
    ReferenceHelperBase* helper,
    JITSettings settings)
 {
-   _inlineMask = mskCodeRef32;
+   _constants.inlineMask = mskCodeRef32;
 
    JITCompiler32::prepare(loader, imageProvider, helper, settings);
 }

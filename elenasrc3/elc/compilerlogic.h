@@ -39,7 +39,7 @@ namespace elena_lang
       void tweakClassFlags(ClassInfo& info, bool classClassMode);
 
       bool validateMessage(mssg_t message);
-      void validateClassDeclaration();
+      void validateClassDeclaration(ClassInfo& info, bool& emptyStructure);
 
       void writeDictionaryEntry(MemoryBase* section, ustr_t key, int value);
       bool readDictionary(MemoryBase* section, ReferenceMap& map);

@@ -133,7 +133,7 @@ void X86_64JITCompiler :: prepare(
    ReferenceHelperBase* helper,
    JITSettings _settings)
 {
-   _inlineMask = mskCodeRelRef32;
+   _constants.inlineMask = mskCodeRelRef32;
 
    // override code generators
    auto commands = codeGenerators();

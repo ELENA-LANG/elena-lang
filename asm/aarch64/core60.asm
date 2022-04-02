@@ -666,6 +666,23 @@ inline %0F4h
 
 end
 
+// ; newnr i, r
+inline %0F5h
+
+  mov     x11, __arg16_1
+  movz    x17,  code_ptr32lo : %GC_ALLOC
+  movk    x17,  code_ptr32hi : %GC_ALLOC, lsl #16
+  blr     x17
+  movz    x18, __n16_1
+  movk    x18, __n16hi_1, lsl #16
+  movz    x19,  __ptr32lo_2
+  movk    x19,  __ptr32hi_2, lsl #16
+  sub     x20, x10, elVMTOffset
+  str     x19, [x20]
+  str     w18, [x20, #12]!
+
+end
+
 // ; xstorefir
 inline %0F9h
 

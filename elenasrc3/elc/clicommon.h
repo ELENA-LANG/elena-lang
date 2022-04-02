@@ -395,7 +395,7 @@ struct ExpressionAttributes
 // --- FieldAttributes ---
 struct FieldAttributes
 {
-   
+   ref_t typeRef;
 };
 
 // --- CompilerBase ---
