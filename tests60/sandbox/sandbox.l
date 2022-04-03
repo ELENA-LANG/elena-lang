@@ -1,15 +1,7 @@
-// Invoking a class symbol
-
-//struct R
-//{
-//   /*embeddable */__int theValue[4];
-//}
-
 C;
 
-D
+D : C
 {
-   C c;
 }
 
 singleton B
@@ -22,8 +14,6 @@ singleton B
 
 class A
 {
-   b;
-
    testA() 
    {
       var a := self;

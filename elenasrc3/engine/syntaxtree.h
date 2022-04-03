@@ -62,7 +62,7 @@ namespace elena_lang
       Message            = 0x001050,
       Postfix            = 0x001060,
       TemplateArg        = 0x001070,
-      Dimension          = 0x001071,
+      Dimension          = 0x001471,
 
       Name               = 0x000101,
       Namespace          = 0x000103,

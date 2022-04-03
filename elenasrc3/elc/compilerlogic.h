@@ -20,6 +20,11 @@ namespace elena_lang
    public:
       BuildKey resolveOp(int operatorId, ref_t* arguments, size_t length);
 
+      bool defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
+
+      SizeInfo defineStructSize(ClassInfo& info);
+      SizeInfo defineStructSize(ModuleScopeBase& scope, ref_t reference);
+
       bool validateTemplateAttribute(ref_t attribute, Visibility& visibility, TemplateType& type);
       bool validateSymbolAttribute(ref_t attribute, Visibility& visibility);
       bool validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility);
@@ -30,6 +35,7 @@ namespace elena_lang
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
 
       bool isRole(ClassInfo& info);
+      bool isEmbeddableStruct(ClassInfo& info);
 
       bool isValidObjOp(int operatorId);
       bool isValidStrDictionaryOp(int operatorId);
@@ -37,6 +43,7 @@ namespace elena_lang
       bool isValidOp(int operatorId, BuildKey op);
 
       void tweakClassFlags(ClassInfo& info, bool classClassMode);
+      void tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef);
 
       bool validateMessage(mssg_t message);
       void validateClassDeclaration(ClassInfo& info, bool& emptyStructure);

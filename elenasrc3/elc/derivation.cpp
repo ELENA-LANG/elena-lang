@@ -273,12 +273,32 @@ void SyntaxTreeBuilder :: flushTemplageExpression(Scope& scope, SyntaxNode node,
    _writer.closeNode();
 }
 
-void SyntaxTreeBuilder :: flushImports(Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushClassMemberPostfixes(Scope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current.key == SyntaxKey::Postfix) {
          flushTemplageExpression(scope, current, SyntaxKey::InlineTemplate, false);
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void SyntaxTreeBuilder :: flushClassPostfixes(Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current.key == SyntaxKey::Postfix) {
+         if (current.existChild(SyntaxKey::TemplateArg)) {
+            //flushTemplageExpression(scope, current, SyntaxKey::InlineTemplate, false);
+         }
+         else {
+            _writer.newNode(SyntaxKey::Parent);
+            flushCollection(scope, current);
+            _writer.closeNode();
+         }
+         
       }
 
       current = current.nextNode();
@@ -295,7 +315,7 @@ void SyntaxTreeBuilder :: flushMethodMember(Scope& scope, SyntaxNode node)
    _writer.newNode(node.key);
 
    flushDescriptor(scope, node);
-   flushImports(scope, node);
+   //flushImports(scope, node);
 
    _writer.closeNode();
 }
@@ -348,7 +368,7 @@ void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
    _writer.newNode(node.key);
 
    flushDescriptor(scope, node);
-   flushImports(scope, node);
+   flushClassMemberPostfixes(scope, node);
 
    SyntaxNode member = node.firstChild(SyntaxKey::MemberMask);
    switch (member.key) {
@@ -358,6 +378,7 @@ void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
          flushMethod(scope, node);
          break;
       case SyntaxKey::Dimension:
+         flushNode(scope, member);
       default:
          _writer.CurrentNode().setKey(SyntaxKey::Field);
          break;
@@ -368,6 +389,8 @@ void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
 
 void SyntaxTreeBuilder :: flushClass(Scope& scope, SyntaxNode node)
 {
+   flushClassPostfixes(scope, node);
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current.key == SyntaxKey::Declaration) {

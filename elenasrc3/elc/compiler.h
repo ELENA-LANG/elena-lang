@@ -488,6 +488,7 @@ namespace elena_lang
       ref_t resolvePrimitiveReference(ObjectInfo info);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type);
 
+      int resolveSize(Scope& scope, SyntaxNode node);
       ref_t resolveTypeAttribute(Scope& scope, SyntaxNode node);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix); 
@@ -517,8 +518,8 @@ namespace elena_lang
       void generateClassFlags(ClassScope& scope, ref_t declaredFlags);
       void generateMethodDeclaration(ClassScope& scope, SyntaxNode node);
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey);
-      void generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs);
-      void generateClassFields(ClassScope& scope, SyntaxNode node);
+      void generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool singleField);
+      void generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField);
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
       void declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRef);

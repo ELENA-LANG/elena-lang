@@ -26,7 +26,7 @@ namespace elena_lang
 
    constexpr auto errDuplicatedSymbol     = 102;
    constexpr auto errDuplicatedMethod     = 103;
-   constexpr auto errUnknownClass            = 104;
+   constexpr auto errUnknownClass         = 104;
    constexpr auto errDuplicatedLocal      = 105;
    constexpr auto errUnknownObject        = 106;
    constexpr auto errInvalidOperation     = 107;
@@ -95,6 +95,10 @@ namespace elena_lang
    constexpr auto V_PUBLIC                = 0x80004001u;
    constexpr auto V_PRIVATE               = 0x80004002u;
 
+   /// scope_prefix:
+   constexpr auto V_CONST                 = 0x80002001u;
+   constexpr auto V_EMBEDDABLE            = 0x80002002u;
+
    /// scope:
    constexpr auto V_CLASS                 = 0x80001001u;
    constexpr auto V_STRUCT                = 0x80001002u;
@@ -112,6 +116,7 @@ namespace elena_lang
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;
+   constexpr auto V_INTBINARY             = 0x80000803u;
 
    constexpr auto V_STRING                = 0x80000001u;
    constexpr auto V_INT32                 = 0x80000002u;

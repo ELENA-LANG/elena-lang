@@ -286,18 +286,26 @@ struct BuiltinReferences
    }
 };
 
+// --- SizeInfo ---
+struct SizeInfo
+{
+   int size;
+};
+
 // --- ModuleScopeBase ---
 class ModuleScopeBase : public SectionScopeBase
 {
 public:
-   ReferenceMap       predefined;
-   ReferenceMap       attributes;
-   BuiltinReferences  buildins;
+   ReferenceMap         predefined;
+   ReferenceMap         attributes;
+   BuiltinReferences    buildins;
 
-   IdentifierString   selfVar;
+   IdentifierString     selfVar;
 
-   pos_t              stackAlingment, rawStackAlingment;
-   int                minimalArgList;
+   pos_t                stackAlingment, rawStackAlingment;
+   int                  minimalArgList;
+
+   Map<ref_t, SizeInfo> cachedSizes;
 
    virtual bool isStandardOne() = 0;
 
@@ -324,7 +332,7 @@ public:
       pos_t stackAlingment, 
       pos_t rawStackAlingment,
       int minimalArgList)
-      : predefined(0), attributes(0)
+      : predefined(0), attributes(0), cachedSizes({})
    {
       this->module = module;
       this->debugModule = debugModule;
@@ -396,6 +404,8 @@ struct ExpressionAttributes
 struct FieldAttributes
 {
    ref_t typeRef;
+   int   size;
+   bool  isEmbeddable;
 };
 
 // --- CompilerBase ---

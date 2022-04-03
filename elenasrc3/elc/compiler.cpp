@@ -734,28 +734,85 @@ void Compiler :: generateClassFlags(ClassScope& scope, ref_t declaredFlags)
    scope.info.header.flags |= declaredFlags;
 }
 
-void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)
+void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node, 
+   FieldAttributes& attrs, bool singleField)
 {
-   ustr_t name = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
-
+   ref_t classRef = attrs.typeRef;
+   int   sizeHint = attrs.size;
+   bool  embeddable = attrs.isEmbeddable;
    ref_t flags = scope.info.header.flags;
+
+   if (sizeHint == -1) {
+      scope.raiseError(errIllegalField, node);
+   }
+
    int offset = 0;
+   ustr_t name = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
 
    // a role cannot have fields
    if (test(flags, elStateless))
       scope.raiseError(errIllegalField, node);
 
+   SizeInfo sizeInfo = {};
+   if (classRef)
+      sizeInfo = _logic->defineStructSize(*scope.moduleScope, classRef);
+
+   if (sizeHint != 0) {
+      if (isPrimitiveRef(classRef) && (sizeInfo.size == sizeHint || (classRef == V_INT32 && sizeHint <= sizeInfo.size))) {
+         // for primitive types size should be specified
+         sizeInfo.size = sizeHint;
+      }
+      else scope.raiseError(errIllegalField, node);
+   }
+
+   if (test(flags, elWrapper) && scope.info.fields.count() > 0) {
+      // wrapper may have only one field
+      scope.raiseError(errIllegalField, node);
+   }
+   else if (embeddable/* && !fieldArray*/) {
+      if (!singleField || scope.info.fields.count() > 0)
+         scope.raiseError(errIllegalField, node);
+
+      // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
+      if (test(scope.info.header.flags, elSealed)) {
+         scope.info.header.flags |= elWrapper;
+         if (sizeInfo.size > 0 && !test(scope.info.header.flags, elNonStructureRole))
+            scope.info.header.flags |= elStructureRole;
+      }
+   }
+
    if (scope.info.fields.exist(name)) {
       scope.raiseError(errDuplicatedField, node);
    }
 
-   scope.info.header.flags |= elNonStructureRole;
+   // if it is a structure field
+   if (test(scope.info.header.flags, elStructureRole)) {
+      if (sizeInfo.size <= 0)
+         scope.raiseError(errIllegalField, node);
 
-   offset = scope.info.fields.count();
-   scope.info.fields.add(name, { offset, attrs.typeRef });
+      if (scope.info.size != 0 && scope.info.fields.count() == 0)
+         scope.raiseError(errIllegalField, node);
+
+      offset = scope.info.size;
+      scope.info.size += sizeInfo.size;
+      scope.info.fields.add(name, { offset, classRef });
+
+      if (isPrimitiveRef(classRef))
+         _logic->tweakPrimitiveClassFlags(scope.info, classRef);
+   }
+   else {
+      // primitive / virtual classes cannot be declared
+      if (sizeInfo.size != 0 && isPrimitiveRef(classRef))
+         scope.raiseError(errIllegalField, node);
+
+      scope.info.header.flags |= elNonStructureRole;
+
+      offset = scope.info.fields.count();
+      scope.info.fields.add(name, { offset, classRef });
+   }
 }
 
-void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node)
+void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField)
 {
    bool isClassClassMode = scope.isClassClass();
 
@@ -766,7 +823,7 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node)
          declareFieldAttributes(scope, current, attrs);
 
          if (!isClassClassMode) {
-            generateClassField(scope, current, attrs/*, singleField*/);
+            generateClassField(scope, current, attrs, singleField);
          }
       }
 
@@ -780,8 +837,11 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
       
    }
    else {
+      // HOTFIX : flags / fields should be compiled only for the class itself
+      generateClassFlags(scope, declaredFlags);
+
       // generate fields
-      generateClassFields(scope, node);
+      generateClassFields(scope, node, SyntaxTree:: countChild(node, SyntaxKey::Field) == 1);
    }
 
    //_logic->injectVirtualCode(scope.info);
@@ -791,9 +851,6 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
       generateMethodDeclarations(scope, node, SyntaxKey::Constructor);
    }
    else {
-      // HOTFIX : flags / fields should be compiled only for the class itself
-      generateClassFlags(scope, declaredFlags);
-
       generateMethodDeclarations(scope, node, SyntaxKey::Method);
    }
 
@@ -843,9 +900,9 @@ void Compiler :: declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNo
 void Compiler :: resolveClassParent(ClassScope& scope, SyntaxNode baseNode)
 {
    ref_t parentRef = 0;
-   //if (node == parentType) {
-   //   parentRef = resolveParentRef(node, scope, false);
-   //}
+   if (baseNode == SyntaxKey::Parent) {
+      parentRef = resolveTypeAttribute(scope, baseNode);
+   }
 
    if (scope.info.header.parentRef == scope.reference) {
       // if it is a super class
@@ -1491,7 +1548,7 @@ ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxK
 
    switch (identInfo.kind) {
       case ObjectKind::Class:
-         return identInfo.type;
+         return identInfo.reference;
       default:
          return 0;
    }
@@ -1515,6 +1572,20 @@ ref_t Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node)
    return typeRef;
 }
 
+int Compiler :: resolveSize(Scope& scope, SyntaxNode node)
+{
+   if (node == SyntaxKey::integer) {
+      return StrConvertor::toInt(node.identifier(), 10);
+   }
+   else if (node == SyntaxKey::hexinteger) {
+      return StrConvertor::toInt(node.identifier(), 16);
+   }
+   else {
+      scope.raiseError(errInvalidSyntax, node);
+
+      return 0;
+   }
+}
 
 void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)
 {
@@ -1531,11 +1602,35 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
             } 
             else scope.raiseError(errInvalidHint, current);
             break;
+         case SyntaxKey::Dimension:
+            if (!attrs.size && attrs.typeRef) {
+               if (current.arg.value) {
+                  attrs.size = current.arg.value;
+               }
+               else attrs.size = resolveSize(scope, current.firstChild(SyntaxKey::TerminalMask));
+            }
+            else scope.raiseError(errInvalidHint, current);
+            break;
          default:
             break;
       }
 
       current = current.nextNode();
+   }
+
+   //HOTFIX : recognize raw data
+   if (attrs.typeRef == V_INTBINARY) {
+      switch (attrs.size) {
+         case 1:
+         case 2:
+         case 4:
+            // treat it like dword
+            attrs.typeRef = V_INT32;
+            break;
+         default:
+            scope.raiseError(errInvalidHint, node);
+            break;
+      }
    }
 }
 

@@ -47,6 +47,7 @@ namespace elena_lang
       TerminalMap()
       {
          this->eof = this->identifier = 0;
+         this->reference = 0;
          this->string = this->integer = this->hexinteger = 0;
       }
       TerminalMap(parse_key_t eof,

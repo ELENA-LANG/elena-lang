@@ -9,6 +9,7 @@
 #include "ecviewer.h"
 #include "ecvconst.h"
 #include "module.h"
+#include "langcommon.h"
 
 using namespace elena_lang;
 
@@ -332,11 +333,52 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elSealed)) {
       printLineAndCount("@flag ", "elSealed", row, pageSize);
    }
+   if (test(flags, elClosed)) {
+      printLineAndCount("@flag ", "elClosed", row, pageSize);
+   }
    if (test(flags, elStateless)) {
       printLineAndCount("@flag ", "elStateless", row, pageSize);
    }
    if (test(flags, elNonStructureRole)) {
       printLineAndCount("@flag ", "elNonStructureRole", row, pageSize);
+   }
+   if (test(flags, elStructureRole)) {
+      printLineAndCount("@flag ", "elStructureRole", row, pageSize);
+   }
+   if (test(flags, elWrapper)) {
+      printLineAndCount("@flag ", "elWrapper", row, pageSize);
+   }
+   if (test(flags, elReadOnlyRole)) {
+      printLineAndCount("@flag ", "elReadOnlyRole", row, pageSize);
+   }
+}
+
+void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
+{
+   IdentifierString line;
+
+   auto it = classInfo.fields.start();
+   while (!it.eof()) {
+      auto fieldInfo = *it;
+
+      line.copy(it.key());
+      if (isPrimitiveRef(fieldInfo.typeRef)) {
+         switch (fieldInfo.typeRef) {
+            case V_INT32:
+               line.append(" of __int[4]");
+               break;
+         }
+      }
+      else if (fieldInfo.typeRef) {
+         ustr_t typeName = _module->resolveReference(fieldInfo.typeRef);
+
+         line.append(" of ");
+         line.append(typeName);
+      }
+
+      printLineAndCount("@field ", *line, row, pageSize);
+
+      ++it;
    }
 }
 
@@ -438,6 +480,7 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
       }
 
       printFlags(info.header.flags, row, _pageSize);
+      printFields(info, row, _pageSize);
    }
 
    MethodEntry entry = {};

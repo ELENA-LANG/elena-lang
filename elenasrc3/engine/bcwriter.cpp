@@ -37,7 +37,7 @@ inline bool testMask(BuildKey key, BuildKey mask)
 void openFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    if (tapeScope.classMode) {
-      for (int i = 0; i < tapeScope.scope->minimalArgList; i++) {
+      for (pos_t i = 0; i < tapeScope.scope->minimalArgList; i++) {
          tape.write(ByteCode::XFlushSI, i);
       }
    }
@@ -77,7 +77,7 @@ void sendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 
    pos_t argCount = getArgCount(node.arg.reference);
    if (argCount < tapeScope.scope->minimalArgList) {
-      for (int i = 0; i < tapeScope.scope->minimalArgList; i++) {
+      for (pos_t i = 0; i < tapeScope.scope->minimalArgList; i++) {
          tape.write(ByteCode::XStoreSIR, i, 0);
       }
    }

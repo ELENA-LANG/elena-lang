@@ -75,6 +75,7 @@ namespace elena_lang
       void printByteCodes(MemoryBase* section, pos_t address, int indent, int pageSize);
 
       void printFlags(ref_t flags, int& row, int pageSize);
+      void printFields(ClassInfo& classInfo, int& row, int pageSize);
 
       void printMethod(ustr_t name);
       void printSymbol(ustr_t name);

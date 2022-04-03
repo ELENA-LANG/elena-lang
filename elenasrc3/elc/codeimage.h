@@ -24,9 +24,11 @@ namespace elena_lang
 
       TargetImageInfo()
       {
-         codeAlignment = 0;
          type = PlatformType::None;
+         codeAlignment = 0;
          autoClassSymbol = false;
+         coreSettings = {};
+         ns = nullptr;
       }
    };
 

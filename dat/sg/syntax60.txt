@@ -23,7 +23,7 @@ __define ADDITION_ASSIGNMENT 6211;
 __define MESSAGE_OPERATION   6225;
 __define POSTFIX             4192;
 __define TEMPLATE_ARG        4208;
-__define DIMENSION           4209;
+__define DIMENSION           5233;
 
 START ::= 
         NEXT_DECLARATION;

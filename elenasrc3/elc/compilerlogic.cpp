@@ -136,9 +136,12 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
          break;
       case V_CLASS:
          break;
-   case V_STRUCT:
+      case V_STRUCT:
          flags |= elStructureRole;
          break;
+      case V_CONST:
+         flags |= elReadOnlyRole;
+         return true;
       case V_SINGLETON:
          flags = elRole | elSealed | elStateless;
          break;
@@ -153,6 +156,12 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
 {
    switch (attribute) {
       case V_FIELD:
+         break;
+      case V_INTBINARY:
+         attrs.typeRef = V_INTBINARY;
+         break;
+      case V_EMBEDDABLE:
+         attrs.isEmbeddable = true;
          break;
       default:
          return false;
@@ -244,6 +253,11 @@ bool CompilerLogic :: isRole(ClassInfo& info)
    return test(info.header.flags, elRole);
 }
 
+bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
+{
+   return test(info.header.flags, elStructureRole)/* && !test(info.header.flags, elDynamicRole)*/;
+}
+
 void CompilerLogic :: tweakClassFlags(ClassInfo& info, bool classClassMode)
 {
    if (classClassMode) {
@@ -251,6 +265,11 @@ void CompilerLogic :: tweakClassFlags(ClassInfo& info, bool classClassMode)
       info.header.flags |= elStateless;
       info.header.flags |= elSealed;
    }
+}
+
+void CompilerLogic :: tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef)
+{
+   
 }
 
 void CompilerLogic :: writeDictionaryEntry(MemoryBase* section, ustr_t key, int value)
@@ -296,3 +315,65 @@ void CompilerLogic :: writeArrayEntry(MemoryBase* section, ref_t reference)
 //      
 //   }
 //}
+
+bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly)
+{
+   if (isPrimitiveRef(reference) && !headerOnly) {
+      scope.loadClassInfo(info, scope.buildins.superReference);
+   }
+
+   switch (reference)
+   {
+      case V_INT32:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = /*elDebugDWORD | */elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
+      default:
+         if (reference != 0) {
+            if (!scope.loadClassInfo(info, reference, headerOnly))
+               return false;
+         }
+         else {
+            info.header.parentRef = 0;
+            info.header.flags = 0;
+            //info.size = 0;
+         }
+         break;
+   }
+
+   return true;
+}
+
+SizeInfo CompilerLogic :: defineStructSize(ClassInfo& info)
+{
+   SizeInfo sizeInfo = { /*!test(info.header.flags, elReadOnlyRole)*/};
+
+   if (isEmbeddableStruct(info)) {
+      sizeInfo.size = info.size;
+
+      return sizeInfo;
+   }
+   //else if (isEmbeddableArray(info)) {
+   //   return info.size;
+   //}
+
+   return {};
+}
+
+SizeInfo CompilerLogic :: defineStructSize(ModuleScopeBase& scope, ref_t reference)
+{
+   auto sizeInfo = scope.cachedSizes.get(reference);
+   if (!sizeInfo.size) {
+      ClassInfo classInfo;
+      if (defineClassInfo(scope, classInfo, reference)) {
+         sizeInfo = defineStructSize(classInfo);
+
+         scope.cachedSizes.add(reference, sizeInfo);
+
+         return sizeInfo;
+      }
+      else return { 0 };
+   }
+   else return sizeInfo;
+}

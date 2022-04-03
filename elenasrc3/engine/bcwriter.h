@@ -27,7 +27,7 @@ namespace elena_lang
          MemoryWriter*     debug;
          MemoryWriter*     debugStrings;
 
-         int               minimalArgList;
+         pos_t             minimalArgList;
       };
 
       struct TapeScope
