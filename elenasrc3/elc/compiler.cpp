@@ -1237,8 +1237,10 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
    if (scope.info.header.classRef != scope.reference && scope.info.header.classRef != 0) {
       ClassScope classClassScope((NamespaceScope*)scope.parent, scope.info.header.classRef, scope.visibility);
 
-      // if default constructor has to be created
-      injectDefaultConstructor(scope.moduleScope, node);
+      if (/*!withDefaultConstructor &&!scope.abstractMode && */!test(scope.info.header.flags, elDynamicRole)) {
+         // if default constructor has to be created
+         injectDefaultConstructor(scope.moduleScope, node);
+      }
 
       declareClassClass(classClassScope, node);
    }

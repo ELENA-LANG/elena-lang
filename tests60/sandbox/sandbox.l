@@ -1,10 +1,5 @@
 import system;
 
-B
-{
-  __string object[] theArray;
-}
-
 singleton B
 {
     testB(a) 

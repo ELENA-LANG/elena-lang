@@ -23,6 +23,7 @@
         <include>base.l</include>
         <include>object.l</include>
         <include>basic.l</include>
+        <include>strings.l</include>
         <include>app.l</include>
      </module>
   </files>
