@@ -124,6 +124,7 @@ namespace elena_lang
    constexpr auto V_NIL                   = 0x80000004u;
    constexpr auto V_OBJARRAY              = 0x80000005u;
    constexpr auto V_OBJECT                = 0x80000006u;
+   constexpr auto V_BINARYARRAY           = 0x8000000Bu;
 
    constexpr auto V_SELF_VAR              = 0x80000081u;
 

@@ -1353,6 +1353,22 @@ pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT)
    else return 0;
 }
 
+void JITCompiler32 :: allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
+   bool structMode, bool virtualMode)
+{
+   alignCode(writer, _constants.alignmentVA, false);
+
+   if (virtualMode) {
+      writer.writeDReference((ref_t)vmtAddress, 0);
+   }
+   else writer.writeDWord((pos_t)vmtAddress);
+
+   if (structMode) {
+      writer.writeDWord(length | elStructMask64);
+   }
+   else writer.writeDWord(length << 2);
+}
+
 void JITCompiler32 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount)
 {
    VMTEntry32* entries = (VMTEntry32*)targetVMT;
@@ -1483,6 +1499,11 @@ void JITCompiler32 :: addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool 
       writer.writeDWord(vaddress);
    }
    else writer.writeDReference(vaddress, 0);
+}
+
+void JITCompiler32 :: writeInt32(MemoryWriter& writer, unsigned value)
+{
+   writer.writeDWord(value);
 }
 
 // --- JITCompiler64 ---
@@ -1648,7 +1669,6 @@ pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
    }
 
    return actionRef;
-
 }
 
 pos_t JITCompiler64 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, bool virtualMode)
@@ -1665,6 +1685,23 @@ pos_t JITCompiler64 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress
 
    return position;
 
+}
+
+void JITCompiler64 :: allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
+   bool structMode, bool virtualMode)
+{
+   alignCode(writer, _constants.alignmentVA, false);
+
+   if (virtualMode) {
+      writer.writeQReference((ref_t)vmtAddress, 0);
+   }
+   else writer.writeQWord(vmtAddress);
+
+   writer.writeDWord(0);
+   if (structMode) {
+      writer.writeDWord(length | elStructMask64);
+   }
+   else writer.writeDWord(length << 3);
 }
 
 void JITCompiler64 :: addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode)
@@ -1693,4 +1730,9 @@ int JITCompiler64 :: calcTotalSize(int numberOfFields)
 int JITCompiler64 :: calcTotalStructSize(int size)
 {
    return align(size + elObjectOffset64, gcPageSize64);
+}
+
+void JITCompiler64 :: writeInt32(MemoryWriter& writer, unsigned value)
+{
+   writer.writeDWord(value);
 }

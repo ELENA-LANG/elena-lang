@@ -68,7 +68,7 @@ namespace elena_lang
       ClassSectionInfo getClassSections(ReferenceInfo referenceInfo, ref_t vmtMask, ref_t codeMask, 
          bool silentMode) override;
 
-      ReferenceInfo retrieveReferenceInfo(ModuleBase* module, ref_t reference, 
+      ReferenceInfo retrieveReferenceInfo(ModuleBase* module, ref_t reference, ref_t mask,
          ForwardResolverBase* forwardResolver) override;
       ReferenceInfo retrieveReferenceInfo(ustr_t referenceName, 
          ForwardResolverBase* forwardResolver) override;

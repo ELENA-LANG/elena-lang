@@ -16,6 +16,13 @@ public /*abstract*/ class IntBaseNumber : BaseNumber
 {
 }
 
+// --- ByteNumber ---
+
+public const struct ByteNumber : IntBaseNumber
+{
+   embeddable __int theValue[1];
+}
+
 // --- IntNumber ---
 
 public const struct IntNumber : IntBaseNumber

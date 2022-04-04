@@ -351,6 +351,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elReadOnlyRole)) {
       printLineAndCount("@flag ", "elReadOnlyRole", row, pageSize);
    }
+   if (test(flags, elDynamicRole)) {
+      printLineAndCount("@flag ", "elDynamicRole", row, pageSize);
+   }
 }
 
 void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)

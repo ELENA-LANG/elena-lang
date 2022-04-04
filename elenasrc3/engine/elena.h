@@ -274,7 +274,7 @@ namespace elena_lang
    class LibraryLoaderBase
    {
    public:
-      virtual ReferenceInfo retrieveReferenceInfo(ModuleBase* module, ref_t reference, 
+      virtual ReferenceInfo retrieveReferenceInfo(ModuleBase* module, ref_t reference, ref_t mask,
          ForwardResolverBase* forwardResolver) = 0;
       virtual ReferenceInfo retrieveReferenceInfo(ustr_t referenceName,
          ForwardResolverBase* forwardResolver) = 0;
@@ -381,6 +381,10 @@ namespace elena_lang
       virtual void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
          ref_t flags, pos_t count, bool virtualMode) = 0;
       virtual pos_t copyParentVMT(void* parentVMT, void* targetVMT) = 0;
+
+      virtual void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
+         bool structMode, bool virtualMode) = 0;
+      virtual void writeInt32(MemoryWriter& writer, unsigned int value) = 0;
 
       virtual void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) = 0;
       virtual void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) = 0;
@@ -646,6 +650,7 @@ namespace elena_lang
    {
       int   offset;
       ref_t typeRef;
+      ref_t elementRef;
    };
 
    // --- MethodInfo ---

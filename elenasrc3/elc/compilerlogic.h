@@ -24,6 +24,7 @@ namespace elena_lang
 
       SizeInfo defineStructSize(ClassInfo& info);
       SizeInfo defineStructSize(ModuleScopeBase& scope, ref_t reference);
+      ref_t definePrimitiveArray(ModuleScopeBase& scope, ref_t elementRef, bool structOne);
 
       bool validateTemplateAttribute(ref_t attribute, Visibility& visibility, TemplateType& type);
       bool validateSymbolAttribute(ref_t attribute, Visibility& visibility);

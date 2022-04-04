@@ -394,6 +394,13 @@ namespace elena_lang
             else return Scope::getScope(level);
          }
 
+         ref_t getClassFlags(bool ownerClass = true)
+         {
+            ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+
+            return scope ? scope->info.header.flags : 0;
+         }
+
          void markAsAssigned(ObjectInfo object) override;
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
@@ -497,6 +504,8 @@ namespace elena_lang
 
       void importTemplate(Scope& scope, SyntaxNode node, ustr_t prefix, SyntaxNode target);
       void importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode);
+
+      void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs);
 
       void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node);
       void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node);

@@ -406,6 +406,7 @@ struct FieldAttributes
    ref_t typeRef;
    int   size;
    bool  isEmbeddable;
+   bool  inlineArray;
 };
 
 // --- CompilerBase ---

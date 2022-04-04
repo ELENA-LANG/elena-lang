@@ -59,6 +59,7 @@ namespace elena_lang
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 
    constexpr auto SUPER_FORWARD           = "$forwards'$super";          // the common class predecessor
+   constexpr auto INTLITERAL_FORWARD      = "$forwards'$int";          // the common class predecessor
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";
@@ -89,6 +90,7 @@ namespace elena_lang
    constexpr ref_t elReadOnlyRole      = 0x00001000;
    constexpr ref_t elNonStructureRole  = 0x00002000;
    constexpr ref_t elWrapper           = 0x00004000;
+   constexpr ref_t elDynamicRole       = 0x00008000;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -166,6 +168,7 @@ namespace elena_lang
    constexpr ref_t mskStrMetaArrayRef     = 0x09000000u;
    constexpr ref_t mskSyntaxTreeRef       = 0x0A000000u;
    constexpr ref_t mskProcedureRef        = 0x0B000000u;
+   constexpr ref_t mskIntLiteralRef       = 0x0C000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

@@ -160,6 +160,9 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_INTBINARY:
          attrs.typeRef = V_INTBINARY;
          break;
+      case V_STRINGOBJ:
+         attrs.inlineArray = true;
+         break;
       case V_EMBEDDABLE:
          attrs.isEmbeddable = true;
          break;
@@ -255,7 +258,7 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 
 bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
 {
-   return test(info.header.flags, elStructureRole)/* && !test(info.header.flags, elDynamicRole)*/;
+   return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
 }
 
 void CompilerLogic :: tweakClassFlags(ClassInfo& info, bool classClassMode)
@@ -376,4 +379,28 @@ SizeInfo CompilerLogic :: defineStructSize(ModuleScopeBase& scope, ref_t referen
       else return { 0 };
    }
    else return sizeInfo;
+}
+
+ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elementRef, bool structOne)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, elementRef, true))
+      return 0;
+
+   if (isEmbeddableStruct(info) && structOne) {
+      //if (isCompatible(scope, V_INT32, elementRef, true)) {
+      //   switch (info.size) {
+      //      case 4:
+      //         return V_INT32ARRAY;
+      //      case 2:
+      //         return V_INT16ARRAY;
+      //      case 1:
+      //         return V_INT8ARRAY;
+      //      default:
+      //         break;
+      //   }
+      //}
+      return V_BINARYARRAY;
+   }
+   else return V_OBJARRAY;
 }

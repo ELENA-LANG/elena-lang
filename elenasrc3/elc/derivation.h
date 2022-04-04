@@ -84,7 +84,8 @@ namespace elena_lang
       void flushMethod(Scope& scope, SyntaxNode node);
       void flushMethodMember(Scope& scope, SyntaxNode node);
       void flushTemplate(Scope& scope, SyntaxNode node);
-      void flushAttribute(Scope& scope, SyntaxNode node, SyntaxNode nameNode, ref_t& previusCategory);
+      void flushAttribute(Scope& scope, SyntaxNode node, ref_t& previusCategory, bool allowType);
+      void flushTypeAttribute(Scope& scope, SyntaxNode node, ref_t& previusCategory, bool allowType);
       void flushClassMemberPostfixes(Scope& scope, SyntaxNode node);
       void flushClassPostfixes(Scope& scope, SyntaxNode node);
 

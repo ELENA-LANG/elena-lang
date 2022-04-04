@@ -180,7 +180,7 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
    //   default:
    //
    vaddress = _owner->_mapper->resolveReference(
-      _owner->_loader->retrieveReferenceInfo(module, refID, _owner->_forwardResolver), mask);
+      _owner->_loader->retrieveReferenceInfo(module, refID, mask, _owner->_forwardResolver), mask);
    //
    //      break;
    //}
@@ -270,7 +270,7 @@ mssg_t JITLinker::JITLinkerReferenceHelper :: importMessage(mssg_t message, Modu
 addr_t JITLinker :: getVMTAddress(ModuleBase* module, ref_t reference, VAddressMap& references)
 {
    if (reference) {
-      auto referenceInfo = _loader->retrieveReferenceInfo(module, reference, _forwardResolver);
+      auto referenceInfo = _loader->retrieveReferenceInfo(module, reference, mskVMTRef, _forwardResolver);
 
       addr_t vaddress = _mapper->resolveReference(referenceInfo, mskVMTRef);
       if (vaddress == INVALID_ADDR) {
@@ -321,7 +321,7 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
       ref_t currentRef = info.reference & ~mskAnyRef;
       ref_t currentMask = info.reference & mskAnyRef;
 
-      auto vaddress = resolve(_loader->retrieveReferenceInfo(info.module, currentRef, 
+      auto vaddress = resolve(_loader->retrieveReferenceInfo(info.module, currentRef, currentMask,
          _forwardResolver), currentMask, false);
 
       switch (info.addressMask & mskRefType) {
@@ -404,7 +404,7 @@ ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, VAddress
    IdentifierString signatureName;
    for (size_t i = 0; i < count; i++) {
       signatureName.append('$');
-      auto referenceInfo = _loader->retrieveReferenceInfo(module, signReferences[i], _forwardResolver);
+      auto referenceInfo = _loader->retrieveReferenceInfo(module, signReferences[i], mskVMTRef, _forwardResolver);
       if (referenceInfo.module != nullptr) {
          signatureName.append(referenceInfo.module->name());
          signatureName.append(referenceInfo.referenceName);
@@ -423,7 +423,7 @@ ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, VAddress
       for (size_t i = 0; i < count; i++) {
          // NOTE : indicate weak class reference, to be later resolved if required
          auto typeClassRef = _mapper->resolveReference(
-            _loader->retrieveReferenceInfo(module, signReferences[i], _forwardResolver),
+            _loader->retrieveReferenceInfo(module, signReferences[i], mskVMTRef, _forwardResolver),
             mskVMTRef);
 
          pos_t position = _compiler->addSignatureEntry(writer, typeClassRef, _virtualMode);
@@ -680,6 +680,51 @@ addr_t JITLinker :: resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectio
    return vaddress;
 }
 
+addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask)
+{
+   ReferenceInfo vmtReferenceInfo = referenceInfo;
+   ustr_t value = referenceInfo.referenceName;
+   int size = 0;
+   bool structMode = false;
+   switch (sectionMask) {
+      case mskIntLiteralRef:
+         vmtReferenceInfo.referenceName = _constantSettings.intLiteralClass;
+         size = 4;
+         structMode = true;
+         break;
+      default:
+         break;
+   }
+
+   // get constant VMT reference
+   addr_t vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
+
+   // HOTFIX: if the constant is referred by iself it could be already resolved
+   addr_t vaddress = _mapper->resolveReference(referenceInfo, sectionMask);
+   if (vaddress != INVALID_ADDR)
+      return vaddress;
+
+   // get target image & resolve virtual address
+   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   // allocate object header
+   _compiler->allocateHeader(writer, vmtVAddress, size, structMode, _virtualMode);
+   vaddress = calculateVAddress(writer, mskRDataRef);
+
+   _mapper->mapReference(referenceInfo, vaddress, sectionMask);
+
+   switch (sectionMask) {
+      case mskIntLiteralRef:
+         _compiler->writeInt32(writer, StrConvertor::toUInt(value, 16));
+         break;
+      default:
+         break;
+   }
+
+   return vaddress;
+}
+
 void JITLinker :: prepare(JITCompilerBase* compiler)
 {
    _compiler = compiler;
@@ -747,6 +792,9 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
          case mskMetaArrayRef:
             address = resolveMetaSection(referenceInfo, sectionMask, 
                _loader->getSection(referenceInfo, sectionMask, silentMode));
+            break;
+         case mskIntLiteralRef:
+            address = resolveConstant(referenceInfo, sectionMask);
             break;
          default:
             // to make compiler happy

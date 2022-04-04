@@ -369,35 +369,43 @@ ClassSectionInfo LibraryProvider :: getClassSections(ReferenceInfo referenceInfo
    return info;
 }
 
-ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t reference, 
+ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t reference, ref_t mask,
    ForwardResolverBase* forwardResolver)
 {
-   ustr_t referenceName = module->resolveReference(reference);
-   while (isForwardReference(referenceName)) {
-      ustr_t resolvedName = forwardResolver->resolveForward(referenceName);
-      if (!resolvedName.empty()) {
-         referenceName = resolvedName;
+   switch (mask) {
+      case mskIntLiteralRef:
+         return module->resolveConstant(reference);
+      default:
+      {
+         ustr_t referenceName = module->resolveReference(reference);
+         while (isForwardReference(referenceName)) {
+            ustr_t resolvedName = forwardResolver->resolveForward(referenceName);
+            if (!resolvedName.empty()) {
+               referenceName = resolvedName;
+            }
+            else throw JITUnresolvedException(ReferenceInfo(referenceName));
+         }
+
+         if (NamespaceString::compareNs(referenceName, ROOT_MODULE)) {
+            ReferenceName name;
+            ReferenceName::copyProperName(name, referenceName);
+
+            ReferenceName resolvedName(*_namespace, *name);
+
+            return retrieveReferenceInfo(*resolvedName, forwardResolver);
+         }
+
+         if (isWeakReference(referenceName)) {
+            if (isTemplateWeakReference(referenceName)) {
+               referenceName = resolveTemplateWeakReference(referenceName, forwardResolver);
+            }
+
+            return ReferenceInfo(module, referenceName);
+         }
+         else return ReferenceInfo(referenceName);
       }
-      else throw JITUnresolvedException(ReferenceInfo(referenceName));
    }
 
-   if (NamespaceString::compareNs(referenceName, ROOT_MODULE)) {
-      ReferenceName name;
-      ReferenceName::copyProperName(name, referenceName);
-
-      ReferenceName resolvedName(*_namespace, *name);
-
-      return retrieveReferenceInfo(*resolvedName, forwardResolver);
-   }
-
-   if (isWeakReference(referenceName)) {
-      if (isTemplateWeakReference(referenceName)) {
-         referenceName = resolveTemplateWeakReference(referenceName, forwardResolver);
-      }
-
-      return ReferenceInfo(module, referenceName);
-   }
-   else return ReferenceInfo(referenceName);
 }
 
 ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ustr_t referenceName, ForwardResolverBase* forwardResolver)

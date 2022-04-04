@@ -1,7 +1,6 @@
-C;
-
-D : C
+B
 {
+  __string /*object*/system'Object[] theArray;
 }
 
 singleton B
@@ -16,7 +15,7 @@ class A
 {
    testA() 
    {
-      var a := self;
+      var a := 2;
    }
 
    constructor new() {}

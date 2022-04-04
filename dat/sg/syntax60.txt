@@ -17,11 +17,14 @@ __define INCLUDE_STATEMENT   4130;
 __define MESSAGE             4176;
 __define EXPRESSION          6192;
 __define OBJECT              4145;
+__define TEMPLATE_TYPE       4146;
+__define ARRAY_TYPE          4147;
 __define INDEXER_OPERATION   6209;
 __define ASSIGN_OPERATION    6210;
 __define ADDITION_ASSIGNMENT 6211;
 __define MESSAGE_OPERATION   6225;
 __define POSTFIX             4192;
+__define TEMPLATE_POSTFIX    4193;
 __define TEMPLATE_ARG        4208;
 __define DIMENSION           5233;
 
@@ -47,8 +50,13 @@ DECLARATION ::=
 
 ISCOPE_R ::=
         identifier ISCOPE_R
+	| reference ISCOPE_R
 	| TEMPLATE_BRACKETS SCOPE_OPT
+	| DYNAMIC_DIMENSION ^ARRAY_TYPE DDSCOPE_R
         | SCOPE_OPT;
+
+DDSCOPE_R ::=
+	identifier SCOPE_OPT;
 
 DICTIONARY ::=
         identifier IDICTIONARY_R DECLARATION_END;
@@ -76,7 +84,7 @@ POSTFIX ::=
 	identifier IPOSTFIX_R;
 
 IPOSTFIX_R ::=
-	TEMPLATE_BRACKETS
+	TEMPLATE_BRACKETS ^ TEMPLATE_POSTFIX
 	| eps;
 
 METHOD_BODY_OPT ::=
@@ -180,6 +188,9 @@ PARAMETER_R ::=
 DIMENSION ::=
         integer
         | hexinteger;	
+
+DYNAMIC_DIMENSION ::=
+	"[]";
 
 TEMPLATE_ARG ::=
 	identifier

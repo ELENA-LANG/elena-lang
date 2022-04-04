@@ -6,8 +6,10 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
-    * >int literal
-    * byte
+    * >import namespaces
+    * type alias
+    * array
+    * struct array
     * string
     * string literal
     * print message using external routine

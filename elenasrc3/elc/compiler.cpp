@@ -743,7 +743,12 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
    ref_t flags = scope.info.header.flags;
 
    if (sizeHint == -1) {
-      scope.raiseError(errIllegalField, node);
+      if (singleField) {
+         scope.info.header.flags |= elDynamicRole;
+      }
+      else scope.raiseError(errIllegalField, node);
+
+      sizeHint = 0;
    }
 
    int offset = 0;
@@ -781,34 +786,52 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
       }
    }
 
-   if (scope.info.fields.exist(name)) {
-      scope.raiseError(errDuplicatedField, node);
-   }
+   // a class with a dynamic length structure must have no fields
+   if (test(scope.info.header.flags, elDynamicRole)) {
+      if (scope.info.size == 0 && scope.info.fields.count() == 0) {
+         // compiler magic : turn a field declaration into an array or string one
+         if (sizeInfo.size > 0 && !test(scope.info.header.flags, elNonStructureRole)) {
+            scope.info.header.flags |= elStructureRole;
+            scope.info.size = -sizeInfo.size;
+         }
 
-   // if it is a structure field
-   if (test(scope.info.header.flags, elStructureRole)) {
-      if (sizeInfo.size <= 0)
-         scope.raiseError(errIllegalField, node);
+         ref_t arrayRef = _logic->definePrimitiveArray(*scope.moduleScope, classRef, 
+            test(scope.info.header.flags, elStructureRole));
 
-      if (scope.info.size != 0 && scope.info.fields.count() == 0)
-         scope.raiseError(errIllegalField, node);
-
-      offset = scope.info.size;
-      scope.info.size += sizeInfo.size;
-      scope.info.fields.add(name, { offset, classRef });
-
-      if (isPrimitiveRef(classRef))
-         _logic->tweakPrimitiveClassFlags(scope.info, classRef);
+         scope.info.fields.add(name, { -1, arrayRef, classRef });
+      }
+      else scope.raiseError(errIllegalField, node);
    }
    else {
-      // primitive / virtual classes cannot be declared
-      if (sizeInfo.size != 0 && isPrimitiveRef(classRef))
-         scope.raiseError(errIllegalField, node);
+      if (scope.info.fields.exist(name)) {
+         scope.raiseError(errDuplicatedField, node);
+      }
 
-      scope.info.header.flags |= elNonStructureRole;
+      // if it is a structure field
+      if (test(scope.info.header.flags, elStructureRole)) {
+         if (sizeInfo.size <= 0)
+            scope.raiseError(errIllegalField, node);
 
-      offset = scope.info.fields.count();
-      scope.info.fields.add(name, { offset, classRef });
+         if (scope.info.size != 0 && scope.info.fields.count() == 0)
+            scope.raiseError(errIllegalField, node);
+
+         offset = scope.info.size;
+         scope.info.size += sizeInfo.size;
+         scope.info.fields.add(name, { offset, classRef });
+
+         if (isPrimitiveRef(classRef))
+            _logic->tweakPrimitiveClassFlags(scope.info, classRef);
+      }
+      else {
+         // primitive / virtual classes cannot be declared
+         if (sizeInfo.size != 0 && isPrimitiveRef(classRef))
+            scope.raiseError(errIllegalField, node);
+
+         scope.info.header.flags |= elNonStructureRole;
+
+         offset = scope.info.fields.count();
+         scope.info.fields.add(name, { offset, classRef });
+      }
    }
 }
 
@@ -1299,11 +1322,11 @@ void Compiler :: evalStatement(MetaScope& scope, SyntaxNode node)
 void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
 {
    switch (info.kind) {
-      //case ObjectKind::IntLiteral:
-      //   writer.newNode(BuildKey::IntLiteral, info.reference);
-      //   writer.appendNode(BuildKey::Value, info.extra);
-      //   writer.closeNode();
-      //   break;
+      case ObjectKind::IntLiteral:
+         writer.newNode(BuildKey::IntLiteral, info.reference);
+         writer.appendNode(BuildKey::Value, info.extra);
+         writer.closeNode();
+         break;
       //case ObjectKind::StringLiteral:
       //   writer.appendNode(BuildKey::StringLiteral, info.reference);
       //   break;
@@ -1587,7 +1610,7 @@ int Compiler :: resolveSize(Scope& scope, SyntaxNode node)
    }
 }
 
-void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)
+void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -1599,7 +1622,7 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
          case SyntaxKey::Type:
             if (!attrs.typeRef) {
                attrs.typeRef = resolveTypeAttribute(scope, current);
-            } 
+            }
             else scope.raiseError(errInvalidHint, current);
             break;
          case SyntaxKey::Dimension:
@@ -1611,12 +1634,25 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
             }
             else scope.raiseError(errInvalidHint, current);
             break;
+         case SyntaxKey::ArrayType:
+            if (!attrs.size) {
+               attrs.size = -1;
+
+               readFieldAttributes(scope, current, attrs);
+            }
+            else scope.raiseError(errInvalidHint, current);
+            break;
          default:
             break;
       }
 
       current = current.nextNode();
    }
+}
+
+void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)
+{
+   readFieldAttributes(scope, node, attrs);
 
    //HOTFIX : recognize raw data
    if (attrs.typeRef == V_INTBINARY) {
@@ -2183,8 +2219,8 @@ void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodSc
 
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::Class);
 
-   //if (test(classScope->info.header.flags, elDynamicRole))
-   //   throw InternalError("Invalid constructor");
+   if (test(classScope->info.header.flags, elDynamicRole))
+      throw InternalError(errFatalError);
 
    if (test(classScope->info.header.flags, elStructureRole)) {
       writer.newNode(BuildKey::CreatingStruct, classScope->info.size);
@@ -2209,6 +2245,7 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    beginMethod(writer, scope, BuildKey::Method);
 
    CodeScope codeScope(&scope);
+   ref_t classFlags = codeScope.getClassFlags();
 
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
 
@@ -2234,7 +2271,7 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
          compileMethodCode(writer, scope, codeScope, node, newFrame);
          break;
       case SyntaxKey::None:
-         if (isDefConvConstructor) {
+         if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
             // if it is a default / conversion (unnamed) constructor
             // it should create the object
             compileDefConvConstructorCode(writer, scope, node, newFrame);
@@ -2242,7 +2279,6 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
          }
       default:
          throw InternalError(errFatalError);
-         break;
    }
 
    codeScope.syncStack(&scope);

@@ -23,6 +23,7 @@ namespace elena_lang
    constexpr char dfaQuote       = 'g';
    constexpr char dfaHexInteger  = 'j';
    constexpr char dfaReference   = 'm';
+   constexpr char dfaDblOperator = 'q';
 
    constexpr char dfaError       = '?';
    constexpr char dfaEOF         = '.';

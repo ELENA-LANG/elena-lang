@@ -25,6 +25,11 @@ namespace elena_lang
    // --- JITLinker ---
    class JITLinker
    {
+      struct ConstantSettings
+      {
+         ustr_t intLiteralClass;
+      };
+
       struct VAddressInfo
       {
          ref_t       reference;
@@ -97,6 +102,7 @@ namespace elena_lang
 
       pos_t                 _alignment;
       JITSettings           _jitSettings;
+      ConstantSettings      _constantSettings;
       bool                  _virtualMode;
       bool                  _classSymbolAutoLoadMode;
       bool                  _withDebugInfo;
@@ -122,6 +128,7 @@ namespace elena_lang
       addr_t resolveVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo);
       addr_t resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
       addr_t resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
+      addr_t resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask);
 
       pos_t createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
@@ -151,6 +158,8 @@ namespace elena_lang
          _virtualMode = settings->virtualMode;
          _classSymbolAutoLoadMode = settings->autoLoadMode;
          _withDebugInfo = false;
+
+         _constantSettings.intLiteralClass = forwardResolver->resolveForward(INTLITERAL_FORWARD);
       }
    };
 
