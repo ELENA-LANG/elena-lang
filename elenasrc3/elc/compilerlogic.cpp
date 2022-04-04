@@ -22,10 +22,11 @@ struct Op
    ref_t    ioperand;
 };
 
-constexpr auto OperationLength = 3;
+constexpr auto OperationLength = 4;
 constexpr Op Operations[OperationLength] =
 {
    { BuildKey::StrDictionaryOp, V_DICTIONARY, V_INT32, V_STRING },
+   { BuildKey::AttrDictionaryOp, V_OBJATTRIBUTES, V_OBJECT, V_STRING },
    { BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0 },
    { BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0 }
 };
@@ -60,6 +61,16 @@ bool CompilerLogic :: isValidStrDictionaryOp(int operatorId)
    }
 }
 
+bool CompilerLogic::isValidAttrDictionaryOp(int operatorId)
+{
+   switch (operatorId) {
+      case SET_INDEXER_OPERATOR_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
 bool CompilerLogic :: isValidOp(int operatorId, BuildKey op)
 {
    switch (op) {
@@ -69,6 +80,8 @@ bool CompilerLogic :: isValidOp(int operatorId, BuildKey op)
          return isValidStrDictionaryOp(operatorId);
       case BuildKey::ObjArrayOp:
          return isValidObjArrayOp(operatorId);
+      case BuildKey::AttrDictionaryOp:
+         return isValidAttrDictionaryOp(operatorId);
       default:
          return false;
    }
@@ -214,12 +227,16 @@ bool CompilerLogic::validateImplicitMethodAttribute(ref_t attribute, MethodHint&
 
 bool CompilerLogic :: validateDictionaryAttribute(ref_t attribute, ref_t& dictionaryType)
 {
-   if (attribute == V_STRINGOBJ) {
-      dictionaryType = V_STRINGOBJ;
-
-      return true;
+   switch (attribute) {
+      case V_STRINGOBJ:
+         dictionaryType = V_STRINGOBJ;
+         return true;
+      case V_SYMBOL:
+         dictionaryType = V_OBJATTRIBUTES;
+         return true;
+      default:
+         return false;
    }
-   else return false;
 }
 
 bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs)
@@ -273,6 +290,35 @@ void CompilerLogic :: tweakClassFlags(ClassInfo& info, bool classClassMode)
 void CompilerLogic :: tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef)
 {
    
+}
+
+void CompilerLogic :: writeAttrDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference)
+{
+   MemoryWriter writer(section);
+   writer.writeString(key);
+   writer.writeDWord(2);
+   writer.writeRef(reference);
+}
+
+bool CompilerLogic :: readAttrDictionary(ModuleBase* extModule, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope)
+{
+   IdentifierString key;
+
+   MemoryReader reader(section);
+   while (!reader.eof()) {
+      reader.readString(key);
+      int type = reader.getDWord();
+
+      if (type == 2) {
+         ref_t reference = reader.getRef();
+         reference = scope->importReference(extModule, reference);
+
+         map.add(*key, reference);
+      }
+      else return false;
+   }
+
+   return true;
 }
 
 void CompilerLogic :: writeDictionaryEntry(MemoryBase* section, ustr_t key, int value)

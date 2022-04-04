@@ -530,7 +530,10 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxNode node)
       }
       
    }
-   else { 
+   else if (SyntaxTree::ifChildExists(_writer.CurrentNode(), SyntaxKey::Attribute, V_IMPORT)) {
+      _writer.CurrentNode().setKey(SyntaxKey::Import);
+   }
+   else {
       _writer.CurrentNode().setKey(SyntaxKey::Class);
 
       flushClass(scope, node);

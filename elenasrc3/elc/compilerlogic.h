@@ -41,6 +41,7 @@ namespace elena_lang
       bool isValidObjOp(int operatorId);
       bool isValidStrDictionaryOp(int operatorId);
       bool isValidObjArrayOp(int operatorId);
+      bool isValidAttrDictionaryOp(int operatorId);
       bool isValidOp(int operatorId, BuildKey op);
 
       void tweakClassFlags(ClassInfo& info, bool classClassMode);
@@ -53,6 +54,9 @@ namespace elena_lang
       bool readDictionary(MemoryBase* section, ReferenceMap& map);
 
       void writeArrayEntry(MemoryBase* section, ref_t reference);
+
+      void writeAttrDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference);
+      bool readAttrDictionary(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
       //void injectVirtualCode(ClassInfo& classInfo);
 

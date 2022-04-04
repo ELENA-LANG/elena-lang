@@ -532,6 +532,24 @@ namespace elena_lang
          return Node();
       }
 
+      static Node gotoChild(Node node, Key key, int value)
+      {
+         Node current = node.findChild(key);
+         while (current == key) {
+            if (value == current.arg.value)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return Node();
+      }
+
+      static bool ifChildExists(Node node, Key key, int value)
+      {
+         return gotoChild(node, key, value) == key;
+      }
+
       static int countChild(Node node, Key key)
       {
          int counter = 0;

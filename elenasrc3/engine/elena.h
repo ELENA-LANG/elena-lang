@@ -92,6 +92,9 @@ namespace elena_lang
    typedef Map<ref64_t, ref_t>                        ActionMap;
    typedef Map<ustr_t, addr_t, allocUStr, freeUStr>   AddressMap;
 
+   // --- Maps ---
+   typedef List<ustr_t, freeUStr>                     IdentifierList;
+
    // --- Tuples ---
 
    // --- ModuleBase ---

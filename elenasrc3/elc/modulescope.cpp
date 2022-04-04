@@ -97,6 +97,28 @@ ref_t ModuleScope :: resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Vis
    else return ::mapExistingIdentifier(module, identifier, visibility);
 }
 
+ref_t ModuleScope :: resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs)
+{
+   ref_t reference = 0;
+
+   auto it = importedNs->start();
+   while (!it.eof()) {
+      ReferenceName fullName(*it, identifier);
+
+      auto sectionInfo = loader->getModule(*fullName, true);
+      if (sectionInfo.module && sectionInfo.reference) {
+         if (sectionInfo.module != module) {
+            return module->mapReference(*fullName, false);
+         }
+         else return reference;
+      }
+
+      ++it;
+   }
+
+   return reference;
+}
+
 ustr_t ModuleScope :: resolveWeakTemplateReference(ustr_t referenceName)
 {
    ustr_t resolvedName = forwardResolver->resolveForward(referenceName);
@@ -284,4 +306,66 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
    if (target.header.parentRef)
       target.header.parentRef = importReference(exporter, target.header.parentRef);
 
+}
+
+void ModuleScope :: saveListMember(ustr_t name, ustr_t memberName)
+{
+   // HOTFIX : do not include itself
+   IdentifierString sectionName("'", name);
+
+   MemoryBase* section = module->mapSection(
+      module->mapReference(*sectionName, false) | mskStrMetaArrayRef, 
+      false);
+
+   // check if the module alread included
+   MemoryReader metaReader(section);
+   while (!metaReader.eof()) {
+      ustr_t s = metaReader.getString(DEFAULT_STR);
+      if (s.compare(memberName))
+         return;
+   }
+
+   // otherwise add it to the list
+   MemoryWriter metaWriter(section);
+
+   metaWriter.writeString(memberName);
+}
+
+void ModuleScope :: newNamespace(ustr_t ns)
+{
+   IdentifierString virtualRef("'");
+   if (!ns.empty()) {
+      virtualRef.append(ns);
+      virtualRef.append("'");
+   }
+   virtualRef.append(NAMESPACE_REF);
+
+   module->mapReference(*virtualRef, false);
+
+   if (!ns.empty())
+      saveListMember(NAMESPACES_SECTION, ns);
+}
+
+bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bool& duplicateInclusion)
+{
+   // check if the namespace exists
+   ReferenceName virtualRef(name, NAMESPACE_REF);
+   ref_t dummyRef = 0;
+
+   auto sectionInfo = loader->getModule(ReferenceInfo(module, *virtualRef), true);
+   if (sectionInfo.module && sectionInfo.reference && sectionInfo.module != module) {
+      ustr_t value = importedNs.retrieve<ustr_t>(name, [](ustr_t name, ustr_t current)
+         {
+            return current == name;
+         });
+      if (value == nullptr) {
+         importedNs.add(name.clone());
+
+         saveListMember(IMPORTS_SECTION, sectionInfo.module->name());
+
+         return true;
+      }
+      else duplicateInclusion = true;
+   }
+   return false;
 }

@@ -1,6 +1,8 @@
+import system;
+
 B
 {
-  __string /*object*/system'Object[] theArray;
+  __string object[] theArray;
 }
 
 singleton B

@@ -354,6 +354,15 @@ namespace elena_lang
          else return false;
       }
 
+      ustr_t getString(ustr_t)
+      {
+         const char* s = (const char*)_memory->get(_position);
+
+         seek(_position + getlength_pos(s) + 1);
+
+         return s;
+      }
+
       MemoryReader(MemoryBase* memory)
       {
          _memory = memory;

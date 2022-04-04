@@ -54,6 +54,15 @@ void Interpreter :: addArrayItem(ref_t dictionaryRef, ref_t symbolRef)
    _logic->writeArrayEntry(dictionary, symbolRef | mskSymbolRef);
 }
 
+void Interpreter :: setAttrDictionaryValue(ref_t dictionaryRef, ustr_t key, ref_t reference)
+{
+   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskMetaAttributesRef, true);
+   if (!dictionary)
+      throw InternalError(errFatalError);
+
+   _logic->writeAttrDictionaryEntry(dictionary, key, reference);
+}
+
 void Interpreter :: setDictionaryValue(ref_t dictionaryRef, ustr_t key, int value)
 {
    MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskMetaDictionaryRef, true);
@@ -61,6 +70,30 @@ void Interpreter :: setDictionaryValue(ref_t dictionaryRef, ustr_t key, int valu
       throw InternalError(errFatalError);
 
    _logic->writeDictionaryEntry(dictionary, key, value);
+}
+
+bool Interpreter :: evalAttrDictionaryOp(ref_t operator_id, ArgumentsInfo& args)
+{
+   ObjectInfo loperand = args[0];
+   ObjectInfo roperand = args[1];
+
+   if (args.count() == 3 && loperand.kind == ObjectKind::MetaDictionary 
+      && (roperand.kind == ObjectKind::Class || roperand.kind == ObjectKind::Symbol)
+      && args[2].kind == ObjectKind::StringLiteral)
+   {
+      ObjectInfo ioperand = args[2];
+
+      ustr_t key = _scope->module->resolveConstant(ioperand.reference);
+      ref_t reference = roperand.reference;
+
+      if (operator_id == SET_INDEXER_OPERATOR_ID) {
+         setAttrDictionaryValue(loperand.reference, key, reference);
+
+         return true;
+      }
+   }
+
+   return false;
 }
 
 bool Interpreter :: evalStrDictionaryOp(ref_t operator_id, ArgumentsInfo& args)
@@ -108,12 +141,22 @@ bool Interpreter :: eval(BuildKey key, ref_t operator_id, ArgumentsInfo& argumen
          return evalStrDictionaryOp(operator_id, arguments);
       case BuildKey::ObjArrayOp:
          return evalObjArrayOp(operator_id, arguments);
+      case BuildKey::AttrDictionaryOp:
+         return evalAttrDictionaryOp(operator_id, arguments);
       default:
          return false;
    }
 }
 
 // --- Compiler::NamespaceScope ---
+
+Compiler::NamespaceScope :: NamespaceScope(NamespaceScope* parent)
+   : Scope(parent), forwards(0), importedNs(nullptr)
+{
+   nsName.copy(*parent->nsName);
+   defaultVisibility = parent->defaultVisibility;
+   errorProcessor = parent->errorProcessor;
+}
 
 void Compiler::NamespaceScope :: raiseError(int message, SyntaxNode terminal)
 {
@@ -140,14 +183,25 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, Express
             info.kind = ObjectKind::MetaDictionary;
             info.type = V_DICTIONARY;
             info.reference = reference;
+
+            return info;
          }
          else if (module->mapSection(reference | mskMetaArrayRef, true)) {
             info.kind = ObjectKind::MetaArray;
             info.type = V_OBJARRAY;
             info.reference = reference;
+
+            return info;
+         }
+         else if (module->mapSection(reference | mskMetaAttributesRef, true)) {
+            info.kind = ObjectKind::MetaDictionary;
+            info.type = V_OBJATTRIBUTES;
+            info.reference = reference;
+
+            return info;
          }
       }
-      else if (internOne) {
+      if (internOne) {
          // check if it is an internal procedure
          info.kind = ObjectKind::InternalProcedure;
          info.reference = reference;
@@ -203,6 +257,9 @@ ref_t Compiler::NamespaceScope :: resolveImplicitIdentifier(ustr_t identifier, b
    if (!reference && innnerMost)
       reference = moduleScope->resolveImplicitIdentifier(*nsName, identifier, Visibility::Private);
 
+   if (!reference && !referenceOne)
+      reference = moduleScope->resolveImportedIdentifier(identifier, &importedNs);
+
    if (reference)
       forwards.add(identifier, reference);
 
@@ -217,6 +274,12 @@ ref_t Compiler::NamespaceScope :: mapNewIdentifier(ustr_t name, Visibility visib
 ObjectInfo Compiler::NamespaceScope :: mapIdentifier(ustr_t identifier, bool referenceOne, EAttr mode)
 {
    ref_t reference = 0;
+   if (!referenceOne) {
+      // try resolve as type-alias
+      reference = moduleScope->aliases.get(identifier);
+      if (isPrimitiveRef(reference))
+         reference = 0;
+   }
 
    if (!reference)
       reference = resolveImplicitIdentifier(identifier, referenceOne, !EAttrs::test(mode, EAttr::NestedNs));
@@ -515,6 +578,8 @@ inline ref_t resolveDictionaryMask(ref_t typeRef)
          return mskMetaArrayRef;
       case V_DICTIONARY:
          return mskMetaDictionaryRef;
+      case V_OBJATTRIBUTES:
+         return mskMetaAttributesRef;
       default:
          return 0;
    }
@@ -1179,21 +1244,27 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
    }
 }
 
-void Compiler :: declareNamespace(NamespaceScope& ns, SyntaxNode node)
+void Compiler :: declareMembers(NamespaceScope& ns, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-         case SyntaxKey::SourcePath:
-            ns.sourcePath.copy(current.identifier());
+         case SyntaxKey::Namespace:
+         {
+            NamespaceScope namespaceScope(&ns);
+            declareNamespace(namespaceScope, node);
+            ns.moduleScope->newNamespace(*namespaceScope.nsName);
+
+            declareMembers(namespaceScope, current);
             break;
+         }
          case SyntaxKey::Symbol:
          {
             SymbolScope symbolScope(&ns, 0, ns.defaultVisibility);
 
             declareSymbol(symbolScope, current);
             break;
-         }            
+         }
          case SyntaxKey::Class:
          {
             ClassScope classScope(&ns, 0, ns.defaultVisibility);
@@ -1218,6 +1289,47 @@ void Compiler :: declareNamespace(NamespaceScope& ns, SyntaxNode node)
          {
             TemplateScope templateScope(&ns, 0, ns.defaultVisibility);
             declareTemplateCode(templateScope, current);
+            break;
+         }
+         default:
+            // to make compiler happy
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: declareNamespace(NamespaceScope& ns, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::SourcePath:
+            ns.sourcePath.copy(current.identifier());
+            break;
+         case SyntaxKey::Name:
+            if (ns.nsName.length() > 0)
+               ns.nsName.append('\'');
+
+            ns.nsName.append(current.firstChild(SyntaxKey::TerminalMask).identifier());
+            break;
+         case SyntaxKey::Import:
+         {
+            bool duplicateInclusion = false;
+            ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+            if (ns.moduleScope->includeNamespace(ns.importedNs, name, duplicateInclusion)) {
+            }
+            else if (duplicateInclusion) {
+               ns.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
+
+               // HOTFIX : comment out, to prevent duplicate warnings
+               current.setKey(SyntaxKey::Idle);
+            }
+            else {
+               ns.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current);
+               current.setKey(SyntaxKey::Idle); // remove the node, to prevent duplicate warnings
+            }
             break;
          }
          default:
@@ -1521,12 +1633,13 @@ void Compiler :: declareDictionaryAttributes(Scope& scope, SyntaxNode node, ref_
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Attribute) {
-         if (!_logic->validateDictionaryAttribute(current.arg.value, dictionaryType))
-         {
+         if (!_logic->validateDictionaryAttribute(current.arg.value, dictionaryType)) {
             current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
       }
+      else if (current == SyntaxKey::Type)
+         scope.raiseError(errInvalidHint, current);
 
       current = current.nextNode();
    }
@@ -2039,7 +2152,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
    return retVal;
 }
 
-ObjectInfo Compiler::compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+ObjectInfo Compiler :: compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
 {
    ExprScope scope(&codeScope);
 
@@ -2427,6 +2540,10 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    if (attributeInfo.section) {
       _logic->readDictionary(attributeInfo.section, moduleScope->attributes);
    }
+   auto aliasInfo = moduleScope->getSection(ALIASES_FORWARD, mskMetaAttributesRef, true);
+   if (aliasInfo.section) {
+      _logic->readAttrDictionary(aliasInfo.module, aliasInfo.section, moduleScope->aliases, moduleScope);
+   }
 
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
@@ -2464,7 +2581,12 @@ void Compiler :: declare(ModuleScopeBase* moduleScope, SyntaxTree& input)
       if (current == SyntaxKey::Namespace) {
          NamespaceScope ns(moduleScope, _errorProcessor, _logic);
 
+         // declare namespace
          declareNamespace(ns, current);
+         ns.moduleScope->newNamespace(*ns.nsName);
+
+         // declare all module members - map symbol identifiers
+         declareMembers(ns, current);
       }
 
       current = current.nextNode();
@@ -2481,6 +2603,7 @@ void Compiler :: compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildT
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Namespace) {
          NamespaceScope ns(moduleScope, _errorProcessor, _logic);
+         declareNamespace(ns, current);
 
          compileNamespace(writer, ns, current);
       }

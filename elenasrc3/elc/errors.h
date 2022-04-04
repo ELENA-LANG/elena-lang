@@ -51,6 +51,8 @@ namespace elena_lang
 
    constexpr auto wrnMsgUnknownHint          = "%s(%d:%d): warning 404: Unknown attribute '%s'\n";
    constexpr auto wrnMsgInvalidHint          = "%s(%d:%d): warning 406: Attribute '%s' cannot be applied here\n";
+   constexpr auto wrnMsgUnknownModule        = "%s(%d:%d): warning 413: Unknown module '%s'\n";
+   constexpr auto wrnMsgDuplicateInclude     = "%s(%d:%d): warning 425: '%s': duplicate inclusion\n";
 
    constexpr auto wrnMsgSyntaxFileNotFound   = "warning 500: cannot open syntax file '%s'\n";
    constexpr auto wrnMsgInvalidConfig        = "warning 501: invalid or unknown config file %s\n";

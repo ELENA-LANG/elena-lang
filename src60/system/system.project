@@ -27,6 +27,7 @@
      <module name="predefined">
         <include>predefined/attributes.l</include>
         <include>predefined/predefined.l</include>
+        <include>predefined/aliases.l</include>
      </module>
      <module>
         <include>base.l</include>

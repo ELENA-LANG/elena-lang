@@ -141,9 +141,11 @@ namespace elena_lang
       ModuleScopeBase* _scope;
       CompilerLogic*   _logic;
 
+      void setAttrDictionaryValue(ref_t dictionaryRef, ustr_t key, ref_t reference);
       void setDictionaryValue(ref_t dictionaryRef, ustr_t key, int value);
       void addArrayItem(ref_t dictionaryRef, ref_t symbolRef);
 
+      bool evalAttrDictionaryOp(ref_t operator_id, ArgumentsInfo& args);
       bool evalStrDictionaryOp(ref_t operator_id, ArgumentsInfo& args);
       bool evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args);
 
@@ -244,7 +246,9 @@ namespace elena_lang
          IdentifierString sourcePath;
 
          // forward declarations
-         ForwardMap       forwards;       
+         ForwardMap       forwards;
+         // imported namespaces
+         IdentifierList   importedNs;
 
          Visibility       defaultVisibility;
 
@@ -273,7 +277,7 @@ namespace elena_lang
          ObjectInfo mapWeakReference(ustr_t identifier, bool directResolved);
 
          NamespaceScope(ModuleScopeBase* moduleScope, ErrorProcessor* errorProcessor, CompilerLogic* compilerLogic)
-            : Scope(nullptr), forwards(0)
+            : Scope(nullptr), forwards(0), importedNs(nullptr)
          {
             this->moduleScope = moduleScope;
             this->module = moduleScope->module;
@@ -282,6 +286,7 @@ namespace elena_lang
             this->errorProcessor = errorProcessor;
             this->compilerLogic = compilerLogic;
          }
+         NamespaceScope(NamespaceScope* parent);
       };
 
       struct SourceScope : Scope
@@ -547,6 +552,7 @@ namespace elena_lang
       void declareClass(ClassScope& scope, SyntaxNode node);
 
       void declareNamespace(NamespaceScope& ns, SyntaxNode node);
+      void declareMembers(NamespaceScope& ns, SyntaxNode node);
 
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id);
       ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node);

@@ -47,7 +47,8 @@ namespace elena_lang
       Import            = 0x0028,
       StrDictionaryOp   = 0x0029,
       ObjArrayOp        = 0x002A,
-      ObjOp             = 0x002B ,
+      ObjOp             = 0x002B,
+      AttrDictionaryOp  = 0x002C,
 
       Value             = 0x8001,
       Reserved          = 0x8002,      // reserved managed

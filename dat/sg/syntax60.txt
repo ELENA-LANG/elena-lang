@@ -128,6 +128,7 @@ MESSAGE_PARAMETER ::=
 
 EXPRESSION ::=
         identifier I_R
+	| reference I_R
         | integer ^OBJECT
         | hexinteger ^OBJECT
         | string ^OBJECT;

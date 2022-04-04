@@ -44,6 +44,7 @@ namespace elena_lang
    // --- ELENA special sections ---
    constexpr auto NAMESPACES_SECTION      = "$namespaces";
    constexpr auto IMPORTS_SECTION         = "$import";
+   constexpr auto NAMESPACE_REF           = "$namespace";
 
    // --- ELENA standard weak namespace
    constexpr auto RT_FORWARD              = "$rt";
@@ -55,6 +56,7 @@ namespace elena_lang
 
    constexpr auto PREDEFINED_FORWARD      = "$forwards'meta$predefined";
    constexpr auto ATTRIBUTES_FORWARD      = "$forwards'meta$attributes";
+   constexpr auto ALIASES_FORWARD         = "$forwards'meta$aliasTypes";
    constexpr auto SYSTEM_ENTRY            = "$forwards'$system_entry";   // the system entry
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 
@@ -169,6 +171,7 @@ namespace elena_lang
    constexpr ref_t mskSyntaxTreeRef       = 0x0A000000u;
    constexpr ref_t mskProcedureRef        = 0x0B000000u;
    constexpr ref_t mskIntLiteralRef       = 0x0C000000u;
+   constexpr ref_t mskMetaAttributesRef   = 0x0D000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

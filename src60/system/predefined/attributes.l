@@ -21,8 +21,10 @@
 #let attributesSymbols["dispatch"]    := 80001013h;
 #let attributesSymbols["intern"]      := 80001016h;
 #let attributesSymbols["forward"]     := 80001017h;
+#let attributesSymbols["import"]      := 80001018h;
 #let attributesSymbols["inline"]      := 80001025h;
 
 /// primitive types
 #let attributesSymbols["__string"]    := 80000801h;
 #let attributesSymbols["__int"]       := 80000803h;
+#let attributesSymbols["__symbol"]    := 80000808h;

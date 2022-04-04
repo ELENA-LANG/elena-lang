@@ -20,6 +20,8 @@ class ModuleScope : public ModuleScopeBase
    LibraryLoaderBase*   loader;
    ForwardResolverBase* forwardResolver;
 
+   void saveListMember(ustr_t name, ustr_t memberName);
+
 public:
    bool isStandardOne() override;
 
@@ -37,6 +39,7 @@ public:
    ref_t mapWeakReference(ustr_t referenceName, bool existing) override;
 
    ref_t resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) override;
+   ref_t resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs) override;
 
    ustr_t resolveWeakTemplateReference(ustr_t referenceName);
 
@@ -63,6 +66,9 @@ public:
 
    void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode/*,
       bool ignoreFields*/) override;
+
+   void newNamespace(ustr_t name) override;
+   bool includeNamespace(IdentifierList& importedNs, ustr_t name, bool& duplicateInclusion) override;
 
    ModuleScope(LibraryLoaderBase* loader, 
       ForwardResolverBase* forwardResolver, 

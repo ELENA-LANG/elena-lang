@@ -59,6 +59,8 @@ namespace elena_lang
 
    constexpr auto wrnUnknownHint          = 404;
    constexpr auto wrnInvalidHint          = 406;
+   constexpr auto wrnUnknownModule        = 413;
+   constexpr auto wrnDuplicateInclude     = 425;
 
    constexpr auto wrnSyntaxFileNotFound   = 500;
    constexpr auto wrnInvalidConfig        = 501;
@@ -112,12 +114,15 @@ namespace elena_lang
    constexpr auto V_DISPATCHER            = 0x80001013u;
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;
+   constexpr auto V_IMPORT                = 0x80001018u;
    constexpr auto V_INLINE                = 0x80001025u;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;
    constexpr auto V_INTBINARY             = 0x80000803u;
+   constexpr auto V_SYMBOL                = 0x80000808u;
 
+   /// primitive types
    constexpr auto V_STRING                = 0x80000001u;
    constexpr auto V_INT32                 = 0x80000002u;
    constexpr auto V_DICTIONARY            = 0x80000003u;
@@ -125,7 +130,9 @@ namespace elena_lang
    constexpr auto V_OBJARRAY              = 0x80000005u;
    constexpr auto V_OBJECT                = 0x80000006u;
    constexpr auto V_BINARYARRAY           = 0x8000000Bu;
+   constexpr auto V_OBJATTRIBUTES         = 0x80000012u;
 
+   /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;
 
    // === Operators ===

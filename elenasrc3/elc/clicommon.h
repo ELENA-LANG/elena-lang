@@ -298,6 +298,7 @@ class ModuleScopeBase : public SectionScopeBase
 public:
    ReferenceMap         predefined;
    ReferenceMap         attributes;
+   ReferenceMap         aliases;
    BuiltinReferences    buildins;
 
    IdentifierString     selfVar;
@@ -315,6 +316,7 @@ public:
    virtual ref_t mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
 
    virtual ref_t resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
+   virtual ref_t resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs) = 0;
 
    virtual SectionInfo getSection(ustr_t referenceName, ref_t mask, bool silentMode) = 0;
 
@@ -327,12 +329,15 @@ public:
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode/*,
       bool ignoreFields*/) = 0;
 
+   virtual void newNamespace(ustr_t name) = 0;
+   virtual bool includeNamespace(IdentifierList& importedNs, ustr_t name, bool& duplicateInclusion) = 0;
+
    ModuleScopeBase(ModuleBase* module,
       ModuleBase* debugModule,
       pos_t stackAlingment, 
       pos_t rawStackAlingment,
       int minimalArgList)
-      : predefined(0), attributes(0), cachedSizes({})
+      : predefined(0), attributes(0), aliases(0), cachedSizes({})
    {
       this->module = module;
       this->debugModule = debugModule;
