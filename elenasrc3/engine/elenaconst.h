@@ -62,6 +62,7 @@ namespace elena_lang
 
    constexpr auto SUPER_FORWARD           = "$forwards'$super";          // the common class predecessor
    constexpr auto INTLITERAL_FORWARD      = "$forwards'$int";          // the common class predecessor
+   constexpr auto LITERAL_FORWARD         = "$forwards'$string";          // the common class predecessor
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";
@@ -172,6 +173,7 @@ namespace elena_lang
    constexpr ref_t mskProcedureRef        = 0x0B000000u;
    constexpr ref_t mskIntLiteralRef       = 0x0C000000u;
    constexpr ref_t mskMetaAttributesRef   = 0x0D000000u;
+   constexpr ref_t mskLiteralRef          = 0x0E000000u;   // reference to constant literal
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

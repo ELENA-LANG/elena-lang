@@ -1441,9 +1441,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
          writer.appendNode(BuildKey::Value, info.extra);
          writer.closeNode();
          break;
-      //case ObjectKind::StringLiteral:
-      //   writer.appendNode(BuildKey::StringLiteral, info.reference);
-      //   break;
+      case ObjectKind::StringLiteral:
+         writer.appendNode(BuildKey::StringLiteral, info.reference);
+         break;
       //case ObjectKind::MetaDictionary:
       //   writer.appendNode(BuildKey::MetaDictionary, info.reference);
       //   break;

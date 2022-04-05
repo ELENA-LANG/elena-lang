@@ -43,6 +43,7 @@ namespace elena_lang
       EOPBreakpoint     = 0x000F,
       CreatingStruct    = 0x0010,
       IntLiteral        = 0x0011,
+      StringLiteral     = 0x0012,
 
       Import            = 0x0028,
       StrDictionaryOp   = 0x0029,
@@ -58,7 +59,6 @@ namespace elena_lang
       Column            = 0x8006,
       Row               = 0x8007,
 
-      //StringLiteral     = 0x0021,
       //MetaDictionary    = 0x0022,
       //MetaArray         = 0x1023,
 

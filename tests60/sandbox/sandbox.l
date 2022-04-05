@@ -12,7 +12,7 @@ class A
 {
    testA() 
    {
-      var a := 2;
+      var s := "abc";
    }
 
    constructor new() {}

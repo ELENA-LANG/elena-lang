@@ -148,6 +148,11 @@ void intLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskIntLiteralRef);
 }
 
+void stringLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskLiteralRef);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -167,7 +172,8 @@ ByteCodeWriter::Saver commands[] =
    addingBreakpoint,
    addingBreakpoint,
    creatingStruct,
-   intLiteral
+   intLiteral,
+   stringLiteral
 };
 
 // --- ByteCodeWriter ---

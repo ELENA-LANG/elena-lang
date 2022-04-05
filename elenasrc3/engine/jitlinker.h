@@ -28,6 +28,7 @@ namespace elena_lang
       struct ConstantSettings
       {
          ustr_t intLiteralClass;
+         ustr_t literalClass;
       };
 
       struct VAddressInfo
@@ -160,6 +161,7 @@ namespace elena_lang
          _withDebugInfo = false;
 
          _constantSettings.intLiteralClass = forwardResolver->resolveForward(INTLITERAL_FORWARD);
+         _constantSettings.literalClass = forwardResolver->resolveForward(LITERAL_FORWARD);
       }
    };
 

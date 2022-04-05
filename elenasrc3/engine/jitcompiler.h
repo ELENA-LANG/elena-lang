@@ -190,6 +190,7 @@ namespace elena_lang
       void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) override;
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
+      void writeLiteral(MemoryWriter& writer, ustr_t value) override;
 
       JITCompiler32()
          : JITCompiler()
@@ -235,6 +236,7 @@ namespace elena_lang
       void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) override;
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
+      void writeLiteral(MemoryWriter& writer, ustr_t value) override;
 
       JITCompiler64()
          : JITCompiler()

@@ -1506,6 +1506,12 @@ void JITCompiler32 :: writeInt32(MemoryWriter& writer, unsigned value)
    writer.writeDWord(value);
 }
 
+void JITCompiler32 :: writeLiteral(MemoryWriter& writer, ustr_t value)
+{
+   writer.writeString(value, value.length() + 1);
+   writer.align(4, 0);
+}
+
 // --- JITCompiler64 ---
 
 inline void insertVMTEntry64(VMTEntry64* entries, pos_t count, pos_t index)
@@ -1735,4 +1741,11 @@ int JITCompiler64 :: calcTotalStructSize(int size)
 void JITCompiler64 :: writeInt32(MemoryWriter& writer, unsigned value)
 {
    writer.writeDWord(value);
+   writer.align(8, 0);
+}
+
+void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)
+{
+   writer.writeString(value, value.length() + 1);
+   writer.align(8, 0);
 }
