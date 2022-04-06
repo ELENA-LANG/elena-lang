@@ -590,6 +590,7 @@ namespace elena_lang
       ObjectInfo compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
          ExpressionAttribute mode);
       ObjectInfo compileRootExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
+      ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
 
       ObjectInfo compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
 

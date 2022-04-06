@@ -329,6 +329,22 @@ namespace elena_lang
          return tmp;
       }
 
+      MemoryListIterator& operator --()
+      {
+         if (_position >= sizeof(T)) {
+            _position -= sizeof(T);
+         }
+
+         return *this;
+      }
+      MemoryListIterator operator --(int)
+      {
+         MemoryListIterator tmp = *this;
+         -- *this;
+
+         return tmp;
+      }
+
       T& operator*()
       {
          _buffer->read(_position, &_current, sizeof(T));
@@ -369,6 +385,8 @@ namespace elena_lang
       Iterator end() { return Iterator(_tale); }
 
       pos_t count() const { return _count; }
+
+      T peek() const { return _top->item; }
 
       T DefaultValue() const { return _defaultValue; }
 
@@ -565,6 +583,11 @@ namespace elena_lang
          _list.addToTale(item);
       }
 
+      T peek() const
+      {
+         return _list.peek();
+      }
+
       T get(int index) const
       {
          return _list.getAt(index);
@@ -614,11 +637,28 @@ namespace elena_lang
       T           _defaultItem;
 
    public:
+      typedef ListIteratorBase<T, ItemBase<T>> Iterator;
+
+      Iterator start()
+      {
+         return _list.start();
+      }
+
+      Iterator end()
+      {
+         return _list.end();
+      }
+
       T DefaultValue() const { return _list.DefaultValue(); }
 
       void push(T item)
       {
          _list.addToTop(item);
+      }
+
+      T peek() const
+      {
+         return _list.peek();
       }
 
       T pop()
@@ -1157,7 +1197,23 @@ namespace elena_lang
 
    inline unsigned int Map_GetUInt(MemoryDump* dump, pos_t position)
    {
-      unsigned int* keyPtr = (mssg_t*)dump->get(position);
+      unsigned int* keyPtr = (unsigned int*)dump->get(position);
+
+      return *keyPtr;
+   }
+
+   inline pos_t Map_StoreInt(MemoryDump* dump, int n)
+   {
+      pos_t position = dump->length();
+
+      dump->writeInt(position, n);
+
+      return position;
+   }
+
+   inline int Map_GetInt(MemoryDump* dump, pos_t position)
+   {
+      int* keyPtr = (int*)dump->get(position);
 
       return *keyPtr;
    }
@@ -1309,6 +1365,39 @@ namespace elena_lang
             return true;
          }
          else return false;
+      }
+
+      T exclude(Key key)
+      {
+         if (_top) {
+            pos_t currentOffset = _top;
+            pos_t previousOffset = -1;
+            while (currentOffset) {
+               Item* current = (Item*)_buffer.get(currentOffset);
+
+               if (current->readKey(&_buffer) == key) {
+                  if (previousOffset == -1) {
+                     _top = current->nextOffset;
+                  }
+                  else {
+                     Item* previous = (Item*)_buffer.get(previousOffset);
+                     previous->nextOffset = current->nextOffset;
+                  }
+
+                  if (_tale == currentOffset)
+                     _tale = previousOffset;
+
+                  _count--;
+                  if (!_count)
+                     _top = _tale = 0;
+
+                  return current->item;
+               }
+
+               previousOffset = currentOffset;
+               currentOffset = current->nextOffset;
+            }
+         }
       }
 
       void clear()
@@ -1667,6 +1756,213 @@ namespace elena_lang
       ~HashTable()
       {
          clear();
+      }
+   };
+
+   template <class Key> Key GetKey(MemoryDump* dump, pos_t position)
+   {
+      Key* keyPtr = (Key*)dump->get(position);
+
+      return *keyPtr;
+   }
+
+   template <class Key> pos_t StoreKey(MemoryDump* dump, Key key)
+   {
+      pos_t position = dump->length();
+
+      dump->write(position, &key, sizeof(key));
+
+      return position;
+   }
+
+   // --- CachedMap ---
+   // NOTE : Key type should be a simple key
+   template <class Key, class T, size_t cacheSize,
+      void(*FreeT)(T) = nullptr>
+   class CachedMemoryMap
+   {
+      typedef MemoryMapItemBase<Key, T, GetKey> Item;
+      typedef MemoryIteratorBase<Key, T, Item>  MemoryIterator;
+
+      struct CachedItem
+      {
+         Key key;
+         T   item;
+      };
+
+      class CachedMemoryMapIterator
+      {
+         friend class CachedMemoryMap;
+
+         CachedMemoryMap* _cachedMap;
+         size_t           _index;
+         MemoryIterator   _iterator;
+
+         CachedMemoryMapIterator(CachedMemoryMap* cachedMap, unsigned int index)
+         {
+            this->_cachedMap = cachedMap;
+            this->_index = index;
+         }
+         CachedMemoryMapIterator(MemoryIterator iterator)
+         {
+            _cachedMap = nullptr;
+            _iterator = iterator;
+         }
+
+      public:
+         CachedMemoryMapIterator& operator =(const CachedMemoryMapIterator& it)
+         {
+            this->_iterator = it._iterator;
+            this->_cachedMap = it._cachedMap;
+            this->_index = it._index;
+
+            return *this;
+         }
+
+         CachedMemoryMapIterator& operator++()
+         {
+            if (_cachedMap && _cachedMap->_cached) {
+               if (this->_index < _cachedMap->_count) {
+                  _index++;
+               }
+            }
+            else _iterator++;
+
+            return *this;
+         }
+         CachedMemoryMapIterator operator ++(int)
+         {
+            CachedMemoryMapIterator tmp = *this;
+            ++* this;
+
+            return tmp;
+         }
+
+         T& operator*() const
+         {
+            if (_cachedMap && _cachedMap->_cached) {
+               return _cachedMap->_cache[_index].item;
+            }
+            else return *_iterator;
+         }
+
+         Key key() const
+         {
+            if (_cachedMap && _cachedMap->_cached) {
+               return _cachedMap->_cache[_index].key;
+            }
+            else return _iterator.key();
+         }
+
+         bool eof() const
+         {
+            if (_cachedMap && _cachedMap->_cached) {
+               return _index >= _cachedMap->_count;
+            }
+            else return _iterator.eof();
+         }
+
+         CachedMemoryMapIterator()
+         {
+            this->_cachedMap = nullptr;
+         }
+      };
+      friend class CachedMemoryMapIterator;
+
+      MemoryMap<Key, T, StoreKey, GetKey, FreeT> _map;
+
+      bool                                       _cached;
+      CachedItem                                 _cache[cacheSize];
+      size_t                                     _count;
+
+   public:
+      typedef CachedMemoryMapIterator Iterator;
+
+      Iterator start()
+      {
+         if (_cached) {
+            return Iterator(this, 0);
+         }
+         else return Iterator(_map.start());
+      }
+
+      T get(Key key)
+      {
+         if (_cached) {
+            for (size_t i = 0; i < _count; i++) {
+               if (_cache[i].key == key)
+                  return _cache[i].item;
+            }
+
+            return _map.DefaultValue();
+         }
+         else return _map.get(key);
+      }
+
+      Iterator getIt(Key key)
+      {
+         if (_cached) {
+            for (size_t i = 0; i < _count; i++) {
+               if (_cache[i].key == key)
+                  return Iterator(this, i);
+            }
+            return Iterator(this, _count + 1);
+         }
+         else return Iterator(_map.getIt(key));
+      }
+
+      bool exist(Key key)
+      {
+         return !getIt(key).eof();
+      }
+
+      void add(Key key, T value)
+      {
+         if (_cached) {
+            if (cacheSize == _count) {
+               _cached = false;
+
+               for (size_t i = 0; i < _count; i++)
+                  _map.add(_cache[i].key, _cache[i].item);
+
+               _map.add(key, value);
+            }
+            else {
+               _cache[_count].key = key;
+               _cache[_count].item = value;
+
+               _count++;
+            }
+         }
+         else _map.add(key, value);
+      }
+
+      T exclude(Key key)
+      {
+         if (_cached) {
+            for (size_t i = 0; i < _count; i++) {
+               if (_cache[i].key == key) {
+                  T item = _cache[i].item;
+
+                  for (unsigned int j = i + 1; j < _count; j++) {
+                     _cache[i] = _cache[j];
+                  }
+
+                  _count--;
+
+                  return item;
+               }
+            }
+            return _map.DefaultValue();
+         }
+         else return _map.exclude(key);
+      }
+
+      CachedMemoryMap(T defValue)
+         : _map(defValue)
+      {
+         _cached = false;
+         _count = 0;
       }
    };
 

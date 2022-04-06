@@ -47,7 +47,7 @@ const char* _fnOpcodes[256] =
    "save dp", "store fp", "save sp", "store sp", "xflush sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "peek fp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "call", "call vt", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "call", "call vt", "jump", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -62,6 +62,41 @@ const char* _fnOpcodes[256] =
    "open", "xstore sp", "open header", "mov sp", "new", "newn", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, "xstore fp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "call extern", OPCODE_UNKNOWN
 };
+
+// --- Auxiliary  ---
+
+void fixJumps(MemoryBase* code, int labelPosition, Map<int, int>& jumps, int label)
+{
+   Map<int, int>::Iterator it = jumps.start();
+   while (!it.eof()) {
+      if (it.key() == label) {
+         int position = labelPosition - *it - 4;
+         code->write(*it, &position, 4);
+      }
+      ++it;
+   }
+}
+
+// return true if there is a idle jump
+inline bool fixIdleJumps(int label, int labelIndex, CachedMemoryMap<int, int, 40>& fixes, CachedMemoryMap<int, int, 40>& jumps)
+{
+   bool idleJump = false;
+
+   CachedMemoryMap<int, int, 40>::Iterator it = fixes.start();
+   while (!it.eof()) {
+      if (it.key() == label) {
+         if (1 + *it == labelIndex) {
+            idleJump = true;
+         }
+         else jumps.add(*it, labelIndex);
+      }
+
+      it++;
+   }
+   return idleJump;
+}
+
+// --- ByteCodeUtil ---
 
 ByteCode ByteCodeUtil :: code(ustr_t command)
 {
@@ -173,6 +208,309 @@ void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* targe
 
 // --- CommandTape ---
 
+inline void addJump(int label, int index, CachedMemoryMap<int, int, 20>& labels,
+   CachedMemoryMap<int, int, 40>& jumps,
+   CachedMemoryMap<int, int, 40>& fixes)
+{
+   int labelIndex = labels.get(label);
+   if (labelIndex != -1) {
+      jumps.add(index, labelIndex);
+   }
+   // if the label is not yet defined, the jump should be resolved later
+   else fixes.add(label, index);
+}
+
+inline bool removeIdleJump(ByteCodeIterator it)
+{
+   ByteCommand command = *it;
+
+   while (true) {
+      switch (command.code) {
+         case ByteCode::Jump:
+         //case bcIfR:
+         //case bcElseR:
+         //   //case bcIfB:
+         //case bcElseD:
+         //case bcIf:
+         //case bcIfCount:
+         //case bcElse:
+         //   //case bcLess:
+         //case bcNotLess:
+         //case bcNotGreater:
+         //case bcIfN:
+         //case bcElseN:
+         //case bcLessN:
+         //case bcNotLessN:
+         //case bcGreaterN:
+         //case bcNotGreaterN:
+         //   //case bcIfM:
+         //   //case bcElseM:
+         //   //case bcNext:
+         //case bcIfHeap:
+         //case bcJumpRM:
+         //case bcVJumpRM:
+         //case bcJumpI:
+            *it = ByteCode::Nop;
+            return true;
+         }
+         --it;
+   }
+   return false;
+}
+
+inline bool markAsReached(int blockStart, int blockEnd, CachedMemoryMap<int, int, 20>& blocks, CachedMemoryMap<int, int, 40>& jumps)
+{
+   bool applied = false;
+
+   CachedMemoryMap<int, int, 40>::Iterator it = jumps.start();
+   while (!it.eof()) {
+      if (it.key() >= blockStart && it.key() < blockEnd) {
+         CachedMemoryMap<int, int, 20>::Iterator b_it = blocks.getIt(*it);
+         if (*b_it != -1) {
+            applied = true;
+
+            *b_it = -1;
+         }
+      }
+
+      it++;
+   }
+
+   return applied;
+}
+
+inline int getBlockEnd(CachedMemoryMap<int, int, 20>::Iterator it, int length)
+{
+   ++it;
+
+   if (!it.eof()) {
+      return it.key();
+   }
+   else return length;
+}
+
+inline bool optimizeProcJumps(ByteCodeIterator it)
+{
+   bool modified = false;
+
+   auto start_it = it;
+
+   CachedMemoryMap<int, int, 20> blocks(0); // value: 0 - unreached, -1 - reached, 1 - partial (reached if the previous one can be reached)
+   CachedMemoryMap<int, int, 20> labels(-1);
+   CachedMemoryMap<int, int, 40> jumps(0);
+   CachedMemoryMap<int, int, 40> fixes(0);
+   CachedMemoryMap<int, ByteCodeIterator, 20> idleLabels({}); // used to remove unused labels
+
+   blocks.add(0, -1);
+
+   // populate blocks and jump lists
+   int index = 0;
+   while (!it.eof()) {
+      // skip pseudo commands (except labels)
+      ByteCommand command = *it;
+
+      if (command.code == ByteCode::Label) {
+         labels.add(command.arg1, index);
+
+         // add to idleLabels only if there are no forward jumps to it
+         if (!fixes.exist(command.arg1)) {
+            idleLabels.add(command.arg1, it);
+         }
+
+         // create partial block if it was not created
+         if (!blocks.exist(index))
+            blocks.add(index, 1);
+
+         // fix forward jumps
+         // if there is a idle jump it should be removed
+         if (fixIdleJumps(command.arg1, index, fixes, jumps)) {
+            modified |= removeIdleJump(it);
+            // mark its block as partial
+            *blocks.getIt(index) = 1;
+         }
+      }
+      else if (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop) {
+         switch (command.code) {
+            //case bcThrow:
+            case ByteCode::Quit:
+            //case bcQuitN:
+            //case ByteCode::JumpVI:
+            //case ByteCode::JumpRM:
+            //case ByteCode::VJumpRM:
+            //case ByteCode::JumpI:
+               blocks.add(index + 1, 0);
+               break;
+            case ByteCode::Jump:
+               blocks.add(index + 1, 0);
+            //case bcIfR:
+            //case bcElseR:
+            //case bcElseD:
+            //case bcIf:
+            //case bcIfCount:
+            //case bcElse:
+            //case bcNotLess:
+            //case bcNotGreater:
+            //case bcIfN:
+            //case bcElseN:
+            //case bcLessN:
+            //case bcNotLessN:
+            //case bcGreaterN:
+            //case bcNotGreaterN:
+               //            case bcIfM:
+               //            case bcElseM:              
+               //            case bcNext:
+            //case bcHook:
+            //case bcAddress:
+            //case bcIfHeap:
+               // remove the label from idle list
+               idleLabels.exclude(command.arg1);
+
+               addJump(command.arg1, index, labels, jumps, fixes);
+               break;
+         }
+
+         index++;
+      }
+      it++;
+   }
+
+   int length = index;
+
+   // find out the blocks which can be reached
+   bool marked = true;
+   while (marked) {
+      marked = false;
+
+      CachedMemoryMap<int, int, 20>::Iterator b_it = blocks.start();
+      bool prev = false;
+      while (!b_it.eof()) {
+         if (*b_it == -1) {
+            prev = true;
+
+            marked |= markAsReached(b_it.key(), getBlockEnd(b_it, length), blocks, jumps);
+         }
+         else if (*b_it == 1 && prev) {
+            *b_it = -1;
+            marked |= markAsReached(b_it.key(), getBlockEnd(b_it, length), blocks, jumps);
+         }
+         else prev = false;
+
+         b_it++;
+      }
+   }
+
+   // remove unreached blocks
+   it = start_it;
+   index = 0;
+   CachedMemoryMap<int, int, 20>::Iterator b_it = blocks.start();
+   int blockEnd = getBlockEnd(b_it, length);
+   while (!it.eof()) {
+      ByteCommand command = *it;
+      bool isCommand = (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop);
+
+      if (index == blockEnd) {
+         b_it++;
+         blockEnd = getBlockEnd(b_it, length);
+      }
+
+      // clear unreachable block
+      // HOTFIX : do not remove ending breakpoint coordinates
+      if (*b_it != -1 && command.code != ByteCode::None && command.code != ByteCode::Breakpoint) {
+         (*it).code = ByteCode::None;
+         modified = true;
+      }
+
+      if (isCommand)
+         index++;
+
+      ++it;
+   }
+
+   // remove idle labels
+   CachedMemoryMap<int, ByteCodeIterator, 20>::Iterator i_it = idleLabels.start();
+   while (!i_it.eof()) {
+      *(*i_it) = ByteCode::Nop;
+      modified = true;
+
+      ++i_it;
+   }
+
+   return modified;
+}
+
+//bool CommandTape :: optimizeIdleBreakpoints(CommandTape& tape)
+//{
+//   bool modified = false;
+//   bool idle = false;
+
+   //ByteCodeIterator it = tape.start();
+   //while (!it.Eof()) {
+   //   int code = (*it).code;
+
+   //   if (code == bcJump)
+   //      idle = true;
+   //   else if (code == bcBreakpoint) {
+   //      if (idle) {
+   //         (*it).code = bcNone;
+   //      }
+   //   }
+   //   // HOTFIX : if there is a label before breakpoint
+   //   // it should not be removed
+   //   else if (code == blLabel) {
+   //      idle = false;
+   //   }
+   //   else if (code <= bcCallExtR && code >= bcNop) {
+   //      idle = false;
+   //   }
+
+   //   it++;
+   //}
+
+//   return modified;
+//}
+
+bool CommandTape :: optimizeJumps(CommandTape& tape)
+{
+   bool modified = optimizeProcJumps(tape.start());
+
+   return modified;
+}
+
+int CommandTape :: resolvePseudoArg(PseudoArg argument)
+{
+   int realArg = 0;
+   switch (argument) {
+      case PseudoArg::CurrentLabel:
+         realArg = labels.peek();
+         break;
+   }
+
+   if (argument == PseudoArg::CurrentLabel) {
+      realArg = labels.peek();
+   }
+   else if (argument == PseudoArg::FirstLabel) {
+      realArg = *labels.end();
+   }
+   else if (argument == PseudoArg::PreviousLabel) {
+      Stack<int>::Iterator it = labels.start();
+      if (!it.eof()) {
+         ++it;
+
+         realArg = *it;
+      }
+   }
+   else if (argument == PseudoArg::Prev2Label) {
+      Stack<int>::Iterator it = labels.start();
+      if (!it.eof()) {
+         ++it;
+         ++it;
+
+         realArg = *it;
+      }
+   }
+   return realArg;
+}
+
 void CommandTape :: write(ByteCode code)
 {
    ByteCommand command(code);
@@ -185,6 +523,11 @@ void CommandTape :: write(ByteCode code, arg_t arg1)
    ByteCommand command(code, arg1);
 
    tape.add(command);
+}
+
+void CommandTape :: write(ByteCode code, PseudoArg arg)
+{
+   write(code, resolvePseudoArg(arg));
 }
 
 void CommandTape :: write(ByteCode code, arg_t arg1, arg_t arg2)
@@ -213,11 +556,41 @@ void CommandTape :: import(ModuleBase* sourceModule, MemoryBase* source, bool wi
 
 void CommandTape :: saveTo(MemoryWriter* writer)
 {
+   Map<int, int> labels(0);
+   Map<int, int> fwdJumps(0);
+
    for (auto it = tape.start(); !it.eof(); ++it) {
       auto command = *it;
-      if ((unsigned int)command.code < 0x100) {
-         ByteCodeUtil::write(*writer, command);
+      switch (command.code) {
+         case ByteCode::Label:
+            fixJumps(writer->Memory(), writer->position(), fwdJumps, command.arg1);
+            labels.add(command.arg1, writer->position());
+
+            // JIT compiler interprets nop command as a label mark
+            write(ByteCode::Nop);
+
+            break;
+         case ByteCode::Jump:
+            writer->writeByte((char)command.code);
+
+            // if forward jump, it should be resolved later
+            if (!labels.exist(command.arg1)) {
+               fwdJumps.add(command.arg1, writer->position());
+               // put jump offset place holder
+               writer->writeDWord(0);
+            }
+            // if backward jump
+            else writer->writeDWord(labels.get(command.arg1) - writer->position() - 4);
+
+            if (command.code > ByteCode::MaxDoubleOp)
+               writer->write(&command.arg2, sizeof(arg_t));
+
+            break;
+         default:
+            if ((unsigned int)command.code < 0x100) {
+               ByteCodeUtil::write(*writer, command);
+            }
+            break;
       }
    }
 }
-

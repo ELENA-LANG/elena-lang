@@ -27,7 +27,7 @@ namespace elena_lang
          MemoryWriter*     debug;
          MemoryWriter*     debugStrings;
 
-         pos_t             minimalArgList;
+         int               minimalArgList;
       };
 
       struct TapeScope
@@ -61,6 +61,8 @@ namespace elena_lang
 
       void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList);
       void saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList);
+
+      void optimizeTape(CommandTape& tape);
 
    public:
       void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList);

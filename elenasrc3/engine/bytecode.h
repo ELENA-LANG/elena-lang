@@ -45,6 +45,7 @@ namespace elena_lang
 
       CallR          = 0xB0,
       CallVI         = 0xB1,
+      Jump           = 0xB2,
 
       MaxDoubleOp    = 0xEF,
 
@@ -58,6 +59,16 @@ namespace elena_lang
       CallExtR       = 0xFE,
 
       None           = 0x1000,
+      Label          = 0x1001,
+   };
+
+   enum class PseudoArg
+   {
+      None           = 0,
+      FirstLabel     = 1,
+      CurrentLabel   = 2,
+      PreviousLabel  = 3,
+      Prev2Label     = 4, // before previous
    };
 
    // --- ByteCommand ---
@@ -93,20 +104,54 @@ namespace elena_lang
       }
    };
 
+   typedef MemoryList<ByteCommand> ByteCodeList;
+   typedef ByteCodeList::Iterator  ByteCodeIterator;
+
    struct CommandTape
    {
-      MemoryList<ByteCommand> tape;
+      ByteCodeList   tape;
+
+      int            labelSeed;
+      Stack<int>     labels;
+
+      ByteCodeIterator start() const
+      {
+         return tape.start();
+      }
+
+      int resolvePseudoArg(PseudoArg argument);
+
+      int newLabel()
+      {
+         labelSeed++;
+
+         labels.push(labelSeed);
+
+         return labelSeed;
+      }
+
+      void setLabel(bool persist = false)
+      {
+         if (persist) {
+            write(ByteCode::Label, labels.peek());
+         }
+         else write(ByteCode::Label, labels.pop());
+      }
 
       void write(ByteCode code);
       void write(ByteCode code, arg_t arg1);
       void write(ByteCode code, arg_t arg1, arg_t arg2);
+      void write(ByteCode code, PseudoArg arg);
 
       void import(ModuleBase* sourceModule, MemoryBase* source, bool withHeader, SectionScopeBase* target);
 
       void saveTo(MemoryWriter* writer);
 
+      //static bool optimizeIdleBreakpoints(CommandTape& tape);
+      static bool optimizeJumps(CommandTape& tape);
+
       CommandTape()
-         : tape({})
+         : tape({}), labelSeed(0), labels(0)
       {
       }
    };

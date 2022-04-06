@@ -113,3 +113,9 @@ ELENA byte codes (or ecodes)
    newn n {prefix}:r        - create the object with the specified
                               size;
                               out: acc contains the class instance, index - undefined
+
+
+ Jump operations:
+ ---------------- 
+   jump label               - jumps to the label
+ 

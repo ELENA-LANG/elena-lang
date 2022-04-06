@@ -59,6 +59,10 @@ namespace elena_lang
       {
          write(position, &value, sizeof(unsigned int));
       }
+      void writeInt(pos_t position, int value)
+      {
+         write(position, &value, sizeof(int));
+      }
 
       void load(StreamReader& reader, pos_t length);
 

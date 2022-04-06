@@ -2184,6 +2184,17 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
    return retVal;
 }
 
+ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+{
+   ExprScope scope(&codeScope);
+
+   ObjectInfo retVal = compileExpression(writer, scope, node.findChild(SyntaxKey::EOP), EAttr::None);
+
+   writer.appendNode(BuildKey::goingToEOP);
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
 {
    ExprScope scope(&codeScope);
@@ -2269,9 +2280,9 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
          case SyntaxKey::Expression:
             compileRootExpression(writer, codeScope, current);
             break;
-         //case SyntaxKey::ReturnExpression:
-         //   compileRetExpression();
-         //   break;
+         case SyntaxKey::ReturnExpression:
+            compileRetExpression(writer, codeScope, current);
+            break;
          case SyntaxKey::EOP:
             addBreakpoint(writer, current, BuildKey::EOPBreakpoint);
             break;

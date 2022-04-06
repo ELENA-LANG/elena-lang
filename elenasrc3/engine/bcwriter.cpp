@@ -45,14 +45,15 @@ void openFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    int reservedManaged = tapeScope.reserved;
    int reservedUnmanaged = tapeScope.reservedN;
 
+   tape.newLabel();
    tape.write(ByteCode::OpenIN, reservedManaged, reservedUnmanaged);
-
 }
 
 void closeFrame(CommandTape& tape, BuildNode& node, TapeScope& scope)
 {
    int reservedUnmanaged = scope.reservedN;
 
+   tape.setLabel();
    tape.write(ByteCode::CloseN, reservedUnmanaged);
 }
 
@@ -153,6 +154,12 @@ void stringLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskLiteralRef);
 }
 
+void goingToEOP(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   //gotoEnd(tape, baFirstLabel);
+   tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -173,7 +180,8 @@ ByteCodeWriter::Saver commands[] =
    addingBreakpoint,
    creatingStruct,
    intLiteral,
-   stringLiteral
+   stringLiteral,
+   goingToEOP,
 };
 
 // --- ByteCodeWriter ---
@@ -297,6 +305,12 @@ void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope,
    else saveProcedure(node, scope, false);
 }
 
+void ByteCodeWriter :: optimizeTape(CommandTape& tape)
+{
+   // optimize unused and idle jumps
+   while (CommandTape::optimizeJumps(tape));
+}
+
 void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode)
 {
    TapeScope tapeScope = {
@@ -309,8 +323,8 @@ void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMod
    CommandTape tape;
    saveTape(tape, node.findChild(BuildKey::Tape), tapeScope);
 
-   //// optimize
-   //optimizeTape(tape);
+   // optimize
+   optimizeTape(tape);
 
    MemoryWriter* code = scope.code;
    pos_t sizePlaceholder = code->position();

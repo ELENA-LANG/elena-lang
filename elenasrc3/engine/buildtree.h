@@ -44,6 +44,7 @@ namespace elena_lang
       CreatingStruct    = 0x0010,
       IntLiteral        = 0x0011,
       StringLiteral     = 0x0012,
+      goingToEOP        = 0x0013,
 
       Import            = 0x0028,
       StrDictionaryOp   = 0x0029,
