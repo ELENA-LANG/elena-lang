@@ -25,6 +25,8 @@ namespace elena_lang
    constexpr auto ACTION_MASK             = 0x1C0u;
    constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
 
+   constexpr auto CONVERSION_MESSAGE      = 0x040u;
+
    constexpr auto ARG_COUNT               = 0x01Eu;
    constexpr auto ARG_MASK                = 0x01Fu;
 
@@ -77,6 +79,7 @@ namespace elena_lang
    // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";
    constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
+   constexpr auto CAST_MESSAGE            = "#cast";
 
    // --- constant string lengths ---
    constexpr auto TEMPLATE_PREFIX_NS_LEN = (sizeof(TEMPLATE_PREFIX_NS) - 1);

@@ -1720,7 +1720,7 @@ void JITCompiler64 :: addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWrit
    else writer.writeQReference(mskCodeRef64, codeWriter.position());
 }
 
-void JITCompiler64::addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode)
+void JITCompiler64 :: addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode)
 {
    if (!virtualMode) {
       writer.writeQWord(vaddress);

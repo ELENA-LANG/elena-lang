@@ -419,7 +419,10 @@ typedef Map<ustr_t, ref_t, allocUStr, freeUStr> ForwardMap;
 
 class CompilerBase
 {
-public:   
+public:
+   virtual void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode, 
+      mssg_t message, ustr_t retVar, ref_t classRef) = 0;
+
 };
 
 // --- TemplateProssesorBase ---

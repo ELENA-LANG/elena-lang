@@ -485,9 +485,11 @@ namespace elena_lang
       };
 
    private:
-      CompilerLogic*         _logic;
+      CompilerLogic*        _logic;
       TemplateProssesorBase* _templateProcessor;
       ErrorProcessor*        _errorProcessor;
+
+      bool reloadMetaDictionary(ModuleScopeBase* moduleScope, ustr_t name);
 
       void saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN);
 
@@ -518,7 +520,7 @@ namespace elena_lang
       void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode);
       void declareMethodAttributes(MethodScope& scope, SyntaxNode node);
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, ref_t& dictionaryType);
-      void declareExpressionAttributes(Scope& scope, SyntaxNode node, ExpressionAttributes& mode);
+      void declareExpressionAttributes(Scope& scope, SyntaxNode node, ref_t& typeRef, ExpressionAttributes& mode);
 
       void declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility);
 
@@ -579,7 +581,7 @@ namespace elena_lang
       ObjectInfo mapStringConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapIntConstant(Scope& scope, SyntaxNode node, int radix);
       ObjectInfo mapUIntConstant(Scope& scope, SyntaxNode node, int radix);
-      ObjectInfo mapTerminal(Scope& scope, SyntaxNode node, ExpressionAttribute attrs);
+      ObjectInfo mapTerminal(Scope& scope, SyntaxNode node, ref_t declaredRef, ExpressionAttribute attrs);
 
       ObjectInfo mapObject(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
 
@@ -621,6 +623,9 @@ namespace elena_lang
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver);
       void declare(ModuleScopeBase* moduleScope, SyntaxTree& input);
       void compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildTree& output);
+
+      void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode,
+         mssg_t message, ustr_t retVar, ref_t classRef) override;
 
       Compiler(
          ErrorProcessor* errorProcessor, 

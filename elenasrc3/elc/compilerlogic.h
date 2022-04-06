@@ -58,7 +58,8 @@ namespace elena_lang
       void writeAttrDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference);
       bool readAttrDictionary(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
-      //void injectVirtualCode(ClassInfo& classInfo);
+      void injectVirtualCode(CompilerBase* compiler, SyntaxNode classNode, 
+         ModuleScopeBase* scope, ref_t classRef, ClassInfo& classInfo);
 
       static CompilerLogic* getInstance()
       {

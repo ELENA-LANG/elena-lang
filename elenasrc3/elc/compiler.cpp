@@ -932,7 +932,7 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
       generateClassFields(scope, node, SyntaxTree:: countChild(node, SyntaxKey::Field) == 1);
    }
 
-   //_logic->injectVirtualCode(scope.info);
+   //_logic->injectVirtualCode(scope.reference, scope.info);
 
    if (scope.isClassClass()) {
       generateMethodDeclarations(scope, node, SyntaxKey::StaticMethod);
@@ -1041,6 +1041,9 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
          case SyntaxKey::Attribute:
          case SyntaxKey::CodeBlock:
          case SyntaxKey::Parameter:
+         case SyntaxKey::Type:
+         case SyntaxKey::ArrayType:
+         case SyntaxKey::TemplateType:
             break;
          case SyntaxKey::WithoutBody:
             withoutBody = true;
@@ -1284,6 +1287,16 @@ void Compiler :: declareMembers(NamespaceScope& ns, SyntaxNode node)
             evalStatement(scope, current);
             break;
          }
+         case SyntaxKey::ReloadStatement:
+         {
+            IdentifierString dictionaryName(
+               FORWARD_PREFIX_NS, 
+               META_PREFIX, 
+               current.firstChild(SyntaxKey::TerminalMask).identifier());
+
+            reloadMetaDictionary(ns.moduleScope, *dictionaryName);
+            break;
+         }
          case SyntaxKey::Template:
             declareTemplate(ns, current);
             break;
@@ -1400,9 +1413,10 @@ ObjectInfo Compiler :: evalObject(Interpreter& interpreter, Scope& scope, Syntax
 
    SyntaxNode terminalNode = node.lastChild(SyntaxKey::TerminalMask);
 
-   declareExpressionAttributes(scope, node, mode);
+   ref_t declaredRef = 0;
+   declareExpressionAttributes(scope, node, declaredRef, mode);
 
-   return mapTerminal(scope, terminalNode, mode.attrs);
+   return mapTerminal(scope, terminalNode, declaredRef, mode.attrs);
 }
 
 ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node)
@@ -1532,28 +1546,42 @@ void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node)
    SyntaxNode current = node.firstChild();
    bool explicitMode = false;
    while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::Attribute) {
-         ref_t value = current.arg.reference;
+      switch (current.key) {
+         case SyntaxKey::Attribute:
+         {
+            ref_t value = current.arg.reference;
 
-         MethodHint hint = MethodHint::None;
-         if (_logic->validateMethodAttribute(value, hint, explicitMode)) {
-            scope.info.hints |= (ref_t)hint;
-         }
-         else {
-            current.setArgumentReference(0);
+            MethodHint hint = MethodHint::None;
+            if (_logic->validateMethodAttribute(value, hint, explicitMode)) {
+               scope.info.hints |= (ref_t)hint;
+            }
+            else {
+               current.setArgumentReference(0);
 
-            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, node);
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, node);
+            }
+            break;
          }
-      }
-      else if (!explicitMode && current == SyntaxKey::Name) {
-         // resolving implicit method attributes
-         ref_t attr = scope.moduleScope->attributes.get(current.firstChild(SyntaxKey::TerminalMask).identifier());
-         MethodHint hint = MethodHint::None;
-         if (_logic->validateImplicitMethodAttribute(attr, hint)) {
-            scope.info.hints |= (ref_t)hint;
-            current.setKey(SyntaxKey::Attribute);
-            current.setArgumentReference(attr);
+         case SyntaxKey::Type:
+         case SyntaxKey::TemplateType:
+         case SyntaxKey::ArrayType:
+            // if it is a type attribute
+            scope.info.outputRef = resolveTypeAttribute(scope, current);
+            break;
+         case SyntaxKey::Name:
+         {
+            // resolving implicit method attributes
+            ref_t attr = scope.moduleScope->attributes.get(current.firstChild(SyntaxKey::TerminalMask).identifier());
+            MethodHint hint = MethodHint::None;
+            if (_logic->validateImplicitMethodAttribute(attr, hint)) {
+               scope.info.hints |= (ref_t)hint;
+               current.setKey(SyntaxKey::Attribute);
+               current.setArgumentReference(attr);
+            }
+            break;
          }
+         default:
+            break;
       }
 
       current = current.nextNode();
@@ -1647,7 +1675,7 @@ void Compiler :: declareDictionaryAttributes(Scope& scope, SyntaxNode node, ref_
    }
 }
 
-void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, ExpressionAttributes& mode)
+void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, ref_t& typeRef, ExpressionAttributes& mode)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None)  {
@@ -1657,10 +1685,11 @@ void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, Expr
                scope.raiseError(errInvalidHint, current);
             break;
          case SyntaxKey::Type:
-            /*if (!EAttrs::test(mode.attrs, EAttr::NoTypeAllowed)) {
-               
+            if (!EAttrs::test(mode.attrs, EAttr::NoTypeAllowed)) {
+               mode |= ExpressionAttribute::NewVariable;
+               typeRef = resolveTypeAttribute(scope, current);
             }
-            else */scope.raiseError(errInvalidHint, current);
+            else scope.raiseError(errInvalidHint, current);
             break;
          default:
             break;
@@ -2037,7 +2066,7 @@ ObjectInfo Compiler :: mapUIntConstant(Scope& scope, SyntaxNode node, int radix)
    return ObjectInfo(ObjectKind::IntLiteral, V_INT32, ::mapUIntConstant(scope, integer), integer);
 }
 
-ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, EAttr attrs)
+ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, ref_t declaredRef, EAttr attrs)
 {
    bool forwardMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Forward);
    bool variableMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::NewVariable);
@@ -2050,7 +2079,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, EAttr attrs)
          if (variableMode) {
             invalid = forwardMode;
 
-            declareVariable(scope, node, 0); // !! temporal - typeref should be provided or super class
+            declareVariable(scope, node, declaredRef); // !! temporal - typeref should be provided or super class
             retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs | ExpressionAttribute::Local);
          }
          else if (forwardMode) {
@@ -2091,9 +2120,10 @@ ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
 {
    SyntaxNode terminalNode = node.lastChild(SyntaxKey::TerminalMask);
 
-   declareExpressionAttributes(scope, node, mode);
+   ref_t declaredRef = 0;
+   declareExpressionAttributes(scope, node, declaredRef, mode);
 
-   ObjectInfo retVal = mapTerminal(scope, terminalNode, mode.attrs);
+   ObjectInfo retVal = mapTerminal(scope, terminalNode, declaredRef, mode.attrs);
 
    return retVal;
 }
@@ -2239,6 +2269,9 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
          case SyntaxKey::Expression:
             compileRootExpression(writer, codeScope, current);
             break;
+         //case SyntaxKey::ReturnExpression:
+         //   compileRetExpression();
+         //   break;
          case SyntaxKey::EOP:
             addBreakpoint(writer, current, BuildKey::EOPBreakpoint);
             break;
@@ -2532,20 +2565,42 @@ inline ref_t safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase*
    else return 0;
 }
 
+bool Compiler :: reloadMetaDictionary(ModuleScopeBase* moduleScope, ustr_t name)
+{
+   if (name.compare(PREDEFINED_FORWARD)) {
+      moduleScope->predefined.clear();
+
+      auto predefinedInfo = moduleScope->getSection(PREDEFINED_FORWARD, mskMetaDictionaryRef, true);
+      if (predefinedInfo.section) {
+         _logic->readDictionary(predefinedInfo.section, moduleScope->predefined);
+      }
+   }
+   else if (name.compare(ATTRIBUTES_FORWARD)) {
+      moduleScope->attributes.clear();
+
+      auto attributeInfo = moduleScope->getSection(ATTRIBUTES_FORWARD, mskMetaDictionaryRef, true);
+      if (attributeInfo.section) {
+         _logic->readDictionary(attributeInfo.section, moduleScope->attributes);
+      }
+   }
+   else if (name.compare(ALIASES_FORWARD)) {
+      moduleScope->aliases.clear();
+
+      auto aliasInfo = moduleScope->getSection(ALIASES_FORWARD, mskMetaAttributesRef, true);
+      if (aliasInfo.section) {
+         _logic->readAttrDictionary(aliasInfo.module, aliasInfo.section, moduleScope->aliases, moduleScope);
+      }
+   }
+   else return false;
+
+   return true;
+}
+
 void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver)
 {
-   auto predefinedInfo = moduleScope->getSection(PREDEFINED_FORWARD, mskMetaDictionaryRef, true);
-   if (predefinedInfo.section) {
-      _logic->readDictionary(predefinedInfo.section, moduleScope->predefined);
-   }
-   auto attributeInfo = moduleScope->getSection(ATTRIBUTES_FORWARD, mskMetaDictionaryRef, true);
-   if (attributeInfo.section) {
-      _logic->readDictionary(attributeInfo.section, moduleScope->attributes);
-   }
-   auto aliasInfo = moduleScope->getSection(ALIASES_FORWARD, mskMetaAttributesRef, true);
-   if (aliasInfo.section) {
-      _logic->readAttrDictionary(aliasInfo.module, aliasInfo.section, moduleScope->aliases, moduleScope);
-   }
+   reloadMetaDictionary(moduleScope, PREDEFINED_FORWARD);
+   reloadMetaDictionary(moduleScope, ATTRIBUTES_FORWARD);
+   reloadMetaDictionary(moduleScope, ALIASES_FORWARD);
 
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
@@ -2625,4 +2680,23 @@ void Compiler :: injectDefaultConstructor(ModuleScopeBase* scope, SyntaxNode nod
    SyntaxNode methodNode = node.appendChild(SyntaxKey::Constructor, message);
    methodNode.appendChild(SyntaxKey::Autogenerated);
    methodNode.appendChild(SyntaxKey::Hints, (int)hints);
+}
+
+void Compiler :: injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode,
+   mssg_t message, ustr_t retVar, ref_t classRef)
+{
+   //SNode methNode = classNode.appendNode(lxClassMethod, message);
+   //methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
+   //methNode.appendNode(lxAttribute, tpEmbeddable);
+   //methNode.appendNode(lxAttribute, tpSealed);
+   //methNode.appendNode(lxAttribute, tpCast);
+
+   //if (outputRef) {
+   //   methNode.appendNode(lxType, outputRef);
+   //}
+
+   //SNode exprNode = methNode.appendNode(lxReturning).appendNode(lxExpression);
+   //exprNode.appendNode(lxAttribute, V_NODEBUGINFO);
+   //exprNode.appendNode(lxIdentifier, variable);
+
 }

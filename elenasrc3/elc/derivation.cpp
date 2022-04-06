@@ -356,6 +356,7 @@ void SyntaxTreeBuilder :: flushMethodCode(Scope& scope, SyntaxNode node)
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Expression:
+         case SyntaxKey::ReturnExpression:
             flushStatement(scope, current);
             break;
          case SyntaxKey::EOP:

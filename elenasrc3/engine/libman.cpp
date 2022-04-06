@@ -440,6 +440,8 @@ ModuleBase* LibraryProvider :: createModule(ustr_t name)
 {
    auto module = new Module(name);
 
+   _modules.add(name, module);
+
    return module;
 }
 

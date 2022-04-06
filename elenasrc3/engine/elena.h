@@ -662,11 +662,13 @@ namespace elena_lang
    {
       bool  inherited;
       ref_t hints;
+      ref_t outputRef;
 
       MethodInfo()
       {
          inherited = false;
          hints = 0;
+         outputRef = 0;
       }
    };
 

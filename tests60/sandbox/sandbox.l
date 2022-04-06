@@ -1,5 +1,15 @@
 import system;
 
+C;
+
+D
+{
+   C get()
+   {
+   }
+}
+
+
 singleton B
 {
     testB(a) 
@@ -8,11 +18,13 @@ singleton B
     }
 }
 
+C;
+
 class A
 {
    testA() 
    {
-      var s := "abc";
+       ^ self;
    }
 
    constructor new() {}

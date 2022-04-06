@@ -311,7 +311,9 @@ bool CompilerLogic :: readAttrDictionary(ModuleBase* extModule, MemoryBase* sect
 
       if (type == 2) {
          ref_t reference = reader.getRef();
-         reference = scope->importReference(extModule, reference);
+         if (scope->module != extModule) {
+            reference = scope->importReference(extModule, reference);
+         }
 
          map.add(*key, reference);
       }
@@ -355,15 +357,25 @@ void CompilerLogic :: writeArrayEntry(MemoryBase* section, ref_t reference)
    writer.writeRef(reference);
 }
 
-//void CompilerLogic :: injectVirtualCode(ClassInfo& classInfo)
-//{
-//   if (test(classInfo.header.flags, elClassClass)) {
-//      
-//   }
-//   else {
-//      
-//   }
-//}
+void CompilerLogic :: injectVirtualCode(CompilerBase* compiler, SyntaxNode classNode, ModuleScopeBase* scope, 
+   ref_t classRef, ClassInfo& classInfo)
+{
+   //if (test(classInfo.header.flags, elClassClass)) {
+   //   
+   //}
+   //else if (/*!test(classInfo.header.flags, elNestedClass) && */!test(classInfo.header.flags, elRole)) {
+   //   // skip class classes, extensions and singletons
+   //   if (classRef != scope->buildins.superReference && !test(classInfo.header.flags, elClosed)) {
+   //      // auto generate cast$<type> message for explicitly declared classes
+   //      ref_t signRef = scope->module->mapSignature(&classRef, 1, false);
+   //      ref_t actionRef = scope->module->mapAction(CAST_MESSAGE, signRef, false);
+
+   //      compiler->injectVirtualReturningMethod(scope, classNode, 
+   //         encodeMessage(actionRef, 1, CONVERSION_MESSAGE), 
+   //         scope->selfVar, classRef);
+   //   }
+   //}
+}
 
 bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly)
 {
