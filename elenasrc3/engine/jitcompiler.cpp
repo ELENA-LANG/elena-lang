@@ -51,7 +51,7 @@ CodeGenerator _codeGenerators[256] =
    loadFrameDispOp, loadFrameIndexOp, loadIndexOp, loadIndexOp, loadIndexOp, loadNop, loadNop, loadNop,
    loadFrameIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadCallROp, loadVMTIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadCallROp, loadVMTIndexOp, compileJump, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -90,14 +90,14 @@ const ref_t coreFunctions[coreFunctionNumber] =
 
 // preloaded bc commands
 
-const size_t bcCommandNumber = 24;
+const size_t bcCommandNumber = 25;
 const ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDDisp, ByteCode::CloseN, ByteCode::AllocI, 
    ByteCode::FreeI, ByteCode::SaveDDisp, ByteCode::StoreFI, ByteCode::OpenIN, ByteCode::XStoreSIR, 
    ByteCode::OpenHeaderIN, ByteCode::CallExtR, ByteCode::MovSIFI, ByteCode::PeekFI, ByteCode::Load,  
    ByteCode::SaveSI, ByteCode::CallR, ByteCode::Quit, ByteCode::MovM, ByteCode::CallVI,
-   ByteCode::StoreSI, ByteCode::Redirect, ByteCode::NewIR, ByteCode::XFlushSI
+   ByteCode::StoreSI, ByteCode::Redirect, ByteCode::NewIR, ByteCode::XFlushSI, ByteCode::Jump
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/, 
@@ -1177,6 +1177,19 @@ void elena_lang::compileBreakpoint(JITCompilerScope* scope)
 {
    if (scope->withDebugInfo)
       scope->helper->addBreakpoint(*scope->codeWriter);
+}
+
+void elena_lang::compileJump(JITCompilerScope* scope)
+{
+   pos_t position = scope->codeWriter->position() + scope->command.arg1;
+
+   if (scope->command.arg1 < 0) {
+      // if it is a back jump
+      scope->lh->writeJumpBack(position, *scope->codeWriter);
+   }
+   else {
+      scope->lh->writeJumpForward(position, *scope->codeWriter, scope->command.arg1);
+   }
 }
 
 // --- JITCompiler ---

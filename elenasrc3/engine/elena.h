@@ -368,6 +368,9 @@ namespace elena_lang
       virtual bool setLabel(pos_t label, MemoryWriter& writer) = 0;
 
       virtual bool fixLabel(pos_t label, MemoryWriter& writer) = 0;
+
+      virtual void writeJumpBack(pos_t label, MemoryWriter& writer) = 0;
+      virtual void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
    };
 
    // --- JITCompilerBase ---

@@ -106,6 +106,7 @@ namespace elena_lang
       friend void compileBreakpoint(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
       friend void compileOpen(JITCompilerScope* scope);
+      friend void compileJump(JITCompilerScope* scope);
 
       void loadCoreRoutines(
          LibraryLoaderBase* loader,
@@ -280,6 +281,7 @@ namespace elena_lang
    void compileClose(JITCompilerScope* scope);
    void compileOpen(JITCompilerScope* scope);
    void compileBreakpoint(JITCompilerScope* scope);
+   void compileJump(JITCompilerScope* scope);
 }
 
 #endif

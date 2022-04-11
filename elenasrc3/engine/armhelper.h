@@ -367,6 +367,11 @@ namespace elena_lang
    // --- ARMLabelHelper ---
    struct ARMLabelHelper : LabelHelper
    {
+      static void writeB(int imm, MemoryWriter& writer)
+      {
+         writer.writeDWord(ARMHelper::makeBOpcode(0x5, imm));
+      }
+
       bool fixLabel(pos_t label, MemoryWriter& writer) override
       {
          for (auto it = jumps.getIt(label); !it.eof(); ++it) {
@@ -390,6 +395,23 @@ namespace elena_lang
             }
          }
          return true;
+      }
+
+      void writeJumpBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0x3FFFF)
+            throw InternalError(-1);
+
+         writeB(offset, writer);
+      }
+
+      void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeB(0, writer);
+
       }
    };
 }

@@ -171,6 +171,11 @@ namespace elena_lang
    // --- PPCLabelHelper ---
    struct PPCLabelHelper : LabelHelper
    {
+      static void writeBxx(int offset, int aa, int lk, MemoryWriter& writer)
+      {
+         writer.writeDWord(PPCHelper::makeICommand(18, offset >> 2, aa, lk));
+      }
+
       bool fixLabel(pos_t label, MemoryWriter& writer) override
       {
          for (auto it = jumps.getIt(label); !it.eof(); ++it) {
@@ -186,6 +191,22 @@ namespace elena_lang
             }
          }
          return true;
+      }
+
+      void writeJumpBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0xFFFF)
+            throw InternalError(-1);
+
+         writeBxx(offset, 0, 0, writer);
+      }
+
+      void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBxx(0, 0, 0, writer);
       }
    };
 

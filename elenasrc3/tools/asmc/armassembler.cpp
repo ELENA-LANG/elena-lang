@@ -553,7 +553,7 @@ bool Arm64Assembler :: compileANDS(ScriptToken& tokenInfo, ARMOperand rd, ARMOpe
 
 bool Arm64Assembler :: compileB(int imm, MemoryWriter& writer)
 {
-   writer.writeDWord(ARMHelper::makeBOpcode(0x5, imm));
+   ARMLabelHelper::writeB(imm, writer);
 
    return true;
 }

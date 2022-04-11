@@ -382,6 +382,14 @@ namespace elena_lang
 
       void fixJumps(pos_t position, int size, MemoryWriter& writer);
       bool fixLabel(pos_t label, MemoryWriter& writer) override;
+
+      void writeShortJmpForward(pos_t label, MemoryWriter& writer);
+      void writeJmpForward(pos_t label, MemoryWriter& writer);
+      void writeShortJmpBack(pos_t label, MemoryWriter& writer);
+      void writeNearJmpBack(pos_t label, MemoryWriter& writer);
+
+      void writeJumpBack(pos_t label, MemoryWriter& writer) override;
+      void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override;
    };
 }
 

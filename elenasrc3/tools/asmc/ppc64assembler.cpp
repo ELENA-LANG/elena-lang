@@ -384,7 +384,7 @@ void PPC64Assembler :: compileBCCTR(int bo, int bi, int bh, MemoryWriter& writer
 
 void PPC64Assembler :: compileBxx(int offset, int aa, int lk, MemoryWriter& writer)
 {
-   writer.writeDWord(PPCHelper::makeICommand(18, offset >> 2, aa, lk));
+   PPCLabelHelper::writeBxx(offset, aa, lk, writer);
 }
 
 void PPC64Assembler :: compileBCxx(int bo, int bi, int bd, int aa, int lk, MemoryWriter& writer)
@@ -624,7 +624,7 @@ void PPC64Assembler :: compileB(ScriptToken& tokenInfo, MemoryWriter& writer, La
    if (!tokenInfo.compare(":")) {
       // if jump forward
       if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
-         labelScope.helper->jumps.add(labelScope.getLabel(*tokenInfo.token), writer.position());
+         labelScope.helper->jumps.add(labelScope.getLabel(*tokenInfo.token), { writer.position() });
 
          compileBxx(0, 0, 0, writer);
       }

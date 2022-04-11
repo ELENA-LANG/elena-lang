@@ -6,8 +6,7 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
-    * >new opcode - jump
-    * method return type
+    * >method return type
     * typecast the return type
     * return statement
     * inject typecaster
@@ -60,6 +59,7 @@ Pipeline:
 
     * module template - to include basic import statement
     * module template - probably should include meta dictionary for attributes / types / ...
+    * asmc : raise an error if the label was not resolved
 
     * debugger : fix two breakpont in row
     * redirect handler : throw an exception on unhandled message
