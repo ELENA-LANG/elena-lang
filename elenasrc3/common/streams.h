@@ -25,11 +25,18 @@ namespace elena_lang
          return *(char*)get(position);
       }
 
+      static bool writeDWord(MemoryBase* target, pos_t position, unsigned int value)
+      {
+         return target->write(position, &value, sizeof(value));
+      }
+
       virtual pos_t length() const = 0;
 
       virtual void* get(pos_t position) const = 0;
 
       virtual bool write(pos_t position, const void* s, pos_t length) = 0;
+
+      virtual void insert(pos_t position, const void* s, pos_t length) = 0;
 
       virtual bool read(pos_t position, void* s, pos_t length) = 0;
 
@@ -428,8 +435,6 @@ namespace elena_lang
       {
          int value = *(int*)_memory->get(_position);
 
-         //printf("%x\n", value | mask); // !! temporal
-
          writeDWord(value | mask);
       }
 
@@ -446,6 +451,28 @@ namespace elena_lang
             return writeQWord(value);
          }
          else return false;
+      }
+
+      void insertByte(pos_t position, char value)
+      {
+         _memory->insert(position, &value, 1);
+
+         if (position <= _position)
+            _position += 1;
+      }
+      void insertDWord(pos_t position, int value)
+      {
+         _memory->insert(position, &value, 4);
+
+         if (position <= _position)
+            _position += 4;
+      }
+      void insert(pos_t position, void* value, pos_t length)
+      {
+         _memory->insert(position, value, length);
+
+         if (position <= _position)
+            _position += length;
       }
 
       void align(pos_t alignment, unsigned char c)

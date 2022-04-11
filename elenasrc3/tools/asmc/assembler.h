@@ -11,6 +11,7 @@
 
 #include "elena.h"
 #include "scriptreader.h"
+#include "lbhelper.h"
 
 namespace elena_lang
 {
@@ -27,63 +28,53 @@ namespace elena_lang
 
    struct LabelScope
    {
-      ReferenceMap      labels;
-      Map<ref_t, pos_t> declaredLabels;
-      Map<ref_t, pos_t> jumps;
+      ReferenceMap      labelNames;
+      Map<pos_t, bool>  declaredLabels;
+      LabelHelper*      helper;
 
       ref_t getLabel(ustr_t labelName)
       {
-         return labels.get(labelName);
+         return labelNames.get(labelName);
       }
 
-      LabelScope()
-         : labels(0), declaredLabels(0), jumps(0)
+      bool checkDeclaredLabel(ustr_t label)
       {
-      }
-   };
-
-   // --- BaseJumpHelper
-   class BaseJumpHelper
-   {
-   public:
-      virtual bool fixLabel(ref_t label, LabelScope& labelScope, MemoryWriter& writer) = 0;
-
-      bool checkDeclaredLabel(ustr_t label, LabelScope& labelScope)
-      {
-         return labelScope.declaredLabels.exist(labelScope.labels.get(label));
+         return declaredLabels.exist(labelNames.get(label));
       }
 
-      void registerLabel(ustr_t labelName, LabelScope& labelScope, MemoryWriter& writer)
+      int resolveLabel(ustr_t label, MemoryWriter& writer)
       {
-         ref_t label = labelScope.labels.get(labelName);
-         if (!label) {
-            label = labelScope.labels.count() + 1;
+         int offset = helper->labels.get(getLabel(label)) - writer.position();
 
-            labelScope.labels.add(labelName, label);
-         }
-
-         labelScope.jumps.add(label, writer.position());
+         return offset;
       }
 
-      bool addLabel(ustr_t labelName, LabelScope& labelScope, MemoryWriter& writer)
+      bool declareLabel(ustr_t labelName, MemoryWriter& writer)
       {
-         pos_t labelPosition = writer.position();
-
-         ref_t label = labelScope.labels.get(labelName);
-         if (!label) {
-            label = labelScope.labels.count() + 1;
-
-            labelScope.labels.add(labelName, label);
-         }
-
-         if (!fixLabel(label, labelScope, writer))
+         if (!registerLabel(labelName, writer))
             return false;
 
-         labelScope.declaredLabels.add(label, labelPosition);
+         declaredLabels.add(labelNames.get(labelName), true);
 
          return true;
       }
 
+      bool registerLabel(ustr_t labelName, MemoryWriter& writer)
+      {
+         ref_t label = labelNames.get(labelName);
+         if (!label) {
+            label = labelNames.count() + 1;
+
+            labelNames.add(labelName, label);
+         }
+
+         return helper->setLabel(label, writer);
+      }
+
+      LabelScope(LabelHelper* lh)
+         : labelNames(0), declaredLabels(false), helper(lh)
+      {
+      }
    };
 
    // --- AssemblerBase ---
@@ -140,7 +131,9 @@ namespace elena_lang
       virtual void compileDDField(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual void compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
 
-      void compileProcedure(ScriptToken& tokenInfo);
+      virtual void compileProcedure(ScriptToken& tokenInfo) = 0;
+
+      void compileProcedure(ScriptToken& tokenInfo, LabelHelper* helper);
       void compileStructure(ScriptToken& tokenInfo);
       void declareConstant(ScriptToken& tokenInfo);
 

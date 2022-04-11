@@ -325,6 +325,12 @@ void ROModule::ROSection :: trim(pos_t)
    throw InternalError(errReadOnlyModule);
 }
 
+void ROModule::ROSection :: insert(pos_t position, const void* s, pos_t length)
+{
+   // should never be called
+   throw InternalError(errReadOnlyModule);
+}
+
 // --- ROModule ---
 
 ROModule::ROModule(StreamReader& reader, LoadResult& result)
@@ -423,7 +429,6 @@ ref_t ROModule :: mapSignature(ref_t* references, size_t length, bool existing)
    }
    else throw InternalError(errReadOnlyModule);
 }
-
 
 ref_t ROModule :: mapConstant(ustr_t reference)
 {

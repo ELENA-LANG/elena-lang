@@ -307,9 +307,9 @@ bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
    }
 }
 
-void AssemblerBase :: compileProcedure(ScriptToken& tokenInfo)
+void AssemblerBase :: compileProcedure(ScriptToken& tokenInfo, LabelHelper* helper)
 {
-   LabelScope    labelScope;
+   LabelScope    labelScope(helper);
    ProcedureInfo procInfo;
    declareProcedure(tokenInfo, procInfo);
 

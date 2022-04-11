@@ -3,7 +3,7 @@
 //
 //		This file contains the body of ELENA Engine Data Section
 //		classes.
-//                                                  (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -11,6 +11,13 @@
 #include "section.h"
 
 using namespace elena_lang;
+
+void Section :: insert(pos_t position, const void* s, pos_t length)
+{
+   MemoryDump::insert(position, s, length);
+
+   ::shift(_references.start(), position, length);
+}
 
 Section* Section :: readSection(StreamReader& reader)
 {

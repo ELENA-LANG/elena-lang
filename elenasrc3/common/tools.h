@@ -183,6 +183,12 @@ inline bool test64(uint64_t number, uint64_t mask)
    return ((number & mask) == mask);
 }
 
+// --- _abs ---
+inline int _abs(int x)
+{
+   return (x ^ (x >> 31)) - (x >> 31);
+}
+
 
 } // _ELENA_
 

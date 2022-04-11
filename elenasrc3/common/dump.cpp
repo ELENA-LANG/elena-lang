@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Engine Data Section
 //		classes.
-//                                                  (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "common.h"
@@ -77,6 +77,17 @@ bool MemoryDump :: write(pos_t position, const void* s, pos_t length)
    }
    else return false;
 
+}
+
+void MemoryDump :: insert(pos_t position, const void* s, pos_t length)
+{
+   if (position <= _used) {
+      resize(_used + length);
+
+      memmove(get(position + length), get(position), _used - position - length);
+      if (s != nullptr)
+         memcpy(get(position), s, length);
+   }
 }
 
 bool MemoryDump :: read(pos_t position, void* s, pos_t length)

@@ -18,14 +18,6 @@ namespace elena_lang
    class PPC64Assembler : public AssemblerBase
    {
    protected:
-      class JumpHelper : public BaseJumpHelper
-      {
-      public:
-         bool fixLabel(ref_t label, LabelScope& labelScope, MemoryWriter& writer) override;
-      };
-
-      JumpHelper _jumpHelper;
-
       PPCOperand defineRegister(ScriptToken& tokenInfo, ustr_t errorMessage);
 
       PPCOperand readRegister(ScriptToken& tokenInfo, ustr_t errorMessage, bool checkRc = false);
@@ -128,6 +120,8 @@ namespace elena_lang
       bool compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+
+      void compileProcedure(ScriptToken& tokenInfo) override;
 
    public:
       PPC64Assembler(int tabSize, UStrReader* reader, ModuleBase* target)

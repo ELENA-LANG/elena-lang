@@ -307,8 +307,8 @@ void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope,
 
 void ByteCodeWriter :: optimizeTape(CommandTape& tape)
 {
-   // optimize unused and idle jumps
-   while (CommandTape::optimizeJumps(tape));
+   //// optimize unused and idle jumps
+   //while (CommandTape::optimizeJumps(tape));
 }
 
 void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode)

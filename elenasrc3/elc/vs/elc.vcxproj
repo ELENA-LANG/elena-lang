@@ -184,6 +184,7 @@
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\syntaxtree.cpp" />
     <ClCompile Include="..\..\engine\x86compiler.cpp" />
+    <ClCompile Include="..\..\engine\x86helper.cpp" />
     <ClCompile Include="..\..\engine\x86_64compiler.cpp" />
     <ClCompile Include="..\compiler.cpp" />
     <ClCompile Include="..\compilerlogic.cpp" />
@@ -222,12 +223,14 @@
     <ClInclude Include="..\..\engine\jitcompiler.h" />
     <ClInclude Include="..\..\engine\jitlinker.h" />
     <ClInclude Include="..\..\engine\langcommon.h" />
+    <ClInclude Include="..\..\engine\lbhelper.h" />
     <ClInclude Include="..\..\engine\libman.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\parsertable.h" />
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\syntaxtree.h" />
     <ClInclude Include="..\..\engine\x86compiler.h" />
+    <ClInclude Include="..\..\engine\x86helper.h" />
     <ClInclude Include="..\..\engine\x86relocation.h" />
     <ClInclude Include="..\..\engine\x86_64compiler.h" />
     <ClInclude Include="..\clicommon.h" />

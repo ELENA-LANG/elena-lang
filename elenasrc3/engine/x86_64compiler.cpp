@@ -9,6 +9,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "x86_64compiler.h"
+#include "x86helper.h"
 #include "langcommon.h"
 
 using namespace elena_lang;
@@ -131,6 +132,7 @@ void X86_64JITCompiler :: prepare(
    LibraryLoaderBase* loader, 
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
+   LabelHelperBase*,
    JITSettings _settings)
 {
    _constants.inlineMask = mskCodeRelRef32;
@@ -141,7 +143,8 @@ void X86_64JITCompiler :: prepare(
    for (size_t i = 0; i < OverloadsCount; i++)
       commands[(int)Overloads[i].value1] = Overloads[i].value2;
 
-   JITCompiler64::prepare(loader, imageProvider, helper, _settings);
+   X86LabelHelper lh;
+   JITCompiler64::prepare(loader, imageProvider, helper, &lh, _settings);
 }
 
 void X86_64JITCompiler :: writeImm9(MemoryWriter* writer, int value, int type)
@@ -159,16 +162,22 @@ void X86_64JITCompiler :: alignCode(MemoryWriter& writer, pos_t alignment, bool 
    writer.align(alignment, isText ? 0x90 : 0x00);
 }
 
-void X86_64JITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter)
+void X86_64JITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+   MemoryWriter& codeWriter, LabelHelperBase*)
 {
-   JITCompiler::compileProcedure(helper, bcReader, codeWriter);
+   X86LabelHelper lh;
+
+   JITCompiler::compileProcedure(helper, bcReader, codeWriter, &lh);
 
    alignCode(codeWriter, 0x08, true);
 }
 
-void X86_64JITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter)
+void X86_64JITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+   MemoryWriter& codeWriter, LabelHelperBase*)
 {
-   JITCompiler64::compileSymbol(helper, bcReader, codeWriter);
+   X86LabelHelper lh;
+
+   JITCompiler64::compileSymbol(helper, bcReader, codeWriter, &lh);
 
    alignCode(codeWriter, 0x08, true);
 }

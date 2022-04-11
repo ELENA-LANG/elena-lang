@@ -64,6 +64,8 @@ namespace elena_lang
          write(position, &value, sizeof(int));
       }
 
+      void insert(pos_t position, const void* s, pos_t length) override;
+
       void load(StreamReader& reader, pos_t length);
 
       void clear()

@@ -21,6 +21,7 @@ namespace elena_lang
          LibraryLoaderBase* loader, 
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
+         LabelHelperBase* lh,
          JITSettings settings) override;
 
       friend void x86_64loadCallOp(JITCompilerScope* scope);
@@ -33,8 +34,11 @@ namespace elena_lang
 
       void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) override;
 
-      void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter) override;
-      void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter) override;
+      // NOTE that LabelHelperBase argument should be overridden inside the CPU compiler
+      void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+         MemoryWriter& codeWriter, LabelHelperBase*) override;
+      void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+         MemoryWriter& codeWriter, LabelHelperBase*) override;
 
       X86_64JITCompiler()
          : JITCompiler64()

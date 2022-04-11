@@ -358,7 +358,8 @@ addr_t JITLinker :: loadMethod(ReferenceHelperBase& refHelper, MemoryReader& rea
    pos_t position = writer.position();
 
    // method just in time compilation
-   _compiler->compileProcedure(&refHelper, reader, writer);
+   // NOTE : LabelHelper parameter should be overriden inside the specific CPU compiler
+   _compiler->compileProcedure(&refHelper, reader, writer, nullptr);
 
    return _virtualMode ? position : (addr_t)writer.Memory()->get(position);
 }
@@ -644,11 +645,13 @@ addr_t JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t se
    if (_withDebugInfo) {
       pos_t sizePosition = createNativeSymbolDebugInfo(referenceInfo, vaddress);
 
-      _compiler->compileSymbol(&helper, bcReader, writer);
+      // NOTE : LabelHelper parameter should be overriden inside the specific CPU compiler
+      _compiler->compileSymbol(&helper, bcReader, writer, nullptr);
 
       endNativeDebugInfo(sizePosition);
    }
-   else _compiler->compileSymbol(&helper, bcReader, writer);
+   // NOTE : LabelHelper parameter should be overriden inside the specific CPU compiler
+   else _compiler->compileSymbol(&helper, bcReader, writer, nullptr);
 
    // fix not loaded references
    fixReferences(references, image);
@@ -756,7 +759,7 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
    resolveWeakAction(CONSTRUCTOR_MESSAGE);
 
    // prepare jit compiler
-   _compiler->prepare(_loader, _imageProvider, &helper, _jitSettings);
+   _compiler->prepare(_loader, _imageProvider, &helper, nullptr, _jitSettings);
 
    // fix not loaded references
    fixReferences(references, _imageProvider->getTextSection());

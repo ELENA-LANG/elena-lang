@@ -13,25 +13,6 @@
 
 using namespace elena_lang;
 
-// --- PPC64Assembler::JumpHelper ---
-
-bool PPC64Assembler::JumpHelper :: fixLabel(ref_t label, LabelScope& labelScope, MemoryWriter& writer)
-{
-   for (auto it = labelScope.jumps.getIt(label); !it.eof(); ++it) {
-      if (it.key() == label) {
-         ref_t labelPos = *it;
-         int offset = writer.position() - labelPos;
-         if (abs(offset) > 0xFFFF)
-            return false;
-
-         void* opcode = writer.Memory()->get(labelPos);
-
-         PPCHelper::fixBCommand(opcode, offset);
-      }
-   }
-   return true;
-}
-
 // --- PPC64Assembler ---
 
 PPCOperand PPC64Assembler :: defineRegister(ScriptToken& tokenInfo, ustr_t errorMessage)
@@ -337,7 +318,10 @@ void PPC64Assembler :: writeDReference(ScriptToken& tokenInfo, ref_t reference, 
 
 void PPC64Assembler :: declareLabel(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
 {
-   if(!_jumpHelper.addLabel(*tokenInfo.token, labelScope, writer))
+   if (labelScope.checkDeclaredLabel(*tokenInfo.token))
+      throw SyntaxError(ASM_LABEL_EXISTS, tokenInfo.lineInfo);
+
+   if(!labelScope.declareLabel(*tokenInfo.token, writer))
       throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
 
    read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
@@ -613,14 +597,14 @@ void PPC64Assembler :: compileBCxx(ScriptToken& tokenInfo, int bo, int bi, Memor
    read(tokenInfo);
    if (!tokenInfo.compare(":")) {
       // if jump forward
-      if (!_jumpHelper.checkDeclaredLabel(*tokenInfo.token, labelScope)) {
-         _jumpHelper.registerLabel(*tokenInfo.token, labelScope, writer);
+      if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
+         labelScope.registerLabel(*tokenInfo.token, writer);
 
          compileBCxx(bo, bi, 0, 0, 0, writer);
       }
       // if jump backward
       else {
-         int offset = labelScope.declaredLabels.get(labelScope.getLabel(*tokenInfo.token)) - writer.position();
+         int offset = labelScope.resolveLabel(*tokenInfo.token, writer);
          if (abs(offset) > 0xFFFF)
             throw SyntaxError(ASM_JUMP_TOO_LONG, tokenInfo.lineInfo);
 
@@ -639,14 +623,14 @@ void PPC64Assembler :: compileB(ScriptToken& tokenInfo, MemoryWriter& writer, La
    read(tokenInfo);
    if (!tokenInfo.compare(":")) {
       // if jump forward
-      if (!_jumpHelper.checkDeclaredLabel(*tokenInfo.token, labelScope)) {
-         labelScope.jumps.add(labelScope.getLabel(*tokenInfo.token), writer.position());
+      if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
+         labelScope.helper->jumps.add(labelScope.getLabel(*tokenInfo.token), writer.position());
 
          compileBxx(0, 0, 0, writer);
       }
       // if jump backward
       else {
-         int offset = labelScope.declaredLabels.get(labelScope.getLabel(*tokenInfo.token)) - writer.position();
+         int offset = labelScope.resolveLabel(*tokenInfo.token, writer);
          if (abs(offset) > 0xFFFF)
             throw SyntaxError(ASM_JUMP_TOO_LONG, tokenInfo.lineInfo);
 
@@ -1370,4 +1354,11 @@ bool PPC64Assembler :: compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    else return false;
 
    return true;
+}
+
+void PPC64Assembler :: compileProcedure(ScriptToken& tokenInfo)
+{
+   PPCLabelHelper helper;
+
+   AssemblerBase::compileProcedure(tokenInfo, &helper);
 }

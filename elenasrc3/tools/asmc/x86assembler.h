@@ -18,14 +18,6 @@ namespace elena_lang
    class X86Assembler : public AssemblerBase
    {
    protected:
-      class JumpHelper : public BaseJumpHelper
-      {
-      public:
-         bool fixLabel(ref_t label, LabelScope& labelScope, MemoryWriter& writer) override;
-      };
-
-      JumpHelper _jumpHelper;
-
       virtual X86OperandType getDefaultPrefix()
       {
          return X86OperandType::M32;
@@ -128,6 +120,8 @@ namespace elena_lang
       bool compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+
+      void compileProcedure(ScriptToken& tokenInfo) override;
 
    public:
       X86Assembler(int tabSize, UStrReader* reader, ModuleBase* target)

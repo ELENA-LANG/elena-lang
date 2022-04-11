@@ -168,6 +168,27 @@ namespace elena_lang
       }
    };
 
+   // --- PPCLabelHelper ---
+   struct PPCLabelHelper : LabelHelper
+   {
+      bool fixLabel(pos_t label, MemoryWriter& writer) override
+      {
+         for (auto it = jumps.getIt(label); !it.eof(); ++it) {
+            if (it.key() == label) {
+               ref_t labelPos = (*it).position;
+               int offset = writer.position() - labelPos;
+               if (abs(offset) > 0xFFFF)
+                  return false;
+
+               void* opcode = writer.Memory()->get(labelPos);
+
+               PPCHelper::fixBCommand(opcode, offset);
+            }
+         }
+         return true;
+      }
+   };
+
 }
 
 #endif

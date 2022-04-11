@@ -15,29 +15,6 @@ using namespace elena_lang;
 
 // --- X86Assembler ---
 
-bool X86Assembler::JumpHelper :: fixLabel(ref_t label, LabelScope& labelScope, MemoryWriter& writer)
-{
-   for (auto it = labelScope.jumps.getIt(label); !it.eof(); ++it) {
-      if (it.key() == label) {
-         ref_t labelPos = *it;
-
-         // get jump byte
-         void* opcode = writer.Memory()->get(labelPos);
-
-         if (X86Helper::isShortJump(*(char*)opcode)) {
-            X86Helper::fixShortLabel(writer, labelPos + 1);
-         }
-         else if (X86Helper::isFarUnconditionalJump(*(char*)opcode)) {
-            X86Helper::fixNearLabel(writer, labelPos + 1);
-         }
-         else X86Helper::fixNearLabel(writer, labelPos + 2);
-      }
-   }
-   return true;
-}
-
-// --- X86Assembler ---
-
 X86Operand X86Assembler :: defineDBDisp(X86Operand operand)
 {
    operand.type = operand.type | X86OperandType::M32disp8;
@@ -440,7 +417,10 @@ X86Operand X86Assembler :: compileOperand(ScriptToken& tokenInfo, ustr_t errorMe
 
 void X86Assembler :: declareLabel(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
 {
-   if (!_jumpHelper.addLabel(*tokenInfo.token, labelScope, writer))
+   if (labelScope.checkDeclaredLabel(*tokenInfo.token))
+      throw SyntaxError(ASM_LABEL_EXISTS, tokenInfo.lineInfo);
+
+   if (!labelScope.declareLabel(*tokenInfo.token, writer))
       throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
 
    read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
@@ -528,15 +508,15 @@ void X86Assembler :: compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, X8
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 
    // if jump forward
-   if (!_jumpHelper.checkDeclaredLabel(*tokenInfo.token, labelScope)) {
-      _jumpHelper.registerLabel(*tokenInfo.token, labelScope, writer);
+   if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
+      labelScope.registerLabel(*tokenInfo.token, writer);
 
       if(!compileJccForward(type, shortJump, writer))
          throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
    }
    // if jump backward
    else {
-      int offset = labelScope.declaredLabels.get(labelScope.getLabel(*tokenInfo.token)) - writer.position();
+      int offset = labelScope.resolveLabel(*tokenInfo.token, writer);
       if (shortJump && abs(offset) > 0x7F)
          throw SyntaxError(ASM_JUMP_TOO_LONG, tokenInfo.lineInfo);
 
@@ -567,15 +547,15 @@ void X86Assembler :: compileJmp(ScriptToken& tokenInfo, MemoryWriter& writer, La
       }
 
       // if jump forward
-      if (!_jumpHelper.checkDeclaredLabel(*tokenInfo.token, labelScope)) {
-         labelScope.jumps.add(labelScope.getLabel(*tokenInfo.token), writer.position());
+      if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
+         labelScope.registerLabel(*tokenInfo.token, writer);
 
          if (!compileJmpForward(shortJump, writer))
             throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
       }
       // if jump backward
       else {
-         int offset = labelScope.declaredLabels.get(labelScope.getLabel(*tokenInfo.token)) - writer.position();
+         int offset = labelScope.resolveLabel(*tokenInfo.token, writer);
          if (shortJump && abs(offset) > 0x7F)
             throw SyntaxError(ASM_JUMP_TOO_LONG, tokenInfo.lineInfo);
 
@@ -1209,6 +1189,13 @@ bool X86Assembler :: compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    else return false;
 
    return true;
+}
+
+void X86Assembler :: compileProcedure(ScriptToken& tokenInfo)
+{
+   X86LabelHelper helper;
+
+   AssemblerBase::compileProcedure(tokenInfo, &helper);
 }
 
 // --- X86_64Assembler ---

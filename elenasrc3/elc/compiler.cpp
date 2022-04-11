@@ -2188,7 +2188,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 {
    ExprScope scope(&codeScope);
 
-   ObjectInfo retVal = compileExpression(writer, scope, node.findChild(SyntaxKey::EOP), EAttr::None);
+   ObjectInfo retVal = compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), EAttr::None);
 
    writer.appendNode(BuildKey::goingToEOP);
 

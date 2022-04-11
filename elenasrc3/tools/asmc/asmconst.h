@@ -12,7 +12,7 @@
 namespace elena_lang
 {
 
-   #define ASM_REVISION_NUMBER               0x003F
+   #define ASM_REVISION_NUMBER               0x0040
 
    constexpr auto N_ARGUMENT1                = "__n_1";
    constexpr auto N_ARGUMENT2                = "__n_2";
@@ -83,6 +83,7 @@ namespace elena_lang
    constexpr auto ASM_DUPLICATE_ARG          = "(%d,%d): Duplicate argument \n";
    constexpr auto ASM_JUMP_TOO_LONG          = "(%d,%d): Jump too long\n";
    constexpr auto INVALID_CALL_TARGET        = "(%d,%d): Invalid call target\n";
+   constexpr auto ASM_LABEL_EXISTS           = "Label with such a name already exists (%d)\n";
 
    constexpr auto ASM_CANNOTCREATE_OUTPUT    = "Cannot create an output file\n";
    constexpr auto ASM_CANNOTOPEN_INPUT       = "Cannot open %s an input file\n";

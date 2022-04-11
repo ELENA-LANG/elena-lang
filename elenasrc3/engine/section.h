@@ -35,6 +35,8 @@ namespace elena_lang
       static Section* readSection(StreamReader& reader);
       static void writeSection(Section* section, StreamWriter& writer);
 
+      void insert(pos_t position, const void* s, pos_t length) override;
+
       pos_t sizeInMemory()
       {
          return length() + _references.sizeInMemory() + (pos_t)sizeof(pos_t);

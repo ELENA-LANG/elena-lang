@@ -18,12 +18,6 @@ namespace elena_lang
    class Arm64Assembler : public AssemblerBase
    {
    protected:
-      class JumpHelper : public BaseJumpHelper
-      {
-      public:
-         bool fixLabel(ref_t label, LabelScope& labelScope, MemoryWriter& writer) override;
-      };
-
       enum class JumpType
       {
          EQ = 0x0,
@@ -42,8 +36,6 @@ namespace elena_lang
          LE = 0xD,
          AL = 0xE
       };
-
-      JumpHelper _jumpHelper;
 
       int readIntArg(ScriptToken& tokenInfo, ref_t& reference);
       int readReferenceArg(ScriptToken& tokenInfo, ref_t& reference, ustr_t errorMessage);
@@ -128,6 +120,8 @@ namespace elena_lang
       void compileDWField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       void compileDDField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       void compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+
+      void compileProcedure(ScriptToken& tokenInfo) override;
 
    public:
       Arm64Assembler(int tabSize, UStrReader* reader, ModuleBase* target)

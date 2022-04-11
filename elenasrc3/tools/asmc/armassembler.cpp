@@ -14,33 +14,6 @@
 
 using namespace elena_lang;
 
-// --- Arm64Assembler::JumpHelper ---
-
-bool Arm64Assembler::JumpHelper :: fixLabel(ref_t label, LabelScope& labelScope, MemoryWriter& writer)
-{
-   for (auto it = labelScope.jumps.getIt(label); !it.eof(); ++it) {
-      if (it.key() == label) {
-         ref_t labelPos = *it;
-         int offset = writer.position() - labelPos;
-
-         void* opcode = writer.Memory()->get(labelPos);
-         if (ARMHelper::isBxxCommand(opcode)) {
-            if (abs(offset) > 0x1FFFF)
-               return false;
-
-            ARMHelper::fixBxxCommand(opcode, offset);
-         }         
-         else if (ARMHelper::isBCommand(opcode)) {
-            if (abs(offset) > 0x3FFFFFF)
-               return false;
-
-            ARMHelper::fixBCommand(opcode, offset);
-         }
-      }
-   }
-  return true;
-}
-
 // --- Arm64Assembler ---
 
 int Arm64Assembler :: readIntArg(ScriptToken& tokenInfo, ref_t& reference)
@@ -517,7 +490,10 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
 
 void Arm64Assembler :: declareLabel(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
 {
-   if (!_jumpHelper.addLabel(*tokenInfo.token, labelScope, writer))
+   if (labelScope.checkDeclaredLabel(*tokenInfo.token))
+      throw SyntaxError(ASM_LABEL_EXISTS, tokenInfo.lineInfo);
+
+   if (!labelScope.declareLabel(*tokenInfo.token, writer))
       throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
 
    read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
@@ -850,14 +826,14 @@ void Arm64Assembler :: compileB(ScriptToken& tokenInfo, MemoryWriter& writer, La
    read(tokenInfo);
    if (!tokenInfo.compare(":")) {
       // if jump forward
-      if (!_jumpHelper.checkDeclaredLabel(*tokenInfo.token, labelScope)) {
-         _jumpHelper.registerLabel(*tokenInfo.token, labelScope, writer);
+      if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
+         labelScope.registerLabel(*tokenInfo.token, writer);
 
          compileB(0, writer);
       }
       // if jump backward
       else {
-         int offset = labelScope.declaredLabels.get(labelScope.getLabel(*tokenInfo.token)) - writer.position();
+         int offset = labelScope.resolveLabel(*tokenInfo.token, writer);
          if (abs(offset) > 0x3FFFF)
             throw SyntaxError(ASM_JUMP_TOO_LONG, tokenInfo.lineInfo);
 
@@ -874,14 +850,14 @@ void Arm64Assembler :: compileBxx(ScriptToken& tokenInfo, JumpType cond, MemoryW
    read(tokenInfo);
    if (!tokenInfo.compare(":")) {
       // if jump forward
-      if (!_jumpHelper.checkDeclaredLabel(*tokenInfo.token, labelScope)) {
-         _jumpHelper.registerLabel(*tokenInfo.token, labelScope, writer);
+      if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
+         labelScope.registerLabel(*tokenInfo.token, writer);
 
          compileBxx(0, (int)cond, writer);
       }
       // if jump backward
       else {
-         int offset = labelScope.declaredLabels.get(labelScope.getLabel(*tokenInfo.token)) - writer.position();
+         int offset = labelScope.resolveLabel(*tokenInfo.token, writer);
          if (abs(offset) > 0x1FFFF)
             throw SyntaxError(ASM_JUMP_TOO_LONG, tokenInfo.lineInfo);
 
@@ -1403,4 +1379,11 @@ void Arm64Assembler::compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer
       writer.writeQReference(reference, d);
    }
    else writer.writeQWord(d);
+}
+
+void Arm64Assembler :: compileProcedure(ScriptToken& tokenInfo)
+{
+   ARMLabelHelper helper;
+
+   AssemblerBase::compileProcedure(tokenInfo, &helper);
 }

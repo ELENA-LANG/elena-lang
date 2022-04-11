@@ -3,7 +3,7 @@
 //
 //		This file contains CPU native helpers
 //		Supported platforms: ARM64
-//                                            (C)2021, by Aleksey Rakov
+//                                            (C)2021-2022, by Aleksey Rakov
 //                                            (C)2016, from The LLVM Compiler
 //---------------------------------------------------------------------------
 
@@ -364,6 +364,34 @@ namespace elena_lang
       }
    };
 
+   // --- ARMLabelHelper ---
+   struct ARMLabelHelper : LabelHelper
+   {
+      bool fixLabel(pos_t label, MemoryWriter& writer) override
+      {
+         for (auto it = jumps.getIt(label); !it.eof(); ++it) {
+            if (it.key() == label) {
+               ref_t labelPos = (*it).position;
+               int offset = writer.position() - labelPos;
+
+               void* opcode = writer.Memory()->get(labelPos);
+               if (ARMHelper::isBxxCommand(opcode)) {
+                  if (abs(offset) > 0x1FFFF)
+                     return false;
+
+                  ARMHelper::fixBxxCommand(opcode, offset);
+               }
+               else if (ARMHelper::isBCommand(opcode)) {
+                  if (abs(offset) > 0x3FFFFFF)
+                     return false;
+
+                  ARMHelper::fixBCommand(opcode, offset);
+               }
+            }
+         }
+         return true;
+      }
+   };
 }
 
 #endif

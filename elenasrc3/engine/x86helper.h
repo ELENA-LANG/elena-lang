@@ -3,11 +3,14 @@
 //
 //		This file contains CPU native helpers
 //		Supported platforms: x86 / x86-64
-//                                                  (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86HELPER_H
 #define X86HELPER_H
+
+#include "elena.h"
+#include "lbhelper.h"
 
 namespace elena_lang
 {
@@ -212,17 +215,6 @@ namespace elena_lang
    class X86Helper
    {
    public:
-      static bool isShortJump(unsigned char opcode)
-      {
-         // if it is jump of address load
-         if (opcode == 0xE8 || opcode == 0xB9)
-            return false;
-         else if ((opcode >= 0x80 && opcode < 0x90) || opcode == 0xE9) {
-            return false;
-         }
-         else return true;
-      }
-
       static bool isFarUnconditionalJump(unsigned char opcode)
       {
          return opcode == 0xE9;
@@ -348,6 +340,49 @@ namespace elena_lang
       }
    };
 
+   // --- X86LabelHelper ---
+   struct X86LabelHelper : LabelHelper
+   {
+      static bool isShortJmp(unsigned char opcode)
+      {
+         return opcode == 0xEB;
+      }
+
+      static bool isShortJump(unsigned char opcode)
+      {
+         // if it is jump of address load
+         if (opcode == 0xE8 || opcode == 0xB9)
+            return false;
+         else if ((opcode >= 0x80 && opcode < 0x90) || opcode == 0xE9) {
+            return false;
+         }
+         else return true;
+      }
+
+      int fixShortLabel(pos_t labelPos, MemoryWriter& writer);
+      int fixNearLabel(pos_t labelPos, MemoryWriter& writer);
+
+      void convertShortToNear(pos_t position, int offset, MemoryWriter& writer);
+
+      void shiftLabels(pos_t position, int firstDisplacement, int displacement)
+      {
+         shift(labels.start(), position + 1, displacement);
+
+         auto it = jumps.start();
+         while (!it.eof()) {
+            if ((*it).position == position) {
+               (*it).position += firstDisplacement;
+            }
+            else if ((*it).position > position)
+               (*it).position += displacement;
+
+            ++it;
+         }
+      }
+
+      void fixJumps(pos_t position, int size, MemoryWriter& writer);
+      bool fixLabel(pos_t label, MemoryWriter& writer) override;
+   };
 }
 
 #endif

@@ -360,6 +360,16 @@ namespace elena_lang
       pos_t    ygSize;
    };
 
+   // --- LabelHelperBase ---
+   struct LabelHelperBase
+   {
+      virtual bool checkLabel(pos_t label) = 0;
+
+      virtual bool setLabel(pos_t label, MemoryWriter& writer) = 0;
+
+      virtual bool fixLabel(pos_t label, MemoryWriter& writer) = 0;
+   };
+
    // --- JITCompilerBase ---
    class JITCompilerBase
    {
@@ -368,14 +378,17 @@ namespace elena_lang
          LibraryLoaderBase* loader, 
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
+         LabelHelperBase* lh,
          JITSettings settings) = 0;
 
       virtual bool isWithDebugInfo() = 0;
 
       virtual void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) = 0;
 
-      virtual void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter) = 0;
-      virtual void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter) = 0;
+      virtual void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+         MemoryWriter& codeWriter, LabelHelperBase* lh) = 0;
+      virtual void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+         MemoryWriter& codeWriter, LabelHelperBase* lh) = 0;
 
       virtual void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) = 0;
 

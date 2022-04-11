@@ -1961,7 +1961,7 @@ namespace elena_lang
       CachedMemoryMap(T defValue)
          : _map(defValue)
       {
-         _cached = false;
+         _cached = true;
          _count = 0;
       }
    };
@@ -2043,6 +2043,17 @@ namespace elena_lang
       }
       ~MemoryList() = default;
    };
+
+   // --- shift routine ---
+   template <class Iterator, class T> void shift(Iterator it, T minValue, const int displacement)
+   {
+      while (!it.eof()) {
+         if ((*it) >= minValue)
+            *it += displacement;
+
+         it++;
+      }
+   }
 
    // --- mapKey routine ---
    template<class Map, class Key, class T> T mapKey(Map& map, Key key, T newValue)

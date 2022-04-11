@@ -20,6 +20,7 @@ namespace elena_lang
          LibraryLoaderBase* loader, 
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
+         LabelHelperBase* lh,
          JITSettings settings) override;
 
    public:
@@ -28,8 +29,11 @@ namespace elena_lang
 
       void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) override;
 
-      void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter) override;
-      void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter) override;
+      // NOTE that LabelHelperBase argument should be overridden inside the CPU compiler
+      void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+         MemoryWriter& codeWriter, LabelHelperBase* lh) override;
+      void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+         MemoryWriter& codeWriter, LabelHelperBase* lh) override;
 
       X86JITCompiler()
          : JITCompiler32()

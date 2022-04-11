@@ -176,8 +176,16 @@ inline int getFPOffset(int argument, int argOffset)
    return -(argument - (argument < 0 ? argOffset : 0));
 }
 
-void elena_lang :: loadNop(JITCompilerScope*)
+void elena_lang :: loadNop(JITCompilerScope* scope)
 {
+   // nop command is used to indicate possible label
+   // fix the label if it exists
+   pos_t position = scope->codeWriter->position();
+   if (scope->lh->checkLabel(position)) {
+      scope->lh->fixLabel(position, *scope->codeWriter);
+   }
+   // or add the label
+   else scope->lh->setLabel(position, *scope->codeWriter);
 }
 
 void elena_lang :: loadLOp(JITCompilerScope* scope)
@@ -1173,11 +1181,12 @@ void elena_lang::compileBreakpoint(JITCompilerScope* scope)
 
 // --- JITCompiler ---
 
-JITCompilerScope :: JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, MemoryWriter* writer,
-   JITConstants* constants)
+JITCompilerScope :: JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, LabelHelperBase* lh, 
+   MemoryWriter* writer, JITConstants* constants)
 {
    this->helper = helper;
    this->compiler = compiler;
+   this->lh = lh;
    this->codeWriter = writer;
    this->constants = constants;
 
@@ -1191,6 +1200,7 @@ void JITCompiler :: loadCoreRoutines(
    LibraryLoaderBase* loader,
    ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
+   LabelHelperBase* lh,
    JITSettings settings,
    Map<ref_t, pos_t>& positions, bool declareMode)
 {
@@ -1204,13 +1214,13 @@ void JITCompiler :: loadCoreRoutines(
    MemoryWriter dataWriter(data);
 
    // preload variables
-   JITCompilerScope dataScope(helper, this, &dataWriter, &_constants);
+   JITCompilerScope dataScope(helper, this, lh, &dataWriter, &_constants);
    loadPreloaded(
       dataScope, loader, coreVariableNumber, coreVariables, 
       _preloaded, positions, _constants.inlineMask, declareMode);
 
    // preload core constants
-   JITCompilerScope rdataScope(helper, this, &rdataWriter, &_constants);
+   JITCompilerScope rdataScope(helper, this, lh, &rdataWriter, &_constants);
    loadPreloaded(rdataScope, loader, coreConstantNumber, coreConstants, 
       _preloaded, positions, _constants.inlineMask, declareMode);
    // NOTE : SYSTEM_ENV table is tailed with GCMGSize,GCYGSize,GCPERMSize,MaxThread
@@ -1218,7 +1228,7 @@ void JITCompiler :: loadCoreRoutines(
    rdataWriter.writeDWord(settings.ygSize);
 
    // preload core functions
-   JITCompilerScope scope(helper, this, &codeWriter, &_constants);
+   JITCompilerScope scope(helper, this, lh, &codeWriter, &_constants);
    loadPreloaded(scope, loader, coreFunctionNumber, coreFunctions, _preloaded, positions, 
       _constants.inlineMask, declareMode);
 }
@@ -1227,11 +1237,12 @@ void JITCompiler :: prepare(
    LibraryLoaderBase* loader, 
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
+   LabelHelperBase* lh,
    JITSettings settings)
 {
    Map<ref_t, pos_t> positions(0u);
-   loadCoreRoutines(loader, imageProvider, helper, settings, positions, true);
-   loadCoreRoutines(loader, imageProvider, helper, settings, positions, false);
+   loadCoreRoutines(loader, imageProvider, helper, lh, settings, positions, true);
+   loadCoreRoutines(loader, imageProvider, helper, lh, settings, positions, false);
 
    // preload vm commands
    for (ref_t i = 0; i < NumberOfInlines; i++) {
@@ -1249,10 +1260,11 @@ void JITCompiler :: writeArgAddress(JITCompilerScope* scope, arg_t arg, pos_t of
    scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(), (ref_t)arg, offset, addressMask);
 }
 
-void JITCompiler :: compileTape(ReferenceHelperBase* helper, MemoryReader& bcReader, pos_t endPos, MemoryWriter& codeWriter)
+void JITCompiler :: compileTape(ReferenceHelperBase* helper, MemoryReader& bcReader, pos_t endPos, 
+   MemoryWriter& codeWriter, LabelHelperBase* lh)
 {
    CodeGenerator*   generators = codeGenerators();
-   JITCompilerScope scope(helper, this, &codeWriter, &_constants);
+   JITCompilerScope scope(helper, this, lh, &codeWriter, &_constants);
 
    while (bcReader.position() < endPos) {
       ByteCodeUtil::read(bcReader, scope.command);
@@ -1261,20 +1273,22 @@ void JITCompiler :: compileTape(ReferenceHelperBase* helper, MemoryReader& bcRea
    }
 }
 
-void JITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter)
+void JITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+   MemoryWriter& codeWriter, LabelHelperBase* lh)
 {
    pos_t codeSize = bcReader.getPos();
    pos_t endPos = bcReader.position() + codeSize;
 
-   compileTape(helper, bcReader, endPos, codeWriter);
+   compileTape(helper, bcReader, endPos, codeWriter, lh);
 }
 
-void JITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter)
+void JITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+   MemoryWriter& codeWriter, LabelHelperBase* lh)
 {
    pos_t codeSize = bcReader.getPos();
    pos_t endPos = bcReader.position() + codeSize;
 
-   compileTape(helper, bcReader, endPos, codeWriter);
+   compileTape(helper, bcReader, endPos, codeWriter, lh);
 }
 
 // --- JITCompiler32 ---
@@ -1290,6 +1304,7 @@ void JITCompiler32 :: prepare(
    LibraryLoaderBase* loader, 
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
+   LabelHelperBase* lh,
    JITSettings settings)
 {
    _constants.indexPower = 2;
@@ -1297,7 +1312,7 @@ void JITCompiler32 :: prepare(
    _constants.dataHeader = 8;
    _constants.structMask = elStructMask32;
 
-   JITCompiler::prepare(loader, imageProvider, helper, settings);
+   JITCompiler::prepare(loader, imageProvider, helper, lh, settings);
 }
 
 void JITCompiler32 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length)
@@ -1525,6 +1540,7 @@ void JITCompiler64 :: prepare(
    LibraryLoaderBase* loader, 
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
+   LabelHelperBase* lh,
    JITSettings settings)
 {
    _constants.indexPower = 3;
@@ -1532,7 +1548,7 @@ void JITCompiler64 :: prepare(
    _constants.dataHeader = 16;
    _constants.structMask = elStructMask64;
 
-   JITCompiler::prepare(loader, imageProvider, helper, settings);
+   JITCompiler::prepare(loader, imageProvider, helper, lh, settings);
 }
 
 void JITCompiler64 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length)

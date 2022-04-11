@@ -35,6 +35,7 @@ namespace elena_lang
    {
       ReferenceHelperBase* helper;
       JITCompiler*         compiler;
+      LabelHelperBase*     lh;
       MemoryWriter*        codeWriter;
       ByteCommand          command;
       JITConstants*        constants;
@@ -47,7 +48,7 @@ namespace elena_lang
          return (unsigned char)command.code;
       }
 
-      JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, MemoryWriter* writer,
+      JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, LabelHelperBase* lh, MemoryWriter* writer,
          JITConstants* constants);
    };
 
@@ -74,7 +75,7 @@ namespace elena_lang
       void writeArgAddress(JITCompilerScope* scope, arg_t arg, pos_t offset, ref_t addressMask);
 
       virtual void compileTape(ReferenceHelperBase* helper, MemoryReader& bcReader, pos_t endPos, 
-         MemoryWriter& codeWriter);
+         MemoryWriter& codeWriter, LabelHelperBase* lh);
 
       friend void writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/, 
          pos_t disp, void* code);
@@ -110,6 +111,7 @@ namespace elena_lang
          LibraryLoaderBase* loader,
          ImageProviderBase* imageProvider,
          ReferenceHelperBase* helper,
+         LabelHelperBase* lh,
          JITSettings settings,
          Map<ref_t, pos_t>& positions, bool declareMode);
 
@@ -125,10 +127,13 @@ namespace elena_lang
          LibraryLoaderBase* loader, 
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
+         LabelHelperBase* lh,
          JITSettings settings) override;
 
-      void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter) override;
-      void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter) override;
+      void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+         MemoryWriter& codeWriter, LabelHelperBase* lh) override;
+      void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter
+         , LabelHelperBase* lh) override;
 
       void writeImm16(MemoryWriter* writer, int value, int type) override
       {
@@ -169,6 +174,7 @@ namespace elena_lang
          LibraryLoaderBase* loader, 
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
+         LabelHelperBase* lh,
          JITSettings settings) override;
 
       void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) override;
@@ -215,6 +221,7 @@ namespace elena_lang
          LibraryLoaderBase* loader, 
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
+         LabelHelperBase* lh,
          JITSettings settings) override;
 
       void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) override;
