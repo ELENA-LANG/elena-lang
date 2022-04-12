@@ -38,6 +38,8 @@ public:
    ref_t mapFullReference(ustr_t referenceName, bool existing) override;
    ref_t mapWeakReference(ustr_t referenceName, bool existing) override;
 
+   ref_t mapExternal(ustr_t dllAlias, ustr_t functionName) override;
+
    ref_t resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) override;
    ref_t resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs) override;
 

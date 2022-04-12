@@ -53,7 +53,6 @@ namespace elena_lang
       };
 #pragma pack(pop)
 
-
    private:
       pos_t newChild(pos_t position, Key key, NodeArg& arg)
       {
@@ -537,6 +536,18 @@ namespace elena_lang
          Node current = node.findChild(key);
          while (current == key) {
             if (value == current.arg.value)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return Node();
+      }
+
+      static Node gotoNode(Node current, Key key)
+      {
+         while (current != defKey) {
+            if (current.key == key)
                return current;
 
             current = current.nextNode();

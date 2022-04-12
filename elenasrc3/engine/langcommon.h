@@ -119,6 +119,7 @@ namespace elena_lang
    constexpr auto V_STATIC                = 0x8000100Fu;
    constexpr auto V_CONVERSION            = 0x80001011u;
    constexpr auto V_DISPATCHER            = 0x80001013u;
+   constexpr auto V_EXTERN                = 0x80001015u;
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;
    constexpr auto V_IMPORT                = 0x80001018u;

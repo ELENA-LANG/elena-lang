@@ -19,6 +19,7 @@
 #let attributesSymbols["var"]         := 8000100Dh;
 #let attributesSymbols["static"]      := 8000100Fh;
 #let attributesSymbols["dispatch"]    := 80001013h;
+#let attributesSymbols["extern"]      := 80001015h;
 #let attributesSymbols["intern"]      := 80001016h;
 #let attributesSymbols["forward"]     := 80001017h;
 #let attributesSymbols["import"]      := 80001018h;

@@ -35,6 +35,7 @@ namespace elena_lang
       Local,
       TempLocal,
       LocalAddress,
+      External
    };
 
    struct ObjectInfo
@@ -500,7 +501,7 @@ namespace elena_lang
       };
 
    private:
-      CompilerLogic*        _logic;
+      CompilerLogic*         _logic;
       TemplateProssesorBase* _templateProcessor;
       ErrorProcessor*        _errorProcessor;
 
@@ -512,6 +513,8 @@ namespace elena_lang
       mssg_t mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef, 
          ref_t flags, ref_t* signature, size_t signatureLen);
       mssg_t mapMessage(ExprScope& scope, SyntaxNode node);
+
+      ref_t mapExternal(Scope& scope, SyntaxNode node);
 
       ref_t resolveObjectReference(ObjectInfo info);
       ref_t resolvePrimitiveReference(ObjectInfo info);
@@ -593,8 +596,10 @@ namespace elena_lang
 
       ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef);
 
-      ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, /*SyntaxNode node, ObjectInfo target, */mssg_t message, ArgumentsInfo& arguments);
-      ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
+      ObjectInfo compileExternalOp(BuildTreeWriter& writer, ref_t externalRef, ArgumentsInfo& arguments);
+
+      ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, mssg_t message, ArgumentsInfo& arguments);
+      ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute attrs);
 
       ObjectInfo compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand);
 

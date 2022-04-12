@@ -87,6 +87,19 @@ ref_t ModuleScope :: mapWeakReference(ustr_t referenceName, bool existing)
    else return module->mapReference(referenceName, existing);
 }
 
+ref_t ModuleScope :: mapExternal(ustr_t dllAlias, ustr_t functionName)
+{
+   ustr_t dllName = forwardResolver->resolveExternal(dllAlias);
+   if (dllName.empty())
+      dllName = dllAlias;
+
+   ReferenceName referenceName(dllName);
+   referenceName.append(".");
+   referenceName.append(functionName);
+
+   return module->mapReference(*referenceName);
+}
+
 ref_t ModuleScope :: resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility)
 {
    if (!ns.empty()) {

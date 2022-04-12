@@ -47,6 +47,10 @@ namespace elena_lang
       goingToEOP        = 0x0013,
       LocalAddress      = 0x0014,
       Copying           = 0x0015,
+      Allocating        = 0x0016,
+      Freeing           = 0x0017,
+      SavingNInStack    = 0x0018,
+      ExtCallOp         = 0x0019,
 
       Import            = 0x0028,
       StrDictionaryOp   = 0x0029,
@@ -62,6 +66,7 @@ namespace elena_lang
       Column            = 0x8006,
       Row               = 0x8007,
       Size              = 0x8008,
+      Count             = 0x8009,
 
       //MetaDictionary    = 0x0022,
       //MetaArray         = 0x1023,

@@ -251,6 +251,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_VARIABLE:
          attrs |= ExpressionAttribute::NewVariable;
          return true;
+      case V_EXTERN:
+         attrs |= ExpressionAttribute::Extern;
+         return true;
       default:
          return false;
    }

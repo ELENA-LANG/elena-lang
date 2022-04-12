@@ -1931,6 +1931,44 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRe
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
 
+ref_t Compiler :: mapExternal(Scope& scope, SyntaxNode node)
+{
+   SyntaxNode objNode = node.parentNode();
+
+   ustr_t dllAlias = node.identifier();
+   ustr_t functionName = SyntaxTree::gotoNode(objNode, SyntaxKey::Message).firstChild(SyntaxKey::TerminalMask).identifier();
+
+   return scope.moduleScope->mapExternal(dllAlias, functionName);
+}
+
+ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ref_t externalRef, ArgumentsInfo& arguments)
+{
+   int count = arguments.count();
+
+   writer.appendNode(BuildKey::Allocating, count);
+
+   for (int i = count; i > 0; i--) {
+      ObjectInfo arg = arguments[i - 1];
+
+      writeObjectInfo(writer, arg);
+      switch (arg.kind) {
+         case ObjectKind::IntLiteral:
+            writer.appendNode(BuildKey::SavingNInStack, i - 1);
+            break;
+         default:
+            throw InternalError(errFatalError);
+      }
+   }
+
+   writer.newNode(BuildKey::ExtCallOp, externalRef);
+   writer.appendNode(BuildKey::Count, count);
+   writer.closeNode();
+
+   writer.appendNode(BuildKey::Freeing, count);
+
+   return { ObjectKind::External, V_INT32, 0 };
+}
+
 ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, SyntaxNode rnode, int operatorId)
 {
    ObjectInfo retVal;
@@ -2054,8 +2092,10 @@ void Compiler :: addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKe
    }
 }
 
-ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
+ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
+   ExpressionAttribute attrs)
 {
+   ObjectInfo retVal = { };
    ArgumentsInfo arguments;
 
    SyntaxNode current = node.firstChild();
@@ -2063,17 +2103,26 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       addBreakpoint(writer, current, BuildKey::Breakpoint);
    }
 
-   arguments.add(compileObject(writer, scope, current, EAttr::Parameter));
+   ObjectInfo source = compileObject(writer, scope, current, EAttr::Parameter);
 
-   current = current.nextNode();
-   mssg_t messageReg = 0;
-   messageReg = mapMessage(scope, current);
+   if (source.kind != ObjectKind::External) {
+      arguments.add(source);
 
-   compileMessageArguments(writer, scope, current, arguments);
+      current = current.nextNode();
+      mssg_t messageReg = 0;
+      messageReg = mapMessage(scope, current);
 
-   ObjectInfo retVal = compileMessageOperation(writer, scope, messageReg, arguments);
+      compileMessageArguments(writer, scope, current, arguments);
 
-   scope.reserveArgs(arguments.count());
+      retVal = compileMessageOperation(writer, scope, messageReg, arguments);
+
+      scope.reserveArgs(arguments.count());
+   }
+   else {
+      compileMessageArguments(writer, scope, current, arguments);
+
+      retVal = compileExternalOp(writer, source.reference, arguments);
+   }
 
    return retVal;
 }
@@ -2182,44 +2231,50 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, ref_t declared
 {
    bool forwardMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Forward);
    bool variableMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::NewVariable);
+   bool externalOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::Extern);
 
    ObjectInfo retVal;
    bool invalid = false;
-   switch (node.key) {
-      case SyntaxKey::identifier:
-      case SyntaxKey::reference:
-         if (variableMode) {
-            invalid = forwardMode;
+   if (externalOp) {
+      return { ObjectKind::External, 0, mapExternal(scope, node), 0 };
+   }
+   else {
+      switch (node.key) {
+         case SyntaxKey::identifier:
+         case SyntaxKey::reference:
+            if (variableMode) {
+               invalid = forwardMode;
 
-            declareVariable(scope, node, declaredRef); // !! temporal - typeref should be provided or super class
-            retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs | ExpressionAttribute::Local);
-         }
-         else if (forwardMode) {
-            IdentifierString forwardName(FORWARD_PREFIX_NS, node.identifier());
+               declareVariable(scope, node, declaredRef); // !! temporal - typeref should be provided or super class
+               retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs | ExpressionAttribute::Local);
+            }
+            else if (forwardMode) {
+               IdentifierString forwardName(FORWARD_PREFIX_NS, node.identifier());
 
-            retVal = scope.mapIdentifier(*forwardName, true, attrs);
-         }
-         else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
-         break;
-      case SyntaxKey::string:
-         invalid = forwardMode || variableMode;
+               retVal = scope.mapIdentifier(*forwardName, true, attrs);
+            }
+            else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
+            break;
+         case SyntaxKey::string:
+            invalid = forwardMode || variableMode;
 
-         retVal = mapStringConstant(scope, node);
-         break;
-      case SyntaxKey::integer:
-         invalid = forwardMode || variableMode;
+            retVal = mapStringConstant(scope, node);
+            break;
+         case SyntaxKey::integer:
+            invalid = forwardMode || variableMode;
 
-         retVal = mapIntConstant(scope, node, 10);
-         break;
-      case SyntaxKey::hexinteger:
-         invalid = forwardMode || variableMode;
+            retVal = mapIntConstant(scope, node, 10);
+            break;
+         case SyntaxKey::hexinteger:
+            invalid = forwardMode || variableMode;
 
-         retVal = mapUIntConstant(scope, node, 16);
-         break;
-      default:
-         // to make compiler happy
-         invalid = true;
-         break;
+            retVal = mapUIntConstant(scope, node, 16);
+            break;
+         default:
+            // to make compiler happy
+            invalid = true;
+            break;
+      }
    }
 
    if (invalid)
@@ -2288,7 +2343,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
    SyntaxNode current = node == SyntaxKey::Expression ? node.firstChild() : node;
    switch (current.key) {
       case SyntaxKey::MessageOperation:
-         retVal = compileMessageOperation(writer, scope, current);
+         retVal = compileMessageOperation(writer, scope, current, mode);
          break;
       case SyntaxKey::AssignOperation:
       //case SyntaxKey::AddAssignOperation:

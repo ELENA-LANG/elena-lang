@@ -1,8 +1,5 @@
 import system;
 
-public C;
-C;
-
 singleton B
 {
     testB(a) 
@@ -15,7 +12,10 @@ class A
 {
    testA() 
    {
-       ^ self;
+       int h := extern KERNEL32.GetStdHandle();
+
+       //int h := extern KERNEL32.GetStdHandle(0FFFFFFF5h);
+//       extern KERNEL32.WriteConsoleW(h,"hello",4,0,0);
    }
 
    constructor new() {}

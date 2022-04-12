@@ -172,6 +172,27 @@ void goingToEOP(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
 }
 
+void allocatingStack(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::AllocI, node.arg.value);
+}
+
+void freeingStack(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::FreeI, node.arg.value);
+}
+
+void savingNInStack(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::Load);
+   tape.write(ByteCode::SaveSI, node.arg.value);
+}
+
+void extCallOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::CallExtR, node.arg.reference | mskExternalRef, node.findChild(BuildKey::Count).arg.value);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -196,6 +217,10 @@ ByteCodeWriter::Saver commands[] =
    goingToEOP,
    getLocalAddredd,
    copyingLocal,
+   allocatingStack,
+   freeingStack,
+   savingNInStack,
+   extCallOp,
 };
 
 // --- ByteCodeWriter ---

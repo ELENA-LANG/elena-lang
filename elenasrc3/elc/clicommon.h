@@ -332,6 +332,8 @@ public:
    virtual void newNamespace(ustr_t name) = 0;
    virtual bool includeNamespace(IdentifierList& importedNs, ustr_t name, bool& duplicateInclusion) = 0;
 
+   virtual ref_t mapExternal(ustr_t dllAlias, ustr_t functionName) = 0;
+
    ModuleScopeBase(ModuleBase* module,
       ModuleBase* debugModule,
       pos_t stackAlingment, 
@@ -351,16 +353,18 @@ public:
 
 enum class ExpressionAttribute : pos64_t
 {
-   None              = 0x00000000,
-   Meta              = 0x00000001,
-   NestedNs          = 0x00000002,
-   Forward           = 0x00000004,
-   Weak              = 0x00000008,
-   NoTypeAllowed     = 0x00000010,
-   Intern            = 0x00000020,
-   Parameter         = 0x00000040,
-   NewVariable       = 0x00000080,
-   Local             = 0x00000100,
+   None              = 0x00000000000,
+   Meta              = 0x00000000001,
+   NestedNs          = 0x00000000002,
+   Forward           = 0x00000000004,
+   Weak              = 0x00000000008,
+   NoTypeAllowed     = 0x00000000010,
+   Intern            = 0x00000000020,
+   Parameter         = 0x00000000040,
+   NewVariable       = 0x00000000080,
+   Local             = 0x00000000100,
+   Extern            = 0x00000080000,
+   NoDebugInfo       = 0x40000000000,
 };
 
 struct ExpressionAttributes
