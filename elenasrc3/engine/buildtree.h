@@ -45,6 +45,8 @@ namespace elena_lang
       IntLiteral        = 0x0011,
       StringLiteral     = 0x0012,
       goingToEOP        = 0x0013,
+      LocalAddress      = 0x0014,
+      Copying           = 0x0015,
 
       Import            = 0x0028,
       StrDictionaryOp   = 0x0029,
@@ -59,6 +61,7 @@ namespace elena_lang
       Type              = 0x8005,
       Column            = 0x8006,
       Row               = 0x8007,
+      Size              = 0x8008,
 
       //MetaDictionary    = 0x0022,
       //MetaArray         = 0x1023,

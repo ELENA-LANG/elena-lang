@@ -31,6 +31,7 @@ namespace elena_lang
       SetDDisp       = 0x81,
       MovM           = 0x88,
 
+      Copy           = 0x90,
       CloseN         = 0x91,
       AllocI         = 0x92,
       FreeI          = 0x93,

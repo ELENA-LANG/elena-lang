@@ -114,6 +114,8 @@ ELENA byte codes (or ecodes)
                               size;
                               out: acc contains the class instance, index - undefined
 
+   copy n                   - sp[0] >> acc, n bytes
+
 
  Jump operations:
  ---------------- 

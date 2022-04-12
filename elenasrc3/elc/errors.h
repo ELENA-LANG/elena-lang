@@ -24,6 +24,7 @@ namespace elena_lang
    constexpr auto errMsgInvalidOperation     = "%s(%d:%d): error 107: Invalid operation with '%s'\n";
    constexpr auto errMsgDuplicatedDictionary = "%s(%d:%d): error 108: Dictionary '%s' already exists\n";
    constexpr auto errMsgDuplicatedField      = "%s(%d:%d): error 109: Field '%s' already exists in the class\n";
+   constexpr auto errMsgUnknownVariableType  = "%s(%d:%d): error 110: Type of the variable '%s' doesn't exist\n";
    constexpr auto errMsgIllegalField         = "%s(%d:%d): error 111: Illegal field declaration '%s'\n";
    constexpr auto errMsgTooManyParameters    = "%s(%d:%d): error 113: Too many parameters for '%s' message\n";
    constexpr auto errMsgDuplicatedDefinition = "%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n";

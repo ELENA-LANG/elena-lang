@@ -151,7 +151,7 @@ ref_t ModuleScope :: importSignature(ModuleBase* referenceModule, ref_t signRef)
       dump[i] = importReference(referenceModule, dump[i]);
    }
 
-   return referenceModule->mapSignature(dump, len, false);
+   return module->mapSignature(dump, len, false);
 }
 
 ref_t ModuleScope :: importMessage(ModuleBase* referenceModule, mssg_t exportRef)

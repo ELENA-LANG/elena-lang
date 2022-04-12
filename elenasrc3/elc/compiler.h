@@ -34,6 +34,7 @@ namespace elena_lang
       Param,
       Local,
       TempLocal,
+      LocalAddress,
    };
 
    struct ObjectInfo
@@ -379,7 +380,6 @@ namespace elena_lang
             return scope ? scope->reference : 0;
          }
 
-
          MethodScope(ClassScope* classScope);
       };
 
@@ -406,6 +406,13 @@ namespace elena_lang
             return scope ? scope->info.header.flags : 0;
          }
 
+         ref_t getOutputRef()
+         {
+            MethodScope* scope = (MethodScope*)getScope(ScopeLevel::Method);
+
+            return scope ? scope->info.outputRef : 0;
+         }
+
          void markAsAssigned(ObjectInfo object) override;
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
@@ -417,6 +424,14 @@ namespace elena_lang
                reserved1 = allocated1;
 
             return allocated1;
+         }
+         int allocLocalAddress(int size)
+         {
+            allocated2 += align(size, moduleScope->rawStackAlingment);
+            if (allocated2 > reserved2)
+               reserved2 = allocated2;
+
+            return allocated2;
          }
 
          ObjectInfo mapLocal(ustr_t identifier);
@@ -514,6 +529,8 @@ namespace elena_lang
 
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs);
 
+      int allocateLocalAddress(CodeScope* codeScope, int size);
+
       void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node);
       void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node);
       void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& flags);
@@ -553,8 +570,12 @@ namespace elena_lang
       void declareClassClass(ClassScope& classClassScope, SyntaxNode node);
       void declareClass(ClassScope& scope, SyntaxNode node);
 
-      void declareNamespace(NamespaceScope& ns, SyntaxNode node);
+      void declareNamespace(NamespaceScope& ns, SyntaxNode node, bool ignoreImport = false);
       void declareMembers(NamespaceScope& ns, SyntaxNode node);
+      void declareMemberIdentifiers(NamespaceScope& ns, SyntaxNode node);
+
+      void declareModuleIdentifiers(ModuleScopeBase* moduleScope, SyntaxNode node);
+      void declareModule(ModuleScopeBase* moduleScope, SyntaxNode node);
 
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id);
       ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node);
@@ -569,6 +590,8 @@ namespace elena_lang
       ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, ArgumentsInfo& arguments);
 
       ObjectInfo saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object);
+
+      ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef);
 
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, /*SyntaxNode node, ObjectInfo target, */mssg_t message, ArgumentsInfo& arguments);
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
@@ -588,7 +611,7 @@ namespace elena_lang
       ObjectInfo compileObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
          ExpressionAttribute mode);
       ObjectInfo compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
-         ExpressionAttribute mode);
+         ref_t targetRef, ExpressionAttribute mode);
       ObjectInfo compileRootExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
       ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
 

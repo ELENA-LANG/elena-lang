@@ -6,14 +6,7 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
-    * >method return type
-    * typecast the return type
-    * return statement
-    * inject typecaster
-    * typecasting object
-    * stack allocated variable
-    * assign allocated variable
-    * uncomment & fix optimizeTape routine
+    * >duplicate class name
     * print message using external routine
     * print message using external routine - x86, x86-64, i386, amd64, ppc64le, arm64
     --- ide redux ---
@@ -57,9 +50,18 @@ Pipeline:
     --- docs / tutorials ---
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
+    * copy : support 1, 2, any other size
+    * boxing stack allocated variable
+    * boxing stack allocated parameter for strong typed method
+    * uncomment & fix optimizeTape routine
+    * try to typecast the object directly
     * module template - to include basic import statement
     * module template - probably should include meta dictionary for attributes / types / ...
+    * do not allow to override sealed method
     * asmc : raise an error if the label was not resolved
+    * warn if the method was overriden but the output type was not specify
+    * raise an error if the overridden output type was changed
+    * optimization : copying ops
 
     * debugger : fix two breakpont in row
     * redirect handler : throw an exception on unhandled message

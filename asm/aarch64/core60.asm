@@ -174,6 +174,26 @@ inline %88h
 
 end
 
+// ; copy
+inline %92h
+
+  mov     x11, __arg12_1
+  mov     x12, x0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 8
+  ldr     x14, [x12], #8
+  str     x14, [x13], #8
+  b       labLoop
+
+labEnd:
+
+end
+
+
 // ; closen
 inline %91h
 

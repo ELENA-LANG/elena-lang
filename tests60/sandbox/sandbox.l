@@ -1,15 +1,7 @@
 import system;
 
+public C;
 C;
-
-D
-{
-   C get()
-   {
-       ^ self;
-   }
-}
-
 
 singleton B
 {
@@ -18,8 +10,6 @@ singleton B
        a.testA();
     }
 }
-
-C;
 
 class A
 {

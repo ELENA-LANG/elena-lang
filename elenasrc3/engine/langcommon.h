@@ -16,8 +16,10 @@ namespace elena_lang
       Mask           = 0x000000F,
 
       None           = 0x0000000,
+      Sealed         = 0x0000001,
       Dispatcher     = 0x0000004,
       Constructor    = 0x0200400,
+      Conversion     = 0x0200800,
       Static         = 0x0004000,
    };
 
@@ -32,6 +34,7 @@ namespace elena_lang
    constexpr auto errInvalidOperation     = 107;
    constexpr auto errDuplicatedDictionary = 108;
    constexpr auto errDuplicatedField      = 109;
+   constexpr auto errUnknownVariableType  = 110;
    constexpr auto errIllegalField         = 111;
    constexpr auto errTooManyParameters    = 113;
    constexpr auto errDuplicatedDefinition = 119;
@@ -97,6 +100,9 @@ namespace elena_lang
    constexpr auto V_PUBLIC                = 0x80004001u;
    constexpr auto V_PRIVATE               = 0x80004002u;
 
+   /// property:
+   constexpr auto V_SEALED                = 0x80003001u;
+
    /// scope_prefix:
    constexpr auto V_CONST                 = 0x80002001u;
    constexpr auto V_EMBEDDABLE            = 0x80002002u;
@@ -111,6 +117,7 @@ namespace elena_lang
    constexpr auto V_FIELD                 = 0x80001009u;
    constexpr auto V_VARIABLE              = 0x8000100Du;
    constexpr auto V_STATIC                = 0x8000100Fu;
+   constexpr auto V_CONVERSION            = 0x80001011u;
    constexpr auto V_DISPATCHER            = 0x80001013u;
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;

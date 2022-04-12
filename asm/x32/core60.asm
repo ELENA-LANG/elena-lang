@@ -162,6 +162,16 @@ inline %88h
 
 end
 
+// ; copy
+inline %90h
+
+  mov  ecx, __n_1 
+  mov  edi, ebx
+  rep  movsb
+  sub  esi, __n_1          // ; to set back ESI register
+
+end
+
 // ; closen
 inline %91h
 

@@ -182,6 +182,27 @@ inline %88h
 
 end
 
+// ; copy
+inline %90h
+
+  li      r16, __n_1
+  mr      r19, r3
+  mr      r18, r15
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  ld      r17, 0(r19)
+  addi    r16, r16, -8
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  addi    r19, r19, 8
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; closen
 inline %91h
 

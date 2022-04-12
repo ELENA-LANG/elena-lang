@@ -102,9 +102,21 @@ void assigningLocal(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::StoreFI, node.arg.value);
 }
 
+void copyingLocal(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::StoreSI, 0);
+   tape.write(ByteCode::SetDDisp, node.arg.value);
+   tape.write(ByteCode::Copy, node.findChild(BuildKey::Size).arg.value);
+}
+
 void getLocal(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::PeekFI, node.arg.value);
+}
+
+void getLocalAddredd(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::SetDDisp, node.arg.value);
 }
 
 void creatingClass(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -182,6 +194,8 @@ ByteCodeWriter::Saver commands[] =
    intLiteral,
    stringLiteral,
    goingToEOP,
+   getLocalAddredd,
+   copyingLocal,
 };
 
 // --- ByteCodeWriter ---

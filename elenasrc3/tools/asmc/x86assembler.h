@@ -84,6 +84,7 @@ namespace elena_lang
       void compileJmp(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileLea(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMov(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileMovsb(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileNop(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compilePop(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compilePush(ScriptToken& tokenInfo, MemoryWriter& writer);

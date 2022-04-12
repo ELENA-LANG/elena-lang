@@ -161,6 +161,16 @@ inline %88h
 
 end
 
+// ; copy
+inline %90h
+
+  mov  rsi, r10
+  mov  ecx, __n_1 
+  mov  rdi, rbx
+  rep  movsb
+
+end
+
 // ; closen
 inline %91h
 

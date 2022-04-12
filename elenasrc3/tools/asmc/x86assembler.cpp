@@ -929,6 +929,12 @@ bool X86Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWrit
    return true;
 }
 
+void X86Assembler :: compileMovsb(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   writer.writeByte(0xA4);
+   read(tokenInfo);
+}
+
 bool X86Assembler :: compilePop(X86Operand source, MemoryWriter& writer)
 {
    if (source.isR32()) {
@@ -1105,6 +1111,9 @@ bool X86Assembler :: compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
 {
    if (tokenInfo.compare("mov")) {
       compileMov(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("movsb")) {
+      compileMovsb(tokenInfo, writer);
    }
    else return false;
 
