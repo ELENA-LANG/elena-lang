@@ -61,6 +61,10 @@ namespace elena_lang
       void injectVirtualCode(CompilerBase* compiler, SyntaxNode classNode, 
          ModuleScopeBase* scope, ref_t classRef, ClassInfo& classInfo);
 
+      bool isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef);
+
+      ConversionRoutine retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef);
+
       static CompilerLogic* getInstance()
       {
          static CompilerLogic instance;

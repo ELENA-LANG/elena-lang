@@ -31,6 +31,14 @@ constexpr Op Operations[OperationLength] =
    { BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0 }
 };
 
+inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
+{
+   switch (targetRef) {
+      default:
+         return targetRef == sourceRef;
+   }
+}
+
 // --- CompilerLogic ---
 
 bool CompilerLogic :: isValidObjOp(int operatorId)
@@ -464,4 +472,58 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
       return V_BINARYARRAY;
    }
    else return V_OBJARRAY;
+}
+
+bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef)
+{
+   if ((!targetRef || targetRef == scope.buildins.superReference) && !isPrimitiveRef(sourceRef))
+      return true;
+
+   if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
+      return true;
+
+   while (sourceRef != 0) {
+      if (targetRef != sourceRef) {
+         ClassInfo info;
+         if (!defineClassInfo(scope, info, sourceRef))
+            return false;
+
+         // if it is a structure wrapper
+         if (isPrimitiveRef(targetRef) && test(info.header.flags, elWrapper)) {
+            auto inner = info.fields.get(0);
+            if (isCompatible(scope, targetRef, inner.typeRef/*, ignoreNils*/))
+               return true;
+         }
+
+         if (test(info.header.flags, elClassClass)) {
+            // class class can be compatible only with itself and the super class
+            sourceRef = scope.buildins.superReference;
+         }
+         else sourceRef = info.header.parentRef;
+
+      }
+      else return true;
+   }
+
+   return false;
+}
+
+ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, targetRef))
+      return { };
+
+   // if the target class is wrapper around the source
+   if (test(info.header.flags, elWrapper) && !test(info.header.flags, elDynamicRole)) {
+      auto inner = *info.fields.start();
+
+      bool compatible = false;
+      compatible = isCompatible(scope, inner.typeRef, sourceRef);
+
+      if (compatible)
+         return { ConversionResult::BoxingRequired };
+   }
+
+   return {};
 }

@@ -96,6 +96,7 @@ namespace elena_lang
    constexpr ref_t elReadOnlyRole      = 0x00001000;
    constexpr ref_t elNonStructureRole  = 0x00002000;
    constexpr ref_t elWrapper           = 0x00004000;
+   constexpr ref_t elStructureWrapper  = 0x00004800;
    constexpr ref_t elDynamicRole       = 0x00008000;
 
    // --- LoadResult enum ---

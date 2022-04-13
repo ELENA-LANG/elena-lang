@@ -307,7 +307,19 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
          if (inheritMode)
             info.inherited = true;
 
+         if (info.outputRef)
+            info.outputRef = importReference(exporter, info.outputRef);
+
          target.methods.add(importMessage(exporter, it.key()), info);
+      }
+
+      for (auto it = copy.fields.start(); !it.eof(); ++it) {
+         FieldInfo info = *it;
+
+         if (info.typeRef && !isPrimitiveRef(info.typeRef))
+            info.typeRef = importReference(exporter, info.typeRef);
+
+         target.fields.add(it.key(), info);
       }
    }
 

@@ -536,7 +536,6 @@ public:
 };
 
 // --- LinkerBaser ---
-
 class LinkerBase
 {
 protected:
@@ -549,6 +548,19 @@ public:
    {
       _errorProcessor = errorProcessor;
    }
+};
+
+// --- ConversionResult ---
+enum class ConversionResult
+{
+   None = 0,
+   BoxingRequired
+};
+
+// --- ConversionRoutine ---
+struct ConversionRoutine
+{
+   ConversionResult result;
 };
 
 }

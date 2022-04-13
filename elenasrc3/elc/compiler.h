@@ -35,6 +35,7 @@ namespace elena_lang
       Local,
       TempLocal,
       LocalAddress,
+      TempLocalAddress,
       External
    };
 
@@ -595,6 +596,7 @@ namespace elena_lang
       ObjectInfo saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object);
 
       ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef);
+      ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef);
 
       ObjectInfo compileExternalOp(BuildTreeWriter& writer, ref_t externalRef, ArgumentsInfo& arguments);
 

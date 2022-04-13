@@ -1553,6 +1553,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
          writer.appendNode(BuildKey::Local, info.reference);
          break;
       case ObjectKind::LocalAddress:
+      case ObjectKind::TempLocalAddress:
          writer.appendNode(BuildKey::LocalAddress, info.reference);
          break;
       case ObjectKind::Object:
@@ -2152,7 +2153,8 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    }
 
    ObjectInfo exprVal;
-   exprVal = compileExpression(writer, scope, roperand, 0, EAttr::Parameter);
+   exprVal = compileExpression(writer, scope, roperand, 
+      resolveObjectReference(target), EAttr::Parameter);
 
    writeObjectInfo(writer, exprVal);
 
@@ -2297,10 +2299,22 @@ ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
 
 ObjectInfo Compiler :: saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object)
 {
-   int tempLocal = scope.newTempLocal();
-   writer.appendNode(BuildKey::Assigning, tempLocal);
+   if (object.kind == ObjectKind::External) {
+      CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::Code);
 
-   return { ObjectKind::TempLocal, object.type, (ref_t)tempLocal };
+      auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, object.type);
+
+      int tempLocal = allocateLocalAddress(codeScope, sizeInfo.size);
+      writer.appendNode(BuildKey::Copying, tempLocal);
+
+      return { ObjectKind::TempLocalAddress, object.type, (ref_t)tempLocal };
+   }
+   else {
+      int tempLocal = scope.newTempLocal();
+      writer.appendNode(BuildKey::Assigning, tempLocal);
+
+      return { ObjectKind::TempLocal, object.type, (ref_t)tempLocal };
+   }
 }
 
 ObjectInfo Compiler :: compileObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
@@ -2330,7 +2344,34 @@ ObjectInfo Compiler :: typecastObject(BuildTreeWriter& writer, ExprScope& scope,
    ArgumentsInfo arguments;
    arguments.add(source);
 
-   compileMessageOperation(writer, scope, typecastMssg, arguments);
+   return compileMessageOperation(writer, scope, typecastMssg, arguments);
+}
+
+ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, 
+   ref_t targetRef)
+{
+   ref_t sourceRef = resolveObjectReference(source);
+   if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
+      auto conversionRoutine = _logic->retrieveConversionRoutine(*scope.moduleScope, targetRef, sourceRef);
+      if (conversionRoutine.result == ConversionResult::BoxingRequired) {
+         // if it is implcitily compatible
+         switch (source.kind) {
+            case ObjectKind::TempLocalAddress:
+               source.type = targetRef;
+               break;
+            default:
+               throw InternalError(errFatalError);
+         }
+      }
+      else source = typecastObject(writer, scope, source, targetRef);
+   }
+
+   return source;
+}
+
+inline bool hasToBePresaved(ObjectInfo retVal)
+{
+   return retVal.kind == ObjectKind::Object || retVal.kind == ObjectKind::External;
 }
 
 ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
@@ -2360,12 +2401,12 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
    }
 
-   if ((paramMode || targetRef) && retVal.kind == ObjectKind::Object) {
+   if ((paramMode || targetRef) && hasToBePresaved(retVal)) {
       retVal = saveToTempLocal(writer, scope, retVal);
    }
    if (targetRef) {
-      typecastObject(writer, scope, retVal, targetRef);
-      if (paramMode)
+      retVal = convertObject(writer, scope, retVal, targetRef);
+      if (paramMode && hasToBePresaved(retVal))
          retVal = saveToTempLocal(writer, scope, retVal);
    }
 

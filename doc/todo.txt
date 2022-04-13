@@ -54,7 +54,6 @@ Pipeline:
     * boxing stack allocated variable
     * boxing stack allocated parameter for strong typed method
     * uncomment & fix optimizeTape routine
-    * try to typecast the object directly
     * module template - to include basic import statement
     * module template - probably should include meta dictionary for attributes / types / ...
     * do not allow to override sealed method
@@ -62,6 +61,7 @@ Pipeline:
     * warn if the method was overriden but the output type was not specify
     * raise an error if the overridden output type was changed
     * optimization : copying ops
+    * isCompatble - cache the results
 
     * debugger : fix two breakpont in row
     * redirect handler : throw an exception on unhandled message
