@@ -39,7 +39,7 @@ public:
 int main(int argc, char* argv[])
 {
    Presenter presenter;
-   ByteCodeViewer viewer(&presenter);
+   ByteCodeViewer viewer(&presenter, 30);
 
    if (argc < 2) {
       presenter.print("ecv <module name> | ecv -p<module path>");

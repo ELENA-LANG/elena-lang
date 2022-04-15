@@ -12,9 +12,7 @@ class A
 {
    testA() 
    {
-       int h := extern KERNEL32.GetStdHandle();
-
-       //int h := extern KERNEL32.GetStdHandle(0FFFFFFF5h);
+       int h := extern KERNEL32.GetStdHandle(0FFFFFFF5h);
 //       extern KERNEL32.WriteConsoleW(h,"hello",4,0,0);
    }
 

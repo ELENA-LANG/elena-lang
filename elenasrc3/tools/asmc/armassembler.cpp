@@ -827,7 +827,7 @@ void Arm64Assembler :: compileB(ScriptToken& tokenInfo, MemoryWriter& writer, La
    if (!tokenInfo.compare(":")) {
       // if jump forward
       if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
-         labelScope.registerLabel(*tokenInfo.token, writer);
+         labelScope.registerJump(*tokenInfo.token, writer);
 
          compileB(0, writer);
       }
@@ -851,7 +851,7 @@ void Arm64Assembler :: compileBxx(ScriptToken& tokenInfo, JumpType cond, MemoryW
    if (!tokenInfo.compare(":")) {
       // if jump forward
       if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
-         labelScope.registerLabel(*tokenInfo.token, writer);
+         labelScope.registerJump(*tokenInfo.token, writer);
 
          compileBxx(0, (int)cond, writer);
       }

@@ -74,6 +74,19 @@ public:
    }
 };
 
+bool getConsoleSize(int& columns, int& rows)
+{
+   CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+   if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
+      columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+      rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+      return true;
+   }
+   else return false;
+}
+
 int main()
 {
    printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2022 by Aleksey Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ECV_REVISION_NUMBER);
@@ -82,8 +95,11 @@ int main()
    int argc;
    wchar_t** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
+   int columns = 0, rows = 30;
+   getConsoleSize(columns, rows);
+
    Presenter presenter;
-   ByteCodeViewer viewer(&presenter);
+   ByteCodeViewer viewer(&presenter, rows);
 
    if (argc < 2) {
       presenter.print("ecv <module name> | ecv -p<module path>");

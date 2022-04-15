@@ -11,24 +11,33 @@
 using namespace elena_lang;
 
 // --- X86LabelHelper ---
-int X86LabelHelper :: fixNearLabel(pos_t labelPos, MemoryWriter& writer)
+int X86LabelHelper :: fixNearJccLabel(pos_t jumpPos, MemoryWriter& writer)
 {
-   int offset = writer.position() - labelPos - 4;
+   int offset = writer.position() - jumpPos - 6;
 
-   writer.Memory()->write(labelPos, &offset, 4);
+   writer.Memory()->write(jumpPos, &offset, 4);
 
    return offset;
 }
 
-int X86LabelHelper :: fixShortLabel(pos_t labelPos, MemoryWriter& writer)
+int X86LabelHelper::fixNearJmpLabel(pos_t jumpPos, MemoryWriter& writer)
 {
-   int offset = writer.position() - labelPos - 1;
+   int offset = writer.position() - jumpPos - 5;
+
+   writer.Memory()->write(jumpPos, &offset, 4);
+
+   return offset;
+}
+
+int X86LabelHelper :: fixShortLabel(pos_t jumpPos, MemoryWriter& writer)
+{
+   int offset = writer.position() - jumpPos - 2;
 
    // if we are unlucky we must change jump from short to near
    if (_abs(offset) > 0x80) {
-      convertShortToNear(labelPos, offset, writer);
+      convertShortToNear(jumpPos, offset, writer);
    }
-   else *(char*)(&(*writer.Memory())[labelPos]) = (char)offset;
+   else *(char*)(&(*writer.Memory())[jumpPos + 1]) = (char)offset;
 
    return offset;
 }
@@ -37,7 +46,7 @@ void X86LabelHelper :: convertShortToNear(pos_t position, int offset, MemoryWrit
 {
    MemoryBase* memory = writer.Memory();
 
-   char opcode = (*memory)[position - 1];
+   char opcode = (*memory)[position];
 
    // if jmp opcode
    if ((unsigned char)opcode == 0xEB) {
@@ -45,16 +54,16 @@ void X86LabelHelper :: convertShortToNear(pos_t position, int offset, MemoryWrit
       writer.insertByte(position + 2, 0);
       writer.insertByte(position + 3, 0);
 
-      *(unsigned char*)(&(*memory)[position - 1]) = 0xE9;
-      (*memory)[position] = offset;
+      *(unsigned char*)(&(*memory)[position]) = 0xE9;
+      MemoryBase::writeDWord(memory, position + 1, offset);
 
       shiftLabels(position, 0, 3);
-      fixJumps(position + 2, 3, writer);
+      fixJumps(position + 1, 3, writer);
    }
    else {
-      *(char*)(&(*memory)[position - 1]) = 0x0F;
-      *(char*)(&(*memory)[position]) = (char)opcode + 0x10; // to change from short to near
-      writer.insertDWord(position + 1, offset);
+      *(char*)(&(*memory)[position]) = 0x0F;
+      *(char*)(&(*memory)[position + 1]) = (char)opcode + 0x10; // to change from short to near
+      writer.insertDWord(position + 2, offset);
 
       shiftLabels(position, 1, 4);
       fixJumps(position + 1, 4, writer);
@@ -70,43 +79,54 @@ void X86LabelHelper :: fixJumps(pos_t position, int size, MemoryWriter& writer)
 
    auto it = jumps.start();
    while (!it.eof()) {
-      pos_t labelPos = (*it).position;
+      pos_t jumpPos = (*it).position;
       int   offset = (*it).offset;
 
       // skip if the inserted label to prevent infinite loop
-      if (position == labelPos) {
+      if (position == jumpPos) {
       }
       // if we inserted the code into existing jump - should be fixed
       // in case of back jump
-      else if (offset < 0 && position < labelPos && position > labelPos + offset) {
+      else if (offset < 0 && position < jumpPos && position > jumpPos + offset) {
          offset -= size;
 
          if (abs(offset) < 0x80) {
-            *(char*)(&(*memory)[labelPos]) = (char)offset;
+            *(char*)(&(*memory)[jumpPos + 1]) = (char)offset;
          }
          else {
-            // if we are unlucky we must change jump from short to near
-            if (abs((*it).offset) < 0x80) {
-               promotions.add(it.key(), offset);
+            char opcode = (*memory)[jumpPos];
+            // if jmp opcode
+            if ((unsigned char)opcode == 0xEB) {
+               if (abs((*it).offset) < 0x80) {
+                  // if we are unlucky we must change jump from short to near
+                  promotions.add(it.key(), offset);
+               }
+               else MemoryBase::writeDWord(memory, jumpPos + 1, offset);
             }
-            else (*memory)[labelPos] = offset;
+            else {
+               if (abs((*it).offset) < 0x80) {
+                  // if we are unlucky we must change jump from short to near
+                  promotions.add(it.key(), offset);
+               }
+               else MemoryBase::writeDWord(memory, jumpPos + 2, offset);
+            }
          }
          (*it).offset = offset;
       }
       // in case of forward jump
-      else if (offset > 0 && position >= labelPos && position <= labelPos + offset/* + size*/) {
+      else if (offset > 0 && position >= jumpPos && position <= jumpPos + offset/* + size*/) {
          offset += size;
 
          if (offset < 0x82) {
-            *(char*)(&(*memory)[labelPos]) = (char)offset;
+            *(char*)(&(*memory)[jumpPos + 1]) = (char)offset;
          }
          else {
-            int opcode = (*memory)[labelPos - 1];
+            int opcode = (*memory)[jumpPos];
 
             // call is always near
             // !! should we check 0xB9 (load) as well?
             if ((unsigned char)opcode == 0xE8) {
-               (*memory)[labelPos] = offset;
+               MemoryBase::writeDWord(memory, jumpPos + 1, offset);
             }
             // if we are unlucky we must change jump from short to near
             else if ((*it).offset < 0x82) {
@@ -118,11 +138,11 @@ void X86LabelHelper :: fixJumps(pos_t position, int size, MemoryWriter& writer)
                }
                else offset += 4;
             }
-            else (*memory)[labelPos] = offset;
+            else MemoryBase::writeDWord(memory, jumpPos + 2, offset);
          }
          (*it).offset = offset;
       }
-      it++;
+      ++it;
    }
 
    // convert from short to near
@@ -141,15 +161,18 @@ bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
    auto it = jumps.getIt(label);
 
    while (!it.eof() && it.key() == label) {
-      pos_t labelPos = (*it).position;
+      pos_t jumpPos = (*it).position;
 
       // get jump byte
       int opcode = 0;
-      writer.Memory()->read(labelPos - 1, &opcode, sizeof(opcode));
+      writer.Memory()->read(jumpPos, &opcode, sizeof(opcode));
       if (isShortJump((char)opcode)) {
-         (*it).offset = fixShortLabel(labelPos, writer);
+         (*it).offset = fixShortLabel(jumpPos, writer);
       }
-      else (*it).offset = fixNearLabel(labelPos, writer);
+      else if (isNearJmp((char)opcode)) {
+         (*it).offset = fixNearJmpLabel(jumpPos, writer);
+      }
+      else (*it).offset = fixNearJccLabel(jumpPos, writer);
 
       it = jumps.nextIt(label, it);
    }

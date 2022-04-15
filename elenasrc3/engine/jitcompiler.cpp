@@ -90,14 +90,15 @@ const ref_t coreFunctions[coreFunctionNumber] =
 
 // preloaded bc commands
 
-const size_t bcCommandNumber = 25;
+const size_t bcCommandNumber = 26;
 const ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDDisp, ByteCode::CloseN, ByteCode::AllocI, 
    ByteCode::FreeI, ByteCode::SaveDDisp, ByteCode::StoreFI, ByteCode::OpenIN, ByteCode::XStoreSIR, 
    ByteCode::OpenHeaderIN, ByteCode::CallExtR, ByteCode::MovSIFI, ByteCode::PeekFI, ByteCode::Load,  
    ByteCode::SaveSI, ByteCode::CallR, ByteCode::Quit, ByteCode::MovM, ByteCode::CallVI,
-   ByteCode::StoreSI, ByteCode::Redirect, ByteCode::NewIR, ByteCode::XFlushSI, ByteCode::Copy
+   ByteCode::StoreSI, ByteCode::Redirect, ByteCode::NewIR, ByteCode::XFlushSI, ByteCode::Copy,
+   ByteCode::NewNR
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/, 
@@ -508,8 +509,7 @@ void elena_lang::loadNOp(JITCompilerScope* scope)
    while (count > 0) {
       // locate relocation position
       writer->seek(position + entries->offset);
-      switch (entries->reference)
-      {
+      switch (entries->reference) {
          case NARG_1:
             writer->writeDWord(scope->command.arg1);
             break;

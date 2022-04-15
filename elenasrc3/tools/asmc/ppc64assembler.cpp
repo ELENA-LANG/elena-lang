@@ -598,7 +598,7 @@ void PPC64Assembler :: compileBCxx(ScriptToken& tokenInfo, int bo, int bi, Memor
    if (!tokenInfo.compare(":")) {
       // if jump forward
       if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
-         labelScope.registerLabel(*tokenInfo.token, writer);
+         labelScope.registerJump(*tokenInfo.token, writer);
 
          compileBCxx(bo, bi, 0, 0, 0, writer);
       }
@@ -624,7 +624,7 @@ void PPC64Assembler :: compileB(ScriptToken& tokenInfo, MemoryWriter& writer, La
    if (!tokenInfo.compare(":")) {
       // if jump forward
       if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
-         labelScope.helper->jumps.add(labelScope.getLabel(*tokenInfo.token), { writer.position() });
+         labelScope.registerJump(*tokenInfo.token, writer);
 
          compileBxx(0, 0, 0, writer);
       }

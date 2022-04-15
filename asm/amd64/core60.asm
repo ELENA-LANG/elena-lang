@@ -174,7 +174,7 @@ end
 // ; closen
 inline %91h
 
-  add  rbp, __arg32_1
+  add  rbp, __n_1
   mov  rsp, rbp
   pop  rbp
   
@@ -594,5 +594,6 @@ inline %0FEh
   mov  rcx, r10
   mov  rdx, r11
   call extern __relptr32_1
+  mov  rdx, rax
 
 end

@@ -62,6 +62,7 @@ Pipeline:
     * raise an error if the overridden output type was changed
     * optimization : copying ops
     * isCompatble - cache the results
+    * compiler : remove executable / modules before the compilation start
 
     * debugger : fix two breakpont in row
     * redirect handler : throw an exception on unhandled message

@@ -51,6 +51,7 @@ namespace elena_lang
       Freeing           = 0x0017,
       SavingNInStack    = 0x0018,
       ExtCallOp         = 0x0019,
+      SavingIndex       = 0x001A,
 
       Import            = 0x0028,
       StrDictionaryOp   = 0x0029,

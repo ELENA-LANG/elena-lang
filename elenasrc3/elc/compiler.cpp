@@ -1890,11 +1890,16 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
    }
 }
 
+inline int newLocalAddr(int allocated)
+{
+   return -allocated;
+}
+
 int Compiler :: allocateLocalAddress(CodeScope* codeScope, int size)
 {
    int retVal = codeScope->allocLocalAddress(size);
 
-   return retVal;
+   return newLocalAddr(retVal);
 }
 
 void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRef)
@@ -2303,9 +2308,9 @@ ObjectInfo Compiler :: saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope
       CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::Code);
 
       auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, object.type);
-
       int tempLocal = allocateLocalAddress(codeScope, sizeInfo.size);
-      writer.appendNode(BuildKey::Copying, tempLocal);
+
+      writer.appendNode(BuildKey::SavingIndex, tempLocal);
 
       return { ObjectKind::TempLocalAddress, object.type, (ref_t)tempLocal };
    }

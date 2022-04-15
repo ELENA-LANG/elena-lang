@@ -175,7 +175,7 @@ end
 // ; closen
 inline %91h
 
-  add  ebp, __arg32_1
+  add  ebp, __n_1
   mov  esp, ebp
   pop  ebp
   
@@ -557,6 +557,7 @@ inline %0FEh
 
   mov  [esp], esi
   call extern __ptr32_1
+  mov  edx, eax
 
 end
 
@@ -564,5 +565,6 @@ end
 inline %1FEh
 
   call extern __ptr32_1
+  mov  edx, eax
 
 end

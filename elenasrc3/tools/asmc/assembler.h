@@ -42,24 +42,7 @@ namespace elena_lang
          return declaredLabels.exist(labelNames.get(label));
       }
 
-      int resolveLabel(ustr_t label, MemoryWriter& writer)
-      {
-         int offset = helper->labels.get(getLabel(label)) - writer.position();
-
-         return offset;
-      }
-
-      bool declareLabel(ustr_t labelName, MemoryWriter& writer)
-      {
-         if (!registerLabel(labelName, writer))
-            return false;
-
-         declaredLabels.add(labelNames.get(labelName), true);
-
-         return true;
-      }
-
-      bool registerLabel(ustr_t labelName, MemoryWriter& writer)
+      void registerJump(ustr_t labelName, MemoryWriter& writer)
       {
          ref_t label = labelNames.get(labelName);
          if (!label) {
@@ -68,7 +51,28 @@ namespace elena_lang
             labelNames.add(labelName, label);
          }
 
+         helper->declareJump(label, writer);
+      }
+
+      bool declareLabel(ustr_t labelName, MemoryWriter& writer)
+      {
+         ref_t label = getLabel(labelName);
+         if (!label) {
+            label = labelNames.count() + 1;
+
+            labelNames.add(labelName, label);
+         }
+
+         declaredLabels.add(labelNames.get(labelName), true);
+
          return helper->setLabel(label, writer);
+      }
+
+      int resolveLabel(ustr_t label, MemoryWriter& writer)
+      {
+         int offset = helper->labels.get(getLabel(label)) - writer.position();
+
+         return offset;
       }
 
       LabelScope(LabelHelper* lh)

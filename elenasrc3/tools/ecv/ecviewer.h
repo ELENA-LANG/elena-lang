@@ -86,11 +86,11 @@ namespace elena_lang
 
       void runSession();
 
-      ByteCodeViewer(PresenterBase* presenter)
+      ByteCodeViewer(PresenterBase* presenter, int pageSize)
       {
          _presenter = presenter;
          _module = nullptr;
-         _pageSize = 20;
+         _pageSize = pageSize;
          _noPaging = false;
       }
       virtual ~ByteCodeViewer()

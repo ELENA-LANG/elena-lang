@@ -193,6 +193,11 @@ void extCallOp(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::CallExtR, node.arg.reference | mskExternalRef, node.findChild(BuildKey::Count).arg.value);
 }
 
+void savingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::SaveDDisp, node.arg.value);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -221,6 +226,7 @@ ByteCodeWriter::Saver commands[] =
    freeingStack,
    savingNInStack,
    extCallOp,
+   savingIndex
 };
 
 // --- ByteCodeWriter ---

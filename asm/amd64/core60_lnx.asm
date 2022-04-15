@@ -164,6 +164,7 @@ inline %0FEh
   mov  rsi, r11
   mov  rdi, r10
   call extern __relptr32_1
+  mov  rdx, rax
 
 end
 
@@ -172,6 +173,7 @@ inline %1FEh
 
   mov  rdi, r10
   call extern __relptr32_1
+  mov  rdx, rax
 
 end
 
@@ -181,6 +183,7 @@ inline %2FEh
   mov  rsi, r11
   mov  rdi, r10
   call extern __relptr32_1
+  mov  rdx, rax
 
 end
 
@@ -191,5 +194,6 @@ inline %3FEh
   mov  rsi, r11
   mov  rdi, r10
   call extern __relptr32_1
+  mov  rdx, rax
 
 end

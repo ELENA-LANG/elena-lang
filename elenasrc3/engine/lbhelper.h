@@ -46,6 +46,11 @@ namespace elena_lang
          return labels.exist(label);
       }
 
+      void declareJump(pos_t label, MemoryWriter& writer)
+      {
+         jumps.add(label, { writer.position() });
+      }
+
       bool setLabel(pos_t label, MemoryWriter& writer) override
       {
          labels.add(label, writer.position());

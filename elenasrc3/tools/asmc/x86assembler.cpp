@@ -509,7 +509,7 @@ void X86Assembler :: compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, X8
 
    // if jump forward
    if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
-      labelScope.registerLabel(*tokenInfo.token, writer);
+      labelScope.registerJump(*tokenInfo.token, writer);
 
       if(!compileJccForward(type, shortJump, writer))
          throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
@@ -548,7 +548,7 @@ void X86Assembler :: compileJmp(ScriptToken& tokenInfo, MemoryWriter& writer, La
 
       // if jump forward
       if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
-         labelScope.registerLabel(*tokenInfo.token, writer);
+         labelScope.registerJump(*tokenInfo.token, writer);
 
          if (!compileJmpForward(shortJump, writer))
             throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);

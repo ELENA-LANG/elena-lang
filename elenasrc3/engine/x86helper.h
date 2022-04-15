@@ -348,6 +348,11 @@ namespace elena_lang
          return opcode == 0xEB;
       }
 
+      static bool isNearJmp(unsigned char opcode)
+      {
+         return opcode == 0xE9;
+      }
+
       static bool isShortJump(unsigned char opcode)
       {
          // if it is jump of address load
@@ -360,7 +365,8 @@ namespace elena_lang
       }
 
       int fixShortLabel(pos_t labelPos, MemoryWriter& writer);
-      int fixNearLabel(pos_t labelPos, MemoryWriter& writer);
+      int fixNearJccLabel(pos_t labelPos, MemoryWriter& writer);
+      int fixNearJmpLabel(pos_t labelPos, MemoryWriter& writer);
 
       void convertShortToNear(pos_t position, int offset, MemoryWriter& writer);
 

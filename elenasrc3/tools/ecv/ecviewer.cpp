@@ -1,4 +1,5 @@
 //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Tools
 //
 //		This is a main file containing ecode viewer code
@@ -161,6 +162,10 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
          break;
       case mskVMTRef:
          commandStr.append("class:");
+         break;
+      case mskIntLiteralRef:
+         commandStr.append("intconst:");
+         referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       default:
          commandStr.append(":");
