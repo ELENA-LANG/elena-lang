@@ -368,7 +368,7 @@ X86Operand X86Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t err
 
 X86Operand X86Assembler :: compileOperand(ScriptToken& tokenInfo, ustr_t errorMessage)
 {
-   X86Operand operand;
+   X86Operand operand = {};
 
    read(tokenInfo);
    if (tokenInfo.compare("[")) {
@@ -531,7 +531,7 @@ void X86Assembler :: compileJmp(ScriptToken& tokenInfo, MemoryWriter& writer, La
 {
    X86Operand operand = compileOperand(tokenInfo, nullptr);
 
-   if (operand.isR32_M32() || operand.isR64_M64()) {
+   if (operand.isR32_M32() || operand.isR64_M64() || operand.isRX64_MX64()) {
       if(!compileJmp(operand, writer))
          throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
    }
@@ -1280,7 +1280,11 @@ X86Operand X86_64Assembler :: defineRDisp(X86Operand operand)
 
 X86Operand X86_64Assembler :: defineDBDisp(X86Operand operand)
 {
-   operand.type = operand.type | X86OperandType::M64disp8;
+   //if (operand.type )
+   if (test(operand.type, X86OperandType::MX64)) {
+      operand.type = operand.type | X86OperandType::MX64disp8;
+   }
+   else operand.type = operand.type | X86OperandType::M64disp8;
 
    return operand;
 }
@@ -1430,8 +1434,13 @@ bool X86_64Assembler :: compileCmp(X86Operand source, X86Operand target, MemoryW
 
 bool X86_64Assembler :: compileJmp(X86Operand source, MemoryWriter& writer)
 {
-   if (source.isR64_M64()) {
+   if (source.isRX64_MX64()) {
       writer.writeByte(0x4F);
+      writer.writeByte(0xFF);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
+   }
+   else if (source.isR64_M64()) {
+      writer.writeByte(0x48);
       writer.writeByte(0xFF);
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
    }
@@ -1468,14 +1477,14 @@ bool X86_64Assembler :: compileLea(X86Operand source, X86Operand target, MemoryW
 
 bool X86_64Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
-   if (source.isR64() && target.isDB_DD_DQ()) {
-      target.type = X86OperandType::DQ;
-      writer.writeByte(0x48);
+   if (source.isRX64() && target.isDB_DD_DQ()) {
+      writer.writeByte(0x49);
       writer.writeByte(0xB8 + (char)source.type);
       X86Helper::writeImm(writer, target);
    }
-   else if (source.isRX64() && target.isDB_DD_DQ()) {
-      writer.writeByte(0x4C);
+   else if (source.isR64() && target.isDB_DD_DQ()) {
+      target.type = X86OperandType::DQ;
+      writer.writeByte(0x48);
       writer.writeByte(0xB8 + (char)source.type);
       X86Helper::writeImm(writer, target);
    }
@@ -1500,7 +1509,7 @@ bool X86_64Assembler :: compileMov(X86Operand source, X86Operand target, MemoryW
       X86Helper::writeModRM(writer, source, target);
    }
    else if (source.isM64() && target.isRX64()) {
-      writer.writeByte(0x49);
+      writer.writeByte(0x4C);
       writer.writeByte(0x89);
       X86Helper::writeModRM(writer, target, source);
    }

@@ -174,6 +174,8 @@ namespace elena_lang
 
       ustr_t resolveForward(ustr_t weakReference) override;
       ustr_t resolveExternal(ustr_t forward) override;
+      ustr_t resolveWinApi(ustr_t forward) override;
+
       void addForward(ustr_t forward, ustr_t referenceName) override;
 
       ModuleIteratorBase* allocModuleIterator() override

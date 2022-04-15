@@ -64,6 +64,7 @@ end
 // ; --- GC_ALLOC ---
 // ; in: rcx - size ; out: ebx - created object
 inline % GC_ALLOC
+
   mov  rax, [data : %CORE_GC_TABLE + gc_yg_current]
   mov  r12, [data : %CORE_GC_TABLE + gc_yg_end]
   add  rcx, rax
@@ -96,11 +97,11 @@ labStart:
   shr   esi, 1
   lea   r13, [rsi*2]
   setnc cl
-  cmp   rax, [r14+r13*8]
+  cmp   rdx, [r14+r13*8]
   je    short labFound
-  lea   r12, [r14+r13*8]
+  lea   r8, [r14+r13*8]
   jb    short labSplit
-  lea   r14, [r12+16]
+  lea   r14, [r8+16]
   sub   esi, ecx
   jmp   labSplit
   nop
@@ -269,14 +270,14 @@ end
 // ; savesi 0
 inline %1A2h
 
-  mov r10, rax
+  mov r10, rdx
 
 end 
 
 // ; savesi 1
 inline %2A2h
 
-  mov r11, rax
+  mov r11, rdx
 
 end 
 
@@ -593,6 +594,8 @@ inline %0FEh
 
   mov  rcx, r10
   mov  rdx, r11
+  mov  r8, [rsp+16]
+  mov  r9, [rsp+24]
   call extern __relptr32_1
   mov  rdx, rax
 

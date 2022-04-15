@@ -490,7 +490,7 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_
 
          // if it is a structure wrapper
          if (isPrimitiveRef(targetRef) && test(info.header.flags, elWrapper)) {
-            auto inner = info.fields.get(0);
+            auto inner = *info.fields.start();
             if (isCompatible(scope, targetRef, inner.typeRef/*, ignoreNils*/))
                return true;
          }

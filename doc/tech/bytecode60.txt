@@ -17,7 +17,7 @@ ELENA byte codes (or ecodes)
    ppc64  : fp - r31, sp - r1, index - r14, acc - r15, sp[0] - r3, sp[1] - r4
 
    NOTE : content of shadow stack is not defined after the call operations 
-   NOTE : the preallocared stack should contains at least two elements for some operations
+   NOTE : the preallocated stack should contains at least two elements for some operations
 
    prefix : array, marray
 

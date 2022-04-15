@@ -199,8 +199,8 @@ void CompilingProcess :: compile(ProjectBase& project,
       buildModule(*module_it, &syntaxTree, &project,
          project.IntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
          project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
-         project.BoolSetting(ProjectOption::DebugMode, true),
-         minimalArgList);
+         minimalArgList,
+         project.BoolSetting(ProjectOption::DebugMode, true));
 
       ++(*module_it);
    }

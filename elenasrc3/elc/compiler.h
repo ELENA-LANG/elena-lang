@@ -515,7 +515,7 @@ namespace elena_lang
          ref_t flags, ref_t* signature, size_t signatureLen);
       mssg_t mapMessage(ExprScope& scope, SyntaxNode node);
 
-      ref_t mapExternal(Scope& scope, SyntaxNode node);
+      ExternalInfo mapExternal(Scope& scope, SyntaxNode node);
 
       ref_t resolveObjectReference(ObjectInfo info);
       ref_t resolvePrimitiveReference(ObjectInfo info);
@@ -598,7 +598,8 @@ namespace elena_lang
       ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef);
       ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef);
 
-      ObjectInfo compileExternalOp(BuildTreeWriter& writer, ref_t externalRef, ArgumentsInfo& arguments);
+      ObjectInfo compileExternalOp(BuildTreeWriter& writer, Scope& scope, ref_t externalRef, bool stdCall, 
+         ArgumentsInfo& arguments);
 
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, mssg_t message, ArgumentsInfo& arguments);
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute attrs);

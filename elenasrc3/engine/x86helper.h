@@ -248,7 +248,8 @@ namespace elena_lang
 
             writer.writeByte((unsigned char)sib);
          }
-         if (test(dest.type, X86OperandType::M32disp8) || test(dest.type, X86OperandType::M8disp8) || test(dest.type, X86OperandType::M64disp8)) {
+         if (test(dest.type, X86OperandType::M32disp8) || test(dest.type, X86OperandType::M8disp8)
+            || test(dest.type, X86OperandType::M64disp8) || test(dest.type, X86OperandType::MX64disp8)) {
             writer.writeByte((unsigned char)dest.offset);
          }
          else if (test(dest.type, X86OperandType::M32disp32) || test(dest.type, X86OperandType::M64disp32) || dest.factorReg) {

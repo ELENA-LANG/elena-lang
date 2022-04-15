@@ -1,5 +1,24 @@
 import system;
 
+public singleton WinOutput
+{
+   method output()
+   {
+       int h := extern KERNEL32.GetStdHandle(0FFFFFFF5h);
+       extern KERNEL32.WriteConsoleA(h,"hello",5,0,0);
+   }
+}
+
+public singleton LinuxOutput
+{
+   method output()
+   {
+       extern libc.write(1, "hellow", 5);
+   }
+}
+
+Output = WinOutput;
+
 singleton B
 {
     testB(a) 
@@ -12,8 +31,7 @@ class A
 {
    testA() 
    {
-       int h := extern KERNEL32.GetStdHandle(0FFFFFFF5h);
-//       extern KERNEL32.WriteConsoleW(h,"hello",4,0,0);
+      Output.output();
    }
 
    constructor new() {}

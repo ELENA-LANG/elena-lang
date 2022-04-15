@@ -6,9 +6,7 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
-    * >print message using external routine : windows 
-    * print message using external routine : linux
-    * print message using external routine - x86, x86-64, i386, amd64, ppc64le, arm64
+    * >print message using external routine - x86, x86-64, i386, amd64, ppc64le, arm64
     --- ide redux ---
     * linux styles : color format, no need for encoding, all utf
     * linux textview - show text
@@ -22,22 +20,26 @@ In development:
     * editor - status bar
     * linux ide
     * linux debugger
-    === Sprint 5 ===
+    === Sprint 5 : dispatching methods ===
     --- elena redux ---
     * ecv - support loading modules by name
+    * optimization - call method directly
+    * compiler - calling a constructor method directly
+    * compiler - constructor - fill newly created object with zerros
+    * compiler - if the method has no call operarion, no need to set arg length
     * strong typed method parameter
     * signature dispatch 
     * signature dispatch - x86, x86-64, i386, amd64, ppc64le, arm64 
     --- ide redux ---
     * editor - edit text
     * editor - correctly destroy tabbar / frame / view
-    === Sprint 6 ===
+    === Sprint 6 : console output ===
     * hello world sample
-    === Sprint 7 ===
+    === Sprint 7 : functional GC ===
     --- elena redux ---
     * create an object (GC)
     * create an object in sandbox - x86, x86-64, i386, amd64, ppc64le, arm64
-    === Sprint 8 ===
+    === Sprint 8 : intsum / realsum ===
     --- elena redux ---
     * api documentation
 
@@ -50,6 +52,7 @@ Pipeline:
     --- docs / tutorials ---
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
+    * support constants
     * copy : support 1, 2, any other size
     * boxing stack allocated variable
     * boxing stack allocated parameter for strong typed method
@@ -63,16 +66,13 @@ Pipeline:
     * optimization : copying ops
     * isCompatble - cache the results
     * compiler : remove executable / modules before the compilation start
+    * external call : pass int constants directly
 
     * debugger : fix two breakpont in row
     * redirect handler : throw an exception on unhandled message
 
     * for windows x86-64 allocate shadow memory
     * for linux amd64 allocate shadow memory
-
-    * compiler - calling a constructor method directly
-    * compiler - constructor - fill newly created object with zerros
-    * compiler - if the method has no call operarion, no need to set arg length
 
     * asmc : duplicate inline command
     * ide : editor
@@ -93,7 +93,6 @@ Pipeline:
     * optimization : openheader / open - there should be an optimized version for n < 4 - with reserved raw stack
     * fix : for ppc64 / arm64 - there should be alternative version to deal with args more than 9 / 12 / 16 bits
 
-    * optimization - call method directly
     * optimization - openin - increase number of optimization - open 4,0; open 1,n; open 2,n; open 3,n; open 4,n
     * modules - add reference cache
     * elenavm support : windows / linus, x86, ppc64le, arm64

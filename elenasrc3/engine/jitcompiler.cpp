@@ -1583,12 +1583,11 @@ void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vm
    alignCode(vmtWriter, _constants.alignmentVA, false);
 
    // create VMT header:
-   VMTHeader64 header = { 0 };
+   VMTHeader64 header = { 0, flags, 0, vmtLength };
 
    vmtWriter.write(&header, sizeof(header));
 
    pos_t position = vmtWriter.position();
-
    pos_t vmtSize = 0;
    if (test(flags, elStandartVMT))
       // + VMT length

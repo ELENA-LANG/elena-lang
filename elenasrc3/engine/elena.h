@@ -218,6 +218,7 @@ namespace elena_lang
 
       virtual ustr_t resolveForward(ustr_t forward) = 0;
       virtual ustr_t resolveExternal(ustr_t forward) = 0;
+      virtual ustr_t resolveWinApi(ustr_t forward) = 0;
    };
 
    // --- ModuleLoaderBase ---

@@ -163,6 +163,7 @@ enum class ProjectOption
    Primitives,
    Forwards,
    Externals,
+   Winapis,
    References,
 
    Namespace,
@@ -171,6 +172,7 @@ enum class ProjectOption
    FileKey,
    Forward,
    External,
+   Winapi,
 
    TargetPath,
    BasePath,
@@ -292,6 +294,20 @@ struct SizeInfo
    int size;
 };
 
+// --- ExternalType ---
+enum class ExternalType
+{
+   Standard = 0,
+   WinApi
+};
+
+// --- ExternalInfo ---
+struct ExternalInfo
+{
+   ExternalType type;
+   ref_t        reference;
+};
+
 // --- ModuleScopeBase ---
 class ModuleScopeBase : public SectionScopeBase
 {
@@ -332,7 +348,7 @@ public:
    virtual void newNamespace(ustr_t name) = 0;
    virtual bool includeNamespace(IdentifierList& importedNs, ustr_t name, bool& duplicateInclusion) = 0;
 
-   virtual ref_t mapExternal(ustr_t dllAlias, ustr_t functionName) = 0;
+   virtual ExternalInfo mapExternal(ustr_t dllAlias, ustr_t functionName) = 0;
 
    ModuleScopeBase(ModuleBase* module,
       ModuleBase* debugModule,

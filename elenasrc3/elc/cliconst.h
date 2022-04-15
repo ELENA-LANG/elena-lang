@@ -11,7 +11,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x008A
+   #define ELC_REVISION_NUMBER               0x008B
 
    // --- Information messages ---
    constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2022 by Aleksey Rakov\n";
@@ -43,6 +43,7 @@ namespace elena_lang
    constexpr auto PRIMITIVE_CATEGORY         = "primitives/*";
    constexpr auto FORWARD_CATEGORY           = "forwards/*";
    constexpr auto EXTERNAL_CATEGORY          = "externals/*";
+   constexpr auto WINAPI_CATEGORY            = "winapi/*";
    constexpr auto REFERENCE_CATEGORY         = "references/*";
    constexpr auto MODULE_CATEGORY            = "files/*";
    constexpr auto FILE_CATEGORY              = "include/*";

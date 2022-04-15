@@ -1937,7 +1937,7 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRe
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
 
-ref_t Compiler :: mapExternal(Scope& scope, SyntaxNode node)
+ExternalInfo Compiler :: mapExternal(Scope& scope, SyntaxNode node)
 {
    SyntaxNode objNode = node.parentNode();
 
@@ -1947,7 +1947,8 @@ ref_t Compiler :: mapExternal(Scope& scope, SyntaxNode node)
    return scope.moduleScope->mapExternal(dllAlias, functionName);
 }
 
-ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ref_t externalRef, ArgumentsInfo& arguments)
+ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, Scope& scope, ref_t externalRef, 
+   bool stdCall, ArgumentsInfo& arguments)
 {
    int count = arguments.count();
 
@@ -1962,15 +1963,22 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ref_t external
             writer.appendNode(BuildKey::SavingNInStack, i - 1);
             break;
          default:
-            throw InternalError(errFatalError);
+            if (_logic->isCompatible(*scope.moduleScope, V_INT32, resolveObjectReference(arg))) {
+               writer.appendNode(BuildKey::SavingNInStack, i - 1);
+            }
+            else writer.appendNode(BuildKey::SavingInStack, i - 1); // !! temporally - passing dynamic references to the exteranl routines should not be allowed
+            break;
       }
    }
 
    writer.newNode(BuildKey::ExtCallOp, externalRef);
+
    writer.appendNode(BuildKey::Count, count);
+
    writer.closeNode();
 
-   writer.appendNode(BuildKey::Freeing, count);
+   if (!stdCall)
+      writer.appendNode(BuildKey::Freeing, count);
 
    return { ObjectKind::External, V_INT32, 0 };
 }
@@ -2127,7 +2135,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    else {
       compileMessageArguments(writer, scope, current, arguments);
 
-      retVal = compileExternalOp(writer, source.reference, arguments);
+      retVal = compileExternalOp(writer, scope, source.reference, source.extra == -1, arguments);
    }
 
    return retVal;
@@ -2243,7 +2251,13 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, ref_t declared
    ObjectInfo retVal;
    bool invalid = false;
    if (externalOp) {
-      return { ObjectKind::External, 0, mapExternal(scope, node), 0 };
+      auto externalInfo = mapExternal(scope, node);
+      switch (externalInfo.type) {
+         case ExternalType::WinApi:
+            return { ObjectKind::External, 0, externalInfo.reference, -1 };
+         default:
+            return { ObjectKind::External, 0, externalInfo.reference, 0 };
+      }
    }
    else {
       switch (node.key) {

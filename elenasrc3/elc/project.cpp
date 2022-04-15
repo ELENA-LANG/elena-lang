@@ -122,6 +122,11 @@ ustr_t Project::resolveExternal(ustr_t dllAlias)
    return resolveKey(ProjectOption::Externals, ProjectOption::External, dllAlias);
 }
 
+ustr_t Project :: resolveWinApi(ustr_t dllAlias)
+{
+   return resolveKey(ProjectOption::Winapis, ProjectOption::Winapi, dllAlias);
+}
+
 void Project :: addForward(ustr_t forward, ustr_t referenceName)
 {
    auto collectionNode = _root.findChild(ProjectOption::Forwards);
@@ -371,6 +376,8 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
          ProjectOption::Forwards, ProjectOption::Forward, FORWARD_PREFIX_NS);
       loadKeyCollection(config, root, EXTERNAL_CATEGORY,
          ProjectOption::Externals, ProjectOption::External, nullptr);
+      loadKeyCollection(config, root, WINAPI_CATEGORY,
+         ProjectOption::Winapis, ProjectOption::Winapi, nullptr);
 
       loadPathSetting(config, root, LIB_PATH, ProjectOption::LibPath, configPath);
       loadPathSetting(config, root, OUTPUT_PATH, ProjectOption::OutputPath, configPath);
