@@ -167,24 +167,30 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\common\config.cpp" />
     <ClCompile Include="..\..\..\common\dump.cpp" />
     <ClCompile Include="..\..\..\common\files.cpp" />
     <ClCompile Include="..\..\..\common\paths.cpp" />
     <ClCompile Include="..\..\..\common\ustring.cpp" />
+    <ClCompile Include="..\..\..\common\xmltree.cpp" />
     <ClCompile Include="..\..\..\engine\bytecode.cpp" />
+    <ClCompile Include="..\..\..\engine\libman.cpp" />
     <ClCompile Include="..\..\..\engine\module.cpp" />
     <ClCompile Include="..\..\..\engine\section.cpp" />
     <ClCompile Include="..\ecviewer.cpp" />
     <ClCompile Include="..\windows\ecv.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\common\config.h" />
     <ClInclude Include="..\..\..\common\dump.h" />
     <ClInclude Include="..\..\..\common\files.h" />
     <ClInclude Include="..\..\..\common\lists.h" />
     <ClInclude Include="..\..\..\common\paths.h" />
     <ClInclude Include="..\..\..\common\ustring.h" />
+    <ClInclude Include="..\..\..\common\xmltree.h" />
     <ClInclude Include="..\..\..\engine\bytecode.h" />
     <ClInclude Include="..\..\..\engine\elenaconst.h" />
+    <ClInclude Include="..\..\..\engine\libman.h" />
     <ClInclude Include="..\..\..\engine\module.h" />
     <ClInclude Include="..\..\..\engine\section.h" />
     <ClInclude Include="..\ecvconst.h" />

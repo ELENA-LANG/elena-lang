@@ -6,9 +6,8 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
-    * >print message using external routine - x86, x86-64, i386, amd64, ppc64le, arm64
+    * >print message using external routine - i386, amd64, ppc64le, arm64
     --- ide redux ---
-    * linux styles : color format, no need for encoding, all utf
     * linux textview - show text
     * linux sdi - menu
     * linux debugger
@@ -22,7 +21,6 @@ In development:
     * linux debugger
     === Sprint 5 : dispatching methods ===
     --- elena redux ---
-    * ecv - support loading modules by name
     * optimization - call method directly
     * compiler - calling a constructor method directly
     * compiler - constructor - fill newly created object with zerros
@@ -65,7 +63,6 @@ Pipeline:
     * raise an error if the overridden output type was changed
     * optimization : copying ops
     * isCompatble - cache the results
-    * compiler : remove executable / modules before the compilation start
     * external call : pass int constants directly
 
     * debugger : fix two breakpont in row
@@ -110,7 +107,7 @@ Pipeline:
     * #386 : writeRef32Hi, writeRef32Hi - for non virtual mode - should offset the address to be correctly mapped to opcode
 
     * globals
-    * yield metods
+    * yield methods
     * #206 : compile sqllite for 64bit
     * #206 : samples, tutorials
 

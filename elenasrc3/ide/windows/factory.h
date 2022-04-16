@@ -10,6 +10,7 @@
 #include "idecommon.h"
 #include "windows/wincommon.h"
 #include "windows/wincanvas.h"
+#include "windows/wintextview.h"
 #include "ideview.h"
 #include "idecontroller.h"
 
@@ -20,6 +21,7 @@ namespace elena_lang
    {
    protected:
       FontFactory    _fontFactory;
+      ViewStyles     _styles;
       StyleInfo*     _schemes[2];
       GUISettinngs   _settings;
 

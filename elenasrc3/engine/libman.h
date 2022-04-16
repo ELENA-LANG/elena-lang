@@ -59,6 +59,8 @@ namespace elena_lang
       void addPrimitivePath(ustr_t alias, path_t path);
       void addPackage(ustr_t ns, path_t path);
 
+      void resolvePath(ustr_t ns, PathString& path) override;
+
       ModuleInfo getModule(ReferenceInfo referenceInfo, bool silentMode) override;
 
       ModuleInfo getWeakModule(ustr_t weakReferenceName, bool silentMode) override;
@@ -78,6 +80,8 @@ namespace elena_lang
 
       bool saveModule(ModuleBase* module);
       bool saveDebugModule(ModuleBase* module);
+
+      ModuleBase* loadModule(ustr_t name);
 
       LibraryProvider();
    };

@@ -44,6 +44,7 @@ namespace elena_lang
          bool withDebug);
 
       void configurate(ProjectBase& project);
+      void cleanUp(ProjectBase& project);
       void compile(ProjectBase& project, 
          pos_t defaultStackAlignment, 
          pos_t defaultRawStackAlignment,

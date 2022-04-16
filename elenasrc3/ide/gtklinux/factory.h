@@ -18,8 +18,9 @@ namespace elena_lang
    class IDEFactory
    {
    protected:
-      //FontFactory    _fontFactory;
-      //StyleInfo*     _schemes[2];
+      FontFactory    _fontFactory;
+      ViewStyles     _styles;
+      StyleInfo*     _schemes[2];
       GUISettinngs   _settings;
 
       //HINSTANCE      _instance;

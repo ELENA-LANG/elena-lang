@@ -33,7 +33,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    Text::TabSize = 4; // !! temporal
 
    GUISettinngs  settings = { true };
-   IDEModel      ideModel;
+   IDEModel      ideModel(10);
    DebugProcess  debugProcess;
    IDEController ideController(&debugProcess, &ideModel);
    IDEFactory    factory(hInstance, nCmdShow, &ideModel, &ideController, settings);

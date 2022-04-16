@@ -236,6 +236,39 @@ void CompilingProcess :: greeting()
    _presenter->print(ELC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELC_REVISION_NUMBER);
 }
 
+void CompilingProcess :: cleanUp(ProjectBase& project)
+{
+   // clean modules
+   auto module_it = project.allocModuleIterator();
+   while (!module_it->eof()) {
+      PathString path;
+      _libraryProvider.resolvePath(module_it->name(), path);
+
+      // remove a module
+      PathUtil::removeFile(*path);
+
+      // remove a debug module
+      path.changeExtension("dnl");
+      PathUtil::removeFile(*path);
+
+      ++(*module_it);
+   }
+
+   freeobj(module_it);
+   // remove executable
+   path_t output = project.PathSetting(ProjectOption::TargetPath);
+   if (!output.empty()) {
+      PathString exePath(output);
+      exePath.changeExtension(L"exe");
+
+      PathUtil::removeFile(*exePath);
+
+      // remove debug module
+      exePath.changeExtension(L"dn");
+      PathUtil::removeFile(*exePath);
+   }
+}
+
 int CompilingProcess :: build(ProjectBase& project, 
    LinkerBase& linker, 
    pos_t defaultStackAlignment, 
@@ -250,6 +283,10 @@ int CompilingProcess :: build(ProjectBase& project,
 
       // Project Greetings
       _presenter->print(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()), getTargetTypeName(targetType));
+
+      // Cleaning up
+      _presenter->print(ELC_CLEANING);
+      cleanUp(project);
 
       compile(project, defaultStackAlignment, defaultRawStackAlignment, minimalArgList);
 

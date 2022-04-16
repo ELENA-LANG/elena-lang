@@ -8,110 +8,107 @@
 
 using namespace elena_lang;
 
-//// --- Font ---
+// --- Font ---
 //
-//_ELENA_::List<Font*> Font :: Cache = _ELENA_::List<Font*>(NULL, _ELENA_::freeobj);
+//Font :: Font()
+//{
+//   _descr = NULL;
 //
-//Font* Font :: createFont(const char* fontName, int size, bool bold, bool italic)
+//   _fontName = NULL;
+//}
+
+Font :: Font(const char* fontName, int size, bool bold, bool italic)
+{
+   _fontName = fontName;
+   _bold = bold;
+   _italic = italic;
+   _size = size;
+
+   _font.set_family(fontName);
+   _font.set_size(size * PANGO_SCALE);
+   if (bold)
+      _font.set_weight(Pango::WEIGHT_BOLD);
+
+   if (italic)
+      _font.set_style(Pango::STYLE_ITALIC);
+}
+
+//void Font :: release()
+//{
+//   if (_descr != NULL) {
+//      pango_font_description_free(_descr);
+//      _descr = NULL;
+//   }
+//}
+
+// --- FontFactory ---
+
+Font* FontFactory:: createFont(const char* fontName, int size, bool bold, bool italic)
+{
+   for (auto it = _cache.start(); !it.eof(); ++it) {
+      Font* font = *it;
+
+      if (font->fontName.compare(fontName) && font->size == size &&
+         font->bold == bold && font->italic==italic)
+      {
+         return font;
+      }
+   }
+   Font* font = new Font(fontName, size, bold, italic);
+   _cache.add(font);
+
+   return font;
+}
+
+//void Font :: releaseFontCache()
 //{
 //   _ELENA_::List<Font*>::Iterator it = Cache.start();
 //   while (!it.Eof()) {
 //      Font* font = *it;
-//
-//      if (font->_fontName.compare(fontName) && font->_size == size &&
-//         font->_bold == bold && font->_italic==italic)
-//      {
-//         return font;
-//      }
 //      it++;
-//   }
-//   Font* font = new Font(fontName, size, bold, italic);
 //
-//   Cache.add(font);
-//
-//   return font;
-//}
-//
-////void Font :: releaseFontCache()
-////{
-////   _ELENA_::List<Font*>::Iterator it = Cache.start();
-////   while (!it.Eof()) {
-////      Font* font = *it;
-////      it++;
-////
-////      Cache.cut(font);
-////   }
-////}
-////
-////Font :: Font()
-////{
-////   _descr = NULL;
-////
-////   _fontName = NULL;
-////}
-//
-//Font :: Font(const char* fontName, int size, bool bold, bool italic)
-//{
-//   _fontName = fontName;
-//   _bold = bold;
-//   _italic = italic;
-//   _size = size;
-//
-//   _font.set_family(fontName);
-//   _font.set_size(size * PANGO_SCALE);
-//   if (bold)
-//      _font.set_weight(Pango::WEIGHT_BOLD);
-//
-//   if (italic)
-//      _font.set_style(Pango::STYLE_ITALIC);
-//}
-//
-////void Font :: release()
-////{
-////   if (_descr != NULL) {
-////      pango_font_description_free(_descr);
-////      _descr = NULL;
-////   }
-////}
-//
-//// --- Style ---
-//
-//Style :: Style()
-//{
-//   font = NULL;
-//   valid = false;
-//   avgCharWidth = 0;
-//   lineHeight = 0;
-//}
-//
-//Style :: Style(Colour foreground, Colour background, Font* font)
-//{
-//   this->foreground = foreground;
-//   this->background = background;
-//   this->font = font;
-//   this->valid = false;
-//   this->avgCharWidth = 0;
-//   this->lineHeight = 0;
-//}
-//
-//Style :: ~Style()
-//{
-//}
-//
-//void Style :: validate(Glib::RefPtr<Pango::Layout> layout)
-//{
-//   if (!valid) {
-//      layout->set_font_description(font->_font);
-//      layout->set_text("H");
-//      layout->get_pixel_size(avgCharWidth, lineHeight);
-//
-//      //avgCharWidth >>= 1;
-//      //avgCharWidth++;
-//
-//      valid = true;
+//      Cache.cut(font);
 //   }
 //}
-//
+
+// --- Style ---
+
+Style :: Style()
+{
+   font = nullptr;
+   valid = false;
+   avgCharWidth = 0;
+   lineHeight = 0;
+}
+
+Style :: Style(Color foreground, Color background, Font* font)
+{
+   this->foreground = foreground;
+   this->background = background;
+   this->font = font;
+   this->valid = false;
+   this->avgCharWidth = 0;
+   this->lineHeight = 0;
+}
+
+Style :: ~Style()
+{
+}
+
+void Style :: validate(Glib::RefPtr<Pango::Layout> layout)
+{
+   if (!valid) {
+      layout->set_font_description(font->_font);
+      layout->set_text("H");
+      layout->get_pixel_size(avgCharWidth, lineHeight);
+
+      //avgCharWidth >>= 1;
+      //avgCharWidth++;
+
+      valid = true;
+   }
+}
+
 ////// --- DoubleBuffer ---
 ////
 ////void DoubleBuffer :: init(Canvas& canvas, size_t width, size_t height)

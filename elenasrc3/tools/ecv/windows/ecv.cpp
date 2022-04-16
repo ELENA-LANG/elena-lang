@@ -8,10 +8,24 @@
 
 #include <windows.h>
 
+#include "config.h"
 #include "ecvconst.h"
 #include "ecviewer.h"
 
 using namespace elena_lang;
+
+constexpr auto PLATFORM_CATEGORY = "configuration/platform";
+constexpr auto LIB_PATH = "project/libpath";
+
+#ifdef _M_IX86
+
+constexpr auto PLATFORM_KEY = "Win_x86";
+
+#elif _M_X64
+
+constexpr auto PLATFORM_KEY = "Win_x64";
+
+#endif
 
 class Presenter : public PresenterBase
 {
@@ -87,6 +101,16 @@ bool getConsoleSize(int& columns, int& rows)
    else return false;
 }
 
+void getAppPath(PathString& appPath)
+{
+   wchar_t path[MAX_PATH + 1];
+
+   ::GetModuleFileName(NULL, path, MAX_PATH);
+
+   appPath.copySubPath(path);
+   appPath.lower();
+}
+
 int main()
 {
    printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2022 by Aleksey Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ECV_REVISION_NUMBER);
@@ -98,8 +122,35 @@ int main()
    int columns = 0, rows = 30;
    getConsoleSize(columns, rows);
 
+   // prepare library provider
+   LibraryProvider provider;
+
+   PathString configPath;
+   getAppPath(configPath);
+   configPath.combine("templates\\lib60.cfg");
+
+   ConfigFile config;
+   if (config.load(*configPath, FileEncoding::UTF8)) {
+      // select platform configuration
+      ustr_t key = PLATFORM_KEY;
+      ConfigFile::Node platformRoot = config.selectNode<ustr_t>(PLATFORM_CATEGORY, key, [](ustr_t key, ConfigFile::Node& node)
+         {
+            return node.compareAttribute("key", key);
+         });
+
+      auto configNode = config.selectNode(platformRoot, LIB_PATH);
+      DynamicString<char> path;
+      configNode.readContent(path);
+
+      PathString libPath;
+      getAppPath(libPath);
+      libPath.combine("templates");
+      libPath.combine(path.str());
+      provider.setRootPath(*libPath);
+   }
+
    Presenter presenter;
-   ByteCodeViewer viewer(&presenter, rows);
+   ByteCodeViewer viewer(&provider, &presenter, rows);
 
    if (argc < 2) {
       presenter.print("ecv <module name> | ecv -p<module path>");
@@ -112,6 +163,14 @@ int main()
       PathString path(argv[1]);
       if(!viewer.load(*path)) {
          presenter.printPath(ECV_MODULE_NOTLOADED, path.str());
+
+         return -1;
+      }
+   }
+   else {
+      IdentifierString arg(argv[1]);
+      if (!viewer.loadByName(*arg)) {
+         presenter.printPath(ECV_MODULE_NOTLOADED, argv[1]);
 
          return -1;
       }

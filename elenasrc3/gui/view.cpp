@@ -8,49 +8,15 @@
 
 using namespace elena_lang;
 
-// --- ViewStyles ---
-
-void ViewStyles :: assign(pos_t count, StyleInfo* styles, int lineHeight, int marginWidth, FontFactoryBase* factory)
-{
-   this->count = count;
-   this->items = new Style[count];
-   this->marginWidth = marginWidth;
-   this->lineHeight = lineHeight;
-
-   for(size_t i = 0; i < count; i++) {
-      FontBase* font = factory->createFont(styles[i].faceName, styles[i].size, styles[i].characterSet,
-         styles[i].bold, styles[i].italic);
-
-      this->items[i] = Style(styles[i].foreground, styles[i].background, font);
-   }
-}
-
-void ViewStyles :: release()
-{
-   if (count > 0)
-      delete[] items;
-
-   count = 0;
-}
-
 // --- TextViewModel ---
 
-void TextViewModel :: setStyles(pos_t count, StyleInfo* styleInfos, int lineHeight, int marginWidth, FontFactoryBase* factory)
-{
-   styles.release();
-   styles.assign(count, styleInfos, lineHeight, marginWidth, factory);
-   changed = true;
-   lineNumbersVisible = false;
-}
-
-TextViewModel :: TextViewModel()
+TextViewModel :: TextViewModel(int fontSize)
+   : TextViewModelBase(fontSize)
 {
    changed = true;
-   fontSize = 10; // !! temporal
    docView = nullptr;
 }
 
 TextViewModel :: ~TextViewModel()
 {
-   styles.release();
 }

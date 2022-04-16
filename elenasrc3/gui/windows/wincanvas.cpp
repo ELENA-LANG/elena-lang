@@ -57,7 +57,7 @@ void Font :: release()
 
 // --- FontFactory ----
 
-FontBase* FontFactory :: createFont(wstr_t fontName, int size, int characterSet, bool bold, bool italic)
+Font* FontFactory :: createFont(wstr_t fontName, int size, int characterSet, bool bold, bool italic)
 {
    for (auto it = _cache.start(); !it.eof(); ++it) {
       Font* font = *it;

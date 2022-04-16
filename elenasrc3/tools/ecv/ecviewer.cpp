@@ -514,6 +514,7 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
 bool ByteCodeViewer :: load(path_t path)
 {
    _module = new Module();
+   _pathMode = true;
 
    FileReader reader(path, FileRBMode, FileEncoding::Raw, false);
    auto retVal = static_cast<Module*>(_module)->load(reader);
@@ -524,6 +525,13 @@ bool ByteCodeViewer :: load(path_t path)
       return true;
    }
    else return false;
+}
+
+bool ByteCodeViewer :: loadByName(ustr_t name)
+{
+   _module = _provider->loadModule(name);
+
+   return _module != nullptr;
 }
 
 void ByteCodeViewer :: listMembers()

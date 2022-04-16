@@ -39,6 +39,45 @@ namespace elena_lang
       int   extParam;
    };
 
+   // --- Color ---
+   class Color
+   {
+      long _color;
+
+   public:
+      operator long() const { return _color; }
+
+      void set(unsigned int red, unsigned int green, unsigned int blue)
+      {
+         _color = red | (green << 8) | (blue << 16);
+      }
+
+      int red()
+      {
+         return _color & 0xFF;
+      }
+
+      int green()
+      {
+         return (_color >> 8) & 0xFF;
+      }
+
+      int blue()
+      {
+         return (_color >> 16) & 0xFF;
+      }
+
+      Color(unsigned int red, unsigned int green, unsigned int blue)
+      {
+         set(red, green, blue);
+      }
+
+      Color(long colour = 0)
+      {
+         _color = colour;
+      }
+   };
+
    // --- ControlBase ---
    class ControlBase : public GUIControlBase
    {

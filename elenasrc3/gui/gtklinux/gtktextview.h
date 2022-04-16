@@ -13,6 +13,62 @@
 
 namespace elena_lang
 {
+   // --- StyleInfo ---
+   struct StyleInfo
+   {
+      Color       foreground;
+      Color       background;
+      const char* faceName;
+      int         size;
+      bool        bold;
+      bool        italic;
+   };
+
+   // --- ViewStyles ---
+   struct ViewStyles
+   {
+      Style* items;
+      pos_t  count;
+
+      int    marginWidth;
+      int    lineHeight;
+
+      void assign(pos_t count, StyleInfo* styles, int lineHeight, int marginWidth, FontFactory* factory);
+      void release();
+
+      Style* getStyle(pos_t index) const
+      {
+         return &items[index];
+      }
+
+      int getMarginWidth() const
+      {
+         return marginWidth;
+      }
+
+      int getLineHeight() const
+      {
+         return lineHeight;
+      }
+
+      void validate(Glib::RefPtr<Pango::Layout> layout)
+      {
+         for (pos_t i = 0; i < count; i++) {
+            items[i].validate(layout);
+
+            if (items[i].valid && lineHeight < items[i].lineHeight)
+               lineHeight = items[i].lineHeight;
+         }
+      }
+
+      ViewStyles()
+      {
+         lineHeight = marginWidth = 0;
+         items = nullptr;
+         count = 0;
+      }
+   };
+
    // --- TextViewWindow ---
    class TextViewWindow : public Gtk::Table
    {
@@ -24,6 +80,7 @@ namespace elena_lang
 
          TextViewModelBase*         _model;
          bool                       _needToResize;
+         ViewStyles*                _styles;
 
          //Overrides:
          Gtk::SizeRequestMode get_request_mode_vfunc() const override;
@@ -47,14 +104,14 @@ namespace elena_lang
          void paint(Canvas& canvas, int viewWidth, int viewHeight);
 
       public:
-         TextDrawingArea(TextViewWindow* view, TextViewModelBase* model);
+         TextDrawingArea(TextViewWindow* view, TextViewModelBase* model, ViewStyles* styles);
       };
 
    protected:
       TextDrawingArea    _area;
 
    public:
-      TextViewWindow(TextViewModelBase* model);
+      TextViewWindow(TextViewModelBase* model, ViewStyles* styles);
    };
 }
 

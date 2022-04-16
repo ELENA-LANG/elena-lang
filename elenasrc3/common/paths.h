@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Path class declarations.
 //
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PATHS_H
@@ -27,6 +27,8 @@ namespace elena_lang
    class PathUtil
    {
    public:
+      static bool removeFile(path_t path);
+
       static bool recreatePath(/*path_t root, */path_t path);
 
       static bool isRelative(path_t path, size_t length);

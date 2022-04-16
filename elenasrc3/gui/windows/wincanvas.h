@@ -14,7 +14,8 @@ namespace elena_lang
    // --- Font ---
    struct Font : public FontBase
    {
-      HFONT fontID;
+      wstr_t fontName;
+      HFONT  fontID;
 
       void create(HDC handler);
       void release();
@@ -25,12 +26,12 @@ namespace elena_lang
    };
 
    // --- FontFactory ---
-   class FontFactory : public  FontFactoryBase
+   class FontFactory
    {
       List<Font*, freeobj> _cache;
 
    public:
-      FontBase* createFont(wstr_t fontName, int size, int characterSet, bool bold, bool italic) override;
+      Font* createFont(wstr_t fontName, int size, int characterSet, bool bold, bool italic);
 
       FontFactory()
          : _cache(nullptr)
@@ -39,8 +40,37 @@ namespace elena_lang
       }
    };
 
+   // --- Style ---
+   struct Style
+   {
+      bool    valid;
+
+      Font*   font;
+      int     lineHeight;
+      int     avgCharWidth;
+      Color   foreground;
+      Color   background;
+
+      Style()
+      {
+         valid = false;
+         font = nullptr;
+         lineHeight = 0;
+         avgCharWidth = 8;
+      }
+      Style(Color foreground, Color background, Font* font)
+      {
+         this->valid = false;
+         this->font = font;
+         this->lineHeight = 0;
+         this->avgCharWidth = 8;
+         this->foreground = foreground;
+         this->background = background;
+      }
+   };
+
    // --- Canvas ---
-   class Canvas : public CanvasBase
+   class Canvas
    {
    protected:
       HDC     _handler;
@@ -69,7 +99,7 @@ namespace elena_lang
 
       void clone(Canvas* canvas, int width, int height);
 
-      void validateStyle(Style* style) override;
+      void validateStyle(Style* style);
 
       int TextWidth(Style* style, wstr_t s, int length);
 

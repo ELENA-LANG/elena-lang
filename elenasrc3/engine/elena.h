@@ -290,6 +290,8 @@ namespace elena_lang
 
       virtual ModuleInfo getModule(ReferenceInfo referenceInfo, bool silentMode) = 0;
       virtual ModuleInfo getWeakModule(ustr_t weakReferenceName, bool silentMode) = 0;
+
+      virtual void resolvePath(ustr_t ns, PathString& path) = 0;
    };
 
    // --- SectionScopeBase ---

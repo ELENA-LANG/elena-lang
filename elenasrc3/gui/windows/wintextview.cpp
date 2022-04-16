@@ -13,12 +13,38 @@ inline bool isKeyDown(int key)
    return (::GetKeyState(key) & 0x80000000) != 0;
 }
 
+// --- ViewStyles ---
+
+void ViewStyles::assign(pos_t count, StyleInfo* styles, int lineHeight, int marginWidth, FontFactory* factory)
+{
+   this->count = count;
+   this->items = new Style[count];
+   this->marginWidth = marginWidth;
+   this->lineHeight = lineHeight;
+
+   for (size_t i = 0; i < count; i++) {
+      Font* font = factory->createFont(styles[i].faceName, styles[i].size, styles[i].characterSet,
+         styles[i].bold, styles[i].italic);
+
+      this->items[i] = { styles[i].foreground, styles[i].background, font };
+   }
+}
+
+void ViewStyles::release()
+{
+   if (count > 0)
+      delete[] items;
+
+   count = 0;
+}
+
 // --- TextViewWindow ---
 
-TextViewWindow :: TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller)
+TextViewWindow :: TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles)
    : WindowBase(nullptr)
 {
    _model = model;
+   _styles = styles;
    _controller = controller;
    _needToResize = _cached = false;
    _caretVisible = _caretValid = false;
@@ -51,7 +77,7 @@ HWND TextViewWindow :: create(HINSTANCE instance, wstr_t className, ControlBase*
 int TextViewWindow :: getLineNumberMargin()
 {
    if (_model->lineNumbersVisible) {
-      Style* marginStyle = _model->getStyle(STYLE_MARGIN);
+      Style* marginStyle = _styles->getStyle(STYLE_MARGIN);
 
       return marginStyle->avgCharWidth * 5;
    }
@@ -63,12 +89,12 @@ void TextViewWindow :: resizeDocument()
    if (_model->isAssigned()) {
       Point     size;
       Rectangle client = getRectangle();
-      auto style = _model->getStyle(STYLE_DEFAULT);
+      auto style = _styles->getStyle(STYLE_DEFAULT);
 
       int marginWidth = getLineNumberMargin();
 
       size.x = (client.width() - marginWidth) / style->avgCharWidth;
-      size.y = client.height() / _model->getLineHeight();
+      size.y = client.height() / _styles->getLineHeight();
 
       _needToResize = false;
       _model->resize(size);
@@ -80,12 +106,12 @@ void TextViewWindow :: resizeDocument()
 void TextViewWindow :: mouseToScreen(Point point, int& col, int& row, bool& margin)
 {
    Rectangle rect = getRectangle();
-   auto defaultStyle = _model->getStyle(STYLE_DEFAULT);
-   int marginWidth = _model->getMarginWidth() + getLineNumberMargin();
+   auto defaultStyle = _styles->getStyle(STYLE_DEFAULT);
+   int marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
    int offset = defaultStyle->avgCharWidth / 2;
 
    col = (point.x - rect.topLeft.x - marginWidth + offset) / defaultStyle->avgCharWidth;
-   row = (point.y - rect.topLeft.y) / (_model->getLineHeight());
+   row = (point.y - rect.topLeft.y) / (_styles->getLineHeight());
    margin = (point.x - rect.topLeft.x < marginWidth);
 }
 
@@ -139,18 +165,18 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 
    Point caret = docView->getCaret(false) - docView->getFrame();
 
-   Style* defaultStyle = _model->getStyle(STYLE_DEFAULT);
-   Style* marginStyle = _model->getStyle(STYLE_MARGIN);
-   int lineHeight = _model->getLineHeight();
-   int marginWidth = _model->getMarginWidth() + getLineNumberMargin();
+   Style* defaultStyle = _styles->getStyle(STYLE_DEFAULT);
+   Style* marginStyle = _styles->getStyle(STYLE_MARGIN);
+   int lineHeight = _styles->getLineHeight();
+   int marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
 
    if (!_cached) {
       
       if (!defaultStyle->valid) {
-         _model->validate(&canvas);
+         _styles->validate(&canvas);
 
-         lineHeight = _model->getLineHeight();
-         marginWidth = _model->getMarginWidth() + getLineNumberMargin();
+         lineHeight = _styles->getLineHeight();
+         marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
 
          _needToResize = true;
       }
@@ -185,7 +211,7 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
       DocumentView::LexicalReader reader(docView);
       reader.readFirst(writer, 255);
       do {
-         style = _model->getStyle(reader.style);
+         style = _styles->getStyle(reader.style);
          length = writer.position();
 
          if (reader.newLine) {
@@ -223,7 +249,7 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
          reader.seekCurrentLine();
          reader.readCurrentLine(writer, 255);
          do {
-            _caret_x += canvas.TextWidth(_model->getStyle(reader.style), buffer, writer.position());
+            _caret_x += canvas.TextWidth(_styles->getStyle(reader.style), buffer, writer.position());
 
             writer.reset();
          } while (reader.readCurrentLine(writer, 0xFF));
@@ -281,7 +307,7 @@ void TextViewWindow :: onSetFocus()
 {
    if (_model) {
       _caretVisible = true;
-      createCaret(_model->getLineHeight(), /*_view->docView->status.overwriteMode ? _view->styles.getStyle(STYLE_DEFAULT)->avgCharWidth : */1);
+      createCaret(_styles->getLineHeight(), /*_view->docView->status.overwriteMode ? _view->styles.getStyle(STYLE_DEFAULT)->avgCharWidth : */1);
       showCaret();
       refresh();
    }

@@ -84,6 +84,11 @@ bool LibraryProvider :: loadCore(LoadResult& result)
    return true;
 }
 
+void LibraryProvider :: resolvePath(ustr_t moduleName, PathString& path)
+{
+   nameToPath(moduleName, path);
+}
+
 ModuleBase* LibraryProvider :: loadModule(ustr_t name, LoadResult& result, bool readOnly)
 {
    ModuleBase* module = _modules.get(name);
@@ -155,6 +160,16 @@ ustr_t LibraryProvider :: resolveTemplateWeakReference(ustr_t referenceName, For
    else referenceName = resolvedName;
 
    return referenceName;
+}
+
+ModuleBase* LibraryProvider :: loadModule(ustr_t name)
+{
+   LoadResult result = LoadResult::NotFound;
+   ModuleBase* module = loadModule(name, result, true);
+   if (result == LoadResult::Successful) {
+      return module;
+   }
+   else return nullptr;
 }
 
 ModuleBase* LibraryProvider :: resolveModule(ustr_t referenceName, ref_t& reference, bool silentMode)

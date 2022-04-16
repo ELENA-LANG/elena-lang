@@ -47,7 +47,7 @@ StyleInfo defaultStyles[STYLE_MAX + 1] = {
 StyleInfo classicStyles[STYLE_MAX + 1] = {
    {Color(0xFF, 0xFF, 0), Color(0, 0, 0x80), L"Courier New", IDE_CHARSET_ANSI, 10, false, false},
    {Color(0), Color(Canvas::Chrome()), L"Courier New", IDE_CHARSET_ANSI, 10, false, false},
-   //{Colour(0x60, 0x60, 0x60), Colour(0xC0, 0xC0, 0xC0), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
+   {Color(0x60, 0x60, 0x60), Color(0xC0, 0xC0, 0xC0), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
    //{Colour(0xFF, 0xFF, 0xFF), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0xC0, 0xC0, 0xC0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0xC0, 0xC0, 0xC0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
@@ -93,7 +93,7 @@ void IDEFactory :: registerClasses()
 
 ControlBase* IDEFactory :: createTextControl(WindowBase* owner)
 {
-   TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_controller->sourceController);
+   TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_controller->sourceController, &_styles);
    TextViewFrame* frame = new TextViewFrame(_settings.withTabAboverscore, view);
 
    view->create(_instance, szTextView, owner);
@@ -119,7 +119,7 @@ void IDEFactory :: initializeModel(IDEModel* ideView)
 
    viewModel->docView = new DocumentView(text, ELENADocFormatter::getInstance());
 
-   viewModel->setStyles(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
+   _styles.assign(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
 }
 
 GUIApp* IDEFactory :: createApp()

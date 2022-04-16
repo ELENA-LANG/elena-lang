@@ -21,42 +21,41 @@ using namespace elena_lang;
 
 #define IDE_CHARSET_UTF8                     1 // !! dummy value
 
-//// --- Styles ---
-//StyleInfo defaultStyles[STYLE_MAX + 1] = {
-//   {Color(0), Color(0xFF, 0xFF, 0xFF), "Monospace", IDE_CHARSET_UTF8, 10, false, false},
-//   {Color(0), Color(1), "Monospace", IDE_CHARSET_UTF8, 10, false, false},
-//   {Color(0x60, 0x60, 0x60), Color(0x0, 0xFF, 0xFF), "Monospace", IDE_CHARSET_UTF8, 10, true, false},
-//   //{Colour(0), Colour(0xC0, 0xC0, 0xC0), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0, 0, 0xFF), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0, 0x80, 0), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0x40, 0x80, 0x80), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
-//   //{Colour(0, 0x00, 0x80), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
-//   //{Colour(0xFF, 0x80, 0x40), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0, 0x80, 0x80), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0, 0x80, 0), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0xFF, 0xFF, 0xFF), Colour(0xFF, 0x0, 0x0), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0), Colour(0x0, 0xFF, 0xFF), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0x60, 0x60, 0x60), Colour(0x0, 0xFF, 0xFF), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
-//   //{Colour(0xFF, 0xFF, 0xFF), Colour(0xFF, 0x0, 0x0), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false}
-//};
-
+// --- Styles ---
+StyleInfo defaultStyles[STYLE_MAX + 1] = {
+   {Color(0, 0, 0), Colour(1, 1, 1), "Monospace", 10, false, false},
+   {Color(0, 0, 0), Colour(0.84, 0.84, 0.84), "Monospace", 10, false, false},
+   {Color(0, 0, 0), Colour(0.75, 0.75, 0.75), "Monospace", 10, false, false},
+   //{Colour(0, 0, 1), Colour(1, 1, 1), "Monospace", 10, false, false},
+   //{Colour(0, 0.4, 0.5), Colour(1, 1, 1), "Monospace", 10, true, false},
+   //{Colour(0, 0, 0), Colour(1, 1, 1), "Monospace", 10, true, false},
+   //{Colour(1, 0.5, 0.4), Colour(1, 1, 1), "Monospace", 10, false, false},
+   //{Colour(0, 0.5, 0.5), Colour(1, 1, 1), "Monospace", 10, false, false},
+   //{Colour(0, 0.5, 0), Colour(1, 1, 1), "Monospace", 10, false, false},
+   //{Colour(0.37, 0.37, 0.37), Colour(0, 1, 1), "Monospace", 10, true, false},
+   //{Colour(0.37, 0.37, 0.37), Colour(0, 1, 1), "Monospace", 10, true, false},
+   //{Colour(0.37, 0.37, 0.37), Colour(0, 1, 1), "Monospace", 10, true, false},
+   //{Colour(0.37, 0.37, 0.37), Colour(0, 1, 1), "Monospace", 10, true, false},
+   //{Colour(0.37, 0.37, 0.37), Colour(0, 1, 1), "Monospace", 10, true, false},
+   //{Colour(0.37, 0.37, 0.37), Colour(1, 1, 1), "Monospace", 10, true, false},
+};
+//
 //StyleInfo classicStyles[STYLE_MAX + 1] = {
-//   {Color(0xFF, 0xFF, 0), Color(0, 0, 0x80), L"Courier New", IDE_CHARSET_ANSI, 10, false, false},
-//   {Color(0), Color(Canvas::Chrome()), L"Courier New", IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0x60, 0x60, 0x60), Colour(0xC0, 0xC0, 0xC0), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
-//   //{Colour(0xFF, 0xFF, 0xFF), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0xC0, 0xC0, 0xC0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0xC0, 0xC0, 0xC0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0xFF, 0xFF, 0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
-//   //{Colour(0, 0xFF, 0x80), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0, 0xFF, 0xFF), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0x80, 0xFF, 0xFF), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0, 0, 0x80), Colour(0xC0, 0xC0, 0xC0), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0), Colour(0x0, 0xFF, 0xFF), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0x60, 0x60, 0x60), Colour(0x0, 0xFF, 0xFF), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
-//   //{Colour(0xFF, 0xFF, 0xFF), Colour(0xFF, 0x0, 0x0), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-//   //{Colour(0xFF, 0xFF, 0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false}
+//   {Colour(1, 1, 0), Colour(0, 0, 0.5), "Monospace", 10, false, false},
+//   {Colour(0, 0, 0), Colour(0.84, 0.84, 0.84), "Monospace", 10, false, false},
+//   {Colour(0.37, 0.37, 0.37), Colour(1, 1, 1), "Monospace", 10, false, false},
+//   {Colour(0.7, 0.7, 0.7), Colour(0, 0, 0.5), "Monospace", 10, false, false},
+//   {Colour(1, 1, 1), Colour(0, 0, 0.5), "Monospace", 10, false, false},
+//   {Colour(1, 1, 0), Colour(0, 0, 0.5), "Monospace", 10, true, false},
+//   {Colour(0, 1, 0.5), Colour(0, 0, 0.5), "Monospace", 10, false, false},
+//   {Colour(0, 1, 1), Colour(0, 0, 0.5), "Monospace", 10, false, false},
+//   {Colour(0.8, 0.8, 0.8), Colour(0, 0, 0.5), "Monospace", 10, false, false},
+//   {Colour(0.8, 0.8, 0.8), Colour(0, 0, 0.5), "Monospace", 10, false, false},
+//   {Colour(1, 1, 0), Colour(0, 0, 0.5), "Monospace", 10, true, false},
+//   {Colour(0, 1, 0.5), Colour(0, 0, 0.5), "Monospace", 10, false, false},
+//   {Colour(0, 1, 1), Colour(0, 0, 0.5), "Monospace", 10, false, false},
+//   {Colour(0.8, 0.8, 0.8), Colour(0, 0, 0.5), "Monospace", 10, false, false},
+//   {Colour(0.8, 0.8, 0.8), Colour(0, 0, 0.5), "Monospace", 10, false, false}//,
 //};
 
 // --- IDEFactory ---
@@ -65,8 +64,8 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, */IDEModel* ideModel
    /*IDEController* controller,*/
    GUISettinngs   settings)
 {
-//   _schemes[0] = defaultStyles;
-//   _schemes[1] = classicStyles;
+   _schemes[0] = defaultStyles;
+   _schemes[1] = classicStyles;
 //   _settings = settings;
 //
 //   _instance = instance;
@@ -109,9 +108,9 @@ void IDEFactory :: initializeModel(IDEModel* ideView)
    PathString path("/home/alex/elena-lang/tests60/sandbox/sandbox.l");
    text->load(*path, FileEncoding::UTF8, false);
 
-   //viewModel->docView = new DocumentView(text, ELENADocFormatter::getInstance());
+   viewModel->docView = new DocumentView(text, ELENADocFormatter::getInstance());
 
-   //viewModel->setStyles(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
+   _styles.assign(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
 }
 
 SDIWindow* IDEFactory :: createMainWindow()

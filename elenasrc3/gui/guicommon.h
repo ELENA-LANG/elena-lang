@@ -110,96 +110,13 @@ namespace elena_lang
       }
    };
 
-   // --- Color ---
-   class Color
-   {
-      long _color;
-
-   public:
-      operator long() const { return _color; }
-
-      void set(unsigned int red, unsigned int green, unsigned int blue)
-      {
-         _color = red | (green << 8) | (blue << 16);
-      }
-
-      int red()
-      {
-         return _color & 0xFF;
-      }
-
-      int green()
-      {
-         return (_color >> 8) & 0xFF;
-      }
-
-      int blue()
-      {
-         return (_color >> 16) & 0xFF;
-      }
-
-      Color(unsigned int red, unsigned int green, unsigned int blue)
-      {
-         set(red, green, blue);
-      }
-
-      Color(long colour = 0)
-      {
-         _color = colour;
-      }
-   };
-
    // --- FontBase ---
    struct FontBase
    {
-      wstr_t fontName;
       bool   bold;
       bool   italic;
       int    size;
       int    characterSet;
-   };
-
-   // --- Style ---
-   struct Style
-   {
-      bool      valid;
-
-      Color     foreground;
-      Color     background;
-      FontBase* font;
-      int       lineHeight;
-      int       avgCharWidth;
-
-      Style()
-      {
-         font = nullptr;
-         valid = false;
-         avgCharWidth = 8;
-         lineHeight = 0;
-      }
-      Style(Color foreground, Color background, FontBase* font)
-      {
-         this->valid = false;
-         this->foreground = foreground;
-         this->background = background;
-         this->font = font;
-         this->lineHeight = 0;
-         this->avgCharWidth = 8;
-      }
-   };
-
-   // --- BaseCanvas ---
-   class CanvasBase
-   {
-   public:
-      virtual void validateStyle(Style* style) = 0;
-   };
-
-   // --- FontFactoryBase ---
-   class FontFactoryBase
-   {
-   public:
-      virtual FontBase* createFont(wstr_t fontName, int size, int characterSet, bool bold, bool italic) = 0;
    };
 
    // --- GUIControlBase ---

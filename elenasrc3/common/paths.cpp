@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine File class implementations.
 //
-//                                              (C)2005-2021, by Alexei Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "common.h"
@@ -46,6 +46,11 @@ bool PathUtil :: recreatePath(/*path_t root, */path_t path)
    //   return createDir(dirPath.str()) == 0;
    //}
    //else return false;
+}
+
+bool PathUtil ::removeFile(path_t path)
+{
+   return _wremove(path.str()) != 0;
 }
 
 bool PathUtil :: isRelative(path_t path, size_t length)
@@ -104,6 +109,11 @@ bool PathUtil::recreatePath(path_t path)
       }
    }
    return true;
+}
+
+bool PathUtil :: removeFile(path_t path)
+{
+   return ::remove(path.str()) != 0;;
 }
 
 #endif

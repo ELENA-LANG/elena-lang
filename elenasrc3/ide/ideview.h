@@ -24,8 +24,8 @@ public:
 
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
-   IDEModel()
-      : projectModel(&status)
+   IDEModel(int fontSize)
+      : projectModel(&status), sourceViewModel(fontSize)
    {
       status = IDEStatus::None;
    }

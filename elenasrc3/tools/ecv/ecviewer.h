@@ -11,6 +11,7 @@
 
 #include "elena.h"
 #include "bytecode.h"
+#include "libman.h"
 
 namespace elena_lang
 {
@@ -32,10 +33,12 @@ namespace elena_lang
    // --- ByteCodeViewer ---
    class ByteCodeViewer
    {
-      PresenterBase* _presenter;
-      ModuleBase*    _module;
-      int            _pageSize;
-      bool           _noPaging;
+      PresenterBase*   _presenter;
+      LibraryProvider* _provider;
+      ModuleBase*      _module;
+      int              _pageSize;
+      bool             _noPaging;
+      bool             _pathMode;
 
       MemoryBase* findSymbolCode(ustr_t referenceName);
       MemoryBase* findClassVMT(ustr_t referenceName);
@@ -82,20 +85,24 @@ namespace elena_lang
       void printClass(ustr_t name, bool fullInfo);
 
    public:
-      bool load(path_t);
+      bool load(path_t path);
+      bool loadByName(ustr_t name);
 
       void runSession();
 
-      ByteCodeViewer(PresenterBase* presenter, int pageSize)
+      ByteCodeViewer(LibraryProvider* provider, PresenterBase* presenter, int pageSize)
       {
          _presenter = presenter;
+         _provider = provider;
          _module = nullptr;
          _pageSize = pageSize;
          _noPaging = false;
+         _pathMode = false;
       }
       virtual ~ByteCodeViewer()
       {
-         freeobj(_module);
+         if (_pathMode)
+            freeobj(_module);
       }
    };
 }

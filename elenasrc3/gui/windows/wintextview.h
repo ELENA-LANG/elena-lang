@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TextView Control Header File
-//                                               (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINTEXTVIEW_H
@@ -13,10 +13,69 @@
 
 namespace elena_lang
 {
+   // --- StyleInfo ---
+   struct StyleInfo
+   {
+      Color  foreground;
+      Color  background;
+      wstr_t faceName;
+      int    characterSet;
+      int    size;
+      bool   bold;
+      bool   italic;
+   };
+
+   // --- ViewStyles ---
+   struct ViewStyles
+   {
+      Style* items;
+      pos_t  count;
+
+      int    marginWidth;
+      int    lineHeight;
+
+      void assign(pos_t count, StyleInfo* styles, int lineHeight, int marginWidth, FontFactory* factory);
+      void release();
+
+      Style* getStyle(pos_t index) const
+      {
+         return &items[index];
+      }
+
+      int getMarginWidth() const
+      {
+         return marginWidth;
+      }
+
+      int getLineHeight() const
+      {
+         return lineHeight;
+      }
+
+      void validate(Canvas* canvas)
+      {
+         for (pos_t i = 0; i < count; i++) {
+            canvas->validateStyle(&items[i]);
+
+            if (items[i].valid && lineHeight < items[i].lineHeight)
+               lineHeight = items[i].lineHeight;
+         }
+      }
+
+      ViewStyles()
+      {
+         lineHeight = marginWidth = 0;
+         items = nullptr;
+         count = 0;
+      }
+   };
+
+   // --- TextViewWindow ---
    class TextViewWindow : public WindowBase, public DocumentNotifier
    {
    protected:
       TextViewModelBase*      _model;
+      ViewStyles*             _styles;
       TextViewControllerBase* _controller;
 
       bool                    _cached;
@@ -66,7 +125,7 @@ namespace elena_lang
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 
-      TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller);
+      TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles);
       virtual ~TextViewWindow();
    };
 }

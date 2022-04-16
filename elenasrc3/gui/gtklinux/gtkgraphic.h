@@ -12,104 +12,60 @@
 namespace elena_lang
 {
 
-//// --- Colour ---
-//
-//struct Colour
-//{
-//   double red;
-//   double green;
-//   double blue;
-//   double alpha;
-//
-//   bool operator == (Colour& color)
-//   {
-//      if (red == color.red && green == color.green && blue == color.blue && alpha == color.alpha) {
-//         return true;
-//      }
-//      else return false;
-//   }
-//
-//   bool operator != (Colour& color)
-//   {
-//      if (red != color.red || green != color.green || blue != color.blue || alpha != color.alpha) {
-//         return true;
-//      }
-//      else return false;
-//   }
-//
-//   void set(double red, double green, double blue)
-//   {
-//      this->red = red;
-//      this->green = green;
-//      this->blue = blue;
-//      this->alpha = 1.0;
-//   }
-//
-//   void set(double red, double green, double blue, double alpha)
-//   {
-//      this->red = red;
-//      this->green = green;
-//      this->blue = blue;
-//      this->alpha = alpha;
-//   }
-//
-//   Colour()
-//   {
-//      set(0, 0, 0);
-//   }
-//   Colour(double red, double green, double blue)
-//   {
-//      set(red, green, blue);
-//   }
-//
-//   Colour(double red, double green, double blue, double alpha)
-//   {
-//      set(red, green, blue, alpha);
-//   }
-//};
-//
-//// --- Font ---
-//
-//struct Font
-//{
+// --- Font ---
+
+struct Font
+{
 //   static _ELENA_::List<Font*> Cache;
 //
 //   static Font* createFont(const char* fontName, int size, bool bold, bool italic);
 //   static void releaseFontCache();
-//
-//public:
-//   text_str _fontName;
-//   bool     _bold;
-//   bool     _italic;
-//   int      _size;
-//
-//   Pango::FontDescription _font;
-//
-////   void release();
-//
-//   Font(const char* fontName, int size, bool bold, bool italic);
-////   ~Font() { release(); }
-//};
-//
-//// --- Style ---
-//
-//struct Style
-//{
-//   bool   valid;
-//
-//   Colour foreground;
-//   Colour background;
-//   Font*  font;
-//   int    lineHeight;
-//   int    avgCharWidth;
-//
-//   void validate(Glib::RefPtr<Pango::Layout> layout);
-//
-//   Style();
-//   Style(Colour foreground, Colour background, Font* font);
-//   ~Style();
-//};
-//
+
+public:
+   text_str _fontName;
+
+   Pango::FontDescription _font;
+
+//   void release();
+
+   Font(const char* fontName, int size, bool bold, bool italic);
+//   ~Font() { release(); }
+};
+
+// --- FontFactory ---
+class FontFactory
+{
+   List<Font*, freeobj> _cache;
+
+public:
+   Font* createFont(wstr_t fontName, int size, int characterSet, bool bold, bool italic);
+
+   FontFactory()
+      : _cache(nullptr)
+   {
+
+   }
+};
+
+// --- Style ---
+
+struct Style
+{
+   bool   valid;
+
+   Color  foreground;
+   Color  background;
+   Font*  font;
+   int    lineHeight;
+   int    avgCharWidth;
+
+   void validate(Glib::RefPtr<Pango::Layout> layout);
+
+   Style();
+   Style(Colour foreground, Color background, Font* font);
+   ~Style();
+};
+
 ////// --- DoubleBuffer ---
 ////
 ////struct Canvas;

@@ -8,14 +8,42 @@
 
 using namespace elena_lang;
 
+// --- ViewStyles ---
+
+void ViewStyles::assign(pos_t count, StyleInfo* styles, int lineHeight, int marginWidth, FontFactory* factory)
+{
+   this->count = count;
+   this->items = new Style[count];
+   this->marginWidth = marginWidth;
+   this->lineHeight = lineHeight;
+
+   for (size_t i = 0; i < count; i++) {
+      Font* font = factory->createFont(styles[i].faceName, styles[i].size,
+         styles[i].bold, styles[i].italic);
+
+      this->items[i] = { styles[i].foreground, styles[i].background, font };
+   }
+}
+
+void ViewStyles::release()
+{
+   if (count > 0)
+      delete[] items;
+
+   count = 0;
+}
+
 // --- TextDrawingArea ---
 
-TextViewWindow::TextDrawingArea :: TextDrawingArea(TextViewWindow* view, TextViewModelBase* model) :
+TextViewWindow::TextDrawingArea :: TextDrawingArea(TextViewWindow* view, TextViewModelBase* model, 
+   ViewStyles* styles
+) :
    Glib::ObjectBase("textview"),
    Gtk::DrawingArea()
 {
    _model = model;
    _needToResize = false;
+   _styles = styles;
 }
 
 Gtk::SizeRequestMode TextViewWindow::TextDrawingArea :: get_request_mode_vfunc() const
@@ -179,12 +207,45 @@ void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, in
    if (_needToResize)
       resizeDocument(viewWidth, viewHeight);
 
-   // Draw background
+   // draw background
    canvas.fillRectangle(0, 0, viewWidth, viewHeight, defaultStyle);
 
-   // Draw margin
+   // draw margin
    canvas.fillRectangle(0, 0, marginWidth, viewHeight, marginStyle);
 
+   // draw text
+   int x = marginWidth;
+   int y = 1 - lineHeight;
+   int width = 0;
+
+   Style* style = defaultStyle;
+   pos_t length = 0;
+
+   DocumentView::LexicalReader reader(docView);
+   reader.readFirst(writer, 255);
+   do {
+      style = _styles->getStyle(reader.style);
+      length = writer.position();
+
+      if (reader.newLine) {
+         reader.newLine = false;
+
+         x = marginWidth;
+         y += lineHeight;
+      }
+      if (reader.bandStyle) {
+         canvas.fillRectangle(x, y, viewWidth, lineHeight + 1, marginStyle);
+
+         reader.bandStyle = false;
+      }
+
+      width = canvas.TextWidth(&style, buffer);
+
+      /*else */canvas.drawText(x, y, buffer, style);
+
+      x += width;
+      writer.reset();
+   } while (reader.readNext(writer, 255));
 }
 
 int TextViewWindow::TextDrawingArea :: getLineNumberMargin()
@@ -229,8 +290,8 @@ void TextViewWindow::TextDrawingArea :: update(bool resized)
 
 // --- TextViewWindow ---
 
-TextViewWindow :: TextViewWindow(TextViewModelBase* model)
-   : _area(this, model)
+TextViewWindow :: TextViewWindow(TextViewModelBase* model, ViewStyles* styles)
+   : _area(this, model, styles)
 {
    attach(_area, 0, 1, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::EXPAND | Gtk::FILL, 0, 0);
 }

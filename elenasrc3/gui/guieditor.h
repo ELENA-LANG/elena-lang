@@ -37,20 +37,16 @@ namespace elena_lang
    public:
       DocumentView* docView;
       bool          lineNumbersVisible;
-
-      virtual Style* getStyle(pos_t styleKey) const = 0;
-      virtual int getMarginWidth() const = 0;
-      virtual int getLineHeight() const = 0;
-      virtual bool isAssigned() const = 0;
+      int           fontSize;
 
       virtual void resize(Point size) = 0;
+      virtual bool isAssigned() const = 0;
 
-      virtual void validate(CanvasBase* canvas) = 0;
-
-      TextViewModelBase()
+      TextViewModelBase(int fontSize)
       {
-         lineNumbersVisible = false;
-         docView = nullptr;
+         this->docView = nullptr;
+         this->lineNumbersVisible = false;
+         this->fontSize = fontSize;
       }
    };
 
