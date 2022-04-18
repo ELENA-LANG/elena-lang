@@ -3,6 +3,7 @@
 /// visibility:
 #let attributesSymbols["public"]      := 80004001h;
 #let attributesSymbols["private"]     := 80004002h;
+#let attributesSymbols["protected"]   := 80004004h;
 
 /// scope_prefix:
 #let attributesSymbols["const"]       := 80002001h;

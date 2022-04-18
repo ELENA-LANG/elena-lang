@@ -61,6 +61,7 @@ namespace elena_lang
       }
 
       ref_t readReference(ScriptToken& tokenInfo);
+      mssg_t readM(ScriptToken& tokenInfo, bool skipRead = false);
       int readN(ScriptToken& tokenInfo, bool skipRead = false);
       int readI(ScriptToken& tokenInfo, bool skipRead = false);
       int readFrameI(ScriptToken& tokenInfo, ReferenceMap& locals, bool skipRead = false);
@@ -80,6 +81,7 @@ namespace elena_lang
          ReferenceMap& locals, bool skipRead);
       bool compileOpIN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileOpII(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
+      bool compileMR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileCloseOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, ReferenceMap& dataLocals);
       bool compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          ReferenceMap& locals, ReferenceMap& dataLocals);

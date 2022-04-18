@@ -29,8 +29,14 @@ singleton B
 
 class A
 {
+   private test() 
+   {
+   }
+
    testA() 
    {
+      self.test();
+
       Output.output();
    }
 

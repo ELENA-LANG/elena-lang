@@ -30,10 +30,10 @@ namespace elena_lang
       Object,
       Singleton,
       InternalProcedure,
-      SelfParam,
       Param,
       Local,
       TempLocal,
+      SelfLocal,
       LocalAddress,
       TempLocalAddress,
       External
@@ -336,6 +336,18 @@ namespace elena_lang
             else return Scope::getScope(level);
          }
 
+         void addMssgAttribute(mssg_t message, ClassAttribute attribute, mssg_t value)
+         {
+            ClassAttributeKey key = { message, attribute };
+            info.attributes.exclude(key);
+            info.attributes.add(key, value);
+         }
+
+         mssg_t getMssgAttribute(mssg_t message, ClassAttribute attribute)
+         {
+            return info.attributes.get({ message, attribute });
+         }
+
          bool isClassClass()
          {
             return test(info.header.flags, elClassClass);
@@ -366,14 +378,39 @@ namespace elena_lang
             else return Scope::getScope(level);
          }
 
+         mssg_t getAttribute(ClassAttribute attribute, bool ownerClass = true)
+         {
+            ClassScope* classScope = (ClassScope*)getScope(ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+
+            return classScope->getMssgAttribute(message, attribute);
+         }
+
+         mssg_t getAttribute(mssg_t attrMessage, ClassAttribute attribute, bool ownerClass = true)
+         {
+            ClassScope* classScope = (ClassScope*)getScope(ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+
+            return classScope->getMssgAttribute(attrMessage, attribute);
+         }
+
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
          ObjectInfo mapParameter(ustr_t identifier);
          ObjectInfo mapSelf();
 
+         static bool checkHint(MethodInfo& methodInfo, MethodHint hint)
+         {
+            return test(methodInfo.hints, (ref_t)hint);
+         }
+         static bool checkAnyHint(MethodInfo& methodInfo, MethodHint hint1, MethodHint hint2)
+         {
+            return testany(methodInfo.hints, (ref_t)hint1 | (ref_t)hint2);
+         }
          bool checkHint(MethodHint hint)
          {
             return test(info.hints, (ref_t)hint);
          }
+
+         bool checkKind(MethodHint hint);
+         static bool checkKind(MethodInfo& methodInfo, MethodHint hint);
 
          ref_t getClassRef(bool ownerClass = true)
          {
@@ -526,6 +563,8 @@ namespace elena_lang
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix); 
 
+      mssg_t resolveMessageAtCompileTime(mssg_t weakMessage);
+
       bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message/*, bool& isProtectedDefConst*/);
 
       void importTemplate(Scope& scope, SyntaxNode node, ustr_t prefix, SyntaxNode target);
@@ -552,8 +591,12 @@ namespace elena_lang
 
       InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreFields, bool ignoreSealed*/);
 
+      void checkMethodDuplicates(ClassScope& scope, SyntaxNode node, mssg_t message, 
+         mssg_t publicMessage, bool protectedOne, bool internalOne);
+
       void generateClassFlags(ClassScope& scope, ref_t declaredFlags);
-      void generateMethodDeclaration(ClassScope& scope, SyntaxNode node);
+      void generateMethodAttributes(ClassScope& scope, SyntaxNode node, MethodInfo& methodInfo);
+      void generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed);
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey);
       void generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool singleField);
       void generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField);
@@ -601,7 +644,8 @@ namespace elena_lang
       ObjectInfo compileExternalOp(BuildTreeWriter& writer, Scope& scope, ref_t externalRef, bool stdCall, 
          ArgumentsInfo& arguments);
 
-      ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, mssg_t message, ArgumentsInfo& arguments);
+      ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, mssg_t message, 
+         ArgumentsInfo& arguments);
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute attrs);
 
       ObjectInfo compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand);

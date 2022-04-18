@@ -552,6 +552,13 @@ inline %0F9h
 
 end
 
+// ; callmr
+inline %0FDh
+
+  call __relptr32_2
+
+end
+
 // ; callext
 inline %0FEh
 

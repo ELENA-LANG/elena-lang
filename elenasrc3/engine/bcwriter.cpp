@@ -37,7 +37,7 @@ inline bool testMask(BuildKey key, BuildKey mask)
 void openFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    if (tapeScope.classMode) {
-      for (pos_t i = 0; i < tapeScope.scope->minimalArgList; i++) {
+      for (int i = 0; i < tapeScope.scope->minimalArgList; i++) {
          tape.write(ByteCode::XFlushSI, i);
       }
    }
@@ -77,14 +77,29 @@ void sendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    int vmtIndex = node.findChild(BuildKey::Index).arg.value;
 
    pos_t argCount = getArgCount(node.arg.reference);
-   if (argCount < tapeScope.scope->minimalArgList) {
-      for (pos_t i = 0; i < tapeScope.scope->minimalArgList; i++) {
+   if ((int)argCount < tapeScope.scope->minimalArgList) {
+      for (int i = 0; i < tapeScope.scope->minimalArgList; i++) {
          tape.write(ByteCode::XStoreSIR, i, 0);
       }
    }
 
    tape.write(ByteCode::MovM, node.arg.reference);
    tape.write(ByteCode::CallVI, vmtIndex);
+}
+
+void directCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
+
+   pos_t argCount = getArgCount(node.arg.reference);
+   if ((int)argCount < tapeScope.scope->minimalArgList) {
+      for (int i = 0; i < tapeScope.scope->minimalArgList; i++) {
+         tape.write(ByteCode::XStoreSIR, i, 0);
+      }
+   }
+
+   tape.write(ByteCode::MovM, node.arg.reference);
+   tape.write(ByteCode::CallMR, node.arg.reference, targetRef);
 }
 
 void exit(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -226,7 +241,8 @@ ByteCodeWriter::Saver commands[] =
    freeingStack,
    savingNInStack,
    extCallOp,
-   savingIndex
+   savingIndex,
+   directCallOp,
 };
 
 // --- ByteCodeWriter ---
@@ -425,9 +441,9 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
    // reset VMT length
    info.header.count = 0;
    for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
-      ////NOTE : ingnore statically linked methods
-      //if (!test(m_it.key(), STATIC_MESSAGE))
-      info.header.count++;
+      //NOTE : ingnore statically linked methods
+      if (!test(m_it.key(), STATIC_MESSAGE))
+         info.header.count++;
    }
 
    vmtWriter.write(&info.header, sizeof(ClassHeader));  // header

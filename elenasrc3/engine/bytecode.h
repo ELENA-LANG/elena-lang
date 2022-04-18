@@ -57,6 +57,7 @@ namespace elena_lang
       NewIR          = 0xF4,
       NewNR          = 0xF5,
       XStoreFIR      = 0xF9,
+      CallMR         = 0xFD,
       CallExtR       = 0xFE,
 
       None           = 0x1000,
@@ -178,6 +179,7 @@ namespace elena_lang
       {
          switch (code) {
             case ByteCode::MovM:
+            case ByteCode::CallMR:
                return true;
             default:
                return false;
@@ -203,6 +205,7 @@ namespace elena_lang
             case ByteCode::XStoreFIR:
             case ByteCode::NewIR:
             case ByteCode::NewNR:
+            case ByteCode::CallMR:
                return true;
             default:
                return false;

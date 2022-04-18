@@ -71,7 +71,7 @@ inline void writeVAddress64(MemoryBase* image, pos_t position, addr_t vaddress, 
       //   image->write(position, &offs, 4);
       //}
       //else {
-         vaddress += disp;
+         vaddress += (addr_t)disp;
          image->write(position, &vaddress, 8);
       //}
    }
@@ -174,6 +174,13 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
 
    if (module == nullptr)
       module = _module;
+
+   // vmt entry offset / address should be resolved later
+   if (mask == mskVMTMethodAddress) {
+      _references->add(position, { reference, module, addressMask, disp });
+
+      return;
+   }
 
    addr_t vaddress = INVALID_ADDR;
    //switch (mask) {
@@ -321,8 +328,22 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
       ref_t currentRef = info.reference & ~mskAnyRef;
       ref_t currentMask = info.reference & mskAnyRef;
 
-      auto vaddress = resolve(_loader->retrieveReferenceInfo(info.module, currentRef, currentMask,
-         _forwardResolver), currentMask, false);
+      addr_t vaddress = 0;
+      switch (currentMask) {
+         case mskVMTMethodAddress:
+         {
+            resolve(_loader->retrieveReferenceInfo(info.module, currentRef, mskVMTRef,
+               _forwardResolver), mskVMTRef, false);
+
+            vaddress = resolveVMTMethodAddress(info.module, currentRef, info.disp);
+            info.disp = 0; // NOTE : disp contains the message, so it should be cleared
+            break;
+         }
+         default:
+            vaddress = resolve(_loader->retrieveReferenceInfo(info.module, currentRef, currentMask,
+               _forwardResolver), currentMask, false);
+            break;
+      }
 
       switch (info.addressMask & mskRefType) {
          case mskRelRef32:
@@ -351,6 +372,30 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             break;
       }
    }
+}
+
+addr_t JITLinker :: getVMTMethodAddress(addr_t vmtAddress, mssg_t message)
+{
+   void* entries = getVMTPtr(vmtAddress);
+
+   return _compiler->findMethodAddress(entries, message);
+}
+
+addr_t JITLinker :: resolveVMTMethodAddress(ModuleBase* module, ref_t reference, mssg_t message)
+{
+   addr_t vmtAddress = resolve(_loader->retrieveReferenceInfo(module, reference, mskVMTRef, _forwardResolver), mskVMTRef, false);
+
+   addr_t vaddress = _staticMethods.get({ vmtAddress, message });
+   if (vaddress == INVALID_ADDR) {
+      vaddress = getVMTMethodAddress(vmtAddress, message);
+
+      _staticMethods.add({ vmtAddress, message }, vaddress);
+   }
+
+   if (_virtualMode)
+      vaddress |= mskCodeRef;
+
+   return vaddress;
 }
 
 addr_t JITLinker :: loadMethod(ReferenceHelperBase& refHelper, MemoryReader& reader, MemoryWriter& writer)
@@ -522,7 +567,13 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
             methodPosition = loadMethod(helper, codeReader, codeWriter);
          }
 
-         _compiler->addVMTEntry(helper.importMessage(entry.message), methodPosition, vmtImage->get(position), count);
+         // NOTE : statically linked message is not added to VMT
+         if (test(entry.message, STATIC_MESSAGE)) {
+            _staticMethods.add(
+               { vaddress, helper.importMessage(entry.message) }, methodPosition);
+         }
+         else _compiler->addVMTEntry(helper.importMessage(entry.message), methodPosition, 
+            vmtImage->get(position), count);
 
          size -= sizeof(MethodEntry);
       }

@@ -3,8 +3,8 @@
 //
 //		This file contains String classes implementations
 //
-//                                              (C)2005-2021, by Alexei Rakov
-//                                              (C)1994-2004, Unicode, Inc.
+//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)1994-2004, Unicode, Inc.
 //---------------------------------------------------------------------------
 
 ///* ---------------------------------------------------------------------
@@ -311,6 +311,15 @@ bool inline util_compare(const char* s1, const char* s2, size_t length)
 inline size_t util_find(const char* s, char ch, size_t length, size_t defValue)
 {
    const char* p = (const char*)memchr(s, ch, length);
+   if (p == nullptr) {
+      return defValue;
+   }
+   else return p - s;
+}
+
+inline size_t util_find_str(const char* s, const char* subs, size_t defValue)
+{
+   const char* p = (const char*)strstr(s, subs);
    if (p == nullptr) {
       return defValue;
    }
@@ -729,6 +738,11 @@ size_t ustr_t :: findLast(char c, size_t defValue)
 size_t ustr_t::findLastSub(size_t index, char c, size_t defValue)
 {
    return util_find_last(_string + index, c, defValue - index) + index;
+}
+
+size_t ustr_t::findStr(const char* subs, size_t defValue)
+{
+   return util_find_str(_string, subs, defValue);
 }
 
 char* ustr_t :: clone()

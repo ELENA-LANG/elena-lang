@@ -12,7 +12,7 @@
 namespace elena_lang
 {
 
-   #define ASM_REVISION_NUMBER               0x0043
+   #define ASM_REVISION_NUMBER               0x0044
 
    constexpr auto N_ARGUMENT1                = "__n_1";
    constexpr auto N_ARGUMENT2                = "__n_2";
@@ -32,6 +32,7 @@ namespace elena_lang
    constexpr auto PTR32_ARGUMENT1            = "__ptr32_1";
    constexpr auto PTR32_ARGUMENT2            = "__ptr32_2";
    constexpr auto RELPTR32_ARGUMENT1         = "__relptr32_1";
+   constexpr auto RELPTR32_ARGUMENT2         = "__relptr32_2";
    constexpr auto DISP32HI_ARGUMENT1         = "__disp32hi_1";
    constexpr auto DISP32HI_ARGUMENT2         = "__disp32hi_2";
    constexpr auto DISP32LO_ARGUMENT1         = "__disp32lo_1";

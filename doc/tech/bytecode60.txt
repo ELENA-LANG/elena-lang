@@ -69,7 +69,11 @@ ELENA byte codes (or ecodes)
    call symbol:r            - calls the procedure;
                               acc contains the result
 
-   call vt:i                - call acc::VMT[i] method
+   call vt:i                - call acc::VMT[i] method;
+                              acc contains the result
+
+   callrm mssg:m, r         - calls directly the method resolved by JIT by r and m
+                              acc contains the result 
 
 
  Stack operations:

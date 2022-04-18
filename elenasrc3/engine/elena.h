@@ -84,6 +84,15 @@ namespace elena_lang
       signatureRef = (r >> 32);
    }
 
+   inline mssg_t overwriteAction(mssg_t message, ref_t newAction)
+   {
+      pos_t argCount;
+      ref_t actionRef, flags;
+      decodeMessage(message, actionRef, argCount, flags);
+
+      return encodeMessage(newAction, argCount, flags);
+   }
+
    // --- Misc types ---
    typedef unsigned int parse_key_t;
 
@@ -398,6 +407,9 @@ namespace elena_lang
 
       virtual void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) = 0;
 
+      virtual pos_t getVMTLength(void* targetVMT) = 0;
+      virtual addr_t findMethodAddress(void* entries, mssg_t message) = 0;
+
       virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength) = 0;
       virtual void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) = 0;
       virtual void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
@@ -440,6 +452,11 @@ namespace elena_lang
    {
    public:
       ustr_t operator*() const { return ustr_t(_string); }
+
+      bool compare(ustr_t s)
+      {
+         return s.compare(_string);
+      }
 
       ref_t toRef(int radix = 10) const
       {
@@ -667,6 +684,9 @@ namespace elena_lang
       }
    };
 
+   typedef Pair<ref_t, ClassAttribute, 0, ClassAttribute::None> ClassAttributeKey;
+   typedef MemoryMap<ClassAttributeKey, ref_t, Map_StoreKey<ClassAttributeKey>, Map_GetKey<ClassAttributeKey>> ClassAttributes;
+
 #pragma pack(push, 1)
    // --- FieldInfo ---
    struct FieldInfo
@@ -765,6 +785,7 @@ namespace elena_lang
       pos_t           size;           // Object size
       MethodMap       methods;
       FieldMap        fields;
+      ClassAttributes attributes;
 
       void save(StreamWriter* writer, bool headerAndSizeOnly = false)
       {
@@ -783,6 +804,13 @@ namespace elena_lang
                {
                   writer->writeString(name);
                   writer->write(&info, sizeof(info));
+               });
+
+            writer->writePos(attributes.count());
+            attributes.forEach<StreamWriter*>(writer, [](StreamWriter* writer, ClassAttributeKey key, ref_t reference)
+               {
+                  writer->write(&key, sizeof(key));
+                  writer->writeRef(reference);
                });
          }
       }
@@ -809,11 +837,20 @@ namespace elena_lang
 
                fields.add(*fieldName, fieldInfo);
             }
+            pos_t attrCount = reader->getPos();
+            for (pos_t i = 0; i < attrCount; i++) {
+               ClassAttributeKey key;
+               reader->read(&key, sizeof(key));
+
+               ref_t reference = reader->getRef();
+
+               attributes.add(key, reference);
+            }
          }
       }
 
       ClassInfo()
-         : methods({}), fields({})
+         : methods({}), fields({}), attributes(0)
       {
          header.staticSize = 0;
          header.parentRef = header.classRef = 0;

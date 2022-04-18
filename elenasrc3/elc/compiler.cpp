@@ -10,6 +10,8 @@
 #include "langcommon.h"
 #include <errno.h>
 
+#include "bytecode.h"
+
 using namespace elena_lang;
 
 typedef ExpressionAttribute   EAttr;
@@ -25,6 +27,11 @@ EAttr operator | (const EAttr& l, const EAttr& r)
 EAttr operator & (const EAttr& l, const EAttr& r)
 {
    return (EAttr)((pos64_t)l & (pos64_t)r);
+}
+
+MethodHint operator & (const ref_t& l, const MethodHint& r)
+{
+   return (MethodHint)(l & (unsigned int)r);
 }
 
 //inline void testNodes(SyntaxNode node)
@@ -411,10 +418,20 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    reservedArgs = parent->moduleScope->minimalArgList;
 }
 
+bool Compiler::MethodScope::checkKind(MethodHint hint)
+{
+   return (info.hints & MethodHint::Mask) == hint;
+}
+
+bool Compiler::MethodScope :: checkKind(MethodInfo& methodInfo, MethodHint hint)
+{
+   return (methodInfo.hints & MethodHint::Mask) == hint;
+}
+
 ObjectInfo Compiler::MethodScope :: mapSelf()
 {
    if (selfLocal != 0) {
-      return { ObjectKind::SelfParam, getClassRef(false), (ref_t)selfLocal };
+      return { ObjectKind::SelfLocal, getClassRef(false), (ref_t)selfLocal };
    }
    else return {};
 }
@@ -435,6 +452,9 @@ ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool refere
    auto paramInfo = mapParameter(identifier);
    if (paramInfo.kind != ObjectKind::Unknown) {
       return paramInfo;
+   }
+   else if (moduleScope->selfVar.compare(identifier)) {
+      return mapSelf();
    }
 
    return Scope::mapIdentifier(identifier, referenceOne, attr);
@@ -756,6 +776,19 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
    }
    else {
       scope.info.load(&reader, false);
+
+      // mark all methods as inherited
+      auto it = scope.info.methods.start();
+      while (!it.eof()) {
+         mssg_t message = it.key();
+
+         (*it).inherited = true;
+         ++it;
+
+         // private methods are not inherited
+         if (test(message, STATIC_MESSAGE))
+            scope.info.methods.exclude(message);
+      }
    }
 
    if (test(scope.info.header.flags, elFinal)) {
@@ -781,15 +814,30 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
    return InheritResult::irSuccessfull;
 }
 
-void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node)
+void Compiler :: checkMethodDuplicates(ClassScope& scope, SyntaxNode node, mssg_t message, 
+   mssg_t publicMessage, bool protectedOne, bool internalOne)
+{
+   if (!test(message, STATIC_MESSAGE) && scope.info.methods.exist(publicMessage | STATIC_MESSAGE)) {
+      // there should be no public method with the same name
+      scope.raiseError(errDupPrivateMethod, node);
+   }
+   if (publicMessage != message && scope.info.methods.exist(publicMessage)) {
+      // there should be no public method with the same name
+      scope.raiseError(errDupPublicMethod, node);
+   }
+   if (!protectedOne && scope.getMssgAttribute(publicMessage, ClassAttribute::ProtectedAlias)) {
+      // there should be no protected method with the same name
+      scope.raiseError(errDupProtectedMethod, node);
+   }
+   if (!internalOne && scope.getMssgAttribute(publicMessage, ClassAttribute::InternalAlias)) {
+      // there should be no internal method with the same name
+      scope.raiseError(errDupInternalMethod, node);
+   }
+}
+
+void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node, MethodInfo& methodInfo)
 {
    mssg_t message = node.arg.reference;
-   MethodInfo methodInfo;
-
-   auto methodIt = scope.info.methods.getIt(message);
-   bool existing = !methodIt.eof();
-   if (existing)
-      methodInfo = *methodIt;
 
    methodInfo.hints |= node.findChild(SyntaxKey::Hints).arg.reference;
 
@@ -797,11 +845,71 @@ void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node)
    if (outputRef)
       methodInfo.outputRef = outputRef;
 
+   // check duplicates with different visibility scope
+   if (MethodScope::checkHint(methodInfo, MethodHint::Private)) {
+      checkMethodDuplicates(scope, node, message, message & ~STATIC_MESSAGE, false, false);
+   }
+   else if (MethodScope::checkAnyHint(methodInfo, MethodHint::Protected, MethodHint::Internal)) {
+      // if it is internal / protected message save the public alias
+      ref_t signRef = 0;
+      ustr_t name = scope.module->resolveAction(getAction(message), signRef);
+      mssg_t publicMessage = 0;
+
+      size_t index = name.findStr("$$");
+      if (index == NOTFOUND_POS)
+         scope.raiseError(errDupInternalMethod, node);
+
+      publicMessage = overwriteAction(message, scope.module->mapAction(name + index + 2, 0, false));
+
+      if (MethodScope::checkHint(methodInfo, MethodHint::Protected)) {
+         checkMethodDuplicates(scope, node, message, publicMessage, true, false);
+
+         scope.addMssgAttribute(publicMessage, ClassAttribute::ProtectedAlias, message);
+      }
+      else {
+         checkMethodDuplicates(scope, node, message, publicMessage, false, true);
+
+         scope.addMssgAttribute(publicMessage, ClassAttribute::InternalAlias, message);
+      }
+   }
+   else {
+      checkMethodDuplicates(scope, node, message, message, false, false);
+   }
+}
+
+void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed)
+{
+   mssg_t message = node.arg.reference;
+   MethodInfo methodInfo = {};
+
+   auto methodIt = scope.info.methods.getIt(message);
+   bool existing = !methodIt.eof();
+   if (existing)
+      methodInfo = *methodIt;
+
+   generateMethodAttributes(scope, node, methodInfo);
+
    // check if there is no duplicate method
    if (existing && !methodInfo.inherited) {
       scope.raiseError(errDuplicatedMethod, node);
    }
    else {
+      bool privateOne = MethodScope::checkHint(methodInfo, MethodHint::Private);
+
+      // if the class is closed, no new methods can be declared
+      // except private sealed ones (which are declared outside the class VMT)
+      if (existing && closed && !privateOne) {
+         IdentifierString messageName;
+         ByteCodeUtil::resolveMessageName(messageName, scope.module, message);
+
+         _errorProcessor->info(infoNewMethod, *messageName);
+
+         scope.raiseError(errClosedParent, node);
+      }
+
+      if (existing && MethodScope::checkKind(methodInfo, MethodHint::Sealed))
+         scope.raiseError(errClosedMethod, node);
+
       methodInfo.inherited = false;
 
       if (!existing) {
@@ -823,7 +931,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
    current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == methodKey) {
-         generateMethodDeclaration(scope, current);
+         generateMethodDeclaration(scope, current, test(scope.info.header.flags, elClosed));
       }
 
       current = current.nextNode();
@@ -1144,7 +1252,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node)
 
    // HOTFIX : do not overwrite the message on the second pass
    if (scope.message == 0) {
-      if (scope.checkHint(MethodHint::Dispatcher)) {
+      if (scope.checkKind(MethodHint::Dispatcher)) {
          if (paramCount == 0 && unnamedMessage) {
             actionRef = getAction(scope.moduleScope->buildins.dispatch_message);
             unnamedMessage = false;
@@ -1152,10 +1260,37 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node)
          else scope.raiseError(errIllegalMethod, node);
       }
 
-      scope.message = mapMethodName(scope, paramCount, *actionStr, actionRef, flags,
-         signature, signatureLen);
-      if (unnamedMessage || !scope.message)
-         scope.raiseError(errIllegalMethod, node);
+      if (scope.checkHint(MethodHint::Internal)) {
+         actionStr.insert("$$", 0);
+         actionStr.insert(scope.module->name(), 0);
+      }
+      else if (scope.checkHint(MethodHint::Protected)) {
+         // check if protected method already declared
+         mssg_t publicMessage = mapMethodName(scope, paramCount, *actionStr, actionRef, flags,
+            signature, signatureLen);
+
+         mssg_t declaredMssg = scope.getAttribute(publicMessage, ClassAttribute::ProtectedAlias);
+         if (!declaredMssg) {
+            ustr_t className = scope.module->resolveReference(scope.getClassRef());
+
+            actionStr.insert("$$", 0);
+            actionStr.insert(className + 1, 0);
+            actionStr.insert("@", 0);
+            actionStr.insert(scope.module->name(), 0);
+            actionStr.replaceAll('\'', '@', 0);
+         }
+         else scope.message = declaredMssg;
+      }
+      else if (scope.checkHint(MethodHint::Private)) {
+         flags |= STATIC_MESSAGE;
+      }
+
+      if (!scope.message) {
+         scope.message = mapMethodName(scope, paramCount, *actionStr, actionRef, flags,
+            signature, signatureLen);
+         if (unnamedMessage || !scope.message)
+            scope.raiseError(errIllegalMethod, node);
+      }
    }
 }
 
@@ -1458,7 +1593,7 @@ ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, Syn
    }
 
    ArgumentsInfo arguments;
-   ref_t         argumentRefs[3];
+   ref_t         argumentRefs[3] = {};
    argumentRefs[0] = resolvePrimitiveReference(loperand);
    arguments.add(loperand);
 
@@ -1547,7 +1682,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
          writer.appendNode(BuildKey::ClassReference, info.reference);
          break;
       case ObjectKind::Param:
-      case ObjectKind::SelfParam:
+      case ObjectKind::SelfLocal:
       case ObjectKind::Local:
       case ObjectKind::TempLocal:
          writer.appendNode(BuildKey::Local, info.reference);
@@ -1617,6 +1752,11 @@ void Compiler :: declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_
    }
 }
 
+inline bool isMethodKind(ref_t hint)
+{
+   return (hint & (ref_t)MethodHint::Mask) != 0;
+}
+
 void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
@@ -1627,9 +1767,13 @@ void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node)
          {
             ref_t value = current.arg.reference;
 
-            MethodHint hint = MethodHint::None;
+            ref_t hint = 0;
             if (_logic->validateMethodAttribute(value, hint, explicitMode)) {
-               scope.info.hints |= (ref_t)hint;
+               if (isMethodKind(hint) && isMethodKind(scope.info.hints)) {
+                  // a method kind can be set only once
+                  scope.raiseError(errInvalidHint, node);
+               }
+               else scope.info.hints |= hint;
             }
             else {
                current.setArgumentReference(0);
@@ -1648,9 +1792,9 @@ void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node)
          {
             // resolving implicit method attributes
             ref_t attr = scope.moduleScope->attributes.get(current.firstChild(SyntaxKey::TerminalMask).identifier());
-            MethodHint hint = MethodHint::None;
+            ref_t hint = (ref_t)MethodHint::None;
             if (_logic->validateImplicitMethodAttribute(attr, hint)) {
-               scope.info.hints |= (ref_t)hint;
+               scope.info.hints |= hint;
                current.setKey(SyntaxKey::Attribute);
                current.setArgumentReference(attr);
             }
@@ -2070,12 +2214,61 @@ ref_t Compiler :: compileMessageArguments(BuildTreeWriter& writer, ExprScope& sc
    return 0;
 }
 
-ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, /*SyntaxNode node, ObjectInfo target, */mssg_t message, ArgumentsInfo & arguments)
+mssg_t Compiler :: resolveMessageAtCompileTime(mssg_t weakMessage)
+{
+   return weakMessage;
+}
+
+inline bool isSelfCall(ObjectInfo target)
+{
+   switch (target.kind) {
+      case ObjectKind::SelfLocal:
+      //case okOuterSelf:
+      //case okClassSelf:
+      //case okInternalSelf:
+         return true;
+      default:
+         return false;
+   }
+}
+
+ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, /*SyntaxNode node, */ObjectInfo target, 
+   mssg_t weakMessage, ArgumentsInfo & arguments)
 {
    ObjectInfo retVal(ObjectKind::Object);
 
    BuildKey operation = BuildKey::CallOp;
-   ref_t argument = message;
+   mssg_t message = resolveMessageAtCompileTime(weakMessage);
+   ref_t targetRef = 0;
+
+   CheckMethodResult result = {};
+   bool found = _logic->resolveCallType(*scope.moduleScope, resolveObjectReference(target), message, result);
+   if (found) {
+      switch (result.visibility) {
+         case Visibility::Private:
+         case Visibility::Protected:
+            if (isSelfCall(target)) {
+               message = result.message;
+            }
+            else found = false;
+            break;
+         default:
+            break;
+      }
+
+   }
+
+   if (found) {
+      retVal.type = result.outputRef;
+      switch ((MethodHint)result.kind) {
+         case MethodHint::Sealed:
+            operation = BuildKey::DirectCallOp;
+            targetRef = resolveObjectReference(target);
+            break;
+         default:
+            break;
+      }
+   }
 
    pos_t counter = arguments.count();
    for (unsigned int i = counter; i > 0; i--) {
@@ -2083,11 +2276,14 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
       writeObjectInfo(writer, arg);
       writer.appendNode(BuildKey::SavingInStack, i - 1);
-
-      //withUnboxing |= unboxingRequired(arg);
    }
 
-   writer.appendNode(operation, argument);
+   writer.newNode(operation, message);
+
+   if (targetRef)
+      writer.appendNode(BuildKey::Type, targetRef);
+
+   writer.closeNode();
 
    return retVal;
 }
@@ -2128,7 +2324,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
       compileMessageArguments(writer, scope, current, arguments);
 
-      retVal = compileMessageOperation(writer, scope, messageReg, arguments);
+      retVal = compileMessageOperation(writer, scope, source, messageReg, arguments);
 
       scope.reserveArgs(arguments.count());
    }
@@ -2363,7 +2559,7 @@ ObjectInfo Compiler :: typecastObject(BuildTreeWriter& writer, ExprScope& scope,
    ArgumentsInfo arguments;
    arguments.add(source);
 
-   return compileMessageOperation(writer, scope, typecastMssg, arguments);
+   return compileMessageOperation(writer, scope, source, typecastMssg, arguments);
 }
 
 ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, 
@@ -2560,7 +2756,6 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
    // stack should contains current self reference
    // the original message should be restored if it is a generic method
    scope.selfLocal = codeScope.newLocal();
-   codeScope.mapNewLocal(*scope.moduleScope->selfVar, scope.selfLocal, scope.getClassRef(false));
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
    ObjectInfo retVal = { };
@@ -2990,7 +3185,7 @@ void Compiler :: injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode
    SyntaxNode methNode = classNode.appendChild(SyntaxKey::Method, message);
    //methNode.appendChild(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
    //methNode.appendChild(lxAttribute, tpEmbeddable);
-   methNode.appendChild(SyntaxKey::Hints, (int)MethodHint::Sealed | (int)MethodHint::Conversion);
+   methNode.appendChild(SyntaxKey::Hints, (ref_t)MethodHint::Sealed | (ref_t)MethodHint::Conversion);
 
    if (classRef) {
       methNode.appendChild(SyntaxKey::Type, classRef);

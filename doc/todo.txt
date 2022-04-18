@@ -6,6 +6,16 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
+    * call direct method
+
+    * call private method
+    * call protected method
+
+    * abstract method
+    * private constructor
+    * protected constructor
+    * predefined methods
+
     * >print message using external routine - i386, amd64, ppc64le, arm64
     --- ide redux ---
     * linux textview - show text
@@ -32,6 +42,7 @@ In development:
     * editor - edit text
     * editor - correctly destroy tabbar / frame / view
     === Sprint 6 : console output ===
+    * dispatcher : raise an error if the message is not handled
     * hello world sample
     === Sprint 7 : functional GC ===
     --- elena redux ---
@@ -50,6 +61,14 @@ Pipeline:
     --- docs / tutorials ---
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
+    * branching : boolean type
+    * branching : operator : ?
+    * branching : if operator
+    * branching : loop attribute
+    * branching : while operator
+
+    * warn on not found message for the existing object
+    * call internal
     * support constants
     * copy : support 1, 2, any other size
     * boxing stack allocated variable
@@ -57,7 +76,6 @@ Pipeline:
     * uncomment & fix optimizeTape routine
     * module template - to include basic import statement
     * module template - probably should include meta dictionary for attributes / types / ...
-    * do not allow to override sealed method
     * asmc : raise an error if the label was not resolved
     * warn if the method was overriden but the output type was not specify
     * raise an error if the overridden output type was changed

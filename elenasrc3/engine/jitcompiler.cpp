@@ -64,7 +64,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    compileOpen, loadIndexROp, compileOpen, loadIndexIndexOp, loadNewOp, loadNewNOp, loadNop, loadNop,
-   loadNop, loadFrameIndexROp, loadNop, loadNop, loadNop, loadNop, loadCallOp, loadNop,
+   loadNop, loadFrameIndexROp, loadNop, loadNop, loadNop, loadMROp, loadCallOp, loadNop,
 };
 
 // preloaded gc routines
@@ -90,7 +90,7 @@ const ref_t coreFunctions[coreFunctionNumber] =
 
 // preloaded bc commands
 
-const size_t bcCommandNumber = 26;
+const size_t bcCommandNumber = 27;
 const ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDDisp, ByteCode::CloseN, ByteCode::AllocI, 
@@ -98,7 +98,7 @@ const ByteCode bcCommands[bcCommandNumber] =
    ByteCode::OpenHeaderIN, ByteCode::CallExtR, ByteCode::MovSIFI, ByteCode::PeekFI, ByteCode::Load,  
    ByteCode::SaveSI, ByteCode::CallR, ByteCode::Quit, ByteCode::MovM, ByteCode::CallVI,
    ByteCode::StoreSI, ByteCode::Redirect, ByteCode::NewIR, ByteCode::XFlushSI, ByteCode::Copy,
-   ByteCode::NewNR
+   ByteCode::NewNR, ByteCode::CallMR,
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/, 
@@ -695,7 +695,7 @@ void elena_lang :: loadCallROp(JITCompilerScope* scope)
          case RELPTR32_1:
             scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRelRef32);
             break;
-         case DISP32HI_2:
+         case DISP32HI_1:
             scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskDisp32Hi);
             break;
          case DISP32LO_1:
@@ -1116,6 +1116,66 @@ void elena_lang::loadNewNOp(JITCompilerScope* scope)
    writer->seekEOF();
 }
 
+void elena_lang :: loadMROp(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   void* code = scope->compiler->_inlines[0][scope->code()];
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case PTR32_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress, 
+               scope->command.arg1, mskRef32);
+            break;
+         case RELPTR32_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress, 
+               scope->command.arg1, mskRelRef32);
+            break;
+         case DISP32HI_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress, 
+               scope->command.arg1, mskDisp32Hi);
+            break;
+         case DISP32LO_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress, 
+               scope->command.arg1, mskDisp32Lo);
+            break;
+         case PTR32HI_2:
+         {
+            short disp = *(short*)((char*)code + entries->offset);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress, 
+               scope->command.arg1, mskRef32Hi);
+            break;
+         }
+         case PTR32LO_2:
+         {
+            short disp = *(short*)((char*)code + entries->offset);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress, 
+               scope->command.arg1, mskRef32Lo);
+            break;
+         }
+         default:
+            //else writeCoreReference();
+            break;
+      }
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
 inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, size_t length,
    const ref_t* functions, JITCompiler::PreloadedMap& map, Map<ref_t, pos_t>& positions, 
    ref_t mask, bool declarating)
@@ -1362,6 +1422,31 @@ void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vm
    vmtWriter.seek(position);
 }
 
+pos_t JITCompiler32 :: getVMTLength(void* targetVMT)
+{
+   // get the parent vmt size
+   VMTHeader32* header = (VMTHeader32*)((uintptr_t)targetVMT - elVMTClassOffset32);
+
+   return header->count;
+}
+
+addr_t JITCompiler32 :: findMethodAddress(void* entries, mssg_t message)
+{
+   // return the method address
+   // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
+   VMTHeader32* header = (VMTHeader32*)((uintptr_t)entries - elVMTClassOffset32);
+
+   pos_t address = ((VMTEntry32*)entries)[0].address;
+   for (pos_t i = 0; i < header->count; i++) {
+      if (((VMTEntry32*)entries)[i].message == message) {
+         address = ((VMTEntry32*)entries)[i].address;
+         break;
+      }
+   }
+
+   return (addr_t)address;
+}
+
 pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT)
 {
    if (parentVMT) {
@@ -1598,6 +1683,30 @@ void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vm
    vmtWriter.seek(position);
 }
 
+pos_t JITCompiler64 :: getVMTLength(void* targetVMT)
+{
+   VMTHeader64* header = (VMTHeader64*)((uintptr_t)targetVMT - elVMTClassOffset64);
+
+   return (pos_t)header->count;
+}
+
+addr_t JITCompiler64 :: findMethodAddress(void* entries, mssg_t message)
+{
+   // return the method address
+   // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
+   VMTHeader64* header = (VMTHeader64*)((uintptr_t)entries - elVMTClassOffset32);
+
+   pos64_t address = ((VMTEntry64*)entries)[0].address;
+   for (pos64_t i = 0; i < header->count; i++) {
+      if (((VMTEntry64*)entries)[i].message == message) {
+         address = ((VMTEntry64*)entries)[i].address;
+         break;
+      }
+   }
+
+   return (addr_t)address;
+}
+
 pos_t JITCompiler64 :: copyParentVMT(void* parentVMT, void* targetVMT)
 {
    if (parentVMT) {
@@ -1718,7 +1827,6 @@ pos_t JITCompiler64 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress
    else writer.writeQWord(0);
 
    return position;
-
 }
 
 void JITCompiler64 :: allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 

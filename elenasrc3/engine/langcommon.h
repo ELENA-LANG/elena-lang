@@ -11,16 +11,21 @@
 
 namespace elena_lang
 {
-   enum class MethodHint
+   enum class MethodHint : ref_t
    {
       Mask           = 0x000000F,
 
       None           = 0x0000000,
       Sealed         = 0x0000001,
+      Normal         = 0x0000003,
       Dispatcher     = 0x0000004,
+
       Constructor    = 0x0200400,
       Conversion     = 0x0200800,
       Static         = 0x0004000,
+      Internal       = 0x0040000,
+      Protected      = 0x4000000,
+      Private        = 0x8000000,
    };
 
    // === ELENA Error codes ===
@@ -41,13 +46,19 @@ namespace elena_lang
    constexpr auto errInvalidIntNumber     = 130;
    constexpr auto errCannotEval           = 140;
    constexpr auto errSealedParent         = 141;
+   constexpr auto errClosedParent         = 142;
    constexpr auto errInvalidHint          = 147;
    constexpr auto errIllegalConstructor   = 149;
+   constexpr auto errClosedMethod         = 150;
    constexpr auto errIllegalStaticMethod  = 151;
    constexpr auto errIllegalMethod        = 152;
+   constexpr auto errDupPublicMethod      = 167;
    constexpr auto errEmptyStructure       = 169;
+   constexpr auto errDupInternalMethod    = 173;
    constexpr auto errNoBodyMethod         = 180;
    constexpr auto errUnknownTemplate      = 181;
+   constexpr auto errDupPrivateMethod     = 182;
+   constexpr auto errDupProtectedMethod   = 183;
 
    constexpr auto errUnknownModule        = 201;
    constexpr auto errUnresovableLink      = 202;
@@ -75,6 +86,8 @@ namespace elena_lang
    constexpr auto errUnknownBaseClass     = 604;
    constexpr auto errNoDispatcher         = 605;
 
+   constexpr auto infoNewMethod           = 701;
+
    constexpr auto errFatalError       = -1;
    constexpr auto errFatalLinker      = -2;
    constexpr auto errNotImplemented   = -3;
@@ -99,6 +112,8 @@ namespace elena_lang
    /// visibility:
    constexpr auto V_PUBLIC                = 0x80004001u;
    constexpr auto V_PRIVATE               = 0x80004002u;
+   constexpr auto V_INTERNAL              = 0x80004003u;
+   constexpr auto V_PROTECTED             = 0x80004004u;
 
    /// property:
    constexpr auto V_SEALED                = 0x80003001u;

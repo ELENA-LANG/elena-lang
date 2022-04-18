@@ -89,17 +89,21 @@ namespace elena_lang
          this->item = item;
       }
    };
-#pragma pack(pop)
 
-   template <class T1, class T2> struct Pair
+   template <class T1, class T2, T1 def1 = 0, T2 def2 = 0> struct Pair
    {
       T1 value1;
       T2 value2;
 
+      bool operator ==(Pair pair) const
+      {
+         return (this->value1 == pair.value1 && this->value2 == pair.value2);
+      }
+
       Pair()
       {
-         this->value1 = 0;
-         this->value2 = 0;
+         this->value1 = def1;
+         this->value2 = def2;
       }
       Pair(T1 value1, T2 value2)
       {
@@ -107,6 +111,7 @@ namespace elena_lang
          this->value2 = value2;
       }
    };
+#pragma pack(pop)
 
    // --- IteratorBase ---
    template <class T, class Item> class ListIteratorBase
@@ -1398,6 +1403,7 @@ namespace elena_lang
                currentOffset = current->nextOffset;
             }
          }
+         return _defValue;
       }
 
       void clear()
@@ -2067,7 +2073,22 @@ namespace elena_lang
       else return value;
    }
 
+   template<class Key> pos_t Map_StoreKey(MemoryDump* dump, Key key)
+   {
+      pos_t position = dump->length();
 
+      dump->write(position, &key, sizeof(key));
+
+      return position;
+   }
+
+   template<class Key> Key Map_GetKey(MemoryDump* dump, pos_t position)
+   {
+      Key key;
+      dump->read(position, &key, sizeof(key));
+
+      return key;
+   }
 }
 
 #endif

@@ -3,7 +3,7 @@
 //
 //		This header contains UTF8 String classes declarations
 //
-//                                                  (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef USTRING_H
@@ -114,6 +114,8 @@ namespace elena_lang
 
       size_t findLast(char c, size_t defValue = NOTFOUND_POS);
       size_t findLastSub(size_t index,  char c, size_t defValue = NOTFOUND_POS);
+
+      size_t findStr(const char* subs, size_t defValue = NOTFOUND_POS);
 
       char* clone();
       char* clone(size_t index, size_t length);
@@ -406,6 +408,14 @@ namespace elena_lang
       void insert(const T* s, size_t index)
       {
          StrUtil::insert(_string, index, getlength(s), s);
+      }
+
+      void replaceAll(T oldCh, T newCh, size_t index)
+      {
+         for (size_t i = index; i < getlength(_string); i++) {
+            if (_string[i] == oldCh)
+               _string[i] = newCh;
+         }
       }
 
       void lower()

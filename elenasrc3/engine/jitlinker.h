@@ -13,6 +13,32 @@
 
 namespace elena_lang
 {
+   // --- MethodAddress ---
+   typedef Pair<addr_t, mssg_t> MethodAddress;
+
+   inline pos_t Map_StoreMethodAddress(MemoryDump* dump, MethodAddress addr)
+   {
+      pos_t position = dump->length();
+
+      dump->write(position, &addr, sizeof(addr));
+
+      return position;
+   }
+
+   inline MethodAddress Map_GetMethodAddress(MemoryDump* dump, pos_t position)
+   {
+      MethodAddress addr;
+      dump->read(position, &addr, sizeof(addr));
+
+      return addr;
+   }
+
+   typedef MemoryMap<
+      MethodAddress, addr_t,
+      Map_StoreMethodAddress,
+      Map_GetMethodAddress
+   > MethodAddressMap;
+
    // --- JITLinkerSettings ---
    struct JITLinkerSettings
    {
@@ -55,7 +81,7 @@ namespace elena_lang
          }
       };
 
-      typedef Map<pos_t, VAddressInfo> VAddressMap;
+      typedef Map<pos_t, VAddressInfo>          VAddressMap;
 
       class JITLinkerReferenceHelper : public ReferenceHelperBase
       {
@@ -100,6 +126,7 @@ namespace elena_lang
       ForwardResolverBase*  _forwardResolver;
       ImageProviderBase*    _imageProvider;
       JITCompilerBase*      _compiler;
+      MethodAddressMap      _staticMethods;
 
       pos_t                 _alignment;
       JITSettings           _jitSettings;
@@ -113,7 +140,11 @@ namespace elena_lang
       addr_t getVMTAddress(ModuleBase* module, ref_t reference, VAddressMap& references);
       void* getVMTPtr(addr_t address);
 
+      addr_t getVMTMethodAddress(addr_t vmtAddress, mssg_t message);
+
       void fixReferences(VAddressMap& relocations, MemoryBase* image);
+
+      addr_t resolveVMTMethodAddress(ModuleBase* module, ref_t reference, mssg_t message);
 
       addr_t loadMethod(ReferenceHelperBase& refHelper, MemoryReader& reader, MemoryWriter& writer);
 
@@ -146,7 +177,8 @@ namespace elena_lang
       JITLinker(ReferenceMapperBase* mapper, 
          LibraryLoaderBase* loader, ForwardResolverBase* forwardResolver,
          ImageProviderBase* provider,
-         JITLinkerSettings* settings)
+         JITLinkerSettings* settings
+      ) : _staticMethods(INVALID_ADDR)
       {
          _mapper = mapper;
          _loader = loader;

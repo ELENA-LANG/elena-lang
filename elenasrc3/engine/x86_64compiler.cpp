@@ -15,7 +15,7 @@
 using namespace elena_lang;
 
 constexpr auto OverloadsCount = 5;
-const Pair<ByteCode, CodeGenerator> Overloads[OverloadsCount] =
+const Pair<ByteCode, CodeGenerator, ByteCode::None, nullptr> Overloads[OverloadsCount] =
 {
    { ByteCode::CallExtR, x86_64loadCallOp},
    { ByteCode::FreeI, x86_64compileStackOp},

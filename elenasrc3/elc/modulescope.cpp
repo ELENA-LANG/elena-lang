@@ -310,13 +310,17 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
       for (auto it = copy.methods.start(); !it.eof(); ++it) {
          MethodInfo info = *it;
 
-         if (inheritMode)
-            info.inherited = true;
-
          if (info.outputRef)
             info.outputRef = importReference(exporter, info.outputRef);
 
-         target.methods.add(importMessage(exporter, it.key()), info);
+         if (inheritMode) {
+            info.inherited = true;
+
+            // private methods are not inherited
+            if (!test(it.key(), STATIC_MESSAGE))
+               target.methods.add(importMessage(exporter, it.key()), info);
+         }
+         else target.methods.add(importMessage(exporter, it.key()), info);
       }
 
       for (auto it = copy.fields.start(); !it.eof(); ++it) {
@@ -326,6 +330,25 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
             info.typeRef = importReference(exporter, info.typeRef);
 
          target.fields.add(it.key(), info);
+      }
+
+      for (auto it = copy.attributes.start(); !it.eof(); ++it) {
+         ClassAttributeKey key = it.key();
+         if (test((unsigned)key.value2, (unsigned)ClassAttribute::ReferenceKeyMask)) {
+            key.value1 = importReference(exporter, key.value1);
+         }
+         else if (test((unsigned)key.value2, (unsigned)ClassAttribute::MessageKeyMask)) {
+            key.value1 = importMessage(exporter, key.value1);
+         }
+         ref_t referece = *it;
+         if (test((unsigned)key.value2, (unsigned)ClassAttribute::ReferenceMask)) {
+            referece = importReference(exporter, referece);
+         }
+         else if (test((unsigned)key.value2, (unsigned)ClassAttribute::MessageMask)) {
+            referece = importMessage(exporter, referece);
+         }
+
+         target.attributes.add(key, referece);
       }
    }
 

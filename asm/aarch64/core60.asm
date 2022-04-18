@@ -713,6 +713,15 @@ inline %0F9h
 
 end
 
+// ; callmr
+inline %0FDh
+
+  movz    x17,  __ptr32lo_2
+  movk    x17,  __ptr32hi_2, lsl #16
+  blr     x17
+
+end
+
 // ; callext
 inline %0FEh
 

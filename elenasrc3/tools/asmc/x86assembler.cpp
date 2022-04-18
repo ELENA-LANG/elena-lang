@@ -472,6 +472,13 @@ void X86Assembler :: compileCall(ScriptToken& tokenInfo, MemoryWriter& writer)
       if (!compileCall(operand, writer))
          throw SyntaxError(ASM_INVALID_CALL_LABEL, tokenInfo.lineInfo);
    }
+   else if (tokenInfo.compare(RELPTR32_ARGUMENT2)) {
+      X86Operand operand(X86OperandType::DD);
+      operand.reference = RELPTR32_2;
+
+      if (!compileCall(operand, writer))
+         throw SyntaxError(ASM_INVALID_CALL_LABEL, tokenInfo.lineInfo);
+   }
    else {
       X86Operand operand = defineRegister(*tokenInfo.token);
       if (operand.isR32() || operand.isR64()) {
@@ -769,7 +776,7 @@ bool X86Assembler :: compileCall(X86Operand source, MemoryWriter& writer)
 {
    if (source.type == X86OperandType::DD) {
       writer.writeByte(0xE8);
-      if (source.reference == RELPTR32_1) {
+      if (source.reference == RELPTR32_1 || source.reference == RELPTR32_2) {
          writer.writeDReference(source.reference, source.offset);
       }
       else writer.writeDReference(source.reference | mskCodeRelRef32, source.offset);

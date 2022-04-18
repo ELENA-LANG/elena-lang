@@ -14,6 +14,14 @@
 
 namespace elena_lang
 {
+   struct CheckMethodResult
+   {
+      mssg_t      message;
+      ref_t       kind;
+      ref_t       outputRef;
+      Visibility  visibility;
+   };
+
    // --- CompilerLogic ---
    class CompilerLogic
    {
@@ -30,8 +38,8 @@ namespace elena_lang
       bool validateSymbolAttribute(ref_t attribute, Visibility& visibility);
       bool validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility);
       bool validateFieldAttribute(ref_t attribute, FieldAttributes& attrs);
-      bool validateMethodAttribute(ref_t attribute, MethodHint& hint, bool& explicitMode);
-      bool validateImplicitMethodAttribute(ref_t attribute, MethodHint& hint);
+      bool validateMethodAttribute(ref_t attribute, ref_t& hint, bool& explicitMode);
+      bool validateImplicitMethodAttribute(ref_t attribute, ref_t& hint);
       bool validateDictionaryAttribute(ref_t attribute, ref_t& dictionaryType);
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
 
@@ -64,6 +72,12 @@ namespace elena_lang
       bool isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef);
 
       ConversionRoutine retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef);
+
+      bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
+      bool checkMethod(ModuleScopeBase& scope, ref_t reference, mssg_t message, CheckMethodResult& result);
+
+      bool resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
+         CheckMethodResult& result);
 
       static CompilerLogic* getInstance()
       {

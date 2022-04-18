@@ -60,7 +60,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "open", "xstore sp", "open header", "mov sp", "new", "newn", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, "xstore fp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "call extern", OPCODE_UNKNOWN
+   OPCODE_UNKNOWN, "xstore fp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "call mssg", "call extern", OPCODE_UNKNOWN
 };
 
 // --- Auxiliary  ---
@@ -124,6 +124,9 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    if (emptystr(actionName))
       return false;
 
+   if (test(flags, STATIC_MESSAGE))
+      messageName.append("static:");
+
    messageName.append(actionName);
    if (signature) {
       ref_t references[ARG_COUNT];
@@ -152,6 +155,11 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
 {
    pos_t argCount = 0;
    ref_t actionRef = 0, flags = 0;
+
+   if (messageName.startsWith("static:")) {
+      flags |= STATIC_MESSAGE;
+      messageName += getlength("static:");
+   }
 
    IdentifierString actionName;
    size_t paramIndex = messageName.find('[');

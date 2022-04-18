@@ -270,7 +270,8 @@ enum class Visibility
 {
    Private,
    Internal,
-   Public
+   Public,
+   Protected
 };
 
 struct BuiltinReferences
@@ -503,6 +504,11 @@ class ErrorProcessor : public ErrorProcessorBase
    }
 
 public:
+   void info(int code, ustr_t arg)
+   {
+      _presenter->print(_presenter->getMessage(code), arg);
+   }
+
    void raiseError(int code, ustr_t arg) override
    {
       _presenter->print(_presenter->getMessage(code), arg);

@@ -13,6 +13,21 @@
 
 using namespace elena_lang;
 
+inline MethodHint operator | (const MethodHint& l, const MethodHint& r)
+{
+   return (MethodHint)((unsigned int)l | (unsigned int)r);
+}
+
+inline MethodHint operator & (const MethodHint& l, const MethodHint& r)
+{
+   return (MethodHint)((unsigned int)l & (unsigned int)r);
+}
+
+inline MethodHint operator & (const ref_t& l, const MethodHint& r)
+{
+   return (MethodHint)(l & (unsigned int)r);
+}
+
 struct Op
 {
    BuildKey operation;
@@ -194,24 +209,34 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
    return true;
 }
 
-bool CompilerLogic :: validateMethodAttribute(ref_t attribute, MethodHint& hint, bool& explicitMode)
+bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool& explicitMode)
 {
    switch (attribute) {
       case 0:
+      case V_PUBLIC:
+         break;
+      case V_PRIVATE:
+         hint = (ref_t)MethodHint::Private | (ref_t)MethodHint::Sealed;
+         break;
+      case V_PROTECTED:
+         hint = (ref_t)MethodHint::Protected;
+         break;
+      case V_INTERNAL:
+         hint = (ref_t)MethodHint::Internal;
          break;
       case V_METHOD:
          explicitMode = true;
          break;
       case V_STATIC:
-         hint = MethodHint::Static;
+         hint = (ref_t)MethodHint::Static;
          break;
       case V_DISPATCHER:
          explicitMode = true;
-         hint = MethodHint::Dispatcher;
+         hint = (ref_t)MethodHint::Dispatcher;
          break;
       case V_CONSTRUCTOR:
          explicitMode = true;
-         hint = MethodHint::Constructor;
+         hint = (ref_t)MethodHint::Constructor;
          break;
       default:
          return false;
@@ -220,7 +245,7 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, MethodHint& hint,
    return true;
 }
 
-bool CompilerLogic::validateImplicitMethodAttribute(ref_t attribute, MethodHint& hint)
+bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hint)
 {
    bool dummy = false;
    switch (attribute) {
@@ -526,4 +551,72 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& sc
    }
 
    return {};
+}
+
+bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result)
+{
+   bool methodFound = info.methods.exist(message);
+   if (methodFound) {
+      MethodInfo methodInfo = info.methods.get(message);
+
+      result.message = message;
+      result.outputRef = methodInfo.outputRef;
+      if (test(methodInfo.hints, (ref_t)MethodHint::Private)) {
+         result.visibility = Visibility::Private;
+      }
+      else if (test(methodInfo.hints, (ref_t)MethodHint::Protected)) {
+         result.visibility = Visibility::Protected;
+      }
+      else if (test(methodInfo.hints, (ref_t)MethodHint::Internal)) {
+         result.visibility = Visibility::Internal;
+      }
+      else result.visibility = Visibility::Public;
+
+      result.kind = methodInfo.hints & (ref_t)MethodHint::Mask;
+      if (!result.kind)
+         result.kind = (ref_t)MethodHint::Normal;
+
+      return true;
+   }
+   else return false;
+}
+
+bool CompilerLogic :: checkMethod(ModuleScopeBase& scope, ref_t classRef, mssg_t message, CheckMethodResult& result)
+{
+   ClassInfo info;
+   if (classRef && defineClassInfo(scope, info, classRef)) {
+      return checkMethod(info, message, result);
+   }
+}
+
+bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
+   CheckMethodResult& result)
+{
+   ClassInfo info;
+   if (classRef && defineClassInfo(scope, info, classRef)) {
+      if (!checkMethod(info, message, result)) {
+         if (checkMethod(info, message | STATIC_MESSAGE, result)) {
+            result.visibility = Visibility::Private;
+
+            return true;
+         }
+         mssg_t protectedMessage = info.attributes.get({ message, ClassAttribute::ProtectedAlias });
+         if (protectedMessage) {
+            if(checkMethod(info, protectedMessage, result)) {
+               result.visibility = Visibility::Protected;
+               return true;
+            }
+         }
+         mssg_t internalMessage = info.attributes.get({ message, ClassAttribute::InternalAlias });
+         if (internalMessage) {
+            if (checkMethod(info, internalMessage, result)) {
+               result.visibility = Visibility::Internal;
+               return true;
+            }
+         }
+      }
+      else return true;      
+   }
+
+   return false;
 }

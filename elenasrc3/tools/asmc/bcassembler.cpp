@@ -47,6 +47,16 @@ int ByteCodeAssembler :: readN(ScriptToken& tokenInfo, bool skipRead)
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+mssg_t ByteCodeAssembler :: readM(ScriptToken& tokenInfo, bool skipRead)
+{
+   if (!skipRead)
+      _reader.read(tokenInfo);
+
+   mssg_t message = ByteCodeUtil::resolveMessage(*tokenInfo.token, _module);
+
+   return message;
+}
+
 int ByteCodeAssembler :: readI(ScriptToken& tokenInfo, bool skipRead)
 {
    if (!skipRead)
@@ -348,6 +358,19 @@ bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& w
    return true;
 }
 
+bool ByteCodeAssembler :: compileMR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead)
+{
+   mssg_t arg = readM(tokenInfo, skipRead);
+
+   read(tokenInfo, ",", ASM_COMMA_EXPECTED);
+
+   ref_t arg2 = readReference(tokenInfo);
+
+   ByteCodeUtil::write(writer, command.code, arg, arg2);
+
+   return true;
+}
+
 bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& writer,
    ReferenceMap& locals, ReferenceMap& dataLocals)
 {
@@ -386,6 +409,8 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::SaveDDisp:
          case ByteCode::SetDDisp:
             return compileDDisp(tokenInfo, writer, opCommand, dataLocals, true);
+         case ByteCode::CallMR:
+            return compileMR(tokenInfo, writer, opCommand, true);
          default:
             return false;
       }

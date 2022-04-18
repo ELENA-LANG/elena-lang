@@ -26,6 +26,7 @@ namespace elena_lang
    constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
 
    constexpr auto CONVERSION_MESSAGE      = 0x040u;
+   constexpr auto STATIC_MESSAGE          = 0x100u;
 
    constexpr auto ARG_COUNT               = 0x01Eu;
    constexpr auto ARG_MASK                = 0x01Fu;
@@ -158,6 +159,20 @@ namespace elena_lang
       End
    };
 
+   // --- ClassAttribute ---
+   enum class ClassAttribute
+   {
+      None              = 0x000,
+
+      ReferenceMask     = 0x100,
+      MessageMask       = 0x200,
+      ReferenceKeyMask  = 0x400,
+      MessageKeyMask    = 0x800,
+
+      ProtectedAlias    = 0xA01,
+      InternalAlias     = 0xA02,
+   };
+
    // === Reference constants ====
    constexpr ref_t mskAnyRef              = 0xFF000000u;
    constexpr ref_t mskRefType             = 0xF0000000u;
@@ -178,6 +193,7 @@ namespace elena_lang
    constexpr ref_t mskIntLiteralRef       = 0x0C000000u;
    constexpr ref_t mskMetaAttributesRef   = 0x0D000000u;
    constexpr ref_t mskLiteralRef          = 0x0E000000u;   // reference to constant literal
+   constexpr ref_t mskVMTMethodAddress    = 0x0F000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;
@@ -267,6 +283,7 @@ namespace elena_lang
    constexpr ref_t ARG64_2                = 0x0000001Eu;
    constexpr ref_t NARG16_1               = 0x0000001Fu;
    constexpr ref_t NARGHI_1               = 0x00000020u;
+   constexpr ref_t RELPTR32_2             = 0x00000021u;
 
    // predefined debug module sections
    constexpr ref_t DEBUG_LINEINFO_ID      = -1;

@@ -811,6 +811,17 @@ inline %0F9h
 
 end
 
+// ; callmr
+inline %0FDh
+
+  ld       r12, toc_code(r2)
+  addis    r12, r12, __disp32hi_2 
+  addi     r12, r12, __disp32lo_2
+  mtctr    r12            // ; put code address into ctr
+  bctrl                   // ; and call it
+
+end
+
 // ; callext
 inline %0FEh
 

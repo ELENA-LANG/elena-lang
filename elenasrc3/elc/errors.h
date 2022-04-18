@@ -31,13 +31,20 @@ namespace elena_lang
    constexpr auto errMsgInvalidIntNumber     = "%s(%d:%d): error 130: Invalid integer value %s\n";
    constexpr auto errMsgCannotEval           = "%s(%d:%d): error 140: Cannot evaluate the expression %s\n";
    constexpr auto errMsgSealedParent         = "%s(%d:%d): error 141: parent class %s cannot be inherited\n";
+   constexpr auto errMsgClosedParent         = "%s(%d:%d): error 142: new method cannot be declared\n";
+
    constexpr auto errMsgInvalidHint          = "%s(%d:%d): error 147: Invalid attribute '%s'\n";
    constexpr auto errMsgIllegalConstructor   = "%s(%d:%d): error 149: Constructor cannot be declared\n";
+   constexpr auto errMsgClosedMethod         = "%s(%d:%d): error 150: sealed method cannot be overridden\n";
    constexpr auto errMsgIllegalStaticMethod  = "%s(%d:%d): error 151: Static method cannot be declared\n";
    constexpr auto errMsgIllegalMethod        = "%s(%d:%d): error 152: Illegal method declaration\n";
+   constexpr auto errMsgDupPublicMethod      = "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n";
    constexpr auto errMsgEmptyStructure       = "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
+   constexpr auto errMsgDupInternalMethod    = "%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";
    constexpr auto errMsgNoBodyMethod         = "%s(%d:%d): error 180: Only abstract method can have no body\n";
    constexpr auto errMsgUnknownTemplate      = "%s(%d:%d): error 181: Unknown template %s\n";
+   constexpr auto errMsgDupPrivateMethod     = "%s(%d:%d): error 182: A private method with the same name '%s' is already declared\n";
+   constexpr auto errMsgDupProtectedMethod   = "%s(%d:%d): error 183: A protected method with the same name '%s' is already declared\n";
 
    constexpr auto errMsgUnknownModule        = "linker: error 201: Unknown module '%s'\n";
    constexpr auto errMsgUnresovableLink      = "linker: error 202: Link '%s' is not resolved\n";
@@ -70,6 +77,8 @@ namespace elena_lang
    constexpr auto errMsgFatalLinkerError     = "Fatal linker error\n";
    constexpr auto errMsgNotImplemented       = "Not implemented error\n";
    constexpr auto errMsgCorruptedVMT         = "VMT structure is corrupt";
+
+   constexpr auto infoMsgNewMethod           = "info 700: new method %s";
 
 } // _ELENA_
 
