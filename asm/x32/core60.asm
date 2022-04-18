@@ -552,6 +552,14 @@ inline %0F9h
 
 end
 
+// ; vcallmr
+inline %0FCh
+
+  mov  eax, [ebx - elVMTOffset]
+  call [eax + __arg32_1]
+
+end
+
 // ; callmr
 inline %0FDh
 

@@ -176,7 +176,7 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
       module = _module;
 
    // vmt entry offset / address should be resolved later
-   if (mask == mskVMTMethodAddress) {
+   if (mask == mskVMTMethodAddress || mask == mskVMTMethodOffset) {
       _references->add(position, { reference, module, addressMask, disp });
 
       return;
@@ -320,6 +320,26 @@ addr_t JITLinker :: calculateVAddress(MemoryWriter& writer, ref_t targetMask)
    return _virtualMode ? (writer.position() | targetMask) : (addr_t)writer.address();
 }
 
+void JITLinker :: fixOffset(pos_t position, ref_t offsetMask, int offset, MemoryBase* image)
+{
+   MemoryWriter writer(image);
+   writer.seek(position);
+
+   switch (offsetMask) {
+      case mskRef32:
+         _compiler->writeImm32(&writer, offset);
+         break;
+      case mskRef32Lo12:
+         _compiler->writeImm12(&writer, offset, 0);
+         break;
+      case mskRef32Lo:
+         _compiler->writeImm16(&writer, offset, 0);
+         break;
+      default:
+         break;
+   }
+}
+
 void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
 {
    for (auto it = relocations.start(); !it.eof(); ++it) {
@@ -337,6 +357,16 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
 
             vaddress = resolveVMTMethodAddress(info.module, currentRef, info.disp);
             info.disp = 0; // NOTE : disp contains the message, so it should be cleared
+            break;
+         }
+         case mskVMTMethodOffset:
+         {
+            resolve(_loader->retrieveReferenceInfo(info.module, currentRef, mskVMTRef,
+               _forwardResolver), mskVMTRef, false);
+            pos_t offset = resolveVMTMethodOffset(info.module, currentRef, info.disp);
+            fixOffset(it.key(), info.addressMask, offset, image);
+
+            info.addressMask = 0; // clear because it is already fixed
             break;
          }
          default:
@@ -396,6 +426,17 @@ addr_t JITLinker :: resolveVMTMethodAddress(ModuleBase* module, ref_t reference,
       vaddress |= mskCodeRef;
 
    return vaddress;
+}
+
+pos_t JITLinker :: resolveVMTMethodOffset(ModuleBase* module, ref_t reference, mssg_t message)
+{
+   addr_t vmtAddress = resolve(_loader->retrieveReferenceInfo(module, reference, mskVMTRef, _forwardResolver), mskVMTRef, false);
+
+   void* vmtPtr = getVMTPtr(vmtAddress);
+
+   pos_t offset = _compiler->findMethodOffset(vmtPtr, message);
+
+   return offset;
 }
 
 addr_t JITLinker :: loadMethod(ReferenceHelperBase& refHelper, MemoryReader& reader, MemoryWriter& writer)

@@ -56,7 +56,8 @@ namespace elena_lang
       void tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef);
 
       bool validateMessage(mssg_t message);
-      void validateClassDeclaration(ClassInfo& info, bool& emptyStructure);
+      void validateClassDeclaration(ModuleScopeBase& scope, ClassInfo& info,
+         bool& emptyStructure, bool& disptacherNotAllowed);
 
       void writeDictionaryEntry(MemoryBase* section, ustr_t key, int value);
       bool readDictionary(MemoryBase* section, ReferenceMap& map);

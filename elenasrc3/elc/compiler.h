@@ -327,6 +327,8 @@ namespace elena_lang
       struct ClassScope : SourceScope
       {
          ClassInfo   info;
+         bool        abstractMode;
+         bool        abstractBasedMode;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -576,7 +578,7 @@ namespace elena_lang
 
       void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node);
       void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node);
-      void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& flags);
+      void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& fldeclaredFlagsags);
       void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode);
       void declareMethodAttributes(MethodScope& scope, SyntaxNode node);
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, ref_t& dictionaryType);
@@ -595,9 +597,10 @@ namespace elena_lang
          mssg_t publicMessage, bool protectedOne, bool internalOne);
 
       void generateClassFlags(ClassScope& scope, ref_t declaredFlags);
-      void generateMethodAttributes(ClassScope& scope, SyntaxNode node, MethodInfo& methodInfo);
+      void generateMethodAttributes(ClassScope& scope, SyntaxNode node, 
+         MethodInfo& methodInfo, bool abstractBased);
       void generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed);
-      void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey);
+      void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed);
       void generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool singleField);
       void generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField);
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
@@ -610,7 +613,7 @@ namespace elena_lang
       void declareVMTMessage(MethodScope& scope, SyntaxNode node);
 
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
-      void declareMethod(MethodScope& scope, SyntaxNode node);
+      void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode);
       void declareVMT(ClassScope& scope, SyntaxNode node);
 
       void declareSymbol(SymbolScope& scope, SyntaxNode node);
@@ -677,6 +680,7 @@ namespace elena_lang
       void compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScope& scope, 
          SyntaxNode node, bool newFrame);
 
+      void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
       void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileConstructor(BuildTreeWriter& writer, MethodScope& scope, ClassScope& classClassScope, SyntaxNode node);
       void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);

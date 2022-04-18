@@ -713,6 +713,17 @@ inline %0F9h
 
 end
 
+// ; vcallmr
+inline %0FCh
+
+  sub     x14, x10, elVMTOffset              
+  ldr     x17, [x14]
+  add     x17, x17, __arg12_1
+  ldr     x17, [x17]
+  blr     x17
+
+end
+
 // ; callmr
 inline %0FDh
 

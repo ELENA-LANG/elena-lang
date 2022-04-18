@@ -25,6 +25,7 @@ namespace elena_lang
       Class             = 0x1002,
       Method            = 0x1003,
       Tape              = 0x1004,
+      AbstractMethod    = 0x1005,
 
       OpenFrame         = 0x0001,
       CloseFrame        = 0x0002,

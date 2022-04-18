@@ -64,7 +64,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    compileOpen, loadIndexROp, compileOpen, loadIndexIndexOp, loadNewOp, loadNewNOp, loadNop, loadNop,
-   loadNop, loadFrameIndexROp, loadNop, loadNop, loadNop, loadMROp, loadCallOp, loadNop,
+   loadNop, loadFrameIndexROp, loadNop, loadNop, loadVMTROp, loadMROp, loadCallOp, loadNop,
 };
 
 // preloaded gc routines
@@ -90,7 +90,7 @@ const ref_t coreFunctions[coreFunctionNumber] =
 
 // preloaded bc commands
 
-const size_t bcCommandNumber = 27;
+const size_t bcCommandNumber = 28;
 const ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDDisp, ByteCode::CloseN, ByteCode::AllocI, 
@@ -98,7 +98,7 @@ const ByteCode bcCommands[bcCommandNumber] =
    ByteCode::OpenHeaderIN, ByteCode::CallExtR, ByteCode::MovSIFI, ByteCode::PeekFI, ByteCode::Load,  
    ByteCode::SaveSI, ByteCode::CallR, ByteCode::Quit, ByteCode::MovM, ByteCode::CallVI,
    ByteCode::StoreSI, ByteCode::Redirect, ByteCode::NewIR, ByteCode::XFlushSI, ByteCode::Copy,
-   ByteCode::NewNR, ByteCode::CallMR,
+   ByteCode::NewNR, ByteCode::CallMR, ByteCode::VCallMR
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/, 
@@ -1176,6 +1176,48 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
    writer->seekEOF();
 }
 
+void elena_lang::loadVMTROp(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   void* code = scope->compiler->_inlines[0][scope->code()];
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case ARG32_1:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodOffset,
+               scope->command.arg1, mskRef32);
+            break;
+         case ARG12_1:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodOffset,
+               scope->command.arg1, mskRef32Lo12);
+            break;
+         case ARG16_1:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodOffset,
+               scope->command.arg1, mskRef32Lo);
+            break;
+         default:
+            //else writeCoreReference();
+            break;
+      }
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
 inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, size_t length,
    const ref_t* functions, JITCompiler::PreloadedMap& map, Map<ref_t, pos_t>& positions, 
    ref_t mask, bool declarating)
@@ -1447,6 +1489,20 @@ addr_t JITCompiler32 :: findMethodAddress(void* entries, mssg_t message)
    return (addr_t)address;
 }
 
+pos_t JITCompiler32 :: findMethodOffset(void* entries, mssg_t message)
+{
+   VMTHeader32* header = (VMTHeader32*)((uintptr_t)entries - elVMTClassOffset64);
+   pos_t offset = 0;
+   for (pos_t i = 0; i < header->count; i++) {
+      if (((VMTEntry32*)entries)[i].message == message) {
+         offset = i * sizeof(VMTEntry32);
+         break;
+      }
+   }
+
+   return offset + 4;
+}
+
 pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT)
 {
    if (parentVMT) {
@@ -1694,7 +1750,7 @@ addr_t JITCompiler64 :: findMethodAddress(void* entries, mssg_t message)
 {
    // return the method address
    // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
-   VMTHeader64* header = (VMTHeader64*)((uintptr_t)entries - elVMTClassOffset32);
+   VMTHeader64* header = (VMTHeader64*)((uintptr_t)entries - elVMTClassOffset64);
 
    pos64_t address = ((VMTEntry64*)entries)[0].address;
    for (pos64_t i = 0; i < header->count; i++) {
@@ -1705,6 +1761,20 @@ addr_t JITCompiler64 :: findMethodAddress(void* entries, mssg_t message)
    }
 
    return (addr_t)address;
+}
+
+pos_t JITCompiler64 :: findMethodOffset(void* entries, mssg_t message)
+{
+   VMTHeader64* header = (VMTHeader64*)((uintptr_t)entries - elVMTClassOffset64);
+   pos_t offset = 0;
+   for (pos64_t i = 0; i < header->count; i++) {
+      if (((VMTEntry64*)entries)[i].message == message) {
+         offset = (pos_t)i * sizeof(VMTEntry64);
+         break;
+      }
+   }
+
+   return offset + 8;
 }
 
 pos_t JITCompiler64 :: copyParentVMT(void* parentVMT, void* targetVMT)

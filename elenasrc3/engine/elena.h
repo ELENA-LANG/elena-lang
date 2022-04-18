@@ -409,6 +409,7 @@ namespace elena_lang
 
       virtual pos_t getVMTLength(void* targetVMT) = 0;
       virtual addr_t findMethodAddress(void* entries, mssg_t message) = 0;
+      virtual pos_t findMethodOffset(void* entries, mssg_t message) = 0;
 
       virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength) = 0;
       virtual void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) = 0;
@@ -431,6 +432,7 @@ namespace elena_lang
       virtual void writeImm9(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm12(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm16(MemoryWriter* writer, int value, int type) = 0;
+      virtual void writeImm32(MemoryWriter* writer, int value) = 0;
 
       virtual ~JITCompilerBase() = default;
    };

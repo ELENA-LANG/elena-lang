@@ -5,6 +5,10 @@
 #let attributesSymbols["private"]     := 80004002h;
 #let attributesSymbols["protected"]   := 80004004h;
 
+/// property:
+#let attributesSymbols["sealed"]      := 80003001h;
+#let attributesSymbols["abstract"]    := 80003002h;
+
 /// scope_prefix:
 #let attributesSymbols["const"]       := 80002001h;
 #let attributesSymbols["embeddable"]  := 80002002h;
@@ -15,6 +19,7 @@
 #let attributesSymbols["symbol"]      := 80001003h;
 #let attributesSymbols["constructor"] := 80001004h;
 #let attributesSymbols["singleton"]   := 80001006h;
+#let attributesSymbols["interface"]   := 80001007h;
 #let attributesSymbols["method"]      := 80001008h;
 #let attributesSymbols["field"]       := 80001009h;
 #let attributesSymbols["var"]         := 8000100Dh;

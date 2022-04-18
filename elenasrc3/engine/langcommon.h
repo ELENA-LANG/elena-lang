@@ -20,10 +20,11 @@ namespace elena_lang
       Normal         = 0x0000003,
       Dispatcher     = 0x0000004,
 
+      Static         = 0x0004000,
+      Abstract       = 0x0020000,
+      Internal       = 0x0040000,
       Constructor    = 0x0200400,
       Conversion     = 0x0200800,
-      Static         = 0x0004000,
-      Internal       = 0x0040000,
       Protected      = 0x4000000,
       Private        = 0x8000000,
    };
@@ -52,9 +53,13 @@ namespace elena_lang
    constexpr auto errClosedMethod         = 150;
    constexpr auto errIllegalStaticMethod  = 151;
    constexpr auto errIllegalMethod        = 152;
+   constexpr auto errDispatcherInInterface= 160;
+   constexpr auto errAbstractMethodCode   = 161;
+   constexpr auto errNotAbstractClass     = 164;
    constexpr auto errDupPublicMethod      = 167;
    constexpr auto errEmptyStructure       = 169;
    constexpr auto errDupInternalMethod    = 173;
+   constexpr auto errIllegalConstructorAbstract = 177;
    constexpr auto errNoBodyMethod         = 180;
    constexpr auto errUnknownTemplate      = 181;
    constexpr auto errDupPrivateMethod     = 182;
@@ -117,6 +122,7 @@ namespace elena_lang
 
    /// property:
    constexpr auto V_SEALED                = 0x80003001u;
+   constexpr auto V_ABSTRACT              = 0x80003002u;
 
    /// scope_prefix:
    constexpr auto V_CONST                 = 0x80002001u;
@@ -128,6 +134,7 @@ namespace elena_lang
    constexpr auto V_SYMBOLEXPR            = 0x80001003u;
    constexpr auto V_CONSTRUCTOR           = 0x80001004u;
    constexpr auto V_SINGLETON             = 0x80001006u;
+   constexpr auto V_LIMITED               = 0x80001007u;
    constexpr auto V_METHOD                = 0x80001008u;
    constexpr auto V_FIELD                 = 0x80001009u;
    constexpr auto V_VARIABLE              = 0x8000100Du;

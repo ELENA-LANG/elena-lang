@@ -142,9 +142,11 @@ namespace elena_lang
 
       addr_t getVMTMethodAddress(addr_t vmtAddress, mssg_t message);
 
+      void fixOffset(pos_t position, ref_t offsetMask, int offset, MemoryBase* image);
       void fixReferences(VAddressMap& relocations, MemoryBase* image);
 
       addr_t resolveVMTMethodAddress(ModuleBase* module, ref_t reference, mssg_t message);
+      pos_t resolveVMTMethodOffset(ModuleBase* module, ref_t reference, mssg_t message);
 
       addr_t loadMethod(ReferenceHelperBase& refHelper, MemoryReader& reader, MemoryWriter& writer);
 

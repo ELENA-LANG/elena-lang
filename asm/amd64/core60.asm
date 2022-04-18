@@ -589,6 +589,14 @@ inline %0F9h
 
 end
 
+// ; vcallmr
+inline % 0FCh
+
+  mov  rax, [rbx - elVMTOffset]
+  call [rax + __arg32_1]
+
+end
+
 // ; callmr
 inline %0FDh
 

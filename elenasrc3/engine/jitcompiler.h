@@ -103,6 +103,7 @@ namespace elena_lang
       friend void loadNewOp(JITCompilerScope* scope);
       friend void loadNewNOp(JITCompilerScope* scope);
       friend void loadMROp(JITCompilerScope* scope);
+      friend void loadVMTROp(JITCompilerScope* scope);
 
       friend void compileBreakpoint(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
@@ -149,6 +150,11 @@ namespace elena_lang
          }         
       }
 
+      void writeImm32(MemoryWriter* writer, int value) override
+      {
+         writer->writeDWord(value);
+      }
+
       JITCompiler()
          : _inlines{}, _preloaded(nullptr)
       {
@@ -183,6 +189,7 @@ namespace elena_lang
 
       pos_t getVMTLength(void* targetVMT) override;
       addr_t findMethodAddress(void* entries, mssg_t message) override;
+      pos_t findMethodOffset(void* entries, mssg_t message) override;
 
       void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
@@ -233,6 +240,7 @@ namespace elena_lang
 
       pos_t getVMTLength(void* targetVMT) override;
       addr_t findMethodAddress(void* entries, mssg_t message) override;
+      pos_t findMethodOffset(void* entries, mssg_t message) override;
 
       void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength) override;
       pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
@@ -285,6 +293,7 @@ namespace elena_lang
    void loadNewOp(JITCompilerScope* scope);
    void loadNewNOp(JITCompilerScope* scope);
    void loadMROp(JITCompilerScope* scope);
+   void loadVMTROp(JITCompilerScope* scope);
 
    void compileClose(JITCompilerScope* scope);
    void compileOpen(JITCompilerScope* scope);

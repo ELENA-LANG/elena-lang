@@ -397,6 +397,7 @@ Compiler::ClassScope :: ClassScope(NamespaceScope* ns, ref_t reference, Visibili
 {
    info.header.flags = elStandartVMT;
    info.header.parentRef = moduleScope->buildins.superReference;
+   abstractMode = abstractBasedMode = false;
 }
 
 void Compiler::ClassScope :: save()
@@ -835,9 +836,14 @@ void Compiler :: checkMethodDuplicates(ClassScope& scope, SyntaxNode node, mssg_
    }
 }
 
-void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node, MethodInfo& methodInfo)
+void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node, 
+   MethodInfo& methodInfo, bool abstractBased)
 {
    mssg_t message = node.arg.reference;
+
+   if (abstractBased) {
+      methodInfo.hints &= ~((ref_t)MethodHint::Abstract);
+   }
 
    methodInfo.hints |= node.findChild(SyntaxKey::Hints).arg.reference;
 
@@ -887,7 +893,7 @@ void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node, b
    if (existing)
       methodInfo = *methodIt;
 
-   generateMethodAttributes(scope, node, methodInfo);
+   generateMethodAttributes(scope, node, methodInfo, scope.abstractBasedMode);
 
    // check if there is no duplicate method
    if (existing && !methodInfo.inherited) {
@@ -898,7 +904,7 @@ void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node, b
 
       // if the class is closed, no new methods can be declared
       // except private sealed ones (which are declared outside the class VMT)
-      if (existing && closed && !privateOne) {
+      if (!existing && closed && !privateOne) {
          IdentifierString messageName;
          ByteCodeUtil::resolveMessageName(messageName, scope.module, message);
 
@@ -919,7 +925,7 @@ void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node, b
    }
 }
 
-void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey)
+void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed)
 {
    // first pass - mark all multi-methods
    SyntaxNode current = node.firstChild();
@@ -931,7 +937,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
    current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == methodKey) {
-         generateMethodDeclaration(scope, current, test(scope.info.header.flags, elClosed));
+         generateMethodDeclaration(scope, current, closed);
       }
 
       current = current.nextNode();
@@ -1065,6 +1071,8 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node, bool si
 
 void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags)
 {
+   bool closed = test(scope.info.header.flags, elClosed);
+
    if (scope.isClassClass()) {
       
    }
@@ -1079,17 +1087,20 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
    _logic->injectVirtualCode(this, node, scope.moduleScope, scope.reference, scope.info);
 
    if (scope.isClassClass()) {
-      generateMethodDeclarations(scope, node, SyntaxKey::StaticMethod);
-      generateMethodDeclarations(scope, node, SyntaxKey::Constructor);
+      generateMethodDeclarations(scope, node, SyntaxKey::StaticMethod, false);
+      generateMethodDeclarations(scope, node, SyntaxKey::Constructor, false);
    }
    else {
-      generateMethodDeclarations(scope, node, SyntaxKey::Method);
+      generateMethodDeclarations(scope, node, SyntaxKey::Method, closed);
    }
 
    bool emptyStructure = false;
-   _logic->validateClassDeclaration(scope.info, emptyStructure);
+   bool customDispatcher = false;
+   _logic->validateClassDeclaration(*scope.moduleScope, scope.info, emptyStructure, customDispatcher);
    if (emptyStructure)
       scope.raiseError(errEmptyStructure, node.findChild(SyntaxKey::Name));
+   if (customDispatcher)
+      scope.raiseError(errDispatcherInInterface, node.findChild(SyntaxKey::Name));
 
    _logic->tweakClassFlags(scope.info, scope.isClassClass());
 }
@@ -1294,7 +1305,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node)
    }
 }
 
-void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node)
+void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool abstractMode)
 {
    if (methodScope.info.hints)
       node.appendChild(SyntaxKey::Hints, methodScope.info.hints);
@@ -1303,7 +1314,11 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node)
       node.setKey(SyntaxKey::StaticMethod);
    }
    else if (methodScope.checkHint(MethodHint::Constructor)) {
-      node.setKey(SyntaxKey::Constructor);
+      if (abstractMode) {
+         // abstract class cannot have public constructors
+         methodScope.raiseError(errIllegalConstructorAbstract, node);
+      }
+      else node.setKey(SyntaxKey::Constructor);
    }
 
    SyntaxNode current = node.firstChild();
@@ -1330,7 +1345,7 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node)
             else methodScope.message = current.arg.reference;
 
             declareMethodMetaInfo(methodScope, current);
-            declareMethod(methodScope, current);
+            declareMethod(methodScope, current, scope.abstractMode);
 
             if (!_logic->validateMessage(methodScope.message)) {
                scope.raiseError(errIllegalMethod, current);
@@ -1360,16 +1375,16 @@ void Compiler :: declareClassClass(ClassScope& classClassScope, SyntaxNode node)
 
 void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
 {
-   ref_t flags = scope.info.header.flags;
-   declareClassAttributes(scope, node, flags);
-
    resolveClassParent(scope, node.findChild(SyntaxKey::Parent)/*, extensionDeclaration, lxParent*/);
+
+   ref_t declaredFlags = 0;
+   declareClassAttributes(scope, node, declaredFlags);
 
    declareVMT(scope, node);
 
    // NOTE : generateClassDeclaration should be called for the proper class before a class class one
    //        due to dynamic array implementation (auto-generated default constructor should be removed)
-   generateClassDeclaration(scope, node, flags);
+   generateClassDeclaration(scope, node, declaredFlags);
 
    if (_logic->isRole(scope.info)) {
       // class is its own class class
@@ -1750,6 +1765,16 @@ void Compiler :: declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_
 
       current = current.nextNode();
    }
+
+   // handle the abstract flag
+   if (test(scope.info.header.flags, elAbstract)) {
+      if (!test(flags, elAbstract)) {
+         scope.abstractBasedMode = true;
+         scope.info.header.flags &= ~elAbstract;
+      }
+      else scope.abstractMode = true;
+   }
+   else scope.abstractMode = test(flags, elAbstract);
 }
 
 inline bool isMethodKind(ref_t hint)
@@ -2790,6 +2815,20 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
    writer.appendNode(BuildKey::CloseFrame);
 }
 
+void Compiler :: compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode)
+{
+   SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
+   if (current.key == SyntaxKey::WithoutBody) {
+      // NOTE : abstract method should not have a body
+      if (!abstractMode)
+         scope.raiseError(errNotAbstractClass, node);
+   }
+   else scope.raiseError(errAbstractMethodCode, node);
+
+   writer.newNode(BuildKey::AbstractMethod, scope.message);
+   writer.closeNode();
+}
+
 void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
    beginMethod(writer, scope, BuildKey::Method);
@@ -2913,9 +2952,14 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
          {
             MethodScope methodScope(&scope);
             methodScope.message = current.arg.reference;
+            methodScope.info = scope.info.methods.get(methodScope.message);
 
             declareVMTMessage(methodScope, current);
-            compileMethod(writer, methodScope, current);
+
+            if (methodScope.checkHint(MethodHint::Abstract)) {
+               compileAbstractMethod(writer, methodScope, current, scope.abstractMode);
+            }
+            else compileMethod(writer, methodScope, current);
             break;
          }
          case SyntaxKey::Constructor:
@@ -3002,6 +3046,7 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
          {
             ClassScope classScope(&ns, current.arg.reference, ns.defaultVisibility);
             ns.moduleScope->loadClassInfo(classScope.info, current.arg.reference, false);
+            classScope.abstractMode = test(classScope.info.header.flags, elAbstract);
 
             compileClass(writer, classScope, current);
 

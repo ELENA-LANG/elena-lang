@@ -86,19 +86,21 @@ namespace elena_lang
    constexpr auto TEMPLATE_PREFIX_NS_LEN = (sizeof(TEMPLATE_PREFIX_NS) - 1);
 
    // --- ELENA VMT flags ---
-   constexpr ref_t elStandartVMT       = 0x00000001;
-   constexpr ref_t elClassClass        = 0x00000002;
-   constexpr ref_t elStateless         = 0x00000004;
-   constexpr ref_t elFinal             = 0x00000008;
-   constexpr ref_t elClosed            = 0x00000010;
-   constexpr ref_t elSealed            = 0x00000038;
-   constexpr ref_t elRole              = 0x00000100;
-   constexpr ref_t elStructureRole     = 0x00000838;
-   constexpr ref_t elReadOnlyRole      = 0x00001000;
-   constexpr ref_t elNonStructureRole  = 0x00002000;
-   constexpr ref_t elWrapper           = 0x00004000;
-   constexpr ref_t elStructureWrapper  = 0x00004800;
-   constexpr ref_t elDynamicRole       = 0x00008000;
+   constexpr ref_t elStandartVMT          = 0x00000001;
+   constexpr ref_t elClassClass           = 0x00000002;
+   constexpr ref_t elStateless            = 0x00000004;
+   constexpr ref_t elFinal                = 0x00000008;
+   constexpr ref_t elClosed               = 0x00000010;
+   constexpr ref_t elSealed               = 0x00000038;
+   constexpr ref_t elRole                 = 0x00000100;
+   constexpr ref_t elAbstract             = 0x00000200;
+   constexpr ref_t elNoCustomDispatcher   = 0x00000400;
+   constexpr ref_t elStructureRole        = 0x00000838;
+   constexpr ref_t elReadOnlyRole         = 0x00001000;
+   constexpr ref_t elNonStructureRole     = 0x00002000;
+   constexpr ref_t elWrapper              = 0x00004000;
+   constexpr ref_t elStructureWrapper     = 0x00004800;
+   constexpr ref_t elDynamicRole          = 0x00008000;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -194,6 +196,7 @@ namespace elena_lang
    constexpr ref_t mskMetaAttributesRef   = 0x0D000000u;
    constexpr ref_t mskLiteralRef          = 0x0E000000u;   // reference to constant literal
    constexpr ref_t mskVMTMethodAddress    = 0x0F000000u;
+   constexpr ref_t mskVMTMethodOffset     = 0x10000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

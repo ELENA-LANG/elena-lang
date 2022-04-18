@@ -417,6 +417,10 @@ void ByteCodeWriter :: saveVMT(BuildNode node, Scope& scope)
          }
          else saveProcedure(current, scope, true);
       }
+      else if (current == BuildKey::AbstractMethod) {
+         MethodEntry entry = { current.arg.reference, INVALID_POS };
+         scope.vmt->write(&entry, sizeof(MethodEntry));
+      }
 
       current = current.nextNode();
    }

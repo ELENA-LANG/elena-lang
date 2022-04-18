@@ -811,6 +811,16 @@ inline %0F9h
 
 end
 
+// ; vcallmr
+inline % 0FCh
+
+  ld       r16, -elVMTOffset(r15)     
+  ld       r17, __arg16_1(r16)
+  mtctr    r17            // ; put code address into ctr
+  bctrl                   // ; and call it
+
+end
+
 // ; callmr
 inline %0FDh
 

@@ -181,6 +181,15 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_SINGLETON:
          flags = elRole | elSealed | elStateless;
          break;
+      case V_LIMITED:
+         flags = (elClosed | elAbstract | elNoCustomDispatcher);
+         break;
+      case V_ABSTRACT:
+         flags = elAbstract;
+         break;
+      case 0:
+         // ignore idle
+         break;
       default:
          return false;
    }
@@ -237,6 +246,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_CONSTRUCTOR:
          explicitMode = true;
          hint = (ref_t)MethodHint::Constructor;
+         break;
+      case V_ABSTRACT:
+         hint = (ref_t)MethodHint::Abstract;
          break;
       default:
          return false;
@@ -297,11 +309,19 @@ bool CompilerLogic :: validateMessage(mssg_t message)
    return true;
 }
 
-void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& emptyStructure)
+void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ClassInfo& info, 
+   bool& emptyStructure, bool& disptacherNotAllowed)
 {
    // a structure class should contain fields
    if (test(info.header.flags, elStructureRole) && info.size == 0)
       emptyStructure = true;
+
+   // interface class cannot have a custom dispatcher method
+   if (test(info.header.flags, elNoCustomDispatcher)) {
+      auto dispatchInfo = info.methods.get(scope.buildins.dispatch_message);
+
+      disptacherNotAllowed = !dispatchInfo.inherited;
+   }
 }
 
 bool CompilerLogic :: isRole(ClassInfo& info)

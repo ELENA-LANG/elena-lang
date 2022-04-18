@@ -1,5 +1,15 @@
 import system;
 
+interface X
+{
+    abstract x();
+}
+
+XX : X
+{
+   x() {} 
+}
+
 public singleton WinOutput
 {
    method output()

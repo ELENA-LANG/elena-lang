@@ -260,6 +260,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addSecondRArg(command.arg2, commandStr);
             break;
          case ByteCode::CallMR:
+         case ByteCode::VCallMR:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
             addSecondRArg(command.arg2, commandStr);
