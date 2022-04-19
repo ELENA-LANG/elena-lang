@@ -78,7 +78,7 @@ void sendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 
    pos_t argCount = getArgCount(node.arg.reference);
    if ((int)argCount < tapeScope.scope->minimalArgList) {
-      for (int i = 0; i < tapeScope.scope->minimalArgList; i++) {
+      for (int i = argCount; i < tapeScope.scope->minimalArgList; i++) {
          tape.write(ByteCode::XStoreSIR, i, 0);
       }
    }

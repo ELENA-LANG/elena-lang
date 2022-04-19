@@ -369,14 +369,14 @@ end
 // ; xflushsi 0
 inline %1A4h
 
-  std     r3, 8(r1)  
+  std     r3, 0(r1)  
 
 end 
 
 // ; xflushsi 1
 inline %2A4h
 
-  std     r4, 16(r1)
+  std     r4, 8(r1)
 
 end 
 

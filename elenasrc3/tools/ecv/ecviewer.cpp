@@ -149,7 +149,7 @@ void ByteCodeViewer :: printLineAndCount(ustr_t arg1, ustr_t arg2, int& row, int
 void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 {
    ref_t mask = arg & mskAnyRef;
-   ustr_t referenceName = _module->resolveReference(arg & ~mskAnyRef);
+   ustr_t referenceName = arg ? _module->resolveReference(arg & ~mskAnyRef) : nullptr;
    switch (mask) {
       case mskArrayRef:
          commandStr.append("array:");
@@ -171,10 +171,17 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
          commandStr.append(":");
          break;
    }
-   if (isWeakReference(referenceName))
-      commandStr.append(_module->name());
 
-   commandStr.append(referenceName);
+   if (!arg) {
+      commandStr.append("0");
+   }
+   else {
+      if (isWeakReference(referenceName))
+         commandStr.append(_module->name());
+
+      commandStr.append(referenceName);
+   }
+
 }
 
 void ByteCodeViewer :: addSecondRArg(arg_t arg, IdentifierString& commandStr)
