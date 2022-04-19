@@ -378,6 +378,8 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
 
                addJump(command.arg1, index, labels, jumps, fixes);
                break;
+            default:
+               break;
          }
 
          index++;
