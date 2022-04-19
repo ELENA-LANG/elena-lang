@@ -28,7 +28,7 @@ OBJDIR_RELEASE = ../../../temp/asm64-cli/
 DEP_RELEASE = 
 OUT_RELEASE = ../../../../bin/asm64-cli
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/section.o $(OBJDIR_RELEASE)/__/asmc.o $(OBJDIR_RELEASE)/__/assembler.o $(OBJDIR_RELEASE)/__/x86assembler.o $(OBJDIR_RELEASE)/__/ppc64assembler.o  $(OBJDIR_RELEASE)/__/armassembler.o $(OBJDIR_RELEASE)/__/bcassembler.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/section.o $(OBJDIR_RELEASE)/__/asmc.o $(OBJDIR_RELEASE)/__/assembler.o $(OBJDIR_RELEASE)/__/x86assembler.o $(OBJDIR_RELEASE)/__/ppc64assembler.o  $(OBJDIR_RELEASE)/__/armassembler.o $(OBJDIR_RELEASE)/__/bcassembler.o $(OBJDIR_RELEASE)/__/__/__/engine/x86helper.o
 
 all: release
 
@@ -79,6 +79,9 @@ $(OBJDIR_RELEASE)/__/assembler.o  : ../assembler.cpp
 
 $(OBJDIR_RELEASE)/__/x86assembler.o  : ../x86assembler.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../x86assembler.cpp -o $(OBJDIR_RELEASE)/__/x86assembler.o
+
+$(OBJDIR_RELEASE)/__/__/__/engine/x86helper.o: ../../../engine/x86helper.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/x86helper.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/x86helper.o
 
 $(OBJDIR_RELEASE)/__/ppc64assembler.o  : ../ppc64assembler.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../ppc64assembler.cpp -o $(OBJDIR_RELEASE)/__/ppc64assembler.o
