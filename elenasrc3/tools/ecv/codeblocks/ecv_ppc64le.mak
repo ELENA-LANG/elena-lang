@@ -28,7 +28,7 @@ OBJDIR_RELEASE = ../../../temp/ecv64-cli/
 DEP_RELEASE = 
 OUT_RELEASE = ../../../../bin/ecv64-cli
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/__/engine/section.o $(OBJDIR_RELEASE)/__/ecviewer.o $(OBJDIR_RELEASE)/__/linux/ecv.o $(OBJDIR_RELEASE)/__/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/__/common/xmltree.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/__/engine/section.o $(OBJDIR_RELEASE)/__/ecviewer.o $(OBJDIR_RELEASE)/__/linux/ecv.o $(OBJDIR_RELEASE)/__/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/__/common/xmltree.o $(OBJDIR_RELEASE)/__/__/__/common/config.o
 
 all: release
 
