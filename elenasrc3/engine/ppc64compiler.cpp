@@ -9,11 +9,12 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "ppc64compiler.h"
+#include "ppchelper.h"
 
 using namespace elena_lang;
 
 constexpr auto OverloadsCount = 3;
-const Pair<ByteCode, CodeGenerator, ByteCode::None> Overloads[OverloadsCount] =
+const Pair<ByteCode, CodeGenerator, ByteCode::None, nullptr> Overloads[OverloadsCount] =
 {
    { ByteCode::CallExtR, PPC64loadCallOp},
    { ByteCode::OpenIN, PPC64compileOpenIN},

@@ -10,6 +10,7 @@
 #define PPC64COMPILER_H
 
 #include "jitcompiler.h"
+#include "ppchelper.h"
 
 namespace elena_lang
 {
