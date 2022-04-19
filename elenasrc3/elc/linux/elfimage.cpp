@@ -417,7 +417,6 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
       pos_t relPosition = reltabWriter.position() - reltabOffset;
       reltabWriter.writeQReference(importRef, gotPosition);
       reltabWriter.writeQWord((symbolIndex << 32) + relocateType);
-      reltabWriter.writeQWord(0);
 
       // string table entry
       strWriter.writeString(fun.key());
