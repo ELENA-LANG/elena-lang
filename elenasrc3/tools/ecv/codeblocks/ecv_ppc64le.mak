@@ -28,7 +28,7 @@ OBJDIR_RELEASE = ../../../temp/ecv64-cli/
 DEP_RELEASE = 
 OUT_RELEASE = ../../../../bin/ecv64-cli
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/__/engine/section.o $(OBJDIR_RELEASE)/__/ecviewer.o $(OBJDIR_RELEASE)/__/linux/ecv.o $(OBJDIR_RELEASE)/__/__/__/engine/libman.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/__/engine/section.o $(OBJDIR_RELEASE)/__/ecviewer.o $(OBJDIR_RELEASE)/__/linux/ecv.o $(OBJDIR_RELEASE)/__/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/__/common/xmltree.o
 
 all: release
 
@@ -74,6 +74,12 @@ $(OBJDIR_RELEASE)/__/ecviewer.o  : ../ecviewer.cpp
 
 $(OBJDIR_RELEASE)/__/linux/ecv.o  : ../linux/ecv.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/ecv.cpp -o $(OBJDIR_RELEASE)/__/linux/ecv.o
+
+$(OBJDIR_RELEASE)/__/__/__/common/paths.o: ../../../common/paths.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/paths.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/paths.o
+
+$(OBJDIR_RELEASE)/__/__/__/common/xmltree.o: ../../../common/xmltree.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/xmltree.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/xmltree.o
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
