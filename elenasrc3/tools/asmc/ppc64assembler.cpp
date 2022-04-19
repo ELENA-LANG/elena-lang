@@ -390,7 +390,7 @@ void PPC64Assembler :: compileBxx(int offset, int aa, int lk, MemoryWriter& writ
 
 void PPC64Assembler :: compileBCxx(int bo, int bi, int bd, int aa, int lk, MemoryWriter& writer)
 {
-   writer.writeDWord(PPCHelper::makeBCommand(16, bo, bi, bd, aa, lk));
+   writer.writeDWord(PPCHelper::makeBCommand(16, bo, bi, bd >> 2, aa, lk));
 }
 
 void PPC64Assembler :: compileRLDICL(PPCOperand ra, PPCOperand rs, int sh, int mb, MemoryWriter& writer)
