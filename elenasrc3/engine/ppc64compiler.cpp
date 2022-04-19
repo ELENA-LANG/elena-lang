@@ -74,7 +74,28 @@ void elena_lang::PPC64loadCallOp(JITCompilerScope* scope)
 //         break;
 //   }
 
-   void* code = ((PPC64leJITCompiler*)scope->compiler)->_inlines[0][scope->code()];
+   void* code = nullptr;
+   switch (scope->command.arg2) {
+      case 0:
+         code = ((PPC64leJITCompiler*)scope->compiler)->_inlines[1][scope->code()];
+         break;
+      case 1:
+         code = ((PPC64leJITCompiler*)scope->compiler)->_inlines[2][scope->code()];
+         break;
+      case 2:
+         code = ((PPC64leJITCompiler*)scope->compiler)->_inlines[3][scope->code()];
+         break;
+      case 3:
+         code = ((PPC64leJITCompiler*)scope->compiler)->_inlines[4][scope->code()];
+         break;
+      case 4:
+         code = ((PPC64leJITCompiler*)scope->compiler)->_inlines[5][scope->code()];
+         break;
+      default:
+         code = ((PPC64leJITCompiler*)scope->compiler)->_inlines[0][scope->code()];
+         break;
+   }
+
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
 
@@ -134,6 +155,7 @@ void PPC64leJITCompiler:: prepare(
    LibraryLoaderBase* loader, 
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
+   LabelHelperBase*,
    JITSettings settings)
 {
    //_inlineMask = mskCodeRelRef32;
@@ -144,7 +166,8 @@ void PPC64leJITCompiler:: prepare(
    for (size_t i = 0; i < OverloadsCount; i++)
       commands[(int)Overloads[i].value1] = Overloads[i].value2;
 
-   JITCompiler64::prepare(loader, imageProvider, helper, settings);
+   PPCLabelHelper labelHelper;
+   JITCompiler64::prepare(loader, imageProvider, helper, &labelHelper, settings);
 }
 
 void PPC64leJITCompiler:: alignCode(MemoryWriter& writer, pos_t alignment, bool isText)
@@ -158,9 +181,12 @@ void PPC64leJITCompiler:: alignCode(MemoryWriter& writer, pos_t alignment, bool 
    else writer.align(alignment, 0x00);
 }
 
-void PPC64leJITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter)
+void PPC64leJITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter, 
+   LabelHelperBase*)
 {
-   JITCompiler::compileProcedure(helper, bcReader, codeWriter);
+   PPCLabelHelper labelHelper;
+
+   JITCompiler::compileProcedure(helper, bcReader, codeWriter, &labelHelper);
 
    alignCode(codeWriter, 0x08, true);
 }

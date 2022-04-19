@@ -21,6 +21,7 @@ namespace elena_lang
          LibraryLoaderBase* loader, 
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
+         LabelHelperBase* lh,
          JITSettings settings) override;
 
       friend void PPC64loadCallOp(JITCompilerScope* scope);
@@ -33,8 +34,10 @@ namespace elena_lang
 
       void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) override;
 
-      void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter) override;
-      void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter) override;
+      void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+         MemoryWriter& codeWriter, LabelHelperBase* lh) override;
+      void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter, 
+         LabelHelperBase* lh) override;
 
       PPC64leJITCompiler()
          : JITCompiler64()
