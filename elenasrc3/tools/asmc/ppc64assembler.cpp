@@ -395,7 +395,7 @@ void PPC64Assembler :: compileBCxx(int bo, int bi, int bd, int aa, int lk, Memor
 
 void PPC64Assembler :: compileRLDICL(PPCOperand ra, PPCOperand rs, int sh, int mb, MemoryWriter& writer)
 {
-   writer.writeDWord(PPCHelper::makeMDCommand(30, rs.type, ra.type, sh & 0x1F, mb, 0, 
+   writer.writeDWord(PPCHelper::makeMDCommand(30, rs.type, ra.type, sh & 0x1F, mb << 1, 0, 
       sh >> 5, 0));
 }
 

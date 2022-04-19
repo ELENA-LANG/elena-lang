@@ -75,6 +75,9 @@ end
 // ; in: r18 - size ; out: r15 - created object
 inline % GC_ALLOC
 
+  rldicl r0, r0, 60, 4
+
+
   ld      r19, toc_gctable(r2)
   ld      r17, gc_yg_current(r19) 
   ld      r16, gc_yg_end(r19) 

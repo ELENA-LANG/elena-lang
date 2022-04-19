@@ -210,7 +210,9 @@ void ElfPPC64leImageFormatter :: writePLTStartEntry(MemoryWriter& codeWriter, re
    codeWriter.writeDWord(0xe98b0000);
    // rldicl r0, r0, 60, 4
    //codeWriter.writeDWord(0x7800F082);
-   codeWriter.writeDWord(0x7800e082);
+   codeWriter.writeDWord(0x7800e102);
+   
+
    // ; Branch to resolver
    // mtctr r12
    codeWriter.writeDWord(0x7d8903a6);
