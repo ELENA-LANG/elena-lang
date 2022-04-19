@@ -292,6 +292,9 @@ namespace elena_lang
    constexpr ref_t DEBUG_LINEINFO_ID      = -1;
    constexpr ref_t DEBUG_STRINGS_ID       = -2;
 
+   // === ELENA Error codes ===
+   constexpr auto errNotImplemented = -3;
+
 } // _ELENA_
 
 #endif // ELENACONST_H

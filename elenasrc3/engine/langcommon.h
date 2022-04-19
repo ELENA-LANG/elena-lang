@@ -95,7 +95,6 @@ namespace elena_lang
 
    constexpr auto errFatalError       = -1;
    constexpr auto errFatalLinker      = -2;
-   constexpr auto errNotImplemented   = -3;
    constexpr auto errCorruptedVMT     = -4;
 
    // --- Project warning levels
