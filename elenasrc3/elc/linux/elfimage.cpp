@@ -423,7 +423,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
       strWriter.writeString(fun.key());
 
       // got / plt entry
-      pos_t position = writePLTEntry(codeWriter, relPosition, importRelRef, gotPosition, pltIndex);
+      pos_t position = writePLTEntry(codeWriter, /*relPosition*/pltIndex - 1, importRelRef, gotPosition, pltIndex);
       gotWriter.writeQReference(mskCodeRef64, position);
 
       symbolIndex++;
