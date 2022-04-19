@@ -190,6 +190,7 @@ end
 // ; callext
 inline %3FEh
 
+  mov  rcx, [rsp+16]
   mov  rdx, [rsp+16]
   mov  rsi, r11
   mov  rdi, r10
