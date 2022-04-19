@@ -93,15 +93,15 @@ const ref_t coreFunctions[coreFunctionNumber] =
 const size_t bcCommandNumber = 28;
 const ByteCode bcCommands[bcCommandNumber] =
 {
-   ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDDisp, ByteCode::CloseN, ByteCode::AllocI, 
-   ByteCode::FreeI, ByteCode::SaveDDisp, ByteCode::StoreFI, ByteCode::OpenIN, ByteCode::XStoreSIR, 
-   ByteCode::OpenHeaderIN, ByteCode::CallExtR, ByteCode::MovSIFI, ByteCode::PeekFI, ByteCode::Load,  
+   ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDDisp, ByteCode::CloseN, ByteCode::AllocI,
+   ByteCode::FreeI, ByteCode::SaveDDisp, ByteCode::StoreFI, ByteCode::OpenIN, ByteCode::XStoreSIR,
+   ByteCode::OpenHeaderIN, ByteCode::CallExtR, ByteCode::MovSIFI, ByteCode::PeekFI, ByteCode::Load,
    ByteCode::SaveSI, ByteCode::CallR, ByteCode::Quit, ByteCode::MovM, ByteCode::CallVI,
    ByteCode::StoreSI, ByteCode::Redirect, ByteCode::NewIR, ByteCode::XFlushSI, ByteCode::Copy,
    ByteCode::NewNR, ByteCode::CallMR, ByteCode::VCallMR
 };
 
-void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/, 
+void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/,
    pos_t disp, void* code)
 {
    // references should be already preloaded
@@ -212,7 +212,7 @@ void elena_lang :: allocateCode(JITCompilerScope* scope, void* code)
 void elena_lang :: loadCode(JITCompilerScope* scope, void* code)
 {
    MemoryWriter* writer = scope->codeWriter;
-   
+
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
 
@@ -430,7 +430,7 @@ void elena_lang::loadFrameIndexOp(JITCompilerScope* scope)
                0);
             break;
          case ARG9_1:
-            scope->compiler->writeImm9(writer, 
+            scope->compiler->writeImm9(writer,
                getFPOffset(scope->command.arg1 << scope->constants->indexPower, scope->frameOffset),
                0);
             break;
@@ -472,11 +472,11 @@ void elena_lang::loadFrameDispOp(JITCompilerScope* scope)
             writer->writeWord(getFPOffset(scope->command.arg1, scope->constants->dataOffset));
             break;
          case ARG12_1:
-            scope->compiler->writeImm12(writer, getFPOffset(scope->command.arg1, 
+            scope->compiler->writeImm12(writer, getFPOffset(scope->command.arg1,
                scope->constants->dataOffset), 0);
             break;
          case ARG9_1:
-            scope->compiler->writeImm9(writer, getFPOffset(scope->command.arg1, 
+            scope->compiler->writeImm9(writer, getFPOffset(scope->command.arg1,
                scope->constants->dataOffset), 0);
             break;
          default:
@@ -716,7 +716,7 @@ void elena_lang :: loadCallROp(JITCompilerScope* scope)
          default:
             //else writeCoreReference();
             break;
-      }      
+      }
 
       entries++;
       count--;
@@ -930,7 +930,7 @@ void elena_lang::loadIndexNOp(JITCompilerScope* scope)
             scope->compiler->writeImm16(writer, scope->command.arg2, 0);
             break;
          case INV_NARG16_2:
-            scope->compiler->writeImm16(writer, scope->command.arg2, INV_ARG);            
+            scope->compiler->writeImm16(writer, scope->command.arg2, INV_ARG);
             break;
          default:
             writeCoreReference(scope, entries->reference, entries->offset, code);
@@ -1136,32 +1136,32 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case PTR32_2:
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress, 
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
                scope->command.arg1, mskRef32);
             break;
          case RELPTR32_2:
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress, 
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
                scope->command.arg1, mskRelRef32);
             break;
          case DISP32HI_2:
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress, 
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
                scope->command.arg1, mskDisp32Hi);
             break;
          case DISP32LO_2:
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress, 
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
                scope->command.arg1, mskDisp32Lo);
             break;
          case PTR32HI_2:
          {
             short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress, 
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
                scope->command.arg1, mskRef32Hi);
             break;
          }
          case PTR32LO_2:
          {
             short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress, 
+            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
                scope->command.arg1, mskRef32Lo);
             break;
          }
@@ -1219,7 +1219,7 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
 }
 
 inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, size_t length,
-   const ref_t* functions, JITCompiler::PreloadedMap& map, Map<ref_t, pos_t>& positions, 
+   const ref_t* functions, JITCompiler::PreloadedMap& map, Map<ref_t, pos_t>& positions,
    ref_t mask, bool declarating)
 {
    for (size_t i = 0; i < length; i++) {
@@ -1296,7 +1296,7 @@ void elena_lang::compileJump(JITCompilerScope* scope)
 
 // --- JITCompiler ---
 
-JITCompilerScope :: JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, LabelHelperBase* lh, 
+JITCompilerScope :: JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, LabelHelperBase* lh,
    MemoryWriter* writer, JITConstants* constants)
 {
    this->helper = helper;
@@ -1331,12 +1331,12 @@ void JITCompiler :: loadCoreRoutines(
    // preload variables
    JITCompilerScope dataScope(helper, this, lh, &dataWriter, &_constants);
    loadPreloaded(
-      dataScope, loader, coreVariableNumber, coreVariables, 
+      dataScope, loader, coreVariableNumber, coreVariables,
       _preloaded, positions, _constants.inlineMask, declareMode);
 
    // preload core constants
    JITCompilerScope rdataScope(helper, this, lh, &rdataWriter, &_constants);
-   loadPreloaded(rdataScope, loader, coreConstantNumber, coreConstants, 
+   loadPreloaded(rdataScope, loader, coreConstantNumber, coreConstants,
       _preloaded, positions, _constants.inlineMask, declareMode);
    // NOTE : SYSTEM_ENV table is tailed with GCMGSize,GCYGSize,GCPERMSize,MaxThread
    rdataWriter.writeDWord(settings.mgSize);
@@ -1344,13 +1344,13 @@ void JITCompiler :: loadCoreRoutines(
 
    // preload core functions
    JITCompilerScope scope(helper, this, lh, &codeWriter, &_constants);
-   loadPreloaded(scope, loader, coreFunctionNumber, coreFunctions, _preloaded, positions, 
+   loadPreloaded(scope, loader, coreFunctionNumber, coreFunctions, _preloaded, positions,
       _constants.inlineMask, declareMode);
 }
 
 void JITCompiler :: prepare(
-   LibraryLoaderBase* loader, 
-   ImageProviderBase* imageProvider, 
+   LibraryLoaderBase* loader,
+   ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
    JITSettings settings)
@@ -1375,7 +1375,7 @@ void JITCompiler :: writeArgAddress(JITCompilerScope* scope, arg_t arg, pos_t of
    scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(), (ref_t)arg, offset, addressMask);
 }
 
-void JITCompiler :: compileTape(ReferenceHelperBase* helper, MemoryReader& bcReader, pos_t endPos, 
+void JITCompiler :: compileTape(ReferenceHelperBase* helper, MemoryReader& bcReader, pos_t endPos,
    MemoryWriter& codeWriter, LabelHelperBase* lh)
 {
    CodeGenerator*   generators = codeGenerators();
@@ -1388,7 +1388,7 @@ void JITCompiler :: compileTape(ReferenceHelperBase* helper, MemoryReader& bcRea
    }
 }
 
-void JITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+void JITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader,
    MemoryWriter& codeWriter, LabelHelperBase* lh)
 {
    pos_t codeSize = bcReader.getPos();
@@ -1397,7 +1397,7 @@ void JITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryReader& 
    compileTape(helper, bcReader, endPos, codeWriter, lh);
 }
 
-void JITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+void JITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader,
    MemoryWriter& codeWriter, LabelHelperBase* lh)
 {
    pos_t codeSize = bcReader.getPos();
@@ -1416,8 +1416,8 @@ inline void insertVMTEntry32(VMTEntry32* entries, pos_t count, pos_t index)
 }
 
 void JITCompiler32 :: prepare(
-   LibraryLoaderBase* loader, 
-   ImageProviderBase* imageProvider, 
+   LibraryLoaderBase* loader,
+   ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
    JITSettings settings)
@@ -1522,7 +1522,7 @@ pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT)
    else return 0;
 }
 
-void JITCompiler32 :: allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
+void JITCompiler32 :: allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length,
    bool structMode, bool virtualMode)
 {
    alignCode(writer, _constants.alignmentVA, false);
@@ -1560,7 +1560,7 @@ void JITCompiler32 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targ
    entries[index].address = (pos_t)codeAddress;
 }
 
-void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
+void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress,
    ref_t flags, pos_t count, bool virtualMode)
 {
    pos_t position = vmtWriter.position();
@@ -1573,7 +1573,7 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
       header.parentRef = (pos_t)parentAddress;
       header.classRef = (pos_t)classClassAddress;
    }
-   
+
    vmtWriter.write(&header, sizeof(VMTHeader32));
 
    if (virtualMode) {
@@ -1599,7 +1599,7 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
    vmtWriter.seek(position);
 }
 
-pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName, 
+pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName,
    ref_t weakActionRef, ref_t signature)
 {
    pos_t actionRef = messageWriter.position() >> 3;
@@ -1657,7 +1657,9 @@ void JITCompiler32 :: addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWrit
    if (!virtualMode) {
       MemoryBase* image = codeWriter.Memory();
 
-      writer.writeDWord((unsigned int)image->get(codeWriter.position()));
+      addr_t address = (addr_t)image->get(codeWriter.position());
+
+      writer.writeDWord((unsigned int)address);
    }
    else writer.writeDReference(mskCodeRef32, codeWriter.position());
 }
@@ -1691,8 +1693,8 @@ inline void insertVMTEntry64(VMTEntry64* entries, pos_t count, pos_t index)
 }
 
 void JITCompiler64 :: prepare(
-   LibraryLoaderBase* loader, 
-   ImageProviderBase* imageProvider, 
+   LibraryLoaderBase* loader,
+   ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
    JITSettings settings)
@@ -1818,7 +1820,7 @@ void JITCompiler64 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targ
    entries[index].address = codeAddress;
 }
 
-void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
+void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress,
    ref_t flags, pos_t count, bool virtualMode)
 {
    pos_t position = vmtWriter.position();
@@ -1856,7 +1858,7 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
    vmtWriter.seek(position);
 }
 
-pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName, 
+pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName,
    ref_t weakActionRef, ref_t signature)
 {
    pos_t actionRef = messageWriter.position() >> 4;
@@ -1899,7 +1901,7 @@ pos_t JITCompiler64 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress
    return position;
 }
 
-void JITCompiler64 :: allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
+void JITCompiler64 :: allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length,
    bool structMode, bool virtualMode)
 {
    alignCode(writer, _constants.alignmentVA, false);
