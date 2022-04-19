@@ -135,8 +135,8 @@ namespace elena_lang
 
       void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
          MemoryWriter& codeWriter, LabelHelperBase* lh) override;
-      void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter
-         , LabelHelperBase* lh) override;
+      void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter, 
+         LabelHelperBase* lh) override;
 
       void writeImm16(MemoryWriter* writer, int value, int type) override
       {

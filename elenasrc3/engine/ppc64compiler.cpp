@@ -165,9 +165,12 @@ void PPC64leJITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryR
    alignCode(codeWriter, 0x08, true);
 }
 
-void PPC64leJITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter)
+void PPC64leJITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+   MemoryWriter& codeWriter, LabelHelperBase*)
 {
-   JITCompiler64::compileSymbol(helper, bcReader, codeWriter);
+   PPCLabelHelper labelHelper;
+
+   JITCompiler64::compileSymbol(helper, bcReader, codeWriter, &labelHelper);
 
    alignCode(codeWriter, 0x08, true);
 }

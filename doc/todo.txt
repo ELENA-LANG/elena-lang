@@ -7,7 +7,7 @@ In development:
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
 
-    * >print message using external routine - i386, amd64, ppc64le, arm64
+    * >print message using external routine - ppc64le, arm64
     --- ide redux ---
     * linux textview - show text
     * linux sdi - menu
