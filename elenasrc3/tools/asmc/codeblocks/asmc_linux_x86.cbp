@@ -90,6 +90,8 @@
 		<Unit filename="../../../engine/scriptreader.h" />
 		<Unit filename="../../../engine/section.cpp" />
 		<Unit filename="../../../engine/section.h" />
+		<Unit filename="../../../engine/x86helper.cpp" />
+		<Unit filename="../../../engine/x86helper.h" />
 		<Unit filename="../armassembler.cpp" />
 		<Unit filename="../armassembler.h" />
 		<Unit filename="../asmc.cpp" />

@@ -73,14 +73,22 @@
 			<Add directory="../../../engine" />
 			<Add directory="../../../common" />
 		</Compiler>
+		<Unit filename="../../../common/config.cpp" />
+		<Unit filename="../../../common/config.h" />
 		<Unit filename="../../../common/dump.cpp" />
 		<Unit filename="../../../common/dump.h" />
 		<Unit filename="../../../common/files.cpp" />
 		<Unit filename="../../../common/files.h" />
+		<Unit filename="../../../common/paths.cpp" />
+		<Unit filename="../../../common/paths.h" />
 		<Unit filename="../../../common/ustring.cpp" />
 		<Unit filename="../../../common/ustring.h" />
+		<Unit filename="../../../common/xmltree.cpp" />
+		<Unit filename="../../../common/xmltree.h" />
 		<Unit filename="../../../engine/bytecode.cpp" />
 		<Unit filename="../../../engine/bytecode.h" />
+		<Unit filename="../../../engine/libman.cpp" />
+		<Unit filename="../../../engine/libman.h" />
 		<Unit filename="../../../engine/module.cpp" />
 		<Unit filename="../../../engine/module.h" />
 		<Unit filename="../../../engine/section.cpp" />
