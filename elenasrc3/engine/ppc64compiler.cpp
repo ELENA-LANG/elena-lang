@@ -13,7 +13,7 @@
 using namespace elena_lang;
 
 constexpr auto OverloadsCount = 3;
-const Pair<ByteCode, CodeGenerator> Overloads[OverloadsCount] =
+const Pair<ByteCode, CodeGenerator, ByteCode::None> Overloads[OverloadsCount] =
 {
    { ByteCode::CallExtR, PPC64loadCallOp},
    { ByteCode::OpenIN, PPC64compileOpenIN},
