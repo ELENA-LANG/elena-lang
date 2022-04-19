@@ -1,3 +1,4 @@
+
 // ; --- Predefined References  --
 define INVOKER               10001h
 define GC_ALLOC	             10002h
@@ -73,10 +74,6 @@ end
 // ; --- GC_ALLOC ---
 // ; in: r18 - size ; out: r15 - created object
 inline % GC_ALLOC
-
-  rldicl r0, r0, 60, 4
-
-
 
   ld      r19, toc_gctable(r2)
   ld      r17, gc_yg_current(r19) 
@@ -842,6 +839,8 @@ inline %0FEh
   // ; Put the parameters in r3 through r10,
   // ; and additional parameters go on the stack
   // ; after the home space (not shown here).
+
+  ld      r5, 16(r1)
 
   ld      r12, toc_import(r2)
   addis   r12, r12, __disp32hi_1 
