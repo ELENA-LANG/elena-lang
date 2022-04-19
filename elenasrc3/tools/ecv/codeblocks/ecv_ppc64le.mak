@@ -28,7 +28,7 @@ OBJDIR_RELEASE = ../../../temp/ecv64-cli/
 DEP_RELEASE = 
 OUT_RELEASE = ../../../../bin/ecv64-cli
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/__/engine/section.o $(OBJDIR_RELEASE)/__/ecviewer.o $(OBJDIR_RELEASE)/__/linux/ecv.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/__/engine/section.o $(OBJDIR_RELEASE)/__/ecviewer.o $(OBJDIR_RELEASE)/__/linux/ecv.o $(OBJDIR_RELEASE)/__/__/__/engine/libman.o
 
 all: release
 
@@ -65,6 +65,9 @@ $(OBJDIR_RELEASE)/__/__/__/engine/module.o: ../../../engine/module.cpp
 
 $(OBJDIR_RELEASE)/__/__/__/engine/section.o: ../../../engine/section.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/section.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/section.o
+
+$(OBJDIR_RELEASE)/__/__/__/engine/libman.o: ../../../engine/libman.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/libman.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/libman.o
 
 $(OBJDIR_RELEASE)/__/ecviewer.o  : ../ecviewer.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../ecviewer.cpp -o $(OBJDIR_RELEASE)/__/ecviewer.o
