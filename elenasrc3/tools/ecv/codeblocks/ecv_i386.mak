@@ -28,7 +28,7 @@ OBJDIR_RELEASE = ../../../temp/ecv-cli/
 DEP_RELEASE = 
 OUT_RELEASE = ../../../../bin/ecv-cli
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/__/engine/section.o $(OBJDIR_RELEASE)/__/ecviewer.o $(OBJDIR_RELEASE)/__/linux/ecv.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/__/common/config.o $(OBJDIR_RELEASE)/__/__/__/common/xmltree.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/__/engine/section.o $(OBJDIR_RELEASE)/__/ecviewer.o $(OBJDIR_RELEASE)/__/linux/ecv.o
 
 all: release
 
@@ -53,6 +53,15 @@ $(OBJDIR_RELEASE)/__/__/__/common/dump.o: ../../../common/dump.cpp
 
 $(OBJDIR_RELEASE)/__/__/__/common/files.o: ../../../common/files.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/files.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/files.o
+
+$(OBJDIR_RELEASE)/__/__/__/common/paths.o: ../../../common/paths.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/paths.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/paths.o
+
+$(OBJDIR_RELEASE)/__/__/__/common/xmltree.o: ../../../common/xmltree.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/xmltree.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/xmltree.o
+
+$(OBJDIR_RELEASE)/__/__/__/common/config.o: ../../../common/config.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/config.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/config.o
 
 $(OBJDIR_RELEASE)/__/__/__/common/ustring.o: ../../../common/ustring.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/ustring.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o
