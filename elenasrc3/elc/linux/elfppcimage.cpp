@@ -202,14 +202,14 @@ void ElfPPC64leImageFormatter :: writePLTStartEntry(MemoryWriter& codeWriter, re
    codeWriter.writeDWord(0x7d8b6050);
    // add r11,r0,r11
    codeWriter.writeDWord(0x7d605a14);
-   // subi r0, r12, 44
+   // subi r0, r12, 44,
    codeWriter.writeDWord(0x380cffd4);
    // ; Load resolver addressand DSO identifier from the
    // ; first two doublewords of the PLT
    // ld r12, 0(r11)
    codeWriter.writeDWord(0xe98b0000);
    // rldicl r0, r0, 62, 4
-   codeWriter.writeDWord(0x7800F082);
+   codeWriter.writeDWord(0x7800F084);
    // ; Branch to resolver
    // mtctr r12
    codeWriter.writeDWord(0x7d8903a6);
