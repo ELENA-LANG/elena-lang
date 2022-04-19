@@ -51,7 +51,7 @@ namespace elena_lang
       void writeSegments(ElfExecutableImage& image, FileWriter* file);
 
       bool createExecutable(ElfExecutableImage& image, path_t exePath);
-      bool createDebugFile(ImageProviderBase& provider, WinNtExecutableImage& image, path_t debugFilePath);
+      bool createDebugFile(ImageProviderBase& provider, ElfExecutableImage& image, path_t debugFilePath);
 
       virtual void prepareElfImage(ImageProviderBase& provider, ElfExecutableImage& image, unsigned int headerSize);
 
