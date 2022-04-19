@@ -9,6 +9,8 @@
 #ifndef PPCHELPER_H
 #define PPCHELPER_H
 
+#include "lbhelper.h"
+
 namespace elena_lang
 {
    // --- PPCOperand ---
