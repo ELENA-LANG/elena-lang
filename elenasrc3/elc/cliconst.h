@@ -11,11 +11,11 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x008E
+   #define ELC_REVISION_NUMBER               0x008F
 
    // --- Information messages ---
    constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2022 by Aleksey Rakov\n";
-   constexpr auto ELC_STARTING               = "Project: %s, Platform: %s, Target type: %s"; 
+   constexpr auto ELC_STARTING               = "Project: %s, Platform: %s, Target type: %s";
    constexpr auto ELC_CLEANING               = "Cleaning up";
    constexpr auto ELC_LINKING                = "Linking..\n";
 

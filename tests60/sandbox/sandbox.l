@@ -27,7 +27,8 @@ public singleton LinuxOutput
    }
 }
 
-Output = WinOutput;
+//Output = WinOutput;
+Output = LinuxOutput;
 
 singleton B
 {

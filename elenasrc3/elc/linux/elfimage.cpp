@@ -240,7 +240,7 @@ void Elf32ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
       // got / plt entry
       pos_t position = writePLTEntry(codeWriter, relPosition, importRef, gotPosition, pltIndex);
-      gotWriter.writeQReference(mskCodeRef32, position);
+      gotWriter.writeDReference(mskCodeRef32, position);
 
       symbolIndex++;
       pltIndex++;
