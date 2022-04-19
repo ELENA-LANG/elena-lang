@@ -263,6 +263,8 @@ inline bool removeIdleJump(ByteCodeIterator it)
          //case bcJumpI:
             *it = ByteCode::Nop;
             return true;
+         default:
+            break;
          }
          --it;
    }
