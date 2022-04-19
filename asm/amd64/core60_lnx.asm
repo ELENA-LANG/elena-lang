@@ -173,7 +173,6 @@ end
 // ; callext
 inline %1FEh
 
-  mov  rdi, r10
   call extern __relptr32_1
   mov  rdx, rax
 
@@ -181,6 +180,15 @@ end
 
 // ; callext
 inline %2FEh
+
+  mov  rdi, r10
+  call extern __relptr32_1
+  mov  rdx, rax
+
+end
+
+// ; callext
+inline %3FEh
 
   mov  rsi, r11
   mov  rdi, r10
@@ -190,7 +198,7 @@ inline %2FEh
 end
 
 // ; callext
-inline %3FEh
+inline %4FEh
 
   mov  rdx, [rsp+16]
   mov  rsi, r11
@@ -201,7 +209,7 @@ inline %3FEh
 end
 
 // ; callext
-inline %4FEh
+inline %5FEh
 
   mov  rcx, [rsp+24]
   mov  rdx, [rsp+16]

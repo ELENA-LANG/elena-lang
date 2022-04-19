@@ -642,6 +642,9 @@ void elena_lang::loadCallOp(JITCompilerScope* scope)
        case 3:
            code = scope->compiler->_inlines[4][scope->code()];
            break;
+       case 4:
+          code = scope->compiler->_inlines[5][scope->code()];
+          break;
        default:
            code = scope->compiler->_inlines[0][scope->code()];
            break;
