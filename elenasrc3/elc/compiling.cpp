@@ -113,7 +113,7 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    _libraryProvider.saveDebugModule(moduleScope.debugModule);
 }
 
-void CompilingProcess :: buildModule(ModuleIteratorBase& module_it, SyntaxTree* syntaxTree, 
+void CompilingProcess :: buildModule(ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
    pos_t stackAlingment,
    pos_t rawStackAlingment,
@@ -121,8 +121,8 @@ void CompilingProcess :: buildModule(ModuleIteratorBase& module_it, SyntaxTree* 
    bool withDebug)
 {
    ModuleScope moduleScope(
-      &_libraryProvider, 
-      forwardResolver, 
+      &_libraryProvider,
+      forwardResolver,
       _libraryProvider.createModule(module_it.name()),
       withDebug ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
       stackAlingment, rawStackAlingment, minimalArgList);
@@ -183,8 +183,8 @@ void CompilingProcess :: configurate(ProjectBase& project)
    _libraryProvider.addPackage(project.Namespace(), project.PathSetting(ProjectOption::OutputPath));
 }
 
-void CompilingProcess :: compile(ProjectBase& project, 
-   pos_t defaultStackAlignment, 
+void CompilingProcess :: compile(ProjectBase& project,
+   pos_t defaultStackAlignment,
    pos_t defaultRawStackAlignment,
    int minimalArgList)
 {
@@ -222,7 +222,7 @@ void CompilingProcess :: link(ProjectBase& project, LinkerBase& linker)
    imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);
    imageInfo.ns = project.StringSetting(ProjectOption::Namespace);
 
-   TargetImage code(&project, &_libraryProvider, _jitCompilerFactory, 
+   TargetImage code(&project, &_libraryProvider, _jitCompilerFactory,
       imageInfo);
 
    linker.run(project, code);
@@ -259,19 +259,19 @@ void CompilingProcess :: cleanUp(ProjectBase& project)
    path_t output = project.PathSetting(ProjectOption::TargetPath);
    if (!output.empty()) {
       PathString exePath(output);
-      exePath.changeExtension(L"exe");
+      exePath.changeExtension("exe");
 
       PathUtil::removeFile(*exePath);
 
       // remove debug module
-      exePath.changeExtension(L"dn");
+      exePath.changeExtension("dn");
       PathUtil::removeFile(*exePath);
    }
 }
 
-int CompilingProcess :: build(ProjectBase& project, 
-   LinkerBase& linker, 
-   pos_t defaultStackAlignment, 
+int CompilingProcess :: build(ProjectBase& project,
+   LinkerBase& linker,
+   pos_t defaultStackAlignment,
    pos_t defaultRawStackAlignment,
    int minimalArgList)
 {

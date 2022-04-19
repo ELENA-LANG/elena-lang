@@ -66,7 +66,7 @@ bool ElfLinker :: createExecutable(ElfExecutableImage& image, path_t exePath)
    return true;
 }
 
-void ElfLinker :: createDebugFile(ImageProviderBase& provider, WinNtExecutableImage& image, path_t debugFilePath)
+bool ElfLinker :: createDebugFile(ImageProviderBase& provider, ElfExecutableImage& image, path_t debugFilePath)
 {
    FileWriter debugWriter(debugFilePath, FileEncoding::Raw, false);
    if (!debugWriter.isOpen())
@@ -78,7 +78,7 @@ void ElfLinker :: createDebugFile(ImageProviderBase& provider, WinNtExecutableIm
    debugWriter.write(DEBUG_MODULE_SIGNATURE, getlength_pos(DEBUG_MODULE_SIGNATURE));
 
    // save entry point
-   addr_t entryPoint = image.addressSpace.code + image.addressSpace.imageBase + provider.getDebugEntryPoint();
+   addr_t entryPoint = image.addressMap.code + image.addressMap.imageBase + provider.getDebugEntryPoint();
 
    debugWriter.writePos(debug->length());
    debugWriter.writePos((pos_t)entryPoint);
@@ -86,6 +86,8 @@ void ElfLinker :: createDebugFile(ImageProviderBase& provider, WinNtExecutableIm
    // save breakpoints
    MemoryReader reader(debug);
    debugWriter.copyFrom(&reader, debug->length());
+
+   return true;
 }
 
 void ElfLinker :: prepareElfImage(ImageProviderBase& provider, ElfExecutableImage& image, unsigned int headerSize)
@@ -98,8 +100,8 @@ void ElfLinker :: prepareElfImage(ImageProviderBase& provider, ElfExecutableImag
    image.addressMap.imageBase = IMAGE_BASE;
    image.addressMap.headerSize += align(headerSize, image.fileAlignment);
 
-   _imageFormatter->prepareImage(provider, image.addressMap, image.imageSections, 
-      image.sectionAlignment, 
+   _imageFormatter->prepareImage(provider, image.addressMap, image.imageSections,
+      image.sectionAlignment,
       image.fileAlignment,
       image.withDebugInfo);
 }
