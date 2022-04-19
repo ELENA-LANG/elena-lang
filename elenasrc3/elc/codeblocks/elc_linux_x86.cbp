@@ -114,6 +114,8 @@
 		<Unit filename="../../engine/x86_64compiler.h" />
 		<Unit filename="../../engine/x86compiler.cpp" />
 		<Unit filename="../../engine/x86compiler.h" />
+		<Unit filename="../../engine/x86helper.cpp" />
+		<Unit filename="../../engine/x86helper.h" />
 		<Unit filename="../clicommon.h" />
 		<Unit filename="../cliconst.h" />
 		<Unit filename="../codeimage.cpp" />
