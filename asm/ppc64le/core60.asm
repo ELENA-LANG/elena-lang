@@ -791,7 +791,7 @@ inline %0F5h
   bctrl                   
 
   li      r18, __n16_1
-  addis   r18, __n16hi_1
+  addis   r18, r18, __n16hi_1
 
   ld      r17, toc_rdata(r2)
   addis   r17, r17, __disp32hi_2 
