@@ -37,8 +37,8 @@ void ElfARM64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData&
    MemoryWriter gotWriter(import);
    gotWriter.writeQWord(0);
    gotWriter.writeQWord(0);
-   pos_t gotStart = gotWriter.position();
    gotWriter.writeQWord(0);
+   pos_t gotStart = gotWriter.position();
    gotWriter.writeBytes(0, count * 8);
    gotWriter.seek(gotStart);
 
@@ -69,7 +69,6 @@ void ElfARM64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData&
 
    pos_t pltStartEntry = codeWriter.position();
    writePLTStartEntry(codeWriter, (count + 1) | mskImportRef, gotStart);
-   gotWriter.writeQReference(mskCodeRef64, pltStartEntry);
 
    int relocateType = getRelocationType();
    long long symbolIndex = 1;
@@ -100,9 +99,8 @@ void ElfARM64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData&
       strWriter.writeString(fun.key());
 
       // plt entry
-      pos_t pltEntry = codeWriter.position();
       writePLTEntry(codeWriter, 0, funRef | mskImportRef, 0, pltIndex);
-      gotWriter.writeQReference(mskCodeRef64, pltEntry);
+      gotWriter.writeQReference(mskCodeRef64, pltStartEntry);
 
       symbolIndex++;
       pltIndex++;
