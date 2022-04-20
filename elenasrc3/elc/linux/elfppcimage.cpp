@@ -94,7 +94,7 @@ void ElfPPC64leImageFormatter :: fillElfData(ImageProviderBase& provider, ElfDat
 
       // plt entry
       writePLTEntry(codeWriter, 0, 0, 0, pltIndex);
-      //gotWriter.writeDWord();
+      gotWriter.writeQWord(0);
 
       symbolIndex++;
       pltIndex++;
