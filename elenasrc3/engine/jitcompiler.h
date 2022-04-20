@@ -73,6 +73,7 @@ namespace elena_lang
       virtual int calcTotalStructSize(int size) = 0;
 
       void writeArgAddress(JITCompilerScope* scope, arg_t arg, pos_t offset, ref_t addressMask);
+      void writeVMTMethodArg(JITCompilerScope* scope, arg_t arg, pos_t offset, mssg_t message, ref_t addressMask);
 
       virtual void compileTape(ReferenceHelperBase* helper, MemoryReader& bcReader, pos_t endPos, 
          MemoryWriter& codeWriter, LabelHelperBase* lh);

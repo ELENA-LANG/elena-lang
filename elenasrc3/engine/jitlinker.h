@@ -63,6 +63,7 @@ namespace elena_lang
          ModuleBase* module;
          ref_t       addressMask;
          pos_t       disp;
+         mssg_t      message;
 
          VAddressInfo()
          {
@@ -70,6 +71,7 @@ namespace elena_lang
             this->module = nullptr;
             this->addressMask = 0;
             this->disp = 0;
+            this->message = 0;
 
          }
          VAddressInfo(ref_t reference, ModuleBase* module, ref_t addressMask, pos_t disp)
@@ -78,6 +80,15 @@ namespace elena_lang
             this->module = module;
             this->addressMask = addressMask;
             this->disp = disp;
+            this->message = 0;
+         }
+         VAddressInfo(ref_t reference, ModuleBase* module, ref_t addressMask, pos_t disp, mssg_t message)
+         {
+            this->reference = reference;
+            this->module = module;
+            this->addressMask = addressMask;
+            this->disp = disp;
+            this->message = message;
          }
       };
 
@@ -94,6 +105,8 @@ namespace elena_lang
          void addBreakpoint(MemoryWriter& writer) override;
 
          void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
+            ref_t addressMask, ModuleBase* module) override;
+         void writeVMTMethodReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp, mssg_t message,
             ref_t addressMask, ModuleBase* module) override;
 
          void writeVAddress32(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,

@@ -1139,33 +1139,33 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case PTR32_2:
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
-               scope->helper->importMessage(scope->command.arg1), mskRef32);
+            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+               0, scope->helper->importMessage(scope->command.arg1), mskRef32);
             break;
          case RELPTR32_2:
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
-               scope->helper->importMessage(scope->command.arg1), mskRelRef32);
+            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+               0, scope->helper->importMessage(scope->command.arg1), mskRelRef32);
             break;
          case DISP32HI_2:
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
-               scope->helper->importMessage(scope->command.arg1), mskDisp32Hi);
+            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+               0, scope->helper->importMessage(scope->command.arg1), mskDisp32Hi);
             break;
          case DISP32LO_2:
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
-               scope->helper->importMessage(scope->command.arg1), mskDisp32Lo);
+            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+               0, scope->helper->importMessage(scope->command.arg1), mskDisp32Lo);
             break;
          case PTR32HI_2:
          {
             short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
-               scope->helper->importMessage(scope->command.arg1), mskRef32Hi);
+            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+               disp, scope->helper->importMessage(scope->command.arg1), mskRef32Hi);
             break;
          }
          case PTR32LO_2:
          {
             short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
-               scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
+            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+               disp, scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
             break;
          }
          default:
@@ -1199,16 +1199,16 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodOffset,
-               scope->command.arg1, mskRef32);
+            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodOffset,
+               0, scope->helper->importMessage(scope->command.arg1), mskRef32);
             break;
          case ARG12_1:
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodOffset,
-               scope->command.arg1, mskRef32Lo12);
+            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodOffset,
+               0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo12);
             break;
          case ARG16_1:
-            scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodOffset,
-               scope->command.arg1, mskRef32Lo);
+            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodOffset,
+               0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
             break;
          default:
             //else writeCoreReference();
@@ -1376,6 +1376,11 @@ CodeGenerator* JITCompiler :: codeGenerators()
 void JITCompiler :: writeArgAddress(JITCompilerScope* scope, arg_t arg, pos_t offset, ref_t addressMask)
 {
    scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(), (ref_t)arg, offset, addressMask);
+}
+
+void JITCompiler :: writeVMTMethodArg(JITCompilerScope* scope, arg_t arg, pos_t offset, mssg_t message, ref_t addressMask)
+{
+   scope->helper->writeVMTMethodReference(*scope->codeWriter->Memory(), scope->codeWriter->position(), (ref_t)arg, offset, message, addressMask);
 }
 
 void JITCompiler :: compileTape(ReferenceHelperBase* helper, MemoryReader& bcReader, pos_t endPos,

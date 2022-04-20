@@ -166,6 +166,16 @@ void JITLinker::JITLinkerReferenceHelper :: addBreakpoint(MemoryWriter& codeWrit
    _owner->_compiler->addBreakpoint(writer, codeWriter, _owner->_virtualMode);
 }
 
+void JITLinker::JITLinkerReferenceHelper :: writeVMTMethodReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp, mssg_t message,
+   ref_t addressMask, ModuleBase* module)
+{
+   if (module == nullptr)
+      module = _module;
+
+   // vmt entry offset / address should be resolved later
+   _references->add(position, { reference, module, addressMask, disp, message });
+}
+
 void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
    ref_t addressMask, ModuleBase* module)
 {
@@ -174,13 +184,6 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
 
    if (module == nullptr)
       module = _module;
-
-   // vmt entry offset / address should be resolved later
-   if (mask == mskVMTMethodAddress || mask == mskVMTMethodOffset) {
-      _references->add(position, { reference, module, addressMask, disp });
-
-      return;
-   }
 
    addr_t vaddress = INVALID_ADDR;
    //switch (mask) {
