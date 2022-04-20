@@ -168,7 +168,7 @@ void ARM64JITCompiler :: prepare(
       commands[(int)Overloads[i].value1] = Overloads[i].value2;
 
    ARMLabelHelper labelHelper;
-   JITCompiler64::prepare(loader, imageProvider, helper, labelHelper, settings);
+   JITCompiler64::prepare(loader, imageProvider, helper, &labelHelper, settings);
 }
 
 void ARM64JITCompiler :: alignCode(MemoryWriter& writer, pos_t alignment, bool isText)
