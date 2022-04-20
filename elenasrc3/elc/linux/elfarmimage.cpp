@@ -99,8 +99,9 @@ void ElfARM64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData&
       strWriter.writeString(fun.key());
 
       // plt entry
+      pos_t pltEntry = codeWriter.position();
       writePLTEntry(codeWriter, 0, funRef | mskImportRef, 0, pltIndex);
-      gotWriter.writeQReference(mskCodeRef64, pltStartEntry);
+      gotWriter.writeQReference(mskCodeRef64, /*pltStartEntry*/pltEntry);
 
       symbolIndex++;
       pltIndex++;

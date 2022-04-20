@@ -1,5 +1,10 @@
 import system;
 
+//C
+//{
+//    constructor() {}
+//}
+
 public singleton WinOutput
 {
    method output()

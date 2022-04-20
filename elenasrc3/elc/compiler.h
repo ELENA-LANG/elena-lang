@@ -614,7 +614,7 @@ namespace elena_lang
 
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
       void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode);
-      void declareVMT(ClassScope& scope, SyntaxNode node);
+      void declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor);
 
       void declareSymbol(SymbolScope& scope, SyntaxNode node);
       void declareClassClass(ClassScope& classClassScope, SyntaxNode node);

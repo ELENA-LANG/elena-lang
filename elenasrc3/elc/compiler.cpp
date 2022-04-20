@@ -1270,6 +1270,10 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node)
          }
          else scope.raiseError(errIllegalMethod, node);
       }
+      else if (scope.checkKind(MethodHint::Constructor) && unnamedMessage) {
+         actionStr.copy(CONSTRUCTOR_MESSAGE);
+         unnamedMessage = false;
+      }
 
       if (scope.checkHint(MethodHint::Internal)) {
          actionStr.insert("$$", 0);
@@ -1328,7 +1332,7 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
    }
 }
 
-void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node)
+void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -1346,6 +1350,12 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node)
 
             declareMethodMetaInfo(methodScope, current);
             declareMethod(methodScope, current, scope.abstractMode);
+            if (methodScope.checkHint(MethodHint::Constructor)) {
+               withConstructors = true;
+               if ((methodScope.message & ~CONVERSION_MESSAGE) == scope.moduleScope->buildins.constructor_message) {
+                  withDefaultConstructor = true;
+               }
+            }
 
             if (!_logic->validateMessage(methodScope.message)) {
                scope.raiseError(errIllegalMethod, current);
@@ -1380,7 +1390,9 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
    ref_t declaredFlags = 0;
    declareClassAttributes(scope, node, declaredFlags);
 
-   declareVMT(scope, node);
+   bool withConstructors = false;
+   bool withDefConstructor = false;
+   declareVMT(scope, node, withConstructors, withDefConstructor);
 
    // NOTE : generateClassDeclaration should be called for the proper class before a class class one
    //        due to dynamic array implementation (auto-generated default constructor should be removed)
