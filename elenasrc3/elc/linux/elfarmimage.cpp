@@ -36,6 +36,7 @@ void ElfARM64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData&
    // reserve got table
    MemoryWriter gotWriter(import);
    gotWriter.writeQWord(0);
+   gotWriter.writeQWord(0);
    pos_t gotStart = gotWriter.position();
    gotWriter.writeQWord(0);
    gotWriter.writeBytes(0, count * 8);
