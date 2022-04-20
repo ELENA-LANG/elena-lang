@@ -2121,7 +2121,7 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, Scope& scope, 
 {
    int count = arguments.count();
 
-   writer.appendNode(BuildKey::Allocating, count);
+   writer.appendNode(BuildKey::Allocating, align(count, scope.moduleScope->stackAlingment));
 
    for (int i = count; i > 0; i--) {
       ObjectInfo arg = arguments[i - 1];
@@ -2147,7 +2147,7 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, Scope& scope, 
    writer.closeNode();
 
    if (!stdCall)
-      writer.appendNode(BuildKey::Freeing, count);
+      writer.appendNode(BuildKey::Freeing, align(count, scope.moduleScope->stackAlingment));
 
    return { ObjectKind::External, V_INT32, 0 };
 }

@@ -6,7 +6,7 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
-    * >print message using external routine - arm64
+    * >print message using external routine - arm64  (400678)
     === Sprint 5 : dispatching methods ===
     --- elena redux ---
     * private - direct call
@@ -64,6 +64,7 @@ Pipeline:
     * branching : if operator
     * branching : loop attribute
     * branching : while operator
+    * bcwriter : openFrame - should flush only used arguments (e.g. for test[1] - only one xflush)
 
     * editor - do we need checkmode? it seems like not
 

@@ -1,13 +1,5 @@
 import system;
 
-X
-{
-   directCall()
-   {
-       B.testB(self);
-   }
-}
-
 public singleton WinOutput
 {
    method output()
