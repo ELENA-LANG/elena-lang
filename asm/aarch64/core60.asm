@@ -354,15 +354,14 @@ end
 // ; xflushsi 0
 inline %1A4h
 
-  add     x11, sp, 8
-  str     x0, [x11]
+  str     x0, [sp]
 
 end 
 
 // ; xflushsi 1
 inline %2A4h
 
-  add     x11, sp, 16
+  add     x11, sp, 8
   str     x1, [x11]
 
 end 

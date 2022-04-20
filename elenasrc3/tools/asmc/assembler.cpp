@@ -266,6 +266,10 @@ void AssemblerBase :: declareProcedure(ScriptToken& tokenInfo, ProcedureInfo& pr
    }
    else throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
 
+   if (_target->mapSection(procInfo.reference, true) != nullptr) {
+      throw SyntaxError(ASM_PROCEDURE_EXIST, tokenInfo.lineInfo);
+   }
+
    read(tokenInfo);
 }
 
