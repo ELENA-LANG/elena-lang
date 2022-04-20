@@ -9,11 +9,12 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "arm64compiler.h"
+#include "armhelper.h"
 
 using namespace elena_lang;
 
 constexpr auto OverloadsCount = 3;
-const Pair<ByteCode, CodeGenerator> Overloads[OverloadsCount] =
+const Pair<ByteCode, CodeGenerator, ByteCode::None, nullptr> Overloads[OverloadsCount] =
 {
    { ByteCode::CallExtR, ARM64loadCallOp},
    { ByteCode::OpenIN, ARM64compileOpenIN},
@@ -44,7 +45,28 @@ void elena_lang::ARM64loadCallOp(JITCompilerScope* scope)
 //         break;
 //   }
 
-   void* code = ((ARM64JITCompiler*)scope->compiler)->_inlines[0][scope->code()];
+   void* code = nullptr;
+   switch (scope->command.arg2) {
+      case 0:
+         code = ((ARM64JITCompiler*)scope->compiler)->_inlines[1][scope->code()];
+         break;
+      case 1:
+         code = ((ARM64JITCompiler*)scope->compiler)->_inlines[2][scope->code()];
+         break;
+      case 2:
+         code = ((ARM64JITCompiler*)scope->compiler)->_inlines[3][scope->code()];
+         break;
+      case 3:
+         code = ((ARM64JITCompiler*)scope->compiler)->_inlines[4][scope->code()];
+         break;
+      case 4:
+         code = ((ARM64JITCompiler*)scope->compiler)->_inlines[5][scope->code()];
+         break;
+      default:
+         code = ((ARM64JITCompiler*)scope->compiler)->_inlines[0][scope->code()];
+         break;
+   }
+
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
 
@@ -134,6 +156,7 @@ void ARM64JITCompiler :: prepare(
    LibraryLoaderBase* loader, 
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
+   LabelHelperBase*,
    JITSettings settings)
 {
    //_inlineMask = mskCodeRelRef32;
@@ -144,7 +167,8 @@ void ARM64JITCompiler :: prepare(
    for (size_t i = 0; i < OverloadsCount; i++)
       commands[(int)Overloads[i].value1] = Overloads[i].value2;
 
-   JITCompiler64::prepare(loader, imageProvider, helper, settings);
+   ARMLabelHelper labelHelper;
+   JITCompiler64::prepare(loader, imageProvider, helper, labelHelper, settings);
 }
 
 void ARM64JITCompiler :: alignCode(MemoryWriter& writer, pos_t alignment, bool isText)
@@ -160,16 +184,20 @@ void ARM64JITCompiler :: alignCode(MemoryWriter& writer, pos_t alignment, bool i
    else writer.align(alignment, 0x00);
 }
 
-void ARM64JITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter)
+void ARM64JITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+   MemoryWriter& codeWriter, LabelHelperBase*)
 {
-   JITCompiler::compileProcedure(helper, bcReader, codeWriter);
+   ARMLabelHelper labelHelper;
+   JITCompiler::compileProcedure(helper, bcReader, codeWriter, &labelHelper);
 
    alignCode(codeWriter, 0x08, true);
 }
 
-void ARM64JITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, MemoryWriter& codeWriter)
+void ARM64JITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+   MemoryWriter& codeWriter, LabelHelperBase*)
 {
-   JITCompiler64::compileSymbol(helper, bcReader, codeWriter);
+   ARMLabelHelper labelHelper;
+   JITCompiler64::compileSymbol(helper, bcReader, codeWriter, &labelHelper);
 
    alignCode(codeWriter, 0x08, true);
 }

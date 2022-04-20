@@ -7,7 +7,7 @@ In development:
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
 
-    * >print message using external routine - ppc64le, arm64
+    * >print message using external routine - arm64
     --- ide redux ---
     * linux textview - show text
     * linux sdi - menu
@@ -66,6 +66,7 @@ Pipeline:
     * branching : loop attribute
     * branching : while operator
 
+    * ppc64 : check direct method resolvement - e.g. call a private method
     * warn on not found message for the existing object
     * call internal
     * support constants
