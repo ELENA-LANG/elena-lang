@@ -870,10 +870,18 @@ namespace elena_lang
    struct InternalError : ExceptionBase
    {
       int messageCode;
+      int arg;
 
       InternalError(int messageCode)
       {
          this->messageCode = messageCode;
+         this->arg = 0;
+      }
+
+      InternalError(int messageCode, int arg)
+      {
+         this->messageCode = messageCode;
+         this->arg = arg;
       }
    };
 

@@ -69,7 +69,7 @@ namespace elena_lang
    constexpr auto wrnMsgSyntaxFileNotFound   = "warning 500: cannot open syntax file '%s'\n";
    constexpr auto wrnMsgInvalidConfig        = "warning 501: invalid or unknown config file %s\n";
 
-   constexpr auto errMsgCommandSetAbsent     = "internal error 600: command set is not defined";
+   constexpr auto errMsgCommandSetAbsent     = "internal error 600: command set is not defined for %x";
    constexpr auto errMsgReadOnlyModule       = "internal error 601: read-only module"; 
    constexpr auto errMsgNotDefinedBaseClass  = "internal error 602: base class is not defined";
    constexpr auto errMsgReferenceOverflow    = "internal error 603: Reference overflow";

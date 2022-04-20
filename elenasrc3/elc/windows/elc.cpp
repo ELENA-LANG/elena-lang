@@ -130,6 +130,12 @@ public:
 
       ::print(wstr.str(), arg1.str(), arg2, arg3, warg4.str());
    }
+   void print(ustr_t msg, int arg1) override
+   {
+      WideMessage wstr(msg);
+
+      ::print(wstr.str(), arg1);
+   }
    void print(ustr_t msg, int arg1, int arg2) override
    {
       WideMessage wstr(msg);

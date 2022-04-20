@@ -330,7 +330,7 @@ int CompilingProcess :: build(ProjectBase& project,
       return -2;
    }
    catch (InternalError& ex) {
-      _presenter->print(_presenter->getMessage(ex.messageCode));
+      _presenter->print(_presenter->getMessage(ex.messageCode), ex.arg);
 
       _presenter->print(ELC_UNSUCCESSFUL);
       return -2;

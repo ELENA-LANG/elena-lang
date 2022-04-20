@@ -1229,7 +1229,7 @@ inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, si
       // due to optimization section must be ROModule::ROSection instance
       auto info = loader->getCoreSection(functions[i], false);
       if (!info.section)
-         throw InternalError(errCommandSetAbsent);
+         throw InternalError(errCommandSetAbsent, functions[i]);
 
       if (declarating) {
          if (!map.exist(functions[i])) {

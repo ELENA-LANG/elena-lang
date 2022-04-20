@@ -29,6 +29,7 @@ public:
    virtual void print(ustr_t msg, ustr_t arg) = 0;
    virtual void print(ustr_t msg, ustr_t arg1, ustr_t arg2) = 0;
    virtual void print(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr_t arg3) = 0;
+   virtual void print(ustr_t msg, int arg1) = 0;
    virtual void print(ustr_t msg, int arg1, int arg2) = 0;
    virtual void print(ustr_t msg, int arg1, int arg2, int arg3) = 0;
    virtual void print(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
