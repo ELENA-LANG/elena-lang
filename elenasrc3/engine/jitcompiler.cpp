@@ -1259,7 +1259,7 @@ inline void loadInline(ref_t index, void* inlines[][0x100], LibraryLoaderBase* l
       else if (inlines[0][(ref_t)bcCommands[i]] != nullptr) {
          inlines[index][(ref_t)bcCommands[i]] = inlines[0][(ref_t)bcCommands[i]];
       }
-      else throw InternalError(errCommandSetAbsent);
+      else throw InternalError(errCommandSetAbsent, (int)bcCommands[i]);
    }
 }
 
