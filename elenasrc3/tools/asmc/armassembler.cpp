@@ -561,7 +561,7 @@ bool Arm64Assembler :: compileB(int imm, MemoryWriter& writer)
 
 bool Arm64Assembler :: compileBxx(int imm, int cond, MemoryWriter& writer)
 {
-   writer.writeDWord(ARMHelper::makeBxxOpcode(0x2A, 0, imm, 0, cond));
+   writer.writeDWord(ARMHelper::makeBxxOpcode(0x2A, 0, imm >> 2, 0, cond));
 
    return true;
 }
