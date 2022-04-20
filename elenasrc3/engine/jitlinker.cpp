@@ -358,15 +358,14 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             resolve(_loader->retrieveReferenceInfo(info.module, currentRef, mskVMTRef,
                _forwardResolver), mskVMTRef, false);
 
-            vaddress = resolveVMTMethodAddress(info.module, currentRef, info.disp);
-            info.disp = 0; // NOTE : disp contains the message, so it should be cleared
+            vaddress = resolveVMTMethodAddress(info.module, currentRef, info.message);
             break;
          }
          case mskVMTMethodOffset:
          {
             resolve(_loader->retrieveReferenceInfo(info.module, currentRef, mskVMTRef,
                _forwardResolver), mskVMTRef, false);
-            pos_t offset = resolveVMTMethodOffset(info.module, currentRef, info.disp);
+            pos_t offset = resolveVMTMethodOffset(info.module, currentRef, info.message);
             fixOffset(it.key(), info.addressMask, offset, image);
 
             info.addressMask = 0; // clear because it is already fixed
