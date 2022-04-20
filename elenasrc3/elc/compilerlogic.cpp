@@ -593,8 +593,12 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
       else result.visibility = Visibility::Public;
 
       result.kind = methodInfo.hints & (ref_t)MethodHint::Mask;
-      if (!result.kind)
-         result.kind = (ref_t)MethodHint::Normal;
+      if (!result.kind) {
+         if (test(info.header.flags, elSealed)) {
+            result.kind = (ref_t)MethodHint::Sealed; // mark it as sealed - because the class is sealed
+         }
+         else result.kind = (ref_t)MethodHint::Normal;
+      }
 
       return true;
    }

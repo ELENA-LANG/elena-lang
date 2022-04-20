@@ -1140,32 +1140,32 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
       switch (entries->reference) {
          case PTR32_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
-               scope->command.arg1, mskRef32);
+               scope->helper->importMessage(scope->command.arg1), mskRef32);
             break;
          case RELPTR32_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
-               scope->command.arg1, mskRelRef32);
+               scope->helper->importMessage(scope->command.arg1), mskRelRef32);
             break;
          case DISP32HI_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
-               scope->command.arg1, mskDisp32Hi);
+               scope->helper->importMessage(scope->command.arg1), mskDisp32Hi);
             break;
          case DISP32LO_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
-               scope->command.arg1, mskDisp32Lo);
+               scope->helper->importMessage(scope->command.arg1), mskDisp32Lo);
             break;
          case PTR32HI_2:
          {
             short disp = *(short*)((char*)code + entries->offset);
             scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
-               scope->command.arg1, mskRef32Hi);
+               scope->helper->importMessage(scope->command.arg1), mskRef32Hi);
             break;
          }
          case PTR32LO_2:
          {
             short disp = *(short*)((char*)code + entries->offset);
             scope->compiler->writeArgAddress(scope, scope->command.arg2 | mskVMTMethodAddress,
-               scope->command.arg1, mskRef32Lo);
+               scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
             break;
          }
          default:

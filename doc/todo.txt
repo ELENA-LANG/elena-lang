@@ -6,13 +6,14 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
+    * private - direct call
 
     * >print message using external routine - arm64
     --- ide redux ---
+    * linux init styles
     * linux textview - show text
     * linux sdi - menu
     * linux debugger
-    * editor - do we need checkmode? it seems like not
     * editor - compile
     * editor - edit text
     * editor - open / close / save / select source files
@@ -65,6 +66,8 @@ Pipeline:
     * branching : if operator
     * branching : loop attribute
     * branching : while operator
+
+    * editor - do we need checkmode? it seems like not
 
     * ppc64 : check direct method resolvement - e.g. call a private method
     * warn on not found message for the existing object

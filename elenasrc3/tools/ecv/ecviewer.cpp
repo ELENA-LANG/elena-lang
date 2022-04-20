@@ -175,12 +175,13 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
    if (!arg) {
       commandStr.append("0");
    }
-   else {
+   else if (!referenceName.empty()) {
       if (isWeakReference(referenceName))
          commandStr.append(_module->name());
 
       commandStr.append(referenceName);
    }
+   else commandStr.appendUInt(arg);
 
 }
 

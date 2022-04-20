@@ -99,7 +99,7 @@ void directCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    }
 
    tape.write(ByteCode::MovM, node.arg.reference);
-   tape.write(ByteCode::CallMR, node.arg.reference, targetRef);
+   tape.write(ByteCode::CallMR, node.arg.reference, targetRef | mskVMTRef);
 }
 
 void exit(CommandTape& tape, BuildNode& node, TapeScope&)

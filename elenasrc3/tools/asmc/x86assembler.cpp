@@ -1398,7 +1398,7 @@ bool X86_64Assembler :: compileCall(X86Operand source, MemoryWriter& writer)
 {
    if (source.type == X86OperandType::DD) {
       writer.writeByte(0xE8);
-      if (source.reference == RELPTR32_1) {
+      if (source.reference == RELPTR32_1 || source.reference == RELPTR32_2) {
          writer.writeDReference(source.reference, source.offset);
       }
       else writer.writeDReference(source.reference | mskCodeRelRef32, source.offset);

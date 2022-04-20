@@ -1,13 +1,11 @@
 import system;
 
-interface X
+X
 {
-    abstract x();
-}
-
-XX : X
-{
-   x() {} 
+   directCall()
+   {
+       B.testB(self);
+   }
 }
 
 public singleton WinOutput
@@ -27,8 +25,8 @@ public singleton LinuxOutput
    }
 }
 
-//Output = WinOutput;
-Output = LinuxOutput;
+Output = WinOutput;
+//Output = LinuxOutput;
 
 singleton B
 {
