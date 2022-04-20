@@ -159,7 +159,7 @@ public:
    }
    void print(ustr_t msg, int arg1) override
    {
-      ::print(wstr.str(), arg1);
+      ::print(msg.str(), arg1);
    }
    void printPath(ustr_t msg, path_t arg)
    {
