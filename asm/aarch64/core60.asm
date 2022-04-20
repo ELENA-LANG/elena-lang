@@ -175,7 +175,7 @@ inline %88h
 end
 
 // ; copy
-inline %92h
+inline %90h
 
   mov     x11, __arg12_1
   mov     x12, x0

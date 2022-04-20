@@ -6,7 +6,6 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 4 : print message using external routine / debugger ===
     --- elena redux ---
-    * private - direct call
 
     * >print message using external routine - arm64
     --- ide redux ---
@@ -23,6 +22,8 @@ In development:
     * linux debugger
     === Sprint 5 : dispatching methods ===
     --- elena redux ---
+    * asmc : duplicate inline command
+    * private - direct call
     * abstract method
     * abstract method cannot be created
     * validate if all abstract methods are declared
@@ -92,7 +93,6 @@ Pipeline:
     * for windows x86-64 allocate shadow memory
     * for linux amd64 allocate shadow memory
 
-    * asmc : duplicate inline command
     * ide : editor
     * ide : project view
     * ide : compiling
