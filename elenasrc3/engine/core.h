@@ -39,6 +39,8 @@ namespace elena_lang
    constexpr ref_t CORE_TOC                  = 0x20001;
    constexpr ref_t SYSTEM_ENV                = 0x20002;
    constexpr ref_t CORE_GC_TABLE             = 0x20003;
+   constexpr ref_t VOIDOBJ                   = 0x2000D;
+   constexpr ref_t VOIDPTR                   = 0x2000E;
 
 #pragma pack(push, 1)
    // --- VMTHeader ---

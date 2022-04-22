@@ -106,6 +106,7 @@ namespace elena_lang
       JB    = 0x02,
       JAE   = 0x03,
       JZ    = 0x04,
+      JNZ   = 0x05,
    };
 
    inline bool test(X86OperandType type, X86OperandType mask)

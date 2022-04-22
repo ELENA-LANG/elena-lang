@@ -1,10 +1,15 @@
 // ; --- Predefined References  --
-define INVOKER         10001h
-define GC_ALLOC	       10002h
+define INVOKER              10001h
+define GC_ALLOC	            10002h
 
-define CORE_TOC        20001h
-define SYSTEM_ENV      20002h
-define CORE_GC_TABLE   20003h
+define CORE_TOC             20001h
+define SYSTEM_ENV           20002h
+define CORE_GC_TABLE   	    20003h
+define CORE_MESSAGE_TABLE   2000Ah
+define VOID           	    2000Dh
+define VOIDPTR              2000Eh
+
+define ACTION_ORDER              9
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -60,6 +65,24 @@ structure %SYSTEM_ENV
   dd code : %INVOKER
   // ; dd GCMGSize
   // ; dd GCYGSize
+
+end
+
+rstructure %VOID
+
+  dd 0
+  dd 0  // ; a reference to the super class class
+  dd 0
+  dd 0  
+  dd 0
+
+end
+
+structure %VOIDPTR
+
+  dd rdata : %VOID + elPackageOffset
+  dd 0
+  dd 0
 
 end
 
@@ -549,6 +572,61 @@ inline %0F9h
 
   mov  eax, __ptr32_2
   mov  [ebp+__arg32_1], eax
+
+end
+
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 0FBh
+
+  mov  eax, __arg32_2
+  mov  esi, __ptr32_2
+  push ebx
+  xor  edx, edx
+  mov  ebx, [esi] // ; message from overload list
+
+labNextOverloadlist:
+  shr  ebx, ACTION_ORDER
+  mov  edi, rdata : % CORE_MESSAGE_TABLE
+  mov  ebx, [edi + ebx * 8 + 4]
+  mov  ecx, __n_1
+  lea  ebx, [edi + ebx - 4]
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  mov  esi, __ptr32_2
+  pop  ebx
+  mov  eax, [esi + edx * 8 + 4]
+  mov  ecx, [ebx - elVMTOffset]
+  mov  edx, [esi + edx * 8]
+  jmp  [ecx + eax * 8 + 4]
+
+labMatching:
+  mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
+  test  edi, edi
+  cmovz edi, esi
+
+  mov  edi, [edi - elVMTOffset]
+  mov  esi, [ebx + ecx * 4]
+
+labNextBaseClass:
+  cmp  esi, edi
+  jz   labNextParam
+  mov  edi, [edi - elPackageOffset]
+  and  edi, edi
+  jnz  short labNextBaseClass
+
+  mov  esi, __ptr32_2
+  add  edx, 1
+  mov  ebx, [esi + edx * 8] // ; message from overload list
+  and  ebx, ebx
+  jnz  labNextOverloadlist
+
+  pop  ebx
 
 end
 

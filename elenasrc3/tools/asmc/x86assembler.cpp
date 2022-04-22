@@ -123,7 +123,10 @@ X86Operand X86Assembler :: defineOperand(ScriptToken& tokenInfo, X86OperandType 
             operand.type = X86OperandType::DD;
       }
       else if (tokenInfo.compare("data")) {
-         operand = compileDataOperand(tokenInfo, errorMessage);
+         operand = compileDataOperand(tokenInfo, errorMessage, false);
+      }
+      else if (tokenInfo.compare("rdata")) {
+         operand = compileDataOperand(tokenInfo, errorMessage, true);
       }
       else if (!errorMessage.empty()) {
          throw SyntaxError(errorMessage, tokenInfo.lineInfo);
@@ -350,16 +353,18 @@ X86Operand X86Assembler :: compileCodeOperand(ScriptToken& tokenInfo, ustr_t err
    return operand;
 }
 
-X86Operand X86Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage)
+X86Operand X86Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, bool rdataMode)
 {
    X86Operand operand;
 
    read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
+   ref_t mask = rdataMode ? mskRDataRef32 : mskDataRef32;
+
    read(tokenInfo);
    if (tokenInfo.compare("%")) {
       operand.type = X86OperandType::DD;
-      operand.reference = readReference(tokenInfo) | mskDataRef32;
+      operand.reference = readReference(tokenInfo) | mask;
    }
    else throw SyntaxError(ASM_INVALID_TARGET, tokenInfo.lineInfo);
 
@@ -394,10 +399,15 @@ X86Operand X86Assembler :: compileOperand(ScriptToken& tokenInfo, ustr_t errorMe
 
       read(tokenInfo);
    }
-   else if (tokenInfo.compare("data")) {
-      operand = compileDataOperand(tokenInfo, errorMessage);
+   else if (tokenInfo.compare("data") || tokenInfo.compare("rdata")) {
+      operand = compileDataOperand(tokenInfo, errorMessage, tokenInfo.compare("rdata"));
 
       read(tokenInfo);
+      if (tokenInfo.compare("+")) {
+         operand.offset += readInteger(tokenInfo);
+
+         read(tokenInfo);
+      }
    }
    else {
       operand = defineOperand(tokenInfo, X86OperandType::DD, errorMessage);
@@ -437,6 +447,18 @@ void X86Assembler::compileAdd(ScriptToken& tokenInfo, MemoryWriter& writer)
    X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
 
    if (!compileAdd(sour, dest, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileAnd(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileAnd(sour, dest, writer))
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
@@ -503,6 +525,18 @@ void X86Assembler :: compileCmp(ScriptToken& tokenInfo, MemoryWriter& writer)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void X86Assembler :: compileCMovcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileCMovcc(sour, dest, writer, type))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void X86Assembler :: compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type, LabelScope& labelScope)
 {
    read(tokenInfo);
@@ -512,7 +546,6 @@ void X86Assembler :: compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, X8
       shortJump = true;
       read(tokenInfo);
    }
-   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 
    // if jump forward
    if (!labelScope.checkDeclaredLabel(*tokenInfo.token)) {
@@ -772,6 +805,17 @@ bool X86Assembler :: compileAdd(X86Operand source, X86Operand target, MemoryWrit
    return true;
 }
 
+bool X86Assembler :: compileAnd(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isR32() && target.isR32_M32()) {
+      writer.writeByte(0x23);
+      X86Helper::writeModRM(writer, source, target);
+   }
+   else return false;
+
+   return true;
+}
+
 bool X86Assembler :: compileCall(X86Operand source, MemoryWriter& writer)
 {
    if (source.type == X86OperandType::DD) {
@@ -799,6 +843,18 @@ bool X86Assembler :: compileCmp(X86Operand source, X86Operand target, MemoryWrit
 {
    if (source.isR32() && target.isR32_M32()) {
       writer.writeByte(0x3B);
+      X86Helper::writeModRM(writer, source, target);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileCMovcc(X86Operand source, X86Operand target, MemoryWriter& writer, X86JumpType type)
+{
+   if (source.isR32() && target.isR32_M32()) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0x40 + (int)type);
       X86Helper::writeModRM(writer, source, target);
    }
    else return false;
@@ -1052,6 +1108,9 @@ bool X86Assembler::compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
    if (tokenInfo.compare("add")) {
       compileAdd(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("and")) {
+      compileAnd(tokenInfo, writer);
+   }
    else return false;
 
    return true;
@@ -1069,6 +1128,9 @@ bool X86Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
    else if (tokenInfo.compare("cmp")) {
       compileCmp(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("cmovz")) {
+      compileCMovcc(tokenInfo, writer, X86JumpType::JZ);
    }
    else return false;
 
@@ -1089,6 +1151,9 @@ bool X86Assembler :: compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
 {
    if (tokenInfo.compare("jz") || tokenInfo.compare("je")) {
       compileJcc(tokenInfo, writer, X86JumpType::JZ, labelScope);
+   }
+   else if (tokenInfo.compare("jnz")) {
+      compileJcc(tokenInfo, writer, X86JumpType::JNZ, labelScope);
    }
    else if (tokenInfo.compare("jb")) {
       compileJcc(tokenInfo, writer, X86JumpType::JB, labelScope);
@@ -1340,16 +1405,18 @@ X86Operand X86_64Assembler :: compileCodeOperand(ScriptToken& tokenInfo, ustr_t 
    return operand;
 }
 
-X86Operand X86_64Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage)
+X86Operand X86_64Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, bool rdataMode)
 {
    X86Operand operand;
+
+   ref_t mask = rdataMode ? mskRDataRef64 : mskDataRef64;
 
    read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
    read(tokenInfo);
    if (tokenInfo.compare("%")) {
       operand.type = X86OperandType::DQ;
-      operand.reference = readReference(tokenInfo) | mskDataRef64;
+      operand.reference = readReference(tokenInfo) | mask;
    }
    else throw SyntaxError(ASM_INVALID_TARGET, tokenInfo.lineInfo);
 

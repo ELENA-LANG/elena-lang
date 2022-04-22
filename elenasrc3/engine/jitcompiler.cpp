@@ -64,7 +64,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    compileOpen, loadIndexROp, compileOpen, loadIndexIndexOp, loadNewOp, loadNewNOp, loadNop, loadNop,
-   loadNop, loadFrameIndexROp, loadNop, loadNop, loadVMTROp, loadMROp, loadCallOp, loadNop,
+   loadNop, loadFrameIndexROp, loadNop, compileDispatchMR, loadVMTROp, loadMROp, loadCallOp, loadNop,
 };
 
 // preloaded gc routines
@@ -74,11 +74,11 @@ const ref_t coreVariables[coreVariableNumber] =
    CORE_GC_TABLE//, CORE_EH_TABLE
 };
 
-const int coreConstantNumber = 2;
+const int coreConstantNumber = 4;
 const ref_t coreConstants[coreConstantNumber] =
 {
    // NOTE: SYSTEM_ENV should be the last one correctly to add extra fields: GCMGSize, GCYGSize
-   CORE_TOC, SYSTEM_ENV
+   CORE_TOC, VOIDOBJ, VOIDPTR, SYSTEM_ENV
 };
 
 // preloaded gc routines
@@ -1295,6 +1295,51 @@ void elena_lang::compileJump(JITCompilerScope* scope)
    else {
       scope->lh->writeJumpForward(position, *scope->codeWriter, scope->command.arg1);
    }
+}
+
+void elena_lang::compileDispatchMR(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   void* code = scope->compiler->_inlines[0][scope->code()];
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   int startArg = 1;
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case ARG32_1:
+            scope->compiler->writeImm32(writer, scope->helper->importMessage(scope->command.arg1));
+            break;
+         case NARG_1:
+            scope->compiler->writeImm32(writer, scope->command.arg1 & ARG_MASK);
+            break;
+         case PTR32_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
+            break;
+         case NARG_2:
+            scope->compiler->writeImm32(writer, startArg);
+            break;
+         default:
+            //else writeCoreReference();
+            break;
+      }
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+
 }
 
 // --- JITCompiler ---

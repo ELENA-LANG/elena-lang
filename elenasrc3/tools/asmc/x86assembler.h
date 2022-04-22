@@ -52,15 +52,17 @@ namespace elena_lang
       X86Operand readPtrOperand(ScriptToken& tokenInfo, X86OperandType prefix, ustr_t errorMessage);
 
       virtual X86Operand compileCodeOperand(ScriptToken& tokenInfo, ustr_t errorMessage);
-      virtual X86Operand compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage);
+      virtual X86Operand compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, bool rdataMode);
 
       X86Operand compileOperand(ScriptToken& tokenInfo, ustr_t errorMessage);
 
       void declareLabel(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
 
       virtual bool compileAdd(X86Operand source, X86Operand target, MemoryWriter& writer);
+      virtual bool compileAnd(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileCall(X86Operand source, MemoryWriter& writer);
       virtual bool compileCmp(X86Operand source, X86Operand target, MemoryWriter& writer);
+      virtual bool compileCMovcc(X86Operand source, X86Operand target, MemoryWriter& writer, X86JumpType type);
       virtual bool compileJccForward(X86JumpType type, bool shortJump, MemoryWriter& writer);
       virtual bool compileJccBack(X86JumpType type, bool shortJump, int offset, MemoryWriter& writer);
       virtual bool compileJmpForward(bool shortJump, MemoryWriter& writer);
@@ -78,8 +80,10 @@ namespace elena_lang
       virtual void compileExternCall(ScriptToken& tokenInfo, MemoryWriter& writer);
 
       void compileAdd(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileAnd(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCall(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCmp(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileCMovcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type);
       void compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type, LabelScope& labelScope);
       void compileJmp(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileLea(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -149,7 +153,7 @@ namespace elena_lang
       X86Operand readDispOperand(ScriptToken& tokenInfo, X86Operand operand, X86OperandType prefix, ustr_t errorMessage) override;
 
       X86Operand compileCodeOperand(ScriptToken& tokenInfo, ustr_t errorMessage) override;
-      X86Operand compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage) override;
+      X86Operand compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, bool rdataMode) override;
 
       void compileExternCall(ScriptToken& tokenInfo, MemoryWriter& writer) override;
 
