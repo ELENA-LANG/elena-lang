@@ -1,9 +1,18 @@
 import system;
 
-//C
-//{
+D
+{
+   proceed(C c)
+   {
+       //c.proceed()
+   }
+}
+
+C
+{
 //    constructor() {}
-//}
+    proceed() {}
+}
 
 public singleton WinOutput
 {
@@ -22,8 +31,8 @@ public singleton LinuxOutput
    }
 }
 
-//Output = WinOutput;
-Output = LinuxOutput;
+Output = WinOutput;
+//Output = LinuxOutput;
 
 singleton B
 {

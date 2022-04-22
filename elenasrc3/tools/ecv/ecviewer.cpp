@@ -373,6 +373,21 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elDynamicRole)) {
       printLineAndCount("@flag ", "elDynamicRole", row, pageSize);
    }
+   if (test(flags, elAbstract)) {
+      printLineAndCount("@flag ", "elAbstract", row, pageSize);
+   }
+   if (test(flags, elFinal)) {
+      printLineAndCount("@flag ", "elFinal", row, pageSize);
+   }
+   if (test(flags, elNoCustomDispatcher)) {
+      printLineAndCount("@flag ", "elNoCustomDispatcher", row, pageSize);
+   }
+   if (test(flags, elStructureWrapper)) {
+      printLineAndCount("@flag ", "elStructureWrapper", row, pageSize);
+   }
+   if (test(flags, elDynamicRole)) {
+      printLineAndCount("@flag ", "elDynamicRole", row, pageSize);
+   }
 }
 
 void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)

@@ -2012,6 +2012,42 @@ namespace elena_lang
          _length++;
       }
 
+      void insert(pos_t index, T item)
+      {
+         if (_length < cacheSize) {
+            for (size_t i = _length; i > index; i--)
+               _cached[i] = _cached[i - 1];
+
+            _cached[index] = item;
+         }
+         else {
+            if (_length - cacheSize >= _allocatedSize) {
+               _allocatedSize += 10;
+
+               _allocated = (T*)realloc(_allocated, _allocatedSize * sizeof(T));
+            }
+
+            if (index < cacheSize) {
+               for (size_t i = _length; i > cacheSize; i--)
+                  _allocated[i - cacheSize] = _allocated[i - cacheSize - 1];
+
+               _allocated[0] = _cached[cacheSize - 1];
+               for (size_t i = cacheSize - 1; i > index; i--)
+                  _cached[i] = _cached[i - 1];
+
+               _cached[index] = item;
+            }
+            else {
+               for (size_t i = _length; i > index; i--)
+                  _allocated[i - cacheSize] = _allocated[i - cacheSize - 1];
+
+               _allocated[index] = item;
+            }
+         }
+
+         _length++;
+      }
+
       CachedList()
       {
          _allocated = nullptr;

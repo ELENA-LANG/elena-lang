@@ -47,6 +47,29 @@ bool ModuleScope :: isStandardOne()
    return module->name().compare(STANDARD_MODULE) || module->name().compare(PREDEFINED_MODULE);
 }
 
+inline void findUninqueName(ModuleBase* module, IdentifierString& name)
+{
+   size_t pos = name.length();
+   int   index = 0;
+   ref_t ref = 0;
+   do {
+      name[pos] = 0;
+      name.appendUInt(index++, 16);
+
+      ref = module->mapReference(*name, true);
+   } while (ref != 0);
+}
+
+ref_t ModuleScope :: mapAnonymous(ustr_t prefix)
+{
+   // auto generate the name
+   IdentifierString name("'", prefix, INLINE_CLASSNAME);
+
+   findUninqueName(module, name);
+
+   return module->mapReference(*name);
+}
+
 ref_t ModuleScope :: mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility)
 {
    if (!ns.empty()) {
@@ -312,6 +335,9 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
 
          if (info.outputRef)
             info.outputRef = importReference(exporter, info.outputRef);
+
+         if (info.multiMethod)
+            info.multiMethod = importMessage(exporter, info.multiMethod);
 
          if (inheritMode) {
             info.inherited = true;

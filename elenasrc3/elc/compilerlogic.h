@@ -25,6 +25,11 @@ namespace elena_lang
    // --- CompilerLogic ---
    class CompilerLogic
    {
+      ref_t generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, mssg_t message,
+         void* param, ref_t(*resolve)(void*, ref_t));
+
+      bool isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t sourceLen);
+
    public:
       BuildKey resolveOp(int operatorId, ref_t* arguments, size_t length);
 
@@ -45,6 +50,7 @@ namespace elena_lang
 
       bool isRole(ClassInfo& info);
       bool isEmbeddableStruct(ClassInfo& info);
+      bool isMultiMethod(ClassInfo& info, MethodInfo& methodInfo);
 
       bool isValidObjOp(int operatorId);
       bool isValidStrDictionaryOp(int operatorId);
@@ -67,10 +73,9 @@ namespace elena_lang
       void writeAttrDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference);
       bool readAttrDictionary(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
-      void injectVirtualCode(CompilerBase* compiler, SyntaxNode classNode, 
-         ModuleScopeBase* scope, ref_t classRef, ClassInfo& classInfo);
+      bool isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils);
 
-      bool isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef);
+      bool isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage);
 
       ConversionRoutine retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef);
 
@@ -79,6 +84,10 @@ namespace elena_lang
 
       bool resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
          CheckMethodResult& result);
+
+      void injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef);
+
+      void verifyMultimethods();
 
       static CompilerLogic* getInstance()
       {

@@ -706,12 +706,14 @@ namespace elena_lang
       bool  inherited;
       ref_t hints;
       ref_t outputRef;
+      ref_t multiMethod;
 
       MethodInfo()
       {
          inherited = false;
          hints = 0;
          outputRef = 0;
+         multiMethod = 0;
       }
    };
 

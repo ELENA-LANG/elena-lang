@@ -54,8 +54,9 @@ namespace elena_lang
    constexpr auto ROOT_MODULE             = "$rootnamespace";  // The project namespace
 
    // --- ELENA standard forwards
-   constexpr auto FORWARD_PREFIX_NS       = "$forwards'";
    constexpr auto TEMPLATE_PREFIX_NS      = "'$auto'";
+   constexpr auto FORWARD_PREFIX_NS       = "$forwards'";
+   constexpr auto INLINE_CLASSNAME        = "$inline";          // nested class generic name
 
    constexpr auto PREDEFINED_FORWARD      = "$forwards'meta$predefined";
    constexpr auto ATTRIBUTES_FORWARD      = "$forwards'meta$attributes";
@@ -173,6 +174,7 @@ namespace elena_lang
 
       ProtectedAlias    = 0xA01,
       InternalAlias     = 0xA02,
+      OverloadList      = 0x903, 
    };
 
    // === Reference constants ====
@@ -197,6 +199,7 @@ namespace elena_lang
    constexpr ref_t mskLiteralRef          = 0x0E000000u;   // reference to constant literal
    constexpr ref_t mskVMTMethodAddress    = 0x0F000000u;
    constexpr ref_t mskVMTMethodOffset     = 0x10000000u;
+   constexpr ref_t mskConstArray          = 0x11000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

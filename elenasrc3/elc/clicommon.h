@@ -328,6 +328,8 @@ public:
 
    virtual bool isStandardOne() = 0;
 
+   virtual ref_t mapAnonymous(ustr_t prefix) = 0;
+
    virtual ref_t mapFullReference(ustr_t referenceName, bool existing = false) = 0;
    virtual ref_t mapWeakReference(ustr_t referenceName, bool existing = false) = 0;
 
@@ -442,6 +444,8 @@ typedef Map<ustr_t, ref_t, allocUStr, freeUStr> ForwardMap;
 class CompilerBase
 {
 public:
+   virtual void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, mssg_t messageRef) = 0;
+
    virtual void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode, 
       mssg_t message, ustr_t retVar, ref_t classRef) = 0;
 

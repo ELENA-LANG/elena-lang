@@ -60,7 +60,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "open", "xstore sp", "open header", "mov sp", "new", "newn", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, "xstore fp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
+   OPCODE_UNKNOWN, "xstore fp", OPCODE_UNKNOWN, "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
 };
 
 // --- Auxiliary  ---

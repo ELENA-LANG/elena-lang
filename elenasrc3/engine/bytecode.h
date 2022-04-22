@@ -57,6 +57,7 @@ namespace elena_lang
       NewIR          = 0xF4,
       NewNR          = 0xF5,
       XStoreFIR      = 0xF9,
+      DispatchMR     = 0xFB,
       VCallMR        = 0xFC,
       CallMR         = 0xFD,
       CallExtR       = 0xFE,
@@ -182,6 +183,7 @@ namespace elena_lang
             case ByteCode::MovM:
             case ByteCode::CallMR:
             case ByteCode::VCallMR:
+            case ByteCode::DispatchMR:
                return true;
             default:
                return false;
@@ -209,6 +211,7 @@ namespace elena_lang
             case ByteCode::NewNR:
             case ByteCode::CallMR:
             case ByteCode::VCallMR:
+            case ByteCode::DispatchMR:
                return true;
             default:
                return false;

@@ -38,6 +38,7 @@ namespace elena_lang
    constexpr auto errMsgClosedMethod         = "%s(%d:%d): error 150: sealed method cannot be overridden\n";
    constexpr auto errMsgIllegalStaticMethod  = "%s(%d:%d): error 151: Static method cannot be declared\n";
    constexpr auto errMsgIllegalMethod        = "%s(%d:%d): error 152: Illegal method declaration\n";
+   constexpr auto errMsgIllegalOperation     = "%s(%d:%d): error 153: Illegal operation\n";
    constexpr auto errMsgDispatcherInInterface= "%s(%d:%d): error 160: Closed class contains a dispatcher method\n";
    constexpr auto errMsgAbstractMethodCode   = "%s(%d:%d): error 161: An abstract method cannot have an explicit body\n";
    constexpr auto errMsgNotAbstractClass     = "%s(%d:%d): error 164: An attribute '%s' cannot be declared in a non-abstract class\n";

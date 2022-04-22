@@ -4,25 +4,19 @@ In development:
 
   [development]
     ### EPOCH: elena 6.0 - redux ###
-    === Sprint 4 : print message using external routine / debugger ===
-    --- elena redux ---
-    * >print message using external routine - arm64  (400678)
     === Sprint 5 : dispatching methods ===
     --- elena redux ---
-    * implicit constructor
-    * private constructor
-    * abstract method
-    * abstract method cannot be created
-    * validate if all abstract methods are declared
-    * make BaseValue / BaseNumber / BaseIntNumber - an abstract
-    * call interface method
-    * optimization - call method directly
-    * compiler - calling a constructor method directly
-    * compiler - constructor - fill newly created object with zerros
-    * compiler - if the method has no call operarion, no need to set arg length
-    * strong typed method parameter
-    * signature dispatch 
+    * generate overloadlist
+    * import overloadlist
+
+    * implicit multimethod
+    * if virtual multi-method handler is overridden - redirect to the parent one
+    * verifyMultimethods implements
+    * explicit multimethod
+
+    * run-time signature dispatch 
     * signature dispatch - x86, x86-64, i386, amd64, ppc64le, arm64 
+
     --- ide redux ---
     * linux init styles
     * linux textview - show text
@@ -57,6 +51,18 @@ Pipeline:
     --- docs / tutorials ---
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
+    * implicit constructor
+    * private constructor
+    * abstract method
+    * abstract method cannot be created
+    * validate if all abstract methods are declared
+    * make BaseValue / BaseNumber / BaseIntNumber - an abstract
+    * call interface method
+    * optimization - call method directly
+    * compiler - calling a constructor method directly
+    * compiler - constructor - fill newly created object with zerros
+    * compiler - if the method has no call operarion, no need to set arg length
+    * dispatching a message in compile-time when it is possible
     * protected constructor
     * predefined methods
     * branching : boolean type
@@ -65,6 +71,10 @@ Pipeline:
     * branching : loop attribute
     * branching : while operator
     * bcwriter : openFrame - should flush only used arguments (e.g. for test[1] - only one xflush)
+    * dispatch opcode : optimize for 1,2,3,4 arguments
+    * optimization sealed dispatching
+    * optimization single dispatching
+    * private method dispatching
 
     * editor - do we need checkmode? it seems like not
 

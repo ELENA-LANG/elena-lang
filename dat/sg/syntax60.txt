@@ -20,7 +20,7 @@ __define EXPRESSION          6192;
 __define OBJECT              4145;
 __define TEMPLATE_TYPE       4146;
 __define ARRAY_TYPE          4147;
-__define RET_EXPRESSION      6196;
+__define RET_EXPRESSION      7220;
 __define INDEXER_OPERATION   6209;
 __define ASSIGN_OPERATION    6210;
 __define ADDITION_ASSIGNMENT 6211;
@@ -194,7 +194,8 @@ PARAMETER ::=
 	identifier PARAMETER_R;
 
 PARAMETER_R ::=
-	eps;
+	identifier PARAMETER_R
+	| eps;
 
 DIMENSION ::=
         integer

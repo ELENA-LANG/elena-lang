@@ -447,6 +447,13 @@ namespace elena_lang
             return scope ? scope->info.header.flags : 0;
          }
 
+         mssg_t getMessageID()
+         {
+            MethodScope* scope = (MethodScope*)getScope(ScopeLevel::Method);
+
+            return scope ? scope->message : 0;
+         }
+
          ref_t getOutputRef()
          {
             MethodScope* scope = (MethodScope*)getScope(ScopeLevel::Method);
@@ -556,12 +563,16 @@ namespace elena_lang
 
       ExternalInfo mapExternal(Scope& scope, SyntaxNode node);
 
+      mssg_t defineMultimethod(ClassScope& scope, mssg_t messageRef);
+
       ref_t resolveObjectReference(ObjectInfo info);
       ref_t resolvePrimitiveReference(ObjectInfo info);
-      ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type);
+      ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
+         bool declarationMode);
 
       int resolveSize(Scope& scope, SyntaxNode node);
-      ref_t resolveTypeAttribute(Scope& scope, SyntaxNode node);
+      ref_t resolveTypeAttribute(Scope& scope, SyntaxNode node, 
+         bool declarationMode);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix); 
 
@@ -581,6 +592,7 @@ namespace elena_lang
       void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& fldeclaredFlagsags);
       void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode);
       void declareMethodAttributes(MethodScope& scope, SyntaxNode node);
+      void declareArgumentAttributes(MethodScope& scope, SyntaxNode node, ref_t& typeRef, bool declarationMode);
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, ref_t& dictionaryType);
       void declareExpressionAttributes(Scope& scope, SyntaxNode node, ref_t& typeRef, ExpressionAttributes& mode);
 
@@ -610,7 +622,7 @@ namespace elena_lang
       void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);
       void resolveClassParent(ClassScope& scope, SyntaxNode node);
 
-      void declareVMTMessage(MethodScope& scope, SyntaxNode node);
+      void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool declarationMode);
 
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
       void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode);
@@ -670,6 +682,9 @@ namespace elena_lang
       ObjectInfo compileRootExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
       ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
 
+      void compileMultidispatch(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
+      void compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
+
       ObjectInfo compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
 
       void beginMethod(BuildTreeWriter& writer, MethodScope& scope, BuildKey scopeKey);
@@ -697,7 +712,17 @@ namespace elena_lang
       void validateSuperClass(ClassScope& scope, SyntaxNode node);
       void validateType(Scope& scope, ref_t typeRef, SyntaxNode node);
 
+      void injectVirtualCode(SyntaxNode classNode, ModuleScopeBase* scope, ref_t classRef, ClassInfo& classInfo);
+      void injectVirtualMultimethods(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
+         ClassInfo& info, List<mssg_t>& implicitMultimethods);
+
+      void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
+         ClassInfo& classInfo, mssg_t message, bool inherited);
+      void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, 
+         mssg_t resendMessage, ref_t resendTarget);
       void injectDefaultConstructor(ModuleScopeBase* scope, SyntaxNode node);
+
+      void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, mssg_t messageRef) override;
 
    public:
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver);

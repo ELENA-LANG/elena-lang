@@ -54,6 +54,7 @@ namespace elena_lang
       ExtCallOp         = 0x0019,
       SavingIndex       = 0x001A,
       DirectCallOp      = 0x001B,
+      DispatchingOp     = 0x001C,
 
       Import            = 0x0028,
       StrDictionaryOp   = 0x0029,
@@ -70,6 +71,7 @@ namespace elena_lang
       Row               = 0x8007,
       Size              = 0x8008,
       Count             = 0x8009,
+      Message           = 0x800A,
 
       //MetaDictionary    = 0x0022,
       //MetaArray         = 0x1023,

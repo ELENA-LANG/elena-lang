@@ -20,6 +20,7 @@ namespace elena_lang
       Normal         = 0x0000003,
       Dispatcher     = 0x0000004,
 
+      Multimethod    = 0x0001000,
       Static         = 0x0004000,
       Abstract       = 0x0020000,
       Internal       = 0x0040000,
@@ -53,6 +54,7 @@ namespace elena_lang
    constexpr auto errClosedMethod         = 150;
    constexpr auto errIllegalStaticMethod  = 151;
    constexpr auto errIllegalMethod        = 152;
+   constexpr auto errIllegalOperation     = 153;
    constexpr auto errDispatcherInInterface= 160;
    constexpr auto errAbstractMethodCode   = 161;
    constexpr auto errNotAbstractClass     = 164;

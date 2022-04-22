@@ -90,7 +90,7 @@ const ref_t coreFunctions[coreFunctionNumber] =
 
 // preloaded bc commands
 
-const size_t bcCommandNumber = 28;
+const size_t bcCommandNumber = 29;
 const ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDDisp, ByteCode::CloseN, ByteCode::AllocI,
@@ -98,7 +98,7 @@ const ByteCode bcCommands[bcCommandNumber] =
    ByteCode::OpenHeaderIN, ByteCode::CallExtR, ByteCode::MovSIFI, ByteCode::PeekFI, ByteCode::Load,
    ByteCode::SaveSI, ByteCode::CallR, ByteCode::Quit, ByteCode::MovM, ByteCode::CallVI,
    ByteCode::StoreSI, ByteCode::Redirect, ByteCode::NewIR, ByteCode::XFlushSI, ByteCode::Copy,
-   ByteCode::NewNR, ByteCode::CallMR, ByteCode::VCallMR
+   ByteCode::NewNR, ByteCode::CallMR, ByteCode::VCallMR, ByteCode::DispatchMR
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/,

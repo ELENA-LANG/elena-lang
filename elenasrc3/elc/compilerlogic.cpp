@@ -84,7 +84,7 @@ bool CompilerLogic :: isValidStrDictionaryOp(int operatorId)
    }
 }
 
-bool CompilerLogic::isValidAttrDictionaryOp(int operatorId)
+bool CompilerLogic :: isValidAttrDictionaryOp(int operatorId)
 {
    switch (operatorId) {
       case SET_INDEXER_OPERATOR_ID:
@@ -334,6 +334,11 @@ bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
    return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
 }
 
+bool CompilerLogic :: isMultiMethod(ClassInfo& info, MethodInfo& methodInfo)
+{
+   return test(methodInfo.hints, (ref_t)MethodHint::Multimethod);
+}
+
 void CompilerLogic :: tweakClassFlags(ClassInfo& info, bool classClassMode)
 {
    if (classClassMode) {
@@ -411,26 +416,6 @@ void CompilerLogic :: writeArrayEntry(MemoryBase* section, ref_t reference)
 {
    MemoryWriter writer(section);
    writer.writeRef(reference);
-}
-
-void CompilerLogic :: injectVirtualCode(CompilerBase* compiler, SyntaxNode classNode, ModuleScopeBase* scope, 
-   ref_t classRef, ClassInfo& classInfo)
-{
-   if (test(classInfo.header.flags, elClassClass)) {
-      
-   }
-   else if (/*!test(classInfo.header.flags, elNestedClass) && */!test(classInfo.header.flags, elRole)) {
-      // skip class classes, extensions and singletons
-      if (classRef != scope->buildins.superReference && !test(classInfo.header.flags, elClosed)) {
-         // auto generate cast$<type> message for explicitly declared classes
-         ref_t signRef = scope->module->mapSignature(&classRef, 1, false);
-         ref_t actionRef = scope->module->mapAction(CAST_MESSAGE, signRef, false);
-
-         compiler->injectVirtualReturningMethod(scope, classNode, 
-            encodeMessage(actionRef, 1, CONVERSION_MESSAGE), 
-            *scope->selfVar, classRef);
-      }
-   }
 }
 
 bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly)
@@ -519,10 +504,17 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
    else return V_OBJARRAY;
 }
 
-bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef)
+bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils)
 {
    if ((!targetRef || targetRef == scope.buildins.superReference) && !isPrimitiveRef(sourceRef))
       return true;
+
+   if (sourceRef == V_NIL) {
+      // nil is compatible with a super class for the message dispatching
+      // and with all types for all other cases
+      if (!ignoreNils || targetRef == scope.buildins.superReference)
+         return true;
+   }
 
    if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
       return true;
@@ -536,7 +528,7 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_
          // if it is a structure wrapper
          if (isPrimitiveRef(targetRef) && test(info.header.flags, elWrapper)) {
             auto inner = *info.fields.start();
-            if (isCompatible(scope, targetRef, inner.typeRef/*, ignoreNils*/))
+            if (isCompatible(scope, targetRef, inner.typeRef, ignoreNils))
                return true;
          }
 
@@ -553,6 +545,43 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_
    return false;
 }
 
+inline ref_t getSignature(ModuleScopeBase& scope, mssg_t message)
+{
+   ref_t actionRef = getAction(message);
+   ref_t signRef = 0;
+   scope.module->resolveAction(actionRef, signRef);
+
+   return signRef;
+}
+
+bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature, 
+   ref_t* sourceSignatures, size_t sourceLen)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
+   if (sourceLen == 0 && len == 0)
+      return true;
+
+   if (len < 1)
+      return false;
+
+   for (size_t i = 0; i < sourceLen; i++) {
+      ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
+      if (!isCompatible(scope, targetSign, sourceSignatures[i], true))
+         return false;
+   }
+
+   return true;
+}
+
+bool CompilerLogic::isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage)
+{
+   ref_t sourceSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
+
+   return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures, len);
+}
+
 ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef)
 {
    ClassInfo info;
@@ -564,7 +593,7 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& sc
       auto inner = *info.fields.start();
 
       bool compatible = false;
-      compatible = isCompatible(scope, inner.typeRef, sourceRef);
+      compatible = isCompatible(scope, inner.typeRef, sourceRef, false);
 
       if (compatible)
          return { ConversionResult::BoxingRequired };
@@ -644,3 +673,84 @@ bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, ms
 
    return false;
 }
+
+void CompilerLogic :: verifyMultimethods()
+{
+   
+}
+
+inline ustr_t resolveActionName(ModuleBase* module, mssg_t message)
+{
+   ref_t signRef = 0;
+   return module->resolveAction(getAction(message), signRef);
+}
+
+ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, mssg_t message,
+   void* param, ref_t(*resolve)(void*, ref_t))
+{
+   // create a new overload list
+   ref_t listRef = scope.mapAnonymous(resolveActionName(scope.module, message));
+
+   // sort the overloadlist
+   CachedList<mssg_t, 0x20> list;
+   for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
+      auto methodInfo = *m_it;
+      if (methodInfo.multiMethod == message) {
+         bool added = false;
+         mssg_t omsg = m_it.key();
+         pos_t len = list.count();
+         for (pos_t i = 0; i < len; i++) {
+            if (isSignatureCompatible(scope, omsg, list[i])) {
+               list.insert(i, omsg);
+               added = true;
+               break;
+            }
+         }
+         if (!added)
+            list.add(omsg);
+      }
+   }
+
+   // fill the overloadlist
+   for (size_t i = 0; i < list.count(); i++) {
+      ref_t classRef = resolve(param, list[i]);
+
+      /*if (test(flags, elSealed) || test(message, STATIC_MESSAGE)) {
+         compiler.generateSealedOverloadListMember(scope, listRef, list[i], classRef);
+      }
+      else if (test(flags, elClosed)) {
+         compiler.generateClosedOverloadListMember(scope, listRef, list[i], classRef);
+      }
+      else*/ compiler->generateOverloadListMember(scope, listRef, list[i]);
+   }
+
+   return listRef;
+}
+
+ref_t paramFeedback(void* param, ref_t)
+{
+#if defined(__LP64__)
+   size_t val = (size_t)val;
+
+   return (ref_t)val;
+#else
+   return (ref_t)param;
+#endif
+}
+
+void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef)
+{
+   for (auto it = info.methods.start(); !it.eof(); ++it) {
+      auto methodInfo = *it;
+      if (!methodInfo.inherited && isMultiMethod(info, methodInfo)) {
+         // create a new overload list
+         mssg_t message = it.key();
+         ref_t listRef = generateOverloadList(compiler, scope, info, message, (void*)classRef, paramFeedback);
+
+         ClassAttributeKey key = { message, ClassAttribute::OverloadList };
+         info.attributes.exclude(key);
+         info.attributes.add(key, listRef);
+      }
+   }
+}
+

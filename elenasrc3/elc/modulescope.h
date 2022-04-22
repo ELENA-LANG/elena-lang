@@ -33,6 +33,8 @@ public:
       return importReference(referenceModule, referenceModule->resolveReference(reference));
    }
 
+   ref_t mapAnonymous(ustr_t prefix) override;
+
    ref_t mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) override;
 
    ref_t mapFullReference(ustr_t referenceName, bool existing) override;

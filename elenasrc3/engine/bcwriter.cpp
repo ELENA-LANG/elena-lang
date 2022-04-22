@@ -213,6 +213,13 @@ void savingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SaveDDisp, node.arg.value);
 }
 
+void dispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   mssg_t message = node.findChild(BuildKey::Message).arg.reference;
+
+   tape.write(ByteCode::DispatchMR, message, node.arg.reference | mskConstArray);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -243,6 +250,7 @@ ByteCodeWriter::Saver commands[] =
    extCallOp,
    savingIndex,
    directCallOp,
+   dispatchOp,
 };
 
 // --- ByteCodeWriter ---
