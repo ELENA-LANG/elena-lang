@@ -147,7 +147,8 @@ I_R ::=
         identifier I_R
         | I_L0_R
 	| I_L1_R
-	| I_L2_R NEXT_L2_R
+	| I_L2_R
+	| I_L3_R NEXT_L3_R
         | eps ^OBJECT; 
 
 I_L0_R ::=
@@ -161,10 +162,13 @@ L1_R ::=
         ":=" EXPRESSION ^ASSIGN_OPERATION;
 
 I_L2_R ::=
+	"(" ^OBJECT MESSAGE_PARAMETERS ")" ^ MESSAGE_OPERATION;
+
+I_L3_R ::=
 	"." ^OBJECT MESSAGE MESSAGE_R;
 
-NEXT_L2_R ::=
-	"." MESSAGE MESSAGE_R NEXT_L2_R
+NEXT_L3_R ::=
+	"." MESSAGE MESSAGE_R NEXT_L3_R
 	| eps;
 
 INDEXER_R ::=

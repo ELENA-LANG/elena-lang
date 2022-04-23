@@ -1,5 +1,4 @@
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Tools
 //
 //		This is a main file containing ecode viewer code
@@ -419,6 +418,14 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
    }
 }
 
+inline ustr_t getMethodPrefix(bool isFunction)
+{
+   if (isFunction) {
+      return "@function";
+   }
+   return "@method";
+}
+
 void ByteCodeViewer::printMethod(ustr_t name)
 {
    name = trim(name);
@@ -478,7 +485,7 @@ void ByteCodeViewer::printMethod(ustr_t name)
          line.append('.');
          addMessage(line, message);
 
-         printLine("@method ", *line);
+         printLine(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)), *line);
          printByteCodes(code, entry.codeOffset, 4, _pageSize);
          printLine("@end");
 
@@ -532,7 +539,7 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
       line.append('.');
       addMessage(line, entry.message);
 
-      prefix.copy("@method ");
+      prefix.copy(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)));
 
       printLineAndCount(*prefix, *line, row, _pageSize);
 

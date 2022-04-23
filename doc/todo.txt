@@ -6,6 +6,10 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 5 : dispatching methods ===
     --- elena redux ---
+    * function message
+    * calling function
+    * calling implicit constructor
+
     * generate overloadlist
     * import overloadlist
 
@@ -75,6 +79,7 @@ Pipeline:
     * optimization sealed dispatching
     * optimization single dispatching
     * private method dispatching
+    * optimization xstore sp:0, 0 and xstore sp:1, 0 - should be replaced with xor operation
 
     * editor - do we need checkmode? it seems like not
 

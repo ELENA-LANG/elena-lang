@@ -127,6 +127,9 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    if (test(flags, STATIC_MESSAGE))
       messageName.append("static:");
 
+   if (test(flags, FUNCTION_MESSAGE))
+      messageName.append("function:");
+
    messageName.append(actionName);
    if (signature) {
       ref_t references[ARG_COUNT];
@@ -159,6 +162,10 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
    if (messageName.startsWith("static:")) {
       flags |= STATIC_MESSAGE;
       messageName += getlength("static:");
+   }
+   if (messageName.startsWith("function:")) {
+      flags |= FUNCTION_MESSAGE;
+      messageName += getlength("function:");
    }
 
    IdentifierString actionName;

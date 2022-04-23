@@ -12,7 +12,7 @@
 /// scope_prefix:
 #let attributesSymbols["const"]       := 80002001h;
 #let attributesSymbols["embeddable"]  := 80002002h;
-
+                                                 
 /// scope:
 #let attributesSymbols["class"]       := 80001001h;
 #let attributesSymbols["struct"]      := 80001002h;
@@ -24,6 +24,7 @@
 #let attributesSymbols["field"]       := 80001009h;
 #let attributesSymbols["var"]         := 8000100Dh;
 #let attributesSymbols["static"]      := 8000100Fh;
+#let attributesSymbols["new"]         := 80001012h;
 #let attributesSymbols["dispatch"]    := 80001013h;
 #let attributesSymbols["extern"]      := 80001015h;
 #let attributesSymbols["intern"]      := 80001016h;

@@ -36,7 +36,8 @@ namespace elena_lang
       SelfLocal,
       LocalAddress,
       TempLocalAddress,
-      External
+      External,
+      Creating
    };
 
    struct ObjectInfo
@@ -562,6 +563,7 @@ namespace elena_lang
       mssg_t mapMessage(ExprScope& scope, SyntaxNode node);
 
       ExternalInfo mapExternal(Scope& scope, SyntaxNode node);
+      ObjectInfo mapClassSymbol(Scope& scope, ref_t classRef);
 
       mssg_t defineMultimethod(ClassScope& scope, mssg_t messageRef);
 

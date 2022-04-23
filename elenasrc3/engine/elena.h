@@ -93,6 +93,15 @@ namespace elena_lang
       return encodeMessage(newAction, argCount, flags);
    }
 
+   inline mssg_t overwriteArgCount(mssg_t message, pos_t newArgCount)
+   {
+      pos_t argCount;
+      ref_t actionRef, flags;
+      decodeMessage(message, actionRef, argCount, flags);
+
+      return encodeMessage(actionRef, newArgCount, flags);
+   }
+
    // --- Misc types ---
    typedef unsigned int parse_key_t;
 

@@ -25,6 +25,7 @@ namespace elena_lang
    constexpr auto ACTION_MASK             = 0x1C0u;
    constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
 
+   constexpr auto FUNCTION_MESSAGE        = 0x020u;         // indicates it is an invoke message (without target variable in the call stack)
    constexpr auto CONVERSION_MESSAGE      = 0x040u;
    constexpr auto STATIC_MESSAGE          = 0x100u;
 

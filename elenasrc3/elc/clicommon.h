@@ -383,6 +383,7 @@ enum class ExpressionAttribute : pos64_t
    Parameter         = 0x00000000040,
    NewVariable       = 0x00000000080,
    Local             = 0x00000000100,
+   NewOp             = 0x00000000200,
    Extern            = 0x00000080000,
    NoDebugInfo       = 0x40000000000,
 };

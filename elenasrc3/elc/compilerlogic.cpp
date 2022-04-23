@@ -299,6 +299,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_EXTERN:
          attrs |= ExpressionAttribute::Extern;
          return true;
+      case V_NEWOP:
+         attrs |= ExpressionAttribute::NewOp;
+         return true;
       default:
          return false;
    }
