@@ -19,18 +19,18 @@ using namespace elena_lang;
 
 Font :: Font(const char* fontName, int size, bool bold, bool italic)
 {
-   _fontName = fontName;
-   _bold = bold;
-   _italic = italic;
-   _size = size;
+   this->fontName = fontName;
+   this->bold = bold;
+   this->italic = italic;
+   this->size = size;
 
-   _font.set_family(fontName);
-   _font.set_size(size * PANGO_SCALE);
+   this->font.set_family(fontName);
+   this->font.set_size(size * PANGO_SCALE);
    if (bold)
-      _font.set_weight(Pango::WEIGHT_BOLD);
+      this->font.set_weight(Pango::WEIGHT_BOLD);
 
    if (italic)
-      _font.set_style(Pango::STYLE_ITALIC);
+      this->font.set_style(Pango::STYLE_ITALIC);
 }
 
 //void Font :: release()
@@ -43,7 +43,7 @@ Font :: Font(const char* fontName, int size, bool bold, bool italic)
 
 // --- FontFactory ---
 
-Font* FontFactory:: createFont(const char* fontName, int size, bool bold, bool italic)
+Font* FontFactory:: createFont(ustr_t fontName, int size, bool bold, bool italic)
 {
    for (auto it = _cache.start(); !it.eof(); ++it) {
       Font* font = *it;
@@ -87,7 +87,7 @@ Style :: Style(Color foreground, Color background, Font* font)
    this->background = background;
    this->font = font;
    this->valid = false;
-   this->avgCharWidth = 0;
+   this->avgCharWidth = 8;
    this->lineHeight = 0;
 }
 
@@ -98,7 +98,7 @@ Style :: ~Style()
 void Style :: validate(Glib::RefPtr<Pango::Layout> layout)
 {
    if (!valid) {
-      layout->set_font_description(font->_font);
+      layout->set_font_description(font->font);
       layout->set_text("H");
       layout->get_pixel_size(avgCharWidth, lineHeight);
 
@@ -154,45 +154,45 @@ void Canvas :: validateStyle(Style* style)
 void Canvas :: fillRectangle(int x, int y, int width, int height, Style* style)
 {
    cr->rectangle (x, y, width, height);
-   cr->set_source_rgb(style->background.red(), style->background.green(), style->background.blue());
+   cr->set_source_rgb(style->background.red, style->background.green, style->background.blue);
    cr->fill();
 }
 
-//void Canvas :: drawText(int x, int y, const char* s, Style& style)
-//{
-//   cr->set_source_rgb(style.foreground.red, style.foreground.green, style.foreground.blue);
-//
-//   cr->move_to(x, y);
-//
-//   layout->set_font_description(style.font->_font);
-//   layout->set_text(s);
-//
-//   layout->update_from_cairo_context(cr);
-//   layout->show_in_cairo_context(cr);
-//}
-//
-//int Canvas :: TextWidth(Style* style, const char* s)
-//{
-//   layout->set_font_description(style->font->_font);
-//   layout->set_text(s);
-//
-//   int text_width;
-//   int text_height;
-//   layout->get_pixel_size(text_width, text_height);
-//
-//   return text_width;
-//}
-//
-//void Canvas :: drawCursor(int x, int y, Style& style)
-//{
-//   cr->set_source_rgb(style.foreground.red, style.foreground.green, style.foreground.blue);
-//
-//   cr->move_to(x, y);
-//   cr->line_to(x, y + style.lineHeight);
-//
-//   cr->stroke();
-//}
-//
+void Canvas :: drawText(int x, int y, const char* s, Style* style)
+{
+   cr->set_source_rgb(style->foreground.red, style->foreground.green, style->foreground.blue);
+
+   cr->move_to(x, y);
+
+   layout->set_font_description(style->font->font);
+   layout->set_text(s);
+
+   layout->update_from_cairo_context(cr);
+   layout->show_in_cairo_context(cr);
+}
+
+int Canvas :: TextWidth(Style* style, const char* s)
+{
+   layout->set_font_description(style->font->font);
+   layout->set_text(s);
+
+   int text_width;
+   int text_height;
+   layout->get_pixel_size(text_width, text_height);
+
+   return text_width;
+}
+
+void Canvas :: drawCursor(int x, int y, Style* style)
+{
+   cr->set_source_rgb(style->foreground.red, style->foreground.green, style->foreground.blue);
+
+   cr->move_to(x, y);
+   cr->line_to(x, y + style->lineHeight);
+
+   cr->stroke();
+}
+
 //void Canvas :: drawOverwriteCursor(int x, int y, Style& style)
 //{
 ////   GdkRectangle cursor_location;
