@@ -35,7 +35,7 @@ void ViewStyles::release()
 
 // --- TextDrawingArea ---
 
-TextViewWindow::TextDrawingArea :: TextDrawingArea(TextViewWindow* view, TextViewModelBase* model, 
+TextViewWindow::TextDrawingArea :: TextDrawingArea(TextViewWindow* view, TextViewModelBase* model,
    ViewStyles* styles
 ) :
    Glib::ObjectBase("textview"),
@@ -190,16 +190,16 @@ void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, in
 
    Point caret = docView->getCaret(false) - docView->getFrame();
 
-   Style* defaultStyle = _model->getStyle(STYLE_DEFAULT);
-   Style* marginStyle = _model->getStyle(STYLE_MARGIN);
-   int lineHeight = _model->getLineHeight();
-   int marginWidth = _model->getMarginWidth() + getLineNumberMargin();
+   Style* defaultStyle = _styles->getStyle(STYLE_DEFAULT);
+   Style* marginStyle = _styles->getStyle(STYLE_MARGIN);
+   int lineHeight = _styles->getLineHeight();
+   int marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
 
    if (!defaultStyle->valid) {
-      _model->validate(&canvas);
+      _styles->validate(canvas.layout);
 
-      lineHeight = _model->getLineHeight();
-      marginWidth = _model->getMarginWidth() + getLineNumberMargin();
+      lineHeight = _styles->getLineHeight();
+      marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
 
       _needToResize = true;
    }
@@ -218,8 +218,10 @@ void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, in
    int y = 1 - lineHeight;
    int width = 0;
 
-   Style* style = defaultStyle;
-   pos_t length = 0;
+   Style*                      style = defaultStyle;
+   char                        buffer[0x100];
+   StringTextWriter<char, 255> writer(buffer);
+   pos_t                       length = 0;
 
    DocumentView::LexicalReader reader(docView);
    reader.readFirst(writer, 255);
@@ -239,7 +241,7 @@ void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, in
          reader.bandStyle = false;
       }
 
-      width = canvas.TextWidth(&style, buffer);
+      width = canvas.TextWidth(style, buffer);
 
       /*else */canvas.drawText(x, y, buffer, style);
 
@@ -251,7 +253,7 @@ void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, in
 int TextViewWindow::TextDrawingArea :: getLineNumberMargin()
 {
    if (_model->lineNumbersVisible) {
-      Style* marginStyle = _model->getStyle(STYLE_MARGIN);
+      Style* marginStyle = _styles->getStyle(STYLE_MARGIN);
 
       return marginStyle->avgCharWidth * 5;
    }
@@ -262,12 +264,12 @@ void TextViewWindow::TextDrawingArea :: resizeDocument(int width, int height)
 {
    if (_model->isAssigned()) {
       Point     size;
-      auto style = _model->getStyle(STYLE_DEFAULT);
+      auto style = _styles->getStyle(STYLE_DEFAULT);
 
       int marginWidth = getLineNumberMargin();
 
       size.x = (width - marginWidth) / style->avgCharWidth;
-      size.y = height / _model->getLineHeight();
+      size.y = height / _styles->getLineHeight();
 
       _model->resize(size);
 

@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 {
    Gtk::Main kit(argc, argv);
 
-   IDEModel      ideModel;
+   IDEModel      ideModel(10);
    GUISettinngs  settings = { true };
    IDEFactory    factory(&ideModel, settings);
 

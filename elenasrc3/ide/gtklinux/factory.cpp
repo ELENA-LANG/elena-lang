@@ -9,6 +9,7 @@
 #include "gtklinux/gtktextframe.h"
 #include "gtklinux/gtktextview.h"
 #include "text.h"
+#include "sourceformatter.h"
 
 using namespace elena_lang;
 
@@ -23,9 +24,9 @@ using namespace elena_lang;
 
 // --- Styles ---
 StyleInfo defaultStyles[STYLE_MAX + 1] = {
-   {Color(0, 0, 0), Colour(1, 1, 1), "Monospace", 10, false, false},
-   {Color(0, 0, 0), Colour(0.84, 0.84, 0.84), "Monospace", 10, false, false},
-   {Color(0, 0, 0), Colour(0.75, 0.75, 0.75), "Monospace", 10, false, false},
+   {Color(0, 0, 0), Color(1, 1, 1), "Monospace", 10, false, false},
+   {Color(0, 0, 0), Color(0.84, 0.84, 0.84), "Monospace", 10, false, false},
+   {Color(0, 0, 0), Color(0.75, 0.75, 0.75), "Monospace", 10, false, false},
    //{Colour(0, 0, 1), Colour(1, 1, 1), "Monospace", 10, false, false},
    //{Colour(0, 0.4, 0.5), Colour(1, 1, 1), "Monospace", 10, true, false},
    //{Colour(0, 0, 0), Colour(1, 1, 1), "Monospace", 10, true, false},
@@ -65,7 +66,7 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, */IDEModel* ideModel
    GUISettinngs   settings)
 {
    _schemes[0] = defaultStyles;
-   _schemes[1] = classicStyles;
+//   _schemes[1] = classicStyles;
 //   _settings = settings;
 //
 //   _instance = instance;
@@ -78,7 +79,7 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, */IDEModel* ideModel
 
 Gtk::Widget* IDEFactory :: createTextControl()
 {
-   TextViewWindow* view = new TextViewWindow(_model->viewModel()/*, &_controller->sourceController*/);
+   TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_styles/*, &_controller->sourceController*/);
    TextViewFrame* frame = new TextViewFrame(/*_settings.withTabAboverscore, view*/);
 
    // !! temporal

@@ -14,17 +14,12 @@ namespace elena_lang
 
 // --- Font ---
 
-struct Font
+struct Font : public FontBase
 {
-//   static _ELENA_::List<Font*> Cache;
-//
-//   static Font* createFont(const char* fontName, int size, bool bold, bool italic);
-//   static void releaseFontCache();
-
 public:
-   text_str _fontName;
+   text_str fontName;
 
-   Pango::FontDescription _font;
+   Pango::FontDescription font;
 
 //   void release();
 
@@ -38,7 +33,7 @@ class FontFactory
    List<Font*, freeobj> _cache;
 
 public:
-   Font* createFont(wstr_t fontName, int size, int characterSet, bool bold, bool italic);
+   Font* createFont(ustr_t fontName, int size, bool bold, bool italic);
 
    FontFactory()
       : _cache(nullptr)
@@ -62,7 +57,7 @@ struct Style
    void validate(Glib::RefPtr<Pango::Layout> layout);
 
    Style();
-   Style(Colour foreground, Color background, Font* font);
+   Style(Color foreground, Color background, Font* font);
    ~Style();
 };
 
@@ -97,34 +92,23 @@ struct Style
 
 // --- Canvas ---
 
-struct Canvas : public CanvasBase
+struct Canvas
 {
    const Cairo::RefPtr<Cairo::Context> cr;
    Glib::RefPtr<Pango::Layout>         layout;
 
-   void validateStyle(Style* style) override;
+   void validateStyle(Style* style);
 
-//   void drawText(int x, int y, const char* s, Style& style);
-//   void drawCursor(int x, int y, Style& style);
+   void drawText(int x, int y, const char* s, Style* style);
+   void drawCursor(int x, int y, Style* style);
 //   void drawOverwriteCursor(int x, int y, Style& style);
 //
 ////   void copy(DoubleBuffer& buffer, int x, int y);
-//
-////   Canvas(GdkDrawable* drawable);
-//////   Canvas(DoubleBuffer& buffer);
-////   ~Canvas();
-////   PangoLayout* layout;
-//
-//   int TextWidth(Style* style, const char* s);
+
+   int TextWidth(Style* style, const char* s);
 
    void fillRectangle(int x, int y, int width, int height, Style* style);
 
-////   void drawText(int x, int y, const TCHAR* s, int length, Style& style);
-////   void drawCursor(GtkWidget* widget, int x, int y, Style& style);
-////   void drawOverwriteCursor(GtkWidget* widget, int x, int y, Style& style);
-////
-////   void copy(DoubleBuffer& buffer, int x, int y);
-//
    Canvas(const Cairo::RefPtr<Cairo::Context>& cr);
 ////   Canvas(DoubleBuffer& buffer);
 //   ~Canvas();

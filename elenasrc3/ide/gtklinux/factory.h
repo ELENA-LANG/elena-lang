@@ -9,6 +9,8 @@
 
 #include "idecommon.h"
 #include "gtklinux/gtksdi.h"
+#include "gtklinux/gtkgraphic.h"
+#include "gtklinux/gtktextview.h"
 #include "ideview.h"
 #include "idecontroller.h"
 

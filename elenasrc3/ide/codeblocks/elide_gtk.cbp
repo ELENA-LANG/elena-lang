@@ -81,10 +81,14 @@
 			<Add directory="../../common" />
 			<Add directory="../../gui" />
 		</Compiler>
+		<Unit filename="../../common/dump.cpp" />
+		<Unit filename="../../common/dump.h" />
 		<Unit filename="../../common/files.cpp" />
 		<Unit filename="../../common/files.h" />
 		<Unit filename="../../common/ustring.cpp" />
 		<Unit filename="../../common/ustring.h" />
+		<Unit filename="../../gui/document.cpp" />
+		<Unit filename="../../gui/document.h" />
 		<Unit filename="../../gui/gtklinux/gtkcommon.cpp" />
 		<Unit filename="../../gui/gtklinux/gtkcommon.h" />
 		<Unit filename="../../gui/gtklinux/gtkgraphic.cpp" />
@@ -113,6 +117,8 @@
 		<Unit filename="../ideproject.h" />
 		<Unit filename="../ideview.cpp" />
 		<Unit filename="../ideview.h" />
+		<Unit filename="../sourceformatter.cpp" />
+		<Unit filename="../sourceformatter.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
