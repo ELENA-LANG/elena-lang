@@ -10,19 +10,17 @@ In development:
     * signature dispatch - i386, amd64, ppc64le, arm64 
 
     --- ide redux ---
-    * linux init styles
-    * linux textview - show text
-    * linux sdi - menu
     * editor - new file
     * editor - edit text
     * editor - open / close / save / select source files
     * editor - scrollers
     * editor - status bar
     * editor - compile
-    * linux ide
-    * linux debugger
+    * linux sdi - menu
     * linux ide : new file
     * linux ide : edit
+    * linux ide
+    * linux debugger
     * editor - edit text
     * editor - correctly destroy tabbar / frame / view
     === Sprint 6 : console output ===

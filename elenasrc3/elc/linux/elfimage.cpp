@@ -143,8 +143,10 @@ void ElfImageFormatter :: fixImage(ImageProviderBase& provider, AddressSpace& ma
 {
    fixSection(provider.getTextSection(), map);
    fixSection(provider.getRDataSection(), map);
-   fixImportSection(provider.getImportSection(), map);
    fixSection(provider.getDataSection(), map);
+   fixSection(provider.getMDataSection(), map);
+   fixSection(provider.getMBDataSection(), map);
+   fixImportSection(provider.getImportSection(), map);
 
    // fix up debug info if enabled
    if (withDebugInfo) {
