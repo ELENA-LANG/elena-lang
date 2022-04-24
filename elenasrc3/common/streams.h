@@ -542,6 +542,7 @@ namespace elena_lang
       StringTextWriter(T* text)
       {
          _text = text;
+         _offset = 0;
       }
    };
 

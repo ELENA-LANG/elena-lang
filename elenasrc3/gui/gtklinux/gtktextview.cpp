@@ -229,6 +229,9 @@ void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, in
       style = _styles->getStyle(reader.style);
       length = writer.position();
 
+      // set the text length
+      buffer[length] = 0;
+
       if (reader.newLine) {
          reader.newLine = false;
 
