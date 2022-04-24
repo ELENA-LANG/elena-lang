@@ -5,7 +5,6 @@ define GC_ALLOC	            10002h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE   	    20003h
-define CORE_MESSAGE_TABLE   2000Ah
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
@@ -68,7 +67,7 @@ structure %SYSTEM_ENV
 
 end
 
-rstructure %VOID
+structure %VOID
 
   dd 0
   dd 0  // ; a reference to the super class class
@@ -578,7 +577,9 @@ end
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 0FBh
 
-  mov  eax, __arg32_2
+  mov  [esp+4], esi                      // ; saving arg0
+  lea  eax, [esp + __n_2]
+
   mov  esi, __ptr32_2
   push ebx
   xor  edx, edx
@@ -586,10 +587,10 @@ inline % 0FBh
 
 labNextOverloadlist:
   shr  ebx, ACTION_ORDER
-  mov  edi, rdata : % CORE_MESSAGE_TABLE
+  mov  edi, mdata : %0
   mov  ebx, [edi + ebx * 8 + 4]
   mov  ecx, __n_1
-  lea  ebx, [edi + ebx - 4]
+  lea  ebx, [ebx - 4]
 
 labNextParam:
   sub  ecx, 1
@@ -598,8 +599,9 @@ labNextParam:
   mov  esi, __ptr32_2
   pop  ebx
   mov  eax, [esi + edx * 8 + 4]
-  mov  ecx, [ebx - elVMTOffset]
   mov  edx, [esi + edx * 8]
+  mov  ecx, [ebx - elVMTOffset]
+  mov  esi, [esp+4]                      // ; restore arg0
   jmp  [ecx + eax * 8 + 4]
 
 labMatching:
@@ -627,6 +629,7 @@ labNextBaseClass:
   jnz  labNextOverloadlist
 
   pop  ebx
+  mov  esi, [esp+4]                      // ; restore arg0
 
 end
 

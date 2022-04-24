@@ -140,6 +140,8 @@ void WinNtImageFormatter :: fixImage(ImageProviderBase& provider, AddressSpace& 
 {
    fixSection(provider.getTextSection(), map);
    fixSection(provider.getRDataSection(), map);
+   fixSection(provider.getMDataSection(), map);
+   fixSection(provider.getMBDataSection(), map);
    fixImportSection(provider.getImportSection(), map);
 
    // fix up debug info if enabled

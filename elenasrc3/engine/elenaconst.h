@@ -201,13 +201,15 @@ namespace elena_lang
    constexpr ref_t mskVMTMethodAddress    = 0x0F000000u;
    constexpr ref_t mskVMTMethodOffset     = 0x10000000u;
    constexpr ref_t mskConstArray          = 0x11000000u;
+   constexpr ref_t mskMessageBodyRef      = 0x12000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;
    constexpr ref_t mskRDataRef            = 0x02000000u;
    constexpr ref_t mskDataRef             = 0x03000000u;
    constexpr ref_t mskImportRef           = 0x04000000u;
-   constexpr ref_t mskMessageBodyRef      = 0x05000000u;
+   constexpr ref_t mskMBDataRef           = 0x05000000u;
+   constexpr ref_t mskMDataRef            = 0x06000000u;
 
    // --- Address reference types ---
    // NOTE: Address reference types and Image reference types should not intersect
@@ -254,6 +256,11 @@ namespace elena_lang
    constexpr ref_t mskDataRef64           = 0xC3000000u;
    constexpr ref_t mskDataRef32Hi         = 0x23000000u;
    constexpr ref_t mskDataRef32Lo         = 0xA3000000u;
+
+   constexpr ref_t mskMDataRef32          = 0x86000000u;
+
+   constexpr ref_t mskMBDataRef32         = 0x85000000u;
+   constexpr ref_t mskMBDataRef64         = 0xC5000000u;
 
    // --- Address predefined references ---
    constexpr ref_t INV_ARG                = 0x00000100u;

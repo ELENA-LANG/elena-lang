@@ -49,6 +49,11 @@ namespace elena_lang
          return true;
       }
 
+      void* getReferences() const override
+      {
+         return _references.Address();
+      }
+
       template<class ArgT> void fixupReferences(ArgT arg, 
          void(relocate)(pos_t, ref_t, ref_t, void*, ArgT arg))
       {

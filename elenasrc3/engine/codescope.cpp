@@ -32,6 +32,7 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
       case mskMetaArrayRef:
       case mskIntLiteralRef:
       case mskLiteralRef:
+      case mskConstArray:
          return _constReferences.get(referenceName);
       case mskExternalRef:
          return resolveExternal(referenceName);
@@ -51,6 +52,7 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
       case mskMetaArrayRef:
       case mskLiteralRef:
       case mskIntLiteralRef:
+      case mskConstArray:
          _constReferences.add(referenceName, address);
          break;
       case mskVMTRef:

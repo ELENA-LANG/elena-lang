@@ -104,6 +104,9 @@ namespace elena_lang
       public:
          void addBreakpoint(MemoryWriter& writer) override;
 
+         void writeSectionReference(MemoryBase* image, pos_t imageOffset, ref_t reference, 
+            MemoryBase* section, pos_t sectionOffset) override;
+
          void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
             ref_t addressMask, ModuleBase* module) override;
          void writeVMTMethodReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp, mssg_t message,
@@ -176,6 +179,7 @@ namespace elena_lang
       addr_t resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
       addr_t resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
       addr_t resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask);
+      addr_t resolveConstantArray(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
 
       pos_t createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);

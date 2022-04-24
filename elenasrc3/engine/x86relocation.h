@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains relocation functions
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 using namespace elena_lang;
@@ -22,6 +22,12 @@ inline void relocate(pos_t pos, ref_t mask, ref_t reference, void* address, Addr
          break;
       case mskDataRef32:
          *(unsigned int*)address += (unsigned int)(base + space->data);
+         break;
+      case mskMDataRef32:
+         *(unsigned int*)address += (unsigned int)(base + space->mdata);
+         break;
+      case mskMBDataRef32:
+         *(unsigned int*)address += (unsigned int)(base + space->mbdata);
          break;
       case mskImportRef32:
          base = space->imageBase + space->importMapping.get(reference | mask);

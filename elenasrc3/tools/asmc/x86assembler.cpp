@@ -128,6 +128,9 @@ X86Operand X86Assembler :: defineOperand(ScriptToken& tokenInfo, X86OperandType 
       else if (tokenInfo.compare("rdata")) {
          operand = compileDataOperand(tokenInfo, errorMessage, true);
       }
+      else if (tokenInfo.compare("mdata")) {
+         operand = compileMDataOperand(tokenInfo, errorMessage);
+      }
       else if (!errorMessage.empty()) {
          throw SyntaxError(errorMessage, tokenInfo.lineInfo);
       }
@@ -245,7 +248,7 @@ X86Operand X86Assembler :: readDispOperand(ScriptToken& tokenInfo, X86Operand op
          X86Operand disp2 = defineDisplacement(tokenInfo, errorMessage);
          if (disp2.type == X86OperandType::DD || disp2.type == X86OperandType::DB) {
             // if it is [r + r + disp]
-            int sibcode = ((char)operand.type + ((char)operand.type << 3)) << 24;
+            int sibcode = ((char)operand.type + ((char)disp.type << 3)) << 24;
 
             if (!setOffset(operand, disp2))
                throw SyntaxError(errorMessage, tokenInfo.lineInfo);
@@ -360,6 +363,24 @@ X86Operand X86Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t err
    read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
    ref_t mask = rdataMode ? mskRDataRef32 : mskDataRef32;
+
+   read(tokenInfo);
+   if (tokenInfo.compare("%")) {
+      operand.type = X86OperandType::DD;
+      operand.reference = readReference(tokenInfo) | mask;
+   }
+   else throw SyntaxError(ASM_INVALID_TARGET, tokenInfo.lineInfo);
+
+   return operand;
+}
+
+X86Operand X86Assembler :: compileMDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage)
+{
+   X86Operand operand;
+
+   read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+   ref_t mask = mskMDataRef32;
 
    read(tokenInfo);
    if (tokenInfo.compare("%")) {

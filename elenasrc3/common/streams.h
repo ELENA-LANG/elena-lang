@@ -30,6 +30,14 @@ namespace elena_lang
          return target->write(position, &value, sizeof(value));
       }
 
+      static unsigned int getDWord(MemoryBase* source, pos_t position)
+      {
+         unsigned int value = 0;
+         source->read(position, &value, sizeof(value));
+
+         return value;
+      }
+
       virtual pos_t length() const = 0;
 
       virtual void* get(pos_t position) const = 0;
@@ -43,6 +51,11 @@ namespace elena_lang
       virtual bool addReference(ref_t, pos_t)
       {
          return false;
+      }
+
+      virtual void* getReferences() const
+      {
+         return nullptr;
       }
 
       virtual void trim(pos_t position) = 0;

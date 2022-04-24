@@ -53,6 +53,7 @@ namespace elena_lang
 
       virtual X86Operand compileCodeOperand(ScriptToken& tokenInfo, ustr_t errorMessage);
       virtual X86Operand compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, bool rdataMode);
+      virtual X86Operand compileMDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage);
 
       X86Operand compileOperand(ScriptToken& tokenInfo, ustr_t errorMessage);
 

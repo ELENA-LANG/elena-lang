@@ -6,19 +6,8 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 5 : dispatching methods ===
     --- elena redux ---
-    * function message
-    * calling function
-    * calling implicit constructor
 
-    * generate overloadlist
-    * import overloadlist
-
-    * implicit multimethod
-    * if virtual multi-method handler is overridden - redirect to the parent one
-    * verifyMultimethods implements
-    * explicit multimethod
-
-    * run-time signature dispatch 
+    * no need to store an argument for the function (constructor)
     * signature dispatch - x86, x86-64, i386, amd64, ppc64le, arm64 
 
     --- ide redux ---
@@ -36,6 +25,10 @@ In development:
     * editor - edit text
     * editor - correctly destroy tabbar / frame / view
     === Sprint 6 : console output ===
+    * static symbol
+    * branching
+    * embeddable return
+    * exception handling
     * dispatcher : raise an error if the message is not handled
     * hello world sample
     === Sprint 7 : functional GC ===
@@ -55,6 +48,9 @@ Pipeline:
     --- docs / tutorials ---
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
+    * if virtual multi-method handler is overridden - redirect to the parent one
+    * verifyMultimethods implements
+    * explicit multimethod
     * implicit constructor
     * private constructor
     * abstract method

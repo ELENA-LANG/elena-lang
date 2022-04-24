@@ -77,7 +77,7 @@ const ref_t coreVariables[coreVariableNumber] =
 const int coreConstantNumber = 4;
 const ref_t coreConstants[coreConstantNumber] =
 {
-   // NOTE: SYSTEM_ENV should be the last one correctly to add extra fields: GCMGSize, GCYGSize
+   // NOTE: SYSTEM_ENV should be the last one to add correctly extra fields: GCMGSize, GCYGSize
    CORE_TOC, VOIDOBJ, VOIDPTR, SYSTEM_ENV
 };
 
@@ -109,6 +109,7 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*
    switch (mask) {
       case mskCodeRef32:
       case mskDataRef32:
+      case mskMDataRef32:
          scope->helper->writeVAddress32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
             *(pos_t*)((char*)code + disp), mask);
@@ -1309,7 +1310,7 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
    // simply copy correspondent inline code
    writer->write(code, length);
 
-   int startArg = 1;
+   int startArg = 1 << scope->constants->indexPower;
 
    // resolve section references
    pos_t count = *(pos_t*)((char*)code + length);
@@ -1331,7 +1332,7 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
             scope->compiler->writeImm32(writer, startArg);
             break;
          default:
-            //else writeCoreReference();
+            writeCoreReference(scope, entries->reference, entries->offset, code);
             break;
       }
 
@@ -1580,7 +1581,10 @@ void JITCompiler32 :: allocateHeader(MemoryWriter& writer, addr_t vmtAddress, in
 {
    alignCode(writer, _constants.alignmentVA, false);
 
-   if (virtualMode) {
+   if (vmtAddress == INVALID_ADDR) {
+      writer.writeDWord(0);
+   }
+   else if (virtualMode) {
       writer.writeDReference((ref_t)vmtAddress, 0);
    }
    else writer.writeDWord((pos_t)vmtAddress);
@@ -1665,13 +1669,13 @@ pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
 
    // signature or action name for weak message
    if (signature) {
-      messageWriter.writeDReference(mskMessageBodyRef | signature, 0u);
+      messageWriter.writeDReference(mskMBDataRef32 | signature, 0u);
    }
    else if (actionName.empty()) {
       messageWriter.writeRef(0u);
    }
    else {
-      messageWriter.writeDReference(mskMessageBodyRef | messageBodyWriter.position(), 0u);
+      messageWriter.writeDReference(mskMBDataRef32 | messageBodyWriter.position(), 0u);
 
       messageBodyWriter.writeString(actionName, actionName.length() + 1);
       messageBodyWriter.align(4, 0);
@@ -1680,13 +1684,15 @@ pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
    return actionRef;
 }
 
-pos_t JITCompiler32 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, bool virtualMode)
+pos_t JITCompiler32 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode)
 {
    pos_t position = writer.position();
 
+   targetMask = mskRef32;
+
    if (vmtAddress != INVALID_ADDR) {
       if (virtualMode) {
-         writer.writeDReference((ref_t)vmtAddress | mskVMTRef, 0);
+         writer.writeDReference((ref_t)vmtAddress | targetMask, 0);
       }
       else writer.writeDWord(vmtAddress);
    }
@@ -1734,6 +1740,24 @@ void JITCompiler32 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
    writer.writeString(value, value.length() + 1);
    writer.align(4, 0);
+}
+
+void JITCompiler32 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, MemoryBase* section)
+{
+   pos_t position = writer.position();
+   pos_t length = section->length();
+
+   writer.write(section->get(0), length);
+   writer.align(4, 0);
+
+   for (auto it = RelocationMap::Iterator(section->getReferences()); !it.eof(); ++it) {
+      pos_t imageOffset = *it + position;
+
+      if (*it == (pos_t)-4) {
+         // skip VMT reference
+      }
+      else helper->writeSectionReference(writer.Memory(), imageOffset, it.key(), section, *it);
+   }
 }
 
 // --- JITCompiler64 ---
@@ -1924,13 +1948,13 @@ pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
 
    // signature or action name for weak message
    if (signature) {
-      messageWriter.writeQReference(mskMessageBodyRef | signature, 0u);
+      messageWriter.writeQReference(mskMBDataRef64 | signature, 0u);
    }
    else if (actionName.empty()) {
       messageWriter.writeRef64(0u);
    }
    else {
-      messageWriter.writeQReference(mskMessageBodyRef | messageBodyWriter.position(), 0u);
+      messageWriter.writeQReference(mskMBDataRef64 | messageBodyWriter.position(), 0u);
 
       messageBodyWriter.writeString(actionName, actionName.length() + 1);
       messageBodyWriter.align(8, 0);
@@ -1939,13 +1963,15 @@ pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
    return actionRef;
 }
 
-pos_t JITCompiler64 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, bool virtualMode)
+pos_t JITCompiler64 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode)
 {
    pos_t position = writer.position();
 
+   targetMask = mskRef64;
+
    if (vmtAddress != INVALID_ADDR) {
       if (virtualMode) {
-         writer.writeQReference((ref_t)vmtAddress | mskVMTRef, 0);
+         writer.writeQReference((ref_t)vmtAddress | mskRef64, 0);
       }
       else writer.writeQWord(vmtAddress);
    }
@@ -1959,7 +1985,10 @@ void JITCompiler64 :: allocateHeader(MemoryWriter& writer, addr_t vmtAddress, in
 {
    alignCode(writer, _constants.alignmentVA, false);
 
-   if (virtualMode) {
+   if (vmtAddress == INVALID_ADDR) {
+      writer.writeQWord(0);
+   }
+   else if (virtualMode) {
       writer.writeQReference((ref_t)vmtAddress, 0);
    }
    else writer.writeQWord(vmtAddress);
@@ -2009,4 +2038,27 @@ void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
    writer.writeString(value, value.length() + 1);
    writer.align(8, 0);
+}
+
+void JITCompiler64 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, MemoryBase* section)
+{
+   pos_t position = writer.position();
+   pos_t length = section->length();
+
+   // object body
+   pos_t index = 0;
+   while (index < length) {
+      writer.writeQWord(MemoryBase::getDWord(section, index));
+      index += 4;
+   }
+   writer.align(8, 0);
+
+   for (auto it = RelocationMap::Iterator(section->getReferences()); !it.eof(); ++it) {
+      pos_t imageOffset = ((*it) << 1) + position;
+
+      if (*it == (pos_t)-4) {
+         // skip VMT reference
+      }
+      else helper->writeSectionReference(writer.Memory(), imageOffset, it.key(), section, *it);
+   }
 }

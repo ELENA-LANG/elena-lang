@@ -200,6 +200,7 @@ namespace elena_lang
       pos_t       position;
       ModuleBase* module;
       ref_t       reference;
+      ref_t       addressMask;
    };
 
    // --- ReferenceMapperBase ---
@@ -353,6 +354,9 @@ namespace elena_lang
 
       virtual addr_t calculateVAddress(MemoryWriter& writer, ref_t addressMask) = 0;
 
+      virtual void writeSectionReference(MemoryBase* image, pos_t imageOffset, ref_t reference, 
+         MemoryBase* section, pos_t sectionOffset) = 0;
+
       virtual void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
          ref_t addressMask, ModuleBase* module = nullptr) = 0;
       virtual void writeVMTMethodReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp, mssg_t message,
@@ -432,11 +436,12 @@ namespace elena_lang
          bool structMode, bool virtualMode) = 0;
       virtual void writeInt32(MemoryWriter& writer, unsigned int value) = 0;
       virtual void writeLiteral(MemoryWriter& writer, ustr_t value) = 0;
+      virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, MemoryBase* section) = 0;
 
       virtual void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) = 0;
       virtual void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) = 0;
 
-      virtual pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, bool virtualMode) = 0;
+      virtual pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) = 0;
       virtual pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, 
          ustr_t actionName, ref_t weakActionRef, ref_t signature) = 0;
 

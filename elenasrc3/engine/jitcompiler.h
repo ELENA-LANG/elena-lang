@@ -204,13 +204,14 @@ namespace elena_lang
 
       pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName, 
          ref_t weakActionRef, ref_t signature) override;
-      pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, bool virtualMode) override;
+      pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) override;
 
       void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) override;
       void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) override;
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
+      void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, MemoryBase* section) override;
 
       JITCompiler32()
          : JITCompiler()
@@ -255,13 +256,14 @@ namespace elena_lang
 
       pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName, ref_t weakActionRef, 
          ref_t signature) override;
-      pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, bool virtualMode) override;
+      pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) override;
 
       void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) override;
       void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) override;
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
+      void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, MemoryBase* section) override;
 
       JITCompiler64()
          : JITCompiler()

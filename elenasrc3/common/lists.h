@@ -1071,9 +1071,18 @@ namespace elena_lang
             _position = position;
             _end = (*(pos_t*)_buffer) * (sizeof(T) + sizeof(Key));
          }
+         Iterator(void* buffer)
+            : Iterator(buffer, 4)
+         {
+         }
       };
 
       T DefaultValue() const { return _defValue; }
+
+      void* Address() const
+      {
+         return _buffer.get(0);
+      }
 
       Iterator start()
       {
