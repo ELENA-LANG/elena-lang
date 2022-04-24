@@ -66,6 +66,12 @@ inline void relocate64(pos_t pos, ref_t mask, ref_t reference, void* address, Ad
       case mskDataRef64:
          *(unsigned long long*)address += (unsigned long long)(base + space->data);
          break;
+      case mskMDataRef64:
+         *(unsigned long long*)address += (unsigned long long)(base + space->mdata);
+         break;
+      case mskMBDataRef64:
+         *(unsigned long long*)address += (unsigned long long)(base + space->mbdata);
+         break;
       case mskImportRelRef32:
       {
          addr_t tableAddress = space->import + space->imageBase + space->importMapping.get(reference | mask);

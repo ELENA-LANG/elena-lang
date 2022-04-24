@@ -1444,6 +1444,24 @@ X86Operand X86_64Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t 
    return operand;
 }
 
+X86Operand X86_64Assembler :: compileMDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage)
+{
+   X86Operand operand;
+
+   ref_t mask = mskMDataRef64;
+
+   read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+   read(tokenInfo);
+   if (tokenInfo.compare("%")) {
+      operand.type = X86OperandType::DQ;
+      operand.reference = readReference(tokenInfo) | mask;
+   }
+   else throw SyntaxError(ASM_INVALID_TARGET, tokenInfo.lineInfo);
+
+   return operand;
+}
+
 void X86_64Assembler :: compileExternCall(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    writer.writeWord(0x15FF);
@@ -1482,6 +1500,18 @@ bool X86_64Assembler::compileAdd(X86Operand source, X86Operand target, MemoryWri
    return true;
 }
 
+bool X86_64Assembler :: compileAnd(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isR64() && target.isR64_M64()) {
+      writer.writeByte(0x48);
+      writer.writeByte(0x23);
+      X86Helper::writeModRM(writer, source, target);
+   }
+   else return X86Assembler::compileAnd(source, target, writer);
+
+   return true;
+}
+
 bool X86_64Assembler :: compileCall(X86Operand source, MemoryWriter& writer)
 {
    if (source.type == X86OperandType::DD) {
@@ -1501,6 +1531,19 @@ bool X86_64Assembler :: compileCall(X86Operand source, MemoryWriter& writer)
       X86Helper::writeImm(writer, source);
    }
    else return false;
+
+   return true;
+}
+
+bool X86_64Assembler :: compileCMovcc(X86Operand source, X86Operand target, MemoryWriter& writer, X86JumpType type)
+{
+   if (source.isR64() && target.isR64_M64()) {
+      writer.writeByte(0x48);
+      writer.writeByte(0x0F);
+      writer.writeByte(0x40 + (int)type);
+      X86Helper::writeModRM(writer, source, target);
+   }
+   else return X86Assembler::compileCMovcc(source, target, writer, type);
 
    return true;
 }
@@ -1550,18 +1593,23 @@ bool X86_64Assembler :: compileJmp(X86Operand source, MemoryWriter& writer)
 
 bool X86_64Assembler :: compileLea(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
-   if (source.isR64() && target.isM64()) {
-      writer.writeByte(0x48);
-      writer.writeByte(0x8D);
-      X86Helper::writeModRM(writer, source, target);
-   }
-   else if (source.isRX64() && target.isMX64()) {
+   if (source.isRX64() && target.isMX64()) {
       writer.writeByte(0x4F);
       writer.writeByte(0x8D);
       X86Helper::writeModRM(writer, source, target);
    }
    else if (source.isRX64() && target.isM64()) {
       writer.writeByte(0x4C);
+      writer.writeByte(0x8D);
+      X86Helper::writeModRM(writer, source, target);
+   }
+   else if (source.isR64() && target.isMX64()) {
+      writer.writeByte(0x4B);
+      writer.writeByte(0x8D);
+      X86Helper::writeModRM(writer, source, target);
+   }
+   else if (source.isR64() && target.isM64()) {
+      writer.writeByte(0x48);
       writer.writeByte(0x8D);
       X86Helper::writeModRM(writer, source, target);
    }
@@ -1573,6 +1621,7 @@ bool X86_64Assembler :: compileLea(X86Operand source, X86Operand target, MemoryW
 bool X86_64Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
    if (source.isRX64() && target.isDB_DD_DQ()) {
+      target.type = X86OperandType::DQ;
       writer.writeByte(0x49);
       writer.writeByte(0xB8 + (char)source.type);
       X86Helper::writeImm(writer, target);
@@ -1582,6 +1631,11 @@ bool X86_64Assembler :: compileMov(X86Operand source, X86Operand target, MemoryW
       writer.writeByte(0x48);
       writer.writeByte(0xB8 + (char)source.type);
       X86Helper::writeImm(writer, target);
+   }
+   else if (source.isRX64() && target.isRX64_MX64()) {
+      writer.writeByte(0x4F);
+      writer.writeByte(0x8B);
+      X86Helper::writeModRM(writer, source, target);
    }
    else if (source.isRX64() && target.isR64_M64()) {
       writer.writeByte(0x4C);
@@ -1686,4 +1740,16 @@ void X86_64Assembler :: compileStosq(ScriptToken& tokenInfo, MemoryWriter& write
    writer.writeByte(0x48);
    writer.writeByte(0xAB);
    read(tokenInfo);
+}
+
+bool X86_64Assembler :: compileTest(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isR64() && target.isR64()) {
+      writer.writeByte(0x48);
+      writer.writeByte(0x85);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else return X86Assembler::compileTest(source, target, writer);
+
+   return true;
 }

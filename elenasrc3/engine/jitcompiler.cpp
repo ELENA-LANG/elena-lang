@@ -116,6 +116,7 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*
          break;
       case mskCodeRef64:
       case mskDataRef64:
+      case mskMDataRef64:
          scope->helper->writeVAddress64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
             *(pos_t*)((char*)code + disp), mask);
@@ -1328,6 +1329,9 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
          case PTR32_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
             break;
+         case PTR64_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef64);
+            break;
          case NARG_2:
             scope->compiler->writeImm32(writer, startArg);
             break;
@@ -2049,7 +2053,7 @@ void JITCompiler64 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter&
    pos_t index = 0;
    while (index < length) {
       writer.writeQWord(MemoryBase::getDWord(section, index));
-      index += 4;
+      index += 8;
    }
    writer.align(8, 0);
 

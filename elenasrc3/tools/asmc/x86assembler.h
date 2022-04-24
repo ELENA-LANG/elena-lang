@@ -155,11 +155,14 @@ namespace elena_lang
 
       X86Operand compileCodeOperand(ScriptToken& tokenInfo, ustr_t errorMessage) override;
       X86Operand compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, bool rdataMode) override;
+      X86Operand compileMDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage) override;
 
       void compileExternCall(ScriptToken& tokenInfo, MemoryWriter& writer) override;
 
       bool compileAdd(X86Operand source, X86Operand target, MemoryWriter& writer) override;
+      bool compileAnd(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileCall(X86Operand source, MemoryWriter& writer) override;
+      bool compileCMovcc(X86Operand source, X86Operand target, MemoryWriter& writer, X86JumpType type) override;
       bool compileCmp(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileJmp(X86Operand source, MemoryWriter& writer) override;
       bool compileLea(X86Operand source, X86Operand target, MemoryWriter& writer) override;
@@ -167,6 +170,7 @@ namespace elena_lang
       bool compilePop(X86Operand source, MemoryWriter& writer) override;
       bool compilePush(X86Operand source, MemoryWriter& writer) override;
       bool compileSub(X86Operand source, X86Operand target, MemoryWriter& writer) override;
+      bool compileTest(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileXor(X86Operand source, X86Operand target, MemoryWriter& writer) override;
 
       void compileStos(ScriptToken& tokenInfo, MemoryWriter& writer) override
