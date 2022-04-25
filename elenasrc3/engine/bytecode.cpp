@@ -377,7 +377,7 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
             //case bcGreaterN:
             //case bcNotGreaterN:
                //            case bcIfM:
-               //            case bcElseM:              
+               //            case bcElseM:
                //            case bcNext:
             //case bcHook:
             //case bcAddress:
@@ -504,6 +504,8 @@ int CommandTape :: resolvePseudoArg(PseudoArg argument)
    switch (argument) {
       case PseudoArg::CurrentLabel:
          realArg = labels.peek();
+         break;
+      default:
          break;
    }
 

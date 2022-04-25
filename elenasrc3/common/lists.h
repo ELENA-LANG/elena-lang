@@ -630,7 +630,7 @@ namespace elena_lang
       List(T defValue)
          : _list(defValue)
       {
-
+         _defaultItem = defValue;
       }
       virtual ~List() = default;
    };
@@ -745,7 +745,7 @@ namespace elena_lang
       }
 
       BList()
-      {         
+      {
       }
       ~BList()
       {

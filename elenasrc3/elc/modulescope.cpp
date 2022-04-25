@@ -394,7 +394,7 @@ void ModuleScope :: saveListMember(ustr_t name, ustr_t memberName)
    IdentifierString sectionName("'", name);
 
    MemoryBase* section = module->mapSection(
-      module->mapReference(*sectionName, false) | mskStrMetaArrayRef, 
+      module->mapReference(*sectionName, false) | mskStrMetaArrayRef,
       false);
 
    // check if the module alread included
@@ -430,8 +430,6 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bo
 {
    // check if the namespace exists
    ReferenceName virtualRef(name, NAMESPACE_REF);
-   ref_t dummyRef = 0;
-
    auto sectionInfo = loader->getModule(ReferenceInfo(module, *virtualRef), true);
    if (sectionInfo.module && sectionInfo.reference && sectionInfo.module != module) {
       ustr_t value = importedNs.retrieve<ustr_t>(name, [](ustr_t name, ustr_t current)
