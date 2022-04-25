@@ -1,18 +1,23 @@
 
 // ; --- Predefined References  --
-define INVOKER               10001h
-define GC_ALLOC	             10002h
+define INVOKER              10001h
+define GC_ALLOC	            10002h
 
-define CORE_TOC              20001h
-define SYSTEM_ENV            20002h
-define CORE_GC_TABLE         20003h
+define CORE_TOC             20001h
+define SYSTEM_ENV           20002h
+define CORE_GC_TABLE        20003h
+define VOID           	    2000Dh
+define VOIDPTR              2000Eh
+
+define ACTION_ORDER              9
 
 // ; TOC TABLE OFFSETS
 define toc_import            0000h
 define toc_rdata             0008h
-define toc_code              0010h
-define toc_gctable           0018h
-define toc_alloc             0020h
+define toc_mdata             0010h
+define toc_code              0018h
+define toc_gctable           0020h
+define toc_alloc             0028h
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -41,6 +46,7 @@ structure % CORE_TOC
 
   dq import : 0         // ; address of import section
   dq rdata  : 0         // ; address of rdata section
+  dq mdata  : 0         // ; address of rdata section
   dq code   : 0         // ; address of code section
   dq data   : %CORE_GC_TABLE
   dq code   : %GC_ALLOC // ; address of alloc function
@@ -845,10 +851,10 @@ labNextOverloadlist:
 
 //;  mov  r13, [r9 + r13 * 2 + 8]
   sldi    r23, r23, 1
-  addi    r23, r23, r24
+  add     r23, r23, r24
   ld      r23, 8(r23)
 //;  mov  ecx, __n_1
-  mr      r16, __n16_1
+  li      r16, __n16_1
 //;  lea  rbx, [r13 - 8]
   ld      r22, -8(r23)
 

@@ -72,6 +72,7 @@ namespace elena_lang
       void compileBLR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileBCTRL(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileBEQ(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
+      void compileBNE(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileBLT(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileBGE(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer);

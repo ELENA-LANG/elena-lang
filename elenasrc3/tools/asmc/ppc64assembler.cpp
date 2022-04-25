@@ -198,6 +198,11 @@ void PPC64Assembler :: readIOperand(ScriptToken& tokenInfo, int& value, ref_t& r
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
       value = readIntArg(tokenInfo);
    }
+   else if (tokenInfo.compare("mdata")) {
+      reference = mskMDataRef64;
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+      value = readIntArg(tokenInfo);
+   }
    else if (tokenInfo.compare("data")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
@@ -650,6 +655,13 @@ void PPC64Assembler :: compileB(ScriptToken& tokenInfo, MemoryWriter& writer, La
 void PPC64Assembler::compileBEQ(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
 {
    compileBCxx(tokenInfo, 12, 2, writer, labelScope);
+
+   read(tokenInfo);
+}
+
+void PPC64Assembler :: compileBNE(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
+{
+   compileBCxx(tokenInfo, 4, 10, writer, labelScope);
 
    read(tokenInfo);
 }
@@ -1189,6 +1201,9 @@ bool PPC64Assembler :: compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    }
    else if (tokenInfo.compare("beq")) {
       compileBEQ(tokenInfo, writer, labelScope);
+   }
+   else if (tokenInfo.compare("bne")) {
+      compileBNE(tokenInfo, writer, labelScope);
    }
    else if (tokenInfo.compare("blt")) {
       compileBLT(tokenInfo, writer, labelScope);
