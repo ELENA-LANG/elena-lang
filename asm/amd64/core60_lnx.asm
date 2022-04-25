@@ -140,7 +140,7 @@ inline %5F2h
 end 
 
 // ; openheaderin i, 0
-inline %5F2h
+inline %6F2h
 
   xor  rbp, rbp
   push rbp                 // ; note an extra push to simulate the function entry
