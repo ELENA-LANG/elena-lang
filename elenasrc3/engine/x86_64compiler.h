@@ -44,6 +44,7 @@ namespace elena_lang
          : JITCompiler64()
       {
          _constants.dataOffset = 0x0C;
+         _constants.unframedOffset = 1;
       }
    };
 

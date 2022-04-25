@@ -35,8 +35,8 @@ namespace elena_lang
    // --- TargetImage ---
    class TargetImage : public ReferenceMapper, public ImageProvider
    {
-      pos_t _entryPoint;
-      pos_t _debugEntryPoint;
+      pos_t              _entryPoint;
+      pos_t              _debugEntryPoint;
 
       void prepareImage(ustr_t ns);
 
@@ -55,7 +55,7 @@ namespace elena_lang
 
       TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loader, 
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType),
-         TargetImageInfo imageInfo);
+         TargetImageInfo imageInfo, AddressMapperBase* addressMapper);
    };
 }
 

@@ -84,7 +84,7 @@ namespace elena_lang
 
       void populate(size_t counter, ControlBase** children)
       {
-         _children = new ControlBase * [counter];
+         _children = new ControlBase*[counter];
          for (size_t i = 0; i < counter; i++) {
             _children[i] = children[i];
          }
@@ -92,6 +92,8 @@ namespace elena_lang
          _childCounter = counter;
       }
       void setLayout(int center, int top, int bottom, int right, int left);
+
+      void close();
 
       SDIWindow(wstr_t title)
          : WindowBase(title)

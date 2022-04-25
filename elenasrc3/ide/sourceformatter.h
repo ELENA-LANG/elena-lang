@@ -12,18 +12,18 @@
 
 namespace elena_lang
 {
-
-   class ELENADocFormatter : TextFormatterBase
+   // --- SourceFormatter --
+   class SourceFormatter : TextFormatterBase
    {
    public:
-      ELENADocFormatter() = default;
+      SourceFormatter() = default;
 
       void start(FormatterInfo& info) override;
       bool next(text_c ch, FormatterInfo& info, pos_t& lastState) override;
 
       static TextFormatterBase* getInstance()
       {
-         static ELENADocFormatter instance;
+         static SourceFormatter instance;
 
          return &instance;
       }

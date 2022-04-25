@@ -38,7 +38,7 @@ namespace elena_lang
       X86JITCompiler()
          : JITCompiler32()
       {
-         
+         _constants.unframedOffset = 1;
       }
    };
 }

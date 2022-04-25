@@ -21,7 +21,7 @@ AddressMap::Iterator TargetImage :: externals()
 
 TargetImage :: TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loader,
    JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType),
-   TargetImageInfo imageInfo)
+   TargetImageInfo imageInfo, AddressMapperBase* addressMapper)
 {
    JITCompilerBase* compiler = jitCompilerFactory(loader, imageInfo.type);
 
@@ -37,7 +37,8 @@ TargetImage :: TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loa
       dynamic_cast<ReferenceMapperBase*>(this), 
       loader, resolver,
       dynamic_cast<ImageProviderBase*>(this), 
-      &settings);
+      &settings,
+      addressMapper);
 
    // add predefined values
    prepareImage(imageInfo.ns);
@@ -70,7 +71,7 @@ void TargetImage :: prepareImage(ustr_t ns)
    rdataWriter.write(&envPtr, sizeof(addr_t));
 
    // put a signature
-   rdataWriter.write(ELENA_SIGNITURE, strlen(ELENA_SIGNITURE));
+   rdataWriter.write(ELENA_SIGNITURE, getlength_pos(ELENA_SIGNITURE));
 
    String<char, 4> number;
    number.appendInt(ENGINE_MAJOR_VERSION);

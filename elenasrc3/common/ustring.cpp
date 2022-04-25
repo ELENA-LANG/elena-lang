@@ -284,6 +284,117 @@ bool StrConvertor :: copy(wide_c* dest, const wide_c* sour, size_t sourLength, s
    else return false;
 }
 
+bool StrConvertor :: copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength)
+{
+   bool result = true;
+
+   const unsigned int* s = sour;
+   const unsigned int* end = s + sourLength;
+
+   char* d = dest;
+   const char* d_end = d + destLength;
+
+   while (s < end) {
+      unsigned int ch;
+      unsigned short bytesToWrite = 0;
+      const unsigned int byteMask = 0xBF;
+      const unsigned int byteMark = 0x80;
+      ch = *s++;
+      /*
+      * Figure out how many bytes the result will require. Turn any
+      * illegally large UTF32 things (> Plane 17) into replacement chars.
+      */
+      if (ch < (unsigned int)0x80) { bytesToWrite = 1; }
+      else if (ch < (unsigned int)0x800) { bytesToWrite = 2; }
+      else if (ch < (unsigned int)0x10000) { bytesToWrite = 3; }
+      else if (ch <= UNI_MAX_LEGAL_UTF32) { bytesToWrite = 4; }
+      else {
+         bytesToWrite = 3;
+         ch = UNI_REPLACEMENT_CHAR;
+         result = false;
+      }
+
+      d += bytesToWrite;
+      if (d > d_end) {
+         --s; /* Back up source pointer! */
+         d -= bytesToWrite;
+         result = false;
+         break;
+      }
+      switch (bytesToWrite) { /* note: everything falls through. */
+      case 4: *--d = (char)((ch | byteMark) & byteMask); ch >>= 6;
+      case 3: *--d = (char)((ch | byteMark) & byteMask); ch >>= 6;
+      case 2: *--d = (char)((ch | byteMark) & byteMask); ch >>= 6;
+      case 1: *--d = (char)(ch | firstByteMark[bytesToWrite]);
+      }
+      d += bytesToWrite;
+   }
+   destLength = d - dest;
+
+   return result;
+}
+
+bool StrConvertor :: copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength)
+{
+   bool result = true;
+
+   const unsigned char* s = (const unsigned char*)sour;
+   const unsigned char* end = s + sourLength;
+
+   unsigned int* d = dest;
+   const unsigned int* d_end = d + destLength;
+
+   while (s < end) {
+      unsigned int ch = 0;
+      unsigned short extraBytesToRead = trailingBytesForUTF8[*s];
+      if (extraBytesToRead >= end - s) {
+         result = false;
+         *d++ = UNI_REPLACEMENT_CHAR;
+         break;
+      }
+      if (d >= d_end) {
+         result = false;
+         break;
+      }
+      /* Do this check whether lenient or strict */
+      if (!isLegalUTF8((unsigned char*)s, extraBytesToRead + 1)) {
+         result = false;
+         break;
+      }
+      /*
+      * The cases all fall through. See "Note A" below.
+      */
+      switch (extraBytesToRead) {
+      case 5: ch += *s++; ch <<= 6;
+      case 4: ch += *s++; ch <<= 6;
+      case 3: ch += *s++; ch <<= 6;
+      case 2: ch += *s++; ch <<= 6;
+      case 1: ch += *s++; ch <<= 6;
+      case 0: ch += *s++;
+      }
+      ch -= offsetsFromUTF8[extraBytesToRead];
+      if (ch <= UNI_MAX_LEGAL_UTF32) {
+         /*
+         * UTF-16 surrogate values are illegal in UTF-32, and anything
+         * over Plane 17 (> 0x10FFFF) is illegal.
+         */
+         if (ch >= UNI_SUR_HIGH_START && ch <= UNI_SUR_LOW_END) {
+            *d++ = UNI_REPLACEMENT_CHAR;
+         }
+         else {
+            *d++ = ch;
+         }
+      }
+      else { /* i.e., ch > UNI_MAX_LEGAL_UTF32 */
+         result = false;
+         *d++ = UNI_REPLACEMENT_CHAR;
+      }
+   }
+   destLength = d - dest;
+
+   return result;
+}
+
 int StrConvertor :: toInt(const char* s, int radix)
 {
    return strtol(s, nullptr, radix);
@@ -571,6 +682,21 @@ inline wchar_t util_lower(unsigned short ch)
 
 // --- StrUtil ---
 
+char* StrUtil :: clone(const char* s)
+{
+   return util_clone(s);
+}
+
+wide_c* StrUtil :: clone(const wide_c* s)
+{
+   return util_clone(s);
+}
+
+void StrUtil :: move(char* s1, const char* s2, size_t length)
+{
+   memmove(s1, s2, length);
+}
+
 void StrUtil :: append(char* dest, const char* sour, size_t length)
 {
    ::append(dest, sour, length);
@@ -644,6 +770,11 @@ char* StrFactory :: reallocate(char* s, size_t size)
 
 #ifdef _MSC_VER
 
+void StrUtil :: move(wchar_t* s1, const wchar_t* s2, size_t length)
+{
+   memmove(s1, s2, length << 1);
+}
+
 wide_c* StrFactory::allocate(size_t size, const wide_c* value)
 {
    wchar_t* s = (wchar_t*)malloc(size << 1);
@@ -667,6 +798,11 @@ wchar_t* StrFactory::reallocate(wchar_t* s, size_t size)
 }
 
 #else
+
+void StrUtil :: move(unsigned short* s1, const unsigned short* s2, size_t length)
+{
+   memmove(s1, s2, length << 1);
+}
 
 unsigned short* StrFactory::allocate(size_t size, const unsigned short* value)
 {
@@ -747,7 +883,7 @@ size_t ustr_t::findStr(const char* subs, size_t defValue)
 
 char* ustr_t :: clone()
 {
-   return ::util_clone(_string);
+   return _string ? ::util_clone(_string) : nullptr;
 }
 
 char* ustr_t :: clone(size_t index, size_t length)
@@ -816,9 +952,9 @@ size_t wstr_t :: findLastSub(size_t index, char c, size_t defValue)
    return util_find_last(_string + index, c, defValue - index) + index;
 }
 
-wide_c* wstr_t::clone()
+wide_c* wstr_t :: clone()
 {
-   return ::util_clone(_string);
+   return _string ? ::util_clone(_string) : nullptr;
 }
 
 wide_c* wstr_t :: clone(size_t index, size_t length)

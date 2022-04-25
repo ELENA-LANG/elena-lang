@@ -37,6 +37,7 @@ namespace elena_lang
    {
       NMHDR nmhrd;
       int   extParam;
+      int   extParam2;
    };
 
    // --- Color ---
@@ -99,6 +100,9 @@ namespace elena_lang
 
       void showWindow(int cmdShow);
 
+      virtual void show();
+      virtual void hide();
+
       Rectangle getRectangle();
       virtual void setRectangle(Rectangle rec);
 
@@ -106,6 +110,7 @@ namespace elena_lang
       virtual void refresh();
 
       virtual void onDrawItem(DRAWITEMSTRUCT* item) {}
+      virtual void onSelChanged() {}
 
       virtual HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner);
 
@@ -158,7 +163,7 @@ namespace elena_lang
       int run(GUIControlBase* mainWindow) override;
 
       void notifyMessage(int messageCode) override;
-      void notifyModelChange(int modelCode) override;
+      void notifyModelChange(int modelCode, int arg) override;
 
       WindowApp(HINSTANCE instance, int cmdShow, wstr_t accelerators)
       {

@@ -20,6 +20,8 @@ constexpr auto SPACE_TEXT = L" ";
 
 #endif
 
+constexpr pos_t ERASE_MODE = 0x80000000;
+
 // --- TextBookmarkReader ---
 
 TextBookmarkReader :: TextBookmarkReader(Text* text)
@@ -446,6 +448,7 @@ Text :: Text(EOLMode mode)
 {
    _mode = mode;
    _encoding = FileEncoding::UTF8;
+   _rowCount = 0;
 }
 
 Text :: ~Text()
@@ -458,7 +461,7 @@ void Text :: attachWatcher(TextWatcherBase* watcher)
    _watchers.add(watcher);
 }
 
-void Text :: dettachWatcher(TextWatcherBase* watcher)
+void Text :: detachWatcher(TextWatcherBase* watcher)
 {
    _watchers.cut(watcher);
 }
@@ -473,6 +476,26 @@ void Text :: refreshPage(Pages::Iterator& page)
       if (text[i] == 10)
          (*page).rows++;
    }
+}
+
+void Text :: refreshNextPage(Pages::Iterator page)
+{
+   if (!page.last()) {
+      ++page;
+      refreshPage(page);
+   }
+}
+
+int Text :: retrieveRowCount()
+{
+   Pages::Iterator it = _pages.start();
+   int count = 1;
+   while (!it.eof()) {
+      count += (*it).rows;
+
+      it++;
+   }
+   return count;
 }
 
 void Text :: validateBookmark(TextBookmark& bookmark)
@@ -566,7 +589,7 @@ void Text :: copyLineToX(TextBookmark& bookmark, TextWriter<text_c>& writer, pos
 
       const text_c* line = (*bookmark._page).text + offset;
       disp_t i = 0;
-      while (i < count && col < x) {
+      while ((size_t)i < count && col < x) {
          if (TextBookmark::isNewLineCh(line[i])) {
             bookmark.moveOn(i);
             return;
@@ -652,4 +675,484 @@ bool Text :: load(path_t path, FileEncoding encoding, bool autoDetecting)
    }
 
    return true;
+}
+
+void Text :: save(path_t path)
+{
+   FileWriter writer(path, _encoding, false);
+
+   for (auto it = _pages.start(); !it.eof(); ++it) {
+      writer.writeText((*it).text, (*it).used);
+   }
+}
+
+void Text :: insert(TextBookmark bookmark, text_t s, size_t length, bool checkRowCount)
+{
+   size_t position = bookmark.longPosition();
+
+   TextWatchers::Iterator it = _watchers.start();
+   while (!it.eof()) {
+      (*it)->onInsert(position, length, s);
+      ++it;
+   }
+   size_t offset = bookmark._offset;
+   size_t size;
+   while (length > 0) {
+      Pages::Iterator page = bookmark._page;
+      size = PAGE_SIZE - (*page).used;
+      if (size > length)
+         size = length;
+
+      if (offset < (*page).used) {
+         if (size == 0) {
+            size = (*page).used - offset;
+            (*page).used = offset;
+
+            Page newPage(size);
+            StrUtil::move(newPage.text, (*page).text + offset, size);
+
+            _pages.insertAfter(page, newPage);
+
+            if (!checkRowCount) {
+               refreshPage(page);
+            }
+            refreshNextPage(page);
+
+            if (size > length)
+               size = length;
+         }
+         else StrUtil::move((*page).text + offset + size, (*page).text + offset, (*page).used - offset);
+      }
+      else if (size == 0) {
+         if (!bookmark.goToNextPage(true)) {
+            Page newPage;
+
+            _pages.insertAfter(bookmark._page, newPage);
+            bookmark.goToNextPage(true);
+         }
+         offset = bookmark._offset;
+         continue;
+      }
+      StrUtil::move((*page).text + offset, s, size);
+
+      (*page).used += size;
+      if (checkRowCount) {
+         refreshPage(page);
+      }
+      length -= size;
+      offset += size;
+      s += size;
+   }
+
+   it = _watchers.start();
+   while (!it.eof()) {
+      (*it)->onUpdate(position);
+      ++it;
+   }
+}
+
+void Text :: erase(TextBookmark bookmark, size_t length, bool checkRowCount)
+{
+   size_t size = 0;
+   size_t offset = bookmark._offset;
+   size_t position = bookmark.longPosition();
+
+   while (length > 0) {
+      Pages::Iterator page = bookmark._page;
+      size = length;
+      if (size > (*page).used - offset)
+         size = (*page).used - offset;
+
+      if (size != 0) {
+         TextWatchers::Iterator it = _watchers.start();
+         while (!it.eof()) {
+            (*it)->onErase(position, size, (*page).text + offset);
+            it++;
+         }
+
+         if (offset + size < (*page).used) {
+            size_t l = (*page).used - offset;
+            StrUtil::move((*page).text + offset, (*page).text + offset + size, l);
+         }
+         (*page).used -= size;
+         length -= size;
+         if (checkRowCount) {
+            refreshPage(page);
+         }
+      }
+      if (length != 0) {
+         if (!bookmark.goToNextPage())
+            break;
+
+         offset = bookmark._offset;
+         position = bookmark.longPosition();
+      }
+   }
+   TextWatchers::Iterator it = _watchers.start();
+   while (!it.eof()) {
+      (*it)->onUpdate(position);
+      it++;
+   }
+}
+
+bool Text :: insertLine(TextBookmark& bookmark, text_t s, size_t length)
+{
+   validateBookmark(bookmark);
+
+   insert(bookmark, s, length, true);
+   bookmark._length = BM_INVALID;
+
+   _rowCount = retrieveRowCount();
+
+   return true;
+}
+
+bool Text :: insertChar(TextBookmark& bookmark, text_c ch)
+{
+   validateBookmark(bookmark);
+
+   insert(bookmark, &ch, 1, false);
+   if (ch == '\t') {
+      bookmark._length = NOTFOUND_POS;
+   }
+   else if (bookmark._length != NOTFOUND_POS)
+      bookmark._length++;
+
+   if (_rowCount == 0) {
+      _rowCount++;
+   }
+   return true;
+}
+
+bool Text :: insertNewLine(TextBookmark& bookmark)
+{
+   validateBookmark(bookmark);
+
+   text_c ch[2];
+   if (_mode == EOLMode::CRLF) {
+      ch[0] = 13;
+      ch[1] = 10;
+      insert(bookmark, ch, 2, true);
+   }
+   else {
+      ch[0] = 10;
+      insert(bookmark, ch, 1, true);
+   }
+
+   bookmark._length = NOTFOUND_POS;
+
+   _rowCount++;
+
+   return true;
+}
+
+bool Text :: eraseChar(TextBookmark& bookmark)
+{
+   validateBookmark(bookmark);
+
+   if (bookmark._column == bookmark.length_pos()) {
+      if (bookmark._row != _rowCount - 1) {
+         if ((*bookmark._page).text[bookmark._offset] == 13) {
+            if (_mode == EOLMode::CRLF) {
+               erase(bookmark, 2, true);
+            }
+            else erase(bookmark, 1, true);
+         }
+         else erase(bookmark, 1, true);
+
+         _rowCount--;
+      }
+      else return false;
+   }
+   else erase(bookmark, 1, false);
+
+   bookmark._length = NOTFOUND_POS;
+   //   bookmark.skipEmptyPages();
+
+   return true;
+}
+
+bool Text :: eraseLine(TextBookmark& bookmark, size_t length)
+{
+   validateBookmark(bookmark);
+
+   erase(bookmark, length, true);
+   bookmark._length = NOTFOUND_POS;
+   //   bookmark.skipEmptyPages();
+
+   _rowCount = retrieveRowCount();
+
+   return true;
+}
+
+// --- TextHistory::HistoryWriter ---
+
+TextHistory::HistoryWriter :: HistoryWriter()
+{
+   lastLength = 0;
+   lastPosition = 0;
+   lastOperation = Operation::None;
+}
+
+constexpr pos_t START_RECORD_SIZE = sizeof(pos_t) * 2 + sizeof(text_c);
+constexpr pos_t END_RECORD_SIZE = sizeof(pos_t) + sizeof(text_c);
+
+void TextHistory::HistoryWriter :: writeEndRecord(MemoryWriter& writer, pos_t length)
+{
+   text_c ch = 0;
+
+   writer.write(&ch, sizeof(text_c));
+   writer.writePos(length);
+}
+
+bool TextHistory::HistoryWriter :: writeRecord(Buffer* buffer, Operation operation, pos_t &position, pos_t &length,
+   void* &line, pos_t& offset)
+{
+   MemoryWriter writer(buffer);
+   pos_t freeSpace = buffer->freeSpace();
+   pos_t shift = (operation == Operation::Insert) ? lastLength : 0;
+   if (lastOperation == operation && (lastPosition + shift) == position) {
+      if (freeSpace > length + END_RECORD_SIZE) {
+         lastLength += length;
+         writer.write(line, length);
+      }
+      else {
+         // if it is not enough place
+         pos_t sublength = 0;
+         if (freeSpace > END_RECORD_SIZE) {
+            // if it is enough to place end buffer record
+            sublength = freeSpace - END_RECORD_SIZE;
+            writer.write(line, sublength);
+         }
+         writeEndRecord(writer, lastLength + sublength);
+
+         line = (char*)line + sublength;
+         length -= sublength;
+         if (operation == Operation::Insert)
+            position += sublength;
+
+         return false;
+      }
+   }
+   else {
+      if (lastOperation != Operation::None) {
+         writeEndRecord(writer, lastLength);
+         freeSpace -= END_RECORD_SIZE;
+      }
+      lastOperation = operation;
+      lastPosition = position;
+      if (freeSpace >= length + START_RECORD_SIZE) {
+         lastLength = length;
+         writer.writePos((operation == Operation::Insert) ? position : position | ERASE_MODE);
+         writer.write(line, length);
+      }
+      else {
+         pos_t sublength = 0;
+         if (freeSpace > START_RECORD_SIZE) {
+            sublength = freeSpace - START_RECORD_SIZE;
+            writer.writePos((operation == Operation::Insert) ? position : position | ERASE_MODE);
+            writer.write(line, sublength);
+
+            writeEndRecord(writer, sublength);
+         }
+         line = (char*)line + sublength;
+         length -= sublength;
+         if (operation == Operation::Insert)
+            position += sublength;
+
+         return false;
+      }
+      offset = writer.position();
+      return true;
+   }
+}
+
+bool TextHistory::HistoryWriter :: write(Buffer* buffer, Operation operation, pos_t& position, 
+   pos_t& length, void* &line, pos_t offset)
+{
+#ifdef _MSC_VER
+   // HOTFIX : adjust for utf16 string
+   position <<= 1;
+   length <<= 1;
+#endif
+
+   bool retVal = writeRecord(buffer, operation, position, length, line, offset);
+   if (!retVal) {
+      lastOperation = Operation::None;
+   }
+
+#ifdef _MSC_VER
+   // HOTFIX : adjust for utf16 string
+   position >>= 1;
+   length >>= 1;
+#endif
+
+   return retVal;
+}
+
+void TextHistory::HistoryWriter :: endRecord(Buffer* buffer, pos_t& offset)
+{
+   MemoryWriter writer(buffer);
+
+   writeEndRecord(writer, lastLength);
+
+   offset = writer.position();
+
+   lastOperation = Operation::None;
+}
+
+// --- TextHistory::HistoryBackReader ---
+
+TextHistory::HistoryBackReader :: HistoryBackReader(Buffer* buffer, pos_t offset)
+{
+   _buffer = buffer;
+   _offset = offset;
+}
+
+pos_t TextHistory::HistoryBackReader :: getLength()
+{
+   _offset -= sizeof(pos_t);
+
+   pos_t length = _buffer->getPos(_offset);
+
+   return length;
+}
+
+void* TextHistory::HistoryBackReader :: getLine(pos_t length)
+{
+   _offset -= (length + 1);
+
+   return _buffer->get(_offset);
+}
+
+pos_t TextHistory::HistoryBackReader :: getPosition(bool& eraseMode)
+{
+   _offset -= sizeof(pos_t);
+
+   pos_t value = _buffer->getPos(_offset);
+   pos_t position = value & ~ERASE_MODE;
+   eraseMode = test(value, ERASE_MODE);
+
+   return position;
+}
+
+// --- TextHistory ---
+
+TextHistory :: TextHistory(pos_t capacity)
+   : _buffer1(capacity), _buffer2(capacity)
+{
+   _locking = false;
+
+   _offset = 0;
+   _buffer = &_buffer1;
+   _previous = nullptr;
+}
+
+void TextHistory :: switchBuffer()
+{
+   _previous = _buffer;
+   if (&_buffer1 == _buffer) {
+      _buffer = &_buffer2;
+   }
+   else _buffer = &_buffer1;
+   
+   _buffer->clear();
+   _offset = 0;
+}
+
+void TextHistory :: writeOperation(Operation operation, pos_t position,
+   pos_t length, void* line)
+{
+   if (!_writer.write(_buffer, operation, position, length, line, _offset)) {
+      switchBuffer();
+
+      writeOperation(operation, position, length, line);
+   }
+}
+
+void TextHistory :: onUpdate(size_t)
+{
+}
+
+void TextHistory :: onInsert(size_t position, size_t length, text_t line)
+{
+   if (_locking)
+      return;
+
+   _buffer->trim(_offset);
+
+   writeOperation(Operation::Insert, (pos_t)position, (pos_t)length, line);
+}
+
+void TextHistory :: onErase(size_t position, size_t length, text_t line)
+{
+   if (_locking)
+      return;
+
+   _buffer->trimLong(_offset);
+
+   writeOperation(Operation::Erase, (pos_t)position, (pos_t)length, line);
+}
+
+bool TextHistory :: bof() const
+{
+   return (_offset == 0 && (_previous == nullptr));
+}
+
+bool TextHistory :: eof() const
+{
+   if (_buffer->length() == _offset) {
+      return true;
+   }
+   else return false;
+}
+
+void TextHistory :: undo(Text* text, TextBookmark& caret)
+{
+   if (bof())
+      return;
+
+   text->validateBookmark(caret);
+
+   if (_writer.lastOperation != Operation::None)
+      _writer.endRecord(_buffer, _offset);
+
+   if (_offset == 0 && _previous) {
+      _buffer = _previous;
+      _offset = _previous->length();
+      _previous = nullptr;
+   }
+
+   HistoryBackReader reader(_buffer, _offset);
+
+   pos_t length = reader.getLength();
+   void* line = reader.getLine(length);
+
+   bool   eraseMode = false;
+   pos_t position = reader.getPosition(eraseMode);
+
+#ifdef _MSC_VER
+   // HOTFIX : adjust for utf16 string
+   position >>= 1;
+   length >>= 1;
+#endif
+
+   _locking = true;
+   caret.moveOn(position - caret.position());
+   if (eraseMode) {
+      // erase mode
+      text->insertLine(caret, (text_t)line, length);
+      caret.moveOn(length);
+   }
+   else {
+      // insert mode
+      text->eraseLine(caret, length);
+   }
+   _locking = false;
+}
+
+void TextHistory :: redo(Text* text, TextBookmark& caret)
+{
+   if (eof())
+      return;
 }

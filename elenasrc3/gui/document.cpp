@@ -7,6 +7,7 @@
 #include "guicommon.h"
 // --------------------------------------------------------------------------
 #include "document.h"
+#include "guieditor.h"
 
 using namespace elena_lang;
 
@@ -28,7 +29,7 @@ LexicalFormatter :: LexicalFormatter(Text* text, TextFormatterBase* formatter, M
 
 LexicalFormatter :: ~LexicalFormatter()
 {
-   _text->dettachWatcher(this);
+   _text->detachWatcher(this);
 }
 
 void LexicalFormatter :: format()
@@ -221,12 +222,80 @@ DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter)
 
    _maxColumn = 0;
    _selection = 0;
+
+   _text->attachWatcher(this);
+}
+
+DocumentView :: ~DocumentView()
+{
+   _text->detachWatcher(this);
+}
+
+void DocumentView :: onInsert(size_t position, size_t length, text_t line)
+{
+   _frame.invalidate();
+
+   if (_caret.longPosition() > position) {
+      _caret.invalidate();
+   }
+
+   status.modifiedMode = true;
+   status.frameChanged = true;
+}
+
+void DocumentView :: onUpdate(size_t position)
+{
+   _frame.invalidate();
+
+   if (_caret.longPosition() > position) {
+      _caret.invalidate();
+   }
+
+   status.modifiedMode = true;
+   status.frameChanged = true;
+}
+
+void DocumentView :: onErase(size_t position, size_t length, text_t line)
+{
+   _frame.invalidate();
+
+   if (_caret.longPosition() > position) {
+      _caret.invalidate();
+   }
+
+   status.modifiedMode = true;
+   status.frameChanged = true;
 }
 
 pos_t DocumentView :: format(LexicalReader& reader)
 {
    pos_t length = _size.x;
    pos_t position = reader.bm.position();
+
+   if (_selection != 0) {
+      pos_t curPos = _caret.position();
+      pos_t selPos = curPos + _selection;
+      if (_selection > 0) {
+         if (reader.bm.row() == _caret.row() && position < curPos) {
+            length = _min(curPos - position, length);
+         }
+         else if (position >= curPos && position < selPos) {
+            reader.style = STYLE_SELECTION;
+
+            return _min(selPos - position, length);
+         }
+      }
+      else {
+         if (position >= selPos && position < curPos) {
+            reader.style = STYLE_SELECTION;
+
+            return _min(curPos - position, length);
+         }
+         else if (position < selPos && position + length > selPos) {
+            length = _min(selPos - position, length);
+         }
+      }
+   }
 
    pos_t proceeded = _formatter.proceed(position, reader);
    return _min(length, proceeded);
@@ -259,8 +328,8 @@ void DocumentView :: setCaret(int column, int row, bool selecting)
    pos_t position = _caret.position();
 
    _caret.moveTo(column, row);
-   if (_maxColumn < _caret.length_pos() + _size.x) {
-      _maxColumn = _caret.length_pos() + _size.x;
+   if (_maxColumn < _caret.length_int() + _size.x) {
+      _maxColumn = _caret.length_int() + _size.x;
 
       status.maxColChanged = true;
    }
@@ -300,6 +369,20 @@ void DocumentView :: setCaret(int column, int row, bool selecting)
    status.caretChanged = true;
 
    notifyOnChange();
+}
+
+void DocumentView :: hscroll(int displacement)
+{
+   Point frame = _frame.getCaret();
+
+   frame.x += displacement;
+   if (frame.x < 0)
+      frame.x = 0;
+
+   if (_frame.getCaret() != frame) {
+      _frame.moveTo(frame.x, frame.y);
+      status.frameChanged = true;
+   }
 }
 
 void DocumentView :: vscroll(int displacement)
@@ -417,7 +500,7 @@ void DocumentView :: moveRightToken(bool selecting, bool trimWhitespace)
    bool newToken = false;
    bool operatorOne = false;
    bool first = false;
-   while (first || _caret.column() < _caret.position()) {
+   while (first || (pos_t)_caret.column() < _caret.position()) {
       pos_t length = 0;
       text_t line = _text->getLine(_caret, length);
       if (length == 0)
@@ -478,4 +561,141 @@ void DocumentView :: notifyOnChange()
    for(auto it = _notifiers.start(); !it.eof(); ++it) {
       (*it)->onDocumentUpdate();
    }
+}
+
+void DocumentView :: tabbing(text_c space, size_t count, bool indent)
+{
+   _text->validateBookmark(_caret);
+
+   if (_selection < 0) {
+      _caret.moveOn(_selection);
+      _selection = abs(_selection);
+   }
+   TextBookmark end = _caret;
+
+   end.moveOn(_selection);
+
+   // if only part of the line was selected just insert tab
+   int lastRow = end.row();
+   if (lastRow == _caret.row()) {
+      if (indent)
+         insertChar(space, count);
+   }
+   else {
+      setCaret(0, _caret.row(), true);
+
+      if (end.column() == 0)
+         lastRow--;
+
+      TextBookmark start = _caret;
+      while (start.row() <= lastRow) {
+         if (indent) {
+            for (size_t i = 0; i < count; i++) {
+               _text->insertChar(start, space);
+               _selection++;
+            }
+         }
+         else {
+            pos_t length;
+            for (size_t i = 0; i < count; i++) {
+               text_t s = _text->getLine(start, length);
+               if (length != 0 && (s[0] == ' ' || s[0] == '\t')) {
+                  bool tab = (s[0] == '\t');
+
+                  _text->eraseChar(start);
+                  _selection--;
+
+                  if (tab)
+                     break;
+               }
+               else break;
+            }
+         }
+         if (!start.moveTo(0, start.row() + 1))
+            break;
+      }
+   }
+}
+
+void DocumentView :: insertChar(text_c ch, size_t count)
+{
+   if (hasSelection()) {
+      int rowCount = _text->getRowCount();
+
+      eraseSelection();
+
+      status.rowDifference += (_text->getRowCount() - rowCount);
+   }
+   else if (status.overwriteMode && (int)_caret.length() > _caret.column(false)) {
+      _text->eraseChar(_caret);
+   }
+
+   while (count > 0) {
+      if (_text->insertChar(_caret, ch)) {
+         _text->validateBookmark(_caret);
+         _caret.moveOn(1);
+         setCaret(_caret.getCaret(), false);
+      }
+      else break;
+
+      count--;
+   }
+}
+
+void DocumentView :: insertNewLine()
+{
+   int rowCount = _text->getRowCount();
+
+   eraseSelection();
+
+   if (_text->insertNewLine(_caret)) {
+      setCaret(0, _caret.row() + 1, false);
+   }
+
+   status.rowDifference += (_text->getRowCount() - rowCount);
+}
+
+void DocumentView :: eraseChar(bool moveback)
+{
+   int rowCount = _text->getRowCount();
+
+   if (_selection != 0) {
+      eraseSelection();
+
+      setCaret(_caret.getCaret(), false);
+   }
+   else {
+      if (moveback) {
+         if (_caret.column(false) == 0 && _caret.row() == 0)
+            return;
+
+         moveLeft(false);
+      }
+      _text->eraseChar(_caret);
+   }
+
+   status.rowDifference += (_text->getRowCount() - rowCount);
+}
+
+bool DocumentView :: eraseSelection()
+{
+   if (_selection == 0)
+      return false;
+
+   _text->validateBookmark(_caret);
+
+   if (_selection < 0) {
+      _caret.moveOn(_selection);
+      _selection = -_selection;
+   }
+   _text->eraseLine(_caret, _selection);
+   _selection = 0;
+   status.selelectionChanged = true;
+
+   return true;
+}
+
+void DocumentView :: save(path_t path)
+{
+   _text->save(path);
 }

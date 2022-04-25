@@ -27,6 +27,25 @@ inline int createDir(const wchar_t* path)
    return _wmkdir(path);
 }
 
+bool PathUtil::compare(path_t path1, path_t path2)
+{
+   size_t l1 = path1.length();
+   size_t l2 = path2.length();
+
+   if (l1 == l2) {
+      for (size_t i = 0; i < l1; i++) {
+         path_c ch1 = StrUtil::lower(path1[i]);
+         path_c ch2 = StrUtil::lower(path2[i]);
+
+         if (ch1 != ch2)
+            return false;
+      }
+
+      return true;
+   }
+   else return false;
+}
+
 bool PathUtil :: recreatePath(/*path_t root, */path_t path)
 {
    PathString dirPath;

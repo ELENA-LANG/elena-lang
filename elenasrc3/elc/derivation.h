@@ -22,23 +22,38 @@ namespace elena_lang
       enum class ScopeType
       {
          Unknown = 0,
-         InlineTemplate
+         InlineTemplate,
+         ClassTemplate
       };
 
       struct Scope
       {
          ScopeType    type;
          bool         ignoreTerminalInfo;
+         ReferenceMap arguments;
          ReferenceMap parameters;
+         int          nestedLevel;
 
-         bool isParameter(SyntaxNode node, ref_t& parameterKey)
+         bool withTypeParameters() const
+         {
+            return type == ScopeType::ClassTemplate;
+         }
+
+         bool isParameter(SyntaxNode node, SyntaxKey& parameterKey, ref_t& parameterIndex)
          {
             switch (type) {
                case ScopeType::InlineTemplate:
                {
-                  ref_t key = parameters.get(node.identifier());
-                  if (key) {
-                     parameterKey = key;
+                  ref_t index = arguments.get(node.identifier());
+                  if (index) {
+                     parameterKey = SyntaxKey::TemplateArgParameter;
+                     parameterIndex = index;
+                     return true;
+                  }
+                  index = parameters.get(node.identifier());
+                  if (index) {
+                     parameterKey = SyntaxKey::TemplateParameter;
+                     parameterIndex = index;
                      return true;
                   }
                   return false;
@@ -49,52 +64,72 @@ namespace elena_lang
          }
 
          Scope()
-            : parameters(0)
+            : arguments(0), parameters(0)
          {
             type = ScopeType::Unknown;
             ignoreTerminalInfo = false;
+            nestedLevel = 0;
          }
       };
 
-      ErrorProcessor*   _errorProcessor;
-      SyntaxTree        _cache;
-      int               _level;
+      ErrorProcessor*         _errorProcessor;
+      SyntaxTree              _cache;
+      int                     _level;
 
-      SyntaxTreeWriter  _writer;
-      SyntaxTreeWriter  _cacheWriter;
+      SyntaxTreeWriter        _writer;
+      SyntaxTreeWriter        _cacheWriter;
 
-      ModuleScopeBase* _moduleScope;
+      ModuleScopeBase*        _moduleScope;
+      TemplateProssesorBase*  _templateProcessor;
 
       ref_t mapAttribute(SyntaxNode node, bool allowType, ref_t& previusCategory);
 
-      void flushNode(Scope& scope, SyntaxNode node);
-      void flushCollection(Scope& scope, SyntaxNode node);
+      void parseStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current, 
+         List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
+      void generateTemplateStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
-      void flushIdentifier(SyntaxNode identNode, bool ignoreTerminalInfo);
-      void flushTemplateCode(Scope& scope, SyntaxNode node);
-      void flushTemplateArgDescr(Scope& scope, SyntaxNode node);
-      void flushTemplateArg(Scope& scope, SyntaxNode node, bool allowType);
-      void flushTemplageExpression(Scope& scope, SyntaxNode node, SyntaxKey type, bool allowType);
-      void flushMessage(Scope& scope, SyntaxNode node);
-      void flushObject(Scope& scope, SyntaxNode node);
-      void flushExpression(Scope& scope, SyntaxNode node);
-      void flushStatement(Scope& scope, SyntaxNode node);
-      void flushMethodCode(Scope& scope, SyntaxNode node);
-      void flushClassMember(Scope& scope, SyntaxNode node);
-      void flushMethod(Scope& scope, SyntaxNode node);
-      void flushMethodMember(Scope& scope, SyntaxNode node);
-      void flushTemplate(Scope& scope, SyntaxNode node);
-      void flushAttribute(Scope& scope, SyntaxNode node, ref_t& previusCategory, bool allowType);
-      void flushTypeAttribute(Scope& scope, SyntaxNode node, ref_t& previusCategory, bool allowType);
-      void flushClassMemberPostfixes(Scope& scope, SyntaxNode node);
-      void flushClassPostfixes(Scope& scope, SyntaxNode node);
+      void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
-      void flushDescriptor(Scope& scope, SyntaxNode node, bool withNameNode = true);
-      void flushClass(Scope& scope, SyntaxNode node);
-      void flushInlineTemplate(Scope& scope, SyntaxNode node);
-      void flushDeclaration(SyntaxNode node);
-      void flushDictionary(SyntaxNode node);
-      void flush(SyntaxNode node);
+      void flushIdentifier(SyntaxTreeWriter& writer, SyntaxNode identNode, bool ignoreTerminalInfo);
+      void flushTemplateCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushTemplateArgDescr(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushParameterArgDescr(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool allowType);
+      void flushTemplageExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxKey type, bool allowType);
+      void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushMessage(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushObject(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushNested(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushClosure(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+
+      void copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+
+      void flushSubScopeMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxNode headerNode);
+      void flushSubScope(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxNode headerNode);
+
+      void flushClassMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool functionMode = false);
+      void flushMethod(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushMethodMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
+         bool allowType);
+      void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
+         bool allowType);
+      void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+
+      void flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool withNameNode = true, 
+         bool typeDescriptor = false);
+      void flushClass(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool functionMode);
+      void flushInlineTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode node);
+      void flushDictionary(SyntaxTreeWriter& writer, SyntaxNode node);
+      void flushNamespace(SyntaxTreeWriter& writer, SyntaxNode node);
+      void flush(SyntaxTreeWriter& writer, SyntaxNode node);
 
    public:
       void newNode(parse_key_t key) override;
@@ -113,11 +148,13 @@ namespace elena_lang
          _cacheWriter.newNode(SyntaxKey::Root);
       }
 
-      SyntaxTreeBuilder(SyntaxTree* target, ErrorProcessor* errorProcessor, ModuleScopeBase* moduleScope)
+      SyntaxTreeBuilder(SyntaxTree* target, ErrorProcessor* errorProcessor, 
+         ModuleScopeBase* moduleScope, TemplateProssesorBase* templateProcessor)
          : _writer(*target), _cacheWriter(_cache)
       {
          _errorProcessor = errorProcessor;
          _moduleScope = moduleScope;
+         _templateProcessor = templateProcessor;
 
          _writer.clear();
          _writer.newNode(SyntaxKey::Root);
@@ -127,51 +164,65 @@ namespace elena_lang
    };
 
    // ---- TemplateProssesor ---
-   class TemplateProssesor : public TemplateProssesorBase
+   class TemplateProssesor
    {
       enum class Type
       {
          None = 0,
-         Inline
+         Inline,
+         CodeTemplate,
+         Class
       };
 
       typedef Map<ref_t, SyntaxNode> NodeMap;
 
       struct TemplateScope
       {
-         Type    type;
-         NodeMap parameterValues;
+         Type             type;
+         NodeMap          argValues;
+         NodeMap          parameterValues;
+         ModuleScopeBase* moduleScope;
+         ref_t            targetRef;
 
-         TemplateScope()
-            : parameterValues({})
+         TemplateScope() :
+            type(Type::None),
+            argValues({}),
+            parameterValues({}),
+            moduleScope(nullptr), targetRef(0)
          {
-            type = Type::None;
          }
-         TemplateScope(Type type)
-            : parameterValues({})
+         TemplateScope(Type type, ModuleScopeBase* scope, ref_t targetRef) :
+            type(type),
+            argValues({}),
+            parameterValues({}),
+            moduleScope(scope),
+            targetRef(targetRef)
          {
-            this->type = type;
          }
       };
 
+      void loadArguments(TemplateScope& scope, List<SyntaxNode>* parameters);
+      void loadParameters(TemplateScope& scope, List<SyntaxNode>* parameters);
+
       void copyNode(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyChildren(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyMethod(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
 
       void generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection);
 
-      bool importTemplate(Type type, ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
-         List<SyntaxNode>& parameters);
+      void generateTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateBody);
+
+      void importTemplate(Type type, MemoryBase* templateSection, SyntaxNode target,
+         List<SyntaxNode>* arguments, List<SyntaxNode>* parameters);
 
    public:
-      static TemplateProssesorBase* getInstance()
-      {
-         static TemplateProssesor instance;
+      void importInlineTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
+      void importCodeTemplate(MemoryBase* templateSection,
+         SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
 
-         return &instance;
-      }
-
-      bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
-         List<SyntaxNode>& parameters) override;
+      void generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, SyntaxTree* syntaxTree, 
+         MemoryBase* sectionBody, List<SyntaxNode>& parameters);
 
       TemplateProssesor() = default;
    };

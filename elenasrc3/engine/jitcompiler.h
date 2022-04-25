@@ -29,6 +29,7 @@ namespace elena_lang
       ref_t        inlineMask;
       int          alignmentVA;
       int          structMask;
+      int          unframedOffset;
    };
 
    struct JITCompilerScope
@@ -37,11 +38,13 @@ namespace elena_lang
       JITCompiler*         compiler;
       LabelHelperBase*     lh;
       MemoryWriter*        codeWriter;
+      MemoryReader*        tapeReader;
       ByteCommand          command;
       JITConstants*        constants;
 
       bool                 withDebugInfo;
       ref_t                frameOffset;
+      ref_t                stackOffset;
 
       unsigned char code() const
       {
@@ -49,7 +52,7 @@ namespace elena_lang
       }
 
       JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, LabelHelperBase* lh, MemoryWriter* writer,
-         JITConstants* constants);
+         MemoryReader* tapeReader, JITConstants* constants);
    };
 
    typedef void(*CodeGenerator)(JITCompilerScope*);
@@ -85,31 +88,40 @@ namespace elena_lang
 
       friend void* retrieveCode(JITCompilerScope* scope);
       friend void* retrieveCodeWithNegative(JITCompilerScope* scope);
+      friend void* retrieveICode(JITCompilerScope* scope, int arg);
 
       friend void loadOp(JITCompilerScope* scope);
       friend void loadLOp(JITCompilerScope* scope);
       friend void loadIndexOp(JITCompilerScope* scope);
+      friend void loadStackIndexOp(JITCompilerScope* scope);
       friend void loadVMTIndexOp(JITCompilerScope* scope);
       friend void loadFrameIndexOp(JITCompilerScope* scope);
       friend void loadFrameDispOp(JITCompilerScope* scope);
       friend void loadNOp(JITCompilerScope* scope);
+      friend void loadLenOp(JITCompilerScope* scope);
       friend void loadROp(JITCompilerScope* scope);
+      friend void loadRROp(JITCompilerScope* scope);
       friend void loadMOp(JITCompilerScope* scope);
       friend void loadCallOp(JITCompilerScope* scope);
       friend void loadCallROp(JITCompilerScope* scope);
-      friend void loadIndexROp(JITCompilerScope* scope);
+      friend void loadStackIndexROp(JITCompilerScope* scope);
       friend void loadFrameIndexROp(JITCompilerScope* scope);
       friend void loadIndexNOp(JITCompilerScope* scope);
-      friend void loadIndexIndexOp(JITCompilerScope* scope);
+      friend void loadStackIndexFrameIndexOp(JITCompilerScope* scope);
+      friend void loadStackIndexIndexOp(JITCompilerScope* scope);
       friend void loadNewOp(JITCompilerScope* scope);
       friend void loadNewNOp(JITCompilerScope* scope);
       friend void loadMROp(JITCompilerScope* scope);
       friend void loadVMTROp(JITCompilerScope* scope);
+      friend void loadDPNOp(JITCompilerScope* scope);
+      friend void loadIOp(JITCompilerScope* scope);
 
       friend void compileBreakpoint(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
       friend void compileOpen(JITCompilerScope* scope);
       friend void compileJump(JITCompilerScope* scope);
+      friend void compileJeq(JITCompilerScope* scope);
+      friend void compileJne(JITCompilerScope* scope);
       friend void compileDispatchMR(JITCompilerScope* scope);
 
       void loadCoreRoutines(
@@ -164,6 +176,7 @@ namespace elena_lang
          _constants.dataHeader = _constants.dataOffset = 0;
          _constants.inlineMask = 0;
          _constants.alignmentVA = 8;
+         _constants.unframedOffset = 0;
       }
    };
 
@@ -211,7 +224,7 @@ namespace elena_lang
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
-      void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, MemoryBase* section) override;
+      void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
 
       JITCompiler32()
          : JITCompiler()
@@ -263,7 +276,7 @@ namespace elena_lang
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
-      void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, MemoryBase* section) override;
+      void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
 
       JITCompiler64()
          : JITCompiler()
@@ -277,6 +290,7 @@ namespace elena_lang
 
    inline void* retrieveCode(JITCompilerScope* scope);
    inline void* retrieveCodeWithNegative(JITCompilerScope* scope);
+   inline void* retrieveICode(JITCompilerScope* scope, int arg);
 
    void loadNop(JITCompilerScope*);
    void loadOp(JITCompilerScope* scope);
@@ -284,25 +298,33 @@ namespace elena_lang
    void loadIndexOp(JITCompilerScope* scope);
    void loadVMTIndexOp(JITCompilerScope* scope);
    void loadFrameIndexOp(JITCompilerScope* scope);
+   void loadStackIndexOp(JITCompilerScope* scope);
    void loadFrameDispOp(JITCompilerScope* scope);
    void loadNOp(JITCompilerScope* scope);
+   void loadLenOp(JITCompilerScope* scope);
    void loadROp(JITCompilerScope* scope);
+   void loadRROp(JITCompilerScope* scope);
    void loadMOp(JITCompilerScope* scope);
    void loadCallOp(JITCompilerScope* scope);
    void loadCallROp(JITCompilerScope* scope);
-   void loadIndexROp(JITCompilerScope* scope);
+   void loadStackIndexROp(JITCompilerScope* scope);
    void loadFrameIndexROp(JITCompilerScope* scope);
    void loadIndexNOp(JITCompilerScope* scope);
-   void loadIndexIndexOp(JITCompilerScope* scope);
+   void loadStackIndexFrameIndexOp(JITCompilerScope* scope);
+   void loadStackIndexIndexOp(JITCompilerScope* scope);
    void loadNewOp(JITCompilerScope* scope);
    void loadNewNOp(JITCompilerScope* scope);
    void loadMROp(JITCompilerScope* scope);
    void loadVMTROp(JITCompilerScope* scope);
+   void loadDPNOp(JITCompilerScope* scope);
+   void loadIOp(JITCompilerScope* scope);
 
    void compileClose(JITCompilerScope* scope);
    void compileOpen(JITCompilerScope* scope);
    void compileBreakpoint(JITCompilerScope* scope);
    void compileJump(JITCompilerScope* scope);
+   void compileJeq(JITCompilerScope* scope);
+   void compileJne(JITCompilerScope* scope);
    void compileDispatchMR(JITCompilerScope* scope);
 }
 

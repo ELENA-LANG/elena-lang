@@ -152,8 +152,16 @@ bool AssemblerBase :: getArgReference(ScriptToken& tokenInfo, int& offset, ref_t
       reference = NARG16_1;
       offset = 0;
    }
+   else if (tokenInfo.compare(N16_ARGUMENT2)) {
+      reference = NARG16_2;
+      offset = 0;
+   }
    else if (tokenInfo.compare(N16HI_ARGUMENT1)) {
       reference = NARGHI_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(N12_ARGUMENT1)) {
+      reference = NARG12_1;
       offset = 0;
    }
    else if (tokenInfo.compare(N12_ARGUMENT2)) {
@@ -282,6 +290,8 @@ bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
          return compileBOpCode(tokenInfo, writer, labelScope);
       case 'c':
          return compileCOpCode(tokenInfo, writer);
+      case 'd':
+         return compileDOpCode(tokenInfo, writer);
       case 'e':
          return compileEOpCode(tokenInfo, writer);
       case 'i':
@@ -389,6 +399,7 @@ void AssemblerBase :: compile()
 
          declareConstant(tokenInfo);
       }
+      else throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
    }
 }
 

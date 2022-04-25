@@ -51,12 +51,12 @@ TextViewWindow :: TextViewWindow(TextViewModelBase* model, TextViewControllerBas
    _mouseCaptured = false;
    _caret_x = 0;
 
-   _model->docView->attachMotifier(this);
+   _model->attachDocListener(this);
 }
 
 TextViewWindow :: ~TextViewWindow()
 {
-   _model->docView->removeNotifier(this);
+   _model->removeDocListener(this);
 }
 
 void TextViewWindow :: registerTextViewWindow(HINSTANCE hInstance, wstr_t className)
@@ -82,6 +82,15 @@ int TextViewWindow :: getLineNumberMargin()
       return marginStyle->avgCharWidth * 5;
    }
    else return 0;
+}
+
+bool TextViewWindow :: getScrollInfo(int bar, SCROLLINFO* info)
+{
+   memset(info, 0, sizeof(*info));
+   info->cbSize = sizeof(*info);
+   info->fMask = SIF_ALL;
+
+   return ::GetScrollInfo(_handle, bar, info) ? true : false;
 }
 
 void TextViewWindow :: resizeDocument()
@@ -154,14 +163,83 @@ void TextViewWindow :: releaseMouse()
    ::ReleaseCapture();
 }
 
-void TextViewWindow :: update(bool resize)
+int TextViewWindow :: getHScrollerPosition()
 {
-   refresh();
+   return _model->DocView()->getFrame().x;
+}
+
+int TextViewWindow :: getVScrollerPosition()
+{
+   return _model->DocView()->getFrame().y;
+}
+
+void TextViewWindow :: update(bool resized)
+{
+   if (_model->isAssigned()) {
+      auto docView = _model->DocView();
+
+      updateVScroller(resized);
+      if (docView->status.maxColChanged) {
+         updateHScroller(resized);
+         docView->status.maxColChanged = false;
+      }
+      else updateHScroller(resized);
+   }
+
+   ControlBase::refresh();
+}
+
+void TextViewWindow :: updateHScroller(bool resized)
+{
+   int position = getHScrollerPosition();
+   if (resized) {
+      auto docView = _model->DocView();
+
+      Point size = _model->DocView()->getSize();
+      int max = docView->getMaxColumn();
+      setScrollInfo(SB_HORZ, max - 1, size.x);
+   }
+   setScrollPosition(SB_HORZ, position);
+}
+
+void TextViewWindow :: updateVScroller(bool resized)
+{
+   int position = getVScrollerPosition();
+   if (resized)  {
+      auto docView = _model->DocView();
+
+      Point size = _model->DocView()->getSize();
+      int max = docView->getRowCount();
+      setScrollInfo(SB_VERT, max + size.y, size.y);
+   }
+   setScrollPosition(SB_VERT, position);
+}
+
+void TextViewWindow :: setScrollInfo(int bar, int max, int page)
+{
+   SCROLLINFO info;
+
+   info.cbSize = sizeof(info);
+   info.fMask = SIF_PAGE | SIF_RANGE;
+   info.nMin = 0;
+   info.nMax = max;
+   info.nPage = page;
+   info.nPos = 0;
+   info.nTrackPos = 1;
+
+   ::SetScrollInfo(_handle, bar, &info, TRUE);
+}
+
+void TextViewWindow :: setScrollPosition(int bar, int position)
+{
+   ::SetScrollPos(_handle, bar, position, TRUE);
 }
 
 void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 {
-   auto docView = _model->docView;
+   auto docView = _model->DocView();
+   if (!docView)
+      return;
 
    Point caret = docView->getCaret(false) - docView->getFrame();
 
@@ -345,7 +423,7 @@ void TextViewWindow :: onButtonDown(Point point, bool kbShift)
    bool margin = false;
    mouseToScreen(point, col, row, margin);
 
-   _model->docView->moveToFrame(col, row, kbShift);
+   _model->DocView()->moveToFrame(col, row, kbShift);
 
    captureMouse();
 }
@@ -377,12 +455,47 @@ bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
    return true;
 }
 
+bool TextViewWindow :: onKeyPressed(wchar_t ch)
+{
+   if (_model->isAssigned()) {
+      auto docView = _model->DocView();
+      if (docView->status.readOnly)
+         return false;
+
+      switch (ch) {
+         case 0x0D:
+            docView->insertNewLine();
+            break;
+         case 0x08:
+            docView->eraseChar(true);
+            break;
+         case 0x09:
+            _controller->indent(_model);
+            break;
+         default:
+            if (ch >= 0x20) {
+               docView->insertChar(ch);
+            }
+            else return false;
+      }
+
+      onDocumentUpdate();
+      return true;
+   }
+   else return false;
+}
+
 LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message) {
       case WM_PAINT:
          onPaint();
          return 0;
+      case WM_CHAR:
+         if (onKeyPressed((wchar_t)wParam)) {
+            return 0;
+         }
+         else break;
       case WM_LBUTTONDOWN:
          onButtonDown(Point(LOWORD(lParam), HIWORD(lParam)), (wParam & MK_SHIFT) != 0);
          return 0;
@@ -394,6 +507,12 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
             return true;
          }
          else break;
+      case WM_VSCROLL:
+         onScroll(SB_VERT, LOWORD(wParam));
+         return 0;
+      case WM_HSCROLL:
+         onScroll(SB_HORZ, LOWORD(wParam));
+         return 0;
       default:
          // to make compiler happy
          break;
@@ -404,10 +523,59 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 
 void TextViewWindow :: onDocumentUpdate()
 {
-   if (_model->docView->status.isViewChanged()) {
+   auto docView = _model->DocView();
+
+   if (docView && docView->status.isViewChanged()) {
       _cached = false;
       _caret_x = 0;
    }
 
    update();
+}
+
+void TextViewWindow :: onScroll(int bar, int type)
+{
+   SCROLLINFO info;
+   getScrollInfo(bar, &info);
+   int offset = 0;
+   switch (type) {
+      case SB_LINEUP:
+         if (info.nPos <= info.nMin)
+            return;
+
+         offset = -1;
+         break;
+      case SB_LINEDOWN:
+         if (info.nPos >= info.nMax)
+            return;
+
+         offset = 1;
+         break;
+      case SB_THUMBPOSITION:
+      case SB_THUMBTRACK:
+         offset = info.nTrackPos - getScrollerPosition(bar);
+         break;
+      case SB_PAGEDOWN:
+         offset = info.nPage;
+         break;
+      case SB_PAGEUP:
+         offset = -(int)info.nPage;
+         break;
+      default:
+         return;
+   }
+
+   auto docView = _model->DocView();
+   if (bar == SB_VERT) {
+      docView->vscroll(offset);
+   }
+   else docView->hscroll(offset);
+
+   onDocumentUpdate();
+
+}
+
+void TextViewWindow :: refresh()
+{
+   onDocumentUpdate();
 }

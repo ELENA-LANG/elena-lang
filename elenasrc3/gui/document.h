@@ -98,7 +98,7 @@ namespace elena_lang
    typedef List<DocumentNotifier*> DocumentNotifiers;
 
    // --- Document ---
-   class DocumentView
+   class DocumentView : public TextWatcherBase
    {
    public:
       struct LexicalReader : ReaderInfo
@@ -133,6 +133,25 @@ namespace elena_lang
          bool frameChanged;
          bool selelectionChanged;
          bool formatterChanged;
+         bool readOnly;
+         bool modifiedMode;
+         bool unnamed;
+         bool overwriteMode;
+
+         bool oldModified;
+         bool oldOvewrite;
+
+         int  rowDifference;
+
+         bool isModeChanged()
+         {
+            bool changed = (modifiedMode != oldModified) || (overwriteMode != oldOvewrite);
+
+            oldModified = modifiedMode;
+            oldOvewrite = overwriteMode;
+
+            return changed;
+         }
 
          bool isViewChanged(bool reset = true)
          {
@@ -149,8 +168,15 @@ namespace elena_lang
             caretChanged = false;
             maxColChanged = false;
             frameChanged = false;
+            oldModified = modifiedMode = false;
             selelectionChanged = false;
             formatterChanged = false;
+            readOnly = false;
+            unnamed = false;
+            overwriteMode = false;
+            oldOvewrite = true;     // to trigger mode change
+
+            rowDifference = 0;
          }
 
          Status()
@@ -168,7 +194,7 @@ namespace elena_lang
       Point             _size;
       TextBookmark      _frame;
       TextBookmark      _caret;
-      pos_t             _selection;
+      int               _selection;
 
       int               _maxColumn;
 
@@ -176,11 +202,15 @@ namespace elena_lang
       DocumentNotifiers _notifiers;
 
       pos_t format(LexicalReader& reader);
-      
+
+      void onInsert(size_t position, size_t length, text_t line) override;
+      void onUpdate(size_t position) override;
+      void onErase(size_t position, size_t length, text_t line) override;
+
    public:
       Status status;
 
-      void attachMotifier(DocumentNotifier* notifier)
+      void attachNotifier(DocumentNotifier* notifier)
       {
          _notifiers.add(notifier);
       }
@@ -205,10 +235,16 @@ namespace elena_lang
 
       virtual void resize(Point size);
 
+      bool hasSelection() const { return (_selection != 0); }
+
       TextBookmark getCaretBookmark() { return _caret; }
 
       Point getFrame() const { return _frame.getCaret(); }
       Point getCaret(bool virtualOne = true) const { return _caret.getCaret(virtualOne); }
+      Point getSize() const { return _size; }
+
+      int getRowCount() const { return _text->getRowCount(); }
+      int getMaxColumn() const { return _maxColumn; }
 
       void setCaret(int column, int row, bool selecting);
       void setCaret(Point caret, bool selecting)
@@ -217,6 +253,7 @@ namespace elena_lang
       }
 
       void vscroll(int offset);
+      void hscroll(int offset);
 
       void moveRight(bool selecting);
       void moveLeft(bool selecting);
@@ -230,10 +267,24 @@ namespace elena_lang
 
       void moveToFrame(int column, int row, bool selecting);
 
+      virtual void tabbing(text_c space, size_t count, bool indent);
+
+      void insertNewLine();
+      void insertChar(text_c ch)
+      {
+         insertChar(ch, 1);
+      }
+      void insertChar(text_c ch, size_t number);
+
+      void eraseChar(bool moveback);
+      bool eraseSelection();
+
       void notifyOnChange();
 
+      void save(path_t path);
+
       DocumentView(Text* text, TextFormatterBase* formatter);
-      virtual ~DocumentView() = default;
+      virtual ~DocumentView();
    };
 }
 

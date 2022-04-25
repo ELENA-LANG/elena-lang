@@ -201,6 +201,8 @@ int main()
 {
    try
    {
+      bool cleanMode = false;
+
       PathString appPath;
       getAppPath(appPath);
 
@@ -227,7 +229,19 @@ int main()
       }
 
       for (int i = 1; i < argc; i++) {
-         if (PathUtil::checkExtension(argv[i], "prj")) {
+         if (argv[i][0] == '-') {
+            switch (argv[i][1]) {
+               case 'm':
+                  project.addBoolSetting(ProjectOption::MappingOutputMode, true);
+                  break;
+               case 'r':
+                  cleanMode = true;
+                  break;
+               default:
+                  break;
+            }
+         }
+         else if (PathUtil::checkExtension(argv[i], "prj")) {
             PathString path(argv[i]);
 
             if (!project.loadProject(*path)) {
@@ -242,11 +256,16 @@ int main()
          }
       }
 
-      // Building...
-      return process.build(project, linker, 
-         DEFAULT_STACKALIGNMENT, 
-         DEFAULT_RAW_STACKALIGNMENT,
-         MINIMAL_ARG_LIST);
+      if (cleanMode) {
+         return process.clean(project);
+      }
+      else {
+         // Building...
+         return process.build(project, linker,
+            DEFAULT_STACKALIGNMENT,
+            DEFAULT_RAW_STACKALIGNMENT,
+            MINIMAL_ARG_LIST);
+      }
    }
    catch (CLIException)
    {

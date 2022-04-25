@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive ELF Image class implementation
 //       supported platform: PPC64le
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "clicommon.h"

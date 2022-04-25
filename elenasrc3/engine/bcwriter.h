@@ -46,21 +46,27 @@ namespace elena_lang
       const Saver*       _commands;
       LibraryLoaderBase* _loader;
 
+      pos_t savePath(BuildNode node, SectionScopeBase* moduleScope, ReferenceMap& paths);
+
       void openSymbolDebugInfo(Scope& scope, ustr_t symbolName);
       void openClassDebugInfo(Scope& scope, ustr_t className, ref_t flags);
-      void openMethodDebugInfo(Scope& scope);
+      void openMethodDebugInfo(Scope& scope, pos_t sourcePath);
       void endDebugInfo(Scope& scope);
 
       void importTree(CommandTape& tape, BuildNode node, Scope& scope);
 
-      void saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
+      void saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
+         ReferenceMap& paths, bool loopMode = false);
+      void saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
+         ReferenceMap& paths, bool loopMode);
+      void saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths);
 
-      void saveProcedure(BuildNode node, Scope& scope, bool classMode);
+      void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, ReferenceMap& paths);
 
-      void saveVMT(BuildNode node, Scope& scope);
+      void saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths);
 
-      void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList);
-      void saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList);
+      void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, ReferenceMap& paths);
+      void saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, ReferenceMap& paths);
 
       void optimizeTape(CommandTape& tape);
 

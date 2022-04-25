@@ -173,6 +173,7 @@
     <ClInclude Include="..\..\gui\windows\wincanvas.h" />
     <ClInclude Include="..\..\gui\windows\wincommon.h" />
     <ClInclude Include="..\..\gui\windows\winsdi.h" />
+    <ClInclude Include="..\..\gui\windows\winstatusbar.h" />
     <ClInclude Include="..\..\gui\windows\wintabbar.h" />
     <ClInclude Include="..\..\gui\windows\wintextframe.h" />
     <ClInclude Include="..\..\gui\windows\wintextview.h" />
@@ -188,8 +189,10 @@
     <ClInclude Include="..\windows\editcontrol.h" />
     <ClInclude Include="..\windows\factory.h" />
     <ClInclude Include="..\windows\Resource.h" />
+    <ClInclude Include="..\windows\windialogs.h" />
     <ClInclude Include="..\windows\winide.h" />
     <ClInclude Include="..\windows\win32debugprocess.h" />
+    <ClInclude Include="..\windows\winidestatusbar.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\common\dump.cpp" />
@@ -206,6 +209,7 @@
     <ClCompile Include="..\..\gui\windows\wincanvas.cpp" />
     <ClCompile Include="..\..\gui\windows\wincommon.cpp" />
     <ClCompile Include="..\..\gui\windows\winsdi.cpp" />
+    <ClCompile Include="..\..\gui\windows\winstatusbar.cpp" />
     <ClCompile Include="..\..\gui\windows\wintabbar.cpp" />
     <ClCompile Include="..\..\gui\windows\wintextframe.cpp" />
     <ClCompile Include="..\..\gui\windows\wintextview.cpp" />
@@ -220,8 +224,10 @@
     <ClCompile Include="..\windows\editcontrol.cpp" />
     <ClCompile Include="..\windows\factory.cpp" />
     <ClCompile Include="..\windows\main.cpp" />
+    <ClCompile Include="..\windows\windialogs.cpp" />
     <ClCompile Include="..\windows\winide.cpp" />
     <ClCompile Include="..\windows\win32debugprocess.cpp" />
+    <ClCompile Include="..\windows\winidestatusbar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\windows\small.ico" />

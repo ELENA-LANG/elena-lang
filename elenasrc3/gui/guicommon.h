@@ -13,7 +13,11 @@ namespace elena_lang
 {
 #ifdef _MSC_VER
 
-   #define _T(x) L ## x
+#ifndef _T
+
+#define _T(x) L ## x
+
+#endif // _T
 
    typedef wide_c  text_c;
    typedef wide_c* text_t;
@@ -21,7 +25,11 @@ namespace elena_lang
 
 #elif __GNUG__
 
+#ifndef _T
+
    #define _T(x) x
+
+#endif // _T
 
    typedef char   text_c;
    typedef char*  text_t;
@@ -133,7 +141,7 @@ namespace elena_lang
    {
    public:
       virtual void notifyMessage(int messageCode) = 0;
-      virtual void notifyModelChange(int modelCode) = 0;
+      virtual void notifyModelChange(int modelCode, int arg = 0) = 0;
    };
 
    // --- GUIApp ---

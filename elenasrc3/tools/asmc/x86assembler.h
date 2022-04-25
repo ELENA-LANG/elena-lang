@@ -59,11 +59,15 @@ namespace elena_lang
 
       void declareLabel(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
 
+      virtual bool compileAdc(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileAdd(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileAnd(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileCall(X86Operand source, MemoryWriter& writer);
       virtual bool compileCmp(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileCMovcc(X86Operand source, X86Operand target, MemoryWriter& writer, X86JumpType type);
+      virtual bool compileDiv(X86Operand source, MemoryWriter& writer);
+      virtual bool compileIDiv(X86Operand source, MemoryWriter& writer);
+      virtual bool compileIMul(X86Operand source, MemoryWriter& writer);
       virtual bool compileJccForward(X86JumpType type, bool shortJump, MemoryWriter& writer);
       virtual bool compileJccBack(X86JumpType type, bool shortJump, int offset, MemoryWriter& writer);
       virtual bool compileJmpForward(bool shortJump, MemoryWriter& writer);
@@ -71,8 +75,13 @@ namespace elena_lang
       virtual bool compileJmp(X86Operand source, MemoryWriter& writer);
       virtual bool compileLea(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileMov(X86Operand source, X86Operand target, MemoryWriter& writer);
+      virtual bool compileMul(X86Operand source, MemoryWriter& writer);
+      virtual bool compileNeg(X86Operand source, MemoryWriter& writer);
+      virtual bool compileOr(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compilePop(X86Operand source, MemoryWriter& writer);
       virtual bool compilePush(X86Operand source, MemoryWriter& writer);
+      virtual bool compileRcr(X86Operand source, X86Operand target, MemoryWriter& writer);
+      virtual bool compileSbb(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileSetcc(X86Operand source, X86JumpType type, MemoryWriter& writer);
       virtual bool compileShr(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileSub(X86Operand source, X86Operand target, MemoryWriter& writer);
@@ -80,21 +89,31 @@ namespace elena_lang
       virtual bool compileXor(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual void compileExternCall(ScriptToken& tokenInfo, MemoryWriter& writer);
 
+      void compileAdc(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileAdd(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileAnd(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCall(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileCdq(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCmp(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMovcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type);
+      void compileDiv(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileIDiv(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileIMul(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type, LabelScope& labelScope);
       void compileJmp(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileLea(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMov(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMovsb(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileMul(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileNeg(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileNop(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileOr(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compilePop(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compilePush(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileRcr(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileRep(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileRet(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileSbb(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSetcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type);
       void compileShr(ScriptToken& tokenInfo, MemoryWriter& writer);
       virtual void compileStos(ScriptToken& tokenInfo, MemoryWriter& writer)
@@ -114,6 +133,7 @@ namespace elena_lang
       bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
       bool compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
@@ -164,6 +184,8 @@ namespace elena_lang
       bool compileCall(X86Operand source, MemoryWriter& writer) override;
       bool compileCMovcc(X86Operand source, X86Operand target, MemoryWriter& writer, X86JumpType type) override;
       bool compileCmp(X86Operand source, X86Operand target, MemoryWriter& writer) override;
+      bool compileIDiv(X86Operand source, MemoryWriter& writer) override;
+      bool compileIMul(X86Operand source, MemoryWriter& writer) override;
       bool compileJmp(X86Operand source, MemoryWriter& writer) override;
       bool compileLea(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileMov(X86Operand source, X86Operand target, MemoryWriter& writer) override;

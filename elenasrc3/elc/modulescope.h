@@ -36,6 +36,7 @@ public:
    ref_t mapAnonymous(ustr_t prefix) override;
 
    ref_t mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) override;
+   ref_t mapTemplateIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility, bool& alreadyDeclared) override;
 
    ref_t mapFullReference(ustr_t referenceName, bool existing) override;
    ref_t mapWeakReference(ustr_t referenceName, bool existing) override;
@@ -62,10 +63,16 @@ public:
    ModuleInfo getModule(ustr_t referenceName, bool silentMode) override;
    ModuleInfo getWeakModule(ustr_t referenceName, bool silentMode) override;
 
-   ref_t loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly) override;
-   ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly) override
+   ref_t loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly, bool fieldsOnly) override;
+   ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly, bool fieldsOnly) override
    {
-      return loadClassInfo(info, module->resolveReference(reference), headerOnly);
+      return loadClassInfo(info, module->resolveReference(reference), headerOnly, fieldsOnly);
+   }
+
+   ref_t loadSymbolInfo(SymbolInfo& info, ustr_t referenceName) override;
+   ref_t loadSymbolInfo(SymbolInfo& info, ref_t reference) override
+   {
+      return loadSymbolInfo(info, module->resolveReference(reference));
    }
 
    void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode/*,
@@ -73,6 +80,8 @@ public:
 
    void newNamespace(ustr_t name) override;
    bool includeNamespace(IdentifierList& importedNs, ustr_t name, bool& duplicateInclusion) override;
+
+   bool isDeclared(ref_t reference) override;
 
    ModuleScope(LibraryLoaderBase* loader, 
       ForwardResolverBase* forwardResolver, 

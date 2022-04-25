@@ -7,6 +7,14 @@ procedure __object_dispatcher
 
 end
 
+procedure __object_equal
+
+  peek        sp:0
+  cmp         sp:1
+  seleq       class:"system'BoolValue#true", class:"system'BoolValue#false"
+
+end
+
 symbol sta_start
 
   open header [arg1],[envptr]

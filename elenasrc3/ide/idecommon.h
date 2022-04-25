@@ -8,8 +8,9 @@
 #define IDECOMMON_H
 
 #include "guicommon.h"
+#include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                     7
+#define IDE_REVISION_NUMBER                           0x000E
 
 namespace elena_lang
 {
@@ -19,13 +20,17 @@ namespace elena_lang
 
    // --- Notification codes ---
    constexpr auto NOTIFY_SOURCEMODEL                  = 1;
+   constexpr auto NOTIFY_CURRENTVIEW_CHANGED          = 2;
+   constexpr auto NOTIFY_CURRENTVIEW_SHOW             = 3;
+   constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
 
    // --- IDEStatus ---
    enum class IDEStatus
    {
       None            = 0,
-      Busy            = 1,
-      AutoRecompiling = 2,
+      Ready           = 1,
+      Busy            = 2,
+      AutoRecompiling = 3,
    };
 
    inline bool testIDEStatus(IDEStatus value, IDEStatus mask)
@@ -109,7 +114,7 @@ namespace elena_lang
    {
    public:
       virtual GUIApp* createApp() = 0;
-      virtual GUIControlBase* createMainWindow() = 0;
+      virtual GUIControlBase* createMainWindow(NotifierBase* notifier) = 0;
    };
 }
 

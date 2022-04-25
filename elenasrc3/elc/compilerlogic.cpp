@@ -28,27 +28,91 @@ inline MethodHint operator & (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l & (unsigned int)r);
 }
 
+bool testMethodHint(MethodHint hint, MethodHint mask)
+{
+   return test((ref_t)hint, (ref_t)mask);
+}
+
+bool testMethodHint(ref_t hint, MethodHint mask)
+{
+   return test(hint, (ref_t)mask);
+}
+
 struct Op
 {
-   BuildKey operation;
+   const int* allowedOperators;
+   size_t     allowedOperatorLength;
 
-   ref_t    loperand;
-   ref_t    roperand;
-   ref_t    ioperand;
+   BuildKey   operation;
+
+   ref_t      loperand;
+   ref_t      roperand;
+   ref_t      ioperand;
+
+   ref_t      outputRef;
+   bool       needToAlloc;
 };
 
-constexpr auto OperationLength = 4;
+constexpr int DictionaryOperators[1]  = { SET_INDEXER_OPERATOR_ID };
+constexpr int ArrayOperators[1]       = { ADD_ASSIGN_OPERATOR_ID };
+constexpr int SArrayOperators[1]      = { LEN_OPERATOR_ID };
+constexpr int IntOperators[2]         = { ADD_OPERATOR_ID, SUB_OPERATOR_ID };
+constexpr int CondOperators[3]        = { EQUAL_OPERATOR_ID, NOTEQUAL_OPERATOR_ID, LESS_OPERATOR_ID };
+constexpr int BranchingOperators[1]   = { IF_OPERATOR_ID };
+constexpr int SDeclOperators[1]       = { NAME_OPERATOR_ID };
+constexpr int SOpOperators[1]         = { NOT_OPERATOR_ID };
+
+constexpr auto OperationLength = 11;
 constexpr Op Operations[OperationLength] =
 {
-   { BuildKey::StrDictionaryOp, V_DICTIONARY, V_INT32, V_STRING },
-   { BuildKey::AttrDictionaryOp, V_OBJATTRIBUTES, V_OBJECT, V_STRING },
-   { BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0 },
-   { BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0 }
+   {
+      DictionaryOperators, 1,
+      BuildKey::StrDictionaryOp, V_DICTIONARY, V_INT32, V_STRING, V_OBJECT, false
+   },
+   {
+      DictionaryOperators, 1,
+      BuildKey::AttrDictionaryOp, V_OBJATTRIBUTES, V_OBJECT, V_STRING, V_OBJECT, false
+   },
+   {
+      DictionaryOperators, 1,
+      BuildKey::DeclDictionaryOp, V_DECLATTRIBUTES, V_DECLARATION, V_STRING, V_OBJECT, false
+   },
+   {
+      ArrayOperators, 1,
+      BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0, V_OBJECT, false
+   },
+   { {}, 0,BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0, V_OBJECT, false },
+   {
+      IntOperators, 2,
+      BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32, true
+   },
+   {
+      CondOperators, 3,
+      BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG, false
+   },
+   {
+      SArrayOperators, 1,
+      BuildKey::ByteArraySOp, V_BINARYARRAY, 0, 0, V_INT32, true
+   },
+   {
+      BranchingOperators, 1,
+      BuildKey::BranchOp, V_FLAG, V_CLOSURE, 0, 0, false
+   },
+   {
+      SDeclOperators, 1,
+      BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING, false
+   },
+   {
+      SOpOperators, 1,
+      BuildKey::BoolSOp, V_FLAG, 0, 0, V_FLAG, false
+   }
 };
 
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 {
    switch (targetRef) {
+      case V_OBJECT:
+         return !isPrimitiveRef(sourceRef);
       default:
          return targetRef == sourceRef;
    }
@@ -56,67 +120,29 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 
 // --- CompilerLogic ---
 
-bool CompilerLogic :: isValidObjOp(int operatorId)
+bool CompilerLogic :: isValidOp(int operatorId, const int* validOperators, size_t len)
 {
-   switch (operatorId) {
-      default:
-         return false;
-   }
-}
-
-bool CompilerLogic :: isValidObjArrayOp(int operatorId)
-{
-   switch (operatorId) {
-      case ADD_ASSIGN_OPERATOR_ID:
+   for (size_t i = 0; i < len; ++i) {
+      if (validOperators[i] == operatorId)
          return true;
-      default:
-         return false;
    }
+
+   return false;
 }
 
-bool CompilerLogic :: isValidStrDictionaryOp(int operatorId)
-{
-   switch (operatorId) {
-      case SET_INDEXER_OPERATOR_ID:
-         return true;
-      default:
-         return false;
-   }
-}
-
-bool CompilerLogic :: isValidAttrDictionaryOp(int operatorId)
-{
-   switch (operatorId) {
-      case SET_INDEXER_OPERATOR_ID:
-         return true;
-      default:
-         return false;
-   }
-}
-
-bool CompilerLogic :: isValidOp(int operatorId, BuildKey op)
-{
-   switch (op) {
-      case BuildKey::ObjOp:
-         return isValidObjOp(operatorId);
-      case BuildKey::StrDictionaryOp:
-         return isValidStrDictionaryOp(operatorId);
-      case BuildKey::ObjArrayOp:
-         return isValidObjArrayOp(operatorId);
-      case BuildKey::AttrDictionaryOp:
-         return isValidAttrDictionaryOp(operatorId);
-      default:
-         return false;
-   }
-}
-
-BuildKey CompilerLogic :: resolveOp(int operatorId, ref_t* arguments, size_t length)
+BuildKey CompilerLogic :: resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length,
+   ref_t& outputRef, bool& needToAlloc)
 {
    for(size_t i = 0; i < OperationLength; i++) {
-      if (arguments[0] == Operations[i].loperand && arguments[1] == Operations[i].roperand) {
-         if ((length == 2) || (arguments[2] == Operations[i].ioperand)) {
-            if (isValidOp(operatorId, Operations[i].operation))
-               return Operations[i].operation;
+      if (isValidOp(operatorId, Operations[i].allowedOperators, Operations[i].allowedOperatorLength)) {
+         bool compatible = isCompatible(scope, Operations[i].loperand, arguments[0], false);
+         compatible = compatible && (length <= 1 || isCompatible(scope, Operations[i].roperand, arguments[1], false));
+         compatible = compatible && (length <= 2 || isCompatible(scope, Operations[i].ioperand, arguments[2], false));
+
+         if (compatible) {
+            outputRef = Operations[i].outputRef;
+            needToAlloc = Operations[i].needToAlloc;
+            return Operations[i].operation;
          }
       }
    }
@@ -143,7 +169,7 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
    return true;
 }
 
-bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visibility)
+bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant)
 {
    switch (attribute) {
       case V_PUBLIC:
@@ -153,6 +179,9 @@ bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visib
          visibility = Visibility::Private;
          break;
       case V_SYMBOLEXPR:
+         break;
+      case V_CONST:
+         constant = true;
          break;
       default:
          return false;
@@ -187,6 +216,12 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_ABSTRACT:
          flags = elAbstract;
          break;
+      case V_SEALED:
+         flags = elSealed;
+         break;
+      case V_EXTENSION:
+         flags = elExtension;
+         break;
       case 0:
          // ignore idle
          break;
@@ -210,6 +245,9 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
          break;
       case V_EMBEDDABLE:
          attrs.isEmbeddable = true;
+         break;
+      case V_CONST:
+         attrs.isConstant = true;
          break;
       default:
          return false;
@@ -250,6 +288,21 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_ABSTRACT:
          hint = (ref_t)MethodHint::Abstract;
          break;
+      case V_GETACCESSOR:
+         hint = (ref_t)MethodHint::GetAccessor;
+         break;
+      case V_SETACCESSOR:
+         hint = (ref_t)MethodHint::SetAccessor;
+         break;
+      case V_CONST:
+         hint = (ref_t)MethodHint::Constant | (ref_t)MethodHint::Sealed;
+         return true;
+      case V_FUNCTION:
+         hint = (ref_t)MethodHint::Function;
+         return true;
+      case V_PREDEFINED:
+         hint = (ref_t)MethodHint::Predefined;
+         return true;
       default:
          return false;
    }
@@ -264,6 +317,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
       case V_METHOD:
       case V_DISPATCHER:
       case V_CONSTRUCTOR:
+      case V_FUNCTION:
          return validateMethodAttribute(attribute, hint, dummy);
       default:
          return false;
@@ -278,6 +332,9 @@ bool CompilerLogic :: validateDictionaryAttribute(ref_t attribute, ref_t& dictio
          return true;
       case V_SYMBOL:
          dictionaryType = V_OBJATTRIBUTES;
+         return true;
+      case V_DECLOBJ:
+         dictionaryType = V_DECLATTRIBUTES;
          return true;
       default:
          return false;
@@ -302,13 +359,29 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_NEWOP:
          attrs |= ExpressionAttribute::NewOp;
          return true;
+      case V_CONVERSION:
+         attrs |= ExpressionAttribute::CastOp;
+         return true;
       default:
          return false;
    }
 }
 
-bool CompilerLogic :: validateMessage(mssg_t message)
+bool CompilerLogic :: validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_t message)
 {
+   bool dispatchOne = message == scope.buildins.dispatch_message;
+   if (testany((int)hints, (int)(MethodHint::Constructor | MethodHint::Static))) {
+      if (dispatchOne)
+         return false;
+   }
+
+   // const attribute can be applied only to a get-property
+   if (testMethodHint(hints, MethodHint::Constant) 
+      && ((message & PREFIX_MESSAGE_MASK) != PROPERTY_MESSAGE && getArgCount(message) > 1))
+   {
+      return false;
+   }
+
    return true;
 }
 
@@ -342,13 +415,27 @@ bool CompilerLogic :: isMultiMethod(ClassInfo& info, MethodInfo& methodInfo)
    return test(methodInfo.hints, (ref_t)MethodHint::Multimethod);
 }
 
-void CompilerLogic :: tweakClassFlags(ClassInfo& info, bool classClassMode)
+void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool classClassMode)
 {
    if (classClassMode) {
       // class class is always stateless and final
       info.header.flags |= elStateless;
       info.header.flags |= elSealed;
    }
+
+   if (test(info.header.flags, elNestedClass)) {
+      // stateless inline class
+      if (info.fields.count() == 0 && !test(info.header.flags, elStructureRole)) {
+         info.header.flags |= elStateless;
+
+         // stateless inline class is its own class class
+         info.header.classRef = classRef;
+      }
+      else info.header.flags &= ~elStateless;
+   }
+
+   if (test(info.header.flags, elExtension))
+      info.header.flags |= elSealed;
 }
 
 void CompilerLogic :: tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef)
@@ -374,6 +461,37 @@ bool CompilerLogic :: readAttrDictionary(ModuleBase* extModule, MemoryBase* sect
       int type = reader.getDWord();
 
       if (type == 2) {
+         ref_t reference = reader.getRef();
+         if (scope->module != extModule) {
+            reference = scope->importReference(extModule, reference);
+         }
+
+         map.add(*key, reference);
+      }
+      else return false;
+   }
+
+   return true;
+}
+
+void CompilerLogic :: writeDeclDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference)
+{
+   MemoryWriter writer(section);
+   writer.writeString(key);
+   writer.writeDWord(3);
+   writer.writeRef(reference);
+}
+
+bool CompilerLogic :: readDeclDictionary(ModuleBase* extModule, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope)
+{
+   IdentifierString key;
+
+   MemoryReader reader(section);
+   while (!reader.eof()) {
+      reader.readString(key);
+      int type = reader.getDWord();
+
+      if (type == 3) {
          ref_t reference = reader.getRef();
          if (scope->module != extModule) {
             reference = scope->importReference(extModule, reference);
@@ -421,7 +539,41 @@ void CompilerLogic :: writeArrayEntry(MemoryBase* section, ref_t reference)
    writer.writeRef(reference);
 }
 
-bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly)
+void CompilerLogic :: writeExtMessageEntry(MemoryBase* section, ref_t extRef, mssg_t message, mssg_t strongMessage)
+{
+   MemoryWriter writer(section);
+   writer.writeRef(extRef);
+   writer.writeRef(message);
+   writer.writeRef(strongMessage);
+}
+
+bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* section, ExtensionMap& map, ModuleScopeBase* scope)
+{
+   bool importMode = extModule != scope->module;
+
+   IdentifierString key;
+
+   MemoryReader reader(section);
+   while (!reader.eof()) {
+      ref_t extRef = reader.getRef();
+      if (importMode)
+         extRef = scope->importReference(extModule, extRef);
+
+      mssg_t message = reader.getRef();
+      if (importMode)
+         message = scope->importMessage(extModule, message);
+
+      mssg_t strongMessage = reader.getRef();
+      if (importMode)
+         strongMessage = scope->importMessage(extModule, strongMessage);
+
+      map.add(message, { extRef, strongMessage });
+   }
+
+   return true;
+}
+
+bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly, bool fieldsOnly)
 {
    if (isPrimitiveRef(reference) && !headerOnly) {
       scope.loadClassInfo(info, scope.buildins.superReference);
@@ -436,7 +588,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          break;
       default:
          if (reference != 0) {
-            if (!scope.loadClassInfo(info, reference, headerOnly))
+            if (!scope.loadClassInfo(info, reference, headerOnly, fieldsOnly))
                return false;
          }
          else {
@@ -518,6 +670,12 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_
       if (!ignoreNils || targetRef == scope.buildins.superReference)
          return true;
    }
+   else if (targetRef == V_FLAG) {
+      if (targetRef == sourceRef) {
+         return true;
+      }
+      else return isCompatible(scope, scope.branchingInfo.typeRef, sourceRef, ignoreNils);
+   }
 
    if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
       return true;
@@ -577,12 +735,23 @@ bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ref_t target
    return true;
 }
 
-bool CompilerLogic::isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage)
+bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage)
 {
    ref_t sourceSignatures[ARG_COUNT];
    size_t len = scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
 
    return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures, len);
+}
+
+bool CompilerLogic :: isMessageCompatibleWithSignature(ModuleScopeBase& scope, mssg_t targetMessage, 
+   ref_t* sourceSignature, size_t len)
+{
+   ref_t targetSignRef = getSignature(scope, targetMessage);
+
+   if (isSignatureCompatible(scope, targetSignRef, sourceSignature, len)) {
+      return true;
+   }
+   else return false;
 }
 
 ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef)
@@ -632,6 +801,10 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          else result.kind = (ref_t)MethodHint::Normal;
       }
 
+      if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
+         result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });
+      }
+
       return true;
    }
    else return false;
@@ -643,13 +816,17 @@ bool CompilerLogic :: checkMethod(ModuleScopeBase& scope, ref_t classRef, mssg_t
    if (classRef && defineClassInfo(scope, info, classRef)) {
       return checkMethod(info, message, result);
    }
+   else return false;
 }
 
 bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
    CheckMethodResult& result)
 {
+   if (!classRef)
+      classRef = scope.buildins.superReference;
+
    ClassInfo info;
-   if (classRef && defineClassInfo(scope, info, classRef)) {
+   if (defineClassInfo(scope, info, classRef)) {
       if (!checkMethod(info, message, result)) {
          if (checkMethod(info, message | STATIC_MESSAGE, result)) {
             result.visibility = Visibility::Private;
@@ -688,20 +865,20 @@ inline ustr_t resolveActionName(ModuleBase* module, mssg_t message)
    return module->resolveAction(getAction(message), signRef);
 }
 
-ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, mssg_t message,
-   void* param, ref_t(*resolve)(void*, ref_t))
+ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, ClassInfo::MethodMap& methods, 
+   mssg_t message, void* param, ref_t(*resolve)(void*, ref_t))
 {
    // create a new overload list
    ref_t listRef = scope.mapAnonymous(resolveActionName(scope.module, message));
 
    // sort the overloadlist
    CachedList<mssg_t, 0x20> list;
-   for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
+   for (auto m_it = methods.start(); !m_it.eof(); ++m_it) {
       auto methodInfo = *m_it;
       if (methodInfo.multiMethod == message) {
          bool added = false;
          mssg_t omsg = m_it.key();
-         pos_t len = list.count();
+         pos_t len = list.count_pos();
          for (pos_t i = 0; i < len; i++) {
             if (isSignatureCompatible(scope, omsg, list[i])) {
                list.insert(i, omsg);
@@ -718,13 +895,13 @@ ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeB
    for (size_t i = 0; i < list.count(); i++) {
       ref_t classRef = resolve(param, list[i]);
 
-      /*if (test(flags, elSealed) || test(message, STATIC_MESSAGE)) {
-         compiler.generateSealedOverloadListMember(scope, listRef, list[i], classRef);
+      if (test(flags, elSealed) || test(message, STATIC_MESSAGE)) {
+         compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Sealed);
       }
       else if (test(flags, elClosed)) {
-         compiler.generateClosedOverloadListMember(scope, listRef, list[i], classRef);
+         compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Virtual);
       }
-      else*/ compiler->generateOverloadListMember(scope, listRef, list[i]);
+      else compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Normal);
    }
 
    return listRef;
@@ -733,12 +910,23 @@ ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeB
 ref_t paramFeedback(void* param, ref_t)
 {
 #if defined(__LP64__)
-   size_t val = (size_t)val;
+   size_t val = (size_t)param;
 
    return (ref_t)val;
 #else
    return (ref_t)param;
 #endif
+}
+
+void CompilerLogic::injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags,
+   mssg_t message, ClassInfo::MethodMap& methods, ClassAttributes& attributes,
+   void* param, ref_t(*resolve)(void*, ref_t))
+{
+   ref_t listRef = generateOverloadList(compiler, scope, flags, methods, message, param, resolve);
+
+   ClassAttributeKey key = { message, ClassAttribute::OverloadList };
+   attributes.exclude(key);
+   attributes.add(key, listRef);
 }
 
 void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef)
@@ -748,11 +936,9 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
       if (!methodInfo.inherited && isMultiMethod(info, methodInfo)) {
          // create a new overload list
          mssg_t message = it.key();
-         ref_t listRef = generateOverloadList(compiler, scope, info, message, (void*)classRef, paramFeedback);
 
-         ClassAttributeKey key = { message, ClassAttribute::OverloadList };
-         info.attributes.exclude(key);
-         info.attributes.add(key, listRef);
+         injectMethodOverloadList(compiler, scope, info.header.flags, message, 
+            info.methods, info.attributes, (void*)classRef, paramFeedback);
       }
    }
 }

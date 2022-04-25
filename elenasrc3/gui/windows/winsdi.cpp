@@ -105,8 +105,9 @@ void LayoutManager :: resizeTo(Rectangle area)
          rightRect.width(), rightRect.height() });
    }
 
-   if (isVisible(_center))
-      _center->setRectangle(area);
+   if (isVisible(_center)) {
+      _center->setRectangle({ x, y, totalWidth, totalHeight });
+   }      
 }
 
 // --- SDIWindow ---
@@ -203,7 +204,11 @@ void SDIWindow :: onDrawItem(DRAWITEMSTRUCT* item)
    }
 }
 
-//
+void SDIWindow :: close()
+{
+   ::SendMessage(_handle, WM_CLOSE, 0, 0);
+}
+
 //void SDIWindow :: drawControls(HDC& hdc)
 //{
 //   for (size_t i = 0; i < _controlLength; i++) {

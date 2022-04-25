@@ -14,6 +14,16 @@
 
 namespace elena_lang
 {
+   // --- DebugSourceController ---
+   class DebugSourceController
+   {
+   public:
+      virtual bool selectSource(ProjectModel* model, SourceViewModel* sourceModel, 
+         ustr_t moduleName, path_t sourcePath) = 0;
+
+      virtual ~DebugSourceController() = default;
+   };
+
    // --- DebugInfoProvider ---
    class DebugInfoProvider
    {
@@ -190,17 +200,22 @@ namespace elena_lang
          }
       };
 
-      bool              _started;
-      bool              _running;
-      PathString        _debuggee;
-      PathString        _arguments;
+      bool                    _started;
+      bool                    _running;
+      PathString              _debuggee;
+      PathString              _arguments;
 
-      DebugProcessBase* _process;
-      DebugInfoProvider _provider;
-      PostponedStart    _postponed;
+      DebugProcessBase*       _process;
+      DebugInfoProvider       _provider;
+      PostponedStart          _postponed;
 
-      SourceViewModel*  _sourceModel;
-      NotifierBase*     _notifier;
+      ProjectModel*           _model;
+      SourceViewModel*        _sourceModel;
+      NotifierBase*           _notifier;
+      DebugSourceController*  _sourceController;
+
+      ustr_t                  _currentModule;
+      ustr_t                  _currentPath;
 
       void debugThread() override;
       void processStep();
@@ -240,7 +255,7 @@ namespace elena_lang
       }
 
       DebugController(DebugProcessBase* process, ProjectModel* model, 
-         SourceViewModel* sourceModel, NotifierBase* notifier);
+         SourceViewModel* sourceModel, NotifierBase* notifier, DebugSourceController* sourceController);
    };
    
 }

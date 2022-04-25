@@ -60,6 +60,10 @@ ELENA byte codes (or ecodes)
 
    set dp:i                 - dp[i] => acc
 
+   seleq r1, r2             - acc <= COMP.EQ ? r1 : r2
+
+   sellt r1, r2             - acc <= COMP.EQ ? r1 : r2
+
 
  Call operations:
  ----------------
@@ -78,6 +82,12 @@ ELENA byte codes (or ecodes)
    vcall mssg:m, r          - calls via table the method resolved by JIT by r and m
                               acc contains the result 
  
+   jump mssg:m, r           - jumps directly the method resolved by JIT by r and m
+                              acc contains the result 
+
+   vjump mssg:m, r          - jumps via table the method resolved by JIT by r and m
+                              acc contains the result 
+ 
 
  Stack operations:
  -----------------                                           
@@ -89,9 +99,13 @@ ELENA byte codes (or ecodes)
 
    load fp:i                - index := fp[i]
 
-   mov sp:i1, fp:i2,        - sp[i1] := fp[i2] 
+   mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
+
+   xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
 
    peek fp:i                - acc := fp[i]
+
+   peek sp:i                - acc := sp[i]
 
    save dp:disp             - dp[disp]  := index
 
@@ -124,10 +138,66 @@ ELENA byte codes (or ecodes)
                               size;
                               out: acc contains the class instance, index - undefined
 
+   nlen n                   - index := acc.length / n;
+                              returns the structure size
+
+   len                      - index := acc.length;
+                              returns the object length
+
    copy n                   - sp[0] >> acc, n bytes
+
+   copy dp:disp, n          - dp[disp] => temp;
+                              sp[0] >> temp, n bytes  
+
+   xdispatch m, r           - search in message table r the message in index and provided parameter list; 
+                              if found jumps directly to it;
 
 
  Jump operations:
  ---------------- 
    jump label               - jumps to the label
+
+   jeq  label               - jump if COMP.EQ == 1
  
+   jne  label               - jump if COMP.EQ == 0
+ 
+
+ Arithmeric operations:
+ ----------------------
+   iadd dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] += temp;
+                              n = 1,2,4,8 
+ 
+   idiv dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] /= temp;
+                              n = 1,2,4,8  
+
+   imul dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] *= temp;
+                              n = 1,2,4,8  
+
+
+   isub dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] -= temp;
+                              n = 1,2,4,8  
+
+
+ Comparison operations:
+ ----------------------
+   cmpr r                   - COMP.EQ := (acc == r);
+
+   cmp  sp:i                - COMP.EQ := (acc == sp[i]);
+
+   cmp  fp:i                - COMP.EQ := (acc == fp[i]);
+
+   icmp n                   - temp1 : n << acc;
+                              temp2 : n << sp[0];
+                              COMP.EQ := (temp2 == temp1);
+                              COMP.LT := (temp2 < temp1);
+                              n = 1,2,4,8 
+
+   icmp n                   - temp : n << acc;
+                              temp2 : n << sp[0];
+                              COMP.EQ := (temp2 == temp1);
+                              COMP.EQ := (temp2 < temp1);
+                              n = 1,2,4,8 

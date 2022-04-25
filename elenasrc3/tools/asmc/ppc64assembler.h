@@ -43,6 +43,7 @@ namespace elena_lang
          ref_t reference, MemoryWriter& writer);
       void compileADDIS(ScriptToken& tokenInfo, PPCOperand rx, PPCOperand ry, int i,
          ref_t reference, MemoryWriter& writer);
+      bool compileAND(PPCOperand rx, PPCOperand ry, PPCOperand rz, MemoryWriter& writer);
       void compileANDI(ScriptToken& tokenInfo, PPCOperand rx, PPCOperand ry, int i,
          ref_t reference, MemoryWriter& writer);
       void compileBxx(int address, int aa, int lk, MemoryWriter& writer);
@@ -66,20 +67,28 @@ namespace elena_lang
       void compileADDI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileADDIS(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileANDI(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileAND(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileBCTR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileBCL(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileB(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileBLR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileBCTRL(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileBEQ(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
+      void compileBNE(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileBLT(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileBGE(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMPWI(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileCMPDI(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileDIVD(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileDIVW(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileEXTRDI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileISELEQ(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileISELLT(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileOR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileORI(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileLBZ(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileLHZ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLWZ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLIS(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -88,10 +97,14 @@ namespace elena_lang
       void compileMR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMTLR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMTCTR(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileMULLD(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileMULLW(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileRLDICL(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSRDI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSLDI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSTW(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileSTB(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileSTH(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSTD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSTDU(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSTWU(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -108,6 +121,7 @@ namespace elena_lang
       bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
       bool compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;

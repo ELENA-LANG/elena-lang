@@ -107,6 +107,10 @@ namespace elena_lang
       JAE   = 0x03,
       JZ    = 0x04,
       JNZ   = 0x05,
+      JBE   = 0x06,
+      JA    = 0x07,
+      JL    = 0x0C,
+      JGE   = 0x0D,
    };
 
    inline bool test(X86OperandType type, X86OperandType mask)
@@ -148,6 +152,18 @@ namespace elena_lang
       bool isR8() const
       {
          return test(type, X86OperandType::R8);
+      }
+      bool isR8_M8() const
+      {
+         return test(type, X86OperandType::R8) || test(type, X86OperandType::M8);
+      }
+      bool isR16() const
+      {
+         return test(type, X86OperandType::R16);
+      }
+      bool isR16_M16() const
+      {
+         return test(type, X86OperandType::R16) || test(type, X86OperandType::M16);
       }
       bool isR32() const
       {
@@ -345,11 +361,6 @@ namespace elena_lang
    // --- X86LabelHelper ---
    struct X86LabelHelper : LabelHelper
    {
-      static bool isShortJmp(unsigned char opcode)
-      {
-         return opcode == 0xEB;
-      }
-
       static bool isNearJmp(unsigned char opcode)
       {
          return opcode == 0xE9;
@@ -360,7 +371,7 @@ namespace elena_lang
          // if it is jump of address load
          if (opcode == 0xE8 || opcode == 0xB9)
             return false;
-         else if ((opcode >= 0x80 && opcode < 0x90) || opcode == 0xE9) {
+         else if ((opcode == 0x0F) || opcode == 0xE9) {
             return false;
          }
          else return true;
@@ -396,8 +407,35 @@ namespace elena_lang
       void writeShortJmpBack(pos_t label, MemoryWriter& writer);
       void writeNearJmpBack(pos_t label, MemoryWriter& writer);
 
+      void writeShortJccForward(X86JumpType type, pos_t label, MemoryWriter& writer);
+      void writeNearJccForward(X86JumpType type, pos_t label, MemoryWriter& writer);
+      void writeShortJccBack(X86JumpType type, pos_t label, MemoryWriter& writer);
+      void writeNearJccBack(X86JumpType type, pos_t label, MemoryWriter& writer);
+
       void writeJumpBack(pos_t label, MemoryWriter& writer) override;
       void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override;
+
+      void writeJccBack(X86JumpType type, pos_t label, MemoryWriter& writer);
+      void writeJccForward(X86JumpType type, pos_t label, MemoryWriter& writer, int byteCodeOffset);
+
+      void writeJeqForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         writeJccForward(X86JumpType::JZ, label, writer, byteCodeOffset);
+      }
+      void writeJeqBack(pos_t label, MemoryWriter& writer) override
+      {
+         writeJccBack(X86JumpType::JZ, label, writer);
+      }
+
+      void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         writeJccForward(X86JumpType::JNZ, label, writer, byteCodeOffset);
+      }
+
+      void writeJneBack(pos_t label, MemoryWriter& writer) override
+      {
+         writeJccBack(X86JumpType::JNZ, label, writer);
+      }
    };
 }
 

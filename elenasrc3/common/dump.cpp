@@ -16,12 +16,20 @@ constexpr auto SECTION_PAGE_SIZE = 0x0040;            // the section page size, 
 
 // --- MemoryDump ---
 
-MemoryDump::MemoryDump()
+MemoryDump :: MemoryDump()
 {
    _used = 0;
    _total = SECTION_PAGE_SIZE;
 
    _buffer = realloc(nullptr, SECTION_PAGE_SIZE);
+}
+
+MemoryDump :: MemoryDump(pos_t capacity)
+{
+   _used = 0;
+   _total = capacity;
+
+   _buffer = realloc(nullptr, capacity);
 }
 
 MemoryDump :: MemoryDump(const MemoryDump& copy)

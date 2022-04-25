@@ -70,6 +70,28 @@ ref_t ModuleScope :: mapAnonymous(ustr_t prefix)
    return module->mapReference(*name);
 }
 
+ref_t ModuleScope :: mapTemplateIdentifier(ustr_t ns, ustr_t templateName, Visibility visibility, bool& alreadyDeclared)
+{
+   IdentifierString forwardName(TEMPLATE_PREFIX_NS, templateName);
+
+   if (forwardResolver->resolveForward(templateName).empty()) {
+      ReferenceName fullName(module->name());
+      if (!ns.empty())
+         fullName.combine(ns);
+
+      fullName.combine(templateName);
+
+      forwardResolver->addForward(templateName, *fullName);
+
+      mapNewIdentifier(ns, templateName, visibility);
+
+      alreadyDeclared = false;
+   }
+   else alreadyDeclared = true;
+
+   return module->mapReference(*forwardName);
+}
+
 ref_t ModuleScope :: mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility)
 {
    if (!ns.empty()) {
@@ -164,7 +186,7 @@ ref_t ModuleScope :: resolveImportedIdentifier(ustr_t identifier, IdentifierList
 ustr_t ModuleScope :: resolveWeakTemplateReference(ustr_t referenceName)
 {
    ustr_t resolvedName = forwardResolver->resolveForward(referenceName);
-   if (referenceName.empty()) {
+   if (resolvedName.empty()) {
       // COMPILER MAGIC : try to find a template implementation
       auto resolved = getWeakModule(referenceName, true);
       if (resolved.module != nullptr) {
@@ -271,14 +293,49 @@ ModuleInfo ModuleScope :: getWeakModule(ustr_t referenceName, bool silentMode)
    return loader->getWeakModule(referenceName, silentMode);
 }
 
-ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly)
+ref_t ModuleScope :: loadSymbolInfo(SymbolInfo& info, ustr_t referenceName)
+{
+   if (referenceName.empty())
+      return 0;
+
+   ModuleInfo moduleInfo;
+   if (isWeakReference(referenceName)) {
+      // if it is a weak reference - do not need to resolve the module
+      moduleInfo.module = module;
+      moduleInfo.reference = module->mapReference(referenceName);
+   }
+   else moduleInfo = getModule(referenceName, true);
+
+   if (moduleInfo.unassigned())
+      return 0;
+
+   // load argument VMT meta data
+   MemoryBase* metaData = moduleInfo.module->mapSection(moduleInfo.reference | mskMetaSymbolInfoRef, true);
+   if (!metaData)
+      return 0;
+
+   MemoryReader reader(metaData);
+   if (moduleInfo.module != module) {
+      SymbolInfo copy;
+      copy.load(&reader);
+
+      info.symbolType = copy.symbolType;
+      info.typeRef = importReference(moduleInfo.module, copy.typeRef);
+      info.valueRef = importReference(moduleInfo.module, copy.valueRef);
+   }
+   else info.load(&reader);
+
+   return moduleInfo.reference;
+}
+
+ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly, bool fieldsOnly)
 {
    if (referenceName.empty())
       return 0;
 
    if (isTemplateWeakReference(referenceName)) {
       // COMPILER MAGIC : try to find a template
-      ref_t ref = loadClassInfo(info, resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN), headerOnly);
+      ref_t ref = loadClassInfo(info, resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN), headerOnly, fieldsOnly);
       if (ref != 0 && info.header.classRef != 0) {
          if (module->resolveReference(info.header.classRef).endsWith(CLASSCLASS_POSTFIX)) {
             // HOTFIX : class class ref should be template weak reference as well
@@ -310,14 +367,14 @@ ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ustr_t referenceName, bool h
       MemoryReader reader(metaData);
       if (moduleInfo.module != module) {
          ClassInfo copy;
-         copy.load(&reader, headerOnly);
+         copy.load(&reader, headerOnly, fieldsOnly);
 
          importClassInfo(copy, info, moduleInfo.module, headerOnly, false/*, false*/);
 
          // import reference
          importReference(moduleInfo.module, moduleInfo.reference);
       }
-      else info.load(&reader, headerOnly);
+      else info.load(&reader, headerOnly, fieldsOnly);
 
       return moduleInfo.reference;
    }
@@ -394,7 +451,7 @@ void ModuleScope :: saveListMember(ustr_t name, ustr_t memberName)
    IdentifierString sectionName("'", name);
 
    MemoryBase* section = module->mapSection(
-      module->mapReference(*sectionName, false) | mskStrMetaArrayRef, 
+      module->mapReference(*sectionName, false) | mskStrMetaArrayRef,
       false);
 
    // check if the module alread included
@@ -430,8 +487,6 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bo
 {
    // check if the namespace exists
    ReferenceName virtualRef(name, NAMESPACE_REF);
-   ref_t dummyRef = 0;
-
    auto sectionInfo = loader->getModule(ReferenceInfo(module, *virtualRef), true);
    if (sectionInfo.module && sectionInfo.reference && sectionInfo.module != module) {
       ustr_t value = importedNs.retrieve<ustr_t>(name, [](ustr_t name, ustr_t current)
@@ -446,6 +501,15 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bo
          return true;
       }
       else duplicateInclusion = true;
+   }
+   return false;
+}
+
+bool ModuleScope :: isDeclared(ref_t reference)
+{
+   ref_t resolvedReference = mapFullReference(module->resolveReference(reference), true);
+   if (resolvedReference) {
+      return module->mapSection(resolvedReference | mskMetaClassInfoRef, true) != nullptr;
    }
    return false;
 }

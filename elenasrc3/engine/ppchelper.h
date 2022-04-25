@@ -136,7 +136,7 @@ namespace elena_lang
          int xo, int sh_hi, int rc)
       {
          return (opcode << 26) | (((unsigned int)rs & 0x1F) << 21) | (((unsigned int)ra & 0x1F) << 16)
-            | (sh << 11) | (mb << 5) | (xo << 2) | (sh_hi << 1) | rc;
+            | ((sh & 0x1F) << 11) | ((mb & 0x3F) << 5) | ((xo & 3) << 2) | ((sh_hi & 1) << 1) | rc;
       }
 
       static unsigned int makeXLCommand(unsigned int opcode, int bo, int bi, int bh, int xo, int lk)
@@ -145,7 +145,7 @@ namespace elena_lang
       }
       static unsigned int makeBCommand(unsigned int opcode, int bo, int bi, int bd, int aa, int lk)
       {
-         return (opcode << 26) | (bo << 21) | (bi << 16) | ((bd & 0xFFFF) << 2) | (aa << 1) | lk;
+         return (opcode << 26) | (bo << 21) | (bi << 16) | ((bd & 0x3FFF) << 2) | (aa << 1) | lk;
       }
       static unsigned int makeXOCommand(unsigned int opcode, PPCOperandType rt, PPCOperandType ra, PPCOperandType rb, 
          int oe, int xo, int rc)
@@ -176,6 +176,11 @@ namespace elena_lang
       static void writeBxx(int offset, int aa, int lk, MemoryWriter& writer)
       {
          writer.writeDWord(PPCHelper::makeICommand(18, offset >> 2, aa, lk));
+      }
+
+      static void writeBCxx(int bo, int bi, int bd, int aa, int lk, MemoryWriter& writer)
+      {
+         writer.writeDWord(PPCHelper::makeBCommand(16, bo, bi, bd >> 2, aa, lk));
       }
 
       bool fixLabel(pos_t label, MemoryWriter& writer) override
@@ -209,6 +214,38 @@ namespace elena_lang
          jumps.add(label, { writer.position() });
 
          writeBxx(0, 0, 0, writer);
+      }
+
+      void writeJeqForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBCxx(12, 2, 0, 0, 0, writer);
+      }
+
+      void writeJeqBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0xFFFF)
+            throw InternalError(-1);
+
+         writeBCxx(12, 2, offset, 0, 0, writer);
+      }
+
+      void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBCxx(4, 2, 0, 0, 0, writer);
+      }
+
+      void writeJneBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0xFFFF)
+            throw InternalError(-1);
+
+         writeBCxx(4, 2, offset, 0, 0, writer);
       }
    };
 

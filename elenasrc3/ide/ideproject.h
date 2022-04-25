@@ -14,11 +14,15 @@ namespace elena_lang
    // --- ProjectModel ---
    struct ProjectModel
    {
+   private:
       IDEStatus* status;
 
+   public:
       struct Paths
       {
          PathString libraryRoot;
+         PathString lastPath;
+         PathString librarySourceRoot;
       } paths;
 
       bool       autoRecompile;
@@ -32,6 +36,11 @@ namespace elena_lang
       path_t getOutputPath();
 
       bool getDebugMode();
+
+      IDEStatus getStatus() const
+      {
+         return *status;
+      }
 
       ProjectModel(IDEStatus* status);
    };

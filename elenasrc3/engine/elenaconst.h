@@ -25,9 +25,11 @@ namespace elena_lang
    constexpr auto ACTION_MASK             = 0x1C0u;
    constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
 
+   constexpr auto STATIC_MESSAGE          = 0x100u;
    constexpr auto FUNCTION_MESSAGE        = 0x020u;         // indicates it is an invoke message (without target variable in the call stack)
    constexpr auto CONVERSION_MESSAGE      = 0x040u;
-   constexpr auto STATIC_MESSAGE          = 0x100u;
+   constexpr auto PROPERTY_MESSAGE        = 0x0C0u;
+   constexpr auto PREFIX_MESSAGE_MASK     = 0x0C0u;         // HOTFIX : is used to correctly identify VARIADIC_MESSAGE or PROPERTY_MESSAGE
 
    constexpr auto ARG_COUNT               = 0x01Eu;
    constexpr auto ARG_MASK                = 0x01Fu;
@@ -48,6 +50,8 @@ namespace elena_lang
    // --- ELENA special sections ---
    constexpr auto NAMESPACES_SECTION      = "$namespaces";
    constexpr auto IMPORTS_SECTION         = "$import";
+   constexpr auto EXTENSION_SECTION       = "#extensions";
+
    constexpr auto NAMESPACE_REF           = "$namespace";
 
    // --- ELENA standard weak namespace
@@ -61,13 +65,17 @@ namespace elena_lang
 
    constexpr auto PREDEFINED_FORWARD      = "$forwards'meta$predefined";
    constexpr auto ATTRIBUTES_FORWARD      = "$forwards'meta$attributes";
+   constexpr auto OPERATION_FORWARD       = "$forwards'meta$statementTemplates";
    constexpr auto ALIASES_FORWARD         = "$forwards'meta$aliasTypes";
    constexpr auto SYSTEM_ENTRY            = "$forwards'$system_entry";   // the system entry
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 
    constexpr auto SUPER_FORWARD           = "$forwards'$super";          // the common class predecessor
-   constexpr auto INTLITERAL_FORWARD      = "$forwards'$int";          // the common class predecessor
-   constexpr auto LITERAL_FORWARD         = "$forwards'$string";          // the common class predecessor
+   constexpr auto INTLITERAL_FORWARD      = "$forwards'$int";            // the common class predecessor
+   constexpr auto LITERAL_FORWARD         = "$forwards'$string";         // the common class predecessor
+   constexpr auto BOOL_FORWARD            = "$forwards'$boolean";        // the common class predecessor
+   constexpr auto TRUE_FORWARD            = "$forwards'$true";           // the common class predecessor
+   constexpr auto FALSE_FORWARD           = "$forwards'$false";          // the common class predecessor
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";
@@ -83,9 +91,17 @@ namespace elena_lang
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";
    constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
    constexpr auto CAST_MESSAGE            = "#cast";
+   constexpr auto INVOKE_MESSAGE          = "#invoke";
+
+   constexpr auto ADD_MESSAGE             = "add";
+   constexpr auto IF_MESSAGE              = "if";
+   constexpr auto EQUAL_MESSAGE           = "equal";
+   constexpr auto NOT_MESSAGE             = "Inverted";
+   constexpr auto NOTEQUAL_MESSAGE        = "notequal";
+   constexpr auto LESS_MESSAGE            = "less";
 
    // --- constant string lengths ---
-   constexpr auto TEMPLATE_PREFIX_NS_LEN = (sizeof(TEMPLATE_PREFIX_NS) - 1);
+   constexpr auto TEMPLATE_PREFIX_NS_LEN = 7;
 
    // --- ELENA VMT flags ---
    constexpr ref_t elStandartVMT          = 0x00000001;
@@ -94,6 +110,7 @@ namespace elena_lang
    constexpr ref_t elFinal                = 0x00000008;
    constexpr ref_t elClosed               = 0x00000010;
    constexpr ref_t elSealed               = 0x00000038;
+   constexpr ref_t elNestedClass          = 0x00000040;
    constexpr ref_t elRole                 = 0x00000100;
    constexpr ref_t elAbstract             = 0x00000200;
    constexpr ref_t elNoCustomDispatcher   = 0x00000400;
@@ -103,6 +120,7 @@ namespace elena_lang
    constexpr ref_t elWrapper              = 0x00004000;
    constexpr ref_t elStructureWrapper     = 0x00004800;
    constexpr ref_t elDynamicRole          = 0x00008000;
+   constexpr ref_t elExtension            = 0x0000110C;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -175,7 +193,9 @@ namespace elena_lang
 
       ProtectedAlias    = 0xA01,
       InternalAlias     = 0xA02,
-      OverloadList      = 0x903, 
+      OverloadList      = 0x903,
+      ConstantMethod    = 0x904,
+      ExtensionRef      = 0x105,  
    };
 
    // === Reference constants ====
@@ -202,6 +222,9 @@ namespace elena_lang
    constexpr ref_t mskVMTMethodOffset     = 0x10000000u;
    constexpr ref_t mskConstArray          = 0x11000000u;
    constexpr ref_t mskMessageBodyRef      = 0x12000000u;
+   constexpr ref_t mskMetaSymbolInfoRef   = 0x13000000u;
+   constexpr ref_t mskDeclAttributesRef   = 0x14000000u;
+   constexpr ref_t mskMetaExtensionRef    = 0x15000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;
@@ -259,6 +282,8 @@ namespace elena_lang
 
    constexpr ref_t mskMDataRef32          = 0x86000000u;
    constexpr ref_t mskMDataRef64          = 0xC6000000u;
+   constexpr ref_t mskMDataRef32Hi        = 0x26000000u;
+   constexpr ref_t mskMDataRef32Lo        = 0xA6000000u;
 
    constexpr ref_t mskMBDataRef32         = 0x85000000u;
    constexpr ref_t mskMBDataRef64         = 0xC5000000u;
@@ -299,6 +324,7 @@ namespace elena_lang
    constexpr ref_t NARG16_1               = 0x0000001Fu;
    constexpr ref_t NARGHI_1               = 0x00000020u;
    constexpr ref_t RELPTR32_2             = 0x00000021u;
+   constexpr ref_t NARG12_1               = 0x00000022u;
 
    // predefined debug module sections
    constexpr ref_t DEBUG_LINEINFO_ID      = -1;

@@ -20,6 +20,28 @@ namespace elena_lang
    // --- CompilingProcess ---
    class CompilingProcess
    {
+      // --- TemplateGenerator ---
+      class TemplateGenerator : public TemplateProssesorBase
+      {
+         CompilingProcess* _process;
+         TemplateProssesor _processor;
+
+         ref_t generateTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility, 
+            ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared);
+
+      public:
+         ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
+            List<SyntaxNode>& parameters, bool declarationMode) override;
+
+         bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+            SyntaxNode target, List<SyntaxNode>& parameters) override;
+
+         bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
+            List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
+
+         TemplateGenerator(CompilingProcess* process);
+      };
+
       PresenterBase*      _presenter;
       ErrorProcessor*     _errorProcessor;
       LibraryProvider     _libraryProvider;
@@ -31,11 +53,21 @@ namespace elena_lang
 
       JITCompilerBase*(*_jitCompilerFactory)(LibraryLoaderBase*, PlatformType);
 
+      TemplateGenerator   _templateGenerator;
+
+      void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree);
+
       void compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target);
       void generateModule(ModuleScopeBase& moduleScope, BuildTree& tree);
-      void parseFile(FileIteratorBase& file_it, SyntaxWriterBase* syntaxWriter);
-      void parseModule(ModuleIteratorBase& module_it, SyntaxTreeBuilder& builder, ModuleScopeBase& moduleScope);
-      void buildModule(ModuleIteratorBase& module_it, 
+      void parseFile(path_t projectPath,
+         FileIteratorBase& file_it, 
+         SyntaxWriterBase* syntaxWriter);
+      void parseModule(path_t projectPath,
+         ModuleIteratorBase& module_it, 
+         SyntaxTreeBuilder& builder, 
+         ModuleScopeBase& moduleScope);
+      void buildModule(path_t projectPath,
+         ModuleIteratorBase& module_it, 
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,
          pos_t stackAlingment,
@@ -58,6 +90,7 @@ namespace elena_lang
          pos_t defaultStackAlignment, 
          pos_t defaultRawStackAlignment,
          int minimalArgList);
+      int clean(ProjectBase& project);
 
       CompilingProcess(PathString& appPath, PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,

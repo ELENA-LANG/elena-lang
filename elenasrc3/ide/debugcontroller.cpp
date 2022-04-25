@@ -160,19 +160,17 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
       DebugLineInfo info;
       void* current = nullptr;
       int level = 1;
-      while (!reader.eof()) {
+      while (level > 0 && !reader.eof()) {
          current = reader.address();
 
          reader.read(&info, sizeof(DebugLineInfo));
          switch (info.symbol) {
+            case DebugSymbol::Statement:
             case DebugSymbol::Procedure:
                level++;
                break;
             case DebugSymbol::End:
-               if (level == 1) {
-                  break;
-               }
-               else level--;
+               level--;
                break;
                //else if (info.symbol == dsField || (info.symbol & ~dsTypeMask) == dsLocal || info.symbol == dsFieldInfo)
                //{
@@ -270,15 +268,17 @@ DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, us
    if (module) {
       moduleName = module->name();
 
-      //DebugLineInfo* current = (DebugLineInfo*)lineInfoAddress;
-      //while (current->symbol != DebugSymbol::Procedure/* && current->symbol != dsCodeInfo*/)
-      //   current = &current[-1];
+      DebugLineInfo* current = (DebugLineInfo*)lineInfoAddress;
+      while (current->symbol != DebugSymbol::Procedure)
+         current = &current[-1];
 
-      //MemoryBase* section = module->mapSection(DEBUG_STRINGS_ID, true);
+      if (current->addresses.source.nameRef != INVALID_POS) {
+         MemoryBase* section = module->mapSection(DEBUG_STRINGS_ID, true);
 
-      //if (section != NULL) {
-      //   sourcePath = (const char*)section->get(current->addresses.source.nameRef);
-      //}
+         if (section != NULL) {
+            sourcePath = (const char*)section->get(current->addresses.source.nameRef);
+         }
+      }
 
       return (DebugLineInfo*)lineInfoAddress;
    }
@@ -312,12 +312,12 @@ DebugLineInfo* DebugInfoProvider :: getNextStep(DebugLineInfo* step, bool stepOv
    }
    else*/ next = &next[1];
 
-   //while ((next->symbol & dsDebugMask) != dsStep) {
-   //   if (next->symbol == dsEnd)
-   //      return nullptr;
+   while (next->symbol  != DebugSymbol::Breakpoint) {
+      if (next->symbol == DebugSymbol::End)
+         return nullptr;
 
-   //   next = &next[1];
-   //}
+      next = &next[1];
+   }
 
    return next;
 }
@@ -325,14 +325,18 @@ DebugLineInfo* DebugInfoProvider :: getNextStep(DebugLineInfo* step, bool stepOv
 // --- DebugController ---
 
 DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model, 
-   SourceViewModel* sourceModel, NotifierBase* notifier)
+   SourceViewModel* sourceModel, NotifierBase* notifier, DebugSourceController* sourceController)
    : _provider(model)
 {
    _started = false;
    _process = process;
    _running = false;
    _sourceModel = sourceModel;
+   _model = model;
    _notifier = notifier;
+   _currentModule = nullptr;
+   _currentPath = nullptr;
+   _sourceController = sourceController;
 }
 
 void DebugController :: debugThread()
@@ -495,18 +499,23 @@ void DebugController :: processStep()
 
 void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath)
 {
+   bool found = true;
    if (lineInfo) {
-      _sourceModel->setTraceLine(lineInfo->row);
+      _sourceModel->clearTraceLine();
+
+      if (!moduleName.compare(_currentModule) || !sourcePath.compare(_currentPath)) {
+         _currentModule = moduleName;
+         _currentPath = sourcePath;
+
+         PathString path(sourcePath);
+         found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
+      }
+
+      if (found) {
+         _sourceModel->setTraceLine(lineInfo->row, true);
+      }
 
       _notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
-
-      //if (!moduleName.compare(_currentModule) || !sourcePath.compare(_currentSource)) {
-      //   //!! do we need it at all?
-      //   //onLoadModule(moduleName, sourcePath);
-      //   _currentModule = moduleName;
-      //   _currentSource = sourcePath;
-      //}
-      //_listener->onStep(moduleName, sourcePath, lineInfo->row, lineInfo->col, lineInfo->length);
    }
 }
 
@@ -515,6 +524,9 @@ void DebugController :: onStop()
    _started = false;
    _process->reset();
    _provider.clear();
+
+   _currentModule = nullptr;
+   _currentPath = nullptr;
 
    _sourceModel->clearTraceLine();
    _notifier->notifyModelChange(NOTIFY_SOURCEMODEL);

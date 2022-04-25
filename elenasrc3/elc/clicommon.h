@@ -186,7 +186,10 @@ enum class ProjectOption
    RawStackAlignment,
    GCMGSize,
    GCYGSize,
+
+   // flags
    DebugMode,
+   MappingOutputMode,
 
    Key,
    Value,
@@ -264,7 +267,9 @@ public:
 enum class TemplateType
 {
    None = 0,
-   Inline
+   Inline,
+   Class,
+   Statement
 };
 
 enum class Visibility
@@ -275,18 +280,44 @@ enum class Visibility
    Protected
 };
 
+struct BranchingInfo
+{
+   ref_t typeRef;
+   ref_t trueRef;
+   ref_t falseRef;
+
+   BranchingInfo()
+   {
+      typeRef = 0;
+      trueRef = falseRef = 0;
+   }
+};
+
 struct BuiltinReferences
 {
    ref_t   superReference;
+   ref_t   intReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
+   mssg_t  add_message;
+   mssg_t  if_message;
+   mssg_t  equal_message;
+   mssg_t  not_message;
+   mssg_t  notequal_message;
+   mssg_t  less_message;
 
    BuiltinReferences()
    {
-      superReference = 0;
+      superReference = intReference = 0;
 
       dispatch_message = constructor_message = 0;
+      add_message = 0;
+      if_message = 0;
+      equal_message = 0;
+      not_message = 0;
+      notequal_message = 0;
+      less_message = 0;
    }
 };
 
@@ -317,9 +348,12 @@ public:
    ReferenceMap         predefined;
    ReferenceMap         attributes;
    ReferenceMap         aliases;
+   ReferenceMap         operations;
    BuiltinReferences    buildins;
+   BranchingInfo        branchingInfo;
 
    IdentifierString     selfVar;
+   IdentifierString     declVar;
 
    pos_t                stackAlingment, rawStackAlingment;
    int                  minimalArgList;
@@ -328,12 +362,17 @@ public:
 
    virtual bool isStandardOne() = 0;
 
-   virtual ref_t mapAnonymous(ustr_t prefix) = 0;
+   virtual bool isDeclared(ref_t reference) = 0;
+
+   virtual ref_t mapAnonymous(ustr_t prefix = nullptr) = 0;
 
    virtual ref_t mapFullReference(ustr_t referenceName, bool existing = false) = 0;
    virtual ref_t mapWeakReference(ustr_t referenceName, bool existing = false) = 0;
 
    virtual ref_t mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
+
+   virtual ref_t mapTemplateIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility, 
+      bool& alreadyDeclared) = 0;
 
    virtual ref_t resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
    virtual ref_t resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs) = 0;
@@ -343,8 +382,11 @@ public:
    virtual ModuleInfo getModule(ustr_t referenceName, bool silentMode) = 0;
    virtual ModuleInfo getWeakModule(ustr_t referenceName, bool silentMode) = 0;
 
-   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-   virtual ref_t loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly = false) = 0;
+   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false, bool fieldsOnly = false) = 0;
+   virtual ref_t loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly = false, bool fieldsOnly = false) = 0;
+
+   virtual ref_t loadSymbolInfo(SymbolInfo& info, ref_t reference) = 0;
+   virtual ref_t loadSymbolInfo(SymbolInfo& info, ustr_t referenceName) = 0;
 
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode/*,
       bool ignoreFields*/) = 0;
@@ -358,8 +400,13 @@ public:
       ModuleBase* debugModule,
       pos_t stackAlingment, 
       pos_t rawStackAlingment,
-      int minimalArgList)
-      : predefined(0), attributes(0), aliases(0), cachedSizes({})
+      int minimalArgList
+   ) :
+      predefined(0),
+      attributes(0),
+      aliases(0),
+      operations(0),
+      cachedSizes({})
    {
       this->module = module;
       this->debugModule = debugModule;
@@ -384,8 +431,13 @@ enum class ExpressionAttribute : pos64_t
    NewVariable       = 0x00000000080,
    Local             = 0x00000000100,
    NewOp             = 0x00000000200,
+   StrongResolved    = 0x00000000400,
+   RootSymbol        = 0x00000000800,
+   Root              = 0x00000001000,
+   CastOp            = 0x00000002000,
    Extern            = 0x00000080000,
    NoDebugInfo       = 0x40000000000,
+   NoExtension       = 0x80000000000,
 };
 
 struct ExpressionAttributes
@@ -435,6 +487,7 @@ struct FieldAttributes
 {
    ref_t typeRef;
    int   size;
+   bool  isConstant;
    bool  isEmbeddable;
    bool  inlineArray;
 };
@@ -445,10 +498,13 @@ typedef Map<ustr_t, ref_t, allocUStr, freeUStr> ForwardMap;
 class CompilerBase
 {
 public:
-   virtual void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, mssg_t messageRef) = 0;
+   virtual void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
+      mssg_t messageRef, MethodHint targetType) = 0;
 
    virtual void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode, 
       mssg_t message, ustr_t retVar, ref_t classRef) = 0;
+
+   virtual ~CompilerBase() = default;
 
 };
 
@@ -457,8 +513,13 @@ public:
 class TemplateProssesorBase
 {
 public:
+   virtual ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
+      List<SyntaxNode>& parameters, bool declarationMode) = 0;
+
    virtual bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& parameters) = 0;
+   virtual bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
+      List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
 };
 
 // --- SyntaxWriterBase ---
@@ -563,6 +624,14 @@ public:
    }
 };
 
+// --- LinkResult ---
+
+struct LinkResult
+{
+   addr_t code;
+   addr_t rdata;
+};
+
 // --- LinkerBaser ---
 class LinkerBase
 {
@@ -570,7 +639,7 @@ protected:
    ErrorProcessorBase* _errorProcessor;
 
 public:
-   virtual void run(ProjectBase& project, ImageProviderBase& provider) = 0;
+   virtual LinkResult run(ProjectBase& project, ImageProviderBase& provider) = 0;
 
    LinkerBase(ErrorProcessorBase* errorProcessor)
    {

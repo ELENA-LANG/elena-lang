@@ -35,6 +35,12 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
 
          break;
       }
+      case mskMDataRef64:
+         *(unsigned long long*)address += (unsigned long long)(base + space->mdata);
+         break;
+      case mskMBDataRef64:
+         *(unsigned long long*)address += (unsigned long long)(base + space->mbdata);
+         break;
       case mskRDataRef64:
          *(unsigned long long*)address += (unsigned long long)(base + space->rdata);
          break;

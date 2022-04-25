@@ -39,11 +39,12 @@ namespace elena_lang
 
    public:
       void mapReference(ReferenceInfo referenceInfo, addr_t address, ref_t mask) override;
-
       addr_t resolveReference(ReferenceInfo referenceInfo, ref_t mask) override;
+      ustr_t retrieveReference(addr_t address, ref_t sectionMask) override;
 
       void mapAction(ustr_t actionName, ref_t actionRef, ref_t signRef) override;
       ref_t resolveAction(ustr_t actionName, ref_t signRef) override;
+      ustr_t retrieveAction(ref_t actionRef, ref_t& signRef) override;
 
       void addLazyReference(LazyReferenceInfo info) override;
 

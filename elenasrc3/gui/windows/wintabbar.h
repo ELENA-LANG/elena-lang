@@ -15,7 +15,10 @@ namespace elena_lang
    class CustomTabBar : public ControlBase
    {
    protected:
-      bool     _withAbovescore;
+      NotifierBase*  _notifier;
+
+      bool           _withAbovescore;
+      bool           _notSelected;
 
    public:
       void onDrawItem(DRAWITEMSTRUCT* item) override;
@@ -24,8 +27,11 @@ namespace elena_lang
       int getTabCount();
 
       void addTab(int index, wstr_t title, void* param);
+      void selectTab(int index);
+      void renameTab(int index, wstr_t title);
+      void deleteTab(int index);
 
-      CustomTabBar(bool withAbovescore);
+      CustomTabBar(NotifierBase* notifier, bool withAbovescore);
    };
 
    // --- MultiTabControl ---
@@ -37,15 +43,19 @@ namespace elena_lang
       void onSetFocus() override;
 
    public:
+      void show() override;
+
       void setRectangle(Rectangle rec) override;
 
       int addTabView(wstr_t title, void* param);
+      void renameTabView(int index, wstr_t title);
+      void eraseTabView(int index);
 
       void setFocus() override;
 
       HWND createControl(HINSTANCE instance, ControlBase* owner);
 
-      MultiTabControl(bool withAbovescore, ControlBase* child);
+      MultiTabControl(NotifierBase* notifier, bool withAbovescore, ControlBase* child);
    };
 
 }

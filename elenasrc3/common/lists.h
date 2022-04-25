@@ -8,9 +8,12 @@
 
 #ifndef LISTS_H
 #define LISTS_H
+#include <assert.h>
 
 namespace elena_lang
 {
+   template <class T, void(*FreeT)(T) = nullptr> class BListBase;
+
    // --- ItemBase ---
    template <class T> struct ItemBase
    {
@@ -117,6 +120,8 @@ namespace elena_lang
    template <class T, class Item> class ListIteratorBase
    {
       Item* _current;
+
+      friend class BListBase<T>;
 
    public:
       bool operator ==(const ListIteratorBase& it)
@@ -464,8 +469,12 @@ namespace elena_lang
          if (tmp) {
             _count--;
 
-            if (_tale == tmp)
+            if (_top == _tale) {
+               _top = _tale = nullptr;
+            }
+            else if (_tale == tmp) {
                _tale = previous;
+            }
             else if (previous == nullptr) {
                _top = _top->next;
             }
@@ -507,7 +516,7 @@ namespace elena_lang
    };
 
    // --- BListBase ---
-   template <class T, void(*FreeT)(T) = nullptr> class BListBase
+   template <class T, void(*FreeT)(T)> class BListBase
    {
       typedef BItemBase<T> Item;
 
@@ -540,6 +549,20 @@ namespace elena_lang
             _tale = item;
          }
          else _top = _tale = item;
+
+         _count++;
+      }
+
+      void insertAfter(Iterator it, T item)
+      {
+         Item* nextItem = it._current->next;
+
+         it._current->next = new Item(item, it._current, nextItem);
+
+         if (nextItem) {
+            nextItem->previous = it._current->next;
+         }
+         else _tale = it._current->next;
 
          _count++;
       }
@@ -630,7 +653,7 @@ namespace elena_lang
       List(T defValue)
          : _list(defValue)
       {
-
+         _defaultItem = defValue;
       }
       virtual ~List() = default;
    };
@@ -739,13 +762,21 @@ namespace elena_lang
          _list.add(value);
       }
 
+      void insertAfter(Iterator it, T item)
+      {
+         if (it.eof()) {
+            add(item);
+         }
+         else _list.insertAfter(it, item);
+      }
+
       void clear()
       {
          _list.clear();
       }
 
       BList()
-      {         
+      {
       }
       ~BList()
       {
@@ -1390,7 +1421,7 @@ namespace elena_lang
                Item* current = (Item*)_buffer.get(currentOffset);
 
                if (current->readKey(&_buffer) == key) {
-                  if (previousOffset == -1) {
+                  if (previousOffset == INVALID_POS) {
                      _top = current->nextOffset;
                   }
                   else {
@@ -1813,7 +1844,7 @@ namespace elena_lang
          size_t           _index;
          MemoryIterator   _iterator;
 
-         CachedMemoryMapIterator(CachedMemoryMap* cachedMap, unsigned int index)
+         CachedMemoryMapIterator(CachedMemoryMap* cachedMap, size_t index)
          {
             this->_cachedMap = cachedMap;
             this->_index = index;
@@ -1959,7 +1990,7 @@ namespace elena_lang
                if (_cache[i].key == key) {
                   T item = _cache[i].item;
 
-                  for (unsigned int j = i + 1; j < _count; j++) {
+                  for (size_t j = i + 1; j < _count; j++) {
                      _cache[i] = _cache[j];
                   }
 
@@ -2003,6 +2034,11 @@ namespace elena_lang
          return _length;
       }
 
+      pos_t count_pos() const
+      {
+         return (pos_t)_length;
+      }
+
       void add(T item)
       {
          if (_length < cacheSize) {
@@ -2012,7 +2048,13 @@ namespace elena_lang
             if (_length - cacheSize >= _allocatedSize) {
                _allocatedSize += 10;
 
-               _allocated = (T*)realloc(_allocated, _allocatedSize * sizeof(T));
+               void* ptr = (T*)realloc(_allocated, _allocatedSize * sizeof(T));
+
+               assert(ptr != nullptr);
+
+               if (ptr) {
+                  _allocated = (T*)ptr;
+               }
             }
 
             _allocated[_length - cacheSize] = item;
@@ -2033,7 +2075,13 @@ namespace elena_lang
             if (_length - cacheSize >= _allocatedSize) {
                _allocatedSize += 10;
 
-               _allocated = (T*)realloc(_allocated, _allocatedSize * sizeof(T));
+               void* ptr = realloc(_allocated, _allocatedSize * sizeof(T));
+
+               assert(ptr != nullptr);
+
+               if (ptr) {
+                  _allocated = (T*)ptr;
+               }
             }
 
             if (index < cacheSize) {

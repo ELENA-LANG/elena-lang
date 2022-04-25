@@ -257,14 +257,14 @@ FileEncoding File :: detectEncoding(FileEncoding defaultEncoding)
    FileEncoding encoding = defaultEncoding;
 
    unsigned short signature = 0;
-   fread(&signature, 1, 2, _file);
-   if (signature == 0xFEFF) {
+   size_t read = fread(&signature, 1, 2, _file);
+   if (read == 2 && signature == 0xFEFF) {
       encoding = FileEncoding::UTF16;
    }
    else if (signature == 0xBBEF) {
       unsigned char ch;
-      fread(&ch, 1, 1, _file);
-      if (ch == 0xBF) {
+      read = fread(&ch, 1, 1, _file);
+      if (read == 1 && ch == 0xBF) {
          encoding = FileEncoding::UTF8;
       }
       else rewind();

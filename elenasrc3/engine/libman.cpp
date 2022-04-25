@@ -296,7 +296,6 @@ ModuleInfo LibraryProvider :: getModule(ReferenceInfo referenceInfo, bool silent
 {
    ModuleInfo info;
 
-   ref_t reference = 0;
    if (referenceInfo.isRelative()) {
       info.module = referenceInfo.module;
       info.reference = referenceInfo.module->mapReference(referenceInfo.referenceName, true);
@@ -408,7 +407,12 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
 
             ReferenceName resolvedName(*_namespace, *name);
 
-            return retrieveReferenceInfo(*resolvedName, forwardResolver);
+            auto info = retrieveReferenceInfo(*resolvedName, forwardResolver);
+            // NOTE : if the reference was not resolved - reset the initial reference
+            if (!info.module)
+               info.referenceName = referenceName;
+
+            return info;
          }
 
          if (isWeakReference(referenceName)) {

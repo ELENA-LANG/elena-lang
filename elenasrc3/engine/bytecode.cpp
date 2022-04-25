@@ -14,7 +14,7 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 
 const char* _fnOpcodes[256] =
 {
-   OPCODE_UNKNOWN, "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", OPCODE_UNKNOWN,
+   "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -38,29 +38,29 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "set", "set dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "set", "set dp", "nlen", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "mov mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "copy", "close", "alloc", "free", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "save dp", "store fp", "save sp", "store sp", "xflush sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   "peek fp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "peek fp", "peek sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "call", "call vt", "jump", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "call", "call vt", "jump", "jeq", "jne", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "cmp", OPCODE_UNKNOWN, "icmp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "open", "xstore sp", "open header", "mov sp", "new", "newn", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, "xstore fp", OPCODE_UNKNOWN, "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
+   "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "vjump mssg", "jump mssg", "seleq", "sellt",
+
+   "open", "xstore sp", "open header", "mov sp", "new", "newn", "xmov sp", OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
 };
 
 // --- Auxiliary  ---
@@ -130,6 +130,9 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    if (test(flags, FUNCTION_MESSAGE))
       messageName.append("function:");
 
+   if (test(flags, PROPERTY_MESSAGE))
+      messageName.append("prop:");
+
    messageName.append(actionName);
    if (signature) {
       ref_t references[ARG_COUNT];
@@ -167,6 +170,10 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
       flags |= FUNCTION_MESSAGE;
       messageName += getlength("function:");
    }
+   if (messageName.startsWith("prop:")) {
+      flags |= PROPERTY_MESSAGE;
+      messageName += getlength("prop:");
+   }
 
    IdentifierString actionName;
    size_t paramIndex = messageName.find('[');
@@ -177,6 +184,10 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
       argCount = StrConvertor::toInt(counterStr.str(), 10);
    }
    else actionName.copy(messageName);
+
+   if (actionName.compare(INVOKE_MESSAGE)) {
+      flags |= FUNCTION_MESSAGE;
+   }
 
    ref_t signature = 0;
    size_t index = (*actionName).find('<');
@@ -213,14 +224,16 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
 void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* target, ModuleBase* importer)
 {
    if (isRCommand(command.code)) {
-      command.arg1 = target->importReference(importer, command.arg1);
+      ref_t mask = command.arg1 & mskAnyRef;
+      command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
    }
    else if (isMCommand(command.code)) {
       command.arg1 = target->importMessage(importer, command.arg1);
    }
 
    if (isR2Command(command.code)) {
-      command.arg2 = target->importReference(importer, command.arg2);
+      ref_t mask = command.arg2 & mskAnyRef;
+      command.arg2 = target->importReference(importer, command.arg2 & ~mskAnyRef) | mask;
    }
 }
 
@@ -377,7 +390,7 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
             //case bcGreaterN:
             //case bcNotGreaterN:
                //            case bcIfM:
-               //            case bcElseM:              
+               //            case bcElseM:
                //            case bcNext:
             //case bcHook:
             //case bcAddress:
@@ -505,6 +518,8 @@ int CommandTape :: resolvePseudoArg(PseudoArg argument)
       case PseudoArg::CurrentLabel:
          realArg = labels.peek();
          break;
+      default:
+         break;
    }
 
    if (argument == PseudoArg::CurrentLabel) {
@@ -589,10 +604,12 @@ void CommandTape :: saveTo(MemoryWriter* writer)
             labels.add(command.arg1, writer->position());
 
             // JIT compiler interprets nop command as a label mark
-            write(ByteCode::Nop);
+            ByteCodeUtil::write(*writer, { ByteCode::Nop });
 
             break;
          case ByteCode::Jump:
+         case ByteCode::Jeq:
+         case ByteCode::Jne:
             writer->writeByte((char)command.code);
 
             // if forward jump, it should be resolved later

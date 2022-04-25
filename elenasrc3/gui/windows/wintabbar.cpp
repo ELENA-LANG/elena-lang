@@ -4,6 +4,7 @@
 //                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include "idecommon.h"
 #include "wintabbar.h"
 #include "wincanvas.h"
 
@@ -11,10 +12,12 @@ using namespace elena_lang;
 
 // --- CustomTabBar ---
 
-CustomTabBar :: CustomTabBar(bool withAbovescore)
+CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore)
    : ControlBase(nullptr)
 {
+   _notifier = notifier;
    _withAbovescore = withAbovescore;
+   _notSelected = true;
 }
 
 void CustomTabBar :: onDrawItem(DRAWITEMSTRUCT* item)
@@ -73,6 +76,32 @@ void CustomTabBar :: addTab(int index, wstr_t name, void* param)
    ::SendMessage(_handle, TCM_INSERTITEM, index, (LPARAM)&tie);
 }
 
+void CustomTabBar :: selectTab(int index)
+{
+   int previous = (int)::SendMessage(_handle, TCM_SETCURSEL, index, 0);
+   if (_notSelected || previous != index) {
+      _notifier->notifyModelChange(NOTIFY_CURRENTVIEW_CHANGED, index);
+
+      _notSelected = false;
+   }
+}
+
+void CustomTabBar :: renameTab(int index, wstr_t title)
+{
+   // rename tab caption
+   TCITEM tie;
+   tie.mask = TCIF_TEXT | TCIF_IMAGE;
+   tie.iImage = -1;
+   tie.pszText = (wchar_t*)title.str();
+
+   ::SendMessage(_handle, TCM_SETITEM, index, (LPARAM)&tie);
+}
+
+void CustomTabBar :: deleteTab(int index)
+{
+   ::SendMessage(_handle, TCM_DELETEITEM, index, 0);
+}
+
 int CustomTabBar :: getTabCount()
 {
    return (int)::SendMessage(_handle, TCM_GETITEMCOUNT, 0, 0);
@@ -85,10 +114,16 @@ int CustomTabBar :: getCurrentIndex()
 
 // --- MultiTabControl ---
 
-MultiTabControl :: MultiTabControl(bool withAbovescore, ControlBase* child)
-   : CustomTabBar(withAbovescore)
+MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, ControlBase* child)
+   : CustomTabBar(notifier, withAbovescore)
 {
    _child = child;
+}
+
+void MultiTabControl :: show()
+{
+   ControlBase::show();
+   refresh();
 }
 
 void MultiTabControl :: setRectangle(Rectangle rec)
@@ -96,10 +131,10 @@ void MultiTabControl :: setRectangle(Rectangle rec)
    CustomTabBar::setRectangle(rec);
 
    if (_child) {
-      rec.topLeft.y += 32;
+      rec.topLeft.y += 35;
       rec.topLeft.x += 4;
       rec.setWidth(rec.width() - 8);
-      rec.setHeight(rec.height() - 32);
+      rec.setHeight(rec.height() - 6);
       _child->setRectangle(rec);
    }
 }
@@ -135,4 +170,15 @@ int MultiTabControl :: addTabView(wstr_t title, void* param)
    addTab(index, title, param);
 
    return index;
+}
+
+void MultiTabControl :: renameTabView(int index, wstr_t title)
+{
+   // rename tab caption
+   renameTab(index, title);
+}
+
+void MultiTabControl :: eraseTabView(int index)
+{
+   deleteTab(index);
 }

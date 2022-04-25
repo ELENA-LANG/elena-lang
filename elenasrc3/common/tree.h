@@ -478,6 +478,11 @@ namespace elena_lang
             newNode(key, arg);
             closeNode();
          }
+         void appendNode(Key key, ustr_t arg)
+         {
+            newNode(key, arg);
+            closeNode();
+         }
          void appendNode(Key key)
          {
             newNode(key, 0);

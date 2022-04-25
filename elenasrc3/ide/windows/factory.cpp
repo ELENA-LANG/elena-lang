@@ -8,7 +8,7 @@
 #include "windows/winide.h"
 #include "windows/wintextview.h"
 #include "windows/wintextframe.h"
-#include "sourceformatter.h"
+#include "windows/winidestatusbar.h"
 #include "Resource.h"
 
 using namespace elena_lang;
@@ -26,10 +26,10 @@ WCHAR szTextView[MAX_LOADSTRING];               // the main window class name
 
 // --- Styles ---
 StyleInfo defaultStyles[STYLE_MAX + 1] = {
-   {Color(0), Color(0xFF, 0xFF, 0xFF), L"Courier New", IDE_CHARSET_ANSI, 10, false, false},
-   {Color(0), Color(Canvas::Chrome()), L"Courier New", IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0), Color(Canvas::Chrome()), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0), Color(0xC0, 0xC0, 0xC0), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0x60, 0x60, 0x60), Color(0x0, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
-   //{Colour(0), Colour(0xC0, 0xC0, 0xC0), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0, 0, 0xFF), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0, 0x80, 0), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0x40, 0x80, 0x80), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
@@ -45,9 +45,10 @@ StyleInfo defaultStyles[STYLE_MAX + 1] = {
 };
 
 StyleInfo classicStyles[STYLE_MAX + 1] = {
-   {Color(0xFF, 0xFF, 0), Color(0, 0, 0x80), L"Courier New", IDE_CHARSET_ANSI, 10, false, false},
-   {Color(0), Color(Canvas::Chrome()), L"Courier New", IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0xFF, 0xFF, 0), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0), Color(Canvas::Chrome()), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0x60, 0x60, 0x60), Color(0xC0, 0xC0, 0xC0), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
+   {Color(0x60, 0x60, 0x60), Color(0x0, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
    //{Colour(0xFF, 0xFF, 0xFF), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0xC0, 0xC0, 0xC0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0xC0, 0xC0, 0xC0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
@@ -76,8 +77,6 @@ IDEFactory :: IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideModel,
    _cmdShow = cmdShow;
    _model = ideModel;
    _controller = controller;
-
-   initializeModel(ideModel);
 }
 
 void IDEFactory :: registerClasses()
@@ -91,35 +90,46 @@ void IDEFactory :: registerClasses()
    TextViewWindow::registerTextViewWindow(_instance, szTextView);
 }
 
-ControlBase* IDEFactory :: createTextControl(WindowBase* owner)
+ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* notifier)
 {
+   auto viewModel = _model->viewModel();
+
+   // initialize view styles
+   _styles.assign(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
+
+   // initialize UI components
    TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_controller->sourceController, &_styles);
-   TextViewFrame* frame = new TextViewFrame(_settings.withTabAboverscore, view);
+   TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, view, _model->viewModel());
 
    view->create(_instance, szTextView, owner);
    frame->createControl(_instance, owner);
 
    // !! temporal
-   frame->addTabView(_T("test"), nullptr);
-
-   // !! temporal
-   view->showWindow(SW_SHOW);
-   frame->showWindow(SW_SHOW);
+   frame->show();
 
    return frame;
 }
 
-void IDEFactory :: initializeModel(IDEModel* ideView)
+ControlBase* IDEFactory :: createStatusbar(WindowBase* owner)
 {
-   auto viewModel = ideView->viewModel();
+   StatusBar* statusBar = new IDEStatusBar(_model);
 
-   Text* text = new Text(EOLMode::CRLF);
-   PathString path("C:\\Alex\\ELENA\\tests60\\sandbox\\sandbox.l");
-   text->load(*path, FileEncoding::UTF8, false);
+   statusBar->createControl(_instance, owner);
 
-   viewModel->docView = new DocumentView(text, ELENADocFormatter::getInstance());
+   statusBar->show(); // !! temporal
 
-   _styles.assign(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
+   return statusBar;
+}
+
+void IDEFactory :: initializeModel()
+{
+   //// !! temporal
+   //auto viewModel = _model->viewModel();
+
+   //PathString path("C:\\Alex\\ELENA\\tests60\\sandbox\\sandbox.l");
+
+   //_controller->sourceController.openDocument(viewModel, "sandbox.l", *path, FileEncoding::UTF8);
+   //_controller->sourceController.selectDocument(viewModel, "sandbox.l");
 }
 
 GUIApp* IDEFactory :: createApp()
@@ -131,19 +141,25 @@ GUIApp* IDEFactory :: createApp()
    return app;
 }
 
-GUIControlBase* IDEFactory :: createMainWindow()
+GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier)
 {
-   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model);
-   sdi->create(_instance, szSDI, nullptr);
-
-   ControlBase* children[1];
+   ControlBase* children[2];
    int counter = 0;
 
    int textIndex = counter++;
-   children[textIndex] = createTextControl(sdi);
+   int statusBarIndex = counter++;
+
+   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance, 
+      textIndex);
+   sdi->create(_instance, szSDI, nullptr);
+
+   children[textIndex] = createTextControl(sdi, notifier);
+   children[statusBarIndex] = createStatusbar(sdi);
 
    sdi->populate(counter, children);
-   sdi->setLayout(textIndex, -1, -1, -1, -1);
+   sdi->setLayout(textIndex, -1, statusBarIndex, -1, -1);
+
+   initializeModel();
 
    return sdi;
 }

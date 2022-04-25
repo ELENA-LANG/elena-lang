@@ -27,9 +27,12 @@ namespace elena_lang
    {
    public:
       static bool copy(char* dest, const char* sour, size_t sourLength, size_t& destLength);
+      static bool copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
       static bool copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
       static bool copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength);
-      static bool copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
+
+      static bool copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength);
+      static bool copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength);
 
       static int toInt(const char* s, int radix);
       static unsigned int toUInt(const char* s, int radix);
@@ -39,6 +42,12 @@ namespace elena_lang
    class StrUtil
    {
    public:
+      static char* clone(const char* s);
+      static wide_c* clone(const wide_c* s);
+
+      static void move(char* s1, const char* s2, size_t length);
+      static void move(wide_c* s1, const wide_c* s2, size_t length);
+
       static void append(char* dest, const char* sour, size_t length);
       static void append(wide_c* dest, const wide_c* sour, size_t length);
 

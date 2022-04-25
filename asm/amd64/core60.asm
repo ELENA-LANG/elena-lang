@@ -33,6 +33,8 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
+define struct_mask_inv     7FFFFFh
+
 // ; --- System Core Preloaded Routines --
 
 structure % CORE_TOC
@@ -156,6 +158,16 @@ inline %6
 
 end
 
+// ; len
+inline %7
+
+  mov  edx, struct_mask_inv
+  mov  rcx, [rbx-elSizeOffset]
+  and  rdx, rcx
+  shr  edx, 3
+
+end
+
 // ; setr
 inline %80h
 
@@ -176,6 +188,57 @@ inline %81h
   lea  rbx, [rbp + __arg32_1]
 
 end 
+
+// ; nlen n
+inline %82h
+
+  mov  eax, struct_mask_inv
+  and  eax, dword ptr [rbx-elSizeOffset]
+  mov  ecx, __n_1
+  cdq
+  idiv ecx
+  mov  rdx, rax
+
+end
+
+// ; nlen 1
+inline %182h
+
+  mov  edx, struct_mask_inv
+  mov  ecx, dword ptr [rbx-elSizeOffset]
+  and  edx, ecx
+
+end
+
+// ; nlen 2
+inline %282h
+
+  mov  edx, struct_mask_inv
+  mov  ecx, dword ptr [rbx-elSizeOffset]
+  and  edx, ecx
+  shr  edx, 1
+
+end
+
+// ; nlen 4
+inline %382h
+
+  mov  edx, struct_mask_inv
+  mov  ecx, dword ptr [rbx-elSizeOffset]
+  and  edx, ecx
+  shr  edx, 2
+
+end
+
+// ; nlen 8
+inline %482h
+
+  mov  edx, struct_mask_inv
+  mov  ecx, dword ptr [rbx-elSizeOffset]
+  and  edx, ecx
+  shr  edx, 3
+
+end
 
 // ; movm
 inline %88h
@@ -350,6 +413,27 @@ inline %0A8h
 
 end 
 
+// ; peeksi
+inline %0A9h
+
+  mov rbx, qword ptr [rsp + __arg32_1]
+
+end 
+
+// ; peeksi 0
+inline %1A9h
+
+  mov rbx, r10
+
+end 
+
+// ; peeksi 1
+inline %2A9h
+
+  mov rbx, r11
+
+end 
+
 // ; callr
 inline %0B0h
 
@@ -362,6 +446,277 @@ inline % 0B1h
 
   mov  rax, [rbx - elVMTOffset]
   call [rax + __arg32_1]
+
+end
+
+// ; cmpr r
+inline %0C0h
+
+  mov  rax, __ptr64_1
+  cmp  rbx, rax
+
+end 
+
+// ; cmpr 0
+inline %1C0h
+
+  mov  rax, 0
+  cmp  rbx, rax
+
+end 
+
+// ; icmpn 4
+inline %0C2h
+
+  mov  rax, [r10]
+  cmp  eax, dword ptr[rbx]
+
+end
+
+// ; icmpn 1
+inline %1C2h
+
+  mov  rax, [r10]
+  cmp  al, byte ptr [rbx]
+
+end
+
+// ; icmpn 2
+inline %2C2h
+
+  mov  rax, [r10]
+  cmp  ax, word ptr [rbx]
+
+end
+
+// ; icmpn 8
+inline %4C2h
+
+  mov  rax, [r10]
+  cmp  rax, [rbx]
+
+end
+
+// ; cmpfi
+inline %0C8h
+
+  cmp  rbx, qword ptr [rbp + __arg32_1]
+
+end 
+
+// ; cmpsi
+inline %0C9h
+
+  cmp rbx, qword ptr [rsp + __arg32_1]
+
+end 
+
+// ; cmpsi 0
+inline %1C9h
+
+  cmp rbx, r10
+
+end 
+
+// ; cmpsi 1
+inline %2C9h
+
+  cmp rbx, r11
+
+end 
+
+// ; copydpn
+inline %0E0h
+
+  mov  rsi, r10
+  lea  rdi, [rbp + __arg32_1]
+  mov  ecx, __n_2
+  rep  movsb
+
+end
+
+// ; iaddndp
+inline %0E1h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  add  dword ptr [rdi], eax
+
+end
+
+// ; iaddndp
+inline %1E1h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  add  byte ptr [rdi], al
+
+end
+
+// ; iaddndp
+inline %2E1h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  add  word ptr [rdi], ax
+
+end
+
+// ; iaddndp
+inline %4E1h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  add  [rdi], rax
+
+end
+
+// ; isubndp
+inline %0E2h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  sub  dword ptr[rdi], eax
+
+end
+
+// ; isubndp
+inline %1E2h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  sub  byte ptr [rdi], al
+
+end
+
+// ; isubndp
+inline %2E2h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  sub  word ptr [rdi], ax
+
+end
+
+// ; isubndp
+inline %4E2h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  sub  [rdi], rax
+
+end
+
+// ; imulndp
+inline %0E3h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  imul ecx
+  mov  dword ptr [rbp+__arg32_1], eax
+
+end
+
+// ; imulndp
+inline %1E3h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  imul cl
+  mov  byte ptr [rbp+__arg32_1], al
+
+end
+
+// ; imulndp
+inline %2E3h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  imul cx
+  mov  word ptr [rbp+__arg32_1], ax
+
+end
+
+// ; imulndp
+inline %4E3h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  imul rcx
+  mov  [rbp+__arg32_1], rax
+
+end
+
+// ; idivndp
+inline %0E4h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  idiv rcx
+  mov  dword ptr [rbp+__arg32_1], eax
+
+end
+
+// ; idivndp
+inline %1E4h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  idiv cl
+  mov  byte ptr [rbp+__arg32_1], al
+
+end
+
+// ; idivndp
+inline %2E4h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  idiv cx
+  mov  word ptr [rbp+__arg32_1], ax
+
+end
+
+// ; idivndp
+inline %4E4h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  idiv rcx
+  mov  [rbp+__arg32_1], rax
+
+end
+
+// ; vjumpmr
+inline % 0ECh
+
+  mov  rax, [rbx - elVMTOffset]
+  jmp  [rax + __arg32_1]
+
+end
+
+// ; jumpmr
+inline %0EDh
+
+  jmp __relptr32_2
+
+end
+
+// ; seleqrr
+inline %0EEh
+
+  mov   rax, __ptr64_1
+  mov   rbx, __ptr64_2
+  cmovz rbx, rax
+
+end
+
+// ; selltrr
+inline %0EFh
+
+  mov   rax, __ptr64_1
+  mov   rbx, __ptr64_2
+  cmovl rbx, rax
 
 end
 
@@ -597,9 +952,59 @@ inline %0F5h
   call %GC_ALLOC
 
   mov  ecx, __n_1
-  mov  eax, __ptr32_2
+  mov  rax, __ptr64_2
   mov  [rbx - elVMTOffset], rax
   mov  dword ptr [rbx - elSizeOffset], ecx
+
+end
+
+// ; xmovsisi
+inline %0F6h
+
+  mov  rax, [rsp+__arg32_2]
+  mov  [rsp+__arg32_1], rax
+
+end
+
+// ; xmovsisi 0, n
+inline %1F6h
+
+  mov  r10, [rsp+__arg32_2]
+
+end
+
+// ; xmovsisi n, 0
+inline %2F6h
+
+  mov  [rsp+__arg32_1], r10
+
+end
+
+// ; xmovsisi 1, n
+inline %3F6h
+
+  mov  r11, [rsp+__arg32_2]
+
+end
+
+// ; xmovsisi n, 1
+inline %4F6h
+
+  mov  [rsp+__arg32_1], r11
+
+end
+
+// ; xmovsisi 0, 1
+inline %5F6h
+
+  mov  r10, r11
+
+end
+
+// ; xmovsisi 1, 0
+inline %6F6h
+
+  mov  r11, r10
 
 end
 
@@ -611,6 +1016,66 @@ inline %0F9h
 
 end
 
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 0FAh
+
+  mov  r8,  rbx
+  mov  [rsp+8], r10                      // ; saving arg0
+  lea  rax, [rsp + __n_2]
+  mov  [rsp+16], r11                     // ; saving arg0
+
+  mov  rsi, __ptr64_2
+  xor  edx, edx
+  mov  rbx, [rsi] // ; message from overload list
+
+labNextOverloadlist:
+  mov  r9, mdata : %0
+  shr  ebx, ACTION_ORDER
+  lea  r13, [rbx*8]
+  mov  r13, [r9 + r13 * 2 + 8]
+  mov  ecx, __n_1
+  lea  rbx, [r13 - 8]
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  mov  r9, __ptr64_2
+  lea  r13, [rdx * 8]
+  mov  rbx, r8
+  mov  rax, [r9 + r13 * 2 + 8]
+  mov  rdx, [r9 + r13 * 2]
+  jmp  rax
+
+labMatching:
+  mov  rdi, [rax + rcx * 8]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+  test  rdi, rdi                                              
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, [rbx + rcx * 8]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  add  edx, 1
+  mov  r13, __ptr64_2
+  lea  r9, [rdx * 8]
+  mov  rbx, [r13 + r9 * 2] // ; message from overload list
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+end
+
+// ; dispatchmr
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 0FBh
 
@@ -663,7 +1128,7 @@ labNextBaseClass:
   jnz  short labNextBaseClass
 
   add  rdx, 1
-  mov  r13, __ptr32_2
+  mov  r13, __ptr64_2
   lea  r9, [rdx * 8]
   mov  rbx, [r13 + r9 * 2] // ; message from overload list
   and  rbx, rbx

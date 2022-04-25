@@ -194,7 +194,17 @@ void PPC64Assembler :: readIOperand(ScriptToken& tokenInfo, int& value, ref_t& r
       value = readIntArg(tokenInfo);
    }
    else if (tokenInfo.compare("rdata")) {
-      reference = mskRDataRef64;
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      readPtrOperand(tokenInfo, value, reference, mskRDataRef64, errorMessage);
+
+      read(tokenInfo);
+      if (tokenInfo.compare("+")) {
+         value = readIntArg(tokenInfo);
+      }
+   }
+   else if (tokenInfo.compare("mdata")) {
+      reference = mskMDataRef64;
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
       value = readIntArg(tokenInfo);
    }
@@ -266,7 +276,7 @@ void PPC64Assembler :: readPtrOperand(ScriptToken& tokenInfo, int& value, ref_t&
       value = 0;
    }
    else if (tokenInfo.compare("0")) {
-      reference = PTR64_2 | mask;
+      reference = mask;
       value = 0;
    }
    else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
@@ -401,7 +411,10 @@ void PPC64Assembler :: compileRLDICL(PPCOperand ra, PPCOperand rs, int sh, int m
 
 void PPC64Assembler :: compileRLDICR(PPCOperand ra, PPCOperand rs, int sh, int mb, MemoryWriter& writer)
 {
-   writer.writeDWord(PPCHelper::makeMDCommand(30, rs.type, ra.type, sh & 0x1F, mb, 1,
+   int me = (mb & 0x1F) << 1;
+   me |= (mb >> 5);
+
+   writer.writeDWord(PPCHelper::makeMDCommand(30, rs.type, ra.type, sh & 0x1F, me, 1,
       sh >> 5, 0));
 }
 
@@ -431,6 +444,44 @@ bool PPC64Assembler :: compileMTSPR(PPCOperand rt, int spr, MemoryWriter& writer
    return true;
 }
 
+void PPC64Assembler :: compileMULLD(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand ry = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (rx.isGPR() && ry.isGPR() && rz.isGPR()) {
+      writer.writeDWord(PPCHelper::makeXOCommand(31, rx.type, ry.type,
+         rz.type, 0, 233, 0));
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void PPC64Assembler :: compileMULLW(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand ry = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (rx.isGPR() && ry.isGPR() && rz.isGPR()) {
+      writer.writeDWord(PPCHelper::makeXOCommand(31, rx.type, ry.type,
+         rz.type, 0, 235, 0));
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void PPC64Assembler :: compileADDI(ScriptToken& tokenInfo, PPCOperand rt, PPCOperand ra, int i, 
    ref_t reference, MemoryWriter& writer)
 {
@@ -453,6 +504,17 @@ void PPC64Assembler :: compileADDIS(ScriptToken& tokenInfo, PPCOperand rt, PPCOp
          writeDReference(tokenInfo, reference, writer, ASM_INVALID_DESTINATION);
    }
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+bool PPC64Assembler :: compileAND(PPCOperand ra, PPCOperand rs, PPCOperand rb, MemoryWriter& writer)
+{
+   if (rs.isGPR() && ra.isGPR() && rb.isGPR()) {
+      writer.writeDWord(PPCHelper::makeXCommand(31, rs.type, ra.type,
+         rb.type, 28, 0));
+   }
+   else return false;
+
+   return true;
 }
 
 void PPC64Assembler :: compileANDI(ScriptToken& tokenInfo, PPCOperand ra, PPCOperand rs, int i,
@@ -565,6 +627,22 @@ void PPC64Assembler :: compileADDIS(ScriptToken& tokenInfo, MemoryWriter& writer
    compileADDIS(tokenInfo, rt, ra, d, reference, writer);
 }
 
+void PPC64Assembler :: compileAND(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand ry = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (!compileAND(rx, ry, rz, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void PPC64Assembler :: compileANDI(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand rt = readRegister(tokenInfo, ASM_INVALID_SOURCE, true);
@@ -647,9 +725,16 @@ void PPC64Assembler :: compileB(ScriptToken& tokenInfo, MemoryWriter& writer, La
    read(tokenInfo);
 }
 
-void PPC64Assembler::compileBEQ(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
+void PPC64Assembler :: compileBEQ(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
 {
    compileBCxx(tokenInfo, 12, 2, writer, labelScope);
+
+   read(tokenInfo);
+}
+
+void PPC64Assembler :: compileBNE(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
+{
+   compileBCxx(tokenInfo, 4, 2, writer, labelScope);
 
    read(tokenInfo);
 }
@@ -740,6 +825,57 @@ void PPC64Assembler ::compileCMPWI(ScriptToken& tokenInfo, MemoryWriter& writer)
    compileCMPI(tokenInfo, 0, 0, ra, d, reference, writer);
 }
 
+void PPC64Assembler :: compileCMPDI(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand ra = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   int d = 0;
+   ref_t reference = 0;
+   readIOperand(tokenInfo, d, reference, ASM_INVALID_TARGET);
+
+   compileCMPI(tokenInfo, 0, 1, ra, d, reference, writer);
+}
+
+void PPC64Assembler :: compileDIVD(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand ry = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (rx.isGPR() && ry.isGPR() && rz.isGPR()) {
+      writer.writeDWord(PPCHelper::makeXOCommand(31, rx.type, ry.type,
+         rz.type, 0, 489, 0));
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void PPC64Assembler :: compileDIVW(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand ry = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (rx.isGPR() && ry.isGPR() && rz.isGPR()) {
+      writer.writeDWord(PPCHelper::makeXOCommand(31, rx.type, ry.type,
+         rz.type, 0, 491, 0));
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void PPC64Assembler :: compileOR(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -771,6 +907,44 @@ void PPC64Assembler :: compileORI(ScriptToken& tokenInfo, MemoryWriter& writer)
    readIOperand(tokenInfo, d, reference, ASM_INVALID_TARGET);
 
    compileORI(tokenInfo, ra, rs, d, reference, writer);
+}
+
+void PPC64Assembler :: compileLBZ(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rs = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   int d = 0;
+   ref_t reference = 0;
+   PPCOperand ra = readDispOperand(tokenInfo, d, reference, ASM_INVALID_TARGET);
+
+   if (rs.isGPR() && ra.isGPR()) {
+      writer.writeDWord(PPCHelper::makeDCommand(34, rs.type, ra.type, d));
+
+      if (reference)
+         writeDReference(tokenInfo, reference, writer, ASM_INVALID_DESTINATION);
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void PPC64Assembler :: compileLHZ(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rs = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   int d = 0;
+   ref_t reference = 0;
+   PPCOperand ra = readDispOperand(tokenInfo, d, reference, ASM_INVALID_TARGET);
+
+   if (rs.isGPR() && ra.isGPR()) {
+      writer.writeDWord(PPCHelper::makeDCommand(40, rs.type, ra.type, d));
+
+      if (reference)
+         writeDReference(tokenInfo, reference, writer, ASM_INVALID_DESTINATION);
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
 void PPC64Assembler :: compileLWZ(ScriptToken& tokenInfo, MemoryWriter& writer)
@@ -823,7 +997,24 @@ void PPC64Assembler :: compileISELEQ(ScriptToken& tokenInfo, MemoryWriter& write
 
    PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
 
-   if (!compileISEL(rx, ry, rz, 1, writer))
+   if (!compileISEL(rx, ry, rz, 2, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+
+}
+
+void PPC64Assembler :: compileISELLT(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand ry = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (!compileISEL(rx, ry, rz, 0, writer))
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 
 }
@@ -960,6 +1151,25 @@ void PPC64Assembler :: compileSLDI(ScriptToken& tokenInfo, MemoryWriter& writer)
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void PPC64Assembler :: compileSTB(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rs = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   int d = 0;
+   ref_t reference = 0;
+   PPCOperand ra = readDispOperand(tokenInfo, d, reference, ASM_INVALID_TARGET);
+
+   if (rs.isGPR() && ra.isGPR()) {
+      writer.writeDWord(PPCHelper::makeDCommand(38, rs.type, ra.type, d));
+
+      if (reference)
+         writeDReference(tokenInfo, reference, writer, ASM_INVALID_DESTINATION);
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void PPC64Assembler :: compileSTW(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand rs = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -972,6 +1182,25 @@ void PPC64Assembler :: compileSTW(ScriptToken& tokenInfo, MemoryWriter& writer)
 
    if (rs.isGPR() && ra.isGPR()) {
       writer.writeDWord(PPCHelper::makeDCommand(36, rs.type, ra.type, d));
+
+      if (reference)
+         writeDReference(tokenInfo, reference, writer, ASM_INVALID_DESTINATION);
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void PPC64Assembler :: compileSTH(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rs = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   int d = 0;
+   ref_t reference = 0;
+   PPCOperand ra = readDispOperand(tokenInfo, d, reference, ASM_INVALID_TARGET);
+
+   if (rs.isGPR() && ra.isGPR()) {
+      writer.writeDWord(PPCHelper::makeDCommand(44, rs.type, ra.type, d));
 
       if (reference)
          writeDReference(tokenInfo, reference, writer, ASM_INVALID_DESTINATION);
@@ -1162,6 +1391,9 @@ bool PPC64Assembler :: compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    else if (tokenInfo.compare("adde")) {
       compileADDE(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("and")) {
+      compileAND(tokenInfo, writer);
+   }
    else if (tokenInfo.compare("andi")) {
       compileANDI(tokenInfo, writer);
    }
@@ -1190,6 +1422,9 @@ bool PPC64Assembler :: compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    else if (tokenInfo.compare("beq")) {
       compileBEQ(tokenInfo, writer, labelScope);
    }
+   else if (tokenInfo.compare("bne")) {
+      compileBNE(tokenInfo, writer, labelScope);
+   }
    else if (tokenInfo.compare("blt")) {
       compileBLT(tokenInfo, writer, labelScope);
    }
@@ -1208,6 +1443,22 @@ bool PPC64Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    }
    else if (tokenInfo.compare("cmpwi")) {
       compileCMPWI(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("cmpdi")) {
+      compileCMPDI(tokenInfo, writer);
+   }
+   else return false;
+
+   return true;
+}
+
+bool PPC64Assembler :: compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   if (tokenInfo.compare("divd")) {
+      compileDIVD(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("divw")) {
+      compileDIVW(tokenInfo, writer);
    }
    else return false;
 
@@ -1229,6 +1480,9 @@ bool PPC64Assembler :: compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    if (tokenInfo.compare("iseleq")) {
       compileISELEQ(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("isellt")) {
+      compileISELLT(tokenInfo, writer);
+   }
    else return false;
 
    return true;
@@ -1241,7 +1495,13 @@ bool PPC64Assembler :: compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
 
 bool PPC64Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   if (tokenInfo.compare("lwz")) {
+   if (tokenInfo.compare("lbz")) {
+      compileLBZ(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("lhz")) {
+      compileLHZ(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("lwz")) {
       compileLWZ(tokenInfo, writer);
    }
    else if (tokenInfo.compare("ld")) {
@@ -1271,6 +1531,12 @@ bool PPC64Assembler :: compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    }
    else if (tokenInfo.compare("mtctr")) {
       compileMTCTR(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("mulld")) {
+      compileMULLD(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("mullw")) {
+      compileMULLW(tokenInfo, writer);
    }
    else return false;
 
@@ -1318,6 +1584,12 @@ bool PPC64Assembler :: compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    }
    else if (tokenInfo.compare("stw")) {
       compileSTW(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("stb")) {
+      compileSTB(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("sth")) {
+      compileSTH(tokenInfo, writer);
    }
    else if (tokenInfo.compare("std")) {
       compileSTD(tokenInfo, writer);

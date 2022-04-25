@@ -48,6 +48,11 @@ namespace elena_lang
          used = 0;
          rows = 0;
       }
+      Page(size_t size)
+      {
+         rows = 0;
+         used = size;
+      }
       Page(const Page& page)
       {
          rows = page.rows;
@@ -213,6 +218,10 @@ namespace elena_lang
       {
          return (pos_t)length();
       }
+      int length_int()
+      {
+         return (int)length();
+      }
 
       int getVirtualDiff() const { return _column - _virtual_column; }
 
@@ -276,6 +285,12 @@ namespace elena_lang
       TextWatchers _watchers;
 
       void refreshPage(Pages::Iterator& page);
+      void refreshNextPage(Pages::Iterator page);
+
+      int retrieveRowCount();
+
+      void insert(TextBookmark bookmark, text_t s, size_t length, bool checkRowCount);
+      void erase(TextBookmark bookmark, size_t length, bool checkRowCount);
 
    public:
       static int TabSize;
@@ -291,12 +306,93 @@ namespace elena_lang
 
       void create();
       bool load(path_t path, FileEncoding encoding, bool autoDetecting);
+      void save(path_t path);
+
+      bool insertChar(TextBookmark& bookmark, text_c ch);
+      bool insertLine(TextBookmark& bookmark, text_t s, size_t length);
+      bool insertNewLine(TextBookmark& bookmark);
+
+      bool eraseChar(TextBookmark& bookmark);
+      bool eraseLine(TextBookmark& bookmark, size_t length);
 
       void attachWatcher(TextWatcherBase* watcher);
-      void dettachWatcher(TextWatcherBase* watcher);
+      void detachWatcher(TextWatcherBase* watcher);
 
       Text(EOLMode mode);
       virtual ~Text();
+   };
+
+   // --- TextHistory ---
+   class TextHistory : public TextWatcherBase
+   {
+   public:
+      typedef MemoryDump   Buffer;
+      typedef MemoryWriter BufferWriter;
+
+      enum class Operation { None, Insert, Erase };
+
+      class HistoryWriter
+      {
+         void writeEndRecord(MemoryWriter& writer, pos_t length);
+
+         bool writeRecord(Buffer* buffer, Operation operation, pos_t& position, pos_t& length,
+            void* &line, pos_t& offset);
+
+      public:
+         pos_t     lastLength, lastPosition;
+         Operation lastOperation;
+
+         bool write(Buffer* buffer, Operation operation, pos_t& position, pos_t& length,
+            void*& line, pos_t offset);
+
+         void endRecord(Buffer* buffer, pos_t& offset);
+
+         HistoryWriter();
+      };
+
+      class HistoryBackReader
+      {
+         Buffer* _buffer;
+         pos_t   _offset;
+
+      public:
+         pos_t getLength();
+         void* getLine(pos_t length);
+         pos_t getPosition(bool& eraseMode);
+
+         HistoryBackReader(Buffer* buffer, pos_t offset);
+      };
+
+   private:
+      Buffer        _buffer1;
+      Buffer        _buffer2;
+
+      bool          _locking;
+
+      pos_t         _offset;
+      Buffer*       _buffer;
+      Buffer*       _previous;
+
+      HistoryWriter _writer;
+
+      void switchBuffer();
+
+      void writeOperation(Operation operation, pos_t position,
+         pos_t length, void* line);
+
+   public:
+      bool eof() const;
+      bool bof() const;
+
+      void onUpdate(size_t position) override;
+      void onInsert(size_t position, size_t length, text_t line) override;
+      void onErase(size_t position, size_t length, text_t line) override;
+
+      void undo(Text* text, TextBookmark& caret);
+      void redo(Text* text, TextBookmark& caret);
+
+      TextHistory(pos_t capacity);
+      virtual ~TextHistory() = default;
    };
 }
 

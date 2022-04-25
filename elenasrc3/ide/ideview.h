@@ -13,9 +13,22 @@
 
 namespace elena_lang
 {
+
+// --- IDEListener ---
+
+class IDEListener
+{
+public:
+   virtual void onIDEChange() = 0;
+};
+
+typedef List<IDEListener*> IDEListenerListeners;
+
 // --- IDEModel ---
 class IDEModel
 {
+   IDEListenerListeners listeners;
+
 public:
    IDEStatus       status;
 
@@ -24,8 +37,14 @@ public:
 
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
+   void attachListener(IDEListener* listener);
+
+   void changeStatus(IDEStatus status);
+
+   void onIDEChange();
+
    IDEModel(int fontSize)
-      : projectModel(&status), sourceViewModel(fontSize)
+      : listeners(nullptr), sourceViewModel(fontSize), projectModel(&status)
    {
       status = IDEStatus::None;
    }

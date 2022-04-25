@@ -24,11 +24,13 @@ namespace elena_lang
       Quit           = 0x04,
       MovEnv         = 0x05,
       Load           = 0x06,
+      Len            = 0x07,
 
       MaxSingleOp    = 0x7F,
 
       SetR           = 0x80,
-      SetDDisp       = 0x81,
+      SetDP          = 0x81,
+      NLen           = 0x82,
       MovM           = 0x88,
 
       Copy           = 0x90,
@@ -36,19 +38,37 @@ namespace elena_lang
       AllocI         = 0x92,
       FreeI          = 0x93,
 
-      SaveDDisp      = 0xA0,
+      SaveDP         = 0xA0,
       StoreFI        = 0xA1,
       SaveSI         = 0xA2,
       StoreSI        = 0xA3,
       XFlushSI       = 0xA4,
 
       PeekFI         = 0xA8,
+      PeekSI         = 0xA9,
 
       CallR          = 0xB0,
       CallVI         = 0xB1,
       Jump           = 0xB2,
+      Jeq            = 0xB3,
+      Jne            = 0xB4,
 
-      MaxDoubleOp    = 0xEF,
+      CmpR           = 0xC0,
+      ICmpN          = 0xC2,
+      CmpFI          = 0xC8,
+      CmpSI          = 0xC9,
+
+      MaxDoubleOp    = 0xDF,
+
+      CopyDPN        = 0xE0,
+      IAddDPN        = 0xE1,
+      ISubDPN        = 0xE2,
+      IMulDPN        = 0xE3,
+      IDivDPN        = 0xE4,
+      VJumpMR        = 0xEC,
+      JumpMR         = 0xED,
+      SelEqRR        = 0xEE,
+      SelLtRR        = 0xEF,
 
       OpenIN         = 0xF0,
       XStoreSIR      = 0xF1,
@@ -56,7 +76,9 @@ namespace elena_lang
       MovSIFI        = 0xF3,
       NewIR          = 0xF4,
       NewNR          = 0xF5,
+      XMovSISI       = 0xF6,
       XStoreFIR      = 0xF9,
+      XDispatchMR    = 0xFA,
       DispatchMR     = 0xFB,
       VCallMR        = 0xFC,
       CallMR         = 0xFD,
@@ -142,6 +164,11 @@ namespace elena_lang
          else write(ByteCode::Label, labels.pop());
       }
 
+      void releaseLabel()
+      {
+         labels.pop();
+      }
+
       void write(ByteCode code);
       void write(ByteCode code, arg_t arg1);
       void write(ByteCode code, arg_t arg1, arg_t arg2);
@@ -183,7 +210,10 @@ namespace elena_lang
             case ByteCode::MovM:
             case ByteCode::CallMR:
             case ByteCode::VCallMR:
+            case ByteCode::JumpMR:
+            case ByteCode::VJumpMR:
             case ByteCode::DispatchMR:
+            case ByteCode::XDispatchMR:
                return true;
             default:
                return false;
@@ -196,6 +226,9 @@ namespace elena_lang
          case ByteCode::SetR:
          case ByteCode::CallR:
          case ByteCode::CallExtR:
+         case ByteCode::CmpR:
+         case ByteCode::SelEqRR:
+         case ByteCode::SelLtRR:
             return true;
          default:
             return false;
@@ -211,7 +244,12 @@ namespace elena_lang
             case ByteCode::NewNR:
             case ByteCode::CallMR:
             case ByteCode::VCallMR:
+            case ByteCode::JumpMR:
+            case ByteCode::VJumpMR:
             case ByteCode::DispatchMR:
+            case ByteCode::XDispatchMR:
+            case ByteCode::SelEqRR:
+            case ByteCode::SelLtRR:
                return true;
             default:
                return false;

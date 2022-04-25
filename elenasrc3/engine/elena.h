@@ -103,12 +103,15 @@ namespace elena_lang
    }
 
    // --- Misc types ---
-   typedef unsigned int parse_key_t;
+   typedef unsigned int          parse_key_t;
+   typedef Pair<ref_t, mssg_t>   ExtensionInfo;
 
    // --- Maps ---
    typedef Map<ustr_t, ref_t, allocUStr, freeUStr>    ReferenceMap;
    typedef Map<ref64_t, ref_t>                        ActionMap;
    typedef Map<ustr_t, addr_t, allocUStr, freeUStr>   AddressMap;
+   typedef Map<mssg_t, ExtensionInfo>                 ExtensionMap;
+   typedef Map<ref_t, ref_t>                          ResolvedMap;
 
    // --- Maps ---
    typedef List<ustr_t, freeUStr>                     IdentifierList;
@@ -211,11 +214,12 @@ namespace elena_lang
 
    public:
       virtual addr_t resolveReference(ReferenceInfo referenceInfo, ref_t sectionMask) = 0;
-
       virtual void mapReference(ReferenceInfo referenceInfo, addr_t address, ref_t sectionMask) = 0;
+      virtual ustr_t retrieveReference(addr_t address, ref_t sectionMask) = 0;
 
       virtual ref_t resolveAction(ustr_t actionName, ref_t signRef) = 0;
       virtual void mapAction(ustr_t actionName, ref_t actionRef, ref_t signRef) = 0;
+      virtual ustr_t retrieveAction(ref_t actionRef, ref_t& signRef) = 0;
 
       virtual void addLazyReference(LazyReferenceInfo info) = 0;
 
@@ -355,7 +359,7 @@ namespace elena_lang
       virtual addr_t calculateVAddress(MemoryWriter& writer, ref_t addressMask) = 0;
 
       virtual void writeSectionReference(MemoryBase* image, pos_t imageOffset, ref_t reference, 
-         MemoryBase* section, pos_t sectionOffset) = 0;
+         SectionInfo* sectionInfo, pos_t sectionOffset, ref_t addressMask) = 0;
 
       virtual void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
          ref_t addressMask, ModuleBase* module = nullptr) = 0;
@@ -398,6 +402,12 @@ namespace elena_lang
 
       virtual void writeJumpBack(pos_t label, MemoryWriter& writer) = 0;
       virtual void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
+      virtual void writeJeqBack(pos_t label, MemoryWriter& writer) = 0;
+      virtual void writeJeqForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
+      virtual void writeJneBack(pos_t label, MemoryWriter& writer) = 0;
+      virtual void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
    };
 
    // --- JITCompilerBase ---
@@ -436,7 +446,7 @@ namespace elena_lang
          bool structMode, bool virtualMode) = 0;
       virtual void writeInt32(MemoryWriter& writer, unsigned int value) = 0;
       virtual void writeLiteral(MemoryWriter& writer, ustr_t value) = 0;
-      virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, MemoryBase* section) = 0;
+      virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
 
       virtual void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) = 0;
       virtual void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) = 0;
@@ -453,17 +463,34 @@ namespace elena_lang
       virtual ~JITCompilerBase() = default;
    };
 
+   // --- AddressMapperBase ---
+   class AddressMapperBase
+   {
+   public:
+      virtual void addMethod(addr_t vaddress, mssg_t message, addr_t methodPosition) = 0;
+      virtual void addSymbol(addr_t vaddress, addr_t position) = 0;
+
+      virtual ~AddressMapperBase() = default;
+   };
+
    // --- WideMessage ---
    class WideMessage : public String<wide_c, MESSAGE_LEN>
    {
    public:
+      wstr_t operator*() const { return wstr_t(_string); }
+
       WideMessage(const char* s)
       {
          size_t len = MESSAGE_LEN;
          StrConvertor::copy(_string, s, getlength(s), len);
          _string[len] = 0;
       }
+      WideMessage(const wide_c* s)
+      {
+         copy(s);
+      }
    };
+
 
    // --- IdentifierString ---
    class IdentifierString : public String<char, IDENTIFIER_LEN>
@@ -520,11 +547,16 @@ namespace elena_lang
       QuoteString(ustr_t s, pos_t len)
       {
          int mode = 0; // 1 - normal, 2 - character code
+         size_t index = 0;
          for (size_t i = 0; i <= len; i++) {
             switch (mode) {
                case 0:
                   if (s[i] == '"') {
                      mode = 1;
+                  }
+                  else if (s[i] == '$') {
+                     mode = 2;
+                     index = i + 1;
                   }
                   break;
                case 1:
@@ -538,6 +570,18 @@ namespace elena_lang
                      mode = 0;
                   }
                   else append(s[i]);
+                  break;
+               case 2:
+                  if ((s[i] < '0' || s[i] > '9') && (s[i] < 'A' || s[i] > 'F')  && (s[i] < 'a' || s[i] > 'f')) 
+                  {
+                     String<char, 12> number(s + index, i - index);
+                     unic_c ch = StrConvertor::toInt(number.str(), (s[i] == 'h') ? 16 : 10);
+
+                     char temp[5];
+                     size_t temp_len = 4;
+                     StrConvertor::copy(temp, &ch, 1, temp_len);
+                     append(temp, temp_len);
+                  }
                   break;
                default:
                   // to make compiler happy
@@ -714,6 +758,14 @@ namespace elena_lang
       ref_t elementRef;
    };
 
+   // --- StaticFieldInfo ---
+   struct StaticFieldInfo
+   {
+      int   offset;
+      ref_t typeRef;
+      ref_t statRef;
+   };
+
    // --- MethodInfo ---
    struct MethodInfo
    {
@@ -728,6 +780,13 @@ namespace elena_lang
          hints = 0;
          outputRef = 0;
          multiMethod = 0;
+      }
+      MethodInfo(bool inherited, ref_t hints, ref_t outputRef, ref_t multiMethod) :
+         inherited(inherited),
+         hints(hints),
+         outputRef(outputRef),
+         multiMethod(multiMethod)
+      {
       }
    };
 
@@ -795,16 +854,47 @@ namespace elena_lang
    };
 #pragma pack(pop)
 
+   // --- SymbolInfo ---
+   enum class SymbolType : int
+   {
+      Symbol = 0,
+      Singleton,
+      Constant
+   };
+
+   struct SymbolInfo
+   {
+      SymbolType symbolType;
+      ref_t      valueRef;
+      ref_t      typeRef;
+
+      void load(StreamReader* reader)
+      {
+         symbolType = (SymbolType)reader->getDWord();
+         valueRef = reader->getRef();
+         typeRef = reader->getRef();
+      }
+
+      void save(StreamWriter* writer)
+      {
+         writer->writeDWord((unsigned int)symbolType);
+         writer->writeRef(valueRef);
+         writer->writeRef(typeRef);
+      }
+   };
+
    // --- ClassInfo ---
    struct ClassInfo
    {
       typedef MemoryMap<mssg_t, MethodInfo, Map_StoreUInt, Map_GetUInt> MethodMap;
       typedef MemoryMap<ustr_t, FieldInfo, Map_StoreUStr, Map_GetUStr> FieldMap;
+      typedef MemoryMap<ustr_t, StaticFieldInfo, Map_StoreUStr, Map_GetUStr> StaticFieldMap;
 
       ClassHeader     header;
       pos_t           size;           // Object size
       MethodMap       methods;
       FieldMap        fields;
+      StaticFieldMap  statics;
       ClassAttributes attributes;
 
       void save(StreamWriter* writer, bool headerAndSizeOnly = false)
@@ -812,17 +902,17 @@ namespace elena_lang
          writer->write(&header, sizeof(ClassHeader));
          writer->writeDWord(size);
          if (!headerAndSizeOnly) {
-            writer->writePos(methods.count());
-            methods.forEach<StreamWriter*>(writer, [](StreamWriter* writer, mssg_t message, MethodInfo info)
-               {
-                  writer->writeDWord(message);
-                  writer->write(&info, sizeof(info));
-               });
-
             writer->writePos(fields.count());
             fields.forEach<StreamWriter*>(writer, [](StreamWriter* writer, ustr_t name, FieldInfo info)
                {
                   writer->writeString(name);
+                  writer->write(&info, sizeof(info));
+               });
+
+            writer->writePos(methods.count());
+            methods.forEach<StreamWriter*>(writer, [](StreamWriter* writer, mssg_t message, MethodInfo info)
+               {
+                  writer->writeDWord(message);
                   writer->write(&info, sizeof(info));
                });
 
@@ -832,22 +922,21 @@ namespace elena_lang
                   writer->write(&key, sizeof(key));
                   writer->writeRef(reference);
                });
+
+            writer->writePos(statics.count());
+            statics.forEach<StreamWriter*>(writer, [](StreamWriter* writer, ustr_t name, StaticFieldInfo info)
+               {
+                  writer->writeString(name);
+                  writer->write(&info, sizeof(info));
+               });
          }
       }
 
-      void load(StreamReader* reader, bool headerAndSizeOnly = false)
+      void load(StreamReader* reader, bool headerAndSizeOnly = false, bool fieldsOnly = false)
       {
          reader->read(&header, sizeof(ClassHeader));
          size = reader->getDWord();
          if (!headerAndSizeOnly) {
-            pos_t methodsCount = reader->getPos();
-            for (pos_t i = 0; i < methodsCount; i++) {
-               mssg_t message = reader->getDWord();
-               MethodInfo methodInfo;
-               reader->read(&methodInfo, sizeof(MethodInfo));
-
-               methods.add(message, methodInfo);
-            }
             pos_t fieldCount = reader->getPos();
             for (pos_t i = 0; i < fieldCount; i++) {
                IdentifierString fieldName;
@@ -857,25 +946,50 @@ namespace elena_lang
 
                fields.add(*fieldName, fieldInfo);
             }
-            pos_t attrCount = reader->getPos();
-            for (pos_t i = 0; i < attrCount; i++) {
-               ClassAttributeKey key;
-               reader->read(&key, sizeof(key));
 
-               ref_t reference = reader->getRef();
+            if (!fieldsOnly) {
+               pos_t methodsCount = reader->getPos();
+               for (pos_t i = 0; i < methodsCount; i++) {
+                  mssg_t message = reader->getDWord();
+                  MethodInfo methodInfo;
+                  reader->read(&methodInfo, sizeof(MethodInfo));
 
-               attributes.add(key, reference);
+                  methods.add(message, methodInfo);
+               }
+               pos_t attrCount = reader->getPos();
+               for (pos_t i = 0; i < attrCount; i++) {
+                  ClassAttributeKey key;
+                  reader->read(&key, sizeof(key));
+
+                  ref_t reference = reader->getRef();
+
+                  attributes.add(key, reference);
+               }
+               pos_t statCount = reader->getPos();
+               for (pos_t i = 0; i < statCount; i++) {
+                  IdentifierString fieldName;
+                  reader->readString(fieldName);
+                  StaticFieldInfo fieldInfo;
+                  reader->read(&fieldInfo, sizeof(fieldInfo));
+
+                  statics.add(*fieldName, fieldInfo);
+               }
             }
          }
       }
 
-      ClassInfo()
-         : methods({}), fields({}), attributes(0)
+      ClassInfo() :
+         header({}),
+         size(0),
+         methods({}),
+         fields({ -1 }),
+         statics({}),
+         attributes(0)
       {
-         header.staticSize = 0;
-         header.parentRef = header.classRef = 0;
-         header.flags = 0;
-         header.count = size = 0;
+         //header.staticSize = 0;
+         //header.parentRef = header.classRef = 0;
+         //header.flags = 0;
+         //header.count = size = 0;
       }
    };
 

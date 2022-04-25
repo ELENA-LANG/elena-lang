@@ -33,13 +33,14 @@ namespace elena_lang
 
       void registerClasses();
 
-      ControlBase* createTextControl(WindowBase* owner);
+      ControlBase* createTextControl(WindowBase* owner, NotifierBase* notifier);
+      ControlBase* createStatusbar(WindowBase* owner);
 
-      void initializeModel(IDEModel* ideView);
+      void initializeModel();
 
    public:
       GUIApp* createApp() override;
-      GUIControlBase* createMainWindow() override;
+      GUIControlBase* createMainWindow(NotifierBase* notifier) override;
 
       IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideView, 
          IDEController* ideController,

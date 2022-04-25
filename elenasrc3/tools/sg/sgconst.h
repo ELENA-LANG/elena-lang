@@ -21,7 +21,7 @@ namespace elena_lang
    constexpr auto SG_FATAL               = "a fatal error\n";
    constexpr auto SG_FILENOTEXIST        = "error:file not found\n";
    constexpr auto SG_INVALID_RULE        = "error(%d:%d) : invalid rule structure\n";
-   constexpr auto SG_AMBIGUOUS           = "error:ambiguous rule % s\n";
+   constexpr auto SG_AMBIGUOUS           = "error:ambiguous rule %s\n";
 
 }
 

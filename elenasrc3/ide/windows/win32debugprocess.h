@@ -140,6 +140,7 @@ namespace elena_lang
 
       DWORD                      dwCurrentProcessId;
       DWORD                      dwCurrentThreadId;
+      DWORD                      dwDebugeeProcessId;
 
       StepMap                    steps;
 

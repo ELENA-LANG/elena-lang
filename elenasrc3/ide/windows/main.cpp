@@ -10,6 +10,7 @@
 #include "ideview.h"
 #include "windows/wincommon.h"
 #include "windows/win32debugprocess.h"
+#include "windows/windialogs.h"
 #include "Resource.h"
 #include "text.h"
 
@@ -32,17 +33,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
    Text::TabSize = 4; // !! temporal
 
-   GUISettinngs  settings = { true };
-   IDEModel      ideModel(10);
-   DebugProcess  debugProcess;
-   IDEController ideController(&debugProcess, &ideModel);
-   IDEFactory    factory(hInstance, nCmdShow, &ideModel, &ideController, settings);
+   GUISettinngs  guiSettings = { true };
+   TextViewSettings textViewSettings = { EOLMode::CRLF, false, 3 };
+
+   IDEModel          ideModel(10);
+   DebugProcess      debugProcess;
+   IDEController     ideController(&debugProcess, &ideModel, textViewSettings);
+   IDEFactory        factory(hInstance, nCmdShow, &ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();
+   GUIControlBase* ideWindow = factory.createMainWindow(app);
 
    ideController.setNotifier(app);
+   ideController.init(&ideModel);
 
-   int retVal = app->run(factory.createMainWindow());
+   int retVal = app->run(ideWindow);
 
    delete app;
 

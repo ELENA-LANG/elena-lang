@@ -105,7 +105,7 @@ namespace elena_lang
          void addBreakpoint(MemoryWriter& writer) override;
 
          void writeSectionReference(MemoryBase* image, pos_t imageOffset, ref_t reference, 
-            MemoryBase* section, pos_t sectionOffset) override;
+            SectionInfo* sectionInfo, pos_t sectionOffset, ref_t addressMask) override;
 
          void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
             ref_t addressMask, ModuleBase* module) override;
@@ -143,6 +143,7 @@ namespace elena_lang
       ImageProviderBase*    _imageProvider;
       JITCompilerBase*      _compiler;
       MethodAddressMap      _staticMethods;
+      AddressMapperBase*    _addressMapper;
 
       pos_t                 _alignment;
       JITSettings           _jitSettings;
@@ -196,7 +197,8 @@ namespace elena_lang
       JITLinker(ReferenceMapperBase* mapper, 
          LibraryLoaderBase* loader, ForwardResolverBase* forwardResolver,
          ImageProviderBase* provider,
-         JITLinkerSettings* settings
+         JITLinkerSettings* settings,
+         AddressMapperBase* addressMapper
       ) : _staticMethods(INVALID_ADDR)
       {
          _mapper = mapper;
@@ -204,6 +206,7 @@ namespace elena_lang
          _forwardResolver = forwardResolver;
          _imageProvider = provider;
          _compiler = nullptr;
+         _addressMapper = addressMapper;
 
          _alignment = settings->alignment;
          _jitSettings = settings->jitSettings;

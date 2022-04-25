@@ -49,6 +49,32 @@ MemoryBase* ByteCodeViewer :: findClassVMT(ustr_t name)
    return _module->mapSection(reference | mskVMTRef, true);
 }
 
+bool ByteCodeViewer :: findClassInfo(ustr_t name, ClassInfo& info)
+{
+   ReferenceName referenceName(nullptr, name);
+
+   ref_t reference = _module->mapReference(*referenceName, true);
+   if (!reference)
+      return false;
+
+   auto section = _module->mapSection(reference | mskMetaClassInfoRef, true);
+   MemoryReader reader(section);
+
+   info.load(&reader);
+
+   return true;
+}
+
+bool ByteCodeViewer::findMethodInfo(ustr_t referenceName, mssg_t message, MethodInfo& info)
+{
+   ClassInfo classInfo;
+   if (!findClassInfo(referenceName, classInfo))
+      return false;
+
+   info = classInfo.methods.get(message);
+   return true;
+}
+
 MemoryBase* ByteCodeViewer :: findClassCode(ustr_t name)
 {
    ReferenceName referenceName(nullptr, name);
@@ -166,6 +192,10 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
          commandStr.append("intconst:");
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
+      case mskLiteralRef:
+         commandStr.append("strconst:");
+         referenceName = _module->resolveConstant(arg & ~mskAnyRef);
+         break;
       default:
          commandStr.append(":");
          break;
@@ -230,17 +260,56 @@ void ByteCodeViewer :: addSecondSPArg(arg_t arg, IdentifierString& commandStr)
    addSPArg(arg, commandStr);
 }
 
-void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierString& commandStr)
+inline int getLabelIndex(pos_t label, List<pos_t>& labels)
+{
+   int index = 0;
+   auto it = labels.start();
+   while (!it.eof()) {
+      if (*it == label)
+         return index;
+
+      index++;
+      ++it;
+   }
+
+   return -1;
+}
+
+void ByteCodeViewer :: addLabel(arg_t labelPosition, IdentifierString& commandStr, List<pos_t>& labels)
+{
+   int index = getLabelIndex(labelPosition, labels);
+
+   if (index == -1) {
+      index = labels.count();
+
+      labels.add(labelPosition);
+   }
+
+   commandStr.append("Lab");
+   if (index < 10) {
+      commandStr.append('0');
+   }
+   commandStr.appendInt(index);
+}
+
+void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierString& commandStr, 
+   List<pos_t>& labels, pos_t commandPosition)
 {
    if (ByteCodeUtil::isDoubleOp(command.code)) {
       switch (command.code) {
          case ByteCode::SetR:
          case ByteCode::CallR:
+         case ByteCode::CmpR:
             addRArg(command.arg1, commandStr);
             break;
          case ByteCode::MovM:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
+            break;
+         case ByteCode::Jump:
+         case ByteCode::Jeq:
+         case ByteCode::Jne:
+            addLabel(command.arg1 + commandPosition + 5, commandStr, labels);
             break;
          default:
             addArg(command.arg1, commandStr);
@@ -268,8 +337,17 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::CallMR:
          case ByteCode::VCallMR:
+         case ByteCode::JumpMR:
+         case ByteCode::VJumpMR:
+         case ByteCode::DispatchMR:
+         case ByteCode::XDispatchMR:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
+            addSecondRArg(command.arg2, commandStr);
+            break;
+         case ByteCode::SelEqRR:
+         case ByteCode::SelLtRR:
+            addRArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr);
             break;
          default:
@@ -285,32 +363,42 @@ void ByteCodeViewer :: addMessage(IdentifierString& commandStr, mssg_t message)
    ByteCodeUtil::resolveMessageName(commandStr, _module, message);
 }
 
-void ByteCodeViewer :: printCommand(ByteCommand& command, int indent)
+void ByteCodeViewer :: printCommand(ByteCommand& command, int indent, 
+   List<pos_t>& labels, pos_t commandPosition)
 {
    IdentifierString commandLine;
-   for (int i = 0; i < indent; i++)
-      commandLine.append(" ");
+   if (command.code == ByteCode::Nop) {
+      addLabel(commandPosition, commandLine, labels);
+      commandLine.append(':');
+      commandLine.append("     ");
 
-   ByteCodeUtil::decode(command.code, commandLine);
-
-   // HOTFIX : remove tailing double colon
-   if (commandLine[commandLine.length() - 1] == ':') {
-      commandLine.truncate(commandLine.length() - 2);
+      ByteCodeUtil::decode(command.code, commandLine);
    }
+   else {
+      for (int i = 0; i < indent; i++)
+         commandLine.append(" ");
 
+      ByteCodeUtil::decode(command.code, commandLine);
 
-   size_t tabbing = TABBING;
-   while (commandLine.length() < tabbing) {
-      commandLine.append(" ");
+      // HOTFIX : remove tailing double colon
+      if (commandLine[commandLine.length() - 1] == ':') {
+         commandLine.truncate(commandLine.length() - 2);
+      }
+
+      size_t tabbing = TABBING;
+      while (commandLine.length() < tabbing) {
+         commandLine.append(" ");
+      }
+
+      addCommandArguments(command, commandLine, labels, commandPosition);
    }
-
-   addCommandArguments(command, commandLine);
 
    _presenter->print(commandLine.str());
 }
 
 void ByteCodeViewer :: printByteCodes(MemoryBase* section, pos_t address, int indent, int pageSize)
 {
+   List<pos_t> labels(INVALID_POS);
    MemoryReader reader(section, address);
 
    ByteCommand command;
@@ -318,9 +406,11 @@ void ByteCodeViewer :: printByteCodes(MemoryBase* section, pos_t address, int in
    pos_t endPos = reader.position() + size;
    int row = 1;
    while (reader.position() < endPos) {
+      pos_t position = reader.position();
+
       ByteCodeUtil::read(reader, command);
 
-      printCommand(command, indent);
+      printCommand(command, indent, labels, position);
       nextRow(row, pageSize);
    }
 }
@@ -342,8 +432,29 @@ void ByteCodeViewer :: printSymbol(ustr_t name)
 
 void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
 {
+   if (test(flags, elAbstract)) {
+      printLineAndCount("@flag ", "elAbstract", row, pageSize);
+   }
    if (test(flags, elClassClass)) {
       printLineAndCount("@flag ", "elClassClass", row, pageSize);
+   }
+   if (test(flags, elClosed)) {
+      printLineAndCount("@flag ", "elClosed", row, pageSize);
+   }
+   if (test(flags, elDynamicRole)) {
+      printLineAndCount("@flag ", "elDynamicRole", row, pageSize);
+   }
+   if (test(flags, elFinal)) {
+      printLineAndCount("@flag ", "elFinal", row, pageSize);
+   }
+   if (test(flags, elNestedClass)) {
+      printLineAndCount("@flag ", "elNestedClass", row, pageSize);
+   }
+   if (test(flags, elNonStructureRole)) {
+      printLineAndCount("@flag ", "elNonStructureRole", row, pageSize);
+   }
+   if (test(flags, elReadOnlyRole)) {
+      printLineAndCount("@flag ", "elReadOnlyRole", row, pageSize);
    }
    if (test(flags, elRole)) {
       printLineAndCount("@flag ", "elRole", row, pageSize);
@@ -351,14 +462,8 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elSealed)) {
       printLineAndCount("@flag ", "elSealed", row, pageSize);
    }
-   if (test(flags, elClosed)) {
-      printLineAndCount("@flag ", "elClosed", row, pageSize);
-   }
    if (test(flags, elStateless)) {
       printLineAndCount("@flag ", "elStateless", row, pageSize);
-   }
-   if (test(flags, elNonStructureRole)) {
-      printLineAndCount("@flag ", "elNonStructureRole", row, pageSize);
    }
    if (test(flags, elStructureRole)) {
       printLineAndCount("@flag ", "elStructureRole", row, pageSize);
@@ -366,26 +471,14 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elWrapper)) {
       printLineAndCount("@flag ", "elWrapper", row, pageSize);
    }
-   if (test(flags, elReadOnlyRole)) {
-      printLineAndCount("@flag ", "elReadOnlyRole", row, pageSize);
-   }
-   if (test(flags, elDynamicRole)) {
-      printLineAndCount("@flag ", "elDynamicRole", row, pageSize);
-   }
-   if (test(flags, elAbstract)) {
-      printLineAndCount("@flag ", "elAbstract", row, pageSize);
-   }
-   if (test(flags, elFinal)) {
-      printLineAndCount("@flag ", "elFinal", row, pageSize);
-   }
    if (test(flags, elNoCustomDispatcher)) {
       printLineAndCount("@flag ", "elNoCustomDispatcher", row, pageSize);
    }
    if (test(flags, elStructureWrapper)) {
       printLineAndCount("@flag ", "elStructureWrapper", row, pageSize);
    }
-   if (test(flags, elDynamicRole)) {
-      printLineAndCount("@flag ", "elDynamicRole", row, pageSize);
+   if (test(flags, elExtension)) {
+      printLineAndCount("@flag ", "elExtension", row, pageSize);
    }
 }
 
@@ -426,7 +519,7 @@ inline ustr_t getMethodPrefix(bool isFunction)
    return "@method";
 }
 
-void ByteCodeViewer::printMethod(ustr_t name)
+void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
 {
    name = trim(name);
 
@@ -468,7 +561,7 @@ void ByteCodeViewer::printMethod(ustr_t name)
    if (message == 0)
       return;
 
-   bool found = false;
+//   bool found = false;
    MethodEntry entry = {};
 
    size -= sizeof(ClassHeader);
@@ -478,12 +571,19 @@ void ByteCodeViewer::printMethod(ustr_t name)
       vmtReader.read((void*)&entry, sizeof(MethodEntry));
 
       if (entry.message == message) {
-         found = true;
+         MethodInfo methodInfo = {};
+         if (fullInfo) {
+            findMethodInfo(*className, message, methodInfo);
+         }
 
          IdentifierString line;
          line.copy(*className);
          line.append('.');
          addMessage(line, message);
+         if (methodInfo.outputRef) {
+            line.append("->");
+            line.append(_module->resolveReference(methodInfo.outputRef));
+         }
 
          printLine(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)), *line);
          printByteCodes(code, entry.codeOffset, 4, _pageSize);
@@ -494,7 +594,6 @@ void ByteCodeViewer::printMethod(ustr_t name)
 
       size -= sizeof(MethodEntry);
    }
-
 }
 
 void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
@@ -518,6 +617,8 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
 
    int row = 1;
    if (fullInfo) {
+      findClassInfo(name, info);
+
       if (info.header.parentRef) {
          printLineAndCount("@parent ", _module->resolveReference(info.header.parentRef), row, _pageSize);
          row++;
@@ -624,7 +725,7 @@ void ByteCodeViewer :: runSession()
          printSymbol(buffer + 1);
       }
       else if (ustr_t(buffer).find('.') != NOTFOUND_POS) {
-         printMethod(buffer);
+         printMethod(buffer, true);
       }
       else printClass(buffer, true);
    }
