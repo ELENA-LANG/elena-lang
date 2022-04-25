@@ -611,6 +611,7 @@ inline %0F9h
 
 end
 
+// ; dispatchmr
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 0FBh
 

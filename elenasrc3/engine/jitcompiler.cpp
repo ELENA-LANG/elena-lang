@@ -515,6 +515,7 @@ void elena_lang::loadNOp(JITCompilerScope* scope)
          case NARG_1:
             writer->writeDWord(scope->command.arg1);
             break;
+         case NARG16_1:
          case ARG16_1:
             writer->writeWord(scope->command.arg1);
             break;
@@ -1326,6 +1327,9 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
          case NARG_1:
             scope->compiler->writeImm32(writer, scope->command.arg1 & ARG_MASK);
             break;
+         case NARG16_1:
+            scope->compiler->writeImm16(writer, scope->command.arg1 & ARG_MASK, 0);
+            break;
          case PTR32_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
             break;
@@ -1334,6 +1338,9 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
             break;
          case NARG_2:
             scope->compiler->writeImm32(writer, startArg);
+            break;
+         case NARG16_2:
+            scope->compiler->writeImm16(writer, startArg, 0);
             break;
          default:
             writeCoreReference(scope, entries->reference, entries->offset, code);
