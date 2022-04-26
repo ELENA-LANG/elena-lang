@@ -194,9 +194,14 @@ void PPC64Assembler :: readIOperand(ScriptToken& tokenInfo, int& value, ref_t& r
       value = readIntArg(tokenInfo);
    }
    else if (tokenInfo.compare("rdata")) {
-      reference = mskRDataRef64;
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
-      value = readIntArg(tokenInfo);
+
+      readPtrOperand(tokenInfo, value, reference, mskRDataRef64, errorMessage);
+
+      read(tokenInfo);
+      if (tokenInfo.compare("+")) {
+         value = readIntArg(tokenInfo);
+      }
    }
    else if (tokenInfo.compare("mdata")) {
       reference = mskMDataRef64;
@@ -271,7 +276,7 @@ void PPC64Assembler :: readPtrOperand(ScriptToken& tokenInfo, int& value, ref_t&
       value = 0;
    }
    else if (tokenInfo.compare("0")) {
-      reference = PTR64_2 | mask;
+      reference = mask;
       value = 0;
    }
    else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
