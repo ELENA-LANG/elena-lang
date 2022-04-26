@@ -1336,6 +1336,12 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
          case PTR64_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef64);
             break;
+         case DISP32HI_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskDisp32Hi);
+            break;
+         case DISP32LO_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskDisp32Lo);
+            break;
          case NARG_2:
             scope->compiler->writeImm32(writer, startArg);
             break;
