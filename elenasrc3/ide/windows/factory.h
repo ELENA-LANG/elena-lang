@@ -35,7 +35,7 @@ namespace elena_lang
 
       ControlBase* createTextControl(WindowBase* owner);
 
-      void initializeModel(IDEModel* ideView);
+      void initializeModel();
 
    public:
       GUIApp* createApp() override;

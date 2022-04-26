@@ -73,6 +73,16 @@ void CustomTabBar :: addTab(int index, wstr_t name, void* param)
    ::SendMessage(_handle, TCM_INSERTITEM, index, (LPARAM)&tie);
 }
 
+void CustomTabBar :: selectTab(int index)
+{
+   int previous = (int)::SendMessage(_handle, TCM_SETCURSEL, index, 0);
+   //if (_notSelected || previous != index) {
+   //   _notify(_owner, TCN_SELCHANGE);
+
+   //   _notSelected = false;
+   //}
+}
+
 int CustomTabBar :: getTabCount()
 {
    return (int)::SendMessage(_handle, TCM_GETITEMCOUNT, 0, 0);

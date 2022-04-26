@@ -19,17 +19,17 @@ SourceViewModel :: SourceViewModel(int fontSize)
 void SourceViewModel :: setTraceLine(int row)
 {
    if (traceRow != -1) {
-      docView->removeMarker(traceRow, STYLE_TRACE_LINE);
+      _currentView->removeMarker(traceRow, STYLE_TRACE_LINE);
    }
 
-   docView->addMarker(row, STYLE_TRACE_LINE);
+   _currentView->addMarker(row, STYLE_TRACE_LINE);
    traceRow = row;
 }
 
 void SourceViewModel :: clearTraceLine()
 {
    if (traceRow != -1) {
-      docView->removeMarker(traceRow, STYLE_TRACE_LINE);
+      _currentView->removeMarker(traceRow, STYLE_TRACE_LINE);
    }
    traceRow = -1;
 }

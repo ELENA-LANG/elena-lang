@@ -457,6 +457,8 @@ namespace elena_lang
    class WideMessage : public String<wide_c, MESSAGE_LEN>
    {
    public:
+      wstr_t operator*() const { return wstr_t(_string); }
+
       WideMessage(const char* s)
       {
          size_t len = MESSAGE_LEN;

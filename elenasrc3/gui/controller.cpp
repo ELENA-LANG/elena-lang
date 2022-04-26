@@ -9,35 +9,60 @@ using namespace elena_lang;
 
 // --- TextViewController ---
 
+//void TextViewController :: newDocument(TextViewModelBase* model)
+//{
+//   
+//}
+
+void TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, path_t path, FileEncoding encoding)
+{
+   Text* text = new Text(_eolMode);
+   text->load(path, encoding, false);
+
+   model->addDocumentView(name, text);
+}
+
+void TextViewController :: selectDocument(TextViewModelBase* model, ustr_t name)
+{
+   model->selectDocumentView(name);
+}
+
 void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
-   if (kbCtrl) {
-      model->docView->moveFrameDown();
-   }
-   else model->docView->moveDown(kbShift);
+   auto docView = model->DocView();
 
+   if (kbCtrl) {
+      docView->moveFrameDown();
+   }
+   else docView->moveDown(kbShift);
 }
 
 void TextViewController :: moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
+   auto docView = model->DocView();
+
    if (kbCtrl) {
-      model->docView->moveLeftToken(kbShift);
+      docView->moveLeftToken(kbShift);
    }
-   else model->docView->moveLeft(kbShift);
+   else docView->moveLeft(kbShift);
 }
 
 void TextViewController :: moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
+   auto docView = model->DocView();
+
    if (kbCtrl) {
-      model->docView->moveRightToken(kbShift);
+      docView->moveRightToken(kbShift);
    }
-   else model->docView->moveRight(kbShift);
+   else docView->moveRight(kbShift);
 }
 
 void TextViewController :: moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
+   auto docView = model->DocView();
+
    if (kbCtrl) {
-      model->docView->moveFrameUp();
+      docView->moveFrameUp();
    }
-   else model->docView->moveUp(kbShift);
+   else docView->moveUp(kbShift);
 }

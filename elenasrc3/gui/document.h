@@ -180,7 +180,7 @@ namespace elena_lang
    public:
       Status status;
 
-      void attachMotifier(DocumentNotifier* notifier)
+      void attachNotifier(DocumentNotifier* notifier)
       {
          _notifiers.add(notifier);
       }

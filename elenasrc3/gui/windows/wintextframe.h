@@ -8,14 +8,21 @@
 #define WINTEXTFRAME_H
 
 #include "wintabbar.h"
+#include "editframe.h"
 
 namespace elena_lang
 {
    // --- TextViewFrame --
-   class TextViewFrame : public MultiTabControl
+   class TextViewFrame : public MultiTabControl, TextViewListener
    {
+   protected:
+      TextViewModel* _model;
+
    public:
-      TextViewFrame(bool withAbovescore, ControlBase* view);
+      void onDocumentView(int index) override;
+      void onDocumentViewSelect(int index) override;
+
+      TextViewFrame(bool withAbovescore, ControlBase* view, TextViewModel* model);
    };
 
 }

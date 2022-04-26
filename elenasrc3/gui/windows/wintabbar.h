@@ -24,6 +24,7 @@ namespace elena_lang
       int getTabCount();
 
       void addTab(int index, wstr_t title, void* param);
+      void selectTab(int index);
 
       CustomTabBar(bool withAbovescore);
    };

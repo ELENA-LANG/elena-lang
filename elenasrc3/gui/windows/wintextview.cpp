@@ -51,12 +51,12 @@ TextViewWindow :: TextViewWindow(TextViewModelBase* model, TextViewControllerBas
    _mouseCaptured = false;
    _caret_x = 0;
 
-   _model->docView->attachMotifier(this);
+   _model->attachDocListener(this);
 }
 
 TextViewWindow :: ~TextViewWindow()
 {
-   _model->docView->removeNotifier(this);
+   _model->removeDocListener(this);
 }
 
 void TextViewWindow :: registerTextViewWindow(HINSTANCE hInstance, wstr_t className)
@@ -161,7 +161,7 @@ void TextViewWindow :: update(bool resize)
 
 void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 {
-   auto docView = _model->docView;
+   auto docView = _model->DocView();
 
    Point caret = docView->getCaret(false) - docView->getFrame();
 
@@ -345,7 +345,7 @@ void TextViewWindow :: onButtonDown(Point point, bool kbShift)
    bool margin = false;
    mouseToScreen(point, col, row, margin);
 
-   _model->docView->moveToFrame(col, row, kbShift);
+   _model->DocView()->moveToFrame(col, row, kbShift);
 
    captureMouse();
 }
@@ -404,7 +404,9 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 
 void TextViewWindow :: onDocumentUpdate()
 {
-   if (_model->docView->status.isViewChanged()) {
+   auto docView = _model->DocView();
+
+   if (docView->status.isViewChanged()) {
       _cached = false;
       _caret_x = 0;
    }

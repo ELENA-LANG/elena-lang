@@ -31,20 +31,49 @@ namespace elena_lang
    //#define STYLE_HIGHLIGHTED_BRACKET               14
    constexpr auto STYLE_MAX = 2;
 
+   class TextViewListener
+   {
+   public:
+      virtual void onDocumentViewSelect(int index) = 0;
+      virtual void onDocumentView(int index) = 0;
+   };
+
    // --- TextViewBase ---
    class TextViewModelBase
    {
+   protected:
+      DocumentView* _currentView;
+
    public:
-      DocumentView* docView;
       bool          lineNumbersVisible;
       int           fontSize;
 
+      DocumentView* DocView()
+      {
+         return _currentView;
+      }
+
+      virtual void attachListener(TextViewListener* listener) = 0;
+
+      virtual void attachDocListener(DocumentNotifier* listener) = 0;
+      virtual void removeDocListener(DocumentNotifier* listener) = 0;
+
+      virtual void addDocumentView(ustr_t name, Text* text) = 0;
+
+      virtual bool selectDocumentView(ustr_t name) = 0;
+
+      virtual ustr_t getDocumentName(int index) = 0;
+
       virtual void resize(Point size) = 0;
-      virtual bool isAssigned() const = 0;
+
+      bool isAssigned() const
+      {
+         return _currentView != nullptr;
+      }
 
       TextViewModelBase(int fontSize)
       {
-         this->docView = nullptr;
+         this->_currentView = nullptr;
          this->lineNumbersVisible = false;
          this->fontSize = fontSize;
       }
@@ -54,11 +83,15 @@ namespace elena_lang
    class TextViewControllerBase
    {
    public:
+      //virtual int newDocument(TextViewModelBase* model) = 0;
+      virtual void openDocument(TextViewModelBase* model, ustr_t name, path_t path, FileEncoding encoding) = 0;
+
+      virtual void selectDocument(TextViewModelBase* model, ustr_t name) = 0;
+
       virtual void moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
-
    };
 
 }

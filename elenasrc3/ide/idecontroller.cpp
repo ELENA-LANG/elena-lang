@@ -76,6 +76,12 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
    return true;
 }
 
+
+void ProjectController :: doNewFile(ProjectModel& model)
+{
+   
+}
+
 void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
 {
    if (!testIDEStatus(*model.status, IDEStatus::Busy)) {

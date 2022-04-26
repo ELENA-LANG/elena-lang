@@ -77,6 +77,24 @@ structure %SYSTEM_ENV
 
 end
 
+structure %VOID
+
+  dq 0
+  dq 0  // ; a reference to the super class class
+  dq 0
+  dq 0  
+  dq 0
+
+end
+
+structure %VOIDPTR
+
+  dq rdata : %VOID + elPackageOffset
+  dq 0
+  dq 0
+
+end
+
 // ; --- GC_ALLOC ---
 // ; in: r18 - size ; out: r15 - created object
 inline % GC_ALLOC

@@ -17,6 +17,10 @@ namespace elena_lang
    class SourceViewController : public TextViewController
    {
    public:
+      SourceViewController(EOLMode eolMode)
+         : TextViewController(eolMode)
+      {
+      }
    };
 
    // --- DebugAction ---
@@ -40,6 +44,8 @@ namespace elena_lang
       bool startDebugger(ProjectModel& model/*, bool stepMode*/);
 
    public:
+      void doNewFile(ProjectModel& model);
+
       bool doCompileProject(ProjectModel& model, DebugAction postponedAction);
 
       void doDebugAction(ProjectModel& model, DebugAction action);
@@ -83,8 +89,9 @@ namespace elena_lang
          projectController.setNotifier(notifier);
       }
 
-      IDEController(DebugProcessBase* process, IDEModel* model)
-         : projectController(process, &model->projectModel, &model->sourceViewModel)
+      IDEController(DebugProcessBase* process, IDEModel* model, EOLMode eolMode) :
+         sourceController(eolMode),
+         projectController(process, &model->projectModel, &model->sourceViewModel)
       {
          _notifier = nullptr;
       }

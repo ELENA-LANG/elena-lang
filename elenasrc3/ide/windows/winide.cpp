@@ -19,6 +19,9 @@ void IDEWindow :: onActivate()
 bool IDEWindow :: onCommand(int command)
 {
    switch (command) {
+      //case IDM_FILE_NEW:
+      //   _controller->projectController.doNewFile();
+      //   break;
       case IDM_DEBUG_RUN:
          _controller->projectController.doDebugAction(_model->projectModel, DebugAction::Run);
          break;
@@ -37,9 +40,11 @@ bool IDEWindow :: onCommand(int command)
 
 void IDEWindow :: onModelChange(ExtNMHDR* hdr)
 {
+   auto docView = _model->sourceViewModel.DocView();
+
    switch (hdr->extParam) {
       case NOTIFY_SOURCEMODEL:
-         _model->sourceViewModel.docView->notifyOnChange();
+         docView->notifyOnChange();
          break;
       default:
          break;

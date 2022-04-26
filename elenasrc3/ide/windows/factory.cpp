@@ -8,7 +8,6 @@
 #include "windows/winide.h"
 #include "windows/wintextview.h"
 #include "windows/wintextframe.h"
-#include "sourceformatter.h"
 #include "Resource.h"
 
 using namespace elena_lang;
@@ -76,8 +75,6 @@ IDEFactory :: IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideModel,
    _cmdShow = cmdShow;
    _model = ideModel;
    _controller = controller;
-
-   initializeModel(ideModel);
 }
 
 void IDEFactory :: registerClasses()
@@ -93,14 +90,17 @@ void IDEFactory :: registerClasses()
 
 ControlBase* IDEFactory :: createTextControl(WindowBase* owner)
 {
+   auto viewModel = _model->viewModel();
+
+   // initialize view styles
+   _styles.assign(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
+
+   // initialize UI components
    TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_controller->sourceController, &_styles);
-   TextViewFrame* frame = new TextViewFrame(_settings.withTabAboverscore, view);
+   TextViewFrame* frame = new TextViewFrame(_settings.withTabAboverscore, view, _model->viewModel());
 
    view->create(_instance, szTextView, owner);
    frame->createControl(_instance, owner);
-
-   // !! temporal
-   frame->addTabView(_T("test"), nullptr);
 
    // !! temporal
    view->showWindow(SW_SHOW);
@@ -109,17 +109,15 @@ ControlBase* IDEFactory :: createTextControl(WindowBase* owner)
    return frame;
 }
 
-void IDEFactory :: initializeModel(IDEModel* ideView)
+void IDEFactory :: initializeModel()
 {
-   auto viewModel = ideView->viewModel();
+   // !! temporal
+   auto viewModel = _model->viewModel();
 
-   Text* text = new Text(EOLMode::CRLF);
    PathString path("C:\\Alex\\ELENA\\tests60\\sandbox\\sandbox.l");
-   text->load(*path, FileEncoding::UTF8, false);
 
-   viewModel->docView = new DocumentView(text, ELENADocFormatter::getInstance());
-
-   _styles.assign(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
+   _controller->sourceController.openDocument(viewModel, "test", *path, FileEncoding::UTF8);
+   _controller->sourceController.selectDocument(viewModel, "test");
 }
 
 GUIApp* IDEFactory :: createApp()
@@ -144,6 +142,8 @@ GUIControlBase* IDEFactory :: createMainWindow()
 
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, -1, -1, -1, -1);
+
+   initializeModel();
 
    return sdi;
 }
