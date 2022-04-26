@@ -849,8 +849,8 @@ inline % 0FBh
 
 //;  mov  rsi, __ptr64_2
   ld      r21, toc_rdata(r2)
-  addis   r21, r21, __disp32hi_1 
-  addi    r21, r21, __disp32lo_1 
+  addis   r21, r21, __disp32hi_2 
+  addi    r21, r21, __disp32lo_2 
 
 //;  xor  edx, edx
   li      r25, 0
