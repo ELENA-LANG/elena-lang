@@ -4,6 +4,7 @@
 //                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include "idecommon.h"
 #include "wintabbar.h"
 #include "wincanvas.h"
 
@@ -11,10 +12,12 @@ using namespace elena_lang;
 
 // --- CustomTabBar ---
 
-CustomTabBar :: CustomTabBar(bool withAbovescore)
+CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore)
    : ControlBase(nullptr)
 {
+   _notifier = notifier;
    _withAbovescore = withAbovescore;
+   _notSelected = true;
 }
 
 void CustomTabBar :: onDrawItem(DRAWITEMSTRUCT* item)
@@ -76,11 +79,11 @@ void CustomTabBar :: addTab(int index, wstr_t name, void* param)
 void CustomTabBar :: selectTab(int index)
 {
    int previous = (int)::SendMessage(_handle, TCM_SETCURSEL, index, 0);
-   //if (_notSelected || previous != index) {
-   //   _notify(_owner, TCN_SELCHANGE);
+   if (_notSelected || previous != index) {
+      _notifier->notifyModelChange(NOTIFY_CURRENTVIEW_CHANGED, index);
 
-   //   _notSelected = false;
-   //}
+      _notSelected = false;
+   }
 }
 
 int CustomTabBar :: getTabCount()
@@ -95,8 +98,8 @@ int CustomTabBar :: getCurrentIndex()
 
 // --- MultiTabControl ---
 
-MultiTabControl :: MultiTabControl(bool withAbovescore, ControlBase* child)
-   : CustomTabBar(withAbovescore)
+MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, ControlBase* child)
+   : CustomTabBar(notifier, withAbovescore)
 {
    _child = child;
 }

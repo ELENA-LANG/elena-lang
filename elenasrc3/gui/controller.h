@@ -18,10 +18,12 @@ namespace elena_lang
       EOLMode  _eolMode;
 
    public:
+      //void onFrameChange() override;
+
       void openDocument(TextViewModelBase* model, ustr_t name, path_t path, FileEncoding encoding) override;
       void selectDocument(TextViewModelBase* model, ustr_t name) override;
 
-      //void newDocument(TextViewModelBase* model) override;
+      void newDocument(TextViewModelBase* model, ustr_t name) override;
 
       void moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;

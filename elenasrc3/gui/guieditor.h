@@ -34,8 +34,10 @@ namespace elena_lang
    class TextViewListener
    {
    public:
-      virtual void onDocumentViewSelect(int index) = 0;
-      virtual void onDocumentView(int index) = 0;
+      virtual void onDocumentSelected(int index) = 0;
+
+      virtual void onSelectDocument(int index) = 0;
+      virtual void onNewDocument(int index) = 0;
    };
 
    // --- TextViewBase ---
@@ -53,6 +55,9 @@ namespace elena_lang
          return _currentView;
       }
 
+      virtual void onDocumentSelected(int index) = 0;
+      virtual void onModelChanged() = 0;
+
       virtual void attachListener(TextViewListener* listener) = 0;
 
       virtual void attachDocListener(DocumentNotifier* listener) = 0;
@@ -60,7 +65,9 @@ namespace elena_lang
 
       virtual void addDocumentView(ustr_t name, Text* text) = 0;
 
+      virtual void clearDocumentView() = 0;
       virtual bool selectDocumentView(ustr_t name) = 0;
+      virtual bool selectDocumentViewByIndex(int index) = 0;
 
       virtual ustr_t getDocumentName(int index) = 0;
 
@@ -83,7 +90,9 @@ namespace elena_lang
    class TextViewControllerBase
    {
    public:
-      //virtual int newDocument(TextViewModelBase* model) = 0;
+      //virtual void onFrameChange() = 0;
+
+      virtual void newDocument(TextViewModelBase* model, ustr_t name) = 0;
       virtual void openDocument(TextViewModelBase* model, ustr_t name, path_t path, FileEncoding encoding) = 0;
 
       virtual void selectDocument(TextViewModelBase* model, ustr_t name) = 0;

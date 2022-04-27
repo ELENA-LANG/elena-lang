@@ -19,6 +19,7 @@ namespace elena_lang
       IDEController* _controller;
 
       void onModelChange(ExtNMHDR* hdr);
+      void onTabSelChanged(HWND wnd);
 
       bool onCommand(int command) override;
       void onNotify(NMHDR* hdr) override;

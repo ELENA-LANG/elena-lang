@@ -89,6 +89,15 @@ namespace elena_lang
 
       int getLineNumberMargin();
 
+      int getVScrollerPosition();
+      int getHScrollerPosition();
+      int getScrollerPosition(int bar)
+      {
+         return (bar == SB_VERT) ? getVScrollerPosition() : getHScrollerPosition();
+      }
+
+      bool getScrollInfo(int bar, SCROLLINFO* info);
+
       void resizeDocument();
 
       void mouseToScreen(Point point, int& col, int& row, bool& margin);
@@ -99,7 +108,12 @@ namespace elena_lang
       void hideCaret();
       void locateCaret(int x, int y);
 
+      void setScrollPosition(int bar, int position);
+      void setScrollInfo(int bar, int max, int page);
+
       void update(bool resize = true);
+      void updateVScroller(bool resize);
+      void updateHScroller(bool resize);
 
       void paint(Canvas& canvas, Rectangle clientRect);
 
@@ -116,8 +130,12 @@ namespace elena_lang
       void onLoseFocus() override;
       bool onSetCursor() override;
 
+      void onScroll(int bar, int type);
+
    public:
       void onDocumentUpdate() override;
+
+      void refresh() override;
 
       static void registerTextViewWindow(HINSTANCE hInstance, wstr_t className);
 

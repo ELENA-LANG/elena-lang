@@ -209,6 +209,10 @@ namespace elena_lang
 
       Point getFrame() const { return _frame.getCaret(); }
       Point getCaret(bool virtualOne = true) const { return _caret.getCaret(virtualOne); }
+      Point getSize() const { return _size; }
+
+      int getRowCount() const { return _text->getRowCount(); }
+      int getMaxColumn() const { return _maxColumn; }
 
       void setCaret(int column, int row, bool selecting);
       void setCaret(Point caret, bool selecting)
@@ -217,6 +221,7 @@ namespace elena_lang
       }
 
       void vscroll(int offset);
+      void hscroll(int offset);
 
       void moveRight(bool selecting);
       void moveLeft(bool selecting);

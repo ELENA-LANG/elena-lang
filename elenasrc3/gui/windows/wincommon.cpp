@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Body File
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wincommon.h"
@@ -51,6 +51,16 @@ void ControlBase :: refresh()
 bool ControlBase :: visible()
 {
    return ::IsWindowVisible(_handle) ? true : false;
+}
+
+void ControlBase :: show()
+{
+   showWindow(SW_SHOW);
+}
+
+void ControlBase :: hide()
+{
+   showWindow(SW_HIDE);
 }
 
 // --- WindowBase ---
@@ -170,13 +180,14 @@ void WindowApp :: notifyMessage(int messageCode)
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-void WindowApp :: notifyModelChange(int modelCode)
+void WindowApp :: notifyModelChange(int modelCode, int arg)
 {
    ExtNMHDR notification;
 
    notification.nmhrd.code = NMHDR_Model;
    notification.nmhrd.hwndFrom = _hwnd;
    notification.extParam = modelCode;
+   notification.extParam2 = arg;
 
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }

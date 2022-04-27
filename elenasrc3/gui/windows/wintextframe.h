@@ -19,10 +19,13 @@ namespace elena_lang
       TextViewModel* _model;
 
    public:
-      void onDocumentView(int index) override;
-      void onDocumentViewSelect(int index) override;
+      void onNewDocument(int index) override;
+      void onSelectDocument(int index) override;
+      void onDocumentSelected(int index) override;
 
-      TextViewFrame(bool withAbovescore, ControlBase* view, TextViewModel* model);
+      void onSelChanged() override;
+
+      TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model);
    };
 
 }

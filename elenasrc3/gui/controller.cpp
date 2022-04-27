@@ -4,15 +4,24 @@
 //---------------------------------------------------------------------------
 
 #include "controller.h"
+#include "elena.h"
 
 using namespace elena_lang;
 
 // --- TextViewController ---
 
-//void TextViewController :: newDocument(TextViewModelBase* model)
+//void TextViewController :: onFrameChange()
 //{
 //   
 //}
+
+void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name)
+{
+   Text* text = new Text(_eolMode);
+   text->create();
+
+   model->addDocumentView(name, text);
+}
 
 void TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, path_t path, FileEncoding encoding)
 {

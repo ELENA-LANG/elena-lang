@@ -26,14 +26,14 @@ void TextViewModel :: attachListener(TextViewListener* listener)
    int index = 0;
    int selected = -1;
    for (auto it = _documents.start(); !it.eof(); ++it) {
-      listener->onDocumentView(index);
+      listener->onNewDocument(index);
       index++;
       if (*it == _currentView)
          selected = index;
    }
 
    if (selected != -1)
-      listener->onDocumentViewSelect(selected);
+      listener->onSelectDocument(selected);
 }
 
 void TextViewModel::attachDocListener(DocumentNotifier* listener)
@@ -54,18 +54,30 @@ void TextViewModel :: removeDocListener(DocumentNotifier* listener)
    _docListeners.cut(listener);
 }
 
-void TextViewModel :: onNewDocumentView(int index)
+void TextViewModel :: onNewDocument(int index)
 {
    for (auto it = _listeners.start(); !it.eof(); ++it) {
-      (*it)->onDocumentView(index);
+      (*it)->onNewDocument(index);
    }
 }
 
-void TextViewModel :: onDocumentViewSelect(int index)
+void TextViewModel :: onSelectDocument(int index)
 {
    for (auto it = _listeners.start(); !it.eof(); ++it) {
-      (*it)->onDocumentViewSelect(index);
+      (*it)->onSelectDocument(index);
    }
+}
+
+void TextViewModel :: onDocumentSelected(int index)
+{
+   for (auto it = _listeners.start(); !it.eof(); ++it) {
+      (*it)->onDocumentSelected(index);
+   }
+}
+
+void TextViewModel :: onModelChanged()
+{
+   
 }
 
 void TextViewModel :: addDocumentView(ustr_t name, Text* text)
@@ -78,7 +90,19 @@ void TextViewModel :: addDocumentView(ustr_t name, Text* text)
       docView->attachNotifier(*it);
    }
 
-   onNewDocumentView(_documents.count() - 1);
+   onNewDocument(_documents.count() - 1);
+}
+
+void TextViewModel :: clearDocumentView()
+{
+   _currentView = nullptr;
+}
+
+bool TextViewModel :: selectDocumentViewByIndex(int index)
+{
+   ustr_t name = getDocumentName(index);
+
+   return selectDocumentView(name);
 }
 
 bool TextViewModel :: selectDocumentView(ustr_t name)
@@ -87,8 +111,9 @@ bool TextViewModel :: selectDocumentView(ustr_t name)
    for (auto it = _documents.start(); !it.eof(); ++it) {
       if (it.key().compare(name)) {
          _currentView = *it;
+         _currentView->status.formatterChanged = true;
 
-         onDocumentViewSelect(index);
+         onSelectDocument(index);
          break;
       }
 

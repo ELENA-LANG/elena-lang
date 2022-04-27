@@ -44,8 +44,6 @@ namespace elena_lang
       bool startDebugger(ProjectModel& model/*, bool stepMode*/);
 
    public:
-      void doNewFile(ProjectModel& model);
-
       bool doCompileProject(ProjectModel& model, DebugAction postponedAction);
 
       void doDebugAction(ProjectModel& model, DebugAction action);
@@ -60,10 +58,10 @@ namespace elena_lang
          if (_notifier)
             _notifier->notifyMessage(messageCode);
       }
-      void notifyModelChange(int modelCode) override
+      void notifyModelChange(int modelCode, int arg) override
       {
          if (_notifier)
-            _notifier->notifyModelChange(modelCode);
+            _notifier->notifyModelChange(modelCode, arg);
       }
 
       ProjectController(DebugProcessBase* process, ProjectModel* model, SourceViewModel* sourceModel)
@@ -88,6 +86,8 @@ namespace elena_lang
 
          projectController.setNotifier(notifier);
       }
+
+      void doNewFile(IDEModel* model);
 
       IDEController(DebugProcessBase* process, IDEModel* model, EOLMode eolMode) :
          sourceController(eolMode),

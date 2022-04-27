@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           8
+#define IDE_REVISION_NUMBER                           9
 
 namespace elena_lang
 {
@@ -19,6 +19,7 @@ namespace elena_lang
 
    // --- Notification codes ---
    constexpr auto NOTIFY_SOURCEMODEL                  = 1;
+   constexpr auto NOTIFY_CURRENTVIEW_CHANGED          = 2;
 
    // --- IDEStatus ---
    enum class IDEStatus
@@ -109,7 +110,7 @@ namespace elena_lang
    {
    public:
       virtual GUIApp* createApp() = 0;
-      virtual GUIControlBase* createMainWindow() = 0;
+      virtual GUIControlBase* createMainWindow(NotifierBase* notifier) = 0;
    };
 }
 

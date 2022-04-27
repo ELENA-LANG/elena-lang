@@ -19,9 +19,9 @@ void IDEWindow :: onActivate()
 bool IDEWindow :: onCommand(int command)
 {
    switch (command) {
-      //case IDM_FILE_NEW:
-      //   _controller->projectController.doNewFile();
-      //   break;
+      case IDM_FILE_NEW:
+         _controller->doNewFile(_model);
+         break;
       case IDM_DEBUG_RUN:
          _controller->projectController.doDebugAction(_model->projectModel, DebugAction::Run);
          break;
@@ -46,17 +46,35 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
       case NOTIFY_SOURCEMODEL:
          docView->notifyOnChange();
          break;
+      case NOTIFY_CURRENTVIEW_CHANGED:
+         _model->sourceViewModel.onDocumentSelected(hdr->extParam);
+         _model->sourceViewModel.onModelChanged();
+         break;
       default:
          break;
    }
    
 }
 
+void IDEWindow :: onTabSelChanged(HWND wnd)
+{
+   for (size_t i = 0; i < _childCounter; i++) {
+      if (_children[i]->checkHandle(wnd)) {
+         _children[i]->onSelChanged();
+         break;
+      }
+   }
+}
+
+
 void IDEWindow :: onNotify(NMHDR* hdr)
 {
    switch (hdr->code) {
       case NMHDR_Model:
          onModelChange((ExtNMHDR*)hdr);
+         break;
+      case TCN_SELCHANGE:
+         onTabSelChanged(hdr->hwndFrom);
          break;
       default:
          break;

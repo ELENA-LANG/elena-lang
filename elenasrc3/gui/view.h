@@ -22,10 +22,13 @@ namespace elena_lang
       TextViewListeners _listeners;
       DocumentNotifiers _docListeners;
 
-      void onNewDocumentView(int index);
-      void onDocumentViewSelect(int index);
+      void onNewDocument(int index);
+      void onSelectDocument(int index);
 
    public:
+      void onDocumentSelected(int index) override;
+      void onModelChanged() override;
+
       void attachListener(TextViewListener* listener) override;
 
       void attachDocListener(DocumentNotifier* listener) override;
@@ -34,7 +37,10 @@ namespace elena_lang
       void addDocumentView(ustr_t name, Text* text) override;
 
       ustr_t getDocumentName(int index) override;
+
+      void clearDocumentView() override;
       bool selectDocumentView(ustr_t name) override;
+      bool selectDocumentViewByIndex(int index) override;
 
       void resize(Point size) override;
 

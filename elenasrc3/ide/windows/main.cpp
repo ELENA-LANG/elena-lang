@@ -42,7 +42,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
    ideController.setNotifier(app);
 
-   int retVal = app->run(factory.createMainWindow());
+   int retVal = app->run(factory.createMainWindow(app));
 
    delete app;
 

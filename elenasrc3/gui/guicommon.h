@@ -133,7 +133,7 @@ namespace elena_lang
    {
    public:
       virtual void notifyMessage(int messageCode) = 0;
-      virtual void notifyModelChange(int modelCode) = 0;
+      virtual void notifyModelChange(int modelCode, int arg = 0) = 0;
    };
 
    // --- GUIApp ---

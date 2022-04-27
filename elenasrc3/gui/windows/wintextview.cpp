@@ -84,6 +84,15 @@ int TextViewWindow :: getLineNumberMargin()
    else return 0;
 }
 
+bool TextViewWindow :: getScrollInfo(int bar, SCROLLINFO* info)
+{
+   memset(info, 0, sizeof(*info));
+   info->cbSize = sizeof(*info);
+   info->fMask = SIF_ALL;
+
+   return ::GetScrollInfo(_handle, bar, info) ? true : false;
+}
+
 void TextViewWindow :: resizeDocument()
 {
    if (_model->isAssigned()) {
@@ -154,9 +163,76 @@ void TextViewWindow :: releaseMouse()
    ::ReleaseCapture();
 }
 
-void TextViewWindow :: update(bool resize)
+int TextViewWindow :: getHScrollerPosition()
 {
-   refresh();
+   return _model->DocView()->getFrame().x;
+}
+
+int TextViewWindow :: getVScrollerPosition()
+{
+   return _model->DocView()->getFrame().y;
+}
+
+void TextViewWindow :: update(bool resized)
+{
+   if (_model->isAssigned()) {
+      auto docView = _model->DocView();
+
+      updateVScroller(resized);
+      if (docView->status.maxColChanged) {
+         updateHScroller(resized);
+         docView->status.maxColChanged = false;
+      }
+      else updateHScroller(resized);
+   }
+
+   ControlBase::refresh();
+}
+
+void TextViewWindow :: updateHScroller(bool resized)
+{
+   int position = getHScrollerPosition();
+   if (resized) {
+      auto docView = _model->DocView();
+
+      Point size = _model->DocView()->getSize();
+      int max = docView->getMaxColumn();
+      setScrollInfo(SB_HORZ, max - 1, size.x);
+   }
+   setScrollPosition(SB_HORZ, position);
+}
+
+void TextViewWindow :: updateVScroller(bool resized)
+{
+   int position = getVScrollerPosition();
+   if (resized)  {
+      auto docView = _model->DocView();
+
+      Point size = _model->DocView()->getSize();
+      int max = docView->getRowCount();
+      setScrollInfo(SB_VERT, max + size.y, size.y);
+   }
+   setScrollPosition(SB_VERT, position);
+}
+
+void TextViewWindow :: setScrollInfo(int bar, int max, int page)
+{
+   SCROLLINFO info;
+
+   info.cbSize = sizeof(info);
+   info.fMask = SIF_PAGE | SIF_RANGE;
+   info.nMin = 0;
+   info.nMax = max;
+   info.nPage = page;
+   info.nPos = 0;
+   info.nTrackPos = 1;
+
+   ::SetScrollInfo(_handle, bar, &info, TRUE);
+}
+
+void TextViewWindow :: setScrollPosition(int bar, int position)
+{
+   ::SetScrollPos(_handle, bar, position, TRUE);
 }
 
 void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
@@ -394,6 +470,12 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
             return true;
          }
          else break;
+      case WM_VSCROLL:
+         onScroll(SB_VERT, LOWORD(wParam));
+         return 0;
+      case WM_HSCROLL:
+         onScroll(SB_HORZ, LOWORD(wParam));
+         return 0;
       default:
          // to make compiler happy
          break;
@@ -412,4 +494,51 @@ void TextViewWindow :: onDocumentUpdate()
    }
 
    update();
+}
+
+void TextViewWindow :: onScroll(int bar, int type)
+{
+   SCROLLINFO info;
+   getScrollInfo(bar, &info);
+   int offset = 0;
+   switch (type) {
+      case SB_LINEUP:
+         if (info.nPos <= info.nMin)
+            return;
+
+         offset = -1;
+         break;
+      case SB_LINEDOWN:
+         if (info.nPos >= info.nMax)
+            return;
+
+         offset = 1;
+         break;
+      case SB_THUMBPOSITION:
+      case SB_THUMBTRACK:
+         offset = info.nTrackPos - getScrollerPosition(bar);
+         break;
+      case SB_PAGEDOWN:
+         offset = info.nPage;
+         break;
+      case SB_PAGEUP:
+         offset = -(int)info.nPage;
+         break;
+      default:
+         return;
+   }
+
+   auto docView = _model->DocView();
+   if (bar == SB_VERT) {
+      docView->vscroll(offset);
+   }
+   else docView->hscroll(offset);
+
+   onDocumentUpdate();
+
+}
+
+void TextViewWindow :: refresh()
+{
+   onDocumentUpdate();
 }

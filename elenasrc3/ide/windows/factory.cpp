@@ -88,7 +88,7 @@ void IDEFactory :: registerClasses()
    TextViewWindow::registerTextViewWindow(_instance, szTextView);
 }
 
-ControlBase* IDEFactory :: createTextControl(WindowBase* owner)
+ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* notifier)
 {
    auto viewModel = _model->viewModel();
 
@@ -97,7 +97,7 @@ ControlBase* IDEFactory :: createTextControl(WindowBase* owner)
 
    // initialize UI components
    TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_controller->sourceController, &_styles);
-   TextViewFrame* frame = new TextViewFrame(_settings.withTabAboverscore, view, _model->viewModel());
+   TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, view, _model->viewModel());
 
    view->create(_instance, szTextView, owner);
    frame->createControl(_instance, owner);
@@ -129,7 +129,7 @@ GUIApp* IDEFactory :: createApp()
    return app;
 }
 
-GUIControlBase* IDEFactory :: createMainWindow()
+GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier)
 {
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model);
    sdi->create(_instance, szSDI, nullptr);
@@ -138,7 +138,7 @@ GUIControlBase* IDEFactory :: createMainWindow()
    int counter = 0;
 
    int textIndex = counter++;
-   children[textIndex] = createTextControl(sdi);
+   children[textIndex] = createTextControl(sdi, notifier);
 
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, -1, -1, -1, -1);

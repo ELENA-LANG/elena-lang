@@ -76,12 +76,6 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
    return true;
 }
 
-
-void ProjectController :: doNewFile(ProjectModel& model)
-{
-   
-}
-
 void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
 {
    if (!testIDEStatus(*model.status, IDEStatus::Busy)) {
@@ -106,4 +100,14 @@ void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
 bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction postponedAction)
 {
    return true; // !! temporal
+}
+
+// --- IDEController ---
+
+void IDEController :: doNewFile(IDEModel* model)
+{
+   IdentifierString tabName("unnamed");
+
+   sourceController.newDocument(&model->sourceViewModel, *tabName);
+   sourceController.selectDocument(&model->sourceViewModel, *tabName);
 }

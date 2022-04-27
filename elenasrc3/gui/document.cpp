@@ -302,6 +302,20 @@ void DocumentView :: setCaret(int column, int row, bool selecting)
    notifyOnChange();
 }
 
+void DocumentView :: hscroll(int displacement)
+{
+   Point frame = _frame.getCaret();
+
+   frame.x += displacement;
+   if (frame.x < 0)
+      frame.x = 0;
+
+   if (_frame.getCaret() != frame) {
+      _frame.moveTo(frame.x, frame.y);
+      status.frameChanged = true;
+   }
+}
+
 void DocumentView :: vscroll(int displacement)
 {
    Point frame = _frame.getCaret();
