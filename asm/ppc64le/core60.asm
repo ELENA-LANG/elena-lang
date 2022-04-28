@@ -894,15 +894,14 @@ labNextParam:
 //;  mov  rcx, [rbx - elVMTOffset]
   ld      r16, -elVMTOffset(r15)
 //;  lea  rax, [r13 * 8]
-  sldi    r17, r23, 3
+  sldi    r17, r23, 4
 
 //;  mov  rdx, [r9 + r13 * 2]
-  sldi    r20, r23, 1
+  sldi    r23, r23, 1
   add     r14, r20, r24
   ld      r14, 0(r14)
 //;  jmp  [rcx + rax * 2 + 8]
-  sldi    r20, r17, 1
-  add     r20, r20, r16
+  add     r20, r20, r17
   ld      r0, 8(r20)
   mtctr   r0
   bctr
