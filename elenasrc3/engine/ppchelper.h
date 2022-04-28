@@ -136,7 +136,7 @@ namespace elena_lang
          int xo, int sh_hi, int rc)
       {
          return (opcode << 26) | (((unsigned int)rs & 0x1F) << 21) | (((unsigned int)ra & 0x1F) << 16)
-            | (sh << 11) | (mb << 5) | (xo << 2) | (sh_hi << 1) | rc;
+            | ((sh & 0x1F) << 11) | ((mb & 0x3F) << 5) | ((xo & 3) << 2) | ((sh_hi & 1) << 1) | rc;
       }
 
       static unsigned int makeXLCommand(unsigned int opcode, int bo, int bi, int bh, int xo, int lk)
