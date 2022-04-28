@@ -872,7 +872,7 @@ labNextOverloadlist:
 //;  mov  ecx, __n_1
   li      r16, __n16_1
 //;  lea  rbx, [r13 - 8]
-  ld      r22, -8(r23)
+  addi    r22, r23, -8
 
 labNextParam:
 //;  sub  ecx, 1
