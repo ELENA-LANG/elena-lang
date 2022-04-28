@@ -760,6 +760,19 @@ void PPC64Assembler ::compileCMPWI(ScriptToken& tokenInfo, MemoryWriter& writer)
    compileCMPI(tokenInfo, 0, 0, ra, d, reference, writer);
 }
 
+void PPC64Assembler :: compileCMPDI(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand ra = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   int d = 0;
+   ref_t reference = 0;
+   readIOperand(tokenInfo, d, reference, ASM_INVALID_TARGET);
+
+   compileCMPI(tokenInfo, 0, 1, ra, d, reference, writer);
+}
+
 void PPC64Assembler :: compileOR(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -1231,6 +1244,9 @@ bool PPC64Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    }
    else if (tokenInfo.compare("cmpwi")) {
       compileCMPWI(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("cmpdi")) {
+      compileCMPDI(tokenInfo, writer);
    }
    else return false;
 

@@ -922,7 +922,7 @@ labMatching:
   cmpwi   r18,0
 
 //;  cmovz rdi, rsi
-  iseleq  r18, r18, r20
+  iseleq  r18, r20, r18
 
 //;  mov  rdi, [rdi - elVMTOffset]
   ld      r18, elVMTOffset(r18)
