@@ -678,7 +678,7 @@ wchar_t* StrFactory::reallocate(wchar_t* s, size_t size)
 
 #else
 
-void StrHelper :: move(unsigned short* s1, const unsigned short* s2, size_t length)
+void StrUtil :: move(unsigned short* s1, const unsigned short* s2, size_t length)
 {
    memmove(s1, s2, length << 1);
 }
