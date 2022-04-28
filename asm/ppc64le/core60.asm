@@ -925,7 +925,7 @@ labMatching:
   iseleq  r18, r20, r18
 
 //;  mov  rdi, [rdi - elVMTOffset]
-  ld      r18, elVMTOffset(r18)
+  ld      r18, -elVMTOffset(r18)
 //;  mov  rsi, [rbx + rcx * 8]
   add     r20,  r22, r19
 
