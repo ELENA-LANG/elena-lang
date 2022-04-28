@@ -7,7 +7,7 @@ In development:
     === Sprint 5 : dispatching methods ===
     --- elena redux ---
 
-    * signature dispatch - ppc64le, arm64 - 400668
+    * signature dispatch - ppc64le, arm64 - 4006CC
 
     --- ide redux ---
     * editor - edit text

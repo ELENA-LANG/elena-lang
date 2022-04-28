@@ -843,7 +843,7 @@ void PPC64Assembler :: compileISELEQ(ScriptToken& tokenInfo, MemoryWriter& write
 
    PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
 
-   if (!compileISEL(rx, ry, rz, 1, writer))
+   if (!compileISEL(rx, ry, rz, 2, writer))
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 
 }
