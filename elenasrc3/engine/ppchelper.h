@@ -145,7 +145,7 @@ namespace elena_lang
       }
       static unsigned int makeBCommand(unsigned int opcode, int bo, int bi, int bd, int aa, int lk)
       {
-         return (opcode << 26) | (bo << 21) | (bi << 16) | ((bd & 0xFFFF) << 2) | (aa << 1) | lk;
+         return (opcode << 26) | (bo << 21) | (bi << 16) | ((bd & 0x3FFF) << 2) | (aa << 1) | lk;
       }
       static unsigned int makeXOCommand(unsigned int opcode, PPCOperandType rt, PPCOperandType ra, PPCOperandType rb, 
          int oe, int xo, int rc)
