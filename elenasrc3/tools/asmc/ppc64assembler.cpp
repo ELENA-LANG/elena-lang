@@ -669,7 +669,7 @@ void PPC64Assembler::compileBEQ(ScriptToken& tokenInfo, MemoryWriter& writer, La
 
 void PPC64Assembler :: compileBNE(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
 {
-   compileBCxx(tokenInfo, 12, 10, writer, labelScope);
+   compileBCxx(tokenInfo, 4, 2, writer, labelScope);
 
    read(tokenInfo);
 }
