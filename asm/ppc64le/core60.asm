@@ -928,6 +928,7 @@ labMatching:
   ld      r18, -elVMTOffset(r18)
 //;  mov  rsi, [rbx + rcx * 8]
   add     r20,  r22, r19
+  ld      r20, 0(r20)
 
 labNextBaseClass:
 //;  cmp  rsi, rdi
