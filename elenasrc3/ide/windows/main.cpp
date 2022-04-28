@@ -32,11 +32,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
    Text::TabSize = 4; // !! temporal
 
-   GUISettinngs  settings = { true };
+   GUISettinngs  guiSettings = { true };
+   TextViewSettings textViewSettings = { EOLMode::CRLF, false, 3 };
+
    IDEModel      ideModel(10);
    DebugProcess  debugProcess;
-   IDEController ideController(&debugProcess, &ideModel, EOLMode::CRLF);
-   IDEFactory    factory(hInstance, nCmdShow, &ideModel, &ideController, settings);
+   IDEController ideController(&debugProcess, &ideModel, textViewSettings);
+   IDEFactory    factory(hInstance, nCmdShow, &ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();
 

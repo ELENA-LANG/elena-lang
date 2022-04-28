@@ -17,8 +17,8 @@ namespace elena_lang
    class SourceViewController : public TextViewController
    {
    public:
-      SourceViewController(EOLMode eolMode)
-         : TextViewController(eolMode)
+      SourceViewController(TextViewSettings& settings)
+         : TextViewController(settings)
       {
       }
    };
@@ -89,8 +89,8 @@ namespace elena_lang
 
       void doNewFile(IDEModel* model);
 
-      IDEController(DebugProcessBase* process, IDEModel* model, EOLMode eolMode) :
-         sourceController(eolMode),
+      IDEController(DebugProcessBase* process, IDEModel* model, TextViewSettings& textViewSettings) :
+         sourceController(textViewSettings),
          projectController(process, &model->projectModel, &model->sourceViewModel)
       {
          _notifier = nullptr;

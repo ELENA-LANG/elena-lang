@@ -98,7 +98,7 @@ namespace elena_lang
    typedef List<DocumentNotifier*> DocumentNotifiers;
 
    // --- Document ---
-   class DocumentView
+   class DocumentView : public TextWatcherBase
    {
    public:
       struct LexicalReader : ReaderInfo
@@ -192,7 +192,7 @@ namespace elena_lang
       Point             _size;
       TextBookmark      _frame;
       TextBookmark      _caret;
-      pos_t             _selection;
+      int               _selection;
 
       int               _maxColumn;
 
@@ -200,7 +200,11 @@ namespace elena_lang
       DocumentNotifiers _notifiers;
 
       pos_t format(LexicalReader& reader);
-      
+
+      void onInsert(size_t position, size_t length, text_t line) override;
+      void onUpdate(size_t position) override;
+      void onErase(size_t position, size_t length, text_t line) override;
+
    public:
       Status status;
 
@@ -261,6 +265,8 @@ namespace elena_lang
 
       void moveToFrame(int column, int row, bool selecting);
 
+      virtual void tabbing(text_c space, size_t count, bool indent);
+
       void insertNewLine();
       void insertChar(text_c ch)
       {
@@ -274,7 +280,7 @@ namespace elena_lang
       void notifyOnChange();
 
       DocumentView(Text* text, TextFormatterBase* formatter);
-      virtual ~DocumentView() = default;
+      virtual ~DocumentView();
    };
 }
 

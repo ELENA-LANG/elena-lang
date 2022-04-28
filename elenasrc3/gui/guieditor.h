@@ -13,11 +13,12 @@
 namespace elena_lang
 {
    // --- ELENA IDE Styles ---
-   //#define SCHEME_COUNT                            2
+   constexpr auto SCHEME_COUNT         = 2;
 
    constexpr auto STYLE_DEFAULT        = 0;
    constexpr auto STYLE_MARGIN         = 1;
-   constexpr auto STYLE_TRACE_LINE     = 2;
+   constexpr auto STYLE_SELECTION      = 2;
+   constexpr auto STYLE_TRACE_LINE     = 3;
    //#define STYLE_KEYWORD                           3
    //#define STYLE_COMMENT                           4
    //#define STYLE_OPERATOR                          5
@@ -29,7 +30,7 @@ namespace elena_lang
    //#define STYLE_TRACE                             12
    //#define STYLE_BREAKPOINT                        13
    //#define STYLE_HIGHLIGHTED_BRACKET               14
-   constexpr auto STYLE_MAX = 2;
+   constexpr auto STYLE_MAX            = 3;
 
    class TextViewListener
    {
@@ -96,6 +97,8 @@ namespace elena_lang
       virtual void openDocument(TextViewModelBase* model, ustr_t name, path_t path, FileEncoding encoding) = 0;
 
       virtual void selectDocument(TextViewModelBase* model, ustr_t name) = 0;
+
+      virtual void indent(TextViewModelBase* model) = 0;
 
       virtual void moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;

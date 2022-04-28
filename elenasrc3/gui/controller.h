@@ -11,11 +11,19 @@
 
 namespace elena_lang
 {
+   // --- TextViewSettings ---
+   struct TextViewSettings
+   {
+      EOLMode  eolMode;
+      bool     tabUsing;
+      int      tabSize;
+   };
+
    // --- TextViewController ---
    class TextViewController : public TextViewControllerBase
    {
    protected:
-      EOLMode  _eolMode;
+      TextViewSettings _settings;
 
    public:
       //void onFrameChange() override;
@@ -25,14 +33,16 @@ namespace elena_lang
 
       void newDocument(TextViewModelBase* model, ustr_t name) override;
 
+      void indent(TextViewModelBase* model) override;
+
       void moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
 
-      TextViewController(EOLMode eolMode)
-         : _eolMode(eolMode)
+      TextViewController(TextViewSettings& settings)
       {
+         _settings = settings;
       }
    };
 

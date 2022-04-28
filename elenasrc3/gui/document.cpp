@@ -7,6 +7,7 @@
 #include "guicommon.h"
 // --------------------------------------------------------------------------
 #include "document.h"
+#include "guieditor.h"
 
 using namespace elena_lang;
 
@@ -28,7 +29,7 @@ LexicalFormatter :: LexicalFormatter(Text* text, TextFormatterBase* formatter, M
 
 LexicalFormatter :: ~LexicalFormatter()
 {
-   _text->dettachWatcher(this);
+   _text->detachWatcher(this);
 }
 
 void LexicalFormatter :: format()
@@ -221,12 +222,80 @@ DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter)
 
    _maxColumn = 0;
    _selection = 0;
+
+   _text->attachWatcher(this);
+}
+
+DocumentView :: ~DocumentView()
+{
+   _text->detachWatcher(this);
+}
+
+void DocumentView :: onInsert(size_t position, size_t length, text_t line)
+{
+   _frame.invalidate();
+
+   if (_caret.longPosition() > position) {
+      _caret.invalidate();
+   }
+
+   status.modifiedMode = true;
+   status.frameChanged = true;
+}
+
+void DocumentView :: onUpdate(size_t position)
+{
+   _frame.invalidate();
+
+   if (_caret.longPosition() > position) {
+      _caret.invalidate();
+   }
+
+   status.modifiedMode = true;
+   status.frameChanged = true;
+}
+
+void DocumentView :: onErase(size_t position, size_t length, text_t line)
+{
+   _frame.invalidate();
+
+   if (_caret.longPosition() > position) {
+      _caret.invalidate();
+   }
+
+   status.modifiedMode = true;
+   status.frameChanged = true;
 }
 
 pos_t DocumentView :: format(LexicalReader& reader)
 {
    pos_t length = _size.x;
    pos_t position = reader.bm.position();
+
+   if (_selection != 0) {
+      pos_t curPos = _caret.position();
+      pos_t selPos = curPos + _selection;
+      if (_selection > 0) {
+         if (reader.bm.row() == _caret.row() && position < curPos) {
+            length = _min(curPos - position, length);
+         }
+         else if (position >= curPos && position < selPos) {
+            reader.style = STYLE_SELECTION;
+
+            return _min(selPos - position, length);
+         }
+      }
+      else {
+         if (position >= selPos && position < curPos) {
+            reader.style = STYLE_SELECTION;
+
+            return _min(curPos - position, length);
+         }
+         else if (position < selPos && position + length > selPos) {
+            length = _min(selPos - position, length);
+         }
+      }
+   }
 
    pos_t proceeded = _formatter.proceed(position, reader);
    return _min(length, proceeded);
@@ -491,6 +560,60 @@ void DocumentView :: notifyOnChange()
 {
    for(auto it = _notifiers.start(); !it.eof(); ++it) {
       (*it)->onDocumentUpdate();
+   }
+}
+
+void DocumentView :: tabbing(text_c space, size_t count, bool indent)
+{
+   _text->validateBookmark(_caret);
+
+   if (_selection < 0) {
+      _caret.moveOn(_selection);
+      _selection = abs(_selection);
+   }
+   TextBookmark end = _caret;
+
+   end.moveOn(_selection);
+
+   // if only part of the line was selected just insert tab
+   int lastRow = end.row();
+   if (lastRow == _caret.row()) {
+      if (indent)
+         insertChar(space, count);
+   }
+   else {
+      setCaret(0, _caret.row(), true);
+
+      if (end.column() == 0)
+         lastRow--;
+
+      TextBookmark start = _caret;
+      while (start.row() <= lastRow) {
+         if (indent) {
+            for (size_t i = 0; i < count; i++) {
+               _text->insertChar(start, space);
+               _selection++;
+            }
+         }
+         else {
+            pos_t length;
+            for (size_t i = 0; i < count; i++) {
+               text_t s = _text->getLine(start, length);
+               if (length != 0 && (s[0] == ' ' || s[0] == '\t')) {
+                  bool tab = (s[0] == '\t');
+
+                  _text->eraseChar(start);
+                  _selection--;
+
+                  if (tab)
+                     break;
+               }
+               else break;
+            }
+         }
+         if (!start.moveTo(0, start.row() + 1))
+            break;
+      }
    }
 }
 

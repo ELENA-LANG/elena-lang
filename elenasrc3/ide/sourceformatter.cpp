@@ -90,16 +90,16 @@ text_c makeStep(text_c ch, text_c state)
    return (unsigned)ch < 128 ? lexDFA[state - lexStart][ch] : lexDFA[state - lexStart][127];
 }
 
-// --- ELENADocFormatter ---
+// --- SourceFormatter ---
 
-void ELENADocFormatter :: start(FormatterInfo& info)
+void SourceFormatter :: start(FormatterInfo& info)
 {
    info.lookAhead = false;
    info.state = lexStart;
    info.style = STYLE_DEFAULT;
 }
 
-bool ELENADocFormatter :: next(text_c ch, FormatterInfo& info, pos_t& lastStyle)
+bool SourceFormatter :: next(text_c ch, FormatterInfo& info, pos_t& lastStyle)
 {
    info.state = makeStep(ch, info.state);
    pos_t nextStyle = defineStyle(info.state, info.style);

@@ -310,7 +310,7 @@ namespace elena_lang
       bool eraseLine(TextBookmark& bookmark, size_t length);
 
       void attachWatcher(TextWatcherBase* watcher);
-      void dettachWatcher(TextWatcherBase* watcher);
+      void detachWatcher(TextWatcherBase* watcher);
 
       Text(EOLMode mode);
       virtual ~Text();

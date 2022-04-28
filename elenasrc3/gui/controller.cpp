@@ -17,7 +17,7 @@ using namespace elena_lang;
 
 void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name)
 {
-   Text* text = new Text(_eolMode);
+   Text* text = new Text(_settings.eolMode);
    text->create();
 
    model->addDocumentView(name, text);
@@ -25,7 +25,7 @@ void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name)
 
 void TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, path_t path, FileEncoding encoding)
 {
-   Text* text = new Text(_eolMode);
+   Text* text = new Text(_settings.eolMode);
    text->load(path, encoding, false);
 
    model->addDocumentView(name, text);
@@ -34,6 +34,22 @@ void TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, p
 void TextViewController :: selectDocument(TextViewModelBase* model, ustr_t name)
 {
    model->selectDocumentView(name);
+}
+
+void TextViewController :: indent(TextViewModelBase* model)
+{
+   auto docView = model->DocView();
+
+   if (_settings.tabUsing) {
+      docView->tabbing('\t', 1, true);
+   }
+   else {
+      if (!docView->hasSelection()) {
+         int shift = calcTabShift(docView->getCaret().x, _settings.tabSize);
+         docView->insertChar(' ', shift);
+      }
+      else docView->tabbing(' ', _settings.tabSize, true);
+   }
 }
 
 void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl)

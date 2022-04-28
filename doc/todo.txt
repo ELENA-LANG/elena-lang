@@ -10,9 +10,6 @@ In development:
     * signature dispatch - arm64
 
     --- ide redux ---
-    * editor - edit text
-    * editor - selecting text
-
     * editor - open / close / save / select source files
     * editor - status bar
     * editor - undo / redo

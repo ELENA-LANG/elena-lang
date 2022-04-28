@@ -468,7 +468,7 @@ bool TextViewWindow :: onKeyPressed(wchar_t ch)
             docView->eraseChar(true);
             break;
          case 0x09:
-            indent();
+            _controller->indent(_model);
             break;
          default:
             if (ch >= 0x20) {

@@ -446,6 +446,7 @@ Text :: Text(EOLMode mode)
 {
    _mode = mode;
    _encoding = FileEncoding::UTF8;
+   _rowCount = 0;
 }
 
 Text :: ~Text()
@@ -458,7 +459,7 @@ void Text :: attachWatcher(TextWatcherBase* watcher)
    _watchers.add(watcher);
 }
 
-void Text :: dettachWatcher(TextWatcherBase* watcher)
+void Text :: detachWatcher(TextWatcherBase* watcher)
 {
    _watchers.cut(watcher);
 }
@@ -789,9 +790,9 @@ bool Text :: insertChar(TextBookmark& bookmark, text_c ch)
 
    insert(bookmark, &ch, 1, false);
    if (ch == '\t') {
-      bookmark._length = BM_INVALID;
+      bookmark._length = NOTFOUND_POS;
    }
-   else if (bookmark._length != BM_INVALID)
+   else if (bookmark._length != NOTFOUND_POS)
       bookmark._length++;
 
    if (_rowCount == 0) {
@@ -815,7 +816,7 @@ bool Text :: insertNewLine(TextBookmark& bookmark)
       insert(bookmark, ch, 1, true);
    }
 
-   bookmark._length = BM_INVALID;
+   bookmark._length = NOTFOUND_POS;
 
    _rowCount++;
 
@@ -826,10 +827,13 @@ bool Text :: eraseChar(TextBookmark& bookmark)
 {
    validateBookmark(bookmark);
 
-   if (bookmark._column == bookmark.length()) {
+   if (bookmark._column == bookmark.length_pos()) {
       if (bookmark._row != _rowCount - 1) {
          if ((*bookmark._page).text[bookmark._offset] == 13) {
-            erase(bookmark, 2, true);
+            if (_mode == EOLMode::CRLF) {
+               erase(bookmark, 2, true);
+            }
+            else erase(bookmark, 1, true);
          }
          else erase(bookmark, 1, true);
 
@@ -839,7 +843,7 @@ bool Text :: eraseChar(TextBookmark& bookmark)
    }
    else erase(bookmark, 1, false);
 
-   bookmark._length = BM_INVALID;
+   bookmark._length = NOTFOUND_POS;
    //   bookmark.skipEmptyPages();
 
    return true;
@@ -850,7 +854,7 @@ bool Text :: eraseLine(TextBookmark& bookmark, size_t length)
    validateBookmark(bookmark);
 
    erase(bookmark, length, true);
-   bookmark._length = BM_INVALID;
+   bookmark._length = NOTFOUND_POS;
    //   bookmark.skipEmptyPages();
 
    _rowCount = retrieveRowCount();

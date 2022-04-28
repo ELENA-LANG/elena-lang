@@ -11,6 +11,8 @@
 
 namespace elena_lang
 {
+   template <class T, void(*FreeT)(T) = nullptr> class BListBase;
+
    // --- ItemBase ---
    template <class T> struct ItemBase
    {
@@ -117,6 +119,8 @@ namespace elena_lang
    template <class T, class Item> class ListIteratorBase
    {
       Item* _current;
+
+      friend class BListBase<T>;
 
    public:
       bool operator ==(const ListIteratorBase& it)
@@ -507,7 +511,7 @@ namespace elena_lang
    };
 
    // --- BListBase ---
-   template <class T, void(*FreeT)(T) = nullptr> class BListBase
+   template <class T, void(*FreeT)(T)> class BListBase
    {
       typedef BItemBase<T> Item;
 

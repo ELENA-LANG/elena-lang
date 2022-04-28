@@ -82,7 +82,7 @@ void TextViewModel :: onModelChanged()
 
 void TextViewModel :: addDocumentView(ustr_t name, Text* text)
 {
-   auto docView = new DocumentView(text, ELENADocFormatter::getInstance());
+   auto docView = new DocumentView(text, SourceFormatter::getInstance());
 
    _documents.add(name, docView);
 
