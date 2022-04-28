@@ -5,6 +5,8 @@ define GC_ALLOC	             10002h
 define CORE_TOC              20001h
 define SYSTEM_ENV            20002h
 define CORE_GC_TABLE         20003h
+define VOID           	     2000Dh
+define VOIDPTR               2000Eh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -56,6 +58,24 @@ structure %SYSTEM_ENV
 
   dq data : %CORE_GC_TABLE
   dq code : %INVOKER
+
+end
+
+structure %VOID
+
+  dq 0
+  dq 0  // ; a reference to the super class class
+  dq 0
+  dq 0  
+  dq 0
+
+end
+
+structure %VOIDPTR
+
+  dq rdata : %VOID + elPackageOffset
+  dq 0
+  dq 0
 
 end
 

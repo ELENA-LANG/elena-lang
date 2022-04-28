@@ -299,6 +299,14 @@ ARMOperand Arm64Assembler :: readOperand(ScriptToken& tokenInfo, ustr_t errorMes
             }
             else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
          }
+         else if (tokenInfo.compare("rdata")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskRDataRef64, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
          else if (tokenInfo.compare("rdata_ptr32lo")) {
             read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
@@ -353,6 +361,21 @@ ARMOperand Arm64Assembler :: readOperand(ScriptToken& tokenInfo, ustr_t errorMes
       }
 
       read(tokenInfo);
+
+      if (tokenInfo.compare("+")) {
+         if (operand.type != ARMOperandType::Imm)
+            throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+
+         read(tokenInfo);
+
+         if (constants.exist(*tokenInfo.token)) {
+            operand.imm += constants.get(*tokenInfo.token);
+         }
+         else throw SyntaxError(errorMessage, tokenInfo.lineInfo);;
+
+         read(tokenInfo);
+      }
+
    }
 
    return operand;

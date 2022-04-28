@@ -660,7 +660,7 @@ void PPC64Assembler :: compileB(ScriptToken& tokenInfo, MemoryWriter& writer, La
    read(tokenInfo);
 }
 
-void PPC64Assembler::compileBEQ(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
+void PPC64Assembler :: compileBEQ(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
 {
    compileBCxx(tokenInfo, 12, 2, writer, labelScope);
 
