@@ -881,28 +881,25 @@ labNextParam:
   cmpwi   r16,0
   bne     labMatching
 
-//;  mov  r9, __ptr64_2
-  mr      r24, r21
+//;  mov  r9, __ptr64_2  - r21
 
-//;  lea  r13, [rdx * 8]
+//;  mov  r13, [r9 + rdx * 16 + 8] 
   sldi    r23, r25, 4  
-//;  mov  rbx, r8
-//;  mov  r13, [r9 + r13 * 2 + 8] 
-  add     r25, r24, r23
+  add     r25, r21, r23
   ld      r23, 8(r25)
 
 //;  mov  rcx, [rbx - elVMTOffset]
   ld      r16, -elVMTOffset(r15)
-//;  lea  rax, [r13 * 8]
-  sldi    r17, r23, 2
+//;  lea  rax, [r13 * 16]
+  sldi    r17, r23, 4
 
-//;  mov  rdx, [r9 + r13 * 2]
+//;  mov  rdx, [r9 + r13 * 2]        // c02
   sldi    r23, r23, 1
-  add     r14, r20, r23
-  ld      r14, 0(r14)
-//;  jmp  [rcx + rax * 2 + 8]
-  add     r20, r20, r17
-  ld      r0, 8(r20)
+  add     r14, r21, r23
+  ld      r14, 0(r14)                
+//;  jmp  [rcx + rax + 8]       // rax - 0
+  add     r20, r16, r17
+  ld      r0, 8(r20)                
   mtctr   r0
   bctr
 
