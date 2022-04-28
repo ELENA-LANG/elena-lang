@@ -864,11 +864,9 @@ labNextOverloadlist:
 //;  shr  ebx, ACTION_ORDER
   srdi    r22, r22, ACTION_ORDER
 //;  lea  r13, [rbx*8]
-  sldi    r23, r22, 3
-  ld      r23, 0(r23)
+  sldi    r23, r22, 4
 
 //;  mov  r13, [r9 + r13 * 2 + 8]
-  sldi    r23, r23, 1
   add     r23, r23, r24
   ld      r23, 8(r23)
 //;  mov  ecx, __n_1
