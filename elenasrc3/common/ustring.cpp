@@ -571,6 +571,11 @@ inline wchar_t util_lower(unsigned short ch)
 
 // --- StrUtil ---
 
+void StrUtil :: move(char* s1, const char* s2, size_t length)
+{
+   memmove(s1, s2, length);
+}
+
 void StrUtil :: append(char* dest, const char* sour, size_t length)
 {
    ::append(dest, sour, length);
@@ -644,6 +649,11 @@ char* StrFactory :: reallocate(char* s, size_t size)
 
 #ifdef _MSC_VER
 
+void StrUtil :: move(wchar_t* s1, const wchar_t* s2, size_t length)
+{
+   memmove(s1, s2, length << 1);
+}
+
 wide_c* StrFactory::allocate(size_t size, const wide_c* value)
 {
    wchar_t* s = (wchar_t*)malloc(size << 1);
@@ -667,6 +677,11 @@ wchar_t* StrFactory::reallocate(wchar_t* s, size_t size)
 }
 
 #else
+
+void StrHelper :: move(unsigned short* s1, const unsigned short* s2, size_t length)
+{
+   memmove(s1, s2, length << 1);
+}
 
 unsigned short* StrFactory::allocate(size_t size, const unsigned short* value)
 {

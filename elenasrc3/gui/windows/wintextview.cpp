@@ -453,12 +453,47 @@ bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
    return true;
 }
 
+bool TextViewWindow :: onKeyPressed(wchar_t ch)
+{
+   if (_model->isAssigned()) {
+      auto docView = _model->DocView();
+      if (docView->status.readOnly)
+         return false;
+
+      switch (ch) {
+         case 0x0D:
+            docView->insertNewLine();
+            break;
+         case 0x08:
+            docView->eraseChar(true);
+            break;
+         case 0x09:
+            indent();
+            break;
+         default:
+            if (ch >= 0x20) {
+               docView->insertChar(ch);
+            }
+            else return false;
+      }
+
+      onDocumentUpdate();
+      return true;
+   }
+   else return false;
+}
+
 LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message) {
       case WM_PAINT:
          onPaint();
          return 0;
+      case WM_CHAR:
+         if (onKeyPressed((wchar_t)wParam)) {
+            return 0;
+         }
+         else break;
       case WM_LBUTTONDOWN:
          onButtonDown(Point(LOWORD(lParam), HIWORD(lParam)), (wParam & MK_SHIFT) != 0);
          return 0;

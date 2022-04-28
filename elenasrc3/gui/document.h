@@ -133,6 +133,24 @@ namespace elena_lang
          bool frameChanged;
          bool selelectionChanged;
          bool formatterChanged;
+         bool readOnly;
+         bool modifiedMode;
+         bool overwriteMode;
+
+         bool oldModified;
+         bool oldOvewrite;
+
+         int  rowDifference;
+
+         bool isModeChanged()
+         {
+            bool changed = (modifiedMode != oldModified) || (overwriteMode != oldOvewrite);
+
+            oldModified = modifiedMode;
+            oldOvewrite = overwriteMode;
+
+            return changed;
+         }
 
          bool isViewChanged(bool reset = true)
          {
@@ -149,8 +167,14 @@ namespace elena_lang
             caretChanged = false;
             maxColChanged = false;
             frameChanged = false;
+            oldModified = modifiedMode = false;
             selelectionChanged = false;
             formatterChanged = false;
+            readOnly = false;
+            overwriteMode = false;
+            oldOvewrite = true;     // to trigger mode change
+
+            rowDifference = 0;
          }
 
          Status()
@@ -205,6 +229,8 @@ namespace elena_lang
 
       virtual void resize(Point size);
 
+      bool hasSelection() const { return (_selection != 0); }
+
       TextBookmark getCaretBookmark() { return _caret; }
 
       Point getFrame() const { return _frame.getCaret(); }
@@ -234,6 +260,16 @@ namespace elena_lang
       void moveFrameDown();
 
       void moveToFrame(int column, int row, bool selecting);
+
+      void insertNewLine();
+      void insertChar(text_c ch)
+      {
+         insertChar(ch, 1);
+      }
+      void insertChar(text_c ch, size_t number);
+
+      void eraseChar(bool moveback);
+      bool eraseSelection();
 
       void notifyOnChange();
 

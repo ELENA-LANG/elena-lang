@@ -39,6 +39,9 @@ namespace elena_lang
    class StrUtil
    {
    public:
+      static void move(char* s1, const char* s2, size_t length);
+      static void move(wide_c* s1, const wide_c* s2, size_t length);
+
       static void append(char* dest, const char* sour, size_t length);
       static void append(wide_c* dest, const wide_c* sour, size_t length);
 

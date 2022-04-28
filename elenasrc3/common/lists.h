@@ -544,6 +544,20 @@ namespace elena_lang
          _count++;
       }
 
+      void insertAfter(Iterator it, T item)
+      {
+         Item* nextItem = it._current->next;
+
+         it._current->next = new Item(item, it._current, nextItem);
+
+         if (nextItem) {
+            nextItem->previous = it._current->next;
+         }
+         else _tale = it._current->next;
+
+         _count++;
+      }
+
       void clear()
       {
          while (_count > 0) {
@@ -737,6 +751,14 @@ namespace elena_lang
       void add(T value)
       {
          _list.add(value);
+      }
+
+      void insertAfter(Iterator it, T item)
+      {
+         if (it.eof()) {
+            add(item);
+         }
+         else _list.insertAfter(it, item);
       }
 
       void clear()

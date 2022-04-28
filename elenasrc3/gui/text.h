@@ -48,6 +48,11 @@ namespace elena_lang
          used = 0;
          rows = 0;
       }
+      Page(size_t size)
+      {
+         rows = 0;
+         used = size;
+      }
       Page(const Page& page)
       {
          rows = page.rows;
@@ -276,6 +281,12 @@ namespace elena_lang
       TextWatchers _watchers;
 
       void refreshPage(Pages::Iterator& page);
+      void refreshNextPage(Pages::Iterator page);
+
+      int retrieveRowCount();
+
+      void insert(TextBookmark bookmark, text_t s, size_t length, bool checkRowCount);
+      void erase(TextBookmark bookmark, size_t length, bool checkRowCount);
 
    public:
       static int TabSize;
@@ -291,6 +302,12 @@ namespace elena_lang
 
       void create();
       bool load(path_t path, FileEncoding encoding, bool autoDetecting);
+
+      bool insertChar(TextBookmark& bookmark, text_c ch);
+      bool insertNewLine(TextBookmark& bookmark);
+
+      bool eraseChar(TextBookmark& bookmark);
+      bool eraseLine(TextBookmark& bookmark, size_t length);
 
       void attachWatcher(TextWatcherBase* watcher);
       void dettachWatcher(TextWatcherBase* watcher);

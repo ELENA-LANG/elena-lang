@@ -493,3 +493,81 @@ void DocumentView :: notifyOnChange()
       (*it)->onDocumentUpdate();
    }
 }
+
+void DocumentView :: insertChar(text_c ch, size_t count)
+{
+   if (hasSelection()) {
+      int rowCount = _text->getRowCount();
+
+      eraseSelection();
+
+      status.rowDifference += (_text->getRowCount() - rowCount);
+   }
+   else if (status.overwriteMode && (int)_caret.length() > _caret.column(false)) {
+      _text->eraseChar(_caret);
+   }
+
+   while (count > 0) {
+      if (_text->insertChar(_caret, ch)) {
+         _text->validateBookmark(_caret);
+         _caret.moveOn(1);
+         setCaret(_caret.getCaret(), false);
+      }
+      else break;
+
+      count--;
+   }
+}
+
+void DocumentView :: insertNewLine()
+{
+   int rowCount = _text->getRowCount();
+
+   eraseSelection();
+
+   if (_text->insertNewLine(_caret)) {
+      setCaret(0, _caret.row() + 1, false);
+   }
+
+   status.rowDifference += (_text->getRowCount() - rowCount);
+}
+
+void DocumentView :: eraseChar(bool moveback)
+{
+   int rowCount = _text->getRowCount();
+
+   if (_selection != 0) {
+      eraseSelection();
+
+      setCaret(_caret.getCaret(), false);
+   }
+   else {
+      if (moveback) {
+         if (_caret.column(false) == 0 && _caret.row() == 0)
+            return;
+
+         moveLeft(false);
+      }
+      _text->eraseChar(_caret);
+   }
+
+   status.rowDifference += (_text->getRowCount() - rowCount);
+}
+
+bool DocumentView :: eraseSelection()
+{
+   if (_selection == 0)
+      return false;
+
+   _text->validateBookmark(_caret);
+
+   if (_selection < 0) {
+      _caret.moveOn(_selection);
+      _selection = -_selection;
+   }
+   _text->eraseLine(_caret, _selection);
+   _selection = 0;
+   status.selelectionChanged = true;
+
+   return true;
+}

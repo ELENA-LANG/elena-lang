@@ -11,8 +11,11 @@ In development:
 
     --- ide redux ---
     * editor - edit text
+    * editor - selecting text
+
     * editor - open / close / save / select source files
     * editor - status bar
+    * editor - undo / redo
     * editor - compile
     * linux sdi - menu
     * linux ide : new file

@@ -475,6 +475,26 @@ void Text :: refreshPage(Pages::Iterator& page)
    }
 }
 
+void Text :: refreshNextPage(Pages::Iterator page)
+{
+   if (!page.last()) {
+      ++page;
+      refreshPage(page);
+   }
+}
+
+int Text :: retrieveRowCount()
+{
+   Pages::Iterator it = _pages.start();
+   int count = 1;
+   while (!it.eof()) {
+      count += (*it).rows;
+
+      it++;
+   }
+   return count;
+}
+
 void Text :: validateBookmark(TextBookmark& bookmark)
 {
    if (!bookmark.isValid()) {
@@ -650,6 +670,190 @@ bool Text :: load(path_t path, FileEncoding encoding, bool autoDetecting)
 
       _rowCount += (*it).rows;
    }
+
+   return true;
+}
+
+void Text :: insert(TextBookmark bookmark, text_t s, size_t length, bool checkRowCount)
+{
+   size_t position = bookmark.longPosition();
+
+   TextWatchers::Iterator it = _watchers.start();
+   while (!it.eof()) {
+      (*it)->onInsert(position, length, s);
+      ++it;
+   }
+   size_t offset = bookmark._offset;
+   size_t size;
+   while (length > 0) {
+      Pages::Iterator page = bookmark._page;
+      size = PAGE_SIZE - (*page).used;
+      if (size > length)
+         size = length;
+
+      if (offset < (*page).used) {
+         if (size == 0) {
+            size = (*page).used - offset;
+            (*page).used = offset;
+
+            Page newPage(size);
+            StrUtil::move(newPage.text, (*page).text + offset, size);
+
+            _pages.insertAfter(page, newPage);
+
+            if (!checkRowCount) {
+               refreshPage(page);
+            }
+            refreshNextPage(page);
+
+            if (size > length)
+               size = length;
+         }
+         else StrUtil::move((*page).text + offset + size, (*page).text + offset, (*page).used - offset);
+      }
+      else if (size == 0) {
+         if (!bookmark.goToNextPage(true)) {
+            Page newPage;
+
+            _pages.insertAfter(bookmark._page, newPage);
+            bookmark.goToNextPage(true);
+         }
+         offset = bookmark._offset;
+         continue;
+      }
+      StrUtil::move((*page).text + offset, s, size);
+
+      (*page).used += size;
+      if (checkRowCount) {
+         refreshPage(page);
+      }
+      length -= size;
+      offset += size;
+      s += size;
+   }
+
+   it = _watchers.start();
+   while (!it.eof()) {
+      (*it)->onUpdate(position);
+      ++it;
+   }
+}
+
+void Text :: erase(TextBookmark bookmark, size_t length, bool checkRowCount)
+{
+   size_t size = 0;
+   size_t offset = bookmark._offset;
+   size_t position = bookmark.longPosition();
+
+   while (length > 0) {
+      Pages::Iterator page = bookmark._page;
+      size = length;
+      if (size > (*page).used - offset)
+         size = (*page).used - offset;
+
+      if (size != 0) {
+         TextWatchers::Iterator it = _watchers.start();
+         while (!it.eof()) {
+            (*it)->onErase(position, size, (*page).text + offset);
+            it++;
+         }
+
+         if (offset + size < (*page).used) {
+            size_t l = (*page).used - offset;
+            StrUtil::move((*page).text + offset, (*page).text + offset + size, l);
+         }
+         (*page).used -= size;
+         length -= size;
+         if (checkRowCount) {
+            refreshPage(page);
+         }
+      }
+      if (length != 0) {
+         if (!bookmark.goToNextPage())
+            break;
+
+         offset = bookmark._offset;
+         position = bookmark.longPosition();
+      }
+   }
+   TextWatchers::Iterator it = _watchers.start();
+   while (!it.eof()) {
+      (*it)->onUpdate(position);
+      it++;
+   }
+}
+
+bool Text :: insertChar(TextBookmark& bookmark, text_c ch)
+{
+   validateBookmark(bookmark);
+
+   insert(bookmark, &ch, 1, false);
+   if (ch == '\t') {
+      bookmark._length = BM_INVALID;
+   }
+   else if (bookmark._length != BM_INVALID)
+      bookmark._length++;
+
+   if (_rowCount == 0) {
+      _rowCount++;
+   }
+   return true;
+}
+
+bool Text :: insertNewLine(TextBookmark& bookmark)
+{
+   validateBookmark(bookmark);
+
+   text_c ch[2];
+   if (_mode == EOLMode::CRLF) {
+      ch[0] = 13;
+      ch[1] = 10;
+      insert(bookmark, ch, 2, true);
+   }
+   else {
+      ch[0] = 10;
+      insert(bookmark, ch, 1, true);
+   }
+
+   bookmark._length = BM_INVALID;
+
+   _rowCount++;
+
+   return true;
+}
+
+bool Text :: eraseChar(TextBookmark& bookmark)
+{
+   validateBookmark(bookmark);
+
+   if (bookmark._column == bookmark.length()) {
+      if (bookmark._row != _rowCount - 1) {
+         if ((*bookmark._page).text[bookmark._offset] == 13) {
+            erase(bookmark, 2, true);
+         }
+         else erase(bookmark, 1, true);
+
+         _rowCount--;
+      }
+      else return false;
+   }
+   else erase(bookmark, 1, false);
+
+   bookmark._length = BM_INVALID;
+   //   bookmark.skipEmptyPages();
+
+   return true;
+}
+
+bool Text :: eraseLine(TextBookmark& bookmark, size_t length)
+{
+   validateBookmark(bookmark);
+
+   erase(bookmark, length, true);
+   bookmark._length = BM_INVALID;
+   //   bookmark.skipEmptyPages();
+
+   _rowCount = retrieveRowCount();
 
    return true;
 }

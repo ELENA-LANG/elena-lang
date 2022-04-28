@@ -124,6 +124,7 @@ namespace elena_lang
       void onButtonUp();
 
       bool onKeyDown(int keyCode, bool kbShift, bool kbCtrl);
+      bool onKeyPressed(wchar_t ch);
       void onPaint();
       void onResize() override;
       void onSetFocus() override;
