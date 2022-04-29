@@ -1342,11 +1342,20 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
          case DISP32LO_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskDisp32Lo);
             break;
+         case PTR32HI_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
+            break;
+         case PTR32LO_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
+            break;
          case NARG_2:
             scope->compiler->writeImm32(writer, startArg);
             break;
          case NARG16_2:
             scope->compiler->writeImm16(writer, startArg, 0);
+            break;
+         case NARG12_2:
+            scope->compiler->writeImm12(writer, startArg, 0);
             break;
          default:
             writeCoreReference(scope, entries->reference, entries->offset, code);

@@ -21,25 +21,42 @@ In development:
     * linux debugger
     * editor - edit text
     * editor - correctly destroy tabbar / frame / view
-    === Sprint 6 : console output ===
+    === Sprint 6 : branching ===
+    * implicit constructor
+    * private constructor
+    * abstract method
+    * abstract method cannot be created
+    * validate if all abstract methods are declared
+    * make BaseValue / BaseNumber / BaseIntNumber - an abstract
+    * protected constructor
+    * predefined methods
+    * branching : boolean type
+    * branching : operator : ?
+    * branching : if operator
+    * branching : loop attribute
+    * branching : while operator
     * static symbol
     * branching
+    === Sprint 7 : utf8 / utf16 / utf32 ===
     * embeddable return
+    * string & widestring
+    === Sprint 8 : console output ===
+    * hello world sample
+    === Sprint 9 : exception handling ===
     * exception handling
     * dispatcher : raise an error if the message is not handled
-    * hello world sample
-    === Sprint 7 : functional GC ===
+    === Sprint 10 : functional GC ===
     --- elena redux ---
     * create an object (GC)
     * create an object in sandbox - x86, x86-64, i386, amd64, ppc64le, arm64
-    === Sprint 8 : intsum / realsum ===
+    === Sprint 11 : intsum / realsum ===
     --- elena redux ---
     * api documentation
 
 ------                                                           
 Pipeline:
 ------   
-2    --- output redux ---
+    --- output redux ---
     --- elena redux ---
     --- ide redux ---
     --- docs / tutorials ---
@@ -48,25 +65,12 @@ Pipeline:
     * if virtual multi-method handler is overridden - redirect to the parent one
     * verifyMultimethods implements
     * explicit multimethod
-    * implicit constructor
-    * private constructor
-    * abstract method
-    * abstract method cannot be created
-    * validate if all abstract methods are declared
-    * make BaseValue / BaseNumber / BaseIntNumber - an abstract
     * call interface method
     * optimization - call method directly
     * compiler - calling a constructor method directly
     * compiler - constructor - fill newly created object with zerros
     * compiler - if the method has no call operarion, no need to set arg length
     * dispatching a message in compile-time when it is possible
-    * protected constructor
-    * predefined methods
-    * branching : boolean type
-    * branching : operator : ?
-    * branching : if operator
-    * branching : loop attribute
-    * branching : while operator
     * bcwriter : openFrame - should flush only used arguments (e.g. for test[1] - only one xflush)
     * dispatch opcode : optimize for 1,2,3,4 arguments
     * optimization sealed dispatching
