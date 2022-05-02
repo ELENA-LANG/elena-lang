@@ -820,7 +820,7 @@ labMatching:
   cmp     x18, #0
 
 //;  cmovz rdi, rsi
-  csinc   x18, x20, x18, eq
+  csel   x18, x20, x18, eq
 
 //;  mov  rdi, [rdi - elVMTOffset]
   sub     x18, x18, elVMTOffset
