@@ -85,10 +85,6 @@ end
 // ; in: x11 - size ; out: x10 - created object
 inline % GC_ALLOC
 
-  ldr     x23, [x23, #8]
-
-
-
   movz    x12,  data_ptr32lo : %CORE_GC_TABLE
   movk    x12,  data_ptr32hi : %CORE_GC_TABLE, lsl #16
   add     x13, x12, gc_yg_current
