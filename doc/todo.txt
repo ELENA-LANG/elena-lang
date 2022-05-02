@@ -7,6 +7,7 @@ In development:
     === Sprint 5 : dispatching methods ===
     --- elena redux ---
 
+    * #386 : import - longer distance
     * signature dispatch - arm64
 
     --- ide redux ---

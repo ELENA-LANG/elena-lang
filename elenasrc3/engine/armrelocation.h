@@ -58,7 +58,11 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
             space->importMapping.get(reference | mskImportRef64);
          addr_t codeAddress = space->code + space->imageBase + pos + 4;
 
+         printf("%x\n", tableAddress);
+
          int disp = (unsigned int)(tableAddress - codeAddress) >> 12;
+
+         printf("disp %x\n", disp);
 
          unsigned int opcode = *(unsigned int*)address;
 
