@@ -774,6 +774,7 @@ labNextParam:
 
 //;  lea  rbx, [r13 - 8]
 //  sub     x22, x23, #8
+  add     x23, x23, x24
 
 labMatching:
 
