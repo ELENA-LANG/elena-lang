@@ -813,8 +813,8 @@ labMatching:
 
   //; check nil
 //;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
-  movz    x20,  rdata_ptr32hi : %VOIDPTR
-  movk    x20,  rdata_ptr32hi : %VOIDPTR, lsl #16
+//  movz    x20,  rdata_ptr32hi : %VOIDPTR
+//  movk    x20,  rdata_ptr32hi : %VOIDPTR, lsl #16
 
 //;  test  rdi, rdi                                              
   cmp     x18, #0
