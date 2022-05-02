@@ -759,7 +759,7 @@ labNextOverloadlist:
   movk    x24,  mdata_ptr32hi : #0, lsl #16
 
 //;  shr  ebx, ACTION_ORDER
-//  lsr     x22, x22, # ACTION_ORDER
+  lsr     x22, x22, # ACTION_ORDER
 //;  lea  r13, [rbx*8]
 //  lsl     x23, x22, #4
 //
