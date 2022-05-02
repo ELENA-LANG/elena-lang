@@ -773,7 +773,7 @@ labNextParam:
 //  mov     x16, __n16_1
 
 //;  lea  rbx, [r13 - 8]
-  sub     x22, x23, #8
+//  sub     x22, x23, #8
 
 labMatching:
 
