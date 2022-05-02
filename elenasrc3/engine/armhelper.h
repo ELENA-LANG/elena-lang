@@ -315,7 +315,7 @@ namespace elena_lang
 
       static unsigned int makeBxxOpcode(int op, int z, int imm19, int op2, int cond)
       {
-         return (op << 25) | (z << 24) | ((imm19 & 0x1FFFF) << 5) | (op2 << 4) | cond;
+         return (op << 25) | (z << 24) | ((imm19 & 0x7FFFF) << 5) | (op2 << 4) | cond;
       }
 
       static unsigned int makeCondOpcode(int sf, int op, int op2, ARMOperandType rm, int cond, int o2, 
