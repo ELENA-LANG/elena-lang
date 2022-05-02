@@ -759,26 +759,26 @@ labNextOverloadlist:
   movk    x24,  mdata_ptr32hi : #0, lsl #16
 
 //;  shr  ebx, ACTION_ORDER
-  lsr     x22, x22, # ACTION_ORDER
+//  lsr     x22, x22, # ACTION_ORDER
 //;  lea  r13, [rbx*8]
-  lsl     x23, x22, #4
-
+//  lsl     x23, x22, #4
+//
 //;  mov  r13, [r9 + r13 * 2 + 8]
-  add     x23, x23, x24
-  ldr     x23, [x23, #8]
+// add     x23, x23, x24
+//  ldr     x23, [x23, #8]
 
 //;  mov  ecx, __n_1
-  mov     x16, __n16_1
+//  mov     x16, __n16_1
 
 //;  lea  rbx, [r13 - 8]
-  sub     x22, x23, #8
+//  sub     x22, x23, #8
 
 labNextParam:
 //;  sub  ecx, 1
-  sub     x16, x16, #1
+//  sub     x16, x16, #1
 
 //;  jnz  short labMatching
-  cmp     x16, #0 
+//  cmp     x16, #0 
 //;  bne     labMatching
 
 //;  mov  r9, __ptr64_2  - r21
