@@ -755,7 +755,7 @@ inline % 0FBh
 
 labNextOverloadlist:
 //;  mov  r9, mdata : %0
-  movz    x24,  mdata_ptr32lo : #0
+  movz    x24,  mdata_ptr32lo : #0               //;
   movk    x24,  mdata_ptr32hi : #0, lsl #16
 
 //;  shr  ebx, ACTION_ORDER

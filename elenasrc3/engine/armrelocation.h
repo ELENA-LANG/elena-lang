@@ -105,6 +105,12 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       case mskDataRef64:
          *(unsigned long long*)address += (unsigned long long)(base + space->data);
          break;
+      case mskMDataRef64:
+         *(unsigned long long*)address += (unsigned long long)(base + space->mdata);
+         break;
+      case mskMBDataRef64:
+         *(unsigned long long*)address += (unsigned long long)(base + space->mbdata);
+         break;
       case mskRDataRef32Hi:
       {
          unsigned int opcode = *(unsigned int*)address;
