@@ -761,7 +761,7 @@ labNextOverloadlist:
 labNextParam:
 
 //;  shr  ebx, ACTION_ORDER
-  lsr     x22, x22, # ACTION_ORDER
+//  lsr     x22, x22, # ACTION_ORDER
 //;  lea  r13, [rbx*8]
   lsl     x23, x22, #4
 
