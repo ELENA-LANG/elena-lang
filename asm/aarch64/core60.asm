@@ -784,11 +784,11 @@ labNextParam:
 //;  mov  r9, __ptr64_2  - r21
 
 //;  mov  r13, [r9 + rdx * 16 + 8] 
-  lsl     x23, x25, #4
-  add     x25, x21, x23
-  ldr     x23, [x25, #8] 
+//  lsl     x23, x25, #4
+//  add     x25, x21, x23
+//  ldr     x23, [x25, #8] 
 
-labMatching:
+//labMatching:
 
 end
 
