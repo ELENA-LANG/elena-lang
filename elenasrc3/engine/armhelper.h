@@ -180,7 +180,7 @@ namespace elena_lang
 
       static unsigned int makeImm12Opcode(int size, int op1, int op2, int op3, int opc, int imm12, ARMOperandType rn, ARMOperandType rt)
       {
-         return (size << 30) | (op1 << 27) | (op2 << 26) | (op3 << 24) | (opc << 22) | (((imm12 >> 3) & 0xFFF) << 10)
+         return (size << 30) | (op1 << 27) | (op2 << 26) | (op3 << 24) | (opc << 22) | ((imm12 & 0xFFF) << 10)
             | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rt & 0x1F);
       }
 

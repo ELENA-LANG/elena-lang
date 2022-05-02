@@ -85,6 +85,10 @@ end
 // ; in: x11 - size ; out: x10 - created object
 inline % GC_ALLOC
 
+  ldr     x23, [x23, #8]
+
+
+
   movz    x12,  data_ptr32lo : %CORE_GC_TABLE
   movk    x12,  data_ptr32hi : %CORE_GC_TABLE, lsl #16
   add     x13, x12, gc_yg_current
@@ -755,7 +759,7 @@ inline % 0FBh
 
 labNextOverloadlist:
 //;  mov  r9, mdata : %0
-  movz    x24,  mdata_ptr32lo : #0               //;
+  movz    x24,  mdata_ptr32lo : #0               //;--
   movk    x24,  mdata_ptr32hi : #0, lsl #16
 
 //;  shr  ebx, ACTION_ORDER
