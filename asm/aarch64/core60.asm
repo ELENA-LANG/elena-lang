@@ -8,6 +8,8 @@ define CORE_GC_TABLE         20003h
 define VOID           	     2000Dh
 define VOIDPTR               2000Eh
 
+define ACTION_ORDER              9
+
 // ; --- Object header fields ---
 define elSizeOffset          0004h
 define elVMTOffset           0010h 
@@ -753,11 +755,11 @@ inline % 0FBh
 
 labNextOverloadlist:
 //;  mov  r9, mdata : %0
-  movz    x24,  mdata_ptr32lo : 0
-  movk    x2r,  mdata_ptr32hi : 0, lsl #16
+  movz    x24,  mdata_ptr32lo : #0
+  movk    x24,  mdata_ptr32hi : #0, lsl #16
 
 //;  shr  ebx, ACTION_ORDER
-  lsr     x22, x22, ACTION_ORDER
+  lsr     x22, x22, # ACTION_ORDER
 //;  lea  r13, [rbx*8]
   lsl     x23, x22, #4
 
@@ -811,8 +813,8 @@ labMatching:
 
   //; check nil
 //;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
-  movz    x20,  rdata_disp32hi : %VOIDPTR
-  movk    x20,  rdata_disp32hi : %VOIDPTR, lsl #16
+  movz    x20,  rdata_ptr32hi : %VOIDPTR
+  movk    x20,  rdata_ptr32hi : %VOIDPTR, lsl #16
 
 //;  test  rdi, rdi                                              
   cmp     x18, #0
@@ -821,7 +823,7 @@ labMatching:
   csinc   x18, x20, x18, eq
 
 //;  mov  rdi, [rdi - elVMTOffset]
-  ld      r18, -elVMTOffset(r18)
+  sub     x18, x18, elVMTOffset
   ldr     x18, [x18, #0]
 
 //;  mov  rsi, [rbx + rcx * 8]

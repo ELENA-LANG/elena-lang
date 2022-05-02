@@ -53,6 +53,18 @@ bool Arm64Assembler :: readOperandReference(ScriptToken& tokenInfo, ref_t mask, 
       }
       else return false;
    }
+   else if (tokenInfo.compare("#")) {
+      read(tokenInfo);
+
+      if (tokenInfo.state == dfaInteger) {
+         imm = tokenInfo.token.toInt();
+         reference = mask;
+      }
+      else if (tokenInfo.state == dfaHexInteger) {
+         imm = tokenInfo.token.toInt(16);
+         reference = mask;
+      }
+   }
    else return false;
 
    return true;
@@ -323,6 +335,22 @@ ARMOperand Arm64Assembler :: readOperand(ScriptToken& tokenInfo, ustr_t errorMes
             }
             else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
          }
+         else if (tokenInfo.compare("mdata_ptr32lo")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskMDataRef32Lo, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("mdata_ptr32hi")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskMDataRef32Hi, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
          else if (tokenInfo.compare("data_ptr32lo")) {
             read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
@@ -504,6 +532,8 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
             case mskCodeRef32Lo:
             case mskCodeDisp32Hi:
             case mskCodeDisp32Lo:
+            case mskMDataRef32Hi:
+            case mskMDataRef32Lo:
                writer.Memory()->addReference(reference, writer.position() - 4);
                break;
             default:
@@ -908,6 +938,24 @@ void Arm64Assembler :: compileCSET(ScriptToken& tokenInfo, MemoryWriter& writer)
    }
 }
 
+void Arm64Assembler :: compileCSINC(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn2 = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   JumpType cond = readCond(tokenInfo);
+
+   if (!compileCSINC(rd, rn, rn2, cond, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void Arm64Assembler :: compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -1230,6 +1278,9 @@ bool Arm64Assembler::compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    else if (tokenInfo.compare("ble")) {
       compileBxx(tokenInfo, JumpType::LE, writer, labelScope);
    }
+   else if (tokenInfo.compare("bne")) {
+      compileBxx(tokenInfo, JumpType::NE, writer, labelScope);
+   }
    else if (tokenInfo.compare("b")) {
       compileB(tokenInfo, writer, labelScope);
    }
@@ -1242,6 +1293,9 @@ bool Arm64Assembler::compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
 {
    if (tokenInfo.compare("cset")) {
       compileCSET(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("csinc")) {
+      compileCSINC(tokenInfo, writer);
    }
    else if (tokenInfo.compare("cmp")) {
       compileCMP(tokenInfo, writer);

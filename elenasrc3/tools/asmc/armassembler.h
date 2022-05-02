@@ -86,6 +86,7 @@ namespace elena_lang
       void compileBLR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileBR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCSET(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileCSINC(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLDP(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLDR(ScriptToken& tokenInfo, MemoryWriter& writer);
