@@ -54,19 +54,15 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       }
       case mskImportRelRef32Hi4k:
       {
-         addr_t tableAddress = space->import + space->imageBase + 
-            space->importMapping.get(reference | mskImportRef64);
-         addr_t codeAddress = space->code + space->imageBase + pos + 4;
+         addr_t tableAddress = (space->import + space->imageBase + 
+            space->importMapping.get(reference | mskImportRef64)) >> 12;
+         addr_t codeAddress = (space->code + space->imageBase + pos + 4) >> 12;
 
-         printf("%x\n", tableAddress);
-
-         int disp = (unsigned int)(tableAddress - codeAddress) >> 12;
-
-         printf("disp %x\n", disp);
+         unsigned int disp = (unsigned int)(tableAddress - codeAddress);
 
          unsigned int opcode = *(unsigned int*)address;
 
-         opcode += (((disp >> 2) & 0x3FFFF) << 5);
+         opcode |= (((disp >> 2) & 0x7FFFF) << 5);
          opcode |= ((disp & 0x3) << 29);
 
          *(unsigned int*)address = opcode;
