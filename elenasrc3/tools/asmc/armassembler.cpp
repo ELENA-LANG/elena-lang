@@ -639,6 +639,17 @@ bool Arm64Assembler::compileBR(ARMOperand r, MemoryWriter& writer)
    return true;
 }
 
+bool Arm64Assembler :: compileCSEL(ARMOperand rd, ARMOperand rn, ARMOperand rm, JumpType cond, MemoryWriter& writer)
+{
+   if (rd.isXR() && rn.isXR() && rm.isXR()) {
+      writer.writeDWord(ARMHelper::makeCondOpcode(1, 0, 0xD4, rm.type, (int)cond, 0,
+         rn.type, rd.type));
+   }
+   else return false;
+
+   return true;
+}
+
 bool Arm64Assembler :: compileCSINC(ARMOperand rd, ARMOperand rn, ARMOperand rm, JumpType cond, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && rm.isXR()) {
@@ -953,6 +964,24 @@ void Arm64Assembler :: compileCSINC(ScriptToken& tokenInfo, MemoryWriter& writer
    JumpType cond = readCond(tokenInfo);
 
    if (!compileCSINC(rd, rn, rn2, cond, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void Arm64Assembler :: compileCSEL(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn2 = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   JumpType cond = readCond(tokenInfo);
+
+   if (!compileCSEL(rd, rn, rn2, cond, writer))
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
@@ -1296,6 +1325,9 @@ bool Arm64Assembler::compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
    else if (tokenInfo.compare("csinc")) {
       compileCSINC(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("csel")) {
+      compileCSEL(tokenInfo, writer);
    }
    else if (tokenInfo.compare("cmp")) {
       compileCMP(tokenInfo, writer);
