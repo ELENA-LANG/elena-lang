@@ -748,6 +748,16 @@ inline % 0FBh
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
 
+//;  xor  edx, edx
+  mov     x25, #0
+//;  mov  rbx, [rsi] // ; message from overload list
+  ldr     x22, [x21, #0]
+
+labNextOverloadlist:
+//;  mov  r9, mdata : %0
+  movz    x24,  mdata_ptr32lo : #0
+  movk    x24,  mdata_ptr32hi : #0, lsl #16
+
 end
 
 // ; vcallmr
