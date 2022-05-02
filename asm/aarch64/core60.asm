@@ -748,39 +748,6 @@ inline % 0FBh
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
 
-//;  xor  edx, edx
-  mov     x25, #0
-//;  mov  rbx, [rsi] // ; message from overload list
-  ldr     x22, [x21, #0]
-
-labNextOverloadlist:
-//;  mov  r9, mdata : %0
-  movz    x24,  mdata_ptr32lo : #0
-  movk    x24,  mdata_ptr32hi : #0, lsl #16
-
-labNextParam:
-
-//;  shr  ebx, ACTION_ORDER
-//  lsr     x22, x22, # ACTION_ORDER
-//;  lea  r13, [rbx*8]
-//  lsl     x23, x22, #4
-
-//;  mov  r13, [r9 + r13 * 2 + 8]
-//  add     x23, x23, x24
-//  ldr     x23, [x23, #8]
-
-//;  mov  ecx, __n_1
-//  mov     x16, __n16_1
-
-//;  lea  rbx, [r13 - 8]
-//  sub     x22, x23, #8
-  add     x23, x23, x24
-
-labMatching:
-
-
-labNextBaseClass:
-
 end
 
 // ; vcallmr
