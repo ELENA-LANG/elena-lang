@@ -789,7 +789,7 @@ labNextParam:
   ldr     x23, [x25, #8] 
 
 //;  mov  rcx, [rbx - elVMTOffset]
-  sub     x16, x15, elVMTOffset
+  sub     x16, x10, elVMTOffset
   ldr     x16, [x16, #0]
 
 //;  lea  rax, [r13 * 16]
@@ -798,7 +798,7 @@ labNextParam:
 //;  mov  rdx, [r9 + r13 * 2]        // c02
   lsl     x23, x23, #1
   add     x14, x21, x23 
-  ldr     x14, [x14, #0]
+  ldr     x9, [x14, #0]
 //;  jmp  [rcx + rax + 8]       // rax - 0
   add     x20, x16, x17
 

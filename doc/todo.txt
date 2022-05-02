@@ -7,7 +7,7 @@ In development:
     === Sprint 5 : dispatching methods ===
     --- elena redux ---
 
-    * signature dispatch - arm64         - 400618
+    * signature dispatch - arm64         - 4005c0
 
     --- ide redux ---
     * editor - open / close / save / select source files
