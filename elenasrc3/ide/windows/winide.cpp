@@ -22,6 +22,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_FILE_NEW:
          _controller->doNewFile(_model);
          break;
+      case IDM_FILE_OPEN:
+         _controller->doOpenFile(_model);
+         break;
       case IDM_DEBUG_RUN:
          _controller->projectController.doDebugAction(_model->projectModel, DebugAction::Run);
          break;

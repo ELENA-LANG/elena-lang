@@ -111,3 +111,10 @@ void IDEController :: doNewFile(IDEModel* model)
    sourceController.newDocument(&model->sourceViewModel, *tabName);
    sourceController.selectDocument(&model->sourceViewModel, *tabName);
 }
+
+void IDEController :: doOpenFile(IDEModel* model)
+{
+   if (_dialogController->selectFiles()) {
+      
+   }
+}

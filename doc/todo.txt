@@ -4,23 +4,6 @@ In development:
 
   [development]
     ### EPOCH: elena 6.0 - redux ###
-    === Sprint 5 : dispatching methods ===
-    --- elena redux ---
-
-    * signature dispatch - arm64         - 4005c0
-
-    --- ide redux ---
-    * editor - open / close / save / select source files
-    * editor - status bar
-    * editor - undo / redo
-    * editor - compile
-    * linux sdi - menu
-    * linux ide : new file
-    * linux ide : edit
-    * linux ide
-    * linux debugger
-    * editor - edit text
-    * editor - correctly destroy tabbar / frame / view
     === Sprint 6 : branching ===
     * implicit constructor
     * private constructor
@@ -37,6 +20,20 @@ In development:
     * branching : while operator
     * static symbol
     * branching
+    --- ide redux ---
+    * debugger : auto scroll to the tracer
+    * editor - open / close / save / exit
+    * editor - status bar
+    * editor - undo / redo
+    * editor - clip operations
+    * editor - compile
+    * linux sdi - menu
+    * linux ide : new file
+    * linux ide : edit
+    * linux ide
+    * linux debugger
+    * editor - edit text
+    * editor - correctly destroy tabbar / frame / view
     === Sprint 7 : utf8 / utf16 / utf32 ===
     * embeddable return
     * string & widestring
@@ -99,6 +96,7 @@ Pipeline:
     * external call : pass int constants directly
     * aarch64 : use - ldr x17, [x16, #PLT_GOT+0x10] to load value without using another operation
     * aarch64 : use adrp to load some 32bit addresses
+    * retro : is CONVERSION_MESSAGE flag is really required?
 
     * debugger : fix two breakpont in row
     * redirect handler : throw an exception on unhandled message

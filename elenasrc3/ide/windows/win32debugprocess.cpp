@@ -338,6 +338,8 @@ bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cm
       return false;
    }
 
+   dwDebugeeProcessId = pi.dwProcessId;
+
    if (pi.hProcess)
       CloseHandle(pi.hProcess);
 
@@ -396,14 +398,15 @@ void Win32DebugProcess :: processEvent(size_t timeout)
 
       switch (event.dwDebugEventCode) {
          case CREATE_PROCESS_DEBUG_EVENT:
-            baseAddress = (addr_t)event.u.CreateProcessInfo.lpBaseOfImage;
-
             _current = new Win32ThreadContext(event.u.CreateProcessInfo.hProcess, event.u.CreateProcessInfo.hThread);
             _current->refresh();
 
             _threads.add(dwCurrentThreadId, _current);
 
-            _breakpoints.setSoftwareBreakpoints(_current);
+            if (dwCurrentProcessId == dwDebugeeProcessId) {
+               baseAddress = (addr_t)event.u.CreateProcessInfo.lpBaseOfImage;
+               _breakpoints.setSoftwareBreakpoints(_current);
+            }
 
             ::CloseHandle(event.u.CreateProcessInfo.hFile);
             break;
@@ -549,6 +552,8 @@ void Win32DebugProcess :: reset()
    maxAddress = 0;
    baseAddress = 0;
 
+   dwDebugeeProcessId = 0;
+
    steps.clear();
    _breakpoints.clear();
 
@@ -578,13 +583,13 @@ addr_t Win32DebugProcess :: getBaseAddress()
 bool Win32DebugProcess :: findSignature(StreamReader& reader, char* signature, pos_t length)
 {
    size_t rdata = 0;
-   PEHelper::seekSection(reader, ".rdata", rdata);
+   if (!PEHelper::seekSection(reader, ".rdata", rdata))
+      return false;
 
    // load Executable image
    _current->readDump(rdata + sizeof(addr_t), signature, length);
 
    return true;
-
 }
 
 void Win32DebugProcess :: setBreakpoint(addr_t address, bool withStackLevelControl)

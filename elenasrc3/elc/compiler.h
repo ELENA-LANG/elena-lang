@@ -412,8 +412,8 @@ namespace elena_lang
             return test(info.hints, (ref_t)hint);
          }
 
-         bool checkKind(MethodHint hint);
-         static bool checkKind(MethodInfo& methodInfo, MethodHint hint);
+         bool checkType(MethodHint type);
+         static bool checkType(MethodInfo& methodInfo, MethodHint type);
 
          ref_t getClassRef(bool ownerClass = true)
          {

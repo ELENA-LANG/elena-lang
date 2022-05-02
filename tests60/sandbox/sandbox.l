@@ -1,19 +1,17 @@
 import system;
 
-A;
+A
+{
+   constructor()
+   { 
+   }
+}
 
 singleton Tester
 {
    run()
    {
       var a := new A();
-
-      self.test(a);
-   }
-
-   test(A a)
-   {
-       Output.write("  A()");
    }
 }
 

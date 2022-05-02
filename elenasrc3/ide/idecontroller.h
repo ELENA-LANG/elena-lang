@@ -74,7 +74,8 @@ namespace elena_lang
    // --- IDEController ---
    class IDEController
    {
-      NotifierBase* _notifier;
+      NotifierBase*           _notifier;
+      DialogControllerBase*   _dialogController;
 
    public:
       SourceViewController sourceController;
@@ -88,12 +89,17 @@ namespace elena_lang
       }
 
       void doNewFile(IDEModel* model);
+      void doOpenFile(IDEModel* model);
 
-      IDEController(DebugProcessBase* process, IDEModel* model, TextViewSettings& textViewSettings) :
+      IDEController(DebugProcessBase* process, IDEModel* model, 
+         TextViewSettings& textViewSettings,
+         DialogControllerBase* dialogController
+      ) :
          sourceController(textViewSettings),
          projectController(process, &model->projectModel, &model->sourceViewModel)
       {
          _notifier = nullptr;
+         _dialogController = dialogController;
       }
    };
 

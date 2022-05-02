@@ -11,6 +11,13 @@
 
 namespace elena_lang
 {
+   // --- DialogControllerBase ---
+   class DialogControllerBase
+   {
+   public:
+      virtual bool selectFiles() = 0;
+   };
+
    // --- TextViewSettings ---
    struct TextViewSettings
    {

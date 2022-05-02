@@ -419,14 +419,14 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    reservedArgs = parent->moduleScope->minimalArgList;
 }
 
-bool Compiler::MethodScope::checkKind(MethodHint hint)
+bool Compiler::MethodScope :: checkType(MethodHint type)
 {
-   return (info.hints & MethodHint::Mask) == hint;
+   return (info.hints & MethodHint::Mask) == type;
 }
 
-bool Compiler::MethodScope :: checkKind(MethodInfo& methodInfo, MethodHint hint)
+bool Compiler::MethodScope :: checkType(MethodInfo& methodInfo, MethodHint type)
 {
-   return (methodInfo.hints & MethodHint::Mask) == hint;
+   return (methodInfo.hints & MethodHint::Mask) == type;
 }
 
 ObjectInfo Compiler::MethodScope :: mapSelf()
@@ -686,7 +686,9 @@ mssg_t Compiler :: mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionNa
    }
    else return 0;
 
-   pos_t argCount = paramCount + 1;
+   // NOTE : a message target should be included as well for a normal message
+   pos_t argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
+   argCount += paramCount;
 
    return encodeMessage(actionRef, argCount, flags);
 }
@@ -917,7 +919,7 @@ void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node, b
          scope.raiseError(errClosedParent, node);
       }
 
-      if (existing && MethodScope::checkKind(methodInfo, MethodHint::Sealed))
+      if (existing && MethodScope::checkType(methodInfo, MethodHint::Sealed))
          scope.raiseError(errClosedMethod, node);
 
       methodInfo.inherited = false;
@@ -1377,16 +1379,17 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool dec
 
    // HOTFIX : do not overwrite the message on the second pass
    if (scope.message == 0) {
-      if (scope.checkKind(MethodHint::Dispatcher)) {
+      if (scope.checkType(MethodHint::Dispatcher)) {
          if (paramCount == 0 && unnamedMessage) {
             actionRef = getAction(scope.moduleScope->buildins.dispatch_message);
             unnamedMessage = false;
          }
          else scope.raiseError(errIllegalMethod, node);
       }
-      else if (scope.checkKind(MethodHint::Constructor) && unnamedMessage) {
+      else if (scope.checkHint(MethodHint::Constructor) && unnamedMessage) {
          actionStr.copy(CONSTRUCTOR_MESSAGE);
          unnamedMessage = false;
+         flags |= FUNCTION_MESSAGE;
       }
 
       if (scope.checkHint(MethodHint::Internal)) {
