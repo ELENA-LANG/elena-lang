@@ -803,7 +803,7 @@ labNextParam:
   add     x20, x16, x17
 
   ldr     x17, [x20, #8]
-  blr     x17
+  br      x17
 
 labMatching:
 //;  mov  rdi, [rax + rcx * 8]
