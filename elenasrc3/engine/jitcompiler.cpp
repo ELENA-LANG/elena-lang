@@ -144,6 +144,7 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*
          break;
       case mskDataRef32Lo:
       case mskRDataRef32Lo:
+      case mskMDataRef32Lo:
       case mskCodeRef32Lo:
          scope->helper->writeVAddress32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
@@ -151,6 +152,7 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*
          break;
       case mskDataRef32Hi:
       case mskRDataRef32Hi:
+      case mskMDataRef32Hi:
       case mskCodeRef32Hi:
          scope->helper->writeVAddress32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
