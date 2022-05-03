@@ -20,7 +20,9 @@ __define EXPRESSION          6192;
 __define OBJECT              4145;
 __define TEMPLATE_TYPE       4146;
 __define ARRAY_TYPE          4147;
+__define NESTED              4224;
 __define RET_EXPRESSION      7220;
+__define NESTED_EXPRESSION   6197;
 __define INDEXER_OPERATION   6209;
 __define ASSIGN_OPERATION    6210;
 __define ADDITION_ASSIGNMENT 6211;
@@ -144,13 +146,20 @@ EXPRESSION ::=
         | hexinteger ^OBJECT
         | string ^OBJECT;
 
+NESTED_EXPRESSION ::=
+	"{" SUB_DECLARATIONS "}";
+
 I_R ::=
         identifier I_R
+	| NESTED_EXPRESSION ^NESTED N_R
         | I_L0_R
 	| I_L1_R
 	| I_L2_R
 	| I_L3_R NEXT_L3_R
         | eps ^OBJECT; 
+
+N_R ::=
+	eps;
 
 I_L0_R ::=
         "[" ^OBJECT EXPRESSION "]" ^INDEXER_OPERATION INDEXER_R

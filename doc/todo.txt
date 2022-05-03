@@ -80,6 +80,7 @@ Pipeline:
     * private method dispatching
     * optimization xstore sp:0, 0 and xstore sp:1, 0 - should be replaced with xor operation
     * no need to store an argument for the function (constructor)
+    * nested class cannot have static methods
 
     * editor - do we need checkmode? it seems like not
 

@@ -26,6 +26,7 @@ namespace elena_lang
       Internal       = 0x0040000,
       Constructor    = 0x0200400,
       Conversion     = 0x0200800,
+      Constant       = 0x2000000,
       Protected      = 0x4000000,
       Private        = 0x8000000,
    };

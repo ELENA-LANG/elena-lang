@@ -358,7 +358,7 @@ namespace elena_lang
 
          void save();
 
-         ClassScope(NamespaceScope* ns, ref_t reference, Visibility visibility);
+         ClassScope(Scope* parent, ref_t reference, Visibility visibility);
       };
 
       struct MethodScope : Scope
@@ -530,6 +530,13 @@ namespace elena_lang
             else return Scope::getScope(level);
          }
 
+         ref_t getClassRef(bool ownerClass = true)
+         {
+            ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+
+            return scope ? scope->reference : 0;
+         }
+
          void markAsAssigned(ObjectInfo object) override
          {
             parent->markAsAssigned(object);
@@ -546,6 +553,11 @@ namespace elena_lang
 
          ExprScope(SourceScope* parent);
          ExprScope(CodeScope* parent);
+      };
+
+      struct InlineClassScope : ClassScope
+      {
+         InlineClassScope(ExprScope* owner, ref_t reference);
       };
 
    private:
@@ -680,6 +692,7 @@ namespace elena_lang
 
       ObjectInfo mapObject(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
 
+      ObjectInfo compileNested(ExprScope& scope, SyntaxNode node, ExpressionAttribute mode);
       ObjectInfo compileObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
          ExpressionAttribute mode);
       ObjectInfo compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
@@ -703,6 +716,7 @@ namespace elena_lang
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
       void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileConstructor(BuildTreeWriter& writer, MethodScope& scope, ClassScope& classClassScope, SyntaxNode node);
+      void compileNestedVMT(ClassScope& scope, SyntaxNode node);
       void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);
       void compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node);
 

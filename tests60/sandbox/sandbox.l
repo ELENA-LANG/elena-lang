@@ -2,12 +2,10 @@ import system;
 
 A
 {
-   get() = self;
-
-//    get() = new 
-//    {
-//       test() {}
-//    };
+    get() = new 
+    {
+       test() {}
+    };
 }
 
 singleton Tester

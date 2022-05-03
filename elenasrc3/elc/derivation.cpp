@@ -131,6 +131,24 @@ void SyntaxTreeBuilder :: flushObject(Scope& scope, SyntaxNode node)
    _writer.closeNode();
 }
 
+void SyntaxTreeBuilder :: flushNested(Scope& scope, SyntaxNode node)
+{
+   _writer.newNode(node.key);
+
+   SyntaxNode current = node.firstChild();
+   ref_t attributeCategory = V_CATEGORY_MAX;
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::NestedExpression) {
+         flushClass(scope, current);
+      }
+      else flushAttribute(scope, current, attributeCategory, true);
+
+      current = current.nextNode();
+   }
+
+   _writer.closeNode();
+}
+
 void SyntaxTreeBuilder :: flushMessage(Scope& scope, SyntaxNode node)
 {
    _writer.newNode(node.key);
@@ -154,6 +172,9 @@ void SyntaxTreeBuilder :: flushExpression(Scope& scope, SyntaxNode node)
       switch (current.key) {
          case SyntaxKey::Object:
             flushObject(scope, current);
+            break;
+         case SyntaxKey::NestedBlock:
+            flushNested(scope, current);
             break;
          case SyntaxKey::Message:
             flushMessage(scope, current);

@@ -60,6 +60,7 @@ namespace elena_lang
       TemplateType       = 0x001032,
       ArrayType          = 0x001033,
       ReturnExpression   = 0x001C34,
+      NestedExpression   = 0x001835,
       IndexerOperation   = 0x001841,
       AssignOperation    = 0x001842,
       AddAssignOperation = 0x001843,
@@ -71,6 +72,7 @@ namespace elena_lang
       TemplatePostfix    = 0x001061,
       TemplateArg        = 0x001070,
       Dimension          = 0x001471,
+      NestedBlock        = 0x001080,
 
       Name               = 0x000101,
       Namespace          = 0x000103,

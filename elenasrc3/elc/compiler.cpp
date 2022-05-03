@@ -392,7 +392,7 @@ Compiler::TemplateScope :: TemplateScope(Scope* parent, ref_t reference, Visibil
 
 // --- Compiler::ClassScope ---
 
-Compiler::ClassScope :: ClassScope(NamespaceScope* ns, ref_t reference, Visibility visibility)
+Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibility)
    : SourceScope(ns, reference, visibility)
 {
    info.header.flags = elStandartVMT;
@@ -581,6 +581,14 @@ void Compiler::ExprScope :: syncStack()
             symbolScope->reserved1 = tempAllocated1;
       }
    }
+}
+
+// --- Compiler::InlineClassScope ---
+
+Compiler::InlineClassScope :: InlineClassScope(ExprScope* owner, ref_t reference)
+   : ClassScope(owner, reference, Visibility::Internal)
+{
+   
 }
 
 // --- Compiler ---
@@ -2817,6 +2825,50 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
    return source;
 }
 
+ObjectInfo Compiler :: compileNested(ExprScope& ownerScope, SyntaxNode node, ExpressionAttribute mode)
+{
+   ObjectInfo retVal = {};
+
+   ref_t declaredRef = 0;
+   EAttrs nestedMode = {};
+   declareExpressionAttributes(ownerScope, node, declaredRef, nestedMode);
+
+   if (nestedMode.attrs != EAttr::None && nestedMode.attrs != EAttr::NewOp)
+      ownerScope.raiseError(errInvalidOperation, node);
+
+   ref_t nestedRef = 0;
+   if (EAttrs::testAndExclude(mode, EAttr::RootSymbol)) {
+      SymbolScope* owner = (SymbolScope*)ownerScope.getScope(Scope::ScopeLevel::Symbol);
+      if (owner)
+         nestedRef = owner->reference;
+   }
+   else if (EAttrs::testAndExclude(mode, EAttr::Root)) {
+      MethodScope* ownerMeth = (MethodScope*)ownerScope.getScope(Scope::ScopeLevel::Method);
+      if (ownerMeth && ownerMeth->checkHint(MethodHint::Constant)) {
+         ref_t dummyRef = 0;
+         // HOTFIX : recognize property constant
+
+         IdentifierString name(ownerScope.module->resolveReference(ownerScope.getClassRef()));
+         if ((*name).endsWith(CLASSCLASS_POSTFIX))
+            name.truncate(name.length() - getlength(CLASSCLASS_POSTFIX));
+
+         name.append('#');
+         name.append(ownerScope.module->resolveAction(getAction(ownerMeth->message), dummyRef));
+
+         nestedRef = ownerMeth->module->mapReference(*name);
+      }
+   }
+
+   if (!nestedRef)
+      nestedRef = ownerScope.moduleScope->mapAnonymous();
+
+   InlineClassScope scope(&ownerScope, nestedRef);
+
+   compileNestedVMT(scope, node);
+
+   return retVal;
+}
+
 inline bool hasToBePresaved(ObjectInfo retVal)
 {
    return retVal.kind == ObjectKind::Object || retVal.kind == ObjectKind::External;
@@ -2844,6 +2896,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::Object:
          retVal = compileObject(writer, scope, current, mode);
          break;
+      case SyntaxKey::NestedBlock:
+         retVal = compileNested(scope, current, mode);
+         break;
       default:
          retVal = compileObject(writer, scope, node, mode);
          break;
@@ -2867,7 +2922,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 
    ref_t outputRef = codeScope.getOutputRef();
 
-   ObjectInfo retVal = compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), outputRef, EAttr::None);
+   ObjectInfo retVal = compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), outputRef, EAttr::Root);
 
    writer.appendNode(BuildKey::goingToEOP);
 
@@ -2908,7 +2963,7 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
    ExprScope exprScope(&scope);
    ObjectInfo retVal = compileExpression(writer, exprScope,
       node.findChild(SyntaxKey::Expression), 0,
-      ExpressionAttribute::None);
+      ExpressionAttribute::RootSymbol);
 
    writeObjectInfo(writer, retVal);
 
@@ -3239,6 +3294,23 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
 
       current = current.nextNode();
    }
+}
+
+void Compiler :: compileNestedVMT(ClassScope& scope, SyntaxNode node)
+{
+   resolveClassParent(scope, node.findChild(SyntaxKey::Type));
+
+   bool withConstructors = false;
+   bool withDefaultConstructor = false;
+   declareVMT(scope, node, withConstructors, withDefaultConstructor);
+   if (withConstructors)
+      scope.raiseError(errIllegalConstructor, node);
+
+   generateClassDeclaration(scope, node, elNestedClass | elSealed);
+
+   scope.save();
+
+
 }
 
 void Compiler :: compileClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)

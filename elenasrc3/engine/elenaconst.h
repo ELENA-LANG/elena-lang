@@ -94,6 +94,7 @@ namespace elena_lang
    constexpr ref_t elFinal                = 0x00000008;
    constexpr ref_t elClosed               = 0x00000010;
    constexpr ref_t elSealed               = 0x00000038;
+   constexpr ref_t elNestedClass          = 0x00000040;
    constexpr ref_t elRole                 = 0x00000100;
    constexpr ref_t elAbstract             = 0x00000200;
    constexpr ref_t elNoCustomDispatcher   = 0x00000400;

@@ -77,6 +77,7 @@ namespace elena_lang
       void flushTemplageExpression(Scope& scope, SyntaxNode node, SyntaxKey type, bool allowType);
       void flushMessage(Scope& scope, SyntaxNode node);
       void flushObject(Scope& scope, SyntaxNode node);
+      void flushNested(Scope& scope, SyntaxNode node);
       void flushExpression(Scope& scope, SyntaxNode node);
       void flushStatement(Scope& scope, SyntaxNode node);
       void flushMethodCode(Scope& scope, SyntaxNode node);

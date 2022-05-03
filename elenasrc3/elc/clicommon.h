@@ -328,7 +328,7 @@ public:
 
    virtual bool isStandardOne() = 0;
 
-   virtual ref_t mapAnonymous(ustr_t prefix) = 0;
+   virtual ref_t mapAnonymous(ustr_t prefix = nullptr) = 0;
 
    virtual ref_t mapFullReference(ustr_t referenceName, bool existing = false) = 0;
    virtual ref_t mapWeakReference(ustr_t referenceName, bool existing = false) = 0;
@@ -385,6 +385,8 @@ enum class ExpressionAttribute : pos64_t
    Local             = 0x00000000100,
    NewOp             = 0x00000000200,
    StrongResolved    = 0x00000000400,
+   RootSymbol        = 0x00000000800,
+   Root              = 0x00000001000,
    Extern            = 0x00000080000,
    NoDebugInfo       = 0x40000000000,
 };
