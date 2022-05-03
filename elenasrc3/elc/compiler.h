@@ -655,14 +655,17 @@ namespace elena_lang
 
       ObjectInfo saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object);
 
-      ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef);
-      ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef);
+      ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
+      ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
 
       ObjectInfo compileExternalOp(BuildTreeWriter& writer, Scope& scope, ref_t externalRef, bool stdCall, 
          ArgumentsInfo& arguments);
 
-      ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, mssg_t message, 
-         ArgumentsInfo& arguments);
+      ObjectInfo compileNewOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
+         ObjectInfo source, ArgumentsInfo& arguments);
+
+      ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target, mssg_t message, 
+         ArgumentsInfo& arguments, ExpressionAttributes mode);
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute attrs);
 
       ObjectInfo compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand);

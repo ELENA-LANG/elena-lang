@@ -5,11 +5,15 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 6 : branching ===
-    * implicit constructor
+    * warn if the message is not resolved for the strong typed operation
+    * new op - raise an error if the operation was not directly resolved
+
     * private constructor
+    * interface with private constructor - cannot be publically inherited
     * abstract method
-    * abstract method cannot be created
+    * abstract class cannot be created
     * validate if all abstract methods are declared
+    * Boolean
     * make BaseValue / BaseNumber / BaseIntNumber - an abstract
     * protected constructor
     * predefined methods
@@ -18,6 +22,7 @@ In development:
     * branching : if operator
     * branching : loop attribute
     * branching : while operator
+    * comparision operators
     * static symbol
     * branching
     --- ide redux ---

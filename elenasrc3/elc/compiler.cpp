@@ -2420,17 +2420,17 @@ inline bool isSelfCall(ObjectInfo target)
    }
 }
 
-ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, /*SyntaxNode node, */ObjectInfo target,
-   mssg_t weakMessage, ArgumentsInfo & arguments)
+ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target,
+   mssg_t weakMessage, ArgumentsInfo & arguments, ExpressionAttributes mode)
 {
    ObjectInfo retVal(ObjectKind::Object);
 
    BuildKey operation = BuildKey::CallOp;
    mssg_t message = resolveMessageAtCompileTime(weakMessage);
-   ref_t targetRef = 0;
+   ref_t targetRef = resolveObjectReference(target);
 
    CheckMethodResult result = {};
-   bool found = _logic->resolveCallType(*scope.moduleScope, resolveObjectReference(target), message, result);
+   bool found = _logic->resolveCallType(*scope.moduleScope, targetRef, message, result);
    if (found) {
       switch (result.visibility) {
          case Visibility::Private:
@@ -2443,7 +2443,20 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          default:
             break;
       }
+   }
+   else if (targetRef) {
+      if (EAttrs::test(mode.attrs, EAttr::StrongResolved)) {
+         if (getAction(message) == getAction(scope.moduleScope->buildins.constructor_message)) {
+            scope.raiseError(errUnknownDefConstructor, node);
+         }
+         else scope.raiseError(errUnknownMessage, node.findChild(SyntaxKey::Message));
+      }
+      else {
+         // treat it as a weak reference
+         targetRef = 0;
 
+         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(SyntaxKey::Message));
+      }
    }
 
    if (found) {
@@ -2451,7 +2464,6 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       switch ((MethodHint)result.kind) {
          case MethodHint::Sealed:
             operation = BuildKey::DirectCallOp;
-            targetRef = resolveObjectReference(target);
             break;
          default:
             break;
@@ -2490,6 +2502,18 @@ void Compiler :: addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKe
    }
 }
 
+ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source,
+   ArgumentsInfo& arguments)
+{
+   mssg_t messageRef = overwriteArgCount(scope.moduleScope->buildins.constructor_message, arguments.count());
+   ObjectInfo retVal = compileMessageOperation(
+      writer, scope, node, source, messageRef, arguments, EAttr::StrongResolved);
+
+   scope.reserveArgs(arguments.count());
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
    ExpressionAttribute attrs)
 {
@@ -2509,16 +2533,10 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          retVal = compileExternalOp(writer, scope, source.reference, source.extra == -1, arguments);
          break;
       case ObjectKind::Creating:
-      {
-         source = mapClassSymbol(scope, source.type);
-
          compileMessageArguments(writer, scope, current, arguments);
-         mssg_t messageRef = overwriteArgCount(scope.moduleScope->buildins.constructor_message, arguments.count());
-         retVal = compileMessageOperation(writer, scope, source, messageRef, arguments);
 
-         scope.reserveArgs(arguments.count());
+         retVal = compileNewOp(writer, scope, node, mapClassSymbol(scope, source.type), arguments);
          break;
-      }
       default:
       {
          arguments.add(source);
@@ -2528,7 +2546,8 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
          compileMessageArguments(writer, scope, current, arguments);
 
-         retVal = compileMessageOperation(writer, scope, source, messageRef, arguments);
+         retVal = compileMessageOperation(writer, scope, node, source, messageRef, 
+            arguments, EAttr::None);
 
          scope.reserveArgs(arguments.count());
          break;
@@ -2759,7 +2778,7 @@ ObjectInfo Compiler :: compileObject(BuildTreeWriter& writer, ExprScope& scope, 
    else return compileExpression(writer, scope, node, 0, mode);
 }
 
-ObjectInfo Compiler :: typecastObject(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef)
+ObjectInfo Compiler :: typecastObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef)
 {
    if (targetRef == scope.moduleScope->buildins.superReference)
       return source;
@@ -2772,10 +2791,10 @@ ObjectInfo Compiler :: typecastObject(BuildTreeWriter& writer, ExprScope& scope,
    ArgumentsInfo arguments;
    arguments.add(source);
 
-   return compileMessageOperation(writer, scope, source, typecastMssg, arguments);
+   return compileMessageOperation(writer, scope, node, source, typecastMssg, arguments, EAttr::None);
 }
 
-ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source,
+ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source,
    ref_t targetRef)
 {
    ref_t sourceRef = resolveObjectReference(source);
@@ -2791,7 +2810,7 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
                throw InternalError(errFatalError);
          }
       }
-      else source = typecastObject(writer, scope, source, targetRef);
+      else source = typecastObject(writer, scope, node, source, targetRef);
    }
 
    return source;
@@ -2833,7 +2852,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       retVal = saveToTempLocal(writer, scope, retVal);
    }
    if (targetRef) {
-      retVal = convertObject(writer, scope, retVal, targetRef);
+      retVal = convertObject(writer, scope, node, retVal, targetRef);
       if (paramMode && hasToBePresaved(retVal))
          retVal = saveToTempLocal(writer, scope, retVal);
    }
@@ -2992,7 +3011,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
       if (outputRef) {
          ExprScope exprScope(&codeScope);
 
-         typecastObject(writer, exprScope, retVal, outputRef);
+         typecastObject(writer, exprScope, node, retVal, outputRef);
 
          exprScope.syncStack();
       }
