@@ -5,18 +5,17 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 6 : branching ===
-    * warn if the message is not resolved for the strong typed operation
-    * new op - raise an error if the operation was not directly resolved
+    * nested class
 
-    * private constructor
-    * interface with private constructor - cannot be publically inherited
-    * abstract method
-    * abstract class cannot be created
-    * validate if all abstract methods are declared
+    * nested class with the specified parent 
+    * properties
+    * const fields
+    * const static properties
     * Boolean
-    * make BaseValue / BaseNumber / BaseIntNumber - an abstract
     * protected constructor
     * predefined methods
+    * make BaseValue / BaseNumber / BaseIntNumber - an abstract
+    * conversion routines
     * branching : boolean type
     * branching : operator : ?
     * branching : if operator
@@ -64,6 +63,7 @@ Pipeline:
     --- docs / tutorials ---
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
+    * optimization: resolve const static properties directly
     * if virtual multi-method handler is overridden - redirect to the parent one
     * verifyMultimethods implements
     * explicit multimethod
@@ -101,6 +101,7 @@ Pipeline:
     * external call : pass int constants directly
     * aarch64 : use - ldr x17, [x16, #PLT_GOT+0x10] to load value without using another operation
     * aarch64 : use adrp to load some 32bit addresses
+    * validate if all abstract methods are declared
     * retro : is CONVERSION_MESSAGE flag is really required?
 
     * debugger : fix two breakpont in row

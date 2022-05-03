@@ -2,9 +2,12 @@ import system;
 
 A
 {
-   constructor()
-   { 
-   }
+   get() = self;
+
+//    get() = new 
+//    {
+//       test() {}
+//    };
 }
 
 singleton Tester
@@ -12,6 +15,8 @@ singleton Tester
    run()
    {
       var a := new A();
+//      var t := a.get();
+//      t.test();
    }
 }
 

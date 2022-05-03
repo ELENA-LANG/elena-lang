@@ -382,6 +382,7 @@ void SyntaxTreeBuilder :: flushMethod(Scope& scope, SyntaxNode node)
             break;
          case SyntaxKey::CodeBlock:
          case SyntaxKey::WithoutBody:
+         case SyntaxKey::ReturnExpression:
             flushMethodCode(scope, current);
             break;
          default:
@@ -403,6 +404,7 @@ void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
    switch (member.key) {
       case SyntaxKey::CodeBlock:
       case SyntaxKey::WithoutBody:
+      case SyntaxKey::ReturnExpression:
          _writer.CurrentNode().setKey(SyntaxKey::Method);
          flushMethod(scope, node);
          break;

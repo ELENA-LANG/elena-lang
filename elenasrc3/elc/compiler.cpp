@@ -1300,6 +1300,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
          case SyntaxKey::Name:
          case SyntaxKey::Attribute:
          case SyntaxKey::CodeBlock:
+         case SyntaxKey::ReturnExpression:
          case SyntaxKey::Parameter:
          case SyntaxKey::Type:
          case SyntaxKey::ArrayType:
@@ -1469,7 +1470,7 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
             declareMethod(methodScope, current, scope.abstractMode);
             if (methodScope.checkHint(MethodHint::Constructor)) {
                withConstructors = true;
-               if ((methodScope.message & ~CONVERSION_MESSAGE) == scope.moduleScope->buildins.constructor_message) {
+               if ((methodScope.message & ~STATIC_MESSAGE) == scope.moduleScope->buildins.constructor_message) {
                   withDefaultConstructor = true;
                }
             }
@@ -2444,6 +2445,17 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
             break;
       }
    }
+
+   if (found) {
+      retVal.type = result.outputRef;
+      switch ((MethodHint)result.kind) {
+         case MethodHint::Sealed:
+            operation = BuildKey::DirectCallOp;
+            break;
+         default:
+            break;
+      }
+   }
    else if (targetRef) {
       if (EAttrs::test(mode.attrs, EAttr::StrongResolved)) {
          if (getAction(message) == getAction(scope.moduleScope->buildins.constructor_message)) {
@@ -2456,17 +2468,6 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          targetRef = 0;
 
          scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(SyntaxKey::Message));
-      }
-   }
-
-   if (found) {
-      retVal.type = result.outputRef;
-      switch ((MethodHint)result.kind) {
-         case MethodHint::Sealed:
-            operation = BuildKey::DirectCallOp;
-            break;
-         default:
-            break;
       }
    }
 
