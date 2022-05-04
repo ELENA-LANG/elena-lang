@@ -58,7 +58,7 @@ namespace elena_lang
       bool isValidAttrDictionaryOp(int operatorId);
       bool isValidOp(int operatorId, BuildKey op);
 
-      void tweakClassFlags(ClassInfo& info, bool classClassMode);
+      void tweakClassFlags(ref_t classRef, ClassInfo& info, bool classClassMode);
       void tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef);
 
       bool validateMessage(mssg_t message);

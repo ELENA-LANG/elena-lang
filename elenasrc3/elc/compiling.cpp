@@ -346,4 +346,4 @@ int CompilingProcess :: build(ProjectBase& project,
 
       return -2;
    }
-   }
+}

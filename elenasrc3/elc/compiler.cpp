@@ -402,9 +402,11 @@ Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibi
 
 void Compiler::ClassScope :: save()
 {
+   MemoryBase* section = moduleScope->mapSection(reference | mskMetaClassInfoRef, false);
+   section->trim(0);
+
    // save class meta data
-   MemoryWriter metaWriter(moduleScope->mapSection(reference | mskMetaClassInfoRef, false));
-   metaWriter.Memory()->trim(0);
+   MemoryWriter metaWriter(section);
    info.save(&metaWriter);
 }
 
@@ -974,7 +976,7 @@ void Compiler :: injectVirtualCode(SyntaxNode classNode, ModuleScopeBase* scope,
    if (test(classInfo.header.flags, elClassClass)) {
 
    }
-   else if (/*!test(classInfo.header.flags, elNestedClass) && */!test(classInfo.header.flags, elRole)) {
+   else if (!test(classInfo.header.flags, elNestedClass) && !test(classInfo.header.flags, elRole)) {
       // skip class classes, extensions and singletons
       if (classRef != scope->buildins.superReference && !test(classInfo.header.flags, elClosed)) {
          // auto generate cast$<type> message for explicitly declared classes
@@ -1220,7 +1222,7 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
    if (customDispatcher)
       scope.raiseError(errDispatcherInInterface, node.findChild(SyntaxKey::Name));
 
-   _logic->tweakClassFlags(scope.info, scope.isClassClass());
+   _logic->tweakClassFlags(scope.reference, scope.info, scope.isClassClass());
 
    // generate operation list if required
    _logic->injectOverloadList(this, *scope.moduleScope, scope.info, scope.reference);
@@ -2825,15 +2827,28 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
    return source;
 }
 
-ObjectInfo Compiler :: compileNested(ExprScope& ownerScope, SyntaxNode node, ExpressionAttribute mode)
+ObjectInfo Compiler :: compileNestedExpression(InlineClassScope& scope, EAttr mode)
 {
-   ObjectInfo retVal = {};
+   ref_t nestedRef = scope.reference;
 
-   ref_t declaredRef = 0;
+   if (test(scope.info.header.flags, elStateless)) {
+      ObjectInfo retVal = { ObjectKind::Singleton, nestedRef, nestedRef };
+
+      return retVal;
+   }
+   else {
+      throw InternalError(errFatalError); // !! temporal
+   }
+}
+
+ObjectInfo Compiler :: compileNested(BuildTreeWriter& writer, ExprScope& ownerScope, SyntaxNode node, ExpressionAttribute mode)
+{
+   ref_t parentRef = ownerScope.moduleScope->buildins.superReference;
    EAttrs nestedMode = {};
-   declareExpressionAttributes(ownerScope, node, declaredRef, nestedMode);
+   declareExpressionAttributes(ownerScope, node, parentRef, nestedMode);
 
-   if (nestedMode.attrs != EAttr::None && nestedMode.attrs != EAttr::NewOp)
+   // allow only new and type attrobutes
+   if (nestedMode.attrs != EAttr::None && nestedMode.attrs != EAttr::NewOp && nestedMode.attrs != EAttr::NewVariable)
       ownerScope.raiseError(errInvalidOperation, node);
 
    ref_t nestedRef = 0;
@@ -2864,14 +2879,14 @@ ObjectInfo Compiler :: compileNested(ExprScope& ownerScope, SyntaxNode node, Exp
 
    InlineClassScope scope(&ownerScope, nestedRef);
 
-   compileNestedVMT(scope, node);
+   compileNestedClass(writer, scope, node, parentRef);
 
-   return retVal;
+   return compileNestedExpression(scope, mode);
 }
 
 inline bool hasToBePresaved(ObjectInfo retVal)
 {
-   return retVal.kind == ObjectKind::Object || retVal.kind == ObjectKind::External;
+   return retVal.kind == ObjectKind::Object || retVal.kind == ObjectKind::External || retVal.kind == ObjectKind::Symbol;
 }
 
 ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
@@ -2897,7 +2912,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          retVal = compileObject(writer, scope, current, mode);
          break;
       case SyntaxKey::NestedBlock:
-         retVal = compileNested(scope, current, mode);
+         retVal = compileNested(writer, scope, current, mode);
          break;
       default:
          retVal = compileObject(writer, scope, node, mode);
@@ -2923,6 +2938,9 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    ref_t outputRef = codeScope.getOutputRef();
 
    ObjectInfo retVal = compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), outputRef, EAttr::Root);
+   if (!hasToBePresaved(retVal)) {
+      writeObjectInfo(writer, retVal);
+   }
 
    writer.appendNode(BuildKey::goingToEOP);
 
@@ -3230,13 +3248,21 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    endMethod(writer, scope);
 }
 
-void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
+void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, 
+   bool exclusiveMode, bool ignoreAutoMultimethod)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Method:
          {
+            if (exclusiveMode 
+               && (ignoreAutoMultimethod == SyntaxTree::ifChildExists(current, SyntaxKey::Autogenerated, -1)))
+            {
+               current = current.nextNode();
+               continue;
+            }
+
             MethodScope methodScope(&scope);
             methodScope.message = current.arg.reference;
             methodScope.info = scope.info.methods.get(methodScope.message);
@@ -3296,9 +3322,9 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
    }
 }
 
-void Compiler :: compileNestedVMT(ClassScope& scope, SyntaxNode node)
+void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef)
 {
-   resolveClassParent(scope, node.findChild(SyntaxKey::Type));
+   declareClassParent(parentRef, scope, node);
 
    bool withConstructors = false;
    bool withDefaultConstructor = false;
@@ -3310,7 +3336,19 @@ void Compiler :: compileNestedVMT(ClassScope& scope, SyntaxNode node)
 
    scope.save();
 
+   writer.newNode(BuildKey::NestedClass, scope.reference);
+   compileVMT(writer, scope, node, true, true);
 
+   // set flags once again
+   // NOTE : it should be called after the code compilation to take into consideration outer fields
+   _logic->tweakClassFlags(scope.reference, scope.info, scope.isClassClass());
+
+   // NOTE : compile once again only auto generated methods
+   compileVMT(writer, scope, node, true, false);
+
+   writer.closeNode();
+
+   scope.save();
 }
 
 void Compiler :: compileClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
@@ -3567,7 +3605,7 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
    mssg_t resendMessage, ref_t resendTarget)
 {
    SyntaxNode methodNode = newVirtualMultimethod(classNode, methodType, message);
-   methodNode.appendChild(SyntaxKey::Autogenerated);
+   methodNode.appendChild(SyntaxKey::Autogenerated, -1); // -1 indicates autogenerated multi-method
 
    if (message == resendMessage) {
       methodNode.appendChild(SyntaxKey::RedirectOperation, resendTarget);

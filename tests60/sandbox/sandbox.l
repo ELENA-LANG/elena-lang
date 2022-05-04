@@ -1,8 +1,10 @@
 import system;
 
+B;
+
 A
 {
-    get() = new 
+    get() = B
     {
        test() {}
     };

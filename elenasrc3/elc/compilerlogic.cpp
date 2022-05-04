@@ -342,12 +342,23 @@ bool CompilerLogic :: isMultiMethod(ClassInfo& info, MethodInfo& methodInfo)
    return test(methodInfo.hints, (ref_t)MethodHint::Multimethod);
 }
 
-void CompilerLogic :: tweakClassFlags(ClassInfo& info, bool classClassMode)
+void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool classClassMode)
 {
    if (classClassMode) {
       // class class is always stateless and final
       info.header.flags |= elStateless;
       info.header.flags |= elSealed;
+   }
+
+   if (test(info.header.flags, elNestedClass)) {
+      // stateless inline class
+      if (info.fields.count() == 0 && !test(info.header.flags, elStructureRole)) {
+         info.header.flags |= elStateless;
+
+         // stateless inline class is its own class class
+         info.header.classRef = classRef;
+      }
+      else info.header.flags &= ~elStateless;
    }
 }
 

@@ -5,10 +5,8 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 6 : branching ===
-    * nested class
-
-    * nested class with the specified parent 
     * properties
+
     * const fields
     * const static properties
     * Boolean

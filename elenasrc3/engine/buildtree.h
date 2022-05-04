@@ -56,11 +56,12 @@ namespace elena_lang
       DirectCallOp      = 0x001B,
       DispatchingOp     = 0x001C,
 
-      Import            = 0x0028,
-      StrDictionaryOp   = 0x0029,
-      ObjArrayOp        = 0x002A,
-      ObjOp             = 0x002B,
-      AttrDictionaryOp  = 0x002C,
+      Import            = 0x0038,
+      StrDictionaryOp   = 0x0039,
+      ObjArrayOp        = 0x003A,
+      ObjOp             = 0x003B,
+      AttrDictionaryOp  = 0x003C,
+      NestedClass       = 0x003D,
 
       Value             = 0x8001,
       Reserved          = 0x8002,      // reserved managed

@@ -343,6 +343,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
          case BuildKey::Import:
             importTree(tape, current, *tapeScope.scope);
             break;
+         case BuildKey::NestedClass:
+            saveClass(current, tapeScope.scope->moduleScope, tapeScope.scope->minimalArgList);
+            break;
          default:
             _commands[(int)current.key](tape, current, tapeScope);
             break;

@@ -342,8 +342,29 @@ void ByteCodeViewer :: printSymbol(ustr_t name)
 
 void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
 {
+   if (test(flags, elAbstract)) {
+      printLineAndCount("@flag ", "elAbstract", row, pageSize);
+   }
    if (test(flags, elClassClass)) {
       printLineAndCount("@flag ", "elClassClass", row, pageSize);
+   }
+   if (test(flags, elClosed)) {
+      printLineAndCount("@flag ", "elClosed", row, pageSize);
+   }
+   if (test(flags, elDynamicRole)) {
+      printLineAndCount("@flag ", "elDynamicRole", row, pageSize);
+   }
+   if (test(flags, elFinal)) {
+      printLineAndCount("@flag ", "elFinal", row, pageSize);
+   }
+   if (test(flags, elNestedClass)) {
+      printLineAndCount("@flag ", "elNestedClass", row, pageSize);
+   }
+   if (test(flags, elNonStructureRole)) {
+      printLineAndCount("@flag ", "elNonStructureRole", row, pageSize);
+   }
+   if (test(flags, elReadOnlyRole)) {
+      printLineAndCount("@flag ", "elReadOnlyRole", row, pageSize);
    }
    if (test(flags, elRole)) {
       printLineAndCount("@flag ", "elRole", row, pageSize);
@@ -351,14 +372,8 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elSealed)) {
       printLineAndCount("@flag ", "elSealed", row, pageSize);
    }
-   if (test(flags, elClosed)) {
-      printLineAndCount("@flag ", "elClosed", row, pageSize);
-   }
    if (test(flags, elStateless)) {
       printLineAndCount("@flag ", "elStateless", row, pageSize);
-   }
-   if (test(flags, elNonStructureRole)) {
-      printLineAndCount("@flag ", "elNonStructureRole", row, pageSize);
    }
    if (test(flags, elStructureRole)) {
       printLineAndCount("@flag ", "elStructureRole", row, pageSize);
@@ -366,26 +381,11 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elWrapper)) {
       printLineAndCount("@flag ", "elWrapper", row, pageSize);
    }
-   if (test(flags, elReadOnlyRole)) {
-      printLineAndCount("@flag ", "elReadOnlyRole", row, pageSize);
-   }
-   if (test(flags, elDynamicRole)) {
-      printLineAndCount("@flag ", "elDynamicRole", row, pageSize);
-   }
-   if (test(flags, elAbstract)) {
-      printLineAndCount("@flag ", "elAbstract", row, pageSize);
-   }
-   if (test(flags, elFinal)) {
-      printLineAndCount("@flag ", "elFinal", row, pageSize);
-   }
    if (test(flags, elNoCustomDispatcher)) {
       printLineAndCount("@flag ", "elNoCustomDispatcher", row, pageSize);
    }
    if (test(flags, elStructureWrapper)) {
       printLineAndCount("@flag ", "elStructureWrapper", row, pageSize);
-   }
-   if (test(flags, elDynamicRole)) {
-      printLineAndCount("@flag ", "elDynamicRole", row, pageSize);
    }
 }
 

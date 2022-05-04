@@ -692,13 +692,14 @@ namespace elena_lang
 
       ObjectInfo mapObject(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
 
-      ObjectInfo compileNested(ExprScope& scope, SyntaxNode node, ExpressionAttribute mode);
+      ObjectInfo compileNested(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute mode);
       ObjectInfo compileObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
          ExpressionAttribute mode);
       ObjectInfo compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
          ref_t targetRef, ExpressionAttribute mode);
       ObjectInfo compileRootExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
       ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
+      ObjectInfo compileNestedExpression(InlineClassScope& scope, ExpressionAttribute mode);
 
       void compileMultidispatch(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
       void compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
@@ -716,8 +717,9 @@ namespace elena_lang
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
       void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileConstructor(BuildTreeWriter& writer, MethodScope& scope, ClassScope& classClassScope, SyntaxNode node);
-      void compileNestedVMT(ClassScope& scope, SyntaxNode node);
-      void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);
+      void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);
+      void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
+         bool exclusiveMode = false, bool ignoreAutoMultimethod = false);
       void compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node);
 
       void compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, SyntaxNode node);
