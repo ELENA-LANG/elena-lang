@@ -419,6 +419,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    reserved1 = reserved2 = 0;
    selfLocal = 0;
    reservedArgs = parent->moduleScope->minimalArgList;
+   functionMode = false;
 }
 
 bool Compiler::MethodScope :: checkType(MethodHint type)
@@ -441,7 +442,7 @@ ObjectInfo Compiler::MethodScope :: mapSelf()
 
 ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier)
 {
-   int prefix = /*functionMode ? 0 : */-1;
+   int prefix = functionMode ? 0 : -1;
 
    Parameter local = parameters.get(identifier);
    if (local.offset != -1) {
@@ -1069,6 +1070,18 @@ void Compiler :: generateClassFlags(ClassScope& scope, ref_t declaredFlags)
    scope.info.header.flags |= declaredFlags;
 }
 
+void Compiler :: generateClassStaticField(ClassScope& scope, SyntaxNode node, bool isConst)
+{
+   //ustr_t name = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+   //if (scope.isClassClass()) {
+
+   //}
+   //else {
+   //   
+   //}
+   throw InternalError(errFatalError);
+}
+
 void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
    FieldAttributes& attrs, bool singleField)
 {
@@ -1180,7 +1193,10 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node, bool si
          FieldAttributes attrs = {};
          declareFieldAttributes(scope, current, attrs);
 
-         if (!isClassClassMode) {
+         if (attrs.isConstant) {
+            generateClassStaticField(scope, current, attrs.isConstant);
+         }
+         else if (!isClassClassMode) {
             generateClassField(scope, current, attrs, singleField);
          }
       }
@@ -1402,6 +1418,19 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool dec
          unnamedMessage = false;
          flags |= FUNCTION_MESSAGE;
       }
+      else if (scope.checkHint(MethodHint::Function)) {
+         if (!unnamedMessage)
+            scope.raiseError(errInvalidHint, node);
+
+         actionStr.copy(INVOKE_MESSAGE);
+
+         flags |= FUNCTION_MESSAGE;
+         unnamedMessage = false;
+      }
+
+      if (scope.checkHint(MethodHint::GetAccessor) || scope.checkHint(MethodHint::SetAccessor)) {
+         flags |= PROPERTY_MESSAGE;
+      }
 
       if (scope.checkHint(MethodHint::Internal)) {
          actionStr.insert("$$", 0);
@@ -1437,6 +1466,12 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool dec
    }
 }
 
+void Compiler :: declareClosureMessage(MethodScope& methodScope, SyntaxNode node)
+{
+   ref_t invokeAction = methodScope.module->mapAction(INVOKE_MESSAGE, 0, false);
+   methodScope.message = encodeMessage(invokeAction, 0, FUNCTION_MESSAGE);
+}
+
 void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool abstractMode)
 {
    if (methodScope.info.hints)
@@ -1446,7 +1481,7 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
       node.setKey(SyntaxKey::StaticMethod);
    }
    else if (methodScope.checkHint(MethodHint::Constructor)) {
-      if (abstractMode) {
+      if (abstractMode && !methodScope.isPrivate()) {
          // abstract class cannot have public constructors
          methodScope.raiseError(errIllegalConstructorAbstract, node);
       }
@@ -1485,7 +1520,7 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
                }
             }
 
-            if (!_logic->validateMessage(methodScope.message)) {
+            if (!_logic->validateMessage(*scope.moduleScope, methodScope.info.hints, methodScope.message)) {
                scope.raiseError(errIllegalMethod, current);
             }
             break;
@@ -2374,9 +2409,9 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    return retVal;
 }
 
-mssg_t Compiler :: mapMessage(ExprScope& scope, SyntaxNode current)
+mssg_t Compiler :: mapMessage(ExprScope& scope, SyntaxNode current, bool propertyMode)
 {
-   ref_t flags = 0;
+   ref_t flags = propertyMode ? PROPERTY_MESSAGE : 0;
 
    IdentifierString messageStr;
 
@@ -2394,6 +2429,17 @@ mssg_t Compiler :: mapMessage(ExprScope& scope, SyntaxNode current)
 
       current = current.nextNode(SyntaxKey::ScopeMask);
    }
+
+   if (messageStr.empty()) {
+      flags |= FUNCTION_MESSAGE;
+
+      // if it is an implicit message
+      messageStr.copy(INVOKE_MESSAGE);
+   }
+
+   if (test(flags, FUNCTION_MESSAGE))
+      // exclude the target from the arg counter for the function
+      argCount--;
 
    ref_t actionRef = scope.module->mapAction(*messageStr, 0, false);
 
@@ -2525,6 +2571,38 @@ ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, S
    return retVal;
 }
 
+ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute attrs)
+{
+   ObjectInfo retVal = { };
+   ArgumentsInfo arguments;
+
+   SyntaxNode current = node.firstChild();
+   if (current == SyntaxKey::Object) {
+      addBreakpoint(writer, current, BuildKey::Breakpoint);
+   }
+
+   ObjectInfo source = compileObject(writer, scope, current, EAttr::Parameter);
+   switch (source.kind) {
+      case ObjectKind::External:
+      case ObjectKind::Creating:
+         scope.raiseError(errInvalidOperation, node);
+         break;
+      default:
+         arguments.add(source);
+         break;
+   }
+
+   current = current.nextNode();
+   mssg_t messageRef = mapMessage(scope, current, true);
+
+   retVal = compileMessageOperation(writer, scope, node, source, messageRef,
+      arguments, EAttr::None);
+
+   scope.reserveArgs(arguments.count());
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
    ExpressionAttribute attrs)
 {
@@ -2553,7 +2631,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          arguments.add(source);
 
          current = current.nextNode();
-         mssg_t messageRef = mapMessage(scope, current);
+         mssg_t messageRef = mapMessage(scope, current, false);
 
          compileMessageArguments(writer, scope, current, arguments);
 
@@ -2841,16 +2919,8 @@ ObjectInfo Compiler :: compileNestedExpression(InlineClassScope& scope, EAttr mo
    }
 }
 
-ObjectInfo Compiler :: compileNested(BuildTreeWriter& writer, ExprScope& ownerScope, SyntaxNode node, ExpressionAttribute mode)
+ref_t Compiler :: mapNested(ExprScope& ownerScope, ExpressionAttribute mode)
 {
-   ref_t parentRef = ownerScope.moduleScope->buildins.superReference;
-   EAttrs nestedMode = {};
-   declareExpressionAttributes(ownerScope, node, parentRef, nestedMode);
-
-   // allow only new and type attrobutes
-   if (nestedMode.attrs != EAttr::None && nestedMode.attrs != EAttr::NewOp && nestedMode.attrs != EAttr::NewVariable)
-      ownerScope.raiseError(errInvalidOperation, node);
-
    ref_t nestedRef = 0;
    if (EAttrs::testAndExclude(mode, EAttr::RootSymbol)) {
       SymbolScope* owner = (SymbolScope*)ownerScope.getScope(Scope::ScopeLevel::Symbol);
@@ -2877,6 +2947,30 @@ ObjectInfo Compiler :: compileNested(BuildTreeWriter& writer, ExprScope& ownerSc
    if (!nestedRef)
       nestedRef = ownerScope.moduleScope->mapAnonymous();
 
+   return nestedRef;
+}
+
+ObjectInfo Compiler :: compileClosure(BuildTreeWriter& writer, ExprScope& ownerScope, SyntaxNode node, ExpressionAttribute mode)
+{
+   ref_t nestedRef = mapNested(ownerScope, mode);
+   InlineClassScope scope(&ownerScope, nestedRef);
+
+   compileClosureClass(writer, scope, node);
+
+   return compileNestedExpression(scope, mode);
+}
+
+ObjectInfo Compiler :: compileNested(BuildTreeWriter& writer, ExprScope& ownerScope, SyntaxNode node, ExpressionAttribute mode)
+{
+   ref_t parentRef = ownerScope.moduleScope->buildins.superReference;
+   EAttrs nestedMode = {};
+   declareExpressionAttributes(ownerScope, node, parentRef, nestedMode);
+
+   // allow only new and type attrobutes
+   if (nestedMode.attrs != EAttr::None && nestedMode.attrs != EAttr::NewOp && nestedMode.attrs != EAttr::NewVariable)
+      ownerScope.raiseError(errInvalidOperation, node);
+
+   ref_t nestedRef = mapNested(ownerScope, mode);
    InlineClassScope scope(&ownerScope, nestedRef);
 
    compileNestedClass(writer, scope, node, parentRef);
@@ -2901,9 +2995,15 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::MessageOperation:
          retVal = compileMessageOperation(writer, scope, current, mode);
          break;
+      case SyntaxKey::PropertyOperation:
+         retVal = compilePropertyOperation(writer, scope, current, mode);
+         break;
       case SyntaxKey::AssignOperation:
       //case SyntaxKey::AddAssignOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
+         break;
+      case SyntaxKey::ReturnExpression:
+         retVal = compileExpression(writer, scope, current.firstChild(), 0, mode);
          break;
       case SyntaxKey::Expression:
          retVal = compileExpression(writer, scope, current, 0, mode);
@@ -2913,6 +3013,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::NestedBlock:
          retVal = compileNested(writer, scope, current, mode);
+         break;
+      case SyntaxKey::ClosureBlock:
+         retVal = compileClosure(writer, scope, current, mode);
          break;
       default:
          retVal = compileObject(writer, scope, node, mode);
@@ -2980,7 +3083,7 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
 
    ExprScope exprScope(&scope);
    ObjectInfo retVal = compileExpression(writer, exprScope,
-      node.findChild(SyntaxKey::Expression), 0,
+      node.findChild(SyntaxKey::ReturnExpression), 0,
       ExpressionAttribute::RootSymbol);
 
    writeObjectInfo(writer, retVal);
@@ -3266,6 +3369,7 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
             MethodScope methodScope(&scope);
             methodScope.message = current.arg.reference;
             methodScope.info = scope.info.methods.get(methodScope.message);
+            methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
 
             declareVMTMessage(methodScope, current, false);
 
@@ -3302,6 +3406,7 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
          {
             MethodScope methodScope(&classClassScope);
             methodScope.message = current.arg.reference;
+            methodScope.info = classClassScope.info.methods.get(methodScope.message);
 
             compileMethod(writer, methodScope, current);
             break;
@@ -3310,6 +3415,7 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
          {
             MethodScope methodScope(&scope);
             methodScope.message = current.arg.reference;
+            methodScope.info = classClassScope.info.methods.get(methodScope.message);
 
             compileConstructor(writer, methodScope, classClassScope, current);
             break;
@@ -3322,9 +3428,64 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
    }
 }
 
+void Compiler :: compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+{
+   beginMethod(writer, scope, BuildKey::Method);
+
+   CodeScope codeScope(&scope);
+
+   SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
+   switch (current.key) {
+      case SyntaxKey::CodeBlock:
+      case SyntaxKey::ReturnExpression:
+         compileMethodCode(writer, scope, codeScope, node, false);
+         break;
+      default:
+         break;
+   }
+
+   codeScope.syncStack(&scope);
+
+   endMethod(writer, scope);
+}
+
+void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
+{
+   ref_t parentRef = scope.info.header.parentRef;
+
+   writer.newNode(BuildKey::NestedClass, scope.reference);
+
+   MethodScope methodScope(&scope);
+   declareClosureMessage(methodScope, node);
+
+   methodScope.functionMode = true;
+
+   compileClosureMethod(writer, methodScope, node);
+
+   declareClassParent(parentRef, scope, node);
+   generateClassFlags(scope, elNestedClass);
+
+   auto m_it = scope.info.methods.getIt(methodScope.message);
+   if (!m_it.eof()) {
+      (*m_it).inherited = true;
+   }
+   else scope.info.methods.add(methodScope.message, methodScope.info);
+
+   // set flags once again
+   // NOTE : it should be called after the code compilation to take into consideration outer fields
+   _logic->tweakClassFlags(scope.reference, scope.info, scope.isClassClass());
+
+   writer.closeNode();
+
+   scope.save();
+}
+
 void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef)
 {
    declareClassParent(parentRef, scope, node);
+
+   ref_t dummy = 0;
+   declareClassAttributes(scope, {}, dummy);
 
    bool withConstructors = false;
    bool withDefaultConstructor = false;

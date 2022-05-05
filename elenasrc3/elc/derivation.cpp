@@ -54,7 +54,7 @@ void SyntaxTreeBuilder :: flushNode(Scope& scope, SyntaxNode node)
    _writer.closeNode();
 }
 
-void SyntaxTreeBuilder::flushCollection(Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushCollection(Scope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -131,6 +131,11 @@ void SyntaxTreeBuilder :: flushObject(Scope& scope, SyntaxNode node)
    _writer.closeNode();
 }
 
+void SyntaxTreeBuilder :: flushClosure(Scope& scope, SyntaxNode node)
+{
+   flushMethodCode(scope, node);
+}
+
 void SyntaxTreeBuilder :: flushNested(Scope& scope, SyntaxNode node)
 {
    _writer.newNode(node.key);
@@ -176,6 +181,9 @@ void SyntaxTreeBuilder :: flushExpression(Scope& scope, SyntaxNode node)
          case SyntaxKey::NestedBlock:
             flushNested(scope, current);
             break;
+         case SyntaxKey::ClosureBlock:
+            flushClosure(scope, current);
+            break;
          case SyntaxKey::Message:
             flushMessage(scope, current);
             break;
@@ -184,6 +192,7 @@ void SyntaxTreeBuilder :: flushExpression(Scope& scope, SyntaxNode node)
          case SyntaxKey::IndexerOperation:
          case SyntaxKey::AddAssignOperation:
          case SyntaxKey::MessageOperation:
+         case SyntaxKey::PropertyOperation:
             flushExpression(scope, current);
             break;
          default:
@@ -534,10 +543,10 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxNode node)
 
    flushDescriptor(scope, node);
 
-   if(node.existChild(SyntaxKey::Expression)) {
+   if(node.existChild(SyntaxKey::ReturnExpression)) {
       _writer.CurrentNode().setKey(SyntaxKey::Symbol);
 
-      flushStatement(scope, node.findChild(SyntaxKey::Expression));
+      flushStatement(scope, node.findChild(SyntaxKey::ReturnExpression));
    }
    else if (node.existChild(SyntaxKey::TemplateArg)) {
       SyntaxNode body = node.firstChild(SyntaxKey::MemberMask);

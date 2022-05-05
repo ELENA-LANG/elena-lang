@@ -61,7 +61,7 @@ namespace elena_lang
       void tweakClassFlags(ref_t classRef, ClassInfo& info, bool classClassMode);
       void tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef);
 
-      bool validateMessage(mssg_t message);
+      bool validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_t message);
       void validateClassDeclaration(ModuleScopeBase& scope, ClassInfo& info,
          bool& emptyStructure, bool& disptacherNotAllowed);
 

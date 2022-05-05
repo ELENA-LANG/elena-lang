@@ -1,22 +1,18 @@
 import system;
 
-B;
-
 A
 {
-    get() = B
-    {
-       test() {}
-    };
+   function()
+   {
+   }
 }
 
 singleton Tester
 {
    run()
    {
-      var a := new A();
-//      var t := a.get();
-//      t.test();
+       var a := { ^ nil };
+       a();
    }
 }
 

@@ -373,6 +373,8 @@ namespace elena_lang
          pos_t        reserved2;             // defines unmanaged frame size (excluded from GC frame chain)
          pos_t        reservedArgs;          // contains the maximal argument list
 
+         bool         functionMode;
+
          Scope* getScope(ScopeLevel level) override
          {
             if (level == ScopeLevel::Method) {
@@ -398,6 +400,11 @@ namespace elena_lang
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
          ObjectInfo mapParameter(ustr_t identifier);
          ObjectInfo mapSelf();
+
+         bool isPrivate() const
+         {
+            return test(message, STATIC_MESSAGE);
+         }
 
          static bool checkHint(MethodInfo& methodInfo, MethodHint hint)
          {
@@ -572,10 +579,12 @@ namespace elena_lang
       ref_t mapNewTerminal(Scope& scope, SyntaxNode nameNode, ustr_t prefix, Visibility visibility);
       mssg_t mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef, 
          ref_t flags, ref_t* signature, size_t signatureLen);
-      mssg_t mapMessage(ExprScope& scope, SyntaxNode node);
+      mssg_t mapMessage(ExprScope& scope, SyntaxNode node, bool propertyMode);
 
       ExternalInfo mapExternal(Scope& scope, SyntaxNode node);
       ObjectInfo mapClassSymbol(Scope& scope, ref_t classRef);
+
+      ref_t mapNested(ExprScope& ownerScope, ExpressionAttribute mode);
 
       mssg_t defineMultimethod(ClassScope& scope, mssg_t messageRef);
 
@@ -628,6 +637,7 @@ namespace elena_lang
       void generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed);
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed);
       void generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool singleField);
+      void generateClassStaticField(ClassScope& scope, SyntaxNode node, bool isConst);
       void generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField);
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
@@ -637,6 +647,7 @@ namespace elena_lang
       void resolveClassParent(ClassScope& scope, SyntaxNode node);
 
       void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool declarationMode);
+      void declareClosureMessage(MethodScope& scope, SyntaxNode node);
 
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
       void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode);
@@ -679,6 +690,7 @@ namespace elena_lang
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target, mssg_t message, 
          ArgumentsInfo& arguments, ExpressionAttributes mode);
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute attrs);
+      ObjectInfo compilePropertyOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute attrs);
 
       ObjectInfo compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand);
 
@@ -693,6 +705,7 @@ namespace elena_lang
       ObjectInfo mapObject(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
 
       ObjectInfo compileNested(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute mode);
+      ObjectInfo compileClosure(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute mode);
       ObjectInfo compileObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
          ExpressionAttribute mode);
       ObjectInfo compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
@@ -714,10 +727,12 @@ namespace elena_lang
       void compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScope& scope, 
          SyntaxNode node, bool newFrame);
 
+      void compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
       void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileConstructor(BuildTreeWriter& writer, MethodScope& scope, ClassScope& classClassScope, SyntaxNode node);
       void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);
+      void compileClosureClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);
       void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
          bool exclusiveMode = false, bool ignoreAutoMultimethod = false);
       void compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node);

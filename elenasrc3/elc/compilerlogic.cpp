@@ -28,6 +28,16 @@ inline MethodHint operator & (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l & (unsigned int)r);
 }
 
+bool testMethodHint(MethodHint hint, MethodHint mask)
+{
+   return test((ref_t)hint, (ref_t)mask);
+}
+
+bool testMethodHint(ref_t hint, MethodHint mask)
+{
+   return test(hint, (ref_t)mask);
+}
+
 struct Op
 {
    BuildKey operation;
@@ -211,6 +221,9 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_EMBEDDABLE:
          attrs.isEmbeddable = true;
          break;
+      case V_CONST:
+         attrs.isConstant = true;
+         break;
       default:
          return false;
    }
@@ -250,6 +263,18 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_ABSTRACT:
          hint = (ref_t)MethodHint::Abstract;
          break;
+      case V_GETACCESSOR:
+         hint = (ref_t)MethodHint::GetAccessor;
+         break;
+      case V_SETACCESSOR:
+         hint = (ref_t)MethodHint::SetAccessor;
+         break;
+      case V_CONST:
+         hint = (ref_t)MethodHint::Constant;
+         return true;
+      case V_FUNCTION:
+         hint = (ref_t)MethodHint::Function;
+         return true;
       default:
          return false;
    }
@@ -264,6 +289,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
       case V_METHOD:
       case V_DISPATCHER:
       case V_CONSTRUCTOR:
+      case V_FUNCTION:
          return validateMethodAttribute(attribute, hint, dummy);
       default:
          return false;
@@ -307,8 +333,21 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
    }
 }
 
-bool CompilerLogic :: validateMessage(mssg_t message)
+bool CompilerLogic :: validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_t message)
 {
+   bool dispatchOne = message == scope.buildins.dispatch_message;
+   if (testany((int)hints, (int)(MethodHint::Constructor | MethodHint::Static))) {
+      if (dispatchOne)
+         return false;
+   }
+
+   // const attribute can be applied only to a get-property
+   if (testMethodHint(hints, MethodHint::Constant) 
+      && ((message & PREFIX_MESSAGE_MASK) != PROPERTY_MESSAGE && getArgCount(message) > 1))
+   {
+      return false;
+   }
+
    return true;
 }
 

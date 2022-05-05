@@ -1,5 +1,9 @@
 #new attributesSymbols;
 
+/// scope_accessors:
+#let attributesSymbols["get"]         := 80005001h;
+#let attributesSymbols["set"]         := 80005002h;
+
 /// visibility:
 #let attributesSymbols["public"]      := 80004001h;
 #let attributesSymbols["private"]     := 80004002h;
@@ -22,6 +26,7 @@
 #let attributesSymbols["interface"]   := 80001007h;
 #let attributesSymbols["method"]      := 80001008h;
 #let attributesSymbols["field"]       := 80001009h;
+#let attributesSymbols["function"]    := 8000100Ch;
 #let attributesSymbols["var"]         := 8000100Dh;
 #let attributesSymbols["static"]      := 8000100Fh;
 #let attributesSymbols["new"]         := 80001012h;

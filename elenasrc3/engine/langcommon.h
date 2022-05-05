@@ -20,12 +20,15 @@ namespace elena_lang
       Normal         = 0x0000003,
       Dispatcher     = 0x0000004,
 
+      Function       = 0x0000080,
       Multimethod    = 0x0001000,
       Static         = 0x0004000,
+      GetAccessor    = 0x0008000,
       Abstract       = 0x0020000,
       Internal       = 0x0040000,
       Constructor    = 0x0200400,
       Conversion     = 0x0200800,
+      SetAccessor    = 0x0400000,
       Constant       = 0x2000000,
       Protected      = 0x4000000,
       Private        = 0x8000000,
@@ -120,6 +123,10 @@ namespace elena_lang
    constexpr auto V_CATEGORY_MASK         = 0x7FFFFF00u;
    constexpr auto V_CATEGORY_MAX          = 0x0000F000u;
 
+   /// accessors:
+   constexpr auto V_GETACCESSOR           = 0x80005001u;
+   constexpr auto V_SETACCESSOR           = 0x80005002u;
+
    /// visibility:
    constexpr auto V_PUBLIC                = 0x80004001u;
    constexpr auto V_PRIVATE               = 0x80004002u;
@@ -143,6 +150,7 @@ namespace elena_lang
    constexpr auto V_LIMITED               = 0x80001007u;
    constexpr auto V_METHOD                = 0x80001008u;
    constexpr auto V_FIELD                 = 0x80001009u;
+   constexpr auto V_FUNCTION              = 0x8000100Cu;     // a closure attribute
    constexpr auto V_VARIABLE              = 0x8000100Du;
    constexpr auto V_STATIC                = 0x8000100Fu;
    constexpr auto V_CONVERSION            = 0x80001011u;

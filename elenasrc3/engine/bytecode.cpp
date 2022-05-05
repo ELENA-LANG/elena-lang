@@ -130,6 +130,9 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    if (test(flags, FUNCTION_MESSAGE))
       messageName.append("function:");
 
+   if (test(flags, PROPERTY_MESSAGE))
+      messageName.append("prop:");
+
    messageName.append(actionName);
    if (signature) {
       ref_t references[ARG_COUNT];
@@ -167,6 +170,10 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
       flags |= FUNCTION_MESSAGE;
       messageName += getlength("function:");
    }
+   if (messageName.startsWith("prop:")) {
+      flags |= PROPERTY_MESSAGE;
+      messageName += getlength("prop:");
+   }
 
    IdentifierString actionName;
    size_t paramIndex = messageName.find('[');
@@ -177,6 +184,10 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
       argCount = StrConvertor::toInt(counterStr.str(), 10);
    }
    else actionName.copy(messageName);
+
+   if (actionName.compare(INVOKE_MESSAGE)) {
+      flags |= FUNCTION_MESSAGE;
+   }
 
    ref_t signature = 0;
    size_t index = (*actionName).find('<');
