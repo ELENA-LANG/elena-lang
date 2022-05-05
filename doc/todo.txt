@@ -5,9 +5,14 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 6 : branching ===
-    * closure
+    * string return length
+
+    * support \n char inside the string
+
+    * branching : weak implementation
 
     * branching : operator : ? - weak implementation
+
     * branching : operator : ? - native implementation
 
     * protected constructor

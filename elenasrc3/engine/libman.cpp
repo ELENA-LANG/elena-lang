@@ -408,7 +408,12 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
 
             ReferenceName resolvedName(*_namespace, *name);
 
-            return retrieveReferenceInfo(*resolvedName, forwardResolver);
+            auto info = retrieveReferenceInfo(*resolvedName, forwardResolver);
+            // NOTE : if the reference was not resolved - reset the initial reference
+            if (!info.module)
+               info.referenceName = referenceName;
+
+            return info;
          }
 
          if (isWeakReference(referenceName)) {

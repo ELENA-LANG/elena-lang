@@ -1,9 +1,19 @@
 import system;
 
+//singleton Value
+//{
+//   if(action)
+//   {
+//      action()
+//   }
+//}
+
 A
 {
-   function()
+   int Length
    {
+      get()
+        = 2;
    }
 }
 
@@ -11,8 +21,10 @@ singleton Tester
 {
    run()
    {
-       var a := { ^ nil };
-       a();
+      //Output.write("Hello");
+
+//      var a := Value;
+//      a.if({ Output.write() });
    }
 }
 
@@ -33,7 +45,7 @@ public singleton LinuxOutput
    }
 }
 
-//Output = WinOutput;
-Output = LinuxOutput;
+Output = WinOutput;
+//Output = LinuxOutput;
 
 public symbol program = Tester.run();

@@ -82,6 +82,12 @@ namespace elena_lang
       void flushExpression(Scope& scope, SyntaxNode node);
       void flushStatement(Scope& scope, SyntaxNode node);
       void flushMethodCode(Scope& scope, SyntaxNode node);
+
+      void copyHeader(Scope& scope, SyntaxNode node);
+
+      void flushSubScopeMember(Scope& scope, SyntaxNode node, SyntaxNode headerNode);
+      void flushSubScope(Scope& scope, SyntaxNode node, SyntaxNode headerNode);
+
       void flushClassMember(Scope& scope, SyntaxNode node);
       void flushMethod(Scope& scope, SyntaxNode node);
       void flushMethodMember(Scope& scope, SyntaxNode node);
@@ -91,7 +97,7 @@ namespace elena_lang
       void flushClassMemberPostfixes(Scope& scope, SyntaxNode node);
       void flushClassPostfixes(Scope& scope, SyntaxNode node);
 
-      void flushDescriptor(Scope& scope, SyntaxNode node, bool withNameNode = true);
+      void flushDescriptor(Scope& scope, SyntaxNode node, bool withNameNode = true, bool typeDescriptor = false);
       void flushClass(Scope& scope, SyntaxNode node);
       void flushInlineTemplate(Scope& scope, SyntaxNode node);
       void flushDeclaration(SyntaxNode node);

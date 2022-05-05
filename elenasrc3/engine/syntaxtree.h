@@ -33,7 +33,7 @@ namespace elena_lang
       eop                = 0x003009,
 
       // NOTE : low word should be unique for every key
-      Declaration        = 0x001000,
+      Declaration        = 0x001400,
 
       Class              = 0x001001,
       Symbol             = 0x001002,

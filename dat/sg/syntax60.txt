@@ -6,7 +6,7 @@ __define hexinteger         12295;
 __define reference          12296;
 __defineterminal }          12297;
 
-__define DECLARATION         4096;
+__define DECLARATION         5120;
 __define BLOCK               7184;
 __define NO_BODY             7185;
 __define PARAMETER 	     4106;

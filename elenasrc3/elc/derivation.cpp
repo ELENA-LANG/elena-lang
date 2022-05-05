@@ -13,15 +13,15 @@
 
 using namespace elena_lang;
 
-//inline void testNodes(SyntaxNode node)
-//{
-//   SyntaxNode current = node.firstChild();
-//   while (current != SyntaxKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 inline bool testNodeMask(SyntaxKey key, SyntaxKey mask)
 {
@@ -216,9 +216,11 @@ void SyntaxTreeBuilder :: flushDictionary(SyntaxNode node)
    _writer.closeNode();
 }
 
-void SyntaxTreeBuilder :: flushDescriptor(Scope& scope, SyntaxNode node, bool withNameNode)
+void SyntaxTreeBuilder :: flushDescriptor(Scope& scope, SyntaxNode node, bool withNameNode, bool typeDescriptor)
 {
    SyntaxNode nameNode = node.lastChild(SyntaxKey::TerminalMask);
+   if (typeDescriptor)
+      nameNode = nameNode.nextNode();
 
    SyntaxNode current = node.firstChild();
    ref_t attributeCategory = V_CATEGORY_MAX;
@@ -233,7 +235,7 @@ void SyntaxTreeBuilder :: flushDescriptor(Scope& scope, SyntaxNode node, bool wi
       current = current.nextNode();
    }
 
-   if (nameNode != SyntaxKey::None) {
+   if (!typeDescriptor && nameNode != SyntaxKey::None) {
       if (withNameNode) {
          _writer.newNode(SyntaxKey::Name);
          flushNode(scope, current);
@@ -423,6 +425,47 @@ void SyntaxTreeBuilder :: flushMethod(Scope& scope, SyntaxNode node)
    }
 }
 
+void SyntaxTreeBuilder :: copyHeader(Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      flushNode(scope, current);
+
+      current = current.nextNode();
+   }
+}
+
+void SyntaxTreeBuilder :: flushSubScopeMember(Scope& scope, SyntaxNode node, SyntaxNode headerNode)
+{
+   SyntaxNode member = node.firstChild(SyntaxKey::MemberMask);
+   switch (member.key) {
+      case SyntaxKey::CodeBlock:
+      case SyntaxKey::WithoutBody:
+      case SyntaxKey::ReturnExpression:
+         _writer.newNode(SyntaxKey::Method);
+
+         flushDescriptor(scope, node, true, true);
+         copyHeader(scope, headerNode);
+
+         flushMethod(scope, node);
+
+         _writer.closeNode();
+         break;
+   }
+}
+
+void SyntaxTreeBuilder :: flushSubScope(Scope& scope, SyntaxNode node, SyntaxNode headerNode)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Declaration) {
+         flushSubScopeMember(scope, current, headerNode);
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
 {
    _writer.newNode(node.key);
@@ -438,6 +481,14 @@ void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
          _writer.CurrentNode().setKey(SyntaxKey::Method);
          flushMethod(scope, node);
          break;
+      case SyntaxKey::Declaration:
+      {
+         SyntaxNode headerNode = _writer.CurrentNode();
+         _writer.closeNode();
+
+         flushSubScope(scope, node, headerNode);
+         return;
+      }
       case SyntaxKey::Dimension:
          flushNode(scope, member);
       default:
