@@ -45,15 +45,19 @@ struct Op
    ref_t    loperand;
    ref_t    roperand;
    ref_t    ioperand;
+
+   ref_t    outputRef;
+   bool     needToAlloc;
 };
 
-constexpr auto OperationLength = 4;
+constexpr auto OperationLength = 5;
 constexpr Op Operations[OperationLength] =
 {
-   { BuildKey::StrDictionaryOp, V_DICTIONARY, V_INT32, V_STRING },
-   { BuildKey::AttrDictionaryOp, V_OBJATTRIBUTES, V_OBJECT, V_STRING },
-   { BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0 },
-   { BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0 }
+   { BuildKey::StrDictionaryOp, V_DICTIONARY, V_INT32, V_STRING, V_OBJECT, false },
+   { BuildKey::AttrDictionaryOp, V_OBJATTRIBUTES, V_OBJECT, V_STRING, V_OBJECT, false },
+   { BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0, V_OBJECT, false },
+   { BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0, V_OBJECT, false },
+   { BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32, true }
 };
 
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
@@ -120,13 +124,17 @@ bool CompilerLogic :: isValidOp(int operatorId, BuildKey op)
    }
 }
 
-BuildKey CompilerLogic :: resolveOp(int operatorId, ref_t* arguments, size_t length)
+BuildKey CompilerLogic :: resolveOp(int operatorId, ref_t* arguments, size_t length, 
+   ref_t& outputRef, bool& needToAlloc)
 {
    for(size_t i = 0; i < OperationLength; i++) {
       if (arguments[0] == Operations[i].loperand && arguments[1] == Operations[i].roperand) {
          if ((length == 2) || (arguments[2] == Operations[i].ioperand)) {
-            if (isValidOp(operatorId, Operations[i].operation))
+            if (isValidOp(operatorId, Operations[i].operation)) {
+               outputRef = Operations[i].outputRef;
+               needToAlloc = Operations[i].needToAlloc;
                return Operations[i].operation;
+            }
          }
       }
    }

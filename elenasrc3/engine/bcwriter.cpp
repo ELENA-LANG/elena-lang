@@ -10,6 +10,8 @@
 // --------------------------------------------------------------------------
 #include "bcwriter.h"
 
+#include "langcommon.h"
+
 using namespace elena_lang;
 
 typedef ByteCodeWriter::TapeScope TapeScope;
@@ -119,9 +121,10 @@ void assigningLocal(CommandTape& tape, BuildNode& node, TapeScope&)
 
 void copyingLocal(CommandTape& tape, BuildNode& node, TapeScope&)
 {
+   int n = node.findChild(BuildKey::Size).arg.value;
+
    tape.write(ByteCode::StoreSI, 0);
-   tape.write(ByteCode::SetDDisp, node.arg.value);
-   tape.write(ByteCode::Copy, node.findChild(BuildKey::Size).arg.value);
+   tape.write(ByteCode::CopyDPN, node.arg.value, n);
 }
 
 void getLocal(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -131,7 +134,7 @@ void getLocal(CommandTape& tape, BuildNode& node, TapeScope&)
 
 void getLocalAddredd(CommandTape& tape, BuildNode& node, TapeScope&)
 {
-   tape.write(ByteCode::SetDDisp, node.arg.value);
+   tape.write(ByteCode::SetDP, node.arg.value);
 }
 
 void creatingClass(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -210,7 +213,7 @@ void extCallOp(CommandTape& tape, BuildNode& node, TapeScope&)
 
 void savingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
 {
-   tape.write(ByteCode::SaveDDisp, node.arg.value);
+   tape.write(ByteCode::SaveDP, node.arg.value);
 }
 
 void dispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -218,6 +221,22 @@ void dispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
    mssg_t message = node.findChild(BuildKey::Message).arg.reference;
 
    tape.write(ByteCode::DispatchMR, message, node.arg.reference | mskConstArray);
+}
+
+void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+         tape.write(ByteCode::CopyDPN, targetOffset, 4);
+         tape.write(ByteCode::XMovSISI, 0, 1);
+         tape.write(ByteCode::IAddDPN, targetOffset, 4);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
 }
 
 ByteCodeWriter::Saver commands[] =
@@ -251,6 +270,7 @@ ByteCodeWriter::Saver commands[] =
    savingIndex,
    directCallOp,
    dispatchOp,
+   intOp,
 };
 
 // --- ByteCodeWriter ---

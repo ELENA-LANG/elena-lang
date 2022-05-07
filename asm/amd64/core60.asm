@@ -365,6 +365,17 @@ inline % 0B1h
 
 end
 
+// ; copydpn
+inlinr %0E0h
+
+  mov  rax, rsi
+  mov  rsi, r10
+  lea  rdi, [rbp + __arg32_1]
+  mov  ecx, __n_2
+  rep  movsb
+
+end
+
 // ; openin
 inline %0F0h
 

@@ -192,7 +192,7 @@ inline %180h
 
 end 
 
-// ; setddisp
+// ; setdp
 inline %81h
 
   addi    r15, r31, __arg16_1
@@ -430,6 +430,27 @@ inline % 0B1h
   ld       r17, __arg16_1(r16)
   mtctr    r17            // ; put code address into ctr
   bctrl                   // ; and call it
+
+end
+
+// ; copydpn
+inline %0E0h
+
+  li      r16, __n16_2
+  addi    r18, r31, __arg16_1
+  mr      r19, r3
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  ld      r17, 0(r19)
+  addi    r16, r16, -8
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  addi    r19, r19, 8
+  b       labLoop
+
+labEnd:
 
 end
 

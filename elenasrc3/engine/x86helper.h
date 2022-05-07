@@ -107,6 +107,9 @@ namespace elena_lang
       JAE   = 0x03,
       JZ    = 0x04,
       JNZ   = 0x05,
+      JBE   = 0x06,
+      JA    = 0x07,
+      JGE   = 0x0D,
    };
 
    inline bool test(X86OperandType type, X86OperandType mask)
@@ -148,6 +151,18 @@ namespace elena_lang
       bool isR8() const
       {
          return test(type, X86OperandType::R8);
+      }
+      bool isR8_M8() const
+      {
+         return test(type, X86OperandType::R8) || test(type, X86OperandType::M8);
+      }
+      bool isR16() const
+      {
+         return test(type, X86OperandType::R16);
+      }
+      bool isR16_M16() const
+      {
+         return test(type, X86OperandType::R16) || test(type, X86OperandType::M16);
       }
       bool isR32() const
       {

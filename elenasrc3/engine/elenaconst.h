@@ -87,6 +87,8 @@ namespace elena_lang
    constexpr auto CAST_MESSAGE            = "#cast";
    constexpr auto INVOKE_MESSAGE          = "#invoke";
 
+   constexpr auto ADD_MESSAGE             = "add";
+
    // --- constant string lengths ---
    constexpr auto TEMPLATE_PREFIX_NS_LEN = (sizeof(TEMPLATE_PREFIX_NS) - 1);
 

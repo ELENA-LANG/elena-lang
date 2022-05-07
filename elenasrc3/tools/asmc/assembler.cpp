@@ -282,6 +282,8 @@ bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
          return compileBOpCode(tokenInfo, writer, labelScope);
       case 'c':
          return compileCOpCode(tokenInfo, writer);
+      case 'd':
+         return compileDOpCode(tokenInfo, writer);
       case 'e':
          return compileEOpCode(tokenInfo, writer);
       case 'i':

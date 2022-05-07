@@ -8,19 +8,21 @@ import system;
 //   }
 //}
 
-A
-{
-   int Length
-   {
-      get()
-        = 2;
-   }
-}
+//A
+//{
+//   int Length
+//   {
+//      get()
+//        = 2;
+//   }
+//}
 
 singleton Tester
 {
    run()
    {
+      var n := 2 + 1;
+
       //Output.write("Hello");
 
 //      var a := Value;

@@ -187,15 +187,14 @@ void SyntaxTreeBuilder :: flushExpression(Scope& scope, SyntaxNode node)
          case SyntaxKey::Message:
             flushMessage(scope, current);
             break;
-         case SyntaxKey::Expression:
-         case SyntaxKey::AssignOperation:
-         case SyntaxKey::IndexerOperation:
-         case SyntaxKey::AddAssignOperation:
-         case SyntaxKey::MessageOperation:
-         case SyntaxKey::PropertyOperation:
+         case SyntaxKey::L5Expression:
+            current.setKey(SyntaxKey::Expression);
             flushExpression(scope, current);
             break;
-         default:
+      default:
+            if (SyntaxTree::test(current.key, SyntaxKey::ScopeMask)) {
+               flushExpression(scope, current);
+            }
             // to make compiler happy
             break;
       }
@@ -389,6 +388,11 @@ void SyntaxTreeBuilder :: flushMethodCode(Scope& scope, SyntaxNode node)
       switch (current.key) {
          case SyntaxKey::Expression:
          case SyntaxKey::ReturnExpression:
+            flushStatement(scope, current);
+            break;
+         case SyntaxKey::L5Expression:
+            // HOTFIX : treat them as a normal expression
+            current.setKey(SyntaxKey::Expression);
             flushStatement(scope, current);
             break;
          case SyntaxKey::EOP:

@@ -55,6 +55,7 @@ namespace elena_lang
       SavingIndex       = 0x001A,
       DirectCallOp      = 0x001B,
       DispatchingOp     = 0x001C,
+      IntOp             = 0x001D,
 
       Import            = 0x0038,
       StrDictionaryOp   = 0x0039,

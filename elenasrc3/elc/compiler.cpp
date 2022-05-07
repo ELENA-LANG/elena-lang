@@ -352,7 +352,7 @@ ObjectInfo Compiler::MetaScope :: mapIdentifier(ustr_t identifier, bool referenc
    if (!referenceOne) {
       IdentifierString metaIdentifier(META_PREFIX, identifier);
 
-      NamespaceScope* ns = (NamespaceScope*)getScope(ScopeLevel::Namespace);
+      NamespaceScope* ns = Scope::getScope<NamespaceScope>(*this, ScopeLevel::Namespace);
 
       // check if it is a meta dictionary
       ObjectInfo retVal = parent->mapIdentifier(*metaIdentifier, referenceOne, attr | EAttr::Meta);
@@ -566,18 +566,18 @@ int Compiler::ExprScope :: newTempLocal()
 
 void Compiler::ExprScope :: syncStack()
 {
-   CodeScope* codeScope = (CodeScope*)getScope(Scope::ScopeLevel::Code);
+   CodeScope* codeScope = Scope::getScope<CodeScope>(*this, Scope::ScopeLevel::Code);
    if (codeScope != nullptr) {
       if (codeScope->reserved1 < tempAllocated1)
          codeScope->reserved1 = tempAllocated1;
 
-      MethodScope* methodScope = (MethodScope*)getScope(ScopeLevel::Method);
+      MethodScope* methodScope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
       if (methodScope != nullptr) {
          methodScope->reservedArgs = _max(methodScope->reservedArgs, allocatedArgs);
       }
    }
    else {
-      SymbolScope* symbolScope = (SymbolScope*)getScope(ScopeLevel::Symbol);
+      SymbolScope* symbolScope = Scope::getScope<SymbolScope>(*this, ScopeLevel::Symbol);
       if (symbolScope != nullptr) {
          symbolScope->reservedArgs = _max(symbolScope->reservedArgs, allocatedArgs);
          if (symbolScope->reserved1 < tempAllocated1)
@@ -636,7 +636,7 @@ ref_t Compiler :: mapNewTerminal(Scope& scope, SyntaxNode nameNode, ustr_t prefi
 
       nameNode.setArgumentReference(reference);
 
-      NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::Namespace);
+      NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
       // verify if the name is unique
       if (visibility == Visibility::Public) {
@@ -727,7 +727,7 @@ ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<
    NamespaceScope* ns = &scope;
    ref_t reference = ns->resolveImplicitIdentifier(*templateName, false, true);
    while (!reference && ns->parent != nullptr) {
-      ns = (NamespaceScope*)ns->parent->getScope(Scope::ScopeLevel::Namespace);
+      ns = Scope::getScope<NamespaceScope>(*ns->parent, Scope::ScopeLevel::Namespace);
       if (ns) {
          reference = ns->resolveImplicitIdentifier(*templateName, false, false);
       }
@@ -741,7 +741,7 @@ void Compiler :: importTemplate(Scope& scope, SyntaxNode node, ustr_t prefix, Sy
 {
    List<SyntaxNode> parameters({});
 
-   NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::Namespace);
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
    ref_t templateRef = retrieveTemplate(*ns, node, parameters, prefix);
    if (!templateRef)
       scope.raiseError(errUnknownTemplate, node);
@@ -1794,9 +1794,11 @@ ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, Syn
       arguments.add(ioperand);
    }
 
-   BuildKey opKey = _logic->resolveOp(operator_id, argumentRefs, argCount);
+   ref_t outputRef = 0;
+   bool needToAlloc = false;
+   BuildKey opKey = _logic->resolveOp(operator_id, argumentRefs, argCount, outputRef, needToAlloc);
 
-   if (!interpreter.eval(opKey, operator_id, arguments)) {
+   if (needToAlloc || !interpreter.eval(opKey, operator_id, arguments)) {
       scope.raiseError(errCannotEval, node);
    }
 
@@ -2145,7 +2147,7 @@ ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxK
 {
    ObjectInfo identInfo;
 
-   NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::Namespace);
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
    identInfo = ns->mapIdentifier(identifier, type == SyntaxKey::reference, EAttr::None);
 
@@ -2267,8 +2269,8 @@ int Compiler :: allocateLocalAddress(CodeScope* codeScope, int size)
 
 void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRef)
 {
-   ExprScope* exprScope = (ExprScope*)scope.getScope(Scope::ScopeLevel::Expr);
-   CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::Code);
+   ExprScope* exprScope = Scope::getScope<ExprScope>(scope, Scope::ScopeLevel::Expr);
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
    if (codeScope == nullptr)
       scope.raiseError(errInvalidOperation, terminal);
 
@@ -2361,6 +2363,46 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, Scope& scope, 
    return { ObjectKind::External, V_INT32, 0 };
 }
 
+mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId)
+{
+   switch (operatorId) {
+      case ADD_OPERATOR_ID:
+         return scope->buildins.add_message;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
+
+ObjectInfo Compiler :: declareTempStructure(ExprScope& scope, int size)
+{
+   if (size <= 0)
+      return {};
+
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+
+   ObjectInfo retVal = { ObjectKind::TempLocalAddress };
+   retVal.reference = allocateLocalAddress(codeScope, size);
+
+   scope.syncStack();
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: allocateResult(ExprScope& scope, ref_t resultRef)
+{
+   SizeInfo info = _logic->defineStructSize(*scope.moduleScope, resultRef);
+   if (info.size > 0) {
+      ObjectInfo retVal = declareTempStructure(scope, info.size);
+      retVal.type = resultRef;
+
+      return retVal;
+   }
+   else throw InternalError(errFatalError);
+
+   return {}; // NOTE : should never be reached
+}
+
 ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, SyntaxNode rnode, int operatorId)
 {
    ObjectInfo retVal;
@@ -2389,22 +2431,51 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
 
    arguments[0] = resolvePrimitiveReference(loperand);
    arguments[1] = resolvePrimitiveReference(roperand);
+
+   ref_t outputRef = 0;
+   bool  needToAlloc = false;
    if (inode != SyntaxKey::None) {
       arguments[2] = resolvePrimitiveReference(ioperand);
 
-      op = _logic->resolveOp(operatorId, arguments, 3);
+      op = _logic->resolveOp(operatorId, arguments, 3, outputRef, needToAlloc);
    }
-   else op = _logic->resolveOp(operatorId, arguments, 2);
+   else op = _logic->resolveOp(operatorId, arguments, 2, outputRef, needToAlloc);
 
    if (op != BuildKey::None) {
-      writeObjectInfo(writer, loperand);
-      writeObjectInfo(writer, roperand);
-      if (inode != SyntaxKey::None)
-         writeObjectInfo(writer, ioperand);
+      if (needToAlloc) {
+         retVal = allocateResult(scope, outputRef);
+      }
+      else retVal = { ObjectKind::Object, outputRef, 0 };
 
-      writer.appendNode(op);
+      writeObjectInfo(writer, loperand);
+      writer.appendNode(BuildKey::SavingInStack, 0);
+
+      writeObjectInfo(writer, roperand);
+      writer.appendNode(BuildKey::SavingInStack, 1);
+
+      if (inode != SyntaxKey::None)
+         throw InternalError(errFatalError);
+         //writeObjectInfo(writer, ioperand);
+
+      if (needToAlloc) {
+         writer.newNode(op);
+         writer.appendNode(BuildKey::Index, retVal.argument);
+         writer.closeNode();
+      }
+      else writer.appendNode(op);
    }
-   else throw InternalError(errFatalError);
+   else {
+      mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
+      ArgumentsInfo messageArguments;
+      messageArguments.add(loperand);
+      messageArguments.add(roperand);
+      if (ioperand.kind != ObjectKind::Unknown) {
+         overwriteArgCount(message, 3);
+         messageArguments.add(ioperand);
+      }
+
+      retVal = compileMessageOperation(writer, scope, node, loperand, message, messageArguments, EAttr::None);
+   }
 
    return retVal;
 }
@@ -2836,7 +2907,7 @@ ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
 ObjectInfo Compiler :: saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object)
 {
    if (object.kind == ObjectKind::External) {
-      CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::Code);
+      CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
 
       auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, object.type);
       int tempLocal = allocateLocalAddress(codeScope, sizeInfo.size);
@@ -2923,12 +2994,12 @@ ref_t Compiler :: mapNested(ExprScope& ownerScope, ExpressionAttribute mode)
 {
    ref_t nestedRef = 0;
    if (EAttrs::testAndExclude(mode, EAttr::RootSymbol)) {
-      SymbolScope* owner = (SymbolScope*)ownerScope.getScope(Scope::ScopeLevel::Symbol);
+      SymbolScope* owner = Scope::getScope<SymbolScope>(ownerScope, Scope::ScopeLevel::Symbol);
       if (owner)
          nestedRef = owner->reference;
    }
    else if (EAttrs::testAndExclude(mode, EAttr::Root)) {
-      MethodScope* ownerMeth = (MethodScope*)ownerScope.getScope(Scope::ScopeLevel::Method);
+      MethodScope* ownerMeth = Scope::getScope<MethodScope>(ownerScope, Scope::ScopeLevel::Method);
       if (ownerMeth && ownerMeth->checkHint(MethodHint::Constant)) {
          ref_t dummyRef = 0;
          // HOTFIX : recognize property constant
@@ -3000,6 +3071,8 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::AssignOperation:
       //case SyntaxKey::AddAssignOperation:
+      case SyntaxKey::AddOperation:
+      case SyntaxKey::SubOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::ReturnExpression:
@@ -3215,7 +3288,7 @@ void Compiler :: compileAbstractMethod(BuildTreeWriter& writer, MethodScope& sco
 
 void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node)
 {
-   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::Class);
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
 
    mssg_t message = scope.getMessageID();
 
@@ -3282,7 +3355,7 @@ void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodSc
       newFrame = true;
    }
 
-   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::Class);
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
 
    if (test(classScope->info.header.flags, elDynamicRole))
       throw InternalError(errFatalError);
@@ -3629,6 +3702,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.constructor_message =
       encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
          0, FUNCTION_MESSAGE);
+   moduleScope->buildins.add_message =
+      encodeMessage(moduleScope->module->mapAction(ADD_MESSAGE, 0, false),
+         2, 0);
 
    // cache self variable
    moduleScope->selfVar.copy(moduleScope->predefined.retrieve<ref_t>("$self", V_SELF_VAR, [](ref_t reference, ustr_t key, ref_t current)

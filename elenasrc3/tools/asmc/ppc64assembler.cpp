@@ -1253,6 +1253,11 @@ bool PPC64Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    return true;
 }
 
+bool PPC64Assembler :: compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   return false;
+}
+
 bool PPC64Assembler :: compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    if (tokenInfo.compare("extrdi")) {

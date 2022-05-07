@@ -89,7 +89,9 @@ ELENA byte codes (or ecodes)
 
    load fp:i                - index := fp[i]
 
-   mov sp:i1, fp:i2,        - sp[i1] := fp[i2] 
+   mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
+
+   xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
 
    peek fp:i                - acc := fp[i]
 
@@ -126,8 +128,30 @@ ELENA byte codes (or ecodes)
 
    copy n                   - sp[0] >> acc, n bytes
 
+   copy dp:disp, n          - dp[disp] => temp;
+                              sp[0] >> temp, n bytes  
 
  Jump operations:
  ---------------- 
    jump label               - jumps to the label
  
+
+ Arithmeric operations:
+ ----------------------
+   iadd dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] += temp;
+                              n = 1,2,4,8 
+ 
+   idiv dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] /= temp;
+                              n = 1,2,4,8  
+
+   imul dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] *= temp;
+                              n = 1,2,4,8  
+
+
+   isub dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] -= temp;
+                              n = 1,2,4,8  
+

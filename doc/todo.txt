@@ -4,7 +4,20 @@ In development:
 
   [development]
     ### EPOCH: elena 6.0 - redux ###
-    === Sprint 6 : branching ===
+    === Sprint 6 : branching / aithmetic ===
+    * new opcode : iaddndp : x86-64, ppc64, aarch64
+    * new opcode : isubndp : x86-64, ppc64, aarch64
+    * new opcode : imulndp : x86-64, ppc64, aarch64
+    * new opcode : idivndp : x86-64, ppc64, aarch64
+
+    * new opcode : movsisi : x86, x86-64, ppc64, aarch64
+
+    * arithmetic operators : native implementation
+    * make BaseValue / BaseNumber / BaseIntNumber - an abstract
+    * int / byte / short should support plus / minus operator
+
+    * sizeof operator
+
     * string return length
 
     * support \n char inside the string
@@ -17,7 +30,6 @@ In development:
 
     * protected constructor
     * predefined methods
-    * make BaseValue / BaseNumber / BaseIntNumber - an abstract
     * conversion routines
     * branching : if operator
     * branching : loop attribute
@@ -67,6 +79,7 @@ Pipeline:
     --- docs / tutorials ---
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
+    * copydpn : optimization (by 4, 8, and if less then 8)
     * true / false symbol - replace symbol call with constant reference
     * optimization: resolve const static properties directly
     * if virtual multi-method handler is overridden - redirect to the parent one

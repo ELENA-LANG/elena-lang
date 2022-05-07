@@ -28,7 +28,7 @@ namespace elena_lang
       MaxSingleOp    = 0x7F,
 
       SetR           = 0x80,
-      SetDDisp       = 0x81,
+      SetDP          = 0x81,
       MovM           = 0x88,
 
       Copy           = 0x90,
@@ -36,7 +36,7 @@ namespace elena_lang
       AllocI         = 0x92,
       FreeI          = 0x93,
 
-      SaveDDisp      = 0xA0,
+      SaveDP         = 0xA0,
       StoreFI        = 0xA1,
       SaveSI         = 0xA2,
       StoreSI        = 0xA3,
@@ -48,7 +48,13 @@ namespace elena_lang
       CallVI         = 0xB1,
       Jump           = 0xB2,
 
-      MaxDoubleOp    = 0xEF,
+      MaxDoubleOp    = 0xDF,
+
+      CopyDPN        = 0xE0,
+      IAddDPN        = 0xE1,
+      ISubDPN        = 0xE2,
+      IMulDPN        = 0xE3,
+      IDivDPN        = 0xE4,
 
       OpenIN         = 0xF0,
       XStoreSIR      = 0xF1,
@@ -56,6 +62,7 @@ namespace elena_lang
       MovSIFI        = 0xF3,
       NewIR          = 0xF4,
       NewNR          = 0xF5,
+      XMovSISI       = 0xF6,
       XStoreFIR      = 0xF9,
       DispatchMR     = 0xFB,
       VCallMR        = 0xFC,

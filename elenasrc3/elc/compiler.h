@@ -228,6 +228,13 @@ namespace elena_lang
             else return {};
          }
 
+         template<class T> static T* getScope(Scope& scope, ScopeLevel level)
+         {
+            T* targetScope = (T*)scope.getScope(level);
+
+            return targetScope;
+         }
+
          Scope(Scope* parent)
          {
             this->parent = parent;
@@ -600,6 +607,7 @@ namespace elena_lang
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix); 
 
       mssg_t resolveMessageAtCompileTime(mssg_t weakMessage);
+      mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
 
       bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message/*, bool& isProtectedDefConst*/);
 
@@ -609,6 +617,8 @@ namespace elena_lang
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs);
 
       int allocateLocalAddress(CodeScope* codeScope, int size);
+
+      ObjectInfo allocateResult(ExprScope& scope, ref_t resultRef);
 
       void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node);
       void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node);
@@ -642,6 +652,8 @@ namespace elena_lang
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
       void declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRef);
+
+      ObjectInfo declareTempStructure(ExprScope& scope, int size);
 
       void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);
       void resolveClassParent(ClassScope& scope, SyntaxNode node);

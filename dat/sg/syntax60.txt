@@ -17,6 +17,7 @@ __define INCLUDE_STATEMENT   4130;
 __define RELOAD_STATEMENT    4131;
 __define MESSAGE             4176;
 __define EXPRESSION          6192;
+__define L5_EXPRESSION       6199;
 __define OBJECT              4145;
 __define TEMPLATE_TYPE       4146;
 __define ARRAY_TYPE          4147;
@@ -28,6 +29,8 @@ __define CLOSURE_EXPRESSION  6198;
 __define INDEXER_OPERATION   6209;
 __define ASSIGN_OPERATION    6210;
 __define ADDITION_ASSIGNMENT 6211;
+__define ADD_OPERATION       6212;
+__define SUB_OPERATION       6213;
 __define MESSAGE_OPERATION   6225;
 __define PROPERTY_OPERATION  6228;
 __define POSTFIX             4192;
@@ -153,10 +156,15 @@ MESSAGE_PARAMETER ::=
 EXPRESSION ::=
         identifier I_R
 	| reference I_R
-        | integer ^OBJECT
-        | hexinteger ^OBJECT
-        | string ^OBJECT
+        | integer E_R
+        | hexinteger E_R
+        | string E_R
 	| CLOSURE_EXPRESSION ^CLOSURE;
+
+L5_EXPRESSION ::=
+        identifier I5_R
+        | integer ^OBJECT
+        | hexinteger ^OBJECT;
 
 CLOSURE_EXPRESSION ::=
 	"{" STATEMENTS "}";
@@ -171,6 +179,15 @@ I_R ::=
 	| I_L1_R
 	| I_L2_R
 	| I_L3_R NEXT_L3_R
+	| L5_R
+        | eps ^OBJECT; 
+
+E_R ::=
+	L5_R
+	| eps ^OBJECT;
+
+I5_R ::=
+        identifier I5_R
         | eps ^OBJECT; 
 
 N_R ::=
@@ -191,6 +208,10 @@ I_L2_R ::=
 
 I_L3_R ::=
 	"." ^OBJECT MESSAGE MESSAGE_R;
+
+L5_R ::=
+	"+" ^OBJECT L5_EXPRESSION ^ADD_OPERATION
+	| "-" ^OBJECT L5_EXPRESSION ^SUB_OPERATION;
 
 NEXT_L3_R ::=
 	"." MESSAGE MESSAGE_R NEXT_L3_R

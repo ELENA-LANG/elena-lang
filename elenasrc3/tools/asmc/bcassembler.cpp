@@ -406,8 +406,8 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileOpII(tokenInfo, writer, opCommand, true);
          case ByteCode::StoreFI:
             return compileOpFrameI(tokenInfo, writer, opCommand, locals, true);
-         case ByteCode::SaveDDisp:
-         case ByteCode::SetDDisp:
+         case ByteCode::SaveDP:
+         case ByteCode::SetDP:
             return compileDDisp(tokenInfo, writer, opCommand, dataLocals, true);
          case ByteCode::CallMR:
          case ByteCode::VCallMR:

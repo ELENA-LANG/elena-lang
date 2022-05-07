@@ -93,8 +93,8 @@ const ref_t coreFunctions[coreFunctionNumber] =
 const size_t bcCommandNumber = 29;
 const ByteCode bcCommands[bcCommandNumber] =
 {
-   ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDDisp, ByteCode::CloseN, ByteCode::AllocI,
-   ByteCode::FreeI, ByteCode::SaveDDisp, ByteCode::StoreFI, ByteCode::OpenIN, ByteCode::XStoreSIR,
+   ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
+   ByteCode::FreeI, ByteCode::SaveDP, ByteCode::StoreFI, ByteCode::OpenIN, ByteCode::XStoreSIR,
    ByteCode::OpenHeaderIN, ByteCode::CallExtR, ByteCode::MovSIFI, ByteCode::PeekFI, ByteCode::Load,
    ByteCode::SaveSI, ByteCode::CallR, ByteCode::Quit, ByteCode::MovM, ByteCode::CallVI,
    ByteCode::StoreSI, ByteCode::Redirect, ByteCode::NewIR, ByteCode::XFlushSI, ByteCode::Copy,

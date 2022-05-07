@@ -181,7 +181,7 @@ inline %180h
 
 end 
 
-// ; setddisp
+// ; setdp
 inline %81h
 
   add     x10, x29, __arg12_1
@@ -423,6 +423,25 @@ inline %0B1h
   add     x17, x17, __arg12_1
   ldr     x17, [x17]
   blr     x17
+
+end
+
+// ; copydpn
+inline %0E0h
+
+  mov     x11, __arg12_1
+  mov     x12, x0
+  add     x13, x29, __arg12_1
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 8
+  ldr     x14, [x12], #8
+  str     x14, [x13], #8
+  b       labLoop
+
+labEnd:
 
 end
 

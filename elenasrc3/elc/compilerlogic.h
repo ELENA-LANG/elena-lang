@@ -31,7 +31,7 @@ namespace elena_lang
       bool isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t sourceLen);
 
    public:
-      BuildKey resolveOp(int operatorId, ref_t* arguments, size_t length);
+      BuildKey resolveOp(int operatorId, ref_t* arguments, size_t length, ref_t& outputRef, bool& needToAlloc);
 
       bool defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 
