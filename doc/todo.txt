@@ -5,11 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 6 : branching / aithmetic ===
-    * new opcode : iaddndp : x86-64, ppc64, aarch64
-    * new opcode : isubndp : x86-64, ppc64, aarch64
-    * new opcode : imulndp : x86-64, ppc64, aarch64
-    * new opcode : idivndp : x86-64, ppc64, aarch64
-
     * new opcode : movsisi : x86, x86-64, ppc64, aarch64
 
     * arithmetic operators : native implementation
@@ -99,6 +94,7 @@ Pipeline:
     * optimization xstore sp:0, 0 and xstore sp:1, 0 - should be replaced with xor operation
     * no need to store an argument for the function (constructor)
     * nested class cannot have static methods
+    * ppc64 optimization : use store multiple for alloc / open opcodes - for filling the stack with zeros
 
     * editor - do we need checkmode? it seems like not
 

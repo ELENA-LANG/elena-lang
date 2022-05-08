@@ -184,6 +184,8 @@ namespace elena_lang
       bool compileCall(X86Operand source, MemoryWriter& writer) override;
       bool compileCMovcc(X86Operand source, X86Operand target, MemoryWriter& writer, X86JumpType type) override;
       bool compileCmp(X86Operand source, X86Operand target, MemoryWriter& writer) override;
+      bool compileIDiv(X86Operand source, MemoryWriter& writer) override;
+      bool compileIMul(X86Operand source, MemoryWriter& writer) override;
       bool compileJmp(X86Operand source, MemoryWriter& writer) override;
       bool compileLea(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileMov(X86Operand source, X86Operand target, MemoryWriter& writer) override;

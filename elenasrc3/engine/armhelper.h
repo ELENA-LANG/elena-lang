@@ -154,6 +154,20 @@ namespace elena_lang
    class ARMHelper
    {
    public:
+      static unsigned int makeOpcode(int sf, int op, int op2, int op3, ARMOperandType rm, int op4, int o1,
+         ARMOperandType rn, ARMOperandType rd)
+      {
+         return (sf << 31) | (op << 30) | (op2 << 29) | (op2 << 21) | (((unsigned int)rm & 0x1F) << 16) | (op4 << 11)
+            | (o1 << 10) | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
+      static unsigned int makeOpcode(int sf, int op1, int op2, int op3, ARMOperandType rm, int op4, ARMOperandType ra,
+         ARMOperandType rn, ARMOperandType rd)
+      {
+         return (sf << 31) | (op1 << 29) | (op2 << 24) | (op3 << 23) | (((unsigned int)rm & 0x1F) << 16)
+            | (op4 << 15) | (((unsigned int)ra & 0x1F) << 10) | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
       static unsigned int makeOpcode(int opc, int op1, int op2, int op3, int l, int imm, ARMOperandType rt2, ARMOperandType rn, ARMOperandType rt)
       {
          return (opc << 30) | (op1 << 27) | (op2 << 26) | (op3 << 23) | (l << 22) | ((imm & 0x7F) << 15) | (((unsigned int)rt2 & 0x1F) << 10)

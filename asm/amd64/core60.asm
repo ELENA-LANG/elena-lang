@@ -368,11 +368,163 @@ end
 // ; copydpn
 inlinr %0E0h
 
-  mov  rax, rsi
   mov  rsi, r10
   lea  rdi, [rbp + __arg32_1]
   mov  ecx, __n_2
   rep  movsb
+
+end
+
+
+// ; iaddndp
+inline %0E1h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  add  dword ptr [rdi], eax
+
+end
+
+// ; iaddndp
+inline %1E1h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  add  byte ptr [rdi], al
+
+end
+
+// ; iaddndp
+inline %2E1h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  add  word ptr [rdi], ax
+
+end
+
+// ; iaddndp
+inline %4E1h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  add  [rdi], rax
+
+end
+
+// ; isubndp
+inline %0E2h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  sub  dword ptr[rdi], eax
+
+end
+
+// ; isubndp
+inline %1E2h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  sub  byte ptr [rdi], al
+
+end
+
+// ; isubndp
+inline %2E2h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  sub  word ptr [rdi], ax
+
+end
+
+// ; isubndp
+inline %4E2h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  sub  [rdi], rax
+
+end
+
+// ; imulndp
+inline %0E3h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  imul ecx
+  mov  dword ptr [rbp+__arg32_1], eax
+
+end
+
+// ; imulndp
+inline %1E3h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  imul cl
+  mov  byte ptr [rbp+__arg32_1], al
+
+end
+
+// ; imulndp
+inline %2E3h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  imul cx
+  mov  word ptr [rbp+__arg32_1], ax
+
+end
+
+// ; imulndp
+inline %4E3h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  imul rcx
+  mov  [rbp+__arg32_1], rax
+
+end
+
+// ; idivndp
+inline %0E4h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  idiv rcx
+  mov  dword ptr [rbp+__arg32_1], eax
+
+end
+
+// ; idivndp
+inline %1E4h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  idiv cl
+  mov  byte ptr [rbp+__arg32_1], al
+
+end
+
+// ; idivndp
+inline %2E4h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  idiv cx
+  mov  word ptr [rbp+__arg32_1], ax
+
+end
+
+// ; idivndp
+inline %4E4h
+
+  mov  rcx, [r10]
+  mov  rax, [rbp+__arg32_1]
+  idiv rcx
+  mov  [rbp+__arg32_1], rax
 
 end
 

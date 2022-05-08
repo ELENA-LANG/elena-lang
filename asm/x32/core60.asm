@@ -445,8 +445,9 @@ end
 // ; imulndp
 inline %1E3h
 
+  mov  ecx, [esi]
   mov  eax, [ebp+__arg32_1]
-  imul dword ptr [esi]
+  imul cl
   mov  byte ptr [ebp+__arg32_1], al
 
 end
@@ -454,8 +455,9 @@ end
 // ; imulndp
 inline %2E3h
 
+  mov  ecx, [esi]
   mov  eax, [ebp+__arg32_1]
-  imul dword ptr [esi]
+  imul cx
   mov  word ptr [ebp+__arg32_1], ax
 
 end
@@ -509,9 +511,10 @@ end
 // ; idivndp
 inline %1E4h
 
+  mov  ecx, [esi]
   mov  eax, [ebp+__arg32_1]
   cdq
-  idiv dword ptr [esi]
+  idiv cl
   mov  byte ptr [ebp+__arg32_1], al
 
 end
@@ -519,9 +522,10 @@ end
 // ; idivndp
 inline %2E4h
 
+  mov  ecx, [esi]
   mov  eax, [ebp+__arg32_1]
   cdq
-  idiv dword ptr [esi]
+  idiv cx
   mov  word ptr [ebp+__arg32_1], ax
 
 end

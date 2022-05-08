@@ -445,6 +445,230 @@ labEnd:
 
 end
 
+// ; iaddndp
+inline %0E1h
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  add     x17, x17, x18  
+
+  str     w17, [x19]
+
+end
+
+// ; iaddndp
+inline %1E1h
+
+  add     x19, x29, __arg12_1
+
+  ldrsb   x17, [x0]
+  ldrsb   x18, [x19]
+
+  add     x17, x17, x18  
+
+  strb    w17, [x19]
+
+end
+
+// ; iaddndp
+inline %2E1h
+
+  add     x19, x29, __arg12_1
+
+  ldrsh   x17, [x0]
+  ldrsh   x18, [x19]
+
+  add     x17, x17, x18  
+
+  strh    w17, [x19]
+
+end
+
+// ; iaddndp
+inline %4E1h
+
+  add     x19, x29, __arg12_1
+
+  ldr     x17, [x0]
+  ldr     x18, [x19]
+
+  add     x17, x17, x18  
+
+  str     x17, [x19]
+
+end
+
+// ; isubndp
+inline %0E2h
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  sub     x17, x17, x18  
+
+  str     w17, [x19]
+
+end
+
+// ; isubndp
+inline %1E2h
+
+  add     x19, x29, __arg12_1
+
+  ldrsb   x17, [x0]
+  ldrsb   x18, [x19]
+
+  sub     x17, x17, x18  
+
+  strb    w17, [x19]
+
+end
+
+// ; isubndp
+inline %2E2h
+
+  add     x19, x29, __arg12_1
+
+  ldrsb   x17, [x0]
+  ldrsb   x18, [x19]
+
+  sub     x17, x17, x18  
+
+  strh    w17, [x19]
+
+end
+
+// ; isubndp
+inline %4E2h
+
+  add     x19, x29, __arg12_1
+
+  ldr     x17, [x0]
+  ldr     x18, [x19]
+
+  sub     x17, x17, x18  
+
+  str     x17, [x19]
+
+end
+
+// ; imulndp
+inline %0E3h
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  mul     x17, x17, x18  
+
+  str     w17, [x19]
+
+end
+
+// ; imulndp
+inline %1E3h
+
+  add     x19, x29, __arg12_1
+
+  ldrsb   x17, [x0]
+  ldrsb   x18, [x19]
+
+  mul     x17, x17, x18  
+
+  strb    w17, [x19]
+
+end
+
+// ; imulndp
+inline %2E3h
+
+  add     x19, x29, __arg12_1
+
+  ldrsb   x17, [x0]
+  ldrsb   x18, [x19]
+
+  mul     x17, x17, x18  
+
+  strh    w17, [x19]
+
+end
+
+// ; imulndp
+inline %4E3h
+
+  add     x19, x29, __arg12_1
+
+  ldr     x17, [x0]
+  ldr     x18, [x19]
+
+  mul     x17, x17, x18  
+
+  str     x17, [x19]
+
+end
+
+// ; idivndp
+inline %0E4h
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  sdiv    x17, x17, x18  
+
+  str     w17, [x19]
+
+end
+
+// ; idivndp
+inline %1E4h
+
+  add     x19, x29, __arg12_1
+
+  ldrsb   x17, [x0]
+  ldrsb   x18, [x19]
+
+  sdiv    x17, x17, x18  
+
+  strb    w17, [x19]
+
+end
+
+// ; idivndp
+inline %2E4h
+
+  add     x19, x29, __arg12_1
+
+  ldrsb   x17, [x0]
+  ldrsb   x18, [x19]
+
+  sdiv    x17, x17, x18  
+
+  strh    w17, [x19]
+
+end
+
+// ; idivndp
+inline %4E4h
+
+  add     x19, x29, __arg12_1
+
+  ldr     x17, [x0]
+  ldr     x18, [x19]
+
+  sdiv    x17, x17, x18  
+
+  str     x17, [x19]
+
+end
+
 // ; openin
 inline %0F0h
 
