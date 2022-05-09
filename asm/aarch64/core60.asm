@@ -966,6 +966,68 @@ inline %0F5h
 
 end
 
+
+// ; xmovsisi
+inline %0F6h
+ 
+  add     x12, sp, __arg12_1
+  add     x13, sp, __arg12_2
+
+  ldr     x11, [x12]
+  str     x11, [x13]
+
+end
+
+// ; xmovsisi 1, n
+inline %1F6h
+
+  add     x13, sp, __arg12_2
+
+  ldr     x0, [x13]
+
+end
+
+// ; xmovsisi n, 1
+inline %2F6h
+
+  add     x13, sp, __arg12_1
+
+  str     x0, [x13]
+
+end
+
+// ; xmovsisi 2, n
+inline %3F6h
+
+  add     x13, sp, __arg12_2
+
+  ldr     x1, [x13]
+
+end
+
+// ; xmovsisi n, 1
+inline %4F6h
+
+  add     x13, sp, __arg12_1
+
+  str     x1, [x13]
+
+end
+
+// ; xmovsisi 1, 2
+inline %5F6h
+
+  mov     x0, x1
+
+end
+
+// ; xmovsisi 2, 1
+inline %6F6h
+
+  mov     x1, x0
+
+end
+
 // ; xstorefir
 inline %0F9h
 

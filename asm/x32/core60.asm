@@ -862,6 +862,35 @@ inline %0F5h
 
 end
 
+// ; xmovsisi
+inline %0F6h
+
+  mov  eax, [esp+__arg32_2]
+  mov  [esp+__arg32_1], eax
+
+end
+
+// ; xmovsisi 1, n
+inline %1F6h
+
+  mov  esi, [esp+__arg32_2]
+
+end
+
+// ; xmovsisi n, 1
+inline %2F6h
+
+  mov  [esp+__arg32_1], esi
+
+end
+
+// ; xmovsisi 1, 2
+inline %5F6h
+
+  mov  esi, [esp+8]
+
+end
+
 // ; xstorefir
 inline %0F9h
 

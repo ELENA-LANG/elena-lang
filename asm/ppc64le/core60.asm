@@ -1071,6 +1071,57 @@ inline %0F5h
 
 end
 
+// ; xmovsisi
+inline %0F6h
+
+  ld       r16, __arg16_2(r1)
+  std      r16, __arg16_1(r1)
+
+end
+
+// ; xmovsisi 1, n
+inline %1F6h
+
+  ld       r3, __arg16_2(r1)
+
+end
+
+// ; xmovsisi n, 1
+inline %2F6h
+
+  std      r3, __arg16_1(r1)
+
+end
+
+// ; xmovsisi 2, n
+inline %3F6h
+
+  ld       r4, __arg16_2(r1)
+
+end
+
+// ; xmovsisi n, 1
+inline %4F6h
+
+  std      r4, __arg16_1(r1)
+
+end
+
+
+// ; xmovsisi 1, 2
+inline %5F6h
+
+  mr       r3, r4
+
+end
+
+// ; xmovsisi 2, 1
+inline %6F6h
+
+  mr       r4, r3
+
+end
+
 // ; xstorefir
 inline %0F9h
 

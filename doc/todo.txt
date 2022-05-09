@@ -5,8 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 6 : branching / aithmetic ===
-    * new opcode : movsisi : x86, x86-64, ppc64, aarch64
-
     * arithmetic operators : native implementation
     * make BaseValue / BaseNumber / BaseIntNumber - an abstract
     * int / byte / short should support plus / minus operator

@@ -766,6 +766,56 @@ inline %0F5h
 
 end
 
+// ; xmovsisi
+inline %0F6h
+
+  mov  rax, [rsp+__arg32_2]
+  mov  [rsp+__arg32_1], rax
+
+end
+
+// ; xmovsisi 1, n
+inline %1F6h
+
+  mov  r10, [rsp+__arg32_2]
+
+end
+
+// ; xmovsisi n, 1
+inline %2F6h
+
+  mov  [rsp+__arg32_1], r10
+
+end
+
+// ; xmovsisi 2, n
+inline %3F6h
+
+  mov  r11, [rsp+__arg32_2]
+
+end
+
+// ; xmovsisi n, 1
+inline %4F6h
+
+  mov  [rsp+__arg32_1], r11
+
+end
+
+// ; xmovsisi 1, 2
+inline %5F6h
+
+  mov  r10, r11
+
+end
+
+// ; xmovsisi 2, 1
+inline %6F6h
+
+  mov  r11, r10
+
+end
+
 // ; xstorefir
 inline %0F9h
 
