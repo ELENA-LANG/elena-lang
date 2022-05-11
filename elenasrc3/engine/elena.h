@@ -824,17 +824,17 @@ namespace elena_lang
          writer->write(&header, sizeof(ClassHeader));
          writer->writeDWord(size);
          if (!headerAndSizeOnly) {
-            writer->writePos(methods.count());
-            methods.forEach<StreamWriter*>(writer, [](StreamWriter* writer, mssg_t message, MethodInfo info)
-               {
-                  writer->writeDWord(message);
-                  writer->write(&info, sizeof(info));
-               });
-
             writer->writePos(fields.count());
             fields.forEach<StreamWriter*>(writer, [](StreamWriter* writer, ustr_t name, FieldInfo info)
                {
                   writer->writeString(name);
+                  writer->write(&info, sizeof(info));
+               });
+
+            writer->writePos(methods.count());
+            methods.forEach<StreamWriter*>(writer, [](StreamWriter* writer, mssg_t message, MethodInfo info)
+               {
+                  writer->writeDWord(message);
                   writer->write(&info, sizeof(info));
                });
 
@@ -854,19 +854,11 @@ namespace elena_lang
          }
       }
 
-      void load(StreamReader* reader, bool headerAndSizeOnly = false)
+      void load(StreamReader* reader, bool headerAndSizeOnly = false, bool fieldsOnly = false)
       {
          reader->read(&header, sizeof(ClassHeader));
          size = reader->getDWord();
          if (!headerAndSizeOnly) {
-            pos_t methodsCount = reader->getPos();
-            for (pos_t i = 0; i < methodsCount; i++) {
-               mssg_t message = reader->getDWord();
-               MethodInfo methodInfo;
-               reader->read(&methodInfo, sizeof(MethodInfo));
-
-               methods.add(message, methodInfo);
-            }
             pos_t fieldCount = reader->getPos();
             for (pos_t i = 0; i < fieldCount; i++) {
                IdentifierString fieldName;
@@ -876,30 +868,40 @@ namespace elena_lang
 
                fields.add(*fieldName, fieldInfo);
             }
-            pos_t attrCount = reader->getPos();
-            for (pos_t i = 0; i < attrCount; i++) {
-               ClassAttributeKey key;
-               reader->read(&key, sizeof(key));
 
-               ref_t reference = reader->getRef();
+            if (!fieldsOnly) {
+               pos_t methodsCount = reader->getPos();
+               for (pos_t i = 0; i < methodsCount; i++) {
+                  mssg_t message = reader->getDWord();
+                  MethodInfo methodInfo;
+                  reader->read(&methodInfo, sizeof(MethodInfo));
 
-               attributes.add(key, reference);
+                  methods.add(message, methodInfo);
+               }
+               pos_t attrCount = reader->getPos();
+               for (pos_t i = 0; i < attrCount; i++) {
+                  ClassAttributeKey key;
+                  reader->read(&key, sizeof(key));
+
+                  ref_t reference = reader->getRef();
+
+                  attributes.add(key, reference);
+               }
+               pos_t statCount = reader->getPos();
+               for (pos_t i = 0; i < attrCount; i++) {
+                  IdentifierString fieldName;
+                  reader->readString(fieldName);
+                  StaticFieldInfo fieldInfo;
+                  reader->read(&fieldInfo, sizeof(fieldInfo));
+
+                  statics.add(*fieldName, fieldInfo);
+               }
             }
-            pos_t statCount = reader->getPos();
-            for (pos_t i = 0; i < attrCount; i++) {
-               IdentifierString fieldName;
-               reader->readString(fieldName);
-               StaticFieldInfo fieldInfo;
-               reader->read(&fieldInfo, sizeof(fieldInfo));
-
-               statics.add(*fieldName, fieldInfo);
-            }
-
          }
       }
 
       ClassInfo()
-         : methods({}), fields({}), attributes(0), statics({})
+         : methods({}), fields({ -1 }), attributes(0), statics({})
       {
          header.staticSize = 0;
          header.parentRef = header.classRef = 0;

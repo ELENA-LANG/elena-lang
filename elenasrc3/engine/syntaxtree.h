@@ -19,6 +19,7 @@ namespace elena_lang
       // masks
       ScopeMask          = 0x000800,
       MemberMask         = 0x000400,
+      DeclarationMask    = 0x001000,
       TerminalMask       = 0x002000,
 
       None               = 0x000000,

@@ -63,6 +63,8 @@ constexpr Op Operations[OperationLength] =
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 {
    switch (targetRef) {
+      case V_OBJECT:
+         return !isPrimitiveRef(sourceRef);
       default:
          return targetRef == sourceRef;
    }
@@ -119,22 +121,26 @@ bool CompilerLogic :: isValidOp(int operatorId, BuildKey op)
          return isValidObjArrayOp(operatorId);
       case BuildKey::AttrDictionaryOp:
          return isValidAttrDictionaryOp(operatorId);
+      case BuildKey::IntOp:
+         return true;
       default:
          return false;
    }
 }
 
-BuildKey CompilerLogic :: resolveOp(int operatorId, ref_t* arguments, size_t length, 
+BuildKey CompilerLogic :: resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length,
    ref_t& outputRef, bool& needToAlloc)
 {
    for(size_t i = 0; i < OperationLength; i++) {
-      if (arguments[0] == Operations[i].loperand && arguments[1] == Operations[i].roperand) {
-         if ((length == 2) || (arguments[2] == Operations[i].ioperand)) {
-            if (isValidOp(operatorId, Operations[i].operation)) {
-               outputRef = Operations[i].outputRef;
-               needToAlloc = Operations[i].needToAlloc;
-               return Operations[i].operation;
-            }
+      if (isValidOp(operatorId, Operations[i].operation)) {
+         bool compatible = isCompatible(scope, Operations[i].loperand, arguments[0], false);
+         compatible = compatible && (length <= 1 || isCompatible(scope, Operations[i].roperand, arguments[1], false));
+         compatible = compatible && (length <= 2 || isCompatible(scope, Operations[i].ioperand, arguments[2], false));
+
+         if (compatible) {
+            outputRef = Operations[i].outputRef;
+            needToAlloc = Operations[i].needToAlloc;
+            return Operations[i].operation;
          }
       }
    }
@@ -204,6 +210,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
          break;
       case V_ABSTRACT:
          flags = elAbstract;
+         break;
+      case V_SEALED:
+         flags = elSealed;
          break;
       case 0:
          // ignore idle
@@ -479,7 +488,7 @@ void CompilerLogic :: writeArrayEntry(MemoryBase* section, ref_t reference)
    writer.writeRef(reference);
 }
 
-bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly)
+bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly, bool fieldsOnly)
 {
    if (isPrimitiveRef(reference) && !headerOnly) {
       scope.loadClassInfo(info, scope.buildins.superReference);
@@ -494,7 +503,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          break;
       default:
          if (reference != 0) {
-            if (!scope.loadClassInfo(info, reference, headerOnly))
+            if (!scope.loadClassInfo(info, reference, headerOnly, fieldsOnly))
                return false;
          }
          else {

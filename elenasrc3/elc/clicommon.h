@@ -278,6 +278,7 @@ enum class Visibility
 struct BuiltinReferences
 {
    ref_t   superReference;
+   ref_t   intReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
@@ -285,7 +286,7 @@ struct BuiltinReferences
 
    BuiltinReferences()
    {
-      superReference = 0;
+      superReference = intReference = 0;
 
       dispatch_message = constructor_message = 0;
       add_message = 0;
@@ -345,8 +346,8 @@ public:
    virtual ModuleInfo getModule(ustr_t referenceName, bool silentMode) = 0;
    virtual ModuleInfo getWeakModule(ustr_t referenceName, bool silentMode) = 0;
 
-   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-   virtual ref_t loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly = false) = 0;
+   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false, bool fieldsOnly = false) = 0;
+   virtual ref_t loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly = false, bool fieldsOnly = false) = 0;
 
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode/*,
       bool ignoreFields*/) = 0;

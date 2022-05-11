@@ -234,6 +234,11 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
          tape.write(ByteCode::XMovSISI, 0, 1);
          tape.write(ByteCode::IAddDPN, targetOffset, 4);
          break;
+      case SUB_OPERATOR_ID:
+         tape.write(ByteCode::CopyDPN, targetOffset, 4);
+         tape.write(ByteCode::XMovSISI, 0, 1);
+         tape.write(ByteCode::ISubDPN, targetOffset, 4);
+         break;
       default:
          throw InternalError(errFatalError);
    }

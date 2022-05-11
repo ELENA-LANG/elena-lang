@@ -37,7 +37,11 @@ namespace elena_lang
       LocalAddress,
       TempLocalAddress,
       External,
-      Creating
+      Creating,
+      ReadOnlyFieldAddress,
+      FieldAddress,
+      ReadOnlyField,
+      Field
    };
 
    struct ObjectInfo
@@ -86,6 +90,9 @@ namespace elena_lang
          this->extra = extra;
       }
    };
+
+   typedef Pair<ObjectKind, ref_t, ObjectKind::Unknown, 0>                                  ObjectKey;
+   typedef MemoryMap<ObjectKey, ObjectInfo, Map_StoreKey<ObjectKey>, Map_GetKey<ObjectKey>> ObjectKeys;
 
    struct Parameter
    {
@@ -363,6 +370,10 @@ namespace elena_lang
             return test(info.header.flags, elClassClass);
          }
 
+         ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr);
+
+         ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
+
          void save();
 
          ClassScope(Scope* parent, ref_t reference, Visibility visibility);
@@ -392,14 +403,14 @@ namespace elena_lang
 
          mssg_t getAttribute(ClassAttribute attribute, bool ownerClass = true)
          {
-            ClassScope* classScope = (ClassScope*)getScope(ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+            ClassScope* classScope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
 
             return classScope->getMssgAttribute(message, attribute);
          }
 
          mssg_t getAttribute(mssg_t attrMessage, ClassAttribute attribute, bool ownerClass = true)
          {
-            ClassScope* classScope = (ClassScope*)getScope(ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+            ClassScope* classScope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
 
             return classScope->getMssgAttribute(attrMessage, attribute);
          }
@@ -431,7 +442,7 @@ namespace elena_lang
 
          ref_t getClassRef(bool ownerClass = true)
          {
-            ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+            ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
 
             return scope ? scope->reference : 0;
          }
@@ -457,21 +468,21 @@ namespace elena_lang
 
          ref_t getClassFlags(bool ownerClass = true)
          {
-            ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+            ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
 
             return scope ? scope->info.header.flags : 0;
          }
 
          mssg_t getMessageID()
          {
-            MethodScope* scope = (MethodScope*)getScope(ScopeLevel::Method);
+            MethodScope* scope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
 
             return scope ? scope->message : 0;
          }
 
          ref_t getOutputRef()
          {
-            MethodScope* scope = (MethodScope*)getScope(ScopeLevel::Method);
+            MethodScope* scope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
 
             return scope ? scope->info.outputRef : 0;
          }
@@ -532,6 +543,8 @@ namespace elena_lang
 
       struct ExprScope : Scope
       {
+         ObjectKeys tempLocals;
+
          pos_t allocatedArgs;
          pos_t tempAllocated1;
          pos_t tempAllocated2;
@@ -546,9 +559,18 @@ namespace elena_lang
 
          ref_t getClassRef(bool ownerClass = true)
          {
-            ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+            ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
 
             return scope ? scope->reference : 0;
+         }
+
+         ObjectInfo mapSelf()
+         {
+            MethodScope* scope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
+            if (scope) {
+               return scope->mapSelf();
+            }
+            else return {};
          }
 
          void markAsAssigned(ObjectInfo object) override
@@ -595,8 +617,8 @@ namespace elena_lang
 
       mssg_t defineMultimethod(ClassScope& scope, mssg_t messageRef);
 
-      ref_t resolveObjectReference(ObjectInfo info);
-      ref_t resolvePrimitiveReference(ObjectInfo info);
+      ref_t resolveObjectReference(Scope& scope, ObjectInfo info, bool noPrimitiveAllowed = true);
+      ref_t resolvePrimitiveReference(Scope& scope, ObjectInfo info);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
          bool declarationMode);
 
@@ -682,18 +704,23 @@ namespace elena_lang
 
       void evalStatement(MetaScope& scope, SyntaxNode node);
 
-      void writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info) ;
+      void writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info);
 
       void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey);
 
       ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, ArgumentsInfo& arguments);
 
+      ObjectInfo boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
+      ObjectInfo boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool stackSafe, bool boxInPlace);
+      ObjectInfo boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool boxInPlace);
+
       ObjectInfo saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object);
+      ObjectInfo declareTempLocal(ExprScope& scope, ref_t typeRef);
 
       ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
       ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
 
-      ObjectInfo compileExternalOp(BuildTreeWriter& writer, Scope& scope, ref_t externalRef, bool stdCall, 
+      ObjectInfo compileExternalOp(BuildTreeWriter& writer, ExprScope& scope, ref_t externalRef, bool stdCall, 
          ArgumentsInfo& arguments);
 
       ObjectInfo compileNewOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 

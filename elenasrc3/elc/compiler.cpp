@@ -400,6 +400,40 @@ Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibi
    abstractMode = abstractBasedMode = false;
 }
 
+ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribute attr)
+{
+   bool readOnly = test(info.header.flags, elReadOnlyRole);
+
+   auto fieldInfo = info.fields.get(identifier);
+   if (fieldInfo.offset >= 0) {
+      if (test(info.header.flags, elStructureRole)) {
+         return { readOnly ? ObjectKind::ReadOnlyFieldAddress : ObjectKind::FieldAddress, fieldInfo.typeRef, fieldInfo.offset };
+      }
+      else return { readOnly ? ObjectKind::ReadOnlyField : ObjectKind::Field, fieldInfo.typeRef, fieldInfo.offset };
+   }
+   //else if (fieldInfo.offset == -2) {
+   //   return { readOnly ? ObjectKind::ReadOnlySelfParam : ObjectKind::SelfParam, fieldInfo.typeRef, 1};
+   //}
+   else {
+      //auto staticFieldInfo = info.statics.get(identifier);
+      //if (staticFieldInfo.offset != 0) {
+      //   
+      //}
+
+      return {};
+   }
+}
+
+ObjectInfo Compiler::ClassScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
+{
+   if (!referenceOne) {
+      ObjectInfo fieldInfo = mapField(identifier, attr);
+      if (fieldInfo.kind != ObjectKind::Unknown)
+         return fieldInfo;
+   }
+   return Scope::mapIdentifier(identifier, referenceOne, attr);
+}
+
 void Compiler::ClassScope :: save()
 {
    MemoryBase* section = moduleScope->mapSection(reference | mskMetaClassInfoRef, false);
@@ -543,14 +577,14 @@ void Compiler::CodeScope :: markAsAssigned(ObjectInfo object)
 // --- Compiler::ExprScope ---
 
 Compiler::ExprScope :: ExprScope(SourceScope* parent)
-   : Scope(parent)
+   : Scope(parent), tempLocals({})
 {
    allocatedArgs = 0;
    tempAllocated2 = tempAllocated1 = 0;
 }
 
 Compiler::ExprScope :: ExprScope(CodeScope* parent)
-   : Scope(parent)
+   : Scope(parent), tempLocals({})
 {
    allocatedArgs = 0;
    tempAllocated1 = parent->allocated1;
@@ -1146,7 +1180,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
          ref_t arrayRef = _logic->definePrimitiveArray(*scope.moduleScope, classRef,
             test(scope.info.header.flags, elStructureRole));
 
-         scope.info.fields.add(name, { -1, arrayRef, classRef });
+         scope.info.fields.add(name, { -2, arrayRef, classRef });
       }
       else scope.raiseError(errIllegalField, node);
    }
@@ -1752,6 +1786,8 @@ void Compiler :: declareNamespace(NamespaceScope& ns, SyntaxNode node, bool igno
    }
 }
 
+
+
 ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id)
 {
    ObjectInfo loperand = {};
@@ -1759,11 +1795,11 @@ ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, Syn
    ObjectInfo ioperand = {};
    ref_t argCount = 2;
 
-   SyntaxNode lnode = node.firstChild(SyntaxKey::Declaration);
-   SyntaxNode rnode = lnode.nextNode(SyntaxKey::Declaration);
+   SyntaxNode lnode = node.firstChild(SyntaxKey::DeclarationMask);
+   SyntaxNode rnode = lnode.nextNode(SyntaxKey::DeclarationMask);
    if (lnode == SyntaxKey::IndexerOperation) {
-      SyntaxNode sublnode = lnode.firstChild(SyntaxKey::Declaration);
-      SyntaxNode subrnode = sublnode.nextNode(SyntaxKey::Declaration);
+      SyntaxNode sublnode = lnode.firstChild(SyntaxKey::DeclarationMask);
+      SyntaxNode subrnode = sublnode.nextNode(SyntaxKey::DeclarationMask);
 
       loperand = evalExpression(interpreter, scope, sublnode);
       ioperand = evalExpression(interpreter, scope, subrnode);
@@ -1783,20 +1819,20 @@ ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, Syn
 
    ArgumentsInfo arguments;
    ref_t         argumentRefs[3] = {};
-   argumentRefs[0] = resolvePrimitiveReference(loperand);
+   argumentRefs[0] = resolveObjectReference(scope, loperand, false);
    arguments.add(loperand);
 
-   argumentRefs[1] = resolvePrimitiveReference(roperand);
+   argumentRefs[1] = resolveObjectReference(scope, roperand, false);
    arguments.add(roperand);
 
    if (argCount == 3) {
-      argumentRefs[2] = resolvePrimitiveReference(ioperand);
+      argumentRefs[2] = resolveObjectReference(scope, ioperand, false);
       arguments.add(ioperand);
    }
 
    ref_t outputRef = 0;
    bool needToAlloc = false;
-   BuildKey opKey = _logic->resolveOp(operator_id, argumentRefs, argCount, outputRef, needToAlloc);
+   BuildKey opKey = _logic->resolveOp(*scope.moduleScope, operator_id, argumentRefs, argCount, outputRef, needToAlloc);
 
    if (needToAlloc || !interpreter.eval(opKey, operator_id, arguments)) {
       scope.raiseError(errCannotEval, node);
@@ -1821,7 +1857,7 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
 {
    switch (node.key) {
       case SyntaxKey::Expression:
-         return evalExpression(interpreter, scope, node.firstChild(SyntaxKey::Declaration));
+         return evalExpression(interpreter, scope, node.firstChild(SyntaxKey::DeclarationMask));
       case SyntaxKey::AssignOperation:
          return evalOperation(interpreter, scope, node, SET_OPERATOR_ID);
       case SyntaxKey::AddAssignOperation:
@@ -1843,6 +1879,106 @@ void Compiler :: evalStatement(MetaScope& scope, SyntaxNode node)
    ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression));
    if (retVal.kind == ObjectKind::Unknown)
       scope.raiseError(errCannotEval, node);
+}
+
+inline bool hasToBePresaved(ObjectInfo retVal)
+{
+   return retVal.kind == ObjectKind::Object || retVal.kind == ObjectKind::External || retVal.kind == ObjectKind::Symbol;
+}
+
+inline void createObject(BuildTreeWriter& writer, ClassInfo& info, ref_t reference)
+{
+   if (test(info.header.flags, elStructureRole)) {
+      writer.newNode(BuildKey::CreatingStruct, info.size);
+   }
+   else writer.newNode(BuildKey::CreatingClass, info.fields.count());
+
+   writer.appendNode(BuildKey::Type, reference);
+
+   writer.closeNode();
+}
+
+inline void copyObject(BuildTreeWriter& writer, ClassInfo& info, int offset)
+{
+   if (test(info.header.flags, elStructureRole)) {
+      writer.newNode(BuildKey::Copying, offset);
+      writer.appendNode(BuildKey::Size, info.size);
+   }
+   else throw InternalError(errFatalError);
+
+   writer.closeNode();
+}
+
+ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info)
+{
+   ref_t typeRef = resolveObjectReference(scope, info);
+
+   ObjectInfo tempLocal = {};
+   if (hasToBePresaved(info)) {
+      info = tempLocal = saveToTempLocal(writer, scope, info);
+   }
+   else tempLocal = declareTempLocal(scope, typeRef);
+
+   ClassInfo argInfo;
+   _logic->defineClassInfo(*scope.moduleScope, argInfo, typeRef, false, true);
+
+   createObject(writer, argInfo, typeRef);
+   writer.appendNode(BuildKey::Assigning, tempLocal.argument);
+
+   writeObjectInfo(writer, info);
+   copyObject(writer, argInfo, tempLocal.reference);
+
+   return tempLocal;
+}
+
+inline bool isBoxingRequired(ObjectInfo info)
+{
+   switch (info.kind) {
+      case ObjectKind::LocalAddress:
+      case ObjectKind::TempLocalAddress:
+         return true;
+      default:
+         return false;
+   }
+}
+
+ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool boxInPlace)
+{
+   switch (info.kind) {
+      case ObjectKind::ReadOnlyFieldAddress:
+      case ObjectKind::FieldAddress:
+         if (info.argument == 0) {
+            ObjectInfo retVal = scope.mapSelf();
+            retVal.type = info.type;
+
+            return retVal;
+         }
+         else throw InternalError(errFatalError);
+      default:
+         return info;
+   }
+}
+
+ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool stackSafe, bool boxInPlace)
+{
+   ObjectInfo retVal = { ObjectKind::Unknown };
+
+   if (!stackSafe && isBoxingRequired(info)) {
+      ObjectKey key = { info.kind, info.reference };
+
+      if (!boxInPlace)
+         retVal = scope.tempLocals.get(key);
+
+      if (retVal.kind == ObjectKind::Unknown) {
+         retVal = boxArgumentInPlace(writer, scope, info);
+
+         if (!boxInPlace)
+            scope.tempLocals.add(key, retVal);
+      }
+   }
+   else retVal = info;
+
+   return retVal;
 }
 
 void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
@@ -1889,18 +2025,24 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
    }
 }
 
-ref_t Compiler :: resolveObjectReference(ObjectInfo info)
+ref_t Compiler :: resolveObjectReference(Scope& scope, ObjectInfo info, bool noPrimitiveAllowed)
 {
-   return info.type;
-}
-
-ref_t Compiler :: resolvePrimitiveReference(ObjectInfo info)
-{
-   if (!isPrimitiveRef(info.type)) {
-      return V_OBJECT; // !!temporal
+   ref_t typeRef = info.type;
+   if (noPrimitiveAllowed && isPrimitiveRef(typeRef)) {
+      typeRef = resolvePrimitiveReference(scope, info);
    }
 
-   return info.type;
+   return typeRef;
+}
+
+ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ObjectInfo info)
+{
+   switch (info.type) {
+      case V_INT32:
+         return scope.moduleScope->buildins.intReference;
+      default:
+         throw InternalError(errFatalError);
+   }
 }
 
 void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node)
@@ -1926,8 +2068,7 @@ void Compiler :: declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Attribute:
-            if (!_logic->validateClassAttribute(current.arg.value, flags, scope.visibility))
-            {
+            if (!_logic->validateClassAttribute(current.arg.value, flags, scope.visibility)) {
                current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
                scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
             }
@@ -2327,7 +2468,7 @@ ExternalInfo Compiler :: mapExternal(Scope& scope, SyntaxNode node)
    return scope.moduleScope->mapExternal(dllAlias, functionName);
 }
 
-ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, Scope& scope, ref_t externalRef,
+ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& scope, ref_t externalRef,
    bool stdCall, ArgumentsInfo& arguments)
 {
    int count = arguments.count();
@@ -2343,7 +2484,9 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, Scope& scope, 
             writer.appendNode(BuildKey::SavingNInStack, i - 1);
             break;
          default:
-            if (_logic->isCompatible(*scope.moduleScope, V_INT32, resolveObjectReference(arg), true)) {
+            if (_logic->isCompatible(*scope.moduleScope, V_INT32, 
+               resolveObjectReference(scope, arg), true)) 
+            {
                writer.appendNode(BuildKey::SavingNInStack, i - 1);
             }
             else writer.appendNode(BuildKey::SavingInStack, i - 1); // !! temporally - passing dynamic references to the exteranl routines should not be allowed
@@ -2422,30 +2565,34 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    // HOTFIX : typecast the right-hand expression if required
    ref_t rTargetRef = 0;
    if (operatorId == SET_OPERATOR_ID)
-      rTargetRef = resolveObjectReference(loperand);
+      rTargetRef = resolveObjectReference(scope, loperand);
 
    ObjectInfo roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter);
    ObjectInfo ioperand;
    if (inode != SyntaxKey::None)
       ioperand = compileExpression(writer, scope, inode, 0, EAttr::Parameter);
 
-   arguments[0] = resolvePrimitiveReference(loperand);
-   arguments[1] = resolvePrimitiveReference(roperand);
+   arguments[0] = resolveObjectReference(scope, loperand, false);
+   arguments[1] = resolveObjectReference(scope, roperand, false);
 
    ref_t outputRef = 0;
    bool  needToAlloc = false;
    if (inode != SyntaxKey::None) {
-      arguments[2] = resolvePrimitiveReference(ioperand);
+      arguments[2] = resolveObjectReference(scope, ioperand, false);
 
-      op = _logic->resolveOp(operatorId, arguments, 3, outputRef, needToAlloc);
+      op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, 3, outputRef, needToAlloc);
    }
-   else op = _logic->resolveOp(operatorId, arguments, 2, outputRef, needToAlloc);
+   else op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, 2, outputRef, needToAlloc);
 
    if (op != BuildKey::None) {
       if (needToAlloc) {
          retVal = allocateResult(scope, outputRef);
       }
       else retVal = { ObjectKind::Object, outputRef, 0 };
+
+      // box argument locally if required
+      loperand = boxArgumentLocally(writer, scope, loperand, true);
+      roperand = boxArgumentLocally(writer, scope, roperand, true);
 
       writeObjectInfo(writer, loperand);
       writer.appendNode(BuildKey::SavingInStack, 0);
@@ -2458,7 +2605,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
          //writeObjectInfo(writer, ioperand);
 
       if (needToAlloc) {
-         writer.newNode(op);
+         writer.newNode(op, operatorId);
          writer.appendNode(BuildKey::Index, retVal.argument);
          writer.closeNode();
       }
@@ -2555,7 +2702,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
    BuildKey operation = BuildKey::CallOp;
    mssg_t message = resolveMessageAtCompileTime(weakMessage);
-   ref_t targetRef = resolveObjectReference(target);
+   ref_t targetRef = resolveObjectReference(scope, target);
 
    CheckMethodResult result = {};
    bool found = _logic->resolveCallType(*scope.moduleScope, targetRef, message, result);
@@ -2599,6 +2746,13 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    }
 
    pos_t counter = arguments.count();
+   // box the arguments if required
+   for (unsigned int i = counter; i > 0; i--) {
+      ObjectInfo arg = boxArgument(writer, scope, arguments[i - 1], false, false);
+
+      arguments[i - 1] = arg;
+   }
+
    for (unsigned int i = counter; i > 0; i--) {
       ObjectInfo arg = arguments[i - 1];
 
@@ -2724,6 +2878,7 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
 
    ObjectInfo target = mapObject(scope, loperand, EAttr::None);
    int size = 0;
+   bool stackSafe = false;
    switch (target.kind) {
       case ObjectKind::Local:
          scope.markAsAssigned(target);
@@ -2735,6 +2890,7 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
          operationType = BuildKey::Copying;
          operand = target.reference;
          size = _logic->defineStructSize(*scope.moduleScope, target.type).size;
+         stackSafe = true;
          break;
       default:
          scope.raiseError(errInvalidOperation, loperand.parentNode());
@@ -2743,14 +2899,14 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
 
    ObjectInfo exprVal;
    exprVal = compileExpression(writer, scope, roperand,
-      resolveObjectReference(target), EAttr::Parameter);
+      resolveObjectReference(scope, target), EAttr::Parameter);
 
-   writeObjectInfo(writer, exprVal);
+   writeObjectInfo(writer, 
+      boxArgument(writer, scope, exprVal, stackSafe, true));
 
    writer.newNode(operationType, operand);
    if (size != 0) {
       writer.appendNode(BuildKey::Size, size);
-
    }
    writer.closeNode();
 
@@ -2904,6 +3060,12 @@ ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
    return retVal;
 }
 
+ObjectInfo Compiler :: declareTempLocal(ExprScope& scope, ref_t typeRef)
+{
+   int tempLocal = scope.newTempLocal();
+   return { ObjectKind::TempLocal, typeRef, (ref_t)tempLocal };
+}
+
 ObjectInfo Compiler :: saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object)
 {
    if (object.kind == ObjectKind::External) {
@@ -2957,7 +3119,7 @@ ObjectInfo Compiler :: typecastObject(BuildTreeWriter& writer, ExprScope& scope,
 ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source,
    ref_t targetRef)
 {
-   ref_t sourceRef = resolveObjectReference(source);
+   ref_t sourceRef = resolveObjectReference(scope, source);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef, false)) {
       auto conversionRoutine = _logic->retrieveConversionRoutine(*scope.moduleScope, targetRef, sourceRef);
       if (conversionRoutine.result == ConversionResult::BoxingRequired) {
@@ -3049,11 +3211,6 @@ ObjectInfo Compiler :: compileNested(BuildTreeWriter& writer, ExprScope& ownerSc
    return compileNestedExpression(scope, mode);
 }
 
-inline bool hasToBePresaved(ObjectInfo retVal)
-{
-   return retVal.kind == ObjectKind::Object || retVal.kind == ObjectKind::External || retVal.kind == ObjectKind::Symbol;
-}
-
 ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
    ref_t targetRef, ExpressionAttribute mode)
 {
@@ -3113,7 +3270,10 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 
    ref_t outputRef = codeScope.getOutputRef();
 
-   ObjectInfo retVal = compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), outputRef, EAttr::Root);
+   ObjectInfo retVal = boxArgument(writer, scope, 
+      compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), outputRef, EAttr::Root),
+      false, true);
+
    if (!hasToBePresaved(retVal)) {
       writeObjectInfo(writer, retVal);
    }
@@ -3159,7 +3319,8 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
       node.findChild(SyntaxKey::ReturnExpression), 0,
       ExpressionAttribute::RootSymbol);
 
-   writeObjectInfo(writer, retVal);
+   writeObjectInfo(writer, 
+      boxArgument(writer, exprScope, retVal, false, true));
 
    exprScope.syncStack();
 
@@ -3178,6 +3339,7 @@ void Compiler :: compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope)
    writer.newNode(BuildKey::Tape);
    writer.appendNode(BuildKey::OpenFrame);
    ObjectInfo retVal(ObjectKind::Class, scope.info.header.classRef, scope.reference, 0);
+   ExprScope exprScope(&scope);
    writeObjectInfo(writer, retVal);
    writer.appendNode(BuildKey::CloseFrame);
    writer.appendNode(BuildKey::Exit);
@@ -3256,17 +3418,17 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
 
    // if the method returns itself
    if (retVal.kind == ObjectKind::Unknown) {
+      ExprScope exprScope(&codeScope);
+
       retVal = scope.mapSelf();
       ref_t outputRef = scope.info.outputRef;
       if (outputRef) {
-         ExprScope exprScope(&codeScope);
-
          typecastObject(writer, exprScope, node, retVal, outputRef);
 
          exprScope.syncStack();
       }
 
-      writeObjectInfo(writer, retVal);
+      writeObjectInfo(writer, boxArgument(writer, exprScope, retVal, false, true));
    }
 
    writer.appendNode(BuildKey::CloseFrame);
@@ -3360,12 +3522,7 @@ void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodSc
    if (test(classScope->info.header.flags, elDynamicRole))
       throw InternalError(errFatalError);
 
-   if (test(classScope->info.header.flags, elStructureRole)) {
-      writer.newNode(BuildKey::CreatingStruct, classScope->info.size);
-   }
-   else writer.newNode(BuildKey::CreatingClass, classScope->info.fields.count());
-   writer.appendNode(BuildKey::Type, classScope->reference);
-   writer.closeNode();
+   createObject(writer, classScope->info, classScope->reference);
 
    //// call field initilizers if available for default constructor
    //compileSpecialMethodCall(writer, *classScope, scope.moduleScope->init_message);
@@ -3695,6 +3852,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
 
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
+   moduleScope->buildins.intReference = safeMapReference(moduleScope, forwardResolver, INTLITERAL_FORWARD);
 
    // cache the frequently used messages
    moduleScope->buildins.dispatch_message = encodeMessage(

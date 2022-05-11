@@ -271,14 +271,14 @@ ModuleInfo ModuleScope :: getWeakModule(ustr_t referenceName, bool silentMode)
    return loader->getWeakModule(referenceName, silentMode);
 }
 
-ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly)
+ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly, bool fieldsOnly)
 {
    if (referenceName.empty())
       return 0;
 
    if (isTemplateWeakReference(referenceName)) {
       // COMPILER MAGIC : try to find a template
-      ref_t ref = loadClassInfo(info, resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN), headerOnly);
+      ref_t ref = loadClassInfo(info, resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN), headerOnly, fieldsOnly);
       if (ref != 0 && info.header.classRef != 0) {
          if (module->resolveReference(info.header.classRef).endsWith(CLASSCLASS_POSTFIX)) {
             // HOTFIX : class class ref should be template weak reference as well
@@ -310,14 +310,14 @@ ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ustr_t referenceName, bool h
       MemoryReader reader(metaData);
       if (moduleInfo.module != module) {
          ClassInfo copy;
-         copy.load(&reader, headerOnly);
+         copy.load(&reader, headerOnly, fieldsOnly);
 
          importClassInfo(copy, info, moduleInfo.module, headerOnly, false/*, false*/);
 
          // import reference
          importReference(moduleInfo.module, moduleInfo.reference);
       }
-      else info.load(&reader, headerOnly);
+      else info.load(&reader, headerOnly, fieldsOnly);
 
       return moduleInfo.reference;
    }

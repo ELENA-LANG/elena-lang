@@ -30,6 +30,9 @@ public abstract class BaseValue
 
 public abstract class BaseNumber : BaseValue
 {
+    abstract add(o);
+
+    abstract subtract(o);
 }
 
 // --- IntBaseNumber ---
@@ -50,4 +53,10 @@ public const struct ByteNumber : IntBaseNumber
 public const struct IntNumber : IntBaseNumber
 {
    embeddable __int theValue[4];
+
+    int add(int n)
+        = theValue + n;   
+
+    int subtract(int n)
+        = theValue - n;   
 }

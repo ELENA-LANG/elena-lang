@@ -62,10 +62,10 @@ public:
    ModuleInfo getModule(ustr_t referenceName, bool silentMode) override;
    ModuleInfo getWeakModule(ustr_t referenceName, bool silentMode) override;
 
-   ref_t loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly) override;
-   ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly) override
+   ref_t loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly, bool fieldsOnly) override;
+   ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly, bool fieldsOnly) override
    {
-      return loadClassInfo(info, module->resolveReference(reference), headerOnly);
+      return loadClassInfo(info, module->resolveReference(reference), headerOnly, fieldsOnly);
    }
 
    void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode/*,

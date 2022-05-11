@@ -21,8 +21,6 @@ singleton Tester
 {
    run()
    {
-      var n := 2 + 1;
-
       //Output.write("Hello");
 
 //      var a := Value;

@@ -14,7 +14,7 @@ using namespace elena_lang;
 
 const char* source_dfa[17] =
 {
-        ".????????bb??b??????????????????b?fidd?ldd?dd?dheeeeeeeeeeddddd??ccccccccccccccccccccccccccd?ddc?ccccccccccccccccccccccccccd?d??",
+        ".????????bb??b??????????????????b?fidd?ldd?ddddheeeeeeeeeeddddd??ccccccccccccccccccccccccccd?ddc?ccccccccccccccccccccccccccd?d??",
         "*********bb*********************b***********************************************************************************************",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaalaaaaaaaaccccccccccaaaaaaaccccccccccccccccccccccccccaaaacaccccccccccccccccccccccccccaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadaadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
