@@ -474,6 +474,27 @@ inline %0A8h
 
 end 
 
+// ; peeksi
+inline %0A9h
+
+  ld      r15, __arg16_1(r1)  
+
+end 
+
+// ; peeksi 0
+inline %1A9h
+
+  mr      r15, r3
+
+end 
+
+// ; peeksi 1
+inline %2A9h
+
+  mr      r15, r4
+
+end 
+
 // ; callr
 inline %0B0h
 

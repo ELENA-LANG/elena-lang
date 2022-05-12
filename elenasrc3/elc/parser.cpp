@@ -40,6 +40,7 @@ parse_key_t Parser :: resolveTerminal(SourceInfo& info)
       case dfaReference:
          return _terminalKeys.reference;
       case dfaQuote:
+      case dfaQuoteCode:
          return _terminalKeys.string;
       case dfaEOF:
          return _terminalKeys.eof;

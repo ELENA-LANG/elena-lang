@@ -95,6 +95,8 @@ ELENA byte codes (or ecodes)
 
    peek fp:i                - acc := fp[i]
 
+   peek sp:i                - acc := sp[i]
+
    save dp:disp             - dp[disp]  := index
 
    save sp:disp             - sp[disp]  := index

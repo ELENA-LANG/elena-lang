@@ -45,6 +45,7 @@ namespace elena_lang
       XFlushSI       = 0xA4,
 
       PeekFI         = 0xA8,
+      PeekSI         = 0xA9,
 
       CallR          = 0xB0,
       CallVI         = 0xB1,

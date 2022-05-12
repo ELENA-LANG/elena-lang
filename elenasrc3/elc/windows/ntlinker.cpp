@@ -188,7 +188,7 @@ void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableI
    image.headerSize += IMAGE_SIZEOF_SECTION_HEADER * image.imageSections.headers.count();
 }
 
-void WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider)
+LinkResult WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider)
 {
    bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true); // !! temporally by default the debug mode is on
 
@@ -212,4 +212,9 @@ void WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider)
          _errorProcessor->raisePathError(errCannotCreate, *debugFilePath);
       }
    }
+
+   return{
+      image.addressSpace.imageBase + image.addressSpace.code,
+      image.addressSpace.imageBase + image.addressSpace.rdata
+   };
 }

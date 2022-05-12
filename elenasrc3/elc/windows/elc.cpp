@@ -227,7 +227,14 @@ int main()
       }
 
       for (int i = 1; i < argc; i++) {
-         if (PathUtil::checkExtension(argv[i], "prj")) {
+         if (argv[i][0] == '-') {
+            switch (argv[i][1]) {
+               case 'm':
+                  project.addBoolSetting(ProjectOption::MappingOutputMode, true);
+                  break;
+            }
+         }
+         else if (PathUtil::checkExtension(argv[i], "prj")) {
             PathString path(argv[i]);
 
             if (!project.loadProject(*path)) {

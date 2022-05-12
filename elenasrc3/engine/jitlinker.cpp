@@ -670,12 +670,16 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
          }
 
          // NOTE : statically linked message is not added to VMT
+         mssg_t message = helper.importMessage(entry.message);
          if (test(entry.message, STATIC_MESSAGE)) {
             _staticMethods.add(
-               { vaddress, helper.importMessage(entry.message) }, methodPosition);
+               { vaddress, message }, methodPosition);
          }
-         else _compiler->addVMTEntry(helper.importMessage(entry.message), methodPosition, 
+         else _compiler->addVMTEntry(message, methodPosition,
             vmtImage->get(position), count);
+
+         if (_addressMapper && methodPosition)
+            _addressMapper->addMethod(vaddress, message, methodPosition);
 
          size -= sizeof(MethodEntry);
       }
@@ -790,6 +794,9 @@ addr_t JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t se
    addr_t vaddress = calculateVAddress(writer, mskCodeRef);
 
    _mapper->mapReference(referenceInfo, vaddress, sectionMask);
+
+   if (_addressMapper)
+      _addressMapper->addSymbol(vaddress, writer.position());
 
    VAddressMap references(VAddressInfo(0, nullptr, 0, 0));
    JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);

@@ -1379,7 +1379,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
    }
 }
 
-void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool declarationMode)
+void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode)
 {
    IdentifierString actionStr;
    ref_t            actionRef = 0;
@@ -1412,10 +1412,11 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool dec
          int size = 0;
          declareArgumentAttributes(scope, current, classRef/*, elementRef*/, declarationMode);
 
-         if (!classRef) {
+         if (withoutWeakMessages && !classRef)
             classRef = scope.moduleScope->buildins.superReference;
-         }
-         else weakSignature = false;
+
+         if (classRef) 
+            weakSignature = false;
 
          ustr_t terminal = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
          if (scope.parameters.exist(terminal))
@@ -1540,7 +1541,7 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
             declareMethodAttributes(methodScope, current);
 
             if (!current.arg.reference) {
-               declareVMTMessage(methodScope, current, true);
+               declareVMTMessage(methodScope, current, false, true);
                current.setArgumentReference(methodScope.message);
             }
             else methodScope.message = current.arg.reference;
@@ -2010,6 +2011,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
          break;
       case ObjectKind::Param:
       case ObjectKind::SelfLocal:
+      case ObjectKind::ReadOnlySelfLocal:
       case ObjectKind::Local:
       case ObjectKind::TempLocal:
          writer.appendNode(BuildKey::Local, info.reference);
@@ -2600,8 +2602,10 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       writeObjectInfo(writer, loperand);
       writer.appendNode(BuildKey::SavingInStack, 0);
 
-      writeObjectInfo(writer, roperand);
-      writer.appendNode(BuildKey::SavingInStack, 1);
+      if (rnode != SyntaxKey::None) {
+         writeObjectInfo(writer, roperand);
+         writer.appendNode(BuildKey::SavingInStack, 1);
+      }
 
       if (inode != SyntaxKey::None)
          throw InternalError(errFatalError);
@@ -2734,7 +2738,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       }
    }
    else if (targetRef) {
-      if (EAttrs::test(mode.attrs, EAttr::StrongResolved)) {
+         if (EAttrs::test(mode.attrs, EAttr::StrongResolved)) {
          if (getAction(message) == getAction(scope.moduleScope->buildins.constructor_message)) {
             scope.raiseError(errUnknownDefConstructor, node);
          }
@@ -3605,7 +3609,7 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
             methodScope.info = scope.info.methods.get(methodScope.message);
             methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
 
-            declareVMTMessage(methodScope, current, false);
+            declareVMTMessage(methodScope, current, false, false);
 
             if (methodScope.checkHint(MethodHint::Abstract)) {
                compileAbstractMethod(writer, methodScope, current, scope.abstractMode);

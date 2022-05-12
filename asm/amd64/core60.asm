@@ -413,6 +413,27 @@ inline %0A8h
 
 end 
 
+// ; peeksi
+inline %0A9h
+
+  mov rbx, qword ptr [rsp + __arg32_1]
+
+end 
+
+// ; peeksi 0
+inline %1A9h
+
+  mov rbx, r10
+
+end 
+
+// ; peeksi 1
+inline %2A9h
+
+  mov rbx, r11
+
+end 
+
 // ; callr
 inline %0B0h
 

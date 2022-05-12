@@ -56,6 +56,8 @@ namespace elena_lang
       bool isValidStrDictionaryOp(int operatorId);
       bool isValidObjArrayOp(int operatorId);
       bool isValidAttrDictionaryOp(int operatorId);
+      bool isValidArithmOp(int operatorId);
+      bool isValidArraySOp(int operatorId);
       bool isValidOp(int operatorId, BuildKey op);
 
       void tweakClassFlags(ref_t classRef, ClassInfo& info, bool classClassMode);

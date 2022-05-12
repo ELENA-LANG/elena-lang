@@ -186,7 +186,10 @@ enum class ProjectOption
    RawStackAlignment,
    GCMGSize,
    GCYGSize,
+
+   // flags
    DebugMode,
+   MappingOutputMode,
 
    Key,
    Value,
@@ -570,6 +573,14 @@ public:
    }
 };
 
+// --- LinkResult ---
+
+struct LinkResult
+{
+   addr_t code;
+   addr_t rdata;
+};
+
 // --- LinkerBaser ---
 class LinkerBase
 {
@@ -577,7 +588,7 @@ protected:
    ErrorProcessorBase* _errorProcessor;
 
 public:
-   virtual void run(ProjectBase& project, ImageProviderBase& provider) = 0;
+   virtual LinkResult run(ProjectBase& project, ImageProviderBase& provider) = 0;
 
    LinkerBase(ErrorProcessorBase* errorProcessor)
    {

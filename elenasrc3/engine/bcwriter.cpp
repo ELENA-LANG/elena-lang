@@ -244,6 +244,23 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void binarySOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   int size = node.findChild(BuildKey::Size).arg.value;
+
+   switch (node.arg.value) {
+      case LEN_OPERATOR_ID:
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::NLen, size);
+         tape.write(ByteCode::SaveDP, targetOffset, 4);
+         break;
+   default:
+      throw InternalError(errFatalError);
+   }
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -276,6 +293,7 @@ ByteCodeWriter::Saver commands[] =
    directCallOp,
    dispatchOp,
    intOp,
+   binarySOp,
 };
 
 // --- ByteCodeWriter ---

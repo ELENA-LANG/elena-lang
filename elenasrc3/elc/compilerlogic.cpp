@@ -111,6 +111,27 @@ bool CompilerLogic :: isValidAttrDictionaryOp(int operatorId)
    }
 }
 
+bool CompilerLogic :: isValidArithmOp(int operatorId)
+{
+   switch (operatorId) {
+      case ADD_OPERATOR_ID:
+      case SUB_OPERATOR_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
+bool CompilerLogic :: isValidArraySOp(int operatorId)
+{
+   switch (operatorId) {
+      case LEN_OPERATOR_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
 bool CompilerLogic :: isValidOp(int operatorId, BuildKey op)
 {
    switch (op) {
@@ -123,7 +144,9 @@ bool CompilerLogic :: isValidOp(int operatorId, BuildKey op)
       case BuildKey::AttrDictionaryOp:
          return isValidAttrDictionaryOp(operatorId);
       case BuildKey::IntOp:
-         return true;
+         return isValidArithmOp(operatorId);
+      case BuildKey::BinArraySOp:
+         return isValidArraySOp(operatorId);;
       default:
          return false;
    }

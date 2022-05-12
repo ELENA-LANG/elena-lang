@@ -21,7 +21,7 @@ AddressMap::Iterator TargetImage :: externals()
 
 TargetImage :: TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loader,
    JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType),
-   TargetImageInfo imageInfo)
+   TargetImageInfo imageInfo, AddressMapperBase* addressMapper)
 {
    JITCompilerBase* compiler = jitCompilerFactory(loader, imageInfo.type);
 
@@ -37,7 +37,8 @@ TargetImage :: TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loa
       dynamic_cast<ReferenceMapperBase*>(this), 
       loader, resolver,
       dynamic_cast<ImageProviderBase*>(this), 
-      &settings);
+      &settings,
+      addressMapper);
 
    // add predefined values
    prepareImage(imageInfo.ns);

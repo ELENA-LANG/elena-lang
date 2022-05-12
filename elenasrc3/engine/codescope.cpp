@@ -63,6 +63,24 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
    }
 }
 
+ustr_t ReferenceMapper :: retrieveReference(addr_t address, ref_t sectionMask)
+{
+   switch (sectionMask) {
+      case mskVMTRef:
+         return _dataReferences.retrieve<addr_t>(nullptr, address, [](addr_t reference, ustr_t key, addr_t current)
+            {
+               return current == reference;
+            });
+      case mskSymbolRef:
+         return _symbolReferences.retrieve<addr_t>(nullptr, address, [](addr_t reference, ustr_t key, addr_t current)
+            {
+               return current == reference;
+            });
+      default:
+         return nullptr;
+   }
+}
+
 addr_t ReferenceMapper :: resolveReference(ReferenceInfo referenceInfo, ref_t mask)
 {
    if (referenceInfo.isRelative()) {
@@ -96,6 +114,25 @@ ref_t ReferenceMapper :: resolveAction(ustr_t actionName, ref_t signRef)
    ref_t actionNameId = _actionNames.get(actionName);
 
    return _actions.get(encodeAction64(actionNameId, signRef));
+}
+
+ustr_t ReferenceMapper :: retrieveAction(ref_t actionRef, ref_t& signRef)
+{
+   auto actionKey = _actions.retrieve<ref_t>(0, actionRef, [](ref_t actionRef, ref64_t key, ref_t current)
+      {
+         return current == actionRef;
+      });
+
+   ref_t actionName = 0;
+   if (actionKey != 0) {
+      decodeAction64(actionKey, actionName, signRef);
+   }
+   else actionName = actionRef;
+
+   return _actionNames.retrieve<ref_t>(nullptr, actionName, [](ref_t reference, ustr_t, ref_t current)
+   {
+      return current == reference;
+   });
 }
 
 void ReferenceMapper :: addLazyReference(LazyReferenceInfo info)

@@ -469,6 +469,28 @@ inline %5A8h
 
 end 
 
+// ; peeksi
+inline %0A9h
+
+  add     x11, sp, __arg12_1
+  ldr     x10, [x11]
+
+end 
+
+// ; peeksi 0
+inline %1A9h
+
+  mov     x10, x0
+
+end 
+
+// ; peeksi 1
+inline %2A9h
+
+  mov     x10, x1
+
+end 
+
 // ; callr
 inline %0B0h
 

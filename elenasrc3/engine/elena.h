@@ -211,11 +211,12 @@ namespace elena_lang
 
    public:
       virtual addr_t resolveReference(ReferenceInfo referenceInfo, ref_t sectionMask) = 0;
-
       virtual void mapReference(ReferenceInfo referenceInfo, addr_t address, ref_t sectionMask) = 0;
+      virtual ustr_t retrieveReference(addr_t address, ref_t sectionMask) = 0;
 
       virtual ref_t resolveAction(ustr_t actionName, ref_t signRef) = 0;
       virtual void mapAction(ustr_t actionName, ref_t actionRef, ref_t signRef) = 0;
+      virtual ustr_t retrieveAction(ref_t actionRef, ref_t& signRef) = 0;
 
       virtual void addLazyReference(LazyReferenceInfo info) = 0;
 
@@ -453,6 +454,14 @@ namespace elena_lang
       virtual ~JITCompilerBase() = default;
    };
 
+   // --- AddressMapperBase ---
+   class AddressMapperBase
+   {
+   public:
+      virtual void addMethod(addr_t vaddress, mssg_t message, addr_t methodPosition) = 0;
+      virtual void addSymbol(addr_t vaddress, addr_t position) = 0;
+   };
+
    // --- WideMessage ---
    class WideMessage : public String<wide_c, MESSAGE_LEN>
    {
@@ -466,6 +475,7 @@ namespace elena_lang
          _string[len] = 0;
       }
    };
+
 
    // --- IdentifierString ---
    class IdentifierString : public String<char, IDENTIFIER_LEN>
@@ -522,11 +532,16 @@ namespace elena_lang
       QuoteString(ustr_t s, pos_t len)
       {
          int mode = 0; // 1 - normal, 2 - character code
+         size_t index = 0;
          for (size_t i = 0; i <= len; i++) {
             switch (mode) {
                case 0:
                   if (s[i] == '"') {
                      mode = 1;
+                  }
+                  else if (s[i] == '$') {
+                     mode = 2;
+                     index = i + 1;
                   }
                   break;
                case 1:
@@ -540,6 +555,18 @@ namespace elena_lang
                      mode = 0;
                   }
                   else append(s[i]);
+                  break;
+               case 2:
+                  if ((s[i] < '0' || s[i] > '9') && (s[i] < 'A' || s[i] > 'F')  && (s[i] < 'a' || s[i] > 'f')) 
+                  {
+                     String<char, 12> number(s + index, i - index);
+                     unic_c ch = StrConvertor::toInt(number.str(), (s[i] == 'h') ? 16 : 10);
+
+                     char temp[5];
+                     size_t temp_len = 4;
+                     StrConvertor::copy(temp, &ch, 1, temp_len);
+                     append(temp, temp_len);
+                  }
                   break;
                default:
                   // to make compiler happy

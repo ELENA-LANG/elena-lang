@@ -392,6 +392,20 @@ inline %0A8h
 
 end 
 
+// ; peeksi
+inline %0A9h
+
+  mov ebx, [esp + __arg32_1]
+
+end 
+
+// ; peeksi 0
+inline %1A9h
+
+  mov ebx, esi
+
+end 
+
 // ; callr
 inline %0B0h
 

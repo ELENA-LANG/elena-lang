@@ -27,9 +27,12 @@ namespace elena_lang
    {
    public:
       static bool copy(char* dest, const char* sour, size_t sourLength, size_t& destLength);
+      static bool copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
       static bool copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
       static bool copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength);
-      static bool copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
+
+      static bool copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength);
+      static bool copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength);
 
       static int toInt(const char* s, int radix);
       static unsigned int toUInt(const char* s, int radix);

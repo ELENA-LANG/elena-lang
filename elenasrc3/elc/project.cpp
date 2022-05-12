@@ -84,6 +84,11 @@ bool Project :: BoolSetting(ProjectOption option, bool defValue) const
    return val == "-1";
 }
 
+void Project :: addBoolSetting(ProjectOption option, bool value)
+{
+   _root.appendChild(option, value ? "-1" : "0");
+}
+
 int Project :: IntSetting(ProjectOption option, int defValue) const
 {
    ustr_t val = StringSetting(option);

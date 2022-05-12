@@ -26,6 +26,8 @@ namespace elena_lang
    typedef unsigned long long ref64_t;
    typedef unsigned long long mssg64_t;
 
+   typedef unsigned int       unic_c;
+
 #if defined _M_IX86 || __i386__
 
    typedef unsigned int       addr_t;

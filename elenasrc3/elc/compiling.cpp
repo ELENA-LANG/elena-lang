@@ -17,6 +17,69 @@
 
 using namespace elena_lang;
 
+// --- AddressMapper ---
+class AddressMapper : public AddressMapperBase
+{
+   PresenterBase* presenter;
+
+   Map<Pair<addr_t, mssg_t>, addr_t> addresses;
+
+public:
+   void addMethod(addr_t vaddress, mssg_t message, addr_t methodPosition) override
+   {
+      addresses.add({ vaddress, message }, methodPosition);
+   }
+
+   void addSymbol(addr_t vaddress, addr_t position) override
+   {
+      addresses.add({ vaddress, 0 }, position);
+   }
+
+   void output(ReferenceMapper* mapper, LinkResult& result)
+   {
+      for(auto it = addresses.start(); !it.eof(); ++it) {
+         if (it.key().value2) {
+            mssg_t message = it.key().value2;
+            addr_t address = result.code + *it;
+            ref_t signRef = 0;
+
+            IdentifierString fullName(mapper->retrieveReference(it.key().value1, mskVMTRef));
+            fullName.append('.');
+            fullName.append(mapper->retrieveAction(getAction(message), signRef));
+            if (signRef != 0) {
+               fullName.append('<');
+               ref_t dummy = 0;
+               fullName.append(mapper->retrieveAction(signRef | 0x80000000, dummy));
+               fullName.append('>');
+            }
+            fullName.append('[');
+            fullName.appendInt(getArgCount(message));
+            fullName.append(']');
+
+            fullName.append("=");
+            fullName.appendUInt((unsigned int)address, 16);
+
+            presenter->print(*fullName);
+         }
+         else {
+            addr_t address = result.code + *it;
+
+            IdentifierString fullName(mapper->retrieveReference(it.key().value1, mskSymbolRef));
+            fullName.append("=");
+            fullName.appendUInt((unsigned int)address, 16);
+
+            presenter->print(*fullName);
+         }
+      }
+   }
+
+   AddressMapper(PresenterBase* presenter)
+      : addresses(0u)
+   {
+      this->presenter = presenter;
+   }
+};
+
 // --- CompilingProcess ---
 
 CompilingProcess :: CompilingProcess(PathString& appPath, PresenterBase* presenter, ErrorProcessor* errorProcessor,
@@ -222,12 +285,22 @@ void CompilingProcess :: link(ProjectBase& project, LinkerBase& linker)
    imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);
    imageInfo.ns = project.StringSetting(ProjectOption::Namespace);
 
-   TargetImage code(&project, &_libraryProvider, _jitCompilerFactory,
-      imageInfo);
+   AddressMapper* addressMapper = nullptr;
+   if (project.BoolSetting(ProjectOption::MappingOutputMode))
+      addressMapper = new AddressMapper(_presenter);
 
-   linker.run(project, code);
+   TargetImage code(&project, &_libraryProvider, _jitCompilerFactory,
+      imageInfo, addressMapper);
+
+   auto result = linker.run(project, code);
 
    _presenter->print(ELC_SUCCESSFUL_LINKING);
+
+   if (addressMapper) {
+      addressMapper->output(&code, result);
+   }
+
+   freeobj(addressMapper);
 }
 
 void CompilingProcess :: greeting()

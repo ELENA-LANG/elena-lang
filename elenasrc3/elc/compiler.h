@@ -681,7 +681,7 @@ namespace elena_lang
       void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);
       void resolveClassParent(ClassScope& scope, SyntaxNode node);
 
-      void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool declarationMode);
+      void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode);
       void declareClosureMessage(MethodScope& scope, SyntaxNode node);
 
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);

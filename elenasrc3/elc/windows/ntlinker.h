@@ -73,7 +73,7 @@ namespace elena_lang
       bool createDebugFile(ImageProviderBase& provider, WinNtExecutableImage& image, path_t debugFilePath);
 
    public:
-      void run(ProjectBase& project, ImageProviderBase& code) override;
+      LinkResult run(ProjectBase& project, ImageProviderBase& code) override;
 
       WinNtLinker(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
          : LinkerBase(errorProcessor)
