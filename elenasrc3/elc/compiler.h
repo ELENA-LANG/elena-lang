@@ -34,6 +34,7 @@ namespace elena_lang
       Local,
       TempLocal,
       SelfLocal,
+      ReadOnlySelfLocal,
       LocalAddress,
       TempLocalAddress,
       External,

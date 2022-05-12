@@ -50,14 +50,15 @@ struct Op
    bool     needToAlloc;
 };
 
-constexpr auto OperationLength = 5;
+constexpr auto OperationLength = 6;
 constexpr Op Operations[OperationLength] =
 {
    { BuildKey::StrDictionaryOp, V_DICTIONARY, V_INT32, V_STRING, V_OBJECT, false },
    { BuildKey::AttrDictionaryOp, V_OBJATTRIBUTES, V_OBJECT, V_STRING, V_OBJECT, false },
    { BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0, V_OBJECT, false },
    { BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0, V_OBJECT, false },
-   { BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32, true }
+   { BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32, true },
+   { BuildKey::BinArraySOp, V_BINARYARRAY, 0, 0, V_INT32, true}
 };
 
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)

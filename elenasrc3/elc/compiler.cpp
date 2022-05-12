@@ -411,9 +411,9 @@ ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribu
       }
       else return { readOnly ? ObjectKind::ReadOnlyField : ObjectKind::Field, fieldInfo.typeRef, fieldInfo.offset };
    }
-   //else if (fieldInfo.offset == -2) {
-   //   return { readOnly ? ObjectKind::ReadOnlySelfParam : ObjectKind::SelfParam, fieldInfo.typeRef, 1};
-   //}
+   else if (fieldInfo.offset == -2) {
+      return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeRef, 1};
+   }
    else {
       //auto staticFieldInfo = info.statics.get(identifier);
       //if (staticFieldInfo.offset != 0) {
@@ -2559,30 +2559,33 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    }
 
    BuildKey   op = BuildKey::None;
-   ref_t      arguments[3];
    ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter);
+   ObjectInfo roperand = {};
+   ObjectInfo ioperand = {};
+
+   size_t     argLen = 1;
+   ref_t      arguments[3];
+   arguments[0] = resolveObjectReference(scope, loperand, false);
 
    // HOTFIX : typecast the right-hand expression if required
-   ref_t rTargetRef = 0;
-   if (operatorId == SET_OPERATOR_ID)
-      rTargetRef = resolveObjectReference(scope, loperand);
+   if (rnode != SyntaxKey::None) {
+      ref_t rTargetRef = 0;
+      if (operatorId == SET_OPERATOR_ID)
+         rTargetRef = resolveObjectReference(scope, loperand);
 
-   ObjectInfo roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter);
-   ObjectInfo ioperand;
-   if (inode != SyntaxKey::None)
+      roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter);
+
+      arguments[argLen++] = resolveObjectReference(scope, roperand, false);
+   }
+
+   if (inode != SyntaxKey::None) {
       ioperand = compileExpression(writer, scope, inode, 0, EAttr::Parameter);
-
-   arguments[0] = resolveObjectReference(scope, loperand, false);
-   arguments[1] = resolveObjectReference(scope, roperand, false);
+      arguments[argLen++] = resolveObjectReference(scope, ioperand, false);
+   }
 
    ref_t outputRef = 0;
    bool  needToAlloc = false;
-   if (inode != SyntaxKey::None) {
-      arguments[2] = resolveObjectReference(scope, ioperand, false);
-
-      op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, 3, outputRef, needToAlloc);
-   }
-   else op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, 2, outputRef, needToAlloc);
+   op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, outputRef, needToAlloc);
 
    if (op != BuildKey::None) {
       if (needToAlloc) {
@@ -3230,6 +3233,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       //case SyntaxKey::AddAssignOperation:
       case SyntaxKey::AddOperation:
       case SyntaxKey::SubOperation:
+      case SyntaxKey::LenOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::ReturnExpression:

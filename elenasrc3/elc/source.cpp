@@ -12,9 +12,9 @@
 
 using namespace elena_lang;
 
-const char* source_dfa[17] =
+const char* source_dfa[18] =
 {
-        ".????????bb??b??????????????????b?fidd?ldd?ddddheeeeeeeeeeddddd??ccccccccccccccccccccccccccd?ddc?ccccccccccccccccccccccccccd?d??",
+        ".????????bb??b??????????????????b?firc?ldd?ddddheeeeeeeeeeddddd??ccccccccccccccccccccccccccd?ddc?ccccccccccccccccccccccccccd?d??",
         "*********bb*********************b***********************************************************************************************",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaalaaaaaaaaccccccccccaaaaaaaccccccccccccccccccccccccccaaaacaccccccccccccccccccccccccccaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadaadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -30,7 +30,8 @@ const char* source_dfa[17] =
         "*nnnnnnnnn*nn*nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
         "?ooooooooooooooooooooooooooooooooooooooooopooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
         "?ooooooooooooooooooooooooooooooooooooooooooooooboooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaarrrrrrrrrrrrrrrrrrrrrrrrrraaaaaarrrrrrrrrrrrrrrrrrrrrrrrrraaaaa"
 };
 
 // --- SourceReader ---

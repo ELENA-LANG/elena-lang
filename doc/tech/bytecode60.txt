@@ -126,6 +126,12 @@ ELENA byte codes (or ecodes)
                               size;
                               out: acc contains the class instance, index - undefined
 
+   nlen n                   - index := acc.length / n;
+                              returns the structure size
+
+   len                      - index := acc.length;
+                              returns the object length
+
    copy n                   - sp[0] >> acc, n bytes
 
    copy dp:disp, n          - dp[disp] => temp;

@@ -24,11 +24,13 @@ namespace elena_lang
       Quit           = 0x04,
       MovEnv         = 0x05,
       Load           = 0x06,
+      Len            = 0x07,
 
       MaxSingleOp    = 0x7F,
 
       SetR           = 0x80,
       SetDP          = 0x81,
+      NLen           = 0x82,
       MovM           = 0x88,
 
       Copy           = 0x90,

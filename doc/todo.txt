@@ -5,7 +5,10 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 6 : branching / aithmetic ===
-    * sizeof operator
+    * len opcodes
+    * nlen opcodes
+
+    * $len operator -> get Length
 
     * string return length
 

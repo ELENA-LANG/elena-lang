@@ -187,12 +187,12 @@ void SyntaxTreeBuilder :: flushExpression(Scope& scope, SyntaxNode node)
          case SyntaxKey::Message:
             flushMessage(scope, current);
             break;
-         case SyntaxKey::L5Expression:
-            current.setKey(SyntaxKey::Expression);
-            flushExpression(scope, current);
-            break;
-      default:
-            if (SyntaxTree::test(current.key, SyntaxKey::ScopeMask)) {
+         default:
+            if (SyntaxTree::testSuperKey(current.key, SyntaxKey::Expression)) {
+               current.setKey(SyntaxKey::Expression);
+               flushExpression(scope, current);
+            }
+            else if (SyntaxTree::test(current.key, SyntaxKey::ScopeMask)) {
                flushExpression(scope, current);
             }
             // to make compiler happy

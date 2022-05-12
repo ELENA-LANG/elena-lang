@@ -166,6 +166,16 @@ inline %6
 
 end
 
+// ; len
+inline %7
+
+  sub     x11, x10, elSizeOffset
+  ldr     x9, [x11]
+  and     x9, x9, struct_mask_inv
+  lsr     x9, x9, #3
+
+end
+
 // ; setr
 inline %80h
 
@@ -187,6 +197,57 @@ inline %81h
   add     x10, x29, __arg12_1
 
 end 
+
+// ; nlen n
+inline %82h
+
+  mov     x18, __n_1
+
+  sub     x11, x10, elSizeOffset
+  ldr     x9, [x11]
+  and     x9, x9, struct_mask_inv
+  sdiv    x17, x17, x18  
+
+end
+
+// ; nlen 1
+inline %182h
+
+  sub     x11, x10, elSizeOffset
+  ldr     x9, [x11]
+  and     x9, x9, struct_mask_inv
+
+end
+
+// ; nlen 2
+inline %282h
+
+  sub     x11, x10, elSizeOffset
+  ldr     x9, [x11]
+  and     x9, x9, struct_mask_inv
+  lsr     x9, x9, #1
+
+end
+
+// ; nlen 4
+inline %382h
+
+  sub     x11, x10, elSizeOffset
+  ldr     x9, [x11]
+  and     x9, x9, struct_mask_inv
+  lsr     x9, x9, #2
+
+end
+
+// ; nlen 8
+inline %482h
+
+  sub     x11, x10, elSizeOffset
+  ldr     x9, [x11]
+  and     x9, x9, struct_mask_inv
+  lsr     x9, x9, #3
+
+end
 
 // ; movm
 inline %88h

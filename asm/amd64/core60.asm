@@ -33,6 +33,8 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
+define struct_mask_inv     7FFFFFh
+
 // ; --- System Core Preloaded Routines --
 
 structure % CORE_TOC
@@ -156,6 +158,16 @@ inline %6
 
 end
 
+// ; len
+inline %7
+
+  mov  edx, struct_mask_inv
+  mov  rcx, [rbx-elSizeOffset]
+  and  rdx, rcx
+  shr  edx, 3
+
+end
+
 // ; setr
 inline %80h
 
@@ -176,6 +188,57 @@ inline %81h
   lea  rbx, [rbp + __arg32_1]
 
 end 
+
+// ; nlen n
+inline %82h
+
+  mov  eax, struct_mask_inv
+  and  eax, dword ptr [rbx-elSizeOffset]
+  mov  ecx, __n_1
+  cdq
+  idiv ecx
+  mov  rdx, rax
+
+end
+
+// ; nlen 1
+inline %182h
+
+  mov  edx, struct_mask_inv
+  mov  ecx, dword ptr [rbx-elSizeOffset]
+  and  edx, ecx
+
+end
+
+// ; nlen 2
+inline %282h
+
+  mov  edx, struct_mask_inv
+  mov  ecx, dword ptr [rbx-elSizeOffset]
+  and  edx, ecx
+  shr  edx, 1
+
+end
+
+// ; nlen 4
+inline %382h
+
+  mov  edx, struct_mask_inv
+  mov  ecx, dword ptr [rbx-elSizeOffset]
+  and  edx, ecx
+  shr  edx, 2
+
+end
+
+// ; nlen 8
+inline %482h
+
+  mov  edx, struct_mask_inv
+  mov  ecx, dword ptr [rbx-elSizeOffset]
+  and  edx, ecx
+  shr  edx, 3
+
+end
 
 // ; movm
 inline %88h

@@ -1,21 +1,14 @@
 import system;
 
-//singleton Value
-//{
-//   if(action)
-//   {
-//      action()
-//   }
-//}
+public const struct String : BaseValue
+{
+    __string byte[] theArray;
 
-//A
-//{
-//   int Length
-//   {
-//      get()
-//        = 2;
-//   }
-//}
+    get int Length()
+    {
+       int l := $len theArray;
+    }
+}
 
 singleton Tester
 {

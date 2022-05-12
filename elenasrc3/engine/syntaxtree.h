@@ -56,19 +56,18 @@ namespace elena_lang
       MetaExpression     = 0x001021,
       IncludeStatement   = 0x001022,
       ReloadStatement    = 0x001023,
-      Expression         = 0x001830,
       Object             = 0x001031,
       TemplateType       = 0x001032,
       ArrayType          = 0x001033,
       ReturnExpression   = 0x001C34,
       NestedExpression   = 0x001835,
       ClosureExpression  = 0x001836,
-      L5Expression       = 0x001837,
       IndexerOperation   = 0x001841,
       AssignOperation    = 0x001842,
       AddAssignOperation = 0x001843,
       AddOperation       = 0x001844,
       SubOperation       = 0x001845,
+      LenOperation       = 0x001846,
       MessageOperation   = 0x001851,
       ResendOperation    = 0x001C52,
       RedirectOperation  = 0x001C53,
@@ -80,6 +79,9 @@ namespace elena_lang
       Dimension          = 0x001471,
       NestedBlock        = 0x001080,
       ClosureBlock       = 0x001081,
+      Expression         = 0x001890,
+      L5Expression       = 0x001891,
+      SubExpression      = 0x001892,
 
       Name               = 0x000101,
       Namespace          = 0x000103,
@@ -106,6 +108,11 @@ namespace elena_lang
    public:
       void save(MemoryBase* section);
       void load(MemoryBase* section);
+
+      static bool testSuperKey(SyntaxKey key, SyntaxKey superKey)
+      {
+         return ((parse_key_t)key & 0xFFFFFFF0) == (parse_key_t)superKey;
+      }
 
       static bool test(SyntaxKey key, SyntaxKey mask)
       {
