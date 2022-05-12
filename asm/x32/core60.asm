@@ -231,7 +231,7 @@ inline %382h
 end
 
 // ; nlen 8
-inline %382h
+inline %482h
 
   mov  edx, struct_mask_inv
   mov  ecx, [ebx-elSizeOffset]

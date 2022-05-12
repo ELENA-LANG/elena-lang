@@ -506,6 +506,17 @@ void PPC64Assembler :: compileADDIS(ScriptToken& tokenInfo, PPCOperand rt, PPCOp
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+bool PPC64Assembler :: compileAND(PPCOperand ra, PPCOperand rs, PPCOperand rb, MemoryWriter& writer)
+{
+   if (rs.isGPR() && ra.isGPR() && rb.isGPR()) {
+      writer.writeDWord(PPCHelper::makeXCommand(31, rs.type, ra.type,
+         rb.type, 28, 0));
+   }
+   else return false;
+
+   return true;
+}
+
 void PPC64Assembler :: compileANDI(ScriptToken& tokenInfo, PPCOperand ra, PPCOperand rs, int i,
    ref_t reference, MemoryWriter& writer)
 {
@@ -614,6 +625,22 @@ void PPC64Assembler :: compileADDIS(ScriptToken& tokenInfo, MemoryWriter& writer
    readIOperand(tokenInfo, d, reference, ASM_INVALID_TARGET);
 
    compileADDIS(tokenInfo, rt, ra, d, reference, writer);
+}
+
+void PPC64Assembler :: compileAND(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand ry = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (!compileOR(rx, ry, rz, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
 void PPC64Assembler :: compileANDI(ScriptToken& tokenInfo, MemoryWriter& writer)
@@ -1346,6 +1373,9 @@ bool PPC64Assembler :: compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    }
    else if (tokenInfo.compare("adde")) {
       compileADDE(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("and")) {
+      compileAND(tokenInfo, writer);
    }
    else if (tokenInfo.compare("andi")) {
       compileANDI(tokenInfo, writer);

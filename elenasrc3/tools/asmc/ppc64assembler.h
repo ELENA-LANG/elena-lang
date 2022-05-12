@@ -43,6 +43,7 @@ namespace elena_lang
          ref_t reference, MemoryWriter& writer);
       void compileADDIS(ScriptToken& tokenInfo, PPCOperand rx, PPCOperand ry, int i,
          ref_t reference, MemoryWriter& writer);
+      bool compileAND(PPCOperand rx, PPCOperand ry, PPCOperand rz, MemoryWriter& writer);
       void compileANDI(ScriptToken& tokenInfo, PPCOperand rx, PPCOperand ry, int i,
          ref_t reference, MemoryWriter& writer);
       void compileBxx(int address, int aa, int lk, MemoryWriter& writer);
@@ -66,6 +67,7 @@ namespace elena_lang
       void compileADDI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileADDIS(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileANDI(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileAND(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileBCTR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileBCL(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileB(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);

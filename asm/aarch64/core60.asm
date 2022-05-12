@@ -31,6 +31,8 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
+define struct_mask_inv     7FFFFFh
+
 // ; --- System Core Preloaded Routines --
 
 structure % CORE_TOC
@@ -201,7 +203,7 @@ end
 // ; nlen n
 inline %82h
 
-  mov     x18, __n_1
+  mov     x18, __arg12_1
 
   sub     x11, x10, elSizeOffset
   ldr     x9, [x11]

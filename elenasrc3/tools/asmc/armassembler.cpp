@@ -579,6 +579,19 @@ bool Arm64Assembler :: compileADDImm(ScriptToken& tokenInfo, ARMOperand rd, ARMO
    return true;
 }
 
+bool Arm64Assembler :: compileANDImm(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand ry, MemoryWriter& writer)
+{
+   if (rd.isXR() && rn.isXR() && ry.type == ARMOperandType::Imm) {
+      writer.writeDWord(ARMHelper::makeLogocalImm13Opcode(1, 3, 0x24, ry.imm, rn.type, rd.type));
+
+      if (ry.reference)
+         writeReference(tokenInfo, ry.reference, writer, ASM_INVALID_SOURCE);
+   }
+   else return false;
+
+   return true;
+}
+
 bool Arm64Assembler :: compileADRP(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand imm, MemoryWriter& writer)
 {
    if (rt.isXR() && imm.type == ARMOperandType::Imm) {
@@ -595,7 +608,7 @@ bool Arm64Assembler :: compileADRP(ScriptToken& tokenInfo, ARMOperand rt, ARMOpe
 bool Arm64Assembler :: compileANDS(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand ry, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && ry.type == ARMOperandType::Imm) {
-      writer.writeDWord(ARMHelper::makeLogocalImm13Opcode(1, 3, 0x24, ry.imm, rn.type, rd.type));
+      writer.writeDWord(ARMHelper::makeLogocalImm13Opcode(1, 0, 0x24, ry.imm, rn.type, rd.type));
 
       if (rn.reference)
          writeReference(tokenInfo, rn.reference, writer, ASM_INVALID_SOURCE);
@@ -967,6 +980,27 @@ void Arm64Assembler::compileADD(ScriptToken& tokenInfo, MemoryWriter& writer)
    }
    else {
       isValid = compileADDShifted(tokenInfo, rd, rn, rn2, 0, 0, writer);
+   }
+
+   if (!isValid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void Arm64Assembler :: compileAND(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn2 = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   bool isValid = false;
+   if (rn2.type == ARMOperandType::Imm) {
+      isValid = compileANDImm(tokenInfo, rd, rn, rn2, writer);
    }
 
    if (!isValid)
@@ -1562,6 +1596,9 @@ bool Arm64Assembler :: compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
 {
    if (tokenInfo.compare("add")) {
       compileADD(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("and")) {
+      compileAND(tokenInfo, writer);
    }
    else if (tokenInfo.compare("adrp")) {
       compileADRP(tokenInfo, writer);
