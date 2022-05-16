@@ -843,7 +843,7 @@ inline %0F5h
   call %GC_ALLOC
 
   mov  ecx, __n_1
-  mov  eax, __ptr32_2
+  mov  rax, __ptr64_2
   mov  [rbx - elVMTOffset], rax
   mov  dword ptr [rbx - elSizeOffset], ecx
 

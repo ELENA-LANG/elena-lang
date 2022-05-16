@@ -58,6 +58,7 @@ namespace elena_lang
          pos_t defaultStackAlignment, 
          pos_t defaultRawStackAlignment,
          int minimalArgList);
+      int clean(ProjectBase& project);
 
       CompilingProcess(PathString& appPath, PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,

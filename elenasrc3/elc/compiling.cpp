@@ -342,6 +342,15 @@ void CompilingProcess :: cleanUp(ProjectBase& project)
    }
 }
 
+int CompilingProcess :: clean(ProjectBase& project)
+{
+   configurate(project);
+
+   cleanUp(project);
+
+   return 0;
+}
+
 int CompilingProcess :: build(ProjectBase& project,
    LinkerBase& linker,
    pos_t defaultStackAlignment,

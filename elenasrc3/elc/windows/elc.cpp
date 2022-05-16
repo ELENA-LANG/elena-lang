@@ -201,6 +201,8 @@ int main()
 {
    try
    {
+      bool cleanMode = false;
+
       PathString appPath;
       getAppPath(appPath);
 
@@ -232,6 +234,11 @@ int main()
                case 'm':
                   project.addBoolSetting(ProjectOption::MappingOutputMode, true);
                   break;
+               case 'r':
+                  cleanMode = true;
+                  break;
+               default:
+                  break;
             }
          }
          else if (PathUtil::checkExtension(argv[i], "prj")) {
@@ -249,11 +256,16 @@ int main()
          }
       }
 
-      // Building...
-      return process.build(project, linker, 
-         DEFAULT_STACKALIGNMENT, 
-         DEFAULT_RAW_STACKALIGNMENT,
-         MINIMAL_ARG_LIST);
+      if (cleanMode) {
+         return process.clean(project);
+      }
+      else {
+         // Building...
+         return process.build(project, linker,
+            DEFAULT_STACKALIGNMENT,
+            DEFAULT_RAW_STACKALIGNMENT,
+            MINIMAL_ARG_LIST);
+      }
    }
    catch (CLIException)
    {
