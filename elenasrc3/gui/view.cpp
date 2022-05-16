@@ -14,6 +14,7 @@ using namespace elena_lang;
 TextViewModel :: TextViewModel(int fontSize) :
    TextViewModelBase(fontSize),
    _documents(nullptr),
+   _documentPaths(nullptr),
    _listeners(nullptr),
    _docListeners(nullptr)
 {
@@ -80,11 +81,13 @@ void TextViewModel :: onModelChanged()
    
 }
 
-void TextViewModel :: addDocumentView(ustr_t name, Text* text)
+void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path)
 {
    auto docView = new DocumentView(text, SourceFormatter::getInstance());
 
    _documents.add(name, docView);
+   if (!path.empty())
+      _documentPaths.add(name, path.clone());
 
    for (auto it = _docListeners.start(); !it.eof(); ++it) {
       docView->attachNotifier(*it);
@@ -134,6 +137,14 @@ ustr_t TextViewModel :: getDocumentName(int index)
    }
 
    return nullptr;
+}
+
+ustr_t TextViewModel :: getDocumentNameByPath(path_t path)
+{
+   return _documentPaths.retrieve<path_t>(nullptr, path, [](path_t path, ustr_t key, wstr_t item)
+      {
+         return path.compare(item);
+      });
 }
 
 void TextViewModel :: resize(Point size)

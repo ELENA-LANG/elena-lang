@@ -38,8 +38,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
    IDEModel          ideModel(10);
    DebugProcess      debugProcess;
-   DialogController  dialogController;
-   IDEController     ideController(&debugProcess, &ideModel, textViewSettings, &dialogController);
+   IDEController     ideController(&debugProcess, &ideModel, textViewSettings);
    IDEFactory        factory(hInstance, nCmdShow, &ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();

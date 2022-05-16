@@ -19,6 +19,7 @@ namespace elena_lang
       struct Paths
       {
          PathString libraryRoot;
+         PathString lastPath;
       } paths;
 
       bool       autoRecompile;

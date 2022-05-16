@@ -496,7 +496,7 @@ void DebugController :: processStep()
 void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath)
 {
    if (lineInfo) {
-      _sourceModel->setTraceLine(lineInfo->row);
+      _sourceModel->setTraceLine(lineInfo->row, true);
 
       _notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
 

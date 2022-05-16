@@ -16,13 +16,16 @@ SourceViewModel :: SourceViewModel(int fontSize)
    traceRow = -1;
 }
 
-void SourceViewModel :: setTraceLine(int row)
+void SourceViewModel :: setTraceLine(int row, bool withCursor)
 {
    if (traceRow != -1) {
       _currentView->removeMarker(traceRow, STYLE_TRACE_LINE);
    }
 
    _currentView->addMarker(row, STYLE_TRACE_LINE);
+   if (withCursor)
+      _currentView->setCaret(0, row - 1, false);
+
    traceRow = row;
 }
 

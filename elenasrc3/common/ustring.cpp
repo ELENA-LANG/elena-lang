@@ -682,6 +682,16 @@ inline wchar_t util_lower(unsigned short ch)
 
 // --- StrUtil ---
 
+char* StrUtil :: clone(const char* s)
+{
+   return util_clone(s);
+}
+
+wide_c* StrUtil :: clone(const wide_c* s)
+{
+   return util_clone(s);
+}
+
 void StrUtil :: move(char* s1, const char* s2, size_t length)
 {
    memmove(s1, s2, length);

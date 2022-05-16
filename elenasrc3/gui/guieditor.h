@@ -64,13 +64,14 @@ namespace elena_lang
       virtual void attachDocListener(DocumentNotifier* listener) = 0;
       virtual void removeDocListener(DocumentNotifier* listener) = 0;
 
-      virtual void addDocumentView(ustr_t name, Text* text) = 0;
+      virtual void addDocumentView(ustr_t name, Text* text, path_t path) = 0;
 
       virtual void clearDocumentView() = 0;
       virtual bool selectDocumentView(ustr_t name) = 0;
       virtual bool selectDocumentViewByIndex(int index) = 0;
 
       virtual ustr_t getDocumentName(int index) = 0;
+      virtual ustr_t getDocumentNameByPath(path_t path) = 0;
 
       virtual void resize(Point size) = 0;
 

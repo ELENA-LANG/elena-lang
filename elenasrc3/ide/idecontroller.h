@@ -17,6 +17,12 @@ namespace elena_lang
    class SourceViewController : public TextViewController
    {
    public:
+      void newSource(TextViewModelBase* model, ustr_t name, bool autoSelect);
+      bool openSource(TextViewModelBase* model, ustr_t name, path_t sourcePath,
+         FileEncoding encoding, bool autoSelect);
+
+      void saveSource(TextViewModelBase* model, ustr_t name);
+
       SourceViewController(TextViewSettings& settings)
          : TextViewController(settings)
       {
@@ -44,6 +50,8 @@ namespace elena_lang
       bool startDebugger(ProjectModel& model/*, bool stepMode*/);
 
    public:
+      void defineSourceName(path_t path, IdentifierString& retVal);
+
       bool doCompileProject(ProjectModel& model, DebugAction postponedAction);
 
       void doDebugAction(ProjectModel& model, DebugAction action);
@@ -75,9 +83,12 @@ namespace elena_lang
    class IDEController
    {
       NotifierBase*           _notifier;
-      DialogControllerBase*   _dialogController;
+
+      bool openFile(IDEModel* model, path_t sourceFile);
 
    public:
+      FileEncoding         defaultEncoding;
+
       SourceViewController sourceController;
       ProjectController    projectController;
 
@@ -89,17 +100,17 @@ namespace elena_lang
       }
 
       void doNewFile(IDEModel* model);
-      void doOpenFile(IDEModel* model);
+      void doOpenFile(FileDialogBase& dialog, IDEModel* model);
+      void doSaveFile(FileDialogBase& dialog, IDEModel* model);
 
       IDEController(DebugProcessBase* process, IDEModel* model, 
-         TextViewSettings& textViewSettings,
-         DialogControllerBase* dialogController
+         TextViewSettings& textViewSettings
       ) :
          sourceController(textViewSettings),
          projectController(process, &model->projectModel, &model->sourceViewModel)
       {
          _notifier = nullptr;
-         _dialogController = dialogController;
+         defaultEncoding = FileEncoding::UTF8;
       }
    };
 

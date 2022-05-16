@@ -5,8 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Sprint 6 : branching / aithmetic ===
-    * typecasting int
-
     * test printing for i386, amd64, ppc64le, aarch64
 
     * branching : weak implementation
@@ -26,8 +24,8 @@ In development:
     * static symbol
     * branching
     --- ide redux ---
-    * debugger : auto scroll to the tracer
-    * editor - open / close / save / exit
+    * editor - save / close / exit
+    * debuggrt : open source files 
     * editor - status bar
     * editor - undo / redo
     * editor - clip operations
@@ -37,7 +35,7 @@ In development:
     * linux sdi - menu
     * linux ide : new file
     * linux ide : edit
-    * linux ide
+    * linux editor - open / close / save / exit
     * linux debugger
     * linux debuggrt : watch
     * editor - edit text
@@ -72,6 +70,7 @@ Pipeline:
     --- docs / tutorials ---
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
+    * ide - open file - namespace should be added
     * do load self for expression with ret statement
     * byte / short should support plus / minus operator
     * copydpn : optimization (by 4, 8, and if less then 8)

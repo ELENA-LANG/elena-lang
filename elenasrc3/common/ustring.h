@@ -42,6 +42,9 @@ namespace elena_lang
    class StrUtil
    {
    public:
+      static char* clone(const char* s);
+      static wide_c* clone(const wide_c* s);
+
       static void move(char* s1, const char* s2, size_t length);
       static void move(wide_c* s1, const wide_c* s2, size_t length);
 

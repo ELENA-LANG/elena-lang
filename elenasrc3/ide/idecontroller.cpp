@@ -10,7 +10,49 @@ using namespace elena_lang;
 
 // --- SourceViewController ---
 
+void SourceViewController :: newSource(TextViewModelBase* model, ustr_t caption, bool autoSelect)
+{
+//   IdentifierString tabName("unnamed");
+
+   newDocument(model, caption);
+
+   if (autoSelect) {
+      selectDocument(model, caption);
+
+      model->DocView()->status.unnamed = true;
+      model->DocView()->status.modifiedMode = true;
+   }
+}
+
+bool SourceViewController :: openSource(TextViewModelBase* model, ustr_t caption, path_t sourcePath, 
+   FileEncoding encoding, bool autoSelect)
+{
+   openDocument(model, caption, sourcePath, encoding);
+
+   if (autoSelect)
+      selectDocument(model, caption);
+
+   return true;
+}
+
+void SourceViewController :: saveSource(TextViewModelBase* model, ustr_t name)
+{
+   
+}
+
 // --- ProjectController ---
+
+void ProjectController :: defineSourceName(path_t path, IdentifierString& retVal)
+{
+   if (path.empty()) {
+      retVal.copy("undefined");
+   }
+   else {
+      IdentifierString fileName(path + path.findLast(PATH_SEPARATOR) + 1);
+
+      retVal.append(*fileName);
+   }
+}
 
 bool ProjectController :: startDebugger(ProjectModel& model)
 {
@@ -106,15 +148,51 @@ bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction post
 
 void IDEController :: doNewFile(IDEModel* model)
 {
-   IdentifierString tabName("unnamed");
+   IdentifierString sourceNameStr;
+   projectController.defineSourceName(nullptr, sourceNameStr);
 
-   sourceController.newDocument(&model->sourceViewModel, *tabName);
-   sourceController.selectDocument(&model->sourceViewModel, *tabName);
+   sourceController.newSource(&model->sourceViewModel, *sourceNameStr, true);
 }
 
-void IDEController :: doOpenFile(IDEModel* model)
+bool IDEController :: openFile(IDEModel* model, path_t sourceFile)
 {
-   if (_dialogController->selectFiles()) {
+   ustr_t sourceName = model->sourceViewModel.getDocumentNameByPath(sourceFile);
+   if (!sourceName.empty()) {
+      sourceController.selectDocument(&model->sourceViewModel, sourceName);
+
+      return false;
+   }
+   else {
+      IdentifierString sourceNameStr;
+      projectController.defineSourceName(sourceFile, sourceNameStr);
+
+      sourceName = *sourceNameStr;
+   }
+
+   return sourceController.openSource(&model->sourceViewModel, sourceName, sourceFile, defaultEncoding, true);
+}
+
+void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
+{
+   List<path_t, freepath> files(nullptr);
+   if (dialog.openFiles(files)) {
+      for (auto it = files.start(); !it.eof(); ++it) {
+         if(openFile(model, *it)) {
+            
+         }
+      }
+   }
+}
+
+void IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model)
+{
+   auto docView = model->sourceViewModel.DocView();
+   if (!docView)
+      return;
+
+   if (docView->status.unnamed) {
       
    }
+
+   sourceController.saveSource(&model->sourceViewModel, nullptr);
 }

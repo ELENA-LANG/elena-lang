@@ -20,7 +20,7 @@ void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name)
    Text* text = new Text(_settings.eolMode);
    text->create();
 
-   model->addDocumentView(name, text);
+   model->addDocumentView(name, text, nullptr);
 }
 
 void TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, path_t path, FileEncoding encoding)
@@ -28,7 +28,7 @@ void TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, p
    Text* text = new Text(_settings.eolMode);
    text->load(path, encoding, false);
 
-   model->addDocumentView(name, text);
+   model->addDocumentView(name, text, path);
 }
 
 void TextViewController :: selectDocument(TextViewModelBase* model, ustr_t name)

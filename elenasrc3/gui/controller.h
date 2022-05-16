@@ -11,11 +11,11 @@
 
 namespace elena_lang
 {
-   // --- DialogControllerBase ---
-   class DialogControllerBase
+   // --- FileDialogBase ---
+   class FileDialogBase
    {
    public:
-      virtual bool selectFiles() = 0;
+      virtual bool openFiles(List<path_t, freepath>& files) = 0;
    };
 
    // --- TextViewSettings ---

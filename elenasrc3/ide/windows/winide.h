@@ -15,6 +15,8 @@ namespace elena_lang
 {
    class IDEWindow : public SDIWindow
    {
+      HINSTANCE      _instance;
+
       IDEModel*      _model;
       IDEController* _controller;
 
@@ -25,10 +27,15 @@ namespace elena_lang
       void onNotify(NMHDR* hdr) override;
       void onActivate() override;
 
+      void newFile();
+      void openFile();
+      void saveFile();
+
    public:
-      IDEWindow(wstr_t title, IDEController* controller, IDEModel* model)
+      IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance)
          : SDIWindow(title)
       {
+         this->_instance = instance;
          this->_controller = controller;
          this->_model = model;
       }

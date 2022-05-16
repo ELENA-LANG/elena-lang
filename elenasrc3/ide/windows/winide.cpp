@@ -5,6 +5,8 @@
 //---------------------------------------------------------------------------
 
 #include "windows/winide.h"
+#include "windows/windialogs.h"
+
 #include <windows/Resource.h>
 
 using namespace elena_lang;
@@ -16,15 +18,34 @@ void IDEWindow :: onActivate()
       center->setFocus();
 }
 
+void IDEWindow :: newFile()
+{
+   _controller->doNewFile(_model);
+}
+
+void IDEWindow :: openFile()
+{
+   FileDialog dialog(_instance, this, FileDialog::SourceFilter, OPEN_FILE_CAPTION, *_model->projectModel.paths.lastPath);
+
+   _controller->doOpenFile(dialog, _model);
+}
+
+void IDEWindow :: saveFile()
+{
+   //_controller->doSaveFile(_model);
+}
+
 bool IDEWindow :: onCommand(int command)
 {
    switch (command) {
       case IDM_FILE_NEW:
-         _controller->doNewFile(_model);
+         newFile();
          break;
       case IDM_FILE_OPEN:
-         _controller->doOpenFile(_model);
+         openFile();
          break;
+      case IDM_FILE_SAVE:
+         saveFile();
       case IDM_DEBUG_RUN:
          _controller->projectController.doDebugAction(_model->projectModel, DebugAction::Run);
          break;

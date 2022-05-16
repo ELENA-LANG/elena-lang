@@ -19,7 +19,7 @@ namespace elena_lang
       int traceRow;
 
    public:
-      void setTraceLine(int row);
+      void setTraceLine(int row, bool withCursor);
       void clearTraceLine();
 
       SourceViewModel(int fontSize);

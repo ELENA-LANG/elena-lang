@@ -132,7 +132,7 @@ GUIApp* IDEFactory :: createApp()
 
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier)
 {
-   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model);
+   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance);
    sdi->create(_instance, szSDI, nullptr);
 
    ControlBase* children[1];

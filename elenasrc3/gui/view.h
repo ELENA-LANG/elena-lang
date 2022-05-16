@@ -11,7 +11,9 @@
 
 namespace elena_lang
 {
+   //typedef Pair<path_t, > DocumentInfo 
    typedef Map<ustr_t, DocumentView*, allocUStr, freeUStr, freeobj> DocumentViewMap;
+   typedef Map<ustr_t, path_t, allocUStr, freeUStr, freepath>       DocumentPathMap;
    typedef List<TextViewListener*> TextViewListeners;
 
    // --- TextViewModel ---
@@ -19,6 +21,8 @@ namespace elena_lang
    {
    protected:
       DocumentViewMap   _documents;
+      DocumentPathMap   _documentPaths;
+
       TextViewListeners _listeners;
       DocumentNotifiers _docListeners;
 
@@ -34,9 +38,10 @@ namespace elena_lang
       void attachDocListener(DocumentNotifier* listener) override;
       void removeDocListener(DocumentNotifier* listener) override;
 
-      void addDocumentView(ustr_t name, Text* text) override;
+      void addDocumentView(ustr_t name, Text* text, path_t path) override;
 
       ustr_t getDocumentName(int index) override;
+      ustr_t getDocumentNameByPath(path_t path) override;
 
       void clearDocumentView() override;
       bool selectDocumentView(ustr_t name) override;

@@ -135,6 +135,7 @@ namespace elena_lang
          bool formatterChanged;
          bool readOnly;
          bool modifiedMode;
+         bool unnamed;
          bool overwriteMode;
 
          bool oldModified;
@@ -171,6 +172,7 @@ namespace elena_lang
             selelectionChanged = false;
             formatterChanged = false;
             readOnly = false;
+            unnamed = false;
             overwriteMode = false;
             oldOvewrite = true;     // to trigger mode change
 
