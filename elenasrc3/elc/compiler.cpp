@@ -1899,10 +1899,10 @@ inline void createObject(BuildTreeWriter& writer, ClassInfo& info, ref_t referen
    writer.closeNode();
 }
 
-inline void copyObject(BuildTreeWriter& writer, ClassInfo& info, int offset)
+inline void copyObjectToAcc(BuildTreeWriter& writer, ClassInfo& info, int offset)
 {
    if (test(info.header.flags, elStructureRole)) {
-      writer.newNode(BuildKey::Copying, offset);
+      writer.newNode(BuildKey::AccCopying, offset);
       writer.appendNode(BuildKey::Size, info.size);
    }
    else throw InternalError(errFatalError);
@@ -1916,9 +1916,9 @@ ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& sc
 
    ObjectInfo tempLocal = {};
    if (hasToBePresaved(info)) {
-      info = tempLocal = saveToTempLocal(writer, scope, info);
+      info = saveToTempLocal(writer, scope, info);
    }
-   else tempLocal = declareTempLocal(scope, typeRef);
+   tempLocal = declareTempLocal(scope, typeRef);
 
    ClassInfo argInfo;
    _logic->defineClassInfo(*scope.moduleScope, argInfo, typeRef, false, true);
@@ -1927,7 +1927,9 @@ ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& sc
    writer.appendNode(BuildKey::Assigning, tempLocal.argument);
 
    writeObjectInfo(writer, info);
-   copyObject(writer, argInfo, tempLocal.reference);
+   writer.appendNode(BuildKey::SavingInStack, 0);
+   writeObjectInfo(writer, tempLocal);
+   copyObjectToAcc(writer, argInfo, tempLocal.reference);
 
    return tempLocal;
 }
@@ -2528,6 +2530,7 @@ ObjectInfo Compiler :: declareTempStructure(ExprScope& scope, int size)
 
    ObjectInfo retVal = { ObjectKind::TempLocalAddress };
    retVal.reference = allocateLocalAddress(codeScope, size);
+   retVal.extra = size;
 
    scope.syncStack();
 

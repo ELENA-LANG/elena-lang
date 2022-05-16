@@ -30,14 +30,20 @@ In development:
     * editor - undo / redo
     * editor - clip operations
     * editor - compile
+    * editor - enable / disable menu commands
+    * debuggrt : watch
     * linux sdi - menu
     * linux ide : new file
     * linux ide : edit
     * linux ide
     * linux debugger
+    * linux debuggrt : watch
     * editor - edit text
     * editor - correctly destroy tabbar / frame / view
     === Sprint 7 : utf8 / utf16 / utf32 ===
+    * optimize String.prop:Length[1]
+    * all basic types : int, byte, short, boolean, string, widestring, char
+    * conversion between basic types
     * call set properties
     * static field
     * embeddable return
@@ -64,6 +70,7 @@ Pipeline:
     --- docs / tutorials ---
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
+    * do load self for expression with ret statement
     * byte / short should support plus / minus operator
     * copydpn : optimization (by 4, 8, and if less then 8)
     * true / false symbol - replace symbol call with constant reference

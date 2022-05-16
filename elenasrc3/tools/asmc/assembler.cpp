@@ -391,6 +391,7 @@ void AssemblerBase :: compile()
 
          declareConstant(tokenInfo);
       }
+      else throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
    }
 }
 

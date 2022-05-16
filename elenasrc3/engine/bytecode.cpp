@@ -14,7 +14,7 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 
 const char* _fnOpcodes[256] =
 {
-   OPCODE_UNKNOWN, "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
+   "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -602,7 +602,7 @@ void CommandTape :: saveTo(MemoryWriter* writer)
             labels.add(command.arg1, writer->position());
 
             // JIT compiler interprets nop command as a label mark
-            write(ByteCode::Nop);
+            ByteCodeUtil::write(*writer, { ByteCode::Nop });
 
             break;
          case ByteCode::Jump:

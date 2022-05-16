@@ -450,7 +450,7 @@ inline % 0B1h
 end
 
 // ; copydpn
-inlinr %0E0h
+inline %0E0h
 
   mov  rsi, r10
   lea  rdi, [rbp + __arg32_1]
@@ -458,7 +458,6 @@ inlinr %0E0h
   rep  movsb
 
 end
-
 
 // ; iaddndp
 inline %0E1h
@@ -858,21 +857,21 @@ inline %0F6h
 
 end
 
-// ; xmovsisi 1, n
+// ; xmovsisi 0, n
 inline %1F6h
 
   mov  r10, [rsp+__arg32_2]
 
 end
 
-// ; xmovsisi n, 1
+// ; xmovsisi n, 0
 inline %2F6h
 
   mov  [rsp+__arg32_1], r10
 
 end
 
-// ; xmovsisi 2, n
+// ; xmovsisi 1, n
 inline %3F6h
 
   mov  r11, [rsp+__arg32_2]
@@ -886,14 +885,14 @@ inline %4F6h
 
 end
 
-// ; xmovsisi 1, 2
+// ; xmovsisi 0, 1
 inline %5F6h
 
   mov  r10, r11
 
 end
 
-// ; xmovsisi 2, 1
+// ; xmovsisi 1, 0
 inline %6F6h
 
   mov  r11, r10

@@ -471,7 +471,7 @@ inline %4E1h
 
 end
 
-// ; isubndp
+// ; isubndp 4
 inline %0E2h
 
   lea  edi, [ebp + __arg32_1]
@@ -480,7 +480,7 @@ inline %0E2h
 
 end
 
-// ; isubndp
+// ; isubndp 1
 inline %1E2h
 
   lea  edi, [ebp + __arg32_1]
@@ -489,7 +489,7 @@ inline %1E2h
 
 end
 
-// ; isubndp
+// ; isubndp 2
 inline %2E2h
 
   lea  edi, [ebp + __arg32_1]
@@ -498,13 +498,12 @@ inline %2E2h
 
 end
 
-// ; isubndp
+// ; isubndp 8
 inline %4E2h
 
   lea  edi, [ebp + __arg32_1]
   mov  eax, [esi + 4]
   mov  ecx, [esi]
-  add  word ptr [edi], ax
   sub  [edi], ecx
   sbb  [edi+4], eax
 
@@ -947,24 +946,24 @@ inline %0F6h
 
 end
 
-// ; xmovsisi 1, n
+// ; xmovsisi 0, n
 inline %1F6h
 
   mov  esi, [esp+__arg32_2]
 
 end
 
-// ; xmovsisi n, 1
+// ; xmovsisi n, 0
 inline %2F6h
 
   mov  [esp+__arg32_1], esi
 
 end
 
-// ; xmovsisi 1, 2
+// ; xmovsisi 0, 1
 inline %5F6h
 
-  mov  esi, [esp+8]
+  mov  esi, [esp+4]
 
 end
 

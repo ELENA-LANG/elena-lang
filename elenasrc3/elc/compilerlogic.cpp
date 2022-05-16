@@ -58,7 +58,7 @@ constexpr Op Operations[OperationLength] =
    { BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0, V_OBJECT, false },
    { BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0, V_OBJECT, false },
    { BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32, true },
-   { BuildKey::BinArraySOp, V_BINARYARRAY, 0, 0, V_INT32, true}
+   { BuildKey::ByteArraySOp, V_BINARYARRAY, 0, 0, V_INT32, true}
 };
 
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
@@ -145,8 +145,8 @@ bool CompilerLogic :: isValidOp(int operatorId, BuildKey op)
          return isValidAttrDictionaryOp(operatorId);
       case BuildKey::IntOp:
          return isValidArithmOp(operatorId);
-      case BuildKey::BinArraySOp:
-         return isValidArraySOp(operatorId);;
+      case BuildKey::ByteArraySOp:
+         return isValidArraySOp(operatorId);
       default:
          return false;
    }

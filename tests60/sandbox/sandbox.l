@@ -4,7 +4,7 @@ singleton Tester
 {
    run()
    {
-      Output.write("Hello"$10);
+      Output.write("Hello From ELENA 6.0"$10);
 
 //      var a := Value;
 //      a.if({ Output.write() });

@@ -70,11 +70,15 @@ namespace elena_lang
       void addArg(arg_t arg, IdentifierString& commandStr);
       void addSecondArg(arg_t arg, IdentifierString& commandStr);
 
-      void addCommandArguments(ByteCommand& command, IdentifierString& commandStr);
+      void addLabel(arg_t arg, IdentifierString& commandStr, List<pos_t>& labels);
+
+      void addCommandArguments(ByteCommand& command, IdentifierString& commandStr, 
+         List<pos_t>& labels, pos_t commandPosition);
 
       void addMessage(IdentifierString& commandStr, mssg_t message);
 
-      void printCommand(ByteCommand& command, int indent);
+      void printCommand(ByteCommand& command, int indent, 
+         List<pos_t>& labels, pos_t commandPosition);
       void printByteCodes(MemoryBase* section, pos_t address, int indent, int pageSize);
 
       void printFlags(ref_t flags, int& row, int pageSize);

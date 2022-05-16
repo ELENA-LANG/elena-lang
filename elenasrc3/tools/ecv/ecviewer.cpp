@@ -230,7 +230,40 @@ void ByteCodeViewer :: addSecondSPArg(arg_t arg, IdentifierString& commandStr)
    addSPArg(arg, commandStr);
 }
 
-void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierString& commandStr)
+inline int getLabelIndex(int label, List<pos_t>& labels)
+{
+   int index = 0;
+   auto it = labels.start();
+   while (!it.eof()) {
+      if (*it == label)
+         return index;
+
+      index++;
+      ++it;
+   }
+
+   return -1;
+}
+
+void ByteCodeViewer :: addLabel(arg_t labelPosition, IdentifierString& commandStr, List<pos_t>& labels)
+{
+   int index = getLabelIndex(labelPosition, labels);
+
+   if (index == -1) {
+      index = labels.count();
+
+      labels.add(labelPosition);
+   }
+
+   commandStr.append("Lab");
+   if (index < 10) {
+      commandStr.append('0');
+   }
+   commandStr.appendInt(index);
+}
+
+void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierString& commandStr, 
+   List<pos_t>& labels, pos_t commandPosition)
 {
    if (ByteCodeUtil::isDoubleOp(command.code)) {
       switch (command.code) {
@@ -241,6 +274,9 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::MovM:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
+            break;
+         case ByteCode::Jump:
+            addLabel(command.arg1 + commandPosition + 5, commandStr, labels);
             break;
          default:
             addArg(command.arg1, commandStr);
@@ -285,32 +321,42 @@ void ByteCodeViewer :: addMessage(IdentifierString& commandStr, mssg_t message)
    ByteCodeUtil::resolveMessageName(commandStr, _module, message);
 }
 
-void ByteCodeViewer :: printCommand(ByteCommand& command, int indent)
+void ByteCodeViewer :: printCommand(ByteCommand& command, int indent, 
+   List<pos_t>& labels, pos_t commandPosition)
 {
    IdentifierString commandLine;
-   for (int i = 0; i < indent; i++)
-      commandLine.append(" ");
+   if (command.code == ByteCode::Nop) {
+      addLabel(commandPosition, commandLine, labels);
+      commandLine.append(':');
+      commandLine.append("     ");
 
-   ByteCodeUtil::decode(command.code, commandLine);
-
-   // HOTFIX : remove tailing double colon
-   if (commandLine[commandLine.length() - 1] == ':') {
-      commandLine.truncate(commandLine.length() - 2);
+      ByteCodeUtil::decode(command.code, commandLine);
    }
+   else {
+      for (int i = 0; i < indent; i++)
+         commandLine.append(" ");
 
+      ByteCodeUtil::decode(command.code, commandLine);
 
-   size_t tabbing = TABBING;
-   while (commandLine.length() < tabbing) {
-      commandLine.append(" ");
+      // HOTFIX : remove tailing double colon
+      if (commandLine[commandLine.length() - 1] == ':') {
+         commandLine.truncate(commandLine.length() - 2);
+      }
+
+      size_t tabbing = TABBING;
+      while (commandLine.length() < tabbing) {
+         commandLine.append(" ");
+      }
+
+      addCommandArguments(command, commandLine, labels, commandPosition);
    }
-
-   addCommandArguments(command, commandLine);
 
    _presenter->print(commandLine.str());
 }
 
 void ByteCodeViewer :: printByteCodes(MemoryBase* section, pos_t address, int indent, int pageSize)
 {
+   List<pos_t> labels(INVALID_POS);
    MemoryReader reader(section, address);
 
    ByteCommand command;
@@ -318,9 +364,11 @@ void ByteCodeViewer :: printByteCodes(MemoryBase* section, pos_t address, int in
    pos_t endPos = reader.position() + size;
    int row = 1;
    while (reader.position() < endPos) {
+      pos_t position = reader.position();
+
       ByteCodeUtil::read(reader, command);
 
-      printCommand(command, indent);
+      printCommand(command, indent, labels, position);
       nextRow(row, pageSize);
    }
 }
@@ -494,7 +542,6 @@ void ByteCodeViewer::printMethod(ustr_t name)
 
       size -= sizeof(MethodEntry);
    }
-
 }
 
 void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)

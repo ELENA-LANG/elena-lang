@@ -182,46 +182,52 @@ bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
 
 void X86LabelHelper :: writeJmpForward(pos_t label, MemoryWriter& writer)
 {
+   pos_t position = writer.position();
+
    writer.writeByte(0xE9);
 
-   jumps.add(label, { writer.position() });
+   jumps.add(label, { position });
 
    writer.writeDWord(0);
 }
 
 void X86LabelHelper :: writeShortJmpForward(pos_t label, MemoryWriter& writer)
 {
+   pos_t position = writer.position();
+
    writer.writeByte(0xEB);
 
-   jumps.add(label, { writer.position() });
+   jumps.add(label, { position });
 
    writer.writeByte(0);
 }
 
 void X86LabelHelper :: writeNearJmpBack(pos_t label, MemoryWriter& writer)
 {
-   int offset = labels.get(label) - writer.position();
+   pos_t position = writer.position();
+   int offset = labels.get(label) - position;
 
    writer.writeByte(0xE9);
 
    // to exclude the command itself
    offset -= 5;
 
-   jumps.add(label, { writer.position(), offset });
+   jumps.add(label, { position, offset });
 
    writer.writeDWord(offset);
 }
 
 void X86LabelHelper :: writeShortJmpBack(pos_t label, MemoryWriter& writer)
 {
-   int offset = labels.get(label) - writer.position();
+   pos_t position = writer.position();
+   int offset = labels.get(label) - position;
 
    writer.writeByte(0xEB);
 
    // to exclude the command itself
    offset -= 2;
 
-   jumps.add(label, { writer.position(), offset });
+   jumps.add(label, { position, offset });
 
    writer.writeByte((unsigned char)offset);
 }

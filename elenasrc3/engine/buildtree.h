@@ -56,7 +56,8 @@ namespace elena_lang
       DirectCallOp      = 0x001B,
       DispatchingOp     = 0x001C,
       IntOp             = 0x001D,
-      BinArraySOp       = 0x001E,
+      ByteArraySOp      = 0x001E,
+      AccCopying        = 0x001F,
 
       Import            = 0x0038,
       StrDictionaryOp   = 0x0039,

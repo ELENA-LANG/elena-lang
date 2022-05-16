@@ -127,6 +127,13 @@ void copyingLocal(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::CopyDPN, node.arg.value, n);
 }
 
+void copyingAcc(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int n = node.findChild(BuildKey::Size).arg.value;
+
+   tape.write(ByteCode::Copy, n);
+}
+
 void getLocal(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::PeekFI, node.arg.value);
@@ -244,16 +251,15 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-void binarySOp(CommandTape& tape, BuildNode& node, TapeScope&)
+void byteArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.findChild(BuildKey::Index).arg.value;
-   int size = node.findChild(BuildKey::Size).arg.value;
 
    switch (node.arg.value) {
       case LEN_OPERATOR_ID:
          tape.write(ByteCode::PeekSI, 0);
-         tape.write(ByteCode::NLen, size);
+         tape.write(ByteCode::NLen, 1);
          tape.write(ByteCode::SaveDP, targetOffset, 4);
          break;
    default:
@@ -293,7 +299,8 @@ ByteCodeWriter::Saver commands[] =
    directCallOp,
    dispatchOp,
    intOp,
-   binarySOp,
+   byteArraySOp,
+   copyingAcc,
 };
 
 // --- ByteCodeWriter ---

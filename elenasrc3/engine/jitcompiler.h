@@ -37,6 +37,7 @@ namespace elena_lang
       JITCompiler*         compiler;
       LabelHelperBase*     lh;
       MemoryWriter*        codeWriter;
+      MemoryReader*        tapeReader;
       ByteCommand          command;
       JITConstants*        constants;
 
@@ -49,7 +50,7 @@ namespace elena_lang
       }
 
       JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* compiler, LabelHelperBase* lh, MemoryWriter* writer,
-         JITConstants* constants);
+         MemoryReader* tapeReader, JITConstants* constants);
    };
 
    typedef void(*CodeGenerator)(JITCompilerScope*);
@@ -93,6 +94,7 @@ namespace elena_lang
       friend void loadFrameIndexOp(JITCompilerScope* scope);
       friend void loadFrameDispOp(JITCompilerScope* scope);
       friend void loadNOp(JITCompilerScope* scope);
+      friend void loadLenOp(JITCompilerScope* scope);
       friend void loadROp(JITCompilerScope* scope);
       friend void loadMOp(JITCompilerScope* scope);
       friend void loadCallOp(JITCompilerScope* scope);
@@ -101,10 +103,12 @@ namespace elena_lang
       friend void loadFrameIndexROp(JITCompilerScope* scope);
       friend void loadIndexNOp(JITCompilerScope* scope);
       friend void loadIndexIndexOp(JITCompilerScope* scope);
+      friend void loadSPSPOp(JITCompilerScope* scope);
       friend void loadNewOp(JITCompilerScope* scope);
       friend void loadNewNOp(JITCompilerScope* scope);
       friend void loadMROp(JITCompilerScope* scope);
       friend void loadVMTROp(JITCompilerScope* scope);
+      friend void loadDPNOp(JITCompilerScope* scope);
 
       friend void compileBreakpoint(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
@@ -286,6 +290,7 @@ namespace elena_lang
    void loadFrameIndexOp(JITCompilerScope* scope);
    void loadFrameDispOp(JITCompilerScope* scope);
    void loadNOp(JITCompilerScope* scope);
+   void loadLenOp(JITCompilerScope* scope);
    void loadROp(JITCompilerScope* scope);
    void loadMOp(JITCompilerScope* scope);
    void loadCallOp(JITCompilerScope* scope);
@@ -294,10 +299,12 @@ namespace elena_lang
    void loadFrameIndexROp(JITCompilerScope* scope);
    void loadIndexNOp(JITCompilerScope* scope);
    void loadIndexIndexOp(JITCompilerScope* scope);
+   void loadSPSPOp(JITCompilerScope* scope);
    void loadNewOp(JITCompilerScope* scope);
    void loadNewNOp(JITCompilerScope* scope);
    void loadMROp(JITCompilerScope* scope);
    void loadVMTROp(JITCompilerScope* scope);
+   void loadDPNOp(JITCompilerScope* scope);
 
    void compileClose(JITCompilerScope* scope);
    void compileOpen(JITCompilerScope* scope);
