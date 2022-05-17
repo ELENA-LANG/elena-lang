@@ -212,6 +212,8 @@ int main(int argc, char* argv[])
 {
    try
    {
+      bool cleanMode = false;
+
       PathString dataPath(DATA_PATH);
 
       JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE };
@@ -234,7 +236,19 @@ int main(int argc, char* argv[])
       }
 
       for (int i = 1; i < argc; i++) {
-         if (PathUtil::checkExtension(argv[i], "project")) {
+         if (argv[i][0] == '-') {
+            switch (argv[i][1]) {
+               case 'm':
+                  project.addBoolSetting(ProjectOption::MappingOutputMode, true);
+                  break;
+               case 'r':
+                  cleanMode = true;
+                  break;
+               default:
+                  break;
+            }
+         }
+         else if (PathUtil::checkExtension(argv[i], "project")) {
             PathString path(argv[i]);
 
             if (!project.loadProject(*path)) {
@@ -248,11 +262,16 @@ int main(int argc, char* argv[])
          }
       }
 
-      // Building...
-      return process.build(project, linker, 
-         DEFAULT_STACKALIGNMENT, 
-         DEFAULT_RAW_STACKALIGNMENT, 
-         MINIMAL_ARG_LIST);
+      if (cleanMode) {
+         return process.clean(project);
+      }
+      else {
+         // Building...
+         return process.build(project, linker,
+            DEFAULT_STACKALIGNMENT,
+            DEFAULT_RAW_STACKALIGNMENT,
+            MINIMAL_ARG_LIST);
+      }
    }
    catch (CLIException e)
    {
