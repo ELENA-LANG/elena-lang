@@ -132,7 +132,7 @@ LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider)
    }
 
    return{
-      image.addressSpace.imageBase + image.addressSpace.code,
-      image.addressSpace.imageBase + image.addressSpace.rdata
+      image.addressMap.imageBase + image.addressMap.code,
+      image.addressMap.imageBase + image.addressMap.rdata
    };
 }
