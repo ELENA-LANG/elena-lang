@@ -455,6 +455,8 @@ void SyntaxTreeBuilder :: flushSubScopeMember(Scope& scope, SyntaxNode node, Syn
 
          _writer.closeNode();
          break;
+      default:
+         break;
    }
 }
 

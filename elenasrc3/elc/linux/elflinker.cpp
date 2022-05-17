@@ -106,7 +106,7 @@ void ElfLinker :: prepareElfImage(ImageProviderBase& provider, ElfExecutableImag
       image.withDebugInfo);
 }
 
-void ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider)
+LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider)
 {
    bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode);
    ElfExecutableImage image(withDebugMode);
@@ -130,4 +130,9 @@ void ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider)
          _errorProcessor->raisePathError(errCannotCreate, *debugFilePath);
       }
    }
+
+   return{
+      image.addressSpace.imageBase + image.addressSpace.code,
+      image.addressSpace.imageBase + image.addressSpace.rdata
+   };
 }

@@ -56,7 +56,7 @@ namespace elena_lang
       virtual void prepareElfImage(ImageProviderBase& provider, ElfExecutableImage& image, unsigned int headerSize);
 
    public:
-      void run(ProjectBase& project, ImageProviderBase& code) override;
+      LinkResult run(ProjectBase& project, ImageProviderBase& code) override;
 
       ElfLinker(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
          : LinkerBase(errorProcessor)
