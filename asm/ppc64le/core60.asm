@@ -134,7 +134,7 @@ labSplit:
 labStart:
   andi.   r0, r7, 1
   srdi    r7, r7, 1
-  iseleq  r21, r19, r17                   //; ecx
+  iseleq  r21, r19, r17                  //; ecx
 
   sldi    r22, r7, 4
   add     r22, r22, r16                  //; edx

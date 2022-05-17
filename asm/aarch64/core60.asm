@@ -206,7 +206,7 @@ inline %82h
   mov     x18, __arg12_1
 
   sub     x11, x10, elSizeOffset
-  ldr     x9, [x11]
+  ldr     w9, [x11]
   and     x9, x9, struct_mask_inv
   sdiv    x17, x17, x18  
 
@@ -216,7 +216,7 @@ end
 inline %182h
 
   sub     x11, x10, elSizeOffset
-  ldr     x9, [x11]
+  ldr     w9, [x11]
   and     x9, x9, struct_mask_inv
 
 end
@@ -225,7 +225,7 @@ end
 inline %282h
 
   sub     x11, x10, elSizeOffset
-  ldr     x9, [x11]
+  ldr     w9, [x11]
   and     x9, x9, struct_mask_inv
   lsr     x9, x9, #1
 
@@ -235,7 +235,7 @@ end
 inline %382h
 
   sub     x11, x10, elSizeOffset
-  ldr     x9, [x11]
+  ldr     w9, [x11]
   and     x9, x9, struct_mask_inv
   lsr     x9, x9, #2
 
@@ -245,7 +245,7 @@ end
 inline %482h
 
   sub     x11, x10, elSizeOffset
-  ldr     x9, [x11]
+  ldr     w9, [x11]
   and     x9, x9, struct_mask_inv
   lsr     x9, x9, #3
 
@@ -521,9 +521,9 @@ inline %0E0h
 labLoop:
   cmp     x11, 0
   beq     labEnd
-  sub     x11, x11, 8
-  ldr     x14, [x12], #8
-  str     x14, [x13], #8
+  sub     x11, x11, 1
+  ldr     x14, [x12], #1
+  strb    x14, [x13], #1
   b       labLoop
 
 labEnd:
