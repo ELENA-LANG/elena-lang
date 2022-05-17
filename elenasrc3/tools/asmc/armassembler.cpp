@@ -608,7 +608,7 @@ bool Arm64Assembler :: compileADRP(ScriptToken& tokenInfo, ARMOperand rt, ARMOpe
 bool Arm64Assembler :: compileANDS(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand ry, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && ry.type == ARMOperandType::Imm) {
-      writer.writeDWord(ARMHelper::makeLogocalImm13Opcode(1, 0, 0x24, ry.imm, rn.type, rd.type));
+      writer.writeDWord(ARMHelper::makeLogocalImm13Opcode(1, 3, 0x24, ry.imm, rn.type, rd.type));
 
       if (rn.reference)
          writeReference(tokenInfo, rn.reference, writer, ASM_INVALID_SOURCE);
