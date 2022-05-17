@@ -30,7 +30,7 @@ public singleton LinuxOutput
    }
 }
 
-Output = WinOutput;
-//Output = LinuxOutput;
+//Output = WinOutput;
+Output = LinuxOutput;
 
 public symbol program = Tester.run();
