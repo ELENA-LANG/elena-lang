@@ -915,7 +915,7 @@ namespace elena_lang
                   attributes.add(key, reference);
                }
                pos_t statCount = reader->getPos();
-               for (pos_t i = 0; i < attrCount; i++) {
+               for (pos_t i = 0; i < statCount; i++) {
                   IdentifierString fieldName;
                   reader->readString(fieldName);
                   StaticFieldInfo fieldInfo;

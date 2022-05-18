@@ -701,6 +701,18 @@ bool Arm64Assembler :: compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
    else if (rt.isXR() && ptr.isUnsigned()) {
       writer.writeDWord(ARMHelper::makeImm12Opcode(3, 7, 0, 1, 1, ptr.imm >> 3, ptr.type, rt.type));
    }
+   else if (rt.isWR() && ptr.isUnsigned()) {
+      writer.writeDWord(ARMHelper::makeImm12Opcode(2, 7, 0, 1, 1, ptr.imm >> 3, ptr.type, rt.type));
+   }
+   else if (rt.isWR() && ptr.isPreindex()) {
+      writer.writeDWord(ARMHelper::makeImm9Opcode(2, 7, 0, 0, 1, 0, ptr.imm >> 3, 3, ptr.type, rt.type));
+   }
+   else if (rt.isWR() && ptr.isPostindex()) {
+      writer.writeDWord(ARMHelper::makeImm9Opcode(2, 7, 0, 0, 1, 0, ptr.imm >> 3, 1, ptr.type, rt.type));
+
+      if (ptr.reference)
+         writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
+   }
    else return false;
 
    return true;
