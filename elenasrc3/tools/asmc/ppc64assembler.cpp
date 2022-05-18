@@ -639,7 +639,7 @@ void PPC64Assembler :: compileAND(ScriptToken& tokenInfo, MemoryWriter& writer)
 
    PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
 
-   if (!compileOR(rx, ry, rz, writer))
+   if (!compileAND(rx, ry, rz, writer))
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 

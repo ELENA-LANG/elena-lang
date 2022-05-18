@@ -214,8 +214,9 @@ end
 // ; nlen n
 inline %82h
 
+  lis     r18, __n16hi_1
   li      r18, __n16_1
-  li      r16, struct_mask_inv
+
   lwz     r14, -elSizeOffset(r15)
   and     r14, r14, r16 
   divw    r14, r14, r18  
@@ -225,7 +226,9 @@ end
 // ; nlen 1
 inline %182h
 
-  li      r16, struct_mask_inv
+  lis     r18, __n16hi_1
+  li      r18, __n16_1
+
   lwz     r14, -elSizeOffset(r15)
   and     r14, r14, r16
 
@@ -234,7 +237,9 @@ end
 // ; nlen 2
 inline %282h
 
-  li      r16, struct_mask_inv
+  lis     r18, __n16hi_1
+  li      r18, __n16_1
+
   lwz     r14, -elSizeOffset(r15)
   and     r14, r14, r16
   srdi    r14, r14, 1
@@ -244,7 +249,9 @@ end
 // ; nlen 4
 inline %382h
 
-  li      r16, struct_mask_inv
+  lis     r18, __n16hi_1
+  li      r18, __n16_1
+
   lwz     r14, -elSizeOffset(r15)
   and     r14, r14, r16
   srdi    r14, r14, 2
@@ -254,7 +261,9 @@ end
 // ; nlen 8
 inline %482h
 
-  li      r16, struct_mask_inv
+  lis     r18, __n16hi_1
+  li      r18, __n16_1
+
   lwz     r14, -elSizeOffset(r15)
   and     r14, r14, r16
   srdi    r14, r14, 3
