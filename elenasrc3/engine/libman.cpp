@@ -296,7 +296,6 @@ ModuleInfo LibraryProvider :: getModule(ReferenceInfo referenceInfo, bool silent
 {
    ModuleInfo info;
 
-   ref_t reference = 0;
    if (referenceInfo.isRelative()) {
       info.module = referenceInfo.module;
       info.reference = referenceInfo.module->mapReference(referenceInfo.referenceName, true);

@@ -1,4 +1,4 @@
-C:\Alex\ELENA\asm\aarch64\core60.asm// ; --- Predefined References  --
+// ; --- Predefined References  --
 define INVOKER               10001h
 define GC_ALLOC	             10002h
 
