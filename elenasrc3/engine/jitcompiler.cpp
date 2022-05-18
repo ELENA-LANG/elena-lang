@@ -521,7 +521,7 @@ void elena_lang::loadNOp(JITCompilerScope* scope)
             break;
          case NARG16_1:
          case ARG16_1:
-            writer->writeWord(scope->command.arg1);
+            scope->compiler->writeImm16(writer, (short)scope->command.arg1, 0);
             break;
          default:
             //writeCoreReference();
@@ -575,7 +575,7 @@ void elena_lang::loadLenOp(JITCompilerScope* scope)
             break;
          case NARG16_1:
          case ARG16_1:
-            writer->writeWord(scope->command.arg1);
+            scope->compiler->writeImm16(writer, (short)scope->command.arg1, 0);
             break;
          default:
             //writeCoreReference();

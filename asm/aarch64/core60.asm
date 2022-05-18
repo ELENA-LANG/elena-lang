@@ -203,7 +203,7 @@ end
 // ; nlen n
 inline %82h
 
-  mov     x18, __arg12_1
+  mov     x18, __n16_1
 
   sub     x11, x10, elSizeOffset
   ldr     w9, [x11]
