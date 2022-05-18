@@ -2475,11 +2475,11 @@ ExternalInfo Compiler :: mapExternal(Scope& scope, SyntaxNode node)
 ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& scope, ref_t externalRef,
    bool stdCall, ArgumentsInfo& arguments)
 {
-   int count = arguments.count();
+   pos_t count = arguments.count_pos();
 
    writer.appendNode(BuildKey::Allocating, align(count, scope.moduleScope->stackAlingment));
 
-   for (int i = count; i > 0; i--) {
+   for (pos_t i = count; i > 0; i--) {
       ObjectInfo arg = arguments[i - 1];
 
       writeObjectInfo(writer, arg);
@@ -2755,7 +2755,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       }
    }
 
-   pos_t counter = arguments.count();
+   pos_t counter = arguments.count_pos();
    // box the arguments if required
    for (unsigned int i = counter; i > 0; i--) {
       ObjectInfo arg = boxArgument(writer, scope, arguments[i - 1], false, false);
@@ -2797,11 +2797,11 @@ void Compiler :: addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKe
 ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source,
    ArgumentsInfo& arguments)
 {
-   mssg_t messageRef = overwriteArgCount(scope.moduleScope->buildins.constructor_message, arguments.count());
+   mssg_t messageRef = overwriteArgCount(scope.moduleScope->buildins.constructor_message, arguments.count_pos());
    ObjectInfo retVal = compileMessageOperation(
       writer, scope, node, source, messageRef, arguments, EAttr::StrongResolved);
 
-   scope.reserveArgs(arguments.count());
+   scope.reserveArgs(arguments.count_pos());
 
    return retVal;
 }
@@ -2833,7 +2833,7 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
    retVal = compileMessageOperation(writer, scope, node, source, messageRef,
       arguments, EAttr::None);
 
-   scope.reserveArgs(arguments.count());
+   scope.reserveArgs(arguments.count_pos());
 
    return retVal;
 }
@@ -2873,7 +2873,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          retVal = compileMessageOperation(writer, scope, node, source, messageRef, 
             arguments, EAttr::None);
 
-         scope.reserveArgs(arguments.count());
+         scope.reserveArgs(arguments.count_pos());
          break;
       }
    }

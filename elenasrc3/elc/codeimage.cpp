@@ -71,7 +71,7 @@ void TargetImage :: prepareImage(ustr_t ns)
    rdataWriter.write(&envPtr, sizeof(addr_t));
 
    // put a signature
-   rdataWriter.write(ELENA_SIGNITURE, strlen(ELENA_SIGNITURE));
+   rdataWriter.write(ELENA_SIGNITURE, getlength_pos(ELENA_SIGNITURE));
 
    String<char, 4> number;
    number.appendInt(ENGINE_MAJOR_VERSION);

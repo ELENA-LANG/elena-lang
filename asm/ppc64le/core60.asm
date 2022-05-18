@@ -280,10 +280,10 @@ labLoop:
   cmpwi   r16,0
   beq     labEnd
   ld      r17, 0(r19)
-  addi    r16, r16, -8
-  std     r17, 0(r18)
-  addi    r18, r18, 8
-  addi    r19, r19, 8
+  addi    r16, r16, -1
+  stb     r17, 0(r18)
+  addi    r18, r18, 1
+  addi    r19, r19, 1
   b       labLoop
 
 labEnd:
@@ -293,7 +293,7 @@ end
 // ; closen
 inline %91h
 
-  addi    r31, r31, __arg16_1  // ; skip unframed stack
+  addi    r31, r31, __n16_1  // ; skip unframed stack
   mr      r1, r31              // ; restore stack pointer
 
   ld      r31, 00h(r1)         // ; restore frame pointer
@@ -527,10 +527,10 @@ labLoop:
   cmpwi   r16,0
   beq     labEnd
   ld      r17, 0(r19)
-  addi    r16, r16, -8
-  std     r17, 0(r18)
-  addi    r18, r18, 8
-  addi    r19, r19, 8
+  addi    r16, r16, -1
+  stb     r17, 0(r18)
+  addi    r18, r18, 1
+  addi    r19, r19, 1
   b       labLoop
 
 labEnd:

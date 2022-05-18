@@ -1899,7 +1899,7 @@ pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
    else {
       messageWriter.writeDReference(mskMBDataRef32 | messageBodyWriter.position(), 0u);
 
-      messageBodyWriter.writeString(actionName, actionName.length() + 1);
+      messageBodyWriter.writeString(actionName, actionName.length_pos() + 1);
       messageBodyWriter.align(4, 0);
    }
 
@@ -1916,7 +1916,7 @@ pos_t JITCompiler32 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress
       if (virtualMode) {
          writer.writeDReference((ref_t)vmtAddress | targetMask, 0);
       }
-      else writer.writeDWord(vmtAddress);
+      else writer.writeDWord((unsigned int)vmtAddress);
    }
    else writer.writeDWord(0);
 
@@ -1948,9 +1948,9 @@ void JITCompiler32 :: addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWrit
 void JITCompiler32 :: addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode)
 {
    if (!virtualMode) {
-      writer.writeDWord(vaddress);
+      writer.writeDWord((unsigned int)vaddress);
    }
-   else writer.writeDReference(vaddress, 0);
+   else writer.writeDReference((ref_t)vaddress, 0);
 }
 
 void JITCompiler32 :: writeInt32(MemoryWriter& writer, unsigned value)
@@ -1960,7 +1960,7 @@ void JITCompiler32 :: writeInt32(MemoryWriter& writer, unsigned value)
 
 void JITCompiler32 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
-   writer.writeString(value, value.length() + 1);
+   writer.writeString(value, value.length_pos() + 1);
    writer.align(4, 0);
 }
 
@@ -2178,7 +2178,7 @@ pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
    else {
       messageWriter.writeQReference(mskMBDataRef64 | messageBodyWriter.position(), 0u);
 
-      messageBodyWriter.writeString(actionName, actionName.length() + 1);
+      messageBodyWriter.writeString(actionName, actionName.length_pos() + 1);
       messageBodyWriter.align(8, 0);
    }
 
@@ -2237,7 +2237,7 @@ void JITCompiler64 :: addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool 
    if (!virtualMode) {
       writer.writeQWord(vaddress);
    }
-   else writer.writeQReference(vaddress, 0);
+   else writer.writeQReference((ref_t)vaddress, 0);
 }
 
 int JITCompiler64 :: calcTotalSize(int numberOfFields)
@@ -2258,7 +2258,7 @@ void JITCompiler64 :: writeInt32(MemoryWriter& writer, unsigned value)
 
 void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
-   writer.writeString(value, value.length() + 1);
+   writer.writeString(value, value.length_pos() + 1);
    writer.align(8, 0);
 }
 

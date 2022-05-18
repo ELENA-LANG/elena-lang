@@ -906,7 +906,7 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          break;
       case mskLiteralRef:
          vmtReferenceInfo.referenceName = _constantSettings.literalClass;
-         size = value.length() + 1;
+         size = value.length_pos() + 1;
          structMode = true;
          break;
       default:

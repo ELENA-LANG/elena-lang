@@ -8,6 +8,7 @@
 
 #ifndef LISTS_H
 #define LISTS_H
+#include <assert.h>
 
 namespace elena_lang
 {
@@ -1839,7 +1840,7 @@ namespace elena_lang
          size_t           _index;
          MemoryIterator   _iterator;
 
-         CachedMemoryMapIterator(CachedMemoryMap* cachedMap, unsigned int index)
+         CachedMemoryMapIterator(CachedMemoryMap* cachedMap, size_t index)
          {
             this->_cachedMap = cachedMap;
             this->_index = index;
@@ -2029,6 +2030,11 @@ namespace elena_lang
          return _length;
       }
 
+      pos_t count_pos() const
+      {
+         return (pos_t)_length;
+      }
+
       void add(T item)
       {
          if (_length < cacheSize) {
@@ -2059,7 +2065,13 @@ namespace elena_lang
             if (_length - cacheSize >= _allocatedSize) {
                _allocatedSize += 10;
 
-               _allocated = (T*)realloc(_allocated, _allocatedSize * sizeof(T));
+               void* ptr = realloc(_allocated, _allocatedSize * sizeof(T));
+
+               assert(ptr != nullptr);
+
+               if (ptr) {
+                  _allocated = (T*)ptr;
+               }
             }
 
             if (index < cacheSize) {

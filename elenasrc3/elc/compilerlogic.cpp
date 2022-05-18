@@ -75,10 +75,10 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 
 bool CompilerLogic :: isValidObjOp(int operatorId)
 {
-   switch (operatorId) {
-      default:
+//   switch (operatorId) {
+//      default:
          return false;
-   }
+//   }
 }
 
 bool CompilerLogic :: isValidObjArrayOp(int operatorId)
@@ -734,6 +734,7 @@ bool CompilerLogic :: checkMethod(ModuleScopeBase& scope, ref_t classRef, mssg_t
    if (classRef && defineClassInfo(scope, info, classRef)) {
       return checkMethod(info, message, result);
    }
+   else return false;
 }
 
 bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
@@ -792,7 +793,7 @@ ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeB
       if (methodInfo.multiMethod == message) {
          bool added = false;
          mssg_t omsg = m_it.key();
-         pos_t len = list.count();
+         pos_t len = list.count_pos();
          for (pos_t i = 0; i < len; i++) {
             if (isSignatureCompatible(scope, omsg, list[i])) {
                list.insert(i, omsg);
