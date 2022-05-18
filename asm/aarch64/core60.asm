@@ -591,8 +591,8 @@ inline %0E2h
 
   add     x19, x29, __arg12_1
 
-  ldrsw   x17, [x0]
-  ldrsw   x18, [x19]
+  ldr     w17, [x0]
+  ldr     w18, [x19]
 
   sub     x17, x17, x18  
 
@@ -619,12 +619,12 @@ inline %2E2h
 
   add     x19, x29, __arg12_1
 
-  ldrsb   x17, [x0]
-  ldrsb   x18, [x19]
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
 
   sub     x17, x17, x18  
 
-  strh    w17, [x19]
+  str     w17, [x19]
 
 end
 

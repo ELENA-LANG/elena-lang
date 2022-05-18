@@ -230,7 +230,7 @@ void ByteCodeViewer :: addSecondSPArg(arg_t arg, IdentifierString& commandStr)
    addSPArg(arg, commandStr);
 }
 
-inline int getLabelIndex(int label, List<pos_t>& labels)
+inline int getLabelIndex(pos_t label, List<pos_t>& labels)
 {
    int index = 0;
    auto it = labels.start();
