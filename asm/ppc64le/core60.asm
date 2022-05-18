@@ -41,6 +41,9 @@ define gc_end                0048h
 define gc_mg_wbar            0050h
 
 define struct_mask_inv     7FFFFFh
+define struct_mask_inv_lo  0FFFFh
+define struct_mask_inv_hi  7Fh
+
 
 // ; --- System Core Preloaded Routines --
 
@@ -181,7 +184,9 @@ end
 // ; len
 inline %7
 
-  li      r16, struct_mask_inv
+  li      r16, struct_mask_inv_lo
+  addis   r16, r16, struct_mask_inv_hi
+
   ld      r14, -elSizeOffset(r15)
   and     r14, r14, r16
   srdi    r14, r14, 3
@@ -214,7 +219,9 @@ end
 // ; nlen n
 inline %82h
 
-  lis     r18, __n16hi_1
+  li      r16, struct_mask_inv_lo
+  addis   r16, r16, struct_mask_inv_hi
+
   li      r18, __n16_1
 
   lwz     r14, -elSizeOffset(r15)
@@ -226,8 +233,8 @@ end
 // ; nlen 1
 inline %182h
 
-  lis     r18, __n16hi_1
-  li      r18, __n16_1
+  li      r16, struct_mask_inv_lo
+  addis   r16, r16, struct_mask_inv_hi
 
   lwz     r14, -elSizeOffset(r15)
   and     r14, r14, r16
@@ -237,8 +244,8 @@ end
 // ; nlen 2
 inline %282h
 
-  lis     r18, __n16hi_1
-  li      r18, __n16_1
+  li      r16, struct_mask_inv_lo
+  addis   r16, r16, struct_mask_inv_hi
 
   lwz     r14, -elSizeOffset(r15)
   and     r14, r14, r16
@@ -249,8 +256,8 @@ end
 // ; nlen 4
 inline %382h
 
-  lis     r18, __n16hi_1
-  li      r18, __n16_1
+  li      r16, struct_mask_inv_lo
+  addis   r16, r16, struct_mask_inv_hi
 
   lwz     r14, -elSizeOffset(r15)
   and     r14, r14, r16
@@ -261,8 +268,8 @@ end
 // ; nlen 8
 inline %482h
 
-  lis     r18, __n16hi_1
-  li      r18, __n16_1
+  li      r16, struct_mask_inv_lo
+  addis   r16, r16, struct_mask_inv_hi
 
   lwz     r14, -elSizeOffset(r15)
   and     r14, r14, r16

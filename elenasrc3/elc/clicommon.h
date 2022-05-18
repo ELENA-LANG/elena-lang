@@ -460,6 +460,8 @@ public:
    virtual void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode, 
       mssg_t message, ustr_t retVar, ref_t classRef) = 0;
 
+   virtual ~CompilerBase() = default;
+
 };
 
 // --- TemplateProssesorBase ---
