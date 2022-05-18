@@ -617,7 +617,7 @@ inline %0E2h
   lwz     r17, 0(r3)
   lwz     r18, 0(r19)
 
-  add     r17, r17, r18  
+  subf    r17, r17, r18  
 
   stw     r17, 0(r19)
 
@@ -631,7 +631,7 @@ inline %1E2h
   lbz     r17, 0(r3)
   lbz     r18, 0(r19)
 
-  add     r17, r17, r18  
+  subf    r17, r17, r18  
 
   stb     r17, 0(r19)
 
@@ -645,7 +645,7 @@ inline %2E2h
   lhz     r17, 0(r3)
   lhz     r18, 0(r19)
 
-  add     r17, r17, r18  
+  subf    r17, r17, r18  
 
   sth     r17, 0(r19)
 
@@ -659,7 +659,7 @@ inline %4E2h
   ld      r17, 0(r3)
   ld      r18, 0(r19)
 
-  add     r17, r17, r18  
+  subf    r17, r17, r18  
 
   std     r17, 0(r19)
 
