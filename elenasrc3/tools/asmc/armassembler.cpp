@@ -738,6 +738,25 @@ bool Arm64Assembler :: compileLDRSB(ScriptToken& tokenInfo, ARMOperand rt, ARMOp
    return true;
 }
 
+bool Arm64Assembler :: compileLDRB(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
+{
+   if (rt.isWR() && ptr.isPreindex()) {
+      writer.writeDWord(ARMHelper::makeImm9Opcode(0, 7, 0, 0, 1, 0, ptr.imm, 3, ptr.type, rt.type));
+   }
+   else if (rt.isWR() && ptr.isPostindex()) {
+      writer.writeDWord(ARMHelper::makeImm9Opcode(0, 7, 0, 0, 1, 0, ptr.imm, 1, ptr.type, rt.type));
+
+      if (ptr.reference)
+         writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
+   }
+   else if (rt.isWR() && ptr.isUnsigned()) {
+      writer.writeDWord(ARMHelper::makeImm12Opcode(0, 7, 0, 1, 1, ptr.imm, ptr.type, rt.type));
+   }
+   else return false;
+
+   return true;
+}
+
 bool Arm64Assembler :: compileLDRSW(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
    if (rt.isXR() && ptr.isPreindex()) {
@@ -1251,6 +1270,32 @@ void Arm64Assembler :: compileLDRSB(ScriptToken& tokenInfo, MemoryWriter& writer
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void Arm64Assembler :: compileLDRB(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rt = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand ptr = readPtrOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (ptr.isPostindex()) {
+      if (tokenInfo.compare(",")) {
+         ARMOperand n2 = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+         if (n2.type == ARMOperandType::Imm) {
+            ptr.imm = n2.imm;
+            ptr.reference = n2.reference;
+         }
+      }
+      else ptr.imm = 0;
+
+      if (!compileLDRB(tokenInfo, rt, ptr, writer))
+         throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+
+   }
+   else if (!compileLDRB(tokenInfo, rt, ptr, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void Arm64Assembler :: compileLDRSW(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    ARMOperand rt = readOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -1702,6 +1747,9 @@ bool Arm64Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    }
    else if (tokenInfo.compare("ldrsb")) {
       compileLDRSB(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("ldrb")) {
+      compileLDRB(tokenInfo, writer);
    }
    else if (tokenInfo.compare("ldrsh")) {
       compileLDRSH(tokenInfo, writer);

@@ -522,7 +522,7 @@ labLoop:
   cmp     x11, 0
   beq     labEnd
   sub     x11, x11, 1
-  ldr     x14, [x12], #1
+  ldrb    w14, [x12], #1
   strb    w14, [x13], #1
   b       labLoop
 

@@ -228,6 +228,8 @@ namespace elena_lang
 
          return true;
       }
+
+      virtual ~TextWriter() = default;
    };
 
    // --- StreamWriter
