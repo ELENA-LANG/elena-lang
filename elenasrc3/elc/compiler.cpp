@@ -2741,7 +2741,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       }
    }
    else if (targetRef) {
-         if (EAttrs::test(mode.attrs, EAttr::StrongResolved)) {
+      if (EAttrs::test(mode.attrs, EAttr::StrongResolved)) {
          if (getAction(message) == getAction(scope.moduleScope->buildins.constructor_message)) {
             scope.raiseError(errUnknownDefConstructor, node);
          }
@@ -2769,6 +2769,8 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       writeObjectInfo(writer, arg);
       writer.appendNode(BuildKey::SavingInStack, i - 1);
    }
+
+   writeObjectInfo(writer, target);
 
    writer.newNode(operation, message);
 
@@ -2863,10 +2865,11 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          break;
       default:
       {
-         arguments.add(source);
-
          current = current.nextNode();
          mssg_t messageRef = mapMessage(scope, current, false);
+
+         if (!test(messageRef, FUNCTION_MESSAGE))
+            arguments.add(source);
 
          compileMessageArguments(writer, scope, current, arguments);
 
@@ -3325,10 +3328,11 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
    writer.newNode(BuildKey::Tape);
    writer.appendNode(BuildKey::OpenFrame);
 
+   SyntaxNode bodyNode = node.findChild(SyntaxKey::GetExpression);
+
    ExprScope exprScope(&scope);
    ObjectInfo retVal = compileExpression(writer, exprScope,
-      node.findChild(SyntaxKey::ReturnExpression), 0,
-      ExpressionAttribute::RootSymbol);
+      bodyNode.firstChild(), 0, ExpressionAttribute::RootSymbol);
 
    writeObjectInfo(writer, 
       boxArgument(writer, exprScope, retVal, false, true));

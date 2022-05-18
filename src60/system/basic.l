@@ -4,21 +4,27 @@ public interface BoolValue
 {
    private constructor() {}
 
+   abstract if(trueAction);
+
 //   abstract bool equal(bool f);
 
    const static true = BoolValue
    {
+      if(trueAction) = trueAction();
+
 //      bool equal(bool f) {}  
    };
 
    const static false = BoolValue
    {
+      if(trueAction) = nil;
+
 //      bool equal(bool f) {}  
    };
 }
 
-//public /*const*/ true = BoolValue.true;
-//public /*const*/ false = BoolValue.false;
+public /*const*/ true = BoolValue.true;
+public /*const*/ false = BoolValue.false;
 
 // --- BaseValue ---
 

@@ -1,13 +1,21 @@
 import system;
 
+singleton Value
+{
+   if(trueAction)
+   {
+      trueAction();
+   }
+}
+
 singleton Tester
 {
    run()
    {
-      Output.write("Hello From ELENA 6.0"$10);
+//      Output.write("Hello From ELENA 6.0"$10);
 
-//      var a := Value;
-//      a.if({ Output.write() });
+      var a := Value;
+      a.if({ Output.write("Hello From ELENA 6.0"$10); });
    }
 }
 
@@ -30,7 +38,7 @@ public singleton LinuxOutput
    }
 }
 
-//Output = WinOutput;
-Output = LinuxOutput;
+Output = WinOutput;
+//Output = LinuxOutput;
 
 public symbol program = Tester.run();

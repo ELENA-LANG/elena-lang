@@ -131,11 +131,6 @@ void SyntaxTreeBuilder :: flushObject(Scope& scope, SyntaxNode node)
    _writer.closeNode();
 }
 
-void SyntaxTreeBuilder :: flushClosure(Scope& scope, SyntaxNode node)
-{
-   flushMethodCode(scope, node);
-}
-
 void SyntaxTreeBuilder :: flushNested(Scope& scope, SyntaxNode node)
 {
    _writer.newNode(node.key);
@@ -386,24 +381,31 @@ void SyntaxTreeBuilder :: flushMethodCode(Scope& scope, SyntaxNode node)
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-         case SyntaxKey::Expression:
-         case SyntaxKey::ReturnExpression:
-            flushStatement(scope, current);
-            break;
-         case SyntaxKey::L5Expression:
-            // HOTFIX : treat them as a normal expression
-            current.setKey(SyntaxKey::Expression);
-            flushStatement(scope, current);
-            break;
          case SyntaxKey::EOP:
             flushNode(scope, current);
             break;
          default:
+            if (SyntaxTree::testSuperKey(current.key, SyntaxKey::Expression)) {
+               current.setKey(SyntaxKey::Expression);
+               flushStatement(scope, current);
+            }
+            else if (SyntaxTree::test(current.key, SyntaxKey::ScopeMask)) {
+               flushStatement(scope, current);
+            }
             break;
       }
 
       current = current.nextNode();
    }
+
+   _writer.closeNode();
+}
+
+void SyntaxTreeBuilder::flushClosure(Scope& scope, SyntaxNode node)
+{
+   _writer.newNode(node.key);
+
+   flushMethodCode(scope, node.firstChild(SyntaxKey::ScopeMask));
 
    _writer.closeNode();
 }
@@ -485,6 +487,14 @@ void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
       case SyntaxKey::WithoutBody:
       case SyntaxKey::ReturnExpression:
          _writer.CurrentNode().setKey(SyntaxKey::Method);
+         flushMethod(scope, node);
+         break;
+      case SyntaxKey::GetExpression:
+         _writer.CurrentNode().setKey(SyntaxKey::Method);
+         _writer.appendNode(SyntaxKey::Attribute, V_GETACCESSOR);
+
+         member.setKey(SyntaxKey::ReturnExpression);
+
          flushMethod(scope, node);
          break;
       case SyntaxKey::Declaration:
@@ -600,10 +610,10 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxNode node)
 
    flushDescriptor(scope, node);
 
-   if(node.existChild(SyntaxKey::ReturnExpression)) {
+   if(node.existChild(SyntaxKey::GetExpression)) {
       _writer.CurrentNode().setKey(SyntaxKey::Symbol);
 
-      flushStatement(scope, node.findChild(SyntaxKey::ReturnExpression));
+      flushStatement(scope, node.findChild(SyntaxKey::GetExpression));
    }
    else if (node.existChild(SyntaxKey::TemplateArg)) {
       SyntaxNode body = node.firstChild(SyntaxKey::MemberMask);

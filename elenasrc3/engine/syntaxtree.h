@@ -61,7 +61,7 @@ namespace elena_lang
       ArrayType          = 0x001033,
       ReturnExpression   = 0x001C34,
       NestedExpression   = 0x001835,
-      ClosureExpression  = 0x001836,
+      GetExpression      = 0x001C36,
       IndexerOperation   = 0x001841,
       AssignOperation    = 0x001842,
       AddAssignOperation = 0x001843,

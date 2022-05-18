@@ -22,8 +22,8 @@ __define ARRAY_TYPE          4147;
 __define NESTED              4224;
 __define CLOSURE             4225;
 __define RET_EXPRESSION      7220;
+__define GET_EXPRESSION      7222;
 __define NESTED_EXPRESSION   6197;
-__define CLOSURE_EXPRESSION  6198;
 __define INDEXER_OPERATION   6209;
 __define ASSIGN_OPERATION    6210;
 __define ADDITION_ASSIGNMENT 6211;
@@ -79,7 +79,7 @@ IDICTIONARY_R ::=
         | eps;
 
 SCOPE ::=
-        "=" RET_EXPRESSION DECLARATION_END
+        "=" GET_EXPRESSION DECLARATION_END
 	| "{" SUB_DECLARATIONS END_OF_BLOCK
 	| "(" PARAMETERS ")" METHOD_BODY_OPT
 	| "[" DIMENSION "]" DECLARATION_END
@@ -152,6 +152,9 @@ ROOT_EXPRESSION ::=
 RET_EXPRESSION ::=
 	EXPRESSION;
 
+GET_EXPRESSION ::=
+	EXPRESSION;
+
 MESSAGE_PARAMETER ::=
 	EXPRESSION;
 
@@ -162,7 +165,7 @@ EXPRESSION ::=
         | hexinteger E_R
         | string E_R
 	| "$len" SUB_EXPRESSION ^LEN_OPERATION
-	| CLOSURE_EXPRESSION ^CLOSURE;
+	| BLOCK ^CLOSURE;
 
 SUB_EXPRESSION ::=
         identifier I_R
@@ -175,9 +178,6 @@ L5_EXPRESSION ::=
         identifier I5_R
         | integer ^OBJECT
         | hexinteger ^OBJECT;
-
-CLOSURE_EXPRESSION ::=
-	"{" STATEMENTS "}";
 
 NESTED_EXPRESSION ::=
 	"{" SUB_DECLARATIONS "}";
