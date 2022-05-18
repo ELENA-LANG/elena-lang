@@ -1,4 +1,4 @@
-// ; --- Predefined References  --
+C:\Alex\ELENA\asm\aarch64\core60.asm// ; --- Predefined References  --
 define INVOKER               10001h
 define GC_ALLOC	             10002h
 
@@ -514,7 +514,7 @@ end
 // ; copydpn
 inline %0E0h
 
-  mov     x11, __arg12_1
+  mov     x11, __n16_2
   mov     x12, x0
   add     x13, x29, __arg12_1
 

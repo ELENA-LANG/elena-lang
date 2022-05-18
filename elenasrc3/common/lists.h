@@ -1416,7 +1416,7 @@ namespace elena_lang
                Item* current = (Item*)_buffer.get(currentOffset);
 
                if (current->readKey(&_buffer) == key) {
-                  if (previousOffset == -1) {
+                  if (previousOffset == INVALID_POS) {
                      _top = current->nextOffset;
                   }
                   else {

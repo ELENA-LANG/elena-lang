@@ -56,6 +56,10 @@ namespace elena_lang
 
 #endif
 
+   constexpr pos_t   INVALID_POS = -1;
+   constexpr ref_t   INVALID_REF = -1;
+   constexpr addr_t  INVALID_ADDR = -1;
+
 }
 
 // --- Common headers ---
@@ -68,13 +72,5 @@ namespace elena_lang
 #include "files.h"
 
 #define DEFAULT_STR (elena_lang::ustr_t)nullptr
-
-namespace elena_lang
-{
-   constexpr pos_t   INVALID_POS = -1;
-   constexpr ref_t   INVALID_REF = -1;
-   constexpr addr_t  INVALID_ADDR = -1;
-
-}
 
 #endif // COMMON_H
