@@ -929,13 +929,18 @@ namespace elena_lang
          }
       }
 
-      ClassInfo()
-         : methods({}), fields({ -1 }), attributes(0), statics({})
+      ClassInfo() :
+         header({}),
+         size(0),
+         methods({}),
+         fields({ -1 }),
+         statics({}),
+         attributes(0)
       {
-         header.staticSize = 0;
-         header.parentRef = header.classRef = 0;
-         header.flags = 0;
-         header.count = size = 0;
+         //header.staticSize = 0;
+         //header.parentRef = header.classRef = 0;
+         //header.flags = 0;
+         //header.count = size = 0;
       }
    };
 

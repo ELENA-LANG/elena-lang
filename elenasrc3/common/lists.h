@@ -1986,7 +1986,7 @@ namespace elena_lang
                if (_cache[i].key == key) {
                   T item = _cache[i].item;
 
-                  for (unsigned int j = i + 1; j < _count; j++) {
+                  for (size_t j = i + 1; j < _count; j++) {
                      _cache[i] = _cache[j];
                   }
 
