@@ -281,7 +281,7 @@ end
 // ; closen
 inline %91h
 
-  add     x29, x29, __arg12_1
+  add     x29, x29, __n12_1
   mov     sp, x29
   ldp     x29, x30, [sp], #16
   

@@ -503,6 +503,7 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
    switch (reference) {
       case ARG12_1:
       case ARG12_2:
+      case NARG12_1:
       case NARG12_2:
       case NARG16_1:
       case NARG16_2:

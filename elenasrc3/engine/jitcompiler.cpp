@@ -523,6 +523,9 @@ void elena_lang::loadNOp(JITCompilerScope* scope)
          case ARG16_1:
             scope->compiler->writeImm16(writer, (short)scope->command.arg1, 0);
             break;
+         case NARG12_1:
+            scope->compiler->writeImm12(writer, (short)scope->command.arg1, 0);
+            break;
          default:
             //writeCoreReference();
             break;

@@ -307,6 +307,7 @@ namespace elena_lang
    constexpr ref_t NARG16_1               = 0x0000001Fu;
    constexpr ref_t NARGHI_1               = 0x00000020u;
    constexpr ref_t RELPTR32_2             = 0x00000021u;
+   constexpr ref_t NARG12_1               = 0x00000022u;
 
    // predefined debug module sections
    constexpr ref_t DEBUG_LINEINFO_ID      = -1;

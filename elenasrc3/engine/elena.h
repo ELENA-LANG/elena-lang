@@ -460,6 +460,8 @@ namespace elena_lang
    public:
       virtual void addMethod(addr_t vaddress, mssg_t message, addr_t methodPosition) = 0;
       virtual void addSymbol(addr_t vaddress, addr_t position) = 0;
+
+      virtual ~AddressMapperBase() = default;
    };
 
    // --- WideMessage ---
