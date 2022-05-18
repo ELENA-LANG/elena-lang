@@ -262,16 +262,16 @@ end
 // ; copy
 inline %90h
 
-  mov     x11, __arg12_1
+  mov     x11, __n16_1
   mov     x12, x0
   mov     x13, x10
 
 labLoop:
   cmp     x11, 0
   beq     labEnd
-  sub     x11, x11, 8
-  ldr     x14, [x12], #8
-  str     x14, [x13], #8
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
   b       labLoop
 
 labEnd:

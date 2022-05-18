@@ -824,7 +824,7 @@ ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeB
 ref_t paramFeedback(void* param, ref_t)
 {
 #if defined(__LP64__)
-   size_t val = (size_t)val;
+   size_t val = (size_t)param;
 
    return (ref_t)val;
 #else
