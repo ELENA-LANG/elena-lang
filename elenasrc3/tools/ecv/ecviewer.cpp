@@ -516,7 +516,7 @@ void ByteCodeViewer::printMethod(ustr_t name)
    if (message == 0)
       return;
 
-   bool found = false;
+//   bool found = false;
    MethodEntry entry = {};
 
    size -= sizeof(ClassHeader);
@@ -526,7 +526,7 @@ void ByteCodeViewer::printMethod(ustr_t name)
       vmtReader.read((void*)&entry, sizeof(MethodEntry));
 
       if (entry.message == message) {
-         found = true;
+         //found = true;
 
          IdentifierString line;
          line.copy(*className);

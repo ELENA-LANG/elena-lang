@@ -594,7 +594,7 @@ inline %0E2h
   ldr     w17, [x0]
   ldr     w18, [x19]
 
-  sub     x17, x17, x18  
+  sub     x17, x18, x17  
 
   str     w17, [x19]
 
