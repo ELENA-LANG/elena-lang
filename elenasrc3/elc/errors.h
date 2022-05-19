@@ -45,6 +45,7 @@ namespace elena_lang
    constexpr auto errMsgDupPublicMethod         = "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n";
    constexpr auto errMsgEmptyStructure          = "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
    constexpr auto errMsgDupInternalMethod       = "%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";
+   constexpr auto errMsgInvalidConstAttr        = "%s(%d:%d): error 174: A method '%s' cannot be compiled as a constant one\n";
    constexpr auto errMsgIllegalConstructorAbstract = "%s(%d:%d): error 177: An abstract class cannot have a public constructor\n";
    constexpr auto errMsgNoBodyMethod            = "%s(%d:%d): error 180: Only abstract method can have no body\n";
    constexpr auto errMsgUnknownTemplate         = "%s(%d:%d): error 181: Unknown template %s\n";

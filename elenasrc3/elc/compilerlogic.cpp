@@ -191,7 +191,7 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
    return true;
 }
 
-bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visibility)
+bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant)
 {
    switch (attribute) {
       case V_PUBLIC:
@@ -201,6 +201,9 @@ bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visib
          visibility = Visibility::Private;
          break;
       case V_SYMBOLEXPR:
+         break;
+      case V_CONST:
+         constant = true;
          break;
       default:
          return false;
@@ -311,7 +314,7 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
          hint = (ref_t)MethodHint::SetAccessor;
          break;
       case V_CONST:
-         hint = (ref_t)MethodHint::Constant;
+         hint = (ref_t)MethodHint::Constant | (ref_t)MethodHint::Sealed;
          return true;
       case V_FUNCTION:
          hint = (ref_t)MethodHint::Function;
@@ -721,6 +724,10 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
             result.kind = (ref_t)MethodHint::Sealed; // mark it as sealed - because the class is sealed
          }
          else result.kind = (ref_t)MethodHint::Normal;
+      }
+
+      if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
+         result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });
       }
 
       return true;

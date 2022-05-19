@@ -354,6 +354,9 @@ public:
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false, bool fieldsOnly = false) = 0;
    virtual ref_t loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly = false, bool fieldsOnly = false) = 0;
 
+   virtual ref_t loadSymbolInfo(SymbolInfo& info, ref_t reference) = 0;
+   virtual ref_t loadSymbolInfo(SymbolInfo& info, ustr_t referenceName) = 0;
+
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode/*,
       bool ignoreFields*/) = 0;
 

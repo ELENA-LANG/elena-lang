@@ -182,7 +182,8 @@ namespace elena_lang
 
       ProtectedAlias    = 0xA01,
       InternalAlias     = 0xA02,
-      OverloadList      = 0x903, 
+      OverloadList      = 0x903,
+      ConstantMethod    = 0x904,
    };
 
    // === Reference constants ====
@@ -209,6 +210,7 @@ namespace elena_lang
    constexpr ref_t mskVMTMethodOffset     = 0x10000000u;
    constexpr ref_t mskConstArray          = 0x11000000u;
    constexpr ref_t mskMessageBodyRef      = 0x12000000u;
+   constexpr ref_t mskMetaSymbolInfoRef   = 0x13000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

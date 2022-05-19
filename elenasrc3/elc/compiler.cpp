@@ -226,7 +226,17 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, Express
                else if (test(classInfo.header.flags, elStandartVMT) && classInfo.header.classRef != 0) {
                   return {ObjectKind::Class, classInfo.header.classRef, reference };
                }
-
+            }
+            else {
+               SymbolInfo symbolInfo;
+               if (moduleScope->loadSymbolInfo(symbolInfo, reference)) {
+                  switch (symbolInfo.symbolType) {
+                     case SymbolType::Singleton:
+                        return defineObjectInfo(symbolInfo.valueRef, mode, true);
+                     default:
+                        break;
+                  }
+               }
             }
          }
          // otherwise it is a normal one
@@ -376,10 +386,24 @@ Compiler::SourceScope :: SourceScope(Scope* parent, ref_t reference, Visibility 
 // --- Compiler::SymbolScope ---
 
 Compiler::SymbolScope :: SymbolScope(NamespaceScope* ns, ref_t reference, Visibility visibility)
-   : SourceScope(ns, reference, visibility)
+   : SourceScope(ns, reference, visibility), info({})
 {
    reserved1 = reserved2 = 0;
    reservedArgs = ns->moduleScope->minimalArgList;
+}
+
+void Compiler::SymbolScope :: load()
+{
+   // save class meta data
+   MemoryReader metaReader(moduleScope->module->mapSection(reference | mskMetaSymbolInfoRef, true), 0);
+   info.load(&metaReader);
+}
+
+void Compiler::SymbolScope :: save()
+{
+   // save class meta data
+   MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaSymbolInfoRef, false), 0);
+   info.save(&metaWriter);
 }
 
 // --- Compiler::TemplateScope ---
@@ -644,6 +668,8 @@ Compiler :: Compiler(
    _logic = compilerLogic;
    _errorProcessor = errorProcessor;
    _templateProcessor = templateProcessor;
+
+   _optMode = true; // !! temporally - should be set if the optimization is enabled
 }
 
 inline ref_t resolveDictionaryMask(ref_t typeRef)
@@ -886,6 +912,16 @@ void Compiler :: checkMethodDuplicates(ClassScope& scope, SyntaxNode node, mssg_
    if (!internalOne && scope.getMssgAttribute(publicMessage, ClassAttribute::InternalAlias)) {
       // there should be no internal method with the same name
       scope.raiseError(errDupInternalMethod, node);
+   }
+}
+
+ref_t Compiler :: generateConstant(ObjectInfo info)
+{
+   switch (info.kind) {
+      case ObjectKind::Singleton:
+         return info.reference;
+      default:
+         return 0;
    }
 }
 
@@ -1287,6 +1323,8 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
 void Compiler :: declareSymbol(SymbolScope& scope, SyntaxNode node)
 {
    declareSymbolAttributes(scope, node);
+
+   scope.save();
 }
 
 void Compiler :: declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode baseNode)
@@ -2058,18 +2096,21 @@ ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ObjectInfo info)
 
 void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node)
 {
+   bool constant = false;
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Attribute) {
-         if (!_logic->validateSymbolAttribute(current.arg.value/*, constant, scope.staticOne, scope.preloaded*/,
-            scope.visibility))
-         {
+         if (!_logic->validateSymbolAttribute(current.arg.value, scope.visibility, constant)) {
             current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
       }
 
       current = current.nextNode();
+   }
+
+   if (constant) {
+      scope.info.symbolType = SymbolType::Constant;
    }
 }
 
@@ -2577,7 +2618,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    ObjectInfo roperand = {};
    ObjectInfo ioperand = {};
 
-   size_t     argLen = 1;
+   pos_t      argLen = 1;
    ref_t      arguments[3];
    arguments[0] = resolveObjectReference(scope, loperand, false);
 
@@ -2629,6 +2670,8 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
          writer.closeNode();
       }
       else writer.appendNode(op);
+
+      scope.reserveArgs(argLen);
    }
    else {
       mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
@@ -2743,7 +2786,14 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       retVal.type = result.outputRef;
       switch ((MethodHint)result.kind) {
          case MethodHint::Sealed:
-            operation = BuildKey::DirectCallOp;
+            if (result.constRef && _optMode) {
+               NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+               retVal = nsScope->defineObjectInfo(result.constRef, EAttr::None, true);
+
+               operation = BuildKey::None;
+            }
+            else operation = BuildKey::DirectCallOp;
             break;
          default:
             break;
@@ -2764,29 +2814,36 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       }
    }
 
-   pos_t counter = arguments.count_pos();
-   // box the arguments if required
-   for (unsigned int i = counter; i > 0; i--) {
-      ObjectInfo arg = boxArgument(writer, scope, arguments[i - 1], false, false);
+   if (operation != BuildKey::None) {
+      pos_t counter = arguments.count_pos();
+      // box the arguments if required
+      for (unsigned int i = counter; i > 0; i--) {
+         ObjectInfo arg = boxArgument(writer, scope, arguments[i - 1], false, false);
 
-      arguments[i - 1] = arg;
+         arguments[i - 1] = arg;
+      }
+
+      for (unsigned int i = counter; i > 0; i--) {
+         ObjectInfo arg = arguments[i - 1];
+
+         writeObjectInfo(writer, arg);
+         writer.appendNode(BuildKey::SavingInStack, i - 1);
+      }
+
+      if (target == arguments[0]) {
+         writer.appendNode(BuildKey::Argument, 0);
+      }
+      else writeObjectInfo(writer, target);
+
+      writer.newNode(operation, message);
+
+      if (targetRef)
+         writer.appendNode(BuildKey::Type, targetRef);
+
+      writer.closeNode();
    }
 
-   for (unsigned int i = counter; i > 0; i--) {
-      ObjectInfo arg = arguments[i - 1];
-
-      writeObjectInfo(writer, arg);
-      writer.appendNode(BuildKey::SavingInStack, i - 1);
-   }
-
-   writeObjectInfo(writer, target);
-
-   writer.newNode(operation, message);
-
-   if (targetRef)
-      writer.appendNode(BuildKey::Type, targetRef);
-
-   writer.closeNode();
+   scope.reserveArgs(arguments.count_pos());
 
    return retVal;
 }
@@ -2811,8 +2868,6 @@ ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, S
    mssg_t messageRef = overwriteArgCount(scope.moduleScope->buildins.constructor_message, arguments.count_pos());
    ObjectInfo retVal = compileMessageOperation(
       writer, scope, node, source, messageRef, arguments, EAttr::StrongResolved);
-
-   scope.reserveArgs(arguments.count_pos());
 
    return retVal;
 }
@@ -2843,8 +2898,6 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
 
    retVal = compileMessageOperation(writer, scope, node, source, messageRef,
       arguments, EAttr::None);
-
-   scope.reserveArgs(arguments.count_pos());
 
    return retVal;
 }
@@ -2884,8 +2937,6 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
          retVal = compileMessageOperation(writer, scope, node, source, messageRef, 
             arguments, EAttr::None);
-
-         scope.reserveArgs(arguments.count_pos());
          break;
       }
    }
@@ -3374,8 +3425,30 @@ void Compiler :: saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_
       writer.appendNode(BuildKey::ReservedN, reservedN);
 }
 
+bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
+{
+   ref_t constRef = generateConstant(retVal);
+   if (constRef) {
+      switch (retVal.kind) {
+         case ObjectKind::Singleton:
+            scope.info.symbolType = SymbolType::Singleton;
+            scope.info.valueRef = retVal.reference;
+            scope.info.typeRef = retVal.type;
+            break;
+         default:
+            assert(false);
+            break;
+      }
+
+      return true;
+   }
+   else return false;
+}
+
 void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, SyntaxNode node)
 {
+   scope.load();
+
    writer.newNode(BuildKey::Symbol, node.arg.reference);
    writer.newNode(BuildKey::Tape);
    writer.appendNode(BuildKey::OpenFrame);
@@ -3397,6 +3470,14 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
    writer.closeNode();
    saveFrameAttributes(writer, scope, scope.reserved1 + scope.reservedArgs, scope.reserved2);
    writer.closeNode();
+
+   // create constant if required
+   if (scope.info.symbolType == SymbolType::Constant) {
+      if (!compileSymbolConstant(scope, retVal))
+         scope.raiseError(errInvalidOperation, node);
+   }
+
+   scope.save();
 }
 
 void Compiler :: compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope)
@@ -3503,6 +3584,18 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
    }
 
    writer.appendNode(BuildKey::CloseFrame);
+
+   if (scope.checkHint(MethodHint::Constant)) {
+      ref_t constRef = generateConstant(retVal);
+      if (constRef) {
+         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+         classScope->addRefAttribute(scope.message, ClassAttribute::ConstantMethod, constRef);
+
+         classScope->save();
+      }
+      else scope.raiseError(errInvalidConstAttr, node);
+   }
 }
 
 void Compiler :: compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode)

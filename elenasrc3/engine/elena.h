@@ -834,6 +834,35 @@ namespace elena_lang
    };
 #pragma pack(pop)
 
+   // --- SymbolInfo ---
+   enum class SymbolType : int
+   {
+      Symbol = 0,
+      Singleton,
+      Constant
+   };
+
+   struct SymbolInfo
+   {
+      SymbolType symbolType;
+      ref_t      valueRef;
+      ref_t      typeRef;
+
+      void load(StreamReader* reader)
+      {
+         symbolType = (SymbolType)reader->getDWord();
+         valueRef = reader->getRef();
+         typeRef = reader->getRef();
+      }
+
+      void save(StreamWriter* writer)
+      {
+         writer->writeDWord((unsigned int)symbolType);
+         writer->writeRef(valueRef);
+         writer->writeRef(typeRef);
+      }
+   };
+
    // --- ClassInfo ---
    struct ClassInfo
    {

@@ -271,6 +271,41 @@ ModuleInfo ModuleScope :: getWeakModule(ustr_t referenceName, bool silentMode)
    return loader->getWeakModule(referenceName, silentMode);
 }
 
+ref_t ModuleScope :: loadSymbolInfo(SymbolInfo& info, ustr_t referenceName)
+{
+   if (referenceName.empty())
+      return 0;
+
+   ModuleInfo moduleInfo;
+   if (isWeakReference(referenceName)) {
+      // if it is a weak reference - do not need to resolve the module
+      moduleInfo.module = module;
+      moduleInfo.reference = module->mapReference(referenceName);
+   }
+   else moduleInfo = getModule(referenceName, true);
+
+   if (moduleInfo.unassigned())
+      return 0;
+
+   // load argument VMT meta data
+   MemoryBase* metaData = moduleInfo.module->mapSection(moduleInfo.reference | mskMetaSymbolInfoRef, true);
+   if (!metaData)
+      return 0;
+
+   MemoryReader reader(metaData);
+   if (moduleInfo.module != module) {
+      SymbolInfo copy;
+      copy.load(&reader);
+
+      info.symbolType = copy.symbolType;
+      info.typeRef = importReference(moduleInfo.module, copy.typeRef);
+      info.valueRef = importReference(moduleInfo.module, copy.valueRef);
+   }
+   else info.load(&reader);
+
+   return moduleInfo.reference;
+}
+
 ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ustr_t referenceName, bool headerOnly, bool fieldsOnly)
 {
    if (referenceName.empty())

@@ -58,6 +58,7 @@ namespace elena_lang
       IntOp             = 0x001D,
       ByteArraySOp      = 0x001E,
       AccCopying        = 0x001F,
+      Argument          = 0x0020,
 
       Import            = 0x0038,
       StrDictionaryOp   = 0x0039,

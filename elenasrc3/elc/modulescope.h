@@ -68,6 +68,12 @@ public:
       return loadClassInfo(info, module->resolveReference(reference), headerOnly, fieldsOnly);
    }
 
+   ref_t loadSymbolInfo(SymbolInfo& info, ustr_t referenceName) override;
+   ref_t loadSymbolInfo(SymbolInfo& info, ref_t reference) override
+   {
+      return loadSymbolInfo(info, module->resolveReference(reference));
+   }
+
    void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode/*,
       bool ignoreFields*/) override;
 

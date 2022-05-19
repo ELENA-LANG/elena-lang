@@ -139,6 +139,11 @@ void getLocal(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::PeekFI, node.arg.value);
 }
 
+void getArgument(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::PeekSI, node.arg.value);
+}
+
 void getLocalAddredd(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::SetDP, node.arg.value);
@@ -301,6 +306,7 @@ ByteCodeWriter::Saver commands[] =
    intOp,
    byteArraySOp,
    copyingAcc,
+   getArgument
 };
 
 // --- ByteCodeWriter ---

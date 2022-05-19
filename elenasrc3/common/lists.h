@@ -2044,7 +2044,13 @@ namespace elena_lang
             if (_length - cacheSize >= _allocatedSize) {
                _allocatedSize += 10;
 
-               _allocated = (T*)realloc(_allocated, _allocatedSize * sizeof(T));
+               void* ptr = (T*)realloc(_allocated, _allocatedSize * sizeof(T));
+
+               assert(ptr != nullptr);
+
+               if (ptr) {
+                  _allocated = (T*)ptr;
+               }
             }
 
             _allocated[_length - cacheSize] = item;

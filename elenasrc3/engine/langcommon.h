@@ -65,6 +65,7 @@ namespace elena_lang
    constexpr auto errDupPublicMethod         = 167;
    constexpr auto errEmptyStructure          = 169;
    constexpr auto errDupInternalMethod       = 173;
+   constexpr auto errInvalidConstAttr        = 174;
    constexpr auto errIllegalConstructorAbstract = 177;
    constexpr auto errNoBodyMethod            = 180;
    constexpr auto errUnknownTemplate         = 181;

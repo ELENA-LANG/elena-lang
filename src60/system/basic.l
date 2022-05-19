@@ -23,8 +23,8 @@ public interface BoolValue
    };
 }
 
-public /*const*/ true = BoolValue.true;
-public /*const*/ false = BoolValue.false;
+public const true = BoolValue.true;
+public const false = BoolValue.false;
 
 // --- BaseValue ---
 

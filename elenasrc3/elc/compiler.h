@@ -57,10 +57,15 @@ namespace elena_lang
       };
       int        extra;
 
+      bool operator ==(ObjectInfo& val) const
+      {
+         return (this->kind == val.kind && this->reference == val.reference);
+      }
+
       ObjectInfo()
       {
          kind = ObjectKind::Unknown;
-         reference = type = 0;
+         type = reference = 0;
          extra = 0;
       }
       ObjectInfo(ObjectKind kind)
@@ -326,6 +331,8 @@ namespace elena_lang
 
       struct SymbolScope : SourceScope
       {
+         SymbolInfo   info;
+
          pos_t        reserved1;             // defines managed frame size
          pos_t        reserved2;             // defines unmanaged frame size (excluded from GC frame chain)
          pos_t        reservedArgs;          // contains the maximal argument list
@@ -337,6 +344,9 @@ namespace elena_lang
             }
             else return Scope::getScope(level);
          }
+
+         void save();
+         void load();
 
          SymbolScope(NamespaceScope* ns, ref_t reference, Visibility visibility);
       };
@@ -356,6 +366,13 @@ namespace elena_lang
          }
 
          void addMssgAttribute(mssg_t message, ClassAttribute attribute, mssg_t value)
+         {
+            ClassAttributeKey key = { message, attribute };
+            info.attributes.exclude(key);
+            info.attributes.add(key, value);
+         }
+
+         void addRefAttribute(mssg_t message, ClassAttribute attribute, ref_t value)
          {
             ClassAttributeKey key = { message, attribute };
             info.attributes.exclude(key);
@@ -604,6 +621,8 @@ namespace elena_lang
       TemplateProssesorBase* _templateProcessor;
       ErrorProcessor*        _errorProcessor;
 
+      bool                   _optMode;
+
       bool reloadMetaDictionary(ModuleScopeBase* moduleScope, ustr_t name);
 
       void saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN);
@@ -666,6 +685,8 @@ namespace elena_lang
       void checkMethodDuplicates(ClassScope& scope, SyntaxNode node, mssg_t message, 
          mssg_t publicMessage, bool protectedOne, bool internalOne);
 
+      ref_t generateConstant(ObjectInfo info);
+
       void generateClassFlags(ClassScope& scope, ref_t declaredFlags);
       void generateMethodAttributes(ClassScope& scope, SyntaxNode node, 
          MethodInfo& methodInfo, bool abstractBased);
@@ -722,6 +743,8 @@ namespace elena_lang
 
       ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
       ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
+
+      bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
 
       ObjectInfo compileExternalOp(BuildTreeWriter& writer, ExprScope& scope, ref_t externalRef, bool stdCall, 
          ArgumentsInfo& arguments);

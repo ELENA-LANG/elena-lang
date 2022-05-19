@@ -6,7 +6,7 @@ singleton Tester
    {
 //      Output.write("Hello From ELENA 6.0"$10);
 
-      var a := true;
+      bool a := true;
 
       a ? { Output.write("Hello From ELENA 6.0"$10); }
    }
