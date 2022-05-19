@@ -446,14 +446,17 @@ void Compiler::ClassScope :: save()
 
 // --- Compiler::MethodScope ---
 
-Compiler::MethodScope :: MethodScope(ClassScope* parent)
-   : Scope(parent), parameters({})
+Compiler::MethodScope :: MethodScope(ClassScope* parent) :
+   Scope(parent),
+   message(0),
+   parameters({}),
+   selfLocal(0),
+   reserved1(0),
+   reserved2(0),
+   reservedArgs(parent->moduleScope->minimalArgList),
+   functionMode(false),
+   closureMode(false)
 {
-   message = 0;
-   reserved1 = reserved2 = 0;
-   selfLocal = 0;
-   reservedArgs = parent->moduleScope->minimalArgList;
-   functionMode = false;
 }
 
 bool Compiler::MethodScope :: checkType(MethodHint type)
@@ -604,6 +607,9 @@ void Compiler::ExprScope :: syncStack()
    if (codeScope != nullptr) {
       if (codeScope->reserved1 < tempAllocated1)
          codeScope->reserved1 = tempAllocated1;
+
+      if (tempAllocated1 < codeScope->allocated1)
+         tempAllocated1 = codeScope->allocated1;
 
       MethodScope* methodScope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
       if (methodScope != nullptr) {
@@ -1505,6 +1511,7 @@ void Compiler :: declareClosureMessage(MethodScope& methodScope, SyntaxNode node
 {
    ref_t invokeAction = methodScope.module->mapAction(INVOKE_MESSAGE, 0, false);
    methodScope.message = encodeMessage(invokeAction, 0, FUNCTION_MESSAGE);
+   methodScope.closureMode = true;
 }
 
 void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool abstractMode)
@@ -2515,6 +2522,8 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
    switch (operatorId) {
       case ADD_OPERATOR_ID:
          return scope->buildins.add_message;
+      case IF_OPERATOR_ID:
+         return scope->buildins.if_message;
       default:
          throw InternalError(errFatalError);
    }
@@ -2946,12 +2955,41 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
 
 ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
 {
+   ObjectInfo retVal = {};
+
    SyntaxNode lnode = node.firstChild();
    SyntaxNode rnode = lnode.nextNode();
 
    ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter);
+   ObjectInfo roperand = { ObjectKind::Closure, V_CLOSURE, 0 };
 
-   return {}; // !! temporal
+   BuildKey   op = BuildKey::None;
+
+   size_t     argLen = 1;
+   ref_t      arguments[3];
+   arguments[0] = resolveObjectReference(scope, loperand, false);
+   arguments[1] = resolveObjectReference(scope, roperand, false);
+
+   ref_t outputRef = 0;
+   bool  needToAlloc = false;
+   op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, outputRef, needToAlloc);
+
+   if (op != BuildKey::None) {
+      assert(false);
+   }
+   else {
+      mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
+
+      roperand = compileClosure(writer, scope, rnode, EAttr::None);
+
+      ArgumentsInfo messageArguments;
+      messageArguments.add(loperand);
+      messageArguments.add(roperand);
+
+      retVal = compileMessageOperation(writer, scope, node, loperand, message, messageArguments, EAttr::None);
+   }
+
+   return retVal;
 }
 
 ObjectInfo Compiler :: mapStringConstant(Scope& scope, SyntaxNode node)
@@ -3393,16 +3431,19 @@ void Compiler :: endMethod(BuildTreeWriter& writer, MethodScope& scope)
    writer.closeNode();
 }
 
-ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode)
 {
+   ObjectInfo retVal = {};
+   ObjectInfo exprRetVal = {};
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Expression:
-            compileRootExpression(writer, codeScope, current);
+            exprRetVal = compileRootExpression(writer, codeScope, current);
             break;
          case SyntaxKey::ReturnExpression:
-            compileRetExpression(writer, codeScope, current);
+            exprRetVal = retVal = compileRetExpression(writer, codeScope, current);
             break;
          case SyntaxKey::EOP:
             addBreakpoint(writer, current, BuildKey::EOPBreakpoint);
@@ -3414,7 +3455,8 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
       current = current.nextNode();
    }
 
-   return {};
+   // NOTE : in the closure mode the last statement is the closure result
+   return closureMode ? exprRetVal : retVal;
 }
 
 void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope,
@@ -3436,7 +3478,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
    SyntaxNode bodyNode = node.firstChild(SyntaxKey::ScopeMask);
    switch (bodyNode.key) {
       case SyntaxKey::CodeBlock:
-         retVal = compileCode(writer, codeScope, bodyNode);
+         retVal = compileCode(writer, codeScope, bodyNode, scope.closureMode);
          break;
       case SyntaxKey::ReturnExpression:
          retVal = compileRetExpression(writer, codeScope, bodyNode);
@@ -3891,6 +3933,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
          0, FUNCTION_MESSAGE);
    moduleScope->buildins.add_message =
       encodeMessage(moduleScope->module->mapAction(ADD_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.if_message =
+      encodeMessage(moduleScope->module->mapAction(IF_MESSAGE, 0, false),
          2, 0);
 
    // cache self variable

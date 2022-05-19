@@ -176,6 +176,7 @@ namespace elena_lang
    constexpr auto V_OBJECT                = 0x80000006u;
    constexpr auto V_BINARYARRAY           = 0x8000000Bu;
    constexpr auto V_OBJATTRIBUTES         = 0x80000012u;
+   constexpr auto V_CLOSURE               = 0x80000013u;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;
@@ -188,6 +189,7 @@ namespace elena_lang
    constexpr auto ADD_OPERATOR_ID         = 0x0004;
    constexpr auto SUB_OPERATOR_ID         = 0x0005;
    constexpr auto LEN_OPERATOR_ID         = 0x0006;
+   constexpr auto IF_OPERATOR_ID          = 0x0007;
    constexpr auto SET_INDEXER_OPERATOR_ID = 0x0201;
 
 }

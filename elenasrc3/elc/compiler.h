@@ -42,7 +42,8 @@ namespace elena_lang
       ReadOnlyFieldAddress,
       FieldAddress,
       ReadOnlyField,
-      Field
+      Field,
+      Closure
    };
 
    struct ObjectInfo
@@ -393,6 +394,7 @@ namespace elena_lang
          pos_t        reservedArgs;          // contains the maximal argument list
 
          bool         functionMode;
+         bool         closureMode;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -758,7 +760,7 @@ namespace elena_lang
       void compileMultidispatch(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
       void compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
 
-      ObjectInfo compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
+      ObjectInfo compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode);
 
       void beginMethod(BuildTreeWriter& writer, MethodScope& scope, BuildKey scopeKey);
       void endMethod(BuildTreeWriter& writer, MethodScope& scope);

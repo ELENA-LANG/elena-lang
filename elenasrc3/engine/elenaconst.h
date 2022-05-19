@@ -88,6 +88,7 @@ namespace elena_lang
    constexpr auto INVOKE_MESSAGE          = "#invoke";
 
    constexpr auto ADD_MESSAGE             = "add";
+   constexpr auto IF_MESSAGE              = "if";
 
    // --- constant string lengths ---
    constexpr auto TEMPLATE_PREFIX_NS_LEN = (sizeof(TEMPLATE_PREFIX_NS) - 1);
