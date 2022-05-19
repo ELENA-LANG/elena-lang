@@ -39,6 +39,7 @@ namespace elena_lang
 
       virtual void onSelectDocument(int index) = 0;
       virtual void onNewDocument(int index) = 0;
+      virtual void onDocumentRename(int index) = 0;
    };
 
    // --- TextViewBase ---
@@ -65,6 +66,7 @@ namespace elena_lang
       virtual void removeDocListener(DocumentNotifier* listener) = 0;
 
       virtual void addDocumentView(ustr_t name, Text* text, path_t path) = 0;
+      virtual void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) = 0;
 
       virtual void clearDocumentView() = 0;
       virtual bool selectDocumentView(ustr_t name) = 0;
@@ -72,6 +74,9 @@ namespace elena_lang
 
       virtual ustr_t getDocumentName(int index) = 0;
       virtual ustr_t getDocumentNameByPath(path_t path) = 0;
+
+      virtual DocumentView* getDocument(ustr_t name) = 0;
+      virtual path_t getDocumentPath(ustr_t name) = 0;
 
       virtual void resize(Point size) = 0;
 

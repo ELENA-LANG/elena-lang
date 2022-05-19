@@ -281,6 +281,8 @@ namespace elena_lang
 
       void notifyOnChange();
 
+      void save(path_t path);
+
       DocumentView(Text* text, TextFormatterBase* formatter);
       virtual ~DocumentView();
    };

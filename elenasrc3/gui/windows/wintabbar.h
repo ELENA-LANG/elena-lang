@@ -28,6 +28,7 @@ namespace elena_lang
 
       void addTab(int index, wstr_t title, void* param);
       void selectTab(int index);
+      void renameTab(int index, wstr_t title);
 
       CustomTabBar(NotifierBase* notifier, bool withAbovescore);
    };
@@ -44,6 +45,7 @@ namespace elena_lang
       void setRectangle(Rectangle rec) override;
 
       int addTabView(wstr_t title, void* param);
+      void renameTabView(int index, wstr_t title);
 
       void setFocus() override;
 

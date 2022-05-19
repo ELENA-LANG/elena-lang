@@ -16,6 +16,7 @@ namespace elena_lang
    {
    public:
       virtual bool openFiles(List<path_t, freepath>& files) = 0;
+      virtual bool saveFile(path_t ext, PathString& path) = 0;
    };
 
    // --- TextViewSettings ---

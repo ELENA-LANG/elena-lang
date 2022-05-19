@@ -14,10 +14,38 @@ using namespace elena_lang;
 TextViewModel :: TextViewModel(int fontSize) :
    TextViewModelBase(fontSize),
    _documents(nullptr),
-   _documentPaths(nullptr),
    _listeners(nullptr),
    _docListeners(nullptr)
 {
+}
+
+int TextViewModel :: getCurrentIndex()
+{
+   int index = 0;
+   for (auto it = _documents.start(); !it.eof(); ++it) {
+      index++;
+
+      if ((*it)->documentView == _currentView)
+         return index;
+   }
+
+   return -1;
+}
+
+int TextViewModel :: getDocumentIndex(ustr_t name)
+{
+   if (name.empty())
+      name = getDocumentName(-1);
+
+   int index = 0;
+   for (auto it = _documents.start(); !it.eof(); ++it) {
+      index++;
+
+      if ((*it)->name.compare(name))
+         return index;
+   }
+
+   return -1;
 }
 
 void TextViewModel :: attachListener(TextViewListener* listener)
@@ -27,9 +55,10 @@ void TextViewModel :: attachListener(TextViewListener* listener)
    int index = 0;
    int selected = -1;
    for (auto it = _documents.start(); !it.eof(); ++it) {
-      listener->onNewDocument(index);
       index++;
-      if (*it == _currentView)
+
+      listener->onNewDocument(index);
+      if ((*it)->documentView == _currentView)
          selected = index;
    }
 
@@ -42,14 +71,14 @@ void TextViewModel::attachDocListener(DocumentNotifier* listener)
    _docListeners.add(listener);
 
    for (auto it = _documents.start(); !it.eof(); ++it) {
-      (*it)->attachNotifier(listener);
+      (*it)->documentView->attachNotifier(listener);
    }
 }
 
 void TextViewModel :: removeDocListener(DocumentNotifier* listener)
 {
    for (auto it = _documents.start(); !it.eof(); ++it) {
-      (*it)->removeNotifier(listener);
+      (*it)->documentView->removeNotifier(listener);
    }
 
    _docListeners.cut(listener);
@@ -76,6 +105,13 @@ void TextViewModel :: onDocumentSelected(int index)
    }
 }
 
+void TextViewModel :: onDocumentRename(int index)
+{
+   for (auto it = _listeners.start(); !it.eof(); ++it) {
+      (*it)->onDocumentRename(index);
+   }
+}
+
 void TextViewModel :: onModelChanged()
 {
    
@@ -85,15 +121,33 @@ void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path)
 {
    auto docView = new DocumentView(text, SourceFormatter::getInstance());
 
-   _documents.add(name, docView);
-   if (!path.empty())
-      _documentPaths.add(name, path.clone());
+   _documents.add(new DocumentViewScope(name, path, docView));
 
    for (auto it = _docListeners.start(); !it.eof(); ++it) {
       docView->attachNotifier(*it);
    }
 
-   onNewDocument(_documents.count() - 1);
+   onNewDocument(_documents.count());
+}
+
+void TextViewModel :: renameDocumentView(ustr_t oldName, ustr_t newName, path_t path)
+{
+   int index = getDocumentIndex(oldName);
+   if (index <= 0)
+      return;
+
+   auto info = _documents.get(index);
+   if (info != nullptr) {
+      info->name.free();
+
+      if (!info->path.empty())
+         info->path.free();
+
+      info->name = newName.clone();
+      info->path = path.clone();
+   }
+
+   onDocumentRename(index);
 }
 
 void TextViewModel :: clearDocumentView()
@@ -110,10 +164,10 @@ bool TextViewModel :: selectDocumentViewByIndex(int index)
 
 bool TextViewModel :: selectDocumentView(ustr_t name)
 {
-   int index = 0;
+   int index = 1;
    for (auto it = _documents.start(); !it.eof(); ++it) {
-      if (it.key().compare(name)) {
-         _currentView = *it;
+      if ((*it)->name.compare(name)) {
+         _currentView = (*it)->documentView;
          _currentView->status.formatterChanged = true;
 
          onSelectDocument(index);
@@ -128,10 +182,10 @@ bool TextViewModel :: selectDocumentView(ustr_t name)
 
 ustr_t TextViewModel :: getDocumentName(int index)
 {
-   int currentIndex = 0;
+   int currentIndex = 1;
    for (auto it = _documents.start(); !it.eof(); ++it) {
-      if (currentIndex == index)
-         return it.key();
+      if (currentIndex == index || (index == -1 && (*it)->documentView == _currentView))
+         return (*it)->name;
 
       currentIndex++;
    }
@@ -141,15 +195,35 @@ ustr_t TextViewModel :: getDocumentName(int index)
 
 ustr_t TextViewModel :: getDocumentNameByPath(path_t path)
 {
-   return _documentPaths.retrieve<path_t>(nullptr, path, [](path_t path, ustr_t key, wstr_t item)
+   auto info =_documents.retrieve<path_t>(path, [](path_t path, DocumentViewScope* item)
       {
-         return path.compare(item);
+         return path.compare(item->path.str());
       });
+
+   return info ? info->name : nullptr;
+}
+
+DocumentView* TextViewModel :: getDocument(ustr_t name)
+{
+   int index = getDocumentIndex(name);
+
+   auto info = _documents.get(index);
+
+   return info ? info->documentView : nullptr;
+}
+
+path_t TextViewModel :: getDocumentPath(ustr_t name)
+{
+   int index = getDocumentIndex(name);
+
+   auto info = _documents.get(index);
+
+   return info ? info->path : nullptr;
 }
 
 void TextViewModel :: resize(Point size)
 {
    for (auto it = _documents.start(); !it.eof(); ++it) {
-      (*it)->resize(size);
+      (*it)->documentView->resize(size);
    }
 }

@@ -883,7 +883,7 @@ size_t ustr_t::findStr(const char* subs, size_t defValue)
 
 char* ustr_t :: clone()
 {
-   return ::util_clone(_string);
+   return _string ? ::util_clone(_string) : nullptr;
 }
 
 char* ustr_t :: clone(size_t index, size_t length)
@@ -952,9 +952,9 @@ size_t wstr_t :: findLastSub(size_t index, char c, size_t defValue)
    return util_find_last(_string + index, c, defValue - index) + index;
 }
 
-wide_c* wstr_t::clone()
+wide_c* wstr_t :: clone()
 {
-   return ::util_clone(_string);
+   return _string ? ::util_clone(_string) : nullptr;
 }
 
 wide_c* wstr_t :: clone(size_t index, size_t length)

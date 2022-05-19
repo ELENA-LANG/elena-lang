@@ -23,6 +23,7 @@ namespace elena_lang
       static const wchar_t* SourceFilter;
 
       bool openFiles(List<path_t, freepath>& files) override;
+      bool saveFile(path_t ext, PathString& path) override;
 
       FileDialog(HINSTANCE instance, WindowBase* owner, const wchar_t* filter, const wchar_t* caption, 
          const wchar_t* initialDir = nullptr);

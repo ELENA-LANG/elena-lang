@@ -68,6 +68,7 @@ namespace elena_lang
       AddOperation       = 0x001844,
       SubOperation       = 0x001845,
       LenOperation       = 0x001846,
+      IfOperation        = 0x001847,
       MessageOperation   = 0x001851,
       ResendOperation    = 0x001C52,
       RedirectOperation  = 0x001C53,
@@ -82,6 +83,7 @@ namespace elena_lang
       Expression         = 0x001890,
       L5Expression       = 0x001891,
       SubExpression      = 0x001892,
+      L7Expression       = 0x001893,
 
       Name               = 0x000101,
       Namespace          = 0x000103,

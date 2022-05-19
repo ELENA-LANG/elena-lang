@@ -30,11 +30,13 @@ __define ADDITION_ASSIGNMENT 6211;
 __define ADD_OPERATION       6212;
 __define SUB_OPERATION       6213;
 __define LEN_OPERATION       6214;
+__define IF_OPERATION        6215;
 __define MESSAGE_OPERATION   6225;
 __define PROPERTY_OPERATION  6228;
 __define EXPRESSION          6288;
 __define L5_EXPRESSION       6289;
 __define SUB_EXPRESSION      6290;
+__define L7_EXPRESSION       6291;
 __define POSTFIX             4192;
 __define TEMPLATE_POSTFIX    4193;
 __define TEMPLATE_ARG        4208;
@@ -179,6 +181,9 @@ L5_EXPRESSION ::=
         | integer ^OBJECT
         | hexinteger ^OBJECT;
 
+L7_EXPRESSION ::=
+	BLOCK;
+
 NESTED_EXPRESSION ::=
 	"{" SUB_DECLARATIONS "}";
 
@@ -190,10 +195,12 @@ I_R ::=
 	| I_L2_R
 	| I_L3_R NEXT_L3_R
 	| L5_R
+	| L7_R
         | eps ^OBJECT; 
 
 E_R ::=
 	L5_R
+	| L7_R
 	| eps ^OBJECT;
 
 I5_R ::=
@@ -222,6 +229,9 @@ I_L3_R ::=
 L5_R ::=
 	"+" ^OBJECT L5_EXPRESSION ^ADD_OPERATION
 	| "-" ^OBJECT L5_EXPRESSION ^SUB_OPERATION;
+
+L7_R ::=
+	"?" L7_EXPRESSION ^IF_OPERATION;
 
 NEXT_L3_R ::=
 	"." MESSAGE MESSAGE_R NEXT_L3_R

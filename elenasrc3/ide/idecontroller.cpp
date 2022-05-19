@@ -35,9 +35,18 @@ bool SourceViewController :: openSource(TextViewModelBase* model, ustr_t caption
    return true;
 }
 
+void SourceViewController :: renameSource(TextViewModelBase* model, ustr_t oldName, ustr_t newName, path_t newSourcePath)
+{
+   model->renameDocumentView(oldName, newName, newSourcePath);
+}
+
 void SourceViewController :: saveSource(TextViewModelBase* model, ustr_t name)
 {
-   
+   auto docInfo = model->getDocument(name);
+   path_t path = model->getDocumentPath(name);
+
+   if (docInfo)
+      docInfo->save(path);
 }
 
 // --- ProjectController ---
@@ -184,14 +193,21 @@ void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
    }
 }
 
-void IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model)
+void IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode)
 {
    auto docView = model->sourceViewModel.DocView();
    if (!docView)
       return;
 
-   if (docView->status.unnamed) {
-      
+   if (docView->status.unnamed || saveAsMode) {
+      PathString path;
+      if (!dialog.saveFile(_T("l"), path))
+         return;
+
+      IdentifierString sourceNameStr;
+      projectController.defineSourceName(*path, sourceNameStr);
+
+      sourceController.renameSource(&model->sourceViewModel, nullptr, *sourceNameStr, *path);
    }
 
    sourceController.saveSource(&model->sourceViewModel, nullptr);

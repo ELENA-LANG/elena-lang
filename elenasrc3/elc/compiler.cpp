@@ -2944,6 +2944,16 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    else return compileOperation(writer, scope, loperand, roperand, operatorId);
 }
 
+ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
+{
+   SyntaxNode lnode = node.firstChild();
+   SyntaxNode rnode = lnode.nextNode();
+
+   ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter);
+
+   return {}; // !! temporal
+}
+
 ObjectInfo Compiler :: mapStringConstant(Scope& scope, SyntaxNode node)
 {
    return ObjectInfo(ObjectKind::StringLiteral, V_STRING, scope.module->mapConstant(node.identifier()));
@@ -3093,6 +3103,7 @@ ObjectInfo Compiler :: saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope
    }
    else {
       int tempLocal = scope.newTempLocal();
+      writeObjectInfo(writer, object);
       writer.appendNode(BuildKey::Assigning, tempLocal);
 
       return { ObjectKind::TempLocal, object.type, (ref_t)tempLocal };
@@ -3245,6 +3256,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::SubOperation:
       case SyntaxKey::LenOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
+         break;
+      case SyntaxKey::IfOperation:
+         retVal = compileBranchingOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::ReturnExpression:
          retVal = compileExpression(writer, scope, current.firstChild(), 0, mode);

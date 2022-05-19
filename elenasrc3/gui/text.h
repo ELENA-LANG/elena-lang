@@ -302,6 +302,7 @@ namespace elena_lang
 
       void create();
       bool load(path_t path, FileEncoding encoding, bool autoDetecting);
+      void save(path_t path);
 
       bool insertChar(TextBookmark& bookmark, text_c ch);
       bool insertNewLine(TextBookmark& bookmark);

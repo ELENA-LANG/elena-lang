@@ -1,21 +1,14 @@
 import system;
 
-singleton Value
-{
-   if(trueAction)
-   {
-      trueAction();
-   }
-}
-
 singleton Tester
 {
    run()
    {
 //      Output.write("Hello From ELENA 6.0"$10);
 
-      var a := Value;
-      a.if({ Output.write("Hello From ELENA 6.0"$10); });
+      var a := true;
+
+      a ? { Output.write("Hello From ELENA 6.0"$10); }
    }
 }
 

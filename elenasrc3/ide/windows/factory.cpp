@@ -117,8 +117,8 @@ void IDEFactory :: initializeModel()
 
    PathString path("C:\\Alex\\ELENA\\tests60\\sandbox\\sandbox.l");
 
-   _controller->sourceController.openDocument(viewModel, "test", *path, FileEncoding::UTF8);
-   _controller->sourceController.selectDocument(viewModel, "test");
+   _controller->sourceController.openDocument(viewModel, "sandbox.l", *path, FileEncoding::UTF8);
+   _controller->sourceController.selectDocument(viewModel, "sandbox.l");
 }
 
 GUIApp* IDEFactory :: createApp()

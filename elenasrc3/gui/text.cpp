@@ -675,6 +675,15 @@ bool Text :: load(path_t path, FileEncoding encoding, bool autoDetecting)
    return true;
 }
 
+void Text :: save(path_t path)
+{
+   FileWriter writer(path, _encoding, false);
+
+   for (auto it = _pages.start(); !it.eof(); ++it) {
+      writer.writeText((*it).text, (*it).used);
+   }
+}
+
 void Text :: insert(TextBookmark bookmark, text_t s, size_t length, bool checkRowCount)
 {
    size_t position = bookmark.longPosition();

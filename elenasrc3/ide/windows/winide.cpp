@@ -32,7 +32,9 @@ void IDEWindow :: openFile()
 
 void IDEWindow :: saveFile()
 {
-   //_controller->doSaveFile(_model);
+   FileDialog dialog(_instance, this, FileDialog::SourceFilter, SAVEAS_PROJECT_CAPTION, *_model->projectModel.paths.lastPath);
+
+   _controller->doSaveFile(dialog, _model, false);
 }
 
 bool IDEWindow :: onCommand(int command)

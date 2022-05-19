@@ -22,6 +22,7 @@ namespace elena_lang
       void onNewDocument(int index) override;
       void onSelectDocument(int index) override;
       void onDocumentSelected(int index) override;
+      void onDocumentRename(int index) override;
 
       void onSelChanged() override;
 

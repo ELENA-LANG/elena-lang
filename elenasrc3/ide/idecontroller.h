@@ -21,6 +21,8 @@ namespace elena_lang
       bool openSource(TextViewModelBase* model, ustr_t name, path_t sourcePath,
          FileEncoding encoding, bool autoSelect);
 
+      void renameSource(TextViewModelBase* model, ustr_t oldName, ustr_t newName, path_t newSourcePath);
+
       void saveSource(TextViewModelBase* model, ustr_t name);
 
       SourceViewController(TextViewSettings& settings)
@@ -101,7 +103,7 @@ namespace elena_lang
 
       void doNewFile(IDEModel* model);
       void doOpenFile(FileDialogBase& dialog, IDEModel* model);
-      void doSaveFile(FileDialogBase& dialog, IDEModel* model);
+      void doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode);
 
       IDEController(DebugProcessBase* process, IDEModel* model, 
          TextViewSettings& textViewSettings

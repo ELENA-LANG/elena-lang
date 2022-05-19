@@ -86,6 +86,17 @@ void CustomTabBar :: selectTab(int index)
    }
 }
 
+void CustomTabBar :: renameTab(int index, wstr_t title)
+{
+   // rename tab caption
+   TCITEM tie;
+   tie.mask = TCIF_TEXT | TCIF_IMAGE;
+   tie.iImage = -1;
+   tie.pszText = (wchar_t*)title.str();
+
+   ::SendMessage(_handle, TCM_SETITEM, index, (LPARAM)&tie);
+}
+
 int CustomTabBar :: getTabCount()
 {
    return (int)::SendMessage(_handle, TCM_GETITEMCOUNT, 0, 0);
@@ -148,4 +159,10 @@ int MultiTabControl :: addTabView(wstr_t title, void* param)
    addTab(index, title, param);
 
    return index;
+}
+
+void MultiTabControl :: renameTabView(int index, wstr_t title)
+{
+   // rename tab caption
+   renameTab(index, title);
 }

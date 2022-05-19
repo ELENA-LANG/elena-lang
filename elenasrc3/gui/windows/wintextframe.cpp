@@ -28,7 +28,7 @@ void TextViewFrame :: onNewDocument(int index)
 
 void TextViewFrame :: onSelectDocument(int index)
 {
-   selectTab(index);
+   selectTab(index - 1);
 }
 
 void TextViewFrame :: onDocumentSelected(int index)
@@ -37,13 +37,20 @@ void TextViewFrame :: onDocumentSelected(int index)
    _child->refresh();
 }
 
+void TextViewFrame :: onDocumentRename(int index)
+{
+   WideMessage title(_model->getDocumentName(index));
+
+   renameTabView(index - 1, *title);
+}
+
 void TextViewFrame :: onSelChanged()
 {
    int index = getCurrentIndex();
    if (index >= 0) {
-      _model->selectDocumentViewByIndex(index);
+      _model->selectDocumentViewByIndex(index + 1);
 
-      onDocumentSelected(index);
+      onDocumentSelected(index + 1);
    }
    else {
       _child->hide();

@@ -118,6 +118,15 @@ namespace elena_lang
 
       void align(unsigned int alignment);
 
+      bool writeText(char* s, size_t size)
+      {
+         return _file.writeText(s, _encoding, size);
+      }
+      bool writeText(wide_c* s, size_t size)
+      {
+         return _file.writeText(s, _encoding, size);
+      }
+
       FileWriter(path_t path, FileEncoding encoding, bool withBOM);
    };
 

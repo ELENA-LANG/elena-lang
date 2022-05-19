@@ -694,3 +694,8 @@ bool DocumentView :: eraseSelection()
 
    return true;
 }
+
+void DocumentView :: save(path_t path)
+{
+   _text->save(path);
+}

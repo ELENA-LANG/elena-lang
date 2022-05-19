@@ -68,3 +68,16 @@ bool FileDialog :: openFiles(List<path_t, freepath>& files)
 
    return false;
 }
+
+bool FileDialog :: saveFile(path_t ext, PathString& path)
+{
+   _struct.Flags = _defaultFlags | OFN_PATHMUSTEXIST;
+   _struct.lpstrDefExt = ext;
+
+   if (::GetSaveFileName(&_struct)) {
+      path.copy(_fileName);
+
+      return true;
+   }
+   else return false;
+}
