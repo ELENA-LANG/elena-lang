@@ -53,13 +53,7 @@ namespace elena_lang
       bool isEmbeddableStruct(ClassInfo& info);
       bool isMultiMethod(ClassInfo& info, MethodInfo& methodInfo);
 
-      bool isValidObjOp(int operatorId);
-      bool isValidStrDictionaryOp(int operatorId);
-      bool isValidObjArrayOp(int operatorId);
-      bool isValidAttrDictionaryOp(int operatorId);
-      bool isValidArithmOp(int operatorId);
-      bool isValidArraySOp(int operatorId);
-      bool isValidOp(int operatorId, BuildKey op);
+      bool isValidOp(int operatorId, const int* validOperators, size_t len);
 
       void tweakClassFlags(ref_t classRef, ClassInfo& info, bool classClassMode);
       void tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef);

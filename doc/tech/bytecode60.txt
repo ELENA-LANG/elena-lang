@@ -142,6 +142,10 @@ ELENA byte codes (or ecodes)
  Jump operations:
  ---------------- 
    jump label               - jumps to the label
+
+   jeq  label               - jump if COMP.EQ == 1
+ 
+   jne  label               - jump if COMP.EQ == 0
  
 
  Arithmeric operations:
@@ -163,3 +167,8 @@ ELENA byte codes (or ecodes)
                               [dp[disp]] -= temp;
                               n = 1,2,4,8  
 
+
+ Comparison operations:
+ ----------------------
+
+   cmpr r                   - COMP.EQ := (acc == r);

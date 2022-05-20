@@ -40,25 +40,53 @@ bool testMethodHint(ref_t hint, MethodHint mask)
 
 struct Op
 {
-   BuildKey operation;
+   const int* allowedOperators;
+   size_t     allowedOperatorLength;
 
-   ref_t    loperand;
-   ref_t    roperand;
-   ref_t    ioperand;
+   BuildKey   operation;
 
-   ref_t    outputRef;
-   bool     needToAlloc;
+   ref_t      loperand;
+   ref_t      roperand;
+   ref_t      ioperand;
+
+   ref_t      outputRef;
+   bool       needToAlloc;
 };
 
-constexpr auto OperationLength = 6;
+constexpr int DictionaryOperators[1]  = { SET_INDEXER_OPERATOR_ID };
+constexpr int ArrayOperators[1]       = { ADD_ASSIGN_OPERATOR_ID };
+constexpr int SArrayOperators[1]      = { LEN_OPERATOR_ID };
+constexpr int IntOperators[2]       = { ADD_OPERATOR_ID, SUB_OPERATOR_ID };
+constexpr int BranchingOperators[1]   = { IF_OPERATOR_ID };
+
+constexpr auto OperationLength = 7;
 constexpr Op Operations[OperationLength] =
 {
-   { BuildKey::StrDictionaryOp, V_DICTIONARY, V_INT32, V_STRING, V_OBJECT, false },
-   { BuildKey::AttrDictionaryOp, V_OBJATTRIBUTES, V_OBJECT, V_STRING, V_OBJECT, false },
-   { BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0, V_OBJECT, false },
-   { BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0, V_OBJECT, false },
-   { BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32, true },
-   { BuildKey::ByteArraySOp, V_BINARYARRAY, 0, 0, V_INT32, true}
+   {
+      DictionaryOperators, 1,
+      BuildKey::StrDictionaryOp, V_DICTIONARY, V_INT32, V_STRING, V_OBJECT, false
+   },
+   {
+      DictionaryOperators, 1,
+      BuildKey::AttrDictionaryOp, V_OBJATTRIBUTES, V_OBJECT, V_STRING, V_OBJECT, false
+   },
+   {
+      ArrayOperators, 1,
+      BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0, V_OBJECT, false
+   },
+   { {}, 0,BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0, V_OBJECT, false },
+   {
+      IntOperators, 2,
+      BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32, true
+   },
+   {
+      SArrayOperators, 1,
+      BuildKey::ByteArraySOp, V_BINARYARRAY, 0, 0, V_INT32, true
+   },
+   {
+      BranchingOperators, 1,
+      BuildKey::BranchOp, V_FLAG, V_CLOSURE, 0, 0, false
+   }
 };
 
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
@@ -73,90 +101,21 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 
 // --- CompilerLogic ---
 
-bool CompilerLogic :: isValidObjOp(int operatorId)
+bool CompilerLogic :: isValidOp(int operatorId, const int* validOperators, size_t len)
 {
-//   switch (operatorId) {
-//      default:
-         return false;
-//   }
-}
-
-bool CompilerLogic :: isValidObjArrayOp(int operatorId)
-{
-   switch (operatorId) {
-      case ADD_ASSIGN_OPERATOR_ID:
+   for (size_t i = 0; i < len; ++i) {
+      if (validOperators[i] == operatorId)
          return true;
-      default:
-         return false;
    }
-}
 
-bool CompilerLogic :: isValidStrDictionaryOp(int operatorId)
-{
-   switch (operatorId) {
-      case SET_INDEXER_OPERATOR_ID:
-         return true;
-      default:
-         return false;
-   }
-}
-
-bool CompilerLogic :: isValidAttrDictionaryOp(int operatorId)
-{
-   switch (operatorId) {
-      case SET_INDEXER_OPERATOR_ID:
-         return true;
-      default:
-         return false;
-   }
-}
-
-bool CompilerLogic :: isValidArithmOp(int operatorId)
-{
-   switch (operatorId) {
-      case ADD_OPERATOR_ID:
-      case SUB_OPERATOR_ID:
-         return true;
-      default:
-         return false;
-   }
-}
-
-bool CompilerLogic :: isValidArraySOp(int operatorId)
-{
-   switch (operatorId) {
-      case LEN_OPERATOR_ID:
-         return true;
-      default:
-         return false;
-   }
-}
-
-bool CompilerLogic :: isValidOp(int operatorId, BuildKey op)
-{
-   switch (op) {
-      case BuildKey::ObjOp:
-         return isValidObjOp(operatorId);
-      case BuildKey::StrDictionaryOp:
-         return isValidStrDictionaryOp(operatorId);
-      case BuildKey::ObjArrayOp:
-         return isValidObjArrayOp(operatorId);
-      case BuildKey::AttrDictionaryOp:
-         return isValidAttrDictionaryOp(operatorId);
-      case BuildKey::IntOp:
-         return isValidArithmOp(operatorId);
-      case BuildKey::ByteArraySOp:
-         return isValidArraySOp(operatorId);
-      default:
-         return false;
-   }
+   return false;
 }
 
 BuildKey CompilerLogic :: resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length,
    ref_t& outputRef, bool& needToAlloc)
 {
    for(size_t i = 0; i < OperationLength; i++) {
-      if (isValidOp(operatorId, Operations[i].operation)) {
+      if (isValidOp(operatorId, Operations[i].allowedOperators, Operations[i].allowedOperatorLength)) {
          bool compatible = isCompatible(scope, Operations[i].loperand, arguments[0], false);
          compatible = compatible && (length <= 1 || isCompatible(scope, Operations[i].roperand, arguments[1], false));
          compatible = compatible && (length <= 2 || isCompatible(scope, Operations[i].ioperand, arguments[2], false));
@@ -611,6 +570,9 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_
       // and with all types for all other cases
       if (!ignoreNils || targetRef == scope.buildins.superReference)
          return true;
+   }
+   else if (targetRef == V_FLAG) {
+      return isCompatible(scope, scope.branchingInfo.typeRef, sourceRef, ignoreNils);
    }
 
    if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))

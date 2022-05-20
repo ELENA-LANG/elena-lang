@@ -50,6 +50,10 @@ namespace elena_lang
       CallR          = 0xB0,
       CallVI         = 0xB1,
       Jump           = 0xB2,
+      Jeq            = 0xB3,
+      Jne            = 0xB4,
+
+      CmpR           = 0xC0,
 
       MaxDoubleOp    = 0xDF,
 
@@ -206,6 +210,7 @@ namespace elena_lang
          case ByteCode::SetR:
          case ByteCode::CallR:
          case ByteCode::CallExtR:
+         case ByteCode::CmpR:
             return true;
          default:
             return false;

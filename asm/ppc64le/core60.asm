@@ -532,6 +532,16 @@ inline % 0B1h
 
 end
 
+// ; cmpr
+inline %0C0h
+
+  ld      r16, toc_rdata(r2)
+  addis   r16, r16, __disp32hi_1 
+  addi    r16, r16, __disp32lo_1 
+  cmp     r15, r16
+
+end 
+
 // ; copydpn
 inline %0E0h
 

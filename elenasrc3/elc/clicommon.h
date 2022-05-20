@@ -278,6 +278,19 @@ enum class Visibility
    Protected
 };
 
+struct BranchingInfo
+{
+   ref_t typeRef;
+   ref_t trueRef;
+   ref_t falseRef;
+
+   BranchingInfo()
+   {
+      typeRef = 0;
+      trueRef = falseRef = 0;
+   }
+};
+
 struct BuiltinReferences
 {
    ref_t   superReference;
@@ -326,6 +339,7 @@ public:
    ReferenceMap         attributes;
    ReferenceMap         aliases;
    BuiltinReferences    buildins;
+   BranchingInfo        branchingInfo;
 
    IdentifierString     selfVar;
 

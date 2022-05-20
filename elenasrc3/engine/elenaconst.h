@@ -68,8 +68,11 @@ namespace elena_lang
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 
    constexpr auto SUPER_FORWARD           = "$forwards'$super";          // the common class predecessor
-   constexpr auto INTLITERAL_FORWARD      = "$forwards'$int";          // the common class predecessor
-   constexpr auto LITERAL_FORWARD         = "$forwards'$string";          // the common class predecessor
+   constexpr auto INTLITERAL_FORWARD      = "$forwards'$int";            // the common class predecessor
+   constexpr auto LITERAL_FORWARD         = "$forwards'$string";         // the common class predecessor
+   constexpr auto BOOL_FORWARD            = "$forwards'$boolean";        // the common class predecessor
+   constexpr auto TRUE_FORWARD            = "$forwards'$true";           // the common class predecessor
+   constexpr auto FALSE_FORWARD           = "$forwards'$false";          // the common class predecessor
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";

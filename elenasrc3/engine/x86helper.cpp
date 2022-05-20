@@ -191,11 +191,34 @@ void X86LabelHelper :: writeJmpForward(pos_t label, MemoryWriter& writer)
    writer.writeDWord(0);
 }
 
+void X86LabelHelper :: writeNearJccForward(X86JumpType type, pos_t label, MemoryWriter& writer)
+{
+   pos_t position = writer.position();
+
+   writer.writeByte(0x0F);
+   writer.writeByte((unsigned char)0x80 + (unsigned char)type);
+
+   jumps.add(label, { position });
+
+   writer.writeDWord(0);
+}
+
 void X86LabelHelper :: writeShortJmpForward(pos_t label, MemoryWriter& writer)
 {
    pos_t position = writer.position();
 
    writer.writeByte(0xEB);
+
+   jumps.add(label, { position });
+
+   writer.writeByte(0);
+}
+
+void X86LabelHelper :: writeShortJccForward(X86JumpType type, pos_t label, MemoryWriter& writer)
+{
+   pos_t position = writer.position();
+
+   writer.writeByte((unsigned char)0x70 + (unsigned char)type);
 
    jumps.add(label, { position });
 
@@ -217,12 +240,43 @@ void X86LabelHelper :: writeNearJmpBack(pos_t label, MemoryWriter& writer)
    writer.writeDWord(offset);
 }
 
+void X86LabelHelper :: writeNearJccBack(X86JumpType type, pos_t label, MemoryWriter& writer)
+{
+   pos_t position = writer.position();
+   int offset = labels.get(label) - position;
+
+   writer.writeByte(0x0F);
+   writer.writeByte((unsigned char)0x80 + (unsigned char)type);
+
+   // to exclude the command itself
+   offset -= 6;
+
+   jumps.add(label, { position, offset });
+
+   writer.writeDWord(offset);
+}
+
 void X86LabelHelper :: writeShortJmpBack(pos_t label, MemoryWriter& writer)
 {
    pos_t position = writer.position();
    int offset = labels.get(label) - position;
 
    writer.writeByte(0xEB);
+
+   // to exclude the command itself
+   offset -= 2;
+
+   jumps.add(label, { position, offset });
+
+   writer.writeByte((unsigned char)offset);
+}
+
+void X86LabelHelper :: writeShortJccBack(X86JumpType type, pos_t label, MemoryWriter& writer)
+{
+   pos_t position = writer.position();
+   int offset = labels.get(label) - position;
+
+   writer.writeByte((unsigned char)0x70 + (unsigned char)type);
 
    // to exclude the command itself
    offset -= 2;
@@ -242,10 +296,28 @@ void X86LabelHelper :: writeJumpBack(pos_t label, MemoryWriter& writer)
    else writeNearJmpBack(label, writer);
 }
 
+void X86LabelHelper :: writeJccBack(X86JumpType type, pos_t label, MemoryWriter& writer)
+{
+   int offset = labels.get(label) - writer.position();
+
+   if (abs(offset) < 0x7F) {
+      writeShortJccBack(type, label, writer);
+   }
+   else writeNearJccBack(type, label, writer);
+}
+
 void X86LabelHelper :: writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)
 {
    if (_abs(byteCodeOffset) < 0x10) {
       writeShortJmpForward(label, writer);
    }
    else writeJmpForward(label, writer);
+}
+
+void X86LabelHelper :: writeJccForward(X86JumpType type, pos_t label, MemoryWriter& writer, int byteCodeOffset)
+{
+   if (_abs(byteCodeOffset) < 0x10) {
+      writeShortJccForward(type, label, writer);
+   }
+   else writeNearJccForward(type, label, writer);
 }

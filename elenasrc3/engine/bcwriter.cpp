@@ -306,7 +306,7 @@ ByteCodeWriter::Saver commands[] =
    intOp,
    byteArraySOp,
    copyingAcc,
-   getArgument
+   getArgument,
 };
 
 // --- ByteCodeWriter ---
@@ -391,6 +391,25 @@ void ByteCodeWriter :: importTree(CommandTape& tape, BuildNode node, Scope& scop
    tape.import(importInfo.module, importInfo.section, true, scope.moduleScope);
 }
 
+void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope)
+{
+   tape.newLabel();
+
+   switch (node.arg.value) {
+      case IF_OPERATOR_ID:
+         tape.write(ByteCode::CmpR, node.findChild(BuildKey::Const).arg.reference);
+         tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   saveTape(tape, node.findChild(BuildKey::Tape), tapeScope);
+
+   tape.setLabel();
+}
+
 void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope)
 {
    BuildNode current = node.firstChild();
@@ -401,6 +420,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::NestedClass:
             saveClass(current, tapeScope.scope->moduleScope, tapeScope.scope->minimalArgList);
+            break;
+         case BuildKey::BranchOp:
+            saveBranching(tape, current, tapeScope);
             break;
          default:
             _commands[(int)current.key](tape, current, tapeScope);

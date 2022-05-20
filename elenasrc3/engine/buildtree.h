@@ -59,6 +59,7 @@ namespace elena_lang
       ByteArraySOp      = 0x001E,
       AccCopying        = 0x001F,
       Argument          = 0x0020,
+      BranchOp          = 0x0021,
 
       Import            = 0x0038,
       StrDictionaryOp   = 0x0039,
@@ -77,6 +78,7 @@ namespace elena_lang
       Size              = 0x8008,
       Count             = 0x8009,
       Message           = 0x800A,
+      Const             = 0x800B,
 
       //MetaDictionary    = 0x0022,
       //MetaArray         = 0x1023,

@@ -178,6 +178,11 @@ namespace elena_lang
          writer.writeDWord(PPCHelper::makeICommand(18, offset >> 2, aa, lk));
       }
 
+      static void writeBCxx(int bo, int bi, int bd, int aa, int lk, MemoryWriter& writer)
+      {
+         writer.writeDWord(PPCHelper::makeBCommand(16, bo, bi, bd >> 2, aa, lk));
+      }
+
       bool fixLabel(pos_t label, MemoryWriter& writer) override
       {
          for (auto it = jumps.getIt(label); !it.eof(); ++it) {
@@ -209,6 +214,38 @@ namespace elena_lang
          jumps.add(label, { writer.position() });
 
          writeBxx(0, 0, 0, writer);
+      }
+
+      void writeJeqForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBCxx(12, 2, 0, 0, 0, writer);
+      }
+
+      void writeJeqBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0xFFFF)
+            throw InternalError(-1);
+
+         writeBCxx(12, 2, offset, 0, 0, writer);
+      }
+
+      void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBCxx(4, 2, 0, 0, 0, writer);
+      }
+
+      void writeJneBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0xFFFF)
+            throw InternalError(-1);
+
+         writeBCxx(4, 2, offset, 0, 0, writer);
       }
    };
 

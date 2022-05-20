@@ -3026,7 +3026,17 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, outputRef, needToAlloc);
 
    if (op != BuildKey::None) {
-      assert(false);
+      writer.newNode(op, operatorId);
+      writer.appendNode(BuildKey::Const, scope.moduleScope->branchingInfo.trueRef);
+      writer.newNode(BuildKey::Tape);
+
+      scope.syncStack();
+
+      CodeScope codeScope(Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code));
+      compileCode(writer, codeScope, rnode, false);
+
+      writer.closeNode();
+      writer.closeNode();
    }
    else {
       mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
@@ -4017,6 +4027,10 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
    moduleScope->buildins.intReference = safeMapReference(moduleScope, forwardResolver, INTLITERAL_FORWARD);
+
+   moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);
+   moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);
+   moduleScope->branchingInfo.falseRef = safeMapReference(moduleScope, forwardResolver, FALSE_FORWARD);
 
    // cache the frequently used messages
    moduleScope->buildins.dispatch_message = encodeMessage(

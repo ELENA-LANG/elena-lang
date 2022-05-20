@@ -476,7 +476,7 @@ int Arm64Assembler :: readLSL(ScriptToken& tokenInfo, ustr_t error)
    }
 }
 
-Arm64Assembler::JumpType Arm64Assembler :: readCond(ScriptToken& tokenInfo)
+JumpType Arm64Assembler :: readCond(ScriptToken& tokenInfo)
 {
    read(tokenInfo);
    if (tokenInfo.compare("eq")) {
@@ -487,7 +487,7 @@ Arm64Assembler::JumpType Arm64Assembler :: readCond(ScriptToken& tokenInfo)
    else throw SyntaxError(ASM_INVALID_TARGET, tokenInfo.lineInfo);
 }
 
-Arm64Assembler::JumpType Arm64Assembler :: invertCond(JumpType type)
+JumpType Arm64Assembler :: invertCond(JumpType type)
 {
    int val = (int)type;
    val = val & 0xE;

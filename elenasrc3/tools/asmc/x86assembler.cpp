@@ -991,6 +991,11 @@ bool X86Assembler :: compileCmp(X86Operand source, X86Operand target, MemoryWrit
       writer.writeByte(0x3B);
       X86Helper::writeModRM(writer, source, target);
    }
+   else if (source.isR32_M32() && target.type == X86OperandType::DD) {
+      writer.writeByte(0x81);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 7), source);
+      X86Helper::writeImm(writer, target);
+   }
    else return false;
 
    return true;
@@ -1876,6 +1881,12 @@ bool X86_64Assembler :: compileCmp(X86Operand source, X86Operand target, MemoryW
       writer.writeByte(0x4B);
       writer.writeByte(0x3B);
       X86Helper::writeModRM(writer, source, target);
+   }
+   else if (source.isR64_M64() && target.type == X86OperandType::DD) {
+      writer.writeByte(0x48);
+      writer.writeByte(0x81);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 7), source);
+      X86Helper::writeImm(writer, target);
    }
    else return X86Assembler::compileCmp(source, target, writer);
 

@@ -13,6 +13,25 @@
 
 namespace elena_lang
 {
+   enum class JumpType
+   {
+      EQ = 0x0,
+      NE = 0x1,
+      CS = 0x2,
+      CC = 0x3,
+      MI = 0x4,
+      PL = 0x5,
+      VS = 0x6,
+      VC = 0x7,
+      HI = 0x8,
+      LS = 0x9,
+      GE = 0xA,
+      LT = 0xB,
+      GT = 0xC,
+      LE = 0xD,
+      AL = 0xE
+   };
+
    // --- ARMOperandType ---
    enum class ARMOperandType : unsigned int
    {
@@ -386,6 +405,11 @@ namespace elena_lang
          writer.writeDWord(ARMHelper::makeBOpcode(0x5, imm));
       }
 
+      static void writeBcc(int imm, int cond, MemoryWriter& writer)
+      {
+         writer.writeDWord(ARMHelper::makeBxxOpcode(0x2A, 0, imm >> 2, 0, cond));
+      }
+
       bool fixLabel(pos_t label, MemoryWriter& writer) override
       {
          for (auto it = jumps.getIt(label); !it.eof(); ++it) {
@@ -425,7 +449,38 @@ namespace elena_lang
          jumps.add(label, { writer.position() });
 
          writeB(0, writer);
+      }
 
+      void writeJeqForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBcc(0, (int)JumpType::EQ, writer);
+      }
+
+      void writeJeqBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0x3FFFF)
+            throw InternalError(-1);
+
+         writeBcc(offset, (int)JumpType::EQ, writer);
+      }
+
+      void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBcc(0, (int)JumpType::NE, writer);
+      }
+
+      void writeJneBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0x3FFFF)
+            throw InternalError(-1);
+
+         writeBcc(offset, (int)JumpType::NE, writer);
       }
    };
 }

@@ -273,6 +273,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
       switch (command.code) {
          case ByteCode::SetR:
          case ByteCode::CallR:
+         case ByteCode::CmpR:
             addRArg(command.arg1, commandStr);
             break;
          case ByteCode::MovM:
@@ -280,6 +281,8 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addMessage(commandStr, command.arg1);
             break;
          case ByteCode::Jump:
+         case ByteCode::Jeq:
+         case ByteCode::Jne:
             addLabel(command.arg1 + commandPosition + 5, commandStr, labels);
             break;
          default:

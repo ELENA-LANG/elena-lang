@@ -411,8 +411,35 @@ namespace elena_lang
       void writeShortJmpBack(pos_t label, MemoryWriter& writer);
       void writeNearJmpBack(pos_t label, MemoryWriter& writer);
 
+      void writeShortJccForward(X86JumpType type, pos_t label, MemoryWriter& writer);
+      void writeNearJccForward(X86JumpType type, pos_t label, MemoryWriter& writer);
+      void writeShortJccBack(X86JumpType type, pos_t label, MemoryWriter& writer);
+      void writeNearJccBack(X86JumpType type, pos_t label, MemoryWriter& writer);
+
       void writeJumpBack(pos_t label, MemoryWriter& writer) override;
       void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override;
+
+      void writeJccBack(X86JumpType type, pos_t label, MemoryWriter& writer);
+      void writeJccForward(X86JumpType type, pos_t label, MemoryWriter& writer, int byteCodeOffset);
+
+      void writeJeqForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         writeJccForward(X86JumpType::JZ, label, writer, byteCodeOffset);
+      }
+      void writeJeqBack(pos_t label, MemoryWriter& writer) override
+      {
+         writeJccBack(X86JumpType::JZ, label, writer);
+      }
+
+      void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         writeJccForward(X86JumpType::JNZ, label, writer, byteCodeOffset);
+      }
+
+      void writeJneBack(pos_t label, MemoryWriter& writer) override
+      {
+         writeJccBack(X86JumpType::JNZ, label, writer);
+      }
    };
 }
 

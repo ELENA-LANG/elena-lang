@@ -511,6 +511,15 @@ inline %0B1h
 
 end
 
+// ; cmpr
+inline %0C0h
+
+  movz    x11,  __ptr32lo_1
+  movk    x11,  __ptr32hi_1, lsl #16
+  cmp     x10, x11
+
+end 
+
 // ; copydpn
 inline %0E0h
 

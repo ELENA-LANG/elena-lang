@@ -421,6 +421,13 @@ inline %0B1h
 
 end
 
+// ; cmpr r
+inline %0C0h
+
+  cmp  ebx, __ptr32_1
+
+end 
+
 // ; copydpn
 inline %0E0h
 
