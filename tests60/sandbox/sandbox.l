@@ -5,31 +5,16 @@ import system;
 //   #let routine[@name] := @reference
 //}
 
-//if<expr>(truePart) //: statement<templates>
-//{
-//
-//}
-
-B;
-
-class A<T>
+if<expr>(truePart) //: statement<templates>
 {
-   T field;
 
-//   constructor new(T t)
-//   {
-//      this field := t;  
-//   }
 }
 
 singleton Tester
 {
    run()
    {
-      A<B> a := nil;
-
-//      var a := A<B>.new(new B());
-//      var a := new A<B>();
+      print("Hello From ELENA 6.0"$10);
 
 //      Output.write("Hello From ELENA 6.0"$10);
 

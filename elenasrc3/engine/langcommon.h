@@ -88,6 +88,7 @@ namespace elena_lang
    constexpr auto wrnUnknownHint             = 404;
    constexpr auto wrnInvalidHint             = 406;
    constexpr auto wrnUnknownMessage          = 407;
+   constexpr auto wrnUnknownFunction         = 408;
    constexpr auto wrnUnknownDefConstructor   = 409;
    constexpr auto wrnUnknownModule           = 413;
    constexpr auto wrnDuplicateInclude        = 425;

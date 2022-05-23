@@ -2884,7 +2884,11 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          // treat it as a weak reference
          targetRef = 0;
 
-         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(SyntaxKey::Message));
+         SyntaxNode messageNode = node.findChild(SyntaxKey::Message);
+         if (messageNode == SyntaxKey::None) {
+            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownFunction, node);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, messageNode);
       }
    }
 

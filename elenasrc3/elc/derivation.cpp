@@ -191,7 +191,7 @@ void SyntaxTreeBuilder :: flushNested(Scope& scope, SyntaxNode node)
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::NestedExpression) {
-         flushClass(scope, current);
+         flushClass(scope, current, false);
       }
       else flushAttribute(scope, current, attributeCategory, true);
 
@@ -538,12 +538,15 @@ void SyntaxTreeBuilder :: flushSubScope(Scope& scope, SyntaxNode node, SyntaxNod
    }
 }
 
-void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node, bool functionMode)
 {
    _writer.newNode(node.key);
 
-   flushDescriptor(scope, node);
-   flushClassMemberPostfixes(scope, node);
+   if (!functionMode) {
+      flushDescriptor(scope, node);
+      flushClassMemberPostfixes(scope, node);
+   }
+   else _writer.appendNode(SyntaxKey::Attribute, V_FUNCTION);
 
    SyntaxNode member = node.firstChild(SyntaxKey::MemberMask);
    switch (member.key) {
@@ -579,17 +582,24 @@ void SyntaxTreeBuilder :: flushClassMember(Scope& scope, SyntaxNode node)
    _writer.closeNode();
 }
 
-void SyntaxTreeBuilder :: flushClass(Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushClass(Scope& scope, SyntaxNode node, bool functionMode)
 {
    flushClassPostfixes(scope, node);
 
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      if (current.key == SyntaxKey::Declaration) {
-         flushClassMember(scope, current);
-      }
+   if (functionMode) {
+      _writer.appendNode(SyntaxKey::Attribute, V_SINGLETON);
 
-      current = current.nextNode();
+      flushClassMember(scope, node, true);
+   }
+   else {
+      SyntaxNode current = node.firstChild();
+      while (current != SyntaxKey::None) {
+         if (current.key == SyntaxKey::Declaration) {
+            flushClassMember(scope, current);
+         }
+
+         current = current.nextNode();
+      }
    }
 }
 
@@ -706,7 +716,7 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxNode node)
    else {
       _writer.CurrentNode().setKey(SyntaxKey::Class);
 
-      flushClass(scope, node);
+      flushClass(scope, node, node.existChild(SyntaxKey::CodeBlock));
    }
 
    _writer.closeNode();   
