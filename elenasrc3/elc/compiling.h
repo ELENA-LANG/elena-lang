@@ -20,6 +20,25 @@ namespace elena_lang
    // --- CompilingProcess ---
    class CompilingProcess
    {
+      // --- TemplateGenerator ---
+      class TemplateGenerator : public TemplateProssesorBase
+      {
+         CompilingProcess* _process;
+         TemplateProssesor _processor;
+
+         ref_t generateTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility, 
+            ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared);
+
+      public:
+         ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
+            List<SyntaxNode>& parameters, bool declarationMode) override;
+
+         bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+            SyntaxNode target, List<SyntaxNode>& parameters) override;
+
+         TemplateGenerator(CompilingProcess* process);
+      };
+
       PresenterBase*      _presenter;
       ErrorProcessor*     _errorProcessor;
       LibraryProvider     _libraryProvider;
@@ -30,6 +49,10 @@ namespace elena_lang
       JITSettings         _defaultCoreSettings;
 
       JITCompilerBase*(*_jitCompilerFactory)(LibraryLoaderBase*, PlatformType);
+
+      TemplateGenerator   _templateGenerator;
+
+      void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree);
 
       void compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target);
       void generateModule(ModuleScopeBase& moduleScope, BuildTree& tree);

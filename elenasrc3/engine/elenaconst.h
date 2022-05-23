@@ -94,7 +94,7 @@ namespace elena_lang
    constexpr auto IF_MESSAGE              = "if";
 
    // --- constant string lengths ---
-   constexpr auto TEMPLATE_PREFIX_NS_LEN = (sizeof(TEMPLATE_PREFIX_NS) - 1);
+   constexpr auto TEMPLATE_PREFIX_NS_LEN = 7;
 
    // --- ELENA VMT flags ---
    constexpr ref_t elStandartVMT          = 0x00000001;

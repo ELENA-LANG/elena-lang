@@ -70,6 +70,28 @@ ref_t ModuleScope :: mapAnonymous(ustr_t prefix)
    return module->mapReference(*name);
 }
 
+ref_t ModuleScope :: mapTemplateIdentifier(ustr_t ns, ustr_t templateName, Visibility visibility, bool& alreadyDeclared)
+{
+   IdentifierString forwardName(TEMPLATE_PREFIX_NS, templateName);
+
+   if (forwardResolver->resolveForward(templateName).empty()) {
+      ReferenceName fullName(module->name());
+      if (!ns.empty())
+         fullName.combine(ns);
+
+      fullName.combine(templateName);
+
+      forwardResolver->addForward(templateName, *fullName);
+
+      mapNewIdentifier(ns, templateName, visibility);
+
+      alreadyDeclared = false;
+   }
+   else alreadyDeclared = true;
+
+   return module->mapReference(*forwardName);
+}
+
 ref_t ModuleScope :: mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility)
 {
    if (!ns.empty()) {
@@ -164,7 +186,7 @@ ref_t ModuleScope :: resolveImportedIdentifier(ustr_t identifier, IdentifierList
 ustr_t ModuleScope :: resolveWeakTemplateReference(ustr_t referenceName)
 {
    ustr_t resolvedName = forwardResolver->resolveForward(referenceName);
-   if (referenceName.empty()) {
+   if (resolvedName.empty()) {
       // COMPILER MAGIC : try to find a template implementation
       auto resolved = getWeakModule(referenceName, true);
       if (resolved.module != nullptr) {
@@ -479,6 +501,15 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bo
          return true;
       }
       else duplicateInclusion = true;
+   }
+   return false;
+}
+
+bool ModuleScope :: isDeclared(ref_t reference)
+{
+   ref_t resolvedReference = mapFullReference(module->resolveReference(reference), true);
+   if (resolvedReference) {
+      return module->mapSection(resolvedReference | mskMetaClassInfoRef, true) != nullptr;
    }
    return false;
 }

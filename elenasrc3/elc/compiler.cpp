@@ -812,9 +812,7 @@ void Compiler :: importTemplate(Scope& scope, SyntaxNode node, ustr_t prefix, Sy
    if (!templateRef)
       scope.raiseError(errUnknownTemplate, node);
 
-   if(_templateProcessor->importInlineTemplate(*ns->moduleScope, templateRef | mskSyntaxTreeRef, target,
-      parameters))
-   {
+   if(_templateProcessor->importInlineTemplate(*scope.moduleScope, templateRef, target, parameters)) {
 
    }
    else scope.raiseError(errInvalidSyntax, node);
@@ -1719,8 +1717,11 @@ void Compiler :: declareMembers(NamespaceScope& ns, SyntaxNode node)
             break;
          }
          case SyntaxKey::Template:
-            declareTemplate(ns, current);
+         {
+            TemplateScope templateScope(&ns, 0, ns.defaultVisibility);
+            declareTemplateClass(templateScope, current);
             break;
+         }
          case SyntaxKey::TemplateCode:
          {
             TemplateScope templateScope(&ns, 0, ns.defaultVisibility);
@@ -2268,11 +2269,11 @@ void Compiler :: saveTemplate(TemplateScope& scope, SyntaxNode& node)
    SyntaxTree::saveNode(node, target);
 }
 
-void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
+void Compiler :: declareTemplate(TemplateScope& scope, SyntaxNode& node)
 {
-   declareTemplateAttributes(scope, node);
    switch (scope.type) {
       case TemplateType::Inline:
+      case TemplateType::Class:
          break;
       default:
          scope.raiseError(errInvalidSyntax, node);
@@ -2284,9 +2285,18 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
    node.setKey(SyntaxKey::Idle);
 }
 
-void Compiler :: declareTemplate(NamespaceScope& scope, SyntaxNode& node)
+void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
 {
-   node.setKey(SyntaxKey::Idle);
+   declareTemplateAttributes(scope, node);
+
+   declareTemplate(scope, node);
+}
+
+void Compiler :: declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
+{
+   scope.type = TemplateType::Class;
+
+   declareTemplate(scope, node);
 }
 
 void Compiler :: declareDictionaryAttributes(Scope& scope, SyntaxNode node, ref_t& dictionaryType)
@@ -2355,16 +2365,78 @@ ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxK
    }
 }
 
+ref_t Compiler :: mapTemplateType(Scope& scope, SyntaxNode node)
+{
+   int paramCounter = 0;
+   SyntaxNode current = node.nextNode();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::TemplateArg:
+            paramCounter++;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   IdentifierString templateName;
+   templateName.appendInt(paramCounter);
+   templateName.append('#');
+   templateName.append(node.identifier());
+
+   // NOTE : check it in declararion mode - we need only reference
+   return resolveTypeIdentifier(scope, *templateName, node.key, true/*, false*/);
+}
+
+void Compiler :: declareTemplateAttributes(Scope& scope, SyntaxNode node, 
+   List<SyntaxNode>& parameters, bool declarationMode)
+{
+   SyntaxNode current = node.nextNode();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::TemplateArg && !current.arg.reference) {
+         ref_t typeRef = resolveTypeAttribute(scope, current, declarationMode);
+
+         current.setArgumentReference(typeRef);
+      }
+
+      parameters.add(current);
+
+      current = current.nextNode();
+   }
+}
+
+ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode)
+{
+   List<SyntaxNode> parameters({});
+   declareTemplateAttributes(scope, node, parameters, declarationMode);
+
+   ref_t templateRef = mapTemplateType(scope, node);
+   if (!templateRef)
+      scope.raiseError(errInvalidHint, node);
+
+   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+   return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
+      templateRef, parameters, declarationMode);
+}
+
 ref_t Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode)
 {
    ref_t typeRef = 0;
    if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
-      typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode/*, allowRole*/);
+      if (node.nextNode() == SyntaxKey::TemplateArg) {
+         typeRef = resolveTypeTemplate(scope, node, declarationMode);
+      }
+      else typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode/*, allowRole*/);
    }
    else {
       SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
 
-      typeRef = resolveTypeIdentifier(scope,
+      if (terminal.nextNode() == SyntaxKey::TemplateArg) {
+         typeRef = resolveTypeTemplate(scope, terminal, declarationMode);
+      }
+      else typeRef = resolveTypeIdentifier(scope,
          terminal.identifier(), terminal.key, declarationMode/*, allowRole*/);
    }
 
@@ -2464,8 +2536,10 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRe
 {
    ExprScope* exprScope = Scope::getScope<ExprScope>(scope, Scope::ScopeLevel::Expr);
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
-   if (codeScope == nullptr)
+   if (codeScope == nullptr) {
       scope.raiseError(errInvalidOperation, terminal);
+      return; // the code will never be reached
+   }
 
    IdentifierString identifier(terminal.identifier());
 
@@ -3010,6 +3084,8 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
    SyntaxNode lnode = node.firstChild();
    SyntaxNode rnode = lnode.nextNode();
+   if (rnode.existChild(SyntaxKey::CodeBlock))
+      rnode = rnode.findChild(SyntaxKey::CodeBlock);
 
    ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter);
    ObjectInfo roperand = { ObjectKind::Closure, V_CLOSURE, 0 };
@@ -3176,6 +3252,9 @@ ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
 
    ref_t declaredRef = 0;
    declareExpressionAttributes(scope, node, declaredRef, mode);
+   if (terminalNode.nextNode() == SyntaxKey::TemplateArg && !EAttrs::test(mode.attrs, ExpressionAttribute::NewOp)) {
+      scope.raiseError(errInvalidSyntax, node);
+   }
 
    ObjectInfo retVal = mapTerminal(scope, terminalNode, declaredRef, mode.attrs);
 

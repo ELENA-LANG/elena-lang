@@ -22,7 +22,8 @@ namespace elena_lang
       enum class ScopeType
       {
          Unknown = 0,
-         InlineTemplate
+         InlineTemplate,
+         ClassTemplate
       };
 
       struct Scope
@@ -30,6 +31,12 @@ namespace elena_lang
          ScopeType    type;
          bool         ignoreTerminalInfo;
          ReferenceMap parameters;
+         int          nestedLevel;
+
+         bool withTypeParameters() const
+         {
+            return type == ScopeType::ClassTemplate;
+         }
 
          bool isParameter(SyntaxNode node, ref_t& parameterKey)
          {
@@ -53,6 +60,7 @@ namespace elena_lang
          {
             type = ScopeType::Unknown;
             ignoreTerminalInfo = false;
+            nestedLevel = 0;
          }
       };
 
@@ -67,6 +75,8 @@ namespace elena_lang
 
       ref_t mapAttribute(SyntaxNode node, bool allowType, ref_t& previusCategory);
 
+      void generateTemplateStatement();
+
       void flushNode(Scope& scope, SyntaxNode node);
       void flushCollection(Scope& scope, SyntaxNode node);
 
@@ -75,6 +85,7 @@ namespace elena_lang
       void flushTemplateArgDescr(Scope& scope, SyntaxNode node);
       void flushTemplateArg(Scope& scope, SyntaxNode node, bool allowType);
       void flushTemplageExpression(Scope& scope, SyntaxNode node, SyntaxKey type, bool allowType);
+      void flushTemplateType(Scope& scope, SyntaxNode node);
       void flushMessage(Scope& scope, SyntaxNode node);
       void flushObject(Scope& scope, SyntaxNode node);
       void flushNested(Scope& scope, SyntaxNode node);
@@ -135,51 +146,53 @@ namespace elena_lang
    };
 
    // ---- TemplateProssesor ---
-   class TemplateProssesor : public TemplateProssesorBase
+   class TemplateProssesor
    {
       enum class Type
       {
          None = 0,
-         Inline
+         Inline,
+         Class
       };
 
       typedef Map<ref_t, SyntaxNode> NodeMap;
 
       struct TemplateScope
       {
-         Type    type;
-         NodeMap parameterValues;
+         Type             type;
+         NodeMap          parameterValues;
+         ModuleScopeBase* moduleScope;
+         ref_t            targetRef;
 
          TemplateScope()
-            : parameterValues({})
+            : type(Type::None), parameterValues({}), moduleScope(nullptr), targetRef(0)
          {
-            type = Type::None;
          }
-         TemplateScope(Type type)
-            : parameterValues({})
+         TemplateScope(Type type, ModuleScopeBase* scope, ref_t targetRef)
+            : type(type), parameterValues({}), moduleScope(scope), targetRef(targetRef)
          {
-            this->type = type;
          }
       };
 
+      void loadParameters(TemplateScope& scope, List<SyntaxNode>& parameters);
+
       void copyNode(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyChildren(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyMethod(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
 
       void generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection);
 
-      bool importTemplate(Type type, ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
+      void generateTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateBody);
+
+      void importTemplate(Type type, MemoryBase* templateSection, SyntaxNode target,
          List<SyntaxNode>& parameters);
 
    public:
-      static TemplateProssesorBase* getInstance()
-      {
-         static TemplateProssesor instance;
+      void importInlineTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
 
-         return &instance;
-      }
-
-      bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
-         List<SyntaxNode>& parameters) override;
+      void generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, SyntaxTree* syntaxTree, 
+         MemoryBase* sectionBody, List<SyntaxNode>& parameters);
 
       TemplateProssesor() = default;
    };

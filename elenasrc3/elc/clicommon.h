@@ -267,7 +267,8 @@ public:
 enum class TemplateType
 {
    None = 0,
-   Inline
+   Inline,
+   Class
 };
 
 enum class Visibility
@@ -350,12 +351,17 @@ public:
 
    virtual bool isStandardOne() = 0;
 
+   virtual bool isDeclared(ref_t reference) = 0;
+
    virtual ref_t mapAnonymous(ustr_t prefix = nullptr) = 0;
 
    virtual ref_t mapFullReference(ustr_t referenceName, bool existing = false) = 0;
    virtual ref_t mapWeakReference(ustr_t referenceName, bool existing = false) = 0;
 
    virtual ref_t mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
+
+   virtual ref_t mapTemplateIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility, 
+      bool& alreadyDeclared) = 0;
 
    virtual ref_t resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
    virtual ref_t resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs) = 0;
@@ -488,6 +494,9 @@ public:
 class TemplateProssesorBase
 {
 public:
+   virtual ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
+      List<SyntaxNode>& parameters, bool declarationMode) = 0;
+
    virtual bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& parameters) = 0;
 };

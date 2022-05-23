@@ -637,12 +637,18 @@ namespace elena_lang
 
       ref_t mapNested(ExprScope& ownerScope, ExpressionAttribute mode);
 
+      ref_t mapTemplateType(Scope& scope, SyntaxNode node);
+
       mssg_t defineMultimethod(ClassScope& scope, mssg_t messageRef);
+
+      void declareTemplateAttributes(Scope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
+         bool declarationMode);
 
       ref_t resolveObjectReference(Scope& scope, ObjectInfo info, bool noPrimitiveAllowed = true);
       ref_t resolvePrimitiveReference(Scope& scope, ObjectInfo info);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
          bool declarationMode);
+      ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode);
 
       int resolveSize(Scope& scope, SyntaxNode node);
       ref_t resolveTypeAttribute(Scope& scope, SyntaxNode node, 
@@ -677,7 +683,9 @@ namespace elena_lang
 
       void saveTemplate(TemplateScope& scope, SyntaxNode& node);
 
-      void declareTemplate(NamespaceScope& scope, SyntaxNode& node);
+      void declareTemplate(TemplateScope& scope, SyntaxNode& node);
+
+      void declareTemplateClass(TemplateScope& scope, SyntaxNode& node);
       void declareTemplateCode(TemplateScope& scope, SyntaxNode& node);
 
       InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreFields, bool ignoreSealed*/);

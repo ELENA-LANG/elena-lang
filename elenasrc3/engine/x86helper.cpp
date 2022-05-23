@@ -15,7 +15,7 @@ int X86LabelHelper :: fixNearJccLabel(pos_t jumpPos, MemoryWriter& writer)
 {
    int offset = writer.position() - jumpPos - 6;
 
-   writer.Memory()->write(jumpPos, &offset, 4);
+   writer.Memory()->write(jumpPos + 2, &offset, 4);
 
    return offset;
 }
@@ -24,7 +24,7 @@ int X86LabelHelper::fixNearJmpLabel(pos_t jumpPos, MemoryWriter& writer)
 {
    int offset = writer.position() - jumpPos - 5;
 
-   writer.Memory()->write(jumpPos, &offset, 4);
+   writer.Memory()->write(jumpPos + 1, &offset, 4);
 
    return offset;
 }
@@ -164,12 +164,12 @@ bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
       pos_t jumpPos = (*it).position;
 
       // get jump byte
-      int opcode = 0;
+      char opcode = 0;
       writer.Memory()->read(jumpPos, &opcode, sizeof(opcode));
-      if (isShortJump((char)opcode)) {
+      if (isShortJump(opcode)) {
          (*it).offset = fixShortLabel(jumpPos, writer);
       }
-      else if (isNearJmp((char)opcode)) {
+      else if (isNearJmp(opcode)) {
          (*it).offset = fixNearJmpLabel(jumpPos, writer);
       }
       else (*it).offset = fixNearJccLabel(jumpPos, writer);

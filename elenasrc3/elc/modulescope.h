@@ -36,6 +36,7 @@ public:
    ref_t mapAnonymous(ustr_t prefix) override;
 
    ref_t mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) override;
+   ref_t mapTemplateIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility, bool& alreadyDeclared) override;
 
    ref_t mapFullReference(ustr_t referenceName, bool existing) override;
    ref_t mapWeakReference(ustr_t referenceName, bool existing) override;
@@ -79,6 +80,8 @@ public:
 
    void newNamespace(ustr_t name) override;
    bool includeNamespace(IdentifierList& importedNs, ustr_t name, bool& duplicateInclusion) override;
+
+   bool isDeclared(ref_t reference) override;
 
    ModuleScope(LibraryLoaderBase* loader, 
       ForwardResolverBase* forwardResolver, 

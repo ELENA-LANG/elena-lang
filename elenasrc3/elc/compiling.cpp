@@ -80,12 +80,97 @@ public:
    }
 };
 
+// --- CompilingProcess::TemplateGenerator ---
+
+CompilingProcess::TemplateGenerator :: TemplateGenerator(CompilingProcess* process)
+   : _process(process)
+{
+}
+
+bool CompilingProcess::TemplateGenerator :: importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+   SyntaxNode target, List<SyntaxNode>& parameters)
+{
+   auto templateSection = moduleScope.mapSection(templateRef | mskSyntaxTreeRef, true);
+   if (!templateSection)
+      return false;
+
+   _processor.importInlineTemplate(templateSection, target, parameters);
+
+   return true;
+}
+
+ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility,
+   ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared)
+{
+   ModuleBase* module = moduleScope.module;
+
+   ustr_t templateName = module->resolveReference(templateRef);
+   IdentifierString name;
+   if (isWeakReference(templateName)) {
+      name.copy(module->name());
+      name.append(templateName);
+   }
+   else name.copy(templateName);
+
+   for(auto it = parameters.start(); !it.eof(); ++it) {
+      name.append("&");
+
+      ref_t typeRef = (*it).arg.reference;
+      ustr_t param = module->resolveReference(typeRef);
+      if (isWeakReference(param)) {
+         name.append(module->name());
+         name.append(param);
+      }
+      else name.append(param);
+   }
+   name.replaceAll('\'', '@', 0);
+
+   return moduleScope.mapTemplateIdentifier(ns, *name, visibility, alreadyDeclared);
+}
+
+ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns,
+   ref_t templateRef, List<SyntaxNode>& parameters, bool declarationMode)
+{
+   ref_t generatedReference = 0;
+
+   if (declarationMode) {
+      bool dummy = false;
+      generatedReference = generateTemplateName(moduleScope, ns, Visibility::Public, templateRef, 
+         parameters, dummy);
+   }
+   else {
+      auto sectionInfo = moduleScope.getSection(
+         moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
+
+      SyntaxTree syntaxTree;
+
+      //_compiler->compile()
+
+      bool alreadyDeclared = false;
+      generatedReference = generateTemplateName(moduleScope, ns, Visibility::Public, templateRef,
+         parameters, alreadyDeclared);
+
+      if (alreadyDeclared && moduleScope.isDeclared(generatedReference))
+         return generatedReference;
+
+      _processor.generateClassTemplate(&moduleScope, generatedReference, &syntaxTree, 
+         sectionInfo.section, parameters);
+
+      _process->buildSyntaxTree(moduleScope, &syntaxTree);
+
+   }
+
+   return generatedReference;
+}
+
 // --- CompilingProcess ---
 
 CompilingProcess :: CompilingProcess(PathString& appPath, PresenterBase* presenter, ErrorProcessor* errorProcessor,
    pos_t codeAlignment,
    JITSettings defaultCoreSettings,
-   JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType))
+   JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType)
+) :
+   _templateGenerator(this)
 {
    _presenter = presenter;
    _errorProcessor = errorProcessor;
@@ -107,7 +192,7 @@ CompilingProcess :: CompilingProcess(PathString& appPath, PresenterBase* present
       _parser = new Parser(&syntax, terminals, _presenter);
       _compiler = new Compiler(
          _errorProcessor,
-         TemplateProssesor::getInstance(),
+         &_templateGenerator,
          CompilerLogic::getInstance());
    }
    else {
@@ -176,6 +261,16 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    _libraryProvider.saveDebugModule(moduleScope.debugModule);
 }
 
+void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree)
+{
+   // generating build tree
+   BuildTree buildTree;
+   compileModule(moduleScope, *syntaxTree, buildTree);
+
+   // generating byte code
+   generateModule(moduleScope, buildTree);
+}
+
 void CompilingProcess :: buildModule(ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
    pos_t stackAlingment,
@@ -192,17 +287,11 @@ void CompilingProcess :: buildModule(ModuleIteratorBase& module_it, SyntaxTree* 
 
    _compiler->prepare(&moduleScope, forwardResolver);
 
+   _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
    SyntaxTreeBuilder builder(syntaxTree, _errorProcessor, &moduleScope);
    parseModule(module_it, builder, moduleScope);
 
-   _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
-
-   // generating build tree
-   BuildTree buildTree;
-   compileModule(moduleScope, *syntaxTree, buildTree);
-
-   // generating byte code
-   generateModule(moduleScope, buildTree);
+   buildSyntaxTree(moduleScope, syntaxTree);
 }
 
 void CompilingProcess :: configurate(ProjectBase& project)

@@ -397,7 +397,7 @@ void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScop
 
    switch (node.arg.value) {
       case IF_OPERATOR_ID:
-         tape.write(ByteCode::CmpR, node.findChild(BuildKey::Const).arg.reference);
+         tape.write(ByteCode::CmpR, node.findChild(BuildKey::Const).arg.reference | mskVMTRef);
          tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
          break;
       default:

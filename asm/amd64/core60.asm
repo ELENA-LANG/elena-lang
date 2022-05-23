@@ -452,7 +452,8 @@ end
 // ; cmpr r
 inline %0C0h
 
-  cmp  rbx, __ptr64_1
+  mov  rax, __ptr64_1
+  cmp  rbx, rax
 
 end 
 

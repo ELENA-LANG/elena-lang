@@ -606,6 +606,8 @@ void CommandTape :: saveTo(MemoryWriter* writer)
 
             break;
          case ByteCode::Jump:
+         case ByteCode::Jeq:
+         case ByteCode::Jne:
             writer->writeByte((char)command.code);
 
             // if forward jump, it should be resolved later

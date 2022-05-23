@@ -360,11 +360,6 @@ namespace elena_lang
    // --- X86LabelHelper ---
    struct X86LabelHelper : LabelHelper
    {
-      static bool isShortJmp(unsigned char opcode)
-      {
-         return opcode == 0xEB;
-      }
-
       static bool isNearJmp(unsigned char opcode)
       {
          return opcode == 0xE9;
@@ -375,7 +370,7 @@ namespace elena_lang
          // if it is jump of address load
          if (opcode == 0xE8 || opcode == 0xB9)
             return false;
-         else if ((opcode >= 0x80 && opcode < 0x90) || opcode == 0xE9) {
+         else if ((opcode == 0x0F) || opcode == 0xE9) {
             return false;
          }
          else return true;
