@@ -219,7 +219,7 @@ RI_R ::=
 	| I_L3_R NEXT_L3_R
 	| L5_R
 	| IL6a_R
-	| L7_R
+	| IL7_R
 	| NESTED_EXPRESSION ^NESTED N_R
         | eps ^OBJECT; 
 
@@ -228,11 +228,11 @@ I_R ::=
 	| NESTED_EXPRESSION ^NESTED N_R
         | I_L0_R
 	| I_L1_R
-	| I_L2_R
+	| I_L2_R L7_OPT
 	| I_L3_R NEXT_L3_R
 	| L5_R
 	| IL6a_R
-	| L7_R
+	| IL7_R
         | eps ^OBJECT; 
 
 TEMPLATE_R ::=
@@ -245,7 +245,7 @@ VAR_R ::=
 
 E_R ::=
 	L5_R
-	| L7_R
+	| IL7_R
 	| eps ^OBJECT;
 
 I5_R ::=
@@ -289,8 +289,15 @@ IL6a_OPT ::=
 	">" ^ TEMPLATE_TYPE TEMPLATE_R
 	| eps ^ LESS_OPERATION;
 
-L7_R ::=
+L7_OPT ::=
+	L7_R
+	| eps;
+
+IL7_R ::=
 	"?" ^OBJECT L7_EXPRESSION ^IF_OPERATION;
+
+L7_R ::=
+	"?" L7_EXPRESSION ^IF_OPERATION;
 
 NEXT_L3_R ::=
 	"." MESSAGE MESSAGE_R NEXT_L3_R

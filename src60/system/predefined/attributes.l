@@ -29,6 +29,7 @@
 #let attributesSymbols["function"]    := 8000100Ch;
 #let attributesSymbols["var"]         := 8000100Dh;
 #let attributesSymbols["static"]      := 8000100Fh;
+#let attributesSymbols["cast"]        := 80001011h;
 #let attributesSymbols["new"]         := 80001012h;
 #let attributesSymbols["dispatch"]    := 80001013h;
 #let attributesSymbols["extern"]      := 80001015h;

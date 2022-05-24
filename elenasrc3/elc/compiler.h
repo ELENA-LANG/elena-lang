@@ -41,6 +41,7 @@ namespace elena_lang
       TempLocalAddress,
       External,
       Creating,
+      Casting,
       ReadOnlyFieldAddress,
       FieldAddress,
       ReadOnlyField,

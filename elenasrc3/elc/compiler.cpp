@@ -3108,6 +3108,7 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
    switch (source.kind) {
       case ObjectKind::External:
       case ObjectKind::Creating:
+      case ObjectKind::Casting:
          scope.raiseError(errInvalidOperation, node);
          break;
       default:
@@ -3146,6 +3147,13 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          compileMessageArguments(writer, scope, current, arguments);
 
          retVal = compileNewOp(writer, scope, node, mapClassSymbol(scope, source.type), arguments);
+         break;
+      case ObjectKind::Casting:
+         compileMessageArguments(writer, scope, current, arguments);
+         if (arguments.count() == 1) {
+            retVal = convertObject(writer, scope, current, arguments[0], source.type);
+         }
+         else scope.raiseError(errInvalidOperation, node);
          break;
       default:
       {
@@ -3341,6 +3349,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, ref_t declared
    bool variableMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::NewVariable);
    bool externalOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::Extern);
    bool newOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::NewOp);
+   bool castOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::CastOp);
 
    ObjectInfo retVal;
    bool invalid = false;
@@ -3353,11 +3362,12 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, ref_t declared
             return { ObjectKind::External, 0, externalInfo.reference, 0 };
       }
    }
-   else if (newOp) {
+   else if (newOp || castOp) {
       switch (node.key) {
          case SyntaxKey::identifier:
          case SyntaxKey::reference:
-            retVal = { ObjectKind::Creating, resolveTypeAttribute(scope, node, false), 0, 0 };
+            retVal = { newOp ? ObjectKind::Creating : ObjectKind::Casting,
+               resolveTypeAttribute(scope, node, false), 0, 0 };
             break;
          default:
             invalid = true;
@@ -3478,7 +3488,11 @@ ObjectInfo Compiler :: typecastObject(BuildTreeWriter& writer, ExprScope& scope,
    ArgumentsInfo arguments;
    arguments.add(source);
 
-   return compileMessageOperation(writer, scope, node, source, typecastMssg, arguments, EAttr::None);
+   ObjectInfo retVal = compileMessageOperation(writer, scope, node, source, typecastMssg, arguments, EAttr::None);
+   // NOTE : typecasting message is guaranteed to return the instance of the target type
+   retVal.type = targetRef;
+
+   return retVal;
 }
 
 ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source,

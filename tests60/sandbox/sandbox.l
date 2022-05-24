@@ -4,14 +4,12 @@ singleton Tester
 {
    run()
    {
-      bool a := true;
+      var a := true;
 
       if(a) 
       {
          Output.write("Hello From ELENA 6.0"$10);
       };
-
-//      a ? { Output.write("Hello From ELENA 6.0"$10); }
    }
 }
 

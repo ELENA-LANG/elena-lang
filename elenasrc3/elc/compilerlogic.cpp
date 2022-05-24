@@ -343,6 +343,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_NEWOP:
          attrs |= ExpressionAttribute::NewOp;
          return true;
+      case V_CONVERSION:
+         attrs |= ExpressionAttribute::CastOp;
+         return true;
       default:
          return false;
    }

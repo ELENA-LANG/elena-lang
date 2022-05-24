@@ -426,6 +426,7 @@ enum class ExpressionAttribute : pos64_t
    StrongResolved    = 0x00000000400,
    RootSymbol        = 0x00000000800,
    Root              = 0x00000001000,
+   CastOp            = 0x00000002000,
    Extern            = 0x00000080000,
    NoDebugInfo       = 0x40000000000,
 };

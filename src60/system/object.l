@@ -6,7 +6,7 @@
 
 public if<expr>(truePart) : __included<statementTemplates>
 {
-   expr ? truePart
+   cast bool(expr) ? truePart
 }
 
 #reload statementTemplates;
