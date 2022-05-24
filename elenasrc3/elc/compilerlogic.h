@@ -70,6 +70,9 @@ namespace elena_lang
       void writeAttrDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference);
       bool readAttrDictionary(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
+      void writeDeclDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference);
+      bool readDeclDictionary(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
+
       bool isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils);
 
       bool isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage);

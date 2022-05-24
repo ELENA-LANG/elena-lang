@@ -167,6 +167,7 @@ namespace elena_lang
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;
    constexpr auto V_INTBINARY             = 0x80000803u;
+   constexpr auto V_DECLOBJ               = 0x80000804u;
    constexpr auto V_SYMBOL                = 0x80000808u;
 
    /// primitive types
@@ -180,9 +181,12 @@ namespace elena_lang
    constexpr auto V_BINARYARRAY           = 0x8000000Bu;
    constexpr auto V_OBJATTRIBUTES         = 0x80000012u;
    constexpr auto V_CLOSURE               = 0x80000013u;
+   constexpr auto V_DECLARATION           = 0x80000014u;
+   constexpr auto V_DECLATTRIBUTES        = 0x80000015u;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;
+   constexpr auto V_DECL_VAR              = 0x80000082u;
 
    // === Operators ===
    constexpr auto OPERATOR_MAKS           = 0x1840;
@@ -193,6 +197,8 @@ namespace elena_lang
    constexpr auto SUB_OPERATOR_ID         = 0x0005;
    constexpr auto LEN_OPERATOR_ID         = 0x0006;
    constexpr auto IF_OPERATOR_ID          = 0x0007;
+   constexpr auto LESS_OPERATOR_ID        = 0x0008;
+   constexpr auto NAME_OPERATOR_ID        = 0x0009;
    constexpr auto SET_INDEXER_OPERATOR_ID = 0x0201;
 
 }

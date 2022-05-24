@@ -32,6 +32,7 @@ __define SUB_OPERATION       6213;
 __define LEN_OPERATION       6214;
 __define IF_OPERATION        6215;
 __define LESS_OPERATION      6216;
+__define NAME_OPERATION      6217;
 __define MESSAGE_OPERATION   6225;
 __define PROPERTY_OPERATION  6228;
 __define EXPRESSION          6288;
@@ -40,6 +41,7 @@ __define SUB_EXPRESSION      6290;
 __define L7_EXPRESSION       6291;
 __define ROOT_EXPRESSION     6292;
 __define L6_EXPRESSION       6293;
+__define T_EXPRESSION        6294;
 __define POSTFIX             4192;
 __define TEMPLATE_POSTFIX    4193;
 __define TEMPLATE_ARG        4208;
@@ -125,6 +127,7 @@ STATEMENTS ::=
 	ROOT_EXPRESSION NEXT_STATEMENT
 	| "^" RET_EXPRESSION NEXT_LAST_STATEMENT
 	| "#include" INCLUDE_STATEMENT STATEMENTS
+        | "#let" META_STATEMENT STATEMENTS
 	| eps;
 
 NEXT_STATEMENT ::=
@@ -159,6 +162,7 @@ ROOT_EXPRESSION ::=
         | hexinteger E_R
         | string E_R
 	| "$len" SUB_EXPRESSION ^LEN_OPERATION
+	| "$name" SUB_EXPRESSION ^NAME_OPERATION
 	| BLOCK ^CLOSURE;
 
 EXPRESSION ::=
@@ -168,6 +172,7 @@ EXPRESSION ::=
         | hexinteger E_R
         | string E_R
 	| "$len" SUB_EXPRESSION ^LEN_OPERATION
+	| "$name" SUB_EXPRESSION ^NAME_OPERATION
 	| BLOCK ^CLOSURE;
 
 RET_EXPRESSION ::=
@@ -180,11 +185,11 @@ MESSAGE_PARAMETER ::=
 	EXPRESSION;
 
 SUB_EXPRESSION ::=
-        identifier I_R
-	| reference I_R
-        | integer E_R
-        | hexinteger E_R
-        | string E_R;
+        identifier ^OBJECT
+	| reference ^OBJECT
+        | integer ^OBJECT
+        | hexinteger ^OBJECT
+        | string ^OBJECT;
 
 L5_EXPRESSION ::=
         identifier I5_R
@@ -201,6 +206,9 @@ L7_EXPRESSION ::=
 
 NESTED_EXPRESSION ::=
 	"{" SUB_DECLARATIONS "}";
+
+T_EXPRESSION ::=
+	 BLOCK ^ CLOSURE;
 
 RI_R ::=
         identifier I_R
@@ -263,7 +271,7 @@ RI_L2_R ::=
 	"(" ^OBJECT MESSAGE_PARAMETERS ")" RI_L2_OPT;
 
 RI_L2_OPT ::=
-	BLOCK ^ TEMPLATE_EXPRESSION
+	T_EXPRESSION ^ TEMPLATE_EXPRESSION
 	| eps ^ MESSAGE_OPERATION;
 
 I_L3_R ::=

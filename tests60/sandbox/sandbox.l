@@ -1,29 +1,17 @@
 import system;
 
-//inline statement<routine>()
-//{
-//   #let routine[@name] := @reference
-//}
-
-if<expr>(truePart) //: statement<templates>
-{
-
-}
-
 singleton Tester
 {
    run()
    {
-      print("Hello From ELENA 6.0"$10);
-
 //      Output.write("Hello From ELENA 6.0"$10);
 
-//      bool a := false;
+      bool a := false;
 
-//      if(a) 
-//      {
-//         Output.write("Hello From ELENA 6.0"$10);
-//      };
+      if(a) 
+      {
+         Output.write("Hello From ELENA 6.0"$10);
+      };
 
 //      a ? { Output.write("Hello From ELENA 6.0"$10); }
    }

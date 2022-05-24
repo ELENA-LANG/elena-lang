@@ -22,8 +22,10 @@ namespace elena_lang
 
       MetaDictionary,
       MetaArray,
+      MetaConstant,
       StringLiteral,
       IntLiteral,
+      Template,
       Nil,
       Symbol,
       Class,
@@ -43,7 +45,7 @@ namespace elena_lang
       FieldAddress,
       ReadOnlyField,
       Field,
-      Closure
+      Closure,
    };
 
    struct ObjectInfo
@@ -159,16 +161,21 @@ namespace elena_lang
       ModuleScopeBase* _scope;
       CompilerLogic*   _logic;
 
+      ObjectInfo mapStringConstant(ustr_t s);
+
+      void setDeclDictionaryValue(ref_t dictionaryRef, ustr_t key, ref_t reference);
       void setAttrDictionaryValue(ref_t dictionaryRef, ustr_t key, ref_t reference);
       void setDictionaryValue(ref_t dictionaryRef, ustr_t key, int value);
       void addArrayItem(ref_t dictionaryRef, ref_t symbolRef);
 
+      bool evalDeclDictionaryOp(ref_t operator_id, ArgumentsInfo& args);
       bool evalAttrDictionaryOp(ref_t operator_id, ArgumentsInfo& args);
       bool evalStrDictionaryOp(ref_t operator_id, ArgumentsInfo& args);
       bool evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args);
+      bool evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
    public:
-      bool eval(BuildKey key, ref_t operator_id, ArgumentsInfo& args);
+      bool eval(BuildKey key, ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
       Interpreter(ModuleScopeBase* scope, CompilerLogic* logic);
    };
@@ -195,6 +202,7 @@ namespace elena_lang
          enum class ScopeLevel
          {
             Namespace,
+            Template,
             Symbol,
             Class,
             OwnerClass,
@@ -325,6 +333,14 @@ namespace elena_lang
       struct TemplateScope : SourceScope
       {
          TemplateType type;
+
+         Scope* getScope(ScopeLevel level) override
+         {
+            if (level == ScopeLevel::Template) {
+               return this;
+            }
+            else return Scope::getScope(level);
+         }
 
          TemplateScope(Scope* parent, ref_t reference, Visibility visibility);
       };
@@ -556,9 +572,11 @@ namespace elena_lang
 
       struct MetaScope : Scope
       {
+         ObjectInfo mapDecl();
+
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
 
-         MetaScope(NamespaceScope* parent);
+         MetaScope(Scope* parent);
       };
 
       struct ExprScope : Scope
@@ -715,6 +733,7 @@ namespace elena_lang
       void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode);
       void declareClosureMessage(MethodScope& scope, SyntaxNode node);
 
+      void declareMetaInfo(Scope& scope, SyntaxNode node);
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
       void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode);
       void declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor);

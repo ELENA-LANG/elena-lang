@@ -268,7 +268,8 @@ enum class TemplateType
 {
    None = 0,
    Inline,
-   Class
+   Class,
+   Statement
 };
 
 enum class Visibility
@@ -339,10 +340,12 @@ public:
    ReferenceMap         predefined;
    ReferenceMap         attributes;
    ReferenceMap         aliases;
+   ReferenceMap         operations;
    BuiltinReferences    buildins;
    BranchingInfo        branchingInfo;
 
    IdentifierString     selfVar;
+   IdentifierString     declVar;
 
    pos_t                stackAlingment, rawStackAlingment;
    int                  minimalArgList;
@@ -389,8 +392,13 @@ public:
       ModuleBase* debugModule,
       pos_t stackAlingment, 
       pos_t rawStackAlingment,
-      int minimalArgList)
-      : predefined(0), attributes(0), aliases(0), cachedSizes({})
+      int minimalArgList
+   ) :
+      predefined(0),
+      attributes(0),
+      aliases(0),
+      operations(0),
+      cachedSizes({})
    {
       this->module = module;
       this->debugModule = debugModule;
@@ -499,6 +507,8 @@ public:
 
    virtual bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& parameters) = 0;
+   virtual bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
+      List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
 };
 
 // --- SyntaxWriterBase ---

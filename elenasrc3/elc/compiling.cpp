@@ -90,11 +90,27 @@ CompilingProcess::TemplateGenerator :: TemplateGenerator(CompilingProcess* proce
 bool CompilingProcess::TemplateGenerator :: importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
    SyntaxNode target, List<SyntaxNode>& parameters)
 {
-   auto templateSection = moduleScope.mapSection(templateRef | mskSyntaxTreeRef, true);
-   if (!templateSection)
+   auto sectionInfo = moduleScope.getSection(
+      moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
+
+   if (!sectionInfo.section)
       return false;
 
-   _processor.importInlineTemplate(templateSection, target, parameters);
+   _processor.importInlineTemplate(sectionInfo.section, target, parameters);
+
+   return true;
+}
+
+bool CompilingProcess::TemplateGenerator :: importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+   SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
+{
+   auto sectionInfo = moduleScope.getSection(
+      moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
+
+   if (!sectionInfo.section)
+      return false;
+
+   _processor.importCodeTemplate(sectionInfo.section, target, arguments, parameters);
 
    return true;
 }
@@ -143,8 +159,6 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
          moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
 
       SyntaxTree syntaxTree;
-
-      //_compiler->compile()
 
       bool alreadyDeclared = false;
       generatedReference = generateTemplateName(moduleScope, ns, Visibility::Public, templateRef,
@@ -288,7 +302,8 @@ void CompilingProcess :: buildModule(ModuleIteratorBase& module_it, SyntaxTree* 
    _compiler->prepare(&moduleScope, forwardResolver);
 
    _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
-   SyntaxTreeBuilder builder(syntaxTree, _errorProcessor, &moduleScope);
+   SyntaxTreeBuilder builder(syntaxTree, _errorProcessor, 
+      &moduleScope, &_templateGenerator);
    parseModule(module_it, builder, moduleScope);
 
    buildSyntaxTree(moduleScope, syntaxTree);

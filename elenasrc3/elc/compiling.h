@@ -36,6 +36,9 @@ namespace elena_lang
          bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
             SyntaxNode target, List<SyntaxNode>& parameters) override;
 
+         bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
+            List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
+
          TemplateGenerator(CompilingProcess* process);
       };
 

@@ -63,6 +63,7 @@ namespace elena_lang
 
    constexpr auto PREDEFINED_FORWARD      = "$forwards'meta$predefined";
    constexpr auto ATTRIBUTES_FORWARD      = "$forwards'meta$attributes";
+   constexpr auto OPERATION_FORWARD       = "$forwards'meta$statementTemplates";
    constexpr auto ALIASES_FORWARD         = "$forwards'meta$aliasTypes";
    constexpr auto SYSTEM_ENTRY            = "$forwards'$system_entry";   // the system entry
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
@@ -214,6 +215,7 @@ namespace elena_lang
    constexpr ref_t mskConstArray          = 0x11000000u;
    constexpr ref_t mskMessageBodyRef      = 0x12000000u;
    constexpr ref_t mskMetaSymbolInfoRef   = 0x13000000u;
+   constexpr ref_t mskDeclAttributesRef   = 0x14000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

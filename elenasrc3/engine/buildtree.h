@@ -66,7 +66,10 @@ namespace elena_lang
       ObjArrayOp        = 0x003A,
       ObjOp             = 0x003B,
       AttrDictionaryOp  = 0x003C,
-      NestedClass       = 0x003D,
+      DeclOp            = 0x003D,
+      DeclDictionaryOp  = 0x003E,
+
+      NestedClass       = 0x0080,
 
       Value             = 0x8001,
       Reserved          = 0x8002,      // reserved managed

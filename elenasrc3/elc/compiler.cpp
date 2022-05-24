@@ -52,6 +52,11 @@ Interpreter :: Interpreter(ModuleScopeBase* scope, CompilerLogic* logic)
    _logic = logic;
 }
 
+ObjectInfo Interpreter :: mapStringConstant(ustr_t s)
+{
+   return ObjectInfo(ObjectKind::StringLiteral, V_STRING, _scope->module->mapConstant(s));
+}
+
 void Interpreter :: addArrayItem(ref_t dictionaryRef, ref_t symbolRef)
 {
    MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskMetaArrayRef, true);
@@ -68,6 +73,15 @@ void Interpreter :: setAttrDictionaryValue(ref_t dictionaryRef, ustr_t key, ref_
       throw InternalError(errFatalError);
 
    _logic->writeAttrDictionaryEntry(dictionary, key, reference);
+}
+
+void Interpreter :: setDeclDictionaryValue(ref_t dictionaryRef, ustr_t key, ref_t reference)
+{
+   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskDeclAttributesRef, true);
+   if (!dictionary)
+      throw InternalError(errFatalError);
+
+   _logic->writeDeclDictionaryEntry(dictionary, key, reference);
 }
 
 void Interpreter :: setDictionaryValue(ref_t dictionaryRef, ustr_t key, int value)
@@ -95,6 +109,29 @@ bool Interpreter :: evalAttrDictionaryOp(ref_t operator_id, ArgumentsInfo& args)
 
       if (operator_id == SET_INDEXER_OPERATOR_ID) {
          setAttrDictionaryValue(loperand.reference, key, reference);
+
+         return true;
+      }
+   }
+
+   return false;
+}
+
+bool Interpreter :: evalDeclDictionaryOp(ref_t operator_id, ArgumentsInfo& args)
+{
+   ObjectInfo loperand = args[0];
+   ObjectInfo roperand = args[1];
+
+   if (args.count() == 3 && loperand.kind == ObjectKind::MetaDictionary
+      && (roperand.kind == ObjectKind::Template))
+   {
+      ObjectInfo ioperand = args[2];
+
+      ustr_t key = _scope->module->resolveConstant(ioperand.reference);
+      ref_t reference = roperand.reference;
+
+      if (operator_id == SET_INDEXER_OPERATOR_ID) {
+         setDeclDictionaryValue(loperand.reference, key, reference);
 
          return true;
       }
@@ -141,7 +178,21 @@ bool Interpreter :: evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args)
    return false;
 }
 
-bool Interpreter :: eval(BuildKey key, ref_t operator_id, ArgumentsInfo& arguments)
+bool Interpreter :: evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
+{
+   ObjectInfo loperand = args[0];
+   if (operator_id == NAME_OPERATOR_ID && loperand.kind == ObjectKind::Template) {
+      ReferenceProperName name(_scope->resolveFullName(loperand.reference));
+
+      retVal = mapStringConstant(*name);
+
+      return true;
+   }
+
+   return false;
+}
+
+bool Interpreter :: eval(BuildKey key, ref_t operator_id, ArgumentsInfo& arguments, ObjectInfo& retVal)
 {
    switch (key) {
       case BuildKey::StrDictionaryOp:
@@ -150,6 +201,10 @@ bool Interpreter :: eval(BuildKey key, ref_t operator_id, ArgumentsInfo& argumen
          return evalObjArrayOp(operator_id, arguments);
       case BuildKey::AttrDictionaryOp:
          return evalAttrDictionaryOp(operator_id, arguments);
+      case BuildKey::DeclDictionaryOp:
+         return evalDeclDictionaryOp(operator_id, arguments);
+      case BuildKey::DeclOp:
+         return evalDeclOp(operator_id, arguments, retVal);
       default:
          return false;
    }
@@ -203,6 +258,13 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, Express
          else if (module->mapSection(reference | mskMetaAttributesRef, true)) {
             info.kind = ObjectKind::MetaDictionary;
             info.type = V_OBJATTRIBUTES;
+            info.reference = reference;
+
+            return info;
+         }
+         else if (module->mapSection(reference | mskDeclAttributesRef, true)) {
+            info.kind = ObjectKind::MetaDictionary;
+            info.type = V_DECLATTRIBUTES;
             info.reference = reference;
 
             return info;
@@ -352,24 +414,39 @@ ObjectInfo Compiler::NamespaceScope :: mapWeakReference(ustr_t identifier, bool 
 
 // --- Compiler::MetaScope ---
 
-Compiler::MetaScope :: MetaScope(NamespaceScope* parent)
+Compiler::MetaScope :: MetaScope(Scope* parent)
    : Scope(parent)
 {
+   
+}
+
+ObjectInfo Compiler::MetaScope :: mapDecl()
+{
+   TemplateScope* tempScope = Scope::getScope<TemplateScope>(*this, ScopeLevel::Template);
+   if (tempScope != nullptr) {
+      return { ObjectKind::Template, V_DECLARATION, tempScope->reference };
+   }
+   else return {};
 }
 
 ObjectInfo Compiler::MetaScope :: mapIdentifier(ustr_t identifier, bool referenceOne, EAttr attr)
 {
    if (!referenceOne) {
-      IdentifierString metaIdentifier(META_PREFIX, identifier);
-
-      NamespaceScope* ns = Scope::getScope<NamespaceScope>(*this, ScopeLevel::Namespace);
-
-      // check if it is a meta dictionary
-      ObjectInfo retVal = parent->mapIdentifier(*metaIdentifier, referenceOne, attr | EAttr::Meta);
-      if (retVal.kind == ObjectKind::Unknown) {
-         return Scope::mapIdentifier(identifier, referenceOne, attr);
+      if (moduleScope->declVar.compare(identifier)) {
+         return mapDecl();
       }
-      else return retVal;
+      else {
+         IdentifierString metaIdentifier(META_PREFIX, identifier);
+
+         NamespaceScope* ns = Scope::getScope<NamespaceScope>(*this, ScopeLevel::Namespace);
+
+         // check if it is a meta dictionary
+         ObjectInfo retVal = parent->mapIdentifier(*metaIdentifier, referenceOne, attr | EAttr::Meta);
+         if (retVal.kind == ObjectKind::Unknown) {
+            return Scope::mapIdentifier(identifier, referenceOne, attr);
+         }
+         else return retVal;
+      }
    }
    else return Scope::mapIdentifier(identifier, referenceOne, attr);
 }
@@ -681,6 +758,8 @@ inline ref_t resolveDictionaryMask(ref_t typeRef)
          return mskMetaDictionaryRef;
       case V_OBJATTRIBUTES:
          return mskMetaAttributesRef;
+      case V_DECLATTRIBUTES:
+         return mskDeclAttributesRef;
       default:
          return 0;
    }
@@ -1380,6 +1459,30 @@ void Compiler :: importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNod
    }
 }
 
+void Compiler :: declareMetaInfo(Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   SyntaxNode noBodyNode = {};
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::InlineTemplate:
+            importTemplate(scope, current, INLINE_PREFIX, node);
+            break;
+         case SyntaxKey::MetaExpression:
+         {
+            MetaScope metaScope(&scope);
+
+            evalStatement(metaScope, current);
+            break;
+         }
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
 {
    bool withoutBody = false;
@@ -1407,6 +1510,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
          case SyntaxKey::Type:
          case SyntaxKey::ArrayType:
          case SyntaxKey::TemplateType:
+         case SyntaxKey::EOP:
             break;
          case SyntaxKey::WithoutBody:
             withoutBody = true;
@@ -1833,14 +1937,12 @@ void Compiler :: declareNamespace(NamespaceScope& ns, SyntaxNode node, bool igno
    }
 }
 
-
-
 ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id)
 {
    ObjectInfo loperand = {};
    ObjectInfo roperand = {};
    ObjectInfo ioperand = {};
-   ref_t argCount = 2;
+   ref_t argCount = 1;
 
    SyntaxNode lnode = node.firstChild(SyntaxKey::DeclarationMask);
    SyntaxNode rnode = lnode.nextNode(SyntaxKey::DeclarationMask);
@@ -1861,7 +1963,10 @@ ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, Syn
    }
    else {
       loperand = evalExpression(interpreter, scope, lnode);
-      roperand = evalExpression(interpreter, scope, rnode);
+      if (rnode != SyntaxKey::None) {
+         argCount = 2;
+         roperand = evalExpression(interpreter, scope, rnode);
+      }
    }
 
    ArgumentsInfo arguments;
@@ -1869,8 +1974,10 @@ ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, Syn
    argumentRefs[0] = resolveObjectReference(scope, loperand, false);
    arguments.add(loperand);
 
-   argumentRefs[1] = resolveObjectReference(scope, roperand, false);
-   arguments.add(roperand);
+   if (argCount >= 2) {
+      argumentRefs[1] = resolveObjectReference(scope, roperand, false);
+      arguments.add(roperand);
+   }
 
    if (argCount == 3) {
       argumentRefs[2] = resolveObjectReference(scope, ioperand, false);
@@ -1881,11 +1988,12 @@ ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, Syn
    bool needToAlloc = false;
    BuildKey opKey = _logic->resolveOp(*scope.moduleScope, operator_id, argumentRefs, argCount, outputRef, needToAlloc);
 
-   if (needToAlloc || !interpreter.eval(opKey, operator_id, arguments)) {
+   ObjectInfo retVal = loperand;
+   if (needToAlloc || !interpreter.eval(opKey, operator_id, arguments, retVal)) {
       scope.raiseError(errCannotEval, node);
    }
 
-   return loperand;
+   return retVal;
 }
 
 ObjectInfo Compiler :: evalObject(Interpreter& interpreter, Scope& scope, SyntaxNode node)
@@ -1906,9 +2014,9 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
       case SyntaxKey::Expression:
          return evalExpression(interpreter, scope, node.firstChild(SyntaxKey::DeclarationMask));
       case SyntaxKey::AssignOperation:
-         return evalOperation(interpreter, scope, node, SET_OPERATOR_ID);
       case SyntaxKey::AddAssignOperation:
-         return evalOperation(interpreter, scope, node, ADD_ASSIGN_OPERATOR_ID);
+      case SyntaxKey::NameOperation:
+         return evalOperation(interpreter, scope, node, (int)node.key - OPERATOR_MAKS);
       case SyntaxKey::Object:
          return evalObject(interpreter, scope, node);
       default:
@@ -2248,11 +2356,19 @@ void Compiler :: saveTemplate(TemplateScope& scope, SyntaxNode& node)
    IdentifierString prefix;
 
    int argCount = SyntaxTree::countChild(node, SyntaxKey::TemplateArg);
+   int paramCount = SyntaxTree::countChild(node, SyntaxKey::Parameter);
    prefix.appendInt(argCount);
    prefix.append('#');
+
    switch (scope.type) {
       case TemplateType::Inline:
          prefix.append(INLINE_PREFIX);
+         if (paramCount > 0)
+            scope.raiseError(errInvalidSyntax, node);
+         break;
+      case TemplateType::Statement:
+         prefix.appendInt(argCount);
+         prefix.append('#');
          break;
       default:
          break;
@@ -2274,6 +2390,7 @@ void Compiler :: declareTemplate(TemplateScope& scope, SyntaxNode& node)
    switch (scope.type) {
       case TemplateType::Inline:
       case TemplateType::Class:
+      case TemplateType::Statement:
          break;
       default:
          scope.raiseError(errInvalidSyntax, node);
@@ -2288,7 +2405,34 @@ void Compiler :: declareTemplate(TemplateScope& scope, SyntaxNode& node)
 void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
 {
    declareTemplateAttributes(scope, node);
+   if (scope.type == TemplateType::None)
+      scope.type = TemplateType::Statement;
 
+   IdentifierString prefix;
+
+   int argCount = SyntaxTree::countChild(node, SyntaxKey::TemplateArg);
+   int paramCount = SyntaxTree::countChild(node, SyntaxKey::Parameter);
+   prefix.appendInt(argCount);
+   prefix.append('#');
+
+   switch (scope.type) {
+      case TemplateType::Inline:
+         prefix.append(INLINE_PREFIX);
+         if (paramCount > 0)
+            scope.raiseError(errInvalidSyntax, node);
+         break;
+      case TemplateType::Statement:
+         prefix.appendInt(argCount);
+         prefix.append('#');
+         break;
+      default:
+         break;
+   }
+
+   SyntaxNode name = node.findChild(SyntaxKey::Name);
+   scope.reference = mapNewTerminal(scope, name, *prefix, scope.visibility);
+
+   declareMetaInfo(scope, node);
    declareTemplate(scope, node);
 }
 
@@ -3437,6 +3581,8 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::AddOperation:
       case SyntaxKey::SubOperation:
       case SyntaxKey::LenOperation:
+      case SyntaxKey::LessOperation:
+      case SyntaxKey::NameOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::IfOperation:
@@ -3456,6 +3602,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::ClosureBlock:
          retVal = compileClosure(writer, scope, current, mode);
+         break;
+      case SyntaxKey::None:
+         assert(false);
          break;
       default:
          retVal = compileObject(writer, scope, node, mode);
@@ -4088,6 +4237,14 @@ bool Compiler :: reloadMetaDictionary(ModuleScopeBase* moduleScope, ustr_t name)
          _logic->readDictionary(attributeInfo.section, moduleScope->attributes);
       }
    }
+   else if (name.compare(OPERATION_FORWARD)) {
+      moduleScope->operations.clear();
+
+      auto operationInfo = moduleScope->getSection(OPERATION_FORWARD, mskDeclAttributesRef, true);
+      if (operationInfo.section) {
+         _logic->readDeclDictionary(operationInfo.module, operationInfo.section, moduleScope->operations, moduleScope);
+      }
+   }
    else if (name.compare(ALIASES_FORWARD)) {
       moduleScope->aliases.clear();
 
@@ -4105,6 +4262,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
 {
    reloadMetaDictionary(moduleScope, PREDEFINED_FORWARD);
    reloadMetaDictionary(moduleScope, ATTRIBUTES_FORWARD);
+   reloadMetaDictionary(moduleScope, OPERATION_FORWARD);
    reloadMetaDictionary(moduleScope, ALIASES_FORWARD);
 
    // cache the frequently used references
@@ -4129,7 +4287,13 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
          2, 0);
 
    // cache self variable
-   moduleScope->selfVar.copy(moduleScope->predefined.retrieve<ref_t>("$self", V_SELF_VAR, [](ref_t reference, ustr_t key, ref_t current)
+   moduleScope->selfVar.copy(moduleScope->predefined.retrieve<ref_t>("@self", V_SELF_VAR, 
+      [](ref_t reference, ustr_t key, ref_t current)
+      {
+         return current == reference;
+      }));
+   moduleScope->declVar.copy(moduleScope->predefined.retrieve<ref_t>("@decl", V_DECL_VAR, 
+      [](ref_t reference, ustr_t key, ref_t current)
       {
          return current == reference;
       }));

@@ -56,10 +56,11 @@ struct Op
 constexpr int DictionaryOperators[1]  = { SET_INDEXER_OPERATOR_ID };
 constexpr int ArrayOperators[1]       = { ADD_ASSIGN_OPERATOR_ID };
 constexpr int SArrayOperators[1]      = { LEN_OPERATOR_ID };
-constexpr int IntOperators[2]       = { ADD_OPERATOR_ID, SUB_OPERATOR_ID };
+constexpr int IntOperators[2]         = { ADD_OPERATOR_ID, SUB_OPERATOR_ID };
 constexpr int BranchingOperators[1]   = { IF_OPERATOR_ID };
+constexpr int SDeclOperators[1]       = { NAME_OPERATOR_ID };
 
-constexpr auto OperationLength = 7;
+constexpr auto OperationLength = 9;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -69,6 +70,10 @@ constexpr Op Operations[OperationLength] =
    {
       DictionaryOperators, 1,
       BuildKey::AttrDictionaryOp, V_OBJATTRIBUTES, V_OBJECT, V_STRING, V_OBJECT, false
+   },
+   {
+      DictionaryOperators, 1,
+      BuildKey::DeclDictionaryOp, V_DECLATTRIBUTES, V_DECLARATION, V_STRING, V_OBJECT, false
    },
    {
       ArrayOperators, 1,
@@ -86,6 +91,10 @@ constexpr Op Operations[OperationLength] =
    {
       BranchingOperators, 1,
       BuildKey::BranchOp, V_FLAG, V_CLOSURE, 0, 0, false
+   },
+   {
+      SDeclOperators, 1,
+      BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING, false
    }
 };
 
@@ -308,6 +317,9 @@ bool CompilerLogic :: validateDictionaryAttribute(ref_t attribute, ref_t& dictio
       case V_SYMBOL:
          dictionaryType = V_OBJATTRIBUTES;
          return true;
+      case V_DECLOBJ:
+         dictionaryType = V_DECLATTRIBUTES;
+         return true;
       default:
          return false;
    }
@@ -427,6 +439,37 @@ bool CompilerLogic :: readAttrDictionary(ModuleBase* extModule, MemoryBase* sect
       int type = reader.getDWord();
 
       if (type == 2) {
+         ref_t reference = reader.getRef();
+         if (scope->module != extModule) {
+            reference = scope->importReference(extModule, reference);
+         }
+
+         map.add(*key, reference);
+      }
+      else return false;
+   }
+
+   return true;
+}
+
+void CompilerLogic :: writeDeclDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference)
+{
+   MemoryWriter writer(section);
+   writer.writeString(key);
+   writer.writeDWord(3);
+   writer.writeRef(reference);
+}
+
+bool CompilerLogic :: readDeclDictionary(ModuleBase* extModule, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope)
+{
+   IdentifierString key;
+
+   MemoryReader reader(section);
+   while (!reader.eof()) {
+      reader.readString(key);
+      int type = reader.getDWord();
+
+      if (type == 3) {
          ref_t reference = reader.getRef();
          if (scope->module != extModule) {
             reference = scope->importReference(extModule, reference);
