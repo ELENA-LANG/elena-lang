@@ -3226,14 +3226,29 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    else return compileOperation(writer, scope, loperand, roperand, operatorId);
 }
 
+inline SyntaxNode skipNestedExpression(SyntaxNode node)
+{
+   if (node == SyntaxKey::Expression) {
+      SyntaxNode current = node.firstChild();
+      while (current == SyntaxKey::Expression) {
+         node = current;
+         current = current.firstChild();
+      }
+
+      return node;
+   }
+   return node;
+}
+
 ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
 {
    ObjectInfo retVal = {};
 
    SyntaxNode lnode = node.firstChild();
-   SyntaxNode rnode = lnode.nextNode();
-   if (rnode.existChild(SyntaxKey::CodeBlock))
-      rnode = rnode.findChild(SyntaxKey::CodeBlock);
+   SyntaxNode rnode = skipNestedExpression(lnode.nextNode());
+
+   if (rnode.existChild(SyntaxKey::ClosureBlock))
+      rnode = rnode.findChild(SyntaxKey::ClosureBlock);
 
    ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter);
    ObjectInfo roperand = { ObjectKind::Closure, V_CLOSURE, 0 };
@@ -3257,7 +3272,7 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
       scope.syncStack();
 
       CodeScope codeScope(Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code));
-      compileCode(writer, codeScope, rnode, false);
+      compileCode(writer, codeScope, rnode.firstChild(), false);
 
       writer.closeNode();
       writer.closeNode();

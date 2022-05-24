@@ -6,7 +6,7 @@
 
 public if<expr>(truePart) : __included<statementTemplates>
 {
-   expr.if(truePart)
+   expr ? truePart
 }
 
 #reload statementTemplates;

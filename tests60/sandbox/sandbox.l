@@ -4,9 +4,7 @@ singleton Tester
 {
    run()
    {
-//      Output.write("Hello From ELENA 6.0"$10);
-
-      bool a := false;
+      bool a := true;
 
       if(a) 
       {
