@@ -465,21 +465,21 @@ inline %0C8h
 end 
 
 // ; cmpsi
-inline %0A9h
+inline %0C9h
 
   cmp rbx, qword ptr [rsp + __arg32_1]
 
 end 
 
 // ; cmpsi 0
-inline %1A9h
+inline %1C9h
 
   cmp rbx, r10
 
 end 
 
 // ; cmpsi 1
-inline %2A9h
+inline %2C9h
 
   cmp rbx, r11
 

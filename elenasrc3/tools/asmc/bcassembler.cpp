@@ -26,12 +26,22 @@ void ByteCodeAssembler :: read(ScriptToken& tokenInfo)
       throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
 }
 
-ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo)
+ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
 {
-   _reader.read(tokenInfo);
+   if (!skipRead)
+      _reader.read(tokenInfo);
+
+   ref_t mask = 0;
+   if (tokenInfo.compare("rdata")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      _reader.read(tokenInfo);
+
+      mask = mskRDataRef;
+   }
 
    if (tokenInfo.state == dfaQuote) {
-      return _module->mapReference(*tokenInfo.token);
+      return _module->mapReference(*tokenInfo.token) | mask;
    }
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
@@ -239,6 +249,23 @@ bool ByteCodeAssembler :: compileOpFrameI(ScriptToken& tokenInfo, MemoryWriter& 
    return true;
 }
 
+bool ByteCodeAssembler :: compileOpStackI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
+   ReferenceMap& locals, bool skipRead)
+{
+   if (skipRead) {
+      if (!tokenInfo.compare(":"))
+         throw SyntaxError(ASM_DOUBLECOLON_EXPECTED, tokenInfo.lineInfo);
+   }
+   else read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+   command.arg1 = readFrameI(tokenInfo, locals, false);
+
+   ByteCodeUtil::write(writer, command);
+
+   read(tokenInfo);
+   return true;
+}
+
 bool ByteCodeAssembler :: compileOpIN(ScriptToken& tokenInfo, MemoryWriter& writer,
    ByteCommand& command, bool skipRead)
 {
@@ -371,6 +398,21 @@ bool ByteCodeAssembler :: compileMR(ScriptToken& tokenInfo, MemoryWriter& writer
    return true;
 }
 
+bool ByteCodeAssembler :: compileRR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead)
+{
+   mssg_t arg = readReference(tokenInfo, skipRead);
+
+   read(tokenInfo, ",", ASM_COMMA_EXPECTED);
+
+   ref_t arg2 = readReference(tokenInfo);
+
+   ByteCodeUtil::write(writer, command.code, arg, arg2);
+
+   read(tokenInfo);
+
+   return true;
+}
+
 bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& writer,
    ReferenceMap& locals, ReferenceMap& dataLocals)
 {
@@ -405,7 +447,10 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::MovSIFI:
             return compileOpII(tokenInfo, writer, opCommand, true);
          case ByteCode::StoreFI:
+         case ByteCode::CmpFI:
             return compileOpFrameI(tokenInfo, writer, opCommand, locals, true);
+         case ByteCode::CmpSI:
+            return compileOpStackI(tokenInfo, writer, opCommand, locals, true);
          case ByteCode::SaveDP:
          case ByteCode::SetDP:
             return compileDDisp(tokenInfo, writer, opCommand, dataLocals, true);
@@ -414,6 +459,8 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::JumpMR:
          case ByteCode::VJumpMR:
             return compileMR(tokenInfo, writer, opCommand, true);
+         case ByteCode::SelEqRR:
+            return compileRR(tokenInfo, writer, opCommand, true);
          default:
             return false;
       }

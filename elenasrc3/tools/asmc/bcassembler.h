@@ -60,7 +60,7 @@ namespace elena_lang
             throw SyntaxError(error, tokenInfo.lineInfo);
       }
 
-      ref_t readReference(ScriptToken& tokenInfo);
+      ref_t readReference(ScriptToken& tokenInfo, bool skipRead = false);
       mssg_t readM(ScriptToken& tokenInfo, bool skipRead = false);
       int readN(ScriptToken& tokenInfo, bool skipRead = false);
       int readI(ScriptToken& tokenInfo, bool skipRead = false);
@@ -79,9 +79,12 @@ namespace elena_lang
       bool compileOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileOpFrameI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ReferenceMap& locals, bool skipRead);
+      bool compileOpStackI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
+         ReferenceMap& locals, bool skipRead);
       bool compileOpIN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileOpII(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileMR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
+      bool compileRR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileCloseOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, ReferenceMap& dataLocals);
       bool compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          ReferenceMap& locals, ReferenceMap& dataLocals);

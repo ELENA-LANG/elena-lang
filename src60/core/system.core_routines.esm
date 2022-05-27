@@ -7,6 +7,13 @@ procedure __object_dispatcher
 
 end
 
+procedure __object_equal
+
+  cmp         sp:1
+  seleq       rdata:"system'true", rdata:"system'false"
+
+end
+
 symbol sta_start
 
   open header [arg1],[envptr]

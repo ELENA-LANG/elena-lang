@@ -29,6 +29,7 @@ namespace elena_lang
       ref_t        inlineMask;
       int          alignmentVA;
       int          structMask;
+      int          unframedOffset;
    };
 
    struct JITCompilerScope
@@ -43,6 +44,7 @@ namespace elena_lang
 
       bool                 withDebugInfo;
       ref_t                frameOffset;
+      ref_t                stackOffset;
 
       unsigned char code() const
       {
@@ -90,6 +92,7 @@ namespace elena_lang
       friend void loadOp(JITCompilerScope* scope);
       friend void loadLOp(JITCompilerScope* scope);
       friend void loadIndexOp(JITCompilerScope* scope);
+      friend void loadStackIndexOp(JITCompilerScope* scope);
       friend void loadVMTIndexOp(JITCompilerScope* scope);
       friend void loadFrameIndexOp(JITCompilerScope* scope);
       friend void loadFrameDispOp(JITCompilerScope* scope);
@@ -100,11 +103,11 @@ namespace elena_lang
       friend void loadMOp(JITCompilerScope* scope);
       friend void loadCallOp(JITCompilerScope* scope);
       friend void loadCallROp(JITCompilerScope* scope);
-      friend void loadIndexROp(JITCompilerScope* scope);
+      friend void loadStackIndexROp(JITCompilerScope* scope);
       friend void loadFrameIndexROp(JITCompilerScope* scope);
       friend void loadIndexNOp(JITCompilerScope* scope);
-      friend void loadIndexIndexOp(JITCompilerScope* scope);
-      friend void loadSPSPOp(JITCompilerScope* scope);
+      friend void loadStackIndexFrameIndexOp(JITCompilerScope* scope);
+      friend void loadStackIndexIndexOp(JITCompilerScope* scope);
       friend void loadNewOp(JITCompilerScope* scope);
       friend void loadNewNOp(JITCompilerScope* scope);
       friend void loadMROp(JITCompilerScope* scope);
@@ -171,6 +174,7 @@ namespace elena_lang
          _constants.dataHeader = _constants.dataOffset = 0;
          _constants.inlineMask = 0;
          _constants.alignmentVA = 8;
+         _constants.unframedOffset = 0;
       }
    };
 
@@ -291,6 +295,7 @@ namespace elena_lang
    void loadIndexOp(JITCompilerScope* scope);
    void loadVMTIndexOp(JITCompilerScope* scope);
    void loadFrameIndexOp(JITCompilerScope* scope);
+   void loadStackIndexOp(JITCompilerScope* scope);
    void loadFrameDispOp(JITCompilerScope* scope);
    void loadNOp(JITCompilerScope* scope);
    void loadLenOp(JITCompilerScope* scope);
@@ -299,11 +304,11 @@ namespace elena_lang
    void loadMOp(JITCompilerScope* scope);
    void loadCallOp(JITCompilerScope* scope);
    void loadCallROp(JITCompilerScope* scope);
-   void loadIndexROp(JITCompilerScope* scope);
+   void loadStackIndexROp(JITCompilerScope* scope);
    void loadFrameIndexROp(JITCompilerScope* scope);
    void loadIndexNOp(JITCompilerScope* scope);
-   void loadIndexIndexOp(JITCompilerScope* scope);
-   void loadSPSPOp(JITCompilerScope* scope);
+   void loadStackIndexFrameIndexOp(JITCompilerScope* scope);
+   void loadStackIndexIndexOp(JITCompilerScope* scope);
    void loadNewOp(JITCompilerScope* scope);
    void loadNewNOp(JITCompilerScope* scope);
    void loadMROp(JITCompilerScope* scope);

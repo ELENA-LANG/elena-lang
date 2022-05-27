@@ -48,14 +48,14 @@ CodeGenerator _codeGenerators[256] =
    loadNOp, compileClose, loadIndexOp, loadIndexOp, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadFrameDispOp, loadFrameIndexOp, loadIndexOp, loadIndexOp, loadIndexOp, loadNop, loadNop, loadNop,
-   loadFrameIndexOp, loadIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop,
+   loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadROp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
-   loadFrameIndexOp, loadIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -63,7 +63,7 @@ CodeGenerator _codeGenerators[256] =
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadVMTROp, loadMROp, loadRROp, loadNop,
 
-   compileOpen, loadIndexROp, compileOpen, loadIndexIndexOp, loadNewOp, loadNewNOp, loadSPSPOp, loadNop,
+   compileOpen, loadStackIndexROp, compileOpen, loadStackIndexFrameIndexOp, loadNewOp, loadNewNOp, loadStackIndexIndexOp, loadNop,
    loadNop, loadFrameIndexROp, loadNop, compileDispatchMR, loadVMTROp, loadMROp, loadCallOp, loadNop,
 };
 
@@ -335,6 +335,53 @@ void elena_lang :: loadIndexOp(JITCompilerScope* scope)
             scope->compiler->writeImm12(writer,
                scope->command.arg1 << scope->constants->indexPower,
                0);
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
+      //else writeCoreReference();
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
+void elena_lang::loadStackIndexOp(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   void* code = retrieveCode(scope);
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   arg_t arg1 = scope->stackOffset + scope->command.arg1;
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case ARG32_1:
+            writer->writeDWord(arg1 << scope->constants->indexPower);
+            break;
+         case NARG_1:
+            writer->writeDWord(arg1);
+            break;
+         case ARG16_1:
+            writer->writeWord((unsigned short)arg1 << scope->constants->indexPower);
+            break;
+         case INV_ARG16_1:
+            writer->writeWord((unsigned short)-(arg1 << scope->constants->indexPower));
+            break;
+         case ARG12_1:
+            scope->compiler->writeImm12(writer, arg1 << scope->constants->indexPower, 0);
             break;
          default:
             // to make compiler happy
@@ -873,7 +920,7 @@ void elena_lang :: loadCallROp(JITCompilerScope* scope)
    writer->seekEOF();
 }
 
-void elena_lang::loadIndexROp(JITCompilerScope* scope)
+void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
@@ -888,12 +935,13 @@ void elena_lang::loadIndexROp(JITCompilerScope* scope)
    // resolve section references
    pos_t count = *(pos_t*)((char*)code + length);
    RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   arg_t arg1 = scope->stackOffset + scope->command.arg1;
    while (count > 0) {
       // locate relocation position
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(scope->command.arg1 << scope->constants->indexPower);
+            writer->writeDWord(arg1 << scope->constants->indexPower);
             break;
          case PTR32_2:
             if (scope->command.arg2) {
@@ -1092,7 +1140,7 @@ void elena_lang::loadIndexNOp(JITCompilerScope* scope)
    writer->seekEOF();
 }
 
-void elena_lang::loadIndexIndexOp(JITCompilerScope* scope)
+void elena_lang::loadStackIndexFrameIndexOp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
@@ -1104,6 +1152,9 @@ void elena_lang::loadIndexIndexOp(JITCompilerScope* scope)
    // simply copy correspondent inline code
    writer->write(code, length);
 
+   arg_t arg1 = scope->stackOffset + scope->command.arg1;
+   arg_t arg2 = getFPOffset(scope->command.arg2 << scope->constants->indexPower, scope->frameOffset);
+
    // resolve section references
    pos_t count = *(pos_t*)((char*)code + length);
    RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
@@ -1112,10 +1163,10 @@ void elena_lang::loadIndexIndexOp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(scope->command.arg1 << scope->constants->indexPower);
+            writer->writeDWord(arg1 << scope->constants->indexPower);
             break;
          case ARG32_2:
-            writer->writeDWord(scope->command.arg2 << scope->constants->indexPower);
+            writer->writeDWord(arg2);
             break;
          default:
             writeCoreReference(scope, entries->reference, entries->offset, code);
@@ -1128,7 +1179,7 @@ void elena_lang::loadIndexIndexOp(JITCompilerScope* scope)
    writer->seekEOF();
 }
 
-void elena_lang::loadSPSPOp(JITCompilerScope* scope)
+void elena_lang::loadStackIndexIndexOp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
@@ -1161,6 +1212,11 @@ void elena_lang::loadSPSPOp(JITCompilerScope* scope)
    // simply copy correspondent inline code
    writer->write(code, length);
 
+   // HOTFIX : for some CPU the unframed stack already contains the returning address,
+   // which should be taken into account
+   arg1 += scope->stackOffset;
+   arg2 += scope->stackOffset;
+
    // resolve section references
    pos_t count = *(pos_t*)((char*)code + length);
    RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
@@ -1168,15 +1224,15 @@ void elena_lang::loadSPSPOp(JITCompilerScope* scope)
       // locate relocation position
       writer->seek(position + entries->offset);
       switch (entries->reference) {
-      case ARG32_1:
-         writer->writeDWord(scope->command.arg1 << scope->constants->indexPower);
-         break;
-      case ARG32_2:
-         writer->writeDWord(scope->command.arg2 << scope->constants->indexPower);
-         break;
-      default:
-         writeCoreReference(scope, entries->reference, entries->offset, code);
-         break;
+         case ARG32_1:
+            writer->writeDWord(arg1 << scope->constants->indexPower);
+            break;
+         case ARG32_2:
+            writer->writeDWord(arg2 << scope->constants->indexPower);
+            break;
+         default:
+            writeCoreReference(scope, entries->reference, entries->offset, code);
+            break;
       }
 
       entries++;
@@ -1548,6 +1604,7 @@ void elena_lang::compileClose(JITCompilerScope* scope)
 void elena_lang::compileOpen(JITCompilerScope* scope)
 {
    scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2);
+   scope->stackOffset = 0;
 
    loadIndexNOp(scope);
 }
@@ -1684,6 +1741,7 @@ JITCompilerScope :: JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* c
    this->tapeReader = tapeReader;
    this->constants = constants;
 
+   this->stackOffset = constants->unframedOffset;
    this->frameOffset = 0;
    this->withDebugInfo = compiler->isWithDebugInfo();
 }
