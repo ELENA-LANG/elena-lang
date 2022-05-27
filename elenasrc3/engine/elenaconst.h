@@ -50,6 +50,8 @@ namespace elena_lang
    // --- ELENA special sections ---
    constexpr auto NAMESPACES_SECTION      = "$namespaces";
    constexpr auto IMPORTS_SECTION         = "$import";
+   constexpr auto EXTENSION_SECTION       = "#extensions";
+
    constexpr auto NAMESPACE_REF           = "$namespace";
 
    // --- ELENA standard weak namespace
@@ -114,6 +116,7 @@ namespace elena_lang
    constexpr ref_t elWrapper              = 0x00004000;
    constexpr ref_t elStructureWrapper     = 0x00004800;
    constexpr ref_t elDynamicRole          = 0x00008000;
+   constexpr ref_t elExtension            = 0x0000110C;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -188,6 +191,7 @@ namespace elena_lang
       InternalAlias     = 0xA02,
       OverloadList      = 0x903,
       ConstantMethod    = 0x904,
+      ExtensionRef      = 0x105,  
    };
 
    // === Reference constants ====
@@ -216,6 +220,7 @@ namespace elena_lang
    constexpr ref_t mskMessageBodyRef      = 0x12000000u;
    constexpr ref_t mskMetaSymbolInfoRef   = 0x13000000u;
    constexpr ref_t mskDeclAttributesRef   = 0x14000000u;
+   constexpr ref_t mskMetaExtensionRef    = 0x15000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

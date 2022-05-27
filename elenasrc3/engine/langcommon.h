@@ -13,25 +13,26 @@ namespace elena_lang
 {
    enum class MethodHint : ref_t
    {
-      Mask           = 0x000000F,
+      Mask           = 0x0000000F,
 
-      None           = 0x0000000,
-      Sealed         = 0x0000001,
-      Normal         = 0x0000003,
-      Dispatcher     = 0x0000004,
+      None           = 0x00000000,
+      Sealed         = 0x00000001,
+      Normal         = 0x00000003,
+      Dispatcher     = 0x00000004,
 
-      Function       = 0x0000080,
-      Multimethod    = 0x0001000,
-      Static         = 0x0004000,
-      GetAccessor    = 0x0008000,
-      Abstract       = 0x0020000,
-      Internal       = 0x0040000,
-      Constructor    = 0x0200400,
-      Conversion     = 0x0200800,
-      SetAccessor    = 0x0400000,
-      Constant       = 0x2000000,
-      Protected      = 0x4000000,
-      Private        = 0x8000000,
+      Function       = 0x00000080,
+      Multimethod    = 0x00001000,
+      Static         = 0x00004000,
+      GetAccessor    = 0x00008000,
+      Abstract       = 0x00020000,
+      Internal       = 0x00040000,
+      Constructor    = 0x00200400,
+      Conversion     = 0x00200800,
+      SetAccessor    = 0x00400000,
+      Constant       = 0x02000000,
+      Protected      = 0x04000000,
+      Private        = 0x08000000,
+      Extension      = 0x10000000,
    };
 
    // === ELENA Error codes ===
@@ -62,6 +63,7 @@ namespace elena_lang
    constexpr auto errDispatcherInInterface   = 160;
    constexpr auto errAbstractMethodCode      = 161;
    constexpr auto errNotAbstractClass        = 164;
+   constexpr auto errIllegalPrivate          = 166;
    constexpr auto errDupPublicMethod         = 167;
    constexpr auto errEmptyStructure          = 169;
    constexpr auto errDupInternalMethod       = 173;
@@ -148,6 +150,7 @@ namespace elena_lang
    constexpr auto V_STRUCT                = 0x80001002u;
    constexpr auto V_SYMBOLEXPR            = 0x80001003u;
    constexpr auto V_CONSTRUCTOR           = 0x80001004u;
+   constexpr auto V_EXTENSION             = 0x80001005u;
    constexpr auto V_SINGLETON             = 0x80001006u;
    constexpr auto V_LIMITED               = 0x80001007u;
    constexpr auto V_METHOD                = 0x80001008u;

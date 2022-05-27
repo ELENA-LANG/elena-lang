@@ -429,6 +429,7 @@ enum class ExpressionAttribute : pos64_t
    CastOp            = 0x00000002000,
    Extern            = 0x00000080000,
    NoDebugInfo       = 0x40000000000,
+   NoExtension       = 0x80000000000,
 };
 
 struct ExpressionAttributes

@@ -4,12 +4,22 @@ singleton Tester
 {
    run()
    {
-      var a := true;
+      self.testMe();
 
-      if(a) 
-      {
-         Output.write("Hello From ELENA 6.0"$10);
-      };
+//      var a := true;
+
+//      if(a) 
+//      {
+//         Output.write("Hello From ELENA 6.0"$10);
+//      };
+   }
+}
+
+public extension op
+{
+   testMe()
+   {
+      Output.write("testMe extension");
    }
 }
 

@@ -78,6 +78,12 @@ ELENA byte codes (or ecodes)
    vcall mssg:m, r          - calls via table the method resolved by JIT by r and m
                               acc contains the result 
  
+   jump mssg:m, r           - jumps directly the method resolved by JIT by r and m
+                              acc contains the result 
+
+   vjump mssg:m, r          - jumps via table the method resolved by JIT by r and m
+                              acc contains the result 
+ 
 
  Stack operations:
  -----------------                                           
@@ -170,5 +176,4 @@ ELENA byte codes (or ecodes)
 
  Comparison operations:
  ----------------------
-
    cmpr r                   - COMP.EQ := (acc == r);

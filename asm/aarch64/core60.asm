@@ -763,6 +763,27 @@ inline %4E4h
 
 end
 
+
+// ; vjumpmr
+inline %0ECh
+
+  sub     x14, x10, elVMTOffset              
+  ldr     x17, [x14]
+  add     x17, x17, __arg12_1
+  ldr     x17, [x17]
+  br      x17
+
+end
+
+// ; jumpmr
+inline %0EDh
+
+  movz    x17,  __ptr32lo_2
+  movk    x17,  __ptr32hi_2, lsl #16
+  br      x17
+
+end
+
 // ; openin
 inline %0F0h
 

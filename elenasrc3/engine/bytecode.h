@@ -62,6 +62,8 @@ namespace elena_lang
       ISubDPN        = 0xE2,
       IMulDPN        = 0xE3,
       IDivDPN        = 0xE4,
+      VJumpMR        = 0xEC,
+      JumpMR         = 0xED,
 
       OpenIN         = 0xF0,
       XStoreSIR      = 0xF1,
@@ -197,6 +199,8 @@ namespace elena_lang
             case ByteCode::MovM:
             case ByteCode::CallMR:
             case ByteCode::VCallMR:
+            case ByteCode::JumpMR:
+            case ByteCode::VJumpMR:
             case ByteCode::DispatchMR:
                return true;
             default:
@@ -226,6 +230,8 @@ namespace elena_lang
             case ByteCode::NewNR:
             case ByteCode::CallMR:
             case ByteCode::VCallMR:
+            case ByteCode::JumpMR:
+            case ByteCode::VJumpMR:
             case ByteCode::DispatchMR:
                return true;
             default:

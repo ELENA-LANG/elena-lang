@@ -47,6 +47,7 @@ namespace elena_lang
       ReadOnlyField,
       Field,
       Closure,
+      Extension,
    };
 
    struct ObjectInfo
@@ -283,6 +284,11 @@ namespace elena_lang
          ForwardMap       forwards;
          // imported namespaces
          IdentifierList   importedNs;
+         // extensions
+         ExtensionMap     extensions;
+         ResolvedMap      extensionTargets;
+         ResolvedMap      extensionDispatchers;
+//         ExtensionMap     declaredExtensions;
 
          Visibility       defaultVisibility;
 
@@ -295,6 +301,10 @@ namespace elena_lang
             }
             else return Scope::getScope(level);
          }
+
+         void addExtension(mssg_t message, ref_t extRef, mssg_t strongMessage);
+
+         ref_t resolveExtensionTarget(ref_t reference);
 
          void raiseError(int message, SyntaxNode terminal) override;
          void raiseWarning(int level, int message, SyntaxNode terminal) override;
@@ -310,8 +320,14 @@ namespace elena_lang
          ObjectInfo mapGlobal(ustr_t identifier, ExpressionAttribute mode);
          ObjectInfo mapWeakReference(ustr_t identifier, bool directResolved);
 
-         NamespaceScope(ModuleScopeBase* moduleScope, ErrorProcessor* errorProcessor, CompilerLogic* compilerLogic)
-            : Scope(nullptr), forwards(0), importedNs(nullptr)
+         NamespaceScope(ModuleScopeBase* moduleScope, ErrorProcessor* errorProcessor, CompilerLogic* compilerLogic) :
+            Scope(nullptr),
+            forwards(0),
+            importedNs(nullptr),
+            extensions({}),
+            extensionTargets(INVALID_REF),
+            extensionDispatchers(INVALID_REF)
+            //declaredExtensions({})
          {
             this->moduleScope = moduleScope;
             this->module = moduleScope->module;
@@ -371,6 +387,7 @@ namespace elena_lang
       struct ClassScope : SourceScope
       {
          ClassInfo   info;
+         ref_t       extensionClassRef;
          bool        abstractMode;
          bool        abstractBasedMode;
 
@@ -396,9 +413,20 @@ namespace elena_lang
             info.attributes.add(key, value);
          }
 
+         void addAttribute(ClassAttribute attribute, ref_t value)
+         {
+            ClassAttributeKey key = { 0, attribute };
+            info.attributes.exclude(key);
+            info.attributes.add(key, value);
+         }
+
          mssg_t getMssgAttribute(mssg_t message, ClassAttribute attribute)
          {
             return info.attributes.get({ message, attribute });
+         }
+         ref_t getAttribute(ClassAttribute attribute)
+         {
+            return info.attributes.get({ 0, attribute });
          }
 
          bool isClassClass()
@@ -644,12 +672,15 @@ namespace elena_lang
 
       bool reloadMetaDictionary(ModuleScopeBase* moduleScope, ustr_t name);
 
+      void importExtensions(NamespaceScope& ns, ustr_t importedNs);
+      void loadExtensions(NamespaceScope& ns, bool internalOne);
+
       void saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN);
 
       ref_t mapNewTerminal(Scope& scope, SyntaxNode nameNode, ustr_t prefix, Visibility visibility);
       mssg_t mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef, 
          ref_t flags, ref_t* signature, size_t signatureLen);
-      mssg_t mapMessage(ExprScope& scope, SyntaxNode node, bool propertyMode);
+      mssg_t mapMessage(ExprScope& scope, SyntaxNode node, bool propertyMode, bool extensionMode);
 
       ExternalInfo mapExternal(Scope& scope, SyntaxNode node);
       ObjectInfo mapClassSymbol(Scope& scope, ref_t classRef);
@@ -657,6 +688,9 @@ namespace elena_lang
       ref_t mapNested(ExprScope& ownerScope, ExpressionAttribute mode);
 
       ref_t mapTemplateType(Scope& scope, SyntaxNode node);
+
+      ref_t mapExtension(Scope& scope, mssg_t& resolvedMessage, ref_t implicitSignatureRef, 
+         ObjectInfo object);
 
       mssg_t defineMultimethod(ClassScope& scope, mssg_t messageRef);
 
@@ -675,7 +709,8 @@ namespace elena_lang
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix); 
 
-      mssg_t resolveMessageAtCompileTime(mssg_t weakMessage);
+      mssg_t resolveMessageAtCompileTime(ObjectInfo target, ExprScope& scope, mssg_t weakMessage, 
+         ref_t implicitSignatureRef, bool ignoreExtensions, ref_t& resolvedExtensionRef);
       mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
 
       bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message/*, bool& isProtectedDefConst*/);
@@ -693,7 +728,7 @@ namespace elena_lang
       void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node);
       void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& fldeclaredFlagsags);
       void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode);
-      void declareMethodAttributes(MethodScope& scope, SyntaxNode node);
+      void declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode);
       void declareArgumentAttributes(MethodScope& scope, SyntaxNode node, ref_t& typeRef, bool declarationMode);
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, ref_t& dictionaryType);
       void declareExpressionAttributes(Scope& scope, SyntaxNode node, ref_t& typeRef, ExpressionAttributes& mode);
@@ -729,7 +764,7 @@ namespace elena_lang
       ObjectInfo declareTempStructure(ExprScope& scope, int size);
 
       void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);
-      void resolveClassParent(ClassScope& scope, SyntaxNode node);
+      void resolveClassParent(ClassScope& scope, SyntaxNode node, bool extensionMode);
 
       void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode);
       void declareClosureMessage(MethodScope& scope, SyntaxNode node);
@@ -743,12 +778,18 @@ namespace elena_lang
       void declareClassClass(ClassScope& classClassScope, SyntaxNode node);
       void declareClass(ClassScope& scope, SyntaxNode node);
 
-      void declareNamespace(NamespaceScope& ns, SyntaxNode node, bool ignoreImport = false);
+      void declareNamespace(NamespaceScope& ns, SyntaxNode node, bool ignoreImport = false, 
+         bool ignoreExtensions = false);
       void declareMembers(NamespaceScope& ns, SyntaxNode node);
       void declareMemberIdentifiers(NamespaceScope& ns, SyntaxNode node);
 
       void declareModuleIdentifiers(ModuleScopeBase* moduleScope, SyntaxNode node);
       void declareModule(ModuleScopeBase* moduleScope, SyntaxNode node);
+
+      void addExtensionMessage(Scope& scope, mssg_t message, ref_t extRef, mssg_t strongMessage, 
+         bool internalOne);
+
+      void declareExtension(ClassScope& scope, mssg_t message, bool internalOne);
 
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id);
       ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node);
@@ -759,6 +800,8 @@ namespace elena_lang
       void writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info);
 
       void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey);
+
+      ref_t compileExtensionDispatcher(NamespaceScope& scope, mssg_t genericMessage);
 
       ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, ArgumentsInfo& arguments);
 
@@ -778,10 +821,10 @@ namespace elena_lang
          ArgumentsInfo& arguments);
 
       ObjectInfo compileNewOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
-         ObjectInfo source, ArgumentsInfo& arguments);
+         ObjectInfo source, ref_t signRef, ArgumentsInfo& arguments);
 
-      ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target, mssg_t message, 
-         ArgumentsInfo& arguments, ExpressionAttributes mode);
+      ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target, 
+         mssg_t message, ref_t implicitSignatureRef, ArgumentsInfo& arguments, ExpressionAttributes mode);
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute attrs);
       ObjectInfo compilePropertyOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute attrs);
 

@@ -209,6 +209,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_SEALED:
          flags = elSealed;
          break;
+      case V_EXTENSION:
+         flags = elExtension;
+         break;
       case 0:
          // ignore idle
          break;
@@ -520,6 +523,35 @@ void CompilerLogic :: writeArrayEntry(MemoryBase* section, ref_t reference)
    writer.writeRef(reference);
 }
 
+void CompilerLogic :: writeExtMessageEntry(MemoryBase* section, ref_t extRef, mssg_t message, mssg_t strongMessage)
+{
+   MemoryWriter writer(section);
+   writer.writeRef(extRef);
+   writer.writeRef(message);
+   writer.writeRef(strongMessage);
+}
+
+bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* section, ExtensionMap& map, ModuleScopeBase* scope)
+{
+   IdentifierString key;
+
+   MemoryReader reader(section);
+   while (!reader.eof()) {
+      ref_t extRef = reader.getRef();
+      extRef = scope->importReference(extModule, extRef);
+
+      mssg_t message = reader.getRef();
+      message = scope->importMessage(extModule, message);
+
+      mssg_t strongMessage = reader.getRef();
+      strongMessage = scope->importMessage(extModule, strongMessage);
+
+      map.add(message, { extRef, strongMessage });
+   }
+
+   return true;
+}
+
 bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly, bool fieldsOnly)
 {
    if (isPrimitiveRef(reference) && !headerOnly) {
@@ -679,12 +711,23 @@ bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ref_t target
    return true;
 }
 
-bool CompilerLogic::isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage)
+bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage)
 {
    ref_t sourceSignatures[ARG_COUNT];
    size_t len = scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
 
    return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures, len);
+}
+
+bool CompilerLogic :: isMessageCompatibleWithSignature(ModuleScopeBase& scope, mssg_t targetMessage, 
+   ref_t* sourceSignature, size_t len)
+{
+   ref_t targetSignRef = getSignature(scope, targetMessage);
+
+   if (isSignatureCompatible(scope, targetSignRef, sourceSignature, len)) {
+      return true;
+   }
+   else return false;
 }
 
 ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef)

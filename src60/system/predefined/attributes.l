@@ -22,6 +22,7 @@
 #let attributesSymbols["struct"]      := 80001002h;
 #let attributesSymbols["symbol"]      := 80001003h;
 #let attributesSymbols["constructor"] := 80001004h;
+#let attributesSymbols["extension"]   := 80001005h;
 #let attributesSymbols["singleton"]   := 80001006h;
 #let attributesSymbols["interface"]   := 80001007h;
 #let attributesSymbols["method"]      := 80001008h;

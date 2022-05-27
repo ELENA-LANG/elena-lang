@@ -73,9 +73,14 @@ namespace elena_lang
       void writeDeclDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference);
       bool readDeclDictionary(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
+      void writeExtMessageEntry(MemoryBase* section, ref_t extRef, mssg_t message, mssg_t strongMessage);
+      bool readExtMessageEntry(ModuleBase* module, MemoryBase* section, ExtensionMap& map, ModuleScopeBase* scope);
+
       bool isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils);
 
       bool isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage);
+      bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, mssg_t targetMessage,
+         ref_t* sourceSignature, size_t len);
 
       ConversionRoutine retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef);
 

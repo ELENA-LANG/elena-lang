@@ -411,6 +411,8 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileDDisp(tokenInfo, writer, opCommand, dataLocals, true);
          case ByteCode::CallMR:
          case ByteCode::VCallMR:
+         case ByteCode::JumpMR:
+         case ByteCode::VJumpMR:
             return compileMR(tokenInfo, writer, opCommand, true);
          default:
             return false;

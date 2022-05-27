@@ -619,6 +619,21 @@ inline %4E4h
 
 end
 
+// ; vjumpmr
+inline % 0ECh
+
+  mov  rax, [rbx - elVMTOffset]
+  jmp  [rax + __arg32_1]
+
+end
+
+// ; jumpmr
+inline %0EDh
+
+  jmp __relptr32_2
+
+end
+
 // ; openin
 inline %0F0h
 

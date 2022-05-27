@@ -311,6 +311,8 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::CallMR:
          case ByteCode::VCallMR:
+         case ByteCode::JumpMR:
+         case ByteCode::VJumpMR:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
             addSecondRArg(command.arg2, commandStr);
@@ -441,6 +443,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    }
    if (test(flags, elStructureWrapper)) {
       printLineAndCount("@flag ", "elStructureWrapper", row, pageSize);
+   }
+   if (test(flags, elExtension)) {
+      printLineAndCount("@flag ", "elExtension", row, pageSize);
    }
 }
 

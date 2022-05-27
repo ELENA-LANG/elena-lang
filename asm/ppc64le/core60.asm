@@ -787,6 +787,28 @@ inline %4E4h
 
 end
 
+
+// ; vjumpmr
+inline % 0FCh
+
+  ld       r16, -elVMTOffset(r15)     
+  ld       r17, __arg16_1(r16)
+  mtctr    r17            // ; put code address into ctr
+  bctr                    // ; and jump to it
+
+end
+
+// ; jumpmr
+inline %0FDh
+
+  ld       r12, toc_code(r2)
+  addis    r12, r12, __disp32hi_2 
+  addi     r12, r12, __disp32lo_2
+  mtctr    r12            // ; put code address into ctr
+  bctr                    // ; and jump to it
+
+end
+
 // ; openin
 inline %0F0h
 

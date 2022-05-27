@@ -723,6 +723,22 @@ L8:
 
 end
 
+// ; vjumpmr
+inline %0ECh
+
+  mov  eax, [ebx - elVMTOffset]
+  mov  eax, [eax + __arg32_1]
+  jmp  eax
+
+end
+
+// ; jumpmr
+inline %0EDh
+
+  jmp __relptr32_2
+
+end
+
 // ; openin
 inline %0F0h
 

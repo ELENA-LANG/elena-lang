@@ -42,6 +42,8 @@ namespace elena_lang
    constexpr auto errMsgDispatcherInInterface   = "%s(%d:%d): error 160: Closed class contains a dispatcher method\n";
    constexpr auto errMsgAbstractMethodCode      = "%s(%d:%d): error 161: An abstract method cannot have an explicit body\n";
    constexpr auto errMsgNotAbstractClass        = "%s(%d:%d): error 164: An attribute '%s' cannot be declared in a non-abstract class\n";
+   constexpr auto errMsgIllegalPrivate          = "%s(%d:%d): error 166: An attribute '%s' cannot be applied for an extension\n";
+
    constexpr auto errMsgDupPublicMethod         = "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n";
    constexpr auto errMsgEmptyStructure          = "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
    constexpr auto errMsgDupInternalMethod       = "%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";

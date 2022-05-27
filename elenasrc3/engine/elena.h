@@ -103,12 +103,15 @@ namespace elena_lang
    }
 
    // --- Misc types ---
-   typedef unsigned int parse_key_t;
+   typedef unsigned int          parse_key_t;
+   typedef Pair<ref_t, mssg_t>   ExtensionInfo;
 
    // --- Maps ---
    typedef Map<ustr_t, ref_t, allocUStr, freeUStr>    ReferenceMap;
    typedef Map<ref64_t, ref_t>                        ActionMap;
    typedef Map<ustr_t, addr_t, allocUStr, freeUStr>   AddressMap;
+   typedef Map<mssg_t, ExtensionInfo>                 ExtensionMap;
+   typedef Map<ref_t, ref_t>                          ResolvedMap;
 
    // --- Maps ---
    typedef List<ustr_t, freeUStr>                     IdentifierList;
