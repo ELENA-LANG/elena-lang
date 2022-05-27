@@ -4,7 +4,6 @@ singleton Tester
 {
    run()
    {
-      self.testMe();
 
 //      var a := true;
 
@@ -12,14 +11,6 @@ singleton Tester
 //      {
 //         Output.write("Hello From ELENA 6.0"$10);
 //      };
-   }
-}
-
-public extension op
-{
-   testMe()
-   {
-      Output.write("testMe extension");
    }
 }
 

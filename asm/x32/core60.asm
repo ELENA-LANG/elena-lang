@@ -428,6 +428,27 @@ inline %0C0h
 
 end 
 
+// ; cmpfi
+inline %0C8h
+
+  cmp  ebx, [ebp + __arg32_1]
+
+end 
+
+// ; cmpsi
+inline %0C9h
+
+  cmp  ebx, [esp + __arg32_1]
+
+end 
+
+// ; cmpsi 0
+inline %1C9h
+
+  cmp  ebx, esi
+
+end 
+
 // ; copydpn
 inline %0E0h
 
@@ -736,6 +757,15 @@ end
 inline %0EDh
 
   jmp __relptr32_2
+
+end
+
+// ; seleqrr
+inline %0EEh
+
+  mov   eax, __ptr32_1
+  mov   ebx, __ptr32_2
+  cmovz ebx, eax
 
 end
 

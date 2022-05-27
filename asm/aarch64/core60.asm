@@ -520,6 +520,51 @@ inline %0C0h
 
 end 
 
+// ; cmpfi
+// ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
+inline %0C8h
+
+  sub     x11, x29, -__arg12_1
+  ldr     x11, [x11]
+  cmp     x10, x11
+
+end 
+
+// ; cmpfi
+// ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
+inline %5C8h
+
+  add     x11, x29, __arg12_1
+  ldr     x11, [x11]
+  cmp     x10, x11
+
+end 
+
+// ; cmpsi
+inline %0C9h
+
+  add     x11, sp, __arg12_1
+  ldr     x11, [x11]
+  cmp     x10, x11
+
+end 
+
+// ; cmpsi 0
+inline %1C9h
+
+  mov     x11, x0
+  cmp     x10, x11
+
+end 
+
+// ; cmpsi 1
+inline %2C9h
+
+  mov     x10, x1
+  cmp     x10, x11
+
+end 
+
 // ; copydpn
 inline %0E0h
 
@@ -781,6 +826,18 @@ inline %0EDh
   movz    x17,  __ptr32lo_2
   movk    x17,  __ptr32hi_2, lsl #16
   br      x17
+
+end
+
+// ; seleqrr
+inline %0EEh
+
+  movz    x11,  __ptr32lo_1
+  movz    x12,  __ptr32lo_2
+  movk    x11,  __ptr32hi_1, lsl #16
+  movk    x12,  __ptr32hi_2, lsl #16
+
+  csel    x10, x11, x12, eq
 
 end
 

@@ -457,6 +457,34 @@ inline %0C0h
 
 end 
 
+// ; cmpfi
+inline %0C8h
+
+  cmp  rbx, qword ptr [rbp + __arg32_1]
+
+end 
+
+// ; cmpsi
+inline %0A9h
+
+  cmp rbx, qword ptr [rsp + __arg32_1]
+
+end 
+
+// ; cmpsi 0
+inline %1A9h
+
+  cmp rbx, r10
+
+end 
+
+// ; cmpsi 1
+inline %2A9h
+
+  cmp rbx, r11
+
+end 
+
 // ; copydpn
 inline %0E0h
 
@@ -631,6 +659,15 @@ end
 inline %0EDh
 
   jmp __relptr32_2
+
+end
+
+// ; seleqrr
+inline %0EEh
+
+  mov   rax, __ptr32_1
+  mov   rbx, __ptr32_2
+  cmovz rbx, rax
 
 end
 

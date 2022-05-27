@@ -542,6 +542,36 @@ inline %0C0h
 
 end 
 
+// ; cmpfi
+inline %0C8h
+
+  ld      r16, __arg16_1(r31)
+  cmp     r15, r16
+
+end 
+
+// ; cmpsi
+inline %0C9h
+
+  ld      r16, __arg16_1(r1)  
+  cmp     r15, r16
+
+end 
+
+// ; cmpsi 0
+inline %1C9h
+
+  cmp     r15, r3
+
+end 
+
+// ; cmpsi 1
+inline %2C9h
+
+  cmp     r15, r4
+
+end 
+
 // ; copydpn
 inline %0E0h
 
@@ -787,9 +817,8 @@ inline %4E4h
 
 end
 
-
 // ; vjumpmr
-inline % 0FCh
+inline % 0ECh
 
   ld       r16, -elVMTOffset(r15)     
   ld       r17, __arg16_1(r16)
@@ -799,7 +828,7 @@ inline % 0FCh
 end
 
 // ; jumpmr
-inline %0FDh
+inline %0EDh
 
   ld       r12, toc_code(r2)
   addis    r12, r12, __disp32hi_2 
@@ -808,6 +837,19 @@ inline %0FDh
   bctr                    // ; and jump to it
 
 end
+
+// ; setr
+inline %0EEh
+
+  ld      r16, toc_rdata(r2)
+  addis   r17, r16, __disp32hi_1 
+  addis   r18, r16, __disp32hi_2 
+  addi    r17, r16, __disp32lo_1 
+  addi    r18, r16, __disp32lo_2 
+
+  iseleq  r15, r18, r17
+
+end 
 
 // ; openin
 inline %0F0h
