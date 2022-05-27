@@ -60,6 +60,8 @@ namespace elena_lang
       AccCopying        = 0x001F,
       Argument          = 0x0020,
       BranchOp          = 0x0021,
+      DirectResendOp    = 0x0022,
+      ResendOp          = 0x0023,
 
       Import            = 0x0038,
       StrDictionaryOp   = 0x0039,

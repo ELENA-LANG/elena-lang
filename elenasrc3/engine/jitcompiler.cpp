@@ -1054,7 +1054,7 @@ void elena_lang::loadSPSPOp(JITCompilerScope* scope)
    int arg1 = scope->command.arg1;
    int arg2 = scope->command.arg2;
 
-   void* code = nullptr;
+   void* code = scope->compiler->_inlines[0][scope->code()];;
    if (arg1 == 0 && arg2 == 1) {
       code = scope->compiler->_inlines[5][scope->code()];
    }

@@ -777,6 +777,13 @@ namespace elena_lang
          outputRef = 0;
          multiMethod = 0;
       }
+      MethodInfo(bool inherited, ref_t hints, ref_t outputRef, ref_t multiMethod) :
+         inherited(inherited),
+         hints(hints),
+         outputRef(outputRef),
+         multiMethod(multiMethod)
+      {
+      }
    };
 
    // --- ClassHeader ---

@@ -236,7 +236,7 @@ void Compiler::NamespaceScope :: addExtension(mssg_t message, ref_t extRef, mssg
 ref_t Compiler::NamespaceScope :: resolveExtensionTarget(ref_t reference)
 {
    ref_t resolved = extensionTargets.get(reference);
-   if (!resolved == INVALID_REF) {
+   if (resolved == INVALID_REF) {
       ClassInfo classInfo;
       moduleScope->loadClassInfo(classInfo, reference);
 
@@ -525,8 +525,9 @@ Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibi
 {
    info.header.flags = elStandartVMT;
    info.header.parentRef = moduleScope->buildins.superReference;
-   abstractMode = abstractBasedMode = false;
    extensionClassRef = 0;
+   abstractMode = abstractBasedMode = false;
+   extensionDispatcher = false;
 }
 
 ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribute attr)
@@ -2272,6 +2273,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
          break;
       case ObjectKind::Class:
       case ObjectKind::Singleton:
+      case ObjectKind::ConstantRole:
          writer.appendNode(BuildKey::ClassReference, info.reference);
          break;
       case ObjectKind::Param:
@@ -3098,14 +3100,56 @@ mssg_t Compiler :: mapMessage(ExprScope& scope, SyntaxNode current, bool propert
    return encodeMessage(actionRef, argCount, flags);
 }
 
-ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, mssg_t genericMessage)
+ref_t targetResolver(void* param, mssg_t mssg)
+{
+   return ((ResolvedMap*)param)->get(mssg);
+}
+
+ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage)
 {
    ref_t extRef = scope.moduleScope->mapAnonymous();
    ClassScope classScope(&scope, extRef, Visibility::Private);
-//   classScope.extensionDispatcher = true;
+   declareClassParent(classScope.info.header.parentRef, classScope, {});
+   classScope.extensionDispatcher = true;
+   classScope.info.header.classRef = classScope.reference;
+   classScope.extensionClassRef = scope.moduleScope->buildins.superReference;
+   generateClassFlags(classScope, elExtension | elSealed);
 
-   assert(false);
-   return 0; // !! temporal
+   // create a new overload list
+   ClassInfo::MethodMap methods({});
+   ResolvedMap targets(0);
+   for(auto it = scope.extensions.getIt(genericMessage); !it.eof(); it = scope.extensions.nextIt(genericMessage, it)) {
+      auto extInfo = *it;
+
+      methods.add(extInfo.value2, { false, 0, 0, genericMessage | FUNCTION_MESSAGE });
+      targets.add(extInfo.value2, extInfo.value1);
+   }
+
+   _logic->injectMethodOverloadList(this, *scope.moduleScope, 
+      genericMessage | FUNCTION_MESSAGE, methods, classScope.info.attributes,
+      &targets, targetResolver);
+
+   SyntaxTree classTree;
+   SyntaxTreeWriter classWriter(classTree);
+
+   // build the class tree
+   classWriter.newNode(SyntaxKey::Root);
+   classWriter.newNode(SyntaxKey::Class, extRef);
+
+   SyntaxNode classNode = classWriter.CurrentNode();
+   injectVirtualMultimethod(classNode, SyntaxKey::Method, genericMessage | FUNCTION_MESSAGE, genericMessage, 0);
+
+   classWriter.closeNode();
+   classWriter.closeNode();
+
+   generateMethodDeclaration(classScope, classNode.findChild(SyntaxKey::Method), false);
+   classScope.save();
+
+   writer.newNode(BuildKey::NestedClass, extRef);
+   compileVMT(writer, classScope, classNode);
+   writer.closeNode();
+
+   return extRef;
 }
 
 ref_t Compiler :: compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, ArgumentsInfo& arguments)
@@ -3145,7 +3189,7 @@ ref_t Compiler :: compileMessageArguments(BuildTreeWriter& writer, ExprScope& sc
    return 0;
 }
 
-ref_t Compiler :: mapExtension(Scope& scope, mssg_t& message, ref_t implicitSignatureRef, ObjectInfo object)
+ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& message, ref_t implicitSignatureRef, ObjectInfo object)
 {
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
@@ -3208,7 +3252,7 @@ ref_t Compiler :: mapExtension(Scope& scope, mssg_t& message, ref_t implicitSign
       // bad luck - we have to generate run-time extension dispatcher
       ref_t extRef = nsScope->extensionDispatchers.get(message);
       if (extRef == INVALID_REF) {
-         extRef = compileExtensionDispatcher(*nsScope, message);
+         extRef = compileExtensionDispatcher(writer, *nsScope, message);
 
          nsScope->extensionDispatchers.add(message, extRef);
       }
@@ -3221,7 +3265,7 @@ ref_t Compiler :: mapExtension(Scope& scope, mssg_t& message, ref_t implicitSign
    return 0;
 }
 
-mssg_t Compiler :: resolveMessageAtCompileTime(ObjectInfo target, ExprScope& scope, mssg_t weakMessage,
+mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectInfo target, ExprScope& scope, mssg_t weakMessage,
    ref_t implicitSignatureRef, bool ignoreExtensions, ref_t& resolvedExtensionRef)
 {
    mssg_t resolvedMessage = 0;
@@ -3237,7 +3281,7 @@ mssg_t Compiler :: resolveMessageAtCompileTime(ObjectInfo target, ExprScope& sco
          return weakMessage;
       }
 
-      ref_t extensionRef = mapExtension(scope, resolvedMessage, implicitSignatureRef, target);
+      ref_t extensionRef = mapExtension(writer, scope, resolvedMessage, implicitSignatureRef, target);
       if (extensionRef != 0) {
          // if there is an extension to handle the compile-time resolved message - use it
          resolvedExtensionRef = extensionRef;
@@ -3270,10 +3314,15 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
    BuildKey operation = BuildKey::CallOp;
    ref_t resolvedExtensionRef = 0;
-   mssg_t message = resolveMessageAtCompileTime(target, scope, weakMessage,
+   mssg_t message = resolveMessageAtCompileTime(writer, target, scope, weakMessage,
       implicitSignatureRef,
       EAttrs::testAndExclude(mode.attrs, EAttr::NoExtension), 
       resolvedExtensionRef);
+
+   if (resolvedExtensionRef) {
+      // if extension was found - make it a operation target
+      target = { ObjectKind::ConstantRole, resolvedExtensionRef, resolvedExtensionRef };
+   }
 
    ref_t targetRef = resolveObjectReference(scope, target);
 
@@ -4201,10 +4250,12 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
    writer.newNode(op, opRef);
    writer.appendNode(BuildKey::Message, message);
    writer.closeNode();
-   //if (classScope->extensionDispatcher) {
-   //   writer.appendNode(BuildKey::Argument, 0);
+   if (classScope->extensionDispatcher) {
+      writer.appendNode(BuildKey::Argument, 0);
 
-   //}
+      writer.newNode(BuildKey::ResendOp);
+      writer.closeNode();
+   }
 }
 
 void Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)

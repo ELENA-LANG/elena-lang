@@ -89,6 +89,12 @@ void sendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::CallVI, vmtIndex);
 }
 
+void resendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   int vmtIndex = node.findChild(BuildKey::Index).arg.value;
+   tape.write(ByteCode::CallVI, vmtIndex);
+}
+
 void directCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
@@ -272,6 +278,13 @@ void byteArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void directResend(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
+
+   tape.write(ByteCode::JumpMR, node.arg.reference, targetRef | mskVMTRef);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -307,6 +320,8 @@ ByteCodeWriter::Saver commands[] =
    byteArraySOp,
    copyingAcc,
    getArgument,
+   directResend,
+   resendOp
 };
 
 // --- ByteCodeWriter ---

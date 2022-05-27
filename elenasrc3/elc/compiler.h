@@ -48,6 +48,7 @@ namespace elena_lang
       Field,
       Closure,
       Extension,
+      ConstantRole
    };
 
    struct ObjectInfo
@@ -390,6 +391,7 @@ namespace elena_lang
          ref_t       extensionClassRef;
          bool        abstractMode;
          bool        abstractBasedMode;
+         bool        extensionDispatcher;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -689,7 +691,7 @@ namespace elena_lang
 
       ref_t mapTemplateType(Scope& scope, SyntaxNode node);
 
-      ref_t mapExtension(Scope& scope, mssg_t& resolvedMessage, ref_t implicitSignatureRef, 
+      ref_t mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& resolvedMessage, ref_t implicitSignatureRef,
          ObjectInfo object);
 
       mssg_t defineMultimethod(ClassScope& scope, mssg_t messageRef);
@@ -709,7 +711,7 @@ namespace elena_lang
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix); 
 
-      mssg_t resolveMessageAtCompileTime(ObjectInfo target, ExprScope& scope, mssg_t weakMessage, 
+      mssg_t resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectInfo target, ExprScope& scope, mssg_t weakMessage,
          ref_t implicitSignatureRef, bool ignoreExtensions, ref_t& resolvedExtensionRef);
       mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
 
@@ -801,7 +803,7 @@ namespace elena_lang
 
       void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey);
 
-      ref_t compileExtensionDispatcher(NamespaceScope& scope, mssg_t genericMessage);
+      ref_t compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage);
 
       ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, ArgumentsInfo& arguments);
 

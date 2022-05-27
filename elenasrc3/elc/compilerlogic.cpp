@@ -838,15 +838,15 @@ inline ustr_t resolveActionName(ModuleBase* module, mssg_t message)
    return module->resolveAction(getAction(message), signRef);
 }
 
-ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, mssg_t message,
-   void* param, ref_t(*resolve)(void*, ref_t))
+ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo::MethodMap& methods, 
+   mssg_t message, void* param, ref_t(*resolve)(void*, ref_t))
 {
    // create a new overload list
    ref_t listRef = scope.mapAnonymous(resolveActionName(scope.module, message));
 
    // sort the overloadlist
    CachedList<mssg_t, 0x20> list;
-   for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
+   for (auto m_it = methods.start(); !m_it.eof(); ++m_it) {
       auto methodInfo = *m_it;
       if (methodInfo.multiMethod == message) {
          bool added = false;
@@ -891,6 +891,17 @@ ref_t paramFeedback(void* param, ref_t)
 #endif
 }
 
+void CompilerLogic :: injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, mssg_t message, 
+   ClassInfo::MethodMap& methods, ClassAttributes& attributes,
+   void* param, ref_t(*resolve)(void*, ref_t))
+{
+   ref_t listRef = generateOverloadList(compiler, scope, methods, message, param, resolve);
+
+   ClassAttributeKey key = { message, ClassAttribute::OverloadList };
+   attributes.exclude(key);
+   attributes.add(key, listRef);
+}
+
 void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef)
 {
    for (auto it = info.methods.start(); !it.eof(); ++it) {
@@ -898,11 +909,8 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
       if (!methodInfo.inherited && isMultiMethod(info, methodInfo)) {
          // create a new overload list
          mssg_t message = it.key();
-         ref_t listRef = generateOverloadList(compiler, scope, info, message, (void*)classRef, paramFeedback);
 
-         ClassAttributeKey key = { message, ClassAttribute::OverloadList };
-         info.attributes.exclude(key);
-         info.attributes.add(key, listRef);
+         injectMethodOverloadList(compiler, scope, message, info.methods, info.attributes, (void*)classRef, paramFeedback);
       }
    }
 }
