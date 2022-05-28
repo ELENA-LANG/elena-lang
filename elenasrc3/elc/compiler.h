@@ -897,7 +897,8 @@ namespace elena_lang
          mssg_t resendMessage, ref_t resendTarget);
       void injectDefaultConstructor(ModuleScopeBase* scope, SyntaxNode node);
 
-      void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, mssg_t messageRef) override;
+      void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
+         mssg_t messageRef, MethodHint type) override;
 
    public:
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver);

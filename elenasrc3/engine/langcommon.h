@@ -17,6 +17,7 @@ namespace elena_lang
 
       None           = 0x00000000,
       Sealed         = 0x00000001,
+      Virtual        = 0x00000002,
       Normal         = 0x00000003,
       Dispatcher     = 0x00000004,
 

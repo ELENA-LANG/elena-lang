@@ -64,7 +64,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadVMTROp, loadMROp, loadRROp, loadNop,
 
    compileOpen, loadStackIndexROp, compileOpen, loadStackIndexFrameIndexOp, loadNewOp, loadNewNOp, loadStackIndexIndexOp, loadNop,
-   loadNop, loadFrameIndexROp, loadNop, compileDispatchMR, loadVMTROp, loadMROp, loadCallOp, loadNop,
+   loadNop, loadFrameIndexROp, compileDispatchMR, compileDispatchMR, loadVMTROp, loadMROp, loadCallOp, loadNop,
 };
 
 // preloaded gc routines
@@ -90,7 +90,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 
 // preloaded bc commands
 
-constexpr size_t bcCommandNumber = 44;
+constexpr size_t bcCommandNumber = 45;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -101,7 +101,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::NewNR, ByteCode::CallMR, ByteCode::VCallMR, ByteCode::DispatchMR, ByteCode::CopyDPN,
    ByteCode::IAddDPN, ByteCode::ISubDPN, ByteCode::IMulDPN, ByteCode::IDivDPN, ByteCode::PeekSI,
    ByteCode::Len, ByteCode::NLen, ByteCode::XMovSISI, ByteCode::CmpR, ByteCode::VJumpMR,
-   ByteCode::JumpMR, ByteCode::CmpFI, ByteCode::CmpSI, ByteCode::SelEqRR
+   ByteCode::JumpMR, ByteCode::CmpFI, ByteCode::CmpSI, ByteCode::SelEqRR, ByteCode::XDispatchMR
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/,
@@ -1666,7 +1666,9 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
    // simply copy correspondent inline code
    writer->write(code, length);
 
-   int startArg = 1 << scope->constants->indexPower;
+   bool functionMode = test((unsigned int)scope->command.arg1, FUNCTION_MESSAGE);
+   int startArg = (functionMode ? 0 : 1) << scope->constants->indexPower;
+   int argCount = (scope->command.arg1 & ARG_MASK) + (functionMode ? 1 : 0);
 
    // resolve section references
    pos_t count = *(pos_t*)((char*)code + length);
@@ -1679,10 +1681,10 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
             scope->compiler->writeImm32(writer, scope->helper->importMessage(scope->command.arg1));
             break;
          case NARG_1:
-            scope->compiler->writeImm32(writer, scope->command.arg1 & ARG_MASK);
+            scope->compiler->writeImm32(writer, argCount);
             break;
          case NARG16_1:
-            scope->compiler->writeImm16(writer, scope->command.arg1 & ARG_MASK, 0);
+            scope->compiler->writeImm16(writer, argCount, 0);
             break;
          case PTR32_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
@@ -2130,8 +2132,10 @@ void JITCompiler32 :: writeLiteral(MemoryWriter& writer, ustr_t value)
    writer.align(4, 0);
 }
 
-void JITCompiler32 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, MemoryBase* section)
+void JITCompiler32 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo)
 {
+   MemoryBase* section = sectionInfo->section;
+
    pos_t position = writer.position();
    pos_t length = section->length();
 
@@ -2144,7 +2148,7 @@ void JITCompiler32 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter&
       if (*it == (pos_t)-4) {
          // skip VMT reference
       }
-      else helper->writeSectionReference(writer.Memory(), imageOffset, it.key(), section, *it);
+      else helper->writeSectionReference(writer.Memory(), imageOffset, it.key(), sectionInfo, *it, mskRef32);
    }
 }
 
@@ -2428,8 +2432,10 @@ void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)
    writer.align(8, 0);
 }
 
-void JITCompiler64 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, MemoryBase* section)
+void JITCompiler64 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo)
 {
+   MemoryBase* section = sectionInfo->section;
+
    pos_t position = writer.position();
    pos_t length = section->length();
 
@@ -2447,6 +2453,7 @@ void JITCompiler64 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter&
       if (*it == (pos_t)-4) {
          // skip VMT reference
       }
-      else helper->writeSectionReference(writer.Memory(), imageOffset, it.key(), section, *it);
+      else helper->writeSectionReference(writer.Memory(), imageOffset, it.key(), 
+         sectionInfo, *it, mskRef64);
    }
 }

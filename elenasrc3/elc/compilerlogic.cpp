@@ -838,7 +838,7 @@ inline ustr_t resolveActionName(ModuleBase* module, mssg_t message)
    return module->resolveAction(getAction(message), signRef);
 }
 
-ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo::MethodMap& methods, 
+ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, ClassInfo::MethodMap& methods, 
    mssg_t message, void* param, ref_t(*resolve)(void*, ref_t))
 {
    // create a new overload list
@@ -868,13 +868,13 @@ ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeB
    for (size_t i = 0; i < list.count(); i++) {
       ref_t classRef = resolve(param, list[i]);
 
-      /*if (test(flags, elSealed) || test(message, STATIC_MESSAGE)) {
-         compiler.generateSealedOverloadListMember(scope, listRef, list[i], classRef);
+      if (test(flags, elSealed) || test(message, STATIC_MESSAGE)) {
+         compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Sealed);
       }
       else if (test(flags, elClosed)) {
-         compiler.generateClosedOverloadListMember(scope, listRef, list[i], classRef);
+         compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Virtual);
       }
-      else*/ compiler->generateOverloadListMember(scope, listRef, list[i]);
+      else compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Normal);
    }
 
    return listRef;
@@ -891,11 +891,11 @@ ref_t paramFeedback(void* param, ref_t)
 #endif
 }
 
-void CompilerLogic :: injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, mssg_t message, 
-   ClassInfo::MethodMap& methods, ClassAttributes& attributes,
+void CompilerLogic::injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags,
+   mssg_t message, ClassInfo::MethodMap& methods, ClassAttributes& attributes,
    void* param, ref_t(*resolve)(void*, ref_t))
 {
-   ref_t listRef = generateOverloadList(compiler, scope, methods, message, param, resolve);
+   ref_t listRef = generateOverloadList(compiler, scope, flags, methods, message, param, resolve);
 
    ClassAttributeKey key = { message, ClassAttribute::OverloadList };
    attributes.exclude(key);
@@ -910,7 +910,8 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
          // create a new overload list
          mssg_t message = it.key();
 
-         injectMethodOverloadList(compiler, scope, message, info.methods, info.attributes, (void*)classRef, paramFeedback);
+         injectMethodOverloadList(compiler, scope, info.header.flags, message, 
+            info.methods, info.attributes, (void*)classRef, paramFeedback);
       }
    }
 }

@@ -147,6 +147,10 @@ ELENA byte codes (or ecodes)
    copy dp:disp, n          - dp[disp] => temp;
                               sp[0] >> temp, n bytes  
 
+   xdispatch m, r           - search in message table r the message in index and provided parameter list; 
+                              if found jumps directly to it;
+
+
  Jump operations:
  ---------------- 
    jump label               - jumps to the label

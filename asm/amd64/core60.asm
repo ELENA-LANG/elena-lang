@@ -967,6 +967,66 @@ inline %0F9h
 
 end
 
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 0FAh
+
+  mov  r8,  rbx
+  mov  [rsp+8], r10                      // ; saving arg0
+  lea  rax, [rsp + __n_2]
+  mov  [rsp+16], r11                     // ; saving arg0
+
+  mov  rsi, __ptr64_2
+  xor  edx, edx
+  mov  rbx, [rsi] // ; message from overload list
+
+labNextOverloadlist:
+  mov  r9, mdata : %0
+  shr  ebx, ACTION_ORDER
+  lea  r13, [rbx*8]
+  mov  r13, [r9 + r13 * 2 + 8]
+  mov  ecx, __n_1
+  lea  rbx, [r13 - 8]
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  mov  r9, __ptr64_2
+  lea  r13, [rdx * 8]
+  mov  rbx, r8
+  mov  r13, [r9 + r13 * 2 + 8] 
+  mov  rax, [r9 + r13 * 2 + 8]
+  mov  rdx, [r9 + r13 * 2]
+  jmp  rax
+
+labMatching:
+  mov  rdi, [rax + rcx * 8]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+  test  rdi, rdi                                              
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, [rbx + rcx * 8]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  add  rdx, 1
+  mov  r13, __ptr32_2
+  lea  r9, [rdx * 8]
+  mov  rbx, [r13 + r9 * 2] // ; message from overload list
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+end
+
 // ; dispatchmr
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 0FBh

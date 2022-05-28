@@ -76,6 +76,7 @@ namespace elena_lang
       NewNR          = 0xF5,
       XMovSISI       = 0xF6,
       XStoreFIR      = 0xF9,
+      XDispatchMR    = 0xFA,
       DispatchMR     = 0xFB,
       VCallMR        = 0xFC,
       CallMR         = 0xFD,
@@ -205,6 +206,7 @@ namespace elena_lang
             case ByteCode::JumpMR:
             case ByteCode::VJumpMR:
             case ByteCode::DispatchMR:
+            case ByteCode::XDispatchMR:
                return true;
             default:
                return false;
@@ -237,6 +239,7 @@ namespace elena_lang
             case ByteCode::JumpMR:
             case ByteCode::VJumpMR:
             case ByteCode::DispatchMR:
+            case ByteCode::XDispatchMR:
             case ByteCode::SelEqRR:
                return true;
             default:

@@ -105,7 +105,7 @@ namespace elena_lang
          void addBreakpoint(MemoryWriter& writer) override;
 
          void writeSectionReference(MemoryBase* image, pos_t imageOffset, ref_t reference, 
-            MemoryBase* section, pos_t sectionOffset) override;
+            SectionInfo* sectionInfo, pos_t sectionOffset, ref_t addressMask) override;
 
          void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
             ref_t addressMask, ModuleBase* module) override;

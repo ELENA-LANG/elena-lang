@@ -1756,7 +1756,8 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
 
             if (!current.arg.reference) {
                declareVMTMessage(methodScope, current, 
-                  testany(scope.info.header.flags, elNestedClass | elExtension), true);
+                  methodScope.checkHint(MethodHint::Extension) 
+                  || test(scope.info.header.flags, elNestedClass), true);
 
                current.setArgumentReference(methodScope.message);
             }
@@ -3126,8 +3127,8 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
    }
 
    _logic->injectMethodOverloadList(this, *scope.moduleScope, 
-      genericMessage | FUNCTION_MESSAGE, methods, classScope.info.attributes,
-      &targets, targetResolver);
+      classScope.info.header.flags, genericMessage | FUNCTION_MESSAGE, methods, 
+      classScope.info.attributes, &targets, targetResolver);
 
    SyntaxTree classTree;
    SyntaxTreeWriter classWriter(classTree);
@@ -4247,6 +4248,10 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
    if (!opRef)
       scope.raiseError(errIllegalOperation, node);
 
+   if (test(classScope->info.header.flags, elSealed) || test(message, STATIC_MESSAGE)) {
+      op = BuildKey::SealedDispatchingOp;
+   }
+
    writer.newNode(op, opRef);
    writer.appendNode(BuildKey::Message, message);
    writer.closeNode();
@@ -4854,17 +4859,38 @@ void Compiler :: injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode
    exprNode.appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, retVar);
 }
 
-void Compiler :: generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, mssg_t messageRef)
+void Compiler :: generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
+   mssg_t messageRef, MethodHint type)
 {
    MemoryWriter metaWriter(scope.module->mapSection(listRef | mskConstArray, false));
    if (metaWriter.position() == 0) {
       metaWriter.writeDReference(0, messageRef);
-      metaWriter.writeDWord(0);
+      switch (type) {
+         case MethodHint::Sealed:
+            metaWriter.writeDReference(classRef | mskVMTMethodAddress, messageRef);
+            break;
+         case MethodHint::Virtual:
+            metaWriter.writeDReference(classRef | mskVMTMethodOffset, messageRef);
+            break;
+         default:
+            metaWriter.writeDWord(0);
+            break;
+      }
       metaWriter.writeDWord(0);
    }
    else {
       metaWriter.insertDWord(0, 0);
       metaWriter.insertDWord(0, messageRef);
       metaWriter.Memory()->addReference(0, 0);
+      switch (type) {
+         case MethodHint::Sealed:
+            metaWriter.Memory()->addReference(classRef | mskVMTMethodAddress, 4);
+            break;
+         case MethodHint::Virtual:
+            metaWriter.Memory()->addReference(classRef | mskVMTMethodOffset, 4);
+            break;
+         default:
+            break;
+      }
    }
 }

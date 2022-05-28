@@ -22,8 +22,8 @@ public class Object
 
 // --- basic extensions ---
 
-//public extension commonOp
-//{
-//   bool equalReference(o) : external<system'core_routines'__object_equal>;
-//}
+public extension commonOp
+{
+   bool equalReference(o) : external<system'core_routines'__object_equal>;
+}
 

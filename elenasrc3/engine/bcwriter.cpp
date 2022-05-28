@@ -241,6 +241,13 @@ void dispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::DispatchMR, message, node.arg.reference | mskConstArray);
 }
 
+void xdispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   mssg_t message = node.findChild(BuildKey::Message).arg.reference;
+
+   tape.write(ByteCode::XDispatchMR, message, node.arg.reference | mskConstArray);
+}
+
 void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
@@ -320,8 +327,10 @@ ByteCodeWriter::Saver commands[] =
    byteArraySOp,
    copyingAcc,
    getArgument,
+   nullptr,
    directResend,
-   resendOp
+   resendOp,
+   xdispatchOp,
 };
 
 // --- ByteCodeWriter ---

@@ -222,7 +222,7 @@ namespace elena_lang
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
-      void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, MemoryBase* section) override;
+      void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
 
       JITCompiler32()
          : JITCompiler()
@@ -274,7 +274,7 @@ namespace elena_lang
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
-      void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, MemoryBase* section) override;
+      void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
 
       JITCompiler64()
          : JITCompiler()
