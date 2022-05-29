@@ -995,7 +995,6 @@ labNextParam:
   mov  r9, __ptr64_2
   lea  r13, [rdx * 8]
   mov  rbx, r8
-  mov  r13, [r9 + r13 * 2 + 8] 
   mov  rax, [r9 + r13 * 2 + 8]
   mov  rdx, [r9 + r13 * 2]
   jmp  rax
@@ -1018,8 +1017,8 @@ labNextBaseClass:
   and  rdi, rdi
   jnz  short labNextBaseClass
 
-  add  rdx, 1
-  mov  r13, __ptr32_2
+  add  edx, 1
+  mov  r13, __ptr64_2
   lea  r9, [rdx * 8]
   mov  rbx, [r13 + r9 * 2] // ; message from overload list
   and  rbx, rbx
@@ -1080,7 +1079,7 @@ labNextBaseClass:
   jnz  short labNextBaseClass
 
   add  rdx, 1
-  mov  r13, __ptr32_2
+  mov  r13, __ptr64_2
   lea  r9, [rdx * 8]
   mov  rbx, [r13 + r9 * 2] // ; message from overload list
   and  rbx, rbx

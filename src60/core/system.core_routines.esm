@@ -9,8 +9,9 @@ end
 
 procedure __object_equal
 
+  peek        sp:0
   cmp         sp:1
-  seleq       rdata:"system'true", rdata:"system'false"
+  seleq       class:"system'BoolValue#true", class:"system'BoolValue#false"
 
 end
 

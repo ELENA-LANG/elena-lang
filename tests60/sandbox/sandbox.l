@@ -1,48 +1,29 @@
 import system;
 
-//public extension commonOp
-//{
-//   bool equalReference(o) {}
-//}
-
 B;
 
-sealed class A
+A
 {
-   do(B b)
-   {
-      Output.write("Dispatch works!"$10);
-   }
-
-   do(A A)
-   {
-      Output.write("Dispatch doesn't works!"$10);
-   }
+   B get() = new B();
+ 
 }
 
 singleton Tester
 {
    run()
    {
-      /*A*/var a := new A();
-      var b := new B();
+      var r1 := 2;
+      var r2 := 3;
 
-      a.do(b);
+      if(r1.equalReference(r1)) 
+      {
+          Output.write("equalReference works"$10);
+      };
 
-//      var r1 := 2;
-//      var r2 := 3;
-
-//      r1.equalReference(r1)
- 
-//      if(r1.equalReference(r1)) 
-//      {
-//          Output.write("equalReference works"$10);
-//      };
-
-//      if(r1.equalReference(r2)) 
-//      {
-//          Output.write("equalReference doesn't works"$10);
-//      }
+      if(r1.equalReference(r2)) 
+      {
+          Output.write("equalReference doesn't works"$10);
+      }
 
 //      var a := true;
 

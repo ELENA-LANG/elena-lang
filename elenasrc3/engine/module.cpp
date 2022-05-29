@@ -331,6 +331,13 @@ void ROModule::ROSection :: insert(pos_t position, const void* s, pos_t length)
    throw InternalError(errReadOnlyModule);
 }
 
+void* ROModule::ROSection :: getReferences() const
+{
+   pos_t position = *(pos_t*)_buffer;
+
+   return (void*)((char*)_buffer + position + sizeof(pos_t));
+}
+
 // --- ROModule ---
 
 ROModule::ROModule(StreamReader& reader, LoadResult& result)

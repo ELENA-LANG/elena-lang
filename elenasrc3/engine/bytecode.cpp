@@ -224,14 +224,16 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
 void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* target, ModuleBase* importer)
 {
    if (isRCommand(command.code)) {
-      command.arg1 = target->importReference(importer, command.arg1);
+      ref_t mask = command.arg1 & mskAnyRef;
+      command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
    }
    else if (isMCommand(command.code)) {
       command.arg1 = target->importMessage(importer, command.arg1);
    }
 
    if (isR2Command(command.code)) {
-      command.arg2 = target->importReference(importer, command.arg2);
+      ref_t mask = command.arg2 & mskAnyRef;
+      command.arg2 = target->importReference(importer, command.arg2 & ~mskAnyRef) | mask;
    }
 }
 

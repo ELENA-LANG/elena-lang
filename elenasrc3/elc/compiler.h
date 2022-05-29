@@ -662,6 +662,14 @@ namespace elena_lang
 
       struct InlineClassScope : ClassScope
       {
+         Scope* getScope(ScopeLevel level) override
+         {
+            if (level == ScopeLevel::Class) {
+               return this;
+            }
+            else return Scope::getScope(level);
+         }
+
          InlineClassScope(ExprScope* owner, ref_t reference);
       };
 

@@ -982,17 +982,17 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
    }
 
    if (test(scope.info.header.flags, elFinal)) {
-      //// COMPILER MAGIC : if it is a unsealed nested class inheriting its owner
-      //if (!test(scope.info.header.flags, elSealed) && test(flagCopy, elNestedClass)) {
-      //   ClassScope* owner = (ClassScope*)scope.getScope(Scope::ScopeLevel::slOwnerClass);
-      //   if (owner->classClassMode && scope.info.header.classRef == owner->reference) {
-      //      // HOTFIX : if it is owner class class - allow it as well
-      //   }
-      //   else if (owner->reference != parentRef) {
-      //      return InheritResult::irSealed;
-      //   }
-      //}
-      /*else */return InheritResult::irSealed;
+      // COMPILER MAGIC : if it is a unsealed nested class inheriting its owner
+      if (!test(scope.info.header.flags, elSealed) && test(flagCopy, elNestedClass)) {
+         ClassScope* owner = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::OwnerClass);
+         if (test(owner->info.header.flags, elClassClass) && scope.info.header.classRef == owner->reference) {
+            // HOTFIX : if it is owner class class - allow it as well
+         }
+         else if (owner->reference != parentRef) {
+            return InheritResult::irSealed;
+         }
+      }
+      else return InheritResult::irSealed;
    }
 
    // restore parent and flags
@@ -1046,7 +1046,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
 
    methodInfo.hints |= node.findChild(SyntaxKey::Hints).arg.reference;
 
-   ref_t outputRef = node.findChild(SyntaxKey::Type).arg.reference;
+   ref_t outputRef = node.findChild(SyntaxKey::OutputType).arg.reference;
    if (outputRef)
       methodInfo.outputRef = outputRef;
 
@@ -1726,6 +1726,9 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
    if (methodScope.info.hints)
       node.appendChild(SyntaxKey::Hints, methodScope.info.hints);
 
+   if (methodScope.info.outputRef)
+      node.appendChild(SyntaxKey::OutputType, methodScope.info.outputRef);
+
    if (methodScope.checkHint(MethodHint::Static)) {
       node.setKey(SyntaxKey::StaticMethod);
    }
@@ -1755,9 +1758,9 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
             declareMethodAttributes(methodScope, current, scope.extensionClassRef != 0);
 
             if (!current.arg.reference) {
-               declareVMTMessage(methodScope, current, 
-                  methodScope.checkHint(MethodHint::Extension) 
-                  || test(scope.info.header.flags, elNestedClass), true);
+               // NOTE : an extension method must be strong-resolved
+               declareVMTMessage(methodScope, current,
+                  methodScope.checkHint(MethodHint::Extension), true);
 
                current.setArgumentReference(methodScope.message);
             }
@@ -1851,6 +1854,14 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
       }
 
       declareClassClass(classClassScope, node);
+
+      // HOTFIX : if the default constructor is private - a class cannot be inherited
+      if (withDefConstructor 
+         && classClassScope.info.methods.exist(scope.moduleScope->buildins.constructor_message | STATIC_MESSAGE))
+      {
+         scope.info.header.flags |= elFinal;
+         scope.save();
+      }
    }
 }
 
@@ -4511,6 +4522,7 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
 
 void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef)
 {
+   scope.info.header.flags |= elNestedClass;
    declareClassParent(parentRef, scope, node);
 
    ref_t dummy = 0;

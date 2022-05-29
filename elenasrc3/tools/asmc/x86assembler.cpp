@@ -276,6 +276,8 @@ X86Operand X86Assembler :: readDispOperand(ScriptToken& tokenInfo, X86Operand op
                // if it is [r + r*factor]
                int sibcode = ((char)operand.type + ((char)disp.type << 3)) << 24;
 
+               operand = defineDBDisp(operand);
+
                operand.type = (operand.type & 0xFFFFFFF8) | X86OperandType::SIB | (X86OperandType)sibcode | disp2.type;
             }
             else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
@@ -1812,7 +1814,7 @@ bool X86_64Assembler::compileAdd(X86Operand source, X86Operand target, MemoryWri
       writer.writeByte(0x01);
       X86Helper::writeModRM(writer, target, source);
    }
-   else return X86Assembler::compileMov(source, target, writer);
+   else return X86Assembler::compileAdd(source, target, writer);
 
    return true;
 }

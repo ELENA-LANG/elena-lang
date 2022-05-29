@@ -131,6 +131,8 @@ namespace elena_lang
          bool write(pos_t position, const void* s, pos_t length) override;
 
          void trim(pos_t) override;
+
+         void* getReferences() const override;
       }; 
 
       typedef FixedMemoryMap<ref_t, ROSection> ROSectionMap;

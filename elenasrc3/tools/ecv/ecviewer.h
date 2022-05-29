@@ -44,6 +44,9 @@ namespace elena_lang
       MemoryBase* findClassVMT(ustr_t referenceName);
       MemoryBase* findClassCode(ustr_t referenceName);
 
+      bool findClassInfo(ustr_t referenceName, ClassInfo& info);
+      bool findMethodInfo(ustr_t referenceName, mssg_t message, MethodInfo& info);
+
       mssg_t resolveMessageByIndex(MemoryBase* vmt, int index);
       mssg_t resolveMessage(ustr_t methodName);
 
@@ -84,7 +87,7 @@ namespace elena_lang
       void printFlags(ref_t flags, int& row, int pageSize);
       void printFields(ClassInfo& classInfo, int& row, int pageSize);
 
-      void printMethod(ustr_t name);
+      void printMethod(ustr_t name, bool fullInfo);
       void printSymbol(ustr_t name);
       void printClass(ustr_t name, bool fullInfo);
 

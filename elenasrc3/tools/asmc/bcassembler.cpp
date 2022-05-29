@@ -39,6 +39,13 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
 
       mask = mskRDataRef;
    }
+   else if (tokenInfo.compare("class")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      _reader.read(tokenInfo);
+
+      mask = mskVMTRef;
+   }
 
    if (tokenInfo.state == dfaQuote) {
       return _module->mapReference(*tokenInfo.token) | mask;
@@ -449,6 +456,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::StoreFI:
          case ByteCode::CmpFI:
             return compileOpFrameI(tokenInfo, writer, opCommand, locals, true);
+         case ByteCode::PeekSI:
          case ByteCode::CmpSI:
             return compileOpStackI(tokenInfo, writer, opCommand, locals, true);
          case ByteCode::SaveDP:

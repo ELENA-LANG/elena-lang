@@ -49,6 +49,32 @@ MemoryBase* ByteCodeViewer :: findClassVMT(ustr_t name)
    return _module->mapSection(reference | mskVMTRef, true);
 }
 
+bool ByteCodeViewer :: findClassInfo(ustr_t name, ClassInfo& info)
+{
+   ReferenceName referenceName(nullptr, name);
+
+   ref_t reference = _module->mapReference(*referenceName, true);
+   if (!reference)
+      return false;
+
+   auto section = _module->mapSection(reference | mskMetaClassInfoRef, true);
+   MemoryReader reader(section);
+
+   info.load(&reader);
+
+   return true;
+}
+
+bool ByteCodeViewer::findMethodInfo(ustr_t referenceName, mssg_t message, MethodInfo& info)
+{
+   ClassInfo classInfo;
+   if (!findClassInfo(referenceName, classInfo))
+      return false;
+
+   info = classInfo.methods.get(message);
+   return true;
+}
+
 MemoryBase* ByteCodeViewer :: findClassCode(ustr_t name)
 {
    ReferenceName referenceName(nullptr, name);
@@ -319,6 +345,10 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addMessage(commandStr, command.arg1);
             addSecondRArg(command.arg2, commandStr);
             break;
+         case ByteCode::SelEqRR:
+            addRArg(command.arg1, commandStr);
+            addSecondRArg(command.arg2, commandStr);
+            break;
          default:
             addArg(command.arg1, commandStr);
             addSecondArg(command.arg2, commandStr);
@@ -488,7 +518,7 @@ inline ustr_t getMethodPrefix(bool isFunction)
    return "@method";
 }
 
-void ByteCodeViewer::printMethod(ustr_t name)
+void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
 {
    name = trim(name);
 
@@ -540,12 +570,19 @@ void ByteCodeViewer::printMethod(ustr_t name)
       vmtReader.read((void*)&entry, sizeof(MethodEntry));
 
       if (entry.message == message) {
-         //found = true;
+         MethodInfo methodInfo = {};
+         if (fullInfo) {
+            findMethodInfo(*className, message, methodInfo);
+         }
 
          IdentifierString line;
          line.copy(*className);
          line.append('.');
          addMessage(line, message);
+         if (methodInfo.outputRef) {
+            line.append("->");
+            line.append(_module->resolveReference(methodInfo.outputRef));
+         }
 
          printLine(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)), *line);
          printByteCodes(code, entry.codeOffset, 4, _pageSize);
@@ -579,6 +616,8 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
 
    int row = 1;
    if (fullInfo) {
+      findClassInfo(name, info);
+
       if (info.header.parentRef) {
          printLineAndCount("@parent ", _module->resolveReference(info.header.parentRef), row, _pageSize);
          row++;
@@ -685,7 +724,7 @@ void ByteCodeViewer :: runSession()
          printSymbol(buffer + 1);
       }
       else if (ustr_t(buffer).find('.') != NOTFOUND_POS) {
-         printMethod(buffer);
+         printMethod(buffer, true);
       }
       else printClass(buffer, true);
    }

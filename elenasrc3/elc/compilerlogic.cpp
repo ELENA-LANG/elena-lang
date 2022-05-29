@@ -420,6 +420,9 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
       }
       else info.header.flags &= ~elStateless;
    }
+
+   if (test(info.header.flags, elExtension))
+      info.header.flags |= elSealed;
 }
 
 void CompilerLogic :: tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef)

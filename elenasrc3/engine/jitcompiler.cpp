@@ -2443,7 +2443,7 @@ void JITCompiler64 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter&
    pos_t index = 0;
    while (index < length) {
       writer.writeQWord(MemoryBase::getDWord(section, index));
-      index += 8;
+      index += 4;
    }
    writer.align(8, 0);
 
