@@ -1,13 +1,5 @@
 import system;
 
-B;
-
-A
-{
-   B get() = new B();
- 
-}
-
 singleton Tester
 {
    run()
@@ -15,12 +7,12 @@ singleton Tester
       var r1 := 2;
       var r2 := 3;
 
-      if(r1.equalReference(r1)) 
+      if(r1.equal(r1)) 
       {
           Output.write("equalReference works"$10);
       };
 
-      if(r1.equalReference(r2)) 
+      if(r1.equal(r2)) 
       {
           Output.write("equalReference doesn't works"$10);
       }

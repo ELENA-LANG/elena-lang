@@ -536,18 +536,23 @@ void CompilerLogic :: writeExtMessageEntry(MemoryBase* section, ref_t extRef, ms
 
 bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* section, ExtensionMap& map, ModuleScopeBase* scope)
 {
+   bool importMode = extModule != scope->module;
+
    IdentifierString key;
 
    MemoryReader reader(section);
    while (!reader.eof()) {
       ref_t extRef = reader.getRef();
-      extRef = scope->importReference(extModule, extRef);
+      if (importMode)
+         extRef = scope->importReference(extModule, extRef);
 
       mssg_t message = reader.getRef();
-      message = scope->importMessage(extModule, message);
+      if (importMode)
+         message = scope->importMessage(extModule, message);
 
       mssg_t strongMessage = reader.getRef();
-      strongMessage = scope->importMessage(extModule, strongMessage);
+      if (importMode)
+         strongMessage = scope->importMessage(extModule, strongMessage);
 
       map.add(message, { extRef, strongMessage });
    }

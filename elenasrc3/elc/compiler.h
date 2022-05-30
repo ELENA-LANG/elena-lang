@@ -811,7 +811,8 @@ namespace elena_lang
 
       void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey);
 
-      ref_t compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage);
+      ref_t compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage, 
+         ref_t outputRef);
 
       ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, ArgumentsInfo& arguments);
 
@@ -900,9 +901,9 @@ namespace elena_lang
          ClassInfo& info, List<mssg_t>& implicitMultimethods);
 
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
-         ClassInfo& classInfo, mssg_t message, bool inherited);
+         ClassInfo& classInfo, mssg_t message, bool inherited, ref_t outputRef);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, 
-         mssg_t resendMessage, ref_t resendTarget);
+         mssg_t resendMessage, ref_t resendTarget, ref_t outputRef);
       void injectDefaultConstructor(ModuleScopeBase* scope, SyntaxNode node);
 
       void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 

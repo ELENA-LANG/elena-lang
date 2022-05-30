@@ -61,6 +61,7 @@ namespace elena_lang
    constexpr auto errIllegalStaticMethod     = 151;
    constexpr auto errIllegalMethod           = 152;
    constexpr auto errIllegalOperation        = 153;
+   constexpr auto errTypeAlreadyDeclared     = 158;
    constexpr auto errDispatcherInInterface   = 160;
    constexpr auto errAbstractMethodCode      = 161;
    constexpr auto errNotAbstractClass        = 164;
@@ -94,6 +95,7 @@ namespace elena_lang
    constexpr auto wrnUnknownFunction         = 408;
    constexpr auto wrnUnknownDefConstructor   = 409;
    constexpr auto wrnUnknownModule           = 413;
+   constexpr auto wrnTypeInherited           = 420;
    constexpr auto wrnDuplicateInclude        = 425;
 
    constexpr auto wrnSyntaxFileNotFound      = 500;

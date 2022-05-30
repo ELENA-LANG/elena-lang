@@ -17,6 +17,9 @@ public if<expr>(truePart) : __included<statementTemplates>
 
 public class Object
 {
+    bool equal(o)
+       = self.equalReference(o);
+
     dispatch() : external<system'core_routines'__object_dispatcher>;
 }
 
