@@ -36,10 +36,12 @@ namespace elena_lang
    public:
       //void onFrameChange() override;
 
-      void openDocument(TextViewModelBase* model, ustr_t name, path_t path, FileEncoding encoding) override;
+      void openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
+         FileEncoding encoding, int notifyMessage) override;
       void selectDocument(TextViewModelBase* model, ustr_t name) override;
 
-      void newDocument(TextViewModelBase* model, ustr_t name) override;
+      void newDocument(TextViewModelBase* model, ustr_t name, 
+         int notifyMessage) override;
 
       void indent(TextViewModelBase* model) override;
 

@@ -19,9 +19,9 @@ namespace elena_lang
       TextViewModel* _model;
 
    public:
-      void onNewDocument(int index) override;
-      void onSelectDocument(int index) override;
-      void onDocumentSelected(int index) override;
+      void onDocumentNew(int index, int notifyMessage) override;
+      void onDocumentSelect(int index) override;
+      void afterDocumentSelect(int index) override;
       void onDocumentRename(int index) override;
 
       void onSelChanged() override;

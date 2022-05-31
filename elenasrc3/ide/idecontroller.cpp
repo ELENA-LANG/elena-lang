@@ -14,7 +14,7 @@ void SourceViewController :: newSource(TextViewModelBase* model, ustr_t caption,
 {
 //   IdentifierString tabName("unnamed");
 
-   newDocument(model, caption);
+   newDocument(model, caption, model->empty ? NOTIFY_CURRENTVIEW_SHOW : 0);
 
    if (autoSelect) {
       selectDocument(model, caption);
@@ -27,7 +27,7 @@ void SourceViewController :: newSource(TextViewModelBase* model, ustr_t caption,
 bool SourceViewController :: openSource(TextViewModelBase* model, ustr_t caption, path_t sourcePath, 
    FileEncoding encoding, bool autoSelect)
 {
-   openDocument(model, caption, sourcePath, encoding);
+   openDocument(model, caption, sourcePath, encoding, model->empty ? NOTIFY_CURRENTVIEW_SHOW : 0);
 
    if (autoSelect)
       selectDocument(model, caption);
@@ -211,4 +211,9 @@ void IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model, bool s
    }
 
    sourceController.saveSource(&model->sourceViewModel, nullptr);
+}
+
+bool IDEController :: doExit()
+{
+   return true;
 }

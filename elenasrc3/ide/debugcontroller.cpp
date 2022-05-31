@@ -160,19 +160,17 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
       DebugLineInfo info;
       void* current = nullptr;
       int level = 1;
-      while (!reader.eof()) {
+      while (level > 0 && !reader.eof()) {
          current = reader.address();
 
          reader.read(&info, sizeof(DebugLineInfo));
          switch (info.symbol) {
+            case DebugSymbol::Statement:
             case DebugSymbol::Procedure:
                level++;
                break;
             case DebugSymbol::End:
-               if (level == 1) {
-                  break;
-               }
-               else level--;
+               level--;
                break;
                //else if (info.symbol == dsField || (info.symbol & ~dsTypeMask) == dsLocal || info.symbol == dsFieldInfo)
                //{
@@ -312,12 +310,12 @@ DebugLineInfo* DebugInfoProvider :: getNextStep(DebugLineInfo* step, bool stepOv
    }
    else*/ next = &next[1];
 
-   //while ((next->symbol & dsDebugMask) != dsStep) {
-   //   if (next->symbol == dsEnd)
-   //      return nullptr;
+   while (next->symbol  != DebugSymbol::Breakpoint) {
+      if (next->symbol == DebugSymbol::End)
+         return nullptr;
 
-   //   next = &next[1];
-   //}
+      next = &next[1];
+   }
 
    return next;
 }

@@ -21,6 +21,7 @@ namespace elena_lang
    // --- Notification codes ---
    constexpr auto NOTIFY_SOURCEMODEL                  = 1;
    constexpr auto NOTIFY_CURRENTVIEW_CHANGED          = 2;
+   constexpr auto NOTIFY_CURRENTVIEW_SHOW             = 3;
 
    // --- IDEStatus ---
    enum class IDEStatus

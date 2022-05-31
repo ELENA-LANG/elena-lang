@@ -57,13 +57,13 @@ void TextViewModel :: attachListener(TextViewListener* listener)
    for (auto it = _documents.start(); !it.eof(); ++it) {
       index++;
 
-      listener->onNewDocument(index);
+      listener->onDocumentNew(index, 0);
       if ((*it)->documentView == _currentView)
          selected = index;
    }
 
    if (selected != -1)
-      listener->onSelectDocument(selected);
+      listener->onDocumentSelect(selected);
 }
 
 void TextViewModel::attachDocListener(DocumentNotifier* listener)
@@ -84,24 +84,24 @@ void TextViewModel :: removeDocListener(DocumentNotifier* listener)
    _docListeners.cut(listener);
 }
 
-void TextViewModel :: onNewDocument(int index)
+void TextViewModel :: onDocumentNew(int index, int notifyMessage)
 {
    for (auto it = _listeners.start(); !it.eof(); ++it) {
-      (*it)->onNewDocument(index);
+      (*it)->onDocumentNew(index, notifyMessage);
    }
 }
 
-void TextViewModel :: onSelectDocument(int index)
+void TextViewModel :: onDocumentSelect(int index)
 {
    for (auto it = _listeners.start(); !it.eof(); ++it) {
-      (*it)->onSelectDocument(index);
+      (*it)->onDocumentSelect(index);
    }
 }
 
-void TextViewModel :: onDocumentSelected(int index)
+void TextViewModel :: afterDocumentSelect(int index)
 {
    for (auto it = _listeners.start(); !it.eof(); ++it) {
-      (*it)->onDocumentSelected(index);
+      (*it)->afterDocumentSelect(index);
    }
 }
 
@@ -117,8 +117,10 @@ void TextViewModel :: onModelChanged()
    
 }
 
-void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path)
+void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path, int notifyMessage)
 {
+   empty = false;
+
    auto docView = new DocumentView(text, SourceFormatter::getInstance());
 
    _documents.add(new DocumentViewScope(name, path, docView));
@@ -127,7 +129,7 @@ void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path)
       docView->attachNotifier(*it);
    }
 
-   onNewDocument(_documents.count());
+   onDocumentNew(_documents.count(), notifyMessage);
 }
 
 void TextViewModel :: renameDocumentView(ustr_t oldName, ustr_t newName, path_t path)
@@ -170,7 +172,7 @@ bool TextViewModel :: selectDocumentView(ustr_t name)
          _currentView = (*it)->documentView;
          _currentView->status.formatterChanged = true;
 
-         onSelectDocument(index);
+         onDocumentSelect(index);
          break;
       }
 

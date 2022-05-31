@@ -238,6 +238,8 @@ void TextViewWindow :: setScrollPosition(int bar, int position)
 void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 {
    auto docView = _model->DocView();
+   if (!docView)
+      return;
 
    Point caret = docView->getCaret(false) - docView->getFrame();
 
@@ -523,7 +525,7 @@ void TextViewWindow :: onDocumentUpdate()
 {
    auto docView = _model->DocView();
 
-   if (docView->status.isViewChanged()) {
+   if (docView && docView->status.isViewChanged()) {
       _cached = false;
       _caret_x = 0;
    }

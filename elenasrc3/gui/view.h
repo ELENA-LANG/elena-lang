@@ -49,12 +49,13 @@ namespace elena_lang
       int getCurrentIndex();
       int getDocumentIndex(ustr_t name);
 
-      void onNewDocument(int index);
-      void onSelectDocument(int index);
+      void onDocumentNew(int index, int notifyMessage);
+      void onDocumentSelect(int index);
       void onDocumentRename(int index);
 
    public:
-      void onDocumentSelected(int index) override;
+      void afterDocumentSelect(int index) override;
+
       void onModelChanged() override;
 
       void attachListener(TextViewListener* listener) override;
@@ -62,7 +63,7 @@ namespace elena_lang
       void attachDocListener(DocumentNotifier* listener) override;
       void removeDocListener(DocumentNotifier* listener) override;
 
-      void addDocumentView(ustr_t name, Text* text, path_t path) override;
+      void addDocumentView(ustr_t name, Text* text, path_t path, int notifyMessage) override;
       void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) override;
 
       ustr_t getDocumentName(int index) override;

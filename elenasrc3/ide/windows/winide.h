@@ -20,6 +20,8 @@ namespace elena_lang
       IDEModel*      _model;
       IDEController* _controller;
 
+      int            _textFrameId;
+
       void onModelChange(ExtNMHDR* hdr);
       void onTabSelChanged(HWND wnd);
 
@@ -30,14 +32,16 @@ namespace elena_lang
       void newFile();
       void openFile();
       void saveFile();
+      void exit();
 
    public:
-      IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance)
+      IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, int textFrameId)
          : SDIWindow(title)
       {
          this->_instance = instance;
          this->_controller = controller;
          this->_model = model;
+         this->_textFrameId = textFrameId;
       }
    };
 

@@ -4,7 +4,7 @@ __define integer            12293;
 __define string             12294;
 __define hexinteger         12295;
 __define reference          12296;
-__defineterminal }          12297;
+__define terminal           12297;
 
 __define DECLARATION         5120;
 __define BLOCK               7184;
@@ -33,6 +33,8 @@ __define LEN_OPERATION       6214;
 __define IF_OPERATION        6215;
 __define LESS_OPERATION      6216;
 __define NAME_OPERATION      6217;
+__define EQUAL_OPERATION     6218;
+__define NOT_OPERATION       6219;
 __define MESSAGE_OPERATION   6225;
 __define PROPERTY_OPERATION  6228;
 __define EXPRESSION          6288;
@@ -163,6 +165,7 @@ ROOT_EXPRESSION ::=
         | string E_R
 	| "$len" SUB_EXPRESSION ^LEN_OPERATION
 	| "$name" SUB_EXPRESSION ^NAME_OPERATION
+	| "!" SUB_EXPRESSION ^NOT_OPERATION
 	| BLOCK ^CLOSURE;
 
 EXPRESSION ::=
@@ -173,6 +176,7 @@ EXPRESSION ::=
         | string E_R
 	| "$len" SUB_EXPRESSION ^LEN_OPERATION
 	| "$name" SUB_EXPRESSION ^NAME_OPERATION
+	| "!" SUB_EXPRESSION ^NOT_OPERATION
 	| BLOCK ^CLOSURE;
 
 RET_EXPRESSION ::=
@@ -197,9 +201,9 @@ L5_EXPRESSION ::=
         | hexinteger ^OBJECT;
 
 L6_EXPRESSION ::=
-        identifier
-        | integer
-        | hexinteger;
+        identifier ^OBJECT
+        | integer ^OBJECT
+        | hexinteger ^OBJECT;
 
 L7_EXPRESSION ::=
 	BLOCK ^ CLOSURE
@@ -218,6 +222,7 @@ RI_R ::=
 	| RI_L2_R
 	| I_L3_R NEXT_L3_R
 	| L5_R
+	| L6_R
 	| IL6a_R
 	| IL7_R
 	| NESTED_EXPRESSION ^NESTED N_R
@@ -231,6 +236,7 @@ I_R ::=
 	| I_L2_R L7_OPT
 	| I_L3_R NEXT_L3_R
 	| L5_R
+	| L6_R
 	| IL6a_R
 	| IL7_R
         | eps ^OBJECT; 
@@ -281,6 +287,9 @@ I_L3_R ::=
 L5_R ::=
 	"+" ^OBJECT L5_EXPRESSION ^ADD_OPERATION
 	| "-" ^OBJECT L5_EXPRESSION ^SUB_OPERATION;
+
+L6_R ::=
+	"==" ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION;
 
 IL6a_R ::=
 	"<" ^OBJECT L6_EXPRESSION IL6a_OPT;

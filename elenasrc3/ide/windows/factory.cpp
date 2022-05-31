@@ -104,21 +104,20 @@ ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* no
    frame->createControl(_instance, owner);
 
    // !! temporal
-   view->showWindow(SW_SHOW);
-   frame->showWindow(SW_SHOW);
+   frame->show();
 
    return frame;
 }
 
 void IDEFactory :: initializeModel()
 {
-   // !! temporal
-   auto viewModel = _model->viewModel();
+   //// !! temporal
+   //auto viewModel = _model->viewModel();
 
-   PathString path("C:\\Alex\\ELENA\\tests60\\sandbox\\sandbox.l");
+   //PathString path("C:\\Alex\\ELENA\\tests60\\sandbox\\sandbox.l");
 
-   _controller->sourceController.openDocument(viewModel, "sandbox.l", *path, FileEncoding::UTF8);
-   _controller->sourceController.selectDocument(viewModel, "sandbox.l");
+   //_controller->sourceController.openDocument(viewModel, "sandbox.l", *path, FileEncoding::UTF8);
+   //_controller->sourceController.selectDocument(viewModel, "sandbox.l");
 }
 
 GUIApp* IDEFactory :: createApp()
@@ -132,13 +131,15 @@ GUIApp* IDEFactory :: createApp()
 
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier)
 {
-   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance);
-   sdi->create(_instance, szSDI, nullptr);
-
    ControlBase* children[1];
    int counter = 0;
 
    int textIndex = counter++;
+
+   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance, 
+      textIndex);
+   sdi->create(_instance, szSDI, nullptr);
+
    children[textIndex] = createTextControl(sdi, notifier);
 
    sdi->populate(counter, children);

@@ -4,18 +4,24 @@ singleton Tester
 {
    run()
    {
-      var r1 := 2;
-      var r2 := 3;
+       bool b1 := true; 
+       var b2 := false; 
 
-      if(r1.equal(r1)) 
-      {
-          Output.write("equalReference works"$10);
-      };
+       var c := b1.equal(b2);
 
-      if(r1.equal(r2)) 
-      {
-          Output.write("equalReference doesn't works"$10);
-      }
+
+//      var r1 := 2;
+//      var r2 := 3;
+
+//      if(r1 == r1) 
+//      {
+//          Output.write("equalReference works"$10);
+//      };
+
+//      if(r1 == r2) 
+//      {
+//          Output.write("equalReference doesn't works"$10);
+//      }
 
 //      var a := true;
 

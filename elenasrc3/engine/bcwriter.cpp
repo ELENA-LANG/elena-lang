@@ -292,6 +292,15 @@ void directResend(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::JumpMR, node.arg.reference, targetRef | mskVMTRef);
 }
 
+void boolSOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   tape.write(ByteCode::CmpR, trueRef | mskVMTRef);
+   tape.write(ByteCode::SelEqRR, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -331,6 +340,7 @@ ByteCodeWriter::Saver commands[] =
    directResend,
    resendOp,
    xdispatchOp,
+   boolSOp,
 };
 
 // --- ByteCodeWriter ---

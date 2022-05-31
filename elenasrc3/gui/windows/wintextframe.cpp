@@ -19,19 +19,22 @@ TextViewFrame :: TextViewFrame(NotifierBase* notifier, bool withAbovescore, Cont
    model->attachListener(this);
 }
 
-void TextViewFrame :: onNewDocument(int index)
+void TextViewFrame :: onDocumentNew(int index, int notifyMessage)
 {
+   if (notifyMessage)
+      _notifier->notifyModelChange(notifyMessage, 0);
+
    WideMessage title(_model->getDocumentName(index));
 
    addTabView(*title, nullptr);
 }
 
-void TextViewFrame :: onSelectDocument(int index)
+void TextViewFrame :: onDocumentSelect(int index)
 {
    selectTab(index - 1);
 }
 
-void TextViewFrame :: onDocumentSelected(int index)
+void TextViewFrame :: afterDocumentSelect(int index)
 {
    _child->show();
    _child->refresh();
@@ -50,7 +53,7 @@ void TextViewFrame :: onSelChanged()
    if (index >= 0) {
       _model->selectDocumentViewByIndex(index + 1);
 
-      onDocumentSelected(index + 1);
+      afterDocumentSelect(index + 1);
    }
    else {
       _child->hide();

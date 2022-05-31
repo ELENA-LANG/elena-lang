@@ -105,6 +105,8 @@ namespace elena_lang
       void doOpenFile(FileDialogBase& dialog, IDEModel* model);
       void doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode);
 
+      bool doExit();
+
       IDEController(DebugProcessBase* process, IDEModel* model, 
          TextViewSettings& textViewSettings
       ) :

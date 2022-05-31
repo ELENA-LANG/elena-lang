@@ -37,6 +37,13 @@ void IDEWindow :: saveFile()
    _controller->doSaveFile(dialog, _model, false);
 }
 
+void IDEWindow :: exit()
+{
+   if(_controller->doExit()) {
+      close();
+   }
+}
+
 bool IDEWindow :: onCommand(int command)
 {
    switch (command) {
@@ -48,6 +55,10 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_FILE_SAVE:
          saveFile();
+         break;
+      case IDM_FILE_EXIT:
+         exit();
+         break;
       case IDM_DEBUG_RUN:
          _controller->projectController.doDebugAction(_model->projectModel, DebugAction::Run);
          break;
@@ -73,8 +84,11 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
          docView->notifyOnChange();
          break;
       case NOTIFY_CURRENTVIEW_CHANGED:
-         _model->sourceViewModel.onDocumentSelected(hdr->extParam);
+         _model->sourceViewModel.afterDocumentSelect(hdr->extParam);
          _model->sourceViewModel.onModelChanged();
+         break;
+      case NOTIFY_CURRENTVIEW_SHOW:
+         _children[_textFrameId]->show();
          break;
       default:
          break;

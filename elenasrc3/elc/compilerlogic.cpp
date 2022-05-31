@@ -59,8 +59,9 @@ constexpr int SArrayOperators[1]      = { LEN_OPERATOR_ID };
 constexpr int IntOperators[2]         = { ADD_OPERATOR_ID, SUB_OPERATOR_ID };
 constexpr int BranchingOperators[1]   = { IF_OPERATOR_ID };
 constexpr int SDeclOperators[1]       = { NAME_OPERATOR_ID };
+constexpr int SOpOperators[1]         = { NOT_OPERATOR_ID };
 
-constexpr auto OperationLength = 9;
+constexpr auto OperationLength = 10;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -95,6 +96,10 @@ constexpr Op Operations[OperationLength] =
    {
       SDeclOperators, 1,
       BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING, false
+   },
+   {
+      SOpOperators, 1,
+      BuildKey::BoolSOp, V_FLAG, 0, 0, V_FLAG, false
    }
 };
 
@@ -806,8 +811,11 @@ bool CompilerLogic :: checkMethod(ModuleScopeBase& scope, ref_t classRef, mssg_t
 bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
    CheckMethodResult& result)
 {
+   if (!classRef)
+      classRef = scope.buildins.superReference;
+
    ClassInfo info;
-   if (classRef && defineClassInfo(scope, info, classRef)) {
+   if (defineClassInfo(scope, info, classRef)) {
       if (!checkMethod(info, message, result)) {
          if (checkMethod(info, message | STATIC_MESSAGE, result)) {
             result.visibility = Visibility::Private;

@@ -4,22 +4,28 @@ public interface BoolValue
 {
    private constructor() {}
 
+   get abstract bool Inverted();
+
    abstract if(trueAction);
 
-//   abstract bool equal(bool f);
+   abstract bool equal(bool f);
 
-   const static true = BoolValue
+   const static bool true = BoolValue
    {
+      bool Inverted = BoolValue.false;
+
       if(trueAction) = trueAction();
 
-//      bool equal(bool f) {}  
+      bool equal(bool b) = b;
    };
 
-   const static false = BoolValue
+   const static bool false = BoolValue
    {
+      bool Inverted = BoolValue.true;
+
       if(trueAction) = nil;
 
-//      bool equal(bool f) {}  
+      bool equal(bool b) = !b;
    };
 }
 

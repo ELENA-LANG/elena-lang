@@ -115,6 +115,12 @@ MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, 
    _child = child;
 }
 
+void MultiTabControl :: show()
+{
+   ControlBase::show();
+   refresh();
+}
+
 void MultiTabControl :: setRectangle(Rectangle rec)
 {
    CustomTabBar::setRectangle(rec);

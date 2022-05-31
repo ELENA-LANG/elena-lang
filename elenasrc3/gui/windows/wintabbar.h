@@ -42,6 +42,8 @@ namespace elena_lang
       void onSetFocus() override;
 
    public:
+      void show() override;
+
       void setRectangle(Rectangle rec) override;
 
       int addTabView(wstr_t title, void* param);

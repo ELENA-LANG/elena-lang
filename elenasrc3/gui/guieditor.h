@@ -35,10 +35,10 @@ namespace elena_lang
    class TextViewListener
    {
    public:
-      virtual void onDocumentSelected(int index) = 0;
+      virtual void afterDocumentSelect(int index) = 0;
 
-      virtual void onSelectDocument(int index) = 0;
-      virtual void onNewDocument(int index) = 0;
+      virtual void onDocumentSelect(int index) = 0;
+      virtual void onDocumentNew(int index, int notifyMessage) = 0;
       virtual void onDocumentRename(int index) = 0;
    };
 
@@ -51,13 +51,15 @@ namespace elena_lang
    public:
       bool          lineNumbersVisible;
       int           fontSize;
+      bool          empty;
 
       DocumentView* DocView()
       {
          return _currentView;
       }
 
-      virtual void onDocumentSelected(int index) = 0;
+      virtual void afterDocumentSelect(int index) = 0;
+
       virtual void onModelChanged() = 0;
 
       virtual void attachListener(TextViewListener* listener) = 0;
@@ -65,7 +67,7 @@ namespace elena_lang
       virtual void attachDocListener(DocumentNotifier* listener) = 0;
       virtual void removeDocListener(DocumentNotifier* listener) = 0;
 
-      virtual void addDocumentView(ustr_t name, Text* text, path_t path) = 0;
+      virtual void addDocumentView(ustr_t name, Text* text, path_t path, int notifyMessage) = 0;
       virtual void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) = 0;
 
       virtual void clearDocumentView() = 0;
@@ -90,6 +92,7 @@ namespace elena_lang
          this->_currentView = nullptr;
          this->lineNumbersVisible = false;
          this->fontSize = fontSize;
+         this->empty = true;
       }
    };
 
@@ -99,8 +102,10 @@ namespace elena_lang
    public:
       //virtual void onFrameChange() = 0;
 
-      virtual void newDocument(TextViewModelBase* model, ustr_t name) = 0;
-      virtual void openDocument(TextViewModelBase* model, ustr_t name, path_t path, FileEncoding encoding) = 0;
+      virtual void newDocument(TextViewModelBase* model, ustr_t name, 
+         int notifyMessage) = 0;
+      virtual void openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
+         FileEncoding encoding, int notifyMessage) = 0;
 
       virtual void selectDocument(TextViewModelBase* model, ustr_t name) = 0;
 

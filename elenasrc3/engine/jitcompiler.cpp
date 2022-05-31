@@ -2118,7 +2118,7 @@ void JITCompiler32 :: addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool 
    if (!virtualMode) {
       writer.writeDWord((unsigned int)vaddress);
    }
-   else writer.writeDReference((ref_t)vaddress, 0);
+   else writer.writeDReference((ref_t)vaddress | mskRef32, 0);
 }
 
 void JITCompiler32 :: writeInt32(MemoryWriter& writer, unsigned value)
@@ -2407,7 +2407,7 @@ void JITCompiler64 :: addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool 
    if (!virtualMode) {
       writer.writeQWord(vaddress);
    }
-   else writer.writeQReference((ref_t)vaddress, 0);
+   else writer.writeQReference((ref_t)vaddress | mskRef64, 0);
 }
 
 int JITCompiler64 :: calcTotalSize(int numberOfFields)

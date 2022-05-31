@@ -93,6 +93,8 @@ namespace elena_lang
       }
       void setLayout(int center, int top, int bottom, int right, int left);
 
+      void close();
+
       SDIWindow(wstr_t title)
          : WindowBase(title)
       {

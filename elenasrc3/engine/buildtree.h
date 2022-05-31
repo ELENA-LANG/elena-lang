@@ -63,6 +63,7 @@ namespace elena_lang
       DirectResendOp       = 0x0022,
       ResendOp             = 0x0023,
       SealedDispatchingOp  = 0x0024,
+      BoolSOp              = 0x0025,
 
       Import               = 0x0038,
       StrDictionaryOp      = 0x0039,
@@ -85,6 +86,8 @@ namespace elena_lang
       Count                = 0x8009,
       Message              = 0x800A,
       Const                = 0x800B,
+      TrueConst            = 0x800C,
+      FalseConst           = 0x800D,
 
       //MetaDictionary    = 0x0022,
       //MetaArray         = 0x1023,

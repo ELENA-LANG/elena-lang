@@ -15,20 +15,21 @@ using namespace elena_lang;
 //   
 //}
 
-void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name)
+void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name, int notifyMessage)
 {
    Text* text = new Text(_settings.eolMode);
    text->create();
 
-   model->addDocumentView(name, text, nullptr);
+   model->addDocumentView(name, text, nullptr, notifyMessage);
 }
 
-void TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, path_t path, FileEncoding encoding)
+void TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
+   FileEncoding encoding, int notifyMessage)
 {
    Text* text = new Text(_settings.eolMode);
    text->load(path, encoding, false);
 
-   model->addDocumentView(name, text, path);
+   model->addDocumentView(name, text, path, notifyMessage);
 }
 
 void TextViewController :: selectDocument(TextViewModelBase* model, ustr_t name)
