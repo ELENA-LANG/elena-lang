@@ -64,6 +64,7 @@ namespace elena_lang
       ResendOp             = 0x0023,
       SealedDispatchingOp  = 0x0024,
       BoolSOp              = 0x0025,
+      IntCondOp            = 0x0026,
 
       Import               = 0x0038,
       StrDictionaryOp      = 0x0039,

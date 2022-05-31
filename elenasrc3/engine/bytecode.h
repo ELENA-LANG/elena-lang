@@ -54,6 +54,7 @@ namespace elena_lang
       Jne            = 0xB4,
 
       CmpR           = 0xC0,
+      ICmpN          = 0xC2,
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
 

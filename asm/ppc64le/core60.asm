@@ -542,6 +542,46 @@ inline %0C0h
 
 end 
 
+// ; icmpn 4
+inline %0C2h
+
+  lwz      r17, 0(r3)
+  lwz      r18, 0(r15)
+
+  cmp      r17, r18
+
+end
+
+// ; icmpn 1
+inline %1C2h
+
+  lbz     r17, 0(r3)
+  lbz     r18, 0(r15)
+
+  cmp      r17, r18
+
+end
+
+// ; icmpn 2
+inline %2C2h
+
+  lhz     r17, 0(r3)
+  lhz     r18, 0(r15)
+
+  cmp      r17, r18
+
+end
+
+// ; icmpdpn 8
+inline %4C2h
+
+  ld      r17, 0(r3)
+  ld      r18, 0(r15)
+
+  cmp     r17, r18
+
+end
+
 // ; cmpfi
 inline %0C8h
 

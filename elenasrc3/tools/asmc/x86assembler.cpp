@@ -993,10 +993,32 @@ bool X86Assembler :: compileCmp(X86Operand source, X86Operand target, MemoryWrit
       writer.writeByte(0x3B);
       X86Helper::writeModRM(writer, source, target);
    }
+   else if (source.isR32_M32() && target.isR32()) {
+      writer.writeByte(0x39);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR16() && target.isR16_M16()) {
+      writer.writeByte(0x66);
+      writer.writeByte(0x3B);
+      X86Helper::writeModRM(writer, source, target);
+   }
    else if (source.isR32_M32() && target.type == X86OperandType::DD) {
       writer.writeByte(0x81);
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 7), source);
       X86Helper::writeImm(writer, target);
+   }
+   else if (source.isR16_M16() && target.isR16()) {
+      writer.writeByte(0x66);
+      writer.writeByte(0x39);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR8() && target.isR8_M8()) {
+      writer.writeByte(0x3A);
+      X86Helper::writeModRM(writer, source, target);
+   }
+   else if (source.isR8_M8() && target.isR8()) {
+      writer.writeByte(0x38);
+      X86Helper::writeModRM(writer, target, source);
    }
    else return false;
 
@@ -1288,6 +1310,10 @@ bool X86Assembler :: compileSbb(X86Operand source, X86Operand target, MemoryWrit
    if (source.isR32_M32() && target.isR32()) {
       writer.writeByte(0x19);
       X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR32() && target.isR32_M32()) {
+      writer.writeByte(0x1B);
+      X86Helper::writeModRM(writer, source, target);
    }
    else if (source.isR32_M32() && target.type == X86OperandType::DB) {
       writer.writeByte(0x83);

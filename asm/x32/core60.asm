@@ -428,6 +428,40 @@ inline %0C0h
 
 end 
 
+// ; icmpn 4
+inline %0C2h
+
+  mov  eax, [esi]
+  cmp  eax, [ebx]
+
+end
+
+// ; icmpn 1
+inline %1C2h
+
+  mov  eax, [esi]
+  cmp  al, byte ptr [ebx]
+
+end
+
+// ; icmpn 2
+inline %2C2h
+
+  mov  eax, [esi]
+  cmp  ax, word ptr [ebx]
+
+end
+
+// ; icmpn 8
+inline %4C2h
+
+  mov  eax, [esi]
+  sub  ecx, [ebx]
+  mov  eax, [esi+4]
+  sbb  eax, [ebx+4]
+
+end
+
 // ; cmpfi
 inline %0C8h
 

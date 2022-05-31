@@ -520,6 +520,46 @@ inline %0C0h
 
 end 
 
+// ; icmpn 4
+inline %0C2h
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x10]
+
+  cmp     x17, x18
+
+end
+
+// ; icmpn 1
+inline %1C2h
+
+  ldrsb   x17, [x0]
+  ldrsb   x18, [x10]
+
+  cmp     x17, x18
+
+end
+
+// ; icmpn 2
+inline %2C2h
+
+  ldrsh   x17, [x0]
+  ldrsh   x18, [x10]
+
+  cmp     x17, x18
+
+end
+
+// ; icmpdpn 8
+inline %4EFh
+
+  ldr     x17, [x0]
+  ldr     x18, [x10]
+
+  cmp     x17, x18
+
+end
+
 // ; cmpfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0C8h
@@ -807,7 +847,6 @@ inline %4E4h
   str     x17, [x19]
 
 end
-
 
 // ; vjumpmr
 inline %0ECh

@@ -2965,6 +2965,8 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
          return scope->buildins.if_message;
       case EQUAL_OPERATOR_ID:
          return scope->buildins.equal_message;
+      case NOTEQUAL_OPERATOR_ID:
+         return scope->buildins.notequal_message;
       case NOT_OPERATOR_ID:
          return scope->buildins.not_message;
       default:
@@ -3075,6 +3077,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
 
       switch (op) {
          case BuildKey::BoolSOp:
+         case BuildKey::IntCondOp:
             writer.appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);
             writer.appendNode(BuildKey::FalseConst, scope.moduleScope->branchingInfo.falseRef);
             break;
@@ -4010,6 +4013,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::NameOperation:
       case SyntaxKey::EqualOperation:
       case SyntaxKey::NotOperation:
+      case SyntaxKey::NotEqualOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::IfOperation:
@@ -4747,6 +4751,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.not_message =
       encodeMessage(moduleScope->module->mapAction(NOT_MESSAGE, 0, false),
          1, PROPERTY_MESSAGE);
+   moduleScope->buildins.notequal_message =
+      encodeMessage(moduleScope->module->mapAction(NOTEQUAL_MESSAGE, 0, false),
+         2, 0);
 
    // cache self variable
    moduleScope->selfVar.copy(moduleScope->predefined.retrieve<ref_t>("@self", V_SELF_VAR, 

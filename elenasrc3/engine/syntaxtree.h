@@ -73,6 +73,7 @@ namespace elena_lang
       NameOperation        = 0x001849,
       EqualOperation       = 0x00184A,
       NotOperation         = 0x00184B,
+      NotEqualOperation    = 0x00184C,
       MessageOperation     = 0x001851,
       ResendOperation      = 0x001C52,
       RedirectOperation    = 0x001C53,

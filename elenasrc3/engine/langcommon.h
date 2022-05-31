@@ -207,6 +207,7 @@ namespace elena_lang
    constexpr auto NAME_OPERATOR_ID        = 0x0009;
    constexpr auto EQUAL_OPERATOR_ID       = 0x000A;
    constexpr auto NOT_OPERATOR_ID         = 0x000B;
+   constexpr auto NOTEQUAL_OPERATOR_ID    = 0x000C;
    constexpr auto SET_INDEXER_OPERATOR_ID = 0x0201;
 
 }

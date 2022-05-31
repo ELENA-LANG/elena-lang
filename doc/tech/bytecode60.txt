@@ -187,3 +187,12 @@ ELENA byte codes (or ecodes)
    cmp  sp:i                - COMP.EQ := (acc == sp[i]);
 
    cmp  fp:i                - COMP.EQ := (acc == fp[i]);
+
+   icmp n                   - temp1 : n << acc;
+                              temp2 : n << sp[0];
+                              COMP.EQ := (temp1 == temp2);
+                              n = 1,2,4,8 
+
+   icmp dp:disp n           - temp : n << acc;
+                              COMP.EQ := (temp == dp[disp]);
+                              n = 1,2,4,8 

@@ -304,6 +304,7 @@ struct BuiltinReferences
    mssg_t  if_message;
    mssg_t  equal_message;
    mssg_t  not_message;
+   mssg_t  notequal_message;
 
    BuiltinReferences()
    {
@@ -314,6 +315,7 @@ struct BuiltinReferences
       if_message = 0;
       equal_message = 0;
       not_message = 0;
+      notequal_message = 0;
    }
 };
 

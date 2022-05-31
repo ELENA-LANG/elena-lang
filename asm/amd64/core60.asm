@@ -457,6 +457,38 @@ inline %0C0h
 
 end 
 
+// ; icmpn 4
+inline %0C2h
+
+  mov  rax, [r10]
+  cmp  dword ptr[rbx], eax
+
+end
+
+// ; icmpn 1
+inline %1C2h
+
+  mov  rax, [r10]
+  cmp  byte ptr [rbx], al
+
+end
+
+// ; icmpn 2
+inline %2C2h
+
+  mov  rax, [r10]
+  cmp  word ptr [rbx], ax
+
+end
+
+// ; icmpn 8
+inline %4C2h
+
+  mov  rax, [r10]
+  cmp  [rbx], rax
+
+end
+
 // ; cmpfi
 inline %0C8h
 

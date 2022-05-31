@@ -4,10 +4,10 @@ singleton Tester
 {
    run()
    {
-       bool b1 := true; 
-       var b2 := false; 
+      int n1 := 2;
+      int n2 := 3;
 
-       var c := b1.equal(b2);
+      n1 != n2;
 
 
 //      var r1 := 2;

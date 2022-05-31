@@ -97,6 +97,7 @@ namespace elena_lang
    constexpr auto IF_MESSAGE              = "if";
    constexpr auto EQUAL_MESSAGE           = "equal";
    constexpr auto NOT_MESSAGE             = "Inverted";
+   constexpr auto NOTEQUAL_MESSAGE        = "notequal";
 
    // --- constant string lengths ---
    constexpr auto TEMPLATE_PREFIX_NS_LEN = 7;

@@ -57,11 +57,12 @@ constexpr int DictionaryOperators[1]  = { SET_INDEXER_OPERATOR_ID };
 constexpr int ArrayOperators[1]       = { ADD_ASSIGN_OPERATOR_ID };
 constexpr int SArrayOperators[1]      = { LEN_OPERATOR_ID };
 constexpr int IntOperators[2]         = { ADD_OPERATOR_ID, SUB_OPERATOR_ID };
+constexpr int CondOperators[1]        = { EQUAL_OPERATOR_ID };
 constexpr int BranchingOperators[1]   = { IF_OPERATOR_ID };
 constexpr int SDeclOperators[1]       = { NAME_OPERATOR_ID };
 constexpr int SOpOperators[1]         = { NOT_OPERATOR_ID };
 
-constexpr auto OperationLength = 10;
+constexpr auto OperationLength = 11;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -84,6 +85,10 @@ constexpr Op Operations[OperationLength] =
    {
       IntOperators, 2,
       BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32, true
+   },
+   {
+      CondOperators, 1,
+      BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG, false
    },
    {
       SArrayOperators, 1,

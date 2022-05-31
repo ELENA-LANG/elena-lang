@@ -252,21 +252,38 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   tape.write(ByteCode::CopyDPN, targetOffset, 4);
+   tape.write(ByteCode::XMovSISI, 0, 1);
 
    switch (node.arg.value) {
       case ADD_OPERATOR_ID:
-         tape.write(ByteCode::CopyDPN, targetOffset, 4);
-         tape.write(ByteCode::XMovSISI, 0, 1);
          tape.write(ByteCode::IAddDPN, targetOffset, 4);
          break;
       case SUB_OPERATOR_ID:
-         tape.write(ByteCode::CopyDPN, targetOffset, 4);
-         tape.write(ByteCode::XMovSISI, 0, 1);
          tape.write(ByteCode::ISubDPN, targetOffset, 4);
          break;
       default:
          throw InternalError(errFatalError);
    }
+}
+
+void intCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+
+   switch (node.arg.value) {
+      case EQUAL_OPERATOR_ID:
+         tape.write(ByteCode::ICmpN, 4);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+
+   tape.write(ByteCode::SelEqRR, falseRef | mskVMTRef, trueRef | mskVMTRef);
 }
 
 void byteArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -341,6 +358,7 @@ ByteCodeWriter::Saver commands[] =
    resendOp,
    xdispatchOp,
    boolSOp,
+   intCondOp,
 };
 
 // --- ByteCodeWriter ---
