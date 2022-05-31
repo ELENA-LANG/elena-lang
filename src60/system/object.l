@@ -20,6 +20,11 @@ public class Object
     bool equal(o)
        = self.equalReference(o);
 
+    bool notequal(o)
+       = !(self.equal(o));
+
+    predefined bool less(o);
+
     dispatch() : external<system'core_routines'__object_dispatcher>;
 }
 

@@ -891,6 +891,19 @@ inline %0EEh
 
 end 
 
+// ; setr
+inline %0EFh
+
+  ld      r16, toc_rdata(r2)
+  addis   r17, r16, __disp32hi_1 
+  addis   r18, r16, __disp32hi_2 
+  addi    r17, r16, __disp32lo_1 
+  addi    r18, r16, __disp32lo_2 
+
+  isellt  r15, r18, r17
+
+end 
+
 // ; openin
 inline %0F0h
 

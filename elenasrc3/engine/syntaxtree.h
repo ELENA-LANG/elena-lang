@@ -49,6 +49,7 @@ namespace elena_lang
       EOP                  = 0x00100B,
       Field                = 0x00100C,
       Import               = 0x00100D,
+      PredefinedMethod     = 0x00100E,
       CodeBlock            = 0x001C10,
       WithoutBody          = 0x001C11,
       Importing            = 0x001C12,

@@ -194,7 +194,8 @@ SUB_EXPRESSION ::=
 	| reference ^OBJECT
         | integer ^OBJECT
         | hexinteger ^OBJECT
-        | string ^OBJECT;
+        | string ^OBJECT
+        | "(" EXPRESSION ")";
 
 L5_EXPRESSION ::=
         identifier I5_R

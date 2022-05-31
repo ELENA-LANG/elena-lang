@@ -10,13 +10,19 @@ public interface BoolValue
 
    abstract bool equal(bool f);
 
+   abstract bool notequal(bool f);
+
    const static bool true = BoolValue
    {
       bool Inverted = BoolValue.false;
 
       if(trueAction) = trueAction();
 
-      bool equal(bool b) = b;
+      bool equal(bool b) 
+         = b;
+
+      bool notequal(bool b)
+         = !b;
    };
 
    const static bool false = BoolValue
@@ -26,6 +32,9 @@ public interface BoolValue
       if(trueAction) = nil;
 
       bool equal(bool b) = !b;
+
+      bool notequal(bool b)
+         = b; 
    };
 }
 
@@ -36,15 +45,16 @@ public const false = BoolValue.false;
 
 public abstract class BaseValue
 {
+//   abstract bool less(v);
 }
 
 // --- BaseNumber ---
 
 public abstract class BaseNumber : BaseValue
 {
-    abstract add(o);
+   abstract add(o);
 
-    abstract subtract(o);
+   abstract subtract(o);
 }
 
 // --- IntBaseNumber ---
@@ -66,9 +76,18 @@ public const struct IntNumber : IntBaseNumber
 {
    embeddable __int theValue[4];
 
-    int add(int n)
-        = theValue + n;   
+   bool equal(int n)
+      = theValue == n; 
 
-    int subtract(int n)
-        = theValue - n;   
+   bool notequal(int n)
+      = theValue != n;
+
+   bool less(int n)
+      = theValue < n;
+
+   int add(int n)
+      = theValue + n;   
+
+   int subtract(int n)
+      = theValue - n;   
 }

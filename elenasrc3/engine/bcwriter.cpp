@@ -269,21 +269,35 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
 
 void intCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
+   bool inverted = false;
    ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
    ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
 
    // NOTE : sp[0] - loperand, sp[1] - roperand
    tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::ICmpN, 4);
 
+   ByteCode opCode = ByteCode::None;
    switch (node.arg.value) {
+      case LESS_OPERATOR_ID:
+         opCode = ByteCode::SelLtRR;
+         break;
       case EQUAL_OPERATOR_ID:
-         tape.write(ByteCode::ICmpN, 4);
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
          break;
       default:
-         throw InternalError(errFatalError);
+         assert(false);
+         break;
    }
 
-   tape.write(ByteCode::SelEqRR, falseRef | mskVMTRef, trueRef | mskVMTRef);
+   if (inverted) {
+      tape.write(ByteCode::SelEqRR, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(ByteCode::SelEqRR, falseRef | mskVMTRef, trueRef | mskVMTRef);
 }
 
 void byteArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -586,8 +600,10 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
    // reset VMT length
    info.header.count = 0;
    for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
-      //NOTE : ingnore statically linked methods
-      if (!test(m_it.key(), STATIC_MESSAGE))
+      auto m_info = *m_it;
+
+      //NOTE : ingnore statically linked and predefined methods
+      if (!test(m_it.key(), STATIC_MESSAGE) && !test(m_info.hints, (ref_t)MethodHint::Predefined))
          info.header.count++;
    }
 

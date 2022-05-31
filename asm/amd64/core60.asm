@@ -703,6 +703,15 @@ inline %0EEh
 
 end
 
+// ; selltrr
+inline %0EFh
+
+  mov   rax, __ptr32_1
+  mov   rbx, __ptr32_2
+  cmovl rbx, rax
+
+end
+
 // ; openin
 inline %0F0h
 

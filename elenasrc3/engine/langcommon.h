@@ -16,10 +16,10 @@ namespace elena_lang
       Mask           = 0x0000000F,
 
       None           = 0x00000000,
-      Sealed         = 0x00000001,
-      Virtual        = 0x00000002,
-      Normal         = 0x00000003,
-      Dispatcher     = 0x00000004,
+      Normal         = 0x00000001,
+      Sealed         = 0x00000003,
+      Virtual        = 0x00000005,
+      Dispatcher     = 0x00000007,
 
       Function       = 0x00000080,
       Multimethod    = 0x00001000,
@@ -27,6 +27,7 @@ namespace elena_lang
       GetAccessor    = 0x00008000,
       Abstract       = 0x00020000,
       Internal       = 0x00040000,
+      Predefined     = 0x0080000, // virtual class declaration
       Constructor    = 0x00200400,
       Conversion     = 0x00200800,
       SetAccessor    = 0x00400000,
@@ -143,6 +144,7 @@ namespace elena_lang
    /// property:
    constexpr auto V_SEALED                = 0x80003001u;
    constexpr auto V_ABSTRACT              = 0x80003002u;
+   constexpr auto V_PREDEFINED            = 0x80003005u;
 
    /// scope_prefix:
    constexpr auto V_CONST                 = 0x80002001u;

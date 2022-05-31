@@ -880,6 +880,18 @@ inline %0EEh
 
 end
 
+// ; seleqrr
+inline %0EFh
+
+  movz    x11,  __ptr32lo_1
+  movz    x12,  __ptr32lo_2
+  movk    x11,  __ptr32hi_1, lsl #16
+  movk    x12,  __ptr32hi_2, lsl #16
+
+  csel    x10, x11, x12, lt
+
+end
+
 // ; openin
 inline %0F0h
 

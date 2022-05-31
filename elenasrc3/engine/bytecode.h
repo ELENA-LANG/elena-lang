@@ -68,6 +68,7 @@ namespace elena_lang
       VJumpMR        = 0xEC,
       JumpMR         = 0xED,
       SelEqRR        = 0xEE,
+      SelLtRR        = 0xEF,
 
       OpenIN         = 0xF0,
       XStoreSIR      = 0xF1,
@@ -222,6 +223,7 @@ namespace elena_lang
          case ByteCode::CallExtR:
          case ByteCode::CmpR:
          case ByteCode::SelEqRR:
+         case ByteCode::SelLtRR:
             return true;
          default:
             return false;
@@ -242,6 +244,7 @@ namespace elena_lang
             case ByteCode::DispatchMR:
             case ByteCode::XDispatchMR:
             case ByteCode::SelEqRR:
+            case ByteCode::SelLtRR:
                return true;
             default:
                return false;

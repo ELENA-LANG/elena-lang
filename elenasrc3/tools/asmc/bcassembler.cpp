@@ -468,6 +468,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::VJumpMR:
             return compileMR(tokenInfo, writer, opCommand, true);
          case ByteCode::SelEqRR:
+         case ByteCode::SelLtRR:
             return compileRR(tokenInfo, writer, opCommand, true);
          default:
             return false;

@@ -803,6 +803,15 @@ inline %0EEh
 
 end
 
+// ; selltrr
+inline %0EFh
+
+  mov   eax, __ptr32_1
+  mov   ebx, __ptr32_2
+  cmovl ebx, eax
+
+end
+
 // ; openin
 inline %0F0h
 
