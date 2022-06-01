@@ -4012,6 +4012,20 @@ ObjectInfo Compiler :: compileNested(BuildTreeWriter& writer, ExprScope& ownerSc
    return compileNestedExpression(scope, mode);
 }
 
+ObjectInfo Compiler :: compileLoopExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
+   ExpressionAttribute mode)
+{
+   ObjectInfo retVal = { ObjectKind::Object };
+
+   writer.newNode(BuildKey::LoopOp);
+
+   compileExpression(writer, scope, node, 0, mode);
+
+   writer.closeNode();
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
    ref_t targetRef, ExpressionAttribute mode)
 {
@@ -4077,6 +4091,14 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
    return retVal;
 }
 
+inline SyntaxNode findObjectNode(SyntaxNode node)
+{
+   if (node != SyntaxKey::None && node != SyntaxKey::Object) {
+      return findObjectNode(node.firstChild());
+   }
+   else return node;
+}
+
 ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
 {
    ExprScope scope(&codeScope);
@@ -4084,6 +4106,8 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    ref_t outputRef = codeScope.getOutputRef();
 
    writer.appendNode(BuildKey::OpenStatement);
+   addBreakpoint(writer, findObjectNode(node), BuildKey::Breakpoint);
+
    ObjectInfo retVal = boxArgument(writer, scope,
       compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), outputRef, EAttr::Root),
       false, true);
@@ -4100,22 +4124,16 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    return retVal;
 }
 
-inline SyntaxNode findObjectNode(SyntaxNode node)
-{
-   if (node != SyntaxKey::None && node != SyntaxKey::Object) {
-      return findObjectNode(node.firstChild());
-   }
-   else return node;
-}
-
 ObjectInfo Compiler :: compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
 {
    ExprScope scope(&codeScope);
 
+   ExpressionAttribute mode = EAttr::None;
+
    writer.appendNode(BuildKey::OpenStatement);
    addBreakpoint(writer, findObjectNode(node), BuildKey::Breakpoint);
 
-   auto retVal = compileExpression(writer, scope, node, 0, EAttr::None);
+   auto retVal = compileExpression(writer, scope, node, 0, mode);
    writer.appendNode(BuildKey::EndStatement);
 
    scope.syncStack();
@@ -4160,10 +4178,17 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
    scope.load();
 
    writer.newNode(BuildKey::Symbol, node.arg.reference);
+
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   writer.appendNode(BuildKey::Path, *ns->sourcePath);
+
    writer.newNode(BuildKey::Tape);
    writer.appendNode(BuildKey::OpenFrame);
 
    SyntaxNode bodyNode = node.findChild(SyntaxKey::GetExpression);
+
+   writer.appendNode(BuildKey::OpenStatement);
+   addBreakpoint(writer, findObjectNode(bodyNode), BuildKey::Breakpoint);
 
    ExprScope exprScope(&scope);
    ObjectInfo retVal = compileExpression(writer, exprScope,
@@ -4171,6 +4196,8 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
 
    writeObjectInfo(writer, 
       boxArgument(writer, exprScope, retVal, false, true));
+
+   writer.appendNode(BuildKey::EndStatement);
 
    exprScope.syncStack();
 
@@ -4598,6 +4625,8 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
 
 void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef)
 {
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
    scope.info.header.flags |= elNestedClass;
    declareClassParent(parentRef, scope, node);
 
@@ -4615,6 +4644,9 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
    scope.save();
 
    writer.newNode(BuildKey::NestedClass, scope.reference);
+
+   writer.appendNode(BuildKey::Path, *ns->sourcePath);
+
    compileVMT(writer, scope, node, true, true);
 
    // set flags once again
@@ -4631,7 +4663,11 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
 
 void Compiler :: compileClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
 {
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
    writer.newNode(BuildKey::Class, scope.reference);
+   writer.appendNode(BuildKey::Path, *ns->sourcePath);
+
    compileVMT(writer, scope, node);
    writer.closeNode();
 

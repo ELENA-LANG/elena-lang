@@ -16,7 +16,9 @@ ProjectModel :: ProjectModel(IDEStatus* status)
 
    this->autoRecompile = /*true*/false;// !! temporal
    this->projectPath.copy("C:\\Alex\\ELENA\\tests60\\sandbox\\"); // !! temporal
-   this->outputPath.copy("C:\\Alex\\ELENA\\tests60\\sandbox\\"); // !! temporal
+   this->outputPath.copy("C:\\Alex\\ELENA\\tests60\\sandbox\\");  // !! temporal
+
+   this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60\\");      // !! temporal
 }
 
 path_t ProjectModel::getOutputPath()

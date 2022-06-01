@@ -4,10 +4,17 @@ singleton Tester
 {
    run()
    {
-      int n1 := 2;
-      int n2 := 3;
+      var n := 1;
+      n.equal(2);
 
-      n1 != n2;
+//      1.equal(2);
+
+//      int n1 := 2;
+//      int n2 := 3;
+
+//      n1.equal(n2);
+
+      //n1 != n2;
 
 
 //      var r1 := 2;

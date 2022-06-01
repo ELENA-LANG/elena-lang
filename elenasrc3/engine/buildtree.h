@@ -73,6 +73,7 @@ namespace elena_lang
       AttrDictionaryOp     = 0x003C,
       DeclOp               = 0x003D,
       DeclDictionaryOp     = 0x003E,
+      LoopOp               = 0x003F,
 
       NestedClass          = 0x0080,
 
@@ -89,6 +90,7 @@ namespace elena_lang
       Const                = 0x800B,
       TrueConst            = 0x800C,
       FalseConst           = 0x800D,
+      Path                 = 0x800E,
 
       //MetaDictionary    = 0x0022,
       //MetaArray         = 0x1023,

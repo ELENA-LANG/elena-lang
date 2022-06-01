@@ -164,6 +164,11 @@ namespace elena_lang
          else write(ByteCode::Label, labels.pop());
       }
 
+      void releaseLabel()
+      {
+         labels.pop();
+      }
+
       void write(ByteCode code);
       void write(ByteCode code, arg_t arg1);
       void write(ByteCode code, arg_t arg1, arg_t arg2);

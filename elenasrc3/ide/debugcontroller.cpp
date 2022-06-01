@@ -268,15 +268,17 @@ DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, us
    if (module) {
       moduleName = module->name();
 
-      //DebugLineInfo* current = (DebugLineInfo*)lineInfoAddress;
-      //while (current->symbol != DebugSymbol::Procedure/* && current->symbol != dsCodeInfo*/)
-      //   current = &current[-1];
+      DebugLineInfo* current = (DebugLineInfo*)lineInfoAddress;
+      while (current->symbol != DebugSymbol::Procedure)
+         current = &current[-1];
 
-      //MemoryBase* section = module->mapSection(DEBUG_STRINGS_ID, true);
+      if (current->addresses.source.nameRef != INVALID_POS) {
+         MemoryBase* section = module->mapSection(DEBUG_STRINGS_ID, true);
 
-      //if (section != NULL) {
-      //   sourcePath = (const char*)section->get(current->addresses.source.nameRef);
-      //}
+         if (section != NULL) {
+            sourcePath = (const char*)section->get(current->addresses.source.nameRef);
+         }
+      }
 
       return (DebugLineInfo*)lineInfoAddress;
    }
