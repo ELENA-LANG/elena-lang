@@ -428,6 +428,13 @@ inline %0C0h
 
 end 
 
+// ; cmpr 0
+inline %1C0h
+
+  cmp  ebx, 0
+
+end 
+
 // ; icmpn 4
 inline %0C2h
 

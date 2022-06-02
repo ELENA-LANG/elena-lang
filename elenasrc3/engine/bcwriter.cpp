@@ -497,7 +497,10 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
          break;
    }
 
-   saveTape(tape, node.findChild(BuildKey::Tape), tapeScope, paths);
+   if (simpleLoop) {
+      saveTape(tape, node, tapeScope, paths);
+   }
+   else saveTape(tape, node.findChild(BuildKey::Tape), tapeScope, paths);
 
    if (!simpleLoop) {
       tape.write(ByteCode::Jump, startLabel);

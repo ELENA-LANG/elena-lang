@@ -3454,6 +3454,11 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    }
 
    if (operation != BuildKey::None) {
+      bool targetOverridden = (target != arguments[0]);
+      if (targetOverridden) {
+         target = boxArgument(writer, scope, target, false, false);
+      }
+
       pos_t counter = arguments.count_pos();
       // box the arguments if required
       for (unsigned int i = counter; i > 0; i--) {
@@ -3469,7 +3474,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          writer.appendNode(BuildKey::SavingInStack, i - 1);
       }
 
-      if (target == arguments[0]) {
+      if (!targetOverridden) {
          writer.appendNode(BuildKey::Argument, 0);
       }
       else writeObjectInfo(writer, target);
@@ -4055,6 +4060,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::IfOperation:
          retVal = compileBranchingOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
+         break;
+      case SyntaxKey::LoopOperation:
+         retVal = compileLoopExpression(writer, scope, current.firstChild(), mode);
          break;
       case SyntaxKey::ReturnExpression:
          retVal = compileExpression(writer, scope, current.firstChild(), 0, mode);

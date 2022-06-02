@@ -542,6 +542,14 @@ inline %0C0h
 
 end 
 
+// ; cmpr
+inline %1C0h
+
+  li      r16, 0
+  cmp     r15, r16
+
+end 
+
 // ; icmpn 4
 inline %0C2h
 

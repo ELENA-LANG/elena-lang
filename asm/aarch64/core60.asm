@@ -520,6 +520,14 @@ inline %0C0h
 
 end 
 
+// ; cmpr
+inline %1C0h
+
+  mov     x11, #0
+  cmp     x10, x11
+
+end 
+
 // ; icmpn 4
 inline %0C2h
 

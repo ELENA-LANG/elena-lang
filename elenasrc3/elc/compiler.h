@@ -67,6 +67,11 @@ namespace elena_lang
          return (this->kind == val.kind && this->reference == val.reference);
       }
 
+      bool operator !=(ObjectInfo& val) const
+      {
+         return !(*this == val);
+      }
+
       ObjectInfo()
       {
          kind = ObjectKind::Unknown;

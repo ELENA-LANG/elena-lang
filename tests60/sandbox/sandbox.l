@@ -4,18 +4,7 @@ singleton Tester
 {
    run()
    {
-      var n := 1;
-      n.equal(2);
-
-//      1.equal(2);
-
-//      int n1 := 2;
-//      int n2 := 3;
-
-//      n1.equal(n2);
-
-      //n1 != n2;
-
+       $rep Output.write("*");
 
 //      var r1 := 2;
 //      var r2 := 3;
