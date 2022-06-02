@@ -671,7 +671,10 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_
          return true;
    }
    else if (targetRef == V_FLAG) {
-      return isCompatible(scope, scope.branchingInfo.typeRef, sourceRef, ignoreNils);
+      if (targetRef == sourceRef) {
+         return true;
+      }
+      else return isCompatible(scope, scope.branchingInfo.typeRef, sourceRef, ignoreNils);
    }
 
    if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))

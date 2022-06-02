@@ -34,15 +34,15 @@ MethodHint operator & (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l & (unsigned int)r);
 }
 
-//inline void testNodes(SyntaxNode node)
-//{
-//   SyntaxNode current = node.firstChild();
-//   while (current != SyntaxKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 // --- Interpreter ---
 
@@ -742,8 +742,14 @@ void Compiler::ExprScope :: syncStack()
       if (codeScope->reserved1 < tempAllocated1)
          codeScope->reserved1 = tempAllocated1;
 
+      if (codeScope->reserved2 < tempAllocated2)
+         codeScope->reserved2 = tempAllocated2;
+
       if (tempAllocated1 < codeScope->allocated1)
          tempAllocated1 = codeScope->allocated1;
+
+      if (tempAllocated2 < codeScope->allocated2)
+         tempAllocated2 = codeScope->allocated2;
 
       MethodScope* methodScope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
       if (methodScope != nullptr) {
@@ -3702,8 +3708,11 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
       scope.syncStack();
 
-      CodeScope codeScope(Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code));
+      CodeScope* parentCodeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+
+      CodeScope codeScope(parentCodeScope);
       compileCode(writer, codeScope, rnode.firstChild(), false);
+      codeScope.syncStack(parentCodeScope);
 
       writer.closeNode();
       writer.closeNode();

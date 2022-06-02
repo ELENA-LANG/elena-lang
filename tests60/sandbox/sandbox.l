@@ -4,7 +4,9 @@ singleton Tester
 {
    run()
    {
-       $rep Output.write("*");
+       int n := 0;
+
+       $rep (n < 5) ? { Output.write("*"); n := n + 1; };
 
 //      var r1 := 2;
 //      var r2 := 3;

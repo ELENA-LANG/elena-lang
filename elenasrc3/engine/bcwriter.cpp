@@ -457,9 +457,11 @@ void ByteCodeWriter :: importTree(CommandTape& tape, BuildNode node, Scope& scop
    tape.import(importInfo.module, importInfo.section, true, scope.moduleScope);
 }
 
-void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths)
+void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
+   ReferenceMap& paths, bool loopMode)
 {
-   tape.newLabel();
+   if (!loopMode)
+      tape.newLabel();
 
    switch (node.arg.value) {
       case IF_OPERATOR_ID:
@@ -473,48 +475,26 @@ void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScop
 
    saveTape(tape, node.findChild(BuildKey::Tape), tapeScope, paths);
 
-   tape.setLabel();
+   if (!loopMode)
+      tape.setLabel();
 }
 
 void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths)
 {
-   bool simpleLoop = true;
-   int eopLabel = tape.newLabel();
    int startLabel = tape.newLabel();
    tape.setLabel(true);
+   int eopLabel = tape.newLabel();   
 
-   BuildNode opNode = node.firstChild();
+   saveTape(tape, node, tapeScope, paths, true);
 
-   switch (opNode.arg.value) {
-      case IF_OPERATOR_ID:
-         simpleLoop = false;
-         saveTape(tape, opNode, tapeScope, paths);
-         tape.write(ByteCode::CmpR, node.findChild(BuildKey::Const).arg.reference | mskVMTRef);
-         tape.write(ByteCode::Jeq, eopLabel);
-         node = opNode;
-         break;
-      default:
-         break;
-   }
+   tape.write(ByteCode::Jump, startLabel);
 
-   if (simpleLoop) {
-      saveTape(tape, node, tapeScope, paths);
-   }
-   else saveTape(tape, node.findChild(BuildKey::Tape), tapeScope, paths);
-
-   if (!simpleLoop) {
-      tape.write(ByteCode::Jump, startLabel);
-   }
-   else {
-      tape.write(ByteCode::CmpR, 0);
-      tape.write(ByteCode::Jne, startLabel);
-   }
-
-   tape.releaseLabel();
    tape.setLabel();
+   tape.releaseLabel();
 }
 
-void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths)
+void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
+   ReferenceMap& paths, bool loopMode)
 {
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
@@ -526,7 +506,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             saveClass(current, tapeScope.scope->moduleScope, tapeScope.scope->minimalArgList, paths);
             break;
          case BuildKey::BranchOp:
-            saveBranching(tape, current, tapeScope, paths);
+            saveBranching(tape, current, tapeScope, paths, loopMode);
             break;
          case BuildKey::LoopOp:
             saveLoop(tape, current, tapeScope, paths);

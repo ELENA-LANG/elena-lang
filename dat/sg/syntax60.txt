@@ -161,10 +161,10 @@ META_STATEMENT ::=
 
 ROOT_EXPRESSION ::=
         identifier RI_R
-	| reference I_R
-        | integer E_R
-        | hexinteger E_R
-        | string E_R
+	| reference O_R
+        | integer O_R
+        | hexinteger O_R
+        | string O_R
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$len" SUB_EXPRESSION ^LEN_OPERATION
 	| "$name" SUB_EXPRESSION ^NAME_OPERATION
@@ -173,10 +173,11 @@ ROOT_EXPRESSION ::=
 
 EXPRESSION ::=
         identifier I_R
-	| reference I_R
-        | integer E_R
-        | hexinteger E_R
-        | string E_R
+	| reference O_R
+        | integer O_R
+        | hexinteger O_R
+        | string O_R
+        | "(" EXPRESSION ")" E_R
 	| "$len" SUB_EXPRESSION ^LEN_OPERATION
 	| "$name" SUB_EXPRESSION ^NAME_OPERATION
 	| "!" SUB_EXPRESSION ^NOT_OPERATION
@@ -225,25 +226,33 @@ RI_R ::=
 	| I_L1_R
 	| RI_L2_R
 	| I_L3_R NEXT_L3_R
-	| L5_R
-	| L6_R
-	| IL6a_R
+	| I_L5_R
+	| I_L6_R
+	| I_L6a_R
 	| IL7_R
 	| NESTED_EXPRESSION ^NESTED N_R
         | eps ^OBJECT; 
 
 I_R ::=
         identifier I_R
-	| NESTED_EXPRESSION ^NESTED N_R
+	| O_R;
+
+O_R ::=
+        NESTED_EXPRESSION ^NESTED N_R
         | I_L0_R
 	| I_L1_R
 	| I_L2_R L7_OPT
 	| I_L3_R NEXT_L3_R
-	| L5_R
-	| L6_R
-	| IL6a_R
+	| I_L5_R
+	| I_L6_R
+	| I_L6a_R
 	| IL7_R
         | eps ^OBJECT; 
+
+E_R ::=
+	L5_R
+	| L7_R
+	| eps;
 
 TEMPLATE_R ::=
 	I_L2_R
@@ -252,11 +261,6 @@ TEMPLATE_R ::=
 VAR_R ::=
 	L1_R
 	| eps;
-
-E_R ::=
-	L5_R
-	| IL7_R
-	| eps ^OBJECT;
 
 I5_R ::=
         identifier I5_R
@@ -288,18 +292,22 @@ RI_L2_OPT ::=
 I_L3_R ::=
 	"." ^OBJECT MESSAGE MESSAGE_R;
 
-L5_R ::=
+I_L5_R ::=
 	"+" ^OBJECT L5_EXPRESSION ^ADD_OPERATION
 	| "-" ^OBJECT L5_EXPRESSION ^SUB_OPERATION;
 
-L6_R ::=
+L5_R ::=
+	"+" L5_EXPRESSION ^ADD_OPERATION
+	| "-" L5_EXPRESSION ^SUB_OPERATION;
+
+I_L6_R ::=
 	"==" ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION;
 	| "!=" ^OBJECT L6_EXPRESSION ^NOTEQUAL_OPERATION;
 
-IL6a_R ::=
-	"<" ^OBJECT L6_EXPRESSION IL6a_OPT;
+I_L6a_R ::=
+	"<" ^OBJECT L6_EXPRESSION I_L6a_OPT;
 
-IL6a_OPT ::=
+I_L6a_OPT ::=
 	">" ^ TEMPLATE_TYPE TEMPLATE_R
 	| eps ^ LESS_OPERATION;
 

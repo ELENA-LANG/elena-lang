@@ -55,8 +55,10 @@ namespace elena_lang
 
       void importTree(CommandTape& tape, BuildNode node, Scope& scope);
 
-      void saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths);
-      void saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths);
+      void saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
+         ReferenceMap& paths, bool loopMode = false);
+      void saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
+         ReferenceMap& paths, bool loopMode);
       void saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths);
 
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, ReferenceMap& paths);

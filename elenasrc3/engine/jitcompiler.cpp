@@ -54,7 +54,7 @@ CodeGenerator _codeGenerators[256] =
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadROp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadROp, loadNop, loadIOp, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -551,6 +551,46 @@ void elena_lang::loadNOp(JITCompilerScope* scope)
    MemoryWriter* writer = scope->codeWriter;
 
    void* code = retrieveCode(scope);
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case NARG_1:
+            writer->writeDWord(scope->command.arg1);
+            break;
+         case NARG16_1:
+         case ARG16_1:
+            scope->compiler->writeImm16(writer, (short)scope->command.arg1, 0);
+            break;
+         case NARG12_1:
+            scope->compiler->writeImm12(writer, (short)scope->command.arg1, 0);
+            break;
+         default:
+            //writeCoreReference();
+            break;
+      }
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
+void elena_lang :: loadIOp(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   void* code = retrieveICode(scope, scope->command.arg1);
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
@@ -1481,28 +1521,27 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
    writer->seekEOF();
 }
 
+inline void* elena_lang::retrieveICode(JITCompilerScope* scope, int arg)
+{
+   switch (arg) {
+      case 1:
+         return scope->compiler->_inlines[1][scope->code()];
+      case 2:
+         return scope->compiler->_inlines[2][scope->code()];
+      case 4:
+         return scope->compiler->_inlines[3][scope->code()];
+      case 8:
+         return scope->compiler->_inlines[4][scope->code()];
+      default:
+         return scope->compiler->_inlines[0][scope->code()];
+   }
+}
+
 void elena_lang::loadDPNOp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = nullptr;
-   switch (scope->command.arg2) {
-      case 1:
-         code = scope->compiler->_inlines[1][scope->code()];
-         break;
-      case 2:
-         code = scope->compiler->_inlines[2][scope->code()];
-         break;
-      case 4:
-         code = scope->compiler->_inlines[3][scope->code()];
-         break;
-      case 8:
-         code = scope->compiler->_inlines[4][scope->code()];
-         break;
-      default:
-         code = scope->compiler->_inlines[0][scope->code()];
-         break;
-   }
+   void* code = retrieveICode(scope, scope->command.arg2);
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));

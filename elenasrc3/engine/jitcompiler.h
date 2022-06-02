@@ -88,6 +88,7 @@ namespace elena_lang
 
       friend void* retrieveCode(JITCompilerScope* scope);
       friend void* retrieveCodeWithNegative(JITCompilerScope* scope);
+      friend void* retrieveICode(JITCompilerScope* scope, int arg);
 
       friend void loadOp(JITCompilerScope* scope);
       friend void loadLOp(JITCompilerScope* scope);
@@ -113,6 +114,7 @@ namespace elena_lang
       friend void loadMROp(JITCompilerScope* scope);
       friend void loadVMTROp(JITCompilerScope* scope);
       friend void loadDPNOp(JITCompilerScope* scope);
+      friend void loadIOp(JITCompilerScope* scope);
 
       friend void compileBreakpoint(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
@@ -288,6 +290,7 @@ namespace elena_lang
 
    inline void* retrieveCode(JITCompilerScope* scope);
    inline void* retrieveCodeWithNegative(JITCompilerScope* scope);
+   inline void* retrieveICode(JITCompilerScope* scope, int arg);
 
    void loadNop(JITCompilerScope*);
    void loadOp(JITCompilerScope* scope);
@@ -314,6 +317,7 @@ namespace elena_lang
    void loadMROp(JITCompilerScope* scope);
    void loadVMTROp(JITCompilerScope* scope);
    void loadDPNOp(JITCompilerScope* scope);
+   void loadIOp(JITCompilerScope* scope);
 
    void compileClose(JITCompilerScope* scope);
    void compileOpen(JITCompilerScope* scope);
