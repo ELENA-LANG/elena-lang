@@ -27,12 +27,16 @@ void SourceViewController :: newSource(TextViewModelBase* model, ustr_t caption,
 bool SourceViewController :: openSource(TextViewModelBase* model, ustr_t caption, path_t sourcePath, 
    FileEncoding encoding, bool autoSelect)
 {
-   openDocument(model, caption, sourcePath, encoding, model->empty ? NOTIFY_CURRENTVIEW_SHOW : 0);
+   if (openDocument(model, caption, sourcePath, encoding,
+      model->empty ? NOTIFY_CURRENTVIEW_SHOW : 0))
+   {
+      if (autoSelect)
+         selectDocument(model, caption);
 
-   if (autoSelect)
-      selectDocument(model, caption);
+      return true;
+   }
+   else return false;
 
-   return true;
 }
 
 void SourceViewController :: renameSource(TextViewModelBase* model, ustr_t oldName, ustr_t newName, path_t newSourcePath)
@@ -50,6 +54,25 @@ void SourceViewController :: saveSource(TextViewModelBase* model, ustr_t name)
 }
 
 // --- ProjectController ---
+
+bool ProjectController::isIncluded(ProjectModel& model, ustr_t ns)
+{
+   return NamespaceString::isIncluded(model.getPackage(), ns);
+}
+
+void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t path, 
+   PathString& fullPath)
+{
+   if (isIncluded(model, ns)) {
+      fullPath.copy(*model.projectPath);
+      fullPath.combine(path);
+   }
+   else {
+      fullPath.copy(*model.paths.librarySourceRoot);
+      fullPath.combine(ns);
+      fullPath.combine(path);
+   }
+}
 
 void ProjectController :: defineSourceName(path_t path, IdentifierString& retVal)
 {
@@ -155,6 +178,15 @@ bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction post
 
 // --- IDEController ---
 
+bool IDEController :: selectSource(ProjectModel* model, SourceViewModel* sourceModel,
+   ustr_t ns, path_t sourcePath)
+{
+   PathString fullPath;
+   projectController.defineFullPath(*model, ns, sourcePath, fullPath);
+
+   return openFile(sourceModel, *fullPath);
+}
+
 void IDEController :: doNewFile(IDEModel* model)
 {
    IdentifierString sourceNameStr;
@@ -165,11 +197,16 @@ void IDEController :: doNewFile(IDEModel* model)
 
 bool IDEController :: openFile(IDEModel* model, path_t sourceFile)
 {
-   ustr_t sourceName = model->sourceViewModel.getDocumentNameByPath(sourceFile);
-   if (!sourceName.empty()) {
-      sourceController.selectDocument(&model->sourceViewModel, sourceName);
+   return openFile(&model->sourceViewModel, sourceFile);
+}
 
-      return false;
+bool IDEController :: openFile(SourceViewModel* model, path_t sourceFile)
+{
+   ustr_t sourceName = model->getDocumentNameByPath(sourceFile);
+   if (!sourceName.empty()) {
+      sourceController.selectDocument(model, sourceName);
+
+      return true;
    }
    else {
       IdentifierString sourceNameStr;
@@ -178,7 +215,8 @@ bool IDEController :: openFile(IDEModel* model, path_t sourceFile)
       sourceName = *sourceNameStr;
    }
 
-   return sourceController.openSource(&model->sourceViewModel, sourceName, sourceFile, defaultEncoding, true);
+   return sourceController.openSource(model, sourceName, sourceFile, 
+      defaultEncoding, true);
 }
 
 void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)

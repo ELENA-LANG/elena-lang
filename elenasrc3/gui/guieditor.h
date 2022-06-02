@@ -104,7 +104,7 @@ namespace elena_lang
 
       virtual void newDocument(TextViewModelBase* model, ustr_t name, 
          int notifyMessage) = 0;
-      virtual void openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
+      virtual bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
          FileEncoding encoding, int notifyMessage) = 0;
 
       virtual void selectDocument(TextViewModelBase* model, ustr_t name) = 0;

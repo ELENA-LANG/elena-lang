@@ -23,11 +23,12 @@ void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name, in
    model->addDocumentView(name, text, nullptr, notifyMessage);
 }
 
-void TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
+bool TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
    FileEncoding encoding, int notifyMessage)
 {
    Text* text = new Text(_settings.eolMode);
-   text->load(path, encoding, false);
+   if (!text->load(path, encoding, false))
+      return false;
 
    model->addDocumentView(name, text, path, notifyMessage);
 }

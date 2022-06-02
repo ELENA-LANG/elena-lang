@@ -20,6 +20,7 @@ namespace elena_lang
       {
          PathString libraryRoot;
          PathString lastPath;
+         PathString librarySourceRoot;
       } paths;
 
       bool       autoRecompile;

@@ -59,9 +59,15 @@ namespace elena_lang
 
       void compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target);
       void generateModule(ModuleScopeBase& moduleScope, BuildTree& tree);
-      void parseFile(FileIteratorBase& file_it, SyntaxWriterBase* syntaxWriter);
-      void parseModule(ModuleIteratorBase& module_it, SyntaxTreeBuilder& builder, ModuleScopeBase& moduleScope);
-      void buildModule(ModuleIteratorBase& module_it, 
+      void parseFile(path_t projectPath,
+         FileIteratorBase& file_it, 
+         SyntaxWriterBase* syntaxWriter);
+      void parseModule(path_t projectPath,
+         ModuleIteratorBase& module_it, 
+         SyntaxTreeBuilder& builder, 
+         ModuleScopeBase& moduleScope);
+      void buildModule(path_t projectPath,
+         ModuleIteratorBase& module_it, 
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,
          pos_t stackAlingment,

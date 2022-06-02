@@ -19,6 +19,7 @@ ProjectModel :: ProjectModel(IDEStatus* status)
    this->outputPath.copy("C:\\Alex\\ELENA\\tests60\\sandbox\\");  // !! temporal
 
    this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60\\");      // !! temporal
+   this->paths.librarySourceRoot.copy("C:\\Alex\\ELENA\\src60\\");// !! temporal
 }
 
 path_t ProjectModel::getOutputPath()

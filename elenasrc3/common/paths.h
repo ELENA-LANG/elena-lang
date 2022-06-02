@@ -27,6 +27,8 @@ namespace elena_lang
    class PathUtil
    {
    public:
+      static bool compare(path_t path1, path_t path);
+
       static bool removeFile(path_t path);
 
       static bool recreatePath(/*path_t root, */path_t path);

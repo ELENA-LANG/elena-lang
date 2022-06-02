@@ -217,12 +217,18 @@ CompilingProcess :: CompilingProcess(PathString& appPath, PresenterBase* present
    }
 }
 
-void CompilingProcess :: parseFile(FileIteratorBase& file_it, SyntaxWriterBase* syntaxWriter)
+void CompilingProcess :: parseFile(path_t projectPath,
+   FileIteratorBase& file_it, 
+   SyntaxWriterBase* syntaxWriter)
 {
-   _presenter->printPath(ELC_PARSING_FILE, *file_it);
-
    // save the path to the current source
-   IdentifierString pathStr((*file_it).str());
+   path_t sourceRelativePath = (*file_it).str();
+   if (!projectPath.empty())
+      sourceRelativePath += projectPath.length() + 1;
+
+   _presenter->printPath(ELC_PARSING_FILE, sourceRelativePath);
+
+   IdentifierString pathStr(sourceRelativePath);
    syntaxWriter->newNode(SyntaxTree::toParseKey(SyntaxKey::SourcePath), *pathStr);
    syntaxWriter->closeNode();
 
@@ -245,14 +251,17 @@ void CompilingProcess :: parseFile(FileIteratorBase& file_it, SyntaxWriterBase* 
 
 }
 
-void CompilingProcess :: parseModule(ModuleIteratorBase& module_it, SyntaxTreeBuilder& builder, ModuleScopeBase& moduleScope)
+void CompilingProcess :: parseModule(path_t projectPath,
+   ModuleIteratorBase& module_it, 
+   SyntaxTreeBuilder& builder, 
+   ModuleScopeBase& moduleScope)
 {
    auto& file_it = module_it.files();
    while (!file_it.eof()) {
       builder.newNode(SyntaxTree::toParseKey(SyntaxKey::Namespace));
 
       // generating syntax tree
-      parseFile(file_it, &builder);
+      parseFile(projectPath, file_it, &builder);
 
       builder.closeNode();
 
@@ -285,7 +294,8 @@ void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTre
    generateModule(moduleScope, buildTree);
 }
 
-void CompilingProcess :: buildModule(ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
+void CompilingProcess :: buildModule(path_t projectPath,
+   ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
    pos_t stackAlingment,
    pos_t rawStackAlingment,
@@ -304,7 +314,7 @@ void CompilingProcess :: buildModule(ModuleIteratorBase& module_it, SyntaxTree* 
    _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
    SyntaxTreeBuilder builder(syntaxTree, _errorProcessor, 
       &moduleScope, &_templateGenerator);
-   parseModule(module_it, builder, moduleScope);
+   parseModule(projectPath, module_it, builder, moduleScope);
 
    buildSyntaxTree(moduleScope, syntaxTree);
 }
@@ -363,7 +373,9 @@ void CompilingProcess :: compile(ProjectBase& project,
 
    auto module_it = project.allocModuleIterator();
    while (!module_it->eof()) {
-      buildModule(*module_it, &syntaxTree, &project,
+      buildModule(
+         project.PathSetting(ProjectOption::ProjectPath),
+         *module_it, &syntaxTree, &project,         
          project.IntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
          project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
          minimalArgList,

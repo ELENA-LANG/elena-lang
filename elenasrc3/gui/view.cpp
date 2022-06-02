@@ -199,7 +199,7 @@ ustr_t TextViewModel :: getDocumentNameByPath(path_t path)
 {
    auto info =_documents.retrieve<path_t>(path, [](path_t path, DocumentViewScope* item)
       {
-         return path.compare(item->path.str());
+         return PathUtil::compare(path, item->path.str());
       });
 
    return info ? info->name : nullptr;
