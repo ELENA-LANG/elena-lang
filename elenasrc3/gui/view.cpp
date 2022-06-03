@@ -117,6 +117,20 @@ void TextViewModel :: onModelChanged()
    
 }
 
+void TextViewModel :: beforeDocumentClose(int index)
+{
+   for (auto it = _listeners.start(); !it.eof(); ++it) {
+      (*it)->beforeDocumentClose(index);
+   }
+}
+
+void TextViewModel :: onDocumentClose(int index, int notifyMessage)
+{
+   for (auto it = _listeners.start(); !it.eof(); ++it) {
+      (*it)->onDocumentClose(index, notifyMessage);
+   }
+}
+
 void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path, int notifyMessage)
 {
    empty = false;
@@ -152,6 +166,24 @@ void TextViewModel :: renameDocumentView(ustr_t oldName, ustr_t newName, path_t 
    onDocumentRename(index);
 }
 
+void TextViewModel :: closeDocumentView(ustr_t name, int notifyMessage)
+{
+   int index = getDocumentIndex(name);
+   if (index >= 0) {
+      beforeDocumentClose(index);
+
+      auto info = _documents.get(index);
+
+      _documents.cut(info);
+
+      empty = _documents.count() == 0;
+   }
+
+   clearDocumentView();
+
+   onDocumentClose(index, notifyMessage);
+}
+
 void TextViewModel :: clearDocumentView()
 {
    _currentView = nullptr;
@@ -170,7 +202,7 @@ bool TextViewModel :: selectDocumentView(ustr_t name)
    for (auto it = _documents.start(); !it.eof(); ++it) {
       if ((*it)->name.compare(name)) {
          _currentView = (*it)->documentView;
-         _currentView->status.formatterChanged = true;
+         _currentView->status.frameChanged = true;
 
          onDocumentSelect(index);
          break;

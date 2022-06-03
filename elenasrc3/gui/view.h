@@ -53,6 +53,9 @@ namespace elena_lang
       void onDocumentSelect(int index);
       void onDocumentRename(int index);
 
+      void beforeDocumentClose(int index);
+      void onDocumentClose(int index, int notifyMessage);
+
    public:
       void afterDocumentSelect(int index) override;
 
@@ -75,6 +78,13 @@ namespace elena_lang
       void clearDocumentView() override;
       bool selectDocumentView(ustr_t name) override;
       bool selectDocumentViewByIndex(int index) override;
+
+      void closeDocumentView(ustr_t name, int notifyMessage) override;
+
+      pos_t getDocumentCount() override
+      {
+         return _documents.count();
+      }
 
       void resize(Point size) override;
 

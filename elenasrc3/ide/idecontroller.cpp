@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 
 #include "idecontroller.h"
+#include "eng/messages.h"
 
 using namespace elena_lang;
 
@@ -36,12 +37,28 @@ bool SourceViewController :: openSource(TextViewModelBase* model, ustr_t caption
       return true;
    }
    else return false;
-
 }
 
 void SourceViewController :: renameSource(TextViewModelBase* model, ustr_t oldName, ustr_t newName, path_t newSourcePath)
 {
    model->renameDocumentView(oldName, newName, newSourcePath);
+}
+
+void SourceViewController :: closeSource(TextViewModelBase* model, ustr_t name, bool autoSelect)
+{
+   int index = model->getDocumentIndex(name);
+   if (index != -1) {
+      int count = model->getDocumentCount();
+
+      closeDocument(model, name, count == 1 ? NOTIFY_CURRENTVIEW_HIDE : 0);
+
+      if (autoSelect && !model->empty) {
+         if (index == count) {
+            selectDocument(model, model->getDocumentName(count - 1));
+         }
+         else selectDocument(model, model->getDocumentName(index));
+      }
+   }
 }
 
 void SourceViewController :: saveSource(TextViewModelBase* model, ustr_t name)
@@ -219,7 +236,7 @@ bool IDEController :: openFile(SourceViewModel* model, path_t sourceFile)
       defaultEncoding, true);
 }
 
-void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
+void IDEController :: doOpenFile(DialogBase& dialog, IDEModel* model)
 {
    List<path_t, freepath> files(nullptr);
    if (dialog.openFiles(files)) {
@@ -231,16 +248,16 @@ void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
    }
 }
 
-void IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode)
+bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode)
 {
    auto docView = model->sourceViewModel.DocView();
    if (!docView)
-      return;
+      return false;
 
    if (docView->status.unnamed || saveAsMode) {
       PathString path;
       if (!dialog.saveFile(_T("l"), path))
-         return;
+         return false;
 
       IdentifierString sourceNameStr;
       projectController.defineSourceName(*path, sourceNameStr);
@@ -249,6 +266,35 @@ void IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model, bool s
    }
 
    sourceController.saveSource(&model->sourceViewModel, nullptr);
+
+   return true;
+}
+
+bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
+{
+   auto docView = model->sourceViewModel.DocView();
+   if (docView) {
+      ustr_t current = model->sourceViewModel.getDocumentName(-1);
+
+      if (docView->status.unnamed) {
+         doSaveFile(dialog, model, false);
+      }
+      else if (docView->status.modifiedMode) {
+         path_t path = model->sourceViewModel.getDocumentPath(current);
+
+         auto result = dialog.question(
+            QUESTION_SAVE_FILECHANGES, path);
+
+         if (result == DialogBase::Answer::Cancel) {
+            return false;
+         }
+         else if (result == DialogBase::Answer::Yes) {
+            if (!doSaveFile(dialog, model, false));
+         }
+      }
+
+      sourceController.closeSource(&model->sourceViewModel, current, true);
+   }
 }
 
 bool IDEController :: doExit()

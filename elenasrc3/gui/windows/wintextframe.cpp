@@ -40,6 +40,21 @@ void TextViewFrame :: afterDocumentSelect(int index)
    _child->refresh();
 }
 
+void TextViewFrame :: beforeDocumentClose(int index)
+{
+
+}
+
+void TextViewFrame :: onDocumentClose(int index, int notifyMessage)
+{
+   eraseTabView(index - 1);
+
+   _child->hide();
+
+   if (notifyMessage)
+      _notifier->notifyModelChange(notifyMessage, 0);
+}
+
 void TextViewFrame :: onDocumentRename(int index)
 {
    WideMessage title(_model->getDocumentName(index));

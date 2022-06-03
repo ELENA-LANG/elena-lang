@@ -485,6 +485,10 @@ namespace elena_lang
          StrConvertor::copy(_string, s, getlength(s), len);
          _string[len] = 0;
       }
+      WideMessage(const wchar_t* s)
+      {
+         copy(s);
+      }
    };
 
 

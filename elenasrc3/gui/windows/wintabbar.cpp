@@ -97,6 +97,11 @@ void CustomTabBar :: renameTab(int index, wstr_t title)
    ::SendMessage(_handle, TCM_SETITEM, index, (LPARAM)&tie);
 }
 
+void CustomTabBar :: deleteTab(int index)
+{
+   ::SendMessage(_handle, TCM_DELETEITEM, index, 0);
+}
+
 int CustomTabBar :: getTabCount()
 {
    return (int)::SendMessage(_handle, TCM_GETITEMCOUNT, 0, 0);
@@ -171,4 +176,9 @@ void MultiTabControl :: renameTabView(int index, wstr_t title)
 {
    // rename tab caption
    renameTab(index, title);
+}
+
+void MultiTabControl :: eraseTabView(int index)
+{
+   deleteTab(index);
 }

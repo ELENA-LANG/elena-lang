@@ -40,6 +40,9 @@ namespace elena_lang
       virtual void onDocumentSelect(int index) = 0;
       virtual void onDocumentNew(int index, int notifyMessage) = 0;
       virtual void onDocumentRename(int index) = 0;
+
+      virtual void beforeDocumentClose(int index) = 0;
+      virtual void onDocumentClose(int index, int notifyMessage) = 0;
    };
 
    // --- TextViewBase ---
@@ -74,11 +77,17 @@ namespace elena_lang
       virtual bool selectDocumentView(ustr_t name) = 0;
       virtual bool selectDocumentViewByIndex(int index) = 0;
 
+      virtual void closeDocumentView(ustr_t name, int notifyMessage) = 0;
+
       virtual ustr_t getDocumentName(int index) = 0;
       virtual ustr_t getDocumentNameByPath(path_t path) = 0;
 
       virtual DocumentView* getDocument(ustr_t name) = 0;
       virtual path_t getDocumentPath(ustr_t name) = 0;
+
+      virtual int getDocumentIndex(ustr_t name) = 0;
+
+      virtual pos_t getDocumentCount() = 0;
 
       virtual void resize(Point size) = 0;
 
@@ -108,6 +117,9 @@ namespace elena_lang
          FileEncoding encoding, int notifyMessage) = 0;
 
       virtual void selectDocument(TextViewModelBase* model, ustr_t name) = 0;
+
+      virtual void closeDocument(TextViewModelBase* model, ustr_t name, 
+         int notifyMessage) = 0;
 
       virtual void indent(TextViewModelBase* model) = 0;
 

@@ -5,11 +5,23 @@
 //---------------------------------------------------------------------------
 
 #include "windows/winide.h"
-#include "windows/windialogs.h"
 
 #include <windows/Resource.h>
 
 using namespace elena_lang;
+
+IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, int textFrameId) : 
+   SDIWindow(title), 
+   dialog(instance, 
+      this, Dialog::SourceFilter, 
+      OPEN_FILE_CAPTION, 
+      *model->projectModel.paths.lastPath)
+{
+   this->_instance = instance;
+   this->_controller = controller;
+   this->_model = model;
+   this->_textFrameId = textFrameId;
+}
 
 void IDEWindow :: onActivate()
 {
@@ -25,16 +37,17 @@ void IDEWindow :: newFile()
 
 void IDEWindow :: openFile()
 {
-   FileDialog dialog(_instance, this, FileDialog::SourceFilter, OPEN_FILE_CAPTION, *_model->projectModel.paths.lastPath);
-
    _controller->doOpenFile(dialog, _model);
 }
 
 void IDEWindow :: saveFile()
 {
-   FileDialog dialog(_instance, this, FileDialog::SourceFilter, SAVEAS_PROJECT_CAPTION, *_model->projectModel.paths.lastPath);
-
    _controller->doSaveFile(dialog, _model, false);
+}
+
+void IDEWindow::closeFile()
+{
+   _controller->doCloseFile(dialog, _model);
 }
 
 void IDEWindow :: exit()
@@ -55,6 +68,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_FILE_SAVE:
          saveFile();
+         break;
+      case IDM_FILE_CLOSE:
+         closeFile();
          break;
       case IDM_FILE_EXIT:
          exit();
@@ -90,10 +106,12 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
       case NOTIFY_CURRENTVIEW_SHOW:
          _children[_textFrameId]->show();
          break;
+      case NOTIFY_CURRENTVIEW_HIDE:
+         _children[_textFrameId]->hide();
+         break;
       default:
          break;
-   }
-   
+   }   
 }
 
 void IDEWindow :: onTabSelChanged(HWND wnd)

@@ -6,7 +6,11 @@ singleton Tester
    {
        int n := 0;
 
-       $rep (n < 5) ? { Output.write("*"); n := n + 1; };
+       //$rep (n < 5) ? { Output.write("*"); n := n + 1; };
+
+       while (n < 5) {
+          Output.write("*"); n := n + 1; 
+       }
 
 //      var r1 := 2;
 //      var r2 := 3;

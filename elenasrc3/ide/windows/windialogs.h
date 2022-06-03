@@ -12,9 +12,23 @@
 
 namespace elena_lang
 {
-   // --- FileDialog ---
-   class FileDialog : public FileDialogBase
+   class MsgBox
    {
+   public:
+      static int show(HWND owner, const wchar_t* message, int type);
+
+      static int showQuestion(HWND owner, const wchar_t* message);
+
+      static bool isCancel(int result) { return result == IDCANCEL; }
+      static bool isYes(int result) { return result == IDYES; }
+      static bool isNo(int result) { return result == IDNO; }
+   };
+
+   // --- Dialog ---
+   class Dialog : public DialogBase
+   {
+      WindowBase*  _owner;
+
       OPENFILENAME _struct;
       wchar_t      _fileName[MAX_PATH * 8];        // ??
       int          _defaultFlags;
@@ -25,7 +39,9 @@ namespace elena_lang
       bool openFiles(List<path_t, freepath>& files) override;
       bool saveFile(path_t ext, PathString& path) override;
 
-      FileDialog(HINSTANCE instance, WindowBase* owner, const wchar_t* filter, const wchar_t* caption, 
+      Answer question(text_str message, text_str param) override;
+
+      Dialog(HINSTANCE instance, WindowBase* owner, const wchar_t* filter, const wchar_t* caption, 
          const wchar_t* initialDir = nullptr);
    };
 

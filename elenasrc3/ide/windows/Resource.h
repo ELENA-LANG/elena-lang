@@ -10,6 +10,7 @@
 #define IDM_FILE_OPEN               402
 #define IDM_FILE_EXIT               403
 #define IDM_FILE_SAVE               404
+#define IDM_FILE_CLOSE              405
 
 #define IDM_DEBUG_RUN               601
 #define IDM_DEBUG_STEPOVER          602

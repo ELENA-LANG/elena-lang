@@ -31,11 +31,19 @@ bool TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, p
       return false;
 
    model->addDocumentView(name, text, path, notifyMessage);
+
+   return true;
 }
 
 void TextViewController :: selectDocument(TextViewModelBase* model, ustr_t name)
 {
    model->selectDocumentView(name);
+}
+
+void TextViewController :: closeDocument(TextViewModelBase* model, ustr_t name, 
+   int notifyMessage)
+{
+   model->closeDocumentView(name, notifyMessage);
 }
 
 void TextViewController :: indent(TextViewModelBase* model)

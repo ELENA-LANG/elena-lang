@@ -5,14 +5,27 @@
 //---------------------------------------------------------------------------
 
 #include "windialogs.h"
+#include "eng/messages.h"
 
 using namespace elena_lang;
 
+// --- MsgBox ---
+
+int MsgBox :: show(HWND owner, const wchar_t* message, int type)
+{
+   return ::MessageBox(owner, message, APP_NAME, type);
+}
+
+int MsgBox :: showQuestion(HWND owner, const wchar_t* message)
+{
+   return show(owner, message, MB_YESNOCANCEL | MB_ICONQUESTION);
+}
+
 // --- FileDialog ---
 
-const wchar_t* FileDialog::SourceFilter = _T("ELENA source file\0*.l\0All types\0*.*\0\0");
+const wchar_t* Dialog::SourceFilter = _T("ELENA source file\0*.l\0All types\0*.*\0\0");
 
-FileDialog :: FileDialog(HINSTANCE instance, WindowBase* owner, const wchar_t* filter, const wchar_t* caption,
+Dialog :: Dialog(HINSTANCE instance, WindowBase* owner, const wchar_t* filter, const wchar_t* caption,
    const wchar_t* initialDir)
 {
    ZeroMemory(&_struct, sizeof(_struct));
@@ -39,9 +52,11 @@ FileDialog :: FileDialog(HINSTANCE instance, WindowBase* owner, const wchar_t* f
    _defaultFlags = OFN_PATHMUSTEXIST | OFN_EXPLORER | OFN_LONGNAMES | DS_CENTER | OFN_HIDEREADONLY;
 
    _fileName[0] = 0;
+
+   _owner = owner;
 }
 
-bool FileDialog :: openFiles(List<path_t, freepath>& files)
+bool Dialog :: openFiles(List<path_t, freepath>& files)
 {
    _struct.Flags = _defaultFlags | OFN_FILEMUSTEXIST | OFN_ALLOWMULTISELECT;
    if (::GetOpenFileName(&_struct)) {
@@ -69,7 +84,7 @@ bool FileDialog :: openFiles(List<path_t, freepath>& files)
    return false;
 }
 
-bool FileDialog :: saveFile(path_t ext, PathString& path)
+bool Dialog :: saveFile(path_t ext, PathString& path)
 {
    _struct.Flags = _defaultFlags | OFN_PATHMUSTEXIST;
    _struct.lpstrDefExt = ext;
@@ -80,4 +95,20 @@ bool FileDialog :: saveFile(path_t ext, PathString& path)
       return true;
    }
    else return false;
+}
+
+DialogBase::Answer Dialog :: question(text_str message, text_str param)
+{
+   WideMessage wideMessage(message);
+   wideMessage.append(param);
+
+   int result = MsgBox::show(_owner->handle(), *wideMessage, MB_YESNOCANCEL | MB_ICONQUESTION);
+
+   if (MsgBox::isYes(result)) {
+      return Answer::Yes;
+   }
+   else if (MsgBox::isCancel(result)) {
+      return Answer::Cancel;
+   }
+   else return Answer::No;
 }

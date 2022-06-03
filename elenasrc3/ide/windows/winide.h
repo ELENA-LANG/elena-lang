@@ -8,6 +8,7 @@
 #define WINIDE_H
 
 #include "windows/winsdi.h"
+#include "windows/windialogs.h"
 #include "idecontroller.h"
 #include "ideview.h"
 
@@ -15,6 +16,8 @@ namespace elena_lang
 {
    class IDEWindow : public SDIWindow
    {
+      Dialog         dialog;
+
       HINSTANCE      _instance;
 
       IDEModel*      _model;
@@ -32,17 +35,12 @@ namespace elena_lang
       void newFile();
       void openFile();
       void saveFile();
+      void closeFile();
       void exit();
 
    public:
-      IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, int textFrameId)
-         : SDIWindow(title)
-      {
-         this->_instance = instance;
-         this->_controller = controller;
-         this->_model = model;
-         this->_textFrameId = textFrameId;
-      }
+      IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, 
+         int textFrameId);
    };
 
 }

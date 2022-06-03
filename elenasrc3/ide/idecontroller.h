@@ -20,6 +20,7 @@ namespace elena_lang
       void newSource(TextViewModelBase* model, ustr_t name, bool autoSelect);
       bool openSource(TextViewModelBase* model, ustr_t name, path_t sourcePath,
          FileEncoding encoding, bool autoSelect);
+      void closeSource(TextViewModelBase* model, ustr_t name, bool autoSelect);
 
       void renameSource(TextViewModelBase* model, ustr_t oldName, ustr_t newName, path_t newSourcePath);
 
@@ -111,8 +112,9 @@ namespace elena_lang
          ustr_t moduleName, path_t sourcePath);
 
       void doNewFile(IDEModel* model);
-      void doOpenFile(FileDialogBase& dialog, IDEModel* model);
-      void doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode);
+      void doOpenFile(DialogBase& dialog, IDEModel* model);
+      bool doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode);
+      bool doCloseFile(DialogBase& dialog, IDEModel* model);
 
       bool doExit();
 

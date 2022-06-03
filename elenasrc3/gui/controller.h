@@ -7,16 +7,24 @@
 #ifndef CONTOLLER_H
 #define CONTOLLER_H
 
+#include "elena.h"
 #include "guieditor.h"
 
 namespace elena_lang
 {
-   // --- FileDialogBase ---
-   class FileDialogBase
+   // --- DialogBase ---
+   class DialogBase
    {
    public:
+      enum Answer
+      {
+         Yes, No, Cancel
+      };
+
       virtual bool openFiles(List<path_t, freepath>& files) = 0;
       virtual bool saveFile(path_t ext, PathString& path) = 0;
+
+      virtual Answer question(text_str message, const text_str param) = 0;
    };
 
    // --- TextViewSettings ---
@@ -39,6 +47,8 @@ namespace elena_lang
       bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
          FileEncoding encoding, int notifyMessage) override;
       void selectDocument(TextViewModelBase* model, ustr_t name) override;
+      void closeDocument(TextViewModelBase* model, ustr_t name, 
+         int notifyMessage) override;
 
       void newDocument(TextViewModelBase* model, ustr_t name, 
          int notifyMessage) override;

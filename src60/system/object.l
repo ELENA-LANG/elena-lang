@@ -9,6 +9,13 @@ public if<expr>(truePart) : __included<statementTemplates>
    cast bool(expr) ? truePart
 }
 
+// --- while ---
+
+public while<expr>(loopBody) : __included<statementTemplates>
+{
+   $rep cast bool(expr) ? loopBody
+}
+
 #reload statementTemplates;
 
 // === classes ===

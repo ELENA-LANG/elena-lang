@@ -469,8 +469,12 @@ namespace elena_lang
          if (tmp) {
             _count--;
 
-            if (_tale == tmp)
+            if (_top == _tale) {
+               _top = _tale = nullptr;
+            }
+            else if (_tale == tmp) {
                _tale = previous;
+            }
             else if (previous == nullptr) {
                _top = _top->next;
             }

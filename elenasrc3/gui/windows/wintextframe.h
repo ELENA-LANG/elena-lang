@@ -23,6 +23,8 @@ namespace elena_lang
       void onDocumentSelect(int index) override;
       void afterDocumentSelect(int index) override;
       void onDocumentRename(int index) override;
+      void beforeDocumentClose(int index) override;
+      void onDocumentClose(int index, int notifyMessage) override;
 
       void onSelChanged() override;
 

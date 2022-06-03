@@ -10,7 +10,7 @@
 #include "guicommon.h"
 #include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                           0x000C
+#define IDE_REVISION_NUMBER                           0x000D
 
 namespace elena_lang
 {
@@ -22,6 +22,7 @@ namespace elena_lang
    constexpr auto NOTIFY_SOURCEMODEL                  = 1;
    constexpr auto NOTIFY_CURRENTVIEW_CHANGED          = 2;
    constexpr auto NOTIFY_CURRENTVIEW_SHOW             = 3;
+   constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
 
    // --- IDEStatus ---
    enum class IDEStatus
