@@ -34,15 +34,15 @@ MethodHint operator & (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l & (unsigned int)r);
 }
 
-inline void testNodes(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      testNodes(current);
-
-      current = current.nextNode();
-   }
-}
+//inline void testNodes(SyntaxNode node)
+//{
+//   SyntaxNode current = node.firstChild();
+//   while (current != SyntaxKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Interpreter ---
 
@@ -2523,34 +2523,7 @@ void Compiler :: declareTemplateAttributes(TemplateScope& scope, SyntaxNode node
 
 void Compiler :: saveTemplate(TemplateScope& scope, SyntaxNode& node)
 {
-   IdentifierString prefix;
-
-   int argCount = SyntaxTree::countChild(node, SyntaxKey::TemplateArg);
-   int paramCount = SyntaxTree::countChild(node, SyntaxKey::Parameter);
-   prefix.appendInt(argCount);
-   prefix.append('#');
-
-   switch (scope.type) {
-      case TemplateType::Inline:
-         prefix.append(INLINE_PREFIX);
-         if (paramCount > 0)
-            scope.raiseError(errInvalidSyntax, node);
-         break;
-      case TemplateType::Statement:
-         prefix.appendInt(argCount);
-         prefix.append('#');
-         break;
-      default:
-         break;
-   }
-
-   SyntaxNode name = node.findChild(SyntaxKey::Name);
-
-   ref_t reference = mapNewTerminal(scope, name, *prefix, scope.visibility);
-   if (scope.module->mapSection(reference | mskSyntaxTreeRef, true))
-      scope.raiseError(errDuplicatedDictionary, name.firstChild(SyntaxKey::TerminalMask));
-
-   MemoryBase* target = scope.module->mapSection(reference | mskSyntaxTreeRef, false);
+   MemoryBase* target = scope.module->mapSection(scope.reference | mskSyntaxTreeRef, false);
 
    SyntaxTree::saveNode(node, target);
 }
@@ -2592,7 +2565,7 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
             scope.raiseError(errInvalidSyntax, node);
          break;
       case TemplateType::Statement:
-         prefix.appendInt(argCount);
+         prefix.appendInt(paramCount);
          prefix.append('#');
          break;
       default:
@@ -2601,6 +2574,8 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
 
    SyntaxNode name = node.findChild(SyntaxKey::Name);
    scope.reference = mapNewTerminal(scope, name, *prefix, scope.visibility);
+   if (scope.module->mapSection(scope.reference | mskSyntaxTreeRef, true))
+      scope.raiseError(errDuplicatedDictionary, name.firstChild(SyntaxKey::TerminalMask));
 
    declareMetaInfo(scope, node);
    declareTemplate(scope, node);
@@ -3677,6 +3652,20 @@ inline SyntaxNode skipNestedExpression(SyntaxNode node)
    return node;
 }
 
+ObjectInfo Compiler :: compileSubCode(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
+   ExpressionAttribute mode)
+{
+   scope.syncStack();
+
+   CodeScope* parentCodeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+
+   CodeScope codeScope(parentCodeScope);
+   compileCode(writer, codeScope, node, false);
+   codeScope.syncStack(parentCodeScope);
+
+   return { ObjectKind::Object };
+}
+
 ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
 {
    ObjectInfo retVal = {};
@@ -3706,13 +3695,7 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
       writer.appendNode(BuildKey::Const, scope.moduleScope->branchingInfo.trueRef);
       writer.newNode(BuildKey::Tape);
 
-      scope.syncStack();
-
-      CodeScope* parentCodeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
-
-      CodeScope codeScope(parentCodeScope);
-      compileCode(writer, codeScope, rnode.firstChild(), false);
-      codeScope.syncStack(parentCodeScope);
+      compileSubCode(writer, scope, rnode.firstChild(), EAttr::None);
 
       writer.closeNode();
       writer.closeNode();
@@ -4088,6 +4071,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::ClosureBlock:
          retVal = compileClosure(writer, scope, current, mode);
          break;
+      case SyntaxKey::CodeBlock:
+         compileSubCode(writer, scope, current, mode);
+         break;
       case SyntaxKey::None:
          assert(false);
          break;
@@ -4280,6 +4266,13 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
          case SyntaxKey::ReturnExpression:
             exprRetVal = retVal = compileRetExpression(writer, codeScope, current);
             break;
+         case SyntaxKey::CodeBlock:
+         {
+            CodeScope subScope(&codeScope);
+            exprRetVal = compileCode(writer, subScope, current, false);
+            subScope.syncStack(&codeScope);
+            break;
+         }
          case SyntaxKey::EOP:
             addBreakpoint(writer, current, BuildKey::EOPBreakpoint);
             break;

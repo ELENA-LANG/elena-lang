@@ -293,7 +293,8 @@ void SyntaxTreeBuilder :: flushExpression(SyntaxTreeWriter& writer, Scope& scope
          case SyntaxKey::Message:
             flushMessage(writer, scope, current);
             break;
-         case SyntaxKey::TemplateExpression:
+         case SyntaxKey::TemplateCode:
+            writer.CurrentNode().setKey(SyntaxKey::CodeBlock);
             generateTemplateStatement(writer, scope, current);
             break;
          default:
@@ -974,6 +975,7 @@ void TemplateProssesor :: generate(SyntaxTreeWriter& writer, TemplateScope& scop
    templateTree.load(templateSection);
 
    SyntaxNode root = templateTree.readRoot();
+
    switch (scope.type) {
       case Type::Inline:
       case Type::CodeTemplate:

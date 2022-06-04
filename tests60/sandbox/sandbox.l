@@ -4,13 +4,17 @@ singleton Tester
 {
    run()
    {
-       int n := 0;
-
-       //$rep (n < 5) ? { Output.write("*"); n := n + 1; };
-
-       while (n < 5) {
-          Output.write("*"); n := n + 1; 
+       for (int n := 0, n < 5, n := n + 1) {
+          Output.write("*");
        }
+
+//     int n := 0;
+//       $rep (n < 5) ? { Output.write("*"); n := n + 1; };
+
+//       int n := 0;
+//       while (n < 5) {
+//          Output.write("*"); n := n + 1; 
+//       }
 
 //      var r1 := 2;
 //      var r2 := 3;

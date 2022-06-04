@@ -9,6 +9,7 @@ __define terminal           12297;
 __define DECLARATION         5120;
 __define BLOCK               7184;
 __define NO_BODY             7185;
+__define TEMPLATE_BLOCK      4104;
 __define PARAMETER 	     4106;
 __define END_OF_BLOCK        4107;
 __define DICTIONARY          4128;
@@ -50,7 +51,6 @@ __define POSTFIX             4192;
 __define TEMPLATE_POSTFIX    4193;
 __define TEMPLATE_ARG        4208;
 __define DIMENSION           5233;
-__define TEMPLATE_EXPRESSION 6304;
 
 START ::= 
         NEXT_DECLARATION;
@@ -218,7 +218,7 @@ NESTED_EXPRESSION ::=
 	"{" SUB_DECLARATIONS "}";
 
 T_EXPRESSION ::=
-	 BLOCK ^ CLOSURE;
+	 BLOCK;
 
 RI_R ::=
         identifier I_R
@@ -286,7 +286,7 @@ RI_L2_R ::=
 	"(" ^OBJECT MESSAGE_PARAMETERS ")" RI_L2_OPT;
 
 RI_L2_OPT ::=
-	T_EXPRESSION ^ TEMPLATE_EXPRESSION
+	T_EXPRESSION ^ TEMPLATE_BLOCK
 	| eps ^ MESSAGE_OPERATION;
 
 I_L3_R ::=

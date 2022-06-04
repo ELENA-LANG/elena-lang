@@ -294,10 +294,10 @@ void intCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
          break;
    }
 
-   if (inverted) {
-      tape.write(ByteCode::SelEqRR, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
    }
-   else tape.write(ByteCode::SelEqRR, falseRef | mskVMTRef, trueRef | mskVMTRef);
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
 }
 
 void byteArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)

@@ -211,6 +211,8 @@ bool TextViewModel :: selectDocumentView(ustr_t name)
       index++;
    }
 
+   afterDocumentSelect(index);
+
    return _currentView != nullptr;
 }
 

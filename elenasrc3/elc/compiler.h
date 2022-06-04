@@ -865,6 +865,8 @@ namespace elena_lang
          ref_t targetRef, ExpressionAttribute mode);
       ObjectInfo compileLoopExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
          ExpressionAttribute mode);
+      ObjectInfo compileSubCode(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
+         ExpressionAttribute mode);
       ObjectInfo compileRootExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
       ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
       ObjectInfo compileNestedExpression(InlineClassScope& scope, ExpressionAttribute mode);
