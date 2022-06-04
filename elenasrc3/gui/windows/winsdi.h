@@ -84,7 +84,7 @@ namespace elena_lang
 
       void populate(size_t counter, ControlBase** children)
       {
-         _children = new ControlBase * [counter];
+         _children = new ControlBase*[counter];
          for (size_t i = 0; i < counter; i++) {
             _children[i] = children[i];
          }

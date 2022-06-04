@@ -469,7 +469,7 @@ end
 inline %0C2h
 
   mov  rax, [r10]
-  cmp  dword ptr[rbx], eax
+  cmp  eax, dword ptr[rbx]
 
 end
 
@@ -477,7 +477,7 @@ end
 inline %1C2h
 
   mov  rax, [r10]
-  cmp  byte ptr [rbx], al
+  cmp  al, byte ptr [rbx]
 
 end
 
@@ -485,7 +485,7 @@ end
 inline %2C2h
 
   mov  rax, [r10]
-  cmp  word ptr [rbx], ax
+  cmp  ax, word ptr [rbx]
 
 end
 
@@ -493,7 +493,7 @@ end
 inline %4C2h
 
   mov  rax, [r10]
-  cmp  [rbx], rax
+  cmp  rax, [rbx]
 
 end
 
@@ -705,8 +705,8 @@ end
 // ; seleqrr
 inline %0EEh
 
-  mov   rax, __ptr32_1
-  mov   rbx, __ptr32_2
+  mov   rax, __ptr64_1
+  mov   rbx, __ptr64_2
   cmovz rbx, rax
 
 end
@@ -714,8 +714,8 @@ end
 // ; selltrr
 inline %0EFh
 
-  mov   rax, __ptr32_1
-  mov   rbx, __ptr32_2
+  mov   rax, __ptr64_1
+  mov   rbx, __ptr64_2
   cmovl rbx, rax
 
 end

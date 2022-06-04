@@ -131,10 +131,10 @@ void MultiTabControl :: setRectangle(Rectangle rec)
    CustomTabBar::setRectangle(rec);
 
    if (_child) {
-      rec.topLeft.y += 32;
+      rec.topLeft.y += 35;
       rec.topLeft.x += 4;
       rec.setWidth(rec.width() - 8);
-      rec.setHeight(rec.height() - 32);
+      rec.setHeight(rec.height() - 6);
       _child->setRectangle(rec);
    }
 }

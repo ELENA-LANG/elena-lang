@@ -118,6 +118,8 @@ namespace elena_lang
 
       bool doExit();
 
+      void init(IDEModel* model);
+
       IDEController(DebugProcessBase* process, IDEModel* model, 
          TextViewSettings& textViewSettings
       ) :

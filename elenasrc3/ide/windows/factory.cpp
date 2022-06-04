@@ -8,6 +8,7 @@
 #include "windows/winide.h"
 #include "windows/wintextview.h"
 #include "windows/wintextframe.h"
+#include "windows/winidestatusbar.h"
 #include "Resource.h"
 
 using namespace elena_lang;
@@ -109,6 +110,17 @@ ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* no
    return frame;
 }
 
+ControlBase* IDEFactory :: createStatusbar(WindowBase* owner)
+{
+   StatusBar* statusBar = new IDEStatusBar(_model);
+
+   statusBar->createControl(_instance, owner);
+
+   statusBar->show(); // !! temporal
+
+   return statusBar;
+}
+
 void IDEFactory :: initializeModel()
 {
    //// !! temporal
@@ -131,19 +143,21 @@ GUIApp* IDEFactory :: createApp()
 
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier)
 {
-   ControlBase* children[1];
+   ControlBase* children[2];
    int counter = 0;
 
    int textIndex = counter++;
+   int statusBarIndex = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance, 
       textIndex);
    sdi->create(_instance, szSDI, nullptr);
 
    children[textIndex] = createTextControl(sdi, notifier);
+   children[statusBarIndex] = createStatusbar(sdi);
 
    sdi->populate(counter, children);
-   sdi->setLayout(textIndex, -1, -1, -1, -1);
+   sdi->setLayout(textIndex, -1, statusBarIndex, -1, -1);
 
    initializeModel();
 

@@ -192,9 +192,12 @@ ELENA byte codes (or ecodes)
 
    icmp n                   - temp1 : n << acc;
                               temp2 : n << sp[0];
-                              COMP.EQ := (temp1 == temp2);
+                              COMP.EQ := (temp2 == temp1);
+                              COMP.LT := (temp2 < temp1);
                               n = 1,2,4,8 
 
-   icmp dp:disp n           - temp : n << acc;
-                              COMP.EQ := (temp == dp[disp]);
+   icmp n                   - temp : n << acc;
+                              temp2 : n << sp[0];
+                              COMP.EQ := (temp2 == temp1);
+                              COMP.EQ := (temp2 < temp1);
                               n = 1,2,4,8 

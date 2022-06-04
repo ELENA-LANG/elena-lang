@@ -34,6 +34,7 @@ namespace elena_lang
       void registerClasses();
 
       ControlBase* createTextControl(WindowBase* owner, NotifierBase* notifier);
+      ControlBase* createStatusbar(WindowBase* owner);
 
       void initializeModel();
 

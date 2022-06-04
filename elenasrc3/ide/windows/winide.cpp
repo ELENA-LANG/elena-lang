@@ -124,7 +124,6 @@ void IDEWindow :: onTabSelChanged(HWND wnd)
    }
 }
 
-
 void IDEWindow :: onNotify(NMHDR* hdr)
 {
    switch (hdr->code) {

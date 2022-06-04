@@ -149,11 +149,11 @@ bool ProjectController :: isOutaged(bool noWarning)
 
 bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
 {
-   if (testIDEStatus(*model.status, IDEStatus::Busy))
+   if (testIDEStatus(model.getStatus(), IDEStatus::Busy))
       return false;
 
    if (!_debugController.isStarted()) {
-      bool toRecompile = model.autoRecompile && !testIDEStatus(*model.status, IDEStatus::AutoRecompiling);
+      bool toRecompile = model.autoRecompile && !testIDEStatus(model.getStatus(), IDEStatus::AutoRecompiling);
       if (isOutaged(toRecompile)) {
          if (toRecompile) {
             if (!doCompileProject(model, action))
@@ -169,7 +169,7 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
 
 void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
 {
-   if (!testIDEStatus(*model.status, IDEStatus::Busy)) {
+   if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
       if (onDebugAction(model, action)) {
          switch (action) {
             case DebugAction::Run:
@@ -194,6 +194,11 @@ bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction post
 }
 
 // --- IDEController ---
+
+void IDEController :: init(IDEModel* model)
+{
+   model->changeStatus(IDEStatus::Ready);
+}
 
 bool IDEController :: selectSource(ProjectModel* model, SourceViewModel* sourceModel,
    ustr_t ns, path_t sourcePath)

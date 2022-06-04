@@ -105,8 +105,9 @@ void LayoutManager :: resizeTo(Rectangle area)
          rightRect.width(), rightRect.height() });
    }
 
-   if (isVisible(_center))
-      _center->setRectangle(area);
+   if (isVisible(_center)) {
+      _center->setRectangle({ x, y, totalWidth, totalHeight });
+   }      
 }
 
 // --- SDIWindow ---

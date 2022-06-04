@@ -10,7 +10,7 @@
 #include "guicommon.h"
 #include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                           0x000D
+#define IDE_REVISION_NUMBER                           0x000E
 
 namespace elena_lang
 {
@@ -28,8 +28,9 @@ namespace elena_lang
    enum class IDEStatus
    {
       None            = 0,
-      Busy            = 1,
-      AutoRecompiling = 2,
+      Ready           = 1,
+      Busy            = 2,
+      AutoRecompiling = 3,
    };
 
    inline bool testIDEStatus(IDEStatus value, IDEStatus mask)

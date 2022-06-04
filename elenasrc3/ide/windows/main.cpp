@@ -42,10 +42,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    IDEFactory        factory(hInstance, nCmdShow, &ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();
+   GUIControlBase* ideWindow = factory.createMainWindow(app);
 
    ideController.setNotifier(app);
+   ideController.init(&ideModel);
 
-   int retVal = app->run(factory.createMainWindow(app));
+   int retVal = app->run(ideWindow);
 
    delete app;
 
