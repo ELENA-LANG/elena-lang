@@ -222,6 +222,7 @@ Compiler::NamespaceScope :: NamespaceScope(NamespaceScope* parent) :
    //declaredExtensions({})
 {
    nsName.copy(*parent->nsName);
+   sourcePath.copy(*parent->sourcePath);
    defaultVisibility = parent->defaultVisibility;
    errorProcessor = parent->errorProcessor;
 }
@@ -1915,8 +1916,7 @@ void Compiler :: declareMembers(NamespaceScope& ns, SyntaxNode node)
          case SyntaxKey::Namespace:
          {
             NamespaceScope namespaceScope(&ns);
-            declareNamespace(namespaceScope, node, false, true);
-            ns.moduleScope->newNamespace(*namespaceScope.nsName);
+            declareNamespace(namespaceScope, current, false, true);
 
             declareMembers(namespaceScope, current);
             break;
@@ -1982,7 +1982,7 @@ void Compiler :: declareMemberIdentifiers(NamespaceScope& ns, SyntaxNode node)
          case SyntaxKey::Namespace:
          {
             NamespaceScope namespaceScope(&ns);
-            declareNamespace(namespaceScope, node, true, true);
+            declareNamespace(namespaceScope, current, true, true);
             ns.moduleScope->newNamespace(*namespaceScope.nsName);
 
             declareMemberIdentifiers(namespaceScope, current);
@@ -3883,10 +3883,22 @@ ObjectInfo Compiler :: compileObject(BuildTreeWriter& writer, ExprScope& scope, 
    ExpressionAttribute mode)
 {
    if (node == SyntaxKey::Object) {
-      ObjectInfo retVal = mapObject(scope, node, mode);
+      bool paramMode = EAttrs::testAndExclude(mode, EAttr::Parameter);
 
-      if (retVal.kind == ObjectKind::Unknown)
-         scope.raiseError(errUnknownObject, node.lastChild(SyntaxKey::TerminalMask));
+      ObjectInfo retVal = mapObject(scope, node, mode);
+      switch (retVal.kind) {
+         case ObjectKind::External:
+            return retVal;
+         case ObjectKind::Unknown:
+            scope.raiseError(errUnknownObject, node.lastChild(SyntaxKey::TerminalMask));
+            break;
+         default:
+            break;
+      }
+
+      if (paramMode && hasToBePresaved(retVal)) {
+         retVal = saveToTempLocal(writer, scope, retVal);
+      }
 
       return retVal;
    }
@@ -4701,6 +4713,14 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
          case SyntaxKey::SourcePath:
             ns.sourcePath.copy(current.identifier());
             break;
+         case SyntaxKey::Namespace:
+         {
+            NamespaceScope namespaceScope(&ns);
+            declareNamespace(namespaceScope, current, false, false);
+
+            compileNamespace(writer, namespaceScope, current);
+            break;
+         }
          case SyntaxKey::Symbol:
          {
             SymbolScope symbolScope(&ns, current.arg.reference, ns.defaultVisibility);

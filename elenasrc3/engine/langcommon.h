@@ -170,6 +170,7 @@ namespace elena_lang
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;
    constexpr auto V_IMPORT                = 0x80001018u;
+   constexpr auto V_NAMESPACE             = 0x80001021u;
    constexpr auto V_INLINE                = 0x80001025u;
 
    /// primitive type attribute

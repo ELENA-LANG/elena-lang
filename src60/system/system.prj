@@ -24,7 +24,9 @@
         <include>object.l</include>
         <include>basic.l</include>
         <include>strings.l</include>
+        <include>console.l</include>
         <include>app.l</include>
+        <include>io\win_console.l</include>
      </module>
   </files>
 </configuration>

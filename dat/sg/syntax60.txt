@@ -235,6 +235,7 @@ RI_R ::=
 
 I_R ::=
         identifier I_R
+        | reference I_R
 	| O_R;
 
 O_R ::=

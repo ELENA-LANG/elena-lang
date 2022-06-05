@@ -38,6 +38,7 @@
 #let attributesSymbols["intern"]      := 80001016h;
 #let attributesSymbols["forward"]     := 80001017h;
 #let attributesSymbols["import"]      := 80001018h;
+#let attributesSymbols["namespace"]   := 80001021h;
 #let attributesSymbols["inline"]      := 80001025h;
 
 /// primitive types

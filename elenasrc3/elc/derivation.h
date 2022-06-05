@@ -128,6 +128,7 @@ namespace elena_lang
       void flushInlineTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode node);
       void flushDictionary(SyntaxTreeWriter& writer, SyntaxNode node);
+      void flushNamespace(SyntaxTreeWriter& writer, SyntaxNode node);
       void flush(SyntaxTreeWriter& writer, SyntaxNode node);
 
    public:

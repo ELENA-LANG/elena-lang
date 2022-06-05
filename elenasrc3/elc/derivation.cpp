@@ -64,6 +64,28 @@ void SyntaxTreeBuilder :: flushCollection(SyntaxTreeWriter& writer, Scope& scope
    }
 }
 
+void SyntaxTreeBuilder :: flushNamespace(SyntaxTreeWriter& writer, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::MetaDictionary:
+            flushDictionary(writer, current);
+            break;
+         case SyntaxKey::MetaExpression:
+         {
+            Scope scope;
+            flushStatement(writer, scope, current);
+            break;
+         }
+         case SyntaxKey::Declaration:
+            flushDeclaration(writer, current);
+            break;
+      }
+      current = current.nextNode();
+   }
+}
+
 void SyntaxTreeBuilder :: flush(SyntaxTreeWriter& writer, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
@@ -772,6 +794,38 @@ void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, 
    }
 }
 
+enum DeclarationType
+{
+   Class,
+   Import,
+   Namespace
+};
+
+inline DeclarationType defineDeclarationType(SyntaxNode node)
+{
+   DeclarationType type = DeclarationType::Class;
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Attribute) {
+         switch (current.arg.reference) {
+            case V_IMPORT:
+               type = DeclarationType::Import;
+               break;
+            case V_NAMESPACE:
+               type = DeclarationType::Namespace;
+               break;
+            default:
+               break;
+         }
+      }
+
+      current = current.nextNode();
+   }
+
+   return type;
+}
+
 void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode node)
 {
    Scope scope;
@@ -802,13 +856,25 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
       }
       
    }
-   else if (SyntaxTree::ifChildExists(writer.CurrentNode(), SyntaxKey::Attribute, V_IMPORT)) {
-      writer.CurrentNode().setKey(SyntaxKey::Import);
-   }
    else {
-      writer.CurrentNode().setKey(SyntaxKey::Class);
+      DeclarationType type = defineDeclarationType(writer.CurrentNode());
+      switch (type) {
+         case DeclarationType::Import:
+            writer.CurrentNode().setKey(SyntaxKey::Import);
+            break;
+         case DeclarationType::Namespace:
+            writer.CurrentNode().setKey(SyntaxKey::Namespace);
 
-      flushClass(writer, scope, node, node.existChild(SyntaxKey::CodeBlock));
+            flushNamespace(writer, node);
+            break;
+         case DeclarationType::Class:
+            writer.CurrentNode().setKey(SyntaxKey::Class);
+
+            flushClass(writer, scope, node, node.existChild(SyntaxKey::CodeBlock));
+            break;
+         default:
+            break;
+      }
    }
 
    writer.closeNode();   
