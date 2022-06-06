@@ -81,6 +81,8 @@ void SyntaxTreeBuilder :: flushNamespace(SyntaxTreeWriter& writer, SyntaxNode no
          case SyntaxKey::Declaration:
             flushDeclaration(writer, current);
             break;
+         default:
+            break;
       }
       current = current.nextNode();
    }
