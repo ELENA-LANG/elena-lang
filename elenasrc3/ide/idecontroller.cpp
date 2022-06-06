@@ -294,12 +294,16 @@ bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
             return false;
          }
          else if (result == DialogBase::Answer::Yes) {
-            if (!doSaveFile(dialog, model, false));
+            if (!doSaveFile(dialog, model, false))
+               return false;
          }
       }
 
       sourceController.closeSource(&model->sourceViewModel, current, true);
+
+      return true;
    }
+   return false;
 }
 
 bool IDEController :: doExit()

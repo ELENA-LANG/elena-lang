@@ -328,8 +328,8 @@ void DocumentView :: setCaret(int column, int row, bool selecting)
    pos_t position = _caret.position();
 
    _caret.moveTo(column, row);
-   if (_maxColumn < _caret.length_pos() + _size.x) {
-      _maxColumn = _caret.length_pos() + _size.x;
+   if (_maxColumn < _caret.length_int() + _size.x) {
+      _maxColumn = _caret.length_int() + _size.x;
 
       status.maxColChanged = true;
    }
@@ -500,7 +500,7 @@ void DocumentView :: moveRightToken(bool selecting, bool trimWhitespace)
    bool newToken = false;
    bool operatorOne = false;
    bool first = false;
-   while (first || _caret.column() < _caret.position()) {
+   while (first || (pos_t)_caret.column() < _caret.position()) {
       pos_t length = 0;
       text_t line = _text->getLine(_caret, length);
       if (length == 0)

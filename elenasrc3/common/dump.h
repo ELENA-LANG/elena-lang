@@ -17,9 +17,9 @@ namespace elena_lang
    class MemoryDump : public MemoryBase
    {
    protected:
-      void* _buffer;
       pos_t _total;
       pos_t _used;
+      void* _buffer;
 
       void resize(pos_t size);
 
@@ -27,6 +27,8 @@ namespace elena_lang
       void reserve(pos_t size);
 
       pos_t length() const override { return _used; }
+
+      pos_t freeSpace() const { return _total - _used; }
 
       bool write(pos_t position, const void* s, pos_t length) override;
 
@@ -79,8 +81,15 @@ namespace elena_lang
             _used = position;
          }
       }
+      void trimLong(size_t position)
+      {
+         if (position < (size_t)_used) {
+            _used = (pos_t)position;
+         }
+      }
 
       MemoryDump();
+      MemoryDump(pos_t capacity);
       MemoryDump(const MemoryDump& copy);
       virtual ~MemoryDump()
       {
