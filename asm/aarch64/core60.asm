@@ -889,7 +889,7 @@ inline %0EEh
 
 end
 
-// ; seleqrr
+// ; selltrr
 inline %0EFh
 
   movz    x11,  __ptr32lo_1
