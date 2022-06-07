@@ -483,7 +483,7 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
 {
    int startLabel = tape.newLabel();
    tape.setLabel(true);
-   int eopLabel = tape.newLabel();   
+   /*int eopLabel = */tape.newLabel();
 
    saveTape(tape, node, tapeScope, paths, true);
 
