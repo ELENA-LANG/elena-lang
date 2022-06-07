@@ -273,6 +273,34 @@ void* elena_lang :: retrieveCode(JITCompilerScope* scope)
    return code;
 }
 
+void* elena_lang :: retrieveIndexRCode(JITCompilerScope* scope)
+{
+   size_t index = 0;
+   switch (scope->command.arg1) {
+      case 0:
+         index = 1;
+         break;
+      case 1:
+         index = 2;
+         break;
+      case 2:
+         index = 3;
+         break;
+      case 3:
+         index = 4;
+         break;
+      case 4:
+         index = 5;
+        break;
+      default:
+         break;
+   }
+   if (scope->command.arg2 == 0)
+      index += 5;
+
+   return scope->compiler->_inlines[index][scope->code()];
+}
+
 void* elena_lang::retrieveCodeWithNegative(JITCompilerScope* scope)
 {
    arg_t arg = scope->command.arg1;
@@ -965,7 +993,7 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = retrieveCode(scope);
+   void* code = retrieveIndexRCode(scope);
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));

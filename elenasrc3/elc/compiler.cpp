@@ -3476,10 +3476,9 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 void Compiler :: addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey)
 {
    SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
-   if (terminal != SyntaxKey::None) {
-      SyntaxNode row = terminal.findChild(SyntaxKey::Row);
-      SyntaxNode col = terminal.findChild(SyntaxKey::Column);
-
+   SyntaxNode row = terminal.findChild(SyntaxKey::Row);
+   SyntaxNode col = terminal.findChild(SyntaxKey::Column);
+   if (row != SyntaxKey::None) {
       writer.newNode(bpKey);
       writer.appendNode(BuildKey::Row, row.arg.value);
       writer.appendNode(BuildKey::Column, col.arg.value);
@@ -4108,6 +4107,10 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
 
 inline SyntaxNode findObjectNode(SyntaxNode node)
 {
+   if (node == SyntaxKey::CodeBlock) {
+      // HOTFIX : to prevent double breakpoint
+      return {};
+   }
    if (node != SyntaxKey::None && node != SyntaxKey::Object) {
       return findObjectNode(node.firstChild());
    }

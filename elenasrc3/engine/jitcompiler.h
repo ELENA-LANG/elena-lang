@@ -14,7 +14,7 @@
 
 namespace elena_lang
 {
-   constexpr auto NumberOfInlines = 7;
+   constexpr auto NumberOfInlines = 11;
 
    // --- JITCompilerScope ---
    class JITCompiler;
@@ -87,6 +87,7 @@ namespace elena_lang
       friend void loadCode(JITCompilerScope* scope, void* code);
 
       friend void* retrieveCode(JITCompilerScope* scope);
+      friend void* retrieveIndexRCode(JITCompilerScope* scope);
       friend void* retrieveCodeWithNegative(JITCompilerScope* scope);
       friend void* retrieveICode(JITCompilerScope* scope, int arg);
 
@@ -289,6 +290,7 @@ namespace elena_lang
    void allocateCode(JITCompilerScope* scope, void* code);
 
    inline void* retrieveCode(JITCompilerScope* scope);
+   inline void* retrieveIndexRCode(JITCompilerScope* scope);
    inline void* retrieveCodeWithNegative(JITCompilerScope* scope);
    inline void* retrieveICode(JITCompilerScope* scope, int arg);
 

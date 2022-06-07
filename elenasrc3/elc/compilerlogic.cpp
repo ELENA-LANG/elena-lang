@@ -794,11 +794,14 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
       else result.visibility = Visibility::Public;
 
       result.kind = methodInfo.hints & (ref_t)MethodHint::Mask;
-      if (!result.kind) {
+      if (result.kind == (ref_t)MethodHint::Normal) {
+         // check if the normal method can be called directly / semi-directly
          if (test(info.header.flags, elSealed)) {
             result.kind = (ref_t)MethodHint::Sealed; // mark it as sealed - because the class is sealed
          }
-         else result.kind = (ref_t)MethodHint::Normal;
+         else if (test(info.header.flags, elClosed)) {
+            result.kind = (ref_t)MethodHint::Virtual; // mark it as virtual - because the class is closed
+         }
       }
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {

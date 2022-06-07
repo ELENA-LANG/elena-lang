@@ -827,6 +827,20 @@ inline %2F1h
 
 end
 
+// ; xstoresir :0, 0
+inline %6F1h
+
+  mov  r10, 0
+
+end
+
+// ; xstoresir :1, 0
+inline %7F1h
+
+  mov  r11, 0
+
+end
+
 // ; openheaderin
 inline %0F2h
 
