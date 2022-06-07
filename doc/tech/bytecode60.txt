@@ -1,0 +1,203 @@
+ELENA byte codes (or ecodes)
+==============================
+
+ ELENA virtual machine registers:
+ --------------------------------
+   f(p)   - frame pointer     (positive values - pointing to the current frame, 
+                               negative - to the previous frame)
+   s(p)   - stack pointer     (only positive)
+
+   acc    - accumulator      
+
+   index  - data accumulator 
+
+   x86    : fp - ebp, sp - esp, acc - ebx, index - eax, sp[0] - esi, sp[1] - edx
+   x86_64 : fp - rbp, sp - rsp, acc - rbx, index - rax, sp[0] - r10, sp[1] - rdx, r15 - presaved
+   arm64  : fp - x29, sp - x31, index - x9, acc - x10, sp[0] - x0, sp[1] - x1
+   ppc64  : fp - r31, sp - r1, index - r14, acc - r15, sp[0] - r3, sp[1] - r4
+
+   NOTE : content of shadow stack is not defined after the call operations 
+   NOTE : the preallocated stack should contains at least two elements for some operations
+
+   prefix : array, marray
+
+ Preserved registers
+ -------------------
+   x86    :                edx, ebx, [esi]
+   x86_64 : (r15)          rdx, rbx, [r10, r11]
+   arm64  : (x29, x31),    x9, x10,  [x0, x1]
+   ppc64  : (r13, r1, r2), r14, r15, [r3, r4]
+
+ Frame operations:
+ -----------------              
+   open i, n                - save the last frame and open the new frame ; allocating both
+                              unmanaged (n) and managed stack (i * 4 / 8);
+                              should be used only in thr program main body; 
+                              mnemonic: open [a,b,c,...],[$a,$b,$c,...]
+
+   open header i, n         - init the frame header offset ; allocating both
+                              unmanaged (n) and managed stack (i * 4 / 8);
+                              it should be used only in thread program main body; 
+                              mnemonic: open header [a,b,c,...],[$a,$b,$c,...]
+
+   close n                  - restore the previous frame;
+                              should be paired with open;
+                              it should be only one command per procedure ; 
+
+   quit                     - terminates the procedure;
+                              acc / index are not affected
+
+
+ Register operations:
+ --------------------
+   load                     - index := [acc] 
+
+   mov env                  - %SYSTEM_ENV => index 
+
+   mov mssg:m               - index := m
+
+   set {prefix}:r           - r => acc
+
+   set dp:i                 - dp[i] => acc
+
+   seleq r1, r2             - acc <= COMP.EQ ? r1 : r2
+
+   sellt r1, r2             - acc <= COMP.EQ ? r1 : r2
+
+
+ Call operations:
+ ----------------
+   call extern:r, n         - call an external routine
+                              mnemonic: call {extern}:r args
+
+   call symbol:r            - calls the procedure;
+                              acc contains the result
+
+   call vt:i                - call acc::VMT[i] method;
+                              acc contains the result
+
+   call mssg:m, r           - calls directly the method resolved by JIT by r and m
+                              acc contains the result 
+
+   vcall mssg:m, r          - calls via table the method resolved by JIT by r and m
+                              acc contains the result 
+ 
+   jump mssg:m, r           - jumps directly the method resolved by JIT by r and m
+                              acc contains the result 
+
+   vjump mssg:m, r          - jumps via table the method resolved by JIT by r and m
+                              acc contains the result 
+ 
+
+ Stack operations:
+ -----------------                                           
+   alloc i                  - sp += i ; reserve and fill with zeros; 
+                              new sp value is aligned to 2 in x86-64 mode
+
+   free i                   - sp -= i ; release the stack; 
+                              new sp value is aligned to 2 in x86-64 mode
+
+   load fp:i                - index := fp[i]
+
+   mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
+
+   xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
+
+   peek fp:i                - acc := fp[i]
+
+   peek sp:i                - acc := sp[i]
+
+   save dp:disp             - dp[disp]  := index
+
+   save sp:disp             - sp[disp]  := index
+
+   store fp:i               - fp[i] := acc
+
+   store sp:i               - sp[i] := acc
+
+   xflush sp:i              - sp[i] := cached_sp[i];
+
+   xstore fp:i, {prefix:}r  - sp[i] := r
+
+   xstore sp:i, {prefix:}r  - sp[i] := r
+
+
+ Object operations:
+ ------------------
+   redirect                 - search acc::VMT for the message in index;
+                              if found jumps to it; binary search is used ; index, acc presaved
+
+   dispatch m, r            - search in message table r the message in index and provided parameter list; 
+                              if found jumps to it;
+
+   new i, {prefix}:r        - create the object with the specified
+                              number of fields;
+                              out: acc contains the class instance, index - undefined
+
+   newn n {prefix}:r        - create the object with the specified
+                              size;
+                              out: acc contains the class instance, index - undefined
+
+   nlen n                   - index := acc.length / n;
+                              returns the structure size
+
+   len                      - index := acc.length;
+                              returns the object length
+
+   copy n                   - sp[0] >> acc, n bytes
+
+   copy dp:disp, n          - dp[disp] => temp;
+                              sp[0] >> temp, n bytes  
+
+   xdispatch m, r           - search in message table r the message in index and provided parameter list; 
+                              if found jumps directly to it;
+
+
+ Jump operations:
+ ---------------- 
+   jump label               - jumps to the label
+
+   jeq  label               - jump if COMP.EQ == 1
+ 
+   jne  label               - jump if COMP.EQ == 0
+ 
+
+ Arithmeric operations:
+ ----------------------
+   iadd dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] += temp;
+                              n = 1,2,4,8 
+ 
+   idiv dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] /= temp;
+                              n = 1,2,4,8  
+
+   imul dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] *= temp;
+                              n = 1,2,4,8  
+
+
+   isub dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] -= temp;
+                              n = 1,2,4,8  
+
+
+ Comparison operations:
+ ----------------------
+   cmpr r                   - COMP.EQ := (acc == r);
+
+   cmp  sp:i                - COMP.EQ := (acc == sp[i]);
+
+   cmp  fp:i                - COMP.EQ := (acc == fp[i]);
+
+   icmp n                   - temp1 : n << acc;
+                              temp2 : n << sp[0];
+                              COMP.EQ := (temp2 == temp1);
+                              COMP.LT := (temp2 < temp1);
+                              n = 1,2,4,8 
+
+   icmp n                   - temp : n << acc;
+                              temp2 : n << sp[0];
+                              COMP.EQ := (temp2 == temp1);
+                              COMP.EQ := (temp2 < temp1);
+                              n = 1,2,4,8 

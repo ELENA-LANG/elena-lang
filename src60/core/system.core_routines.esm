@@ -1,0 +1,31 @@
+//        ELENA Language 6.0
+//      inline system library
+
+procedure __object_dispatcher
+
+  redirect
+
+end
+
+procedure __object_equal
+
+  peek        sp:0
+  cmp         sp:1
+  seleq       class:"system'BoolValue#true", class:"system'BoolValue#false"
+
+end
+
+symbol sta_start
+
+  open header [arg1],[envptr]
+  
+  mov         env
+  save        dp:envptr
+  set         dp:envptr
+  store       fp:arg1
+
+  call extern:InitializeSTA (*arg1, marray:"$forwards'meta$startUpSymbols")
+
+  close       []
+
+end

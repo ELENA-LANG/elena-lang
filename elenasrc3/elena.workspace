@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="elc/codeblocks/elc_linux_x86.cbp" />
+		<Project filename="tools/asmc/codeblocks/asmc_linux_x86.cbp" />
+		<Project filename="tools/sg/codeblocks/sg_linux_x86.cbp" />
+		<Project filename="tools/ecv/codeblocks/ecv_linux_x86.cbp" />
+		<Project filename="elenart/codeblocks/elenart_linux_x86.cbp" />
+		<Project filename="ide/codeblocks/elide_gtk.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

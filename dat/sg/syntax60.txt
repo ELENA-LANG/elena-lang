@@ -1,0 +1,388 @@
+__define eof                 8195;
+__define identifier         12292;
+__define integer            12293;
+__define string             12294;
+__define hexinteger         12295;
+__define reference          12296;
+__define terminal           12297;
+
+__define DECLARATION         5120;
+__define BLOCK               7184;
+__define NO_BODY             7185;
+__define TEMPLATE_BLOCK      4104;
+__define PARAMETER 	     4106;
+__define END_OF_BLOCK        4107;
+__define DICTIONARY          4128;
+__define META_STATEMENT      4129;
+__define INCLUDE_STATEMENT   4130;
+__define RELOAD_STATEMENT    4131;
+__define MESSAGE             4176;
+__define OBJECT              4145;
+__define TEMPLATE_TYPE       4146;
+__define ARRAY_TYPE          4147;
+__define NESTED              4224;
+__define CLOSURE             4225;
+__define RET_EXPRESSION      7220;
+__define GET_EXPRESSION      7222;
+__define NESTED_EXPRESSION   6197;
+__define INDEXER_OPERATION   6209;
+__define ASSIGN_OPERATION    6210;
+__define ADDITION_ASSIGNMENT 6211;
+__define ADD_OPERATION       6212;
+__define SUB_OPERATION       6213;
+__define LEN_OPERATION       6214;
+__define IF_OPERATION        6215;
+__define LESS_OPERATION      6216;
+__define NAME_OPERATION      6217;
+__define EQUAL_OPERATION     6218;
+__define NOT_OPERATION       6219;
+__define NOTEQUAL_OPERATION  6220;
+__define LOOP_OPERATION      6221;
+__define MESSAGE_OPERATION   6225;
+__define PROPERTY_OPERATION  6228;
+__define EXPRESSION          6288;
+__define L5_EXPRESSION       6289;
+__define SUB_EXPRESSION      6290;
+__define L7_EXPRESSION       6291;
+__define ROOT_EXPRESSION     6292;
+__define L6_EXPRESSION       6293;
+__define T_EXPRESSION        6294;
+__define POSTFIX             4192;
+__define TEMPLATE_POSTFIX    4193;
+__define TEMPLATE_ARG        4208;
+__define DIMENSION           5233;
+
+START ::= 
+        NEXT_DECLARATION;
+
+NEXT_DECLARATION ::=
+        DECLARATION NEXT_DECLARATION
+        | "#new" DICTIONARY NEXT_DECLARATION
+        | "#let" META_STATEMENT NEXT_DECLARATION
+        | "#include" INCLUDE_STATEMENT NEXT_DECLARATION
+	| "#reload" RELOAD_STATEMENT NEXT_DECLARATION
+        | eof;
+
+SUB_DECLARATIONS ::=
+        DECLARATION SUB_DECLARATIONS
+        | "#new" DICTIONARY SUB_DECLARATIONS
+        | "#let" META_STATEMENT SUB_DECLARATIONS
+        | "#include" INCLUDE_STATEMENT SUB_DECLARATIONS
+	| eps;	
+
+DECLARATION ::=
+        identifier ISCOPE_R;
+
+ISCOPE_R ::=
+        identifier ISCOPE_R
+	| reference ISCOPE_R
+	| TEMPLATE_BRACKETS SCOPE_OPT
+	| DYNAMIC_DIMENSION ^ARRAY_TYPE DDSCOPE_R
+        | SCOPE_OPT;
+
+DDSCOPE_R ::=
+	identifier SCOPE_OPT;
+
+DICTIONARY ::=
+        identifier IDICTIONARY_R DECLARATION_END;
+
+IDICTIONARY_R ::=
+        identifier IDICTIONARY_R
+        | eps;
+
+SCOPE ::=
+        "=" GET_EXPRESSION DECLARATION_END
+	| "{" SUB_DECLARATIONS END_OF_BLOCK
+	| "(" PARAMETERS ")" METHOD_BODY_OPT
+	| "[" DIMENSION "]" DECLARATION_END
+        | DECLARATION_END;
+
+SCOPE_OPT ::=
+	SCOPE
+	| ":" POSTFIX POSTFIXES SCOPE;
+
+POSTFIXES ::=
+	"," POSTFIX POSTFIXES
+	| eps;
+
+POSTFIX ::=
+	identifier IPOSTFIX_R;
+
+IPOSTFIX_R ::=
+	TEMPLATE_BRACKETS ^ TEMPLATE_POSTFIX
+	| eps;
+
+METHOD_BODY_OPT ::=
+	METHOD_BODY
+	| ":" POSTFIX POSTFIXES METHOD_BODY;
+
+METHOD_BODY ::=
+	BLOCK
+	| "=" RET_EXPRESSION DECLARATION_END
+	| NO_BODY;
+
+NO_BODY ::=
+	";";
+
+BLOCK ::= 
+	"{" STATEMENTS END_OF_BLOCK;
+
+STATEMENTS ::=
+	ROOT_EXPRESSION NEXT_STATEMENT
+	| "^" RET_EXPRESSION NEXT_LAST_STATEMENT
+	| "#include" INCLUDE_STATEMENT STATEMENTS
+        | "#let" META_STATEMENT STATEMENTS
+	| eps;
+
+NEXT_STATEMENT ::=
+	DECLARATION_END STATEMENTS
+	| eps;
+
+NEXT_LAST_STATEMENT ::=
+	DECLARATION_END
+	| eps;
+
+INCLUDE_STATEMENT ::=
+	INCLUDE_ARG INCLUDE_ARGS DECLARATION_END;
+
+RELOAD_STATEMENT ::=
+	identifier DECLARATION_END;
+
+INCLUDE_ARGS ::=
+	INCLUDE_ARG INCLUDE_ARGS
+	| eps;
+
+INCLUDE_ARG ::=
+	identifier
+	| reference;
+
+META_STATEMENT ::=
+        EXPRESSION DECLARATION_END;
+
+ROOT_EXPRESSION ::=
+        identifier RI_R
+	| reference O_R
+        | integer O_R
+        | hexinteger O_R
+        | string O_R
+	| "$rep" EXPRESSION ^LOOP_OPERATION
+	| "$len" SUB_EXPRESSION ^LEN_OPERATION
+	| "$name" SUB_EXPRESSION ^NAME_OPERATION
+	| "!" SUB_EXPRESSION ^NOT_OPERATION
+	| BLOCK ^CLOSURE;
+
+EXPRESSION ::=
+        identifier I_R
+	| reference O_R
+        | integer O_R
+        | hexinteger O_R
+        | string O_R
+        | "(" EXPRESSION ")" E_R
+	| "$len" SUB_EXPRESSION ^LEN_OPERATION
+	| "$name" SUB_EXPRESSION ^NAME_OPERATION
+	| "!" SUB_EXPRESSION ^NOT_OPERATION
+	| BLOCK ^CLOSURE;
+
+RET_EXPRESSION ::=
+	EXPRESSION;
+
+GET_EXPRESSION ::=
+	EXPRESSION;
+
+MESSAGE_PARAMETER ::=
+	EXPRESSION;
+
+SUB_EXPRESSION ::=
+        identifier ^OBJECT
+	| reference ^OBJECT
+        | integer ^OBJECT
+        | hexinteger ^OBJECT
+        | string ^OBJECT
+        | "(" EXPRESSION ")";
+
+L5_EXPRESSION ::=
+        identifier I5_R
+        | integer ^OBJECT
+        | hexinteger ^OBJECT;
+
+L6_EXPRESSION ::=
+        identifier ^OBJECT
+        | integer ^OBJECT
+        | hexinteger ^OBJECT;
+
+L7_EXPRESSION ::=
+	BLOCK ^ CLOSURE
+	| SUB_EXPRESSION;
+
+NESTED_EXPRESSION ::=
+	"{" SUB_DECLARATIONS "}";
+
+T_EXPRESSION ::=
+	 BLOCK;
+
+RI_R ::=
+        identifier I_R
+        | I_L0_R
+	| I_L1_R
+	| RI_L2_R
+	| I_L3_R NEXT_L3_R
+	| I_L5_R
+	| I_L6_R
+	| I_L6a_R
+	| IL7_R
+	| NESTED_EXPRESSION ^NESTED N_R
+        | eps ^OBJECT; 
+
+I_R ::=
+        identifier I_R
+        | reference I_R
+	| O_R;
+
+O_R ::=
+        NESTED_EXPRESSION ^NESTED N_R
+        | I_L0_R
+	| I_L1_R
+	| I_L2_R L7_OPT
+	| I_L3_R NEXT_L3_R
+	| I_L5_R
+	| I_L6_R
+	| I_L6a_R
+	| IL7_R
+        | eps ^OBJECT; 
+
+E_R ::=
+	L5_R
+	| L7_R
+	| eps;
+
+TEMPLATE_R ::=
+	I_L2_R
+	| identifier ^OBJECT VAR_R;	
+
+VAR_R ::=
+	L1_R
+	| eps;
+
+I5_R ::=
+        identifier I5_R
+        | eps ^OBJECT; 
+
+N_R ::=
+	eps;
+
+I_L0_R ::=
+        "[" ^OBJECT EXPRESSION "]" ^INDEXER_OPERATION INDEXER_R
+        | "+=" ^OBJECT EXPRESSION ^ADDITION_ASSIGNMENT;
+
+I_L1_R ::=
+        ":=" ^OBJECT EXPRESSION ^ASSIGN_OPERATION;
+
+L1_R ::=
+        ":=" EXPRESSION ^ASSIGN_OPERATION;
+
+I_L2_R ::=
+	"(" ^OBJECT MESSAGE_PARAMETERS ")" ^ MESSAGE_OPERATION;
+
+RI_L2_R ::=
+	"(" ^OBJECT MESSAGE_PARAMETERS ")" RI_L2_OPT;
+
+RI_L2_OPT ::=
+	T_EXPRESSION ^ TEMPLATE_BLOCK
+	| eps ^ MESSAGE_OPERATION;
+
+I_L3_R ::=
+	"." ^OBJECT MESSAGE MESSAGE_R;
+
+I_L5_R ::=
+	"+" ^OBJECT L5_EXPRESSION ^ADD_OPERATION
+	| "-" ^OBJECT L5_EXPRESSION ^SUB_OPERATION;
+
+L5_R ::=
+	"+" L5_EXPRESSION ^ADD_OPERATION
+	| "-" L5_EXPRESSION ^SUB_OPERATION;
+
+I_L6_R ::=
+	"==" ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION;
+	| "!=" ^OBJECT L6_EXPRESSION ^NOTEQUAL_OPERATION;
+
+I_L6a_R ::=
+	"<" ^OBJECT L6_EXPRESSION I_L6a_OPT;
+
+I_L6a_OPT ::=
+	">" ^ TEMPLATE_TYPE TEMPLATE_R
+	| eps ^ LESS_OPERATION;
+
+L7_OPT ::=
+	L7_R
+	| eps;
+
+IL7_R ::=
+	"?" ^OBJECT L7_EXPRESSION ^IF_OPERATION;
+
+L7_R ::=
+	"?" L7_EXPRESSION ^IF_OPERATION;
+
+NEXT_L3_R ::=
+	"." MESSAGE MESSAGE_R NEXT_L3_R
+	| eps;
+
+INDEXER_R ::=
+        L1_R
+        | eps;
+
+MESSAGE_R ::=
+	"(" MESSAGE_PARAMETERS ")" ^ MESSAGE_OPERATION
+	| eps ^PROPERTY_OPERATION;
+
+MESSAGE_PARAMETERS ::=
+	MESSAGE_PARAMETER NEXT_MESSAGE_PARAMETER
+	| eps;
+
+NEXT_MESSAGE_PARAMETER ::=
+	"," MESSAGE_PARAMETER NEXT_MESSAGE_PARAMETER
+	| eps;
+
+PARAMETERS ::=
+	PARAMETER NEXT_PARAMETER
+	| eps;
+
+NEXT_PARAMETER ::= 
+	"," PARAMETER NEXT_PARAMETER
+	| eps;
+
+PARAMETER ::=
+	identifier PARAMETER_R;
+
+PARAMETER_R ::=
+	identifier PARAMETER_R
+	| eps;
+
+DIMENSION ::=
+        integer
+        | hexinteger;	
+
+DYNAMIC_DIMENSION ::=
+	"[]";
+
+TEMPLATE_ARG ::=
+	identifier
+	| reference;
+
+MESSAGE ::=
+	identifier;
+
+TEMPLATE_BRACKETS ::=
+	"<" TEMPLATE_ARG TEMPLATE_ARGS;
+
+TEMPLATE_ARGS ::=
+	"," TEMPLATE_ARG TEMPLATE_ARGS
+	|  ">";
+
+ADDITION_ASSIGNMENT ::=
+        "+=";
+
+DECLARATION_END ::=
+	";";
+
+END_OF_BLOCK ::=
+	"}";

@@ -1,7 +1,9 @@
 // r1 - stack frame pointer
 // r2 - TOC??
 
-// r4 - acc
+// r14 - acc
+
+// r11,r12 - can be used 
 
 // r31 - base frame pointer
 
