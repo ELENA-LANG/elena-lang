@@ -96,7 +96,7 @@ inline % GC_ALLOC
   add     x11, x11, x15
   cmp     x11, x14
   bge     labYGCollect
-  str     x14, [x13]
+  str     x11, [x13]
   add     x10, x15, elObjectOffset
   ret     x30
 
