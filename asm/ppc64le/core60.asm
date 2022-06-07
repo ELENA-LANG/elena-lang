@@ -145,8 +145,9 @@ labStart:
   ld      r23, 0(r22)
   cmp     r14, r23
   beq     labFound
-  addi    r16, r22, 16  
+  addi    r22, r22, 16  
   blt     labSplit
+  mr      r16, r22
   subf    r7, r21, r7
   b       labSplit
 labFound:

@@ -132,8 +132,9 @@ labStart:
   ldr     x15, [x14]         //; edx
   cmp     x9, x15
   beq     labFound
-  add     x11, x14, #16
+  add     x14, x14, #16
   ble     labSplit
+  mov     x11, x14
   sub     x13, x13, x12
   b       labSplit
 

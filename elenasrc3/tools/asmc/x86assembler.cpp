@@ -323,7 +323,7 @@ X86Operand X86Assembler :: readPtrOperand(ScriptToken& tokenInfo, X86OperandType
    }
    else {
       X86Operand operand = defineOperand(tokenInfo, prefix, errorMessage);
-      if (operand.type == X86OperandType::DD && operand.reference == 0 || operand.type == X86OperandType::DB) {
+      if ((operand.type == X86OperandType::DD && operand.reference == 0) || operand.type == X86OperandType::DB) {
          if (prefix == X86OperandType::M16) {
             operand.type = X86OperandType::DW;
          }
