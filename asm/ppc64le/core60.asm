@@ -909,7 +909,7 @@ inline %0EFh
   addi    r17, r16, __disp32lo_1 
   addi    r18, r16, __disp32lo_2 
 
-  isellt  r15, r18, r17
+  isellt  r15, r17, r18
 
 end 
 
