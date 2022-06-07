@@ -1648,6 +1648,12 @@ inline %0FEh
 //   ; ld      r2,  08h(r11)  // ; load table of contents for destination
   mtctr   r12            // ; put code address into ctr
   bctrl                  // ; and call it
+
   // lwz      r2, n(r1)     // ; restore our table of contents
+
+
+  // ; temporally reloading TOC pointer
+  lis   r2, rdata32_hi : %CORE_TOC
+  addi  r2, r2, rdata32_lo : %CORE_TOC
 
 end
