@@ -55,6 +55,8 @@ namespace elena_lang
 
       void indent(TextViewModelBase* model) override;
 
+      void undo(TextViewModelBase* model) override;
+
       void moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;

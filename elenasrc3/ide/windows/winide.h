@@ -38,6 +38,8 @@ namespace elena_lang
       void closeFile();
       void exit();
 
+      void undo();
+
    public:
       IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, 
          int textFrameId);

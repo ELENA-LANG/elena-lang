@@ -19,6 +19,7 @@ constexpr auto MDATA_SECTION  = ".mdata";
 constexpr auto RDATA_SECTION  = ".rdata";
 constexpr auto IMPORT_SECTION = ".import";
 constexpr auto BSS_SECTION    = ".bss";
+constexpr auto DATA_SECTION   = ".data";
 
 // --- WinNtImageFormatter ---
 
@@ -61,6 +62,7 @@ void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    Section* mbdata = provider.getMBDataSection();
    Section* rdata = provider.getRDataSection();
    Section* data = provider.getDataSection();
+   Section* stat = provider.getStatSection();
    Section* import = provider.getImportSection();
 
    pos_t    size = 0;
@@ -89,7 +91,8 @@ void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    size += mbdata->length();
    map.dataSize += align(size, fileAlignment);
 
-   sections.headers.add(ImageSectionHeader::get(MDATA_SECTION, map.mdata, ImageSectionHeader::SectionType::RData,
+   sections.headers.add(ImageSectionHeader::get(MDATA_SECTION, map.mdata, 
+      ImageSectionHeader::SectionType::RData,
       align(size, sectionAlignment),
       align(size, fileAlignment)));
 
@@ -103,7 +106,8 @@ void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    map.rdata = offset;
    map.dataSize += align(size, fileAlignment);
 
-   sections.headers.add(ImageSectionHeader::get(RDATA_SECTION, map.rdata, ImageSectionHeader::SectionType::RData,
+   sections.headers.add(ImageSectionHeader::get(RDATA_SECTION, map.rdata, 
+      ImageSectionHeader::SectionType::RData,
       align(size, sectionAlignment),
       align(size, fileAlignment)));
 
@@ -115,7 +119,8 @@ void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    map.import = offset;
    map.importSize = size = import->length();
 
-   sections.headers.add(ImageSectionHeader::get(IMPORT_SECTION, map.import, ImageSectionHeader::SectionType::Data,
+   sections.headers.add(ImageSectionHeader::get(IMPORT_SECTION, map.import, 
+      ImageSectionHeader::SectionType::Data,
       align(size, sectionAlignment),
       align(size, fileAlignment)));
 
@@ -128,7 +133,19 @@ void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    map.data = offset;
    map.unintDataSize = align(size, fileAlignment);
 
-   sections.headers.add(ImageSectionHeader::get(BSS_SECTION, map.data, ImageSectionHeader::SectionType::Data,
+   sections.headers.add(ImageSectionHeader::get(BSS_SECTION, map.data, 
+      ImageSectionHeader::SectionType::Data,
+      align(size, sectionAlignment), 0));
+
+   offset = align(offset + size, sectionAlignment);
+
+   // --- stat ---
+   size = stat->length();
+   map.stat = offset;
+   map.unintDataSize += align(size, fileAlignment);
+
+   sections.headers.add(ImageSectionHeader::get(DATA_SECTION, map.stat,
+      ImageSectionHeader::SectionType::Data,
       align(size, sectionAlignment), 0));
 
    offset = align(offset + size, sectionAlignment);

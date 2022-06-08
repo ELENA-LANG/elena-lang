@@ -38,6 +38,8 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
          return resolveExternal(referenceName);
       case mskVMTRef:
          return _dataReferences.get(referenceName);
+      case mskStaticRef:
+         return _statReferences.get(referenceName);
       default:
          return INVALID_ADDR;
    }
@@ -57,6 +59,9 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
          break;
       case mskVMTRef:
          _dataReferences.add(referenceName, address);
+         break;
+      case mskStaticRef:
+         _statReferences.add(referenceName, address);
          break;
       default:
          break;
@@ -165,6 +170,11 @@ Section* ImageProvider :: getImportSection()
 Section* ImageProvider :: getDataSection()
 {
    return &_data;
+}
+
+Section* ImageProvider::getStatSection()
+{
+   return &_stat;
 }
 
 Section* ImageProvider :: getMBDataSection()

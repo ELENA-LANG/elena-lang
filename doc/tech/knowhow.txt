@@ -1,3 +1,9 @@
+Primitive types:
+----------------
+__word   - supports comparision operation
+__int    - supports comparision, arithmetic operation
+
+
 1) ELENA module structure
 -------------------------
 a) General file structure:

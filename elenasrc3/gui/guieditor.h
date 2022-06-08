@@ -121,6 +121,8 @@ namespace elena_lang
       virtual void closeDocument(TextViewModelBase* model, ustr_t name, 
          int notifyMessage) = 0;
 
+      virtual void undo(TextViewModelBase* model) = 0;
+
       virtual void indent(TextViewModelBase* model) = 0;
 
       virtual void moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;

@@ -189,6 +189,7 @@ namespace elena_lang
 
    protected:
       Text*             _text;
+      TextHistory       _undoBuffer;
       LexicalFormatter  _formatter;
 
       Point             _size;
@@ -278,6 +279,8 @@ namespace elena_lang
 
       void eraseChar(bool moveback);
       bool eraseSelection();
+
+      void undo();
 
       void notifyOnChange();
 

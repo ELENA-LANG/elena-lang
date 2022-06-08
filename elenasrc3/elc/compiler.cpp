@@ -1332,16 +1332,15 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
       scope.raiseError(errIllegalField, node);
 
    SizeInfo sizeInfo = {};
-   if (classRef)
-      sizeInfo = _logic->defineStructSize(*scope.moduleScope, classRef);
-
-   if (sizeHint != 0) {
-      if (isPrimitiveRef(classRef) && (sizeInfo.size == sizeHint || (classRef == V_INT32 && sizeHint <= sizeInfo.size))) {
-         // for primitive types size should be specified
-         sizeInfo.size = sizeHint;
+   if (isPrimitiveRef(classRef)) {
+      if (!sizeHint) {
+         scope.raiseError(errIllegalField, node);
       }
-      else scope.raiseError(errIllegalField, node);
+      // for primitive types size should be specified
+      else sizeInfo.size = sizeHint;
    }
+   else if (classRef)
+      sizeInfo = _logic->defineStructSize(*scope.moduleScope, classRef);
 
    if (test(flags, elWrapper) && scope.info.fields.count() > 0) {
       // wrapper may have only one field
@@ -2831,18 +2830,39 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
    readFieldAttributes(scope, node, attrs);
 
    //HOTFIX : recognize raw data
-   if (attrs.typeRef == V_INTBINARY) {
-      switch (attrs.size) {
+   if (isPrimitiveRef(attrs.typeRef)) {
+      bool valid = true;
+      switch (attrs.typeRef) {
+      case V_INTBINARY:
+         switch (attrs.size) {
          case 1:
-         case 2:
+            attrs.typeRef = V_INT8;
+            break;
          case 4:
-            // treat it like dword
             attrs.typeRef = V_INT32;
             break;
          default:
-            scope.raiseError(errInvalidHint, node);
+            valid = false;
             break;
+         }
+         break;
+      case V_WORDBINARY:
+         switch (attrs.size) {
+         case 4:
+            attrs.typeRef = V_WORD32;
+            break;
+         default:
+            valid = false;
+            break;
+         }
+         break;
+      default:
+         valid = false;
+         break;
       }
+
+      if (!valid)
+         scope.raiseError(errInvalidHint, node);
    }
 }
 

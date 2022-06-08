@@ -14,6 +14,9 @@ using namespace elena_lang;
 constexpr auto WHITESPACE = _T(" \r\t");
 constexpr auto OPERATORS = _T("(){}[]:=<>.,^@+-*/!~?;\"");
 
+constexpr auto UNDO_BUFFER_SIZE = 0x40000;
+
+
 // --- LexicalFormatter ---
 
 LexicalFormatter :: LexicalFormatter(Text* text, TextFormatterBase* formatter, MarkerList* markers)
@@ -215,8 +218,11 @@ bool DocumentView::LexicalReader :: readNext(TextWriter<text_c>& writer, pos_t l
 
 // --- DocumentView ---
 
-DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter)
-   : _formatter(text, formatter, &_markers), _notifiers(nullptr), _markers({})
+DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter) :
+   _undoBuffer(UNDO_BUFFER_SIZE),
+   _formatter(text, formatter, &_markers),
+   _notifiers(nullptr),
+   _markers({})
 {
    _text = text;
 
@@ -233,6 +239,8 @@ DocumentView :: ~DocumentView()
 
 void DocumentView :: onInsert(size_t position, size_t length, text_t line)
 {
+   _undoBuffer.onInsert(position, length, line);
+
    _frame.invalidate();
 
    if (_caret.longPosition() > position) {
@@ -245,6 +253,8 @@ void DocumentView :: onInsert(size_t position, size_t length, text_t line)
 
 void DocumentView :: onUpdate(size_t position)
 {
+   _undoBuffer.onUpdate(position);
+
    _frame.invalidate();
 
    if (_caret.longPosition() > position) {
@@ -257,6 +267,8 @@ void DocumentView :: onUpdate(size_t position)
 
 void DocumentView :: onErase(size_t position, size_t length, text_t line)
 {
+   _undoBuffer.onErase(position, length, line);
+
    _frame.invalidate();
 
    if (_caret.longPosition() > position) {
@@ -693,6 +705,11 @@ bool DocumentView :: eraseSelection()
    status.selelectionChanged = true;
 
    return true;
+}
+
+void DocumentView :: undo()
+{
+   
 }
 
 void DocumentView :: save(path_t path)

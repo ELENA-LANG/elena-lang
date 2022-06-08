@@ -159,6 +159,7 @@ namespace elena_lang
       virtual Section* getMBDataSection() = 0;
       virtual Section* getImportSection() = 0;
       virtual Section* getDataSection() = 0;
+      virtual Section* getStatSection() = 0;
 
       virtual Section* getTargetSection(ref_t targetMask) = 0;
       virtual Section* getTargetDebugSection() = 0;
@@ -432,6 +433,8 @@ namespace elena_lang
 
       virtual void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) = 0;
 
+      virtual pos_t getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed = false) = 0;
+
       virtual pos_t getVMTLength(void* targetVMT) = 0;
       virtual addr_t findMethodAddress(void* entries, mssg_t message) = 0;
       virtual pos_t findMethodOffset(void* entries, mssg_t message) = 0;
@@ -459,6 +462,8 @@ namespace elena_lang
       virtual void writeImm12(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm16(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm32(MemoryWriter* writer, int value) = 0;
+
+      virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) = 0;
 
       virtual ~JITCompilerBase() = default;
    };

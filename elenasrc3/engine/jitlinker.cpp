@@ -993,6 +993,12 @@ void JITLinker :: complete(JITCompilerBase* compiler)
       }
    });
 
+   // fix static table size
+   compiler->updateEnvironment(
+      _imageProvider->getRDataSection(),
+      compiler->getStaticCounter(_imageProvider->getStatSection(), true),
+      _virtualMode);
+
    fixReferences(mbReferences, mbSection);
 }
 

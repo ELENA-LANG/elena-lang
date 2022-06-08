@@ -203,6 +203,8 @@ namespace elena_lang
 
       void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) override;
 
+      pos_t getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed) override;
+
       pos_t getVMTLength(void* targetVMT) override;
       addr_t findMethodAddress(void* entries, mssg_t message) override;
       pos_t findMethodOffset(void* entries, mssg_t message) override;
@@ -226,6 +228,8 @@ namespace elena_lang
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
+
+      void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
 
       JITCompiler32()
          : JITCompiler()
@@ -255,6 +259,8 @@ namespace elena_lang
 
       void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) override;
 
+      pos_t getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed) override;
+
       pos_t getVMTLength(void* targetVMT) override;
       addr_t findMethodAddress(void* entries, mssg_t message) override;
       pos_t findMethodOffset(void* entries, mssg_t message) override;
@@ -278,6 +284,8 @@ namespace elena_lang
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
+
+      void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
 
       JITCompiler64()
          : JITCompiler()

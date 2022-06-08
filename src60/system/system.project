@@ -36,6 +36,7 @@
         <include>strings.l</include>
         <include>console.l</include>
         <include>app.l</include>
+        <include>lnx_strings.l</include>
         <include>io/lnx_console.l</include>
      </module>
   </files>

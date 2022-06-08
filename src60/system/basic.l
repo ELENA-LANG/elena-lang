@@ -91,3 +91,10 @@ public const struct IntNumber : IntBaseNumber
    int subtract(int n)
       = theValue - n;   
 }
+
+// --- CharValue ---
+
+public const struct CharValue : BaseValue
+{
+   embeddable __word theValue[4];
+}

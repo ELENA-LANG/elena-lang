@@ -62,6 +62,7 @@ end
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
 structure %SYSTEM_ENV
 
+  dd 0
   dd data : %CORE_GC_TABLE
   dd code : %INVOKER
   // ; dd GCMGSize

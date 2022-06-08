@@ -58,11 +58,12 @@ constexpr int ArrayOperators[1]       = { ADD_ASSIGN_OPERATOR_ID };
 constexpr int SArrayOperators[1]      = { LEN_OPERATOR_ID };
 constexpr int IntOperators[2]         = { ADD_OPERATOR_ID, SUB_OPERATOR_ID };
 constexpr int CondOperators[3]        = { EQUAL_OPERATOR_ID, NOTEQUAL_OPERATOR_ID, LESS_OPERATOR_ID };
+constexpr int ValCondOperators[2]     = { EQUAL_OPERATOR_ID, NOTEQUAL_OPERATOR_ID };
 constexpr int BranchingOperators[1]   = { IF_OPERATOR_ID };
 constexpr int SDeclOperators[1]       = { NAME_OPERATOR_ID };
 constexpr int SOpOperators[1]         = { NOT_OPERATOR_ID };
 
-constexpr auto OperationLength = 11;
+constexpr auto OperationLength = 12;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -89,6 +90,10 @@ constexpr Op Operations[OperationLength] =
    {
       CondOperators, 3,
       BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG, false
+   },
+   {
+      CondOperators, 3,
+      BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG, false
    },
    {
       SArrayOperators, 1,
@@ -238,7 +243,8 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_FIELD:
          break;
       case V_INTBINARY:
-         attrs.typeRef = V_INTBINARY;
+      case V_WORDBINARY:
+         attrs.typeRef = attribute;
          break;
       case V_STRINGOBJ:
          attrs.inlineArray = true;

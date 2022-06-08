@@ -1942,6 +1942,14 @@ void JITCompiler32 :: prepare(
    JITCompiler::prepare(loader, imageProvider, helper, lh, settings);
 }
 
+pos_t JITCompiler32 :: getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed)
+{
+   if (emptyNotAllowed && statSection->length() == 0)
+      MemoryBase::writeDWord(statSection, 0, 0);
+
+   return statSection->length() >> 2;
+}
+
 void JITCompiler32 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length)
 {
    writer.writeDWord(length);
@@ -2220,6 +2228,17 @@ void JITCompiler32 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter&
    }
 }
 
+void JITCompiler32 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode)
+{
+   void* env = _preloaded.get(SYSTEM_ENV);
+   if (virtualMode) {
+      MemoryBase::writeDWord(rdata, ((ref_t)env & ~mskAnyRef), staticCounter);
+   }
+   else {
+      *(int64_t*)env = staticCounter;
+   }
+}
+
 // --- JITCompiler64 ---
 
 inline void insertVMTEntry64(VMTEntry64* entries, pos_t count, pos_t index)
@@ -2276,6 +2295,14 @@ void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vm
    vmtWriter.writeBytes(0, vmtSize);
 
    vmtWriter.seek(position);
+}
+
+pos_t JITCompiler64 :: getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed)
+{
+   if (emptyNotAllowed && statSection->length() == 0)
+      MemoryBase::writeQWord(statSection, 0, 0);
+
+   return statSection->length() >> 3;
 }
 
 pos_t JITCompiler64 :: getVMTLength(void* targetVMT)
@@ -2523,5 +2550,16 @@ void JITCompiler64 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter&
       }
       else helper->writeSectionReference(writer.Memory(), imageOffset, it.key(), 
          sectionInfo, *it, mskRef64);
+   }
+}
+
+void JITCompiler64 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode)
+{
+   void* env = _preloaded.get(SYSTEM_ENV);
+   if (virtualMode) {
+      MemoryBase::writeQWord(rdata, (pos_t)env & ~mskAnyRef, staticCounter);
+   }
+   else {
+      *(int64_t*)env = staticCounter;
    }
 }

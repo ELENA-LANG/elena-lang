@@ -64,6 +64,7 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    Section* mbdata = provider.getMBDataSection();
    Section* import = provider.getImportSection();
    Section* data = provider.getDataSection();
+   Section* stat = provider.getStatSection();
 
    // === address space mapping ===
 
@@ -126,6 +127,11 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
 
    fileSize += align(data->length(), fileAlignment);
    sectionSize += align(data->length(), fileAlignment);
+
+   map.dataSize += stat->length();
+   map.stat = map.data + data->length();
+
+   sectionSize += align(stat->length(), fileAlignment);
 
    sections.headers.add(ImageSectionHeader::get(nullptr, map.import, ImageSectionHeader::SectionType::Data,
       sectionSize, fileSize));

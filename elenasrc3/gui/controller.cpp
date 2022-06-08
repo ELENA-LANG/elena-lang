@@ -62,6 +62,13 @@ void TextViewController :: indent(TextViewModelBase* model)
    }
 }
 
+void TextViewController :: undo(TextViewModelBase* model)
+{
+   auto docView = model->DocView();
+
+
+}
+
 void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
    auto docView = model->DocView();

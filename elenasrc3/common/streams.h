@@ -38,6 +38,11 @@ namespace elena_lang
          return value;
       }
 
+      static bool writeQWord(MemoryBase* target, pos_t position, unsigned long long value)
+      {
+         return target->write(position, &value, sizeof(value));
+      }
+
       virtual pos_t length() const = 0;
 
       virtual void* get(pos_t position) const = 0;

@@ -120,7 +120,7 @@ struct AddressSpace
    addr_t          imageBase;
    pos_t           code;
    pos_t           mdata, mbdata, rdata;
-   pos_t           data;
+   pos_t           data, stat;
    pos_t           import;
 
    pos_t           entryPoint;
@@ -137,8 +137,8 @@ struct AddressSpace
 
       importSize = imageSize = 0;
       imageBase = 0;
-      code = data = 0;
-      mdata = mbdata = rdata = 0;
+      code = mdata = mbdata = rdata = 0;
+      data = stat = 0;
 
       entryPoint = 0;
    }
