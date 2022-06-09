@@ -297,6 +297,7 @@ struct BuiltinReferences
 {
    ref_t   superReference;
    ref_t   intReference;
+   ref_t   literalReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
@@ -310,6 +311,7 @@ struct BuiltinReferences
    BuiltinReferences()
    {
       superReference = intReference = 0;
+      literalReference = 0;
 
       dispatch_message = constructor_message = 0;
       add_message = 0;

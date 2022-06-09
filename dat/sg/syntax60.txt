@@ -5,6 +5,7 @@ __define string             12294;
 __define hexinteger         12295;
 __define reference          12296;
 __define terminal           12297;
+__define character          12298;
 
 __define DECLARATION         5120;
 __define BLOCK               7184;
@@ -165,6 +166,7 @@ ROOT_EXPRESSION ::=
         | integer O_R
         | hexinteger O_R
         | string O_R
+        | character O_R
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$len" SUB_EXPRESSION ^LEN_OPERATION
 	| "$name" SUB_EXPRESSION ^NAME_OPERATION
@@ -177,6 +179,7 @@ EXPRESSION ::=
         | integer O_R
         | hexinteger O_R
         | string O_R
+        | character O_R
         | "(" EXPRESSION ")" E_R
 	| "$len" SUB_EXPRESSION ^LEN_OPERATION
 	| "$name" SUB_EXPRESSION ^NAME_OPERATION

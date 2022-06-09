@@ -1,2 +1,2 @@
-//public const string newLine
-//    = $13$10;
+public const string newLine
+    = $13$10;

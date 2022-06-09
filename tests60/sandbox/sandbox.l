@@ -1,8 +1,5 @@
 import system;
 
-//public const string newLine
-//    = $13$10;
-
 //A
 //{
 //   constructor()
@@ -17,6 +14,10 @@ singleton Tester
 {
    run()
    {
+      console.writeLine("Line1");
+      console.writeLine("Line2");
+      console.writeLine("Line3");
+
 //      var a1 := a;
 //      var a2 := a;
 

@@ -24,6 +24,7 @@ namespace elena_lang
       MetaArray,
       MetaConstant,
       StringLiteral,
+      CharacterLiteral,
       IntLiteral,
       Template,
       Nil,
@@ -762,7 +763,7 @@ namespace elena_lang
       void checkMethodDuplicates(ClassScope& scope, SyntaxNode node, mssg_t message, 
          mssg_t publicMessage, bool protectedOne, bool internalOne);
 
-      ref_t generateConstant(ObjectInfo info);
+      ref_t generateConstant(Scope& scope, ObjectInfo& info, ref_t reference);
 
       void generateClassFlags(ClassScope& scope, ref_t declaredFlags);
       void generateMethodAttributes(ClassScope& scope, SyntaxNode node, 
@@ -812,7 +813,7 @@ namespace elena_lang
 
       void evalStatement(MetaScope& scope, SyntaxNode node);
 
-      void writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info);
+      void writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
 
       void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey);
 
@@ -851,6 +852,7 @@ namespace elena_lang
       ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
 
       ObjectInfo mapStringConstant(Scope& scope, SyntaxNode node);
+      ObjectInfo mapCharacterConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapIntConstant(Scope& scope, SyntaxNode node, int radix);
       ObjectInfo mapUIntConstant(Scope& scope, SyntaxNode node, int radix);
       ObjectInfo mapTerminal(Scope& scope, SyntaxNode node, ref_t declaredRef, ExpressionAttribute attrs);

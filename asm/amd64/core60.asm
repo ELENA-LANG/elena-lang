@@ -243,6 +243,13 @@ inline %482h
 
 end
 
+// ; xassigni
+inline %83h
+
+  mov  [rbx + __arg32_1], r10
+
+end
+
 // ; movm
 inline %88h
 
@@ -408,6 +415,13 @@ inline %2A4h
   mov [rsp+16], r11
 
 end 
+
+// ; geti
+inline %0A5h
+
+  mov  rbx, [rbx + __arg32_1]
+
+end
 
 // ; peekfi
 inline %0A8h

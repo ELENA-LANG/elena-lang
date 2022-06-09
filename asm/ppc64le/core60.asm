@@ -281,6 +281,14 @@ inline %482h
 
 end
 
+// ; xassigni
+inline %83h
+
+  add     r16, r15, __arg16_1
+  std     r3, 0(r16)
+
+end
+
 // ; movm
 inline %88h
 
@@ -486,6 +494,14 @@ inline %2A4h
   std     r4, 8(r1)
 
 end 
+
+// ; geti
+inline %0A5h
+
+  add     r16, r15, __arg16_1
+  std     r15, 0(r16)
+
+end
 
 // ; peekfi
 inline %0A8h

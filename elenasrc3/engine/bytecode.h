@@ -31,6 +31,7 @@ namespace elena_lang
       SetR           = 0x80,
       SetDP          = 0x81,
       NLen           = 0x82,
+      XAssignI       = 0x83,
       MovM           = 0x88,
 
       Copy           = 0x90,
@@ -43,7 +44,7 @@ namespace elena_lang
       SaveSI         = 0xA2,
       StoreSI        = 0xA3,
       XFlushSI       = 0xA4,
-
+      GetI           = 0xA5,
       PeekFI         = 0xA8,
       PeekSI         = 0xA9,
 

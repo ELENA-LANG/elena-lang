@@ -241,6 +241,13 @@ inline %482h
 
 end
 
+// ; xassigni
+inline %83h
+
+  mov  [ebx + __arg32_1], esi
+
+end
+
 // ; movm
 inline %88h
 
@@ -385,6 +392,13 @@ inline %1A4h
   mov [esp+4], esi
 
 end 
+
+// ; xassigni
+inline %0A5h
+
+  mov  ebx, [ebx + __arg32_1]
+
+end
 
 // ; peekfi
 inline %0A8h

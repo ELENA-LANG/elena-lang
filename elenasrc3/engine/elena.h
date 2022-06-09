@@ -449,6 +449,7 @@ namespace elena_lang
          bool structMode, bool virtualMode) = 0;
       virtual void writeInt32(MemoryWriter& writer, unsigned int value) = 0;
       virtual void writeLiteral(MemoryWriter& writer, ustr_t value) = 0;
+      virtual void writeChar32(MemoryWriter& writer, ustr_t value) = 0;
       virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
 
       virtual void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) = 0;
@@ -586,6 +587,15 @@ namespace elena_lang
                      size_t temp_len = 4;
                      StrConvertor::copy(temp, &ch, 1, temp_len);
                      append(temp, temp_len);
+
+                     if (s[i] == '"') {
+                        mode = 1;
+                     }
+                     else if (s[i] == '$') {
+                        index = i + 1;
+                        mode = 2;
+                     }
+                     else mode = 0;
                   }
                   break;
                default:

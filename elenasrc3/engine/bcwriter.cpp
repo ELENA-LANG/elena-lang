@@ -202,6 +202,11 @@ void stringLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskLiteralRef);
 }
 
+void charLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskCharacterRef);
+}
+
 void goingToEOP(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    //gotoEnd(tape, baFirstLabel);
@@ -332,6 +337,18 @@ void boolSOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SelEqRR, falseRef | mskVMTRef, trueRef | mskVMTRef);
 }
 
+void assignSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   // !! temporally - assigni should be used instead
+   tape.write(ByteCode::XAssignI, node.arg.value);
+}
+
+void getField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   // !! temporally - assigni should be used instead
+   tape.write(ByteCode::GetI, node.arg.value);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -373,6 +390,9 @@ ByteCodeWriter::Saver commands[] =
    xdispatchOp,
    boolSOp,
    intCondOp,
+   charLiteral,
+   assignSPField,
+   getField,
 };
 
 // --- ByteCodeWriter ---

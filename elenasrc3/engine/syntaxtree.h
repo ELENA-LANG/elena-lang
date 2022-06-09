@@ -32,6 +32,7 @@ namespace elena_lang
       hexinteger           = 0x003007,
       reference            = 0x003008,
       eop                  = 0x003009,
+      character            = 0x00300A,
 
       // NOTE : low word should be unique for every key
       Declaration          = 0x001400,

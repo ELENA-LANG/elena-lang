@@ -73,6 +73,7 @@ namespace elena_lang
    constexpr auto SUPER_FORWARD           = "$forwards'$super";          // the common class predecessor
    constexpr auto INTLITERAL_FORWARD      = "$forwards'$int";            // the common class predecessor
    constexpr auto LITERAL_FORWARD         = "$forwards'$string";         // the common class predecessor
+   constexpr auto CHAR_FORWARD            = "$forwards'$char";         // the common class predecessor
    constexpr auto BOOL_FORWARD            = "$forwards'$boolean";        // the common class predecessor
    constexpr auto TRUE_FORWARD            = "$forwards'$true";           // the common class predecessor
    constexpr auto FALSE_FORWARD           = "$forwards'$false";          // the common class predecessor
@@ -226,6 +227,8 @@ namespace elena_lang
    constexpr ref_t mskDeclAttributesRef   = 0x14000000u;
    constexpr ref_t mskMetaExtensionRef    = 0x15000000u;
    constexpr ref_t mskStaticRef           = 0x16000000u;
+   constexpr ref_t mskCharacterRef        = 0x17000000u;   // reference to character literal
+   constexpr ref_t mskConstant            = 0x18000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

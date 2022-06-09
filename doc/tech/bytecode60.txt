@@ -50,19 +50,24 @@ ELENA byte codes (or ecodes)
 
  Register operations:
  --------------------
+   get i                    - acc[i] => acc
+
    load                     - index := [acc] 
 
    mov env                  - %SYSTEM_ENV => index 
 
    mov mssg:m               - index := m
 
+   seleq r1, r2             - acc <= COMP.EQ ? r1 : r2
+
+   sellt r1, r2             - acc <= COMP.EQ ? r1 : r2
+
    set {prefix}:r           - r => acc
 
    set dp:i                 - dp[i] => acc
 
-   seleq r1, r2             - acc <= COMP.EQ ? r1 : r2
-
-   sellt r1, r2             - acc <= COMP.EQ ? r1 : r2
+   xassign i                - acc[i] := sp[0];
+                              direct operation
 
 
  Call operations:

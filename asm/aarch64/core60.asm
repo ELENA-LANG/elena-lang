@@ -255,6 +255,14 @@ inline %482h
 
 end
 
+// ; xassigni
+inline %83h
+
+  add     x11, x10, __arg12
+  str     x0, [x11]
+
+end
+
 // ; movm
 inline %88h
 
@@ -454,6 +462,14 @@ inline %2A4h
   str     x1, [x11]
 
 end 
+
+// ; geti
+inline %0A5h
+
+  add     x11, x10, __arg12
+  ldr     x10 [x11]
+
+end
 
 // ; peekfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)

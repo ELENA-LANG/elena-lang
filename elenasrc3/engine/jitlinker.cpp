@@ -916,6 +916,11 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          size = value.length_pos() + 1;
          structMode = true;
          break;
+      case mskCharacterRef:
+         vmtReferenceInfo.referenceName = _constantSettings.characterClass;
+         size = 4;
+         structMode = true;
+         break;
       default:
          break;
    }
@@ -941,6 +946,9 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
    switch (sectionMask) {
       case mskIntLiteralRef:
          _compiler->writeInt32(writer, StrConvertor::toUInt(value, 16));
+         break;
+      case mskCharacterRef:
+         _compiler->writeChar32(writer, value);
          break;
       case mskLiteralRef:
          _compiler->writeLiteral(writer, value);
@@ -1028,6 +1036,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
             break;
          case mskIntLiteralRef:
          case mskLiteralRef:
+         case mskCharacterRef:
             address = resolveConstant(referenceInfo, sectionMask);
             break;
          case mskConstArray:

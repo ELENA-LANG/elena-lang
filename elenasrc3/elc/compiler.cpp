@@ -1032,14 +1032,45 @@ void Compiler :: checkMethodDuplicates(ClassScope& scope, SyntaxNode node, mssg_
    }
 }
 
-ref_t Compiler :: generateConstant(ObjectInfo info)
+ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t constRef)
 {
-   switch (info.kind) {
+   // check if the constant can be resolved immediately
+   switch (retVal.kind) {
       case ObjectKind::Singleton:
-         return info.reference;
+         return retVal.reference;
+      case ObjectKind::StringLiteral:
+         break;
       default:
          return 0;
    }
+
+   // otherwise we have to create the constant
+   ModuleBase* module = scope.module;
+   if (!constRef)
+      constRef = scope.moduleScope->mapAnonymous("const");
+
+   MemoryWriter dataWriter(module->mapSection(constRef | mskConstant, false));
+   switch (retVal.kind) {
+      case ObjectKind::StringLiteral:
+      {
+         ustr_t value = module->resolveConstant(retVal.reference);
+         dataWriter.writeString(value, value.length() + 1);
+
+         retVal.type = scope.moduleScope->buildins.literalReference;
+         break;
+      }
+      default:
+         break;
+   }
+
+   dataWriter.Memory()->addReference(retVal.type | mskVMTRef, (pos_t)-4);
+
+   // save constant meta info
+   SymbolInfo constantInfo = { SymbolType::Constant, constRef, retVal.type };
+   MemoryWriter metaWriter(module->mapSection(constRef | mskMetaSymbolInfoRef, false));
+   constantInfo.save(&metaWriter);
+
+   return constRef;
 }
 
 void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
@@ -2243,9 +2274,9 @@ ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& sc
    createObject(writer, argInfo, typeRef);
    writer.appendNode(BuildKey::Assigning, tempLocal.argument);
 
-   writeObjectInfo(writer, info);
+   writeObjectInfo(writer, scope, info);
    writer.appendNode(BuildKey::SavingInStack, 0);
-   writeObjectInfo(writer, tempLocal);
+   writeObjectInfo(writer, scope, tempLocal);
    copyObjectToAcc(writer, argInfo, tempLocal.reference);
 
    return tempLocal;
@@ -2301,7 +2332,7 @@ ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, Ob
    return retVal;
 }
 
-void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
+void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info)
 {
    switch (info.kind) {
       case ObjectKind::IntLiteral:
@@ -2312,7 +2343,10 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
       case ObjectKind::StringLiteral:
          writer.appendNode(BuildKey::StringLiteral, info.reference);
          break;
-      //case ObjectKind::MetaDictionary:
+      case ObjectKind::CharacterLiteral:
+         writer.appendNode(BuildKey::CharLiteral, info.reference);
+         break;
+         //case ObjectKind::MetaDictionary:
       //   writer.appendNode(BuildKey::MetaDictionary, info.reference);
       //   break;
       //case ObjectKind::MetaArray:
@@ -2339,6 +2373,10 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ObjectInfo info)
       case ObjectKind::LocalAddress:
       case ObjectKind::TempLocalAddress:
          writer.appendNode(BuildKey::LocalAddress, info.reference);
+         break;
+      case ObjectKind::Field:
+         writeObjectInfo(writer, scope, scope.mapSelf());
+         writer.appendNode(BuildKey::Field, info.reference);
          break;
       case ObjectKind::Object:
          break;
@@ -2950,7 +2988,7 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
    for (pos_t i = count; i > 0; i--) {
       ObjectInfo arg = arguments[i - 1];
 
-      writeObjectInfo(writer, arg);
+      writeObjectInfo(writer, scope, arg);
       switch (arg.kind) {
          case ObjectKind::IntLiteral:
             writer.appendNode(BuildKey::SavingNInStack, i - 1);
@@ -3047,7 +3085,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    ObjectInfo ioperand = {};
 
    pos_t      argLen = 1;
-   ref_t      arguments[3];
+   ref_t      arguments[3] = {};
    arguments[0] = resolveObjectReference(scope, loperand, false);
 
    // HOTFIX : typecast the right-hand expression if required
@@ -3080,11 +3118,11 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       loperand = boxArgumentLocally(writer, scope, loperand, true);
       roperand = boxArgumentLocally(writer, scope, roperand, true);
 
-      writeObjectInfo(writer, loperand);
+      writeObjectInfo(writer, scope, loperand);
       writer.appendNode(BuildKey::SavingInStack, 0);
 
       if (rnode != SyntaxKey::None) {
-         writeObjectInfo(writer, roperand);
+         writeObjectInfo(writer, scope, roperand);
          writer.appendNode(BuildKey::SavingInStack, 1);
       }
 
@@ -3471,14 +3509,14 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       for (unsigned int i = counter; i > 0; i--) {
          ObjectInfo arg = arguments[i - 1];
 
-         writeObjectInfo(writer, arg);
+         writeObjectInfo(writer, scope, arg);
          writer.appendNode(BuildKey::SavingInStack, i - 1);
       }
 
       if (!targetOverridden) {
          writer.appendNode(BuildKey::Argument, 0);
       }
-      else writeObjectInfo(writer, target);
+      else writeObjectInfo(writer, scope, target);
 
       writer.newNode(operation, message);
 
@@ -3605,6 +3643,7 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    ObjectInfo target = mapObject(scope, loperand, EAttr::None);
    int size = 0;
    bool stackSafe = false;
+   bool fieldMode = false;
    switch (target.kind) {
       case ObjectKind::Local:
          scope.markAsAssigned(target);
@@ -3618,6 +3657,12 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
          size = _logic->defineStructSize(*scope.moduleScope, target.type).size;
          stackSafe = true;
          break;
+      case ObjectKind::Field:
+         scope.markAsAssigned(target);
+         operationType = BuildKey::FieldAssigning;
+         operand = target.reference;
+         fieldMode = true;
+         break;
       default:
          scope.raiseError(errInvalidOperation, loperand.parentNode());
          break;
@@ -3627,8 +3672,13 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    exprVal = compileExpression(writer, scope, roperand,
       resolveObjectReference(scope, target), EAttr::Parameter);
 
-   writeObjectInfo(writer, 
+   writeObjectInfo(writer, scope,
       boxArgument(writer, scope, exprVal, stackSafe, true));
+
+   if (fieldMode) {
+      writer.appendNode(BuildKey::Argument, 0);
+      writeObjectInfo(writer, scope, scope.mapSelf());
+   }
 
    writer.newNode(operationType, operand);
    if (size != 0) {
@@ -3636,7 +3686,7 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    }
    writer.closeNode();
 
-   writeObjectInfo(writer, target);
+   writeObjectInfo(writer, scope, target);
 
    return target;
 }
@@ -3742,6 +3792,11 @@ ObjectInfo Compiler :: mapStringConstant(Scope& scope, SyntaxNode node)
    return { ObjectKind::StringLiteral, V_STRING, scope.module->mapConstant(node.identifier()) };
 }
 
+ObjectInfo Compiler :: mapCharacterConstant(Scope& scope, SyntaxNode node)
+{
+   return { ObjectKind::CharacterLiteral, V_WORD32, scope.module->mapConstant(node.identifier()) };
+}
+
 inline ref_t mapIntConstant(Compiler::Scope& scope, int integer)
 {
    String<char, 20> s;
@@ -3833,6 +3888,11 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, ref_t declared
 
             retVal = mapStringConstant(scope, node);
             break;
+         case SyntaxKey::character:
+            invalid = forwardMode || variableMode;
+
+            retVal = mapCharacterConstant(scope, node);
+            break;
          case SyntaxKey::integer:
             invalid = forwardMode || variableMode;
 
@@ -3891,7 +3951,7 @@ ObjectInfo Compiler :: saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope
    }
    else {
       int tempLocal = scope.newTempLocal();
-      writeObjectInfo(writer, object);
+      writeObjectInfo(writer, scope, object);
       writer.appendNode(BuildKey::Assigning, tempLocal);
 
       return { ObjectKind::TempLocal, object.type, (ref_t)tempLocal };
@@ -4151,7 +4211,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
       false, true);
 
    if (!hasToBePresaved(retVal)) {
-      writeObjectInfo(writer, retVal);
+      writeObjectInfo(writer, scope, retVal);
    }
    writer.appendNode(BuildKey::EndStatement);
 
@@ -4193,11 +4253,16 @@ void Compiler :: saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_
 
 bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
 {
-   ref_t constRef = generateConstant(retVal);
+   ref_t constRef = generateConstant(scope, retVal, scope.reference);
    if (constRef) {
       switch (retVal.kind) {
          case ObjectKind::Singleton:
             scope.info.symbolType = SymbolType::Singleton;
+            scope.info.valueRef = retVal.reference;
+            scope.info.typeRef = retVal.type;
+            break;
+         case ObjectKind::StringLiteral:
+            scope.info.symbolType = SymbolType::Constant;
             scope.info.valueRef = retVal.reference;
             scope.info.typeRef = retVal.type;
             break;
@@ -4232,7 +4297,7 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
    ObjectInfo retVal = compileExpression(writer, exprScope,
       bodyNode.firstChild(), 0, ExpressionAttribute::RootSymbol);
 
-   writeObjectInfo(writer, 
+   writeObjectInfo(writer, exprScope,
       boxArgument(writer, exprScope, retVal, false, true));
 
    writer.appendNode(BuildKey::EndStatement);
@@ -4263,7 +4328,7 @@ void Compiler :: compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope)
    writer.appendNode(BuildKey::OpenFrame);
    ObjectInfo retVal(ObjectKind::Class, scope.info.header.classRef, scope.reference, 0);
    ExprScope exprScope(&scope);
-   writeObjectInfo(writer, retVal);
+   writeObjectInfo(writer, exprScope, retVal);
    writer.appendNode(BuildKey::CloseFrame);
    writer.appendNode(BuildKey::Exit);
    writer.closeNode();
@@ -4362,13 +4427,14 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
          exprScope.syncStack();
       }
 
-      writeObjectInfo(writer, boxArgument(writer, exprScope, retVal, false, true));
+      writeObjectInfo(writer, exprScope,
+         boxArgument(writer, exprScope, retVal, false, true));
    }
 
    writer.appendNode(BuildKey::CloseFrame);
 
    if (scope.checkHint(MethodHint::Constant)) {
-      ref_t constRef = generateConstant(retVal);
+      ref_t constRef = generateConstant(scope, retVal, 0);
       if (constRef) {
          ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
 
@@ -4840,6 +4906,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
    moduleScope->buildins.intReference = safeMapReference(moduleScope, forwardResolver, INTLITERAL_FORWARD);
+   moduleScope->buildins.literalReference = safeMapReference(moduleScope, forwardResolver, LITERAL_FORWARD);
 
    moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);
    moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);

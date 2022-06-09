@@ -65,6 +65,9 @@ namespace elena_lang
       SealedDispatchingOp  = 0x0024,
       BoolSOp              = 0x0025,
       IntCondOp            = 0x0026,
+      CharLiteral          = 0x0027,
+      FieldAssigning       = 0x0028,
+      Field                = 0x0029,
 
       Import               = 0x0038,
       StrDictionaryOp      = 0x0039,

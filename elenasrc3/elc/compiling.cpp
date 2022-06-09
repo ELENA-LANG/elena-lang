@@ -200,6 +200,7 @@ CompilingProcess :: CompilingProcess(PathString& appPath, PresenterBase* present
          SyntaxTree::toParseKey(SyntaxKey::identifier),
          SyntaxTree::toParseKey(SyntaxKey::reference),
          SyntaxTree::toParseKey(SyntaxKey::string),
+         SyntaxTree::toParseKey(SyntaxKey::character),
          SyntaxTree::toParseKey(SyntaxKey::integer),
          SyntaxTree::toParseKey(SyntaxKey::hexinteger));
 
