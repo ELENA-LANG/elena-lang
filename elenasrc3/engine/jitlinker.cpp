@@ -960,6 +960,20 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
    return vaddress;
 }
 
+addr_t JITLinker :: resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sectionMask)
+{
+   // get target image & resolve virtual address
+   MemoryBase* image = _imageProvider->getTargetSection(mskStatDataRef);
+   MemoryWriter writer(image);
+
+   addr_t vaddress = calculateVAddress(writer, mskStatDataRef);
+   _compiler->writeVariable(writer);
+
+   _mapper->mapReference(referenceInfo, vaddress, sectionMask);
+
+   return vaddress;
+}
+
 void JITLinker :: prepare(JITCompilerBase* compiler)
 {
    _compiler = compiler;
@@ -1029,6 +1043,9 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
          case mskVMTRef:
             address = resolveVMTSection(referenceInfo, 
                _loader->getClassSections(referenceInfo, mskVMTRef, mskClassRef, silentMode));
+            break;
+         case mskStaticVariable:
+            address = resolveStaticVariable(referenceInfo, sectionMask);
             break;
          case mskMetaArrayRef:
             address = resolveMetaSection(referenceInfo, sectionMask, 

@@ -32,6 +32,8 @@ namespace elena_lang
       SetDP          = 0x81,
       NLen           = 0x82,
       XAssignI       = 0x83,
+      PeekR          = 0x84,
+      StoreR         = 0x85,
       MovM           = 0x88,
 
       Copy           = 0x90,
@@ -230,6 +232,8 @@ namespace elena_lang
          case ByteCode::CmpR:
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
+         case ByteCode::PeekR:
+         case ByteCode::StoreR:
             return true;
          default:
             return false;

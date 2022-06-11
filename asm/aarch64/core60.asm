@@ -263,6 +263,24 @@ inline %83h
 
 end
 
+// ; peekr
+inline %84h
+
+  movz    x11,  __ptr32lo_1
+  movk    x11,  __ptr32hi_1, lsl #16
+  ldr     x10, [x11]
+
+end 
+
+// ; storer
+inline %85h
+
+  movz    x11,  __ptr32lo_1
+  movk    x11,  __ptr32hi_1, lsl #16
+  str     x10, [x11]
+
+end 
+
 // ; movm
 inline %88h
 

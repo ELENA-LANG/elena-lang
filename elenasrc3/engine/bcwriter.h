@@ -65,7 +65,8 @@ namespace elena_lang
 
       void saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths);
 
-      void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, ReferenceMap& paths);
+      void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
+         ReferenceMap& paths);
       void saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, ReferenceMap& paths);
 
       void optimizeTape(CommandTape& tape);

@@ -42,7 +42,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadROp, loadFrameDispOp, loadLenOp, loadIndexOp, loadNop, loadNop, loadNop, loadNop,
+   loadROp, loadFrameDispOp, loadLenOp, loadIndexOp, loadROp, loadROp, loadNop, loadNop,
    loadMOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNOp, compileClose, loadIndexOp, loadIndexOp, loadNop, loadNop, loadNop, loadNop,
@@ -89,7 +89,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 49;
+constexpr size_t bcCommandNumber = 51;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -101,7 +101,8 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::IAddDPN, ByteCode::ISubDPN, ByteCode::IMulDPN, ByteCode::IDivDPN, ByteCode::PeekSI,
    ByteCode::Len, ByteCode::NLen, ByteCode::XMovSISI, ByteCode::CmpR, ByteCode::VJumpMR,
    ByteCode::JumpMR, ByteCode::CmpFI, ByteCode::CmpSI, ByteCode::SelEqRR, ByteCode::XDispatchMR,
-   ByteCode::ICmpN, ByteCode::SelLtRR, ByteCode::XAssignI, ByteCode::GetI
+   ByteCode::ICmpN, ByteCode::SelLtRR, ByteCode::XAssignI, ByteCode::GetI, ByteCode::PeekR,
+   ByteCode::StoreR
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/,
@@ -2237,6 +2238,11 @@ void JITCompiler32 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter&
    }
 }
 
+void JITCompiler32 :: writeVariable(MemoryWriter& writer)
+{
+   writer.writeDWord(0);
+}
+
 void JITCompiler32 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode)
 {
    void* env = _preloaded.get(SYSTEM_ENV);
@@ -2570,6 +2576,11 @@ void JITCompiler64 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter&
       else helper->writeSectionReference(writer.Memory(), imageOffset, it.key(), 
          sectionInfo, *it, mskRef64);
    }
+}
+
+void JITCompiler64 :: writeVariable(MemoryWriter& writer)
+{
+   writer.writeQWord(0);
 }
 
 void JITCompiler64 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode)

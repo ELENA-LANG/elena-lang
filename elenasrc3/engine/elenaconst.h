@@ -229,6 +229,7 @@ namespace elena_lang
    constexpr ref_t mskStaticRef           = 0x16000000u;
    constexpr ref_t mskCharacterRef        = 0x17000000u;   // reference to character literal
    constexpr ref_t mskConstant            = 0x18000000u;
+   constexpr ref_t mskStaticVariable      = 0x19000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

@@ -248,6 +248,20 @@ inline %83h
 
 end
 
+// ; peekr
+inline %84h
+
+  mov  ebx, [__ptr32_1]
+
+end 
+
+// ; storer
+inline %85h
+
+  mov  [__ptr32_1], ebx
+
+end 
+
 // ; movm
 inline %88h
 

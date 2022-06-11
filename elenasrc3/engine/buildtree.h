@@ -68,6 +68,8 @@ namespace elena_lang
       CharLiteral          = 0x0027,
       FieldAssigning       = 0x0028,
       Field                = 0x0029,
+      OpenStatic           = 0x002A,
+      CloseStatic          = 0x002B,
 
       Import               = 0x0038,
       StrDictionaryOp      = 0x0039,

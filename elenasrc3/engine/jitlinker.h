@@ -182,6 +182,7 @@ namespace elena_lang
       addr_t resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
       addr_t resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask);
       addr_t resolveConstantArray(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
+      addr_t resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sectionMask);
 
       pos_t createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);

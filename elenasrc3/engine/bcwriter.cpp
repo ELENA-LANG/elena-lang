@@ -349,6 +349,21 @@ void getField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::GetI, node.arg.value);
 }
 
+void staticBegin(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.newLabel();     // declare symbol-end label
+   tape.write(ByteCode::PeekR, node.arg.reference | mskStaticVariable);
+   tape.write(ByteCode::CmpR, 0);
+   tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+}
+
+void staticEnd(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::StoreR, node.arg.reference | mskStaticVariable);
+
+   tape.setLabel();
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -393,6 +408,8 @@ ByteCodeWriter::Saver commands[] =
    charLiteral,
    assignSPField,
    getField,
+   staticBegin,
+   staticEnd
 };
 
 // --- ByteCodeWriter ---
@@ -540,7 +557,8 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
    }
 }
 
-void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, ReferenceMap& paths)
+void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
+   ReferenceMap& paths)
 {
    auto section = moduleScope->mapSection(node.arg.reference | mskSymbolRef, false);
    MemoryWriter writer(section);
@@ -570,7 +588,8 @@ void ByteCodeWriter :: optimizeTape(CommandTape& tape)
    //while (CommandTape::optimizeJumps(tape));
 }
 
-void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, ReferenceMap& paths)
+void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
+   ReferenceMap& paths)
 {
    if (scope.moduleScope->debugModule)
       openMethodDebugInfo(scope, sourcePathRef);

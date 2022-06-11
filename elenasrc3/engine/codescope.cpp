@@ -39,6 +39,7 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
       case mskVMTRef:
          return _dataReferences.get(referenceName);
       case mskStaticRef:
+      case mskStaticVariable:
          return _statReferences.get(referenceName);
       default:
          return INVALID_ADDR;
@@ -61,6 +62,7 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
          _dataReferences.add(referenceName, address);
          break;
       case mskStaticRef:
+      case mskStaticVariable:
          _statReferences.add(referenceName, address);
          break;
       default:

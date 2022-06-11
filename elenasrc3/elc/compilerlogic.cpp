@@ -174,7 +174,7 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
    return true;
 }
 
-bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant)
+bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, bool& isStatic)
 {
    switch (attribute) {
       case V_PUBLIC:
@@ -187,6 +187,9 @@ bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visib
          break;
       case V_CONST:
          constant = true;
+         break;
+      case V_STATIC:
+         isStatic = true;
          break;
       default:
          return false;

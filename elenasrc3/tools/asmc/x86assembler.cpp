@@ -188,6 +188,10 @@ X86Operand X86Assembler :: defineRDisp(X86Operand operand)
       operand.type = operand.type | X86OperandType::M32disp8;
       operand.offset = 0;
    }
+   else if (operand.type == X86OperandType::M32) {
+      operand.type = X86OperandType::Disp32;
+      operand.offset = 0;
+   }
    return operand;
 }
 
@@ -1716,6 +1720,10 @@ X86Operand X86_64Assembler :: defineRDisp(X86Operand operand)
    // if it is register disp [r]
    if (operand.ebpReg && operand.type == X86OperandType::Disp64) {
       operand.type = operand.type | X86OperandType::M64disp8;
+      operand.offset = 0;
+   }
+   else if (operand.type == X86OperandType::M64) {
+      operand.type = X86OperandType::Disp64;
       operand.offset = 0;
    }
    return operand;

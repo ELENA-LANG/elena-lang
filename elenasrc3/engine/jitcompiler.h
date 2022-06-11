@@ -229,6 +229,7 @@ namespace elena_lang
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
       void writeChar32(MemoryWriter& writer, ustr_t value) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
+      void writeVariable(MemoryWriter& writer) override;
 
       void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
 
@@ -286,6 +287,7 @@ namespace elena_lang
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
       void writeChar32(MemoryWriter& writer, ustr_t value) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
+      void writeVariable(MemoryWriter& writer) override;
 
       void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
 

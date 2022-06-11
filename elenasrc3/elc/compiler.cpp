@@ -493,6 +493,7 @@ Compiler::SourceScope :: SourceScope(Scope* parent, ref_t reference, Visibility 
 Compiler::SymbolScope :: SymbolScope(NamespaceScope* ns, ref_t reference, Visibility visibility)
    : SourceScope(ns, reference, visibility), info({})
 {
+   isStatic = false;
    reserved1 = reserved2 = 0;
    reservedArgs = ns->moduleScope->minimalArgList;
 }
@@ -2413,7 +2414,7 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node)
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Attribute) {
-         if (!_logic->validateSymbolAttribute(current.arg.value, scope.visibility, constant)) {
+         if (!_logic->validateSymbolAttribute(current.arg.value, scope.visibility, constant, scope.isStatic)) {
             current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
@@ -4286,6 +4287,9 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
    writer.appendNode(BuildKey::Path, *ns->sourcePath);
 
    writer.newNode(BuildKey::Tape);
+   if (scope.isStatic)
+      writer.appendNode(BuildKey::OpenStatic, node.arg.reference);
+
    writer.appendNode(BuildKey::OpenFrame);
 
    SyntaxNode bodyNode = node.findChild(SyntaxKey::GetExpression);
@@ -4305,6 +4309,10 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
    exprScope.syncStack();
 
    writer.appendNode(BuildKey::CloseFrame);
+
+   if (scope.isStatic)
+      writer.appendNode(BuildKey::CloseStatic, node.arg.reference);
+
    writer.appendNode(BuildKey::Exit);
 
    writer.closeNode();
@@ -4813,6 +4821,7 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
          case SyntaxKey::Symbol:
          {
             SymbolScope symbolScope(&ns, current.arg.reference, ns.defaultVisibility);
+            symbolScope.isStatic = SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_STATIC);
 
             compileSymbol(writer, symbolScope, current);
             break;

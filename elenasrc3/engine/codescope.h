@@ -96,6 +96,8 @@ namespace elena_lang
                return getRDataSection();
             case mskDataRef:
                return getDataSection();
+            case mskStatDataRef:
+               return getStatSection();
             default:
                return nullptr;
          }

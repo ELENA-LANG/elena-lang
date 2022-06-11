@@ -58,6 +58,8 @@ ELENA byte codes (or ecodes)
 
    mov mssg:m               - index := m
 
+   peek r                   - acc <= [r] 
+
    seleq r1, r2             - acc <= COMP.EQ ? r1 : r2
 
    sellt r1, r2             - acc <= COMP.EQ ? r1 : r2
@@ -65,6 +67,8 @@ ELENA byte codes (or ecodes)
    set {prefix}:r           - r => acc
 
    set dp:i                 - dp[i] => acc
+
+   store r                  - acc => [r]
 
    xassign i                - acc[i] := sp[0];
                               direct operation

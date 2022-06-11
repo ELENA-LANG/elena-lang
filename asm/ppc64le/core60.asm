@@ -289,6 +289,28 @@ inline %83h
 
 end
 
+// ; peekr
+inline %84h
+
+  ld      r16, toc_rdata(r2)
+  addis   r16, r16, __disp32hi_1 
+  addi    r16, r16, __disp32lo_1 
+
+  ld      r15, 0(r16)
+
+end 
+
+// ; storer
+inline %85h
+
+  ld      r16, toc_rdata(r2)
+  addis   r16, r16, __disp32hi_1 
+  addi    r16, r16, __disp32lo_1 
+
+  std     r15, 0(r16)
+
+end 
+
 // ; movm
 inline %88h
 

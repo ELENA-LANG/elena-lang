@@ -200,6 +200,9 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
          commandStr.append("charconst:");
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
+      case mskStaticVariable:
+         commandStr.append("static:");
+         break;
       default:
          commandStr.append(":");
          break;
@@ -214,7 +217,7 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 
       commandStr.append(referenceName);
    }
-   else commandStr.appendUInt(arg);
+   else commandStr.appendUInt(arg, 16);
 
 }
 
@@ -304,6 +307,8 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::SetR:
          case ByteCode::CallR:
          case ByteCode::CmpR:
+         case ByteCode::PeekR:
+         case ByteCode::StoreR:
             addRArg(command.arg1, commandStr);
             break;
          case ByteCode::MovM:

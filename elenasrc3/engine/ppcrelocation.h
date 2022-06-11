@@ -47,17 +47,17 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       case mskDataRef64:
          *(unsigned long long*)address += (unsigned long long)(base + space->data);
          break;
-      case mskStatRef64:
+      case mskStatDataRef64:
          *(unsigned long long*)address += (unsigned long long)(base + space->stat);
          break;
-      case mskStatRef32Hi:
+      case mskStatDataRef32Hi:
       {
          addr_t addr = base + space->stat >> 16;
 
          *(unsigned short*)address += (unsigned short)(addr);
          break;
       }
-      case mskStatRef32Lo:
+      case mskStatDataRef32Lo:
       {
          addr_t addr = (base + space->stat);
 
