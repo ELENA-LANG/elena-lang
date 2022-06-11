@@ -967,13 +967,28 @@ bool TextHistory::HistoryWriter :: writeRecord(Buffer* buffer, Operation operati
    }
 }
 
+inline size_t sizeToShift(size_t size)
+{
+   switch (size) {
+      case 1:
+         return 0;
+      case 2:
+         return 1;
+      case 4:
+         return 2;
+      default:
+         assert(false);
+         return 0;
+   }
+}
+
 bool TextHistory::HistoryWriter :: write(Buffer* buffer, Operation operation, pos_t& position, 
-   pos_t& length, void* &line, pos_t offset)
+   pos_t& length, void* &line, pos_t& offset)
 {
 #ifdef _MSC_VER
    // HOTFIX : adjust for utf16 string
-   position <<= 1;
-   length <<= 1;
+   position <<= sizeToShift(sizeof(wide_c));
+   length <<= sizeToShift(sizeof(wide_c));
 #endif
 
    bool retVal = writeRecord(buffer, operation, position, length, line, offset);
@@ -983,8 +998,8 @@ bool TextHistory::HistoryWriter :: write(Buffer* buffer, Operation operation, po
 
 #ifdef _MSC_VER
    // HOTFIX : adjust for utf16 string
-   position >>= 1;
-   length >>= 1;
+   position >>= sizeToShift(sizeof(wide_c));
+   length >>= sizeToShift(sizeof(wide_c));
 #endif
 
    return retVal;
@@ -1020,7 +1035,7 @@ pos_t TextHistory::HistoryBackReader :: getLength()
 
 void* TextHistory::HistoryBackReader :: getLine(pos_t length)
 {
-   _offset -= (length + 1);
+   _offset -= (length + sizeof(wchar_t));
 
    return _buffer->get(_offset);
 }
@@ -1133,8 +1148,8 @@ void TextHistory :: undo(Text* text, TextBookmark& caret)
 
 #ifdef _MSC_VER
    // HOTFIX : adjust for utf16 string
-   position >>= 1;
-   length >>= 1;
+   position >>= sizeToShift(sizeof(wide_c));
+   length >>= sizeToShift(sizeof(wide_c));
 #endif
 
    _locking = true;

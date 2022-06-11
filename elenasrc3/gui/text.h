@@ -343,7 +343,7 @@ namespace elena_lang
          Operation lastOperation;
 
          bool write(Buffer* buffer, Operation operation, pos_t& position, pos_t& length,
-            void*& line, pos_t offset);
+            void*& line, pos_t& offset);
 
          void endRecord(Buffer* buffer, pos_t& offset);
 

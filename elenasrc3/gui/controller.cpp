@@ -66,7 +66,7 @@ void TextViewController :: undo(TextViewModelBase* model)
 {
    auto docView = model->DocView();
 
-
+   docView->undo();
 }
 
 void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl)

@@ -709,7 +709,9 @@ bool DocumentView :: eraseSelection()
 
 void DocumentView :: undo()
 {
-   
+   _undoBuffer.undo(_text, _caret);
+
+   setCaret(getCaret(false), false);
 }
 
 void DocumentView :: save(path_t path)
