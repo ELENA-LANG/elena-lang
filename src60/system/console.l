@@ -14,4 +14,4 @@ class Console
    }
 }
 
-public symbol console = new Console();
+public static console = new Console();

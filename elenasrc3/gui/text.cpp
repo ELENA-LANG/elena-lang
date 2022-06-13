@@ -962,9 +962,9 @@ bool TextHistory::HistoryWriter :: writeRecord(Buffer* buffer, Operation operati
 
          return false;
       }
-      offset = writer.position();
-      return true;
    }
+   offset = writer.position();
+   return true;
 }
 
 inline size_t sizeToShift(size_t size)
@@ -1104,7 +1104,7 @@ void TextHistory :: onErase(size_t position, size_t length, text_t line)
    if (_locking)
       return;
 
-   _buffer->trimLong(_offset);
+   _buffer->trim(_offset);
 
    writeOperation(Operation::Erase, (pos_t)position, (pos_t)length, line);
 }

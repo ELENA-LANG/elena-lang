@@ -1879,12 +1879,14 @@ CodeGenerator* JITCompiler :: codeGenerators()
 
 void JITCompiler :: writeArgAddress(JITCompilerScope* scope, arg_t arg, pos_t offset, ref_t addressMask)
 {
-   scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(), (ref_t)arg, offset, addressMask);
+   scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(), 
+      (ref_t)arg, offset, addressMask);
 }
 
 void JITCompiler :: writeVMTMethodArg(JITCompilerScope* scope, arg_t arg, pos_t offset, mssg_t message, ref_t addressMask)
 {
-   scope->helper->writeVMTMethodReference(*scope->codeWriter->Memory(), scope->codeWriter->position(), (ref_t)arg, offset, message, addressMask);
+   scope->helper->writeVMTMethodReference(*scope->codeWriter->Memory(), scope->codeWriter->position(), 
+      (ref_t)arg, offset, message, addressMask);
 }
 
 void JITCompiler :: compileTape(ReferenceHelperBase* helper, MemoryReader& bcReader, pos_t endPos,
@@ -1964,8 +1966,12 @@ void JITCompiler32 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader&
    }
 }
 
-void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength)
+void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
+   pos_t staticLength)
 {
+   // create VMT static table
+   vmtWriter.writeBytes(0, staticLength << 2);
+
    alignCode(vmtWriter, _constants.alignmentVA, false);
 
    // create VMT header:
@@ -2292,8 +2298,11 @@ void JITCompiler64 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader&
    }
 }
 
-void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength)
+void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticLength)
 {
+   // create VMT static table
+   vmtWriter.writeBytes(0, staticLength << 3);
+
    alignCode(vmtWriter, _constants.alignmentVA, false);
 
    // create VMT header:

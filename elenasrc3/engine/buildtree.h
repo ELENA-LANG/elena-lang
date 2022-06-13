@@ -70,6 +70,7 @@ namespace elena_lang
       Field                = 0x0029,
       OpenStatic           = 0x002A,
       CloseStatic          = 0x002B,
+      NameOp               = 0x002C,
 
       Import               = 0x0038,
       StrDictionaryOp      = 0x0039,

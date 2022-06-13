@@ -35,6 +35,7 @@ namespace elena_lang
       Protected      = 0x04000000,
       Private        = 0x08000000,
       Extension      = 0x10000000,
+      Initializer    = 0x20000000,
    };
 
    // === ELENA Error codes ===

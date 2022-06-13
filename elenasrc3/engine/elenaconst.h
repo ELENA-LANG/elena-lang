@@ -87,12 +87,14 @@ namespace elena_lang
    constexpr auto INTERNAL_PREFIX_NS      = "'$intern'";
 
    constexpr auto CLASSCLASS_POSTFIX      = "#class";
+   constexpr auto CONST_POSTFIX           = "#const";
 
    // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";
    constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
    constexpr auto CAST_MESSAGE            = "#cast";
    constexpr auto INVOKE_MESSAGE          = "#invoke";
+   constexpr auto INIT_MESSAGE            = "#init";
 
    constexpr auto ADD_MESSAGE             = "add";
    constexpr auto IF_MESSAGE              = "if";
@@ -230,6 +232,8 @@ namespace elena_lang
    constexpr ref_t mskCharacterRef        = 0x17000000u;   // reference to character literal
    constexpr ref_t mskConstant            = 0x18000000u;
    constexpr ref_t mskStaticVariable      = 0x19000000u;
+   constexpr ref_t mskNameLiteralRef      = 0x1A000000u;
+   constexpr ref_t mskPathLiteralRef      = 0x1B000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

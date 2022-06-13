@@ -364,6 +364,11 @@ void staticEnd(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.setLabel();
 }
 
+void nameReference(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskNameLiteralRef);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -409,7 +414,8 @@ ByteCodeWriter::Saver commands[] =
    assignSPField,
    getField,
    staticBegin,
-   staticEnd
+   staticEnd,
+   nameReference
 };
 
 // --- ByteCodeWriter ---

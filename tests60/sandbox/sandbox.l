@@ -1,21 +1,18 @@
 import system;
 
-A
+class A
 {
-   constructor()
+   nameMe()
    {
-      console.writeLine("new A()")
+      console.writeLine($name self);
    }
 }
-
-static a = new A();
 
 singleton Tester
 {
    run()
    {
-      var a1 := a;
-      var a2 := a;
+       new A().nameMe()
 
 //      for (int n := 0, n < 5, n := n + 1) {
 //         console.write("*");

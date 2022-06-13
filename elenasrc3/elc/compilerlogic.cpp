@@ -63,7 +63,7 @@ constexpr int BranchingOperators[1]   = { IF_OPERATOR_ID };
 constexpr int SDeclOperators[1]       = { NAME_OPERATOR_ID };
 constexpr int SOpOperators[1]         = { NOT_OPERATOR_ID };
 
-constexpr auto OperationLength = 12;
+constexpr auto OperationLength = 13;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -110,7 +110,11 @@ constexpr Op Operations[OperationLength] =
    {
       SOpOperators, 1,
       BuildKey::BoolSOp, V_FLAG, 0, 0, V_FLAG, false
-   }
+   },
+   {
+      SDeclOperators, 1,
+      BuildKey::NameOp, V_OBJECT, 0, 0, V_STRING, false
+   },
 };
 
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)

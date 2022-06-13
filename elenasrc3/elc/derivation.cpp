@@ -660,6 +660,17 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
          flushSubScope(writer, scope, node, headerNode);
          return;
       }
+      case SyntaxKey::InitExpression:
+      {
+         SyntaxNode nameNode = writer.CurrentNode().findChild(SyntaxKey::Name);
+
+         writer.CurrentNode().setKey(SyntaxKey::Field);
+         writer.closeNode();
+         writer.newNode(SyntaxKey::AssignOperation);
+         flushCollection(writer, scope, nameNode);
+         flushExpression(writer, scope, node.findChild(SyntaxKey::InitExpression).firstChild());
+         break;
+      }
       case SyntaxKey::Dimension:
          flushNode(writer, scope, member);
       default:

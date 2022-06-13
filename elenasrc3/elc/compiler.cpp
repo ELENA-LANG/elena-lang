@@ -1225,22 +1225,27 @@ mssg_t Compiler :: defineMultimethod(ClassScope& scope, mssg_t messageRef)
    return 0;
 }
 
-void Compiler :: injectVirtualCode(SyntaxNode classNode, ModuleScopeBase* scope,
-   ref_t classRef, ClassInfo& classInfo)
+void Compiler :: injectVirtualCode(SyntaxNode classNode, ClassScope& scope)
 {
-   if (test(classInfo.header.flags, elClassClass)) {
+   if (test(scope.info.header.flags, elClassClass)) {
 
    }
-   else if (!test(classInfo.header.flags, elNestedClass) && !test(classInfo.header.flags, elRole)) {
-      // skip class classes, extensions and singletons
-      if (classRef != scope->buildins.superReference && !test(classInfo.header.flags, elClosed)) {
-         // auto generate cast$<type> message for explicitly declared classes
-         ref_t signRef = scope->module->mapSignature(&classRef, 1, false);
-         ref_t actionRef = scope->module->mapAction(CAST_MESSAGE, signRef, false);
+   else if (!test(scope.info.header.flags, elNestedClass) && 
+      !test(scope.info.header.flags, elRole))
+   {
+      if (!evalInitializers(scope, classNode)) {
+         injectInitializer(classNode, SyntaxKey::Method, scope.moduleScope->buildins.init_message);
+      }
 
-         injectVirtualReturningMethod(scope, classNode,
+      // skip class classes, extensions and singletons
+      if (scope.reference != scope.moduleScope->buildins.superReference && !test(scope.info.header.flags, elClosed)) {
+         // auto generate cast$<type> message for explicitly declared classes
+         ref_t signRef = scope.module->mapSignature(&scope.reference, 1, false);
+         ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
+
+         injectVirtualReturningMethod(scope.moduleScope, classNode,
             encodeMessage(actionRef, 1, CONVERSION_MESSAGE),
-            *scope->selfVar, classRef);
+            *scope.moduleScope->selfVar, scope.reference);
       }
    }
 }
@@ -1327,16 +1332,20 @@ void Compiler :: generateClassFlags(ClassScope& scope, ref_t declaredFlags)
       scope.addAttribute(ClassAttribute::ExtensionRef, scope.extensionClassRef);
 }
 
-void Compiler :: generateClassStaticField(ClassScope& scope, SyntaxNode node, bool isConst)
+void Compiler :: generateClassStaticField(ClassScope& scope, SyntaxNode node, bool isConst, ref_t typeRef)
 {
-   //ustr_t name = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
-   //if (scope.isClassClass()) {
+   ustr_t name = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+   if (scope.info.statics.exist(name)) {
+      scope.raiseError(errDuplicatedField, node);
+   }
 
+   //if (isConst) {
+   //   ref_t statRef = scope.moduleScope->mapAnonymous(CONST_POSTFIX);
+
+   //   // NOTE : the index is 0 for the constants
+   //   scope.info.statics.add(name, { 0, typeRef, statRef });
    //}
-   //else {
-   //   
-   //}
-   throw InternalError(errFatalError);
+   /*else*/ assert(false);
 }
 
 void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
@@ -1450,7 +1459,7 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node, bool si
          declareFieldAttributes(scope, current, attrs);
 
          if (attrs.isConstant) {
-            generateClassStaticField(scope, current, attrs.isConstant);
+            generateClassStaticField(scope, current, attrs.isConstant, attrs.typeRef);
          }
          else if (!isClassClassMode) {
             generateClassField(scope, current, attrs, singleField);
@@ -1476,7 +1485,7 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
       generateClassFields(scope, node, SyntaxTree:: countChild(node, SyntaxKey::Field) == 1);
    }
 
-   injectVirtualCode(node, scope.moduleScope, scope.reference, scope.info);
+   injectVirtualCode(node, scope);
 
    if (scope.isClassClass()) {
       generateMethodDeclarations(scope, node, SyntaxKey::StaticMethod, false);
@@ -2954,6 +2963,32 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRe
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
 
+bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
+{
+   bool found = false;
+   bool evalulated = true;
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::AssignOperation) {
+         found = true;
+
+         ObjectInfo target = mapObject(scope, current, EAttr::None);
+         switch (target.kind) {
+            case ObjectKind::Field:
+               evalulated = false;
+               break;
+            default:
+               scope.raiseError(errInvalidOperation, current);
+               break;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   return !found || evalulated;
+}
+
 ObjectInfo Compiler :: mapClassSymbol(Scope& scope, ref_t classRef)
 {
    if (classRef) {
@@ -3139,6 +3174,13 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       }
 
       switch (op) {
+         case BuildKey::NameOp:
+            // if it is a special case nameof operation
+            if (loperand.kind == ObjectKind::SelfLocal) {
+               // $name self - replace direct reference with the owner reference
+               writer.CurrentNode().setArgumentReference(mskNameLiteralRef);
+            }
+            break;
          case BuildKey::BoolSOp:
          case BuildKey::IntCondOp:
             writer.appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);
@@ -3423,7 +3465,7 @@ inline bool isSelfCall(ObjectInfo target)
 }
 
 ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target,
-   mssg_t weakMessage, ref_t implicitSignatureRef, ArgumentsInfo & arguments, ExpressionAttributes mode)
+   mssg_t weakMessage, ref_t implicitSignatureRef, ArgumentsInfo& arguments, ExpressionAttributes mode)
 {
    ObjectInfo retVal(ObjectKind::Object);
 
@@ -3919,7 +3961,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, ref_t declared
 
 ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
 {
-   SyntaxNode terminalNode = node.lastChild(SyntaxKey::TerminalMask);
+   SyntaxNode terminalNode = node == SyntaxKey::identifier ? node : node.lastChild(SyntaxKey::TerminalMask);
 
    ref_t declaredRef = 0;
    declareExpressionAttributes(scope, node, declaredRef, mode);
@@ -4454,6 +4496,35 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
    }
 }
 
+void Compiler :: compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode)
+{
+   beginMethod(writer, scope, BuildKey::Method);
+
+   CodeScope codeScope(&scope);
+
+   // new stack frame
+   writer.appendNode(BuildKey::OpenFrame);
+
+   // stack should contains current self reference
+   // the original message should be restored if it is a generic method
+   scope.selfLocal = codeScope.newLocal();
+   writer.appendNode(BuildKey::Assigning, scope.selfLocal);
+
+   SyntaxNode current = classNode.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::AssignOperation) {
+         compileRootExpression(writer, codeScope, current);
+      }
+      current = current.nextNode();
+   }
+
+   codeScope.syncStack(&scope);
+
+   writer.appendNode(BuildKey::CloseFrame);
+
+   endMethod(writer, scope);
+}
+
 void Compiler :: compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode)
 {
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
@@ -4556,8 +4627,14 @@ void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodSc
 
    createObject(writer, classScope->info, classScope->reference);
 
-   //// call field initilizers if available for default constructor
-   //compileSpecialMethodCall(writer, *classScope, scope.moduleScope->init_message);
+   // call field initilizers if available for default constructor
+   if(classScope->info.methods.exist(scope.moduleScope->buildins.init_message)) {
+      ExprScope exprScope(classScope);
+      ArgumentsInfo args;
+
+      compileMessageOperation(writer, exprScope, node, scope.mapSelf(), scope.moduleScope->buildins.init_message,
+         0, args, EAttr::None);
+   }
 
    writer.appendNode(BuildKey::CloseFrame);
 }
@@ -4616,6 +4693,7 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
 void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, 
    bool exclusiveMode, bool ignoreAutoMultimethod)
 {
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
@@ -4637,6 +4715,9 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
 
             if (methodScope.checkHint(MethodHint::Abstract)) {
                compileAbstractMethod(writer, methodScope, current, scope.abstractMode);
+            }
+            else if (methodScope.checkHint(MethodHint::Initializer)) {
+               compileInitializerMethod(writer, methodScope, node);
             }
             else compileMethod(writer, methodScope, current);
             break;
@@ -4927,6 +5008,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.constructor_message =
       encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
          0, FUNCTION_MESSAGE);
+   moduleScope->buildins.init_message =
+      encodeMessage(moduleScope->module->mapAction(INIT_MESSAGE, 0, false),
+         0, FUNCTION_MESSAGE | STATIC_MESSAGE);
    moduleScope->buildins.add_message =
       encodeMessage(moduleScope->module->mapAction(ADD_MESSAGE, 0, false),
          2, 0);
@@ -5097,6 +5181,15 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
       methodNode.appendChild(SyntaxKey::RedirectDispatch, resendTarget);
    }
    else methodNode.appendChild(SyntaxKey::ResendDispatch, resendMessage);
+}
+
+void Compiler :: injectInitializer(SyntaxNode classNode, SyntaxKey methodType, mssg_t message)
+{
+   SyntaxNode methodNode = classNode.appendChild(methodType, message);
+   methodNode.appendChild(SyntaxKey::Hints, (ref_t)MethodHint::Initializer);
+   methodNode.appendChild(SyntaxKey::Autogenerated);
+
+   methodNode.appendChild(SyntaxKey::FieldInitializer);
 }
 
 void Compiler :: injectDefaultConstructor(ModuleScopeBase* scope, SyntaxNode node)

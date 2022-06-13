@@ -439,7 +439,7 @@ namespace elena_lang
       virtual addr_t findMethodAddress(void* entries, mssg_t message) = 0;
       virtual pos_t findMethodOffset(void* entries, mssg_t message) = 0;
 
-      virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength) = 0;
+      virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticLength) = 0;
       virtual void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) = 0;
       virtual void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
          ref_t flags, pos_t count, bool virtualMode) = 0;
@@ -999,7 +999,7 @@ namespace elena_lang
          size(0),
          methods({}),
          fields({ -1 }),
-         statics({}),
+         statics({ -1 }),
          attributes(0)
       {
          //header.staticSize = 0;

@@ -772,7 +772,7 @@ namespace elena_lang
       void generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed);
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed);
       void generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool singleField);
-      void generateClassStaticField(ClassScope& scope, SyntaxNode node, bool isConst);
+      void generateClassStaticField(ClassScope& scope, SyntaxNode node, bool isConst, ref_t typeRef);
       void generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField);
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
@@ -817,6 +817,8 @@ namespace elena_lang
       void writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
 
       void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey);
+
+      bool evalInitializers(ClassScope& scope, SyntaxNode node);
 
       ref_t compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage, 
          ref_t outputRef);
@@ -887,6 +889,7 @@ namespace elena_lang
       void compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScope& scope, 
          SyntaxNode node, bool newFrame);
 
+      void compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode);
       void compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
       void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
@@ -908,9 +911,11 @@ namespace elena_lang
       void validateSuperClass(ClassScope& scope, SyntaxNode node);
       void validateType(Scope& scope, ref_t typeRef, SyntaxNode node);
 
-      void injectVirtualCode(SyntaxNode classNode, ModuleScopeBase* scope, ref_t classRef, ClassInfo& classInfo);
+      void injectVirtualCode(SyntaxNode classNode, ClassScope& scope);
       void injectVirtualMultimethods(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
          ClassInfo& info, List<mssg_t>& implicitMultimethods);
+
+      void injectInitializer(SyntaxNode classNode, SyntaxKey methodType, mssg_t message);
 
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
          ClassInfo& classInfo, mssg_t message, bool inherited, ref_t outputRef);

@@ -64,6 +64,7 @@ namespace elena_lang
       ReturnExpression     = 0x001C34,
       NestedExpression     = 0x001835,
       GetExpression        = 0x001C36,
+      InitExpression       = 0x001C37,
       IndexerOperation     = 0x001841,
       AssignOperation      = 0x001842,
       AddAssignOperation   = 0x001843,
@@ -98,6 +99,7 @@ namespace elena_lang
       L6Expression         = 0x001895,
       TExpression          = 0x001896,
       TemplateExpression   = 0x0018A0,
+      FieldInitializer     = 0x0018B0,
 
       Name                 = 0x000101,
       Namespace            = 0x000103,
