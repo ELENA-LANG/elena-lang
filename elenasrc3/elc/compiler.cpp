@@ -188,6 +188,11 @@ bool Interpreter :: evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInf
 
       return true;
    }
+   else if (operator_id == NAME_OPERATOR_ID && loperand.kind == ObjectKind::Class) {
+      retVal = { ObjectKind::SelfName };
+
+      return true;
+   }
 
    return false;
 }
@@ -454,7 +459,12 @@ ObjectInfo Compiler::MetaScope :: mapDecl()
    if (tempScope != nullptr) {
       return { ObjectKind::Template, V_DECLARATION, tempScope->reference };
    }
-   else return {};
+   ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
+   if (classScope != nullptr) {
+      return { ObjectKind::Class, V_DECLARATION, classScope->reference };
+   }
+
+   return {};
 }
 
 ObjectInfo Compiler::MetaScope :: mapIdentifier(ustr_t identifier, bool referenceOne, EAttr attr)
@@ -547,10 +557,13 @@ ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribu
       return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeRef, 1};
    }
    else {
-      //auto staticFieldInfo = info.statics.get(identifier);
-      //if (staticFieldInfo.offset != 0) {
-      //   
-      //}
+      auto staticFieldInfo = info.statics.get(identifier);
+      if (staticFieldInfo.offset != 0 && staticFieldInfo.valueRef != 0) {
+         return { ObjectKind::StaticConstField, staticFieldInfo.typeRef, staticFieldInfo.offset };
+      }
+      else if (staticFieldInfo.valueRef) {
+         return { ObjectKind::ClassConstant, staticFieldInfo.typeRef, staticFieldInfo.valueRef };
+      }
 
       return {};
    }
@@ -1339,13 +1352,12 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SyntaxNode node, bo
       scope.raiseError(errDuplicatedField, node);
    }
 
-   //if (isConst) {
-   //   ref_t statRef = scope.moduleScope->mapAnonymous(CONST_POSTFIX);
-
-   //   // NOTE : the index is 0 for the constants
-   //   scope.info.statics.add(name, { 0, typeRef, statRef });
-   //}
-   /*else*/ assert(false);
+   if (isConst) {
+      // NOTE : the index is 0 for the constants
+      // NOTE : INVALID_REF indicates that the value should be assigned later
+      scope.info.statics.add(name, { 0, typeRef, INVALID_REF });
+   }
+   else assert(false);
 }
 
 void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
@@ -2388,6 +2400,12 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          writeObjectInfo(writer, scope, scope.mapSelf());
          writer.appendNode(BuildKey::Field, info.reference);
          break;
+      case ObjectKind::StaticConstField:
+      case ObjectKind::StaticField:
+         writeObjectInfo(writer, scope, scope.mapSelf());
+         writer.appendNode(BuildKey::ClassOp, CLASS_OPERATOR_ID);
+         writer.appendNode(BuildKey::Field, info.reference);
+         break;
       case ObjectKind::Object:
          break;
       default:
@@ -2410,6 +2428,8 @@ ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ObjectInfo info)
    switch (info.type) {
       case V_INT32:
          return scope.moduleScope->buildins.intReference;
+      case V_STRING:
+         return scope.moduleScope->buildins.literalReference;
       case V_FLAG:
          return scope.moduleScope->branchingInfo.typeRef;
       default:
@@ -2844,7 +2864,7 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
             break;
          case SyntaxKey::Type:
             if (!attrs.typeRef) {
-               attrs.typeRef = resolveTypeAttribute(scope, current, false);
+               attrs.typeRef = resolveTypeAttribute(scope, current, true);
             }
             else scope.raiseError(errInvalidHint, current);
             break;
@@ -2963,6 +2983,37 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRe
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
 
+bool Compiler :: evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo)
+{
+   Interpreter interpreter(scope.moduleScope, _logic);
+   MetaScope metaScope(&scope);
+
+   ObjectInfo retVal = evalExpression(interpreter, metaScope, node);
+   bool setIndex = false;
+   switch (retVal.kind) {
+      case ObjectKind::SelfName:
+         constInfo.type = V_STRING;
+         constInfo.reference = mskNameLiteralRef;
+         setIndex = true;
+         break;
+      default:
+         return false;
+   }
+
+   auto it = scope.info.statics.getIt(constName);
+
+   assert(!it.eof());
+
+   (*it).valueRef = constInfo.reference;
+   if (setIndex && !(*it).offset) {
+      scope.info.header.staticSize++;
+
+      (*it).offset = -((int)scope.info.header.staticSize);
+   }
+
+   return true;
+}
+
 bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
 {
    bool found = false;
@@ -2972,11 +3023,20 @@ bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::AssignOperation) {
          found = true;
-
          ObjectInfo target = mapObject(scope, current, EAttr::None);
          switch (target.kind) {
             case ObjectKind::Field:
                evalulated = false;
+               break;
+            case ObjectKind::ClassConstant:
+               if (target.reference == INVALID_REF) {
+                  if(evalClassConstant(current.firstChild(SyntaxKey::TerminalMask).identifier(),
+                     scope, current.firstChild(SyntaxKey::ScopeMask), target))
+                  {
+                     current.setKey(SyntaxKey::Idle);
+                  }
+                  else scope.raiseError(errInvalidOperation, current);
+               }
                break;
             default:
                scope.raiseError(errInvalidOperation, current);
@@ -3174,13 +3234,6 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       }
 
       switch (op) {
-         case BuildKey::NameOp:
-            // if it is a special case nameof operation
-            if (loperand.kind == ObjectKind::SelfLocal) {
-               // $name self - replace direct reference with the owner reference
-               writer.CurrentNode().setArgumentReference(mskNameLiteralRef);
-            }
-            break;
          case BuildKey::BoolSOp:
          case BuildKey::IntCondOp:
             writer.appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);

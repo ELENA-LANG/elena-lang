@@ -250,16 +250,16 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
       module = _module;
 
    addr_t vaddress = INVALID_ADDR;
-   switch (mask) {
-      case mskNameLiteralRef:
-      case mskPathLiteralRef:
-         break;
-      default:
+   //switch (mask) {
+   //   case mskNameLiteralRef:
+   //   case mskPathLiteralRef:
+   //      break;
+   //   default:
          vaddress = _owner->_mapper->resolveReference(
             _owner->_loader->retrieveReferenceInfo(module, refID, mask, 
                _owner->_forwardResolver), mask);
-         break;
-   }
+   //      break;
+   //}
 
    if (vaddress != INVALID_ADDR) {
       switch (addressMask & mskRefType) {
@@ -409,7 +409,7 @@ void JITLinker :: fixOffset(pos_t position, ref_t offsetMask, int offset, Memory
    }
 }
 
-void JITLinker :: fixReferences(ReferenceInfo& ownerReferenceInfo, VAddressMap& relocations, MemoryBase* image)
+void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
 {
    for (auto it = relocations.start(); !it.eof(); ++it) {
       VAddressInfo info = *it;
@@ -437,15 +437,15 @@ void JITLinker :: fixReferences(ReferenceInfo& ownerReferenceInfo, VAddressMap& 
             info.addressMask = 0; // clear because it is already fixed
             break;
          }
-         case mskNameLiteralRef:
-         case mskPathLiteralRef:
-            //NOTE : Zero reference is considered to be the reference to itself
-            if (currentRef) {
-               vaddress = resolveName(_loader->retrieveReferenceInfo(info.module, currentRef, 
-                  currentMask, _forwardResolver), currentMask == mskPathLiteralRef);
-            }
-            else vaddress = resolveName(ownerReferenceInfo, currentMask == mskPathLiteralRef);
-            break;
+         //case mskNameLiteralRef:
+         //case mskPathLiteralRef:
+         //   //NOTE : Zero reference is considered to be the reference to itself
+         //   if (currentRef) {
+         //      vaddress = resolveName(_loader->retrieveReferenceInfo(info.module, currentRef, 
+         //         currentMask, _forwardResolver), currentMask == mskPathLiteralRef);
+         //   }
+         //   else vaddress = resolveName(ownerReferenceInfo, currentMask == mskPathLiteralRef);
+         //   break;
          default:
             vaddress = resolve(_loader->retrieveReferenceInfo(info.module, currentRef, currentMask,
                _forwardResolver), currentMask, false);
@@ -625,6 +625,37 @@ mssg_t JITLinker :: createMessage(ModuleBase* module, mssg_t message, VAddressMa
    return encodeMessage(importedAction, argCount, flags);
 }
 
+void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader& vmtReader, FieldAddressMap& staticValues)
+{
+   ClassInfo::StaticFieldMap statics({});
+   ClassInfo::loadStaticFields(&vmtReader, statics);
+
+   for (auto it = statics.start(); !it.eof(); ++it) {
+      auto fieldInfo = *it;
+      if (fieldInfo.valueRef) {
+         addr_t vaddress = INVALID_REF;
+
+         switch (fieldInfo.valueRef) {
+            case mskNameLiteralRef:
+               vaddress = resolveName(referenceInfo, false);
+               break;
+            case mskPathLiteralRef:
+               vaddress = resolveName(referenceInfo, true);
+               break;
+            default:
+               vaddress = resolve(
+                  _loader->retrieveReferenceInfo(referenceInfo.module, fieldInfo.valueRef & ~mskAnyRef,
+                     fieldInfo.valueRef & mskAnyRef, _forwardResolver),
+                  mskVMTRef, false);
+         }
+
+         assert(vaddress != INVALID_REF);
+
+         staticValues.add(fieldInfo.offset, vaddress);
+      }
+   }
+}
+
 addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo,
    VAddressMap& references)
 {
@@ -711,8 +742,12 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
       // load the class class
       addr_t classClassAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
 
+      // load the static values
+      FieldAddressMap staticValues(INVALID_REF);
+      resolveStaticFields(referenceInfo, vmtReader, staticValues);
+
       // update VMT
-      _compiler->updateVMTHeader(vmtWriter, parentAddress, classClassAddress, header.flags, header.count, _virtualMode);
+      _compiler->updateVMTHeader(vmtWriter, parentAddress, classClassAddress, header.flags, header.count, staticValues, _virtualMode);
    }
 
    return vaddress;
@@ -730,7 +765,7 @@ addr_t JITLinker :: resolveVMTSection(ReferenceInfo referenceInfo, ClassSectionI
       resolve(referenceInfo, mskSymbolRef, true);
 
    // fix not loaded references
-   fixReferences(referenceInfo, references, _imageProvider->getTargetSection(mskCodeRef));
+   fixReferences(references, _imageProvider->getTargetSection(mskCodeRef));
 
    return vaddress;
 }
@@ -832,7 +867,7 @@ addr_t JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t se
    else _compiler->compileSymbol(&helper, bcReader, writer, nullptr);
 
    // fix not loaded references
-   fixReferences(referenceInfo, references, image);
+   fixReferences(references, image);
 
    return vaddress;
 }
@@ -856,7 +891,7 @@ addr_t JITLinker :: resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectio
    _compiler->compileMetaList(&helper, bcReader, writer, sectionInfo.section->length() >> 2);
 
    // fix not loaded references
-   fixReferences(referenceInfo, references, image);
+   fixReferences(references, image);
 
    return vaddress;
 }
@@ -905,7 +940,7 @@ addr_t JITLinker :: resolveConstantArray(ReferenceInfo referenceInfo, ref_t sect
    JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
    _compiler->writeCollection(&helper, writer, &sectionInfo);
 
-   fixReferences(referenceInfo, references, image);
+   fixReferences(references, image);
 
    return vaddress;
 }
@@ -1027,8 +1062,7 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
    _compiler->prepare(_loader, _imageProvider, &helper, nullptr, _jitSettings);
 
    // fix not loaded references
-   ReferenceInfo dummy = {};
-   fixReferences(dummy, references, _imageProvider->getTextSection());
+   fixReferences(references, _imageProvider->getTextSection());
 }
 
 void JITLinker :: complete(JITCompilerBase* compiler)
@@ -1049,8 +1083,7 @@ void JITLinker :: complete(JITCompilerBase* compiler)
       compiler->getStaticCounter(_imageProvider->getStatSection(), true),
       _virtualMode);
 
-   ReferenceInfo dummy = {};
-   fixReferences(dummy, mbReferences, mbSection);
+   fixReferences(mbReferences, mbSection);
 }
 
 addr_t JITLinker :: resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode)

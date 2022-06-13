@@ -380,6 +380,16 @@ ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ustr_t referenceName, bool h
    }
 }
 
+ref_t ModuleScope :: importReferenceWithMask(ModuleBase* referenceModule, ref_t reference)
+{
+   ref_t mask = reference & mskAnyRef;
+   ref_t refId = reference & ~mskAnyRef;
+   if (refId)
+      refId = importReference(referenceModule, refId);
+
+   return refId | mask;
+}
+
 void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode)
 {
    target.header = copy.header;
@@ -432,6 +442,15 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
          }
 
          target.attributes.add(key, referece);
+      }
+
+      for (auto it = copy.statics.start(); !it.eof(); ++it) {
+         auto info = *it;
+         info.typeRef = importReference(exporter, info.typeRef);
+
+         info.valueRef = importReferenceWithMask(exporter, info.valueRef);
+
+         target.statics.add(it.key(), info);
       }
    }
 

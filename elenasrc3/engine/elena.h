@@ -112,6 +112,7 @@ namespace elena_lang
    typedef Map<ustr_t, addr_t, allocUStr, freeUStr>   AddressMap;
    typedef Map<mssg_t, ExtensionInfo>                 ExtensionMap;
    typedef Map<ref_t, ref_t>                          ResolvedMap;
+   typedef Map<int, addr_t>                           FieldAddressMap;
 
    // --- Maps ---
    typedef List<ustr_t, freeUStr>                     IdentifierList;
@@ -442,7 +443,7 @@ namespace elena_lang
       virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticLength) = 0;
       virtual void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) = 0;
       virtual void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
-         ref_t flags, pos_t count, bool virtualMode) = 0;
+         ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode) = 0;
       virtual pos_t copyParentVMT(void* parentVMT, void* targetVMT) = 0;
 
       virtual void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
@@ -779,7 +780,7 @@ namespace elena_lang
    {
       int   offset;
       ref_t typeRef;
-      ref_t statRef;
+      ref_t valueRef;
    };
 
    // --- MethodInfo ---
@@ -913,6 +914,29 @@ namespace elena_lang
       StaticFieldMap  statics;
       ClassAttributes attributes;
 
+      static void loadStaticFields(StreamReader* reader, StaticFieldMap& statics)
+      {
+         pos_t statCount = reader->getPos();
+         for (pos_t i = 0; i < statCount; i++) {
+            IdentifierString fieldName;
+            reader->readString(fieldName);
+            StaticFieldInfo fieldInfo;
+            reader->read(&fieldInfo, sizeof(fieldInfo));
+
+            statics.add(*fieldName, fieldInfo);
+         }
+      }
+
+      static void saveStaticFields(StreamWriter* writer, StaticFieldMap& statics)
+      {
+         writer->writePos(statics.count());
+         statics.forEach<StreamWriter*>(writer, [](StreamWriter* writer, ustr_t name, StaticFieldInfo info)
+            {
+               writer->writeString(name);
+               writer->write(&info, sizeof(info));
+            });
+      }
+
       void save(StreamWriter* writer, bool headerAndSizeOnly = false)
       {
          writer->write(&header, sizeof(ClassHeader));
@@ -939,12 +963,7 @@ namespace elena_lang
                   writer->writeRef(reference);
                });
 
-            writer->writePos(statics.count());
-            statics.forEach<StreamWriter*>(writer, [](StreamWriter* writer, ustr_t name, StaticFieldInfo info)
-               {
-                  writer->writeString(name);
-                  writer->write(&info, sizeof(info));
-               });
+            saveStaticFields(writer, statics);
          }
       }
 
@@ -981,15 +1000,8 @@ namespace elena_lang
 
                   attributes.add(key, reference);
                }
-               pos_t statCount = reader->getPos();
-               for (pos_t i = 0; i < statCount; i++) {
-                  IdentifierString fieldName;
-                  reader->readString(fieldName);
-                  StaticFieldInfo fieldInfo;
-                  reader->read(&fieldInfo, sizeof(fieldInfo));
 
-                  statics.add(*fieldName, fieldInfo);
-               }
+               loadStaticFields(reader, statics);
             }
          }
       }

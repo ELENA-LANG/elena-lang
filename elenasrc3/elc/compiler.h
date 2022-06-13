@@ -49,7 +49,11 @@ namespace elena_lang
       Field,
       Closure,
       Extension,
-      ConstantRole
+      ConstantRole,
+      ClassConstant,
+      SelfName,
+      StaticField,
+      StaticConstField,
    };
 
    struct ObjectInfo
@@ -819,6 +823,7 @@ namespace elena_lang
       void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey);
 
       bool evalInitializers(ClassScope& scope, SyntaxNode node);
+      bool evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo);
 
       ref_t compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage, 
          ref_t outputRef);

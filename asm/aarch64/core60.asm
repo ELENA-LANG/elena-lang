@@ -182,6 +182,14 @@ inline %7
 
 end
 
+// ; class
+inline %8
+
+  sub     x14, x10, elVMTOffset              
+  ldr     x10, [x14]              //; edi
+
+end
+
 // ; setr
 inline %80h
 

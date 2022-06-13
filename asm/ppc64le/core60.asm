@@ -197,6 +197,13 @@ inline %7
 
 end
 
+// ; class
+inline %8
+
+  ld      r15, -elVMTOffset(r15)
+
+end
+
 // ; setr
 inline %80h
 

@@ -161,7 +161,7 @@ namespace elena_lang
       addr_t getVMTMethodAddress(addr_t vmtAddress, mssg_t message);
 
       void fixOffset(pos_t position, ref_t offsetMask, int offset, MemoryBase* image);
-      void fixReferences(ReferenceInfo& ownerReferenceInfo, VAddressMap& relocations, MemoryBase* image);
+      void fixReferences(VAddressMap& relocations, MemoryBase* image);
 
       addr_t resolveVMTMethodAddress(ModuleBase* module, ref_t reference, mssg_t message);
       pos_t resolveVMTMethodOffset(ModuleBase* module, ref_t reference, mssg_t message);
@@ -184,6 +184,8 @@ namespace elena_lang
       addr_t resolveConstantArray(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
       addr_t resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sectionMask);
       addr_t resolveName(ReferenceInfo referenceInfo, bool onlyPath);
+
+      void resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader& vmtReader, FieldAddressMap& staticValues);
 
       pos_t createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);

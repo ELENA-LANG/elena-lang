@@ -364,9 +364,16 @@ void staticEnd(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.setLabel();
 }
 
-void nameReference(CommandTape& tape, BuildNode& node, TapeScope&)
+void classOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
-   tape.write(ByteCode::SetR, node.arg.reference | mskNameLiteralRef);
+   switch (node.arg.value) {
+      case CLASS_OPERATOR_ID:
+         tape.write(ByteCode::Class);
+         break;
+      default:
+         assert(false);
+         break;
+   }
 }
 
 ByteCodeWriter::Saver commands[] =
@@ -415,7 +422,7 @@ ByteCodeWriter::Saver commands[] =
    getField,
    staticBegin,
    staticEnd,
-   nameReference
+   classOp
 };
 
 // --- ByteCodeWriter ---
@@ -714,6 +721,8 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
 
    pos_t size = vmtWriter.position() - classPosition;
    vmtSection->write(classPosition - 4, &size, sizeof(size));
+
+   ClassInfo::saveStaticFields(&vmtWriter, info.statics);
 }
 
 void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList)

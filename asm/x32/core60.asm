@@ -170,6 +170,13 @@ inline %7
 
 end
 
+// ; class
+inline %8
+
+  mov ebx, [ebx - elVMTOffset] 
+
+end
+
 // ; setr
 inline %80h
 

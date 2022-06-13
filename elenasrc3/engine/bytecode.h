@@ -25,6 +25,7 @@ namespace elena_lang
       MovEnv         = 0x05,
       Load           = 0x06,
       Len            = 0x07,
+      Class          = 0x08,
 
       MaxSingleOp    = 0x7F,
 

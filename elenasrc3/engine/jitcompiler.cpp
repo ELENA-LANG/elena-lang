@@ -19,7 +19,7 @@ using namespace elena_lang;
 CodeGenerator _codeGenerators[256] =
 {
    loadNop, compileBreakpoint, loadNop, loadOp, loadOp, loadOp, loadOp, loadOp,
-   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -48,7 +48,7 @@ CodeGenerator _codeGenerators[256] =
    loadNOp, compileClose, loadIndexOp, loadIndexOp, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadIndexOp, loadNop, loadNop,
+   loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadFieldIndexOp, loadNop, loadNop,
    loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadNop, loadNop, loadNop,
@@ -89,7 +89,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 51;
+constexpr size_t bcCommandNumber = 52;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -102,7 +102,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::Len, ByteCode::NLen, ByteCode::XMovSISI, ByteCode::CmpR, ByteCode::VJumpMR,
    ByteCode::JumpMR, ByteCode::CmpFI, ByteCode::CmpSI, ByteCode::SelEqRR, ByteCode::XDispatchMR,
    ByteCode::ICmpN, ByteCode::SelLtRR, ByteCode::XAssignI, ByteCode::GetI, ByteCode::PeekR,
-   ByteCode::StoreR
+   ByteCode::StoreR, ByteCode::Class
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/,
@@ -368,6 +368,55 @@ void elena_lang :: loadIndexOp(JITCompilerScope* scope)
          default:
             // to make compiler happy
             break;
+      }
+      //else writeCoreReference();
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
+void elena_lang :: loadFieldIndexOp(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   void* code = retrieveCode(scope);
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   int arg1 = 0;
+   if (scope->command.arg1 < 0) {
+      arg1 = (scope->command.arg1 << scope->constants->indexPower) - scope->constants->vmtSize;
+   }
+   else arg1 = scope->command.arg1 << scope->constants->indexPower;
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+      case ARG32_1:
+         writer->writeDWord(arg1);
+         break;
+      case NARG_1:
+         writer->writeDWord(arg1);
+         break;
+      case ARG16_1:
+         writer->writeWord((unsigned short)arg1);
+         break;
+      case ARG12_1:
+         scope->compiler->writeImm12(writer, arg1, 0);
+         break;
+      default:
+         // to make compiler happy
+         break;
       }
       //else writeCoreReference();
 
@@ -1940,6 +1989,7 @@ void JITCompiler32 :: prepare(
    _constants.dataOffset = 4;
    _constants.dataHeader = 8;
    _constants.structMask = elStructMask32;
+   _constants.vmtSize = elVMTClassOffset32;
 
    JITCompiler::prepare(loader, imageProvider, helper, lh, settings);
 }
@@ -2090,7 +2140,7 @@ void JITCompiler32 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targ
 }
 
 void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress,
-   ref_t flags, pos_t count, bool virtualMode)
+   ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode)
 {
    pos_t position = vmtWriter.position();
 
@@ -2123,6 +2173,15 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
 
          entryPosition += 8;
       }
+   }
+
+   // settings static values
+   for (auto it = staticValues.start(); !it.eof(); ++it) {
+      vmtWriter.seek(position - sizeof(VMTHeader32) + it.key() * 4);
+      if (virtualMode) {
+         vmtWriter.writeDReference(*it | mskRef32, 0);
+      }
+      else vmtWriter.writeDWord((pos_t)*it);
    }
 
    vmtWriter.seek(position);
@@ -2280,6 +2339,7 @@ void JITCompiler64 :: prepare(
    _constants.dataOffset = 8;
    _constants.dataHeader = 16;
    _constants.structMask = elStructMask64;
+   _constants.vmtSize = elVMTClassOffset64;
 
    JITCompiler::prepare(loader, imageProvider, helper, lh, settings);
 }
@@ -2409,7 +2469,7 @@ void JITCompiler64 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targ
 }
 
 void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress,
-   ref_t flags, pos_t count, bool virtualMode)
+   ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode)
 {
    pos_t position = vmtWriter.position();
 
@@ -2441,6 +2501,15 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
 
          entryPosition += 16;
       }
+   }
+
+   // settings static values
+   for (auto it = staticValues.start(); !it.eof(); ++it) {
+      vmtWriter.seek(position - sizeof(VMTHeader64) - it.key() * 4);
+      if (virtualMode) {
+         vmtWriter.writeQReference(*it | mskRef64, 0);
+      }
+      else vmtWriter.writeQWord(*it);
    }
 
    vmtWriter.seek(position);

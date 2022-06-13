@@ -30,6 +30,7 @@ namespace elena_lang
       int          alignmentVA;
       int          structMask;
       int          unframedOffset;
+      int          vmtSize;
    };
 
    struct JITCompilerScope
@@ -94,6 +95,7 @@ namespace elena_lang
       friend void loadOp(JITCompilerScope* scope);
       friend void loadLOp(JITCompilerScope* scope);
       friend void loadIndexOp(JITCompilerScope* scope);
+      friend void loadFieldIndexOp(JITCompilerScope* scope);
       friend void loadStackIndexOp(JITCompilerScope* scope);
       friend void loadVMTIndexOp(JITCompilerScope* scope);
       friend void loadFrameIndexOp(JITCompilerScope* scope);
@@ -212,7 +214,7 @@ namespace elena_lang
       void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticLength) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
       void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
-         ref_t flags, pos_t count, bool virtualMode) override;
+         ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode) override;
       pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
 
       void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
@@ -272,7 +274,7 @@ namespace elena_lang
       pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
       void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
-         ref_t flags, pos_t count, bool virtualMode) override;
+         ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode) override;
 
       void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
          bool structMode, bool virtualMode) override;
@@ -311,6 +313,7 @@ namespace elena_lang
    void loadOp(JITCompilerScope* scope);
    void loadLOp(JITCompilerScope* scope);
    void loadIndexOp(JITCompilerScope* scope);
+   void loadFieldIndexOp(JITCompilerScope* scope);
    void loadVMTIndexOp(JITCompilerScope* scope);
    void loadFrameIndexOp(JITCompilerScope* scope);
    void loadStackIndexOp(JITCompilerScope* scope);

@@ -4,6 +4,11 @@ __word   - supports comparision operation
 __int    - supports comparision, arithmetic operation
 
 
+Meta operations:
+----------------
+$name __decl    - Returning the owner class name
+
+
 1) ELENA module structure
 -------------------------
 a) General file structure:

@@ -33,6 +33,8 @@ public for<initExpr,condExpr,stepExpr>(loopBody) : __included<statementTemplates
 
 public class Object
 {
+    const string __className := $name __decl;
+
     bool equal(o)
        = self.equalReference(o);
 
@@ -40,6 +42,8 @@ public class Object
        = !(self.equal(o));
 
     predefined bool less(o);
+
+    string toPrintable() = __className;
 
     dispatch() : external<system'core_routines'__object_dispatcher>;
 }

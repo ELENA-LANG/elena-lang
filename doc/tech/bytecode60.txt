@@ -133,11 +133,18 @@ ELENA byte codes (or ecodes)
 
  Object operations:
  ------------------
-   redirect                 - search acc::VMT for the message in index;
-                              if found jumps to it; binary search is used ; index, acc presaved
+   class                    - acc := acc.class
+
+   copy n                   - sp[0] >> acc, n bytes
+
+   copy dp:disp, n          - dp[disp] => temp;
+                              sp[0] >> temp, n bytes  
 
    dispatch m, r            - search in message table r the message in index and provided parameter list; 
                               if found jumps to it;
+
+   len                      - index := acc.length;
+                              returns the object length
 
    new i, {prefix}:r        - create the object with the specified
                               number of fields;
@@ -150,13 +157,8 @@ ELENA byte codes (or ecodes)
    nlen n                   - index := acc.length / n;
                               returns the structure size
 
-   len                      - index := acc.length;
-                              returns the object length
-
-   copy n                   - sp[0] >> acc, n bytes
-
-   copy dp:disp, n          - dp[disp] => temp;
-                              sp[0] >> temp, n bytes  
+   redirect                 - search acc::VMT for the message in index;
+                              if found jumps to it; binary search is used ; index, acc presaved
 
    xdispatch m, r           - search in message table r the message in index and provided parameter list; 
                               if found jumps directly to it;
