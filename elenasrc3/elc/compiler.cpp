@@ -819,17 +819,17 @@ inline ref_t resolveDictionaryMask(ref_t typeRef)
    }
 }
 
-ref_t Compiler :: mapNewTerminal(Scope& scope, SyntaxNode nameNode, ustr_t prefix, Visibility visibility)
+ref_t Compiler :: mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, Visibility visibility)
 {
    if (nameNode == SyntaxKey::Name) {
       SyntaxNode terminal = nameNode.firstChild(SyntaxKey::TerminalMask);
       ustr_t name = terminal.identifier();
 
       ref_t reference = 0;
-      if (!prefix.empty()) {
-         IdentifierString nameWithPrefix(prefix, name);
+      if (!prefix.empty() || !postfix.empty()) {
+         IdentifierString nameWithFixes(prefix, name, postfix);
 
-         reference = scope.mapNewIdentifier(*nameWithPrefix, visibility);
+         reference = scope.mapNewIdentifier(*nameWithFixes, visibility);
       }
       else reference = scope.mapNewIdentifier(name, visibility);
 
@@ -918,10 +918,10 @@ ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<
       current = current.nextNode();
    }
 
-   templateName.appendInt(parameters.count());
-   templateName.append('#');
    templateName.append(prefix);
    templateName.append(identNode.identifier());
+   templateName.append('#');
+   templateName.appendInt(parameters.count());
 
    NamespaceScope* ns = &scope;
    ref_t reference = ns->resolveImplicitIdentifier(*templateName, false, true);
@@ -958,7 +958,7 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
 
    SyntaxNode name = node.findChild(SyntaxKey::Name);
 
-   ref_t reference = mapNewTerminal(scope, name, META_PREFIX, visibility);
+   ref_t reference = mapNewTerminal(scope, META_PREFIX, name, nullptr, visibility);
    ref_t mask = resolveDictionaryMask(targetType);
 
    // create a meta section
@@ -2047,7 +2047,7 @@ void Compiler :: declareMemberIdentifiers(NamespaceScope& ns, SyntaxNode node)
 
             SyntaxNode name = current.findChild(SyntaxKey::Name);
 
-            ref_t reference = mapNewTerminal(symbolScope, name, nullptr, symbolScope.visibility);
+            ref_t reference = mapNewTerminal(symbolScope, nullptr, name, nullptr, symbolScope.visibility);
             symbolScope.module->mapSection(reference | mskSymbolRef, false);
 
             current.setArgumentReference(reference);
@@ -2062,7 +2062,7 @@ void Compiler :: declareMemberIdentifiers(NamespaceScope& ns, SyntaxNode node)
 
             SyntaxNode name = current.findChild(SyntaxKey::Name);
 
-            classScope.reference = mapNewTerminal(classScope, name, nullptr, classScope.visibility);
+            classScope.reference = mapNewTerminal(classScope, nullptr, name, nullptr, classScope.visibility);
             classScope.module->mapSection(classScope.reference | mskSymbolRef, false);
 
             current.setArgumentReference(classScope.reference);
@@ -2565,7 +2565,7 @@ void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bo
    }
 }
 
-void Compiler :: declareTemplateAttributes(TemplateScope& scope, SyntaxNode node)
+void Compiler :: declareTemplateAttributes(TemplateScope& scope, SyntaxNode node, IdentifierString& postfix)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -2579,6 +2579,10 @@ void Compiler :: declareTemplateAttributes(TemplateScope& scope, SyntaxNode node
             break;
          case SyntaxKey::Type:
             scope.raiseError(errInvalidSyntax, current);
+            break;
+         case SyntaxKey::Postfix:
+            postfix.append(':');
+            postfix.append(current.firstChild(SyntaxKey::TerminalMask).identifier());
             break;
          default:
             break;
@@ -2614,16 +2618,16 @@ void Compiler :: declareTemplate(TemplateScope& scope, SyntaxNode& node)
 
 void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
 {
-   declareTemplateAttributes(scope, node);
+   IdentifierString prefix;
+   IdentifierString postfix;
+   declareTemplateAttributes(scope, node, postfix);
    if (scope.type == TemplateType::None)
       scope.type = TemplateType::Statement;
 
-   IdentifierString prefix;
-
    int argCount = SyntaxTree::countChild(node, SyntaxKey::TemplateArg);
    int paramCount = SyntaxTree::countChild(node, SyntaxKey::Parameter);
-   prefix.appendInt(argCount);
-   prefix.append('#');
+   postfix.append('#');
+   postfix.appendInt(argCount);
 
    switch (scope.type) {
       case TemplateType::Inline:
@@ -2632,15 +2636,15 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
             scope.raiseError(errInvalidSyntax, node);
          break;
       case TemplateType::Statement:
-         prefix.appendInt(paramCount);
-         prefix.append('#');
+         postfix.append('#');
+         postfix.appendInt(paramCount);
          break;
       default:
          break;
    }
 
    SyntaxNode name = node.findChild(SyntaxKey::Name);
-   scope.reference = mapNewTerminal(scope, name, *prefix, scope.visibility);
+   scope.reference = mapNewTerminal(scope, *prefix, name, *postfix, scope.visibility);
    if (scope.module->mapSection(scope.reference | mskSyntaxTreeRef, true))
       scope.raiseError(errDuplicatedDictionary, name.firstChild(SyntaxKey::TerminalMask));
 
@@ -3119,6 +3123,8 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
          return scope->buildins.add_message;
       case IF_OPERATOR_ID:
          return scope->buildins.if_message;
+      case IF_ELSE_OPERATOR_ID:
+         return overwriteArgCount(scope->buildins.if_message, 3);
       case EQUAL_OPERATOR_ID:
          return scope->buildins.equal_message;
       case NOTEQUAL_OPERATOR_ID:
@@ -3837,19 +3843,31 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
    SyntaxNode lnode = node.firstChild();
    SyntaxNode rnode = skipNestedExpression(lnode.nextNode());
+   SyntaxNode r2node = {};
+   if (operatorId == IF_ELSE_OPERATOR_ID)
+      r2node = rnode.nextNode();
 
    if (rnode.existChild(SyntaxKey::ClosureBlock))
       rnode = rnode.findChild(SyntaxKey::ClosureBlock);
+   if (r2node.existChild(SyntaxKey::ClosureBlock))
+      r2node = r2node.findChild(SyntaxKey::ClosureBlock);
 
    ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter);
    ObjectInfo roperand = { ObjectKind::Closure, V_CLOSURE, 0 };
+   ObjectInfo roperand2 = {};
 
    BuildKey   op = BuildKey::None;
 
-   size_t     argLen = 1;
+   size_t     argLen = 2;
    ref_t      arguments[3];
    arguments[0] = resolveObjectReference(scope, loperand, false);
    arguments[1] = resolveObjectReference(scope, roperand, false);
+   if (r2node != SyntaxKey::None) {
+      roperand2 = { ObjectKind::Closure, V_CLOSURE, 0 };
+
+      argLen++;
+      arguments[2] = resolveObjectReference(scope, roperand2, false);
+   }
 
    ref_t outputRef = 0;
    bool  needToAlloc = false;
@@ -3861,10 +3879,14 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
       writer.newNode(op, operatorId);
       writer.appendNode(BuildKey::Const, scope.moduleScope->branchingInfo.trueRef);
       writer.newNode(BuildKey::Tape);
-
       compileSubCode(writer, scope, rnode.firstChild(), EAttr::None);
-
       writer.closeNode();
+      if (r2node != SyntaxKey::None) {
+         writer.newNode(BuildKey::Tape);
+         compileSubCode(writer, scope, r2node.firstChild(), EAttr::None);
+         writer.closeNode();
+      }
+
       writer.closeNode();
    }
    else {
@@ -3875,6 +3897,9 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
       ArgumentsInfo messageArguments;
       messageArguments.add(loperand);
       messageArguments.add(roperand);
+      if (r2node != SyntaxKey::None) {
+         messageArguments.add(roperand2);
+      }
 
       ref_t signRef = scope.module->mapSignature(arguments, argLen, false);
 
@@ -4241,6 +4266,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::IfOperation:
       case SyntaxKey::IfNotOperation:
+      case SyntaxKey::IfElseOperation:
          retVal = compileBranchingOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::LoopOperation:

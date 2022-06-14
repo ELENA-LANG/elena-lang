@@ -85,7 +85,7 @@ namespace elena_lang
       ref_t mapAttribute(SyntaxNode node, bool allowType, ref_t& previusCategory);
 
       void parseStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current, 
-         List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
+         List<SyntaxNode>& arguments, List<SyntaxNode>& parameters, IdentifierString& postfix);
       void generateTemplateStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
       void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
@@ -119,6 +119,7 @@ namespace elena_lang
          bool allowType);
       void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
          bool allowType);
+      void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 

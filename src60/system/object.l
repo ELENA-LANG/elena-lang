@@ -9,6 +9,13 @@ public if<expr>(truePart) : __included<statementTemplates>
    cast bool(expr) ? { truePart }
 }
 
+// --- if:else ---
+
+public if<expr>:else(truePart, falsePart) : __included<statementTemplates>
+{
+   cast bool(expr) ? { truePart } : { falsePart }
+}
+
 // --- ifnot ---
 
 public ifnot<expr>(falsePart) : __included<statementTemplates>

@@ -510,11 +510,17 @@ void ByteCodeWriter :: importTree(CommandTape& tape, BuildNode node, Scope& scop
 void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
    ReferenceMap& paths, bool loopMode)
 {
+   bool ifElseMode = node.arg.value == IF_ELSE_OPERATOR_ID;
+   if (ifElseMode) {
+      tape.newLabel();
+   }
+
    if (!loopMode)
       tape.newLabel();
 
    switch (node.arg.value) {
       case IF_OPERATOR_ID:
+      case IF_ELSE_OPERATOR_ID:
          tape.write(ByteCode::CmpR, node.findChild(BuildKey::Const).arg.reference | mskVMTRef);
          tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
          break;
@@ -527,10 +533,21 @@ void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScop
          break;
    }
 
-   saveTape(tape, node.findChild(BuildKey::Tape), tapeScope, paths);
+   BuildNode tapeNode = node.findChild(BuildKey::Tape);
+   saveTape(tape, tapeNode, tapeScope, paths);
 
-   if (!loopMode)
+   if (ifElseMode) {
+      tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+
       tape.setLabel();
+      saveTape(tape, tapeNode.nextNode(), tapeScope, paths);
+
+      tape.setLabel();
+   }
+   else {
+      if (!loopMode)
+         tape.setLabel();
+   }
 }
 
 void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths)

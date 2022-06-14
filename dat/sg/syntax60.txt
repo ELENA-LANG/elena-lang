@@ -17,12 +17,12 @@ __define DICTIONARY          4128;
 __define META_STATEMENT      4129;
 __define INCLUDE_STATEMENT   4130;
 __define RELOAD_STATEMENT    4131;
-__define MESSAGE             4176;
 __define OBJECT              4145;
 __define TEMPLATE_TYPE       4146;
 __define ARRAY_TYPE          4147;
 __define NESTED              4224;
 __define CLOSURE             4225;
+__define MESSAGE             4288;
 __define RET_EXPRESSION      7220;
 __define GET_EXPRESSION      7222;
 __define INIT_EXPRESSION     7223;
@@ -41,8 +41,9 @@ __define NOT_OPERATION       6219;
 __define NOTEQUAL_OPERATION  6220;
 __define LOOP_OPERATION      6221;
 __define ELSE_OPERATION      6222;
-__define MESSAGE_OPERATION   6225;
-__define PROPERTY_OPERATION  6228;
+__define IF_ELSE_OPERATION   6223;
+__define MESSAGE_OPERATION   6337;
+__define PROPERTY_OPERATION  6340;
 __define EXPRESSION          6288;
 __define L5_EXPRESSION       6289;
 __define SUB_EXPRESSION      6290;
@@ -52,6 +53,7 @@ __define L6_EXPRESSION       6293;
 __define T_EXPRESSION        6294;
 __define POSTFIX             4192;
 __define TEMPLATE_POSTFIX    4193;
+__define METHOD_POSTFIX      4194;
 __define TEMPLATE_ARG        4208;
 __define DIMENSION           5233;
 
@@ -112,13 +114,20 @@ POSTFIXES ::=
 POSTFIX ::=
 	identifier IPOSTFIX_R;
 
+METHOD_POSTFIXES ::=
+	"," METHOD_POSTFIX METHOD_POSTFIXES
+	| eps;
+
+METHOD_POSTFIX ::=
+	identifier IPOSTFIX_R;
+
 IPOSTFIX_R ::=
 	TEMPLATE_BRACKETS ^ TEMPLATE_POSTFIX
 	| eps;
 
 METHOD_BODY_OPT ::=
 	METHOD_BODY
-	| ":" POSTFIX POSTFIXES METHOD_BODY;
+	| ":" METHOD_POSTFIX METHOD_POSTFIXES METHOD_BODY;
 
 METHOD_BODY ::=
 	BLOCK
@@ -229,6 +238,10 @@ NESTED_EXPRESSION ::=
 T_EXPRESSION ::=
 	 BLOCK;
 
+T_EXPRESSIONS ::=
+	identifier T_EXPRESSION
+	| eps;
+
 RI_R ::=
         identifier I_R
         | I_L0_R
@@ -296,7 +309,7 @@ RI_L2_R ::=
 	"(" ^OBJECT MESSAGE_PARAMETERS ")" RI_L2_OPT;
 
 RI_L2_OPT ::=
-	T_EXPRESSION ^ TEMPLATE_BLOCK
+	T_EXPRESSION T_EXPRESSIONS ^ TEMPLATE_BLOCK
 	| eps ^ MESSAGE_OPERATION;
 
 I_L3_R ::=
@@ -333,12 +346,16 @@ L7_OPT ::=
 	| eps;
 
 IL7_R ::=
-	"?" ^OBJECT L7_EXPRESSION ^IF_OPERATION
+	"?" ^OBJECT L7_EXPRESSION L7_IF_R
 	| "!" ^OBJECT L7_EXPRESSION ^ELSE_OPERATION;
 
 L7_R ::=
-	"?" L7_EXPRESSION ^IF_OPERATION
+	"?" L7_EXPRESSION L7_IF_R
 	| "!" L7_EXPRESSION ^ELSE_OPERATION;
+
+L7_IF_R ::=
+	eps ^IF_OPERATION
+	| ":" L7_EXPRESSION ^IF_ELSE_OPERATION;
 
 NEXT_L3_R ::=
 	"." MESSAGE MESSAGE_R NEXT_L3_R

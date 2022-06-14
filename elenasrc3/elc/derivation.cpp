@@ -119,11 +119,15 @@ void SyntaxTreeBuilder :: flush(SyntaxTreeWriter& writer, SyntaxNode node)
 }
 
 void SyntaxTreeBuilder :: parseStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current, 
-   List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
+   List<SyntaxNode>& arguments, List<SyntaxNode>& parameters, IdentifierString& postfix)
 {
    scope.nestedLevel += 0x100;
    while (current != SyntaxKey::None) {
       switch (current.key) {
+         case SyntaxKey::identifier:
+            postfix.append(':');
+            postfix.append(current.identifier());
+            break;
          case SyntaxKey::Expression:
             writer.newNode(SyntaxKey::Idle);
             flushExpression(writer, scope, current);
@@ -152,21 +156,21 @@ void SyntaxTreeBuilder :: generateTemplateStatement(SyntaxTreeWriter& writer, Sc
    SyntaxNode objNode = node.findChild(SyntaxKey::Object);
    SyntaxNode current = objNode.nextNode();
 
-   IdentifierString templateName;
-
    List<SyntaxNode> arguments({});
    List<SyntaxNode> parameters({});
+
+   IdentifierString templateName;
+   templateName.append(objNode.firstChild(SyntaxKey::identifier).identifier());
 
    // generate template arguments
    SyntaxTree tempTree;
    SyntaxTreeWriter tempWriter(tempTree);
-   parseStatement(tempWriter, scope, current, arguments, parameters);
+   parseStatement(tempWriter, scope, current, arguments, parameters, templateName);
 
+   templateName.append('#');
    templateName.appendInt(arguments.count());
    templateName.append('#');
    templateName.appendInt(parameters.count());
-   templateName.append('#');
-   templateName.append(objNode.firstChild(SyntaxKey::identifier).identifier());
 
    ref_t templateRef = _moduleScope->operations.get(*templateName);
 
@@ -477,7 +481,7 @@ void SyntaxTreeBuilder :: flushClassMemberPostfixes(SyntaxTreeWriter& writer, Sc
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      if (current.key == SyntaxKey::Postfix) {
+      if (current.key == SyntaxKey::MethodPostfix) {
          SyntaxNode child = current.firstChild();
          if (child == SyntaxKey::TemplatePostfix) {
             flushTemplageExpression(writer, scope, child, SyntaxKey::InlineTemplate, false);
@@ -756,11 +760,24 @@ void SyntaxTreeBuilder :: flushParameterArgDescr(SyntaxTreeWriter& writer, Scope
    SyntaxTree::copyNode(writer, node, true);
 }
 
+void SyntaxTreeBuilder :: flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current.key == SyntaxKey::Postfix) {
+         flushNode(writer, scope, current);
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
    scope.type = ScopeType::InlineTemplate;
    scope.ignoreTerminalInfo = true;
 
+   flushInlineTemplatePostfixes(writer, scope, node);
    flushClassMemberPostfixes(writer, scope, node);
 
    SyntaxNode current = node.firstChild();
