@@ -9,6 +9,13 @@ public if<expr>(truePart) : __included<statementTemplates>
    cast bool(expr) ? { truePart }
 }
 
+// --- ifnot ---
+
+public ifnot<expr>(falsePart) : __included<statementTemplates>
+{
+   cast bool(expr) ! { falsePart }
+}
+
 // --- while ---
 
 public while<expr>(loopBody) : __included<statementTemplates>

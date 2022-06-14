@@ -1051,6 +1051,11 @@ pos_t TextHistory::HistoryBackReader :: getPosition(bool& eraseMode)
    return position;
 }
 
+pos_t TextHistory::HistoryBackReader :: position() const
+{
+   return _offset;
+}
+
 // --- TextHistory ---
 
 TextHistory :: TextHistory(pos_t capacity)
@@ -1164,6 +1169,7 @@ void TextHistory :: undo(Text* text, TextBookmark& caret)
       text->eraseLine(caret, length);
    }
    _locking = false;
+   _offset = reader.position();
 }
 
 void TextHistory :: redo(Text* text, TextBookmark& caret)

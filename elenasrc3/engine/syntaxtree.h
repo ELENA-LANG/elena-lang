@@ -78,6 +78,7 @@ namespace elena_lang
       NotOperation         = 0x00184B,
       NotEqualOperation    = 0x00184C,
       LoopOperation        = 0x00184D,
+      IfNotOperation       = 0x00184E,
       Message              = 0x001050,
       MessageOperation     = 0x001851,
       ResendOperation      = 0x001C52,

@@ -3856,6 +3856,8 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, outputRef, needToAlloc);
 
    if (op != BuildKey::None) {
+      writeObjectInfo(writer, scope, loperand);
+
       writer.newNode(op, operatorId);
       writer.appendNode(BuildKey::Const, scope.moduleScope->branchingInfo.trueRef);
       writer.newNode(BuildKey::Tape);
@@ -4238,6 +4240,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::IfOperation:
+      case SyntaxKey::IfNotOperation:
          retVal = compileBranchingOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::LoopOperation:

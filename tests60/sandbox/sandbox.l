@@ -6,17 +6,17 @@ singleton Tester
 {
    run()
    {
-      var o := new Object();
-      console.writeLine(o);
+      ifnot(false) {
+         console.writeLine("ifnot works")
+      };
 
-      var a := new A();
-      console.writeLine(a);
+      ifnot(true) {
+         console.writeLine("ifnot doesn't works")
+      };
 
-      console.writeLine("*");
-
-//      for (int n := 0, n < 5, n := n + 1) {
-//         console.write("*");
-//      }
+      for (int n := 0, n < 5, n := n + 1) {
+         console.write("*");
+      }
    }
 }
 

@@ -59,7 +59,7 @@ constexpr int SArrayOperators[1]      = { LEN_OPERATOR_ID };
 constexpr int IntOperators[2]         = { ADD_OPERATOR_ID, SUB_OPERATOR_ID };
 constexpr int CondOperators[3]        = { EQUAL_OPERATOR_ID, NOTEQUAL_OPERATOR_ID, LESS_OPERATOR_ID };
 constexpr int ValCondOperators[2]     = { EQUAL_OPERATOR_ID, NOTEQUAL_OPERATOR_ID };
-constexpr int BranchingOperators[1]   = { IF_OPERATOR_ID };
+constexpr int BranchingOperators[2]   = { IF_OPERATOR_ID, ELSE_OPERATOR_ID };
 constexpr int SDeclOperators[1]       = { NAME_OPERATOR_ID };
 constexpr int SOpOperators[1]         = { NOT_OPERATOR_ID };
 
@@ -100,7 +100,7 @@ constexpr Op Operations[OperationLength] =
       BuildKey::ByteArraySOp, V_BINARYARRAY, 0, 0, V_INT32, true
    },
    {
-      BranchingOperators, 1,
+      BranchingOperators, 2,
       BuildKey::BranchOp, V_FLAG, V_CLOSURE, 0, 0, false
    },
    {

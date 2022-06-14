@@ -356,6 +356,8 @@ namespace elena_lang
          pos_t   _offset;
 
       public:
+         pos_t position() const;
+
          pos_t getLength();
          void* getLine(pos_t length);
          pos_t getPosition(bool& eraseMode);
