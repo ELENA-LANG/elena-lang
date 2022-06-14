@@ -440,6 +440,7 @@ enum class ExpressionAttribute : pos64_t
    Root              = 0x00000001000,
    CastOp            = 0x00000002000,
    Extern            = 0x00000080000,
+   Lookahead         = 0x20000080000,
    NoDebugInfo       = 0x40000000000,
    NoExtension       = 0x80000000000,
 };
@@ -456,6 +457,11 @@ struct ExpressionAttributes
          return true;
       }
       else return false;
+   }
+
+   bool test(ExpressionAttribute mask)
+   {
+      return test(attrs, mask);
    }
 
    static bool test(ExpressionAttribute attrs, ExpressionAttribute mask)

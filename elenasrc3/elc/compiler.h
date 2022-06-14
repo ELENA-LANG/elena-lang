@@ -42,6 +42,7 @@ namespace elena_lang
       TempLocalAddress,
       External,
       Creating,
+      Declaring,
       Casting,
       ReadOnlyFieldAddress,
       FieldAddress,
@@ -65,11 +66,12 @@ namespace elena_lang
          ref_t      reference;
          int        argument;
       };
+      ref_t      element;
       int        extra;
 
       bool operator ==(ObjectInfo& val) const
       {
-         return (this->kind == val.kind && this->reference == val.reference);
+         return (this->kind == val.kind && this->reference == val.reference && this->element == val.element);
       }
 
       bool operator !=(ObjectInfo& val) const
@@ -81,34 +83,35 @@ namespace elena_lang
       {
          kind = ObjectKind::Unknown;
          type = reference = 0;
-         extra = 0;
+         element = extra = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
          this->type = 0;
          this->reference = 0;
-         this->extra = 0;
+         this->element = this->extra = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t type, ref_t reference)
       {
          this->kind = kind;
          this->type = type;
          this->reference = reference;
-         this->extra = 0;
+         this->element = this->extra = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t type, int value)
       {
          this->kind = kind;
          this->type = type;
          this->argument = value;
-         this->extra = 0;
+         this->element = this->extra = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t type, ref_t reference, int extra)
       {
          this->kind = kind;
          this->type = type;
          this->reference = reference;
+         this->element = 0;
          this->extra = extra;
       }
    };
@@ -787,6 +790,8 @@ namespace elena_lang
       void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);
       void resolveClassParent(ClassScope& scope, SyntaxNode node, bool extensionMode);
 
+      int resolveArraySize(Scope& scope, SyntaxNode node);
+
       void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode);
       void declareClosureMessage(MethodScope& scope, SyntaxNode node);
 
@@ -856,6 +861,7 @@ namespace elena_lang
       ObjectInfo compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand);
 
       ObjectInfo compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand, int operatorId);
+      ObjectInfo compileIndexerOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
       ObjectInfo compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
       ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
 

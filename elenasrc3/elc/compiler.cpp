@@ -2950,8 +2950,30 @@ int Compiler :: allocateLocalAddress(CodeScope* codeScope, int size)
    return newLocalAddr(retVal);
 }
 
+int Compiler :: resolveArraySize(Scope& scope, SyntaxNode node)
+{
+   Interpreter interpreter(scope.moduleScope, _logic);
+   ObjectInfo retVal = evalExpression(interpreter, scope, node);
+   switch (retVal.kind) {
+      case ObjectKind::IntLiteral:
+         return retVal.extra;
+         break;
+      default:
+         scope.raiseError(errInvalidOperation, node);
+         return 0;
+   }
+}
+
 void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRef)
 {
+   int size = 0;
+   if (terminal == SyntaxKey::IndexerOperation) {
+      // COMPILER MAGIC : if it is a fixed-sized array
+      size = resolveArraySize(scope, terminal.firstChild(SyntaxKey::ScopeMask));
+
+      terminal = terminal.findChild(SyntaxKey::Object).findChild(SyntaxKey::identifier);
+   }
+
    ExprScope* exprScope = Scope::getScope<ExprScope>(scope, Scope::ScopeLevel::Expr);
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
    if (codeScope == nullptr) {
@@ -2965,16 +2987,34 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRe
    variable.type = typeRef;
    variable.kind = ObjectKind::Local;
 
+   if (size != 0 && variable.type != 0) {
+      if (!isPrimitiveRef(variable.type)) {
+         // if it is a primitive array
+         variable.element = variable.type;
+         variable.type = _logic->definePrimitiveArray(*scope.moduleScope, variable.element, true);
+      }
+      else scope.raiseError(errInvalidHint, terminal);
+   }
+
    ClassInfo localInfo;
+   //bool binaryArray = false;
    if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.type))
       scope.raiseError(errUnknownVariableType, terminal);
 
-   int size = 0;
-   if (_logic->isEmbeddableStruct(localInfo)/* && size == 0*/) {
+   if (_logic->isEmbeddableArray(localInfo) && size != 0) {
+      //binaryArray = true;
+      size = size * (-((int)localInfo.size));
+
+      variable.reference = allocateLocalAddress(codeScope, size);
+   }
+   else if (_logic->isEmbeddableStruct(localInfo) && size == 0) {
       size = align(_logic->defineStructSize(localInfo).size,
          scope.moduleScope->rawStackAlingment);
 
       variable.reference = allocateLocalAddress(codeScope, size);
+   }
+   else if (size != 0) {
+      scope.raiseError(errInvalidOperation, terminal);
    }
    else variable.reference = codeScope->newLocal();
 
@@ -2982,7 +3022,7 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRe
       exprScope->syncStack();
 
    if (!codeScope->locals.exist(*identifier)) {
-      codeScope->mapNewLocal(*identifier, variable.reference, variable.type, /*variable.element*/0, size, true);
+      codeScope->mapNewLocal(*identifier, variable.reference, variable.type, variable.element, size, true);
    }
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
@@ -3793,6 +3833,23 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    return target;
 }
 
+ObjectInfo Compiler :: compileIndexerOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
+{
+   // HOTFIX : recognize fixed-array declaration
+   SyntaxNode loperand = node.firstChild();
+   if (loperand == SyntaxKey::Object) {
+      ObjectInfo info = mapObject(scope, loperand, EAttr::Lookahead);
+      if (info.kind == ObjectKind::Declaring) {
+         // if it is a new variable declaration - treat it like a new array
+         declareVariable(scope, node, info.type); // !! temporal - typeref should be provided or super class
+
+         return {}; // !! temporally
+      }
+   }
+
+   return compileOperation(writer, scope, node, operatorId);
+}
+
 ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
 {
    SyntaxNode loperand = node.firstChild();
@@ -4045,6 +4102,13 @@ ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
 
    ref_t declaredRef = 0;
    declareExpressionAttributes(scope, node, declaredRef, mode);
+   if (mode.test(EAttr::Lookahead)) {
+      if (mode.test(EAttr::NewVariable)) {
+         return { ObjectKind::Declaring, declaredRef, 0 };
+      }
+      else return {};
+   }
+
    if (terminalNode.nextNode() == SyntaxKey::TemplateArg && !EAttrs::test(mode.attrs, ExpressionAttribute::NewOp)) {
       scope.raiseError(errInvalidSyntax, node);
    }
@@ -4263,6 +4327,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::NotOperation:
       case SyntaxKey::NotEqualOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
+         break;
+      case SyntaxKey::IndexerOperation:
+         retVal = compileIndexerOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::IfOperation:
       case SyntaxKey::IfNotOperation:

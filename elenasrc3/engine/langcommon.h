@@ -192,6 +192,7 @@ namespace elena_lang
    constexpr auto V_WORD32                = 0x80000008u;
    constexpr auto V_INT8                  = 0x80000009u;
    constexpr auto V_BINARYARRAY           = 0x8000000Bu;
+   constexpr auto V_INT8ARRAY             = 0x8000000Cu;
    constexpr auto V_OBJATTRIBUTES         = 0x80000012u;
    constexpr auto V_CLOSURE               = 0x80000013u;
    constexpr auto V_DECLARATION           = 0x80000014u;

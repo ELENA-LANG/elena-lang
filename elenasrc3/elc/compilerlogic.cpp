@@ -414,9 +414,15 @@ bool CompilerLogic :: isRole(ClassInfo& info)
    return test(info.header.flags, elRole);
 }
 
+bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
+{
+   return test(info.header.flags, elDynamicRole | elStructureRole | elWrapper);
+}
+
 bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
 {
-   return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
+   return test(info.header.flags, elStructureRole)
+      && !test(info.header.flags, elDynamicRole);
 }
 
 bool CompilerLogic :: isMultiMethod(ClassInfo& info, MethodInfo& methodInfo)
@@ -595,6 +601,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.flags = /*elDebugDWORD | */elStructureRole | elReadOnlyRole;
          info.size = 4;
          break;
+      case V_INT8ARRAY:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
+         info.size = -1;
+         break;
       default:
          if (reference != 0) {
             if (!scope.loadClassInfo(info, reference, headerOnly, fieldsOnly))
@@ -651,14 +662,15 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
       return 0;
 
    if (isEmbeddableStruct(info) && structOne) {
+      if (isCompatible(scope, V_INT8, elementRef, true) && info.size == 1)
+         return V_INT8ARRAY;
+
       //if (isCompatible(scope, V_INT32, elementRef, true)) {
       //   switch (info.size) {
       //      case 4:
       //         return V_INT32ARRAY;
       //      case 2:
       //         return V_INT16ARRAY;
-      //      case 1:
-      //         return V_INT8ARRAY;
       //      default:
       //         break;
       //   }
