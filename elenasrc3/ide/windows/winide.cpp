@@ -62,6 +62,11 @@ void IDEWindow :: undo()
    _controller->sourceController.undo(_model->viewModel());
 }
 
+void IDEWindow :: redo()
+{
+   _controller->sourceController.redo(_model->viewModel());
+}
+
 bool IDEWindow :: onCommand(int command)
 {
    switch (command) {
@@ -82,6 +87,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_EDIT_UNDO:
          undo();
+         break;
+      case IDM_EDIT_REDO:
+         redo();
          break;
       case IDM_DEBUG_RUN:
          _controller->projectController.doDebugAction(_model->projectModel, DebugAction::Run);

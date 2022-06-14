@@ -122,6 +122,7 @@ namespace elena_lang
          int notifyMessage) = 0;
 
       virtual void undo(TextViewModelBase* model) = 0;
+      virtual void redo(TextViewModelBase* model) = 0;
 
       virtual void indent(TextViewModelBase* model) = 0;
 

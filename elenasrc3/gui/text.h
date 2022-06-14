@@ -365,6 +365,20 @@ namespace elena_lang
          HistoryBackReader(Buffer* buffer, pos_t offset);
       };
 
+      class HistoryReader
+      {
+         MemoryReader _reader;
+
+      public:
+         pos_t position() const;
+
+         pos_t getLength();
+         void* getLine();
+         pos_t getPosition(bool& eraseMode);
+
+         HistoryReader(Buffer* buffer, pos_t offset);
+      };
+
    private:
       Buffer        _buffer1;
       Buffer        _buffer2;

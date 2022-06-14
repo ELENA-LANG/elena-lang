@@ -39,6 +39,7 @@ namespace elena_lang
       void exit();
 
       void undo();
+      void redo();
 
    public:
       IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, 

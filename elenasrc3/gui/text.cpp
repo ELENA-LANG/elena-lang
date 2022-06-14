@@ -1056,6 +1056,45 @@ pos_t TextHistory::HistoryBackReader :: position() const
    return _offset;
 }
 
+// --- TextHistory::HistoryReader ---
+
+TextHistory::HistoryReader :: HistoryReader(Buffer* buffer, pos_t offset)
+   : _reader(buffer, offset)
+{
+}
+
+pos_t TextHistory::HistoryReader :: getLength()
+{
+   return _reader.getPos();
+}
+
+void* TextHistory::HistoryReader :: getLine()
+{
+   void* str = _reader.address();
+
+   text_c ch = 0;
+   do {
+      _reader.read(&ch, sizeof(ch));
+
+   } while (ch != 0);
+
+   return str;
+}
+
+pos_t TextHistory::HistoryReader :: getPosition(bool& eraseMode)
+{
+   pos_t value = _reader.getPos();
+   pos_t position = value & ~ERASE_MODE;
+   eraseMode = test(value, ERASE_MODE);
+
+   return position;
+}
+
+pos_t TextHistory::HistoryReader :: position() const
+{
+   return _reader.position();
+}
+
 // --- TextHistory ---
 
 TextHistory :: TextHistory(pos_t capacity)
@@ -1176,4 +1215,37 @@ void TextHistory :: redo(Text* text, TextBookmark& caret)
 {
    if (eof())
       return;
+
+   text->validateBookmark(caret);
+
+   HistoryReader reader(_buffer, _offset);
+
+   bool   eraseMode = false;
+   pos_t position = reader.getPosition(eraseMode);
+
+   text_t line = (text_t)reader.getLine();
+   pos_t length = reader.getLength();
+
+#ifdef _MSC_VER
+   // HOTFIX : adjust for utf16 string
+   position >>= sizeToShift(sizeof(wide_c));
+   length >>= sizeToShift(sizeof(wide_c));
+#endif
+
+   _locking = true;
+   caret.moveOn(position - caret.position());
+   if (eraseMode) {
+      // erase mode
+      text->eraseLine(caret, length);
+   }
+   else {
+      // insert mode
+      text->insertLine(caret, line, length);
+   }
+   _locking = false;
+   _offset = reader.position();
+
+   if (_offset == _buffer->length() && !_previous) {
+      switchBuffer();
+   }
 }

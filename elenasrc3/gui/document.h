@@ -281,6 +281,7 @@ namespace elena_lang
       bool eraseSelection();
 
       void undo();
+      void redo();
 
       void notifyOnChange();
 

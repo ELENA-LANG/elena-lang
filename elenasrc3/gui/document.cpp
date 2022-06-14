@@ -714,6 +714,13 @@ void DocumentView :: undo()
    setCaret(getCaret(false), false);
 }
 
+void DocumentView :: redo()
+{
+   _undoBuffer.redo(_text, _caret);
+
+   setCaret(getCaret(false), false);
+}
+
 void DocumentView :: save(path_t path)
 {
    _text->save(path);
