@@ -1,22 +1,22 @@
 import system;
 
-B;
+//B;
 
-A
-{
-   B cast()
-      = new B();
-}
+//A
+//{
+//   B cast()
+//      = new B();
+//}
 
 
 singleton Tester
 {
    run()
    {
-      A a := new A();
-      B b := a;
+//      A a := new A();
+//      B b := a;
 
-//       byte b := 55;
+       byte b := 55;
 
 //       byte tmp[10];
 //       tmp[0] := b;

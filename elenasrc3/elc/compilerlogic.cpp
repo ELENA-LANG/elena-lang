@@ -705,6 +705,9 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_
       if (!ignoreNils || targetRef == scope.buildins.superReference)
          return true;
    }
+   else if (sourceRef == V_FLAG) {
+      return isCompatible(scope, targetRef, scope.branchingInfo.typeRef, ignoreNils);
+   }
    else if (targetRef == V_FLAG) {
       if (targetRef == sourceRef) {
          return true;

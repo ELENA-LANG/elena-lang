@@ -4204,10 +4204,20 @@ ObjectInfo Compiler :: typecastObject(BuildTreeWriter& writer, ExprScope& scope,
    return retVal;
 }
 
+inline bool isConstant(ObjectInfo info)
+{
+   switch (info.kind) {
+      case ObjectKind::IntLiteral:
+         return true;
+   default:
+      return false;
+   }
+}
+
 ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source,
    ref_t targetRef)
 {
-   ref_t sourceRef = resolveObjectReference(scope, source, false);
+   ref_t sourceRef = resolveObjectReference(scope, source, isConstant(source));
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef, false)) {
       auto conversionRoutine = _logic->retrieveConversionRoutine(*scope.moduleScope, targetRef, sourceRef);
       if (conversionRoutine.result == ConversionResult::BoxingRequired) {

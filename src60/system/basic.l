@@ -91,8 +91,8 @@ public const struct IntNumber : IntBaseNumber
    int subtract(int n)
       = theValue - n;   
 
-   byte cast()
-     = byteConvertor.convert(self);
+//   byte cast()
+//     = byteConvertor.convert(self);
 }
 
 // --- CharValue ---
