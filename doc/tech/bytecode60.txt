@@ -110,7 +110,7 @@ ELENA byte codes (or ecodes)
 
    mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
 
-   xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
+   nsave dp:disp, i         - sp[disp] := i
 
    peek fp:i                - acc := fp[i]
 
@@ -125,6 +125,8 @@ ELENA byte codes (or ecodes)
    store sp:i               - sp[i] := acc
 
    xflush sp:i              - sp[i] := cached_sp[i];
+
+   xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
 
    xstore fp:i, {prefix:}r  - sp[i] := r
 

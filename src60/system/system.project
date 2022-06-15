@@ -34,6 +34,7 @@
         <include>object.l</include>
         <include>basic.l</include>
         <include>strings.l</include>
+        <include>convertors.l</include>
         <include>console.l</include>
         <include>app.l</include>
         <include>lnx_strings.l</include>

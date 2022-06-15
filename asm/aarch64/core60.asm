@@ -902,6 +902,15 @@ inline %4E4h
 
 end
 
+// ; nsavedpn
+inline %0E5h
+
+  add     x19, x29, __arg12_1
+  mov     x18, __n16_1
+  str     w18, [x19]
+
+end
+
 // ; vjumpmr
 inline %0ECh
 

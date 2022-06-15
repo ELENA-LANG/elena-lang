@@ -69,6 +69,7 @@ namespace elena_lang
       ISubDPN        = 0xE2,
       IMulDPN        = 0xE3,
       IDivDPN        = 0xE4,
+      NSaveDPN       = 0xE5,
       VJumpMR        = 0xEC,
       JumpMR         = 0xED,
       SelEqRR        = 0xEE,

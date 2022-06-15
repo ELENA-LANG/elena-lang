@@ -914,6 +914,15 @@ inline %4E4h
 
 end
 
+// ; nsavedpn
+inline %0E5h
+
+  addi    r19, r31, __arg16_1
+  li      r17, __n16_1
+  stw     r17, 0(r19)
+
+end
+
 // ; vjumpmr
 inline % 0ECh
 

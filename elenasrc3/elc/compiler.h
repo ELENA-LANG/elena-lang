@@ -744,7 +744,7 @@ namespace elena_lang
 
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs);
 
-      int allocateLocalAddress(CodeScope* codeScope, int size);
+      int allocateLocalAddress(CodeScope* codeScope, int size, bool binaryArray);
 
       ObjectInfo allocateResult(ExprScope& scope, ref_t resultRef);
 
@@ -933,6 +933,8 @@ namespace elena_lang
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, 
          mssg_t resendMessage, ref_t resendTarget, ref_t outputRef);
       void injectDefaultConstructor(ModuleScopeBase* scope, SyntaxNode node);
+
+      void injectVariableInfo(BuildNode node, CodeScope& codeScope);
 
       void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
          mssg_t messageRef, MethodHint type) override;

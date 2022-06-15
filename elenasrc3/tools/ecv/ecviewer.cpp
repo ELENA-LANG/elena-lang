@@ -505,6 +505,9 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
             case V_INT32:
                line.append(" of __int[4]");
                break;
+            case V_INT8:
+               line.append(" of __int[1]");
+               break;
          }
       }
       else if (fieldInfo.typeRef) {

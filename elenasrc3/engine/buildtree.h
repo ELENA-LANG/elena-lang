@@ -83,6 +83,10 @@ namespace elena_lang
 
       NestedClass          = 0x0080,
 
+      VariableInfo         = 0x0090,
+
+      BinaryArray          = 0x00A0,
+
       Value                = 0x8001,
       Reserved             = 0x8002,      // reserved managed
       ReservedN            = 0x8003,      // reserved unmanaged

@@ -1739,6 +1739,16 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          }
          else scope.raiseError(errIllegalMethod, node);
       }
+      else if (scope.checkHint(MethodHint::Conversion)) {
+         if (paramCount == 0 && unnamedMessage && scope.info.outputRef) {
+            ref_t signatureRef = scope.moduleScope->module->mapSignature(&scope.info.outputRef, 1, false);
+            actionRef = scope.moduleScope->module->mapAction(CAST_MESSAGE, signatureRef, false);
+            flags |= CONVERSION_MESSAGE;
+
+            unnamedMessage = false;
+         }
+         else scope.raiseError(errIllegalMethod, node);
+      }
       else if (scope.checkHint(MethodHint::Constructor) && unnamedMessage) {
          actionStr.copy(CONSTRUCTOR_MESSAGE);
          unnamedMessage = false;
@@ -2943,11 +2953,12 @@ inline int newLocalAddr(int allocated)
    return -allocated;
 }
 
-int Compiler :: allocateLocalAddress(CodeScope* codeScope, int size)
+int Compiler :: allocateLocalAddress(CodeScope* codeScope, int size, bool binaryArray)
 {
-   int retVal = codeScope->allocLocalAddress(size);
+   int disp = binaryArray ? align(4, codeScope->moduleScope->rawStackAlingment) : 0;
+   int retVal = codeScope->allocLocalAddress(size + disp);
 
-   return newLocalAddr(retVal);
+   return newLocalAddr(retVal - disp);
 }
 
 int Compiler :: resolveArraySize(Scope& scope, SyntaxNode node)
@@ -3005,13 +3016,13 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRe
       //binaryArray = true;
       size = size * (-((int)localInfo.size));
 
-      variable.reference = allocateLocalAddress(codeScope, size);
+      variable.reference = allocateLocalAddress(codeScope, size, true);
    }
    else if (_logic->isEmbeddableStruct(localInfo) && size == 0) {
       size = align(_logic->defineStructSize(localInfo).size,
          scope.moduleScope->rawStackAlingment);
 
-      variable.reference = allocateLocalAddress(codeScope, size);
+      variable.reference = allocateLocalAddress(codeScope, size, false);
    }
    else if (size != 0) {
       scope.raiseError(errInvalidOperation, terminal);
@@ -3022,7 +3033,8 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, ref_t typeRe
       exprScope->syncStack();
 
    if (!codeScope->locals.exist(*identifier)) {
-      codeScope->mapNewLocal(*identifier, variable.reference, variable.type, variable.element, size, true);
+      codeScope->mapNewLocal(*identifier, variable.reference, variable.type, variable.element, 
+         size, true);
    }
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
@@ -3187,7 +3199,7 @@ ObjectInfo Compiler :: declareTempStructure(ExprScope& scope, int size)
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
 
    ObjectInfo retVal = { ObjectKind::TempLocalAddress };
-   retVal.reference = allocateLocalAddress(codeScope, size);
+   retVal.reference = allocateLocalAddress(codeScope, size, false);
    retVal.extra = size;
 
    scope.syncStack();
@@ -4053,7 +4065,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, ref_t declared
             if (variableMode) {
                invalid = forwardMode;
 
-               declareVariable(scope, node, declaredRef); // !! temporal - typeref should be provided or super class
+               declareVariable(scope, node, declaredRef);
                retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs | ExpressionAttribute::Local);
             }
             else if (forwardMode) {
@@ -4130,7 +4142,7 @@ ObjectInfo Compiler :: saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope
       CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
 
       auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, object.type);
-      int tempLocal = allocateLocalAddress(codeScope, sizeInfo.size);
+      int tempLocal = allocateLocalAddress(codeScope, sizeInfo.size, false);
 
       writer.appendNode(BuildKey::SavingIndex, tempLocal);
 
@@ -4195,7 +4207,7 @@ ObjectInfo Compiler :: typecastObject(BuildTreeWriter& writer, ExprScope& scope,
 ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source,
    ref_t targetRef)
 {
-   ref_t sourceRef = resolveObjectReference(scope, source);
+   ref_t sourceRef = resolveObjectReference(scope, source, false);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef, false)) {
       auto conversionRoutine = _logic->retrieveConversionRoutine(*scope.moduleScope, targetRef, sourceRef);
       if (conversionRoutine.result == ConversionResult::BoxingRequired) {
@@ -4551,10 +4563,26 @@ void Compiler :: endMethod(BuildTreeWriter& writer, MethodScope& scope)
    writer.closeNode();
 }
 
+void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
+{
+   for (auto it = codeScope.locals.start(); !it.eof(); ++it) {
+      auto localInfo = *it;
+      if (localInfo.class_ref && _logic->isEmbeddableArray(*codeScope.moduleScope, localInfo.class_ref)) {
+         node.appendChild(BuildKey::BinaryArray, localInfo.offset)
+            .appendChild(BuildKey::Size, localInfo.size);
+      }
+   }
+}
+
 ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode)
 {
    ObjectInfo retVal = {};
    ObjectInfo exprRetVal = {};
+
+   // variable declaration node
+   writer.newNode(BuildKey::VariableInfo);
+   BuildNode variableNode = writer.CurrentNode();
+   writer.closeNode();
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -4581,6 +4609,8 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
 
       current = current.nextNode();
    }
+
+   injectVariableInfo(variableNode, codeScope);
 
    // NOTE : in the closure mode the last statement is the closure result
    return closureMode ? exprRetVal : retVal;

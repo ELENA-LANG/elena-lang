@@ -50,7 +50,10 @@ namespace elena_lang
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
 
       bool isRole(ClassInfo& info);
+
       bool isEmbeddableArray(ClassInfo& info);
+      bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);
+
       bool isEmbeddableStruct(ClassInfo& info);
       bool isMultiMethod(ClassInfo& info, MethodInfo& methodInfo);
 

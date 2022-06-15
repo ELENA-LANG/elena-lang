@@ -97,7 +97,7 @@ constexpr Op Operations[OperationLength] =
    },
    {
       SArrayOperators, 1,
-      BuildKey::ByteArraySOp, V_BINARYARRAY, 0, 0, V_INT32, true
+      BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32, true
    },
    {
       BranchingOperators, 3,
@@ -312,6 +312,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_PREDEFINED:
          hint = (ref_t)MethodHint::Predefined;
          return true;
+      case V_CONVERSION:
+         hint = (ref_t)MethodHint::Conversion;
+         return true;
       default:
          return false;
    }
@@ -327,6 +330,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
       case V_DISPATCHER:
       case V_CONSTRUCTOR:
       case V_FUNCTION:
+      case V_CONVERSION:
          return validateMethodAttribute(attribute, hint, dummy);
       default:
          return false;
@@ -412,6 +416,16 @@ void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ClassInfo
 bool CompilerLogic :: isRole(ClassInfo& info)
 {
    return test(info.header.flags, elRole);
+}
+
+bool CompilerLogic :: isEmbeddableArray(ModuleScopeBase& scope, ref_t reference)
+{
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference, true)) {
+      return isEmbeddableArray(info);
+   }
+
+   return false;
 }
 
 bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
@@ -709,9 +723,11 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_
 
          // if it is a structure wrapper
          if (isPrimitiveRef(targetRef) && test(info.header.flags, elWrapper)) {
-            auto inner = *info.fields.start();
-            if (isCompatible(scope, targetRef, inner.typeRef, ignoreNils))
-               return true;
+            if (info.fields.count() > 0) {
+               auto inner = *info.fields.start();
+               if (isCompatible(scope, targetRef, inner.typeRef, ignoreNils))
+                  return true;
+            }
          }
 
          if (test(info.header.flags, elClassClass)) {

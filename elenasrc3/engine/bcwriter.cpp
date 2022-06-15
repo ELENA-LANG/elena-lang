@@ -564,12 +564,33 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
    tape.releaseLabel();
 }
 
+void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)
+{
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      switch (current.key) {
+         case BuildKey::BinaryArray:
+            // setting size
+            tape.write(ByteCode::NSaveDPN, current.arg.value, current.findChild(BuildKey::Size).arg.value);
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
    ReferenceMap& paths, bool loopMode)
 {
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
       switch (current.key) {
+         case BuildKey::VariableInfo:
+            // declaring variables / setting array size
+            saveVariableInfo(tape, current);
+            break;
          case BuildKey::Import:
             importTree(tape, current, *tapeScope.scope);
             break;

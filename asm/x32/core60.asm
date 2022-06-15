@@ -821,6 +821,14 @@ L8:
 
 end
 
+// ; nsavedpn
+inline %0E5h
+
+  mov  eax, __n_2
+  mov  [ebp+__arg32_1], eax
+
+end
+
 // ; vjumpmr
 inline %0ECh
 
