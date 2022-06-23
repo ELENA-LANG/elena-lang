@@ -1,0 +1,6 @@
+
+// --- byteConvertor ---
+
+public singleton byteConvertor
+{
+}

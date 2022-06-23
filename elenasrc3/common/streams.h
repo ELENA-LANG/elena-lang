@@ -363,7 +363,7 @@ namespace elena_lang
 
       bool seek(pos_t position) override
       {
-         if (position < _memory->length()) {
+         if (position <= _memory->length()) {
             _position = position;
 
             return true;

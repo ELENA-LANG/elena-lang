@@ -167,8 +167,15 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       if (alreadyDeclared && moduleScope.isDeclared(generatedReference))
          return generatedReference;
 
-      _processor.generateClassTemplate(&moduleScope, generatedReference, &syntaxTree, 
+      SyntaxTreeWriter writer(syntaxTree);
+      writer.newNode(SyntaxKey::Root);
+      writer.newNode(SyntaxKey::Namespace, ns);
+
+      _processor.generateClassTemplate(&moduleScope, generatedReference, writer, 
          sectionInfo.section, parameters);
+
+      writer.closeNode();
+      writer.closeNode();
 
       _process->buildSyntaxTree(moduleScope, &syntaxTree);
 
@@ -249,7 +256,6 @@ void CompilingProcess :: parseFile(path_t projectPath,
    else {
       _errorProcessor->raisePathError(errInvalidFile, *file_it);
    }
-
 }
 
 void CompilingProcess :: parseModule(path_t projectPath,

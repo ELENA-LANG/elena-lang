@@ -168,7 +168,10 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
          type = TemplateType::Inline;
          break;
       default:
-         return false;
+      {
+         ref_t dummy = 0;
+         return validateClassAttribute(attribute, dummy, visibility);
+      }
    }
 
    return true;

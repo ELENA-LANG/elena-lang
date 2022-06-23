@@ -760,6 +760,7 @@ namespace elena_lang
       void declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility);
 
       void saveTemplate(TemplateScope& scope, SyntaxNode& node);
+      void saveNamespaceInfo(SyntaxNode node, NamespaceScope* nsScope, bool outerMost);
 
       void declareTemplate(TemplateScope& scope, SyntaxNode& node);
 
@@ -835,7 +836,7 @@ namespace elena_lang
 
       ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, ArgumentsInfo& arguments);
 
-      ObjectInfo boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
+      ObjectInfo boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t typeRef);
       ObjectInfo boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool stackSafe, bool boxInPlace);
       ObjectInfo boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool boxInPlace);
 

@@ -210,9 +210,12 @@ namespace elena_lang
       void copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyMethod(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
 
+      void copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode rootNode, TemplateScope& scope);
+
       void generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection);
 
-      void generateTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateBody);
+      void generateTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, 
+         MemoryBase* templateBody, bool importModuleInfo);
 
       void importTemplate(Type type, MemoryBase* templateSection, SyntaxNode target,
          List<SyntaxNode>* arguments, List<SyntaxNode>* parameters);
@@ -222,8 +225,8 @@ namespace elena_lang
       void importCodeTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
 
-      void generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, SyntaxTree* syntaxTree, 
-         MemoryBase* sectionBody, List<SyntaxNode>& parameters);
+      void generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, SyntaxTreeWriter& writer,
+         MemoryBase* sectionBody, List<SyntaxNode>& args);
 
       TemplateProssesor() = default;
    };

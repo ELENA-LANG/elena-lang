@@ -395,7 +395,7 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
       {
          ustr_t referenceName = module->resolveReference(reference);
          while (isForwardReference(referenceName)) {
-            ustr_t resolvedName = forwardResolver->resolveForward(referenceName);
+            ustr_t resolvedName = forwardResolver->resolveForward(referenceName + getlength(FORWARD_PREFIX_NS));
             if (!resolvedName.empty()) {
                referenceName = resolvedName;
             }
@@ -432,7 +432,7 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
 ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ustr_t referenceName, ForwardResolverBase* forwardResolver)
 {
    while (isForwardReference(referenceName)) {
-      ustr_t resolvedName = forwardResolver->resolveForward(referenceName);
+      ustr_t resolvedName = forwardResolver->resolveForward(referenceName + getlength(FORWARD_PREFIX_NS));
       if (!resolvedName.empty()) {
          referenceName = resolvedName;
       }

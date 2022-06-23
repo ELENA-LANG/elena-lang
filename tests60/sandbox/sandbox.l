@@ -1,22 +1,25 @@
 import system;
 
-//B;
+public sealed ref<T>
+{
+   embeddable T field;
 
-//A
-//{
-//   B cast()
-//      = new B();
-//}
+   T get()
+      = field;
 
+   set(T v)
+   {
+      field := v
+   }
+}
 
 singleton Tester
 {
    run()
    {
-//      A a := new A();
-//      B b := a;
+      ref<int> r := 1;
 
-       byte b := 55;
+//       byte b := 55;
 
 //       byte tmp[10];
 //       tmp[0] := b;

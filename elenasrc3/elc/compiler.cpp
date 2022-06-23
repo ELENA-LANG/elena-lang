@@ -2071,8 +2071,13 @@ void Compiler :: declareMemberIdentifiers(NamespaceScope& ns, SyntaxNode node)
             declareClassAttributes(classScope, current, flags);
 
             SyntaxNode name = current.findChild(SyntaxKey::Name);
+            if (current.arg.reference == INVALID_REF) {
+               // if it is a template based class - its name was already resolved
+               classScope.reference = current.findChild(SyntaxKey::Name).arg.reference;
+            }
+            else classScope.reference = mapNewTerminal(classScope, nullptr, 
+               name, nullptr, classScope.visibility);
 
-            classScope.reference = mapNewTerminal(classScope, nullptr, name, nullptr, classScope.visibility);
             classScope.module->mapSection(classScope.reference | mskSymbolRef, false);
 
             current.setArgumentReference(classScope.reference);
@@ -2290,10 +2295,8 @@ inline void copyObjectToAcc(BuildTreeWriter& writer, ClassInfo& info, int offset
    writer.closeNode();
 }
 
-ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info)
+ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t typeRef)
 {
-   ref_t typeRef = resolveObjectReference(scope, info);
-
    ObjectInfo tempLocal = {};
    if (hasToBePresaved(info)) {
       info = saveToTempLocal(writer, scope, info);
@@ -2346,6 +2349,8 @@ ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, Ob
 {
    ObjectInfo retVal = { ObjectKind::Unknown };
 
+   info = boxArgumentLocally(writer, scope, info, boxInPlace);
+
    if (!stackSafe && isBoxingRequired(info)) {
       ObjectKey key = { info.kind, info.reference };
 
@@ -2353,7 +2358,8 @@ ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, Ob
          retVal = scope.tempLocals.get(key);
 
       if (retVal.kind == ObjectKind::Unknown) {
-         retVal = boxArgumentInPlace(writer, scope, info);
+         retVal = boxArgumentInPlace(writer, scope, info, 
+            resolveObjectReference(scope, info));
 
          if (!boxInPlace)
             scope.tempLocals.add(key, retVal);
@@ -2609,11 +2615,42 @@ void Compiler :: saveTemplate(TemplateScope& scope, SyntaxNode& node)
    SyntaxTree::saveNode(node, target);
 }
 
+void Compiler::saveNamespaceInfo(SyntaxNode node, NamespaceScope* nsScope, bool outerMost)
+{
+   if (outerMost)
+      node.appendChild(SyntaxKey::SourcePath, *nsScope->sourcePath);
+
+   IdentifierString nsFullName(nsScope->module->name());
+   if (nsScope->nsName.length() > 0) {
+      nsFullName.copy("'");
+      nsFullName.append(*nsScope->nsName);
+   }
+   node.appendChild(SyntaxKey::Import)
+      .appendChild(SyntaxKey::Name)
+         .appendChild(SyntaxKey::reference, *nsFullName);
+
+   for (auto it = nsScope->importedNs.start(); !it.eof(); ++it) {
+      node.appendChild(SyntaxKey::Import)
+         .appendChild(SyntaxKey::Name)
+            .appendChild(SyntaxKey::reference, *it);
+   }
+
+   if (nsScope->parent)
+      saveNamespaceInfo(node, (NamespaceScope*)nsScope->parent, false);
+}
+
 void Compiler :: declareTemplate(TemplateScope& scope, SyntaxNode& node)
 {
    switch (scope.type) {
-      case TemplateType::Inline:
       case TemplateType::Class:
+      {
+         // COMPILER MAGIC : inject imported namespaces & source path
+         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+         saveNamespaceInfo(node, nsScope, true);
+         break;
+      }
+      case TemplateType::Inline:
       case TemplateType::Statement:
          break;
       default:
@@ -2665,6 +2702,18 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
 void Compiler :: declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
 {
    scope.type = TemplateType::Class;
+
+   IdentifierString postfix;
+   declareTemplateAttributes(scope, node, postfix);
+
+   int argCount = SyntaxTree::countChild(node, SyntaxKey::TemplateArg);
+   postfix.append('#');
+   postfix.appendInt(argCount);
+
+   SyntaxNode name = node.findChild(SyntaxKey::Name);
+   scope.reference = mapNewTerminal(scope, nullptr, name, *postfix, scope.visibility);
+   if (scope.module->mapSection(scope.reference | mskSyntaxTreeRef, true))
+      scope.raiseError(errDuplicatedDictionary, name.firstChild(SyntaxKey::TerminalMask));
 
    declareTemplate(scope, node);
 }
@@ -2788,9 +2837,9 @@ ref_t Compiler :: mapTemplateType(Scope& scope, SyntaxNode node)
    }
 
    IdentifierString templateName;
-   templateName.appendInt(paramCounter);
-   templateName.append('#');
    templateName.append(node.identifier());
+   templateName.append('#');
+   templateName.appendInt(paramCounter);
 
    // NOTE : check it in declararion mode - we need only reference
    return resolveTypeIdentifier(scope, *templateName, node.key, true/*, false*/);
@@ -2837,14 +2886,23 @@ ref_t Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool decla
       }
       else typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode/*, allowRole*/);
    }
+   else if (node == SyntaxKey::TemplateArg) {
+      typeRef = resolveTypeAttribute(scope, node.firstChild(), declarationMode);
+   }
    else {
-      SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
-
-      if (terminal.nextNode() == SyntaxKey::TemplateArg) {
-         typeRef = resolveTypeTemplate(scope, terminal, declarationMode);
+      SyntaxNode current = node.firstChild();
+      if (current == SyntaxKey::Object) {
+         typeRef = resolveTypeAttribute(scope, current, declarationMode);
       }
-      else typeRef = resolveTypeIdentifier(scope,
-         terminal.identifier(), terminal.key, declarationMode/*, allowRole*/);
+      else {
+         SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
+
+         if (terminal.nextNode() == SyntaxKey::TemplateArg) {
+            typeRef = resolveTypeTemplate(scope, terminal, declarationMode);
+         }
+         else typeRef = resolveTypeIdentifier(scope,
+            terminal.identifier(), terminal.key, declarationMode/*, allowRole*/);
+      }
    }
 
    validateType(scope, typeRef, node);
@@ -3817,6 +3875,16 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
          operand = target.reference;
          fieldMode = true;
          break;
+      case ObjectKind::FieldAddress:
+         scope.markAsAssigned(target);
+         if (!target.reference) {
+            operationType = BuildKey::AccCopying;
+            operand = target.reference;
+            fieldMode = true;
+         }
+         else assert(false);
+
+         break;
       default:
          scope.raiseError(errInvalidOperation, loperand.parentNode());
          break;
@@ -3839,8 +3907,6 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
       writer.appendNode(BuildKey::Size, size);
    }
    writer.closeNode();
-
-   writeObjectInfo(writer, scope, target);
 
    return target;
 }
@@ -4227,7 +4293,7 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
                source.type = targetRef;
                break;
             default:
-               throw InternalError(errFatalError);
+               return boxArgumentInPlace(writer, scope, source, targetRef);
          }
       }
       else source = typecastObject(writer, scope, node, source, targetRef);
@@ -5138,34 +5204,34 @@ inline ref_t safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase*
 
 bool Compiler :: reloadMetaDictionary(ModuleScopeBase* moduleScope, ustr_t name)
 {
-   if (name.compare(PREDEFINED_FORWARD)) {
+   if (name.compare(PREDEFINED_MAP)) {
       moduleScope->predefined.clear();
 
-      auto predefinedInfo = moduleScope->getSection(PREDEFINED_FORWARD, mskMetaDictionaryRef, true);
+      auto predefinedInfo = moduleScope->getSection(PREDEFINED_MAP, mskMetaDictionaryRef, true);
       if (predefinedInfo.section) {
          _logic->readDictionary(predefinedInfo.section, moduleScope->predefined);
       }
    }
-   else if (name.compare(ATTRIBUTES_FORWARD)) {
+   else if (name.compare(ATTRIBUTES_MAP)) {
       moduleScope->attributes.clear();
 
-      auto attributeInfo = moduleScope->getSection(ATTRIBUTES_FORWARD, mskMetaDictionaryRef, true);
+      auto attributeInfo = moduleScope->getSection(ATTRIBUTES_MAP, mskMetaDictionaryRef, true);
       if (attributeInfo.section) {
          _logic->readDictionary(attributeInfo.section, moduleScope->attributes);
       }
    }
-   else if (name.compare(OPERATION_FORWARD)) {
+   else if (name.compare(OPERATION_MAP)) {
       moduleScope->operations.clear();
 
-      auto operationInfo = moduleScope->getSection(OPERATION_FORWARD, mskDeclAttributesRef, true);
+      auto operationInfo = moduleScope->getSection(OPERATION_MAP, mskDeclAttributesRef, true);
       if (operationInfo.section) {
          _logic->readDeclDictionary(operationInfo.module, operationInfo.section, moduleScope->operations, moduleScope);
       }
    }
-   else if (name.compare(ALIASES_FORWARD)) {
+   else if (name.compare(ALIASES_MAP)) {
       moduleScope->aliases.clear();
 
-      auto aliasInfo = moduleScope->getSection(ALIASES_FORWARD, mskMetaAttributesRef, true);
+      auto aliasInfo = moduleScope->getSection(ALIASES_MAP, mskMetaAttributesRef, true);
       if (aliasInfo.section) {
          _logic->readAttrDictionary(aliasInfo.module, aliasInfo.section, moduleScope->aliases, moduleScope);
       }
@@ -5177,10 +5243,10 @@ bool Compiler :: reloadMetaDictionary(ModuleScopeBase* moduleScope, ustr_t name)
 
 void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver)
 {
-   reloadMetaDictionary(moduleScope, PREDEFINED_FORWARD);
-   reloadMetaDictionary(moduleScope, ATTRIBUTES_FORWARD);
-   reloadMetaDictionary(moduleScope, OPERATION_FORWARD);
-   reloadMetaDictionary(moduleScope, ALIASES_FORWARD);
+   reloadMetaDictionary(moduleScope, PREDEFINED_MAP);
+   reloadMetaDictionary(moduleScope, ATTRIBUTES_MAP);
+   reloadMetaDictionary(moduleScope, OPERATION_MAP);
+   reloadMetaDictionary(moduleScope, ALIASES_MAP);
 
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);

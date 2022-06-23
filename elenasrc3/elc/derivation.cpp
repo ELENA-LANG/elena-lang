@@ -239,9 +239,13 @@ void SyntaxTreeBuilder :: flushObject(SyntaxTreeWriter& writer, Scope& scope, Sy
    SyntaxNode current = node.firstChild();
    if (current == SyntaxKey::TemplateType) {
       if (current.nextNode() == SyntaxKey::identifier) {
+         SyntaxNode identNode = node.lastChild(SyntaxKey::TerminalMask);
+
          writer.newNode(SyntaxKey::Type);
          flushTemplateType(writer, scope, current);
          writer.closeNode();
+
+         flushNode(writer, scope, identNode);
       }
       else flushTemplateType(writer, scope, current);
    }
@@ -1175,16 +1179,37 @@ void TemplateProssesor :: copyMethod(SyntaxTreeWriter& writer, TemplateScope& sc
    writer.closeNode();
 }
 
-void TemplateProssesor :: generateTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateBody)
+void TemplateProssesor :: copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode node, TemplateScope& scope)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Import:
+         case SyntaxKey::SourcePath:
+            copyNode(writer, scope, current);
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void TemplateProssesor :: generateTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, 
+   MemoryBase* templateBody, bool importModuleInfo)
 {
    SyntaxTree templateTree;
    templateTree.load(templateBody);
 
    SyntaxNode rootNode = templateTree.readRoot();
+   if (importModuleInfo)
+      copyModuleInfo(writer, rootNode, scope);
+
    if (scope.type == Type::Class) {
       ustr_t fullName = scope.moduleScope->resolveFullName(scope.targetRef);
 
-      writer.newNode(SyntaxKey::Class/*, INVALID_REF*/);
+      writer.newNode(SyntaxKey::Class, INVALID_REF);
       writer.appendNode(SyntaxKey::Name, scope.moduleScope->mapFullReference(fullName, true));
    }
 
@@ -1212,12 +1237,10 @@ void TemplateProssesor :: generateTemplate(SyntaxTreeWriter& writer, TemplateSco
 }
 
 void TemplateProssesor :: generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, 
-   SyntaxTree* syntaxTree, MemoryBase* sectionBody, List<SyntaxNode>& parameters)
+   SyntaxTreeWriter& writer, MemoryBase* sectionBody, List<SyntaxNode>& args)
 {
    TemplateScope templateScope(Type::Class, moduleScope, classRef);
-   loadParameters(templateScope, &parameters);
+   loadArguments(templateScope, &args);
 
-   SyntaxTreeWriter writer(*syntaxTree);
-
-   generateTemplate(writer, templateScope, sectionBody);
+   generateTemplate(writer, templateScope, sectionBody, true);
 }

@@ -63,20 +63,21 @@ namespace elena_lang
    constexpr auto FORWARD_PREFIX_NS       = "$forwards'";
    constexpr auto INLINE_CLASSNAME        = "$inline";          // nested class generic name
 
-   constexpr auto PREDEFINED_FORWARD      = "$forwards'meta$predefined";
-   constexpr auto ATTRIBUTES_FORWARD      = "$forwards'meta$attributes";
-   constexpr auto OPERATION_FORWARD       = "$forwards'meta$statementTemplates";
-   constexpr auto ALIASES_FORWARD         = "$forwards'meta$aliasTypes";
-   constexpr auto SYSTEM_ENTRY            = "$forwards'$system_entry";   // the system entry
+   constexpr auto PREDEFINED_MAP          = "$forwards'meta$predefined";
+   constexpr auto ATTRIBUTES_MAP          = "$forwards'meta$attributes";
+   constexpr auto OPERATION_MAP           = "$forwards'meta$statementTemplates";
+   constexpr auto ALIASES_MAP             = "$forwards'meta$aliasTypes";
+
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 
-   constexpr auto SUPER_FORWARD           = "$forwards'$super";          // the common class predecessor
-   constexpr auto INTLITERAL_FORWARD      = "$forwards'$int";            // the common class predecessor
-   constexpr auto LITERAL_FORWARD         = "$forwards'$string";         // the common class predecessor
-   constexpr auto CHAR_FORWARD            = "$forwards'$char";         // the common class predecessor
-   constexpr auto BOOL_FORWARD            = "$forwards'$boolean";        // the common class predecessor
-   constexpr auto TRUE_FORWARD            = "$forwards'$true";           // the common class predecessor
-   constexpr auto FALSE_FORWARD           = "$forwards'$false";          // the common class predecessor
+   constexpr auto SYSTEM_FORWARD          = "$system_entry";   // the system entry
+   constexpr auto SUPER_FORWARD           = "$super";          // the common class predecessor
+   constexpr auto INTLITERAL_FORWARD      = "$int";            // the common class predecessor
+   constexpr auto LITERAL_FORWARD         = "$string";         // the common class predecessor
+   constexpr auto CHAR_FORWARD            = "$char";         // the common class predecessor
+   constexpr auto BOOL_FORWARD            = "$boolean";        // the common class predecessor
+   constexpr auto TRUE_FORWARD            = "$true";           // the common class predecessor
+   constexpr auto FALSE_FORWARD           = "$false";          // the common class predecessor
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";

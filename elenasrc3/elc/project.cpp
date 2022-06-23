@@ -138,20 +138,16 @@ void Project :: addForward(ustr_t forward, ustr_t referenceName)
    if (collectionNode == ProjectOption::None)
       collectionNode = _root.appendChild(ProjectOption::Forwards);
 
-   IdentifierString key;
-
-   ProjectNode keyNode = ProjectTree::gotoChild(collectionNode, ProjectOption::Forward, key.str());
+   ProjectNode keyNode = ProjectTree::gotoChild(collectionNode, ProjectOption::Forward, forward);
    if (keyNode == ProjectOption::None) {
-      key.insert(FORWARD_PREFIX_NS, 0);
-
-      keyNode = collectionNode.appendChild(ProjectOption::Forward, key.str());
+      keyNode = collectionNode.appendChild(ProjectOption::Forward, forward);
    }
 
    ProjectNode valueNode = keyNode.findChild(ProjectOption::Value);
    if (valueNode == ProjectOption::None) {
       keyNode.appendChild(ProjectOption::Value, referenceName);
    }
-   else keyNode.setStrArgument(referenceName);
+   else valueNode.setStrArgument(referenceName);
 
 }
 
@@ -378,7 +374,7 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
          ProjectOption::References, configPath);
 
       loadKeyCollection(config, root, FORWARD_CATEGORY,
-         ProjectOption::Forwards, ProjectOption::Forward, FORWARD_PREFIX_NS);
+         ProjectOption::Forwards, ProjectOption::Forward, nullptr);
       loadKeyCollection(config, root, EXTERNAL_CATEGORY,
          ProjectOption::Externals, ProjectOption::External, nullptr);
       loadKeyCollection(config, root, WINAPI_CATEGORY,
