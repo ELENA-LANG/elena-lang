@@ -626,20 +626,23 @@ ObjectInfo Compiler::MethodScope :: mapSelf()
    else return {};
 }
 
-ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier)
+ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier, ExpressionAttribute attr)
 {
    int prefix = functionMode ? 0 : -1;
 
    Parameter local = parameters.get(identifier);
    if (local.offset != -1) {
-      return { ObjectKind::Param, local.class_ref, prefix - local.offset };
+      if (local.class_ref == V_WRAPPER && !EAttrs::test(attr, EAttr::AssigningTarget)) {
+         return { ObjectKind::ParamField, local.class_ref, prefix - local.offset, local.element_ref, 0 };
+      }
+      else return {ObjectKind::Param, local.class_ref, prefix - local.offset, local.element_ref, 0 };
    }
    else return {};
 }
 
 ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
 {
-   auto paramInfo = mapParameter(identifier);
+   auto paramInfo = mapParameter(identifier, attr);
    if (paramInfo.kind != ObjectKind::Unknown) {
       return paramInfo;
    }
@@ -1701,7 +1704,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          ref_t classRef = 0;
          ref_t elementRef = 0;
          int size = 0;
-         declareArgumentAttributes(scope, current, classRef/*, elementRef*/, declarationMode);
+         declareArgumentAttributes(scope, current, classRef, elementRef, declarationMode);
 
          if (withoutWeakMessages && !classRef)
             classRef = scope.moduleScope->buildins.superReference;
@@ -1717,7 +1720,11 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          if (paramCount >= ARG_COUNT/* || (flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE*/)
             scope.raiseError(errTooManyParameters, current);
 
-         signature[signatureLen++] = classRef;
+         if (isPrimitiveRef(classRef)) {
+            // primitive arguments should be replaced with wrapper classes
+            signature[signatureLen++] = resolvePrimitiveReference(scope, classRef, elementRef, declarationMode);  
+         }
+         else signature[signatureLen++] = classRef;
 
          scope.parameters.add(terminal, Parameter(index, classRef, elementRef, size));
       }
@@ -2359,7 +2366,7 @@ ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, Ob
 
       if (retVal.kind == ObjectKind::Unknown) {
          retVal = boxArgumentInPlace(writer, scope, info, 
-            resolveObjectReference(scope, info));
+            resolveObjectReference(scope, info, true));
 
          if (!boxInPlace)
             scope.tempLocals.add(key, retVal);
@@ -2429,25 +2436,34 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
    }
 }
 
-ref_t Compiler :: resolveObjectReference(Scope& scope, ObjectInfo info, bool noPrimitiveAllowed)
+ref_t Compiler :: resolveObjectReference(Scope& scope, ObjectInfo info, bool noPrimitiveAllowed,
+   bool unboxWrapper)
 {
    ref_t typeRef = info.type;
+   ref_t elementRef = info.element;
+   if (unboxWrapper && typeRef == V_WRAPPER) {
+      typeRef = elementRef;
+      elementRef = 0;
+   }
+
    if (noPrimitiveAllowed && isPrimitiveRef(typeRef)) {
-      typeRef = resolvePrimitiveReference(scope, info);
+      typeRef = resolvePrimitiveReference(scope, typeRef, elementRef, false);
    }
 
    return typeRef;
 }
 
-ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ObjectInfo info)
+ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t typeRef, ref_t elementRef, bool declarationMode)
 {
-   switch (info.type) {
+   switch (typeRef) {
       case V_INT32:
          return scope.moduleScope->buildins.intReference;
       case V_STRING:
          return scope.moduleScope->buildins.literalReference;
       case V_FLAG:
          return scope.moduleScope->branchingInfo.typeRef;
+      case V_WRAPPER:
+         return resolveWrapperTemplate(scope, elementRef, declarationMode);
       default:
          throw InternalError(errFatalError);
    }
@@ -2510,20 +2526,30 @@ inline bool isMethodKind(ref_t hint)
    return (hint & (ref_t)MethodHint::Mask) != 0;
 }
 
-void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, ref_t& typeRef, bool declarationMode)
+void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, ref_t& typeRef, ref_t& elementRef, 
+   bool declarationMode)
 {
    SyntaxNode current = node.firstChild();
+   bool byRefArg = false;
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Type:
             // if it is a type attribute
             typeRef = resolveTypeAttribute(scope, current, declarationMode);
             break;
+         case SyntaxKey::Attribute:
+            if (!_logic->validateArgumentAttribute(current.arg.reference, byRefArg))
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            break;
          default:
             break;
       }
 
       current = current.nextNode();
+   }
+   if (byRefArg) {
+      elementRef = typeRef;
+      typeRef = V_WRAPPER;
    }
 }
 
@@ -2808,7 +2834,13 @@ ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxK
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
-   identInfo = ns->mapIdentifier(identifier, type == SyntaxKey::reference, EAttr::None);
+   if (type == SyntaxKey::reference && isWeakReference(identifier)) {
+      identInfo = ns->mapWeakReference(identifier, false);
+   }
+   else if (type == SyntaxKey::globalreference) {
+      identInfo = ns->mapGlobal(identifier, EAttr::None);
+   }
+   else identInfo = ns->mapIdentifier(identifier, type == SyntaxKey::reference, EAttr::None);
 
    switch (identInfo.kind) {
       case ObjectKind::Class:
@@ -2872,6 +2904,37 @@ ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declar
       scope.raiseError(errInvalidHint, node);
 
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+   return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
+      templateRef, parameters, declarationMode);
+}
+
+ref_t Compiler :: resolveWrapperTemplate(Scope& scope, ref_t elementRef, bool declarationMode)
+{
+   List<SyntaxNode> parameters({});
+
+   // HOTFIX : generate a temporal template to pass the type
+   SyntaxTree dummyTree;
+   SyntaxTreeWriter dummyWriter(dummyTree);
+   dummyWriter.newNode(SyntaxKey::Root);
+   dummyWriter.newNode(SyntaxKey::TemplateArg, elementRef);
+   dummyWriter.newNode(SyntaxKey::Type);
+
+   ustr_t referenceName = scope.moduleScope->module->resolveReference(elementRef);
+   if (isWeakReference(referenceName)) {
+      dummyWriter.appendNode(SyntaxKey::reference, referenceName);
+   }
+   else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
+
+   dummyWriter.closeNode();
+   dummyWriter.closeNode();
+   dummyWriter.closeNode();
+
+   parameters.add(dummyTree.readRoot().firstChild());
+
+   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+   ref_t templateRef = nsScope->moduleScope->buildins.wrapperTemplateReference;
 
    return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
       templateRef, parameters, declarationMode);
@@ -3205,7 +3268,7 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
             break;
          default:
             if (_logic->isCompatible(*scope.moduleScope, V_INT32, 
-               resolveObjectReference(scope, arg), true)) 
+               resolveObjectReference(scope, arg, true), true)) 
             {
                writer.appendNode(BuildKey::SavingNInStack, i - 1);
             }
@@ -3304,7 +3367,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    if (rnode != SyntaxKey::None) {
       ref_t rTargetRef = 0;
       if (operatorId == SET_OPERATOR_ID)
-         rTargetRef = resolveObjectReference(scope, loperand);
+         rTargetRef = resolveObjectReference(scope, loperand, true);
 
       roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter);
 
@@ -3650,7 +3713,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       target = { ObjectKind::ConstantRole, resolvedExtensionRef, resolvedExtensionRef };
    }
 
-   ref_t targetRef = resolveObjectReference(scope, target);
+   ref_t targetRef = resolveObjectReference(scope, target, true);
 
    CheckMethodResult result = {};
    bool found = _logic->resolveCallType(*scope.moduleScope, targetRef, message, result);
@@ -3707,13 +3770,13 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    if (operation != BuildKey::None) {
       bool targetOverridden = (target != arguments[0]);
       if (targetOverridden) {
-         target = boxArgument(writer, scope, target, false, false);
+         target = boxArgument(writer, scope, target, result.stackSafe, false);
       }
 
       pos_t counter = arguments.count_pos();
       // box the arguments if required
       for (unsigned int i = counter; i > 0; i--) {
-         ObjectInfo arg = boxArgument(writer, scope, arguments[i - 1], false, false);
+         ObjectInfo arg = boxArgument(writer, scope, arguments[i - 1], result.stackSafe, false);
 
          arguments[i - 1] = arg;
       }
@@ -3852,10 +3915,11 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    BuildKey operationType = BuildKey::None;
    int operand = 0;
 
-   ObjectInfo target = mapObject(scope, loperand, EAttr::None);
+   ObjectInfo target = mapObject(scope, loperand, EAttr::AssigningTarget);
    int size = 0;
    bool stackSafe = false;
    bool fieldMode = false;
+   ref_t targetRef = resolveObjectReference(scope, target, false, false);
    switch (target.kind) {
       case ObjectKind::Local:
          scope.markAsAssigned(target);
@@ -3885,14 +3949,27 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
          else assert(false);
 
          break;
+      // NOTE : it should be the last condition
+      case ObjectKind::Param:
+         if (targetRef == V_WRAPPER) {
+            targetRef = target.element;
+            size = _logic->defineStructSize(*scope.moduleScope, targetRef).size;
+            if (size > 0) {
+               stackSafe = true;
+               operationType = BuildKey::Copying;
+               operand = target.reference;
+            }
+            else assert(false); // !! temporally
+            break;
+         }
       default:
          scope.raiseError(errInvalidOperation, loperand.parentNode());
          break;
-   }
+   } 
 
    ObjectInfo exprVal;
    exprVal = compileExpression(writer, scope, roperand,
-      resolveObjectReference(scope, target), EAttr::Parameter);
+      targetRef, EAttr::Parameter);
 
    writeObjectInfo(writer, scope,
       boxArgument(writer, scope, exprVal, stackSafe, true));
@@ -4451,6 +4528,11 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       default:
          retVal = compileObject(writer, scope, node, mode);
          break;
+   }
+
+   ref_t resultRef = resolveObjectReference(scope, retVal, false);
+   if (!targetRef && isPrimitiveRef(resultRef)) {
+      targetRef = resolvePrimitiveReference(scope, resultRef, retVal.element, false);
    }
 
    if ((paramMode || targetRef) && hasToBePresaved(retVal)) {
@@ -5252,6 +5334,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
    moduleScope->buildins.intReference = safeMapReference(moduleScope, forwardResolver, INTLITERAL_FORWARD);
    moduleScope->buildins.literalReference = safeMapReference(moduleScope, forwardResolver, LITERAL_FORWARD);
+   moduleScope->buildins.wrapperTemplateReference = safeMapReference(moduleScope, forwardResolver, WRAPPER_FORWARD);
 
    moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);
    moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);

@@ -1140,12 +1140,12 @@ void TemplateProssesor :: copyField(SyntaxTreeWriter& writer, TemplateScope& sco
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-         case SyntaxKey::TemplateArgParameter:
-         {
-            SyntaxNode nodeToInject = scope.argValues.get(current.arg.value);
-            copyNode(writer, scope, nodeToInject);
-            break;
-         }
+         //case SyntaxKey::TemplateArgParameter:
+         //{
+         //   SyntaxNode nodeToInject = scope.argValues.get(current.arg.value);
+         //   copyNode(writer, scope, nodeToInject);
+         //   break;
+         //}
          default:
             copyNode(writer, scope, current);
             break;
@@ -1163,12 +1163,12 @@ void TemplateProssesor :: copyMethod(SyntaxTreeWriter& writer, TemplateScope& sc
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-         case SyntaxKey::TemplateArgParameter:
-         {
-            SyntaxNode nodeToInject = scope.argValues.get(current.arg.value);
-            copyNode(writer, scope, nodeToInject);
-            break;
-         }
+         //case SyntaxKey::TemplateArgParameter:
+         //{
+         //   SyntaxNode nodeToInject = scope.argValues.get(current.arg.value);
+         //   copyNode(writer, scope, nodeToInject);
+         //   break;
+         //}
          default:
             copyNode(writer, scope, current);
             break;

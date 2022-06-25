@@ -21,6 +21,7 @@ namespace elena_lang
       ref_t       outputRef;
       ref_t       constRef;
       Visibility  visibility;
+      bool        stackSafe;
    };
 
    // --- CompilerLogic ---
@@ -48,6 +49,7 @@ namespace elena_lang
       bool validateImplicitMethodAttribute(ref_t attribute, ref_t& hint);
       bool validateDictionaryAttribute(ref_t attribute, ref_t& dictionaryType);
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
+      bool validateArgumentAttribute(ref_t attrValue, bool& byRefArg);
 
       bool isRole(ClassInfo& info);
 
@@ -55,6 +57,10 @@ namespace elena_lang
       bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);
 
       bool isEmbeddableStruct(ClassInfo& info);
+
+      bool isEmbeddable(ModuleScopeBase& scope, ref_t reference);
+      bool isEmbeddable(ClassInfo& info);
+
       bool isMultiMethod(ClassInfo& info, MethodInfo& methodInfo);
 
       bool isValidOp(int operatorId, const int* validOperators, size_t len);

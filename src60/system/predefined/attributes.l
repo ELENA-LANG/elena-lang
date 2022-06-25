@@ -17,6 +17,7 @@
 /// scope_prefix:
 #let attributesSymbols["const"]       := 80002001h;
 #let attributesSymbols["embeddable"]  := 80002002h;
+#let attributesSymbols["ref"]         := 80002003h;
                                                  
 /// scope:
 #let attributesSymbols["class"]       := 80001001h;

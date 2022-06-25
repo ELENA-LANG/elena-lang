@@ -72,12 +72,13 @@ namespace elena_lang
 
    constexpr auto SYSTEM_FORWARD          = "$system_entry";   // the system entry
    constexpr auto SUPER_FORWARD           = "$super";          // the common class predecessor
-   constexpr auto INTLITERAL_FORWARD      = "$int";            // the common class predecessor
-   constexpr auto LITERAL_FORWARD         = "$string";         // the common class predecessor
-   constexpr auto CHAR_FORWARD            = "$char";         // the common class predecessor
-   constexpr auto BOOL_FORWARD            = "$boolean";        // the common class predecessor
-   constexpr auto TRUE_FORWARD            = "$true";           // the common class predecessor
-   constexpr auto FALSE_FORWARD           = "$false";          // the common class predecessor
+   constexpr auto INTLITERAL_FORWARD      = "$int";            // the int literal
+   constexpr auto LITERAL_FORWARD         = "$string";         // the string literal
+   constexpr auto CHAR_FORWARD            = "$char";           // the char literal
+   constexpr auto BOOL_FORWARD            = "$boolean";        // the boolean class
+   constexpr auto TRUE_FORWARD            = "$true";           // the true boolean value
+   constexpr auto FALSE_FORWARD           = "$false";          // the false boolean value
+   constexpr auto WRAPPER_FORWARD         = "$ref";            // the wrapper template 
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";

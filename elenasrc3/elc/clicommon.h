@@ -298,6 +298,7 @@ struct BuiltinReferences
    ref_t   superReference;
    ref_t   intReference;
    ref_t   literalReference;
+   ref_t   wrapperTemplateReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
@@ -313,6 +314,7 @@ struct BuiltinReferences
    {
       superReference = intReference = 0;
       literalReference = 0;
+      wrapperTemplateReference = 0;
 
       dispatch_message = constructor_message = 0;
       init_message = 0;
@@ -439,6 +441,7 @@ enum class ExpressionAttribute : pos64_t
    RootSymbol        = 0x00000000800,
    Root              = 0x00000001000,
    CastOp            = 0x00000002000,
+   AssigningTarget   = 0x00000004000,
    Extern            = 0x00000080000,
    Lookahead         = 0x20000080000,
    NoDebugInfo       = 0x40000000000,

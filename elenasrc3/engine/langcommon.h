@@ -150,6 +150,7 @@ namespace elena_lang
    /// scope_prefix:
    constexpr auto V_CONST                 = 0x80002001u;
    constexpr auto V_EMBEDDABLE            = 0x80002002u;
+   constexpr auto V_WRAPPER               = 0x80002003u;
 
    /// scope:
    constexpr auto V_CLASS                 = 0x80001001u;

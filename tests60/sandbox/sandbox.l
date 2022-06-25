@@ -1,23 +1,16 @@
 import system;
 
-public sealed ref<T>
-{
-   embeddable T field;
-
-   T get()
-      = field;
-
-   set(T v)
-   {
-      field := v
-   }
-}
-
 singleton Tester
 {
+   test(ref int r)
+   {
+      r := 3;
+   }
+
    run()
    {
-      ref<int> r := 1;
+      int r := 0;
+      Tester.test(ref r);
 
 //       byte b := 55;
 

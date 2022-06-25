@@ -383,6 +383,17 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
    }
 }
 
+bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, bool& byRefArg)
+{
+   switch (attrValue) {
+      case V_WRAPPER:
+         byRefArg = true;
+         return true;
+      default:
+         return false;
+   }
+}
+
 bool CompilerLogic :: validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_t message)
 {
    bool dispatchOne = message == scope.buildins.dispatch_message;
@@ -440,6 +451,24 @@ bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
 {
    return test(info.header.flags, elStructureRole)
       && !test(info.header.flags, elDynamicRole);
+}
+
+bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, ref_t reference)
+{
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference, true)) {
+      return isEmbeddable(info);
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: isEmbeddable(ClassInfo& info)
+{
+   if (test(info.header.flags, elDynamicRole)) {
+      return isEmbeddableArray(info);
+   }
+   else return isEmbeddableStruct(info);
 }
 
 bool CompilerLogic :: isMultiMethod(ClassInfo& info, MethodInfo& methodInfo)
@@ -845,6 +874,16 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          else if (test(info.header.flags, elClosed)) {
             result.kind = (ref_t)MethodHint::Virtual; // mark it as virtual - because the class is closed
          }
+      }
+
+      switch ((MethodHint)result.kind) {
+         case MethodHint::Virtual:
+         case MethodHint::Sealed:
+            result.stackSafe = true;
+            break;
+         default:
+            result.stackSafe = false;
+            break;
       }
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {

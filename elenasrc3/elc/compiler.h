@@ -34,6 +34,7 @@ namespace elena_lang
       Singleton,
       InternalProcedure,
       Param,
+      ParamField,
       Local,
       TempLocal,
       SelfLocal,
@@ -112,6 +113,22 @@ namespace elena_lang
          this->type = type;
          this->reference = reference;
          this->element = 0;
+         this->extra = extra;
+      }
+      ObjectInfo(ObjectKind kind, ref_t type, ref_t reference, ref_t elementRef, int extra)
+      {
+         this->kind = kind;
+         this->type = type;
+         this->reference = reference;
+         this->element = elementRef;
+         this->extra = extra;
+      }
+      ObjectInfo(ObjectKind kind, ref_t type, int argument, ref_t elementRef, int extra)
+      {
+         this->kind = kind;
+         this->type = type;
+         this->argument = argument;
+         this->element = elementRef;
          this->extra = extra;
       }
    };
@@ -497,7 +514,7 @@ namespace elena_lang
          }
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
-         ObjectInfo mapParameter(ustr_t identifier);
+         ObjectInfo mapParameter(ustr_t identifier, ExpressionAttribute attr);
          ObjectInfo mapSelf();
 
          bool isPrivate() const
@@ -721,11 +738,14 @@ namespace elena_lang
       void declareTemplateAttributes(Scope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
          bool declarationMode);
 
-      ref_t resolveObjectReference(Scope& scope, ObjectInfo info, bool noPrimitiveAllowed = true);
-      ref_t resolvePrimitiveReference(Scope& scope, ObjectInfo info);
+      ref_t resolveObjectReference(Scope& scope, ObjectInfo info, bool noPrimitiveAllowed,
+         bool unboxWrapper = true);
+      ref_t resolvePrimitiveReference(Scope& scope, ref_t typeRef, ref_t elementRef, bool declarationMode);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
          bool declarationMode);
       ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode);
+
+      ref_t resolveWrapperTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 
       int resolveSize(Scope& scope, SyntaxNode node);
       ref_t resolveTypeAttribute(Scope& scope, SyntaxNode node, 
@@ -753,7 +773,7 @@ namespace elena_lang
       void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& fldeclaredFlagsags);
       void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode);
       void declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode);
-      void declareArgumentAttributes(MethodScope& scope, SyntaxNode node, ref_t& typeRef, bool declarationMode);
+      void declareArgumentAttributes(MethodScope& scope, SyntaxNode node, ref_t& typeRef, ref_t& elementRef, bool declarationMode);
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, ref_t& dictionaryType);
       void declareExpressionAttributes(Scope& scope, SyntaxNode node, ref_t& typeRef, ExpressionAttributes& mode);
 
