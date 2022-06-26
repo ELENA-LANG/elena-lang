@@ -2436,16 +2436,10 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
    }
 }
 
-ref_t Compiler :: resolveObjectReference(Scope& scope, ObjectInfo info, bool noPrimitiveAllowed,
-   bool unboxWrapper)
+ref_t Compiler :: resolveObjectReference(Scope& scope, ObjectInfo info, bool noPrimitiveAllowed)
 {
    ref_t typeRef = info.type;
    ref_t elementRef = info.element;
-   if (unboxWrapper && typeRef == V_WRAPPER) {
-      typeRef = elementRef;
-      elementRef = 0;
-   }
-
    if (noPrimitiveAllowed && isPrimitiveRef(typeRef)) {
       typeRef = resolvePrimitiveReference(scope, typeRef, elementRef, false);
    }
@@ -3919,7 +3913,7 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    int size = 0;
    bool stackSafe = false;
    bool fieldMode = false;
-   ref_t targetRef = resolveObjectReference(scope, target, false, false);
+   ref_t targetRef = resolveObjectReference(scope, target, false);
    switch (target.kind) {
       case ObjectKind::Local:
          scope.markAsAssigned(target);
@@ -4177,6 +4171,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, ref_t declared
    bool externalOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::Extern);
    bool newOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::NewOp);
    bool castOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::CastOp);
+   bool refOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::RefOp);
 
    ObjectInfo retVal;
    bool invalid = false;
@@ -4217,24 +4212,36 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, ref_t declared
                retVal = scope.mapIdentifier(*forwardName, true, attrs);
             }
             else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
+
+            if (refOp) {
+               switch (retVal.kind) {
+                  case ObjectKind::LocalAddress:
+                     retVal.element = retVal.type;
+                     retVal.type = V_WRAPPER;
+                     break;
+                  default:
+                     invalid = true;
+                     break;
+               }
+            }
             break;
          case SyntaxKey::string:
-            invalid = forwardMode || variableMode;
+            invalid = forwardMode || variableMode || refOp;
 
             retVal = mapStringConstant(scope, node);
             break;
          case SyntaxKey::character:
-            invalid = forwardMode || variableMode;
+            invalid = forwardMode || variableMode || refOp;
 
             retVal = mapCharacterConstant(scope, node);
             break;
          case SyntaxKey::integer:
-            invalid = forwardMode || variableMode;
+            invalid = forwardMode || variableMode || refOp;
 
             retVal = mapIntConstant(scope, node, 10);
             break;
          case SyntaxKey::hexinteger:
-            invalid = forwardMode || variableMode;
+            invalid = forwardMode || variableMode || refOp;
 
             retVal = mapUIntConstant(scope, node, 16);
             break;

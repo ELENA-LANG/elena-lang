@@ -442,6 +442,7 @@ enum class ExpressionAttribute : pos64_t
    Root              = 0x00000001000,
    CastOp            = 0x00000002000,
    AssigningTarget   = 0x00000004000,
+   RefOp             = 0x00000008000,
    Extern            = 0x00000080000,
    Lookahead         = 0x20000080000,
    NoDebugInfo       = 0x40000000000,

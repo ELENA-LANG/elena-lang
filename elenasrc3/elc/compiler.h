@@ -56,6 +56,7 @@ namespace elena_lang
       SelfName,
       StaticField,
       StaticConstField,
+      Wrapper,
    };
 
    struct ObjectInfo
@@ -738,8 +739,7 @@ namespace elena_lang
       void declareTemplateAttributes(Scope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
          bool declarationMode);
 
-      ref_t resolveObjectReference(Scope& scope, ObjectInfo info, bool noPrimitiveAllowed,
-         bool unboxWrapper = true);
+      ref_t resolveObjectReference(Scope& scope, ObjectInfo info, bool noPrimitiveAllowed);
       ref_t resolvePrimitiveReference(Scope& scope, ref_t typeRef, ref_t elementRef, bool declarationMode);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
          bool declarationMode);

@@ -2,16 +2,8 @@ import system;
 
 singleton Tester
 {
-   test(ref int r)
-   {
-      r := 3;
-   }
-
    run()
    {
-      int r := 0;
-      Tester.test(ref r);
-
 //       byte b := 55;
 
 //       byte tmp[10];
