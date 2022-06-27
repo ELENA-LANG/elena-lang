@@ -484,7 +484,7 @@ bool LibraryProvider :: saveModule(ModuleBase* module)
 
    // saving a module
    IdentifierString tmp(*path);
-   printf("saving %s", tmp.str());
+   printf("saving %s\n", tmp.str());
 
    FileWriter writer(*path, FileEncoding::Raw, false);
    return dynamic_cast<Module*>(module)->save(writer);

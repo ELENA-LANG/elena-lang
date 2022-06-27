@@ -2302,8 +2302,10 @@ inline void copyObjectToAcc(BuildTreeWriter& writer, ClassInfo& info, int offset
    writer.closeNode();
 }
 
-ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t typeRef)
+ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info)
 {
+   ref_t typeRef = resolveObjectReference(scope, info, true);
+
    ObjectInfo tempLocal = {};
    if (hasToBePresaved(info)) {
       info = saveToTempLocal(writer, scope, info);
@@ -2352,7 +2354,8 @@ ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& sc
    }
 }
 
-ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool stackSafe, bool boxInPlace)
+ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
+   bool stackSafe, bool boxInPlace)
 {
    ObjectInfo retVal = { ObjectKind::Unknown };
 
@@ -2365,8 +2368,7 @@ ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, Ob
          retVal = scope.tempLocals.get(key);
 
       if (retVal.kind == ObjectKind::Unknown) {
-         retVal = boxArgumentInPlace(writer, scope, info, 
-            resolveObjectReference(scope, info, true));
+         retVal = boxArgumentInPlace(writer, scope, info);
 
          if (!boxInPlace)
             scope.tempLocals.add(key, retVal);
@@ -2458,6 +2460,8 @@ ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t typeRef, ref_t e
          return scope.moduleScope->branchingInfo.typeRef;
       case V_WRAPPER:
          return resolveWrapperTemplate(scope, elementRef, declarationMode);
+   case V_NIL:
+         return scope.moduleScope->buildins.superReference;
       default:
          throw InternalError(errFatalError);
    }
@@ -3544,7 +3548,7 @@ ref_t Compiler :: compileMessageArguments(BuildTreeWriter& writer, ExprScope& sc
 
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Expression) {
-         auto argInfo = compileExpression(writer, scope, current, 0, EAttr::Parameter);
+         auto argInfo = compileExpression(writer, scope, current, 0, EAttr::Parameter | EAttr::NoPrimitives);
          ref_t argRef = resolveObjectReference(scope, argInfo, false);
          if (argRef) {
             signatures[signatureLen++] = argRef;
@@ -3833,7 +3837,7 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
       addBreakpoint(writer, current, BuildKey::Breakpoint);
    }
 
-   ObjectInfo source = compileObject(writer, scope, current, EAttr::Parameter);
+   ObjectInfo source = compileExpression(writer, scope, current, 0, EAttr::Parameter | EAttr::NoPrimitives);
    switch (source.kind) {
       case ObjectKind::External:
       case ObjectKind::Creating:
@@ -3862,7 +3866,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    ArgumentsInfo arguments;
 
    SyntaxNode current = node.firstChild();
-   ObjectInfo source = compileObject(writer, scope, current, EAttr::Parameter);
+   ObjectInfo source = compileExpression(writer, scope, current, 0, EAttr::Parameter | EAttr::NoPrimitives);
    switch (source.kind) {
       case ObjectKind::External:
          compileMessageArguments(writer, scope, current, arguments);
@@ -4377,7 +4381,10 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
                source.type = targetRef;
                break;
             default:
-               return boxArgumentInPlace(writer, scope, source, targetRef);
+               //source.type = targetRef;
+               //return boxArgument(writer, scope, source, false, true);
+               assert(false);
+               break;
          }
       }
       else source = typecastObject(writer, scope, node, source, targetRef);
@@ -4477,6 +4484,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
    ref_t targetRef, ExpressionAttribute mode)
 {
    bool paramMode = EAttrs::testAndExclude(mode, EAttr::Parameter);
+   bool noPrimitives = EAttrs::testAndExclude(mode, EAttr::NoPrimitives);
 
    ObjectInfo retVal;
 
@@ -4519,6 +4527,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::Object:
          retVal = compileObject(writer, scope, current, mode);
+         if (retVal.kind == ObjectKind::External)
+            return retVal;
+
          break;
       case SyntaxKey::NestedBlock:
          retVal = compileNested(writer, scope, current, mode);
@@ -4538,7 +4549,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
    }
 
    ref_t resultRef = resolveObjectReference(scope, retVal, false);
-   if (!targetRef && isPrimitiveRef(resultRef)) {
+   if (!targetRef && isPrimitiveRef(resultRef) && noPrimitives) {
       targetRef = resolvePrimitiveReference(scope, resultRef, retVal.element, false);
    }
 

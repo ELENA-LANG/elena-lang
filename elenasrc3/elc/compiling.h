@@ -55,10 +55,10 @@ namespace elena_lang
 
       TemplateGenerator   _templateGenerator;
 
-      void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree);
+      void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode);
 
       void compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target);
-      void generateModule(ModuleScopeBase& moduleScope, BuildTree& tree);
+      void generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode);
       void parseFile(path_t projectPath,
          FileIteratorBase& file_it, 
          SyntaxWriterBase* syntaxWriter);

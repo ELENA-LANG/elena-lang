@@ -127,9 +127,9 @@ ref_t ModuleScope :: mapWeakReference(ustr_t referenceName, bool existing)
 {
    if (isTemplateWeakReference(referenceName)) {
       // COMPILER MAGIC : try to find a template implementation
-      return module->mapReference(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN), existing);
+      return mapFullReference(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN), existing);
    }
-   else return module->mapReference(referenceName, existing);
+   else return mapFullReference(referenceName, existing);
 }
 
 ExternalInfo ModuleScope :: mapExternal(ustr_t dllAlias, ustr_t functionName)
@@ -526,9 +526,5 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bo
 
 bool ModuleScope :: isDeclared(ref_t reference)
 {
-   ref_t resolvedReference = mapFullReference(module->resolveReference(reference), true);
-   if (resolvedReference) {
-      return module->mapSection(resolvedReference | mskMetaClassInfoRef, true) != nullptr;
-   }
-   return false;
+   return mapSection(reference | mskMetaClassInfoRef, true) != nullptr;
 }

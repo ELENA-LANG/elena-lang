@@ -177,7 +177,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       writer.closeNode();
       writer.closeNode();
 
-      _process->buildSyntaxTree(moduleScope, &syntaxTree);
+      _process->buildSyntaxTree(moduleScope, &syntaxTree, true);
 
    }
 
@@ -282,23 +282,25 @@ void CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree&
    _compiler->compile(&moduleScope, source, target);
 }
 
-void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree)
+void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode)
 {
    ByteCodeWriter bcWriter(&_libraryProvider);
    bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList);
 
-   _libraryProvider.saveModule(moduleScope.module);
-   _libraryProvider.saveDebugModule(moduleScope.debugModule);
+   if (savingMode) {
+      _libraryProvider.saveModule(moduleScope.module);
+      _libraryProvider.saveDebugModule(moduleScope.debugModule);
+   }
 }
 
-void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree)
+void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode)
 {
    // generating build tree
    BuildTree buildTree;
    compileModule(moduleScope, *syntaxTree, buildTree);
 
    // generating byte code
-   generateModule(moduleScope, buildTree);
+   generateModule(moduleScope, buildTree, !templateMode);
 }
 
 void CompilingProcess :: buildModule(path_t projectPath,
@@ -323,7 +325,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
       &moduleScope, &_templateGenerator);
    parseModule(projectPath, module_it, builder, moduleScope);
 
-   buildSyntaxTree(moduleScope, syntaxTree);
+   buildSyntaxTree(moduleScope, syntaxTree, false);
 }
 
 void CompilingProcess :: configurate(ProjectBase& project)

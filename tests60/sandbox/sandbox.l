@@ -1,9 +1,21 @@
 import system;
 
+public singleton byteConvertor
+{
+   convert(/*int n, */ref byte retVal)
+   {
+      retVal := 2;
+   }
+}
+
 singleton Tester
 {
    run()
    {
+       byte b := 0;
+       byteConvertor.convert(ref b);
+
+
 //       byte b := 55;
 
 //       byte tmp[10];
