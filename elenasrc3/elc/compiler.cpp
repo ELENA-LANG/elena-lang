@@ -2302,9 +2302,11 @@ inline void copyObjectToAcc(BuildTreeWriter& writer, ClassInfo& info, int offset
    writer.closeNode();
 }
 
-ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info)
+ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef)
 {
-   ref_t typeRef = resolveObjectReference(scope, info, true);
+   ref_t typeRef = targetRef;
+   if (!typeRef)
+      typeRef = resolveObjectReference(scope, info, true);
 
    ObjectInfo tempLocal = {};
    if (hasToBePresaved(info)) {
@@ -2355,7 +2357,7 @@ ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& sc
 }
 
 ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
-   bool stackSafe, bool boxInPlace)
+   bool stackSafe, bool boxInPlace, ref_t targetRef)
 {
    ObjectInfo retVal = { ObjectKind::Unknown };
 
@@ -2368,7 +2370,7 @@ ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, Ob
          retVal = scope.tempLocals.get(key);
 
       if (retVal.kind == ObjectKind::Unknown) {
-         retVal = boxArgumentInPlace(writer, scope, info);
+         retVal = boxArgumentInPlace(writer, scope, info, targetRef);
 
          if (!boxInPlace)
             scope.tempLocals.add(key, retVal);
@@ -3658,6 +3660,16 @@ mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectIn
    mssg_t resolvedMessage = 0;
    ref_t targetRef = resolveObjectReference(scope, target, true);
 
+   // try to resolve the message as is
+   resolvedMessage = _logic->resolveMultimethod(*scope.moduleScope, weakMessage, targetRef,
+      implicitSignatureRef/*, resolvedStackSafeAttr, isSelfCall(target)*/);
+   if (resolvedMessage != 0) {
+      //stackSafeAttr = resolvedStackSafeAttr;
+
+      // if the object handles the compile-time resolved message - use it
+      return resolvedMessage;
+   }
+
    if (!ignoreExtensions) {
       // check the existing extensions if allowed
       resolvedMessage = weakMessage;
@@ -4381,11 +4393,17 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
                source.type = targetRef;
                break;
             default:
-               //source.type = targetRef;
-               //return boxArgument(writer, scope, source, false, true);
-               assert(false);
-               break;
+               return boxArgument(writer, scope, source, false, true, targetRef);
          }
+      }
+      else if (conversionRoutine.result == ConversionResult::Conversion) {
+         ArgumentsInfo arguments;
+         arguments.add(source);
+         ref_t signRef = scope.module->mapSignature(&sourceRef, 1, false);
+
+         return compileNewOp(writer, scope, node, mapClassSymbol(scope, targetRef),
+            signRef, arguments);
+
       }
       else source = typecastObject(writer, scope, node, source, targetRef);
    }

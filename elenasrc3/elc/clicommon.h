@@ -666,13 +666,15 @@ public:
 enum class ConversionResult
 {
    None = 0,
-   BoxingRequired
+   BoxingRequired,
+   Conversion
 };
 
 // --- ConversionRoutine ---
 struct ConversionRoutine
 {
    ConversionResult result;
+   mssg_t           conversionMssg;
 };
 
 }

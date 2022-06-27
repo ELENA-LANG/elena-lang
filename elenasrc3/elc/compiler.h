@@ -856,8 +856,9 @@ namespace elena_lang
 
       ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, ArgumentsInfo& arguments);
 
-      ObjectInfo boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
-      ObjectInfo boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool stackSafe, bool boxInPlace);
+      ObjectInfo boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
+      ObjectInfo boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
+         bool stackSafe, bool boxInPlace, ref_t targetRef = 0);
       ObjectInfo boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool boxInPlace);
 
       ObjectInfo saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object);

@@ -4,7 +4,9 @@ public singleton byteConvertor
 {
    convert(/*int n, */ref byte retVal)
    {
-      retVal := 2;
+      byte b := 2;
+
+//      retVal := 2;
    }
 }
 

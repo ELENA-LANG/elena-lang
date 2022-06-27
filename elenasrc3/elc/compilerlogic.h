@@ -31,11 +31,15 @@ namespace elena_lang
          mssg_t message, void* param, ref_t(*resolve)(void*, ref_t));
 
       bool isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t sourceLen);
+      bool isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* targetModule, ref_t targetSignature, 
+         ref_t* sourceSignatures, size_t sourceLen);
 
    public:
       BuildKey resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length, ref_t& outputRef, bool& needToAlloc);
 
       bool defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly = false, bool fieldsOnly = false);
+
+      ref_t getClassClassRef(ModuleScopeBase& scope, ref_t targetRef);
 
       SizeInfo defineStructSize(ClassInfo& info);
       SizeInfo defineStructSize(ModuleScopeBase& scope, ref_t reference);
@@ -92,6 +96,8 @@ namespace elena_lang
       bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, mssg_t targetMessage,
          ref_t* sourceSignature, size_t len);
 
+      ref_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, size_t signLen);
+
       ConversionRoutine retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef);
 
       bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
@@ -106,6 +112,8 @@ namespace elena_lang
          void* param, ref_t(*resolve)(void*, ref_t));
 
       void verifyMultimethods();
+
+      mssg_t resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, ref_t implicitSignatureRef);
 
       static CompilerLogic* getInstance()
       {

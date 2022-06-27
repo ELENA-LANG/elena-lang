@@ -790,6 +790,28 @@ inline ref_t getSignature(ModuleScopeBase& scope, mssg_t message)
    return signRef;
 }
 
+bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* targetModule, ref_t targetSignature, 
+   ref_t* sourceSignatures, size_t sourceLen)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
+
+   if (sourceLen == 0 && len == 0)
+      return true;
+
+   if (len < 1)
+      return false;
+
+   for (size_t i = 0; i < sourceLen; i++) {
+      ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
+
+      if (!isCompatible(scope, scope.importReference(targetModule, targetSign), sourceSignatures[i], true))
+         return false;
+   }
+
+   return true;
+}
+
 bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature, 
    ref_t* sourceSignatures, size_t sourceLen)
 {
@@ -829,6 +851,77 @@ bool CompilerLogic :: isMessageCompatibleWithSignature(ModuleScopeBase& scope, m
    else return false;
 }
 
+ref_t CompilerLogic :: getClassClassRef(ModuleScopeBase& scope, ref_t targetRef)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, targetRef, true))
+      return 0;
+
+   return info.header.classRef;
+}
+
+mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, ref_t implicitSignatureRef)
+{
+   if (!targetRef)
+      return 0;
+
+   ClassInfo info;
+   if (defineClassInfo(scope, info, targetRef)) {
+      if (!implicitSignatureRef)
+         return 0;
+
+      ref_t signatures[ARG_COUNT];
+      size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
+
+      ref_t listRef = info.attributes.get({ weakMessage, ClassAttribute::OverloadList });
+      if (listRef) {
+         auto sectionInfo = scope.getSection(scope.module->resolveReference(listRef), mskConstArray, true);
+         if (!sectionInfo.section || sectionInfo.section->length() < 4)
+            return 0;
+
+         MemoryReader reader(sectionInfo.section);
+         pos_t position = sectionInfo.section->length() - 4;
+         mssg_t foundMessage = 0;
+         while (position != 0) {
+            reader.seek(position - 8);
+            mssg_t argMessage = reader.getRef();
+            ref_t argSign = 0;
+            sectionInfo.module->resolveAction(getAction(argMessage), argSign);
+
+            if (sectionInfo.module == scope.module) {
+               if (isSignatureCompatible(scope, argSign, signatures, signatureLen)) {
+                  foundMessage = argMessage;
+               }
+            }
+            else {
+               if (isSignatureCompatible(scope, sectionInfo.module, 
+                  argSign, signatures, signatureLen)) 
+               {
+                  foundMessage = scope.importMessage(sectionInfo.module, argMessage);
+               }
+            }
+
+            position -= 8;
+         }
+         return foundMessage;
+      }
+   }
+
+   return 0;
+}
+
+ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, pos_t signLen)
+{
+   ref_t classClassRef = getClassClassRef(scope, targetRef);
+   mssg_t messageRef = overwriteArgCount(scope.buildins.constructor_message, signLen);
+
+   // try to resolve implicit multi-method
+   mssg_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef, signRef);
+   if (resolvedMessage)
+      return resolvedMessage;
+
+}
+
 ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef)
 {
    ClassInfo info;
@@ -845,6 +938,12 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& sc
       if (compatible)
          return { ConversionResult::BoxingRequired };
    }
+
+   // if there is a implicit conversion routine
+   ref_t signRef = scope.module->mapSignature(&sourceRef, 1, false);
+   mssg_t messageRef = retrieveImplicitConstructor(scope, targetRef, signRef, 1);
+   if (messageRef)
+      return { ConversionResult::Conversion, messageRef };
 
    return {};
 }
