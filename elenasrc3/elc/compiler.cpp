@@ -1226,7 +1226,7 @@ mssg_t Compiler :: defineMultimethod(ClassScope& scope, mssg_t messageRef)
    ref_t actionRef = 0, flags = 0, signRef = 0;
    decodeMessage(messageRef, actionRef, argCount, flags);
 
-   if (argCount == 1)
+   if (argCount <= (test(flags, FUNCTION_MESSAGE) ? 0 : 1))
       return 0;
 
    ustr_t actionStr = scope.module->resolveAction(actionRef, signRef);
@@ -4913,25 +4913,23 @@ void Compiler :: compileAbstractMethod(BuildTreeWriter& writer, MethodScope& sco
    writer.closeNode();
 }
 
-void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node)
+void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope, ClassScope& classScope, SyntaxNode node)
 {
-   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
-
    mssg_t message = scope.getMessageID();
 
    BuildKey op = BuildKey::DispatchingOp;
-   ref_t    opRef = classScope->info.attributes.get({ message, ClassAttribute::OverloadList });
+   ref_t    opRef = classScope.info.attributes.get({ message, ClassAttribute::OverloadList });
    if (!opRef)
       scope.raiseError(errIllegalOperation, node);
 
-   if (test(classScope->info.header.flags, elSealed) || test(message, STATIC_MESSAGE)) {
+   if (test(classScope.info.header.flags, elSealed) || test(message, STATIC_MESSAGE)) {
       op = BuildKey::SealedDispatchingOp;
    }
 
    writer.newNode(op, opRef);
    writer.appendNode(BuildKey::Message, message);
    writer.closeNode();
-   if (classScope->extensionDispatcher) {
+   if (classScope.extensionDispatcher) {
       writer.appendNode(BuildKey::Argument, 0);
 
       writer.newNode(BuildKey::ResendOp);
@@ -4941,7 +4939,16 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
 
 void Compiler :: compileDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
 {
-   compileMultidispatch(writer, codeScope, node);
+   ClassScope* classScope = Scope::getScope<ClassScope>(codeScope, Scope::ScopeLevel::Class);
+
+   compileMultidispatch(writer, codeScope, *classScope, node);
+   // adding resend / redirect
+}
+
+void Compiler :: compileConstructorDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, 
+   ClassScope& classClassScope, SyntaxNode node)
+{
+   compileMultidispatch(writer, codeScope, classClassScope, node);
    // adding resend / redirect
 }
 
@@ -5028,6 +5035,9 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
 
    bool newFrame = false;
+   if (current == SyntaxKey::ResendDispatch || current == SyntaxKey::RedirectDispatch) {
+      // do not create a frame for resend operation
+   }
    if (isDefConvConstructor) {
       // new stack frame
       writer.appendNode(BuildKey::OpenFrame);
@@ -5047,6 +5057,10 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    switch (current.key) {
       case SyntaxKey::CodeBlock:
          compileMethodCode(writer, scope, codeScope, node, newFrame);
+         break;
+      case SyntaxKey::ResendDispatch:
+      case SyntaxKey::RedirectDispatch:
+         compileConstructorDispatchCode(writer, codeScope, classClassScope, node);
          break;
       case SyntaxKey::None:
          if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
@@ -5530,7 +5544,7 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
       ref_t signatureLen = 0;
       ref_t signatures[ARG_COUNT];
 
-      pos_t firstArg = /*test(flags, FUNCTION_MESSAGE) ? 0 : */1;
+      pos_t firstArg = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
       for (pos_t i = firstArg; i < argCount; i++) {
          signatures[signatureLen++] = scope.buildins.superReference;
       }

@@ -12,19 +12,19 @@ public singleton byteConvertor
 
 B;
 
-//A
-//{
-//   constructor(B b)
-//   {
-//   }
-//}
+A
+{
+   constructor(B b)
+   {
+   }
+}
 
 singleton Tester
 {
    run()
    {
        B b := new B();
-//       A a := b;
+       A a := b;
 
 //       byte b := 0;
 //       byteConvertor.convert(ref b);
