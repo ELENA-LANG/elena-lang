@@ -2,20 +2,32 @@ import system;
 
 public singleton byteConvertor
 {
-   convert(/*int n, */ref byte retVal)
-   {
-      byte b := 2;
+//   convert(/*int n, */ref byte retVal)
+//   {
+//      byte b := 2;
 
 //      retVal := 2;
-   }
+//   }
 }
+
+B;
+
+//A
+//{
+//   constructor(B b)
+//   {
+//   }
+//}
 
 singleton Tester
 {
    run()
    {
-       byte b := 0;
-       byteConvertor.convert(ref b);
+       B b := new B();
+//       A a := b;
+
+//       byte b := 0;
+//       byteConvertor.convert(ref b);
 
 
 //       byte b := 55;

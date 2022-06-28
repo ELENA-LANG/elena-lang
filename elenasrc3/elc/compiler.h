@@ -954,7 +954,7 @@ namespace elena_lang
          ClassInfo& classInfo, mssg_t message, bool inherited, ref_t outputRef);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, 
          mssg_t resendMessage, ref_t resendTarget, ref_t outputRef);
-      void injectDefaultConstructor(ModuleScopeBase* scope, SyntaxNode node);
+      void injectDefaultConstructor(ClassScope& scope, SyntaxNode node);
 
       void injectVariableInfo(BuildNode node, CodeScope& codeScope);
 
