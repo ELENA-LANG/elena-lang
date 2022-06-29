@@ -442,7 +442,7 @@ ObjectInfo Compiler::NamespaceScope :: mapWeakReference(ustr_t identifier, bool 
    }
    else reference = moduleScope->mapFullReference(identifier);
 
-   return defineObjectInfo(reference, EAttr::None, false);
+   return defineObjectInfo(reference, EAttr::None, true);
 }
 
 // --- Compiler::MetaScope ---
@@ -4857,7 +4857,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
       retVal = scope.mapSelf();
       ref_t outputRef = scope.info.outputRef;
       if (outputRef) {
-         typecastObject(writer, exprScope, node, retVal, outputRef);
+         convertObject(writer, exprScope, node, retVal, outputRef);
 
          exprScope.syncStack();
       }
