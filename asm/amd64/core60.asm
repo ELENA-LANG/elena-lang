@@ -178,6 +178,13 @@ inline %8
 
 end
 
+// ; save
+inline %9
+
+  mov  dword ptr [rbx], edx
+
+end
+
 // ; setr
 inline %80h
 
@@ -359,6 +366,13 @@ end
 inline %93h
 
   add  rsp, __arg32_1
+
+end
+
+// ; andn
+inline %94h
+
+  and  edx, __n_1
 
 end
 

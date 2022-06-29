@@ -963,6 +963,16 @@ bool X86Assembler :: compileAnd(X86Operand source, X86Operand target, MemoryWrit
       writer.writeByte(0x23);
       X86Helper::writeModRM(writer, source, target);
    }
+   else if (source.isR32() && target.type == X86OperandType::DB) {
+      writer.writeByte(0x83);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
+      X86Helper::writeImm(writer, target);
+   }
+   else if (source.isR32_M32() && target.type == X86OperandType::DD) {
+      writer.writeByte(0x81);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
+      X86Helper::writeImm(writer, target);
+   }
    else return false;
 
    return true;

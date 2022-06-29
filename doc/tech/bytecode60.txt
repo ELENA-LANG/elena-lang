@@ -50,6 +50,8 @@ ELENA byte codes (or ecodes)
 
  Register operations:
  --------------------
+   andn n                   - index := index & n
+
    get i                    - acc[i] => acc
 
    load                     - index := [acc] 
@@ -59,6 +61,8 @@ ELENA byte codes (or ecodes)
    mov mssg:m               - index := m
 
    peek r                   - acc <= [r] 
+
+   save                     - [acc] := index
 
    seleq r1, r2             - acc <= COMP.EQ ? r1 : r2
 
@@ -177,6 +181,8 @@ ELENA byte codes (or ecodes)
 
  Arithmeric operations:
  ----------------------
+   andn n                   - index := index & n
+ 
    iadd dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] += temp;
                               n = 1,2,4,8 

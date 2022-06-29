@@ -1,30 +1,11 @@
 import system;
 
-public singleton byteConvertor
-{
-//   convert(/*int n, */ref byte retVal)
-//   {
-//      byte b := 2;
-
-//      retVal := 2;
-//   }
-}
-
-B;
-
-A
-{
-   constructor(B b)
-   {
-   }
-}
-
 singleton Tester
 {
    run()
    {
-       B b := new B();
-       A a := b;
+       byte n;
+       byteConvertor.convert(2, ref n);
 
 //       byte b := 0;
 //       byteConvertor.convert(ref b);

@@ -26,6 +26,7 @@ namespace elena_lang
       Load           = 0x06,
       Len            = 0x07,
       Class          = 0x08,
+      Save           = 0x09,
 
       MaxSingleOp    = 0x7F,
 
@@ -41,6 +42,7 @@ namespace elena_lang
       CloseN         = 0x91,
       AllocI         = 0x92,
       FreeI          = 0x93,
+      AndN           = 0x94,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,

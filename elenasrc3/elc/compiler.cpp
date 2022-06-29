@@ -3930,6 +3930,7 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    int size = 0;
    bool stackSafe = false;
    bool fieldMode = false;
+   bool accMode = false;
    ref_t targetRef = resolveObjectReference(scope, target, false);
    switch (target.kind) {
       case ObjectKind::Local:
@@ -3967,8 +3968,9 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
             size = _logic->defineStructSize(*scope.moduleScope, targetRef).size;
             if (size > 0) {
                stackSafe = true;
-               operationType = BuildKey::Copying;
+               operationType = BuildKey::AccCopying;
                operand = target.reference;
+               accMode = true;
             }
             else assert(false); // !! temporally
             break;
@@ -3978,16 +3980,19 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
          break;
    } 
 
-   ObjectInfo exprVal;
-   exprVal = compileExpression(writer, scope, roperand,
+   ObjectInfo exprVal = compileExpression(writer, scope, roperand,
       targetRef, EAttr::Parameter);
 
    writeObjectInfo(writer, scope,
       boxArgument(writer, scope, exprVal, stackSafe, true));
 
    if (fieldMode) {
-      writer.appendNode(BuildKey::Argument, 0);
+      writer.appendNode(BuildKey::SavingInStack, 0);
       writeObjectInfo(writer, scope, scope.mapSelf());
+   }
+   else if (accMode) {
+      writer.appendNode(BuildKey::SavingInStack, 0);
+      writeObjectInfo(writer, scope, target);
    }
 
    writer.newNode(operationType, operand);
@@ -4386,11 +4391,17 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
 {
    ref_t sourceRef = resolveObjectReference(scope, source, isConstant(source));
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef, false)) {
+      if (sourceRef == V_WRAPPER) {
+         // unbox wrapper for the conversion
+         sourceRef = source.element;
+      }
+
       auto conversionRoutine = _logic->retrieveConversionRoutine(*scope.moduleScope, targetRef, sourceRef);
       if (conversionRoutine.result == ConversionResult::BoxingRequired) {
          // if it is implcitily compatible
          switch (source.kind) {
             case ObjectKind::TempLocalAddress:
+            case ObjectKind::LocalAddress:
                source.type = targetRef;
                break;
             default:

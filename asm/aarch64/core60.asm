@@ -190,6 +190,13 @@ inline %8
 
 end
 
+// ; save
+inline %9
+
+  str    x9, [x10]
+
+end
+
 // ; setr
 inline %80h
 
@@ -396,6 +403,13 @@ end
 inline %93h
 
   add     sp, sp, __arg12_1
+
+end
+
+// ; andn
+inline %94h
+
+  and     x9, x9, __n12_1
 
 end
 

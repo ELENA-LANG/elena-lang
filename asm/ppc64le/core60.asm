@@ -204,6 +204,13 @@ inline %8
 
 end
 
+// ; save
+inline %9
+
+  stw      r14, 0(r15)
+
+end
+
 // ; setr
 inline %80h
 
@@ -446,6 +453,13 @@ end
 inline %93h
 
   addi    r1, r1, __arg16_1     // ; free stack
+
+end
+
+// ; andn
+inline %93h
+
+  and    r14, r14, __n16_1     // ; free stack
 
 end
 

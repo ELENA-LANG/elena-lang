@@ -96,7 +96,7 @@ namespace elena_lang
       bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, mssg_t targetMessage,
          ref_t* sourceSignature, size_t len);
 
-      ref_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, size_t signLen);
+      ref_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, pos_t signLen);
 
       ConversionRoutine retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef);
 

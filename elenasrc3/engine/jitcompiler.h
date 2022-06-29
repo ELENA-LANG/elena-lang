@@ -95,6 +95,7 @@ namespace elena_lang
       friend void loadOp(JITCompilerScope* scope);
       friend void loadLOp(JITCompilerScope* scope);
       friend void loadIndexOp(JITCompilerScope* scope);
+      friend void loadNOp(JITCompilerScope* scope);
       friend void loadFieldIndexOp(JITCompilerScope* scope);
       friend void loadStackIndexOp(JITCompilerScope* scope);
       friend void loadVMTIndexOp(JITCompilerScope* scope);
@@ -313,6 +314,7 @@ namespace elena_lang
    void loadOp(JITCompilerScope* scope);
    void loadLOp(JITCompilerScope* scope);
    void loadIndexOp(JITCompilerScope* scope);
+   void loadNOp(JITCompilerScope* scope);
    void loadFieldIndexOp(JITCompilerScope* scope);
    void loadVMTIndexOp(JITCompilerScope* scope);
    void loadFrameIndexOp(JITCompilerScope* scope);
