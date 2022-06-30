@@ -58,6 +58,8 @@ namespace elena_lang
       void undo(TextViewModelBase* model) override;
       void redo(TextViewModelBase* model) override;
 
+      void deleteText(TextViewModelBase* model) override;
+
       bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
       void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
 

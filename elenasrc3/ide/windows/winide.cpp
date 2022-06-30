@@ -165,7 +165,7 @@ void IDEWindow :: pasteFromClipboard()
 
 void IDEWindow :: deleteText()
 {
-   
+   _controller->sourceController.deleteText(_model->viewModel());
 }
 
 bool IDEWindow :: onCommand(int command)

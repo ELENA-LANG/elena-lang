@@ -93,6 +93,14 @@ void TextViewController :: pasteFromClipboard(TextViewModelBase* model, Clipboar
    }
 }
 
+void TextViewController::deleteText(TextViewModelBase* model)
+{
+   auto docView = model->DocView();
+   if (!docView->status.readOnly) {
+      docView->eraseSelection();
+   }
+}
+
 void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
    auto docView = model->DocView();
