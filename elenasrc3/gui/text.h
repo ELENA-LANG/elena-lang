@@ -301,6 +301,7 @@ namespace elena_lang
 
       void copyLineTo(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_t length, bool stopOnEOL);
       void copyLineToX(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_t length, int x);
+      void copyTo(TextBookmark bookmark, text_c* buffer, disp_t length);
 
       text_t getLine(TextBookmark& bookmark, pos_t& length);
 

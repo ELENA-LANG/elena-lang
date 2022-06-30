@@ -76,6 +76,23 @@ void TextViewController :: redo(TextViewModelBase* model)
    docView->redo();
 }
 
+bool TextViewController :: copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard)
+{
+   auto docView = model->DocView();
+   if (docView->hasSelection()) {
+      return clipboard->copyToClipboard(docView);
+   }
+   else return false;
+}
+
+void TextViewController :: pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard)
+{
+   auto docView = model->DocView();
+   if (!docView->status.readOnly) {
+      clipboard->pasteFromClipboard(docView);
+   }
+}
+
 void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
    auto docView = model->DocView();

@@ -14,9 +14,33 @@
 
 namespace elena_lang
 {
+   // --- Clipboard ---
+   class Clipboard : public ClipboardBase
+   {
+      ControlBase* _owner;
+
+      bool begin();
+      void clear();
+      void copy(HGLOBAL buffer);
+      HGLOBAL get();
+      void end();
+
+      HGLOBAL createBuffer(size_t size);
+      wchar_t* allocateBuffer(HGLOBAL buffer);
+      void freeBuffer(HGLOBAL buffer);
+
+   public:
+      bool copyToClipboard(DocumentView* docView) override;
+      void pasteFromClipboard(DocumentView* docView) override;
+
+      Clipboard(ControlBase* owner);
+   };
+
+   // --- IDEWindow ---
    class IDEWindow : public SDIWindow
    {
       Dialog         dialog;
+      Clipboard      clipboard;
 
       HINSTANCE      _instance;
 
@@ -40,6 +64,9 @@ namespace elena_lang
 
       void undo();
       void redo();
+      bool copyToClipboard();
+      void pasteFromClipboard();
+      void deleteText();
 
    public:
       IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, 

@@ -14,6 +14,10 @@
 
 #define IDM_EDIT_UNDO               501
 #define IDM_EDIT_REDO               502
+#define IDM_EDIT_CUT                503
+#define IDM_EDIT_COPY               504
+#define IDM_EDIT_PASTE              505
+#define IDM_EDIT_DELETE             506
 
 #define IDM_DEBUG_RUN               601
 #define IDM_DEBUG_STEPOVER          602

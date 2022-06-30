@@ -448,6 +448,16 @@ bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
       case VK_DOWN:
          _controller->moveCaretDown(_model, kbShift, kbCtrl);
          break;
+      case VK_DELETE:
+      {
+         auto docView = _model->DocView();
+         if (docView->status.readOnly)
+            return false;
+
+         docView->eraseChar(false);
+         onDocumentUpdate();
+         break;
+      }
       default:
          return false;
    }

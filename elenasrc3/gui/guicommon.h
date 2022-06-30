@@ -152,6 +152,7 @@ namespace elena_lang
 
       virtual ~GUIApp() = default;
    };
+
 }
 
 #endif

@@ -279,6 +279,11 @@ void DocumentView :: onErase(size_t position, size_t length, text_t line)
    status.frameChanged = true;
 }
 
+disp_t DocumentView :: getSelectionLength()
+{
+   return abs(_selection);
+}
+
 pos_t DocumentView :: format(LexicalReader& reader)
 {
    pos_t length = _size.x;
@@ -667,6 +672,20 @@ void DocumentView :: insertNewLine()
    status.rowDifference += (_text->getRowCount() - rowCount);
 }
 
+void DocumentView :: insertLine(text_t text, disp_t length)
+{
+   int rowCount = _text->getRowCount();
+
+   eraseSelection();
+
+   _text->insertLine(_caret, text, length);
+   _caret.moveOn(length);
+
+   setCaret(_caret.getCaret(), false);
+
+   status.rowDifference += (_text->getRowCount() - rowCount);
+}
+
 void DocumentView :: eraseChar(bool moveback)
 {
    int rowCount = _text->getRowCount();
@@ -705,6 +724,16 @@ bool DocumentView :: eraseSelection()
    status.selelectionChanged = true;
 
    return true;
+}
+
+void DocumentView :: copySelection(text_c* text)
+{
+   if (_selection == 0) {
+      text[0] = 0;
+   }
+   else {
+      _text->copyTo(_caret, text, _selection);
+   }
 }
 
 void DocumentView :: undo()

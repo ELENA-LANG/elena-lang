@@ -237,6 +237,7 @@ namespace elena_lang
       virtual void resize(Point size);
 
       bool hasSelection() const { return (_selection != 0); }
+      disp_t getSelectionLength();
 
       TextBookmark getCaretBookmark() { return _caret; }
 
@@ -276,9 +277,12 @@ namespace elena_lang
          insertChar(ch, 1);
       }
       void insertChar(text_c ch, size_t number);
+      void insertLine(text_t text, disp_t length);
 
       void eraseChar(bool moveback);
       bool eraseSelection();
+
+      void copySelection(text_c* text);
 
       void undo();
       void redo();

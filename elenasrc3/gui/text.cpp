@@ -624,6 +624,34 @@ void Text :: copyLineToX(TextBookmark& bookmark, TextWriter<text_c>& writer, pos
    }
 }
 
+void Text :: copyTo(TextBookmark bookmark, text_c* buffer, disp_t length)
+{
+   validateBookmark(bookmark);
+   if (length < 0) {
+      bookmark.go(length);
+      length = -length;
+   }
+
+   buffer[length] = 0;
+   while (length > 0) {
+      if (bookmark._offset >= (*bookmark._page).used) {
+         bookmark.goToNextPage();
+      }
+      size_t copied = (*bookmark._page).used - bookmark._offset;
+      if (copied > (size_t)length) {
+         copied = length;
+      }
+      StrUtil::move(buffer, (*bookmark._page).text + bookmark._offset, copied);
+
+      if (!copied)
+         break;
+
+      bookmark.go(copied);
+      buffer += copied;
+      length -= copied;
+   }
+}
+
 text_t Text :: getLine(TextBookmark& bookmark, pos_t& length)
 {
    validateBookmark(bookmark);
