@@ -374,6 +374,37 @@ inline %94h
 
 end
 
+// ; readn
+inline %95h
+
+  mov  ecx, __n_1 
+  mov  eax, edx
+  mul  ecx
+  mov  edi, esi
+  add  esi, eax
+  mov  eax,  edi
+  mov  edi, ebx
+  rep  movsb
+  mov  esi, eax
+
+end
+
+// ; writen
+inline %96h
+
+  mov  ecx, __n_1 
+  mov  eax, edx
+  mul  ecx
+  mov  edi, esi
+  add  esi, eax
+  mov  eax,  edi
+  mov  edi, esi
+  mov  esi, ebx
+  rep  movsb
+  mov  esi, eax
+
+end
+
 // ; saveddisp
 inline %0A0h
 

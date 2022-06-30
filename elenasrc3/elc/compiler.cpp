@@ -1226,7 +1226,7 @@ mssg_t Compiler :: defineMultimethod(ClassScope& scope, mssg_t messageRef)
    ref_t actionRef = 0, flags = 0, signRef = 0;
    decodeMessage(messageRef, actionRef, argCount, flags);
 
-   if (argCount <= (test(flags, FUNCTION_MESSAGE) ? 0 : 1))
+   if (argCount <= (test(flags, FUNCTION_MESSAGE) ? 0u : 1u))
       return 0;
 
    ustr_t actionStr = scope.module->resolveAction(actionRef, signRef);
@@ -1241,7 +1241,7 @@ mssg_t Compiler :: defineMultimethod(ClassScope& scope, mssg_t messageRef)
    return 0;
 }
 
-void Compiler :: injectVirtualCode(SyntaxNode classNode, ClassScope& scope)
+void Compiler :: injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased)
 {
    if (test(scope.info.header.flags, elClassClass)) {
 
@@ -1254,7 +1254,7 @@ void Compiler :: injectVirtualCode(SyntaxNode classNode, ClassScope& scope)
       }
 
       // skip class classes, extensions and singletons
-      if (scope.reference != scope.moduleScope->buildins.superReference && !test(scope.info.header.flags, elClosed)) {
+      if (scope.reference != scope.moduleScope->buildins.superReference && !interfaceBased) {
          // auto generate cast$<type> message for explicitly declared classes
          ref_t signRef = scope.module->mapSignature(&scope.reference, 1, false);
          ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
@@ -1500,7 +1500,7 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
       generateClassFields(scope, node, SyntaxTree:: countChild(node, SyntaxKey::Field) == 1);
    }
 
-   injectVirtualCode(node, scope);
+   injectVirtualCode(node, scope, closed);
 
    if (scope.isClassClass()) {
       generateMethodDeclarations(scope, node, SyntaxKey::StaticMethod, false);
@@ -3312,7 +3312,6 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
    }
 }
 
-
 ObjectInfo Compiler :: declareTempStructure(ExprScope& scope, int size)
 {
    if (size <= 0)
@@ -3403,8 +3402,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       }
 
       if (inode != SyntaxKey::None)
-         throw InternalError(errFatalError);
-         //writeObjectInfo(writer, ioperand);
+         writeObjectInfo(writer, scope, ioperand);
 
       writer.newNode(op, operatorId);
 
@@ -4376,10 +4374,10 @@ ObjectInfo Compiler :: typecastObject(BuildTreeWriter& writer, ExprScope& scope,
    return retVal;
 }
 
-inline bool isConstant(ObjectInfo info)
+inline bool isNormalConstant(ObjectInfo info)
 {
    switch (info.kind) {
-      case ObjectKind::IntLiteral:
+      case ObjectKind::StringLiteral:
          return true;
    default:
       return false;
@@ -4389,7 +4387,7 @@ inline bool isConstant(ObjectInfo info)
 ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source,
    ref_t targetRef)
 {
-   ref_t sourceRef = resolveObjectReference(scope, source, isConstant(source));
+   ref_t sourceRef = resolveObjectReference(scope, source, isNormalConstant(source));
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef, false)) {
       if (sourceRef == V_WRAPPER) {
          // unbox wrapper for the conversion
@@ -4402,6 +4400,7 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
          switch (source.kind) {
             case ObjectKind::TempLocalAddress:
             case ObjectKind::LocalAddress:
+            case ObjectKind::IntLiteral:
                source.type = targetRef;
                break;
             default:

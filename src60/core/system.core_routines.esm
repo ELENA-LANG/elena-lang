@@ -17,10 +17,10 @@ end
 
 procedure __intToByte
 
-  peek       sp:0
+  peek       sp:1
   load
   andn       0FFh
-  peek       sp:1
+  peek       sp:2
   save
 
 end

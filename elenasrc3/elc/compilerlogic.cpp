@@ -55,6 +55,8 @@ struct Op
 
 constexpr int DictionaryOperators[1]  = { SET_INDEXER_OPERATOR_ID };
 constexpr int ArrayOperators[1]       = { ADD_ASSIGN_OPERATOR_ID };
+constexpr int ArraySetOperators[1]    = { SET_INDEXER_OPERATOR_ID };
+constexpr int ArrayGetOperators[1]    = { INDEX_OPERATOR_ID };
 constexpr int SArrayOperators[1]      = { LEN_OPERATOR_ID };
 constexpr int IntOperators[2]         = { ADD_OPERATOR_ID, SUB_OPERATOR_ID };
 constexpr int CondOperators[3]        = { EQUAL_OPERATOR_ID, NOTEQUAL_OPERATOR_ID, LESS_OPERATOR_ID };
@@ -63,7 +65,7 @@ constexpr int BranchingOperators[3]   = { IF_OPERATOR_ID, ELSE_OPERATOR_ID, IF_E
 constexpr int SDeclOperators[1]       = { NAME_OPERATOR_ID };
 constexpr int SOpOperators[1]         = { NOT_OPERATOR_ID };
 
-constexpr auto OperationLength = 12;
+constexpr auto OperationLength = 14;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -98,6 +100,14 @@ constexpr Op Operations[OperationLength] =
    {
       SArrayOperators, 1,
       BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32, true
+   },
+   {
+      ArraySetOperators, 1,
+      BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT8, V_INT32, 0, false
+   },
+   {
+      ArrayGetOperators, 1,
+      BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT32, 0, V_INT8, true
    },
    {
       BranchingOperators, 3,
@@ -650,6 +660,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.flags = /*elDebugDWORD | */elStructureRole | elReadOnlyRole;
          info.size = 4;
          break;
+      case V_INT8:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = /*elDebugDWORD | */elStructureRole | elReadOnlyRole;
+         info.size = 1;
+         break;
       case V_INT8ARRAY:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
@@ -920,6 +935,7 @@ ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t
    if (resolvedMessage)
       return resolvedMessage;
 
+   return 0;
 }
 
 ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef)

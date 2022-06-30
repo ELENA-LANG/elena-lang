@@ -569,7 +569,7 @@ ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, VAddress
    for (size_t i = 0; i < count; i++) {
       signatureName.append('$');
       auto referenceInfo = _loader->retrieveReferenceInfo(module, signReferences[i], mskVMTRef, _forwardResolver);
-      if (referenceInfo.module != nullptr) {
+      if (referenceInfo.module != nullptr && isWeakReference(referenceInfo.referenceName)) {
          signatureName.append(referenceInfo.module->name());
          signatureName.append(referenceInfo.referenceName);
       }

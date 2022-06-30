@@ -413,6 +413,50 @@ inline %94h
 
 end
 
+// ; readn
+inline %95h
+
+  mov     x11, __n16_1
+  mov     x12, x0
+  mov     x13, x10
+  mov     x14, x11
+  mul     x14, x14, x11
+  add     x13, x13, x14
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; writen
+inline %96h
+
+  mov     x11, __n16_1
+  mov     x12, x0
+  mov     x13, x10
+  mov     x14, x11
+  mul     x14, x14, x11
+  add     x13, x13, x14
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x13], #1
+  strb    w14, [x12], #1
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; saveddisp
 inline %0A0h
 

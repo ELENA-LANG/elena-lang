@@ -43,6 +43,8 @@ namespace elena_lang
       AllocI         = 0x92,
       FreeI          = 0x93,
       AndN           = 0x94,
+      ReadN          = 0x95,
+      WriteN         = 0x96,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,

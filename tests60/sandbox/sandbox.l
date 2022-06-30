@@ -4,19 +4,15 @@ singleton Tester
 {
    run()
    {
-       byte n;
-       byteConvertor.convert(2, ref n);
+       byte b := 55;
+       byte z := 0;
 
-//       byte b := 0;
-//       byteConvertor.convert(ref b);
-
-
-//       byte b := 55;
-
-//       byte tmp[10];
-//       tmp[0] := b;
-//       tmp[1] := 57;
-//       tmp[2] := 0;
+       byte tmp[10];
+       tmp[0] := b;
+//       b := tmp[0];
+       tmp[1] := b;
+       tmp[2] := b;
+       tmp[3] := z;
 
 
 //      for (int n := 0, n < 5, n := n + 1) {

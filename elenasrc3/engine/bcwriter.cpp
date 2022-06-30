@@ -321,6 +321,34 @@ void byteArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void byteArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   switch (node.arg.value) {
+      case SET_INDEXER_OPERATOR_ID:
+         // load
+         // peek sp:1
+         // write 1
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::WriteN, 1);
+         break;
+      case INDEX_OPERATOR_ID:
+         // peek sp:1
+         // load
+         // setdp index
+         // read 1
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::SetDP, targetOffset);
+         tape.write(ByteCode::ReadN, 1);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
 void directResend(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
@@ -422,7 +450,8 @@ ByteCodeWriter::Saver commands[] =
    getField,
    staticBegin,
    staticEnd,
-   classOp
+   classOp,
+   byteArrayOp,
 };
 
 // --- ByteCodeWriter ---
@@ -571,7 +600,7 @@ void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)
       switch (current.key) {
          case BuildKey::BinaryArray:
             // setting size
-            tape.write(ByteCode::NSaveDPN, current.arg.value, current.findChild(BuildKey::Size).arg.value);
+            tape.write(ByteCode::NSaveDPN, current.arg.value - 4, current.findChild(BuildKey::Size).arg.value);
             break;
          default:
             break;

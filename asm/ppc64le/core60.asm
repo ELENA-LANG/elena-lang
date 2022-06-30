@@ -457,9 +457,56 @@ inline %93h
 end
 
 // ; andn
-inline %93h
+inline %94h
 
   and    r14, r14, __n16_1     // ; free stack
+
+end
+
+
+// ; readn
+inline %95h
+
+  li      r16, __n16_1
+  mr      r19, r3
+  mr      r18, r15
+  mr      r20, r16
+  mul     r20, r20, r14
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  ld      r17, 0(r19)
+  addi    r16, r16, -1
+  stb     r17, 0(r18)
+  addi    r18, r18, 1
+  addi    r19, r19, 1
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; writen
+inline %96h
+
+  li      r16, __n16_1
+  mr      r19, r3
+  mr      r18, r15
+  mr      r20, r16
+  mul     r20, r20, r14
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  ld      r17, 0(r18)
+  addi    r16, r16, -1
+  stb     r17, 0(r19)
+  addi    r18, r18, 1
+  addi    r19, r19, 1
+  b       labLoop
+
+labEnd:
 
 end
 

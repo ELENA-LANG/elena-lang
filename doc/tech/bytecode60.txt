@@ -163,8 +163,12 @@ ELENA byte codes (or ecodes)
    nlen n                   - index := acc.length / n;
                               returns the structure size
 
+   read n                   - sp[0][index*n] >> acc, n bytes
+
    redirect                 - search acc::VMT for the message in index;
                               if found jumps to it; binary search is used ; index, acc presaved
+
+   write n                  - sp[0][index*n] << acc, n bytes
 
    xdispatch m, r           - search in message table r the message in index and provided parameter list; 
                               if found jumps directly to it;
