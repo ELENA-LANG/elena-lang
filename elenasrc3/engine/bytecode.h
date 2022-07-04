@@ -86,6 +86,8 @@ namespace elena_lang
       NewIR          = 0xF4,
       NewNR          = 0xF5,
       XMovSISI       = 0xF6,
+      CreateNR       = 0xF7,
+      CreateR        = 0xF8,
       XStoreFIR      = 0xF9,
       XDispatchMR    = 0xFA,
       DispatchMR     = 0xFB,

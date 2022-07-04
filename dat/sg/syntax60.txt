@@ -270,6 +270,7 @@ O_R ::=
 	| I_L6_R
 	| I_L6a_R
 	| IL7_R
+	| DYNAMIC_DIMENSION ^OBJECT ^ARRAY_TYPE TEMPLATE_R
         | eps ^OBJECT; 
 
 E_R ::=

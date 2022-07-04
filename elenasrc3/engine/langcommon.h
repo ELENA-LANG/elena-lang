@@ -111,6 +111,8 @@ namespace elena_lang
    constexpr auto errNoDispatcher            = 605;
 
    constexpr auto infoNewMethod              = 701;
+   constexpr auto infoCurrentMethod          = 702;
+   constexpr auto infoCurrentClass           = 703;
 
    constexpr auto errFatalError       = -1;
    constexpr auto errFatalLinker      = -2;

@@ -43,6 +43,7 @@ namespace elena_lang
       TempLocalAddress,
       External,
       Creating,
+      CreatingArray,
       Declaring,
       Casting,
       ReadOnlyFieldAddress,
@@ -739,13 +740,17 @@ namespace elena_lang
       void declareTemplateAttributes(Scope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
          bool declarationMode);
 
+      ObjectInfo defineArrayType(Scope& scope, ObjectInfo info);
+
       ref_t resolveObjectReference(Scope& scope, ObjectInfo info, bool noPrimitiveAllowed);
       ref_t resolvePrimitiveReference(Scope& scope, ref_t typeRef, ref_t elementRef, bool declarationMode);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
          bool declarationMode);
       ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode);
 
+      ref_t resolveTemplate(Scope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode);
       ref_t resolveWrapperTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
+      ref_t resolveArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 
       int resolveSize(Scope& scope, SyntaxNode node);
       ref_t resolveTypeAttribute(Scope& scope, SyntaxNode node, 
@@ -816,6 +821,8 @@ namespace elena_lang
       void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode);
       void declareClosureMessage(MethodScope& scope, SyntaxNode node);
 
+      void initializeMethod(ClassScope& scope, MethodScope& methodScope, SyntaxNode current);
+
       void declareMetaInfo(Scope& scope, SyntaxNode node);
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
       void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode);
@@ -854,7 +861,8 @@ namespace elena_lang
       ref_t compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage, 
          ref_t outputRef);
 
-      ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, ArgumentsInfo& arguments);
+      ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, 
+         ArgumentsInfo& arguments, ExpressionAttribute mode);
 
       ObjectInfo boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
       ObjectInfo boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
@@ -872,13 +880,16 @@ namespace elena_lang
       ObjectInfo compileExternalOp(BuildTreeWriter& writer, ExprScope& scope, ref_t externalRef, bool stdCall, 
          ArgumentsInfo& arguments);
 
+      ObjectInfo compileNewArrayOp(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments);
       ObjectInfo compileNewOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
          ObjectInfo source, ref_t signRef, ArgumentsInfo& arguments);
 
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target, 
          mssg_t message, ref_t implicitSignatureRef, ArgumentsInfo& arguments, ExpressionAttributes mode);
-      ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute attrs);
-      ObjectInfo compilePropertyOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute attrs);
+      ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
+         ref_t targetRef, ExpressionAttribute attrs);
+      ObjectInfo compilePropertyOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
+         ref_t targetRef, ExpressionAttribute attrs);
 
       ObjectInfo compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand);
 
@@ -894,6 +905,9 @@ namespace elena_lang
       ObjectInfo mapTerminal(Scope& scope, SyntaxNode node, ref_t declaredRef, ExpressionAttribute attrs);
 
       ObjectInfo mapObject(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
+
+      ObjectInfo validateObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo retVal,
+         ref_t targetRef, bool noPrimitives, bool paramMode);
 
       ObjectInfo compileNested(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute mode);
       ObjectInfo compileClosure(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute mode);

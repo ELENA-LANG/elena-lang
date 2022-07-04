@@ -5,7 +5,7 @@ public abstract class BaseVariable
    set abstract Value(o);
 }
 
-public sealed ref<T> : BaseVariable
+public sealed Reference<T> : BaseVariable
 {
    embeddable T value;
 

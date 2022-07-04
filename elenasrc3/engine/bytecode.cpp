@@ -59,8 +59,8 @@ const char* _fnOpcodes[256] =
    "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "vjump mssg", "jump mssg", "seleq", "sellt",
 
-   "open", "xstore sp", "open header", "mov sp", "new", "newn", "xmov sp", OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
+   "open", "xstore sp", "open header", "mov sp", "new", "newn", "xmov sp", "createn",
+   "create", "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
 };
 
 // --- Auxiliary  ---

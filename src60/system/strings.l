@@ -1,3 +1,10 @@
+// --- Array template ---
+
+public sealed Array<T> //: Indexable<T>
+{
+    __string T[] theArray;
+}
+
 // --- String ---
 
 public const struct String : BaseValue

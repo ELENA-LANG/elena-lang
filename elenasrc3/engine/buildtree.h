@@ -72,6 +72,7 @@ namespace elena_lang
       CloseStatic          = 0x002B,
       ClassOp              = 0x002C,
       ByteArrayOp          = 0x002D,
+      NewArrayOp           = 0x002E,
 
       Import               = 0x0038,
       StrDictionaryOp      = 0x0039,

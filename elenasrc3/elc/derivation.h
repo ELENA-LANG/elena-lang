@@ -98,6 +98,7 @@ namespace elena_lang
       void flushTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool allowType);
       void flushTemplageExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxKey type, bool allowType);
       void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMessage(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushObject(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushNested(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);

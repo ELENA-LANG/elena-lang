@@ -162,7 +162,6 @@ enum class ProjectOption
    Files,
    Templates,
    Primitives,
-   Forwards,
    Externals,
    Winapis,
    References,
@@ -171,7 +170,6 @@ enum class ProjectOption
 
    Module,
    FileKey,
-   Forward,
    External,
    Winapi,
 
@@ -299,6 +297,7 @@ struct BuiltinReferences
    ref_t   intReference;
    ref_t   literalReference;
    ref_t   wrapperTemplateReference;
+   ref_t   arrayTemplateReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
@@ -315,6 +314,7 @@ struct BuiltinReferences
       superReference = intReference = 0;
       literalReference = 0;
       wrapperTemplateReference = 0;
+      arrayTemplateReference = 0;
 
       dispatch_message = constructor_message = 0;
       init_message = 0;

@@ -78,7 +78,8 @@ namespace elena_lang
    constexpr auto BOOL_FORWARD            = "$boolean";        // the boolean class
    constexpr auto TRUE_FORWARD            = "$true";           // the true boolean value
    constexpr auto FALSE_FORWARD           = "$false";          // the false boolean value
-   constexpr auto WRAPPER_FORWARD         = "$ref";            // the wrapper template 
+   constexpr auto WRAPPER_FORWARD         = "$ref";            // the wrapper template
+   constexpr auto ARRAY_FORWARD           = "$array";          // the array template 
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";

@@ -94,7 +94,9 @@ namespace elena_lang
    constexpr auto errMsgNotImplemented       = "Not implemented error\n";
    constexpr auto errMsgCorruptedVMT         = "VMT structure is corrupt";
 
-   constexpr auto infoMsgNewMethod           = "info 700: new method %s";
+   constexpr auto infoMsgNewMethod           = "info 701:   new method %s";
+   constexpr auto infoMsgCurrentMethod       = "info 702:   compiling method %s";
+   constexpr auto infoMsgCurrentClass        = "info 703: compiling class %s";
 
 } // _ELENA_
 

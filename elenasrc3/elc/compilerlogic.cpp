@@ -165,6 +165,20 @@ BuildKey CompilerLogic :: resolveOp(ModuleScopeBase& scope, int operatorId, ref_
    return BuildKey::None;
 }
 
+BuildKey CompilerLogic :: resolveNewOp(ModuleScopeBase& scope, ref_t loperand, ref_t* signatures, pos_t signatureLen)
+{
+   if (signatureLen == 1 &&
+      isCompatible(scope, V_INT32, signatures[0], false))
+   {
+      ClassInfo info;
+      if (defineClassInfo(scope, info, loperand, true)) {
+         return test(info.header.flags, elDynamicRole) ? BuildKey::NewArrayOp : BuildKey::None;
+      }
+   }
+
+   return BuildKey::None;
+}
+
 bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& visibility, TemplateType& type)
 {
    switch (attribute) {

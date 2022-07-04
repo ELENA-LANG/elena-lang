@@ -404,6 +404,14 @@ void classOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void newArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   ref_t typeRef = node.arg.reference;
+   int n = node.findChild(BuildKey::Size).arg.value;
+
+   tape.write(ByteCode::CreateNR, n, typeRef | mskVMTRef);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -452,6 +460,7 @@ ByteCodeWriter::Saver commands[] =
    staticEnd,
    classOp,
    byteArrayOp,
+   newArrayOp
 };
 
 // --- ByteCodeWriter ---
