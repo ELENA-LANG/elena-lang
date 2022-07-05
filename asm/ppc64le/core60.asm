@@ -1474,7 +1474,6 @@ inline %4F6h
 
 end
 
-
 // ; xmovsisi 1, 2
 inline %5F6h
 
@@ -1486,6 +1485,32 @@ end
 inline %6F6h
 
   mr       r4, r3
+
+end
+
+// ; create n, r
+inline %0F7h
+
+  ld      r12, [r3]
+  movz    r13, __n16_1
+  mul     r12, r12, r13
+  add     r12, r12, page_ceil
+  and     r18, r12, page_mask
+
+  ld      r12, toc_alloc(r2)
+  mtctr   r12            
+  bctrl                   
+
+  ld      r12, [r3]
+  movz    r13, __n16_1
+  mul     r12, r12, r13
+  or      r18, r12, struct_mask
+
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, __disp32hi_2 
+  addi    r17, r17, __disp32lo_2
+  std     r18, -elSizeOffset(r15)
+  std     r17, -elVMTOffset(r15)
 
 end
 

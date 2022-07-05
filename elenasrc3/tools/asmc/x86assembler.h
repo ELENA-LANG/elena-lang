@@ -68,6 +68,7 @@ namespace elena_lang
       virtual bool compileDiv(X86Operand source, MemoryWriter& writer);
       virtual bool compileIDiv(X86Operand source, MemoryWriter& writer);
       virtual bool compileIMul(X86Operand source, MemoryWriter& writer);
+      virtual bool compileIMul(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileJccForward(X86JumpType type, bool shortJump, MemoryWriter& writer);
       virtual bool compileJccBack(X86JumpType type, bool shortJump, int offset, MemoryWriter& writer);
       virtual bool compileJmpForward(bool shortJump, MemoryWriter& writer);

@@ -613,8 +613,16 @@ void X86Assembler :: compileIMul(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
 
-   if (!compileIMul(sour, writer))
-      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+   if (!tokenInfo.compare(",")) {
+      if (!compileIMul(sour, writer))
+         throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+   }
+   else {
+      X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+      if (!compileIMul(sour, dest, writer))
+         throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+   }
 }
 
 void X86Assembler :: compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type, LabelScope& labelScope)
@@ -1104,6 +1112,28 @@ bool X86Assembler :: compileIMul(X86Operand source, MemoryWriter& writer)
    return true;
 }
 
+bool X86Assembler :: compileIMul(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isR32() && target.type == X86OperandType::DB) {
+      writer.writeByte(0x6B);
+      X86Helper::writeModRM(writer, source, source);
+      writer.writeByte(target.offset);
+   }
+   if (source.isR32() && target.type == X86OperandType::DD) {
+      writer.writeByte(0x69);
+      X86Helper::writeModRM(writer, source, source);
+      X86Helper::writeImm(writer, target);
+   }
+   else if (source.isR32() && target.isR32()) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0xAF);
+      X86Helper::writeModRM(writer, source, target);
+   }
+   else return false;
+
+   return true;
+}
+
 bool X86Assembler :: compileJccForward(X86JumpType type, bool shortJump, MemoryWriter& writer)
 {
    if (shortJump) {
@@ -1276,6 +1306,16 @@ bool X86Assembler :: compileOr(X86Operand source, X86Operand target, MemoryWrite
    if (source.isR32_M32() && target.isR32()) {
       writer.writeByte(0x09);
       X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR32_M32() && target.type == X86OperandType::DB) {
+      writer.writeByte(0x83);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 1 }, source);
+      writer.writeByte(target.offset);
+   }
+   else if (source.isR32_M32() && target.type == X86OperandType::DD) {
+      writer.writeByte(0x81);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 1 }, source);
+      X86Helper::writeImm(writer, target);
    }
    else return false;
 

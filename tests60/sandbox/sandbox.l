@@ -4,8 +4,8 @@ public const struct XString
 {
     __string byte[] theArray;
 
-//    constructor allocate(int size)
-//        = new byte[](size/* + 1*/);
+    constructor allocate(int size)
+        = new byte[](size/* + 1*/);
 }
 
 singleton Tester

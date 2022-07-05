@@ -33,7 +33,11 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
-define struct_mask_inv     7FFFFFh
+// ; --- Page Size ----
+define page_ceil               2Fh
+define page_mask        0FFFFFFE0h
+define struct_mask       40000000h
+define struct_mask_inv   3FFFFFFFh
 
 // ; --- System Core Preloaded Routines --
 
@@ -1111,6 +1115,27 @@ end
 inline %6F6h
 
   mov  r11, r10
+
+end
+
+// ; createnr n,r
+inline %0F7h
+
+  mov  eax, dword ptr [rsi]
+  mov  ecx, page_ceil
+  imul eax, __n_1
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOC
+
+  mov  ecx, dword ptr[rsi]
+  mov  eax, __n_1
+  imul ecx, eax
+  or   ecx, struct_mask
+
+  mov  rax, __ptr32_2
+  mov  [rbx - elVMTOffset], rax
+  mov  [rbx - elSizeOffset], rcx
 
 end
 

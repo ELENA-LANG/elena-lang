@@ -2465,6 +2465,8 @@ ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t typeRef, ref_t e
          return scope.moduleScope->branchingInfo.typeRef;
       case V_WRAPPER:
          return resolveWrapperTemplate(scope, elementRef, declarationMode);
+      case V_INT8ARRAY:
+         return resolveArrayTemplate(scope, elementRef, declarationMode);
       case V_NIL:
          return scope.moduleScope->buildins.superReference;
       default:
@@ -3864,7 +3866,7 @@ void Compiler :: addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKe
 
 ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments)
 {
-   ref_t sourceRef = resolveObjectReference(scope, source, true);
+   ref_t sourceRef = resolveObjectReference(scope, source, false);
 
    if (!targetRef)
       targetRef = resolvePrimitiveReference(scope, source.type, source.element, false);
@@ -3877,10 +3879,10 @@ ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& sco
 
    BuildKey operationKey = _logic->resolveNewOp(*scope.moduleScope, source.type, argumentRefs, argLen);
    if (operationKey == BuildKey::NewArrayOp) {
-      auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, sourceRef);
+      auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, source.type);
 
       if (targetRef) {
-         auto conversionRoutine = _logic->retrieveConversionRoutine(*scope.moduleScope, targetRef, sourceRef);
+         auto conversionRoutine = _logic->retrieveConversionRoutine(*scope.moduleScope, targetRef, sourceRef, source.element);
          if (conversionRoutine.result == ConversionResult::BoxingRequired) {
             source.type = targetRef;
          }
@@ -3897,6 +3899,8 @@ ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& sco
          writer.appendNode(BuildKey::Size, sizeInfo.size);
 
       writer.closeNode();
+
+      return { ObjectKind::Object, source.type, 0, source.element, 0 };
    }
 
    assert(false);
@@ -4484,7 +4488,7 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
          sourceRef = source.element;
       }
 
-      auto conversionRoutine = _logic->retrieveConversionRoutine(*scope.moduleScope, targetRef, sourceRef);
+      auto conversionRoutine = _logic->retrieveConversionRoutine(*scope.moduleScope, targetRef, sourceRef, source.element);
       if (conversionRoutine.result == ConversionResult::BoxingRequired) {
          // if it is implcitily compatible
          switch (source.kind) {

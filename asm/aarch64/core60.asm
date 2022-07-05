@@ -1386,6 +1386,31 @@ inline %6F6h
 
 end
 
+// ; createnr n,r
+inline %0F7h
+
+  ldw     w19, [x0]
+  movz    x18, __n16_1
+  mul     x19, x19, x18
+  add     x19, x18, page_ceil
+  and     x11, x19, page_mask
+
+  movz    x17,  code_ptr32lo : %GC_ALLOC
+  movk    x17,  code_ptr32hi : %GC_ALLOC, lsl #16
+  blr     x17
+
+  ldw     w19, [x0]
+  movz    x18, __n16_1
+  mul     x18, x19, x18
+
+  movz    x19,  __ptr32lo_2
+  movk    x19,  __ptr32hi_2, lsl #16
+  sub     x20, x10, elVMTOffset
+  str     x19, [x20]
+  str     w18, [x20, #12]!
+
+end
+
 // ; xstorefir
 inline %0F9h
 

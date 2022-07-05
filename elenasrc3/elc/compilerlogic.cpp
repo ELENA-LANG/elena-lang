@@ -709,9 +709,11 @@ SizeInfo CompilerLogic :: defineStructSize(ClassInfo& info)
 
       return sizeInfo;
    }
-   //else if (isEmbeddableArray(info)) {
-   //   return info.size;
-   //}
+   else if (isEmbeddableArray(info)) {
+      sizeInfo.size = info.size;
+
+      return sizeInfo;
+   }
 
    return {};
 }
@@ -952,7 +954,8 @@ ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t
    return 0;
 }
 
-ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef)
+ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, 
+   ref_t sourceRef, ref_t elementRef)
 {
    ClassInfo info;
    if (!defineClassInfo(scope, info, targetRef))
@@ -965,6 +968,15 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& sc
       bool compatible = false;
       compatible = isCompatible(scope, inner.typeRef, sourceRef, false);
 
+      if (compatible)
+         return { ConversionResult::BoxingRequired };
+   }
+
+   // COMPILE MAGIC : trying to typecast primitive array
+   if (isEmbeddableArray(scope, sourceRef) && test(info.header.flags, elDynamicRole)) {
+      auto inner = *info.fields.start();
+
+      bool compatible = isCompatible(scope, inner.elementRef, elementRef, false);
       if (compatible)
          return { ConversionResult::BoxingRequired };
    }

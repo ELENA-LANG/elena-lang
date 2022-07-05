@@ -146,6 +146,11 @@ ELENA byte codes (or ecodes)
    copy dp:disp, n          - dp[disp] => temp;
                               sp[0] >> temp, n bytes  
 
+   create n {prefix}:r      - create the object with the specified size;
+                              sp[0] >> temp;
+                              size * temp;
+                              out: acc contains the class instance, index - undefined
+
    dispatch m, r            - search in message table r the message in index and provided parameter list; 
                               if found jumps to it;
 
