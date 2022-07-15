@@ -12,6 +12,8 @@ singleton Tester
 {
    run()
    {
+       var s := XString.allocate(3);
+
 //       byte b := 55;
 //       byte z := 0;
 
@@ -23,9 +25,9 @@ singleton Tester
 //       tmp[3] := z;
 
 
-      for (int n := 0, n < 5, n := n + 1) {
-         console.write("*");
-      }
+//      for (int n := 0, n < 5, n := n + 1) {
+//         console.write("*");
+//      }
    }
 }
 

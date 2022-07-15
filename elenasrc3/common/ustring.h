@@ -456,6 +456,11 @@ namespace elena_lang
          return StrConvertor::toInt(_string, radix);
       }
 
+      int toUInt(int radix = 10) const
+      {
+         return StrConvertor::toUInt(_string, radix);
+      }
+
       String()
       {
          _string[0] = 0;

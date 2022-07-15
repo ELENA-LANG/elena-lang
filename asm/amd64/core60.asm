@@ -1134,8 +1134,8 @@ inline %0F7h
   or   ecx, struct_mask
 
   mov  rax, __ptr32_2
-  mov  [rbx - elVMTOffset], rax
   mov  [rbx - elSizeOffset], rcx
+  mov  [rbx - elVMTOffset], rax
 
 end
 

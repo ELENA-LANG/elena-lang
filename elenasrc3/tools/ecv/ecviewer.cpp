@@ -341,6 +341,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::NewIR:
          case ByteCode::NewNR:
+         case ByteCode::CreateNR:
             addArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr);
             break;

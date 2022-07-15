@@ -1183,6 +1183,7 @@ inline %0F7h
   mov  ecx, [esi]
   mov  eax, __n_1
   imul ecx, eax
+  mov  eax, __ptr32_2
   or   ecx, struct_mask
   mov  [ebx - elVMTOffset], eax
   mov  [ebx - elSizeOffset], ecx
