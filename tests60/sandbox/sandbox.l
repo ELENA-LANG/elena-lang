@@ -1,18 +1,40 @@
 import system;
 
-public const struct XString
+A
+{
+   test2()
+       <= test1();
+
+   test1()
+   {
+      console.writeLine("A.test1");
+   }
+}
+
+public const struct XString : BaseValue
 {
     __string byte[] theArray;
 
+    string toPrintable() = self;
+
     constructor allocate(int size)
-        = new byte[](size/* + 1*/);
+        = new byte[](size + 1);
+
+//    /*internal */constructor fromByteArray(int index, int size, byte[] buffer)
+//        <= allocate(size)
+//    {
+//        extern elenart.core_subcopyz(self, index, size, buffer);
+//    }
 }
 
 singleton Tester
 {
    run()
    {
-       var s := XString.allocate(3);
+      var a := new A();
+      a.test2();
+
+//       var s := XString.allocate(3);
 
 //       byte b := 55;
 //       byte z := 0;

@@ -56,6 +56,7 @@ __define TEMPLATE_POSTFIX    4193;
 __define METHOD_POSTFIX      4194;
 __define TEMPLATE_ARG        4208;
 __define DIMENSION           5233;
+__define RESEND              7366;
 
 START ::= 
         NEXT_DECLARATION;
@@ -132,7 +133,11 @@ METHOD_BODY_OPT ::=
 METHOD_BODY ::=
 	BLOCK
 	| "=" RET_EXPRESSION DECLARATION_END
+	| "<=" RESEND RESEND_OPT
 	| NO_BODY;
+
+RESEND_OPT ::=
+	DECLARATION_END;
 
 NO_BODY ::=
 	";";
@@ -319,6 +324,9 @@ I_L3_R ::=
 L3_R ::=
 	"." MESSAGE MESSAGE_R;
 
+RESEND ::= 
+	MESSAGE MESSAGE_R;
+
 L3s ::=
 	L3_R L3s
 	| eps;
@@ -391,7 +399,12 @@ PARAMETER ::=
 
 PARAMETER_R ::=
 	identifier PARAMETER_R
+	| TEMPLATE_BRACKETS PARAMETER_R
+	| DYNAMIC_DIMENSION ^ARRAY_TYPE LAST_PARAMETER_R
 	| eps;
+
+LAST_PARAMETER_R ::=
+	identifier;
 
 DIMENSION ::=
         integer

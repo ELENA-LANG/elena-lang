@@ -125,11 +125,11 @@ namespace elena_lang
 
       void init(IDEModel* model);
 
-      IDEController(DebugProcessBase* process, IDEModel* model, 
+      IDEController(OSControllerBase* osController, DebugProcessBase* process, IDEModel* model, 
          TextViewSettings& textViewSettings
       ) :
          sourceController(textViewSettings),
-         projectController(process, &model->projectModel, &model->sourceViewModel, this)
+         projectController(osController, process, &model->projectModel, &model->sourceViewModel, this)
       {
          _notifier = nullptr;
          defaultEncoding = FileEncoding::UTF8;

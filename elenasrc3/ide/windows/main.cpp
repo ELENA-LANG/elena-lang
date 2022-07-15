@@ -9,6 +9,7 @@
 #include "ide.h"
 #include "ideview.h"
 #include "windows/wincommon.h"
+#include "windows/win32controller.h"
 #include "windows/win32debugprocess.h"
 #include "windows/windialogs.h"
 #include "Resource.h"
@@ -37,8 +38,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    TextViewSettings textViewSettings = { EOLMode::CRLF, false, 3 };
 
    IDEModel          ideModel(10);
+   Win32Controller   osController;
    DebugProcess      debugProcess;
-   IDEController     ideController(&debugProcess, &ideModel, textViewSettings);
+   IDEController     ideController(&osController, &debugProcess, &ideModel, textViewSettings);
    IDEFactory        factory(hInstance, nCmdShow, &ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();

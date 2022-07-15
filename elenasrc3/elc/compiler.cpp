@@ -1646,6 +1646,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
          case SyntaxKey::ArrayType:
          case SyntaxKey::TemplateType:
          case SyntaxKey::EOP:
+         case SyntaxKey::ResendDispatch:
             break;
          case SyntaxKey::WithoutBody:
             withoutBody = true;
@@ -2539,6 +2540,7 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Type:
+         case SyntaxKey::ArrayType:
             // if it is a type attribute
             typeRef = resolveTypeAttribute(scope, current, declarationMode);
             break;
@@ -2982,6 +2984,11 @@ ref_t Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool decla
    }
    else if (node == SyntaxKey::TemplateArg) {
       typeRef = resolveTypeAttribute(scope, node.firstChild(), declarationMode);
+   }
+   else if (node == SyntaxKey::ArrayType) {
+      ref_t elementRef = resolveTypeAttribute(scope, node.firstChild(), declarationMode);
+
+      typeRef = resolveArrayTemplate(scope, elementRef, declarationMode);
    }
    else {
       SyntaxNode current = node.firstChild();
@@ -4944,6 +4951,9 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
       case SyntaxKey::ReturnExpression:
          retVal = compileRetExpression(writer, codeScope, bodyNode);
          break;
+      case SyntaxKey::ResendDispatch:
+         retVal = compileResendCode(writer, codeScope, scope.mapSelf(), bodyNode);
+         break;
       default:
          break;
    }
@@ -5046,6 +5056,32 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
    }
 }
 
+ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, ObjectInfo source, SyntaxNode node)
+{
+   ObjectInfo retVal = {};
+
+   if (!node.arg.reference) {
+      SyntaxNode current = node.firstChild();
+
+      ExprScope scope(&codeScope);
+      ArgumentsInfo arguments;
+
+      mssg_t messageRef = mapMessage(scope, current.firstChild(), false, false);
+
+      if (!test(messageRef, FUNCTION_MESSAGE))
+         arguments.add(source);
+
+      ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current.firstChild(), arguments, EAttr::NoPrimitives);
+
+      retVal = compileMessageOperation(writer, scope, node, source, messageRef,
+         implicitSignatureRef, arguments, EAttr::None);
+
+   }
+   else assert(false);
+
+   return retVal;
+}
+
 void Compiler :: compileDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(codeScope, Scope::ScopeLevel::Class);
@@ -5071,6 +5107,7 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
    switch (current.key) {
       case SyntaxKey::CodeBlock:
       case SyntaxKey::ReturnExpression:
+      case SyntaxKey::ResendDispatch:
          compileMethodCode(writer, scope, codeScope, node, false);
          break;
       case SyntaxKey::Importing:
@@ -5079,7 +5116,6 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
       case SyntaxKey::WithoutBody:
          scope.raiseError(errNoBodyMethod, node);
          break;
-      case SyntaxKey::ResendDispatch:
       case SyntaxKey::RedirectDispatch:
          compileDispatchCode(writer, codeScope, node);
          break;

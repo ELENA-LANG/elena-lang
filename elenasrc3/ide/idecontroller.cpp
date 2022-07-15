@@ -190,6 +190,8 @@ void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
 
 bool ProjectController :: compile()
 {
+
+
    return true;
 }
 
