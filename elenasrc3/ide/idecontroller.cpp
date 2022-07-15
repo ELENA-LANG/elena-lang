@@ -188,9 +188,19 @@ void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
    }
 }
 
+bool ProjectController :: compile()
+{
+   return true;
+}
+
+bool ProjectController :: compileSingleFile()
+{
+   return true;
+}
+
 bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction postponedAction)
 {
-   return true; // !! temporal
+   return compileSingleFile();
 }
 
 // --- IDEController ---

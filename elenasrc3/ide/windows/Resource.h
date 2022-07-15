@@ -19,9 +19,11 @@
 #define IDM_EDIT_PASTE              505
 #define IDM_EDIT_DELETE             506
 
-#define IDM_DEBUG_RUN               601
-#define IDM_DEBUG_STEPOVER          602
-#define IDM_DEBUG_STEPINTO          603
+#define IDM_PROJECT_COMPILE         601
+
+#define IDM_DEBUG_RUN               701
+#define IDM_DEBUG_STEPOVER          702
+#define IDM_DEBUG_STEPINTO          703
 
 #define IDI_IDE                     107
 #define IDI_SMALL                   108

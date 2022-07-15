@@ -10,7 +10,7 @@
 #include "guicommon.h"
 #include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                           0x0011
+#define IDE_REVISION_NUMBER                           0x0012
 
 namespace elena_lang
 {
@@ -37,6 +37,12 @@ namespace elena_lang
    {
       return test((int)value, (int)mask);
    }
+
+   // --- OSController --
+   class OSControllerBase
+   {
+   public:
+   };
 
    // --- DebugControllerBase ---
    constexpr auto DEBUG_CLOSE = 0;

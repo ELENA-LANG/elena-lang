@@ -206,6 +206,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_EDIT_DELETE:
          deleteText();
          break;
+      case IDM_PROJECT_COMPILE:
+         _controller->projectController.doCompileProject(_model->projectModel, DebugAction::None);
+         break;
       case IDM_DEBUG_RUN:
          _controller->projectController.doDebugAction(_model->projectModel, DebugAction::Run);
          break;
