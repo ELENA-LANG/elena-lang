@@ -2,12 +2,15 @@ import system;
 
 A
 {
-   test2()
-       <= test1();
-
-   test1()
+   constructor allocate()
    {
-      console.writeLine("A.test1");
+      console.writeLine("allocate");
+   }
+
+   constructor create()
+      <= allocate()
+   {
+      console.writeLine("create");
    }
 }
 
@@ -17,22 +20,21 @@ public const struct XString : BaseValue
 
     string toPrintable() = self;
 
+    /*internal */constructor fromByteArray(int index, int size, byte[] buffer)
+        <= allocate(size)
+    {
+//        extern elenart.core_subcopyz(self, index, size, buffer);
+    }
+
     constructor allocate(int size)
         = new byte[](size + 1);
-
-//    /*internal */constructor fromByteArray(int index, int size, byte[] buffer)
-//        <= allocate(size)
-//    {
-//        extern elenart.core_subcopyz(self, index, size, buffer);
-//    }
 }
 
 singleton Tester
 {
    run()
    {
-      var a := new A();
-      a.test2();
+      var a := A.create();
 
 //       var s := XString.allocate(3);
 

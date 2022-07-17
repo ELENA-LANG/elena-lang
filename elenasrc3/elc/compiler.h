@@ -492,6 +492,7 @@ namespace elena_lang
 
          bool         functionMode;
          bool         closureMode;
+         bool         constructorMode;
 
          Scope* getScope(ScopeLevel level) override
          {

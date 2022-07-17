@@ -602,7 +602,8 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent) :
    reserved2(0),
    reservedArgs(parent->moduleScope->minimalArgList),
    functionMode(false),
-   closureMode(false)
+   closureMode(false),
+   constructorMode(false)
 {
 }
 
@@ -4952,7 +4953,10 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
          retVal = compileRetExpression(writer, codeScope, bodyNode);
          break;
       case SyntaxKey::ResendDispatch:
-         retVal = compileResendCode(writer, codeScope, scope.mapSelf(), bodyNode);
+         retVal = compileResendCode(writer, codeScope, 
+            scope.constructorMode ? 
+               mapClassSymbol(scope, scope.getClassRef()) : scope.mapSelf(), 
+            bodyNode);
          break;
       default:
          break;
@@ -5079,6 +5083,13 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
    }
    else assert(false);
 
+   SyntaxNode current = node.nextNode();
+   if (current == SyntaxKey::CodeBlock) {
+      MethodScope* methodScope = Scope::getScope<MethodScope>(codeScope, Scope::ScopeLevel::Method);
+
+      retVal = compileCode(writer, codeScope, current, methodScope->closureMode);
+   }
+
    return retVal;
 }
 
@@ -5204,13 +5215,13 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
 
    switch (current.key) {
       case SyntaxKey::CodeBlock:
+      case SyntaxKey::ResendDispatch:
          compileMethodCode(writer, scope, codeScope, node, newFrame);
          break;
       case SyntaxKey::ReturnExpression:
          compileRetExpression(writer, codeScope, current);
          writer.appendNode(BuildKey::CloseFrame);
          break;
-      case SyntaxKey::ResendDispatch:
       case SyntaxKey::RedirectDispatch:
          compileConstructorDispatchCode(writer, codeScope, classClassScope, node);
          break;
@@ -5247,7 +5258,6 @@ inline void printMessageInfo()
 void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, 
    bool exclusiveMode, bool ignoreAutoMultimethod)
 {
-
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
@@ -5314,6 +5324,7 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
          {
             MethodScope methodScope(&scope);
             initializeMethod(classClassScope, methodScope, current);
+            methodScope.constructorMode = true;
 
             compileConstructor(writer, methodScope, classClassScope, current);
             break;
@@ -5741,9 +5752,9 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
       methodNode.appendChild(SyntaxKey::OutputType, outputRef);
 
    if (message == resendMessage) {
-      methodNode.appendChild(SyntaxKey::RedirectDispatch, resendTarget);
+      methodNode.appendChild(SyntaxKey::RedirectDispatch);
    }
-   else methodNode.appendChild(SyntaxKey::ResendDispatch, resendMessage);
+   else methodNode.appendChild(SyntaxKey::RedirectDispatch, resendMessage);
 }
 
 void Compiler :: injectInitializer(SyntaxNode classNode, SyntaxKey methodType, mssg_t message)
