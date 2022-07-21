@@ -45,4 +45,7 @@ singleton Tester
    }
 }
 
-public symbol program = Tester.run();
+public program() 
+{
+   Tester.run();
+}
