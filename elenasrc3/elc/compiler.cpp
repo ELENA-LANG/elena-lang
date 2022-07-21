@@ -2462,15 +2462,23 @@ ref_t Compiler :: retrieveStrongType(Scope& scope, ObjectInfo info)
    else return info.typeInfo.typeRef;
 }
 
+ref_t Compiler :: retrieveType(Scope& scope, ObjectInfo info)
+{
+   if (info.typeInfo.isPrimitive() && info.typeInfo.elementRef) {
+      return retrieveStrongType(scope, info);
+   }
+   else return info.typeInfo.typeRef;
+}
+
 ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool declarationMode)
 {
    switch (typeInfo.typeRef) {
       case V_INT32:
          return scope.moduleScope->buildins.intReference;
-      //case V_STRING:
-      //   return scope.moduleScope->buildins.literalReference;
-      //case V_FLAG:
-      //   return scope.moduleScope->branchingInfo.typeRef;
+      case V_STRING:
+         return scope.moduleScope->buildins.literalReference;
+      case V_FLAG:
+         return scope.moduleScope->branchingInfo.typeRef;
       case V_WRAPPER:
          return resolveWrapperTemplate(scope, typeInfo.elementRef, declarationMode);
       case V_INT8ARRAY:
@@ -4218,34 +4226,33 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
    size_t     argLen = 2;
    ref_t      arguments[3];
-   //arguments[0] = resolveObjectReference(scope, loperand, false);
-   //arguments[1] = resolveObjectReference(scope, roperand, false);
-   //if (r2node != SyntaxKey::None) {
-   //   roperand2 = { ObjectKind::Closure, V_CLOSURE, 0 };
+   arguments[0] = retrieveType(scope, loperand);
+   arguments[1] = retrieveType(scope, roperand);
+   if (r2node != SyntaxKey::None) {
+      roperand2 = { ObjectKind::Closure, { V_CLOSURE }, 0 };
 
-   //   argLen++;
-   //   arguments[2] = resolveObjectReference(scope, roperand2, false);
-   //}
+      argLen++;
+      arguments[2] = retrieveType(scope, roperand2);
+   }
 
-   //ref_t outputRef = 0;
-   //bool  needToAlloc = false;
-   //op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, outputRef, needToAlloc);
+   ref_t outputRef = 0;
+   op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, outputRef);
 
    if (op != BuildKey::None) {
-      //writeObjectInfo(writer, scope, loperand);
+      writeObjectInfo(writer, scope, loperand);
 
-      //writer.newNode(op, operatorId);
-      //writer.appendNode(BuildKey::Const, scope.moduleScope->branchingInfo.trueRef);
-      //writer.newNode(BuildKey::Tape);
-      //compileSubCode(writer, scope, rnode.firstChild(), EAttr::None);
-      //writer.closeNode();
-      //if (r2node != SyntaxKey::None) {
-      //   writer.newNode(BuildKey::Tape);
-      //   compileSubCode(writer, scope, r2node.firstChild(), EAttr::None);
-      //   writer.closeNode();
-      //}
+      writer.newNode(op, operatorId);
+      writer.appendNode(BuildKey::Const, scope.moduleScope->branchingInfo.trueRef);
+      writer.newNode(BuildKey::Tape);
+      compileSubCode(writer, scope, rnode.firstChild(), EAttr::None);
+      writer.closeNode();
+      if (r2node != SyntaxKey::None) {
+         writer.newNode(BuildKey::Tape);
+         compileSubCode(writer, scope, r2node.firstChild(), EAttr::None);
+         writer.closeNode();
+      }
 
-      //writer.closeNode();
+      writer.closeNode();
    }
    else {
       mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
@@ -5587,7 +5594,7 @@ bool Compiler :: reloadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
    else if (name.compare(OPERATION_MAP)) {
       moduleScope->operations.clear();
 
-      auto operationInfo = moduleScope->getSection(OPERATION_MAP, mskDeclAttributesRef, true);
+      auto operationInfo = moduleScope->getSection(OPERATION_MAP, mskTypeMapRef, true);
       if (operationInfo.section) {
          _logic->readTypeMap(operationInfo.module, operationInfo.section, moduleScope->operations, moduleScope);
       }

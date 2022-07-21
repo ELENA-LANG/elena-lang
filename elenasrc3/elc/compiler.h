@@ -725,6 +725,7 @@ namespace elena_lang
       ref_t defineArrayType(Scope& scope, ref_t elementRef);
 
       ref_t retrieveStrongType(Scope& scope, ObjectInfo info);
+      ref_t retrieveType(Scope& scope, ObjectInfo info);
       ref_t resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool declarationMode);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
          bool declarationMode);

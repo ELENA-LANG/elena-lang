@@ -49,7 +49,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = /*14*/12;
+constexpr auto OperationLength = 15;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -94,39 +94,24 @@ constexpr Op Operations[OperationLength] =
    {
       LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32
    },
+   {
+      IF_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, 0, V_CLOSURE
+   },
+   {
+      ELSE_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, 0, V_CLOSURE
+   },
+   {
+      IF_ELSE_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, V_CLOSURE, V_CLOSURE
+   },
 //   {
 //      ArraySetOperators, 1,
 //      BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT8, V_INT32, 0, false
 //   },
-//   {
-//      DictionaryOperators, 1,
-//      BuildKey::DeclDictionaryOp, V_DECLATTRIBUTES, V_DECLARATION, V_STRING, V_OBJECT, false
-//   },
 //   { {}, 0,BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0, V_OBJECT, false },
-//   {
-//      IntOperators, 2,
-//      BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32, true
-//   },
-//   {
-//      CondOperators, 3,
-//      BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG, false
-//   },
 //   {
 //      ArrayGetOperators, 1,
 //      BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT32, 0, V_INT8, true
 //   },
-//   {
-//      BranchingOperators, 3,
-//      BuildKey::BranchOp, V_FLAG, V_CLOSURE, V_CLOSURE, 0, false
-//   },
-//   {
-//      SDeclOperators, 1,
-//      BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING, false
-//   },
-//   {
-//      SOpOperators, 1,
-//      BuildKey::BoolSOp, V_FLAG, 0, 0, V_FLAG, false
-//   }
 };
 
 inline bool isPrimitiveCompatible(TypeInfo target, TypeInfo source)
@@ -773,20 +758,31 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
    //if ((!targetRef || targetRef == scope.buildins.superReference) && !isPrimitiveRef(sourceRef))
    //   return true;
 
-   if (sourceInfo.typeRef == V_NIL) {
-      // nil is compatible with a super class for the message dispatching
-      // and with all types for all other cases
-      if (!ignoreNils || targetInfo.typeRef == scope.buildins.superReference)
-         return true;
-   }
-   else if (sourceInfo.typeRef == V_FLAG) {
-      return isCompatible(scope, targetInfo, { scope.branchingInfo.typeRef }, ignoreNils);
-   }
-   else if (targetInfo.typeRef == V_FLAG) {
-      if (targetInfo == sourceInfo) {
-         return true;
-      }
-      else return isCompatible(scope, { scope.branchingInfo.typeRef }, sourceInfo, ignoreNils);
+   switch (sourceInfo.typeRef) {
+      case V_NIL:
+         // nil is compatible with a super class for the message dispatching
+         // and with all types for all other cases
+         if (!ignoreNils || targetInfo.typeRef == scope.buildins.superReference)
+            return true;
+
+         break;
+      case V_STRING:
+         if (targetInfo == sourceInfo) {
+            return true;
+         }
+         else return isCompatible(scope, targetInfo, { scope.buildins.literalReference }, ignoreNils);
+         break;
+      case V_FLAG:
+         return isCompatible(scope, targetInfo, { scope.branchingInfo.typeRef }, ignoreNils);
+         break;
+      default:
+         if (targetInfo.typeRef == V_FLAG) {
+            if (targetInfo == sourceInfo) {
+               return true;
+            }
+            else return isCompatible(scope, { scope.branchingInfo.typeRef }, sourceInfo, ignoreNils);
+         }
+         break;
    }
 
    if (targetInfo.isPrimitive() && isPrimitiveCompatible(targetInfo, sourceInfo))
