@@ -45,6 +45,16 @@ bin\elena64-cli src60\system\system.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elena-cli tests60\system_tests\system_tests.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+tests60\system_tests\system_tests.exe
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO TestError
+@echo on
+
 @echo off 
 echo === Done ===
 @echo on

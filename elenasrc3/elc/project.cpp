@@ -452,7 +452,9 @@ bool Project :: loadProject(path_t path)
 {
    if (_projectName.empty()) {
       if(loadConfig(path, true)) {
-         IdentifierString name(path);
+         FileNameString fileName(path);
+         IdentifierString name(*fileName);
+
          _projectName.copy(name.str());
 
          return true;
