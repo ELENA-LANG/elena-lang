@@ -34,6 +34,7 @@
         <include>object.l</include>
         <include>basic.l</include>
         <include>variables.l</include>
+        <include>primitives.l</include>
         <include>strings.l</include>
         <include>convertors.l</include>
         <include>console.l</include>

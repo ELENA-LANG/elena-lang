@@ -3435,16 +3435,16 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    if (rnode != SyntaxKey::None) {
       ref_t rTargetRef = 0;
       if (operatorId == SET_OPERATOR_ID)
-         rTargetRef = retrieveStrongType(scope, loperand);
+         rTargetRef = retrieveType(scope, loperand);
 
       roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter);
 
-      arguments[argLen++] = retrieveStrongType(scope, roperand);
+      arguments[argLen++] = retrieveType(scope, roperand);
    }
 
    if (inode != SyntaxKey::None) {
       ioperand = compileExpression(writer, scope, inode, 0, EAttr::Parameter);
-      arguments[argLen++] = retrieveStrongType(scope, ioperand);
+      arguments[argLen++] = retrieveType(scope, ioperand);
    }
 
    ref_t outputRef = 0;
@@ -5240,7 +5240,13 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
       writer.appendNode(BuildKey::OpenFrame);
       newFrame = true;
    }
-   else {
+   else if (retExpr) {
+      // new stack frame
+      writer.appendNode(BuildKey::OpenFrame);
+      newFrame = true;
+   }
+   else if (!test(classFlags, elDynamicRole) && classClassScope.info.methods.exist(defConstrMssg)) 
+   {
       // new stack frame
       writer.appendNode(BuildKey::OpenFrame);
       newFrame = true;
@@ -5252,6 +5258,8 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
          writer.closeNode();
       }
    }
+   // if it is a dynamic object implicit constructor call is not possible
+   else scope.raiseError(errIllegalConstructor, node);
 
    switch (current.key) {
       case SyntaxKey::CodeBlock:

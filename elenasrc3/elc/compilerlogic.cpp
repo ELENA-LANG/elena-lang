@@ -49,7 +49,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 15;
+constexpr auto OperationLength = 17;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -92,6 +92,12 @@ constexpr Op Operations[OperationLength] =
       NOT_OPERATOR_ID, BuildKey::BoolSOp, V_FLAG, 0, 0, V_FLAG
    },
    {
+      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT32, 0, V_INT8
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT8, V_INT32, 0
+   },
+   {
       LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32
    },
    {
@@ -103,15 +109,6 @@ constexpr Op Operations[OperationLength] =
    {
       IF_ELSE_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, V_CLOSURE, V_CLOSURE
    },
-//   {
-//      ArraySetOperators, 1,
-//      BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT8, V_INT32, 0, false
-//   },
-//   { {}, 0,BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0, V_OBJECT, false },
-//   {
-//      ArrayGetOperators, 1,
-//      BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT32, 0, V_INT8, true
-//   },
 };
 
 inline bool isPrimitiveCompatible(TypeInfo target, TypeInfo source)
