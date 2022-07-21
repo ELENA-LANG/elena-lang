@@ -500,11 +500,11 @@ struct ExpressionAttributes
 // --- FieldAttributes ---
 struct FieldAttributes
 {
-   ref_t typeRef;
-   int   size;
-   bool  isConstant;
-   bool  isEmbeddable;
-   bool  inlineArray;
+   TypeInfo typeInfo;
+   int      size;
+   bool     isConstant;
+   bool     isEmbeddable;
+   bool     inlineArray;
 };
 
 // --- CompilerBase ---

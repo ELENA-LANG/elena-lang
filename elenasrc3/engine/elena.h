@@ -767,20 +767,41 @@ namespace elena_lang
    typedef MemoryMap<ClassAttributeKey, ref_t, Map_StoreKey<ClassAttributeKey>, Map_GetKey<ClassAttributeKey>> ClassAttributes;
 
 #pragma pack(push, 1)
+   // --- TypeInfo ---
+   struct TypeInfo
+   {
+      ref_t typeRef;
+      ref_t elementRef;
+
+      bool isPrimitive() const
+      {
+         return isPrimitiveRef(typeRef);
+      }
+
+      bool operator ==(TypeInfo& val) const
+      {
+         return this->typeRef == val.typeRef && this->elementRef == val.elementRef;
+      }
+
+      bool operator !=(TypeInfo& val) const
+      {
+         return this->typeRef != val.typeRef || this->elementRef != val.elementRef;
+      }
+   };
+
    // --- FieldInfo ---
    struct FieldInfo
    {
-      int   offset;
-      ref_t typeRef;
-      ref_t elementRef;
+      int      offset;
+      TypeInfo typeInfo;
    };
 
    // --- StaticFieldInfo ---
    struct StaticFieldInfo
    {
-      int   offset;
-      ref_t typeRef;
-      ref_t valueRef;
+      int      offset;
+      TypeInfo typeInfo;
+      ref_t    valueRef;
    };
 
    // --- MethodInfo ---

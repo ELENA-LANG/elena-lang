@@ -35,7 +35,7 @@ namespace elena_lang
          ref_t* sourceSignatures, size_t sourceLen);
 
    public:
-      BuildKey resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length, ref_t& outputRef, bool& needToAlloc);
+      BuildKey resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length, ref_t& outputRef);
       BuildKey resolveNewOp(ModuleScopeBase& scope, ref_t loperand, ref_t* arguments, pos_t length);
 
       bool defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly = false, bool fieldsOnly = false);
@@ -52,7 +52,7 @@ namespace elena_lang
       bool validateFieldAttribute(ref_t attribute, FieldAttributes& attrs);
       bool validateMethodAttribute(ref_t attribute, ref_t& hint, bool& explicitMode);
       bool validateImplicitMethodAttribute(ref_t attribute, ref_t& hint);
-      bool validateDictionaryAttribute(ref_t attribute, ref_t& dictionaryType);
+      bool validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo);
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
       bool validateArgumentAttribute(ref_t attrValue, bool& byRefArg);
 
@@ -77,21 +77,21 @@ namespace elena_lang
       void validateClassDeclaration(ModuleScopeBase& scope, ClassInfo& info,
          bool& emptyStructure, bool& disptacherNotAllowed);
 
-      void writeDictionaryEntry(MemoryBase* section, ustr_t key, int value);
-      bool readDictionary(MemoryBase* section, ReferenceMap& map);
+      void writeAttributeMapEntry(MemoryBase* section, ustr_t key, int value);
+      bool readAttributeMap(MemoryBase* section, ReferenceMap& map);
 
       void writeArrayEntry(MemoryBase* section, ref_t reference);
 
-      void writeAttrDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference);
-      bool readAttrDictionary(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
+      void writeTypeMapEntry(MemoryBase* section, ustr_t key, ref_t reference);
+      bool readTypeMap(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
-      void writeDeclDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference);
-      bool readDeclDictionary(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
+      //void writeDeclDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference);
+      //bool readDeclDictionary(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
       void writeExtMessageEntry(MemoryBase* section, ref_t extRef, mssg_t message, mssg_t strongMessage);
       bool readExtMessageEntry(ModuleBase* module, MemoryBase* section, ExtensionMap& map, ModuleScopeBase* scope);
 
-      bool isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils);
+      bool isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, bool ignoreNils);
 
       bool isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage);
       bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, mssg_t targetMessage,
@@ -99,8 +99,7 @@ namespace elena_lang
 
       ref_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, pos_t signLen);
 
-      ConversionRoutine retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, 
-         ref_t sourceRef, ref_t elementRef);
+      ConversionRoutine retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, TypeInfo sourceInfo);
 
       bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
       bool checkMethod(ModuleScopeBase& scope, ref_t reference, mssg_t message, CheckMethodResult& result);

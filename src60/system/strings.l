@@ -2,7 +2,7 @@
 
 public sealed Array<T> //: Indexable<T>
 {
-    __string T[] theArray;
+    embeddable __string T[] theArray;
 }
 
 // --- String ---

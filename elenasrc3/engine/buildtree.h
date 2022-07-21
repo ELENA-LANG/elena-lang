@@ -75,7 +75,8 @@ namespace elena_lang
       NewArrayOp           = 0x002E,
 
       Import               = 0x0038,
-      StrDictionaryOp      = 0x0039,
+      DictionaryOp         = 0x0039,
+
       ObjArrayOp           = 0x003A,
       ObjOp                = 0x003B,
       AttrDictionaryOp     = 0x003C,

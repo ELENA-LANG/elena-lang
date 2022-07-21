@@ -419,8 +419,11 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
       for (auto it = copy.fields.start(); !it.eof(); ++it) {
          FieldInfo info = *it;
 
-         if (info.typeRef && !isPrimitiveRef(info.typeRef))
-            info.typeRef = importReference(exporter, info.typeRef);
+         if (info.typeInfo.typeRef && !isPrimitiveRef(info.typeInfo.typeRef))
+            info.typeInfo.typeRef = importReference(exporter, info.typeInfo.typeRef);
+
+         if (info.typeInfo.elementRef && !isPrimitiveRef(info.typeInfo.elementRef))
+            info.typeInfo.elementRef = importReference(exporter, info.typeInfo.elementRef);
 
          target.fields.add(it.key(), info);
       }
@@ -446,7 +449,11 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
 
       for (auto it = copy.statics.start(); !it.eof(); ++it) {
          auto info = *it;
-         info.typeRef = importReference(exporter, info.typeRef);
+         if (info.typeInfo.typeRef)
+            info.typeInfo.typeRef = importReference(exporter, info.typeInfo.typeRef);
+
+         if (info.typeInfo.elementRef)
+            info.typeInfo.elementRef = importReference(exporter, info.typeInfo.elementRef);
 
          info.valueRef = importReferenceWithMask(exporter, info.valueRef);
 
@@ -465,25 +472,25 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
 
 void ModuleScope :: saveListMember(ustr_t name, ustr_t memberName)
 {
-   // HOTFIX : do not include itself
-   IdentifierString sectionName("'", name);
+   //// HOTFIX : do not include itself
+   //IdentifierString sectionName("'", name);
 
-   MemoryBase* section = module->mapSection(
-      module->mapReference(*sectionName, false) | mskStrMetaArrayRef,
-      false);
+   //MemoryBase* section = module->mapSection(
+   //   module->mapReference(*sectionName, false) | mskStrMetaArrayRef,
+   //   false);
 
-   // check if the module alread included
-   MemoryReader metaReader(section);
-   while (!metaReader.eof()) {
-      ustr_t s = metaReader.getString(DEFAULT_STR);
-      if (s.compare(memberName))
-         return;
-   }
+   //// check if the module alread included
+   //MemoryReader metaReader(section);
+   //while (!metaReader.eof()) {
+   //   ustr_t s = metaReader.getString(DEFAULT_STR);
+   //   if (s.compare(memberName))
+   //      return;
+   //}
 
-   // otherwise add it to the list
-   MemoryWriter metaWriter(section);
+   //// otherwise add it to the list
+   //MemoryWriter metaWriter(section);
 
-   metaWriter.writeString(memberName);
+   //metaWriter.writeString(memberName);
 }
 
 void ModuleScope :: newNamespace(ustr_t ns)

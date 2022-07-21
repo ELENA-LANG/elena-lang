@@ -1116,7 +1116,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
          case mskStaticVariable:
             address = resolveStaticVariable(referenceInfo, sectionMask);
             break;
-         case mskMetaArrayRef:
+         case mskTypeListRef:
             address = resolveMetaSection(referenceInfo, sectionMask, 
                _loader->getSection(referenceInfo, sectionMask, silentMode));
             break;

@@ -239,39 +239,39 @@ ModuleBase* LibraryProvider :: resolveIndirectWeakModule(ustr_t weakName, ref_t&
       if (reference)
          return *it;
 
-      // if not - load imported modules
-      if ((*it)->mapReference(*relativeName, true)) {
-         // get list of nested namespaces
-         IdentifierString nsSectionName("'", NAMESPACES_SECTION);
-         auto nsSection = (*it)->mapSection((*it)->mapReference(*nsSectionName, true) | mskStrMetaArrayRef, true);
-         if (nsSection) {
-            MemoryReader nsReader(nsSection);
-            while (!nsReader.eof()) {
-               IdentifierString nsProperName("'");
-               nsReader.appendString(nsProperName);
-               nsProperName.append("'");
-               nsProperName.append(weakName.str());
+      //// if not - load imported modules
+      //if ((*it)->mapReference(*relativeName, true)) {
+      //   // get list of nested namespaces
+      //   IdentifierString nsSectionName("'", NAMESPACES_SECTION);
+      //   auto nsSection = (*it)->mapSection((*it)->mapReference(*nsSectionName, true) | mskStrMetaArrayRef, true);
+      //   if (nsSection) {
+      //      MemoryReader nsReader(nsSection);
+      //      while (!nsReader.eof()) {
+      //         IdentifierString nsProperName("'");
+      //         nsReader.appendString(nsProperName);
+      //         nsProperName.append("'");
+      //         nsProperName.append(weakName.str());
 
-               reference = (*it)->mapReference(*nsProperName, true);
-               if (reference)
-                  return *it;
-            }
-         }
+      //         reference = (*it)->mapReference(*nsProperName, true);
+      //         if (reference)
+      //            return *it;
+      //      }
+      //   }
 
-         // get list of imported modules
-         IdentifierString importSectionName("'", IMPORTS_SECTION);
-         auto importSection = (*it)->mapSection((*it)->mapReference(*importSectionName, true) | mskStrMetaArrayRef, true);
-         if (importSection) {
-            MemoryReader importReader(importSection);
-            while (!importReader.eof()) {
-               IdentifierString moduleName;
-               importReader.readString(moduleName);
+      //   // get list of imported modules
+      //   IdentifierString importSectionName("'", IMPORTS_SECTION);
+      //   auto importSection = (*it)->mapSection((*it)->mapReference(*importSectionName, true) | mskStrMetaArrayRef, true);
+      //   if (importSection) {
+      //      MemoryReader importReader(importSection);
+      //      while (!importReader.eof()) {
+      //         IdentifierString moduleName;
+      //         importReader.readString(moduleName);
 
-               LoadResult tempResult;
-               loadModule(*moduleName, tempResult, true);
-            }
-         }
-      }
+      //         LoadResult tempResult;
+      //         loadModule(*moduleName, tempResult, true);
+      //      }
+      //   }
+      //}
    }
 
    return nullptr;

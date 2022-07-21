@@ -216,13 +216,13 @@ namespace elena_lang
    constexpr ref_t mskVMTRef              = 0x04000000u;
    constexpr ref_t mskMetaClassInfoRef    = 0x05000000u;
    constexpr ref_t mskClassRef            = 0x06000000u;
-   constexpr ref_t mskMetaDictionaryRef   = 0x07000000u;
-   constexpr ref_t mskMetaArrayRef        = 0x08000000u;
-   constexpr ref_t mskStrMetaArrayRef     = 0x09000000u;
+   constexpr ref_t mskAttributeMapRef     = 0x07000000u;
+   constexpr ref_t mskTypeListRef         = 0x08000000u;
+   //constexpr ref_t mskStrMetaArrayRef     = 0x09000000u;
    constexpr ref_t mskSyntaxTreeRef       = 0x0A000000u;
    constexpr ref_t mskProcedureRef        = 0x0B000000u;
    constexpr ref_t mskIntLiteralRef       = 0x0C000000u;
-   constexpr ref_t mskMetaAttributesRef   = 0x0D000000u;
+   constexpr ref_t mskTypeMapRef          = 0x0D000000u;
    constexpr ref_t mskLiteralRef          = 0x0E000000u;   // reference to constant literal
    constexpr ref_t mskVMTMethodAddress    = 0x0F000000u;
    constexpr ref_t mskVMTMethodOffset     = 0x10000000u;

@@ -1,30 +1,23 @@
 import system;
 
-A
-{
-   constructor allocate()
-   {
-      console.writeLine("allocate");
-   }
-
-   constructor create()
-      <= allocate()
-   {
-      console.writeLine("create");
-   }
-}
-
-public const struct XString : BaseValue
+public struct XString
 {
     __string byte[] theArray;
 
-    string toPrintable() = self;
-
-    /*internal */constructor fromByteArray(int index, int size, byte[] buffer)
+    /*internal */constructor fromByteArray(/*int index, int size, */byte[] buffer)
         <= allocate(size)
     {
+       byte b;
+       /*theArray[0]*/b := buffer[0];
+
+//       for (int i := 0, i < size, i := i + 1) {
+//          theArray[i] := buffer[index + i];
+//       }
+
 //        extern elenart.core_subcopyz(self, index, size, buffer);
     }
+
+    string toPrintable() = self;
 
     constructor allocate(int size)
         = new byte[](size + 1);
@@ -34,9 +27,7 @@ singleton Tester
 {
    run()
    {
-      var a := A.create();
-
-//       var s := XString.allocate(3);
+       var s := XString.allocate(3);
 
 //       byte b := 55;
 //       byte z := 0;
@@ -48,10 +39,10 @@ singleton Tester
 //       tmp[2] := b;
 //       tmp[3] := z;
 
+//   for (int n := 0, n < 5, n := n + 1) {
+//      console.write("*");
+//   }
 
-//      for (int n := 0, n < 5, n := n + 1) {
-//         console.write("*");
-//      }
    }
 }
 

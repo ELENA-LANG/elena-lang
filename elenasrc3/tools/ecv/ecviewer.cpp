@@ -179,7 +179,7 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
       case mskArrayRef:
          commandStr.append("array:");
          break;
-      case mskMetaArrayRef:
+      case mskTypeListRef:
          commandStr.append("marray:");
          break;
       case mskSymbolRef:
@@ -501,8 +501,8 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
       auto fieldInfo = *it;
 
       line.copy(it.key());
-      if (isPrimitiveRef(fieldInfo.typeRef)) {
-         switch (fieldInfo.typeRef) {
+      if (isPrimitiveRef(fieldInfo.typeInfo.typeRef)) {
+         switch (fieldInfo.typeInfo.typeRef) {
             case V_INT32:
                line.append(" of __int[4]");
                break;
@@ -511,8 +511,8 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
                break;
          }
       }
-      else if (fieldInfo.typeRef) {
-         ustr_t typeName = _module->resolveReference(fieldInfo.typeRef);
+      else if (fieldInfo.typeInfo.typeRef) {
+         ustr_t typeName = _module->resolveReference(fieldInfo.typeInfo.typeRef);
 
          line.append(" of ");
          line.append(typeName);

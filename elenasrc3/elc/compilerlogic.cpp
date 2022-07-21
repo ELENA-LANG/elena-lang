@@ -40,96 +40,102 @@ bool testMethodHint(ref_t hint, MethodHint mask)
 
 struct Op
 {
-   const int* allowedOperators;
-   size_t     allowedOperatorLength;
+   int      operatorId;
+   BuildKey operation;
 
-   BuildKey   operation;
-
-   ref_t      loperand;
-   ref_t      roperand;
-   ref_t      ioperand;
-
-   ref_t      outputRef;
-   bool       needToAlloc;
+   ref_t    loperand;
+   ref_t    roperand;
+   ref_t    ioperand;
+   ref_t    output;
 };
 
-constexpr int DictionaryOperators[1]  = { SET_INDEXER_OPERATOR_ID };
-constexpr int ArrayOperators[1]       = { ADD_ASSIGN_OPERATOR_ID };
-constexpr int ArraySetOperators[1]    = { SET_INDEXER_OPERATOR_ID };
-constexpr int ArrayGetOperators[1]    = { INDEX_OPERATOR_ID };
-constexpr int SArrayOperators[1]      = { LEN_OPERATOR_ID };
-constexpr int IntOperators[2]         = { ADD_OPERATOR_ID, SUB_OPERATOR_ID };
-constexpr int CondOperators[3]        = { EQUAL_OPERATOR_ID, NOTEQUAL_OPERATOR_ID, LESS_OPERATOR_ID };
-constexpr int ValCondOperators[2]     = { EQUAL_OPERATOR_ID, NOTEQUAL_OPERATOR_ID };
-constexpr int BranchingOperators[3]   = { IF_OPERATOR_ID, ELSE_OPERATOR_ID, IF_ELSE_OPERATOR_ID };
-constexpr int SDeclOperators[1]       = { NAME_OPERATOR_ID };
-constexpr int SOpOperators[1]         = { NOT_OPERATOR_ID };
-
-constexpr auto OperationLength = 14;
+constexpr auto OperationLength = /*14*/12;
 constexpr Op Operations[OperationLength] =
 {
    {
-      DictionaryOperators, 1,
-      BuildKey::StrDictionaryOp, V_DICTIONARY, V_INT32, V_STRING, V_OBJECT, false
+      SET_INDEXER_OPERATOR_ID, BuildKey::DictionaryOp, V_DICTIONARY, V_INT32, V_STRING, V_OBJECT
    },
    {
-      DictionaryOperators, 1,
-      BuildKey::AttrDictionaryOp, V_OBJATTRIBUTES, V_OBJECT, V_STRING, V_OBJECT, false
+      SET_INDEXER_OPERATOR_ID, BuildKey::DictionaryOp, V_DICTIONARY, V_OBJECT, V_STRING, V_OBJECT
    },
    {
-      DictionaryOperators, 1,
-      BuildKey::DeclDictionaryOp, V_DECLATTRIBUTES, V_DECLARATION, V_STRING, V_OBJECT, false
+      SET_INDEXER_OPERATOR_ID, BuildKey::DictionaryOp, V_DICTIONARY, V_DECLARATION, V_STRING, V_OBJECT
    },
    {
-      ArrayOperators, 1,
-      BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0, V_OBJECT, false
-   },
-   { {}, 0,BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0, V_OBJECT, false },
-   {
-      IntOperators, 2,
-      BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32, true
+      NAME_OPERATOR_ID, BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING
    },
    {
-      CondOperators, 3,
-      BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG, false
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0, V_OBJECT
    },
    {
-      CondOperators, 3,
-      BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG, false
+      ADD_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
    },
    {
-      SArrayOperators, 1,
-      BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32, true
+      SUB_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
+   },
+   //{
+   //   MUL_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
+   //},
+   //{
+   //   DIV_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
+   //},
+   {
+      EQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG
    },
    {
-      ArraySetOperators, 1,
-      BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT8, V_INT32, 0, false
+      LESS_OPERATOR_ID, BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG
    },
    {
-      ArrayGetOperators, 1,
-      BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT32, 0, V_INT8, true
+      NOTEQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG
    },
    {
-      BranchingOperators, 3,
-      BuildKey::BranchOp, V_FLAG, V_CLOSURE, V_CLOSURE, 0, false
+      NOT_OPERATOR_ID, BuildKey::BoolSOp, V_FLAG, 0, 0, V_FLAG
    },
    {
-      SDeclOperators, 1,
-      BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING, false
+      LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32
    },
-   {
-      SOpOperators, 1,
-      BuildKey::BoolSOp, V_FLAG, 0, 0, V_FLAG, false
-   }
+//   {
+//      ArraySetOperators, 1,
+//      BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT8, V_INT32, 0, false
+//   },
+//   {
+//      DictionaryOperators, 1,
+//      BuildKey::DeclDictionaryOp, V_DECLATTRIBUTES, V_DECLARATION, V_STRING, V_OBJECT, false
+//   },
+//   { {}, 0,BuildKey::ObjOp, V_OBJECT, V_OBJECT, 0, V_OBJECT, false },
+//   {
+//      IntOperators, 2,
+//      BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32, true
+//   },
+//   {
+//      CondOperators, 3,
+//      BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG, false
+//   },
+//   {
+//      ArrayGetOperators, 1,
+//      BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT32, 0, V_INT8, true
+//   },
+//   {
+//      BranchingOperators, 3,
+//      BuildKey::BranchOp, V_FLAG, V_CLOSURE, V_CLOSURE, 0, false
+//   },
+//   {
+//      SDeclOperators, 1,
+//      BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING, false
+//   },
+//   {
+//      SOpOperators, 1,
+//      BuildKey::BoolSOp, V_FLAG, 0, 0, V_FLAG, false
+//   }
 };
 
-inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
+inline bool isPrimitiveCompatible(TypeInfo target, TypeInfo source)
 {
-   switch (targetRef) {
+   switch (target.typeRef) {
       case V_OBJECT:
-         return !isPrimitiveRef(sourceRef);
+         return !isPrimitiveRef(source.typeRef);
       default:
-         return targetRef == sourceRef;
+         return target == source;
    }
 }
 
@@ -146,17 +152,16 @@ bool CompilerLogic :: isValidOp(int operatorId, const int* validOperators, size_
 }
 
 BuildKey CompilerLogic :: resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length,
-   ref_t& outputRef, bool& needToAlloc)
+   ref_t& outputRef)
 {
    for(size_t i = 0; i < OperationLength; i++) {
-      if (isValidOp(operatorId, Operations[i].allowedOperators, Operations[i].allowedOperatorLength)) {
-         bool compatible = isCompatible(scope, Operations[i].loperand, arguments[0], false);
-         compatible = compatible && (length <= 1 || isCompatible(scope, Operations[i].roperand, arguments[1], false));
-         compatible = compatible && (length <= 2 || isCompatible(scope, Operations[i].ioperand, arguments[2], false));
-
+      if (Operations[i].operatorId == operatorId) {
+         bool compatible = isCompatible(scope, { Operations[i].loperand }, { arguments[0] }, false);
+         compatible = compatible && (length <= 1 || isCompatible(scope, { Operations[i].roperand }, { arguments[1] }, false));
+         compatible = compatible && (length <= 2 || isCompatible(scope, { Operations[i].ioperand }, { arguments[2] }, false));
          if (compatible) {
-            outputRef = Operations[i].outputRef;
-            needToAlloc = Operations[i].needToAlloc;
+            outputRef = Operations[i].output;
+
             return Operations[i].operation;
          }
       }
@@ -168,7 +173,7 @@ BuildKey CompilerLogic :: resolveOp(ModuleScopeBase& scope, int operatorId, ref_
 BuildKey CompilerLogic :: resolveNewOp(ModuleScopeBase& scope, ref_t loperand, ref_t* signatures, pos_t signatureLen)
 {
    if (signatureLen == 1 &&
-      isCompatible(scope, V_INT32, signatures[0], false))
+      isCompatible(scope, { V_INT32 }, { signatures[0] }, false))
    {
       ClassInfo info;
       if (defineClassInfo(scope, info, loperand, true)) {
@@ -274,7 +279,7 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
          break;
       case V_INTBINARY:
       case V_WORDBINARY:
-         attrs.typeRef = attribute;
+         attrs.typeInfo.typeRef = attribute;
          break;
       case V_STRINGOBJ:
          attrs.inlineArray = true;
@@ -364,18 +369,20 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
    }
 }
 
-bool CompilerLogic :: validateDictionaryAttribute(ref_t attribute, ref_t& dictionaryType)
+bool CompilerLogic :: validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo)
 {
    switch (attribute) {
       case V_STRINGOBJ:
-         dictionaryType = V_STRINGOBJ;
+         dictionaryTypeInfo.typeRef = V_STRINGOBJ;
+         dictionaryTypeInfo.elementRef = V_SYMBOL;
          return true;
       case V_SYMBOL:
-         dictionaryType = V_OBJATTRIBUTES;
+         dictionaryTypeInfo.typeRef = V_DICTIONARY;
+         dictionaryTypeInfo.elementRef = V_SYMBOL;
          return true;
-      case V_DECLOBJ:
-         dictionaryType = V_DECLATTRIBUTES;
-         return true;
+      //case V_DECLOBJ:
+      //   dictionaryType = V_DECLATTRIBUTES;
+      //   return true;
       default:
          return false;
    }
@@ -531,7 +538,7 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef)
    
 }
 
-void CompilerLogic :: writeAttrDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference)
+void CompilerLogic :: writeTypeMapEntry(MemoryBase* section, ustr_t key, ref_t reference)
 {
    MemoryWriter writer(section);
    writer.writeString(key);
@@ -539,7 +546,7 @@ void CompilerLogic :: writeAttrDictionaryEntry(MemoryBase* section, ustr_t key, 
    writer.writeRef(reference);
 }
 
-bool CompilerLogic :: readAttrDictionary(ModuleBase* extModule, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope)
+bool CompilerLogic :: readTypeMap(ModuleBase* extModule, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope)
 {
    IdentifierString key;
 
@@ -562,38 +569,38 @@ bool CompilerLogic :: readAttrDictionary(ModuleBase* extModule, MemoryBase* sect
    return true;
 }
 
-void CompilerLogic :: writeDeclDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference)
-{
-   MemoryWriter writer(section);
-   writer.writeString(key);
-   writer.writeDWord(3);
-   writer.writeRef(reference);
-}
+//void CompilerLogic :: writeDeclDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference)
+//{
+//   MemoryWriter writer(section);
+//   writer.writeString(key);
+//   writer.writeDWord(3);
+//   writer.writeRef(reference);
+//}
+//
+//bool CompilerLogic :: readDeclDictionary(ModuleBase* extModule, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope)
+//{
+//   IdentifierString key;
+//
+//   MemoryReader reader(section);
+//   while (!reader.eof()) {
+//      reader.readString(key);
+//      int type = reader.getDWord();
+//
+//      if (type == 3) {
+//         ref_t reference = reader.getRef();
+//         if (scope->module != extModule) {
+//            reference = scope->importReference(extModule, reference);
+//         }
+//
+//         map.add(*key, reference);
+//      }
+//      else return false;
+//   }
+//
+//   return true;
+//}
 
-bool CompilerLogic :: readDeclDictionary(ModuleBase* extModule, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope)
-{
-   IdentifierString key;
-
-   MemoryReader reader(section);
-   while (!reader.eof()) {
-      reader.readString(key);
-      int type = reader.getDWord();
-
-      if (type == 3) {
-         ref_t reference = reader.getRef();
-         if (scope->module != extModule) {
-            reference = scope->importReference(extModule, reference);
-         }
-
-         map.add(*key, reference);
-      }
-      else return false;
-   }
-
-   return true;
-}
-
-void CompilerLogic :: writeDictionaryEntry(MemoryBase* section, ustr_t key, int value)
+void CompilerLogic :: writeAttributeMapEntry(MemoryBase* section, ustr_t key, int value)
 {
    MemoryWriter writer(section);
    writer.writeString(key);
@@ -601,7 +608,7 @@ void CompilerLogic :: writeDictionaryEntry(MemoryBase* section, ustr_t key, int 
    writer.writeDWord(value);
 }
 
-bool CompilerLogic :: readDictionary(MemoryBase* section, ReferenceMap& map)
+bool CompilerLogic :: readAttributeMap(MemoryBase* section, ReferenceMap& map)
 {
    IdentifierString key;
 
@@ -661,7 +668,8 @@ bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* sec
    return true;
 }
 
-bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly, bool fieldsOnly)
+bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, 
+   bool headerOnly, bool fieldsOnly)
 {
    if (isPrimitiveRef(reference) && !headerOnly) {
       scope.loadClassInfo(info, scope.buildins.superReference);
@@ -692,7 +700,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          else {
             info.header.parentRef = 0;
             info.header.flags = 0;
-            //info.size = 0;
+            info.size = 0;
          }
          break;
    }
@@ -742,7 +750,7 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
       return 0;
 
    if (isEmbeddableStruct(info) && structOne) {
-      if (isCompatible(scope, V_INT8, elementRef, true) && info.size == 1)
+      if (isCompatible(scope, { V_INT8 }, { elementRef }, true) && info.size == 1)
          return V_INT8ARRAY;
 
       //if (isCompatible(scope, V_INT32, elementRef, true)) {
@@ -760,51 +768,50 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
    else return V_OBJARRAY;
 }
 
-bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils)
+bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, bool ignoreNils)
 {
-   if ((!targetRef || targetRef == scope.buildins.superReference) && !isPrimitiveRef(sourceRef))
-      return true;
+   //if ((!targetRef || targetRef == scope.buildins.superReference) && !isPrimitiveRef(sourceRef))
+   //   return true;
 
-   if (sourceRef == V_NIL) {
+   if (sourceInfo.typeRef == V_NIL) {
       // nil is compatible with a super class for the message dispatching
       // and with all types for all other cases
-      if (!ignoreNils || targetRef == scope.buildins.superReference)
+      if (!ignoreNils || targetInfo.typeRef == scope.buildins.superReference)
          return true;
    }
-   else if (sourceRef == V_FLAG) {
-      return isCompatible(scope, targetRef, scope.branchingInfo.typeRef, ignoreNils);
+   else if (sourceInfo.typeRef == V_FLAG) {
+      return isCompatible(scope, targetInfo, { scope.branchingInfo.typeRef }, ignoreNils);
    }
-   else if (targetRef == V_FLAG) {
-      if (targetRef == sourceRef) {
+   else if (targetInfo.typeRef == V_FLAG) {
+      if (targetInfo == sourceInfo) {
          return true;
       }
-      else return isCompatible(scope, scope.branchingInfo.typeRef, sourceRef, ignoreNils);
+      else return isCompatible(scope, { scope.branchingInfo.typeRef }, sourceInfo, ignoreNils);
    }
 
-   if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
+   if (targetInfo.isPrimitive() && isPrimitiveCompatible(targetInfo, sourceInfo))
       return true;
 
-   while (sourceRef != 0) {
-      if (targetRef != sourceRef) {
+   while (sourceInfo.typeRef != 0) {
+      if (targetInfo != sourceInfo) {
          ClassInfo info;
-         if (!defineClassInfo(scope, info, sourceRef))
+         if (sourceInfo.isPrimitive() || !defineClassInfo(scope, info, sourceInfo.typeRef))
             return false;
 
          // if it is a structure wrapper
-         if (isPrimitiveRef(targetRef) && test(info.header.flags, elWrapper)) {
+         if (targetInfo.isPrimitive() && test(info.header.flags, elWrapper)) {
             if (info.fields.count() > 0) {
                auto inner = *info.fields.start();
-               if (isCompatible(scope, targetRef, inner.typeRef, ignoreNils))
+               if (isCompatible(scope, targetInfo, inner.typeInfo, ignoreNils))
                   return true;
             }
          }
 
          if (test(info.header.flags, elClassClass)) {
             // class class can be compatible only with itself and the super class
-            sourceRef = scope.buildins.superReference;
+            sourceInfo = { scope.buildins.superReference };
          }
-         else sourceRef = info.header.parentRef;
-
+         else sourceInfo = { info.header.parentRef };
       }
       else return true;
    }
@@ -836,7 +843,7 @@ bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* 
    for (size_t i = 0; i < sourceLen; i++) {
       ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
 
-      if (!isCompatible(scope, scope.importReference(targetModule, targetSign), sourceSignatures[i], true))
+      if (!isCompatible(scope, { scope.importReference(targetModule, targetSign) }, { sourceSignatures[i] }, true))
          return false;
    }
 
@@ -856,7 +863,7 @@ bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ref_t target
 
    for (size_t i = 0; i < sourceLen; i++) {
       ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
-      if (!isCompatible(scope, targetSign, sourceSignatures[i], true))
+      if (!isCompatible(scope, { targetSign }, { sourceSignatures[i] }, true))
          return false;
    }
 
@@ -955,7 +962,7 @@ ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t
 }
 
 ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, 
-   ref_t sourceRef, ref_t elementRef)
+   TypeInfo sourceInfo)
 {
    ClassInfo info;
    if (!defineClassInfo(scope, info, targetRef))
@@ -966,26 +973,28 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& sc
       auto inner = *info.fields.start();
 
       bool compatible = false;
-      compatible = isCompatible(scope, inner.typeRef, sourceRef, false);
+      compatible = isCompatible(scope, inner.typeInfo, sourceInfo, false);
 
       if (compatible)
          return { ConversionResult::BoxingRequired };
    }
 
    // COMPILE MAGIC : trying to typecast primitive array
-   if (isEmbeddableArray(scope, sourceRef) && test(info.header.flags, elDynamicRole)) {
+   if (isEmbeddableArray(scope, sourceInfo.typeRef) && test(info.header.flags, elDynamicRole)) {
       auto inner = *info.fields.start();
 
-      bool compatible = isCompatible(scope, inner.elementRef, elementRef, false);
+      bool compatible = isCompatible(scope, { inner.typeInfo.elementRef }, { sourceInfo.elementRef }, false);
       if (compatible)
          return { ConversionResult::BoxingRequired };
    }
 
    // if there is a implicit conversion routine
-   ref_t signRef = scope.module->mapSignature(&sourceRef, 1, false);
-   mssg_t messageRef = retrieveImplicitConstructor(scope, targetRef, signRef, 1);
-   if (messageRef)
-      return { ConversionResult::Conversion, messageRef };
+   if (!sourceInfo.isPrimitive()) {
+      ref_t signRef = scope.module->mapSignature(&sourceInfo.typeRef, 1, false);
+      mssg_t messageRef = retrieveImplicitConstructor(scope, targetRef, signRef, 1);
+      if (messageRef)
+         return { ConversionResult::Conversion, messageRef };
+   }
 
    return {};
 }

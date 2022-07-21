@@ -1,6 +1,6 @@
 // === statement templates ===
 
-#new __meta statementTemplates;
+#new __symbol statementTemplates;
 
 // --- if ---
 

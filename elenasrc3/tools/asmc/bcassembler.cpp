@@ -165,7 +165,7 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
       arg.type = Operand::Type::R;
-      arg.reference = readReference(tokenInfo) | mskMetaArrayRef;
+      arg.reference = readReference(tokenInfo) | mskTypeListRef;
 
       return arg;
    }
