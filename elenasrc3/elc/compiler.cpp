@@ -3145,10 +3145,12 @@ inline int newLocalAddr(int allocated)
 
 int Compiler :: allocateLocalAddress(CodeScope* codeScope, int size, bool binaryArray)
 {
-   int disp = binaryArray ? align(4, codeScope->moduleScope->rawStackAlingment) : 0;
-   int retVal = codeScope->allocLocalAddress(size + disp);
+   int retVal = codeScope->allocLocalAddress(size);
 
-   return newLocalAddr(retVal - disp);
+   if (binaryArray)
+      codeScope->allocLocalAddress(4);
+
+   return newLocalAddr(retVal);
 }
 
 int Compiler :: resolveArraySize(Scope& scope, SyntaxNode node)
@@ -3188,14 +3190,14 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
    variable.typeInfo = typeInfo;
    variable.kind = ObjectKind::Local;
 
-   //if (size != 0 && variable.typeInfo.typeRef != 0) {
-   //   if (!variable.typeInfo.isPrimitive()) {
-   //      // if it is a primitive array
-   //      variable.element = variable.type;
-   //      variable.type = _logic->definePrimitiveArray(*scope.moduleScope, variable.element, true);
-   //   }
-   //   else scope.raiseError(errInvalidHint, terminal);
-   //}
+   if (size != 0 && variable.typeInfo.typeRef != 0) {
+      if (!variable.typeInfo.isPrimitive()) {
+         // if it is a primitive array
+         variable.typeInfo.elementRef = variable.typeInfo.typeRef;
+         variable.typeInfo.typeRef = _logic->definePrimitiveArray(*scope.moduleScope, variable.typeInfo.elementRef, true);
+      }
+      else scope.raiseError(errInvalidHint, terminal);
+   }
 
    ClassInfo localInfo;
    //bool binaryArray = false;
@@ -4330,7 +4332,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    bool externalOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::Extern);
    bool newOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::NewOp);
    bool castOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::CastOp);
-   //bool refOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::RefOp);
+   bool refOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::RefOp);
 
    ObjectInfo retVal;
    bool invalid = false;
@@ -4376,35 +4378,34 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
             }
             else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
 
-   //         //if (refOp) {
-   //         //   switch (retVal.kind) {
-   //         //      case ObjectKind::LocalAddress:
-   //         //         retVal.element = retVal.type;
-   //         //         retVal.type = V_WRAPPER;
-   //         //         break;
-   //         //      default:
-   //         //         invalid = true;
-   //         //         break;
-   //         //   }
-   //         //}
+            if (refOp) {
+               switch (retVal.kind) {
+                  case ObjectKind::LocalAddress:
+                     retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                     break;
+                  default:
+                     invalid = true;
+                     break;
+               }
+            }
             break;
          case SyntaxKey::string:
-            //invalid = forwardMode || variableMode || refOp;
+            invalid = forwardMode || variableMode || refOp;
 
             retVal = mapStringConstant(scope, node);
             break;
-   //      case SyntaxKey::character:
-   //         invalid = forwardMode || variableMode/*  || refOp*/;
+         case SyntaxKey::character:
+            invalid = forwardMode || variableMode || refOp;
 
-   //         retVal = mapCharacterConstant(scope, node);
-   //         break;
+            retVal = mapCharacterConstant(scope, node);
+            break;
          case SyntaxKey::integer:
-            //invalid = forwardMode || variableMode/* || refOp */;
+            invalid = forwardMode || variableMode || refOp;
 
             retVal = mapIntConstant(scope, node, 10);
             break;
          case SyntaxKey::hexinteger:
-            //invalid = forwardMode || variableMode/* || refOp*/;
+            invalid = forwardMode || variableMode || refOp;
 
             retVal = mapUIntConstant(scope, node, 16);
             break;
@@ -4530,10 +4531,10 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
    ref_t targetRef)
 {
    if (!_logic->isCompatible(*scope.moduleScope, { targetRef }, source.typeInfo, false)) {
-      //if (sourceRef == V_WRAPPER) {
-      //   // unbox wrapper for the conversion
-      //   sourceRef = source.element;
-      //}
+      if (source.typeInfo.typeRef == V_WRAPPER) {
+         // unbox wrapper for the conversion
+         source.typeInfo = { source.typeInfo.elementRef };
+      }
 
       auto conversionRoutine = _logic->retrieveConversionRoutine(*scope.moduleScope, targetRef, source.typeInfo);
       if (conversionRoutine.result == ConversionResult::BoxingRequired) {
@@ -4917,13 +4918,20 @@ void Compiler :: endMethod(BuildTreeWriter& writer, MethodScope& scope)
 
 void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
 {
-   //for (auto it = codeScope.locals.start(); !it.eof(); ++it) {
-   //   auto localInfo = *it;
-   //   if (localInfo.class_ref && _logic->isEmbeddableArray(*codeScope.moduleScope, localInfo.class_ref)) {
-   //      node.appendChild(BuildKey::BinaryArray, localInfo.offset)
-   //         .appendChild(BuildKey::Size, localInfo.size);
-   //   }
-   //}
+   for (auto it = codeScope.locals.start(); !it.eof(); ++it) {
+      auto localInfo = *it;
+      if (localInfo.typeInfo.typeRef) {
+         ref_t typeRef = localInfo.typeInfo.typeRef;
+         if (localInfo.typeInfo.isPrimitive() && localInfo.typeInfo.elementRef)
+            typeRef = resolvePrimitiveType(codeScope, localInfo.typeInfo, false);
+
+         if (_logic->isEmbeddableArray(*codeScope.moduleScope, typeRef)) {
+            node.appendChild(BuildKey::BinaryArray, localInfo.offset)
+               .appendChild(BuildKey::Size, localInfo.size);
+         }
+      }
+
+   }
 }
 
 ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode)
@@ -5126,6 +5134,13 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
    SyntaxNode current = node.nextNode();
    if (current == SyntaxKey::CodeBlock) {
       MethodScope* methodScope = Scope::getScope<MethodScope>(codeScope, Scope::ScopeLevel::Method);
+      if (methodScope->constructorMode) {
+         // HOTFIX : overwrite self variable for the redirect constructor code
+         
+         // stack should contains current self reference
+         // the original message should be restored if it is a generic method
+         writer.appendNode(BuildKey::Assigning, methodScope->selfLocal);
+      }
 
       retVal = compileCode(writer, codeScope, current, methodScope->closureMode);
    }

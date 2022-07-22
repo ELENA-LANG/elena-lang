@@ -28,6 +28,10 @@
         <include>predefined/attributes.l</include>
         <include>predefined/predefined.l</include>
      </module>
+     <module name="operations">
+        <include>operations/inline.l</include>
+        <include>operations/operations.l</include>
+     </module>
      <module>
         <include>aliases.l</include>
         <include>base.l</include>

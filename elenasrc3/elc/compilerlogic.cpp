@@ -111,13 +111,18 @@ constexpr Op Operations[OperationLength] =
    },
 };
 
-inline bool isPrimitiveCompatible(TypeInfo target, TypeInfo source)
+bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source)
 {
+   if (target == source)
+      return true;
+
    switch (target.typeRef) {
       case V_OBJECT:
          return !isPrimitiveRef(source.typeRef);
+      case V_FLAG:
+         return isCompatible(scope, { scope.branchingInfo.typeRef }, source, true);
       default:
-         return target == source;
+         return false;
    }
 }
 
@@ -220,6 +225,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
          break;
       case V_PRIVATE:
          visibility = Visibility::Private;
+         break;
+      case V_INTERNAL:
+         visibility = Visibility::Internal;
          break;
       case V_CLASS:
          break;
@@ -485,6 +493,22 @@ bool CompilerLogic :: isEmbeddable(ClassInfo& info)
       return isEmbeddableArray(info);
    }
    else return isEmbeddableStruct(info);
+}
+
+bool CompilerLogic :: isWrapper(ModuleScopeBase& scope, ref_t reference)
+{
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference, true)) {
+      return isWrapper(info);
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: isWrapper(ClassInfo& info)
+{
+   return test(info.header.flags, elWrapper)
+      && !test(info.header.flags, elDynamicRole);
 }
 
 bool CompilerLogic :: isMultiMethod(ClassInfo& info, MethodInfo& methodInfo)
@@ -771,18 +795,11 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
          break;
       case V_FLAG:
          return isCompatible(scope, targetInfo, { scope.branchingInfo.typeRef }, ignoreNils);
-         break;
       default:
-         if (targetInfo.typeRef == V_FLAG) {
-            if (targetInfo == sourceInfo) {
-               return true;
-            }
-            else return isCompatible(scope, { scope.branchingInfo.typeRef }, sourceInfo, ignoreNils);
-         }
          break;
    }
 
-   if (targetInfo.isPrimitive() && isPrimitiveCompatible(targetInfo, sourceInfo))
+   if (targetInfo.isPrimitive() && isPrimitiveCompatible(scope, targetInfo, sourceInfo))
       return true;
 
    while (sourceInfo.typeRef != 0) {

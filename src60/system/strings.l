@@ -16,11 +16,15 @@ public const struct String : BaseValue
     constructor allocate(int size)
         = new byte[](size + 1);
 
-//    /*internal */constructor fromByteArray(int index, int size, byte[] buffer)
-//        <= allocate(size)
-//    {
-//        extern elenart.core_subcopyz(self, index, size, buffer);
-//    }
+    /*internal */constructor fromByteArray(int index, int size, byte[] buffer)
+        <= allocate(size)
+    {
+       PrimitiveOperations.copy(theArray, index, size, buffer);
+
+       // add tailing zero
+       byte z := 0;
+       theArray[size] := z;
+    }
 
     int Length
     {

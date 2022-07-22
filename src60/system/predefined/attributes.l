@@ -7,6 +7,7 @@
 /// visibility:
 #let attributesSymbols["public"]      := 80004001h;
 #let attributesSymbols["private"]     := 80004002h;
+#let attributesSymbols["internal"]    := 80004003h;
 #let attributesSymbols["protected"]   := 80004004h;
 
 /// property:
@@ -48,3 +49,5 @@
 //#let attributesSymbols["__meta"]      := 80000804h;
 #let attributesSymbols["__word"]      := 80000805h;
 #let attributesSymbols["__symbol"]    := 80000808h;
+
+#reload attributesSymbols;

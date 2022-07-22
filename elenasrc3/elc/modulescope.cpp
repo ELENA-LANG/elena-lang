@@ -44,7 +44,9 @@ inline ref_t mapExistingIdentifier(ModuleBase* module, ustr_t identifier, Visibi
 
 bool ModuleScope :: isStandardOne()
 {
-   return module->name().compare(STANDARD_MODULE) || module->name().compare(PREDEFINED_MODULE);
+   return module->name().compare(STANDARD_MODULE) 
+      || module->name().compare(PREDEFINED_MODULE)
+      || module->name().compare(OPERATIONS_MODULE);      
 }
 
 inline void findUninqueName(ModuleBase* module, IdentifierString& name)

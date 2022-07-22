@@ -66,6 +66,9 @@ namespace elena_lang
       bool isEmbeddable(ModuleScopeBase& scope, ref_t reference);
       bool isEmbeddable(ClassInfo& info);
 
+      bool isWrapper(ModuleScopeBase& scope, ref_t reference);
+      bool isWrapper(ClassInfo& info);
+
       bool isMultiMethod(ClassInfo& info, MethodInfo& methodInfo);
 
       bool isValidOp(int operatorId, const int* validOperators, size_t len);
@@ -92,6 +95,7 @@ namespace elena_lang
       bool readExtMessageEntry(ModuleBase* module, MemoryBase* section, ExtensionMap& map, ModuleScopeBase* scope);
 
       bool isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, bool ignoreNils);
+      bool isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source);
 
       bool isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage);
       bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, mssg_t targetMessage,

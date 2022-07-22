@@ -45,6 +45,7 @@ namespace elena_lang
    // --- ELENA predefined module names ---
    constexpr auto BINARY_MODULE           = "$binary";
    constexpr auto PREDEFINED_MODULE       = "system'predefined"; // NOTE : system'predefined module should preceed system one
+   constexpr auto OPERATIONS_MODULE       = "system'operations"; // NOTE : system'predefined module should preceed system one
    constexpr auto STANDARD_MODULE         = "system";
 
    // --- ELENA special sections ---

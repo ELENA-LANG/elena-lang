@@ -611,7 +611,7 @@ void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)
       switch (current.key) {
          case BuildKey::BinaryArray:
             // setting size
-            tape.write(ByteCode::NSaveDPN, current.arg.value - 4, current.findChild(BuildKey::Size).arg.value);
+            tape.write(ByteCode::NSaveDPN, current.arg.value + 4, current.findChild(BuildKey::Size).arg.value);
             break;
          default:
             break;
