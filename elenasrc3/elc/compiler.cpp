@@ -4692,6 +4692,8 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       //case SyntaxKey::AddAssignOperation:
       case SyntaxKey::AddOperation:
       case SyntaxKey::SubOperation:
+      case SyntaxKey::MulOperation:
+      case SyntaxKey::DivOperation:
       case SyntaxKey::LenOperation:
       case SyntaxKey::LessOperation:
       case SyntaxKey::NameOperation:

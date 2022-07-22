@@ -91,6 +91,12 @@ public const struct IntNumber : IntBaseNumber
    int subtract(int n)
       = theValue - n;   
 
+   int multiply(int n)
+      = theValue * n;   
+
+   int divide(int n)
+      = theValue / n;   
+
    byte cast()
      = byteConvertor.convert(self);
 }

@@ -267,6 +267,12 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
       case SUB_OPERATOR_ID:
          tape.write(ByteCode::ISubDPN, targetOffset, 4);
          break;
+      case MUL_OPERATOR_ID:
+         tape.write(ByteCode::IMulDPN, targetOffset, 4);
+         break;
+      case DIV_OPERATOR_ID:
+         tape.write(ByteCode::IDivDPN, targetOffset, 4);
+         break;
       default:
          throw InternalError(errFatalError);
    }

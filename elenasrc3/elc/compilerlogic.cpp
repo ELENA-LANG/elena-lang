@@ -49,7 +49,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 17;
+constexpr auto OperationLength = 19;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -73,12 +73,12 @@ constexpr Op Operations[OperationLength] =
    {
       SUB_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
    },
-   //{
-   //   MUL_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
-   //},
-   //{
-   //   DIV_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
-   //},
+   {
+      MUL_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
+   },
    {
       EQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG
    },

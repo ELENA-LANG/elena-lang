@@ -4,6 +4,8 @@ singleton Tester
 {
    run()
    {
+       var n := 3 * 2;
+
        byte b := 55;
        byte tmp[5];
        tmp[0] := b;

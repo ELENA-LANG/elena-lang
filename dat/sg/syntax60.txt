@@ -42,6 +42,8 @@ __define NOTEQUAL_OPERATION  6220;
 __define LOOP_OPERATION      6221;
 __define ELSE_OPERATION      6222;
 __define IF_ELSE_OPERATION   6223;
+__define MUL_OPERATION       6224;
+__define DIV_OPERATION       6225;
 __define MESSAGE_OPERATION   6337;
 __define PROPERTY_OPERATION  6340;
 __define EXPRESSION          6288;
@@ -51,6 +53,7 @@ __define L7_EXPRESSION       6291;
 __define ROOT_EXPRESSION     6292;
 __define L6_EXPRESSION       6293;
 __define T_EXPRESSION        6294;
+__define L4_EXPRESSION       6295;
 __define POSTFIX             4192;
 __define TEMPLATE_POSTFIX    4193;
 __define METHOD_POSTFIX      4194;
@@ -224,6 +227,11 @@ SUB_EXPRESSION ::=
         | string ^OBJECT
         | "(" EXPRESSION ")";
 
+L4_EXPRESSION ::=
+        identifier I4_R
+        | integer ^OBJECT
+        | hexinteger ^OBJECT;
+
 L5_EXPRESSION ::=
         identifier I5_R
         | integer ^OBJECT
@@ -254,6 +262,7 @@ RI_R ::=
 	| I_L1_R
 	| RI_L2_R
 	| I_L3_R NEXT_L3_R
+	| I_L4_R
 	| I_L5_R
 	| I_L6_R
 	| I_L6a_R
@@ -272,6 +281,7 @@ O_R ::=
 	| I_L1_R
 	| I_L2_R L3s L7_OPT
 	| I_L3_R NEXT_L3_R
+	| I_L4_R
 	| I_L5_R
 	| I_L6_R
 	| I_L6a_R
@@ -280,7 +290,8 @@ O_R ::=
         | eps ^OBJECT; 
 
 E_R ::=
-	L5_R
+	L4_R
+	| L5_R
 	| L7_R
 	| eps;
 
@@ -291,6 +302,10 @@ TEMPLATE_R ::=
 VAR_R ::=
 	L1_R
 	| eps;
+
+I4_R ::=
+        identifier I4_R
+        | eps ^OBJECT; 
 
 I5_R ::=
         identifier I5_R
@@ -331,6 +346,14 @@ RESEND ::=
 L3s ::=
 	L3_R L3s
 	| eps;
+
+I_L4_R ::=
+	"*" ^OBJECT L4_EXPRESSION ^MUL_OPERATION
+	| "/" ^OBJECT L4_EXPRESSION ^DIV_OPERATION;
+
+L4_R ::=
+	"*" L4_EXPRESSION ^ADD_OPERATION
+	| "/" L4_EXPRESSION ^SUB_OPERATION;
 
 I_L5_R ::=
 	"+" ^OBJECT L5_EXPRESSION ^ADD_OPERATION
