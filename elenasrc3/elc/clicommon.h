@@ -586,7 +586,7 @@ class ErrorProcessor : public ErrorProcessorBase
    }
 
 public:
-   void info(int code, ustr_t arg)
+   void info(int code, ustr_t arg) override
    {
       _presenter->print(_presenter->getMessage(code), arg);
    }

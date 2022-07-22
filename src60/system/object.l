@@ -13,6 +13,7 @@ public class Object
        = !(self.equal(o));
 
     predefined bool less(o);
+    predefined bool notless(o);
 
     string toPrintable() = __className;
 

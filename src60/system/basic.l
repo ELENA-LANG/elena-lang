@@ -45,7 +45,9 @@ public const false = BoolValue.false;
 
 public abstract class BaseValue
 {
-//   abstract bool less(v);
+   abstract bool less(v);
+
+   bool notless(o) = !(self.less(o));
 }
 
 // --- BaseNumber ---
@@ -65,7 +67,7 @@ public abstract class IntBaseNumber : BaseNumber
 
 // --- ByteNumber ---
 
-public const struct ByteNumber : IntBaseNumber
+public const struct ByteNumber //: IntBaseNumber
 {
    embeddable __int theValue[1];
 }
@@ -103,7 +105,7 @@ public const struct IntNumber : IntBaseNumber
 
 // --- CharValue ---
 
-public const struct CharValue : BaseValue
+public const struct CharValue //: BaseValue
 {
    embeddable __word theValue[4];
 }

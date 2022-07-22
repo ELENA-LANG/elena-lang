@@ -1526,7 +1526,10 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
 
    bool emptyStructure = false;
    bool customDispatcher = false;
-   _logic->validateClassDeclaration(*scope.moduleScope, scope.info, emptyStructure, customDispatcher);
+   bool withAbstractMethods = false;
+   _logic->validateClassDeclaration(*scope.moduleScope, _errorProcessor, scope.info, emptyStructure, customDispatcher, withAbstractMethods);
+   if (withAbstractMethods)
+      scope.raiseError(errAbstractMethods, node);
    if (emptyStructure)
       scope.raiseError(errEmptyStructure, node.findChild(SyntaxKey::Name));
    if (customDispatcher)
@@ -4700,6 +4703,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::EqualOperation:
       case SyntaxKey::NotOperation:
       case SyntaxKey::NotEqualOperation:
+      case SyntaxKey::NotLessOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::IndexerOperation:

@@ -7,7 +7,7 @@ public sealed Array<T> //: Indexable<T>
 
 // --- String ---
 
-public const struct String : BaseValue
+public const struct String //: BaseValue
 {
     __string byte[] theArray;
 

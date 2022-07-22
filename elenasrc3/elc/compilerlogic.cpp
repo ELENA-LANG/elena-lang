@@ -10,6 +10,7 @@
 // --------------------------------------------------------------------------
 #include "langcommon.h"
 #include "compilerlogic.h"
+#include "bytecode.h"
 
 using namespace elena_lang;
 
@@ -436,9 +437,26 @@ bool CompilerLogic :: validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_
    return true;
 }
 
-void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ClassInfo& info, 
-   bool& emptyStructure, bool& disptacherNotAllowed)
+void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ErrorProcessorBase* errorProcessor, ClassInfo& info,
+   bool& emptyStructure, bool& disptacherNotAllowed, bool& withAbstractMethods)
 {
+   // check abstract methods
+   if (!isAbstract(info)) {
+      for (auto it = info.methods.start(); !it.eof(); ++it) {
+         auto mssg = it.key();
+         auto methodInfo = *it;
+
+         if (test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
+            IdentifierString messageName;
+            ByteCodeUtil::resolveMessageName(messageName, scope.module, mssg);
+
+            errorProcessor->info(infoAbstractMetod, *messageName);
+
+            withAbstractMethods = true;
+         }
+      }
+   }
+
    // a structure class should contain fields
    if (test(info.header.flags, elStructureRole) && info.size == 0)
       emptyStructure = true;
@@ -454,6 +472,11 @@ void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ClassInfo
 bool CompilerLogic :: isRole(ClassInfo& info)
 {
    return test(info.header.flags, elRole);
+}
+
+bool CompilerLogic :: isAbstract(ClassInfo& info)
+{
+   return test(info.header.flags, elAbstract);
 }
 
 bool CompilerLogic :: isEmbeddableArray(ModuleScopeBase& scope, ref_t reference)

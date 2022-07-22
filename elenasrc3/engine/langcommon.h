@@ -64,6 +64,7 @@ namespace elena_lang
    constexpr auto errIllegalMethod           = 152;
    constexpr auto errIllegalOperation        = 153;
    constexpr auto errTypeAlreadyDeclared     = 158;
+   constexpr auto errAbstractMethods         = 159;
    constexpr auto errDispatcherInInterface   = 160;
    constexpr auto errAbstractMethodCode      = 161;
    constexpr auto errNotAbstractClass        = 164;
@@ -113,6 +114,7 @@ namespace elena_lang
    constexpr auto infoNewMethod              = 701;
    constexpr auto infoCurrentMethod          = 702;
    constexpr auto infoCurrentClass           = 703;
+   constexpr auto infoAbstractMetod          = 704;
 
    constexpr auto errFatalError       = -1;
    constexpr auto errFatalLinker      = -2;
@@ -224,6 +226,7 @@ namespace elena_lang
    constexpr auto IF_ELSE_OPERATOR_ID     = 0x000F;
    constexpr auto MUL_OPERATOR_ID         = 0x0010;
    constexpr auto DIV_OPERATOR_ID         = 0x0011;
+   constexpr auto NOTLESS_OPERATOR_ID     = 0x0012;
    constexpr auto CLASS_OPERATOR_ID       = 0x003F;
    constexpr auto SET_INDEXER_OPERATOR_ID = 0x0201;
 

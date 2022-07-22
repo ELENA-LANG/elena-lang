@@ -57,6 +57,7 @@ namespace elena_lang
       bool validateArgumentAttribute(ref_t attrValue, bool& byRefArg);
 
       bool isRole(ClassInfo& info);
+      bool isAbstract(ClassInfo& info);
 
       bool isEmbeddableArray(ClassInfo& info);
       bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);
@@ -77,8 +78,8 @@ namespace elena_lang
       void tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef);
 
       bool validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_t message);
-      void validateClassDeclaration(ModuleScopeBase& scope, ClassInfo& info,
-         bool& emptyStructure, bool& disptacherNotAllowed);
+      void validateClassDeclaration(ModuleScopeBase& scope, ErrorProcessorBase* errorProcessor, ClassInfo& info,
+         bool& emptyStructure, bool& disptacherNotAllowed, bool& withAbstractMethods);
 
       void writeAttributeMapEntry(MemoryBase* section, ustr_t key, int value);
       bool readAttributeMap(MemoryBase* section, ReferenceMap& map);
