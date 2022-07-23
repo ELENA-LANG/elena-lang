@@ -100,7 +100,10 @@ public const struct IntNumber : IntBaseNumber
       = theValue / n;   
 
    byte cast()
-     = byteConvertor.convert(self);
+      = byteConvertor.convert(self);
+
+   string toPrintable()
+      = stringConvertor.convert(self, 10);
 }
 
 // --- CharValue ---

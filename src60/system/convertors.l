@@ -25,18 +25,20 @@ public singleton stringConvertor
       byte buffer[12];
       byte tmp;
       int len := 0;
-      while (n < radix) {
+      int index := 11;
+      while (n >= radix) {
          int r := n.mod(radix);
          n := n / radix;
 
-         tmp := 30 + r;
-         buffer[len] := tmp;
+         tmp := 48 + r;
+         buffer[index] := tmp;
+         index := index - 1;
          len := len + 1;
       };
-      tmp := 30 + n;
-      buffer[len] := tmp;
+      tmp := 48 + n;
+      buffer[index] := tmp;
       len := len + 1;
 
-      ^ String.fromByteArray(0, len, buffer);
+      ^ String.fromByteArray(index, len, buffer);
    }
 }

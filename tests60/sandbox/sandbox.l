@@ -4,11 +4,11 @@ singleton Tester
 {
    run()
    {
-      int n := 11;
-      int r := 12;
+//      int n := 11;
+//      int r := 12;
 
-      bool b := n >= r;
-      console.writeLine(b);
+//      bool b := n >= r;
+//      console.writeLine(b);
 
 //       var n := 3 * 2 * 3;
 
@@ -19,9 +19,9 @@ singleton Tester
 //       tmp[2] := b;
 
 //       var s := String.fromByteArray(0,3,tmp);
-
-//       var s := stringConvertor.convert(3, 10);
 //       console.writeLine(s);
+
+       console.writeLine(123);
    }
 }
 
