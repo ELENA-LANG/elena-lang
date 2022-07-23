@@ -5,9 +5,10 @@ singleton Tester
    run()
    {
       int n := 11;
-      int r := 10;
+      int r := 12;
 
       bool b := n >= r;
+      console.writeLine(b);
 
 //       var n := 3 * 2 * 3;
 

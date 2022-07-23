@@ -601,7 +601,8 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent) :
    reservedArgs(parent->moduleScope->minimalArgList),
    functionMode(false),
    closureMode(false),
-   constructorMode(false)
+   constructorMode(false),
+   isEmbeddable(false)
 {
 }
 
@@ -622,7 +623,10 @@ ObjectInfo Compiler::MethodScope :: mapSelf()
 
    //}
    /*else */if (selfLocal != 0) {
-      return { ObjectKind::SelfLocal, { getClassRef(false) }, (ref_t)selfLocal };
+      if (isEmbeddable) {
+         return { ObjectKind::SelfLocalBoxable, { getClassRef(false) }, (ref_t)selfLocal };
+      }
+      else return { ObjectKind::SelfLocal, { getClassRef(false) }, (ref_t)selfLocal };
    }
    else return {};
 }
@@ -633,10 +637,20 @@ ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier, ExpressionAt
 
    Parameter local = parameters.get(identifier);
    if (local.offset != -1) {
-      if (local.typeInfo.typeRef == V_WRAPPER && !EAttrs::test(attr, EAttr::AssigningTarget)) {
-         return { ObjectKind::ParamField, local.typeInfo, prefix - local.offset };
+      bool byRef = local.typeInfo.typeRef == V_WRAPPER && !EAttrs::test(attr, EAttr::AssigningTarget);
+
+      if (local.size > 0) {
+         if (byRef) {
+            return { ObjectKind::ParamFieldBoxable, local.typeInfo, prefix - local.offset };
+         }
+         else return { ObjectKind::ParamBoxable, local.typeInfo, prefix - local.offset };
       }
-      else return {ObjectKind::Param, local.typeInfo, prefix - local.offset };
+      else {
+         if (byRef) {
+            return { ObjectKind::ParamField, local.typeInfo, prefix - local.offset };
+         }
+         else return { ObjectKind::Param, local.typeInfo, prefix - local.offset };
+      }
    }
    else return {};
 }
@@ -1719,8 +1733,9 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Parameter) {
          int index = 1 + scope.parameters.count();
+
+         SizeInfo sizeInfo = {};
          TypeInfo paramTypeInfo = {};
-         int size = 0;
          declareArgumentAttributes(scope, current, paramTypeInfo, declarationMode);
 
          if (withoutWeakMessages && !paramTypeInfo.typeRef)
@@ -1743,7 +1758,10 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          }
          else signature[signatureLen++] = paramTypeInfo.typeRef;
 
-         scope.parameters.add(terminal, Parameter(index, paramTypeInfo, size));
+         if (signature[signatureLen - 1])
+            sizeInfo = _logic->defineStructSize(*scope.moduleScope, signature[signatureLen - 1]);
+
+         scope.parameters.add(terminal, Parameter(index, paramTypeInfo, sizeInfo.size));
       }
       else break;
 
@@ -2350,6 +2368,9 @@ inline bool isBoxingRequired(ObjectInfo info)
    switch (info.kind) {
       case ObjectKind::LocalAddress:
       case ObjectKind::TempLocalAddress:
+      case ObjectKind::ParamBoxable:
+      case ObjectKind::ParamFieldBoxable:
+      case ObjectKind::SelfLocalBoxable:
          return true;
       default:
          return false;
@@ -2434,6 +2455,8 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::ReadOnlySelfLocal:
       case ObjectKind::Local:
       case ObjectKind::TempLocal:
+      case ObjectKind::ParamBoxable:
+      case ObjectKind::SelfLocalBoxable:
          writer.appendNode(BuildKey::Local, info.reference);
          break;
       case ObjectKind::LocalAddress:
@@ -3380,6 +3403,8 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
          return scope->buildins.less_message;
       case NOT_OPERATOR_ID:
          return scope->buildins.not_message;
+      case NOTLESS_OPERATOR_ID:
+         return scope->buildins.notless_message;
       default:
          throw InternalError(errFatalError);
    }
@@ -3740,16 +3765,17 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& me
 }
 
 mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectInfo target, ExprScope& scope, mssg_t weakMessage,
-   ref_t implicitSignatureRef, bool ignoreExtensions, ref_t& resolvedExtensionRef)
+   ref_t implicitSignatureRef, bool ignoreExtensions, ref_t& resolvedExtensionRef, int& stackSafeAttr)
 {
    mssg_t resolvedMessage = 0;
    ref_t targetRef = retrieveStrongType(scope, target);
 
    // try to resolve the message as is
+   int resolvedStackSafeAttr = 0;
    resolvedMessage = _logic->resolveMultimethod(*scope.moduleScope, weakMessage, targetRef,
-      implicitSignatureRef/*, resolvedStackSafeAttr, isSelfCall(target)*/);
+      implicitSignatureRef, resolvedStackSafeAttr/*, isSelfCall(target)*/);
    if (resolvedMessage != 0) {
-      //stackSafeAttr = resolvedStackSafeAttr;
+      stackSafeAttr = resolvedStackSafeAttr;
 
       // if the object handles the compile-time resolved message - use it
       return resolvedMessage;
@@ -3798,15 +3824,18 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
    BuildKey operation = BuildKey::CallOp;
    ref_t resolvedExtensionRef = 0;
+   int stackSafeAttr = 0;
    mssg_t message = resolveMessageAtCompileTime(writer, target, scope, weakMessage,
-      implicitSignatureRef,
+      implicitSignatureRef, 
       EAttrs::testAndExclude(mode.attrs, EAttr::NoExtension), 
-      resolvedExtensionRef);
+      resolvedExtensionRef, stackSafeAttr);
 
    if (resolvedExtensionRef) {
       // if extension was found - make it a operation target
       target = { ObjectKind::ConstantRole, { resolvedExtensionRef }, resolvedExtensionRef };
    }
+
+   //stackSafeAttrs &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
 
    ref_t targetRef = retrieveStrongType(scope, target);
 
@@ -3842,6 +3871,11 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          default:
             break;
       }
+      //if (operation != BuildKey::CallOp && result.stackSafe) {
+      //   // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
+      //   if (_logic->isStacksafeArg(*scope.moduleScope, targetRef))
+      //      stackSafeAttr |= 1;
+      //}
    }
    else if (targetRef) {
       if (EAttrs::test(mode.attrs, EAttr::StrongResolved)) {
@@ -3868,12 +3902,18 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          target = boxArgument(writer, scope, target, result.stackSafe, false);
       }
 
+      if (!result.stackSafe)
+         stackSafeAttr = 0;
+
       pos_t counter = arguments.count_pos();
       // box the arguments if required
-      for (unsigned int i = counter; i > 0; i--) {
-         ObjectInfo arg = boxArgument(writer, scope, arguments[i - 1], result.stackSafe, false);
+      int argMask = 1;
+      for (unsigned int i = 0; i < counter; i++) {
+         ObjectInfo arg = boxArgument(writer, scope, arguments[i], 
+            test(stackSafeAttr, argMask), false);
 
-         arguments[i - 1] = arg;
+         arguments[i] = arg;
+         argMask <<= 1;
       }
 
       for (unsigned int i = counter; i > 0; i--) {
@@ -5315,6 +5355,7 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    methodScope.message = current.arg.reference;
    methodScope.info = scope.info.methods.get(methodScope.message);
    methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
+   methodScope.isEmbeddable = _logic->isEmbeddableStruct(scope.info);
 
    declareVMTMessage(methodScope, current, false, false);
 }
@@ -5685,6 +5726,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
          2, 0);
    moduleScope->buildins.less_message =
       encodeMessage(moduleScope->module->mapAction(LESS_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.notless_message =
+      encodeMessage(moduleScope->module->mapAction(NOTLESS_MESSAGE, 0, false),
          2, 0);
 
    // cache self variable

@@ -308,6 +308,7 @@ struct BuiltinReferences
    mssg_t  not_message;
    mssg_t  notequal_message;
    mssg_t  less_message;
+   mssg_t  notless_message;
 
    BuiltinReferences()
    {
@@ -324,6 +325,7 @@ struct BuiltinReferences
       not_message = 0;
       notequal_message = 0;
       less_message = 0;
+      notless_message = 0;
    }
 };
 
@@ -675,6 +677,7 @@ struct ConversionRoutine
 {
    ConversionResult result;
    mssg_t           conversionMssg;
+   int              stackSafeAttrs;
 };
 
 }

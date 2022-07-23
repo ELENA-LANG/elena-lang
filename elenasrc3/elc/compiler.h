@@ -43,6 +43,9 @@ namespace elena_lang
       ReadOnlySelfLocal,
       LocalAddress,
       TempLocalAddress,
+      ParamBoxable,
+      ParamFieldBoxable,
+      SelfLocalBoxable,
       External,
       Creating,
       CreatingArray,
@@ -473,6 +476,7 @@ namespace elena_lang
          bool         functionMode;
          bool         closureMode;
          bool         constructorMode;
+         bool         isEmbeddable;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -742,7 +746,7 @@ namespace elena_lang
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix); 
 
       mssg_t resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectInfo target, ExprScope& scope, mssg_t weakMessage,
-         ref_t implicitSignatureRef, bool ignoreExtensions, ref_t& resolvedExtensionRef);
+         ref_t implicitSignatureRef, bool ignoreExtensions, ref_t& resolvedExtensionRef, int& stackSafeAttr);
       mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
 
       bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message/*, bool& isProtectedDefConst*/);

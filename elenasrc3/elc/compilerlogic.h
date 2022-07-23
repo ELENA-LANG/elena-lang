@@ -34,6 +34,10 @@ namespace elena_lang
       bool isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* targetModule, ref_t targetSignature, 
          ref_t* sourceSignatures, size_t sourceLen);
 
+      void setSignatureStacksafe(ModuleScopeBase& scope, ref_t targetSignature, int& stackSafeAttr);
+      void setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* targetModule,
+         ref_t targetSignature, int& stackSafeAttr);
+
    public:
       BuildKey resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length, ref_t& outputRef);
       BuildKey resolveNewOp(ModuleScopeBase& scope, ref_t loperand, ref_t* arguments, pos_t length);
@@ -70,6 +74,9 @@ namespace elena_lang
       bool isWrapper(ModuleScopeBase& scope, ref_t reference);
       bool isWrapper(ClassInfo& info);
 
+      bool isStacksafeArg(ModuleScopeBase& scope, ref_t reference);
+      bool isStacksafeArg(ClassInfo& info);
+
       bool isMultiMethod(ClassInfo& info, MethodInfo& methodInfo);
 
       bool isValidOp(int operatorId, const int* validOperators, size_t len);
@@ -102,7 +109,8 @@ namespace elena_lang
       bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, mssg_t targetMessage,
          ref_t* sourceSignature, size_t len);
 
-      ref_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, pos_t signLen);
+      ref_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
+         pos_t signLen, int& stackSafeAttrs);
 
       ConversionRoutine retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, TypeInfo sourceInfo);
 
@@ -119,7 +127,8 @@ namespace elena_lang
 
       void verifyMultimethods();
 
-      mssg_t resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, ref_t implicitSignatureRef);
+      mssg_t resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, 
+         ref_t implicitSignatureRef, int& stackSafeAttr);
 
       static CompilerLogic* getInstance()
       {

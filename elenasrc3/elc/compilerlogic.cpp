@@ -518,6 +518,24 @@ bool CompilerLogic :: isEmbeddable(ClassInfo& info)
    else return isEmbeddableStruct(info);
 }
 
+bool CompilerLogic :: isStacksafeArg(ClassInfo& info)
+{
+   if (test(info.header.flags, elDynamicRole)) {
+      return isEmbeddableArray(info);
+   }
+   else return isEmbeddable(info);
+}
+
+bool CompilerLogic :: isStacksafeArg(ModuleScopeBase& scope, ref_t reference)
+{
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference, true)) {
+      return isStacksafeArg(info);
+   }
+
+   return false;
+}
+
 bool CompilerLogic :: isWrapper(ModuleScopeBase& scope, ref_t reference)
 {
    ClassInfo info;
@@ -931,7 +949,41 @@ ref_t CompilerLogic :: getClassClassRef(ModuleScopeBase& scope, ref_t targetRef)
    return info.header.classRef;
 }
 
-mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, ref_t implicitSignatureRef)
+void CompilerLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ref_t targetSignature, int& stackSafeAttr)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
+   if (len <= 0)
+      return;
+
+   int flag = 1;
+   for (size_t i = 0; i < len; i++) {
+      flag <<= 1;
+
+      if (isStacksafeArg(scope, targetSignatures[i]))
+         stackSafeAttr |= flag;
+   }
+}
+
+void CompilerLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* targetModule, 
+   ref_t targetSignature, int& stackSafeAttr)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
+   if (len <= 0)
+      return;
+
+   int flag = 1;
+   for (size_t i = 0; i < len; i++) {
+      flag <<= 1;
+
+      if (isStacksafeArg(scope, scope.importReference(targetModule, targetSignatures[i])))
+         stackSafeAttr |= flag;
+   }
+}
+
+mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, 
+   ref_t implicitSignatureRef, int& stackSafeAttr)
 {
    if (!targetRef)
       return 0;
@@ -940,6 +992,9 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
    if (defineClassInfo(scope, info, targetRef)) {
       if (!implicitSignatureRef)
          return 0;
+
+      if (isStacksafeArg(info))
+         stackSafeAttr |= 1;
 
       ref_t signatures[ARG_COUNT];
       size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
@@ -961,6 +1016,8 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
 
             if (sectionInfo.module == scope.module) {
                if (isSignatureCompatible(scope, argSign, signatures, signatureLen)) {
+                  setSignatureStacksafe(scope, argSign, stackSafeAttr);
+
                   foundMessage = argMessage;
                }
             }
@@ -968,6 +1025,8 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
                if (isSignatureCompatible(scope, sectionInfo.module, 
                   argSign, signatures, signatureLen)) 
                {
+                  setSignatureStacksafe(scope, sectionInfo.module, argSign, stackSafeAttr);
+
                   foundMessage = scope.importMessage(sectionInfo.module, argMessage);
                }
             }
@@ -981,16 +1040,20 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
    return 0;
 }
 
-ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, pos_t signLen)
+ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
+   pos_t signLen, int& stackSafeAttrs)
 {
    ref_t classClassRef = getClassClassRef(scope, targetRef);
    mssg_t messageRef = overwriteArgCount(scope.buildins.constructor_message, signLen);
 
    // try to resolve implicit multi-method
-   mssg_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef, signRef);
+   mssg_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef, 
+      signRef, stackSafeAttrs);
+
    if (resolvedMessage)
       return resolvedMessage;
 
+   stackSafeAttrs = 0;
    return 0;
 }
 
@@ -1024,9 +1087,10 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& sc
    // if there is a implicit conversion routine
    if (!sourceInfo.isPrimitive()) {
       ref_t signRef = scope.module->mapSignature(&sourceInfo.typeRef, 1, false);
-      mssg_t messageRef = retrieveImplicitConstructor(scope, targetRef, signRef, 1);
+      int stackSafeAttrs = 0;
+      mssg_t messageRef = retrieveImplicitConstructor(scope, targetRef, signRef, 1, stackSafeAttrs);
       if (messageRef)
-         return { ConversionResult::Conversion, messageRef };
+         return { ConversionResult::Conversion, messageRef, stackSafeAttrs };
    }
 
    return {};
