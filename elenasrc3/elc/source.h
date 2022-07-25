@@ -28,7 +28,54 @@ namespace elena_lang
    // --- SourceReader ---
    class SourceReader : protected TextParser<char, LINE_LEN>
    {
+      bool _operatorMode;
+
       void copyToken(char* token, size_t length);
+
+      //inline void resolveDotAmbiguity(SourceInfo& info)
+      //{
+      //   char state = info.state;
+      //   size_t rollback = _position;
+      //   nextColumn();
+
+      //   char endState = TextParser::read(dfaDotStart, info.state, info.lineInfo);
+      //   // rollback if lookahead fails
+      //   if (endState == dfaBack) {
+      //      _position = rollback;
+      //      info.state = state;
+      //   }
+      //}
+
+      bool IsOperator(char state)
+      {
+         return (state == dfaOperator || state == dfaDblOperator/* || state == dfaAltOperator*/);
+      }
+
+      void resolveSignAmbiguity(SourceInfo& info)
+      {
+         // if it is not preceeded by an operator
+         if (!_operatorMode) {
+            info.state = dfaOperator;
+         }
+         // otherwise check if it could be part of numeric constant
+         else {
+            pos_t rollback = _position;
+            pos_t rollbackStart = _startPosition;
+
+            char terminalState = TextParser::read(dfaSignStart, info.state, info.lineInfo);
+            // rollback if lookahead fails
+            if (terminalState == dfaBack) {
+               _position = rollback;
+               info.state = dfaOperator;
+            }
+            //// resolve dot ambiguity
+            //else if (terminalState == dfaDotLookahead) {
+            //   resolveDotAmbiguity(info);
+            //}
+
+            _startPosition = rollbackStart;
+         }
+      }
 
    public:
       SourceInfo read(char* line, size_t length);

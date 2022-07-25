@@ -12,9 +12,9 @@
 
 using namespace elena_lang;
 
-const char* source_dfa[21] =
+const char* source_dfa[23] =
 {
-        ".????????bb??b??????????????????bdfirc?ldddddddheeeeeeeeeedddddd?ccccccccccccccccccccccccccd?ddc?ccccccccccccccccccccccccccd?d??",
+        ".????????bb??b??????????????????bdfirc?ldddddvdheeeeeeeeeedddddd?ccccccccccccccccccccccccccd?ddc?ccccccccccccccccccccccccccd?d??",
         "*********bb*********************b***********************************************************************************************",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaalaaaaaaaaccccccccccaaaaaaaccccccccccccccccccccccccccaaaacaccccccccccccccccccccccccccaaaaa",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -35,12 +35,14 @@ const char* source_dfa[21] =
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafataaaaaaaaaaassssssssssaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "????????????????????????????????????????????????uuuuuuuuuu??????????????????????????????????????????????????????????????????????",
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaagaaaaaaaaaaauuuuuuuuuuaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "--------------------------------------------------------------------------------------------------------------------------------",
+        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!eeeeeeeeee!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 };
 
 // --- SourceReader ---
 
 SourceReader::SourceReader(int tabSize, UStrReader* reader)
-   : TextParser(source_dfa, tabSize, reader)
+   : TextParser(source_dfa, tabSize, reader), _operatorMode(false)
 {
 
 }
@@ -65,6 +67,9 @@ SourceInfo SourceReader :: read(char* line, size_t length)
          info.state = dfaEOF;
          info.symbol = nullptr;
          return info;
+      case dfaMinusLookahead:
+         resolveSignAmbiguity(info);
+         break;
       default:
          // to make compiler happy
          break;
@@ -72,6 +77,8 @@ SourceInfo SourceReader :: read(char* line, size_t length)
 
    copyToken(line, length);
    info.symbol = line;
+
+   _operatorMode = IsOperator(info.state);
 
    return info;
 }

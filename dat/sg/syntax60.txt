@@ -282,8 +282,8 @@ O_R ::=
 	| I_L1_R
 	| I_L2_R L3s L7_OPT
 	| I_L3_R NEXT_L3_R
-	| I_L4_R L4s
-	| I_L5_R
+	| I_L4_R L4s L5s
+	| I_L5_R L5s
 	| I_L6_R
 	| I_L6a_R
 	| IL7_R
@@ -367,6 +367,10 @@ I_L5_R ::=
 L5_R ::=
 	"+" L5_EXPRESSION ^ADD_OPERATION
 	| "-" L5_EXPRESSION ^SUB_OPERATION;
+
+L5s ::=
+	L5_R L5s
+	| eps;
 
 I_L6_R ::=
 	"==" ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION

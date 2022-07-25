@@ -14,22 +14,27 @@
 namespace elena_lang
 {
    // --- ELENA DFA Constants ---
-   constexpr char dfaMaxChar     = 127;
+   constexpr char dfaMaxChar        = 127;
 
-   constexpr char dfaStart       = 'a';
-   constexpr char dfaIdentifier  = 'c';
-   constexpr char dfaOperator    = 'd';
-   constexpr char dfaInteger     = 'e';
-   constexpr char dfaQuote       = 'g';
-   constexpr char dfaHexInteger  = 'j';
-   constexpr char dfaReference   = 'm';
-   constexpr char dfaDblOperator = 'q';
-   constexpr char dfaCharacter   = 's';
-   constexpr char dfaQuoteCode   = 'u';
+   constexpr char dfaStart          = 'a';
+   constexpr char dfaIdentifier     = 'c';
+   constexpr char dfaOperator       = 'd';
+   constexpr char dfaInteger        = 'e';
+   constexpr char dfaQuote          = 'g';
+   constexpr char dfaHexInteger     = 'j';
+   constexpr char dfaReference      = 'm';
+   constexpr char dfaDblOperator    = 'q';
+   constexpr char dfaCharacter      = 's';
+   constexpr char dfaQuoteCode      = 'u';
+   constexpr char dfaSignStart      = 'w';
 
-   constexpr char dfaError       = '?';
-   constexpr char dfaEOF         = '.';
-   constexpr char dfaWhitespace  = '*';
+   constexpr char dfaError          = '?';
+   constexpr char dfaEOF            = '.';
+   constexpr char dfaWhitespace     = '*';
+   constexpr char dfaMinusLookahead = '-';  // indicates that if minus is preceeded by the operator it may be part of the digit
+   constexpr char dfaDotLookahead   = '$';
+   constexpr char dfaBack           = '!';
+
 
    // --- LineInfo ---
    struct LineInfo
@@ -144,6 +149,7 @@ namespace elena_lang
          return false;
       }
 
+   protected:
       void nextColumn()
       {
          if (_line[_position] == '\t') {

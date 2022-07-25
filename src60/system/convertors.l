@@ -1,4 +1,3 @@
-
 // --- byteConvertor ---
 
 public singleton byteConvertor
@@ -21,6 +20,10 @@ public singleton stringConvertor
    string convert(int value, int radix)
    {
       int n := value;
+      if (n < 0)
+      {
+         n := 0 - n;
+      };   
 
       byte buffer[12];
       byte tmp;
@@ -38,6 +41,13 @@ public singleton stringConvertor
       tmp := 48 + n;
       buffer[index] := tmp;
       len := len + 1;
+
+      if (value < 0) {
+        index := index - 1;
+        tmp := 45;
+        buffer[index] := tmp;
+        len := len + 1;
+      };
 
       ^ String.fromByteArray(index, len, buffer);
    }
