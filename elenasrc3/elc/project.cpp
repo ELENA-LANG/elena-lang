@@ -388,6 +388,7 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
 
       loadPathSetting(config, root, LIB_PATH, ProjectOption::LibPath, configPath);
       loadPathSetting(config, root, OUTPUT_PATH, ProjectOption::OutputPath, configPath);
+      loadPathSetting(config, root, TARGET_PATH, ProjectOption::TargetPath, configPath);
 
       copySetting(config, root, MGSIZE_PATH, ProjectOption::GCMGSize);
       copySetting(config, root, YGSIZE_PATH, ProjectOption::GCYGSize);

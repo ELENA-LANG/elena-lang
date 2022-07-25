@@ -271,14 +271,16 @@ end
 // ; peekr
 inline %84h
 
-  mov  rbx, [__ptr32_1]
+  mov  rax, __ptr64_1
+  mov  rbx, [rax]
 
 end 
 
 // ; storer
 inline %85h
 
-  mov  [__ptr32_1], rbx
+  mov  rax, __ptr64_1
+  mov  [rax], rbx
 
 end 
 
@@ -380,19 +382,16 @@ inline %94h
 
 end
 
-
 // ; readn
 inline %95h
 
   mov  ecx, __n_1 
   mov  eax, edx
   mul  ecx
-  mov  rdi, rsi
+  mov  rsi, r10
   add  rsi, rax
-  mov  rax,  rdi
   mov  rdi, rbx
   rep  movsb
-  mov  rsi, rax
 
 end
 
@@ -402,13 +401,10 @@ inline %96h
   mov  ecx, __n_1 
   mov  eax, edx
   mul  ecx
-  mov  rdi, rsi
-  add  rsi, rax
-  mov  rax,  rdi
-  mov  rdi, rsi
+  mov  rdi, r10
+  add  rdi, rax
   mov  rsi, rbx
   rep  movsb
-  mov  rsi, rax
 
 end
 
@@ -1121,19 +1117,19 @@ end
 // ; createnr n,r
 inline %0F7h
 
-  mov  eax, dword ptr [rsi]
+  mov  rax, [r10]
   mov  ecx, page_ceil
   imul eax, __n_1
   add  ecx, eax
   and  ecx, page_mask 
   call %GC_ALLOC
 
-  mov  ecx, dword ptr[rsi]
+  mov  rcx, [r10]
   mov  eax, __n_1
   imul ecx, eax
   or   ecx, struct_mask
 
-  mov  rax, __ptr32_2
+  mov  rax, __ptr64_2
   mov  [rbx - elSizeOffset], rcx
   mov  [rbx - elVMTOffset], rax
 

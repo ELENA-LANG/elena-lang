@@ -474,25 +474,25 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
 
 void ModuleScope :: saveListMember(ustr_t name, ustr_t memberName)
 {
-   //// HOTFIX : do not include itself
-   //IdentifierString sectionName("'", name);
+   // HOTFIX : do not include itself
+   IdentifierString sectionName("'", name);
 
-   //MemoryBase* section = module->mapSection(
-   //   module->mapReference(*sectionName, false) | mskStrMetaArrayRef,
-   //   false);
+   MemoryBase* section = module->mapSection(
+      module->mapReference(*sectionName, false) | mskLiteralListRef,
+      false);
 
-   //// check if the module alread included
-   //MemoryReader metaReader(section);
-   //while (!metaReader.eof()) {
-   //   ustr_t s = metaReader.getString(DEFAULT_STR);
-   //   if (s.compare(memberName))
-   //      return;
-   //}
+   // check if the module alread included
+   MemoryReader metaReader(section);
+   while (!metaReader.eof()) {
+      ustr_t s = metaReader.getString(DEFAULT_STR);
+      if (s.compare(memberName))
+         return;
+   }
 
-   //// otherwise add it to the list
-   //MemoryWriter metaWriter(section);
+   // otherwise add it to the list
+   MemoryWriter metaWriter(section);
 
-   //metaWriter.writeString(memberName);
+   metaWriter.writeString(memberName);
 }
 
 void ModuleScope :: newNamespace(ustr_t ns)

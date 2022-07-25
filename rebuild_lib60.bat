@@ -50,7 +50,19 @@ bin\elena-cli tests60\system_tests\system_tests.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elena64-cli tests60\system_tests\system_tests.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+echo system api test for x86
 tests60\system_tests\system_tests.exe
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO TestError
+@echo on
+
+echo system api test for amd64
+tests60\system_tests\system_tests64.exe
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO TestError
 @echo on

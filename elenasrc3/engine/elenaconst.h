@@ -220,7 +220,7 @@ namespace elena_lang
    constexpr ref_t mskClassRef            = 0x06000000u;
    constexpr ref_t mskAttributeMapRef     = 0x07000000u;
    constexpr ref_t mskTypeListRef         = 0x08000000u;
-   //constexpr ref_t mskStrMetaArrayRef     = 0x09000000u;
+   constexpr ref_t mskLiteralListRef      = 0x09000000u;
    constexpr ref_t mskSyntaxTreeRef       = 0x0A000000u;
    constexpr ref_t mskProcedureRef        = 0x0B000000u;
    constexpr ref_t mskIntLiteralRef       = 0x0C000000u;

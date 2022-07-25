@@ -1,4 +1,14 @@
 <configuration>
+  <platform key="Win_x86">
+     <project>
+        <executable>system_tests</executable>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <executable>system_tests64</executable>
+     </project>
+  </platform>
   <project>
      <namespace>system_tests</namespace>
      <template>console</template>
