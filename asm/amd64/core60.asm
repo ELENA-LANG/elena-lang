@@ -736,7 +736,8 @@ inline %0E4h
 
   mov  rcx, [r10]
   mov  rax, [rbp+__arg32_1]
-  idiv rcx
+  xor  edx, edx
+  idiv ecx
   mov  dword ptr [rbp+__arg32_1], eax
 
 end

@@ -4,12 +4,14 @@ singleton Tester
 {
    run()
    {
-//      int n := 11;
-//      int r := 12;
+//      int n := 4;
+//      int m := 2;
+//      int r := n / m;
 
-//      console.writeLine(11);
+      int n := 11;
+      int r := 12;
 
-//      console.writeLine(n*r-5);
+      console.writeLine(n*r-5);
 
 //      bool b := n >= r;
 //      console.writeLine(b);
@@ -26,7 +28,7 @@ singleton Tester
 //       var s := String.fromByteArray(0,3,tmp);
 //       console.writeLine(s);
 
-       console.writeLine(13);  
+//       console.writeLine(13);  
 //       console.writeLine(-123);  
    }
 }
