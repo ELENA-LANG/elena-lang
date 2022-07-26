@@ -1994,13 +1994,13 @@ CodeGenerator* JITCompiler :: codeGenerators()
 
 void JITCompiler :: writeArgAddress(JITCompilerScope* scope, arg_t arg, pos_t offset, ref_t addressMask)
 {
-   scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(), 
+   scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
       (ref_t)arg, offset, addressMask);
 }
 
 void JITCompiler :: writeVMTMethodArg(JITCompilerScope* scope, arg_t arg, pos_t offset, mssg_t message, ref_t addressMask)
 {
-   scope->helper->writeVMTMethodReference(*scope->codeWriter->Memory(), scope->codeWriter->position(), 
+   scope->helper->writeVMTMethodReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
       (ref_t)arg, offset, message, addressMask);
 }
 
@@ -2082,7 +2082,7 @@ void JITCompiler32 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader&
    }
 }
 
-void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
+void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength,
    pos_t staticLength)
 {
    // create VMT static table
@@ -2378,7 +2378,13 @@ void JITCompiler32 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, 
 {
    void* env = _preloaded.get(SYSTEM_ENV);
    if (virtualMode) {
+#if defined _M_X64 || __x86_64__ || __PPC64__ || __aarch64__
+      int64_t tmp = (int64_t)env;
+
+      MemoryBase::writeDWord(rdata, (static_cast<ref_t>(tmp) & ~mskAnyRef), staticCounter);
+#else
       MemoryBase::writeDWord(rdata, ((ref_t)env & ~mskAnyRef), staticCounter);
+#endif
    }
    else {
       *(int64_t*)env = staticCounter;
@@ -2717,7 +2723,7 @@ void JITCompiler64 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter&
       if (*it == (pos_t)-4) {
          // skip VMT reference
       }
-      else helper->writeSectionReference(writer.Memory(), imageOffset, it.key(), 
+      else helper->writeSectionReference(writer.Memory(), imageOffset, it.key(),
          sectionInfo, *it, mskRef64);
    }
 }
@@ -2731,7 +2737,7 @@ void JITCompiler64 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, 
 {
    void* env = _preloaded.get(SYSTEM_ENV);
    if (virtualMode) {
-      MemoryBase::writeQWord(rdata, (pos_t)env & ~mskAnyRef, staticCounter);
+      MemoryBase::writeQWord(rdata, (int64_t)env & ~mskAnyRef, staticCounter);
    }
    else {
       *(int64_t*)env = staticCounter;
