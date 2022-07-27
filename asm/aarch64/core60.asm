@@ -969,7 +969,7 @@ end
 inline %0E5h
 
   add     x19, x29, __arg12_1
-  mov     x18, __n16_1
+  mov     x18, __n16_2
   str     w18, [x19]
 
 end
