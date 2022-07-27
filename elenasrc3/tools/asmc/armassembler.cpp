@@ -573,6 +573,17 @@ bool Arm64Assembler :: compileADDShifted(ScriptToken& tokenInfo, ARMOperand rd, 
    return true;
 }
 
+bool Arm64Assembler :: compileANDShifted(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm,
+   int shift, int amount, MemoryWriter& writer)
+{
+   if (rd.isXR() && rn.isXR() && rm.isXR()) {
+      writer.writeDWord(ARMHelper::makeImm6ShiftOpcode(1, 0, 0, 0xA, shift, amount, rm.type, rn.type, rd.type));
+   }
+   else return false;
+
+   return true;
+}
+
 bool Arm64Assembler :: compileADDImm(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand imm, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && imm.type == ARMOperandType::Imm) {
@@ -1039,6 +1050,9 @@ void Arm64Assembler :: compileAND(ScriptToken& tokenInfo, MemoryWriter& writer)
    bool isValid = false;
    if (rn2.type == ARMOperandType::Imm) {
       isValid = compileANDImm(tokenInfo, rd, rn, rn2, writer);
+   }
+   else {
+      isValid = compileANDShifted(tokenInfo, rd, rn, rn2, 0, 0, writer);
    }
 
    if (!isValid)

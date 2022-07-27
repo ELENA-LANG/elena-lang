@@ -412,7 +412,9 @@ end
 // ; andn
 inline %94h
 
-  and     x9, x9, __n12_1
+//;  and     x9, x9, __n13_1
+  mov     x19, __n16_1   // ; temporally
+  and     x9, x9, x19
 
 end
 
