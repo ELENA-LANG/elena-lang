@@ -31,6 +31,9 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
+// ; --- Page Size ----
+define page_ceil               2Fh
+define page_mask        0FFFFFFE0h
 define struct_mask_inv     7FFFFFh
 
 // ; --- System Core Preloaded Routines --
@@ -273,7 +276,7 @@ end
 // ; xassigni
 inline %83h
 
-  add     x11, x10, __arg12
+  add     x11, x10, __arg12_1
   str     x0, [x11]
 
 end
@@ -550,8 +553,8 @@ end
 // ; geti
 inline %0A5h
 
-  add     x11, x10, __arg12
-  ldr     x10 [x11]
+  add     x11, x10, __arg12_1
+  ldr     x10, [x11]
 
 end
 
@@ -1389,7 +1392,7 @@ end
 // ; createnr n,r
 inline %0F7h
 
-  ldw     w19, [x0]
+  ldr     w19, [x0]
   movz    x18, __n16_1
   mul     x19, x19, x18
   add     x19, x18, page_ceil
@@ -1399,7 +1402,7 @@ inline %0F7h
   movk    x17,  code_ptr32hi : %GC_ALLOC, lsl #16
   blr     x17
 
-  ldw     w19, [x0]
+  ldr     w19, [x0]
   movz    x18, __n16_1
   mul     x18, x19, x18
 
