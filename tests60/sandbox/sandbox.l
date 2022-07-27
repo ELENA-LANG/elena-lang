@@ -4,8 +4,6 @@ singleton Tester
 {
    run()
    {
-      console.writeLine("hello");
-
 //      int n := 4;
 //      int m := 2;
 //      int r := n / m;
@@ -20,7 +18,7 @@ singleton Tester
 
 //       var n := 3 * 2 * 3;
 
-//       byte b := 55;
+       byte b := 55;
 //       byte tmp[5];
 //       tmp[0] := b;
 //       tmp[1] := b;
