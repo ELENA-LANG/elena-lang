@@ -19,8 +19,8 @@ singleton Tester
 //       var n := 3 * 2 * 3;
 
        byte b := 55;
-//       byte tmp[5];
-//       tmp[0] := b;
+       byte tmp[5];
+       tmp[0] := b;
 //       tmp[1] := b;
 //       tmp[2] := b;
 //       b := tmp[0];
