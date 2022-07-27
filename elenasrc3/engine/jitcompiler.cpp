@@ -401,7 +401,7 @@ void elena_lang :: loadNOp(JITCompilerScope* scope)
             writer->writeDWord(scope->command.arg1);
             break;
          case NARG16_1:
-            writer->writeWord((unsigned short)scope->command.arg1);
+            scope->compiler->writeImm16(writer, scope->command.arg1, 0);
             break;
          case NARG12_1:
             scope->compiler->writeImm12(writer, scope->command.arg1, 0);
