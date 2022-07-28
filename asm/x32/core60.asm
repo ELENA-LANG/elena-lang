@@ -401,7 +401,7 @@ inline %96h
   mul  ecx
   mov  edi, esi
   add  esi, eax
-  mov  eax,  edi
+  mov  eax, edi
   mov  edi, esi
   mov  esi, ebx
   rep  movsb

@@ -422,11 +422,9 @@ end
 inline %95h
 
   mov     x11, __n16_1
-  mov     x12, x0
   mov     x13, x10
-  mov     x14, x11
-  mul     x14, x14, x11
-  add     x13, x13, x14
+  mul     x14, x9, x11
+  add     x12, x0, x14
 
 labLoop:
   cmp     x11, 0
@@ -444,11 +442,9 @@ end
 inline %96h
 
   mov     x11, __n16_1
-  mov     x12, x0
   mov     x13, x10
-  mov     x14, x11
-  mul     x14, x14, x11
-  add     x13, x13, x14
+  mul     x14, x9, x11
+  add     x12, x0, x14
 
 labLoop:
   cmp     x11, 0
