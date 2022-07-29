@@ -2577,7 +2577,7 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
 
    // settings static values
    for (auto it = staticValues.start(); !it.eof(); ++it) {
-      vmtWriter.seek(position - sizeof(VMTHeader64) - it.key() * 4);
+      vmtWriter.seek(position - sizeof(VMTHeader64) + it.key() * 8);
       if (virtualMode) {
          vmtWriter.writeQReference(*it | mskRef64, 0);
       }

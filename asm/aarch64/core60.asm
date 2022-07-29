@@ -171,7 +171,7 @@ end
 // ; load
 inline %6
 
-  ldr    x9, [x10]
+  ldrsw   x9, [x10]
 
 end
 

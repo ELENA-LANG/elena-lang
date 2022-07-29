@@ -181,7 +181,7 @@ end
 // ; load
 inline %6
 
-  ld      r14, 0(r15)
+  lwz     r14, 0(r15)
 
 end
 
