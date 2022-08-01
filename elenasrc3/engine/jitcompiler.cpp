@@ -422,7 +422,7 @@ void elena_lang :: loadFieldIndexOp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = retrieveCode(scope);
+   void* code = retrieveCodeWithNegative(scope);
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
@@ -454,6 +454,9 @@ void elena_lang :: loadFieldIndexOp(JITCompilerScope* scope)
          break;
       case ARG12_1:
          scope->compiler->writeImm12(writer, arg1, 0);
+         break;
+      case INV_ARG12_1:
+         scope->compiler->writeImm12(writer, -arg1, 0);
          break;
       default:
          // to make compiler happy

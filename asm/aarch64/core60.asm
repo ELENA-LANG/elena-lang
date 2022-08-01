@@ -556,6 +556,15 @@ inline %0A5h
 
 end
 
+// ; geti
+// ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
+inline %5A5h
+
+  sub     x11, x10, -__arg12_1
+  ldr     x10, [x11]
+
+end
+
 // ; peekfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0A8h
