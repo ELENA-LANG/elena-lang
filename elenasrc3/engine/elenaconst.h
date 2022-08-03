@@ -308,6 +308,8 @@ namespace elena_lang
    constexpr ref_t mskStatDataRef64       = 0xC7000000u;
    constexpr ref_t mskStatDataRef32Hi     = 0x27000000u;
    constexpr ref_t mskStatDataRef32Lo     = 0xA7000000u;
+   constexpr ref_t mskStatDisp32Hi        = 0x67000000u;
+   constexpr ref_t mskStatDisp32Lo        = 0xE7000000u;
 
    // --- Address predefined references ---
    constexpr ref_t INV_ARG                = 0x00000100u;
