@@ -708,10 +708,10 @@ bool Arm64Assembler::compileLDP(ARMOperand rt1, ARMOperand rt2, ARMOperand n1, A
 bool Arm64Assembler :: compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
    if (rt.isXR() && ptr.isPreindex()) {
-      writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 0, 0, 1, 0, ptr.imm >> 3, 3, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 0, 0, 1, 0, ptr.imm, 3, ptr.type, rt.type));
    }
    else if (rt.isXR() && ptr.isPostindex()) {
-      writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 0, 0, 1, 0, ptr.imm >> 3, 1, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 0, 0, 1, 0, ptr.imm, 1, ptr.type, rt.type));
 
       if (ptr.reference)
          writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
@@ -723,10 +723,10 @@ bool Arm64Assembler :: compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
       writer.writeDWord(ARMHelper::makeImm12Opcode(2, 7, 0, 1, 1, ptr.imm >> 3, ptr.type, rt.type));
    }
    else if (rt.isWR() && ptr.isPreindex()) {
-      writer.writeDWord(ARMHelper::makeImm9Opcode(2, 7, 0, 0, 1, 0, ptr.imm >> 3, 3, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm9Opcode(2, 7, 0, 0, 1, 0, ptr.imm, 3, ptr.type, rt.type));
    }
    else if (rt.isWR() && ptr.isPostindex()) {
-      writer.writeDWord(ARMHelper::makeImm9Opcode(2, 7, 0, 0, 1, 0, ptr.imm >> 3, 1, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm9Opcode(2, 7, 0, 0, 1, 0, ptr.imm, 1, ptr.type, rt.type));
 
       if (ptr.reference)
          writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
@@ -739,10 +739,10 @@ bool Arm64Assembler :: compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
 bool Arm64Assembler :: compileLDRSB(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
    if (rt.isXR() && ptr.isPreindex()) {
-      writer.writeDWord(ARMHelper::makeImm9Opcode(0, 7, 0, 0, 2, 0, ptr.imm >> 3, 3, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm9Opcode(0, 7, 0, 0, 2, 0, ptr.imm, 3, ptr.type, rt.type));
    }
    else if (rt.isXR() && ptr.isPostindex()) {
-      writer.writeDWord(ARMHelper::makeImm9Opcode(0, 7, 0, 0, 2, 0, ptr.imm >> 3, 1, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm9Opcode(0, 7, 0, 0, 2, 0, ptr.imm, 1, ptr.type, rt.type));
 
       if (ptr.reference)
          writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
@@ -777,10 +777,10 @@ bool Arm64Assembler :: compileLDRB(ScriptToken& tokenInfo, ARMOperand rt, ARMOpe
 bool Arm64Assembler :: compileLDRSW(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
    if (rt.isXR() && ptr.isPreindex()) {
-      writer.writeDWord(ARMHelper::makeImm9Opcode(2, 7, 0, 0, 2, 0, ptr.imm >> 3, 3, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm9Opcode(2, 7, 0, 0, 2, 0, ptr.imm, 3, ptr.type, rt.type));
    }
    else if (rt.isXR() && ptr.isPostindex()) {
-      writer.writeDWord(ARMHelper::makeImm9Opcode(2, 7, 0, 0, 2, 0, ptr.imm >> 3, 1, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm9Opcode(2, 7, 0, 0, 2, 0, ptr.imm, 1, ptr.type, rt.type));
 
       if (ptr.reference)
          writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
@@ -796,10 +796,10 @@ bool Arm64Assembler :: compileLDRSW(ScriptToken& tokenInfo, ARMOperand rt, ARMOp
 bool Arm64Assembler :: compileLDRSH(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
    if (rt.isXR() && ptr.isPreindex()) {
-      writer.writeDWord(ARMHelper::makeImm9Opcode(1, 7, 0, 0, 2, 0, ptr.imm >> 3, 3, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm9Opcode(1, 7, 0, 0, 2, 0, ptr.imm, 3, ptr.type, rt.type));
    }
    else if (rt.isXR() && ptr.isPostindex()) {
-      writer.writeDWord(ARMHelper::makeImm9Opcode(1, 7, 0, 0, 2, 0, ptr.imm >> 3, 1, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm9Opcode(1, 7, 0, 0, 2, 0, ptr.imm, 1, ptr.type, rt.type));
 
       if (ptr.reference)
          writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
