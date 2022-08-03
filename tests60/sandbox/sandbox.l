@@ -38,8 +38,8 @@ singleton Tester
 //       var s := String.fromByteArray(0,3,tmp);
 //       console.writeLine(s);
 
-       console.writeLine(13);  
-//       console.writeLine(-123);  
+//       console.writeLine(13);  
+       console.writeLine(-123);  
    }
 }
 
