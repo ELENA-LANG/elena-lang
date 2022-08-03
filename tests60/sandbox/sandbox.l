@@ -9,7 +9,9 @@ singleton Tester
       int n := 12;
       int m := 10;
 
-      int k := n.mod(m);
+      int k := n / m;
+
+//      int k := n.mod(m);
 
 
 //      int n := 4;
