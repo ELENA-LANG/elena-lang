@@ -40,10 +40,12 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
+// ; --- Page Size ----
+define page_ceil               2Fh
+define page_mask        0FFFFFFE0h
 define struct_mask_inv     7FFFFFh
-define struct_mask_inv_lo  0FFFFh
-define struct_mask_inv_hi  7Fh
-
+define struct_mask_inv_lo   0FFFFh
+define struct_mask_inv_hi      7Fh
 
 // ; --- System Core Preloaded Routines --
 
@@ -298,7 +300,7 @@ end
 // ; xassigni
 inline %83h
 
-  add     r16, r15, __arg16_1
+  addi    r16, r15, __arg16_1
   std     r3, 0(r16)
 
 end
@@ -458,8 +460,8 @@ end
 
 // ; andn
 inline %94h
-
-  and    r14, r14, __n16_1     // ; free stack
+          	
+  andi.   r14, r14, __n16_1     // ; free stack
 
 end
 
@@ -471,7 +473,7 @@ inline %95h
   mr      r19, r3
   mr      r18, r15
   mr      r20, r16
-  mul     r20, r20, r14
+  mulld   r20, r20, r14
 
 labLoop:
   cmpwi   r16,0
@@ -494,7 +496,7 @@ inline %96h
   mr      r19, r3
   mr      r18, r15
   mr      r20, r16
-  mul     r20, r20, r14
+  mulld   r20, r20, r14
 
 labLoop:
   cmpwi   r16,0
@@ -588,7 +590,7 @@ end
 // ; geti
 inline %0A5h
 
-  add     r16, r15, __arg16_1
+  addi    r16, r15, __arg16_1
   std     r15, 0(r16)
 
 end
@@ -1491,20 +1493,23 @@ end
 // ; create n, r
 inline %0F7h
 
-  ld      r12, [r3]
-  movz    r13, __n16_1
-  mul     r12, r12, r13
-  add     r12, r12, page_ceil
-  and     r18, r12, page_mask
+  ld      r12, 0(r3)
+  li      r13, __n16_1
+  mulld   r12, r12, r13
+  addi    r12, r12, page_ceil
+  andi.   r18, r12, page_mask
 
   ld      r12, toc_alloc(r2)
   mtctr   r12            
   bctrl                   
 
-  ld      r12, [r3]
-  movz    r13, __n16_1
-  mul     r12, r12, r13
-  or      r18, r12, struct_mask
+  ld      r12, 0(r3)
+  li      r13, __n16_1
+  mulld   r12, r12, r13
+
+  li      r16, struct_mask_inv_lo
+  addis   r16, r16, struct_mask_inv_hi
+  or      r18, r12, r16
 
   ld      r17, toc_rdata(r2)
   addis   r17, r17, __disp32hi_2 
