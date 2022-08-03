@@ -922,9 +922,9 @@ inline %0E4h
   ldrsw   x17, [x0]
   ldrsw   x18, [x19]
 
-  sdiv    x17, x17, x18  
+  sdiv    x18, x18, x17    // ; sp[0] / temp
 
-  str     w17, [x19]
+  str     w18, [x19]
 
 end
 
@@ -936,9 +936,9 @@ inline %1E4h
   ldrsb   x17, [x0]
   ldrsb   x18, [x19]
 
-  sdiv    x17, x17, x18  
+  sdiv    x18, x18, x17  
 
-  strb    w17, [x19]
+  strb    w18, [x19]
 
 end
 
@@ -950,9 +950,9 @@ inline %2E4h
   ldrsb   x17, [x0]
   ldrsb   x18, [x19]
 
-  sdiv    x17, x17, x18  
+  sdiv    x18, x18, x17  
 
-  strh    w17, [x19]
+  strh    w18, [x19]
 
 end
 
@@ -964,9 +964,9 @@ inline %4E4h
   ldr     x17, [x0]
   ldr     x18, [x19]
 
-  sdiv    x17, x17, x18  
+  sdiv    x18, x18, x17  
 
-  str     x17, [x19]
+  str     x18, [x19]
 
 end
 

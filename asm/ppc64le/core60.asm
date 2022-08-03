@@ -927,9 +927,9 @@ inline %0E4h
   lwz     r17, 0(r3)
   lwz     r18, 0(r19)
 
-  divw    r17, r17, r18  
+  divw    r18, r18, r17  
 
-  stw     r17, 0(r19)
+  stw     r18, 0(r19)
 
 end
 
@@ -941,9 +941,9 @@ inline %1E4h
   lbz     r17, 0(r3)
   lbz     r18, 0(r19)
 
-  divw    r17, r17, r18  
+  divw    r18, r18, r17  
 
-  stb     r17, 0(r19)
+  stb     r18, 0(r19)
 
 end
 
@@ -955,9 +955,9 @@ inline %2E4h
   lhz     r17, 0(r3)
   lhz     r18, 0(r19)
 
-  divw    r17, r17, r18  
+  divw    r18, r18, r17  
 
-  sth     r17, 0(r19)
+  sth     r18, 0(r19)
 
 end
 
@@ -969,9 +969,9 @@ inline %4E4h
   ld      r17, 0(r3)
   ld      r18, 0(r19)
 
-  divd    r17, r17, r18  
+  divd    r18, r18, r17  
 
-  std     r17, 0(r19)
+  std     r18, 0(r19)
 
 end
 
