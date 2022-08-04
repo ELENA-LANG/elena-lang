@@ -6,7 +6,7 @@ singleton Tester
    {
 //       console.writeLine("Working");  
 
-     var b := true;
+//     var b := true;
 
 //      int n := 12;
 //      int m := 10;
@@ -26,19 +26,19 @@ singleton Tester
 //      console.writeLine(n*r-5);
 
 //      bool b := n >= r;
-      console.writeLine(b);
+//      console.writeLine(b);
 
 //       var n := 3 * 2 * 3;
 
-//       byte b := 55;
-//       byte tmp[5];
-//       tmp[0] := b;
-//       tmp[1] := b;
-//       tmp[2] := b;
+       byte b := 55;
+       byte tmp[5];
+       tmp[0] := b;
+       tmp[1] := b;
+       tmp[2] := b;
 //       b := tmp[0];
 
-//       var s := String.fromByteArray(0,3,tmp);
-//       console.writeLine(s);
+       var s := String.fromByteArray(0,3,tmp);
+       console.writeLine(s);
 
 //       console.writeLine(13);  
 //       console.writeLine(-123);  
