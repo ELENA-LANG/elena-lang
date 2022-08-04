@@ -98,7 +98,6 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       }
       case mskRDataDisp32Lo:
       case mskCodeDisp32Lo:
-      case mskStatDisp32Lo:
       {
          unsigned short disp = (unsigned short)(reference & 0xFFFF);
 
