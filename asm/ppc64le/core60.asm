@@ -591,7 +591,7 @@ end
 inline %0A5h
 
   addi    r16, r15, __arg16_1
-  std     r15, 0(r16)
+  ld      r15, 0(r16)
 
 end
 
