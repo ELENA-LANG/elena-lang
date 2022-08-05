@@ -470,15 +470,13 @@ inline %94h
 
 end
 
-
 // ; readn
 inline %95h
 
   li      r16, __n16_1
-  mr      r19, r3
   mr      r18, r15
-  mr      r20, r16
-  mulld   r20, r20, r14
+  mulld   r20, r16, r14
+  add     r19, r3, r20
 
 labLoop:
   cmpwi   r16,0
@@ -498,10 +496,9 @@ end
 inline %96h
 
   li      r16, __n16_1
-  mr      r19, r3
   mr      r18, r15
-  mr      r20, r16
-  mulld   r20, r20, r14
+  mulld   r20, r16, r14
+  add     r19, r3, r20
 
 labLoop:
   cmpwi   r16,0
