@@ -983,7 +983,7 @@ end
 inline %0E5h
 
   addi    r19, r31, __arg16_1
-  li      r17, __n16_1
+  li      r17, __n16_2
   stw     r17, 0(r19)
 
 end
