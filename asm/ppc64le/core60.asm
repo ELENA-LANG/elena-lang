@@ -1691,7 +1691,7 @@ labNextParam:
 
 //;  mov  r13, [r9 + rdx * 16 + 8] 
   sldi    r23, r25, 4  
-  add     r23, r21, r23
+  add     r25, r21, r23
 
   ld      r23, 8(r25)
 
