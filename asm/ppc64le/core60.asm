@@ -1580,20 +1580,11 @@ labNextParam:
 
 //;  mov  r13, [r9 + rdx * 16 + 8] 
   sldi    r23, r25, 4  
-  add     r25, r21, r23
-  ld      r23, 8(r25)
+  add     r23, r21, r23
 
-//;  mov  rcx, [rbx - elVMTOffset]
-  ld      r16, -elVMTOffset(r15)
-//;  lea  rax, [r13 * 16]
-  sldi    r17, r23, 4
+  ld      r14, 0(r23)
+  ld      r0,  8(r23)                
 
-//;  mov  rdx, [r9 + r13 * 2]        // c02
-  sldi    r23, r23, 1
-  add     r14, r21, r23
-  ld      r14, 0(r14)                
-//;  jmp  [rcx + rax + 8]       // rax - 0
-  ld      r0, 8(r14)                
   mtctr   r0
   bctr
 
@@ -1700,7 +1691,8 @@ labNextParam:
 
 //;  mov  r13, [r9 + rdx * 16 + 8] 
   sldi    r23, r25, 4  
-  add     r25, r21, r23
+  add     r23, r21, r23
+
   ld      r23, 8(r25)
 
 //;  mov  rcx, [rbx - elVMTOffset]
