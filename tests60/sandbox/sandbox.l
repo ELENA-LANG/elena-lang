@@ -25,7 +25,7 @@ singleton Tester
 
 //      console.writeLine(n*r-5);
 
-//      bool b := n >= r;
+      bool b := n >= r;
 //      console.writeLine(b);
 
 //       var n := 3 * 2 * 3;
@@ -40,7 +40,7 @@ singleton Tester
 //       var s := String.fromByteArray(0,3,tmp);
 //       console.writeLine(s);
 
-       console.writeLine(13);  
+//       console.writeLine(13);  
 //       console.writeLine(-123);  
    }
 }
