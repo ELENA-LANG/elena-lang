@@ -37,7 +37,7 @@ singleton Tester
        tmp[2] := b;
        b := tmp[0];
 
-//       var s := String.fromByteArray(0,3,tmp);
+       var s := String.fromByteArray(0,3,tmp);
 //       console.writeLine(s);
 
 //       console.writeLine(13);  
