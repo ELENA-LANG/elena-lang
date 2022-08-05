@@ -4,7 +4,9 @@ singleton Tester
 {
    run()
    {
-       console.writeLine("Working");  
+      console.writeLine("777");  
+
+//       console.writeLine("Working");  
 
 //     var b := true;
 
