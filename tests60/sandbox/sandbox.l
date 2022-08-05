@@ -26,7 +26,7 @@ singleton Tester
 //      console.writeLine(n*r-5);
 
       bool b := n >= r;
-      console.writeLine(b);
+//      console.writeLine(b);
 
 //       var n := 3 * 2 * 3;
 
