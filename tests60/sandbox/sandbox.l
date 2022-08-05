@@ -8,10 +8,10 @@ singleton Tester
 
 //     var b := true;
 
-//      int n := 12;
-//      int m := 10;
+      int n := 12;
+      int m := 10;
 
-//      int k := n / m;
+      int k := n / m;
 
 //      int k := n.mod(m);
 
@@ -40,7 +40,7 @@ singleton Tester
 //       var s := String.fromByteArray(0,3,tmp);
 //       console.writeLine(s);
 
-       console.writeLine(13);  
+//       console.writeLine(13);  
 //       console.writeLine(-123);  
    }
 }
