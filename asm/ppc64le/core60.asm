@@ -47,6 +47,11 @@ define struct_mask_inv     7FFFFFh
 define struct_mask_inv_lo   0FFFFh
 define struct_mask_inv_hi      7Fh
 
+define struct_mask       40000000h
+define struct_mask_lo        0000h
+define struct_mask_hi        4000h
+
+
 // ; --- System Core Preloaded Routines --
 
 structure % CORE_TOC
@@ -1507,8 +1512,8 @@ inline %0F7h
   li      r13, __n16_1
   mulld   r12, r12, r13
 
-  li      r16, struct_mask_inv_lo
-  addis   r16, r16, struct_mask_inv_hi
+  li      r16, struct_mask_lo
+  addis   r16, r16, struct_mask_hi
   or      r18, r12, r16
 
   ld      r17, toc_rdata(r2)

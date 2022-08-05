@@ -1413,6 +1413,8 @@ inline %0F7h
   movz    x18, __n16_1
   mul     x18, x19, x18
 
+  // ; adding mask
+
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16
   sub     x20, x10, elVMTOffset
