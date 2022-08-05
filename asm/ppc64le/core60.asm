@@ -1496,8 +1496,8 @@ end
 inline %0F7h
 
   ld      r12, 0(r3)
-  li      r13, __n16_1
-  mulld   r12, r12, r13
+  li      r10, __n16_1
+  mulld   r12, r12, r10
   addi    r12, r12, page_ceil
   andi.   r18, r12, page_mask
 
@@ -1506,8 +1506,8 @@ inline %0F7h
   bctrl                   
 
   ld      r12, 0(r3)
-  li      r13, __n16_1
-  mulld   r12, r12, r13
+  li      r10, __n16_1
+  mulld   r12, r12, r10
 
   li      r16, struct_mask_lo
   addis   r16, r16, struct_mask_hi
