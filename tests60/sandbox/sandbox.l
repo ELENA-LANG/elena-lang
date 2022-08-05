@@ -20,8 +20,8 @@ singleton Tester
 //      int m := 2;
 //      int r := n / m;
 
-//      int n := 11;
-//      int r := 12;
+      int n := 11;
+      int r := 12;
 
 //      console.writeLine(n*r-5);
 
