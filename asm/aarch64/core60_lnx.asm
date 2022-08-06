@@ -4,6 +4,7 @@
 
 // ; --- Predefined References  --
 define INVOKER         10001h
+define EXCEPTION_HANDLER     10003h
 
 // ; ==== System commands ===
 
@@ -33,5 +34,10 @@ procedure % INVOKER
   ldp     x19, x20, [sp], #16 
 
   ret     x30
+
+end
+
+// EXCEPTION_HANDLER() 
+procedure % EXCEPTION_HANDLER
 
 end

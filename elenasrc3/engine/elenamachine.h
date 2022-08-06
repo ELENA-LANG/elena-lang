@@ -98,6 +98,8 @@ namespace elena_lang
       static uintptr_t NewHeap(int totalSize, int committedSize);
 
       static void Init(SystemEnv* env, SystemSettings settings);
+      static void InitExceptionHandling(SystemEnv* env, ExceptionStruct* ex_struct);
+      static void InitCriticalStruct(uintptr_t criticalHandler);
 
       static void InitSTA(SystemEnv* env);
 

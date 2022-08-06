@@ -44,6 +44,13 @@ namespace elena_lang
    constexpr ref_t VOIDOBJ                   = 0x2000D;
    constexpr ref_t VOIDPTR                   = 0x2000E;
 
+   // ELENA run-time exceptions
+   constexpr int ELENA_ERR_CRITICAL          = 0x100;
+   constexpr int ELENA_ERR_ACCESS_VIOLATION  = 0x101;
+   constexpr int ELENA_ERR_DIVIDE_BY_ZERO    = 0x102;
+   constexpr int ELENA_ERR_OUT_OF_MEMORY     = 0x103;
+   constexpr int ELENA_ERR_OUT_OF_PERMMEMORY = 0x104;
+
 #pragma pack(push, 1)
    // --- VMTHeader ---
    constexpr auto VMTHeader32ParentRefOffs = 0;

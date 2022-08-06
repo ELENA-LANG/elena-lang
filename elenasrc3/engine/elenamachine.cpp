@@ -12,6 +12,13 @@ using namespace elena_lang;
 
 // --- SystemRoutineProvider ---
 
+void SystemRoutineProvider :: InitExceptionHandling(SystemEnv* env, ExceptionStruct* exception_struct)
+{
+   exception_struct->core_catch_addr = (uintptr_t)env->ex_handler;
+
+   InitCriticalStruct((uintptr_t)env->ex_handler);
+}
+
 void SystemRoutineProvider :: Init(SystemEnv* env, SystemSettings settings)
 {
    int page_mask = settings.page_mask;

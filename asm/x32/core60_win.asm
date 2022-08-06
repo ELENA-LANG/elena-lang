@@ -1,8 +1,9 @@
 // ; --- Predefined References  --
-define INVOKER         10001h
+define INVOKER           10001h
+define EXCEPTION_HANDLER 10003h
 
-define CORE_TOC        20001h
-define SYSTEM_ENV      20002h
+define CORE_TOC          20001h
+define SYSTEM_ENV        20002h
 
 // ; ==== System commands ===
 
@@ -35,5 +36,10 @@ procedure % INVOKER
   pop  edi
   pop  esi
   ret
+
+end
+
+// EXCEPTION_HANDLER() 
+procedure % EXCEPTION_HANDLER
 
 end

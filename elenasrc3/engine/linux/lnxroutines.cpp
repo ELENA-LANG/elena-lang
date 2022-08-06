@@ -7,10 +7,14 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
+#include "core.h"
+
 #include <sys/mman.h>
 #include <errno.h>
 
 using namespace elena_lang;
+
+static uintptr_t CriticalHandler = 0;
 
 uintptr_t SystemRoutineProvider::NewHeap(int totalSize, int committedSize)
 {
@@ -34,4 +38,40 @@ uintptr_t SystemRoutineProvider::NewHeap(int totalSize, int committedSize)
 void SystemRoutineProvider :: Exit(int exitCode)
 {
    ::exit(exitCode);
+}
+
+static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
+{
+   ucontext_t* u = (ucontext_t*)unused;
+
+   switch (sig) {
+      case SIGFPE:
+         u->uc_mcontext.gregs[REG_EDX] = u->uc_mcontext.gregs[REG_EIP];
+         u->uc_mcontext.gregs[REG_EAX] = ELENA_ERR_DIVIDE_BY_ZERO;
+         u->uc_mcontext.gregs[REG_EIP] = CriticalHandler;
+         break;
+      case SIGSEGV:
+         u->uc_mcontext.gregs[REG_EDX] = u->uc_mcontext.gregs[REG_EIP];
+         u->uc_mcontext.gregs[REG_EAX] = ELENA_ERR_ACCESS_VIOLATION;
+         u->uc_mcontext.gregs[REG_EIP] = CriticalHandler;
+         break;
+      default:
+         u->uc_mcontext.gregs[REG_EDX] = u->uc_mcontext.gregs[REG_EIP];
+         u->uc_mcontext.gregs[REG_EAX] = ELENA_ERR_CRITICAL;
+         u->uc_mcontext.gregs[REG_EIP] = CriticalHandler;
+         break;
+   }
+
+}
+
+void SystemRoutineProvider :: InitCriticalStruct(uintptr_t criticalHandler)
+{
+   CriticalHandler = criticalHandler;
+
+   struct sigaction sa;
+   sa.sa_flags = SA_SIGINFO;
+   sigemptyset(&sa.sa_mask);
+   sa.sa_sigaction = ELENASignalHandler;
+   if (sigaction(SIGSEGV, &sa, NULL) == -1)
+      throw EAbortException();
 }

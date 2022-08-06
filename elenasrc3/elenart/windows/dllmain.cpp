@@ -24,6 +24,8 @@ EXTERN_DLL_EXPORT void InitializeSTA(SystemEnv* env, SymbolList* entryList, Exce
    printf("InitializeSTA.4 %x,%x,%x\n", (int)env, (int)entryList, (int)ex_struct);
    fflush(stdout);
 
+   __routineProvider.InitExceptionHandling(env, ex_struct);
+
    machine->startSTA(env, entryList);
 }
 

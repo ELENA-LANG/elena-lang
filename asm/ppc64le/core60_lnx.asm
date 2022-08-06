@@ -3,9 +3,10 @@
 // ; ==== Overridden Command Set ==
 
 // ; --- Predefined References  --
-define INVOKER         10001h
+define INVOKER           10001h
+define EXCEPTION_HANDLER 10003h
 
-define CORE_TOC        20001h
+define CORE_TOC          20001h
 
 // ; ==== System commands ===
 
@@ -44,5 +45,10 @@ procedure % INVOKER
 
   addi  r1, r1, 176
   blr                                          
+
+end
+
+// EXCEPTION_HANDLER() 
+procedure % EXCEPTION_HANDLER
 
 end
