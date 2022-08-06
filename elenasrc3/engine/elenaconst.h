@@ -355,6 +355,7 @@ namespace elena_lang
 
    // === ELENA Error codes ===
    constexpr auto errNotImplemented = -3;
+   constexpr auto errAborted        = -4;
 
 } // _ELENA_
 

@@ -28,7 +28,16 @@ void ELENARTMachine :: startSTA(SystemEnv* env, SymbolList* entryList)
    // executing the program
    int retVal = 0;
    for (size_t i = 0; i < entryList->length; i += sizeof(intptr_t)) {
-      retVal = entry.evaluate(entryList->entries[i].address, 0);
+      try
+      {
+         retVal = entry.evaluate(entryList->entries[i].address, 0);
+      }
+      catch (InternalError&)
+      {
+         //_instance->printInfo("EAbortException");
+
+         retVal = -1;
+      }
    }
 
    // winding down system

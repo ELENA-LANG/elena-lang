@@ -74,5 +74,5 @@ void SystemRoutineProvider :: InitCriticalStruct(uintptr_t criticalHandler)
    sigemptyset(&sa.sa_mask);
    sa.sa_sigaction = ELENASignalHandler;
    if (sigaction(SIGSEGV, &sa, NULL) == -1)
-      throw EAbortException();
+      throw InternalError(errAborted);
 }
