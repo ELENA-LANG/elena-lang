@@ -10,6 +10,7 @@
 #include "core.h"
 
 #include <sys/mman.h>
+#include <signal.h>
 #include <errno.h>
 
 using namespace elena_lang;
