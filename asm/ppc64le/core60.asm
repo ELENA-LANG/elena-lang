@@ -1009,7 +1009,7 @@ inline %0EDh
 
 end
 
-// ; setr
+// ; seleqrr
 inline %0EEh
 
   ld      r16, toc_rdata(r2)
@@ -1018,11 +1018,11 @@ inline %0EEh
   addi    r17, r16, __disp32lo_1 
   addi    r18, r16, __disp32lo_2 
 
-  iseleq  r15, r18, r17
+  iseleq  r15, r17, r18
 
 end 
 
-// ; setr
+// ; selltrr
 inline %0EFh
 
   ld      r16, toc_rdata(r2)
