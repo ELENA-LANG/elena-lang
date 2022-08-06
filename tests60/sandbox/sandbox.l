@@ -20,13 +20,13 @@ singleton Tester
 //      int m := 2;
 //      int r := n / m;
 
-//      int n := 11;
-//      int r := 12;
+      int n := 11;
+      int r := 12;
 
 //      console.writeLine(n*r-5);
 
-//      bool b := n >= r;
-//      console.writeLine(b);
+      bool b := n >= r;
+      console.writeLine(b);
 
 //       var n := 3 * 2 * 3;
 
