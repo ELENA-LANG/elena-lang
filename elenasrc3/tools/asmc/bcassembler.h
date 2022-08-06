@@ -26,7 +26,9 @@ namespace elena_lang
          {
             None = 0,
             R,
-            Variable
+            Variable,
+            DataVariable,
+            Value
          };
 
          Type  type;
@@ -67,12 +69,15 @@ namespace elena_lang
       int readFrameI(ScriptToken& tokenInfo, ReferenceMap& locals, bool skipRead = false);
       int readDisp(ScriptToken& tokenInfo, ReferenceMap& dataLocals, bool skipRead = false);
 
-      void readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, int factor);
+      void readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants, 
+         int factor, bool allowSize);
 
       bool writeArg(MemoryWriter& writer, Operand& arg, int index);
 
-      Operand compileArg(ScriptToken& tokenInfo, ReferenceMap& locals);
-      void compileArgList(ScriptToken& tokenInfo, List<Operand>& operands, ReferenceMap& locals);
+      Operand compileArg(ScriptToken& tokenInfo, ReferenceMap& locals, 
+         ReferenceMap& dataLocals, ReferenceMap& constants);
+      void compileArgList(ScriptToken& tokenInfo, List<Operand>& operands, 
+         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
 
       bool compileDDisp(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
         ReferenceMap& dataLocals, bool skipRead);
@@ -87,13 +92,15 @@ namespace elena_lang
       bool compileRR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileCloseOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, ReferenceMap& dataLocals);
       bool compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
-         ReferenceMap& locals, ReferenceMap& dataLocals);
-      bool compileCallExt(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, ReferenceMap& locals);
+         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
+      bool compileCallExt(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
+         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
 
       bool compileByteCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
-         ReferenceMap& locals, ReferenceMap& dataLocals);
+         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
 
-      void compileProcedure(ScriptToken& tokenInfo, ref_t mask);
+      void compileConstant(ScriptToken& tokenInfo, ReferenceMap& constants);
+      void compileProcedure(ScriptToken& tokenInfo, ref_t mask, ReferenceMap& constants);
 
    public:
       void compile();

@@ -124,6 +124,19 @@ bool ByteCodeAssembler :: writeArg(MemoryWriter& writer, Operand& arg, int index
          // store :index, :arg.reference
          ByteCodeUtil::write(writer, ByteCode::XStoreSIR, index, arg.reference);
          break;
+      case Operand::Type::DataVariable:
+         ByteCodeUtil::write(writer, ByteCode::SetDP, arg.reference);
+         if (arg.byVal) {
+            // load
+            // save sp:index
+            ByteCodeUtil::write(writer, ByteCode::Load);
+            ByteCodeUtil::write(writer, ByteCode::SaveSI, index);
+         }
+         else {
+            // store sp:index
+            ByteCodeUtil::write(writer, ByteCode::StoreSI, index);
+         }
+         break;
       case Operand::Type::Variable:
          if (arg.byVal) {
             // peek fp:arg.reference
@@ -145,7 +158,8 @@ bool ByteCodeAssembler :: writeArg(MemoryWriter& writer, Operand& arg, int index
    return true;
 }
 
-ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInfo, ReferenceMap& locals)
+ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInfo, ReferenceMap& locals, 
+   ReferenceMap& dataLocals, ReferenceMap& constants)
 {
    Operand arg;
    if (tokenInfo.compare("*")) {
@@ -175,10 +189,37 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 
       return arg;
    }
-   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+   else if (dataLocals.exist(*tokenInfo.token)) {
+      arg.type = Operand::Type::DataVariable;
+      arg.reference = dataLocals.get(*tokenInfo.token);
+
+      return arg;
+   }
+   else if (constants.exist(*tokenInfo.token)) {
+      arg.type = Operand::Type::Value;
+      arg.reference = locals.get(*tokenInfo.token);
+
+      return arg;
+   }
+   else {
+      IdentifierString platformConstant(*tokenInfo.token);
+      if (_mode64) {
+         platformConstant.append("64");
+      }
+      else platformConstant.append("32");
+
+      if (constants.exist(*platformConstant)) {
+         arg.type = Operand::Type::Value;
+         arg.reference = constants.get(*platformConstant);
+
+         return arg;
+      }
+      else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+   }   
 }
 
-void ByteCodeAssembler :: compileArgList(ScriptToken& tokenInfo, List<Operand>& operands, ReferenceMap& locals)
+void ByteCodeAssembler :: compileArgList(ScriptToken& tokenInfo, List<Operand>& operands,
+   ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants)
 {
    int counter = 0;
    while (!tokenInfo.compare(")")) {
@@ -191,7 +232,7 @@ void ByteCodeAssembler :: compileArgList(ScriptToken& tokenInfo, List<Operand>& 
          else throw SyntaxError(ASM_COMMA_EXPECTED, tokenInfo.lineInfo);
       }
 
-      Operand arg = compileArg(tokenInfo, locals);
+      Operand arg = compileArg(tokenInfo, locals, dataLocals, constants);
       operands.add(arg);
 
       read(tokenInfo);
@@ -304,16 +345,47 @@ bool ByteCodeAssembler :: compileOpII(ScriptToken& tokenInfo, MemoryWriter& writ
    return true;
 }
 
-void ByteCodeAssembler :: readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, int factor)
+inline int calcSize(ReferenceMap& locals)
+{
+   int offset = 0;
+   for (auto it = locals.start(); !it.eof(); ++it) {
+      offset += *it;
+   }
+
+   return offset;
+}
+
+void ByteCodeAssembler :: readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants, 
+   int factor, bool allowSize)
 {
    read(tokenInfo);
    while (true) {
-      if (!locals.exist(*tokenInfo.token)) {
-         locals.add(*tokenInfo.token, (locals.count() + 1) * factor);
+      IdentifierString name(*tokenInfo.token);
+
+      read(tokenInfo);
+      int offset = 0;
+      if (allowSize) {
+         offset = calcSize(locals);
+
+         if (allowSize && tokenInfo.compare(":")) {
+            read(tokenInfo);
+            auto arg = compileArg(tokenInfo, locals, locals, constants);
+            if (arg.type == Operand::Type::Value) {
+               offset -= arg.reference;
+
+               read(tokenInfo);
+            }
+            else throw SyntaxError(ASM_INVALID_TARGET, tokenInfo.lineInfo);
+         }
+         else offset += factor;
+      }
+      else offset = (locals.count() + 1) * factor;
+
+      if (!locals.exist(*name)) {
+         locals.add(*name, offset);
       }
       else throw SyntaxError(ASM_DUPLICATE_ARG, tokenInfo.lineInfo);
 
-      read(tokenInfo);
       if (tokenInfo.compare(",")) {
          read(tokenInfo);
       }
@@ -325,16 +397,16 @@ void ByteCodeAssembler :: readArgList(ScriptToken& tokenInfo, ReferenceMap& loca
 }
 
 bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& writer,
-   ByteCommand& command, ReferenceMap& locals, ReferenceMap& dataLocals)
+   ByteCommand& command, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants)
 {
    if (tokenInfo.compare("[")) {
-      readArgList(tokenInfo, locals, 1);
+      readArgList(tokenInfo, locals, constants, 1, false);
 
       read(tokenInfo);
       if (tokenInfo.compare(",")) {
          read(tokenInfo, "[", ASM_INVALID_DESTINATION);
 
-         readArgList(tokenInfo, dataLocals, (_mode64 ? 8 : 4) * -1);
+         readArgList(tokenInfo, dataLocals, constants, (_mode64 ? 8 : 4) * -1, true);
 
          read(tokenInfo);
       }
@@ -350,7 +422,7 @@ bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& wr
 }
 
 bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& writer,
-   ByteCommand& command, ReferenceMap& locals)
+   ByteCommand& command, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants)
 {
    IdentifierString functionName;
    if (tokenInfo.compare(":")) {
@@ -374,7 +446,7 @@ bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& w
       List<Operand> args(Operand::Default());
 
       read(tokenInfo);
-      compileArgList(tokenInfo, args, locals);
+      compileArgList(tokenInfo, args, locals, dataLocals, constants);
 
       if (args.count() > 0)
          ByteCodeUtil::write(writer, ByteCode::AllocI, args.count());
@@ -424,7 +496,7 @@ bool ByteCodeAssembler :: compileRR(ScriptToken& tokenInfo, MemoryWriter& writer
 }
 
 bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& writer,
-   ReferenceMap& locals, ReferenceMap& dataLocals)
+   ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants)
 {
    IdentifierString command(*tokenInfo.token);
    size_t timePos = command.length();
@@ -448,10 +520,10 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
    if (!ByteCodeUtil::isSingleOp(opCommand.code)) {
       switch (opCommand.code) {
          case ByteCode::CallExtR:
-            return compileCallExt(tokenInfo, writer, opCommand, locals);
+            return compileCallExt(tokenInfo, writer, opCommand, locals, dataLocals, constants);
          case ByteCode::OpenIN:
          case ByteCode::OpenHeaderIN:
-            return compileOpenOp(tokenInfo, writer, opCommand, locals, dataLocals);
+            return compileOpenOp(tokenInfo, writer, opCommand, locals, dataLocals, constants);
          case ByteCode::CloseN:
             return compileCloseOpN(tokenInfo, writer, opCommand, dataLocals);
          case ByteCode::MovSIFI:
@@ -485,7 +557,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
    }
 }
 
-void ByteCodeAssembler :: compileProcedure(ScriptToken& tokenInfo, ref_t mask)
+void ByteCodeAssembler :: compileProcedure(ScriptToken& tokenInfo, ref_t mask, ReferenceMap& constants)
 {
    ReferenceName name;
    name.combine(*tokenInfo.token);
@@ -508,7 +580,7 @@ void ByteCodeAssembler :: compileProcedure(ScriptToken& tokenInfo, ref_t mask)
    ReferenceMap locals(0);
    ReferenceMap dataLocals(0);
    while (!tokenInfo.compare("end")) {
-      if (!compileByteCode(tokenInfo, codeWriter, locals, dataLocals)) {
+      if (!compileByteCode(tokenInfo, codeWriter, locals, dataLocals, constants)) {
          throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
       }
    }
@@ -522,19 +594,38 @@ void ByteCodeAssembler :: compileProcedure(ScriptToken& tokenInfo, ref_t mask)
 
 }
 
+void ByteCodeAssembler :: compileConstant(ScriptToken& tokenInfo, ReferenceMap& constants)
+{
+   if (!constants.exist(*tokenInfo.token)) {
+      IdentifierString name(*tokenInfo.token);
+
+      int value = readN(tokenInfo);
+      constants.add(*name, value);
+   }
+   else throw SyntaxError(ASM_DUPLICATE_ARG, tokenInfo.lineInfo);
+
+   read(tokenInfo, ";", ASM_SEMICOLON_EXPECTED);
+}
+
 void ByteCodeAssembler :: compile()
 {
-   ScriptToken  tokenInfo;
+   ScriptToken   tokenInfo;
+   ReferenceMap  constants(0);
    while (_reader.read(tokenInfo)) {
       if (tokenInfo.compare("symbol")) {
          read(tokenInfo);
 
-         compileProcedure(tokenInfo, mskSymbolRef);
+         compileProcedure(tokenInfo, mskSymbolRef, constants);
       }
       else if (tokenInfo.compare("procedure")) {
          read(tokenInfo);
 
-         compileProcedure(tokenInfo, mskProcedureRef);
+         compileProcedure(tokenInfo, mskProcedureRef, constants);
+      }
+      else if (tokenInfo.compare("define")) {
+         read(tokenInfo);
+
+         compileConstant(tokenInfo, constants);
       }
       else throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
    }

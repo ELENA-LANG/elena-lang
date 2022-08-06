@@ -73,6 +73,7 @@ namespace elena_lang
    constexpr auto ASM_COMMA_EXPECTED         = "(%d,%d): Comma expected\n";
    constexpr auto ASM_INVALID_COMMAND        = "(%d,%d): Invalid command\n";
    constexpr auto ASM_DOUBLECOLON_EXPECTED   = "(%d,%d): ':' expected\n";
+   constexpr auto ASM_SEMICOLON_EXPECTED     = "(%d,%d): ';' expected\n";
    constexpr auto ASM_SBRACKET_EXPECTED      = "(%d,%d): '[' expected\n";
    constexpr auto ASM_SBRACKETCLOSE_EXPECTED  = "(%d,%d): ']' expected\n";
    constexpr auto ASM_BRACKET_EXPECTED       = "(%d,%d): '(' expected\n";
