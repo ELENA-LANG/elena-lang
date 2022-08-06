@@ -6,7 +6,7 @@ singleton Tester
    {
 //       console.writeLine("Working");  
 
-//     var b := true;
+     var b := true;
 
 //      int n := 12;
 //      int m := 10;
@@ -20,12 +20,14 @@ singleton Tester
 //      int m := 2;
 //      int r := n / m;
 
-      int n := 11;
-      int r := 12;
+//      int n := 11;
+//      int r := 12;
 
 //      console.writeLine(n*r-5);
 
-      bool b := n >= r;
+      b := !b;
+
+//      bool b := n >= r;
       console.writeLine(b);
 
 //       var n := 3 * 2 * 3;
