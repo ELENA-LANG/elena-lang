@@ -46,10 +46,10 @@ TargetImage :: TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loa
    linker.prepare(compiler);
 
    // resolve the program entry
-   ustr_t entryName = resolver->resolveForward(SYSTEM_ENTRY);
+   ustr_t entryName = resolver->resolveForward(SYSTEM_FORWARD);
    _entryPoint = entryName.empty() ? INVALID_POS : (pos_t)linker.resolve(entryName, mskSymbolRef, true);
    if (_entryPoint == INVALID_POS)
-      throw JITUnresolvedException(ReferenceInfo(SYSTEM_ENTRY));
+      throw JITUnresolvedException(ReferenceInfo(SYSTEM_FORWARD));
 
    // resolvethe debug entry
    _debugEntryPoint = (pos_t)linker.resolve(PROGRAM_ENTRY, mskSymbolRef, true);

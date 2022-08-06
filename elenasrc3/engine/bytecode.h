@@ -25,25 +25,33 @@ namespace elena_lang
       MovEnv         = 0x05,
       Load           = 0x06,
       Len            = 0x07,
+      Class          = 0x08,
+      Save           = 0x09,
 
       MaxSingleOp    = 0x7F,
 
       SetR           = 0x80,
       SetDP          = 0x81,
       NLen           = 0x82,
+      XAssignI       = 0x83,
+      PeekR          = 0x84,
+      StoreR         = 0x85,
       MovM           = 0x88,
 
       Copy           = 0x90,
       CloseN         = 0x91,
       AllocI         = 0x92,
       FreeI          = 0x93,
+      AndN           = 0x94,
+      ReadN          = 0x95,
+      WriteN         = 0x96,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,
       SaveSI         = 0xA2,
       StoreSI        = 0xA3,
       XFlushSI       = 0xA4,
-
+      GetI           = 0xA5,
       PeekFI         = 0xA8,
       PeekSI         = 0xA9,
 
@@ -65,6 +73,7 @@ namespace elena_lang
       ISubDPN        = 0xE2,
       IMulDPN        = 0xE3,
       IDivDPN        = 0xE4,
+      NSaveDPN       = 0xE5,
       VJumpMR        = 0xEC,
       JumpMR         = 0xED,
       SelEqRR        = 0xEE,
@@ -77,6 +86,8 @@ namespace elena_lang
       NewIR          = 0xF4,
       NewNR          = 0xF5,
       XMovSISI       = 0xF6,
+      CreateNR       = 0xF7,
+      CreateR        = 0xF8,
       XStoreFIR      = 0xF9,
       XDispatchMR    = 0xFA,
       DispatchMR     = 0xFB,
@@ -229,6 +240,8 @@ namespace elena_lang
          case ByteCode::CmpR:
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
+         case ByteCode::PeekR:
+         case ByteCode::StoreR:
             return true;
          default:
             return false;

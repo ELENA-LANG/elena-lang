@@ -301,6 +301,7 @@ namespace elena_lang
 
       void copyLineTo(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_t length, bool stopOnEOL);
       void copyLineToX(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_t length, int x);
+      void copyTo(TextBookmark bookmark, text_c* buffer, disp_t length);
 
       text_t getLine(TextBookmark& bookmark, pos_t& length);
 
@@ -343,7 +344,7 @@ namespace elena_lang
          Operation lastOperation;
 
          bool write(Buffer* buffer, Operation operation, pos_t& position, pos_t& length,
-            void*& line, pos_t offset);
+            void*& line, pos_t& offset);
 
          void endRecord(Buffer* buffer, pos_t& offset);
 
@@ -356,11 +357,27 @@ namespace elena_lang
          pos_t   _offset;
 
       public:
+         pos_t position() const;
+
          pos_t getLength();
          void* getLine(pos_t length);
          pos_t getPosition(bool& eraseMode);
 
          HistoryBackReader(Buffer* buffer, pos_t offset);
+      };
+
+      class HistoryReader
+      {
+         MemoryReader _reader;
+
+      public:
+         pos_t position() const;
+
+         pos_t getLength();
+         void* getLine();
+         pos_t getPosition(bool& eraseMode);
+
+         HistoryReader(Buffer* buffer, pos_t offset);
       };
 
    private:

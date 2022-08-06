@@ -55,6 +55,7 @@ namespace elena_lang
       {
          ustr_t intLiteralClass;
          ustr_t literalClass;
+         ustr_t characterClass;
       };
 
       struct VAddressInfo
@@ -181,6 +182,10 @@ namespace elena_lang
       addr_t resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
       addr_t resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask);
       addr_t resolveConstantArray(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
+      addr_t resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sectionMask);
+      addr_t resolveName(ReferenceInfo referenceInfo, bool onlyPath);
+
+      void resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader& vmtReader, FieldAddressMap& staticValues);
 
       pos_t createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
@@ -216,6 +221,7 @@ namespace elena_lang
 
          _constantSettings.intLiteralClass = forwardResolver->resolveForward(INTLITERAL_FORWARD);
          _constantSettings.literalClass = forwardResolver->resolveForward(LITERAL_FORWARD);
+         _constantSettings.characterClass = forwardResolver->resolveForward(CHAR_FORWARD);
       }
    };
 

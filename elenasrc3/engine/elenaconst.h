@@ -45,6 +45,7 @@ namespace elena_lang
    // --- ELENA predefined module names ---
    constexpr auto BINARY_MODULE           = "$binary";
    constexpr auto PREDEFINED_MODULE       = "system'predefined"; // NOTE : system'predefined module should preceed system one
+   constexpr auto OPERATIONS_MODULE       = "system'operations"; // NOTE : system'predefined module should preceed system one
    constexpr auto STANDARD_MODULE         = "system";
 
    // --- ELENA special sections ---
@@ -63,19 +64,23 @@ namespace elena_lang
    constexpr auto FORWARD_PREFIX_NS       = "$forwards'";
    constexpr auto INLINE_CLASSNAME        = "$inline";          // nested class generic name
 
-   constexpr auto PREDEFINED_FORWARD      = "$forwards'meta$predefined";
-   constexpr auto ATTRIBUTES_FORWARD      = "$forwards'meta$attributes";
-   constexpr auto OPERATION_FORWARD       = "$forwards'meta$statementTemplates";
-   constexpr auto ALIASES_FORWARD         = "$forwards'meta$aliasTypes";
-   constexpr auto SYSTEM_ENTRY            = "$forwards'$system_entry";   // the system entry
+   constexpr auto PREDEFINED_MAP          = "$forwards'meta$predefined";
+   constexpr auto ATTRIBUTES_MAP          = "$forwards'meta$attributes";
+   constexpr auto OPERATION_MAP           = "$forwards'meta$statementTemplates";
+   constexpr auto ALIASES_MAP             = "$forwards'meta$aliasTypes";
+
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 
-   constexpr auto SUPER_FORWARD           = "$forwards'$super";          // the common class predecessor
-   constexpr auto INTLITERAL_FORWARD      = "$forwards'$int";            // the common class predecessor
-   constexpr auto LITERAL_FORWARD         = "$forwards'$string";         // the common class predecessor
-   constexpr auto BOOL_FORWARD            = "$forwards'$boolean";        // the common class predecessor
-   constexpr auto TRUE_FORWARD            = "$forwards'$true";           // the common class predecessor
-   constexpr auto FALSE_FORWARD           = "$forwards'$false";          // the common class predecessor
+   constexpr auto SYSTEM_FORWARD          = "$system_entry";   // the system entry
+   constexpr auto SUPER_FORWARD           = "$super";          // the common class predecessor
+   constexpr auto INTLITERAL_FORWARD      = "$int";            // the int literal
+   constexpr auto LITERAL_FORWARD         = "$string";         // the string literal
+   constexpr auto CHAR_FORWARD            = "$char";           // the char literal
+   constexpr auto BOOL_FORWARD            = "$boolean";        // the boolean class
+   constexpr auto TRUE_FORWARD            = "$true";           // the true boolean value
+   constexpr auto FALSE_FORWARD           = "$false";          // the false boolean value
+   constexpr auto WRAPPER_FORWARD         = "$ref";            // the wrapper template
+   constexpr auto ARRAY_FORWARD           = "$array";          // the array template 
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";
@@ -86,12 +91,14 @@ namespace elena_lang
    constexpr auto INTERNAL_PREFIX_NS      = "'$intern'";
 
    constexpr auto CLASSCLASS_POSTFIX      = "#class";
+   constexpr auto CONST_POSTFIX           = "#const";
 
    // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";
    constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
    constexpr auto CAST_MESSAGE            = "#cast";
    constexpr auto INVOKE_MESSAGE          = "#invoke";
+   constexpr auto INIT_MESSAGE            = "#init";
 
    constexpr auto ADD_MESSAGE             = "add";
    constexpr auto IF_MESSAGE              = "if";
@@ -99,6 +106,7 @@ namespace elena_lang
    constexpr auto NOT_MESSAGE             = "Inverted";
    constexpr auto NOTEQUAL_MESSAGE        = "notequal";
    constexpr auto LESS_MESSAGE            = "less";
+   constexpr auto NOTLESS_MESSAGE         = "notless";
 
    // --- constant string lengths ---
    constexpr auto TEMPLATE_PREFIX_NS_LEN = 7;
@@ -210,13 +218,13 @@ namespace elena_lang
    constexpr ref_t mskVMTRef              = 0x04000000u;
    constexpr ref_t mskMetaClassInfoRef    = 0x05000000u;
    constexpr ref_t mskClassRef            = 0x06000000u;
-   constexpr ref_t mskMetaDictionaryRef   = 0x07000000u;
-   constexpr ref_t mskMetaArrayRef        = 0x08000000u;
-   constexpr ref_t mskStrMetaArrayRef     = 0x09000000u;
+   constexpr ref_t mskAttributeMapRef     = 0x07000000u;
+   constexpr ref_t mskTypeListRef         = 0x08000000u;
+   constexpr ref_t mskLiteralListRef      = 0x09000000u;
    constexpr ref_t mskSyntaxTreeRef       = 0x0A000000u;
    constexpr ref_t mskProcedureRef        = 0x0B000000u;
    constexpr ref_t mskIntLiteralRef       = 0x0C000000u;
-   constexpr ref_t mskMetaAttributesRef   = 0x0D000000u;
+   constexpr ref_t mskTypeMapRef          = 0x0D000000u;
    constexpr ref_t mskLiteralRef          = 0x0E000000u;   // reference to constant literal
    constexpr ref_t mskVMTMethodAddress    = 0x0F000000u;
    constexpr ref_t mskVMTMethodOffset     = 0x10000000u;
@@ -225,6 +233,12 @@ namespace elena_lang
    constexpr ref_t mskMetaSymbolInfoRef   = 0x13000000u;
    constexpr ref_t mskDeclAttributesRef   = 0x14000000u;
    constexpr ref_t mskMetaExtensionRef    = 0x15000000u;
+   constexpr ref_t mskStaticRef           = 0x16000000u;
+   constexpr ref_t mskCharacterRef        = 0x17000000u;   // reference to character literal
+   constexpr ref_t mskConstant            = 0x18000000u;
+   constexpr ref_t mskStaticVariable      = 0x19000000u;
+   constexpr ref_t mskNameLiteralRef      = 0x1A000000u;
+   constexpr ref_t mskPathLiteralRef      = 0x1B000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;
@@ -233,6 +247,7 @@ namespace elena_lang
    constexpr ref_t mskImportRef           = 0x04000000u;
    constexpr ref_t mskMBDataRef           = 0x05000000u;
    constexpr ref_t mskMDataRef            = 0x06000000u;
+   constexpr ref_t mskStatDataRef         = 0x07000000u;
 
    // --- Address reference types ---
    // NOTE: Address reference types and Image reference types should not intersect
@@ -280,13 +295,21 @@ namespace elena_lang
    constexpr ref_t mskDataRef32Hi         = 0x23000000u;
    constexpr ref_t mskDataRef32Lo         = 0xA3000000u;
 
+   constexpr ref_t mskMBDataRef32         = 0x85000000u;
+   constexpr ref_t mskMBDataRef64         = 0xC5000000u;
+
    constexpr ref_t mskMDataRef32          = 0x86000000u;
    constexpr ref_t mskMDataRef64          = 0xC6000000u;
    constexpr ref_t mskMDataRef32Hi        = 0x26000000u;
    constexpr ref_t mskMDataRef32Lo        = 0xA6000000u;
 
-   constexpr ref_t mskMBDataRef32         = 0x85000000u;
-   constexpr ref_t mskMBDataRef64         = 0xC5000000u;
+   constexpr ref_t mskStatDataRef32       = 0x87000000u;
+   constexpr ref_t mskStatDataRelRef32    = 0x47000000u;
+   constexpr ref_t mskStatDataRef64       = 0xC7000000u;
+   constexpr ref_t mskStatDataRef32Hi     = 0x27000000u;
+   constexpr ref_t mskStatDataRef32Lo     = 0xA7000000u;
+   constexpr ref_t mskStatDisp32Hi        = 0x67000000u;
+   constexpr ref_t mskStatDisp32Lo        = 0xE7000000u;
 
    // --- Address predefined references ---
    constexpr ref_t INV_ARG                = 0x00000100u;

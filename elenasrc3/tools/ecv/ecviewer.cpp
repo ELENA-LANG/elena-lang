@@ -179,7 +179,7 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
       case mskArrayRef:
          commandStr.append("array:");
          break;
-      case mskMetaArrayRef:
+      case mskTypeListRef:
          commandStr.append("marray:");
          break;
       case mskSymbolRef:
@@ -196,6 +196,13 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
          commandStr.append("strconst:");
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
+      case mskCharacterRef:
+         commandStr.append("charconst:");
+         referenceName = _module->resolveConstant(arg & ~mskAnyRef);
+         break;
+      case mskStaticVariable:
+         commandStr.append("static:");
+         break;
       default:
          commandStr.append(":");
          break;
@@ -210,7 +217,7 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 
       commandStr.append(referenceName);
    }
-   else commandStr.appendUInt(arg);
+   else commandStr.appendUInt(arg, 16);
 
 }
 
@@ -300,6 +307,8 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::SetR:
          case ByteCode::CallR:
          case ByteCode::CmpR:
+         case ByteCode::PeekR:
+         case ByteCode::StoreR:
             addRArg(command.arg1, commandStr);
             break;
          case ByteCode::MovM:
@@ -332,6 +341,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::NewIR:
          case ByteCode::NewNR:
+         case ByteCode::CreateNR:
             addArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr);
             break;
@@ -491,15 +501,18 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
       auto fieldInfo = *it;
 
       line.copy(it.key());
-      if (isPrimitiveRef(fieldInfo.typeRef)) {
-         switch (fieldInfo.typeRef) {
+      if (isPrimitiveRef(fieldInfo.typeInfo.typeRef)) {
+         switch (fieldInfo.typeInfo.typeRef) {
             case V_INT32:
                line.append(" of __int[4]");
                break;
+            case V_INT8:
+               line.append(" of __int[1]");
+               break;
          }
       }
-      else if (fieldInfo.typeRef) {
-         ustr_t typeName = _module->resolveReference(fieldInfo.typeRef);
+      else if (fieldInfo.typeInfo.typeRef) {
+         ustr_t typeName = _module->resolveReference(fieldInfo.typeInfo.typeRef);
 
          line.append(" of ");
          line.append(typeName);

@@ -167,10 +167,17 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       if (alreadyDeclared && moduleScope.isDeclared(generatedReference))
          return generatedReference;
 
-      _processor.generateClassTemplate(&moduleScope, generatedReference, &syntaxTree, 
+      SyntaxTreeWriter writer(syntaxTree);
+      writer.newNode(SyntaxKey::Root);
+      writer.newNode(SyntaxKey::Namespace, ns);
+
+      _processor.generateClassTemplate(&moduleScope, generatedReference, writer, 
          sectionInfo.section, parameters);
 
-      _process->buildSyntaxTree(moduleScope, &syntaxTree);
+      writer.closeNode();
+      writer.closeNode();
+
+      _process->buildSyntaxTree(moduleScope, &syntaxTree, true);
 
    }
 
@@ -200,6 +207,7 @@ CompilingProcess :: CompilingProcess(PathString& appPath, PresenterBase* present
          SyntaxTree::toParseKey(SyntaxKey::identifier),
          SyntaxTree::toParseKey(SyntaxKey::reference),
          SyntaxTree::toParseKey(SyntaxKey::string),
+         SyntaxTree::toParseKey(SyntaxKey::character),
          SyntaxTree::toParseKey(SyntaxKey::integer),
          SyntaxTree::toParseKey(SyntaxKey::hexinteger));
 
@@ -248,7 +256,6 @@ void CompilingProcess :: parseFile(path_t projectPath,
    else {
       _errorProcessor->raisePathError(errInvalidFile, *file_it);
    }
-
 }
 
 void CompilingProcess :: parseModule(path_t projectPath,
@@ -275,23 +282,25 @@ void CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree&
    _compiler->compile(&moduleScope, source, target);
 }
 
-void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree)
+void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode)
 {
    ByteCodeWriter bcWriter(&_libraryProvider);
    bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList);
 
-   _libraryProvider.saveModule(moduleScope.module);
-   _libraryProvider.saveDebugModule(moduleScope.debugModule);
+   if (savingMode) {
+      _libraryProvider.saveModule(moduleScope.module);
+      _libraryProvider.saveDebugModule(moduleScope.debugModule);
+   }
 }
 
-void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree)
+void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode)
 {
    // generating build tree
    BuildTree buildTree;
    compileModule(moduleScope, *syntaxTree, buildTree);
 
    // generating byte code
-   generateModule(moduleScope, buildTree);
+   generateModule(moduleScope, buildTree, !templateMode);
 }
 
 void CompilingProcess :: buildModule(path_t projectPath,
@@ -316,7 +325,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
       &moduleScope, &_templateGenerator);
    parseModule(projectPath, module_it, builder, moduleScope);
 
-   buildSyntaxTree(moduleScope, syntaxTree);
+   buildSyntaxTree(moduleScope, syntaxTree, false);
 }
 
 void CompilingProcess :: configurate(ProjectBase& project)

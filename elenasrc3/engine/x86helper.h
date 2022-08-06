@@ -144,6 +144,7 @@ namespace elena_lang
    {
       bool           ebpReg;     // to resolve conflict between [ebp] and disp32
       bool           factorReg;   // to implement [r*factor] SIB
+      bool           accReg;
 
       X86OperandType type;
       ref_t          reference;
@@ -225,6 +226,7 @@ namespace elena_lang
          this->offset = 0;
          this->factorReg = false;
          this->ebpReg = (type == X86OperandType::EBP || this->type == X86OperandType::RBP);
+         this->accReg = (type == X86OperandType::EAX || this->type == X86OperandType::RAX);
       }
    };
 

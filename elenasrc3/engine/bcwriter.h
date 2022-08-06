@@ -60,12 +60,14 @@ namespace elena_lang
       void saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
          ReferenceMap& paths, bool loopMode);
       void saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths);
+      void saveVariableInfo(CommandTape& tape, BuildNode node);
 
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, ReferenceMap& paths);
 
       void saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths);
 
-      void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, ReferenceMap& paths);
+      void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
+         ReferenceMap& paths);
       void saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, ReferenceMap& paths);
 
       void optimizeTape(CommandTape& tape);

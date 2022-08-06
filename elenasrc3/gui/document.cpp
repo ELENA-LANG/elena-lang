@@ -14,6 +14,9 @@ using namespace elena_lang;
 constexpr auto WHITESPACE = _T(" \r\t");
 constexpr auto OPERATORS = _T("(){}[]:=<>.,^@+-*/!~?;\"");
 
+constexpr auto UNDO_BUFFER_SIZE = 0x40000;
+
+
 // --- LexicalFormatter ---
 
 LexicalFormatter :: LexicalFormatter(Text* text, TextFormatterBase* formatter, MarkerList* markers)
@@ -215,8 +218,11 @@ bool DocumentView::LexicalReader :: readNext(TextWriter<text_c>& writer, pos_t l
 
 // --- DocumentView ---
 
-DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter)
-   : _formatter(text, formatter, &_markers), _notifiers(nullptr), _markers({})
+DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter) :
+   _undoBuffer(UNDO_BUFFER_SIZE),
+   _formatter(text, formatter, &_markers),
+   _notifiers(nullptr),
+   _markers({})
 {
    _text = text;
 
@@ -233,6 +239,8 @@ DocumentView :: ~DocumentView()
 
 void DocumentView :: onInsert(size_t position, size_t length, text_t line)
 {
+   _undoBuffer.onInsert(position, length, line);
+
    _frame.invalidate();
 
    if (_caret.longPosition() > position) {
@@ -245,6 +253,8 @@ void DocumentView :: onInsert(size_t position, size_t length, text_t line)
 
 void DocumentView :: onUpdate(size_t position)
 {
+   _undoBuffer.onUpdate(position);
+
    _frame.invalidate();
 
    if (_caret.longPosition() > position) {
@@ -257,6 +267,8 @@ void DocumentView :: onUpdate(size_t position)
 
 void DocumentView :: onErase(size_t position, size_t length, text_t line)
 {
+   _undoBuffer.onErase(position, length, line);
+
    _frame.invalidate();
 
    if (_caret.longPosition() > position) {
@@ -265,6 +277,11 @@ void DocumentView :: onErase(size_t position, size_t length, text_t line)
 
    status.modifiedMode = true;
    status.frameChanged = true;
+}
+
+disp_t DocumentView :: getSelectionLength()
+{
+   return abs(_selection);
 }
 
 pos_t DocumentView :: format(LexicalReader& reader)
@@ -655,6 +672,20 @@ void DocumentView :: insertNewLine()
    status.rowDifference += (_text->getRowCount() - rowCount);
 }
 
+void DocumentView :: insertLine(text_t text, disp_t length)
+{
+   int rowCount = _text->getRowCount();
+
+   eraseSelection();
+
+   _text->insertLine(_caret, text, length);
+   _caret.moveOn(length);
+
+   setCaret(_caret.getCaret(), false);
+
+   status.rowDifference += (_text->getRowCount() - rowCount);
+}
+
 void DocumentView :: eraseChar(bool moveback)
 {
    int rowCount = _text->getRowCount();
@@ -693,6 +724,30 @@ bool DocumentView :: eraseSelection()
    status.selelectionChanged = true;
 
    return true;
+}
+
+void DocumentView :: copySelection(text_c* text)
+{
+   if (_selection == 0) {
+      text[0] = 0;
+   }
+   else {
+      _text->copyTo(_caret, text, _selection);
+   }
+}
+
+void DocumentView :: undo()
+{
+   _undoBuffer.undo(_text, _caret);
+
+   setCaret(getCaret(false), false);
+}
+
+void DocumentView :: redo()
+{
+   _undoBuffer.redo(_text, _caret);
+
+   setCaret(getCaret(false), false);
 }
 
 void DocumentView :: save(path_t path)

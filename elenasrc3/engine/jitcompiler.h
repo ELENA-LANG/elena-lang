@@ -14,7 +14,7 @@
 
 namespace elena_lang
 {
-   constexpr auto NumberOfInlines = 7;
+   constexpr auto NumberOfInlines = 11;
 
    // --- JITCompilerScope ---
    class JITCompiler;
@@ -30,6 +30,7 @@ namespace elena_lang
       int          alignmentVA;
       int          structMask;
       int          unframedOffset;
+      int          vmtSize;
    };
 
    struct JITCompilerScope
@@ -87,12 +88,15 @@ namespace elena_lang
       friend void loadCode(JITCompilerScope* scope, void* code);
 
       friend void* retrieveCode(JITCompilerScope* scope);
+      friend void* retrieveIndexRCode(JITCompilerScope* scope);
       friend void* retrieveCodeWithNegative(JITCompilerScope* scope);
       friend void* retrieveICode(JITCompilerScope* scope, int arg);
 
       friend void loadOp(JITCompilerScope* scope);
       friend void loadLOp(JITCompilerScope* scope);
       friend void loadIndexOp(JITCompilerScope* scope);
+      friend void loadNOp(JITCompilerScope* scope);
+      friend void loadFieldIndexOp(JITCompilerScope* scope);
       friend void loadStackIndexOp(JITCompilerScope* scope);
       friend void loadVMTIndexOp(JITCompilerScope* scope);
       friend void loadFrameIndexOp(JITCompilerScope* scope);
@@ -111,6 +115,7 @@ namespace elena_lang
       friend void loadStackIndexIndexOp(JITCompilerScope* scope);
       friend void loadNewOp(JITCompilerScope* scope);
       friend void loadNewNOp(JITCompilerScope* scope);
+      friend void loadCreateNOp(JITCompilerScope* scope);
       friend void loadMROp(JITCompilerScope* scope);
       friend void loadVMTROp(JITCompilerScope* scope);
       friend void loadDPNOp(JITCompilerScope* scope);
@@ -202,14 +207,16 @@ namespace elena_lang
 
       void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) override;
 
+      pos_t getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed) override;
+
       pos_t getVMTLength(void* targetVMT) override;
       addr_t findMethodAddress(void* entries, mssg_t message) override;
       pos_t findMethodOffset(void* entries, mssg_t message) override;
 
-      void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength) override;
+      void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticLength) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
       void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
-         ref_t flags, pos_t count, bool virtualMode) override;
+         ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode) override;
       pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
 
       void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
@@ -224,7 +231,11 @@ namespace elena_lang
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
+      void writeChar32(MemoryWriter& writer, ustr_t value) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
+      void writeVariable(MemoryWriter& writer) override;
+
+      void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
 
       JITCompiler32()
          : JITCompiler()
@@ -254,15 +265,18 @@ namespace elena_lang
 
       void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) override;
 
+      pos_t getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed) override;
+
       pos_t getVMTLength(void* targetVMT) override;
       addr_t findMethodAddress(void* entries, mssg_t message) override;
       pos_t findMethodOffset(void* entries, mssg_t message) override;
 
-      void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength) override;
+      void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
+         pos_t staticLength) override;
       pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
       void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
-         ref_t flags, pos_t count, bool virtualMode) override;
+         ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode) override;
 
       void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
          bool structMode, bool virtualMode) override;
@@ -276,7 +290,11 @@ namespace elena_lang
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
+      void writeChar32(MemoryWriter& writer, ustr_t value) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
+      void writeVariable(MemoryWriter& writer) override;
+
+      void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
 
       JITCompiler64()
          : JITCompiler()
@@ -289,6 +307,7 @@ namespace elena_lang
    void allocateCode(JITCompilerScope* scope, void* code);
 
    inline void* retrieveCode(JITCompilerScope* scope);
+   inline void* retrieveIndexRCode(JITCompilerScope* scope);
    inline void* retrieveCodeWithNegative(JITCompilerScope* scope);
    inline void* retrieveICode(JITCompilerScope* scope, int arg);
 
@@ -296,6 +315,8 @@ namespace elena_lang
    void loadOp(JITCompilerScope* scope);
    void loadLOp(JITCompilerScope* scope);
    void loadIndexOp(JITCompilerScope* scope);
+   void loadNOp(JITCompilerScope* scope);
+   void loadFieldIndexOp(JITCompilerScope* scope);
    void loadVMTIndexOp(JITCompilerScope* scope);
    void loadFrameIndexOp(JITCompilerScope* scope);
    void loadStackIndexOp(JITCompilerScope* scope);
@@ -314,6 +335,7 @@ namespace elena_lang
    void loadStackIndexIndexOp(JITCompilerScope* scope);
    void loadNewOp(JITCompilerScope* scope);
    void loadNewNOp(JITCompilerScope* scope);
+   void loadCreateNOp(JITCompilerScope* scope);
    void loadMROp(JITCompilerScope* scope);
    void loadVMTROp(JITCompilerScope* scope);
    void loadDPNOp(JITCompilerScope* scope);

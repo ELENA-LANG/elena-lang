@@ -8,7 +8,7 @@
 
 namespace elena_lang
 {
-   constexpr auto MessageLength = 67;
+   constexpr auto MessageLength = 72;
    const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -63,9 +63,13 @@ namespace elena_lang
       {errDupProtectedMethod, errMsgDupProtectedMethod},
       {errDupInternalMethod, errMsgDupInternalMethod},
       {infoNewMethod, infoMsgNewMethod},
+      {infoCurrentMethod, infoMsgCurrentMethod},
+      {infoCurrentClass, infoMsgCurrentClass},
+      {infoAbstractMetod, infoMsgAbstractMetod},
       {errClosedParent, errMsgClosedParent},
       {errDispatcherInInterface, errMsgDispatcherInInterface},
       {errIllegalConstructorAbstract, errMsgIllegalConstructorAbstract},
+      {errIllegalConstructor, errMsgIllegalConstructor},
       {errAbstractMethodCode, errMsgAbstractMethodCode},
       {errNotAbstractClass, errMsgNotAbstractClass},
       {errIllegalOperation, errMsgIllegalOperation},
@@ -77,7 +81,8 @@ namespace elena_lang
       {wrnUnknownFunction, wrnMsgUnknownFunction},
       {errIllegalPrivate, errMsgIllegalPrivate},
       {wrnTypeInherited, wrnMsgTypeInherited},
-      {errTypeAlreadyDeclared, errMsgTypeAlreadyDeclared}
+      {errTypeAlreadyDeclared, errMsgTypeAlreadyDeclared},
+      {errAbstractMethods, errMsgAbstractMethods},
    };
 
 }

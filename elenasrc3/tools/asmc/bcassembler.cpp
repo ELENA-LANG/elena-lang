@@ -61,6 +61,9 @@ int ByteCodeAssembler :: readN(ScriptToken& tokenInfo, bool skipRead)
    if (tokenInfo.state == dfaInteger) {
       return tokenInfo.token.toInt();
    }
+   else if (tokenInfo.state == dfaHexInteger) {
+      return tokenInfo.token.toInt(16);
+   }
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
@@ -162,7 +165,7 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
       arg.type = Operand::Type::R;
-      arg.reference = readReference(tokenInfo) | mskMetaArrayRef;
+      arg.reference = readReference(tokenInfo) | mskTypeListRef;
 
       return arg;
    }
@@ -470,6 +473,8 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
             return compileRR(tokenInfo, writer, opCommand, true);
+         case ByteCode::AndN:
+            return compileOpN(tokenInfo, writer, opCommand, true);
          default:
             return false;
       }

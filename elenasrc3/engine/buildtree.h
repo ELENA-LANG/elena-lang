@@ -65,9 +65,18 @@ namespace elena_lang
       SealedDispatchingOp  = 0x0024,
       BoolSOp              = 0x0025,
       IntCondOp            = 0x0026,
+      CharLiteral          = 0x0027,
+      FieldAssigning       = 0x0028,
+      Field                = 0x0029,
+      OpenStatic           = 0x002A,
+      CloseStatic          = 0x002B,
+      ClassOp              = 0x002C,
+      ByteArrayOp          = 0x002D,
+      NewArrayOp           = 0x002E,
 
       Import               = 0x0038,
-      StrDictionaryOp      = 0x0039,
+      DictionaryOp         = 0x0039,
+
       ObjArrayOp           = 0x003A,
       ObjOp                = 0x003B,
       AttrDictionaryOp     = 0x003C,
@@ -76,6 +85,10 @@ namespace elena_lang
       LoopOp               = 0x003F,
 
       NestedClass          = 0x0080,
+
+      VariableInfo         = 0x0090,
+
+      BinaryArray          = 0x00A0,
 
       Value                = 0x8001,
       Reserved             = 0x8002,      // reserved managed

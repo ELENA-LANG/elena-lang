@@ -50,19 +50,32 @@ ELENA byte codes (or ecodes)
 
  Register operations:
  --------------------
+   andn n                   - index := index & n
+
+   get i                    - acc[i] => acc
+
    load                     - index := [acc] 
 
    mov env                  - %SYSTEM_ENV => index 
 
    mov mssg:m               - index := m
 
-   set {prefix}:r           - r => acc
+   peek r                   - acc <= [r] 
 
-   set dp:i                 - dp[i] => acc
+   save                     - [acc] := index
 
    seleq r1, r2             - acc <= COMP.EQ ? r1 : r2
 
    sellt r1, r2             - acc <= COMP.EQ ? r1 : r2
+
+   set {prefix}:r           - r => acc
+
+   set dp:i                 - dp[i] => acc
+
+   store r                  - acc => [r]
+
+   xassign i                - acc[i] := sp[0];
+                              direct operation
 
 
  Call operations:
@@ -101,7 +114,7 @@ ELENA byte codes (or ecodes)
 
    mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
 
-   xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
+   nsave dp:disp, i         - sp[disp] := i
 
    peek fp:i                - acc := fp[i]
 
@@ -117,6 +130,8 @@ ELENA byte codes (or ecodes)
 
    xflush sp:i              - sp[i] := cached_sp[i];
 
+   xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
+
    xstore fp:i, {prefix:}r  - sp[i] := r
 
    xstore sp:i, {prefix:}r  - sp[i] := r
@@ -124,11 +139,23 @@ ELENA byte codes (or ecodes)
 
  Object operations:
  ------------------
-   redirect                 - search acc::VMT for the message in index;
-                              if found jumps to it; binary search is used ; index, acc presaved
+   class                    - acc := acc.class
+
+   copy n                   - sp[0] >> acc, n bytes
+
+   copy dp:disp, n          - dp[disp] => temp;
+                              sp[0] >> temp, n bytes  
+
+   create n {prefix}:r      - create the object with the specified size;
+                              sp[0] >> temp;
+                              size * temp;
+                              out: acc contains the class instance, index - undefined
 
    dispatch m, r            - search in message table r the message in index and provided parameter list; 
                               if found jumps to it;
+
+   len                      - index := acc.length;
+                              returns the object length
 
    new i, {prefix}:r        - create the object with the specified
                               number of fields;
@@ -141,13 +168,12 @@ ELENA byte codes (or ecodes)
    nlen n                   - index := acc.length / n;
                               returns the structure size
 
-   len                      - index := acc.length;
-                              returns the object length
+   read n                   - sp[0][index*n] >> acc, n bytes
 
-   copy n                   - sp[0] >> acc, n bytes
+   redirect                 - search acc::VMT for the message in index;
+                              if found jumps to it; binary search is used ; index, acc presaved
 
-   copy dp:disp, n          - dp[disp] => temp;
-                              sp[0] >> temp, n bytes  
+   write n                  - sp[0][index*n] << acc, n bytes
 
    xdispatch m, r           - search in message table r the message in index and provided parameter list; 
                               if found jumps directly to it;
@@ -164,6 +190,8 @@ ELENA byte codes (or ecodes)
 
  Arithmeric operations:
  ----------------------
+   andn n                   - index := index & n
+ 
    iadd dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] += temp;
                               n = 1,2,4,8 

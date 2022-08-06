@@ -44,7 +44,9 @@ inline ref_t mapExistingIdentifier(ModuleBase* module, ustr_t identifier, Visibi
 
 bool ModuleScope :: isStandardOne()
 {
-   return module->name().compare(STANDARD_MODULE) || module->name().compare(PREDEFINED_MODULE);
+   return module->name().compare(STANDARD_MODULE) 
+      || module->name().compare(PREDEFINED_MODULE)
+      || module->name().compare(OPERATIONS_MODULE);      
 }
 
 inline void findUninqueName(ModuleBase* module, IdentifierString& name)
@@ -127,9 +129,9 @@ ref_t ModuleScope :: mapWeakReference(ustr_t referenceName, bool existing)
 {
    if (isTemplateWeakReference(referenceName)) {
       // COMPILER MAGIC : try to find a template implementation
-      return module->mapReference(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN), existing);
+      return mapFullReference(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN), existing);
    }
-   else return module->mapReference(referenceName, existing);
+   else return mapFullReference(referenceName, existing);
 }
 
 ExternalInfo ModuleScope :: mapExternal(ustr_t dllAlias, ustr_t functionName)
@@ -195,7 +197,7 @@ ustr_t ModuleScope :: resolveWeakTemplateReference(ustr_t referenceName)
             IdentifierString fullName(resolved.module->name(), resolvedName);
 
             forwardResolver->addForward(referenceName, *fullName);
-            //resolvedName = forwardResolver->resolveForward(referenceName);
+            resolvedName = forwardResolver->resolveForward(referenceName);
          }
          else forwardResolver->addForward(referenceName, resolvedName);
       }
@@ -254,7 +256,7 @@ ref_t ModuleScope :: importReference(ModuleBase* referenceModule, ustr_t referen
 SectionInfo ModuleScope :: getSection(ustr_t referenceName, ref_t mask, bool silentMode)
 {
    if (isForwardReference(referenceName)) {
-      referenceName = forwardResolver->resolveForward(referenceName);
+      referenceName = forwardResolver->resolveForward(referenceName + getlength(FORWARD_PREFIX_NS));
    }
 
    if (isWeakReference(referenceName)) {
@@ -275,7 +277,7 @@ MemoryBase* ModuleScope :: mapSection(ref_t reference, bool existing)
 ModuleInfo ModuleScope :: getModule(ustr_t referenceName, bool silentMode)
 {
    if (isForwardReference(referenceName)) {
-      referenceName = forwardResolver->resolveForward(referenceName);
+      referenceName = forwardResolver->resolveForward(referenceName + getlength(FORWARD_PREFIX_NS));
    }
 
    if (isWeakReference(referenceName)) {
@@ -287,7 +289,7 @@ ModuleInfo ModuleScope :: getModule(ustr_t referenceName, bool silentMode)
 ModuleInfo ModuleScope :: getWeakModule(ustr_t referenceName, bool silentMode)
 {
    if (isForwardReference(referenceName)) {
-      referenceName = forwardResolver->resolveForward(referenceName);
+      referenceName = forwardResolver->resolveForward(referenceName + getlength(FORWARD_PREFIX_NS));
    }
 
    return loader->getWeakModule(referenceName, silentMode);
@@ -380,6 +382,16 @@ ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ustr_t referenceName, bool h
    }
 }
 
+ref_t ModuleScope :: importReferenceWithMask(ModuleBase* referenceModule, ref_t reference)
+{
+   ref_t mask = reference & mskAnyRef;
+   ref_t refId = reference & ~mskAnyRef;
+   if (refId)
+      refId = importReference(referenceModule, refId);
+
+   return refId | mask;
+}
+
 void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode)
 {
    target.header = copy.header;
@@ -409,8 +421,11 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
       for (auto it = copy.fields.start(); !it.eof(); ++it) {
          FieldInfo info = *it;
 
-         if (info.typeRef && !isPrimitiveRef(info.typeRef))
-            info.typeRef = importReference(exporter, info.typeRef);
+         if (info.typeInfo.typeRef && !isPrimitiveRef(info.typeInfo.typeRef))
+            info.typeInfo.typeRef = importReference(exporter, info.typeInfo.typeRef);
+
+         if (info.typeInfo.elementRef && !isPrimitiveRef(info.typeInfo.elementRef))
+            info.typeInfo.elementRef = importReference(exporter, info.typeInfo.elementRef);
 
          target.fields.add(it.key(), info);
       }
@@ -433,6 +448,19 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
 
          target.attributes.add(key, referece);
       }
+
+      for (auto it = copy.statics.start(); !it.eof(); ++it) {
+         auto info = *it;
+         if (info.typeInfo.typeRef)
+            info.typeInfo.typeRef = importReference(exporter, info.typeInfo.typeRef);
+
+         if (info.typeInfo.elementRef)
+            info.typeInfo.elementRef = importReference(exporter, info.typeInfo.elementRef);
+
+         info.valueRef = importReferenceWithMask(exporter, info.valueRef);
+
+         target.statics.add(it.key(), info);
+      }
    }
 
    // import class class reference
@@ -442,7 +470,6 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
    // import parent reference
    if (target.header.parentRef)
       target.header.parentRef = importReference(exporter, target.header.parentRef);
-
 }
 
 void ModuleScope :: saveListMember(ustr_t name, ustr_t memberName)
@@ -451,7 +478,7 @@ void ModuleScope :: saveListMember(ustr_t name, ustr_t memberName)
    IdentifierString sectionName("'", name);
 
    MemoryBase* section = module->mapSection(
-      module->mapReference(*sectionName, false) | mskStrMetaArrayRef,
+      module->mapReference(*sectionName, false) | mskLiteralListRef,
       false);
 
    // check if the module alread included
@@ -488,7 +515,7 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bo
    // check if the namespace exists
    ReferenceName virtualRef(name, NAMESPACE_REF);
    auto sectionInfo = loader->getModule(ReferenceInfo(module, *virtualRef), true);
-   if (sectionInfo.module && sectionInfo.reference && sectionInfo.module != module) {
+   if (sectionInfo.module && sectionInfo.reference) {
       ustr_t value = importedNs.retrieve<ustr_t>(name, [](ustr_t name, ustr_t current)
          {
             return current == name;
@@ -496,7 +523,8 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bo
       if (value == nullptr) {
          importedNs.add(name.clone());
 
-         saveListMember(IMPORTS_SECTION, sectionInfo.module->name());
+         if (sectionInfo.module != module)
+            saveListMember(IMPORTS_SECTION, sectionInfo.module->name());
 
          return true;
       }
@@ -507,9 +535,5 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bo
 
 bool ModuleScope :: isDeclared(ref_t reference)
 {
-   ref_t resolvedReference = mapFullReference(module->resolveReference(reference), true);
-   if (resolvedReference) {
-      return module->mapSection(resolvedReference | mskMetaClassInfoRef, true) != nullptr;
-   }
-   return false;
+   return mapSection(reference | mskMetaClassInfoRef, true) != nullptr;
 }

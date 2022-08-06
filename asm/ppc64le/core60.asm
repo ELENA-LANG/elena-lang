@@ -40,9 +40,16 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
+// ; --- Page Size ----
+define page_ceil               2Fh
+define page_mask        0FFFFFFE0h
 define struct_mask_inv     7FFFFFh
-define struct_mask_inv_lo  0FFFFh
-define struct_mask_inv_hi  7Fh
+define struct_mask_inv_lo   0FFFFh
+define struct_mask_inv_hi      7Fh
+
+define struct_mask       40000000h
+define struct_mask_lo        0000h
+define struct_mask_hi        4000h
 
 
 // ; --- System Core Preloaded Routines --
@@ -77,8 +84,11 @@ end
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
 structure %SYSTEM_ENV
 
+  dq 0  
   dq data : %CORE_GC_TABLE
   dq code : %INVOKER
+  // ; dd GCMGSize
+  // ; dd GCYGSize
 
 end
 
@@ -178,7 +188,7 @@ end
 // ; load
 inline %6
 
-  ld      r14, 0(r15)
+  lwz     r14, 0(r15)
 
 end
 
@@ -191,6 +201,20 @@ inline %7
   ld      r14, -elSizeOffset(r15)
   and     r14, r14, r16
   srdi    r14, r14, 3
+
+end
+
+// ; class
+inline %8
+
+  ld      r15, -elVMTOffset(r15)
+
+end
+
+// ; save
+inline %9
+
+  stw      r14, 0(r15)
 
 end
 
@@ -277,6 +301,36 @@ inline %482h
   srdi    r14, r14, 3
 
 end
+
+// ; xassigni
+inline %83h
+
+  addi    r16, r15, __arg16_1
+  std     r3, 0(r16)
+
+end
+
+// ; peekr
+inline %84h
+
+  ld      r16, toc_rdata(r2)
+  addis   r16, r16, __disp32hi_1 
+  addi    r16, r16, __disp32lo_1 
+
+  ld      r15, 0(r16)
+
+end 
+
+// ; storer
+inline %85h
+
+  ld      r16, toc_rdata(r2)
+  addis   r16, r16, __disp32hi_1 
+  addi    r16, r16, __disp32lo_1 
+
+  std     r15, 0(r16)
+
+end 
 
 // ; movm
 inline %88h
@@ -409,6 +463,57 @@ inline %93h
 
 end
 
+// ; andn
+inline %94h
+          	
+  andi.   r14, r14, __n16_1     // ; free stack
+
+end
+
+// ; readn
+inline %95h
+
+  li      r16, __n16_1
+  mr      r18, r15
+  mulld   r20, r16, r14
+  add     r19, r3, r20
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  ld      r17, 0(r19)
+  addi    r16, r16, -1
+  stb     r17, 0(r18)
+  addi    r18, r18, 1
+  addi    r19, r19, 1
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; writen
+inline %96h
+
+  li      r16, __n16_1
+  mr      r18, r15
+  mulld   r20, r16, r14
+  add     r19, r3, r20
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  ld      r17, 0(r18)
+  addi    r16, r16, -1
+  stb     r17, 0(r19)
+  addi    r18, r18, 1
+  addi    r19, r19, 1
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; saveddisp
 inline %0A0h
 
@@ -483,6 +588,14 @@ inline %2A4h
   std     r4, 8(r1)
 
 end 
+
+// ; geti
+inline %0A5h
+
+  addi    r16, r15, __arg16_1
+  ld      r15, 0(r16)
+
+end
 
 // ; peekfi
 inline %0A8h
@@ -818,9 +931,9 @@ inline %0E4h
   lwz     r17, 0(r3)
   lwz     r18, 0(r19)
 
-  divw    r17, r17, r18  
+  divw    r18, r18, r17  
 
-  stw     r17, 0(r19)
+  stw     r18, 0(r19)
 
 end
 
@@ -832,9 +945,9 @@ inline %1E4h
   lbz     r17, 0(r3)
   lbz     r18, 0(r19)
 
-  divw    r17, r17, r18  
+  divw    r18, r18, r17  
 
-  stb     r17, 0(r19)
+  stb     r18, 0(r19)
 
 end
 
@@ -846,9 +959,9 @@ inline %2E4h
   lhz     r17, 0(r3)
   lhz     r18, 0(r19)
 
-  divw    r17, r17, r18  
+  divw    r18, r18, r17  
 
-  sth     r17, 0(r19)
+  sth     r18, 0(r19)
 
 end
 
@@ -860,9 +973,18 @@ inline %4E4h
   ld      r17, 0(r3)
   ld      r18, 0(r19)
 
-  divd    r17, r17, r18  
+  divd    r18, r18, r17  
 
-  std     r17, 0(r19)
+  std     r18, 0(r19)
+
+end
+
+// ; nsavedpn
+inline %0E5h
+
+  addi    r19, r31, __arg16_1
+  li      r17, __n16_2
+  stw     r17, 0(r19)
 
 end
 
@@ -887,7 +1009,7 @@ inline %0EDh
 
 end
 
-// ; setr
+// ; seleqrr
 inline %0EEh
 
   ld      r16, toc_rdata(r2)
@@ -896,11 +1018,11 @@ inline %0EEh
   addi    r17, r16, __disp32lo_1 
   addi    r18, r16, __disp32lo_2 
 
-  iseleq  r15, r18, r17
+  iseleq  r15, r17, r18
 
 end 
 
-// ; setr
+// ; selltrr
 inline %0EFh
 
   ld      r16, toc_rdata(r2)
@@ -1082,6 +1204,20 @@ inline %2F1h
   addi    r16, r16, __disp32lo_2
 
   mr    r4, r16
+
+end
+
+// ; xstoresir :0, 0
+inline %6F1h
+
+  li    r3, 0
+
+end
+
+// ; xstoresir :1, 0
+inline %7F1h
+
+  li    r4, 0
 
 end
 
@@ -1342,7 +1478,6 @@ inline %4F6h
 
 end
 
-
 // ; xmovsisi 1, 2
 inline %5F6h
 
@@ -1354,6 +1489,35 @@ end
 inline %6F6h
 
   mr       r4, r3
+
+end
+
+// ; create n, r
+inline %0F7h
+
+  ld      r12, 0(r3)
+  li      r10, __n16_1
+  mulld   r12, r12, r10
+  addi    r12, r12, page_ceil
+  andi.   r18, r12, page_mask
+
+  ld      r12, toc_alloc(r2)
+  mtctr   r12            
+  bctrl                   
+
+  ld      r12, 0(r3)
+  li      r10, __n16_1
+  mulld   r12, r12, r10
+
+  li      r16, struct_mask_lo
+  addis   r16, r16, struct_mask_hi
+  or      r18, r12, r16
+
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, __disp32hi_2 
+  addi    r17, r17, __disp32lo_2
+  std     r18, -elSizeOffset(r15)
+  std     r17, -elVMTOffset(r15)
 
 end
 
@@ -1416,20 +1580,11 @@ labNextParam:
 
 //;  mov  r13, [r9 + rdx * 16 + 8] 
   sldi    r23, r25, 4  
-  add     r25, r21, r23
-  ld      r23, 8(r25)
+  add     r23, r21, r23
 
-//;  mov  rcx, [rbx - elVMTOffset]
-  ld      r16, -elVMTOffset(r15)
-//;  lea  rax, [r13 * 16]
-  sldi    r17, r23, 4
+  ld      r14, 0(r23)
+  ld      r0,  8(r23)                
 
-//;  mov  rdx, [r9 + r13 * 2]        // c02
-  sldi    r23, r23, 1
-  add     r14, r21, r23
-  ld      r14, 0(r14)                
-//;  jmp  [rcx + rax + 8]       // rax - 0
-  ld      r0, 8(r14)                
   mtctr   r0
   bctr
 
@@ -1537,6 +1692,7 @@ labNextParam:
 //;  mov  r13, [r9 + rdx * 16 + 8] 
   sldi    r23, r25, 4  
   add     r25, r21, r23
+
   ld      r23, 8(r25)
 
 //;  mov  rcx, [rbx - elVMTOffset]

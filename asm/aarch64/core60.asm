@@ -31,6 +31,9 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
+// ; --- Page Size ----
+define page_ceil               2Fh
+define page_mask        0FFFFFFE0h
 define struct_mask_inv     7FFFFFh
 
 // ; --- System Core Preloaded Routines --
@@ -60,8 +63,11 @@ end
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
 structure %SYSTEM_ENV
 
+  dq 0
   dq data : %CORE_GC_TABLE
   dq code : %INVOKER
+  // ; dd GCMGSize
+  // ; dd GCYGSize
 
 end
 
@@ -165,7 +171,7 @@ end
 // ; load
 inline %6
 
-  ldr    x9, [x10]
+  ldrsw   x9, [x10]
 
 end
 
@@ -176,6 +182,21 @@ inline %7
   ldr     x9, [x11]
   and     x9, x9, struct_mask_inv
   lsr     x9, x9, #3
+
+end
+
+// ; class
+inline %8
+
+  sub     x14, x10, elVMTOffset              
+  ldr     x10, [x14]              //; edi
+
+end
+
+// ; save
+inline %9
+
+  str    x9, [x10]
 
 end
 
@@ -251,6 +272,32 @@ inline %482h
   lsr     x9, x9, #3
 
 end
+
+// ; xassigni
+inline %83h
+
+  add     x11, x10, __arg12_1
+  str     x0, [x11]
+
+end
+
+// ; peekr
+inline %84h
+
+  movz    x11,  __ptr32lo_1
+  movk    x11,  __ptr32hi_1, lsl #16
+  ldr     x10, [x11]
+
+end 
+
+// ; storer
+inline %85h
+
+  movz    x11,  __ptr32lo_1
+  movk    x11,  __ptr32hi_1, lsl #16
+  str     x10, [x11]
+
+end 
 
 // ; movm
 inline %88h
@@ -362,6 +409,55 @@ inline %93h
 
 end
 
+// ; andn
+inline %94h
+
+//;  and     x9, x9, __n13_1
+  mov     x19, __n16_1   // ; temporally
+  and     x9, x9, x19
+
+end
+
+// ; readn
+inline %95h
+
+  mov     x11, __n16_1
+  mov     x13, x10
+  mul     x14, x9, x11
+  add     x12, x0, x14
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; writen
+inline %96h
+
+  mov     x11, __n16_1
+  mov     x13, x10
+  mul     x14, x9, x11
+  add     x12, x0, x14
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x13], #1
+  strb    w14, [x12], #1
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; saveddisp
 inline %0A0h
 
@@ -451,6 +547,23 @@ inline %2A4h
   str     x1, [x11]
 
 end 
+
+// ; geti
+inline %0A5h
+
+  add     x11, x10, __arg12_1
+  ldr     x10, [x11]
+
+end
+
+// ; geti
+// ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
+inline %5A5h
+
+  sub     x11, x10, -__arg12_1
+  ldr     x10, [x11]
+
+end
 
 // ; peekfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
@@ -809,9 +922,9 @@ inline %0E4h
   ldrsw   x17, [x0]
   ldrsw   x18, [x19]
 
-  sdiv    x17, x17, x18  
+  sdiv    x18, x18, x17    // ; sp[0] / temp
 
-  str     w17, [x19]
+  str     w18, [x19]
 
 end
 
@@ -823,9 +936,9 @@ inline %1E4h
   ldrsb   x17, [x0]
   ldrsb   x18, [x19]
 
-  sdiv    x17, x17, x18  
+  sdiv    x18, x18, x17  
 
-  strb    w17, [x19]
+  strb    w18, [x19]
 
 end
 
@@ -837,9 +950,9 @@ inline %2E4h
   ldrsb   x17, [x0]
   ldrsb   x18, [x19]
 
-  sdiv    x17, x17, x18  
+  sdiv    x18, x18, x17  
 
-  strh    w17, [x19]
+  strh    w18, [x19]
 
 end
 
@@ -851,9 +964,18 @@ inline %4E4h
   ldr     x17, [x0]
   ldr     x18, [x19]
 
-  sdiv    x17, x17, x18  
+  sdiv    x18, x18, x17  
 
-  str     x17, [x19]
+  str     x18, [x19]
+
+end
+
+// ; nsavedpn
+inline %0E5h
+
+  add     x19, x29, __arg12_1
+  mov     x18, __n16_2
+  str     w18, [x19]
 
 end
 
@@ -1030,6 +1152,20 @@ inline %2F1h
 
   movz    x1,  __ptr32lo_2
   movk    x1,  __ptr32hi_2, lsl #16
+
+end
+
+// ; xstoresir :0, 0
+inline %6F1h
+
+  mov     x0, #0
+
+end
+
+// ; xstoresir :1, 0
+inline %7F1h
+
+  mov     x1, #0
 
 end
 
@@ -1260,6 +1396,33 @@ inline %6F6h
 
 end
 
+// ; createnr n,r
+inline %0F7h
+
+  ldr     w19, [x0]
+  movz    x18, __n16_1
+  mul     x19, x19, x18
+  add     x19, x18, page_ceil
+  and     x11, x19, page_mask
+
+  movz    x17,  code_ptr32lo : %GC_ALLOC
+  movk    x17,  code_ptr32hi : %GC_ALLOC, lsl #16
+  blr     x17
+
+  ldr     w19, [x0]
+  movz    x18, __n16_1
+  mul     x18, x19, x18
+
+  // ; adding mask
+
+  movz    x19,  __ptr32lo_2
+  movk    x19,  __ptr32hi_2, lsl #16
+  sub     x20, x10, elVMTOffset
+  str     x19, [x20]
+  str     w18, [x20, #12]!
+
+end
+
 // ; xstorefir
 inline %0F9h
 
@@ -1320,23 +1483,15 @@ labNextParam:
 
 //;  mov  r9, __ptr64_2  - r21
 
-//;  mov  r13, [r9 + rdx * 16 + 8] 
+//;  mov  rax, [r9 + rdx * 16 + 8]
+//;  mov  rdx, [r9 + rdx * 16]
+//;  jmp  rax
+
   lsl     x23, x25, #4
-  add     x25, x21, x23
-  ldr     x23, [x25, #8] 
+  add     x23, x21, x23
 
-//;  mov  rcx, [rbx - elVMTOffset]
-  sub     x16, x10, elVMTOffset
-  ldr     x16, [x16, #0]
-
-//;  lea  rax, [r13 * 16]
-  lsl     x17, x23, #4
-
-//;  mov  rdx, [r9 + r13 * 2]        // c02
-  lsl     x23, x23, #1
-  add     x14, x21, x23 
-  ldr     x9, [x14, #0]
-  ldr     x17, [x14, #8]
+  ldr     x9, [x23], #8
+  ldr     x17, [x23]
 
   br      x17
 

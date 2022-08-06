@@ -62,6 +62,45 @@ void TextViewController :: indent(TextViewModelBase* model)
    }
 }
 
+void TextViewController :: undo(TextViewModelBase* model)
+{
+   auto docView = model->DocView();
+
+   docView->undo();
+}
+
+void TextViewController :: redo(TextViewModelBase* model)
+{
+   auto docView = model->DocView();
+
+   docView->redo();
+}
+
+bool TextViewController :: copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard)
+{
+   auto docView = model->DocView();
+   if (docView->hasSelection()) {
+      return clipboard->copyToClipboard(docView);
+   }
+   else return false;
+}
+
+void TextViewController :: pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard)
+{
+   auto docView = model->DocView();
+   if (!docView->status.readOnly) {
+      clipboard->pasteFromClipboard(docView);
+   }
+}
+
+void TextViewController::deleteText(TextViewModelBase* model)
+{
+   auto docView = model->DocView();
+   if (!docView->status.readOnly) {
+      docView->eraseSelection();
+   }
+}
+
 void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
    auto docView = model->DocView();

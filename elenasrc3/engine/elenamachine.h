@@ -41,6 +41,7 @@ namespace elena_lang
    // --- SystemEnv ---
    struct SystemEnv
    {
+      size_t      StatCounter;
       GCTable*    Table;
       void*       BCInvoker;
       pos_t       GCMGSize;

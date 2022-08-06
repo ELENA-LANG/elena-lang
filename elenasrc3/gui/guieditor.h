@@ -32,6 +32,15 @@ namespace elena_lang
    //#define STYLE_HIGHLIGHTED_BRACKET               14
    constexpr auto STYLE_MAX            = 3;
 
+   // --- ClipboardBase ----
+   class ClipboardBase
+   {
+   public:
+      virtual bool copyToClipboard(DocumentView* docView) = 0;
+      virtual void pasteFromClipboard(DocumentView* docView) = 0;
+   };
+
+   // --- TextViewListener --
    class TextViewListener
    {
    public:
@@ -121,7 +130,14 @@ namespace elena_lang
       virtual void closeDocument(TextViewModelBase* model, ustr_t name, 
          int notifyMessage) = 0;
 
+      virtual void undo(TextViewModelBase* model) = 0;
+      virtual void redo(TextViewModelBase* model) = 0;
+
       virtual void indent(TextViewModelBase* model) = 0;
+      virtual void deleteText(TextViewModelBase* model) = 0;
+
+      virtual bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) = 0;
+      virtual void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) = 0;
 
       virtual void moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;

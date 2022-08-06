@@ -117,9 +117,9 @@ PlatformType Project::TargetType()
    return _platform & PlatformType::TargetTypeMask;
 }
 
-ustr_t Project :: resolveForward(ustr_t weakReference)
+ustr_t Project :: resolveForward(ustr_t forward)
 {
-   return resolveKey(ProjectOption::Forwards, ProjectOption::Forward, weakReference);
+   return _forwards.get(forward);
 }
 
 ustr_t Project::resolveExternal(ustr_t dllAlias)
@@ -134,25 +134,9 @@ ustr_t Project :: resolveWinApi(ustr_t dllAlias)
 
 void Project :: addForward(ustr_t forward, ustr_t referenceName)
 {
-   auto collectionNode = _root.findChild(ProjectOption::Forwards);
-   if (collectionNode == ProjectOption::None)
-      collectionNode = _root.appendChild(ProjectOption::Forwards);
+   freeUStr(_forwards.exclude(forward));
 
-   IdentifierString key;
-
-   ProjectNode keyNode = ProjectTree::gotoChild(collectionNode, ProjectOption::Forward, key.str());
-   if (keyNode == ProjectOption::None) {
-      key.insert(FORWARD_PREFIX_NS, 0);
-
-      keyNode = collectionNode.appendChild(ProjectOption::Forward, key.str());
-   }
-
-   ProjectNode valueNode = keyNode.findChild(ProjectOption::Value);
-   if (valueNode == ProjectOption::None) {
-      keyNode.appendChild(ProjectOption::Value, referenceName);
-   }
-   else keyNode.setStrArgument(referenceName);
-
+   _forwards.add(forward, referenceName.clone());
 }
 
 void Project :: addSource(ustr_t ns, path_t path)
@@ -337,6 +321,24 @@ void Project::loadKeyCollection(ConfigFile& config, ConfigFile::Node& root, ustr
    }
 }
 
+void Project :: loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath)
+{
+   DynamicString<char> key, value;
+
+   ConfigFile::Collection collection;
+   if (config.select(root, xpath, collection)) {
+      for (auto it = collection.start(); !it.eof(); ++it) {
+         ConfigFile::Node node = *it;
+
+         if (node.readAttribute("key", key)) {
+            node.readContent(value);
+
+            addForward(key.str(), value.str());
+         }
+      }
+   }
+}
+
 void Project :: copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key)
 {
    auto configNode = config.selectNode(configRoot, xpath);
@@ -377,8 +379,8 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
       loadPathCollection(config, root, REFERENCE_CATEGORY,
          ProjectOption::References, configPath);
 
-      loadKeyCollection(config, root, FORWARD_CATEGORY,
-         ProjectOption::Forwards, ProjectOption::Forward, FORWARD_PREFIX_NS);
+      loadForwards(config, root, FORWARD_CATEGORY);
+
       loadKeyCollection(config, root, EXTERNAL_CATEGORY,
          ProjectOption::Externals, ProjectOption::External, nullptr);
       loadKeyCollection(config, root, WINAPI_CATEGORY,
@@ -386,6 +388,7 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
 
       loadPathSetting(config, root, LIB_PATH, ProjectOption::LibPath, configPath);
       loadPathSetting(config, root, OUTPUT_PATH, ProjectOption::OutputPath, configPath);
+      loadPathSetting(config, root, TARGET_PATH, ProjectOption::TargetPath, configPath);
 
       copySetting(config, root, MGSIZE_PATH, ProjectOption::GCMGSize);
       copySetting(config, root, YGSIZE_PATH, ProjectOption::GCYGSize);
@@ -450,7 +453,9 @@ bool Project :: loadProject(path_t path)
 {
    if (_projectName.empty()) {
       if(loadConfig(path, true)) {
-         IdentifierString name(path);
+         FileNameString fileName(path);
+         IdentifierString name(*fileName);
+
          _projectName.copy(name.str());
 
          return true;

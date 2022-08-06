@@ -1,38 +1,11 @@
-// === statement templates ===
-
-#new __meta statementTemplates;
-
-// --- if ---
-
-public if<expr>(truePart) : __included<statementTemplates>
-{
-   cast bool(expr) ? { truePart }
-}
-
-// --- while ---
-
-public while<expr>(loopBody) : __included<statementTemplates>
-{
-   $rep cast bool(expr) ? { loopBody }
-}
-
-// --- for ---
-
-public for<initExpr,condExpr,stepExpr>(loopBody) : __included<statementTemplates>
-{
-   initExpr;
-
-   $rep cast bool(condExpr) ? { loopBody; stepExpr; }
-}
-
-#reload statementTemplates;
-
 // === classes ===
 
 // --- super object ---
 
 public class Object
 {
+    const string __className := $name __decl;
+
     bool equal(o)
        = self.equalReference(o);
 
@@ -40,6 +13,9 @@ public class Object
        = !(self.equal(o));
 
     predefined bool less(o);
+    predefined bool notless(o);
+
+    string toPrintable() = __className;
 
     dispatch() : external<system'core_routines'__object_dispatcher>;
 }

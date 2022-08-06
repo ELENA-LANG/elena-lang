@@ -33,7 +33,11 @@ define gc_mg_current         0020h
 define gc_end                0024h
 define gc_mg_wbar            0028h
 
+// ; --- Page Size ----
+define page_mask        0FFFFFFF0h
+define page_ceil               17h
 define struct_mask_inv     7FFFFFh
+define struct_mask         800000h
 
 // ; --- System Core Preloaded Routines --
 
@@ -62,6 +66,7 @@ end
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
 structure %SYSTEM_ENV
 
+  dd 0
   dd data : %CORE_GC_TABLE
   dd code : %INVOKER
   // ; dd GCMGSize
@@ -169,6 +174,20 @@ inline %7
 
 end
 
+// ; class
+inline %8
+
+  mov ebx, [ebx - elVMTOffset] 
+
+end
+
+// ; save
+inline %9
+
+  mov  dword ptr [ebx], edx
+
+end
+
 // ; setr
 inline %80h
 
@@ -239,6 +258,27 @@ inline %482h
   shr  edx, 3
 
 end
+
+// ; xassigni
+inline %83h
+
+  mov  [ebx + __arg32_1], esi
+
+end
+
+// ; peekr
+inline %84h
+
+  mov  ebx, [__ptr32_1]
+
+end 
+
+// ; storer
+inline %85h
+
+  mov  [__ptr32_1], ebx
+
+end 
 
 // ; movm
 inline %88h
@@ -331,6 +371,44 @@ inline %93h
 
 end
 
+// ; andn
+inline %94h
+
+  and  edx, __n_1
+
+end
+
+// ; readn
+inline %95h
+
+  mov  ecx, __n_1 
+  mov  eax, edx
+  mul  ecx
+  mov  edi, esi
+  add  esi, eax
+  mov  eax,  edi
+  mov  edi, ebx
+  rep  movsb
+  mov  esi, eax
+
+end
+
+// ; writen
+inline %96h
+
+  mov  ecx, __n_1 
+  mov  eax, edx
+  mul  ecx
+  mov  edi, esi
+  add  esi, eax
+  mov  eax, edi
+  mov  edi, esi
+  mov  esi, ebx
+  rep  movsb
+  mov  esi, eax
+
+end
+
 // ; saveddisp
 inline %0A0h
 
@@ -384,6 +462,13 @@ inline %1A4h
   mov [esp+4], esi
 
 end 
+
+// ; xassigni
+inline %0A5h
+
+  mov  ebx, [ebx + __arg32_1]
+
+end
 
 // ; peekfi
 inline %0A8h
@@ -785,6 +870,14 @@ L8:
 
 end
 
+// ; nsavedpn
+inline %0E5h
+
+  mov  eax, __n_2
+  mov  [ebp+__arg32_1], eax
+
+end
+
 // ; vjumpmr
 inline %0ECh
 
@@ -914,6 +1007,13 @@ end
 inline %1F1h
 
   mov  esi, __ptr32_2
+
+end
+
+// ; xstoresir :0, 0
+inline %6F1h
+
+  mov  esi, 0
 
 end
 
@@ -1067,6 +1167,26 @@ end
 inline %5F6h
 
   mov  esi, [esp+4]
+
+end
+
+// ; createnr n,r
+inline %0F7h
+
+  mov  eax, [esi]
+  mov  ecx, page_ceil
+  imul eax, __n_1
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOC
+
+  mov  ecx, [esi]
+  mov  eax, __n_1
+  imul ecx, eax
+  mov  eax, __ptr32_2
+  or   ecx, struct_mask
+  mov  [ebx - elVMTOffset], eax
+  mov  [ebx - elSizeOffset], ecx
 
 end
 

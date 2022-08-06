@@ -15,6 +15,16 @@ procedure __object_equal
 
 end
 
+procedure __intToByte
+
+  peek       sp:1
+  load
+  andn       0FFh
+  peek       sp:2
+  save
+
+end
+
 symbol sta_start
 
   open header [arg1],[envptr]

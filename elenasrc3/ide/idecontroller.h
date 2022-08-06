@@ -44,6 +44,7 @@ namespace elena_lang
    // --- ProjectController ---
    class ProjectController : public NotifierBase
    {
+      OSControllerBase*    _osController;
       DebugController      _debugController;
       NotifierBase*        _notifier;
 
@@ -53,6 +54,10 @@ namespace elena_lang
       bool startDebugger(ProjectModel& model/*, bool stepMode*/);
 
       bool isIncluded(ProjectModel& model, ustr_t ns);
+
+      bool compile();
+
+      bool compileSingleFile();
 
    public:
       void defineSourceName(path_t path, IdentifierString& retVal);
@@ -79,9 +84,9 @@ namespace elena_lang
             _notifier->notifyModelChange(modelCode, arg);
       }
 
-      ProjectController(DebugProcessBase* process, ProjectModel* model, SourceViewModel* sourceModel,
+      ProjectController(OSControllerBase* osController, DebugProcessBase* process, ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController)
-         : _debugController(process, model, sourceModel, this, sourceController)
+         : _osController(osController), _debugController(process, model, sourceModel, this, sourceController)
       {
          _notifier = nullptr;
       }
@@ -120,11 +125,11 @@ namespace elena_lang
 
       void init(IDEModel* model);
 
-      IDEController(DebugProcessBase* process, IDEModel* model, 
+      IDEController(OSControllerBase* osController, DebugProcessBase* process, IDEModel* model, 
          TextViewSettings& textViewSettings
       ) :
          sourceController(textViewSettings),
-         projectController(process, &model->projectModel, &model->sourceViewModel, this)
+         projectController(osController, process, &model->projectModel, &model->sourceViewModel, this)
       {
          _notifier = nullptr;
          defaultEncoding = FileEncoding::UTF8;

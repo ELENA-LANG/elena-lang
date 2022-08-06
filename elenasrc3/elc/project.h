@@ -18,9 +18,10 @@ namespace elena_lang
    class Project : public ProjectBase
    {
       // --- ProjectTree ---
-      typedef Tree<ProjectOption, ProjectOption::None>         ProjectTree;
-      typedef Tree<ProjectOption, ProjectOption::None>::Node   ProjectNode;
-      typedef List<path_t, freepath>                           Paths;
+      typedef Tree<ProjectOption, ProjectOption::None>                        ProjectTree;
+      typedef Tree<ProjectOption, ProjectOption::None>::Node                  ProjectNode;
+      typedef List<path_t, freepath>                                          Paths;
+      typedef MemoryMap<ustr_t, ustr_t, Map_StoreUStr, Map_GetUStr, freeUStr> Forwards;
 
       FileEncoding   _encoding;
 
@@ -28,6 +29,7 @@ namespace elena_lang
       ProjectNode    _root;
 
       Paths          _paths;
+      Forwards       _forwards;
 
       PathString     _basePath;
       PathString     _projectPath;
@@ -132,6 +134,8 @@ namespace elena_lang
       void loadPathCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath, 
          ProjectOption collectionKey, path_t configPath);
 
+      void loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
+
       void loadKeyCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath,
          ProjectOption collectionKey, ProjectOption itemKey, ustr_t prefix);
 
@@ -218,7 +222,7 @@ namespace elena_lang
       void prepare() override;
 
       Project(path_t path, PlatformType platform, PresenterBase* presenter)
-         : _paths(nullptr), _basePath(path)
+         : _paths(nullptr), _forwards(nullptr), _basePath(path)
       {
          _encoding = FileEncoding::UTF8;
 

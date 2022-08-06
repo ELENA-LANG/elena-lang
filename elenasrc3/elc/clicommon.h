@@ -120,7 +120,7 @@ struct AddressSpace
    addr_t          imageBase;
    pos_t           code;
    pos_t           mdata, mbdata, rdata;
-   pos_t           data;
+   pos_t           data, stat;
    pos_t           import;
 
    pos_t           entryPoint;
@@ -137,8 +137,8 @@ struct AddressSpace
 
       importSize = imageSize = 0;
       imageBase = 0;
-      code = data = 0;
-      mdata = mbdata = rdata = 0;
+      code = mdata = mbdata = rdata = 0;
+      data = stat = 0;
 
       entryPoint = 0;
    }
@@ -162,7 +162,6 @@ enum class ProjectOption
    Files,
    Templates,
    Primitives,
-   Forwards,
    Externals,
    Winapis,
    References,
@@ -171,7 +170,6 @@ enum class ProjectOption
 
    Module,
    FileKey,
-   Forward,
    External,
    Winapi,
 
@@ -297,27 +295,37 @@ struct BuiltinReferences
 {
    ref_t   superReference;
    ref_t   intReference;
+   ref_t   literalReference;
+   ref_t   wrapperTemplateReference;
+   ref_t   arrayTemplateReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
+   mssg_t  init_message;
    mssg_t  add_message;
    mssg_t  if_message;
    mssg_t  equal_message;
    mssg_t  not_message;
    mssg_t  notequal_message;
    mssg_t  less_message;
+   mssg_t  notless_message;
 
    BuiltinReferences()
    {
       superReference = intReference = 0;
+      literalReference = 0;
+      wrapperTemplateReference = 0;
+      arrayTemplateReference = 0;
 
       dispatch_message = constructor_message = 0;
+      init_message = 0;
       add_message = 0;
       if_message = 0;
       equal_message = 0;
       not_message = 0;
       notequal_message = 0;
       less_message = 0;
+      notless_message = 0;
    }
 };
 
@@ -435,7 +443,11 @@ enum class ExpressionAttribute : pos64_t
    RootSymbol        = 0x00000000800,
    Root              = 0x00000001000,
    CastOp            = 0x00000002000,
+   AssigningTarget   = 0x00000004000,
+   RefOp             = 0x00000008000,
+   NoPrimitives      = 0x00000010000,
    Extern            = 0x00000080000,
+   Lookahead         = 0x20000080000,
    NoDebugInfo       = 0x40000000000,
    NoExtension       = 0x80000000000,
 };
@@ -452,6 +464,11 @@ struct ExpressionAttributes
          return true;
       }
       else return false;
+   }
+
+   bool test(ExpressionAttribute mask)
+   {
+      return test(attrs, mask);
    }
 
    static bool test(ExpressionAttribute attrs, ExpressionAttribute mask)
@@ -485,11 +502,11 @@ struct ExpressionAttributes
 // --- FieldAttributes ---
 struct FieldAttributes
 {
-   ref_t typeRef;
-   int   size;
-   bool  isConstant;
-   bool  isEmbeddable;
-   bool  inlineArray;
+   TypeInfo typeInfo;
+   int      size;
+   bool     isConstant;
+   bool     isEmbeddable;
+   bool     inlineArray;
 };
 
 // --- CompilerBase ---
@@ -571,7 +588,7 @@ class ErrorProcessor : public ErrorProcessorBase
    }
 
 public:
-   void info(int code, ustr_t arg)
+   void info(int code, ustr_t arg) override
    {
       _presenter->print(_presenter->getMessage(code), arg);
    }
@@ -651,13 +668,16 @@ public:
 enum class ConversionResult
 {
    None = 0,
-   BoxingRequired
+   BoxingRequired,
+   Conversion
 };
 
 // --- ConversionRoutine ---
 struct ConversionRoutine
 {
    ConversionResult result;
+   mssg_t           conversionMssg;
+   int              stackSafeAttrs;
 };
 
 }

@@ -23,6 +23,9 @@ inline void relocate(pos_t pos, ref_t mask, ref_t reference, void* address, Addr
       case mskDataRef32:
          *(unsigned int*)address += (unsigned int)(base + space->data);
          break;
+      case mskStatDataRef32:
+         *(unsigned int*)address += (unsigned int)(base + space->stat);
+         break;
       case mskMDataRef32:
          *(unsigned int*)address += (unsigned int)(base + space->mdata);
          break;
@@ -65,6 +68,9 @@ inline void relocate64(pos_t pos, ref_t mask, ref_t reference, void* address, Ad
          break;
       case mskDataRef64:
          *(unsigned long long*)address += (unsigned long long)(base + space->data);
+         break;
+      case mskStatDataRef64:
+         *(unsigned long long*)address += (unsigned long long)(base + space->stat);
          break;
       case mskMDataRef64:
          *(unsigned long long*)address += (unsigned long long)(base + space->mdata);

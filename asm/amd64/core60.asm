@@ -33,7 +33,11 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
-define struct_mask_inv     7FFFFFh
+// ; --- Page Size ----
+define page_ceil               2Fh
+define page_mask        0FFFFFFE0h
+define struct_mask       40000000h
+define struct_mask_inv   3FFFFFFFh
 
 // ; --- System Core Preloaded Routines --
 
@@ -62,8 +66,11 @@ end
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
 structure %SYSTEM_ENV
 
+  dq 0
   dq data : %CORE_GC_TABLE
   dq code : %INVOKER
+  // ; dd GCMGSize
+  // ; dd GCYGSize
 
 end
 
@@ -168,6 +175,20 @@ inline %7
 
 end
 
+// ; class
+inline %8
+
+  mov rbx, [rbx - elVMTOffset] 
+
+end
+
+// ; save
+inline %9
+
+  mov  dword ptr [rbx], edx
+
+end
+
 // ; setr
 inline %80h
 
@@ -239,6 +260,29 @@ inline %482h
   shr  edx, 3
 
 end
+
+// ; xassigni
+inline %83h
+
+  mov  [rbx + __arg32_1], r10
+
+end
+
+// ; peekr
+inline %84h
+
+  mov  rax, __ptr64_1
+  mov  rbx, [rax]
+
+end 
+
+// ; storer
+inline %85h
+
+  mov  rax, __ptr64_1
+  mov  [rax], rbx
+
+end 
 
 // ; movm
 inline %88h
@@ -331,6 +375,39 @@ inline %93h
 
 end
 
+// ; andn
+inline %94h
+
+  and  edx, __n_1
+
+end
+
+// ; readn
+inline %95h
+
+  mov  ecx, __n_1 
+  mov  eax, edx
+  mul  ecx
+  mov  rsi, r10
+  add  rsi, rax
+  mov  rdi, rbx
+  rep  movsb
+
+end
+
+// ; writen
+inline %96h
+
+  mov  ecx, __n_1 
+  mov  eax, edx
+  mul  ecx
+  mov  rdi, r10
+  add  rdi, rax
+  mov  rsi, rbx
+  rep  movsb
+
+end
+
 // ; saveddisp
 inline %0A0h
 
@@ -405,6 +482,13 @@ inline %2A4h
   mov [rsp+16], r11
 
 end 
+
+// ; geti
+inline %0A5h
+
+  mov  rbx, [rbx + __arg32_1]
+
+end
 
 // ; peekfi
 inline %0A8h
@@ -652,7 +736,8 @@ inline %0E4h
 
   mov  rcx, [r10]
   mov  rax, [rbp+__arg32_1]
-  idiv rcx
+  xor  edx, edx
+  idiv ecx
   mov  dword ptr [rbp+__arg32_1], eax
 
 end
@@ -684,6 +769,14 @@ inline %4E4h
   mov  rax, [rbp+__arg32_1]
   idiv rcx
   mov  [rbp+__arg32_1], rax
+
+end
+
+// ; nsavedpn
+inline %0E5h
+
+  mov  eax, __n_2
+  mov  dword ptr [rbp+__arg32_1], eax
 
 end
 
@@ -824,6 +917,20 @@ end
 inline %2F1h
 
   mov  r11, __ptr64_2
+
+end
+
+// ; xstoresir :0, 0
+inline %6F1h
+
+  mov  r10, 0
+
+end
+
+// ; xstoresir :1, 0
+inline %7F1h
+
+  mov  r11, 0
 
 end
 
@@ -1005,6 +1112,27 @@ end
 inline %6F6h
 
   mov  r11, r10
+
+end
+
+// ; createnr n,r
+inline %0F7h
+
+  mov  rax, [r10]
+  mov  ecx, page_ceil
+  imul eax, __n_1
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOC
+
+  mov  rcx, [r10]
+  mov  eax, __n_1
+  imul ecx, eax
+  or   ecx, struct_mask
+
+  mov  rax, __ptr64_2
+  mov  [rbx - elSizeOffset], rcx
+  mov  [rbx - elVMTOffset], rax
 
 end
 

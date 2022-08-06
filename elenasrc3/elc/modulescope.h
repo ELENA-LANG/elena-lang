@@ -32,6 +32,7 @@ public:
    {
       return importReference(referenceModule, referenceModule->resolveReference(reference));
    }
+   ref_t importReferenceWithMask(ModuleBase* referenceModule, ref_t reference);
 
    ref_t mapAnonymous(ustr_t prefix) override;
 

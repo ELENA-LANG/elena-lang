@@ -189,6 +189,7 @@
     <ClInclude Include="..\windows\editcontrol.h" />
     <ClInclude Include="..\windows\factory.h" />
     <ClInclude Include="..\windows\Resource.h" />
+    <ClInclude Include="..\windows\win32controller.h" />
     <ClInclude Include="..\windows\windialogs.h" />
     <ClInclude Include="..\windows\winide.h" />
     <ClInclude Include="..\windows\win32debugprocess.h" />
@@ -224,6 +225,7 @@
     <ClCompile Include="..\windows\editcontrol.cpp" />
     <ClCompile Include="..\windows\factory.cpp" />
     <ClCompile Include="..\windows\main.cpp" />
+    <ClCompile Include="..\windows\win32controller.cpp" />
     <ClCompile Include="..\windows\windialogs.cpp" />
     <ClCompile Include="..\windows\winide.cpp" />
     <ClCompile Include="..\windows\win32debugprocess.cpp" />

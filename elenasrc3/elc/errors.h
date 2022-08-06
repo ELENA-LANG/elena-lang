@@ -40,6 +40,7 @@ namespace elena_lang
    constexpr auto errMsgIllegalMethod           = "%s(%d:%d): error 152: Illegal method declaration\n";
    constexpr auto errMsgIllegalOperation        = "%s(%d:%d): error 153: Illegal operation\n";
    constexpr auto errMsgTypeAlreadyDeclared     = "%s(%d:%d): error 158: type attribute cannot be overridden\n";
+   constexpr auto errMsgAbstractMethods         = "%s(%d:%d): error 159: Class contains abstract methods\n";
 
    constexpr auto errMsgDispatcherInInterface   = "%s(%d:%d): error 160: Closed class contains a dispatcher method\n";
    constexpr auto errMsgAbstractMethodCode      = "%s(%d:%d): error 161: An abstract method cannot have an explicit body\n";
@@ -94,7 +95,10 @@ namespace elena_lang
    constexpr auto errMsgNotImplemented       = "Not implemented error\n";
    constexpr auto errMsgCorruptedVMT         = "VMT structure is corrupt";
 
-   constexpr auto infoMsgNewMethod           = "info 700: new method %s";
+   constexpr auto infoMsgNewMethod           = "info 701:   new method %s";
+   constexpr auto infoMsgCurrentMethod       = "info 702:   compiling method %s";
+   constexpr auto infoMsgCurrentClass        = "info 703: compiling class %s";
+   constexpr auto infoMsgAbstractMetod       = "info 704:   abstract method %s";
 
 } // _ELENA_
 

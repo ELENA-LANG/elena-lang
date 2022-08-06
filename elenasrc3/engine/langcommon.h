@@ -35,6 +35,7 @@ namespace elena_lang
       Protected      = 0x04000000,
       Private        = 0x08000000,
       Extension      = 0x10000000,
+      Initializer    = 0x20000000,
    };
 
    // === ELENA Error codes ===
@@ -63,6 +64,7 @@ namespace elena_lang
    constexpr auto errIllegalMethod           = 152;
    constexpr auto errIllegalOperation        = 153;
    constexpr auto errTypeAlreadyDeclared     = 158;
+   constexpr auto errAbstractMethods         = 159;
    constexpr auto errDispatcherInInterface   = 160;
    constexpr auto errAbstractMethodCode      = 161;
    constexpr auto errNotAbstractClass        = 164;
@@ -110,6 +112,9 @@ namespace elena_lang
    constexpr auto errNoDispatcher            = 605;
 
    constexpr auto infoNewMethod              = 701;
+   constexpr auto infoCurrentMethod          = 702;
+   constexpr auto infoCurrentClass           = 703;
+   constexpr auto infoAbstractMetod          = 704;
 
    constexpr auto errFatalError       = -1;
    constexpr auto errFatalLinker      = -2;
@@ -149,6 +154,7 @@ namespace elena_lang
    /// scope_prefix:
    constexpr auto V_CONST                 = 0x80002001u;
    constexpr auto V_EMBEDDABLE            = 0x80002002u;
+   constexpr auto V_WRAPPER               = 0x80002003u;
 
    /// scope:
    constexpr auto V_CLASS                 = 0x80001001u;
@@ -176,7 +182,8 @@ namespace elena_lang
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;
    constexpr auto V_INTBINARY             = 0x80000803u;
-   constexpr auto V_DECLOBJ               = 0x80000804u;
+   //constexpr auto V_DECLOBJ               = 0x80000804u;
+   constexpr auto V_WORDBINARY            = 0x80000805u;
    constexpr auto V_SYMBOL                = 0x80000808u;
 
    /// primitive types
@@ -187,7 +194,11 @@ namespace elena_lang
    constexpr auto V_OBJARRAY              = 0x80000005u;
    constexpr auto V_OBJECT                = 0x80000006u;
    constexpr auto V_FLAG                  = 0x80000007u;
+   constexpr auto V_WORD32                = 0x80000008u;
+   constexpr auto V_INT8                  = 0x80000009u;
+   constexpr auto V_INT8ARRAY             = 0x8000000Au;
    constexpr auto V_BINARYARRAY           = 0x8000000Bu;
+   constexpr auto V_ELEMENT               = 0x8000000Cu;
    constexpr auto V_OBJATTRIBUTES         = 0x80000012u;
    constexpr auto V_CLOSURE               = 0x80000013u;
    constexpr auto V_DECLARATION           = 0x80000014u;
@@ -211,6 +222,12 @@ namespace elena_lang
    constexpr auto EQUAL_OPERATOR_ID       = 0x000A;
    constexpr auto NOT_OPERATOR_ID         = 0x000B;
    constexpr auto NOTEQUAL_OPERATOR_ID    = 0x000C;
+   constexpr auto ELSE_OPERATOR_ID        = 0x000E;
+   constexpr auto IF_ELSE_OPERATOR_ID     = 0x000F;
+   constexpr auto MUL_OPERATOR_ID         = 0x0010;
+   constexpr auto DIV_OPERATOR_ID         = 0x0011;
+   constexpr auto NOTLESS_OPERATOR_ID     = 0x0012;
+   constexpr auto CLASS_OPERATOR_ID       = 0x003F;
    constexpr auto SET_INDEXER_OPERATOR_ID = 0x0201;
 
 }

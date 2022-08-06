@@ -38,6 +38,8 @@ namespace elena_lang
 
       virtual bool compileADDShifted(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry,
          int shift, int ampount, MemoryWriter& writer);
+      virtual bool compileANDShifted(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry,
+         int shift, int ampount, MemoryWriter& writer);
       virtual bool compileADDImm(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry, MemoryWriter& writer);
       virtual bool compileANDImm(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry, MemoryWriter& writer);
       virtual bool compileANDS(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry, MemoryWriter& writer);

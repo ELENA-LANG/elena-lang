@@ -5,6 +5,7 @@ __define string             12294;
 __define hexinteger         12295;
 __define reference          12296;
 __define terminal           12297;
+__define character          12298;
 
 __define DECLARATION         5120;
 __define BLOCK               7184;
@@ -16,14 +17,15 @@ __define DICTIONARY          4128;
 __define META_STATEMENT      4129;
 __define INCLUDE_STATEMENT   4130;
 __define RELOAD_STATEMENT    4131;
-__define MESSAGE             4176;
 __define OBJECT              4145;
 __define TEMPLATE_TYPE       4146;
 __define ARRAY_TYPE          4147;
 __define NESTED              4224;
 __define CLOSURE             4225;
+__define MESSAGE             4288;
 __define RET_EXPRESSION      7220;
 __define GET_EXPRESSION      7222;
+__define INIT_EXPRESSION     7223;
 __define NESTED_EXPRESSION   6197;
 __define INDEXER_OPERATION   6209;
 __define ASSIGN_OPERATION    6210;
@@ -38,8 +40,13 @@ __define EQUAL_OPERATION     6218;
 __define NOT_OPERATION       6219;
 __define NOTEQUAL_OPERATION  6220;
 __define LOOP_OPERATION      6221;
-__define MESSAGE_OPERATION   6225;
-__define PROPERTY_OPERATION  6228;
+__define ELSE_OPERATION      6222;
+__define IF_ELSE_OPERATION   6223;
+__define MUL_OPERATION       6224;
+__define DIV_OPERATION       6225;
+__define NOTLESS_OPERATION   6226;
+__define MESSAGE_OPERATION   6337;
+__define PROPERTY_OPERATION  6340;
 __define EXPRESSION          6288;
 __define L5_EXPRESSION       6289;
 __define SUB_EXPRESSION      6290;
@@ -47,10 +54,13 @@ __define L7_EXPRESSION       6291;
 __define ROOT_EXPRESSION     6292;
 __define L6_EXPRESSION       6293;
 __define T_EXPRESSION        6294;
+__define L4_EXPRESSION       6295;
 __define POSTFIX             4192;
 __define TEMPLATE_POSTFIX    4193;
+__define METHOD_POSTFIX      4194;
 __define TEMPLATE_ARG        4208;
 __define DIMENSION           5233;
+__define RESEND              7366;
 
 START ::= 
         NEXT_DECLARATION;
@@ -95,6 +105,7 @@ SCOPE ::=
 	| "{" SUB_DECLARATIONS END_OF_BLOCK
 	| "(" PARAMETERS ")" METHOD_BODY_OPT
 	| "[" DIMENSION "]" DECLARATION_END
+	| ":=" INIT_EXPRESSION DECLARATION_END;
         | DECLARATION_END;
 
 SCOPE_OPT ::=
@@ -108,18 +119,30 @@ POSTFIXES ::=
 POSTFIX ::=
 	identifier IPOSTFIX_R;
 
+METHOD_POSTFIXES ::=
+	"," METHOD_POSTFIX METHOD_POSTFIXES
+	| eps;
+
+METHOD_POSTFIX ::=
+	identifier IPOSTFIX_R;
+
 IPOSTFIX_R ::=
 	TEMPLATE_BRACKETS ^ TEMPLATE_POSTFIX
 	| eps;
 
 METHOD_BODY_OPT ::=
 	METHOD_BODY
-	| ":" POSTFIX POSTFIXES METHOD_BODY;
+	| ":" METHOD_POSTFIX METHOD_POSTFIXES METHOD_BODY;
 
 METHOD_BODY ::=
 	BLOCK
 	| "=" RET_EXPRESSION DECLARATION_END
+	| "<=" RESEND RESEND_OPT
 	| NO_BODY;
+
+RESEND_OPT ::=
+	DECLARATION_END
+	| BLOCK;
 
 NO_BODY ::=
 	";";
@@ -165,6 +188,7 @@ ROOT_EXPRESSION ::=
         | integer O_R
         | hexinteger O_R
         | string O_R
+        | character O_R
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$len" SUB_EXPRESSION ^LEN_OPERATION
 	| "$name" SUB_EXPRESSION ^NAME_OPERATION
@@ -177,6 +201,7 @@ EXPRESSION ::=
         | integer O_R
         | hexinteger O_R
         | string O_R
+        | character O_R
         | "(" EXPRESSION ")" E_R
 	| "$len" SUB_EXPRESSION ^LEN_OPERATION
 	| "$name" SUB_EXPRESSION ^NAME_OPERATION
@@ -189,6 +214,9 @@ RET_EXPRESSION ::=
 GET_EXPRESSION ::=
 	EXPRESSION;
 
+INIT_EXPRESSION ::=
+	EXPRESSION;
+
 MESSAGE_PARAMETER ::=
 	EXPRESSION;
 
@@ -199,6 +227,11 @@ SUB_EXPRESSION ::=
         | hexinteger ^OBJECT
         | string ^OBJECT
         | "(" EXPRESSION ")";
+
+L4_EXPRESSION ::=
+        identifier I4_R
+        | integer ^OBJECT
+        | hexinteger ^OBJECT;
 
 L5_EXPRESSION ::=
         identifier I5_R
@@ -220,12 +253,17 @@ NESTED_EXPRESSION ::=
 T_EXPRESSION ::=
 	 BLOCK;
 
+T_EXPRESSIONS ::=
+	identifier T_EXPRESSION
+	| eps;
+
 RI_R ::=
         identifier I_R
         | I_L0_R
 	| I_L1_R
 	| RI_L2_R
 	| I_L3_R NEXT_L3_R
+	| I_L4_R
 	| I_L5_R
 	| I_L6_R
 	| I_L6a_R
@@ -242,16 +280,19 @@ O_R ::=
         NESTED_EXPRESSION ^NESTED N_R
         | I_L0_R
 	| I_L1_R
-	| I_L2_R L7_OPT
+	| I_L2_R L3s L7_OPT
 	| I_L3_R NEXT_L3_R
-	| I_L5_R
+	| I_L4_R L4s L5s
+	| I_L5_R L5s
 	| I_L6_R
 	| I_L6a_R
 	| IL7_R
+	| DYNAMIC_DIMENSION ^OBJECT ^ARRAY_TYPE TEMPLATE_R
         | eps ^OBJECT; 
 
 E_R ::=
-	L5_R
+	L4_R
+	| L5_R
 	| L7_R
 	| eps;
 
@@ -262,6 +303,10 @@ TEMPLATE_R ::=
 VAR_R ::=
 	L1_R
 	| eps;
+
+I4_R ::=
+        identifier I4_R
+        | eps ^OBJECT; 
 
 I5_R ::=
         identifier I5_R
@@ -287,11 +332,33 @@ RI_L2_R ::=
 	"(" ^OBJECT MESSAGE_PARAMETERS ")" RI_L2_OPT;
 
 RI_L2_OPT ::=
-	T_EXPRESSION ^ TEMPLATE_BLOCK
+	T_EXPRESSION T_EXPRESSIONS ^ TEMPLATE_BLOCK
 	| eps ^ MESSAGE_OPERATION;
 
 I_L3_R ::=
 	"." ^OBJECT MESSAGE MESSAGE_R;
+
+L3_R ::=
+	"." MESSAGE MESSAGE_R;
+
+RESEND ::= 
+	MESSAGE MESSAGE_R;
+
+L3s ::=
+	L3_R L3s
+	| eps;
+
+I_L4_R ::=
+	"*" ^OBJECT L4_EXPRESSION ^MUL_OPERATION
+	| "/" ^OBJECT L4_EXPRESSION ^DIV_OPERATION;
+
+L4_R ::=
+	"*" L4_EXPRESSION ^MUL_OPERATION
+	| "/" L4_EXPRESSION ^DIV_OPERATION ;
+
+L4s ::=
+	L4_R L4s
+	| eps;
 
 I_L5_R ::=
 	"+" ^OBJECT L5_EXPRESSION ^ADD_OPERATION
@@ -301,9 +368,14 @@ L5_R ::=
 	"+" L5_EXPRESSION ^ADD_OPERATION
 	| "-" L5_EXPRESSION ^SUB_OPERATION;
 
+L5s ::=
+	L5_R L5s
+	| eps;
+
 I_L6_R ::=
-	"==" ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION;
-	| "!=" ^OBJECT L6_EXPRESSION ^NOTEQUAL_OPERATION;
+	"==" ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION
+	| "!=" ^OBJECT L6_EXPRESSION ^NOTEQUAL_OPERATION
+	| ">=" ^OBJECT L6_EXPRESSION ^NOTLESS_OPERATION;
 
 I_L6a_R ::=
 	"<" ^OBJECT L6_EXPRESSION I_L6a_OPT;
@@ -317,10 +389,16 @@ L7_OPT ::=
 	| eps;
 
 IL7_R ::=
-	"?" ^OBJECT L7_EXPRESSION ^IF_OPERATION;
+	"?" ^OBJECT L7_EXPRESSION L7_IF_R
+	| "!" ^OBJECT L7_EXPRESSION ^ELSE_OPERATION;
 
 L7_R ::=
-	"?" L7_EXPRESSION ^IF_OPERATION;
+	"?" L7_EXPRESSION L7_IF_R
+	| "!" L7_EXPRESSION ^ELSE_OPERATION;
+
+L7_IF_R ::=
+	eps ^IF_OPERATION
+	| ":" L7_EXPRESSION ^IF_ELSE_OPERATION;
 
 NEXT_L3_R ::=
 	"." MESSAGE MESSAGE_R NEXT_L3_R
@@ -355,7 +433,12 @@ PARAMETER ::=
 
 PARAMETER_R ::=
 	identifier PARAMETER_R
+	| TEMPLATE_BRACKETS PARAMETER_R
+	| DYNAMIC_DIMENSION ^ARRAY_TYPE LAST_PARAMETER_R
 	| eps;
+
+LAST_PARAMETER_R ::=
+	identifier;
 
 DIMENSION ::=
         integer

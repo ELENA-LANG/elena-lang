@@ -22,6 +22,7 @@ namespace elena_lang
       AddressMap     _exportReferences;
       AddressMap     _constReferences;
       AddressMap     _dataReferences;
+      AddressMap     _statReferences;
 
       ReferenceMap   _actionNames;
       ActionMap      _actions;
@@ -53,6 +54,7 @@ namespace elena_lang
          _exportReferences(INVALID_ADDR), 
          _constReferences(INVALID_ADDR),
          _dataReferences(INVALID_ADDR),
+         _statReferences(INVALID_ADDR),
          _actionNames(0),
          _actions(0),
          _lazyReferences({})
@@ -71,6 +73,7 @@ namespace elena_lang
       Section _rdata;
       Section _import;
       Section _data;
+      Section _stat;
       Section _debug;
 
    public:
@@ -78,6 +81,7 @@ namespace elena_lang
       Section* getRDataSection() override;
       Section* getImportSection() override;
       Section* getDataSection() override;
+      Section* getStatSection() override;
       Section* getMDataSection() override;
       Section* getMBDataSection() override;
 
@@ -90,13 +94,18 @@ namespace elena_lang
                return getTextSection();
             case mskRDataRef:
                return getRDataSection();
+            case mskDataRef:
+               return getDataSection();
+            case mskStatDataRef:
+               return getStatSection();
             default:
                return nullptr;
          }
       }
 
-      ImageProvider()
-         : _text(), _mdata(), _mbdata(), _rdata(), _import(), _data(), _debug()
+      ImageProvider() :
+         _text(), _mdata(), _mbdata(), _rdata(),
+         _import(), _data(), _stat(), _debug()
       {
       }
    };

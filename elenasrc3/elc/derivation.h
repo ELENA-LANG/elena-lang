@@ -85,7 +85,7 @@ namespace elena_lang
       ref_t mapAttribute(SyntaxNode node, bool allowType, ref_t& previusCategory);
 
       void parseStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current, 
-         List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
+         List<SyntaxNode>& arguments, List<SyntaxNode>& parameters, IdentifierString& postfix);
       void generateTemplateStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
       void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
@@ -98,6 +98,7 @@ namespace elena_lang
       void flushTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool allowType);
       void flushTemplageExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxKey type, bool allowType);
       void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMessage(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushObject(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushNested(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
@@ -119,6 +120,7 @@ namespace elena_lang
          bool allowType);
       void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
          bool allowType);
+      void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
@@ -209,9 +211,12 @@ namespace elena_lang
       void copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyMethod(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
 
+      void copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode rootNode, TemplateScope& scope);
+
       void generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection);
 
-      void generateTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateBody);
+      void generateTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, 
+         MemoryBase* templateBody, bool importModuleInfo);
 
       void importTemplate(Type type, MemoryBase* templateSection, SyntaxNode target,
          List<SyntaxNode>* arguments, List<SyntaxNode>* parameters);
@@ -221,8 +226,8 @@ namespace elena_lang
       void importCodeTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
 
-      void generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, SyntaxTree* syntaxTree, 
-         MemoryBase* sectionBody, List<SyntaxNode>& parameters);
+      void generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, SyntaxTreeWriter& writer,
+         MemoryBase* sectionBody, List<SyntaxNode>& args);
 
       TemplateProssesor() = default;
    };

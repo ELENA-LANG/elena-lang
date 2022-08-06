@@ -62,7 +62,7 @@ int AssemblerBase :: readInteger(ScriptToken& tokenInfo)
       integer = tokenInfo.token.toInt();
    }
    else if (tokenInfo.state == dfaHexInteger) {
-      integer = tokenInfo.token.toInt(16);
+      integer = tokenInfo.token.toUInt(16);
    }
    else if (tokenInfo.compare("-")) {
       return -readInteger(tokenInfo);

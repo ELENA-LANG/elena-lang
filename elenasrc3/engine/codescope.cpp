@@ -29,7 +29,7 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
    switch (sectionMask) {
       case mskSymbolRef:
          return _symbolReferences.get(referenceName);
-      case mskMetaArrayRef:
+      case mskTypeListRef:
       case mskIntLiteralRef:
       case mskLiteralRef:
       case mskConstArray:
@@ -38,6 +38,9 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
          return resolveExternal(referenceName);
       case mskVMTRef:
          return _dataReferences.get(referenceName);
+      case mskStaticRef:
+      case mskStaticVariable:
+         return _statReferences.get(referenceName);
       default:
          return INVALID_ADDR;
    }
@@ -49,7 +52,7 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
       case mskSymbolRef:
          _symbolReferences.add(referenceName, address);
          break;
-      case mskMetaArrayRef:
+      case mskTypeListRef:
       case mskLiteralRef:
       case mskIntLiteralRef:
       case mskConstArray:
@@ -57,6 +60,10 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
          break;
       case mskVMTRef:
          _dataReferences.add(referenceName, address);
+         break;
+      case mskStaticRef:
+      case mskStaticVariable:
+         _statReferences.add(referenceName, address);
          break;
       default:
          break;
@@ -165,6 +172,11 @@ Section* ImageProvider :: getImportSection()
 Section* ImageProvider :: getDataSection()
 {
    return &_data;
+}
+
+Section* ImageProvider::getStatSection()
+{
+   return &_stat;
 }
 
 Section* ImageProvider :: getMBDataSection()

@@ -7,6 +7,7 @@
 /// visibility:
 #let attributesSymbols["public"]      := 80004001h;
 #let attributesSymbols["private"]     := 80004002h;
+#let attributesSymbols["internal"]    := 80004003h;
 #let attributesSymbols["protected"]   := 80004004h;
 
 /// property:
@@ -17,6 +18,7 @@
 /// scope_prefix:
 #let attributesSymbols["const"]       := 80002001h;
 #let attributesSymbols["embeddable"]  := 80002002h;
+#let attributesSymbols["ref"]         := 80002003h;
                                                  
 /// scope:
 #let attributesSymbols["class"]       := 80001001h;
@@ -44,5 +46,8 @@
 /// primitive types
 #let attributesSymbols["__string"]    := 80000801h;
 #let attributesSymbols["__int"]       := 80000803h;
-#let attributesSymbols["__meta"]      := 80000804h;
+//#let attributesSymbols["__meta"]      := 80000804h;
+#let attributesSymbols["__word"]      := 80000805h;
 #let attributesSymbols["__symbol"]    := 80000808h;
+
+#reload attributesSymbols;

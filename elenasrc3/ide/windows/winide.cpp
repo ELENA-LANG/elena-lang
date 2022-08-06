@@ -10,12 +10,98 @@
 
 using namespace elena_lang;
 
+// --- Clipboard ---
+
+Clipboard :: Clipboard(ControlBase* owner)
+{
+   this->_owner = owner;
+}
+
+bool Clipboard :: begin()
+{
+   return (::OpenClipboard(_owner->handle()) != 0);
+}
+
+void Clipboard :: clear()
+{
+   ::EmptyClipboard();
+}
+
+void Clipboard :: copy(HGLOBAL buffer)
+{
+   ::SetClipboardData(CF_UNICODETEXT, buffer);
+}
+
+HGLOBAL Clipboard :: get()
+{
+   return ::GetClipboardData(CF_UNICODETEXT);
+}
+
+void Clipboard :: end()
+{
+   ::CloseClipboard();
+}
+
+HGLOBAL Clipboard :: createBuffer(size_t size)
+{
+   return ::GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, (size + 1) * sizeof(wchar_t));
+}
+
+wchar_t* Clipboard :: allocateBuffer(HGLOBAL buffer)
+{
+   return (wchar_t*)::GlobalLock(buffer);
+}
+
+void Clipboard :: freeBuffer(HGLOBAL buffer)
+{
+   ::GlobalUnlock(buffer);
+}
+
+bool Clipboard :: copyToClipboard(DocumentView* docView)
+{
+   if (begin()) {
+      clear();
+
+      HGLOBAL buffer = createBuffer(docView->getSelectionLength());
+      wchar_t* text = allocateBuffer(buffer);
+
+      docView->copySelection(text);
+
+      freeBuffer(buffer);
+      copy(buffer);
+
+      end();
+
+      return true;
+   }
+
+   return false;
+}
+
+void Clipboard :: pasteFromClipboard(DocumentView* docView)
+{
+   if (begin()) {
+      HGLOBAL buffer = get();
+      wchar_t* text = allocateBuffer(buffer);
+      if (!emptystr(text)) {
+         docView->insertLine(text, getlength(text));
+
+         freeBuffer(buffer);
+      }
+
+      end();
+   }
+}
+
+// --- IDEWindow ---
+
 IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, int textFrameId) : 
    SDIWindow(title), 
    dialog(instance, 
       this, Dialog::SourceFilter, 
       OPEN_FILE_CAPTION, 
-      *model->projectModel.paths.lastPath)
+      *model->projectModel.paths.lastPath),
+   clipboard(this)
 {
    this->_instance = instance;
    this->_controller = controller;
@@ -57,6 +143,32 @@ void IDEWindow :: exit()
    }
 }
 
+void IDEWindow :: undo()
+{
+   _controller->sourceController.undo(_model->viewModel());
+}
+
+void IDEWindow :: redo()
+{
+   _controller->sourceController.redo(_model->viewModel());
+}
+
+bool IDEWindow :: copyToClipboard()
+{
+   return _controller->sourceController.copyToClipboard(_model->viewModel(), &clipboard);
+}
+
+void IDEWindow :: pasteFromClipboard()
+{
+   _controller->sourceController.pasteFromClipboard(_model->viewModel(), &clipboard);
+}
+
+void IDEWindow :: deleteText()
+{
+   _controller->sourceController.deleteText(_model->viewModel());
+   _model->sourceViewModel.onModelChanged();
+}
+
 bool IDEWindow :: onCommand(int command)
 {
    switch (command) {
@@ -74,6 +186,28 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_FILE_EXIT:
          exit();
+         break;
+      case IDM_EDIT_UNDO:
+         undo();
+         break;
+      case IDM_EDIT_REDO:
+         redo();
+         break;
+      case IDM_EDIT_CUT:
+         if (copyToClipboard())
+            deleteText();
+         break;
+      case IDM_EDIT_COPY:
+         copyToClipboard();
+         break;
+      case IDM_EDIT_PASTE:
+         pasteFromClipboard();
+         break;
+      case IDM_EDIT_DELETE:
+         deleteText();
+         break;
+      case IDM_PROJECT_COMPILE:
+         _controller->projectController.doCompileProject(_model->projectModel, DebugAction::None);
          break;
       case IDM_DEBUG_RUN:
          _controller->projectController.doDebugAction(_model->projectModel, DebugAction::Run);

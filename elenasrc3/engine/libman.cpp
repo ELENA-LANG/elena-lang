@@ -243,7 +243,7 @@ ModuleBase* LibraryProvider :: resolveIndirectWeakModule(ustr_t weakName, ref_t&
       if ((*it)->mapReference(*relativeName, true)) {
          // get list of nested namespaces
          IdentifierString nsSectionName("'", NAMESPACES_SECTION);
-         auto nsSection = (*it)->mapSection((*it)->mapReference(*nsSectionName, true) | mskStrMetaArrayRef, true);
+         auto nsSection = (*it)->mapSection((*it)->mapReference(*nsSectionName, true) | mskLiteralListRef, true);
          if (nsSection) {
             MemoryReader nsReader(nsSection);
             while (!nsReader.eof()) {
@@ -260,7 +260,7 @@ ModuleBase* LibraryProvider :: resolveIndirectWeakModule(ustr_t weakName, ref_t&
 
          // get list of imported modules
          IdentifierString importSectionName("'", IMPORTS_SECTION);
-         auto importSection = (*it)->mapSection((*it)->mapReference(*importSectionName, true) | mskStrMetaArrayRef, true);
+         auto importSection = (*it)->mapSection((*it)->mapReference(*importSectionName, true) | mskLiteralListRef, true);
          if (importSection) {
             MemoryReader importReader(importSection);
             while (!importReader.eof()) {
@@ -389,12 +389,13 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
    switch (mask) {
       case mskIntLiteralRef:
       case mskLiteralRef:
+      case mskCharacterRef:
          return module->resolveConstant(reference);
       default:
       {
          ustr_t referenceName = module->resolveReference(reference);
          while (isForwardReference(referenceName)) {
-            ustr_t resolvedName = forwardResolver->resolveForward(referenceName);
+            ustr_t resolvedName = forwardResolver->resolveForward(referenceName + getlength(FORWARD_PREFIX_NS));
             if (!resolvedName.empty()) {
                referenceName = resolvedName;
             }
@@ -431,7 +432,7 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
 ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ustr_t referenceName, ForwardResolverBase* forwardResolver)
 {
    while (isForwardReference(referenceName)) {
-      ustr_t resolvedName = forwardResolver->resolveForward(referenceName);
+      ustr_t resolvedName = forwardResolver->resolveForward(referenceName + getlength(FORWARD_PREFIX_NS));
       if (!resolvedName.empty()) {
          referenceName = resolvedName;
       }
@@ -483,7 +484,7 @@ bool LibraryProvider :: saveModule(ModuleBase* module)
 
    // saving a module
    IdentifierString tmp(*path);
-   printf("saving %s", tmp.str());
+   printf("saving %s\n", tmp.str());
 
    FileWriter writer(*path, FileEncoding::Raw, false);
    return dynamic_cast<Module*>(module)->save(writer);
