@@ -12,12 +12,12 @@ namespace elena_lang
    // --- SystemSettings ---
    struct SystemSettings
    {
-      int      YGTotalSize;
-      int      YGCommittedSize;
-      int      MGTotalSize;
-      int      MGCommittedSize;
-      int      PageMask;
-      int      PageSizeOrder;
+      int      yg_total_size;
+      int      yg_committed_size;
+      int      mg_total_size;
+      int      mg_committed_size;
+      int      page_mask;
+      int      page_size_order;
    };
 
 #pragma pack(push, 1)
@@ -41,12 +41,24 @@ namespace elena_lang
    // --- SystemEnv ---
    struct SystemEnv
    {
-      size_t      StatCounter;
-      GCTable*    Table;
-      void*       BCInvoker;
-      pos_t       GCMGSize;
-      pos_t       GCYGSize;
+      size_t      stat_counter;
+      GCTable*    table;
+      void*       bc_invoker;
+      void*       ex_handler;
+      pos_t       gc_mg_size;
+      pos_t       gc_yg_size;
    };
+
+   // --- ExceptionStruct ---
+   struct ExceptionStruct
+   {
+      uintptr_t core_catch_addr;
+      uintptr_t core_catch_level;
+      uintptr_t core_catch_frame;
+   };
+
+   constexpr int SizeOfExceptionStruct32 = 0x0C;
+   constexpr int SizeOfExceptionStruct64 = 0x20;
 
    // --- _Entry ---
    struct Entry

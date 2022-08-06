@@ -23,7 +23,7 @@ void ELENARTMachine :: startSTA(SystemEnv* env, SymbolList* entryList)
    __routineProvider.InitSTA(env);
 
    Entry entry;
-   entry.address = env->BCInvoker;
+   entry.address = env->bc_invoker;
 
    // executing the program
    int retVal = 0;

@@ -19,9 +19,9 @@ void init()
 
 // --- API export ---
 
-EXTERN_DLL_EXPORT void InitializeSTA(SystemEnv* env, SymbolList* entryList)
+EXTERN_DLL_EXPORT void InitializeSTA(SystemEnv* env, SymbolList* entryList, ExceptionStruct* ex_struct)
 {
-   printf("InitializeSTA.3 %x,%x\n", (int)env, (int)entryList);
+   printf("InitializeSTA.4 %x,%x,%x\n", (int)env, (int)entryList, (int)ex_struct);
    fflush(stdout);
 
    machine->startSTA(env, entryList);

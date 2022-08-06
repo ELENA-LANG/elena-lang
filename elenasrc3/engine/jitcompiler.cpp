@@ -68,10 +68,10 @@ CodeGenerator _codeGenerators[256] =
 };
 
 // preloaded gc routines
-constexpr int coreVariableNumber = 1;
+constexpr int coreVariableNumber = 2;
 constexpr ref_t coreVariables[coreVariableNumber] =
 {
-   CORE_GC_TABLE//, CORE_EH_TABLE
+   CORE_GC_TABLE, CORE_EH_TABLE
 };
 
 constexpr int coreConstantNumber = 4;
@@ -82,10 +82,10 @@ constexpr ref_t coreConstants[coreConstantNumber] =
 };
 
 // preloaded gc routines
-constexpr int coreFunctionNumber = 2;
+constexpr int coreFunctionNumber = 3;
 constexpr ref_t coreFunctions[coreFunctionNumber] =
 {
-   INVOKER, GC_ALLOC
+   INVOKER, GC_ALLOC, EXCEPTION_HANDLER
 };
 
 // preloaded bc commands

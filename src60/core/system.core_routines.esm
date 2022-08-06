@@ -1,6 +1,9 @@
 //        ELENA Language 6.0
 //      inline system library
 
+define ex_struct_size32 12; 
+define ex_struct_size64 32; 
+
 procedure __object_dispatcher
 
   redirect
@@ -27,14 +30,14 @@ end
 
 symbol sta_start
 
-  open header [arg1],[envptr]
+  open header [arg1],[envptr,ex_struct:ex_struct_size]
   
   mov         env
   save        dp:envptr
   set         dp:envptr
   store       fp:arg1
 
-  call extern:InitializeSTA (*arg1, marray:"$forwards'meta$startUpSymbols")
+  call extern:InitializeSTA (*arg1, marray:"$forwards'meta$startUpSymbols",ex_struct)
 
   close       []
 

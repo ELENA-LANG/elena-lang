@@ -1,10 +1,12 @@
 // ; --- Predefined References  --
 define INVOKER              10001h
 define GC_ALLOC	            10002h
+define EXCEPTION_HANDLER    10003h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE   	    20003h
+define CORE_ET_TABLE        2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
@@ -46,6 +48,12 @@ structure % CORE_TOC
   dd 0         // ; reserved
 
 end
+
+structure % CORE_ET_TABLE
+
+  dd 0 // ; critical_exception    ; +x00   - pointer to critical exception handler
+
+end
  
 structure %CORE_GC_TABLE
 
@@ -69,6 +77,7 @@ structure %SYSTEM_ENV
   dd 0
   dd data : %CORE_GC_TABLE
   dd code : %INVOKER
+  dd code : %EXCEPTION_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
 

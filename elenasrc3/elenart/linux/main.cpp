@@ -20,9 +20,9 @@ void init()
    machine = new ELENARTMachine();
 }
 
-void InitializeSTA(SystemEnv* env, SymbolList* entryList)
+void InitializeSTA(SystemEnv* env, SymbolList* entryList, ExceptionStruct* ex_struct)
 {
-   printf("InitializeSTA.2 %llx,%llx\n", (long long)env, (long long)entryList);
+   printf("InitializeSTA.4 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)ex_struct);
    fflush(stdout);
 
    if (machine != nullptr)
