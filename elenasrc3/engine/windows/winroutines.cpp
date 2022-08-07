@@ -33,7 +33,7 @@ void SystemRoutineProvider :: Exit(int exitCode)
    ::ExitProcess(exitCode);
 }
 
-#if _M_IX86
+#if _M_IX86 || __i386__
 
 LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 {
@@ -75,7 +75,7 @@ LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
    return EXCEPTION_CONTINUE_SEARCH;
 }
 
-#elif _M_X64
+#elif _M_X64 || __x86_64__ || __PPC64__ || __aarch64__
 
 LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 {
