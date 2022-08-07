@@ -18,7 +18,7 @@ constexpr int page_size_order = gcPageSizeOrder64;
 void SystemRoutineProvider::FillSettings(SystemEnv* env, SystemSettings& settings)
 {
    settings.yg_total_size = 0x8000000;
-   settings.yg_committed_ize = align(env->gc_mg_size, 128) >> page_size_order_minus2;
+   settings.yg_committed_size = align(env->gc_mg_size, 128) >> page_size_order_minus2;
    settings.mg_total_size = 0x20000000;
    settings.mg_committed_size = align(env->gc_mg_size, 128);
 
