@@ -101,24 +101,24 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 
    switch (sig) {
       case SIGFPE:
-         u->uc_mcontext.regs[9] = u->uc_mcontext.pc;
-         u->uc_mcontext.regs[0] = ELENA_ERR_DIVIDE_BY_ZERO;
-         u->uc_mcontext.pc = CriticalHandler;
+         u->uc_mcontext.gp_regs.r9 = u->uc_mcontext.gp_regs.pc;
+         u->uc_mcontext.gp_regs.r0 = ELENA_ERR_DIVIDE_BY_ZERO;
+         u->uc_mcontext.gp_regs.pc = CriticalHandler;
          break;
       case SIGSEGV:
-         u->uc_mcontext.regs[9] = u->uc_mcontext.pc;
-         u->uc_mcontext.regs[0] = ELENA_ERR_ACCESS_VIOLATION;
-         u->uc_mcontext.pc = CriticalHandler;
+         u->uc_mcontext.gp_regs.r9 = u->uc_mcontext.gp_regs.pc;
+         u->uc_mcontext.gp_regs.r0 = ELENA_ERR_ACCESS_VIOLATION;
+         u->uc_mcontext.gp_regs.pc = CriticalHandler;
          break;
       default:
-         u->uc_mcontext.regs[9] = u->uc_mcontext.pc;
-         u->uc_mcontext.regs[0] = ELENA_ERR_CRITICAL;
-         u->uc_mcontext.pc = CriticalHandler;
+         u->uc_mcontext.gp_regs.r9 = u->uc_mcontext.gp_regs.pc;
+         u->uc_mcontext.gp_regs.r0 = ELENA_ERR_CRITICAL;
+         u->uc_mcontext.gp_regs.pc = CriticalHandler;
          break;
    }
 }
 
-#elif __x86_64__
+#elif __PPC64__
 
 static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 {
