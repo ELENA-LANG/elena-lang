@@ -398,7 +398,7 @@ inline %492h
 
   mov     x12, #0
   stp     x12, x12, [sp, #-16]
-  str     x12, [sp, #-8]
+  str     x12, [sp, #-8]!
 
 end
 
