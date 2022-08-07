@@ -69,7 +69,7 @@ namespace elena_lang
       int readFrameI(ScriptToken& tokenInfo, ReferenceMap& locals, bool skipRead = false);
       int readDisp(ScriptToken& tokenInfo, ReferenceMap& dataLocals, bool skipRead = false);
 
-      void readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants, 
+      int readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants, 
          int factor, bool allowSize);
 
       bool writeArg(MemoryWriter& writer, Operand& arg, int index);

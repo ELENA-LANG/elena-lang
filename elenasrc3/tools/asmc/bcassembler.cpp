@@ -345,46 +345,43 @@ bool ByteCodeAssembler :: compileOpII(ScriptToken& tokenInfo, MemoryWriter& writ
    return true;
 }
 
-inline int calcSize(ReferenceMap& locals)
-{
-   int offset = 0;
-   for (auto it = locals.start(); !it.eof(); ++it) {
-      offset += *it;
-   }
-
-   return offset;
-}
-
-void ByteCodeAssembler :: readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants, 
+int ByteCodeAssembler :: readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants, 
    int factor, bool allowSize)
 {
+   int offset = factor;
+   int size = 0;
+
    read(tokenInfo);
    while (true) {
       IdentifierString name(*tokenInfo.token);
-
-      read(tokenInfo);
-      int offset = 0;
-      if (allowSize) {
-         offset = calcSize(locals);
-
-         if (allowSize && tokenInfo.compare(":")) {
-            read(tokenInfo);
-            auto arg = compileArg(tokenInfo, locals, locals, constants);
-            if (arg.type == Operand::Type::Value) {
-               offset -= arg.reference;
-
-               read(tokenInfo);
-            }
-            else throw SyntaxError(ASM_INVALID_TARGET, tokenInfo.lineInfo);
-         }
-         else offset += factor;
-      }
-      else offset = (locals.count() + 1) * factor;
 
       if (!locals.exist(*name)) {
          locals.add(*name, offset);
       }
       else throw SyntaxError(ASM_DUPLICATE_ARG, tokenInfo.lineInfo);
+
+      read(tokenInfo);
+      if (allowSize) {
+         if (allowSize && tokenInfo.compare(":")) {
+            read(tokenInfo);
+            auto arg = compileArg(tokenInfo, locals, locals, constants);
+            if (arg.type == Operand::Type::Value) {
+               offset -= arg.reference;
+               size += arg.reference;
+
+               read(tokenInfo);
+            }
+            else throw SyntaxError(ASM_INVALID_TARGET, tokenInfo.lineInfo);
+         }
+         else {
+            offset += factor;
+            size -= factor;
+         }
+      }
+      else {
+         offset += factor;
+         size += factor;
+      }
 
       if (tokenInfo.compare(",")) {
          read(tokenInfo);
@@ -394,6 +391,8 @@ void ByteCodeAssembler :: readArgList(ScriptToken& tokenInfo, ReferenceMap& loca
       }
       else throw SyntaxError(ASM_COMMA_EXPECTED, tokenInfo.lineInfo);
    }
+
+   return size;
 }
 
 bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& writer,
@@ -403,16 +402,17 @@ bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& wr
       readArgList(tokenInfo, locals, constants, 1, false);
 
       read(tokenInfo);
+      int dataSize = 0;
       if (tokenInfo.compare(",")) {
          read(tokenInfo, "[", ASM_INVALID_DESTINATION);
 
-         readArgList(tokenInfo, dataLocals, constants, (_mode64 ? 8 : 4) * -1, true);
+         dataSize = readArgList(tokenInfo, dataLocals, constants, (_mode64 ? 8 : 4) * -1, true);
 
          read(tokenInfo);
       }
 
       command.arg1 = locals.count();
-      command.arg2 = dataLocals.count() * (_mode64 ? 8 : 4);
+      command.arg2 = dataSize;
 
       ByteCodeUtil::write(writer, command);
 
@@ -448,8 +448,16 @@ bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& w
       read(tokenInfo);
       compileArgList(tokenInfo, args, locals, dataLocals, constants);
 
-      if (args.count() > 0)
-         ByteCodeUtil::write(writer, ByteCode::AllocI, args.count());
+      int stackSize = 0;
+      if (args.count() > 0) {
+         if (_mode64) {
+            stackSize = align(args.count(), 2);
+         }
+         else stackSize = args.count();
+      }
+
+      if (stackSize > 0)
+         ByteCodeUtil::write(writer, ByteCode::AllocI, stackSize);
 
       int index = 0;
       for(auto it = args.start(); !it.eof(); ++it) {
@@ -460,8 +468,8 @@ bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& w
 
       ByteCodeUtil::write(writer, command);
 
-      if (args.count() > 0)
-         ByteCodeUtil::write(writer, ByteCode::FreeI, args.count());
+      if (stackSize > 0)
+         ByteCodeUtil::write(writer, ByteCode::FreeI, stackSize);
    }
 
    return true;
