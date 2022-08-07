@@ -20,7 +20,7 @@ void SystemRoutineProvider::FillSettings(SystemEnv* env, SystemSettings& setting
    settings.yg_total_size = 0x8000000;
    settings.yg_committed_size = align(env->gc_mg_size, 128) >> page_size_order_minus2;
    settings.mg_total_size = 0x20000000;
-   settings.mg_committed_Size = align(env->gc_mg_size, 128);
+   settings.mg_committed_size = align(env->gc_mg_size, 128);
 
    settings.page_mask = page_mask;
    settings.page_size_order = page_size_order;
