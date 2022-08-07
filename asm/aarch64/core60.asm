@@ -1719,6 +1719,7 @@ inline %0FEh
 
   add     x15, sp, #16
   ldr     x2, [x15]  
+  ldr     x3, [x15, #8]  
 
   movz    x16,  __ptr32lo_1
   movk    x16,  __ptr32hi_1, lsl #16
