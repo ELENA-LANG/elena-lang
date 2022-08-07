@@ -126,19 +126,19 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 
    switch (sig) {
       case SIGFPE:
-         u->uc_mcontext.gp_regs.r9 = u->uc_mcontext.gp_regs.pc;
-         u->uc_mcontext.gp_regs.r0 = ELENA_ERR_DIVIDE_BY_ZERO;
-         u->uc_mcontext.gp_regs.pc = CriticalHandler;
+         u->uc_mcontext.mc_gregs.r9 = u->uc_mcontext.mc_gregs.pc;
+         u->uc_mcontext.mc_gregs.r0 = ELENA_ERR_DIVIDE_BY_ZERO;
+         u->uc_mcontext.mc_gregs.pc = CriticalHandler;
          break;
       case SIGSEGV:
-         u->uc_mcontext.gp_regs.r9 = u->uc_mcontext.gp_regs.pc;
-         u->uc_mcontext.gp_regs.r0 = ELENA_ERR_ACCESS_VIOLATION;
-         u->uc_mcontext.gp_regs.pc = CriticalHandler;
+         u->uc_mcontext.mc_gregs.r9 = u->uc_mcontext.mc_gregs.pc;
+         u->uc_mcontext.mc_gregs.r0 = ELENA_ERR_ACCESS_VIOLATION;
+         u->uc_mcontext.mc_gregs.pc = CriticalHandler;
          break;
       default:
-         u->uc_mcontext.gp_regs.r9 = u->uc_mcontext.gp_regs.pc;
-         u->uc_mcontext.gp_regs.r0 = ELENA_ERR_CRITICAL;
-         u->uc_mcontext.gp_regs.pc = CriticalHandler;
+         u->uc_mcontext.mc_gregs.r9 = u->uc_mcontext.mc_gregs.pc;
+         u->uc_mcontext.mc_gregs.r0 = ELENA_ERR_CRITICAL;
+         u->uc_mcontext.mc_gregs.pc = CriticalHandler;
          break;
    }
 }
