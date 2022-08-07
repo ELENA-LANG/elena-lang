@@ -75,7 +75,7 @@ LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
    return EXCEPTION_CONTINUE_SEARCH;
 }
 
-#elif _M_X64 || __x86_64__ || __PPC64__ || __aarch64__
+#elif _M_X64
 
 LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 {

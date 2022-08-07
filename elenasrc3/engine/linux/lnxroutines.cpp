@@ -41,6 +41,8 @@ void SystemRoutineProvider :: Exit(int exitCode)
    ::exit(exitCode);
 }
 
+#if __i386__
+
 static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 {
    ucontext_t* u = (ucontext_t*)unused;
@@ -64,6 +66,33 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
    }
 
 }
+
+#elif __x86_64__
+
+static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
+{
+   ucontext_t* u = (ucontext_t*)unused;
+
+   switch (sig) {
+   case SIGFPE:
+      u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
+      u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_DIVIDE_BY_ZERO;
+      u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+      break;
+   case SIGSEGV:
+      u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
+      u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_ACCESS_VIOLATION;
+      u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+      break;
+   default:
+      u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
+      u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_CRITICAL;
+      u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+      break;
+   }
+}
+
+#endif
 
 void SystemRoutineProvider :: InitCriticalStruct(uintptr_t criticalHandler)
 {
