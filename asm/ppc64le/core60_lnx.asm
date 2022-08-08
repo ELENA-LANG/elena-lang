@@ -4,9 +4,10 @@
 
 // ; --- Predefined References  --
 define INVOKER           10001h
-define EXCEPTION_HANDLER 10003h
+define VEH_HANDLER       10003h
 
 define CORE_TOC          20001h
+define CORE_ET_TABLE     2000Bh
 
 // ; ==== System commands ===
 
@@ -48,7 +49,21 @@ procedure % INVOKER
 
 end
 
-// EXCEPTION_HANDLER() 
-procedure % EXCEPTION_HANDLER
+// VEH_HANDLER() 
+procedure % VEH_HANDLER
+
+  mflr    r0
+  std     r31, -10h(r1)  // ; save frame pointer
+  std     r0,  -08h(r1)  // ; save return address
+
+  addi    r1, r1, -16    // ; allocate raw stack
+
+  ld      r14, toc_data(r2)
+  addis   r14, r14, data_disp32hi : %CORE_ET_TABLE
+  addi    r14, r14, data_disp32lo : %CORE_ET_TABLE
+  ld      r0, [r14]
+
+  mtctr   r0
+  bctr
 
 end

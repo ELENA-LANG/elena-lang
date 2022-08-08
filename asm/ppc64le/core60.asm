@@ -2,7 +2,7 @@
 // ; --- Predefined References  --
 define INVOKER              10001h
 define GC_ALLOC	            10002h
-define EXCEPTION_HANDLER    10003h
+define VEH_HANDLER          10003h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -20,6 +20,7 @@ define toc_mdata             0010h
 define toc_code              0018h
 define toc_gctable           0020h
 define toc_alloc             0028h
+define toc_data              0030h
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -64,12 +65,13 @@ structure % CORE_TOC
   dq code   : 0         // ; address of code section
   dq data   : %CORE_GC_TABLE
   dq code   : %GC_ALLOC // ; address of alloc function
+  dq data   : 0         // ; address of data section
 
 end
  
 structure % CORE_ET_TABLE
 
-  dq 0 // ; critical_exception    ; +x00   - pointer to critical exception handler
+  dq 0 // ; managed_handler    ; +x00   - pointer to ELENA exception handler
 
 end
 
@@ -95,7 +97,7 @@ structure %SYSTEM_ENV
   dq 0  
   dq data : %CORE_GC_TABLE
   dq code : %INVOKER
-  dq code : %EXCEPTION_HANDLER
+  dq code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
 

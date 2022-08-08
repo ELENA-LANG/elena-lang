@@ -1,6 +1,8 @@
 // ; --- Predefined References  --
 define INVOKER           10001h
-define EXCEPTION_HANDLER 10003h
+define VEH_HANDLER       10003h
+
+define CORE_ET_TABLE     2000Bh
 
 // ; ==== System commands ===
 
@@ -48,7 +50,14 @@ procedure % INVOKER
 
 end
 
-// EXCEPTION_HANDLER() 
-procedure % EXCEPTION_HANDLER
+// VEH_HANDLER() 
+procedure % VEH_HANDLER
+
+  mov  r10, rdx
+  push rbp
+  mov  rbp, rsp
+  mov  rdx, rax   // ; set exception code
+  mov  rax, [data : % CORE_ET_TABLE]
+  jmp  rax
 
 end

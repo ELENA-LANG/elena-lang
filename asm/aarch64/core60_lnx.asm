@@ -4,7 +4,9 @@
 
 // ; --- Predefined References  --
 define INVOKER         10001h
-define EXCEPTION_HANDLER     10003h
+define VEH_HANDLER     10003h
+
+define CORE_ET_TABLE   2000Bh
 
 // ; ==== System commands ===
 
@@ -37,7 +39,16 @@ procedure % INVOKER
 
 end
 
-// EXCEPTION_HANDLER() 
-procedure % EXCEPTION_HANDLER
+// VEH_HANDLER() 
+procedure % VEH_HANDLER
+
+  stp     x29, x30, [sp, #-16]! 
+  mov     x29, sp
+
+  movz    x20,  data_ptr32lo : %CORE_ET_TABLE
+  movk    x20,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+
+  ldr     x17, [x20]
+  br      x17
 
 end

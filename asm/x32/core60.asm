@@ -1,7 +1,7 @@
 // ; --- Predefined References  --
 define INVOKER              10001h
 define GC_ALLOC	            10002h
-define EXCEPTION_HANDLER    10003h
+define VEH_HANDLER          10003h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -51,7 +51,7 @@ end
 
 structure % CORE_ET_TABLE
 
-  dd 0 // ; critical_exception    ; +x00   - pointer to critical exception handler
+  dd 0 // ; managed_handler    ; +x00   - pointer to ELENA exception handler
 
 end
  
@@ -77,7 +77,7 @@ structure %SYSTEM_ENV
   dd 0
   dd data : %CORE_GC_TABLE
   dd code : %INVOKER
-  dd code : %EXCEPTION_HANDLER
+  dd code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
 

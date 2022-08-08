@@ -11,8 +11,8 @@ ELENA byte codes (or ecodes)
 
    index  - data accumulator 
 
-   x86    : fp - ebp, sp - esp, acc - ebx, index - eax, sp[0] - esi, sp[1] - edx
-   x86_64 : fp - rbp, sp - rsp, acc - rbx, index - rax, sp[0] - r10, sp[1] - rdx, r15 - presaved
+   x86    : fp - ebp, sp - esp, acc - ebx, index - edx, sp[0] - esi
+   x86_64 : fp - rbp, sp - rsp, acc - rbx, index - rdx, sp[0] - r10, sp[1] - rdx, r15 - presaved
    arm64  : fp - x29, sp - x31, index - x9, acc - x10, sp[0] - x0, sp[1] - x1
    ppc64  : fp - r31, sp - r1, index - r14, acc - r15, sp[0] - r3, sp[1] - r4
 
@@ -26,7 +26,7 @@ ELENA byte codes (or ecodes)
    x86    :                edx, ebx, [esi]
    x86_64 : (r15)          rdx, rbx, [r10, r11]
    arm64  : (x29, x31),    x9, x10,  [x0, x1]
-   ppc64  : (r13, r1, r2), r14, r15, [r3, r4]
+   ppc64  : (r13, r1, r2), r14, r15, [r3, r4], r13 - preserved
 
  Frame operations:
  -----------------              
