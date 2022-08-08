@@ -185,6 +185,7 @@ namespace elena_lang
    //constexpr auto V_DECLOBJ               = 0x80000804u;
    constexpr auto V_WORDBINARY            = 0x80000805u;
    constexpr auto V_SYMBOL                = 0x80000808u;
+   constexpr auto V_MSSGBINARY            = 0x80000809u;
 
    /// primitive types
    constexpr auto V_STRING                = 0x80000001u;
@@ -199,6 +200,7 @@ namespace elena_lang
    constexpr auto V_INT8ARRAY             = 0x8000000Au;
    constexpr auto V_BINARYARRAY           = 0x8000000Bu;
    constexpr auto V_ELEMENT               = 0x8000000Cu;
+   constexpr auto V_MESSAGE               = 0x8000000Du;
    constexpr auto V_OBJATTRIBUTES         = 0x80000012u;
    constexpr auto V_CLOSURE               = 0x80000013u;
    constexpr auto V_DECLARATION           = 0x80000014u;

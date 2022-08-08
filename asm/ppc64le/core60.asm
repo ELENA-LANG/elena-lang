@@ -43,6 +43,13 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
+define et_current            0008h
+
+define es_prev_struct        0000h
+define es_catch_addr         0008h
+define es_catch_level        0010h
+define es_catch_frame        0018h
+
 // ; --- Page Size ----
 define page_ceil               2Fh
 define page_mask        0FFFFFFE0h
@@ -71,7 +78,8 @@ end
  
 structure % CORE_ET_TABLE
 
-  dq 0 // ; managed_handler    ; +x00   - pointer to ELENA exception handler
+  dq 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
+  dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
 
 end
 
@@ -96,6 +104,7 @@ structure %SYSTEM_ENV
 
   dq 0  
   dq data : %CORE_GC_TABLE
+  dq data : %CORE_EH_TABLE
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -226,6 +235,20 @@ end
 inline %9
 
   stw      r14, 0(r15)
+
+end
+
+// ; throw
+inline %0Ah
+
+  ld      r14, toc_data(r2)
+  addis   r14, r14, data_disp32hi : %CORE_ET_TABLE
+  addi    r14, r14, data_disp32lo : %CORE_ET_TABLE
+
+  ld      r15, et_current(r14)
+  ld      r0, es_catch_addr(r15)                
+  mtctr   r0
+  bctr
 
 end
 
@@ -996,6 +1019,28 @@ inline %0E5h
   addi    r19, r31, __arg16_1
   li      r17, __n16_2
   stw     r17, 0(r19)
+
+end
+
+/ ; xhookdpr
+inline %0E6h
+
+  addi    r19, r31, __arg16_1
+
+  ld      r14, toc_data(r2)
+  addis   r14, r14, data_disp32hi : %CORE_ET_TABLE
+  addi    r14, r14, data_disp32lo : %CORE_ET_TABLE
+
+  ld      r15, et_current(r14)
+
+  ld       r12, toc_code(r2)
+  addis    r12, r12, __disp32hi_1 
+  addi     r12, r12, __disp32lo_1
+
+  std     r15, es_prev_struct(r19)
+  std     r12, es_catch_addr(r19)
+  std     r31, es_catch_frame(r19)
+  std     r1, es_catch_level(r19)
 
 end
 
@@ -1804,6 +1849,7 @@ inline %0FEh
   // ; after the home space (not shown here).
 
   ld      r5, 16(r1)
+  ld      r6, 24(r1)
 
   ld      r12, toc_import(r2)
   addis   r12, r12, __disp32hi_1 

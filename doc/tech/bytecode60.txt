@@ -224,8 +224,8 @@ ELENA byte codes (or ecodes)
                               COMP.LT := (temp2 < temp1);
                               n = 1,2,4,8 
 
-   icmp n                   - temp : n << acc;
-                              temp2 : n << sp[0];
-                              COMP.EQ := (temp2 == temp1);
-                              COMP.EQ := (temp2 < temp1);
-                              n = 1,2,4,8 
+
+ Misc operations:
+ ---------------- 
+   throw                    - raise an exception (acc contains the exception object)
+

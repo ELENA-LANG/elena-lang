@@ -14,18 +14,18 @@ namespace elena_lang
    constexpr auto gcPageSize32               = 0x0010;                // a heap page size constant
    constexpr auto gcPageSizeOrder32          = 4;
    constexpr auto gcPageSizeOrderMinus2_32   = 2;
-   constexpr auto gcPageMask32        = 0x0FFFFFFF0;
+   constexpr auto gcPageMask32               = 0x0FFFFFFF0;
 
    constexpr auto elVMTClassOffset32         = 0x0010;                // a VMT32 class offset
    constexpr auto elObjectOffset32           = 0x0008;                // object header / offset constant
 
-   constexpr int elStructMask32                      = 0x800000;
+   constexpr int elStructMask32              = 0x800000;
 
    // --- 64bit ELENA Object constants ---
-   constexpr int gcPageSize64                        = 0x0020;                // a heap page size constant
+   constexpr int gcPageSize64                = 0x0020;                // a heap page size constant
    constexpr auto gcPageSizeOrder64          = 5;
    constexpr auto gcPageSizeOrderMinus2_64   = 3;
-   constexpr auto gcPageMask64        = 0x0FFFFFFE0;
+   constexpr auto gcPageMask64               = 0x0FFFFFFE0;
 
    constexpr auto elVMTClassOffset64         = 0x0020;                // a VMT64 class offset
    constexpr auto elObjectOffset64           = 0x0010;                // object header / offset constant
@@ -84,6 +84,80 @@ namespace elena_lang
    {
       mssg64_t message;
       pos64_t  address;
+   };
+
+   // --- GCTable ---
+   struct GCTable
+   {
+      uintptr_t   gc_header;
+      uintptr_t   gc_start;
+      uintptr_t   gc_yg_start;
+      uintptr_t   gc_yg_current;
+      uintptr_t   gc_yg_end;
+      uintptr_t   gc_shadow;
+      uintptr_t   gc_shadow_end;
+      uintptr_t   gc_mg_start;
+      uintptr_t   gc_mg_current;
+      uintptr_t   gc_end;
+      uintptr_t   gc_mg_wbar;
+   };
+
+   // --- ExceptionStruct ---
+   struct ExceptionStruct
+   {
+      uintptr_t prev_et_struct;
+      uintptr_t core_catch_addr;
+      uintptr_t core_catch_level;
+      uintptr_t core_catch_frame;
+   };
+
+   // --- EHTable ---
+   struct EHTable
+   {
+      uintptr_t        eh_critical;
+      ExceptionStruct* eh_current;
+   };
+
+   // --- SystemEnv ---
+   struct SystemEnv
+   {
+      size_t      stat_counter;
+      GCTable*    gc_table;
+      EHTable*    eh_table;
+      void*       bc_invoker;
+      void*       veh_handler;
+      pos_t       gc_mg_size;
+      pos_t       gc_yg_size;
+   };
+
+   constexpr int SizeOfExceptionStruct32 = 0x0C;
+   constexpr int SizeOfExceptionStruct64 = 0x20;
+
+   // --- _Entry ---
+   struct Entry
+   {
+      union {
+         void* address;
+         int  (*evaluate)(void*, int);
+      };
+
+      Entry()
+      {
+         address = nullptr;
+      }
+   };
+
+   // --- SymbolList ---
+   struct SymbolList
+   {
+      size_t length;
+      // NOTE : the array size if fictinal - it can contain the number of entried defined in the first field
+      Entry  entries[1];
+
+      SymbolList()
+      {
+         length = 0;
+      }
    };
 
 #pragma pack(pop)

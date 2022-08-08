@@ -3154,6 +3154,16 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                   break;
             }
             break;
+         case V_MSSGBINARY:
+            switch (attrs.size) {
+               case 4:
+                  attrs.typeInfo.typeRef = V_MESSAGE;
+                  break;
+               default:
+                  valid = false;
+                  break;
+            }
+            break;
          default:
             valid = false;
             break;

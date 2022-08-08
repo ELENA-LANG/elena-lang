@@ -4,7 +4,9 @@ singleton Tester
 {
    run()
    {
-       console.writeLine("Working");  
+       console.writeLine("Failing");
+       var o := nil;
+       o.fail();
    }
 }
 

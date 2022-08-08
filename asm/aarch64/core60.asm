@@ -33,6 +33,13 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
+define et_current            0008h
+
+define es_prev_struct        0000h
+define es_catch_addr         0008h
+define es_catch_level        0010h
+define es_catch_frame        0018h
+
 // ; --- Page Size ----
 define page_ceil               2Fh
 define page_mask        0FFFFFFE0h
@@ -48,7 +55,8 @@ end
  
 structure % CORE_ET_TABLE
 
-  dq 0 // ; managed_handler    ; +x00   - pointer to ELENA exception handler
+  dq 0 // ; critical_handler       ; +x00   - pointer to ELENA critical exception handler
+  dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
 
 end
 
@@ -73,6 +81,7 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
+  dq data : %CORE_EH_TABLE
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -206,6 +215,19 @@ end
 inline %9
 
   str    x9, [x10]
+
+end
+
+// ; throw
+inline %0Ah
+
+  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
+  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+
+  ldr     x14, [x14, et_current]!
+  ldr     x17, [x14, es_catch_addr]!
+
+  br      x17
 
 end
 
@@ -985,6 +1007,26 @@ inline %0E5h
   add     x19, x29, __arg12_1
   mov     x18, __n16_2
   str     w18, [x19]
+
+end
+
+/ ; xhookdpr
+inline %0E6h
+
+  add     x13, x29, __arg12_1
+
+  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
+  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+
+  ldr     x15, [x14, et_current]!
+
+  movz    x16,  __ptr32lo_2
+  movk    x16,  __ptr32hi_2, lsl #16
+
+  str     x15, [x13]
+  str     x16, [x13, #8]!
+  str     x29, [x13, #8]!
+  str     sp, [x13, #8]!
 
 end
 

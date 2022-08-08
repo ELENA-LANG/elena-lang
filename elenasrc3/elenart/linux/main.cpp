@@ -20,13 +20,24 @@ void init()
    machine = new ELENARTMachine();
 }
 
-void InitializeSTA(SystemEnv* env, SymbolList* entryList, ExceptionStruct* ex_struct)
+void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)
 {
-   printf("InitializeSTA.4 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)ex_struct);
+   printf("InitializeSTA.4 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
    fflush(stdout);
 
    if (machine != nullptr)
       init();
 
+   __routineProvider.InitExceptionHandling(env, criricalHandler);
+
    machine->startSTA(env, entryList);
+}
+
+void ExitLA(int retVal)
+{
+   if (retVal) {
+      printf("Aborted:%x\n", retVal);
+      fflush(stdout);
+   }
+   __routineProvider.Exit(retVal);
 }

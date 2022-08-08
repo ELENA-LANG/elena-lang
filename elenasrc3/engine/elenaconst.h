@@ -81,6 +81,7 @@ namespace elena_lang
    constexpr auto FALSE_FORWARD           = "$false";          // the false boolean value
    constexpr auto WRAPPER_FORWARD         = "$ref";            // the wrapper template
    constexpr auto ARRAY_FORWARD           = "$array";          // the array template 
+   constexpr auto MESSAGE_FORWARD         = "$message";        // the message class
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";
@@ -239,6 +240,7 @@ namespace elena_lang
    constexpr ref_t mskStaticVariable      = 0x19000000u;
    constexpr ref_t mskNameLiteralRef      = 0x1A000000u;
    constexpr ref_t mskPathLiteralRef      = 0x1B000000u;
+   constexpr ref_t mskMssgLiteralRef      = 0x1B000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

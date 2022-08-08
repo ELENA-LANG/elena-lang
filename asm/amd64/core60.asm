@@ -35,6 +35,13 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
+define et_current            0008h
+
+define es_prev_struct        0000h
+define es_catch_addr         0008h
+define es_catch_level        0010h
+define es_catch_frame        0018h
+
 // ; --- Page Size ----
 define page_ceil               2Fh
 define page_mask        0FFFFFFE0h
@@ -51,7 +58,8 @@ end
  
 structure % CORE_ET_TABLE
 
-  dq 0 // ; managed_handler    ; +x00   - pointer to ELENA exception handler
+  dq 0 // ; crtitical_handler      ; +x00   - pointer to ELENA exception handler
+  dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
 
 end
 
@@ -76,6 +84,7 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
+  dq data : %CORE_EH_TABLE
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -195,6 +204,14 @@ end
 inline %9
 
   mov  dword ptr [rbx], edx
+
+end
+
+// ; throw
+inline %0Ah
+
+  mov  rax, [data : %CORE_ET_TABLE + et_current]
+  jmp  [rax + es_catch_addr]
 
 end
 
@@ -786,6 +803,21 @@ inline %0E5h
 
   mov  eax, __n_2
   mov  dword ptr [rbp+__arg32_1], eax
+
+end
+
+/ ; xhookdpr
+inline %0E6h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [data : %CORE_ET_TABLE + et_current]
+
+  mov  [rdi + es_prev_struct], rax
+  mov  [rdi + es_catch_frame], rbp
+  mov  [rdi + es_catch_level], rsp
+  mov  [rdi + es_catch_addr], __ptr64_2
+
+  mov  [data : %CORE_ET_TABLE + et_current], rdi
 
 end
 
