@@ -96,6 +96,19 @@ namespace elena_lang
       }
    };
 
+   class ProcedureError : public ExceptionBase
+   {
+   public:
+      ustr_t           message;
+      IdentifierString name;
+      IdentifierString arg;
+
+      ProcedureError(ustr_t message, ustr_t name, ustr_t arg)
+         : message(message), name(name), arg(arg)
+      {
+      }
+   };
+
    // --- TextParser ---
    typedef bool(*state_matcher)(char ch);
 

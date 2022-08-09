@@ -400,7 +400,7 @@ namespace elena_lang
    {
       virtual bool checkLabel(pos_t label) = 0;
 
-      virtual bool setLabel(pos_t label, MemoryWriter& writer) = 0;
+      virtual bool setLabel(pos_t label, MemoryWriter& writer) = 0;  
 
       virtual bool fixLabel(pos_t label, MemoryWriter& writer) = 0;
 

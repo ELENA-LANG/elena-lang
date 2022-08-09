@@ -11,6 +11,46 @@
 
 using namespace elena_lang;
 
+// --- ByteCodeAssembler::ByteCodeLabelHelper ---
+
+bool ByteCodeAssembler::ByteCodeLabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
+{
+   return false; // !! temporal
+}
+
+void ByteCodeAssembler::ByteCodeLabelHelper :: registerJump(ustr_t labelName, MemoryWriter& writer)
+{
+   ref_t label = labelNames.get(labelName);
+   if (!label) {
+      label = labelNames.count() + 1;
+
+      labelNames.add(labelName, label);
+   }
+
+   declareJump(label, writer);
+}
+
+int ByteCodeAssembler::ByteCodeLabelHelper :: resolveLabel(ustr_t label, MemoryWriter& writer)
+{
+   int offset = labels.get(getLabel(label)) - writer.position();
+
+   return offset;
+}
+
+void ByteCodeAssembler::ByteCodeLabelHelper :: checkAllUsedLabels(ustr_t errorMessage, ustr_t procedureName)
+{
+   auto it = labelNames.start();
+   while (!it.eof()) {
+      ustr_t label = it.key();
+
+      // Check if label is declared
+      if (!declaredLabels.get(*it)) {}
+         throw ProcedureError(errorMessage, procedureName, label);
+
+      it++;
+   }
+}
+
 // --- ByteCodeAssembler ---
 
 ByteCodeAssembler :: ByteCodeAssembler(int tabSize, UStrReader* reader, Module* module, bool mode64)
@@ -53,18 +93,39 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
-int ByteCodeAssembler :: readN(ScriptToken& tokenInfo, bool skipRead)
+int ByteCodeAssembler :: readN(ScriptToken& tokenInfo, ReferenceMap& constants, bool skipRead)
 {
    if (!skipRead)
       _reader.read(tokenInfo);
 
-   if (tokenInfo.state == dfaInteger) {
-      return tokenInfo.token.toInt();
+   if (tokenInfo.compare("-")) {
+      int val = readN(tokenInfo, constants, false);
+
+      return -val;
    }
-   else if (tokenInfo.state == dfaHexInteger) {
-      return tokenInfo.token.toInt(16);
+   else if (constants.exist(*tokenInfo.token)) {
+      return constants.get(*tokenInfo.token);
    }
-   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+   else {
+      if (tokenInfo.state == dfaInteger) {
+         return tokenInfo.token.toInt();
+      }
+      else if (tokenInfo.state == dfaHexInteger) {
+         return tokenInfo.token.toInt(16);
+      }
+      else {
+         IdentifierString platformConstant(*tokenInfo.token);
+         if (_mode64) {
+            platformConstant.append("64");
+         }
+         else platformConstant.append("32");
+
+         if (constants.exist(*platformConstant)) {
+            return constants.get(*platformConstant);
+         }
+         else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+      }
+   }
 }
 
 mssg_t ByteCodeAssembler :: readM(ScriptToken& tokenInfo, bool skipRead)
@@ -258,9 +319,10 @@ bool ByteCodeAssembler :: compileDDisp(ScriptToken& tokenInfo, MemoryWriter& wri
    return true;
 }
 
-bool ByteCodeAssembler :: compileOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead)
+bool ByteCodeAssembler :: compileOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
+   ReferenceMap& constants, bool skipRead)
 {
-   command.arg1 = readN(tokenInfo, skipRead);
+   command.arg1 = readN(tokenInfo, constants, skipRead);
 
    ByteCodeUtil::write(writer, command);
 
@@ -268,14 +330,15 @@ bool ByteCodeAssembler :: compileOpN(ScriptToken& tokenInfo, MemoryWriter& write
    return true;
 }
 
-bool ByteCodeAssembler :: compileCloseOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, ReferenceMap& dataLocals)
+bool ByteCodeAssembler :: compileCloseOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
+   ReferenceMap& dataLocals, ReferenceMap& constants)
 {
    if (tokenInfo.compare("[")) {
       command.arg1 = dataLocals.count() * (_mode64 ? 8 : 4);
 
       read(tokenInfo, "]", ASM_SBRACKETCLOSE_EXPECTED);
    }
-   else command.arg1 = readN(tokenInfo, true);
+   else command.arg1 = readN(tokenInfo, constants, true);
 
    ByteCodeUtil::write(writer, command);
 
@@ -318,15 +381,17 @@ bool ByteCodeAssembler :: compileOpStackI(ScriptToken& tokenInfo, MemoryWriter& 
 }
 
 bool ByteCodeAssembler :: compileOpIN(ScriptToken& tokenInfo, MemoryWriter& writer,
-   ByteCommand& command, bool skipRead)
+   ByteCommand& command, ReferenceMap& constants, bool skipRead)
 {
    command.arg1 = readI(tokenInfo, skipRead);
 
    read(tokenInfo, ",", ASM_COMMA_EXPECTED);
 
-   command.arg2 = readN(tokenInfo);
+   command.arg2 = readN(tokenInfo, constants);
 
    ByteCodeUtil::write(writer, command);
+
+   read(tokenInfo);
 
    return true;
 }
@@ -418,7 +483,7 @@ bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& wr
 
       return true;
    }
-   else return compileOpIN(tokenInfo, writer, command, true);
+   else return compileOpIN(tokenInfo, writer, command, constants, true);
 }
 
 bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& writer,
@@ -503,7 +568,25 @@ bool ByteCodeAssembler :: compileRR(ScriptToken& tokenInfo, MemoryWriter& writer
    return true;
 }
 
-bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& writer,
+bool ByteCodeAssembler :: compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, ByteCodeLabelHelper& lh)
+{
+   if (!lh.checkDeclaredLabel(*tokenInfo.token)) {
+      lh.registerJump(*tokenInfo.token, writer);
+
+      ByteCodeUtil::write(writer, command.code, 0);
+   }
+   else {
+      int offset = lh.resolveLabel(*tokenInfo.token, writer);
+
+      ByteCodeUtil::write(writer, command.code, offset);
+   }
+
+   read(tokenInfo);
+
+   return true;
+}
+
+bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper lh,
    ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants)
 {
    IdentifierString command(*tokenInfo.token);
@@ -533,7 +616,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::OpenHeaderIN:
             return compileOpenOp(tokenInfo, writer, opCommand, locals, dataLocals, constants);
          case ByteCode::CloseN:
-            return compileCloseOpN(tokenInfo, writer, opCommand, dataLocals);
+            return compileCloseOpN(tokenInfo, writer, opCommand, dataLocals, constants);
          case ByteCode::MovSIFI:
             return compileOpII(tokenInfo, writer, opCommand, true);
          case ByteCode::StoreFI:
@@ -554,7 +637,10 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::SelLtRR:
             return compileRR(tokenInfo, writer, opCommand, true);
          case ByteCode::AndN:
-            return compileOpN(tokenInfo, writer, opCommand, true);
+         case ByteCode::ICmpN:
+            return compileOpN(tokenInfo, writer, opCommand, constants, true);
+         case ByteCode::Jeq:
+            return compileJcc(tokenInfo, writer, opCommand, lh);
          default:
             return false;
       }
@@ -565,8 +651,23 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
    }
 }
 
+void ByteCodeAssembler :: declareLabel(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper& labelScope)
+{
+   if (labelScope.checkDeclaredLabel(*tokenInfo.token))
+      throw SyntaxError(ASM_LABEL_EXISTS, tokenInfo.lineInfo);
+
+   if (!labelScope.declareLabel(*tokenInfo.token, writer))
+      throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
+
+   read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+   read(tokenInfo);
+}
+
 void ByteCodeAssembler :: compileProcedure(ScriptToken& tokenInfo, ref_t mask, ReferenceMap& constants)
 {
+   ByteCodeLabelHelper lh;
+
    ReferenceName name;
    name.combine(*tokenInfo.token);
 
@@ -577,7 +678,7 @@ void ByteCodeAssembler :: compileProcedure(ScriptToken& tokenInfo, ref_t mask, R
    }
 
    read(tokenInfo);
-
+         
    MemoryBase* code = _module->mapSection(reference, false);
    MemoryWriter codeWriter(code);
 
@@ -588,10 +689,17 @@ void ByteCodeAssembler :: compileProcedure(ScriptToken& tokenInfo, ref_t mask, R
    ReferenceMap locals(0);
    ReferenceMap dataLocals(0);
    while (!tokenInfo.compare("end")) {
-      if (!compileByteCode(tokenInfo, codeWriter, locals, dataLocals, constants)) {
-         throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
+      if (!compileByteCode(tokenInfo, codeWriter, lh, locals, dataLocals, constants)) {
+         if (tokenInfo.state != dfaEOF) {
+            declareLabel(tokenInfo, codeWriter, lh);
+         }
+         else throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
       }
    }
+
+   // fix labels
+   lh.checkAllUsedLabels("Used label ( %s ) not declared in procedure %s\n", *name);
+
    // fix place holder
    pos_t endPosition = codeWriter.position();
    pos_t size = endPosition - sizePlaceholder - sizeof(pos_t);
@@ -607,7 +715,7 @@ void ByteCodeAssembler :: compileConstant(ScriptToken& tokenInfo, ReferenceMap& 
    if (!constants.exist(*tokenInfo.token)) {
       IdentifierString name(*tokenInfo.token);
 
-      int value = readN(tokenInfo);
+      int value = readN(tokenInfo, constants);
       constants.add(*name, value);
    }
    else throw SyntaxError(ASM_DUPLICATE_ARG, tokenInfo.lineInfo);

@@ -84,7 +84,7 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_EH_TABLE
+  dq data : %CORE_ET_TABLE
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -806,16 +806,17 @@ inline %0E5h
 
 end
 
-/ ; xhookdpr
+// ; xhookdpr
 inline %0E6h
 
   lea  rdi, [rbp + __arg32_1]
+  mov  rcx, __ptr64_2
   mov  rax, [data : %CORE_ET_TABLE + et_current]
 
   mov  [rdi + es_prev_struct], rax
   mov  [rdi + es_catch_frame], rbp
   mov  [rdi + es_catch_level], rsp
-  mov  [rdi + es_catch_addr], __ptr64_2
+  mov  [rdi + es_catch_addr], rcx
 
   mov  [data : %CORE_ET_TABLE + et_current], rdi
 

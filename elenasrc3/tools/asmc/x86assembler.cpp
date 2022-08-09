@@ -1251,6 +1251,12 @@ bool X86Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWrit
       writer.writeByte(0xB8 + (char)source.type);
       X86Helper::writeImm(writer, target);
    }
+   else if (source.isR32_M32() && target.isDB_DD()) {
+      target.type = X86OperandType::DD;
+      writer.writeByte(0xC7);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 0 }, source);
+      X86Helper::writeImm(writer, target);
+   }
    else if (source.isR32() && target.isR32_M32()) {
       writer.writeByte(0x8B);
       X86Helper::writeModRM(writer, source, target);

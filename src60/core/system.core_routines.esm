@@ -1,6 +1,10 @@
 //        ELENA Language 6.0
 //      inline system library
 
+define EXCEPTION_ACCESS_VIOLATION  101h;
+define ELENA_ERR_DIVIDE_BY_ZERO    102h;
+define ELENA_ERR_OUT_OF_MEMORY     103h;
+
 define ex_struct_size32 12; 
 define ex_struct_size64 32; 
 

@@ -84,7 +84,7 @@ structure %SYSTEM_ENV
 
   dd 0
   dd data : %CORE_GC_TABLE
-  dd data : %CORE_EH_TABLE
+  dd data : %CORE_ET_TABLE
   dd code : %INVOKER
   dd code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -904,7 +904,7 @@ inline %0E5h
 
 end
 
-/ ; xhookdpr
+// ; xhookdpr
 inline %0E6h
 
   lea  edi, [ebp + __arg32_1]
