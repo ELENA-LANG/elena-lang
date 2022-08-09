@@ -47,31 +47,31 @@ procedure critical_exception_handler
   icmp ELENA_ERR_OUT_OF_MEMORY
   jeq  labOutOfMemory
 
-  mov     class : system'CriticalException
-  store   si:0
-  mov     mssgconst : "new[1]"
-  store   si:1
+  set     class : "system'CriticalException"
+  store   sp:0
+  set     mssgconst : "new[1]"
+  store   sp:1
   throw
 
 labAccessViolation:
-  mov     class : system'NilReferenceException
-  store   si:0
-  mov     mssgconst : "new[1]"
-  store   si:1
+  set     class : "system'NilReferenceException"
+  store   sp:0
+  set     mssgconst : "new[1]"
+  store   sp:1
   throw
 
 labDivisionByZero:
-  mov     class : system'DivisionByZeroException
-  store   si:0
-  mov     mssgconst : "new[1]"
-  store   si:1
+  set     class : "system'DivisionByZeroException"
+  store   sp:0
+  set     mssgconst : "new[1]"
+  store   sp:1
   throw
 
 labOutOfMemory:
-  mov     class : system'OutOfMemoryException
-  store   si:0
-  mov     mssgconst : "new[0]"
-  store   si:1
+  set     class : "system'OutOfMemoryException"
+  store   sp:0
+  set     mssgconst : "new[0]"
+  store   sp:1
   throw
 
 end
@@ -86,14 +86,17 @@ symbol sta_start
 
   open header [arg1],[envptr,ex_struct:ex_struct_size]
   
-  xhook       dp:ex_struct, code:default_exception_handler
+  xhook       dp:ex_struct, procedure:"core_routines'default_exception_handler"
 
   mov         env
   save        dp:envptr
   set         dp:envptr
   store       fp:arg1
 
-  call extern:InitializeSTLA (*arg1, marray:"$forwards'meta$startUpSymbols",code:critical_exception_handler)
+  call extern:InitializeSTLA (
+     *arg1, 
+     marray:"$forwards'meta$startUpSymbols",
+     procedure:"core_routines'critical_exception_handler")
 
   close       []
 

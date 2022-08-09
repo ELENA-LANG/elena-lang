@@ -86,6 +86,20 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
 
       mask = mskVMTRef;
    }
+   else if (tokenInfo.compare("mssgconst")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      _reader.read(tokenInfo);
+
+      mask = mskMssgLiteralRef;
+   }
+   else if (tokenInfo.compare("procedure")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      _reader.read(tokenInfo);
+
+      mask = mskProcedureRef;
+   }
 
    if (tokenInfo.state == dfaQuote) {
       return _module->mapReference(*tokenInfo.token) | mask;
@@ -244,6 +258,14 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 
       return arg;
    }
+   else if (tokenInfo.compare("procedure")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      arg.type = Operand::Type::R;
+      arg.reference = readReference(tokenInfo) | mskProcedureRef;
+
+      return arg;
+   }
    else if (locals.exist(*tokenInfo.token)) {
       arg.type = Operand::Type::Variable;
       arg.reference = locals.get(*tokenInfo.token);
@@ -312,6 +334,27 @@ bool ByteCodeAssembler :: compileDDisp(ScriptToken& tokenInfo, MemoryWriter& wri
    else read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
    command.arg1 = readDisp(tokenInfo, dataLocals, false);
+
+   ByteCodeUtil::write(writer, command);
+   read(tokenInfo);
+
+   return true;
+}
+
+bool ByteCodeAssembler :: compileDDispR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
+   ReferenceMap& dataLocals, bool skipRead)
+{
+   if (skipRead) {
+      if (!tokenInfo.compare(":"))
+         throw SyntaxError(ASM_DOUBLECOLON_EXPECTED, tokenInfo.lineInfo);
+   }
+   else read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+   command.arg1 = readDisp(tokenInfo, dataLocals, false);
+
+   read(tokenInfo, ",", ASM_COMMA_EXPECTED);
+
+   command.arg2 = readReference(tokenInfo);
 
    ByteCodeUtil::write(writer, command);
    read(tokenInfo);
@@ -553,6 +596,17 @@ bool ByteCodeAssembler :: compileMR(ScriptToken& tokenInfo, MemoryWriter& writer
    return true;
 }
 
+bool ByteCodeAssembler :: compileR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead)
+{
+   ref_t arg = readReference(tokenInfo, skipRead);
+
+   ByteCodeUtil::write(writer, command.code, arg);
+
+   read(tokenInfo);
+
+   return true;
+}
+
 bool ByteCodeAssembler :: compileRR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead)
 {
    mssg_t arg = readReference(tokenInfo, skipRead);
@@ -603,8 +657,11 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
       command.truncate(timePos);
 
       opCommand.code = ByteCodeUtil::code(*command);
-      if (opCommand.code == ByteCode::None)
-         return false;
+      if (opCommand.code == ByteCode::None) {
+         if (tokenInfo.state != dfaEOF) {
+            return declareLabel(*command, tokenInfo, writer, lh);
+         }
+      }
    }
    else read(tokenInfo);
 
@@ -623,11 +680,14 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::CmpFI:
             return compileOpFrameI(tokenInfo, writer, opCommand, locals, true);
          case ByteCode::PeekSI:
+         case ByteCode::StoreSI:
          case ByteCode::CmpSI:
             return compileOpStackI(tokenInfo, writer, opCommand, locals, true);
          case ByteCode::SaveDP:
          case ByteCode::SetDP:
             return compileDDisp(tokenInfo, writer, opCommand, dataLocals, true);
+         case ByteCode::XHookDPR:
+            return compileDDispR(tokenInfo, writer, opCommand, dataLocals, true);
          case ByteCode::CallMR:
          case ByteCode::VCallMR:
          case ByteCode::JumpMR:
@@ -641,6 +701,8 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::Jeq:
             return compileJcc(tokenInfo, writer, opCommand, lh);
+         case ByteCode::SetR:
+            return compileR(tokenInfo, writer, opCommand, true);
          default:
             return false;
       }
@@ -651,15 +713,15 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
    }
 }
 
-void ByteCodeAssembler :: declareLabel(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper& labelScope)
+bool ByteCodeAssembler :: declareLabel(ustr_t label, ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper& labelScope)
 {
-   if (labelScope.checkDeclaredLabel(*tokenInfo.token))
+   if (!tokenInfo.compare(":"))
+      return false;
+
+   if (labelScope.checkDeclaredLabel(label))
       throw SyntaxError(ASM_LABEL_EXISTS, tokenInfo.lineInfo);
 
-   if (!labelScope.declareLabel(*tokenInfo.token, writer))
-      throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
-
-   read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+   labelScope.declareLabel(label, writer);
 
    read(tokenInfo);
 }
@@ -689,12 +751,8 @@ void ByteCodeAssembler :: compileProcedure(ScriptToken& tokenInfo, ref_t mask, R
    ReferenceMap locals(0);
    ReferenceMap dataLocals(0);
    while (!tokenInfo.compare("end")) {
-      if (!compileByteCode(tokenInfo, codeWriter, lh, locals, dataLocals, constants)) {
-         if (tokenInfo.state != dfaEOF) {
-            declareLabel(tokenInfo, codeWriter, lh);
-         }
-         else throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
-      }
+      if (!compileByteCode(tokenInfo, codeWriter, lh, locals, dataLocals, constants))
+         throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
    }
 
    // fix labels

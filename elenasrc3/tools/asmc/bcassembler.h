@@ -129,7 +129,7 @@ namespace elena_lang
 
       bool writeArg(MemoryWriter& writer, Operand& arg, int index);
 
-      void declareLabel(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper& labelScope);
+      bool declareLabel(ustr_t label, ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper& labelScope);
 
       Operand compileArg(ScriptToken& tokenInfo, ReferenceMap& locals, 
          ReferenceMap& dataLocals, ReferenceMap& constants);
@@ -138,7 +138,9 @@ namespace elena_lang
 
       bool compileDDisp(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
         ReferenceMap& dataLocals, bool skipRead);
-      bool compileOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
+      bool compileDDispR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
+         ReferenceMap& dataLocals, bool skipRead);
+      bool compileOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          ReferenceMap& constants, bool skipRead);
       bool compileOpFrameI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ReferenceMap& locals, bool skipRead);
@@ -148,6 +150,7 @@ namespace elena_lang
          ReferenceMap& constants, bool skipRead);
       bool compileOpII(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileMR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
+      bool compileR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileRR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileCloseOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ReferenceMap& dataLocals, ReferenceMap& constants);
