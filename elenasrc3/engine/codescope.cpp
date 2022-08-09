@@ -28,6 +28,7 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
 {
    switch (sectionMask) {
       case mskSymbolRef:
+      case mskProcedureRef:
          return _symbolReferences.get(referenceName);
       case mskTypeListRef:
       case mskIntLiteralRef:
@@ -52,6 +53,7 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
 {
    switch (sectionMask) {
       case mskSymbolRef:
+      case mskProcedureRef:
          _symbolReferences.add(referenceName, address);
          break;
       case mskTypeListRef:

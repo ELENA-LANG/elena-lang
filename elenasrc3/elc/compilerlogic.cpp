@@ -270,6 +270,7 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
          break;
       case V_INTBINARY:
       case V_WORDBINARY:
+      case V_MSSGBINARY:
          attrs.typeInfo.typeRef = attribute;
          break;
       case V_STRINGOBJ:

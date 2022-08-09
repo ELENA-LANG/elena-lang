@@ -1131,6 +1131,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
    if (address == INVALID_ADDR) {
       switch (sectionMask) {
          case mskSymbolRef:
+         case mskProcedureRef:
             address = resolveBytecodeSection(referenceInfo, sectionMask, 
                _loader->getSection(referenceInfo, sectionMask, silentMode));
             break;
