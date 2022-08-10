@@ -15,7 +15,21 @@ using namespace elena_lang;
 
 bool ByteCodeAssembler::ByteCodeLabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
 {
-   return false; // !! temporal
+   MemoryBase* memory = writer.Memory();
+
+   auto it = jumps.start();
+   while (!it.eof()) {
+      if (it.key() == label) {
+         pos_t labelPos = (*it).position + 1;
+         pos_t offset = writer.position() - labelPos - 4;
+
+         MemoryBase::writeDWord(memory, labelPos, offset);
+      }
+
+      ++it;
+   }
+
+   return true;
 }
 
 void ByteCodeAssembler::ByteCodeLabelHelper :: registerJump(ustr_t labelName, MemoryWriter& writer)
@@ -44,7 +58,7 @@ void ByteCodeAssembler::ByteCodeLabelHelper :: checkAllUsedLabels(ustr_t errorMe
       ustr_t label = it.key();
 
       // Check if label is declared
-      if (!declaredLabels.get(*it)) {}
+      if (!declaredLabels.get(*it))
          throw ProcedureError(errorMessage, procedureName, label);
 
       it++;
@@ -640,7 +654,7 @@ bool ByteCodeAssembler :: compileJcc(ScriptToken& tokenInfo, MemoryWriter& write
    return true;
 }
 
-bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper lh,
+bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper& lh,
    ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants)
 {
    IdentifierString command(*tokenInfo.token);
@@ -698,6 +712,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileRR(tokenInfo, writer, opCommand, true);
          case ByteCode::AndN:
          case ByteCode::ICmpN:
+         case ByteCode::CmpN:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::Jeq:
             return compileJcc(tokenInfo, writer, opCommand, lh);
@@ -713,7 +728,8 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
    }
 }
 
-bool ByteCodeAssembler :: declareLabel(ustr_t label, ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper& labelScope)
+bool ByteCodeAssembler :: declareLabel(ustr_t label, ScriptToken& tokenInfo, MemoryWriter& writer, 
+   ByteCodeLabelHelper& labelScope)
 {
    if (!tokenInfo.compare(":"))
       return false;
@@ -721,9 +737,15 @@ bool ByteCodeAssembler :: declareLabel(ustr_t label, ScriptToken& tokenInfo, Mem
    if (labelScope.checkDeclaredLabel(label))
       throw SyntaxError(ASM_LABEL_EXISTS, tokenInfo.lineInfo);
 
+   labelScope.fixLabel(labelScope.getLabel(label), writer);
+
    labelScope.declareLabel(label, writer);
 
+   ByteCodeUtil::write(writer, ByteCode::Nop);
+
    read(tokenInfo);
+
+   return true;
 }
 
 void ByteCodeAssembler :: compileProcedure(ScriptToken& tokenInfo, ref_t mask, ReferenceMap& constants)

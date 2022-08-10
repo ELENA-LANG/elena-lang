@@ -489,6 +489,14 @@ labEnd:
 
 end
 
+// ; cmpn n
+inline %97h
+
+  mov     x18, __n16_1   // ; temporally
+  cmp     x9, x18
+
+end
+
 // ; saveddisp
 inline %0A0h
 

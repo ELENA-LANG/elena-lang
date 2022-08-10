@@ -44,8 +44,6 @@ end
 procedure % VEH_HANDLER
 
   mov  esi, edx
-  push ebp
-  mov  ebp, esp
   mov  edx, eax   // ; set exception code
   mov  eax, [data : % CORE_ET_TABLE]
   jmp  eax

@@ -212,11 +212,14 @@ ELENA byte codes (or ecodes)
 
  Comparison operations:
  ----------------------
-   cmpr r                   - COMP.EQ := (acc == r);
+   cmp  fp:i                - COMP.EQ := (acc == fp[i]);
 
    cmp  sp:i                - COMP.EQ := (acc == sp[i]);
 
-   cmp  fp:i                - COMP.EQ := (acc == fp[i]);
+   cmpn n                   - COMP.EQ := (index == n);
+                              COMP.LT := (index < n);
+
+   cmpr r                   - COMP.EQ := (acc == r);
 
    icmp n                   - temp1 : n << acc;
                               temp2 : n << sp[0];

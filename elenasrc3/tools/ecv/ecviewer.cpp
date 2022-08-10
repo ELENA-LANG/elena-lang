@@ -38,6 +38,17 @@ MemoryBase* ByteCodeViewer :: findSymbolCode(ustr_t name)
    return _module->mapSection(reference | mskSymbolRef, true);
 }
 
+MemoryBase* ByteCodeViewer :: findProcedureCode(ustr_t name)
+{
+   ReferenceName referenceName(nullptr, name);
+
+   ref_t reference = _module->mapReference(*referenceName, true);
+   if (!reference)
+      return nullptr;
+
+   return _module->mapSection(reference | mskProcedureRef, true);
+}
+
 MemoryBase* ByteCodeViewer :: findClassVMT(ustr_t name)
 {
    ReferenceName referenceName(nullptr, name);
@@ -203,6 +214,9 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
       case mskStaticVariable:
          commandStr.append("static:");
          break;
+      case mskProcedureRef:
+         commandStr.append("procedure:");
+         break;
       default:
          commandStr.append(":");
          break;
@@ -360,6 +374,11 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addRArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr);
             break;
+         case ByteCode::XHookDPR:
+            commandStr.append(":");
+            addArg(command.arg1, commandStr);
+            addSecondRArg(command.arg2, commandStr);
+            break;
          default:
             addArg(command.arg1, commandStr);
             addSecondArg(command.arg2, commandStr);
@@ -436,6 +455,21 @@ void ByteCodeViewer :: printSymbol(ustr_t name)
    }
 
    printLine("@symbol", name);
+   printByteCodes(code, 0, 4, _pageSize);
+   printLine("@end");
+}
+
+void ByteCodeViewer :: printProcedure(ustr_t name)
+{
+   // find symbol section
+   MemoryBase* code = findProcedureCode(name);
+   if (code == nullptr) {
+      _presenter->print(ECV_SYMBOL_NOTFOUND, name);
+
+      return;
+   }
+
+   printLine("@procedure", name);
    printByteCodes(code, 0, 4, _pageSize);
    printLine("@end");
 }
@@ -736,6 +770,9 @@ void ByteCodeViewer :: runSession()
       }
       else if (buffer[0] == '#') {
          printSymbol(buffer + 1);
+      }
+      else if (buffer[0] == '$') {
+         printProcedure(buffer + 1);
       }
       else if (ustr_t(buffer).find('.') != NOTFOUND_POS) {
          printMethod(buffer, true);

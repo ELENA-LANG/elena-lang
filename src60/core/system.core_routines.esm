@@ -5,7 +5,7 @@ define EXCEPTION_ACCESS_VIOLATION  101h;
 define ELENA_ERR_DIVIDE_BY_ZERO    102h;
 define ELENA_ERR_OUT_OF_MEMORY     103h;
 
-define ex_struct_size32 12; 
+define ex_struct_size32 16; 
 define ex_struct_size64 32; 
 
 define err_ret          -1;
@@ -36,15 +36,13 @@ end
 
 procedure critical_exception_handler
 
-  open 2, 0 
-
-  icmp EXCEPTION_ACCESS_VIOLATION
+  cmpn EXCEPTION_ACCESS_VIOLATION
   jeq  labAccessViolation
 
-  icmp ELENA_ERR_DIVIDE_BY_ZERO
+  cmpn ELENA_ERR_DIVIDE_BY_ZERO
   jeq  labDivisionByZero
 
-  icmp ELENA_ERR_OUT_OF_MEMORY
+  cmpn ELENA_ERR_OUT_OF_MEMORY
   jeq  labOutOfMemory
 
   set     class : "system'CriticalException"

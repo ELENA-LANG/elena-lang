@@ -130,7 +130,7 @@ namespace elena_lang
       pos_t       gc_yg_size;
    };
 
-   constexpr int SizeOfExceptionStruct32 = 0x0C;
+   constexpr int SizeOfExceptionStruct32 = 0x10;
    constexpr int SizeOfExceptionStruct64 = 0x20;
 
    // --- _Entry ---

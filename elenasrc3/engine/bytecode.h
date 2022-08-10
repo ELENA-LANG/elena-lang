@@ -46,6 +46,7 @@ namespace elena_lang
       AndN           = 0x94,
       ReadN          = 0x95,
       WriteN         = 0x96,
+      CmpN           = 0x97,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,

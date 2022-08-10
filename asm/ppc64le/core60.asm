@@ -500,7 +500,7 @@ end
 // ; andn
 inline %94h
           	
-  andi.   r14, r14, __n16_1     // ; free stack
+  andi.   r14, r14, __n16_1     
 
 end
 
@@ -545,6 +545,15 @@ labLoop:
   b       labLoop
 
 labEnd:
+
+end
+
+// ; cmpn n
+inline %97h
+
+  li       r18, __n16_1
+
+  cmp      r14, r18
 
 end
 

@@ -255,7 +255,7 @@ int main(int argc, char* argv[])
       return -1;
    }
    catch (ProcedureError& e) {
-      printf(e.message, *e.name, *e.arg);
+      printf(e.message, *e.arg, *e.name);
       return -1;
    }
    catch(ExceptionBase&) {

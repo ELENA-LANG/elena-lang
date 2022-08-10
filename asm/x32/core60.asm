@@ -435,6 +435,13 @@ inline %96h
 
 end
 
+// ; cmpn n
+inline %097h
+
+  cmp  edx, __n_1
+
+end
+
 // ; saveddisp
 inline %0A0h
 

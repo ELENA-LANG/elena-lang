@@ -162,7 +162,7 @@ namespace elena_lang
       bool compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ByteCodeLabelHelper& lh);
 
-      bool compileByteCode(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper lh,
+      bool compileByteCode(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper& lh,
          ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
 
       void compileConstant(ScriptToken& tokenInfo, ReferenceMap& constants);
