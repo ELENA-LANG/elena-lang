@@ -313,6 +313,13 @@ inline %88h
 
 end
 
+// ; movn
+inline %89h
+
+  mov  edx, __n_1
+
+end
+
 // ; copy
 inline %90h
 

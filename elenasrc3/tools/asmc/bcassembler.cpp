@@ -240,6 +240,10 @@ bool ByteCodeAssembler :: writeArg(MemoryWriter& writer, Operand& arg, int index
             ByteCodeUtil::write(writer, ByteCode::MovSIFI, index, arg.reference);
          }
          break;
+      case Operand::Type::Value:
+         ByteCodeUtil::write(writer, ByteCode::MovN, arg.reference);
+         ByteCodeUtil::write(writer, ByteCode::SaveSI, index);
+         break;
       default:
          return false;
    }
@@ -294,7 +298,7 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
    }
    else if (constants.exist(*tokenInfo.token)) {
       arg.type = Operand::Type::Value;
-      arg.reference = locals.get(*tokenInfo.token);
+      arg.reference = constants.get(*tokenInfo.token);
 
       return arg;
    }
@@ -713,6 +717,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::AndN:
          case ByteCode::ICmpN:
          case ByteCode::CmpN:
+         case ByteCode::MovN:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::Jeq:
             return compileJcc(tokenInfo, writer, opCommand, lh);

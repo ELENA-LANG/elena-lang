@@ -338,6 +338,13 @@ inline %88h
 
 end
 
+// ; movn
+inline %89h
+
+  mov    x9,  __n16_1
+
+end
+
 // ; copy
 inline %90h
 

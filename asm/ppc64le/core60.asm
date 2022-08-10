@@ -374,6 +374,13 @@ inline %88h
 
 end
 
+// ; movn
+inline %89h
+
+  li      r14, __n16_1
+
+end
+
 // ; copy
 inline %90h
 

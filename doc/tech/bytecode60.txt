@@ -60,6 +60,8 @@ ELENA byte codes (or ecodes)
 
    mov mssg:m               - index := m
 
+   mov n:n                  - index := n
+
    peek r                   - acc <= [r] 
 
    save                     - [acc] := index

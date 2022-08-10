@@ -38,6 +38,7 @@ namespace elena_lang
       PeekR          = 0x84,
       StoreR         = 0x85,
       MovM           = 0x88,
+      MovN           = 0x89,
 
       Copy           = 0x90,
       CloseN         = 0x91,
