@@ -104,7 +104,7 @@ structure %SYSTEM_ENV
 
   dq 0  
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_EH_TABLE
+  dq data : %CORE_ET_TABLE
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -1038,7 +1038,7 @@ inline %0E5h
 
 end
 
-/ ; xhookdpr
+// ; xhookdpr
 inline %0E6h
 
   addi    r19, r31, __arg16_1

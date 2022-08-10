@@ -50,20 +50,13 @@ bool Arm64Assembler :: readOperandReference(ScriptToken& tokenInfo, ref_t mask, 
       if (constants.exist(*tokenInfo.token)) {
          reference = constants.get(*tokenInfo.token) | mask;
          imm = 0;
+
+         read(tokenInfo);
       }
       else return false;
    }
    else if (tokenInfo.compare("#")) {
-      read(tokenInfo);
-
-      if (tokenInfo.state == dfaInteger) {
-         imm = tokenInfo.token.toInt();
-         reference = mask;
-      }
-      else if (tokenInfo.state == dfaHexInteger) {
-         imm = tokenInfo.token.toInt(16);
-         reference = mask;
-      }
+      imm = readIntArg(tokenInfo, reference);
    }
    else return false;
 
@@ -385,10 +378,11 @@ ARMOperand Arm64Assembler :: readOperand(ScriptToken& tokenInfo, ustr_t errorMes
          }
          else if (getIntConstant(tokenInfo, operand.imm, operand.reference)) {
             operand.type = ARMOperandType::Imm;
+
+            read(tokenInfo);
          }
       }
-
-      read(tokenInfo);
+      else read(tokenInfo);
 
       if (tokenInfo.compare("+")) {
          if (operand.type != ARMOperandType::Imm)

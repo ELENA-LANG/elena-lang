@@ -81,7 +81,7 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_EH_TABLE
+  dq data : %CORE_ET_TABLE
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -224,8 +224,8 @@ inline %0Ah
   movz    x14,  data_ptr32lo : %CORE_ET_TABLE
   movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
 
-  ldr     x14, [x14, et_current]!
-  ldr     x17, [x14, es_catch_addr]!
+  ldr     x14, [x14, # et_current]!
+  ldr     x17, [x14, # es_catch_addr]!
 
   br      x17
 
@@ -1025,7 +1025,7 @@ inline %0E5h
 
 end
 
-/ ; xhookdpr
+// ; xhookdpr
 inline %0E6h
 
   add     x13, x29, __arg12_1
@@ -1033,7 +1033,7 @@ inline %0E6h
   movz    x14,  data_ptr32lo : %CORE_ET_TABLE
   movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
 
-  ldr     x15, [x14, et_current]!
+  ldr     x15, [x14, # et_current]!
 
   movz    x16,  __ptr32lo_2
   movk    x16,  __ptr32hi_2, lsl #16
