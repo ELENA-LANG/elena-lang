@@ -392,10 +392,55 @@ void ByteCodeViewer :: addMessage(IdentifierString& commandStr, mssg_t message)
    ByteCodeUtil::resolveMessageName(commandStr, _module, message);
 }
 
+inline void appendHex32(IdentifierString& command, unsigned int hex)
+{
+   unsigned int n = hex / 0x10;
+   int len = 7;
+   while (n > 0) {
+      n = n / 0x10;
+
+      len--;
+   }
+
+   while (len > 0) {
+      command.append('0');
+      len--;
+   }
+
+   command.appendUInt(hex, 16);
+   command.append('h');
+}
+
 void ByteCodeViewer :: printCommand(ByteCommand& command, int indent, 
    List<pos_t>& labels, pos_t commandPosition)
 {
    IdentifierString commandLine;
+
+   if (_showBytecodes) {
+      if ((int)command.code < 0x10)
+         commandLine.append('0');
+
+      commandLine.appendUInt((int)command.code, 16);
+      commandLine.append(' ');
+
+      if (command.code > ByteCode::MaxDoubleOp) {
+         appendHex32(commandLine, command.arg1);
+         commandLine.append(' ');
+
+         appendHex32(commandLine, command.arg2);
+         commandLine.append(' ');
+      }
+      else if (command.code > ByteCode::MaxSingleOp) {
+         appendHex32(commandLine, command.arg1);
+         commandLine.append(' ');
+      }
+
+      size_t tabbing = command.code == ByteCode::Nop ? 26 : 33;
+      while (commandLine.length() < tabbing) {
+         commandLine.append(' ');
+      }
+   }
+
    if (command.code == ByteCode::Nop) {
       addLabel(commandPosition, commandLine, labels);
       commandLine.append(':');
@@ -762,6 +807,10 @@ void ByteCodeViewer :: runSession()
                return;
             case 'o':
                _presenter->setOutputMode(buffer + 2);
+               break;
+            case 'b':
+               _showBytecodes = !_showBytecodes;
+               _presenter->print("Bytecode mode is %s", _showBytecodes ? "true" : "false");
                break;
             default:
                printHelp();

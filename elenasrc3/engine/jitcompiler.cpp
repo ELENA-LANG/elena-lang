@@ -1066,6 +1066,12 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
          case ARG32_1:
             writer->writeDWord(arg1 << scope->constants->indexPower);
             break;
+         case ARG12_1:
+            scope->compiler->writeImm12(writer, scope->command.arg1 << scope->constants->indexPower, 0);
+            break;
+         case ARG16_1:
+            scope->compiler->writeImm16(writer, scope->command.arg1 << scope->constants->indexPower, 0);
+            break;
          case PTR32_2:
             if (scope->command.arg2) {
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);

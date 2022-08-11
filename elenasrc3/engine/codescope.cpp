@@ -86,6 +86,7 @@ ustr_t ReferenceMapper :: retrieveReference(addr_t address, ref_t sectionMask)
                return current == reference;
             });
       case mskSymbolRef:
+      case mskProcedureRef:
          return _symbolReferences.retrieve<addr_t>(nullptr, address, [](addr_t reference, ustr_t key, addr_t current)
             {
                return current == reference;

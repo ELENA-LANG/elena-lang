@@ -39,6 +39,7 @@ namespace elena_lang
       int              _pageSize;
       bool             _noPaging;
       bool             _pathMode;
+      bool             _showBytecodes;
 
       MemoryBase* findProcedureCode(ustr_t referenceName);
       MemoryBase* findSymbolCode(ustr_t referenceName);
@@ -107,6 +108,7 @@ namespace elena_lang
          _pageSize = pageSize;
          _noPaging = false;
          _pathMode = false;
+         _showBytecodes = false;
       }
       virtual ~ByteCodeViewer()
       {
