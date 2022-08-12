@@ -1032,17 +1032,20 @@ inline %0E6h
 
   movz    x14,  data_ptr32lo : %CORE_ET_TABLE
   movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
-
-  ldr     x15, [x14, # et_current]!
+  mov     x18, x13
 
   movz    x16,  __ptr32lo_2
   movk    x16,  __ptr32hi_2, lsl #16
+  add     x14, x14, # et_current
+
   mov     x17, sp
+  ldr     x15, [x14]
 
   str     x15, [x13]
   str     x16, [x13, #8]!
   str     x17, [x13, #8]!
   str     x29, [x13, #8]!
+  str     x18, [x14]
 
 end
 

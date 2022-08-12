@@ -1055,8 +1055,10 @@ inline %0E6h
 
   std     r15, es_prev_struct(r19)
   std     r12, es_catch_addr(r19)
-  std     r31, es_catch_frame(r19)
   std     r1, es_catch_level(r19)
+  std     r31, es_catch_frame(r19)
+
+  std     r19, et_current(r14)
 
 end
 
