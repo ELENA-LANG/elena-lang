@@ -250,6 +250,20 @@ void PPC64Assembler :: readIOperand(ScriptToken& tokenInfo, int& value, ref_t& r
 
       read(tokenInfo);
    }
+   else if (tokenInfo.compare("data_disp32hi")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      readPtrOperand(tokenInfo, value, reference, mskDataDisp32Hi, errorMessage);
+
+      read(tokenInfo);
+   }
+   else if (tokenInfo.compare("data_disp32lo")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      readPtrOperand(tokenInfo, value, reference, mskDataDisp32Lo, errorMessage);
+
+      read(tokenInfo);
+   }
    else {
       if (!getIntConstant(tokenInfo, value, reference))
          throw SyntaxError(errorMessage, tokenInfo.lineInfo);
@@ -319,6 +333,8 @@ void PPC64Assembler :: writeDReference(ScriptToken& tokenInfo, ref_t reference, 
             case mskRDataDisp32Lo:
             case mskCodeDisp32Hi:
             case mskCodeDisp32Lo:
+            case mskDataDisp32Hi:
+            case mskDataDisp32Lo:
                writer.Memory()->addReference(reference, writer.position() - 4);
                break;
             default:

@@ -528,6 +528,8 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
             case mskRDataRef32Lo:
             case mskRDataDisp32Hi:
             case mskRDataDisp32Lo:
+            case mskDataDisp32Hi:
+            case mskDataDisp32Lo:
             case mskDataRef32Hi:
             case mskDataRef32Lo:
             case mskCodeRef32Hi:
