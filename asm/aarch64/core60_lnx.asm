@@ -42,8 +42,9 @@ end
 // VEH_HANDLER() 
 procedure % VEH_HANDLER
 
-  stp     x29, x30, [sp, #-16]! 
-  mov     x29, sp
+  mov     x17, x0
+  mov     x0, x9
+  mov     x9, x17
 
   movz    x20,  data_ptr32lo : %CORE_ET_TABLE
   movk    x20,  data_ptr32hi : %CORE_ET_TABLE, lsl #16

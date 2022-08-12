@@ -52,11 +52,13 @@ end
 // VEH_HANDLER() 
 procedure % VEH_HANDLER
 
-  mflr    r0
-  std     r31, -10h(r1)  // ; save frame pointer
-  std     r0,  -08h(r1)  // ; save return address
+  mr      r16, r3
+  mr      r3, r14
+  mr      r14, r3
 
-  addi    r1, r1, -16    // ; allocate raw stack
+  // ; temporally reloading TOC pointer
+  lis   r2, rdata32_hi : %CORE_TOC
+  addi  r2, r2, rdata32_lo : %CORE_TOC
 
   ld      r14, toc_data(r2)
   addis   r14, r14, data_disp32hi : %CORE_ET_TABLE
