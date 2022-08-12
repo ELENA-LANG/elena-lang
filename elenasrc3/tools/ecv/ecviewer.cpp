@@ -820,7 +820,7 @@ void ByteCodeViewer :: runSession()
       else if (buffer[0] == '#') {
          printSymbol(buffer + 1);
       }
-      else if (buffer[0] == '$') {
+      else if (buffer[0] == '*') {
          printProcedure(buffer + 1);
       }
       else if (ustr_t(buffer).find('.') != NOTFOUND_POS) {

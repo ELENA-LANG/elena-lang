@@ -57,6 +57,7 @@ bool Arm64Assembler :: readOperandReference(ScriptToken& tokenInfo, ref_t mask, 
    }
    else if (tokenInfo.compare("#")) {
       imm = readIntArg(tokenInfo, reference);
+      reference |= mask;
    }
    else return false;
 
