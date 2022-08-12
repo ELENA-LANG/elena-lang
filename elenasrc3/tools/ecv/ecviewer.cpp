@@ -375,7 +375,6 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addSecondRArg(command.arg2, commandStr);
             break;
          case ByteCode::XHookDPR:
-            commandStr.append(":");
             addArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr);
             break;

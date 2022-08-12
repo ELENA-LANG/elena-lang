@@ -14,18 +14,18 @@ namespace elena_lang
    constexpr auto gcPageSize32               = 0x0010;                // a heap page size constant
    constexpr auto gcPageSizeOrder32          = 4;
    constexpr auto gcPageSizeOrderMinus2_32   = 2;
-   constexpr auto gcPageMask32               = 0x0FFFFFFF0;
+   constexpr auto gcPageMask32        = 0x0FFFFFFF0;
 
    constexpr auto elVMTClassOffset32         = 0x0010;                // a VMT32 class offset
    constexpr auto elObjectOffset32           = 0x0008;                // object header / offset constant
 
-   constexpr int elStructMask32              = 0x800000;
+   constexpr int elStructMask32                      = 0x800000;
 
    // --- 64bit ELENA Object constants ---
-   constexpr int gcPageSize64                = 0x0020;                // a heap page size constant
+   constexpr int gcPageSize64                        = 0x0020;                // a heap page size constant
    constexpr auto gcPageSizeOrder64          = 5;
    constexpr auto gcPageSizeOrderMinus2_64   = 3;
-   constexpr auto gcPageMask64               = 0x0FFFFFFE0;
+   constexpr auto gcPageMask64        = 0x0FFFFFFE0;
 
    constexpr auto elVMTClassOffset64         = 0x0020;                // a VMT64 class offset
    constexpr auto elObjectOffset64           = 0x0010;                // object header / offset constant

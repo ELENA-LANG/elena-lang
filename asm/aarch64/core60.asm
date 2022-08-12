@@ -1037,11 +1037,12 @@ inline %0E6h
 
   movz    x16,  __ptr32lo_2
   movk    x16,  __ptr32hi_2, lsl #16
+  mov     x17, sp
 
   str     x15, [x13]
   str     x16, [x13, #8]!
+  str     x17, [x13, #8]!
   str     x29, [x13, #8]!
-  str     sp, [x13, #8]!
 
 end
 
