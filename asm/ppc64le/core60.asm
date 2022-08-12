@@ -1050,8 +1050,8 @@ inline %0E6h
   ld      r15, et_current(r14)
 
   ld       r12, toc_code(r2)
-  addis    r12, r12, __disp32hi_1 
-  addi     r12, r12, __disp32lo_1
+  addis    r12, r12, __disp32hi_2 
+  addi     r12, r12, __disp32lo_2
 
   std     r15, es_prev_struct(r19)
   std     r12, es_catch_addr(r19)
