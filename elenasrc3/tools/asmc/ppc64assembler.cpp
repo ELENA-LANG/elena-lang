@@ -323,6 +323,10 @@ void PPC64Assembler :: writeDReference(ScriptToken& tokenInfo, ref_t reference, 
       case DISP32LO_1:
       case DISP32HI_2:
       case DISP32LO_2:
+      case XDISP32HI_1:
+      case XDISP32LO_1:
+      case XDISP32HI_2:
+      case XDISP32LO_2:
          writer.Memory()->addReference(reference, writer.position() - 4);
          break;
       default:

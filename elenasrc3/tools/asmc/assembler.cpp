@@ -184,6 +184,30 @@ bool AssemblerBase :: getArgReference(ScriptToken& tokenInfo, int& offset, ref_t
       reference = DISP32LO_2;
       offset = 0;
    }
+   else if (tokenInfo.compare(XDISP32LO_ARGUMENT1)) {
+      reference = XDISP32LO_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(XDISP32LO_ARGUMENT2)) {
+      reference = XDISP32LO_2;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(XDISP32HI_ARGUMENT1)) {
+      reference = XDISP32HI_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(XDISP32HI_ARGUMENT2)) {
+      reference = XDISP32HI_2;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(XDISP32LO_ARGUMENT1)) {
+      reference = XDISP32LO_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(XDISP32LO_ARGUMENT2)) {
+      reference = XDISP32LO_2;
+      offset = 0;
+   }
    else if (tokenInfo.compare(PTR32HI_ARGUMENT1)) {
       reference = PTR32HI_1;
       offset = 0;

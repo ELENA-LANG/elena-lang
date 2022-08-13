@@ -796,6 +796,12 @@ void elena_lang :: loadROp(JITCompilerScope* scope)
          case DISP32LO_1:
             scope->compiler->writeArgAddress(scope, arg, 0, mskDisp32Lo);
             break;
+         case XDISP32HI_1:
+            scope->compiler->writeArgAddress(scope, arg, 0, mskXDisp32Hi);
+            break;
+         case XDISP32LO_1:
+            scope->compiler->writeArgAddress(scope, arg, 0, mskXDisp32Lo);
+            break;
          case PTR32HI_1:
          {
             short disp = *(short*)((char*)code + entries->offset);
@@ -864,6 +870,18 @@ void elena_lang :: loadRROp(JITCompilerScope* scope)
             break;
          case DISP32LO_2:
             scope->compiler->writeArgAddress(scope, arg2, 0, mskDisp32Lo);
+            break;
+         case XDISP32HI_1:
+            scope->compiler->writeArgAddress(scope, arg, 0, mskXDisp32Hi);
+            break;
+         case XDISP32HI_2:
+            scope->compiler->writeArgAddress(scope, arg2, 0, mskXDisp32Hi);
+            break;
+         case XDISP32LO_1:
+            scope->compiler->writeArgAddress(scope, arg, 0, mskXDisp32Lo);
+            break;
+         case XDISP32LO_2:
+            scope->compiler->writeArgAddress(scope, arg2, 0, mskXDisp32Lo);
             break;
          case PTR32HI_1:
          {
@@ -1098,6 +1116,18 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
             }
             else scope->compiler->writeImm16(writer, 0, 0);
             break;
+         case XDISP32HI_2:
+            if (scope->command.arg2) {
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskXDisp32Hi);
+            }
+            else scope->compiler->writeImm16(writer, 0, 0);
+            break;
+         case XDISP32LO_2:
+            if (scope->command.arg2) {
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskXDisp32Lo);
+            }
+            else scope->compiler->writeImm16(writer, 0, 0);
+            break;
          case PTR32HI_2:
          {
             if (scope->command.arg2) {
@@ -1161,6 +1191,12 @@ void elena_lang::loadFrameIndexROp(JITCompilerScope* scope)
             break;
          case DISP32LO_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskDisp32Lo);
+            break;
+         case XDISP32HI_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskXDisp32Hi);
+            break;
+         case XDISP32LO_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskXDisp32Lo);
             break;
          case PTR32HI_2:
          {
@@ -1609,6 +1645,14 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
             scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
                0, scope->helper->importMessage(scope->command.arg1), mskDisp32Lo);
             break;
+         case XDISP32HI_2:
+            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+               0, scope->helper->importMessage(scope->command.arg1), mskXDisp32Hi);
+            break;
+         case XDISP32LO_2:
+            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+               0, scope->helper->importMessage(scope->command.arg1), mskXDisp32Lo);
+            break;
          case PTR32HI_2:
          {
             short disp = *(short*)((char*)code + entries->offset);
@@ -1800,6 +1844,12 @@ void elena_lang::loadDPROp(JITCompilerScope* scope)
             break;
          case DISP32LO_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskDisp32Lo);
+            break;
+         case XDISP32HI_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskXDisp32Hi);
+            break;
+         case XDISP32LO_2:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskXDisp32Lo);
             break;
          case PTR32HI_2:
          {

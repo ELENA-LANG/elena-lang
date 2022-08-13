@@ -256,8 +256,8 @@ end
 inline %80h
 
   ld      r15, toc_rdata(r2)
-  addis   r15, r15, __disp32hi_1 
-  addi    r15, r15, __disp32lo_1 
+  addis   r15, r15, __xdisp32hi_1 
+  addi    r15, r15, __xdisp32lo_1 
 
 end 
 
@@ -348,8 +348,8 @@ end
 inline %84h
 
   ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_1 
-  addi    r16, r16, __disp32lo_1 
+  addis   r16, r16, __xdisp32hi_1 
+  addi    r16, r16, __xdisp32lo_1 
 
   ld      r15, 0(r16)
 
@@ -359,8 +359,8 @@ end
 inline %85h
 
   ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_1 
-  addi    r16, r16, __disp32lo_1 
+  addis   r16, r16, __xdisp32hi_1 
+  addi    r16, r16, __xdisp32lo_1 
 
   std     r15, 0(r16)
 
@@ -700,8 +700,8 @@ end
 inline %0C0h
 
   ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_1 
-  addi    r16, r16, __disp32lo_1 
+  addis   r16, r16, __xdisp32hi_1 
+  addi    r16, r16, __xdisp32lo_1 
   cmp     r15, r16
 
 end 
@@ -1087,10 +1087,10 @@ end
 inline %0EEh
 
   ld      r16, toc_rdata(r2)
-  addis   r17, r16, __disp32hi_1 
-  addis   r18, r16, __disp32hi_2 
-  addi    r17, r16, __disp32lo_1 
-  addi    r18, r16, __disp32lo_2 
+  addis   r17, r16, __xdisp32hi_1 
+  addis   r18, r16, __xdisp32hi_2 
+  addi    r17, r16, __xdisp32lo_1 
+  addi    r18, r16, __xdisp32lo_2 
 
   iseleq  r15, r17, r18
 
@@ -1100,10 +1100,10 @@ end
 inline %0EFh
 
   ld      r16, toc_rdata(r2)
-  addis   r17, r16, __disp32hi_1 
-  addis   r18, r16, __disp32hi_2 
-  addi    r17, r16, __disp32lo_1 
-  addi    r18, r16, __disp32lo_2 
+  addis   r17, r16, __xdisp32hi_1 
+  addis   r18, r16, __xdisp32hi_2 
+  addi    r17, r16, __xdisp32lo_1 
+  addi    r18, r16, __xdisp32lo_2 
 
   isellt  r15, r17, r18
 
@@ -1252,8 +1252,8 @@ end
 inline %0F1h
 
   ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_2
-  addi    r16, r16, __disp32lo_2
+  addis   r16, r16, __xdisp32hi_2
+  addi    r16, r16, __xdisp32lo_2
 
   std   r16, __arg16_1(r1)
 
@@ -1263,8 +1263,8 @@ end
 inline %1F1h
 
   ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_2
-  addi    r16, r16, __disp32lo_2
+  addis   r16, r16, __xdisp32hi_2
+  addi    r16, r16, __xdisp32lo_2
 
   mr    r3, r16
 
@@ -1274,8 +1274,8 @@ end
 inline %2F1h
 
   ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_2
-  addi    r16, r16, __disp32lo_2
+  addis   r16, r16, __xdisp32hi_2
+  addi    r16, r16, __xdisp32lo_2
 
   mr    r4, r16
 
@@ -1599,8 +1599,8 @@ end
 inline %0F9h
 
   ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_2
-  addi    r16, r16, __disp32lo_2
+  addis   r16, r16, __xdisp32hi_2
+  addi    r16, r16, __xdisp32lo_2
   std     r16, __arg16_1(r1)
 
 end

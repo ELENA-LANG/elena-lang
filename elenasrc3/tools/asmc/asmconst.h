@@ -36,8 +36,12 @@ namespace elena_lang
    constexpr auto RELPTR32_ARGUMENT2         = "__relptr32_2";
    constexpr auto DISP32HI_ARGUMENT1         = "__disp32hi_1";
    constexpr auto DISP32HI_ARGUMENT2         = "__disp32hi_2";
+   constexpr auto XDISP32HI_ARGUMENT1        = "__xdisp32hi_1";
+   constexpr auto XDISP32HI_ARGUMENT2        = "__xdisp32hi_2";
    constexpr auto DISP32LO_ARGUMENT1         = "__disp32lo_1";
    constexpr auto DISP32LO_ARGUMENT2         = "__disp32lo_2";
+   constexpr auto XDISP32LO_ARGUMENT1        = "__xdisp32lo_1";
+   constexpr auto XDISP32LO_ARGUMENT2        = "__xdisp32lo_2";
    constexpr auto PTR32HI_ARGUMENT1          = "__ptr32hi_1";
    constexpr auto PTR32LO_ARGUMENT1          = "__ptr32lo_1";
    constexpr auto PTR32HI_ARGUMENT2          = "__ptr32hi_2";
