@@ -1118,8 +1118,6 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
             break;
          case XDISP32HI_2:
             if (scope->command.arg2) {
-               printf("%x\n", scope->command.arg2);
-
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskXDisp32Hi);
             }
             else scope->compiler->writeImm16(writer, 0, 0);
