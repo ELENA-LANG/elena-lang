@@ -12,8 +12,11 @@ public class Object
     bool notequal(o)
        = !(self.equal(o));
 
+    // virtual method declarations : forcing the output type                            
     predefined bool less(o);
+    predefined bool greater(o);
     predefined bool notless(o);
+    predefined bool notgreater(o);
 
     string toPrintable() = __className;
 
