@@ -1,6 +1,15 @@
 //        ELENA Language 6.0
 //      inline system library
 
+define EXCEPTION_ACCESS_VIOLATION  101h;
+define ELENA_ERR_DIVIDE_BY_ZERO    102h;
+define ELENA_ERR_OUT_OF_MEMORY     103h;
+
+define ex_struct_size32 16; 
+define ex_struct_size64 32; 
+
+define err_ret          -1;
+
 procedure __object_dispatcher
 
   redirect
@@ -25,16 +34,67 @@ procedure __intToByte
 
 end
 
+procedure critical_exception_handler
+
+  cmpn EXCEPTION_ACCESS_VIOLATION
+  jeq  labAccessViolation
+
+  cmpn ELENA_ERR_DIVIDE_BY_ZERO
+  jeq  labDivisionByZero
+
+  cmpn ELENA_ERR_OUT_OF_MEMORY
+  jeq  labOutOfMemory
+
+  set     class : "system'CriticalException"
+  store   sp:0
+  set     mssgconst : "new[1]"
+  store   sp:1
+  throw
+
+labAccessViolation:
+  set     class : "system'NilReferenceException"
+  store   sp:0
+  set     mssgconst : "new[1]"
+  store   sp:1
+  throw
+
+labDivisionByZero:
+  set     class : "system'DivisionByZeroException"
+  store   sp:0
+  set     mssgconst : "new[1]"
+  store   sp:1
+  throw
+
+labOutOfMemory:
+  set     class : "system'OutOfMemoryException"
+  store   sp:0
+  set     mssgconst : "new[0]"
+  store   sp:1
+  throw
+
+end
+
+procedure default_exception_handler
+
+  call extern:ExitLA (err_ret)
+
+end
+
 symbol sta_start
 
-  open header [arg1],[envptr]
+  open header [arg1],[envptr,ex_struct:ex_struct_size]
   
+  xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
+
   mov         env
   save        dp:envptr
   set         dp:envptr
   store       fp:arg1
 
-  call extern:InitializeSTA (*arg1, marray:"$forwards'meta$startUpSymbols")
+  call extern:InitializeSTLA (
+     *arg1, 
+     marray:"$forwards'meta$startUpSymbols",
+     procedure:"system'core_routines'critical_exception_handler")
 
   close       []
 

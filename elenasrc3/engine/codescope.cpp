@@ -28,6 +28,7 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
 {
    switch (sectionMask) {
       case mskSymbolRef:
+      case mskProcedureRef:
          return _symbolReferences.get(referenceName);
       case mskTypeListRef:
       case mskIntLiteralRef:
@@ -41,6 +42,8 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
       case mskStaticRef:
       case mskStaticVariable:
          return _statReferences.get(referenceName);
+      case mskMssgLiteralRef:
+         return _mssgReferences.get(referenceName);
       default:
          return INVALID_ADDR;
    }
@@ -50,6 +53,7 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
 {
    switch (sectionMask) {
       case mskSymbolRef:
+      case mskProcedureRef:
          _symbolReferences.add(referenceName, address);
          break;
       case mskTypeListRef:
@@ -57,6 +61,9 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
       case mskIntLiteralRef:
       case mskConstArray:
          _constReferences.add(referenceName, address);
+         break;
+      case mskMssgLiteralRef:
+         _mssgReferences.add(referenceName, address);
          break;
       case mskVMTRef:
          _dataReferences.add(referenceName, address);
@@ -79,6 +86,7 @@ ustr_t ReferenceMapper :: retrieveReference(addr_t address, ref_t sectionMask)
                return current == reference;
             });
       case mskSymbolRef:
+      case mskProcedureRef:
          return _symbolReferences.retrieve<addr_t>(nullptr, address, [](addr_t reference, ustr_t key, addr_t current)
             {
                return current == reference;

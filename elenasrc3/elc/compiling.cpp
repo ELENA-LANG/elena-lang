@@ -320,10 +320,11 @@ void CompilingProcess :: buildModule(path_t projectPath,
 
    _compiler->prepare(&moduleScope, forwardResolver);
 
-   _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
    SyntaxTreeBuilder builder(syntaxTree, _errorProcessor, 
       &moduleScope, &_templateGenerator);
    parseModule(projectPath, module_it, builder, moduleScope);
+
+   _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
 
    buildSyntaxTree(moduleScope, syntaxTree, false);
 }

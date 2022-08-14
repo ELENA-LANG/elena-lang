@@ -12,7 +12,7 @@
 namespace elena_lang
 {
 
-   #define ASM_REVISION_NUMBER               0x0066
+   #define ASM_REVISION_NUMBER               0x006D
 
    constexpr auto N_ARGUMENT1                = "__n_1";
    constexpr auto N_ARGUMENT2                = "__n_2";
@@ -36,8 +36,12 @@ namespace elena_lang
    constexpr auto RELPTR32_ARGUMENT2         = "__relptr32_2";
    constexpr auto DISP32HI_ARGUMENT1         = "__disp32hi_1";
    constexpr auto DISP32HI_ARGUMENT2         = "__disp32hi_2";
+   constexpr auto XDISP32HI_ARGUMENT1        = "__xdisp32hi_1";
+   constexpr auto XDISP32HI_ARGUMENT2        = "__xdisp32hi_2";
    constexpr auto DISP32LO_ARGUMENT1         = "__disp32lo_1";
    constexpr auto DISP32LO_ARGUMENT2         = "__disp32lo_2";
+   constexpr auto XDISP32LO_ARGUMENT1        = "__xdisp32lo_1";
+   constexpr auto XDISP32LO_ARGUMENT2        = "__xdisp32lo_2";
    constexpr auto PTR32HI_ARGUMENT1          = "__ptr32hi_1";
    constexpr auto PTR32LO_ARGUMENT1          = "__ptr32lo_1";
    constexpr auto PTR32HI_ARGUMENT2          = "__ptr32hi_2";
@@ -73,6 +77,7 @@ namespace elena_lang
    constexpr auto ASM_COMMA_EXPECTED         = "(%d,%d): Comma expected\n";
    constexpr auto ASM_INVALID_COMMAND        = "(%d,%d): Invalid command\n";
    constexpr auto ASM_DOUBLECOLON_EXPECTED   = "(%d,%d): ':' expected\n";
+   constexpr auto ASM_SEMICOLON_EXPECTED     = "(%d,%d): ';' expected\n";
    constexpr auto ASM_SBRACKET_EXPECTED      = "(%d,%d): '[' expected\n";
    constexpr auto ASM_SBRACKETCLOSE_EXPECTED  = "(%d,%d): ']' expected\n";
    constexpr auto ASM_BRACKET_EXPECTED       = "(%d,%d): '(' expected\n";

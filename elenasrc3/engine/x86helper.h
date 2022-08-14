@@ -218,6 +218,7 @@ namespace elena_lang
          this->reference = 0;
          this->offset = 0;
          this->factorReg = this->ebpReg = false;
+         this->accReg = false;
       }
       X86Operand(X86OperandType type)
       {

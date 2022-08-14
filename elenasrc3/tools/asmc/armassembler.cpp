@@ -50,20 +50,14 @@ bool Arm64Assembler :: readOperandReference(ScriptToken& tokenInfo, ref_t mask, 
       if (constants.exist(*tokenInfo.token)) {
          reference = constants.get(*tokenInfo.token) | mask;
          imm = 0;
+
+         read(tokenInfo);
       }
       else return false;
    }
    else if (tokenInfo.compare("#")) {
-      read(tokenInfo);
-
-      if (tokenInfo.state == dfaInteger) {
-         imm = tokenInfo.token.toInt();
-         reference = mask;
-      }
-      else if (tokenInfo.state == dfaHexInteger) {
-         imm = tokenInfo.token.toInt(16);
-         reference = mask;
-      }
+      imm = readIntArg(tokenInfo, reference);
+      reference |= mask;
    }
    else return false;
 
@@ -385,10 +379,11 @@ ARMOperand Arm64Assembler :: readOperand(ScriptToken& tokenInfo, ustr_t errorMes
          }
          else if (getIntConstant(tokenInfo, operand.imm, operand.reference)) {
             operand.type = ARMOperandType::Imm;
+
+            read(tokenInfo);
          }
       }
-
-      read(tokenInfo);
+      else read(tokenInfo);
 
       if (tokenInfo.compare("+")) {
          if (operand.type != ARMOperandType::Imm)
@@ -533,6 +528,8 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
             case mskRDataRef32Lo:
             case mskRDataDisp32Hi:
             case mskRDataDisp32Lo:
+            case mskDataDisp32Hi:
+            case mskDataDisp32Lo:
             case mskDataRef32Hi:
             case mskDataRef32Lo:
             case mskCodeRef32Hi:

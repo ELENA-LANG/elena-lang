@@ -27,6 +27,7 @@ namespace elena_lang
       Len            = 0x07,
       Class          = 0x08,
       Save           = 0x09,
+      Throw          = 0x0A,  
 
       MaxSingleOp    = 0x7F,
 
@@ -37,6 +38,7 @@ namespace elena_lang
       PeekR          = 0x84,
       StoreR         = 0x85,
       MovM           = 0x88,
+      MovN           = 0x89,
 
       Copy           = 0x90,
       CloseN         = 0x91,
@@ -45,6 +47,7 @@ namespace elena_lang
       AndN           = 0x94,
       ReadN          = 0x95,
       WriteN         = 0x96,
+      CmpN           = 0x97,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,
@@ -74,6 +77,7 @@ namespace elena_lang
       IMulDPN        = 0xE3,
       IDivDPN        = 0xE4,
       NSaveDPN       = 0xE5,
+      XHookDPR       = 0xE6,
       VJumpMR        = 0xEC,
       JumpMR         = 0xED,
       SelEqRR        = 0xEE,
@@ -263,6 +267,7 @@ namespace elena_lang
             case ByteCode::XDispatchMR:
             case ByteCode::SelEqRR:
             case ByteCode::SelLtRR:
+            case ByteCode::XHookDPR:
                return true;
             default:
                return false;

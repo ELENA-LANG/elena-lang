@@ -2,10 +2,12 @@
 // ; --- Predefined References  --
 define INVOKER              10001h
 define GC_ALLOC	            10002h
+define VEH_HANDLER          10003h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
+define CORE_ET_TABLE        2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
@@ -18,6 +20,7 @@ define toc_mdata             0010h
 define toc_code              0018h
 define toc_gctable           0020h
 define toc_alloc             0028h
+define toc_data              0030h
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -39,6 +42,13 @@ define gc_mg_start           0038h
 define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
+
+define et_current            0008h
+
+define es_prev_struct        0000h
+define es_catch_addr         0008h
+define es_catch_level        0010h
+define es_catch_frame        0018h
 
 // ; --- Page Size ----
 define page_ceil               2Fh
@@ -62,9 +72,17 @@ structure % CORE_TOC
   dq code   : 0         // ; address of code section
   dq data   : %CORE_GC_TABLE
   dq code   : %GC_ALLOC // ; address of alloc function
+  dq data   : 0         // ; address of data section
 
 end
  
+structure % CORE_ET_TABLE
+
+  dq 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
+  dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
+
+end
+
 structure %CORE_GC_TABLE
 
   dq 0 // ; gc_header             : +00h
@@ -86,7 +104,9 @@ structure %SYSTEM_ENV
 
   dq 0  
   dq data : %CORE_GC_TABLE
+  dq data : %CORE_ET_TABLE
   dq code : %INVOKER
+  dq code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
 
@@ -218,12 +238,26 @@ inline %9
 
 end
 
+// ; throw
+inline %0Ah
+
+  ld      r14, toc_data(r2)
+  addis   r14, r14, data_disp32hi : %CORE_ET_TABLE
+  addi    r14, r14, data_disp32lo : %CORE_ET_TABLE
+
+  ld      r15, et_current(r14)
+  ld      r0, es_catch_addr(r15)                
+  mtctr   r0
+  bctr
+
+end
+
 // ; setr
 inline %80h
 
-  ld      r15, toc_rdata(r2)
-  addis   r15, r15, __disp32hi_1 
-  addi    r15, r15, __disp32lo_1 
+  ld      r15, toc_code(r2)
+  addis   r15, r15, __xdisp32hi_1 
+  addi    r15, r15, __xdisp32lo_1 
 
 end 
 
@@ -313,9 +347,9 @@ end
 // ; peekr
 inline %84h
 
-  ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_1 
-  addi    r16, r16, __disp32lo_1 
+  ld      r16, toc_code(r2)
+  addis   r16, r16, __xdisp32hi_1 
+  addi    r16, r16, __xdisp32lo_1 
 
   ld      r15, 0(r16)
 
@@ -324,9 +358,9 @@ end
 // ; storer
 inline %85h
 
-  ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_1 
-  addi    r16, r16, __disp32lo_1 
+  ld      r16, toc_code(r2)
+  addis   r16, r16, __xdisp32hi_1 
+  addi    r16, r16, __xdisp32lo_1 
 
   std     r15, 0(r16)
 
@@ -337,6 +371,13 @@ inline %88h
 
   lis     r14, __arg32hi_1
   addi    r14, r14, __arg32lo_1
+
+end
+
+// ; movn
+inline %89h
+
+  li      r14, __n16_1
 
 end
 
@@ -466,7 +507,7 @@ end
 // ; andn
 inline %94h
           	
-  andi.   r14, r14, __n16_1     // ; free stack
+  andi.   r14, r14, __n16_1     
 
 end
 
@@ -511,6 +552,15 @@ labLoop:
   b       labLoop
 
 labEnd:
+
+end
+
+// ; cmpn n
+inline %97h
+
+  li       r18, __n16_1
+
+  cmp      r14, r18
 
 end
 
@@ -649,9 +699,9 @@ end
 // ; cmpr
 inline %0C0h
 
-  ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_1 
-  addi    r16, r16, __disp32lo_1 
+  ld      r16, toc_code(r2)
+  addis   r16, r16, __xdisp32hi_1 
+  addi    r16, r16, __xdisp32lo_1 
   cmp     r15, r16
 
 end 
@@ -988,6 +1038,30 @@ inline %0E5h
 
 end
 
+// ; xhookdpr
+inline %0E6h
+
+  addi    r19, r31, __arg16_1
+
+  ld      r14, toc_data(r2)
+  addis   r14, r14, data_disp32hi : %CORE_ET_TABLE
+  addi    r14, r14, data_disp32lo : %CORE_ET_TABLE
+
+  ld      r15, et_current(r14)
+
+  ld       r12, toc_code(r2)
+  addis    r12, r12, __disp32hi_2 
+  addi     r12, r12, __disp32lo_2
+
+  std     r15, es_prev_struct(r19)
+  std     r12, es_catch_addr(r19)
+  std     r1, es_catch_level(r19)
+  std     r31, es_catch_frame(r19)
+
+  std     r19, et_current(r14)
+
+end
+
 // ; vjumpmr
 inline % 0ECh
 
@@ -1012,11 +1086,11 @@ end
 // ; seleqrr
 inline %0EEh
 
-  ld      r16, toc_rdata(r2)
-  addis   r17, r16, __disp32hi_1 
-  addis   r18, r16, __disp32hi_2 
-  addi    r17, r16, __disp32lo_1 
-  addi    r18, r16, __disp32lo_2 
+  ld      r16, toc_code(r2)
+  addis   r17, r16, __xdisp32hi_1 
+  addis   r18, r16, __xdisp32hi_2 
+  addi    r17, r16, __xdisp32lo_1 
+  addi    r18, r16, __xdisp32lo_2 
 
   iseleq  r15, r17, r18
 
@@ -1025,11 +1099,11 @@ end
 // ; selltrr
 inline %0EFh
 
-  ld      r16, toc_rdata(r2)
-  addis   r17, r16, __disp32hi_1 
-  addis   r18, r16, __disp32hi_2 
-  addi    r17, r16, __disp32lo_1 
-  addi    r18, r16, __disp32lo_2 
+  ld      r16, toc_code(r2)
+  addis   r17, r16, __xdisp32hi_1 
+  addis   r18, r16, __xdisp32hi_2 
+  addi    r17, r16, __xdisp32lo_1 
+  addi    r18, r16, __xdisp32lo_2 
 
   isellt  r15, r17, r18
 
@@ -1177,9 +1251,9 @@ end
 // ; xstoresir
 inline %0F1h
 
-  ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_2
-  addi    r16, r16, __disp32lo_2
+  ld      r16, toc_code(r2)
+  addis   r16, r16, __xdisp32hi_2
+  addi    r16, r16, __xdisp32lo_2
 
   std   r16, __arg16_1(r1)
 
@@ -1188,9 +1262,9 @@ end
 // ; xstoresir :0, ...
 inline %1F1h
 
-  ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_2
-  addi    r16, r16, __disp32lo_2
+  ld      r16, toc_code(r2)
+  addis   r16, r16, __xdisp32hi_2
+  addi    r16, r16, __xdisp32lo_2
 
   mr    r3, r16
 
@@ -1199,9 +1273,9 @@ end
 // ; xstoresir :1, ...
 inline %2F1h
 
-  ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_2
-  addi    r16, r16, __disp32lo_2
+  ld      r16, toc_code(r2)
+  addis   r16, r16, __xdisp32hi_2
+  addi    r16, r16, __xdisp32lo_2
 
   mr    r4, r16
 
@@ -1524,9 +1598,9 @@ end
 // ; xstorefir
 inline %0F9h
 
-  ld      r16, toc_rdata(r2)
-  addis   r16, r16, __disp32hi_2
-  addi    r16, r16, __disp32lo_2
+  ld      r16, toc_code(r2)
+  addis   r16, r16, __xdisp32hi_2
+  addi    r16, r16, __xdisp32lo_2
   std     r16, __arg16_1(r1)
 
 end
@@ -1793,6 +1867,7 @@ inline %0FEh
   // ; after the home space (not shown here).
 
   ld      r5, 16(r1)
+  ld      r6, 24(r1)
 
   ld      r12, toc_import(r2)
   addis   r12, r12, __disp32hi_1 

@@ -10,6 +10,7 @@
 #define LBHELPER_H
 
 #include "elena.h"
+#include "lbhelper.h"
 
 namespace elena_lang
 {

@@ -1182,17 +1182,17 @@ void TemplateProssesor :: copyField(SyntaxTreeWriter& writer, TemplateScope& sco
    writer.newNode(node.key);
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      switch (current.key) {
+      //switch (current.key) {
          //case SyntaxKey::TemplateArgParameter:
          //{
          //   SyntaxNode nodeToInject = scope.argValues.get(current.arg.value);
          //   copyNode(writer, scope, nodeToInject);
          //   break;
          //}
-         default:
+         //default:
             copyNode(writer, scope, current);
-            break;
-      }
+            //break;
+      //}
 
       current = current.nextNode();
    }
@@ -1205,17 +1205,17 @@ void TemplateProssesor :: copyMethod(SyntaxTreeWriter& writer, TemplateScope& sc
    writer.newNode(node.key);
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      switch (current.key) {
+      //switch (current.key) {
          //case SyntaxKey::TemplateArgParameter:
          //{
          //   SyntaxNode nodeToInject = scope.argValues.get(current.arg.value);
          //   copyNode(writer, scope, nodeToInject);
          //   break;
          //}
-         default:
+         //default:
             copyNode(writer, scope, current);
-            break;
-      }
+            //break;
+      //}
 
       current = current.nextNode();
    }

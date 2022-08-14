@@ -19,7 +19,8 @@
 
 extern "C"
 {
-   DLL_PUBLIC void InitializeSTA(elena_lang::SystemEnv* env, elena_lang::SymbolList* entryList);
+   DLL_PUBLIC void InitializeSTLA(elena_lang::SystemEnv* env, elena_lang::SymbolList* entryList, void* criricalHandler);
+   DLL_PUBLIC void ExitLA(int retVal);
 }
 
 #endif // ELENART_H_INCLUDED

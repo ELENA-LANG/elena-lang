@@ -1,10 +1,12 @@
 // ; --- Predefined References  --
 define INVOKER               10001h
 define GC_ALLOC	             10002h
+define VEH_HANDLER           10003h
 
 define CORE_TOC              20001h
 define SYSTEM_ENV            20002h
 define CORE_GC_TABLE         20003h
+define CORE_ET_TABLE         2000Bh
 define VOID           	     2000Dh
 define VOIDPTR               2000Eh
 
@@ -31,6 +33,13 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
+define et_current            0008h
+
+define es_prev_struct        0000h
+define es_catch_addr         0008h
+define es_catch_level        0010h
+define es_catch_frame        0018h
+
 // ; --- Page Size ----
 define page_ceil               2Fh
 define page_mask        0FFFFFFE0h
@@ -44,6 +53,13 @@ structure % CORE_TOC
 
 end
  
+structure % CORE_ET_TABLE
+
+  dq 0 // ; critical_handler       ; +x00   - pointer to ELENA critical exception handler
+  dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
+
+end
+
 structure %CORE_GC_TABLE
 
   dq 0 // ; gc_header             : +00h
@@ -65,7 +81,9 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
+  dq data : %CORE_ET_TABLE
   dq code : %INVOKER
+  dq code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
 
@@ -200,6 +218,19 @@ inline %9
 
 end
 
+// ; throw
+inline %0Ah
+
+  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
+  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+
+  ldr     x14, [x14, # et_current]!
+  ldr     x17, [x14, # es_catch_addr]!
+
+  br      x17
+
+end
+
 // ; setr
 inline %80h
 
@@ -307,6 +338,13 @@ inline %88h
 
 end
 
+// ; movn
+inline %89h
+
+  mov    x9,  __n16_1
+
+end
+
 // ; copy
 inline %90h
 
@@ -388,16 +426,16 @@ end
 inline %492h
 
   mov     x12, #0
-  stp     x12, x12, [sp], #8
-  str     x12, [sp], #16
+  stp     x12, x12, [sp, #-16]!
+  str     x12, [sp, #-8]!
 
 end
 
 // ; alloci 4
 inline %592h
 
-  stp     x12,x12, [sp], #16
-  stp     x12,x12, [sp], #16
+  stp     x12,x12, [sp, #-16]!
+  stp     x12,x12, [sp, #-16]!
 
 end
 
@@ -455,6 +493,14 @@ labLoop:
   b       labLoop
 
 labEnd:
+
+end
+
+// ; cmpn n
+inline %97h
+
+  mov     x18, __n16_1   // ; temporally
+  cmp     x9, x18
 
 end
 
@@ -976,6 +1022,30 @@ inline %0E5h
   add     x19, x29, __arg12_1
   mov     x18, __n16_2
   str     w18, [x19]
+
+end
+
+// ; xhookdpr
+inline %0E6h
+
+  add     x13, x29, __arg12_1
+
+  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
+  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+  mov     x18, x13
+
+  movz    x16,  __ptr32lo_2
+  movk    x16,  __ptr32hi_2, lsl #16
+  add     x14, x14, # et_current
+
+  mov     x17, sp
+  ldr     x15, [x14]
+
+  str     x15, [x13]
+  str     x16, [x13, #8]!
+  str     x17, [x13, #8]!
+  str     x29, [x13, #8]!
+  str     x18, [x14]
 
 end
 
@@ -1710,6 +1780,7 @@ inline %0FEh
 
   add     x15, sp, #16
   ldr     x2, [x15]  
+  ldr     x3, [x15, #8]  
 
   movz    x16,  __ptr32lo_1
   movk    x16,  __ptr32hi_1, lsl #16

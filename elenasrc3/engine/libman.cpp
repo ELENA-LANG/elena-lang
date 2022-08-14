@@ -390,6 +390,7 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
       case mskIntLiteralRef:
       case mskLiteralRef:
       case mskCharacterRef:
+      case mskMssgLiteralRef:
          return module->resolveConstant(reference);
       default:
       {

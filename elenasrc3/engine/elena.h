@@ -400,7 +400,7 @@ namespace elena_lang
    {
       virtual bool checkLabel(pos_t label) = 0;
 
-      virtual bool setLabel(pos_t label, MemoryWriter& writer) = 0;
+      virtual bool setLabel(pos_t label, MemoryWriter& writer) = 0;  
 
       virtual bool fixLabel(pos_t label, MemoryWriter& writer) = 0;
 
@@ -455,6 +455,7 @@ namespace elena_lang
       virtual void writeChar32(MemoryWriter& writer, ustr_t value) = 0;
       virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
       virtual void writeVariable(MemoryWriter& writer) = 0;
+      virtual void writeMessage(MemoryWriter& writer, mssg_t message) = 0;
 
       virtual void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) = 0;
       virtual void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) = 0;

@@ -3,10 +3,12 @@
 // ; --- Predefined References  --
 define INVOKER              10001h
 define GC_ALLOC	            10002h
+define VEH_HANDLER          10003h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
+define CORE_ET_TABLE        2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
@@ -33,6 +35,13 @@ define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
 
+define et_current            0008h
+
+define es_prev_struct        0000h
+define es_catch_addr         0008h
+define es_catch_level        0010h
+define es_catch_frame        0018h
+
 // ; --- Page Size ----
 define page_ceil               2Fh
 define page_mask        0FFFFFFE0h
@@ -47,6 +56,13 @@ structure % CORE_TOC
 
 end
  
+structure % CORE_ET_TABLE
+
+  dq 0 // ; crtitical_handler      ; +x00   - pointer to ELENA exception handler
+  dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
+
+end
+
 structure %CORE_GC_TABLE
 
   dq 0 // ; gc_header             : +00h
@@ -68,7 +84,9 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
+  dq data : %CORE_ET_TABLE
   dq code : %INVOKER
+  dq code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
 
@@ -189,6 +207,14 @@ inline %9
 
 end
 
+// ; throw
+inline %0Ah
+
+  mov  rax, [data : %CORE_ET_TABLE + et_current]
+  jmp  [rax + es_catch_addr]
+
+end
+
 // ; setr
 inline %80h
 
@@ -288,6 +314,13 @@ end
 inline %88h
 
   mov  edx, __arg32_1
+
+end
+
+// ; movn
+inline %89h
+
+  mov  edx, __n_1
 
 end
 
@@ -405,6 +438,13 @@ inline %96h
   add  rdi, rax
   mov  rsi, rbx
   rep  movsb
+
+end
+
+// ; cmpn n
+inline %097h
+
+  cmp  edx, __n_1
 
 end
 
@@ -777,6 +817,22 @@ inline %0E5h
 
   mov  eax, __n_2
   mov  dword ptr [rbp+__arg32_1], eax
+
+end
+
+// ; xhookdpr
+inline %0E6h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rcx, __ptr64_2
+  mov  rax, [data : %CORE_ET_TABLE + et_current]
+
+  mov  [rdi + es_prev_struct], rax
+  mov  [rdi + es_catch_frame], rbp
+  mov  [rdi + es_catch_level], rsp
+  mov  [rdi + es_catch_addr], rcx
+
+  mov  [data : %CORE_ET_TABLE + et_current], rdi
 
 end
 

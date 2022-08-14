@@ -38,6 +38,17 @@ MemoryBase* ByteCodeViewer :: findSymbolCode(ustr_t name)
    return _module->mapSection(reference | mskSymbolRef, true);
 }
 
+MemoryBase* ByteCodeViewer :: findProcedureCode(ustr_t name)
+{
+   ReferenceName referenceName(nullptr, name);
+
+   ref_t reference = _module->mapReference(*referenceName, true);
+   if (!reference)
+      return nullptr;
+
+   return _module->mapSection(reference | mskProcedureRef, true);
+}
+
 MemoryBase* ByteCodeViewer :: findClassVMT(ustr_t name)
 {
    ReferenceName referenceName(nullptr, name);
@@ -203,6 +214,9 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
       case mskStaticVariable:
          commandStr.append("static:");
          break;
+      case mskProcedureRef:
+         commandStr.append("procedure:");
+         break;
       default:
          commandStr.append(":");
          break;
@@ -360,6 +374,10 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addRArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr);
             break;
+         case ByteCode::XHookDPR:
+            addArg(command.arg1, commandStr);
+            addSecondRArg(command.arg2, commandStr);
+            break;
          default:
             addArg(command.arg1, commandStr);
             addSecondArg(command.arg2, commandStr);
@@ -373,10 +391,55 @@ void ByteCodeViewer :: addMessage(IdentifierString& commandStr, mssg_t message)
    ByteCodeUtil::resolveMessageName(commandStr, _module, message);
 }
 
+inline void appendHex32(IdentifierString& command, unsigned int hex)
+{
+   unsigned int n = hex / 0x10;
+   int len = 7;
+   while (n > 0) {
+      n = n / 0x10;
+
+      len--;
+   }
+
+   while (len > 0) {
+      command.append('0');
+      len--;
+   }
+
+   command.appendUInt(hex, 16);
+   command.append('h');
+}
+
 void ByteCodeViewer :: printCommand(ByteCommand& command, int indent, 
    List<pos_t>& labels, pos_t commandPosition)
 {
    IdentifierString commandLine;
+
+   if (_showBytecodes) {
+      if ((int)command.code < 0x10)
+         commandLine.append('0');
+
+      commandLine.appendUInt((int)command.code, 16);
+      commandLine.append(' ');
+
+      if (command.code > ByteCode::MaxDoubleOp) {
+         appendHex32(commandLine, command.arg1);
+         commandLine.append(' ');
+
+         appendHex32(commandLine, command.arg2);
+         commandLine.append(' ');
+      }
+      else if (command.code > ByteCode::MaxSingleOp) {
+         appendHex32(commandLine, command.arg1);
+         commandLine.append(' ');
+      }
+
+      size_t tabbing = command.code == ByteCode::Nop ? 26 : 33;
+      while (commandLine.length() < tabbing) {
+         commandLine.append(' ');
+      }
+   }
+
    if (command.code == ByteCode::Nop) {
       addLabel(commandPosition, commandLine, labels);
       commandLine.append(':');
@@ -436,6 +499,21 @@ void ByteCodeViewer :: printSymbol(ustr_t name)
    }
 
    printLine("@symbol", name);
+   printByteCodes(code, 0, 4, _pageSize);
+   printLine("@end");
+}
+
+void ByteCodeViewer :: printProcedure(ustr_t name)
+{
+   // find symbol section
+   MemoryBase* code = findProcedureCode(name);
+   if (code == nullptr) {
+      _presenter->print(ECV_SYMBOL_NOTFOUND, name);
+
+      return;
+   }
+
+   printLine("@procedure", name);
    printByteCodes(code, 0, 4, _pageSize);
    printLine("@end");
 }
@@ -729,6 +807,10 @@ void ByteCodeViewer :: runSession()
             case 'o':
                _presenter->setOutputMode(buffer + 2);
                break;
+            case 'b':
+               _showBytecodes = !_showBytecodes;
+               _presenter->print("Bytecode mode is %s", _showBytecodes ? "true" : "false");
+               break;
             default:
                printHelp();
                break;
@@ -736,6 +818,9 @@ void ByteCodeViewer :: runSession()
       }
       else if (buffer[0] == '#') {
          printSymbol(buffer + 1);
+      }
+      else if (buffer[0] == '*') {
+         printProcedure(buffer + 1);
       }
       else if (ustr_t(buffer).find('.') != NOTFOUND_POS) {
          printMethod(buffer, true);
