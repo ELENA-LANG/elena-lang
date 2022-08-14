@@ -102,7 +102,7 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          addr_t addr = (base + space->code);
          disp_t disp = addr - baseAddr;
 
-         printf("%ll\n", disp);
+         printf("%llx\n", disp);
 
          *(unsigned short*)address += (unsigned short)(disp >> 16);
          break;
