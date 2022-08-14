@@ -89,6 +89,7 @@ inline void writeDisp32Hi(MemoryBase* image, pos_t position, addr_t vaddress, po
       image->addReference(reference, position);
    }
    else {
+      // !! invalid - should be an offset from an appropriate image
       unsigned int offs = (unsigned int)(vaddress - (addr_t)image->get(0)) + disp;
       offs >>= 16;
       image->write(position, &offs, 2);
@@ -106,6 +107,43 @@ inline void writeDisp32Lo(MemoryBase* image, pos_t position, addr_t vaddress, po
       image->addReference(reference, position);
    }
    else {
+      // !! invalid - should be an offset from an appropriate image
+      unsigned int offs = (unsigned int)(vaddress - (addr_t)image->get(0)) + disp;
+      image->write(position, &offs, 2);
+
+   }
+}
+
+inline void writeXDisp32Hi(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
+   ref_t addressMask, bool virtualMode)
+{
+   if (virtualMode) {
+      // in the virtual mode vaddress is an image offset - plus address mask
+      ref_t reference = (ref_t)vaddress | addressMask;
+
+      image->write(position, &disp, 2);
+      image->addReference(reference, position);
+   }
+   else {
+      // !! invalid - should be an offset from rdata
+      unsigned int offs = (unsigned int)(vaddress - (addr_t)image->get(0)) + disp;
+      offs >>= 16;
+      image->write(position, &offs, 2);
+   }
+}
+
+inline void writeXDisp32Lo(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
+   ref_t addressMask, bool virtualMode)
+{
+   if (virtualMode) {
+      // in the virtual mode vaddress is an image offset - plus address mask
+      ref_t reference = (ref_t)vaddress | addressMask;
+
+      image->write(position, &disp, 2);
+      image->addReference(reference, position);
+   }
+   else {
+      // !! invalid - should be an offset from rdata
       unsigned int offs = (unsigned int)(vaddress - (addr_t)image->get(0)) + disp;
       image->write(position, &offs, 2);
 
@@ -278,6 +316,12 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
             break;
          case mskDisp32Lo:
             ::writeDisp32Lo(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
+            break;
+         case mskXDisp32Hi:
+            ::writeXDisp32Hi(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
+            break;
+         case mskXDisp32Lo:
+            ::writeXDisp32Lo(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
             break;
          case mskRef32Hi:
             ::writeRef32Hi(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
