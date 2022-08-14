@@ -48,7 +48,7 @@ namespace elena_lang
       DebugController      _debugController;
       NotifierBase*        _notifier;
 
-      bool onDebugAction(ProjectModel& model, DebugAction action);
+      bool onDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action);
       bool isOutaged(bool noWarning);
 
       bool startDebugger(ProjectModel& model/*, bool stepMode*/);
@@ -57,16 +57,16 @@ namespace elena_lang
 
       bool compile();
 
-      bool compileSingleFile();
+      bool compileSingleFile(ProjectModel& model, path_t singleProjectFile);
 
    public:
       void defineSourceName(path_t path, IdentifierString& retVal);
 
       void defineFullPath(ProjectModel& model, ustr_t ns, path_t path, PathString& fullPath);
 
-      bool doCompileProject(ProjectModel& model, DebugAction postponedAction);
+      bool doCompileProject(ProjectModel& model, path_t singleProjectFile, DebugAction postponedAction);
 
-      void doDebugAction(ProjectModel& model, DebugAction action);
+      void doDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action);
 
       void setNotifier(NotifierBase* notifier)
       {
@@ -113,13 +113,19 @@ namespace elena_lang
          projectController.setNotifier(notifier);
       }
 
+      path_t retrieveSingleProjectFile(IDEModel* model);
+
       bool selectSource(ProjectModel* model, SourceViewModel* sourceModel,
          ustr_t moduleName, path_t sourcePath);
 
       void doNewFile(IDEModel* model);
       void doOpenFile(DialogBase& dialog, IDEModel* model);
-      bool doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode);
+      bool doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
       bool doCloseFile(DialogBase& dialog, IDEModel* model);
+      bool doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode);
+
+      bool doCompileProject(DialogBase& dialog, IDEModel* model);
+      void doDebugAction(IDEModel* model, DebugAction action);
 
       bool doExit();
 
@@ -129,7 +135,8 @@ namespace elena_lang
          TextViewSettings& textViewSettings
       ) :
          sourceController(textViewSettings),
-         projectController(osController, process, &model->projectModel, &model->sourceViewModel, this)
+         projectController(osController, process, &model->projectModel, &model->sourceViewModel, 
+            this)
       {
          _notifier = nullptr;
          defaultEncoding = FileEncoding::UTF8;

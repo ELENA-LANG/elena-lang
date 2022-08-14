@@ -11,7 +11,19 @@
 #include "windows/winidestatusbar.h"
 #include "Resource.h"
 
+#include <shlwapi.h>
+
 using namespace elena_lang;
+
+#ifdef _M_IX86
+
+#define CLI_PATH "elena-cli.exe"
+
+#else
+
+#define CLI_PATH "elena64-cli.exe"
+
+#endif // DEBUG
 
 #define MAX_LOADSTRING 100
 
@@ -77,6 +89,12 @@ IDEFactory :: IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideModel,
    _cmdShow = cmdShow;
    _model = ideModel;
    _controller = controller;
+
+   wchar_t appPath[MAX_PATH];
+   ::GetModuleFileName(NULL, appPath, MAX_PATH);
+   ::PathRemoveFileSpec(appPath);
+
+   _pathSettings.appPath.copy(appPath);
 }
 
 void IDEFactory :: registerClasses()
@@ -123,6 +141,9 @@ ControlBase* IDEFactory :: createStatusbar(WindowBase* owner)
 
 void IDEFactory :: initializeModel()
 {
+   _model->projectModel.paths.appPath.copy(*_pathSettings.appPath);
+   _model->projectModel.paths.compilerPath.copy(CLI_PATH);
+
    //// !! temporal
    //auto viewModel = _model->viewModel();
 

@@ -8,3 +8,37 @@
 #include "elena.h"
 //---------------------------------------------------------------------------
 #include "windows/win32controller.h"
+#include <windows.h>
+
+using namespace elena_lang;
+
+// --- Win32Controller ---
+
+bool Win32Controller :: execute(path_t path, path_t cmdLine, path_t curDir)
+{
+   PROCESS_INFORMATION pi;
+   STARTUPINFO si;
+
+   ::ZeroMemory(&si, sizeof(STARTUPINFO));
+   si.cb = sizeof(STARTUPINFO);
+   //si.hStdOutput = hStdOut;
+   //si.hStdInput = hStdIn;
+   //si.hStdError = hStdErr;
+   si.wShowWindow = SW_HIDE;
+   si.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW;
+
+   // Note that dwFlags must include STARTF_USESHOWWINDOW if we
+   // use the wShowWindow flags. This also assumes that the
+   // CreateProcess() call will use CREATE_NEW_CONSOLE.
+
+   // Launch the child process.
+   if (!::CreateProcess(path, (wchar_t*)cmdLine.str(), nullptr, nullptr, TRUE,
+      CREATE_NEW_CONSOLE, nullptr, curDir, &si, &pi))
+   {
+      return false;
+   }
+   //_hChildProcess = pi.hProcess;
+   ::CloseHandle(pi.hThread);
+
+   return true;
+}

@@ -24,6 +24,7 @@ namespace elena_lang
       ViewStyles     _styles;
       StyleInfo*     _schemes[2];
       GUISettinngs   _settings;
+      PathSettings   _pathSettings;
 
       HINSTANCE      _instance;
       int            _cmdShow;
@@ -44,7 +45,7 @@ namespace elena_lang
 
       IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideView, 
          IDEController* ideController,
-         GUISettinngs   settings);
+         GUISettinngs settings);
    };
 }
 

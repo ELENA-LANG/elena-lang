@@ -23,6 +23,8 @@ namespace elena_lang
          PathString libraryRoot;
          PathString lastPath;
          PathString librarySourceRoot;
+         PathString appPath;
+         PathString compilerPath;
       } paths;
 
       bool       autoRecompile;

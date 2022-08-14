@@ -16,6 +16,7 @@ namespace elena_lang
    class Win32Controller : public OSControllerBase
    {
    public:
+      bool execute(path_t path, path_t commandLine, path_t curDir) override;
    };
 
 }

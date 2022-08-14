@@ -128,7 +128,7 @@ void IDEWindow :: openFile()
 
 void IDEWindow :: saveFile()
 {
-   _controller->doSaveFile(dialog, _model, false);
+   _controller->doSaveFile(dialog, _model, false, true);
 }
 
 void IDEWindow::closeFile()
@@ -207,16 +207,16 @@ bool IDEWindow :: onCommand(int command)
          deleteText();
          break;
       case IDM_PROJECT_COMPILE:
-         _controller->projectController.doCompileProject(_model->projectModel, DebugAction::None);
+         _controller->doCompileProject(dialog, _model);
          break;
       case IDM_DEBUG_RUN:
-         _controller->projectController.doDebugAction(_model->projectModel, DebugAction::Run);
+         _controller->doDebugAction(_model, DebugAction::Run);
          break;
       case IDM_DEBUG_STEPOVER:
-         _controller->projectController.doDebugAction(_model->projectModel, DebugAction::StepOver);
+         _controller->doDebugAction(_model, DebugAction::StepOver);
          break;
       case IDM_DEBUG_STEPINTO:
-         _controller->projectController.doDebugAction(_model->projectModel, DebugAction::StepInto);
+         _controller->doDebugAction(_model, DebugAction::StepInto);
          break;
       default:
          return false;

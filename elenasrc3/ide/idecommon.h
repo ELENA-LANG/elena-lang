@@ -10,7 +10,7 @@
 #include "guicommon.h"
 #include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                           0x0012
+#define IDE_REVISION_NUMBER                           0x0013
 
 namespace elena_lang
 {
@@ -23,6 +23,12 @@ namespace elena_lang
    constexpr auto NOTIFY_CURRENTVIEW_CHANGED          = 2;
    constexpr auto NOTIFY_CURRENTVIEW_SHOW             = 3;
    constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
+
+   // --- PathSettings ---
+   struct PathSettings
+   {
+      PathString appPath;
+   };
 
    // --- IDEStatus ---
    enum class IDEStatus
@@ -42,6 +48,7 @@ namespace elena_lang
    class OSControllerBase
    {
    public:
+      virtual bool execute(path_t path, path_t commandLine, path_t curDir) = 0;
    };
 
    // --- DebugControllerBase ---

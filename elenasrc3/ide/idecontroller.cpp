@@ -147,7 +147,7 @@ bool ProjectController :: isOutaged(bool noWarning)
    return false; // !! temporal
 }
 
-bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
+bool ProjectController :: onDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action)
 {
    if (testIDEStatus(model.getStatus(), IDEStatus::Busy))
       return false;
@@ -156,7 +156,7 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
       bool toRecompile = model.autoRecompile && !testIDEStatus(model.getStatus(), IDEStatus::AutoRecompiling);
       if (isOutaged(toRecompile)) {
          if (toRecompile) {
-            if (!doCompileProject(model, action))
+            if (!doCompileProject(model, singleProjectPath, action))
                return false;
          }
          return false;
@@ -167,10 +167,10 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
    return true;
 }
 
-void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
+void ProjectController :: doDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action)
 {
    if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
-      if (onDebugAction(model, action)) {
+      if (onDebugAction(model, singleProjectPath, action)) {
          switch (action) {
             case DebugAction::Run:
                _debugController.run();
@@ -195,14 +195,27 @@ bool ProjectController :: compile()
    return true;
 }
 
-bool ProjectController :: compileSingleFile()
+bool ProjectController :: compileSingleFile(ProjectModel& model, path_t singleProjectFile)
 {
-   return true;
+   PathString appPath(model.paths.appPath);
+   appPath.combine(*model.paths.compilerPath);
+
+   PathString cmdLine(*model.paths.compilerPath);
+   cmdLine.append(" ");
+   cmdLine.append(singleProjectFile);
+
+   PathString curDir;
+   curDir.append(singleProjectFile, singleProjectFile.findLast('\\'));
+
+   return _osController->execute(*appPath, *cmdLine, *curDir);
 }
 
-bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction postponedAction)
+bool ProjectController :: doCompileProject(ProjectModel& model, path_t singleProjectFile, DebugAction postponedAction)
 {
-   return compileSingleFile();
+   if (!singleProjectFile.empty()) {
+      return compileSingleFile(model, singleProjectFile);
+   }
+   else return false;   
 }
 
 // --- IDEController ---
@@ -265,7 +278,7 @@ void IDEController :: doOpenFile(DialogBase& dialog, IDEModel* model)
    }
 }
 
-bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode)
+bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave)
 {
    auto docView = model->sourceViewModel.DocView();
    if (!docView)
@@ -280,9 +293,21 @@ bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveA
       projectController.defineSourceName(*path, sourceNameStr);
 
       sourceController.renameSource(&model->sourceViewModel, nullptr, *sourceNameStr, *path);
+
+      forcedSave = true;
    }
 
-   sourceController.saveSource(&model->sourceViewModel, nullptr);
+   if (forcedSave)
+      sourceController.saveSource(&model->sourceViewModel, nullptr);
+
+   return true;
+}
+
+bool IDEController :: doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode)
+{
+   // !! temporal
+   if (!doSaveFile(dialog, model, false, forcedMode))
+      return false;
 
    return true;
 }
@@ -294,7 +319,7 @@ bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
       ustr_t current = model->sourceViewModel.getDocumentName(-1);
 
       if (docView->status.unnamed) {
-         doSaveFile(dialog, model, false);
+         doSaveFile(dialog, model, false, true);
       }
       else if (docView->status.modifiedMode) {
          path_t path = model->sourceViewModel.getDocumentPath(current);
@@ -306,7 +331,7 @@ bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
             return false;
          }
          else if (result == DialogBase::Answer::Yes) {
-            if (!doSaveFile(dialog, model, false))
+            if (!doSaveFile(dialog, model, false, true))
                return false;
          }
       }
@@ -321,4 +346,30 @@ bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
 bool IDEController :: doExit()
 {
    return true;
+}
+
+path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
+{
+   return model->sourceViewModel.getDocumentPath(
+      model->sourceViewModel.getDocumentName(-1));
+}
+
+void IDEController :: doDebugAction(IDEModel* model, DebugAction action)
+{
+   projectController.doDebugAction(model->projectModel, retrieveSingleProjectFile(model), action);
+}
+
+bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
+{
+   if (!doSaveProject(dialog, model, false)) {
+      return false;
+   }
+
+   if (projectController.doCompileProject(model->projectModel, retrieveSingleProjectFile(model), 
+      DebugAction::None)) 
+   {
+      return true;
+   }
+
+   return false;
 }
