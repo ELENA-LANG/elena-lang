@@ -129,6 +129,8 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          addr_t addr = (base + space->rdata);
          addr_t disp = addr - baseAddr;
 
+         printf("%llx-%llx=%llx",addr, baseAddr, disp);
+
          *(unsigned short*)address += (unsigned short)(disp & 0xFFFF);
          break;
       }
