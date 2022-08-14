@@ -318,8 +318,6 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
             ::writeDisp32Lo(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
             break;
          case mskXDisp32Hi:
-            printf("writeReference %x, %x\n", vaddress, addressMask);
-
             ::writeXDisp32Hi(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
             break;
          case mskXDisp32Lo:
@@ -517,6 +515,12 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             break;
          case mskDisp32Lo:
             ::writeDisp32Lo(image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
+            break;
+         case mskXDisp32Hi:
+            ::writeXDisp32Hi(image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
+            break;
+         case mskXDisp32Lo:
+            ::writeXDisp32Lo(image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
             break;
          case mskRef32Hi:
             ::writeRef32Hi(image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
