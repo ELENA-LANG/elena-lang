@@ -80,7 +80,7 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       }
       case mskStatXDisp32Hi:
       {
-         addr_t baseAddr = (base + space->code);
+         addr_t baseAddr = space->imageBase + space->rdata;
          addr_t addr = (base + space->stat);
          addr_t disp = addr - baseAddr;
 
@@ -89,16 +89,37 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       }
       case mskStatXDisp32Lo:
       {
-         addr_t baseAddr = (base + space->code);
+         addr_t baseAddr = space->imageBase + space->rdata;
          addr_t addr = (base + space->stat);
          addr_t disp = addr - baseAddr;
 
          *(unsigned short*)address += (unsigned short)(disp & 0xFFFF);
          break;
       }
+      case mskCodeXDisp32Hi:
+      {
+         addr_t baseAddr = space->imageBase + space->rdata;
+         addr_t addr = (base + space->code);
+         disp_t disp = addr - baseAddr;
+
+         printf("reloc %llx %llx\n", baseAddr, addr);
+         printf("%llx\n", disp);
+
+         *(unsigned short*)address += (unsigned short)(disp >> 16);
+         break;
+      }
+      case mskCodeXDisp32Lo:
+      {
+         addr_t baseAddr = space->imageBase + space->rdata;
+         addr_t addr = (base + space->code);
+         disp_t disp = addr - baseAddr;
+
+         *(short*)address += (short)(disp & 0xFFFF);
+         break;
+      }
       case mskDataXDisp32Hi:
       {
-         addr_t baseAddr = (base + space->code);
+         addr_t baseAddr = space->imageBase + space->rdata;
          addr_t addr = (base + space->data);
          disp_t disp = addr - baseAddr;
 
@@ -107,36 +128,16 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       }
       case mskDataXDisp32Lo:
       {
-         addr_t baseAddr = (base + space->code);
+         addr_t baseAddr = space->imageBase + space->rdata;
          addr_t addr = (base + space->data);
          addr_t disp = addr - baseAddr;
 
          *(unsigned short*)address += (unsigned short)(disp & 0xFFFF);
          break;
       }
-      case mskRDataXDisp32Hi:
-      {
-         addr_t baseAddr = (base + space->code);
-         addr_t addr = (base + space->rdata);
-         disp_t disp = addr - baseAddr;
-
-         *(short*)address += (short)(disp >> 16);
-         break;
-      }
-      case mskRDataXDisp32Lo:
-      {
-         addr_t baseAddr = (base + space->code);
-         addr_t addr = (base + space->rdata);
-         addr_t disp = addr - baseAddr;
-
-         printf("%llx-%llx=%llx",addr, baseAddr, disp);
-
-         *(unsigned short*)address += (unsigned short)(disp & 0xFFFF);
-         break;
-      }
-      case mskCodeXDisp32Lo:
       case mskDataDisp32Lo:
       case mskRDataDisp32Lo:
+      case mskRDataXDisp32Lo:
       case mskCodeDisp32Lo:
       {
          unsigned short disp = (unsigned short)(reference & 0xFFFF);
@@ -144,9 +145,9 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          *(unsigned short*)address += disp;
          break;
       }
-      case mskCodeXDisp32Hi:
       case mskDataDisp32Hi:
       case mskRDataDisp32Hi:
+      case mskRDataXDisp32Hi:
       case mskCodeDisp32Hi:
       {
          unsigned short disp = (unsigned short)(reference >> 16);
@@ -177,33 +178,33 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
 inline void ppc64relocateElf64Import(pos_t pos, ref_t mask, ref_t reference, void* address, AddressSpace* space)
 {
    switch (mask) {
-      case mskImportRef64:
-      {
-         addr_t base = space->imageBase + space->importMapping.get(reference | mask);
-         *(unsigned long long*)address += base + space->import;
+   case mskImportRef64:
+   {
+      addr_t base = space->imageBase + space->importMapping.get(reference | mask);
+      *(unsigned long long*)address += base + space->import;
 
-         break;
-      }
-      case mskRDataRef64:
-      {
-         addr_t base = space->imageBase + reference;
-         *(unsigned long long*)address += (unsigned long long)(base + space->rdata);
-         break;
-      }
-      case mskDataRef64:
-      {
-         addr_t base = space->imageBase + reference;
-         *(unsigned long long*)address += (unsigned long long)(base + space->data);
-         break;
-      }
-      case mskCodeRef64:
-      {
-         addr_t base = space->imageBase + reference;
-         *(unsigned long long*)address += (unsigned long long)(base + space->code);
-         break;
-      }
-      default:
-         // to make compiler happy
-         break;
+      break;
+   }
+   case mskRDataRef64:
+   {
+      addr_t base = space->imageBase + reference;
+      *(unsigned long long*)address += (unsigned long long)(base + space->rdata);
+      break;
+   }
+   case mskDataRef64:
+   {
+      addr_t base = space->imageBase + reference;
+      *(unsigned long long*)address += (unsigned long long)(base + space->data);
+      break;
+   }
+   case mskCodeRef64:
+   {
+      addr_t base = space->imageBase + reference;
+      *(unsigned long long*)address += (unsigned long long)(base + space->code);
+      break;
+   }
+   default:
+      // to make compiler happy
+      break;
    }
 }

@@ -255,7 +255,7 @@ end
 // ; setr
 inline %80h
 
-  ld      r15, toc_code(r2)
+  ld      r15, toc_rdata(r2)
   addis   r15, r15, __xdisp32hi_1 
   addi    r15, r15, __xdisp32lo_1 
 
@@ -347,7 +347,7 @@ end
 // ; peekr
 inline %84h
 
-  ld      r16, toc_code(r2)
+  ld      r16, toc_rdata(r2)
   addis   r16, r16, __xdisp32hi_1 
   addi    r16, r16, __xdisp32lo_1 
 
@@ -358,7 +358,7 @@ end
 // ; storer
 inline %85h
 
-  ld      r16, toc_code(r2)
+  ld      r16, toc_rdata(r2)
   addis   r16, r16, __xdisp32hi_1 
   addi    r16, r16, __xdisp32lo_1 
 
@@ -699,7 +699,7 @@ end
 // ; cmpr
 inline %0C0h
 
-  ld      r16, toc_code(r2)
+  ld      r16, toc_rdata(r2)
   addis   r16, r16, __xdisp32hi_1 
   addi    r16, r16, __xdisp32lo_1 
   cmp     r15, r16
@@ -1086,7 +1086,7 @@ end
 // ; seleqrr
 inline %0EEh
 
-  ld      r16, toc_code(r2)
+  ld      r16, toc_rdata(r2)
   addis   r17, r16, __xdisp32hi_1 
   addis   r18, r16, __xdisp32hi_2 
   addi    r17, r16, __xdisp32lo_1 
@@ -1099,7 +1099,7 @@ end
 // ; selltrr
 inline %0EFh
 
-  ld      r16, toc_code(r2)
+  ld      r16, toc_rdata(r2)
   addis   r17, r16, __xdisp32hi_1 
   addis   r18, r16, __xdisp32hi_2 
   addi    r17, r16, __xdisp32lo_1 
@@ -1251,7 +1251,7 @@ end
 // ; xstoresir
 inline %0F1h
 
-  ld      r16, toc_code(r2)
+  ld      r16, toc_rdata(r2)
   addis   r16, r16, __xdisp32hi_2
   addi    r16, r16, __xdisp32lo_2
 
@@ -1262,7 +1262,7 @@ end
 // ; xstoresir :0, ...
 inline %1F1h
 
-  ld      r16, toc_code(r2)
+  ld      r16, toc_rdata(r2)
   addis   r16, r16, __xdisp32hi_2
   addi    r16, r16, __xdisp32lo_2
 
@@ -1273,7 +1273,7 @@ end
 // ; xstoresir :1, ...
 inline %2F1h
 
-  ld      r16, toc_code(r2)
+  ld      r16, toc_rdata(r2)
   addis   r16, r16, __xdisp32hi_2
   addi    r16, r16, __xdisp32lo_2
 
@@ -1598,7 +1598,7 @@ end
 // ; xstorefir
 inline %0F9h
 
-  ld      r16, toc_code(r2)
+  ld      r16, toc_rdata(r2)
   addis   r16, r16, __xdisp32hi_2
   addi    r16, r16, __xdisp32lo_2
   std     r16, __arg16_1(r1)
