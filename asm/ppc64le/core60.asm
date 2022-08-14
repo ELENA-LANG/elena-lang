@@ -1252,6 +1252,11 @@ end
 inline %0F1h
 
   ld      r16, toc_rdata(r2)
+
+  lis     r14, __xdisp32hi_2
+  addi    r14, r14, __arg32lo_1
+  add     r16, r16, r14
+
   addis   r16, r16, __xdisp32hi_2
   addi    r16, r16, __xdisp32lo_2
 
