@@ -8,11 +8,14 @@
 #include "elena.h"
 //---------------------------------------------------------------------------
 #include "windows/win32controller.h"
-#include <windows.h>
 
 using namespace elena_lang;
 
 // --- Win32Controller ---
+
+Win32Controller :: Win32Controller()
+{
+}
 
 bool Win32Controller :: execute(path_t path, path_t cmdLine, path_t curDir)
 {
@@ -21,9 +24,9 @@ bool Win32Controller :: execute(path_t path, path_t cmdLine, path_t curDir)
 
    ::ZeroMemory(&si, sizeof(STARTUPINFO));
    si.cb = sizeof(STARTUPINFO);
-   //si.hStdOutput = hStdOut;
-   //si.hStdInput = hStdIn;
-   //si.hStdError = hStdErr;
+   si.hStdOutput = redirectInfo.hStdOut;
+   si.hStdInput = redirectInfo.hStdIn;
+   si.hStdError = redirectInfo.hStdErr;
    si.wShowWindow = SW_HIDE;
    si.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW;
 

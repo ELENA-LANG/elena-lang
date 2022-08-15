@@ -36,6 +36,8 @@ namespace elena_lang
 
       ControlBase* createTextControl(WindowBase* owner, NotifierBase* notifier);
       ControlBase* createStatusbar(WindowBase* owner);
+      ControlBase* createTabBar(WindowBase* owner, NotifierBase* notifier);
+      ControlBase* createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, int notifyCode);
 
       void initializeModel();
 

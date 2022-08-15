@@ -243,6 +243,9 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
       case NOTIFY_CURRENTVIEW_HIDE:
          _children[_textFrameId]->hide();
          break;
+      case NOTIFY_LAYOUT_CHANGED:
+         onResize();
+         break;
       default:
          break;
    }   
@@ -252,7 +255,7 @@ void IDEWindow :: onTabSelChanged(HWND wnd)
 {
    for (size_t i = 0; i < _childCounter; i++) {
       if (_children[i]->checkHandle(wnd)) {
-         _children[i]->onSelChanged();
+         ((ControlBase*)_children[i])->onSelChanged();
          break;
       }
    }

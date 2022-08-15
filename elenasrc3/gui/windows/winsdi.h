@@ -11,42 +11,72 @@
 
 namespace elena_lang
 {
+   // --- VerticalBox ---
+   class VerticalBox : public GUIControlBase
+   {
+      CachedList<GUIControlBase*, 3> _list;
+      bool                           _stretchMode;
+
+   public:
+      void append(GUIControlBase* item)
+      {
+         _list.add(item);
+      }
+
+      bool checkHandle(void* param) const override
+      {
+         return false;
+      }
+
+      Rectangle getRectangle() override;
+      void setRectangle(Rectangle rec) override;
+
+      void show() override;
+      void hide() override;
+
+      bool visible() override;
+
+      void setFocus() override;
+
+      VerticalBox(bool stretchMode);
+   };
+
    // --- LayoutManager ---
    class LayoutManager
    {
-      ControlBase* _top;
-      ControlBase* _left;
-      ControlBase* _right;
-      ControlBase* _bottom;
-      ControlBase* _center;
+      GUIControlBase* _top;
+      GUIControlBase* _left;
+      GUIControlBase* _right;
+      GUIControlBase* _bottom;
+      GUIControlBase* _center;
 
    public:
-      ControlBase* getCenter()
+      GUIControlBase* getCenter()
       {
          return _center;
       }
 
-      void setTop(ControlBase* top)
+      void setTop(GUIControlBase* top)
       {
          _top = top;
       }
 
-      void setCenter(ControlBase* center)
+      void setCenter(GUIControlBase* center)
       {
          _center = center;
       }
 
-      void setBottom(ControlBase* bottom)
+      void setBottom(GUIControlBase* bottom)
       {
          _bottom = bottom;
       }
 
-      void setLeft(ControlBase* left)
+      void setLeft(GUIControlBase* left)
       {
          _left = left;
       }
 
-      void setRight(ControlBase* right)
+      void setRight(GUIControlBase* right)
       {
          _right = right;
       }
@@ -65,9 +95,9 @@ namespace elena_lang
    class SDIWindow : public WindowBase
    {
    protected:
-      size_t        _childCounter;
-      ControlBase** _children;
-      LayoutManager _layoutManager;
+      size_t           _childCounter;
+      GUIControlBase** _children;
+      LayoutManager    _layoutManager;
 
       //void drawControls(HDC& hdc);
 
@@ -82,9 +112,9 @@ namespace elena_lang
    public:
       static void registerSDIWindow(HINSTANCE hInstance, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon);
 
-      void populate(size_t counter, ControlBase** children)
+      void populate(size_t counter, GUIControlBase** children)
       {
-         _children = new ControlBase*[counter];
+         _children = new GUIControlBase *[counter];
          for (size_t i = 0; i < counter; i++) {
             _children[i] = children[i];
          }

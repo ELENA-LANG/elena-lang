@@ -34,7 +34,10 @@ elena_lang::Rectangle ControlBase :: getRectangle()
 
 void ControlBase :: setRectangle(Rectangle rec)
 {
-   ::MoveWindow(_handle, rec.topLeft.x, rec.topLeft.y, rec.width(), rec.height(), TRUE);
+   int width = max(rec.width(), _minWidth);
+   int height = max(rec.height(), _minHeight);
+
+   ::MoveWindow(_handle, rec.topLeft.x, rec.topLeft.y, width, height, TRUE);
 }
 
 void ControlBase :: setFocus()
@@ -65,7 +68,7 @@ void ControlBase :: hide()
 
 // --- WindowBase ---
 
-ATOM WindowBase :: registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, unsigned int style)
+ATOM WindowBase :: registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, HCURSOR cursor, HBRUSH background, unsigned int style)
 {
    WNDCLASSEXW wcex;
 
@@ -77,13 +80,18 @@ ATOM WindowBase :: registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t class
    wcex.cbWndExtra = 0;
    wcex.hInstance = hInstance;
    wcex.hIcon = icon;
-   wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-   wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+   wcex.hCursor = cursor;
+   wcex.hbrBackground = background;
    wcex.lpszMenuName = menuName.str();
    wcex.lpszClassName = className.str();
    wcex.hIconSm = smallIcon;
 
    return RegisterClassExW(&wcex);
+}
+
+ATOM WindowBase::registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, unsigned int style)
+{
+   return registerClass(hInstance, proc, className, icon, menuName, smallIcon, LoadCursor(nullptr, IDC_ARROW), (HBRUSH)(COLOR_WINDOW + 1), style);
 }
 
 LRESULT WindowBase :: WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

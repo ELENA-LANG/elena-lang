@@ -131,7 +131,16 @@ namespace elena_lang
    class GUIControlBase
    {
    public:
+      virtual bool checkHandle(void* param) const = 0;
+
+      virtual Rectangle getRectangle() = 0;
+      virtual void setRectangle(Rectangle rec) = 0;
+
+      virtual void show() = 0;
+      virtual void hide() = 0;
       virtual bool visible() = 0;
+
+      virtual void setFocus() = 0;
 
       virtual ~GUIControlBase() = default;
    };

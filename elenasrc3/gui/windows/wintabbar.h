@@ -58,6 +58,15 @@ namespace elena_lang
       MultiTabControl(NotifierBase* notifier, bool withAbovescore, ControlBase* child);
    };
 
+   // --- TabBar ---
+   class TabBar : public CustomTabBar
+   {
+   public:
+      HWND createControl(HINSTANCE instance, ControlBase* owner);
+
+      TabBar(NotifierBase* notifier, bool withAbovescore);
+   };
+
 }
 
 #endif

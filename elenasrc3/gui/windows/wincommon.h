@@ -86,12 +86,15 @@ namespace elena_lang
       HWND   _handle;
       wstr_t _title;
 
+      int    _minWidth;
+      int    _minHeight;
+
       virtual void onSetFocus() {}
       virtual void onLoseFocus() {}
 
    public:
       HWND handle() { return _handle; }
-      bool checkHandle(void* param) const
+      bool checkHandle(void* param) const override
       {
          return (_handle == (HWND)param);
       }
@@ -100,13 +103,13 @@ namespace elena_lang
 
       void showWindow(int cmdShow);
 
-      virtual void show();
-      virtual void hide();
+      void show() override;
+      void hide() override;
 
-      Rectangle getRectangle();
-      virtual void setRectangle(Rectangle rec);
+      Rectangle getRectangle() override;
+      void setRectangle(Rectangle rec) override;
 
-      virtual void setFocus();
+      void setFocus() override;
       virtual void refresh();
 
       virtual void onDrawItem(DRAWITEMSTRUCT* item) {}
@@ -118,6 +121,7 @@ namespace elena_lang
       {
          _handle = nullptr;
          _title = title;
+         _minWidth = _minHeight = 0;
       }
    };
 
@@ -139,6 +143,8 @@ namespace elena_lang
 
    public:
       static ATOM registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, unsigned int style);
+      static ATOM registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, 
+         HCURSOR cursor, HBRUSH background, unsigned int style);
 
       static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
