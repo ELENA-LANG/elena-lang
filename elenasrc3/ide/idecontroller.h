@@ -73,10 +73,10 @@ namespace elena_lang
          _notifier = notifier;
       }
 
-      void notifyMessage(int messageCode) override
+      void notifyMessage(int messageCode, int arg = 0) override
       {
          if (_notifier)
-            _notifier->notifyMessage(messageCode);
+            _notifier->notifyMessage(messageCode, arg);
       }
       void notifyModelChange(int modelCode, int arg) override
       {
@@ -99,6 +99,10 @@ namespace elena_lang
 
       bool openFile(SourceViewModel* model, path_t sourceFile);
       bool openFile(IDEModel* model, path_t sourceFile);
+
+      void onCompilationStart(IDEModel* model);
+      void onCompilationStop(IDEModel* model);
+      void onCompilationBreak(IDEModel* model);
 
    public:
       FileEncoding         defaultEncoding;

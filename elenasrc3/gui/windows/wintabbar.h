@@ -61,8 +61,19 @@ namespace elena_lang
    // --- TabBar ---
    class TabBar : public CustomTabBar
    {
+      List<ControlBase*> _children;
+
    public:
       HWND createControl(HINSTANCE instance, ControlBase* owner);
+
+      void addTabChild(const wchar_t* name, ControlBase* window);
+      void removeTabChild(ControlBase* window);
+
+      void selectTabChild(ControlBase* window);
+
+      void setRectangle(Rectangle rec) override;
+
+      void refresh() override;
 
       TabBar(NotifierBase* notifier, bool withAbovescore);
    };

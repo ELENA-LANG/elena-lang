@@ -359,15 +359,44 @@ void IDEController :: doDebugAction(IDEModel* model, DebugAction action)
    projectController.doDebugAction(model->projectModel, retrieveSingleProjectFile(model), action);
 }
 
+void IDEController :: onCompilationStart(IDEModel* model)
+{
+   model->status = IDEStatus::Busy;
+
+   model->onIDEChange();
+
+   _notifier->notifyMessage(NOTIFY_SHOW_RESULT, model->ideScheme.compilerOutputControl);
+}
+
+void IDEController :: onCompilationStop(IDEModel* model)
+{
+   model->status = IDEStatus::Ready;
+
+   model->onIDEChange();
+}
+
+void IDEController :: onCompilationBreak(IDEModel* model)
+{
+   model->status = IDEStatus::Ready;
+
+   model->onIDEChange();
+}
+
 bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
 {
+   onCompilationStart(model);
+
    if (!doSaveProject(dialog, model, false)) {
+      onCompilationBreak(model);
+
       return false;
    }
 
    if (projectController.doCompileProject(model->projectModel, retrieveSingleProjectFile(model), 
       DebugAction::None)) 
    {
+      onCompilationStop(model);
+
       return true;
    }
 

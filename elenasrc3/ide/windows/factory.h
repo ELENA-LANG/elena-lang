@@ -39,7 +39,7 @@ namespace elena_lang
       ControlBase* createTabBar(WindowBase* owner, NotifierBase* notifier);
       ControlBase* createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, int notifyCode);
 
-      void initializeModel();
+      void initializeModel(int frameTextIndex, int tabBar, int compilerOutput);
 
    public:
       GUIApp* createApp() override;

@@ -177,13 +177,14 @@ bool WindowApp :: initInstance(WindowBase* mainWindow)
    return TRUE;
 }
 
-void WindowApp :: notifyMessage(int messageCode)
+void WindowApp :: notifyMessage(int messageCode, int arg)
 {
    ExtNMHDR notification;
 
    notification.nmhrd.code = NMHDR_Message;
    notification.nmhrd.hwndFrom = _hwnd;
    notification.extParam = messageCode;
+   notification.extParam2 = arg;
 
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }

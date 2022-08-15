@@ -149,7 +149,7 @@ namespace elena_lang
    class NotifierBase
    {
    public:
-      virtual void notifyMessage(int messageCode) = 0;
+      virtual void notifyMessage(int messageCode, int arg = 0) = 0;
       virtual void notifyModelChange(int modelCode, int arg = 0) = 0;
    };
 

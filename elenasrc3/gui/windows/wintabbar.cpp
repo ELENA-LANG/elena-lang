@@ -186,7 +186,7 @@ void MultiTabControl :: eraseTabView(int index)
 // --- TabBar ---
 
 TabBar :: TabBar(NotifierBase* notifier, bool withAbovescore)
-   : CustomTabBar(notifier, withAbovescore)
+   : CustomTabBar(notifier, withAbovescore), _children(nullptr)
 {
    _title = _T("Tabbar");
 }
@@ -200,3 +200,77 @@ HWND TabBar :: createControl(HINSTANCE instance, ControlBase* owner)
 
    return _handle;
 }
+
+void TabBar :: addTabChild(const wchar_t* name, ControlBase* child)
+{
+   auto rec = getRectangle();
+
+   child->setRectangle({ 4, 28, rec.width(), rec.height() });
+   child->hide();
+
+   _children.add(child);
+
+   addTab(_children.count(), name, nullptr);
+}
+
+void TabBar :: removeTabChild(ControlBase* child)
+{
+   if (_children.count() == 0)
+      return;
+
+   int index = _children.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
+      {
+         return current == arg;
+      });
+
+   if (index != -1) {
+      child->hide();
+   }
+
+   _children.cut(child);
+   deleteTab(index);
+
+   refresh();
+}
+
+void TabBar :: selectTabChild(ControlBase* child)
+{
+   int index = _children.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
+      {
+         return current == arg;
+      });
+
+   if (index != -1) {
+      child->show();
+
+      selectTab(index);
+
+      ControlBase::refresh();
+   }
+}
+
+void TabBar :: setRectangle(Rectangle rec)
+{
+   ControlBase::setRectangle(rec);
+
+   Rectangle childRec(rec.topLeft.x, rec.topLeft.y, rec.width() - 14, rec.height() - 36);
+   for (auto it = _children.start(); !it.eof(); ++it) {
+      (*it)->setRectangle(childRec);
+   }
+}
+
+void TabBar :: refresh()
+{
+   int index = getCurrentIndex();
+   int current = 0;
+   for (auto it = _children.start(); !it.eof(); ++it) {
+      if (index == current) {
+         (*it)->show();
+         (*it)->setFocus();
+      }
+      else (*it)->hide();
+
+      current++;
+   }
+}
+

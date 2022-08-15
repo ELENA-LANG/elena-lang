@@ -168,7 +168,7 @@ namespace elena_lang
    public:
       int run(GUIControlBase* mainWindow) override;
 
-      void notifyMessage(int messageCode) override;
+      void notifyMessage(int messageCode, int arg = 0) override;
       void notifyModelChange(int modelCode, int arg) override;
 
       WindowApp(HINSTANCE instance, int cmdShow, wstr_t accelerators)

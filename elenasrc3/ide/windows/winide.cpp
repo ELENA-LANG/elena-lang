@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 
 #include "windows/winide.h"
+#include "windows/wintabbar.h"
 
 #include <windows/Resource.h>
 
@@ -95,7 +96,7 @@ void Clipboard :: pasteFromClipboard(DocumentView* docView)
 
 // --- IDEWindow ---
 
-IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, int textFrameId) : 
+IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance) : 
    SDIWindow(title), 
    dialog(instance, 
       this, Dialog::SourceFilter, 
@@ -106,7 +107,6 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    this->_instance = instance;
    this->_controller = controller;
    this->_model = model;
-   this->_textFrameId = textFrameId;
 }
 
 void IDEWindow :: onActivate()
@@ -167,6 +167,15 @@ void IDEWindow :: deleteText()
 {
    _controller->sourceController.deleteText(_model->viewModel());
    _model->sourceViewModel.onModelChanged();
+}
+
+void IDEWindow :: openResultTab(int controlIndex)
+{
+   TabBar* resultBar = (TabBar*)_children[_model->ideScheme.resultControl];
+
+   resultBar->addTabChild(_model->ideScheme.captions.get(controlIndex), (ControlBase*)_children[controlIndex]);
+   resultBar->selectTabChild((ControlBase*)_children[controlIndex]);
+   resultBar->show();
 }
 
 bool IDEWindow :: onCommand(int command)
@@ -238,10 +247,10 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
          _model->sourceViewModel.onModelChanged();
          break;
       case NOTIFY_CURRENTVIEW_SHOW:
-         _children[_textFrameId]->show();
+         _children[_model->ideScheme.textFrameId]->show();
          break;
       case NOTIFY_CURRENTVIEW_HIDE:
-         _children[_textFrameId]->hide();
+         _children[_model->ideScheme.textFrameId]->hide();
          break;
       case NOTIFY_LAYOUT_CHANGED:
          onResize();
@@ -249,6 +258,19 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
       default:
          break;
    }   
+}
+
+void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
+{
+   auto docView = _model->sourceViewModel.DocView();
+
+   switch (hdr->extParam) {
+      case NOTIFY_SHOW_RESULT:
+         openResultTab(hdr->extParam2);
+         break;
+      default:
+         break;
+   }
 }
 
 void IDEWindow :: onTabSelChanged(HWND wnd)
@@ -269,6 +291,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          break;
       case TCN_SELCHANGE:
          onTabSelChanged(hdr->hwndFrom);
+         break;
+      case NMHDR_Message:
+         onNotifyMessage((ExtNMHDR*)hdr);
          break;
       default:
          break;

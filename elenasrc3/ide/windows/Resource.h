@@ -31,6 +31,7 @@
 #define IDC_TEXTVIEW                110
 #define IDC_HSPLITTER               111
 #define IDC_VSPLITTER               112
+#define IDC_COMPILER_OUTPUT         113
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                  -1
