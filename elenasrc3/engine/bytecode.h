@@ -78,6 +78,7 @@ namespace elena_lang
       IDivDPN        = 0xE4,
       NSaveDPN       = 0xE5,
       XHookDPR       = 0xE6,
+      XNewNR         = 0xE7,
       VJumpMR        = 0xEC,
       JumpMR         = 0xED,
       SelEqRR        = 0xEE,
@@ -259,6 +260,7 @@ namespace elena_lang
             case ByteCode::XStoreFIR:
             case ByteCode::NewIR:
             case ByteCode::NewNR:
+            case ByteCode::XNewNR:
             case ByteCode::CallMR:
             case ByteCode::VCallMR:
             case ByteCode::JumpMR:

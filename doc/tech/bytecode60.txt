@@ -180,6 +180,10 @@ ELENA byte codes (or ecodes)
    xdispatch m, r           - search in message table r the message in index and provided parameter list; 
                               if found jumps directly to it;
 
+   xnewn n {prefix}:r       - "create" the stack allocated object with the specified
+                              size; in : acc contains the reference to the stack space
+                              out: acc contains the class instance, index - undefined
+
 
  Jump operations:
  ---------------- 

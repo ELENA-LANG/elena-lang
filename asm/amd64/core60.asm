@@ -836,6 +836,18 @@ inline %0E6h
 
 end
 
+// ; xnewnr n, r
+inline %0E7h
+
+  lea  rbx, [rax + elObjectOffset]
+
+  mov  ecx, __n_1
+  mov  rax, __ptr64_2
+  mov  [rbx - elVMTOffset], rax
+  mov  dword ptr [rbx - elSizeOffset], ecx
+
+end
+
 // ; vjumpmr
 inline % 0ECh
 

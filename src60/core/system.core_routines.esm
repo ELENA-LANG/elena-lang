@@ -14,6 +14,21 @@ procedure __object_dispatcher
 
   redirect
 
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      class:"system'Message", 4
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+
 end
 
 procedure __object_equal
@@ -36,40 +51,36 @@ end
 
 procedure critical_exception_handler
 
-  cmpn EXCEPTION_ACCESS_VIOLATION
-  jeq  labAccessViolation
+  cmpn        EXCEPTION_ACCESS_VIOLATION
+  jeq         labAccessViolation
 
-  cmpn ELENA_ERR_DIVIDE_BY_ZERO
-  jeq  labDivisionByZero
+  cmpn        ELENA_ERR_DIVIDE_BY_ZERO
+  jeq         labDivisionByZero
 
-  cmpn ELENA_ERR_OUT_OF_MEMORY
-  jeq  labOutOfMemory
+  cmpn        ELENA_ERR_OUT_OF_MEMORY
+  jeq         labOutOfMemory
 
-  set     class : "system'CriticalException"
-  store   sp:0
-  set     mssgconst : "new[1]"
-  store   sp:1
+  set         class : "system'CriticalException"
+  store       sp:0
+  set         mssgconst : "new[1]"
   throw
 
 labAccessViolation:
-  set     class : "system'NilReferenceException"
-  store   sp:0
-  set     mssgconst : "new[1]"
-  store   sp:1
+  set         class : "system'NilReferenceException"
+  store       sp:0
+  set         mssgconst : "new[1]"
   throw
 
 labDivisionByZero:
-  set     class : "system'DivisionByZeroException"
-  store   sp:0
-  set     mssgconst : "new[1]"
-  store   sp:1
+  set         class : "system'DivisionByZeroException"
+  store       sp:0
+  set         mssgconst : "new[1]"
   throw
 
 labOutOfMemory:
-  set     class : "system'OutOfMemoryException"
-  store   sp:0
-  set     mssgconst : "new[0]"
-  store   sp:1
+  set         class : "system'OutOfMemoryException"
+  store       sp:0
+  set         mssgconst : "new[0]"
   throw
 
 end

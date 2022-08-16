@@ -1062,6 +1062,22 @@ inline %0E6h
 
 end
 
+// ; xnewnr n, r
+inline %0E7h
+
+  addi    r15, r15, elObjectOffset
+
+  li      r18, __n16_1
+  addis   r18, r18, __n16hi_1
+
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, __disp32hi_2 
+  addi    r17, r17, __disp32lo_2
+  std     r18, -elSizeOffset(r15)
+  std     r17, -elVMTOffset(r15)
+
+end
+
 // ; vjumpmr
 inline % 0ECh
 

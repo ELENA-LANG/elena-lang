@@ -1049,6 +1049,20 @@ inline %0E6h
 
 end
 
+// ; xnewnr i, r
+inline %0E7h
+
+  add     x10, x10, elObjectOffset
+  movz    x18, __n16_1
+  movk    x18, __n16hi_1, lsl #16
+  movz    x19,  __ptr32lo_2
+  movk    x19,  __ptr32hi_2, lsl #16
+  sub     x20, x10, elVMTOffset
+  str     x19, [x20]
+  str     w18, [x20, #12]!
+
+end
+
 // ; vjumpmr
 inline %0ECh
 

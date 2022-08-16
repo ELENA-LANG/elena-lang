@@ -933,6 +933,17 @@ inline %0E6h
 
 end
 
+// ; xnewnr
+inline %0E7h
+
+  lea  ebx, [eax + elObjectOffset]
+  mov  ecx, __n_1
+  mov  eax, __ptr32_2
+  mov  [ebx - elVMTOffset], eax
+  mov  [ebx - elSizeOffset], ecx
+
+end
+
 // ; vjumpmr
 inline %0ECh
 

@@ -23,5 +23,7 @@ public class OutOfMemoryException : Exception
 {
 }
 
-
-
+// --- MethodNotFoundException ---
+public class MethodNotFoundException : Exception
+{
+}

@@ -524,6 +524,12 @@ int ByteCodeAssembler :: readArgList(ScriptToken& tokenInfo, ReferenceMap& local
 bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& writer,
    ByteCommand& command, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants)
 {
+   int argCount = 0;
+   if (tokenInfo.compare("(")) {
+      argCount = readN(tokenInfo, constants);
+      read(tokenInfo, ")", ASM_INVALID_DESTINATION);
+   }
+
    if (tokenInfo.compare("[")) {
       readArgList(tokenInfo, locals, constants, 1, false);
 
@@ -537,8 +543,11 @@ bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& wr
          read(tokenInfo);
       }
 
-      command.arg1 = locals.count();
+      command.arg1 = locals.count() + argCount;
       command.arg2 = dataSize;
+
+      if (_mode64)
+         command.arg1 = align(command.arg1, 2);
 
       ByteCodeUtil::write(writer, command);
 

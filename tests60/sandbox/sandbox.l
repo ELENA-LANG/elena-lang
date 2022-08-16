@@ -1,12 +1,14 @@
 import system;
 
+A;
+
 singleton Tester
 {
    run()
    {
-       console.writeLine("Failing");
-       var o := nil;
-       o.fail();
+      var a := new A();
+
+      a.fail()
    }
 }
 
