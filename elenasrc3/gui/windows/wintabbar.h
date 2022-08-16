@@ -31,7 +31,7 @@ namespace elena_lang
       void renameTab(int index, wstr_t title);
       void deleteTab(int index);
 
-      CustomTabBar(NotifierBase* notifier, bool withAbovescore);
+      CustomTabBar(NotifierBase* notifier, bool withAbovescore, int width, int height);
    };
 
    // --- MultiTabControl ---

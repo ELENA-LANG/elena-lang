@@ -10,31 +10,42 @@ using namespace elena_lang;
 
 // --- VerticalBox ---
 
-VerticalBox :: VerticalBox(bool stretchMode)
-   : _stretchMode(stretchMode)
+VerticalBox :: VerticalBox(bool stretchMode, int spacer)
+   : _stretchMode(stretchMode), _spacer(spacer)
 {
 
 }
 
-elena_lang::Rectangle VerticalBox :: getRectangle()
+void VerticalBox :: append(GUIControlBase* item)
 {
-   Point topLeft = {};
-   int width = 0;
-   int height = 0;
-   for (size_t i = 0; i < _list.count(); i++) {
+   if (_list.count() != 0) {
+      auto itemRect = item->getRectangle();
+      auto bottomRect = _list[_list.count() - 1]->getRectangle();
 
-      if (_list[i]->visible()) {
-         auto current = _list[i]->getRectangle();
-         if (i == 0)
-            topLeft = current.topLeft;
-
-         width = max(width, current.width());
-         height += current.height();
-      }
-
+      item->setRectangle({ bottomRect.topLeft.x, bottomRect.bottomRight.y + _spacer + 1, 
+         bottomRect.width(), itemRect.height()});
    }
 
-   return elena_lang::Rectangle(topLeft.x, topLeft.y, width, height);
+   _list.add(item);
+}
+
+elena_lang::Rectangle VerticalBox :: getRectangle()
+{
+   int x = 0;
+   int y = 0;
+   int width = 0;
+   int height = 0;
+
+   auto topRect = _list[0]->getRectangle();
+   x = topRect.topLeft.x;
+   y = topRect.topLeft.y;
+
+   auto bottomRect = _list[_list.count() - 1]->getRectangle();
+
+   width = bottomRect.bottomRight.x - x + 1;
+   height = bottomRect.bottomRight.y - y + 1;
+
+   return elena_lang::Rectangle(x, y, width, height);
 }
 
 void VerticalBox :: setRectangle(Rectangle rec)
@@ -54,12 +65,14 @@ void VerticalBox :: setRectangle(Rectangle rec)
          _list[i]->setRectangle({x, y, width, meanHeight });
          height -= meanHeight;
          y += meanHeight;
+         y += _spacer;
       }
    }
    else {
       int fixedHeight = 0;
       for (size_t i = 1; i < count; i++) {
          fixedHeight += _list[i]->getRectangle().height();
+         fixedHeight += _spacer;
       }
       if (height > fixedHeight) {
          height -= fixedHeight;
@@ -71,6 +84,7 @@ void VerticalBox :: setRectangle(Rectangle rec)
 
          _list[i]->setRectangle({x, y, width, height});
          y += height;
+         y += _spacer;
       }
    }
 }
@@ -251,7 +265,7 @@ void SDIWindow :: setLayout(int center, int top, int bottom, int right, int left
 
 void SDIWindow :: onResize()
 {
-   Rectangle clientRect = getRectangle();
+   Rectangle clientRect = getClientRectangle();
 
    _layoutManager.resizeTo(clientRect);
 }

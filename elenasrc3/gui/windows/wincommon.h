@@ -119,10 +119,10 @@ namespace elena_lang
 
       virtual HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner);
 
-      ControlBase(wstr_t title) :
+      ControlBase(wstr_t title, int x, int y, int width, int height) :
          _handle(nullptr),
          _title(title),
-         _rect({}),
+         _rect(x, y, width, height),
          _minWidth(0),
          _minHeight(0)
       {
@@ -152,8 +152,8 @@ namespace elena_lang
 
       static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-      WindowBase(wstr_t title)
-         : ControlBase(title)
+      WindowBase(wstr_t title, int width, int height)
+         : ControlBase(title, 0, 0, width, height)
       {
       }
    };

@@ -16,12 +16,10 @@ namespace elena_lang
    {
       CachedList<GUIControlBase*, 3> _list;
       bool                           _stretchMode;
+      int                            _spacer;
 
    public:
-      void append(GUIControlBase* item)
-      {
-         _list.add(item);
-      }
+      void append(GUIControlBase* item);
 
       bool checkHandle(void* param) const override
       {
@@ -40,7 +38,7 @@ namespace elena_lang
 
       void refresh() override;
 
-      VerticalBox(bool stretchMode);
+      VerticalBox(bool stretchMode, int spacer);
    };
 
    // --- LayoutManager ---
@@ -128,7 +126,7 @@ namespace elena_lang
       void close();
 
       SDIWindow(wstr_t title)
-         : WindowBase(title)
+         : WindowBase(title, 800, 600)
       {
          _children = nullptr;
          _childCounter = 0;

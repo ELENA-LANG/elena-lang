@@ -13,11 +13,7 @@ using namespace elena_lang;
 HWND ControlBase :: create(HINSTANCE instance, wstr_t className, ControlBase* owner)
 {
    _handle = ::CreateWindowW(className.str(), _title.str(), WS_OVERLAPPEDWINDOW,
-      _rect.topLeft.x, _rect.topLeft.y, CW_USEDEFAULT, CW_USEDEFAULT, owner ? owner->handle() : nullptr, nullptr, instance, this);
-
-   auto clientRect = getClientRectangle();
-   _rect.setWidth(clientRect.width());
-   _rect.setHeight(clientRect.height());
+      _rect.topLeft.x, _rect.topLeft.y, _rect.width(), _rect.height(), owner ? owner->handle() : nullptr, nullptr, instance, this);
 
    return _handle;
 }

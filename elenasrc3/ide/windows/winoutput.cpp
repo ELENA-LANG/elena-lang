@@ -17,7 +17,7 @@ LRESULT CALLBACK ProcessOutput::Proc(HWND hWnd, UINT Message, WPARAM wParam, LPA
 }
 
 ProcessOutput :: ProcessOutput()
-   : ControlBase(nullptr),
+   : ControlBase(nullptr, 0, 0, 50, 50),
    _editProc(nullptr)
 {
 

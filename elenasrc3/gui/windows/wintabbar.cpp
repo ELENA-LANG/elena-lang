@@ -12,8 +12,8 @@ using namespace elena_lang;
 
 // --- CustomTabBar ---
 
-CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore)
-   : ControlBase(nullptr)
+CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore, int width, int height)
+   : ControlBase(nullptr, 0, 0, width, height)
 {
    _notifier = notifier;
    _withAbovescore = withAbovescore;
@@ -115,7 +115,7 @@ int CustomTabBar :: getCurrentIndex()
 // --- MultiTabControl ---
 
 MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, ControlBase* child)
-   : CustomTabBar(notifier, withAbovescore)
+   : CustomTabBar(notifier, withAbovescore, 50, 50)
 {
    _child = child;
 }
@@ -186,7 +186,7 @@ void MultiTabControl :: eraseTabView(int index)
 // --- TabBar ---
 
 TabBar :: TabBar(NotifierBase* notifier, bool withAbovescore)
-   : CustomTabBar(notifier, withAbovescore), _children(nullptr)
+   : CustomTabBar(notifier, withAbovescore, 800, 50), _children(nullptr)
 {
    _title = _T("Tabbar");
 

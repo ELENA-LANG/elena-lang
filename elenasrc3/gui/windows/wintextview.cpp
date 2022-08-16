@@ -41,7 +41,7 @@ void ViewStyles::release()
 // --- TextViewWindow ---
 
 TextViewWindow :: TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles)
-   : WindowBase(nullptr)
+   : WindowBase(nullptr, 50, 50)
 {
    _model = model;
    _styles = styles;

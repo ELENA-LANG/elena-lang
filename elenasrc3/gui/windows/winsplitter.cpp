@@ -34,7 +34,7 @@ static LRESULT CALLBACK hookProcMouse(int nCode, WPARAM wParam, LPARAM lParam)
 // --- Splitter ---
 
 Splitter :: Splitter(NotifierBase* notifier, int notifyCode, ControlBase* client, bool vertical)
-   : WindowBase(nullptr),
+   : WindowBase(nullptr, 800, 4),
    _instance(nullptr),
    _notifier(notifier),
    _notifyCode(notifyCode),
