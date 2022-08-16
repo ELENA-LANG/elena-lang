@@ -210,7 +210,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier)
    int textIndex = counter++;
    int bottomBox = counter++;
    int statusBarIndex = counter++;
-   //int vsplitter = counter++;
+   int vsplitter = counter++;
    int tabBar = counter++;
    //int compilerOutput = counter++;
 
@@ -222,20 +222,19 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier)
    children[textIndex] = createTextControl(sdi, notifier);
    children[bottomBox] = vb;
    children[tabBar] = createTabBar(sdi, notifier);
-   //children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier, 
-   //   NOTIFY_LAYOUT_CHANGED);
+   children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier, 
+      NOTIFY_LAYOUT_CHANGED);
    children[statusBarIndex] = createStatusbar(sdi);
    //children[compilerOutput] = new CompilerOutput();
 
-   //vb->append(children[vsplitter]);
-   vb->append(children[tabBar]); // !! temporal
-
+   vb->append(children[vsplitter]);
+//   vb->append(children[tabBar]); // !! temporal
    vb->append(children[statusBarIndex]);
 
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, -1, bottomBox, -1, -1);
 
-   initializeModel(textIndex, /*tabBar*/-1, /*compilerOutput*/-1);
+   initializeModel(textIndex, tabBar, /*compilerOutput*/-1);
 
    return sdi;
 }

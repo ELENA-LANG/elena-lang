@@ -186,7 +186,7 @@ void MultiTabControl :: eraseTabView(int index)
 // --- TabBar ---
 
 TabBar :: TabBar(NotifierBase* notifier, bool withAbovescore)
-   : CustomTabBar(notifier, withAbovescore, 800, 50), _children(nullptr)
+   : CustomTabBar(notifier, withAbovescore, 800, 100), _children(nullptr)
 {
    _title = _T("Tabbar");
 

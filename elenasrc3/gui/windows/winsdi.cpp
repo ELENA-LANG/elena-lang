@@ -40,10 +40,17 @@ elena_lang::Rectangle VerticalBox :: getRectangle()
    x = topRect.topLeft.x;
    y = topRect.topLeft.y;
 
-   auto bottomRect = _list[_list.count() - 1]->getRectangle();
+   for (size_t i = 0; i < _list.count(); i++) {
+      auto itemRect = _list[i]->getRectangle();
 
-   width = bottomRect.bottomRight.x - x + 1;
-   height = bottomRect.bottomRight.y - y + 1;
+      if (i != 0)
+         height += _spacer;
+
+      height += itemRect.height();      
+
+      if (width < itemRect.width())
+         width = itemRect.width();
+   }
 
    return elena_lang::Rectangle(x, y, width, height);
 }
@@ -137,6 +144,7 @@ void adjustVertical(int width, int& height, GUIControlBase* control)
 {
    if (isVisible(control)) {
       elena_lang::Rectangle rect = control->getRectangle();
+      int h = rect.height(); // !! temporal
 
       rect.setWidth(width);
       if (height > rect.height() + 4) {
