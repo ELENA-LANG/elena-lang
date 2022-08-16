@@ -13,7 +13,11 @@ using namespace elena_lang;
 HWND ControlBase :: create(HINSTANCE instance, wstr_t className, ControlBase* owner)
 {
    _handle = ::CreateWindowW(className.str(), _title.str(), WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, owner ? owner->handle() : nullptr, nullptr, instance, this);
+      _rect.topLeft.x, _rect.topLeft.y, CW_USEDEFAULT, CW_USEDEFAULT, owner ? owner->handle() : nullptr, nullptr, instance, this);
+
+   auto clientRect = getClientRectangle();
+   _rect.setWidth(clientRect.width());
+   _rect.setHeight(clientRect.height());
 
    return _handle;
 }
@@ -24,7 +28,7 @@ void ControlBase :: showWindow(int cmdShow)
    UpdateWindow(_handle);
 }
 
-elena_lang::Rectangle ControlBase :: getRectangle()
+elena_lang::Rectangle ControlBase ::getClientRectangle()
 {
    RECT rc = { 0,0,0,0 };
    ::GetClientRect(_handle, &rc);
@@ -32,12 +36,21 @@ elena_lang::Rectangle ControlBase :: getRectangle()
    return Rectangle(rc.left, rc.top, rc.right, rc.bottom);
 }
 
-void ControlBase :: setRectangle(Rectangle rec)
+elena_lang::Rectangle ControlBase::getRectangle()
 {
-   int width = max(rec.width(), _minWidth);
-   int height = max(rec.height(), _minHeight);
+   return _rect;
+}
 
-   ::MoveWindow(_handle, rec.topLeft.x, rec.topLeft.y, width, height, TRUE);
+void ControlBase :: setRectangle(Rectangle rect)
+{
+   int x = rect.topLeft.x;
+   int y = rect.topLeft.y;
+   int width = max(rect.width(), _minWidth);
+   int height = max(rect.height(), _minHeight);
+
+   _rect = { x, y, width, height };
+
+   int r = ::MoveWindow(_handle, x, y, width, height, TRUE);
 }
 
 void ControlBase :: setFocus()

@@ -350,7 +350,7 @@ void TextViewWindow :: onPaint()
          hideCaret();
 
       PAINTSTRUCT ps;
-      Rectangle   clientRect = getRectangle();
+      Rectangle   clientRect = getClientRectangle();
 
       ::BeginPaint(_handle, &ps);
 

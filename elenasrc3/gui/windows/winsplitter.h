@@ -40,7 +40,7 @@ namespace elena_lang
       Rectangle getRectangle() override;
       void setRectangle(Rectangle rec) override;
 
-      //void onResize() override;
+      void refresh() override;
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 

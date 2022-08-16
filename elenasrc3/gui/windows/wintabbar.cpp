@@ -189,6 +189,9 @@ TabBar :: TabBar(NotifierBase* notifier, bool withAbovescore)
    : CustomTabBar(notifier, withAbovescore), _children(nullptr)
 {
    _title = _T("Tabbar");
+
+   _minHeight = 50;
+   _minWidth = 50;
 }
 
 HWND TabBar :: createControl(HINSTANCE instance, ControlBase* owner)
@@ -196,7 +199,7 @@ HWND TabBar :: createControl(HINSTANCE instance, ControlBase* owner)
    _handle = ::CreateWindowEx(
       TCS_EX_FLATSEPARATORS, WC_TABCONTROL, _title,
       WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_BORDER | TCS_FOCUSNEVER | TCS_TABS | TCS_SINGLELINE | TCS_OWNERDRAWFIXED,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, owner->handle(), nullptr, instance, (LPVOID)this);
+      CW_USEDEFAULT, 0, _minWidth, _minHeight, owner->handle(), nullptr, instance, (LPVOID)this);
 
    return _handle;
 }

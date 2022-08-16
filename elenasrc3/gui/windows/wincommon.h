@@ -83,11 +83,12 @@ namespace elena_lang
    class ControlBase : public GUIControlBase
    {
    protected:
-      HWND   _handle;
-      wstr_t _title;
+      HWND      _handle;
+      wstr_t    _title;
 
-      int    _minWidth;
-      int    _minHeight;
+      Rectangle _rect;
+      int       _minWidth;
+      int       _minHeight;
 
       virtual void onSetFocus() {}
       virtual void onLoseFocus() {}
@@ -106,22 +107,25 @@ namespace elena_lang
       void show() override;
       void hide() override;
 
+      Rectangle getClientRectangle();
       Rectangle getRectangle() override;
       void setRectangle(Rectangle rec) override;
 
       void setFocus() override;
-      virtual void refresh();
+      void refresh() override;
 
       virtual void onDrawItem(DRAWITEMSTRUCT* item) {}
       virtual void onSelChanged() {}
 
       virtual HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner);
 
-      ControlBase(wstr_t title)
+      ControlBase(wstr_t title) :
+         _handle(nullptr),
+         _title(title),
+         _rect({}),
+         _minWidth(0),
+         _minHeight(0)
       {
-         _handle = nullptr;
-         _title = title;
-         _minWidth = _minHeight = 0;
       }
    };
 

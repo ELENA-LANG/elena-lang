@@ -176,6 +176,8 @@ void IDEWindow :: openResultTab(int controlIndex)
    resultBar->addTabChild(_model->ideScheme.captions.get(controlIndex), (ControlBase*)_children[controlIndex]);
    resultBar->selectTabChild((ControlBase*)_children[controlIndex]);
    resultBar->show();
+
+   refresh();
 }
 
 bool IDEWindow :: onCommand(int command)
@@ -267,6 +269,9 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
    switch (hdr->extParam) {
       case NOTIFY_SHOW_RESULT:
          openResultTab(hdr->extParam2);
+         break;
+      case NOTIFY_LAYOUT_CHANGED:
+         onResize();
          break;
       default:
          break;

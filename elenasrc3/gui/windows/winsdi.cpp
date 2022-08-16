@@ -22,12 +22,16 @@ elena_lang::Rectangle VerticalBox :: getRectangle()
    int width = 0;
    int height = 0;
    for (size_t i = 0; i < _list.count(); i++) {
-      auto current = _list[i]->getRectangle();
-      if (i == 0)
-         topLeft = current.topLeft;
 
-      width = max(width, current.width());
-      height += current.height();
+      if (_list[i]->visible()) {
+         auto current = _list[i]->getRectangle();
+         if (i == 0)
+            topLeft = current.topLeft;
+
+         width = max(width, current.width());
+         height += current.height();
+      }
+
    }
 
    return elena_lang::Rectangle(topLeft.x, topLeft.y, width, height);
@@ -99,6 +103,13 @@ void VerticalBox :: setFocus()
 {
    if (_list.count() > 0)
       _list[0]->setFocus();
+}
+
+void VerticalBox :: refresh()
+{
+   for (size_t i = 0; i < _list.count(); i++) {
+      _list[i]->refresh();
+   }
 }
 
 // --- LayoutManager ---
@@ -176,12 +187,16 @@ void LayoutManager :: resizeTo(Rectangle area)
          topRect.width(), topRect.height() });
 
       y += topRect.height();
+
+      _top->refresh();
    }
    if (isVisible(_bottom)) {
       Rectangle bottomRect = _bottom->getRectangle();
 
       _bottom->setRectangle({ area.topLeft.x, y + totalHeight,
          bottomRect.width(), bottomRect.height() });
+
+      _bottom->refresh();
    }
    if (isVisible(_left)) {
       Rectangle leftRect = _bottom->getRectangle();
@@ -190,16 +205,22 @@ void LayoutManager :: resizeTo(Rectangle area)
          leftRect.width(), leftRect.height() });
 
       x += leftRect.width();
+
+      _left->refresh();
    }
    if (isVisible(_right)) {
       Rectangle rightRect = _bottom->getRectangle();
 
-      _left->setRectangle({ area.topLeft.x, y,
+      _right->setRectangle({ area.topLeft.x, y,
          rightRect.width(), rightRect.height() });
+
+      _right->refresh();
    }
 
    if (isVisible(_center)) {
       _center->setRectangle({ x, y, totalWidth, totalHeight });
+
+      _center->refresh();
    }      
 }
 

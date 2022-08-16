@@ -38,6 +38,8 @@ namespace elena_lang
 
       void setFocus() override;
 
+      void refresh() override;
+
       VerticalBox(bool stretchMode);
    };
 

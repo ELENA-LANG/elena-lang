@@ -33,7 +33,7 @@ static LRESULT CALLBACK hookProcMouse(int nCode, WPARAM wParam, LPARAM lParam)
 
 // --- Splitter ---
 
-Splitter::Splitter(NotifierBase* notifier, int notifyCode, ControlBase* client, bool vertical)
+Splitter :: Splitter(NotifierBase* notifier, int notifyCode, ControlBase* client, bool vertical)
    : WindowBase(nullptr),
    _instance(nullptr),
    _notifier(notifier),
@@ -91,15 +91,13 @@ elena_lang::Rectangle Splitter :: getRectangle()
    auto rec = _client->getRectangle();
 
    if (!_vertical) {
-      return { rec.topLeft.x, rec.topLeft.y, rec.width(), rec.height() + _minHeight };
+      return { _rect.topLeft.x, _rect.topLeft.y, rec.width(), rec.height() + _minHeight };
    }
-   else return { rec.topLeft.x, rec.topLeft.y, rec.width() + _minHeight, rec.height() };
+   else return { _rect.topLeft.x, _rect.topLeft.y, rec.width() + _minWidth, rec.height() };
 }
 
 void Splitter :: setRectangle(elena_lang::Rectangle rec)
 {
-   int x = rec.topLeft.x;
-   int y = rec.topLeft.y;
    int width = rec.width();
    int height = rec.height();
 
@@ -109,8 +107,8 @@ void Splitter :: setRectangle(elena_lang::Rectangle rec)
       }
       else height = 1;
 
-      _client->setRectangle({ x, y, width, height });
-      ControlBase::setRectangle({ x, y + height, width, _minHeight });
+      _client->setRectangle({ rec.topLeft.x, rec.topLeft.y + _minHeight, width, height });
+      ControlBase::setRectangle({ rec.topLeft.x, rec.topLeft.y, width, _minHeight });
    }
    else {
       if (width > _minWidth) {
@@ -118,14 +116,17 @@ void Splitter :: setRectangle(elena_lang::Rectangle rec)
       }
       else width = 1;
 
-      _client->setRectangle({ x, y, width, height });
-      ControlBase::setRectangle({ x + width, y, width, _minHeight });
+      _client->setRectangle({ rec.topLeft.x + _minWidth, rec.topLeft.y, width, height });
+      ControlBase::setRectangle({ rec.topLeft.x, rec.topLeft.y, _minWidth, height });
    }
 }
-//
-//void Splitter :: onResize()
-//{   
-//}
+
+void Splitter :: refresh()
+{
+   _client->refresh();
+
+   ControlBase::refresh();
+}
 
 void Splitter :: onButtonDown(Point point, bool kbShift)
 {
@@ -141,9 +142,9 @@ void Splitter :: onButtonUp()
 {
    if (hookMouse) {
       ::UnhookWindowsHookEx(hookMouse);
-      hookMouse = NULL;
+      hookMouse = nullptr;
    }
-   ::SetCapture(NULL);
+   ::SetCapture(nullptr);
    _mouseCaptured = false;
 }
 
@@ -156,7 +157,7 @@ void Splitter :: onMove()
       if (!_vertical && (_srcPos.y != destPos.y)) {
          shiftOn(_srcPos.y - destPos.y);
       }
-      else if (_srcPos.x != destPos.x) {
+      else if (_vertical && _srcPos.x != destPos.x) {
          shiftOn(destPos.x - _srcPos.x);
       }
       _srcPos = destPos;

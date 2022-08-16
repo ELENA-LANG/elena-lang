@@ -222,7 +222,8 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier)
    children[textIndex] = createTextControl(sdi, notifier);
    children[bottomBox] = vb;
    children[tabBar] = createTabBar(sdi, notifier);
-   children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], true, notifier, NOTIFY_LAYOUT_CHANGED);
+   children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier, 
+      NOTIFY_LAYOUT_CHANGED);
    children[statusBarIndex] = createStatusbar(sdi);
    children[compilerOutput] = new CompilerOutput();
 
