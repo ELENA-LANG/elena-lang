@@ -44,7 +44,7 @@ namespace elena_lang
    // --- ProjectController ---
    class ProjectController : public NotifierBase
    {
-      OSControllerBase*    _osController;
+      ProcessBase*         _outputProcess;
       DebugController      _debugController;
       NotifierBase*        _notifier;
 
@@ -84,9 +84,9 @@ namespace elena_lang
             _notifier->notifyModelChange(modelCode, arg);
       }
 
-      ProjectController(OSControllerBase* osController, DebugProcessBase* process, ProjectModel* model, SourceViewModel* sourceModel,
+      ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController)
-         : _osController(osController), _debugController(process, model, sourceModel, this, sourceController)
+         : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController)
       {
          _notifier = nullptr;
       }
@@ -135,11 +135,11 @@ namespace elena_lang
 
       void init(IDEModel* model);
 
-      IDEController(OSControllerBase* osController, DebugProcessBase* process, IDEModel* model, 
+      IDEController(ProcessBase* outputProcess, DebugProcessBase* process, IDEModel* model,
          TextViewSettings& textViewSettings
       ) :
          sourceController(textViewSettings),
-         projectController(osController, process, &model->projectModel, &model->sourceViewModel, 
+         projectController(outputProcess, process, &model->projectModel, &model->sourceViewModel,
             this)
       {
          _notifier = nullptr;

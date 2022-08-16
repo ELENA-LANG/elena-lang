@@ -38,12 +38,13 @@ namespace elena_lang
       ControlBase* createStatusbar(WindowBase* owner);
       ControlBase* createTabBar(WindowBase* owner, NotifierBase* notifier);
       ControlBase* createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, int notifyCode);
+      ControlBase* createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess);
 
       void initializeModel(int frameTextIndex, int tabBar, int compilerOutput);
 
    public:
       GUIApp* createApp() override;
-      GUIControlBase* createMainWindow(NotifierBase* notifier) override;
+      GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess) override;
 
       IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideView, 
          IDEController* ideController,

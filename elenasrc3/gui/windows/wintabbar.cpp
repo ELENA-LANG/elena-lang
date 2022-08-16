@@ -186,7 +186,7 @@ void MultiTabControl :: eraseTabView(int index)
 // --- TabBar ---
 
 TabBar :: TabBar(NotifierBase* notifier, bool withAbovescore)
-   : CustomTabBar(notifier, withAbovescore, 800, 100), _children(nullptr)
+   : CustomTabBar(notifier, withAbovescore, 800, 100), _pages(nullptr)
 {
    _title = _T("Tabbar");
 
@@ -206,22 +206,22 @@ HWND TabBar :: createControl(HINSTANCE instance, ControlBase* owner)
 
 void TabBar :: addTabChild(const wchar_t* name, ControlBase* child)
 {
-   auto rec = getRectangle();
+   auto rec = getClientRectangle();
 
-   child->setRectangle({ 4, 28, rec.width(), rec.height() });
+   child->setRectangle({ rec.topLeft.x + 4, rec.topLeft.y + 28, rec.width() - 8, rec.height() - 36 });
    child->hide();
 
-   _children.add(child);
+   _pages.add(child);
 
-   addTab(_children.count(), name, nullptr);
+   addTab(_pages.count(), name, nullptr);
 }
 
 void TabBar :: removeTabChild(ControlBase* child)
 {
-   if (_children.count() == 0)
+   if (_pages.count() == 0)
       return;
 
-   int index = _children.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
+   int index = _pages.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
       {
          return current == arg;
       });
@@ -230,7 +230,7 @@ void TabBar :: removeTabChild(ControlBase* child)
       child->hide();
    }
 
-   _children.cut(child);
+   _pages.cut(child);
    deleteTab(index);
 
    refresh();
@@ -238,7 +238,7 @@ void TabBar :: removeTabChild(ControlBase* child)
 
 void TabBar :: selectTabChild(ControlBase* child)
 {
-   int index = _children.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
+   int index = _pages.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
       {
          return current == arg;
       });
@@ -256,8 +256,10 @@ void TabBar :: setRectangle(Rectangle rec)
 {
    ControlBase::setRectangle(rec);
 
-   Rectangle childRec(rec.topLeft.x, rec.topLeft.y, rec.width() - 14, rec.height() - 36);
-   for (auto it = _children.start(); !it.eof(); ++it) {
+   auto clientRect = getClientRectangle();
+
+   Rectangle childRec(clientRect.topLeft.x + 4, clientRect.topLeft.y + 28, clientRect.width() - 8, clientRect.height() - 36);
+   for (auto it = _pages.start(); !it.eof(); ++it) {
       (*it)->setRectangle(childRec);
    }
 }
@@ -266,7 +268,7 @@ void TabBar :: refresh()
 {
    int index = getCurrentIndex();
    int current = 0;
-   for (auto it = _children.start(); !it.eof(); ++it) {
+   for (auto it = _pages.start(); !it.eof(); ++it) {
       if (index == current) {
          (*it)->show();
          (*it)->setFocus();

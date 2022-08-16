@@ -207,7 +207,7 @@ bool ProjectController :: compileSingleFile(ProjectModel& model, path_t singlePr
    PathString curDir;
    curDir.append(singleProjectFile, singleProjectFile.findLast('\\'));
 
-   return _osController->execute(*appPath, *cmdLine, *curDir);
+   return _outputProcess->start(*appPath, *cmdLine, *curDir, true);
 }
 
 bool ProjectController :: doCompileProject(ProjectModel& model, path_t singleProjectFile, DebugAction postponedAction)

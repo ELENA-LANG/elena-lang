@@ -13,32 +13,43 @@
 
 namespace elena_lang
 {
-   // --- Win32RedirectInfo --
-   struct Win32RedirectInfo
+   // -- Win32Process ---
+   class Win32Process : public ProcessBase
    {
-      HANDLE hStdOut; 
-      HANDLE hStdIn;
-      HANDLE hStdErr;
+      HANDLE _hThread;     // thread to receive the output of the child process
+      HANDLE _hEvtStop;    // event to notify the redir thread to exit
+      DWORD  _dwThreadId;		// id of the redir thread
 
-      Win32RedirectInfo() :
-         hStdOut(nullptr),
-         hStdIn(nullptr),
-         hStdErr(nullptr)
-      {
-      }
-   };
+      DWORD  _dwWaitTime;  // wait time to check the status of the child process
 
-   // -- Win32Controller ---
-   class Win32Controller : public OSControllerBase
-   {
-      Win32RedirectInfo redirectInfo;
+   protected:
+      HANDLE _hStdinWrite;	// write end of child's stdin pipe
+      HANDLE _hStdoutRead;	// read end of child's stdout pipe
+      HANDLE _hChildProcess;
+
+      static DWORD WINAPI OutputThread(LPVOID lpvThreadParam);
+
+      bool start(const wchar_t* path, const wchar_t* cmdLine, const wchar_t* curDir,
+         HANDLE hStdOut, HANDLE hStdIn, HANDLE hStdErr);
+
+      void close();
+
+      int redirectStdout();
+
+      virtual void writeStdOut(const char* output);
+      virtual void writeStdError(const char* error);
+      virtual void afterExecution(DWORD exitCode);
 
    public:
-      bool execute(path_t path, path_t commandLine, path_t curDir) override;
+      bool start(path_t path, path_t commandLine, path_t curDir, bool readOnly) override;
 
-      Win32Controller();
+      void stop(int exitCode = 0) override;
+
+      void flush(char* buffer, size_t length);
+
+      Win32Process(int waitTime);
+      virtual ~Win32Process();
    };
-
 }
 
 #endif // WIN32CONTROLLER_H

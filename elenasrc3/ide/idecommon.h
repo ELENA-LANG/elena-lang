@@ -46,11 +46,37 @@ namespace elena_lang
       return test((int)value, (int)mask);
    }
 
-   // --- OSController --
-   class OSControllerBase
+   // --- ProcessListenerBase --
+   class ProcessListenerBase
    {
    public:
-      virtual bool execute(path_t path, path_t commandLine, path_t curDir) = 0;
+      virtual void onOutput(const char* s) = 0;
+      virtual void onErrorOutput(const char* s) = 0;
+      virtual void afterExecution(int exitCode) = 0;
+   };
+
+   typedef List<ProcessListenerBase*> ProcessListeners;
+
+   // --- ProcessBase --
+   class ProcessBase
+   {
+   protected:
+      ProcessListeners _listeners;
+
+   public:
+      void attachListener(ProcessListenerBase* listener)
+      {
+         _listeners.add(listener);
+      }
+
+      virtual bool start(path_t path, path_t commandLine, path_t curDir, bool readOnly) = 0;
+      virtual void stop(int exitCode) = 0;
+
+      ProcessBase()
+         : _listeners(nullptr)
+      {
+
+      }
    };
 
    // --- DebugControllerBase ---
@@ -129,7 +155,7 @@ namespace elena_lang
    {
    public:
       virtual GUIApp* createApp() = 0;
-      virtual GUIControlBase* createMainWindow(NotifierBase* notifier) = 0;
+      virtual GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess) = 0;
    };
 }
 

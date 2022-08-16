@@ -170,6 +170,17 @@ ControlBase* IDEFactory :: createSplitter(WindowBase* owner, ControlBase* client
    return splitter;
 }
 
+ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess)
+{
+   CompilerOutput* output = new CompilerOutput();
+
+   output->createControl(_instance, owner);
+
+   outputProcess->attachListener(output);
+
+   return output;
+}
+
 void IDEFactory :: initializeModel(int frameTextIndex, int tabBar, int compilerOutput)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
@@ -202,7 +213,7 @@ GUIApp* IDEFactory :: createApp()
    return app;
 }
 
-GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier)
+GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess)
 {
    GUIControlBase* children[6];
    int counter = 0;
@@ -212,7 +223,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier)
    int statusBarIndex = counter++;
    int vsplitter = counter++;
    int tabBar = counter++;
-   //int compilerOutput = counter++;
+   int compilerOutput = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance);
    sdi->create(_instance, szSDI, nullptr);
@@ -225,16 +236,15 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier)
    children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier, 
       NOTIFY_LAYOUT_CHANGED);
    children[statusBarIndex] = createStatusbar(sdi);
-   //children[compilerOutput] = new CompilerOutput();
+   children[compilerOutput] = createCompilerOutput((ControlBase*)children[tabBar], outputProcess);
 
    vb->append(children[vsplitter]);
-//   vb->append(children[tabBar]); // !! temporal
    vb->append(children[statusBarIndex]);
 
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, -1, bottomBox, -1, -1);
 
-   initializeModel(textIndex, tabBar, /*compilerOutput*/-1);
+   initializeModel(textIndex, tabBar, compilerOutput);
 
    return sdi;
 }

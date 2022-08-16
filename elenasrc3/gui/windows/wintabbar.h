@@ -61,7 +61,7 @@ namespace elena_lang
    // --- TabBar ---
    class TabBar : public CustomTabBar
    {
-      List<ControlBase*> _children;
+      List<ControlBase*> _pages;
 
    public:
       HWND createControl(HINSTANCE instance, ControlBase* owner);
