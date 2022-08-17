@@ -274,6 +274,7 @@ RI_R ::=
 I_R ::=
         identifier I_R
         | reference I_R
+	| "=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE
 	| O_R;
 
 O_R ::=

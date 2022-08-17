@@ -82,6 +82,7 @@ namespace elena_lang
    constexpr auto WRAPPER_FORWARD         = "$ref";            // the wrapper template
    constexpr auto ARRAY_FORWARD           = "$array";          // the array template 
    constexpr auto MESSAGE_FORWARD         = "$message";        // the message class
+   constexpr auto CLOSURE_FORWARD         = "$closure";        // the message class
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";

@@ -286,7 +286,7 @@ namespace elena_lang
          Node firstChild(Key mask) const
          {
             Node current = firstChild();
-            while (current != defKey && !test((unsigned int)current.key, (unsigned int)mask)) {
+            while (current != defKey && !test(current.key, mask)) {
                current = current.nextNode();
             }
 
@@ -338,7 +338,7 @@ namespace elena_lang
          {
             if (_tree != nullptr) {
                Node current = read(_tree, _tree->readNext(_position));
-               while (current != defKey && !test((unsigned int)current.key, (unsigned int)mask)) {
+               while (current != defKey && !test(current.key, mask)) {
                   current = current.nextNode();
                }
 
@@ -419,6 +419,11 @@ namespace elena_lang
    protected:
       MemoryDump _body;
       MemoryDump _strings;
+
+      static bool test(Key key, Key mask)
+      {
+         return ::test((unsigned int)key, (unsigned int)mask);
+      }
 
       pos_t newRoot(Key key, ref_t reference, pos_t strArgPosition)
       {

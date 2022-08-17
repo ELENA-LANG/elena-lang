@@ -268,6 +268,22 @@ namespace elena_lang
             else return {};
          }
 
+         virtual bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo)
+         {
+            if (parent) {
+               return parent->resolveAutoType(info, typeInfo);
+            }
+            else return false;
+         }
+
+         virtual bool resolveAutoOutput(ref_t reference)
+         {
+            if (parent) {
+               return parent->resolveAutoOutput(reference);
+            }
+            else return false;
+         }
+
          template<class T> static T* getScope(Scope& scope, ScopeLevel level)
          {
             T* targetScope = (T*)scope.getScope(level);
@@ -532,6 +548,16 @@ namespace elena_lang
             return scope ? scope->reference : 0;
          }
 
+         bool resolveAutoOutput(ref_t reference) override
+         {
+            if (info.outputRef == V_AUTO) {
+               info.outputRef = reference;
+
+               return true;
+            }
+            else return Scope::resolveAutoOutput(reference);
+         }
+
          MethodScope(ClassScope* classScope);
       };
 
@@ -571,6 +597,8 @@ namespace elena_lang
 
             return scope ? scope->info.outputRef : 0;
          }
+
+         bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo) override;
 
          void markAsAssigned(ObjectInfo object) override;
 
@@ -736,12 +764,15 @@ namespace elena_lang
       ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode);
 
       ref_t resolveTemplate(Scope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode);
+      ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);
       ref_t resolveWrapperTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
       ref_t resolveArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 
       int resolveSize(Scope& scope, SyntaxNode node);
       TypeInfo resolveTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode);
       ref_t resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode);
+
+      bool resolveAutoType(ExprScope& scope, ObjectInfo source, ObjectInfo& target);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix); 
 
@@ -804,6 +835,11 @@ namespace elena_lang
       void resolveClassParent(ClassScope& scope, SyntaxNode node, bool extensionMode);
 
       int resolveArraySize(Scope& scope, SyntaxNode node);
+
+      void declareParameter(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode, 
+         bool& weakSignature, pos_t& paramCount, ref_t* signature, size_t& signatureLen);
+
+      ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode);
 
       void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode);
       void declareClosureMessage(MethodScope& scope, SyntaxNode node);

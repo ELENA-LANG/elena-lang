@@ -606,7 +606,18 @@ void SyntaxTreeBuilder :: flushClosure(SyntaxTreeWriter& writer, Scope& scope, S
 {
    writer.newNode(node.key);
 
-   flushMethodCode(writer, scope, node.firstChild(SyntaxKey::ScopeMask));
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Parameter) {
+         flushMethodMember(writer, scope, current);
+      }
+      else if (SyntaxTree::test(current.key, SyntaxKey::ScopeMask)) {
+         flushMethodCode(writer, scope, current);
+         break;
+      }
+
+      current = current.nextNode();
+   }
 
    writer.closeNode();
 }

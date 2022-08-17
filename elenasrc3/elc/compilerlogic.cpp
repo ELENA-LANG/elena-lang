@@ -470,6 +470,22 @@ void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ErrorProc
    }
 }
 
+bool CompilerLogic :: validateAutoType(ModuleScopeBase& scope, ref_t& reference)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, reference))
+      return false;
+
+   while (isRole(info)) {
+      reference = info.header.parentRef;
+
+      if (!defineClassInfo(scope, info, reference))
+         return false;
+   }
+
+   return true;
+}
+
 bool CompilerLogic :: isRole(ClassInfo& info)
 {
    return test(info.header.flags, elRole);

@@ -110,6 +110,7 @@ namespace elena_lang
    constexpr auto errReferenceOverflow       = 603;
    constexpr auto errUnknownBaseClass        = 604;
    constexpr auto errNoDispatcher            = 605;
+   constexpr auto errClosureError            = 606;
 
    constexpr auto infoNewMethod              = 701;
    constexpr auto infoCurrentMethod          = 702;
@@ -176,6 +177,7 @@ namespace elena_lang
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;
    constexpr auto V_IMPORT                = 0x80001018u;
+   constexpr auto V_AUTO                     = 0x8000101Cu;
    constexpr auto V_NAMESPACE             = 0x80001021u;
    constexpr auto V_INLINE                = 0x80001025u;
 

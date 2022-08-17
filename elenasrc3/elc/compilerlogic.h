@@ -60,6 +60,8 @@ namespace elena_lang
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
       bool validateArgumentAttribute(ref_t attrValue, bool& byRefArg);
 
+      bool validateAutoType(ModuleScopeBase& scope, ref_t& reference);
+
       bool isRole(ClassInfo& info);
       bool isAbstract(ClassInfo& info);
 

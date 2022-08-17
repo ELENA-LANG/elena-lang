@@ -744,6 +744,26 @@ void Compiler::CodeScope :: markAsAssigned(ObjectInfo object)
    parent->markAsAssigned(object);
 }
 
+bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, TypeInfo typeInfo)
+{
+   if (info.kind == ObjectKind::Local) {
+      for (auto it = locals.start(); !it.eof(); ++it) {
+         if ((*it).offset == (int)info.reference) {
+            if ((*it).typeInfo.typeRef == V_AUTO) {
+               (*it).typeInfo.typeRef = typeInfo.typeRef;
+               (*it).typeInfo.elementRef = typeInfo.elementRef;
+
+               info.typeInfo = typeInfo;
+
+               return true;
+            }
+         }
+      }
+   }
+
+   return Scope::resolveAutoType(info, typeInfo);
+}
+
 // --- Compiler::ExprScope ---
 
 Compiler::ExprScope :: ExprScope(SourceScope* parent)
@@ -1690,6 +1710,41 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
    }
 }
 
+void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool withoutWeakMessages, bool declarationMode, 
+   bool& weakSignature, pos_t& paramCount, ref_t* signature, size_t& signatureLen)
+{
+   int index = 1 + scope.parameters.count();
+
+   SizeInfo sizeInfo = {};
+   TypeInfo paramTypeInfo = {};
+   declareArgumentAttributes(scope, current, paramTypeInfo, declarationMode);
+
+   if (withoutWeakMessages && !paramTypeInfo.typeRef)
+      paramTypeInfo.typeRef = scope.moduleScope->buildins.superReference;
+
+   if (paramTypeInfo.typeRef)
+      weakSignature = false;
+
+   ustr_t terminal = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+   if (scope.parameters.exist(terminal))
+      scope.raiseError(errDuplicatedLocal, current);
+
+   paramCount++;
+   if (paramCount >= ARG_COUNT/* || (flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE*/)
+      scope.raiseError(errTooManyParameters, current);
+
+   if (paramTypeInfo.isPrimitive()) {
+      // primitive arguments should be replaced with wrapper classes
+      signature[signatureLen++] = resolvePrimitiveType(scope, paramTypeInfo, declarationMode);
+   }
+   else signature[signatureLen++] = paramTypeInfo.typeRef;
+
+   if (signature[signatureLen - 1])
+      sizeInfo = _logic->defineStructSize(*scope.moduleScope, signature[signatureLen - 1]);
+
+   scope.parameters.add(terminal, Parameter(index, paramTypeInfo, sizeInfo.size));
+}
+
 void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode)
 {
    IdentifierString actionStr;
@@ -1732,36 +1787,8 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
    SyntaxNode current = node.findChild(SyntaxKey::Parameter);
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Parameter) {
-         int index = 1 + scope.parameters.count();
-
-         SizeInfo sizeInfo = {};
-         TypeInfo paramTypeInfo = {};
-         declareArgumentAttributes(scope, current, paramTypeInfo, declarationMode);
-
-         if (withoutWeakMessages && !paramTypeInfo.typeRef)
-            paramTypeInfo.typeRef = scope.moduleScope->buildins.superReference;
-
-         if (paramTypeInfo.typeRef)
-            weakSignature = false;
-
-         ustr_t terminal = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
-         if (scope.parameters.exist(terminal))
-            scope.raiseError(errDuplicatedLocal, current);
-
-         paramCount++;
-         if (paramCount >= ARG_COUNT/* || (flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE*/)
-            scope.raiseError(errTooManyParameters, current);
-
-         if (paramTypeInfo.isPrimitive()) {
-            // primitive arguments should be replaced with wrapper classes
-            signature[signatureLen++] = resolvePrimitiveType(scope, paramTypeInfo, declarationMode);  
-         }
-         else signature[signatureLen++] = paramTypeInfo.typeRef;
-
-         if (signature[signatureLen - 1])
-            sizeInfo = _logic->defineStructSize(*scope.moduleScope, signature[signatureLen - 1]);
-
-         scope.parameters.add(terminal, Parameter(index, paramTypeInfo, sizeInfo.size));
+         declareParameter(scope, current, withoutWeakMessages, declarationMode, 
+            withoutWeakMessages, paramCount, signature, signatureLen);
       }
       else break;
 
@@ -1844,11 +1871,41 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
    }
 }
 
+ref_t Compiler :: declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode)
+{
+   IdentifierString messageStr;
+   pos_t paramCount = 0;
+   ref_t signRef = 0;
+
+   bool weakSingature = true;
+   ref_t signatures[ARG_COUNT];
+   size_t signatureLen = 0;
+   while (argNode == SyntaxKey::Parameter) {
+      declareParameter(methodScope, argNode, false, false, weakSingature,
+         paramCount, signatures, signatureLen);
+
+      argNode = argNode.nextNode();
+   }
+
+   messageStr.copy(INVOKE_MESSAGE);
+   if (!weakSingature) {
+      signRef = methodScope.module->mapSignature(signatures, signatureLen, false);
+   }
+
+   ref_t actionRef = methodScope.moduleScope->module->mapAction(*messageStr, signRef, false);
+
+   return encodeMessage(actionRef, paramCount, FUNCTION_MESSAGE);
+}
+
 void Compiler :: declareClosureMessage(MethodScope& methodScope, SyntaxNode node)
 {
    ref_t invokeAction = methodScope.module->mapAction(INVOKE_MESSAGE, 0, false);
    methodScope.message = encodeMessage(invokeAction, 0, FUNCTION_MESSAGE);
    methodScope.closureMode = true;
+
+   SyntaxNode argNode = node.findChild(SyntaxKey::Parameter);
+   if (argNode != SyntaxKey::None)
+      methodScope.message = declareClosureParameters(methodScope, argNode);
 }
 
 void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool abstractMode)
@@ -3010,6 +3067,89 @@ ref_t Compiler :: resolveTemplate(Scope& scope, ref_t templateRef, ref_t element
       templateRef, parameters, declarationMode);
 }
 
+
+ref_t Compiler :: resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef)
+{
+   ref_t signRef = 0;
+   scope.module->resolveAction(getAction(closureMessage), signRef);
+
+   int paramCount = getArgCount(closureMessage);
+
+   IdentifierString closureName(scope.module->resolveReference(scope.moduleScope->buildins.closureTemplateReference));
+   if (signRef == 0) {
+      if (paramCount > 0) {
+         closureName.appendInt(paramCount);
+      }
+
+      if (isWeakReference(*closureName)) {
+         return scope.module->mapReference(*closureName, true);
+      }
+      else return scope.moduleScope->mapFullReference(*closureName, true);
+   }
+   else {
+      ref_t signatures[ARG_COUNT];
+      size_t signLen = scope.module->resolveSignature(signRef, signatures);
+
+      List<SyntaxNode> parameters({});
+
+      // HOTFIX : generate a temporal template to pass the type
+      SyntaxTree dummyTree;
+      SyntaxTreeWriter dummyWriter(dummyTree);
+      dummyWriter.newNode(SyntaxKey::Root);
+
+      for (size_t i = 0; i < signLen; i++) {
+         dummyWriter.newNode(SyntaxKey::TemplateArg, signatures[i]);
+         dummyWriter.newNode(SyntaxKey::Type);
+
+         ustr_t referenceName = scope.moduleScope->module->resolveReference(signatures[i]);
+         if (isWeakReference(referenceName)) {
+            dummyWriter.appendNode(SyntaxKey::reference, referenceName);
+         }
+         else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
+
+         dummyWriter.closeNode();
+         dummyWriter.closeNode();
+      }
+
+      if (outputRef) {
+         dummyWriter.newNode(SyntaxKey::TemplateArg, outputRef);
+         dummyWriter.newNode(SyntaxKey::Type);
+
+         ustr_t referenceName = scope.moduleScope->module->resolveReference(outputRef);
+         if (isWeakReference(referenceName)) {
+            dummyWriter.appendNode(SyntaxKey::reference, referenceName);
+         }
+         else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
+
+         dummyWriter.closeNode();
+         dummyWriter.closeNode();
+      }
+
+      dummyWriter.closeNode();
+
+      SyntaxNode current = dummyTree.readRoot().firstChild();
+      while (current == SyntaxKey::TemplateArg) {
+         parameters.add(current);
+
+         current = current.nextNode();
+      }
+
+      closureName.append('#');
+      closureName.appendInt(paramCount + 1);
+
+      ref_t templateReference = 0;
+      if (isWeakReference(*closureName)) {
+         templateReference = scope.module->mapReference(*closureName, true);
+      }
+      else templateReference = scope.moduleScope->mapFullReference(*closureName, true);
+
+      NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+      return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
+         templateReference, parameters, false);
+   }
+}
+
 ref_t Compiler :: resolveWrapperTemplate(Scope& scope, ref_t elementRef, bool declarationMode)
 {
    return resolveTemplate(scope, scope.moduleScope->buildins.wrapperTemplateReference, elementRef, declarationMode);
@@ -4114,6 +4254,16 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    return retVal;
 }
 
+bool Compiler :: resolveAutoType(ExprScope& scope, ObjectInfo source, ObjectInfo& target)
+{
+   ref_t sourceRef = retrieveStrongType(scope, target);
+
+   if (!_logic->validateAutoType(*scope.moduleScope, sourceRef))
+      return false;
+
+   return scope.resolveAutoType(target, source.typeInfo);
+}
+
 ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand)
 {
    BuildKey operationType = BuildKey::None;
@@ -4173,7 +4323,19 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
          break;
    } 
 
-   ObjectInfo exprVal = compileExpression(writer, scope, roperand,
+   ObjectInfo exprVal = {};
+   if (targetRef == V_AUTO) {
+      // support auto attribute
+      exprVal = compileExpression(writer, scope, roperand,
+         0, EAttr::Parameter);
+
+      if (resolveAutoType(scope, exprVal, target)) {
+         targetRef = retrieveStrongType(scope, exprVal);
+         target.reference = targetRef;
+      }
+      else scope.raiseError(errInvalidOperation, roperand.parentNode());
+   }
+   else exprVal = compileExpression(writer, scope, roperand,
       targetRef, EAttr::Parameter);
 
    writeObjectInfo(writer, scope,
@@ -4814,7 +4976,12 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 {
    ExprScope scope(&codeScope);
 
+   bool autoMode = false;
    ref_t outputRef = codeScope.getOutputRef();
+   if (outputRef == V_AUTO) {
+      autoMode = true;
+      outputRef = 0;
+   }
 
    writer.appendNode(BuildKey::OpenStatement);
    addBreakpoint(writer, findObjectNode(node), BuildKey::Breakpoint);
@@ -4831,6 +4998,12 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    writer.appendNode(BuildKey::goingToEOP);
 
    scope.syncStack();
+
+   outputRef = retrieveStrongType(scope, retVal);
+
+   _logic->validateAutoType(*scope.moduleScope, outputRef);
+
+   scope.resolveAutoOutput(outputRef);
 
    return retVal;
 }
@@ -5503,7 +5676,22 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
 
    methodScope.functionMode = true;
 
+   mssg_t multiMethod = defineMultimethod(scope, methodScope.message);
+   if (multiMethod)
+      methodScope.info.outputRef = V_AUTO;
+
    compileClosureMethod(writer, methodScope, node);
+
+   // HOTFIX : inject an output type if required or used super class
+   if (methodScope.info.outputRef == V_AUTO) {
+      methodScope.info.outputRef = scope.moduleScope->buildins.superReference;
+   }
+
+   ref_t closureRef = resolveClosure(scope, methodScope.message, methodScope.info.outputRef);
+   if (closureRef) {
+      parentRef = closureRef;
+   }
+   else throw InternalError(errClosureError);
 
    declareClassParent(parentRef, scope, node);
    generateClassFlags(scope, elNestedClass);
@@ -5653,6 +5841,19 @@ inline ref_t safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase*
    else return 0;
 }
 
+inline ref_t safeMapWeakReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
+{
+   ustr_t resolved = forwardResolver->resolveForward(forward);
+   if (!emptystr(resolved)) {
+      // HOTFIX : for the standard module the references should be mapped forcefully
+      if (moduleScope->isStandardOne()) {
+         return moduleScope->module->mapReference(resolved + getlength(STANDARD_MODULE), false);
+      }
+      else return moduleScope->module->mapReference(resolved, false);
+   }
+   else return 0;
+}
+
 bool Compiler :: reloadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
 {
    if (name.compare(PREDEFINED_MAP)) {
@@ -5705,6 +5906,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.literalReference = safeMapReference(moduleScope, forwardResolver, LITERAL_FORWARD);
    moduleScope->buildins.wrapperTemplateReference = safeMapReference(moduleScope, forwardResolver, WRAPPER_FORWARD);
    moduleScope->buildins.arrayTemplateReference = safeMapReference(moduleScope, forwardResolver, ARRAY_FORWARD);
+   moduleScope->buildins.closureTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, CLOSURE_FORWARD);
 
    moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);
    moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);

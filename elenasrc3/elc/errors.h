@@ -88,6 +88,7 @@ namespace elena_lang
    constexpr auto errMsgReferenceOverflow    = "internal error 603: Reference overflow";
    constexpr auto errMsgUnknownBaseClass     = "internal error 604: Base class doesn't exist\n";
    constexpr auto errMsgNoDispatcher         = "internal error 605: Default dispatch method is not declared in the base class\n";
+   constexpr auto errMsgClosureError         = "internal error 606: closure cannot be generated";
 
    constexpr auto errMsgFatalError           = "Fatal error\n";
    constexpr auto errMsgUnrecognizedError    = "Unknown error\n";

@@ -298,6 +298,7 @@ struct BuiltinReferences
    ref_t   literalReference;
    ref_t   wrapperTemplateReference;
    ref_t   arrayTemplateReference;
+   ref_t   closureTemplateReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
@@ -316,6 +317,7 @@ struct BuiltinReferences
       literalReference = 0;
       wrapperTemplateReference = 0;
       arrayTemplateReference = 0;
+      closureTemplateReference = 0;
 
       dispatch_message = constructor_message = 0;
       init_message = 0;

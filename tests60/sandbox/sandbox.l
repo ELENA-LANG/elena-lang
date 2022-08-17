@@ -1,14 +1,18 @@
 import system;
 
-A;
+//A;
 
 singleton Tester
 {
    run()
    {
-      var a := new A();
+       var inc := (x => x + 1 );
 
-      a.fail()
+       console.writeLine(inc(2));
+
+      //var a := new A();
+
+      //a.fail() /*\\ on()*/
    }
 }
 
