@@ -85,6 +85,7 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
    if (!skipRead)
       _reader.read(tokenInfo);
 
+   bool constantMode = false;
    ref_t mask = 0;
    if (tokenInfo.compare("rdata")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
@@ -101,6 +102,7 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
       mask = mskVMTRef;
    }
    else if (tokenInfo.compare("mssgconst")) {
+      constantMode = true;
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
       _reader.read(tokenInfo);
@@ -116,7 +118,10 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
    }
 
    if (tokenInfo.state == dfaQuote) {
-      return _module->mapReference(*tokenInfo.token) | mask;
+      if (constantMode) {
+         return _module->mapConstant(*tokenInfo.token) | mask;
+      }
+      else return _module->mapReference(*tokenInfo.token) | mask;
    }
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
@@ -478,6 +483,11 @@ int ByteCodeAssembler :: readArgList(ScriptToken& tokenInfo, ReferenceMap& local
    int size = 0;
 
    read(tokenInfo);
+   if (tokenInfo.compare("]")) {
+      // if it is an empty list
+      return 0;
+   }
+
    while (true) {
       IdentifierString name(*tokenInfo.token);
 
@@ -528,6 +538,9 @@ bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& wr
    if (tokenInfo.compare("(")) {
       argCount = readN(tokenInfo, constants);
       read(tokenInfo, ")", ASM_INVALID_DESTINATION);
+      read(tokenInfo);
+      if (tokenInfo.compare(","))
+         read(tokenInfo);
    }
 
    if (tokenInfo.compare("[")) {
@@ -619,6 +632,22 @@ bool ByteCodeAssembler :: compileMR(ScriptToken& tokenInfo, MemoryWriter& writer
    ref_t arg2 = readReference(tokenInfo);
 
    ByteCodeUtil::write(writer, command.code, arg, arg2);
+
+   return true;
+}
+
+bool ByteCodeAssembler :: compileNR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
+   ReferenceMap& constants, bool skipRead)
+{
+   mssg_t arg = readN(tokenInfo, constants, skipRead);
+
+   read(tokenInfo, ",", ASM_COMMA_EXPECTED);
+
+   ref_t arg2 = readReference(tokenInfo);
+
+   ByteCodeUtil::write(writer, command.code, arg, arg2);
+
+   read(tokenInfo);
 
    return true;
 }
@@ -732,6 +761,8 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileJcc(tokenInfo, writer, opCommand, lh);
          case ByteCode::SetR:
             return compileR(tokenInfo, writer, opCommand, true);
+         case ByteCode::XNewNR:
+            return compileNR(tokenInfo, writer, opCommand, constants, true);
          default:
             return false;
       }

@@ -5,8 +5,12 @@ define EXCEPTION_ACCESS_VIOLATION  101h;
 define ELENA_ERR_DIVIDE_BY_ZERO    102h;
 define ELENA_ERR_OUT_OF_MEMORY     103h;
 
-define ex_struct_size32 16; 
-define ex_struct_size64 32; 
+define ex_struct_size32              16; 
+define ex_struct_size64              32; 
+
+define page_size32                   16;
+define page_size64                   32;
+
 
 define err_ret          -1;
 
@@ -20,7 +24,7 @@ procedure __object_dispatcher
   store      sp:1
 
   set        dp:tempObject
-  xnewn      class:"system'Message", 4
+  xnewn      4, class:"system'Message"
   save
   store      sp:2
 

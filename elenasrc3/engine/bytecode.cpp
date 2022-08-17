@@ -225,7 +225,14 @@ void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* targe
 {
    if (isRCommand(command.code)) {
       ref_t mask = command.arg1 & mskAnyRef;
-      command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
+      switch (mask) {
+         case mskMssgLiteralRef:
+            command.arg1 = target->importConstant(importer, command.arg1 & ~mskAnyRef) | mask;
+            break;
+         default:
+            command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
+            break;
+      }      
    }
    else if (isMCommand(command.code)) {
       command.arg1 = target->importMessage(importer, command.arg1);

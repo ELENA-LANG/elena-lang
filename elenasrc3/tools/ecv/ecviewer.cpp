@@ -184,8 +184,17 @@ void ByteCodeViewer :: printLineAndCount(ustr_t arg1, ustr_t arg2, int& row, int
 
 void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 {
+   ustr_t referenceName = nullptr;
    ref_t mask = arg & mskAnyRef;
-   ustr_t referenceName = arg ? _module->resolveReference(arg & ~mskAnyRef) : nullptr;
+   switch (mask) {
+      case mskMssgLiteralRef:
+         referenceName = arg ? _module->resolveConstant(arg & ~mskAnyRef) : nullptr;
+         break;
+      default:
+         referenceName = arg ? _module->resolveReference(arg & ~mskAnyRef) : nullptr;
+         break;
+   }
+
    switch (mask) {
       case mskArrayRef:
          commandStr.append("array:");
@@ -216,6 +225,9 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
          break;
       case mskProcedureRef:
          commandStr.append("procedure:");
+         break;
+      case mskMssgLiteralRef:
+         commandStr.append("mssgconst:");
          break;
       default:
          commandStr.append(":");
@@ -355,6 +367,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::NewIR:
          case ByteCode::NewNR:
+         case ByteCode::XNewNR:
          case ByteCode::CreateNR:
             addArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr);

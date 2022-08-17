@@ -253,6 +253,16 @@ ref_t ModuleScope :: importReference(ModuleBase* referenceModule, ustr_t referen
    else return 0;
 }
 
+ref_t ModuleScope :: importConstant(ModuleBase* referenceModule, ref_t reference)
+{
+   if (!reference)
+      return 0;
+
+   ustr_t value = referenceModule->resolveConstant(reference);
+
+   return  module->mapConstant(value);
+}
+
 SectionInfo ModuleScope :: getSection(ustr_t referenceName, ref_t mask, bool silentMode)
 {
    if (isForwardReference(referenceName)) {
