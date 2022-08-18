@@ -84,7 +84,7 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          addr_t addr = (base + space->stat);
          addr_t disp = addr - baseAddr;
 
-         *(unsigned short*)address += (unsigned short)(disp >> 16);
+         *(short*)address += (short)(disp >> 16);
          break;
       }
       case mskStatXDisp32Lo:
@@ -93,7 +93,7 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          addr_t addr = (base + space->stat);
          addr_t disp = addr - baseAddr;
 
-         *(unsigned short*)address += (unsigned short)(disp & 0xFFFF);
+         *(short*)address += (short)(disp & 0xFFFF);
          break;
       }
       case mskDataXDisp32Hi:
@@ -111,7 +111,7 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          addr_t addr = (base + space->data);
          addr_t disp = addr - baseAddr;
 
-         *(unsigned short*)address += (unsigned short)(disp & 0xFFFF);
+         *(short*)address += (short)(disp & 0xFFFF);
          break;
       }
       case mskRDataXDisp32Hi:

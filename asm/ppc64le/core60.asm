@@ -73,6 +73,7 @@ structure % CORE_TOC
   dq data   : %CORE_GC_TABLE
   dq code   : %GC_ALLOC // ; address of alloc function
   dq data   : 0         // ; address of data section
+  dq stat   : 0         // ; address of data section
 
 end
  
