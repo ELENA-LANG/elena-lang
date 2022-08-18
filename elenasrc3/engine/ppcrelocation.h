@@ -7,6 +7,17 @@
 
 using namespace elena_lang;
 
+// HOTFIX : if the DWORD LO is over 0x7FFF - adjust DWORD HI (by adding 1) to be properly combined in the following code:
+//     addis   r16, r16, __xdisp32hi_1
+//     addi    r16, r16, __xdisp32lo_1
+
+inline short getHiAdjusted(disp_t n)
+{
+   short lo = n & 0xFFFF;
+
+   return (short)(n >> 16);
+}
+
 inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address, AddressSpace* space)
 {
    addr_t base = space->imageBase + reference;
@@ -84,7 +95,7 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          addr_t addr = (base + space->stat);
          addr_t disp = addr - baseAddr;
 
-         *(short*)address += (short)(disp >> 16);
+         *(short*)address += getHiAdjusted(disp);
          break;
       }
       case mskStatXDisp32Lo:
@@ -102,7 +113,7 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          addr_t addr = (base + space->data);
          disp_t disp = addr - baseAddr;
 
-         *(short*)address += (short)(disp >> 16);
+         *(short*)address += getHiAdjusted(disp);
          break;
       }
       case mskDataXDisp32Lo:
@@ -120,7 +131,7 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          addr_t addr = (base + space->rdata);
          disp_t disp = addr - baseAddr;
 
-         *(short*)address += (short)(disp >> 16);
+         *(short*)address += getHiAdjusted(disp);
          break;
       }
       case mskRDataXDisp32Lo:
@@ -129,7 +140,7 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          addr_t addr = (base + space->rdata);
          addr_t disp = addr - baseAddr;
 
-         *(unsigned short*)address += (unsigned short)(disp & 0xFFFF);
+         *(unsigned short*)address += getHiAdjusted(disp);
          break;
       }
       case mskCodeXDisp32Lo:
