@@ -2833,6 +2833,8 @@ void JITCompiler64 :: writeInt32(MemoryWriter& writer, unsigned value)
 
 void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
+   printf("literal %s, %x \n", value.str(), writer.position());
+
    writer.writeString(value, value.length_pos() + 1);
    writer.align(8, 0);
 }
