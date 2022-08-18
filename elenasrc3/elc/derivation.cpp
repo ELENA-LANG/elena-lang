@@ -235,7 +235,6 @@ void SyntaxTreeBuilder :: flushTemplateType(SyntaxTreeWriter& writer, Scope& sco
 void SyntaxTreeBuilder :: flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
    SyntaxNode objNode = node.findChild(SyntaxKey::Object);
-   SyntaxNode argNode = objNode.nextNode();
 
    SyntaxNode current = objNode.firstChild();
    SyntaxNode identNode = objNode.lastChild(SyntaxKey::TerminalMask);

@@ -215,6 +215,13 @@ void PPC64Assembler :: readIOperand(ScriptToken& tokenInfo, int& value, ref_t& r
 
       read(tokenInfo);
    }
+   else if (tokenInfo.compare("stat")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      readPtrOperand(tokenInfo, value, reference, mskStatDataRef64, errorMessage);
+
+      read(tokenInfo);
+   }
    else if (tokenInfo.compare("code")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
