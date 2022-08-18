@@ -123,6 +123,7 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*
       case mskCodeRef64:
       case mskDataRef64:
       case mskMDataRef64:
+      case mskStatDataRef64:
          scope->helper->writeVAddress64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
             *(pos_t*)((char*)code + disp), mask);

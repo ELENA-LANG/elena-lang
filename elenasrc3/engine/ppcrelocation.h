@@ -93,7 +93,7 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          addr_t addr = (base + space->stat);
          addr_t disp = addr - baseAddr;
 
-         *(short*)address += (short)(disp & 0xFFFF);
+         *(unsigned short*)address += (unsigned short)(disp & 0xFFFF);
          break;
       }
       case mskDataXDisp32Hi:
