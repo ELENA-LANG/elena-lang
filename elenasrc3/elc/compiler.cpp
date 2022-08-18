@@ -1788,7 +1788,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Parameter) {
          declareParameter(scope, current, withoutWeakMessages, declarationMode, 
-            withoutWeakMessages, paramCount, signature, signatureLen);
+            weakSignature, paramCount, signature, signatureLen);
       }
       else break;
 

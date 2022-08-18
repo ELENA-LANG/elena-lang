@@ -1,5 +1,10 @@
 import system;
 
+A
+{
+    add(int n) {}
+}
+
 //A;
 
 singleton Tester
