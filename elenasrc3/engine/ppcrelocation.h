@@ -132,7 +132,8 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          addr_t addr = (base + space->rdata);
          disp_t disp = addr - baseAddr;
 
-         printf("addr %x, disp %x \n", addr, getHiAdjusted(disp));
+         printf("addr %llx, disp %x \n", addr, getHiAdjusted(disp));
+         fflush(stdout);
 
          *(short*)address += getHiAdjusted(disp);
          break;
