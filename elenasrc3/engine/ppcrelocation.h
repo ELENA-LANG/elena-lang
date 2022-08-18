@@ -7,13 +7,14 @@
 
 using namespace elena_lang;
 
-// HOTFIX : if the DWORD LO is over 0x7FFF - adjust DWORD HI (by adding 1) to be properly combined in the following code:
-//     addis   r16, r16, __xdisp32hi_1
-//     addi    r16, r16, __xdisp32lo_1
-
 inline short getHiAdjusted(disp_t n)
 {
+   // HOTFIX : if the DWORD LO is over 0x7FFF - adjust DWORD HI (by adding 1) to be properly combined in the following code:
+   //     addis   r16, r16, __xdisp32hi_1
+   //     addi    r16, r16, __xdisp32lo_1
    short lo = n & 0xFFFF;
+   if (lo < 0)
+      n += 0x10000;
 
    return (short)(n >> 16);
 }
@@ -140,7 +141,7 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          addr_t addr = (base + space->rdata);
          addr_t disp = addr - baseAddr;
 
-         *(unsigned short*)address += getHiAdjusted(disp);
+         *(unsigned short*)address += (short)(disp & 0xFFFF);
          break;
       }
       case mskCodeXDisp32Lo:
