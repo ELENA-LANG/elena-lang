@@ -476,8 +476,6 @@ ObjectInfo Compiler::MetaScope :: mapIdentifier(ustr_t identifier, bool referenc
       else {
          IdentifierString metaIdentifier(META_PREFIX, identifier);
 
-         NamespaceScope* ns = Scope::getScope<NamespaceScope>(*this, ScopeLevel::Namespace);
-
          // check if it is a meta dictionary
          ObjectInfo retVal = parent->mapIdentifier(*metaIdentifier, referenceOne, attr | EAttr::Meta);
          if (retVal.kind == ObjectKind::Unknown) {

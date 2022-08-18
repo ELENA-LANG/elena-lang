@@ -23,6 +23,7 @@ singleton Tester
 
 public program() 
 {
+   console.writeLine("0");
    console.writeLine(1);
 
    Tester.run();

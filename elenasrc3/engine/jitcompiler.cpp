@@ -206,7 +206,6 @@ void elena_lang :: loadLOp(JITCompilerScope* scope)
    MemoryWriter* writer = scope->codeWriter;
 
    void* code = scope->compiler->_inlines[0][scope->code()];
-   pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
 
    // simply copy correspondent inline code
