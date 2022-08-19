@@ -30,9 +30,13 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
       case mskSymbolRef:
       case mskProcedureRef:
          return _symbolReferences.get(referenceName);
-      case mskTypeListRef:
       case mskIntLiteralRef:
+         return _numberReferences.get(referenceName);
       case mskLiteralRef:
+         return _literalReferences.get(referenceName);
+      case mskCharacterRef:
+         return _characterReferences.get(referenceName);
+      case mskTypeListRef:
       case mskConstArray:
          return _constReferences.get(referenceName);
       case mskExternalRef:
@@ -56,9 +60,16 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
       case mskProcedureRef:
          _symbolReferences.add(referenceName, address);
          break;
-      case mskTypeListRef:
       case mskLiteralRef:
+         _literalReferences.add(referenceName, address);
+         break;
       case mskIntLiteralRef:
+         _numberReferences.add(referenceName, address);
+         break;
+      case mskCharacterRef:
+         _characterReferences.add(referenceName, address);
+         break;
+      case mskTypeListRef:
       case mskConstArray:
          _constReferences.add(referenceName, address);
          break;
@@ -121,7 +132,7 @@ void ReferenceMapper :: mapAction(ustr_t actionName, ref_t actionRef, ref_t sign
    ref_t nextNameId = _actionNames.count() + 1;
    ref_t nameId = mapKey(_actionNames, actionName, nextNameId);
 
-   ref_t refId = mapKey(_actions, encodeAction64(nameId, signRef), actionRef);
+   mapKey(_actions, encodeAction64(nameId, signRef), actionRef);
 }
 
 ref_t ReferenceMapper :: resolveAction(ustr_t actionName, ref_t signRef)
