@@ -1117,9 +1117,11 @@ end
 inline %0EFh
 
   ld      r16, toc_code(r2)
+
   addis   r17, r16, __xdisp32hi_1 
-  addis   r18, r16, __xdisp32hi_2 
   addi    r17, r16, __xdisp32lo_1 
+
+  addis   r18, r16, __xdisp32hi_2 
   addi    r18, r16, __xdisp32lo_2 
 
   isellt  r15, r17, r18
