@@ -1,30 +1,20 @@
 import system;
 
-A
-{
-    add(int n) {}
-}
-
-//A;
+A;
 
 singleton Tester
 {
    run()
    {
-       var inc := (x => x + 1 );
+      var a := new A();
 
-       console.writeLine(inc(2));
+      a \\ on((e){ console.writeLine(e) })
 
-      //var a := new A();
-
-      //a.fail() /*\\ on()*/
+      //a.fail() \\ on((e){ console.writeLine(e) })
    }
 }
 
 public program() 
 {
-   console.writeLine("0");
-   console.writeLine(1);
-
    Tester.run();
 }

@@ -108,6 +108,7 @@ namespace elena_lang
       PropertyOperation    = 0x0018C4,
       RedirectDispatch     = 0x001CC5,
       ResendDispatch       = 0x001CC6,
+      CatchOperation       = 0x001CC7,
 
       Name                 = 0x000101,
       Namespace            = 0x000103,

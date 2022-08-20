@@ -49,7 +49,7 @@ __define MESSAGE_OPERATION   6337;
 __define PROPERTY_OPERATION  6340;
 __define EXPRESSION          6288;
 __define L5_EXPRESSION       6289;
-__define SUB_EXPRESSION      6290;
+__define SINGLE_EXPRESSION   6290;
 __define L7_EXPRESSION       6291;
 __define ROOT_EXPRESSION     6292;
 __define L6_EXPRESSION       6293;
@@ -61,6 +61,7 @@ __define METHOD_POSTFIX      4194;
 __define TEMPLATE_ARG        4208;
 __define DIMENSION           5233;
 __define RESEND              7366;
+__define CATCH_OPERATION     7367;
 
 START ::= 
         NEXT_DECLARATION;
@@ -135,35 +136,35 @@ METHOD_BODY_OPT ::=
 	| ":" METHOD_POSTFIX METHOD_POSTFIXES METHOD_BODY;
 
 METHOD_BODY ::=
-	BLOCK
+	"{" BLOCK
 	| "=" RET_EXPRESSION DECLARATION_END
 	| "<=" RESEND RESEND_OPT
 	| NO_BODY;
 
 RESEND_OPT ::=
 	DECLARATION_END
-	| BLOCK;
+	| "{" BLOCK;
 
 NO_BODY ::=
 	";";
 
 BLOCK ::= 
-	"{" STATEMENTS END_OF_BLOCK;
+	STATEMENTS;
 
 STATEMENTS ::=
 	ROOT_EXPRESSION NEXT_STATEMENT
 	| "^" RET_EXPRESSION NEXT_LAST_STATEMENT
 	| "#include" INCLUDE_STATEMENT STATEMENTS
         | "#let" META_STATEMENT STATEMENTS
-	| eps;
+	| END_OF_BLOCK;
 
 NEXT_STATEMENT ::=
 	DECLARATION_END STATEMENTS
-	| eps;
+	| END_OF_BLOCK;
 
 NEXT_LAST_STATEMENT ::=
-	DECLARATION_END
-	| eps;
+	DECLARATION_END END_OF_BLOCK;
+	| END_OF_BLOCK;
 
 INCLUDE_STATEMENT ::=
 	INCLUDE_ARG INCLUDE_ARGS DECLARATION_END;
@@ -184,29 +185,53 @@ META_STATEMENT ::=
 
 ROOT_EXPRESSION ::=
         identifier RI_R
-	| reference O_R
-        | integer O_R
-        | hexinteger O_R
-        | string O_R
-        | character O_R
+	| reference O_Re
+        | integer O_Re
+        | hexinteger O_Re
+        | string O_Re
+        | character O_Re
 	| "$rep" EXPRESSION ^LOOP_OPERATION
-	| "$len" SUB_EXPRESSION ^LEN_OPERATION
-	| "$name" SUB_EXPRESSION ^NAME_OPERATION
-	| "!" SUB_EXPRESSION ^NOT_OPERATION
-	| BLOCK ^CLOSURE;
+	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
+	| "!" SINGLE_EXPRESSION ^NOT_OPERATION
+	| "{" BLOCK ^CLOSURE;
 
 EXPRESSION ::=
         identifier I_R
-	| reference O_R
-        | integer O_R
-        | hexinteger O_R
-        | string O_R
-        | character O_R
-        | "(" EXPRESSION ")" E_R
-	| "$len" SUB_EXPRESSION ^LEN_OPERATION
-	| "$name" SUB_EXPRESSION ^NAME_OPERATION
-	| "!" SUB_EXPRESSION ^NOT_OPERATION
-	| BLOCK ^CLOSURE;
+	| reference O_Re
+        | integer O_Re
+        | hexinteger O_Re
+        | string O_Re
+        | character O_Re
+        | "(" SUB_EXPRESSION
+	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
+	| "!" SINGLE_EXPRESSION ^NOT_OPERATION
+	| "{" BLOCK ^CLOSURE;
+
+SUB_EXPRESSION ::=
+	identifier SI_R
+	| reference O_Re ^EXPRESSION ")" E_R
+        | integer O_Re ^EXPRESSION ")" E_R
+        | hexinteger O_Re ^EXPRESSION ")" E_R
+        | string O_Re ^EXPRESSION ")" E_R
+        | character O_Re ^EXPRESSION ")" E_R
+	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION ^EXPRESSION ")" E_R
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION ^EXPRESSION ")" E_R
+	| "!" SINGLE_EXPRESSION ^NOT_OPERATION ^EXPRESSION ")" E_R
+	| "{" BLOCK ^CLOSURE ^EXPRESSION ")" E_R;
+
+SUB_SINGLE_EXPRESSION ::=
+	identifier SSI_R
+	| reference O_Re ")"
+        | integer O_Re ")"
+        | hexinteger O_Re ")"
+        | string O_Re ")"
+        | character O_Re ")"
+	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION ")"
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION ")"
+	| "!" SINGLE_EXPRESSION ^NOT_OPERATION ")"
+	| "{" BLOCK ^CLOSURE ")";
 
 RET_EXPRESSION ::=
 	EXPRESSION;
@@ -220,13 +245,13 @@ INIT_EXPRESSION ::=
 MESSAGE_PARAMETER ::=
 	EXPRESSION;
 
-SUB_EXPRESSION ::=
+SINGLE_EXPRESSION ::=
         identifier ^OBJECT
 	| reference ^OBJECT
         | integer ^OBJECT
         | hexinteger ^OBJECT
         | string ^OBJECT
-        | "(" EXPRESSION ")";
+	| "(" SUB_SINGLE_EXPRESSION;
 
 L4_EXPRESSION ::=
         identifier I4_R
@@ -244,14 +269,14 @@ L6_EXPRESSION ::=
         | hexinteger ^OBJECT;
 
 L7_EXPRESSION ::=
-	BLOCK ^ CLOSURE
-	| SUB_EXPRESSION;
+	"{" BLOCK ^ CLOSURE
+	| SINGLE_EXPRESSION;
 
 NESTED_EXPRESSION ::=
 	"{" SUB_DECLARATIONS "}";
 
 T_EXPRESSION ::=
-	 BLOCK;
+	 "{" BLOCK;
 
 T_EXPRESSIONS ::=
 	identifier T_EXPRESSION
@@ -268,6 +293,7 @@ RI_R ::=
 	| I_L6_R
 	| I_L6a_R
 	| IL7_R
+	| IL8_R
 	| NESTED_EXPRESSION ^NESTED N_R
         | eps ^OBJECT; 
 
@@ -275,9 +301,29 @@ I_R ::=
         identifier I_R
         | reference I_R
 	| "=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE
-	| O_R;
+	| O_Re;
 
-O_R ::=
+SI_R ::=
+	identifier SI_R 
+	| reference SI_R 
+	| ")" SI_Rf
+	| O_R ")" ^EXPRESSION E_R;
+
+SI_Rf ::=
+	"=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE
+        | "{" ^ PARAMETER BLOCK ^CLOSURE
+	| eps ^EXPRESSION E_R;
+
+SSI_R ::=
+	identifier SSI_R
+	| reference SSI_R
+	| O_R ")";
+
+O_Re ::=
+        O_R
+        | eps ^OBJECT; 
+
+O_R  ::=
         NESTED_EXPRESSION ^NESTED N_R
         | I_L0_R
 	| I_L1_R
@@ -288,13 +334,14 @@ O_R ::=
 	| I_L6_R
 	| I_L6a_R
 	| IL7_R
-	| DYNAMIC_DIMENSION ^OBJECT ^ARRAY_TYPE TEMPLATE_R
-        | eps ^OBJECT; 
+	| IL8_R
+	| DYNAMIC_DIMENSION ^OBJECT ^ARRAY_TYPE TEMPLATE_R; 
 
 E_R ::=
 	L4_R
 	| L5_R
 	| L7_R
+	| L8_R
 	| eps;
 
 TEMPLATE_R ::=
@@ -343,6 +390,9 @@ L3_R ::=
 	"." MESSAGE MESSAGE_R;
 
 RESEND ::= 
+	MESSAGE MESSAGE_R;
+
+CATCH ::=
 	MESSAGE MESSAGE_R;
 
 L3s ::=
@@ -400,6 +450,12 @@ L7_R ::=
 L7_IF_R ::=
 	eps ^IF_OPERATION
 	| ":" L7_EXPRESSION ^IF_ELSE_OPERATION;
+
+IL8_R ::=
+	"\\" ^OBJECT CATCH ^CATCH_OPERATION;
+
+L8_R ::=
+	"\\" CATCH_OPERATION;
 
 NEXT_L3_R ::=
 	"." MESSAGE MESSAGE_R NEXT_L3_R

@@ -610,6 +610,11 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
    tape.releaseLabel();
 }
 
+void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths)
+{
+   BuildNode tapeNode = node.findChild(BuildKey::Tape);
+}
+
 void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)
 {
    BuildNode current = node.firstChild();
@@ -648,6 +653,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::LoopOp:
             saveLoop(tape, current, tapeScope, paths);
+            break;
+         case BuildKey::CatchOp:
+            saveCatching(tape, current, tapeScope, paths);
             break;
          default:
             _commands[(int)current.key](tape, current, tapeScope);

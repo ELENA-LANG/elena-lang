@@ -83,6 +83,7 @@ namespace elena_lang
       DeclOp               = 0x003D,
       DeclDictionaryOp     = 0x003E,
       LoopOp               = 0x003F,
+      CatchOp              = 0x0040,
 
       NestedClass          = 0x0080,
 

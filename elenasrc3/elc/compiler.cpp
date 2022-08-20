@@ -36,15 +36,15 @@ MethodHint operator & (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l & (unsigned int)r);
 }
 
-//inline void testNodes(SyntaxNode node)
-//{
-//   SyntaxNode current = node.firstChild();
-//   while (current != SyntaxKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 // --- Interpreter ---
 
@@ -4490,6 +4490,13 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    return retVal;
 }
 
+ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, SyntaxNode node)
+{
+   testNodes(node);
+
+   return {};
+}
+
 ObjectInfo Compiler :: mapStringConstant(Scope& scope, SyntaxNode node)
 {
    return { ObjectKind::StringLiteral, { V_STRING }, scope.module->mapConstant(node.identifier()) };
@@ -4926,6 +4933,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::LoopOperation:
          retVal = compileLoopExpression(writer, scope, current.firstChild(), mode);
+         break;
+      case SyntaxKey::CatchOperation:
+         retVal = compileCatchOperation(writer, current);
          break;
       case SyntaxKey::ReturnExpression:
          retVal = compileExpression(writer, scope, current.firstChild(), 0, mode);

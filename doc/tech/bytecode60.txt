@@ -236,5 +236,9 @@ ELENA byte codes (or ecodes)
 
  Misc operations:
  ---------------- 
+   hook  dp:i, label        - set a handler to the specified label
+
    throw                    - raise an exception (acc contains the exception object)
+
+   xhook dp:i, r            - set a handler to the specified address
 
