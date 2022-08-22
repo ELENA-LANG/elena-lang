@@ -184,6 +184,7 @@ enum class ProjectOption
    RawStackAlignment,
    GCMGSize,
    GCYGSize,
+   EHTableEntrySize,
 
    // flags
    DebugMode,
@@ -366,6 +367,7 @@ public:
    IdentifierString     declVar;
 
    pos_t                stackAlingment, rawStackAlingment;
+   pos_t                ehTableEntrySize;
    int                  minimalArgList;
 
    Map<ref_t, SizeInfo> cachedSizes;
@@ -410,6 +412,7 @@ public:
       ModuleBase* debugModule,
       pos_t stackAlingment, 
       pos_t rawStackAlingment,
+      pos_t ehTableEntrySize,
       int minimalArgList
    ) :
       predefined(0),
@@ -422,6 +425,7 @@ public:
       this->debugModule = debugModule;
       this->stackAlingment = stackAlingment;
       this->rawStackAlingment = rawStackAlingment;
+      this->ehTableEntrySize = ehTableEntrySize;
       this->minimalArgList = minimalArgList;
    }
 };

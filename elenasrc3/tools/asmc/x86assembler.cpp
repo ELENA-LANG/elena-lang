@@ -1451,6 +1451,11 @@ bool X86Assembler :: compileTest(X86Operand source, X86Operand target, MemoryWri
       writer.writeByte(0x85);
       X86Helper::writeModRM(writer, target, source);
    }
+   else if (source.isR32_M32() && target.type == X86OperandType::DD) {
+      writer.writeByte(0xF7);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 0), source);
+      X86Helper::writeImm(writer, target);   
+   }
    else return false;
 
    return true;

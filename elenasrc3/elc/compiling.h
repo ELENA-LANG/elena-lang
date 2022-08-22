@@ -72,6 +72,7 @@ namespace elena_lang
          ForwardResolverBase* forwardResolver,
          pos_t stackAlingment,
          pos_t rawStackAlingment,
+         pos_t ehTableEntrySize,
          int minimalArgList,
          bool withDebug);
 
@@ -80,6 +81,7 @@ namespace elena_lang
       void compile(ProjectBase& project, 
          pos_t defaultStackAlignment, 
          pos_t defaultRawStackAlignment,
+         pos_t defaultEHTableEntrySize,
          int minimalArgList);
       void link(ProjectBase& project, LinkerBase& linker);
 
@@ -89,6 +91,7 @@ namespace elena_lang
          LinkerBase& linker, 
          pos_t defaultStackAlignment, 
          pos_t defaultRawStackAlignment,
+         pos_t defaultEHTableEntrySize,
          int minimalArgList);
       int clean(ProjectBase& project);
 

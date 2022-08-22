@@ -612,28 +612,37 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
 
 void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths)
 {
-   int catchLabel = tape.newLabel();
    int eosLabel = tape.newLabel();
+   int catchLabel = tape.newLabel();
+
+   tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel);
 
    BuildNode tryNode = node.findChild(BuildKey::Tape);
    saveTape(tape, tryNode, tapeScope, paths, false);
 
-   tape.write(ByteCode::Jump, PseudoArg::CurrentLabel);
+   tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
 
+   // hook:
    tape.setLabel();
-   tape.releaseLabel();
 
-   // check elMessage
+   tape.newLabel();
+   // tstflg elMessage
+   tape.write(ByteCode::TstFlag, elMessage);
    // jne labSkip
+   tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
    // load
-   // callvi 0
+   tape.write(ByteCode::Load);
+   // callvi 0   
+   tape.write(ByteCode::CallVI);
    // labSkip:
+   tape.setLabel();
 
    BuildNode catchNode = tryNode.nextNode(BuildKey::Tape);
    saveTape(tape, catchNode, tapeScope, paths, false);
 
+   // eos:
    tape.setLabel();
-   tape.releaseLabel();
+   tape.write(ByteCode::Unhook);
 }
 
 void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)

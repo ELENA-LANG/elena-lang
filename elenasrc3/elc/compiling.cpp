@@ -308,6 +308,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
    ForwardResolverBase* forwardResolver,
    pos_t stackAlingment,
    pos_t rawStackAlingment,
+   pos_t ehTableEntrySize,
    int minimalArgList,
    bool withDebug)
 {
@@ -316,7 +317,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
       forwardResolver,
       _libraryProvider.createModule(module_it.name()),
       withDebug ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
-      stackAlingment, rawStackAlingment, minimalArgList);
+      stackAlingment, rawStackAlingment, ehTableEntrySize, minimalArgList);
 
    _compiler->prepare(&moduleScope, forwardResolver);
 
@@ -373,6 +374,7 @@ void CompilingProcess :: configurate(ProjectBase& project)
 void CompilingProcess :: compile(ProjectBase& project,
    pos_t defaultStackAlignment,
    pos_t defaultRawStackAlignment,
+   pos_t defaultEHTableEntrySize,
    int minimalArgList)
 {
    if (_parser == nullptr) {
@@ -388,6 +390,7 @@ void CompilingProcess :: compile(ProjectBase& project,
          *module_it, &syntaxTree, &project,         
          project.IntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
          project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
+         project.IntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
          minimalArgList,
          project.BoolSetting(ProjectOption::DebugMode, true));
 
@@ -481,6 +484,7 @@ int CompilingProcess :: build(ProjectBase& project,
    LinkerBase& linker,
    pos_t defaultStackAlignment,
    pos_t defaultRawStackAlignment,
+   pos_t defaultEHTableEntrySize,
    int minimalArgList)
 {
    try
@@ -496,7 +500,7 @@ int CompilingProcess :: build(ProjectBase& project,
       _presenter->print(ELC_CLEANING);
       cleanUp(project);
 
-      compile(project, defaultStackAlignment, defaultRawStackAlignment, minimalArgList);
+      compile(project, defaultStackAlignment, defaultRawStackAlignment, defaultEHTableEntrySize, minimalArgList);
 
       // generating target when required
       switch (targetType) {

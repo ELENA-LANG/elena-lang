@@ -36,15 +36,15 @@ MethodHint operator & (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l & (unsigned int)r);
 }
 
-inline void testNodes(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      testNodes(current);
-
-      current = current.nextNode();
-   }
-}
+//inline void testNodes(SyntaxNode node)
+//{
+//   SyntaxNode current = node.firstChild();
+//   while (current != SyntaxKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Interpreter ---
 
@@ -4492,12 +4492,12 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
 ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
 {
+   ObjectInfo ehLocal = declareTempStructure(scope, scope.moduleScope->ehTableEntrySize);
+
    SyntaxNode catchNode = node.findChild(SyntaxKey::CatchDispatch);
    SyntaxNode opNode = node.firstChild();
    if (opNode.existChild(SyntaxKey::ClosureBlock))
       opNode = opNode.findChild(SyntaxKey::ClosureBlock);
-
-   testNodes(node);
 
    writer.newNode(BuildKey::CatchOp);
 

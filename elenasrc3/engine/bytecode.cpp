@@ -15,7 +15,7 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 const char* _fnOpcodes[256] =
 {
    "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
-   "class", "save", "throw", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "class", "save", "throw", "unhook", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -572,6 +572,11 @@ void CommandTape :: write(ByteCode code, arg_t arg1)
 void CommandTape :: write(ByteCode code, PseudoArg arg)
 {
    write(code, resolvePseudoArg(arg));
+}
+
+void CommandTape :: write(ByteCode code, arg_t arg1, PseudoArg arg2)
+{
+   write(code, arg1, resolvePseudoArg(arg2));
 }
 
 void CommandTape :: write(ByteCode code, arg_t arg1, arg_t arg2)

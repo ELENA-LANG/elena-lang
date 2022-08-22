@@ -28,6 +28,7 @@ namespace elena_lang
       Class          = 0x08,
       Save           = 0x09,
       Throw          = 0x0A,  
+      Unhook         = 0x0B,
 
       MaxSingleOp    = 0x7F,
 
@@ -190,6 +191,7 @@ namespace elena_lang
       void write(ByteCode code, arg_t arg1);
       void write(ByteCode code, arg_t arg1, arg_t arg2);
       void write(ByteCode code, PseudoArg arg);
+      void write(ByteCode code, arg_t arg1, PseudoArg arg2);
 
       void import(ModuleBase* sourceModule, MemoryBase* source, bool withHeader, SectionScopeBase* target);
 

@@ -91,8 +91,9 @@ public:
       ModuleBase* debugModule,
       pos_t stackAlingment,
       pos_t rawStackAlingment,
+      pos_t ehTableEntrySize,
       int minimalArgList)
-      : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, minimalArgList)
+      : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, minimalArgList)
    {
       this->loader = loader;
       this->forwardResolver = forwardResolver;
