@@ -214,6 +214,19 @@ inline %0Ah
 
 end
 
+// ; unhook
+inline %0Bh
+
+  mov  edi, [data : %CORE_ET_TABLE + et_current]
+
+  mov  eax, [edi + es_prev_struct]
+  mov  ebp, [edi + es_catch_frame]
+  mov  esp, [edi + es_catch_level]
+
+  mov  [data : %CORE_ET_TABLE + et_current], eax
+
+end
+
 // ; setr
 inline %80h
 

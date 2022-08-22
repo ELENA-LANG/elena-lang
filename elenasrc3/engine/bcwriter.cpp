@@ -620,21 +620,27 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    BuildNode tryNode = node.findChild(BuildKey::Tape);
    saveTape(tape, tryNode, tapeScope, paths, false);
 
+   // unhook
+   tape.write(ByteCode::Unhook);
+
+   // jump
    tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
 
-   // hook:
+   // catchLabel:
    tape.setLabel();
 
-   tape.newLabel();
+   // unhook
    // tstflg elMessage
-   tape.write(ByteCode::TstFlag, elMessage);
    // jne labSkip
-   tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
    // load
-   tape.write(ByteCode::Load);
    // callvi 0   
-   tape.write(ByteCode::CallVI);
    // labSkip:
+   tape.newLabel();
+   tape.write(ByteCode::Unhook);
+   tape.write(ByteCode::TstFlag, elMessage);
+   tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+   tape.write(ByteCode::Load);
+   tape.write(ByteCode::CallVI);
    tape.setLabel();
 
    BuildNode catchNode = tryNode.nextNode(BuildKey::Tape);
@@ -642,7 +648,6 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
 
    // eos:
    tape.setLabel();
-   tape.write(ByteCode::Unhook);
 }
 
 void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)

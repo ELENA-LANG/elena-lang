@@ -253,6 +253,23 @@ inline %0Ah
 
 end
 
+// ; unhook
+inline %0Bh
+
+  ld      r14, toc_data(r2)
+  addis   r14, r14, data_disp32hi : %CORE_ET_TABLE
+  addi    r14, r14, data_disp32lo : %CORE_ET_TABLE
+
+  ld      r19, et_current(r14)
+
+  ld      r15, es_prev_struct(r19)
+  ld      r1, es_catch_level(r19)
+  ld      r31, es_catch_frame(r19)
+
+  std     r15, et_current(r14)
+
+end
+
 // ; setr
 inline %80h
 

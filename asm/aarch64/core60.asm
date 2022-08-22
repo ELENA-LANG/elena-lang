@@ -231,6 +231,25 @@ inline %0Ah
 
 end
 
+// ; unhook
+inline %0Bh
+
+  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
+  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+
+  add     x14, x14, # et_current
+  ldr     x13, [x14]
+
+
+  ldr     x15, [x13]
+  ldr     x16, [x13, #8]!
+  ldr     x17, [x13, #8]!
+  ldr     x29, [x13, #8]!
+
+  mov     sp, x17
+
+end
+
 // ; setr
 inline %80h
 

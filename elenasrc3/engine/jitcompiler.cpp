@@ -19,7 +19,7 @@ using namespace elena_lang;
 CodeGenerator _codeGenerators[256] =
 {
    loadNop, compileBreakpoint, loadNop, loadOp, loadOp, loadOp, loadOp, loadOp,
-   loadOp, loadOp, loadOp, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadOp, loadOp, loadOp, loadOp, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -89,7 +89,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 64;
+constexpr size_t bcCommandNumber = 65;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -104,7 +104,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::ICmpN, ByteCode::SelLtRR, ByteCode::XAssignI, ByteCode::GetI, ByteCode::PeekR,
    ByteCode::StoreR, ByteCode::Class, ByteCode::NSaveDPN, ByteCode::Save, ByteCode::AndN,
    ByteCode::ReadN, ByteCode::WriteN, ByteCode::CreateNR, ByteCode::Throw, ByteCode::XHookDPR,
-   ByteCode::CmpN, ByteCode::MovN, ByteCode::XNewNR, ByteCode::TstFlag
+   ByteCode::CmpN, ByteCode::MovN, ByteCode::XNewNR, ByteCode::TstFlag, ByteCode::Unhook
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/,

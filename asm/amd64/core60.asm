@@ -215,6 +215,19 @@ inline %0Ah
 
 end
 
+// ; unhook
+inline %0Bh
+
+  mov  rdi, [data : %CORE_ET_TABLE + et_current]
+
+  mov  rax, [rdi + es_prev_struct]
+  mov  rbp, [rdi + es_catch_frame]
+  mov  rsp, [rdi + es_catch_level]
+
+  mov  [data : %CORE_ET_TABLE + et_current], rax
+
+end
+
 // ; setr
 inline %80h
 
