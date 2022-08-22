@@ -66,6 +66,7 @@ namespace elena_lang
 
       CmpR           = 0xC0,
       ICmpN          = 0xC2,
+      TstFlag        = 0xC3,
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
 

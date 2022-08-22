@@ -11,7 +11,7 @@
 
 namespace elena_lang
 {
-   #define ECV_REVISION_NUMBER               0x002D
+   #define ECV_REVISION_NUMBER               0x002E
 
    constexpr auto ECV_GREETING = "ELENA command line ByteCode Viewer %d.%d.%d (C)2021-22 by Aleksey Rakov\n";
 

@@ -595,6 +595,12 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
 
    if (test(info.header.flags, elExtension))
       info.header.flags |= elSealed;
+
+   if (isWrapper(info)) {
+      auto inner = *info.fields.start();
+      if (inner.typeInfo.typeRef == V_MESSAGE)
+         info.header.flags |= elMessage;
+   }
 }
 
 void CompilerLogic :: tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef)

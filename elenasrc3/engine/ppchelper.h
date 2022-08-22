@@ -197,6 +197,33 @@ namespace elena_lang
                PPCHelper::fixBCommand(opcode, offset);
             }
          }
+
+         for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
+            auto info = *a_it;
+            int offset = writer.position() - info.position - 4;
+
+            switch (info.mask) {
+               case mskXDisp32Hi:
+               {
+                  offset >>= 4;
+
+                  writer.Memory()->addReference(mskCodeXDisp32Hi, writer.position());
+                  PPCHelper::fixBCommand(writer.Memory()->get(writer.position()), offset);
+                  break;
+               }
+               case mskXDisp32Lo:
+               {
+                  offset &= 0xFFFF;
+
+                  writer.Memory()->addReference(mskCodeXDisp32Lo, writer.position());
+                  PPCHelper::fixBCommand(writer.Memory()->get(writer.position()), offset);
+                  break;
+               }
+            default:
+               break;
+            }
+         }
+
          return true;
       }
 

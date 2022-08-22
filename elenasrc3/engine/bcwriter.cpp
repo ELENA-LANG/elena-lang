@@ -612,7 +612,28 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
 
 void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths)
 {
-   BuildNode tapeNode = node.findChild(BuildKey::Tape);
+   int catchLabel = tape.newLabel();
+   int eosLabel = tape.newLabel();
+
+   BuildNode tryNode = node.findChild(BuildKey::Tape);
+   saveTape(tape, tryNode, tapeScope, paths, false);
+
+   tape.write(ByteCode::Jump, PseudoArg::CurrentLabel);
+
+   tape.setLabel();
+   tape.releaseLabel();
+
+   // check elMessage
+   // jne labSkip
+   // load
+   // callvi 0
+   // labSkip:
+
+   BuildNode catchNode = tryNode.nextNode(BuildKey::Tape);
+   saveTape(tape, catchNode, tapeScope, paths, false);
+
+   tape.setLabel();
+   tape.releaseLabel();
 }
 
 void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)

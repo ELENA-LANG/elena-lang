@@ -62,6 +62,7 @@ __define TEMPLATE_ARG        4208;
 __define DIMENSION           5233;
 __define RESEND              7366;
 __define CATCH_OPERATION     7367;
+__define CATCH               7368;
 
 START ::= 
         NEXT_DECLARATION;

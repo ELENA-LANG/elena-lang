@@ -218,6 +218,10 @@ ELENA byte codes (or ecodes)
 
  Comparison operations:
  ----------------------
+   tstflg n                 - temp := acc::VMT::flag & n 
+                              COMP.EQ := (temp == 0);
+
+
    cmp  fp:i                - COMP.EQ := (acc == fp[i]);
 
    cmp  sp:i                - COMP.EQ := (acc == sp[i]);

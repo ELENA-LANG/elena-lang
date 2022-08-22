@@ -131,6 +131,7 @@ namespace elena_lang
    constexpr ref_t elStructureWrapper     = 0x00004800;
    constexpr ref_t elDynamicRole          = 0x00008000;
    constexpr ref_t elExtension            = 0x0000110C;
+   constexpr ref_t elMessage              = 0x00200000;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -242,6 +243,7 @@ namespace elena_lang
    constexpr ref_t mskNameLiteralRef      = 0x1A000000u;
    constexpr ref_t mskPathLiteralRef      = 0x1B000000u;
    constexpr ref_t mskMssgLiteralRef      = 0x1B000000u;
+   constexpr ref_t mskLabelRef            = 0x1C000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;
@@ -365,6 +367,8 @@ namespace elena_lang
    constexpr ref_t XDISP32LO_1            = 0x00000024u;
    constexpr ref_t XDISP32HI_2            = 0x00000025u;
    constexpr ref_t XDISP32LO_2            = 0x00000026u;
+   constexpr ref_t NARG16HI_1             = 0x00000027u;
+   constexpr ref_t NARG16LO_1             = 0x00000028u;
 
    // predefined debug module sections
    constexpr ref_t DEBUG_LINEINFO_ID      = -1;

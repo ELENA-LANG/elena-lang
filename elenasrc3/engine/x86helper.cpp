@@ -177,6 +177,22 @@ bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
       it = jumps.nextIt(label, it);
    }
 
+   for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
+      auto info = *a_it;
+      int offset = writer.position() - info.position - 4;
+
+      switch (info.mask) {
+         case mskRef32:
+            writer.writeDReference(mskCodeRef32, offset);
+            break;
+         case mskRef64:
+            writer.writeQReference(mskCodeRef64, offset);
+            break;
+         default:
+            break;
+      }
+   }
+
    return true;
 }
 

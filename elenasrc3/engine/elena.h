@@ -413,6 +413,8 @@ namespace elena_lang
 
       virtual void writeJneBack(pos_t label, MemoryWriter& writer) = 0;
       virtual void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
+      virtual void writeLabelAddress(pos_t label, MemoryWriter& writer, ref_t mask) = 0;
    };
 
    // --- JITCompilerBase ---

@@ -719,12 +719,27 @@ inline %2C2h
 end
 
 // ; icmpdpn 8
-inline %4EFh
+inline %4C2h
 
   ldr     x17, [x0]
   ldr     x18, [x10]
 
   cmp     x17, x18
+
+end
+
+// ; tstflg
+inline %0C3h
+
+  sub     x14, x10, elVMTOffset              
+  ldr     x14, [x14]              
+  sub     x14, x14, elVMTFlagOffset
+  ldr     x14, [x14]              
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  tst     x14, x11
 
 end
 

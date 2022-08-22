@@ -755,6 +755,19 @@ inline %4C2h
 
 end
 
+// ; tstflg
+inline %0C3h
+
+  ld      r16, -elVMTOffset(r15)
+  ld      r16, -elVMTFlagOffset(r16)
+
+  li      r17, __n16lo_1
+  addis   r17, r17, __n16hi_1
+
+  and.    r17, r17, r16
+
+end
+
 // ; cmpfi
 inline %0C8h
 

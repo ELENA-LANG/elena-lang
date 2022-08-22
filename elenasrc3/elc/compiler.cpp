@@ -4490,9 +4490,38 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    return retVal;
 }
 
-ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, SyntaxNode node)
+ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
 {
+   SyntaxNode catchNode = node.findChild(SyntaxKey::CatchDispatch);
+   SyntaxNode opNode = node.firstChild();
+   if (opNode.existChild(SyntaxKey::ClosureBlock))
+      opNode = opNode.findChild(SyntaxKey::ClosureBlock);
+
    testNodes(node);
+
+   writer.newNode(BuildKey::CatchOp);
+
+   writer.newNode(BuildKey::Tape);
+   compileExpression(writer, scope, opNode, 0, EAttr::None);
+   writer.closeNode();
+
+   writer.newNode(BuildKey::Tape);
+
+   mssg_t messageRef = mapMessage(scope, catchNode.firstChild(), false, false);
+   ArgumentsInfo arguments;
+
+   if (!test(messageRef, FUNCTION_MESSAGE)) {
+      arguments.add({ ObjectKind::Object });
+   }
+
+   ref_t implicitSignatureRef = compileMessageArguments(writer, scope, catchNode.firstChild(), arguments, EAttr::NoPrimitives);
+
+   compileMessageOperation(writer, scope, node, { ObjectKind::Object }, messageRef,
+      implicitSignatureRef, arguments, EAttr::None);
+
+   writer.closeNode();
+
+   writer.closeNode();
 
    return {};
 }
@@ -4935,7 +4964,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          retVal = compileLoopExpression(writer, scope, current.firstChild(), mode);
          break;
       case SyntaxKey::CatchOperation:
-         retVal = compileCatchOperation(writer, current);
+         retVal = compileCatchOperation(writer, scope, current);
          break;
       case SyntaxKey::ReturnExpression:
          retVal = compileExpression(writer, scope, current.firstChild(), 0, mode);

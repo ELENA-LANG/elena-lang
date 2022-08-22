@@ -621,6 +621,15 @@ inline %4C2h
 
 end
 
+// ; tstflg
+inline %0C3h
+
+  mov  rcx, [rbx - elVMTOffset] 
+  mov  rax, [rcx - elVMTFlagOffset]
+  test eax, __n_1
+
+end
+
 // ; cmpfi
 inline %0C8h
 

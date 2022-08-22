@@ -545,14 +545,23 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elDynamicRole)) {
       printLineAndCount("@flag ", "elDynamicRole", row, pageSize);
    }
+   if (test(flags, elExtension)) {
+      printLineAndCount("@flag ", "elExtension", row, pageSize);
+   }
    if (test(flags, elFinal)) {
       printLineAndCount("@flag ", "elFinal", row, pageSize);
    }
    if (test(flags, elNestedClass)) {
       printLineAndCount("@flag ", "elNestedClass", row, pageSize);
    }
+   if (test(flags, elNoCustomDispatcher)) {
+      printLineAndCount("@flag ", "elNoCustomDispatcher", row, pageSize);
+   }
    if (test(flags, elNonStructureRole)) {
       printLineAndCount("@flag ", "elNonStructureRole", row, pageSize);
+   }
+   if (test(flags, elMessage)) {
+      printLineAndCount("@flag ", "elMessage", row, pageSize);
    }
    if (test(flags, elReadOnlyRole)) {
       printLineAndCount("@flag ", "elReadOnlyRole", row, pageSize);
@@ -569,17 +578,11 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elStructureRole)) {
       printLineAndCount("@flag ", "elStructureRole", row, pageSize);
    }
-   if (test(flags, elWrapper)) {
-      printLineAndCount("@flag ", "elWrapper", row, pageSize);
-   }
-   if (test(flags, elNoCustomDispatcher)) {
-      printLineAndCount("@flag ", "elNoCustomDispatcher", row, pageSize);
-   }
    if (test(flags, elStructureWrapper)) {
       printLineAndCount("@flag ", "elStructureWrapper", row, pageSize);
    }
-   if (test(flags, elExtension)) {
-      printLineAndCount("@flag ", "elExtension", row, pageSize);
+   if (test(flags, elWrapper)) {
+      printLineAndCount("@flag ", "elWrapper", row, pageSize);
    }
 }
 

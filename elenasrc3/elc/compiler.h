@@ -920,7 +920,7 @@ namespace elena_lang
       ObjectInfo compileIndexerOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
       ObjectInfo compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
       ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
-      ObjectInfo compileCatchOperation(BuildTreeWriter& writer, SyntaxNode node);
+      ObjectInfo compileCatchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
 
       ObjectInfo mapStringConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapCharacterConstant(Scope& scope, SyntaxNode node);
