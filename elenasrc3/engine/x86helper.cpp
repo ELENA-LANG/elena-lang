@@ -179,14 +179,16 @@ bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
 
    for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
       auto info = *a_it;
-      int offset = writer.position() - info.position - 4;
+      int addr = writer.position() - info.position - 4;
 
       switch (info.mask) {
          case mskRef32:
-            writer.writeDReference(mskCodeRef32, offset);
+            MemoryBase::writeDWord(writer.Memory(), info.position, writer.position());
+            writer.Memory()->addReference(mskCodeRef32, info.position);
             break;
          case mskRef64:
-            writer.writeQReference(mskCodeRef64, offset);
+            MemoryBase::writeDWord(writer.Memory(), info.position, writer.position());
+            writer.Memory()->addReference(mskCodeRef64, info.position);
             break;
          default:
             break;

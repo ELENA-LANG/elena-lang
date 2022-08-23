@@ -629,19 +629,21 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    // catchLabel:
    tape.setLabel();
 
-   // unhook
    // tstflg elMessage
-   // jne labSkip
+   // jeq labSkip
    // load
+   // peeksi 0
    // callvi 0   
    // labSkip:
+   // unhook
    tape.newLabel();
-   tape.write(ByteCode::Unhook);
    tape.write(ByteCode::TstFlag, elMessage);
-   tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+   tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
    tape.write(ByteCode::Load);
+   tape.write(ByteCode::PeekSI);
    tape.write(ByteCode::CallVI);
    tape.setLabel();
+   tape.write(ByteCode::Unhook);
 
    BuildNode catchNode = tryNode.nextNode(BuildKey::Tape);
    saveTape(tape, catchNode, tapeScope, paths, false);

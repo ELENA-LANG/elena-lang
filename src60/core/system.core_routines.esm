@@ -32,6 +32,7 @@ procedure __object_dispatcher
   store      sp:0
 
   set        mssgconst : "new[3]"
+  throw
 
 end
 

@@ -1241,10 +1241,10 @@ bool X86Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWrit
    }
    else if (source.type == X86OperandType::Disp32 && target.type == X86OperandType::EAX) {
       writer.writeByte(0xA3);
-      if (target.reference != 0) {
-         writer.writeDReference(target.reference, target.offset);
+      if (source.reference != 0) {
+         writer.writeDReference(source.reference, source.offset);
       }
-      else writer.writeDWord(target.offset);
+      else writer.writeDWord(source.offset);
    }
    else if (source.isR32() && target.isDB_DD()) {
       target.type = X86OperandType::DD;

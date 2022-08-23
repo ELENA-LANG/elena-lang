@@ -958,7 +958,7 @@ end
 // ; xnewnr
 inline %0E7h
 
-  lea  ebx, [eax + elObjectOffset]
+  lea  ebx, [ebx + elObjectOffset]
   mov  ecx, __n_1
   mov  eax, __ptr32_2
   mov  [ebx - elVMTOffset], eax

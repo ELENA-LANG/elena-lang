@@ -861,7 +861,7 @@ end
 // ; xnewnr n, r
 inline %0E7h
 
-  lea  rbx, [rax + elObjectOffset]
+  lea  rbx, [rbx + elObjectOffset]
 
   mov  ecx, __n_1
   mov  rax, __ptr64_2

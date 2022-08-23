@@ -614,11 +614,13 @@ namespace elena_lang
          }
          int allocLocalAddress(int size)
          {
+            int retVal = allocated2;
+
             allocated2 += align(size, moduleScope->rawStackAlingment);
             if (allocated2 > reserved2)
                reserved2 = allocated2;
 
-            return allocated2;
+            return retVal;
          }
 
          ObjectInfo mapLocal(ustr_t identifier);

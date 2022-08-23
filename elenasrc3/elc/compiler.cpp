@@ -3312,19 +3312,19 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
    }
 }
 
-inline int newLocalAddr(int allocated)
+inline int newLocalAddr(int disp, int allocated)
 {
-   return -allocated;
+   return -disp - allocated;
 }
 
 int Compiler :: allocateLocalAddress(CodeScope* codeScope, int size, bool binaryArray)
 {
-   int retVal = codeScope->allocLocalAddress(size);
-
    if (binaryArray)
       codeScope->allocLocalAddress(4);
 
-   return newLocalAddr(retVal);
+   int retVal = codeScope->allocLocalAddress(size);
+
+   return newLocalAddr(align(1, codeScope->moduleScope->rawStackAlingment), retVal);
 }
 
 int Compiler :: resolveArraySize(Scope& scope, SyntaxNode node)
@@ -4499,7 +4499,7 @@ ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope&
    if (opNode.existChild(SyntaxKey::ClosureBlock))
       opNode = opNode.findChild(SyntaxKey::ClosureBlock);
 
-   writer.newNode(BuildKey::CatchOp);
+   writer.newNode(BuildKey::CatchOp, ehLocal.argument);
 
    writer.newNode(BuildKey::Tape);
    compileExpression(writer, scope, opNode, 0, EAttr::None);

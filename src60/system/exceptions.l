@@ -1,6 +1,7 @@
 // --- Exception ---
 public class Exception
 {
+   on((handler) : external<system'core_routines'__object_dispatcher>;
 }
 
 // --- CriticalException ---
@@ -26,4 +27,7 @@ public class OutOfMemoryException : Exception
 // --- MethodNotFoundException ---
 public class MethodNotFoundException : Exception
 {
+   constructor new(object target, message mssg)
+   {
+   }
 }
