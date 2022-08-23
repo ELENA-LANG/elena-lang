@@ -74,7 +74,7 @@ void fixJumps(MemoryBase* code, int labelPosition, Map<int, int>& jumps, int lab
          code->write(*it, &position, 4);
       }
       else if (it.key() == (label | mskLabelRef)) {
-         int position = (labelPosition - *it - 4) | mskLabelRef;
+         int position = labelPosition | mskLabelRef;
          code->write(*it, &position, 4);
       }
       ++it;
