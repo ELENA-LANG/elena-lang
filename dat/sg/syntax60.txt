@@ -210,6 +210,14 @@ EXPRESSION ::=
 	| "!" SINGLE_EXPRESSION ^NOT_OPERATION
 	| "{" BLOCK ^CLOSURE;
 
+SINGLE_EXPRESSION ::=
+        identifier ^OBJECT
+	| reference ^OBJECT
+        | integer ^OBJECT
+        | hexinteger ^OBJECT
+        | string ^OBJECT
+	| "(" SUB_SINGLE_EXPRESSION;
+
 SUB_EXPRESSION ::=
 	identifier SI_R
 	| reference O_Re ^EXPRESSION ")" E_R
@@ -246,14 +254,6 @@ INIT_EXPRESSION ::=
 MESSAGE_PARAMETER ::=
 	EXPRESSION;
 
-SINGLE_EXPRESSION ::=
-        identifier ^OBJECT
-	| reference ^OBJECT
-        | integer ^OBJECT
-        | hexinteger ^OBJECT
-        | string ^OBJECT
-	| "(" SUB_SINGLE_EXPRESSION;
-
 L4_EXPRESSION ::=
         identifier I4_R
         | integer ^OBJECT
@@ -288,7 +288,7 @@ RI_R ::=
         | I_L0_R
 	| I_L1_R
 	| RI_L2_R
-	| I_L3_R NEXT_L3_R
+	| I_L3_R L3s L8e
 	| I_L4_R
 	| I_L5_R
 	| I_L6_R
@@ -318,7 +318,9 @@ SI_Rf ::=
 SSI_R ::=
 	identifier SSI_R
 	| reference SSI_R
-	| O_R ")";
+	| "=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE ")"
+	| ")" ^EXPRESSION
+	| O_R ")" ^EXPRESSION;
 
 O_Re ::=
         O_R
@@ -328,8 +330,8 @@ O_R  ::=
         NESTED_EXPRESSION ^NESTED N_R
         | I_L0_R
 	| I_L1_R
-	| I_L2_R L3s L7_OPT
-	| I_L3_R NEXT_L3_R
+	| I_L2_R L3s L7e
+	| I_L3_R L3s L8e
 	| I_L4_R L4s L5s
 	| I_L5_R L5s
 	| I_L6_R
@@ -352,6 +354,12 @@ TEMPLATE_R ::=
 VAR_R ::=
 	L1_R
 	| eps;
+
+RESEND ::= 
+	MESSAGE MESSAGE_R;
+
+CATCH ::=
+	MESSAGE MESSAGE_R;
 
 I4_R ::=
         identifier I4_R
@@ -389,12 +397,6 @@ I_L3_R ::=
 
 L3_R ::=
 	"." MESSAGE MESSAGE_R;
-
-RESEND ::= 
-	MESSAGE MESSAGE_R;
-
-CATCH ::=
-	MESSAGE MESSAGE_R;
 
 L3s ::=
 	L3_R L3s
@@ -436,7 +438,7 @@ I_L6a_OPT ::=
 	">" ^ TEMPLATE_TYPE TEMPLATE_R
 	| eps ^ LESS_OPERATION;
 
-L7_OPT ::=
+L7e ::=
 	L7_R
 	| eps;
 
@@ -456,10 +458,10 @@ IL8_R ::=
 	"\\" ^OBJECT CATCH ^CATCH_OPERATION;
 
 L8_R ::=
-	"\\" CATCH_OPERATION;
+	"\\"  CATCH ^CATCH_OPERATION;
 
-NEXT_L3_R ::=
-	"." MESSAGE MESSAGE_R NEXT_L3_R
+L8e ::=
+	L8_R
 	| eps;
 
 INDEXER_R ::=
@@ -468,6 +470,7 @@ INDEXER_R ::=
 
 MESSAGE_R ::=
 	"(" MESSAGE_PARAMETERS ")" ^ MESSAGE_OPERATION
+	| ":" SINGLE_EXPRESSION
 	| eps ^PROPERTY_OPERATION;
 
 MESSAGE_PARAMETERS ::=

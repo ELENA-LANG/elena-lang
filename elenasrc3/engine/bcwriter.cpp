@@ -615,7 +615,7 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    int eosLabel = tape.newLabel();
    int catchLabel = tape.newLabel();
 
-   tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel);
+   tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
 
    BuildNode tryNode = node.findChild(BuildKey::Tape);
    saveTape(tape, tryNode, tapeScope, paths, false);

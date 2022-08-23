@@ -73,6 +73,10 @@ void fixJumps(MemoryBase* code, int labelPosition, Map<int, int>& jumps, int lab
          int position = labelPosition - *it - 4;
          code->write(*it, &position, 4);
       }
+      else if (it.key() == (label | mskLabelRef)) {
+         int position = (labelPosition - *it - 4) | mskLabelRef;
+         code->write(*it, &position, 4);
+      }
       ++it;
    }
 }
@@ -579,6 +583,11 @@ void CommandTape :: write(ByteCode code, arg_t arg1, PseudoArg arg2)
    write(code, arg1, resolvePseudoArg(arg2));
 }
 
+void CommandTape::write(ByteCode code, arg_t arg1, PseudoArg arg2, ref_t mask)
+{
+   write(code, arg1, resolvePseudoArg(arg2) | mask);
+}
+
 void CommandTape :: write(ByteCode code, arg_t arg1, arg_t arg2)
 {
    ByteCommand command(code, arg1, arg2);
@@ -635,6 +644,23 @@ void CommandTape :: saveTo(MemoryWriter* writer)
 
             if (command.code > ByteCode::MaxDoubleOp)
                writer->write(&command.arg2, sizeof(arg_t));
+
+            break;
+         case ByteCode::XHookDPR:
+            writer->writeByte((char)command.code);
+            writer->write(&command.arg1, sizeof(arg_t));
+
+            if ((command.arg2 & mskAnyRef) == mskLabelRef) {
+               // if forward jump, it should be resolved later
+               if (!labels.exist(command.arg2)) {
+                  fwdJumps.add(command.arg2, writer->position());
+                  // put jump offset place holder
+                  writer->writeDWord(mskLabelRef);
+               }
+               // if backward jump
+               else writer->writeDWord(labels.get(command.arg2) - writer->position() - 4);
+            }
+            else writer->write(&command.arg2, sizeof(arg_t));
 
             break;
          default:

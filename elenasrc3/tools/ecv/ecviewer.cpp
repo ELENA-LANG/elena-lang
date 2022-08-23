@@ -247,11 +247,14 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 
 }
 
-void ByteCodeViewer :: addSecondRArg(arg_t arg, IdentifierString& commandStr)
+void ByteCodeViewer :: addSecondRArg(arg_t arg, IdentifierString& commandStr, List<pos_t>& labels)
 {
    commandStr.append(", ");
 
-   addRArg(arg, commandStr);
+   if ((arg & mskAnyRef) == mskLabelRef) {
+      addLabel(arg & ~mskAnyRef, commandStr, labels);
+   }
+   else addRArg(arg, commandStr);
 }
 
 void ByteCodeViewer :: addArg(arg_t arg, IdentifierString& commandStr)
@@ -359,7 +362,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::XStoreSIR:
             addArg(command.arg1, commandStr);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::MovSIFI:
             addArg(command.arg1, commandStr);
@@ -370,7 +373,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::XNewNR:
          case ByteCode::CreateNR:
             addArg(command.arg1, commandStr);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::CallMR:
          case ByteCode::VCallMR:
@@ -380,16 +383,16 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::XDispatchMR:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
             addRArg(command.arg1, commandStr);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::XHookDPR:
             addArg(command.arg1, commandStr);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          default:
             addArg(command.arg1, commandStr);

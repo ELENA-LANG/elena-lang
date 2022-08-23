@@ -221,7 +221,7 @@ Pair<parse_key_t, parse_key_t> ParserTable :: generate()
                   if (*f_it != pkEps) {
                      // check if the rule is ambigous
                      if (_table.exist(tableKey(l_symbol, *f_it)))
-                        return { *it, l_symbol };
+                        return { *f_it, l_symbol };
 
                      //_table.add(tableKey(l_symbol, *it), nsEps);
                      copySubSet(_syntax, _table, rule.key(), tableKey(l_symbol, *f_it));

@@ -192,6 +192,7 @@ namespace elena_lang
       void write(ByteCode code, arg_t arg1, arg_t arg2);
       void write(ByteCode code, PseudoArg arg);
       void write(ByteCode code, arg_t arg1, PseudoArg arg2);
+      void write(ByteCode code, arg_t arg1, PseudoArg arg2, ref_t mask);
 
       void import(ModuleBase* sourceModule, MemoryBase* source, bool withHeader, SectionScopeBase* target);
 
