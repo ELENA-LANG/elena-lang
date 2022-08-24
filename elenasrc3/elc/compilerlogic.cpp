@@ -486,6 +486,16 @@ bool CompilerLogic :: validateAutoType(ModuleScopeBase& scope, ref_t& reference)
    return true;
 }
 
+bool CompilerLogic:: isTryDispatchAllowed(ModuleScopeBase& scope, mssg_t message)
+{
+   return message == overwriteArgCount(scope.buildins.invoke_message, 1);
+}
+
+mssg_t CompilerLogic :: defineTryDispatcher(ModuleScopeBase& scope, mssg_t message)
+{
+   return encodeMessage(scope.module->mapAction(TRY_INVOKE_MESSAGE, 0, false), 2, FUNCTION_MESSAGE);
+}
+
 bool CompilerLogic :: isRole(ClassInfo& info)
 {
    return test(info.header.flags, elRole);

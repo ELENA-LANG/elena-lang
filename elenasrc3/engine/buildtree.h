@@ -73,6 +73,7 @@ namespace elena_lang
       ClassOp              = 0x002C,
       ByteArrayOp          = 0x002D,
       NewArrayOp           = 0x002E,
+      Swapping             = 0x002F,
 
       Import               = 0x0038,
       DictionaryOp         = 0x0039,

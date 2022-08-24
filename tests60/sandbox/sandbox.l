@@ -1,5 +1,12 @@
 import system;
 
+B
+{
+   function(int n)
+   {
+   }
+}
+
 A;
 
 singleton Tester
@@ -8,7 +15,7 @@ singleton Tester
    {
       var a := new A();
 
-      a.fail() \\ on((e){ console.writeLine(e) })
+//      a.fail() \\ on((e){ console.writeLine(e) })
    }
 }
 

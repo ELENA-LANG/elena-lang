@@ -44,6 +44,12 @@ procedure __object_equal
 
 end
 
+procedure __exception_dispatcher
+
+
+
+end
+
 procedure __intToByte
 
   peek       sp:1

@@ -323,6 +323,29 @@ inline %85h
 
 end 
 
+// ; xswapsi
+inline %86h
+
+  mov  rax, [rsp+__arg32_1]
+  mov  [rsp+__arg32_1], r10
+  mov  r10, rax
+
+end
+
+// ; xswapsi 0
+inline %186h
+
+end
+
+// ; xswapsi 1
+inline %286h
+
+  mov  rax, r11
+  mov  r11, r10
+  mov  r10, rax
+
+end
+
 // ; movm
 inline %88h
 

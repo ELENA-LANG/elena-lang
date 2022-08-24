@@ -100,6 +100,7 @@ namespace elena_lang
    constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
    constexpr auto CAST_MESSAGE            = "#cast";
    constexpr auto INVOKE_MESSAGE          = "#invoke";
+   constexpr auto TRY_INVOKE_MESSAGE      = "#try_invoke";
    constexpr auto INIT_MESSAGE            = "#init";
 
    constexpr auto ADD_MESSAGE             = "add";

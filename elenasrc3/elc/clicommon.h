@@ -303,6 +303,7 @@ struct BuiltinReferences
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
+   mssg_t  invoke_message;
    mssg_t  init_message;
    mssg_t  add_message;
    mssg_t  if_message;
@@ -321,7 +322,7 @@ struct BuiltinReferences
       closureTemplateReference = 0;
 
       dispatch_message = constructor_message = 0;
-      init_message = 0;
+      invoke_message = init_message = 0;
       add_message = 0;
       if_message = 0;
       equal_message = 0;

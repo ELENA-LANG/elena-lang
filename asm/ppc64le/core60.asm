@@ -384,6 +384,29 @@ inline %85h
 
 end 
 
+// ; xswapsi
+inline %86h
+
+  mr       r16, r3
+  ld       r3, __arg16_1(r1)
+  std      r16, __arg16_1(r1)
+
+end
+
+// ; xswapsi 0
+inline %186h
+
+end
+
+// ; xswapsi 1
+inline %286h
+
+  mr      r16, r3
+  mr      r3 r4
+  mr      r4, r16
+
+end
+
 // ; movm
 inline %88h
 

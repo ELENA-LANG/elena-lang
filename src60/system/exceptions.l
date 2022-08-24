@@ -1,7 +1,7 @@
 // --- Exception ---
 public class Exception
 {
-   on((handler) : external<system'core_routines'__object_dispatcher>;
+//   on((handler) : external<system'core_routines'__exception_dispatcher>;
 }
 
 // --- CriticalException ---

@@ -319,6 +319,21 @@ inline %85h
 
 end 
 
+// ; xswapsi
+inline %86h
+
+  mov  eax, [esp+__arg32_1]
+  mov  [esp+__arg32_1], esi
+  mov  esi, eax
+
+end
+
+// ; xswapsi 0
+inline %186h
+
+
+end
+
 // ; movm
 inline %88h
 

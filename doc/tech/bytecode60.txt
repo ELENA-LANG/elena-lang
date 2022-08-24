@@ -138,6 +138,8 @@ ELENA byte codes (or ecodes)
 
    xstore sp:i, {prefix:}r  - sp[i] := r
 
+   xswap sp:i               - sp[0] <=> sp[i]
+
 
  Object operations:
  ------------------

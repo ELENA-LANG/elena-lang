@@ -91,6 +91,9 @@ void sendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 
 void resendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
+   if (node.arg.reference)
+      tape.write(ByteCode::MovM, node.arg.reference);
+
    int vmtIndex = node.findChild(BuildKey::Index).arg.value;
    tape.write(ByteCode::CallVI, vmtIndex);
 }
@@ -377,6 +380,12 @@ void assignSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::XAssignI, node.arg.value);
 }
 
+void swapSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   // !! temporally - assigni should be used instead
+   tape.write(ByteCode::XSwapSI, node.arg.value);
+}
+
 void getField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    // !! temporally - assigni should be used instead
@@ -468,7 +477,8 @@ ByteCodeWriter::Saver commands[] =
    staticEnd,
    classOp,
    byteArrayOp,
-   newArrayOp
+   newArrayOp,
+   swapSPField
 };
 
 // --- ByteCodeWriter ---

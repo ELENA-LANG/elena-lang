@@ -1324,6 +1324,13 @@ void Compiler :: injectVirtualMultimethods(SyntaxNode classNode, SyntaxKey metho
 
       if (!found || methodInfo.inherited) {
          injectVirtualMultimethod(classNode, methodType, scope, info, *it, methodInfo.inherited, methodInfo.outputRef);
+
+         // COMPILER MAGIC : injecting try-multi-method dispather
+         if (_logic->isTryDispatchAllowed(scope, *it)) {
+            ref_t tryMessage = _logic->defineTryDispatcher(scope, *it);
+
+            injectVirtualTryDispatch(classNode, methodType, info, tryMessage, *it, methodInfo.inherited);
+         }
       }
    }
 }
@@ -5372,6 +5379,17 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
       writer.newNode(BuildKey::ResendOp);
       writer.closeNode();
    }
+   else if (node.arg.reference) {
+      writer.appendNode(BuildKey::ResendOp, node.arg.reference);
+   }
+   else {
+      SyntaxNode targetNode = node.findChild(SyntaxKey::Target);
+      assert(targetNode != SyntaxKey::None);
+
+      writer.newNode(BuildKey::DirectCallOp, message);
+      writer.appendNode(BuildKey::Type, targetNode.arg.reference);
+      writer.closeNode();
+   }
 }
 
 ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, ObjectInfo source, SyntaxNode node)
@@ -5419,14 +5437,46 @@ void Compiler :: compileDispatchCode(BuildTreeWriter& writer, CodeScope& codeSco
    ClassScope* classScope = Scope::getScope<ClassScope>(codeScope, Scope::ScopeLevel::Class);
 
    compileMultidispatch(writer, codeScope, *classScope, node);
-   // adding resend / redirect
 }
 
 void Compiler :: compileConstructorDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, 
    ClassScope& classClassScope, SyntaxNode node)
 {
    compileMultidispatch(writer, codeScope, classClassScope, node);
-   // adding resend / redirect
+}
+
+void Compiler :: compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node)
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+   mssg_t message = scope.getMessageID();
+   mssg_t dispatchMessage = node.arg.reference;
+
+   BuildKey op = BuildKey::DispatchingOp;
+   ref_t    opRef = classScope->info.attributes.get({ dispatchMessage, ClassAttribute::OverloadList });
+   if (!opRef)
+      scope.raiseError(errIllegalOperation, node);
+
+   if (test(classScope->info.header.flags, elSealed) || test(message, STATIC_MESSAGE)) {
+      op = BuildKey::SealedDispatchingOp;
+   }
+
+   writer.newNode(op, opRef);
+   writer.appendNode(BuildKey::Message, message);
+   writer.closeNode();
+
+   SyntaxNode targetNode = node.findChild(SyntaxKey::Target);
+   if (targetNode != SyntaxKey::None) {
+      writer.newNode(BuildKey::DirectCallOp, message);
+      writer.appendNode(BuildKey::Type, targetNode.arg.reference);
+      writer.closeNode();
+   }
+   else {
+      writer.appendNode(BuildKey::Swapping, 1);
+      writer.appendNode(BuildKey::Argument, 2);
+
+      writer.appendNode(BuildKey::CallOp, overwriteArgCount(scope.moduleScope->buildins.invoke_message, 2));
+   }
 }
 
 void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
@@ -5450,6 +5500,9 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
          break;
       case SyntaxKey::RedirectDispatch:
          compileDispatchCode(writer, codeScope, node);
+         break;
+      case SyntaxKey::RedirectTryDispatch:
+         compileDispatchProberCode(writer, codeScope, node);
          break;
       default:
          break;
@@ -5958,6 +6011,8 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.init_message =
       encodeMessage(moduleScope->module->mapAction(INIT_MESSAGE, 0, false),
          0, FUNCTION_MESSAGE | STATIC_MESSAGE);
+   moduleScope->buildins.invoke_message = encodeMessage(
+      moduleScope->module->mapAction(INVOKE_MESSAGE, 0, false), 1, FUNCTION_MESSAGE);
    moduleScope->buildins.add_message =
       encodeMessage(moduleScope->module->mapAction(ADD_MESSAGE, 0, false),
          2, 0);
@@ -6083,6 +6138,13 @@ inline SyntaxNode newVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodTy
    return methodNode;
 }
 
+inline SyntaxNode newVirtualMethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message)
+{
+   SyntaxNode methodNode = classNode.appendChild(methodType, message);
+
+   return methodNode;
+}
+
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
    ClassInfo& info, mssg_t message, bool inherited, ref_t outputRef)
 {
@@ -6128,9 +6190,34 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
       methodNode.appendChild(SyntaxKey::OutputType, outputRef);
 
    if (message == resendMessage) {
-      methodNode.appendChild(SyntaxKey::RedirectDispatch);
+      SyntaxNode dispatchOp = methodNode.appendChild(SyntaxKey::RedirectDispatch);
+      if (resendTarget)
+         dispatchOp.appendChild(SyntaxKey::Target, resendTarget);
    }
    else methodNode.appendChild(SyntaxKey::RedirectDispatch, resendMessage);
+}
+
+void Compiler :: injectVirtualTryDispatch(SyntaxNode classNode, SyntaxKey methodType, 
+   mssg_t message, mssg_t dispatchMessage, ref_t originalTarget)
+{
+   SyntaxNode methodNode = newVirtualMethod(classNode, methodType, message);
+
+   SyntaxNode dispatchOp = methodNode.appendChild(SyntaxKey::RedirectTryDispatch, dispatchMessage);
+   if (originalTarget)
+      dispatchOp.appendChild(SyntaxKey::Target, originalTarget);
+}
+
+void Compiler :: injectVirtualTryDispatch(SyntaxNode classNode, SyntaxKey methodType, ClassInfo& info, 
+   mssg_t message, mssg_t dispatchMessage, bool inherited)
+{
+   ref_t originalTarget = 0;
+   if (inherited) {
+      // if virtual multi-method handler is overridden
+      // redirect to the parent one
+      originalTarget = info.header.parentRef;
+   }
+
+   injectVirtualTryDispatch(classNode, methodType, message, dispatchMessage, originalTarget);
 }
 
 void Compiler :: injectInitializer(SyntaxNode classNode, SyntaxKey methodType, mssg_t message)
