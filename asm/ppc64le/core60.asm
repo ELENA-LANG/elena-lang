@@ -427,7 +427,7 @@ end
 inline %286h
 
   mr      r16, r3
-  mr      r3 r4
+  mr      r3, r4
   mr      r4, r16
 
 end
