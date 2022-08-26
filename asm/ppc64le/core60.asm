@@ -275,7 +275,7 @@ end
 // ; loadv
 inline % 0Ch
 
-  and     r14, r14, ARG_MASK
+  andi.   r14, r14, ARG_MASK
 
   li      r19, ~ARG_MASK
   addis   r19, r19, 0FFFFh
