@@ -538,7 +538,7 @@ bool PPC64Assembler :: compileAND(PPCOperand ra, PPCOperand rs, PPCOperand rb, M
 {
    if (rs.isGPR() && ra.isGPR() && rb.isGPR()) {
       writer.writeDWord(PPCHelper::makeXCommand(31, rs.type, ra.type,
-         rb.type, 28, 0));
+         rb.type, 28, ra.rc ? 1 : 0));
    }
    else return false;
 
@@ -657,7 +657,7 @@ void PPC64Assembler :: compileADDIS(ScriptToken& tokenInfo, MemoryWriter& writer
 
 void PPC64Assembler :: compileAND(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE, true);
 
    checkComma(tokenInfo);
 
