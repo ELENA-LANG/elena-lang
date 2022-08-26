@@ -323,7 +323,8 @@ void PPC64Assembler :: writeDReference(ScriptToken& tokenInfo, ref_t reference, 
       case ARG32HI_1:
       case ARG32LO_1:
       case NARG_1:
-      case NARGHI_1:
+      case NARG16HI_1:
+      case NARG16LO_1:
          writer.Memory()->addReference(reference, writer.position() - 4);
          break;
       case DISP32HI_1:

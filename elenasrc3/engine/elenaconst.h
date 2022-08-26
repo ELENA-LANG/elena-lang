@@ -361,7 +361,6 @@ namespace elena_lang
    constexpr ref_t ARG32LO_1              = 0x0000001Du;
    constexpr ref_t ARG64_2                = 0x0000001Eu;
    constexpr ref_t NARG16_1               = 0x0000001Fu;
-   constexpr ref_t NARGHI_1               = 0x00000020u;
    constexpr ref_t RELPTR32_2             = 0x00000021u;
    constexpr ref_t NARG12_1               = 0x00000022u;
    constexpr ref_t XDISP32HI_1            = 0x00000023u;

@@ -513,7 +513,8 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
       case ARG9_1:
       case ARG32HI_1:
       case ARG32LO_1:
-      case NARGHI_1:
+      case NARG16HI_1:
+      case NARG16LO_1:
          writer.Memory()->addReference(reference, writer.position() - 4);
          break;
       case PTR32HI_1:

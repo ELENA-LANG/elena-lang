@@ -160,7 +160,11 @@ bool AssemblerBase :: getArgReference(ScriptToken& tokenInfo, int& offset, ref_t
       offset = 0;
    }
    else if (tokenInfo.compare(N16HI_ARGUMENT1)) {
-      reference = NARGHI_1;
+      reference = NARG16HI_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(N16LO_ARGUMENT1)) {
+      reference = NARG16LO_1;
       offset = 0;
    }
    else if (tokenInfo.compare(N12_ARGUMENT1)) {

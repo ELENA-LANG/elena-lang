@@ -1514,8 +1514,11 @@ void elena_lang::loadNewNOp(JITCompilerScope* scope)
          case NARG16_1:
             scope->compiler->writeImm16(writer, (short)narg, 0);
             break;
-         case NARGHI_1:
+         case NARG16HI_1:
             scope->compiler->writeImm16(writer, (short)(narg >> 16), 0);
+            break;
+         case NARG16LO_1:
+            scope->compiler->writeImm16(writer, (short)(narg & 0xFFFF), 0);
             break;
          case PTR32_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
@@ -1579,8 +1582,11 @@ void elena_lang::loadCreateNOp(JITCompilerScope* scope)
          case NARG16_1:
             scope->compiler->writeImm16(writer, (short)narg, 0);
             break;
-         case NARGHI_1:
+         case NARG16HI_1:
             scope->compiler->writeImm16(writer, (short)(narg >> 16), 0);
+            break;
+         case NARG16LO_1:
+            scope->compiler->writeImm16(writer, (short)(narg & 0xFFFF), 0);
             break;
          case PTR32_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
