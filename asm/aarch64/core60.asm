@@ -11,6 +11,7 @@ define VOID           	     2000Dh
 define VOIDPTR               2000Eh
 
 define ACTION_ORDER              9
+define ARG_MASK               01Fh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
