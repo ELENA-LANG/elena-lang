@@ -1,19 +1,15 @@
 import system;
 
-B
-{
-   function(int n)
-   {
-   }
-}
-
 A;
 
 singleton Tester
 {
    run()
    {
-      var a := new A();
+      var message := mssgconst writeLine[1];
+      message(console,"Hello");
+
+//      var a := new A();
 
 //      a.fail() \\ on((e){ console.writeLine(e) })
    }
@@ -21,5 +17,8 @@ singleton Tester
 
 public program() 
 {
-   Tester.run();
+      var message := mssgconst writeLine[1];
+      message(console,"Hello");
+
+//   Tester.run();
 }

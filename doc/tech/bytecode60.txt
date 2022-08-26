@@ -246,6 +246,10 @@ ELENA byte codes (or ecodes)
                               COMP.LT := (temp2 < temp1);
                               n = 1,2,4,8 
 
+   xcmp                     - temp << acc[0];
+                              COMP.EQ := (index == temp);
+                              COMP.LT := (index < temp);
+
 
  Misc operations:
  ---------------- 

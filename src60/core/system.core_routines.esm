@@ -5,6 +5,8 @@ define EXCEPTION_ACCESS_VIOLATION  101h;
 define ELENA_ERR_DIVIDE_BY_ZERO    102h;
 define ELENA_ERR_OUT_OF_MEMORY     103h;
 
+define FUNCTION_MESSAGE       00000020h;
+
 define ex_struct_size32              16; 
 define ex_struct_size64              32; 
 
@@ -46,13 +48,15 @@ end
 
 procedure __message_dispatcher
 
-  tstn        SPECIAL_MESSAGE
+  tstn        FUNCTION_MESSAGE
   jeq         labDefault
 
   loadv
+  xcmp
+  jne         labDefault
 
   peek        sp:0
-  jump        vi:0
+  jump        vt:0
 
 labDefault:
 

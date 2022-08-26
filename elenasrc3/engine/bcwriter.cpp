@@ -200,6 +200,11 @@ void intLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskIntLiteralRef);
 }
 
+void mssgLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskMssgLiteralRef);
+}
+
 void stringLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskLiteralRef);
@@ -478,7 +483,8 @@ ByteCodeWriter::Saver commands[] =
    classOp,
    byteArrayOp,
    newArrayOp,
-   swapSPField
+   swapSPField,
+   mssgLiteral,
 };
 
 // --- ByteCodeWriter ---
@@ -690,7 +696,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             saveVariableInfo(tape, current);
             break;
          case BuildKey::Import:
+            tape.write(ByteCode::ImportOn);
             importTree(tape, current, *tapeScope.scope);
+            tape.write(ByteCode::ImportOff);
             break;
          case BuildKey::NestedClass:
             saveClass(current, tapeScope.scope->moduleScope, tapeScope.scope->minimalArgList, paths);

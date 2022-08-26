@@ -15,7 +15,7 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 const char* _fnOpcodes[256] =
 {
    "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
-   "class", "save", "throw", "unhook", "loadv", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "class", "save", "throw", "unhook", "loadv", "xcmp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -616,10 +616,17 @@ void CommandTape :: saveTo(MemoryWriter* writer)
 {
    Map<int, int> labels(0);
    Map<int, int> fwdJumps(0);
+   bool importMode = false;
 
    for (auto it = tape.start(); !it.eof(); ++it) {
       auto command = *it;
       switch (command.code) {
+         case ByteCode::ImportOn:
+            importMode = true;
+            break;
+         case ByteCode::ImportOff:
+            importMode = false;
+            break;
          case ByteCode::Label:
             fixJumps(writer->Memory(), writer->position(), fwdJumps, command.arg1);
             labels.add(command.arg1, writer->position());
@@ -632,15 +639,17 @@ void CommandTape :: saveTo(MemoryWriter* writer)
          case ByteCode::Jeq:
          case ByteCode::Jne:
             writer->writeByte((char)command.code);
-
-            // if forward jump, it should be resolved later
-            if (!labels.exist(command.arg1)) {
-               fwdJumps.add(command.arg1, writer->position());
-               // put jump offset place holder
-               writer->writeDWord(0);
+            if (!importMode) {
+               // if forward jump, it should be resolved later
+               if (!labels.exist(command.arg1)) {
+                  fwdJumps.add(command.arg1, writer->position());
+                  // put jump offset place holder
+                  writer->writeDWord(0);
+               }
+               // if backward jump
+               else writer->writeDWord(labels.get(command.arg1) - writer->position() - 4);
             }
-            // if backward jump
-            else writer->writeDWord(labels.get(command.arg1) - writer->position() - 4);
+            else writer->writeDWord(command.arg1);
 
             if (command.code > ByteCode::MaxDoubleOp)
                writer->write(&command.arg2, sizeof(arg_t));

@@ -35,7 +35,7 @@ MethodHint operator & (const ref_t& l, const MethodHint& r)
 {
    return (MethodHint)(l & (unsigned int)r);
 }
-
+//
 //inline void testNodes(SyntaxNode node)
 //{
 //   SyntaxNode current = node.firstChild();
@@ -2495,6 +2495,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::CharacterLiteral:
          writer.appendNode(BuildKey::CharLiteral, info.reference);
          break;
+      case ObjectKind::MssgLiteral:
+         writer.appendNode(BuildKey::MssgLiteral, info.reference);
+         break;
          //case ObjectKind::MetaDictionary:
       //   writer.appendNode(BuildKey::MetaDictionary, info.reference);
       //   break;
@@ -4376,6 +4379,9 @@ ObjectInfo Compiler :: compileIndexerOperation(BuildTreeWriter& writer, ExprScop
 
          return {}; // !! temporally
       }
+      else if (info.kind == ObjectKind::MssgLiteral) {
+         return mapMessageConstant(scope, node, info.reference);
+      }
    }
 
    return compileOperation(writer, scope, node, operatorId);
@@ -4581,6 +4587,32 @@ ObjectInfo Compiler :: mapUIntConstant(Scope& scope, SyntaxNode node, int radix)
    return { ObjectKind::IntLiteral, { V_INT32 }, ::mapUIntConstant(scope, integer), integer };
 }
 
+ObjectInfo Compiler::mapMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef)
+{
+   SyntaxNode operand = node.findChild(SyntaxKey::Expression);
+
+   pos_t argCount = 0;
+
+   Interpreter interpreter(scope.moduleScope, _logic);
+   ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression));
+   switch (retVal.kind) {
+      case ObjectKind::IntLiteral:
+         argCount = retVal.extra + 1;
+         break;
+      default:
+         scope.raiseError(errCannotEval, node);
+         break;
+   }
+
+   mssg_t message = encodeMessage(actionRef, argCount, 0);
+   IdentifierString messageName;
+   ByteCodeUtil::resolveMessageName(messageName, scope.module, message);
+
+   ref_t constRef = scope.module->mapConstant(*messageName);
+
+   return { ObjectKind::MssgLiteral, { V_MESSAGE }, constRef };
+}
+
 ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, EAttr attrs)
 {
    bool forwardMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Forward);
@@ -4589,6 +4621,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    bool newOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::NewOp);
    bool castOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::CastOp);
    bool refOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::RefOp);
+   bool mssgOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::MssgLiteral);
 
    ObjectInfo retVal;
    bool invalid = false;
@@ -4610,6 +4643,19 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
 
             retVal = { newOp ? ObjectKind::Creating : ObjectKind::Casting,
                typeInfo, 0 };
+            break;
+         }
+         default:
+            invalid = true;
+            break;
+      }
+   }
+   else if (mssgOp) {
+      switch (node.key) {
+         case SyntaxKey::identifier:
+         {
+            retVal = { ObjectKind::MssgNameLiteral, { V_MESSAGENAME },
+               scope.module->mapAction(node.identifier(), 0, false) };
             break;
          }
          default:
@@ -4646,22 +4692,22 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
             }
             break;
          case SyntaxKey::string:
-            invalid = forwardMode || variableMode || refOp;
+            invalid = forwardMode || variableMode || refOp || mssgOp;
 
             retVal = mapStringConstant(scope, node);
             break;
          case SyntaxKey::character:
-            invalid = forwardMode || variableMode || refOp;
+            invalid = forwardMode || variableMode || refOp || mssgOp;
 
             retVal = mapCharacterConstant(scope, node);
             break;
          case SyntaxKey::integer:
-            invalid = forwardMode || variableMode || refOp;
+            invalid = forwardMode || variableMode || refOp || mssgOp;
 
             retVal = mapIntConstant(scope, node, 10);
             break;
          case SyntaxKey::hexinteger:
-            invalid = forwardMode || variableMode || refOp;
+            invalid = forwardMode || variableMode || refOp || mssgOp;
 
             retVal = mapUIntConstant(scope, node, 16);
             break;
@@ -4691,6 +4737,10 @@ ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
    if (mode.test(EAttr::Lookahead)) {
       if (mode.test(EAttr::NewVariable)) {
          return { ObjectKind::Declaring, declaredTypeInfo, 0, 0 };
+      }
+      else if (mode.test(EAttr::MssgNameLiteral)) {
+         return { ObjectKind::MssgLiteral, { V_MESSAGE },
+            scope.module->mapAction(terminalNode.identifier(), 0, false) };
       }
       else return {};
    }

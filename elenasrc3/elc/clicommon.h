@@ -453,6 +453,8 @@ enum class ExpressionAttribute : pos64_t
    AssigningTarget   = 0x00000004000,
    RefOp             = 0x00000008000,
    NoPrimitives      = 0x00000010000,
+   MssgLiteral       = 0x00000020000,
+   MssgNameLiteral   = 0x00000040000,
    Extern            = 0x00000080000,
    Lookahead         = 0x20000080000,
    NoDebugInfo       = 0x40000000000,

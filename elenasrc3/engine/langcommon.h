@@ -177,7 +177,7 @@ namespace elena_lang
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;
    constexpr auto V_IMPORT                = 0x80001018u;
-   constexpr auto V_AUTO                     = 0x8000101Cu;
+   constexpr auto V_AUTO                  = 0x8000101Cu;
    constexpr auto V_NAMESPACE             = 0x80001021u;
    constexpr auto V_INLINE                = 0x80001025u;
 
@@ -186,6 +186,7 @@ namespace elena_lang
    constexpr auto V_INTBINARY             = 0x80000803u;
    //constexpr auto V_DECLOBJ               = 0x80000804u;
    constexpr auto V_WORDBINARY            = 0x80000805u;
+   constexpr auto V_MSSGNAME              = 0x80000806u;
    constexpr auto V_SYMBOL                = 0x80000808u;
    constexpr auto V_MSSGBINARY            = 0x80000809u;
 
@@ -203,6 +204,7 @@ namespace elena_lang
    constexpr auto V_BINARYARRAY           = 0x8000000Bu;
    constexpr auto V_ELEMENT               = 0x8000000Cu;
    constexpr auto V_MESSAGE               = 0x8000000Du;
+   constexpr auto V_MESSAGENAME           = 0x8000000Eu;
    constexpr auto V_OBJATTRIBUTES         = 0x80000012u;
    constexpr auto V_CLOSURE               = 0x80000013u;
    constexpr auto V_DECLARATION           = 0x80000014u;

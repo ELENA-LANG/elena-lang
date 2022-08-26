@@ -404,6 +404,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_WRAPPER:
          attrs |= ExpressionAttribute::RefOp;
          return true;
+      case V_MSSGNAME:
+         attrs |= ExpressionAttribute::MssgNameLiteral;
+         return true;
       default:
          return false;
    }

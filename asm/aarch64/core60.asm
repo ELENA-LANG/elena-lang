@@ -253,9 +253,14 @@ end
 // ; loadv
 inline % 0Ch
 
+  and     x9, x9, ARG_MASK
+
+  movz    x16,  ~ARG_MASK
+  movk    x16,  #0FFFFh, lsl #16
+
   ldrsw   x14, [x10]
-  and     x14, x14, ACTION_MASK
-  and     x9, x14, ARG_MASK
+  and     x14, x14, x16
+
   or      x9, x9, x14
 
 end

@@ -396,6 +396,17 @@ bool ByteCodeAssembler :: compileOpN(ScriptToken& tokenInfo, MemoryWriter& write
    return true;
 }
 
+bool ByteCodeAssembler :: compileOpI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
+   bool skipRead)
+{
+   command.arg1 = readI(tokenInfo, skipRead);
+
+   ByteCodeUtil::write(writer, command);
+
+   read(tokenInfo);
+   return true;
+}
+
 bool ByteCodeAssembler :: compileCloseOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
    ReferenceMap& dataLocals, ReferenceMap& constants)
 {
@@ -756,8 +767,13 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::ICmpN:
          case ByteCode::CmpN:
          case ByteCode::MovN:
+         case ByteCode::TstN:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
+         case ByteCode::CallVI:
+         case ByteCode::JumpVI:
+            return compileOpI(tokenInfo, writer, opCommand, false);
          case ByteCode::Jeq:
+         case ByteCode::Jne:
             return compileJcc(tokenInfo, writer, opCommand, lh);
          case ByteCode::SetR:
             return compileR(tokenInfo, writer, opCommand, true);

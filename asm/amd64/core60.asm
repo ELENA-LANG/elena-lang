@@ -233,10 +233,18 @@ end
 // ; loadv
 inline % 0Ch
 
-  mov  eax, dword ptr [rbx]
-  and  eax, ACTION_MASK
   and  edx, ARG_MASK
-  or   edx, eax
+  mov  ecx, dword ptr [rbx]
+  and  ecx, ~ARG_MASK
+  or   edx, ecx
+
+end
+
+// ; xcmp
+inline % 0Dh
+
+  mov  ecx, dword ptr [rbx]
+  cmp  edx, ecx 
 
 end
 

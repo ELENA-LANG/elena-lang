@@ -30,6 +30,7 @@ namespace elena_lang
       Throw          = 0x0A,  
       Unhook         = 0x0B,
       LoadV          = 0x0C,
+      XCmp           = 0x0D,
 
       MaxSingleOp    = 0x7F,
 
@@ -108,6 +109,8 @@ namespace elena_lang
 
       None           = 0x1000,
       Label          = 0x1001,
+      ImportOn       = 0x1002,
+      ImportOff      = 0x1003,
    };
 
    enum class PseudoArg

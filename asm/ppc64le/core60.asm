@@ -275,10 +275,23 @@ end
 // ; loadv
 inline % 0Ch
 
-  lwz     r18, 0(r15)
-  and     r18, r18, ACTION_MASK
   and     r14, r14, ARG_MASK
+
+  li      r19, ~ARG_MASK
+  addis   r19, r19, 0FFFFh
+
+  lwz     r18, 0(r15)
+  and     r18, r18, r19
+
   or      r14, r14, r18
+
+end
+
+// ; cmpn n
+inline %0Dh
+
+  lwz      r18, 0(r15)
+  cmp      r14, r18
 
 end
 
