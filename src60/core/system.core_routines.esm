@@ -44,9 +44,35 @@ procedure __object_equal
 
 end
 
-procedure __exception_dispatcher
+procedure __message_dispatcher
 
+  tstn        SPECIAL_MESSAGE
+  jeq         labDefault
 
+  loadv
+
+  peek        sp:0
+  jump        vi:0
+
+labDefault:
+
+  redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
 
 end
 

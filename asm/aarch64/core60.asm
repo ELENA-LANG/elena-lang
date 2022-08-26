@@ -250,6 +250,16 @@ inline %0Bh
 
 end
 
+// ; loadv
+inline % 0Ch
+
+  ldrsw   x14, [x10]
+  and     x14, x14, ACTION_MASK
+  and     x9, x14, ARG_MASK
+  or      x9, x9, x14
+
+end
+
 // ; setr
 inline %80h
 
@@ -714,6 +724,17 @@ inline %0B1h
 
 end
 
+// ; jumpvi
+inline %0B5h
+
+  sub     x14, x10, elVMTOffset              
+  ldr     x17, [x14]
+  add     x17, x17, __arg12_1
+  ldr     x17, [x17]
+  br      x17
+
+end
+
 // ; cmpr
 inline %0C0h
 
@@ -783,6 +804,16 @@ inline %0C3h
   movk    x11,  __n16hi_1, lsl #16
 
   tst     x14, x11
+
+end
+
+// ; tstn
+inline %0C3h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  tst     x9, x11
 
 end
 

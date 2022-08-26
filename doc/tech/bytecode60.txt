@@ -56,6 +56,8 @@ ELENA byte codes (or ecodes)
 
    load                     - index := [acc] 
 
+   loadv                    - index.action := [acc].action
+
    mov env                  - %SYSTEM_ENV => index 
 
    mov mssg:m               - index := m
@@ -94,12 +96,15 @@ ELENA byte codes (or ecodes)
    call mssg:m, r           - calls directly the method resolved by JIT by r and m
                               acc contains the result 
 
-   vcall mssg:m, r          - calls via table the method resolved by JIT by r and m
-                              acc contains the result 
- 
    jump mssg:m, r           - jumps directly the method resolved by JIT by r and m
                               acc contains the result 
 
+   jump vt:i                - jump to acc::VMT[i] method;
+                              acc contains the result
+
+   vcall mssg:m, r          - calls via table the method resolved by JIT by r and m
+                              acc contains the result 
+ 
    vjump mssg:m, r          - jumps via table the method resolved by JIT by r and m
                               acc contains the result 
  
@@ -223,6 +228,8 @@ ELENA byte codes (or ecodes)
    tstflg n                 - temp := acc::VMT::flag & n 
                               COMP.EQ := (temp == 0);
 
+   tstn n                   - temp := index & n 
+                              COMP.EQ := (temp == 0);
 
    cmp  fp:i                - COMP.EQ := (acc == fp[i]);
 

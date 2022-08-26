@@ -29,6 +29,7 @@ namespace elena_lang
       Save           = 0x09,
       Throw          = 0x0A,  
       Unhook         = 0x0B,
+      LoadV          = 0x0C,
 
       MaxSingleOp    = 0x7F,
 
@@ -65,10 +66,12 @@ namespace elena_lang
       Jump           = 0xB2,
       Jeq            = 0xB3,
       Jne            = 0xB4,
+      JumpVI         = 0xB5,
 
       CmpR           = 0xC0,
       ICmpN          = 0xC2,
       TstFlag        = 0xC3,
+      TstN           = 0xC4,
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
 

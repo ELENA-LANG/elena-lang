@@ -12,6 +12,8 @@ define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
 define ACTION_ORDER              9
+define ACTION_MASK            1E0h
+define ARG_MASK               01Fh
 
 // ; TOC TABLE OFFSETS
 define toc_import            0000h
@@ -267,6 +269,16 @@ inline %0Bh
   ld      r31, es_catch_frame(r19)
 
   std     r15, et_current(r14)
+
+end
+
+// ; loadv
+inline % 0Ch
+
+  lwz     r18, 0(r15)
+  and     r18, r18, ACTION_MASK
+  and     r14, r14, ARG_MASK
+  or      r14, r14, r18
 
 end
 
@@ -737,6 +749,16 @@ inline % 0B1h
 
 end
 
+// ; jumpvi (ecx - offset to VMT entry)
+inline % 0B5h
+
+  ld       r16, -elVMTOffset(r15)     
+  ld       r17, __arg16_1(r16)
+  mtctr    r17            // ; put code address into ctr
+  bctr                    // ; and jump to it
+
+end
+
 // ; cmpr
 inline %0C0h
 
@@ -805,6 +827,16 @@ inline %0C3h
   addis   r17, r17, __n16hi_1
 
   and.    r17, r17, r16
+
+end
+
+// ; tstn
+inline %0C4h
+
+  li      r17, __n16lo_1
+  addis   r17, r17, __n16hi_1
+
+  and.    r17, r14, r17
 
 end
 

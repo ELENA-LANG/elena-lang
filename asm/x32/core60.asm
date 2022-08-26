@@ -11,6 +11,8 @@ define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
 define ACTION_ORDER              9
+define ACTION_MASK            1E0h
+define ARG_MASK               01Fh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -224,6 +226,16 @@ inline %0Bh
   mov  esp, [edi + es_catch_level]
 
   mov  [data : %CORE_ET_TABLE + et_current], eax
+
+end
+
+// ; loadv
+inline % 0Ch
+
+  mov  eax, [ebx]
+  and  eax, ACTION_MASK
+  and  edx, ARG_MASK
+  or   edx, eax
 
 end
 
@@ -574,6 +586,14 @@ inline %0B1h
 
 end
 
+// ; jumpvi
+inline %0B5h
+
+  mov  eax, [ebx - elVMTOffset]
+  jmp  [eax + __arg32_1]
+
+end
+
 // ; cmpr r
 inline %0C0h
 
@@ -628,6 +648,13 @@ inline %0C3h
   mov  ecx, [ebx - elVMTOffset] 
   mov  eax, [ecx - elVMTFlagOffset]
   test eax, __n_1
+
+end
+
+// ; tstn
+inline %0C4h
+
+  test edx, __n_1
 
 end
 
