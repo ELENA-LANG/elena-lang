@@ -54,6 +54,7 @@ constexpr int MINIMAL_ARG_LIST            = 2;
 
 constexpr auto DEFAULT_STACKALIGNMENT     = 2;
 constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
+constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 32;
 
 typedef ElfAmd64Linker           LinuxLinker;
 typedef ElfAmd64ImageFormatter   LinuxImageFormatter;
@@ -66,7 +67,7 @@ constexpr int MINIMAL_ARG_LIST            = 1;
 
 constexpr auto DEFAULT_STACKALIGNMENT     = 1;
 constexpr auto DEFAULT_RAW_STACKALIGNMENT = 4;
-
+constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 16;
 
 typedef ElfI386Linker            LinuxLinker;
 typedef ElfI386ImageFormatter    LinuxImageFormatter;
@@ -79,7 +80,7 @@ constexpr int MINIMAL_ARG_LIST            = 2;
 
 constexpr auto DEFAULT_STACKALIGNMENT     = 2;
 constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
-
+constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 32;
 
 typedef ElfPPC64leLinker         LinuxLinker;
 typedef ElfPPC64leImageFormatter LinuxImageFormatter;
@@ -92,6 +93,7 @@ constexpr int MINIMAL_ARG_LIST            = 2;
 
 constexpr auto DEFAULT_STACKALIGNMENT     = 2;
 constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
+constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 32;
 
 typedef ElfARM64Linker         LinuxLinker;
 typedef ElfARM64ImageFormatter LinuxImageFormatter;
@@ -270,6 +272,7 @@ int main(int argc, char* argv[])
          return process.build(project, linker,
             DEFAULT_STACKALIGNMENT,
             DEFAULT_RAW_STACKALIGNMENT,
+            DEFAULT_EHTABLE_ENTRY_SIZE,
             MINIMAL_ARG_LIST);
       }
    }
