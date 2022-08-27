@@ -1156,7 +1156,7 @@ end
 inline %0E7h
 
   add     x10, x10, elObjectOffset
-  movz    x18, __n16_1
+  movz    x18, __n16lo_1
   movk    x18, __n16hi_1, lsl #16
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16
@@ -1511,7 +1511,7 @@ inline %0F5h
   movz    x17,  code_ptr32lo : %GC_ALLOC
   movk    x17,  code_ptr32hi : %GC_ALLOC, lsl #16
   blr     x17
-  movz    x18, __n16_1
+  movz    x18, __n16lo_1
   movk    x18, __n16hi_1, lsl #16
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16

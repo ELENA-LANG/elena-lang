@@ -411,7 +411,7 @@ void elena_lang :: loadNOp(JITCompilerScope* scope)
             scope->compiler->writeImm12(writer, scope->command.arg1, 0);
             break;
          case NARG16HI_1:
-            scope->compiler->writeImm16(writer, (scope->command.arg1 >> 4) & 0xFFFF, 0);
+            scope->compiler->writeImm16(writer, (scope->command.arg1 >> 16) & 0xFFFF, 0);
             break;
          case NARG16LO_1:
             scope->compiler->writeImm16(writer, scope->command.arg1 & 0xFFFF, 0);
