@@ -287,7 +287,7 @@ inline % 0Ch
 
 end
 
-// ; cmpn n
+// ; xcmp
 inline %0Dh
 
   lwz      r18, 0(r15)

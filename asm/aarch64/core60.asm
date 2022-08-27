@@ -266,6 +266,14 @@ inline % 0Ch
 
 end
 
+// ; xcmp
+inline %0Dh
+
+  ldrsw   x14, [x10]
+  cmp     x9, x14
+
+end
+
 // ; setr
 inline %80h
 
