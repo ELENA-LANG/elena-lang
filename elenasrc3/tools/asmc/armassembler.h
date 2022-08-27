@@ -42,7 +42,9 @@ namespace elena_lang
          int shift, int ampount, MemoryWriter& writer);
       virtual bool compileADDImm(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry, MemoryWriter& writer);
       virtual bool compileANDImm(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry, MemoryWriter& writer);
-      virtual bool compileANDS(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry, MemoryWriter& writer);
+      virtual bool compileANDSImm(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry, MemoryWriter& writer);
+      virtual bool compileANDSShifted(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry,
+         int shift, int ampount, MemoryWriter& writer);
       virtual bool compileADRP(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand imm, MemoryWriter& writer);
       virtual bool compileCSEL(ARMOperand rd, ARMOperand rn, ARMOperand rm, JumpType cond, MemoryWriter& writer);
       virtual bool compileCSINC(ARMOperand rd, ARMOperand rn, ARMOperand rm, JumpType cond, MemoryWriter& writer);
@@ -55,7 +57,9 @@ namespace elena_lang
       virtual bool compileMOVZ(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rn, MemoryWriter& writer);
       virtual bool compileMOVK(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rn, int lsl, MemoryWriter& writer);
       virtual bool compileMADD(ARMOperand rd, ARMOperand rn, ARMOperand rm, ARMOperand ra, MemoryWriter& writer);
-      virtual bool compileORR(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry, MemoryWriter& writer);
+      virtual bool compileORRShifted(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry,
+         int shift, int ampount, MemoryWriter& writer);
+      virtual bool compileORRImm(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry, MemoryWriter& writer);
       virtual bool compileRET(ARMOperand r, MemoryWriter& writer);
       virtual bool compileB(int imm, MemoryWriter& writer);
       virtual bool compileBxx(int imm, int cond, MemoryWriter& writer);
@@ -95,6 +99,7 @@ namespace elena_lang
       void compileMOVK(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMOVZ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMUL(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileORR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSDIV(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSTP(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSTR(ScriptToken& tokenInfo, MemoryWriter& writer);

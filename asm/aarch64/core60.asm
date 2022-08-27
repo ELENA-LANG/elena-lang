@@ -262,7 +262,7 @@ inline % 0Ch
   ldrsw   x14, [x10]
   and     x14, x14, x16
 
-  or      x9, x9, x14
+  orr     x9, x9, x14
 
 end
 
@@ -814,7 +814,7 @@ inline %0C3h
 end
 
 // ; tstn
-inline %0C3h
+inline %0C4h
 
   movz    x11,  __n16lo_1
   movk    x11,  __n16hi_1, lsl #16
