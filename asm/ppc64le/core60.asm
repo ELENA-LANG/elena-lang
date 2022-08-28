@@ -432,6 +432,33 @@ inline %286h
 
 end
 
+// ; swapsi
+inline %87h
+
+  mr       r16, r15
+  ld       r15, __arg16_1(r1)
+  std      r16, __arg16_1(r1)
+
+end
+
+// ; xswapsi 0
+inline %187h
+
+  mr      r16, r15
+  mr      r15, r3
+  mr      r5, r16
+
+end
+
+// ; swapsi 1
+inline %287h
+
+  mr      r16, r15
+  mr      r15, r4
+  mr      r4, r16
+
+end
+
 // ; movm
 inline %88h
 

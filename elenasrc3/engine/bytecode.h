@@ -41,6 +41,7 @@ namespace elena_lang
       PeekR          = 0x84,
       StoreR         = 0x85,
       XSwapSI        = 0x86,
+      SwapSI         = 0x87,
       MovM           = 0x88,
       MovN           = 0x89,
 

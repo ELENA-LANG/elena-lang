@@ -5522,10 +5522,9 @@ void Compiler :: compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& s
       writer.closeNode();
    }
    else {
-      writer.appendNode(BuildKey::Swapping, 1);
-      writer.appendNode(BuildKey::Argument, 2);
+      writer.appendNode(BuildKey::AccSwapping, 1);
 
-      writer.appendNode(BuildKey::CallOp, overwriteArgCount(scope.moduleScope->buildins.invoke_message, 2));
+      writer.appendNode(BuildKey::RedirectOp, overwriteArgCount(scope.moduleScope->buildins.invoke_message, 2));
    }
 }
 

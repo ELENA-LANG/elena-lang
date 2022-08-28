@@ -4,7 +4,7 @@ import system;
 
 A
 {
-   feedback(prober,arg)
+   feedback(prober)
    {
       console.writeLine("A.default")
    }
@@ -25,11 +25,11 @@ singleton Tester
    {
       console.writeLine("Start");
 
-//      var a := new A();
+      var a := new A();
       var prober := new Prober();
 
       __probe prober("string", mssgconst feedback[2]);
-//      __try prober(a, mssgconst feedback[2]);
+      __probe prober(a, mssgconst feedback[1]);
 
 //      a.fail() \\ on((e){ console.writeLine(e) })
    }

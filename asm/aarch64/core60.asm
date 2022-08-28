@@ -397,6 +397,34 @@ inline %286h
 
 end
 
+// ; swapsi
+inline %87h
+
+  mov     x13, x10
+  add     x12, sp, __arg12_1
+  ldr     x10, [x12]
+  str     x13, [x12]
+
+end
+
+// ; swapsi 0
+inline %187h
+
+  mov     x13, x10
+  mov     x10, x0
+  mov     x0, x13
+
+end
+
+// ; xswapsi 1
+inline %286h
+
+  mov     x13, x10
+  mov     x10, x1
+  mov     x1, x13
+
+end
+
 // ; movm
 inline %88h
 

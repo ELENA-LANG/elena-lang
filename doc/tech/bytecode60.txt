@@ -135,6 +135,8 @@ ELENA byte codes (or ecodes)
 
    store sp:i               - sp[i] := acc
 
+   swap sp:i                - acc <=> sp[i]
+
    xflush sp:i              - sp[i] := cached_sp[i];
 
    xmov sp:i1, sp:i2        - sp[i1] := sp[i2]

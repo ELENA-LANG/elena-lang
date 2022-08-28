@@ -366,6 +366,33 @@ inline %286h
 
 end
 
+// ; swapsi
+inline %87h
+
+  mov  rax, [rsp+__arg32_1]
+  mov  [rsp+__arg32_1], rbx
+  mov  rbx, rax
+
+end
+
+// ; swapsi 0
+inline %187h
+
+  mov  rax, r10
+  mov  r10, rbx
+  mov  rbx, rax
+
+end
+
+// ; swapsi 1
+inline %287h
+
+  mov  rax, r11
+  mov  r11, rbx
+  mov  rbx, rax
+
+end
+
 // ; movm
 inline %88h
 
