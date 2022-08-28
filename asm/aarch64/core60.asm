@@ -416,8 +416,8 @@ inline %187h
 
 end
 
-// ; xswapsi 1
-inline %286h
+// ; swapsi 1
+inline %287h
 
   mov     x13, x10
   mov     x10, x1
