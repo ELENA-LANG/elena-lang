@@ -407,6 +407,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_MSSGNAME:
          attrs |= ExpressionAttribute::MssgNameLiteral;
          return true;
+      case V_PROBEMODE:
+         attrs |= ExpressionAttribute::ProbeMode;
+         return true;
       default:
          return false;
    }

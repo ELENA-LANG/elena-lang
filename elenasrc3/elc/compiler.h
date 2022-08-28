@@ -48,11 +48,8 @@ namespace elena_lang
       ParamBoxable,
       ParamFieldBoxable,
       SelfLocalBoxable,
-      External,
-      Creating,
-      CreatingArray,
-      Declaring,
-      Casting,
+      Extern,
+      NewVariable,
       ReadOnlyFieldAddress,
       FieldAddress,
       ReadOnlyField,
@@ -67,16 +64,28 @@ namespace elena_lang
       Wrapper,
    };
 
+   enum TargetMode
+   {
+      None,
+      Probe,
+      External,
+      WinApi,
+      CreatingArray,
+      Creating,
+      Casting
+   };
+
    struct ObjectInfo
    {
       ObjectKind kind;
       TypeInfo   typeInfo;
       union
       {
-         ref_t      reference;
-         int        argument;
+         ref_t   reference;
+         int     argument;
       };
       int        extra;
+      TargetMode mode;
 
       bool operator ==(ObjectInfo& val) const
       {
@@ -94,6 +103,7 @@ namespace elena_lang
          kind = ObjectKind::Unknown;
          typeInfo = {};
          reference = 0;
+         mode = TargetMode::None;
       }
       ObjectInfo(ObjectKind kind)
       {
@@ -101,6 +111,7 @@ namespace elena_lang
          typeInfo = {};
          this->reference = 0;
          this->extra = 0;
+         mode = TargetMode::None;
       }
       ObjectInfo(ObjectKind kind, TypeInfo typeInfo, ref_t reference)
       {
@@ -108,6 +119,7 @@ namespace elena_lang
          this->typeInfo = typeInfo;
          this->reference = reference;
          this->extra = 0;
+         mode = TargetMode::None;
       }
       ObjectInfo(ObjectKind kind, TypeInfo typeInfo, int value)
       {
@@ -115,6 +127,7 @@ namespace elena_lang
          this->typeInfo = typeInfo;
          this->argument = value;
          this->extra = 0;
+         mode = TargetMode::None;
       }
       ObjectInfo(ObjectKind kind, TypeInfo typeInfo, ref_t reference, int extra)
       {
@@ -122,6 +135,23 @@ namespace elena_lang
          this->typeInfo = typeInfo;
          this->reference = reference;
          this->extra = extra;
+         mode = TargetMode::None;
+      }
+      ObjectInfo(ObjectKind kind, TypeInfo typeInfo, ref_t reference, TargetMode mode)
+      {
+         this->kind = kind;
+         this->typeInfo = typeInfo;
+         this->reference = reference;
+         this->extra = 0;
+         this->mode = mode;
+      }
+      ObjectInfo(ObjectKind kind, TypeInfo typeInfo, ref_t reference, int extra, TargetMode mode)
+      {
+         this->kind = kind;
+         this->typeInfo = typeInfo;
+         this->reference = reference;
+         this->extra = extra;
+         this->mode = mode;
       }
    };
 
@@ -740,7 +770,7 @@ namespace elena_lang
       ref_t mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, Visibility visibility);
       mssg_t mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef, 
          ref_t flags, ref_t* signature, size_t signatureLen);
-      mssg_t mapMessage(ExprScope& scope, SyntaxNode node, bool propertyMode, bool extensionMode);
+      mssg_t mapMessage(ExprScope& scope, SyntaxNode node, bool propertyMode, bool extensionMode, bool probeMode);
 
       ExternalInfo mapExternal(Scope& scope, SyntaxNode node);
       ObjectInfo mapClassSymbol(Scope& scope, ref_t classRef);

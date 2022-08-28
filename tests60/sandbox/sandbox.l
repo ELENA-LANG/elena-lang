@@ -1,15 +1,33 @@
 import system;
 
-A;
+//A;
+
+A
+{
+   feedback(prober,arg)
+   {
+      console.writeLine("A.default")
+   }
+}
+
+Prober
+{
+   function(string s)
+   {
+      console.writeLine(s)
+   }
+}
+
 
 singleton Tester
 {
    run()
    {
-      var message := mssgconst writeLine[1];
-      message(console,"Hello");
-
 //      var a := new A();
+      var prober := new Prober();
+
+//      __probe prober("string", mssgconst feedback[2]);
+//      __try prober(a, mssgconst feedback[2]);
 
 //      a.fail() \\ on((e){ console.writeLine(e) })
    }
@@ -17,8 +35,6 @@ singleton Tester
 
 public program() 
 {
-      var message := mssgconst writeLine[1];
-      message(console,"Hello");
 
 //   Tester.run();
 }

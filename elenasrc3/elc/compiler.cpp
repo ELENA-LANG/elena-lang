@@ -2373,7 +2373,7 @@ void Compiler :: evalStatement(MetaScope& scope, SyntaxNode node)
 
 inline bool hasToBePresaved(ObjectInfo retVal)
 {
-   return retVal.kind == ObjectKind::Object || retVal.kind == ObjectKind::External || retVal.kind == ObjectKind::Symbol;
+   return retVal.kind == ObjectKind::Object || retVal.kind == ObjectKind::Extern || retVal.kind == ObjectKind::Symbol;
 }
 
 inline void createObject(BuildTreeWriter& writer, ClassInfo& info, ref_t reference)
@@ -3025,8 +3025,8 @@ ObjectInfo Compiler :: defineArrayType(Scope& scope, ObjectInfo info)
    info.typeInfo.typeRef = arrayRef;
    info.typeInfo.elementRef = elementRef;
 
-   if (info.kind == ObjectKind::Creating)
-      info.kind = ObjectKind::CreatingArray;
+   if (info.mode == TargetMode::Creating)
+      info.mode = TargetMode::CreatingArray;
 
    return info;
 }
@@ -3541,7 +3541,7 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
    if (!stdCall)
       writer.appendNode(BuildKey::Freeing, align(count, scope.moduleScope->stackAlingment));
 
-   return { ObjectKind::External, { V_INT32 }, 0 };
+   return { ObjectKind::Extern, { V_INT32 }, 0 };
 }
 
 mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId)
@@ -3710,7 +3710,8 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    return retVal;
 }
 
-mssg_t Compiler :: mapMessage(ExprScope& scope, SyntaxNode current, bool propertyMode, bool extensionMode)
+mssg_t Compiler :: mapMessage(ExprScope& scope, SyntaxNode current, bool propertyMode, 
+   bool extensionMode, bool probeMode)
 {
    ref_t flags = propertyMode ? PROPERTY_MESSAGE : 0;
    if (extensionMode)
@@ -3737,7 +3738,7 @@ mssg_t Compiler :: mapMessage(ExprScope& scope, SyntaxNode current, bool propert
       flags |= FUNCTION_MESSAGE;
 
       // if it is an implicit message
-      messageStr.copy(INVOKE_MESSAGE);
+      messageStr.copy(probeMode ? TRY_INVOKE_MESSAGE : INVOKE_MESSAGE);
    }
 
    if (test(flags, FUNCTION_MESSAGE))
@@ -4178,24 +4179,17 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
    }
 
    ObjectInfo source = compileObject(writer, scope, current, EAttr::Parameter);
-   switch (source.kind) {
-      case ObjectKind::External:
-      case ObjectKind::Creating:
-      case ObjectKind::CreatingArray:
-      case ObjectKind::Casting:
-         scope.raiseError(errInvalidOperation, node);
-         break;
-      default:
-         arguments.add(source);
-         break;
-   }
+   if (source.mode != TargetMode::None)
+      scope.raiseError(errInvalidOperation, node);
+
+   arguments.add(source);
 
    // NOTE : the operation target shouldn't be a primtive type
    source = validateObject(writer, scope, node, source, 0, true, true);
 
    current = current.nextNode();
    mssg_t messageRef = mapMessage(scope, current, true, 
-      source.kind == ObjectKind::Extension);
+      source.kind == ObjectKind::Extension, false);
 
    retVal = compileMessageOperation(writer, scope, node, source, messageRef,
       0, arguments, EAttr::None);
@@ -4211,20 +4205,22 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
    SyntaxNode current = node.firstChild();
    ObjectInfo source = compileObject(writer, scope, current, EAttr::Parameter);
-   switch (source.kind) {
-      case ObjectKind::External:
+   bool probeMode = source.mode == TargetMode::Probe;
+   switch (source.mode) {
+      case TargetMode::External:
+      case TargetMode::WinApi:
          compileMessageArguments(writer, scope, current, arguments, EAttr::None);
 
-         retVal = compileExternalOp(writer, scope, source.reference, source.extra == -1, arguments);
+         retVal = compileExternalOp(writer, scope, source.reference, source.mode == TargetMode::WinApi, arguments);
          break;
-      case ObjectKind::CreatingArray:
+      case TargetMode::CreatingArray:
       {
          compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);
 
          retVal = compileNewArrayOp(writer, scope, source, targetRef, arguments);
          break;
       }
-      case ObjectKind::Creating:
+      case TargetMode::Creating:
       {
          ref_t signRef = compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);
 
@@ -4232,7 +4228,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
             retrieveStrongType(scope, source)), signRef, arguments);
          break;
       }
-      case ObjectKind::Casting:
+      case TargetMode::Casting:
          compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);
          if (arguments.count() == 1) {
             retVal = convertObject(writer, scope, current, arguments[0], retrieveStrongType(scope, source));
@@ -4246,7 +4242,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
          current = current.nextNode();
          mssg_t messageRef = mapMessage(scope, current, false,
-            source.kind == ObjectKind::Extension);
+            source.kind == ObjectKind::Extension, probeMode);
 
          if (!test(messageRef, FUNCTION_MESSAGE))
             arguments.add(source);
@@ -4373,7 +4369,7 @@ ObjectInfo Compiler :: compileIndexerOperation(BuildTreeWriter& writer, ExprScop
    SyntaxNode loperand = node.firstChild();
    if (loperand == SyntaxKey::Object) {
       ObjectInfo info = mapObject(scope, loperand, EAttr::Lookahead);
-      if (info.kind == ObjectKind::Declaring) {
+      if (info.kind == ObjectKind::NewVariable) {
          // if it is a new variable declaration - treat it like a new array
          declareVariable(scope, node, info.typeInfo); // !! temporal - typeref should be provided or super class
 
@@ -4520,7 +4516,7 @@ ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope&
 
    writer.newNode(BuildKey::Tape);
 
-   mssg_t messageRef = mapMessage(scope, catchNode.firstChild(), false, false);
+   mssg_t messageRef = mapMessage(scope, catchNode.firstChild(), false, false, false);
    ArgumentsInfo arguments;
 
    if (!test(messageRef, FUNCTION_MESSAGE)) {
@@ -4622,6 +4618,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    bool castOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::CastOp);
    bool refOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::RefOp);
    bool mssgOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::MssgLiteral);
+   bool probeMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ProbeMode);
 
    ObjectInfo retVal;
    bool invalid = false;
@@ -4629,9 +4626,9 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
       auto externalInfo = mapExternal(scope, node);
       switch (externalInfo.type) {
          case ExternalType::WinApi:
-            return { ObjectKind::External, {}, externalInfo.reference, -1 };
+            return { ObjectKind::Extern, {}, externalInfo.reference, 0, TargetMode::WinApi };
          default:
-            return { ObjectKind::External, {}, externalInfo.reference, 0 };
+            return { ObjectKind::Extern, {}, externalInfo.reference, 0, TargetMode::External };
       }
    }
    else if (newOp || castOp) {
@@ -4641,8 +4638,8 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
          {
             TypeInfo typeInfo = resolveTypeAttribute(scope, node, false);
 
-            retVal = { newOp ? ObjectKind::Creating : ObjectKind::Casting,
-               typeInfo, 0 };
+            retVal = { ObjectKind::Class,
+               typeInfo, 0, newOp ? TargetMode::Creating : TargetMode::Casting };
             break;
          }
          default:
@@ -4725,6 +4722,9 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
       retVal = defineArrayType(scope, retVal);
    }
 
+   if (probeMode)
+      retVal.mode = TargetMode::Probe;
+
    return retVal;
 }
 
@@ -4736,7 +4736,7 @@ ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
    declareExpressionAttributes(scope, node, declaredTypeInfo, mode);
    if (mode.test(EAttr::Lookahead)) {
       if (mode.test(EAttr::NewVariable)) {
-         return { ObjectKind::Declaring, declaredTypeInfo, 0, 0 };
+         return { ObjectKind::NewVariable, declaredTypeInfo, 0, 0 };
       }
       else if (mode.test(EAttr::MssgNameLiteral)) {
          return { ObjectKind::MssgLiteral, { V_MESSAGE },
@@ -4762,7 +4762,7 @@ ObjectInfo Compiler :: declareTempLocal(ExprScope& scope, ref_t typeRef)
 
 ObjectInfo Compiler :: saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object)
 {
-   if (object.kind == ObjectKind::External) {
+   if (object.kind == ObjectKind::Extern) {
       CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
 
       auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, object.typeInfo.typeRef);
@@ -4789,9 +4789,6 @@ ObjectInfo Compiler :: compileObject(BuildTreeWriter& writer, ExprScope& scope, 
       switch (retVal.kind) {
          case ObjectKind::Unknown:
             scope.raiseError(errUnknownObject, node.lastChild(SyntaxKey::TerminalMask));
-            break;
-         case ObjectKind::External:
-         case ObjectKind::CreatingArray:
             break;
          default:
             break;
@@ -5452,7 +5449,7 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
       ExprScope scope(&codeScope);
       ArgumentsInfo arguments;
 
-      mssg_t messageRef = mapMessage(scope, current.firstChild(), false, false);
+      mssg_t messageRef = mapMessage(scope, current.firstChild(), false, false, false);
 
       if (!test(messageRef, FUNCTION_MESSAGE))
          arguments.add(source);
@@ -5552,7 +5549,7 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
          compileDispatchCode(writer, codeScope, node);
          break;
       case SyntaxKey::RedirectTryDispatch:
-         compileDispatchProberCode(writer, codeScope, node);
+         compileDispatchProberCode(writer, codeScope, current);
          break;
       default:
          break;

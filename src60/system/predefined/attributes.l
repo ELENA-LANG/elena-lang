@@ -42,6 +42,7 @@
 #let attributesSymbols["import"]      := 80001018h;
 #let attributesSymbols["namespace"]   := 80001021h;
 #let attributesSymbols["inline"]      := 80001025h;
+#let attributesSymbols["__probe"]     := 80001026h;
 
 /// primitive types
 #let attributesSymbols["__string"]    := 80000801h;
