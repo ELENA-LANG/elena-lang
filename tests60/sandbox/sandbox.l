@@ -23,6 +23,8 @@ singleton Tester
 {
    run()
    {
+      console.writeLine("Start")
+
 //      var a := new A();
       var prober := new Prober();
 
