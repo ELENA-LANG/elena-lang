@@ -26,7 +26,7 @@ singleton Tester
 //      var a := new A();
       var prober := new Prober();
 
-//      __probe prober("string", mssgconst feedback[2]);
+      __probe prober("string", mssgconst feedback[2]);
 //      __try prober(a, mssgconst feedback[2]);
 
 //      a.fail() \\ on((e){ console.writeLine(e) })
@@ -35,6 +35,5 @@ singleton Tester
 
 public program() 
 {
-
-//   Tester.run();
+   Tester.run();
 }

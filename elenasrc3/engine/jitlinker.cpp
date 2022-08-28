@@ -285,8 +285,6 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
    ref_t mask = reference & mskAnyRef;
    ref_t refID = reference & ~mskAnyRef;
 
-   assert(!refID);
-
    if (module == nullptr)
       module = _module;
 
