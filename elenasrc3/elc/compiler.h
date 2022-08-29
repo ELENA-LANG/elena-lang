@@ -1021,6 +1021,8 @@ namespace elena_lang
       void validateType(Scope& scope, ref_t typeRef, SyntaxNode node);
 
       void injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased);
+      void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
+         ClassInfo& info, mssg_t multiMethod);
       void injectVirtualMultimethods(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
          ClassInfo& info, List<mssg_t>& implicitMultimethods);
 

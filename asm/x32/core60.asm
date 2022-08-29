@@ -1442,7 +1442,7 @@ labNextParam:
   mov  edx, [esi + edx * 8]
   mov  ecx, [ebx - elVMTOffset]
   mov  esi, [esp+4]                      // ; restore arg0
-  jmp  [ecx + eax * 8 + 4]
+  jmp  [ecx + eax + 4]
 
 labMatching:
   mov  edi, [eax + ecx * 4]

@@ -2370,7 +2370,7 @@ addr_t JITCompiler32 :: findMethodAddress(void* entries, mssg_t message)
 
 pos_t JITCompiler32 :: findMethodOffset(void* entries, mssg_t message)
 {
-   VMTHeader32* header = (VMTHeader32*)((uintptr_t)entries - elVMTClassOffset64);
+   VMTHeader32* header = (VMTHeader32*)((uintptr_t)entries - elVMTClassOffset32);
    pos_t offset = 0;
    for (pos_t i = 0; i < header->count; i++) {
       if (((VMTEntry32*)entries)[i].message == message) {
@@ -2379,7 +2379,7 @@ pos_t JITCompiler32 :: findMethodOffset(void* entries, mssg_t message)
       }
    }
 
-   return offset + 4;
+   return offset;
 }
 
 pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT)
@@ -2738,7 +2738,7 @@ pos_t JITCompiler64 :: findMethodOffset(void* entries, mssg_t message)
       }
    }
 
-   return offset + 8;
+   return offset;
 }
 
 pos_t JITCompiler64 :: copyParentVMT(void* parentVMT, void* targetVMT)

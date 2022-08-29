@@ -1819,24 +1819,16 @@ labNextParam:
 
 //;  mov  r9, __ptr64_2  - r21
 
-//;  mov  r13, [r9 + rdx * 16 + 8] 
   lsl     x23, x25, #4
   add     x25, x21, x23
+  ldr     x9,  [x25]
   ldr     x23, [x25, #8] 
 
-//;  mov  rcx, [rbx - elVMTOffset]
   sub     x16, x10, elVMTOffset
   ldr     x16, [x16, #0]
 
-//;  lea  rax, [r13 * 16]
-  lsl     x17, x23, #4
-
-//;  mov  rdx, [r9 + r13 * 2]        // c02
-  lsl     x23, x23, #1
-  add     x14, x21, x23 
-  ldr     x9, [x14, #0]
 //;  jmp  [rcx + rax + 8]       // rax - 0
-  add     x20, x16, x17
+  add     x20, x16, x23
 
   ldr     x17, [x20, #8]
   br      x17

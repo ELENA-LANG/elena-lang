@@ -1406,11 +1406,10 @@ labNextParam:
   mov  r9, __ptr64_2
   lea  r13, [rdx * 8]
   mov  rbx, r8
-  mov  r13, [r9 + r13 * 2 + 8] 
+  mov  rax, [r9 + r13 * 2 + 8] 
+  mov  rdx, [r9 + r13 * 2] 
   mov  rcx, [rbx - elVMTOffset]
-  lea  rax, [r13 * 8]
-  mov  rdx, [r9 + r13 * 2]
-  jmp  [rcx + rax * 2 + 8]
+  jmp  [rcx + rax + 8]
 
 labMatching:
   mov  rdi, [rax + rcx * 8]

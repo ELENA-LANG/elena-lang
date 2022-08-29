@@ -46,6 +46,12 @@ procedure __object_equal
 
 end
 
+procedure __exception_raise
+
+  throw
+
+end
+
 procedure __message_dispatcher
 
   tstn        FUNCTION_MESSAGE

@@ -1310,28 +1310,34 @@ void Compiler :: injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool
    }
 }
 
+void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
+   ClassInfo& info, mssg_t multiMethod)
+{
+   MethodInfo methodInfo = {};
+
+   auto m_it = info.methods.getIt(multiMethod);
+   bool found = !m_it.eof();
+   if (found)
+      methodInfo = *m_it;
+
+   if (!found || methodInfo.inherited) {
+      injectVirtualMultimethod(classNode, methodType, scope, info, multiMethod, methodInfo.inherited, methodInfo.outputRef);
+
+      // COMPILER MAGIC : injecting try-multi-method dispather
+      if (_logic->isTryDispatchAllowed(scope, multiMethod)) {
+         ref_t tryMessage = _logic->defineTryDispatcher(scope, multiMethod);
+
+         injectVirtualTryDispatch(classNode, methodType, info, tryMessage, multiMethod, info.methods.exist(tryMessage));
+      }
+   }
+}
+
 void Compiler :: injectVirtualMultimethods(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, ClassInfo& info,
    List<mssg_t>& implicitMultimethods)
 {
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.eof(); ++it) {
-      MethodInfo methodInfo = {};
-
-      auto m_it = info.methods.getIt(*it);
-      bool found = !m_it.eof();
-      if (found)
-         methodInfo = *m_it;
-
-      if (!found || methodInfo.inherited) {
-         injectVirtualMultimethod(classNode, methodType, scope, info, *it, methodInfo.inherited, methodInfo.outputRef);
-
-         // COMPILER MAGIC : injecting try-multi-method dispather
-         if (_logic->isTryDispatchAllowed(scope, *it)) {
-            ref_t tryMessage = _logic->defineTryDispatcher(scope, *it);
-
-            injectVirtualTryDispatch(classNode, methodType, info, tryMessage, *it, methodInfo.inherited);
-         }
-      }
+      injectVirtualMultimethod(classNode, methodType, scope, info, *it);
    }
 }
 
@@ -4518,16 +4524,20 @@ ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope&
 
    writer.newNode(BuildKey::Tape);
 
-   mssg_t messageRef = mapMessage(scope, catchNode.firstChild(), false, false, false);
+   // NOTE : the operation target shouldn't be a primtive type
+   ObjectInfo source = validateObject(writer, scope, node, { ObjectKind::Object }, 0, true, true);
+
+   SyntaxNode messageNode = catchNode.firstChild().firstChild();
+   mssg_t messageRef = mapMessage(scope, messageNode, false, false, false);
    ArgumentsInfo arguments;
 
    if (!test(messageRef, FUNCTION_MESSAGE)) {
-      arguments.add({ ObjectKind::Object });
+      arguments.add(source);
    }
 
-   ref_t implicitSignatureRef = compileMessageArguments(writer, scope, catchNode.firstChild(), arguments, EAttr::NoPrimitives);
+   ref_t implicitSignatureRef = compileMessageArguments(writer, scope, messageNode, arguments, EAttr::NoPrimitives);
 
-   compileMessageOperation(writer, scope, node, { ObjectKind::Object }, messageRef,
+   compileMessageOperation(writer, scope, node, source, messageRef,
       implicitSignatureRef, arguments, EAttr::None);
 
    writer.closeNode();
@@ -5816,8 +5826,10 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
    methodScope.functionMode = true;
 
    mssg_t multiMethod = defineMultimethod(scope, methodScope.message);
-   if (multiMethod)
+   if (multiMethod) {
+      methodScope.info.multiMethod = multiMethod;
       methodScope.info.outputRef = V_AUTO;
+   }
 
    compileClosureMethod(writer, methodScope, node);
 
@@ -5835,11 +5847,43 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
    declareClassParent(parentRef, scope, node);
    generateClassFlags(scope, elNestedClass);
 
+   // handle the abstract flag
+   if (test(scope.info.header.flags, elAbstract)) {
+      scope.abstractBasedMode = true;
+      scope.info.header.flags &= ~elAbstract;
+   }
+
    auto m_it = scope.info.methods.getIt(methodScope.message);
    if (!m_it.eof()) {
       (*m_it).inherited = true;
    }
    else scope.info.methods.add(methodScope.message, methodScope.info);
+
+   if (multiMethod) {
+      SyntaxTree classTree;
+      SyntaxTreeWriter classWriter(classTree);
+
+      // build the class tree
+      classWriter.newNode(SyntaxKey::Root);
+      classWriter.newNode(SyntaxKey::Class, scope.reference);
+
+      SyntaxNode classNode = classWriter.CurrentNode();
+      injectVirtualMultimethod(classNode, SyntaxKey::Method, *scope.moduleScope, scope.info, multiMethod);
+
+      classWriter.closeNode();
+      classWriter.closeNode();
+
+      SyntaxNode current = classNode.firstChild();
+      while (current != SyntaxKey::None) {
+         generateMethodDeclaration(scope, current, false);
+
+         current = current.nextNode();
+      }
+
+      _logic->injectOverloadList(this, *scope.moduleScope, scope.info, scope.reference);
+
+      compileVMT(writer, scope, classNode);
+   }      
 
    // set flags once again
    // NOTE : it should be called after the code compilation to take into consideration outer fields

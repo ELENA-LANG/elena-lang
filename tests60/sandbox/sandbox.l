@@ -10,28 +10,28 @@ A
    }
 }
 
-Prober
-{
-   function(string s)
-   {
-      console.writeLine(s)
-   }
-}
-
+//Prober
+//{
+//   function(string s)
+//   {
+//      console.writeLine(s)
+//   }
+//}
 
 singleton Tester
 {
    run()
    {
-      console.writeLine("Start");
+//      console.writeLine("Start");
 
       var a := new A();
-      var prober := new Prober();
+//      var prober := new Prober();
 
-      __probe prober("string", mssgconst feedback[2]);
-      __probe prober(a, mssgconst feedback[1]);
+//      __probe prober("string", mssgconst feedback[2]);
+//      __probe prober(a, mssgconst feedback[1]);
 
 //      a.fail() \\ on((e){ console.writeLine(e) })
+      a.fail() \\ on((Exception e){ console.writeLine(e) })
    }
 }
 

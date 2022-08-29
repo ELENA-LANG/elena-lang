@@ -1,7 +1,15 @@
 // --- Exception ---
 public class Exception
 {
-//   on((handler) : external<system'core_routines'__exception_dispatcher>;
+   on(handler)
+   {
+      __probe handler(self, mssgconst fallback[2]);
+   }
+
+   fallback(arg)
+      <= raise();  
+
+   raise() : external<system'core_routines'__exception_raise>;
 }
 
 // --- CriticalException ---
