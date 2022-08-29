@@ -1,10 +1,7 @@
 // --- Exception ---
 public class Exception
 {
-   on(handler)
-   {
-      __probe handler(self, mssgconst fallback[2]);
-   }
+   on(handler) : external<system'core_routines'__exception_handler>; 
 
    fallback(arg)
       <= raise();  

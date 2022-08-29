@@ -107,6 +107,8 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
 
       _reader.read(tokenInfo);
 
+      ByteCodeUtil::resolveMessage(*tokenInfo.token, _module);
+
       mask = mskMssgLiteralRef;
    }
    else if (tokenInfo.compare("procedure")) {
@@ -188,7 +190,12 @@ int ByteCodeAssembler :: readFrameI(ScriptToken& tokenInfo, ReferenceMap& locals
    if (!skipRead)
       _reader.read(tokenInfo);
 
-   if (tokenInfo.state == dfaInteger) {
+   if (tokenInfo.compare("-")) {
+      int val = readFrameI(tokenInfo, locals, false);
+
+      return -val;
+   }
+   else if (tokenInfo.state == dfaInteger) {
       return tokenInfo.token.toInt();
    }
    else if (locals.exist(*tokenInfo.token)) {
@@ -415,6 +422,9 @@ bool ByteCodeAssembler :: compileCloseOpN(ScriptToken& tokenInfo, MemoryWriter& 
 
       read(tokenInfo, "]", ASM_SBRACKETCLOSE_EXPECTED);
    }
+   else if (tokenInfo.compare(":")) {
+      command.arg1 = readN(tokenInfo, constants, false);
+   }
    else command.arg1 = readN(tokenInfo, constants, true);
 
    ByteCodeUtil::write(writer, command);
@@ -460,11 +470,18 @@ bool ByteCodeAssembler :: compileOpStackI(ScriptToken& tokenInfo, MemoryWriter& 
 bool ByteCodeAssembler :: compileOpIN(ScriptToken& tokenInfo, MemoryWriter& writer,
    ByteCommand& command, ReferenceMap& constants, bool skipRead)
 {
+   if (tokenInfo.compare(":"))
+      read(tokenInfo);
+
    command.arg1 = readI(tokenInfo, skipRead);
 
    read(tokenInfo, ",", ASM_COMMA_EXPECTED);
 
-   command.arg2 = readN(tokenInfo, constants);
+   read(tokenInfo);
+   if (tokenInfo.compare(":"))
+      read(tokenInfo);
+
+   command.arg2 = readN(tokenInfo, constants, true);
 
    ByteCodeUtil::write(writer, command);
 
@@ -647,6 +664,17 @@ bool ByteCodeAssembler :: compileMR(ScriptToken& tokenInfo, MemoryWriter& writer
    return true;
 }
 
+bool ByteCodeAssembler :: compileOpM(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead)
+{
+   mssg_t arg = readM(tokenInfo, skipRead);
+
+   ByteCodeUtil::write(writer, command.code, arg);
+
+   read(tokenInfo);
+
+   return true;
+}
+
 bool ByteCodeAssembler :: compileNR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
    ReferenceMap& constants, bool skipRead)
 {
@@ -745,14 +773,19 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileOpII(tokenInfo, writer, opCommand, true);
          case ByteCode::StoreFI:
          case ByteCode::CmpFI:
+         case ByteCode::PeekFI:
             return compileOpFrameI(tokenInfo, writer, opCommand, locals, true);
          case ByteCode::PeekSI:
          case ByteCode::StoreSI:
          case ByteCode::CmpSI:
+         case ByteCode::XFlushSI:
             return compileOpStackI(tokenInfo, writer, opCommand, locals, true);
          case ByteCode::SaveDP:
          case ByteCode::SetDP:
             return compileDDisp(tokenInfo, writer, opCommand, dataLocals, true);
+         case ByteCode::TstM:
+         case ByteCode::MovM:
+            return compileOpM(tokenInfo, writer, opCommand, false);
          case ByteCode::XHookDPR:
             return compileDDispR(tokenInfo, writer, opCommand, dataLocals, true);
          case ByteCode::CallMR:
@@ -774,6 +807,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileOpI(tokenInfo, writer, opCommand, false);
          case ByteCode::Jeq:
          case ByteCode::Jne:
+         case ByteCode::Jump:
             return compileJcc(tokenInfo, writer, opCommand, lh);
          case ByteCode::SetR:
             return compileR(tokenInfo, writer, opCommand, true);

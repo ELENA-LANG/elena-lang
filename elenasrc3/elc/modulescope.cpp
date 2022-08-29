@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------
 
 #include "modulescope.h"
+#include "bytecode.h"
 
 using namespace elena_lang;
 
@@ -261,6 +262,18 @@ ref_t ModuleScope :: importConstant(ModuleBase* referenceModule, ref_t reference
    ustr_t value = referenceModule->resolveConstant(reference);
 
    return  module->mapConstant(value);
+}
+
+ref_t ModuleScope :: importMessageConstant(ModuleBase* referenceModule, ref_t reference)
+{
+   if (!reference)
+      return 0;
+
+   ustr_t value = referenceModule->resolveConstant(reference);
+
+   ByteCodeUtil::resolveMessage(value, module);
+
+   return module->mapConstant(value);
 }
 
 SectionInfo ModuleScope :: getSection(ustr_t referenceName, ref_t mask, bool silentMode)

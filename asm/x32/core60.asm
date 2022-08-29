@@ -684,6 +684,39 @@ inline %0C4h
 
 end
 
+// ; tstm
+inline % 0C5h // (ebx - object)
+
+  mov   [esp+4], esi                      // ; saving arg0
+  xor   ecx, ecx
+  mov   edi, [ebx - elVMTOffset]
+  mov   esi, [edi - elVMTSizeOffset]
+
+labSplit:
+  test  esi, esi
+  jz    short labEnd
+
+labStart:
+  shr   esi, 1
+  setnc cl
+  mov   eax, __arg32_1
+  cmp   edx, eax
+  je    short labFound
+  lea   eax, [edi+esi*8]
+  jb    short labSplit
+  lea   edi, [eax+8]
+  sub   esi, ecx
+  jmp   short labSplit
+
+labFound:
+  mov   esi, 1
+
+labEnd:
+  cmp   esi, 1
+  mov   esi, [esp+4]                                                              
+
+end
+
 // ; cmpfi
 inline %0C8h
 

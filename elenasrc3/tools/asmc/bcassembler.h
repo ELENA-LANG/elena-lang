@@ -142,6 +142,8 @@ namespace elena_lang
          ReferenceMap& dataLocals, bool skipRead);
       bool compileOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          ReferenceMap& constants, bool skipRead);
+      bool compileOpM(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
+         bool skipRead);
       bool compileOpI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          bool skipRead);
       bool compileOpFrameI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,

@@ -74,6 +74,7 @@ namespace elena_lang
       ICmpN          = 0xC2,
       TstFlag        = 0xC3,
       TstN           = 0xC4,
+      TstM           = 0xC5,
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
 
@@ -242,6 +243,7 @@ namespace elena_lang
             case ByteCode::VJumpMR:
             case ByteCode::DispatchMR:
             case ByteCode::XDispatchMR:
+            case ByteCode::TstM:
                return true;
             default:
                return false;

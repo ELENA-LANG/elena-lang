@@ -880,6 +880,45 @@ inline %0C4h
 
 end
 
+// ; tstm
+inline % 0C5h
+
+  lis     r20, __arg32hi_1
+  addi    r20, r20, __arg32lo_1
+
+  ld      r16, -elVMTOffset(r15)      //; edi
+  xor     r17, r17, r17               //; ecx 
+  ld      r7, -elVMTSizeOffset(r16)   //; esi
+  li      r19, 1
+
+labSplit:
+  cmpwi   r7, 0
+  beq     labEnd
+
+labStart:
+  andi.   r0, r7, 1
+  srdi    r7, r7, 1
+  iseleq  r21, r19, r17                  //; ecx
+
+  sldi    r22, r7, 4
+  add     r22, r22, r16                  //; edx
+
+  ld      r23, 0(r22)
+  cmp     r20, r23
+  beq     labFound
+  addi    r22, r22, 16  
+  blt     labSplit
+  mr      r16, r22
+  subf    r7, r21, r7
+  b       labSplit
+labFound:
+  mr      r7, 1 
+
+labEnd:
+  cmpwi   r7, 1
+                               
+end
+
 // ; cmpfi
 inline %0C8h
 

@@ -50,7 +50,7 @@ const char* _fnOpcodes[256] =
    "call", "call vt", "jump", "jeq", "jne", "jump vt", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "cmp", OPCODE_UNKNOWN, "icmp", "tst flag", "tstn", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "cmp", OPCODE_UNKNOWN, "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -231,7 +231,7 @@ void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* targe
       ref_t mask = command.arg1 & mskAnyRef;
       switch (mask) {
          case mskMssgLiteralRef:
-            command.arg1 = target->importConstant(importer, command.arg1 & ~mskAnyRef) | mask;
+            command.arg1 = target->importMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
             break;
          default:
             command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;

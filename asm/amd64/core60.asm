@@ -728,6 +728,39 @@ inline %0C4h
 
 end
 
+// ; tstm
+inline % 0C5h
+
+  mov  eax, __arg32_1
+  mov  r14, [rbx - elVMTOffset]
+  xor  ecx, ecx
+  mov  rsi, qword ptr[r14 - elVMTSizeOffset]
+
+labSplit:
+  test esi, esi
+  jz   short labEnd
+
+labStart:
+  shr   esi, 1
+  lea   r13, [rsi*2]
+  setnc cl
+  cmp   eax, dword ptr [r14+r13*8]
+  je    short labFound
+  lea   r8, [r14+r13*8]
+  jb    short labSplit
+  lea   r14, [r8+16]
+  sub   esi, ecx
+  jmp   labSplit
+  nop
+  nop
+labFound:
+  mov  esi, 1
+
+labEnd:
+  cmp  esi, 1
+                               
+end
+
 // ; cmpfi
 inline %0C8h
 

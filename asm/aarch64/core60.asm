@@ -859,6 +859,47 @@ inline %0C4h
 
 end
 
+// ; tstm
+inline % 0C5h
+
+  movz    x16,  __arg32lo_1
+  movk    x16,  __arg32hi_1, lsl #16
+
+  sub     x14, x10, elVMTOffset              
+  ldr     x11, [x14]              //; edi
+  mov     x12, #0                 //; ecx
+  sub     x15, x11, elVMTSizeOffset
+  ldr     x13, [x15]              //; esi
+
+labSplit:
+  cmp     x13, #0 
+  beq     labEnd
+
+labStart:
+  tst     x13, #1
+  lsr     x13, x13, #1
+  cset    x12, eq
+
+  lsl     x14, x13, #4
+  add     x14, x14, x11 
+
+  ldr     x15, [x14]         //; edx
+  cmp     x16, x15
+  beq     labFound
+  add     x14, x14, #16
+  ble     labSplit
+  mov     x11, x14
+  sub     x13, x13, x12
+  b       labSplit
+
+labFound:
+  mov     x13, #1
+
+labEnd:
+  cmp     x13, #1
+                               
+end
+
 // ; cmpfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0C8h

@@ -30,8 +30,8 @@ singleton Tester
 //      __probe prober("string", mssgconst feedback[2]);
 //      __probe prober(a, mssgconst feedback[1]);
 
-//      a.fail() \\ on((e){ console.writeLine(e) })
-      a.fail() \\ on((Exception e){ console.writeLine(e) })
+      a.fail() \\ on((e){ console.writeLine(e) })
+//      a.fail() \\ on((Exception e){ console.writeLine(e) })
    }
 }
 

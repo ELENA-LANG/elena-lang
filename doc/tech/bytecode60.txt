@@ -233,6 +233,9 @@ ELENA byte codes (or ecodes)
    tstn n                   - temp := index & n 
                               COMP.EQ := (temp == 0);
 
+   tstm m                   - search for m in acc:VMT;
+                              COMP.EQ := found
+
    cmp  fp:i                - COMP.EQ := (acc == fp[i]);
 
    cmp  sp:i                - COMP.EQ := (acc == sp[i]);

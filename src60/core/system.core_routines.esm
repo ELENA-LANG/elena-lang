@@ -46,6 +46,39 @@ procedure __object_equal
 
 end
 
+procedure __exception_handler
+
+  xflush          sp:0
+  open            :3, :0 
+  store           fp:1 
+
+  tst             mssg:"function:#try_invoke[2]"
+  jeq             Lab01
+
+  set             mssgconst:"fallback[3]" 
+  store           sp:1 
+  peek            fp:1 
+  store           sp:0 
+  peek            fp:-2 
+  mov             mssg:"function:#try_invoke[2]" 
+  call            vt:0 
+
+  jump            Lab00
+
+Lab01:
+  peek            fp:1 
+  store           sp:0 
+  peek            fp:-2 
+  mov             mssg:"function:#invoke[1]" 
+  call            vt:0 
+
+Lab00:
+  peek            fp:1 
+  close           :0 
+  quit             
+
+end
+
 procedure __exception_raise
 
   throw
