@@ -1205,7 +1205,7 @@ inline %0E6h
   movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
   mov     x18, x13
 
-//  movz    x16,  __ptr32lo_2
+  movz    x16,  __ptr32lo_2
 //  movk    x16,  __ptr32hi_2, lsl #16
   add     x14, x14, # et_current
 
