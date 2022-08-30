@@ -444,18 +444,18 @@ namespace elena_lang
                {
                   offset >>= 4;
 
-                  writer.Memory()->addReference(mskCodeRef32Hi, writer.position());
+                  MemoryBase::maskDWord(writer.Memory(), info.position, (offset & 0xFFFF) << 5);
+                  writer.Memory()->addReference(mskCodeRef32Hi, info.position);
 
-                  writer.maskDWord((offset & 0xFFFF) << 5);
                   break;
                }
                case mskRef32Lo:
                {
                   offset &= 0xFFFF;
 
-                  writer.Memory()->addReference(mskCodeRef32Lo | offset, writer.position());
+                  MemoryBase::maskDWord(writer.Memory(), info.position, (offset & 0xFFFF) << 5);
+                  writer.Memory()->addReference(mskCodeRef32Lo, info.position);
 
-                  writer.maskDWord((offset & 0xFFFF) << 5);
                   break;
                }
                default:
