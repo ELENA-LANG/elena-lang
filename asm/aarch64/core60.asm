@@ -241,7 +241,6 @@ inline %0Bh
   add     x14, x14, # et_current
   ldr     x13, [x14]
 
-
   ldr     x15, [x13]
   ldr     x16, [x13, #8]!
   ldr     x17, [x13, #8]!
@@ -1202,12 +1201,12 @@ inline %0E6h
 
   add     x13, x29, __arg12_1
 
-  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
-  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+//  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
+//  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
   mov     x18, x13
 
-  movz    x16,  __ptr32lo_2
-  movk    x16,  __ptr32hi_2, lsl #16
+//  movz    x16,  __ptr32lo_2
+//  movk    x16,  __ptr32hi_2, lsl #16
   add     x14, x14, # et_current
 
   mov     x17, sp
