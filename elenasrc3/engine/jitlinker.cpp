@@ -1017,7 +1017,7 @@ addr_t JITLinker :: resolveName(ReferenceInfo referenceInfo, bool onlyPath)
 
 mssg_t JITLinker :: parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references)
 {
-   mssg_t message = ByteCodeUtil::resolveMessage(messageLiteral, module);
+   mssg_t message = ByteCodeUtil::resolveMessage(messageLiteral, module, true);
 
    return createMessage(module, message, references);
 }

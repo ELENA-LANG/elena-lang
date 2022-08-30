@@ -330,7 +330,7 @@ namespace elena_lang
 
       static bool resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message);
 
-      static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module);
+      static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
    };
 
 }

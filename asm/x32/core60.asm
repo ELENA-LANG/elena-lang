@@ -700,7 +700,7 @@ labStart:
   shr   esi, 1
   setnc cl
   mov   eax, __arg32_1
-  cmp   edx, eax
+  cmp   eax, [edi+esi*8]
   je    short labFound
   lea   eax, [edi+esi*8]
   jb    short labSplit

@@ -271,7 +271,7 @@ ref_t ModuleScope :: importMessageConstant(ModuleBase* referenceModule, ref_t re
 
    ustr_t value = referenceModule->resolveConstant(reference);
 
-   ByteCodeUtil::resolveMessage(value, module);
+   ByteCodeUtil::resolveMessage(value, module, false);
 
    return module->mapConstant(value);
 }

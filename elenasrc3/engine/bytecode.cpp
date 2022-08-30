@@ -161,7 +161,7 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    return true;
 }
 
-mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
+mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode)
 {
    pos_t argCount = 0;
    ref_t actionRef = 0, flags = 0;
@@ -217,7 +217,7 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
    if ((*actionName).compare(CAST_MESSAGE))
       flags |= CONVERSION_MESSAGE;
 
-   actionRef = module->mapAction(*actionName, signature, true);
+   actionRef = module->mapAction(*actionName, signature, readOnlyMode);
    if (actionRef == 0) {
       return 0;
    }

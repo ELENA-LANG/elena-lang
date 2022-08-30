@@ -130,7 +130,7 @@ mssg_t ByteCodeViewer :: resolveMessageByIndex(MemoryBase* vmt, int index)
 
 mssg_t ByteCodeViewer :: resolveMessage(ustr_t messageName)
 {
-   mssg_t message = ByteCodeUtil::resolveMessage(messageName, _module);
+   mssg_t message = ByteCodeUtil::resolveMessage(messageName, _module, true);
    if (message == 0) {
       printLine("Unknown message ", messageName);
    }
@@ -341,6 +341,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addRArg(command.arg1, commandStr);
             break;
          case ByteCode::MovM:
+         case ByteCode::TstM:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
             break;
@@ -404,7 +405,10 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
 
 void ByteCodeViewer :: addMessage(IdentifierString& commandStr, mssg_t message)
 {
-   ByteCodeUtil::resolveMessageName(commandStr, _module, message);
+   if (!ByteCodeUtil::resolveMessageName(commandStr, _module, message)) {
+      commandStr.append("invalid ");
+      commandStr.appendUInt(message);
+   }      
 }
 
 inline void appendHex32(IdentifierString& command, unsigned int hex)

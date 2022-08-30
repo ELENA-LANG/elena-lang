@@ -107,7 +107,7 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
 
       _reader.read(tokenInfo);
 
-      ByteCodeUtil::resolveMessage(*tokenInfo.token, _module);
+      ByteCodeUtil::resolveMessage(*tokenInfo.token, _module, false);
 
       mask = mskMssgLiteralRef;
    }
@@ -168,7 +168,7 @@ mssg_t ByteCodeAssembler :: readM(ScriptToken& tokenInfo, bool skipRead)
    if (!skipRead)
       _reader.read(tokenInfo);
 
-   mssg_t message = ByteCodeUtil::resolveMessage(*tokenInfo.token, _module);
+   mssg_t message = ByteCodeUtil::resolveMessage(*tokenInfo.token, _module, false);
 
    return message;
 }

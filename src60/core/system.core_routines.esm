@@ -53,9 +53,9 @@ procedure __exception_handler
   store           fp:1 
 
   tst             mssg:"function:#try_invoke[2]"
-  jeq             Lab01
+  jne             Lab01
 
-  set             mssgconst:"fallback[3]" 
+  set             mssgconst:"fallback[2]"
   store           sp:1 
   peek            fp:1 
   store           sp:0 
