@@ -12,6 +12,8 @@
 #include "langcommon.h"
 #include "bytecode.h"
 
+#define FULL_OUTOUT_INFO 1
+
 using namespace elena_lang;
 
 constexpr ref_t SIGNATURE_MASK = 0x80000000;
@@ -715,6 +717,12 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
 {
    if (sectionInfo.vmtSection == nullptr || sectionInfo.codeSection == nullptr)
       return INVALID_ADDR;
+
+#ifdef FULL_OUTOUT_INFO
+   if (referenceInfo.referenceName)
+      printf("linking %s\n", referenceInfo.referenceName.str());
+
+#endif // FULL_OUTOUT_INFO
 
    referenceInfo.module = sectionInfo.module;
    referenceInfo.referenceName = referenceInfo.module->resolveReference(sectionInfo.reference);
