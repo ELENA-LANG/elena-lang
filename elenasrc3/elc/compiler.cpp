@@ -3342,7 +3342,7 @@ int Compiler :: allocateLocalAddress(CodeScope* codeScope, int size, bool binary
 
    int retVal = codeScope->allocLocalAddress(size);
 
-   return newLocalAddr(align(1, codeScope->moduleScope->rawStackAlingment), retVal);
+   return newLocalAddr(sizeof(intptr_t), retVal);
 }
 
 int Compiler :: resolveArraySize(Scope& scope, SyntaxNode node)

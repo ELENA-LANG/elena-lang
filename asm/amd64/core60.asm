@@ -744,7 +744,7 @@ labStart:
   shr   esi, 1
   lea   r13, [rsi*2]
   setnc cl
-  cmp   eax, dword ptr [r14+r13*8]
+  cmp   rax, [r14+r13*8]
   je    short labFound
   lea   r8, [r14+r13*8]
   jb    short labSplit

@@ -49,6 +49,7 @@ end
 procedure __exception_handler
 
   xflush          sp:0
+  xflush          sp:1
   open            :3, :0 
   store           fp:1 
 
