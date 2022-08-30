@@ -440,7 +440,7 @@ namespace elena_lang
             switch (info.mask) {
                case mskRef32Hi:
                {
-                  offset >>= 4;
+                  offset >>= 16;
 
                   MemoryBase::maskDWord(writer.Memory(), info.position, (offset & 0xFFFF) << 5);
                   writer.Memory()->addReference(mskCodeRef32Hi, info.position);
