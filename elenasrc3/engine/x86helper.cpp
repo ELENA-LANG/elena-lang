@@ -179,7 +179,6 @@ bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
 
    for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
       auto info = *a_it;
-      int addr = writer.position() - info.position - 4;
 
       switch (info.mask) {
          case mskRef32:

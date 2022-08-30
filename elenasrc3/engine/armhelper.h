@@ -435,10 +435,8 @@ namespace elena_lang
 
          for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
             auto info = *a_it;
-            int offset = writer.position() - info.position - 4;
 
-            printf("fixLabel address %x,%x\n", info.mask, info.position);
-
+            pos_t offset = writer.position();
             switch (info.mask) {
                case mskRef32Hi:
                {
