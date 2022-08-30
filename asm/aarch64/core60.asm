@@ -1201,8 +1201,8 @@ inline %0E6h
 
   add     x13, x29, __arg12_1
 
-//  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
-//  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
+  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
   mov     x18, x13
 
 //  movz    x16,  __ptr32lo_2
