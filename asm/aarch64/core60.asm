@@ -1206,7 +1206,7 @@ inline %0E6h
   mov     x18, x13
 
   movz    x16,  __ptr32lo_2
-//  movk    x16,  __ptr32hi_2, lsl #16
+  movk    x16,  __ptr32hi_2, lsl #16
   add     x14, x14, # et_current
 
   mov     x17, sp
