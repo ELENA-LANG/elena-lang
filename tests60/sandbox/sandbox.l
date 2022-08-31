@@ -11,7 +11,7 @@ singleton Tester
       var a := new A();
 
       a.fail() \\ on((e){ console.writeLine(e) });
-//      a.fail() \\ on((Exception e){ console.writeLine(e) });
+      a.fail() \\ on((Exception e){ console.writeLine(e) });
    }
 }
 
