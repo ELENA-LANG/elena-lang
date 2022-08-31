@@ -437,6 +437,7 @@ namespace elena_lang
             auto info = *a_it;
 
             pos_t offset = writer.position();
+            printf("fixLabel %x\n", offset);
             switch (info.mask) {
                case mskRef32Hi:
                {
