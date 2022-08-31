@@ -160,8 +160,6 @@ int ElfARM64ImageFormatter :: getRelocationType()
 
 void ElfARM64ImageFormatter:: fixSection(Section* section, AddressSpace& map)
 {
-   printf("fix section imageBase: %llx, %x\n", map.imageBase, map.code);
-
    section->fixupReferences<AddressSpace*>(&map, arm64relocate);
 }
 

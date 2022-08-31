@@ -437,12 +437,10 @@ namespace elena_lang
             auto info = *a_it;
 
             pos_t offset = writer.position();
-            printf("fixLabel %x\n", offset);
             switch (info.mask) {
                case mskRef32Hi:
                {
                   offset >>= 16;
-                  printf("fixLabel mskRef32Hi %x\n", offset);
 
                   MemoryBase::maskDWord(writer.Memory(), info.position, (offset & 0xFFFF) << 5);
                   writer.Memory()->addReference(mskCodeRef32Hi, info.position);
@@ -452,7 +450,6 @@ namespace elena_lang
                case mskRef32Lo:
                {
                   offset &= 0xFFFF;
-                  printf("fixLabel mskRef32Lo %x\n", offset);
 
                   MemoryBase::maskDWord(writer.Memory(), info.position, (offset & 0xFFFF) << 5);
                   writer.Memory()->addReference(mskCodeRef32Lo, info.position);
