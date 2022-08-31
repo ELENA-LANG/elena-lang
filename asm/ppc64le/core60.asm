@@ -1790,12 +1790,10 @@ end
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 0FAh
 
-//;  mov  [rsp+8], r10                      // ; saving arg0
-  std     r3, 8(r1)
+  std     r3, 0(r1)                         // ; saving arg0
 //;  lea  rax, [rsp + __n_2]
   addi    r17, r1, __n16_2
-//;  mov  [rsp+16], r11                     // ; saving arg0
-  std     r4, 16(r1)
+  std     r4, 8(r1)                         // ; saving arg1
 
 //;  mov  rsi, __ptr64_2
   ld      r21, toc_rdata(r2)
@@ -1901,12 +1899,10 @@ end
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 0FBh
 
-//;  mov  [rsp+8], r10                      // ; saving arg0
-  std     r3, 8(r1)
+  std     r3, 0(r1)                         // ; saving arg0
 //;  lea  rax, [rsp + __n_2]
   addi    r17, r1, __n16_2
-//;  mov  [rsp+16], r11                     // ; saving arg0
-  std     r4, 16(r1)
+  std     r4, 8(r1)                         // ; saving arg1
 
 //;  mov  rsi, __ptr64_2
   ld      r21, toc_rdata(r2)

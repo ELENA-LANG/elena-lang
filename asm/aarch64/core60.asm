@@ -1693,11 +1693,11 @@ end
 inline % 0FAh
 
 //;  mov  [rsp+8], r10                      // ; saving arg0
-  str     x0, [sp, #8]
+  str     x0, [sp]
 //;  lea  rax, [rsp + __n_2]
   add     x17, sp, __n12_2
-//;  mov  [rsp+16], r11                     // ; saving arg0
-  str     x1, [sp, #16]
+//;  mov  [rsp+16], r11                     // ; saving arg1
+  str     x1, [sp, #8]
 
 //;  mov  rsi, __ptr64_2
   movz    x21,  __ptr32lo_2
@@ -1813,12 +1813,11 @@ end
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 0FBh
 
-//;  mov  [rsp+8], r10                      // ; saving arg0
-  str     x0, [sp, #8]
+  str     x0, [sp]                          // ; saving arg0
 //;  lea  rax, [rsp + __n_2]
   add     x17, sp, __n12_2
 //;  mov  [rsp+16], r11                     // ; saving arg0
-  str     x1, [sp, #16]
+  str     x1, [sp, #8]
 
 //;  mov  rsi, __ptr64_2
   movz    x21,  __ptr32lo_2
