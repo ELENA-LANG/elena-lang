@@ -1699,7 +1699,7 @@ inline % 0FAh
 //;  mov  [rsp+16], r11                     // ; saving arg1
   str     x1, [sp, #8]
 
-  sub     x17, 8                            // ; HOTFIX : ip is not in the stack
+  sub     x17, #8                           // ; HOTFIX : ret address is not in the stack
 
 //;  mov  rsi, __ptr64_2
   movz    x21,  __ptr32lo_2
@@ -1821,7 +1821,7 @@ inline % 0FBh
 //;  mov  [rsp+16], r11                     // ; saving arg0
   str     x1, [sp, #8]
 
-  sub     x17, 8                            // ; HOTFIX : ip is not in the stack
+  sub     x17, #8                           // ; HOTFIX : ret address is not in the stack
 
 //;  mov  rsi, __ptr64_2
   movz    x21,  __ptr32lo_2
