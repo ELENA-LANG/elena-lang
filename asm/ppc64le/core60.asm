@@ -912,7 +912,7 @@ labStart:
   subf    r7, r21, r7
   b       labSplit
 labFound:
-  mr      r7, 1 
+  li      r7, 1 
 
 labEnd:
   cmpwi   r7, 1
