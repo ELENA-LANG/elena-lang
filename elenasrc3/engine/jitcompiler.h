@@ -173,6 +173,11 @@ namespace elena_lang
          }         
       }
 
+      void writeImm16Hi(MemoryWriter* writer, int value, int type) override
+      {
+         writeImm16(writer, value >> 16, type);
+      }
+
       void writeImm32(MemoryWriter* writer, int value) override
       {
          writer->writeDWord(value);

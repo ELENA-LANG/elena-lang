@@ -31,6 +31,10 @@ namespace elena_lang
    public:
       void writeImm9(MemoryWriter* writer, int value, int type) override;
       void writeImm12(MemoryWriter* writer, int value, int type) override;
+      void writeImm16Hi(MemoryWriter* writer, int value, int type) override
+      {
+         writeImm16(writer, PPCHelper::getHiAdjusted(value), type);
+      }
 
       void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) override;
 

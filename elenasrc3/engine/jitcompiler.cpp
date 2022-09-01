@@ -951,7 +951,7 @@ void elena_lang :: loadMOp(JITCompilerScope* scope)
             writer->writeRef(scope->helper->importMessage(arg));
             break;
          case ARG32HI_1:
-            scope->compiler->writeImm16(writer, scope->helper->importMessage(arg) >> 16, 0);
+            scope->compiler->writeImm16Hi(writer, scope->helper->importMessage(arg), 0);
             break;
          case ARG32LO_1:
             scope->compiler->writeImm16(writer, scope->helper->importMessage(arg) & 0xFFFF, 0);
