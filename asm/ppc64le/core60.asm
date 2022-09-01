@@ -244,12 +244,12 @@ end
 // ; throw
 inline %0Ah
 
-  ld      r14, toc_data(r2)
-  addis   r14, r14, data_disp32hi : %CORE_ET_TABLE
-  addi    r14, r14, data_disp32lo : %CORE_ET_TABLE
+  ld      r16, toc_data(r2)
+  addis   r16, r16, data_disp32hi : %CORE_ET_TABLE
+  addi    r16, r16, data_disp32lo : %CORE_ET_TABLE
 
-  ld      r15, et_current(r14)
-  ld      r0, es_catch_addr(r15)                
+  ld      r17, et_current(r16)
+  ld      r0, es_catch_addr(r17)
   mtctr   r0
   bctr
 
@@ -258,17 +258,17 @@ end
 // ; unhook
 inline %0Bh
 
-  ld      r14, toc_data(r2)
-  addis   r14, r14, data_disp32hi : %CORE_ET_TABLE
-  addi    r14, r14, data_disp32lo : %CORE_ET_TABLE
+  ld      r16, toc_data(r2)
+  addis   r16, r16, data_disp32hi : %CORE_ET_TABLE
+  addi    r16, r16, data_disp32lo : %CORE_ET_TABLE
 
-  ld      r19, et_current(r14)
+  ld      r19, et_current(r16)
 
-  ld      r15, es_prev_struct(r19)
+  ld      r17, es_prev_struct(r19)
   ld      r1, es_catch_level(r19)
   ld      r31, es_catch_frame(r19)
 
-  std     r15, et_current(r14)
+  std     r17, et_current(r16)
 
 end
 

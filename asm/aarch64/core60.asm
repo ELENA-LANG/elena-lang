@@ -246,6 +246,8 @@ inline %0Bh
   ldr     x17, [x13, #8]!
   ldr     x29, [x13, #8]!
 
+  str     x15, [x14]
+
   mov     sp, x17
 
 end
