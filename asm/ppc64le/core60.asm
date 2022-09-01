@@ -1795,6 +1795,8 @@ inline % 0FAh
   addi    r17, r1, __n16_2
   std     r4, 8(r1)                         // ; saving arg1
 
+  addi    r17, r17, -8                      // ; HOTFIX : caller address is not in the stack
+
 //;  mov  rsi, __ptr64_2
   ld      r21, toc_rdata(r2)
   addis   r21, r21, __disp32hi_2 
@@ -1903,6 +1905,8 @@ inline % 0FBh
 //;  lea  rax, [rsp + __n_2]
   addi    r17, r1, __n16_2
   std     r4, 8(r1)                         // ; saving arg1
+
+  addi    r17, r17, -8                      // ; HOTFIX : caller address is not in the stack
 
 //;  mov  rsi, __ptr64_2
   ld      r21, toc_rdata(r2)
