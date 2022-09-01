@@ -860,7 +860,7 @@ end
 // ; tstflg
 inline %0C3h
 
-  ld      r16, -elVMTOffset(r15)
+  ld      r16, -elVMTOffset(r10)
   ld      r16, -elVMTFlagOffset(r16)
 
   li      r17, __n16lo_1
