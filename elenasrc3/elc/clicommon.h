@@ -458,6 +458,7 @@ enum class ExpressionAttribute : pos64_t
    MssgLiteral       = 0x00000020000,
    MssgNameLiteral   = 0x00000040000,
    Extern            = 0x00000080000,
+   Memeber           = 0x00000100000,
    Lookahead         = 0x20000000000,
    ProbeMode         = 0x00000100000,
    NoDebugInfo       = 0x40000000000,

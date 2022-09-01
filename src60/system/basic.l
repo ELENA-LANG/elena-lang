@@ -1,46 +1,3 @@
-// --- BoolValue ---
-
-public interface BoolValue
-{
-   private constructor() {}
-
-   get abstract bool Inverted();
-
-   abstract if(trueAction);
-
-   abstract bool equal(bool f);
-
-   abstract bool notequal(bool f);
-
-   const static bool true = BoolValue
-   {
-      bool Inverted = BoolValue.false;
-
-      if(trueAction) = trueAction();
-
-      bool equal(bool b) 
-         = b;
-
-      bool notequal(bool b)
-         = !b;
-   };
-
-   const static bool false = BoolValue
-   {
-      bool Inverted = BoolValue.true;
-
-      if(trueAction) = nil;
-
-      bool equal(bool b) = !b;
-
-      bool notequal(bool b)
-         = b; 
-   };
-}
-
-public const true = BoolValue.true;
-public const false = BoolValue.false;
-
 // --- BaseValue ---
 
 public abstract class BaseValue
@@ -49,6 +6,104 @@ public abstract class BaseValue
 
    bool notless(o) = !(self.less(o));
 }
+
+// --- BoolValue ---
+
+public interface BoolValue
+{
+   private constructor() {}
+
+   static bool MinValue
+     = false;
+
+   abstract if(trueAction);
+
+   abstract if(trueAction,falseAction);
+
+   abstract ifnot(trueAction);
+
+   abstract iif(object trueVal, object falseVal);
+
+   abstract bool equal(bool f);
+
+   abstract bool notequal(bool f);
+
+   abstract bool or(expr);
+
+   abstract bool and(expr);
+
+   abstract bool xor(expr);
+
+   get abstract bool Inverted();
+
+   const static bool true = BoolValue
+   {
+      if(trueAction) = trueAction();
+
+      if(trueAction,elseAction) = trueAction();
+
+      ifnot(trueAction) = nil;
+
+      iif(object trueVal, object falseVal) = trueVal;
+
+      bool equal(bool b) 
+         = b;
+
+      bool notequal(bool b)
+         = !b;
+
+      bool or(expr)
+         = this self;
+
+      bool and(expr)
+         = expr;
+
+      bool xor(expr)
+      {
+         cast bool(expr) ? { ^ BoolValue.false };
+      }
+
+      bool Inverted = BoolValue.false;
+
+      string toPrintable() = "true";
+   };
+
+   const static bool false = BoolValue
+   {
+      bool Inverted = BoolValue.true;
+
+      if(trueAction) = nil;
+
+      if(trueAction,elseAction) = elseAction();
+
+      ifnot(trueAction) = trueAction();
+
+      iif(object trueVal, object falseVal) = falseVal;
+
+      bool equal(bool b) = !b;
+
+      bool notequal(bool b)
+         = b; 
+
+      bool or(expr)
+         = expr;
+
+      bool and(expr)
+          = this self;
+
+      bool xor(expr)
+      {
+          cast bool(expr) ? { ^ BoolValue.true };
+            
+          ^ this self
+      }
+
+      string toPrintable() = "false";
+   };
+}
+
+public const true = BoolValue.true;
+public const false = BoolValue.false;
 
 // --- BaseNumber ---
 

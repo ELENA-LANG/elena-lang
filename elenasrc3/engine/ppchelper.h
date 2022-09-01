@@ -202,8 +202,10 @@ namespace elena_lang
             auto info = *a_it;
 
             pos_t offset = writer.position();
+
             switch (info.mask) {
                case mskXDisp32Hi:
+               case mskDisp32Hi:
                {
                   offset >>= 16;
 
@@ -212,6 +214,7 @@ namespace elena_lang
                   break;
                }
                case mskXDisp32Lo:
+               case mskDisp32Lo:
                {
                   offset &= 0xFFFF;
 

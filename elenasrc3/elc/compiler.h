@@ -300,6 +300,11 @@ namespace elena_lang
             else return {};
          }
 
+         virtual ObjectInfo mapMember(ustr_t identifier)
+         {
+            return {};
+         }
+
          virtual bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo)
          {
             if (parent) {
@@ -721,6 +726,8 @@ namespace elena_lang
             }
             else return {};
          }
+
+         ObjectInfo mapMember(ustr_t identifier) override;
 
          void markAsAssigned(ObjectInfo object) override
          {

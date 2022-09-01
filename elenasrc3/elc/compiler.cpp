@@ -786,6 +786,22 @@ int Compiler::ExprScope :: newTempLocal()
    return tempAllocated1;
 }
 
+ObjectInfo Compiler::ExprScope :: mapMember(ustr_t identifier)
+{
+   MethodScope* methodScope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
+   if (methodScope != nullptr && moduleScope->selfVar.compare(identifier)) {
+      return mapSelf();
+   }
+
+   ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
+   if (classScope) {
+      //if (methodScope)
+      return classScope->mapField(identifier, EAttr::None);
+   }
+
+   return Scope::mapMember(identifier);
+}
+
 void Compiler::ExprScope :: syncStack()
 {
    CodeScope* codeScope = Scope::getScope<CodeScope>(*this, Scope::ScopeLevel::Code);
@@ -4631,9 +4647,11 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    bool refOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::RefOp);
    bool mssgOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::MssgLiteral);
    bool probeMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ProbeMode);
+   bool memberMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Memeber);
 
    ObjectInfo retVal;
    bool invalid = false;
+   bool invalidForNonIdentifier = forwardMode || variableMode || refOp || mssgOp || memberMode;
    if (externalOp) {
       auto externalInfo = mapExternal(scope, node);
       switch (externalInfo.type) {
@@ -4687,6 +4705,9 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
 
                retVal = scope.mapIdentifier(*forwardName, true, attrs);
             }
+            else if (memberMode) {
+               retVal = scope.mapMember(node.identifier());
+            }
             else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
 
             if (refOp) {
@@ -4701,22 +4722,22 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
             }
             break;
          case SyntaxKey::string:
-            invalid = forwardMode || variableMode || refOp || mssgOp;
+            invalid = invalidForNonIdentifier;
 
             retVal = mapStringConstant(scope, node);
             break;
          case SyntaxKey::character:
-            invalid = forwardMode || variableMode || refOp || mssgOp;
+            invalid = invalidForNonIdentifier;
 
             retVal = mapCharacterConstant(scope, node);
             break;
          case SyntaxKey::integer:
-            invalid = forwardMode || variableMode || refOp || mssgOp;
+            invalid = invalidForNonIdentifier;
 
             retVal = mapIntConstant(scope, node, 10);
             break;
          case SyntaxKey::hexinteger:
-            invalid = forwardMode || variableMode || refOp || mssgOp;
+            invalid = invalidForNonIdentifier;
 
             retVal = mapUIntConstant(scope, node, 16);
             break;

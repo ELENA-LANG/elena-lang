@@ -169,6 +169,7 @@ namespace elena_lang
    constexpr auto V_FIELD                 = 0x80001009u;
    constexpr auto V_FUNCTION              = 0x8000100Cu;     // a closure attribute
    constexpr auto V_VARIABLE              = 0x8000100Du;
+   constexpr auto V_MEMBER                = 0x8000100Eu;
    constexpr auto V_STATIC                = 0x8000100Fu;
    constexpr auto V_CONVERSION            = 0x80001011u;
    constexpr auto V_NEWOP                 = 0x80001012u;

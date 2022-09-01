@@ -6,6 +6,8 @@ public class Object
 {
     const string __className := $name __decl;
 
+    constructor() {}
+
     bool equal(o)
        = self.equalReference(o);
 
