@@ -382,6 +382,19 @@ void IDEController :: onCompilationBreak(IDEModel* model)
    model->onIDEChange();
 }
 
+void IDEController :: displayErrors(IDEModel* model)
+{
+   _notifier->notifyMessage(NOTIFY_SHOW_RESULT, model->ideScheme.errorListControl);
+}
+
+void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode)
+{
+   if (exitCode == 0) {
+
+   }
+   else displayErrors(model);
+}
+
 bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
 {
    onCompilationStart(model);

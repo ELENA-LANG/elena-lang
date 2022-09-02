@@ -16,7 +16,7 @@ LRESULT CALLBACK ProcessOutput::Proc(HWND hWnd, UINT Message, WPARAM wParam, LPA
    return window->OutputProc(hWnd, Message, wParam, lParam);
 }
 
-ProcessOutput :: ProcessOutput(bool readOnly) : 
+ProcessOutput :: ProcessOutput(bool readOnly) :
    ControlBase(nullptr, 0, 0, 50, 50),
    _editProc(nullptr),
    _readOnly(readOnly)
@@ -94,8 +94,15 @@ void ProcessOutput :: onErrorOutput(const char* s)
 
 // --- CompilerOutput ---
 
-CompilerOutput :: CompilerOutput()
-   : ProcessOutput(true)
+CompilerOutput :: CompilerOutput(NotifierBase* notifier, int completionCode)
+   : ProcessOutput(true),
+   _notifier(notifier),
+   _completionCode(completionCode)
 {
 
+}
+
+void CompilerOutput :: afterExecution(int exitCode)
+{
+   _notifier->notifyMessage(_completionCode, exitCode);
 }

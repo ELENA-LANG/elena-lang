@@ -37,8 +37,13 @@ namespace elena_lang
    // --- CompilerOutput ---
    class CompilerOutput : public ProcessOutput
    {
+      NotifierBase* _notifier;
+      int           _completionCode;
+
+      void afterExecution(int exitCode) override;
+
    public:
-      CompilerOutput();
+      CompilerOutput(NotifierBase* notifier, int completionCode);
    };
 }
 

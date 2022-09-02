@@ -55,6 +55,8 @@ namespace elena_lang
       void onNotify(NMHDR* hdr) override;
       void onActivate() override;
 
+      void onCompilationEnd(int exitCode);
+
       void openResultTab(int controlIndex);
 
       void newFile();

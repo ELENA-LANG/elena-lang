@@ -10,7 +10,7 @@
 #include "guicommon.h"
 #include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                           0x0016
+#define IDE_REVISION_NUMBER                           0x0017
 
 namespace elena_lang
 {
@@ -25,6 +25,7 @@ namespace elena_lang
    constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
    constexpr auto NOTIFY_LAYOUT_CHANGED               = 5;
    constexpr auto NOTIFY_SHOW_RESULT                  = 6;
+   constexpr auto NOTIFY_COMPILATION_RESULT           = 7;
 
    // --- PathSettings ---
    struct PathSettings

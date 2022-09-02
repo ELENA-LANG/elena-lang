@@ -100,6 +100,8 @@ namespace elena_lang
       bool openFile(SourceViewModel* model, path_t sourceFile);
       bool openFile(IDEModel* model, path_t sourceFile);
 
+      void displayErrors(IDEModel* model);
+
       void onCompilationStart(IDEModel* model);
       void onCompilationStop(IDEModel* model);
       void onCompilationBreak(IDEModel* model);
@@ -130,6 +132,8 @@ namespace elena_lang
 
       bool doCompileProject(DialogBase& dialog, IDEModel* model);
       void doDebugAction(IDEModel* model, DebugAction action);
+
+      void onCompilationCompletion(IDEModel* model, int exitCode);
 
       bool doExit();
 
