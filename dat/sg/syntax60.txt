@@ -55,6 +55,7 @@ __define ROOT_EXPRESSION     6292;
 __define L6_EXPRESSION       6293;
 __define T_EXPRESSION        6294;
 __define L4_EXPRESSION       6295;
+__define NT_EXPRESSION       6296;
 __define POSTFIX             4192;
 __define TEMPLATE_POSTFIX    4193;
 __define METHOD_POSTFIX      4194;
@@ -279,8 +280,11 @@ NESTED_EXPRESSION ::=
 T_EXPRESSION ::=
 	 "{" BLOCK;
 
+NT_EXPRESSION ::=
+	"(" identifier SI_R;	
+
 T_EXPRESSIONS ::=
-	identifier T_EXPRESSION
+	identifier NT_EXPRESSION
 	| eps;
 
 RI_R ::=
@@ -295,7 +299,7 @@ RI_R ::=
 	| I_L6a_R
 	| IL7_R
 	| IL8_R
-	| NESTED_EXPRESSION ^NESTED N_R
+	| T_EXPRESSION T_EXPRESSIONS ^ TEMPLATE_BLOCK
         | eps ^OBJECT; 
 
 I_R ::=

@@ -99,6 +99,7 @@ namespace elena_lang
       L6Expression         = 0x001895,
       TExpression          = 0x001896,
       L4Expression         = 0x001897,
+      NTExpression         = 0x001898,
       TemplateExpression   = 0x0018A0,
       FieldInitializer     = 0x0018B0,
       Message              = 0x0010C0,

@@ -2837,7 +2837,7 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
    int argCount = SyntaxTree::countChild(node, SyntaxKey::TemplateArg);
    int paramCount = SyntaxTree::countChild(node, SyntaxKey::Parameter);
    postfix.append('#');
-   postfix.appendInt(argCount);
+   postfix.appendInt(argCount);  
 
    switch (scope.type) {
       case TemplateType::Inline:
