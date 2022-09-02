@@ -127,6 +127,13 @@ public const struct ByteNumber //: IntBaseNumber
    embeddable __int theValue[1];
 }
 
+// --- ShortNumber ---
+
+public const struct ShortNumber //: IntBaseNumber
+{
+   embeddable __int theValue[2];
+}
+
 // --- IntNumber ---
 
 public const struct IntNumber : IntBaseNumber

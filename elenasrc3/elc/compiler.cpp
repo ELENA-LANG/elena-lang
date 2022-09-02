@@ -3308,6 +3308,9 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                case 1:
                   attrs.typeInfo.typeRef = V_INT8;
                   break;
+               case 2:
+                  attrs.typeInfo.typeRef = V_INT16;
+                  break;
                case 4:
                   attrs.typeInfo.typeRef = V_INT32;
                   break;
