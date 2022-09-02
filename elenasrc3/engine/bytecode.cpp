@@ -15,7 +15,7 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 const char* _fnOpcodes[256] =
 {
    "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
-   "class", "save", "throw", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "class", "save", "throw", "unhook", "loadv", "xcmp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -38,7 +38,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "set", "set dp", "nlen", "xassign", "peek", "store", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "set", "set dp", "nlen", "xassign", "peek", "store", "xswap sp", "swap sp",
    "mov mssg", "mov n", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "copy", "close", "alloc", "free", "andn", "read", "write", "cmpn",
@@ -47,16 +47,16 @@ const char* _fnOpcodes[256] =
    "save dp", "store fp", "save sp", "store sp", "xflush sp", "get", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "peek fp", "peek sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "call", "call vt", "jump", "jeq", "jne", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "call", "call vt", "jump", "jeq", "jne", "jump vt", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "cmp", OPCODE_UNKNOWN, "icmp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "cmp", OPCODE_UNKNOWN, "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", OPCODE_UNKNOWN,
+   "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", "xnewn",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "vjump mssg", "jump mssg", "seleq", "sellt",
 
    "open", "xstore sp", "open header", "mov sp", "new", "newn", "xmov sp", "createn",
@@ -71,6 +71,10 @@ void fixJumps(MemoryBase* code, int labelPosition, Map<int, int>& jumps, int lab
    while (!it.eof()) {
       if (it.key() == label) {
          int position = labelPosition - *it - 4;
+         code->write(*it, &position, 4);
+      }
+      else if (it.key() == (label | mskLabelRef)) {
+         int position = labelPosition | mskLabelRef;
          code->write(*it, &position, 4);
       }
       ++it;
@@ -157,7 +161,7 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    return true;
 }
 
-mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
+mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode)
 {
    pos_t argCount = 0;
    ref_t actionRef = 0, flags = 0;
@@ -213,7 +217,7 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
    if ((*actionName).compare(CAST_MESSAGE))
       flags |= CONVERSION_MESSAGE;
 
-   actionRef = module->mapAction(*actionName, signature, true);
+   actionRef = module->mapAction(*actionName, signature, readOnlyMode);
    if (actionRef == 0) {
       return 0;
    }
@@ -225,7 +229,14 @@ void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* targe
 {
    if (isRCommand(command.code)) {
       ref_t mask = command.arg1 & mskAnyRef;
-      command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
+      switch (mask) {
+         case mskMssgLiteralRef:
+            command.arg1 = target->importMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
+            break;
+         default:
+            command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
+            break;
+      }      
    }
    else if (isMCommand(command.code)) {
       command.arg1 = target->importMessage(importer, command.arg1);
@@ -567,6 +578,16 @@ void CommandTape :: write(ByteCode code, PseudoArg arg)
    write(code, resolvePseudoArg(arg));
 }
 
+void CommandTape :: write(ByteCode code, arg_t arg1, PseudoArg arg2)
+{
+   write(code, arg1, resolvePseudoArg(arg2));
+}
+
+void CommandTape::write(ByteCode code, arg_t arg1, PseudoArg arg2, ref_t mask)
+{
+   write(code, arg1, resolvePseudoArg(arg2) | mask);
+}
+
 void CommandTape :: write(ByteCode code, arg_t arg1, arg_t arg2)
 {
    ByteCommand command(code, arg1, arg2);
@@ -595,10 +616,17 @@ void CommandTape :: saveTo(MemoryWriter* writer)
 {
    Map<int, int> labels(0);
    Map<int, int> fwdJumps(0);
+   bool importMode = false;
 
    for (auto it = tape.start(); !it.eof(); ++it) {
       auto command = *it;
       switch (command.code) {
+         case ByteCode::ImportOn:
+            importMode = true;
+            break;
+         case ByteCode::ImportOff:
+            importMode = false;
+            break;
          case ByteCode::Label:
             fixJumps(writer->Memory(), writer->position(), fwdJumps, command.arg1);
             labels.add(command.arg1, writer->position());
@@ -611,18 +639,37 @@ void CommandTape :: saveTo(MemoryWriter* writer)
          case ByteCode::Jeq:
          case ByteCode::Jne:
             writer->writeByte((char)command.code);
-
-            // if forward jump, it should be resolved later
-            if (!labels.exist(command.arg1)) {
-               fwdJumps.add(command.arg1, writer->position());
-               // put jump offset place holder
-               writer->writeDWord(0);
+            if (!importMode) {
+               // if forward jump, it should be resolved later
+               if (!labels.exist(command.arg1)) {
+                  fwdJumps.add(command.arg1, writer->position());
+                  // put jump offset place holder
+                  writer->writeDWord(0);
+               }
+               // if backward jump
+               else writer->writeDWord(labels.get(command.arg1) - writer->position() - 4);
             }
-            // if backward jump
-            else writer->writeDWord(labels.get(command.arg1) - writer->position() - 4);
+            else writer->writeDWord(command.arg1);
 
             if (command.code > ByteCode::MaxDoubleOp)
                writer->write(&command.arg2, sizeof(arg_t));
+
+            break;
+         case ByteCode::XHookDPR:
+            writer->writeByte((char)command.code);
+            writer->write(&command.arg1, sizeof(arg_t));
+
+            if ((command.arg2 & mskAnyRef) == mskLabelRef) {
+               // if forward jump, it should be resolved later
+               if (!labels.exist(command.arg2)) {
+                  fwdJumps.add(command.arg2, writer->position());
+                  // put jump offset place holder
+                  writer->writeDWord(mskLabelRef);
+               }
+               // if backward jump
+               else writer->writeDWord(labels.get(command.arg2) - writer->position() - 4);
+            }
+            else writer->write(&command.arg2, sizeof(arg_t));
 
             break;
          default:

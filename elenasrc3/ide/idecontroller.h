@@ -44,11 +44,11 @@ namespace elena_lang
    // --- ProjectController ---
    class ProjectController : public NotifierBase
    {
-      OSControllerBase*    _osController;
+      ProcessBase*         _outputProcess;
       DebugController      _debugController;
       NotifierBase*        _notifier;
 
-      bool onDebugAction(ProjectModel& model, DebugAction action);
+      bool onDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action);
       bool isOutaged(bool noWarning);
 
       bool startDebugger(ProjectModel& model/*, bool stepMode*/);
@@ -57,26 +57,26 @@ namespace elena_lang
 
       bool compile();
 
-      bool compileSingleFile();
+      bool compileSingleFile(ProjectModel& model, path_t singleProjectFile);
 
    public:
       void defineSourceName(path_t path, IdentifierString& retVal);
 
       void defineFullPath(ProjectModel& model, ustr_t ns, path_t path, PathString& fullPath);
 
-      bool doCompileProject(ProjectModel& model, DebugAction postponedAction);
+      bool doCompileProject(ProjectModel& model, path_t singleProjectFile, DebugAction postponedAction);
 
-      void doDebugAction(ProjectModel& model, DebugAction action);
+      void doDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action);
 
       void setNotifier(NotifierBase* notifier)
       {
          _notifier = notifier;
       }
 
-      void notifyMessage(int messageCode) override
+      void notifyMessage(int messageCode, int arg = 0) override
       {
          if (_notifier)
-            _notifier->notifyMessage(messageCode);
+            _notifier->notifyMessage(messageCode, arg);
       }
       void notifyModelChange(int modelCode, int arg) override
       {
@@ -84,9 +84,9 @@ namespace elena_lang
             _notifier->notifyModelChange(modelCode, arg);
       }
 
-      ProjectController(OSControllerBase* osController, DebugProcessBase* process, ProjectModel* model, SourceViewModel* sourceModel,
+      ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController)
-         : _osController(osController), _debugController(process, model, sourceModel, this, sourceController)
+         : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController)
       {
          _notifier = nullptr;
       }
@@ -99,6 +99,10 @@ namespace elena_lang
 
       bool openFile(SourceViewModel* model, path_t sourceFile);
       bool openFile(IDEModel* model, path_t sourceFile);
+
+      void onCompilationStart(IDEModel* model);
+      void onCompilationStop(IDEModel* model);
+      void onCompilationBreak(IDEModel* model);
 
    public:
       FileEncoding         defaultEncoding;
@@ -113,23 +117,30 @@ namespace elena_lang
          projectController.setNotifier(notifier);
       }
 
+      path_t retrieveSingleProjectFile(IDEModel* model);
+
       bool selectSource(ProjectModel* model, SourceViewModel* sourceModel,
          ustr_t moduleName, path_t sourcePath);
 
       void doNewFile(IDEModel* model);
       void doOpenFile(DialogBase& dialog, IDEModel* model);
-      bool doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode);
+      bool doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
       bool doCloseFile(DialogBase& dialog, IDEModel* model);
+      bool doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode);
+
+      bool doCompileProject(DialogBase& dialog, IDEModel* model);
+      void doDebugAction(IDEModel* model, DebugAction action);
 
       bool doExit();
 
       void init(IDEModel* model);
 
-      IDEController(OSControllerBase* osController, DebugProcessBase* process, IDEModel* model, 
+      IDEController(ProcessBase* outputProcess, DebugProcessBase* process, IDEModel* model,
          TextViewSettings& textViewSettings
       ) :
          sourceController(textViewSettings),
-         projectController(osController, process, &model->projectModel, &model->sourceViewModel, this)
+         projectController(outputProcess, process, &model->projectModel, &model->sourceViewModel,
+            this)
       {
          _notifier = nullptr;
          defaultEncoding = FileEncoding::UTF8;

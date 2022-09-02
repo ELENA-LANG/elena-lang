@@ -83,15 +83,19 @@ namespace elena_lang
    class ControlBase : public GUIControlBase
    {
    protected:
-      HWND   _handle;
-      wstr_t _title;
+      HWND      _handle;
+      wstr_t    _title;
+
+      Rectangle _rect;
+      int       _minWidth;
+      int       _minHeight;
 
       virtual void onSetFocus() {}
       virtual void onLoseFocus() {}
 
    public:
       HWND handle() { return _handle; }
-      bool checkHandle(void* param) const
+      bool checkHandle(void* param) const override
       {
          return (_handle == (HWND)param);
       }
@@ -100,24 +104,28 @@ namespace elena_lang
 
       void showWindow(int cmdShow);
 
-      virtual void show();
-      virtual void hide();
+      void show() override;
+      void hide() override;
 
-      Rectangle getRectangle();
-      virtual void setRectangle(Rectangle rec);
+      Rectangle getClientRectangle();
+      Rectangle getRectangle() override;
+      void setRectangle(Rectangle rec) override;
 
-      virtual void setFocus();
-      virtual void refresh();
+      void setFocus() override;
+      void refresh() override;
 
       virtual void onDrawItem(DRAWITEMSTRUCT* item) {}
       virtual void onSelChanged() {}
 
       virtual HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner);
 
-      ControlBase(wstr_t title)
+      ControlBase(wstr_t title, int x, int y, int width, int height) :
+         _handle(nullptr),
+         _title(title),
+         _rect(x, y, width, height),
+         _minWidth(0),
+         _minHeight(0)
       {
-         _handle = nullptr;
-         _title = title;
       }
    };
 
@@ -139,11 +147,13 @@ namespace elena_lang
 
    public:
       static ATOM registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, unsigned int style);
+      static ATOM registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, 
+         HCURSOR cursor, HBRUSH background, unsigned int style);
 
       static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-      WindowBase(wstr_t title)
-         : ControlBase(title)
+      WindowBase(wstr_t title, int width, int height)
+         : ControlBase(title, 0, 0, width, height)
       {
       }
    };
@@ -162,7 +172,7 @@ namespace elena_lang
    public:
       int run(GUIControlBase* mainWindow) override;
 
-      void notifyMessage(int messageCode) override;
+      void notifyMessage(int messageCode, int arg = 0) override;
       void notifyModelChange(int modelCode, int arg) override;
 
       WindowApp(HINSTANCE instance, int cmdShow, wstr_t accelerators)

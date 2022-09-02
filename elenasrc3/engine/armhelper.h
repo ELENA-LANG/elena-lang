@@ -432,6 +432,35 @@ namespace elena_lang
                }
             }
          }
+
+         for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
+            auto info = *a_it;
+
+            pos_t offset = writer.position();
+            switch (info.mask) {
+               case mskRef32Hi:
+               {
+                  offset >>= 16;
+
+                  MemoryBase::maskDWord(writer.Memory(), info.position, (offset & 0xFFFF) << 5);
+                  writer.Memory()->addReference(mskCodeRef32Hi, info.position);
+
+                  break;
+               }
+               case mskRef32Lo:
+               {
+                  offset &= 0xFFFF;
+
+                  MemoryBase::maskDWord(writer.Memory(), info.position, (offset & 0xFFFF) << 5);
+                  writer.Memory()->addReference(mskCodeRef32Lo, info.position);
+
+                  break;
+               }
+               default:
+                  break;
+            }
+         }
+
          return true;
       }
 

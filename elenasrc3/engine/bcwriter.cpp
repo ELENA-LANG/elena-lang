@@ -91,8 +91,20 @@ void sendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 
 void resendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
+   if (node.arg.reference)
+      tape.write(ByteCode::MovM, node.arg.reference);
+
    int vmtIndex = node.findChild(BuildKey::Index).arg.value;
    tape.write(ByteCode::CallVI, vmtIndex);
+}
+
+void redirectOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   if (node.arg.reference)
+      tape.write(ByteCode::MovM, node.arg.reference);
+
+   int vmtIndex = node.findChild(BuildKey::Index).arg.value;
+   tape.write(ByteCode::JumpVI, vmtIndex);
 }
 
 void directCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
@@ -195,6 +207,11 @@ void addingBreakpoint(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 void intLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskIntLiteralRef);
+}
+
+void mssgLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskMssgLiteralRef);
 }
 
 void stringLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
@@ -377,6 +394,16 @@ void assignSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::XAssignI, node.arg.value);
 }
 
+void swapSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::XSwapSI, node.arg.value);
+}
+
+void accSwapSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SwapSI, node.arg.value);
+}
+
 void getField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    // !! temporally - assigni should be used instead
@@ -468,7 +495,11 @@ ByteCodeWriter::Saver commands[] =
    staticEnd,
    classOp,
    byteArrayOp,
-   newArrayOp
+   newArrayOp,
+   swapSPField,
+   mssgLiteral,
+   accSwapSPField,
+   redirectOp
 };
 
 // --- ByteCodeWriter ---
@@ -610,6 +641,48 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
    tape.releaseLabel();
 }
 
+void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths)
+{
+   int eosLabel = tape.newLabel();
+   int catchLabel = tape.newLabel();
+
+   tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
+
+   BuildNode tryNode = node.findChild(BuildKey::Tape);
+   saveTape(tape, tryNode, tapeScope, paths, false);
+
+   // unhook
+   tape.write(ByteCode::Unhook);
+
+   // jump
+   tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+
+   // catchLabel:
+   tape.setLabel();
+
+   // tstflg elMessage
+   // jeq labSkip
+   // load
+   // peeksi 0
+   // callvi 0   
+   // labSkip:
+   // unhook
+   tape.newLabel();
+   tape.write(ByteCode::TstFlag, elMessage);
+   tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
+   tape.write(ByteCode::Load);
+   tape.write(ByteCode::PeekSI);
+   tape.write(ByteCode::CallVI);
+   tape.setLabel();
+   tape.write(ByteCode::Unhook);
+
+   BuildNode catchNode = tryNode.nextNode(BuildKey::Tape);
+   saveTape(tape, catchNode, tapeScope, paths, false);
+
+   // eos:
+   tape.setLabel();
+}
+
 void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)
 {
    BuildNode current = node.firstChild();
@@ -638,7 +711,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             saveVariableInfo(tape, current);
             break;
          case BuildKey::Import:
+            tape.write(ByteCode::ImportOn);
             importTree(tape, current, *tapeScope.scope);
+            tape.write(ByteCode::ImportOff);
             break;
          case BuildKey::NestedClass:
             saveClass(current, tapeScope.scope->moduleScope, tapeScope.scope->minimalArgList, paths);
@@ -648,6 +723,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::LoopOp:
             saveLoop(tape, current, tapeScope, paths);
+            break;
+         case BuildKey::CatchOp:
+            saveCatching(tape, current, tapeScope, paths);
             break;
          default:
             _commands[(int)current.key](tape, current, tapeScope);

@@ -32,6 +32,7 @@
 #let attributesSymbols["field"]       := 80001009h;
 #let attributesSymbols["function"]    := 8000100Ch;
 #let attributesSymbols["var"]         := 8000100Dh;
+#let attributesSymbols["this"]        := 8000100Eh;
 #let attributesSymbols["static"]      := 8000100Fh;
 #let attributesSymbols["cast"]        := 80001011h;
 #let attributesSymbols["new"]         := 80001012h;
@@ -42,12 +43,15 @@
 #let attributesSymbols["import"]      := 80001018h;
 #let attributesSymbols["namespace"]   := 80001021h;
 #let attributesSymbols["inline"]      := 80001025h;
+#let attributesSymbols["__probe"]     := 80001026h;
 
 /// primitive types
 #let attributesSymbols["__string"]    := 80000801h;
 #let attributesSymbols["__int"]       := 80000803h;
 //#let attributesSymbols["__meta"]      := 80000804h;
 #let attributesSymbols["__word"]      := 80000805h;
+#let attributesSymbols["mssgconst"]   := 80000806h;
+#let attributesSymbols["mssg"]        := 80000806h;
 #let attributesSymbols["__symbol"]    := 80000808h;
 #let attributesSymbols["__mssg"]      := 80000809h;
 

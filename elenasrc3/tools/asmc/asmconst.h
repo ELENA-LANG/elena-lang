@@ -12,7 +12,7 @@
 namespace elena_lang
 {
 
-   #define ASM_REVISION_NUMBER               0x006D
+   #define ASM_REVISION_NUMBER               0x0075
 
    constexpr auto N_ARGUMENT1                = "__n_1";
    constexpr auto N_ARGUMENT2                = "__n_2";
@@ -21,6 +21,7 @@ namespace elena_lang
    constexpr auto N12_ARGUMENT1              = "__n12_1";
    constexpr auto N12_ARGUMENT2              = "__n12_2";
    constexpr auto N16HI_ARGUMENT1            = "__n16hi_1";
+   constexpr auto N16LO_ARGUMENT1            = "__n16lo_1";
    constexpr auto WORD_ARGUMENT1             = "__arg16_1";
    constexpr auto WORD_ARGUMENT2             = "__arg16_2";
    constexpr auto IMM9_ARGUMENT1             = "__arg9_1";

@@ -131,7 +131,18 @@ namespace elena_lang
    class GUIControlBase
    {
    public:
+      virtual bool checkHandle(void* param) const = 0;
+
+      virtual Rectangle getRectangle() = 0;
+      virtual void setRectangle(Rectangle rec) = 0;
+
+      virtual void show() = 0;
+      virtual void hide() = 0;
       virtual bool visible() = 0;
+
+      virtual void setFocus() = 0;
+
+      virtual void refresh() = 0;
 
       virtual ~GUIControlBase() = default;
    };
@@ -140,7 +151,7 @@ namespace elena_lang
    class NotifierBase
    {
    public:
-      virtual void notifyMessage(int messageCode) = 0;
+      virtual void notifyMessage(int messageCode, int arg = 0) = 0;
       virtual void notifyModelChange(int modelCode, int arg = 0) = 0;
    };
 

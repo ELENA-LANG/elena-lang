@@ -82,6 +82,7 @@ namespace elena_lang
    constexpr auto WRAPPER_FORWARD         = "$ref";            // the wrapper template
    constexpr auto ARRAY_FORWARD           = "$array";          // the array template 
    constexpr auto MESSAGE_FORWARD         = "$message";        // the message class
+   constexpr auto CLOSURE_FORWARD         = "$closure";        // the message class
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";
@@ -99,6 +100,7 @@ namespace elena_lang
    constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
    constexpr auto CAST_MESSAGE            = "#cast";
    constexpr auto INVOKE_MESSAGE          = "#invoke";
+   constexpr auto TRY_INVOKE_MESSAGE      = "#try_invoke";
    constexpr auto INIT_MESSAGE            = "#init";
 
    constexpr auto ADD_MESSAGE             = "add";
@@ -130,6 +132,7 @@ namespace elena_lang
    constexpr ref_t elStructureWrapper     = 0x00004800;
    constexpr ref_t elDynamicRole          = 0x00008000;
    constexpr ref_t elExtension            = 0x0000110C;
+   constexpr ref_t elMessage              = 0x00200000;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -241,6 +244,7 @@ namespace elena_lang
    constexpr ref_t mskNameLiteralRef      = 0x1A000000u;
    constexpr ref_t mskPathLiteralRef      = 0x1B000000u;
    constexpr ref_t mskMssgLiteralRef      = 0x1B000000u;
+   constexpr ref_t mskLabelRef            = 0x1C000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;
@@ -357,13 +361,14 @@ namespace elena_lang
    constexpr ref_t ARG32LO_1              = 0x0000001Du;
    constexpr ref_t ARG64_2                = 0x0000001Eu;
    constexpr ref_t NARG16_1               = 0x0000001Fu;
-   constexpr ref_t NARGHI_1               = 0x00000020u;
    constexpr ref_t RELPTR32_2             = 0x00000021u;
    constexpr ref_t NARG12_1               = 0x00000022u;
    constexpr ref_t XDISP32HI_1            = 0x00000023u;
    constexpr ref_t XDISP32LO_1            = 0x00000024u;
    constexpr ref_t XDISP32HI_2            = 0x00000025u;
    constexpr ref_t XDISP32LO_2            = 0x00000026u;
+   constexpr ref_t NARG16HI_1             = 0x00000027u;
+   constexpr ref_t NARG16LO_1             = 0x00000028u;
 
    // predefined debug module sections
    constexpr ref_t DEBUG_LINEINFO_ID      = -1;

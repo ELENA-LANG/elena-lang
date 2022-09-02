@@ -64,7 +64,7 @@ namespace elena_lang
       void listMembers();
 
       void addRArg(arg_t arg, IdentifierString& commandStr);
-      void addSecondRArg(arg_t arg, IdentifierString& commandStr);
+      void addSecondRArg(arg_t arg, IdentifierString& commandStr, List<pos_t>& labels);
 
       void addSPArg(arg_t arg, IdentifierString& commandStr);
       void addSecondSPArg(arg_t arg, IdentifierString& commandStr);

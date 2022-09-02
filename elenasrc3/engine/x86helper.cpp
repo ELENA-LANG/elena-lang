@@ -177,6 +177,23 @@ bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
       it = jumps.nextIt(label, it);
    }
 
+   for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
+      auto info = *a_it;
+
+      switch (info.mask) {
+         case mskRef32:
+            MemoryBase::writeDWord(writer.Memory(), info.position, writer.position());
+            writer.Memory()->addReference(mskCodeRef32, info.position);
+            break;
+         case mskRef64:
+            MemoryBase::writeDWord(writer.Memory(), info.position, writer.position());
+            writer.Memory()->addReference(mskCodeRef64, info.position);
+            break;
+         default:
+            break;
+      }
+   }
+
    return true;
 }
 

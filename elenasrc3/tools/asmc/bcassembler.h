@@ -142,7 +142,11 @@ namespace elena_lang
          ReferenceMap& dataLocals, bool skipRead);
       bool compileOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          ReferenceMap& constants, bool skipRead);
-      bool compileOpFrameI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
+      bool compileOpM(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
+         bool skipRead);
+      bool compileOpI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
+         bool skipRead);
+      bool compileOpFrameI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          ReferenceMap& locals, bool skipRead);
       bool compileOpStackI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          ReferenceMap& locals, bool skipRead);
@@ -150,6 +154,8 @@ namespace elena_lang
          ReferenceMap& constants, bool skipRead);
       bool compileOpII(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileMR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
+      bool compileNR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
+         ReferenceMap& constants, bool skipRead);
       bool compileR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileRR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileCloseOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 

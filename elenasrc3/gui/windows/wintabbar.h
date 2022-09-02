@@ -31,7 +31,7 @@ namespace elena_lang
       void renameTab(int index, wstr_t title);
       void deleteTab(int index);
 
-      CustomTabBar(NotifierBase* notifier, bool withAbovescore);
+      CustomTabBar(NotifierBase* notifier, bool withAbovescore, int width, int height);
    };
 
    // --- MultiTabControl ---
@@ -56,6 +56,26 @@ namespace elena_lang
       HWND createControl(HINSTANCE instance, ControlBase* owner);
 
       MultiTabControl(NotifierBase* notifier, bool withAbovescore, ControlBase* child);
+   };
+
+   // --- TabBar ---
+   class TabBar : public CustomTabBar
+   {
+      List<ControlBase*> _pages;
+
+   public:
+      HWND createControl(HINSTANCE instance, ControlBase* owner);
+
+      void addTabChild(const wchar_t* name, ControlBase* window);
+      void removeTabChild(ControlBase* window);
+
+      void selectTabChild(ControlBase* window);
+
+      void setRectangle(Rectangle rec) override;
+
+      void refresh() override;
+
+      TabBar(NotifierBase* notifier, bool withAbovescore);
    };
 
 }

@@ -215,6 +215,13 @@ void PPC64Assembler :: readIOperand(ScriptToken& tokenInfo, int& value, ref_t& r
 
       read(tokenInfo);
    }
+   else if (tokenInfo.compare("stat")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      readPtrOperand(tokenInfo, value, reference, mskStatDataRef64, errorMessage);
+
+      read(tokenInfo);
+   }
    else if (tokenInfo.compare("code")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
@@ -316,7 +323,8 @@ void PPC64Assembler :: writeDReference(ScriptToken& tokenInfo, ref_t reference, 
       case ARG32HI_1:
       case ARG32LO_1:
       case NARG_1:
-      case NARGHI_1:
+      case NARG16HI_1:
+      case NARG16LO_1:
          writer.Memory()->addReference(reference, writer.position() - 4);
          break;
       case DISP32HI_1:
@@ -530,7 +538,7 @@ bool PPC64Assembler :: compileAND(PPCOperand ra, PPCOperand rs, PPCOperand rb, M
 {
    if (rs.isGPR() && ra.isGPR() && rb.isGPR()) {
       writer.writeDWord(PPCHelper::makeXCommand(31, rs.type, ra.type,
-         rb.type, 28, 0));
+         rb.type, 28, ra.rc ? 1 : 0));
    }
    else return false;
 
@@ -649,7 +657,7 @@ void PPC64Assembler :: compileADDIS(ScriptToken& tokenInfo, MemoryWriter& writer
 
 void PPC64Assembler :: compileAND(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE, true);
 
    checkComma(tokenInfo);
 

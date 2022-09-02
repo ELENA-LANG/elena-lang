@@ -9,3 +9,5 @@ public inline __included<routine>()
 {
    #let routine[$name __decl] := __decl;
 }
+
+// --- class meta info ---

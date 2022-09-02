@@ -404,6 +404,15 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_WRAPPER:
          attrs |= ExpressionAttribute::RefOp;
          return true;
+      case V_MSSGNAME:
+         attrs |= ExpressionAttribute::MssgNameLiteral;
+         return true;
+      case V_PROBEMODE:
+         attrs |= ExpressionAttribute::ProbeMode;
+         return true;
+      case V_MEMBER:
+         attrs |= ExpressionAttribute::Memeber;
+         return true;
       default:
          return false;
    }
@@ -468,6 +477,32 @@ void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ErrorProc
 
       disptacherNotAllowed = !dispatchInfo.inherited;
    }
+}
+
+bool CompilerLogic :: validateAutoType(ModuleScopeBase& scope, ref_t& reference)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, reference))
+      return false;
+
+   while (isRole(info)) {
+      reference = info.header.parentRef;
+
+      if (!defineClassInfo(scope, info, reference))
+         return false;
+   }
+
+   return true;
+}
+
+bool CompilerLogic:: isTryDispatchAllowed(ModuleScopeBase& scope, mssg_t message)
+{
+   return message == overwriteArgCount(scope.buildins.invoke_message, 1);
+}
+
+mssg_t CompilerLogic :: defineTryDispatcher(ModuleScopeBase& scope, mssg_t message)
+{
+   return encodeMessage(scope.module->mapAction(TRY_INVOKE_MESSAGE, 0, false), 2, FUNCTION_MESSAGE);
 }
 
 bool CompilerLogic :: isRole(ClassInfo& info)
@@ -579,6 +614,12 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
 
    if (test(info.header.flags, elExtension))
       info.header.flags |= elSealed;
+
+   if (isWrapper(info)) {
+      auto inner = *info.fields.start();
+      if (inner.typeInfo.typeRef == V_MESSAGE)
+         info.header.flags |= elMessage;
+   }
 }
 
 void CompilerLogic :: tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef)

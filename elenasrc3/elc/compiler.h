@@ -28,6 +28,8 @@ namespace elena_lang
       StringLiteral,
       CharacterLiteral,
       IntLiteral,
+      MssgNameLiteral,
+      MssgLiteral,
       Template,
       Nil,
       Symbol,
@@ -46,11 +48,8 @@ namespace elena_lang
       ParamBoxable,
       ParamFieldBoxable,
       SelfLocalBoxable,
-      External,
-      Creating,
-      CreatingArray,
-      Declaring,
-      Casting,
+      Extern,
+      NewVariable,
       ReadOnlyFieldAddress,
       FieldAddress,
       ReadOnlyField,
@@ -65,16 +64,28 @@ namespace elena_lang
       Wrapper,
    };
 
+   enum TargetMode
+   {
+      None,
+      Probe,
+      External,
+      WinApi,
+      CreatingArray,
+      Creating,
+      Casting
+   };
+
    struct ObjectInfo
    {
       ObjectKind kind;
       TypeInfo   typeInfo;
       union
       {
-         ref_t      reference;
-         int        argument;
+         ref_t   reference;
+         int     argument;
       };
       int        extra;
+      TargetMode mode;
 
       bool operator ==(ObjectInfo& val) const
       {
@@ -92,6 +103,7 @@ namespace elena_lang
          kind = ObjectKind::Unknown;
          typeInfo = {};
          reference = 0;
+         mode = TargetMode::None;
       }
       ObjectInfo(ObjectKind kind)
       {
@@ -99,6 +111,7 @@ namespace elena_lang
          typeInfo = {};
          this->reference = 0;
          this->extra = 0;
+         mode = TargetMode::None;
       }
       ObjectInfo(ObjectKind kind, TypeInfo typeInfo, ref_t reference)
       {
@@ -106,6 +119,7 @@ namespace elena_lang
          this->typeInfo = typeInfo;
          this->reference = reference;
          this->extra = 0;
+         mode = TargetMode::None;
       }
       ObjectInfo(ObjectKind kind, TypeInfo typeInfo, int value)
       {
@@ -113,6 +127,7 @@ namespace elena_lang
          this->typeInfo = typeInfo;
          this->argument = value;
          this->extra = 0;
+         mode = TargetMode::None;
       }
       ObjectInfo(ObjectKind kind, TypeInfo typeInfo, ref_t reference, int extra)
       {
@@ -120,6 +135,23 @@ namespace elena_lang
          this->typeInfo = typeInfo;
          this->reference = reference;
          this->extra = extra;
+         mode = TargetMode::None;
+      }
+      ObjectInfo(ObjectKind kind, TypeInfo typeInfo, ref_t reference, TargetMode mode)
+      {
+         this->kind = kind;
+         this->typeInfo = typeInfo;
+         this->reference = reference;
+         this->extra = 0;
+         this->mode = mode;
+      }
+      ObjectInfo(ObjectKind kind, TypeInfo typeInfo, ref_t reference, int extra, TargetMode mode)
+      {
+         this->kind = kind;
+         this->typeInfo = typeInfo;
+         this->reference = reference;
+         this->extra = extra;
+         this->mode = mode;
       }
    };
 
@@ -266,6 +298,27 @@ namespace elena_lang
                return parent->mapIdentifier(identifier, referenceOne, attr);
             }
             else return {};
+         }
+
+         virtual ObjectInfo mapMember(ustr_t identifier)
+         {
+            return {};
+         }
+
+         virtual bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo)
+         {
+            if (parent) {
+               return parent->resolveAutoType(info, typeInfo);
+            }
+            else return false;
+         }
+
+         virtual bool resolveAutoOutput(ref_t reference)
+         {
+            if (parent) {
+               return parent->resolveAutoOutput(reference);
+            }
+            else return false;
          }
 
          template<class T> static T* getScope(Scope& scope, ScopeLevel level)
@@ -532,6 +585,16 @@ namespace elena_lang
             return scope ? scope->reference : 0;
          }
 
+         bool resolveAutoOutput(ref_t reference) override
+         {
+            if (info.outputRef == V_AUTO) {
+               info.outputRef = reference;
+
+               return true;
+            }
+            else return Scope::resolveAutoOutput(reference);
+         }
+
          MethodScope(ClassScope* classScope);
       };
 
@@ -572,6 +635,8 @@ namespace elena_lang
             return scope ? scope->info.outputRef : 0;
          }
 
+         bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo) override;
+
          void markAsAssigned(ObjectInfo object) override;
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
@@ -586,11 +651,13 @@ namespace elena_lang
          }
          int allocLocalAddress(int size)
          {
+            int retVal = allocated2;
+
             allocated2 += align(size, moduleScope->rawStackAlingment);
             if (allocated2 > reserved2)
                reserved2 = allocated2;
 
-            return allocated2;
+            return retVal;
          }
 
          ObjectInfo mapLocal(ustr_t identifier);
@@ -660,6 +727,8 @@ namespace elena_lang
             else return {};
          }
 
+         ObjectInfo mapMember(ustr_t identifier) override;
+
          void markAsAssigned(ObjectInfo object) override
          {
             parent->markAsAssigned(object);
@@ -708,7 +777,7 @@ namespace elena_lang
       ref_t mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, Visibility visibility);
       mssg_t mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef, 
          ref_t flags, ref_t* signature, size_t signatureLen);
-      mssg_t mapMessage(ExprScope& scope, SyntaxNode node, bool propertyMode, bool extensionMode);
+      mssg_t mapMessage(ExprScope& scope, SyntaxNode node, bool propertyMode, bool extensionMode, bool probeMode);
 
       ExternalInfo mapExternal(Scope& scope, SyntaxNode node);
       ObjectInfo mapClassSymbol(Scope& scope, ref_t classRef);
@@ -736,12 +805,15 @@ namespace elena_lang
       ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode);
 
       ref_t resolveTemplate(Scope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode);
+      ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);
       ref_t resolveWrapperTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
       ref_t resolveArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 
       int resolveSize(Scope& scope, SyntaxNode node);
       TypeInfo resolveTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode);
       ref_t resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode);
+
+      bool resolveAutoType(ExprScope& scope, ObjectInfo source, ObjectInfo& target);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix); 
 
@@ -804,6 +876,11 @@ namespace elena_lang
       void resolveClassParent(ClassScope& scope, SyntaxNode node, bool extensionMode);
 
       int resolveArraySize(Scope& scope, SyntaxNode node);
+
+      void declareParameter(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode, 
+         bool& weakSignature, pos_t& paramCount, ref_t* signature, size_t& signatureLen);
+
+      ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode);
 
       void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode);
       void declareClosureMessage(MethodScope& scope, SyntaxNode node);
@@ -884,12 +961,14 @@ namespace elena_lang
       ObjectInfo compileIndexerOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
       ObjectInfo compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
       ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
+      ObjectInfo compileCatchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
 
       ObjectInfo mapStringConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapCharacterConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapIntConstant(Scope& scope, SyntaxNode node, int radix);
       ObjectInfo mapUIntConstant(Scope& scope, SyntaxNode node, int radix);
       ObjectInfo mapTerminal(Scope& scope, SyntaxNode node, TypeInfo typeInfo, ExpressionAttribute attrs);
+      ObjectInfo mapMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef);
 
       ObjectInfo mapObject(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
 
@@ -912,6 +991,7 @@ namespace elena_lang
 
       void compileMultidispatch(BuildTreeWriter& writer, CodeScope& codeScope, ClassScope& classcope, SyntaxNode node);
       void compileDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
+      void compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
       void compileConstructorDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, ClassScope& classClassScope, SyntaxNode node);
 
       ObjectInfo compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, ObjectInfo source, SyntaxNode node);
@@ -948,6 +1028,8 @@ namespace elena_lang
       void validateType(Scope& scope, ref_t typeRef, SyntaxNode node);
 
       void injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased);
+      void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
+         ClassInfo& info, mssg_t multiMethod);
       void injectVirtualMultimethods(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
          ClassInfo& info, List<mssg_t>& implicitMultimethods);
 
@@ -957,6 +1039,11 @@ namespace elena_lang
          ClassInfo& classInfo, mssg_t message, bool inherited, ref_t outputRef);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, 
          mssg_t resendMessage, ref_t resendTarget, ref_t outputRef);
+
+      void injectVirtualTryDispatch(SyntaxNode classNode, SyntaxKey methodType, ClassInfo& info, 
+         mssg_t message, mssg_t dispatchMessage, bool inherited);
+      void injectVirtualTryDispatch(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, mssg_t dispatchMessage, ref_t resendTarget);
+
       void injectDefaultConstructor(ClassScope& scope, SyntaxNode node);
 
       void injectVariableInfo(BuildNode node, CodeScope& codeScope);

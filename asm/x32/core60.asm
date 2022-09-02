@@ -11,6 +11,8 @@ define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
 define ACTION_ORDER              9
+define ACTION_MASK            1E0h
+define ARG_MASK               01Fh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -214,6 +216,37 @@ inline %0Ah
 
 end
 
+// ; unhook
+inline %0Bh
+
+  mov  edi, [data : %CORE_ET_TABLE + et_current]
+
+  mov  eax, [edi + es_prev_struct]
+  mov  ebp, [edi + es_catch_frame]
+  mov  esp, [edi + es_catch_level]
+
+  mov  [data : %CORE_ET_TABLE + et_current], eax
+
+end
+
+// ; loadv
+inline % 0Ch
+
+  and  edx, ARG_MASK
+  mov  ecx, [ebx]
+  and  ecx, ~ARG_MASK
+  or   edx, ecx
+
+end
+
+// ; xcmp
+inline % 0Dh
+
+  mov  ecx, [ebx]
+  cmp  edx, ecx 
+
+end
+
 // ; setr
 inline %80h
 
@@ -305,6 +338,39 @@ inline %85h
   mov  [__ptr32_1], ebx
 
 end 
+
+// ; xswapsi
+inline %86h
+
+  mov  eax, [esp+__arg32_1]
+  mov  [esp+__arg32_1], esi
+  mov  esi, eax
+
+end
+
+// ; xswapsi 0
+inline %186h
+
+
+end
+
+// ; swapsi
+inline %87h
+
+  mov  eax, [esp+__arg32_1]
+  mov  [esp+__arg32_1], ebx
+  mov  ebx, eax
+
+end
+
+// ; xswapsi 0
+inline %187h
+
+  mov  eax, ebx
+  mov  ebx, esi
+  mov  esi, eax
+
+end
 
 // ; movm
 inline %88h
@@ -546,6 +612,14 @@ inline %0B1h
 
 end
 
+// ; jumpvi
+inline %0B5h
+
+  mov  eax, [ebx - elVMTOffset]
+  jmp  [eax + __arg32_1]
+
+end
+
 // ; cmpr r
 inline %0C0h
 
@@ -591,6 +665,55 @@ inline %4C2h
   sub  ecx, [ebx]
   mov  eax, [esi+4]
   sbb  eax, [ebx+4]
+
+end
+
+// ; tstflg
+inline %0C3h
+
+  mov  ecx, [ebx - elVMTOffset] 
+  mov  eax, [ecx - elVMTFlagOffset]
+  test eax, __n_1
+
+end
+
+// ; tstn
+inline %0C4h
+
+  test edx, __n_1
+
+end
+
+// ; tstm
+inline % 0C5h // (ebx - object)
+
+  mov   [esp+4], esi                      // ; saving arg0
+  xor   ecx, ecx
+  mov   edi, [ebx - elVMTOffset]
+  mov   esi, [edi - elVMTSizeOffset]
+
+labSplit:
+  test  esi, esi
+  jz    short labEnd
+
+labStart:
+  shr   esi, 1
+  setnc cl
+  mov   eax, __arg32_1
+  cmp   eax, [edi+esi*8]
+  je    short labFound
+  lea   eax, [edi+esi*8]
+  jb    short labSplit
+  lea   edi, [eax+8]
+  sub   esi, ecx
+  jmp   short labSplit
+
+labFound:
+  mov   esi, 1
+
+labEnd:
+  cmp   esi, 1
+  mov   esi, [esp+4]                                                              
 
 end
 
@@ -930,6 +1053,17 @@ inline %0E6h
   mov  [edi + es_catch_addr], __ptr32_2
 
   mov  [data : %CORE_ET_TABLE + et_current], edi
+
+end
+
+// ; xnewnr
+inline %0E7h
+
+  lea  ebx, [ebx + elObjectOffset]
+  mov  ecx, __n_1
+  mov  eax, __ptr32_2
+  mov  [ebx - elVMTOffset], eax
+  mov  [ebx - elSizeOffset], ecx
 
 end
 
@@ -1341,7 +1475,7 @@ labNextParam:
   mov  edx, [esi + edx * 8]
   mov  ecx, [ebx - elVMTOffset]
   mov  esi, [esp+4]                      // ; restore arg0
-  jmp  [ecx + eax * 8 + 4]
+  jmp  [ecx + eax + 4]
 
 labMatching:
   mov  edi, [eax + ecx * 4]

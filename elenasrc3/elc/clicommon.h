@@ -184,6 +184,7 @@ enum class ProjectOption
    RawStackAlignment,
    GCMGSize,
    GCYGSize,
+   EHTableEntrySize,
 
    // flags
    DebugMode,
@@ -296,11 +297,14 @@ struct BuiltinReferences
    ref_t   superReference;
    ref_t   intReference;
    ref_t   literalReference;
+   ref_t   messageReference;
    ref_t   wrapperTemplateReference;
    ref_t   arrayTemplateReference;
+   ref_t   closureTemplateReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
+   mssg_t  invoke_message;
    mssg_t  init_message;
    mssg_t  add_message;
    mssg_t  if_message;
@@ -314,11 +318,13 @@ struct BuiltinReferences
    {
       superReference = intReference = 0;
       literalReference = 0;
+      messageReference = 0;
       wrapperTemplateReference = 0;
       arrayTemplateReference = 0;
+      closureTemplateReference = 0;
 
       dispatch_message = constructor_message = 0;
-      init_message = 0;
+      invoke_message = init_message = 0;
       add_message = 0;
       if_message = 0;
       equal_message = 0;
@@ -364,6 +370,7 @@ public:
    IdentifierString     declVar;
 
    pos_t                stackAlingment, rawStackAlingment;
+   pos_t                ehTableEntrySize;
    int                  minimalArgList;
 
    Map<ref_t, SizeInfo> cachedSizes;
@@ -408,6 +415,7 @@ public:
       ModuleBase* debugModule,
       pos_t stackAlingment, 
       pos_t rawStackAlingment,
+      pos_t ehTableEntrySize,
       int minimalArgList
    ) :
       predefined(0),
@@ -420,6 +428,7 @@ public:
       this->debugModule = debugModule;
       this->stackAlingment = stackAlingment;
       this->rawStackAlingment = rawStackAlingment;
+      this->ehTableEntrySize = ehTableEntrySize;
       this->minimalArgList = minimalArgList;
    }
 };
@@ -446,8 +455,12 @@ enum class ExpressionAttribute : pos64_t
    AssigningTarget   = 0x00000004000,
    RefOp             = 0x00000008000,
    NoPrimitives      = 0x00000010000,
+   MssgLiteral       = 0x00000020000,
+   MssgNameLiteral   = 0x00000040000,
    Extern            = 0x00000080000,
-   Lookahead         = 0x20000080000,
+   Memeber           = 0x00000100000,
+   Lookahead         = 0x20000000000,
+   ProbeMode         = 0x00000100000,
    NoDebugInfo       = 0x40000000000,
    NoExtension       = 0x80000000000,
 };

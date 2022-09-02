@@ -67,6 +67,9 @@ int AssemblerBase :: readInteger(ScriptToken& tokenInfo)
    else if (tokenInfo.compare("-")) {
       return -readInteger(tokenInfo);
    }
+   else if (tokenInfo.compare("~")) {
+      return ~readInteger(tokenInfo);
+   }
    else
    {
       if (constants.exist(*tokenInfo.token)) {
@@ -157,7 +160,11 @@ bool AssemblerBase :: getArgReference(ScriptToken& tokenInfo, int& offset, ref_t
       offset = 0;
    }
    else if (tokenInfo.compare(N16HI_ARGUMENT1)) {
-      reference = NARGHI_1;
+      reference = NARG16HI_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(N16LO_ARGUMENT1)) {
+      reference = NARG16LO_1;
       offset = 0;
    }
    else if (tokenInfo.compare(N12_ARGUMENT1)) {
@@ -264,6 +271,19 @@ bool AssemblerBase :: getIntConstant(ScriptToken& tokenInfo, int& offset, ref_t&
          }
          else if (reference == ARG12_1) {
             reference = INV_ARG12_1;
+         }
+         else return false;
+      }
+      else return false;
+
+      return true;
+   }
+   else if (tokenInfo.compare("~")) {
+      read(tokenInfo);
+
+      if (getIntConstant(tokenInfo, offset, reference)) {
+         if (!reference) {
+            offset = ~offset;
          }
          else return false;
       }

@@ -1,6 +1,12 @@
 // --- Exception ---
 public class Exception
 {
+   on(handler) : external<system'core_routines'__exception_handler>; 
+
+   fallback(arg)
+      <= raise();  
+
+   raise() : external<system'core_routines'__exception_raise>;
 }
 
 // --- CriticalException ---
@@ -23,5 +29,10 @@ public class OutOfMemoryException : Exception
 {
 }
 
-
-
+// --- MethodNotFoundException ---
+public class MethodNotFoundException : Exception
+{
+   constructor new(object target, message mssg)
+   {
+   }
+}

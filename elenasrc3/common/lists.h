@@ -650,6 +650,23 @@ namespace elena_lang
          return _defaultItem;
       }
 
+      template<class ArgT> int retrieveIndex(ArgT arg, bool(*lambda)(ArgT arg, T item))
+      {
+         auto it = start();
+         int index = 0;
+         while (!it.eof())
+         {
+            if (lambda(arg, *it))
+               return index;
+
+            index++;
+
+            ++it;
+         }
+
+         return -1;
+      }
+
       List(T defValue)
          : _list(defValue)
       {

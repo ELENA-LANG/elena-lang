@@ -47,14 +47,15 @@ namespace elena_lang
       IDEModel*      _model;
       IDEController* _controller;
 
-      int            _textFrameId;
-
       void onModelChange(ExtNMHDR* hdr);
+      void onNotifyMessage(ExtNMHDR* hdr);
       void onTabSelChanged(HWND wnd);
 
       bool onCommand(int command) override;
       void onNotify(NMHDR* hdr) override;
       void onActivate() override;
+
+      void openResultTab(int controlIndex);
 
       void newFile();
       void openFile();
@@ -69,8 +70,7 @@ namespace elena_lang
       void deleteText();
 
    public:
-      IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, 
-         int textFrameId);
+      IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance);
    };
 
 }

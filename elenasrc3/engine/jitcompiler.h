@@ -121,6 +121,7 @@ namespace elena_lang
       friend void loadVMTROp(JITCompilerScope* scope);
       friend void loadDPNOp(JITCompilerScope* scope);
       friend void loadDPROp(JITCompilerScope* scope);
+      friend void loadDPLabelOp(JITCompilerScope* scope);
       friend void loadIOp(JITCompilerScope* scope);
 
       friend void compileBreakpoint(JITCompilerScope* scope);
@@ -130,6 +131,7 @@ namespace elena_lang
       friend void compileJeq(JITCompilerScope* scope);
       friend void compileJne(JITCompilerScope* scope);
       friend void compileDispatchMR(JITCompilerScope* scope);
+      friend void compileHookDPR(JITCompilerScope* scope);
 
       void loadCoreRoutines(
          LibraryLoaderBase* loader,
@@ -169,6 +171,11 @@ namespace elena_lang
                writer->writeWord(value);
                break;
          }         
+      }
+
+      void writeImm16Hi(MemoryWriter* writer, int value, int type) override
+      {
+         writeImm16(writer, value >> 16, type);
       }
 
       void writeImm32(MemoryWriter* writer, int value) override
@@ -345,6 +352,7 @@ namespace elena_lang
    void loadVMTROp(JITCompilerScope* scope);
    void loadDPNOp(JITCompilerScope* scope);
    void loadDPROp(JITCompilerScope* scope);
+   void loadDPLabelOp(JITCompilerScope* scope);
    void loadIOp(JITCompilerScope* scope);
 
    void compileClose(JITCompilerScope* scope);
@@ -354,6 +362,7 @@ namespace elena_lang
    void compileJeq(JITCompilerScope* scope);
    void compileJne(JITCompilerScope* scope);
    void compileDispatchMR(JITCompilerScope* scope);
+   void compileHookDPR(JITCompilerScope* scope);
 }
 
 #endif

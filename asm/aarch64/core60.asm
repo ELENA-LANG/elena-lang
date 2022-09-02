@@ -11,6 +11,7 @@ define VOID           	     2000Dh
 define VOIDPTR               2000Eh
 
 define ACTION_ORDER              9
+define ARG_MASK               01Fh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -231,6 +232,49 @@ inline %0Ah
 
 end
 
+// ; unhook
+inline %0Bh
+
+  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
+  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+
+  add     x14, x14, # et_current
+  ldr     x13, [x14]
+
+  ldr     x15, [x13]
+  ldr     x16, [x13, #8]!
+  ldr     x17, [x13, #8]!
+  ldr     x29, [x13, #8]!
+
+  str     x15, [x14]
+
+  mov     sp, x17
+
+end
+
+// ; loadv
+inline % 0Ch
+
+  and     x9, x9, ARG_MASK
+
+  movz    x16,  ~ARG_MASK
+  movk    x16,  #0FFFFh, lsl #16
+
+  ldrsw   x14, [x10]
+  and     x14, x14, x16
+
+  orr     x9, x9, x14
+
+end
+
+// ; xcmp
+inline %0Dh
+
+  ldrsw   x14, [x10]
+  cmp     x9, x14
+
+end
+
 // ; setr
 inline %80h
 
@@ -329,6 +373,58 @@ inline %85h
   str     x10, [x11]
 
 end 
+
+// ; xswapsi
+inline %86h
+
+  mov     x13, x0
+  add     x12, sp, __arg12_1
+  ldr     x0, [x12]
+  str     x13, [x12]
+
+end
+
+// ; xswapsi 0
+inline %186h
+
+end
+
+// ; xswapsi 1
+inline %286h
+
+  mov     x13, x0
+  mov     x0, x1
+  mov     x1, x13
+
+end
+
+// ; swapsi
+inline %87h
+
+  mov     x13, x10
+  add     x12, sp, __arg12_1
+  ldr     x10, [x12]
+  str     x13, [x12]
+
+end
+
+// ; swapsi 0
+inline %187h
+
+  mov     x13, x10
+  mov     x10, x0
+  mov     x0, x13
+
+end
+
+// ; swapsi 1
+inline %287h
+
+  mov     x13, x10
+  mov     x10, x1
+  mov     x1, x13
+
+end
 
 // ; movm
 inline %88h
@@ -671,6 +767,17 @@ inline %0B1h
 
 end
 
+// ; jumpvi
+inline %0B5h
+
+  sub     x14, x10, elVMTOffset              
+  ldr     x17, [x14]
+  add     x17, x17, __arg12_1
+  ldr     x17, [x17]
+  br      x17
+
+end
+
 // ; cmpr
 inline %0C0h
 
@@ -719,13 +826,79 @@ inline %2C2h
 end
 
 // ; icmpdpn 8
-inline %4EFh
+inline %4C2h
 
   ldr     x17, [x0]
   ldr     x18, [x10]
 
   cmp     x17, x18
 
+end
+
+// ; tstflg
+inline %0C3h
+
+  sub     x14, x10, elVMTOffset              
+  ldr     x14, [x14]              
+  sub     x14, x14, elVMTFlagOffset
+  ldr     x14, [x14]              
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  tst     x14, x11
+
+end
+
+// ; tstn
+inline %0C4h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  tst     x9, x11
+
+end
+
+// ; tstm
+inline % 0C5h
+
+  movz    x16,  __arg32lo_1
+  movk    x16,  __arg32hi_1, lsl #16
+
+  sub     x14, x10, elVMTOffset              
+  ldr     x11, [x14]              //; edi
+  mov     x12, #0                 //; ecx
+  sub     x15, x11, elVMTSizeOffset
+  ldr     x13, [x15]              //; esi
+
+labSplit:
+  cmp     x13, #0 
+  beq     labEnd
+
+labStart:
+  tst     x13, #1
+  lsr     x13, x13, #1
+  cset    x12, eq
+
+  lsl     x14, x13, #4
+  add     x14, x14, x11 
+
+  ldr     x15, [x14]         //; edx
+  cmp     x16, x15
+  beq     labFound
+  add     x14, x14, #16
+  ble     labSplit
+  mov     x11, x14
+  sub     x13, x13, x12
+  b       labSplit
+
+labFound:
+  mov     x13, #1
+
+labEnd:
+  cmp     x13, #1
+                               
 end
 
 // ; cmpfi
@@ -1046,6 +1219,20 @@ inline %0E6h
   str     x17, [x13, #8]!
   str     x29, [x13, #8]!
   str     x18, [x14]
+
+end
+
+// ; xnewnr i, r
+inline %0E7h
+
+  add     x10, x10, elObjectOffset
+  movz    x18, __n16lo_1
+  movk    x18, __n16hi_1, lsl #16
+  movz    x19,  __ptr32lo_2
+  movk    x19,  __ptr32hi_2, lsl #16
+  sub     x20, x10, elVMTOffset
+  str     x19, [x20]
+  str     w18, [x20, #12]!
 
 end
 
@@ -1394,7 +1581,7 @@ inline %0F5h
   movz    x17,  code_ptr32lo : %GC_ALLOC
   movk    x17,  code_ptr32hi : %GC_ALLOC, lsl #16
   blr     x17
-  movz    x18, __n16_1
+  movz    x18, __n16lo_1
   movk    x18, __n16hi_1, lsl #16
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16
@@ -1508,11 +1695,13 @@ end
 inline % 0FAh
 
 //;  mov  [rsp+8], r10                      // ; saving arg0
-  str     x0, [sp, #8]
+  str     x0, [sp]
 //;  lea  rax, [rsp + __n_2]
   add     x17, sp, __n12_2
-//;  mov  [rsp+16], r11                     // ; saving arg0
-  str     x1, [sp, #16]
+//;  mov  [rsp+16], r11                     // ; saving arg1
+  str     x1, [sp, #8]
+
+  sub     x17, x17, #8                      // ; HOTFIX : caller address is not in the stack
 
 //;  mov  rsi, __ptr64_2
   movz    x21,  __ptr32lo_2
@@ -1628,12 +1817,13 @@ end
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 0FBh
 
-//;  mov  [rsp+8], r10                      // ; saving arg0
-  str     x0, [sp, #8]
+  str     x0, [sp]                          // ; saving arg0
 //;  lea  rax, [rsp + __n_2]
   add     x17, sp, __n12_2
 //;  mov  [rsp+16], r11                     // ; saving arg0
-  str     x1, [sp, #16]
+  str     x1, [sp, #8]
+
+  sub     x17, x17, #8                      // ; HOTFIX : caller address is not in the stack
 
 //;  mov  rsi, __ptr64_2
   movz    x21,  __ptr32lo_2
@@ -1674,24 +1864,16 @@ labNextParam:
 
 //;  mov  r9, __ptr64_2  - r21
 
-//;  mov  r13, [r9 + rdx * 16 + 8] 
   lsl     x23, x25, #4
   add     x25, x21, x23
+  ldr     x9,  [x25]
   ldr     x23, [x25, #8] 
 
-//;  mov  rcx, [rbx - elVMTOffset]
   sub     x16, x10, elVMTOffset
   ldr     x16, [x16, #0]
 
-//;  lea  rax, [r13 * 16]
-  lsl     x17, x23, #4
-
-//;  mov  rdx, [r9 + r13 * 2]        // c02
-  lsl     x23, x23, #1
-  add     x14, x21, x23 
-  ldr     x9, [x14, #0]
 //;  jmp  [rcx + rax + 8]       // rax - 0
-  add     x20, x16, x17
+  add     x20, x16, x23
 
   ldr     x17, [x20, #8]
   br      x17

@@ -38,3 +38,10 @@ public for<initExpr,condExpr,stepExpr>(loopBody) : __included<statementTemplates
 
    $rep cast bool(condExpr) ? { loopBody; stepExpr; }
 }
+
+// --- try:catch ---
+
+public try:catch(try_block,catch_block) : __included<statementTemplates>
+{
+   try_block \\ on(catch_block);
+}

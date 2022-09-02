@@ -38,13 +38,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    TextViewSettings textViewSettings = { EOLMode::CRLF, false, 3 };
 
    IDEModel          ideModel(10);
-   Win32Controller   osController;
+   Win32Process      outputProcess(50);
    DebugProcess      debugProcess;
-   IDEController     ideController(&osController, &debugProcess, &ideModel, textViewSettings);
+   IDEController     ideController(&outputProcess, &debugProcess, &ideModel, textViewSettings);
    IDEFactory        factory(hInstance, nCmdShow, &ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();
-   GUIControlBase* ideWindow = factory.createMainWindow(app);
+   GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess);
 
    ideController.setNotifier(app);
    ideController.init(&ideModel);

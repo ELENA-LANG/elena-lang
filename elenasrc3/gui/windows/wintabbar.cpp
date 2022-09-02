@@ -12,8 +12,8 @@ using namespace elena_lang;
 
 // --- CustomTabBar ---
 
-CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore)
-   : ControlBase(nullptr)
+CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore, int width, int height)
+   : ControlBase(nullptr, 0, 0, width, height)
 {
    _notifier = notifier;
    _withAbovescore = withAbovescore;
@@ -115,7 +115,7 @@ int CustomTabBar :: getCurrentIndex()
 // --- MultiTabControl ---
 
 MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, ControlBase* child)
-   : CustomTabBar(notifier, withAbovescore)
+   : CustomTabBar(notifier, withAbovescore, 50, 50)
 {
    _child = child;
 }
@@ -182,3 +182,100 @@ void MultiTabControl :: eraseTabView(int index)
 {
    deleteTab(index);
 }
+
+// --- TabBar ---
+
+TabBar :: TabBar(NotifierBase* notifier, bool withAbovescore)
+   : CustomTabBar(notifier, withAbovescore, 800, 100), _pages(nullptr)
+{
+   _title = _T("Tabbar");
+
+   _minHeight = 50;
+   _minWidth = 50;
+}
+
+HWND TabBar :: createControl(HINSTANCE instance, ControlBase* owner)
+{
+   _handle = ::CreateWindowEx(
+      TCS_EX_FLATSEPARATORS, WC_TABCONTROL, _title,
+      WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_BORDER | TCS_FOCUSNEVER | TCS_TABS | TCS_SINGLELINE | TCS_OWNERDRAWFIXED,
+      CW_USEDEFAULT, 0, _minWidth, _minHeight, owner->handle(), nullptr, instance, (LPVOID)this);
+
+   return _handle;
+}
+
+void TabBar :: addTabChild(const wchar_t* name, ControlBase* child)
+{
+   auto rec = getClientRectangle();
+
+   child->setRectangle({ rec.topLeft.x + 4, rec.topLeft.y + 28, rec.width() - 8, rec.height() - 36 });
+   child->hide();
+
+   _pages.add(child);
+
+   addTab(_pages.count(), name, nullptr);
+}
+
+void TabBar :: removeTabChild(ControlBase* child)
+{
+   if (_pages.count() == 0)
+      return;
+
+   int index = _pages.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
+      {
+         return current == arg;
+      });
+
+   if (index != -1) {
+      child->hide();
+   }
+
+   _pages.cut(child);
+   deleteTab(index);
+
+   refresh();
+}
+
+void TabBar :: selectTabChild(ControlBase* child)
+{
+   int index = _pages.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
+      {
+         return current == arg;
+      });
+
+   if (index != -1) {
+      child->show();
+
+      selectTab(index);
+
+      ControlBase::refresh();
+   }
+}
+
+void TabBar :: setRectangle(Rectangle rec)
+{
+   ControlBase::setRectangle(rec);
+
+   auto clientRect = getClientRectangle();
+
+   Rectangle childRec(clientRect.topLeft.x + 4, clientRect.topLeft.y + 28, clientRect.width() - 8, clientRect.height() - 36);
+   for (auto it = _pages.start(); !it.eof(); ++it) {
+      (*it)->setRectangle(childRec);
+   }
+}
+
+void TabBar :: refresh()
+{
+   int index = getCurrentIndex();
+   int current = 0;
+   for (auto it = _pages.start(); !it.eof(); ++it) {
+      if (index == current) {
+         (*it)->show();
+         (*it)->setFocus();
+      }
+      else (*it)->hide();
+
+      current++;
+   }
+}
+

@@ -13,7 +13,7 @@ using namespace elena_lang;
 HWND ControlBase :: create(HINSTANCE instance, wstr_t className, ControlBase* owner)
 {
    _handle = ::CreateWindowW(className.str(), _title.str(), WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, owner ? owner->handle() : nullptr, nullptr, instance, this);
+      _rect.topLeft.x, _rect.topLeft.y, _rect.width(), _rect.height(), owner ? owner->handle() : nullptr, nullptr, instance, this);
 
    return _handle;
 }
@@ -24,7 +24,7 @@ void ControlBase :: showWindow(int cmdShow)
    UpdateWindow(_handle);
 }
 
-elena_lang::Rectangle ControlBase :: getRectangle()
+elena_lang::Rectangle ControlBase ::getClientRectangle()
 {
    RECT rc = { 0,0,0,0 };
    ::GetClientRect(_handle, &rc);
@@ -32,9 +32,21 @@ elena_lang::Rectangle ControlBase :: getRectangle()
    return Rectangle(rc.left, rc.top, rc.right, rc.bottom);
 }
 
-void ControlBase :: setRectangle(Rectangle rec)
+elena_lang::Rectangle ControlBase::getRectangle()
 {
-   ::MoveWindow(_handle, rec.topLeft.x, rec.topLeft.y, rec.width(), rec.height(), TRUE);
+   return _rect;
+}
+
+void ControlBase :: setRectangle(Rectangle rect)
+{
+   int x = rect.topLeft.x;
+   int y = rect.topLeft.y;
+   int width = max(rect.width(), _minWidth);
+   int height = max(rect.height(), _minHeight);
+
+   _rect = { x, y, width, height };
+
+   int r = ::MoveWindow(_handle, x, y, width, height, TRUE);
 }
 
 void ControlBase :: setFocus()
@@ -65,7 +77,7 @@ void ControlBase :: hide()
 
 // --- WindowBase ---
 
-ATOM WindowBase :: registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, unsigned int style)
+ATOM WindowBase :: registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, HCURSOR cursor, HBRUSH background, unsigned int style)
 {
    WNDCLASSEXW wcex;
 
@@ -77,13 +89,18 @@ ATOM WindowBase :: registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t class
    wcex.cbWndExtra = 0;
    wcex.hInstance = hInstance;
    wcex.hIcon = icon;
-   wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-   wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+   wcex.hCursor = cursor;
+   wcex.hbrBackground = background;
    wcex.lpszMenuName = menuName.str();
    wcex.lpszClassName = className.str();
    wcex.hIconSm = smallIcon;
 
    return RegisterClassExW(&wcex);
+}
+
+ATOM WindowBase::registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, unsigned int style)
+{
+   return registerClass(hInstance, proc, className, icon, menuName, smallIcon, LoadCursor(nullptr, IDC_ARROW), (HBRUSH)(COLOR_WINDOW + 1), style);
 }
 
 LRESULT WindowBase :: WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -169,13 +186,14 @@ bool WindowApp :: initInstance(WindowBase* mainWindow)
    return TRUE;
 }
 
-void WindowApp :: notifyMessage(int messageCode)
+void WindowApp :: notifyMessage(int messageCode, int arg)
 {
    ExtNMHDR notification;
 
    notification.nmhrd.code = NMHDR_Message;
    notification.nmhrd.hwndFrom = _hwnd;
    notification.extParam = messageCode;
+   notification.extParam2 = arg;
 
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }

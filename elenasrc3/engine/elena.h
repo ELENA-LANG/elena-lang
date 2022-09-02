@@ -334,6 +334,8 @@ namespace elena_lang
       virtual ref_t importMessage(ModuleBase* referenceModule, mssg_t message) = 0;
       virtual ref_t importReference(ModuleBase* referenceModule, ustr_t referenceName) = 0;
       virtual ref_t importReference(ModuleBase* referenceModule, ref_t reference) = 0;
+      virtual ref_t importConstant(ModuleBase* referenceModule, ref_t reference) = 0;
+      virtual ref_t importMessageConstant(ModuleBase* referenceModule, ref_t reference) = 0;
 
       SectionScopeBase()
       {
@@ -412,6 +414,8 @@ namespace elena_lang
 
       virtual void writeJneBack(pos_t label, MemoryWriter& writer) = 0;
       virtual void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
+      virtual void writeLabelAddress(pos_t label, MemoryWriter& writer, ref_t mask) = 0;
    };
 
    // --- JITCompilerBase ---
@@ -467,6 +471,7 @@ namespace elena_lang
       virtual void writeImm9(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm12(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm16(MemoryWriter* writer, int value, int type) = 0;
+      virtual void writeImm16Hi(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm32(MemoryWriter* writer, int value) = 0;
 
       virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) = 0;

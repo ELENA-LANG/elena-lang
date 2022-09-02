@@ -8,17 +8,143 @@
 
 using namespace elena_lang;
 
+// --- VerticalBox ---
+
+VerticalBox :: VerticalBox(bool stretchMode, int spacer)
+   : _stretchMode(stretchMode), _spacer(spacer)
+{
+
+}
+
+void VerticalBox :: append(GUIControlBase* item)
+{
+   if (_list.count() != 0) {
+      auto itemRect = item->getRectangle();
+      auto bottomRect = _list[_list.count() - 1]->getRectangle();
+
+      item->setRectangle({ bottomRect.topLeft.x, bottomRect.bottomRight.y + _spacer + 1, 
+         bottomRect.width(), itemRect.height()});
+   }
+
+   _list.add(item);
+}
+
+elena_lang::Rectangle VerticalBox :: getRectangle()
+{
+   int x = 0;
+   int y = 0;
+   int width = 0;
+   int height = 0;
+
+   auto topRect = _list[0]->getRectangle();
+   x = topRect.topLeft.x;
+   y = topRect.topLeft.y;
+
+   for (size_t i = 0; i < _list.count(); i++) {
+      auto itemRect = _list[i]->getRectangle();
+
+      if (i != 0)
+         height += _spacer;
+
+      height += itemRect.height();      
+
+      if (width < itemRect.width())
+         width = itemRect.width();
+   }
+
+   return elena_lang::Rectangle(x, y, width, height);
+}
+
+void VerticalBox :: setRectangle(Rectangle rec)
+{
+   int x = rec.topLeft.x;
+   int y = rec.topLeft.y;
+   int width = rec.width();
+   int height = rec.height();
+
+   size_t count = _list.count();
+   if (_stretchMode) {
+      int meanHeight = height / count;
+      for (size_t i = 0; i < count; i++) {
+         if (i == count - 1)
+            meanHeight = height;
+
+         _list[i]->setRectangle({x, y, width, meanHeight });
+         height -= meanHeight;
+         y += meanHeight;
+         y += _spacer;
+      }
+   }
+   else {
+      int fixedHeight = 0;
+      for (size_t i = 1; i < count; i++) {
+         fixedHeight += _list[i]->getRectangle().height();
+         fixedHeight += _spacer;
+      }
+      if (height > fixedHeight) {
+         height -= fixedHeight;
+      }
+      else height = 5;
+      for (size_t i = 0; i < count; i++) {
+         if (i != 0)
+            height = _list[i]->getRectangle().height();
+
+         _list[i]->setRectangle({x, y, width, height});
+         y += height;
+         y += _spacer;
+      }
+   }
+}
+
+void VerticalBox :: show()
+{
+   for (size_t i = 0; i < _list.count(); i++) {
+      _list[i]->show();
+   }
+}
+
+void VerticalBox :: hide()
+{
+   for (size_t i = 0; i < _list.count(); i++) {
+      _list[i]->hide();
+   }
+}
+
+bool VerticalBox :: visible()
+{
+   for (size_t i = 0; i < _list.count(); i++) {
+      if (_list[i]->visible())
+         return true;
+   }
+
+   return false;
+}
+
+void VerticalBox :: setFocus()
+{
+   if (_list.count() > 0)
+      _list[0]->setFocus();
+}
+
+void VerticalBox :: refresh()
+{
+   for (size_t i = 0; i < _list.count(); i++) {
+      _list[i]->refresh();
+   }
+}
+
 // --- LayoutManager ---
 
-inline bool isVisible(ControlBase* control)
+inline bool isVisible(GUIControlBase* control)
 {
    return (control && control->visible());
 }
 
-void adjustVertical(int width, int& height, ControlBase* control)
+void adjustVertical(int width, int& height, GUIControlBase* control)
 {
    if (isVisible(control)) {
       elena_lang::Rectangle rect = control->getRectangle();
+      int h = rect.height(); // !! temporal
 
       rect.setWidth(width);
       if (height > rect.height() + 4) {
@@ -33,7 +159,7 @@ void adjustVertical(int width, int& height, ControlBase* control)
    }
 }
 
-void adjustHorizontal(int& width, int height, ControlBase* control)
+void adjustHorizontal(int& width, int height, GUIControlBase* control)
 {
    if (isVisible(control)) {
       elena_lang::Rectangle rect = control->getRectangle();
@@ -51,7 +177,7 @@ void adjustHorizontal(int& width, int height, ControlBase* control)
    }
 }
 
-void adjustClient(int width, int height, ControlBase* control)
+void adjustClient(int width, int height, GUIControlBase* control)
 {
    if (isVisible(control)) {
       elena_lang::Rectangle rect = control->getRectangle();
@@ -83,12 +209,16 @@ void LayoutManager :: resizeTo(Rectangle area)
          topRect.width(), topRect.height() });
 
       y += topRect.height();
+
+      _top->refresh();
    }
    if (isVisible(_bottom)) {
       Rectangle bottomRect = _bottom->getRectangle();
 
       _bottom->setRectangle({ area.topLeft.x, y + totalHeight,
          bottomRect.width(), bottomRect.height() });
+
+      _bottom->refresh();
    }
    if (isVisible(_left)) {
       Rectangle leftRect = _bottom->getRectangle();
@@ -97,16 +227,22 @@ void LayoutManager :: resizeTo(Rectangle area)
          leftRect.width(), leftRect.height() });
 
       x += leftRect.width();
+
+      _left->refresh();
    }
    if (isVisible(_right)) {
       Rectangle rightRect = _bottom->getRectangle();
 
-      _left->setRectangle({ area.topLeft.x, y,
+      _right->setRectangle({ area.topLeft.x, y,
          rightRect.width(), rightRect.height() });
+
+      _right->refresh();
    }
 
    if (isVisible(_center)) {
       _center->setRectangle({ x, y, totalWidth, totalHeight });
+
+      _center->refresh();
    }      
 }
 
@@ -137,7 +273,7 @@ void SDIWindow :: setLayout(int center, int top, int bottom, int right, int left
 
 void SDIWindow :: onResize()
 {
-   Rectangle clientRect = getRectangle();
+   Rectangle clientRect = getClientRectangle();
 
    _layoutManager.resizeTo(clientRect);
 }
@@ -199,7 +335,7 @@ void SDIWindow :: onDrawItem(DRAWITEMSTRUCT* item)
 {
    for (size_t i = 0; i < _childCounter; ++i) {
       if (_children[i]->checkHandle(item->hwndItem)) {
-         _children[i]->onDrawItem(item);
+         ((ControlBase*)_children[i])->onDrawItem(item);
       }
    }
 }

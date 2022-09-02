@@ -9,9 +9,23 @@
 #include "windows/wintextview.h"
 #include "windows/wintextframe.h"
 #include "windows/winidestatusbar.h"
+#include "windows/winsplitter.h"
+#include "windows/winoutput.h"
 #include "Resource.h"
 
+#include <shlwapi.h>
+
 using namespace elena_lang;
+
+#ifdef _M_IX86
+
+#define CLI_PATH "elena-cli.exe"
+
+#else
+
+#define CLI_PATH "elena64-cli.exe"
+
+#endif // DEBUG
 
 #define MAX_LOADSTRING 100
 
@@ -19,6 +33,9 @@ using namespace elena_lang;
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szSDI[MAX_LOADSTRING];                    // the main window class name
 WCHAR szTextView[MAX_LOADSTRING];               // the main window class name
+WCHAR szHSplitter[MAX_LOADSTRING];               // the hsplitter class name
+WCHAR szVSplitter[MAX_LOADSTRING];               // the vsplitter window class name
+WCHAR szCompilerOutput[MAX_LOADSTRING];          // the compiler output caption
 
 // !! temporally
 #define IDE_CHARSET_ANSI                        ANSI_CHARSET
@@ -77,6 +94,12 @@ IDEFactory :: IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideModel,
    _cmdShow = cmdShow;
    _model = ideModel;
    _controller = controller;
+
+   wchar_t appPath[MAX_PATH];
+   ::GetModuleFileName(NULL, appPath, MAX_PATH);
+   ::PathRemoveFileSpec(appPath);
+
+   _pathSettings.appPath.copy(appPath);
 }
 
 void IDEFactory :: registerClasses()
@@ -85,9 +108,13 @@ void IDEFactory :: registerClasses()
    LoadStringW(_instance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_IDE, szSDI, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_TEXTVIEW, szTextView, MAX_LOADSTRING);
+   LoadStringW(_instance, IDC_HSPLITTER, szHSplitter, MAX_LOADSTRING);
+   LoadStringW(_instance, IDC_VSPLITTER, szVSplitter, MAX_LOADSTRING);
 
    SDIWindow::registerSDIWindow(_instance, szSDI, LoadIcon(_instance, MAKEINTRESOURCE(IDI_IDE)), MAKEINTRESOURCEW(IDC_IDE), LoadIcon(_instance, MAKEINTRESOURCE(IDI_SMALL)));
    TextViewWindow::registerTextViewWindow(_instance, szTextView);
+   Splitter::registerSplitterWindow(_instance, szHSplitter, false);
+   Splitter::registerSplitterWindow(_instance, szVSplitter, true);
 }
 
 ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* notifier)
@@ -121,8 +148,53 @@ ControlBase* IDEFactory :: createStatusbar(WindowBase* owner)
    return statusBar;
 }
 
-void IDEFactory :: initializeModel()
+ControlBase* IDEFactory :: createTabBar(WindowBase* owner, NotifierBase* notifier)
 {
+   TabBar* tabBar = new TabBar(notifier, _settings.withTabAboverscore);
+
+   tabBar->createControl(_instance, owner);
+
+   tabBar->show(); // !! temporal
+
+   return tabBar;
+}
+
+ControlBase* IDEFactory :: createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, int notifyCode)
+{
+   Splitter* splitter = new Splitter(notifier, notifyCode, client, vertical);
+
+   splitter->create(_instance, 
+      vertical ? szVSplitter : szHSplitter,
+     owner);
+
+   return splitter;
+}
+
+ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess)
+{
+   CompilerOutput* output = new CompilerOutput();
+
+   output->createControl(_instance, owner);
+
+   outputProcess->attachListener(output);
+
+   return output;
+}
+
+void IDEFactory :: initializeModel(int frameTextIndex, int tabBar, int compilerOutput)
+{
+   LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
+
+
+   _model->projectModel.paths.appPath.copy(*_pathSettings.appPath);
+   _model->projectModel.paths.compilerPath.copy(CLI_PATH);
+
+   _model->ideScheme.textFrameId = frameTextIndex;
+   _model->ideScheme.resultControl = tabBar;
+   _model->ideScheme.compilerOutputControl = compilerOutput;
+
+   _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
+
    //// !! temporal
    //auto viewModel = _model->viewModel();
 
@@ -141,25 +213,38 @@ GUIApp* IDEFactory :: createApp()
    return app;
 }
 
-GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier)
+GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess)
 {
-   ControlBase* children[2];
+   GUIControlBase* children[6];
    int counter = 0;
 
    int textIndex = counter++;
+   int bottomBox = counter++;
    int statusBarIndex = counter++;
+   int vsplitter = counter++;
+   int tabBar = counter++;
+   int compilerOutput = counter++;
 
-   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance, 
-      textIndex);
+   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance);
    sdi->create(_instance, szSDI, nullptr);
 
+   VerticalBox* vb = new VerticalBox(false, 1);
+
    children[textIndex] = createTextControl(sdi, notifier);
+   children[bottomBox] = vb;
+   children[tabBar] = createTabBar(sdi, notifier);
+   children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier, 
+      NOTIFY_LAYOUT_CHANGED);
    children[statusBarIndex] = createStatusbar(sdi);
+   children[compilerOutput] = createCompilerOutput((ControlBase*)children[tabBar], outputProcess);
+
+   vb->append(children[vsplitter]);
+   vb->append(children[statusBarIndex]);
 
    sdi->populate(counter, children);
-   sdi->setLayout(textIndex, -1, statusBarIndex, -1, -1);
+   sdi->setLayout(textIndex, -1, bottomBox, -1, -1);
 
-   initializeModel();
+   initializeModel(textIndex, tabBar, compilerOutput);
 
    return sdi;
 }

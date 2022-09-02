@@ -5,14 +5,36 @@ define EXCEPTION_ACCESS_VIOLATION  101h;
 define ELENA_ERR_DIVIDE_BY_ZERO    102h;
 define ELENA_ERR_OUT_OF_MEMORY     103h;
 
-define ex_struct_size32 16; 
-define ex_struct_size64 32; 
+define FUNCTION_MESSAGE       00000020h;
+
+define ex_struct_size32              16; 
+define ex_struct_size64              32; 
+
+define page_size32                   16;
+define page_size64                   32;
+
 
 define err_ret          -1;
 
 procedure __object_dispatcher
 
   redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
 
 end
 
@@ -21,6 +43,80 @@ procedure __object_equal
   peek        sp:0
   cmp         sp:1
   seleq       class:"system'BoolValue#true", class:"system'BoolValue#false"
+
+end
+
+procedure __exception_handler
+
+  xflush          sp:0
+  xflush          sp:1
+  open            :3, :0 
+  store           fp:1 
+
+  tst             mssg:"function:#try_invoke[2]"
+  jne             Lab01
+
+  set             mssgconst:"fallback[2]"
+  store           sp:1 
+  peek            fp:1 
+  store           sp:0 
+  peek            fp:-2 
+  mov             mssg:"function:#try_invoke[2]" 
+  call            vt:0 
+
+  jump            Lab00
+
+Lab01:
+  peek            fp:1 
+  store           sp:0 
+  peek            fp:-2 
+  mov             mssg:"function:#invoke[1]" 
+  call            vt:0 
+
+Lab00:
+  peek            fp:1 
+  close           :0 
+  quit             
+
+end
+
+procedure __exception_raise
+
+  throw
+
+end
+
+procedure __message_dispatcher
+
+  tstn        FUNCTION_MESSAGE
+  jeq         labDefault
+
+  loadv
+  xcmp
+  jne         labDefault
+
+  peek        sp:0
+  jump        vt:0
+
+labDefault:
+
+  redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
 
 end
 
@@ -36,40 +132,36 @@ end
 
 procedure critical_exception_handler
 
-  cmpn EXCEPTION_ACCESS_VIOLATION
-  jeq  labAccessViolation
+  cmpn        EXCEPTION_ACCESS_VIOLATION
+  jeq         labAccessViolation
 
-  cmpn ELENA_ERR_DIVIDE_BY_ZERO
-  jeq  labDivisionByZero
+  cmpn        ELENA_ERR_DIVIDE_BY_ZERO
+  jeq         labDivisionByZero
 
-  cmpn ELENA_ERR_OUT_OF_MEMORY
-  jeq  labOutOfMemory
+  cmpn        ELENA_ERR_OUT_OF_MEMORY
+  jeq         labOutOfMemory
 
-  set     class : "system'CriticalException"
-  store   sp:0
-  set     mssgconst : "new[1]"
-  store   sp:1
+  set         class : "system'CriticalException"
+  store       sp:0
+  set         mssgconst : "new[1]"
   throw
 
 labAccessViolation:
-  set     class : "system'NilReferenceException"
-  store   sp:0
-  set     mssgconst : "new[1]"
-  store   sp:1
+  set         class : "system'NilReferenceException"
+  store       sp:0
+  set         mssgconst : "new[1]"
   throw
 
 labDivisionByZero:
-  set     class : "system'DivisionByZeroException"
-  store   sp:0
-  set     mssgconst : "new[1]"
-  store   sp:1
+  set         class : "system'DivisionByZeroException"
+  store       sp:0
+  set         mssgconst : "new[1]"
   throw
 
 labOutOfMemory:
-  set     class : "system'OutOfMemoryException"
-  store   sp:0
-  set     mssgconst : "new[0]"
-  store   sp:1
+  set         class : "system'OutOfMemoryException"
+  store       sp:0
+  set         mssgconst : "new[0]"
   throw
 
 end

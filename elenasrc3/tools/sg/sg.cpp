@@ -138,9 +138,12 @@ int main(int argc, char* argv[])
 
       printf("generating...\n");
 
-      parse_key_t ambigous = table.generate();
-      if (ambigous) {
-         printf(SG_AMBIGUOUS, table.resolveKey(ambigous).str());
+      auto ambigous = table.generate();
+      if (ambigous.value1) {
+         ustr_t terminal = table.resolveKey(ambigous.value2);
+         ustr_t nonterminal = table.resolveKey(ambigous.value1);
+
+         printf(SG_AMBIGUOUS, terminal.str(), nonterminal.str());
          return -1;
       }
 

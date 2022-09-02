@@ -110,6 +110,7 @@ namespace elena_lang
    constexpr auto errReferenceOverflow       = 603;
    constexpr auto errUnknownBaseClass        = 604;
    constexpr auto errNoDispatcher            = 605;
+   constexpr auto errClosureError            = 606;
 
    constexpr auto infoNewMethod              = 701;
    constexpr auto infoCurrentMethod          = 702;
@@ -168,6 +169,7 @@ namespace elena_lang
    constexpr auto V_FIELD                 = 0x80001009u;
    constexpr auto V_FUNCTION              = 0x8000100Cu;     // a closure attribute
    constexpr auto V_VARIABLE              = 0x8000100Du;
+   constexpr auto V_MEMBER                = 0x8000100Eu;
    constexpr auto V_STATIC                = 0x8000100Fu;
    constexpr auto V_CONVERSION            = 0x80001011u;
    constexpr auto V_NEWOP                 = 0x80001012u;
@@ -176,14 +178,17 @@ namespace elena_lang
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;
    constexpr auto V_IMPORT                = 0x80001018u;
+   constexpr auto V_AUTO                  = 0x8000101Cu;
    constexpr auto V_NAMESPACE             = 0x80001021u;
    constexpr auto V_INLINE                = 0x80001025u;
+   constexpr auto V_PROBEMODE             = 0x80001026u;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;
    constexpr auto V_INTBINARY             = 0x80000803u;
    //constexpr auto V_DECLOBJ               = 0x80000804u;
    constexpr auto V_WORDBINARY            = 0x80000805u;
+   constexpr auto V_MSSGNAME              = 0x80000806u;
    constexpr auto V_SYMBOL                = 0x80000808u;
    constexpr auto V_MSSGBINARY            = 0x80000809u;
 
@@ -201,6 +206,7 @@ namespace elena_lang
    constexpr auto V_BINARYARRAY           = 0x8000000Bu;
    constexpr auto V_ELEMENT               = 0x8000000Cu;
    constexpr auto V_MESSAGE               = 0x8000000Du;
+   constexpr auto V_MESSAGENAME           = 0x8000000Eu;
    constexpr auto V_OBJATTRIBUTES         = 0x80000012u;
    constexpr auto V_CLOSURE               = 0x80000013u;
    constexpr auto V_DECLARATION           = 0x80000014u;

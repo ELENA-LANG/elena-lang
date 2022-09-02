@@ -130,7 +130,7 @@ mssg_t ByteCodeViewer :: resolveMessageByIndex(MemoryBase* vmt, int index)
 
 mssg_t ByteCodeViewer :: resolveMessage(ustr_t messageName)
 {
-   mssg_t message = ByteCodeUtil::resolveMessage(messageName, _module);
+   mssg_t message = ByteCodeUtil::resolveMessage(messageName, _module, true);
    if (message == 0) {
       printLine("Unknown message ", messageName);
    }
@@ -184,8 +184,17 @@ void ByteCodeViewer :: printLineAndCount(ustr_t arg1, ustr_t arg2, int& row, int
 
 void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 {
+   ustr_t referenceName = nullptr;
    ref_t mask = arg & mskAnyRef;
-   ustr_t referenceName = arg ? _module->resolveReference(arg & ~mskAnyRef) : nullptr;
+   switch (mask) {
+      case mskMssgLiteralRef:
+         referenceName = arg ? _module->resolveConstant(arg & ~mskAnyRef) : nullptr;
+         break;
+      default:
+         referenceName = arg ? _module->resolveReference(arg & ~mskAnyRef) : nullptr;
+         break;
+   }
+
    switch (mask) {
       case mskArrayRef:
          commandStr.append("array:");
@@ -217,6 +226,9 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
       case mskProcedureRef:
          commandStr.append("procedure:");
          break;
+      case mskMssgLiteralRef:
+         commandStr.append("mssgconst:");
+         break;
       default:
          commandStr.append(":");
          break;
@@ -235,11 +247,14 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 
 }
 
-void ByteCodeViewer :: addSecondRArg(arg_t arg, IdentifierString& commandStr)
+void ByteCodeViewer :: addSecondRArg(arg_t arg, IdentifierString& commandStr, List<pos_t>& labels)
 {
    commandStr.append(", ");
 
-   addRArg(arg, commandStr);
+   if ((arg & mskAnyRef) == mskLabelRef) {
+      addLabel(arg & ~mskAnyRef, commandStr, labels);
+   }
+   else addRArg(arg, commandStr);
 }
 
 void ByteCodeViewer :: addArg(arg_t arg, IdentifierString& commandStr)
@@ -326,6 +341,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addRArg(command.arg1, commandStr);
             break;
          case ByteCode::MovM:
+         case ByteCode::TstM:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
             break;
@@ -347,7 +363,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::XStoreSIR:
             addArg(command.arg1, commandStr);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::MovSIFI:
             addArg(command.arg1, commandStr);
@@ -355,9 +371,10 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::NewIR:
          case ByteCode::NewNR:
+         case ByteCode::XNewNR:
          case ByteCode::CreateNR:
             addArg(command.arg1, commandStr);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::CallMR:
          case ByteCode::VCallMR:
@@ -367,16 +384,16 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::XDispatchMR:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
             addRArg(command.arg1, commandStr);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::XHookDPR:
             addArg(command.arg1, commandStr);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          default:
             addArg(command.arg1, commandStr);
@@ -388,7 +405,10 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
 
 void ByteCodeViewer :: addMessage(IdentifierString& commandStr, mssg_t message)
 {
-   ByteCodeUtil::resolveMessageName(commandStr, _module, message);
+   if (!ByteCodeUtil::resolveMessageName(commandStr, _module, message)) {
+      commandStr.append("invalid ");
+      commandStr.appendUInt(message);
+   }      
 }
 
 inline void appendHex32(IdentifierString& command, unsigned int hex)
@@ -532,14 +552,23 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elDynamicRole)) {
       printLineAndCount("@flag ", "elDynamicRole", row, pageSize);
    }
+   if (test(flags, elExtension)) {
+      printLineAndCount("@flag ", "elExtension", row, pageSize);
+   }
    if (test(flags, elFinal)) {
       printLineAndCount("@flag ", "elFinal", row, pageSize);
    }
    if (test(flags, elNestedClass)) {
       printLineAndCount("@flag ", "elNestedClass", row, pageSize);
    }
+   if (test(flags, elNoCustomDispatcher)) {
+      printLineAndCount("@flag ", "elNoCustomDispatcher", row, pageSize);
+   }
    if (test(flags, elNonStructureRole)) {
       printLineAndCount("@flag ", "elNonStructureRole", row, pageSize);
+   }
+   if (test(flags, elMessage)) {
+      printLineAndCount("@flag ", "elMessage", row, pageSize);
    }
    if (test(flags, elReadOnlyRole)) {
       printLineAndCount("@flag ", "elReadOnlyRole", row, pageSize);
@@ -556,17 +585,11 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elStructureRole)) {
       printLineAndCount("@flag ", "elStructureRole", row, pageSize);
    }
-   if (test(flags, elWrapper)) {
-      printLineAndCount("@flag ", "elWrapper", row, pageSize);
-   }
-   if (test(flags, elNoCustomDispatcher)) {
-      printLineAndCount("@flag ", "elNoCustomDispatcher", row, pageSize);
-   }
    if (test(flags, elStructureWrapper)) {
       printLineAndCount("@flag ", "elStructureWrapper", row, pageSize);
    }
-   if (test(flags, elExtension)) {
-      printLineAndCount("@flag ", "elExtension", row, pageSize);
+   if (test(flags, elWrapper)) {
+      printLineAndCount("@flag ", "elWrapper", row, pageSize);
    }
 }
 
