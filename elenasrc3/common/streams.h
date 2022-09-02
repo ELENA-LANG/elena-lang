@@ -307,6 +307,15 @@ namespace elena_lang
          return true;
       }
 
+      bool writeWideString(wstr_t s, pos_t length)
+      {
+         return write(s, length << 1);
+      }
+      bool writeWideString(wstr_t s)
+      {
+         return writeWideString(s, s.length_pos() + 1);
+      }
+
       bool writeString(ustr_t s, pos_t length)
       {
          return write(s, length);

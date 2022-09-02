@@ -456,6 +456,7 @@ namespace elena_lang
          bool structMode, bool virtualMode) = 0;
       virtual void writeInt32(MemoryWriter& writer, unsigned int value) = 0;
       virtual void writeLiteral(MemoryWriter& writer, ustr_t value) = 0;
+      virtual void writeWideLiteral(MemoryWriter& writer, wstr_t value) = 0;
       virtual void writeChar32(MemoryWriter& writer, ustr_t value) = 0;
       virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
       virtual void writeVariable(MemoryWriter& writer) = 0;

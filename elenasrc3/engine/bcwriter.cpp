@@ -219,6 +219,11 @@ void stringLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskLiteralRef);
 }
 
+void wideLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskWideLiteralRef);
+}
+
 void charLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskCharacterRef);
@@ -341,6 +346,22 @@ void byteArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
          break;
    default:
       throw InternalError(errFatalError);
+   }
+}
+
+void shortArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   switch (node.arg.value) {
+      case LEN_OPERATOR_ID:
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::NLen, 2);
+         tape.write(ByteCode::SaveDP, targetOffset, 4);
+         break;
+      default:
+         throw InternalError(errFatalError);
    }
 }
 
@@ -499,7 +520,9 @@ ByteCodeWriter::Saver commands[] =
    swapSPField,
    mssgLiteral,
    accSwapSPField,
-   redirectOp
+   redirectOp,
+   shortArraySOp,
+   wideLiteral
 };
 
 // --- ByteCodeWriter ---

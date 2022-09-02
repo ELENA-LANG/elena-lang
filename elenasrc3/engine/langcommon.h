@@ -208,6 +208,8 @@ namespace elena_lang
    constexpr auto V_MESSAGE               = 0x8000000Du;
    constexpr auto V_MESSAGENAME           = 0x8000000Eu;
    constexpr auto V_INT16                 = 0x8000000Fu;
+   constexpr auto V_INT16ARRAY            = 0x80000010u;
+   constexpr auto V_WIDESTRING            = 0x80000011u;
    constexpr auto V_OBJATTRIBUTES         = 0x80000012u;
    constexpr auto V_CLOSURE               = 0x80000013u;
    constexpr auto V_DECLARATION           = 0x80000014u;

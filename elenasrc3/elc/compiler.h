@@ -26,6 +26,7 @@ namespace elena_lang
 
       MetaConstant,
       StringLiteral,
+      WideStringLiteral,
       CharacterLiteral,
       IntLiteral,
       MssgNameLiteral,
@@ -211,6 +212,7 @@ namespace elena_lang
       CompilerLogic*   _logic;
 
       ObjectInfo mapStringConstant(ustr_t s);
+      ObjectInfo mapWideStringConstant(ustr_t s);
 
       void setAttributeMapValue(ref_t dictionaryRef, ustr_t key, int value);
       void setTypeMapValue(ref_t dictionaryRef, ustr_t key, ref_t reference);
@@ -964,6 +966,7 @@ namespace elena_lang
       ObjectInfo compileCatchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
 
       ObjectInfo mapStringConstant(Scope& scope, SyntaxNode node);
+      ObjectInfo mapWideStringConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapCharacterConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapIntConstant(Scope& scope, SyntaxNode node, int radix);
       ObjectInfo mapUIntConstant(Scope& scope, SyntaxNode node, int radix);

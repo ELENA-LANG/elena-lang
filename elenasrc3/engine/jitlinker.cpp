@@ -1047,6 +1047,11 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          size = value.length_pos() + 1;
          structMode = true;
          break;
+      case mskWideLiteralRef:
+         vmtReferenceInfo.referenceName = _constantSettings.wideLiteralClass;
+         size = value.length_pos() + 1;
+         structMode = true;
+         break;
       case mskCharacterRef:
          vmtReferenceInfo.referenceName = _constantSettings.characterClass;
          size = 4;
@@ -1094,6 +1099,13 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
       case mskLiteralRef:
          _compiler->writeLiteral(writer, value);
          break;
+      case mskWideLiteralRef:
+      {
+         WideMessage tmp(value);
+
+         _compiler->writeWideLiteral(writer, *tmp);
+         break;
+      }
       default:
          break;
    }
@@ -1206,6 +1218,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
             break;
          case mskIntLiteralRef:
          case mskLiteralRef:
+         case mskWideLiteralRef:
          case mskCharacterRef:
          case mskMssgLiteralRef:
             address = resolveConstant(referenceInfo, sectionMask);

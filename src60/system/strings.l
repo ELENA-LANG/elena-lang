@@ -40,3 +40,21 @@ public const struct String //: BaseValue
 
 }
 
+// --- WideString ---
+
+public const struct WideString //: BaseValue
+{
+    __string short[] theArray;
+
+    int Length
+    {
+        /// Reads the literal length into an output parameter
+        get()
+        {
+           int l := $len theArray;
+           l := l - 1;
+
+           ^ l;
+        }
+    }
+}

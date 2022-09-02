@@ -6,6 +6,7 @@ __define hexinteger         12295;
 __define reference          12296;
 __define terminal           12297;
 __define character          12298;
+__define wide               12300;
 
 __define DECLARATION         5120;
 __define BLOCK               7184;
@@ -191,6 +192,7 @@ ROOT_EXPRESSION ::=
         | integer O_Re
         | hexinteger O_Re
         | string O_Re
+        | wide O_Re
         | character O_Re
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION
@@ -204,6 +206,7 @@ EXPRESSION ::=
         | integer O_Re
         | hexinteger O_Re
         | string O_Re
+        | wide O_Re
         | character O_Re
         | "(" SUB_EXPRESSION
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION
@@ -217,6 +220,7 @@ SINGLE_EXPRESSION ::=
         | integer ^OBJECT
         | hexinteger ^OBJECT
         | string ^OBJECT
+        | wide ^OBJECT
 	| "(" SUB_SINGLE_EXPRESSION;
 
 SUB_EXPRESSION ::=
@@ -225,6 +229,7 @@ SUB_EXPRESSION ::=
         | integer O_Re ^EXPRESSION ")" E_R
         | hexinteger O_Re ^EXPRESSION ")" E_R
         | string O_Re ^EXPRESSION ")" E_R
+        | wide O_Re ^EXPRESSION ")" E_R
         | character O_Re ^EXPRESSION ")" E_R
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION ^EXPRESSION ")" E_R
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION ^EXPRESSION ")" E_R
@@ -237,6 +242,7 @@ SUB_SINGLE_EXPRESSION ::=
         | integer O_Re ")"
         | hexinteger O_Re ")"
         | string O_Re ")"
+        | wide O_Re ")"
         | character O_Re ")"
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION ")"
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION ")"

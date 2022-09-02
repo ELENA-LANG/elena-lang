@@ -2576,6 +2576,12 @@ void JITCompiler32 :: writeLiteral(MemoryWriter& writer, ustr_t value)
    writer.align(4, 0);
 }
 
+void JITCompiler32 :: writeWideLiteral(MemoryWriter& writer, wstr_t value)
+{
+   writer.writeWideString(value, value.length_pos() + 1);
+   writer.align(4, 0);
+}
+
 void JITCompiler32 :: writeChar32(MemoryWriter& writer, ustr_t value)
 {
    size_t len = 1;
@@ -2931,6 +2937,12 @@ void JITCompiler64 :: writeInt32(MemoryWriter& writer, unsigned value)
 void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
    writer.writeString(value, value.length_pos() + 1);
+   writer.align(8, 0);
+}
+
+void JITCompiler64 :: writeWideLiteral(MemoryWriter& writer, wstr_t value)
+{
+   writer.writeWideString(value, value.length_pos() + 1);
    writer.align(8, 0);
 }
 

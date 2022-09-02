@@ -77,6 +77,8 @@ namespace elena_lang
       MssgLiteral          = 0x0030,
       AccSwapping          = 0x0031,
       RedirectOp           = 0x0032,
+      ShortArraySOp        = 0x0033,
+      WideStringLiteral    = 0x0034,
 
       Import               = 0x0038,
       DictionaryOp         = 0x0039,

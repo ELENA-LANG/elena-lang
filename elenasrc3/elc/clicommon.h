@@ -297,6 +297,7 @@ struct BuiltinReferences
    ref_t   superReference;
    ref_t   intReference;
    ref_t   literalReference;
+   ref_t   wideReference;
    ref_t   messageReference;
    ref_t   wrapperTemplateReference;
    ref_t   arrayTemplateReference;
@@ -317,7 +318,7 @@ struct BuiltinReferences
    BuiltinReferences()
    {
       superReference = intReference = 0;
-      literalReference = 0;
+      literalReference = wideReference = 0;
       messageReference = 0;
       wrapperTemplateReference = 0;
       arrayTemplateReference = 0;

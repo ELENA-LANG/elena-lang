@@ -42,6 +42,8 @@ parse_key_t Parser :: resolveTerminal(SourceInfo& info)
       case dfaQuote:
       case dfaQuoteCode:
          return _terminalKeys.string;
+      case dfaWideQuote:
+         return _terminalKeys.wide;
       case dfaEOF:
          return _terminalKeys.eof;
       case dfaInteger:

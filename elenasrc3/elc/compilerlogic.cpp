@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 19;
+constexpr auto OperationLength = 20;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -100,6 +100,9 @@ constexpr Op Operations[OperationLength] =
    },
    {
       LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32
+   },
+   {
+      LEN_OPERATOR_ID, BuildKey::ShortArraySOp, V_INT16ARRAY, 0, 0, V_INT32
    },
    {
       IF_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, 0, V_CLOSURE
@@ -842,6 +845,9 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
       if (isCompatible(scope, { V_INT8 }, { elementRef }, true) && info.size == 1)
          return V_INT8ARRAY;
 
+      if (isCompatible(scope, { V_INT16 }, { elementRef }, true) && info.size == 2)
+         return V_INT16ARRAY;
+
       //if (isCompatible(scope, V_INT32, elementRef, true)) {
       //   switch (info.size) {
       //      case 4:
@@ -875,6 +881,12 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
             return true;
          }
          else return isCompatible(scope, targetInfo, { scope.buildins.literalReference }, ignoreNils);
+         break;
+      case V_WIDESTRING:
+         if (targetInfo == sourceInfo) {
+            return true;
+         }
+         else return isCompatible(scope, targetInfo, { scope.buildins.wideReference }, ignoreNils);
          break;
       case V_FLAG:
          return isCompatible(scope, targetInfo, { scope.branchingInfo.typeRef }, ignoreNils);

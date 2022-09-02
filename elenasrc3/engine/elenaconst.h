@@ -75,6 +75,7 @@ namespace elena_lang
    constexpr auto SUPER_FORWARD           = "$super";          // the common class predecessor
    constexpr auto INTLITERAL_FORWARD      = "$int";            // the int literal
    constexpr auto LITERAL_FORWARD         = "$string";         // the string literal
+   constexpr auto WIDELITERAL_FORWARD     = "$wide";           // the wide string literal
    constexpr auto CHAR_FORWARD            = "$char";           // the char literal
    constexpr auto BOOL_FORWARD            = "$boolean";        // the boolean class
    constexpr auto TRUE_FORWARD            = "$true";           // the true boolean value
@@ -245,6 +246,8 @@ namespace elena_lang
    constexpr ref_t mskPathLiteralRef      = 0x1B000000u;
    constexpr ref_t mskMssgLiteralRef      = 0x1B000000u;
    constexpr ref_t mskLabelRef            = 0x1C000000u;
+   constexpr ref_t mskWideLiteralRef      = 0x1D000000u;   // reference to wide literal constant
+
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

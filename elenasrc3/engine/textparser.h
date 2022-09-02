@@ -27,6 +27,7 @@ namespace elena_lang
    constexpr char dfaCharacter      = 's';
    constexpr char dfaQuoteCode      = 'u';
    constexpr char dfaSignStart      = 'w';
+   constexpr char dfaWideQuote      = 'x';
 
    constexpr char dfaError          = '?';
    constexpr char dfaEOF            = '.';

@@ -59,6 +59,11 @@ ObjectInfo Interpreter :: mapStringConstant(ustr_t s)
    return ObjectInfo(ObjectKind::StringLiteral, { V_STRING }, _scope->module->mapConstant(s));
 }
 
+ObjectInfo Interpreter :: mapWideStringConstant(ustr_t s)
+{
+   return ObjectInfo(ObjectKind::WideStringLiteral, { V_WIDESTRING }, _scope->module->mapConstant(s));
+}
+
 void Interpreter :: addTypeListItem(ref_t dictionaryRef, ref_t symbolRef)
 {
    MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskTypeListRef, true);
@@ -2514,6 +2519,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::StringLiteral:
          writer.appendNode(BuildKey::StringLiteral, info.reference);
          break;
+      case ObjectKind::WideStringLiteral:
+         writer.appendNode(BuildKey::WideStringLiteral, info.reference);
+         break;
       case ObjectKind::CharacterLiteral:
          writer.appendNode(BuildKey::CharLiteral, info.reference);
          break;
@@ -2590,6 +2598,8 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
          return scope.moduleScope->buildins.intReference;
       case V_STRING:
          return scope.moduleScope->buildins.literalReference;
+      case V_WIDESTRING:
+         return scope.moduleScope->buildins.wideReference;
       case V_MESSAGE:
          return scope.moduleScope->buildins.messageReference;
       case V_FLAG:
@@ -4571,6 +4581,11 @@ ObjectInfo Compiler :: mapStringConstant(Scope& scope, SyntaxNode node)
    return { ObjectKind::StringLiteral, { V_STRING }, scope.module->mapConstant(node.identifier()) };
 }
 
+ObjectInfo Compiler :: mapWideStringConstant(Scope& scope, SyntaxNode node)
+{
+   return { ObjectKind::WideStringLiteral, { V_WIDESTRING }, scope.module->mapConstant(node.identifier()) };
+}
+
 ObjectInfo Compiler :: mapCharacterConstant(Scope& scope, SyntaxNode node)
 {
    return { ObjectKind::CharacterLiteral, { V_WORD32 }, scope.module->mapConstant(node.identifier()) };
@@ -4728,6 +4743,11 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
             invalid = invalidForNonIdentifier;
 
             retVal = mapStringConstant(scope, node);
+            break;
+         case SyntaxKey::wide:
+            invalid = invalidForNonIdentifier;
+
+            retVal = mapWideStringConstant(scope, node);
             break;
          case SyntaxKey::character:
             invalid = invalidForNonIdentifier;
@@ -6111,6 +6131,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
    moduleScope->buildins.intReference = safeMapReference(moduleScope, forwardResolver, INTLITERAL_FORWARD);
    moduleScope->buildins.literalReference = safeMapReference(moduleScope, forwardResolver, LITERAL_FORWARD);
+   moduleScope->buildins.wideReference = safeMapReference(moduleScope, forwardResolver, WIDELITERAL_FORWARD);
    moduleScope->buildins.messageReference = safeMapReference(moduleScope, forwardResolver, MESSAGE_FORWARD);
    moduleScope->buildins.wrapperTemplateReference = safeMapReference(moduleScope, forwardResolver, WRAPPER_FORWARD);
    moduleScope->buildins.arrayTemplateReference = safeMapReference(moduleScope, forwardResolver, ARRAY_FORWARD);
