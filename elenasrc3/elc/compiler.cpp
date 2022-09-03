@@ -2608,6 +2608,10 @@ ref_t Compiler :: retrieveType(Scope& scope, ObjectInfo info)
 ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool declarationMode)
 {
    switch (typeInfo.typeRef) {
+      case V_INT8:
+         return scope.moduleScope->buildins.byteReference;
+      case V_INT16:
+         return scope.moduleScope->buildins.shortReference;
       case V_INT32:
          return scope.moduleScope->buildins.intReference;
       case V_STRING:
@@ -3600,6 +3604,12 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
    switch (operatorId) {
       case ADD_OPERATOR_ID:
          return scope->buildins.add_message;
+      case SUB_OPERATOR_ID:
+         return scope->buildins.sub_message;
+      case MUL_OPERATOR_ID:
+         return scope->buildins.mul_message;
+      case DIV_OPERATOR_ID:
+         return scope->buildins.div_message;
       case IF_OPERATOR_ID:
          return scope->buildins.if_message;
       case IF_ELSE_OPERATOR_ID:
@@ -3728,6 +3738,8 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       switch (op) {
          case BuildKey::BoolSOp:
          case BuildKey::IntCondOp:
+         case BuildKey::ByteCondOp:
+         case BuildKey::ShortCondOp:
             writer.appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);
             writer.appendNode(BuildKey::FalseConst, scope.moduleScope->branchingInfo.falseRef);
             break;
@@ -6152,6 +6164,8 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
    moduleScope->buildins.intReference = safeMapReference(moduleScope, forwardResolver, INTLITERAL_FORWARD);
+   moduleScope->buildins.shortReference = safeMapReference(moduleScope, forwardResolver, INT16LITERAL_FORWARD);
+   moduleScope->buildins.byteReference = safeMapReference(moduleScope, forwardResolver, INT8LITERAL_FORWARD);
    moduleScope->buildins.literalReference = safeMapReference(moduleScope, forwardResolver, LITERAL_FORWARD);
    moduleScope->buildins.wideReference = safeMapReference(moduleScope, forwardResolver, WIDELITERAL_FORWARD);
    moduleScope->buildins.messageReference = safeMapReference(moduleScope, forwardResolver, MESSAGE_FORWARD);
@@ -6176,6 +6190,15 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
       moduleScope->module->mapAction(INVOKE_MESSAGE, 0, false), 1, FUNCTION_MESSAGE);
    moduleScope->buildins.add_message =
       encodeMessage(moduleScope->module->mapAction(ADD_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.sub_message =
+      encodeMessage(moduleScope->module->mapAction(SUB_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.mul_message =
+      encodeMessage(moduleScope->module->mapAction(MUL_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.div_message =
+      encodeMessage(moduleScope->module->mapAction(DIV_MESSAGE, 0, false),
          2, 0);
    moduleScope->buildins.if_message =
       encodeMessage(moduleScope->module->mapAction(IF_MESSAGE, 0, false),

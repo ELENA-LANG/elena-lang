@@ -295,7 +295,7 @@ struct BranchingInfo
 struct BuiltinReferences
 {
    ref_t   superReference;
-   ref_t   intReference;
+   ref_t   intReference, shortReference, byteReference;
    ref_t   literalReference;
    ref_t   wideReference;
    ref_t   messageReference;
@@ -307,7 +307,7 @@ struct BuiltinReferences
    mssg_t  constructor_message;
    mssg_t  invoke_message;
    mssg_t  init_message;
-   mssg_t  add_message;
+   mssg_t  add_message, sub_message, mul_message, div_message;
    mssg_t  if_message;
    mssg_t  equal_message;
    mssg_t  not_message;
@@ -318,6 +318,7 @@ struct BuiltinReferences
    BuiltinReferences()
    {
       superReference = intReference = 0;
+      shortReference = byteReference = 0;
       literalReference = wideReference = 0;
       messageReference = 0;
       wrapperTemplateReference = 0;

@@ -74,6 +74,8 @@ namespace elena_lang
    constexpr auto SYSTEM_FORWARD          = "$system_entry";   // the system entry
    constexpr auto SUPER_FORWARD           = "$super";          // the common class predecessor
    constexpr auto INTLITERAL_FORWARD      = "$int";            // the int literal
+   constexpr auto INT8LITERAL_FORWARD     = "$byte";           // the int literal
+   constexpr auto INT16LITERAL_FORWARD    = "$short";          // the int literal
    constexpr auto LITERAL_FORWARD         = "$string";         // the string literal
    constexpr auto WIDELITERAL_FORWARD     = "$wide";           // the wide string literal
    constexpr auto CHAR_FORWARD            = "$char";           // the char literal
@@ -105,6 +107,9 @@ namespace elena_lang
    constexpr auto INIT_MESSAGE            = "#init";
 
    constexpr auto ADD_MESSAGE             = "add";
+   constexpr auto SUB_MESSAGE             = "subtract";
+   constexpr auto MUL_MESSAGE             = "multiply";
+   constexpr auto DIV_MESSAGE             = "divide";
    constexpr auto IF_MESSAGE              = "if";
    constexpr auto EQUAL_MESSAGE           = "equal";
    constexpr auto NOT_MESSAGE             = "Inverted";

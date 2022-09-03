@@ -85,6 +85,8 @@ namespace elena_lang
       MulOperation         = 0x001850,
       DivOperation         = 0x001851,
       NotLessOperation     = 0x001852,
+      GreaterOperation     = 0x001853,
+      NotGreaterOperation  = 0x001854,
       Postfix              = 0x001060,
       TemplatePostfix      = 0x001061,
       MethodPostfix        = 0x001062,

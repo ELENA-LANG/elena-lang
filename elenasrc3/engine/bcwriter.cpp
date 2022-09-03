@@ -300,6 +300,56 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void byteOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   tape.write(ByteCode::CopyDPN, targetOffset, 1);
+   tape.write(ByteCode::XMovSISI, 0, 1);
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+         tape.write(ByteCode::IAddDPN, targetOffset, 1);
+         break;
+      case SUB_OPERATOR_ID:
+         tape.write(ByteCode::ISubDPN, targetOffset, 1);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(ByteCode::IMulDPN, targetOffset, 1);
+         break;
+      case DIV_OPERATOR_ID:
+         tape.write(ByteCode::IDivDPN, targetOffset, 1);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
+void shortOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   tape.write(ByteCode::CopyDPN, targetOffset, 2);
+   tape.write(ByteCode::XMovSISI, 0, 1);
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+         tape.write(ByteCode::IAddDPN, targetOffset, 2);
+         break;
+      case SUB_OPERATOR_ID:
+         tape.write(ByteCode::ISubDPN, targetOffset, 2);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(ByteCode::IMulDPN, targetOffset, 2);
+         break;
+      case DIV_OPERATOR_ID:
+         tape.write(ByteCode::IDivDPN, targetOffset, 2);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
 void intCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    bool inverted = false;
@@ -309,6 +359,75 @@ void intCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
    // NOTE : sp[0] - loperand, sp[1] - roperand
    tape.write(ByteCode::PeekSI, 1);
    tape.write(ByteCode::ICmpN, 4);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case LESS_OPERATOR_ID:
+         opCode = ByteCode::SelLtRR;
+         break;
+      case EQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
+void byteCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   assert(trueRef);
+   assert(falseRef);
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::ICmpN, 1);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case LESS_OPERATOR_ID:
+         opCode = ByteCode::SelLtRR;
+         break;
+      case EQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
+void shortCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::ICmpN, 2);
 
    ByteCode opCode = ByteCode::None;
    switch (node.arg.value) {
@@ -522,7 +641,11 @@ ByteCodeWriter::Saver commands[] =
    accSwapSPField,
    redirectOp,
    shortArraySOp,
-   wideLiteral
+   wideLiteral,
+   byteOp,
+   shortOp,
+   byteCondOp,
+   shortCondOp
 };
 
 // --- ByteCodeWriter ---
