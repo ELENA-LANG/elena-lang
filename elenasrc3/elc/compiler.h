@@ -992,7 +992,8 @@ namespace elena_lang
       ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
       ObjectInfo compileNestedExpression(InlineClassScope& scope, ExpressionAttribute mode);
 
-      void compileMultidispatch(BuildTreeWriter& writer, CodeScope& codeScope, ClassScope& classcope, SyntaxNode node);
+      void compileMultidispatch(BuildTreeWriter& writer, CodeScope& codeScope, ClassScope& classcope, 
+         SyntaxNode node, bool implicitMode);
       void compileDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
       void compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
       void compileConstructorDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, ClassScope& classClassScope, SyntaxNode node);

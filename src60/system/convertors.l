@@ -13,6 +13,27 @@ public singleton byteConvertor
    }
 }
 
+// --- shortConvertor ---
+
+public singleton shortConvertor
+{
+   convert(int n, ref byte retVal) : external<system'core_routines'__intToShort>;
+
+   short convert(int n)
+   {
+      short b;
+      self.convert(n, ref b);
+
+      ^ b;
+   }
+}
+
+// --- intConvertor ---
+
+public singleton intConvertor
+{
+}
+
 // --- stringConvertor ---
 
 public singleton stringConvertor

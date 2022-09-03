@@ -125,6 +125,24 @@ public abstract class IntBaseNumber : BaseNumber
 public const struct ByteNumber //: IntBaseNumber
 {
    embeddable __int theValue[1];
+
+   static byte MinValue
+      = 0;
+
+   static byte MaxValue
+      = 255;
+
+   constructor()
+      = 0;
+
+   constructor(byte b)
+      = b;
+
+   short cast()
+      = shortConvertor.convert(self);
+
+   int cast()
+      = intConvertor.convert(self);
 }
 
 // --- ShortNumber ---
@@ -132,6 +150,27 @@ public const struct ByteNumber //: IntBaseNumber
 public const struct ShortNumber //: IntBaseNumber
 {
    embeddable __int theValue[2];
+
+   static short MinValue
+      = -32768;
+
+   static short MaxValue
+      = 32767;
+
+   constructor()
+      = 0;
+
+   constructor(short s)
+      = s;
+
+   constructor(byte b)
+      = shortConvertor.convert(b);
+
+   byte cast()
+      = byteConvertor.convert(self);
+
+   int cast()
+      = intConvertor.convert(self);
 }
 
 // --- IntNumber ---
@@ -139,6 +178,24 @@ public const struct ShortNumber //: IntBaseNumber
 public const struct IntNumber : IntBaseNumber
 {
    embeddable __int theValue[4];
+
+   static int MinValue
+      = -2147483648;
+
+   static int MaxValue
+      = 2147483647;
+
+   constructor()
+      = 0;
+
+   constructor(int n)
+      = n;
+
+   constructor(byte b)
+      = b;
+
+   constructor(short s)
+      = s;
 
    bool equal(int n)
       = theValue == n; 
@@ -163,6 +220,9 @@ public const struct IntNumber : IntBaseNumber
 
    byte cast()
       = byteConvertor.convert(self);
+
+   short cast()
+      = shortConvertor.convert(self);
 
    string toPrintable()
       = stringConvertor.convert(self, 10);

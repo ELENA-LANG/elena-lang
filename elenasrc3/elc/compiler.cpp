@@ -1376,6 +1376,20 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
             //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
             current.appendChild(SyntaxKey::Multimethod, multiMethod);
 
+            // mark weak message as a multi-method
+            auto m_it = scope.info.methods.getIt(multiMethod);
+            if (!m_it.eof()) {
+               (*m_it).hints |= (ref_t)MethodHint::Multimethod;
+            }
+            else {
+               MethodInfo info = {};
+               info.hints |= (ref_t)MethodHint::Multimethod;
+               info.hints |= (ref_t)MethodHint::Predefined;
+               info.inherited = true;
+
+               scope.info.methods.add(multiMethod, info);
+            }
+
             if (retrieveMethod(implicitMultimethods, multiMethod) == 0) {
                implicitMultimethods.add(multiMethod);
                thirdPassRequired = true;
@@ -5356,7 +5370,13 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
 void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope,
    SyntaxNode node, bool newFrame)
 {
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
    if (!newFrame) {
+      if (scope.checkHint(MethodHint::Multimethod)) {
+         compileMultidispatch(writer, codeScope, *classScope, node, false);
+      }
+
       // new stack frame
       writer.appendNode(BuildKey::OpenFrame);
       newFrame = true;
@@ -5408,8 +5428,6 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
    if (scope.checkHint(MethodHint::Constant)) {
       ref_t constRef = generateConstant(scope, retVal, 0);
       if (constRef) {
-         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
-
          classScope->addRefAttribute(scope.message, ClassAttribute::ConstantMethod, constRef);
 
          classScope->save();
@@ -5461,7 +5479,8 @@ void Compiler :: compileAbstractMethod(BuildTreeWriter& writer, MethodScope& sco
    writer.closeNode();
 }
 
-void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope, ClassScope& classScope, SyntaxNode node)
+void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope, ClassScope& classScope, 
+   SyntaxNode node, bool implicitMode)
 {
    mssg_t message = scope.getMessageID();
 
@@ -5477,22 +5496,25 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
    writer.newNode(op, opRef);
    writer.appendNode(BuildKey::Message, message);
    writer.closeNode();
-   if (classScope.extensionDispatcher) {
-      writer.appendNode(BuildKey::Argument, 0);
+   if (implicitMode) {
+      // if it is an implicit mode (auto generated multi-method)
+      if (classScope.extensionDispatcher) {
+         writer.appendNode(BuildKey::Argument, 0);
 
-      writer.newNode(BuildKey::ResendOp);
-      writer.closeNode();
-   }
-   else if (node.arg.reference) {
-      writer.appendNode(BuildKey::ResendOp, node.arg.reference);
-   }
-   else {
-      SyntaxNode targetNode = node.findChild(SyntaxKey::Target);
-      assert(targetNode != SyntaxKey::None);
+         writer.newNode(BuildKey::ResendOp);
+         writer.closeNode();
+      }
+      else if (node.arg.reference) {
+         writer.appendNode(BuildKey::ResendOp, node.arg.reference);
+      }
+      else {
+         SyntaxNode targetNode = node.findChild(SyntaxKey::Target);
+         assert(targetNode != SyntaxKey::None);
 
-      writer.newNode(BuildKey::DirectCallOp, message);
-      writer.appendNode(BuildKey::Type, targetNode.arg.reference);
-      writer.closeNode();
+         writer.newNode(BuildKey::DirectCallOp, message);
+         writer.appendNode(BuildKey::Type, targetNode.arg.reference);
+         writer.closeNode();
+      }
    }
 }
 
@@ -5540,13 +5562,13 @@ void Compiler :: compileDispatchCode(BuildTreeWriter& writer, CodeScope& codeSco
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(codeScope, Scope::ScopeLevel::Class);
 
-   compileMultidispatch(writer, codeScope, *classScope, node);
+   compileMultidispatch(writer, codeScope, *classScope, node, true);
 }
 
 void Compiler :: compileConstructorDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, 
    ClassScope& classClassScope, SyntaxNode node)
 {
-   compileMultidispatch(writer, codeScope, classClassScope, node);
+   compileMultidispatch(writer, codeScope, classClassScope, node, true);
 }
 
 void Compiler :: compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node)

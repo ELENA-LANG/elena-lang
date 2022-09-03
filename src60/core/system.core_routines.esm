@@ -130,6 +130,16 @@ procedure __intToByte
 
 end
 
+procedure __intToShort
+
+  peek       sp:1
+  load
+  andn       0FFh
+  peek       sp:2
+  save
+
+end
+
 procedure critical_exception_handler
 
   cmpn        EXCEPTION_ACCESS_VIOLATION
