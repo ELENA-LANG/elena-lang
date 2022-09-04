@@ -182,7 +182,12 @@ void IDEWindow :: openResultTab(int controlIndex)
 
 void IDEWindow :: onCompilationEnd(int exitCode)
 {
-   _controller->onCompilationCompletion(_model, exitCode);
+   wchar_t* output = ((ControlBase*)_children[_model->ideScheme.compilerOutputControl])->getValue();
+   ControlBase* messageLog = (ControlBase*)_children[_model->ideScheme.errorListControl];
+
+   _controller->onCompilationCompletion(_model, exitCode, output, dynamic_cast<ErrorLogBase*>(messageLog));
+
+   freestr(output);
 }
 
 bool IDEWindow :: onCommand(int command)

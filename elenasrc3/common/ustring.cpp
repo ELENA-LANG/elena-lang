@@ -437,6 +437,15 @@ inline size_t util_find_str(const char* s, const char* subs, size_t defValue)
    else return p - s;
 }
 
+inline size_t util_find_str(const char* s, size_t index, const char* subs, size_t defValue)
+{
+   const char* p = (const char*)strstr(s + index, subs);
+   if (p == nullptr) {
+      return defValue;
+   }
+   else return p - s;
+}
+
 size_t inline util_find_last(const char* s, char c, size_t defValue)
 {
    const char* p = strrchr(s, c);
@@ -514,6 +523,24 @@ size_t inline util_find(const wchar_t* s, wchar_t ch, size_t length, size_t defV
 inline size_t util_find_last(const wchar_t* s, wchar_t c, size_t defValue)
 {
    const wchar_t* p = wcsrchr(s, c);
+   if (p == nullptr) {
+      return defValue;
+   }
+   else return p - s;
+}
+
+inline size_t util_find_str(const wchar_t* s, const wchar_t* subs, size_t defValue)
+{
+   const wchar_t* p = wcsstr(s, subs);
+   if (p == nullptr) {
+      return defValue;
+   }
+   else return p - s;
+}
+
+inline size_t util_find_str(const wchar_t* s, size_t index, const wchar_t* subs, size_t defValue)
+{
+   const wchar_t* p = wcsstr(s + index, subs);
    if (p == nullptr) {
       return defValue;
    }
@@ -644,6 +671,46 @@ inline size_t util_find_last(const unsigned short* s, unsigned short c, size_t d
          return p - s;
 
       p--;
+   }
+
+   return defValue;
+}
+
+inline size_t util_find_str(const unsigned short* s, const unsigned short* subs, size_t length, size_t defValue)
+{
+   size_t sub_len = getlength(subs);
+
+   for (size_t i = 0; i < length; i++) {
+      bool found = true;
+      for (size_t j = 0; j < sub_len; j++) {
+         if (s[i + j] != subs[j]) {
+            found = false;
+            break;
+         }            
+      }
+
+      if (found)
+         return i;
+   }
+
+   return defValue;
+}
+
+inline size_t util_find_str(const unsigned short* s, size_t index, const unsigned short* subs, size_t length, size_t defValue)
+{
+   size_t sub_len = getlength(subs);
+
+   for (size_t i = index; i < length; i++) {
+      bool found = true;
+      for (size_t j = 0; j < sub_len; j++) {
+         if (s[i + j] != subs[j]) {
+            found = false;
+            break;
+         }
+      }
+
+      if (found)
+         return i;
    }
 
    return defValue;
@@ -881,6 +948,11 @@ size_t ustr_t::findStr(const char* subs, size_t defValue)
    return util_find_str(_string, subs, defValue);
 }
 
+size_t ustr_t::findSubStr(size_t index, const char* subs, size_t length, size_t defValue)
+{
+   return util_find_str(_string, index, subs, defValue);
+}
+
 char* ustr_t :: clone()
 {
    return _string ? ::util_clone(_string) : nullptr;
@@ -940,6 +1012,16 @@ size_t wstr_t::findSub(size_t index, char c, size_t defValue)
 size_t wstr_t::findSub(size_t index, char c, size_t length, size_t defValue)
 {
    return util_find(_string + index, c, length, defValue - index) + index;
+}
+
+size_t wstr_t::findStr(const wide_c* subs, size_t defValue)
+{
+   return util_find_str(_string, subs, defValue);
+}
+
+size_t wstr_t::findSubStr(size_t index, const wide_c* subs, size_t length, size_t defValue)
+{
+   return util_find_str(_string, index, subs, defValue);
 }
 
 size_t wstr_t :: findLast(wide_c c, size_t defValue)

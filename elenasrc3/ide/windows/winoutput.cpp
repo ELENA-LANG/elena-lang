@@ -92,6 +92,19 @@ void ProcessOutput :: onErrorOutput(const char* s)
    onOutput(s);
 }
 
+wchar_t* ProcessOutput :: getValue()
+{
+   int length = (int)SendMessage(_handle, WM_GETTEXTLENGTH, 0, 0);
+   if (length > 0) {
+      wchar_t* buffer = StrFactory::allocate(length + 1, (const wchar_t*)nullptr);
+
+      SendMessage(_handle, WM_GETTEXT, length + 1, (LPARAM)buffer);
+
+      return buffer;
+   }
+   else return nullptr;
+}
+
 // --- CompilerOutput ---
 
 CompilerOutput :: CompilerOutput(NotifierBase* notifier, int completionCode)

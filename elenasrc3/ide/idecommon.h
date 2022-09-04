@@ -10,7 +10,7 @@
 #include "guicommon.h"
 #include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                           0x0017
+#define IDE_REVISION_NUMBER                           0x0018
 
 namespace elena_lang
 {
@@ -78,6 +78,12 @@ namespace elena_lang
       {
 
       }
+   };
+
+   class ErrorLogBase
+   {
+   public:
+      virtual void addMessage(text_str message, text_str file, text_str row, text_str col) = 0;
    };
 
    // --- DebugControllerBase ---

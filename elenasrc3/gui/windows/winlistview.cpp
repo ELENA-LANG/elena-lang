@@ -46,3 +46,42 @@ void ListView :: addColumn(const wchar_t* header, int column, int width)
 {
    addColumn(header, column, width, LVCFMT_LEFT);
 }
+
+int ListView :: addRow(const wchar_t* text)
+{
+   if (emptystr(text))
+      return -1;
+
+   int row = ListView_GetItemCount(_handle);
+
+   LVITEM lvItem;
+
+   lvItem.mask = LVIF_TEXT;
+   lvItem.state = 0;
+   lvItem.stateMask = 0;
+   lvItem.iItem = row;
+   lvItem.iSubItem = 0;
+   lvItem.pszText = (wchar_t*)text;
+
+   row = (int)::SendMessage(_handle, LVM_INSERTITEM, 0, (LPARAM)&lvItem);
+
+   return row;
+
+}
+
+void ListView :: setColumnText(const wchar_t* item, int row, int column)
+{
+   if (emptystr(item))
+      return;
+
+   LVITEM lvItem;
+
+   lvItem.mask = LVIF_TEXT;
+   lvItem.state = 0;
+   lvItem.stateMask = 0;
+   lvItem.iItem = row;
+   lvItem.iSubItem = column;
+   lvItem.pszText = (wchar_t*)item;
+
+   ::SendMessage(_handle, LVM_SETITEMTEXT, row, (LPARAM)&lvItem);
+}

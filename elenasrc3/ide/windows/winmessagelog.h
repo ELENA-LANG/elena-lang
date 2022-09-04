@@ -7,15 +7,18 @@
 #ifndef WINMESSAGELOG_H
 #define WINMESSAGELOG_H
 
+#include "idecommon.h"
 #include "windows/winlistview.h"
 
 namespace elena_lang
 {
    // --- MessageLog ---
-   class MessageLog : public ListView
+   class MessageLog : public ListView, public ErrorLogBase
    {
    public:
       HWND createControl(HINSTANCE instance, ControlBase* owner) override;
+
+      void addMessage(text_str message, text_str file, text_str row, text_str col) override;
 
       MessageLog();
    };

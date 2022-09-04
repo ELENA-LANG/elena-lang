@@ -27,3 +27,12 @@ HWND MessageLog :: createControl(HINSTANCE instance, ControlBase* owner)
 
    return h;
 }
+
+void MessageLog :: addMessage(text_str message, text_str file, text_str row, text_str col)
+{
+   int index = addRow(message);
+   setColumnText(file, index, 1);
+   setColumnText(row, index, 2);
+   setColumnText(col, index, 3);
+
+}

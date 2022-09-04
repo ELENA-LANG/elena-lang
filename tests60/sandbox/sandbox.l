@@ -2,5 +2,5 @@ import system;
 
 public program() 
 {
-   char ch := $0;
+   char ch := x $0;
 }

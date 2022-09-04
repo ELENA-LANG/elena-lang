@@ -125,6 +125,7 @@ namespace elena_lang
       size_t findLastSub(size_t index,  char c, size_t defValue = NOTFOUND_POS);
 
       size_t findStr(const char* subs, size_t defValue = NOTFOUND_POS);
+      size_t findSubStr(size_t index, const char* s, size_t length, size_t defValue = NOTFOUND_POS);
 
       char* clone();
       char* clone(size_t index, size_t length);
@@ -198,6 +199,9 @@ namespace elena_lang
       size_t find(wide_c c, size_t defValue = NOTFOUND_POS);
       size_t findSub(size_t index, char c, size_t defValue = NOTFOUND_POS);
       size_t findSub(size_t index, char c, size_t length, size_t defValue);
+
+      size_t findStr(const wide_c* subs, size_t defValue = NOTFOUND_POS);
+      size_t findSubStr(size_t index, const wide_c* s, size_t length, size_t defValue = NOTFOUND_POS);
 
       size_t findLast(wide_c c, size_t defValue = NOTFOUND_POS);
       size_t findLastSub(size_t index, char c, size_t defValue = NOTFOUND_POS);

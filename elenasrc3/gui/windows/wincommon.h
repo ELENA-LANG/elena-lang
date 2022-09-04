@@ -119,6 +119,8 @@ namespace elena_lang
 
       virtual HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner);
 
+      virtual wchar_t* getValue() { return nullptr; }
+
       ControlBase(wstr_t title, int x, int y, int width, int height) :
          _handle(nullptr),
          _title(title),

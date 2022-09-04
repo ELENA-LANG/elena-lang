@@ -20,6 +20,9 @@ namespace elena_lang
       void addColumn(const wchar_t* header, int column, int width, int alignment);
       void addColumn(const wchar_t* header, int column, int width);
 
+      int addRow(const wchar_t* text);
+      void setColumnText(const wchar_t* item, int row, int column);
+
       ListView(int width, int height);
    };
 }

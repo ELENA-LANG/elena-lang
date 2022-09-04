@@ -496,6 +496,10 @@ namespace elena_lang
    public:
       wstr_t operator*() const { return wstr_t(_string); }
 
+      WideMessage()
+      {
+         _string[0] = 0;
+      }
       WideMessage(const char* s)
       {
          size_t len = MESSAGE_LEN;
