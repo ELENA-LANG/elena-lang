@@ -228,7 +228,7 @@ public const struct ByteNumber : IntBaseNumber
 
 // --- ShortNumber ---
 
-public const struct ShortNumber //: IntBaseNumber
+public const struct ShortNumber : IntBaseNumber
 {
    embeddable __int theValue[2];
 
@@ -437,8 +437,29 @@ public const struct IntNumber : IntBaseNumber
 
 // --- CharValue ---
 
-public const struct CharValue //: BaseValue
+public const struct CharValue : BaseValue
 {
    embeddable __word theValue[4];
-}
 
+   static char MinValue
+      = $0;
+
+   static char MaxValue
+//      = $010FFFFh;
+      = $1114111;
+
+   constructor()
+      = $0;
+
+   constructor(char value)
+      = value;
+
+   constructor load(int n)
+      = charConvertor.convert(n);
+
+   bool equal(char val)
+      = theValue == val;
+
+   bool less(char val)
+      = theValue < val;
+}

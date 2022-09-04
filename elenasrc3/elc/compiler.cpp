@@ -4929,6 +4929,7 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
             case ObjectKind::LocalAddress:
             case ObjectKind::IntLiteral:
             case ObjectKind::MssgLiteral:
+            case ObjectKind::CharacterLiteral:
                source.typeInfo.typeRef = targetRef;
                break;
             default:

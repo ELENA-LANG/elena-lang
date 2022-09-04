@@ -32,6 +32,34 @@ public singleton shortConvertor
 
 public singleton intConvertor
 {
+   int convert(byte b)
+   {
+      int n := b;
+
+      ^ n;
+   }
+
+   int convert(short s)
+   {
+      int n := s;
+
+      ^ n;
+   }
+}
+
+// --- charConvertor ---
+
+public singleton charConvertor
+{
+   convert(int n, ref char retVal) : external<system'core_routines'__intToChar>;
+
+   char convert(int n)
+   {
+      char ch;
+      self.convert(n, ref ch);
+
+      ^ ch;
+   }
 }
 
 // --- stringConvertor ---

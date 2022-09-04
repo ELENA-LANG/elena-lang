@@ -130,6 +130,15 @@ procedure __intToByte
 
 end
 
+procedure __intToChar
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
 procedure __intToShort
 
   peek       sp:1
