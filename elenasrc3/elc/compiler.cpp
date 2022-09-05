@@ -628,7 +628,7 @@ ObjectInfo Compiler::MethodScope :: mapSelf()
    //}
    /*else */if (selfLocal != 0) {
       if (isEmbeddable) {
-         return { ObjectKind::SelfLocalBoxable, { getClassRef(false) }, (ref_t)selfLocal };
+         return { ObjectKind::SelfLocalAddress, { getClassRef(false) }, (ref_t)selfLocal };
       }
       else return { ObjectKind::SelfLocal, { getClassRef(false) }, (ref_t)selfLocal };
    }
@@ -641,17 +641,17 @@ ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier, ExpressionAt
 
    Parameter local = parameters.get(identifier);
    if (local.offset != -1) {
-      bool byRef = local.typeInfo.typeRef == V_WRAPPER && !EAttrs::test(attr, EAttr::AssigningTarget);
+      bool byRef = local.typeInfo.typeRef == V_WRAPPER;
 
       if (local.size > 0) {
          if (byRef) {
-            return { ObjectKind::ParamFieldBoxable, local.typeInfo, prefix - local.offset };
+            return { ObjectKind::ByRefParamAddress, { local.typeInfo.elementRef }, prefix - local.offset, local.size };
          }
-         else return { ObjectKind::ParamBoxable, local.typeInfo, prefix - local.offset };
+         else return { ObjectKind::ParamAddress, local.typeInfo, prefix - local.offset };
       }
       else {
          if (byRef) {
-            return { ObjectKind::ParamField, local.typeInfo, prefix - local.offset };
+            return { ObjectKind::ByRefParam, { local.typeInfo.elementRef }, prefix - local.offset };
          }
          else return { ObjectKind::Param, local.typeInfo, prefix - local.offset };
       }
@@ -1181,8 +1181,8 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
       methodInfo.multiMethod = multiMethod;
 
    mssg_t byRefMethod = node.findChild(SyntaxKey::ByRefRetMethod).arg.reference;
-   if (byRefMethod)
-      methodInfo.byRefHandler = byRefMethod;
+   //if (byRefMethod)
+   //   methodInfo.byRefHandler = byRefMethod;
 
    // check duplicates with different visibility scope
    if (MethodScope::checkHint(methodInfo, MethodHint::Private)) {
@@ -2526,9 +2526,9 @@ inline bool isBoxingRequired(ObjectInfo info)
    switch (info.kind) {
       case ObjectKind::LocalAddress:
       case ObjectKind::TempLocalAddress:
-      case ObjectKind::ParamBoxable:
-      case ObjectKind::ParamFieldBoxable:
-      case ObjectKind::SelfLocalBoxable:
+      case ObjectKind::ParamAddress:
+      case ObjectKind::ByRefParamAddress:
+      case ObjectKind::SelfLocalAddress:
          return true;
       default:
          return false;
@@ -2619,8 +2619,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::ReadOnlySelfLocal:
       case ObjectKind::Local:
       case ObjectKind::TempLocal:
-      case ObjectKind::ParamBoxable:
-      case ObjectKind::SelfLocalBoxable:
+      case ObjectKind::ParamAddress:
+      case ObjectKind::SelfLocalAddress:
+      case ObjectKind::ByRefParamAddress:
          writer.appendNode(BuildKey::Local, info.reference);
          break;
       case ObjectKind::LocalAddress:
@@ -4426,22 +4427,20 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
 
          break;
          // NOTE : it should be the last condition
-      case ObjectKind::Param:
+      case ObjectKind::ByRefParamAddress:
       {
          ref_t targetRef = retrieveStrongType(scope, target);
-         if (targetRef == V_WRAPPER) {
-            targetRef = target.typeInfo.elementRef;
-            size = _logic->defineStructSize(*scope.moduleScope, targetRef).size;
-            if (size > 0) {
-               stackSafe = true;
-               operationType = BuildKey::AccCopying;
-               operand = target.reference;
-               accMode = true;
-            }
-            else assert(false); // !! temporally
-            break;
+         size = _logic->defineStructSize(*scope.moduleScope, targetRef).size;
+         if (size > 0) {
+            stackSafe = true;
+            operationType = BuildKey::AccCopying;
+            operand = target.reference;
+            accMode = true;
          }
-      }
+         else assert(false); // !! temporally
+
+         break;
+      }         
       default:
          return false;
    }
@@ -4469,7 +4468,7 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
 
 ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand)
 {
-   ObjectInfo target = mapObject(scope, loperand, EAttr::AssigningTarget);
+   ObjectInfo target = mapObject(scope, loperand, EAttr::None);
    ObjectInfo exprVal = {};
 
    ref_t targetRef = retrieveStrongType(scope, target);
@@ -4779,8 +4778,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
          {
             TypeInfo typeInfo = resolveTypeAttribute(scope, node, false);
 
-            retVal = { ObjectKind::Class,
-               typeInfo, 0, newOp ? TargetMode::Creating : TargetMode::Casting };
+            retVal = { ObjectKind::Class, typeInfo, 0u, newOp ? TargetMode::Creating : TargetMode::Casting };
             break;
          }
          default:
@@ -5241,28 +5239,31 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    writer.appendNode(BuildKey::OpenStatement);
    addBreakpoint(writer, findObjectNode(node), BuildKey::Breakpoint);
 
-   ObjectInfo retVal = boxArgument(writer, scope,
-      compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), outputRef, EAttr::Root),
-      false, true);
-
-   if (!hasToBePresaved(retVal)) {
-      writeObjectInfo(writer, scope, retVal);
-   }
-   writer.appendNode(BuildKey::EndStatement);
-
+   ObjectInfo retVal = compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), outputRef, EAttr::Root);
    if (codeScope.isByRefHandler()) {
       compileAssigningOp(writer, scope, codeScope.mapByRefReturnArg(), retVal);
+
+      retVal = {};
    }
+   else {
+      retVal = boxArgument(writer, scope, retVal, false, true);
+
+      if (!hasToBePresaved(retVal)) {
+         writeObjectInfo(writer, scope, retVal);
+      }
+
+      outputRef = retrieveStrongType(scope, retVal);
+
+      _logic->validateAutoType(*scope.moduleScope, outputRef);
+
+      scope.resolveAutoOutput(outputRef);
+   }
+
+   writer.appendNode(BuildKey::EndStatement);
 
    writer.appendNode(BuildKey::goingToEOP);
 
    scope.syncStack();
-
-   outputRef = retrieveStrongType(scope, retVal);
-
-   _logic->validateAutoType(*scope.moduleScope, outputRef);
-
-   scope.resolveAutoOutput(outputRef);
 
    return retVal;
 }

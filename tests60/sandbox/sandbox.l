@@ -1,21 +1,34 @@
 import system;
 
-A
-{
-   int getVal()
-      = 2;
-}
+//A
+//{
+//   int getVal()
+//      = 2;
+//}
 
-B : A
-{
-}
+//B : A
+//{
+//}
 
+
+C
+{
+   read(ref int retVal)
+   {
+      retVal := 3;
+   }
+}
 
 public program() 
 {
-   /*auto*/A a := new A();
+   C c := new C();
+   c.read(ref int retVal);
+
+//   console.writeLine(retVal);
+
+//   /*auto*/A a := new A();
 //   var b := new B();
 
-   int v := a.getVal();
+//   int v := a.getVal();
 //   int v2 := b.getVal();
 }

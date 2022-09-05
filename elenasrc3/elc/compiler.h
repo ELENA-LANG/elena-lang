@@ -39,16 +39,16 @@ namespace elena_lang
       Singleton,
       InternalProcedure,
       Param,
-      ParamField,
+      ParamAddress,
+      ByRefParam,
+      ByRefParamAddress,
       Local,
       TempLocal,
       SelfLocal,
       ReadOnlySelfLocal,
       LocalAddress,
       TempLocalAddress,
-      ParamBoxable,
-      ParamFieldBoxable,
-      SelfLocalBoxable,
+      SelfLocalAddress,
       Extern,
       NewVariable,
       ReadOnlyFieldAddress,
@@ -135,6 +135,14 @@ namespace elena_lang
          this->kind = kind;
          this->typeInfo = typeInfo;
          this->reference = reference;
+         this->extra = extra;
+         mode = TargetMode::None;
+      }
+      ObjectInfo(ObjectKind kind, TypeInfo typeInfo, int argument, int extra)
+      {
+         this->kind = kind;
+         this->typeInfo = typeInfo;
+         this->argument = argument;
          this->extra = extra;
          mode = TargetMode::None;
       }
