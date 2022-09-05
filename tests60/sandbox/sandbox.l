@@ -1,6 +1,21 @@
 import system;
 
+A
+{
+   int getVal()
+      = 2;
+}
+
+B : A
+{
+}
+
+
 public program() 
 {
-   char ch := x $0;
+   /*auto*/A a := new A();
+//   var b := new B();
+
+   int v := a.getVal();
+//   int v2 := b.getVal();
 }

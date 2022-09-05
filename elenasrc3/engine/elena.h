@@ -820,10 +820,11 @@ namespace elena_lang
    // --- MethodInfo ---
    struct MethodInfo
    {
-      bool  inherited;
-      ref_t hints;
-      ref_t outputRef;
-      ref_t multiMethod;
+      bool   inherited;
+      ref_t  hints;
+      ref_t  outputRef;
+      mssg_t multiMethod;
+      mssg_t byRefHandler;
 
       MethodInfo()
       {
@@ -831,12 +832,14 @@ namespace elena_lang
          hints = 0;
          outputRef = 0;
          multiMethod = 0;
+         byRefHandler = 0;
       }
-      MethodInfo(bool inherited, ref_t hints, ref_t outputRef, ref_t multiMethod) :
+      MethodInfo(bool inherited, ref_t hints, ref_t outputRef, mssg_t multiMethod, mssg_t byRefHandler) :
          inherited(inherited),
          hints(hints),
          outputRef(outputRef),
-         multiMethod(multiMethod)
+         multiMethod(multiMethod),
+         byRefHandler(byRefHandler)
       {
       }
    };

@@ -128,6 +128,7 @@ namespace elena_lang
       Multimethod          = 0x00010B,
       OutputType           = 0x00010C,
       Target               = 0x00010D,
+      ByRefRetMethod       = 0x00010E,
 
       Column               = 0x000201,
       Row                  = 0x000202,
