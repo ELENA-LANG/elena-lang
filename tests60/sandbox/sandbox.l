@@ -1,4 +1,5 @@
 import system;
+import extensions;
 
 //A
 //{
@@ -11,18 +12,51 @@ import system;
 //}
 
 
-C
+//C
+//{
+//   read(ref int retVal)
+//   {
+//      retVal := 3;
+//   }
+//}
+
+struct BoxingStruct
 {
-   read(ref int retVal)
+   int x;
+   int y;
+
+   constructor()
    {
-      retVal := 3;
+      x := 1;
+      y := 2;
    }
+
+//   set(int x, int y)
+//   {
+//      this x := x;
+//      this y := y;
+//   }
+
+//   test(int x, int y)
+//   {
+//      Assert.ifTrue(this x == x);
+//      Assert.ifTrue(this y == y);
+//   }
 }
+
+//singleton BoxingProber
+//{
+//}
 
 public program() 
 {
-   C c := new C();
-   c.read(ref int retVal);
+   var s := new BoxingStruct();
+
+  // BoxingStruct st;
+
+
+//   C c := new C();
+//   c.read(ref int retVal);
 
 //   console.writeLine(retVal);
 

@@ -152,6 +152,13 @@ void copyingAcc(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::Copy, n);
 }
 
+void copyingAccField(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int n = node.findChild(BuildKey::Size).arg.value;
+
+   tape.write(ByteCode::XCopyON, node.arg.value, n);
+}
+
 void getLocal(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::PeekFI, node.arg.value);
@@ -645,7 +652,8 @@ ByteCodeWriter::Saver commands[] =
    byteOp,
    shortOp,
    byteCondOp,
-   shortCondOp
+   shortCondOp,
+   copyingAccField
 };
 
 // --- ByteCodeWriter ---

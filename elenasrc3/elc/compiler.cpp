@@ -4418,12 +4418,13 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
          break;
       case ObjectKind::FieldAddress:
          scope.markAsAssigned(target);
+         fieldMode = true;
          if (!target.reference) {
             operationType = BuildKey::AccCopying;
-            operand = target.reference;
-            fieldMode = true;
          }
-         else assert(false);
+         else operationType = BuildKey::AccFieldCopying;
+         operand = target.reference;
+         size = _logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
 
          break;
          // NOTE : it should be the last condition
@@ -5858,8 +5859,6 @@ void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodSc
       compileMessageOperation(writer, exprScope, node, scope.mapSelf(), scope.moduleScope->buildins.init_message,
          0, args, EAttr::None);
    }
-
-   writer.appendNode(BuildKey::CloseFrame);
 }
 
 void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
@@ -5907,27 +5906,32 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    // if it is a dynamic object implicit constructor call is not possible
    else scope.raiseError(errIllegalConstructor, node);
 
-   switch (current.key) {
-      case SyntaxKey::CodeBlock:
-      case SyntaxKey::ResendDispatch:
-         compileMethodCode(writer, scope, codeScope, node, newFrame);
-         break;
-      case SyntaxKey::ReturnExpression:
-         compileRetExpression(writer, codeScope, current);
-         writer.appendNode(BuildKey::CloseFrame);
-         break;
-      case SyntaxKey::RedirectDispatch:
-         compileConstructorDispatchCode(writer, codeScope, classClassScope, node);
-         break;
-      case SyntaxKey::None:
-         if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
-            // if it is a default / conversion (unnamed) constructor
-            // it should create the object
-            compileDefConvConstructorCode(writer, scope, node, newFrame);
+   if (current == SyntaxKey::RedirectDispatch) {
+      compileConstructorDispatchCode(writer, codeScope, classClassScope, node);
+   }
+   else {
+      if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
+         // if it is a default / conversion (unnamed) constructor
+         // it should create the object
+         compileDefConvConstructorCode(writer, scope, node, newFrame);
+      }
+      switch (current.key) {
+         case SyntaxKey::CodeBlock:
+         case SyntaxKey::ResendDispatch:
+            compileMethodCode(writer, scope, codeScope, node, newFrame);
             break;
-         }
-      default:
-         throw InternalError(errFatalError);
+         case SyntaxKey::ReturnExpression:
+            compileRetExpression(writer, codeScope, current);
+            writer.appendNode(BuildKey::CloseFrame);
+            break;
+         case SyntaxKey::None:
+            if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
+               writer.appendNode(BuildKey::CloseFrame);
+               break;
+            }
+         default:
+            throw InternalError(errFatalError);
+      }
    }
 
    codeScope.syncStack(&scope);

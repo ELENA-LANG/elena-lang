@@ -1236,6 +1236,26 @@ inline %0E7h
 
 end
 
+// ; xcopyon
+inline %0EBh
+
+  mov     x11, __n16_2
+  mov     x14, __n16_1
+  mov     x12, x0
+  add     x13, x10, x14
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; vjumpmr
 inline %0ECh
 

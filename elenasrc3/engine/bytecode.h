@@ -88,6 +88,7 @@ namespace elena_lang
       NSaveDPN       = 0xE5,
       XHookDPR       = 0xE6,
       XNewNR         = 0xE7,
+      XCopyON        = 0xEB,
       VJumpMR        = 0xEC,
       JumpMR         = 0xED,
       SelEqRR        = 0xEE,

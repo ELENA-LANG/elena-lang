@@ -1243,6 +1243,27 @@ inline %0E7h
 
 end
 
+// ; xcopyon
+inline %0EBh
+
+  li      r16, __n16_2
+  mr      r19, r3
+  addi    r18, r15, __n16_1
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  ld      r17, 0(r19)
+  addi    r16, r16, -1
+  stb     r17, 0(r18)
+  addi    r18, r18, 1
+  addi    r19, r19, 1
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; vjumpmr
 inline % 0ECh
 

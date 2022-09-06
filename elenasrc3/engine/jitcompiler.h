@@ -106,6 +106,7 @@ namespace elena_lang
       friend void loadLenOp(JITCompilerScope* scope);
       friend void loadROp(JITCompilerScope* scope);
       friend void loadRROp(JITCompilerScope* scope);
+      friend void loadONOp(JITCompilerScope* scope);
       friend void loadMOp(JITCompilerScope* scope);
       friend void loadCallOp(JITCompilerScope* scope);
       friend void loadCallROp(JITCompilerScope* scope);
@@ -339,6 +340,7 @@ namespace elena_lang
    void loadLenOp(JITCompilerScope* scope);
    void loadROp(JITCompilerScope* scope);
    void loadRROp(JITCompilerScope* scope);
+   void loadONOp(JITCompilerScope* scope);
    void loadMOp(JITCompilerScope* scope);
    void loadCallOp(JITCompilerScope* scope);
    void loadCallROp(JITCompilerScope* scope);

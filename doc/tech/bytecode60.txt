@@ -154,9 +154,9 @@ ELENA byte codes (or ecodes)
 
    copy n                   - sp[0] >> acc, n bytes
 
-   copy dp:disp, n          - dp[disp] => temp;
-                              sp[0] >> temp, n bytes  
-
+   copy dp:disp, n          - sp[0] >> temp, n bytes  
+                              temp >> dp[disp];
+                              
    create n {prefix}:r      - create the object with the specified size;
                               sp[0] >> temp;
                               size * temp;
@@ -185,6 +185,9 @@ ELENA byte codes (or ecodes)
                               if found jumps to it; binary search is used ; index, acc presaved
 
    write n                  - sp[0][index*n] << acc, n bytes
+
+   xcopy disp, n            - sp[0] >> temp, n bytes;
+                              temp >> acc[disp];
 
    xdispatch m, r           - search in message table r the message in index and provided parameter list; 
                               if found jumps directly to it;

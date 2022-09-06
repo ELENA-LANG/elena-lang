@@ -988,6 +988,16 @@ inline %0E7h
 
 end
 
+// ; xcopyon
+inline %0EBh
+
+  mov  rsi, r10
+  mov  ecx, __n_2
+  lea  rdi, [rbx + __n_1]
+  rep  movsb
+
+end
+
 // ; vjumpmr
 inline % 0ECh
 

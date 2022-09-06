@@ -83,6 +83,7 @@ namespace elena_lang
       ShortOp              = 0x0036,
       ByteCondOp           = 0x0037,
       ShortCondOp          = 0x0038,
+      AccFieldCopying      = 0x0039,
 
       Import               = 0x0048,
       DictionaryOp         = 0x0049,

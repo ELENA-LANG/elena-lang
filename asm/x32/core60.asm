@@ -1067,6 +1067,16 @@ inline %0E7h
 
 end
 
+// ; xcopyon
+inline %0EBh
+
+  mov  ecx, __n_2 
+  lea  edi, [ebx + __n_1]
+  rep  movsb
+  sub  esi, __n_2          // ; to set back ESI register
+
+end
+
 // ; vjumpmr
 inline %0ECh
 
