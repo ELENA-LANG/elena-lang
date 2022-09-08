@@ -340,7 +340,8 @@ struct BuiltinReferences
 // --- SizeInfo ---
 struct SizeInfo
 {
-   int size;
+   int  size;
+   bool readOnly;
 };
 
 // --- ExternalType ---

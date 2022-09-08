@@ -120,11 +120,73 @@ labDefault:
 
 end
 
+procedure __str_equal (s1, s2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[s_len,index,ch,ch2]
+
+  peek       fp:s1
+  nlen       1
+  save       dp:s_len
+
+  peek       fp:s2
+  nlen       1
+  set        dp:s_len
+  xcmp
+  jne        labNotEqual
+
+  sub        n:1
+
+  nsave      dp:index, 0
+
+  peek       fp:s1
+  store      sp:0
+  peek       fp:s2
+  store      sp:1
+
+labCheck:
+  load       dp:index
+  xcmp       dp:s_len
+  jeq        labLoopEnd
+
+  nsave      dp:ch, 0
+  nsave      dp:ch2, 0
+
+  set        dp:ch
+  read       1
+
+  xswap      sp:1
+
+  set        dp:ch2
+  read       1
+
+  load
+  xcmp       dp:ch 
+  jne        labNotEqual
+
+  nadd       dp:index, 1
+  xswap      sp:1
+  jump       labCheck
+
+labLoopEnd:
+  set        class:"system'BoolValue#true"
+  jump       labEnd
+
+labNotEqual:
+   set       class:"system'BoolValue#false"
+
+labEnd:
+  close      []
+
+end
+
 procedure __intToByte
 
   peek       sp:1
   load
-  andn       0FFh
+  and        n:0FFh
   peek       sp:2
   save
 
@@ -143,7 +205,7 @@ procedure __intToShort
 
   peek       sp:1
   load
-  andn       0FFh
+  and        n:0FFh
   peek       sp:2
   save
 
@@ -151,13 +213,13 @@ end
 
 procedure critical_exception_handler
 
-  cmpn        EXCEPTION_ACCESS_VIOLATION
+  cmp         n:EXCEPTION_ACCESS_VIOLATION
   jeq         labAccessViolation
 
-  cmpn        ELENA_ERR_DIVIDE_BY_ZERO
+  cmp         n:ELENA_ERR_DIVIDE_BY_ZERO
   jeq         labDivisionByZero
 
-  cmpn        ELENA_ERR_OUT_OF_MEMORY
+  cmp         n:ELENA_ERR_OUT_OF_MEMORY
   jeq         labOutOfMemory
 
   set         class : "system'CriticalException"

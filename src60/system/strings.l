@@ -38,6 +38,7 @@ public const struct String //: BaseValue
         }
     }
 
+    bool equal(string s) : external<system'core_routines'__str_equal>;
 }
 
 // --- WideString ---

@@ -43,6 +43,8 @@ namespace elena_lang
       ByRefParam,
       ByRefParamAddress,
       Local,
+      LocalReference,
+      RefLocal,
       TempLocal,
       SelfLocal,
       ReadOnlySelfLocal,
@@ -73,7 +75,9 @@ namespace elena_lang
       WinApi,
       CreatingArray,
       Creating,
-      Casting
+      Casting,
+      UnboxingRequired,
+      RefUnboxingRequired
    };
 
    struct ObjectInfo
@@ -902,7 +906,7 @@ namespace elena_lang
 
       void declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo);
 
-      ObjectInfo declareTempStructure(ExprScope& scope, int size);
+      ObjectInfo declareTempStructure(ExprScope& scope, SizeInfo sizeInfo);
 
       void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);
       void resolveClassParent(ClassScope& scope, SyntaxNode node, bool extensionMode);
@@ -961,8 +965,9 @@ namespace elena_lang
          ArgumentsInfo& arguments, ExpressionAttribute mode);
 
       ObjectInfo boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
+      ObjectInfo boxRefArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
       ObjectInfo boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
-         bool stackSafe, bool boxInPlace, ref_t targetRef = 0);
+         bool stackSafe, bool boxInPlace, bool allowingRefArg, ref_t targetRef = 0);
       ObjectInfo boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool boxInPlace);
 
       ObjectInfo saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object);

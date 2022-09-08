@@ -571,6 +571,11 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
    return test(info.header.flags, elAbstract);
 }
 
+bool CompilerLogic :: isReadOnly(ClassInfo& info)
+{
+   return test(info.header.flags, elReadOnlyRole);
+}
+
 bool CompilerLogic :: isEmbeddableArray(ModuleScopeBase& scope, ref_t reference)
 {
    ClassInfo info;
@@ -855,7 +860,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
 
 SizeInfo CompilerLogic :: defineStructSize(ClassInfo& info)
 {
-   SizeInfo sizeInfo = { /*!test(info.header.flags, elReadOnlyRole)*/};
+   SizeInfo sizeInfo = { 0, test(info.header.flags, elReadOnlyRole) };
 
    if (isEmbeddableStruct(info)) {
       sizeInfo.size = info.size;

@@ -552,9 +552,11 @@ ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribu
    auto fieldInfo = info.fields.get(identifier);
    if (fieldInfo.offset >= 0) {
       if (test(info.header.flags, elStructureRole)) {
-         return { readOnly ? ObjectKind::ReadOnlyFieldAddress : ObjectKind::FieldAddress, fieldInfo.typeInfo, fieldInfo.offset };
+         return { readOnly ? ObjectKind::ReadOnlyFieldAddress : ObjectKind::FieldAddress, 
+            fieldInfo.typeInfo, fieldInfo.offset };
       }
-      else return { readOnly ? ObjectKind::ReadOnlyField : ObjectKind::Field, fieldInfo.typeInfo, fieldInfo.offset };
+      else return { readOnly ? ObjectKind::ReadOnlyField : ObjectKind::Field, 
+         fieldInfo.typeInfo, fieldInfo.offset };
    }
    else if (fieldInfo.offset == -2) {
       return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1};
@@ -2490,9 +2492,28 @@ inline void copyObjectToAcc(BuildTreeWriter& writer, ClassInfo& info, int offset
       writer.newNode(BuildKey::AccCopying, offset);
       writer.appendNode(BuildKey::Size, info.size);
    }
-   else throw InternalError(errFatalError);
+   else {      
+      writer.newNode(BuildKey::FieldAssigning, 0);
+   }
 
    writer.closeNode();
+}
+
+ObjectInfo Compiler :: boxRefArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef)
+{
+   ref_t typeRef = targetRef;
+   if (!typeRef)
+      typeRef = retrieveStrongType(scope, info);
+
+   ObjectInfo tempLocal = declareTempLocal(scope, typeRef);
+   tempLocal.mode = TargetMode::RefUnboxingRequired;
+
+   info.kind = ObjectKind::Local;
+   compileAssigningOp(writer, scope, tempLocal, info);
+
+   tempLocal.kind = ObjectKind::LocalReference;
+
+   return tempLocal;
 }
 
 ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef)
@@ -2516,7 +2537,11 @@ ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& sc
    writeObjectInfo(writer, scope, info);
    writer.appendNode(BuildKey::SavingInStack, 0);
    writeObjectInfo(writer, scope, tempLocal);
+
    copyObjectToAcc(writer, argInfo, tempLocal.reference);
+
+   if (!_logic->isReadOnly(argInfo))
+      tempLocal.mode = TargetMode::UnboxingRequired;
 
    return tempLocal;
 }
@@ -2546,14 +2571,27 @@ ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& sc
 
             return retVal;
          }
-         else throw InternalError(errFatalError);
+         else {
+            // allocating temporal variable
+            ObjectInfo tempLocal = declareTempLocal(scope, info.typeInfo.typeRef, false);
+
+            writeObjectInfo(writer, scope, tempLocal);
+            writer.appendNode(BuildKey::SavingInStack, 0);
+
+            writeObjectInfo(writer, scope, scope.mapSelf());
+            writer.newNode(BuildKey::AccFieldCopyingTo, info.reference);
+            writer.appendNode(BuildKey::Size, tempLocal.extra);
+            writer.closeNode();
+
+            return tempLocal;
+         }
       default:
          return info;
    }
 }
 
 ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
-   bool stackSafe, bool boxInPlace, ref_t targetRef)
+   bool stackSafe, bool boxInPlace, bool allowingRefArg, ref_t targetRef)
 {
    ObjectInfo retVal = { ObjectKind::Unknown };
 
@@ -2571,6 +2609,25 @@ ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, Ob
          if (!boxInPlace)
             scope.tempLocals.add(key, retVal);
       }
+   }
+   else if (info.kind == ObjectKind::RefLocal) {
+      ObjectKey key = { info.kind, info.reference };
+
+      if (!boxInPlace)
+         retVal = scope.tempLocals.get(key);
+
+      if (retVal.kind == ObjectKind::Unknown) {
+         if (!allowingRefArg) {
+            info.kind = ObjectKind::Local;
+
+            retVal = boxArgumentInPlace(writer, scope, info, targetRef);
+         }
+         else retVal = boxRefArgumentInPlace(writer, scope, info, targetRef);
+
+         if (!boxInPlace)
+            scope.tempLocals.add(key, retVal);
+      }
+
    }
    else retVal = info;
 
@@ -2624,6 +2681,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::ByRefParamAddress:
          writer.appendNode(BuildKey::Local, info.reference);
          break;
+      case ObjectKind::LocalReference:
+         writer.appendNode(BuildKey::LocalReference, info.reference);
+         break;
       case ObjectKind::LocalAddress:
       case ObjectKind::TempLocalAddress:
          writer.appendNode(BuildKey::LocalAddress, info.reference);
@@ -2637,6 +2697,10 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          writeObjectInfo(writer, scope, scope.mapSelf());
          writer.appendNode(BuildKey::ClassOp, CLASS_OPERATOR_ID);
          writer.appendNode(BuildKey::Field, info.reference);
+         break;
+      case ObjectKind::ByRefParam:
+         writeObjectInfo(writer, scope, { ObjectKind::Param, info.typeInfo, info.reference });
+         writer.appendNode(BuildKey::Field);
          break;
       case ObjectKind::Object:
          break;
@@ -3685,16 +3749,16 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
    }
 }
 
-ObjectInfo Compiler :: declareTempStructure(ExprScope& scope, int size)
+ObjectInfo Compiler :: declareTempStructure(ExprScope& scope, SizeInfo sizeInfo)
 {
-   if (size <= 0)
+   if (sizeInfo.size <= 0)
       return {};
 
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
 
    ObjectInfo retVal = { ObjectKind::TempLocalAddress };
-   retVal.reference = allocateLocalAddress(codeScope, size, false);
-   retVal.extra = size;
+   retVal.reference = allocateLocalAddress(codeScope, sizeInfo.size, false);
+   retVal.extra = sizeInfo.size;
 
    scope.syncStack();
 
@@ -3705,7 +3769,7 @@ ObjectInfo Compiler :: allocateResult(ExprScope& scope, ref_t resultRef)
 {
    SizeInfo info = _logic->defineStructSize(*scope.moduleScope, resultRef);
    if (info.size > 0) {
-      ObjectInfo retVal = declareTempStructure(scope, info.size);
+      ObjectInfo retVal = declareTempStructure(scope, info);
       retVal.typeInfo.typeRef = resultRef;
 
       return retVal;
@@ -4177,7 +4241,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    if (operation != BuildKey::None) {
       bool targetOverridden = (target != arguments[0]);
       if (targetOverridden) {
-         target = boxArgument(writer, scope, target, result.stackSafe, false);
+         target = boxArgument(writer, scope, target, result.stackSafe, false, result.stackSafe);
       }
 
       if (!result.stackSafe)
@@ -4187,8 +4251,9 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       // box the arguments if required
       int argMask = 1;
       for (unsigned int i = 0; i < counter; i++) {
+         // NOTE : byref dynamic arg can be passed semi-directly (via temporal variable) if the method resolved directly
          ObjectInfo arg = boxArgument(writer, scope, arguments[i], 
-            test(stackSafeAttr, argMask), false);
+            test(stackSafeAttr, argMask), false, result.stackSafe);
 
          arguments[i] = arg;
          argMask <<= 1;
@@ -4212,6 +4277,39 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          writer.appendNode(BuildKey::Type, targetRef);
 
       writer.closeNode();
+
+      // unbox the arguments if required
+      bool resultSaved = false;
+      for (auto it = scope.tempLocals.start(); !it.eof(); ++it) {
+         ObjectInfo temp = *it;
+
+         if (temp.mode == TargetMode::UnboxingRequired || temp.mode == TargetMode::RefUnboxingRequired) {
+            if (!resultSaved) {
+               // presave the result
+               ObjectInfo tempResult = declareTempLocal(scope, retVal.typeInfo.typeRef);
+               compileAssigningOp(writer, scope, tempResult, retVal);
+               retVal = tempResult;
+
+               resultSaved = true;
+            }
+
+            // unbox the temporal variable
+            auto key = it.key();
+            if (temp.mode == TargetMode::RefUnboxingRequired) {
+               temp.kind = ObjectKind::Local;
+
+               compileAssigningOp(writer, scope, { ObjectKind::Local, temp.typeInfo, key.value2 }, temp);
+            }
+            else if (key.value1 == ObjectKind::RefLocal) {
+               writeObjectInfo(writer, scope, temp);
+               writer.appendNode(BuildKey::Field);
+               compileAssigningOp(writer, scope, 
+                  { ObjectKind::Local, temp.typeInfo, key.value2 }, 
+                  { ObjectKind::Object, temp.typeInfo, 0 });
+            }
+            else compileAssigningOp(writer, scope, { key.value1, temp.typeInfo, key.value2 }, temp);
+         }
+      }
    }
 
    scope.reserveArgs(arguments.count_pos());
@@ -4399,8 +4497,13 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
    
    switch (target.kind) {
       case ObjectKind::Local:
+      case ObjectKind::TempLocal:
          scope.markAsAssigned(target);
          operationType = BuildKey::Assigning;
+         operand = target.reference;
+         break;
+      case ObjectKind::ByRefParam:
+         operationType = BuildKey::RefParamAssigning;
          operand = target.reference;
          break;
       case ObjectKind::LocalAddress:
@@ -4419,12 +4522,14 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
       case ObjectKind::FieldAddress:
          scope.markAsAssigned(target);
          fieldMode = true;
-         if (!target.reference) {
-            operationType = BuildKey::AccCopying;
+         if (target.reference) {
+            operationType = BuildKey::AccFieldCopying;
+            operand = target.reference;
          }
-         else operationType = BuildKey::AccFieldCopying;
+         else operationType = BuildKey::AccCopying; 
          operand = target.reference;
          size = _logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
+         stackSafe = true;
 
          break;
          // NOTE : it should be the last condition
@@ -4447,7 +4552,7 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
    }
 
    writeObjectInfo(writer, scope,
-      boxArgument(writer, scope, exprVal, stackSafe, true));
+      boxArgument(writer, scope, exprVal, stackSafe, true, false));
 
    if (fieldMode) {
       writer.appendNode(BuildKey::SavingInStack, 0);
@@ -4631,7 +4736,7 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
 ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
 {
-   ObjectInfo ehLocal = declareTempStructure(scope, scope.moduleScope->ehTableEntrySize);
+   ObjectInfo ehLocal = declareTempStructure(scope, { (int)scope.moduleScope->ehTableEntrySize, false });
 
    SyntaxNode catchNode = node.findChild(SyntaxKey::CatchDispatch);
    SyntaxNode opNode = node.firstChild();
@@ -4825,6 +4930,10 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
                   case ObjectKind::LocalAddress:
                      retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
                      break;
+                  case ObjectKind::Local:
+                     retVal.kind = ObjectKind::RefLocal;
+                     retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                     break;
                   default:
                      invalid = true;
                      break;
@@ -4909,7 +5018,7 @@ ObjectInfo Compiler :: declareTempLocal(ExprScope& scope, ref_t typeRef, bool dy
       sizeInfo = _logic->defineStructSize(*scope.moduleScope, typeRef);
    }
    if (sizeInfo.size > 0) {
-      ObjectInfo tempStruct = declareTempStructure(scope, sizeInfo.size);
+      ObjectInfo tempStruct = declareTempStructure(scope, sizeInfo);
       tempStruct.typeInfo = { typeRef };
 
       return tempStruct;
@@ -5009,10 +5118,11 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
             case ObjectKind::IntLiteral:
             case ObjectKind::MssgLiteral:
             case ObjectKind::CharacterLiteral:
+            case ObjectKind::RefLocal:
                source.typeInfo.typeRef = targetRef;
                break;
             default:
-               return boxArgument(writer, scope, source, false, true, targetRef);
+               return boxArgument(writer, scope, source, false, true, false, targetRef);
          }
       }
       else if (conversionRoutine.result == ConversionResult::Conversion) {
@@ -5247,7 +5357,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
       retVal = {};
    }
    else {
-      retVal = boxArgument(writer, scope, retVal, false, true);
+      retVal = boxArgument(writer, scope, retVal, false, true, false);
 
       if (!hasToBePresaved(retVal)) {
          writeObjectInfo(writer, scope, retVal);
@@ -5348,7 +5458,7 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
       bodyNode.firstChild(), 0, ExpressionAttribute::RootSymbol);
 
    writeObjectInfo(writer, exprScope,
-      boxArgument(writer, exprScope, retVal, false, true));
+      boxArgument(writer, exprScope, retVal, false, true, false));
 
    writer.appendNode(BuildKey::EndStatement);
 
@@ -5523,7 +5633,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
          }
 
          writeObjectInfo(writer, exprScope,
-            boxArgument(writer, exprScope, retVal, false, true));
+            boxArgument(writer, exprScope, retVal, false, true, false));
       }
    }
 
@@ -5777,7 +5887,7 @@ void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope
 
    // return temp variable
    writeObjectInfo(writer, scope,
-      boxArgument(writer, scope, tempRetVal, false, true));
+      boxArgument(writer, scope, tempRetVal, false, true, false));
 
    writer.appendNode(BuildKey::CloseFrame);
 }

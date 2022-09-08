@@ -159,9 +159,21 @@ void copyingAccField(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::XCopyON, node.arg.value, n);
 }
 
+void copyingToAccField(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int n = node.findChild(BuildKey::Size).arg.value;
+
+   tape.write(ByteCode::XWriteON, node.arg.value, n);
+}
+
 void getLocal(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::PeekFI, node.arg.value);
+}
+
+void localReference(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::SetFP, node.arg.value);
 }
 
 void getArgument(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -594,6 +606,16 @@ void newArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::CreateNR, -n, typeRef | mskVMTRef);
 }
 
+void refParamAssigning(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // store si:0
+   // peekfi
+   // xassign 0
+   tape.write(ByteCode::StoreSI, 0);
+   tape.write(ByteCode::PeekFI, node.arg.value);
+   tape.write(ByteCode::XAssignI, 0);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr,
@@ -653,7 +675,10 @@ ByteCodeWriter::Saver commands[] =
    shortOp,
    byteCondOp,
    shortCondOp,
-   copyingAccField
+   copyingAccField,
+   copyingToAccField,
+   localReference,
+   refParamAssigning,
 };
 
 // --- ByteCodeWriter ---

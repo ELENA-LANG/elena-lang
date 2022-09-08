@@ -76,6 +76,8 @@ ELENA byte codes (or ecodes)
 
    set dp:i                 - dp[i] => acc
 
+   set fp:i                 - fp[i] => acc
+
    store r                  - acc => [r]
 
    xassign i                - acc[i] := sp[0];
@@ -119,9 +121,13 @@ ELENA byte codes (or ecodes)
 
    load fp:i                - index := fp[i]
 
+   load dp:disp             - index := dp[disp]
+
    mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
 
-   nsave dp:disp, i         - sp[disp] := i
+   nadd dp:disp, n          - [dp[disp]] += n;
+ 
+   nsave dp:disp, i         - dp[disp] := i
 
    peek fp:i                - acc := fp[i]
 
@@ -196,6 +202,9 @@ ELENA byte codes (or ecodes)
                               size; in : acc contains the reference to the stack space
                               out: acc contains the class instance, index - undefined
 
+   xwrite offs, n           - acc[disp] >> temp, n bytes;
+                              temp >> sp[0];
+
 
  Jump operations:
  ---------------- 
@@ -227,6 +236,8 @@ ELENA byte codes (or ecodes)
                               [dp[disp]] -= temp;
                               n = 1,2,4,8  
 
+   subn n                   - index := index - n
+
 
  Comparison operations:
  ----------------------
@@ -257,6 +268,8 @@ ELENA byte codes (or ecodes)
    xcmp                     - temp << acc[0];
                               COMP.EQ := (index == temp);
                               COMP.LT := (index < temp);
+
+   xcmp  dp:i               - COMP.EQ := (index == dp[i]);
 
 
  Misc operations:

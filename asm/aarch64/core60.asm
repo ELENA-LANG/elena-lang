@@ -441,6 +441,55 @@ inline %89h
 
 end
 
+// ; loaddp
+inline %8Ah
+
+  add     x11, x29, __arg12_1
+  ldr     w9,  [x11]
+
+end 
+
+// ; xcmpdp
+inline %8Bh
+
+  add     x11, x29, __arg12_1
+  ldrsw   x14, [x11]
+  cmp     x9, x14
+
+end 
+
+// ; subn
+inline %8Ch
+
+  mov    x11,  __n16_1
+  sub    x9, x9, x11
+
+end
+
+// ; addn
+inline %8Dh
+
+  mov    x11,  __n16_1
+  add    x9, x9, x11
+
+end
+
+// ; peekfi
+// ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
+inline %08Eh
+
+  sub     x10, x29, -__arg12_1
+
+end 
+
+// ; peekfi
+// ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
+inline %58Eh
+
+  add     x10, x29, __arg12_1
+
+end 
+
 // ; copy
 inline %90h
 
@@ -1233,6 +1282,37 @@ inline %0E7h
   sub     x20, x10, elVMTOffset
   str     x19, [x20]
   str     w18, [x20, #12]!
+
+end
+
+// ; nsavedpn
+inline %0E8h
+
+  add     x19, x29, __arg12_1
+  mov     x18, __n16_2
+  ldr     w20, [x19]
+  add     x20, x20, x18
+  str     w20, [x19]
+
+end
+
+// ; xwriteon
+inline %0EAh
+
+  mov     x11, __n16_2
+  mov     x14, __n16_1
+  mov     x13, x0
+  add     x12, x10, x14
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
+  b       labLoop
+
+labEnd:
 
 end
 

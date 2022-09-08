@@ -1,6 +1,7 @@
 import system;
 import extensions;
 
+
 //A
 //{
 //   int getVal()
@@ -20,39 +21,32 @@ import extensions;
 //   }
 //}
 
-struct BoxingStruct
+
+singleton ByRefProber
 {
-   int x;
-   int y;
+//   set(ref int retVal)
+//   {
+//   }
 
-   constructor()
+   set(ref string retVal)
    {
-      x := 1;
-      y := 2;
+      retVal := "hello";
    }
-
-//   set(int x, int y)
-//   {
-//      this x := x;
-//      this y := y;
-//   }
-
-//   test(int x, int y)
-//   {
-//      Assert.ifTrue(this x == x);
-//      Assert.ifTrue(this y == y);
-//   }
 }
-
-//singleton BoxingProber
-//{
-//}
 
 public program() 
 {
-   var s := new BoxingStruct();
+//   int n := 0;
+//   ByRefProber.set(ref n);
 
-  // BoxingStruct st;
+//   Assert.ifTrue(n == 123);
+
+
+//   string s := "none";
+//   ByRefProber.set(ref s);
+
+//   Assert.ifTrue(s == "hello");
+
 
 
 //   C c := new C();

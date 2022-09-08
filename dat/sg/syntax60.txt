@@ -276,7 +276,10 @@ L5_EXPRESSION ::=
 L6_EXPRESSION ::=
         identifier ^OBJECT
         | integer ^OBJECT
-        | hexinteger ^OBJECT;
+        | hexinteger ^OBJECT
+        | string ^OBJECT
+        | wide ^OBJECT
+        | character ^OBJECT;
 
 L7_EXPRESSION ::=
 	"{" BLOCK ^ CLOSURE
