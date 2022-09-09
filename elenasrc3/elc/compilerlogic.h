@@ -34,7 +34,6 @@ namespace elena_lang
       bool isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* targetModule, ref_t targetSignature, 
          ref_t* sourceSignatures, size_t sourceLen);
 
-      void setSignatureStacksafe(ModuleScopeBase& scope, ref_t targetSignature, int& stackSafeAttr);
       void setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* targetModule,
          ref_t targetSignature, int& stackSafeAttr);
 
@@ -45,6 +44,8 @@ namespace elena_lang
       bool defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly = false, bool fieldsOnly = false);
 
       ref_t getClassClassRef(ModuleScopeBase& scope, ref_t targetRef);
+
+      void setSignatureStacksafe(ModuleScopeBase& scope, ref_t targetSignature, int& stackSafeAttr);
 
       SizeInfo defineStructSize(ClassInfo& info);
       SizeInfo defineStructSize(ModuleScopeBase& scope, ref_t reference);
@@ -64,6 +65,7 @@ namespace elena_lang
 
       bool isTryDispatchAllowed(ModuleScopeBase& scope, mssg_t message);
       mssg_t defineTryDispatcher(ModuleScopeBase& scope, mssg_t message);
+      ref_t defineByRefSignature(ModuleScopeBase& scope, ref_t signRef, ref_t resultRef);
 
       bool isRole(ClassInfo& info);
       bool isAbstract(ClassInfo& info);

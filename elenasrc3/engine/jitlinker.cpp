@@ -991,7 +991,10 @@ addr_t JITLinker :: resolveConstantArray(ReferenceInfo referenceInfo, ref_t sect
    int size = sectionInfo.section->length() >> 2;
 
    // get constant VMT reference
-   addr_t vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
+   addr_t vmtVAddress = INVALID_ADDR;
+   if (!vmtReferenceInfo.referenceName.empty()) {
+      vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
+   }
 
    // allocate object header
    _compiler->allocateHeader(writer, vmtVAddress, size, structMode, _virtualMode);

@@ -561,6 +561,16 @@ mssg_t CompilerLogic :: defineTryDispatcher(ModuleScopeBase& scope, mssg_t messa
    return encodeMessage(scope.module->mapAction(TRY_INVOKE_MESSAGE, 0, false), 2, FUNCTION_MESSAGE);
 }
 
+ref_t CompilerLogic :: defineByRefSignature(ModuleScopeBase& scope, ref_t signRef, ref_t resultRef)
+{
+   ref_t targetSignatures[ARG_COUNT];
+
+   size_t len = signRef != 0 ? scope.module->resolveSignature(signRef, targetSignatures) : 0;
+   targetSignatures[len++] = resultRef;
+
+   return scope.module->mapSignature(targetSignatures, len, false);
+}
+
 bool CompilerLogic :: isRole(ClassInfo& info)
 {
    return test(info.header.flags, elRole);
@@ -1238,15 +1248,17 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          }
       }
 
-      switch ((MethodHint)result.kind) {
-         case MethodHint::Virtual:
-         case MethodHint::Sealed:
-            result.stackSafe = true;
-            break;
-         default:
-            result.stackSafe = false;
-            break;
-      }
+      result.stackSafe = true;
+
+      //switch ((MethodHint)result.kind) {
+      //   case MethodHint::Virtual:
+      //   case MethodHint::Sealed:
+      //      result.stackSafe = true;
+      //      break;
+      //   default:
+      //      result.stackSafe = false;
+      //      break;
+      //}
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
          result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });

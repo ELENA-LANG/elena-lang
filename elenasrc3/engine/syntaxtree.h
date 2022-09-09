@@ -115,6 +115,7 @@ namespace elena_lang
       CatchOperation       = 0x001CC7,
       CatchDispatch        = 0x001CC8,
       RedirectTryDispatch  = 0x001CC9,
+      DirectResend         = 0x001CCA,
 
       Name                 = 0x000101,
       Namespace            = 0x000103,

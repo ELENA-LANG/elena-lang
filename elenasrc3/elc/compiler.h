@@ -823,7 +823,7 @@ namespace elena_lang
       ref_t mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& resolvedMessage, ref_t implicitSignatureRef,
          ObjectInfo object);
 
-      mssg_t defineMultimethod(ClassScope& scope, mssg_t messageRef);
+      mssg_t defineMultimethod(Scope& scope, mssg_t messageRef);
 
       void declareTemplateAttributes(Scope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
          bool declarationMode);
@@ -851,6 +851,7 @@ namespace elena_lang
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix); 
 
+      mssg_t resolveByRefHandler(Scope& scope, ref_t targetRef, ref_t expectedRef, mssg_t weakMessage, ref_t& signatureRef);
       mssg_t resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectInfo target, ExprScope& scope, mssg_t weakMessage,
          ref_t implicitSignatureRef, bool ignoreExtensions, ref_t& resolvedExtensionRef, int& stackSafeAttr);
       mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
@@ -1030,6 +1031,7 @@ namespace elena_lang
 
       void compileMultidispatch(BuildTreeWriter& writer, CodeScope& codeScope, ClassScope& classcope, 
          SyntaxNode node, bool implicitMode);
+      void compileDirectResendCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
       void compileDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
       void compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
       void compileConstructorDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, ClassScope& classClassScope, SyntaxNode node);
@@ -1072,6 +1074,8 @@ namespace elena_lang
 
       void injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
+         ClassInfo& info, mssg_t multiMethod);
+      void injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
          ClassInfo& info, mssg_t multiMethod);
 
       void injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,

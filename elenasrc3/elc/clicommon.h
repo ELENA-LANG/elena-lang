@@ -462,6 +462,7 @@ enum class ExpressionAttribute : pos64_t
    Extern            = 0x00000080000,
    Memeber           = 0x00000100000,
    ProbeMode         = 0x00000200000,
+   AlreadyResolved   = 0x00000400000,
    Lookahead         = 0x20000000000,
    NoDebugInfo       = 0x40000000000,
    NoExtension       = 0x80000000000,

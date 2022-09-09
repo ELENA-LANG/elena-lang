@@ -1183,8 +1183,8 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
       methodInfo.multiMethod = multiMethod;
 
    mssg_t byRefMethod = node.findChild(SyntaxKey::ByRefRetMethod).arg.reference;
-   //if (byRefMethod)
-   //   methodInfo.byRefHandler = byRefMethod;
+   if (byRefMethod)
+      methodInfo.byRefHandler = byRefMethod;
 
    // check duplicates with different visibility scope
    if (MethodScope::checkHint(methodInfo, MethodHint::Private)) {
@@ -1299,7 +1299,7 @@ inline mssg_t retrieveMethod(Compiler::VirtualMethodList& implicitMultimethods, 
       }).value1;
 }
 
-mssg_t Compiler :: defineMultimethod(ClassScope& scope, mssg_t messageRef)
+mssg_t Compiler :: defineMultimethod(Scope& scope, mssg_t messageRef)
 {
    pos_t argCount = 0;
    ref_t actionRef = 0, flags = 0, signRef = 0;
@@ -1377,6 +1377,9 @@ void Compiler :: injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType
          case VirtualType::Multimethod:
             injectVirtualMultimethod(classNode, methodType, scope, info, methodInfo.value1);
             break;
+         case VirtualType::EmbeddableWrapper:
+            injectVirtualEmbeddableWrapper(classNode, methodType, scope, info, methodInfo.value1);
+            break;
          default:
             break;
       }      
@@ -1443,13 +1446,15 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
             }
          }
 
-         mssg_t byRefMethod = defineByRefMethod(scope, current);
-         if (byRefMethod) {
-            current.appendChild(SyntaxKey::ByRefRetMethod, byRefMethod);
+         if (methodKey != SyntaxKey::Constructor) {
+            mssg_t byRefMethod = defineByRefMethod(scope, current);
+            if (byRefMethod) {
+               current.appendChild(SyntaxKey::ByRefRetMethod, byRefMethod);
 
-            if (retrieveMethod(implicitMultimethods, byRefMethod) == 0) {
-               implicitMultimethods.add({ multiMethod, VirtualType::EmbeddableWrapper });
-               thirdPassRequired = true;
+               if (retrieveMethod(implicitMultimethods, byRefMethod) == 0) {
+                  implicitMultimethods.add({ byRefMethod, VirtualType::EmbeddableWrapper });
+                  thirdPassRequired = true;
+               }
             }
          }
       }
@@ -4150,7 +4155,8 @@ inline bool isSelfCall(ObjectInfo target)
 {
    switch (target.kind) {
       case ObjectKind::SelfLocal:
-      //case okOuterSelf:
+      case ObjectKind::SelfLocalAddress:
+         //case okOuterSelf:
       //case okClassSelf:
       //case okInternalSelf:
          return true;
@@ -4167,7 +4173,13 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    BuildKey operation = BuildKey::CallOp;
    ref_t resolvedExtensionRef = 0;
    int stackSafeAttr = 0;
-   mssg_t message = resolveMessageAtCompileTime(writer, target, scope, weakMessage,
+   mssg_t message = 0;
+   if (EAttrs::testAndExclude(mode.attrs, EAttr::AlreadyResolved)) {
+      message = weakMessage;
+
+      _logic->setSignatureStacksafe(*scope.moduleScope, implicitSignatureRef, stackSafeAttr);
+   }
+   else message = resolveMessageAtCompileTime(writer, target, scope, weakMessage,
       implicitSignatureRef, 
       EAttrs::testAndExclude(mode.attrs, EAttr::NoExtension), 
       resolvedExtensionRef, stackSafeAttr);
@@ -4213,11 +4225,11 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          default:
             break;
       }
-      //if (operation != BuildKey::CallOp && result.stackSafe) {
-      //   // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
-      //   if (_logic->isStacksafeArg(*scope.moduleScope, targetRef))
-      //      stackSafeAttr |= 1;
-      //}
+      if (/*operation != BuildKey::CallOp && */result.stackSafe) {
+         // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
+         if (_logic->isStacksafeArg(*scope.moduleScope, targetRef))
+            stackSafeAttr |= 1;
+      }
    }
    else if (targetRef) {
       if (EAttrs::test(mode.attrs, EAttr::StrongResolved)) {
@@ -4384,8 +4396,16 @@ ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, S
    return retVal;
 }
 
+inline void addByRefRetVal(ArgumentsInfo& arguments, ObjectInfo& tempRetVal)
+{
+   if (tempRetVal.kind == ObjectKind::TempLocal) {
+      arguments.add({ ObjectKind::RefLocal, { V_WRAPPER, tempRetVal.typeInfo.typeRef }, tempRetVal.argument, tempRetVal.extra });
+   }
+   else arguments.add({ ObjectKind::TempLocalAddress, { V_WRAPPER, tempRetVal.typeInfo.typeRef }, tempRetVal.argument, tempRetVal.extra });
+}
+
 ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
-   ref_t targetRef, ExpressionAttribute attrs)
+   ref_t expectedRef, ExpressionAttribute attrs)
 {
    ObjectInfo retVal = { };
    ArgumentsInfo arguments;
@@ -4408,14 +4428,52 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
    mssg_t messageRef = mapMessage(scope, current, true, 
       source.kind == ObjectKind::Extension, false);
 
-   retVal = compileMessageOperation(writer, scope, node, source, messageRef,
+   ref_t implicitSignatureRef = 0;
+   mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, source), expectedRef, messageRef, implicitSignatureRef);
+   if (byRefHandler) {
+      ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
+
+      addByRefRetVal(arguments, tempRetVal);
+
+      compileMessageOperation(writer, scope, node, source, messageRef,
+         implicitSignatureRef, arguments, EAttr::None);
+
+      retVal = tempRetVal;
+   }
+   else retVal = compileMessageOperation(writer, scope, node, source, messageRef,
       0, arguments, EAttr::None);
 
    return retVal;
 }
 
+mssg_t Compiler :: resolveByRefHandler(Scope& scope, ref_t targetRef, ref_t expectedRef, mssg_t weakMessage, ref_t& signatureRef)
+{
+   pos_t argCount = 0;
+   ref_t actionRef = 0, flags = 0, signRef = 0;
+   decodeMessage(weakMessage, actionRef, argCount, flags);
+
+   if (expectedRef != 0 && targetRef != 0) {
+      ref_t dummySignRef = 0;
+      ustr_t actionName = scope.module->resolveAction(actionRef, dummySignRef);
+
+      ref_t byRefType = retrieveStrongType(scope, { ObjectKind::Object, { V_WRAPPER, expectedRef }, 0 });
+      ref_t byRefSignature = _logic->defineByRefSignature(*scope.moduleScope, signatureRef, byRefType);
+
+      ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, flags);
+
+      CheckMethodResult dummy = {};
+      if (_logic->resolveCallType(*scope.moduleScope, targetRef, byRefMessage, dummy)) {
+         signatureRef = byRefSignature;
+
+         return byRefMessage;
+      }
+   }      
+
+   return 0;
+}
+
 ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
-   ref_t targetRef, ExpressionAttribute attrs)
+   ref_t expectedRef, ExpressionAttribute attrs)
 {
    ObjectInfo retVal = { };
    ArgumentsInfo arguments;
@@ -4434,7 +4492,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       {
          compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);
 
-         retVal = compileNewArrayOp(writer, scope, source, targetRef, arguments);
+         retVal = compileNewArrayOp(writer, scope, source, expectedRef, arguments);
          break;
       }
       case TargetMode::Creating:
@@ -4466,8 +4524,20 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
          ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);
 
-         retVal = compileMessageOperation(writer, scope, node, source, messageRef,
+         mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, source), expectedRef, messageRef, implicitSignatureRef);
+         if (byRefHandler) {
+            ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
+
+            addByRefRetVal(arguments, tempRetVal);
+
+            compileMessageOperation(writer, scope, node, source, byRefHandler,
+               implicitSignatureRef, arguments, EAttr::AlreadyResolved);
+
+            retVal = tempRetVal;
+         }
+         else retVal = compileMessageOperation(writer, scope, node, source, messageRef,
             implicitSignatureRef, arguments, EAttr::None);
+
          break;
       }
    }
@@ -4506,7 +4576,9 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
          operationType = BuildKey::RefParamAssigning;
          operand = target.reference;
          break;
+      case ObjectKind::TempLocalAddress:
       case ObjectKind::LocalAddress:
+      case ObjectKind::SelfLocalAddress:
          scope.markAsAssigned(target);
          operationType = BuildKey::Copying;
          operand = target.reference;
@@ -5785,6 +5857,18 @@ void Compiler :: compileConstructorDispatchCode(BuildTreeWriter& writer, CodeSco
    compileMultidispatch(writer, codeScope, classClassScope, node, true);
 }
 
+void Compiler :: compileDirectResendCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+{
+   mssg_t dispatchMessage = node.arg.reference;
+
+   SyntaxNode targetNode = node.findChild(SyntaxKey::Target);
+   ref_t disptachTarget = targetNode.arg.reference;
+
+   writer.newNode(BuildKey::DirectResendOp, dispatchMessage);
+   writer.appendNode(BuildKey::Type, disptachTarget);
+   writer.closeNode();
+}
+
 void Compiler :: compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node)
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
@@ -5829,8 +5913,11 @@ mssg_t Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& inv
    }
 
    // add byref return arg
+   TypeInfo refType = { V_WRAPPER, invokerScope.info.outputRef };
+   auto sizeInfo = _logic->defineStructSize(*invokerScope.moduleScope, resolvePrimitiveType(invokerScope, refType, false));
+
    int offset = invokerScope.parameters.count() + 1u;
-   privateScope.parameters.add(RETVAL_ARG, { offset, { V_WRAPPER, invokerScope.info.outputRef }, 0 });
+   privateScope.parameters.add(RETVAL_ARG, { offset, refType, sizeInfo.size });
 
    privateScope.message = byRefHandler | STATIC_MESSAGE;
    privateScope.info.hints |= (ref_t)MethodHint::Private;
@@ -5872,18 +5959,18 @@ void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope
    ExprScope scope(&codeScope);
    ArgumentsInfo arguments;
 
-   ObjectInfo tempRetVal = declareTempLocal(scope, targetRef);
+   ObjectInfo tempRetVal = declareTempLocal(scope, targetRef, false);
 
    ObjectInfo target = methodScope.mapSelf();
    arguments.add(target);
    for (auto it = methodScope.parameters.start(); !it.eof(); ++it) {
       arguments.add(methodScope.mapParameter(it.key(), EAttr::None));
    }
-   arguments.add(tempRetVal);
+   addByRefRetVal(arguments, tempRetVal);
 
    ref_t signRef = getSignature(scope.module, handler);
    ObjectInfo retVal = compileMessageOperation(writer, scope, {}, target, handler,
-      signRef, arguments, EAttr::None);
+      signRef, arguments, EAttr::AlreadyResolved);
 
    // return temp variable
    writeObjectInfo(writer, scope,
@@ -5914,6 +6001,9 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
          case SyntaxKey::ReturnExpression:
          case SyntaxKey::ResendDispatch:
             compileMethodCode(writer, scope, codeScope, node, false);
+            break;
+         case SyntaxKey::DirectResend:
+            compileDirectResendCode(writer, codeScope, current);
             break;
          case SyntaxKey::Importing:
             writer.appendNode(BuildKey::Import, current.arg.reference);
@@ -6618,6 +6708,27 @@ inline SyntaxNode newVirtualMethod(SyntaxNode classNode, SyntaxKey methodType, m
    SyntaxNode methodNode = classNode.appendChild(methodType, message);
 
    return methodNode;
+}
+
+void Compiler :: injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
+   ClassInfo& info, mssg_t message)
+{
+   MethodInfo methodInfo = {};
+
+   auto m_it = info.methods.getIt(message);
+   bool found = !m_it.eof();
+   if (found)
+      methodInfo = *m_it;
+
+   if (!found || methodInfo.inherited) {
+      SyntaxNode methodNode = newVirtualMethod(classNode, methodType, message);
+      methodNode.appendChild(SyntaxKey::Autogenerated, -1); // -1 indicates autogenerated method
+
+      mssg_t resendMessage = message | STATIC_MESSAGE;
+
+      SyntaxNode resendOp = methodNode.appendChild(SyntaxKey::DirectResend, resendMessage);
+      resendOp.appendChild(SyntaxKey::Target, classNode.arg.reference);
+   }
 }
 
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
