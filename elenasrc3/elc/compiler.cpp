@@ -12,7 +12,7 @@
 
 #include "bytecode.h"
 
-//#define FULL_OUTOUT_INFO 1
+#define FULL_OUTOUT_INFO 1
 
 using namespace elena_lang;
 
@@ -1175,6 +1175,9 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
    }
 
    methodInfo.hints |= node.findChild(SyntaxKey::Hints).arg.reference;
+
+   if (_logic->isEmbeddableStruct(scope.info))
+      methodInfo.hints |= (ref_t)MethodHint::Stacksafe;
 
    ref_t outputRef = node.findChild(SyntaxKey::OutputType).arg.reference;
 
@@ -4189,7 +4192,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       target = { ObjectKind::ConstantRole, { resolvedExtensionRef }, resolvedExtensionRef };
    }
 
-   //stackSafeAttrs &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
+   stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
 
    ref_t targetRef = retrieveStrongType(scope, target);
 
@@ -4225,9 +4228,9 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          default:
             break;
       }
-      if (/*operation != BuildKey::CallOp && */result.stackSafe) {
+      if (operation != BuildKey::CallOp) {
          // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
-         if (_logic->isStacksafeArg(*scope.moduleScope, targetRef))
+         if (result.stackSafe)
             stackSafeAttr |= 1;
       }
    }
@@ -4253,10 +4256,10 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    if (operation != BuildKey::None) {
       bool targetOverridden = (target != arguments[0]);
       if (targetOverridden) {
-         target = boxArgument(writer, scope, target, result.stackSafe, false, result.stackSafe);
+         target = boxArgument(writer, scope, target, result.stackSafe, false, false);
       }
 
-      if (!result.stackSafe)
+      if (!found)
          stackSafeAttr = 0;
 
       pos_t counter = arguments.count_pos();
@@ -4265,7 +4268,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       for (unsigned int i = 0; i < counter; i++) {
          // NOTE : byref dynamic arg can be passed semi-directly (via temporal variable) if the method resolved directly
          ObjectInfo arg = boxArgument(writer, scope, arguments[i], 
-            test(stackSafeAttr, argMask), false, result.stackSafe);
+            test(stackSafeAttr, argMask), false, found);
 
          arguments[i] = arg;
          argMask <<= 1;
@@ -4428,7 +4431,7 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
    mssg_t messageRef = mapMessage(scope, current, true, 
       source.kind == ObjectKind::Extension, false);
 
-   ref_t implicitSignatureRef = 0;
+   /*ref_t implicitSignatureRef = 0;
    mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, source), expectedRef, messageRef, implicitSignatureRef);
    if (byRefHandler) {
       ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
@@ -4440,7 +4443,7 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
 
       retVal = tempRetVal;
    }
-   else retVal = compileMessageOperation(writer, scope, node, source, messageRef,
+   else*/ retVal = compileMessageOperation(writer, scope, node, source, messageRef,
       0, arguments, EAttr::None);
 
    return retVal;
@@ -5976,6 +5979,8 @@ void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope
    writeObjectInfo(writer, scope,
       boxArgument(writer, scope, tempRetVal, false, true, false));
 
+   scope.syncStack();
+
    writer.appendNode(BuildKey::CloseFrame);
 }
 
@@ -6144,7 +6149,7 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    methodScope.message = current.arg.reference;
    methodScope.info = scope.info.methods.get(methodScope.message);
    methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
-   methodScope.isEmbeddable = _logic->isEmbeddableStruct(scope.info);
+   methodScope.isEmbeddable = methodScope.checkHint(MethodHint::Stacksafe);
 
    declareVMTMessage(methodScope, current, false, false);
 }

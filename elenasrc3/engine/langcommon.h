@@ -27,7 +27,8 @@ namespace elena_lang
       GetAccessor    = 0x00008000,
       Abstract       = 0x00020000,
       Internal       = 0x00040000,
-      Predefined     = 0x0080000, // virtual class declaration
+      Predefined     = 0x00080000, // virtual class declaration
+      Stacksafe      = 0x00100000,
       Constructor    = 0x00200400,
       Conversion     = 0x00200800,
       SetAccessor    = 0x00400000,

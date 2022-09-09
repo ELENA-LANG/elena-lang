@@ -1,7 +1,6 @@
 import system;
 import extensions;
 
-
 A
 {
    int getVal()

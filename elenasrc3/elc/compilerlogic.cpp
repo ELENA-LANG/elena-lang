@@ -1248,17 +1248,7 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          }
       }
 
-      result.stackSafe = true;
-
-      //switch ((MethodHint)result.kind) {
-      //   case MethodHint::Virtual:
-      //   case MethodHint::Sealed:
-      //      result.stackSafe = true;
-      //      break;
-      //   default:
-      //      result.stackSafe = false;
-      //      break;
-      //}
+      result.stackSafe = test(methodInfo.hints, (ref_t)MethodHint::Stacksafe);
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
          result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });
