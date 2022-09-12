@@ -22,7 +22,7 @@ namespace elena_lang
       void setTraceLine(int row, bool withCursor);
       void clearTraceLine();
 
-      SourceViewModel(int fontSize);
+      SourceViewModel();
    };
 }
 

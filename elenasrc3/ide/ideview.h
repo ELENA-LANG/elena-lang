@@ -56,6 +56,9 @@ public:
    ProjectModel    projectModel;
    IDEScheme       ideScheme;
 
+   bool            appMaximized;
+
+
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
    void attachListener(IDEListener* listener);
@@ -64,10 +67,11 @@ public:
 
    void onIDEChange();
 
-   IDEModel(int fontSize)
-      : listeners(nullptr), sourceViewModel(fontSize), projectModel(&status)
+   IDEModel()
+      : listeners(nullptr), projectModel(&status)
    {
       status = IDEStatus::None;
+      appMaximized = false;
    }
 };
 

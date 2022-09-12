@@ -11,6 +11,7 @@ using namespace elena_lang;
 // --- ProjectModel ---
 
 ProjectModel :: ProjectModel(IDEStatus* status)
+   : lastOpenFiles(nullptr)
 {
    this->status = status;
 

@@ -27,7 +27,6 @@ namespace elena_lang
       PathSettings   _pathSettings;
 
       HINSTANCE      _instance;
-      int            _cmdShow;
 
       IDEModel*      _model;
       IDEController* _controller;
@@ -41,13 +40,13 @@ namespace elena_lang
       ControlBase* createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier);
       ControlBase* createErrorList(ControlBase* owner);
 
-      void initializeModel(int frameTextIndex, int tabBar, int compilerOutput, int errorList);
+      void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList);
 
    public:
       GUIApp* createApp() override;
       GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess) override;
 
-      IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideView, 
+      IDEFactory(HINSTANCE instance, IDEModel* ideView, 
          IDEController* ideController,
          GUISettinngs settings);
    };

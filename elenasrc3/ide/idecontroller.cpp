@@ -6,6 +6,7 @@
 
 #include "idecontroller.h"
 #include "eng/messages.h"
+#include "config.h"
 
 using namespace elena_lang;
 
@@ -219,6 +220,53 @@ bool ProjectController :: doCompileProject(ProjectModel& model, path_t singlePro
 }
 
 // --- IDEController ---
+
+inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
+{
+   // read target type; merge it with platform if required
+   ConfigFile::Node targetType = config.selectNode(xpath);
+   if (!targetType.isNotFound()) {
+      DynamicString<char> key;
+      targetType.readContent(key);
+
+      return key.toInt();
+   }
+   else return defValue;
+}
+
+inline void loadRecentFiles(ConfigFile& config, ustr_t xpath, ProjectPaths& paths)
+{
+   DynamicString<char> path;
+
+   ConfigFile::Collection list;
+   if (config.select(xpath, list)) {
+      for (auto m_it = list.start(); !m_it.eof(); ++m_it) {
+         ConfigFile::Node pathNode = *m_it;
+         pathNode.readContent(path);
+
+         PathString filePath(path.str());
+
+         paths.add((*filePath).clone());
+      }
+   }
+}
+
+bool IDEController :: loadConfig(IDEModel* model, path_t path)
+{
+   ConfigFile config;
+   if (config.load(path, FileEncoding::UTF8)) {
+      model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
+      model->sourceViewModel.fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);
+
+      loadRecentFiles(config, RECENTFILES_SETTINGS, model->projectModel.lastOpenFiles);
+
+      return true;
+   }
+   else {
+      return false;
+   }
+
+}
 
 void IDEController :: init(IDEModel* model)
 {

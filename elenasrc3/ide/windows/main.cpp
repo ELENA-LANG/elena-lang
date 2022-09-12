@@ -31,17 +31,22 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
    UNREFERENCED_PARAMETER(hPrevInstance);
    UNREFERENCED_PARAMETER(lpCmdLine);
+   UNREFERENCED_PARAMETER(nCmdShow);
 
    Text::TabSize = 4; // !! temporal
 
    GUISettinngs  guiSettings = { true };
    TextViewSettings textViewSettings = { EOLMode::CRLF, false, 3 };
 
-   IDEModel          ideModel(10);
+   IDEModel          ideModel;
    Win32Process      outputProcess(50);
    DebugProcess      debugProcess;
    IDEController     ideController(&outputProcess, &debugProcess, &ideModel, textViewSettings);
-   IDEFactory        factory(hInstance, nCmdShow, &ideModel, &ideController, guiSettings);
+   IDEFactory        factory(hInstance, &ideModel, &ideController, guiSettings);
+
+   PathString configPath(ideModel.projectModel.paths.appPath);
+   configPath.combine(_T("ide60.cfg"));
+   ideController.loadConfig(&ideModel, *configPath);
 
    GUIApp* app = factory.createApp();
    GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess);
@@ -49,7 +54,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    ideController.setNotifier(app);
    ideController.init(&ideModel);
 
-   int retVal = app->run(ideWindow);
+   int retVal = app->run(ideWindow, ideModel.appMaximized);
 
    delete app;
 

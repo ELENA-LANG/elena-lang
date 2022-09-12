@@ -676,8 +676,9 @@ inline size_t util_find_last(const unsigned short* s, unsigned short c, size_t d
    return defValue;
 }
 
-inline size_t util_find_str(const unsigned short* s, const unsigned short* subs, size_t length, size_t defValue)
+inline size_t util_find_str(const unsigned short* s, const unsigned short* subs, size_t defValue)
 {
+   size_t length = getlength(s);
    size_t sub_len = getlength(subs);
 
    for (size_t i = 0; i < length; i++) {
@@ -696,8 +697,9 @@ inline size_t util_find_str(const unsigned short* s, const unsigned short* subs,
    return defValue;
 }
 
-inline size_t util_find_str(const unsigned short* s, size_t index, const unsigned short* subs, size_t length, size_t defValue)
+inline size_t util_find_str(const unsigned short* s, size_t index, const unsigned short* subs, size_t defValue)
 {
+   size_t length = getlength(s);
    size_t sub_len = getlength(subs);
 
    for (size_t i = index; i < length; i++) {

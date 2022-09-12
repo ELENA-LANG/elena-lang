@@ -82,9 +82,11 @@ StyleInfo classicStyles[STYLE_MAX + 1] = {
    //{Colour(0xFF, 0xFF, 0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false}
 };
 
+constexpr auto STYLE_SCHEME_COUNT = 2;
+
 // --- IDEFactory ---
 
-IDEFactory :: IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideModel, 
+IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel, 
    IDEController* controller,
    GUISettinngs   settings)
 {
@@ -93,7 +95,6 @@ IDEFactory :: IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideModel,
    _settings = settings;
 
    _instance = instance;
-   _cmdShow = cmdShow;
    _model = ideModel;
    _controller = controller;
 
@@ -102,6 +103,9 @@ IDEFactory :: IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideModel,
    ::PathRemoveFileSpec(appPath);
 
    _pathSettings.appPath.copy(appPath);
+
+   _model->projectModel.paths.appPath.copy(*_pathSettings.appPath);
+   _model->projectModel.paths.compilerPath.copy(CLI_PATH);
 }
 
 void IDEFactory :: registerClasses()
@@ -123,8 +127,14 @@ ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* no
 {
    auto viewModel = _model->viewModel();
 
+   // update font size
+   for (int j = 0; j < STYLE_MAX; j++) {
+      defaultStyles[j].size = viewModel->fontSize;
+      classicStyles[j].size = viewModel->fontSize;
+   }
+
    // initialize view styles
-   _styles.assign(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
+   _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontSize + 5, 20, &_fontFactory);
 
    // initialize UI components
    TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_controller->sourceController, &_styles);
@@ -191,13 +201,10 @@ ControlBase* IDEFactory :: createErrorList(ControlBase* owner)
    return log;
 }
 
-void IDEFactory :: initializeModel(int frameTextIndex, int tabBar, int compilerOutput, int errorList)
+void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_MESSAGES, szErrorList, MAX_LOADSTRING);
-
-   _model->projectModel.paths.appPath.copy(*_pathSettings.appPath);
-   _model->projectModel.paths.compilerPath.copy(CLI_PATH);
 
    _model->ideScheme.textFrameId = frameTextIndex;
    _model->ideScheme.resultControl = tabBar;
@@ -207,18 +214,16 @@ void IDEFactory :: initializeModel(int frameTextIndex, int tabBar, int compilerO
    _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
    _model->ideScheme.captions.add(errorList, szErrorList);
 
-   //// !! temporal
-   //auto viewModel = _model->viewModel();
+   if(_model->projectModel.lastOpenFiles.count() > 0) {
+      path_t path = _model->projectModel.lastOpenFiles.get(1);
 
-   //PathString path("C:\\Alex\\ELENA\\tests60\\sandbox\\sandbox.l");
-
-   //_controller->sourceController.openDocument(viewModel, "sandbox.l", *path, FileEncoding::UTF8);
-   //_controller->sourceController.selectDocument(viewModel, "sandbox.l");
+      _controller->openFile(_model, path);
+   }
 }
 
 GUIApp* IDEFactory :: createApp()
 {
-   WindowApp* app = new WindowApp(_instance, _cmdShow, MAKEINTRESOURCE(IDC_IDE));
+   WindowApp* app = new WindowApp(_instance, MAKEINTRESOURCE(IDC_IDE));
 
    registerClasses();
 
@@ -258,7 +263,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, -1, bottomBox, -1, -1);
 
-   initializeModel(textIndex, tabBar, compilerOutput, errorList);
+   initializeScheme(textIndex, tabBar, compilerOutput, errorList);
 
    return sdi;
 }
