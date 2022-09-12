@@ -12,7 +12,7 @@
 
 #include "bytecode.h"
 
-#define FULL_OUTOUT_INFO 1
+//#define FULL_OUTOUT_INFO 1
 
 using namespace elena_lang;
 
@@ -1946,6 +1946,24 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
 
       if (scope.checkHint(MethodHint::GetAccessor) || scope.checkHint(MethodHint::SetAccessor)) {
          flags |= PROPERTY_MESSAGE;
+      }
+
+      if (scope.checkHint(MethodHint::MutliRet)) {
+         if (!scope.info.outputRef || (weakSignature && paramCount > 0))
+            scope.raiseError(errIllegalMethod, node);
+
+         // COMPILER MAGIC : if the message is marked as multiret - it turns into byref return handler
+         // NOTE : it should contain the sepcific return type
+         // NOTE : if the return type is mebeddable - it will be treated in different way (later in the code)
+         if (!_logic->isEmbeddable(*scope.moduleScope, scope.info.outputRef)) {
+            TypeInfo refType = { V_WRAPPER, scope.info.outputRef };
+
+            int offset = scope.parameters.count() + 1u;
+            scope.parameters.add(RETVAL_ARG, { offset, refType, 0 });
+
+            signature[signatureLen++] = resolvePrimitiveType(scope, refType, true);
+            paramCount++;
+         }
       }
 
       if (scope.checkHint(MethodHint::Internal)) {
@@ -4431,19 +4449,19 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
    mssg_t messageRef = mapMessage(scope, current, true, 
       source.kind == ObjectKind::Extension, false);
 
-   /*ref_t implicitSignatureRef = 0;
+   ref_t implicitSignatureRef = 0;
    mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, source), expectedRef, messageRef, implicitSignatureRef);
    if (byRefHandler) {
       ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
 
       addByRefRetVal(arguments, tempRetVal);
 
-      compileMessageOperation(writer, scope, node, source, messageRef,
-         implicitSignatureRef, arguments, EAttr::None);
+      compileMessageOperation(writer, scope, node, source, byRefHandler,
+         implicitSignatureRef, arguments, EAttr::AlreadyResolved);
 
       retVal = tempRetVal;
    }
-   else*/ retVal = compileMessageOperation(writer, scope, node, source, messageRef,
+   else retVal = compileMessageOperation(writer, scope, node, source, messageRef,
       0, arguments, EAttr::None);
 
    return retVal;

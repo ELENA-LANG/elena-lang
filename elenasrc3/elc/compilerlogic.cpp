@@ -395,6 +395,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_CONVERSION:
          hint = (ref_t)MethodHint::Conversion;
          return true;
+      case V_MULTIRET:
+         hint = (ref_t)MethodHint::MutliRet;
+         return true;
       default:
          return false;
    }

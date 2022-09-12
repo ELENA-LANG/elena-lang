@@ -22,6 +22,7 @@ namespace elena_lang
       Dispatcher     = 0x00000007,
 
       Function       = 0x00000080,
+      MutliRet       = 0x00000200,
       Multimethod    = 0x00001000,
       Static         = 0x00004000,
       GetAccessor    = 0x00008000,
@@ -157,6 +158,7 @@ namespace elena_lang
    constexpr auto V_CONST                 = 0x80002001u;
    constexpr auto V_EMBEDDABLE            = 0x80002002u;
    constexpr auto V_WRAPPER               = 0x80002003u;
+   constexpr auto V_MULTIRET              = 0x8000200Au;
 
    /// scope:
    constexpr auto V_CLASS                 = 0x80001001u;

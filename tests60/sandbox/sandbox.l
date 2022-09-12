@@ -1,10 +1,17 @@
 import system;
 import extensions;
 
-A
+A;
+
+B;
+
+C
 {
-   int getVal()
-      = 2;
+   A getVal()
+      = new A();
+
+   multiret B getVal()
+      = new B();
 }
 
 //B : A
@@ -14,11 +21,8 @@ A
 
 public program() 
 {
-   /*auto*/A a := new A();
-//   var b := new B();
+   C c := new C();
 
-   int v := a.getVal();
-//   int v2 := b.getVal();
-
-   console.writeLine(v);
+   A a := c.getVal();
+   B b := c.getVal();
 }
