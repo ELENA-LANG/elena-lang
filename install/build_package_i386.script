@@ -105,7 +105,7 @@ echo compiling lib60 files
    exit 1
  fi
 
- ../bin/elena64-cli ../src60/extensions/extensions.project
+ ../bin/elena-cli ../src60/extensions/extensions.project
  ret=$?
  if [ $ret -eq -2 ]
  then
@@ -115,7 +115,7 @@ echo compiling lib60 files
    echo .
  fi
 
- ../bin/elena64-cli ../tests60/system_tests/system_tests.project
+ ../bin/elena-cli ../tests60/system_tests/system_tests.project
  ret=$?
  if [ $ret -eq -2 ]
  then
