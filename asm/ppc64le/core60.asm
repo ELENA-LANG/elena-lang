@@ -508,7 +508,7 @@ inline %8Dh
 end
 
 // ; setfp
-inline %0A8h
+inline %08Eh
 
   li      r16, __n16_1
   add     r15, r31, r16
