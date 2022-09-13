@@ -510,7 +510,7 @@ end
 // ; setfp
 inline %08Eh
 
-  li      r16, __n16_1
+  li      r16, __arg16_1
   add     r15, r31, r16
 
 end 

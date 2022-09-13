@@ -474,7 +474,7 @@ inline %8Dh
 
 end
 
-// ; peekfi
+// ; setfp
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %08Eh
 
