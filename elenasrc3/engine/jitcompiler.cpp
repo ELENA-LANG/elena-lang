@@ -1849,6 +1849,9 @@ void elena_lang::loadONOp(JITCompilerScope* scope)
          case NARG_2:
             scope->compiler->writeImm32(writer, scope->command.arg2);
             break;
+         case NARG16_1:
+            scope->compiler->writeImm16(writer, scope->command.arg1, 0);
+            break;
          case NARG16_2:
             scope->compiler->writeImm16(writer, scope->command.arg2, 0);
             break;
