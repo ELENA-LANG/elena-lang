@@ -27,6 +27,7 @@ namespace elena_lang
    constexpr char dfaCharacter      = 's';
    constexpr char dfaQuoteCode      = 'u';
    constexpr char dfaSignStart      = 'w';
+   constexpr char dfaWideQuote      = 'x';
 
    constexpr char dfaError          = '?';
    constexpr char dfaEOF            = '.';
@@ -93,6 +94,19 @@ namespace elena_lang
       {
          this->lineInfo = lineInfo;
          this->message = message;
+      }
+   };
+
+   class ProcedureError : public ExceptionBase
+   {
+   public:
+      ustr_t           message;
+      IdentifierString name;
+      IdentifierString arg;
+
+      ProcedureError(ustr_t message, ustr_t name, ustr_t arg)
+         : message(message), name(name), arg(arg)
+      {
       }
    };
 

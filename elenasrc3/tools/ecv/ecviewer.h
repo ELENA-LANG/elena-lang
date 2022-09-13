@@ -39,7 +39,9 @@ namespace elena_lang
       int              _pageSize;
       bool             _noPaging;
       bool             _pathMode;
+      bool             _showBytecodes;
 
+      MemoryBase* findProcedureCode(ustr_t referenceName);
       MemoryBase* findSymbolCode(ustr_t referenceName);
       MemoryBase* findClassVMT(ustr_t referenceName);
       MemoryBase* findClassCode(ustr_t referenceName);
@@ -62,7 +64,7 @@ namespace elena_lang
       void listMembers();
 
       void addRArg(arg_t arg, IdentifierString& commandStr);
-      void addSecondRArg(arg_t arg, IdentifierString& commandStr);
+      void addSecondRArg(arg_t arg, IdentifierString& commandStr, List<pos_t>& labels);
 
       void addSPArg(arg_t arg, IdentifierString& commandStr);
       void addSecondSPArg(arg_t arg, IdentifierString& commandStr);
@@ -89,6 +91,7 @@ namespace elena_lang
 
       void printMethod(ustr_t name, bool fullInfo);
       void printSymbol(ustr_t name);
+      void printProcedure(ustr_t name);
       void printClass(ustr_t name, bool fullInfo);
 
    public:
@@ -105,6 +108,7 @@ namespace elena_lang
          _pageSize = pageSize;
          _noPaging = false;
          _pathMode = false;
+         _showBytecodes = false;
       }
       virtual ~ByteCodeViewer()
       {

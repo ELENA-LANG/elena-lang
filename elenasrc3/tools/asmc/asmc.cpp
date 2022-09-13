@@ -254,6 +254,10 @@ int main(int argc, char* argv[])
       printf(e.message, e.lineInfo.row, e.lineInfo.column);
       return -1;
    }
+   catch (ProcedureError& e) {
+      printf(e.message, *e.arg, *e.name);
+      return -1;
+   }
    catch(ExceptionBase&) {
       return -1;
    }

@@ -29,6 +29,10 @@
 #define IDI_SMALL                   108
 #define IDC_IDE                     109
 #define IDC_TEXTVIEW                110
+#define IDC_HSPLITTER               111
+#define IDC_VSPLITTER               112
+#define IDC_COMPILER_OUTPUT         113
+#define IDC_COMPILER_MESSAGES       114
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                  -1

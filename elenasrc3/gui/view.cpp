@@ -11,8 +11,8 @@ using namespace elena_lang;
 
 // --- TextViewModel ---
 
-TextViewModel :: TextViewModel(int fontSize) :
-   TextViewModelBase(fontSize),
+TextViewModel :: TextViewModel() :
+   TextViewModelBase(),
    _documents(nullptr),
    _listeners(nullptr),
    _docListeners(nullptr)

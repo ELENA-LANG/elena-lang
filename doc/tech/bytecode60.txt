@@ -11,8 +11,8 @@ ELENA byte codes (or ecodes)
 
    index  - data accumulator 
 
-   x86    : fp - ebp, sp - esp, acc - ebx, index - eax, sp[0] - esi, sp[1] - edx
-   x86_64 : fp - rbp, sp - rsp, acc - rbx, index - rax, sp[0] - r10, sp[1] - rdx, r15 - presaved
+   x86    : fp - ebp, sp - esp, acc - ebx, index - edx, sp[0] - esi
+   x86_64 : fp - rbp, sp - rsp, acc - rbx, index - rdx, sp[0] - r10, sp[1] - rdx, r15 - presaved
    arm64  : fp - x29, sp - x31, index - x9, acc - x10, sp[0] - x0, sp[1] - x1
    ppc64  : fp - r31, sp - r1, index - r14, acc - r15, sp[0] - r3, sp[1] - r4
 
@@ -26,7 +26,7 @@ ELENA byte codes (or ecodes)
    x86    :                edx, ebx, [esi]
    x86_64 : (r15)          rdx, rbx, [r10, r11]
    arm64  : (x29, x31),    x9, x10,  [x0, x1]
-   ppc64  : (r13, r1, r2), r14, r15, [r3, r4]
+   ppc64  : (r13, r1, r2), r14, r15, [r3, r4], r13 - preserved
 
  Frame operations:
  -----------------              
@@ -56,9 +56,13 @@ ELENA byte codes (or ecodes)
 
    load                     - index := [acc] 
 
+   loadv                    - index.action := [acc].action
+
    mov env                  - %SYSTEM_ENV => index 
 
    mov mssg:m               - index := m
+
+   mov n:n                  - index := n
 
    peek r                   - acc <= [r] 
 
@@ -71,6 +75,8 @@ ELENA byte codes (or ecodes)
    set {prefix}:r           - r => acc
 
    set dp:i                 - dp[i] => acc
+
+   set fp:i                 - fp[i] => acc
 
    store r                  - acc => [r]
 
@@ -92,12 +98,15 @@ ELENA byte codes (or ecodes)
    call mssg:m, r           - calls directly the method resolved by JIT by r and m
                               acc contains the result 
 
-   vcall mssg:m, r          - calls via table the method resolved by JIT by r and m
-                              acc contains the result 
- 
    jump mssg:m, r           - jumps directly the method resolved by JIT by r and m
                               acc contains the result 
 
+   jump vt:i                - jump to acc::VMT[i] method;
+                              acc contains the result
+
+   vcall mssg:m, r          - calls via table the method resolved by JIT by r and m
+                              acc contains the result 
+ 
    vjump mssg:m, r          - jumps via table the method resolved by JIT by r and m
                               acc contains the result 
  
@@ -112,9 +121,13 @@ ELENA byte codes (or ecodes)
 
    load fp:i                - index := fp[i]
 
+   load dp:disp             - index := dp[disp]
+
    mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
 
-   nsave dp:disp, i         - sp[disp] := i
+   nadd dp:disp, n          - [dp[disp]] += n;
+ 
+   nsave dp:disp, i         - dp[disp] := i
 
    peek fp:i                - acc := fp[i]
 
@@ -128,6 +141,8 @@ ELENA byte codes (or ecodes)
 
    store sp:i               - sp[i] := acc
 
+   swap sp:i                - acc <=> sp[i]
+
    xflush sp:i              - sp[i] := cached_sp[i];
 
    xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
@@ -136,6 +151,8 @@ ELENA byte codes (or ecodes)
 
    xstore sp:i, {prefix:}r  - sp[i] := r
 
+   xswap sp:i               - sp[0] <=> sp[i]
+
 
  Object operations:
  ------------------
@@ -143,9 +160,9 @@ ELENA byte codes (or ecodes)
 
    copy n                   - sp[0] >> acc, n bytes
 
-   copy dp:disp, n          - dp[disp] => temp;
-                              sp[0] >> temp, n bytes  
-
+   copy dp:disp, n          - sp[0] >> temp, n bytes  
+                              temp >> dp[disp];
+                              
    create n {prefix}:r      - create the object with the specified size;
                               sp[0] >> temp;
                               size * temp;
@@ -175,8 +192,18 @@ ELENA byte codes (or ecodes)
 
    write n                  - sp[0][index*n] << acc, n bytes
 
+   xcopy disp, n            - sp[0] >> temp, n bytes;
+                              temp >> acc[disp];
+
    xdispatch m, r           - search in message table r the message in index and provided parameter list; 
                               if found jumps directly to it;
+
+   xnewn n {prefix}:r       - "create" the stack allocated object with the specified
+                              size; in : acc contains the reference to the stack space
+                              out: acc contains the class instance, index - undefined
+
+   xwrite offs, n           - acc[disp] >> temp, n bytes;
+                              temp >> sp[0];
 
 
  Jump operations:
@@ -209,14 +236,28 @@ ELENA byte codes (or ecodes)
                               [dp[disp]] -= temp;
                               n = 1,2,4,8  
 
+   subn n                   - index := index - n
+
 
  Comparison operations:
  ----------------------
-   cmpr r                   - COMP.EQ := (acc == r);
+   tstflg n                 - temp := acc::VMT::flag & n 
+                              COMP.EQ := (temp == 0);
+
+   tstn n                   - temp := index & n 
+                              COMP.EQ := (temp == 0);
+
+   tstm m                   - search for m in acc:VMT;
+                              COMP.EQ := found
+
+   cmp  fp:i                - COMP.EQ := (acc == fp[i]);
 
    cmp  sp:i                - COMP.EQ := (acc == sp[i]);
 
-   cmp  fp:i                - COMP.EQ := (acc == fp[i]);
+   cmpn n                   - COMP.EQ := (index == n);
+                              COMP.LT := (index < n);
+
+   cmpr r                   - COMP.EQ := (acc == r);
 
    icmp n                   - temp1 : n << acc;
                               temp2 : n << sp[0];
@@ -224,8 +265,18 @@ ELENA byte codes (or ecodes)
                               COMP.LT := (temp2 < temp1);
                               n = 1,2,4,8 
 
-   icmp n                   - temp : n << acc;
-                              temp2 : n << sp[0];
-                              COMP.EQ := (temp2 == temp1);
-                              COMP.EQ := (temp2 < temp1);
-                              n = 1,2,4,8 
+   xcmp                     - temp << acc[0];
+                              COMP.EQ := (index == temp);
+                              COMP.LT := (index < temp);
+
+   xcmp  dp:i               - COMP.EQ := (index == dp[i]);
+
+
+ Misc operations:
+ ---------------- 
+   hook  dp:i, label        - set a handler to the specified label
+
+   throw                    - raise an exception (acc contains the exception object)
+
+   xhook dp:i, r            - set a handler to the specified address
+

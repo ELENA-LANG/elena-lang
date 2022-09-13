@@ -88,7 +88,7 @@ namespace elena_lang
 
       void resize(Point size) override;
 
-      TextViewModel(int fontSize);
+      TextViewModel();
       virtual ~TextViewModel() = default;
    };
 

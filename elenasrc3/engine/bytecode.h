@@ -27,6 +27,10 @@ namespace elena_lang
       Len            = 0x07,
       Class          = 0x08,
       Save           = 0x09,
+      Throw          = 0x0A,  
+      Unhook         = 0x0B,
+      LoadV          = 0x0C,
+      XCmp           = 0x0D,
 
       MaxSingleOp    = 0x7F,
 
@@ -36,7 +40,15 @@ namespace elena_lang
       XAssignI       = 0x83,
       PeekR          = 0x84,
       StoreR         = 0x85,
+      XSwapSI        = 0x86,
+      SwapSI         = 0x87,
       MovM           = 0x88,
+      MovN           = 0x89,
+      LoadDP         = 0x8A,
+      XCmpDP         = 0x8B,
+      SubN           = 0x8C,
+      AddN           = 0x8D,
+      SetFP          = 0x8E,
 
       Copy           = 0x90,
       CloseN         = 0x91,
@@ -45,6 +57,7 @@ namespace elena_lang
       AndN           = 0x94,
       ReadN          = 0x95,
       WriteN         = 0x96,
+      CmpN           = 0x97,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,
@@ -60,9 +73,13 @@ namespace elena_lang
       Jump           = 0xB2,
       Jeq            = 0xB3,
       Jne            = 0xB4,
+      JumpVI         = 0xB5,
 
       CmpR           = 0xC0,
       ICmpN          = 0xC2,
+      TstFlag        = 0xC3,
+      TstN           = 0xC4,
+      TstM           = 0xC5,
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
 
@@ -74,6 +91,11 @@ namespace elena_lang
       IMulDPN        = 0xE3,
       IDivDPN        = 0xE4,
       NSaveDPN       = 0xE5,
+      XHookDPR       = 0xE6,
+      XNewNR         = 0xE7,
+      NAddDPN        = 0xE8,
+      XWriteON       = 0xEA,
+      XCopyON        = 0xEB,
       VJumpMR        = 0xEC,
       JumpMR         = 0xED,
       SelEqRR        = 0xEE,
@@ -97,6 +119,8 @@ namespace elena_lang
 
       None           = 0x1000,
       Label          = 0x1001,
+      ImportOn       = 0x1002,
+      ImportOff      = 0x1003,
    };
 
    enum class PseudoArg
@@ -184,6 +208,8 @@ namespace elena_lang
       void write(ByteCode code, arg_t arg1);
       void write(ByteCode code, arg_t arg1, arg_t arg2);
       void write(ByteCode code, PseudoArg arg);
+      void write(ByteCode code, arg_t arg1, PseudoArg arg2);
+      void write(ByteCode code, arg_t arg1, PseudoArg arg2, ref_t mask);
 
       void import(ModuleBase* sourceModule, MemoryBase* source, bool withHeader, SectionScopeBase* target);
 
@@ -225,6 +251,7 @@ namespace elena_lang
             case ByteCode::VJumpMR:
             case ByteCode::DispatchMR:
             case ByteCode::XDispatchMR:
+            case ByteCode::TstM:
                return true;
             default:
                return false;
@@ -255,6 +282,7 @@ namespace elena_lang
             case ByteCode::XStoreFIR:
             case ByteCode::NewIR:
             case ByteCode::NewNR:
+            case ByteCode::XNewNR:
             case ByteCode::CallMR:
             case ByteCode::VCallMR:
             case ByteCode::JumpMR:
@@ -263,6 +291,7 @@ namespace elena_lang
             case ByteCode::XDispatchMR:
             case ByteCode::SelEqRR:
             case ByteCode::SelLtRR:
+            case ByteCode::XHookDPR:
                return true;
             default:
                return false;
@@ -309,7 +338,7 @@ namespace elena_lang
 
       static bool resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message);
 
-      static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module);
+      static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
    };
 
 }

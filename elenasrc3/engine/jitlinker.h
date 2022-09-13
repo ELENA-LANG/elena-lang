@@ -55,7 +55,9 @@ namespace elena_lang
       {
          ustr_t intLiteralClass;
          ustr_t literalClass;
+         ustr_t wideLiteralClass;
          ustr_t characterClass;
+         ustr_t messageClass;
       };
 
       struct VAddressInfo
@@ -177,6 +179,8 @@ namespace elena_lang
       ref_t createSignature(ModuleBase* module, ref_t signature, VAddressMap& references);
       mssg_t createMessage(ModuleBase* module, mssg_t message, VAddressMap& references);
 
+      mssg_t parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
+
       addr_t resolveVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo);
       addr_t resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
       addr_t resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
@@ -221,7 +225,9 @@ namespace elena_lang
 
          _constantSettings.intLiteralClass = forwardResolver->resolveForward(INTLITERAL_FORWARD);
          _constantSettings.literalClass = forwardResolver->resolveForward(LITERAL_FORWARD);
+         _constantSettings.wideLiteralClass = forwardResolver->resolveForward(WIDELITERAL_FORWARD);
          _constantSettings.characterClass = forwardResolver->resolveForward(CHAR_FORWARD);
+         _constantSettings.messageClass = forwardResolver->resolveForward(MESSAGE_FORWARD);
       }
    };
 

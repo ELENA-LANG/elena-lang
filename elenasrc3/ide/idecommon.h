@@ -10,7 +10,7 @@
 #include "guicommon.h"
 #include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                           0x0012
+#define IDE_REVISION_NUMBER                           0x0019
 
 namespace elena_lang
 {
@@ -23,6 +23,15 @@ namespace elena_lang
    constexpr auto NOTIFY_CURRENTVIEW_CHANGED          = 2;
    constexpr auto NOTIFY_CURRENTVIEW_SHOW             = 3;
    constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
+   constexpr auto NOTIFY_LAYOUT_CHANGED               = 5;
+   constexpr auto NOTIFY_SHOW_RESULT                  = 6;
+   constexpr auto NOTIFY_COMPILATION_RESULT           = 7;
+
+   // --- PathSettings ---
+   struct PathSettings
+   {
+      PathString appPath;
+   };
 
    // --- IDEStatus ---
    enum class IDEStatus
@@ -38,10 +47,43 @@ namespace elena_lang
       return test((int)value, (int)mask);
    }
 
-   // --- OSController --
-   class OSControllerBase
+   // --- ProcessListenerBase --
+   class ProcessListenerBase
    {
    public:
+      virtual void onOutput(const char* s) = 0;
+      virtual void onErrorOutput(const char* s) = 0;
+      virtual void afterExecution(int exitCode) = 0;
+   };
+
+   typedef List<ProcessListenerBase*> ProcessListeners;
+
+   // --- ProcessBase --
+   class ProcessBase
+   {
+   protected:
+      ProcessListeners _listeners;
+
+   public:
+      void attachListener(ProcessListenerBase* listener)
+      {
+         _listeners.add(listener);
+      }
+
+      virtual bool start(path_t path, path_t commandLine, path_t curDir, bool readOnly) = 0;
+      virtual void stop(int exitCode) = 0;
+
+      ProcessBase()
+         : _listeners(nullptr)
+      {
+
+      }
+   };
+
+   class ErrorLogBase
+   {
+   public:
+      virtual void addMessage(text_str message, text_str file, text_str row, text_str col) = 0;
    };
 
    // --- DebugControllerBase ---
@@ -120,7 +162,7 @@ namespace elena_lang
    {
    public:
       virtual GUIApp* createApp() = 0;
-      virtual GUIControlBase* createMainWindow(NotifierBase* notifier) = 0;
+      virtual GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess) = 0;
    };
 }
 

@@ -22,12 +22,14 @@ namespace elena_lang
       Dispatcher     = 0x00000007,
 
       Function       = 0x00000080,
+      MutliRet       = 0x00000200,
       Multimethod    = 0x00001000,
       Static         = 0x00004000,
       GetAccessor    = 0x00008000,
       Abstract       = 0x00020000,
       Internal       = 0x00040000,
-      Predefined     = 0x0080000, // virtual class declaration
+      Predefined     = 0x00080000, // virtual class declaration
+      Stacksafe      = 0x00100000,
       Constructor    = 0x00200400,
       Conversion     = 0x00200800,
       SetAccessor    = 0x00400000,
@@ -110,6 +112,7 @@ namespace elena_lang
    constexpr auto errReferenceOverflow       = 603;
    constexpr auto errUnknownBaseClass        = 604;
    constexpr auto errNoDispatcher            = 605;
+   constexpr auto errClosureError            = 606;
 
    constexpr auto infoNewMethod              = 701;
    constexpr auto infoCurrentMethod          = 702;
@@ -155,6 +158,7 @@ namespace elena_lang
    constexpr auto V_CONST                 = 0x80002001u;
    constexpr auto V_EMBEDDABLE            = 0x80002002u;
    constexpr auto V_WRAPPER               = 0x80002003u;
+   constexpr auto V_MULTIRET              = 0x8000200Au;
 
    /// scope:
    constexpr auto V_CLASS                 = 0x80001001u;
@@ -168,6 +172,7 @@ namespace elena_lang
    constexpr auto V_FIELD                 = 0x80001009u;
    constexpr auto V_FUNCTION              = 0x8000100Cu;     // a closure attribute
    constexpr auto V_VARIABLE              = 0x8000100Du;
+   constexpr auto V_MEMBER                = 0x8000100Eu;
    constexpr auto V_STATIC                = 0x8000100Fu;
    constexpr auto V_CONVERSION            = 0x80001011u;
    constexpr auto V_NEWOP                 = 0x80001012u;
@@ -176,15 +181,19 @@ namespace elena_lang
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;
    constexpr auto V_IMPORT                = 0x80001018u;
+   constexpr auto V_AUTO                  = 0x8000101Cu;
    constexpr auto V_NAMESPACE             = 0x80001021u;
    constexpr auto V_INLINE                = 0x80001025u;
+   constexpr auto V_PROBEMODE             = 0x80001026u;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;
    constexpr auto V_INTBINARY             = 0x80000803u;
    //constexpr auto V_DECLOBJ               = 0x80000804u;
    constexpr auto V_WORDBINARY            = 0x80000805u;
+   constexpr auto V_MSSGNAME              = 0x80000806u;
    constexpr auto V_SYMBOL                = 0x80000808u;
+   constexpr auto V_MSSGBINARY            = 0x80000809u;
 
    /// primitive types
    constexpr auto V_STRING                = 0x80000001u;
@@ -199,6 +208,11 @@ namespace elena_lang
    constexpr auto V_INT8ARRAY             = 0x8000000Au;
    constexpr auto V_BINARYARRAY           = 0x8000000Bu;
    constexpr auto V_ELEMENT               = 0x8000000Cu;
+   constexpr auto V_MESSAGE               = 0x8000000Du;
+   constexpr auto V_MESSAGENAME           = 0x8000000Eu;
+   constexpr auto V_INT16                 = 0x8000000Fu;
+   constexpr auto V_INT16ARRAY            = 0x80000010u;
+   constexpr auto V_WIDESTRING            = 0x80000011u;
    constexpr auto V_OBJATTRIBUTES         = 0x80000012u;
    constexpr auto V_CLOSURE               = 0x80000013u;
    constexpr auto V_DECLARATION           = 0x80000014u;

@@ -19,12 +19,24 @@ void init()
 
 // --- API export ---
 
-EXTERN_DLL_EXPORT void InitializeSTA(SystemEnv* env, SymbolList* entryList)
+EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)
 {
-   printf("InitializeSTA.3 %x,%x\n", (int)env, (int)entryList);
+   printf("InitializeSTA.4 %x,%x\n", (int)env, (int)criricalHandler);
    fflush(stdout);
 
+   __routineProvider.InitExceptionHandling(env, criricalHandler);
+
    machine->startSTA(env, entryList);
+}
+
+EXTERN_DLL_EXPORT void ExitLA(int retVal)
+{
+   if (retVal) {
+      printf("Aborted:%x\n", retVal);
+      fflush(stdout);
+   }
+
+   __routineProvider.Exit(retVal);
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,

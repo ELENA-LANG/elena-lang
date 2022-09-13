@@ -91,8 +91,20 @@ void sendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 
 void resendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
+   if (node.arg.reference)
+      tape.write(ByteCode::MovM, node.arg.reference);
+
    int vmtIndex = node.findChild(BuildKey::Index).arg.value;
    tape.write(ByteCode::CallVI, vmtIndex);
+}
+
+void redirectOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   if (node.arg.reference)
+      tape.write(ByteCode::MovM, node.arg.reference);
+
+   int vmtIndex = node.findChild(BuildKey::Index).arg.value;
+   tape.write(ByteCode::JumpVI, vmtIndex);
 }
 
 void directCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
@@ -140,9 +152,28 @@ void copyingAcc(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::Copy, n);
 }
 
+void copyingAccField(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int n = node.findChild(BuildKey::Size).arg.value;
+
+   tape.write(ByteCode::XCopyON, node.arg.value, n);
+}
+
+void copyingToAccField(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int n = node.findChild(BuildKey::Size).arg.value;
+
+   tape.write(ByteCode::XWriteON, node.arg.value, n);
+}
+
 void getLocal(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::PeekFI, node.arg.value);
+}
+
+void localReference(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::SetFP, node.arg.value);
 }
 
 void getArgument(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -197,9 +228,19 @@ void intLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskIntLiteralRef);
 }
 
+void mssgLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskMssgLiteralRef);
+}
+
 void stringLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskLiteralRef);
+}
+
+void wideLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskWideLiteralRef);
 }
 
 void charLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
@@ -278,6 +319,56 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void byteOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   tape.write(ByteCode::CopyDPN, targetOffset, 1);
+   tape.write(ByteCode::XMovSISI, 0, 1);
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+         tape.write(ByteCode::IAddDPN, targetOffset, 1);
+         break;
+      case SUB_OPERATOR_ID:
+         tape.write(ByteCode::ISubDPN, targetOffset, 1);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(ByteCode::IMulDPN, targetOffset, 1);
+         break;
+      case DIV_OPERATOR_ID:
+         tape.write(ByteCode::IDivDPN, targetOffset, 1);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
+void shortOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   tape.write(ByteCode::CopyDPN, targetOffset, 2);
+   tape.write(ByteCode::XMovSISI, 0, 1);
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+         tape.write(ByteCode::IAddDPN, targetOffset, 2);
+         break;
+      case SUB_OPERATOR_ID:
+         tape.write(ByteCode::ISubDPN, targetOffset, 2);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(ByteCode::IMulDPN, targetOffset, 2);
+         break;
+      case DIV_OPERATOR_ID:
+         tape.write(ByteCode::IDivDPN, targetOffset, 2);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
 void intCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    bool inverted = false;
@@ -287,6 +378,75 @@ void intCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
    // NOTE : sp[0] - loperand, sp[1] - roperand
    tape.write(ByteCode::PeekSI, 1);
    tape.write(ByteCode::ICmpN, 4);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case LESS_OPERATOR_ID:
+         opCode = ByteCode::SelLtRR;
+         break;
+      case EQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
+void byteCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   assert(trueRef);
+   assert(falseRef);
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::ICmpN, 1);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case LESS_OPERATOR_ID:
+         opCode = ByteCode::SelLtRR;
+         break;
+      case EQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
+void shortCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::ICmpN, 2);
 
    ByteCode opCode = ByteCode::None;
    switch (node.arg.value) {
@@ -324,6 +484,22 @@ void byteArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
          break;
    default:
       throw InternalError(errFatalError);
+   }
+}
+
+void shortArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   switch (node.arg.value) {
+      case LEN_OPERATOR_ID:
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::NLen, 2);
+         tape.write(ByteCode::SaveDP, targetOffset, 4);
+         break;
+      default:
+         throw InternalError(errFatalError);
    }
 }
 
@@ -377,6 +553,16 @@ void assignSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::XAssignI, node.arg.value);
 }
 
+void swapSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::XSwapSI, node.arg.value);
+}
+
+void accSwapSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SwapSI, node.arg.value);
+}
+
 void getField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    // !! temporally - assigni should be used instead
@@ -420,55 +606,29 @@ void newArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::CreateNR, -n, typeRef | mskVMTRef);
 }
 
+void refParamAssigning(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // store si:0
+   // peekfi
+   // xassign 0
+   tape.write(ByteCode::StoreSI, 0);
+   tape.write(ByteCode::PeekFI, node.arg.value);
+   tape.write(ByteCode::XAssignI, 0);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
-   nullptr,
-   openFrame,
-   closeFrame,
-   nilReference,
-   symbolCall,
-   classReference,
-   sendOp,
-   exit,
-   savingInStack,
-   assigningLocal,
-   getLocal,
-   creatingClass,
-   openStatement,
-   closeStatement,
-   addingBreakpoint,
-   addingBreakpoint,
-   creatingStruct,
-   intLiteral,
-   stringLiteral,
-   goingToEOP,
-   getLocalAddredd,
-   copyingLocal,
-   allocatingStack,
-   freeingStack,
-   savingNInStack,
-   extCallOp,
-   savingIndex,
-   directCallOp,
-   dispatchOp,
-   intOp,
-   byteArraySOp,
-   copyingAcc,
-   getArgument,
-   nullptr,
-   directResend,
-   resendOp,
-   xdispatchOp,
-   boolSOp,
-   intCondOp,
-   charLiteral,
-   assignSPField,
-   getField,
-   staticBegin,
-   staticEnd,
-   classOp,
-   byteArrayOp,
-   newArrayOp
+   nullptr, openFrame, closeFrame, nilReference, symbolCall, classReference, sendOp, exit,
+   savingInStack, assigningLocal, getLocal, creatingClass, openStatement, closeStatement, addingBreakpoint, addingBreakpoint,
+
+   creatingStruct, intLiteral, stringLiteral, goingToEOP, getLocalAddredd, copyingLocal, allocatingStack, freeingStack,
+   savingNInStack, extCallOp, savingIndex, directCallOp, dispatchOp, intOp, byteArraySOp, copyingAcc,
+
+   getArgument, nullptr, directResend, resendOp, xdispatchOp, boolSOp, intCondOp, charLiteral,
+   assignSPField, getField, staticBegin, staticEnd, classOp, byteArrayOp, newArrayOp, swapSPField,
+
+   mssgLiteral, accSwapSPField, redirectOp, shortArraySOp, wideLiteral, byteOp, shortOp, byteCondOp,
+   shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning,
 };
 
 // --- ByteCodeWriter ---
@@ -610,6 +770,48 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
    tape.releaseLabel();
 }
 
+void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths)
+{
+   int eosLabel = tape.newLabel();
+   int catchLabel = tape.newLabel();
+
+   tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
+
+   BuildNode tryNode = node.findChild(BuildKey::Tape);
+   saveTape(tape, tryNode, tapeScope, paths, false);
+
+   // unhook
+   tape.write(ByteCode::Unhook);
+
+   // jump
+   tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+
+   // catchLabel:
+   tape.setLabel();
+
+   // tstflg elMessage
+   // jeq labSkip
+   // load
+   // peeksi 0
+   // callvi 0   
+   // labSkip:
+   // unhook
+   tape.newLabel();
+   tape.write(ByteCode::TstFlag, elMessage);
+   tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
+   tape.write(ByteCode::Load);
+   tape.write(ByteCode::PeekSI);
+   tape.write(ByteCode::CallVI);
+   tape.setLabel();
+   tape.write(ByteCode::Unhook);
+
+   BuildNode catchNode = tryNode.nextNode(BuildKey::Tape);
+   saveTape(tape, catchNode, tapeScope, paths, false);
+
+   // eos:
+   tape.setLabel();
+}
+
 void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)
 {
    BuildNode current = node.firstChild();
@@ -638,7 +840,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             saveVariableInfo(tape, current);
             break;
          case BuildKey::Import:
+            tape.write(ByteCode::ImportOn);
             importTree(tape, current, *tapeScope.scope);
+            tape.write(ByteCode::ImportOff);
             break;
          case BuildKey::NestedClass:
             saveClass(current, tapeScope.scope->moduleScope, tapeScope.scope->minimalArgList, paths);
@@ -648,6 +852,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::LoopOp:
             saveLoop(tape, current, tapeScope, paths);
+            break;
+         case BuildKey::CatchOp:
+            saveCatching(tape, current, tapeScope, paths);
             break;
          default:
             _commands[(int)current.key](tape, current, tapeScope);

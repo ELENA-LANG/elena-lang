@@ -38,6 +38,17 @@ MemoryBase* ByteCodeViewer :: findSymbolCode(ustr_t name)
    return _module->mapSection(reference | mskSymbolRef, true);
 }
 
+MemoryBase* ByteCodeViewer :: findProcedureCode(ustr_t name)
+{
+   ReferenceName referenceName(nullptr, name);
+
+   ref_t reference = _module->mapReference(*referenceName, true);
+   if (!reference)
+      return nullptr;
+
+   return _module->mapSection(reference | mskProcedureRef, true);
+}
+
 MemoryBase* ByteCodeViewer :: findClassVMT(ustr_t name)
 {
    ReferenceName referenceName(nullptr, name);
@@ -119,7 +130,7 @@ mssg_t ByteCodeViewer :: resolveMessageByIndex(MemoryBase* vmt, int index)
 
 mssg_t ByteCodeViewer :: resolveMessage(ustr_t messageName)
 {
-   mssg_t message = ByteCodeUtil::resolveMessage(messageName, _module);
+   mssg_t message = ByteCodeUtil::resolveMessage(messageName, _module, true);
    if (message == 0) {
       printLine("Unknown message ", messageName);
    }
@@ -173,8 +184,17 @@ void ByteCodeViewer :: printLineAndCount(ustr_t arg1, ustr_t arg2, int& row, int
 
 void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 {
+   ustr_t referenceName = nullptr;
    ref_t mask = arg & mskAnyRef;
-   ustr_t referenceName = arg ? _module->resolveReference(arg & ~mskAnyRef) : nullptr;
+   switch (mask) {
+      case mskMssgLiteralRef:
+         referenceName = arg ? _module->resolveConstant(arg & ~mskAnyRef) : nullptr;
+         break;
+      default:
+         referenceName = arg ? _module->resolveReference(arg & ~mskAnyRef) : nullptr;
+         break;
+   }
+
    switch (mask) {
       case mskArrayRef:
          commandStr.append("array:");
@@ -196,12 +216,22 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
          commandStr.append("strconst:");
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
+      case mskWideLiteralRef:
+         commandStr.append("wideconst:");
+         referenceName = _module->resolveConstant(arg & ~mskAnyRef);
+         break;
       case mskCharacterRef:
          commandStr.append("charconst:");
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskStaticVariable:
          commandStr.append("static:");
+         break;
+      case mskProcedureRef:
+         commandStr.append("procedure:");
+         break;
+      case mskMssgLiteralRef:
+         commandStr.append("mssgconst:");
          break;
       default:
          commandStr.append(":");
@@ -221,11 +251,14 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 
 }
 
-void ByteCodeViewer :: addSecondRArg(arg_t arg, IdentifierString& commandStr)
+void ByteCodeViewer :: addSecondRArg(arg_t arg, IdentifierString& commandStr, List<pos_t>& labels)
 {
    commandStr.append(", ");
 
-   addRArg(arg, commandStr);
+   if ((arg & mskAnyRef) == mskLabelRef) {
+      addLabel(arg & ~mskAnyRef, commandStr, labels);
+   }
+   else addRArg(arg, commandStr);
 }
 
 void ByteCodeViewer :: addArg(arg_t arg, IdentifierString& commandStr)
@@ -312,6 +345,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addRArg(command.arg1, commandStr);
             break;
          case ByteCode::MovM:
+         case ByteCode::TstM:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
             break;
@@ -333,7 +367,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::XStoreSIR:
             addArg(command.arg1, commandStr);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::MovSIFI:
             addArg(command.arg1, commandStr);
@@ -341,9 +375,10 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::NewIR:
          case ByteCode::NewNR:
+         case ByteCode::XNewNR:
          case ByteCode::CreateNR:
             addArg(command.arg1, commandStr);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::CallMR:
          case ByteCode::VCallMR:
@@ -353,12 +388,16 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::XDispatchMR:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
             addRArg(command.arg1, commandStr);
-            addSecondRArg(command.arg2, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
+            break;
+         case ByteCode::XHookDPR:
+            addArg(command.arg1, commandStr);
+            addSecondRArg(command.arg2, commandStr, labels);
             break;
          default:
             addArg(command.arg1, commandStr);
@@ -370,13 +409,61 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
 
 void ByteCodeViewer :: addMessage(IdentifierString& commandStr, mssg_t message)
 {
-   ByteCodeUtil::resolveMessageName(commandStr, _module, message);
+   if (!ByteCodeUtil::resolveMessageName(commandStr, _module, message)) {
+      commandStr.append("invalid ");
+      commandStr.appendUInt(message);
+   }      
+}
+
+inline void appendHex32(IdentifierString& command, unsigned int hex)
+{
+   unsigned int n = hex / 0x10;
+   int len = 7;
+   while (n > 0) {
+      n = n / 0x10;
+
+      len--;
+   }
+
+   while (len > 0) {
+      command.append('0');
+      len--;
+   }
+
+   command.appendUInt(hex, 16);
+   command.append('h');
 }
 
 void ByteCodeViewer :: printCommand(ByteCommand& command, int indent, 
    List<pos_t>& labels, pos_t commandPosition)
 {
    IdentifierString commandLine;
+
+   if (_showBytecodes) {
+      if ((int)command.code < 0x10)
+         commandLine.append('0');
+
+      commandLine.appendUInt((int)command.code, 16);
+      commandLine.append(' ');
+
+      if (command.code > ByteCode::MaxDoubleOp) {
+         appendHex32(commandLine, command.arg1);
+         commandLine.append(' ');
+
+         appendHex32(commandLine, command.arg2);
+         commandLine.append(' ');
+      }
+      else if (command.code > ByteCode::MaxSingleOp) {
+         appendHex32(commandLine, command.arg1);
+         commandLine.append(' ');
+      }
+
+      size_t tabbing = command.code == ByteCode::Nop ? 26 : 33;
+      while (commandLine.length() < tabbing) {
+         commandLine.append(' ');
+      }
+   }
+
    if (command.code == ByteCode::Nop) {
       addLabel(commandPosition, commandLine, labels);
       commandLine.append(':');
@@ -440,6 +527,21 @@ void ByteCodeViewer :: printSymbol(ustr_t name)
    printLine("@end");
 }
 
+void ByteCodeViewer :: printProcedure(ustr_t name)
+{
+   // find symbol section
+   MemoryBase* code = findProcedureCode(name);
+   if (code == nullptr) {
+      _presenter->print(ECV_SYMBOL_NOTFOUND, name);
+
+      return;
+   }
+
+   printLine("@procedure", name);
+   printByteCodes(code, 0, 4, _pageSize);
+   printLine("@end");
+}
+
 void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
 {
    if (test(flags, elAbstract)) {
@@ -454,14 +556,23 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elDynamicRole)) {
       printLineAndCount("@flag ", "elDynamicRole", row, pageSize);
    }
+   if (test(flags, elExtension)) {
+      printLineAndCount("@flag ", "elExtension", row, pageSize);
+   }
    if (test(flags, elFinal)) {
       printLineAndCount("@flag ", "elFinal", row, pageSize);
    }
    if (test(flags, elNestedClass)) {
       printLineAndCount("@flag ", "elNestedClass", row, pageSize);
    }
+   if (test(flags, elNoCustomDispatcher)) {
+      printLineAndCount("@flag ", "elNoCustomDispatcher", row, pageSize);
+   }
    if (test(flags, elNonStructureRole)) {
       printLineAndCount("@flag ", "elNonStructureRole", row, pageSize);
+   }
+   if (test(flags, elMessage)) {
+      printLineAndCount("@flag ", "elMessage", row, pageSize);
    }
    if (test(flags, elReadOnlyRole)) {
       printLineAndCount("@flag ", "elReadOnlyRole", row, pageSize);
@@ -478,17 +589,11 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elStructureRole)) {
       printLineAndCount("@flag ", "elStructureRole", row, pageSize);
    }
-   if (test(flags, elWrapper)) {
-      printLineAndCount("@flag ", "elWrapper", row, pageSize);
-   }
-   if (test(flags, elNoCustomDispatcher)) {
-      printLineAndCount("@flag ", "elNoCustomDispatcher", row, pageSize);
-   }
    if (test(flags, elStructureWrapper)) {
       printLineAndCount("@flag ", "elStructureWrapper", row, pageSize);
    }
-   if (test(flags, elExtension)) {
-      printLineAndCount("@flag ", "elExtension", row, pageSize);
+   if (test(flags, elWrapper)) {
+      printLineAndCount("@flag ", "elWrapper", row, pageSize);
    }
 }
 
@@ -729,6 +834,10 @@ void ByteCodeViewer :: runSession()
             case 'o':
                _presenter->setOutputMode(buffer + 2);
                break;
+            case 'b':
+               _showBytecodes = !_showBytecodes;
+               _presenter->print("Bytecode mode is %s", _showBytecodes ? "true" : "false");
+               break;
             default:
                printHelp();
                break;
@@ -736,6 +845,9 @@ void ByteCodeViewer :: runSession()
       }
       else if (buffer[0] == '#') {
          printSymbol(buffer + 1);
+      }
+      else if (buffer[0] == '*') {
+         printProcedure(buffer + 1);
       }
       else if (ustr_t(buffer).find('.') != NOTFOUND_POS) {
          printMethod(buffer, true);

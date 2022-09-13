@@ -663,7 +663,7 @@ void X86Assembler :: compileJmp(ScriptToken& tokenInfo, MemoryWriter& writer, La
       if(!compileJmp(operand, writer))
          throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
    }
-   else if (operand.type == X86OperandType::DD && operand.reference == INVALID_REF) {
+   else if (operand.type == X86OperandType::DD && (operand.reference == RELPTR32_1 || operand.reference == RELPTR32_2)) {
       if(!compileJmp(operand, writer))
          throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
    }
@@ -1176,7 +1176,7 @@ bool X86Assembler :: compileJmp(X86Operand source, MemoryWriter& writer)
       writer.writeByte(0xFF);
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
    }
-   else if (source.type == X86OperandType::DD && source.reference == INVALID_REF) {
+   else if (source.type == X86OperandType::DD && (source.reference == RELPTR32_1 || source.reference == RELPTR32_2)) {
       writer.writeByte(0xE9);
       writer.writeDReference(source.reference, 0);
    }
@@ -1241,14 +1241,20 @@ bool X86Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWrit
    }
    else if (source.type == X86OperandType::Disp32 && target.type == X86OperandType::EAX) {
       writer.writeByte(0xA3);
-      if (target.reference != 0) {
-         writer.writeDReference(target.reference, target.offset);
+      if (source.reference != 0) {
+         writer.writeDReference(source.reference, source.offset);
       }
-      else writer.writeDWord(target.offset);
+      else writer.writeDWord(source.offset);
    }
    else if (source.isR32() && target.isDB_DD()) {
       target.type = X86OperandType::DD;
       writer.writeByte(0xB8 + (char)source.type);
+      X86Helper::writeImm(writer, target);
+   }
+   else if (source.isR32_M32() && target.isDB_DD()) {
+      target.type = X86OperandType::DD;
+      writer.writeByte(0xC7);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 0 }, source);
       X86Helper::writeImm(writer, target);
    }
    else if (source.isR32() && target.isR32_M32()) {
@@ -1444,6 +1450,11 @@ bool X86Assembler :: compileTest(X86Operand source, X86Operand target, MemoryWri
    if (source.isR32_M32() && target.isR32()) {
       writer.writeByte(0x85);
       X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR32_M32() && target.type == X86OperandType::DD) {
+      writer.writeByte(0xF7);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 0), source);
+      X86Helper::writeImm(writer, target);   
    }
    else return false;
 

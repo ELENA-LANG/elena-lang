@@ -33,7 +33,7 @@ bool ScriptReader::read(ScriptToken& tokenInfo)
          tokenInfo.state = dfaEOF;
          return false;
       default:
-         if (tokenInfo.state == dfaQuote) {
+         if (tokenInfo.state == dfaQuote || tokenInfo.state == dfaWideQuote) {
             copyQuote(tokenInfo);
          }
          else copyToken(tokenInfo);

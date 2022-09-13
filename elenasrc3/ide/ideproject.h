@@ -11,6 +11,14 @@
 
 namespace elena_lang
 {
+   constexpr auto MAXIMIZED_SETTINGS = "configuration/settings/maximized";
+   constexpr auto FONTSIZE_SETTINGS = "configuration/settings/font_size";
+
+   constexpr auto RECENTFILES_SETTINGS = "configuration/recent_files/*";
+
+   // --- Map types ---
+   typedef List<path_t, freepath> ProjectPaths;
+
    // --- ProjectModel ---
    struct ProjectModel
    {
@@ -23,11 +31,15 @@ namespace elena_lang
          PathString libraryRoot;
          PathString lastPath;
          PathString librarySourceRoot;
+         PathString appPath;
+         PathString compilerPath;
       } paths;
 
-      bool       autoRecompile;
-      PathString projectPath;
-      PathString outputPath;
+      bool           autoRecompile;
+      PathString     projectPath;
+      PathString     outputPath;
+
+      ProjectPaths   lastOpenFiles;
 
       ustr_t getTarget();
       ustr_t getArguments();

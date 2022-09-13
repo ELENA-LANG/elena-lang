@@ -14,6 +14,26 @@
 namespace elena_lang
 {
 
+// --- IDEScheme ---
+struct IDEScheme
+{
+   int               textFrameId;
+   int               resultControl;
+   int               compilerOutputControl;
+   int               errorListControl;
+
+   Map<int, text_t>  captions;
+
+   IDEScheme() : 
+      textFrameId(-1), 
+      resultControl(-1), 
+      compilerOutputControl(-1), 
+      errorListControl(-1),
+      captions(nullptr)
+   {
+   }
+};
+
 // --- IDEListener ---
 
 class IDEListener
@@ -34,6 +54,10 @@ public:
 
    SourceViewModel sourceViewModel;
    ProjectModel    projectModel;
+   IDEScheme       ideScheme;
+
+   bool            appMaximized;
+
 
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
@@ -43,10 +67,11 @@ public:
 
    void onIDEChange();
 
-   IDEModel(int fontSize)
-      : listeners(nullptr), sourceViewModel(fontSize), projectModel(&status)
+   IDEModel()
+      : listeners(nullptr), projectModel(&status)
    {
       status = IDEStatus::None;
+      appMaximized = false;
    }
 };
 

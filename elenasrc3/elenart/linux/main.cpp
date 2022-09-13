@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -20,13 +20,24 @@ void init()
    machine = new ELENARTMachine();
 }
 
-void InitializeSTA(SystemEnv* env, SymbolList* entryList)
+void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)
 {
-   printf("InitializeSTA.2 %llx,%llx\n", (long long)env, (long long)entryList);
+   printf("InitializeSTA.4 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
    fflush(stdout);
 
    if (machine != nullptr)
       init();
 
+   __routineProvider.InitExceptionHandling(env, criricalHandler);
+
    machine->startSTA(env, entryList);
+}
+
+void ExitLA(int retVal)
+{
+   if (retVal) {
+      printf("Aborted:%x\n", retVal);
+      fflush(stdout);
+   }
+   __routineProvider.Exit(retVal);
 }

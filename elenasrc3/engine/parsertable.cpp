@@ -148,7 +148,7 @@ bool ParserTable :: checkRule(parse_key_t l_symbol)
    return _syntax.exist(syntax_key);
 }
 
-parse_key_t ParserTable :: generate()
+Pair<parse_key_t, parse_key_t> ParserTable :: generate()
 {
    SymbolHash FIRSTsets(0);
    SymbolHash FOLLOWsets(0);
@@ -210,7 +210,7 @@ parse_key_t ParserTable :: generate()
 
       if (test(*rule, pkTerminal)) {
          if (!copySubSet(_syntax, _table, rule.key(), tableKey(l_symbol, *rule)))
-            return l_symbol;
+            return  { *rule, l_symbol };
       }
       else {
          SymbolHash::Iterator it = FIRSTsets.getIt(*rule);
@@ -221,7 +221,7 @@ parse_key_t ParserTable :: generate()
                   if (*f_it != pkEps) {
                      // check if the rule is ambigous
                      if (_table.exist(tableKey(l_symbol, *f_it)))
-                        return l_symbol;
+                        return { *f_it, l_symbol };
 
                      //_table.add(tableKey(l_symbol, *it), nsEps);
                      copySubSet(_syntax, _table, rule.key(), tableKey(l_symbol, *f_it));
@@ -234,13 +234,13 @@ parse_key_t ParserTable :: generate()
             }
             else {
                if (!copySubSet(_syntax, _table, rule.key(), tableKey(l_symbol, *it)))
-                  return l_symbol;
+                  return { *it, l_symbol };
             }
             it++;
          }
       }
    }
-   return 0;
+   return {};
 }
 
 bool ParserTable::read(parse_key_t nonterminal, parse_key_t terminal, ParserStack& derivationStack)

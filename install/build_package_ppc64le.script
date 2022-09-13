@@ -105,14 +105,34 @@ fi
    exit 1
  fi
 
-# ../bin/elena-lc ../src50/extensions/extensions.project
-# ret=$?
-# if [ $ret -eq -2 ]
-# then
-#   echo "Failure" >&2
-#   exit 1
-# else
-#   echo .
-# fi
+ ../bin/elena64-cli ../src60/extensions/extensions.project
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../bin/elena64-cli ../tests60/system_tests/system_tests.project
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../tests60/system_tests/system_tests
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
 
 exit 0

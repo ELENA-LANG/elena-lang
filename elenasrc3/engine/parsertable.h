@@ -60,7 +60,7 @@ namespace elena_lang
       parse_key_t resolveSymbolByIndex(int index);
       ustr_t resolveKey(parse_key_t key);
 
-      parse_key_t generate();
+      Pair<parse_key_t, parse_key_t> generate();
 
       bool read(parse_key_t nonterminal, parse_key_t terminal, ParserStack& derivationStack);
 

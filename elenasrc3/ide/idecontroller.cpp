@@ -6,6 +6,7 @@
 
 #include "idecontroller.h"
 #include "eng/messages.h"
+#include "config.h"
 
 using namespace elena_lang;
 
@@ -147,7 +148,7 @@ bool ProjectController :: isOutaged(bool noWarning)
    return false; // !! temporal
 }
 
-bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
+bool ProjectController :: onDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action)
 {
    if (testIDEStatus(model.getStatus(), IDEStatus::Busy))
       return false;
@@ -156,7 +157,7 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
       bool toRecompile = model.autoRecompile && !testIDEStatus(model.getStatus(), IDEStatus::AutoRecompiling);
       if (isOutaged(toRecompile)) {
          if (toRecompile) {
-            if (!doCompileProject(model, action))
+            if (!doCompileProject(model, singleProjectPath, action))
                return false;
          }
          return false;
@@ -167,10 +168,10 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
    return true;
 }
 
-void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
+void ProjectController :: doDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action)
 {
    if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
-      if (onDebugAction(model, action)) {
+      if (onDebugAction(model, singleProjectPath, action)) {
          switch (action) {
             case DebugAction::Run:
                _debugController.run();
@@ -195,17 +196,77 @@ bool ProjectController :: compile()
    return true;
 }
 
-bool ProjectController :: compileSingleFile()
+bool ProjectController :: compileSingleFile(ProjectModel& model, path_t singleProjectFile)
 {
-   return true;
+   PathString appPath(model.paths.appPath);
+   appPath.combine(*model.paths.compilerPath);
+
+   PathString cmdLine(*model.paths.compilerPath);
+   cmdLine.append(" ");
+   cmdLine.append(singleProjectFile);
+
+   PathString curDir;
+   curDir.append(singleProjectFile, singleProjectFile.findLast('\\'));
+
+   return _outputProcess->start(*appPath, *cmdLine, *curDir, true);
 }
 
-bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction postponedAction)
+bool ProjectController :: doCompileProject(ProjectModel& model, path_t singleProjectFile, DebugAction postponedAction)
 {
-   return compileSingleFile();
+   if (!singleProjectFile.empty()) {
+      return compileSingleFile(model, singleProjectFile);
+   }
+   else return false;   
 }
 
 // --- IDEController ---
+
+inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
+{
+   // read target type; merge it with platform if required
+   ConfigFile::Node targetType = config.selectNode(xpath);
+   if (!targetType.isNotFound()) {
+      DynamicString<char> key;
+      targetType.readContent(key);
+
+      return key.toInt();
+   }
+   else return defValue;
+}
+
+inline void loadRecentFiles(ConfigFile& config, ustr_t xpath, ProjectPaths& paths)
+{
+   DynamicString<char> path;
+
+   ConfigFile::Collection list;
+   if (config.select(xpath, list)) {
+      for (auto m_it = list.start(); !m_it.eof(); ++m_it) {
+         ConfigFile::Node pathNode = *m_it;
+         pathNode.readContent(path);
+
+         PathString filePath(path.str());
+
+         paths.add((*filePath).clone());
+      }
+   }
+}
+
+bool IDEController :: loadConfig(IDEModel* model, path_t path)
+{
+   ConfigFile config;
+   if (config.load(path, FileEncoding::UTF8)) {
+      model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
+      model->sourceViewModel.fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);
+
+      loadRecentFiles(config, RECENTFILES_SETTINGS, model->projectModel.lastOpenFiles);
+
+      return true;
+   }
+   else {
+      return false;
+   }
+
+}
 
 void IDEController :: init(IDEModel* model)
 {
@@ -265,7 +326,7 @@ void IDEController :: doOpenFile(DialogBase& dialog, IDEModel* model)
    }
 }
 
-bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode)
+bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave)
 {
    auto docView = model->sourceViewModel.DocView();
    if (!docView)
@@ -280,9 +341,21 @@ bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveA
       projectController.defineSourceName(*path, sourceNameStr);
 
       sourceController.renameSource(&model->sourceViewModel, nullptr, *sourceNameStr, *path);
+
+      forcedSave = true;
    }
 
-   sourceController.saveSource(&model->sourceViewModel, nullptr);
+   if (forcedSave)
+      sourceController.saveSource(&model->sourceViewModel, nullptr);
+
+   return true;
+}
+
+bool IDEController :: doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode)
+{
+   // !! temporal
+   if (!doSaveFile(dialog, model, false, forcedMode))
+      return false;
 
    return true;
 }
@@ -294,7 +367,7 @@ bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
       ustr_t current = model->sourceViewModel.getDocumentName(-1);
 
       if (docView->status.unnamed) {
-         doSaveFile(dialog, model, false);
+         doSaveFile(dialog, model, false, true);
       }
       else if (docView->status.modifiedMode) {
          path_t path = model->sourceViewModel.getDocumentPath(current);
@@ -306,7 +379,7 @@ bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
             return false;
          }
          else if (result == DialogBase::Answer::Yes) {
-            if (!doSaveFile(dialog, model, false))
+            if (!doSaveFile(dialog, model, false, true))
                return false;
          }
       }
@@ -321,4 +394,125 @@ bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
 bool IDEController :: doExit()
 {
    return true;
+}
+
+path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
+{
+   return model->sourceViewModel.getDocumentPath(
+      model->sourceViewModel.getDocumentName(-1));
+}
+
+void IDEController :: doDebugAction(IDEModel* model, DebugAction action)
+{
+   projectController.doDebugAction(model->projectModel, retrieveSingleProjectFile(model), action);
+}
+
+void IDEController :: onCompilationStart(IDEModel* model)
+{
+   model->status = IDEStatus::Busy;
+
+   model->onIDEChange();
+
+   _notifier->notifyMessage(NOTIFY_SHOW_RESULT, model->ideScheme.compilerOutputControl);
+}
+
+void IDEController :: onCompilationStop(IDEModel* model)
+{
+   model->status = IDEStatus::Ready;
+
+   model->onIDEChange();
+}
+
+void IDEController :: onCompilationBreak(IDEModel* model)
+{
+   model->status = IDEStatus::Ready;
+
+   model->onIDEChange();
+}
+
+void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBase* log)
+{
+   _notifier->notifyMessage(NOTIFY_SHOW_RESULT, model->ideScheme.errorListControl);
+
+   // parse output for errors
+   pos_t length = output.length_pos();
+   pos_t index = 0;
+
+   WideMessage message;
+   WideMessage fileStr, rowStr, colStr;
+   while (index < length) {
+      index = output.findSubStr(index, _T(": error "), length);
+      if (index == NOTFOUND_POS) {
+         index = output.findSubStr(index, _T(": warning "), length);
+      }
+      if (index == NOTFOUND_POS)
+         break;
+
+      pos_t errPos = index;
+      pos_t rowPos = NOTFOUND_POS;
+      pos_t colPos = NOTFOUND_POS;
+      pos_t bolPos = 0;
+
+      index--;
+      while (index >= 0) {
+         if (output[index] == '(') {
+            rowPos = index + 1;
+         }
+         else if (output[index] == ':' && colPos == NOTFOUND_POS) {
+            colPos = index + 1;
+         }
+         else if (output[index] == '\n') {
+            bolPos = index;
+            break;
+         }
+
+         index--;
+      }
+      index = output.findSub(errPos, '\n');
+      message.copy(output.str() + errPos + 2, index - errPos - 3);
+      if (rowPos != NOTFOUND_POS) {
+         fileStr.copy(output.str() + bolPos + 1, rowPos - bolPos - 2);
+         if (colPos != NOTFOUND_POS) {
+            rowStr.copy(output.str() + rowPos, colPos - rowPos - 1);
+            colStr.copy(output.str() + colPos, errPos - colPos - 1);
+         }
+      }
+      else {
+         fileStr.clear();
+         colStr.clear();
+         rowStr.clear();
+      }
+      
+      log->addMessage(*message, *fileStr, *rowStr, *colStr);
+   }
+}
+
+void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode, 
+   text_str output, ErrorLogBase* log)
+{
+   if (exitCode == 0) {
+
+   }
+   else displayErrors(model, output, log);
+}
+
+bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
+{
+   onCompilationStart(model);
+
+   if (!doSaveProject(dialog, model, false)) {
+      onCompilationBreak(model);
+
+      return false;
+   }
+
+   if (projectController.doCompileProject(model->projectModel, retrieveSingleProjectFile(model), 
+      DebugAction::None)) 
+   {
+      onCompilationStop(model);
+
+      return true;
+   }
+
+   return false;
 }

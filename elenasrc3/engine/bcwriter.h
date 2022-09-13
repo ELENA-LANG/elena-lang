@@ -60,6 +60,7 @@ namespace elena_lang
       void saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
          ReferenceMap& paths, bool loopMode);
       void saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths);
+      void saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths);
       void saveVariableInfo(CommandTape& tape, BuildNode node);
 
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, ReferenceMap& paths);

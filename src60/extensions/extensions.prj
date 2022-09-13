@@ -1,0 +1,21 @@
+<configuration>
+  <platform key="Win_x86">
+     <project>
+        <output>..\..\lib60</output>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <output>..\..\lib60_64</output>
+     </project>
+  </platform>
+  <project>
+     <namespace>extensions</namespace>
+     <template>lib60</template>
+  </project>
+  <files>
+     <module>
+        <include>tests.l</include>
+     </module>
+  </files>
+</configuration>

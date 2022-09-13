@@ -35,12 +35,22 @@ bin\elena-cli src60\system\system.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elena-cli src60\extensions\extensions.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 bin\asm-cli -bc64 src60\core\system.core_routines.esm lib60_64
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
 bin\elena64-cli src60\system\system.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+bin\elena64-cli src60\extensions\extensions.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

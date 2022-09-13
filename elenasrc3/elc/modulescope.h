@@ -33,6 +33,8 @@ public:
       return importReference(referenceModule, referenceModule->resolveReference(reference));
    }
    ref_t importReferenceWithMask(ModuleBase* referenceModule, ref_t reference);
+   ref_t importConstant(ModuleBase* referenceModule, ref_t reference);
+   ref_t importMessageConstant(ModuleBase* referenceModule, ref_t reference);
 
    ref_t mapAnonymous(ustr_t prefix) override;
 
@@ -90,8 +92,9 @@ public:
       ModuleBase* debugModule,
       pos_t stackAlingment,
       pos_t rawStackAlingment,
+      pos_t ehTableEntrySize,
       int minimalArgList)
-      : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, minimalArgList)
+      : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, minimalArgList)
    {
       this->loader = loader;
       this->forwardResolver = forwardResolver;

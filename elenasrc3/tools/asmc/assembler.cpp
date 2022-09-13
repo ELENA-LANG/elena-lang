@@ -67,6 +67,9 @@ int AssemblerBase :: readInteger(ScriptToken& tokenInfo)
    else if (tokenInfo.compare("-")) {
       return -readInteger(tokenInfo);
    }
+   else if (tokenInfo.compare("~")) {
+      return ~readInteger(tokenInfo);
+   }
    else
    {
       if (constants.exist(*tokenInfo.token)) {
@@ -128,6 +131,14 @@ bool AssemblerBase :: getArgReference(ScriptToken& tokenInfo, int& offset, ref_t
       reference = PTR32_2;
       offset = 0;
    }
+   else if (tokenInfo.compare(RELPTR32_ARGUMENT1)) {
+      reference = RELPTR32_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(RELPTR32_ARGUMENT2)) {
+      reference = RELPTR32_2;
+      offset = 0;
+   }
    else if (tokenInfo.compare(PTR64_ARGUMENT1)) {
       reference = PTR64_1;
       offset = 0;
@@ -157,7 +168,11 @@ bool AssemblerBase :: getArgReference(ScriptToken& tokenInfo, int& offset, ref_t
       offset = 0;
    }
    else if (tokenInfo.compare(N16HI_ARGUMENT1)) {
-      reference = NARGHI_1;
+      reference = NARG16HI_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(N16LO_ARGUMENT1)) {
+      reference = NARG16LO_1;
       offset = 0;
    }
    else if (tokenInfo.compare(N12_ARGUMENT1)) {
@@ -182,6 +197,30 @@ bool AssemblerBase :: getArgReference(ScriptToken& tokenInfo, int& offset, ref_t
    }
    else if (tokenInfo.compare(DISP32LO_ARGUMENT2)) {
       reference = DISP32LO_2;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(XDISP32LO_ARGUMENT1)) {
+      reference = XDISP32LO_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(XDISP32LO_ARGUMENT2)) {
+      reference = XDISP32LO_2;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(XDISP32HI_ARGUMENT1)) {
+      reference = XDISP32HI_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(XDISP32HI_ARGUMENT2)) {
+      reference = XDISP32HI_2;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(XDISP32LO_ARGUMENT1)) {
+      reference = XDISP32LO_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(XDISP32LO_ARGUMENT2)) {
+      reference = XDISP32LO_2;
       offset = 0;
    }
    else if (tokenInfo.compare(PTR32HI_ARGUMENT1)) {
@@ -240,6 +279,19 @@ bool AssemblerBase :: getIntConstant(ScriptToken& tokenInfo, int& offset, ref_t&
          }
          else if (reference == ARG12_1) {
             reference = INV_ARG12_1;
+         }
+         else return false;
+      }
+      else return false;
+
+      return true;
+   }
+   else if (tokenInfo.compare("~")) {
+      read(tokenInfo);
+
+      if (getIntConstant(tokenInfo, offset, reference)) {
+         if (!reference) {
+            offset = ~offset;
          }
          else return false;
       }

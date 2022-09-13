@@ -33,6 +33,7 @@ using namespace elena_lang;
 
 constexpr auto DEFAULT_STACKALIGNMENT     = 1;
 constexpr auto DEFAULT_RAW_STACKALIGNMENT = 4;
+constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 16;
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86;
 
@@ -48,6 +49,7 @@ typedef Win32NtImageFormatter     WinImageFormatter;
 
 constexpr auto DEFAULT_STACKALIGNMENT     = 2;
 constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
+constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 32;
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86_64;
 
@@ -264,6 +266,7 @@ int main()
          return process.build(project, linker,
             DEFAULT_STACKALIGNMENT,
             DEFAULT_RAW_STACKALIGNMENT,
+            DEFAULT_EHTABLE_ENTRY_SIZE,
             MINIMAL_ARG_LIST);
       }
    }

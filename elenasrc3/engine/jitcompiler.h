@@ -91,6 +91,7 @@ namespace elena_lang
       friend void* retrieveIndexRCode(JITCompilerScope* scope);
       friend void* retrieveCodeWithNegative(JITCompilerScope* scope);
       friend void* retrieveICode(JITCompilerScope* scope, int arg);
+      friend void* retrieveRCode(JITCompilerScope* scope, int arg);
 
       friend void loadOp(JITCompilerScope* scope);
       friend void loadLOp(JITCompilerScope* scope);
@@ -105,6 +106,7 @@ namespace elena_lang
       friend void loadLenOp(JITCompilerScope* scope);
       friend void loadROp(JITCompilerScope* scope);
       friend void loadRROp(JITCompilerScope* scope);
+      friend void loadONOp(JITCompilerScope* scope);
       friend void loadMOp(JITCompilerScope* scope);
       friend void loadCallOp(JITCompilerScope* scope);
       friend void loadCallROp(JITCompilerScope* scope);
@@ -119,6 +121,8 @@ namespace elena_lang
       friend void loadMROp(JITCompilerScope* scope);
       friend void loadVMTROp(JITCompilerScope* scope);
       friend void loadDPNOp(JITCompilerScope* scope);
+      friend void loadDPROp(JITCompilerScope* scope);
+      friend void loadDPLabelOp(JITCompilerScope* scope);
       friend void loadIOp(JITCompilerScope* scope);
 
       friend void compileBreakpoint(JITCompilerScope* scope);
@@ -128,6 +132,7 @@ namespace elena_lang
       friend void compileJeq(JITCompilerScope* scope);
       friend void compileJne(JITCompilerScope* scope);
       friend void compileDispatchMR(JITCompilerScope* scope);
+      friend void compileHookDPR(JITCompilerScope* scope);
 
       void loadCoreRoutines(
          LibraryLoaderBase* loader,
@@ -167,6 +172,11 @@ namespace elena_lang
                writer->writeWord(value);
                break;
          }         
+      }
+
+      void writeImm16Hi(MemoryWriter* writer, int value, int type) override
+      {
+         writeImm16(writer, value >> 16, type);
       }
 
       void writeImm32(MemoryWriter* writer, int value) override
@@ -231,7 +241,9 @@ namespace elena_lang
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
+      void writeWideLiteral(MemoryWriter& writer, wstr_t value) override;
       void writeChar32(MemoryWriter& writer, ustr_t value) override;
+      void writeMessage(MemoryWriter& writer, mssg_t value) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
       void writeVariable(MemoryWriter& writer) override;
 
@@ -290,7 +302,9 @@ namespace elena_lang
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
+      void writeWideLiteral(MemoryWriter& writer, wstr_t value) override;
       void writeChar32(MemoryWriter& writer, ustr_t value) override;
+      void writeMessage(MemoryWriter& writer, mssg_t value) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
       void writeVariable(MemoryWriter& writer) override;
 
@@ -310,6 +324,7 @@ namespace elena_lang
    inline void* retrieveIndexRCode(JITCompilerScope* scope);
    inline void* retrieveCodeWithNegative(JITCompilerScope* scope);
    inline void* retrieveICode(JITCompilerScope* scope, int arg);
+   inline void* retrieveRCode(JITCompilerScope* scope, int arg);
 
    void loadNop(JITCompilerScope*);
    void loadOp(JITCompilerScope* scope);
@@ -325,6 +340,7 @@ namespace elena_lang
    void loadLenOp(JITCompilerScope* scope);
    void loadROp(JITCompilerScope* scope);
    void loadRROp(JITCompilerScope* scope);
+   void loadONOp(JITCompilerScope* scope);
    void loadMOp(JITCompilerScope* scope);
    void loadCallOp(JITCompilerScope* scope);
    void loadCallROp(JITCompilerScope* scope);
@@ -339,6 +355,8 @@ namespace elena_lang
    void loadMROp(JITCompilerScope* scope);
    void loadVMTROp(JITCompilerScope* scope);
    void loadDPNOp(JITCompilerScope* scope);
+   void loadDPROp(JITCompilerScope* scope);
+   void loadDPLabelOp(JITCompilerScope* scope);
    void loadIOp(JITCompilerScope* scope);
 
    void compileClose(JITCompilerScope* scope);
@@ -348,6 +366,7 @@ namespace elena_lang
    void compileJeq(JITCompilerScope* scope);
    void compileJne(JITCompilerScope* scope);
    void compileDispatchMR(JITCompilerScope* scope);
+   void compileHookDPR(JITCompilerScope* scope);
 }
 
 #endif

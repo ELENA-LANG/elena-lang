@@ -92,6 +92,18 @@ namespace elena_lang
    class PPCHelper
    {
    public:
+      static short getHiAdjusted(disp_t n)
+      {
+         // HOTFIX : if the DWORD LO is over 0x7FFF - adjust DWORD HI (by adding 1) to be properly combined in the following code:
+         //     addis   r16, r16, __xdisp32hi_1
+         //     addi    r16, r16, __xdisp32lo_1
+         short lo = n & 0xFFFF;
+         if (lo < 0)
+            n += 0x10000;
+
+         return (short)(n >> 16);
+      }
+
       static unsigned int makeDSCommand(unsigned int opcode, PPCOperandType rs, PPCOperandType ra, int d)
       {
          return (opcode << 26) | (((unsigned int)rs & 0x1F) << 21) | (((unsigned int)ra & 0x1F) << 16) | ((unsigned int)d & 0xFFFC);
@@ -197,6 +209,36 @@ namespace elena_lang
                PPCHelper::fixBCommand(opcode, offset);
             }
          }
+
+         for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
+            auto info = *a_it;
+
+            pos_t offset = writer.position();
+
+            switch (info.mask) {
+               case mskXDisp32Hi:
+               case mskDisp32Hi:
+               {
+                  offset >>= 16;
+
+                  PPCHelper::fixBCommand(writer.Memory()->get(info.position), offset);
+                  writer.Memory()->addReference(mskCodeXDisp32Hi, info.position);
+                  break;
+               }
+               case mskXDisp32Lo:
+               case mskDisp32Lo:
+               {
+                  offset &= 0xFFFF;
+
+                  PPCHelper::fixBCommand(writer.Memory()->get(info.position), offset);
+                  writer.Memory()->addReference(mskCodeXDisp32Lo, info.position);
+                  break;
+               }
+            default:
+               break;
+            }
+         }
+
          return true;
       }
 

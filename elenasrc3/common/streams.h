@@ -38,6 +38,13 @@ namespace elena_lang
          return value;
       }
 
+      static void maskDWord(MemoryBase* source, pos_t position, ref_t mask)
+      {
+         unsigned int value = getDWord(source, position);
+
+         writeDWord(source, position, value | mask);
+      }
+
       static bool writeQWord(MemoryBase* target, pos_t position, unsigned long long value)
       {
          return target->write(position, &value, sizeof(value));
@@ -298,6 +305,15 @@ namespace elena_lang
             count--;
          }
          return true;
+      }
+
+      bool writeWideString(wstr_t s, pos_t length)
+      {
+         return write(s, length << 1);
+      }
+      bool writeWideString(wstr_t s)
+      {
+         return writeWideString(s, s.length_pos() + 1);
       }
 
       bool writeString(ustr_t s, pos_t length)

@@ -71,16 +71,23 @@ namespace elena_lang
 
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 
+   constexpr auto RETVAL_ARG              = "$retVal";
+
    constexpr auto SYSTEM_FORWARD          = "$system_entry";   // the system entry
    constexpr auto SUPER_FORWARD           = "$super";          // the common class predecessor
    constexpr auto INTLITERAL_FORWARD      = "$int";            // the int literal
+   constexpr auto INT8LITERAL_FORWARD     = "$byte";           // the int literal
+   constexpr auto INT16LITERAL_FORWARD    = "$short";          // the int literal
    constexpr auto LITERAL_FORWARD         = "$string";         // the string literal
+   constexpr auto WIDELITERAL_FORWARD     = "$wide";           // the wide string literal
    constexpr auto CHAR_FORWARD            = "$char";           // the char literal
    constexpr auto BOOL_FORWARD            = "$boolean";        // the boolean class
    constexpr auto TRUE_FORWARD            = "$true";           // the true boolean value
    constexpr auto FALSE_FORWARD           = "$false";          // the false boolean value
    constexpr auto WRAPPER_FORWARD         = "$ref";            // the wrapper template
    constexpr auto ARRAY_FORWARD           = "$array";          // the array template 
+   constexpr auto MESSAGE_FORWARD         = "$message";        // the message class
+   constexpr auto CLOSURE_FORWARD         = "$closure";        // the message class
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";
@@ -98,9 +105,13 @@ namespace elena_lang
    constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
    constexpr auto CAST_MESSAGE            = "#cast";
    constexpr auto INVOKE_MESSAGE          = "#invoke";
+   constexpr auto TRY_INVOKE_MESSAGE      = "#try_invoke";
    constexpr auto INIT_MESSAGE            = "#init";
 
    constexpr auto ADD_MESSAGE             = "add";
+   constexpr auto SUB_MESSAGE             = "subtract";
+   constexpr auto MUL_MESSAGE             = "multiply";
+   constexpr auto DIV_MESSAGE             = "divide";
    constexpr auto IF_MESSAGE              = "if";
    constexpr auto EQUAL_MESSAGE           = "equal";
    constexpr auto NOT_MESSAGE             = "Inverted";
@@ -129,6 +140,7 @@ namespace elena_lang
    constexpr ref_t elStructureWrapper     = 0x00004800;
    constexpr ref_t elDynamicRole          = 0x00008000;
    constexpr ref_t elExtension            = 0x0000110C;
+   constexpr ref_t elMessage              = 0x00200000;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -239,6 +251,10 @@ namespace elena_lang
    constexpr ref_t mskStaticVariable      = 0x19000000u;
    constexpr ref_t mskNameLiteralRef      = 0x1A000000u;
    constexpr ref_t mskPathLiteralRef      = 0x1B000000u;
+   constexpr ref_t mskMssgLiteralRef      = 0x1B000000u;
+   constexpr ref_t mskLabelRef            = 0x1C000000u;
+   constexpr ref_t mskWideLiteralRef      = 0x1D000000u;   // reference to wide literal constant
+
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;
@@ -254,13 +270,15 @@ namespace elena_lang
    constexpr ref_t mskRef32               = 0x80000000u;
    constexpr ref_t mskRelRef32            = 0x40000000u;
    constexpr ref_t mskRef64               = 0xC0000000u;
-   constexpr ref_t mskRef32Hi             = 0x20000000u;         // <32 bit address> >> 12    ; for ARM64 : it should be b20:5
-   constexpr ref_t mskRef32Lo             = 0xA0000000u;         // <32 bit address> & 0xFFFF ; for ARM64 : it should be b20:5   
+   constexpr ref_t mskRef32Hi             = 0x20000000u;         // <32 bit address> >> 16     
+   constexpr ref_t mskRef32Lo             = 0xA0000000u;         // <32 bit address> & 0xFFFFF 
    constexpr ref_t mskDisp32Hi            = 0x60000000u;
    constexpr ref_t mskDisp32Lo            = 0xE0000000u;
    constexpr ref_t mskRelRef32Hi4k        = 0x10000000u;          // <32 bit address> >> 12    ; for ARM64 : it should be split: hi 2 bits goes to b30:29, the rest b23:5
    constexpr ref_t mskRef32Lo12           = 0x90000000u;          // <32 bit address> & 0xFFF  ; for ARM64 : it shoulb be b21:10
    constexpr ref_t mskRef32Lo12_8         = 0x50000000u;          // <32 bit address> & 0xFFF  ; for ARM64 : it shoulb be b21:10
+   constexpr ref_t mskXDisp32Hi           = 0x30000000u;
+   constexpr ref_t mskXDisp32Lo           = 0x70000000u;
 
    // --- VAddress reference types ----
    constexpr ref_t mskCodeRef32           = 0x81000000u;
@@ -270,6 +288,8 @@ namespace elena_lang
    constexpr ref_t mskCodeDisp32Lo        = 0xE1000000u;
    constexpr ref_t mskCodeRef32Hi         = 0x21000000u;
    constexpr ref_t mskCodeRef32Lo         = 0xA1000000u;
+   constexpr ref_t mskCodeXDisp32Hi       = 0x31000000u;
+   constexpr ref_t mskCodeXDisp32Lo       = 0x71000000u;
 
    constexpr ref_t mskRDataRef32          = 0x82000000u;
    constexpr ref_t mskRDataRef64          = 0xC2000000u;
@@ -277,6 +297,8 @@ namespace elena_lang
    constexpr ref_t mskRDataRef32Lo        = 0xA2000000u;
    constexpr ref_t mskRDataDisp32Hi       = 0x62000000u;
    constexpr ref_t mskRDataDisp32Lo       = 0xE2000000u;
+   constexpr ref_t mskRDataXDisp32Hi      = 0x32000000u;
+   constexpr ref_t mskRDataXDisp32Lo      = 0x72000000u;
 
    constexpr ref_t mskImportRef32         = 0x84000000u;
    constexpr ref_t mskImportRelRef32      = 0x44000000u;
@@ -294,6 +316,10 @@ namespace elena_lang
    constexpr ref_t mskDataRef64           = 0xC3000000u;
    constexpr ref_t mskDataRef32Hi         = 0x23000000u;
    constexpr ref_t mskDataRef32Lo         = 0xA3000000u;
+   constexpr ref_t mskDataDisp32Hi        = 0x63000000u;
+   constexpr ref_t mskDataDisp32Lo        = 0xE3000000u;
+   constexpr ref_t mskDataXDisp32Hi       = 0x33000000u;
+   constexpr ref_t mskDataXDisp32Lo       = 0x73000000u;
 
    constexpr ref_t mskMBDataRef32         = 0x85000000u;
    constexpr ref_t mskMBDataRef64         = 0xC5000000u;
@@ -308,8 +334,8 @@ namespace elena_lang
    constexpr ref_t mskStatDataRef64       = 0xC7000000u;
    constexpr ref_t mskStatDataRef32Hi     = 0x27000000u;
    constexpr ref_t mskStatDataRef32Lo     = 0xA7000000u;
-   constexpr ref_t mskStatDisp32Hi        = 0x67000000u;
-   constexpr ref_t mskStatDisp32Lo        = 0xE7000000u;
+   constexpr ref_t mskStatXDisp32Hi       = 0x37000000u;
+   constexpr ref_t mskStatXDisp32Lo       = 0x77000000u;
 
    // --- Address predefined references ---
    constexpr ref_t INV_ARG                = 0x00000100u;
@@ -345,9 +371,14 @@ namespace elena_lang
    constexpr ref_t ARG32LO_1              = 0x0000001Du;
    constexpr ref_t ARG64_2                = 0x0000001Eu;
    constexpr ref_t NARG16_1               = 0x0000001Fu;
-   constexpr ref_t NARGHI_1               = 0x00000020u;
    constexpr ref_t RELPTR32_2             = 0x00000021u;
    constexpr ref_t NARG12_1               = 0x00000022u;
+   constexpr ref_t XDISP32HI_1            = 0x00000023u;
+   constexpr ref_t XDISP32LO_1            = 0x00000024u;
+   constexpr ref_t XDISP32HI_2            = 0x00000025u;
+   constexpr ref_t XDISP32LO_2            = 0x00000026u;
+   constexpr ref_t NARG16HI_1             = 0x00000027u;
+   constexpr ref_t NARG16LO_1             = 0x00000028u;
 
    // predefined debug module sections
    constexpr ref_t DEBUG_LINEINFO_ID      = -1;
@@ -355,6 +386,7 @@ namespace elena_lang
 
    // === ELENA Error codes ===
    constexpr auto errNotImplemented = -3;
+   constexpr auto errAborted        = -4;
 
 } // _ELENA_
 

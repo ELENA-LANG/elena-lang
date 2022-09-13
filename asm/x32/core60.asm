@@ -1,14 +1,18 @@
 // ; --- Predefined References  --
 define INVOKER              10001h
 define GC_ALLOC	            10002h
+define VEH_HANDLER          10003h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE   	    20003h
+define CORE_ET_TABLE        2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
 define ACTION_ORDER              9
+define ACTION_MASK            1E0h
+define ARG_MASK               01Fh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -33,6 +37,13 @@ define gc_mg_current         0020h
 define gc_end                0024h
 define gc_mg_wbar            0028h
 
+define et_current            0004h
+
+define es_prev_struct        0000h
+define es_catch_addr         0004h
+define es_catch_level        0008h
+define es_catch_frame        000Ch
+
 // ; --- Page Size ----
 define page_mask        0FFFFFFF0h
 define page_ceil               17h
@@ -44,6 +55,13 @@ define struct_mask         800000h
 structure % CORE_TOC
 
   dd 0         // ; reserved
+
+end
+
+structure % CORE_ET_TABLE
+
+  dd 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
+  dd 0 // ; et_current             ; +x04   - pointer to the current exception struct
 
 end
  
@@ -68,7 +86,9 @@ structure %SYSTEM_ENV
 
   dd 0
   dd data : %CORE_GC_TABLE
+  dd data : %CORE_ET_TABLE
   dd code : %INVOKER
+  dd code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
 
@@ -188,6 +208,45 @@ inline %9
 
 end
 
+// ; throw
+inline %0Ah
+
+  mov  eax, [data : %CORE_ET_TABLE + et_current]
+  jmp  [eax + es_catch_addr]
+
+end
+
+// ; unhook
+inline %0Bh
+
+  mov  edi, [data : %CORE_ET_TABLE + et_current]
+
+  mov  eax, [edi + es_prev_struct]
+  mov  ebp, [edi + es_catch_frame]
+  mov  esp, [edi + es_catch_level]
+
+  mov  [data : %CORE_ET_TABLE + et_current], eax
+
+end
+
+// ; loadv
+inline % 0Ch
+
+  and  edx, ARG_MASK
+  mov  ecx, [ebx]
+  and  ecx, ~ARG_MASK
+  or   edx, ecx
+
+end
+
+// ; xcmp
+inline % 0Dh
+
+  mov  ecx, [ebx]
+  cmp  edx, ecx 
+
+end
+
 // ; setr
 inline %80h
 
@@ -201,6 +260,7 @@ inline %180h
   xor  ebx, ebx
 
 end 
+
 // ; setdp
 inline %81h
 
@@ -280,12 +340,88 @@ inline %85h
 
 end 
 
+// ; xswapsi
+inline %86h
+
+  mov  eax, [esp+__arg32_1]
+  mov  [esp+__arg32_1], esi
+  mov  esi, eax
+
+end
+
+// ; xswapsi 0
+inline %186h
+
+
+end
+
+// ; swapsi
+inline %87h
+
+  mov  eax, [esp+__arg32_1]
+  mov  [esp+__arg32_1], ebx
+  mov  ebx, eax
+
+end
+
+// ; xswapsi 0
+inline %187h
+
+  mov  eax, ebx
+  mov  ebx, esi
+  mov  esi, eax
+
+end
+
 // ; movm
 inline %88h
 
   mov  edx, __arg32_1
 
 end
+
+// ; movn
+inline %89h
+
+  mov  edx, __n_1
+
+end
+
+// ; loaddp
+inline %8Ah
+
+  mov  edx, [ebp + __arg32_1]
+
+end 
+
+// ; xcmpdp
+inline %8Bh
+
+  mov  ecx, [ebp + __arg32_1]
+  cmp  edx, ecx 
+
+end 
+
+// ; subn
+inline %8Ch
+
+  sub  edx, __n_1
+
+end
+
+// ; addn
+inline %8Dh
+
+  add  edx, __n_1
+
+end
+
+// ; setfp
+inline %08Eh
+
+  lea  ebx, [ebp + __arg32_1]
+
+end 
 
 // ; copy
 inline %90h
@@ -381,12 +517,12 @@ end
 // ; readn
 inline %95h
 
-  mov  ecx, __n_1 
   mov  eax, edx
-  mul  ecx
+  mov  ecx, __n_1 
+  imul eax, ecx
   mov  edi, esi
   add  esi, eax
-  mov  eax,  edi
+  mov  eax, edi
   mov  edi, ebx
   rep  movsb
   mov  esi, eax
@@ -396,9 +532,9 @@ end
 // ; writen
 inline %96h
 
-  mov  ecx, __n_1 
   mov  eax, edx
-  mul  ecx
+  mov  ecx, __n_1 
+  imul eax, ecx
   mov  edi, esi
   add  esi, eax
   mov  eax, edi
@@ -406,6 +542,13 @@ inline %96h
   mov  esi, ebx
   rep  movsb
   mov  esi, eax
+
+end
+
+// ; cmpn n
+inline %097h
+
+  cmp  edx, __n_1
 
 end
 
@@ -506,6 +649,14 @@ inline %0B1h
 
 end
 
+// ; jumpvi
+inline %0B5h
+
+  mov  eax, [ebx - elVMTOffset]
+  jmp  [eax + __arg32_1]
+
+end
+
 // ; cmpr r
 inline %0C0h
 
@@ -551,6 +702,55 @@ inline %4C2h
   sub  ecx, [ebx]
   mov  eax, [esi+4]
   sbb  eax, [ebx+4]
+
+end
+
+// ; tstflg
+inline %0C3h
+
+  mov  ecx, [ebx - elVMTOffset] 
+  mov  eax, [ecx - elVMTFlagOffset]
+  test eax, __n_1
+
+end
+
+// ; tstn
+inline %0C4h
+
+  test edx, __n_1
+
+end
+
+// ; tstm
+inline % 0C5h // (ebx - object)
+
+  mov   [esp+4], esi                      // ; saving arg0
+  xor   ecx, ecx
+  mov   edi, [ebx - elVMTOffset]
+  mov   esi, [edi - elVMTSizeOffset]
+
+labSplit:
+  test  esi, esi
+  jz    short labEnd
+
+labStart:
+  shr   esi, 1
+  setnc cl
+  mov   eax, __arg32_1
+  cmp   eax, [edi+esi*8]
+  je    short labFound
+  lea   eax, [edi+esi*8]
+  jb    short labSplit
+  lea   edi, [eax+8]
+  sub   esi, ecx
+  jmp   short labSplit
+
+labFound:
+  mov   esi, 1
+
+labEnd:
+  cmp   esi, 1
+  mov   esi, [esp+4]                                                              
 
 end
 
@@ -875,6 +1075,64 @@ inline %0E5h
 
   mov  eax, __n_2
   mov  [ebp+__arg32_1], eax
+
+end
+
+// ; xhookdpr
+inline %0E6h
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [data : %CORE_ET_TABLE + et_current]
+
+  mov  [edi + es_prev_struct], eax
+  mov  [edi + es_catch_frame], ebp
+  mov  [edi + es_catch_level], esp
+  mov  [edi + es_catch_addr], __ptr32_2
+
+  mov  [data : %CORE_ET_TABLE + et_current], edi
+
+end
+
+// ; xnewnr
+inline %0E7h
+
+  lea  ebx, [ebx + elObjectOffset]
+  mov  ecx, __n_1
+  mov  eax, __ptr32_2
+  mov  [ebx - elVMTOffset], eax
+  mov  [ebx - elSizeOffset], ecx
+
+end
+
+// ; nadddpn
+inline %0E8h
+
+  mov  eax, __n_2
+  add  [ebp+__arg32_1], eax
+
+end
+
+// ; xwriteon
+inline %0EAh
+
+  mov  eax, esi
+
+  mov  edi, esi
+  mov  ecx, __n_2 
+  lea  esi, [ebx + __arg32_1]
+  rep  movsb
+
+  mov  esi, eax
+
+end
+
+// ; xcopyon
+inline %0EBh
+
+  mov  ecx, __n_2 
+  lea  edi, [ebx + __arg32_1]
+  rep  movsb
+  sub  esi, __n_2          // ; to set back ESI register
 
 end
 
@@ -1286,7 +1544,7 @@ labNextParam:
   mov  edx, [esi + edx * 8]
   mov  ecx, [ebx - elVMTOffset]
   mov  esi, [esp+4]                      // ; restore arg0
-  jmp  [ecx + eax * 8 + 4]
+  jmp  [ecx + eax + 4]
 
 labMatching:
   mov  edi, [eax + ecx * 4]

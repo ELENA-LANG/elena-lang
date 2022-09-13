@@ -87,6 +87,7 @@ namespace elena_lang
       };
 
       bool select(Node& node, ustr_t xpath, Collection& collection);
+      bool select(ustr_t xpath, Collection& collection);
 
       Node selectNode(ustr_t xpath);
       Node selectNode(Node& node, ustr_t xpath);

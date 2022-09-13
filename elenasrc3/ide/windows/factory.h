@@ -24,9 +24,9 @@ namespace elena_lang
       ViewStyles     _styles;
       StyleInfo*     _schemes[2];
       GUISettinngs   _settings;
+      PathSettings   _pathSettings;
 
       HINSTANCE      _instance;
-      int            _cmdShow;
 
       IDEModel*      _model;
       IDEController* _controller;
@@ -35,16 +35,20 @@ namespace elena_lang
 
       ControlBase* createTextControl(WindowBase* owner, NotifierBase* notifier);
       ControlBase* createStatusbar(WindowBase* owner);
+      ControlBase* createTabBar(WindowBase* owner, NotifierBase* notifier);
+      ControlBase* createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, int notifyCode);
+      ControlBase* createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier);
+      ControlBase* createErrorList(ControlBase* owner);
 
-      void initializeModel();
+      void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList);
 
    public:
       GUIApp* createApp() override;
-      GUIControlBase* createMainWindow(NotifierBase* notifier) override;
+      GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess) override;
 
-      IDEFactory(HINSTANCE instance, int cmdShow, IDEModel* ideView, 
+      IDEFactory(HINSTANCE instance, IDEModel* ideView, 
          IDEController* ideController,
-         GUISettinngs   settings);
+         GUISettinngs settings);
    };
 }
 

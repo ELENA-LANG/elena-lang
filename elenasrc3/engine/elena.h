@@ -334,6 +334,8 @@ namespace elena_lang
       virtual ref_t importMessage(ModuleBase* referenceModule, mssg_t message) = 0;
       virtual ref_t importReference(ModuleBase* referenceModule, ustr_t referenceName) = 0;
       virtual ref_t importReference(ModuleBase* referenceModule, ref_t reference) = 0;
+      virtual ref_t importConstant(ModuleBase* referenceModule, ref_t reference) = 0;
+      virtual ref_t importMessageConstant(ModuleBase* referenceModule, ref_t reference) = 0;
 
       SectionScopeBase()
       {
@@ -400,7 +402,7 @@ namespace elena_lang
    {
       virtual bool checkLabel(pos_t label) = 0;
 
-      virtual bool setLabel(pos_t label, MemoryWriter& writer) = 0;
+      virtual bool setLabel(pos_t label, MemoryWriter& writer) = 0;  
 
       virtual bool fixLabel(pos_t label, MemoryWriter& writer) = 0;
 
@@ -412,6 +414,8 @@ namespace elena_lang
 
       virtual void writeJneBack(pos_t label, MemoryWriter& writer) = 0;
       virtual void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
+      virtual void writeLabelAddress(pos_t label, MemoryWriter& writer, ref_t mask) = 0;
    };
 
    // --- JITCompilerBase ---
@@ -452,9 +456,11 @@ namespace elena_lang
          bool structMode, bool virtualMode) = 0;
       virtual void writeInt32(MemoryWriter& writer, unsigned int value) = 0;
       virtual void writeLiteral(MemoryWriter& writer, ustr_t value) = 0;
+      virtual void writeWideLiteral(MemoryWriter& writer, wstr_t value) = 0;
       virtual void writeChar32(MemoryWriter& writer, ustr_t value) = 0;
       virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
       virtual void writeVariable(MemoryWriter& writer) = 0;
+      virtual void writeMessage(MemoryWriter& writer, mssg_t message) = 0;
 
       virtual void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) = 0;
       virtual void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) = 0;
@@ -466,6 +472,7 @@ namespace elena_lang
       virtual void writeImm9(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm12(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm16(MemoryWriter* writer, int value, int type) = 0;
+      virtual void writeImm16Hi(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm32(MemoryWriter* writer, int value) = 0;
 
       virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) = 0;
@@ -489,6 +496,10 @@ namespace elena_lang
    public:
       wstr_t operator*() const { return wstr_t(_string); }
 
+      WideMessage()
+      {
+         _string[0] = 0;
+      }
       WideMessage(const char* s)
       {
          size_t len = MESSAGE_LEN;
@@ -809,10 +820,11 @@ namespace elena_lang
    // --- MethodInfo ---
    struct MethodInfo
    {
-      bool  inherited;
-      ref_t hints;
-      ref_t outputRef;
-      ref_t multiMethod;
+      bool   inherited;
+      ref_t  hints;
+      ref_t  outputRef;
+      mssg_t multiMethod;
+      mssg_t byRefHandler;
 
       MethodInfo()
       {
@@ -820,12 +832,14 @@ namespace elena_lang
          hints = 0;
          outputRef = 0;
          multiMethod = 0;
+         byRefHandler = 0;
       }
-      MethodInfo(bool inherited, ref_t hints, ref_t outputRef, ref_t multiMethod) :
+      MethodInfo(bool inherited, ref_t hints, ref_t outputRef, mssg_t multiMethod, mssg_t byRefHandler) :
          inherited(inherited),
          hints(hints),
          outputRef(outputRef),
-         multiMethod(multiMethod)
+         multiMethod(multiMethod),
+         byRefHandler(byRefHandler)
       {
       }
    };

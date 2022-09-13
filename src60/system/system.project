@@ -41,7 +41,10 @@
         <include>extensions.l</include>
         <include>primitives.l</include>
         <include>strings.l</include>
+        <include>messaging.l</include>
+        <include>closures.l</include>
         <include>convertors.l</include>
+        <include>exceptions.l</include>
         <include>console.l</include>
         <include>app.l</include>
         <include>lnx_strings.l</include>

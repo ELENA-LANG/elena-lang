@@ -1,9 +1,40 @@
 //        ELENA Language 6.0
 //      inline system library
 
+define EXCEPTION_ACCESS_VIOLATION  101h;
+define ELENA_ERR_DIVIDE_BY_ZERO    102h;
+define ELENA_ERR_OUT_OF_MEMORY     103h;
+
+define FUNCTION_MESSAGE       00000020h;
+
+define ex_struct_size32              16; 
+define ex_struct_size64              32; 
+
+define page_size32                   16;
+define page_size64                   32;
+
+
+define err_ret          -1;
+
 procedure __object_dispatcher
 
   redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
 
 end
 
@@ -15,26 +46,228 @@ procedure __object_equal
 
 end
 
+procedure __exception_handler
+
+  xflush          sp:0
+  xflush          sp:1
+  open            :3, :0 
+  store           fp:1 
+
+  tst             mssg:"function:#try_invoke[2]"
+  jne             Lab01
+
+  set             mssgconst:"fallback[2]"
+  store           sp:1 
+  peek            fp:1 
+  store           sp:0 
+  peek            fp:-2 
+  mov             mssg:"function:#try_invoke[2]" 
+  call            vt:0 
+
+  jump            Lab00
+
+Lab01:
+  peek            fp:1 
+  store           sp:0 
+  peek            fp:-2 
+  mov             mssg:"function:#invoke[1]" 
+  call            vt:0 
+
+Lab00:
+  peek            fp:1 
+  close           :0 
+  quit             
+
+end
+
+procedure __exception_raise
+
+  throw
+
+end
+
+procedure __message_dispatcher
+
+  tstn        FUNCTION_MESSAGE
+  jeq         labDefault
+
+  loadv
+  xcmp
+  jne         labDefault
+
+  peek        sp:0
+  jump        vt:0
+
+labDefault:
+
+  redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
+procedure __str_equal (s1, s2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[s_len,index,ch,ch2]
+
+  peek       fp:s1
+  nlen       1
+  save       dp:s_len
+
+  peek       fp:s2
+  nlen       1
+  set        dp:s_len
+  xcmp
+  jne        labNotEqual
+
+  sub        n:1
+
+  nsave      dp:index, 0
+
+  peek       fp:s1
+  store      sp:0
+  peek       fp:s2
+  store      sp:1
+
+labCheck:
+  load       dp:index
+  xcmp       dp:s_len
+  jeq        labLoopEnd
+
+  nsave      dp:ch, 0
+  nsave      dp:ch2, 0
+
+  set        dp:ch
+  read       1
+
+  xswap      sp:1
+
+  set        dp:ch2
+  read       1
+
+  load
+  xcmp       dp:ch 
+  jne        labNotEqual
+
+  nadd       dp:index, 1
+  xswap      sp:1
+  jump       labCheck
+
+labLoopEnd:
+  set        class:"system'BoolValue#true"
+  jump       labEnd
+
+labNotEqual:
+   set       class:"system'BoolValue#false"
+
+labEnd:
+  close      []
+
+end
+
 procedure __intToByte
 
   peek       sp:1
   load
-  andn       0FFh
+  and        n:0FFh
   peek       sp:2
   save
 
 end
 
+procedure __intToChar
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
+procedure __intToShort
+
+  peek       sp:1
+  load
+  and        n:0FFh
+  peek       sp:2
+  save
+
+end
+
+procedure critical_exception_handler
+
+  cmp         n:EXCEPTION_ACCESS_VIOLATION
+  jeq         labAccessViolation
+
+  cmp         n:ELENA_ERR_DIVIDE_BY_ZERO
+  jeq         labDivisionByZero
+
+  cmp         n:ELENA_ERR_OUT_OF_MEMORY
+  jeq         labOutOfMemory
+
+  set         class : "system'CriticalException"
+  store       sp:0
+  set         mssgconst : "new[1]"
+  throw
+
+labAccessViolation:
+  set         class : "system'NilReferenceException"
+  store       sp:0
+  set         mssgconst : "new[1]"
+  throw
+
+labDivisionByZero:
+  set         class : "system'DivisionByZeroException"
+  store       sp:0
+  set         mssgconst : "new[1]"
+  throw
+
+labOutOfMemory:
+  set         class : "system'OutOfMemoryException"
+  store       sp:0
+  set         mssgconst : "new[0]"
+  throw
+
+end
+
+procedure default_exception_handler
+
+  call extern:ExitLA (err_ret)
+
+end
+
 symbol sta_start
 
-  open header [arg1],[envptr]
+  open header [arg1],[envptr,ex_struct:ex_struct_size]
   
+  xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
+
   mov         env
   save        dp:envptr
   set         dp:envptr
   store       fp:arg1
 
-  call extern:InitializeSTA (*arg1, marray:"$forwards'meta$startUpSymbols")
+  call extern:InitializeSTLA (
+     *arg1, 
+     marray:"$forwards'meta$startUpSymbols",
+     procedure:"system'core_routines'critical_exception_handler")
 
   close       []
 

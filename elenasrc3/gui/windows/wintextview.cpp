@@ -41,7 +41,7 @@ void ViewStyles::release()
 // --- TextViewWindow ---
 
 TextViewWindow :: TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles)
-   : WindowBase(nullptr)
+   : WindowBase(nullptr, 50, 50)
 {
    _model = model;
    _styles = styles;
@@ -350,7 +350,7 @@ void TextViewWindow :: onPaint()
          hideCaret();
 
       PAINTSTRUCT ps;
-      Rectangle   clientRect = getRectangle();
+      Rectangle   clientRect = getClientRectangle();
 
       ::BeginPaint(_handle, &ps);
 
