@@ -6,6 +6,7 @@
 
 #include "idecontroller.h"
 #include "eng/messages.h"
+#include "config.h"
 
 using namespace elena_lang;
 
@@ -220,6 +221,53 @@ bool ProjectController :: doCompileProject(ProjectModel& model, path_t singlePro
 
 // --- IDEController ---
 
+inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
+{
+   // read target type; merge it with platform if required
+   ConfigFile::Node targetType = config.selectNode(xpath);
+   if (!targetType.isNotFound()) {
+      DynamicString<char> key;
+      targetType.readContent(key);
+
+      return key.toInt();
+   }
+   else return defValue;
+}
+
+inline void loadRecentFiles(ConfigFile& config, ustr_t xpath, ProjectPaths& paths)
+{
+   DynamicString<char> path;
+
+   ConfigFile::Collection list;
+   if (config.select(xpath, list)) {
+      for (auto m_it = list.start(); !m_it.eof(); ++m_it) {
+         ConfigFile::Node pathNode = *m_it;
+         pathNode.readContent(path);
+
+         PathString filePath(path.str());
+
+         paths.add((*filePath).clone());
+      }
+   }
+}
+
+bool IDEController :: loadConfig(IDEModel* model, path_t path)
+{
+   ConfigFile config;
+   if (config.load(path, FileEncoding::UTF8)) {
+      model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
+      model->sourceViewModel.fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);
+
+      loadRecentFiles(config, RECENTFILES_SETTINGS, model->projectModel.lastOpenFiles);
+
+      return true;
+   }
+   else {
+      return false;
+   }
+
+}
+
 void IDEController :: init(IDEModel* model)
 {
    model->changeStatus(IDEStatus::Ready);
@@ -380,6 +428,72 @@ void IDEController :: onCompilationBreak(IDEModel* model)
    model->status = IDEStatus::Ready;
 
    model->onIDEChange();
+}
+
+void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBase* log)
+{
+   _notifier->notifyMessage(NOTIFY_SHOW_RESULT, model->ideScheme.errorListControl);
+
+   // parse output for errors
+   pos_t length = output.length_pos();
+   pos_t index = 0;
+
+   WideMessage message;
+   WideMessage fileStr, rowStr, colStr;
+   while (index < length) {
+      index = output.findSubStr(index, _T(": error "), length);
+      if (index == NOTFOUND_POS) {
+         index = output.findSubStr(index, _T(": warning "), length);
+      }
+      if (index == NOTFOUND_POS)
+         break;
+
+      pos_t errPos = index;
+      pos_t rowPos = NOTFOUND_POS;
+      pos_t colPos = NOTFOUND_POS;
+      pos_t bolPos = 0;
+
+      index--;
+      while (index >= 0) {
+         if (output[index] == '(') {
+            rowPos = index + 1;
+         }
+         else if (output[index] == ':' && colPos == NOTFOUND_POS) {
+            colPos = index + 1;
+         }
+         else if (output[index] == '\n') {
+            bolPos = index;
+            break;
+         }
+
+         index--;
+      }
+      index = output.findSub(errPos, '\n');
+      message.copy(output.str() + errPos + 2, index - errPos - 3);
+      if (rowPos != NOTFOUND_POS) {
+         fileStr.copy(output.str() + bolPos + 1, rowPos - bolPos - 2);
+         if (colPos != NOTFOUND_POS) {
+            rowStr.copy(output.str() + rowPos, colPos - rowPos - 1);
+            colStr.copy(output.str() + colPos, errPos - colPos - 1);
+         }
+      }
+      else {
+         fileStr.clear();
+         colStr.clear();
+         rowStr.clear();
+      }
+      
+      log->addMessage(*message, *fileStr, *rowStr, *colStr);
+   }
+}
+
+void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode, 
+   text_str output, ErrorLogBase* log)
+{
+   if (exitCode == 0) {
+
+   }
+   else displayErrors(model, output, log);
 }
 
 bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)

@@ -159,7 +159,7 @@ namespace elena_lang
    class GUIApp : public NotifierBase
    {
    public:
-      virtual int run(GUIControlBase* mainWindow) = 0;
+      virtual int run(GUIControlBase* mainWindow, bool maximized) = 0;
 
       virtual ~GUIApp() = default;
    };

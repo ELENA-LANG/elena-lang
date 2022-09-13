@@ -1,15 +1,11 @@
 import system;
 
-private entry
-    = forward program();
-
 public program()
 {
-   console.writeLine("--- ELENA API Tests ---");
+   console.writeLine("--- ELENA 6 API Unit Tests ---");
 
-   for (int n := 0, n < 5, n := n + 1) {
-      console.write("*");
-   };
+   boxingTests();
+   byRefTests();
 
    console.writeLine("--- Passed ---")
 }

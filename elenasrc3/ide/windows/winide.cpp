@@ -180,6 +180,16 @@ void IDEWindow :: openResultTab(int controlIndex)
    refresh();
 }
 
+void IDEWindow :: onCompilationEnd(int exitCode)
+{
+   wchar_t* output = ((ControlBase*)_children[_model->ideScheme.compilerOutputControl])->getValue();
+   ControlBase* messageLog = (ControlBase*)_children[_model->ideScheme.errorListControl];
+
+   _controller->onCompilationCompletion(_model, exitCode, output, dynamic_cast<ErrorLogBase*>(messageLog));
+
+   freestr(output);
+}
+
 bool IDEWindow :: onCommand(int command)
 {
    switch (command) {
@@ -272,6 +282,9 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
          break;
       case NOTIFY_LAYOUT_CHANGED:
          onResize();
+         break;
+      case NOTIFY_COMPILATION_RESULT:
+         onCompilationEnd(hdr->extParam2);
          break;
       default:
          break;

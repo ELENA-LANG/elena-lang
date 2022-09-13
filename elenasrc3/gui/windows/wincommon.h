@@ -119,6 +119,8 @@ namespace elena_lang
 
       virtual HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner);
 
+      virtual wchar_t* getValue() { return nullptr; }
+
       ControlBase(wstr_t title, int x, int y, int width, int height) :
          _handle(nullptr),
          _title(title),
@@ -164,22 +166,20 @@ namespace elena_lang
       HINSTANCE _instance;
       HWND      _hwnd;
 
-      int       _cmdShow;
       wstr_t    _accelerators;
 
-      bool initInstance(WindowBase* mainWindow);
+      bool initInstance(WindowBase* mainWindow, int cmdShow);
 
    public:
-      int run(GUIControlBase* mainWindow) override;
+      int run(GUIControlBase* mainWindow, bool maximized) override;
 
       void notifyMessage(int messageCode, int arg = 0) override;
       void notifyModelChange(int modelCode, int arg) override;
 
-      WindowApp(HINSTANCE instance, int cmdShow, wstr_t accelerators)
+      WindowApp(HINSTANCE instance, wstr_t accelerators)
       {
          _instance = instance;
          _hwnd = nullptr;
-         _cmdShow = cmdShow;
          _accelerators = accelerators;
       }
    };

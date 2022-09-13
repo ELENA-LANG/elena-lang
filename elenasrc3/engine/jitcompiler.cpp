@@ -43,7 +43,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadROp, loadFrameDispOp, loadLenOp, loadIndexOp, loadROp, loadROp, loadStackIndexOp, loadStackIndexOp,
-   loadMOp, loadNOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadMOp, loadNOp, loadFrameDispOp, loadFrameDispOp, loadNOp, loadNOp, loadFrameIndexOp, loadNop,
 
    loadNOp, compileClose, loadIndexOp, loadIndexOp, loadNOp, loadNOp, loadNOp, loadNOp,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -61,7 +61,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, compileHookDPR, loadNewOp,
-   loadNop, loadNop, loadNop, loadNop, loadVMTROp, loadMROp, loadRROp, loadRROp,
+   loadDPNOp, loadNop, loadONOp, loadONOp, loadVMTROp, loadMROp, loadRROp, loadRROp,
 
    compileOpen, loadStackIndexROp, compileOpen, loadStackIndexFrameIndexOp, loadNewOp, loadNewNOp, loadStackIndexIndexOp, loadCreateNOp,
    loadNop, loadFrameIndexROp, compileDispatchMR, compileDispatchMR, loadVMTROp, loadMROp, loadCallOp, loadNop,
@@ -89,7 +89,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 72;
+constexpr size_t bcCommandNumber = 80;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -106,7 +106,8 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::ReadN, ByteCode::WriteN, ByteCode::CreateNR, ByteCode::Throw, ByteCode::XHookDPR,
    ByteCode::CmpN, ByteCode::MovN, ByteCode::XNewNR, ByteCode::TstFlag, ByteCode::Unhook,
    ByteCode::XSwapSI, ByteCode::JumpVI, ByteCode::TstN, ByteCode::LoadV, ByteCode::XCmp,
-   ByteCode::SwapSI, ByteCode::TstM
+   ByteCode::SwapSI, ByteCode::TstM, ByteCode::XCopyON, ByteCode::XWriteON, ByteCode::LoadDP,
+   ByteCode::XCmpDP, ByteCode::NAddDPN, ByteCode::AddN, ByteCode::SubN, ByteCode::SetFP
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/,
@@ -1814,6 +1815,61 @@ void elena_lang::loadDPNOp(JITCompilerScope* scope)
    writer->seekEOF();
 }
 
+void elena_lang::loadONOp(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   void* code = retrieveICode(scope, scope->command.arg2);
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case ARG32_1:
+            writer->writeDWord(scope->command.arg1);
+            break;
+         case ARG16_1:
+            writer->writeWord(scope->command.arg1);
+            break;
+         case ARG12_1:
+            scope->compiler->writeImm12(writer, scope->command.arg1, 0);
+            break;
+         case ARG9_1:
+            scope->compiler->writeImm9(writer, scope->command.arg1, 0);
+            break;
+         case NARG_2:
+            scope->compiler->writeImm32(writer, scope->command.arg2);
+            break;
+         case NARG16_1:
+            scope->compiler->writeImm16(writer, scope->command.arg1, 0);
+            break;
+         case NARG16_2:
+            scope->compiler->writeImm16(writer, scope->command.arg2, 0);
+            break;
+         case NARG12_2:
+            scope->compiler->writeImm12(writer, scope->command.arg2, 0);
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
+      //else writeCoreReference();
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
 void elena_lang::loadDPROp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
@@ -2576,6 +2632,12 @@ void JITCompiler32 :: writeLiteral(MemoryWriter& writer, ustr_t value)
    writer.align(4, 0);
 }
 
+void JITCompiler32 :: writeWideLiteral(MemoryWriter& writer, wstr_t value)
+{
+   writer.writeWideString(value, value.length_pos() + 1);
+   writer.align(4, 0);
+}
+
 void JITCompiler32 :: writeChar32(MemoryWriter& writer, ustr_t value)
 {
    size_t len = 1;
@@ -2931,6 +2993,12 @@ void JITCompiler64 :: writeInt32(MemoryWriter& writer, unsigned value)
 void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
    writer.writeString(value, value.length_pos() + 1);
+   writer.align(8, 0);
+}
+
+void JITCompiler64 :: writeWideLiteral(MemoryWriter& writer, wstr_t value)
+{
+   writer.writeWideString(value, value.length_pos() + 1);
    writer.align(8, 0);
 }
 

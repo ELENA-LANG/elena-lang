@@ -27,6 +27,8 @@ namespace elena_lang
       void afterExecution(int exitCode) override {}
 
    public:
+      wchar_t* getValue() override;
+
       static LRESULT CALLBACK Proc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 
       HWND createControl(HINSTANCE instance, ControlBase* owner);
@@ -37,8 +39,13 @@ namespace elena_lang
    // --- CompilerOutput ---
    class CompilerOutput : public ProcessOutput
    {
+      NotifierBase* _notifier;
+      int           _completionCode;
+
+      void afterExecution(int exitCode) override;
+
    public:
-      CompilerOutput();
+      CompilerOutput(NotifierBase* notifier, int completionCode);
    };
 }
 

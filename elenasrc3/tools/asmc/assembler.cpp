@@ -131,6 +131,14 @@ bool AssemblerBase :: getArgReference(ScriptToken& tokenInfo, int& offset, ref_t
       reference = PTR32_2;
       offset = 0;
    }
+   else if (tokenInfo.compare(RELPTR32_ARGUMENT1)) {
+      reference = RELPTR32_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(RELPTR32_ARGUMENT2)) {
+      reference = RELPTR32_2;
+      offset = 0;
+   }
    else if (tokenInfo.compare(PTR64_ARGUMENT1)) {
       reference = PTR64_1;
       offset = 0;

@@ -456,6 +456,7 @@ namespace elena_lang
          bool structMode, bool virtualMode) = 0;
       virtual void writeInt32(MemoryWriter& writer, unsigned int value) = 0;
       virtual void writeLiteral(MemoryWriter& writer, ustr_t value) = 0;
+      virtual void writeWideLiteral(MemoryWriter& writer, wstr_t value) = 0;
       virtual void writeChar32(MemoryWriter& writer, ustr_t value) = 0;
       virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
       virtual void writeVariable(MemoryWriter& writer) = 0;
@@ -495,6 +496,10 @@ namespace elena_lang
    public:
       wstr_t operator*() const { return wstr_t(_string); }
 
+      WideMessage()
+      {
+         _string[0] = 0;
+      }
       WideMessage(const char* s)
       {
          size_t len = MESSAGE_LEN;
@@ -815,10 +820,11 @@ namespace elena_lang
    // --- MethodInfo ---
    struct MethodInfo
    {
-      bool  inherited;
-      ref_t hints;
-      ref_t outputRef;
-      ref_t multiMethod;
+      bool   inherited;
+      ref_t  hints;
+      ref_t  outputRef;
+      mssg_t multiMethod;
+      mssg_t byRefHandler;
 
       MethodInfo()
       {
@@ -826,12 +832,14 @@ namespace elena_lang
          hints = 0;
          outputRef = 0;
          multiMethod = 0;
+         byRefHandler = 0;
       }
-      MethodInfo(bool inherited, ref_t hints, ref_t outputRef, ref_t multiMethod) :
+      MethodInfo(bool inherited, ref_t hints, ref_t outputRef, mssg_t multiMethod, mssg_t byRefHandler) :
          inherited(inherited),
          hints(hints),
          outputRef(outputRef),
-         multiMethod(multiMethod)
+         multiMethod(multiMethod),
+         byRefHandler(byRefHandler)
       {
       }
    };

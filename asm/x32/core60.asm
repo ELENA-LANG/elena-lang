@@ -260,6 +260,7 @@ inline %180h
   xor  ebx, ebx
 
 end 
+
 // ; setdp
 inline %81h
 
@@ -386,6 +387,42 @@ inline %89h
 
 end
 
+// ; loaddp
+inline %8Ah
+
+  mov  edx, [ebp + __arg32_1]
+
+end 
+
+// ; xcmpdp
+inline %8Bh
+
+  mov  ecx, [ebp + __arg32_1]
+  cmp  edx, ecx 
+
+end 
+
+// ; subn
+inline %8Ch
+
+  sub  edx, __n_1
+
+end
+
+// ; addn
+inline %8Dh
+
+  add  edx, __n_1
+
+end
+
+// ; setfp
+inline %08Eh
+
+  lea  ebx, [ebp + __arg32_1]
+
+end 
+
 // ; copy
 inline %90h
 
@@ -480,12 +517,12 @@ end
 // ; readn
 inline %95h
 
-  mov  ecx, __n_1 
   mov  eax, edx
-  mul  ecx
+  mov  ecx, __n_1 
+  imul eax, ecx
   mov  edi, esi
   add  esi, eax
-  mov  eax,  edi
+  mov  eax, edi
   mov  edi, ebx
   rep  movsb
   mov  esi, eax
@@ -495,9 +532,9 @@ end
 // ; writen
 inline %96h
 
-  mov  ecx, __n_1 
   mov  eax, edx
-  mul  ecx
+  mov  ecx, __n_1 
+  imul eax, ecx
   mov  edi, esi
   add  esi, eax
   mov  eax, edi
@@ -1064,6 +1101,38 @@ inline %0E7h
   mov  eax, __ptr32_2
   mov  [ebx - elVMTOffset], eax
   mov  [ebx - elSizeOffset], ecx
+
+end
+
+// ; nadddpn
+inline %0E8h
+
+  mov  eax, __n_2
+  add  [ebp+__arg32_1], eax
+
+end
+
+// ; xwriteon
+inline %0EAh
+
+  mov  eax, esi
+
+  mov  edi, esi
+  mov  ecx, __n_2 
+  lea  esi, [ebx + __arg32_1]
+  rep  movsb
+
+  mov  esi, eax
+
+end
+
+// ; xcopyon
+inline %0EBh
+
+  mov  ecx, __n_2 
+  lea  edi, [ebx + __arg32_1]
+  rep  movsb
+  sub  esi, __n_2          // ; to set back ESI register
 
 end
 

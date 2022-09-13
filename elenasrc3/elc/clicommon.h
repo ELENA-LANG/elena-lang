@@ -295,8 +295,9 @@ struct BranchingInfo
 struct BuiltinReferences
 {
    ref_t   superReference;
-   ref_t   intReference;
+   ref_t   intReference, shortReference, byteReference;
    ref_t   literalReference;
+   ref_t   wideReference;
    ref_t   messageReference;
    ref_t   wrapperTemplateReference;
    ref_t   arrayTemplateReference;
@@ -306,7 +307,7 @@ struct BuiltinReferences
    mssg_t  constructor_message;
    mssg_t  invoke_message;
    mssg_t  init_message;
-   mssg_t  add_message;
+   mssg_t  add_message, sub_message, mul_message, div_message;
    mssg_t  if_message;
    mssg_t  equal_message;
    mssg_t  not_message;
@@ -317,7 +318,8 @@ struct BuiltinReferences
    BuiltinReferences()
    {
       superReference = intReference = 0;
-      literalReference = 0;
+      shortReference = byteReference = 0;
+      literalReference = wideReference = 0;
       messageReference = 0;
       wrapperTemplateReference = 0;
       arrayTemplateReference = 0;
@@ -338,7 +340,8 @@ struct BuiltinReferences
 // --- SizeInfo ---
 struct SizeInfo
 {
-   int size;
+   int  size;
+   bool readOnly;
 };
 
 // --- ExternalType ---
@@ -452,15 +455,15 @@ enum class ExpressionAttribute : pos64_t
    RootSymbol        = 0x00000000800,
    Root              = 0x00000001000,
    CastOp            = 0x00000002000,
-   AssigningTarget   = 0x00000004000,
    RefOp             = 0x00000008000,
    NoPrimitives      = 0x00000010000,
    MssgLiteral       = 0x00000020000,
    MssgNameLiteral   = 0x00000040000,
    Extern            = 0x00000080000,
    Memeber           = 0x00000100000,
+   ProbeMode         = 0x00000200000,
+   AlreadyResolved   = 0x00000400000,
    Lookahead         = 0x20000000000,
-   ProbeMode         = 0x00000100000,
    NoDebugInfo       = 0x40000000000,
    NoExtension       = 0x80000000000,
 };

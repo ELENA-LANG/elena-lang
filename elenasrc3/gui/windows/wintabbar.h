@@ -73,6 +73,11 @@ namespace elena_lang
 
       void setRectangle(Rectangle rec) override;
 
+      void onSelChanged() override
+      {
+         refresh();
+      }
+
       void refresh() override;
 
       TabBar(NotifierBase* notifier, bool withAbovescore);

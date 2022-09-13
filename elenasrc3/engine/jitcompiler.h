@@ -106,6 +106,7 @@ namespace elena_lang
       friend void loadLenOp(JITCompilerScope* scope);
       friend void loadROp(JITCompilerScope* scope);
       friend void loadRROp(JITCompilerScope* scope);
+      friend void loadONOp(JITCompilerScope* scope);
       friend void loadMOp(JITCompilerScope* scope);
       friend void loadCallOp(JITCompilerScope* scope);
       friend void loadCallROp(JITCompilerScope* scope);
@@ -240,6 +241,7 @@ namespace elena_lang
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
+      void writeWideLiteral(MemoryWriter& writer, wstr_t value) override;
       void writeChar32(MemoryWriter& writer, ustr_t value) override;
       void writeMessage(MemoryWriter& writer, mssg_t value) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
@@ -300,6 +302,7 @@ namespace elena_lang
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
+      void writeWideLiteral(MemoryWriter& writer, wstr_t value) override;
       void writeChar32(MemoryWriter& writer, ustr_t value) override;
       void writeMessage(MemoryWriter& writer, mssg_t value) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
@@ -337,6 +340,7 @@ namespace elena_lang
    void loadLenOp(JITCompilerScope* scope);
    void loadROp(JITCompilerScope* scope);
    void loadRROp(JITCompilerScope* scope);
+   void loadONOp(JITCompilerScope* scope);
    void loadMOp(JITCompilerScope* scope);
    void loadCallOp(JITCompilerScope* scope);
    void loadCallROp(JITCompilerScope* scope);

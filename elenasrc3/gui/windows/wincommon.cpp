@@ -172,7 +172,7 @@ LRESULT WindowBase :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 
 // --- WindowApp ---
 
-bool WindowApp :: initInstance(WindowBase* mainWindow)
+bool WindowApp :: initInstance(WindowBase* mainWindow, int cmdShow)
 {
    _hwnd = mainWindow->handle();
 
@@ -181,7 +181,7 @@ bool WindowApp :: initInstance(WindowBase* mainWindow)
       return FALSE;
    }
 
-   mainWindow->showWindow(_cmdShow);
+   mainWindow->showWindow(cmdShow);
 
    return TRUE;
 }
@@ -210,10 +210,10 @@ void WindowApp :: notifyModelChange(int modelCode, int arg)
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-int WindowApp :: run(GUIControlBase* mainWindow)
+int WindowApp :: run(GUIControlBase* mainWindow, bool maximized)
 {
    // Perform application initialization:
-   if (!initInstance(dynamic_cast<WindowBase*>(mainWindow)))
+   if (!initInstance(dynamic_cast<WindowBase*>(mainWindow), maximized ? SW_MAXIMIZE : SW_SHOW))
    {
       return FALSE;
    }

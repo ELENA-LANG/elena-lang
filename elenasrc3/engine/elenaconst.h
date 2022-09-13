@@ -71,10 +71,15 @@ namespace elena_lang
 
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 
+   constexpr auto RETVAL_ARG              = "$retVal";
+
    constexpr auto SYSTEM_FORWARD          = "$system_entry";   // the system entry
    constexpr auto SUPER_FORWARD           = "$super";          // the common class predecessor
    constexpr auto INTLITERAL_FORWARD      = "$int";            // the int literal
+   constexpr auto INT8LITERAL_FORWARD     = "$byte";           // the int literal
+   constexpr auto INT16LITERAL_FORWARD    = "$short";          // the int literal
    constexpr auto LITERAL_FORWARD         = "$string";         // the string literal
+   constexpr auto WIDELITERAL_FORWARD     = "$wide";           // the wide string literal
    constexpr auto CHAR_FORWARD            = "$char";           // the char literal
    constexpr auto BOOL_FORWARD            = "$boolean";        // the boolean class
    constexpr auto TRUE_FORWARD            = "$true";           // the true boolean value
@@ -104,6 +109,9 @@ namespace elena_lang
    constexpr auto INIT_MESSAGE            = "#init";
 
    constexpr auto ADD_MESSAGE             = "add";
+   constexpr auto SUB_MESSAGE             = "subtract";
+   constexpr auto MUL_MESSAGE             = "multiply";
+   constexpr auto DIV_MESSAGE             = "divide";
    constexpr auto IF_MESSAGE              = "if";
    constexpr auto EQUAL_MESSAGE           = "equal";
    constexpr auto NOT_MESSAGE             = "Inverted";
@@ -245,6 +253,8 @@ namespace elena_lang
    constexpr ref_t mskPathLiteralRef      = 0x1B000000u;
    constexpr ref_t mskMssgLiteralRef      = 0x1B000000u;
    constexpr ref_t mskLabelRef            = 0x1C000000u;
+   constexpr ref_t mskWideLiteralRef      = 0x1D000000u;   // reference to wide literal constant
+
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

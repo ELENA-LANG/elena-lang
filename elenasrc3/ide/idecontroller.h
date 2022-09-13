@@ -44,9 +44,9 @@ namespace elena_lang
    // --- ProjectController ---
    class ProjectController : public NotifierBase
    {
-      ProcessBase*         _outputProcess;
-      DebugController      _debugController;
-      NotifierBase*        _notifier;
+      ProcessBase*            _outputProcess;
+      DebugController         _debugController;
+      NotifierBase*           _notifier;
 
       bool onDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action);
       bool isOutaged(bool noWarning);
@@ -98,7 +98,8 @@ namespace elena_lang
       NotifierBase*           _notifier;
 
       bool openFile(SourceViewModel* model, path_t sourceFile);
-      bool openFile(IDEModel* model, path_t sourceFile);
+
+      void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
 
       void onCompilationStart(IDEModel* model);
       void onCompilationStop(IDEModel* model);
@@ -110,6 +111,8 @@ namespace elena_lang
       SourceViewController sourceController;
       ProjectController    projectController;
 
+      bool loadConfig(IDEModel* model, path_t configPath);
+
       void setNotifier(NotifierBase* notifier)
       {
          _notifier = notifier;
@@ -118,6 +121,8 @@ namespace elena_lang
       }
 
       path_t retrieveSingleProjectFile(IDEModel* model);
+
+      bool openFile(IDEModel* model, path_t sourceFile);
 
       bool selectSource(ProjectModel* model, SourceViewModel* sourceModel,
          ustr_t moduleName, path_t sourcePath);
@@ -130,6 +135,9 @@ namespace elena_lang
 
       bool doCompileProject(DialogBase& dialog, IDEModel* model);
       void doDebugAction(IDEModel* model, DebugAction action);
+
+      void onCompilationCompletion(IDEModel* model, int exitCode, 
+         text_str output, ErrorLogBase* log);
 
       bool doExit();
 

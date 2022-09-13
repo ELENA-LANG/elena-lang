@@ -11,6 +11,15 @@ using namespace elena_lang;
 
 // --- ConfigFile ---
 
+bool ConfigFile :: select(ustr_t xpath, Collection& collection)
+{
+   Node rootNode = selectRootNode();
+
+   size_t index = xpath.find('/');
+
+   return select(rootNode, xpath + index + 1, collection);
+}
+
 bool ConfigFile :: select(Node& node, ustr_t xpath, Collection& result)
 {
    XmlNodeList xmlNodes(XmlNode::Default());

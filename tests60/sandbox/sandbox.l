@@ -1,28 +1,22 @@
 import system;
 
-A;
-
-singleton Tester
+singleton ByRefProber
 {
-   run()
+//   set(ref int retVal)
+//   {
+//      retVal := 123;
+//   }
+
+   set(ref string retVal)
    {
-      var a := new A();
-      try
-      {
-        a.fail()
-      } 
-      catch(Exception e) 
-      {
-         console.writeLine(e)
-      }
-
-
-      //a.fail() \\ on((e){ console.writeLine(e) });
-      //a.fail() \\ on((Exception e){ console.writeLine(e) });
+      retVal := "hello";
    }
 }
 
 public program() 
 {
-   Tester.run();
+   string s := "none";
+   ByRefProber.set(ref s);
+
+   console.writeLine(s == "hello");
 }

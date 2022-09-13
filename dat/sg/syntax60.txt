@@ -6,6 +6,7 @@ __define hexinteger         12295;
 __define reference          12296;
 __define terminal           12297;
 __define character          12298;
+__define wide               12300;
 
 __define DECLARATION         5120;
 __define BLOCK               7184;
@@ -45,6 +46,8 @@ __define IF_ELSE_OPERATION   6223;
 __define MUL_OPERATION       6224;
 __define DIV_OPERATION       6225;
 __define NOTLESS_OPERATION   6226;
+__define GREATER_OPERATION   6227;
+__define NOTGREATER_OPERATION 6228;
 __define MESSAGE_OPERATION   6337;
 __define PROPERTY_OPERATION  6340;
 __define EXPRESSION          6288;
@@ -191,6 +194,7 @@ ROOT_EXPRESSION ::=
         | integer O_Re
         | hexinteger O_Re
         | string O_Re
+        | wide O_Re
         | character O_Re
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION
@@ -204,6 +208,7 @@ EXPRESSION ::=
         | integer O_Re
         | hexinteger O_Re
         | string O_Re
+        | wide O_Re
         | character O_Re
         | "(" SUB_EXPRESSION
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION
@@ -217,6 +222,7 @@ SINGLE_EXPRESSION ::=
         | integer ^OBJECT
         | hexinteger ^OBJECT
         | string ^OBJECT
+        | wide ^OBJECT
 	| "(" SUB_SINGLE_EXPRESSION;
 
 SUB_EXPRESSION ::=
@@ -225,6 +231,7 @@ SUB_EXPRESSION ::=
         | integer O_Re ^EXPRESSION ")" E_R
         | hexinteger O_Re ^EXPRESSION ")" E_R
         | string O_Re ^EXPRESSION ")" E_R
+        | wide O_Re ^EXPRESSION ")" E_R
         | character O_Re ^EXPRESSION ")" E_R
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION ^EXPRESSION ")" E_R
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION ^EXPRESSION ")" E_R
@@ -237,6 +244,7 @@ SUB_SINGLE_EXPRESSION ::=
         | integer O_Re ")"
         | hexinteger O_Re ")"
         | string O_Re ")"
+        | wide O_Re ")"
         | character O_Re ")"
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION ")"
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION ")"
@@ -268,7 +276,10 @@ L5_EXPRESSION ::=
 L6_EXPRESSION ::=
         identifier ^OBJECT
         | integer ^OBJECT
-        | hexinteger ^OBJECT;
+        | hexinteger ^OBJECT
+        | string ^OBJECT
+        | wide ^OBJECT
+        | character ^OBJECT;
 
 L7_EXPRESSION ::=
 	"{" BLOCK ^ CLOSURE
@@ -433,7 +444,9 @@ L5s ::=
 I_L6_R ::=
 	"==" ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION
 	| "!=" ^OBJECT L6_EXPRESSION ^NOTEQUAL_OPERATION
-	| ">=" ^OBJECT L6_EXPRESSION ^NOTLESS_OPERATION;
+	| ">=" ^OBJECT L6_EXPRESSION ^NOTLESS_OPERATION
+	| ">" ^OBJECT L6_EXPRESSION ^GREATER_OPERATION
+	| "<=" ^OBJECT L6_EXPRESSION ^NOTGREATER_OPERATION;
 
 I_L6a_R ::=
 	"<" ^OBJECT L6_EXPRESSION I_L6a_OPT;

@@ -407,6 +407,42 @@ inline %89h
 
 end
 
+// ; loaddp
+inline %8Ah
+
+  mov  edx, dword ptr [rbp + __arg32_1]
+
+end 
+
+// ; xcmpdp
+inline %8Bh
+
+  mov  ecx, dword ptr [rbp + __arg32_1]
+  cmp  edx, ecx 
+
+end 
+
+// ; subn
+inline %8Ch
+
+  sub  edx, __n_1
+
+end
+
+// ; addn
+inline %8Dh
+
+  add  edx, __n_1
+
+end
+
+// ; setfp
+inline %8Eh
+
+  lea  rbx, qword ptr [rbp + __arg32_1]
+
+end 
+
 // ; copy
 inline %90h
 
@@ -503,7 +539,7 @@ inline %95h
 
   mov  ecx, __n_1 
   mov  eax, edx
-  mul  ecx
+  imul eax, ecx
   mov  rsi, r10
   add  rsi, rax
   mov  rdi, rbx
@@ -516,7 +552,7 @@ inline %96h
 
   mov  ecx, __n_1 
   mov  eax, edx
-  mul  ecx
+  imul eax, ecx
   mov  rdi, r10
   add  rdi, rax
   mov  rsi, rbx
@@ -985,6 +1021,34 @@ inline %0E7h
   mov  rax, __ptr64_2
   mov  [rbx - elVMTOffset], rax
   mov  dword ptr [rbx - elSizeOffset], ecx
+
+end
+
+// ; nadddpn
+inline %0E8h
+
+  mov  eax, __n_2
+  add  dword ptr [rbp+__arg32_1], eax
+
+end
+
+// ; xwriteon
+inline %0EAh
+
+  mov  rdi, r10
+  mov  ecx, __n_2
+  lea  rsi, [rbx + __arg32_1]
+  rep  movsb
+
+end
+
+// ; xcopyon
+inline %0EBh
+
+  mov  rsi, r10
+  mov  ecx, __n_2
+  lea  rdi, [rbx + __arg32_1]
+  rep  movsb
 
 end
 

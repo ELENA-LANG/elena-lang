@@ -20,6 +20,7 @@ struct IDEScheme
    int               textFrameId;
    int               resultControl;
    int               compilerOutputControl;
+   int               errorListControl;
 
    Map<int, text_t>  captions;
 
@@ -27,6 +28,7 @@ struct IDEScheme
       textFrameId(-1), 
       resultControl(-1), 
       compilerOutputControl(-1), 
+      errorListControl(-1),
       captions(nullptr)
    {
    }
@@ -54,6 +56,9 @@ public:
    ProjectModel    projectModel;
    IDEScheme       ideScheme;
 
+   bool            appMaximized;
+
+
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
    void attachListener(IDEListener* listener);
@@ -62,10 +67,11 @@ public:
 
    void onIDEChange();
 
-   IDEModel(int fontSize)
-      : listeners(nullptr), sourceViewModel(fontSize), projectModel(&status)
+   IDEModel()
+      : listeners(nullptr), projectModel(&status)
    {
       status = IDEStatus::None;
+      appMaximized = false;
    }
 };
 

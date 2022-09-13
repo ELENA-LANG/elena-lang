@@ -42,6 +42,7 @@ namespace elena_lang
       parse_key_t identifier;
       parse_key_t reference;
       parse_key_t string, character;
+      parse_key_t wide;
       parse_key_t integer, hexinteger;
 
       TerminalMap()
@@ -49,6 +50,7 @@ namespace elena_lang
          this->eof = this->identifier = 0;
          this->reference = 0;
          this->string = this->character = 0;
+         this->wide = 0;
          this->integer = this->hexinteger = 0;
       }
       TerminalMap(parse_key_t eof,
@@ -56,6 +58,7 @@ namespace elena_lang
          parse_key_t reference,
          parse_key_t string,
          parse_key_t character,
+         parse_key_t wide,
          parse_key_t integer,
          parse_key_t hexinteger)
       {
@@ -64,6 +67,7 @@ namespace elena_lang
          this->reference = reference;
          this->string = string;
          this->character = character;
+         this->wide = wide;
          this->integer = integer;
          this->hexinteger = hexinteger;
       }

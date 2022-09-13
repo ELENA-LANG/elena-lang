@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 19;
+constexpr auto OperationLength = 37;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -90,6 +90,57 @@ constexpr Op Operations[OperationLength] =
       NOTEQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG
    },
    {
+      EQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG
+   },
+   {
+      ADD_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::ByteCondOp, V_INT8, V_INT8, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::ByteCondOp, V_INT8, V_INT8, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::ByteCondOp, V_INT8, V_INT8, 0, V_FLAG
+   },
+   {
+      ADD_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::ShortCondOp, V_INT16, V_INT16, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::ShortCondOp, V_INT16, V_INT16, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::ShortCondOp, V_INT16, V_INT16, 0, V_FLAG
+   },
+   {
       NOT_OPERATOR_ID, BuildKey::BoolSOp, V_FLAG, 0, 0, V_FLAG
    },
    {
@@ -100,6 +151,9 @@ constexpr Op Operations[OperationLength] =
    },
    {
       LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32
+   },
+   {
+      LEN_OPERATOR_ID, BuildKey::ShortArraySOp, V_INT16ARRAY, 0, 0, V_INT32
    },
    {
       IF_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, 0, V_CLOSURE
@@ -120,6 +174,8 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
    switch (target.typeRef) {
       case V_OBJECT:
          return !isPrimitiveRef(source.typeRef);
+      case V_INT32:
+         return source.typeRef == V_INT8 || source.typeRef == V_INT16;
       case V_FLAG:
          return isCompatible(scope, { scope.branchingInfo.typeRef }, source, true);
       default:
@@ -339,6 +395,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_CONVERSION:
          hint = (ref_t)MethodHint::Conversion;
          return true;
+      case V_MULTIRET:
+         hint = (ref_t)MethodHint::MutliRet;
+         return true;
       default:
          return false;
    }
@@ -505,6 +564,16 @@ mssg_t CompilerLogic :: defineTryDispatcher(ModuleScopeBase& scope, mssg_t messa
    return encodeMessage(scope.module->mapAction(TRY_INVOKE_MESSAGE, 0, false), 2, FUNCTION_MESSAGE);
 }
 
+ref_t CompilerLogic :: defineByRefSignature(ModuleScopeBase& scope, ref_t signRef, ref_t resultRef)
+{
+   ref_t targetSignatures[ARG_COUNT];
+
+   size_t len = signRef != 0 ? scope.module->resolveSignature(signRef, targetSignatures) : 0;
+   targetSignatures[len++] = resultRef;
+
+   return scope.module->mapSignature(targetSignatures, len, false);
+}
+
 bool CompilerLogic :: isRole(ClassInfo& info)
 {
    return test(info.header.flags, elRole);
@@ -513,6 +582,11 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 bool CompilerLogic :: isAbstract(ClassInfo& info)
 {
    return test(info.header.flags, elAbstract);
+}
+
+bool CompilerLogic :: isReadOnly(ClassInfo& info)
+{
+   return test(info.header.flags, elReadOnlyRole);
 }
 
 bool CompilerLogic :: isEmbeddableArray(ModuleScopeBase& scope, ref_t reference)
@@ -799,7 +873,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
 
 SizeInfo CompilerLogic :: defineStructSize(ClassInfo& info)
 {
-   SizeInfo sizeInfo = { /*!test(info.header.flags, elReadOnlyRole)*/};
+   SizeInfo sizeInfo = { 0, test(info.header.flags, elReadOnlyRole) };
 
    if (isEmbeddableStruct(info)) {
       sizeInfo.size = info.size;
@@ -842,6 +916,9 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
       if (isCompatible(scope, { V_INT8 }, { elementRef }, true) && info.size == 1)
          return V_INT8ARRAY;
 
+      if (isCompatible(scope, { V_INT16 }, { elementRef }, true) && info.size == 2)
+         return V_INT16ARRAY;
+
       //if (isCompatible(scope, V_INT32, elementRef, true)) {
       //   switch (info.size) {
       //      case 4:
@@ -875,6 +952,12 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
             return true;
          }
          else return isCompatible(scope, targetInfo, { scope.buildins.literalReference }, ignoreNils);
+         break;
+      case V_WIDESTRING:
+         if (targetInfo == sourceInfo) {
+            return true;
+         }
+         else return isCompatible(scope, targetInfo, { scope.buildins.wideReference }, ignoreNils);
          break;
       case V_FLAG:
          return isCompatible(scope, targetInfo, { scope.branchingInfo.typeRef }, ignoreNils);
@@ -1168,15 +1251,7 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          }
       }
 
-      switch ((MethodHint)result.kind) {
-         case MethodHint::Virtual:
-         case MethodHint::Sealed:
-            result.stackSafe = true;
-            break;
-         default:
-            result.stackSafe = false;
-            break;
-      }
+      result.stackSafe = test(methodInfo.hints, (ref_t)MethodHint::Stacksafe);
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
          result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });

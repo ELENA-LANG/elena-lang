@@ -991,7 +991,10 @@ addr_t JITLinker :: resolveConstantArray(ReferenceInfo referenceInfo, ref_t sect
    int size = sectionInfo.section->length() >> 2;
 
    // get constant VMT reference
-   addr_t vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
+   addr_t vmtVAddress = INVALID_ADDR;
+   if (!vmtReferenceInfo.referenceName.empty()) {
+      vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
+   }
 
    // allocate object header
    _compiler->allocateHeader(writer, vmtVAddress, size, structMode, _virtualMode);
@@ -1047,6 +1050,11 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          size = value.length_pos() + 1;
          structMode = true;
          break;
+      case mskWideLiteralRef:
+         vmtReferenceInfo.referenceName = _constantSettings.wideLiteralClass;
+         size = value.length_pos() + 1;
+         structMode = true;
+         break;
       case mskCharacterRef:
          vmtReferenceInfo.referenceName = _constantSettings.characterClass;
          size = 4;
@@ -1094,6 +1102,13 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
       case mskLiteralRef:
          _compiler->writeLiteral(writer, value);
          break;
+      case mskWideLiteralRef:
+      {
+         WideMessage tmp(value);
+
+         _compiler->writeWideLiteral(writer, *tmp);
+         break;
+      }
       default:
          break;
    }
@@ -1206,6 +1221,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
             break;
          case mskIntLiteralRef:
          case mskLiteralRef:
+         case mskWideLiteralRef:
          case mskCharacterRef:
          case mskMssgLiteralRef:
             address = resolveConstant(referenceInfo, sectionMask);

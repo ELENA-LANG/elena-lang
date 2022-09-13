@@ -38,5 +38,24 @@ public const struct String //: BaseValue
         }
     }
 
+    bool equal(string s) : external<system'core_routines'__str_equal>;
 }
 
+// --- WideString ---
+
+public const struct WideString //: BaseValue
+{
+    __string short[] theArray;
+
+    int Length
+    {
+        /// Reads the literal length into an output parameter
+        get()
+        {
+           int l := $len theArray;
+           l := l - 1;
+
+           ^ l;
+        }
+    }
+}

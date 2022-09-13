@@ -62,8 +62,9 @@ namespace elena_lang
 
    public:
       bool          lineNumbersVisible;
-      int           fontSize;
       bool          empty;
+      int           fontSize;
+      int           schemeIndex;
 
       DocumentView* DocView()
       {
@@ -105,12 +106,13 @@ namespace elena_lang
          return _currentView != nullptr;
       }
 
-      TextViewModelBase(int fontSize)
+      TextViewModelBase()
       {
          this->_currentView = nullptr;
          this->lineNumbersVisible = false;
-         this->fontSize = fontSize;
          this->empty = true;
+         this->fontSize = 10;
+         this->schemeIndex = 0;
       }
    };
 

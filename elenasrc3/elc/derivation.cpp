@@ -1073,6 +1073,13 @@ void SyntaxTreeBuilder :: appendTerminal(parse_key_t key, ustr_t value, LineInfo
          _cacheWriter.newNode(syntaxKey, quote.str());
          break;
       }
+      case SyntaxKey::wide:
+      {
+         QuoteString quote(value, value.length_pos());
+
+         _cacheWriter.newNode(syntaxKey, quote.str());
+         break;
+      }
       default:
          _cacheWriter.newNode(syntaxKey, value);
          break;

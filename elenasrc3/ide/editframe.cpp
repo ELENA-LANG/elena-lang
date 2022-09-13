@@ -10,8 +10,8 @@ using namespace elena_lang;
 
 // --- SourceViewModel ---
 
-SourceViewModel :: SourceViewModel(int fontSize)
-   : TextViewModel(fontSize)
+SourceViewModel :: SourceViewModel()
+   : TextViewModel()
 {
    traceRow = -1;
 }

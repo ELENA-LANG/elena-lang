@@ -22,12 +22,14 @@ namespace elena_lang
       Dispatcher     = 0x00000007,
 
       Function       = 0x00000080,
+      MutliRet       = 0x00000200,
       Multimethod    = 0x00001000,
       Static         = 0x00004000,
       GetAccessor    = 0x00008000,
       Abstract       = 0x00020000,
       Internal       = 0x00040000,
-      Predefined     = 0x0080000, // virtual class declaration
+      Predefined     = 0x00080000, // virtual class declaration
+      Stacksafe      = 0x00100000,
       Constructor    = 0x00200400,
       Conversion     = 0x00200800,
       SetAccessor    = 0x00400000,
@@ -156,6 +158,7 @@ namespace elena_lang
    constexpr auto V_CONST                 = 0x80002001u;
    constexpr auto V_EMBEDDABLE            = 0x80002002u;
    constexpr auto V_WRAPPER               = 0x80002003u;
+   constexpr auto V_MULTIRET              = 0x8000200Au;
 
    /// scope:
    constexpr auto V_CLASS                 = 0x80001001u;
@@ -207,6 +210,9 @@ namespace elena_lang
    constexpr auto V_ELEMENT               = 0x8000000Cu;
    constexpr auto V_MESSAGE               = 0x8000000Du;
    constexpr auto V_MESSAGENAME           = 0x8000000Eu;
+   constexpr auto V_INT16                 = 0x8000000Fu;
+   constexpr auto V_INT16ARRAY            = 0x80000010u;
+   constexpr auto V_WIDESTRING            = 0x80000011u;
    constexpr auto V_OBJATTRIBUTES         = 0x80000012u;
    constexpr auto V_CLOSURE               = 0x80000013u;
    constexpr auto V_DECLARATION           = 0x80000014u;

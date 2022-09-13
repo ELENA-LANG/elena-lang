@@ -34,6 +34,7 @@ namespace elena_lang
       eop                  = 0x003009,
       character            = 0x00300A,
       globalreference      = 0x00300B,
+      wide                 = 0x00300C,
 
       // NOTE : low word should be unique for every key
       Declaration          = 0x001400,
@@ -84,6 +85,8 @@ namespace elena_lang
       MulOperation         = 0x001850,
       DivOperation         = 0x001851,
       NotLessOperation     = 0x001852,
+      GreaterOperation     = 0x001853,
+      NotGreaterOperation  = 0x001854,
       Postfix              = 0x001060,
       TemplatePostfix      = 0x001061,
       MethodPostfix        = 0x001062,
@@ -112,6 +115,7 @@ namespace elena_lang
       CatchOperation       = 0x001CC7,
       CatchDispatch        = 0x001CC8,
       RedirectTryDispatch  = 0x001CC9,
+      DirectResend         = 0x001CCA,
 
       Name                 = 0x000101,
       Namespace            = 0x000103,
@@ -125,6 +129,7 @@ namespace elena_lang
       Multimethod          = 0x00010B,
       OutputType           = 0x00010C,
       Target               = 0x00010D,
+      ByRefRetMethod       = 0x00010E,
 
       Column               = 0x000201,
       Row                  = 0x000202,

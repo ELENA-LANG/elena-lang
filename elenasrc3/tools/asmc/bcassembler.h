@@ -121,8 +121,11 @@ namespace elena_lang
       mssg_t readM(ScriptToken& tokenInfo, bool skipRead = false);
       int readN(ScriptToken& tokenInfo, ReferenceMap& constants, bool skipRead = false);
       int readI(ScriptToken& tokenInfo, bool skipRead = false);
-      int readFrameI(ScriptToken& tokenInfo, ReferenceMap& locals, bool skipRead = false);
+      int readFrameI(ScriptToken& tokenInfo, ReferenceMap& parameters, ReferenceMap& locals,
+         bool skipRead = false);
       int readDisp(ScriptToken& tokenInfo, ReferenceMap& dataLocals, bool skipRead = false);
+
+      void readParameterList(ScriptToken& tokenInfo, ReferenceMap& parameters);
 
       int readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants, 
          int factor, bool allowSize);
@@ -140,6 +143,8 @@ namespace elena_lang
         ReferenceMap& dataLocals, bool skipRead);
       bool compileDDispR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          ReferenceMap& dataLocals, bool skipRead);
+      bool compileDDispN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
+         ReferenceMap& dataLocals, ReferenceMap& constants, bool skipRead);
       bool compileOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          ReferenceMap& constants, bool skipRead);
       bool compileOpM(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
@@ -147,9 +152,9 @@ namespace elena_lang
       bool compileOpI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          bool skipRead);
       bool compileOpFrameI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
-         ReferenceMap& locals, bool skipRead);
+         ReferenceMap& parameters, ReferenceMap& locals, bool skipRead);
       bool compileOpStackI(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
-         ReferenceMap& locals, bool skipRead);
+         bool skipRead);
       bool compileOpIN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ReferenceMap& constants, bool skipRead);
       bool compileOpII(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
@@ -169,7 +174,7 @@ namespace elena_lang
          ByteCodeLabelHelper& lh);
 
       bool compileByteCode(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper& lh,
-         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
+         ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
 
       void compileConstant(ScriptToken& tokenInfo, ReferenceMap& constants);
       void compileProcedure(ScriptToken& tokenInfo, ref_t mask, ReferenceMap& constants);
