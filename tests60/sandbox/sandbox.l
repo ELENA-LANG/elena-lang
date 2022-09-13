@@ -1,28 +1,34 @@
 import system;
-import extensions;
 
-A;
-
-B;
-
-C
+struct BoxingStruct
 {
-   A getVal()
-      = new A();
+   int x;
+   int y;
 
-   multiret B getVal()
-      = new B();
+   constructor()
+   {
+      x := 1;
+      y := 2;
+   }
+
+   set(int x, int y)
+   {
+      this x := x;
+      this y := y;
+   }
+
+   test(int x, int y)
+   {
+      console.writeLine(this x == x);
+      console.writeLine(this y == y);
+   }
 }
-
-//B : A
-//{
-//}
-
 
 public program() 
 {
-   C c := new C();
-
-   A a := c.getVal();
-   B b := c.getVal();
+   BoxingStruct st;
+   BoxingProber.set(st);
+   console.write(".");
+   st.test(3,4);
+   console.write(".");
 }
