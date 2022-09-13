@@ -24,6 +24,14 @@ struct BoxingStruct
    }
 }
 
+singleton BoxingProber
+{
+   set(BoxingStruct bs)
+   {
+      bs.set(3,4)
+   }
+}
+
 public program() 
 {
    BoxingStruct st;
