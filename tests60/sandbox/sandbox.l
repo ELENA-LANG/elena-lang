@@ -34,9 +34,13 @@ singleton BoxingProber
 
 public program() 
 {
-   BoxingStruct st;
-   BoxingProber.set(st);
-   console.write(".");
-   st.test(3,4);
-   console.write(".");
+   var st2 := new BoxingStruct();
+   BoxingProber.set(st2);
+   st2.test(3,4);
+
+//   BoxingStruct st;
+//   BoxingProber.set(st);
+//   console.write(".");
+//   st.test(3,4);
+//   console.write(".");
 }
