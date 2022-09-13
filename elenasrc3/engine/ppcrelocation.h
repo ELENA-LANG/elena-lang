@@ -161,7 +161,7 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       {
          unsigned short disp = (unsigned short)(reference >> 16);
 
-         *(unsigned short*)address += disp;
+         *(unsigned short*)address += getHiAdjusted(disp);;
          break;
       }
       case mskImportDisp32Lo:
