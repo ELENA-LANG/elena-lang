@@ -756,6 +756,30 @@ inline %5A5h
 
 end
 
+// ; assigni
+inline %0A6h
+
+  add     x11, x10, __arg12_1
+
+  // calculate write-barrier address
+  movz    x12, data_ptr32lo : %CORE_GC_TABLE
+  movk    x12, data_ptr32hi : %CORE_GC_TABLE, lsl #16
+
+  add     x13, x12, gc_start
+  add     x15, x12, gc_header
+  ldr     x14, [x13]
+  sub     x14, x10, x14
+  ldr     x15, [x15]
+
+  lsr     x14, x14, page_size_order
+  add     x14, x15, x14
+  mov     x12, 1
+  str     x12, [x14]
+
+  str     x0, [x11]
+
+end
+
 // ; peekfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0A8h

@@ -48,7 +48,7 @@ CodeGenerator _codeGenerators[256] =
    loadNOp, compileClose, loadIndexOp, loadIndexOp, loadNOp, loadNOp, loadNOp, loadNOp,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadFieldIndexOp, loadNop, loadNop,
+   loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadFieldIndexOp, loadFieldIndexOp, loadNop,
    loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadNop, loadNop,
@@ -455,24 +455,24 @@ void elena_lang :: loadFieldIndexOp(JITCompilerScope* scope)
       // locate relocation position
       writer->seek(position + entries->offset);
       switch (entries->reference) {
-      case ARG32_1:
-         writer->writeDWord(arg1);
-         break;
-      case NARG_1:
-         writer->writeDWord(arg1);
-         break;
-      case ARG16_1:
-         writer->writeWord((unsigned short)arg1);
-         break;
-      case ARG12_1:
-         scope->compiler->writeImm12(writer, arg1, 0);
-         break;
-      case INV_ARG12_1:
-         scope->compiler->writeImm12(writer, -arg1, 0);
-         break;
-      default:
-         // to make compiler happy
-         break;
+         case ARG32_1:
+            writer->writeDWord(arg1);
+            break;
+         case NARG_1:
+            writer->writeDWord(arg1);
+            break;
+         case ARG16_1:
+            writer->writeWord((unsigned short)arg1);
+            break;
+         case ARG12_1:
+            scope->compiler->writeImm12(writer, arg1, 0);
+            break;
+         case INV_ARG12_1:
+            scope->compiler->writeImm12(writer, -arg1, 0);
+            break;
+         default:
+            // to make compiler happy
+            break;
       }
       //else writeCoreReference();
 

@@ -606,10 +606,23 @@ inline %1A4h
 
 end 
 
-// ; xassigni
+// ; geti
 inline %0A5h
 
   mov  ebx, [ebx + __arg32_1]
+
+end
+
+// ; assigni
+inline %0A6h
+
+  mov  eax, ebx
+  mov  [ebx + __arg32_1], esi
+  // calculate write-barrier address
+  sub  eax, [data : %CORE_GC_TABLE + gc_start]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_header]
+  shr  eax, page_size_order
+  mov  byte ptr [eax + ecx], 1  	
 
 end
 

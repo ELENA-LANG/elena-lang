@@ -781,6 +781,27 @@ inline %0A5h
 
 end
 
+// ; assigni
+inline %0A6h
+
+  addi    r16, r15, __arg16_1
+
+  // calculate write-barrier address
+  ld      r19, toc_gctable(r2)
+
+  ld      r17, gc_start(r19)
+  ld      r18, gc_header(r19)
+
+  subf    r19, r17, r15
+  srdi    r19, r19, page_size_order
+
+  std     r3, 0(r16)
+  li      r20, 1
+  add     r18, r18, r19
+  std     r20, 0(r18)
+
+end
+
 // ; peekfi
 inline %0A8h
 

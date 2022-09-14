@@ -649,6 +649,20 @@ inline %0A5h
 
 end
 
+// ; assigni
+inline %0A6h
+
+  mov  rax, rbx
+
+  // calculate write-barrier address
+  mov  rcx, [data : %CORE_GC_TABLE + gc_header]
+  sub  rax, [data : %CORE_GC_TABLE + gc_start]
+  shr  rax, page_size_order
+  mov  [rbx + __arg32_1], r10
+  mov  byte ptr [rax + rcx], 1  
+
+end
+
 // ; peekfi
 inline %0A8h
 

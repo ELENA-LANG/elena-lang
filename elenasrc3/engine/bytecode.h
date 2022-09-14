@@ -65,6 +65,7 @@ namespace elena_lang
       StoreSI        = 0xA3,
       XFlushSI       = 0xA4,
       GetI           = 0xA5,
+      AssignI        = 0xA6,
       PeekFI         = 0xA8,
       PeekSI         = 0xA9,
 
