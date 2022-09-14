@@ -47,6 +47,7 @@ define es_catch_frame        000Ch
 // ; --- Page Size ----
 define page_mask        0FFFFFFF0h
 define page_ceil               17h
+define page_size_order          4h
 define struct_mask_inv     7FFFFFh
 define struct_mask         800000h
 

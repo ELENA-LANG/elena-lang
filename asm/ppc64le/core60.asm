@@ -798,7 +798,7 @@ inline %0A6h
   std     r3, 0(r16)
   li      r20, 1
   add     r18, r18, r19
-  std     r20, 0(r18)
+  stb     r20, 0(r18)
 
 end
 

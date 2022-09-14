@@ -1274,6 +1274,11 @@ bool X86Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWrit
       writer.writeByte(0x88);
       X86Helper::writeModRM(writer, target, source);
    }
+   else if (source.isM8() && target.isDB()) {
+      writer.writeByte(0xC6);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 0 }, source);
+      X86Helper::writeImm(writer, target);
+   }
    else return false;
 
    return true;
@@ -2147,6 +2152,19 @@ bool X86_64Assembler :: compilePush(X86Operand source, MemoryWriter& writer)
    return true;
 }
 
+bool X86_64Assembler :: compileShr(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isR64() && target.type == X86OperandType::DB) {
+      writer.writeByte(0x48);
+      writer.writeByte(0xC1);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 5), source);
+      writer.writeByte(target.offset);
+   }
+   else return X86Assembler::compileShr(source, target, writer);
+
+   return true;
+}
+
 bool X86_64Assembler :: compileSub(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
    if (source.isR64_M64() && target.type == X86OperandType::DB) {
@@ -2165,6 +2183,11 @@ bool X86_64Assembler :: compileSub(X86Operand source, X86Operand target, MemoryW
       writer.writeByte(0x48);
       writer.writeByte(0x29);
       X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR64() && target.isR64_M64()) {
+      writer.writeByte(0x48);
+      writer.writeByte(0x2B);
+      X86Helper::writeModRM(writer, source, target);
    }
    else return X86Assembler::compileSub(source, target, writer);
 

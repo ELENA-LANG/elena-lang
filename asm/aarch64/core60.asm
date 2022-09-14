@@ -774,7 +774,7 @@ inline %0A6h
   lsr     x14, x14, page_size_order
   add     x14, x15, x14
   mov     x12, 1
-  str     x12, [x14]
+  strb    x12, [x14]
 
   str     x0, [x11]
 
