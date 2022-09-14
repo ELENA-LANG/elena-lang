@@ -14,6 +14,7 @@
 using namespace elena_lang;
 
 static ELENARTMachine* machine = nullptr;
+static SystemEnv* systemEnv = nullptr;
 
 void init()
 {
@@ -22,6 +23,8 @@ void init()
 
 void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)
 {
+   systemEnv = env;
+
    printf("InitializeSTA.4 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
    fflush(stdout);
 
@@ -31,6 +34,11 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
    __routineProvider.InitExceptionHandling(env, criricalHandler);
 
    machine->startSTA(env, entryList);
+}
+
+void* CollectGCLA(void* roots, size_t size)
+{
+   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size);
 }
 
 void ExitLA(int retVal)

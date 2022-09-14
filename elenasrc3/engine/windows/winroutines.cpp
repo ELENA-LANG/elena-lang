@@ -17,7 +17,12 @@ static uintptr_t CriticalHandler = 0;
 
 #define CALL_FIRST 1  
 
-uintptr_t SystemRoutineProvider::NewHeap(int totalSize, int committedSize)
+size_t SystemRoutineProvider :: AlignHeapSize(size_t size)
+{
+   return alignSize(size, 128);
+}
+
+uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSize)
 {
    // reserve
    void* allocPtr = VirtualAlloc(nullptr, totalSize, MEM_RESERVE, PAGE_READWRITE);
@@ -26,6 +31,19 @@ uintptr_t SystemRoutineProvider::NewHeap(int totalSize, int committedSize)
    VirtualAlloc(allocPtr, committedSize, MEM_COMMIT, PAGE_READWRITE);
 
    return (uintptr_t)allocPtr;
+}
+
+uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
+{
+   // allocate
+   LPVOID r = VirtualAlloc(allocPtr, newSize, MEM_COMMIT, PAGE_READWRITE);
+
+   return !r ? 0 : (uintptr_t)allocPtr;
+}
+
+void SystemRoutineProvider :: RaiseError(int code)
+{
+   ::RaiseException(code, 0, 0, 0);
 }
 
 void SystemRoutineProvider :: Exit(int exitCode)

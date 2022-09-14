@@ -14,23 +14,29 @@ namespace elena_lang
    constexpr auto gcPageSize32               = 0x0010;                // a heap page size constant
    constexpr auto gcPageSizeOrder32          = 4;
    constexpr auto gcPageSizeOrderMinus2_32   = 2;
-   constexpr auto gcPageMask32        = 0x0FFFFFFF0;
+   constexpr auto gcPageMask32               = 0x0FFFFFFF0;
+   constexpr int  gcPageCeil32               = 0x17;
 
    constexpr auto elVMTClassOffset32         = 0x0010;                // a VMT32 class offset
    constexpr auto elObjectOffset32           = 0x0008;                // object header / offset constant
 
-   constexpr int elStructMask32                      = 0x800000;
+   constexpr int  elStructMask32             = 0x800000;
+   constexpr int  elObjectSizeMask32         = 0xFFFFFF;
+   constexpr int  elSizeCeil32               = 0x0FFFFC;
 
    // --- 64bit ELENA Object constants ---
-   constexpr int gcPageSize64                        = 0x0020;                // a heap page size constant
+   constexpr int  gcPageSize64               = 0x0020;                // a heap page size constant
    constexpr auto gcPageSizeOrder64          = 5;
    constexpr auto gcPageSizeOrderMinus2_64   = 3;
-   constexpr auto gcPageMask64        = 0x0FFFFFFE0;
+   constexpr auto gcPageMask64               = 0x0FFFFFFE0;
+   constexpr int  gcPageCeil64               = 0x2F;
 
    constexpr auto elVMTClassOffset64         = 0x0020;                // a VMT64 class offset
    constexpr auto elObjectOffset64           = 0x0010;                // object header / offset constant
 
-   constexpr int elStructMask64              = 0x40000000;
+   constexpr int  elStructMask64             = 0x40000000;
+   constexpr int  elObjectSizeMask64         = 0x7FFFFFFF;
+   constexpr int  elSizeCeil64               = 0x3FFFFFF8;
 
    // --- ELENA CORE built-in routines
    constexpr ref_t INVOKER                   = 0x10001;
@@ -101,6 +107,34 @@ namespace elena_lang
       uintptr_t   gc_end;
       uintptr_t   gc_mg_wbar;
    };
+
+   // --- GCRoot ---
+   struct GCRoot
+   {
+      size_t size;
+      union
+      {
+         void*     stack_ptr;
+         uintptr_t stack_ptr_addr;
+      };
+   };
+
+   // --- ObjectPage ---
+   struct ObjectPage32
+   {
+      uintptr_t vmtPtr;
+      int       size;
+      int       body[2];
+   };
+
+   struct ObjectPage64
+   {
+      uintptr_t vmtPtr;
+      int       lock_flag;
+      int       size;
+      int       body[4];
+   };
+
 
    // --- ExceptionStruct ---
    struct ExceptionStruct
