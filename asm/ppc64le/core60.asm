@@ -7,7 +7,7 @@ define VEH_HANDLER          10003h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
-define CORE_ET_TABLE        2000Bh
+define CORE_THREAD_TABLE    2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
@@ -75,11 +75,11 @@ structure % CORE_TOC
   dq data   : %CORE_GC_TABLE
   dq code   : %GC_ALLOC // ; address of alloc function
   dq data   : 0         // ; address of data section
-  dq stat   : 0         // ; address of data section
+  dq stat   : 0         // ; address of stat section
 
 end
  
-structure % CORE_ET_TABLE
+structure % CORE_THREAD_TABLE
 
   dq 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
@@ -107,7 +107,7 @@ structure %SYSTEM_ENV
 
   dq 0  
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_ET_TABLE
+  dq data : %CORE_THREAD_TABLE
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -148,6 +148,14 @@ inline % GC_ALLOC
   blr
 
 labYGCollect:
+  // ; save registers
+  // ; lock frame
+  // ; create set of roots
+  // ;   save static roots
+  // ;   collect frames
+  // ; restore frame to correctly display a call stack
+  // ; call GC routine
+
   xor  r15, r15, r15  // !! temporal stub
   blr
 
@@ -245,8 +253,8 @@ end
 inline %0Ah
 
   ld      r16, toc_data(r2)
-  addis   r16, r16, data_disp32hi : %CORE_ET_TABLE
-  addi    r16, r16, data_disp32lo : %CORE_ET_TABLE
+  addis   r16, r16, data_disp32hi : %CORE_THREAD_TABLE
+  addi    r16, r16, data_disp32lo : %CORE_THREAD_TABLE
 
   ld      r17, et_current(r16)
   ld      r0, es_catch_addr(r17)
@@ -259,8 +267,8 @@ end
 inline %0Bh
 
   ld      r16, toc_data(r2)
-  addis   r16, r16, data_disp32hi : %CORE_ET_TABLE
-  addi    r16, r16, data_disp32lo : %CORE_ET_TABLE
+  addis   r16, r16, data_disp32hi : %CORE_THREAD_TABLE
+  addi    r16, r16, data_disp32lo : %CORE_THREAD_TABLE
 
   ld      r19, et_current(r16)
 
@@ -1271,8 +1279,8 @@ inline %0E6h
   addi    r19, r31, __arg16_1
 
   ld      r14, toc_data(r2)
-  addis   r14, r14, data_disp32hi : %CORE_ET_TABLE
-  addi    r14, r14, data_disp32lo : %CORE_ET_TABLE
+  addis   r14, r14, data_disp32hi : %CORE_THREAD_TABLE
+  addi    r14, r14, data_disp32lo : %CORE_THREAD_TABLE
 
   ld      r15, et_current(r14)
 

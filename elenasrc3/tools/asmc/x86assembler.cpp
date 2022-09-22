@@ -123,10 +123,10 @@ X86Operand X86Assembler :: defineOperand(ScriptToken& tokenInfo, X86OperandType 
             operand.type = X86OperandType::DD;
       }
       else if (tokenInfo.compare("data")) {
-         operand = compileDataOperand(tokenInfo, errorMessage, false);
+         operand = compileDataOperand(tokenInfo, errorMessage, mskDataRef);
       }
       else if (tokenInfo.compare("rdata")) {
-         operand = compileDataOperand(tokenInfo, errorMessage, true);
+         operand = compileDataOperand(tokenInfo, errorMessage, mskRDataRef);
       }
       else if (tokenInfo.compare("mdata")) {
          operand = compileMDataOperand(tokenInfo, errorMessage);
@@ -362,13 +362,13 @@ X86Operand X86Assembler :: compileCodeOperand(ScriptToken& tokenInfo, ustr_t err
    return operand;
 }
 
-X86Operand X86Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, bool rdataMode)
+X86Operand X86Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, ref_t mask)
 {
    X86Operand operand;
 
    read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
-   ref_t mask = rdataMode ? mskRDataRef32 : mskDataRef32;
+   mask |= mskRef32;
 
    read(tokenInfo);
    if (tokenInfo.compare("%")) {
@@ -436,8 +436,19 @@ X86Operand X86Assembler :: compileOperand(ScriptToken& tokenInfo, ustr_t errorMe
 
       read(tokenInfo);
    }
-   else if (tokenInfo.compare("data") || tokenInfo.compare("rdata")) {
-      operand = compileDataOperand(tokenInfo, errorMessage, tokenInfo.compare("rdata"));
+   else if (tokenInfo.compare("data") || tokenInfo.compare("rdata") || tokenInfo.compare("stat")) {
+      ref_t mask = 0;
+      if (tokenInfo.compare("data")) {
+         mask = mskDataRef;
+      }
+      else if (tokenInfo.compare("rdata")) {
+         mask = mskRDataRef;
+      }
+      else if (tokenInfo.compare("stat")) {
+         mask = mskStatDataRef;
+      }
+
+      operand = compileDataOperand(tokenInfo, errorMessage, mask);
 
       read(tokenInfo);
       if (tokenInfo.compare("+")) {
@@ -812,6 +823,18 @@ void X86Assembler :: compileShr(ScriptToken& tokenInfo, MemoryWriter& writer)
    X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
 
    if (!compileShr(sour, dest, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileShl(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileShl(sour, dest, writer))
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
@@ -1416,6 +1439,18 @@ bool X86Assembler :: compileShr(X86Operand source, X86Operand target, MemoryWrit
    return true;
 }
 
+bool X86Assembler :: compileShl(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isR32() && target.type == X86OperandType::DB) {
+      writer.writeByte(0xC1);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
+      writer.writeByte(target.offset);
+   }
+   else return false;
+
+   return true;
+}
+
 bool X86Assembler :: compileSub(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
    if (source.isR32_M32() && target.type == X86OperandType::DB) {
@@ -1488,7 +1523,16 @@ void X86Assembler :: compileExternCall(ScriptToken& tokenInfo, MemoryWriter& wri
 
       X86Helper::writeImm(writer, operand);
    }
-   else throw SyntaxError(ASM_INVALID_CALL_LABEL, tokenInfo.lineInfo);
+   else {
+      if (tokenInfo.state == dfaQuote) {
+         X86Operand operand(X86OperandType::DD);
+         operand.reference = _target->mapReference(*tokenInfo.token) | mskImportRef32;
+         operand.offset = 0;
+
+         X86Helper::writeImm(writer, operand);
+      }
+      else throw SyntaxError(ASM_INVALID_CALL_LABEL, tokenInfo.lineInfo);
+   }
 }
 
 bool X86Assembler::compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
@@ -1682,6 +1726,9 @@ bool X86Assembler::compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
    else if (tokenInfo.compare("shr")) {
       compileShr(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("shl")) {
+      compileShl(tokenInfo, writer);
+   }
    else if (tokenInfo.compare("stos")) {
       compileStos(tokenInfo, writer);
    }
@@ -1850,11 +1897,11 @@ X86Operand X86_64Assembler :: compileCodeOperand(ScriptToken& tokenInfo, ustr_t 
    return operand;
 }
 
-X86Operand X86_64Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, bool rdataMode)
+X86Operand X86_64Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, ref_t mask)
 {
    X86Operand operand;
 
-   ref_t mask = rdataMode ? mskRDataRef64 : mskDataRef64;
+   mask |= mskRef64;
 
    read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
@@ -2158,6 +2205,19 @@ bool X86_64Assembler :: compileShr(X86Operand source, X86Operand target, MemoryW
       writer.writeByte(0x48);
       writer.writeByte(0xC1);
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 5), source);
+      writer.writeByte(target.offset);
+   }
+   else return X86Assembler::compileShr(source, target, writer);
+
+   return true;
+}
+
+bool X86_64Assembler :: compileShl(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isR64() && target.type == X86OperandType::DB) {
+      writer.writeByte(0x48);
+      writer.writeByte(0xC1);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
       writer.writeByte(target.offset);
    }
    else return X86Assembler::compileShr(source, target, writer);

@@ -6,7 +6,7 @@ define VEH_HANDLER           10003h
 define CORE_TOC              20001h
 define SYSTEM_ENV            20002h
 define CORE_GC_TABLE         20003h
-define CORE_ET_TABLE         2000Bh
+define CORE_THREAD_TABLE     2000Bh
 define VOID           	     2000Dh
 define VOIDPTR               2000Eh
 
@@ -54,7 +54,7 @@ structure % CORE_TOC
 
 end
  
-structure % CORE_ET_TABLE
+structure % CORE_THREAD_TABLE
 
   dq 0 // ; critical_handler       ; +x00   - pointer to ELENA critical exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
@@ -82,7 +82,7 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_ET_TABLE
+  dq data : %CORE_THREAD_TABLE
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -126,6 +126,14 @@ inline % GC_ALLOC
   ret     x30
 
 labYGCollect:
+  // ; save registers
+  // ; lock frame
+  // ; create set of roots
+  // ;   save static roots
+  // ;   collect frames
+  // ; restore frame to correctly display a call stack
+  // ; call GC routine
+
   mov     x10, #0                 //; ecx
   ret     x30
 
@@ -222,8 +230,8 @@ end
 // ; throw
 inline %0Ah
 
-  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
-  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
+  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
 
   ldr     x14, [x14, # et_current]!
   ldr     x17, [x14, # es_catch_addr]!
@@ -235,8 +243,8 @@ end
 // ; unhook
 inline %0Bh
 
-  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
-  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
+  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
 
   add     x14, x14, # et_current
   ldr     x13, [x14]
@@ -1276,8 +1284,8 @@ inline %0E6h
 
   add     x13, x29, __arg12_1
 
-  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
-  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
+  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
   mov     x18, x13
 
   movz    x16,  __ptr32lo_2

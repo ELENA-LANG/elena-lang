@@ -46,7 +46,7 @@ namespace elena_lang
    constexpr ref_t CORE_TOC                  = 0x20001;
    constexpr ref_t SYSTEM_ENV                = 0x20002;
    constexpr ref_t CORE_GC_TABLE             = 0x20003;
-   constexpr ref_t CORE_EH_TABLE             = 0x2000B;
+   constexpr ref_t CORE_THREAD_TABLE         = 0x2000B;
    constexpr ref_t VOIDOBJ                   = 0x2000D;
    constexpr ref_t VOIDPTR                   = 0x2000E;
 
@@ -145,23 +145,24 @@ namespace elena_lang
       uintptr_t core_catch_frame;
    };
 
-   // --- EHTable ---
-   struct EHTable
+   // --- ThreadTableEntry ---
+   struct ThreadTableEntry
    {
       uintptr_t        eh_critical;
       ExceptionStruct* eh_current;
+      uintptr_t        tt_stack_frame;
    };
 
    // --- SystemEnv ---
    struct SystemEnv
    {
-      size_t      stat_counter;
-      GCTable*    gc_table;
-      EHTable*    eh_table;
-      void*       bc_invoker;
-      void*       veh_handler;
-      pos_t       gc_mg_size;
-      pos_t       gc_yg_size;
+      size_t            stat_counter;
+      GCTable*          gc_table;
+      ThreadTableEntry* eh_table;
+      void*             bc_invoker;
+      void*             veh_handler;
+      pos_t             gc_mg_size;
+      pos_t             gc_yg_size;
    };
 
    constexpr int SizeOfExceptionStruct32 = 0x10;

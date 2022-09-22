@@ -71,7 +71,7 @@ CodeGenerator _codeGenerators[256] =
 constexpr int coreVariableNumber = 2;
 constexpr ref_t coreVariables[coreVariableNumber] =
 {
-   CORE_GC_TABLE, CORE_EH_TABLE
+   CORE_GC_TABLE, CORE_THREAD_TABLE
 };
 
 constexpr int coreConstantNumber = 4;
@@ -111,15 +111,17 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::AssignI
 };
 
-void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/,
-   pos_t disp, void* code)
+void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
+   pos_t disp, void* code, ModuleBase* module)
 {
-   // references should be already preloaded
+   // references should be already preloaded - except the import one
    ref_t mask = reference & mskAnyRef;
+   ref_t properRef = reference & ~mskAnyRef;
    switch (mask) {
       case mskCodeRef32:
       case mskDataRef32:
       case mskMDataRef32:
+      case mskStatDataRef32:
          scope->helper->writeVAddress32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
             *(pos_t*)((char*)code + disp), mask);
@@ -138,10 +140,17 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference/*
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
             *(pos_t*)((char*)code + disp), mask);
          break;
+      case mskImportRef32:
+         scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            properRef | mskExternalRef, 0, mskRef32, module);
+         break;
       case mskImportRef64:
-         scope->helper->writeVAddress64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
-            *(pos64_t*)((char*)code + disp), mask);
+         if (properRef) {
+            scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+               properRef | mskExternalRef, 0, mskRef64, module);
+         }
+         else scope->helper->writeVAddress64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            (addr_t)nullptr, *(pos64_t*)((char*)code + disp), mask);
          break;
       case mskRDataRef32:
          scope->helper->writeVAddress32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
@@ -225,7 +234,7 @@ void elena_lang :: allocateCode(JITCompilerScope* scope, void* code)
    writer->writeBytes(0, length);
 }
 
-void elena_lang :: loadCode(JITCompilerScope* scope, void* code)
+void elena_lang :: loadCode(JITCompilerScope* scope, void* code, ModuleBase* module)
 {
    MemoryWriter* writer = scope->codeWriter;
 
@@ -242,7 +251,7 @@ void elena_lang :: loadCode(JITCompilerScope* scope, void* code)
       // locate relocation position
       writer->seek(position + entries->offset);
 
-      writeCoreReference(scope, entries->reference, entries->offset, code);
+      writeCoreReference(scope, entries->reference, entries->offset, code, module);
 
       entries++;
       count--;
@@ -252,7 +261,7 @@ void elena_lang :: loadCode(JITCompilerScope* scope, void* code)
 
 void elena_lang :: loadOp(JITCompilerScope* scope)
 {
-   loadCode(scope, scope->compiler->_inlines[0][scope->code()]);
+   loadCode(scope, scope->compiler->_inlines[0][scope->code()], nullptr);
 }
 
 void* elena_lang :: retrieveCode(JITCompilerScope* scope)
@@ -2049,7 +2058,7 @@ inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, si
          pos_t position = positions.get(functions[i]);
          scope.codeWriter->seek(position);
 
-         loadCode(&scope, info.section->get(0));
+         loadCode(&scope, info.section->get(0), info.module);
       }
    }
 }
@@ -2285,16 +2294,16 @@ CodeGenerator* JITCompiler :: codeGenerators()
    return _codeGenerators;
 }
 
-void JITCompiler :: writeArgAddress(JITCompilerScope* scope, arg_t arg, pos_t offset, ref_t addressMask)
+void JITCompiler :: writeArgAddress(JITCompilerScope* scope, ref_t arg, pos_t offset, ref_t addressMask)
 {
    scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-      (ref_t)arg, offset, addressMask);
+      arg, offset, addressMask);
 }
 
-void JITCompiler :: writeVMTMethodArg(JITCompilerScope* scope, arg_t arg, pos_t offset, mssg_t message, ref_t addressMask)
+void JITCompiler :: writeVMTMethodArg(JITCompilerScope* scope, ref_t arg, pos_t offset, mssg_t message, ref_t addressMask)
 {
    scope->helper->writeVMTMethodReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-      (ref_t)arg, offset, message, addressMask);
+      arg, offset, message, addressMask);
 }
 
 void JITCompiler :: compileTape(ReferenceHelperBase* helper, MemoryReader& bcReader, pos_t endPos,

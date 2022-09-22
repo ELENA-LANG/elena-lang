@@ -8,7 +8,7 @@ define VEH_HANDLER          10003h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
-define CORE_ET_TABLE        2000Bh
+define CORE_THREAD_TABLE    2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
@@ -59,7 +59,7 @@ structure % CORE_TOC
 
 end
  
-structure % CORE_ET_TABLE
+structure % CORE_THREAD_TABLE
 
   dq 0 // ; crtitical_handler      ; +x00   - pointer to ELENA exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
@@ -87,7 +87,7 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_ET_TABLE
+  dq data : %CORE_THREAD_TABLE
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -127,6 +127,14 @@ inline % GC_ALLOC
   ret
 
 labYGCollect:
+  // ; save registers
+  // ; lock frame
+  // ; create set of roots
+  // ;   save static roots
+  // ;   collect frames
+  // ; restore frame to correctly display a call stack
+  // ; call GC routine
+
   xor  rbx, rbx  // !! temporal stub
   ret
 
@@ -213,7 +221,7 @@ end
 // ; throw
 inline %0Ah
 
-  mov  rax, [data : %CORE_ET_TABLE + et_current]
+  mov  rax, [data : %CORE_THREAD_TABLE + et_current]
   jmp  [rax + es_catch_addr]
 
 end
@@ -221,13 +229,13 @@ end
 // ; unhook
 inline %0Bh
 
-  mov  rdi, [data : %CORE_ET_TABLE + et_current]
+  mov  rdi, [data : %CORE_THREAD_TABLE + et_current]
 
   mov  rax, [rdi + es_prev_struct]
   mov  rbp, [rdi + es_catch_frame]
   mov  rsp, [rdi + es_catch_level]
 
-  mov  [data : %CORE_ET_TABLE + et_current], rax
+  mov  [data : %CORE_THREAD_TABLE + et_current], rax
 
 end
 
@@ -1016,14 +1024,14 @@ inline %0E6h
 
   lea  rdi, [rbp + __arg32_1]
   mov  rcx, __ptr64_2
-  mov  rax, [data : %CORE_ET_TABLE + et_current]
+  mov  rax, [data : %CORE_THREAD_TABLE + et_current]
 
   mov  [rdi + es_prev_struct], rax
   mov  [rdi + es_catch_frame], rbp
   mov  [rdi + es_catch_level], rsp
   mov  [rdi + es_catch_addr], rcx
 
-  mov  [data : %CORE_ET_TABLE + et_current], rdi
+  mov  [data : %CORE_THREAD_TABLE + et_current], rdi
 
 end
 
