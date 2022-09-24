@@ -23,6 +23,7 @@ define toc_code              0018h
 define toc_gctable           0020h
 define toc_alloc             0028h
 define toc_data              0030h
+define toc_stat              0038h
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -149,14 +150,90 @@ inline % GC_ALLOC
 
 labYGCollect:
   // ; save registers
-  // ; lock frame
-  // ; create set of roots
-  // ;   save static roots
-  // ;   collect frames
-  // ; restore frame to correctly display a call stack
-  // ; call GC routine
+  sub     r18, r18, r17 
 
-  xor  r15, r15, r15  // !! temporal stub
+  mflr    r0
+  std     r31, -10h(r1)  // ; save frame pointer
+  std     r0,  -08h(r1)  // ; save return address
+
+  addi    r1, r1, -16    // ; allocate raw stack
+  mr      r31, r1        // ; set frame pointer
+
+  // ; lock frame
+  ld      r16, toc_data(r2)
+  addis   r16, r16, data_disp32hi : %CORE_THREAD_TABLE
+  addi    r16, r16, data_disp32lo : %CORE_THREAD_TABLE
+  std     r1, tt_stack_frame(r16)
+
+  std     r18, -08h(r1)  // ; save return address
+  addi    r1, r1, -16    // ; allocate raw stack
+
+  // ; create set of roots
+  mr      r31, r1
+  li      r18, 0
+  std     r18, -10h(r1)
+  std     r18, -08h(r1)
+  addi    r1, r1, -16
+
+  // ;   save static roots
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, rdata_disp32hi : %SYSTEM_ENV
+  addi    r17, r17, rdata_disp32lo : %SYSTEM_ENV
+
+  ld      r19, toc_stat(r2)
+  ld      r18, 0(r17)
+  sldi    r18, r18, 3
+  std     r18, -10h(r1)
+  std     r19, -08h(r1)
+  addi    r1, r1, -16
+
+  // ;   collect frames
+  ld      r19, tt_stack_frame(r16)
+  mr      r18, r19
+
+labYGNextFrame:
+  mr      r17, r19
+  ld      r19, 0(r17)
+  cmpwi   r19, 0
+  bne     labYGNextFrame
+
+  std     r18, -8h(r1)
+  subf    r18, r17, r18
+  neg     r18, r18
+  std     r18, -10h(r1)
+  addi    r1, r1, -16
+
+  ld      r19, 8(r17)
+  cmpwi   r19, 0
+  mr      r18, r19
+  jne     labYGNextFrame
+
+  std     r1, 8(r31)
+
+  ld      r6, 0(r31)
+  mr      r5, r1
+
+  // ; restore frame to correctly display a call stack
+  ld      r31, 8(r31)
+
+  // ; call GC routine
+  ld      r12, toc_import(r2)
+  addis   r12, r12, importhi "$rt.CollectGCLA"
+  addi    r12, r12, importlo "$rt.CollectGCLA"
+  ld      r12,0(r12)
+
+  mtctr   r12            // ; put code address into ctr
+  bctrl                  // ; and call it
+
+  ld      r31, 28h(r1)
+  mr      r15, r0
+
+  mr      r1, r31              // ; restore stack pointer
+
+  ld      r31, 00h(r1)         // ; restore frame pointer
+  ld      r0,  08h(r1)         // ; restore  return address
+
+  mtlr    r0
   blr
 
 end
