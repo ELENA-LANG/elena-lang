@@ -38,6 +38,7 @@ define gc_end                0048h
 define gc_mg_wbar            0050h
 
 define et_current            0008h
+define tt_stack_frame        0008h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
@@ -63,6 +64,7 @@ structure % CORE_THREAD_TABLE
 
   dq 0 // ; crtitical_handler      ; +x00   - pointer to ELENA exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
+  dq 0 // ; tt_stack_frame         ; +x08   - pointer to the stack frame
 
 end
 
@@ -128,14 +130,71 @@ inline % GC_ALLOC
 
 labYGCollect:
   // ; save registers
-  // ; lock frame
-  // ; create set of roots
-  // ;   save static roots
-  // ;   collect frames
-  // ; restore frame to correctly display a call stack
-  // ; call GC routine
+  sub  rcx, rax
+  push rbp
 
-  xor  rbx, rbx  // !! temporal stub
+  // ; lock frame
+  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+
+  push rcx
+
+  // ; create set of roots
+  mov  rbp, rsp
+  xor  ecx, ecx
+  push rcx        // ; reserve place 
+  push rcx
+  push rcx
+
+  // ;   save static roots
+  mov  rax, rdata : %SYSTEM_ENV
+  mov  rsi, stat : %0
+  mov  ecx, dword ptr [rax]
+  shl  ecx, 3
+  push rsi
+  push rcx
+
+  // ;   collect frames
+  mov  rax, [data : %CORE_THREAD_TABLE + tt_stack_frame]  
+  mov  rcx, rax
+
+labYGNextFrame:
+  mov  rsi, rax
+  mov  rax, [rsi]
+  test rax, rax
+  jnz  short labYGNextFrame
+
+  push rcx
+  sub  rcx, rsi
+  neg  rcx
+  push rcx  
+
+  mov  rax, [rsi + 8]
+  test rax, rax
+  mov  rcx, rax
+  jnz  short labYGNextFrame
+
+  mov [rbp-8], rsp      // ; save position for roots
+
+  mov  rdx, [rbp]
+  mov  rcx, rsp
+
+  // ; restore frame to correctly display a call stack
+  mov  rax, rbp
+  mov  rbp, [rax+8]
+
+  // ; call GC routine
+  sub  rsp, 30h
+  mov  [rsp+28h], rax
+  call extern "$rt.CollectGCLA"
+
+  mov  rbp, [rsp+28h] 
+  add  rsp, 30h
+  mov  rbx, rax
+
+  mov  rsp, rbp 
+  pop  rcx
+  pop  rbp
+
   ret
 
 end

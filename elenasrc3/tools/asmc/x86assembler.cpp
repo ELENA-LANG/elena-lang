@@ -1944,7 +1944,16 @@ void X86_64Assembler :: compileExternCall(ScriptToken& tokenInfo, MemoryWriter& 
 
       X86Helper::writeImm(writer, operand);
    }
-   else throw SyntaxError(ASM_INVALID_CALL_LABEL, tokenInfo.lineInfo);
+   else {
+      if (tokenInfo.state == dfaQuote) {
+         X86Operand operand(X86OperandType::DD);
+         operand.reference = _target->mapReference(*tokenInfo.token) | mskImportRelRef32;
+         operand.offset = 0;
+
+         X86Helper::writeImm(writer, operand);
+      }
+      else throw SyntaxError(ASM_INVALID_CALL_LABEL, tokenInfo.lineInfo);
+   }
 }
 
 bool X86_64Assembler::compileAdd(X86Operand source, X86Operand target, MemoryWriter& writer)
@@ -2167,6 +2176,18 @@ bool X86_64Assembler :: compileMov(X86Operand source, X86Operand target, MemoryW
    return true;
 }
 
+bool X86_64Assembler :: compileNeg(X86Operand source, MemoryWriter& writer)
+{
+   if (source.isR64_M64()) {
+      writer.writeByte(0x48);
+      writer.writeByte(0xF7);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 3 }, source);
+   }
+   else return X86Assembler::compileNeg(source, writer);
+
+   return true;
+}
+
 bool X86_64Assembler::compilePop(X86Operand source, MemoryWriter& writer)
 {
    if (source.isR64()) {
@@ -2220,7 +2241,7 @@ bool X86_64Assembler :: compileShl(X86Operand source, X86Operand target, MemoryW
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
       writer.writeByte(target.offset);
    }
-   else return X86Assembler::compileShr(source, target, writer);
+   else return X86Assembler::compileShl(source, target, writer);
 
    return true;
 }
