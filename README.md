@@ -130,7 +130,7 @@ Reach out with any questions you may have and we'll make sure to answer them as 
 
 | Platform  | Link        |
 |:----------|:------------|
-| 💬 Instant Message Chat | [![Discord Banner](https://discord.com/api/guilds/1023392280087908352/widget.png?style=banner2)](https://discord.gg/pMCjunWSxH)
+| 💬 Instant Message Chat | [![Discord Banner 2](https://discordapp.com/api/guilds/1023392280087908352/widget.png?style=banner2)](https://discord.gg/pMCjunWSxH)
 | 📧 E-mail | elenaprolang@gmail.com
 | 🐤 Twitter | [@elena_language](https://twitter.com/elena_language)
 
