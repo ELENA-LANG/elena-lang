@@ -167,7 +167,7 @@ labYGCollect:
   addi    r16, r16, data_disp32lo : %CORE_THREAD_TABLE
   std     r1, tt_stack_frame(r16)
 
-  std     r18, -08h(r1)  // ; save return address
+  std     r18, -08h(r1)  
   addi    r1, r1, -16    // ; allocate raw stack
 
   // ; create set of roots
