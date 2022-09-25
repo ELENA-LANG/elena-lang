@@ -121,9 +121,18 @@ The ELENA source code is organized as follows:
 The compiler and executables distributed in this package fall under MIT License, 
 for more information read the file LICENSE.
 
-## Questions?
+## Community
+We want your contributions and suggestions! One of the easiest ways to contribute is to participate in discussions on Discord.
 
-Feel free to ask any question:  elenaprolang@gmail.com.
+### Contact Us
+
+Reach out with any questions you may have and we'll make sure to answer them as soon as possible!
+
+| Platform  | Link        |
+|:----------|:------------|
+| 💬 Instant Message Chat | [![Discord Banner](https://discord.com/api/guilds/778680217417809931/widget.png?style=banner2)](https://discord.gg/pMCjunWSxH)
+| 📧 E-mail | elenaprolang@gmail.com
+| 🐤 Twitter | [@elena_language](https://twitter.com/elena_language)
 
 ## Resources
 - **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
