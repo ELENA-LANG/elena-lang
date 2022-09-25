@@ -210,9 +210,9 @@ labYGNextFrame:
   mr      r18, r19
   bne     labYGNextFrame
 
-  std     r1, 8(r31)
+  std     r1, 0(r31)
 
-  ld      r6, 0(r31)
+  ld      r6, 8(r31)
   mr      r5, r1
 
   // ; restore frame to correctly display a call stack

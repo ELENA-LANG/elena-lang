@@ -150,11 +150,11 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
          break;
       case mskImportDisp32Hi:
          scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            properRef | mskExternalRef, 0, mskDataDisp32Hi, module);
+            properRef | mskExternalRef, 0, mskDisp32Hi, module);
          break;
       case mskImportDisp32Lo:
          scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            properRef | mskExternalRef, 0, mskDataDisp32Lo, module);
+            properRef | mskExternalRef, 0, mskDisp32Lo, module);
          break;
       case mskImportRef64:
          if (properRef) {
