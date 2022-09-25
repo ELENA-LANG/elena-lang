@@ -148,6 +148,14 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
          scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             properRef | mskExternalRef, 0, mskRelRef32, module);
          break;
+      case mskImportDisp32Hi:
+         scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            properRef | mskExternalRef, 0, mskDataDisp32Hi, module);
+         break;
+      case mskImportDisp32Lo:
+         scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            properRef | mskExternalRef, 0, mskDataDisp32Lo, module);
+         break;
       case mskImportRef64:
          if (properRef) {
             scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),

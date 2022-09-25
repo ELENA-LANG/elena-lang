@@ -193,17 +193,17 @@ void PPC64Assembler :: readIOperand(ScriptToken& tokenInfo, int& value, ref_t& r
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
       value = readIntArg(tokenInfo);
    }
-   else if (tokenInfo.compare("importhi")) {
+   else if (tokenInfo.compare("import_disphi")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
-      readPtrOperand(tokenInfo, value, reference, mskImportRef32Hi, errorMessage);
+      readPtrOperand(tokenInfo, value, reference, mskImportDisp32Hi, errorMessage);
 
       read(tokenInfo);
    }
-   else if (tokenInfo.compare("importlo")) {
+   else if (tokenInfo.compare("import_displo")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
-      readPtrOperand(tokenInfo, value, reference, mskImportRef32Lo, errorMessage);
+      readPtrOperand(tokenInfo, value, reference, mskImportDisp32Lo, errorMessage);
 
       read(tokenInfo);
    }

@@ -220,8 +220,8 @@ labYGNextFrame:
 
   // ; call GC routine
   ld      r12, toc_import(r2)
-  addis   r12, r12, importhi : "$rt.CollectGCLA"
-  addi    r12, r12, importlo : "$rt.CollectGCLA"
+  addis   r12, r12, import_disp32hi : "$rt.CollectGCLA"
+  addi    r12, r12, import_disp32lo : "$rt.CollectGCLA"
   ld      r12,0(r12)
 
   mtctr   r12            // ; put code address into ctr
