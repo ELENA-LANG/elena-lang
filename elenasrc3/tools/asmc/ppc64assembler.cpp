@@ -367,6 +367,8 @@ void PPC64Assembler :: writeDReference(ScriptToken& tokenInfo, ref_t reference, 
             case mskDataDisp32Lo:
             case mskImportRef32Hi:
             case mskImportRef32Lo:
+            case mskImportDisp32Hi:
+            case mskImportDisp32Lo:
                writer.Memory()->addReference(reference, writer.position() - 4);
                break;
             default:
