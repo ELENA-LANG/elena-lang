@@ -229,7 +229,7 @@ inline void CollectMG2YGRoots(GCTable* table, ObjectPage* &shadowPtr)
    }
 }
 
-void __vectorcall MGCollect(GCRoot* root, size_t start, size_t end)
+void MGCollect(GCRoot* root, size_t start, size_t end)
 {
    size_t* ptr = (size_t*)root->stack_ptr;
    size_t  size = root->size;
@@ -259,7 +259,7 @@ void __vectorcall MGCollect(GCRoot* root, size_t start, size_t end)
    }
 }
 
-inline void __vectorcall FixObject(GCTable* table, GCRoot* roots, size_t start, size_t end)
+inline void FixObject(GCTable* table, GCRoot* roots, size_t start, size_t end)
 {
    uintptr_t* ptr = (uintptr_t*)roots->stack_ptr;
    size_t  size = roots->size;
@@ -294,7 +294,7 @@ inline void __vectorcall FixObject(GCTable* table, GCRoot* roots, size_t start, 
    }
 }
 
-inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
+inline void FullCollect(GCTable* table, GCRoot* roots)
 {
    uintptr_t yg_start = table->gc_yg_start;
    uintptr_t mg_end = table->gc_mg_current;
