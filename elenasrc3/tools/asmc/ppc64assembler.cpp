@@ -193,6 +193,20 @@ void PPC64Assembler :: readIOperand(ScriptToken& tokenInfo, int& value, ref_t& r
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
       value = readIntArg(tokenInfo);
    }
+   else if (tokenInfo.compare("importhi")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      readPtrOperand(tokenInfo, value, reference, mskImportRef32Hi, errorMessage);
+
+      read(tokenInfo);
+   }
+   else if (tokenInfo.compare("importlo")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      readPtrOperand(tokenInfo, value, reference, mskImportRef32Lo, errorMessage);
+
+      read(tokenInfo);
+   }
    else if (tokenInfo.compare("rdata")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
@@ -292,6 +306,10 @@ void PPC64Assembler :: readPtrOperand(ScriptToken& tokenInfo, int& value, ref_t&
       }
       else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
    }
+   else if (tokenInfo.state == dfaQuote) {
+      value = 0;
+      reference = _target->mapReference(*tokenInfo.token) | mask;
+   }
    else if (tokenInfo.compare(PTR64_ARGUMENT2)) {
       reference = PTR64_2 | mask;
       value = 0;
@@ -347,6 +365,8 @@ void PPC64Assembler :: writeDReference(ScriptToken& tokenInfo, ref_t reference, 
             case mskCodeDisp32Lo:
             case mskDataDisp32Hi:
             case mskDataDisp32Lo:
+            case mskImportRef32Hi:
+            case mskImportRef32Lo:
                writer.Memory()->addReference(reference, writer.position() - 4);
                break;
             default:
@@ -1293,6 +1313,20 @@ void PPC64Assembler :: compileSTDU(ScriptToken& tokenInfo, MemoryWriter& writer)
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void PPC64Assembler :: compileNEG(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rt = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand ra = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (rt.isGPR() && ra.isGPR()) {
+      writer.writeDWord(PPCHelper::makeXOCommand(31, rt.type, ra.type, PPCOperandType::None, 0, 104, 0));
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void PPC64Assembler :: compileSUB(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -1573,7 +1607,12 @@ bool PPC64Assembler :: compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
 
 bool PPC64Assembler::compileNOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   return false;
+   if (tokenInfo.compare("neg")) {
+      compileNEG(tokenInfo, writer);
+   }
+   else return false;
+
+   return true;
 }
 
 bool PPC64Assembler::compileOOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)

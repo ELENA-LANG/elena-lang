@@ -47,6 +47,7 @@ define gc_end                0048h
 define gc_mg_wbar            0050h
 
 define et_current            0008h
+define tt_stack_frame        0010h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
@@ -56,6 +57,7 @@ define es_catch_frame        0018h
 // ; --- Page Size ----
 define page_ceil               2Fh
 define page_mask        0FFFFFFE0h
+define page_size_order          5h
 define struct_mask_inv     7FFFFFh
 define struct_mask_inv_lo   0FFFFh
 define struct_mask_inv_hi      7Fh
@@ -206,7 +208,7 @@ labYGNextFrame:
   ld      r19, 8(r17)
   cmpwi   r19, 0
   mr      r18, r19
-  jne     labYGNextFrame
+  bne     labYGNextFrame
 
   std     r1, 8(r31)
 
@@ -218,8 +220,8 @@ labYGNextFrame:
 
   // ; call GC routine
   ld      r12, toc_import(r2)
-  addis   r12, r12, importhi "$rt.CollectGCLA"
-  addi    r12, r12, importlo "$rt.CollectGCLA"
+  addis   r12, r12, importhi : "$rt.CollectGCLA"
+  addi    r12, r12, importlo : "$rt.CollectGCLA"
   ld      r12,0(r12)
 
   mtctr   r12            // ; put code address into ctr
