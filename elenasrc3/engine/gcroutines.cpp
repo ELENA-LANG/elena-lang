@@ -56,32 +56,32 @@ typedef ObjectPage64    ObjectPage;
 
 #endif
 
-inline ObjectPage* __vectorcall getObjectPage(uintptr_t objptr)
+inline ObjectPage* getObjectPage(uintptr_t objptr)
 {
    return (ObjectPage*)(objptr - elObjectOffset);
 }
 
-inline uintptr_t __vectorcall getObjectPtr(uintptr_t pagePtr)
+inline uintptr_t getObjectPtr(uintptr_t pagePtr)
 {
    return pagePtr + elObjectOffset;
 }
 
-inline void* __vectorcall getVMTPtr(uintptr_t objptr)
+inline void* getVMTPtr(uintptr_t objptr)
 {
    return (void*)getObjectPage(objptr)->vmtPtr;
 }
 
-inline int __vectorcall getSize(uintptr_t objptr)
+inline int getSize(uintptr_t objptr)
 {
    return getObjectPage(objptr)->size;
 }
 
-inline void __vectorcall orSize(uintptr_t objptr, int mask)
+inline void orSize(uintptr_t objptr, int mask)
 {
    getObjectPage(objptr)->size |= mask;
 }
 
-inline void __vectorcall CopyObjectData(size_t bytesToCopy, void* dst, void* src)
+inline void CopyObjectData(size_t bytesToCopy, void* dst, void* src)
 {
    bytesToCopy += (sizeof(uintptr_t) - 1);
    bytesToCopy &= size_ceil;
@@ -89,7 +89,7 @@ inline void __vectorcall CopyObjectData(size_t bytesToCopy, void* dst, void* src
    memcpy(dst, src, bytesToCopy);
 }
 
-inline void __vectorcall MoveObject(size_t bytesToCopy, void* dst, void* src)
+inline void MoveObject(size_t bytesToCopy, void* dst, void* src)
 {
    memmove(dst, src, bytesToCopy);
 }
