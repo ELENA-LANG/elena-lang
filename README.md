@@ -75,25 +75,6 @@ To run unit-tests type the following command:
 
     lib_tests.bat     
 
-## Contribute!
-
-ELENA Project looks for programmers interested in learning the language and providing feedback.
-
-### 1. Bugs, questions, suggestions?
-
-If you've noticed a bug or have a question go ahead and [make one](https://github.com/ELENA-LANG/elena-lang/issues/new/choose)!
-
-[Join](https://github.com/ELENA-LANG/elena-lang/issues?q=is%3Aissue+is%3Aopen+label%3A%22Design+Idea%22) design discussions or [take part](https://github.com/ELENA-LANG/elena-lang/issues?q=is%3Aissue+is%3Aopen+label%3ADiscussion) in general talks.
-
-### 2. Implement "up for grab" issues
-
-[Good first issue](https://github.com/ELENA-LANG/elena-lang/labels/good%20first%20issue) is a good starting point for a first-time contributors.
-
-### 3. Rosetta code
-
-You may try to implement some of [Rosetta code tasks](http://rosettacode.org/wiki/Reports:Tasks_not_implemented_in_Elena) 
-which are not yet implemented
-
 ## Source Code Organization
 
 ### Windows:
@@ -116,14 +97,33 @@ The ELENA source code is organized as follows:
     examples            ELENA examples
     src50               source for ELENA libraries
 
-## License
+## Community
+We want your contributions and suggestions! One of the easiest ways to contribute is to participate in Github discussions or on Discord.
 
-The compiler and executables distributed in this package fall under MIT License, 
-for more information read the file LICENSE.
+### 1. Bugs, questions, suggestions?
 
-## Questions?
+If you've noticed a bug or have a question go ahead and [make one](https://github.com/ELENA-LANG/elena-lang/issues/new/choose)!
 
-Feel free to ask any question:  elenaprolang@gmail.com.
+[Join](https://github.com/ELENA-LANG/elena-lang/issues?q=is%3Aissue+is%3Aopen+label%3A%22Design+Idea%22) design discussions or [take part](https://github.com/ELENA-LANG/elena-lang/issues?q=is%3Aissue+is%3Aopen+label%3ADiscussion) in general talks.
+
+### 2. Implement "up for grab" issues
+
+[Good first issue](https://github.com/ELENA-LANG/elena-lang/labels/good%20first%20issue) is a good starting point for a first-time contributors.
+
+### 3. Rosetta code
+
+You may try to implement some of [Rosetta code tasks](http://rosettacode.org/wiki/Reports:Tasks_not_implemented_in_Elena) 
+which are not yet implemented
+
+## Contact Us
+
+Reach out with any questions you may have and we'll make sure to answer them as soon as possible!
+
+| Platform  | Link        |
+|:----------|:------------|
+| 💬 Instant Message Chat | [![Discord Banner](https://discordapp.com/api/guilds/1023392280087908352/widget.png?style=banner2)](https://discord.gg/pMCjunWSxH)
+| 📧 E-mail | elenaprolang@gmail.com
+| 🐤 Twitter | [@elena_language](https://twitter.com/elena_language)
 
 ## Resources
 - **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
@@ -135,3 +135,8 @@ Feel free to ask any question:  elenaprolang@gmail.com.
 - **Source code:** <https://github.com/ELENA-LANG/elena-lang>
 - **Twitter:** <https://twitter.com/elena_language>
 - **Rosetta code:** <http://rosettacode.org/wiki/Category:Elena>
+
+## License
+
+The compiler and executables distributed in this package fall under MIT License, 
+for more information read the file LICENSE.
