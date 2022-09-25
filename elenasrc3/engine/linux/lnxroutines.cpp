@@ -24,7 +24,7 @@ size_t SystemRoutineProvider :: AlignHeapSize(size_t size)
 
 uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSize)
 {
-   void* allocPtr = mmap(NULL, totalSize, PROT_READ | PROT_WRITE,
+   void* allocPtr = mmap(nullptr, totalSize, PROT_READ | PROT_WRITE,
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
    if (allocPtr == (void*)INVALID_REF) {
@@ -36,7 +36,7 @@ uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSiz
 
 uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
 {
-   void* r = mremap(allocPtr, totalSize, PROT_READ | PROT_WRITE,
+   void* r = mremap(allocPtr, newSize, PROT_READ | PROT_WRITE,
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
    return !r ? 0 : (uintptr_t)r;
