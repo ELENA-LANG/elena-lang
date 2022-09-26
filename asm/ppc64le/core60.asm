@@ -237,6 +237,7 @@ labYGNextFrame:
   mr      r15, r3
 
   mr      r1, r31              // ; restore stack pointer
+  addi    r1, r1, 16           // ; free raw stack
 
   ld      r31, 00h(r1)         // ; restore frame pointer
   ld      r0,  08h(r1)         // ; restore  return address
