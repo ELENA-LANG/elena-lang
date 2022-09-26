@@ -212,8 +212,8 @@ labYGNextFrame:
 
   std     r1, 0(r31)
 
-  ld      r6, 8(r31)
-  mr      r5, r1
+  ld      r4, 8(r31)
+  mr      r3, r1
 
   // ; restore frame to correctly display a call stack
   ld      r31, 8(r31)
@@ -226,6 +226,8 @@ labYGNextFrame:
 
   mtctr   r12            // ; put code address into ctr
   bctrl                  // ; and call it
+
+  mr      r15, r3
 
   ld      r31, 28h(r1)
   mr      r15, r0
