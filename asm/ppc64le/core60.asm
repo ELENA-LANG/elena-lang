@@ -220,6 +220,7 @@ labYGNextFrame:
 
   // ; call GC routine
   std     r2, -8h(r1)     // ; storing toc pointer
+  std     r31, -10h(r1)     // ; storing toc pointer
   addi    r1, r1, -32     // ; allocating stack
 
   ld      r12, toc_import(r2)
@@ -231,11 +232,9 @@ labYGNextFrame:
   bctrl                  // ; and call it
 
   ld      r2, 24(r1)     // ; restoring toc pointer
+  ld      r31, 16(r1)     // ; restoring toc pointer
 
   mr      r15, r3
-
-  ld      r31, 28h(r1)
-  mr      r15, r0
 
   mr      r1, r31              // ; restore stack pointer
 
