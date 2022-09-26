@@ -217,8 +217,8 @@ labYGNextFrame:
 
   // ; call GC routine
   std     r2, -8h(r1)     // ; storing toc pointer
-  std     r31, -10h(r1)     // ; storing toc pointer
-  addi    r1, r1, -32     // ; allocating stack
+  std     r31, -10h(r1)   // ; storing toc pointer
+  addi    r1, r1, -48     // ; allocating stack
 
   // ; restore frame to correctly display a call stack
   ld      r31, 0(r31)
@@ -231,8 +231,8 @@ labYGNextFrame:
   mtctr   r12            // ; put code address into ctr
   bctrl                  // ; and call it
 
-  ld      r2, 24(r1)     // ; restoring toc pointer
-  ld      r31, 16(r1)     // ; restoring toc pointer
+  ld      r2, 40(r1)     // ; restoring toc pointer
+  ld      r31, 32(r1)     // ; restoring toc pointer
 
   mr      r15, r3
 
