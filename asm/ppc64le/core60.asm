@@ -215,13 +215,13 @@ labYGNextFrame:
   ld      r4, 8(r31)
   mr      r3, r1
 
-  // ; restore frame to correctly display a call stack
-  ld      r31, 8(r31)
-
   // ; call GC routine
   std     r2, -8h(r1)     // ; storing toc pointer
   std     r31, -10h(r1)     // ; storing toc pointer
   addi    r1, r1, -32     // ; allocating stack
+
+  // ; restore frame to correctly display a call stack
+  ld      r31, 0(r31)
 
   ld      r12, toc_import(r2)
   addis   r12, r12, import_disp32hi : "$rt.CollectGCLA"
