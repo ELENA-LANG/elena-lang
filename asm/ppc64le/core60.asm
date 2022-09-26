@@ -219,6 +219,9 @@ labYGNextFrame:
   ld      r31, 8(r31)
 
   // ; call GC routine
+  std     r2, -8h(r1)     // ; storing toc pointer
+  addi    r1, r1, -32     // ; allocating stack
+
   ld      r12, toc_import(r2)
   addis   r12, r12, import_disp32hi : "$rt.CollectGCLA"
   addi    r12, r12, import_disp32lo : "$rt.CollectGCLA"
@@ -226,6 +229,8 @@ labYGNextFrame:
 
   mtctr   r12            // ; put code address into ctr
   bctrl                  // ; and call it
+
+  ld      r2, 24(r1)     // ; restoring toc pointer
 
   mr      r15, r3
 
