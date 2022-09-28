@@ -525,6 +525,8 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             ::writeXDisp32Lo(image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
             break;
          case mskRef32Hi:
+            printf("fixReferences %llx\n", vaddress);
+
             ::writeRef32Hi(_compiler, image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
             break;
          case mskRef32Lo:
