@@ -35,6 +35,7 @@ define gc_end                0048h
 define gc_mg_wbar            0050h
 
 define et_current            0008h
+define tt_stack_frame        0010h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
@@ -58,6 +59,7 @@ structure % CORE_THREAD_TABLE
 
   dq 0 // ; critical_handler       ; +x00   - pointer to ELENA critical exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
+  dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
 
 end
 
@@ -127,14 +129,77 @@ inline % GC_ALLOC
 
 labYGCollect:
   // ; save registers
-  // ; lock frame
-  // ; create set of roots
-  // ;   save static roots
-  // ;   collect frames
-  // ; restore frame to correctly display a call stack
-  // ; call GC routine
+  sub     x11, x11, x15
 
-  mov     x10, #0                 //; ecx
+  stp     x29, x30, [sp, #-16]! 
+  mov     x29, sp              // ; set frame pointer
+
+  // ; lock frame
+  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
+  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+  str     sp, [x14]
+
+  stp     x11, xzr, [sp, #-16]! 
+
+  // ; create set of roots
+  mov     x29, sp
+  mov     x18, 0
+  stp     x18, x18, [sp, #-16]! 
+
+  // ;   save static roots
+  movz    x17, rdata_ptr32lo : %SYSTEM_ENV
+  movk    x17, rdata_ptr32hi : %SYSTEM_ENV, lsl #16
+
+  movz    x19,  stat_ptr32lo : 0
+  movk    x19,  stat_ptr32hi : 0, lsl #16
+  ldr     x18, [x17]
+  stp     x19, x18, [sp, #-16]! 
+
+  // ;   collect frames
+  ldr     x19, [x14]
+  mov     x18, x19
+
+labYGNextFrame:
+  mov     x17, x19
+  ldr     x19, [x17]
+  cmp     x19, #0
+  bne     labYGNextFrame
+
+  mov     x20, x18
+  sub     x18, x17, x18
+  neg     x18
+  stp     x20, x18, [sp, #-16]! 
+
+  ldr     x19, [x17, #8]!
+  cmp     x19, #0
+  mov     x18, x19
+  bne     labYGNextFrame
+
+  str     sp, [x29]
+
+  add     x19, x29, #8
+  ldr     x1, [x19]
+  mov     x0, sp
+
+  // ; restore frame to correctly display a call stack
+  stp     x29, xzr, [sp, #-16]! 
+
+  ldr     x29, [x29]
+
+  // ; call GC routine
+  movz    x16,  import_ptr32hi : "$rt.CollectGCLA"
+  movk    x16,  import_ptr32lo : "$rt.CollectGCLA"
+  ldr     x17, [x16]
+  blr     x17
+
+  mov     x10, x0
+
+  ldp     x19, x29, [sp, #-16]! 
+  mov     sp, x29
+  ldp     x29, x30, [sp], #16
+
   ret     x30
 
 end

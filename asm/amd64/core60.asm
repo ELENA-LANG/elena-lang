@@ -38,7 +38,7 @@ define gc_end                0048h
 define gc_mg_wbar            0050h
 
 define et_current            0008h
-define tt_stack_frame        0008h
+define tt_stack_frame        0010h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
@@ -64,7 +64,7 @@ structure % CORE_THREAD_TABLE
 
   dq 0 // ; crtitical_handler      ; +x00   - pointer to ELENA exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
-  dq 0 // ; tt_stack_frame         ; +x08   - pointer to the stack frame
+  dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
 
 end
 

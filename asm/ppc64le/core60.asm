@@ -86,6 +86,7 @@ structure % CORE_THREAD_TABLE
 
   dq 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
+  dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
 
 end
 
