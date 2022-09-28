@@ -152,39 +152,39 @@ inline void writeXDisp32Lo(MemoryBase* image, pos_t position, addr_t vaddress, p
    }
 }
 
-inline void writeRef32Lo(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
+inline void writeRef32Lo(JITCompilerBase* compiler, MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask, bool virtualMode)
 {
+   MemoryWriter writer(image, position);
    if (virtualMode) {
       // in the virtual mode vaddress is an image offset - plus address mask
       ref_t reference = (ref_t)vaddress | addressMask;
 
-      image->write(position, &disp, 2);
+      compiler->writeImm16(&writer, disp, 0);
       image->addReference(reference, position);
    }
    else {
       // save the lowest part of 32 bit address
       vaddress += disp;
-      image->write(position, &vaddress, 2);
+      compiler->writeImm16Hi(&writer, (int)vaddress, 0);
    }
 }
 
-inline void writeRef32Hi(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
+inline void writeRef32Hi(JITCompilerBase* compiler, MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask, bool virtualMode)
 {
+   MemoryWriter writer(image, position);
    if (virtualMode) {
       // in the virtual mode vaddress is an image offset - plus address mask
       ref_t reference = (ref_t)vaddress | addressMask;
 
-      image->write(position, &disp, 2);
+      compiler->writeImm16Hi(&writer, disp, 0);
       image->addReference(reference, position);
    }
    else {
       // save the highest part of 32 bit address
       vaddress += disp;
-      vaddress >>= 16;
-      image->write(position, &vaddress, 2);
-
+      compiler->writeImm16Hi(&writer, (int)vaddress, 0);
    }
 }
 
@@ -326,10 +326,10 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
             ::writeXDisp32Lo(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
             break;
          case mskRef32Hi:
-            ::writeRef32Hi(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
+            ::writeRef32Hi(_owner->_compiler, &target, position, vaddress, disp, addressMask, _owner->_virtualMode);
             break;
          case mskRef32Lo:
-            ::writeRef32Lo(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
+            ::writeRef32Lo(_owner->_compiler, &target, position, vaddress, disp, addressMask, _owner->_virtualMode);
             break;
          default:
             // to make compiler happy
@@ -359,13 +359,13 @@ void JITLinker::JITLinkerReferenceHelper :: writeVAddress64(MemoryBase& target, 
 void JITLinker::JITLinkerReferenceHelper :: writeVAddress32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask)
 {
-   ::writeRef32Hi(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
+   ::writeRef32Hi(_owner->_compiler, &target, position, vaddress, disp, addressMask, _owner->_virtualMode);
 }
 
 void JITLinker::JITLinkerReferenceHelper :: writeVAddress32Lo(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask)
 {
-   ::writeRef32Lo(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
+   ::writeRef32Lo(_owner->_compiler, &target, position, vaddress, disp, addressMask, _owner->_virtualMode);
 }
 
 void JITLinker::JITLinkerReferenceHelper ::writeDisp32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
@@ -525,10 +525,10 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             ::writeXDisp32Lo(image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
             break;
          case mskRef32Hi:
-            ::writeRef32Hi(image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
+            ::writeRef32Hi(_compiler, image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
             break;
          case mskRef32Lo:
-            ::writeRef32Lo(image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
+            ::writeRef32Lo(_compiler, image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
             break;
          default:
             // to make compiler happy
