@@ -844,14 +844,12 @@ void elena_lang :: loadROp(JITCompilerScope* scope)
             break;
          case PTR32HI_1:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg1, disp, mskRef32Hi);
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Hi);
             break;
          }
          case PTR32LO_1:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg1, disp, mskRef32Lo);
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo);
             break;
          }
          default:
@@ -925,26 +923,22 @@ void elena_lang :: loadRROp(JITCompilerScope* scope)
             break;
          case PTR32HI_1:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg1, disp, mskRef32Hi);
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Hi);
             break;
          }
          case PTR32HI_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Hi);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
          case PTR32LO_1:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg1, disp, mskRef32Lo);
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo);
             break;
          }
          case PTR32LO_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Lo);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
             break;
          }
          default:
@@ -1082,14 +1076,12 @@ void elena_lang :: loadCallROp(JITCompilerScope* scope)
             break;
          case PTR32HI_1:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg1, disp, mskRef32Hi);
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Hi);
             break;
          }
          case PTR32LO_1:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg1, disp, mskRef32Lo);
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo);
             break;
          }
          default:
@@ -1171,8 +1163,7 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
          case PTR32HI_2:
          {
             if (scope->command.arg2) {
-               short disp = *(short*)((char*)code + entries->offset);
-               scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Hi);
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             }
             else scope->compiler->writeImm16(writer, 0, 0);
             break;
@@ -1180,8 +1171,7 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
          case PTR32LO_2:
          {
             if (scope->command.arg2) {
-               short disp = *(short*)((char*)code + entries->offset);
-               scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Lo);
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
             }
             else scope->compiler->writeImm16(writer, 0, 0);
             break;
@@ -1240,14 +1230,12 @@ void elena_lang::loadFrameIndexROp(JITCompilerScope* scope)
             break;
          case PTR32HI_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Hi);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
          case PTR32LO_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Lo);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
             break;
          }
          default:
@@ -1493,14 +1481,12 @@ void elena_lang :: loadNewOp(JITCompilerScope* scope)
             break;
          case PTR32HI_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Hi);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
          case PTR32LO_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Lo);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
             break;
          }
          default:
@@ -1567,14 +1553,12 @@ void elena_lang::loadNewNOp(JITCompilerScope* scope)
             break;
          case PTR32HI_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Hi);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
          case PTR32LO_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Lo);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
             break;
          }
          default:
@@ -1635,14 +1619,12 @@ void elena_lang::loadCreateNOp(JITCompilerScope* scope)
             break;
          case PTR32HI_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Hi);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
          case PTR32LO_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Lo);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
             break;
          }
          default:
@@ -1701,16 +1683,14 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
             break;
          case PTR32HI_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
             scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
-               disp, scope->helper->importMessage(scope->command.arg1), mskRef32Hi);
+               0, scope->helper->importMessage(scope->command.arg1), mskRef32Hi);
             break;
          }
          case PTR32LO_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
             scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
-               disp, scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
+               0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
             break;
          }
          default:
@@ -1954,14 +1934,12 @@ void elena_lang::loadDPROp(JITCompilerScope* scope)
             break;
          case PTR32HI_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Hi);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
          case PTR32LO_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Lo);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
             break;
          }
          default:
@@ -2207,14 +2185,12 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
             break;
          case PTR32HI_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Hi);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
          case PTR32LO_2:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, disp, mskRef32Lo);
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
             break;
          }
          case NARG_2:
