@@ -43,6 +43,7 @@ define es_catch_level        0010h
 define es_catch_frame        0018h
 
 // ; --- Page Size ----
+define page_size_order          5h
 define page_ceil               2Fh
 define page_mask        0FFFFFFE0h
 define struct_mask_inv     7FFFFFh
@@ -141,7 +142,7 @@ labYGCollect:
 
   str     sp, [x14]
 
-  stp     x11, xzr, [sp, #-16]! 
+  stp     x11, x11, [sp, #-16]! 
 
   // ; create set of roots
   mov     x29, sp
@@ -152,8 +153,8 @@ labYGCollect:
   movz    x17, rdata_ptr32lo : %SYSTEM_ENV
   movk    x17, rdata_ptr32hi : %SYSTEM_ENV, lsl #16
 
-  movz    x19,  stat_ptr32lo : 0
-  movk    x19,  stat_ptr32hi : 0, lsl #16
+  movz    x19, stat_ptr32lo : #0
+  movk    x19, stat_ptr32hi : #0, lsl #16
   ldr     x18, [x17]
   stp     x19, x18, [sp, #-16]! 
 
@@ -169,7 +170,7 @@ labYGNextFrame:
 
   mov     x20, x18
   sub     x18, x17, x18
-  neg     x18
+  neg     x18, x18
   stp     x20, x18, [sp, #-16]! 
 
   ldr     x19, [x17, #8]!
@@ -184,7 +185,7 @@ labYGNextFrame:
   mov     x0, sp
 
   // ; restore frame to correctly display a call stack
-  stp     x29, xzr, [sp, #-16]! 
+  stp     x29, x29, [sp, #-16]! 
 
   ldr     x29, [x29]
 
@@ -847,7 +848,7 @@ inline %0A6h
   lsr     x14, x14, page_size_order
   add     x14, x15, x14
   mov     x12, 1
-  strb    x12, [x14]
+  strb    w12, [x14]
 
   str     x0, [x11]
 
