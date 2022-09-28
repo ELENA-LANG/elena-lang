@@ -140,7 +140,8 @@ labYGCollect:
   movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
   add     x14, x14, # tt_stack_frame
 
-  str     sp, [x14]
+  mov     x12, sp
+  str     x12, [x14]
 
   stp     x11, x11, [sp, #-16]! 
 
