@@ -178,7 +178,8 @@ labYGNextFrame:
   mov     x18, x19
   bne     labYGNextFrame
 
-  str     sp, [x29]
+  mov     x20, sp
+  str     x20, [x29]
 
   add     x19, x29, #8
   ldr     x1, [x19]
