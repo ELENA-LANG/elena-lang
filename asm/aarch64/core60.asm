@@ -171,7 +171,6 @@ labYGNextFrame:
 
   mov     x20, x18
   sub     x18, x17, x18
-  neg     x18, x18
   stp     x20, x18, [sp, #-16]! 
 
   ldr     x19, [x17, #8]!
