@@ -158,11 +158,11 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
          break;
       case mskImportRef32Hi:
          scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            properRef | mskExternalRef, *(pos_t*)((char*)code + disp), mskRef32Hi, module);
+            properRef | mskExternalRef, disp, mskRef32Hi, module);
          break;
       case mskImportRef32Lo:
          scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            properRef | mskExternalRef, *(pos_t*)((char*)code + disp), mskRef32Lo, module);
+            properRef | mskExternalRef, disp, mskRef32Lo, module);
          break;
       case mskImportRef64:
          if (properRef) {
@@ -189,7 +189,7 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
       case mskStatDataRef32Lo:
          scope->helper->writeVAddress32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
-            *(pos_t*)((char*)code + disp), mask);
+            disp, mask);
          break;
       case mskDataRef32Hi:
       case mskRDataRef32Hi:
@@ -198,7 +198,7 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
       case mskStatDataRef32Hi:
          scope->helper->writeVAddress32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
-            *(pos_t*)((char*)code + disp), mask);
+            disp, mask);
          break;
       case mskDataDisp32Hi:
       case mskRDataDisp32Hi:

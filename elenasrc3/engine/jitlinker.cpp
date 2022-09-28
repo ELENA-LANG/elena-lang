@@ -155,36 +155,38 @@ inline void writeXDisp32Lo(MemoryBase* image, pos_t position, addr_t vaddress, p
 inline void writeRef32Lo(JITCompilerBase* compiler, MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask, bool virtualMode)
 {
+   MemoryWriter writer(image, position);
    if (virtualMode) {
       // in the virtual mode vaddress is an image offset - plus address mask
       ref_t reference = (ref_t)vaddress | addressMask;
 
-      image->write(position, &disp, 2);
+      //image->write(position, &disp, 2);
+      compiler->writeImm16(&writer, disp, 0);
       image->addReference(reference, position);
    }
    else {
-      // save the highest part of 32 bit address
+      // save the lowest part of 32 bit address
       vaddress += disp;
-      vaddress >>= 16;
-      image->write(position, &vaddress, 2);
-
+      compiler->writeImm16(&writer, (int)vaddress, 0);
    }
 }
 
 inline void writeRef32Hi(JITCompilerBase* compiler, MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask, bool virtualMode)
 {
+   MemoryWriter writer(image, position);
    if (virtualMode) {
       // in the virtual mode vaddress is an image offset - plus address mask
       ref_t reference = (ref_t)vaddress | addressMask;
 
-      image->write(position, &disp, 2);
+      //image->write(position, &disp, 2);
+      compiler->writeImm16(&writer, disp, 0);
       image->addReference(reference, position);
    }
    else {
-      // save the lowest part of 32 bit address
+      // save the highest part of 32 bit address
       vaddress += disp;
-      image->write(position, &vaddress, 2);
+      compiler->writeImm16Hi(&writer, (int)vaddress, 0);
    }
 }
 
