@@ -351,11 +351,21 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
 
    // populate blocks and jump lists
    int index = 0;
+   bool importMode = false;
    while (!it.eof()) {
       // skip pseudo commands (except labels)
       ByteCommand command = *it;
 
-      if (command.code == ByteCode::Label) {
+      if (command.code == ByteCode::ImportOn) {
+         importMode = true;
+      }
+      else if (command.code == ByteCode::ImportOff) {
+         importMode = false;
+      }
+      else if (importMode) {
+         // ignore commands in the import mode
+      }
+      else if (command.code == ByteCode::Label) {
          labels.add(command.arg1, index);
 
          // add to idleLabels only if there are no forward jumps to it
@@ -456,7 +466,14 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
    int blockEnd = getBlockEnd(b_it, length);
    while (!it.eof()) {
       ByteCommand command = *it;
-      bool isCommand = (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop);
+      if (command.code == ByteCode::ImportOn) {
+         importMode = true;
+      }
+      else if (command.code == ByteCode::ImportOff) {
+         importMode = false;
+      }
+
+      bool isCommand = !importMode && (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop);
 
       if (index == blockEnd) {
          b_it++;

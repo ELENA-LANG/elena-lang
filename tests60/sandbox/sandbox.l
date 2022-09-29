@@ -1,6 +1,19 @@
 import system;
 import extensions;
 
+inline external<routine>()
+{
+   #include intern routine;
+}
+
+public const struct String //: BaseValue
+{
+    __string byte[] theArray;
+
+    bool equal(string s) : external<system'core_routines'__str_equal>;
+}
+
+
 AssignTestClass
 {
    field x;
@@ -14,8 +27,6 @@ AssignTestClass
 
    test(x, y)
    {
-      console.writeLine(this x == x);
-      Assert.ifTrue(this x == x);
       console.writeLine(this y == y);
       Assert.ifTrue(this y == y);
    }
