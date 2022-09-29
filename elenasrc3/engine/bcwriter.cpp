@@ -550,7 +550,7 @@ void boolSOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 void assignSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    // !! temporally - assigni should be used instead
-   tape.write(ByteCode::XAssignI, node.arg.value);
+   tape.write(ByteCode::AssignI, node.arg.value);
 }
 
 void swapSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)

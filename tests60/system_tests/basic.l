@@ -1,6 +1,47 @@
 import system;
 import extensions;
 
+// --- gcTests ---
+
+gcTests()
+{
+   console.write("gcTests");
+   for (int i := 0, i < 100000, i := i + 1)
+   {
+      new IntNumber();
+   };
+   console.writeLine(".");
+}
+
+// --- assignTests ---
+
+AssignTestClass
+{
+   field x;
+   field y;
+
+   constructor(x, y)
+   {
+      this x := x;
+      this y := y;
+   }
+
+   test(x, y)
+   {
+      Assert.ifTrue(this x == x);
+      Assert.ifTrue(this y == y);
+   }
+}
+
+assignTests()
+{
+   console.write("assignTests");
+   var o := new AssignTestClass(2,"test");
+   o.test(2,"test");
+
+   console.writeLine(".");
+}
+
 // --- boxingTests ---
 
 struct BoxingStruct
@@ -113,3 +154,15 @@ byRefTests()
    Assert.ifTrue(s2 == "hello");
    console.writeLine(".");
 }
+
+// --- gcTests ---
+
+//gcTests()
+//{
+//   console.write("gcTests");
+//   for (int i := 0, i < 10000, i := i + 1)
+//   {
+//      new IntNumber();
+//   };
+//   console.writeLine(".");
+//}

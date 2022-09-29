@@ -8,7 +8,7 @@ define VEH_HANDLER          10003h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
-define CORE_ET_TABLE        2000Bh
+define CORE_THREAD_TABLE    2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
@@ -38,6 +38,7 @@ define gc_end                0048h
 define gc_mg_wbar            0050h
 
 define et_current            0008h
+define tt_stack_frame        0010h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
@@ -47,6 +48,7 @@ define es_catch_frame        0018h
 // ; --- Page Size ----
 define page_ceil               2Fh
 define page_mask        0FFFFFFE0h
+define page_size_order          5h
 define struct_mask       40000000h
 define struct_mask_inv   3FFFFFFFh
 
@@ -58,10 +60,11 @@ structure % CORE_TOC
 
 end
  
-structure % CORE_ET_TABLE
+structure % CORE_THREAD_TABLE
 
   dq 0 // ; crtitical_handler      ; +x00   - pointer to ELENA exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
+  dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
 
 end
 
@@ -86,7 +89,7 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_ET_TABLE
+  dq data : %CORE_THREAD_TABLE
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -126,7 +129,72 @@ inline % GC_ALLOC
   ret
 
 labYGCollect:
-  xor  rbx, rbx  // !! temporal stub
+  // ; save registers
+  sub  rcx, rax
+  push rbp
+
+  // ; lock frame
+  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+
+  push rcx
+
+  // ; create set of roots
+  mov  rbp, rsp
+  xor  ecx, ecx
+  push rcx        // ; reserve place 
+  push rcx
+  push rcx
+
+  // ;   save static roots
+  mov  rax, rdata : %SYSTEM_ENV
+  mov  rsi, stat : %0
+  mov  ecx, dword ptr [rax]
+  shl  ecx, 3
+  push rsi
+  push rcx
+
+  // ;   collect frames
+  mov  rax, [data : %CORE_THREAD_TABLE + tt_stack_frame]  
+  mov  rcx, rax
+
+labYGNextFrame:
+  mov  rsi, rax
+  mov  rax, [rsi]
+  test rax, rax
+  jnz  short labYGNextFrame
+
+  push rcx
+  sub  rcx, rsi
+  neg  rcx
+  push rcx  
+
+  mov  rax, [rsi + 8]
+  test rax, rax
+  mov  rcx, rax
+  jnz  short labYGNextFrame
+
+  mov [rbp-8], rsp      // ; save position for roots
+
+  mov  rdx, [rbp]
+  mov  rcx, rsp
+
+  // ; restore frame to correctly display a call stack
+  mov  rax, rbp
+  mov  rbp, [rax+8]
+
+  // ; call GC routine
+  sub  rsp, 30h
+  mov  [rsp+28h], rax
+  call extern "$rt.CollectGCLA"
+
+  mov  rbp, [rsp+28h] 
+  add  rsp, 30h
+  mov  rbx, rax
+
+  mov  rsp, rbp 
+  pop  rcx
+  pop  rbp
+
   ret
 
 end
@@ -212,7 +280,7 @@ end
 // ; throw
 inline %0Ah
 
-  mov  rax, [data : %CORE_ET_TABLE + et_current]
+  mov  rax, [data : %CORE_THREAD_TABLE + et_current]
   jmp  [rax + es_catch_addr]
 
 end
@@ -220,13 +288,13 @@ end
 // ; unhook
 inline %0Bh
 
-  mov  rdi, [data : %CORE_ET_TABLE + et_current]
+  mov  rdi, [data : %CORE_THREAD_TABLE + et_current]
 
   mov  rax, [rdi + es_prev_struct]
   mov  rbp, [rdi + es_catch_frame]
   mov  rsp, [rdi + es_catch_level]
 
-  mov  [data : %CORE_ET_TABLE + et_current], rax
+  mov  [data : %CORE_THREAD_TABLE + et_current], rax
 
 end
 
@@ -649,6 +717,20 @@ inline %0A5h
 
 end
 
+// ; assigni
+inline %0A6h
+
+  mov  rax, rbx
+
+  // calculate write-barrier address
+  mov  rcx, [data : %CORE_GC_TABLE + gc_header]
+  sub  rax, [data : %CORE_GC_TABLE + gc_start]
+  shr  rax, page_size_order
+  mov  [rbx + __arg32_1], r10
+  mov  byte ptr [rax + rcx], 1  
+
+end
+
 // ; peekfi
 inline %0A8h
 
@@ -1001,14 +1083,14 @@ inline %0E6h
 
   lea  rdi, [rbp + __arg32_1]
   mov  rcx, __ptr64_2
-  mov  rax, [data : %CORE_ET_TABLE + et_current]
+  mov  rax, [data : %CORE_THREAD_TABLE + et_current]
 
   mov  [rdi + es_prev_struct], rax
   mov  [rdi + es_catch_frame], rbp
   mov  [rdi + es_catch_level], rsp
   mov  [rdi + es_catch_addr], rcx
 
-  mov  [data : %CORE_ET_TABLE + et_current], rdi
+  mov  [data : %CORE_THREAD_TABLE + et_current], rdi
 
 end
 

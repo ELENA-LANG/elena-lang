@@ -17,23 +17,34 @@ using namespace elena_lang;
 
 static uintptr_t CriticalHandler = 0;
 
-uintptr_t SystemRoutineProvider::NewHeap(int totalSize, int committedSize)
+size_t SystemRoutineProvider :: AlignHeapSize(size_t size)
 {
-   void* allocPtr = mmap(NULL, totalSize, PROT_READ | PROT_WRITE,
+   return alignSize(size, 0x10);
+}
+
+uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSize)
+{
+   void* allocPtr = mmap(nullptr, totalSize, PROT_READ | PROT_WRITE,
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
    if (allocPtr == (void*)INVALID_REF) {
-      /*IdentifierString s;
-      s.appendInt(errno);
-
-      ident_t pstr = s;
-      for(int i = 0; i < getlength(s); i++)
-         putchar(pstr[i]);*/
-
       ::exit(errno);
    }
 
    return (uintptr_t)allocPtr;
+}
+
+uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
+{
+   void* r = mremap(allocPtr, newSize, PROT_READ | PROT_WRITE,
+      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+   return !r ? 0 : (uintptr_t)r;
+}
+
+void SystemRoutineProvider :: RaiseError(int code)
+{
+   ::raise(code);
 }
 
 void SystemRoutineProvider :: Exit(int exitCode)

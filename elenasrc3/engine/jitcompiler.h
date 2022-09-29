@@ -76,16 +76,16 @@ namespace elena_lang
       virtual int calcTotalSize(int numberOfFields) = 0;
       virtual int calcTotalStructSize(int size) = 0;
 
-      void writeArgAddress(JITCompilerScope* scope, arg_t arg, pos_t offset, ref_t addressMask);
-      void writeVMTMethodArg(JITCompilerScope* scope, arg_t arg, pos_t offset, mssg_t message, ref_t addressMask);
+      void writeArgAddress(JITCompilerScope* scope, ref_t arg, pos_t offset, ref_t addressMask);
+      void writeVMTMethodArg(JITCompilerScope* scope, ref_t arg, pos_t offset, mssg_t message, ref_t addressMask);
 
       virtual void compileTape(ReferenceHelperBase* helper, MemoryReader& bcReader, pos_t endPos, 
          MemoryWriter& codeWriter, LabelHelperBase* lh);
 
-      friend void writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/, 
-         pos_t disp, void* code);
+      friend void writeCoreReference(JITCompilerScope* scope, ref_t reference, 
+         pos_t disp, void* code, ModuleBase* module);
       friend void allocateCode(JITCompilerScope* scope, void* code);
-      friend void loadCode(JITCompilerScope* scope, void* code);
+      friend void loadCode(JITCompilerScope* scope, void* code, ModuleBase* module);
 
       friend void* retrieveCode(JITCompilerScope* scope);
       friend void* retrieveIndexRCode(JITCompilerScope* scope);
@@ -316,8 +316,8 @@ namespace elena_lang
       }
    };
 
-   void writeCoreReference(JITCompilerScope* scope, ref_t reference/*, pos_t position*/, pos_t disp, void* code);
-   void loadCode(JITCompilerScope* scope, void* code);
+   void writeCoreReference(JITCompilerScope* scope, ref_t reference, pos_t disp, void* code, ModuleBase* module = nullptr);
+   void loadCode(JITCompilerScope* scope, void* code, ModuleBase* module);
    void allocateCode(JITCompilerScope* scope, void* code);
 
    inline void* retrieveCode(JITCompilerScope* scope);

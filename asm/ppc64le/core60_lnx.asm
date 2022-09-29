@@ -40,6 +40,13 @@ procedure % INVOKER
   std   r28, 144(r1)
   std   r27, 136(r1)
 
+  li    r16, 0
+  std   r16, -10h(r1)     // ; save frame pointer
+  std   r16, -08h(r1)     // ; save return address
+
+  addi    r1, r1, -16     // ; allocate raw stack
+  mr      r31, r1         // ; set frame pointer
+
   mtctr r3                // ; put code address into ctr
   mr    r3, r4
   bctrl                   // ; and call it

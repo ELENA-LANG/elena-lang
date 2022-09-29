@@ -10,7 +10,8 @@ using namespace elena_lang;
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
-static ELENARTMachine* machine;
+static ELENARTMachine* machine = nullptr;
+static SystemEnv* systemEnv = nullptr;
 
 void init()
 {
@@ -21,6 +22,8 @@ void init()
 
 EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)
 {
+   systemEnv = env;
+
    printf("InitializeSTA.4 %x,%x\n", (int)env, (int)criricalHandler);
    fflush(stdout);
 
@@ -37,6 +40,11 @@ EXTERN_DLL_EXPORT void ExitLA(int retVal)
    }
 
    __routineProvider.Exit(retVal);
+}
+
+EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size)
+{
+   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size);
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,
