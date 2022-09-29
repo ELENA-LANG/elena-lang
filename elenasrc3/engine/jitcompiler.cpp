@@ -1939,6 +1939,7 @@ void elena_lang::loadDPROp(JITCompilerScope* scope)
          }
          case PTR32LO_2:
          {
+            printf("loadDPROp:");
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
             break;
          }
