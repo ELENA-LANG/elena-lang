@@ -158,7 +158,7 @@ labYGCollect:
   movk    x19, stat_ptr32hi : #0, lsl #16
   ldr     x18, [x17]
   lsl     x18, x18, #3
-  stp     x19, x18, [sp, #-16]! 
+  stp     x18, x19, [sp, #-16]! 
 
   // ;   collect frames
   ldr     x19, [x14]
@@ -172,7 +172,7 @@ labYGNextFrame:
 
   mov     x20, x18
   sub     x18, x17, x18
-  stp     x20, x18, [sp, #-16]! 
+  stp     x18, x20, [sp, #-16]! 
 
   ldr     x19, [x17, #8]!
   cmp     x19, #0
