@@ -7,7 +7,7 @@ define VEH_HANDLER          10003h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
-define CORE_ET_TABLE        2000Bh
+define CORE_THREAD_TABLE    2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
@@ -23,6 +23,7 @@ define toc_code              0018h
 define toc_gctable           0020h
 define toc_alloc             0028h
 define toc_data              0030h
+define toc_stat              0038h
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -46,6 +47,7 @@ define gc_end                0048h
 define gc_mg_wbar            0050h
 
 define et_current            0008h
+define tt_stack_frame        0010h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
@@ -55,6 +57,7 @@ define es_catch_frame        0018h
 // ; --- Page Size ----
 define page_ceil               2Fh
 define page_mask        0FFFFFFE0h
+define page_size_order          5h
 define struct_mask_inv     7FFFFFh
 define struct_mask_inv_lo   0FFFFh
 define struct_mask_inv_hi      7Fh
@@ -75,14 +78,15 @@ structure % CORE_TOC
   dq data   : %CORE_GC_TABLE
   dq code   : %GC_ALLOC // ; address of alloc function
   dq data   : 0         // ; address of data section
-  dq stat   : 0         // ; address of data section
+  dq stat   : 0         // ; address of stat section
 
 end
  
-structure % CORE_ET_TABLE
+structure % CORE_THREAD_TABLE
 
   dq 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
+  dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
 
 end
 
@@ -107,7 +111,7 @@ structure %SYSTEM_ENV
 
   dq 0  
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_ET_TABLE
+  dq data : %CORE_THREAD_TABLE
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -148,7 +152,98 @@ inline % GC_ALLOC
   blr
 
 labYGCollect:
-  xor  r15, r15, r15  // !! temporal stub
+  // ; save registers
+  sub     r18, r18, r17 
+
+  mflr    r0
+  std     r31, -10h(r1)  // ; save frame pointer
+  std     r0,  -08h(r1)  // ; save return address
+
+  addi    r1, r1, -16    // ; allocate raw stack
+  mr      r31, r1        // ; set frame pointer
+
+  // ; lock frame
+  ld      r16, toc_data(r2)
+  addis   r16, r16, data_disp32hi : %CORE_THREAD_TABLE
+  addi    r16, r16, data_disp32lo : %CORE_THREAD_TABLE
+  std     r1, tt_stack_frame(r16)
+
+  std     r18, -08h(r1)  
+  addi    r1, r1, -16    // ; allocate raw stack
+
+  // ; create set of roots
+  mr      r31, r1
+  li      r18, 0
+  std     r18, -10h(r1)
+  std     r18, -08h(r1)
+  addi    r1, r1, -16
+
+  // ;   save static roots
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, rdata_disp32hi : %SYSTEM_ENV
+  addi    r17, r17, rdata_disp32lo : %SYSTEM_ENV
+
+  ld      r19, toc_stat(r2)
+  ld      r18, 0(r17)
+  sldi    r18, r18, 3
+  std     r18, -10h(r1)
+  std     r19, -08h(r1)
+  addi    r1, r1, -16
+
+  // ;   collect frames
+  ld      r19, tt_stack_frame(r16)
+  mr      r18, r19
+
+labYGNextFrame:
+  mr      r17, r19
+  ld      r19, 0(r17)
+  cmpwi   r19, 0
+  bne     labYGNextFrame
+
+  std     r18, -8h(r1)
+  subf    r18, r17, r18
+  neg     r18, r18
+  std     r18, -10h(r1)
+  addi    r1, r1, -16
+
+  ld      r19, 8(r17)
+  cmpwi   r19, 0
+  mr      r18, r19
+  bne     labYGNextFrame
+
+  std     r1, 0(r31)
+
+  ld      r4, 8(r31)
+  mr      r3, r1
+
+  // ; call GC routine
+  std     r2, -8h(r1)     // ; storing toc pointer
+  std     r31, -10h(r1)   // ; storing toc pointer
+  addi    r1, r1, -48     // ; allocating stack
+
+  // ; restore frame to correctly display a call stack
+  ld      r31, 0(r31)
+
+  ld      r12, toc_import(r2)
+  addis   r12, r12, import_disp32hi : "$rt.CollectGCLA"
+  addi    r12, r12, import_disp32lo : "$rt.CollectGCLA"
+  ld      r12,0(r12)
+
+  mtctr   r12            // ; put code address into ctr
+  bctrl                  // ; and call it
+
+  ld      r2, 40(r1)     // ; restoring toc pointer
+  ld      r31, 32(r1)     // ; restoring toc pointer
+
+  mr      r15, r3
+
+  mr      r1, r31              // ; restore stack pointer
+  addi    r1, r1, 16           // ; free raw stack
+
+  ld      r31, 00h(r1)         // ; restore frame pointer
+  ld      r0,  08h(r1)         // ; restore  return address
+
+  mtlr    r0
   blr
 
 end
@@ -245,8 +340,8 @@ end
 inline %0Ah
 
   ld      r16, toc_data(r2)
-  addis   r16, r16, data_disp32hi : %CORE_ET_TABLE
-  addi    r16, r16, data_disp32lo : %CORE_ET_TABLE
+  addis   r16, r16, data_disp32hi : %CORE_THREAD_TABLE
+  addi    r16, r16, data_disp32lo : %CORE_THREAD_TABLE
 
   ld      r17, et_current(r16)
   ld      r0, es_catch_addr(r17)
@@ -259,8 +354,8 @@ end
 inline %0Bh
 
   ld      r16, toc_data(r2)
-  addis   r16, r16, data_disp32hi : %CORE_ET_TABLE
-  addi    r16, r16, data_disp32lo : %CORE_ET_TABLE
+  addis   r16, r16, data_disp32hi : %CORE_THREAD_TABLE
+  addi    r16, r16, data_disp32lo : %CORE_THREAD_TABLE
 
   ld      r19, et_current(r16)
 
@@ -781,6 +876,27 @@ inline %0A5h
 
 end
 
+// ; assigni
+inline %0A6h
+
+  addi    r16, r15, __arg16_1
+
+  // calculate write-barrier address
+  ld      r19, toc_gctable(r2)
+
+  ld      r17, gc_start(r19)
+  ld      r18, gc_header(r19)
+
+  subf    r19, r17, r15
+  srdi    r19, r19, page_size_order
+
+  std     r3, 0(r16)
+  li      r20, 1
+  add     r18, r18, r19
+  stb     r20, 0(r18)
+
+end
+
 // ; peekfi
 inline %0A8h
 
@@ -1250,8 +1366,8 @@ inline %0E6h
   addi    r19, r31, __arg16_1
 
   ld      r14, toc_data(r2)
-  addis   r14, r14, data_disp32hi : %CORE_ET_TABLE
-  addi    r14, r14, data_disp32lo : %CORE_ET_TABLE
+  addis   r14, r14, data_disp32hi : %CORE_THREAD_TABLE
+  addi    r14, r14, data_disp32lo : %CORE_THREAD_TABLE
 
   ld      r15, et_current(r14)
 

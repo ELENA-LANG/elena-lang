@@ -28,13 +28,19 @@ namespace elena_lang
    public:
       static void FillSettings(SystemEnv* env, SystemSettings& settings);
 
-      static uintptr_t NewHeap(int totalSize, int committedSize);
+      static size_t AlignHeapSize(size_t size);
+
+      static uintptr_t NewHeap(size_t totalSize, size_t committedSize);
+      static uintptr_t ExpandHeap(void* allocPtr, size_t newSize);
+
+      static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size);
 
       static void Init(SystemEnv* env, SystemSettings settings);
       static void InitExceptionHandling(SystemEnv* env, void* criticalHandler);
       static void InitCriticalStruct(uintptr_t criticalDispatcher);
-
       static void InitSTA(SystemEnv* env);
+
+      static void RaiseError(int code);
 
       static void Exit(int exitCode);
 

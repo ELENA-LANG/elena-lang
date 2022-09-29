@@ -2518,9 +2518,7 @@ inline void copyObjectToAcc(BuildTreeWriter& writer, ClassInfo& info, int offset
       writer.newNode(BuildKey::AccCopying, offset);
       writer.appendNode(BuildKey::Size, info.size);
    }
-   else {      
-      writer.newNode(BuildKey::FieldAssigning, 0);
-   }
+   else writer.newNode(BuildKey::FieldAssigning, 0);
 
    writer.closeNode();
 }

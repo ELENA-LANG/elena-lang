@@ -64,6 +64,25 @@ bool Arm64Assembler :: readOperandReference(ScriptToken& tokenInfo, ref_t mask, 
    return true;
 }
 
+bool Arm64Assembler :: readOperandExternalReference(ScriptToken& tokenInfo, ref_t mask, int& imm, ref_t& reference)
+{
+   read(tokenInfo);
+
+   if (tokenInfo.state == dfaQuote) {
+      imm = 0;
+      reference = _target->mapReference(*tokenInfo.token) | mask;
+
+      read(tokenInfo);
+   }
+   else if (tokenInfo.compare("#")) {
+      imm = readIntArg(tokenInfo, reference);
+      reference |= mask;
+   }
+   else return false;
+
+   return true;
+}
+
 //void Arm64Assembler :: readIOperand(ScriptToken& tokenInfo, int& value, ref_t& reference, ustr_t errorMessage)
 //{
 //   read(tokenInfo);
@@ -377,6 +396,38 @@ ARMOperand Arm64Assembler :: readOperand(ScriptToken& tokenInfo, ustr_t errorMes
             }
             else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
          }
+         else if (tokenInfo.compare("stat_ptr32lo")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskStatDataRef32Lo, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("stat_ptr32hi")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskStatDataRef32Hi, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("import_ptr32lo")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandExternalReference(tokenInfo, mskImportRef32Lo, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("import_ptr32hi")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandExternalReference(tokenInfo, mskImportRef32Hi, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
          else if (getIntConstant(tokenInfo, operand.imm, operand.reference)) {
             operand.type = ARMOperandType::Imm;
 
@@ -539,6 +590,10 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
             case mskCodeDisp32Lo:
             case mskMDataRef32Hi:
             case mskMDataRef32Lo:
+            case mskStatDataRef32Hi:
+            case mskStatDataRef32Lo:
+            case mskImportRef32Hi:
+            case mskImportRef32Lo:
                writer.Memory()->addReference(reference, writer.position() - 4);
                break;
             default:
@@ -987,6 +1042,17 @@ bool Arm64Assembler :: compileSUBImm(ScriptToken& tokenInfo, ARMOperand rd, ARMO
 
       if (imm.reference)
          writeReference(tokenInfo, imm.reference, writer, ASM_INVALID_SOURCE);
+   }
+   else return false;
+
+   return true;
+}
+
+bool Arm64Assembler :: compileSUBShifted(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm,
+   int shift, int amount, MemoryWriter& writer)
+{
+   if (rd.isXR() && rn.isXR() && rm.isXR()) {
+      writer.writeDWord(ARMHelper::makeImm6ShiftOpcode(1, 1, 0, 0xB, shift, amount, rm.type, rn.type, rd.type));
    }
    else return false;
 
@@ -1512,6 +1578,23 @@ void Arm64Assembler :: compileMUL(ScriptToken& tokenInfo, MemoryWriter& writer)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void Arm64Assembler :: compileNEG(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rm = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   bool isValid = false;
+   if (rd.isXR() && rm.isXR()) {
+      isValid = compileSUBShifted(tokenInfo, rd, { ARMOperandType::XZR }, rm, 0, 0, writer);
+   }
+
+   if (!isValid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void Arm64Assembler :: compileORR(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -1853,7 +1936,12 @@ bool Arm64Assembler::compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
 
 bool Arm64Assembler :: compileNOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   return false;
+   if (tokenInfo.compare("neg")) {
+      compileNEG(tokenInfo, writer);
+   }
+   else return false;
+
+   return true;
 }
 
 bool Arm64Assembler :: compileOOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)

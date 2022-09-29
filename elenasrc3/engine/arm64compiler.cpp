@@ -82,14 +82,12 @@ void elena_lang::ARM64loadCallOp(JITCompilerScope* scope)
       switch (entries->reference) {
          case PTR32HI_1:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, disp, mskRef32Hi);
+            ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Hi);
             break;
          }
          case PTR32LO_1:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, disp, mskRef32Lo);
+            ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo);
             break;
          }
          default:

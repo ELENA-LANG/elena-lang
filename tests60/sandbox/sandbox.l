@@ -1,22 +1,16 @@
 import system;
 
-singleton ByRefProber
+gcTests()
 {
-//   set(ref int retVal)
-//   {
-//      retVal := 123;
-//   }
-
-   set(ref string retVal)
+   console.write("gcTests");
+   for (int i := 0, i < 100000, i := i + 1)
    {
-      retVal := "hello";
-   }
+      new IntNumber();
+   };
+   console.writeLine(".");
 }
 
 public program() 
 {
-   string s := "none";
-   ByRefProber.set(ref s);
-
-   console.writeLine(s == "hello");
+   gcTests()
 }

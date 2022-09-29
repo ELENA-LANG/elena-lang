@@ -178,6 +178,11 @@ inline bool testany(const int number, const int mask)
    return ((number & mask) != 0);
 }
 
+inline bool testanyLong(long long number, long long mask)
+{
+   return ((number & mask) != 0LL);
+}
+
 inline bool test64(uint64_t number, uint64_t mask)
 {
    return ((number & mask) == mask);

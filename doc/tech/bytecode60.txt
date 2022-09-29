@@ -52,6 +52,8 @@ ELENA byte codes (or ecodes)
  --------------------
    andn n                   - index := index & n
 
+   assign i                 - acc[i] := sp[0];
+
    get i                    - acc[i] => acc
 
    load                     - index := [acc] 

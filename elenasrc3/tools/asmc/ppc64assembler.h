@@ -99,6 +99,7 @@ namespace elena_lang
       void compileMTCTR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMULLD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMULLW(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileNEG(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileRLDICL(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSRDI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSLDI(ScriptToken& tokenInfo, MemoryWriter& writer);

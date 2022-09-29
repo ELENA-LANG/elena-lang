@@ -21,6 +21,7 @@ namespace elena_lang
       int readIntArg(ScriptToken& tokenInfo, ref_t& reference);
       int readReferenceArg(ScriptToken& tokenInfo, ref_t& reference, ustr_t errorMessage);
       bool readOperandReference(ScriptToken& tokenInfo, ref_t mask, int& value, ref_t& reference);
+      bool readOperandExternalReference(ScriptToken& tokenInfo, ref_t mask, int& value, ref_t& reference);
 
       ARMOperand defineRegister(ScriptToken& tokenInfo);
 
@@ -70,6 +71,8 @@ namespace elena_lang
       virtual bool compileSTR(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer);
       virtual bool compileSTRB(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer);
       virtual bool compileSTRH(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer);
+      virtual bool compileSUBShifted(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry,
+         int shift, int ampount, MemoryWriter& writer);
       virtual bool compileSUBImm(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry, MemoryWriter& writer);
       virtual bool compileSUBS(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rt, MemoryWriter& writer);
       virtual bool compileSUBSShifted(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rt, 
@@ -99,6 +102,7 @@ namespace elena_lang
       void compileMOVK(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMOVZ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMUL(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileNEG(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileORR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSDIV(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSTP(ScriptToken& tokenInfo, MemoryWriter& writer);
