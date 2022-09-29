@@ -99,6 +99,7 @@ namespace elena_lang
 
    constexpr auto CLASSCLASS_POSTFIX      = "#class";
    constexpr auto CONST_POSTFIX           = "#const";
+   constexpr auto STATICFIELD_POSTFIX     = "#static";
 
    // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";

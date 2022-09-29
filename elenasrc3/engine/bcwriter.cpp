@@ -569,6 +569,11 @@ void getField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::GetI, node.arg.value);
 }
 
+void staticVarOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::PeekR, node.arg.reference | mskStaticVariable);
+}
+
 void staticBegin(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.newLabel();     // declare symbol-end label
@@ -628,7 +633,7 @@ ByteCodeWriter::Saver commands[] =
    assignSPField, getField, staticBegin, staticEnd, classOp, byteArrayOp, newArrayOp, swapSPField,
 
    mssgLiteral, accSwapSPField, redirectOp, shortArraySOp, wideLiteral, byteOp, shortOp, byteCondOp,
-   shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning,
+   shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning, staticVarOp,
 };
 
 // --- ByteCodeWriter ---

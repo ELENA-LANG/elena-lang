@@ -338,6 +338,9 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_CONST:
          attrs.isConstant = true;
          break;
+      case V_STATIC:
+         attrs.isStatic = true;
+         break;
       default:
          return false;
    }
@@ -397,6 +400,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
          return true;
       case V_MULTIRET:
          hint = (ref_t)MethodHint::MutliRet;
+         return true;
+      case V_SEALED:
+         hint = (ref_t)MethodHint::Sealed;
          return true;
       default:
          return false;

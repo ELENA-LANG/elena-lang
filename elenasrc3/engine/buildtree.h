@@ -87,6 +87,7 @@ namespace elena_lang
       AccFieldCopyingTo    = 0x003A,
       LocalReference       = 0x003B,
       RefParamAssigning    = 0x003C,
+      StaticVar            = 0x003D,
 
       Import               = 0x0048,
       DictionaryOp         = 0x0049,

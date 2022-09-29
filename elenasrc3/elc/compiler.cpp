@@ -563,12 +563,14 @@ ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribu
    }
    else {
       auto staticFieldInfo = info.statics.get(identifier);
-      if (staticFieldInfo.offset != 0 && staticFieldInfo.valueRef != 0) {
-         return { ObjectKind::StaticConstField, staticFieldInfo.typeInfo, staticFieldInfo.offset };
-      }
-      else if (staticFieldInfo.valueRef) {
+      if (staticFieldInfo.valueRef && staticFieldInfo.offset == 0) {
          return { ObjectKind::ClassConstant, staticFieldInfo.typeInfo, staticFieldInfo.valueRef };
       }
+      else if (staticFieldInfo.offset < 0 && staticFieldInfo.valueRef != 0) {
+         return { ObjectKind::StaticConstField, staticFieldInfo.typeInfo, staticFieldInfo.offset };
+      }
+      else if (staticFieldInfo.valueRef)
+         return { ObjectKind::StaticField, staticFieldInfo.typeInfo, staticFieldInfo.valueRef };
 
       return {};
    }
@@ -1514,11 +1516,26 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SyntaxNode node, bo
    }
 
    if (isConst) {
-      // NOTE : the index is 0 for the constants
+      // NOTE : the index is zero for the constants
       // NOTE : INVALID_REF indicates that the value should be assigned later
       scope.info.statics.add(name, { 0, typeInfo, INVALID_REF });
    }
-   else assert(false);
+   else {
+      // if it is a static field
+      ref_t staticRef = node.arg.reference;
+      if (!staticRef) {
+         // generate static reference
+         IdentifierString name(scope.module->resolveReference(scope.reference));
+         name.append(STATICFIELD_POSTFIX);
+
+         staticRef = scope.moduleScope->mapAnonymous(*name);
+
+         node.setArgumentReference(staticRef);
+      }
+
+      // NOTE : MAX_OFFSET indicates the sealed static field
+      scope.info.statics.add(name, { MAX_OFFSET, typeInfo, staticRef });
+   }
 }
 
 void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
@@ -1633,7 +1650,7 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node, bool si
          FieldAttributes attrs = {};
          declareFieldAttributes(scope, current, attrs);
 
-         if (attrs.isConstant) {
+         if (attrs.isConstant || attrs.isStatic) {
             generateClassStaticField(scope, current, attrs.isConstant, attrs.typeInfo);
          }
          else if (!isClassClassMode) {
@@ -2718,10 +2735,12 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          writer.appendNode(BuildKey::Field, info.reference);
          break;
       case ObjectKind::StaticConstField:
-      case ObjectKind::StaticField:
          writeObjectInfo(writer, scope, scope.mapSelf());
          writer.appendNode(BuildKey::ClassOp, CLASS_OPERATOR_ID);
          writer.appendNode(BuildKey::Field, info.reference);
+         break;
+      case ObjectKind::StaticField:
+         writer.appendNode(BuildKey::StaticVar, info.reference);
          break;
       case ObjectKind::ByRefParam:
          writeObjectInfo(writer, scope, { ObjectKind::Param, info.typeInfo, info.reference });

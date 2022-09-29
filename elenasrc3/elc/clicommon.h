@@ -533,6 +533,7 @@ struct FieldAttributes
    TypeInfo typeInfo;
    int      size;
    bool     isConstant;
+   bool     isStatic;
    bool     isEmbeddable;
    bool     inlineArray;
 };

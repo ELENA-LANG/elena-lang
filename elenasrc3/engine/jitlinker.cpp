@@ -692,7 +692,7 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
 
    for (auto it = statics.start(); !it.eof(); ++it) {
       auto fieldInfo = *it;
-      if (fieldInfo.valueRef) {
+      if (fieldInfo.valueRef && fieldInfo.offset < 0) {
          addr_t vaddress = INVALID_REF;
 
          switch (fieldInfo.valueRef) {

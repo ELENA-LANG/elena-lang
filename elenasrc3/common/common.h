@@ -58,6 +58,7 @@ namespace elena_lang
 
    constexpr pos_t   INVALID_POS = -1;
    constexpr ref_t   INVALID_REF = -1;
+   constexpr ref_t   MAX_OFFSET = 0x7FFFFFFF;
    constexpr addr_t  INVALID_ADDR = -1;
 
 }
