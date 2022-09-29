@@ -867,7 +867,8 @@ Compiler :: Compiler(
    _errorProcessor = errorProcessor;
    _templateProcessor = templateProcessor;
 
-   _optMode = true; // !! temporally - should be set if the optimization is enabled
+   _optMode = false;
+   _tapeOptMode = false;
 }
 
 inline ref_t resolveDictionaryMask(TypeInfo typeInfo)
@@ -6632,6 +6633,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
       {
          return current == reference;
       }));
+
+   if (!moduleScope->tapeOptMode)
+      moduleScope->tapeOptMode = _tapeOptMode;
 }
 
 void Compiler :: validateScope(ModuleScopeBase* moduleScope)

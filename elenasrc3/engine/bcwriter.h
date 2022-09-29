@@ -56,25 +56,29 @@ namespace elena_lang
       void importTree(CommandTape& tape, BuildNode node, Scope& scope);
 
       void saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
-         ReferenceMap& paths, bool loopMode = false);
+         ReferenceMap& paths, bool tapeOptMode, bool loopMode = false);
       void saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
-         ReferenceMap& paths, bool loopMode);
-      void saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths);
-      void saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths);
+         ReferenceMap& paths, bool tapeOptMode, bool loopMode);
+      void saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, 
+         bool tapeOptMode);
+      void saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, 
+         bool tapeOptMode);
       void saveVariableInfo(CommandTape& tape, BuildNode node);
 
-      void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, ReferenceMap& paths);
+      void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
+         ReferenceMap& paths, bool tapeOptMode);
 
-      void saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths);
+      void saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths, bool tapeOptMode);
 
       void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
-         ReferenceMap& paths);
-      void saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, ReferenceMap& paths);
+         ReferenceMap& paths, bool tapeOptMode);
+      void saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
+         ReferenceMap& paths, bool tapeOptMode);
 
       void optimizeTape(CommandTape& tape);
 
    public:
-      void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList);
+      void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList, bool tapeOptMode);
 
       ByteCodeWriter(LibraryLoaderBase* loader);
    };

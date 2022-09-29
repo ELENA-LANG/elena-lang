@@ -1,16 +1,36 @@
 import system;
+import extensions;
 
-gcTests()
+AssignTestClass
 {
-   console.write("gcTests");
-   for (int i := 0, i < 100000, i := i + 1)
+   field x;
+   field y;
+
+   constructor(x, y)
    {
-      new IntNumber();
-   };
+      this x := x;
+      this y := y;
+   }
+
+   test(x, y)
+   {
+      console.writeLine(this x == x);
+      Assert.ifTrue(this x == x);
+      console.writeLine(this y == y);
+      Assert.ifTrue(this y == y);
+   }
+}
+
+assignTests()
+{
+   console.write("assignTests");
+   var o := new AssignTestClass(2,"test");
+   o.test(2,"test");
+
    console.writeLine(".");
 }
 
 public program() 
 {
-   gcTests()
+   assignTests()
 }

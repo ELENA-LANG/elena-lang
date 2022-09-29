@@ -800,6 +800,7 @@ namespace elena_lang
       ErrorProcessor*        _errorProcessor;
 
       bool                   _optMode;
+      bool                   _tapeOptMode;
 
       bool reloadMetaData(ModuleScopeBase* moduleScope, ustr_t name);
 
@@ -1100,6 +1101,12 @@ namespace elena_lang
          mssg_t messageRef, MethodHint type) override;
 
    public:
+      void setOptimizationMode(int optMode)
+      {
+         _optMode = optMode != 0;
+         _tapeOptMode = optMode > optLow;
+      }
+
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver);
       void declare(ModuleScopeBase* moduleScope, SyntaxTree& input);
       void compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildTree& output);

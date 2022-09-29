@@ -89,6 +89,14 @@ void Project :: addBoolSetting(ProjectOption option, bool value)
    _root.appendChild(option, value ? "-1" : "0");
 }
 
+void Project :: addIntSetting(ProjectOption option, int value)
+{
+   String<char, 20> valStr;
+   valStr.appendInt(value);
+
+   _root.appendChild(option, valStr.str());
+}
+
 int Project :: IntSetting(ProjectOption option, int defValue) const
 {
    ustr_t val = StringSetting(option);

@@ -183,6 +183,7 @@ namespace elena_lang
       void addForward(ustr_t forward, ustr_t referenceName) override;
 
       void addBoolSetting(ProjectOption option, bool value);
+      void addIntSetting(ProjectOption option, int value);
 
       ModuleIteratorBase* allocModuleIterator() override
       {

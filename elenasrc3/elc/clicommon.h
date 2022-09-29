@@ -153,6 +153,13 @@ public:
 
 // --- ProjectBase ---
 
+enum OptimizationModes
+{
+   optNone = 0,
+   optLow = 1,
+   optMiddle = 2
+};
+
 enum class ProjectOption
 {
    None = 0,
@@ -189,6 +196,7 @@ enum class ProjectOption
    // flags
    DebugMode,
    MappingOutputMode,
+   OptimizationMode,
 
    Key,
    Value,
@@ -376,6 +384,8 @@ public:
    pos_t                ehTableEntrySize;
    int                  minimalArgList;
 
+   bool                 tapeOptMode;
+
    Map<ref_t, SizeInfo> cachedSizes;
 
    virtual bool isStandardOne() = 0;
@@ -419,7 +429,8 @@ public:
       pos_t stackAlingment, 
       pos_t rawStackAlingment,
       pos_t ehTableEntrySize,
-      int minimalArgList
+      int minimalArgList,
+      bool tapeOptMode
    ) :
       predefined(0),
       attributes(0),
@@ -433,6 +444,7 @@ public:
       this->rawStackAlingment = rawStackAlingment;
       this->ehTableEntrySize = ehTableEntrySize;
       this->minimalArgList = minimalArgList;
+      this->tapeOptMode = tapeOptMode;
    }
 };
 

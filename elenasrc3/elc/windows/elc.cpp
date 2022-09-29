@@ -236,6 +236,17 @@ int main()
                case 'm':
                   project.addBoolSetting(ProjectOption::MappingOutputMode, true);
                   break;
+               case 'o':
+                  if (argv[i][2] == '0') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optNone);
+                  }
+                  else if (argv[i][2] == '1') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optLow);
+                  }
+                  else if (argv[i][2] == '2') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
+                  }
+                  break;
                case 'r':
                   cleanMode = true;
                   break;

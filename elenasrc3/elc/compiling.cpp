@@ -286,7 +286,7 @@ void CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree&
 void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode)
 {
    ByteCodeWriter bcWriter(&_libraryProvider);
-   bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList);
+   bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList, moduleScope.tapeOptMode);
 
    if (savingMode) {
       _libraryProvider.saveModule(moduleScope.module);
@@ -370,6 +370,9 @@ void CompilingProcess :: configurate(ProjectBase& project)
    _libraryProvider.setOutputPath(project.PathSetting(ProjectOption::OutputPath));
    _libraryProvider.setNamespace(project.Namespace());
    _libraryProvider.addPackage(project.Namespace(), project.PathSetting(ProjectOption::OutputPath));
+
+   int optMode = project.IntSetting(ProjectOption::OptimizationMode, optMiddle);
+   _compiler->setOptimizationMode(optMode);
 }
 
 void CompilingProcess :: compile(ProjectBase& project,
