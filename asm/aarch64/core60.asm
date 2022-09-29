@@ -192,8 +192,9 @@ labYGNextFrame:
   ldr     x29, [x29]
 
   // ; call GC routine
-  movz    x16,  import_ptr32hi : "$rt.CollectGCLA", lsl #16
-  movk    x16,  import_ptr32lo : "$rt.CollectGCLA"
+  movz    x16,  import_ptr32lo : "$rt.CollectGCLA"
+  movk    x16,  import_ptr32hi : "$rt.CollectGCLA", lsl #16
+
   ldr     x17, [x16]
   blr     x17
 
