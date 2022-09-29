@@ -200,7 +200,8 @@ labYGNextFrame:
 
   mov     x10, x0
 
-  ldp     x19, x29, [sp, #-16]! 
+//;  ldp     x19, x29, [sp, #-16]! 
+  ldp     x19, x29, [sp], #16
   mov     sp, x29
   ldp     x29, x30, [sp], #16
 
