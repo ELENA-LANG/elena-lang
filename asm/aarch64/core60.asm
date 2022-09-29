@@ -157,6 +157,7 @@ labYGCollect:
   movz    x19, stat_ptr32lo : #0
   movk    x19, stat_ptr32hi : #0, lsl #16
   ldr     x18, [x17]
+  lsl     x18, x18, #3
   stp     x19, x18, [sp, #-16]! 
 
   // ;   collect frames
@@ -191,7 +192,7 @@ labYGNextFrame:
   ldr     x29, [x29]
 
   // ; call GC routine
-  movz    x16,  import_ptr32hi : "$rt.CollectGCLA"
+  movz    x16,  import_ptr32hi : "$rt.CollectGCLA", lsl #16
   movk    x16,  import_ptr32lo : "$rt.CollectGCLA"
   ldr     x17, [x16]
   blr     x17
