@@ -162,8 +162,9 @@ inline void writeRef32Lo(JITCompilerBase* compiler, MemoryBase* image, pos_t pos
 
       printf("writeRef32Lo %x,%x\n", reference, disp);
 
-      //image->write(position, &disp, 2);
-      compiler->writeImm16(&writer, disp, 0);
+      if (disp)
+         compiler->writeImm16(&writer, disp, 0);
+
       image->addReference(reference, position);
    }
    else {
@@ -181,8 +182,9 @@ inline void writeRef32Hi(JITCompilerBase* compiler, MemoryBase* image, pos_t pos
       // in the virtual mode vaddress is an image offset - plus address mask
       ref_t reference = (ref_t)vaddress | addressMask;
 
-      //image->write(position, &disp, 2);
-      compiler->writeImm16(&writer, disp, 0);
+      if (disp)
+         compiler->writeImm16(&writer, disp, 0);
+
       image->addReference(reference, position);
    }
    else {
