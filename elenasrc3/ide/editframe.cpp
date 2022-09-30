@@ -13,7 +13,7 @@ using namespace elena_lang;
 SourceViewModel :: SourceViewModel()
    : TextViewModel()
 {
-   traceRow = -1;
+   traceRow = errorRow = -1;
 }
 
 void SourceViewModel :: setTraceLine(int row, bool withCursor)
@@ -37,3 +37,24 @@ void SourceViewModel :: clearTraceLine()
    traceRow = -1;
 }
 
+void SourceViewModel :: setErrorLine(int row, int column, bool withCursor)
+{
+   if (errorRow != -1) {
+      _currentView->removeMarker(errorRow, STYLE_ERROR_LINE);
+   }
+
+   _currentView->addMarker(row, STYLE_ERROR_LINE);
+   if (withCursor)
+      _currentView->setCaret(column - 1, row - 1, false);
+
+   errorRow = row;
+
+}
+
+void SourceViewModel :: clearErrorLine()
+{
+   if (errorRow != -1) {
+      _currentView->removeMarker(traceRow, STYLE_ERROR_LINE);
+   }
+   errorRow = -1;
+}

@@ -10,10 +10,11 @@ using namespace elena_lang;
 
 // --- MessageLog ---
 
-MessageLog :: MessageLog()
-   : ListView(50, 50)
+MessageLog :: MessageLog(NotifierBase* notifier, int highlightCode)
+   : ListView(50, 50), _list({}), _paths(nullptr)
 {
-
+   _notifier = notifier;
+   _highlightCode = highlightCode;
 }
 
 HWND MessageLog :: createControl(HINSTANCE instance, ControlBase* owner)
@@ -35,4 +36,28 @@ void MessageLog :: addMessage(text_str message, text_str file, text_str row, tex
    setColumnText(row, index, 2);
    setColumnText(col, index, 3);
 
+   // NOTE : the path should be cloned
+   PathString filePath(file);
+
+   path_t pathStr = (*filePath).clone();
+
+   _list.add(index, { pathStr, StrConvertor::toInt(row, 10), StrConvertor::toInt(col, 10) });
+}
+
+MessageLogInfo MessageLog :: getMessage(int index)
+{
+   return _list.get(index);
+}
+
+void MessageLog :: clearMessages()
+{
+   _paths.clear();
+   _list.clear();
+
+   clearMessages();
+}
+
+void MessageLog :: onItemDblClick(int index)
+{
+   _notifier->notifyMessage(_highlightCode, index);
 }

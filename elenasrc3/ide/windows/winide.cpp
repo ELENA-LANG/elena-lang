@@ -190,6 +190,15 @@ void IDEWindow :: onCompilationEnd(int exitCode)
    freestr(output);
 }
 
+void IDEWindow :: onErrorHighlight(int index)
+{
+   ErrorLogBase* resultBar = dynamic_cast<ErrorLogBase*>(_children[_model->ideScheme.errorListControl]);
+
+   auto messageInfo = resultBar->getMessage(index);
+
+   _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
+}
+
 bool IDEWindow :: onCommand(int command)
 {
    switch (command) {
@@ -250,12 +259,12 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
 {
    auto docView = _model->sourceViewModel.DocView();
 
-   switch (hdr->extParam) {
+   switch (hdr->extParam1) {
       case NOTIFY_SOURCEMODEL:
          docView->notifyOnChange();
          break;
       case NOTIFY_CURRENTVIEW_CHANGED:
-         _model->sourceViewModel.afterDocumentSelect(hdr->extParam);
+         _model->sourceViewModel.afterDocumentSelect(hdr->extParam1);
          _model->sourceViewModel.onModelChanged();
          break;
       case NOTIFY_CURRENTVIEW_SHOW:
@@ -276,7 +285,7 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
 {
    auto docView = _model->sourceViewModel.DocView();
 
-   switch (hdr->extParam) {
+   switch (hdr->extParam1) {
       case NOTIFY_SHOW_RESULT:
          openResultTab(hdr->extParam2);
          break;
@@ -285,6 +294,9 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
          break;
       case NOTIFY_COMPILATION_RESULT:
          onCompilationEnd(hdr->extParam2);
+         break;
+      case NOTIFY_ERROR_HIGHLIGHT_ROW:
+         onErrorHighlight(hdr->extParam2);
          break;
       default:
          break;
@@ -301,6 +313,16 @@ void IDEWindow :: onTabSelChanged(HWND wnd)
    }
 }
 
+void IDEWindow :: onDoubleClick(NMHDR* hdr)
+{
+   for (size_t i = 0; i < _childCounter; i++) {
+      if (_children[i]->checkHandle(hdr->hwndFrom)) {
+         ((ControlBase*)_children[i])->onDoubleClick(hdr);
+         break;
+      }
+   }
+}
+
 void IDEWindow :: onNotify(NMHDR* hdr)
 {
    switch (hdr->code) {
@@ -309,6 +331,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          break;
       case TCN_SELCHANGE:
          onTabSelChanged(hdr->hwndFrom);
+         break;
+      case NM_DBLCLK:
+         onDoubleClick(hdr);
          break;
       case NMHDR_Message:
          onNotifyMessage((ExtNMHDR*)hdr);

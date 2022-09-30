@@ -49,6 +49,9 @@ namespace elena_lang
 
       void onModelChange(ExtNMHDR* hdr);
       void onNotifyMessage(ExtNMHDR* hdr);
+
+      void onDoubleClick(NMHDR* hdr);
+
       void onTabSelChanged(HWND wnd);
 
       bool onCommand(int command) override;
@@ -56,6 +59,7 @@ namespace elena_lang
       void onActivate() override;
 
       void onCompilationEnd(int exitCode);
+      void onErrorHighlight(int index);
 
       void openResultTab(int controlIndex);
 

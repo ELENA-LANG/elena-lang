@@ -672,6 +672,11 @@ namespace elena_lang
          return -1;
       }
 
+      void clear()
+      {
+         _list.clear();
+      }
+
       List(T defValue)
          : _list(defValue)
       {

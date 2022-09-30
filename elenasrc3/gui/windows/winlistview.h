@@ -23,6 +23,10 @@ namespace elena_lang
       int addRow(const wchar_t* text);
       void setColumnText(const wchar_t* item, int row, int column);
 
+      void onDoubleClick(NMHDR* hdr) override;
+
+      virtual void onItemDblClick(int index) {}
+
       ListView(int width, int height);
    };
 }

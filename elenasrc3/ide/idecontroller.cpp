@@ -487,6 +487,13 @@ void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBa
    }
 }
 
+void IDEController :: highlightError(IDEModel* model, int row, int column, path_t path)
+{
+   openFile(model, path);
+
+   model->viewModel()->setErrorLine(row, column, true);
+}
+
 void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode, 
    text_str output, ErrorLogBase* log)
 {

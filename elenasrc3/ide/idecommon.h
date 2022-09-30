@@ -10,7 +10,7 @@
 #include "guicommon.h"
 #include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                           0x0019
+#define IDE_REVISION_NUMBER                           0x001A
 
 namespace elena_lang
 {
@@ -26,6 +26,7 @@ namespace elena_lang
    constexpr auto NOTIFY_LAYOUT_CHANGED               = 5;
    constexpr auto NOTIFY_SHOW_RESULT                  = 6;
    constexpr auto NOTIFY_COMPILATION_RESULT           = 7;
+   constexpr auto NOTIFY_ERROR_HIGHLIGHT_ROW          = 8;
 
    // --- PathSettings ---
    struct PathSettings
@@ -80,10 +81,21 @@ namespace elena_lang
       }
    };
 
+   struct MessageLogInfo
+   {
+      path_t path;
+      int    row;
+      int    column;
+   };
+
    class ErrorLogBase
    {
    public:
       virtual void addMessage(text_str message, text_str file, text_str row, text_str col) = 0;
+
+      virtual MessageLogInfo getMessage(int index) = 0;
+
+      virtual void clearMessages() = 0;
    };
 
    // --- DebugControllerBase ---

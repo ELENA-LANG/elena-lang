@@ -73,10 +73,10 @@ namespace elena_lang
          _notifier = notifier;
       }
 
-      void notifyMessage(int messageCode, int arg = 0) override
+      void notifyMessage(int messageCode, int arg1 = 0, int arg2 = 0) override
       {
          if (_notifier)
-            _notifier->notifyMessage(messageCode, arg);
+            _notifier->notifyMessage(messageCode, arg1);
       }
       void notifyModelChange(int modelCode, int arg) override
       {
@@ -126,6 +126,8 @@ namespace elena_lang
 
       bool selectSource(ProjectModel* model, SourceViewModel* sourceModel,
          ustr_t moduleName, path_t sourcePath);
+
+      void highlightError(IDEModel* model, int row, int column, path_t path);
 
       void doNewFile(IDEModel* model);
       void doOpenFile(DialogBase& dialog, IDEModel* model);
