@@ -137,6 +137,9 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    if (test(flags, PROPERTY_MESSAGE))
       messageName.append("prop:");
 
+   if (test(flags, VARIADIC_MESSAGE))
+      messageName.append("params:");
+
    messageName.append(actionName);
    if (signature) {
       ref_t references[ARG_COUNT];
@@ -177,6 +180,10 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
    if (messageName.startsWith("prop:")) {
       flags |= PROPERTY_MESSAGE;
       messageName += getlength("prop:");
+   }
+   if (messageName.startsWith("params:")) {
+      flags |= VARIADIC_MESSAGE;
+      messageName += getlength("params:");
    }
 
    IdentifierString actionName;

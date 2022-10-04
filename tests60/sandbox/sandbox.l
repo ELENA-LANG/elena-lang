@@ -1,12 +1,12 @@
 import system;
 
-A
-{
-    const 
-}
+//singleton A
+//{
+//    print(params object[] args)
+//    {
+//    }
+//}
 
 public program() 
 {
-   var a := new A();
-   console.writeLine(a.test())
 }

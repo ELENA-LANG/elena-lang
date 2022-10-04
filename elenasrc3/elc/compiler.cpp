@@ -35,7 +35,7 @@ MethodHint operator & (const ref_t& l, const MethodHint& r)
 {
    return (MethodHint)(l & (unsigned int)r);
 }
-//
+
 //inline void testNodes(SyntaxNode node)
 //{
 //   SyntaxNode current = node.firstChild();
@@ -1239,6 +1239,9 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
       }
       methodInfo.outputRef = outputRef;
    }
+
+   if (isOpenArg(message))
+      scope.info.header.flags |= elWithVariadics;
 }
 
 void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed)
@@ -1305,7 +1308,7 @@ inline mssg_t retrieveMethod(Compiler::VirtualMethodList& implicitMultimethods, 
       }).value1;
 }
 
-mssg_t Compiler :: defineMultimethod(Scope& scope, mssg_t messageRef)
+mssg_t Compiler :: defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode)
 {
    pos_t argCount = 0;
    ref_t actionRef = 0, flags = 0, signRef = 0;
@@ -1316,7 +1319,21 @@ mssg_t Compiler :: defineMultimethod(Scope& scope, mssg_t messageRef)
 
    ustr_t actionStr = scope.module->resolveAction(actionRef, signRef);
 
-   if (signRef) {
+   if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
+      // COMPILER MAGIC : for variadic message - use the most general message
+      ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr, 0, false);
+
+      pos_t genericArgCount = 2;
+      // HOTFIX : a variadic extension is a special case of variadic function
+      // - so the target should be included as well
+      if (test(messageRef, FUNCTION_MESSAGE) && !extensionMode)
+         genericArgCount = 1;
+
+      mssg_t genericMessage = encodeMessage(genericActionRef, genericArgCount, flags);
+
+      return genericMessage;
+   }
+   else if (signRef) {
       ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr, 0, false);
       mssg_t genericMessage = encodeMessage(genericActionRef, argCount, flags);
 
@@ -1427,7 +1444,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == methodKey) {
-         mssg_t multiMethod = defineMultimethod(scope, current.arg.reference);
+         mssg_t multiMethod = defineMultimethod(scope, current.arg.reference, scope.extensionClassRef != 0);
          if (multiMethod) {
             //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
             current.appendChild(SyntaxKey::Multimethod, multiMethod);
@@ -1839,8 +1856,9 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
    }
 }
 
-void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool withoutWeakMessages, bool declarationMode, 
-   bool& weakSignature, pos_t& paramCount, ref_t* signature, size_t& signatureLen)
+void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool withoutWeakMessages, 
+   bool declarationMode, bool& variadicMode, bool& weakSignature,
+   pos_t& paramCount, ref_t* signature, size_t& signatureLen)
 {
    int index = 1 + scope.parameters.count();
 
@@ -1859,8 +1877,11 @@ void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool w
       scope.raiseError(errDuplicatedLocal, current);
 
    paramCount++;
-   if (paramCount >= ARG_COUNT/* || (flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE*/)
+   if (paramCount >= ARG_COUNT || variadicMode)
       scope.raiseError(errTooManyParameters, current);
+
+   if (paramTypeInfo.typeRef == V_ARGARRAY)
+      variadicMode = true;
 
    if (paramTypeInfo.isPrimitive()) {
       // primitive arguments should be replaced with wrapper classes
@@ -1894,6 +1915,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
    else unnamedMessage = true;
 
    bool weakSignature = true;
+   bool variadicMode = false;
    pos_t paramCount = 0;
    if (scope.checkHint(MethodHint::Extension)) {
       ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
@@ -1916,8 +1938,9 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
    SyntaxNode current = node.findChild(SyntaxKey::Parameter);
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Parameter) {
-         declareParameter(scope, current, withoutWeakMessages, declarationMode, 
-            weakSignature, paramCount, signature, signatureLen);
+         declareParameter(scope, current, withoutWeakMessages, 
+            declarationMode, variadicMode, weakSignature, 
+            paramCount, signature, signatureLen);
       }
       else break;
 
@@ -1966,13 +1989,16 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          flags |= PROPERTY_MESSAGE;
       }
 
+      if (variadicMode)
+         flags |= VARIADIC_MESSAGE;
+
       if (scope.checkHint(MethodHint::MutliRet)) {
          if (!scope.info.outputRef || (weakSignature && paramCount > 0))
             scope.raiseError(errIllegalMethod, node);
 
          // COMPILER MAGIC : if the message is marked as multiret - it turns into byref return handler
          // NOTE : it should contain the sepcific return type
-         // NOTE : if the return type is mebeddable - it will be treated in different way (later in the code)
+         // NOTE : if the return type is embeddable - it will be treated in different way (later in the code)
          if (!_logic->isEmbeddable(*scope.moduleScope, scope.info.outputRef)) {
             TypeInfo refType = { V_WRAPPER, scope.info.outputRef };
 
@@ -2025,11 +2051,17 @@ ref_t Compiler :: declareClosureParameters(MethodScope& methodScope, SyntaxNode 
    ref_t signRef = 0;
 
    bool weakSingature = true;
+   bool variadicMode = false;
+   ref_t flags = FUNCTION_MESSAGE;
    ref_t signatures[ARG_COUNT];
    size_t signatureLen = 0;
    while (argNode == SyntaxKey::Parameter) {
-      declareParameter(methodScope, argNode, false, false, weakSingature,
+      declareParameter(methodScope, argNode, false, false, 
+         variadicMode, weakSingature,
          paramCount, signatures, signatureLen);
+
+      if (variadicMode)
+         flags |= VARIADIC_MESSAGE;
 
       argNode = argNode.nextNode();
    }
@@ -2041,7 +2073,7 @@ ref_t Compiler :: declareClosureParameters(MethodScope& methodScope, SyntaxNode 
 
    ref_t actionRef = methodScope.moduleScope->module->mapAction(*messageStr, signRef, false);
 
-   return encodeMessage(actionRef, paramCount, FUNCTION_MESSAGE);
+   return encodeMessage(actionRef, paramCount, flags);
 }
 
 void Compiler :: declareClosureMessage(MethodScope& methodScope, SyntaxNode node)
@@ -2792,6 +2824,8 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
          return resolveArrayTemplate(scope, typeInfo.elementRef, declarationMode);
       case V_NIL:
          return scope.moduleScope->buildins.superReference;
+      case V_ARGARRAY:
+         return resolveArrayTemplate(scope, typeInfo.elementRef, declarationMode);
       default:
          throw InternalError(errFatalError);
    }
@@ -2859,15 +2893,19 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
 {
    SyntaxNode current = node.firstChild();
    bool byRefArg = false;
+   bool variadicArg = false;
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Type:
+            // if it is a type attribute
+            typeInfo = resolveTypeAttribute(scope, current, declarationMode, false);
+            break;
          case SyntaxKey::ArrayType:
             // if it is a type attribute
-            typeInfo = resolveTypeAttribute(scope, current, declarationMode);
+            typeInfo = resolveTypeScope(scope, current, variadicArg, declarationMode, false);
             break;
          case SyntaxKey::Attribute:
-            if (!_logic->validateArgumentAttribute(current.arg.reference, byRefArg))
+            if (!_logic->validateArgumentAttribute(current.arg.reference, byRefArg, variadicArg))
                scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
             break;
          default:
@@ -2879,6 +2917,13 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
    if (byRefArg) {
       typeInfo.elementRef = typeInfo.typeRef;
       typeInfo.typeRef = V_WRAPPER;
+   }
+   else if (variadicArg) {
+      if (typeInfo.typeRef != V_OBJARRAY)
+         scope.raiseError(errInvalidOperation, node);
+
+      typeInfo.elementRef = typeInfo.elementRef;
+      typeInfo.typeRef = V_ARGARRAY;
    }
 }
 
@@ -3102,7 +3147,7 @@ void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, Type
          case SyntaxKey::Type:
             if (!EAttrs::test(mode.attrs, EAttr::NoTypeAllowed)) {
                mode |= ExpressionAttribute::NewVariable;
-               typeInfo = resolveTypeAttribute(scope, current, false);
+               typeInfo = resolveTypeAttribute(scope, current, false, false);
             }
             else scope.raiseError(errInvalidHint, current);
             break;
@@ -3155,13 +3200,17 @@ void Compiler :: declareExtension(ClassScope& scope, mssg_t message, bool intern
    addExtensionMessage(scope, extensionMessage, scope.reference, message, internalOne);
 }
 
-void Compiler :: validateType(Scope& scope, ref_t typeRef, SyntaxNode node)
+void Compiler :: validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool ignoreUndeclared, bool allowRole)
 {
    if (!typeRef)
       scope.raiseError(errUnknownClass, node);
+
+   if (!_logic->isValidType(*scope.moduleScope, typeRef, ignoreUndeclared, allowRole))
+      scope.raiseError(errInvalidType, node);
 }
 
-ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, bool declarationMode)
+ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
+   bool declarationMode, bool allowRole)
 {
    ObjectInfo identInfo;
 
@@ -3180,6 +3229,9 @@ ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxK
          return identInfo.reference;
       case ObjectKind::Symbol:
          if (declarationMode)
+            return identInfo.reference;
+      case ObjectKind::Extension:
+         if (allowRole)
             return identInfo.reference;
       default:
          return 0;
@@ -3207,7 +3259,7 @@ ref_t Compiler :: mapTemplateType(Scope& scope, SyntaxNode node)
    templateName.appendInt(paramCounter);
 
    // NOTE : check it in declararion mode - we need only reference
-   return resolveTypeIdentifier(scope, *templateName, node.key, true/*, false*/);
+   return resolveTypeIdentifier(scope, *templateName, node.key, true, false);
 }
 
 void Compiler :: declareTemplateAttributes(Scope& scope, SyntaxNode node, 
@@ -3384,27 +3436,59 @@ ref_t Compiler :: resolveArrayTemplate(Scope& scope, ref_t elementRef, bool decl
    return resolveTemplate(scope, scope.moduleScope->buildins.arrayTemplateReference, elementRef, declarationMode);
 }
 
-TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode)
+TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, bool& variadicArg, 
+   bool declarationMode, bool allowRole)
+{
+   ref_t elementRef = 0;
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Attribute:
+            if (!_logic->validateTypeScopeAttribute(current.arg.reference, variadicArg))
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            break;
+         case SyntaxKey::Type:
+            elementRef = resolveStrongTypeAttribute(scope, current, declarationMode);
+            break;
+         default:
+            elementRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   if (node == SyntaxKey::ArrayType) {
+      return { defineArrayType(scope, elementRef), elementRef };
+   }
+   else return {};
+}
+
+TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole)
 {
    TypeInfo typeInfo = {};
    if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
       if (node.nextNode() == SyntaxKey::TemplateArg) {
          typeInfo.typeRef = resolveTypeTemplate(scope, node, declarationMode);
       }
-      else typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode/*, allowRole*/);
+      else typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
    }
    else if (node == SyntaxKey::TemplateArg) {
-      typeInfo = resolveTypeAttribute(scope, node.firstChild(), declarationMode);
+      typeInfo = resolveTypeAttribute(scope, node.firstChild(), declarationMode, allowRole);
    }
    else if (node == SyntaxKey::ArrayType) {
-      typeInfo.elementRef = resolveStrongTypeAttribute(scope, node.firstChild(), declarationMode);
+      bool variadicOne = false;
 
-      typeInfo.typeRef = defineArrayType(scope, typeInfo.elementRef);
+      typeInfo = resolveTypeScope(scope, node, variadicOne, declarationMode, allowRole);
+
+      if (variadicOne)
+         scope.raiseError(errInvalidOperation, node);
    }
    else {
       SyntaxNode current = node.firstChild();
       if (current == SyntaxKey::Object) {
-         typeInfo = resolveTypeAttribute(scope, current, declarationMode);
+         typeInfo = resolveTypeAttribute(scope, current, declarationMode, allowRole);
       }
       else {
          SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
@@ -3413,18 +3497,18 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
             typeInfo.typeRef = resolveTypeTemplate(scope, terminal, declarationMode);
          }
          else typeInfo.typeRef = resolveTypeIdentifier(scope,
-            terminal.identifier(), terminal.key, declarationMode/*, allowRole*/);
+            terminal.identifier(), terminal.key, declarationMode, allowRole);
       }
    }
 
-   validateType(scope, typeInfo.typeRef, node);
+   validateType(scope, typeInfo.typeRef, node, declarationMode, allowRole);
 
    return typeInfo;
 }
 
 ref_t Compiler :: resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode)
 {
-   TypeInfo typeInfo = resolveTypeAttribute(scope, node, declarationMode);
+   TypeInfo typeInfo = resolveTypeAttribute(scope, node, declarationMode, false);
 
    if (isPrimitiveRef(typeInfo.typeRef)) {
       return resolvePrimitiveType(scope, typeInfo, declarationMode);
@@ -3458,7 +3542,7 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
             break;
          case SyntaxKey::Type:
             if (!attrs.typeInfo.typeRef) {
-               attrs.typeInfo = resolveTypeAttribute(scope, current, true);
+               attrs.typeInfo = resolveTypeAttribute(scope, current, true, false);
             }
             else scope.raiseError(errInvalidHint, current);
             break;
@@ -3961,6 +4045,11 @@ mssg_t Compiler :: mapMessage(ExprScope& scope, SyntaxNode current, bool propert
       current = current.nextNode(SyntaxKey::ScopeMask);
    }
 
+   if (argCount >= ARG_COUNT) {
+      flags |= VARIADIC_MESSAGE;
+      argCount = 2;
+   }
+
    if (messageStr.empty()) {
       flags |= FUNCTION_MESSAGE;
 
@@ -4048,7 +4137,10 @@ ref_t Compiler :: compileMessageArguments(BuildTreeWriter& writer, ExprScope& sc
          auto argInfo = compileExpression(writer, scope, current, 0, 
             paramMode);
          ref_t argRef = retrieveStrongType(scope, argInfo);
-         if (argRef) {
+         if (signatureLen >= ARG_COUNT) {
+            signatureLen++;
+         }
+         else if (argRef) {
             signatures[signatureLen++] = argRef;
          }
          else signatures[signatureLen++] = superReference;
@@ -4993,7 +5085,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
          case SyntaxKey::identifier:
          case SyntaxKey::reference:
          {
-            TypeInfo typeInfo = resolveTypeAttribute(scope, node, false);
+            TypeInfo typeInfo = resolveTypeAttribute(scope, node, false, false);
 
             retVal = { ObjectKind::Class, typeInfo, 0u, newOp ? TargetMode::Creating : TargetMode::Casting };
             break;
@@ -6188,9 +6280,13 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    methodScope.isEmbeddable = methodScope.checkHint(MethodHint::Stacksafe);
 
    declareVMTMessage(methodScope, current, false, false);
+
+   if (methodScope.info.outputRef) {
+      validateType(scope, methodScope.info.outputRef, current, false, false);
+   }
 }
 
-inline void printMessageInfo()
+void Compiler :: compileDispatcher()
 {
    
 }
@@ -6220,12 +6316,19 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
             _errorProcessor->info(infoCurrentMethod, *messageName);
 #endif // FULL_OUTOUT_INFO
 
-            if (methodScope.checkHint(MethodHint::Abstract)) {
+            // if it is a dispatch handler
+            /*if (methodScope.message == scope.moduleScope->buildins.dispatch_message) {
+               compileDispatcher();
+            }*/
+            // if it is an abstract one
+            /*else */if (methodScope.checkHint(MethodHint::Abstract)) {
                compileAbstractMethod(writer, methodScope, current, scope.abstractMode);
             }
+            // if it is an initializer
             else if (methodScope.checkHint(MethodHint::Initializer)) {
                compileInitializerMethod(writer, methodScope, node);
             }
+            // if it is a normal method
             else compileMethod(writer, methodScope, current);
             break;
          }
@@ -6245,6 +6348,29 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
 
       current = current.nextNode();
    }
+
+   // if the VMT conatains newly defined generic / variadic handlers, overrides default one
+   if (testany(scope.info.header.flags, /*elWithGenerics | */elWithVariadics)
+      && scope.info.methods.get(scope.moduleScope->buildins.dispatch_message).inherited)
+   {
+      //MethodScope methodScope(&scope);
+      //methodScope.message = scope.moduleScope->dispatch_message;
+
+      //scope.include(methodScope.message);
+
+      //scope.info.header.flags |= elWithCustomDispatcher;
+
+      compileDispatcher();
+
+      //compileDispatcher(writer, SNode(), methodScope,
+      //   lxClassMethod,
+      //   test(scope.info.header.flags, elWithGenerics),
+      //   test(scope.info.header.flags, elWithVariadics));
+
+      // overwrite the class info
+      scope.save();
+   }
+
 }
 
 void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node)
@@ -6323,7 +6449,7 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
 
    methodScope.functionMode = true;
 
-   mssg_t multiMethod = defineMultimethod(scope, methodScope.message);
+   mssg_t multiMethod = defineMultimethod(scope, methodScope.message, false);
    if (multiMethod) {
       methodScope.info.multiMethod = multiMethod;
       methodScope.info.outputRef = V_AUTO;

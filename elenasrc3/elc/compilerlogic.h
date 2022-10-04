@@ -59,7 +59,8 @@ namespace elena_lang
       bool validateImplicitMethodAttribute(ref_t attribute, ref_t& hint);
       bool validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo);
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
-      bool validateArgumentAttribute(ref_t attrValue, bool& byRefArg);
+      bool validateArgumentAttribute(ref_t attrValue, bool& byRefArg, bool& variadicArg);
+      bool validateTypeScopeAttribute(ref_t attrValue, bool& variadicArg);
 
       bool validateAutoType(ModuleScopeBase& scope, ref_t& reference);
 
@@ -137,6 +138,9 @@ namespace elena_lang
 
       mssg_t resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, 
          ref_t implicitSignatureRef, int& stackSafeAttr);
+
+      bool isValidType(ClassInfo& info, bool allowRole);
+      bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole);
 
       static CompilerLogic* getInstance()
       {

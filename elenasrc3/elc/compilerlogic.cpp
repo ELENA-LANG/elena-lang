@@ -309,6 +309,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_EXTENSION:
          flags = elExtension;
          break;
+      case V_NONESTRUCT:
+         flags = elNonStructureRole;
+         break;
       case 0:
          // ignore idle
          break;
@@ -483,15 +486,30 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
    }
 }
 
-bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, bool& byRefArg)
+bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, bool& byRefArg, bool& variadicArg)
 {
    switch (attrValue) {
       case V_WRAPPER:
          byRefArg = true;
          return true;
+      case V_VARIADIC:
+         variadicArg = true;
+         return true;
       default:
          return false;
    }
+}
+
+bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, bool& variadicArg)
+{
+   switch (attrValue) {
+      case V_VARIADIC:
+         variadicArg = true;
+         return true;
+      default:
+         return false;
+   }
+
 }
 
 bool CompilerLogic :: validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_t message)
@@ -1401,3 +1419,16 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
    }
 }
 
+bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
+{
+   return allowRole || !testany(info.header.flags, elRole);
+}
+
+bool CompilerLogic :: isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, classReference, true))
+      return ignoreUndeclared;
+
+   return isValidType(info, allowRole);
+}

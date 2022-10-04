@@ -824,7 +824,7 @@ namespace elena_lang
       ref_t mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& resolvedMessage, ref_t implicitSignatureRef,
          ObjectInfo object);
 
-      mssg_t defineMultimethod(Scope& scope, mssg_t messageRef);
+      mssg_t defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode);
 
       void declareTemplateAttributes(Scope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
          bool declarationMode);
@@ -836,7 +836,7 @@ namespace elena_lang
       ref_t retrieveType(Scope& scope, ObjectInfo info);
       ref_t resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool declarationMode);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
-         bool declarationMode);
+         bool declarationMode, bool allowRole);
       ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode);
 
       ref_t resolveTemplate(Scope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode);
@@ -845,7 +845,10 @@ namespace elena_lang
       ref_t resolveArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 
       int resolveSize(Scope& scope, SyntaxNode node);
-      TypeInfo resolveTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode);
+      TypeInfo resolveTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, 
+         bool allowRole);
+      TypeInfo resolveTypeScope(Scope& scope, SyntaxNode node, bool& variadicArg, 
+         bool declarationMode, bool allowRole);
       ref_t resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode);
 
       bool resolveAutoType(ExprScope& scope, ObjectInfo source, ObjectInfo& target);
@@ -915,8 +918,9 @@ namespace elena_lang
 
       int resolveArraySize(Scope& scope, SyntaxNode node);
 
-      void declareParameter(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode, 
-         bool& weakSignature, pos_t& paramCount, ref_t* signature, size_t& signatureLen);
+      void declareParameter(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, 
+         bool declarationMode, bool& variadicMode, bool& weakSignature, 
+         pos_t& paramCount, ref_t* signature, size_t& signatureLen);
 
       ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode);
 
@@ -1051,6 +1055,7 @@ namespace elena_lang
 
       mssg_t compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node, mssg_t byRefHandler);
 
+      void compileDispatcher();
       void compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode);
       void compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
@@ -1071,7 +1076,7 @@ namespace elena_lang
 
       void validateScope(ModuleScopeBase* moduleScope);
       void validateSuperClass(ClassScope& scope, SyntaxNode node);
-      void validateType(Scope& scope, ref_t typeRef, SyntaxNode node);
+      void validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool ignoreUndeclared, bool allowRole);
 
       void injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
