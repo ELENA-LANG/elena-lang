@@ -22,6 +22,7 @@
   <project>
      <namespace>system</namespace>
      <template>lib60</template>
+     <prolog> </prolog>
   </project>
   <files>
      <module name="predefined">

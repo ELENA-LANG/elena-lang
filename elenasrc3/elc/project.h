@@ -144,7 +144,7 @@ namespace elena_lang
 
       void loadSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, IdentifierString& value);
 
-      void copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key);
+      void copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key, bool exclusiveMode = false);
 
       void loadTargetType(ConfigFile& config, ConfigFile::Node& configRoot);
 

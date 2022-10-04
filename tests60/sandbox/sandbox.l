@@ -1,4 +1,4 @@
-import system;
+//import system;
 
 //singleton A
 //{
@@ -9,4 +9,5 @@ import system;
 
 public program() 
 {
+   console.writeLine("Hello!")
 }

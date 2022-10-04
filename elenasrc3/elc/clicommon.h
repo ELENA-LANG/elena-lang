@@ -198,6 +198,9 @@ enum class ProjectOption
    MappingOutputMode,
    OptimizationMode,
 
+   Prolog,
+   Epilog,
+
    Key,
    Value,
 };

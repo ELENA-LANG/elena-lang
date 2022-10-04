@@ -1,5 +1,3 @@
-import system; // !! temporal
-
 // --- Assert ---
 
 public class AssertException : Exception
