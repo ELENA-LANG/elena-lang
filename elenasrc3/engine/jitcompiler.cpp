@@ -1448,6 +1448,8 @@ void elena_lang :: loadNewOp(JITCompilerScope* scope)
    // simply copy correspondent inline code
    writer->write(code, length);
 
+   int n = scope->command.arg1 << scope->constants->indexPower;
+
    // resolve section references
    pos_t count = *(pos_t*)((char*)code + length);
    RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
@@ -1456,16 +1458,16 @@ void elena_lang :: loadNewOp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(scope->compiler->calcTotalSize(scope->command.arg1));
+            writer->writeDWord(scope->compiler->calcTotalSize(n));
             break;
          case ARG16_1:
-            scope->compiler->writeImm16(writer, (short)scope->compiler->calcTotalSize(scope->command.arg1), 0);
+            scope->compiler->writeImm16(writer, (short)scope->compiler->calcTotalSize(n), 0);
             break;
          case NARG_1:
-            writer->writeDWord(scope->command.arg1);
+            writer->writeDWord(n);
             break;
          case NARG16_1:
-            scope->compiler->writeImm16(writer, (short)scope->command.arg1, 0);
+            scope->compiler->writeImm16(writer, (short)n, 0);
             break;
          case PTR32_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);

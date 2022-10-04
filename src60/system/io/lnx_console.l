@@ -8,4 +8,8 @@ namespace io
          extern libc.write(1, s, l);
       }
    }
+
+   public class ConsoleReader
+   {
+   }
 }

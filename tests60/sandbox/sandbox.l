@@ -7,7 +7,17 @@
 //    }
 //}
 
+gcTest()
+{
+   for (int i := 0, i < 5500, i := i + 1)
+   {
+      new IntNumber();
+   };
+}
+
 public program() 
 {
-   console.writeLine("Hello!")
+   console.write("gcTests");
+   gcTest();
+   console.writeLine(".");
 }
