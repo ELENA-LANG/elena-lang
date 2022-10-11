@@ -27,7 +27,7 @@ namespace elena_lang
    // --- 64bit ELENA Object constants ---
    constexpr int  gcPageSize64               = 0x0020;                // a heap page size constant
    constexpr auto gcPageSizeOrder64          = 5;
-   constexpr auto gcPageSizeOrderMinus2_64   = 3;
+   constexpr auto gcPageSizeOrderMinus2_64   = 2;
    constexpr auto gcPageMask64               = 0x0FFFFFFE0;
    constexpr int  gcPageCeil64               = 0x2F;
 

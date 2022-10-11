@@ -13,3 +13,6 @@ namespace io
    {
    }
 }
+
+public stdConsoleWriter = new ConsoleWriter();
+public stdConsoleReader = new ConsoleReader();

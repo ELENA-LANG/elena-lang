@@ -1,10 +1,26 @@
 namespace io
 {
+   singleton ConsoleFactory
+   {
+      get OutputHandle()
+      {
+         handle h := extern KERNEL32.GetStdHandle(0FFFFFFF5h);
+
+         ^ h;
+      }
+   }
+
    public class ConsoleWriter
    {
+      handle h;
+
+      constructor(handle h)
+      {
+         this h := h
+      }
+
       write(string s)
       {
-          int h := extern KERNEL32.GetStdHandle(0FFFFFFF5h);
           int l := s.Length;
           extern KERNEL32.WriteConsoleA(h,s,l,0,0);
       }
@@ -46,4 +62,7 @@ namespace io
 //            ^ system'text'UTF16Encoding.toChar(charCode)
       }
    }
+
+   public stdConsoleWriter = new ConsoleWriter(ConsoleFactory.OutputHandle);
+   public stdConsoleReader = new ConsoleReader();
 }

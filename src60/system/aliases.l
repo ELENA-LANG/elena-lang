@@ -10,5 +10,6 @@
 #let aliasTypes["char"]    := system'CharValue;
 #let aliasTypes["string"]  := system'String;
 #let aliasTypes["message"] := system'Message;
+#let aliasTypes["handle"]  := system'Handle;
 
 #reload aliasTypes;

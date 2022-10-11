@@ -39,6 +39,7 @@
         <include>console.l</include>
         <include>app.l</include>
         <include>win_strings.l</include>
+        <include>win_basic.l</include>
         <include>io\win_console.l</include>
      </module>
   </files>

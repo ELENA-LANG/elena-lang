@@ -547,7 +547,7 @@ Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibi
 
 ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribute attr)
 {
-   bool readOnly = test(info.header.flags, elReadOnlyRole);
+   bool readOnly = test(info.header.flags, elReadOnlyRole) && !EAttrs::test(attr, EAttr::InitializerScope);
 
    auto fieldInfo = info.fields.get(identifier);
    if (fieldInfo.offset >= 0) {
@@ -672,6 +672,9 @@ ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool refere
    else if (moduleScope->selfVar.compare(identifier)) {
       return mapSelf();
    }
+
+   if (constructorMode)
+      attr = attr | EAttr::InitializerScope;
 
    return Scope::mapIdentifier(identifier, referenceOne, attr);
 }
@@ -2810,6 +2813,8 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
          return scope.moduleScope->buildins.shortReference;
       case V_INT32:
          return scope.moduleScope->buildins.intReference;
+      case V_WORD32:
+         return scope.moduleScope->buildins.dwordReference;
       case V_STRING:
          return scope.moduleScope->buildins.literalReference;
       case V_WIDESTRING:
@@ -5592,6 +5597,11 @@ ObjectInfo Compiler :: compileRootExpression(BuildTreeWriter& writer, CodeScope&
    addBreakpoint(writer, findObjectNode(node), BuildKey::Breakpoint);
 
    auto retVal = compileExpression(writer, scope, node, 0, mode);
+
+   if (isBoxingRequired(retVal)) {
+      retVal = boxArgumentInPlace(writer, scope, retVal);
+   }
+
    writer.appendNode(BuildKey::EndStatement);
 
    scope.syncStack();
@@ -6720,6 +6730,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.wrapperTemplateReference = safeMapReference(moduleScope, forwardResolver, WRAPPER_FORWARD);
    moduleScope->buildins.arrayTemplateReference = safeMapReference(moduleScope, forwardResolver, ARRAY_FORWARD);
    moduleScope->buildins.closureTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, CLOSURE_FORWARD);
+   moduleScope->buildins.dwordReference = safeMapReference(moduleScope, forwardResolver, DWORD_FORWARD);
 
    moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);
    moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);

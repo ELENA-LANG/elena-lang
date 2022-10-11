@@ -153,15 +153,3 @@ byRefTests()
    Assert.ifTrue(s2 == "hello");
    console.writeLine(".");
 }
-
-// --- gcTests ---
-
-//gcTests()
-//{
-//   console.write("gcTests");
-//   for (int i := 0, i < 10000, i := i + 1)
-//   {
-//      new IntNumber();
-//   };
-//   console.writeLine(".");
-//}

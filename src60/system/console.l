@@ -28,4 +28,4 @@ sealed class Console
     }
 }
 
-public static console = new Console(new io'ConsoleReader(), new io'ConsoleWriter());
+public static console = new Console(io'stdConsoleReader, io'stdConsoleWriter);

@@ -307,6 +307,7 @@ struct BuiltinReferences
 {
    ref_t   superReference;
    ref_t   intReference, shortReference, byteReference;
+   ref_t   dwordReference;
    ref_t   literalReference;
    ref_t   wideReference;
    ref_t   messageReference;
@@ -478,6 +479,7 @@ enum class ExpressionAttribute : pos64_t
    Memeber           = 0x00000100000,
    ProbeMode         = 0x00000200000,
    AlreadyResolved   = 0x00000400000,
+   InitializerScope  = 0x00000800000,
    Lookahead         = 0x20000000000,
    NoDebugInfo       = 0x40000000000,
    NoExtension       = 0x80000000000,
