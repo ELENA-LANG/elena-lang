@@ -36,6 +36,7 @@ namespace elena_lang
       Nil,
       Symbol,
       Class,
+      Method,
       Object,
       Singleton,
       InternalProcedure,
@@ -63,6 +64,7 @@ namespace elena_lang
       ConstantRole,
       ClassConstant,
       SelfName,
+      MethodName,
       StaticField,
       StaticConstField,
       Wrapper,
@@ -224,23 +226,21 @@ namespace elena_lang
       ModuleScopeBase* _scope;
       CompilerLogic*   _logic;
 
-      ObjectInfo mapStringConstant(ustr_t s);
-      ObjectInfo mapWideStringConstant(ustr_t s);
-
       void setAttributeMapValue(ref_t dictionaryRef, ustr_t key, int value);
       void setAttributeMapValue(ref_t dictionaryRef, ustr_t key, ustr_t value);
       void setTypeMapValue(ref_t dictionaryRef, ustr_t key, ref_t reference);
 
-      //void setDeclDictionaryValue(ref_t dictionaryRef, ustr_t key, ref_t reference);
       void addTypeListItem(ref_t dictionaryRef, ref_t symbolRef);
 
       bool evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args);
 
-      //bool evalDeclDictionaryOp(ref_t operator_id, ArgumentsInfo& args);
       bool evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args);
       bool evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
    public:
+      ObjectInfo mapStringConstant(ustr_t s);
+      ObjectInfo mapWideStringConstant(ustr_t s);
+
       bool eval(BuildKey key, ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
       Interpreter(ModuleScopeBase* scope, CompilerLogic* logic);
@@ -967,7 +967,7 @@ namespace elena_lang
       void declareExtension(ClassScope& scope, mssg_t message, bool internalOne);
 
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id);
-      ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node);
+      ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool resolveMode = true);
       ObjectInfo evalObject(Interpreter& interpreter, Scope& scope, SyntaxNode node);
 
       void evalStatement(MetaScope& scope, SyntaxNode node);

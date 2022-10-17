@@ -82,15 +82,6 @@ void Interpreter :: setTypeMapValue(ref_t dictionaryRef, ustr_t key, ref_t refer
    _logic->writeTypeMapEntry(dictionary, key, reference);
 }
 
-//void Interpreter :: setDeclDictionaryValue(ref_t dictionaryRef, ustr_t key, ref_t reference)
-//{
-//   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskDeclAttributesRef, true);
-//   if (!dictionary)
-//      throw InternalError(errFatalError);
-//
-//   _logic->writeDeclDictionaryEntry(dictionary, key, reference);
-//}
-
 void Interpreter :: setAttributeMapValue(ref_t dictionaryRef, ustr_t key, int value)
 {
    MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskAttributeMapRef, true);
@@ -108,29 +99,6 @@ void Interpreter :: setAttributeMapValue(ref_t dictionaryRef, ustr_t key, ustr_t
 
    _logic->writeAttributeMapEntry(dictionary, key, value);
 }
-
-//bool Interpreter :: evalDeclDictionaryOp(ref_t operator_id, ArgumentsInfo& args)
-//{
-//   //ObjectInfo loperand = args[0];
-//   //ObjectInfo roperand = args[1];
-//
-//   //if (args.count() == 3 && loperand.kind == ObjectKind::MetaDictionary
-//   //   && (roperand.kind == ObjectKind::Template))
-//   //{
-//   //   ObjectInfo ioperand = args[2];
-//
-//   //   ustr_t key = _scope->module->resolveConstant(ioperand.reference);
-//   //   ref_t reference = roperand.reference;
-//
-//   //   if (operator_id == SET_INDEXER_OPERATOR_ID) {
-//   //      setDeclDictionaryValue(loperand.reference, key, reference);
-//
-//   //      return true;
-//   //   }
-//   //}
-//
-//   return false;
-//}
 
 bool Interpreter :: evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args)
 {
@@ -167,6 +135,21 @@ bool Interpreter :: evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args)
             return true;
          }
       }
+      else if (loperand.kind == ObjectKind::StringDictionary
+         && (roperand.kind == ObjectKind::StringLiteral)
+         && args[2].kind == ObjectKind::StringLiteral)
+      {
+         ObjectInfo ioperand = args[2];
+
+         ustr_t key = _scope->module->resolveConstant(ioperand.reference);
+         ustr_t value = _scope->module->resolveConstant(roperand.reference);
+
+         if (operator_id == SET_INDEXER_OPERATOR_ID) {
+            setAttributeMapValue(loperand.reference, key, value);
+
+            return true;
+         }
+      }
    }
 
    return false;
@@ -190,17 +173,25 @@ bool Interpreter :: evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args)
 bool Interpreter :: evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
 {
    ObjectInfo loperand = args[0];
-   if (operator_id == NAME_OPERATOR_ID && loperand.kind == ObjectKind::Template) {
-      ReferenceProperName name(_scope->resolveFullName(loperand.reference));
+   if (operator_id == NAME_OPERATOR_ID) {
+      switch (loperand.kind) {
+         case ObjectKind::Template:
+         {
+            ReferenceProperName name(_scope->resolveFullName(loperand.reference));
 
-      retVal = mapStringConstant(*name);
+            retVal = mapStringConstant(*name);
 
-      return true;
-   }
-   else if (operator_id == NAME_OPERATOR_ID && loperand.kind == ObjectKind::Class) {
-      retVal = { ObjectKind::SelfName };
-
-      return true;
+            return true;
+         }
+         case ObjectKind::Class:
+            retVal = { ObjectKind::SelfName };
+            return true;
+         case ObjectKind::Method:
+            retVal = { ObjectKind::MethodName };
+            return true;
+         default:
+            break;
+      }
    }
 
    return false;
@@ -489,7 +480,10 @@ ObjectInfo Compiler::MetaScope :: mapDecl()
       return { ObjectKind::Template, { V_DECLARATION }, tempScope->reference };
    }
 
-   //MethodScope* methodScope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
+   MethodScope* methodScope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
+   if (methodScope != nullptr) {
+      return { ObjectKind::Method, { V_DECLARATION }, methodScope->message };
+   }
 
    ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
    if (classScope != nullptr) {
@@ -2597,23 +2591,47 @@ ObjectInfo Compiler :: evalObject(Interpreter& interpreter, Scope& scope, Syntax
    return mapTerminal(scope, terminalNode, declaredTypeInfo, mode.attrs);
 }
 
-ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node)
+ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool resolveMode)
 {
+   ObjectInfo retVal = {};
+
    switch (node.key) {
       case SyntaxKey::Expression:
-         return evalExpression(interpreter, scope, node.firstChild(SyntaxKey::DeclarationMask));
+         retVal = evalExpression(interpreter, scope, node.firstChild(SyntaxKey::DeclarationMask), resolveMode);
+         break;
       case SyntaxKey::AssignOperation:
       case SyntaxKey::AddAssignOperation:
       case SyntaxKey::NameOperation:
-         return evalOperation(interpreter, scope, node, (int)node.key - OPERATOR_MAKS);
+         retVal = evalOperation(interpreter, scope, node, (int)node.key - OPERATOR_MAKS);
+         break;
       case SyntaxKey::Object:
-         return evalObject(interpreter, scope, node);
+         retVal = evalObject(interpreter, scope, node);
+         break;
       default:
          scope.raiseError(errCannotEval, node);
          break;
    }
 
-   return {};
+   if (resolveMode) {
+      switch (retVal.kind) {
+         case ObjectKind::MethodName:
+         {
+            MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
+            if (methodScope) {
+               IdentifierString methodName;
+               ByteCodeUtil::resolveMessageName(methodName, scope.module, methodScope->message);
+
+               retVal = interpreter.mapStringConstant(*methodName);
+            }
+            else retVal = {};
+            break;
+         }
+         default:
+            break;
+      }
+   }
+
+   return retVal;
 }
 
 void Compiler :: evalStatement(MetaScope& scope, SyntaxNode node)
@@ -3811,7 +3829,7 @@ bool Compiler :: evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNo
    Interpreter interpreter(scope.moduleScope, _logic);
    MetaScope metaScope(&scope, Scope::ScopeLevel::Class);
 
-   ObjectInfo retVal = evalExpression(interpreter, metaScope, node);
+   ObjectInfo retVal = evalExpression(interpreter, metaScope, node, false);
    bool setIndex = false;
    switch (retVal.kind) {
       case ObjectKind::SelfName:
