@@ -93,7 +93,7 @@ void Interpreter :: setAttributeMapValue(ref_t dictionaryRef, ustr_t key, int va
 
 void Interpreter :: setAttributeMapValue(ref_t dictionaryRef, ustr_t key, ustr_t value)
 {
-   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskAttributeMapRef, true);
+   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskStringMapRef, true);
    if (!dictionary)
       throw InternalError(errFatalError);
 
