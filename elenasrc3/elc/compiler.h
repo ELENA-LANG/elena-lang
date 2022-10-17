@@ -929,7 +929,7 @@ namespace elena_lang
       ObjectInfo declareTempStructure(ExprScope& scope, SizeInfo sizeInfo);
 
       void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);
-      void resolveClassParent(ClassScope& scope, SyntaxNode node, bool extensionMode);
+      void resolveClassPostfixes(ClassScope& scope, SyntaxNode node, bool extensionMode);
 
       int resolveArraySize(Scope& scope, SyntaxNode node);
 

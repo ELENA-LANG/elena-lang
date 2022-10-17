@@ -5,7 +5,12 @@ public inline info<text>()
    #let description[$name __decl] := text;
 }
 
-A
+B<T>
+{
+   T get() = nil;
+}
+
+A : B<int> // : info<"Class A">
 {
    b() 
      : info<"Method b">

@@ -1814,11 +1814,26 @@ void Compiler :: declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNo
 
 }
 
-void Compiler :: resolveClassParent(ClassScope& scope, SyntaxNode baseNode, bool extensionMode)
+void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode baseNode, bool extensionMode)
 {
    ref_t parentRef = 0;
-   if (baseNode == SyntaxKey::Parent) {
-      parentRef = resolveStrongTypeAttribute(scope, baseNode, false);
+
+   // analizing class postfixes : if it is a parrent, template or inline template
+   while (baseNode == SyntaxKey::Parent) {
+      SyntaxNode current = baseNode.firstChild();
+      if (current == SyntaxKey::TemplatePostfix) {
+         if (!parentRef) {
+            parentRef = resolveStrongTypeAttribute(scope, current.firstChild(), false);
+         }
+         else scope.raiseError(errInvalidSyntax, baseNode);
+
+      }
+      else if (!parentRef) {
+         parentRef = resolveStrongTypeAttribute(scope, baseNode.firstChild(), false);
+      }
+      else scope.raiseError(errInvalidSyntax, baseNode);
+
+      baseNode = baseNode.nextNode();
    }
 
    if (scope.info.header.parentRef == scope.reference) {
@@ -1916,6 +1931,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
          case SyntaxKey::TemplateType:
          case SyntaxKey::EOP:
          case SyntaxKey::ResendDispatch:
+         case SyntaxKey::identifier:
             break;
          case SyntaxKey::WithoutBody:
             withoutBody = true;
@@ -2269,7 +2285,7 @@ bool inline isExtensionDeclaration(SyntaxNode node)
 void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
 {
    bool extensionDeclaration = isExtensionDeclaration(node);
-   resolveClassParent(scope, node.findChild(SyntaxKey::Parent), extensionDeclaration/*, lxParent*/ );
+   resolveClassPostfixes(scope, node.findChild(SyntaxKey::Parent), extensionDeclaration/*, lxParent*/ );
 
    ref_t declaredFlags = 0;
    declareClassAttributes(scope, node, declaredFlags);
