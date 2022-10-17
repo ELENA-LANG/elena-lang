@@ -99,6 +99,7 @@ namespace elena_lang
       LoopOp               = 0x004F,
       CatchOp              = 0x0050,
 
+
       NestedClass          = 0x0080,
 
       VariableInfo         = 0x0090,

@@ -45,6 +45,7 @@
 #let attributesSymbols["forward"]     := 80001017h;
 #let attributesSymbols["import"]      := 80001018h;
 #let attributesSymbols["namespace"]   := 80001021h;
+#let attributesSymbols["super"]       := 80001024h;
 #let attributesSymbols["inline"]      := 80001025h;
 #let attributesSymbols["__probe"]     := 80001026h;
 

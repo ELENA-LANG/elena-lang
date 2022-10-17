@@ -186,6 +186,7 @@ namespace elena_lang
    constexpr auto V_IMPORT                = 0x80001018u;
    constexpr auto V_AUTO                  = 0x8000101Cu;
    constexpr auto V_NAMESPACE             = 0x80001021u;
+   constexpr auto V_SUPERIOR              = 0x80001024u;
    constexpr auto V_INLINE                = 0x80001025u;
    constexpr auto V_PROBEMODE             = 0x80001026u;
 

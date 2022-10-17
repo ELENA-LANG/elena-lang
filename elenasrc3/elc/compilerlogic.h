@@ -57,7 +57,7 @@ namespace elena_lang
       bool validateFieldAttribute(ref_t attribute, FieldAttributes& attrs);
       bool validateMethodAttribute(ref_t attribute, ref_t& hint, bool& explicitMode);
       bool validateImplicitMethodAttribute(ref_t attribute, ref_t& hint);
-      bool validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo);
+      bool validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo, bool& superMode);
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
       bool validateArgumentAttribute(ref_t attrValue, bool& byRefArg, bool& variadicArg);
       bool validateTypeScopeAttribute(ref_t attrValue, bool& variadicArg);
@@ -98,6 +98,7 @@ namespace elena_lang
          bool& emptyStructure, bool& disptacherNotAllowed, bool& withAbstractMethods);
 
       void writeAttributeMapEntry(MemoryBase* section, ustr_t key, int value);
+      void writeAttributeMapEntry(MemoryBase* section, ustr_t key, ustr_t value);
       bool readAttributeMap(MemoryBase* section, ReferenceMap& map);
 
       void writeArrayEntry(MemoryBase* section, ref_t reference);

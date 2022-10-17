@@ -50,11 +50,14 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 37;
+constexpr auto OperationLength = 38;
 constexpr Op Operations[OperationLength] =
 {
    {
       SET_INDEXER_OPERATOR_ID, BuildKey::DictionaryOp, V_DICTIONARY, V_INT32, V_STRING, V_OBJECT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::DictionaryOp, V_DICTIONARY, V_STRING, V_STRING, V_OBJECT
    },
    {
       SET_INDEXER_OPERATOR_ID, BuildKey::DictionaryOp, V_DICTIONARY, V_OBJECT, V_STRING, V_OBJECT
@@ -431,7 +434,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
    }
 }
 
-bool CompilerLogic :: validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo)
+bool CompilerLogic :: validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo, bool& superMode)
 {
    switch (attribute) {
       case V_STRINGOBJ:
@@ -445,6 +448,9 @@ bool CompilerLogic :: validateDictionaryAttribute(ref_t attribute, TypeInfo& dic
       //case V_DECLOBJ:
       //   dictionaryType = V_DECLATTRIBUTES;
       //   return true;
+      case V_SUPERIOR:
+         superMode = true;
+         return true;
       default:
          return false;
    }
@@ -795,6 +801,15 @@ void CompilerLogic :: writeAttributeMapEntry(MemoryBase* section, ustr_t key, in
    writer.writeString(key);
    writer.writeDWord(1);
    writer.writeDWord(value);
+}
+
+void CompilerLogic :: writeAttributeMapEntry(MemoryBase* section, ustr_t key, ustr_t value)
+{
+   MemoryWriter writer(section);
+   writer.writeString(key);
+   writer.writeDWord(2);
+   writer.writeDWord(value.length());
+   writer.writeString(value);
 }
 
 bool CompilerLogic :: readAttributeMap(MemoryBase* section, ReferenceMap& map)

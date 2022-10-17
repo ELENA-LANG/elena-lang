@@ -21,6 +21,7 @@ namespace elena_lang
       Unknown = 0,
 
       AttributeDictionary, // meta symbols
+      StringDictionary,
       TypeDictionary,
       TypeList,
 
@@ -227,6 +228,7 @@ namespace elena_lang
       ObjectInfo mapWideStringConstant(ustr_t s);
 
       void setAttributeMapValue(ref_t dictionaryRef, ustr_t key, int value);
+      void setAttributeMapValue(ref_t dictionaryRef, ustr_t key, ustr_t value);
       void setTypeMapValue(ref_t dictionaryRef, ustr_t key, ref_t reference);
 
       //void setDeclDictionaryValue(ref_t dictionaryRef, ustr_t key, ref_t reference);
@@ -329,6 +331,14 @@ namespace elena_lang
             return {};
          }
 
+         virtual ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode)
+         {
+            if (parent) {
+               return parent->mapDictionary(identifier, referenceOne, mode);
+            }
+            else return {};
+         }
+
          virtual bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo)
          {
             if (parent) {
@@ -412,6 +422,7 @@ namespace elena_lang
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute mode) override;
          ObjectInfo mapGlobal(ustr_t identifier, ExpressionAttribute mode);
          ObjectInfo mapWeakReference(ustr_t identifier, bool directResolved);
+         ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode) override;
 
          NamespaceScope(ModuleScopeBase* moduleScope, ErrorProcessor* errorProcessor, CompilerLogic* compilerLogic) :
             Scope(nullptr),
@@ -532,6 +543,8 @@ namespace elena_lang
          ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr);
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
+
+         ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode) override;
 
          void save();
 
@@ -722,11 +735,13 @@ namespace elena_lang
 
       struct MetaScope : Scope
       {
+         ScopeLevel scopeLevel;
+
          ObjectInfo mapDecl();
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
 
-         MetaScope(Scope* parent);
+         MetaScope(Scope* parent, ScopeLevel scopeLevel);
       };
 
       struct ExprScope : Scope
@@ -877,10 +892,10 @@ namespace elena_lang
       void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode);
       void declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode);
       void declareArgumentAttributes(MethodScope& scope, SyntaxNode node, TypeInfo& typeInfo, bool declarationMode);
-      void declareDictionaryAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo);
+      void declareDictionaryAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, bool& superMode);
       void declareExpressionAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, ExpressionAttributes& mode);
 
-      void declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility);
+      void declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level);
 
       void saveTemplate(TemplateScope& scope, SyntaxNode& node);
       void saveNamespaceInfo(SyntaxNode node, NamespaceScope* nsScope, bool outerMost);

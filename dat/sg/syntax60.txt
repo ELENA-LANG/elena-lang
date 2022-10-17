@@ -123,7 +123,8 @@ POSTFIXES ::=
 	| eps;
 
 POSTFIX ::=
-	identifier IPOSTFIX_R;
+	identifier IPOSTFIX_R
+	| string;
 
 METHOD_POSTFIXES ::=
 	"," METHOD_POSTFIX METHOD_POSTFIXES
@@ -161,6 +162,7 @@ STATEMENTS ::=
 	| "^" RET_EXPRESSION NEXT_LAST_STATEMENT
 	| "#include" INCLUDE_STATEMENT STATEMENTS
         | "#let" META_STATEMENT STATEMENTS
+        | "#new" DICTIONARY STATEMENTS
 	| END_OF_BLOCK;
 
 NEXT_STATEMENT ::=
@@ -527,7 +529,8 @@ DYNAMIC_DIMENSION ::=
 
 TEMPLATE_ARG ::=
 	identifier
-	| reference;
+	| reference
+        | string;
 
 MESSAGE ::=
 	identifier;

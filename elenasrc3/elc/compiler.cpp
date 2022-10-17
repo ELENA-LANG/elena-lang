@@ -91,7 +91,16 @@ void Interpreter :: setTypeMapValue(ref_t dictionaryRef, ustr_t key, ref_t refer
 //   _logic->writeDeclDictionaryEntry(dictionary, key, reference);
 //}
 
-void Interpreter ::setAttributeMapValue(ref_t dictionaryRef, ustr_t key, int value)
+void Interpreter :: setAttributeMapValue(ref_t dictionaryRef, ustr_t key, int value)
+{
+   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskAttributeMapRef, true);
+   if (!dictionary)
+      throw InternalError(errFatalError);
+
+   _logic->writeAttributeMapEntry(dictionary, key, value);
+}
+
+void Interpreter :: setAttributeMapValue(ref_t dictionaryRef, ustr_t key, ustr_t value)
 {
    MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskAttributeMapRef, true);
    if (!dictionary)
@@ -279,6 +288,13 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, Express
 
             return info;
          }
+         else if (module->mapSection(reference | mskStringMapRef, true)) {
+            info.kind = ObjectKind::StringDictionary;
+            info.typeInfo = { V_DICTIONARY, V_STRING };
+            info.reference = reference;
+
+            return info;
+         }
          else if (module->mapSection(reference | mskTypeMapRef, true)) {
             info.kind = ObjectKind::TypeDictionary;
             info.typeInfo = { V_DICTIONARY, V_SYMBOL };
@@ -450,10 +466,18 @@ ObjectInfo Compiler::NamespaceScope :: mapWeakReference(ustr_t identifier, bool 
    return defineObjectInfo(reference, EAttr::None, true);
 }
 
+ObjectInfo Compiler::NamespaceScope :: mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode)
+{
+   IdentifierString metaIdentifier(META_PREFIX, identifier);
+
+   // check if it is a meta dictionary
+   return mapIdentifier(*metaIdentifier, referenceOne, mode | EAttr::Meta);
+}
+
 // --- Compiler::MetaScope ---
 
-Compiler::MetaScope :: MetaScope(Scope* parent)
-   : Scope(parent)
+Compiler::MetaScope :: MetaScope(Scope* parent, ScopeLevel scopeLevel)
+   : Scope(parent), scopeLevel(scopeLevel)
 {
    
 }
@@ -464,6 +488,9 @@ ObjectInfo Compiler::MetaScope :: mapDecl()
    if (tempScope != nullptr) {
       return { ObjectKind::Template, { V_DECLARATION }, tempScope->reference };
    }
+
+   //MethodScope* methodScope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
+
    ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
    if (classScope != nullptr) {
       return { ObjectKind::Class, { V_DECLARATION }, classScope->reference };
@@ -479,10 +506,7 @@ ObjectInfo Compiler::MetaScope :: mapIdentifier(ustr_t identifier, bool referenc
          return mapDecl();
       }
       else {
-         IdentifierString metaIdentifier(META_PREFIX, identifier);
-
-         // check if it is a meta dictionary
-         ObjectInfo retVal = parent->mapIdentifier(*metaIdentifier, referenceOne, attr | EAttr::Meta);
+         ObjectInfo retVal = mapDictionary(identifier, referenceOne, attr);
          if (retVal.kind == ObjectKind::Unknown) {
             return Scope::mapIdentifier(identifier, referenceOne, attr);
          }
@@ -584,6 +608,17 @@ ObjectInfo Compiler::ClassScope :: mapIdentifier(ustr_t identifier, bool referen
          return fieldInfo;
    }
    return Scope::mapIdentifier(identifier, referenceOne, attr);
+}
+
+ObjectInfo Compiler::ClassScope :: mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode)
+{
+   IdentifierString metaIdentifier(META_PREFIX,identifier);
+   metaIdentifier.append('$');
+   metaIdentifier.append(module->resolveReference(reference));
+   metaIdentifier.replaceAll('\'', '@', 0);
+
+   // check if it is a meta dictionary
+   return mapIdentifier(*metaIdentifier, referenceOne, mode | EAttr::Meta);
 }
 
 void Compiler::ClassScope :: save()
@@ -882,6 +917,8 @@ inline ref_t resolveDictionaryMask(TypeInfo typeInfo)
       switch (typeInfo.elementRef) {
          case V_INT32:
             return mskAttributeMapRef;
+         case V_STRING:
+            return mskStringMapRef;
          case V_SYMBOL:
             return mskTypeMapRef;
          default:
@@ -1032,14 +1069,44 @@ void Compiler :: importTemplate(Scope& scope, SyntaxNode node, ustr_t prefix, Sy
    else scope.raiseError(errInvalidSyntax, node);
 }
 
-void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility)
+void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level)
 {
+   bool superMode = false;
    TypeInfo typeInfo = { V_DICTIONARY, V_INT32 };
-   declareDictionaryAttributes(scope, node, typeInfo);
+   declareDictionaryAttributes(scope, node, typeInfo, superMode);
+
+   if (superMode) {
+      switch (level) {
+         case Scope::ScopeLevel::Class:
+            level = Scope::ScopeLevel::Namespace;
+            break;
+         case Scope::ScopeLevel::Method:
+            level = Scope::ScopeLevel::Class;
+            break;
+         default:
+            break;
+      }
+   }
 
    SyntaxNode name = node.findChild(SyntaxKey::Name);
 
-   ref_t reference = mapNewTerminal(scope, META_PREFIX, name, nullptr, visibility);
+   IdentifierString postfix;
+   switch (level) {
+      case Scope::ScopeLevel::Class:
+      {
+         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+         postfix.append('$');
+         postfix.append(scope.module->resolveReference(classScope->reference));
+
+         break;
+      }
+      default:
+         break;
+   }      
+
+   postfix.replaceAll('\'', '@', 0);
+
+   ref_t reference = mapNewTerminal(scope, META_PREFIX, name, *postfix, visibility);
    ref_t mask = resolveDictionaryMask(typeInfo);
 
    assert(mask != 0);
@@ -1803,7 +1870,7 @@ void Compiler :: declareMetaInfo(Scope& scope, SyntaxNode node)
             break;
          case SyntaxKey::MetaExpression:
          {
-            MetaScope metaScope(&scope);
+            MetaScope metaScope(&scope, Scope::ScopeLevel::Namespace);
 
             evalStatement(metaScope, current);
             break;
@@ -1834,6 +1901,16 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
             }
             else scope.raiseError(errInvalidSyntax, node);
 
+            break;
+         case SyntaxKey::MetaExpression:
+         {
+            MetaScope metaScope(&scope, Scope::ScopeLevel::Method);
+
+            evalStatement(metaScope, current);
+            break;
+         }
+         case SyntaxKey::MetaDictionary:
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Method);
             break;
          case SyntaxKey::Name:
          case SyntaxKey::Attribute:
@@ -2281,7 +2358,7 @@ void Compiler :: declareMembers(NamespaceScope& ns, SyntaxNode node)
          }
          case SyntaxKey::MetaExpression:
          {
-            MetaScope scope(&ns);
+            MetaScope scope(&ns, Scope::ScopeLevel::Namespace);
 
             evalStatement(scope, current);
             break;
@@ -2365,8 +2442,8 @@ void Compiler :: declareMemberIdentifiers(NamespaceScope& ns, SyntaxNode node)
             current.setArgumentReference(classScope.reference);
             break;
          }
-         case SyntaxKey::MetaDictionary:
-            declareDictionary(ns, current, Visibility::Public);
+      case SyntaxKey::MetaDictionary:
+            declareDictionary(ns, current, Visibility::Public, Scope::ScopeLevel::Namespace);
             break;
          default:
             // to make compiler happy
@@ -3123,18 +3200,24 @@ void Compiler :: declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
    declareTemplate(scope, node);
 }
 
-void Compiler :: declareDictionaryAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo)
+void Compiler :: declareDictionaryAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, bool& superMode)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Attribute) {
-         if (!_logic->validateDictionaryAttribute(current.arg.value, typeInfo)) {
+         if (!_logic->validateDictionaryAttribute(current.arg.value, typeInfo, superMode)) {
             current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
       }
-      else if (current == SyntaxKey::Type)
-         scope.raiseError(errInvalidHint, current);
+      else if (current == SyntaxKey::Type) {
+         TypeInfo dictTypeInfo = resolveTypeAttribute(scope, current, true, false);
+         if (_logic->isCompatible(*scope.moduleScope, dictTypeInfo, { V_STRING }, true)) {
+            typeInfo.typeRef = V_DICTIONARY;
+            typeInfo.elementRef = V_STRING;
+         }
+         else scope.raiseError(errInvalidHint, current);
+      }
 
       current = current.nextNode();
    }
@@ -3726,7 +3809,7 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
 bool Compiler :: evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo)
 {
    Interpreter interpreter(scope.moduleScope, _logic);
-   MetaScope metaScope(&scope);
+   MetaScope metaScope(&scope, Scope::ScopeLevel::Class);
 
    ObjectInfo retVal = evalExpression(interpreter, metaScope, node);
    bool setIndex = false;

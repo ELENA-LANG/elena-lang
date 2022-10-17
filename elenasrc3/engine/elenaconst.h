@@ -256,10 +256,10 @@ namespace elena_lang
    constexpr ref_t mskStaticVariable      = 0x19000000u;
    constexpr ref_t mskNameLiteralRef      = 0x1A000000u;
    constexpr ref_t mskPathLiteralRef      = 0x1B000000u;
-   constexpr ref_t mskMssgLiteralRef      = 0x1B000000u;
-   constexpr ref_t mskLabelRef            = 0x1C000000u;
-   constexpr ref_t mskWideLiteralRef      = 0x1D000000u;   // reference to wide literal constant
-
+   constexpr ref_t mskMssgLiteralRef      = 0x1C000000u;
+   constexpr ref_t mskLabelRef            = 0x1D000000u;
+   constexpr ref_t mskWideLiteralRef      = 0x1E000000u;   // reference to wide literal constant
+   constexpr ref_t mskStringMapRef        = 0x1F000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

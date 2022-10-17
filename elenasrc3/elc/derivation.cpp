@@ -787,6 +787,9 @@ void SyntaxTreeBuilder :: flushTemplateCode(SyntaxTreeWriter& writer, Scope& sco
          case SyntaxKey::MetaExpression:
             flushStatement(writer, scope, current);
             break;
+         case SyntaxKey::MetaDictionary:
+            flushDictionary(writer, current);
+            break;
          case SyntaxKey::EOP:
             flushNode(writer, scope, current);
             break;
