@@ -173,7 +173,8 @@ namespace elena_lang
          None = 0,
          Inline,
          CodeTemplate,
-         Class
+         Class,
+         InlineProperty
       };
 
       typedef Map<ref_t, SyntaxNode> NodeMap;
@@ -225,6 +226,7 @@ namespace elena_lang
    public:
       void importTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
       void importInlineTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
+      void importInlinePropertyTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
       void importCodeTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
 

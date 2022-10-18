@@ -1,13 +1,14 @@
-public inline info<text>()
+public field prop<T,name>
 {
-   #new super string description;
-
-   #let description[$name __decl] := text;
+   get T name()
+   {
+      ^ name
+   }
 }
 
 A
 {
-   int f : info<"Method b">;
+   int f : prop;
 }
 
 //class WithField<T>

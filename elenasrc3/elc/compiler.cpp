@@ -1081,17 +1081,62 @@ bool Compiler :: importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target
    return true;
 }
 
-bool Compiler :: importInlineTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
+bool Compiler :: importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target)
 {
    List<SyntaxNode> parameters({});
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   ref_t templateRef = retrieveTemplate(*ns, node, parameters, INLINE_PREFIX);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix);
    if (!templateRef)
       return false;
 
    if(!_templateProcessor->importInlineTemplate(*scope.moduleScope, templateRef, target, parameters))
       scope.raiseError(errInvalidOperation, node);
+
+   return true;
+}
+
+bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target)
+{
+   List<SyntaxNode> parameters({});
+
+   SyntaxTree tree;
+   SyntaxTreeWriter writer(tree);
+   writer.newNode(SyntaxKey::Root);
+   // add implicit type
+   SyntaxNode typeNode = target.findChild(SyntaxKey::Type);
+   if (typeNode != SyntaxKey::None) {
+      writer.newNode(SyntaxKey::TemplateArg);
+      SyntaxTree::copyNode(writer, typeNode);
+
+      parameters.add(writer.CurrentNode());
+
+      writer.closeNode();
+   }
+
+   // add implicit name
+   SyntaxNode nameNode = target.findChild(SyntaxKey::Name);
+   if (nameNode != SyntaxKey::None) {
+      writer.newNode(SyntaxKey::TemplateArg);
+      SyntaxTree::copyNode(writer, nameNode);
+
+      parameters.add(writer.CurrentNode());
+
+      writer.closeNode();
+   }
+
+   writer.closeNode();
+
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix);
+   if (!templateRef)
+      return false;
+
+   if (!_templateProcessor->importPropertyTemplate(*scope.moduleScope, templateRef, 
+      target.parentNode(), parameters))
+   {
+      scope.raiseError(errInvalidOperation, node);
+   }
 
    return true;
 }
@@ -1857,12 +1902,12 @@ void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode baseNode, b
       SyntaxNode current = baseNode.firstChild();
       if (current == SyntaxKey::TemplatePostfix) {
          if (!parentRef) {
-            if (!importInlineTemplate(scope, current, baseNode.parentNode())) {
+            if (!importInlineTemplate(scope, current, INLINE_PREFIX, baseNode.parentNode())) {
                parentRef = resolveStrongTypeAttribute(scope, current.firstChild(), false);
             }
          }
          else {
-            if (!importInlineTemplate(scope, current, baseNode.parentNode())) {
+            if (!importInlineTemplate(scope, current, INLINE_PREFIX, baseNode.parentNode())) {
                if (!importTemplate(scope, current, baseNode.parentNode()))
                   scope.raiseError(errUnknownTemplate, baseNode);
             }
@@ -1915,7 +1960,7 @@ void Compiler :: declareMetaInfo(Scope& scope, SyntaxNode node)
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
-            if(!importInlineTemplate(scope, current, node))
+            if(!importInlineTemplate(scope, current, INLINE_PREFIX, node))
                scope.raiseError(errUnknownTemplate, current);
 
             break;
@@ -1941,9 +1986,17 @@ void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
-            if (!importInlineTemplate(scope, current, node))
+            if (!importPropertyTemplate(scope, current, INLINE_PROPERTY_PREFIX, node)) {
+               if (!importInlineTemplate(scope, current, INLINE_PROPERTY_PREFIX, node))
+                  scope.raiseError(errUnknownTemplate, node);
+            }
+            break;
+         case SyntaxKey::InlineImplicitTemplate:
+            if (!importPropertyTemplate(scope, current, INLINE_PROPERTY_PREFIX, 
+               node))
+            {
                scope.raiseError(errUnknownTemplate, node);
-
+            }
             break;
          case SyntaxKey::MetaExpression:
          {
@@ -1980,7 +2033,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
-            if(!importInlineTemplate(scope, current, node))
+            if(!importInlineTemplate(scope, current, INLINE_PREFIX, node))
                scope.raiseError(errUnknownTemplate, node);
 
             break;
@@ -3263,6 +3316,7 @@ void Compiler :: declareTemplate(TemplateScope& scope, SyntaxNode& node)
 {
    switch (scope.type) {
       case TemplateType::Class:
+      case TemplateType::InlineProperty:
       {
          // COMPILER MAGIC : inject imported namespaces & source path
          NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
@@ -3330,8 +3384,17 @@ void Compiler :: declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
    postfix.append('#');
    postfix.appendInt(argCount);
 
+   IdentifierString prefix;
+   switch (scope.type) {
+      case TemplateType::InlineProperty:
+         prefix.append(INLINE_PROPERTY_PREFIX);
+         break;
+      default:
+         break;
+   }
+
    SyntaxNode name = node.findChild(SyntaxKey::Name);
-   scope.reference = mapNewTerminal(scope, nullptr, name, *postfix, scope.visibility);
+   scope.reference = mapNewTerminal(scope, *prefix, name, *postfix, scope.visibility);
    if (scope.module->mapSection(scope.reference | mskSyntaxTreeRef, true))
       scope.raiseError(errDuplicatedDictionary, name.firstChild(SyntaxKey::TerminalMask));
 

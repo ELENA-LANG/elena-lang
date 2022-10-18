@@ -245,6 +245,9 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
       case V_INLINE:
          type = TemplateType::Inline;
          break;
+      case V_FIELD:
+         type = TemplateType::InlineProperty;
+         break;
       default:
       {
          ref_t dummy = 0;

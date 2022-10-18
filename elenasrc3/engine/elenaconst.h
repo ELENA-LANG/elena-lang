@@ -95,6 +95,7 @@ namespace elena_lang
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";
    constexpr auto INLINE_PREFIX           = "inline$";
+   constexpr auto INLINE_PROPERTY_PREFIX  = "prop$";
 
    // --- ELENA class prefixes / postfixes ---
    constexpr auto PRIVATE_PREFIX_NS       = "'$private'";

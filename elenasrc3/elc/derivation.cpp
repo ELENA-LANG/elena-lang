@@ -13,15 +13,15 @@
 
 using namespace elena_lang;
 
-//inline void testNodes(SyntaxNode node)
-//{
-//   SyntaxNode current = node.firstChild();
-//   while (current != SyntaxKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 inline bool testNodeMask(SyntaxKey key, SyntaxKey mask)
 {
@@ -540,7 +540,7 @@ void SyntaxTreeBuilder :: flushClassMemberPostfixes(SyntaxTreeWriter& writer, Sc
          if (child == SyntaxKey::TemplatePostfix) {
             flushTemplageExpression(writer, scope, child, SyntaxKey::InlineTemplate, false);
          }
-         else throw InternalError(errFatalError);
+         else flushTemplageExpression(writer, scope, current, SyntaxKey::InlineImplicitTemplate, false);
       }
 
       current = current.nextNode();
@@ -1197,6 +1197,7 @@ void TemplateProssesor :: generate(SyntaxTreeWriter& writer, TemplateScope& scop
       case Type::CodeTemplate:
          copyChildren(writer, scope, root.findChild(SyntaxKey::CodeBlock));
          break;
+      case Type::InlineProperty:
       case Type::Class:
          copyClassMembers(writer, scope, root);
          break;
@@ -1251,6 +1252,12 @@ void TemplateProssesor :: importInlineTemplate(MemoryBase* templateSection,
    SyntaxNode target, List<SyntaxNode>& parameters)
 {
    importTemplate(Type::Inline, templateSection, target, &parameters, nullptr);
+}
+
+void TemplateProssesor :: importInlinePropertyTemplate(MemoryBase* templateSection,
+   SyntaxNode target, List<SyntaxNode>& parameters)
+{
+   importTemplate(Type::InlineProperty, templateSection, target, &parameters, nullptr);
 }
 
 void TemplateProssesor :: importCodeTemplate(MemoryBase* templateSection,

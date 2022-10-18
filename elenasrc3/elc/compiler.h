@@ -895,7 +895,8 @@ namespace elena_lang
       bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message/*, bool& isProtectedDefConst*/);
 
       bool importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target);
-      bool importInlineTemplate(Scope& scope, SyntaxNode node, SyntaxNode target);
+      bool importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
+      bool importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
       void importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode);
 
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs);
