@@ -1166,6 +1166,25 @@ void TemplateProssesor :: copyChildren(SyntaxTreeWriter& writer, TemplateScope& 
    }
 }
 
+void TemplateProssesor :: copyClassMembers(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Field:
+            copyField(writer, scope, current);
+            break;
+         case SyntaxKey::Method:
+            copyMethod(writer, scope, current);
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void TemplateProssesor :: generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection)
 {
    SyntaxTree templateTree;
@@ -1177,6 +1196,9 @@ void TemplateProssesor :: generate(SyntaxTreeWriter& writer, TemplateScope& scop
       case Type::Inline:
       case Type::CodeTemplate:
          copyChildren(writer, scope, root.findChild(SyntaxKey::CodeBlock));
+         break;
+      case Type::Class:
+         copyClassMembers(writer, scope, root);
          break;
       default:
          break;
@@ -1217,6 +1239,12 @@ void TemplateProssesor :: importTemplate(Type type, MemoryBase* templateSection,
 
    SyntaxTreeWriter targetWriter(target);
    SyntaxTree::copyNode(targetWriter, bufferTree.readRoot());
+}
+
+void TemplateProssesor :: importTemplate(MemoryBase* templateSection,
+   SyntaxNode target, List<SyntaxNode>& parameters)
+{
+   importTemplate(Type::Class, templateSection, target, &parameters, nullptr);
 }
 
 void TemplateProssesor :: importInlineTemplate(MemoryBase* templateSection,

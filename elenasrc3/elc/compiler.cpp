@@ -1048,19 +1048,34 @@ ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<
    return reference;
 }
 
-void Compiler :: importTemplate(Scope& scope, SyntaxNode node, ustr_t prefix, SyntaxNode target)
+bool Compiler :: importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
 {
    List<SyntaxNode> parameters({});
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   ref_t templateRef = retrieveTemplate(*ns, node, parameters, prefix);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, nullptr);
    if (!templateRef)
-      scope.raiseError(errUnknownTemplate, node);
+      return false;
 
-   if(_templateProcessor->importInlineTemplate(*scope.moduleScope, templateRef, target, parameters)) {
+   if(!_templateProcessor->importTemplate(*scope.moduleScope, templateRef, target, parameters))
+      scope.raiseError(errInvalidOperation, node);
 
-   }
-   else scope.raiseError(errInvalidSyntax, node);
+   return true;
+}
+
+bool Compiler :: importInlineTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
+{
+   List<SyntaxNode> parameters({});
+
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, INLINE_PREFIX);
+   if (!templateRef)
+      return false;
+
+   if(!_templateProcessor->importInlineTemplate(*scope.moduleScope, templateRef, target, parameters))
+      scope.raiseError(errInvalidOperation, node);
+
+   return true;
 }
 
 void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level)
@@ -1823,10 +1838,16 @@ void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode baseNode, b
       SyntaxNode current = baseNode.firstChild();
       if (current == SyntaxKey::TemplatePostfix) {
          if (!parentRef) {
-            parentRef = resolveStrongTypeAttribute(scope, current.firstChild(), false);
+            if (!importInlineTemplate(scope, current, baseNode.parentNode())) {
+               parentRef = resolveStrongTypeAttribute(scope, current.firstChild(), false);
+            }
          }
-         else scope.raiseError(errInvalidSyntax, baseNode);
-
+         else {
+            if (!importInlineTemplate(scope, current, baseNode.parentNode())) {
+               if (!importTemplate(scope, current, baseNode.parentNode()))
+                  scope.raiseError(errUnknownTemplate, baseNode);
+            }
+         }
       }
       else if (!parentRef) {
          parentRef = resolveStrongTypeAttribute(scope, baseNode.firstChild(), false);
@@ -1875,7 +1896,9 @@ void Compiler :: declareMetaInfo(Scope& scope, SyntaxNode node)
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
-            importTemplate(scope, current, INLINE_PREFIX, node);
+            if(!importInlineTemplate(scope, current, node))
+               scope.raiseError(errUnknownTemplate, current);
+
             break;
          case SyntaxKey::MetaExpression:
          {
@@ -1901,7 +1924,9 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
-            importTemplate(scope, current, INLINE_PREFIX, node);
+            if(!importInlineTemplate(scope, current, node))
+               scope.raiseError(errUnknownTemplate, node);
+
             break;
          case SyntaxKey::IncludeStatement:
             if (withoutBody) {

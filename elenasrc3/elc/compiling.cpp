@@ -87,6 +87,20 @@ CompilingProcess::TemplateGenerator :: TemplateGenerator(CompilingProcess* proce
 {
 }
 
+bool CompilingProcess::TemplateGenerator :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+   SyntaxNode target, List<SyntaxNode>& parameters)
+{
+   auto sectionInfo = moduleScope.getSection(
+      moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
+
+   if (!sectionInfo.section)
+      return false;
+
+   _processor.importTemplate(sectionInfo.section, target, parameters);
+
+   return true;
+}
+
 bool CompilingProcess::TemplateGenerator :: importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
    SyntaxNode target, List<SyntaxNode>& parameters)
 {

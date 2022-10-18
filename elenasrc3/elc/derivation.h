@@ -210,6 +210,7 @@ namespace elena_lang
       void copyChildren(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyMethod(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyClassMembers(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
 
       void copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode rootNode, TemplateScope& scope);
 
@@ -222,6 +223,7 @@ namespace elena_lang
          List<SyntaxNode>* arguments, List<SyntaxNode>* parameters);
 
    public:
+      void importTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
       void importInlineTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
       void importCodeTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);

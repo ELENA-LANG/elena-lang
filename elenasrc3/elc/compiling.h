@@ -33,6 +33,9 @@ namespace elena_lang
          ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
             List<SyntaxNode>& parameters, bool declarationMode) override;
 
+         bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
+            List<SyntaxNode>& parameters) override;
+
          bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
             SyntaxNode target, List<SyntaxNode>& parameters) override;
 

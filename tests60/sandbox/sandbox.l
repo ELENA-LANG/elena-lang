@@ -10,7 +10,7 @@ B<T>
    T get() = nil;
 }
 
-A : B<int> // : info<"Class A">
+A : object, B<int> // : info<"Class A">
 {
    b() 
      : info<"Method b">
