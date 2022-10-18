@@ -189,6 +189,9 @@ bool Interpreter :: evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInf
          case ObjectKind::Method:
             retVal = { ObjectKind::MethodName };
             return true;
+         case ObjectKind::Field:
+            retVal = { ObjectKind::FieldName, { V_STRING }, loperand.reference };
+            return true;
          default:
             break;
       }
@@ -465,6 +468,14 @@ ObjectInfo Compiler::NamespaceScope :: mapDictionary(ustr_t identifier, bool ref
    return mapIdentifier(*metaIdentifier, referenceOne, mode | EAttr::Meta);
 }
 
+// --- Compiler::FieldScope ---
+
+Compiler::FieldScope :: FieldScope(Scope* parent, ustr_t fieldName)
+   : Scope(parent), fieldName(fieldName)
+{
+   
+}
+
 // --- Compiler::MetaScope ---
 
 Compiler::MetaScope :: MetaScope(Scope* parent, ScopeLevel scopeLevel)
@@ -483,6 +494,13 @@ ObjectInfo Compiler::MetaScope :: mapDecl()
    MethodScope* methodScope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
    if (methodScope != nullptr) {
       return { ObjectKind::Method, { V_DECLARATION }, methodScope->message };
+   }
+
+   FieldScope* fieldScope = Scope::getScope<FieldScope>(*this, ScopeLevel::Field);
+   if (fieldScope != nullptr) {
+      ref_t nameRef = module->mapConstant(fieldScope->fieldName);
+
+      return { ObjectKind::Field, { V_DECLARATION }, nameRef };
    }
 
    ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
@@ -1090,6 +1108,7 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
             level = Scope::ScopeLevel::Namespace;
             break;
          case Scope::ScopeLevel::Method:
+         case Scope::ScopeLevel::Field:
             level = Scope::ScopeLevel::Class;
             break;
          default:
@@ -1915,6 +1934,43 @@ void Compiler :: declareMetaInfo(Scope& scope, SyntaxNode node)
    }
 }
 
+void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   SyntaxNode noBodyNode = {};
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::InlineTemplate:
+            if (!importInlineTemplate(scope, current, node))
+               scope.raiseError(errUnknownTemplate, node);
+
+            break;
+         case SyntaxKey::MetaExpression:
+         {
+            MetaScope metaScope(&scope, Scope::ScopeLevel::Field);
+
+            evalStatement(metaScope, current);
+            break;
+         }
+         case SyntaxKey::MetaDictionary:
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field);
+            break;
+         case SyntaxKey::Name:
+         case SyntaxKey::Type:
+         case SyntaxKey::ArrayType:
+         case SyntaxKey::Attribute:
+         case SyntaxKey::Dimension:
+         case SyntaxKey::EOP:
+            break;
+         default:
+            scope.raiseError(errInvalidSyntax, node);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
 {
    bool withoutBody = false;
@@ -2307,6 +2363,22 @@ bool inline isExtensionDeclaration(SyntaxNode node)
    return false;
 }
 
+void Compiler :: declareFieldMetaInfos(ClassScope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Field) {
+         IdentifierString fieldName(current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier());
+
+         FieldScope fieldScope(&scope, *fieldName);
+
+         declareFieldMetaInfo(fieldScope, current);
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
 {
    bool extensionDeclaration = isExtensionDeclaration(node);
@@ -2314,6 +2386,10 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
 
    ref_t declaredFlags = 0;
    declareClassAttributes(scope, node, declaredFlags);
+
+   // NOTE : due to implementation the field meta information should be analyzed before
+   // declaring VMT
+   declareFieldMetaInfos(scope, node);
 
    bool withConstructors = false;
    bool withDefConstructor = false;
@@ -2667,6 +2743,9 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
             else retVal = {};
             break;
          }
+         case ObjectKind::FieldName:
+            retVal.kind = ObjectKind::StringLiteral;
+            break;
          default:
             break;
       }

@@ -5,17 +5,9 @@ public inline info<text>()
    #let description[$name __decl] := text;
 }
 
-B<T>
+A
 {
-   T get() = nil;
-}
-
-A : object, B<int> // : info<"Class A">
-{
-   b() 
-     : info<"Method b">
-   {
-   }
+   int f : info<"Method b">;
 }
 
 //class WithField<T>

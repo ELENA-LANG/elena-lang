@@ -531,11 +531,11 @@ void SyntaxTreeBuilder :: flushTemplageExpression(SyntaxTreeWriter& writer, Scop
    writer.closeNode();
 }
 
-void SyntaxTreeBuilder :: flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool ignorePostfix)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      if (current.key == SyntaxKey::MethodPostfix) {
+      if (current.key == SyntaxKey::MethodPostfix || (current.key == SyntaxKey::Postfix && !ignorePostfix)) {
          SyntaxNode child = current.firstChild();
          if (child == SyntaxKey::TemplatePostfix) {
             flushTemplageExpression(writer, scope, child, SyntaxKey::InlineTemplate, false);
@@ -702,7 +702,7 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
 
    if (!functionMode) {
       flushDescriptor(writer,  scope, node);
-      flushClassMemberPostfixes(writer, scope, node);
+      flushClassMemberPostfixes(writer, scope, node, false);
    }
    else writer.appendNode(SyntaxKey::Attribute, V_FUNCTION);
 
@@ -848,7 +848,7 @@ void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& s
    scope.ignoreTerminalInfo = true;
 
    flushInlineTemplatePostfixes(writer, scope, node);
-   flushClassMemberPostfixes(writer, scope, node);
+   flushClassMemberPostfixes(writer, scope, node, true);
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {

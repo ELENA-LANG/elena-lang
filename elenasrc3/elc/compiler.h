@@ -65,6 +65,7 @@ namespace elena_lang
       ClassConstant,
       SelfName,
       MethodName,
+      FieldName,
       StaticField,
       StaticConstField,
       Wrapper,
@@ -283,6 +284,7 @@ namespace elena_lang
             Class,
             OwnerClass,
             Method,
+            Field,
             Code,
             Expr
          };
@@ -441,6 +443,21 @@ namespace elena_lang
             this->compilerLogic = compilerLogic;
          }
          NamespaceScope(NamespaceScope* parent);
+      };
+
+      struct FieldScope : Scope
+      {
+         ustr_t fieldName;
+
+         Scope* getScope(ScopeLevel level) override
+         {
+            if (level == ScopeLevel::Field) {
+               return this;
+            }
+            else return Scope::getScope(level);
+         }
+
+         FieldScope(Scope* parent, ustr_t fieldName);
       };
 
       struct SourceScope : Scope
@@ -914,6 +931,9 @@ namespace elena_lang
       ref_t generateConstant(Scope& scope, ObjectInfo& info, ref_t reference);
 
       mssg_t defineByRefMethod(ClassScope& scope, SyntaxNode node);
+
+      void declareFieldMetaInfo(FieldScope& scope, SyntaxNode node);
+      void declareFieldMetaInfos(ClassScope& scope, SyntaxNode node);
 
       void generateClassFlags(ClassScope& scope, ref_t declaredFlags);
       void generateMethodAttributes(ClassScope& scope, SyntaxNode node, 
