@@ -1103,28 +1103,26 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
    SyntaxTree tree;
    SyntaxTreeWriter writer(tree);
    writer.newNode(SyntaxKey::Root);
-   // add implicit type
-   SyntaxNode typeNode = target.findChild(SyntaxKey::Type);
-   if (typeNode != SyntaxKey::None) {
-      writer.newNode(SyntaxKey::TemplateArg);
-      SyntaxTree::copyNode(writer, typeNode);
-
-      parameters.add(writer.CurrentNode());
-
-      writer.closeNode();
-   }
-
    // add implicit name
    SyntaxNode nameNode = target.findChild(SyntaxKey::Name);
    if (nameNode != SyntaxKey::None) {
       writer.newNode(SyntaxKey::TemplateArg);
-      SyntaxTree::copyNode(writer, nameNode);
+      SyntaxTree::copyNode(writer, nameNode, true);
 
       parameters.add(writer.CurrentNode());
 
       writer.closeNode();
    }
+   // add implicit type
+   SyntaxNode typeNode = target.findChild(SyntaxKey::Type);
+   if (typeNode != SyntaxKey::None) {
+      writer.newNode(SyntaxKey::TemplateArg);
+      SyntaxTree::copyNode(writer, typeNode, true);
 
+      parameters.add(writer.CurrentNode());
+
+      writer.closeNode();
+   }
    writer.closeNode();
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);

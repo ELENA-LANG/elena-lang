@@ -429,7 +429,19 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
 
    if (!typeDescriptor && nameNode != SyntaxKey::None) {
       if (withNameNode) {
-         writer.newNode(SyntaxKey::Name);
+         SyntaxKey key = SyntaxKey::Name;
+         ref_t attrRef = 0;
+
+         if (scope.withNameParameters()) {
+            int index = scope.arguments.get(current.identifier());
+            if (index == 1) {
+               key = SyntaxKey::NameArgParameter;
+               attrRef = index + scope.nestedLevel;
+            }
+            else flushNode(writer, scope, current);
+         }
+
+         writer.newNode(key, attrRef);
          flushNode(writer, scope, current);
          writer.closeNode();
       }
@@ -872,8 +884,6 @@ void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& s
 
 void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
-   scope.type = ScopeType::ClassTemplate;
-
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
@@ -950,6 +960,28 @@ inline bool isTemplateDeclaration(SyntaxNode node)
    return false;
 }
 
+SyntaxTreeBuilder::ScopeType SyntaxTreeBuilder :: defineTemplateType(SyntaxNode node)
+{
+   ScopeType type = ScopeType::ClassTemplate;
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Attribute) {
+         switch (current.arg.reference) {
+            case V_FIELD:
+               type = ScopeType::PropertyTemplate;
+               break;
+            default:
+               break;
+         }
+      }
+
+      current = current.nextNode();
+   }
+
+   return type;
+}
+
 void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode node)
 {
    Scope scope;
@@ -972,6 +1004,8 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
             flushInlineTemplate(writer, scope, node);
             break;
          case SyntaxKey::Declaration:
+            scope.type = defineTemplateType(writer.CurrentNode());
+
             writer.CurrentNode().setKey(SyntaxKey::Template);
             flushTemplate(writer, scope, node);
             break;
@@ -1124,6 +1158,32 @@ void TemplateProssesor :: copyNode(SyntaxTreeWriter& writer, TemplateScope& scop
                writer.CurrentNode().setKey(nodeToInject.key);
 
             copyChildren(writer, scope, nodeToInject);
+         }
+         else {
+            writer.newNode(node.key, node.arg.reference - 0x100);
+            copyChildren(writer, scope, node);
+            writer.closeNode();
+         }
+         break;
+      case SyntaxKey::NameParameter:
+         if (node.arg.reference < 0x100) {
+            SyntaxNode nodeToInject = scope.argValues.get(node.arg.reference);
+
+            copyChildren(writer, scope, nodeToInject.firstChild());
+         }
+         else {
+            writer.newNode(node.key, node.arg.reference - 0x100);
+            copyChildren(writer, scope, node);
+            writer.closeNode();
+         }
+         break;
+      case SyntaxKey::NameArgParameter:
+         if (node.arg.reference < 0x100) {
+            SyntaxNode nodeToInject = scope.argValues.get(node.arg.reference);
+
+            //writer.newNode(SyntaxKey::Name);
+            copyChildren(writer, scope, nodeToInject);
+            //writer.closeNode();
          }
          else {
             writer.newNode(node.key, node.arg.reference - 0x100);

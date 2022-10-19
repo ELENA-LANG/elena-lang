@@ -1,14 +1,14 @@
-public field prop<T,name>
-{
-   get T name()
-   {
-      ^ name
-   }
-}
 
-A
+struct A
 {
-   int f : prop;
+   int x : prop;
+   int y : prop;
+
+   constructor()
+   {
+      x := 1;
+      y := 2;
+   }
 }
 
 //class WithField<T>
@@ -102,7 +102,8 @@ A
 public program() 
 {
     var a := new A();
-    a.test();
+    console.writeLine(a.x);
+    console.writeLine(a.y);
 
 //    var b := a.b;
 
