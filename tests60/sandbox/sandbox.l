@@ -37,7 +37,7 @@ readChar()
 //                };
 
                   var w := dump.eventType;
-                  //console.writeLine(w);
+                  console.writeLine(w);
 
                   //console.writeLine(dump.eventType);
 

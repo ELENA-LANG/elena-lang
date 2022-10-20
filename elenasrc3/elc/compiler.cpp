@@ -679,7 +679,7 @@ ObjectInfo Compiler::MethodScope :: mapSelf()
    //}
    /*else */if (selfLocal != 0) {
       if (isEmbeddable) {
-         return { ObjectKind::SelfLocalAddress, { getClassRef(false) }, (ref_t)selfLocal };
+         return { ObjectKind::SelfBoxableLocal, { getClassRef(false) }, (ref_t)selfLocal };
       }
       else return { ObjectKind::SelfLocal, { getClassRef(false) }, (ref_t)selfLocal };
    }
@@ -2896,7 +2896,7 @@ inline bool isBoxingRequired(ObjectInfo info)
       case ObjectKind::TempLocalAddress:
       case ObjectKind::ParamAddress:
       case ObjectKind::ByRefParamAddress:
-      case ObjectKind::SelfLocalAddress:
+      case ObjectKind::SelfBoxableLocal:
          return true;
       default:
          return false;
@@ -3020,7 +3020,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::Local:
       case ObjectKind::TempLocal:
       case ObjectKind::ParamAddress:
-      case ObjectKind::SelfLocalAddress:
+      case ObjectKind::SelfBoxableLocal:
       case ObjectKind::ByRefParamAddress:
          writer.appendNode(BuildKey::Local, info.reference);
          break;
@@ -4573,7 +4573,7 @@ inline bool isSelfCall(ObjectInfo target)
 {
    switch (target.kind) {
       case ObjectKind::SelfLocal:
-      case ObjectKind::SelfLocalAddress:
+      case ObjectKind::SelfBoxableLocal:
          //case okOuterSelf:
       //case okClassSelf:
       //case okInternalSelf:
@@ -4994,9 +4994,15 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
          operationType = BuildKey::RefParamAssigning;
          operand = target.reference;
          break;
+      case ObjectKind::SelfBoxableLocal:
+         accMode = true;
+         operationType = BuildKey::CopyingToAcc;
+         operand = target.reference;
+         size = _logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
+         stackSafe = true;
+         break;
       case ObjectKind::TempLocalAddress:
       case ObjectKind::LocalAddress:
-      case ObjectKind::SelfLocalAddress:
          scope.markAsAssigned(target);
          operationType = BuildKey::Copying;
          operand = target.reference;

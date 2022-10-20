@@ -52,7 +52,7 @@ namespace elena_lang
       ReadOnlySelfLocal,
       LocalAddress,
       TempLocalAddress,
-      SelfLocalAddress,
+      SelfBoxableLocal, // the argument can be stack allocated
       Extern,
       NewVariable,
       ReadOnlyFieldAddress,
