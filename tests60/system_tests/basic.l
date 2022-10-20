@@ -12,6 +12,17 @@ gcTests()
    console.writeLine(".");
 }
 
+// --- conversionTests ---
+
+conversionTests()
+{
+    console.write("conversionTests");
+    int n := 1234;
+    short w := n;
+    Assert.ifTrue(w == 1234);
+    console.writeLine(".");
+}
+
 // --- assignTests ---
 
 AssignTestClass

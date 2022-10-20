@@ -1,73 +1,27 @@
 
-struct A
+struct KEY_EVENT_RECORD
 {
-   int x : prop;
-   int y : prop;
-
-   constructor()
-   {
-      x := 1;
-      y := 2;
-   }
+   int   bKeyDown : prop;
+   short wRepeatCount : prop;
+   short wVirtualKeyCode : prop;
+   short wVirtualScanCode : prop;
+   short uChar : prop;
+   int   dwControlKeyState : prop;
 }
 
-//class WithField<T>
-//{
-//   T field;
-//}
+struct INPUT_RECORD
+{
+   short eventType : prop;
+   KEY_EVENT_RECORD KeyEvent : prop;
+} 
 
-//A : WithField<int>
-//{
-//   constructor()
-//   {
-//      field := 2;
-//   }
-//}
 
-//A
-//{
-//   x := 2;
-
-//   test()
-//   {
-//      console.writeLine(x)
-//   }
-//}
-
-//A
-//{
-//   b 
-//   {
-//      get() = 2;
-//   }
-//}
-
-//struct XY
-//{
-//
-//}
-
-//struct KEY_EVENT_RECORD
-//{
-//   int   bKeyDown;
-//   short wRepeatCount;
-//   short wVirtualKeyCode;
-//   short wVirtualScanCode;
-//   short uChar;
-//   int   dwControlKeyState;
-//}
-
-//struct INPUT_RECORD
-//{
-//   short eventType;
-//   KEY_EVENT_RECORD KeyEvent;
-//} 
-
-//readChar()
-//{
+readChar()
+{
 //   handle h := extern KERNEL32.GetStdHandle(0FFFFFFF6h);
 
-//            byte  dump[20];
+   INPUT_RECORD dump;
+
 //            int   numberRead := 0;
 //            short eventType := 0;
 //            short charCode := 0;
@@ -75,11 +29,17 @@ struct A
     
 //            bool found := false;
 //            until (found)
+//            while(!found)
 //            {
 //                extern
 //                {
 //                    extern KERNEL32.ReadConsoleInputW(handle, dump, 1, ref numberRead);
 //                };
+
+                  var w := dump.eventType;
+                  //console.writeLine(w);
+
+                  //console.writeLine(dump.eventType);
 
 //                dump.read(0, ref eventType);
 //                if (eventType == 1)
@@ -97,20 +57,12 @@ struct A
 //            dump.read(14, ref charCode);
             
 //            ^ system'text'UTF16Encoding.toChar(charCode)
-//}
+}
 
 public program() 
 {
-    var a := new A();
-    console.writeLine(a.x);
-    console.writeLine(a.y);
+   readChar();
 
-//    var b := a.b;
-
-//    console.writeLine(b);
-
-//    console.writeLine("Hello World!");
-    
     // wait for any key
 //    console.readChar()
 }

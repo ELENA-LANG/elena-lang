@@ -205,7 +205,7 @@ procedure __intToShort
 
   peek       sp:1
   load
-  and        n:0FFh
+  and        n:0FFFFh
   peek       sp:2
   save
 

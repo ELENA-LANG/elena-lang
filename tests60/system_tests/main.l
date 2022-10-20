@@ -6,6 +6,7 @@ public program()
    assignTests();
    boxingTests();
    byRefTests();
+   conversionTests();
    //gcTests()
 
    console.writeLine("--- Passed ---")

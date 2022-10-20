@@ -57,7 +57,7 @@ namespace elena_lang
       DispatchingOp        = 0x001C,
       IntOp                = 0x001D,
       ByteArraySOp         = 0x001E,
-      AccCopying           = 0x001F,
+      CopyingToAcc         = 0x001F,
       Argument             = 0x0020,
       BranchOp             = 0x0021,
       DirectResendOp       = 0x0022,

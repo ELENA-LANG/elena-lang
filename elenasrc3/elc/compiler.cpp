@@ -2834,7 +2834,7 @@ inline void createObject(BuildTreeWriter& writer, ClassInfo& info, ref_t referen
 inline void copyObjectToAcc(BuildTreeWriter& writer, ClassInfo& info, int offset)
 {
    if (test(info.header.flags, elStructureRole)) {
-      writer.newNode(BuildKey::AccCopying, offset);
+      writer.newNode(BuildKey::CopyingToAcc, offset);
       writer.appendNode(BuildKey::Size, info.size);
    }
    else writer.newNode(BuildKey::FieldAssigning, 0);
@@ -5016,7 +5016,7 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
             operationType = BuildKey::AccFieldCopying;
             operand = target.reference;
          }
-         else operationType = BuildKey::AccCopying; 
+         else operationType = BuildKey::CopyingToAcc; 
          operand = target.reference;
          size = _logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
          stackSafe = true;
@@ -5029,7 +5029,7 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
          size = _logic->defineStructSize(*scope.moduleScope, targetRef).size;
          if (size > 0) {
             stackSafe = true;
-            operationType = BuildKey::AccCopying;
+            operationType = BuildKey::CopyingToAcc;
             operand = target.reference;
             accMode = true;
          }

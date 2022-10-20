@@ -145,7 +145,7 @@ void copyingLocal(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::CopyDPN, node.arg.value, n);
 }
 
-void copyingAcc(CommandTape& tape, BuildNode& node, TapeScope&)
+void copyingToAcc(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int n = node.findChild(BuildKey::Size).arg.value;
 
@@ -627,7 +627,7 @@ ByteCodeWriter::Saver commands[] =
    savingInStack, assigningLocal, getLocal, creatingClass, openStatement, closeStatement, addingBreakpoint, addingBreakpoint,
 
    creatingStruct, intLiteral, stringLiteral, goingToEOP, getLocalAddredd, copyingLocal, allocatingStack, freeingStack,
-   savingNInStack, extCallOp, savingIndex, directCallOp, dispatchOp, intOp, byteArraySOp, copyingAcc,
+   savingNInStack, extCallOp, savingIndex, directCallOp, dispatchOp, intOp, byteArraySOp, copyingToAcc,
 
    getArgument, nullptr, directResend, resendOp, xdispatchOp, boolSOp, intCondOp, charLiteral,
    assignSPField, getField, staticBegin, staticEnd, classOp, byteArrayOp, newArrayOp, swapSPField,
