@@ -294,7 +294,8 @@ T_EXPRESSION ::=
 	 "{" BLOCK;
 
 NT_EXPRESSION ::=
-	"(" identifier SI_R;	
+	"(" identifier SI_R
+        | "{" BLOCK;
 
 T_EXPRESSIONS ::=
 	identifier NT_EXPRESSION
