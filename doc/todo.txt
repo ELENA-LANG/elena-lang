@@ -6,6 +6,7 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 10 : hello world sample=== 
     * hello world sample for Linux Amd64, Linux PPC64le
+    * Linux PPC64le - check why it fails on end
 
     * release alpha version for x86, x86-64, Linux I386, Linux Amd64, Linux PPC64le, Linux AARCH64
 

@@ -23,11 +23,11 @@ procedure % INVOKER
   push r14
   push r15
 
-  // declare new frame
+  // ; declare new frame
   mov  rax, rdi
   xor  rdi, rdi
-  push rdi            // ; FrameHeader.previousFrame
-  push rdi            // ; FrameHeader.reserved
+  push 0              // ; FrameHeader.previousFrame
+  push 0              // ; FrameHeader.reserved
   mov  rbp, rsp       // ; FrameHeader
   push rdi
   push rsi            // ; arg
