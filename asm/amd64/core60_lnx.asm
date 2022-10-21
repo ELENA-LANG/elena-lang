@@ -146,8 +146,8 @@ labYGNextFrame:
 
   mov [rbp-8], rsp      // ; save position for roots
 
-  mov  rdi, [rbp]
-  mov  rsi, rsp
+  mov  rsi, [rbp]
+  mov  rdi, rsp
 
   // ; restore frame to correctly display a call stack
   mov  rax, rbp
