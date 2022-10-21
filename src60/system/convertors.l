@@ -60,6 +60,13 @@ public singleton charConvertor
 
       ^ ch;
    }
+
+   char convert(short w)
+   {
+      int n := w;
+
+      ^ self.convert(n);
+   }
 }
 
 // --- stringConvertor ---

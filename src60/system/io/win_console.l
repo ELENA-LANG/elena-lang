@@ -1,10 +1,34 @@
 namespace io
 {
+   struct KEY_EVENT_RECORD
+   {
+      int   bKeyDown : prop;
+      short wRepeatCount : prop;
+      short wVirtualKeyCode : prop;
+      short wVirtualScanCode : prop;
+      short uChar : prop;
+      int   dwControlKeyState : prop;
+   }
+
+   struct INPUT_RECORD
+   {
+      short eventType : prop;
+      short dummy;
+      KEY_EVENT_RECORD KeyEvent : prop;
+   } 
+
    singleton ConsoleFactory
    {
-      get OutputHandle()
+      get /*handle*/ OutputHandle()
       {
          handle h := extern KERNEL32.GetStdHandle(0FFFFFFF5h);
+
+         ^ h;
+      }
+
+      get /*handle*/ InputHandle()
+      {
+         handle h := extern KERNEL32.GetStdHandle(0FFFFFFF6h);
 
          ^ h;
       }
@@ -28,41 +52,55 @@ namespace io
 
    public class ConsoleReader
    {
+      handle h;
+
+      constructor(handle h)
+      {
+         this h := h
+      }
+
       char read()
       {
-//            byte  dump[20];
-//            int   numberRead := 0;
-//            short eventType := 0;
-//            short charCode := 0;
-//            int   keyDown := 0;
+         handle h := extern KERNEL32.GetStdHandle(0FFFFFFF6h);
+
+         INPUT_RECORD dump;
+         KEY_EVENT_RECORD rec;
+
+         int   numberRead := 0;
+         short eventType := 0;
+         short charCode := 0;
+         int   keyDown := 0;
     
-//            bool found := false;
-//            until (found)
-//            {
-//                extern
-//                {
-//                    extern KERNEL32.ReadConsoleInputW(handle, dump, 1, ref numberRead);
-//                };
+         bool found := false;
+         until (found)
+         {
+            extern
+            {
+                    extern KERNEL32.ReadConsoleInputW(h, dump, 1, ref numberRead);
+            };
+
+            eventType := dump.eventType;
+                  
+            if (eventType == 1)
+            {
+               rec := dump.KeyEvent;
+
+               keyDown := rec.bKeyDown;
+
+               found := keyDown == 1
+            }
+            else
+            {
+               found := false 
+            };
+         };
+
+         charCode := rec.uChar;
     
-//                dump.read(0, ref eventType);
-//                if (eventType == 1)
-//                {
-//                    dump.read(4, ref keyDown);
-//                    
-//                    found := keyDown == 1
-//                }
-//                else
-//                {
-//                    found := false 
-//                };
-//            };
-    
-//            dump.read(14, ref charCode);
-            
-//            ^ system'text'UTF16Encoding.toChar(charCode)
+         ^ system'text'UTF16Encoding.toChar(charCode)
       }
    }
 
    public stdConsoleWriter = new ConsoleWriter(ConsoleFactory.OutputHandle);
-   public stdConsoleReader = new ConsoleReader();
+   public stdConsoleReader = new ConsoleReader(ConsoleFactory.InputHandle);
 }
