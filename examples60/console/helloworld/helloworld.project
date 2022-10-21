@@ -20,13 +20,12 @@
      </system>
   </platform>
   <project>
-     <namespace>system_tests</namespace>
+     <namespace>helloworld</namespace>
      <template>console</template>
   </project>
   <files>
      <module>
-        <include>main.l</include>
-        <include>basic.l</include>
+        <include>helloworld.l</include>
      </module>
   </files>
 </configuration>
