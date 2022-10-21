@@ -9,33 +9,33 @@ namespace io
 //    const int TCSANOW = 0;
 //    const int ECHO = 0000010;   /* Enable echo.  */
 
-    struct termios
-    {
-        int c_iflag;		/* input mode flags */
-        int c_oflag;		/* output mode flags */
-        int c_cflag;		/* control mode flags */
-        int c_lflag;		/* local mode flags */
-        int c_line;		/* line discipline */
-        byte c_cc[/*NCCS*/32];		/* control characters */
-        int c_ispeed;		/* input speed */
-        int c_ospeed;		/* output speed */
+//    struct termios
+//    {
+//        int c_iflag;		/* input mode flags */
+//        int c_oflag;		/* output mode flags */
+//        int c_cflag;		/* control mode flags */
+//        int c_lflag;		/* local mode flags */
+//        int c_line;		/* line discipline */
+//        byte c_cc[/*NCCS*/32];		/* control characters */
+//        int c_ispeed;		/* input speed */
+//        int c_ospeed;		/* output speed */
     
-        int LFlag
-        {
-            get()
-                = c_lflag;
+//        int LFlag
+//        {
+//            get()
+//                = c_lflag;
                 
-            set(v)
-            {
-                c_lflag := v
-            }
-        }
+//            set(v)
+//            {
+//                c_lflag := v
+//            }
+//        }
         
-        setAt(int index, byte value)
-        {
-            c_cc[index] := value
-        }
-    }
+//        setAt(int index, byte value)
+//        {
+//            c_cc[index] := value
+//        }
+//    }
 
    public class ConsoleWriter
    {
