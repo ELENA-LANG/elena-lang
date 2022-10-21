@@ -1,13 +1,13 @@
 namespace io
 {
-    const int STDIN_FILENO = 0;
-    const int STDOUT_FILENO = 1;
+//    const int STDIN_FILENO = 0;
+//    const int STDOUT_FILENO = 1;
     
-    const int NCCS = 32;
-    const int ICANON = 0000002;   /* Canonical input (erase and kill processing).  */
-    const int VMIN = 6;
-    const int TCSANOW = 0;
-    const int ECHO = 0000010;   /* Enable echo.  */
+//    const int NCCS = 32;
+//    const int ICANON = 0000002;   /* Canonical input (erase and kill processing).  */
+//    const int VMIN = 6;
+//    const int TCSANOW = 0;
+//    const int ECHO = 0000010;   /* Enable echo.  */
 
     struct termios
     {
