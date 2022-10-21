@@ -394,7 +394,7 @@ end
 inline %0Eh
 
   lwz     r14, 0(r15)
-  andi    r14, r14, 0FFh
+  andi.   r14, r14, 0FFh
 
 end
 

@@ -5,7 +5,7 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 10 : hello world sample=== 
-    * hello world sample for Linux Amd64, Linux PPC64le, Linux AARCH64
+    * hello world sample for Linux Amd64, Linux PPC64le
 
     * release alpha version for x86, x86-64, Linux I386, Linux Amd64, Linux PPC64le, Linux AARCH64
 
@@ -21,8 +21,10 @@ In development:
     * printLine extensions
 
     * default exception handler
+    * release alpha version for Linux I386, Linux Amd64
 
     === Iteration 12 : intsum / realsum, all system tests for existing classes ===
+    * release alpha version for Linux PPC64le, Linux AARCH64
 
 ------                                                           
 Backlog:
