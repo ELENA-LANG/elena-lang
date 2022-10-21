@@ -72,7 +72,7 @@ namespace io
          ^ CharValue.load(ch);
       }
    }
-}
 
-public stdConsoleWriter = new ConsoleWriter();
-public stdConsoleReader = new ConsoleReader();
+   public stdConsoleWriter = new ConsoleWriter();
+   public stdConsoleReader = new ConsoleReader();
+}
