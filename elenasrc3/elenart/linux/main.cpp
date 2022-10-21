@@ -38,6 +38,8 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
 
 void* CollectGCLA(void* roots, size_t size)
 {
+   printf("CollectGCLA %llx\n", (long long)roots, size);
+
    return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size);
 }
 
