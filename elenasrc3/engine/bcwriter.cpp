@@ -644,6 +644,16 @@ void refParamAssigning(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::XAssignI, 0);
 }
 
+inline void includeFrame(CommandTape& tape)
+{
+   tape.write(ByteCode::Include);
+}
+
+inline void excludeFrame(CommandTape& tape)
+{
+   tape.write(ByteCode::Exclude);
+}
+
 ByteCodeWriter::Saver commands[] =
 {
    nullptr, openFrame, closeFrame, nilReference, symbolCall, classReference, sendOp, exit,
@@ -859,6 +869,15 @@ void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)
    }
 }
 
+void ByteCodeWriter :: saveExternOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
+{
+   excludeFrame(tape);
+
+   saveTape(tape, node, tapeScope, paths, tapeOptMode);
+
+   includeFrame(tape);
+}
+
 void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
    ReferenceMap& paths, bool tapeOptMode, bool loopMode)
 {
@@ -885,6 +904,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::CatchOp:
             saveCatching(tape, current, tapeScope, paths, tapeOptMode);
+            break;
+         case BuildKey::ExternOp:
+            saveExternOp(tape, current, tapeScope, paths, tapeOptMode);
             break;
          default:
             _commands[(int)current.key](tape, current, tapeScope);

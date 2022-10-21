@@ -333,6 +333,22 @@ inline %0Fh
 
 end
 
+// ; exclude
+inline % 10h
+
+  push 0                                                     
+  push rbp     
+  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+
+end
+
+// ; include
+inline % 11h
+
+  add  rsp, 10h
+
+end
+
 // ; setr
 inline %80h
 

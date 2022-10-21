@@ -406,6 +406,29 @@ inline %0Fh
 
 end
 
+// ; exclude
+inline % 10h
+
+  li      r18, 0
+
+  std     r31, -10h(r1)  // ; save frame pointer
+  std     r18, -08h(r1)  // ; save return address
+  addi    r1, r1, -16    // ; allocate raw stack
+
+  ld      r16, toc_data(r2)
+  addis   r16, r16, data_disp32hi : %CORE_THREAD_TABLE
+  addi    r16, r16, data_disp32lo : %CORE_THREAD_TABLE
+  std     r1, tt_stack_frame(r16)
+
+end
+
+// ; include
+inline % 11h
+
+  addi    r1, r1, 10h          // ; free stack
+
+end
+
 // ; setr
 inline %80h
 

@@ -369,6 +369,26 @@ inline %0Fh
 
 end
 
+// ; exclude
+inline % 10h
+
+  mov      x18, 0
+
+  stp      x18, x29, [sp, #-16]! 
+
+  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
+  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+end
+
+// ; include
+inline % 11h
+
+  add     sp, sp, 10h          // ; free stack
+
+end
+
 // ; setr
 inline %80h
 

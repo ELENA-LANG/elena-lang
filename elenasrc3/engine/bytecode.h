@@ -34,6 +34,9 @@ namespace elena_lang
       BLoad          = 0x0E,
       WLoad          = 0x0F,
 
+      Exclude        = 0x10,
+      Include        = 0x11,
+
       MaxSingleOp    = 0x7F,
 
       SetR           = 0x80,

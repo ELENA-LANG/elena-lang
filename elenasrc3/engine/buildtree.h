@@ -98,7 +98,7 @@ namespace elena_lang
       DeclDictionaryOp     = 0x004E,
       LoopOp               = 0x004F,
       CatchOp              = 0x0050,
-
+      ExternOp             = 0x0051,
 
       NestedClass          = 0x0080,
 

@@ -24,7 +24,7 @@ namespace elena_lang
          Unknown = 0,
          InlineTemplate,
          ClassTemplate,
-         PropertyTemplate
+         PropertyTemplate,
       };
 
       struct Scope

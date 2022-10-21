@@ -48,6 +48,7 @@
 #let attributesSymbols["super"]       := 80001024h;
 #let attributesSymbols["inline"]      := 80001025h;
 #let attributesSymbols["__probe"]     := 80001026h;
+#let attributesSymbols["template"]    := 80001027h;
 
 /// primitive types
 #let attributesSymbols["__string"]    := 80000801h;

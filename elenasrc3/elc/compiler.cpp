@@ -5725,6 +5725,18 @@ ObjectInfo Compiler :: compileLoopExpression(BuildTreeWriter& writer, ExprScope&
    return retVal;
 }
 
+ObjectInfo Compiler :: compileExternExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
+   ExpressionAttribute mode)
+{
+   writer.newNode(BuildKey::ExternOp);
+
+   compileExpression(writer, scope, node, 0, mode);
+
+   writer.closeNode();
+
+   return { };
+}
+
 ObjectInfo Compiler :: validateObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
    ObjectInfo retVal, ref_t targetRef, bool noPrimitives, bool paramMode)
 {
@@ -5785,6 +5797,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::LoopOperation:
          retVal = compileLoopExpression(writer, scope, current.firstChild(), mode);
+         break;
+      case SyntaxKey::ExternOperation:
+         retVal = compileExternExpression(writer, scope, current.firstChild(), mode);
          break;
       case SyntaxKey::CatchOperation:
          retVal = compileCatchOperation(writer, scope, current);

@@ -331,6 +331,21 @@ inline %0Fh
 
 end
 
+// ; exclude
+inline % 10h
+                                                       
+  push ebp     
+  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], esp
+
+end
+
+// ; include
+inline % 11h
+
+  add  esp, 4                                                       
+
+end
+
 // ; setr
 inline %80h
 

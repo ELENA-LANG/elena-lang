@@ -936,7 +936,20 @@ inline DeclarationType defineDeclarationType(SyntaxNode node)
    return type;
 }
 
-inline bool isTemplateDeclaration(SyntaxNode node)
+inline bool isTemplate(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Attribute && current.arg.reference == V_TEMPLATE) {
+         return true;
+      }
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
+inline bool isTemplateDeclaration(SyntaxNode node, SyntaxNode declaration)
 {
    bool withPostfix = false;
 
@@ -948,7 +961,7 @@ inline bool isTemplateDeclaration(SyntaxNode node)
       else if (current == SyntaxKey::Postfix) {
          withPostfix = true;
       }
-      else if (current == SyntaxKey::Parameter && withPostfix) {
+      else if (current == SyntaxKey::Parameter && (withPostfix || isTemplate(declaration))) {
          return true;
       }
       else if (current != SyntaxKey::identifier) 
@@ -995,7 +1008,7 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
 
       flushStatement(writer, scope, node.findChild(SyntaxKey::GetExpression));
    }
-   else if (isTemplateDeclaration(node)) {
+   else if (isTemplateDeclaration(node, writer.CurrentNode())) {
       SyntaxNode body = node.firstChild(SyntaxKey::MemberMask);
       switch (body.key) {
          case SyntaxKey::CodeBlock:
