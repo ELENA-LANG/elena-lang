@@ -354,6 +354,21 @@ inline %0Dh
 
 end
 
+// ; bload
+inline %0Eh
+
+  ldrb    w9, [x10]
+
+end
+
+// ; wload
+inline %0Fh
+
+  ldrsw   x9, [x10]
+  sxth    x9, x9
+
+end
+
 // ; setr
 inline %80h
 

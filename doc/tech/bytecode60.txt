@@ -54,6 +54,8 @@ ELENA byte codes (or ecodes)
 
    assign i                 - acc[i] := sp[0];
 
+   bload                    - index := byte([acc])
+
    get i                    - acc[i] => acc
 
    load                     - index := [acc] 
@@ -81,6 +83,8 @@ ELENA byte codes (or ecodes)
    set fp:i                 - fp[i] => acc
 
    store r                  - acc => [r]
+
+   wload                    - index := word([acc])
 
    xassign i                - acc[i] := sp[0];
                               direct operation

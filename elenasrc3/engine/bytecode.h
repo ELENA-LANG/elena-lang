@@ -31,6 +31,8 @@ namespace elena_lang
       Unhook         = 0x0B,
       LoadV          = 0x0C,
       XCmp           = 0x0D,
+      BLoad          = 0x0E,
+      WLoad          = 0x0F,
 
       MaxSingleOp    = 0x7F,
 

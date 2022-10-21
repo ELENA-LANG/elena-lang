@@ -316,6 +316,23 @@ inline % 0Dh
 
 end
 
+// ; bload
+inline %0Eh
+
+  mov  edx, dword ptr [ebx]
+  and  edx, 0FFh 
+
+end
+
+// ; wload
+inline %0Fh
+
+  mov  eax, dword ptr [ebx]
+  cwde
+  mov  edx, eax
+
+end
+
 // ; setr
 inline %80h
 

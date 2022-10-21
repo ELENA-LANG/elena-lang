@@ -15,7 +15,7 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 const char* _fnOpcodes[256] =
 {
    "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
-   "class", "save", "throw", "unhook", "loadv", "xcmp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "class", "save", "throw", "unhook", "loadv", "xcmp", "bload", "wload",
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,

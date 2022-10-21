@@ -390,6 +390,22 @@ inline %0Dh
 
 end
 
+// ; bload
+inline %0Eh
+
+  lwz     r14, 0(r15)
+  andi    r14, r14, 0FFh
+
+end
+
+// ; wload
+inline %0Fh
+
+  lwz     r14, 0(r15)
+  addis   r14, r14, 0FFFFh
+
+end
+
 // ; setr
 inline %80h
 

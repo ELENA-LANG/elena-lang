@@ -141,8 +141,31 @@ void copyingLocal(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int n = node.findChild(BuildKey::Size).arg.value;
 
-   tape.write(ByteCode::StoreSI, 0);
-   tape.write(ByteCode::CopyDPN, node.arg.value, n);
+   switch (n) {
+      case 1:
+         // bload
+         // save dp:arg
+         tape.write(ByteCode::BLoad);
+         tape.write(ByteCode::SaveDP, node.arg.value);
+         break;
+      case 2:
+         // wload
+         // save dp:arg
+         tape.write(ByteCode::WLoad);
+         tape.write(ByteCode::SaveDP, node.arg.value);
+         break;
+      case 4:
+         // load
+         // save dp:arg
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::SaveDP, node.arg.value);
+         break;
+      default:
+         tape.write(ByteCode::StoreSI, 0);
+         tape.write(ByteCode::CopyDPN, node.arg.value, n);
+         break;
+   }
+
 }
 
 void copyingToAcc(CommandTape& tape, BuildNode& node, TapeScope&)

@@ -946,6 +946,16 @@ bool Arm64Assembler :: compileRET(ARMOperand r, MemoryWriter& writer)
    return true;
 }
 
+bool Arm64Assembler :: compileSBFM(ARMOperand rd, ARMOperand rn, int immr, int imms, MemoryWriter& writer)
+{
+   if (rn.isXR() && rd.isXR()) {
+      writer.writeDWord(ARMHelper::makeOpcodeImmRS(1, 0, 0x26, 0, immr, imms, rn.type, rd.type));
+   }
+   else return false;
+
+   return true;
+}
+
 bool Arm64Assembler :: compileSDIV(ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer)
 {
    if (rm.isXR() && rn.isXR() && rd.isXR()) {
@@ -1780,6 +1790,23 @@ void Arm64Assembler :: compileSUB(ScriptToken& tokenInfo, MemoryWriter& writer)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void Arm64Assembler :: compileSXTH(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   bool valid = false;
+   if (rd.isXR() && rn.isXR()) {
+      valid = compileSBFM(rd, rn, 0, 15, writer);
+   }
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void Arm64Assembler :: compileTST(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -1988,6 +2015,9 @@ bool Arm64Assembler::compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
    else if (tokenInfo.compare("sub")) {
       compileSUB(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("sxth")) {
+      compileSXTH(tokenInfo, writer);
    }
    else return false;
 

@@ -6,6 +6,7 @@ public program()
    assignTests();
    boxingTests();
    byRefTests();
+   shortTests();
    conversionTests();
    //gcTests()
 

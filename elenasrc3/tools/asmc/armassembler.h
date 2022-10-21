@@ -66,6 +66,7 @@ namespace elena_lang
       virtual bool compileBxx(int imm, int cond, MemoryWriter& writer);
       virtual bool compileBLR(ARMOperand r, MemoryWriter& writer);
       virtual bool compileBR(ARMOperand r, MemoryWriter& writer);
+      virtual bool compileSBFM(ARMOperand rd, ARMOperand rn, int immr, int imms, MemoryWriter& writer);
       virtual bool compileSDIV(ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
       virtual bool compileSTP(ARMOperand t1, ARMOperand t2, ARMOperand ptr, MemoryWriter& writer);
       virtual bool compileSTR(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer);
@@ -111,6 +112,7 @@ namespace elena_lang
       void compileSTRH(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileRET(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSUB(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileSXTH(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileTST(ScriptToken& tokenInfo, MemoryWriter& writer);
 
       bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
