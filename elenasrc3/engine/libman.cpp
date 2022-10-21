@@ -142,12 +142,11 @@ ustr_t LibraryProvider :: resolveTemplateWeakReference(ustr_t referenceName, For
       }
 
       // COMPILER MAGIC : try to find a template implementation
-      ref_t resolvedRef = 0;
-      auto refModule = resolveWeakModule(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedRef, true);
-      if (refModule != nullptr) {
-         ustr_t resolvedReferenceName = refModule->resolveReference(resolvedRef);
+      auto resolved = getWeakModule(referenceName + TEMPLATE_PREFIX_NS_LEN, true);
+      if (resolved.module != nullptr) {
+         ustr_t resolvedReferenceName = resolved.module->resolveReference(resolved.reference);
          if (isWeakReference(resolvedReferenceName)) {
-            IdentifierString fullName(refModule->name(), resolvedReferenceName);
+            IdentifierString fullName(resolved.module->name(), resolvedReferenceName);
 
             forwardResolver->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, *fullName);
          }
