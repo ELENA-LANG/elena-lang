@@ -117,6 +117,7 @@ end
 
 // ; --- GC_ALLOC ---
 // ; in: rcx - size ; out: ebx - created object
+// ; note for linux - there is a separate copy
 inline % GC_ALLOC
 
   mov  rax, [data : %CORE_GC_TABLE + gc_yg_current]
