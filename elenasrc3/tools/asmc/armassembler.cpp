@@ -949,7 +949,7 @@ bool Arm64Assembler :: compileRET(ARMOperand r, MemoryWriter& writer)
 bool Arm64Assembler :: compileSBFM(ARMOperand rd, ARMOperand rn, int immr, int imms, MemoryWriter& writer)
 {
    if (rn.isXR() && rd.isXR()) {
-      writer.writeDWord(ARMHelper::makeOpcodeImmRS(1, 0, 0x26, 0, immr, imms, rn.type, rd.type));
+      writer.writeDWord(ARMHelper::makeOpcodeImmRS(1, 0, 0x26, 1, immr, imms, rn.type, rd.type));
    }
    else return false;
 
