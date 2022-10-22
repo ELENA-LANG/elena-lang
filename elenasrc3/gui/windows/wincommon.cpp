@@ -186,14 +186,15 @@ bool WindowApp :: initInstance(WindowBase* mainWindow, int cmdShow)
    return TRUE;
 }
 
-void WindowApp :: notifyMessage(int messageCode, int arg)
+void WindowApp :: notifyMessage(int messageCode, int arg1, int arg2)
 {
    ExtNMHDR notification;
 
    notification.nmhrd.code = NMHDR_Message;
    notification.nmhrd.hwndFrom = _hwnd;
-   notification.extParam = messageCode;
-   notification.extParam2 = arg;
+   notification.extParam1 = messageCode;
+   notification.extParam2 = arg1;
+   notification.extParam3 = arg2;
 
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
@@ -204,8 +205,9 @@ void WindowApp :: notifyModelChange(int modelCode, int arg)
 
    notification.nmhrd.code = NMHDR_Model;
    notification.nmhrd.hwndFrom = _hwnd;
-   notification.extParam = modelCode;
+   notification.extParam1 = modelCode;
    notification.extParam2 = arg;
+   notification.extParam3 = 0;
 
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }

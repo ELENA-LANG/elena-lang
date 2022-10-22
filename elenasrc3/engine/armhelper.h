@@ -173,6 +173,12 @@ namespace elena_lang
    class ARMHelper
    {
    public:
+      static unsigned int makeOpcodeImmRS(int sf, int ops, int op2, int n, int immr, int imms, ARMOperandType rn, ARMOperandType rd)
+      {
+         return (sf << 31) | (ops << 29) | (op2 << 23) | (n << 22) | (immr << 16)
+            | (imms << 10) | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
       static unsigned int makeOpcode(int sf, int op, int op2, int op3, ARMOperandType rm, int op4, int o1,
          ARMOperandType rn, ARMOperandType rd)
       {

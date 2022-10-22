@@ -38,7 +38,7 @@ namespace elena_lang
       ControlBase* createTabBar(WindowBase* owner, NotifierBase* notifier);
       ControlBase* createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, int notifyCode);
       ControlBase* createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier);
-      ControlBase* createErrorList(ControlBase* owner);
+      ControlBase* createErrorList(ControlBase* owner, NotifierBase* notifier);
 
       void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList);
 

@@ -1,5 +1,3 @@
-import system;
-
 public program()
 {
    console.writeLine("--- ELENA 6 API Unit Tests ---");
@@ -8,6 +6,8 @@ public program()
    assignTests();
    boxingTests();
    byRefTests();
+   shortTests();
+   conversionTests();
    //gcTests()
 
    console.writeLine("--- Passed ---")

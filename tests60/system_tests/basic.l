@@ -1,4 +1,3 @@
-import system;
 import extensions;
 
 // --- gcTests ---
@@ -11,6 +10,27 @@ gcTests()
       new IntNumber();
    };
    console.writeLine(".");
+}
+
+// --- shortTests ---
+
+shortTests()
+{
+    console.write("shortTests");
+    short w := 1234;
+    Assert.ifTrue(w == 1234);
+    console.writeLine(".");
+}
+
+// --- conversionTests ---
+
+conversionTests()
+{
+    console.write("conversionTests");
+    int n := 1234;
+    short w := n;
+    Assert.ifTrue(w == 1234);
+    console.writeLine(".");
 }
 
 // --- assignTests ---
@@ -154,15 +174,3 @@ byRefTests()
    Assert.ifTrue(s2 == "hello");
    console.writeLine(".");
 }
-
-// --- gcTests ---
-
-//gcTests()
-//{
-//   console.write("gcTests");
-//   for (int i := 0, i < 10000, i := i + 1)
-//   {
-//      new IntNumber();
-//   };
-//   console.writeLine(".");
-//}

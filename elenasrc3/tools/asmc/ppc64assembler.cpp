@@ -997,6 +997,25 @@ void PPC64Assembler :: compileLHZ(ScriptToken& tokenInfo, MemoryWriter& writer)
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void PPC64Assembler :: compileLHA(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rs = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   int d = 0;
+   ref_t reference = 0;
+   PPCOperand ra = readDispOperand(tokenInfo, d, reference, ASM_INVALID_TARGET);
+
+   if (rs.isGPR() && ra.isGPR()) {
+      writer.writeDWord(PPCHelper::makeDCommand(42, rs.type, ra.type, d));
+
+      if (reference)
+         writeDReference(tokenInfo, reference, writer, ASM_INVALID_DESTINATION);
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void PPC64Assembler :: compileLWZ(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand rs = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -1564,6 +1583,9 @@ bool PPC64Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    }
    else if (tokenInfo.compare("lhz")) {
       compileLHZ(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("lha")) {
+      compileLHA(tokenInfo, writer);
    }
    else if (tokenInfo.compare("lwz")) {
       compileLWZ(tokenInfo, writer);

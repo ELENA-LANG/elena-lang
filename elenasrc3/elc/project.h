@@ -144,7 +144,7 @@ namespace elena_lang
 
       void loadSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, IdentifierString& value);
 
-      void copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key);
+      void copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key, bool exclusiveMode = false);
 
       void loadTargetType(ConfigFile& config, ConfigFile::Node& configRoot);
 
@@ -183,6 +183,7 @@ namespace elena_lang
       void addForward(ustr_t forward, ustr_t referenceName) override;
 
       void addBoolSetting(ProjectOption option, bool value);
+      void addIntSetting(ProjectOption option, int value);
 
       ModuleIteratorBase* allocModuleIterator() override
       {

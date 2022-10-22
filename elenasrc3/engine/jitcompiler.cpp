@@ -19,9 +19,9 @@ using namespace elena_lang;
 CodeGenerator _codeGenerators[256] =
 {
    loadNop, compileBreakpoint, loadNop, loadOp, loadOp, loadOp, loadOp, loadOp,
-   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadNop, loadNop,
+   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadOp, loadOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -89,7 +89,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 81;
+constexpr size_t bcCommandNumber = 85;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -108,7 +108,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::XSwapSI, ByteCode::JumpVI, ByteCode::TstN, ByteCode::LoadV, ByteCode::XCmp,
    ByteCode::SwapSI, ByteCode::TstM, ByteCode::XCopyON, ByteCode::XWriteON, ByteCode::LoadDP,
    ByteCode::XCmpDP, ByteCode::NAddDPN, ByteCode::AddN, ByteCode::SubN, ByteCode::SetFP,
-   ByteCode::AssignI
+   ByteCode::AssignI, ByteCode::BLoad, ByteCode::WLoad, ByteCode::Include, ByteCode::Exclude
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -1448,6 +1448,8 @@ void elena_lang :: loadNewOp(JITCompilerScope* scope)
    // simply copy correspondent inline code
    writer->write(code, length);
 
+   int n = scope->command.arg1 << scope->constants->indexPower;
+
    // resolve section references
    pos_t count = *(pos_t*)((char*)code + length);
    RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
@@ -1456,16 +1458,16 @@ void elena_lang :: loadNewOp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(scope->compiler->calcTotalSize(scope->command.arg1));
+            writer->writeDWord(scope->compiler->calcTotalSize(n));
             break;
          case ARG16_1:
-            scope->compiler->writeImm16(writer, (short)scope->compiler->calcTotalSize(scope->command.arg1), 0);
+            scope->compiler->writeImm16(writer, (short)scope->compiler->calcTotalSize(n), 0);
             break;
          case NARG_1:
-            writer->writeDWord(scope->command.arg1);
+            writer->writeDWord(n);
             break;
          case NARG16_1:
-            scope->compiler->writeImm16(writer, (short)scope->command.arg1, 0);
+            scope->compiler->writeImm16(writer, (short)n, 0);
             break;
          case PTR32_2:
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
@@ -2028,9 +2030,7 @@ void elena_lang::loadDPLabelOp(JITCompilerScope* scope)
 void elena_lang::compileHookDPR(JITCompilerScope* scope)
 {
    ref_t mask2 = scope->command.arg2 & mskAnyRef;
-   pos_t label = scope->command.arg2 & ~mskAnyRef;
    if (mask2 == mskLabelRef) {
-      //scope->lh->writeLabelAddress(label, *scope->codeWriter);
       loadDPLabelOp(scope);
    }
    else loadDPROp(scope);

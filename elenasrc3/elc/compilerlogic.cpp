@@ -50,11 +50,14 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 37;
+constexpr auto OperationLength = 38;
 constexpr Op Operations[OperationLength] =
 {
    {
       SET_INDEXER_OPERATOR_ID, BuildKey::DictionaryOp, V_DICTIONARY, V_INT32, V_STRING, V_OBJECT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::DictionaryOp, V_DICTIONARY, V_STRING, V_STRING, V_OBJECT
    },
    {
       SET_INDEXER_OPERATOR_ID, BuildKey::DictionaryOp, V_DICTIONARY, V_OBJECT, V_STRING, V_OBJECT
@@ -175,9 +178,11 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
       case V_OBJECT:
          return !isPrimitiveRef(source.typeRef);
       case V_INT32:
-         return source.typeRef == V_INT8 || source.typeRef == V_INT16;
+         return source.typeRef == V_INT8 || source.typeRef == V_INT16 || source.typeRef == V_WORD32;
       case V_FLAG:
          return isCompatible(scope, { scope.branchingInfo.typeRef }, source, true);
+      case V_WORD32:
+         return source.typeRef == V_INT32;
       default:
          return false;
    }
@@ -239,6 +244,11 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
          break;
       case V_INLINE:
          type = TemplateType::Inline;
+         break;
+      case V_FIELD:
+         type = TemplateType::InlineProperty;
+         break;
+      case V_TEMPLATE:
          break;
       default:
       {
@@ -309,6 +319,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_EXTENSION:
          flags = elExtension;
          break;
+      case V_NONESTRUCT:
+         flags = elNonStructureRole;
+         break;
       case 0:
          // ignore idle
          break;
@@ -337,6 +350,9 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
          break;
       case V_CONST:
          attrs.isConstant = true;
+         break;
+      case V_STATIC:
+         attrs.isStatic = true;
          break;
       default:
          return false;
@@ -398,6 +414,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_MULTIRET:
          hint = (ref_t)MethodHint::MutliRet;
          return true;
+      case V_SEALED:
+         hint = (ref_t)MethodHint::Sealed;
+         return true;
       default:
          return false;
    }
@@ -420,7 +439,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
    }
 }
 
-bool CompilerLogic :: validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo)
+bool CompilerLogic :: validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo, bool& superMode)
 {
    switch (attribute) {
       case V_STRINGOBJ:
@@ -434,6 +453,9 @@ bool CompilerLogic :: validateDictionaryAttribute(ref_t attribute, TypeInfo& dic
       //case V_DECLOBJ:
       //   dictionaryType = V_DECLATTRIBUTES;
       //   return true;
+      case V_SUPERIOR:
+         superMode = true;
+         return true;
       default:
          return false;
    }
@@ -477,15 +499,30 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
    }
 }
 
-bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, bool& byRefArg)
+bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, bool& byRefArg, bool& variadicArg)
 {
    switch (attrValue) {
       case V_WRAPPER:
          byRefArg = true;
          return true;
+      case V_VARIADIC:
+         variadicArg = true;
+         return true;
       default:
          return false;
    }
+}
+
+bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, bool& variadicArg)
+{
+   switch (attrValue) {
+      case V_VARIADIC:
+         variadicArg = true;
+         return true;
+      default:
+         return false;
+   }
+
 }
 
 bool CompilerLogic :: validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_t message)
@@ -769,6 +806,15 @@ void CompilerLogic :: writeAttributeMapEntry(MemoryBase* section, ustr_t key, in
    writer.writeString(key);
    writer.writeDWord(1);
    writer.writeDWord(value);
+}
+
+void CompilerLogic :: writeAttributeMapEntry(MemoryBase* section, ustr_t key, ustr_t value)
+{
+   MemoryWriter writer(section);
+   writer.writeString(key);
+   writer.writeDWord(2);
+   writer.writeDWord(value.length());
+   writer.writeString(value);
 }
 
 bool CompilerLogic :: readAttributeMap(MemoryBase* section, ReferenceMap& map)
@@ -1395,3 +1441,16 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
    }
 }
 
+bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
+{
+   return allowRole || !testany(info.header.flags, elRole);
+}
+
+bool CompilerLogic :: isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, classReference, true))
+      return ignoreUndeclared;
+
+   return isValidType(info, allowRole);
+}

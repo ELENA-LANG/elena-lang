@@ -580,6 +580,13 @@ void X86Assembler :: compileCdq(ScriptToken& tokenInfo, MemoryWriter& writer)
    read(tokenInfo);
 }
 
+void X86Assembler :: compileCWDE(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   writer.writeByte(0x98);
+
+   read(tokenInfo);
+}
+
 void X86Assembler :: compileCmp(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -1572,6 +1579,9 @@ bool X86Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
    else if (tokenInfo.compare("cmovl")) {
       compileCMovcc(tokenInfo, writer, X86JumpType::JL);
+   }
+   else if (tokenInfo.compare("cwde")) {
+      compileCWDE(tokenInfo, writer);
    }
    else return false;
 

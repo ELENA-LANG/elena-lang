@@ -22,6 +22,7 @@
   <project>
      <namespace>system</namespace>
      <template>lib60</template>
+     <prolog> </prolog>
   </project>
   <files>
      <module name="predefined">
@@ -48,6 +49,7 @@
         <include>console.l</include>
         <include>app.l</include>
         <include>lnx_strings.l</include>
+        <include>text/encoding.l</include>
         <include>io/lnx_console.l</include>
      </module>
   </files>

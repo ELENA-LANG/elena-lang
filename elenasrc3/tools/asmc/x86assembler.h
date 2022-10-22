@@ -98,6 +98,7 @@ namespace elena_lang
       void compileCdq(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCmp(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMovcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type);
+      void compileCWDE(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDiv(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileIDiv(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileIMul(ScriptToken& tokenInfo, MemoryWriter& writer);

@@ -362,6 +362,11 @@ namespace elena_lang
          return _current;
       }
 
+      void flush()
+      {
+         _buffer->write(_position, &_current, sizeof(T));
+      }
+
       bool eof() const { return _position >= _length; }
 
       MemoryListIterator(MemoryDump* buffer, pos_t length)
@@ -665,6 +670,11 @@ namespace elena_lang
          }
 
          return -1;
+      }
+
+      void clear()
+      {
+         _list.clear();
       }
 
       List(T defValue)

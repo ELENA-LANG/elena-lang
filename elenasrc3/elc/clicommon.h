@@ -153,6 +153,13 @@ public:
 
 // --- ProjectBase ---
 
+enum OptimizationModes
+{
+   optNone = 0,
+   optLow = 1,
+   optMiddle = 2
+};
+
 enum class ProjectOption
 {
    None = 0,
@@ -189,6 +196,10 @@ enum class ProjectOption
    // flags
    DebugMode,
    MappingOutputMode,
+   OptimizationMode,
+
+   Prolog,
+   Epilog,
 
    Key,
    Value,
@@ -267,6 +278,7 @@ enum class TemplateType
 {
    None = 0,
    Inline,
+   InlineProperty,
    Class,
    Statement
 };
@@ -296,6 +308,7 @@ struct BuiltinReferences
 {
    ref_t   superReference;
    ref_t   intReference, shortReference, byteReference;
+   ref_t   dwordReference;
    ref_t   literalReference;
    ref_t   wideReference;
    ref_t   messageReference;
@@ -376,6 +389,8 @@ public:
    pos_t                ehTableEntrySize;
    int                  minimalArgList;
 
+   bool                 tapeOptMode;
+
    Map<ref_t, SizeInfo> cachedSizes;
 
    virtual bool isStandardOne() = 0;
@@ -419,7 +434,8 @@ public:
       pos_t stackAlingment, 
       pos_t rawStackAlingment,
       pos_t ehTableEntrySize,
-      int minimalArgList
+      int minimalArgList,
+      bool tapeOptMode
    ) :
       predefined(0),
       attributes(0),
@@ -433,6 +449,7 @@ public:
       this->rawStackAlingment = rawStackAlingment;
       this->ehTableEntrySize = ehTableEntrySize;
       this->minimalArgList = minimalArgList;
+      this->tapeOptMode = tapeOptMode;
    }
 };
 
@@ -463,6 +480,7 @@ enum class ExpressionAttribute : pos64_t
    Memeber           = 0x00000100000,
    ProbeMode         = 0x00000200000,
    AlreadyResolved   = 0x00000400000,
+   InitializerScope  = 0x00000800000,
    Lookahead         = 0x20000000000,
    NoDebugInfo       = 0x40000000000,
    NoExtension       = 0x80000000000,
@@ -521,6 +539,7 @@ struct FieldAttributes
    TypeInfo typeInfo;
    int      size;
    bool     isConstant;
+   bool     isStatic;
    bool     isEmbeddable;
    bool     inlineArray;
 };
@@ -549,9 +568,13 @@ public:
    virtual ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
       List<SyntaxNode>& parameters, bool declarationMode) = 0;
 
+   virtual bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+      List<SyntaxNode>& parameters) = 0;
    virtual bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& parameters) = 0;
-   virtual bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
+   virtual bool importPropertyTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+      List<SyntaxNode>& parameters) = 0;
+   virtual bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
 };
 

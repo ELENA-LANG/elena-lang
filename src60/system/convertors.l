@@ -17,7 +17,7 @@ public singleton byteConvertor
 
 public singleton shortConvertor
 {
-   convert(int n, ref byte retVal) : external<system'core_routines'__intToShort>;
+   convert(int n, ref short retVal) : external<system'core_routines'__intToShort>;
 
    short convert(int n)
    {
@@ -60,6 +60,13 @@ public singleton charConvertor
 
       ^ ch;
    }
+
+   char convert(short w)
+   {
+      int n := w;
+
+      ^ self.convert(n);
+   }
 }
 
 // --- stringConvertor ---
@@ -99,5 +106,12 @@ public singleton stringConvertor
       };
 
       ^ String.fromByteArray(index, len, buffer);
+   }
+
+   string convert(short value, int radix)
+   {
+      int intValue := value;
+
+      ^ self.convert(intValue, radix);
    }
 }

@@ -212,7 +212,8 @@ int main()
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       Project          project(*appPath, CURRENT_PLATFORM, &Presenter::getInstance());
       WinLinker        linker(&errorProcessor, &WinImageFormatter::getInstance(&project));
-      CompilingProcess process(appPath, &Presenter::getInstance(), &errorProcessor,
+      CompilingProcess process(appPath, L"<prolog>", L"<epilog>", 
+         &Presenter::getInstance(), &errorProcessor,
          VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
       process.greeting();
@@ -235,6 +236,17 @@ int main()
             switch (argv[i][1]) {
                case 'm':
                   project.addBoolSetting(ProjectOption::MappingOutputMode, true);
+                  break;
+               case 'o':
+                  if (argv[i][2] == '0') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optNone);
+                  }
+                  else if (argv[i][2] == '1') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optLow);
+                  }
+                  else if (argv[i][2] == '2') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
+                  }
                   break;
                case 'r':
                   cleanMode = true;

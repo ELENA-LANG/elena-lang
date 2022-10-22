@@ -103,7 +103,6 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
    }
 }
 
-
 #elif __aarch64__
 
 static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)

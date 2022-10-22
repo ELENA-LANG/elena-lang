@@ -314,6 +314,38 @@ inline % 0Dh
 
 end
 
+// ; bload
+inline %0Eh
+
+  mov  edx, dword ptr [ebx]
+  and  edx, 0FFh 
+
+end
+
+// ; wload
+inline %0Fh
+
+  mov  eax, dword ptr [ebx]
+  cwde
+  mov  edx, eax
+
+end
+
+// ; exclude
+inline % 10h
+                                                       
+  push ebp     
+  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], esp
+
+end
+
+// ; include
+inline % 11h
+
+  add  esp, 4                                                       
+
+end
+
 // ; setr
 inline %80h
 

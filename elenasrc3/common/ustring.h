@@ -35,6 +35,8 @@ namespace elena_lang
       static bool copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength);
 
       static int toInt(const char* s, int radix);
+      static int toInt(const wide_c* s, int radix);
+
       static unsigned int toUInt(const char* s, int radix);
    };
 

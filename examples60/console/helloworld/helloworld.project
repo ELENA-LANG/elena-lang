@@ -1,0 +1,31 @@
+<configuration>
+  <platform key="Linux_I386">
+     <system>
+        <platform>4129</platform>
+     </system>
+  </platform>
+  <platform key="Linux_AMD64">
+     <system>
+        <platform>4130</platform>
+     </system>
+  </platform>
+  <platform key="Linux_PPC64le">
+     <system>
+        <platform>4133</platform>
+     </system>
+  </platform>
+  <platform key="Linux_ARM64">
+     <system>
+        <platform>4132</platform>
+     </system>
+  </platform>
+  <project>
+     <namespace>helloworld</namespace>
+     <template>console</template>
+  </project>
+  <files>
+     <module>
+        <include>helloworld.l</include>
+     </module>
+  </files>
+</configuration>

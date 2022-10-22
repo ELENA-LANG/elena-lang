@@ -13,15 +13,15 @@
 
 using namespace elena_lang;
 
-//inline void testNodes(SyntaxNode node)
-//{
-//   SyntaxNode current = node.firstChild();
-//   while (current != SyntaxKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 inline bool testNodeMask(SyntaxKey key, SyntaxKey mask)
 {
@@ -429,7 +429,19 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
 
    if (!typeDescriptor && nameNode != SyntaxKey::None) {
       if (withNameNode) {
-         writer.newNode(SyntaxKey::Name);
+         SyntaxKey key = SyntaxKey::Name;
+         ref_t attrRef = 0;
+
+         if (scope.withNameParameters()) {
+            int index = scope.arguments.get(current.identifier());
+            if (index == 1) {
+               key = SyntaxKey::NameArgParameter;
+               attrRef = index + scope.nestedLevel;
+            }
+            else flushNode(writer, scope, current);
+         }
+
+         writer.newNode(key, attrRef);
          flushNode(writer, scope, current);
          writer.closeNode();
       }
@@ -531,16 +543,16 @@ void SyntaxTreeBuilder :: flushTemplageExpression(SyntaxTreeWriter& writer, Scop
    writer.closeNode();
 }
 
-void SyntaxTreeBuilder :: flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool ignorePostfix)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      if (current.key == SyntaxKey::MethodPostfix) {
+      if (current.key == SyntaxKey::MethodPostfix || (current.key == SyntaxKey::Postfix && !ignorePostfix)) {
          SyntaxNode child = current.firstChild();
          if (child == SyntaxKey::TemplatePostfix) {
             flushTemplageExpression(writer, scope, child, SyntaxKey::InlineTemplate, false);
          }
-         else throw InternalError(errFatalError);
+         else flushTemplageExpression(writer, scope, current, SyntaxKey::InlineImplicitTemplate, false);
       }
 
       current = current.nextNode();
@@ -702,7 +714,7 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
 
    if (!functionMode) {
       flushDescriptor(writer,  scope, node);
-      flushClassMemberPostfixes(writer, scope, node);
+      flushClassMemberPostfixes(writer, scope, node, false);
    }
    else writer.appendNode(SyntaxKey::Attribute, V_FUNCTION);
 
@@ -787,6 +799,9 @@ void SyntaxTreeBuilder :: flushTemplateCode(SyntaxTreeWriter& writer, Scope& sco
          case SyntaxKey::MetaExpression:
             flushStatement(writer, scope, current);
             break;
+         case SyntaxKey::MetaDictionary:
+            flushDictionary(writer, current);
+            break;
          case SyntaxKey::EOP:
             flushNode(writer, scope, current);
             break;
@@ -845,7 +860,7 @@ void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& s
    scope.ignoreTerminalInfo = true;
 
    flushInlineTemplatePostfixes(writer, scope, node);
-   flushClassMemberPostfixes(writer, scope, node);
+   flushClassMemberPostfixes(writer, scope, node, true);
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -869,8 +884,6 @@ void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& s
 
 void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
-   scope.type = ScopeType::ClassTemplate;
-
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
@@ -923,7 +936,20 @@ inline DeclarationType defineDeclarationType(SyntaxNode node)
    return type;
 }
 
-inline bool isTemplateDeclaration(SyntaxNode node)
+inline bool isTemplate(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Attribute && current.arg.reference == V_TEMPLATE) {
+         return true;
+      }
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
+inline bool isTemplateDeclaration(SyntaxNode node, SyntaxNode declaration)
 {
    bool withPostfix = false;
 
@@ -935,7 +961,7 @@ inline bool isTemplateDeclaration(SyntaxNode node)
       else if (current == SyntaxKey::Postfix) {
          withPostfix = true;
       }
-      else if (current == SyntaxKey::Parameter && withPostfix) {
+      else if (current == SyntaxKey::Parameter && (withPostfix || isTemplate(declaration))) {
          return true;
       }
       else if (current != SyntaxKey::identifier) 
@@ -945,6 +971,28 @@ inline bool isTemplateDeclaration(SyntaxNode node)
    }
 
    return false;
+}
+
+SyntaxTreeBuilder::ScopeType SyntaxTreeBuilder :: defineTemplateType(SyntaxNode node)
+{
+   ScopeType type = ScopeType::ClassTemplate;
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Attribute) {
+         switch (current.arg.reference) {
+            case V_FIELD:
+               type = ScopeType::PropertyTemplate;
+               break;
+            default:
+               break;
+         }
+      }
+
+      current = current.nextNode();
+   }
+
+   return type;
 }
 
 void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode node)
@@ -960,7 +1008,7 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
 
       flushStatement(writer, scope, node.findChild(SyntaxKey::GetExpression));
    }
-   else if (isTemplateDeclaration(node)) {
+   else if (isTemplateDeclaration(node, writer.CurrentNode())) {
       SyntaxNode body = node.firstChild(SyntaxKey::MemberMask);
       switch (body.key) {
          case SyntaxKey::CodeBlock:
@@ -969,6 +1017,8 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
             flushInlineTemplate(writer, scope, node);
             break;
          case SyntaxKey::Declaration:
+            scope.type = defineTemplateType(writer.CurrentNode());
+
             writer.CurrentNode().setKey(SyntaxKey::Template);
             flushTemplate(writer, scope, node);
             break;
@@ -1128,6 +1178,32 @@ void TemplateProssesor :: copyNode(SyntaxTreeWriter& writer, TemplateScope& scop
             writer.closeNode();
          }
          break;
+      case SyntaxKey::NameParameter:
+         if (node.arg.reference < 0x100) {
+            SyntaxNode nodeToInject = scope.argValues.get(node.arg.reference);
+
+            copyChildren(writer, scope, nodeToInject.firstChild());
+         }
+         else {
+            writer.newNode(node.key, node.arg.reference - 0x100);
+            copyChildren(writer, scope, node);
+            writer.closeNode();
+         }
+         break;
+      case SyntaxKey::NameArgParameter:
+         if (node.arg.reference < 0x100) {
+            SyntaxNode nodeToInject = scope.argValues.get(node.arg.reference);
+
+            //writer.newNode(SyntaxKey::Name);
+            copyChildren(writer, scope, nodeToInject);
+            //writer.closeNode();
+         }
+         else {
+            writer.newNode(node.key, node.arg.reference - 0x100);
+            copyChildren(writer, scope, node);
+            writer.closeNode();
+         }
+         break;
       case SyntaxKey::TemplateParameter:
          if (node.arg.reference < 0x100) {
             SyntaxNode nodeToInject = scope.parameterValues.get(node.arg.reference);
@@ -1163,6 +1239,25 @@ void TemplateProssesor :: copyChildren(SyntaxTreeWriter& writer, TemplateScope& 
    }
 }
 
+void TemplateProssesor :: copyClassMembers(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Field:
+            copyField(writer, scope, current);
+            break;
+         case SyntaxKey::Method:
+            copyMethod(writer, scope, current);
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void TemplateProssesor :: generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection)
 {
    SyntaxTree templateTree;
@@ -1174,6 +1269,10 @@ void TemplateProssesor :: generate(SyntaxTreeWriter& writer, TemplateScope& scop
       case Type::Inline:
       case Type::CodeTemplate:
          copyChildren(writer, scope, root.findChild(SyntaxKey::CodeBlock));
+         break;
+      case Type::InlineProperty:
+      case Type::Class:
+         copyClassMembers(writer, scope, root);
          break;
       default:
          break;
@@ -1216,10 +1315,22 @@ void TemplateProssesor :: importTemplate(Type type, MemoryBase* templateSection,
    SyntaxTree::copyNode(targetWriter, bufferTree.readRoot());
 }
 
+void TemplateProssesor :: importTemplate(MemoryBase* templateSection,
+   SyntaxNode target, List<SyntaxNode>& parameters)
+{
+   importTemplate(Type::Class, templateSection, target, &parameters, nullptr);
+}
+
 void TemplateProssesor :: importInlineTemplate(MemoryBase* templateSection,
    SyntaxNode target, List<SyntaxNode>& parameters)
 {
    importTemplate(Type::Inline, templateSection, target, &parameters, nullptr);
+}
+
+void TemplateProssesor :: importInlinePropertyTemplate(MemoryBase* templateSection,
+   SyntaxNode target, List<SyntaxNode>& parameters)
+{
+   importTemplate(Type::InlineProperty, templateSection, target, &parameters, nullptr);
 }
 
 void TemplateProssesor :: importCodeTemplate(MemoryBase* templateSection,
