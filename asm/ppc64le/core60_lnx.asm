@@ -51,6 +51,8 @@ procedure % INVOKER
   mr    r3, r4
   bctrl                   // ; and call it
 
+  addi  r1, r1, 16
+
   ld   r31, 168(r1)
   ld   r30, 160(r1)
   ld   r29, 152(r1)
