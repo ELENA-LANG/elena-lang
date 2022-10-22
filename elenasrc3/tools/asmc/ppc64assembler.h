@@ -89,6 +89,7 @@ namespace elena_lang
       void compileORI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLBZ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLHZ(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileLHA(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLWZ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLIS(ScriptToken& tokenInfo, MemoryWriter& writer);

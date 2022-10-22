@@ -1,10 +1,8 @@
 
 public program() 
 {
-   console.write("gcTests");
-   for (int i := 0, i < 100000, i := i + 1)
-   {
-      new IntNumber();
-   };
-   console.writeLine(".");
+    console.write("shortTests");
+    short w := 1234;
+    Assert.ifTrue(w == 1234);
+    console.writeLine(".");
 }

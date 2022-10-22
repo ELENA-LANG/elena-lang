@@ -401,8 +401,7 @@ end
 // ; wload
 inline %0Fh
 
-  lwz     r14, 0(r15)
-  addis   r14, r14, 0FFFFh
+  lha     r14, 0(r15)
 
 end
 
