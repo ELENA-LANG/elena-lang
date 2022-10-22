@@ -2030,9 +2030,7 @@ void elena_lang::loadDPLabelOp(JITCompilerScope* scope)
 void elena_lang::compileHookDPR(JITCompilerScope* scope)
 {
    ref_t mask2 = scope->command.arg2 & mskAnyRef;
-   pos_t label = scope->command.arg2 & ~mskAnyRef;
    if (mask2 == mskLabelRef) {
-      //scope->lh->writeLabelAddress(label, *scope->codeWriter);
       loadDPLabelOp(scope);
    }
    else loadDPROp(scope);

@@ -31,6 +31,9 @@ void ELENARTMachine :: startSTA(SystemEnv* env, SymbolList* entryList)
       try
       {
          retVal = entry.evaluate(entryList->entries[i].address, 0);
+
+         printf("exiting\n");
+         fflush(stdout);
       }
       catch (InternalError&)
       {
