@@ -15,9 +15,9 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 const char* _fnOpcodes[256] =
 {
    "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
-   "class", "save", "throw", "unhook", "loadv", "xcmp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "class", "save", "throw", "unhook", "loadv", "xcmp", "bload", "wload",
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "incude", "exclude", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -44,7 +44,7 @@ const char* _fnOpcodes[256] =
    "copy", "close", "alloc", "free", "and n", "read", "write", "cmp n",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "save dp", "store fp", "save sp", "store sp", "xflush sp", "get", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "save dp", "store fp", "save sp", "store sp", "xflush sp", "get", "assign", OPCODE_UNKNOWN,
    "peek fp", "peek sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "call", "call vt", "jump", "jeq", "jne", "jump vt", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -137,6 +137,9 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    if (test(flags, PROPERTY_MESSAGE))
       messageName.append("prop:");
 
+   if (test(flags, VARIADIC_MESSAGE))
+      messageName.append("params:");
+
    messageName.append(actionName);
    if (signature) {
       ref_t references[ARG_COUNT];
@@ -177,6 +180,10 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
    if (messageName.startsWith("prop:")) {
       flags |= PROPERTY_MESSAGE;
       messageName += getlength("prop:");
+   }
+   if (messageName.startsWith("params:")) {
+      flags |= VARIADIC_MESSAGE;
+      messageName += getlength("params:");
    }
 
    IdentifierString actionName;
@@ -264,19 +271,19 @@ inline void addJump(int label, int index, CachedMemoryMap<int, int, 20>& labels,
 
 inline bool removeIdleJump(ByteCodeIterator it)
 {
-   ByteCommand command = *it;
-
    while (true) {
+      ByteCommand command = *it;
+
       switch (command.code) {
          case ByteCode::Jump:
+         case ByteCode::Jne:
+         case ByteCode::Jeq:
          //case bcIfR:
          //case bcElseR:
-         //   //case bcIfB:
          //case bcElseD:
          //case bcIf:
          //case bcIfCount:
          //case bcElse:
-         //   //case bcLess:
          //case bcNotLess:
          //case bcNotGreater:
          //case bcIfN:
@@ -289,10 +296,12 @@ inline bool removeIdleJump(ByteCodeIterator it)
          //   //case bcElseM:
          //   //case bcNext:
          //case bcIfHeap:
-         //case bcJumpRM:
-         //case bcVJumpRM:
+         case ByteCode::JumpMR:
+         case ByteCode::VJumpMR:
+         case ByteCode::JumpVI:
          //case bcJumpI:
             *it = ByteCode::Nop;
+            it.flush();
             return true;
          default:
             break;
@@ -349,11 +358,21 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
 
    // populate blocks and jump lists
    int index = 0;
+   bool importMode = false;
    while (!it.eof()) {
       // skip pseudo commands (except labels)
       ByteCommand command = *it;
 
-      if (command.code == ByteCode::Label) {
+      if (command.code == ByteCode::ImportOn) {
+         importMode = true;
+      }
+      else if (command.code == ByteCode::ImportOff) {
+         importMode = false;
+      }
+      else if (importMode) {
+         // ignore commands in the import mode
+      }
+      else if (command.code == ByteCode::Label) {
          labels.add(command.arg1, index);
 
          // add to idleLabels only if there are no forward jumps to it
@@ -375,17 +394,19 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
       }
       else if (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop) {
          switch (command.code) {
-            //case bcThrow:
+            case ByteCode::Throw:
             case ByteCode::Quit:
             //case bcQuitN:
-            //case ByteCode::JumpVI:
-            //case ByteCode::JumpRM:
-            //case ByteCode::VJumpRM:
+            case ByteCode::JumpMR:
+            case ByteCode::VJumpMR:
+            case ByteCode::JumpVI:
             //case ByteCode::JumpI:
                blocks.add(index + 1, 0);
                break;
             case ByteCode::Jump:
                blocks.add(index + 1, 0);
+            case ByteCode::Jeq:
+            case ByteCode::Jne:
             //case bcIfR:
             //case bcElseR:
             //case bcElseD:
@@ -452,7 +473,14 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
    int blockEnd = getBlockEnd(b_it, length);
    while (!it.eof()) {
       ByteCommand command = *it;
-      bool isCommand = (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop);
+      if (command.code == ByteCode::ImportOn) {
+         importMode = true;
+      }
+      else if (command.code == ByteCode::ImportOff) {
+         importMode = false;
+      }
+
+      bool isCommand = !importMode && (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop);
 
       if (index == blockEnd) {
          b_it++;
@@ -463,6 +491,7 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
       // HOTFIX : do not remove ending breakpoint coordinates
       if (*b_it != -1 && command.code != ByteCode::None && command.code != ByteCode::Breakpoint) {
          (*it).code = ByteCode::None;
+         it.flush();
          modified = true;
       }
 
@@ -476,6 +505,8 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
    CachedMemoryMap<int, ByteCodeIterator, 20>::Iterator i_it = idleLabels.start();
    while (!i_it.eof()) {
       *(*i_it) = ByteCode::Nop;
+      (*i_it).flush();
+
       modified = true;
 
       ++i_it;

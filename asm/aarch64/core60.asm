@@ -6,7 +6,7 @@ define VEH_HANDLER           10003h
 define CORE_TOC              20001h
 define SYSTEM_ENV            20002h
 define CORE_GC_TABLE         20003h
-define CORE_ET_TABLE         2000Bh
+define CORE_THREAD_TABLE     2000Bh
 define VOID           	     2000Dh
 define VOIDPTR               2000Eh
 
@@ -35,6 +35,7 @@ define gc_end                0048h
 define gc_mg_wbar            0050h
 
 define et_current            0008h
+define tt_stack_frame        0010h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
@@ -42,6 +43,7 @@ define es_catch_level        0010h
 define es_catch_frame        0018h
 
 // ; --- Page Size ----
+define page_size_order          5h
 define page_ceil               2Fh
 define page_mask        0FFFFFFE0h
 define struct_mask_inv     7FFFFFh
@@ -54,10 +56,11 @@ structure % CORE_TOC
 
 end
  
-structure % CORE_ET_TABLE
+structure % CORE_THREAD_TABLE
 
   dq 0 // ; critical_handler       ; +x00   - pointer to ELENA critical exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
+  dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
 
 end
 
@@ -82,7 +85,7 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_ET_TABLE
+  dq data : %CORE_THREAD_TABLE
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -126,7 +129,83 @@ inline % GC_ALLOC
   ret     x30
 
 labYGCollect:
-  mov     x10, #0                 //; ecx
+  // ; save registers
+  sub     x11, x11, x15
+
+  stp     x29, x30, [sp, #-16]! 
+  mov     x29, sp              // ; set frame pointer
+
+  // ; lock frame
+  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
+  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+  mov     x12, sp
+  str     x12, [x14]
+
+  stp     x11, x11, [sp, #-16]! 
+
+  // ; create set of roots
+  mov     x29, sp
+  mov     x18, 0
+  stp     x18, x18, [sp, #-16]! 
+
+  // ;   save static roots
+  movz    x17, rdata_ptr32lo : %SYSTEM_ENV
+  movk    x17, rdata_ptr32hi : %SYSTEM_ENV, lsl #16
+
+  movz    x19, stat_ptr32lo : #0
+  movk    x19, stat_ptr32hi : #0, lsl #16
+  ldr     x18, [x17]
+  lsl     x18, x18, #3
+  stp     x18, x19, [sp, #-16]! 
+
+  // ;   collect frames
+  ldr     x19, [x14]
+  mov     x18, x19
+
+labYGNextFrame:
+  mov     x17, x19
+  ldr     x19, [x17]
+  cmp     x19, #0
+  bne     labYGNextFrame
+
+  mov     x20, x18
+  sub     x18, x17, x18
+  stp     x18, x20, [sp, #-16]! 
+
+  ldr     x19, [x17, #8]!
+  cmp     x19, #0
+  mov     x18, x19
+  bne     labYGNextFrame
+
+  mov     x20, sp
+  str     x20, [x29]
+
+  add     x19, x29, #8
+  ldr     x1, [x19]
+  mov     x0, sp
+
+  // ; restore frame to correctly display a call stack
+  stp     x29, x29, [sp, #-16]! 
+
+  ldr     x29, [x29]
+
+  // ; call GC routine
+  movz    x16,  import_ptr32lo : "$rt.CollectGCLA"
+  movk    x16,  import_ptr32hi : "$rt.CollectGCLA", lsl #16
+
+  ldr     x17, [x16]
+  blr     x17
+
+  mov     x10, x0
+
+//;  ldp     x19, x29, [sp, #-16]! 
+  ldp     x19, x29, [sp], #16
+  add     x29, x29, #16
+  mov     sp, x29
+  ldp     x29, x30, [sp], #16
+
   ret     x30
 
 end
@@ -222,8 +301,8 @@ end
 // ; throw
 inline %0Ah
 
-  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
-  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
+  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
 
   ldr     x14, [x14, # et_current]!
   ldr     x17, [x14, # es_catch_addr]!
@@ -235,8 +314,8 @@ end
 // ; unhook
 inline %0Bh
 
-  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
-  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
+  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
 
   add     x14, x14, # et_current
   ldr     x13, [x14]
@@ -272,6 +351,41 @@ inline %0Dh
 
   ldrsw   x14, [x10]
   cmp     x9, x14
+
+end
+
+// ; bload
+inline %0Eh
+
+  ldrb    w9, [x10]
+
+end
+
+// ; wload
+inline %0Fh
+
+  ldrsw   x9, [x10]
+  sxth    x9, x9
+
+end
+
+// ; exclude
+inline % 10h
+
+  mov      x18, 0
+
+  stp      x18, x29, [sp, #-16]! 
+
+  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
+  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+end
+
+// ; include
+inline % 11h
+
+  add     sp, sp, 10h          // ; free stack
 
 end
 
@@ -753,6 +867,30 @@ inline %5A5h
 
   sub     x11, x10, -__arg12_1
   ldr     x10, [x11]
+
+end
+
+// ; assigni
+inline %0A6h
+
+  add     x11, x10, __arg12_1
+
+  // calculate write-barrier address
+  movz    x12, data_ptr32lo : %CORE_GC_TABLE
+  movk    x12, data_ptr32hi : %CORE_GC_TABLE, lsl #16
+
+  add     x13, x12, gc_start
+  add     x15, x12, gc_header
+  ldr     x14, [x13]
+  sub     x14, x10, x14
+  ldr     x15, [x15]
+
+  lsr     x14, x14, page_size_order
+  add     x14, x15, x14
+  mov     x12, 1
+  strb    w12, [x14]
+
+  str     x0, [x11]
 
 end
 
@@ -1252,8 +1390,8 @@ inline %0E6h
 
   add     x13, x29, __arg12_1
 
-  movz    x14,  data_ptr32lo : %CORE_ET_TABLE
-  movk    x14,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
+  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
   mov     x18, x13
 
   movz    x16,  __ptr32lo_2

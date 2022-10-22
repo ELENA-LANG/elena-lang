@@ -89,6 +89,14 @@ void Project :: addBoolSetting(ProjectOption option, bool value)
    _root.appendChild(option, value ? "-1" : "0");
 }
 
+void Project :: addIntSetting(ProjectOption option, int value)
+{
+   String<char, 20> valStr;
+   valStr.appendInt(value);
+
+   _root.appendChild(option, valStr.str());
+}
+
 int Project :: IntSetting(ProjectOption option, int defValue) const
 {
    ustr_t val = StringSetting(option);
@@ -339,14 +347,21 @@ void Project :: loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t 
    }
 }
 
-void Project :: copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key)
+void Project :: copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key, bool exclusiveMode)
 {
    auto configNode = config.selectNode(configRoot, xpath);
    if (!configNode.isNotFound()) {
       DynamicString<char> content;
       configNode.readContent(content);
 
-      _root.appendChild(key, content.str());
+      if (!exclusiveMode || !_root.existChild(key)) {
+         _root.appendChild(key, content.str());
+      }
+      else {
+         auto node = _root.findChild(key);
+
+         node.setStrArgument(content.str());
+      }
    }
 }
 
@@ -393,6 +408,9 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
       copySetting(config, root, MGSIZE_PATH, ProjectOption::GCMGSize);
       copySetting(config, root, YGSIZE_PATH, ProjectOption::GCYGSize);
       copySetting(config, root, DEBUGMODE_PATH, ProjectOption::DebugMode);
+
+      copySetting(config, root, FILE_PROLOG, ProjectOption::Prolog, true);
+      copySetting(config, root, FILE_EPILOG, ProjectOption::Epilog, true);
    }
 }
 

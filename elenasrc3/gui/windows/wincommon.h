@@ -36,8 +36,9 @@ namespace elena_lang
    struct ExtNMHDR
    {
       NMHDR nmhrd;
-      int   extParam;
+      int   extParam1;
       int   extParam2;
+      int   extParam3;
    };
 
    // --- Color ---
@@ -116,6 +117,7 @@ namespace elena_lang
 
       virtual void onDrawItem(DRAWITEMSTRUCT* item) {}
       virtual void onSelChanged() {}
+      virtual void onDoubleClick(NMHDR* hdr) {}
 
       virtual HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner);
 
@@ -173,7 +175,7 @@ namespace elena_lang
    public:
       int run(GUIControlBase* mainWindow, bool maximized) override;
 
-      void notifyMessage(int messageCode, int arg = 0) override;
+      void notifyMessage(int messageCode, int arg1 = 0, int arg2 = 0) override;
       void notifyModelChange(int modelCode, int arg) override;
 
       WindowApp(HINSTANCE instance, wstr_t accelerators)

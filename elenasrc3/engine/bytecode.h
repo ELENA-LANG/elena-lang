@@ -31,6 +31,11 @@ namespace elena_lang
       Unhook         = 0x0B,
       LoadV          = 0x0C,
       XCmp           = 0x0D,
+      BLoad          = 0x0E,
+      WLoad          = 0x0F,
+
+      Exclude        = 0x10,
+      Include        = 0x11,
 
       MaxSingleOp    = 0x7F,
 
@@ -65,6 +70,7 @@ namespace elena_lang
       StoreSI        = 0xA3,
       XFlushSI       = 0xA4,
       GetI           = 0xA5,
+      AssignI        = 0xA6,
       PeekFI         = 0xA8,
       PeekSI         = 0xA9,
 

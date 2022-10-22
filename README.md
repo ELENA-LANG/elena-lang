@@ -57,15 +57,15 @@ You have to add a path to _BIN_ folder to the system environment *PATH* or copy 
 
 To build the compiler under VS2019 you have to go to the root folder and type:
 
-    recompile19.bat
+    recompile60.bat
 
 To build the ELENA libraries type the following command:
 
-    rebuild_lib.bat
+    rebuild_lib60.bat
     
 To build ELENA samples type the following command:
 
-    rebuild_examples.bat 
+    rebuild_examples60.bat 
     
 To build ELENA Rosetta-code samples type the following command:
 
@@ -88,14 +88,14 @@ The ELENA source code is organized as follows:
     dat\sg              language grammar file            
     dat\og              language optimization rules
     doc                 some documentations
-    elenasrc2\elc       source for the compiler
-    elenasrc2\elenart   source for the run-time shared library
-    elenasrc2\elenasm   source for the script engine
-    elenasrc2\elenavm   source for the virtual machine
-    elenasrc2\gui       source for IDE
-    elenasrc2\tools     source for ELENA utilities
-    examples            ELENA examples
-    src50               source for ELENA libraries
+    elenasrc3\elc       source for the compiler
+    elenasrc3\elenart   source for the run-time shared library
+    elenasrc3\elenasm   source for the script engine
+    elenasrc3\elenavm   source for the virtual machine
+    elenasrc3\gui       source for IDE
+    elenasrc3\tools     source for ELENA utilities
+    examples60          ELENA examples
+    src60               source for ELENA libraries
 
 ## Community
 We want your contributions and suggestions! One of the easiest ways to contribute is to participate in Github discussions or on Discord.

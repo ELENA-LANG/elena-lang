@@ -154,6 +154,10 @@ namespace elena_lang
       {
          return test(type, X86OperandType::R8);
       }
+      bool isM8() const
+      {
+         return test(type, X86OperandType::M8);
+      }
       bool isR8_M8() const
       {
          return test(type, X86OperandType::R8) || test(type, X86OperandType::M8);
@@ -206,6 +210,10 @@ namespace elena_lang
       bool isDB_DD() const
       {
          return type == X86OperandType::DD || type == X86OperandType::DB;
+      }
+      bool isDB() const
+      {
+         return type == X86OperandType::DB;
       }
       bool isDB_DD_DQ() const
       {

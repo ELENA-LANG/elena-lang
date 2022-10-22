@@ -33,7 +33,13 @@ namespace elena_lang
          ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
             List<SyntaxNode>& parameters, bool declarationMode) override;
 
+         bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
+            List<SyntaxNode>& parameters) override;
+
          bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+            SyntaxNode target, List<SyntaxNode>& parameters) override;
+
+         bool importPropertyTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
             SyntaxNode target, List<SyntaxNode>& parameters) override;
 
          bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
@@ -41,6 +47,8 @@ namespace elena_lang
 
          TemplateGenerator(CompilingProcess* process);
       };
+
+      path_t              _prologName, _epilogName;
 
       PresenterBase*      _presenter;
       ErrorProcessor*     _errorProcessor;
@@ -59,14 +67,18 @@ namespace elena_lang
 
       void compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target);
       void generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode);
+      void parseFileTemlate(ustr_t prolog, path_t name,
+         SyntaxWriterBase* syntaxWriter);
       void parseFile(path_t projectPath,
          FileIteratorBase& file_it, 
          SyntaxWriterBase* syntaxWriter);
       void parseModule(path_t projectPath,
-         ModuleIteratorBase& module_it, 
+         ustr_t fileProlog, ustr_t fileEpilog,
+         ModuleIteratorBase& module_it,
          SyntaxTreeBuilder& builder, 
          ModuleScopeBase& moduleScope);
       void buildModule(path_t projectPath,
+         ustr_t fileProlog, ustr_t fileEpilog,
          ModuleIteratorBase& module_it, 
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,
@@ -95,7 +107,8 @@ namespace elena_lang
          int minimalArgList);
       int clean(ProjectBase& project);
 
-      CompilingProcess(PathString& appPath, PresenterBase* presenter, ErrorProcessor* errorProcessor,
+      CompilingProcess(PathString& appPath, path_t prologName, path_t epilogName,
+         PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,
          JITSettings defaultCoreSettings,
          JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType));

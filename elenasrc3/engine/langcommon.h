@@ -73,6 +73,7 @@ namespace elena_lang
    constexpr auto errIllegalPrivate          = 166;
    constexpr auto errDupPublicMethod         = 167;
    constexpr auto errEmptyStructure          = 169;
+   constexpr auto errInvalidType             = 172;
    constexpr auto errDupInternalMethod       = 173;
    constexpr auto errInvalidConstAttr        = 174;
    constexpr auto errIllegalConstructorAbstract = 177;
@@ -159,6 +160,7 @@ namespace elena_lang
    constexpr auto V_EMBEDDABLE            = 0x80002002u;
    constexpr auto V_WRAPPER               = 0x80002003u;
    constexpr auto V_MULTIRET              = 0x8000200Au;
+   constexpr auto V_VARIADIC              = 0x8000200Bu;
 
    /// scope:
    constexpr auto V_CLASS                 = 0x80001001u;
@@ -170,6 +172,7 @@ namespace elena_lang
    constexpr auto V_LIMITED               = 0x80001007u;
    constexpr auto V_METHOD                = 0x80001008u;
    constexpr auto V_FIELD                 = 0x80001009u;
+   constexpr auto V_NONESTRUCT            = 0x8000100Au;
    constexpr auto V_FUNCTION              = 0x8000100Cu;     // a closure attribute
    constexpr auto V_VARIABLE              = 0x8000100Du;
    constexpr auto V_MEMBER                = 0x8000100Eu;
@@ -183,8 +186,10 @@ namespace elena_lang
    constexpr auto V_IMPORT                = 0x80001018u;
    constexpr auto V_AUTO                  = 0x8000101Cu;
    constexpr auto V_NAMESPACE             = 0x80001021u;
+   constexpr auto V_SUPERIOR              = 0x80001024u;
    constexpr auto V_INLINE                = 0x80001025u;
    constexpr auto V_PROBEMODE             = 0x80001026u;
+   constexpr auto V_TEMPLATE              = 0x80001027u;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;
@@ -217,6 +222,7 @@ namespace elena_lang
    constexpr auto V_CLOSURE               = 0x80000013u;
    constexpr auto V_DECLARATION           = 0x80000014u;
    constexpr auto V_DECLATTRIBUTES        = 0x80000015u;
+   constexpr auto V_ARGARRAY              = 0x80000016u;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;

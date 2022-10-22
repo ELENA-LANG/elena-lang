@@ -1,22 +1,8 @@
-import system;
-
-singleton ByRefProber
-{
-//   set(ref int retVal)
-//   {
-//      retVal := 123;
-//   }
-
-   set(ref string retVal)
-   {
-      retVal := "hello";
-   }
-}
 
 public program() 
 {
-   string s := "none";
-   ByRefProber.set(ref s);
-
-   console.writeLine(s == "hello");
+    console.write("shortTests");
+    short w := 1234;
+    Assert.ifTrue(w == 1234);
+    console.writeLine(".");
 }

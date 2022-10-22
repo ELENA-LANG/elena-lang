@@ -23,7 +23,8 @@ namespace elena_lang
       {
          Unknown = 0,
          InlineTemplate,
-         ClassTemplate
+         ClassTemplate,
+         PropertyTemplate,
       };
 
       struct Scope
@@ -36,7 +37,11 @@ namespace elena_lang
 
          bool withTypeParameters() const
          {
-            return type == ScopeType::ClassTemplate;
+            return type == ScopeType::ClassTemplate || type == ScopeType::PropertyTemplate;
+         }
+         bool withNameParameters() const
+         {
+            return type == ScopeType::PropertyTemplate;
          }
 
          bool isParameter(SyntaxNode node, SyntaxKey& parameterKey, ref_t& parameterIndex)
@@ -53,6 +58,21 @@ namespace elena_lang
                   index = parameters.get(node.identifier());
                   if (index) {
                      parameterKey = SyntaxKey::TemplateParameter;
+                     parameterIndex = index;
+                     return true;
+                  }
+                  return false;
+               }
+               case ScopeType::PropertyTemplate:
+               {
+                  ref_t index = arguments.get(node.identifier());
+                  if (index == 1) {
+                     parameterKey = SyntaxKey::NameParameter;
+                     parameterIndex = index;
+                     return true;
+                  }
+                  else if (index > 1) {
+                     parameterKey = SyntaxKey::TemplateArgParameter;
                      parameterIndex = index;
                      return true;
                   }
@@ -81,6 +101,8 @@ namespace elena_lang
 
       ModuleScopeBase*        _moduleScope;
       TemplateProssesorBase*  _templateProcessor;
+
+      ScopeType defineTemplateType(SyntaxNode node);
 
       ref_t mapAttribute(SyntaxNode node, bool allowType, ref_t& previusCategory);
 
@@ -121,7 +143,7 @@ namespace elena_lang
       void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
          bool allowType);
       void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool ignorePostfix);
       void flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
       void flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool withNameNode = true, 
@@ -173,7 +195,8 @@ namespace elena_lang
          None = 0,
          Inline,
          CodeTemplate,
-         Class
+         Class,
+         InlineProperty
       };
 
       typedef Map<ref_t, SyntaxNode> NodeMap;
@@ -210,6 +233,7 @@ namespace elena_lang
       void copyChildren(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyMethod(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyClassMembers(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
 
       void copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode rootNode, TemplateScope& scope);
 
@@ -222,7 +246,9 @@ namespace elena_lang
          List<SyntaxNode>* arguments, List<SyntaxNode>* parameters);
 
    public:
+      void importTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
       void importInlineTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
+      void importInlinePropertyTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
       void importCodeTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
 

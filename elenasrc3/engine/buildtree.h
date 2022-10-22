@@ -57,7 +57,7 @@ namespace elena_lang
       DispatchingOp        = 0x001C,
       IntOp                = 0x001D,
       ByteArraySOp         = 0x001E,
-      AccCopying           = 0x001F,
+      CopyingToAcc         = 0x001F,
       Argument             = 0x0020,
       BranchOp             = 0x0021,
       DirectResendOp       = 0x0022,
@@ -87,6 +87,7 @@ namespace elena_lang
       AccFieldCopyingTo    = 0x003A,
       LocalReference       = 0x003B,
       RefParamAssigning    = 0x003C,
+      StaticVar            = 0x003D,
 
       Import               = 0x0048,
       DictionaryOp         = 0x0049,
@@ -97,6 +98,7 @@ namespace elena_lang
       DeclDictionaryOp     = 0x004E,
       LoopOp               = 0x004F,
       CatchOp              = 0x0050,
+      ExternOp             = 0x0051,
 
       NestedClass          = 0x0080,
 

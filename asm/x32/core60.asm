@@ -6,7 +6,7 @@ define VEH_HANDLER          10003h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE   	    20003h
-define CORE_ET_TABLE        2000Bh
+define CORE_THREAD_TABLE    2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
@@ -38,6 +38,7 @@ define gc_end                0024h
 define gc_mg_wbar            0028h
 
 define et_current            0004h
+define tt_stack_frame        0008h
 
 define es_prev_struct        0000h
 define es_catch_addr         0004h
@@ -47,6 +48,7 @@ define es_catch_frame        000Ch
 // ; --- Page Size ----
 define page_mask        0FFFFFFF0h
 define page_ceil               17h
+define page_size_order          4h
 define struct_mask_inv     7FFFFFh
 define struct_mask         800000h
 
@@ -58,10 +60,11 @@ structure % CORE_TOC
 
 end
 
-structure % CORE_ET_TABLE
+structure % CORE_THREAD_TABLE
 
   dd 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
   dd 0 // ; et_current             ; +x04   - pointer to the current exception struct
+  dd 0 // ; tt_stack_frame         ; +x08   - pointer to the stack frame
 
 end
  
@@ -86,7 +89,7 @@ structure %SYSTEM_ENV
 
   dd 0
   dd data : %CORE_GC_TABLE
-  dd data : %CORE_ET_TABLE
+  dd data : %CORE_THREAD_TABLE
   dd code : %INVOKER
   dd code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -125,7 +128,71 @@ inline % GC_ALLOC
   ret
 
 labYGCollect:
-  xor  ebx, ebx  // !! temporal stub
+  // ; save registers
+  sub  ecx, eax
+  push ebp
+
+  // ; lock frame
+  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], esp
+
+  push ecx
+  
+  // ; create set of roots
+  mov  ebp, esp
+  xor  ecx, ecx
+  push ecx        // ; reserve place 
+  push ecx
+  push ecx
+
+  // ;   save static roots
+  mov  ecx, [rdata : %SYSTEM_ENV]
+  mov  esi, stat : %0
+  shl  ecx, 2
+  push esi
+  push ecx
+
+  // ;   collect frames
+  mov  eax, [data : %CORE_THREAD_TABLE + tt_stack_frame]  
+  mov  ecx, eax
+
+labYGNextFrame:
+  mov  esi, eax
+  mov  eax, [esi]
+  test eax, eax
+  jnz  short labYGNextFrame
+  
+  push ecx
+  sub  ecx, esi
+  neg  ecx
+  push ecx  
+  
+  mov  eax, [esi + 4]
+  test eax, eax
+  mov  ecx, eax
+  jnz  short labYGNextFrame
+
+  mov [ebp-4], esp      // ; save position for roots
+
+  mov  ebx, [ebp]
+  mov  eax, esp
+
+  // ; restore frame to correctly display a call stack
+  mov  edx, ebp
+  mov  ebp, [edx+4]
+
+  // ; call GC routine
+  push edx
+  push ebx
+  push eax
+  call extern "$rt.CollectGCLA"
+
+  mov  ebp, [esp+8] 
+  add  esp, 12
+  mov  ebx, eax
+
+  mov  esp, ebp 
+  pop  ecx 
+  pop  ebp
   ret
 
 end
@@ -211,7 +278,7 @@ end
 // ; throw
 inline %0Ah
 
-  mov  eax, [data : %CORE_ET_TABLE + et_current]
+  mov  eax, [data : %CORE_THREAD_TABLE + et_current]
   jmp  [eax + es_catch_addr]
 
 end
@@ -219,13 +286,13 @@ end
 // ; unhook
 inline %0Bh
 
-  mov  edi, [data : %CORE_ET_TABLE + et_current]
+  mov  edi, [data : %CORE_THREAD_TABLE + et_current]
 
   mov  eax, [edi + es_prev_struct]
   mov  ebp, [edi + es_catch_frame]
   mov  esp, [edi + es_catch_level]
 
-  mov  [data : %CORE_ET_TABLE + et_current], eax
+  mov  [data : %CORE_THREAD_TABLE + et_current], eax
 
 end
 
@@ -244,6 +311,38 @@ inline % 0Dh
 
   mov  ecx, [ebx]
   cmp  edx, ecx 
+
+end
+
+// ; bload
+inline %0Eh
+
+  mov  edx, dword ptr [ebx]
+  and  edx, 0FFh 
+
+end
+
+// ; wload
+inline %0Fh
+
+  mov  eax, dword ptr [ebx]
+  cwde
+  mov  edx, eax
+
+end
+
+// ; exclude
+inline % 10h
+                                                       
+  push ebp     
+  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], esp
+
+end
+
+// ; include
+inline % 11h
+
+  add  esp, 4                                                       
 
 end
 
@@ -606,10 +705,23 @@ inline %1A4h
 
 end 
 
-// ; xassigni
+// ; geti
 inline %0A5h
 
   mov  ebx, [ebx + __arg32_1]
+
+end
+
+// ; assigni
+inline %0A6h
+
+  mov  eax, ebx
+  mov  [ebx + __arg32_1], esi
+  // calculate write-barrier address
+  sub  eax, [data : %CORE_GC_TABLE + gc_start]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_header]
+  shr  eax, page_size_order
+  mov  byte ptr [eax + ecx], 1  	
 
 end
 
@@ -1082,14 +1194,14 @@ end
 inline %0E6h
 
   lea  edi, [ebp + __arg32_1]
-  mov  eax, [data : %CORE_ET_TABLE + et_current]
+  mov  eax, [data : %CORE_THREAD_TABLE + et_current]
 
   mov  [edi + es_prev_struct], eax
   mov  [edi + es_catch_frame], ebp
   mov  [edi + es_catch_level], esp
   mov  [edi + es_catch_addr], __ptr32_2
 
-  mov  [data : %CORE_ET_TABLE + et_current], edi
+  mov  [data : %CORE_THREAD_TABLE + et_current], edi
 
 end
 

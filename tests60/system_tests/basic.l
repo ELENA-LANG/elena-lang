@@ -1,5 +1,66 @@
-import system;
 import extensions;
+
+// --- gcTests ---
+
+gcTests()
+{
+   console.write("gcTests");
+   for (int i := 0, i < 100000, i := i + 1)
+   {
+      new IntNumber();
+   };
+   console.writeLine(".");
+}
+
+// --- shortTests ---
+
+shortTests()
+{
+    console.write("shortTests");
+    short w := 1234;
+    Assert.ifTrue(w == 1234);
+    console.writeLine(".");
+}
+
+// --- conversionTests ---
+
+conversionTests()
+{
+    console.write("conversionTests");
+    int n := 1234;
+    short w := n;
+    Assert.ifTrue(w == 1234);
+    console.writeLine(".");
+}
+
+// --- assignTests ---
+
+AssignTestClass
+{
+   field x;
+   field y;
+
+   constructor(x, y)
+   {
+      this x := x;
+      this y := y;
+   }
+
+   test(x, y)
+   {
+      Assert.ifTrue(this x == x);
+      Assert.ifTrue(this y == y);
+   }
+}
+
+assignTests()
+{
+   console.write("assignTests");
+   var o := new AssignTestClass(2,"test");
+   o.test(2,"test");
+
+   console.writeLine(".");
+}
 
 // --- boxingTests ---
 

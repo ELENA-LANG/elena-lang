@@ -324,6 +324,9 @@ public const struct ShortNumber : IntBaseNumber
 
    int cast()
       = intConvertor.convert(self);
+
+   string toPrintable()
+      = stringConvertor.convert(self, 10);
 }
 
 // --- IntNumber ---

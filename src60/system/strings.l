@@ -5,6 +5,13 @@ public sealed Array<T> //: Indexable<T>
     embeddable __string T[] theArray;
 }
 
+// --- Variadic Array template ---
+
+public sealed nonstructural VariadicArray<T> //: Indexable<T>
+{
+    embeddable __string T[] theArray;
+}
+
 // --- String ---
 
 public const struct String //: BaseValue

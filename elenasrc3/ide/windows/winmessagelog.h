@@ -15,12 +15,26 @@ namespace elena_lang
    // --- MessageLog ---
    class MessageLog : public ListView, public ErrorLogBase
    {
+      typedef Map<int, MessageLogInfo> MessageList;
+      typedef List<path_t, freepath>   Paths;
+
+      MessageList   _list;
+      Paths         _paths;
+      NotifierBase* _notifier;
+      int           _highlightCode;
+
    public:
       HWND createControl(HINSTANCE instance, ControlBase* owner) override;
 
       void addMessage(text_str message, text_str file, text_str row, text_str col) override;
 
-      MessageLog();
+      MessageLogInfo getMessage(int index) override;
+
+      void clearMessages() override;
+
+      void onItemDblClick(int index) override;
+
+      MessageLog(NotifierBase* notifier, int highlightCode);
    };
 }
 

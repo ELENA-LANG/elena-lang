@@ -185,6 +185,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\elenamachine.cpp" />
+    <ClCompile Include="..\..\engine\gcroutines.cpp" />
     <ClCompile Include="..\..\engine\windows\winroutines.cpp" />
     <ClCompile Include="..\..\engine\x86\x86routines.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>

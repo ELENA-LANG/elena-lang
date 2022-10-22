@@ -23,11 +23,16 @@ procedure % INVOKER
   stp     x27, x28, [sp, #-16]! 
   stp     x29, x30, [sp, #-16]! 
 
+  mov     x3, 0
+  stp     x3, x3, [sp, #-16]! 
+  mov     x29, sp
+
   mov     x8, x0
   mov     x0, x1
 
   blr     x8
 
+  add     sp, sp, #16
   ldp     x29, x30, [sp], #16 
   ldp     x27, x28, [sp], #16 
   ldp     x25, x26, [sp], #16 

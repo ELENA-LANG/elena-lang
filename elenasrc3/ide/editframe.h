@@ -17,10 +17,14 @@ namespace elena_lang
    {
    protected:
       int traceRow;
+      int errorRow;
 
    public:
       void setTraceLine(int row, bool withCursor);
       void clearTraceLine();
+
+      void setErrorLine(int row, int column, bool withCursor);
+      void clearErrorLine();
 
       SourceViewModel();
    };

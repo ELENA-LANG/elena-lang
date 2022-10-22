@@ -87,6 +87,34 @@ CompilingProcess::TemplateGenerator :: TemplateGenerator(CompilingProcess* proce
 {
 }
 
+bool CompilingProcess::TemplateGenerator :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+   SyntaxNode target, List<SyntaxNode>& parameters)
+{
+   auto sectionInfo = moduleScope.getSection(
+      moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
+
+   if (!sectionInfo.section)
+      return false;
+
+   _processor.importTemplate(sectionInfo.section, target, parameters);
+
+   return true;
+}
+
+bool CompilingProcess::TemplateGenerator :: importPropertyTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
+   SyntaxNode target, List<SyntaxNode>& parameters)
+{
+   auto sectionInfo = moduleScope.getSection(
+      moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
+
+   if (!sectionInfo.section)
+      return false;
+
+   _processor.importInlinePropertyTemplate(sectionInfo.section, target, parameters);
+
+   return true;
+}
+
 bool CompilingProcess::TemplateGenerator :: importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
    SyntaxNode target, List<SyntaxNode>& parameters)
 {
@@ -186,13 +214,17 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
 
 // --- CompilingProcess ---
 
-CompilingProcess :: CompilingProcess(PathString& appPath, PresenterBase* presenter, ErrorProcessor* errorProcessor,
+CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, path_t epilogName,
+   PresenterBase* presenter, ErrorProcessor* errorProcessor,
    pos_t codeAlignment,
    JITSettings defaultCoreSettings,
    JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType)
 ) :
    _templateGenerator(this)
 {
+   _prologName = prologName;
+   _epilogName = epilogName;
+
    _presenter = presenter;
    _errorProcessor = errorProcessor;
    _jitCompilerFactory = compilerFactory;
@@ -224,6 +256,26 @@ CompilingProcess :: CompilingProcess(PathString& appPath, PresenterBase* present
       _parser = nullptr;
       _compiler = nullptr;
    }
+}
+
+void CompilingProcess :: parseFileTemlate(ustr_t prolog, path_t name,
+   SyntaxWriterBase* syntaxWriter)
+{
+   if (!prolog)
+      return;
+
+   StringTextReader<char> reader(prolog);
+   try
+   {
+      _parser->parse(&reader, syntaxWriter);
+   }
+   catch (ParserError& e)
+   {
+      e.path = name;
+
+      throw e;
+   }
+
 }
 
 void CompilingProcess :: parseFile(path_t projectPath,
@@ -260,6 +312,7 @@ void CompilingProcess :: parseFile(path_t projectPath,
 }
 
 void CompilingProcess :: parseModule(path_t projectPath,
+   ustr_t fileProlog, ustr_t fileEpilog,
    ModuleIteratorBase& module_it, 
    SyntaxTreeBuilder& builder, 
    ModuleScopeBase& moduleScope)
@@ -269,7 +322,9 @@ void CompilingProcess :: parseModule(path_t projectPath,
       builder.newNode(SyntaxTree::toParseKey(SyntaxKey::Namespace));
 
       // generating syntax tree
+      parseFileTemlate(fileProlog, _prologName, &builder); // !! temporal explicit prolog
       parseFile(projectPath, file_it, &builder);
+      parseFileTemlate(fileEpilog, _epilogName, &builder);
 
       builder.closeNode();
 
@@ -286,7 +341,7 @@ void CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree&
 void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode)
 {
    ByteCodeWriter bcWriter(&_libraryProvider);
-   bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList);
+   bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList, moduleScope.tapeOptMode);
 
    if (savingMode) {
       _libraryProvider.saveModule(moduleScope.module);
@@ -305,6 +360,7 @@ void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTre
 }
 
 void CompilingProcess :: buildModule(path_t projectPath,
+   ustr_t fileProlog, ustr_t fileEpilog,
    ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
    pos_t stackAlingment,
@@ -324,7 +380,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
 
    SyntaxTreeBuilder builder(syntaxTree, _errorProcessor, 
       &moduleScope, &_templateGenerator);
-   parseModule(projectPath, module_it, builder, moduleScope);
+   parseModule(projectPath, fileProlog, fileEpilog, module_it, builder, moduleScope);
 
    _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
 
@@ -370,6 +426,9 @@ void CompilingProcess :: configurate(ProjectBase& project)
    _libraryProvider.setOutputPath(project.PathSetting(ProjectOption::OutputPath));
    _libraryProvider.setNamespace(project.Namespace());
    _libraryProvider.addPackage(project.Namespace(), project.PathSetting(ProjectOption::OutputPath));
+
+   int optMode = project.IntSetting(ProjectOption::OptimizationMode, optMiddle);
+   _compiler->setOptimizationMode(optMode);
 }
 
 void CompilingProcess :: compile(ProjectBase& project,
@@ -388,7 +447,9 @@ void CompilingProcess :: compile(ProjectBase& project,
    while (!module_it->eof()) {
       buildModule(
          project.PathSetting(ProjectOption::ProjectPath),
-         *module_it, &syntaxTree, &project,         
+         project.StringSetting(ProjectOption::Prolog),
+         project.StringSetting(ProjectOption::Epilog),
+         *module_it, &syntaxTree, &project,
          project.IntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
          project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
          project.IntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),

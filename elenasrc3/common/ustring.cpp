@@ -400,6 +400,33 @@ int StrConvertor :: toInt(const char* s, int radix)
    return strtol(s, nullptr, radix);
 }
 
+int StrConvertor :: toInt(const wide_c* s, int radix)
+{
+   int n = 0;
+   bool neg = false;
+
+   //!! temporal
+   if (*s == '-') {
+      s++;
+      neg = true;
+   }
+   while (*s) {
+      n *= 10;
+
+      unsigned short c = *s;
+      if (c >= '0' && c <= '9') {
+         n += (c - '0');
+
+         s++;
+      }
+      else return 0;
+   }
+   if (neg)
+      n *= -1;
+
+   return n;
+}
+
 unsigned int StrConvertor :: toUInt(const char* s, int radix)
 {
    return strtoul(s, nullptr, radix);

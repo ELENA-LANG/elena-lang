@@ -30,6 +30,13 @@ public while<expr>(loopBody) : __included<statementTemplates>
    $rep cast bool(expr) ? { loopBody }
 }
 
+// --- until ---
+
+public until<expr>(loopBody) : __included<statementTemplates>
+{
+   $rep cast bool(expr) ! { loopBody }
+}
+
 // --- for ---
 
 public for<initExpr,condExpr,stepExpr>(loopBody) : __included<statementTemplates>
@@ -44,4 +51,11 @@ public for<initExpr,condExpr,stepExpr>(loopBody) : __included<statementTemplates
 public try:catch(try_block,catch_block) : __included<statementTemplates>
 {
    try_block \\ on(catch_block);
+}
+
+// --- extern ---
+
+public template extern(body) : __included<statementTemplates>
+{
+   $ext body
 }

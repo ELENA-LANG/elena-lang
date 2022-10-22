@@ -28,6 +28,7 @@ namespace elena_lang
    constexpr auto STATIC_MESSAGE          = 0x100u;
    constexpr auto FUNCTION_MESSAGE        = 0x020u;         // indicates it is an invoke message (without target variable in the call stack)
    constexpr auto CONVERSION_MESSAGE      = 0x040u;
+   constexpr auto VARIADIC_MESSAGE        = 0x080u;
    constexpr auto PROPERTY_MESSAGE        = 0x0C0u;
    constexpr auto PREFIX_MESSAGE_MASK     = 0x0C0u;         // HOTFIX : is used to correctly identify VARIADIC_MESSAGE or PROPERTY_MESSAGE
 
@@ -85,13 +86,16 @@ namespace elena_lang
    constexpr auto TRUE_FORWARD            = "$true";           // the true boolean value
    constexpr auto FALSE_FORWARD           = "$false";          // the false boolean value
    constexpr auto WRAPPER_FORWARD         = "$ref";            // the wrapper template
-   constexpr auto ARRAY_FORWARD           = "$array";          // the array template 
+   constexpr auto ARRAY_FORWARD           = "$array";          // the array template
+   constexpr auto VARIADIC_ARRAY_FORWARD  = "$varray";         // the array template 
    constexpr auto MESSAGE_FORWARD         = "$message";        // the message class
-   constexpr auto CLOSURE_FORWARD         = "$closure";        // the message class
+   constexpr auto CLOSURE_FORWARD         = "$closure";        // the closure template class
+   constexpr auto DWORD_FORWARD           = "$dword";          // the dword wrapper
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX             = "meta$";
    constexpr auto INLINE_PREFIX           = "inline$";
+   constexpr auto INLINE_PROPERTY_PREFIX  = "prop$";
 
    // --- ELENA class prefixes / postfixes ---
    constexpr auto PRIVATE_PREFIX_NS       = "'$private'";
@@ -99,6 +103,7 @@ namespace elena_lang
 
    constexpr auto CLASSCLASS_POSTFIX      = "#class";
    constexpr auto CONST_POSTFIX           = "#const";
+   constexpr auto STATICFIELD_POSTFIX     = "#static";
 
    // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";
@@ -141,6 +146,7 @@ namespace elena_lang
    constexpr ref_t elDynamicRole          = 0x00008000;
    constexpr ref_t elExtension            = 0x0000110C;
    constexpr ref_t elMessage              = 0x00200000;
+   constexpr ref_t elWithVariadics        = 0x00400000;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -251,10 +257,10 @@ namespace elena_lang
    constexpr ref_t mskStaticVariable      = 0x19000000u;
    constexpr ref_t mskNameLiteralRef      = 0x1A000000u;
    constexpr ref_t mskPathLiteralRef      = 0x1B000000u;
-   constexpr ref_t mskMssgLiteralRef      = 0x1B000000u;
-   constexpr ref_t mskLabelRef            = 0x1C000000u;
-   constexpr ref_t mskWideLiteralRef      = 0x1D000000u;   // reference to wide literal constant
-
+   constexpr ref_t mskMssgLiteralRef      = 0x1C000000u;
+   constexpr ref_t mskLabelRef            = 0x1D000000u;
+   constexpr ref_t mskWideLiteralRef      = 0x1E000000u;   // reference to wide literal constant
+   constexpr ref_t mskStringMapRef        = 0x1F000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

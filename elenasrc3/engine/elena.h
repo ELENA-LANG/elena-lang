@@ -102,6 +102,11 @@ namespace elena_lang
       return encodeMessage(actionRef, newArgCount, flags);
    }
 
+   inline bool isOpenArg(mssg_t message)
+   {
+      return (message & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+   }
+
    // --- Misc types ---
    typedef unsigned int          parse_key_t;
    typedef Pair<ref_t, mssg_t>   ExtensionInfo;

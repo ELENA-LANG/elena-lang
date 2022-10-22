@@ -193,6 +193,20 @@ void PPC64Assembler :: readIOperand(ScriptToken& tokenInfo, int& value, ref_t& r
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
       value = readIntArg(tokenInfo);
    }
+   else if (tokenInfo.compare("import_disp32hi")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      readPtrOperand(tokenInfo, value, reference, mskImportDisp32Hi, errorMessage);
+
+      read(tokenInfo);
+   }
+   else if (tokenInfo.compare("import_disp32lo")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      readPtrOperand(tokenInfo, value, reference, mskImportDisp32Lo, errorMessage);
+
+      read(tokenInfo);
+   }
    else if (tokenInfo.compare("rdata")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
@@ -292,6 +306,10 @@ void PPC64Assembler :: readPtrOperand(ScriptToken& tokenInfo, int& value, ref_t&
       }
       else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
    }
+   else if (tokenInfo.state == dfaQuote) {
+      value = 0;
+      reference = _target->mapReference(*tokenInfo.token) | mask;
+   }
    else if (tokenInfo.compare(PTR64_ARGUMENT2)) {
       reference = PTR64_2 | mask;
       value = 0;
@@ -347,6 +365,10 @@ void PPC64Assembler :: writeDReference(ScriptToken& tokenInfo, ref_t reference, 
             case mskCodeDisp32Lo:
             case mskDataDisp32Hi:
             case mskDataDisp32Lo:
+            case mskImportRef32Hi:
+            case mskImportRef32Lo:
+            case mskImportDisp32Hi:
+            case mskImportDisp32Lo:
                writer.Memory()->addReference(reference, writer.position() - 4);
                break;
             default:
@@ -975,6 +997,25 @@ void PPC64Assembler :: compileLHZ(ScriptToken& tokenInfo, MemoryWriter& writer)
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void PPC64Assembler :: compileLHA(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rs = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   int d = 0;
+   ref_t reference = 0;
+   PPCOperand ra = readDispOperand(tokenInfo, d, reference, ASM_INVALID_TARGET);
+
+   if (rs.isGPR() && ra.isGPR()) {
+      writer.writeDWord(PPCHelper::makeDCommand(42, rs.type, ra.type, d));
+
+      if (reference)
+         writeDReference(tokenInfo, reference, writer, ASM_INVALID_DESTINATION);
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void PPC64Assembler :: compileLWZ(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand rs = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -1293,6 +1334,20 @@ void PPC64Assembler :: compileSTDU(ScriptToken& tokenInfo, MemoryWriter& writer)
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void PPC64Assembler :: compileNEG(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rt = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand ra = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (rt.isGPR() && ra.isGPR()) {
+      writer.writeDWord(PPCHelper::makeXOCommand(31, rt.type, ra.type, PPCOperandType::None, 0, 104, 0));
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void PPC64Assembler :: compileSUB(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -1529,6 +1584,9 @@ bool PPC64Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    else if (tokenInfo.compare("lhz")) {
       compileLHZ(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("lha")) {
+      compileLHA(tokenInfo, writer);
+   }
    else if (tokenInfo.compare("lwz")) {
       compileLWZ(tokenInfo, writer);
    }
@@ -1573,7 +1631,12 @@ bool PPC64Assembler :: compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
 
 bool PPC64Assembler::compileNOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   return false;
+   if (tokenInfo.compare("neg")) {
+      compileNEG(tokenInfo, writer);
+   }
+   else return false;
+
+   return true;
 }
 
 bool PPC64Assembler::compileOOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)

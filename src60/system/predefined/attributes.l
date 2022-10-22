@@ -20,6 +20,7 @@
 #let attributesSymbols["embeddable"]  := 80002002h;
 #let attributesSymbols["ref"]         := 80002003h;
 #let attributesSymbols["multiret"]    := 8000200Ah;
+#let attributesSymbols["params"]      := 8000200Bh;
                                                  
 /// scope:
 #let attributesSymbols["class"]       := 80001001h;
@@ -31,6 +32,7 @@
 #let attributesSymbols["interface"]   := 80001007h;
 #let attributesSymbols["method"]      := 80001008h;
 #let attributesSymbols["field"]       := 80001009h;
+#let attributesSymbols["nonstructural"] := 8000100Ah;
 #let attributesSymbols["function"]    := 8000100Ch;
 #let attributesSymbols["var"]         := 8000100Dh;
 #let attributesSymbols["this"]        := 8000100Eh;
@@ -43,8 +45,10 @@
 #let attributesSymbols["forward"]     := 80001017h;
 #let attributesSymbols["import"]      := 80001018h;
 #let attributesSymbols["namespace"]   := 80001021h;
+#let attributesSymbols["super"]       := 80001024h;
 #let attributesSymbols["inline"]      := 80001025h;
 #let attributesSymbols["__probe"]     := 80001026h;
+#let attributesSymbols["template"]    := 80001027h;
 
 /// primitive types
 #let attributesSymbols["__string"]    := 80000801h;
