@@ -31,7 +31,11 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
    if (machine != nullptr)
       init();
 
+   printf("InitExceptionHandling.1\n");
+
    __routineProvider.InitExceptionHandling(env, criricalHandler);
+
+   printf("startSTA.1\n");
 
    machine->startSTA(env, entryList);
 }
