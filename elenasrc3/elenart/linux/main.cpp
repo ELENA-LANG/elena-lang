@@ -25,24 +25,20 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
 {
    systemEnv = env;
 
-   printf("InitializeSTA.4 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
+   printf("InitializeSTA.5 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
    fflush(stdout);
 
    if (machine != nullptr)
       init();
 
-   printf("InitExceptionHandling.1\n");
-
    __routineProvider.InitExceptionHandling(env, criricalHandler);
-
-   printf("startSTA.1\n");
 
    machine->startSTA(env, entryList);
 }
 
 void* CollectGCLA(void* roots, size_t size)
 {
-   printf("CollectGCLA %llx %llx\n", (long long)roots, size);
+   //printf("CollectGCLA %llx %llx\n", (long long)roots, size);
 
    return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size);
 }

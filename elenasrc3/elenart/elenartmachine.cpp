@@ -19,12 +19,8 @@ void ELENARTMachine :: Exit(int exitCode)
 
 void ELENARTMachine :: startSTA(SystemEnv* env, SymbolList* entryList)
 {
-   printf("startSTA.1\n");
-
    // setting up system
    __routineProvider.InitSTA(env);
-
-   printf("startSTA.2\n");
 
    Entry entry;
    entry.address = env->bc_invoker;
@@ -34,8 +30,6 @@ void ELENARTMachine :: startSTA(SystemEnv* env, SymbolList* entryList)
    for (size_t i = 0; i < entryList->length; i += sizeof(intptr_t)) {
       try
       {
-         printf("startSTA.3\n");
-
          retVal = entry.evaluate(entryList->entries[i].address, 0);
       }
       catch (InternalError&)
