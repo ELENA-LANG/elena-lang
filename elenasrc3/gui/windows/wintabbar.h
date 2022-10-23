@@ -61,7 +61,10 @@ namespace elena_lang
    // --- TabBar ---
    class TabBar : public CustomTabBar
    {
+      ControlBase*       _current;
       List<ControlBase*> _pages;
+
+      void resizeTab(Rectangle* clientRect, ControlBase* control);
 
    public:
       HWND createControl(HINSTANCE instance, ControlBase* owner);
@@ -69,7 +72,7 @@ namespace elena_lang
       void addTabChild(const wchar_t* name, ControlBase* window);
       void removeTabChild(ControlBase* window);
 
-      void selectTabChild(ControlBase* window);
+      bool selectTabChild(ControlBase* window);
 
       void setRectangle(Rectangle rec) override;
 
@@ -80,7 +83,7 @@ namespace elena_lang
 
       void refresh() override;
 
-      TabBar(NotifierBase* notifier, bool withAbovescore);
+      TabBar(NotifierBase* notifier, bool withAbovescore, int height);
    };
 
 }

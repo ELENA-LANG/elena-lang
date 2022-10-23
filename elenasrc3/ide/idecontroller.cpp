@@ -416,6 +416,7 @@ void IDEController :: onCompilationStart(IDEModel* model)
 
    model->onIDEChange();
 
+   _notifier->notifyMessage(NOTIFY_START_COMPILATION);
    _notifier->notifyMessage(NOTIFY_SHOW_RESULT, model->ideScheme.compilerOutputControl);
 }
 
@@ -436,6 +437,8 @@ void IDEController :: onCompilationBreak(IDEModel* model)
 void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBase* log)
 {
    _notifier->notifyMessage(NOTIFY_SHOW_RESULT, model->ideScheme.errorListControl);
+
+   log->clearMessages();
 
    // parse output for errors
    pos_t length = output.length_pos();
@@ -495,6 +498,8 @@ void IDEController :: highlightError(IDEModel* model, int row, int column, path_
    openFile(model, path);
 
    model->viewModel()->setErrorLine(row, column, true);
+
+   _notifier->notifyMessage(NOTIFY_ACTIVATE_EDITFRAME);
 }
 
 void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode, 

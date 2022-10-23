@@ -173,11 +173,24 @@ void IDEWindow :: openResultTab(int controlIndex)
 {
    TabBar* resultBar = (TabBar*)_children[_model->ideScheme.resultControl];
 
-   resultBar->addTabChild(_model->ideScheme.captions.get(controlIndex), (ControlBase*)_children[controlIndex]);
-   resultBar->selectTabChild((ControlBase*)_children[controlIndex]);
+   if(!resultBar->selectTabChild((ControlBase*)_children[controlIndex])) {
+      resultBar->addTabChild(_model->ideScheme.captions.get(controlIndex), (ControlBase*)_children[controlIndex]);
+      resultBar->selectTabChild((ControlBase*)_children[controlIndex]);
+   }
+
    resultBar->show();
 
    refresh();
+}
+
+void IDEWindow :: setChildFocus(int controlIndex)
+{
+   _children[controlIndex]->setFocus();
+}
+
+void IDEWindow :: onComilationStart()
+{
+   ((ControlBase*)_children[_model->ideScheme.compilerOutputControl])->clearValue();
 }
 
 void IDEWindow :: onCompilationEnd(int exitCode)
@@ -289,6 +302,9 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
       case NOTIFY_SHOW_RESULT:
          openResultTab(hdr->extParam2);
          break;
+      case NOTIFY_ACTIVATE_EDITFRAME:
+         setChildFocus(_model->ideScheme.textFrameId);
+         break;
       case NOTIFY_LAYOUT_CHANGED:
          onResize();
          break;
@@ -297,6 +313,9 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
          break;
       case NOTIFY_ERROR_HIGHLIGHT_ROW:
          onErrorHighlight(hdr->extParam2);
+         break;
+      case NOTIFY_START_COMPILATION:
+         onComilationStart();
          break;
       default:
          break;

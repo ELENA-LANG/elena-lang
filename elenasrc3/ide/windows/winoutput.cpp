@@ -92,6 +92,18 @@ void ProcessOutput :: onErrorOutput(const char* s)
    onOutput(s);
 }
 
+void ProcessOutput :: clearValue()
+{
+   if (_readOnly)
+      ::SendMessage(_handle, EM_SETREADONLY, FALSE, 1);
+
+   ::SendMessage(_handle, EM_SETSEL, 0, -1);
+   ::SendMessage(_handle, WM_CLEAR, 0, 0);
+
+   if (_readOnly)
+      ::SendMessage(_handle, EM_SETREADONLY, TRUE, 1);
+}
+
 wchar_t* ProcessOutput :: getValue()
 {
    int length = (int)SendMessage(_handle, WM_GETTEXTLENGTH, 0, 0);

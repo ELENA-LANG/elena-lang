@@ -22,7 +22,7 @@ void SourceViewModel :: setTraceLine(int row, bool withCursor)
       _currentView->removeMarker(traceRow, STYLE_TRACE_LINE);
    }
 
-   _currentView->addMarker(row, STYLE_TRACE_LINE);
+   _currentView->addMarker(row, STYLE_TRACE_LINE, false);
    if (withCursor)
       _currentView->setCaret(0, row - 1, false);
 
@@ -43,18 +43,25 @@ void SourceViewModel :: setErrorLine(int row, int column, bool withCursor)
       _currentView->removeMarker(errorRow, STYLE_ERROR_LINE);
    }
 
-   _currentView->addMarker(row, STYLE_ERROR_LINE);
+   _currentView->addMarker(row, STYLE_ERROR_LINE, true);
    if (withCursor)
       _currentView->setCaret(column - 1, row - 1, false);
 
    errorRow = row;
 
 }
-
-void SourceViewModel :: clearErrorLine()
+void SourceViewModel::clearErrorLine()
 {
    if (errorRow != -1) {
-      _currentView->removeMarker(traceRow, STYLE_ERROR_LINE);
+      _currentView->removeMarker(errorRow, STYLE_ERROR_LINE);
+
+      _currentView->notifyOnChange();
    }
    errorRow = -1;
+}
+
+void SourceViewModel :: onModelChanged()
+{
+   if (errorRow != -1)
+      clearErrorLine();
 }

@@ -1,8 +1,12 @@
+A; ss
 
-public program() 
+public program()
 {
-    console.write("shortTests");
-    short w := 1234;
-    Assert.ifTrue(w == 1234);
-    console.writeLine(".");
+   try {
+      var a := new A();
+      a.fail()  
+   }
+   catch(Exception ex) {
+      console.writeLine(ex)
+   }
 }

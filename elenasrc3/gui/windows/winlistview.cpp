@@ -86,6 +86,11 @@ void ListView :: setColumnText(const wchar_t* item, int row, int column)
    ::SendMessage(_handle, LVM_SETITEMTEXT, row, (LPARAM)&lvItem);
 }
 
+void ListView :: clearRows()
+{
+   ListView_DeleteAllItems(_handle);
+}
+
 void ListView :: onDoubleClick(NMHDR* notification)
 {
    onItemDblClick(((LPNMITEMACTIVATE)notification)->iItem);

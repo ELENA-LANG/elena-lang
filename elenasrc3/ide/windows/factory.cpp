@@ -163,7 +163,7 @@ ControlBase* IDEFactory :: createStatusbar(WindowBase* owner)
 
 ControlBase* IDEFactory :: createTabBar(WindowBase* owner, NotifierBase* notifier)
 {
-   TabBar* tabBar = new TabBar(notifier, _settings.withTabAboverscore);
+   TabBar* tabBar = new TabBar(notifier, _settings.withTabAboverscore, 200);
 
    tabBar->createControl(_instance, owner);
 

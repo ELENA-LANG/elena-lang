@@ -221,7 +221,7 @@ namespace elena_lang
          _notifiers.cut(notifier);
       }
 
-      void addMarker(int row, pos_t style)
+      void addMarker(int row, pos_t style, bool instanteMode)
       {
          _markers.add(row, { style });
 

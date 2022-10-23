@@ -167,6 +167,8 @@ void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift,
       docView->moveFrameDown();
    }
    else docView->moveDown(kbShift);
+
+   model->onModelChanged();
 }
 
 void TextViewController :: moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -177,6 +179,8 @@ void TextViewController :: moveCaretLeft(TextViewModelBase* model, bool kbShift,
       docView->moveLeftToken(kbShift);
    }
    else docView->moveLeft(kbShift);
+
+   model->onModelChanged();
 }
 
 void TextViewController :: moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -187,14 +191,18 @@ void TextViewController :: moveCaretRight(TextViewModelBase* model, bool kbShift
       docView->moveRightToken(kbShift);
    }
    else docView->moveRight(kbShift);
+
+   model->onModelChanged();
 }
 
 void TextViewController :: moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
    auto docView = model->DocView();
 
-   if (kbCtrl) {
-      docView->moveFrameUp();
+   if (!kbCtrl) {
+      docView->moveUp(kbShift);
    }
-   else docView->moveUp(kbShift);
+   else docView->moveFrameUp();
+
+   model->onModelChanged();
 }

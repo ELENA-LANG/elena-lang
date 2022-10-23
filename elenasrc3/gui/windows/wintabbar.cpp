@@ -185,8 +185,9 @@ void MultiTabControl :: eraseTabView(int index)
 
 // --- TabBar ---
 
-TabBar :: TabBar(NotifierBase* notifier, bool withAbovescore)
-   : CustomTabBar(notifier, withAbovescore, 800, 100), _pages(nullptr)
+TabBar :: TabBar(NotifierBase* notifier, bool withAbovescore, int height)
+   : CustomTabBar(notifier, withAbovescore, 800, height),
+   _current(nullptr), _pages(nullptr)
 {
    _title = _T("Tabbar");
 
@@ -206,9 +207,9 @@ HWND TabBar :: createControl(HINSTANCE instance, ControlBase* owner)
 
 void TabBar :: addTabChild(const wchar_t* name, ControlBase* child)
 {
-   auto rec = getClientRectangle();
+   auto rect = getClientRectangle();
+   resizeTab(&rect, child);
 
-   child->setRectangle({ rec.topLeft.x + 4, rec.topLeft.y + 28, rec.width() - 8, rec.height() - 36 });
    child->hide();
 
    _pages.add(child);
@@ -233,10 +234,12 @@ void TabBar :: removeTabChild(ControlBase* child)
    _pages.cut(child);
    deleteTab(index);
 
+   _current = nullptr;
+
    refresh();
 }
 
-void TabBar :: selectTabChild(ControlBase* child)
+bool TabBar :: selectTabChild(ControlBase* child)
 {
    int index = _pages.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
       {
@@ -244,12 +247,28 @@ void TabBar :: selectTabChild(ControlBase* child)
       });
 
    if (index != -1) {
-      child->show();
+      if (_current)
+         _current->hide();
+
+      _current = child;
+
+      _current->show();
 
       selectTab(index);
 
       ControlBase::refresh();
+
+      return true;
    }
+   else return false;
+}
+
+void TabBar :: resizeTab(Rectangle* clientRect, ControlBase* control)
+{
+   Rectangle childRec(clientRect->topLeft.x + 4, clientRect->topLeft.y + 28, 
+      clientRect->width() - 8, clientRect->height() - 36);
+
+   control->setRectangle(childRec);
 }
 
 void TabBar :: setRectangle(Rectangle rec)
@@ -257,10 +276,8 @@ void TabBar :: setRectangle(Rectangle rec)
    ControlBase::setRectangle(rec);
 
    auto clientRect = getClientRectangle();
-
-   Rectangle childRec(clientRect.topLeft.x + 4, clientRect.topLeft.y + 28, clientRect.width() - 8, clientRect.height() - 36);
    for (auto it = _pages.start(); !it.eof(); ++it) {
-      (*it)->setRectangle(childRec);
+      resizeTab(&clientRect, *it);
    }
 }
 
