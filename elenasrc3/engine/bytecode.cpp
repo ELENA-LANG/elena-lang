@@ -424,13 +424,17 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
                //            case bcIfM:
                //            case bcElseM:
                //            case bcNext:
-            //case bcHook:
             //case bcAddress:
             //case bcIfHeap:
                // remove the label from idle list
                idleLabels.exclude(command.arg1);
 
                addJump(command.arg1, index, labels, jumps, fixes);
+               break;
+            case ByteCode::XHookDPR:
+               idleLabels.exclude(command.arg2 & ~mskLabelRef);
+
+               addJump(command.arg2 & ~mskLabelRef, index, labels, jumps, fixes);
                break;
             default:
                break;

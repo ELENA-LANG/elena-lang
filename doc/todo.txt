@@ -8,11 +8,15 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * do not show two output
+    * try-catch : methodnotfound
+    * exception tests : methodnotfound, nilreference
 
-    * default exception handler
+    * ide - suport - home / end
+    * ide - goto mouse / ctrl left / ctrl right
     * ide - fix the cursor size / position
     * ide - ask to save on close
+
+    * default exception handler
 
     * showing call stack, message name and a target
     * default app-level try catch block : showing the exception message

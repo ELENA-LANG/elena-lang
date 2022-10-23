@@ -1,4 +1,4 @@
-A; ss
+A;
 
 public program()
 {
@@ -6,7 +6,8 @@ public program()
       var a := new A();
       a.fail()  
    }
-   catch(Exception ex) {
-      console.writeLine(ex)
+   catch(Exception err) {
+     console.writeLine(err)
+//      console.writeLine(ex)
    }
 }
