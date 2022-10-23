@@ -62,6 +62,13 @@ void TextViewFrame :: onDocumentRename(int index)
    renameTabView(index - 1, *title);
 }
 
+void TextViewFrame :: onDocumentModeChanged(int index, bool modifiedMode)
+{
+   WideMessage title(_model->getDocumentName(index), modifiedMode ? "*" : "");
+
+   renameTabView(index - 1, *title);
+}
+
 void TextViewFrame :: onSelChanged()
 {
    int index = getCurrentIndex();

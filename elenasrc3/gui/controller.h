@@ -41,6 +41,8 @@ namespace elena_lang
    protected:
       TextViewSettings _settings;
 
+      void onTextChanged(TextViewModelBase* model, DocumentView* view);
+
    public:
       //void onFrameChange() override;
 
@@ -52,6 +54,10 @@ namespace elena_lang
 
       void newDocument(TextViewModelBase* model, ustr_t name, 
          int notifyMessage) override;
+
+      bool insertNewLine(TextViewModelBase* model) override;
+      bool insertChar(TextViewModelBase* model, char ch) override;
+      bool eraseChar(TextViewModelBase* model, bool moveback) override;
 
       void indent(TextViewModelBase* model) override;
 

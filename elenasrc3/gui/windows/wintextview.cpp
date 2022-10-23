@@ -468,25 +468,21 @@ bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
 bool TextViewWindow :: onKeyPressed(wchar_t ch)
 {
    if (_model->isAssigned()) {
-      auto docView = _model->DocView();
-      if (docView->status.readOnly)
-         return false;
-
       switch (ch) {
          case 0x0D:
-            docView->insertNewLine();
+            if (!_controller->insertNewLine(_model))
+               return false;
             break;
          case 0x08:
-            docView->eraseChar(true);
+            if(!_controller->eraseChar(_model, true))
+               return false;
             break;
          case 0x09:
             _controller->indent(_model);
             break;
          default:
-            if (ch >= 0x20) {
-               docView->insertChar(ch);
-            }
-            else return false;
+            if (!_controller->insertChar(_model, ch))
+               return false;
       }
 
       onDocumentUpdate();

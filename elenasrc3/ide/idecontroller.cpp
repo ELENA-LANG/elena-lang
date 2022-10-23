@@ -67,8 +67,11 @@ void SourceViewController :: saveSource(TextViewModelBase* model, ustr_t name)
    auto docInfo = model->getDocument(name);
    path_t path = model->getDocumentPath(name);
 
-   if (docInfo)
+   if (docInfo) {
       docInfo->save(path);
+
+      model->onModelModeChanged(model->getDocumentIndex(name));
+   }
 }
 
 // --- ProjectController ---

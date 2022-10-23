@@ -753,4 +753,6 @@ void DocumentView :: redo()
 void DocumentView :: save(path_t path)
 {
    _text->save(path);
+
+   status.modifiedMode = false;
 }

@@ -10,7 +10,7 @@
 #include "guicommon.h"
 #include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                           0x001A
+#define IDE_REVISION_NUMBER                           0x001B
 
 namespace elena_lang
 {
