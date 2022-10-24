@@ -719,6 +719,11 @@ ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool refere
    else if (moduleScope->selfVar.compare(identifier)) {
       return mapSelf();
    }
+   else if (moduleScope->superVar.compare(identifier)) {
+      ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
+
+      return { ObjectKind::SuperLocal, { classScope->info.header.parentRef }, selfLocal };
+   }
 
    if (constructorMode)
       attr = attr | EAttr::InitializerScope;
@@ -3016,6 +3021,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          break;
       case ObjectKind::Param:
       case ObjectKind::SelfLocal:
+      case ObjectKind::SuperLocal:
       case ObjectKind::ReadOnlySelfLocal:
       case ObjectKind::Local:
       case ObjectKind::TempLocal:
@@ -4616,8 +4622,13 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    if (found) {
       switch (result.visibility) {
          case Visibility::Private:
-         case Visibility::Protected:
             if (isSelfCall(target)) {
+               message = result.message;
+            }
+            else found = false;
+            break;
+         case Visibility::Protected:
+            if (isSelfCall(target) || target.kind == ObjectKind::SuperLocal) {
                message = result.message;
             }
             else found = false;
@@ -4666,6 +4677,14 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, messageNode);
       }
+   }
+
+   if (target.kind == ObjectKind::SuperLocal) {
+      if (found) {
+         // parent methods are always sealed
+         operation = BuildKey::DirectCallOp;
+      }
+      else scope.raiseError(errInvalidOperation, node);
    }
 
    if (operation != BuildKey::None) {
@@ -7088,6 +7107,11 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
          return current == reference;
       }));
    moduleScope->declVar.copy(moduleScope->predefined.retrieve<ref_t>("@decl", V_DECL_VAR, 
+      [](ref_t reference, ustr_t key, ref_t current)
+      {
+         return current == reference;
+      }));
+   moduleScope->superVar.copy(moduleScope->predefined.retrieve<ref_t>("@super", V_SUPER_VAR,
       [](ref_t reference, ustr_t key, ref_t current)
       {
          return current == reference;

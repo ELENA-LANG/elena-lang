@@ -49,6 +49,7 @@ namespace elena_lang
       RefLocal,
       TempLocal,
       SelfLocal,
+      SuperLocal,
       ReadOnlySelfLocal,
       LocalAddress,
       TempLocalAddress,

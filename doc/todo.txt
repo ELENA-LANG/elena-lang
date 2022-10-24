@@ -8,8 +8,14 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * try-catch : methodnotfound
-    * exception tests : methodnotfound, nilreference
+    * redirect
+    * call the parent constructor
+
+    * methodnotfoundexception : message
+
+    * ide open project
+    * ide show project
+    * ide select file in the project
 
     * ide - suport - home / end
     * ide - goto mouse / ctrl left / ctrl right
@@ -27,7 +33,6 @@ In development:
     * ide different styles : use dark mode
 
     * ide compile project
-    * ide open project
 
     * all functionality for existing classes
     * ide debugger
@@ -53,6 +58,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * exception tests : methodnotfound, nilreference
     * uncomment hello world
     * uncomment ConsoleFactory type attributes
     * external operation : do not box the arguments

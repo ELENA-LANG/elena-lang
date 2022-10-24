@@ -1,6 +1,8 @@
 // --- Exception ---
 public class Exception
 {
+   string message;
+
    on(handler) : external<system'core_routines'__exception_handler>; 
 
    fallback(arg)
