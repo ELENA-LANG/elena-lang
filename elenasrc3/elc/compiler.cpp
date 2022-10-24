@@ -6287,6 +6287,7 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
       retVal = compileMessageOperation(writer, scope, node, source, messageRef,
          implicitSignatureRef, arguments, EAttr::None);
 
+      scope.syncStack();
    }
    else assert(false);
 

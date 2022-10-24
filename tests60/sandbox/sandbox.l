@@ -1,18 +1,19 @@
-A
+//A
+//{
+//   test()
+//   {
+//     console.writeLine("A.test"); 
+//   }
+//}
+
+B //: A
 {
    test()
-   {
-     console.writeLine("A.test"); 
-   }
-}
+     <= test("test()");
 
-B : A
-{
-   test()
+   test(arg)
    {
-      super.test();
-
-      console.writeLine("B.test"); 
+     console.writeLine(arg) 
    }
 }
 
