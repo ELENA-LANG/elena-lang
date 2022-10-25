@@ -376,7 +376,11 @@ VAR_R ::=
 	| eps;
 
 RESEND ::= 
-	MESSAGE MESSAGE_R;
+	identifier RESEND_F;
+
+RESEND_F ::=
+	identifier MESSAGE_R
+	| MESSAGE_R;
 
 CATCH ::=
 	MESSAGE MESSAGE_R;

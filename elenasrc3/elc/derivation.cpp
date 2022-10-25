@@ -267,6 +267,46 @@ void SyntaxTreeBuilder :: flushArrayType(SyntaxTreeWriter& writer, Scope& scope,
    writer.appendNode(SyntaxKey::Dimension);
 }
 
+void SyntaxTreeBuilder :: flushResend(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   writer.newNode(node.key);
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::MessageOperation) {
+         writer.newNode(current.key);
+
+         SyntaxNode identNode = current.lastChild(SyntaxKey::TerminalMask);
+
+         ref_t attributeCategory = V_CATEGORY_MAX;
+         SyntaxNode attrNode = current.firstChild();
+         while (attrNode != identNode) {
+            flushAttribute(writer, scope, attrNode, attributeCategory, false);
+
+            attrNode = attrNode.nextNode();
+         }
+
+         writer.newNode(SyntaxKey::Message);
+         flushIdentifier(writer, attrNode, scope.ignoreTerminalInfo);
+         writer.closeNode();
+
+         attrNode = attrNode.nextNode();
+         while (attrNode != SyntaxKey::None) {
+            flushExpressionMember(writer, scope, attrNode);
+
+            attrNode = attrNode.nextNode();
+         }
+
+         writer.closeNode();
+      }
+      else flushExpressionMember(writer, scope, current);
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+}
+
 void SyntaxTreeBuilder :: flushObject(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
    writer.newNode(node.key);
@@ -353,43 +393,48 @@ void SyntaxTreeBuilder :: flushMessage(SyntaxTreeWriter& writer, Scope& scope, S
    writer.closeNode();
 }
 
+void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current)
+{
+   switch (current.key) {
+      case SyntaxKey::Parameter:
+         flushMethodMember(writer, scope, current);
+         break;
+      case SyntaxKey::Object:
+         flushObject(writer, scope, current);
+         break;
+      case SyntaxKey::NestedBlock:
+         flushNested(writer, scope, current);
+         break;
+      case SyntaxKey::ClosureBlock:
+         flushClosure(writer, scope, current);
+         break;
+      case SyntaxKey::Message:
+         flushMessage(writer, scope, current);
+         break;
+      case SyntaxKey::TemplateCode:
+         writer.CurrentNode().setKey(SyntaxKey::CodeBlock);
+         generateTemplateStatement(writer, scope, current);
+         break;
+      default:
+         if (SyntaxTree::testSuperKey(current.key, SyntaxKey::Expression)) {
+            current.setKey(SyntaxKey::Expression);
+            flushExpression(writer, scope, current);
+         }
+         else if (SyntaxTree::test(current.key, SyntaxKey::ScopeMask)) {
+            flushExpression(writer, scope, current);
+         }
+         // to make compiler happy
+         break;
+   }
+}
+
 void SyntaxTreeBuilder :: flushExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
    writer.newNode(node.key);
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::Parameter:
-            flushMethodMember(writer, scope, current);
-            break;
-         case SyntaxKey::Object:
-            flushObject(writer, scope, current);
-            break;
-         case SyntaxKey::NestedBlock:
-            flushNested(writer, scope, current);
-            break;
-         case SyntaxKey::ClosureBlock:
-            flushClosure(writer, scope, current);
-            break;
-         case SyntaxKey::Message:
-            flushMessage(writer, scope, current);
-            break;
-         case SyntaxKey::TemplateCode:
-            writer.CurrentNode().setKey(SyntaxKey::CodeBlock);
-            generateTemplateStatement(writer, scope, current);
-            break;
-         default:
-            if (SyntaxTree::testSuperKey(current.key, SyntaxKey::Expression)) {
-               current.setKey(SyntaxKey::Expression);
-               flushExpression(writer, scope, current);
-            }
-            else if (SyntaxTree::test(current.key, SyntaxKey::ScopeMask)) {
-               flushExpression(writer, scope, current);
-            }
-            // to make compiler happy
-            break;
-      }
+      flushExpressionMember(writer, scope, current);
 
       current = current.nextNode();
    }
@@ -654,8 +699,10 @@ void SyntaxTreeBuilder :: flushMethod(SyntaxTreeWriter& writer, Scope& scope, Sy
          case SyntaxKey::CodeBlock:
          case SyntaxKey::WithoutBody:
          case SyntaxKey::ReturnExpression:
-         case SyntaxKey::ResendDispatch:
             flushMethodCode(writer, scope, current);
+            break;
+         case SyntaxKey::ResendDispatch:
+            flushResend(writer, scope, current);
             break;
          default:
             break;

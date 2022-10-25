@@ -1,28 +1,23 @@
-//A
-//{
-//   test()
-//   {
-//     console.writeLine("A.test"); 
-//   }
-//}
-
-B //: A
+A
 {
-   test()
-     <= test("test()");
-
-   test(arg)
+   constructor create(arg)
    {
-     console.writeLine(arg) 
+      console.writeLine(arg)  
    }
+}
+
+B : A
+{
+   constructor create()
+     <= super create("test");
 }
 
 //A;
 
 public program()
 {
-   var b := new B();
-   b.test()
+   var b := B.create();
+   console.writeLine(b)
 
 //   try {
 //      var a := new A();

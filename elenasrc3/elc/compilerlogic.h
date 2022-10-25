@@ -61,6 +61,7 @@ namespace elena_lang
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
       bool validateArgumentAttribute(ref_t attrValue, bool& byRefArg, bool& variadicArg);
       bool validateTypeScopeAttribute(ref_t attrValue, bool& variadicArg);
+      bool validateResendAttribute(ref_t attrValue, bool& superMode);
 
       bool validateAutoType(ModuleScopeBase& scope, ref_t& reference);
 

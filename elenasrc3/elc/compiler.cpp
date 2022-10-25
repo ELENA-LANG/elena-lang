@@ -6272,19 +6272,44 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
    ObjectInfo retVal = {};
 
    if (!node.arg.reference) {
-      SyntaxNode current = node.firstChild();
+      SyntaxNode current = node.firstChild().firstChild();
+      bool superMode = false;
+      while (current == SyntaxKey::Attribute) {
+         if (!_logic->validateResendAttribute(current.arg.reference, superMode)) {
+            codeScope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }
+         current = current.nextNode();
+      }
+
+      ObjectInfo target = source;
+      if (superMode) {
+         if (source.kind == ObjectKind::SelfLocal) {
+            source.kind = ObjectKind::SuperLocal;
+            target = source;
+         }
+         else if (source.kind == ObjectKind::Class) {
+            // NOTE : for the constructor redirect - use the class parent as a target (still keeping the original class
+            // as a parameter)
+            ClassInfo classInfo;
+            if (_logic->defineClassInfo(*codeScope.moduleScope, classInfo, source.reference, true)) {
+               target = mapClassSymbol(codeScope, classInfo.header.parentRef);
+            }
+            else codeScope.raiseError(errInvalidOperation, node);
+         }
+         else codeScope.raiseError(errInvalidOperation, node);
+      }
 
       ExprScope scope(&codeScope);
       ArgumentsInfo arguments;
 
-      mssg_t messageRef = mapMessage(scope, current.firstChild(), false, false, false);
+      mssg_t messageRef = mapMessage(scope, current, false, false, false);
 
       if (!test(messageRef, FUNCTION_MESSAGE))
          arguments.add(source);
 
-      ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current.firstChild(), arguments, EAttr::NoPrimitives);
+      ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);
 
-      retVal = compileMessageOperation(writer, scope, node, source, messageRef,
+      retVal = compileMessageOperation(writer, scope, node, target, messageRef,
          implicitSignatureRef, arguments, EAttr::None);
 
       scope.syncStack();
@@ -6498,6 +6523,12 @@ bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message)
    if (actionRef == getAction(scope.moduleScope->buildins.constructor_message)) {
       return true;
    }
+   else if (getArgCount(message)) {
+      ref_t dummy = 0;
+      ustr_t actionName = scope.module->resolveAction(actionRef, dummy);
+      
+      return actionName.endsWith(CONSTRUCTOR_MESSAGE);
+   }
    else return false;
 }
 
@@ -6563,7 +6594,10 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
       newFrame = true;
 
       if (!retExpr) {
-         writer.appendNode(BuildKey::ClassReference, scope.getClassRef());
+         // NOTE : the named constructor should be polymorphic, depending on the message target
+         writer.appendNode(BuildKey::Local, -1);
+         //writer.appendNode(BuildKey::ClassReference, scope.getClassRef());
+
          writer.newNode(BuildKey::CallOp, defConstrMssg);
          writer.appendNode(BuildKey::Index, 1); // built-in constructor entry should be the second entry in VMT
          writer.closeNode();

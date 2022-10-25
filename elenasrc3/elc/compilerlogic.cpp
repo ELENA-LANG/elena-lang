@@ -522,7 +522,17 @@ bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, bool& variadic
       default:
          return false;
    }
+}
 
+bool CompilerLogic :: validateResendAttribute(ref_t attrValue, bool& superMode)
+{
+   switch (attrValue) {
+      case V_SUPERIOR:
+         superMode = true;
+         return true;
+      default:
+         return false;
+   }
 }
 
 bool CompilerLogic :: validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_t message)
