@@ -8,6 +8,11 @@ A
 
 B : A
 {
+   printMe()
+   {
+      console.writeLine("it's me") 
+   }
+
    constructor create()
      <= super create("test");
 }
@@ -17,7 +22,10 @@ B : A
 public program()
 {
    var b := B.create();
-   console.writeLine(b)
+   var a := A.create("A");
+   //console.writeLine(b);
+   console.writeLine(b.__getClassName());
+   console.writeLine(a.__getClassName());
 
 //   try {
 //      var a := new A();

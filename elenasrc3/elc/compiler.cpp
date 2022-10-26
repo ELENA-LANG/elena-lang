@@ -581,21 +581,22 @@ Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibi
    extensionDispatcher = false;
 }
 
-ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribute attr)
+inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, ExpressionAttribute attr, bool ignoreFields)
 {
-   bool readOnly = test(info.header.flags, elReadOnlyRole) && !EAttrs::test(attr, EAttr::InitializerScope);
+   bool readOnly = test(info.header.flags, elReadOnlyRole)
+      && !EAttrs::test(attr, EAttr::InitializerScope);
 
    auto fieldInfo = info.fields.get(identifier);
-   if (fieldInfo.offset >= 0) {
+   if (!ignoreFields && fieldInfo.offset >= 0) {
       if (test(info.header.flags, elStructureRole)) {
-         return { readOnly ? ObjectKind::ReadOnlyFieldAddress : ObjectKind::FieldAddress, 
+         return { readOnly ? ObjectKind::ReadOnlyFieldAddress : ObjectKind::FieldAddress,
             fieldInfo.typeInfo, fieldInfo.offset };
       }
-      else return { readOnly ? ObjectKind::ReadOnlyField : ObjectKind::Field, 
+      else return { readOnly ? ObjectKind::ReadOnlyField : ObjectKind::Field,
          fieldInfo.typeInfo, fieldInfo.offset };
    }
-   else if (fieldInfo.offset == -2) {
-      return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1};
+   else if (!ignoreFields && fieldInfo.offset == -2) {
+      return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1 };
    }
    else {
       auto staticFieldInfo = info.statics.get(identifier);
@@ -610,6 +611,17 @@ ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribu
 
       return {};
    }
+}
+
+ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribute attr)
+{
+   if (extensionClassRef) {
+      ClassInfo targetInfo;
+      moduleScope->loadClassInfo(targetInfo, extensionClassRef, false, false);
+
+      return mapClassInfoField(targetInfo, identifier, attr, true);
+   }
+   else return mapClassInfoField(info, identifier, attr, false);
 }
 
 ObjectInfo Compiler::ClassScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
@@ -657,7 +669,8 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent) :
    closureMode(false),
    constructorMode(false),
    isEmbeddable(false),
-   byRefReturnMode(false)
+   byRefReturnMode(false),
+   isExtension(false)
 {
 }
 
@@ -671,13 +684,14 @@ bool Compiler::MethodScope :: checkType(MethodInfo& methodInfo, MethodHint type)
    return (methodInfo.hints & MethodHint::Mask) == type;
 }
 
-ObjectInfo Compiler::MethodScope :: mapSelf()
+ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode)
 {
-   //if (checkHint(MethodHint::Extension)) {
-   //   //COMPILER MAGIC : if it is an extension ; replace self with this self
+   if (!memberMode && isExtension) {
+      ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
 
-   //}
-   /*else */if (selfLocal != 0) {
+      return { ObjectKind::Param, { classScope->extensionClassRef }, -1 };
+   }
+   else if (selfLocal != 0) {
       if (isEmbeddable) {
          return { ObjectKind::SelfBoxableLocal, { getClassRef(false) }, (ref_t)selfLocal };
       }
@@ -862,7 +876,7 @@ ObjectInfo Compiler::ExprScope :: mapMember(ustr_t identifier)
 {
    MethodScope* methodScope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
    if (methodScope != nullptr && moduleScope->selfVar.compare(identifier)) {
-      return mapSelf();
+      return methodScope->mapSelf(true);
    }
 
    ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
@@ -5378,7 +5392,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    bool refOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::RefOp);
    bool mssgOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::MssgLiteral);
    bool probeMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ProbeMode);
-   bool memberMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Memeber);
+   bool memberMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Member);
 
    ObjectInfo retVal;
    bool invalid = false;
@@ -6450,7 +6464,7 @@ void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope
 
    ObjectInfo tempRetVal = declareTempLocal(scope, targetRef, false);
 
-   ObjectInfo target = methodScope.mapSelf();
+   ObjectInfo target = methodScope.mapSelf(true);
    arguments.add(target);
    for (auto it = methodScope.parameters.start(); !it.eof(); ++it) {
       arguments.add(methodScope.mapParameter(it.key(), EAttr::None));
@@ -6548,7 +6562,7 @@ void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodSc
 
    createObject(writer, classScope->info, classScope->reference);
 
-   // call field initilizers if available for default constructor
+   // call field initializers if available for default constructor
    if(classScope->info.methods.exist(scope.moduleScope->buildins.init_message)) {
       ExprScope exprScope(classScope);
       ArgumentsInfo args;
@@ -6645,6 +6659,7 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    methodScope.info = scope.info.methods.get(methodScope.message);
    methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
    methodScope.isEmbeddable = methodScope.checkHint(MethodHint::Stacksafe);
+   methodScope.isExtension = methodScope.checkHint(MethodHint::Extension);
 
    declareVMTMessage(methodScope, current, false, false);
 
@@ -7210,10 +7225,10 @@ void Compiler :: declare(ModuleScopeBase* moduleScope, SyntaxTree& input)
    validateScope(moduleScope);
 
    SyntaxNode root = input.readRoot();
-   // declare all memeber identifiers
+   // declare all member identifiers
    declareModuleIdentifiers(moduleScope, root);
 
-   // declare all memebers
+   // declare all members
    declareModule(moduleScope, root);
 }
 

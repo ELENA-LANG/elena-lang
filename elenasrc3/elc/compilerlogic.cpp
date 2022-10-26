@@ -492,7 +492,7 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
          attrs |= ExpressionAttribute::ProbeMode;
          return true;
       case V_MEMBER:
-         attrs |= ExpressionAttribute::Memeber;
+         attrs |= ExpressionAttribute::Member;
          return true;
       default:
          return false;

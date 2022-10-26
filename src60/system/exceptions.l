@@ -3,6 +3,11 @@ public class Exception
 {
    string message;
 
+   constructor new(string message)
+   {
+      this message := message
+   }
+
    on(handler) : external<system'core_routines'__exception_handler>; 
 
    fallback(arg)

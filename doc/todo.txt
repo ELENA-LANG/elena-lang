@@ -18,6 +18,8 @@ In development:
     * ide - goto mouse / ctrl left / ctrl right
     * ide - fix the cursor size / position
     * ide - ask to save on close
+    * ide - scroll with mouse wheel
+    * ide - tab
 
     * default exception handler
 
