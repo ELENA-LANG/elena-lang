@@ -57,6 +57,8 @@ public const struct String //: BaseValue
 
        self.copySubS(retVal, self, 0, l1);
        self.copySubS(retVal, subs, l1, l2);    
+
+       ^ retVal
     }
 }
 

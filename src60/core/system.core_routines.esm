@@ -182,7 +182,7 @@ labEnd:
 
 end
 
-procedure __str_copysubs (s1, s2, index, len)
+procedure __str_copysubs (self, s1, s2, index, len)
 
   xflush     sp:0
   xflush     sp:1
@@ -190,6 +190,7 @@ procedure __str_copysubs (s1, s2, index, len)
   open       (2),[],[i1,i2,tmp]
 
   peek       fp:index
+  store      sp:0
   copy       dp:i1, 4
   nsave      dp:i2, 0
 
@@ -207,7 +208,7 @@ labNext:
   save       dp:i2
 
   xswap      sp:1
-  load       dp:i2
+  load       dp:i1
   write      1
   add        n:1
   save       dp:i1
@@ -222,7 +223,7 @@ labNext:
 
   xswap      sp:1
   set        dp:tmp
-  load       dp:i2
+  load       dp:i1
   write      1
 
   close      []

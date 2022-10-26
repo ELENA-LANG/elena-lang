@@ -46,6 +46,20 @@ MethodHint operator & (const ref_t& l, const MethodHint& r)
 //   }
 //}
 
+inline bool isSelfCall(ObjectInfo target)
+{
+   switch (target.kind) {
+      case ObjectKind::SelfLocal:
+      case ObjectKind::SelfBoxableLocal:
+         //case okOuterSelf:
+      //case okClassSelf:
+      //case okInternalSelf:
+         return true;
+      default:
+         return false;
+   }
+}
+
 // --- Interpreter ---
 
 Interpreter :: Interpreter(ModuleScopeBase* scope, CompilerLogic* logic)
@@ -4558,7 +4572,7 @@ mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectIn
    // try to resolve the message as is
    int resolvedStackSafeAttr = 0;
    resolvedMessage = _logic->resolveMultimethod(*scope.moduleScope, weakMessage, targetRef,
-      implicitSignatureRef, resolvedStackSafeAttr/*, isSelfCall(target)*/);
+      implicitSignatureRef, resolvedStackSafeAttr, isSelfCall(target));
    if (resolvedMessage != 0) {
       stackSafeAttr = resolvedStackSafeAttr;
 
@@ -4587,20 +4601,6 @@ mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectIn
 
    // otherwise - use the weak message
    return weakMessage;
-}
-
-inline bool isSelfCall(ObjectInfo target)
-{
-   switch (target.kind) {
-      case ObjectKind::SelfLocal:
-      case ObjectKind::SelfBoxableLocal:
-         //case okOuterSelf:
-      //case okClassSelf:
-      //case okInternalSelf:
-         return true;
-      default:
-         return false;
-   }
 }
 
 ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target,
