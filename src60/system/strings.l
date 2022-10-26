@@ -46,6 +46,18 @@ public const struct String //: BaseValue
     }
 
     bool equal(string s) : external<system'core_routines'__str_equal>;
+
+    private copySubS(string dest, string sour, int index, int length) : external<system'core_routines'__str_copysubs>;
+
+    string add(string subs)
+    {
+       int l1 := self.Length;
+       int l2 := subs.Length;
+       string retVal := String.allocate(l1 + l2);
+
+       self.copySubS(retVal, self, 0, l1);
+       self.copySubS(retVal, subs, l1, l2);    
+    }
 }
 
 // --- WideString ---

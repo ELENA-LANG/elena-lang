@@ -162,6 +162,8 @@ ELENA byte codes (or ecodes)
 
  Object operations:
  ------------------
+   bwrite n                 - sp[0][index] := byte:n
+
    class                    - acc := acc.class
 
    copy n                   - sp[0] >> acc, n bytes
@@ -223,6 +225,8 @@ ELENA byte codes (or ecodes)
 
  Arithmeric operations:
  ----------------------
+   addn n                   - index := index + n
+ 
    andn n                   - index := index & n
  
    iadd dp:disp, n          - temp : n << sp[0];

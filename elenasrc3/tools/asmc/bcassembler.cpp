@@ -858,6 +858,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::TstN:
          case ByteCode::NLen:
          case ByteCode::ReadN:
+         case ByteCode::WriteN:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::AndN:
          case ByteCode::AddN:
@@ -877,6 +878,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileNR(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::NSaveDPN:
          case ByteCode::NAddDPN:
+         case ByteCode::CopyDPN:
             return compileDDispN(tokenInfo, writer, opCommand, dataLocals, constants, true);
          default:
             return false;
