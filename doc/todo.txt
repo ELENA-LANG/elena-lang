@@ -8,6 +8,9 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
+    * string concatination
+    * message.toPrintable
+
     * methodnotfoundexception : message
 
     * ide open project

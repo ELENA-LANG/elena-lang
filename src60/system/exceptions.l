@@ -8,6 +8,9 @@ public class Exception
       this message := message
    }
 
+   constructor new()
+      <= new(self.__getClassName());
+
    on(handler) : external<system'core_routines'__exception_handler>; 
 
    fallback(arg)
@@ -40,6 +43,7 @@ public class OutOfMemoryException : Exception
 public class MethodNotFoundException : Exception
 {
    constructor new(object target, message mssg)
+//      <= new() 
    {
    }
 }
