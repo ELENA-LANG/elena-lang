@@ -8,7 +8,7 @@
 
 #include "elflinker.h"
 #include "elfcommon.h"
-#include "linux/lnxcommon.h"
+#include "linux/lnxconsts.h"
 
 #include <elf.h>
 #include <sys/stat.h>
