@@ -21,11 +21,9 @@
 
 public program()
 {
-   var s1 := "abc";
-   var s2 := "de";
+   int len := extern LoadMessageNameLA();
 
-   var s := s1 + s2;
-   console.writeLine(s)  
+   var mssg := mssg writeLine[2];
 
 //   var b := B.create();
 //   var a := A.create("A");

@@ -56,7 +56,7 @@ namespace elena_lang
 
       virtual bool write(pos_t position, const void* s, pos_t length) = 0;
 
-      virtual void insert(pos_t position, const void* s, pos_t length) = 0;
+      virtual bool insert(pos_t position, const void* s, pos_t length) = 0;
 
       virtual bool read(pos_t position, void* s, pos_t length) = 0;
 

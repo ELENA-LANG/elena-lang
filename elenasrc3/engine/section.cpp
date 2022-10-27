@@ -12,11 +12,14 @@
 
 using namespace elena_lang;
 
-void Section :: insert(pos_t position, const void* s, pos_t length)
+bool Section :: insert(pos_t position, const void* s, pos_t length)
 {
-   MemoryDump::insert(position, s, length);
+   if (MemoryDump::insert(position, s, length)) {
+      ::shift(_references.start(), position, length);
 
-   ::shift(_references.start(), position, length);
+      return true;
+   }
+   else return false;
 }
 
 Section* Section :: readSection(StreamReader& reader)

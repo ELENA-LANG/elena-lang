@@ -117,17 +117,9 @@ void ByteCodeUtil :: decode(ByteCode code, IdentifierString& target)
    target.append(_fnOpcodes[(int)code]);
 }
 
-bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message)
+void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
+   ref_t* references, size_t len, pos_t argCount, ref_t flags)
 {
-   ref_t actionRef, flags;
-   pos_t argCount = 0;
-   decodeMessage(message, actionRef, argCount, flags);
-
-   ref_t signature = 0;
-   ustr_t actionName = module->resolveAction(actionRef, signature);
-   if (emptystr(actionName))
-      return false;
-
    if (test(flags, STATIC_MESSAGE))
       messageName.append("static:");
 
@@ -141,11 +133,9 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
       messageName.append("params:");
 
    messageName.append(actionName);
-   if (signature) {
-      ref_t references[ARG_COUNT];
-
+   if (len > 0) {
       messageName.append('<');
-      size_t len = module->resolveSignature(signature, references);
+      
       for (size_t i = 0; i < len; i++) {
          if (i != 0)
             messageName.append(',');
@@ -160,6 +150,23 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
       messageName.appendInt(argCount);
       messageName.append(']');
    }
+}
+
+bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message)
+{
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   ref_t signature = 0;
+   ustr_t actionName = module->resolveAction(actionRef, signature);
+   if (emptystr(actionName))
+      return false;
+
+   ref_t references[ARG_COUNT];
+   size_t len = signature ? module->resolveSignature(signature, references) : 0;
+
+   formatMessageName(messageName, module, actionName, references, len, argCount, flags);
 
    return true;
 }

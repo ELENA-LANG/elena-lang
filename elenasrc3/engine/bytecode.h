@@ -342,6 +342,8 @@ namespace elena_lang
 
       static void importCommand(ByteCommand& command, SectionScopeBase* target, ModuleBase* importer);
 
+      static void formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
+         ref_t* references, size_t len, pos_t argCount, ref_t flags);
       static bool resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message);
 
       static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode);

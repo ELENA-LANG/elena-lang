@@ -14,16 +14,20 @@ namespace elena_lang
    // --- ELENARTMachine ---
    class ELENARTMachine
    {
+      void* mdata;
+
       void Exit(int exitCode);
 
    public:
       void startSTA(SystemEnv* env, SymbolList* entryList);
 
-      ELENARTMachine();
+      void loadSubjectName(IdentifierString actionName, ref_t subjectRef);
+      size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
+
+      ELENARTMachine(void* mdata);
 
       virtual ~ELENARTMachine()
       {
-
       }
    };
 }

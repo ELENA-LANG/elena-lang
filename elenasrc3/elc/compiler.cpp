@@ -4127,6 +4127,11 @@ ExternalInfo Compiler :: mapExternal(Scope& scope, SyntaxNode node)
    ustr_t dllAlias = node.identifier();
    ustr_t functionName = SyntaxTree::gotoNode(objNode, SyntaxKey::Message).firstChild(SyntaxKey::TerminalMask).identifier();
 
+   if (functionName.empty()) {
+      functionName = dllAlias;
+      dllAlias = RT_FORWARD;
+   }
+
    return scope.moduleScope->mapExternal(dllAlias, functionName);
 }
 
@@ -4138,7 +4143,7 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
    writer.appendNode(BuildKey::Allocating, align(count, scope.moduleScope->stackAlingment));
 
    for (pos_t i = count; i > 0; i--) {
-      ObjectInfo arg = arguments[i - 1];
+      ObjectInfo arg = boxArgumentLocally(writer, scope, arguments[i - 1], true);
 
       writeObjectInfo(writer, scope, arg);
       switch (arg.kind) {

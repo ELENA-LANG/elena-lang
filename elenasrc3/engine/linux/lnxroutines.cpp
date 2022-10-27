@@ -8,6 +8,7 @@
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
 #include "core.h"
+#include "pehelper.h"
 
 #include <sys/mman.h>
 #include <signal.h>
@@ -16,6 +17,11 @@
 using namespace elena_lang;
 
 static uintptr_t CriticalHandler = 0;
+
+MemoryBase* SystemRoutineProvider :: LoadMData()
+{
+   return nullptr;
+}
 
 size_t SystemRoutineProvider :: AlignHeapSize(size_t size)
 {

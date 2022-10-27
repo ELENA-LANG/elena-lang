@@ -126,7 +126,7 @@ namespace elena_lang
             return true;
          }
 
-         void insert(pos_t position, const void* s, pos_t length) override;
+         bool insert(pos_t position, const void* s, pos_t length) override;
 
          bool write(pos_t position, const void* s, pos_t length) override;
 

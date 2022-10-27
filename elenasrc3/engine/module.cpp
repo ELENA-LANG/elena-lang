@@ -325,7 +325,7 @@ void ROModule::ROSection :: trim(pos_t)
    throw InternalError(errReadOnlyModule);
 }
 
-void ROModule::ROSection :: insert(pos_t position, const void* s, pos_t length)
+bool ROModule::ROSection :: insert(pos_t position, const void* s, pos_t length)
 {
    // should never be called
    throw InternalError(errReadOnlyModule);
