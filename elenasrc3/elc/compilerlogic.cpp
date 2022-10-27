@@ -178,7 +178,8 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
       case V_OBJECT:
          return !isPrimitiveRef(source.typeRef);
       case V_INT32:
-         return source.typeRef == V_INT8 || source.typeRef == V_INT16 || source.typeRef == V_WORD32;
+         return source.typeRef == V_INT8 || source.typeRef == V_INT16
+            || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE;
       case V_FLAG:
          return isCompatible(scope, { scope.branchingInfo.typeRef }, source, true);
       case V_WORD32:

@@ -5371,7 +5371,7 @@ ObjectInfo Compiler::mapMessageConstant(Scope& scope, SyntaxNode node, ref_t act
    ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression));
    switch (retVal.kind) {
       case ObjectKind::IntLiteral:
-         argCount = retVal.extra + 1;
+         argCount = retVal.extra;
          break;
       default:
          scope.raiseError(errCannotEval, node);
