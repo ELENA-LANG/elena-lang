@@ -18,12 +18,12 @@ static uintptr_t CriticalHandler = 0;
 
 #define CALL_FIRST 1  
 
-void* SystemRoutineProvider ::RetrieveMDataPtr(void* imageBase, pos_t imageLength)
+void* SystemRoutineProvider::RetrieveMDataPtr(void* imageBase, pos_t imageLength)
 {
    ImageSection header(imageBase, imageLength);
    MemoryReader reader(&header);
    addr_t addr = 0;
-   if(PEHelper::seekSection(reader, ".mdata", addr)) {
+   if (PEHelper::seekSection(reader, ".mdata", addr)) {
       return (void*)addr;
    }
 
