@@ -10,6 +10,7 @@
 
 #include "elenart.h"
 #include "elenartmachine.h"
+#include "linux/lnxconsts.h"
 
 using namespace elena_lang;
 
@@ -18,7 +19,7 @@ static SystemEnv* systemEnv = nullptr;
 
 void init()
 {
-   machine = new ELENARTMachine();
+   machine = new ELENARTMachine(__routineProvider.RetrieveMDataPtr((void*)IMAGE_BASE, 0x1000000));
 }
 
 void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)

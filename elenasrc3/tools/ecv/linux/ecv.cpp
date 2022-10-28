@@ -42,7 +42,6 @@ class Presenter : public PresenterBase
 public:
    void readLine(char* buffer, size_t length) override
    {
-      // !! fgets is used instead of fgetws, because there is a strange bug in fgetws implementation
       fgets(buffer, LINE_LEN, stdin);
    }
 

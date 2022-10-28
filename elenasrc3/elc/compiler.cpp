@@ -2012,7 +2012,6 @@ void Compiler :: declareMetaInfo(Scope& scope, SyntaxNode node)
 void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
-   SyntaxNode noBodyNode = {};
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
@@ -6474,7 +6473,7 @@ void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope
    addByRefRetVal(arguments, tempRetVal);
 
    ref_t signRef = getSignature(scope.module, handler);
-   ObjectInfo retVal = compileMessageOperation(writer, scope, {}, target, handler,
+   /*ObjectInfo retVal = */compileMessageOperation(writer, scope, {}, target, handler,
       signRef, arguments, EAttr::AlreadyResolved);
 
    // return temp variable

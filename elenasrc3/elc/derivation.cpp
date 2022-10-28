@@ -609,7 +609,6 @@ void SyntaxTreeBuilder :: flushClassPostfixes(SyntaxTreeWriter& writer, Scope& s
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current.key == SyntaxKey::Postfix) {
-         SyntaxNode child = current.firstChild();
          if (current == SyntaxKey::TemplatePostfix) {
             throw InternalError(errFatalError);
             //flushTemplageExpression(scope, current, SyntaxKey::InlineTemplate, false);
