@@ -48,7 +48,7 @@ namespace elena_lang
       DebugController         _debugController;
       NotifierBase*           _notifier;
 
-      bool onDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action);
+      bool onDebugAction(ProjectModel& model, DebugAction action);
       bool isOutaged(bool noWarning);
 
       bool startDebugger(ProjectModel& model/*, bool stepMode*/);
@@ -57,7 +57,7 @@ namespace elena_lang
 
       bool compile();
 
-      bool compileSingleFile(ProjectModel& model, path_t singleProjectFile);
+      bool compileSingleFile(ProjectModel& model);
 
    public:
       void openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
@@ -66,9 +66,9 @@ namespace elena_lang
 
       void defineFullPath(ProjectModel& model, ustr_t ns, path_t path, PathString& fullPath);
 
-      bool doCompileProject(ProjectModel& model, path_t singleProjectFile, DebugAction postponedAction);
+      bool doCompileProject(ProjectModel& model, DebugAction postponedAction);
 
-      void doDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action);
+      void doDebugAction(ProjectModel& model, DebugAction action);
 
       void setNotifier(NotifierBase* notifier)
       {

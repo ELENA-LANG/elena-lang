@@ -151,7 +151,7 @@ bool ProjectController :: isOutaged(bool noWarning)
    return false; // !! temporal
 }
 
-bool ProjectController :: onDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action)
+bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
 {
    if (testIDEStatus(model.getStatus(), IDEStatus::Busy))
       return false;
@@ -160,7 +160,7 @@ bool ProjectController :: onDebugAction(ProjectModel& model, path_t singleProjec
       bool toRecompile = model.autoRecompile && !testIDEStatus(model.getStatus(), IDEStatus::AutoRecompiling);
       if (isOutaged(toRecompile)) {
          if (toRecompile) {
-            if (!doCompileProject(model, singleProjectPath, action))
+            if (!doCompileProject(model, action))
                return false;
          }
          return false;
@@ -171,10 +171,10 @@ bool ProjectController :: onDebugAction(ProjectModel& model, path_t singleProjec
    return true;
 }
 
-void ProjectController :: doDebugAction(ProjectModel& model, path_t singleProjectPath, DebugAction action)
+void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
 {
    if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
-      if (onDebugAction(model, singleProjectPath, action)) {
+      if (onDebugAction(model, action)) {
          switch (action) {
             case DebugAction::Run:
                _debugController.run();
@@ -199,8 +199,10 @@ bool ProjectController :: compile()
    return true;
 }
 
-bool ProjectController :: compileSingleFile(ProjectModel& model, path_t singleProjectFile)
+bool ProjectController :: compileSingleFile(ProjectModel& model)
 {
+   path_t singleProjectFile = model.sources.get(1);
+
    PathString appPath(model.paths.appPath);
    appPath.combine(*model.paths.compilerPath);
 
@@ -209,24 +211,30 @@ bool ProjectController :: compileSingleFile(ProjectModel& model, path_t singlePr
    cmdLine.append(singleProjectFile);
 
    PathString curDir;
-   curDir.append(singleProjectFile, singleProjectFile.findLast('\\'));
+   curDir.append(*model.projectPath);
 
-   return _outputProcess->start(*appPath, *cmdLine, *curDir, true);
+   return _outputProcess->start(*appPath, *cmdLine, *model.projectPath, true);
 }
 
-bool ProjectController :: doCompileProject(ProjectModel& model, path_t singleProjectFile, DebugAction postponedAction)
+bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction postponedAction)
 {
-   if (!singleProjectFile.empty()) {
-      return compileSingleFile(model, singleProjectFile);
+   if (model.sources.count() > 0) {
+      return compileSingleFile(model);
    }
    else return false;   
 }
 
 void ProjectController :: openSingleFileProject(ProjectModel& model, path_t singleProjectFile)
 {
+   FileNameString src(singleProjectFile, true);
+   FileNameString name(singleProjectFile);
+
    model.sources.clear();
 
-   model.sources.add(singleProjectFile.clone());
+   model.name.copy(*name);
+   model.projectPath.copySubPath(singleProjectFile);
+
+   model.sources.add((*src).clone());
 
    if (_notifier)
       _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
@@ -426,7 +434,7 @@ path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
 
 void IDEController :: doDebugAction(IDEModel* model, DebugAction action)
 {
-   projectController.doDebugAction(model->projectModel, retrieveSingleProjectFile(model), action);
+   projectController.doDebugAction(model->projectModel, action);
 }
 
 void IDEController :: onCompilationStart(IDEModel* model)
@@ -540,8 +548,7 @@ bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
       return false;
    }
 
-   if (projectController.doCompileProject(model->projectModel, retrieveSingleProjectFile(model), 
-      DebugAction::None)) 
+   if (projectController.doCompileProject(model->projectModel, DebugAction::None)) 
    {
       onCompilationStop(model);
 
