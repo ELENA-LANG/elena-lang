@@ -12,10 +12,7 @@ In development:
 
     * methodnotfoundexception : message name and a target
 
-    * ide project view
-
     * ide open project
-    * ide show project
     * ide select file in the project
     * ide - suport - home / end
     * ide - goto mouse / ctrl left / ctrl right

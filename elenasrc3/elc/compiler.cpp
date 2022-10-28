@@ -1987,7 +1987,6 @@ void Compiler :: importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNod
 void Compiler :: declareMetaInfo(Scope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
-   SyntaxNode noBodyNode = {};
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
@@ -4522,7 +4521,7 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& me
       int counter = 0;
       while (!it.eof()) {
          auto extInfo = *it;
-         ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value1);
+         /*ref_t targetRef = */nsScope->resolveExtensionTarget(extInfo.value1);
          if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, extInfo.value2,
             signatures, signatureLen))
          {
@@ -4905,7 +4904,7 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
 mssg_t Compiler :: resolveByRefHandler(Scope& scope, ref_t targetRef, ref_t expectedRef, mssg_t weakMessage, ref_t& signatureRef)
 {
    pos_t argCount = 0;
-   ref_t actionRef = 0, flags = 0, signRef = 0;
+   ref_t actionRef = 0, flags = 0;
    decodeMessage(weakMessage, actionRef, argCount, flags);
 
    if (expectedRef != 0 && targetRef != 0) {
@@ -5363,8 +5362,6 @@ ObjectInfo Compiler :: mapUIntConstant(Scope& scope, SyntaxNode node, int radix)
 
 ObjectInfo Compiler::mapMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef)
 {
-   SyntaxNode operand = node.findChild(SyntaxKey::Expression);
-
    pos_t argCount = 0;
 
    Interpreter interpreter(scope.moduleScope, _logic);
@@ -5889,10 +5886,10 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 {
    ExprScope scope(&codeScope);
 
-   bool autoMode = false;
+   //bool autoMode = false;
    ref_t outputRef = codeScope.getOutputRef();
    if (outputRef == V_AUTO) {
-      autoMode = true;
+      //autoMode = true;
       outputRef = 0;
    }
 
