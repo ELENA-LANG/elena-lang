@@ -226,7 +226,7 @@ void ProjectController :: openSingleFileProject(ProjectModel& model, path_t sing
 {
    model.sources.clear();
 
-   model.sources.add(singleProjectFile);
+   model.sources.add(singleProjectFile.clone());
 
    if (_notifier)
       _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
