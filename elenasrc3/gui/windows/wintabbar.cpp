@@ -183,6 +183,13 @@ void MultiTabControl :: eraseTabView(int index)
    deleteTab(index);
 }
 
+void MultiTabControl :: refresh()
+{
+   _child->refresh();
+
+   ControlBase::refresh();
+}
+
 // --- TabBar ---
 
 TabBar :: TabBar(NotifierBase* notifier, bool withAbovescore, int height)

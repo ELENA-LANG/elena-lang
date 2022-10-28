@@ -12,6 +12,7 @@
 #include "windows/winsplitter.h"
 #include "windows/winoutput.h"
 #include "windows/winmessagelog.h"
+#include "windows/wintreeview.h"
 #include "Resource.h"
 
 #include <shlwapi.h>
@@ -202,6 +203,14 @@ ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* not
    return log;
 }
 
+ControlBase* IDEFactory :: createProjectView(ControlBase* owner)
+{
+   TreeView* projectView = new TreeView(300, 50, true);
+   projectView->createControl(_instance, owner);
+
+   return projectView;
+}
+
 void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
@@ -233,7 +242,7 @@ GUIApp* IDEFactory :: createApp()
 
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess)
 {
-   GUIControlBase* children[7];
+   GUIControlBase* children[9];
    int counter = 0;
 
    int textIndex = counter++;
@@ -243,6 +252,8 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int tabBar = counter++;
    int compilerOutput = counter++;
    int errorList = counter++;
+   int projectView = counter++;
+   int hsplitter = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance);
    sdi->create(_instance, szSDI, nullptr);
@@ -257,12 +268,15 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[statusBarIndex] = createStatusbar(sdi);
    children[compilerOutput] = createCompilerOutput((ControlBase*)children[tabBar], outputProcess, notifier);
    children[errorList] = createErrorList((ControlBase*)children[tabBar], notifier);
+   children[projectView] = createProjectView(sdi);
+   children[hsplitter] = createSplitter(sdi, (ControlBase*)children[projectView], true, notifier,
+      NOTIFY_LAYOUT_CHANGED);
 
    vb->append(children[vsplitter]);
    vb->append(children[statusBarIndex]);
 
    sdi->populate(counter, children);
-   sdi->setLayout(textIndex, -1, bottomBox, -1, -1);
+   sdi->setLayout(textIndex, -1, bottomBox, -1, hsplitter);
 
    initializeScheme(textIndex, tabBar, compilerOutput, errorList);
 

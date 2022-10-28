@@ -188,6 +188,7 @@
     <ClInclude Include="..\..\gui\windows\wintabbar.h" />
     <ClInclude Include="..\..\gui\windows\wintextframe.h" />
     <ClInclude Include="..\..\gui\windows\wintextview.h" />
+    <ClInclude Include="..\..\gui\windows\wintreeview.h" />
     <ClInclude Include="..\debugcontroller.h" />
     <ClInclude Include="..\editframe.h" />
     <ClInclude Include="..\ide.h" />
@@ -231,6 +232,7 @@
     <ClCompile Include="..\..\gui\windows\wintabbar.cpp" />
     <ClCompile Include="..\..\gui\windows\wintextframe.cpp" />
     <ClCompile Include="..\..\gui\windows\wintextview.cpp" />
+    <ClCompile Include="..\..\gui\windows\wintreeview.cpp" />
     <ClCompile Include="..\debugcontroller.cpp" />
     <ClCompile Include="..\editframe.cpp" />
     <ClCompile Include="..\ide.cpp" />

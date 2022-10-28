@@ -8,9 +8,11 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * message.toPrintable
+    * message.toPrintable - test for Linux i366, amd64, ppc64le, aarch64
 
     * methodnotfoundexception : message name and a target
+
+    * ide project view
 
     * ide open project
     * ide show project

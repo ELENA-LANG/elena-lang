@@ -11,8 +11,9 @@ using namespace elena_lang;
 // --- StatusBar ---
 
 StatusBar :: StatusBar(int counter, int* widths)
-   : ControlBase(nullptr, 0, 0, 800, 20), _counter(counter), _widths(widths)
+   : ControlBase(nullptr, 0, 0, 800, 30), _counter(counter), _widths(widths)
 {
+   _minHeight = 30;
 }
 
 void StatusBar :: setRectangle(Rectangle rec)

@@ -52,6 +52,7 @@ namespace elena_lang
       void eraseTabView(int index);
 
       void setFocus() override;
+      void refresh() override;
 
       HWND createControl(HINSTANCE instance, ControlBase* owner);
 
