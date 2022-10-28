@@ -60,6 +60,8 @@ namespace elena_lang
       bool compileSingleFile(ProjectModel& model, path_t singleProjectFile);
 
    public:
+      void openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
+
       void defineSourceName(path_t path, IdentifierString& retVal);
 
       void defineFullPath(ProjectModel& model, ustr_t ns, path_t path, PathString& fullPath);

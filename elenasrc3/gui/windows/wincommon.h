@@ -174,7 +174,7 @@ namespace elena_lang
       bool initInstance(WindowBase* mainWindow, int cmdShow);
 
    public:
-      int run(GUIControlBase* mainWindow, bool maximized) override;
+      int run(GUIControlBase* mainWindow, bool maximized, int notificationId) override;
 
       void notifyMessage(int messageCode, int arg1 = 0, int arg2 = 0) override;
       void notifyModelChange(int modelCode, int arg) override;

@@ -211,7 +211,7 @@ ControlBase* IDEFactory :: createProjectView(ControlBase* owner)
    return projectView;
 }
 
-void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList)
+void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, int projectView)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_MESSAGES, szErrorList, MAX_LOADSTRING);
@@ -220,6 +220,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
    _model->ideScheme.resultControl = tabBar;
    _model->ideScheme.compilerOutputControl = compilerOutput;
    _model->ideScheme.errorListControl = errorList;
+   _model->ideScheme.projectView = projectView;
 
    _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
    _model->ideScheme.captions.add(errorList, szErrorList);
@@ -278,7 +279,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, -1, bottomBox, -1, hsplitter);
 
-   initializeScheme(textIndex, tabBar, compilerOutput, errorList);
+   initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView);
 
    return sdi;
 }

@@ -222,6 +222,16 @@ bool ProjectController :: doCompileProject(ProjectModel& model, path_t singlePro
    else return false;   
 }
 
+void ProjectController :: openSingleFileProject(ProjectModel& model, path_t singleProjectFile)
+{
+   model.sources.clear();
+
+   model.sources.add(singleProjectFile);
+
+   if (_notifier)
+      _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
+}
+
 // --- IDEController ---
 
 inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
@@ -295,7 +305,14 @@ void IDEController :: doNewFile(IDEModel* model)
 
 bool IDEController :: openFile(IDEModel* model, path_t sourceFile)
 {
-   return openFile(&model->sourceViewModel, sourceFile);
+   if (openFile(&model->sourceViewModel, sourceFile)) {
+      if (model->projectModel.singleSourceProject) {
+         projectController.openSingleFileProject(model->projectModel, sourceFile);
+      }
+
+      return true;
+   }
+   else return false;
 }
 
 bool IDEController :: openFile(SourceViewModel* model, path_t sourceFile)
@@ -401,8 +418,10 @@ bool IDEController :: doExit()
 
 path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
 {
-   return model->sourceViewModel.getDocumentPath(
-      model->sourceViewModel.getDocumentName(-1));
+   if (model->projectModel.sources.count() != 0) {
+      return *model->projectModel.sources.start();
+   }
+   else return nullptr;
 }
 
 void IDEController :: doDebugAction(IDEModel* model, DebugAction action)

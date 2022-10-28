@@ -21,6 +21,7 @@ struct IDEScheme
    int               resultControl;
    int               compilerOutputControl;
    int               errorListControl;
+   int               projectView;
 
    Map<int, text_t>  captions;
 
@@ -29,6 +30,7 @@ struct IDEScheme
       resultControl(-1), 
       compilerOutputControl(-1), 
       errorListControl(-1),
+      projectView(-1),
       captions(nullptr)
    {
    }

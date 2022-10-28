@@ -56,3 +56,84 @@ HWND TreeView :: createControl(HINSTANCE instance, ControlBase* owner)
 
    return _handle;
 }
+
+TreeViewItem TreeView :: getCurrent()
+{
+   return TreeView_GetSelection(_handle);
+}
+
+TreeViewItem TreeView :: getChild(TreeViewItem parent)
+{
+   return TreeView_GetChild(_handle, parent);
+}
+
+TreeViewItem TreeView :: getNext(TreeViewItem item)
+{
+   return TreeView_GetNextItem(_handle, item, TVGN_NEXT);
+}
+
+void TreeView :: select(TreeViewItem item)
+{
+   TreeView_SelectItem(_handle, item);
+}
+
+size_t TreeView :: readCaption(TreeViewItem item, wchar_t* caption, size_t length)
+{
+   TVITEM itemRec;
+
+   itemRec.mask = TVIF_TEXT;
+   itemRec.hItem = item;
+   itemRec.cchTextMax = (int)length;
+   itemRec.pszText = caption;
+
+   TreeView_GetItem(_handle, &itemRec);
+
+   return getlength(caption);
+}
+
+void TreeView :: setCaption(TreeViewItem item, wchar_t* caption, size_t length)
+{
+   TVITEM itemRec;
+
+   itemRec.mask = TVIF_TEXT;
+   itemRec.hItem = item;
+   itemRec.cchTextMax = (int)length;
+   itemRec.pszText = caption;
+
+   TreeView_SetItem(_handle, &itemRec);
+}
+
+void TreeView :: collapse(TreeViewItem item)
+{
+   TreeView_Expand(_handle, item, TVE_COLLAPSE);
+}
+
+void TreeView :: expand(TreeViewItem item)
+{
+   TreeView_Expand(_handle, item, TVE_EXPAND);
+}
+
+TreeViewItem TreeView :: insertTo(TreeViewItem parent, const wchar_t* caption, size_t param, bool isNode)
+{
+   TV_INSERTSTRUCT item;
+
+   item.hParent = parent;
+   item.hInsertAfter = parent ? TVI_LAST : TVI_ROOT;
+   item.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+   item.item.pszText = (wchar_t*)caption;
+   item.item.lParam = param;
+   item.item.iSelectedImage = item.item.iImage = isNode ? 0 : 1;
+
+   return (TreeViewItem)::SendMessage(_handle, TVM_INSERTITEM, 0, (LPARAM)&item);
+}
+
+void TreeView :: clear(TreeViewItem parent)
+{
+   HTREEITEM item = TreeView_GetChild(_handle, parent);
+   while (item) {
+      HTREEITEM next = TreeView_GetNextSibling(_handle, item);
+      TreeView_DeleteItem(_handle, item);
+
+      item = next;
+   }
+}

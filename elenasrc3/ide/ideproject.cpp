@@ -11,10 +11,11 @@ using namespace elena_lang;
 // --- ProjectModel ---
 
 ProjectModel :: ProjectModel(IDEStatus* status)
-   : lastOpenFiles(nullptr)
+   : lastOpenFiles(nullptr), sources(nullptr)
 {
    this->status = status;
 
+   this->singleSourceProject = true;
    this->autoRecompile = /*true*/false;// !! temporal
    this->projectPath.copy("C:\\Alex\\ELENA\\tests60\\sandbox\\"); // !! temporal
    this->outputPath.copy("C:\\Alex\\ELENA\\tests60\\sandbox\\");  // !! temporal

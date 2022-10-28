@@ -29,6 +29,7 @@ namespace elena_lang
    constexpr auto NOTIFY_ERROR_HIGHLIGHT_ROW          = 8;
    constexpr auto NOTIFY_ACTIVATE_EDITFRAME           = 9;
    constexpr auto NOTIFY_START_COMPILATION            = 10;
+   constexpr auto NOTIFY_PROJECTMODEL                 = 11;
 
    // --- PathSettings ---
    struct PathSettings

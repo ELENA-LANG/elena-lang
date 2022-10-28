@@ -41,7 +41,7 @@ namespace elena_lang
       ControlBase* createErrorList(ControlBase* owner, NotifierBase* notifier);
       ControlBase* createProjectView(ControlBase* owner);
 
-      void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList);
+      void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, int projectView);
 
    public:
       GUIApp* createApp() override;

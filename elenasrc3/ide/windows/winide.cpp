@@ -6,6 +6,7 @@
 
 #include "windows/winide.h"
 #include "windows/wintabbar.h"
+#include "windows/wintreeview.h"
 
 #include <windows/Resource.h>
 
@@ -212,6 +213,57 @@ void IDEWindow :: onErrorHighlight(int index)
    _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
 }
 
+void IDEWindow :: onProjectChange()
+{
+   TreeView* projectTree = dynamic_cast<TreeView*>(_children[_model->ideScheme.projectView]);
+
+   projectTree->clear(nullptr);
+   TreeViewItem root = projectTree->insertTo(nullptr, *_model->projectModel.name, -1, true);
+
+   PathString diskCriteria(":\\");
+
+   int srcIndex = 0;
+   wchar_t buffer[IDENTIFIER_LEN + 1];
+   for(auto it = _model->projectModel.sources.start(); !it.eof(); ++it) {
+      path_t src = *it;
+      pos_t src_len = src.length_pos();
+
+      // remove the disk name
+      pos_t index = src.findStr(*diskCriteria);
+      if (index != NOTFOUND_POS) {
+         src = src + index + 2;
+      }
+
+      TreeViewItem parent = root;
+      pos_t start = 0;
+      while (start < src_len) {
+         pos_t end = src.findSub(start, PATH_SEPARATOR, src_len);
+         PathString name;
+         name.append(src + start, end - start);
+
+         TreeViewItem current = projectTree->getChild(parent);
+         while (current != nullptr) {
+            size_t len = projectTree->readCaption(current, buffer, IDENTIFIER_LEN);
+            if (!(*name).compareSub(buffer, 0, len)) {
+               current = projectTree->getNext(current);
+            }
+            else break;
+         }
+
+         if (current == nullptr) {
+            current = projectTree->insertTo(parent, *name, end == src_len ? srcIndex : NOTFOUND_POS, end != src_len ? true : false);
+         }
+         parent = current;
+
+         start = end + 1;
+      }
+
+      srcIndex++;
+   }
+
+   projectTree->expand(root);
+}
+
 bool IDEWindow :: onCommand(int command)
 {
    switch (command) {
@@ -275,6 +327,9 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
    switch (hdr->extParam1) {
       case NOTIFY_SOURCEMODEL:
          docView->notifyOnChange();
+         break;
+      case NOTIFY_PROJECTMODEL:
+         onProjectChange();
          break;
       case NOTIFY_CURRENTVIEW_CHANGED:
          _model->sourceViewModel.afterDocumentSelect(hdr->extParam1);

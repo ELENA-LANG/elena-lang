@@ -62,6 +62,8 @@ namespace elena_lang
       void onCompilationEnd(int exitCode);
       void onErrorHighlight(int index);
 
+      void onProjectChange();
+
       void openResultTab(int controlIndex);
       void setChildFocus(int controlIndex);
 
