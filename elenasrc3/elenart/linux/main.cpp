@@ -44,6 +44,11 @@ void* CollectGCLA(void* roots, size_t size)
    return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size);
 }
 
+size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
+{
+   return machine->loadMessageName((mssg_t)message, buffer, length);
+}
+
 void ExitLA(int retVal)
 {
    if (retVal) {
