@@ -30,6 +30,8 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
 
    printf("InitializeSTA.6 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
    fflush(stdout);
+   printf("machine %llx\n", (long long)machine);
+   fflush(stdout);
 
    if (machine != nullptr)
       init();
