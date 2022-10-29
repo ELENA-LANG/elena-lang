@@ -19,8 +19,6 @@ static SystemEnv* systemEnv = nullptr;
 
 void init()
 {
-   printf("init\n");
-   fflush(stdout);
    machine = new ELENARTMachine(__routineProvider.RetrieveMDataPtr((void*)IMAGE_BASE, 0x1000000));
 }
 
@@ -28,8 +26,10 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
 {
    systemEnv = env;
 
+#ifdef DEBUG_OUTPUT
    printf("InitializeSTA.6 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
    fflush(stdout);
+#endif
 
    if (machine == nullptr)
       init();

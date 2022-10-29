@@ -24,13 +24,8 @@ void* SystemRoutineProvider::RetrieveMDataPtr(void* imageBase, pos_t imageLength
    MemoryReader reader(&header);
    addr_t addr = 0;
    if (ELFHelper::seekRODataSegment(reader, addr)) {
-      printf("RetrieveMDataPtr %x\n", addr);
-      fflush(stdout);
-
       return (void*)addr;
    }
-   printf("RetrieveMDataPtr null\n");
-   fflush(stdout);
 
    return nullptr;
 }

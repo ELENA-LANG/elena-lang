@@ -27,7 +27,7 @@ EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entryList, voi
    systemEnv = env;
 
 #ifdef DEBUG_OUTPUT
-   printf("InitializeSTA.4 %x,%x\n", (int)env, (int)criricalHandler);
+   printf("InitializeSTA.6 %x,%x\n", (int)env, (int)criricalHandler);
 #endif
 
    fflush(stdout);
