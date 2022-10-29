@@ -9,12 +9,12 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "elfhelper.h"
+#include <elf.h>
 
 using namespace elena_lang;
 
 constexpr unsigned int ELF_HEADER_SIZE = 0x34;
 constexpr unsigned int ELF64_HEADER_SIZE = 0x40;
-
 
 // --- ELFHelper ---
 
