@@ -2206,5 +2206,6 @@ inline %0FEh
   movk    x16,  __ptr32hi_1, lsl #16
   ldr     x17, [x16]
   blr     x17
+  mov     x9, x0
 
 end

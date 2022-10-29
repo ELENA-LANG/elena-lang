@@ -22,8 +22,6 @@ In development:
     * ide - tab
 
     * default exception handler
-
-    * showing call stack
     * default app-level try catch block : showing the exception message
 
     * ide - add close button on tabbar
@@ -33,6 +31,7 @@ In development:
 
     * ide compile project
 
+    * api doc
     * all functionality for existing classes
     * ide debugger
 
@@ -44,6 +43,11 @@ In development:
     * unit tests : arithmetic operations
     * unit tests : boolean operations
 
+    * showing call stack
+    * uncomment hello world
+    * uncomment lnx_console.l code
+
+    * optimization : extra temporal variables
 
     === Iteration 12 : intsum / realsum, all system tests for existing classes ===
 
@@ -60,11 +64,9 @@ Backlog:
     * calling internal method
     * calling protected method
     * exception tests : methodnotfound, nilreference
-    * uncomment hello world
     * uncomment ConsoleFactory type attributes
     * external operation : do not box the arguments
     * support constants in array size declaration (see lnx_console.l)
-    * uncomment lnx_console.l code
     * int to short -> negative
     * short to int -> negative
     * check why the struct is boxed (see INPUT_RECORD operations)
@@ -218,6 +220,7 @@ Backlog:
     * warn on not found message for the existing object
     * support constants
     * copy : support 1, 2, any other size
+    * ncopy / lcopy
     * boxing stack allocated variable
     * boxing stack allocated parameter for strong typed method
     * module template - to include basic import statement
