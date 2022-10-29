@@ -20,6 +20,7 @@ static SystemEnv* systemEnv = nullptr;
 void init()
 {
    printf("init\n");
+   fflush(stdout);
    machine = new ELENARTMachine(__routineProvider.RetrieveMDataPtr((void*)IMAGE_BASE, 0x1000000));
 }
 
