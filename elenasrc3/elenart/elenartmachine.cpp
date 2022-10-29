@@ -19,11 +19,6 @@ ELENARTMachine :: ELENARTMachine(void* mdata)
 
 }
 
-ref_t castAsRef()
-{
-   
-}
-
 void ELENARTMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
 {
    ImageSection section(mdata, 0x1000000);
@@ -53,6 +48,10 @@ size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t le
    ByteCodeUtil::formatMessageName(messageName, nullptr, *actionName, nullptr, 0, argCount, flags);
 
    StrConvertor::copy(buffer, *messageName, messageName.length(), length);
+
+   buffer[length] = 0;
+   printf("loadMessageName %s\n", buffer);
+
    return length;
 }
 

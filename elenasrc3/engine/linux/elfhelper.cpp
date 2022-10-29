@@ -54,6 +54,8 @@ bool ELFHelper :: seekRODataSegment(StreamReader& reader, addr_t& rvaAddress)
       if (ph_header.p_type == PT_LOAD && ph_header.p_flags == PF_R) {
          rvaAddress = ph_header.p_vaddr;
 
+         printf("seekRODataSegment %llx\n", rvaAddress);
+
          return true;
       }
 
