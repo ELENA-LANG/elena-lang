@@ -47,11 +47,6 @@ bool ELFHelper :: seekRODataSegment(StreamReader& reader, addr_t& rvaAddress)
    reader.read(&header, ELF64_HEADER_SIZE);
 #endif
 
-   printf("seekRODataSegment %x\n", header.e_ident[0]);
-   printf("%x\n", header.e_ident[1]);
-   printf("%x\n", header.e_ident[2]);
-   printf("%x\n", header.e_ident[3]);
-
    int count = header.e_phnum;
    while (count > 0) {
       reader.read(&ph_header, header.e_phentsize);
