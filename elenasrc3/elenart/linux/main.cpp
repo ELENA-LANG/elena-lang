@@ -28,7 +28,7 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
 {
    systemEnv = env;
 
-   printf("InitializeSTA.5 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
+   printf("InitializeSTA.6 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
    fflush(stdout);
 
    if (machine != nullptr)
