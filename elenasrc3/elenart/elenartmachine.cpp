@@ -19,15 +19,21 @@ ELENARTMachine :: ELENARTMachine(void* mdata)
 
 }
 
+ref_t castAsRef()
+{
+   
+}
+
 void ELENARTMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
 {
    ImageSection section(mdata, 0x1000000);
    ref_t actionPtr = MemoryBase::getDWord(&section, subjectRef * sizeof(uintptr_t) * 2);
    if (!actionPtr) {
-      pos_t namePtr = MemoryBase::getDWord(&section, subjectRef * sizeof(uintptr_t) * 2 + sizeof(uintptr_t));
+      addr_t namePtr = 0;
+      section.read(subjectRef * sizeof(uintptr_t) * 2 + sizeof(uintptr_t), &namePtr, sizeof(addr_t));
 
       MemoryReader reader(&section);
-      reader.seek(namePtr - (ref_t)mdata);
+      reader.seek((pos_t)(namePtr - (addr_t)mdata));
 
       reader.readString(actionName);
    }
