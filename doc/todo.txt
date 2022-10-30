@@ -8,10 +8,13 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * message.toPrintable - test for Linux i366, amd64, ppc64le, aarch64
+    * simplify string.add<string>[2]
+    * simplify string.copySubStr<string>[2]
 
-    * methodnotfoundexception : message name and a target
+    * fix x86-64 version - tests
+    * fix x86-64 version - string.add
 
+    * ide64 : fix
     * ide open project
     * ide select file in the project
     * ide - suport - home / end
@@ -20,9 +23,6 @@ In development:
     * ide - ask to save on close
     * ide - scroll with mouse wheel
     * ide - tab
-
-    * default exception handler
-    * default app-level try catch block : showing the exception message
 
     * ide - add close button on tabbar
     * ide - fix errors

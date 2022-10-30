@@ -1165,6 +1165,42 @@ labEnd:
 
 end
 
+// ; copydpn dpn, 1
+inline %1E0h
+
+  addi    r18, r31, __arg16_1
+  ld      r17, 0(r3)
+  stb     r17, 0(r18)
+
+end
+
+// ; copydpn dpn, 2
+inline %2E0h
+
+  addi    r18, r31, __arg16_1
+  ld      r17, 0(r3)
+  sth     r17, 0(r18)
+
+end
+
+// ; copydpn dpn, 4
+inline %3E0h
+
+  addi    r18, r31, __arg16_1
+  ld      r17, 0(r3)
+  stw     r17, 0(r18)
+
+end
+
+// ; copydpn dpn, 8
+inline %4E0h
+
+  addi    r18, r31, __arg16_1
+  ld      r17, 0(r3)
+  std     r17, 0(r18)
+
+end
+
 // ; iaddndp
 inline %0E1h
 

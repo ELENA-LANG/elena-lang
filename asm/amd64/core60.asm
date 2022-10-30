@@ -951,12 +951,43 @@ inline %0E0h
 
 end
 
+// ; copydpn dpn, 1
+inline %1E0h
+
+  mov  rax, [r10]
+  mov  byte ptr [rbp + __arg32_1], al
+
+end
+
+// ; copydpn dpn, 2
+inline %2E0h
+
+  mov  rax, [r10]
+  mov  word ptr [rbp + __arg32_1], ax
+
+end
+
+// ; copydpn dpn, 4
+inline %3E0h
+
+  mov  rax, [r10]
+  mov  dword ptr [rbp + __arg32_1], eax
+
+end
+
+// ; copydpn dpn, 8
+inline %4E0h
+
+  mov  rax, [r10]
+  mov  [rbp + __arg32_1], rax
+
+end
+
 // ; iaddndp
 inline %0E1h
 
-  lea  rdi, [rbp + __arg32_1]
   mov  rax, [r10]
-  add  dword ptr [rdi], eax
+  mov  word ptr [rbp + __arg32_1], rax
 
 end
 

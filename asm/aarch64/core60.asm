@@ -1152,6 +1152,42 @@ labEnd:
 
 end
 
+// ; copydpn dpn, 1
+inline %1E0h
+
+  add     x13, x29, __arg12_1
+  ldr     x14, [x0]
+  strb    w14, [x13]
+
+end
+
+// ; copydpn dpn, 2
+inline %2E0h
+
+  add     x13, x29, __arg12_1
+  ldr     x14, [x0]
+  strh    w14, [x13]
+
+end
+
+// ; copydpn dpn, 4
+inline %3E0h
+
+  add     x13, x29, __arg12_1
+  ldr     x14, [x0]
+  str     w14, [x13]
+
+end
+
+// ; copydpn dpn, 8
+inline %4E0h
+
+  add     x13, x29, __arg12_1
+  ldr     x14, [x0]
+  str     x14, [x13]
+
+end
+
 // ; iaddndp
 inline %0E1h
 

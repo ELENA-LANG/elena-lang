@@ -49,8 +49,8 @@ size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t le
 
    StrConvertor::copy(buffer, *messageName, messageName.length(), length);
 
-   buffer[length] = 0;
-   printf("loadMessageName %s\n", buffer);
+//   buffer[length] = 0;
+//   printf("loadMessageName %s\n", buffer);
 
    return length;
 }

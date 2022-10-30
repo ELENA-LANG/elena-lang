@@ -6176,7 +6176,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
       }
       else {
          ref_t outputRef = scope.info.outputRef;
-         if (outputRef) {
+         if (outputRef && outputRef != V_AUTO) {
             convertObject(writer, exprScope, node, retVal, outputRef);
 
             exprScope.syncStack();
