@@ -10,7 +10,6 @@ In development:
 
     * app default handler : ppc64le, aarch64
 
-    * ide64 : fix
     * ide open project
     * ide select file in the project
     * ide - suport - home / end

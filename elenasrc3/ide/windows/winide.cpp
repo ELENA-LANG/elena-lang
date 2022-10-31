@@ -226,18 +226,18 @@ void IDEWindow :: onProjectChange()
    wchar_t buffer[IDENTIFIER_LEN + 1];
    for(auto it = _model->projectModel.sources.start(); !it.eof(); ++it) {
       path_t src = *it;
-      pos_t src_len = src.length_pos();
+      size_t src_len = src.length_pos();
 
       // remove the disk name
-      pos_t index = src.findStr(*diskCriteria);
+      size_t index = src.findStr(*diskCriteria);
       if (index != NOTFOUND_POS) {
          src = src + index + 2;
       }
 
       TreeViewItem parent = root;
-      pos_t start = 0;
+      size_t start = 0;
       while (start < src_len) {
-         pos_t end = src.findSub(start, PATH_SEPARATOR, src_len);
+         size_t end = src.findSub(start, PATH_SEPARATOR, src_len);
          PathString name;
          name.append(src + start, end - start);
 

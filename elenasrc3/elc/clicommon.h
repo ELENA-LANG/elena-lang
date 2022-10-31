@@ -332,6 +332,7 @@ struct BuiltinReferences
    {
       superReference = intReference = 0;
       shortReference = byteReference = 0;
+      dwordReference = 0;
       literalReference = wideReference = 0;
       messageReference = 0;
       wrapperTemplateReference = 0;
@@ -340,7 +341,7 @@ struct BuiltinReferences
 
       dispatch_message = constructor_message = 0;
       invoke_message = init_message = 0;
-      add_message = 0;
+      add_message = sub_message = mul_message = div_message = 0;
       if_message = 0;
       equal_message = 0;
       not_message = 0;
