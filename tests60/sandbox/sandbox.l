@@ -1,5 +1,4 @@
-
-A;
+//A;
 
 public program()
 {
@@ -8,11 +7,14 @@ public program()
 
 // target.__getClassName() + " : Method " + mssg.toPrintable() + " not found"
 
-   var a := "abc";
-   var b := "de";
-   var c := a + b;
+   string s := "abc";
+   int l := s.Length;
 
-   console.writeLine(c)
+//   var a := "abc";
+//   var b := "de";
+//   var c := a + b;
+
+//   console.writeLine(c)
 
 //   try
 //   {

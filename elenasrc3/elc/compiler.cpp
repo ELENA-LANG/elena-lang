@@ -5935,9 +5935,9 @@ ObjectInfo Compiler :: compileRootExpression(BuildTreeWriter& writer, CodeScope&
 
    auto retVal = compileExpression(writer, scope, node, 0, mode);
 
-   if (isBoxingRequired(retVal)) {
-      retVal = boxArgumentInPlace(writer, scope, retVal);
-   }
+   //if (isBoxingRequired(retVal)) {
+   //   retVal = boxArgumentInPlace(writer, scope, retVal);
+   //}
 
    writer.appendNode(BuildKey::EndStatement);
 

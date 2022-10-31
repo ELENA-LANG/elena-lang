@@ -8,9 +8,6 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * simplify string.add<string>[2]
-    * simplify string.copySubStr<string>[2]
-
     * fix x86-64 version - tests
     * fix x86-64 version - string.add
 
