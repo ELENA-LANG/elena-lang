@@ -1,3 +1,14 @@
+B
+{
+   test()
+   {
+      int n := 1;
+      int m := 2;
+      int k := 3;
+   }
+}
+
+
 //A;
 
 public program()
@@ -7,12 +18,9 @@ public program()
 
 // target.__getClassName() + " : Method " + mssg.toPrintable() + " not found"
 
-   string s := "abc";
-   int l := s.Length;
-
-//   var a := "abc";
-//   var b := "de";
-//   var c := a + b;
+   var a := "abc";
+   var b := "de";
+   var c := a + b;
 
 //   console.writeLine(c)
 

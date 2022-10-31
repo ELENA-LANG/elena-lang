@@ -986,8 +986,9 @@ end
 // ; iaddndp
 inline %0E1h
 
+  lea  rdi, [rbp + __arg32_1]
   mov  rax, [r10]
-  mov  word ptr [rbp + __arg32_1], rax
+  add  dword ptr [rdi], eax
 
 end
 

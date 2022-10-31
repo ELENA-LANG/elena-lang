@@ -91,7 +91,7 @@ template<class AssemblyT> void compileAssembly(path_t source, path_t target)
    }
 }
 
-void compileByteCode(path_t source, path_t target, bool mode64)
+void compileByteCode(path_t source, path_t target, bool mode64, int rawDataAlignment)
 {
    FileNameString sourceName(source, true);
    ReferenceName  name;
@@ -106,7 +106,7 @@ void compileByteCode(path_t source, path_t target, bool mode64)
       throw ExceptionBase();
    }
 
-   ByteCodeAssembler assembler(4, &reader, &targetModule, mode64);
+   ByteCodeAssembler assembler(4, &reader, &targetModule, mode64, rawDataAlignment);
 
    assembler.compile();
 
@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
 
             target.changeExtension("nl");
 
-            compileByteCode(*source, *target, false);
+            compileByteCode(*source, *target, false, 4);
 
             break;
          }
@@ -233,7 +233,7 @@ int main(int argc, char* argv[])
 
             target.changeExtension("nl");
 
-            compileByteCode(*source, *target, true);
+            compileByteCode(*source, *target, true, 16);
 
             break;
          }

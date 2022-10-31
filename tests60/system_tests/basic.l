@@ -1,5 +1,18 @@
 import extensions;
 
+// --- intTests ---
+
+intTests()
+{
+    console.write("intTests");
+    int n := 123;
+    Assert.ifTrue(n == 123);
+    console.write(".");
+    n := n + 27;
+    Assert.ifTrue(n == 150);
+    console.writeLine(".");
+}
+
 // --- gcTests ---
 
 gcTests()

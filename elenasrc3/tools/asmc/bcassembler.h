@@ -108,6 +108,7 @@ namespace elena_lang
       ScriptReader _reader;
       Module*      _module;
       bool         _mode64;
+      int          _rawDataAlignment;
 
       void read(ScriptToken& tokenInfo);
       void read(ScriptToken& tokenInfo, ustr_t expectedToken, ustr_t error)
@@ -182,7 +183,8 @@ namespace elena_lang
    public:
       void compile();
 
-      ByteCodeAssembler(int tabSize, UStrReader* reader, Module* module, bool mode64);
+      ByteCodeAssembler(int tabSize, UStrReader* reader, Module* module, 
+         bool mode64, int rawDataAlignment);
    };
 
 }
