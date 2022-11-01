@@ -241,12 +241,11 @@ labYGNextFrame:
 
   mr      r1, r31              // ; restore stack pointer
 
-  ld      r3,  00h(r1)
-  ld      r4,  08h(r1)
-  ld      r31, 10h(r1)         // ; restore frame pointer
-  ld      r0,  18h(r1)         // ; restore  return address
-
-  addi    r1, r1, 32           // ; free raw stack
+  ld      r3,  10h(r1)
+  ld      r4,  18h(r1)
+  ld      r31, 20h(r1)         // ; restore frame pointer
+  ld      r0,  28h(r1) 
+  addi    r1, r1, 48h          // ; free raw stack
 
   mtlr    r0
   blr
@@ -1975,7 +1974,7 @@ inline %0F5h
   mtctr   r12            
   bctrl                   
 
-  li      r18, __n16_1
+  li      r18, __n16lo_1
   addis   r18, r18, __n16hi_1
 
   ld      r17, toc_rdata(r2)
