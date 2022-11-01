@@ -130,13 +130,13 @@ inline % GC_ALLOC
 labYGCollect:
   // ; save registers
   sub  ecx, eax
+  push esi
   push ebp
 
   // ; lock frame
   mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], esp
 
   push ecx
-  push esi
   
   // ; create set of roots
   mov  ebp, esp
@@ -192,9 +192,9 @@ labYGNextFrame:
   mov  ebx, eax
 
   mov  esp, ebp 
-  pop  esi
   pop  ecx 
   pop  ebp
+  pop  esi
   ret
 
 end

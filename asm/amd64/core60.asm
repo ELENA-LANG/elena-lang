@@ -132,13 +132,13 @@ inline % GC_ALLOC
 labYGCollect:
   // ; save registers
   sub  rcx, rax
+  push r10
+  push r11
   push rbp
 
   // ; lock frame
   mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
 
-  push r10
-  push r11
   push rcx
 
   // ; create set of roots
@@ -196,9 +196,9 @@ labYGNextFrame:
 
   mov  rsp, rbp 
   pop  rcx
+  pop  rbp
   pop  r11
   pop  r10
-  pop  rbp
 
   ret
 
