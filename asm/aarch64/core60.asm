@@ -1935,7 +1935,7 @@ inline %0F7h
   ldr     w19, [x0]
   movz    x18, __n16_1
   mul     x19, x19, x18
-  add     x19, x18, page_ceil
+  add     x19, x19, page_ceil
   and     x11, x19, page_mask
 
   movz    x17,  code_ptr32lo : %GC_ALLOC
