@@ -156,10 +156,12 @@ labYGCollect:
   sub     r18, r18, r17 
 
   mflr    r0
+  std     r3,  -20h(r1)
+  std     r4,  -18h(r1)
   std     r31, -10h(r1)  // ; save frame pointer
   std     r0,  -08h(r1)  // ; save return address
 
-  addi    r1, r1, -16    // ; allocate raw stack
+  addi    r1, r1, -32    // ; allocate raw stack
   mr      r31, r1        // ; set frame pointer
 
   // ; lock frame
@@ -233,15 +235,18 @@ labYGNextFrame:
   bctrl                  // ; and call it
 
   ld      r2, 40(r1)     // ; restoring toc pointer
-  ld      r31, 32(r1)     // ; restoring toc pointer
+  ld      r31, 32(r1)    // ; restoring toc pointer
 
   mr      r15, r3
 
   mr      r1, r31              // ; restore stack pointer
-  addi    r1, r1, 16           // ; free raw stack
 
-  ld      r31, 00h(r1)         // ; restore frame pointer
-  ld      r0,  08h(r1)         // ; restore  return address
+  ld      r3,  00h(r1)
+  ld      r4,  08h(r1)
+  ld      r31, 10h(r1)         // ; restore frame pointer
+  ld      r0,  18h(r1)         // ; restore  return address
+
+  addi    r1, r1, 32           // ; free raw stack
 
   mtlr    r0
   blr

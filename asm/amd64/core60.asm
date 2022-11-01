@@ -137,6 +137,8 @@ labYGCollect:
   // ; lock frame
   mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
 
+  push r10
+  push r11
   push rcx
 
   // ; create set of roots
@@ -194,6 +196,8 @@ labYGNextFrame:
 
   mov  rsp, rbp 
   pop  rcx
+  pop  r11
+  pop  r10
   pop  rbp
 
   ret

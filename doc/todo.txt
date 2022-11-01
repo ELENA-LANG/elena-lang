@@ -8,6 +8,8 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
+    * gc_alloc : preserve virtual sp[0] & sp[1]
+
     * app default handler : ppc64le, aarch64
 
     * ide open project

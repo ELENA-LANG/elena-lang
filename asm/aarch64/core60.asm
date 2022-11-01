@@ -133,6 +133,7 @@ labYGCollect:
   sub     x11, x11, x15
 
   stp     x29, x30, [sp, #-16]! 
+  stp     x0,  x1, [sp, #-16]! 
   mov     x29, sp              // ; set frame pointer
 
   // ; lock frame
@@ -204,6 +205,7 @@ labYGNextFrame:
   ldp     x19, x29, [sp], #16
   add     x29, x29, #16
   mov     sp, x29
+  ldp     x0,  x1, [sp], #16
   ldp     x29, x30, [sp], #16
 
   ret     x30
