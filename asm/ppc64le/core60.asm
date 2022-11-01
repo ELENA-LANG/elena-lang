@@ -1446,7 +1446,7 @@ inline %0E6h
   ld      r15, et_current(r14)
 
   ld       r12, toc_code(r2)
-  addis    r12, r12, __disp32hi_2 
+  addis    r12, r12, __disp32hi_2
   addi     r12, r12, __disp32lo_2
 
   std     r15, es_prev_struct(r19)
@@ -1463,7 +1463,7 @@ inline %0E7h
 
   addi    r15, r15, elObjectOffset
 
-  li      r18, __n16_1
+  li      r18, __n16lo_1
   addis   r18, r18, __n16hi_1
 
   ld      r17, toc_rdata(r2)
