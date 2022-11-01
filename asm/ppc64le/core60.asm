@@ -245,7 +245,7 @@ labYGNextFrame:
   ld      r4,  18h(r1)
   ld      r31, 20h(r1)         // ; restore frame pointer
   ld      r0,  28h(r1) 
-  addi    r1, r1, 48h          // ; free raw stack
+  addi    r1, r1, 48           // ; free raw stack
 
   mtlr    r0
   blr
