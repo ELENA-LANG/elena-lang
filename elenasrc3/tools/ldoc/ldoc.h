@@ -25,14 +25,37 @@ namespace elena_lang
       virtual ~PresenterBase() = default;
    };
 
+   typedef List<ustr_t, freeUStr>       StringList;
+
    struct ApiClassInfo
    {
       IdentifierString prefix;
       IdentifierString fullName;
+      IdentifierString name;
       IdentifierString shortDescr;
+      IdentifierString title;
+
+      StringList       parents;
+
+      ApiClassInfo()
+         : parents(nullptr)
+      {
+         
+      }
    };
 
-   typedef List<ApiClassInfo*, freeobj> ApiClassInfoList;
+   inline int sortApiClassInfo(ApiClassInfo* p, ApiClassInfo* n)
+   {
+      if ((*p->name).greater((*n->name))) {
+         return -1;
+      }
+      else if ((*p->name).compare((*n->name))) {
+         return 0;
+      }
+      else return 1;
+   }
+
+   typedef SortedList<ApiClassInfo*, sortApiClassInfo, freeobj> ApiClassInfoList;
 
    struct ApiModuleInfo
    {
@@ -62,8 +85,13 @@ namespace elena_lang
       ApiModuleInfo* findModule(ApiModuleInfoList& modules, ustr_t ns);
       ApiClassInfo* findClass(ApiModuleInfo* module, ustr_t name);
 
-      void generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t name);
+      void generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName);
       void generateModuleDoc(ApiModuleInfo* moduleInfo);
+
+      bool loadClassInfo(ref_t reference, ClassInfo& info);
+
+      void loadParents(ApiClassInfo* apiClassInfo, ref_t parentRef);
+      void loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference);
 
    public:
       void loadNestedModules(ApiModuleInfoList& modules);

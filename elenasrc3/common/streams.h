@@ -232,7 +232,7 @@ namespace elena_lang
 
       bool writeText(const T* s)
       {
-         return write(s, getlength_pos(s) + 1);
+         return write(s, getlength_pos(s));
       }
 
       virtual bool writeTextLine(const T* s)

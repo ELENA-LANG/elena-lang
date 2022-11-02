@@ -440,6 +440,12 @@ bool inline util_compare(const char* s1, const char* s2)
    else return (s1 == s2);
 }
 
+bool inline util_greater(const char* s1, const char* s2)
+{
+   if (s1 && s2) return (strcmp(s1, s2) > 0);
+   else return false;
+}
+
 bool inline util_compare(const char* s1, const char* s2, size_t length)
 {
    if (s1 && s2) return (strncmp(s1, s2, length) == 0);
@@ -926,6 +932,11 @@ bool ustr_t :: compare(const char* s) const
 bool ustr_t::compare(const char* s, size_t length) const
 {
    return util_compare(_string, s, length);
+}
+
+bool ustr_t::greater(const char* s) const
+{
+   return util_greater(_string, s);
 }
 
 bool ustr_t::compareSub(const char* s, size_t index, size_t length) const

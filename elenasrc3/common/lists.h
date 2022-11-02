@@ -439,6 +439,29 @@ namespace elena_lang
 
       }
 
+      void insert(int index, T item)
+      {
+         if (!index)
+            return;
+
+         int currentIndex = 1;
+         Item* current = _top;
+         Item* prev = nullptr;
+         while (currentIndex < index) {
+            prev = current;
+            current = current->next;
+            currentIndex++;
+         }
+
+         if (prev == nullptr) {
+            addToTop(item);
+         }
+         else if (current != nullptr) {
+            prev->next = new Item(item, prev->next);
+         }
+         else addToTale(item);
+      }
+
       T cutTop()
       {
          Item* tmp = _top;
@@ -685,6 +708,112 @@ namespace elena_lang
       virtual ~List() = default;
    };
 
+   // --- SortedList ---
+   template <class T, int(*SortT)(T,T), void(*FreeT)(T) = nullptr> class SortedList
+   {
+      ListBase<T, FreeT> _list;
+      T                  _defaultItem;
+
+   public:
+      typedef ListIteratorBase<T, ItemBase<T>> Iterator;
+
+      T DefaultValue() const { return _list.DefaultValue(); }
+
+      pos_t count() const { return _list.count(); }
+
+      Iterator start()
+      {
+         return _list.start();
+      }
+
+      Iterator end()
+      {
+         return _list.end();
+      }
+
+      void add(T item)
+      {
+         int len = count();
+         for (int i = 1; i <= len; i++) {
+            if (SortT(_list.getAt(i), item) < 0) {
+               _list.insert(i, item);
+
+               return;
+            }
+         }
+
+         _list.addToTale(item);
+      }
+
+      T peek() const
+      {
+         return _list.peek();
+      }
+
+      T get(int index) const
+      {
+         return _list.getAt(index);
+      }
+
+      void cut(T item)
+      {
+         _list.cut(item);
+      }
+
+      template<class ArgT> void forEach(ArgT arg, void(*lambda)(ArgT arg, T item))
+      {
+         auto it = start();
+         while (!it.eof()) {
+            lambda(arg, *it);
+
+            ++it;
+         }
+      }
+
+      template<class ArgT> T retrieve(ArgT arg, bool(*lambda)(ArgT arg, T item))
+      {
+         auto it = start();
+         while (!it.eof())
+         {
+            if (lambda(arg, *it))
+               return *it;
+
+            ++it;
+         }
+
+         return _defaultItem;
+      }
+
+      template<class ArgT> int retrieveIndex(ArgT arg, bool(*lambda)(ArgT arg, T item))
+      {
+         auto it = start();
+         int index = 0;
+         while (!it.eof())
+         {
+            if (lambda(arg, *it))
+               return index;
+
+            index++;
+
+            ++it;
+         }
+
+         return -1;
+      }
+
+      void clear()
+      {
+         _list.clear();
+      }
+
+      SortedList(T defValue)
+         : _list(defValue)
+      {
+         _defaultItem = defValue;
+      }
+      virtual ~SortedList() = default;
+   };
+
    // --- Stack ---
    template <class T> class Stack
    {
@@ -810,6 +939,21 @@ namespace elena_lang
          clear();
       }
    };
+
+   // --- Hash functions ---
+   constexpr size_t cnUStrHashSize = 27;
+   inline size_t mapUStrHash(ustr_t s)
+   {
+      char ch = s[0];
+
+      if (ch >= 'a' && s[0] <= 'z') {
+         return ch - 'a';
+      }
+      else if (ch >= 'A' && s[0] <= 'Z') {
+         return ch - 'A';
+      }
+      return 26;
+   }
 
    // --- Map ---
    inline ustr_t allocUStr(ustr_t key)

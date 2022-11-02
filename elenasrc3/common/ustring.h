@@ -116,6 +116,8 @@ namespace elena_lang
       bool compare(const char* s, size_t length) const;
       bool compareSub(const char* s, size_t index, size_t length) const;
 
+      bool greater(const char* s) const;
+
       bool startsWith(const char* s);
       bool endsWith(const char* s);
 

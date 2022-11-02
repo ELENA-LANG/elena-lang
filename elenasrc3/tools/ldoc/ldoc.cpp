@@ -12,6 +12,17 @@
 
 using namespace elena_lang;
 
+void writeNs(TextFileWriter& writer, ustr_t ns)
+{
+   for (int i = 0; i < getlength(ns); i++)
+   {
+      if (ns[i] == '\'') {
+         writer.writeChar('-');
+      }
+      else writer.writeChar(ns[i]);
+   }
+}
+
 void writeNs(IdentifierString& name, ApiModuleInfo* info)
 {
    for (size_t i = 0; i < info->name.length(); i++)
@@ -29,7 +40,7 @@ void writeHeader(TextFileWriter& writer, const char* package, const char* packag
    writer.writeTextLine("<HTML>");
    writer.writeTextLine("<HEAD>");
    writer.writeTextLine("<TITLE>");
-   writer.writeTextLine(TITLE);
+   writer.writeText(TITLE);
    writer.writeTextLine(package);
    writer.writeTextLine("</TITLE>");
    writer.writeTextLine("<meta name=\"collection\" content=\"api\">");
@@ -97,6 +108,25 @@ void writeClassSummaryHeader(TextFileWriter& writer)
    writer.writeTextLine("</TR>");
 }
 
+void parseNs(IdentifierString& ns, ustr_t root, ustr_t fullName)
+{
+   if (isWeakReference(fullName)) {
+      ns.copy(root);
+   }
+
+   size_t ltIndex = fullName.findStr("&lt;");
+   size_t last = 0;
+   for (size_t i = 0; i < getlength(fullName); i++) {
+      if (fullName[i] == '\'') {
+         last = i;
+      }
+      else if (fullName[i] == '#' || (fullName[i] == '&' && i == ltIndex))
+         break;
+   }
+
+   ns.append(fullName, last);
+}
+
 void writeRefName(TextFileWriter& writer, ustr_t name, bool allowResolvedTemplates)
 {
    int paramIndex = 1;
@@ -156,9 +186,65 @@ void writeClassName(TextFileWriter& writer, ApiClassInfo* info)
       }
 
       writer.writeText("<SPAN CLASS=\"typeNameLabel\">");
-      writer.writeText(*info->fullName);
+      writer.writeText(*info->name);
       writer.writeText("</SPAN>");
    }
+}
+
+void writeType(TextFileWriter& writer, ustr_t type, bool fullReference = false)
+{
+   bool arrayMode = false;
+   if (type.startsWith("params ")) {
+      writer.writeText("<I>params</I>&nbsp;");
+      type = type + 7;
+   }
+   else if (type.startsWith("ref ")) {
+      writer.writeText("<I>ref</I>&nbsp;");
+      type = type + 4;
+   }
+   else if (type.startsWith("arrayof ")) {
+      type = type + 8;
+      arrayMode = true;
+   }
+
+   writer.writeText("<SPAN CLASS=\"memberNameLink\">");
+   if (type.find('\'') != NOTFOUND_POS) {
+      writer.writeText("<A HREF=\"");
+
+      pos_t index = type.findStr("&lt;");
+      NamespaceString ns(type);
+      if (index != NOTFOUND_POS) {
+         for (pos_t i = index; i >= 0; i--) {
+            if (type[i] == '\'') {
+               ns.copy(type, i);
+               break;
+            }
+         }
+      }
+
+      if (emptystr(*ns)) {
+         writer.writeText("#");
+      }
+      else {
+         writeNs(writer, *ns);
+         writer.writeText(".html#");
+      }
+      writeRefName(writer, type + ns.length() + 1, false);
+
+      writer.writeText("\">");
+      if (fullReference) {
+         writer.writeText(type);
+      }
+      else writer.writeText(type + ns.length() + 1);
+
+      writer.writeText("</A>");
+   }
+   else writer.writeText(type);
+
+   if (arrayMode)
+      writer.writeText("<I>[]</I>");
+
+   writer.writeText("</SPAN>");
 }
 
 void writeSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
@@ -168,9 +254,9 @@ void writeSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* b
    writer.writeText("<A HREF=\"");
    writer.writeText(bodyFileName);
    writer.writeText("#");
-   writeRefName(writer, *info->fullName, false);
+   writeRefName(writer, *info->name, false);
    writer.writeText("\">");
-   writer.writeText(*info->fullName);
+   writer.writeText(*info->name);
    writer.writeTextLine("</A>");
    writer.writeTextLine("</TD>");
 
@@ -179,6 +265,78 @@ void writeSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* b
    writeClassName(writer, info);
    writer.writeTextLine("</DIV>");
    writer.writeTextLine("</TD>");
+}
+
+void writeClassBodyHeader(TextFileWriter& writer, ApiClassInfo* info, ustr_t moduleName)
+{
+   writer.writeText("<A NAME=\"");
+   writer.writeText(*info->name);
+   writer.writeTextLine("\">");
+   writer.writeTextLine("</A>");
+
+   writer.writeTextLine("<!-- ======== START OF CLASS DATA ======== -->");
+
+   writer.writeTextLine("<DIV CLASS=\"header\">");
+
+   writer.writeTextLine("<DIV CLASS=\"subTitle\">");
+   writer.writeText(moduleName);
+   writer.writeText("'");
+   writer.writeTextLine("</DIV>");
+
+   writer.writeText("<H2 title=\"");
+   writer.writeText(*info->title);
+   writer.writeText("\" class=\"title\">");
+   writer.writeText(*info->title);
+   writer.writeTextLine("</H2>");
+
+   writer.writeTextLine("</DIV>");
+
+   writer.writeTextLine("<DIV CLASS=\"contentContainer\">");
+
+   writer.writeTextLine("<DIV CLASS=\"description\">");
+   writer.writeTextLine("<BR>");
+   writer.writeTextLine("<HR>");
+   //const char* descr = nullptr;
+   writer.writeTextLine("<PRE STYLE=\"padding-top: 15px;\">");
+   writeClassName(writer, info);
+   writer.writeTextLine("</PRE>");
+   writer.writeTextLine("<BR>");
+   writer.writeTextLine("</DIV>");
+}
+
+void writeParent(TextFileWriter& writer, StringList::Iterator& it, ApiClassInfo* info)
+{
+   writer.writeTextLine("<UL CLASS=\"inheritance\">");
+   writer.writeTextLine("<LI>");
+
+   if (!it.eof()) {
+      writeType(writer, (*it), true);
+      writer.writeTextLine("</LI>");
+
+      it++;
+      writer.writeTextLine("<LI>");
+      writeParent(writer, it, info);
+   }
+   else {
+      writer.writeText(*info->fullName);
+   }
+
+   writer.writeTextLine("</LI>");
+
+   writer.writeTextLine("</UL>");
+}
+
+void writeParents(TextFileWriter& writer, ApiClassInfo* info, ustr_t moduleName)
+{
+   auto it = info->parents.start();
+   writeParent(writer, it, info);
+}
+
+void writeClassBodyFooter(TextFileWriter& writer, ApiClassInfo* info, ustr_t moduleName)
+{
+   writer.writeTextLine("<HR>");
+
+   writer.writeTextLine("</DIV>");
 }
 
 void writeClassSummaryFooter(TextFileWriter& writer)
@@ -255,24 +413,94 @@ ApiClassInfo* DocGenerator :: findClass(ApiModuleInfo* module, ustr_t fullName)
    return nullptr;
 }
 
+bool DocGenerator :: loadClassInfo(ref_t reference, ClassInfo& info)
+{
+   if (!reference)
+      return false;
+
+   MemoryBase* vmt = _module->mapSection(reference | mskVMTRef, true);
+   if (!vmt) {
+      ustr_t refName = _module->resolveReference(reference);
+      if (isTemplateWeakReference(refName)) {
+         ref_t resolvedReference = _module->mapReference(refName + getlength(TEMPLATE_PREFIX_NS) - 1);
+
+         vmt = _module->mapSection(resolvedReference | mskVMTRef, true);
+         if (!vmt)
+            return false;
+      }
+      else return false;
+   }
+
+   MemoryReader vmtReader(vmt);
+   // read tape record size
+   vmtReader.getDWord();
+
+   // read VMT info
+   vmtReader.read((void*)&info.header, sizeof(ClassHeader));
+
+   return true;
+}
+
+void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
+{
+   if (!reference)
+      return;
+
+   // read VMT info
+   ClassInfo info;
+   if (loadClassInfo(reference, info)) {
+      loadParents(apiClassInfo, info.header.parentRef);
+   }
+
+   ustr_t name = _module->resolveReference(reference);
+   apiClassInfo->parents.add(name.clone());
+}
+
+
+void DocGenerator :: loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference)
+{
+   MemoryBase* vmt = _module->mapSection(reference | mskVMTRef, true);
+   if (!vmt) {
+      ustr_t refName = _module->resolveReference(reference);
+      if (isTemplateWeakReference(refName)) {
+         ref_t resolvedReference = _module->mapReference(refName + getlength(TEMPLATE_PREFIX_NS) - 1);
+
+         vmt = _module->mapSection(resolvedReference | mskVMTRef, true);
+         if (!vmt)
+            return;
+      }
+      else return;
+   }
+
+   MemoryReader vmtReader(vmt);
+   // read tape record size
+   vmtReader.getDWord();
+
+   // read VMT info
+   ClassInfo info;
+   vmtReader.read((void*)&info.header, sizeof(ClassHeader));
+
+   loadParents(apiClassInfo, info.header.parentRef);
+}
+
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 {
    auto referenceName = _module->resolveReference(reference);
    if (isWeakReference(referenceName)) {
-      NamespaceString prefix("public");
+      IdentifierString prefix("public ");
       if (referenceName.startsWith(INTERNAL_PREFIX)) {
          if (_publicOnly)
             return;
 
          referenceName += getlength(INTERNAL_PREFIX);
-         prefix.copy("intern");
+         prefix.copy("intern ");
       }
       else if (referenceName.startsWith(PRIVATE_PREFIX)) {
          if (_publicOnly)
             return;
 
          referenceName += getlength(PRIVATE_PREFIX);
-         prefix.copy("private");
+         prefix.copy("private ");
       }
       else if (referenceName.startsWith(TEMPLATE_PREFIX)) {
          return;
@@ -292,15 +520,21 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       }
 
       if (_module->mapSection(reference | mskVMTRef, true)) {
+         prefix.append("class ");
+
          ApiClassInfo* info = findClass(moduleInfo, *fullName);
          if (!info) {
             info = new ApiClassInfo();
 
+            info->fullName.copy(*fullName);
+            info->name.copy(*properName);
+            info->title.copy(*properName);
+            info->prefix.copy(*prefix);
+
             moduleInfo->classes.add(info);
          }
 
-         info->fullName.copy(*fullName);
-         info->prefix.copy(*prefix);
+         loadClassMembers(info, reference);
       }
       else if (_module->mapSection(reference | mskSymbolRef, true)) {
       }
@@ -321,9 +555,20 @@ void DocGenerator :: loadNestedModules(ApiModuleInfoList& modules)
       });
 }
 
-void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t name)
+void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName)
 {
-   writeSummaryTable(summaryWriter, classInfo, name);
+   IdentifierString moduleName;
+   parseNs(moduleName, *_rootNs, *classInfo->fullName);
+
+   writeSummaryTable(summaryWriter, classInfo, bodyName);
+
+   writeClassBodyHeader(bodyWriter, classInfo, *moduleName);
+
+   if (classInfo->parents.count() > 0) {
+      writeParents(bodyWriter, classInfo, *_rootNs);
+   }
+
+   writeClassBodyFooter(bodyWriter, classInfo, *moduleName);
 }
 
 void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
