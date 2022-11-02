@@ -560,6 +560,13 @@ namespace elena_lang
          return true;
       }
 
+      bool writeNewLine() override
+      {
+         T ch = '\n';
+
+         return write(&ch, 1);
+      }
+
       bool write(const T* s, pos_t length)
       {
          size_t lenToWrite = Size - _offset;
