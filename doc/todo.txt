@@ -15,16 +15,18 @@ In development:
     * ide - scroll with mouse wheel
     * ide - tab
 
-    * api doc
+    * api doc - methods
 
     * ide - add close button on tabbar
     * ide - fix errors
     * ide - compile the project / file
     * ide different styles : use dark mode
 
+    * all functionality for existing classes
+    * api doc
+
     * ide compile project
 
-    * all functionality for existing classes
     * ide debugger
 
     * variadic call in compile-time

@@ -7,6 +7,8 @@
 //---------------------------------------------------------------------------
 
 #include "ldoc.h"
+
+#include "bytecode.h"
 #include "ldocconst.h"
 #include "module.h"
 
@@ -332,6 +334,85 @@ void writeParents(TextFileWriter& writer, ApiClassInfo* info, ustr_t moduleName)
    writeParent(writer, it, info);
 }
 
+void writeClassMethodsHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== METHOD SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Method Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Method</TH>");
+   writer.writeTextLine("</TR>");
+}
+
+void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
+{
+   writer.writeTextLine("<TD CLASS=\"colFirst\">");
+   writer.writeTextLine("<CODE>");
+   //if (info->prefix.Length() != 0) {
+   //   writer.writeLiteral("<i>");
+   //   writer.writeLiteral(info->prefix.ident());
+   //   writer.writeLiteral("</i>");
+   //   writer.writeLiteral("&nbsp;");
+   //}
+   //if (info->retType.Length() != 0) {
+   //   writeType(writer, info->retType);
+   //}
+
+   writer.writeTextLine("</CODE></TD>");
+}
+
+void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
+{
+   writer.writeTextLine("<TD CLASS=\"colLast\">");
+   writer.writeText("<CODE>");
+
+   writer.writeText(*info->name);
+   writer.writeText("(");
+
+   bool first = true;
+   auto it = info->params.start();
+   auto name_it = info->paramNames.start();
+   while (!it.eof()) {
+      if (!first) {
+         writer.writeText(", ");
+      }
+      else first = false;
+
+      writeType(writer, *it);
+      if (!name_it.eof()) {
+         writer.writeText(" ");
+         writer.writeText(*name_it);
+         ++name_it;
+      }
+
+      ++it;
+   }
+
+   writer.writeTextLine(")");
+
+   writer.writeTextLine("</CODE>");
+   if (info->shortDescr.length() > 0) {
+      writer.writeTextLine("<div class=\"block\">");
+      writer.writeText(*info->shortDescr);
+      writer.writeTextLine("</div>");
+   }
+   writer.writeTextLine("</TD>");
+}
+
+void writeClassMethodsFooter(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("</TABLE>");
+
+   writer.writeTextLine("</LI>");
+   writer.writeTextLine("</UL>");
+}
+
 void writeClassBodyFooter(TextFileWriter& writer, ApiClassInfo* info, ustr_t moduleName)
 {
    writer.writeTextLine("<HR>");
@@ -413,30 +494,27 @@ ApiClassInfo* DocGenerator :: findClass(ApiModuleInfo* module, ustr_t fullName)
    return nullptr;
 }
 
-bool DocGenerator :: loadClassInfo(ref_t reference, ClassInfo& info)
+bool DocGenerator :: loadClassInfo(ref_t reference, ClassInfo& info, bool headerOnly)
 {
    if (!reference)
       return false;
 
-   MemoryBase* vmt = _module->mapSection(reference | mskVMTRef, true);
-   if (!vmt) {
+   auto section = _module->mapSection(reference | mskMetaClassInfoRef, true);
+   if (!section) {
       ustr_t refName = _module->resolveReference(reference);
       if (isTemplateWeakReference(refName)) {
          ref_t resolvedReference = _module->mapReference(refName + getlength(TEMPLATE_PREFIX_NS) - 1);
 
-         vmt = _module->mapSection(resolvedReference | mskVMTRef, true);
-         if (!vmt)
+         section = _module->mapSection(resolvedReference | mskMetaClassInfoRef, true);
+         if (!mskMetaClassInfoRef)
             return false;
       }
       else return false;
    }
 
-   MemoryReader vmtReader(vmt);
-   // read tape record size
-   vmtReader.getDWord();
-
+   MemoryReader vmtReader(section);
    // read VMT info
-   vmtReader.read((void*)&info.header, sizeof(ClassHeader));
+   info.load(&vmtReader, headerOnly);
 
    return true;
 }
@@ -448,7 +526,7 @@ void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
 
    // read VMT info
    ClassInfo info;
-   if (loadClassInfo(reference, info)) {
+   if (loadClassInfo(reference, info, false)) {
       loadParents(apiClassInfo, info.header.parentRef);
    }
 
@@ -456,31 +534,80 @@ void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
    apiClassInfo->parents.add(name.clone());
 }
 
+void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs/*, bool templateBased*/, bool argMode)
+{
+   if (isTemplateWeakReference(line)) {
+      type.copy(line);
+   }
+   else if (line[0] == '\'') {
+      type.copy(rootNs);
+      type.append(line);
+   }
+   else type.copy(line);
+
+   //validateTemplateType(type, templateBased, argMode);
+}
+
+void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo)
+{
+   bool skipOne = apiMethodInfo->extensionOne;
+
+   ustr_t name = *apiMethodInfo->name;
+
+   size_t sign_index = name.find('<');
+   if (sign_index != NOTFOUND_POS) {
+      IdentifierString param;
+      IdentifierString type;
+      for (size_t i = sign_index + 1; i < name.length(); i++) {
+         if (name[i] == ',' || name[i] == '>') {
+            if (skipOne) {
+               skipOne = false;
+            }
+            else {
+               loadType(type, *param, *_rootNs, /*templateBased, */true);
+
+               //if (info->withVargs && info->name[i] == '>') {
+               //   type.append("[]");
+
+               //   type.insert("params ", 0);
+               //}
+
+               apiMethodInfo->params.add((*type).clone());
+            }
+            param.clear();
+            type.clear();
+         }
+         else param.append(name[i]);
+      }
+
+      apiMethodInfo->name.truncate(sign_index);
+   }
+}
+
+void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo)
+{
+   auto apiMethodInfo = new ApiMethodInfo();
+
+   if (ByteCodeUtil::resolveMessageName(apiMethodInfo->name, _module, message)) {
+      loadMethodName(apiMethodInfo);
+
+      apiClassInfo->methods.add(apiMethodInfo);
+   }
+}
 
 void DocGenerator :: loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference)
 {
-   MemoryBase* vmt = _module->mapSection(reference | mskVMTRef, true);
-   if (!vmt) {
-      ustr_t refName = _module->resolveReference(reference);
-      if (isTemplateWeakReference(refName)) {
-         ref_t resolvedReference = _module->mapReference(refName + getlength(TEMPLATE_PREFIX_NS) - 1);
-
-         vmt = _module->mapSection(resolvedReference | mskVMTRef, true);
-         if (!vmt)
-            return;
-      }
-      else return;
-   }
-
-   MemoryReader vmtReader(vmt);
-   // read tape record size
-   vmtReader.getDWord();
-
-   // read VMT info
    ClassInfo info;
-   vmtReader.read((void*)&info.header, sizeof(ClassHeader));
+   if (loadClassInfo(reference, info, false)) {
+      loadParents(apiClassInfo, info.header.parentRef);
 
-   loadParents(apiClassInfo, info.header.parentRef);
+      for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
+         auto methodInfo = *m_it;
+         if (!methodInfo.inherited) {
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo);
+         }
+      }
+   }
 }
 
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
@@ -567,6 +694,24 @@ void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWri
    if (classInfo->parents.count() > 0) {
       writeParents(bodyWriter, classInfo, *_rootNs);
    }
+
+   writeClassMethodsHeader(bodyWriter, classInfo, *moduleName);
+   bool alt = true;
+   for (auto it = classInfo->methods.start(); !it.eof(); ++it) {
+      if (alt) {
+         bodyWriter.writeTextLine("<TR CLASS=\"altColor\">");
+      }
+      else {
+         bodyWriter.writeTextLine("<TR CLASS=\"rowColor\">");
+      }
+      alt = !alt;
+
+      writeFirstColumn(bodyWriter, *it);
+      writeSecondColumn(bodyWriter, *it);
+
+      bodyWriter.writeTextLine("</TR>");
+   }
+   writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
 
    writeClassBodyFooter(bodyWriter, classInfo, *moduleName);
 }

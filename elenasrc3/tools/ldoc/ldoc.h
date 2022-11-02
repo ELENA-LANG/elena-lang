@@ -27,18 +27,38 @@ namespace elena_lang
 
    typedef List<ustr_t, freeUStr>       StringList;
 
+   struct ApiMethodInfo
+   {
+      IdentifierString  name;
+      IdentifierString  shortDescr;
+
+      bool              extensionOne;
+
+      StringList        params;
+      StringList        paramNames;
+
+      ApiMethodInfo()
+         : extensionOne(false), params(nullptr), paramNames(nullptr)
+      {
+         
+      }
+   };
+
+   typedef List<ApiMethodInfo*, freeobj> ApiMethodInfoList;
+
    struct ApiClassInfo
    {
-      IdentifierString prefix;
-      IdentifierString fullName;
-      IdentifierString name;
-      IdentifierString shortDescr;
-      IdentifierString title;
+      IdentifierString  prefix;
+      IdentifierString  fullName;
+      IdentifierString  name;
+      IdentifierString  shortDescr;
+      IdentifierString  title;
 
-      StringList       parents;
+      StringList        parents;
+      ApiMethodInfoList methods;
 
       ApiClassInfo()
-         : parents(nullptr)
+         : parents(nullptr), methods(nullptr )
       {
          
       }
@@ -88,9 +108,12 @@ namespace elena_lang
       void generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName);
       void generateModuleDoc(ApiModuleInfo* moduleInfo);
 
-      bool loadClassInfo(ref_t reference, ClassInfo& info);
+      bool loadClassInfo(ref_t reference, ClassInfo& info, bool headerOnly = true);
 
       void loadParents(ApiClassInfo* apiClassInfo, ref_t parentRef);
+      void loadMethodName(ApiMethodInfo* apiMethodInfo);
+      void loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo);
+
       void loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference);
 
    public:
