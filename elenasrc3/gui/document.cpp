@@ -471,7 +471,7 @@ void DocumentView :: moveLeftToken(bool selecting)
    _caret.moveOn(-1);
 
    while (_caret.column() > 0 || _caret.row() > 0) {
-      if (_caret.column() == _caret.length_pos())
+      if (_caret.column() == _caret.length_int())
          break;
 
       pos_t length = 0;
@@ -479,7 +479,7 @@ void DocumentView :: moveLeftToken(bool selecting)
       if (length == 0)
          break;
 
-      if (ws.find(line[0] != NOTFOUND_POS)) {
+      if (ws.find(line[0]) != NOTFOUND_POS) {
          if (operatorOne || newToken) {
             _caret.moveOn(1);
             break;
@@ -500,7 +500,7 @@ void DocumentView :: moveLeftToken(bool selecting)
          else newToken = true;
       }
 
-      _caret.moveOn(1);
+      _caret.moveOn(-1);
    }
    if (selecting) {
       _selection += position - _caret.position();
@@ -516,14 +516,14 @@ void DocumentView :: moveRightToken(bool selecting, bool trimWhitespace)
    pos_t position = _caret.position();
    bool newToken = false;
    bool operatorOne = false;
-   bool first = false;
+   bool first = true;
    while (first || (pos_t)_caret.column() < _caret.position()) {
       pos_t length = 0;
       text_t line = _text->getLine(_caret, length);
       if (length == 0)
          break;
 
-      if (ws.find(line[0] != NOTFOUND_POS)) {
+      if (ws.find(line[0]) != NOTFOUND_POS) {
          newToken = true;
          operatorOne = false;
 
@@ -566,6 +566,27 @@ void DocumentView :: moveFrameDown()
          setCaret(_caret.column(), _frame.row(), false);
       }
    }
+}
+
+void DocumentView :: moveFirst(bool selecting)
+{
+   setCaret(0, 0, selecting);
+}
+
+void DocumentView :: moveEnd(bool selecting)
+{
+   int lastRow = _text->getRowCount() - 1;
+   setCaret((int)_text->getRowLength(lastRow), lastRow, selecting);
+}
+
+void DocumentView :: moveHome(bool selecting)
+{
+   setCaret(0, _caret.row(), selecting);
+}
+
+void DocumentView :: moveLast(bool selecting)
+{
+   setCaret(_caret.length_int(), _caret.row(), selecting);
 }
 
 void DocumentView :: moveToFrame(int column, int row, bool selecting)

@@ -206,3 +206,27 @@ void TextViewController :: moveCaretUp(TextViewModelBase* model, bool kbShift, b
 
    model->onModelChanged();
 }
+
+void TextViewController :: moveCaretHome(TextViewModelBase* model, bool kbShift, bool kbCtrl)
+{
+   auto docView = model->DocView();
+
+   if (kbCtrl) {
+      docView->moveFirst(kbShift);
+   }
+   else docView->moveHome(kbShift);
+
+   model->onModelChanged();
+}
+
+void TextViewController :: moveCaretEnd(TextViewModelBase* model, bool kbShift, bool kbCtrl)
+{
+   auto docView = model->DocView();
+
+   if (kbCtrl) {
+      docView->moveEnd(kbShift);
+   }
+   else docView->moveLast(kbShift);
+
+   model->onModelChanged();
+}

@@ -8,16 +8,14 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * app default handler : aarch64
-
     * ide open project
     * ide select file in the project
-    * ide - suport - home / end
-    * ide - goto mouse / ctrl left / ctrl right
-    * ide - fix the cursor size / position
+    * ide - goto mouse
     * ide - ask to save on close
     * ide - scroll with mouse wheel
     * ide - tab
+
+    * api doc
 
     * ide - add close button on tabbar
     * ide - fix errors
@@ -26,7 +24,6 @@ In development:
 
     * ide compile project
 
-    * api doc
     * all functionality for existing classes
     * ide debugger
 

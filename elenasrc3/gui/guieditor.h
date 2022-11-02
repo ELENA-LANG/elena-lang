@@ -152,6 +152,8 @@ namespace elena_lang
       virtual void moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
+      virtual void moveCaretHome(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
+      virtual void moveCaretEnd(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
    };
 
 }

@@ -498,6 +498,18 @@ int Text :: retrieveRowCount()
    return count;
 }
 
+pos_t Text :: getRowLength(int row)
+{
+   if (row < _rowCount) {
+      TextBookmark bookmark;
+      validateBookmark(bookmark);
+
+      bookmark.moveTo(0, row);
+
+      return bookmark.length_pos();
+   }
+}
+
 void Text :: validateBookmark(TextBookmark& bookmark)
 {
    if (!bookmark.isValid()) {

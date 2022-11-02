@@ -266,6 +266,10 @@ namespace elena_lang
       void moveLeftToken(bool selecting);
       void moveFrameUp();
       void moveFrameDown();
+      void moveHome(bool selecting);
+      void moveEnd(bool selecting);
+      void moveFirst(bool selecting);
+      void moveLast(bool selecting);
 
       void moveToFrame(int column, int row, bool selecting);
 

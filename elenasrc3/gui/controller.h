@@ -73,6 +73,8 @@ namespace elena_lang
       void moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
+      void moveCaretHome(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
+      void moveCaretEnd(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
 
       TextViewController(TextViewSettings& settings)
       {
