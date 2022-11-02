@@ -1,21 +1,18 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Tools
 //
-//		This is a main file containing ecode viewer code
+//		This is a main file containing ldoc main code
 //
-//                                              (C)2021, by Aleksey Rakov
+//                                              (C)2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "config.h"
-#include "ecvconst.h"
-#include "ecviewer.h"
+#include "ldocconst.h"
+#include "ldoc.h"
 
 using namespace elena_lang;
 
 constexpr auto DEFAULT_CONFIG       = "/etc/elena/templates/lib60.config";
-
-constexpr auto PLATFORM_CATEGORY    = "configuration/platform";
-constexpr auto LIB_PATH             = "project/libpath";
 
 #if defined(__x86_64__)
 
@@ -37,31 +34,14 @@ constexpr auto PLATFORM_KEY = "Linux_ARM64";
 
 class Presenter : public PresenterBase
 {
-   TextFileWriter* _writer;
-
 public:
-   void readLine(char* buffer, size_t length) override
-   {
-      fgets(buffer, LINE_LEN, stdin);
-   }
-
    void print(ustr_t message) override
    {
-      if (_writer)
-         _writer->writeText(message);
-
       printf("%s", message.str());
    }
 
    void print(ustr_t message, ustr_t arg) override
    {
-      if (_writer) {
-         char tmp[0x200];
-         int len = sprintf(tmp, message.str(), arg.str());
-
-         _writer->write(tmp, len);
-      }
-
       printf(message.str(), arg.str());
    }
 
@@ -70,29 +50,22 @@ public:
       printf(message.str(), arg.str());
    }
 
-   void setOutputMode(ustr_t arg) override
-   {
-      if (_writer)
-         freeobj(_writer);
-
-      PathString path(arg);
-
-      _writer = new TextFileWriter(*path, FileEncoding::UTF8, false);
-   }
-
    Presenter()
    {
-      _writer = nullptr;
    }
    ~Presenter() override
    {
-      freeobj(_writer);
    }
 };
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2022 by Aleksey Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ECV_REVISION_NUMBER);
+   printf(LDOC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, LDOC_REVISION_NUMBER);
+
+   if (argc != 2) {
+      printf("ldoc {<module> | <path>}\n");
+      return -1;
+   }
 
    // prepare library provider
    LibraryProvider provider;
@@ -117,25 +90,28 @@ int main(int argc, char* argv[])
    }
 
    Presenter presenter;
-   ByteCodeViewer viewer(&provider, &presenter, 30);
-
-   if (argc < 2) {
-      presenter.print("ecv <module name> | ecv -p<module path>");
-      return 0;
-   }
+   DocGenerator generator(&provider, &presenter);
 
    if (ustr_t(argv[1]).endsWith(".nl")) {
       // if direct path is provided
 
       PathString path(argv[1]);
-      if(!viewer.load(*path)) {
-         presenter.printPath(ECV_MODULE_NOTLOADED, path.str());
+      if(!generator.load(*path)) {
+         presenter.printPath(LDOC_MODULE_NOTLOADED, path.str());
+
+         return -1;
+      }
+   }
+   else {
+      IdentifierString arg(argv[1]);
+      if (!generator.loadByName(*arg)) {
+         presenter.printPath(LDOC_MODULE_NOTLOADED, argv[1]);
 
          return -1;
       }
    }
 
-   viewer.runSession();
+   generator.generate();
 
    return 0;
 }

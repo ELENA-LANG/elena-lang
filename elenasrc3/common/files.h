@@ -158,6 +158,7 @@ namespace elena_lang
       pos_t position() const override { return _file.position(); }
 
       bool write(const char* s, pos_t length) override;
+      bool writeNewLine() override;
 
       TextFileWriter(path_t path, FileEncoding encoding, bool withBOM);
    };

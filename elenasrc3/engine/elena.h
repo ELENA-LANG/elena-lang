@@ -675,6 +675,15 @@ namespace elena_lang
          _string[index] = 0;
       }
 
+      NamespaceString(ustr_t rootNs, ustr_t referenceName)
+      {
+         copy(rootNs);
+         if (referenceName[0] != '\'')
+            append('\'');
+
+         size_t pos = referenceName.findLast('\'', 0);
+         append(referenceName, pos);
+      }
       NamespaceString(ustr_t referenceName)
       {
          size_t pos = referenceName.findLast('\'', 0);
