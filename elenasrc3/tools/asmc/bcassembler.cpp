@@ -67,11 +67,13 @@ void ByteCodeAssembler::ByteCodeLabelHelper :: checkAllUsedLabels(ustr_t errorMe
 
 // --- ByteCodeAssembler ---
 
-ByteCodeAssembler :: ByteCodeAssembler(int tabSize, UStrReader* reader, Module* module, bool mode64)
+ByteCodeAssembler :: ByteCodeAssembler(int tabSize, UStrReader* reader, Module* module, 
+   bool mode64, int rawDataAlignment)
    : _reader(tabSize, reader)
 {
    _module = module;
    _mode64 = mode64;
+   _rawDataAlignment = rawDataAlignment;
 }
 
 void ByteCodeAssembler :: read(ScriptToken& tokenInfo)
@@ -442,7 +444,7 @@ bool ByteCodeAssembler :: compileCloseOpN(ScriptToken& tokenInfo, MemoryWriter& 
    ReferenceMap& dataLocals, ReferenceMap& constants)
 {
    if (tokenInfo.compare("[")) {
-      command.arg1 = dataLocals.count() * (_mode64 ? 8 : 4);
+      command.arg1 = align(dataLocals.count() * (_mode64 ? 8 : 4), _rawDataAlignment);
 
       read(tokenInfo, "]", ASM_SBRACKETCLOSE_EXPECTED);
    }
@@ -639,7 +641,7 @@ bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& wr
       }
 
       command.arg1 = locals.count() + argCount;
-      command.arg2 = dataSize;
+      command.arg2 = align(dataSize, _rawDataAlignment);
 
       if (_mode64)
          command.arg1 = align(command.arg1, 2);
@@ -858,6 +860,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::TstN:
          case ByteCode::NLen:
          case ByteCode::ReadN:
+         case ByteCode::WriteN:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::AndN:
          case ByteCode::AddN:
@@ -877,6 +880,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileNR(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::NSaveDPN:
          case ByteCode::NAddDPN:
+         case ByteCode::CopyDPN:
             return compileDDispN(tokenInfo, writer, opCommand, dataLocals, constants, true);
          default:
             return false;

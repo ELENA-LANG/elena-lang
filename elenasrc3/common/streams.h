@@ -56,7 +56,7 @@ namespace elena_lang
 
       virtual bool write(pos_t position, const void* s, pos_t length) = 0;
 
-      virtual void insert(pos_t position, const void* s, pos_t length) = 0;
+      virtual bool insert(pos_t position, const void* s, pos_t length) = 0;
 
       virtual bool read(pos_t position, void* s, pos_t length) = 0;
 
@@ -223,10 +223,24 @@ namespace elena_lang
       virtual pos_t position() const = 0;
 
       virtual bool write(const T* s, pos_t length) = 0;
+      virtual bool writeNewLine() = 0;
 
-      void writeText(const T* s)
+      bool writeChar(T ch)
       {
-         write(s, getlength_pos(s) + 1);
+         return write(&ch, 1);
+      }
+
+      bool writeText(const T* s)
+      {
+         return write(s, getlength_pos(s) + 1);
+      }
+
+      virtual bool writeTextLine(const T* s)
+      {
+         if (writeText(s)) {
+            return writeNewLine();
+         }
+         else return false;
       }
 
       bool fillText(const T* s, pos_t length, pos_t count)

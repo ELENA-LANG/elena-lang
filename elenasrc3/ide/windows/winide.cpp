@@ -6,6 +6,7 @@
 
 #include "windows/winide.h"
 #include "windows/wintabbar.h"
+#include "windows/wintreeview.h"
 
 #include <windows/Resource.h>
 
@@ -173,11 +174,24 @@ void IDEWindow :: openResultTab(int controlIndex)
 {
    TabBar* resultBar = (TabBar*)_children[_model->ideScheme.resultControl];
 
-   resultBar->addTabChild(_model->ideScheme.captions.get(controlIndex), (ControlBase*)_children[controlIndex]);
-   resultBar->selectTabChild((ControlBase*)_children[controlIndex]);
+   if(!resultBar->selectTabChild((ControlBase*)_children[controlIndex])) {
+      resultBar->addTabChild(_model->ideScheme.captions.get(controlIndex), (ControlBase*)_children[controlIndex]);
+      resultBar->selectTabChild((ControlBase*)_children[controlIndex]);
+   }
+
    resultBar->show();
 
    refresh();
+}
+
+void IDEWindow :: setChildFocus(int controlIndex)
+{
+   _children[controlIndex]->setFocus();
+}
+
+void IDEWindow :: onComilationStart()
+{
+   ((ControlBase*)_children[_model->ideScheme.compilerOutputControl])->clearValue();
 }
 
 void IDEWindow :: onCompilationEnd(int exitCode)
@@ -197,6 +211,57 @@ void IDEWindow :: onErrorHighlight(int index)
    auto messageInfo = resultBar->getMessage(index);
 
    _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
+}
+
+void IDEWindow :: onProjectChange()
+{
+   TreeView* projectTree = dynamic_cast<TreeView*>(_children[_model->ideScheme.projectView]);
+
+   projectTree->clear(nullptr);
+   TreeViewItem root = projectTree->insertTo(nullptr, *_model->projectModel.name, -1, true);
+
+   PathString diskCriteria(":\\");
+
+   int srcIndex = 0;
+   wchar_t buffer[IDENTIFIER_LEN + 1];
+   for(auto it = _model->projectModel.sources.start(); !it.eof(); ++it) {
+      path_t src = *it;
+      size_t src_len = src.length_pos();
+
+      // remove the disk name
+      size_t index = src.findStr(*diskCriteria);
+      if (index != NOTFOUND_POS) {
+         src = src + index + 2;
+      }
+
+      TreeViewItem parent = root;
+      size_t start = 0;
+      while (start < src_len) {
+         size_t end = src.findSub(start, PATH_SEPARATOR, src_len);
+         PathString name;
+         name.append(src + start, end - start);
+
+         TreeViewItem current = projectTree->getChild(parent);
+         while (current != nullptr) {
+            size_t len = projectTree->readCaption(current, buffer, IDENTIFIER_LEN);
+            if (!(*name).compareSub(buffer, 0, len)) {
+               current = projectTree->getNext(current);
+            }
+            else break;
+         }
+
+         if (current == nullptr) {
+            current = projectTree->insertTo(parent, *name, end == src_len ? srcIndex : NOTFOUND_POS, end != src_len ? true : false);
+         }
+         parent = current;
+
+         start = end + 1;
+      }
+
+      srcIndex++;
+   }
+
+   projectTree->expand(root);
 }
 
 bool IDEWindow :: onCommand(int command)
@@ -263,6 +328,9 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
       case NOTIFY_SOURCEMODEL:
          docView->notifyOnChange();
          break;
+      case NOTIFY_PROJECTMODEL:
+         onProjectChange();
+         break;
       case NOTIFY_CURRENTVIEW_CHANGED:
          _model->sourceViewModel.afterDocumentSelect(hdr->extParam1);
          _model->sourceViewModel.onModelChanged();
@@ -289,6 +357,9 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
       case NOTIFY_SHOW_RESULT:
          openResultTab(hdr->extParam2);
          break;
+      case NOTIFY_ACTIVATE_EDITFRAME:
+         setChildFocus(_model->ideScheme.textFrameId);
+         break;
       case NOTIFY_LAYOUT_CHANGED:
          onResize();
          break;
@@ -297,6 +368,9 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
          break;
       case NOTIFY_ERROR_HIGHLIGHT_ROW:
          onErrorHighlight(hdr->extParam2);
+         break;
+      case NOTIFY_START_COMPILATION:
+         onComilationStart();
          break;
       default:
          break;

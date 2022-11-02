@@ -46,6 +46,20 @@ MethodHint operator & (const ref_t& l, const MethodHint& r)
 //   }
 //}
 
+inline bool isSelfCall(ObjectInfo target)
+{
+   switch (target.kind) {
+      case ObjectKind::SelfLocal:
+      case ObjectKind::SelfBoxableLocal:
+         //case okOuterSelf:
+      //case okClassSelf:
+      //case okInternalSelf:
+         return true;
+      default:
+         return false;
+   }
+}
+
 // --- Interpreter ---
 
 Interpreter :: Interpreter(ModuleScopeBase* scope, CompilerLogic* logic)
@@ -581,21 +595,22 @@ Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibi
    extensionDispatcher = false;
 }
 
-ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribute attr)
+inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, ExpressionAttribute attr, bool ignoreFields)
 {
-   bool readOnly = test(info.header.flags, elReadOnlyRole) && !EAttrs::test(attr, EAttr::InitializerScope);
+   bool readOnly = test(info.header.flags, elReadOnlyRole)
+      && !EAttrs::test(attr, EAttr::InitializerScope);
 
    auto fieldInfo = info.fields.get(identifier);
-   if (fieldInfo.offset >= 0) {
+   if (!ignoreFields && fieldInfo.offset >= 0) {
       if (test(info.header.flags, elStructureRole)) {
-         return { readOnly ? ObjectKind::ReadOnlyFieldAddress : ObjectKind::FieldAddress, 
+         return { readOnly ? ObjectKind::ReadOnlyFieldAddress : ObjectKind::FieldAddress,
             fieldInfo.typeInfo, fieldInfo.offset };
       }
-      else return { readOnly ? ObjectKind::ReadOnlyField : ObjectKind::Field, 
+      else return { readOnly ? ObjectKind::ReadOnlyField : ObjectKind::Field,
          fieldInfo.typeInfo, fieldInfo.offset };
    }
-   else if (fieldInfo.offset == -2) {
-      return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1};
+   else if (!ignoreFields && fieldInfo.offset == -2) {
+      return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1 };
    }
    else {
       auto staticFieldInfo = info.statics.get(identifier);
@@ -610,6 +625,17 @@ ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribu
 
       return {};
    }
+}
+
+ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribute attr)
+{
+   if (extensionClassRef) {
+      ClassInfo targetInfo;
+      moduleScope->loadClassInfo(targetInfo, extensionClassRef, false, false);
+
+      return mapClassInfoField(targetInfo, identifier, attr, true);
+   }
+   else return mapClassInfoField(info, identifier, attr, false);
 }
 
 ObjectInfo Compiler::ClassScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
@@ -657,7 +683,8 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent) :
    closureMode(false),
    constructorMode(false),
    isEmbeddable(false),
-   byRefReturnMode(false)
+   byRefReturnMode(false),
+   isExtension(false)
 {
 }
 
@@ -671,13 +698,14 @@ bool Compiler::MethodScope :: checkType(MethodInfo& methodInfo, MethodHint type)
    return (methodInfo.hints & MethodHint::Mask) == type;
 }
 
-ObjectInfo Compiler::MethodScope :: mapSelf()
+ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode)
 {
-   //if (checkHint(MethodHint::Extension)) {
-   //   //COMPILER MAGIC : if it is an extension ; replace self with this self
+   if (!memberMode && isExtension) {
+      ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
 
-   //}
-   /*else */if (selfLocal != 0) {
+      return { ObjectKind::Param, { classScope->extensionClassRef }, -1 };
+   }
+   else if (selfLocal != 0) {
       if (isEmbeddable) {
          return { ObjectKind::SelfBoxableLocal, { getClassRef(false) }, (ref_t)selfLocal };
       }
@@ -718,6 +746,11 @@ ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool refere
    }
    else if (moduleScope->selfVar.compare(identifier)) {
       return mapSelf();
+   }
+   else if (moduleScope->superVar.compare(identifier)) {
+      ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
+
+      return { ObjectKind::SuperLocal, { classScope->info.header.parentRef }, selfLocal };
    }
 
    if (constructorMode)
@@ -857,7 +890,7 @@ ObjectInfo Compiler::ExprScope :: mapMember(ustr_t identifier)
 {
    MethodScope* methodScope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
    if (methodScope != nullptr && moduleScope->selfVar.compare(identifier)) {
-      return mapSelf();
+      return methodScope->mapSelf(true);
    }
 
    ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
@@ -1289,7 +1322,7 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
       case ObjectKind::StringLiteral:
       {
          ustr_t value = module->resolveConstant(retVal.reference);
-         dataWriter.writeString(value, value.length() + 1);
+         dataWriter.writeString(value, value.length_pos() + 1);
 
          retVal.typeInfo = { scope.moduleScope->buildins.literalReference };
          break;
@@ -1954,7 +1987,6 @@ void Compiler :: importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNod
 void Compiler :: declareMetaInfo(Scope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
-   SyntaxNode noBodyNode = {};
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
@@ -1980,7 +2012,6 @@ void Compiler :: declareMetaInfo(Scope& scope, SyntaxNode node)
 void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
-   SyntaxNode noBodyNode = {};
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
@@ -3016,6 +3047,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          break;
       case ObjectKind::Param:
       case ObjectKind::SelfLocal:
+      case ObjectKind::SuperLocal:
       case ObjectKind::ReadOnlySelfLocal:
       case ObjectKind::Local:
       case ObjectKind::TempLocal:
@@ -4093,6 +4125,11 @@ ExternalInfo Compiler :: mapExternal(Scope& scope, SyntaxNode node)
    ustr_t dllAlias = node.identifier();
    ustr_t functionName = SyntaxTree::gotoNode(objNode, SyntaxKey::Message).firstChild(SyntaxKey::TerminalMask).identifier();
 
+   if (functionName.empty()) {
+      functionName = dllAlias;
+      dllAlias = RT_FORWARD;
+   }
+
    return scope.moduleScope->mapExternal(dllAlias, functionName);
 }
 
@@ -4104,7 +4141,7 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
    writer.appendNode(BuildKey::Allocating, align(count, scope.moduleScope->stackAlingment));
 
    for (pos_t i = count; i > 0; i--) {
-      ObjectInfo arg = arguments[i - 1];
+      ObjectInfo arg = boxArgumentLocally(writer, scope, arguments[i - 1], true);
 
       writeObjectInfo(writer, scope, arg);
       switch (arg.kind) {
@@ -4483,7 +4520,7 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& me
       int counter = 0;
       while (!it.eof()) {
          auto extInfo = *it;
-         ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value1);
+         /*ref_t targetRef = */nsScope->resolveExtensionTarget(extInfo.value1);
          if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, extInfo.value2,
             signatures, signatureLen))
          {
@@ -4538,7 +4575,7 @@ mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectIn
    // try to resolve the message as is
    int resolvedStackSafeAttr = 0;
    resolvedMessage = _logic->resolveMultimethod(*scope.moduleScope, weakMessage, targetRef,
-      implicitSignatureRef, resolvedStackSafeAttr/*, isSelfCall(target)*/);
+      implicitSignatureRef, resolvedStackSafeAttr, isSelfCall(target));
    if (resolvedMessage != 0) {
       stackSafeAttr = resolvedStackSafeAttr;
 
@@ -4567,20 +4604,6 @@ mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectIn
 
    // otherwise - use the weak message
    return weakMessage;
-}
-
-inline bool isSelfCall(ObjectInfo target)
-{
-   switch (target.kind) {
-      case ObjectKind::SelfLocal:
-      case ObjectKind::SelfBoxableLocal:
-         //case okOuterSelf:
-      //case okClassSelf:
-      //case okInternalSelf:
-         return true;
-      default:
-         return false;
-   }
 }
 
 ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target,
@@ -4616,8 +4639,13 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    if (found) {
       switch (result.visibility) {
          case Visibility::Private:
-         case Visibility::Protected:
             if (isSelfCall(target)) {
+               message = result.message;
+            }
+            else found = false;
+            break;
+         case Visibility::Protected:
+            if (isSelfCall(target) || target.kind == ObjectKind::SuperLocal) {
                message = result.message;
             }
             else found = false;
@@ -4666,6 +4694,14 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, messageNode);
       }
+   }
+
+   if (target.kind == ObjectKind::SuperLocal) {
+      if (found) {
+         // parent methods are always sealed
+         operation = BuildKey::DirectCallOp;
+      }
+      else scope.raiseError(errInvalidOperation, node);
    }
 
    if (operation != BuildKey::None) {
@@ -4867,7 +4903,7 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
 mssg_t Compiler :: resolveByRefHandler(Scope& scope, ref_t targetRef, ref_t expectedRef, mssg_t weakMessage, ref_t& signatureRef)
 {
    pos_t argCount = 0;
-   ref_t actionRef = 0, flags = 0, signRef = 0;
+   ref_t actionRef = 0, flags = 0;
    decodeMessage(weakMessage, actionRef, argCount, flags);
 
    if (expectedRef != 0 && targetRef != 0) {
@@ -5325,15 +5361,13 @@ ObjectInfo Compiler :: mapUIntConstant(Scope& scope, SyntaxNode node, int radix)
 
 ObjectInfo Compiler::mapMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef)
 {
-   SyntaxNode operand = node.findChild(SyntaxKey::Expression);
-
    pos_t argCount = 0;
 
    Interpreter interpreter(scope.moduleScope, _logic);
    ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression));
    switch (retVal.kind) {
       case ObjectKind::IntLiteral:
-         argCount = retVal.extra + 1;
+         argCount = retVal.extra;
          break;
       default:
          scope.raiseError(errCannotEval, node);
@@ -5359,7 +5393,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    bool refOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::RefOp);
    bool mssgOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::MssgLiteral);
    bool probeMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ProbeMode);
-   bool memberMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Memeber);
+   bool memberMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Member);
 
    ObjectInfo retVal;
    bool invalid = false;
@@ -5851,10 +5885,10 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 {
    ExprScope scope(&codeScope);
 
-   bool autoMode = false;
+   //bool autoMode = false;
    ref_t outputRef = codeScope.getOutputRef();
    if (outputRef == V_AUTO) {
-      autoMode = true;
+      //autoMode = true;
       outputRef = 0;
    }
 
@@ -5901,9 +5935,9 @@ ObjectInfo Compiler :: compileRootExpression(BuildTreeWriter& writer, CodeScope&
 
    auto retVal = compileExpression(writer, scope, node, 0, mode);
 
-   if (isBoxingRequired(retVal)) {
-      retVal = boxArgumentInPlace(writer, scope, retVal);
-   }
+   //if (isBoxingRequired(retVal)) {
+   //   retVal = boxArgumentInPlace(writer, scope, retVal);
+   //}
 
    writer.appendNode(BuildKey::EndStatement);
 
@@ -6142,7 +6176,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
       }
       else {
          ref_t outputRef = scope.info.outputRef;
-         if (outputRef) {
+         if (outputRef && outputRef != V_AUTO) {
             convertObject(writer, exprScope, node, retVal, outputRef);
 
             exprScope.syncStack();
@@ -6253,21 +6287,47 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
    ObjectInfo retVal = {};
 
    if (!node.arg.reference) {
-      SyntaxNode current = node.firstChild();
+      SyntaxNode current = node.firstChild().firstChild();
+      bool superMode = false;
+      while (current == SyntaxKey::Attribute) {
+         if (!_logic->validateResendAttribute(current.arg.reference, superMode)) {
+            codeScope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }
+         current = current.nextNode();
+      }
+
+      ObjectInfo target = source;
+      if (superMode) {
+         if (source.kind == ObjectKind::SelfLocal) {
+            source.kind = ObjectKind::SuperLocal;
+            target = source;
+         }
+         else if (source.kind == ObjectKind::Class) {
+            // NOTE : for the constructor redirect - use the class parent as a target (still keeping the original class
+            // as a parameter)
+            ClassInfo classInfo;
+            if (_logic->defineClassInfo(*codeScope.moduleScope, classInfo, source.reference, true)) {
+               target = mapClassSymbol(codeScope, classInfo.header.parentRef);
+            }
+            else codeScope.raiseError(errInvalidOperation, node);
+         }
+         else codeScope.raiseError(errInvalidOperation, node);
+      }
 
       ExprScope scope(&codeScope);
       ArgumentsInfo arguments;
 
-      mssg_t messageRef = mapMessage(scope, current.firstChild(), false, false, false);
+      mssg_t messageRef = mapMessage(scope, current, false, false, false);
 
       if (!test(messageRef, FUNCTION_MESSAGE))
          arguments.add(source);
 
-      ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current.firstChild(), arguments, EAttr::NoPrimitives);
+      ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);
 
-      retVal = compileMessageOperation(writer, scope, node, source, messageRef,
+      retVal = compileMessageOperation(writer, scope, node, target, messageRef,
          implicitSignatureRef, arguments, EAttr::None);
 
+      scope.syncStack();
    }
    else assert(false);
 
@@ -6405,7 +6465,7 @@ void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope
 
    ObjectInfo tempRetVal = declareTempLocal(scope, targetRef, false);
 
-   ObjectInfo target = methodScope.mapSelf();
+   ObjectInfo target = methodScope.mapSelf(true);
    arguments.add(target);
    for (auto it = methodScope.parameters.start(); !it.eof(); ++it) {
       arguments.add(methodScope.mapParameter(it.key(), EAttr::None));
@@ -6413,7 +6473,7 @@ void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope
    addByRefRetVal(arguments, tempRetVal);
 
    ref_t signRef = getSignature(scope.module, handler);
-   ObjectInfo retVal = compileMessageOperation(writer, scope, {}, target, handler,
+   /*ObjectInfo retVal = */compileMessageOperation(writer, scope, {}, target, handler,
       signRef, arguments, EAttr::AlreadyResolved);
 
    // return temp variable
@@ -6478,6 +6538,12 @@ bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message)
    if (actionRef == getAction(scope.moduleScope->buildins.constructor_message)) {
       return true;
    }
+   else if (getArgCount(message)) {
+      ref_t dummy = 0;
+      ustr_t actionName = scope.module->resolveAction(actionRef, dummy);
+      
+      return actionName.endsWith(CONSTRUCTOR_MESSAGE);
+   }
    else return false;
 }
 
@@ -6497,7 +6563,7 @@ void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodSc
 
    createObject(writer, classScope->info, classScope->reference);
 
-   // call field initilizers if available for default constructor
+   // call field initializers if available for default constructor
    if(classScope->info.methods.exist(scope.moduleScope->buildins.init_message)) {
       ExprScope exprScope(classScope);
       ArgumentsInfo args;
@@ -6543,7 +6609,10 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
       newFrame = true;
 
       if (!retExpr) {
-         writer.appendNode(BuildKey::ClassReference, scope.getClassRef());
+         // NOTE : the named constructor should be polymorphic, depending on the message target
+         writer.appendNode(BuildKey::Local, -1);
+         //writer.appendNode(BuildKey::ClassReference, scope.getClassRef());
+
          writer.newNode(BuildKey::CallOp, defConstrMssg);
          writer.appendNode(BuildKey::Index, 1); // built-in constructor entry should be the second entry in VMT
          writer.closeNode();
@@ -6591,6 +6660,7 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    methodScope.info = scope.info.methods.get(methodScope.message);
    methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
    methodScope.isEmbeddable = methodScope.checkHint(MethodHint::Stacksafe);
+   methodScope.isExtension = methodScope.checkHint(MethodHint::Extension);
 
    declareVMTMessage(methodScope, current, false, false);
 
@@ -7092,6 +7162,11 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
       {
          return current == reference;
       }));
+   moduleScope->superVar.copy(moduleScope->predefined.retrieve<ref_t>("@super", V_SUPER_VAR,
+      [](ref_t reference, ustr_t key, ref_t current)
+      {
+         return current == reference;
+      }));
 
    if (!moduleScope->tapeOptMode)
       moduleScope->tapeOptMode = _tapeOptMode;
@@ -7151,10 +7226,10 @@ void Compiler :: declare(ModuleScopeBase* moduleScope, SyntaxTree& input)
    validateScope(moduleScope);
 
    SyntaxNode root = input.readRoot();
-   // declare all memeber identifiers
+   // declare all member identifiers
    declareModuleIdentifiers(moduleScope, root);
 
-   // declare all memebers
+   // declare all members
    declareModule(moduleScope, root);
 }
 

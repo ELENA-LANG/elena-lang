@@ -22,10 +22,65 @@ namespace elena_lang
       int      page_size_order;
    };
 
+   class ImageSection : public MemoryBase
+   {
+      void* _section;
+      pos_t _length;
+
+   public:
+      pos_t length() const override
+      {
+         return _length;
+      }
+
+      void* get(pos_t position) const override
+      {
+         if (position < _length) {
+            return (char*)_section + position;
+         }
+         return nullptr;
+      }
+
+      bool read(pos_t position, void* s, pos_t length) override
+      {
+         if (position < _length && _length >= position + length) {
+            memcpy(s, (unsigned char*)_section + position, length);
+
+            return true;
+         }
+         else return false;
+      }
+
+      bool write(pos_t position, const void* s, pos_t length) override
+      {
+         // write operations are not supported
+         return false;
+      }
+
+      bool insert(pos_t position, const void* s, pos_t length) override
+      {
+         // write operations are not supported
+         return false;
+      }
+
+      void trim(pos_t position) override
+      {
+         _length = position;
+      }
+
+      ImageSection(void* section, pos_t length)
+         : _section(section), _length(length)
+      {
+
+      }
+   };
+
    // --- SystemRoutineProvider ---
    static class SystemRoutineProvider
    {
    public:
+      void* RetrieveMDataPtr(void* imageBase, pos_t imageLength);
+
       static void FillSettings(SystemEnv* env, SystemSettings& settings);
 
       static size_t AlignHeapSize(size_t size);

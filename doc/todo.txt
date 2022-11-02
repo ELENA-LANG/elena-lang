@@ -4,28 +4,44 @@ In development:
 
   [development]
     ### EPOCH: elena 6.0 - redux ###
-    === Iteration 10 : hello world sample=== 
-    * hello world sample for Linux Amd64, Linux PPC64le
-    * Linux PPC64le - check why it fails on end
-
-    * release alpha version for x86, x86-64, Linux I386, Linux Amd64, Linux PPC64le, Linux AARCH64
-
     === Iteration 11 : all functionality for existing classes 
-        / default exception handler (showing call stack, message name and a target) 
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
+
+    * ide open project
+    * ide select file in the project
+    * ide - goto mouse
+    * ide - ask to save on close
+    * ide - scroll with mouse wheel
+    * ide - tab
+
+    * api doc
+
+    * ide - add close button on tabbar
+    * ide - fix errors
+    * ide - compile the project / file
+    * ide different styles : use dark mode
+
+    * ide compile project
+
+    * all functionality for existing classes
     * ide debugger
 
     * variadic call in compile-time
     * variadic dispatcher
     * variadic call in run-time
     * printLine extensions
+    * toPrintable should return both wide and string
+    * unit tests : arithmetic operations
+    * unit tests : boolean operations
 
-    * default exception handler
-    * release alpha version for Linux I386, Linux Amd64
+    * showing call stack
+    * uncomment hello world
+    * uncomment lnx_console.l code
+
+    * optimization : extra temporal variables
 
     === Iteration 12 : intsum / realsum, all system tests for existing classes ===
-    * release alpha version for Linux PPC64le, Linux AARCH64
 
 ------                                                           
 Backlog:
@@ -37,11 +53,12 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
-    * uncomment hello world
+    * calling internal method
+    * calling protected method
+    * exception tests : methodnotfound, nilreference
     * uncomment ConsoleFactory type attributes
     * external operation : do not box the arguments
     * support constants in array size declaration (see lnx_console.l)
-    * uncomment lnx_console.l code
     * int to short -> negative
     * short to int -> negative
     * check why the struct is boxed (see INPUT_RECORD operations)
@@ -51,17 +68,12 @@ Backlog:
     * do not box when stack-allocated self is returned from the stack-safe method
     * basic types : short, widestring
     * string <-> wide
-    * toPrintable should return both wide and string
     * info attribute
     * generate api documentations
-    * call stack
-    * default app-level try catch block : showing the exception message
     * new opcode - creater
     * template based array
     * boxing stack allocated array to the template one
     * tests : mg->yg collecting - x86, x86-64, i386, amd64, ppc64le, arm64
-    * unit tests : arithmetic operations
-    * unit tests : boolean operations
     * unit tests : branching
     * unit tests : looping
     * unit tests : exceptions
@@ -92,8 +104,6 @@ Backlog:
     * debugger - auto watch
     * editor - status bar : col, row, ins / ovr
     * editor - modified doc mark, 
-    * ide - compile the project / file
-    * ide - error list
     * editor - black theme
     * editor - highlightning
     * ide : open the last opened file on the ide start
@@ -202,6 +212,7 @@ Backlog:
     * warn on not found message for the existing object
     * support constants
     * copy : support 1, 2, any other size
+    * ncopy / lcopy
     * boxing stack allocated variable
     * boxing stack allocated parameter for strong typed method
     * module template - to include basic import statement

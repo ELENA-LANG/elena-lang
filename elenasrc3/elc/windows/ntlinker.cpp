@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------
 #include "ntlinker.h"
 #include "langcommon.h"
+#include "windows/winconsts.h"
 
 #include <windows.h>
 #include <time.h>
@@ -162,7 +163,7 @@ void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableI
    // !! temporal
    image.fileAlignment = FILE_ALIGNMENT;
    image.sectionAlignment = SECTION_ALIGNMENT;
-   image.addressSpace.imageBase = 0x00400000;
+   image.addressSpace.imageBase = IMAGE_BASE;
 
    _imageFormatter->prepareImage(provider, image.addressSpace, image.imageSections, 
       image.sectionAlignment, 

@@ -270,12 +270,18 @@ MESSAGE_PARAMETER ::=
 L4_EXPRESSION ::=
         identifier I4_R
         | integer ^OBJECT
-        | hexinteger ^OBJECT;
+        | hexinteger ^OBJECT
+        | string ^OBJECT
+        | wide ^OBJECT
+        | character ^OBJECT;
 
 L5_EXPRESSION ::=
         identifier I5_R
-        | integer ^OBJECT
-        | hexinteger ^OBJECT;
+        | integer ^OBJECT L3s L4s
+        | hexinteger ^OBJECT L3s L4s
+        | string ^OBJECT L3s L4s
+        | wide ^OBJECT L3s L4s
+        | character ^OBJECT L3s L4s;
 
 L6_EXPRESSION ::=
         identifier ^OBJECT
@@ -350,8 +356,8 @@ O_R  ::=
         NESTED_EXPRESSION ^NESTED N_R
         | I_L0_R
 	| I_L1_R
-	| I_L2_R L3s L7e
-	| I_L3_R L3s L8e
+	| I_L2_R L3s L4s L5s L7e
+	| I_L3_R L3s L4s L5s L8e
 	| I_L4_R L4s L5s
 	| I_L5_R L5s
 	| I_L6_R
@@ -376,7 +382,11 @@ VAR_R ::=
 	| eps;
 
 RESEND ::= 
-	MESSAGE MESSAGE_R;
+	identifier RESEND_F;
+
+RESEND_F ::=
+	identifier MESSAGE_R
+	| MESSAGE_R;
 
 CATCH ::=
 	MESSAGE MESSAGE_R;
@@ -387,7 +397,17 @@ I4_R ::=
 
 I5_R ::=
         identifier I5_R
+	| O5_Re;
+
+O5_Re ::=
+        O5_R
         | eps ^OBJECT; 
+
+O5_R ::=
+        Ix_L0_R
+	| I_L2_R L3s L4s
+	| I_L3_R L3s L4s
+	| I_L4_R L4s;
 
 N_R ::=
 	eps;
@@ -414,6 +434,9 @@ RI_L2_OPT ::=
 
 I_L3_R ::=
 	"." ^OBJECT MESSAGE MESSAGE_R;
+
+Ix_L0_R ::=
+        "[" ^OBJECT EXPRESSION "]" ^INDEXER_OPERATION;
 
 L3_R ::=
 	"." MESSAGE MESSAGE_R;

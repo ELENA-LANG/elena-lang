@@ -511,9 +511,23 @@ namespace elena_lang
          StrConvertor::copy(_string, s, getlength(s), len);
          _string[len] = 0;
       }
+      WideMessage(const char* s1, const char* s2)
+      {
+         size_t len = MESSAGE_LEN;
+         size_t len2 = MESSAGE_LEN;
+         StrConvertor::copy(_string, s1, getlength(s1), len);
+         StrConvertor::copy(_string + len, s2, getlength(s2), len2);
+
+         _string[len + len2] = 0;
+      }
       WideMessage(const wide_c* s)
       {
          copy(s);
+      }
+      WideMessage(const wide_c* s1, const wide_c* s2)
+      {
+         copy(s1);
+         append(s2);
       }
    };
 
@@ -661,6 +675,15 @@ namespace elena_lang
          _string[index] = 0;
       }
 
+      NamespaceString(ustr_t rootNs, ustr_t referenceName)
+      {
+         copy(rootNs);
+         if (referenceName[0] != '\'')
+            append('\'');
+
+         size_t pos = referenceName.findLast('\'', 0);
+         append(referenceName, pos);
+      }
       NamespaceString(ustr_t referenceName)
       {
          size_t pos = referenceName.findLast('\'', 0);

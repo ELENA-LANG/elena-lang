@@ -87,7 +87,7 @@ bool MemoryDump :: write(pos_t position, const void* s, pos_t length)
 
 }
 
-void MemoryDump :: insert(pos_t position, const void* s, pos_t length)
+bool MemoryDump :: insert(pos_t position, const void* s, pos_t length)
 {
    if (position <= _used) {
       resize(_used + length);
@@ -95,7 +95,10 @@ void MemoryDump :: insert(pos_t position, const void* s, pos_t length)
       memmove(get(position + length), get(position), _used - position - length);
       if (s != nullptr)
          memcpy(get(position), s, length);
+
+      return true;
    }
+   else return false;
 }
 
 bool MemoryDump :: read(pos_t position, void* s, pos_t length)

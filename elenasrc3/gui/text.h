@@ -296,6 +296,7 @@ namespace elena_lang
       static int TabSize;
 
       int getRowCount() const { return _rowCount; }
+      pos_t getRowLength(int row);
 
       void validateBookmark(TextBookmark& bookmark);
 

@@ -107,6 +107,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalOptions>comctl32.lib shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -125,6 +128,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalOptions>comctl32.lib shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -139,6 +145,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalOptions>comctl32.lib shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -155,8 +164,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalOptions>shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>comctl32.lib shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\config.h" />
@@ -185,6 +197,7 @@
     <ClInclude Include="..\..\gui\windows\wintabbar.h" />
     <ClInclude Include="..\..\gui\windows\wintextframe.h" />
     <ClInclude Include="..\..\gui\windows\wintextview.h" />
+    <ClInclude Include="..\..\gui\windows\wintreeview.h" />
     <ClInclude Include="..\debugcontroller.h" />
     <ClInclude Include="..\editframe.h" />
     <ClInclude Include="..\ide.h" />
@@ -228,6 +241,7 @@
     <ClCompile Include="..\..\gui\windows\wintabbar.cpp" />
     <ClCompile Include="..\..\gui\windows\wintextframe.cpp" />
     <ClCompile Include="..\..\gui\windows\wintextview.cpp" />
+    <ClCompile Include="..\..\gui\windows\wintreeview.cpp" />
     <ClCompile Include="..\debugcontroller.cpp" />
     <ClCompile Include="..\editframe.cpp" />
     <ClCompile Include="..\ide.cpp" />

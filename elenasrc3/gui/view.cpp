@@ -117,6 +117,20 @@ void TextViewModel :: onModelChanged()
    
 }
 
+void TextViewModel :: onModelModeChanged(int index)
+{
+   DocumentView* view = nullptr;
+   if (index == -1) {
+      index = getCurrentIndex();
+      view = _currentView;
+   }
+   else view = getDocumentByIndex(index);
+
+   for (auto it = _listeners.start(); !it.eof(); ++it) {
+      (*it)->onDocumentModeChanged(index, view->status.modifiedMode);
+   }
+}
+
 void TextViewModel :: beforeDocumentClose(int index)
 {
    for (auto it = _listeners.start(); !it.eof(); ++it) {
@@ -243,6 +257,13 @@ DocumentView* TextViewModel :: getDocument(ustr_t name)
 {
    int index = getDocumentIndex(name);
 
+   auto info = _documents.get(index);
+
+   return info ? info->documentView : nullptr;
+}
+
+DocumentView* TextViewModel :: getDocumentByIndex(int index)
+{
    auto info = _documents.get(index);
 
    return info ? info->documentView : nullptr;

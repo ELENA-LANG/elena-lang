@@ -22,6 +22,7 @@ namespace elena_lang
 
       int addRow(const wchar_t* text);
       void setColumnText(const wchar_t* item, int row, int column);
+      void clearRows();
 
       void onDoubleClick(NMHDR* hdr) override;
 

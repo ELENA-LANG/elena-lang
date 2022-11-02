@@ -156,10 +156,12 @@ labYGCollect:
   sub     r18, r18, r17 
 
   mflr    r0
-  std     r31, -10h(r1)  // ; save frame pointer
-  std     r0,  -08h(r1)  // ; save return address
+  std     r31, -20h(r1)  // ; save frame pointer
+  std     r0,  -18h(r1)  // ; save return address
+  std     r3,  -10h(r1)
+  std     r4,  -08h(r1)
 
-  addi    r1, r1, -16    // ; allocate raw stack
+  addi    r1, r1, -32    // ; allocate raw stack
   mr      r31, r1        // ; set frame pointer
 
   // ; lock frame
@@ -233,15 +235,17 @@ labYGNextFrame:
   bctrl                  // ; and call it
 
   ld      r2, 40(r1)     // ; restoring toc pointer
-  ld      r31, 32(r1)     // ; restoring toc pointer
+  ld      r31, 32(r1)    // ; restoring toc pointer
 
   mr      r15, r3
 
   mr      r1, r31              // ; restore stack pointer
-  addi    r1, r1, 16           // ; free raw stack
 
-  ld      r31, 00h(r1)         // ; restore frame pointer
-  ld      r0,  08h(r1)         // ; restore  return address
+  ld      r31, 10h(r1)         // ; restore frame pointer
+  ld      r0,  18h(r1) 
+  ld      r3,  20h(r1)
+  ld      r4,  28h(r1)
+  addi    r1, r1, 48           // ; free raw stack
 
   mtlr    r0
   blr
@@ -1165,6 +1169,42 @@ labEnd:
 
 end
 
+// ; copydpn dpn, 1
+inline %1E0h
+
+  addi    r18, r31, __arg16_1
+  ld      r17, 0(r3)
+  stb     r17, 0(r18)
+
+end
+
+// ; copydpn dpn, 2
+inline %2E0h
+
+  addi    r18, r31, __arg16_1
+  ld      r17, 0(r3)
+  sth     r17, 0(r18)
+
+end
+
+// ; copydpn dpn, 4
+inline %3E0h
+
+  addi    r18, r31, __arg16_1
+  ld      r17, 0(r3)
+  stw     r17, 0(r18)
+
+end
+
+// ; copydpn dpn, 8
+inline %4E0h
+
+  addi    r18, r31, __arg16_1
+  ld      r17, 0(r3)
+  std     r17, 0(r18)
+
+end
+
 // ; iaddndp
 inline %0E1h
 
@@ -1410,7 +1450,7 @@ inline %0E6h
   ld      r15, et_current(r14)
 
   ld       r12, toc_code(r2)
-  addis    r12, r12, __disp32hi_2 
+  addis    r12, r12, __disp32hi_2
   addi     r12, r12, __disp32lo_2
 
   std     r15, es_prev_struct(r19)
@@ -1427,7 +1467,7 @@ inline %0E7h
 
   addi    r15, r15, elObjectOffset
 
-  li      r18, __n16_1
+  li      r18, __n16lo_1
   addis   r18, r18, __n16hi_1
 
   ld      r17, toc_rdata(r2)
@@ -1934,7 +1974,7 @@ inline %0F5h
   mtctr   r12            
   bctrl                   
 
-  li      r18, __n16_1
+  li      r18, __n16lo_1
   addis   r18, r18, __n16hi_1
 
   ld      r17, toc_rdata(r2)
@@ -2299,9 +2339,9 @@ inline %0FEh
   mtctr   r12            // ; put code address into ctr
   bctrl                  // ; and call it
 
+  mr      r14, r3
+
   // lwz      r2, n(r1)     // ; restore our table of contents
-
-
   // ; temporally reloading TOC pointer
   lis   r2, rdata32_hi : %CORE_TOC
   addi  r2, r2, rdata32_lo : %CORE_TOC

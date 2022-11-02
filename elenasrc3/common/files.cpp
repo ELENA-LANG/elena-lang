@@ -17,8 +17,12 @@ using namespace elena_lang;
 
 #define file_open _wfopen
 
+#define NEW_LINE "\r\n"
+
 #include <windows.h>
 #include <direct.h>
+
+#define NEW_LINE "\n"
 
 #else
 
@@ -388,4 +392,9 @@ TextFileWriter :: TextFileWriter(path_t path, FileEncoding encoding, bool withBO
 bool TextFileWriter :: write(const char* s, pos_t length)
 {
    return _file.writeText(s, _encoding, length);
+}
+
+bool TextFileWriter :: writeNewLine()
+{
+   return write(NEW_LINE, getlength(NEW_LINE));
 }

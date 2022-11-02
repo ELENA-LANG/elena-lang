@@ -221,7 +221,7 @@ namespace elena_lang
          _notifiers.cut(notifier);
       }
 
-      void addMarker(int row, pos_t style)
+      void addMarker(int row, pos_t style, bool instanteMode)
       {
          _markers.add(row, { style });
 
@@ -266,6 +266,10 @@ namespace elena_lang
       void moveLeftToken(bool selecting);
       void moveFrameUp();
       void moveFrameDown();
+      void moveHome(bool selecting);
+      void moveEnd(bool selecting);
+      void moveFirst(bool selecting);
+      void moveLast(bool selecting);
 
       void moveToFrame(int column, int row, bool selecting);
 

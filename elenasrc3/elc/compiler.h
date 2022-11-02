@@ -49,6 +49,7 @@ namespace elena_lang
       RefLocal,
       TempLocal,
       SelfLocal,
+      SuperLocal,
       ReadOnlySelfLocal,
       LocalAddress,
       TempLocalAddress,
@@ -585,6 +586,7 @@ namespace elena_lang
          bool         constructorMode;
          bool         isEmbeddable;
          bool         byRefReturnMode;
+         bool         isExtension;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -610,7 +612,7 @@ namespace elena_lang
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
          ObjectInfo mapParameter(ustr_t identifier, ExpressionAttribute attr);
-         ObjectInfo mapSelf();
+         ObjectInfo mapSelf(bool memberMode = false);
 
          bool isPrivate() const
          {

@@ -132,6 +132,7 @@ labYGCollect:
   // ; save registers
   sub     x11, x11, x15
 
+  stp     x0,  x1, [sp, #-16]! 
   stp     x29, x30, [sp, #-16]! 
   mov     x29, sp              // ; set frame pointer
 
@@ -205,6 +206,7 @@ labYGNextFrame:
   add     x29, x29, #16
   mov     sp, x29
   ldp     x29, x30, [sp], #16
+  ldp     x0,  x1, [sp], #16
 
   ret     x30
 
@@ -1152,6 +1154,42 @@ labEnd:
 
 end
 
+// ; copydpn dpn, 1
+inline %1E0h
+
+  add     x13, x29, __arg12_1
+  ldr     x14, [x0]
+  strb    w14, [x13]
+
+end
+
+// ; copydpn dpn, 2
+inline %2E0h
+
+  add     x13, x29, __arg12_1
+  ldr     x14, [x0]
+  strh    w14, [x13]
+
+end
+
+// ; copydpn dpn, 4
+inline %3E0h
+
+  add     x13, x29, __arg12_1
+  ldr     x14, [x0]
+  str     w14, [x13]
+
+end
+
+// ; copydpn dpn, 8
+inline %4E0h
+
+  add     x13, x29, __arg12_1
+  ldr     x14, [x0]
+  str     x14, [x13]
+
+end
+
 // ; iaddndp
 inline %0E1h
 
@@ -1897,7 +1935,7 @@ inline %0F7h
   ldr     w19, [x0]
   movz    x18, __n16_1
   mul     x19, x19, x18
-  add     x19, x18, page_ceil
+  add     x19, x19, page_ceil
   and     x11, x19, page_mask
 
   movz    x17,  code_ptr32lo : %GC_ALLOC
@@ -2206,5 +2244,6 @@ inline %0FEh
   movk    x16,  __ptr32hi_1, lsl #16
   ldr     x17, [x16]
   blr     x17
+  mov     x9, x0
 
 end

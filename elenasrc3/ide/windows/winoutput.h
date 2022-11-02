@@ -28,6 +28,7 @@ namespace elena_lang
 
    public:
       wchar_t* getValue() override;
+      void clearValue() override;
 
       static LRESULT CALLBACK Proc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 

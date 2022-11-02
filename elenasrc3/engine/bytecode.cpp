@@ -73,7 +73,7 @@ void fixJumps(MemoryBase* code, int labelPosition, Map<int, int>& jumps, int lab
          int position = labelPosition - *it - 4;
          code->write(*it, &position, 4);
       }
-      else if (it.key() == (label | mskLabelRef)) {
+      else if (it.key() == (int)(label | mskLabelRef)) {
          int position = labelPosition | mskLabelRef;
          code->write(*it, &position, 4);
       }
@@ -117,17 +117,9 @@ void ByteCodeUtil :: decode(ByteCode code, IdentifierString& target)
    target.append(_fnOpcodes[(int)code]);
 }
 
-bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message)
+void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
+   ref_t* references, size_t len, pos_t argCount, ref_t flags)
 {
-   ref_t actionRef, flags;
-   pos_t argCount = 0;
-   decodeMessage(message, actionRef, argCount, flags);
-
-   ref_t signature = 0;
-   ustr_t actionName = module->resolveAction(actionRef, signature);
-   if (emptystr(actionName))
-      return false;
-
    if (test(flags, STATIC_MESSAGE))
       messageName.append("static:");
 
@@ -141,11 +133,9 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
       messageName.append("params:");
 
    messageName.append(actionName);
-   if (signature) {
-      ref_t references[ARG_COUNT];
-
+   if (len > 0) {
       messageName.append('<');
-      size_t len = module->resolveSignature(signature, references);
+      
       for (size_t i = 0; i < len; i++) {
          if (i != 0)
             messageName.append(',');
@@ -160,6 +150,23 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
       messageName.appendInt(argCount);
       messageName.append(']');
    }
+}
+
+bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message)
+{
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   ref_t signature = 0;
+   ustr_t actionName = module->resolveAction(actionRef, signature);
+   if (emptystr(actionName))
+      return false;
+
+   ref_t references[ARG_COUNT];
+   size_t len = signature ? module->resolveSignature(signature, references) : 0;
+
+   formatMessageName(messageName, module, actionName, references, len, argCount, flags);
 
    return true;
 }
@@ -424,13 +431,17 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
                //            case bcIfM:
                //            case bcElseM:
                //            case bcNext:
-            //case bcHook:
             //case bcAddress:
             //case bcIfHeap:
                // remove the label from idle list
                idleLabels.exclude(command.arg1);
 
                addJump(command.arg1, index, labels, jumps, fixes);
+               break;
+            case ByteCode::XHookDPR:
+               idleLabels.exclude(command.arg2 & ~mskLabelRef);
+
+               addJump(command.arg2 & ~mskLabelRef, index, labels, jumps, fixes);
                break;
             default:
                break;

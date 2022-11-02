@@ -185,6 +185,18 @@ namespace elena_lang
    // --- PPCLabelHelper ---
    struct PPCLabelHelper : LabelHelper
    {
+      short getHiAdjusted(disp_t n)
+      {
+         // HOTFIX : if the DWORD LO is over 0x7FFF - adjust DWORD HI (by adding 1) to be properly combined in the following code:
+         //     addis   r16, r16, __xdisp32hi_1
+         //     addi    r16, r16, __xdisp32lo_1
+         short lo = n & 0xFFFF;
+         if (lo < 0)
+            n += 0x10000;
+
+         return (short)(n >> 16);
+      }
+
       static void writeBxx(int offset, int aa, int lk, MemoryWriter& writer)
       {
          writer.writeDWord(PPCHelper::makeICommand(18, offset >> 2, aa, lk));
@@ -219,7 +231,7 @@ namespace elena_lang
                case mskXDisp32Hi:
                case mskDisp32Hi:
                {
-                  offset >>= 16;
+                  offset = getHiAdjusted(offset);
 
                   PPCHelper::fixBCommand(writer.Memory()->get(info.position), offset);
                   writer.Memory()->addReference(mskCodeXDisp32Hi, info.position);

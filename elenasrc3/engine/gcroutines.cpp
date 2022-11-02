@@ -420,7 +420,7 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
       // ; expand MG if required to promote YG
       while (table->gc_end - table->gc_mg_current < table->gc_yg_current - table->gc_yg_start) {
          size_t inc = AlignHeapSize(heap_inc);
-         size_t header_inc = AlignHeapSize(heap_inc >> page_size_order_minus2);
+         //size_t header_inc = AlignHeapSize(heap_inc >> page_size_order_minus2);
 
          ExpandHeap((void*)table->gc_end, inc);
          ExpandHeap((void*)(table->gc_header + ((table->gc_end - table->gc_start) >> page_size_order_minus2)), heapheader_inc);

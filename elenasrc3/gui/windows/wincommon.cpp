@@ -212,13 +212,16 @@ void WindowApp :: notifyModelChange(int modelCode, int arg)
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-int WindowApp :: run(GUIControlBase* mainWindow, bool maximized)
+int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, int notificationId)
 {
    // Perform application initialization:
    if (!initInstance(dynamic_cast<WindowBase*>(mainWindow), maximized ? SW_MAXIMIZE : SW_SHOW))
    {
       return FALSE;
    }
+
+   if (notificationId)
+      notifyModelChange(notificationId, 0);
 
    HACCEL hAccelTable = LoadAccelerators(_instance, _accelerators.str());
 

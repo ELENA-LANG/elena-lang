@@ -12,7 +12,7 @@
 
 using namespace elena_lang;
 
-constexpr auto DEFAULT_CONFIG       = "/etc/elena/elc.config";
+constexpr auto DEFAULT_CONFIG       = "/etc/elena/templates/lib60.config";
 
 constexpr auto PLATFORM_CATEGORY    = "configuration/platform";
 constexpr auto LIB_PATH             = "project/libpath";
@@ -42,7 +42,6 @@ class Presenter : public PresenterBase
 public:
    void readLine(char* buffer, size_t length) override
    {
-      // !! fgets is used instead of fgetws, because there is a strange bug in fgetws implementation
       fgets(buffer, LINE_LEN, stdin);
    }
 

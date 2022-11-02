@@ -54,7 +54,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    ideController.setNotifier(app);
    ideController.init(&ideModel);
 
-   int retVal = app->run(ideWindow, ideModel.appMaximized);
+   int retVal = app->run(ideWindow, ideModel.appMaximized, NOTIFY_PROJECTMODEL);
 
    delete app;
 

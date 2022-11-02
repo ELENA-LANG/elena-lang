@@ -135,7 +135,6 @@ namespace elena_lang
       int       body[4];
    };
 
-
    // --- ExceptionStruct ---
    struct ExceptionStruct
    {

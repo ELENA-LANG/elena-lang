@@ -85,19 +85,77 @@ bool TextViewController :: copyToClipboard(TextViewModelBase* model, ClipboardBa
    else return false;
 }
 
+void TextViewController :: onTextChanged(TextViewModelBase* model, DocumentView* view)
+{
+   if (view->status.isModeChanged()) {
+      model->onModelModeChanged(-1);
+   }
+}
+
 void TextViewController :: pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard)
 {
    auto docView = model->DocView();
    if (!docView->status.readOnly) {
       clipboard->pasteFromClipboard(docView);
+
+      onTextChanged(model, docView);
    }
 }
 
-void TextViewController::deleteText(TextViewModelBase* model)
+bool TextViewController :: insertNewLine(TextViewModelBase* model)
 {
    auto docView = model->DocView();
    if (!docView->status.readOnly) {
       docView->eraseSelection();
+      docView->insertNewLine();
+
+      onTextChanged(model, docView);
+
+      return true;
+   }
+
+   return false;
+}
+
+bool TextViewController :: insertChar(TextViewModelBase* model, char ch)
+{
+   auto docView = model->DocView();
+   if (!docView->status.readOnly && ch >= 0x20) {
+      docView->eraseSelection();
+      docView->insertChar(ch);
+
+      onTextChanged(model, docView);
+
+      return true;
+   }
+
+   return false;
+}
+
+bool TextViewController :: eraseChar(TextViewModelBase* model, bool moveback)
+{
+   auto docView = model->DocView();
+   if (!docView->status.readOnly) {
+      if (docView->hasSelection()) {
+         docView->eraseSelection();
+      }
+      else docView->eraseChar(moveback);
+
+      onTextChanged(model, docView);
+
+      return true;
+   }
+
+   return false;
+}
+
+void TextViewController :: deleteText(TextViewModelBase* model)
+{
+   auto docView = model->DocView();
+   if (!docView->status.readOnly) {
+      docView->eraseSelection();
+
+      onTextChanged(model, docView);
    }
 }
 
@@ -109,6 +167,8 @@ void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift,
       docView->moveFrameDown();
    }
    else docView->moveDown(kbShift);
+
+   model->onModelChanged();
 }
 
 void TextViewController :: moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -119,6 +179,8 @@ void TextViewController :: moveCaretLeft(TextViewModelBase* model, bool kbShift,
       docView->moveLeftToken(kbShift);
    }
    else docView->moveLeft(kbShift);
+
+   model->onModelChanged();
 }
 
 void TextViewController :: moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -129,14 +191,42 @@ void TextViewController :: moveCaretRight(TextViewModelBase* model, bool kbShift
       docView->moveRightToken(kbShift);
    }
    else docView->moveRight(kbShift);
+
+   model->onModelChanged();
 }
 
 void TextViewController :: moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
    auto docView = model->DocView();
 
-   if (kbCtrl) {
-      docView->moveFrameUp();
+   if (!kbCtrl) {
+      docView->moveUp(kbShift);
    }
-   else docView->moveUp(kbShift);
+   else docView->moveFrameUp();
+
+   model->onModelChanged();
+}
+
+void TextViewController :: moveCaretHome(TextViewModelBase* model, bool kbShift, bool kbCtrl)
+{
+   auto docView = model->DocView();
+
+   if (kbCtrl) {
+      docView->moveFirst(kbShift);
+   }
+   else docView->moveHome(kbShift);
+
+   model->onModelChanged();
+}
+
+void TextViewController :: moveCaretEnd(TextViewModelBase* model, bool kbShift, bool kbCtrl)
+{
+   auto docView = model->DocView();
+
+   if (kbCtrl) {
+      docView->moveEnd(kbShift);
+   }
+   else docView->moveLast(kbShift);
+
+   model->onModelChanged();
 }

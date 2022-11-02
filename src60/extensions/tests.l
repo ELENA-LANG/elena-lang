@@ -2,12 +2,12 @@
 
 public class AssertException : Exception
 {
-//    constructor new(string message)
-//        <= new(message);
+    constructor new(string message)
+        <= super new(message);
     
     static raise(string message)
     {
-        AssertException.new(/*message*/).raise()
+        AssertException.new(message).raise()
     }    
 }
 
