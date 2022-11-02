@@ -61,6 +61,7 @@ namespace elena_lang
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
       bool validateArgumentAttribute(ref_t attrValue, bool& byRefArg, bool& variadicArg);
       bool validateTypeScopeAttribute(ref_t attrValue, bool& variadicArg);
+      bool validateResendAttribute(ref_t attrValue, bool& superMode);
 
       bool validateAutoType(ModuleScopeBase& scope, ref_t& reference);
 
@@ -138,7 +139,7 @@ namespace elena_lang
       void verifyMultimethods();
 
       mssg_t resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, 
-         ref_t implicitSignatureRef, int& stackSafeAttr);
+         ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall);
 
       bool isValidType(ClassInfo& info, bool allowRole);
       bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole);

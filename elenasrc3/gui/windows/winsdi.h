@@ -11,23 +11,19 @@
 
 namespace elena_lang
 {
-   // --- VerticalBox ---
-   class VerticalBox : public GUIControlBase
+   // --- BoxBase ---
+   class BoxBase : public GUIControlBase
    {
+   protected:
       CachedList<GUIControlBase*, 3> _list;
       bool                           _stretchMode;
       int                            _spacer;
 
    public:
-      void append(GUIControlBase* item);
-
       bool checkHandle(void* param) const override
       {
          return false;
       }
-
-      Rectangle getRectangle() override;
-      void setRectangle(Rectangle rec) override;
 
       void show() override;
       void hide() override;
@@ -38,7 +34,31 @@ namespace elena_lang
 
       void refresh() override;
 
+      BoxBase(bool stretchMode, int spacer);
+   };
+
+   // --- VerticalBox ---
+   class VerticalBox : public BoxBase
+   {
+   public:
+      void append(GUIControlBase* item);
+
+      Rectangle getRectangle() override;
+      void setRectangle(Rectangle rec) override;
+
       VerticalBox(bool stretchMode, int spacer);
+   };
+
+   // --- HorizontalBox ---
+   class HorizontalBox : public BoxBase
+   {
+   public:
+      void append(GUIControlBase* item);
+
+      Rectangle getRectangle() override;
+      void setRectangle(Rectangle rec) override;
+
+      HorizontalBox(bool stretchMode, int spacer);
    };
 
    // --- LayoutManager ---

@@ -49,6 +49,7 @@ namespace elena_lang
       virtual void onDocumentSelect(int index) = 0;
       virtual void onDocumentNew(int index, int notifyMessage) = 0;
       virtual void onDocumentRename(int index) = 0;
+      virtual void onDocumentModeChanged(int index, bool modifiedMode) = 0;
 
       virtual void beforeDocumentClose(int index) = 0;
       virtual void onDocumentClose(int index, int notifyMessage) = 0;
@@ -74,6 +75,7 @@ namespace elena_lang
       virtual void afterDocumentSelect(int index) = 0;
 
       virtual void onModelChanged() = 0;
+      virtual void onModelModeChanged(int index) = 0;
 
       virtual void attachListener(TextViewListener* listener) = 0;
 
@@ -92,6 +94,7 @@ namespace elena_lang
       virtual ustr_t getDocumentName(int index) = 0;
       virtual ustr_t getDocumentNameByPath(path_t path) = 0;
 
+      virtual DocumentView* getDocumentByIndex(int index) = 0;
       virtual DocumentView* getDocument(ustr_t name) = 0;
       virtual path_t getDocumentPath(ustr_t name) = 0;
 
@@ -132,6 +135,10 @@ namespace elena_lang
       virtual void closeDocument(TextViewModelBase* model, ustr_t name, 
          int notifyMessage) = 0;
 
+      virtual bool insertNewLine(TextViewModelBase* model) = 0;
+      virtual bool insertChar(TextViewModelBase* model, char ch) = 0;
+      virtual bool eraseChar(TextViewModelBase* model, bool moveback) = 0;
+
       virtual void undo(TextViewModelBase* model) = 0;
       virtual void redo(TextViewModelBase* model) = 0;
 
@@ -145,6 +152,8 @@ namespace elena_lang
       virtual void moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
+      virtual void moveCaretHome(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
+      virtual void moveCaretEnd(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
    };
 
 }

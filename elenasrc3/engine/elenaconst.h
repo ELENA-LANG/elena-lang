@@ -101,6 +101,10 @@ namespace elena_lang
    constexpr auto PRIVATE_PREFIX_NS       = "'$private'";
    constexpr auto INTERNAL_PREFIX_NS      = "'$intern'";
 
+   constexpr auto TEMPLATE_PREFIX         = "'$auto";
+   constexpr auto PRIVATE_PREFIX          = "'$private";
+   constexpr auto INTERNAL_PREFIX         = "'$intern";
+
    constexpr auto CLASSCLASS_POSTFIX      = "#class";
    constexpr auto CONST_POSTFIX           = "#const";
    constexpr auto STATICFIELD_POSTFIX     = "#static";

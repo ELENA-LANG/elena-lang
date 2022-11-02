@@ -12,6 +12,7 @@
 #include "windows/winsplitter.h"
 #include "windows/winoutput.h"
 #include "windows/winmessagelog.h"
+#include "windows/wintreeview.h"
 #include "Resource.h"
 
 #include <shlwapi.h>
@@ -163,7 +164,7 @@ ControlBase* IDEFactory :: createStatusbar(WindowBase* owner)
 
 ControlBase* IDEFactory :: createTabBar(WindowBase* owner, NotifierBase* notifier)
 {
-   TabBar* tabBar = new TabBar(notifier, _settings.withTabAboverscore);
+   TabBar* tabBar = new TabBar(notifier, _settings.withTabAboverscore, 200);
 
    tabBar->createControl(_instance, owner);
 
@@ -202,7 +203,15 @@ ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* not
    return log;
 }
 
-void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList)
+ControlBase* IDEFactory :: createProjectView(ControlBase* owner)
+{
+   TreeView* projectView = new TreeView(300, 50, true);
+   projectView->createControl(_instance, owner);
+
+   return projectView;
+}
+
+void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, int projectView)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_MESSAGES, szErrorList, MAX_LOADSTRING);
@@ -211,6 +220,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
    _model->ideScheme.resultControl = tabBar;
    _model->ideScheme.compilerOutputControl = compilerOutput;
    _model->ideScheme.errorListControl = errorList;
+   _model->ideScheme.projectView = projectView;
 
    _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
    _model->ideScheme.captions.add(errorList, szErrorList);
@@ -233,7 +243,7 @@ GUIApp* IDEFactory :: createApp()
 
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess)
 {
-   GUIControlBase* children[7];
+   GUIControlBase* children[9];
    int counter = 0;
 
    int textIndex = counter++;
@@ -243,6 +253,8 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int tabBar = counter++;
    int compilerOutput = counter++;
    int errorList = counter++;
+   int projectView = counter++;
+   int hsplitter = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance);
    sdi->create(_instance, szSDI, nullptr);
@@ -257,14 +269,17 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[statusBarIndex] = createStatusbar(sdi);
    children[compilerOutput] = createCompilerOutput((ControlBase*)children[tabBar], outputProcess, notifier);
    children[errorList] = createErrorList((ControlBase*)children[tabBar], notifier);
+   children[projectView] = createProjectView(sdi);
+   children[hsplitter] = createSplitter(sdi, (ControlBase*)children[projectView], true, notifier,
+      NOTIFY_LAYOUT_CHANGED);
 
    vb->append(children[vsplitter]);
    vb->append(children[statusBarIndex]);
 
    sdi->populate(counter, children);
-   sdi->setLayout(textIndex, -1, bottomBox, -1, -1);
+   sdi->setLayout(textIndex, -1, bottomBox, -1, hsplitter);
 
-   initializeScheme(textIndex, tabBar, compilerOutput, errorList);
+   initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView);
 
    return sdi;
 }

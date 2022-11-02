@@ -113,7 +113,7 @@ void directCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 
    pos_t argCount = getArgCount(node.arg.reference);
    if ((int)argCount < tapeScope.scope->minimalArgList) {
-      for (int i = 0; i < tapeScope.scope->minimalArgList; i++) {
+      for (int i = argCount; i < tapeScope.scope->minimalArgList; i++) {
          tape.write(ByteCode::XStoreSIR, i, 0);
       }
    }
@@ -812,8 +812,8 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
 void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
    ReferenceMap& paths, bool tapeOptMode)
 {
-   int eosLabel = tape.newLabel();
-   int catchLabel = tape.newLabel();
+   tape.newLabel();
+   tape.newLabel();
 
    tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
 

@@ -109,7 +109,6 @@ void TextViewWindow :: resizeDocument()
       _model->resize(size);
    }
    _cached = false;
-
 }
 
 void TextViewWindow :: mouseToScreen(Point point, int& col, int& row, bool& margin)
@@ -249,7 +248,6 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
    int marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
 
    if (!_cached) {
-      
       if (!defaultStyle->valid) {
          _styles->validate(&canvas);
 
@@ -257,6 +255,9 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
          marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
 
          _needToResize = true;
+         if (_caretValid) {
+            createCaret(_styles->getLineHeight(), /*_view->docView->status.overwriteMode ? _view->styles.getStyle(STYLE_DEFAULT)->avgCharWidth : */1);
+         }
       }
       // if document size yet to be defined
       if (_needToResize)
@@ -448,6 +449,12 @@ bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
       case VK_DOWN:
          _controller->moveCaretDown(_model, kbShift, kbCtrl);
          break;
+      case VK_HOME:
+         _controller->moveCaretHome(_model, kbShift, kbCtrl);
+         break;
+      case VK_END:
+         _controller->moveCaretEnd(_model, kbShift, kbCtrl);
+         break;
       case VK_DELETE:
       {
          auto docView = _model->DocView();
@@ -468,25 +475,21 @@ bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
 bool TextViewWindow :: onKeyPressed(wchar_t ch)
 {
    if (_model->isAssigned()) {
-      auto docView = _model->DocView();
-      if (docView->status.readOnly)
-         return false;
-
       switch (ch) {
          case 0x0D:
-            docView->insertNewLine();
+            if (!_controller->insertNewLine(_model))
+               return false;
             break;
          case 0x08:
-            docView->eraseChar(true);
+            if(!_controller->eraseChar(_model, true))
+               return false;
             break;
          case 0x09:
             _controller->indent(_model);
             break;
          default:
-            if (ch >= 0x20) {
-               docView->insertChar(ch);
-            }
-            else return false;
+            if (!_controller->insertChar(_model, ch))
+               return false;
       }
 
       onDocumentUpdate();

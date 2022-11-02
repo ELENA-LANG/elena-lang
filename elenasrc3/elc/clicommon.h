@@ -332,6 +332,7 @@ struct BuiltinReferences
    {
       superReference = intReference = 0;
       shortReference = byteReference = 0;
+      dwordReference = 0;
       literalReference = wideReference = 0;
       messageReference = 0;
       wrapperTemplateReference = 0;
@@ -340,7 +341,7 @@ struct BuiltinReferences
 
       dispatch_message = constructor_message = 0;
       invoke_message = init_message = 0;
-      add_message = 0;
+      add_message = sub_message = mul_message = div_message = 0;
       if_message = 0;
       equal_message = 0;
       not_message = 0;
@@ -384,6 +385,7 @@ public:
 
    IdentifierString     selfVar;
    IdentifierString     declVar;
+   IdentifierString     superVar;
 
    pos_t                stackAlingment, rawStackAlingment;
    pos_t                ehTableEntrySize;
@@ -477,7 +479,7 @@ enum class ExpressionAttribute : pos64_t
    MssgLiteral       = 0x00000020000,
    MssgNameLiteral   = 0x00000040000,
    Extern            = 0x00000080000,
-   Memeber           = 0x00000100000,
+   Member            = 0x00000100000,
    ProbeMode         = 0x00000200000,
    AlreadyResolved   = 0x00000400000,
    InitializerScope  = 0x00000800000,

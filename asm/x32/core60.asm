@@ -130,6 +130,7 @@ inline % GC_ALLOC
 labYGCollect:
   // ; save registers
   sub  ecx, eax
+  push esi
   push ebp
 
   // ; lock frame
@@ -193,6 +194,7 @@ labYGNextFrame:
   mov  esp, ebp 
   pop  ecx 
   pop  ebp
+  pop  esi
   ret
 
 end
@@ -895,6 +897,41 @@ inline %0E0h
   mov  ecx, __n_2
   rep  movsb
   mov  esi, eax
+
+end
+
+// ; copydpn dpn, 1
+inline %1E0h
+
+  mov  eax, [esi]
+  mov  byte ptr [ebp + __arg32_1], al
+
+end
+
+// ; copydpn dpn, 2
+inline %2E0h
+
+  mov  eax, [esi]
+  mov  word ptr [ebp + __arg32_1], ax
+
+end
+
+// ; copydpn dpn, 4
+inline %3E0h
+
+  mov  eax, [esi]
+  mov  [ebp + __arg32_1], eax
+
+end
+
+// ; copydpn dpn, 8
+inline %4E0h
+
+  mov  eax, [esi]
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi+4]
+  mov  [edi], eax
+  mov  [edi + 4], ecx
 
 end
 

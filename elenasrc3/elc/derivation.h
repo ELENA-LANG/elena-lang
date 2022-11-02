@@ -122,10 +122,12 @@ namespace elena_lang
       void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMessage(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushResend(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushObject(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushNested(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushClosure(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 

@@ -1,12 +1,29 @@
 // --- Exception ---
 public class Exception
 {
+   string message;
+
+   constructor new(string message)
+   {
+      this message := message
+   }
+
+   constructor new()
+      <= new(self.__getClassName());
+
    on(handler) : external<system'core_routines'__exception_handler>; 
 
    fallback(arg)
       <= raise();  
 
    raise() : external<system'core_routines'__exception_raise>;
+
+   string toPrintable()
+   {
+      string retVal := message/*.add($10"Call stack:"$10).add(theCallstack.toPrintable())*/;
+        
+      ^ retVal
+   }
 }
 
 // --- CriticalException ---
@@ -33,6 +50,7 @@ public class OutOfMemoryException : Exception
 public class MethodNotFoundException : Exception
 {
    constructor new(object target, message mssg)
+      <= super new(target.__getClassName() + " : Method " + mssg.toPrintable() + " not found")
    {
    }
 }

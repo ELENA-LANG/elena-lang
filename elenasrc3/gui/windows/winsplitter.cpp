@@ -116,8 +116,8 @@ void Splitter :: setRectangle(elena_lang::Rectangle rec)
       }
       else width = 1;
 
-      _client->setRectangle({ rec.topLeft.x + _minWidth, rec.topLeft.y, width, height });
-      ControlBase::setRectangle({ rec.topLeft.x, rec.topLeft.y, _minWidth, height });
+      _client->setRectangle({ rec.topLeft.x, rec.topLeft.y, width, height });
+      ControlBase::setRectangle({ rec.topLeft.x + _client->getRectangle().width(), rec.topLeft.y, _minWidth, height });
    }
 }
 

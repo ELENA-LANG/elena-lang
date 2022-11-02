@@ -1,5 +1,18 @@
 import extensions;
 
+// --- intTests ---
+
+intTests()
+{
+    console.write("intTests");
+    int n := 123;
+    Assert.ifTrue(n == 123);
+    console.write(".");
+    n := n + 27;
+    Assert.ifTrue(n == 150);
+    console.writeLine(".");
+}
+
 // --- gcTests ---
 
 gcTests()
@@ -10,6 +23,21 @@ gcTests()
       new IntNumber();
    };
    console.writeLine(".");
+}
+
+// --- stringTests ---
+stringTests()
+{
+    console.write("stringTests");
+    string s := "abc";
+
+    Assert.ifTrue(s == "abc");
+    console.write(".");
+    string s2 := "de";
+    var s3 := s + s2;
+
+    Assert.ifTrue(s3 == "abcde");
+    console.writeLine(".");
 }
 
 // --- shortTests ---

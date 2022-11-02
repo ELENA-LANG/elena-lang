@@ -60,6 +60,7 @@ namespace elena_lang
       void afterDocumentSelect(int index) override;
 
       void onModelChanged() override;
+      void onModelModeChanged(int index) override;
 
       void attachListener(TextViewListener* listener) override;
 
@@ -72,6 +73,7 @@ namespace elena_lang
       ustr_t getDocumentName(int index) override;
       ustr_t getDocumentNameByPath(path_t path) override;
 
+      DocumentView* getDocumentByIndex(int index) override;
       DocumentView* getDocument(ustr_t name) override;
       path_t getDocumentPath(ustr_t name) override;
 

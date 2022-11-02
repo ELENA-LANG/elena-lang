@@ -54,7 +54,7 @@ void MessageLog :: clearMessages()
    _paths.clear();
    _list.clear();
 
-   clearMessages();
+   clearRows();
 }
 
 void MessageLog :: onItemDblClick(int index)

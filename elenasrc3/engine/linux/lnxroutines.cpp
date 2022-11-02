@@ -8,6 +8,7 @@
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
 #include "core.h"
+#include "linux/elfhelper.h"
 
 #include <sys/mman.h>
 #include <signal.h>
@@ -16,6 +17,18 @@
 using namespace elena_lang;
 
 static uintptr_t CriticalHandler = 0;
+
+void* SystemRoutineProvider::RetrieveMDataPtr(void* imageBase, pos_t imageLength)
+{
+   ImageSection header(imageBase, imageLength);
+   MemoryReader reader(&header);
+   addr_t addr = 0;
+   if (ELFHelper::seekRODataSegment(reader, addr)) {
+      return (void*)addr;
+   }
+
+   return nullptr;
+}
 
 size_t SystemRoutineProvider :: AlignHeapSize(size_t size)
 {
