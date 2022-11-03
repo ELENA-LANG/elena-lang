@@ -656,7 +656,11 @@ ObjectInfo Compiler::ClassScope :: mapDictionary(ustr_t identifier, bool referen
    metaIdentifier.replaceAll('\'', '@', 0);
 
    // check if it is a meta dictionary
-   return mapIdentifier(*metaIdentifier, referenceOne, mode | EAttr::Meta);
+   auto retVal = mapIdentifier(*metaIdentifier, referenceOne, mode | EAttr::Meta);
+   if (retVal.kind == ObjectKind::Unknown) {
+      return Scope::mapDictionary(identifier, referenceOne, mode);
+   }
+   else return retVal;
 }
 
 void Compiler::ClassScope :: save()
@@ -2385,6 +2389,16 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
+         case SyntaxKey::MetaExpression:
+         {
+            MetaScope metaScope(&scope, Scope::ScopeLevel::Class);
+
+            evalStatement(metaScope, current);
+            break;
+         }
+         case SyntaxKey::MetaDictionary:
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Class);
+            break;
          case SyntaxKey::Method:
          {
             MethodScope methodScope(&scope);
@@ -2833,6 +2847,10 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
          case ObjectKind::FieldName:
             retVal.kind = ObjectKind::StringLiteral;
             break;
+         //case ObjectKind::SelfName:
+         //   retVal.typeInfo = { V_STRING };
+         //   retVal.reference = mskNameLiteralRef;
+         //   break;
          default:
             break;
       }
@@ -3526,8 +3544,16 @@ void Compiler :: declareExtension(ClassScope& scope, mssg_t message, bool intern
 
 void Compiler :: validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool ignoreUndeclared, bool allowRole)
 {
-   if (!typeRef)
-      scope.raiseError(errUnknownClass, node);
+   if (!typeRef) {
+      switch (node.key) {
+         case SyntaxKey::string:
+            scope.raiseError(errInvalidSyntax, node);
+            break;
+         default:
+            scope.raiseError(errUnknownClass, node);
+            break;
+      }
+   }
 
    if (!_logic->isValidType(*scope.moduleScope, typeRef, ignoreUndeclared, allowRole))
       scope.raiseError(errInvalidType, node);

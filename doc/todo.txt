@@ -8,11 +8,13 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * ldoc : show conversion cast methods
-    * ide compile project
+    * api : provide class descriptions
+    * api : provide method descriptions
+
     * object extensions
 
     * ide - goto mouse
+    * ide - tab with ctrl-tab / ctrl-shift-tab
     * ide - ask to save on close
     * ide - scroll with mouse wheel
     * ide - tab
@@ -43,8 +45,8 @@ In development:
     * optimization : extra temporal variables
 
     === Iteration 12 : intsum / realsum, all system tests for existing classes ===
-
-    * api : provide descriptions
+    * api : provide field descriptions
+    * api : provide parameter names
 
 ------                                                           
 Backlog:

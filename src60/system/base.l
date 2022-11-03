@@ -7,6 +7,13 @@ inline external<routine>()
 
 // --- class meta info ---
 
+public inline info<descr>()
+{
+   #new super descriptions;
+
+   #let descriptions[$name __decl] := descr;
+}
+
 // --- prop ---
 
 public field prop<name, T>

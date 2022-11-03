@@ -3,6 +3,7 @@
 // --- super object ---
 
 public class Object
+//   : info<"">
 {
     const string __className := $name __decl;
 

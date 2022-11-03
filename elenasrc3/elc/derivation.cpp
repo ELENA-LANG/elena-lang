@@ -849,7 +849,7 @@ void SyntaxTreeBuilder :: flushTemplateCode(SyntaxTreeWriter& writer, Scope& sco
             flushDictionary(writer, current);
             break;
          case SyntaxKey::EOP:
-            flushNode(writer, scope, current);
+            //flushNode(writer, scope, current);
             break;
          default:
             if (SyntaxTree::testSuperKey(current.key, SyntaxKey::Expression)) {
