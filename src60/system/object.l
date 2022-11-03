@@ -32,5 +32,11 @@ public extension commonOp
    back(o) = o;
 
    bool equalReference(o) : external<system'core_routines'__object_equal>;
+
+   then(Func f)
+      = f();
+
+   then(Func1 f)
+      = f(self);
 }
 

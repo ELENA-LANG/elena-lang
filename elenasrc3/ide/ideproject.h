@@ -38,6 +38,7 @@ namespace elena_lang
       bool           singleSourceProject;
       bool           autoRecompile;
       PathString     name;
+      PathString     projectFile;
       PathString     projectPath;
       PathString     outputPath;
       ProjectPaths   sources;

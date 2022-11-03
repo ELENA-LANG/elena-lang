@@ -640,9 +640,9 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo)
          String<char, 10> temp;
          temp.copy(name + arg_index + 1, name.length() - arg_index - 2);
          int argCount = temp.toUInt(10);
-         for (int i = apiMethodInfo->extensionOne ? 1 : 0; i < argCount; i++) {
+         for (int i = 1; i < argCount; i++) {
             IdentifierString argName("arg");
-            argName.appendInt(i + (apiMethodInfo->extensionOne ? 0 : 1));
+            argName.appendInt(i);
 
             apiMethodInfo->params.add((*argName).clone());
          }

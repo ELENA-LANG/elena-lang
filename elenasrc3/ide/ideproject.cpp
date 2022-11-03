@@ -15,10 +15,7 @@ ProjectModel :: ProjectModel(IDEStatus* status)
 {
    this->status = status;
 
-   this->singleSourceProject = true;
    this->autoRecompile = /*true*/false;// !! temporal
-   this->projectPath.copy("C:\\Alex\\ELENA\\tests60\\sandbox\\"); // !! temporal
-   this->outputPath.copy("C:\\Alex\\ELENA\\tests60\\sandbox\\");  // !! temporal
 
    this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60\\");      // !! temporal
    this->paths.librarySourceRoot.copy("C:\\Alex\\ELENA\\src60\\");// !! temporal

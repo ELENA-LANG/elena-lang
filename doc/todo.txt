@@ -8,6 +8,7 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
+    * ldoc : show conversion cast methods
     * ide compile project
     * object extensions
 
@@ -24,7 +25,6 @@ In development:
     * all functionality for existing classes
     * api doc - properties
     * api doc
-    * ldoc : show conversion cast methods (if it is not auto generated)
 
     * ide debugger
 

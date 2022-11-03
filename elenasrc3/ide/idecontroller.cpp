@@ -211,11 +211,19 @@ void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
    }
 }
 
-bool ProjectController :: compile()
+bool ProjectController :: compileProject(ProjectModel& model)
 {
+   PathString appPath(model.paths.appPath);
+   appPath.combine(*model.paths.compilerPath);
 
+   PathString cmdLine(*model.paths.compilerPath);
+   cmdLine.append(" ");
+   cmdLine.append(*model.projectFile);
 
-   return true;
+   PathString curDir;
+   curDir.append(*model.projectPath);
+
+   return _outputProcess->start(*appPath, *cmdLine, *model.projectPath, true);
 }
 
 bool ProjectController :: compileSingleFile(ProjectModel& model)
@@ -237,8 +245,11 @@ bool ProjectController :: compileSingleFile(ProjectModel& model)
 
 bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction postponedAction)
 {
-   if (model.sources.count() > 0) {
+   if (model.singleSourceProject) {
       return compileSingleFile(model);
+   }
+   else if (!model.name.empty()) {
+      return compileProject(model);
    }
    else return false;   
 }
@@ -283,6 +294,7 @@ void ProjectController :: openProject(ProjectModel& model, path_t projectFile)
    model.sources.clear();
 
    model.name.copy(*name);
+   model.projectFile.copy(*src);
    model.projectPath.copySubPath(projectFile);
    model.singleSourceProject = false;
 
@@ -313,7 +325,8 @@ void ProjectController :: openSingleFileProject(ProjectModel& model, path_t sing
 
    model.name.copy(*name);
    model.projectPath.copySubPath(singleProjectFile);
-   model.singleSourceProject = false;
+   model.outputPath.copySubPath(singleProjectFile);
+   model.singleSourceProject = true;
 
    model.sources.add((*src).clone());
 
@@ -403,7 +416,7 @@ void IDEController :: doNewFile(IDEModel* model)
 bool IDEController :: openFile(IDEModel* model, path_t sourceFile)
 {
    if (openFile(&model->sourceViewModel, sourceFile)) {
-      if (model->projectModel.singleSourceProject) {
+      if (model->projectModel.name.empty()) {
          projectController.openSingleFileProject(model->projectModel, sourceFile);
       }
 

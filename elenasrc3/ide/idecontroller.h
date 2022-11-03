@@ -60,8 +60,7 @@ namespace elena_lang
 
       bool isIncluded(ProjectModel& model, ustr_t ns);
 
-      bool compile();
-
+      bool compileProject(ProjectModel& model);
       bool compileSingleFile(ProjectModel& model);
 
    public:
