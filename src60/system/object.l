@@ -3,7 +3,7 @@
 // --- super object ---
 
 public class Object
-//   : info<"">
+   : info<"a common ancestor">
 {
     const string __className := $name __decl;
 

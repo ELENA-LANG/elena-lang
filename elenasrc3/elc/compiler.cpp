@@ -2832,6 +2832,16 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
 
    if (resolveMode) {
       switch (retVal.kind) {
+         case ObjectKind::SelfName:
+         {
+            ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+            if (classScope != nullptr) {
+               ustr_t name = scope.module->resolveReference(classScope->reference);
+
+               retVal = interpreter.mapStringConstant(name);
+            }
+            break;
+         }
          case ObjectKind::MethodName:
          {
             MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
@@ -2847,10 +2857,6 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
          case ObjectKind::FieldName:
             retVal.kind = ObjectKind::StringLiteral;
             break;
-         //case ObjectKind::SelfName:
-         //   retVal.typeInfo = { V_STRING };
-         //   retVal.reference = mskNameLiteralRef;
-         //   break;
          default:
             break;
       }

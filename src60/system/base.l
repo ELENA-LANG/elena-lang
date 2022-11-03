@@ -9,7 +9,7 @@ inline external<routine>()
 
 public inline info<descr>()
 {
-   #new super descriptions;
+   #new super string descriptions;
 
    #let descriptions[$name __decl] := descr;
 }
