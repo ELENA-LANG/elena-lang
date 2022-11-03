@@ -10,7 +10,7 @@
 #include "guicommon.h"
 #include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                           0x001F
+#define IDE_REVISION_NUMBER                           0x0020
 
 namespace elena_lang
 {
@@ -40,6 +40,7 @@ namespace elena_lang
    constexpr auto NOTIFY_ACTIVATE_EDITFRAME           = 9;
    constexpr auto NOTIFY_START_COMPILATION            = 10;
    constexpr auto NOTIFY_PROJECTMODEL                 = 11;
+   constexpr auto NOTIFY_PROJECTVIEW_SEL              = 12;
 
    // --- PathSettings ---
    struct PathSettings

@@ -17,14 +17,19 @@ namespace elena_lang
    // --- TreeView ---
    class TreeView : public ControlBase
    {
-      bool _persistentSelection;
-      bool _enableIcons;
-      int  _iconId;
+      NotifierBase*  _notifier;
+      int            _notificationId;
 
-      HIMAGELIST _hImages;
+      bool           _persistentSelection;
+      bool           _enableIcons;
+      int            _iconId;
+
+      HIMAGELIST     _hImages;
 
    public:
       virtual HWND createControl(HINSTANCE instance, ControlBase* owner);
+
+      void onSelChanged() override;
 
       void select(TreeViewItem item);
       void expand(TreeViewItem item);
@@ -34,6 +39,8 @@ namespace elena_lang
       TreeViewItem getChild(TreeViewItem parent);
       TreeViewItem getNext(TreeViewItem item);
 
+      size_t getParam(TreeViewItem item);
+
       size_t readCaption(TreeViewItem item, wchar_t* caption, size_t length);
       void setCaption(TreeViewItem item, wchar_t* caption, size_t length);
 
@@ -41,7 +48,8 @@ namespace elena_lang
 
       void clear(TreeViewItem item);
 
-      TreeView(int width, int height, bool persistentSelection, bool enableIcons = false, int iconId = 0);
+      TreeView(int width, int height, NotifierBase* notifier, int notificationId, 
+         bool persistentSelection, bool enableIcons = false, int iconId = 0);
       virtual ~TreeView();
    };
 }

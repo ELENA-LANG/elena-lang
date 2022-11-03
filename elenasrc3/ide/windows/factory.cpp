@@ -203,9 +203,9 @@ ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* not
    return log;
 }
 
-ControlBase* IDEFactory :: createProjectView(ControlBase* owner)
+ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* notifier)
 {
-   TreeView* projectView = new TreeView(300, 50, true);
+   TreeView* projectView = new TreeView(300, 50, notifier, NOTIFY_PROJECTVIEW_SEL, true);
    projectView->createControl(_instance, owner);
 
    return projectView;
@@ -269,7 +269,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[statusBarIndex] = createStatusbar(sdi);
    children[compilerOutput] = createCompilerOutput((ControlBase*)children[tabBar], outputProcess, notifier);
    children[errorList] = createErrorList((ControlBase*)children[tabBar], notifier);
-   children[projectView] = createProjectView(sdi);
+   children[projectView] = createProjectView(sdi, notifier);
    children[hsplitter] = createSplitter(sdi, (ControlBase*)children[projectView], true, notifier,
       NOTIFY_LAYOUT_CHANGED);
 

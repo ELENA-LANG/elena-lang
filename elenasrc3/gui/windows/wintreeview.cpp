@@ -11,8 +11,10 @@ using namespace elena_lang;
 
 // --- TreeView ---
 
-TreeView :: TreeView(int width, int height, bool persistentSelection, bool enableIcons, int iconId)
+TreeView :: TreeView(int width, int height, NotifierBase* notifier, int notificationId, 
+   bool persistentSelection, bool enableIcons, int iconId)
    : ControlBase(nullptr, 0, 0, width, height),
+   _notifier(notifier), _notificationId(notificationId),
    _persistentSelection(persistentSelection), _enableIcons(enableIcons), _iconId(iconId)
 {
 
@@ -55,6 +57,26 @@ HWND TreeView :: createControl(HINSTANCE instance, ControlBase* owner)
    else _hImages = nullptr;
 
    return _handle;
+}
+
+void TreeView :: onSelChanged()
+{
+   size_t param = getParam(getCurrent());
+
+   _notifier->notifyMessage(_notificationId, param);
+}
+
+size_t TreeView :: getParam(TreeViewItem item)
+{
+   TVITEM itemRec;
+
+   itemRec.mask = TVIF_PARAM;
+   itemRec.hItem = item;
+   itemRec.lParam = -1;
+
+   TreeView_GetItem(_handle, &itemRec);
+
+   return itemRec.lParam;
 }
 
 TreeViewItem TreeView :: getCurrent()

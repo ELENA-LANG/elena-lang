@@ -321,6 +321,14 @@ void ProjectController :: openSingleFileProject(ProjectModel& model, path_t sing
       _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
 }
 
+path_t ProjectController :: getSourceByIndex(ProjectModel& model, int index)
+{
+   if (index < 0)
+      return nullptr;
+
+   return model.sources.get(index + 1);
+}
+
 // --- IDEController ---
 
 inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
@@ -421,6 +429,17 @@ bool IDEController :: openFile(SourceViewModel* model, path_t sourceFile)
 
    return sourceController.openSource(model, sourceName, sourceFile, 
       defaultEncoding, true);
+}
+
+bool IDEController :: openProjectSourceByIndex(IDEModel* model, int index)
+{
+   path_t sourcePath = projectController.getSourceByIndex(model->projectModel, index);
+   if (!sourcePath.empty()) {
+      PathString fullPath(*model->projectModel.projectPath, sourcePath);
+
+      return openFile(model, *fullPath);
+   }
+   else return false;
 }
 
 bool IDEController :: openProject(IDEModel* model, path_t projectFile)

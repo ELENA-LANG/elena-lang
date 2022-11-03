@@ -54,6 +54,7 @@ namespace elena_lang
       void onDoubleClick(NMHDR* hdr);
 
       void onTabSelChanged(HWND wnd);
+      void onTreeSelChanged(HWND wnd);
 
       bool onCommand(int command) override;
       void onNotify(NMHDR* hdr) override;
@@ -64,6 +65,7 @@ namespace elena_lang
       void onErrorHighlight(int index);
 
       void onProjectChange();
+      void onProjectViewSel(size_t index);
 
       void openResultTab(int controlIndex);
       void setChildFocus(int controlIndex);

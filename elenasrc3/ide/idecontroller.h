@@ -68,6 +68,8 @@ namespace elena_lang
       void openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
       void openProject(ProjectModel& model, path_t projectFile);
 
+      path_t getSourceByIndex(ProjectModel& model, int index);
+
       void defineSourceName(path_t path, IdentifierString& retVal);
 
       void defineFullPath(ProjectModel& model, ustr_t ns, path_t path, PathString& fullPath);
@@ -133,6 +135,7 @@ namespace elena_lang
       path_t retrieveSingleProjectFile(IDEModel* model);
 
       bool openFile(IDEModel* model, path_t sourceFile);
+      bool openProjectSourceByIndex(IDEModel* model, int index);
 
       bool selectSource(ProjectModel* model, SourceViewModel* sourceModel,
          ustr_t moduleName, path_t sourcePath);

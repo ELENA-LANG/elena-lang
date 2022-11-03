@@ -222,6 +222,11 @@ void IDEWindow :: onErrorHighlight(int index)
    _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
 }
 
+void IDEWindow :: onProjectViewSel(size_t index)
+{
+   _controller->openProjectSourceByIndex(_model, index);
+}
+
 void IDEWindow :: onProjectChange()
 {
    TreeView* projectTree = dynamic_cast<TreeView*>(_children[_model->ideScheme.projectView]);
@@ -384,12 +389,25 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
       case NOTIFY_START_COMPILATION:
          onComilationStart();
          break;
+      case NOTIFY_PROJECTVIEW_SEL:
+         onProjectViewSel(hdr->extParam2);
+         break;
       default:
          break;
    }
 }
 
 void IDEWindow :: onTabSelChanged(HWND wnd)
+{
+   for (size_t i = 0; i < _childCounter; i++) {
+      if (_children[i]->checkHandle(wnd)) {
+         ((ControlBase*)_children[i])->onSelChanged();
+         break;
+      }
+   }
+}
+
+void IDEWindow :: onTreeSelChanged(HWND wnd)
 {
    for (size_t i = 0; i < _childCounter; i++) {
       if (_children[i]->checkHandle(wnd)) {
@@ -423,6 +441,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          break;
       case NMHDR_Message:
          onNotifyMessage((ExtNMHDR*)hdr);
+         break;
+      case TVN_SELCHANGED:
+         onTreeSelChanged(hdr->hwndFrom);
          break;
       default:
          break;
