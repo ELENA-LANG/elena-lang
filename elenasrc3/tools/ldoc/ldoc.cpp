@@ -367,6 +367,22 @@ void writeConstructorHeader(TextFileWriter& writer, ApiClassInfo* info, const ch
    writer.writeTextLine("</TR>");
 }
 
+void writeExtensionsHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== CONSTRUCTOR SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Extension Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Extension Method</TH>");
+   writer.writeTextLine("</TR>");
+}
+
 void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
 {
    writer.writeTextLine("<TD CLASS=\"colFirst\">");
@@ -624,9 +640,9 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo)
          String<char, 10> temp;
          temp.copy(name + arg_index + 1, name.length() - arg_index - 2);
          int argCount = temp.toUInt(10);
-         for (int i = 0; i < argCount; i++) {
+         for (int i = apiMethodInfo->extensionOne ? 1 : 0; i < argCount; i++) {
             IdentifierString argName("arg");
-            argName.appendInt(i + 1);
+            argName.appendInt(i + (apiMethodInfo->extensionOne ? 0 : 1));
 
             apiMethodInfo->params.add((*argName).clone());
          }
@@ -637,9 +653,10 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo)
 }
 
 void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, 
-   bool classClassMode)
+   MemberType memberType)
 {
    auto apiMethodInfo = new ApiMethodInfo();
+   apiMethodInfo->extensionOne = memberType == MemberType::Extension;
 
    if (ByteCodeUtil::resolveMessageName(apiMethodInfo->name, _module, message)) {
       if ((*apiMethodInfo->name).startsWith(DISPATCH_MESSAGE)) {
@@ -661,6 +678,13 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          }
       }
       else {
+         bool functionMode = false;
+         if ((*apiMethodInfo->name).startsWith("function:")) {
+            apiMethodInfo->name.cut(0, 9);
+            if (memberType != MemberType::Extension)
+               functionMode = true;
+         }
+
          if (test(methodInfo.hints, (ref_t)MethodHint::Predefined))
             apiMethodInfo->prefix.append("predefined ");
 
@@ -675,8 +699,11 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          }
       }
 
-      if (classClassMode) {
+      if (memberType == MemberType::ClassClass) {
          apiClassInfo->constructors.add(apiMethodInfo);
+      }
+      else if (memberType == MemberType::Extension) {
+         apiClassInfo->extensions.add(apiMethodInfo);
       }
       else apiClassInfo->methods.add(apiMethodInfo);
    }
@@ -689,7 +716,20 @@ void DocGenerator :: loadConstructors(ApiClassInfo* apiClassInfo, ref_t referenc
       for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
          auto methodInfo = *m_it;
          if (!methodInfo.inherited) {
-            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, true);
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::ClassClass);
+         }
+      }
+   }
+}
+
+void DocGenerator :: loadExtensions(ApiClassInfo* apiClassInfo, ref_t reference)
+{
+   ClassInfo info;
+   if (loadClassInfo(reference, info, false)) {
+      for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
+         auto methodInfo = *m_it;
+         if (!methodInfo.inherited) {
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Extension);
          }
       }
    }
@@ -704,10 +744,30 @@ void DocGenerator :: loadClassMembers(ApiClassInfo* apiClassInfo, ref_t referenc
       for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
          auto methodInfo = *m_it;
          if (!methodInfo.inherited) {
-            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, false);
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Normal);
          }
       }
    }
+}
+
+bool DocGenerator :: isExtension(ref_t reference)
+{
+   ClassInfo info;
+   if (loadClassInfo(reference, info, true)) {
+      return test(info.header.flags, elExtension);
+   }
+   else return false;
+}
+
+ref_t DocGenerator :: findExtensionTarget(ref_t reference)
+{
+   ClassInfo info;
+   if (loadClassInfo(reference, info, false)) {
+      ref_t targetRef = info.attributes.get({ 0, ClassAttribute::ExtensionRef });
+
+      return targetRef;
+   }
+   else return 0;
 }
 
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
@@ -734,12 +794,18 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       }
 
       ref_t classClassRef = 0;
+      ref_t extensionRef = 0;
       if (referenceName.endsWith(CLASSCLASS_POSTFIX)) {
          classClassRef = reference;
          IdentifierString name(referenceName);
          name.truncate(name.length() - getlength(CLASSCLASS_POSTFIX));
 
          reference = _module->mapReference(*name, true);
+         referenceName = _module->resolveReference(reference);
+      }
+      else if (isExtension(reference)) {
+         extensionRef = reference;
+         reference = findExtensionTarget(extensionRef);
          referenceName = _module->resolveReference(reference);
       }
 
@@ -774,8 +840,10 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
          if (classClassRef != 0) {
             loadConstructors(info, classClassRef);
          }
+         else if (extensionRef != 0) {
+            loadExtensions(info, extensionRef);
+         }
          else {
-
             loadClassMembers(info, reference);
          }
       }
@@ -839,6 +907,12 @@ void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWri
    if (classInfo->methods.count() > 0) {
       writeClassMethodsHeader(bodyWriter, classInfo, *moduleName);
       generateMethodList(bodyWriter, classInfo->methods);
+      writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   if (classInfo->extensions.count() > 0) {
+      writeExtensionsHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->extensions);
       writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
    }
 

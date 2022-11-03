@@ -8,12 +8,9 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * api doc - constructors
-
-    * object functionality
-    * object extensions
-    * api doc - methods
     * api doc - extensions
+    * ide compile project
+    * object extensions
 
     * ide - goto mouse
     * ide - ask to save on close
@@ -26,9 +23,8 @@ In development:
     * ide different styles : use dark mode
 
     * all functionality for existing classes
+    * api doc - properties
     * api doc
-
-    * ide compile project
 
     * ide debugger
 
@@ -47,6 +43,8 @@ In development:
     * optimization : extra temporal variables
 
     === Iteration 12 : intsum / realsum, all system tests for existing classes ===
+
+    * api : provide descriptions
 
 ------                                                           
 Backlog:

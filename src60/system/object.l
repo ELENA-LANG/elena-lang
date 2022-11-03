@@ -29,6 +29,8 @@ public class Object
 
 public extension commonOp
 {
+   back(o) = o;
+
    bool equalReference(o) : external<system'core_routines'__object_equal>;
 }
 
