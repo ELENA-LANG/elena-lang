@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+﻿//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller implementation File
 //                                             (C)2005-2022, by Aleksey Rakov
@@ -6,9 +6,28 @@
 
 #include "idecontroller.h"
 #include "eng/messages.h"
-#include "config.h"
 
 using namespace elena_lang;
+
+inline ustr_t getPlatformName(PlatformType type)
+{
+   switch (type) {
+      case PlatformType::Win_x86:
+         return WIN_X86_KEY;
+      case PlatformType::Win_x86_64:
+         return WIN_X86_64_KEY;
+      case PlatformType::Linux_x86:
+         return LINUX_X86_KEY;
+      case PlatformType::Linux_x86_64:
+         return LINUX_X86_64_KEY;
+      case PlatformType::Linux_PPC64le:
+         return LINUX_PPC64le_KEY;
+      case PlatformType::Linux_ARM64:
+         return LINUX_ARM64_KEY;
+      default:
+         return nullptr;
+   }
+}
 
 // --- SourceViewController ---
 
@@ -224,6 +243,67 @@ bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction post
    else return false;   
 }
 
+void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node configRoot)
+{
+   // load source files
+   DynamicString<char> subNs;
+   DynamicString<char> path;
+
+   ConfigFile::Collection modules;
+   if (config.select(configRoot, MODULE_CATEGORY, modules)) {
+      for (auto m_it = modules.start(); !m_it.eof(); ++m_it) {
+         ConfigFile::Node moduleNode = *m_it;
+
+         if (!moduleNode.readAttribute("name", subNs)) {
+            subNs.clear();
+         }
+
+         ConfigFile::Collection files;
+         if (config.select(moduleNode, "*", files)) {
+            for (auto it = files.start(); !it.eof(); ++it) {
+               // add source file
+               ConfigFile::Node node = *it;
+               node.readContent(path);
+
+               PathString filePath(path.str());
+               model.sources.add((*filePath).clone());
+            }
+         }
+      }
+   }
+}
+
+void ProjectController :: openProject(ProjectModel& model, path_t projectFile)
+{
+   ustr_t key = getPlatformName(_platform);
+
+   FileNameString src(projectFile, true);
+   FileNameString name(projectFile);
+
+   model.sources.clear();
+
+   model.name.copy(*name);
+   model.projectPath.copySubPath(projectFile);
+   model.singleSourceProject = false;
+
+   ConfigFile projectConfig;
+   if (projectConfig.load(projectFile, FileEncoding::UTF8)) {
+      ConfigFile::Node root = projectConfig.selectRootNode();
+
+      // select platform configuration
+      ConfigFile::Node platformRoot = projectConfig.selectNode<ustr_t>(PLATFORM_CATEGORY, key, [](ustr_t key, ConfigFile::Node& node)
+         {
+            return node.compareAttribute("key", key);
+         });
+
+      loadConfig(model, projectConfig, root);
+      loadConfig(model, projectConfig, platformRoot);
+   }
+
+   if (_notifier)
+      _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
+}
+
 void ProjectController :: openSingleFileProject(ProjectModel& model, path_t singleProjectFile)
 {
    FileNameString src(singleProjectFile, true);
@@ -233,6 +313,7 @@ void ProjectController :: openSingleFileProject(ProjectModel& model, path_t sing
 
    model.name.copy(*name);
    model.projectPath.copySubPath(singleProjectFile);
+   model.singleSourceProject = false;
 
    model.sources.add((*src).clone());
 
@@ -342,6 +423,13 @@ bool IDEController :: openFile(SourceViewModel* model, path_t sourceFile)
       defaultEncoding, true);
 }
 
+bool IDEController :: openProject(IDEModel* model, path_t projectFile)
+{
+   projectController.openProject(model->projectModel, projectFile);
+
+   return false;
+}
+
 void IDEController :: doOpenFile(DialogBase& dialog, IDEModel* model)
 {
    List<path_t, freepath> files(nullptr);
@@ -379,6 +467,21 @@ bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveA
    return true;
 }
 
+bool IDEController :: doOpenProject(DialogBase& dialog, IDEModel* model)
+{
+   PathString path;
+   if (dialog.openFile(path)) {
+      //if (!doCloseProject())
+      //   return false;
+
+      if (openProject(model, *path)) {
+         return true;
+      }
+   }
+
+   return false;
+}
+
 bool IDEController :: doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode)
 {
    // !! temporal
@@ -386,6 +489,11 @@ bool IDEController :: doSaveProject(DialogBase& dialog, IDEModel* model, bool fo
       return false;
 
    return true;
+}
+
+bool IDEController :: doCloseProject()
+{
+   return false;
 }
 
 bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)

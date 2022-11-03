@@ -10,10 +10,20 @@
 #include "guicommon.h"
 #include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                           0x001E
+#define IDE_REVISION_NUMBER                           0x001F
 
 namespace elena_lang
 {
+   constexpr auto PLATFORM_CATEGORY                   = "configuration/platform";
+   constexpr auto MODULE_CATEGORY                     = "files/*";
+
+   constexpr auto WIN_X86_KEY                         = "Win_x86";
+   constexpr auto WIN_X86_64_KEY                      = "Win_x64";
+   constexpr auto LINUX_X86_KEY                       = "Linux_I386";
+   constexpr auto LINUX_X86_64_KEY                    = "Linux_AMD64";
+   constexpr auto LINUX_PPC64le_KEY                   = "Linux_PPC64le";
+   constexpr auto LINUX_ARM64_KEY                     = "Linux_ARM64";
+
    constexpr auto ERROR_RUN_NEED_TARGET               = 0x0001;
    constexpr auto ERROR_DEBUG_FILE_NOT_FOUND_COMPILE  = 0x0002;
    constexpr auto ERROR_RUN_NEED_RECOMPILE            = 0x0003;

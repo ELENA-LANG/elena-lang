@@ -11,6 +11,7 @@
 #define IDM_FILE_EXIT               403
 #define IDM_FILE_SAVE               404
 #define IDM_FILE_CLOSE              405
+#define IDM_PROJECT_OPEN            406
 
 #define IDM_EDIT_UNDO               501
 #define IDM_EDIT_REDO               502

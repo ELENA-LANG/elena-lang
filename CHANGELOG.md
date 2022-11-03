@@ -1,5 +1,10 @@
-## upcoming ELENA 6.0
-*12.06.2022*
+## ELENA 6.0.2a
+- TOOLS
+  - ldoc : api doc generator
+
+
+## ELENA 5.8
+*01.10.2021*
 
 - ELENA
   - binary incompatible due to module structure change / new opcodes / support for amd64

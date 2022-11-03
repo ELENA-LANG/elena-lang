@@ -8,14 +8,18 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * ide open project
     * ide select file in the project
+
+    * object functionality
+    * api doc - constructors
+    * api doc - methods
+    * object extensions
+    * api doc - extensions
+
     * ide - goto mouse
     * ide - ask to save on close
     * ide - scroll with mouse wheel
     * ide - tab
-
-    * api doc - methods
 
     * ide - add close button on tabbar
     * ide - fix errors

@@ -10,6 +10,7 @@
 #include "controller.h"
 #include "debugcontroller.h"
 #include "ideproject.h"
+#include "config.h"
 
 namespace elena_lang
 {
@@ -44,9 +45,13 @@ namespace elena_lang
    // --- ProjectController ---
    class ProjectController : public NotifierBase
    {
+      PlatformType            _platform;
+
       ProcessBase*            _outputProcess;
       DebugController         _debugController;
       NotifierBase*           _notifier;
+
+      void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
 
       bool onDebugAction(ProjectModel& model, DebugAction action);
       bool isOutaged(bool noWarning);
@@ -61,6 +66,7 @@ namespace elena_lang
 
    public:
       void openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
+      void openProject(ProjectModel& model, path_t projectFile);
 
       void defineSourceName(path_t path, IdentifierString& retVal);
 
@@ -87,10 +93,11 @@ namespace elena_lang
       }
 
       ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
-         DebugSourceController* sourceController)
+         DebugSourceController* sourceController, PlatformType platform)
          : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController)
       {
          _notifier = nullptr;
+         _platform = platform;
       }
    };
 
@@ -100,6 +107,7 @@ namespace elena_lang
       NotifierBase*           _notifier;
 
       bool openFile(SourceViewModel* model, path_t sourceFile);
+      bool openProject(IDEModel* model, path_t projectFile);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
 
@@ -135,6 +143,8 @@ namespace elena_lang
       void doOpenFile(DialogBase& dialog, IDEModel* model);
       bool doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
       bool doCloseFile(DialogBase& dialog, IDEModel* model);
+      bool doOpenProject(DialogBase& dialog, IDEModel* model);
+      bool doCloseProject();
       bool doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode);
 
       bool doCompileProject(DialogBase& dialog, IDEModel* model);
@@ -148,11 +158,11 @@ namespace elena_lang
       void init(IDEModel* model);
 
       IDEController(ProcessBase* outputProcess, DebugProcessBase* process, IDEModel* model,
-         TextViewSettings& textViewSettings
+         TextViewSettings& textViewSettings, PlatformType platform
       ) :
          sourceController(textViewSettings),
          projectController(outputProcess, process, &model->projectModel, &model->sourceViewModel,
-            this)
+            this, platform)
       {
          _notifier = nullptr;
          defaultEncoding = FileEncoding::UTF8;

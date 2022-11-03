@@ -39,7 +39,8 @@ namespace elena_lang
    // --- IDEWindow ---
    class IDEWindow : public SDIWindow
    {
-      Dialog         dialog;
+      Dialog         fileDialog;
+      Dialog         projectDialog;
       Clipboard      clipboard;
 
       HINSTANCE      _instance;
@@ -71,6 +72,7 @@ namespace elena_lang
       void openFile();
       void saveFile();
       void closeFile();
+      void openProject();
       void exit();
 
       void undo();

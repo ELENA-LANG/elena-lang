@@ -99,9 +99,13 @@ void Clipboard :: pasteFromClipboard(DocumentView* docView)
 
 IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance) : 
    SDIWindow(title), 
-   dialog(instance, 
+   fileDialog(instance,
       this, Dialog::SourceFilter, 
       OPEN_FILE_CAPTION, 
+      *model->projectModel.paths.lastPath),
+   projectDialog(instance,
+      this, Dialog::ProjectFilter,
+      OPEN_PROJECT_CAPTION,
       *model->projectModel.paths.lastPath),
    clipboard(this)
 {
@@ -124,17 +128,22 @@ void IDEWindow :: newFile()
 
 void IDEWindow :: openFile()
 {
-   _controller->doOpenFile(dialog, _model);
+   _controller->doOpenFile(fileDialog, _model);
 }
 
 void IDEWindow :: saveFile()
 {
-   _controller->doSaveFile(dialog, _model, false, true);
+   _controller->doSaveFile(fileDialog, _model, false, true);
 }
 
 void IDEWindow::closeFile()
 {
-   _controller->doCloseFile(dialog, _model);
+   _controller->doCloseFile(fileDialog, _model);
+}
+
+void IDEWindow :: openProject()
+{
+   _controller->doOpenProject(projectDialog, _model);
 }
 
 void IDEWindow :: exit()
@@ -273,6 +282,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_FILE_OPEN:
          openFile();
          break;
+      case IDM_PROJECT_OPEN:
+         openProject();
+         break;
       case IDM_FILE_SAVE:
          saveFile();
          break;
@@ -302,7 +314,7 @@ bool IDEWindow :: onCommand(int command)
          deleteText();
          break;
       case IDM_PROJECT_COMPILE:
-         _controller->doCompileProject(dialog, _model);
+         _controller->doCompileProject(projectDialog, _model);
          break;
       case IDM_DEBUG_RUN:
          _controller->doDebugAction(_model, DebugAction::Run);

@@ -34,8 +34,10 @@ namespace elena_lang
       int          _defaultFlags;
 
    public:
+      static const wchar_t* ProjectFilter;
       static const wchar_t* SourceFilter;
 
+      bool openFile(PathString& path) override;
       bool openFiles(List<path_t, freepath>& files) override;
       bool saveFile(path_t ext, PathString& path) override;
 
