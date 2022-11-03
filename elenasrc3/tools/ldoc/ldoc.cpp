@@ -838,6 +838,10 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             info->prefix.copy(*prefix);
 
             moduleInfo->classes.add(info);
+
+            ustr_t descr = _classDescriptions.get(referenceName);
+            if (!descr.empty())
+               info->shortDescr.copy(descr);
          }
 
          if (classClassRef != 0) {
@@ -978,6 +982,35 @@ void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
    writeFooter(bodyWriter, *summaryname);
 }
 
+void DocGenerator :: loadDescriptions(ref_t descrRef, DescriptionMap& map)
+{
+   auto section = _module->mapSection(descrRef | mskStringMapRef, true);
+   if (section != nullptr) {
+      IdentifierString key;
+      IdentifierString value;
+      MemoryReader reader(section);
+      while (!reader.eof()) {
+         reader.readString(key);
+         int type = reader.getDWord();
+
+         if (type == 2) {
+            reader.getDWord();
+
+            reader.readString(value);
+
+            map.add(*key, (*value).clone());
+         }
+      }
+   }
+}
+
+void DocGenerator :: loadDescriptions()
+{
+   ref_t descrRef = _module->mapReference("'meta$descriptions", true);
+
+   loadDescriptions(descrRef, _classDescriptions);
+}
+
 bool DocGenerator :: load(path_t path)
 {
    FileNameString fileName(path);
@@ -1006,6 +1039,8 @@ bool DocGenerator :: loadByName(ustr_t name)
 
 void DocGenerator :: generate()
 {
+   loadDescriptions();
+
    ApiModuleInfoList modules(nullptr);
    loadNestedModules(modules);
 

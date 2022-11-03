@@ -98,6 +98,7 @@ namespace elena_lang
    };
 
    typedef List<ApiModuleInfo*, freeobj> ApiModuleInfoList;
+   typedef Map<ustr_t, ustr_t, allocUStr, freeUStr, freeUStr>   DescriptionMap;
 
    // --- DocGenerator ---
    class DocGenerator
@@ -114,6 +115,8 @@ namespace elena_lang
       ModuleBase*      _module;
       IdentifierString _rootNs;
       bool             _publicOnly;
+
+      DescriptionMap   _classDescriptions;
 
       ApiModuleInfo* findModule(ApiModuleInfoList& modules, ustr_t ns);
       ApiClassInfo* findClass(ApiModuleInfo* module, ustr_t name);
@@ -135,6 +138,9 @@ namespace elena_lang
       void loadConstructors(ApiClassInfo* apiClassInfo, ref_t reference);
       void loadExtensions(ApiClassInfo* apiClassInfo, ref_t reference);
 
+      void loadDescriptions(ref_t reference, DescriptionMap& map);
+      void loadDescriptions();
+
    public:
       void loadNestedModules(ApiModuleInfoList& modules);
       void loadMember(ApiModuleInfoList& modules, ref_t reference);
@@ -145,15 +151,14 @@ namespace elena_lang
       void generate();
 
       DocGenerator(LibraryProvider* provider, PresenterBase* presenter)
+         : _classDescriptions(nullptr)
       {
          _presenter = presenter;
          _provider = provider;
          _module = nullptr;
          _publicOnly = true;
       }
-      virtual ~DocGenerator()
-      {
-      }
+      virtual ~DocGenerator() = default;
    };
 }
 
