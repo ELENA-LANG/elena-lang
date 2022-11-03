@@ -427,6 +427,11 @@ namespace elena_lang
          StrUtil::insert(_string, index, getlength(s), s);
       }
 
+      void cut(size_t index, size_t length)
+      {
+         StrUtil::move(_string + index, _string + index + length, getlength(_string) - index - length + 1);
+      }
+
       void replaceAll(T oldCh, T newCh, size_t index)
       {
          for (size_t i = index; i < getlength(_string); i++) {

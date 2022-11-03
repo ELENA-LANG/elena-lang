@@ -29,10 +29,13 @@ namespace elena_lang
 
    struct ApiMethodInfo
    {
+      IdentifierString  prefix;
       IdentifierString  name;
       IdentifierString  shortDescr;
+      IdentifierString  outputType;
 
       bool              extensionOne;
+      bool              special;
 
       StringList        params;
       StringList        paramNames;
@@ -56,9 +59,10 @@ namespace elena_lang
 
       StringList        parents;
       ApiMethodInfoList methods;
+      ApiMethodInfoList constructors;
 
       ApiClassInfo()
-         : parents(nullptr), methods(nullptr )
+         : parents(nullptr), methods(nullptr ), constructors(nullptr)
       {
          
       }
@@ -105,6 +109,7 @@ namespace elena_lang
       ApiModuleInfo* findModule(ApiModuleInfoList& modules, ustr_t ns);
       ApiClassInfo* findClass(ApiModuleInfo* module, ustr_t name);
 
+      void generateMethodList(TextFileWriter& bodyWriter, ApiMethodInfoList& list);
       void generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName);
       void generateModuleDoc(ApiModuleInfo* moduleInfo);
 
@@ -112,9 +117,10 @@ namespace elena_lang
 
       void loadParents(ApiClassInfo* apiClassInfo, ref_t parentRef);
       void loadMethodName(ApiMethodInfo* apiMethodInfo);
-      void loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo);
+      void loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, bool classClassMode);
 
       void loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference);
+      void loadConstructors(ApiClassInfo* apiClassInfo, ref_t reference);
 
    public:
       void loadNestedModules(ApiModuleInfoList& modules);

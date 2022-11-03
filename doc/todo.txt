@@ -8,10 +8,11 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * object functionality
     * api doc - constructors
-    * api doc - methods
+
+    * object functionality
     * object extensions
+    * api doc - methods
     * api doc - extensions
 
     * ide - goto mouse

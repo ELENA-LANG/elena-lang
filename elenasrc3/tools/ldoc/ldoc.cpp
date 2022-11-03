@@ -9,6 +9,7 @@
 #include "ldoc.h"
 
 #include "bytecode.h"
+#include "langcommon.h"
 #include "ldocconst.h"
 #include "module.h"
 
@@ -350,19 +351,35 @@ void writeClassMethodsHeader(TextFileWriter& writer, ApiClassInfo* info, const c
    writer.writeTextLine("</TR>");
 }
 
+void writeConstructorHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== CONSTRUCTOR SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Constructor Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Constructor</TH>");
+   writer.writeTextLine("</TR>");
+}
+
 void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
 {
    writer.writeTextLine("<TD CLASS=\"colFirst\">");
    writer.writeTextLine("<CODE>");
-   //if (info->prefix.Length() != 0) {
-   //   writer.writeLiteral("<i>");
-   //   writer.writeLiteral(info->prefix.ident());
-   //   writer.writeLiteral("</i>");
-   //   writer.writeLiteral("&nbsp;");
-   //}
-   //if (info->retType.Length() != 0) {
-   //   writeType(writer, info->retType);
-   //}
+   if (info->prefix.length() != 0) {
+      writer.writeText("<i>");
+      writer.writeText(*info->prefix);
+      writer.writeText("</i>");
+      writer.writeText("&nbsp;");
+   }
+   if (info->outputType.length() != 0) {
+      writeType(writer, *info->outputType);
+   }
 
    writer.writeTextLine("</CODE></TD>");
 }
@@ -372,7 +389,14 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
    writer.writeTextLine("<TD CLASS=\"colLast\">");
    writer.writeText("<CODE>");
 
+   if (info->special)
+      writer.writeText("<i>");
+   
    writer.writeText(*info->name);
+
+   if (info->special)
+      writer.writeText("</i>");
+
    writer.writeText("(");
 
    bool first = true;
@@ -403,6 +427,14 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
       writer.writeTextLine("</div>");
    }
    writer.writeTextLine("</TD>");
+}
+
+void writeConstructorFooter(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("</TABLE>");
+
+   writer.writeTextLine("</LI>");
+   writer.writeTextLine("</UL>");
 }
 
 void writeClassMethodsFooter(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
@@ -553,6 +585,10 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo)
    bool skipOne = apiMethodInfo->extensionOne;
 
    ustr_t name = *apiMethodInfo->name;
+   if (name.startsWith("static:")) {
+      apiMethodInfo->name.cut(0, 7);
+      name += 7;
+   }
 
    size_t sign_index = name.find('<');
    if (sign_index != NOTFOUND_POS) {
@@ -582,16 +618,80 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo)
 
       apiMethodInfo->name.truncate(sign_index);
    }
+   else {
+      size_t arg_index = name.find('[');
+      if (arg_index != NOTFOUND_POS) {
+         String<char, 10> temp;
+         temp.copy(name + arg_index + 1, name.length() - arg_index - 2);
+         int argCount = temp.toUInt(10);
+         for (int i = 0; i < argCount; i++) {
+            IdentifierString argName("arg");
+            argName.appendInt(i + 1);
+
+            apiMethodInfo->params.add((*argName).clone());
+         }
+
+         apiMethodInfo->name.truncate(arg_index);
+      }
+   }
 }
 
-void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo)
+void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, 
+   bool classClassMode)
 {
    auto apiMethodInfo = new ApiMethodInfo();
 
    if (ByteCodeUtil::resolveMessageName(apiMethodInfo->name, _module, message)) {
-      loadMethodName(apiMethodInfo);
+      if ((*apiMethodInfo->name).startsWith(DISPATCH_MESSAGE)) {
+         apiMethodInfo->special = true;
+         apiMethodInfo->name.copy("dispatch");
+      }
+      else if ((*apiMethodInfo->name).findStr(CONSTRUCTOR_MESSAGE) != NOTFOUND_POS) {
+         if ((*apiMethodInfo->name).startsWith("function:"))
+            apiMethodInfo->name.cut(0, 9);
 
-      apiClassInfo->methods.add(apiMethodInfo);
+         apiMethodInfo->name.cut(0, 1);
+         apiMethodInfo->special = true;
+
+         loadMethodName(apiMethodInfo);
+         if (methodInfo.outputRef) {
+            ustr_t outputType = _module->resolveReference(methodInfo.outputRef);
+
+            loadType(apiMethodInfo->outputType, outputType, *_rootNs, /*templateBased, */false);
+         }
+      }
+      else {
+         if (test(methodInfo.hints, (ref_t)MethodHint::Predefined))
+            apiMethodInfo->prefix.append("predefined ");
+
+         if (test(message, STATIC_MESSAGE))
+            apiMethodInfo->prefix.append("private ");
+
+         loadMethodName(apiMethodInfo);
+         if (methodInfo.outputRef) {
+            ustr_t outputType = _module->resolveReference(methodInfo.outputRef);
+
+            loadType(apiMethodInfo->outputType, outputType, *_rootNs, /*templateBased, */false);
+         }
+      }
+
+      if (classClassMode) {
+         apiClassInfo->constructors.add(apiMethodInfo);
+      }
+      else apiClassInfo->methods.add(apiMethodInfo);
+   }
+}
+
+void DocGenerator :: loadConstructors(ApiClassInfo* apiClassInfo, ref_t reference)
+{
+   ClassInfo info;
+   if (loadClassInfo(reference, info, false)) {
+      for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
+         auto methodInfo = *m_it;
+         if (!methodInfo.inherited) {
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, true);
+         }
+      }
    }
 }
 
@@ -604,7 +704,7 @@ void DocGenerator :: loadClassMembers(ApiClassInfo* apiClassInfo, ref_t referenc
       for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
          auto methodInfo = *m_it;
          if (!methodInfo.inherited) {
-            loadClassMethod(apiClassInfo, m_it.key(), methodInfo);
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, false);
          }
       }
    }
@@ -631,6 +731,16 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       }
       else if (referenceName.startsWith(TEMPLATE_PREFIX)) {
          return;
+      }
+
+      ref_t classClassRef = 0;
+      if (referenceName.endsWith(CLASSCLASS_POSTFIX)) {
+         classClassRef = reference;
+         IdentifierString name(referenceName);
+         name.truncate(name.length() - getlength(CLASSCLASS_POSTFIX));
+
+         reference = _module->mapReference(*name, true);
+         referenceName = _module->resolveReference(reference);
       }
 
       NamespaceString ns(*_rootNs, referenceName);
@@ -661,7 +771,13 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             moduleInfo->classes.add(info);
          }
 
-         loadClassMembers(info, reference);
+         if (classClassRef != 0) {
+            loadConstructors(info, classClassRef);
+         }
+         else {
+
+            loadClassMembers(info, reference);
+         }
       }
       else if (_module->mapSection(reference | mskSymbolRef, true)) {
       }
@@ -682,22 +798,10 @@ void DocGenerator :: loadNestedModules(ApiModuleInfoList& modules)
       });
 }
 
-void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName)
+void DocGenerator :: generateMethodList(TextFileWriter& bodyWriter, ApiMethodInfoList& list)
 {
-   IdentifierString moduleName;
-   parseNs(moduleName, *_rootNs, *classInfo->fullName);
-
-   writeSummaryTable(summaryWriter, classInfo, bodyName);
-
-   writeClassBodyHeader(bodyWriter, classInfo, *moduleName);
-
-   if (classInfo->parents.count() > 0) {
-      writeParents(bodyWriter, classInfo, *_rootNs);
-   }
-
-   writeClassMethodsHeader(bodyWriter, classInfo, *moduleName);
    bool alt = true;
-   for (auto it = classInfo->methods.start(); !it.eof(); ++it) {
+   for (auto it = list.start(); !it.eof(); ++it) {
       if (alt) {
          bodyWriter.writeTextLine("<TR CLASS=\"altColor\">");
       }
@@ -711,7 +815,32 @@ void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWri
 
       bodyWriter.writeTextLine("</TR>");
    }
-   writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
+}
+
+void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName)
+{
+   IdentifierString moduleName;
+   parseNs(moduleName, *_rootNs, *classInfo->fullName);
+
+   writeSummaryTable(summaryWriter, classInfo, bodyName);
+
+   writeClassBodyHeader(bodyWriter, classInfo, *moduleName);
+
+   if (classInfo->parents.count() > 0) {
+      writeParents(bodyWriter, classInfo, *_rootNs);
+   }
+
+   if (classInfo->constructors.count() > 0) {
+      writeConstructorHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->constructors);
+      writeConstructorFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   if (classInfo->methods.count() > 0) {
+      writeClassMethodsHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->methods);
+      writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
+   }
 
    writeClassBodyFooter(bodyWriter, classInfo, *moduleName);
 }
