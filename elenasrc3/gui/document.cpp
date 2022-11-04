@@ -38,6 +38,7 @@ LexicalFormatter :: ~LexicalFormatter()
 void LexicalFormatter :: format()
 {
    _indexes.clear();
+   _lexical.clear();
 
    MemoryWriter  indexWriter(&_indexes);
    MemoryWriter  writer(&_lexical);
@@ -49,7 +50,7 @@ void LexicalFormatter :: format()
 
    TextBookmarkReader reader(_text);
 
-   indexWriter.writeSize(0);
+   indexWriter.writePos(0);
    _formatter->start(info);
    pos_t        style = info.style;
    while (true) {

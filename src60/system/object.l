@@ -13,12 +13,11 @@ public class Object
    }
 
    bool equal(o)
-         : info<"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references.">
-
+               : info<"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references.">
       = self.equalReference(o);
 
    bool notequal(o)
-         : info<"Returns true if the specified object is not equal to the current object; otherwise, false. By default it inverts the result of equal[2].">
+               : info<"Returns true if the specified object is not equal to the current object; otherwise, false. By default it inverts the result of equal[2].">
       = !(self.equal(o));
 
    // virtual method declarations : forcing the output type                            
@@ -28,8 +27,7 @@ public class Object
    predefined bool notgreater(o);
 
    string toPrintable() 
-         : info<"Returns the string representation. By default it returns the class name.">
-
+               : info<"Returns the string representation. By default it returns the class name.">
       = __className;
 
    dispatch() : external<system'core_routines'__object_dispatcher>, info<"Implements a message dispatching in VMT">;
@@ -39,7 +37,9 @@ public class Object
 
 public extension commonOp
 {
-   back(o) = o;
+   back(o)
+            : info<"Returns the parameter">
+      = o;
 
    bool equalReference(o) : external<system'core_routines'__object_equal>;
 

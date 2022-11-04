@@ -113,7 +113,7 @@ void TextViewWindow :: resizeDocument()
 
 void TextViewWindow :: mouseToScreen(Point point, int& col, int& row, bool& margin)
 {
-   Rectangle rect = getRectangle();
+   Rectangle rect = getClientRectangle();
    auto defaultStyle = _styles->getStyle(STYLE_DEFAULT);
    int marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
    int offset = defaultStyle->avgCharWidth / 2;
@@ -434,6 +434,19 @@ void TextViewWindow :: onButtonUp()
    releaseMouse();
 }
 
+void TextViewWindow :: onMouseMove(short wheelDelta, bool kbCtrl)
+{
+   auto docView = _model->DocView();
+
+   int offset = (wheelDelta > 0) ? -1 : 1;
+   if (kbCtrl) {
+      offset *= docView->getSize().y;
+   }
+   docView->vscroll(offset);
+
+   onDocumentUpdate();
+}
+
 bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
 {
    switch (keyCode) {
@@ -514,6 +527,9 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
          return 0;
       case WM_LBUTTONUP:
          onButtonUp();
+         return 0;
+      case WM_MOUSEWHEEL:
+         onMouseMove(HIWORD(wParam), (wParam & MK_CONTROL) != 0);
          return 0;
       case WM_KEYDOWN:
          if (onKeyDown((int)wParam, isKeyDown(VK_SHIFT), isKeyDown(VK_CONTROL))) {

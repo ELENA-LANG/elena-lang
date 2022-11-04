@@ -733,14 +733,14 @@ void DocGenerator :: loadConstructors(ApiClassInfo* apiClassInfo, ref_t referenc
    }
 }
 
-void DocGenerator :: loadExtensions(ApiClassInfo* apiClassInfo, ref_t reference)
+void DocGenerator :: loadExtensions(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions)
 {
    ClassInfo info;
    if (loadClassInfo(reference, info, false)) {
       for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
          auto methodInfo = *m_it;
          if (!methodInfo.inherited) {
-            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Extension, nullptr);
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Extension, descriptions);
          }
       }
    }
@@ -864,7 +864,15 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             loadConstructors(info, classClassRef, &descriptions);
          }
          else if (extensionRef != 0) {
-            loadExtensions(info, extensionRef);
+            DescriptionMap descriptions(nullptr);
+            IdentifierString descrName("$");
+            descrName.append(_module->resolveReference(extensionRef));
+            descrName.replaceAll('\'', ' @', 0);
+            descrName.insert(DESCRIPTION_SECTION, 0);
+
+            loadDescriptions(_module->mapReference(*descrName), descriptions);
+
+            loadExtensions(info, extensionRef, &descriptions);
          }
          else {
             DescriptionMap descriptions(nullptr);

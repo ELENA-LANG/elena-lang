@@ -122,6 +122,7 @@ namespace elena_lang
 
       void onButtonDown(Point point, bool kbShift);
       void onButtonUp();
+      void onMouseMove(short wheelDelta, bool kbCtrl);
 
       bool onKeyDown(int keyCode, bool kbShift, bool kbCtrl);
       bool onKeyPressed(wchar_t ch);

@@ -59,12 +59,13 @@ void TextBookmark :: set(Pages* pages)
 
    // reset bookmark to the beginning
    _status = 0;
+   _pagePosition = 0;
    _offset = 0;
-   _length = NOTFOUND_POS;
    _page = pages->start();
 
    _row = _column = 0;
    _virtual_column = 0;
+   _length = NOTFOUND_POS;
 
    // go to the current position
    moveTo(target.x, target.y);

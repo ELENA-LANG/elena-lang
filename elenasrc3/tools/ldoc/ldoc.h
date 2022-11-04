@@ -137,7 +137,7 @@ namespace elena_lang
 
       void loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions);
       void loadConstructors(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions);
-      void loadExtensions(ApiClassInfo* apiClassInfo, ref_t reference);
+      void loadExtensions(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions);
 
       void loadDescriptions(ref_t reference, DescriptionMap& map);
       void loadDescriptions();

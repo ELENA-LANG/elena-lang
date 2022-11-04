@@ -10,10 +10,8 @@ In development:
 
     * object extensions
 
-    * ide - goto mouse
     * ide - tab with ctrl-tab / ctrl-shift-tab
     * ide - ask to save on close
-    * ide - scroll with mouse wheel
     * ide - tab
 
     * ide - add close button on tabbar
