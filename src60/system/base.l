@@ -11,7 +11,7 @@ public inline info<descr>()
 {
    #new super string descriptions;
 
-   #let descriptions[$name __decl] := descr;
+   #let super descriptions[$name __decl] := descr;
 }
 
 // --- prop ---

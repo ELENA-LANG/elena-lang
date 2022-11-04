@@ -132,10 +132,11 @@ namespace elena_lang
 
       void loadParents(ApiClassInfo* apiClassInfo, ref_t parentRef);
       void loadMethodName(ApiMethodInfo* apiMethodInfo);
-      void loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, MemberType memberType);
+      void loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, 
+         MemberType memberType, DescriptionMap* descriptions);
 
-      void loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference);
-      void loadConstructors(ApiClassInfo* apiClassInfo, ref_t reference);
+      void loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions);
+      void loadConstructors(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions);
       void loadExtensions(ApiClassInfo* apiClassInfo, ref_t reference);
 
       void loadDescriptions(ref_t reference, DescriptionMap& map);

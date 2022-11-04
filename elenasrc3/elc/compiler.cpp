@@ -532,7 +532,11 @@ ObjectInfo Compiler::MetaScope :: mapIdentifier(ustr_t identifier, bool referenc
          return mapDecl();
       }
       else {
-         ObjectInfo retVal = mapDictionary(identifier, referenceOne, attr);
+         ObjectInfo retVal = {};
+         if (EAttrs::testAndExclude(attr, EAttr::Superior) && parent->parent != nullptr) {
+            retVal = parent->parent->mapDictionary(identifier, referenceOne, attr);
+         }
+         else retVal = mapDictionary(identifier, referenceOne, attr);
          if (retVal.kind == ObjectKind::Unknown) {
             return Scope::mapIdentifier(identifier, referenceOne, attr);
          }

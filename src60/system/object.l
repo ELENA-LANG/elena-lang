@@ -5,25 +5,29 @@
 public class Object
    : info<"a common ancestor">
 {
-    const string __className := $name __decl;
+   const string __className := $name __decl;
 
-    constructor() {}
+   constructor() 
+      : info<"Creates the object">
+   {
+   }
 
-    bool equal(o)
-       = self.equalReference(o);
+   bool equal(o)
+//      : info<"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references.">
+      = self.equalReference(o);
 
-    bool notequal(o)
-       = !(self.equal(o));
+   bool notequal(o)
+      = !(self.equal(o));
 
-    // virtual method declarations : forcing the output type                            
-    predefined bool less(o);
-    predefined bool greater(o);
-    predefined bool notless(o);
-    predefined bool notgreater(o);
+   // virtual method declarations : forcing the output type                            
+   predefined bool less(o);
+   predefined bool greater(o);
+   predefined bool notless(o);
+   predefined bool notgreater(o);
 
-    string toPrintable() = __className;
+   string toPrintable() = __className;
 
-    dispatch() : external<system'core_routines'__object_dispatcher>;
+   dispatch() : external<system'core_routines'__object_dispatcher>;
 }
 
 // --- basic extensions ---

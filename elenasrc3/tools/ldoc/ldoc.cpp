@@ -15,6 +15,8 @@
 
 using namespace elena_lang;
 
+constexpr auto DESCRIPTION_SECTION = "'meta$descriptions";
+
 void writeNs(TextFileWriter& writer, ustr_t ns)
 {
    for (int i = 0; i < getlength(ns); i++)
@@ -653,12 +655,18 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo)
 }
 
 void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, 
-   MemberType memberType)
+   MemberType memberType, DescriptionMap* descriptions)
 {
    auto apiMethodInfo = new ApiMethodInfo();
    apiMethodInfo->extensionOne = memberType == MemberType::Extension;
 
    if (ByteCodeUtil::resolveMessageName(apiMethodInfo->name, _module, message)) {
+      if (descriptions) {
+         ustr_t descr = descriptions->get(*apiMethodInfo->name);
+         if (descr)
+            apiMethodInfo->shortDescr.copy(descr);
+      }
+
       if ((*apiMethodInfo->name).startsWith(DISPATCH_MESSAGE)) {
          apiMethodInfo->special = true;
          apiMethodInfo->name.copy("dispatch");
@@ -712,14 +720,14 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
    }
 }
 
-void DocGenerator :: loadConstructors(ApiClassInfo* apiClassInfo, ref_t reference)
+void DocGenerator :: loadConstructors(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions)
 {
    ClassInfo info;
    if (loadClassInfo(reference, info, false)) {
       for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
          auto methodInfo = *m_it;
          if (!methodInfo.inherited) {
-            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::ClassClass);
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::ClassClass, descriptions);
          }
       }
    }
@@ -732,13 +740,13 @@ void DocGenerator :: loadExtensions(ApiClassInfo* apiClassInfo, ref_t reference)
       for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
          auto methodInfo = *m_it;
          if (!methodInfo.inherited) {
-            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Extension);
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Extension, nullptr);
          }
       }
    }
 }
 
-void DocGenerator :: loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference)
+void DocGenerator :: loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions)
 {
    ClassInfo info;
    if (loadClassInfo(reference, info, false)) {
@@ -747,7 +755,7 @@ void DocGenerator :: loadClassMembers(ApiClassInfo* apiClassInfo, ref_t referenc
       for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
          auto methodInfo = *m_it;
          if (!methodInfo.inherited) {
-            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Normal);
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Normal, descriptions);
          }
       }
    }
@@ -845,13 +853,29 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
          }
 
          if (classClassRef != 0) {
-            loadConstructors(info, classClassRef);
+            DescriptionMap descriptions(nullptr);
+            IdentifierString descrName("$");
+            descrName.append(referenceName);
+            descrName.replaceAll('\'', ' @', 0);
+            descrName.insert(DESCRIPTION_SECTION, 0);
+
+            loadDescriptions(_module->mapReference(*descrName), descriptions);
+
+            loadConstructors(info, classClassRef, &descriptions);
          }
          else if (extensionRef != 0) {
             loadExtensions(info, extensionRef);
          }
          else {
-            loadClassMembers(info, reference);
+            DescriptionMap descriptions(nullptr);
+            IdentifierString descrName("$");
+            descrName.append(referenceName);
+            descrName.replaceAll('\'', ' @', 0);
+            descrName.insert(DESCRIPTION_SECTION, 0);
+
+            loadDescriptions(_module->mapReference(*descrName), descriptions);
+
+            loadClassMembers(info, reference, &descriptions);
          }
       }
       else if (_module->mapSection(reference | mskSymbolRef, true)) {
@@ -1006,7 +1030,7 @@ void DocGenerator :: loadDescriptions(ref_t descrRef, DescriptionMap& map)
 
 void DocGenerator :: loadDescriptions()
 {
-   ref_t descrRef = _module->mapReference("'meta$descriptions", true);
+   ref_t descrRef = _module->mapReference(DESCRIPTION_SECTION, true);
 
    loadDescriptions(descrRef, _classDescriptions);
 }
