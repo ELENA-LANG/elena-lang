@@ -13,10 +13,12 @@ public class Object
    }
 
    bool equal(o)
-//      : info<"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references.">
+         : info<"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references.">
+
       = self.equalReference(o);
 
    bool notequal(o)
+         : info<"Returns true if the specified object is not equal to the current object; otherwise, false. By default it inverts the result of equal[2].">
       = !(self.equal(o));
 
    // virtual method declarations : forcing the output type                            
@@ -25,9 +27,12 @@ public class Object
    predefined bool notless(o);
    predefined bool notgreater(o);
 
-   string toPrintable() = __className;
+   string toPrintable() 
+         : info<"Returns the string representation. By default it returns the class name.">
 
-   dispatch() : external<system'core_routines'__object_dispatcher>;
+      = __className;
+
+   dispatch() : external<system'core_routines'__object_dispatcher>, info<"Implements a message dispatching in VMT">;
 }
 
 // --- basic extensions ---
