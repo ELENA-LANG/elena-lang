@@ -46,6 +46,13 @@ procedure __object_equal
 
 end
 
+procedure __object_class
+
+  peek        sp:0
+  class
+
+end
+
 procedure __exception_handler
 
   xflush          sp:0

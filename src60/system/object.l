@@ -44,9 +44,11 @@ public extension commonOp
    bool equalReference(o) : external<system'core_routines'__object_equal>;
 
    then(Func f)
+            : info<"Executes the parameter function">
       = f();
 
    then(Func1 f)
+            : info<"Executes the parameter function and pass itself as a parameter">
       = f(self);
 }
 
