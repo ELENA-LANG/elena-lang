@@ -36,6 +36,8 @@ namespace elena_lang
 
       bool              extensionOne;
       bool              special;
+      bool              property;
+      bool              cast;
 
       StringList        params;
       StringList        paramNames;
@@ -43,7 +45,7 @@ namespace elena_lang
       ApiMethodInfo()
          : extensionOne(false), params(nullptr), paramNames(nullptr)
       {
-         
+         cast = property = special = false;
       }
    };
 
@@ -60,11 +62,14 @@ namespace elena_lang
       StringList        parents;
       ApiMethodInfoList methods;
       ApiMethodInfoList constructors;
+      ApiMethodInfoList properties;
+      ApiMethodInfoList staticProperties;
       ApiMethodInfoList extensions;
 
       ApiClassInfo()
          : parents(nullptr), methods(nullptr ),
-            constructors(nullptr), extensions(nullptr)
+            constructors(nullptr), extensions(nullptr),
+            properties(nullptr), staticProperties(nullptr)
       {
          
       }

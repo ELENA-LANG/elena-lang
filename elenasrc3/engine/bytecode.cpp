@@ -126,11 +126,16 @@ void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase
    if (test(flags, FUNCTION_MESSAGE))
       messageName.append("function:");
 
-   if (test(flags, PROPERTY_MESSAGE))
-      messageName.append("prop:");
-
-   if (test(flags, VARIADIC_MESSAGE))
-      messageName.append("params:");
+   switch (flags & PREFIX_MESSAGE_MASK) {
+      case PROPERTY_MESSAGE:
+         messageName.append("prop:");
+         break;
+      case VARIADIC_MESSAGE:
+         messageName.append("params:");
+         break;
+      default:
+         break;
+   }
 
    messageName.append(actionName);
    if (len > 0) {

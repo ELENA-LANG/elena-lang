@@ -40,6 +40,7 @@
         <include>app.l</include>
         <include>win_strings.l</include>
         <include>win_basic.l</include>
+        <include>template_tests.l</include>
         <include>text\encoding.l</include>
         <include>io\win_console.l</include>
      </module>

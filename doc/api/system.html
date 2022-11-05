@@ -69,7 +69,7 @@ system'$inline0</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>#invoke</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN>)
+<CODE>#invoke(<SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -292,20 +292,23 @@ system'BaseVariable</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:Value()
+<CODE>#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN>)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:Value(<SPAN CLASS="memberNameLink">arg1</SPAN>)
-</CODE>
-</TD>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -334,7 +337,7 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">BoolValue</SPAN></PRE>
+a common boolean value</PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -347,43 +350,37 @@ system'BoolValue</LI>
 </UL>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== STATIC PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Property Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:MinValue()
+<CODE><i>tatic:function:#constructor</i>()
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:true()
-</CODE>
-</TD>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
 </TR>
 <TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:false()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
@@ -411,6 +408,8 @@ system'BoolValue</LI>
 <TD CLASS="colLast">
 <CODE>if(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Executes trueAction if the value is true;<br/>has to be implemented</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -420,6 +419,8 @@ system'BoolValue</LI>
 <TD CLASS="colLast">
 <CODE>if(<SPAN CLASS="memberNameLink">arg1</SPAN>, <SPAN CLASS="memberNameLink">arg2</SPAN>)
 </CODE>
+<div class="block">
+Executes trueAction if the value is true or falseAction otherwise;<br/>has to be implemented</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -429,6 +430,8 @@ system'BoolValue</LI>
 <TD CLASS="colLast">
 <CODE>ifnot(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Executes an action if the value is false;<br/>has to be implemented</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -438,6 +441,8 @@ system'BoolValue</LI>
 <TD CLASS="colLast">
 <CODE>iif(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
 </CODE>
+<div class="block">
+Returns trueVal if the value is true or falseVal otherwise;<br/>has to be implemented</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -447,6 +452,8 @@ system'BoolValue</LI>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
 </CODE>
+<div class="block">
+Determines whether the specified object is equal to the current object boolean value;<br/>has to be implemented</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -465,6 +472,8 @@ system'BoolValue</LI>
 <TD CLASS="colLast">
 <CODE>or(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Executes logical OR operation<;br/>has to be implemented</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -474,6 +483,8 @@ system'BoolValue</LI>
 <TD CLASS="colLast">
 <CODE>and(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Executes logical AND operation;<br/>has to be implemented</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -483,6 +494,8 @@ system'BoolValue</LI>
 <TD CLASS="colLast">
 <CODE>xor(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Executes logical XOR operation;<br/>has to be implemented</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -490,11 +503,120 @@ system'BoolValue</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:Inverted()
+<CODE>#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>if(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes trueAction if the value is true;<br/>has to be implemented</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>if(<SPAN CLASS="memberNameLink">arg1</SPAN>, <SPAN CLASS="memberNameLink">arg2</SPAN>)
+</CODE>
+<div class="block">
+Executes trueAction if the value is true or falseAction otherwise;<br/>has to be implemented</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>ifnot(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes an action if the value is false;<br/>has to be implemented</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>iif(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+</CODE>
+<div class="block">
+Returns trueVal if the value is true or falseVal otherwise;<br/>has to be implemented</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+</CODE>
+<div class="block">
+Determines whether the specified object is equal to the current object boolean value;<br/>has to be implemented</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>notequal(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>or(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes logical OR operation<;br/>has to be implemented</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>and(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes logical AND operation;<br/>has to be implemented</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>xor(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes logical XOR operation;<br/>has to be implemented</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
@@ -556,6 +678,8 @@ system'BoolValue#false</LI>
 <TD CLASS="colLast">
 <CODE>toPrintable()
 </CODE>
+<div class="block">
+Returns literal representation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -565,6 +689,8 @@ system'BoolValue#false</LI>
 <TD CLASS="colLast">
 <CODE>if(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Always returns nil</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -574,6 +700,8 @@ system'BoolValue#false</LI>
 <TD CLASS="colLast">
 <CODE>if(<SPAN CLASS="memberNameLink">arg1</SPAN>, <SPAN CLASS="memberNameLink">arg2</SPAN>)
 </CODE>
+<div class="block">
+Executes else-action</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -583,6 +711,8 @@ system'BoolValue#false</LI>
 <TD CLASS="colLast">
 <CODE>ifnot(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Executes the action</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -592,6 +722,8 @@ system'BoolValue#false</LI>
 <TD CLASS="colLast">
 <CODE>iif(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
 </CODE>
+<div class="block">
+Always returns falseVal.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -601,6 +733,8 @@ system'BoolValue#false</LI>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
 </CODE>
+<div class="block">
+Determines whether the specified object is equal to the current object boolean value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -619,6 +753,8 @@ system'BoolValue#false</LI>
 <TD CLASS="colLast">
 <CODE>or(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Executes logical OR operation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -628,6 +764,8 @@ system'BoolValue#false</LI>
 <TD CLASS="colLast">
 <CODE>and(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Executes logical AND operation;<br/>Always return false</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -637,6 +775,86 @@ system'BoolValue#false</LI>
 <TD CLASS="colLast">
 <CODE>xor(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Executes logical XOR operation</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toPrintable()
+</CODE>
+<div class="block">
+Returns literal representation</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>if(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Always returns nil</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>if(<SPAN CLASS="memberNameLink">arg1</SPAN>, <SPAN CLASS="memberNameLink">arg2</SPAN>)
+</CODE>
+<div class="block">
+Executes else-action</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>ifnot(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes the action</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>iif(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+</CODE>
+<div class="block">
+Always returns falseVal.</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+</CODE>
+<div class="block">
+Determines whether the specified object is equal to the current object boolean value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -644,8 +862,41 @@ system'BoolValue#false</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:Inverted()
+<CODE>notequal(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
 </CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>or(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes logical OR operation</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>and(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes logical AND operation;<br/>Always return false</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>xor(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes logical XOR operation</div>
 </TD>
 </TR>
 </TABLE>
@@ -701,6 +952,8 @@ system'BoolValue#true</LI>
 <TD CLASS="colLast">
 <CODE>toPrintable()
 </CODE>
+<div class="block">
+Returns literal representation.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -710,6 +963,8 @@ system'BoolValue#true</LI>
 <TD CLASS="colLast">
 <CODE>if(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Executes trueAction.</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -719,6 +974,8 @@ system'BoolValue#true</LI>
 <TD CLASS="colLast">
 <CODE>if(<SPAN CLASS="memberNameLink">arg1</SPAN>, <SPAN CLASS="memberNameLink">arg2</SPAN>)
 </CODE>
+<div class="block">
+Executes trueAction.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -728,6 +985,8 @@ system'BoolValue#true</LI>
 <TD CLASS="colLast">
 <CODE>ifnot(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Always returns nil.</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -737,6 +996,8 @@ system'BoolValue#true</LI>
 <TD CLASS="colLast">
 <CODE>iif(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
 </CODE>
+<div class="block">
+Always returns trueVal.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -746,6 +1007,8 @@ system'BoolValue#true</LI>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
 </CODE>
+<div class="block">
+Determines whether the specified object is equal to the current object boolean value.</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -764,6 +1027,8 @@ system'BoolValue#true</LI>
 <TD CLASS="colLast">
 <CODE>or(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Executes logical OR operation;<br/>Always return true</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -773,6 +1038,8 @@ system'BoolValue#true</LI>
 <TD CLASS="colLast">
 <CODE>and(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+executes logical AND operation.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -782,6 +1049,86 @@ system'BoolValue#true</LI>
 <TD CLASS="colLast">
 <CODE>xor(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Executes logical XOR operation.</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toPrintable()
+</CODE>
+<div class="block">
+Returns literal representation.</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>if(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes trueAction.</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>if(<SPAN CLASS="memberNameLink">arg1</SPAN>, <SPAN CLASS="memberNameLink">arg2</SPAN>)
+</CODE>
+<div class="block">
+Executes trueAction.</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>ifnot(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Always returns nil.</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>iif(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+</CODE>
+<div class="block">
+Always returns trueVal.</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+</CODE>
+<div class="block">
+Determines whether the specified object is equal to the current object boolean value.</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -789,8 +1136,41 @@ system'BoolValue#true</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:Inverted()
+<CODE>notequal(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
 </CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>or(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes logical OR operation;<br/>Always return true</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>and(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+executes logical AND operation.</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>xor(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes logical XOR operation.</div>
 </TD>
 </TR>
 </TABLE>
@@ -842,32 +1222,14 @@ system'ByteNumber</LI>
 </UL>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== STATIC PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Property Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:MinValue()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:MaxValue()
-</CODE>
-</TD>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -892,7 +1254,7 @@ system'ByteNumber</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ByteNumber">system@Reference#1&system@ByteNumber</A></SPAN>)
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ByteNumber">system@Reference#1&system@ByteNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -901,7 +1263,55 @@ system'ByteNumber</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ByteNumber">system@Reference#1&system@ByteNumber</A></SPAN>)
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ByteNumber">system@Reference#1&system@ByteNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ByteNumber">system@Reference#1&system@ByteNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ByteNumber">system@Reference#1&system@ByteNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1197,32 +1607,14 @@ system'CharValue</LI>
 </UL>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== STATIC PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Property Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:MinValue()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:MaxValue()
-</CODE>
-</TD>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -1256,7 +1648,7 @@ system'CharValue</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@CharValue">system@Reference#1&system@CharValue</A></SPAN>)
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@CharValue">system@Reference#1&system@CharValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1265,7 +1657,64 @@ system'CharValue</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@CharValue">system@Reference#1&system@CharValue</A></SPAN>)
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@CharValue">system@Reference#1&system@CharValue</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@CharValue">system@Reference#1&system@CharValue</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@CharValue">system@Reference#1&system@CharValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1452,18 +1901,18 @@ system'Exception</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>new</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1625,11 +2074,11 @@ system'Handle</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -1771,32 +2220,14 @@ system'IntNumber</LI>
 </UL>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== STATIC PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Property Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:MinValue()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:MaxValue()
-</CODE>
-</TD>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -1839,7 +2270,7 @@ system'IntNumber</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1848,7 +2279,73 @@ system'IntNumber</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2128,7 +2625,7 @@ system'IntNumber</LI>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== EXTENSION SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Extension Summary</H3>
@@ -2253,18 +2750,18 @@ system'MethodNotFoundException</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#MethodNotFoundException">MethodNotFoundException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN>)
+<CODE><i>new</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2368,11 +2865,11 @@ a common ancestor</PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -2480,7 +2977,7 @@ Implements a message dispatching in VMT</div>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== EXTENSION SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Extension Summary</H3>
@@ -2600,32 +3097,14 @@ system'ShortNumber</LI>
 </UL>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== STATIC PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Property Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:MinValue()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:MaxValue()
-</CODE>
-</TD>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -2659,7 +3138,7 @@ system'ShortNumber</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ShortNumber">system@Reference#1&system@ShortNumber</A></SPAN>)
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ShortNumber">system@Reference#1&system@ShortNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2668,7 +3147,64 @@ system'ShortNumber</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ShortNumber">system@Reference#1&system@ShortNumber</A></SPAN>)
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ShortNumber">system@Reference#1&system@ShortNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ShortNumber">system@Reference#1&system@ShortNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>prop:M(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ShortNumber">system@Reference#1&system@ShortNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2970,11 +3506,11 @@ system'String</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -3018,22 +3554,13 @@ system'String</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:Length()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
@@ -3042,7 +3569,7 @@ system'String</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
@@ -3051,7 +3578,7 @@ system'String</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
@@ -3060,12 +3587,78 @@ system'String</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>prop(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toPrintable()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+</CODE>
+</TD>
+</TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
+<CODE>c(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>prop(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3112,13 +3705,34 @@ system'WideString</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:Length()
+<CODE>#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>prop(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
@@ -3127,12 +3741,12 @@ system'WideString</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
+<CODE>prop(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3645,20 +4259,32 @@ system'system@Reference#1&system@ByteNumber</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Reference#1&system@ByteNumber">system@Reference#1&system@ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:Value()
+<CODE>#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Reference#1&system@ByteNumber">system@Reference#1&system@ByteNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:Value(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
+<CODE>pro(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ByteNumber">system@Reference#1&system@ByteNumber</A></SPAN>)
 </CODE>
 </TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -3674,7 +4300,7 @@ system'system@Reference#1&system@ByteNumber</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:param(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ByteNumber">system@Reference#1&system@ByteNumber</A></SPAN>)
+<CODE>pro(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ByteNumber">system@Reference#1&system@ByteNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3721,20 +4347,32 @@ system'system@Reference#1&system@ShortNumber</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Reference#1&system@ShortNumber">system@Reference#1&system@ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:Value()
+<CODE>#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Reference#1&system@ShortNumber">system@Reference#1&system@ShortNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>prop:params:Value</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
+<CODE>pro(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ShortNumber">system@Reference#1&system@ShortNumber</A></SPAN>)
 </CODE>
 </TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -3750,7 +4388,7 @@ system'system@Reference#1&system@ShortNumber</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:param(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ShortNumber">system@Reference#1&system@ShortNumber</A></SPAN>)
+<CODE>pro(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@ShortNumber">system@Reference#1&system@ShortNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3797,20 +4435,32 @@ system'system@Reference#1&system@IntNumber</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:Value()
+<CODE>#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:Value(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>pro(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
 </CODE>
 </TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -3826,7 +4476,7 @@ system'system@Reference#1&system@IntNumber</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:param(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
+<CODE>pro(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@IntNumber">system@Reference#1&system@IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3873,20 +4523,32 @@ system'system@Reference#1&system@CharValue</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Reference#1&system@CharValue">system@Reference#1&system@CharValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:Value()
+<CODE>#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Reference#1&system@CharValue">system@Reference#1&system@CharValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:params:Value(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
+<CODE>pro(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@CharValue">system@Reference#1&system@CharValue</A></SPAN>)
 </CODE>
 </TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -3902,7 +4564,7 @@ system'system@Reference#1&system@CharValue</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:param(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@CharValue">system@Reference#1&system@CharValue</A></SPAN>)
+<CODE>pro(<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Reference#1&system@CharValue">system@Reference#1&system@CharValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3998,20 +4660,23 @@ system'system@Reference#1&system@BoolValue</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Reference#1&system@BoolValue">system@Reference#1&system@BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>prop:params:Value</i>()
+<CODE><i>#cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Reference#1&system@BoolValue">system@Reference#1&system@BoolValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:Value(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
-</CODE>
-</TD>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -4065,20 +4730,23 @@ system'system@Reference#1&system@String</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Reference#1&system@String">system@Reference#1&system@String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>prop:params:Value</i>()
+<CODE>#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Reference#1&system@String">system@Reference#1&system@String</A></SPAN>)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>prop:params:Value(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
-</CODE>
-</TD>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -4143,7 +4811,7 @@ system'system@Func#2&system@Exception&system@Object</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#system@Func#2&system@Exception&system@Object">system@Func#2&system@Exception&system@Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Func#2&system@Exception&system@Object">system@Func#2&system@Exception&system@Object</A></SPAN>)
+<CODE><i>#cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#system@Func#2&system@Exception&system@Object">system@Func#2&system@Exception&system@Object</A></SPAN>)
 </CODE>
 </TD>
 </TR>

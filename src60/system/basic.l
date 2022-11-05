@@ -1,5 +1,5 @@
-// --- BaseValue ---
 
+// --- BaseValue ---
 public abstract class BaseValue
 {
    abstract bool less(v);
@@ -13,7 +13,6 @@ public abstract class BaseValue
 }
 
 // --- BoolValue ---
-
 public interface BoolValue
    : info<"a common boolean value">
 {

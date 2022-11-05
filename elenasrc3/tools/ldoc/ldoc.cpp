@@ -353,6 +353,22 @@ void writeClassMethodsHeader(TextFileWriter& writer, ApiClassInfo* info, const c
    writer.writeTextLine("</TR>");
 }
 
+void writePropertyHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== PROPERTY SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Property Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Property</TH>");
+   writer.writeTextLine("</TR>");
+}
+
 void writeConstructorHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
 {
    writer.writeTextLine("<!-- ========== CONSTRUCTOR SUMMARY =========== -->");
@@ -360,18 +376,34 @@ void writeConstructorHeader(TextFileWriter& writer, ApiClassInfo* info, const ch
    writer.writeTextLine("<UL CLASS=\"blockList\">");
    writer.writeTextLine("<LI CLASS=\"blockList\">");
 
-   writer.writeTextLine("<H3>Constructor Summary</H3>");
+   writer.writeTextLine("<H3>Constructor / Static Method Summary</H3>");
 
    writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
    writer.writeTextLine("<TR>");
    writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
-   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Constructor</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Constructor / Static Method</TH>");
+   writer.writeTextLine("</TR>");
+}
+
+void writeStaticPropertyHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== STATIC PROPERTY SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Static Property Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Static Property</TH>");
    writer.writeTextLine("</TR>");
 }
 
 void writeExtensionsHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
 {
-   writer.writeTextLine("<!-- ========== CONSTRUCTOR SUMMARY =========== -->");
+   writer.writeTextLine("<!-- ========== EXTENSION SUMMARY =========== -->");
 
    writer.writeTextLine("<UL CLASS=\"blockList\">");
    writer.writeTextLine("<LI CLASS=\"blockList\">");
@@ -415,28 +447,33 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
    if (info->special)
       writer.writeText("</i>");
 
-   writer.writeText("(");
-
-   bool first = true;
-   auto it = info->params.start();
-   auto name_it = info->paramNames.start();
-   while (!it.eof()) {
-      if (!first) {
-         writer.writeText(", ");
-      }
-      else first = false;
-
-      writeType(writer, *it);
-      if (!name_it.eof()) {
-         writer.writeText(" ");
-         writer.writeText(*name_it);
-         ++name_it;
-      }
-
-      ++it;
+   if (info->property) {
+      
    }
+   else {
+      writer.writeText("(");
 
-   writer.writeTextLine(")");
+      bool first = true;
+      auto it = info->params.start();
+      auto name_it = info->paramNames.start();
+      while (!it.eof()) {
+         if (!first) {
+            writer.writeText(", ");
+         }
+         else first = false;
+
+         writeType(writer, *it);
+         if (!name_it.eof()) {
+            writer.writeText(" ");
+            writer.writeText(*name_it);
+            ++name_it;
+         }
+
+         ++it;
+      }
+
+      writer.writeTextLine(")");
+   }
 
    writer.writeTextLine("</CODE>");
    if (info->shortDescr.length() > 0) {
@@ -610,28 +647,30 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo)
 
    size_t sign_index = name.find('<');
    if (sign_index != NOTFOUND_POS) {
-      IdentifierString param;
-      IdentifierString type;
-      for (size_t i = sign_index + 1; i < name.length(); i++) {
-         if (name[i] == ',' || name[i] == '>') {
-            if (skipOne) {
-               skipOne = false;
+      if (!apiMethodInfo->cast) {
+         IdentifierString param;
+         IdentifierString type;
+         for (size_t i = sign_index + 1; i < name.length(); i++) {
+            if (name[i] == ',' || name[i] == '>') {
+               if (skipOne) {
+                  skipOne = false;
+               }
+               else {
+                  loadType(type, *param, *_rootNs, /*templateBased, */true);
+
+                  //if (info->withVargs && info->name[i] == '>') {
+                  //   type.append("[]");
+
+                  //   type.insert("params ", 0);
+                  //}
+
+                  apiMethodInfo->params.add((*type).clone());
+               }
+               param.clear();
+               type.clear();
             }
-            else {
-               loadType(type, *param, *_rootNs, /*templateBased, */true);
-
-               //if (info->withVargs && info->name[i] == '>') {
-               //   type.append("[]");
-
-               //   type.insert("params ", 0);
-               //}
-
-               apiMethodInfo->params.add((*type).clone());
-            }
-            param.clear();
-            type.clear();
+            else param.append(name[i]);
          }
-         else param.append(name[i]);
       }
 
       apiMethodInfo->name.truncate(sign_index);
@@ -660,6 +699,7 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
    auto apiMethodInfo = new ApiMethodInfo();
    apiMethodInfo->extensionOne = memberType == MemberType::Extension;
 
+   bool functionMode = false;
    if (ByteCodeUtil::resolveMessageName(apiMethodInfo->name, _module, message)) {
       if (descriptions) {
          ustr_t descr = descriptions->get(*apiMethodInfo->name);
@@ -672,6 +712,12 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          apiMethodInfo->name.copy("dispatch");
       }
       else if ((*apiMethodInfo->name).findStr(CONSTRUCTOR_MESSAGE) != NOTFOUND_POS) {
+         if (test(message, STATIC_MESSAGE))
+            apiMethodInfo->prefix.append("private ");
+
+         if ((*apiMethodInfo->name).startsWith("static:"))
+            apiMethodInfo->name.cut(0, 7);
+
          if ((*apiMethodInfo->name).startsWith("function:"))
             apiMethodInfo->name.cut(0, 9);
 
@@ -686,18 +732,34 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          }
       }
       else {
-         bool functionMode = false;
          if ((*apiMethodInfo->name).startsWith("function:")) {
             apiMethodInfo->name.cut(0, 9);
             if (memberType != MemberType::Extension)
                functionMode = true;
          }
+         if ((*apiMethodInfo->name).startsWith("prop:")) {
+            apiMethodInfo->name.cut(0, 5);
+            apiMethodInfo->property = true;
+            if (getArgCount(message) > 1) {
+               apiMethodInfo->prefix.append("set ");
+            }
+            else apiMethodInfo->prefix.append("get ");
+         }
+         if ((*apiMethodInfo->name).startsWith("#cast")) {
+            apiMethodInfo->name.cut(0, 1);
+            apiMethodInfo->special = true;
+            apiMethodInfo->cast = true;
+         }
 
          if (test(methodInfo.hints, (ref_t)MethodHint::Predefined))
             apiMethodInfo->prefix.append("predefined ");
 
+         if (test(methodInfo.hints, (ref_t)MethodHint::Abstract))
+            apiMethodInfo->prefix.append("abstract ");
+
          if (test(message, STATIC_MESSAGE))
             apiMethodInfo->prefix.append("private ");
+
 
          loadMethodName(apiMethodInfo);
          if (methodInfo.outputRef) {
@@ -709,10 +771,19 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
 
       if (!test(methodInfo.hints, (ref_t)MethodHint::Autogenerated)) {
          if (memberType == MemberType::ClassClass) {
-            apiClassInfo->constructors.add(apiMethodInfo);
+            if (apiMethodInfo->property) {
+               apiClassInfo->staticProperties.add(apiMethodInfo);
+            }
+            else apiClassInfo->constructors.add(apiMethodInfo);
          }
          else if (memberType == MemberType::Extension) {
+            if (apiMethodInfo->property)
+               apiMethodInfo->prefix.append("property ");
+
             apiClassInfo->extensions.add(apiMethodInfo);
+         }
+         else if (apiMethodInfo->property) {
+            apiClassInfo->properties.add(apiMethodInfo);
          }
          else apiClassInfo->methods.add(apiMethodInfo);
       }
@@ -937,10 +1008,22 @@ void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWri
       writeParents(bodyWriter, classInfo, *_rootNs);
    }
 
+   if (classInfo->staticProperties.count() > 0) {
+      writeStaticPropertyHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->staticProperties);
+      writeConstructorFooter(bodyWriter, classInfo, *moduleName);
+   }
+
    if (classInfo->constructors.count() > 0) {
       writeConstructorHeader(bodyWriter, classInfo, *moduleName);
       generateMethodList(bodyWriter, classInfo->constructors);
       writeConstructorFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   if (classInfo->properties.count() > 0) {
+      writePropertyHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->properties);
+      writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
    }
 
    if (classInfo->methods.count() > 0) {

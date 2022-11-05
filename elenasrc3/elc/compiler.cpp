@@ -1942,11 +1942,14 @@ void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode baseNode, b
    ref_t parentRef = 0;
 
    // analizing class postfixes : if it is a parrent, template or inline template
+   SyntaxNode parentNode = {};
    while (baseNode == SyntaxKey::Parent) {
       SyntaxNode current = baseNode.firstChild();
       if (current == SyntaxKey::TemplatePostfix) {
          if (!parentRef) {
             if (!importInlineTemplate(scope, current, INLINE_PREFIX, baseNode.parentNode())) {
+               parentNode = baseNode;
+
                parentRef = resolveStrongTypeAttribute(scope, current.firstChild(), false);
             }
          }
@@ -1958,6 +1961,8 @@ void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode baseNode, b
          }
       }
       else if (!parentRef) {
+         parentNode = baseNode;
+
          parentRef = resolveStrongTypeAttribute(scope, baseNode.firstChild(), false);
       }
       else scope.raiseError(errInvalidSyntax, baseNode);
@@ -1968,7 +1973,7 @@ void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode baseNode, b
    if (scope.info.header.parentRef == scope.reference) {
       // if it is a super class
       if (parentRef != 0) {
-         scope.raiseError(errInvalidSyntax, baseNode);
+         scope.raiseError(errInvalidSyntax, parentNode);
       }
    }
    else if (parentRef == 0) {
@@ -1979,9 +1984,9 @@ void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode baseNode, b
       //COMPLIER MAGIC : treat the parent declaration in the special way for the extension
       scope.extensionClassRef = parentRef;
 
-      declareClassParent(scope.moduleScope->buildins.superReference, scope, baseNode);
+      declareClassParent(scope.moduleScope->buildins.superReference, scope, parentNode);
    }
-   else declareClassParent(parentRef, scope, baseNode);
+   else declareClassParent(parentRef, scope, parentNode);
 }
 
 void Compiler :: importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode)

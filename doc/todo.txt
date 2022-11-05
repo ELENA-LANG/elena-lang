@@ -8,9 +8,13 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * ldoc : show properties
-    * ldoc : show class properties
-    * ldoc : abstract methods
+    * elena : protected constructor
+
+    * elena : declaring template variable
+    * elena : template method with a prefix
+
+    * ldoc : symbols
+    * ldoc : templates
 
     * ide - ask to save on close
     * ide - ctrl+up / ctrl+down
@@ -172,7 +176,6 @@ Backlog:
     * compile time method dispatching
     * generating template extensions
     * if statements with single statement
-    * protected constructor
     * ide - open file - namespace should be added
     * do load self for expression with ret statement
     * byte / short should support plus / minus operator
@@ -249,7 +252,6 @@ Backlog:
     * hello world vm client sample
     * support preloaded symbols
     * redux : add output convertion for the method without the explicit return statement
-    * redux : protected constructor
 
     * optimization : openheader / open - there should be an optimized version for n < 4 - with reserved raw stack
     * fix : for ppc64 / arm64 - there should be alternative version to deal with args more than 9 / 12 / 16 bits
