@@ -26,6 +26,9 @@
 #define IDM_DEBUG_STEPOVER          702
 #define IDM_DEBUG_STEPINTO          703
 
+#define IDM_WINDOW_NEXT             801
+#define IDM_WINDOW_PREVIOUS         802
+
 #define IDI_IDE                     107
 #define IDI_SMALL                   108
 #define IDC_IDE                     109

@@ -564,6 +564,16 @@ bool IDEController :: doExit()
    return true;
 }
 
+void IDEController :: doSelectNextWindow(IDEModel* model)
+{
+   sourceController.selectNextDocument(&model->sourceViewModel);
+}
+
+void IDEController :: doSelectPrevWindow(IDEModel* model)
+{
+   sourceController.selectPreviousDocument(&model->sourceViewModel);
+}
+
 path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
 {
    if (model->projectModel.sources.count() != 0) {

@@ -50,6 +50,8 @@ namespace elena_lang
       bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
          FileEncoding encoding, int notifyMessage) override;
       void selectDocument(TextViewModelBase* model, ustr_t name) override;
+      void selectNextDocument(TextViewModelBase* model);
+      void selectPreviousDocument(TextViewModelBase* model);
       void closeDocument(TextViewModelBase* model, ustr_t name, 
          int notifyMessage) override;
 

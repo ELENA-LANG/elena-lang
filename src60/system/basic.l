@@ -15,95 +15,142 @@ public abstract class BaseValue
 // --- BoolValue ---
 
 public interface BoolValue
+   : info<"a common boolean value">
 {
    private constructor() {}
 
    static bool MinValue
-     = false;
+                  : info<"Returns the default value">
+      = false;
 
-   abstract if(trueAction);
+   abstract if(trueAction)
+                  : info<"Executes trueAction if the value is true;<br/>has to be implemented">;
 
-   abstract if(trueAction,falseAction);
+   abstract if(trueAction,falseAction)
+                  : info<"Executes trueAction if the value is true or falseAction otherwise;<br/>has to be implemented">;
 
-   abstract ifnot(trueAction);
+   abstract ifnot(trueAction)
+                  : info<"Executes an action if the value is false;<br/>has to be implemented">;
 
-   abstract iif(object trueVal, object falseVal);
+   abstract iif(object trueVal, object falseVal)
+                  : info<"Returns trueVal if the value is true or falseVal otherwise;<br/>has to be implemented">;
 
-   abstract bool equal(bool f);
+   abstract bool equal(bool f)
+                  : info<"Determines whether the specified object is equal to the current object boolean value;<br/>has to be implemented">;
 
    abstract bool notequal(bool f);
 
-   abstract bool or(expr);
+   abstract bool or(expr)
+                  : info<"Executes logical OR operation<;br/>has to be implemented">;
 
-   abstract bool and(expr);
+   abstract bool and(expr)
+                  : info<"Executes logical AND operation;<br/>has to be implemented">;
 
-   abstract bool xor(expr);
+   abstract bool xor(expr)
+                  : info<"Executes logical XOR operation;<br/>has to be implemented">;
 
-   get abstract bool Inverted();
+   get abstract bool Inverted()
+                  : info<"Inverts the value;<br/>has to be implemented">;
 
-   const static bool true = BoolValue
-   {
-      if(trueAction) = trueAction();
-
-      if(trueAction,elseAction) = trueAction();
-
-      ifnot(trueAction) = nil;
-
-      iif(object trueVal, object falseVal) = trueVal;
-
-      bool equal(bool b) 
-         = b;
-
-      bool notequal(bool b)
-         = !b;
-
-      bool or(expr)
-         = this self;
-
-      bool and(expr)
-         = expr;
-
-      bool xor(expr)
+   const static bool true : info<"Returns true value">
+      = BoolValue
       {
-         cast bool(expr) ? { ^ BoolValue.false };
-      }
+         if(trueAction)
+                  : info<"Executes trueAction.">
+            = trueAction();
 
-      bool Inverted = BoolValue.false;
+         if(trueAction,elseAction)
+                  : info<"Executes trueAction.">
+            = trueAction();
 
-      string toPrintable() = "true";
-   };
+         ifnot(trueAction)
+                  : info<"Always returns nil.">
+            = nil;
 
-   const static bool false = BoolValue
-   {
-      bool Inverted = BoolValue.true;
+         iif(object trueVal, object falseVal) 
+                  : info<"Always returns trueVal.">
+            = trueVal;
 
-      if(trueAction) = nil;
+         bool equal(bool b)
+                  : info<"Determines whether the specified object is equal to the current object boolean value.">
+            = b;
 
-      if(trueAction,elseAction) = elseAction();
+         bool notequal(bool b)
+            = !b;
 
-      ifnot(trueAction) = trueAction();
+         bool or(expr)
+                  : info<"Executes logical OR operation;<br/>Always return true">
+            = this self;
 
-      iif(object trueVal, object falseVal) = falseVal;
+         bool and(expr)
+                  : info<"executes logical AND operation.">
+            = expr;
 
-      bool equal(bool b) = !b;
+         bool xor(expr)
+                  : info<"Executes logical XOR operation.">
+         {
+            cast bool(expr) ? { ^ BoolValue.false };
+         }
 
-      bool notequal(bool b)
-         = b; 
+         bool Inverted 
+                  : info<"Always returns false.">
+            = BoolValue.false;
 
-      bool or(expr)
-         = expr;
+         string toPrintable()
+                  : info<"Returns literal representation.">
+            = "true";
+      };
 
-      bool and(expr)
-          = this self;
-
-      bool xor(expr)
+   const static bool false
+                  : info<"Returns false value.">
+      = BoolValue
       {
-          cast bool(expr) ? { ^ BoolValue.true };
+         bool Inverted
+                  : info<"Always returns true">
+            = BoolValue.true;
+
+         if(trueAction)
+                  : info<"Always returns nil">
+            = nil;
+
+         if(trueAction,elseAction)
+                  : info<"Executes else-action">
+            = elseAction();
+
+         ifnot(trueAction)
+                  : info<"Executes the action">
+            = trueAction();
+
+         iif(object trueVal, object falseVal)
+                  : info<"Always returns falseVal.">
+            = falseVal;
+
+         bool equal(bool b)
+                  : info<"Determines whether the specified object is equal to the current object boolean value">
+            = !b;
+
+         bool notequal(bool b)
+            = b; 
+
+         bool or(expr)
+                  : info<"Executes logical OR operation">
+            = expr;
+
+         bool and(expr)
+                  : info<"Executes logical AND operation;<br/>Always return false">
+            = this self;
+
+         bool xor(expr)
+                  : info<"Executes logical XOR operation">
+         {
+            cast bool(expr) ? { ^ BoolValue.true };
             
-          ^ this self
-      }
+            ^ this self
+         }
 
-      string toPrintable() = "false";
+         string toPrintable()
+                  : info<"Returns literal representation">
+            = "false";
    };
 }
 

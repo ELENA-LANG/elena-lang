@@ -8,11 +8,15 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * object extensions : __getClass
-    * object extensions
+    * ldoc : show properties
+    * ldoc : show class properties
+    * ldoc : abstract methods
 
-    * ide - tab with ctrl-tab / ctrl-shift-tab
     * ide - ask to save on close
+    * ide - ctrl+up / ctrl+down
+
+    * all functionality for existing classes
+
     * ide - tab
 
     * ide - add close button on tabbar
@@ -20,23 +24,24 @@ In development:
     * ide - compile the project / file
     * ide different styles : use dark mode
 
-    * all functionality for existing classes
     * api doc - properties
     * api doc
 
     * ide debugger
 
+    * boolean operators : &&, ||, ^^ - strong implementation
+    * boolean operators : &&, ||, ^^ - weak implementation
     * variadic call in compile-time
     * variadic dispatcher
     * variadic call in run-time
     * printLine extensions
     * toPrintable should return both wide and string
     * unit tests : arithmetic operations
-    * unit tests : boolean operations
 
     * showing call stack
     * uncomment hello world
     * uncomment lnx_console.l code
+    * unit tests : boolean operations
 
     * optimization : extra temporal variables
 
@@ -83,7 +88,6 @@ Backlog:
     * introducing longnumber
     * basic operations for : longnumber
     * int, byte, short : bitwise operations
-    * boolean operators : &&, ||, ^^ - weak implementation
     * repeate-until statements
     * aarch64 : setting mask for size (createn, ...)
     * try-finally-catch
@@ -122,7 +126,6 @@ Backlog:
     * linux ide : compile project
     * editor - edit text
     * editor - correctly destroy tabbar / frame / view
-    * boolean operators : &&, ||, ^^ - strong implementation
     * introducing read number
     * script module template
     * hello world sample

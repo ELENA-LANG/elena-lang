@@ -152,6 +152,9 @@ namespace elena_lang
       bool doCompileProject(DialogBase& dialog, IDEModel* model);
       void doDebugAction(IDEModel* model, DebugAction action);
 
+      void doSelectNextWindow(IDEModel* model);
+      void doSelectPrevWindow(IDEModel* model);
+
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
 

@@ -35,6 +35,28 @@ bool TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, p
    return true;
 }
 
+void TextViewController :: selectNextDocument(TextViewModelBase* model)
+{
+   int currentIndex = model->getDocumentIndex(model->getDocumentName(-1));
+   if (currentIndex == model->getDocumentCount()) {
+      currentIndex = 1;
+   }
+   else currentIndex++;
+
+   model->selectDocumentViewByIndex(currentIndex);
+}
+
+void TextViewController :: selectPreviousDocument(TextViewModelBase* model)
+{
+   int currentIndex = model->getDocumentIndex(model->getDocumentName(-1));
+   if (currentIndex == 1) {
+      currentIndex = model->getDocumentCount();
+   }
+   else currentIndex--;
+
+   model->selectDocumentViewByIndex(currentIndex);
+}
+
 void TextViewController :: selectDocument(TextViewModelBase* model, ustr_t name)
 {
    model->selectDocumentView(name);
