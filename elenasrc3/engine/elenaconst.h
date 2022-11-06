@@ -112,6 +112,7 @@ namespace elena_lang
    // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";
    constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
+   constexpr auto CONSTRUCTOR_MESSAGE2    = "#constructor2";   // protected constructor
    constexpr auto CAST_MESSAGE            = "#cast";
    constexpr auto INVOKE_MESSAGE          = "#invoke";
    constexpr auto TRY_INVOKE_MESSAGE      = "#try_invoke";

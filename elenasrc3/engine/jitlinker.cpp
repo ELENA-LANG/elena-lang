@@ -1152,10 +1152,10 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
    // dispatch message should be the next one - to make sure it is always
    // the first entry in the class VMT
    resolveWeakAction(DISPATCH_MESSAGE);
-   //// protected default constructor message should be the second
-   //// NOTE : protected constructor action can be used only for default constructor due to current implementation
-   //// (we have to guarantee that default constructor is always the second one)
-   //resolveWeakAction(CONSTRUCTOR_MESSAGE2);
+   // protected default constructor message should be the second
+   // NOTE : protected constructor action can be used only for default constructor due to current implementation
+   // (we have to guarantee that default constructor is always the second one)
+   resolveWeakAction(CONSTRUCTOR_MESSAGE2);
    // constructor message should be the third
    resolveWeakAction(CONSTRUCTOR_MESSAGE);
 

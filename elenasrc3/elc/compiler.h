@@ -894,7 +894,7 @@ namespace elena_lang
          ref_t implicitSignatureRef, bool ignoreExtensions, ref_t& resolvedExtensionRef, int& stackSafeAttr);
       mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
 
-      bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message/*, bool& isProtectedDefConst*/);
+      bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool& isProtectedDefConst);
 
       bool importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target);
       bool importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
@@ -1139,7 +1139,7 @@ namespace elena_lang
          mssg_t message, mssg_t dispatchMessage, bool inherited);
       void injectVirtualTryDispatch(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, mssg_t dispatchMessage, ref_t resendTarget);
 
-      void injectDefaultConstructor(ClassScope& scope, SyntaxNode node);
+      void injectDefaultConstructor(ClassScope& scope, SyntaxNode node, bool protectedOne);
 
       void injectVariableInfo(BuildNode node, CodeScope& codeScope);
 

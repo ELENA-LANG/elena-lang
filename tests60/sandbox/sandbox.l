@@ -1,11 +1,16 @@
 A
 {
-   private constructor() {}
+   protected constructor() {}
+
+   constructor new()
+   {
+   }
 }
 
 public program()
 {
-   var a := new A();
-//   console.writeLine(a);
+//   var a := new A();
+   var a := A.new();
+   console.writeLine(a);
 //   console.writeLine(a.__getClass());
 }

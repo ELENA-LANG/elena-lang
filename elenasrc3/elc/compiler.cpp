@@ -36,6 +36,11 @@ MethodHint operator & (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l & (unsigned int)r);
 }
 
+MethodHint operator | (const ref_t& l, const MethodHint& r)
+{
+   return (MethodHint)(l | (unsigned int)r);
+}
+
 //inline void testNodes(SyntaxNode node)
 //{
 //   SyntaxNode current = node.firstChild();
@@ -1389,11 +1394,16 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
       ustr_t name = scope.module->resolveAction(getAction(message), signRef);
       mssg_t publicMessage = 0;
 
-      size_t index = name.findStr("$$");
-      if (index == NOTFOUND_POS)
-         scope.raiseError(errDupInternalMethod, node);
+      if (name.compare(CONSTRUCTOR_MESSAGE2)) {
+         publicMessage = overwriteArgCount(scope.moduleScope->buildins.constructor_message, getArgCount(message));
+      }
+      else {
+         size_t index = name.findStr("$$");
+         if (index == NOTFOUND_POS)
+            scope.raiseError(errDupInternalMethod, node);
 
-      publicMessage = overwriteAction(message, scope.module->mapAction(name + index + 2, 0, false));
+         publicMessage = overwriteAction(message, scope.module->mapAction(name + index + 2, 0, false));
+      }
 
       if (MethodScope::checkHint(methodInfo, MethodHint::Protected)) {
          checkMethodDuplicates(scope, node, message, publicMessage, true, false);
@@ -2286,21 +2296,27 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          actionStr.insert(scope.module->name(), 0);
       }
       else if (scope.checkHint(MethodHint::Protected)) {
-         // check if protected method already declared
-         mssg_t publicMessage = mapMethodName(scope, paramCount, *actionStr, actionRef, flags,
-            signature, signatureLen);
-
-         mssg_t declaredMssg = scope.getAttribute(publicMessage, ClassAttribute::ProtectedAlias);
-         if (!declaredMssg) {
-            ustr_t className = scope.module->resolveReference(scope.getClassRef());
-
-            actionStr.insert("$$", 0);
-            actionStr.insert(className + 1, 0);
-            actionStr.insert("@", 0);
-            actionStr.insert(scope.module->name(), 0);
-            actionStr.replaceAll('\'', '@', 0);
+         if (actionStr.compare(CONSTRUCTOR_MESSAGE) && paramCount == 0) {
+            //HOTFIX : protected default constructor has a special name
+            actionStr.copy(CONSTRUCTOR_MESSAGE2);
          }
-         else scope.message = declaredMssg;
+         else {
+            // check if protected method already declared
+            mssg_t publicMessage = mapMethodName(scope, paramCount, *actionStr, actionRef, flags,
+               signature, signatureLen);
+
+            mssg_t declaredMssg = scope.getAttribute(publicMessage, ClassAttribute::ProtectedAlias);
+            if (!declaredMssg) {
+               ustr_t className = scope.module->resolveReference(scope.getClassRef());
+
+               actionStr.insert("$$", 0);
+               actionStr.insert(className + 1, 0);
+               actionStr.insert("@", 0);
+               actionStr.insert(scope.module->name(), 0);
+               actionStr.replaceAll('\'', '@', 0);
+            }
+            else scope.message = declaredMssg;
+         }
       }
       else if (scope.checkHint(MethodHint::Private)) {
          flags |= STATIC_MESSAGE;
@@ -2430,6 +2446,13 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
                if ((methodScope.message & ~STATIC_MESSAGE) == scope.moduleScope->buildins.constructor_message) {
                   withDefaultConstructor = true;
                }
+               else if (getArgCount(methodScope.message) == 0 && methodScope.checkHint(MethodHint::Protected)) {
+                  // check if it is protected default constructor
+                  ref_t dummy = 0;
+                  ustr_t actionName = scope.module->resolveAction(getAction(methodScope.message), dummy);
+                  if (actionName.endsWith(CONSTRUCTOR_MESSAGE2))
+                     withDefaultConstructor = true;
+               }
             }
             else if (methodScope.checkHint(MethodHint::Predefined)) {
                auto info = scope.info.methods.get(methodScope.message);
@@ -2535,7 +2558,7 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
 
       if (!withDefConstructor &&!scope.abstractMode && !test(scope.info.header.flags, elDynamicRole)) {
          // if default constructor has to be created
-         injectDefaultConstructor(scope, node);
+         injectDefaultConstructor(scope, node, withConstructors);
       }
 
       declareClassClass(classClassScope, node);
@@ -6578,17 +6601,25 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
    }
 }
 
-bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message)
+bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool& isProtectedDefConst)
 {
    ref_t actionRef = getAction(message);
    if (actionRef == getAction(scope.moduleScope->buildins.constructor_message)) {
       return true;
    }
+   else if (actionRef == getAction(scope.moduleScope->buildins.protected_constructor_message)) {
+      isProtectedDefConst = true;
+
+      return true;
+   }
    else if (getArgCount(message)) {
       ref_t dummy = 0;
       ustr_t actionName = scope.module->resolveAction(actionRef, dummy);
-      
-      return actionName.endsWith(CONSTRUCTOR_MESSAGE);
+      if (actionName.compare(CONSTRUCTOR_MESSAGE2)) {
+         isProtectedDefConst = true;
+         return true;
+      }
+      else return actionName.endsWith(CONSTRUCTOR_MESSAGE);
    }
    else return false;
 }
@@ -6622,9 +6653,20 @@ void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodSc
 void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    ClassScope& classClassScope, SyntaxNode node)
 {
-   bool isDefConvConstructor = isDefaultOrConversionConstructor(scope, scope.message/*, isProtectedDefConst*/);
+   bool isProtectedDefConst = false;
+   bool isDefConvConstructor = isDefaultOrConversionConstructor(scope, scope.message, isProtectedDefConst);
 
    mssg_t defConstrMssg = scope.moduleScope->buildins.constructor_message;
+   mssg_t protectedDefConstructor = classClassScope.getMssgAttribute(defConstrMssg, ClassAttribute::ProtectedAlias);
+   if (protectedDefConstructor) {
+      // if protected default constructor is declared - use it
+      defConstrMssg = protectedDefConstructor;
+      isProtectedDefConst = true;
+   }
+   else if (classClassScope.info.methods.exist(defConstrMssg | STATIC_MESSAGE)) {
+      // if private default constructor is declared - use it
+      defConstrMssg = defConstrMssg | STATIC_MESSAGE;
+   }
 
    beginMethod(writer, scope, BuildKey::Method);
 
@@ -7161,6 +7203,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.constructor_message =
       encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
          0, FUNCTION_MESSAGE);
+   moduleScope->buildins.protected_constructor_message =
+      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE2, 0, false),
+         0, FUNCTION_MESSAGE);
    moduleScope->buildins.init_message =
       encodeMessage(moduleScope->module->mapAction(INIT_MESSAGE, 0, false),
          0, FUNCTION_MESSAGE | STATIC_MESSAGE);
@@ -7421,11 +7466,13 @@ void Compiler :: injectInitializer(SyntaxNode classNode, SyntaxKey methodType, m
    methodNode.appendChild(SyntaxKey::FieldInitializer);
 }
 
-void Compiler :: injectDefaultConstructor(ClassScope& scope, SyntaxNode node)
+void Compiler :: injectDefaultConstructor(ClassScope& scope, SyntaxNode node, bool protectedOne)
 {
-   mssg_t message = /*protectedOne ? scope.protected_constructor_message : */scope.moduleScope->buildins.constructor_message;
+   mssg_t message = protectedOne ? scope.moduleScope->buildins.protected_constructor_message
+                        : scope.moduleScope->buildins.constructor_message;
    MethodHint hints = (MethodHint)((ref_t)MethodHint::Constructor | (ref_t)MethodHint::Normal);
-   //if (protectedOne) hints |= MethodHint::Protected;
+   if (protectedOne) 
+      hints = (ref_t)hints | MethodHint::Protected;
 
    SyntaxNode methodNode = node.appendChild(SyntaxKey::Constructor, message);
    methodNode.appendChild(SyntaxKey::Autogenerated);
