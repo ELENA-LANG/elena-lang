@@ -1,16 +1,15 @@
-A
-{
-   protected constructor() {}
+A;
 
-   constructor new()
+public sealed  XRef<T>
+{
+   constructor(T val) 
    {
+      T arg := val
    }
 }
 
 public program()
 {
-//   var a := new A();
-   var a := A.new();
-   console.writeLine(a);
-//   console.writeLine(a.__getClass());
+   //Reference<A> ref;
+  XRef<XRef<A>> ref;
 }

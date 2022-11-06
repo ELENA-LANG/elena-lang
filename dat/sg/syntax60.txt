@@ -284,7 +284,7 @@ L5_EXPRESSION ::=
         | character ^OBJECT L3s L4s;
 
 L6_EXPRESSION ::=
-        identifier ^OBJECT
+        identifier I6_R
         | integer ^OBJECT
         | hexinteger ^OBJECT
         | string ^OBJECT
@@ -408,6 +408,14 @@ O5_R ::=
 	| I_L2_R L3s L4s
 	| I_L3_R L3s L4s
 	| I_L4_R L4s;
+
+I6_R ::=
+        identifier I6_R
+	| TEMPLATE_BRACKETS ^ TEMPLATE_TYPE
+	| O6_Re;
+
+O6_Re ::=
+        eps ^OBJECT; 
 
 N_R ::=
 	eps;

@@ -3651,17 +3651,15 @@ ref_t Compiler :: mapTemplateType(Scope& scope, SyntaxNode node)
 }
 
 void Compiler :: declareTemplateAttributes(Scope& scope, SyntaxNode node, 
-   List<SyntaxNode>& parameters, bool declarationMode)
+   TemplateTypeList& parameters, bool declarationMode)
 {
    SyntaxNode current = node.nextNode();
    while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::TemplateArg && !current.arg.reference) {
+      if (current == SyntaxKey::TemplateArg) {
          ref_t typeRef = resolveStrongTypeAttribute(scope, current, declarationMode);
 
-         current.setArgumentReference(typeRef);
+         parameters.add(typeRef);
       }
-
-      parameters.add(current);
 
       current = current.nextNode();
    }
@@ -3687,10 +3685,45 @@ ObjectInfo Compiler :: defineArrayType(Scope& scope, ObjectInfo info)
    return info;
 }
 
+void declareTemplateParameters(ModuleBase* module, TemplateTypeList& typeList,
+   SyntaxTree& dummyTree, List<SyntaxNode>& parameters)
+{
+   SyntaxTreeWriter dummyWriter(dummyTree);
+   dummyWriter.newNode(SyntaxKey::Root);
+
+   for (size_t i = 0; i < typeList.count(); i++) {
+      ref_t elementRef = typeList[i];
+
+      dummyWriter.newNode(SyntaxKey::TemplateArg, elementRef);
+
+      parameters.add(dummyWriter.CurrentNode());
+
+      dummyWriter.newNode(SyntaxKey::Type);
+
+      ustr_t referenceName = module->resolveReference(elementRef);
+      if (isWeakReference(referenceName)) {
+         dummyWriter.appendNode(SyntaxKey::reference, referenceName);
+      }
+      else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
+
+      dummyWriter.closeNode();
+      dummyWriter.closeNode();
+   }
+
+   dummyWriter.closeNode();
+
+
+}
+
 ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode)
 {
+   TemplateTypeList typeList;
+   declareTemplateAttributes(scope, node, typeList, declarationMode);
+
+   // HOTFIX : generate a temporal template to pass the type
+   SyntaxTree dummyTree;
    List<SyntaxNode> parameters({});
-   declareTemplateAttributes(scope, node, parameters, declarationMode);
+   declareTemplateParameters(scope.module, typeList, dummyTree, parameters);
 
    ref_t templateRef = mapTemplateType(scope, node);
    if (!templateRef)
@@ -3704,33 +3737,19 @@ ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declar
 
 ref_t Compiler :: resolveTemplate(Scope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode)
 {
-   List<SyntaxNode> parameters({});
+   TemplateTypeList typeList;
+   typeList.add(elementRef);
 
    // HOTFIX : generate a temporal template to pass the type
    SyntaxTree dummyTree;
-   SyntaxTreeWriter dummyWriter(dummyTree);
-   dummyWriter.newNode(SyntaxKey::Root);
-   dummyWriter.newNode(SyntaxKey::TemplateArg, elementRef);
-   dummyWriter.newNode(SyntaxKey::Type);
-
-   ustr_t referenceName = scope.moduleScope->module->resolveReference(elementRef);
-   if (isWeakReference(referenceName)) {
-      dummyWriter.appendNode(SyntaxKey::reference, referenceName);
-   }
-   else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
-
-   dummyWriter.closeNode();
-   dummyWriter.closeNode();
-   dummyWriter.closeNode();
-
-   parameters.add(dummyTree.readRoot().firstChild());
+   List<SyntaxNode> parameters({});
+   declareTemplateParameters(scope.module, typeList, dummyTree, parameters);
 
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
    return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
       templateRef, parameters, declarationMode);
 }
-
 
 ref_t Compiler :: resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef)
 {

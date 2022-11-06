@@ -173,8 +173,9 @@ namespace elena_lang
       }
    };
 
-   typedef Pair<ObjectKind, ref_t, ObjectKind::Unknown, 0>                                  ObjectKey;
-   typedef MemoryMap<ObjectKey, ObjectInfo, Map_StoreKey<ObjectKey>, Map_GetKey<ObjectKey>> ObjectKeys;
+   typedef Pair<ObjectKind, ref_t, ObjectKind::Unknown, 0>                                   ObjectKey;
+   typedef MemoryMap<ObjectKey, ObjectInfo, Map_StoreKey<ObjectKey>, Map_GetKey<ObjectKey>>  ObjectKeys;
+   typedef CachedList<ref_t, 4>                                                              TemplateTypeList;
 
    struct Parameter
    {
@@ -860,7 +861,7 @@ namespace elena_lang
 
       mssg_t defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode);
 
-      void declareTemplateAttributes(Scope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
+      void declareTemplateAttributes(Scope& scope, SyntaxNode node, TemplateTypeList& parameters, 
          bool declarationMode);
 
       ObjectInfo defineArrayType(Scope& scope, ObjectInfo info);
