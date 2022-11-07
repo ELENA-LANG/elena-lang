@@ -8,10 +8,10 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * elena : test setter / getter : strong typed / weak ones
-    * elena : template method with a prefix
-
+    * ldoc : fields
     * ldoc : symbols
+
+    * elena : test setter / getter : strong typed / weak ones
 
     * ide - ask to save on close
     * ide - ctrl+up / ctrl+down

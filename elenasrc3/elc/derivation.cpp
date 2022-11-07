@@ -1415,17 +1415,60 @@ void TemplateProssesor :: copyMethod(SyntaxTreeWriter& writer, TemplateScope& sc
    writer.newNode(node.key);
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      //switch (current.key) {
+      switch (current.key) {
+         case SyntaxKey::InlineTemplate:
+            copyTemplatePostfix(writer, scope, current);
+            break;
          //case SyntaxKey::TemplateArgParameter:
          //{
          //   SyntaxNode nodeToInject = scope.argValues.get(current.arg.value);
          //   copyNode(writer, scope, nodeToInject);
          //   break;
          //}
-         //default:
+         default:
             copyNode(writer, scope, current);
-            //break;
-      //}
+            break;
+      }
+
+      current = current.nextNode();
+   }
+   writer.closeNode();
+}
+
+void TemplateProssesor :: copyParent(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)
+{
+   writer.newNode(node.key);
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::TemplatePostfix:
+            copyTemplatePostfix(writer, scope, current);
+            break;
+         default:
+            copyNode(writer, scope, current);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+   writer.closeNode();
+}
+
+void TemplateProssesor :: copyTemplatePostfix(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)
+{
+   writer.newNode(node.key);
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::TemplateArg:
+            writer.newNode(current.key);
+            copyChildren(writer, scope, current);
+            writer.closeNode();
+            break;
+         default:
+            copyNode(writer, scope, current);
+            break;
+      }
 
       current = current.nextNode();
    }
@@ -1473,7 +1516,7 @@ void TemplateProssesor :: generateTemplate(SyntaxTreeWriter& writer, TemplateSco
             copyNode(writer, scope, current);
             break;
          case SyntaxKey::Parent:
-            copyNode(writer, scope, current);
+            copyParent(writer, scope, current);
             break;
          case SyntaxKey::Field:
             copyField(writer, scope, current);

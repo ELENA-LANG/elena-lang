@@ -1,9 +1,9 @@
 A;
 B;
 
-public class XReference<T> : B
+public class XReference<T> : B, info<"descr">
 {
-   test() {}
+   test() : info<"test"> {}
 }
 
 public program()
