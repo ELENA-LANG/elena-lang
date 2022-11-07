@@ -177,6 +177,7 @@ namespace elena_lang
       bool loadClassInfo(ref_t reference, ClassInfo& info, bool headerOnly = true);
       bool loadSymbolInfo(ref_t reference, SymbolInfo& info);
 
+      void loadClassPrefixes(ApiClassInfo* apiClassInfo, ref_t reference);
       void loadParents(ApiClassInfo* apiClassInfo, ref_t parentRef);
       void loadFields(ApiClassInfo* apiClassInfo, ClassInfo& info);
       void loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateBased);

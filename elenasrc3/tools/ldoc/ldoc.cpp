@@ -304,18 +304,20 @@ void writeRefName(TextFileWriter& writer, ustr_t name, bool allowResolvedTemplat
 
 void writeClassName(TextFileWriter& writer, ApiClassInfo* info)
 {
+   if (info->prefix.length() > 0) {
+      writer.writeText(*info->prefix);
+   }
+
+   writer.writeText("<SPAN CLASS=\"typeNameLabel\">");
+   writer.writeText(*info->name);
+   writer.writeText("</SPAN>");
+
    const char* descr = *info->shortDescr;
    if (!emptystr(descr)) {
+      writer.writeTextLine("<BR/>");
+      writer.writeText("<I>");
       writer.writeText(descr);
-   }
-   else {
-      if (info->prefix.length() > 0) {
-         writer.writeText(*info->prefix);
-      }
-
-      writer.writeText("<SPAN CLASS=\"typeNameLabel\">");
-      writer.writeText(*info->name);
-      writer.writeText("</SPAN>");
+      writer.writeText("</I>");
    }
 }
 
@@ -1233,6 +1235,16 @@ ref_t DocGenerator :: findExtensionTarget(ref_t reference)
    else return 0;
 }
 
+void DocGenerator :: loadClassPrefixes(ApiClassInfo* apiClassInfo, ref_t reference)
+{
+   ClassInfo info;
+   if (loadClassInfo(reference, info, true)) {
+      if (test(info.header.flags, elAbstract)) {
+         apiClassInfo->prefix.insert("abstract ", 0);
+      }
+   }
+}
+
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 {
    auto referenceName = _module->resolveReference(reference);
@@ -1310,6 +1322,8 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             info->name.copy(*properName);
             info->title.copy(*properName);
             info->prefix.copy(*prefix);
+
+            loadClassPrefixes(info, reference);
 
             moduleInfo->classes.add(info);
 
