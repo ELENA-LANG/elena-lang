@@ -53,6 +53,8 @@ namespace elena_lang
 
    struct ApiClassInfo
    {
+      bool              templateBased;
+
       IdentifierString  prefix;
       IdentifierString  fullName;
       IdentifierString  name;
@@ -136,7 +138,7 @@ namespace elena_lang
       bool loadClassInfo(ref_t reference, ClassInfo& info, bool headerOnly = true);
 
       void loadParents(ApiClassInfo* apiClassInfo, ref_t parentRef);
-      void loadMethodName(ApiMethodInfo* apiMethodInfo);
+      void loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateBased);
       void loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, 
          MemberType memberType, DescriptionMap* descriptions);
 

@@ -8,13 +8,11 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * elena : template in template
+    * ldoc : set property : parameter
 
-    * elena : declaring template variable
     * elena : template method with a prefix
 
     * ldoc : symbols
-    * ldoc : templates
 
     * ide - ask to save on close
     * ide - ctrl+up / ctrl+down

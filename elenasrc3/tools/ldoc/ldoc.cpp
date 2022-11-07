@@ -13,9 +13,22 @@
 #include "ldocconst.h"
 #include "module.h"
 
+constexpr auto ByRefPrefix = "'$auto'system@Reference#1&";
+constexpr auto ArrayPrefix = "'$auto'system@Array#1&";
+
 using namespace elena_lang;
 
 constexpr auto DESCRIPTION_SECTION = "'meta$descriptions";
+
+inline bool isTemplateBased(ustr_t reference)
+{
+   for (size_t i = 0; i < getlength(reference); i++) {
+      if (reference[i] == '#' && reference[i + 1] >= '0' && reference[i + 1] <= '9')
+         return true;
+   }
+
+   return false;
+}
 
 void writeNs(TextFileWriter& writer, ustr_t ns)
 {
@@ -130,6 +143,102 @@ void parseNs(IdentifierString& ns, ustr_t root, ustr_t fullName)
    }
 
    ns.append(fullName, last);
+}
+
+void parseTemplateType(IdentifierString& line, int index, bool argMode)
+{
+   IdentifierString temp(line);
+
+   line.truncate(0);
+
+   int last = index;
+   bool first = true;
+   bool noCurlybrackets = false;
+   if (argMode && (*temp).startsWith(ByRefPrefix)) {
+      // HOTFIX : recognize byref argument
+
+      temp.cut(0, getlength(ByRefPrefix));
+
+      line.append("ref ");
+      noCurlybrackets = true;
+   }
+   else if (argMode && (*temp).startsWith(ArrayPrefix)) {
+      // HOTFIX : recognize byref argument
+
+      temp.cut(0, getlength(ArrayPrefix));
+
+      line.append("arrayof ");
+      noCurlybrackets = true;
+   }
+
+   for (int i = index; i < temp.length(); i++) {
+      if (temp[i] == '@') {
+         temp[i] = '\'';
+      }
+      else if (temp[i] == '#') {
+         line.append((*temp) + last + 1, i - last - 1);
+      }
+      else if (temp[i] == '&') {
+         if (first) {
+            last = i;
+            line.append("&lt;");
+            first = false;
+         }
+         else {
+            line.append((*temp) + last + 1, i - last - 1);
+            line.append(',');
+            last = i;
+         }
+      }
+   }
+
+   if (noCurlybrackets) {
+      line.append(*temp);
+   }
+   else {
+      line.append((*temp) + last + 1);
+      line.append("&gt;");
+   }
+}
+
+void parseTemplateName(IdentifierString& line)
+{
+   IdentifierString temp(*line);
+
+   line.clear();
+
+   int last = 0;
+   bool first = true;
+   for (size_t i = 0; i < temp.length(); i++) {
+      if (temp[i] == '@') {
+         if (!first)
+            temp[i] = '\'';
+         last = i;
+      }
+      else if (temp[i] == '#') {
+         line.append((*temp) + last + 1, i - last - 1);
+      }
+      else if (temp[i] == '&') {
+         if (first) {
+            line.append("&lt;");
+            first = false;
+         }
+         else {
+            line.append((*temp) + last + 1, i - last - 1);
+            line.append(',');
+         }
+      }
+   }
+
+   line.append((*temp) + last + 1);
+   line.append("&gt;");
+}
+
+void parseTemplateName(ReferenceProperName& name)
+{
+   IdentifierString temp(*name);
+   parseTemplateName(temp);
+   name.copy(*temp);
 }
 
 void writeRefName(TextFileWriter& writer, ustr_t name, bool allowResolvedTemplates)
@@ -447,7 +556,7 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
    if (info->special)
       writer.writeText("</i>");
 
-   if (info->property) {
+   if (info->property && info->params.count() == 0) {
       
    }
    else {
@@ -621,7 +730,28 @@ void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
    apiClassInfo->parents.add(name.clone());
 }
 
-void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs/*, bool templateBased*/, bool argMode)
+void validateTemplateType(IdentifierString& type, bool templateBased, bool argMode)
+{
+   if (templateBased) {
+      if (isTemplateBased(*type)) {
+         if (isTemplateWeakReference(*type))
+            type.cut(0, 6);
+
+         parseTemplateName(type);
+      }
+      else if ((*type).findStr("$private'T") != NOTFOUND_POS) {
+         size_t index = (*type).findLast('\'');
+         type.cut(0, index + 1);
+      }
+   }
+   else if (isTemplateWeakReference(*type)) {
+      NamespaceString ns(*type);
+
+      parseTemplateType(type, ns.length(), argMode);
+   }
+}
+
+void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateBased, bool argMode)
 {
    if (isTemplateWeakReference(line)) {
       type.copy(line);
@@ -632,10 +762,10 @@ void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs/*, bool templat
    }
    else type.copy(line);
 
-   //validateTemplateType(type, templateBased, argMode);
+   validateTemplateType(type, templateBased, argMode);
 }
 
-void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo)
+void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateBased)
 {
    bool skipOne = apiMethodInfo->extensionOne;
 
@@ -656,7 +786,7 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo)
                   skipOne = false;
                }
                else {
-                  loadType(type, *param, *_rootNs, /*templateBased, */true);
+                  loadType(type, *param, *_rootNs, templateBased, true);
 
                   //if (info->withVargs && info->name[i] == '>') {
                   //   type.append("[]");
@@ -724,11 +854,11 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          apiMethodInfo->name.cut(0, 1);
          apiMethodInfo->special = true;
 
-         loadMethodName(apiMethodInfo);
+         loadMethodName(apiMethodInfo, apiClassInfo->templateBased);
          if (methodInfo.outputRef) {
             ustr_t outputType = _module->resolveReference(methodInfo.outputRef);
 
-            loadType(apiMethodInfo->outputType, outputType, *_rootNs, /*templateBased, */false);
+            loadType(apiMethodInfo->outputType, outputType, *_rootNs, apiClassInfo->templateBased, false);
          }
       }
       else {
@@ -761,11 +891,11 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
             apiMethodInfo->prefix.append("private ");
 
 
-         loadMethodName(apiMethodInfo);
+         loadMethodName(apiMethodInfo, apiClassInfo->templateBased);
          if (methodInfo.outputRef) {
             ustr_t outputType = _module->resolveReference(methodInfo.outputRef);
 
-            loadType(apiMethodInfo->outputType, outputType, *_rootNs, /*templateBased, */false);
+            loadType(apiMethodInfo->outputType, outputType, *_rootNs, apiClassInfo->templateBased, false);
          }
       }
 
@@ -905,7 +1035,21 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       }
 
       if (_module->mapSection(reference | mskVMTRef, true)) {
-         prefix.append("class ");
+         bool templateBased = false;
+         if (isTemplateBased(referenceName)) {
+            if (referenceName.findStr("$private@T1") != NOTFOUND_POS) {
+               templateBased = true;
+
+               parseTemplateName(properName);
+
+               fullName.copy(*_rootNs);
+               fullName.combine(*properName);
+            }
+            else return;
+
+            prefix.append("template ");
+         }
+         else prefix.append("class ");
 
          ApiClassInfo* info = findClass(moduleInfo, *fullName);
          if (!info) {
@@ -922,6 +1066,8 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             if (!descr.empty())
                info->shortDescr.copy(descr);
          }
+         if (templateBased)
+            info->templateBased = true;
 
          if (classClassRef != 0) {
             DescriptionMap descriptions(nullptr);
