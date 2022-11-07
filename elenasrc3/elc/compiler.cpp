@@ -65,6 +65,20 @@ inline bool isSelfCall(ObjectInfo target)
    }
 }
 
+inline ref_t getSignature(ModuleBase* module, mssg_t message)
+{
+   pos_t argCount = 0;
+   ref_t actionRef = 0, flags = 0, signRef = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   if (argCount <= (test(flags, FUNCTION_MESSAGE) ? 0u : 1u))
+      return 0;
+
+   module->resolveAction(actionRef, signRef);
+
+   return signRef;
+}
+
 // --- Interpreter ---
 
 Interpreter :: Interpreter(ModuleScopeBase* scope, CompilerLogic* logic)
@@ -2122,6 +2136,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
          case SyntaxKey::TemplateType:
          case SyntaxKey::EOP:
          case SyntaxKey::ResendDispatch:
+         case SyntaxKey::Redirect:
          case SyntaxKey::identifier:
             break;
          case SyntaxKey::WithoutBody:
@@ -6250,6 +6265,9 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
                mapClassSymbol(scope, scope.getClassRef()) : scope.mapSelf(), 
             bodyNode);
          break;
+      case SyntaxKey::Redirect:
+         retVal = compileRedirect(writer, codeScope, bodyNode);
+         break;
       default:
          break;
    }
@@ -6368,6 +6386,33 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
          writer.closeNode();
       }
    }
+}
+
+ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+{
+   ExprScope scope(&codeScope);
+   ArgumentsInfo arguments;
+
+   ObjectInfo target = compileExpression(writer, scope, node.firstChild(), 0, EAttr::Parameter);
+
+   mssg_t messageRef = codeScope.getMessageID();
+
+   if (!test(messageRef, FUNCTION_MESSAGE))
+      arguments.add(target);
+
+   MethodScope* methodScope = Scope::getScope<MethodScope>(codeScope, Scope::ScopeLevel::Method);
+
+   for (auto it = methodScope->parameters.start(); !it.eof(); ++it) {
+      arguments.add(methodScope->mapParameter(it.key(), EAttr::None));
+   }
+
+   ref_t signRef = getSignature(scope.module, messageRef);
+   ObjectInfo retVal = compileMessageOperation(writer, scope, {}, target, messageRef,
+      signRef, arguments, EAttr::AlreadyResolved);
+
+   scope.syncStack();
+
+   return retVal;
 }
 
 ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, ObjectInfo source, SyntaxNode node)
@@ -6524,20 +6569,6 @@ mssg_t Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& inv
    return privateScope.message;
 }
 
-inline ref_t getSignature(ModuleBase* module, mssg_t message)
-{
-   pos_t argCount = 0;
-   ref_t actionRef = 0, flags = 0, signRef = 0;
-   decodeMessage(message, actionRef, argCount, flags);
-
-   if (argCount <= (test(flags, FUNCTION_MESSAGE) ? 0u : 1u))
-      return 0;
-
-   module->resolveAction(actionRef, signRef);
-
-   return signRef;
-}
-
 void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& methodScope, CodeScope& codeScope, mssg_t handler, ref_t targetRef)
 {
    writer.appendNode(BuildKey::OpenFrame);
@@ -6594,6 +6625,7 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
          case SyntaxKey::CodeBlock:
          case SyntaxKey::ReturnExpression:
          case SyntaxKey::ResendDispatch:
+         case SyntaxKey::Redirect:
             compileMethodCode(writer, scope, codeScope, node, false);
             break;
          case SyntaxKey::DirectResend:

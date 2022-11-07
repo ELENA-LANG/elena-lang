@@ -698,6 +698,7 @@ void SyntaxTreeBuilder :: flushMethod(SyntaxTreeWriter& writer, Scope& scope, Sy
          case SyntaxKey::CodeBlock:
          case SyntaxKey::WithoutBody:
          case SyntaxKey::ReturnExpression:
+         case SyntaxKey::Redirect:
             flushMethodCode(writer, scope, current);
             break;
          case SyntaxKey::ResendDispatch:
@@ -770,6 +771,7 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
       case SyntaxKey::WithoutBody:
       case SyntaxKey::ReturnExpression:
       case SyntaxKey::ResendDispatch:
+      case SyntaxKey::Redirect:
          writer.CurrentNode().setKey(SyntaxKey::Method);
          flushMethod(writer, scope, node);
          break;

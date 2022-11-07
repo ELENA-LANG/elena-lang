@@ -48,7 +48,7 @@ namespace elena_lang
 
       bool IsOperator(char state)
       {
-         return (state == dfaOperator || state == dfaDblOperator/* || state == dfaAltOperator*/);
+         return (state == dfaOperator || state == dfaAltOperator || state == dfaGrOperator);
       }
 
       void resolveSignAmbiguity(SourceInfo& info)

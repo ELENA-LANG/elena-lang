@@ -1,12 +1,20 @@
-A;
-B;
-
-public class XReference<T> : B, info<"descr">
+A
 {
-   test() : info<"test"> {}
+   val;
+
+   string toPrintable()
+      => val;
+
+   constructor(string val)
+   {
+      this val := val;
+   }
 }
+
+
 
 public program()
 {
-  XReference<A> ref;
+   var a := new A("test");
+   console.writeLine(a)
 }

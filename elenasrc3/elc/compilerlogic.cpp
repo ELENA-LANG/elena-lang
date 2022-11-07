@@ -477,9 +477,12 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_EXTERN:
          attrs |= ExpressionAttribute::Extern;
          return true;
-      case V_NEWOP:
-         attrs |= ExpressionAttribute::NewOp;
-         return true;
+   case V_NEWOP:
+         if (ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::Parameter)) {
+            attrs |= ExpressionAttribute::NewOp;
+            return true;
+         }
+         return false;
       case V_CONVERSION:
          attrs |= ExpressionAttribute::CastOp;
          return true;

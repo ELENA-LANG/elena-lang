@@ -68,6 +68,7 @@ __define DIMENSION           5233;
 __define RESEND              7366;
 __define CATCH_OPERATION     7367;
 __define CATCH               7368;
+__define REDIRECT            7371;
 
 START ::= 
         NEXT_DECLARATION;
@@ -146,6 +147,7 @@ METHOD_BODY ::=
 	"{" BLOCK
 	| "=" RET_EXPRESSION DECLARATION_END
 	| "<=" RESEND RESEND_OPT
+	| "=>" REDIRECT DECLARATION_END
 	| NO_BODY;
 
 RESEND_OPT ::=
@@ -383,6 +385,9 @@ VAR_R ::=
 
 RESEND ::= 
 	identifier RESEND_F;
+
+REDIRECT ::= 
+	EXPRESSION;
 
 RESEND_F ::=
 	identifier MESSAGE_R

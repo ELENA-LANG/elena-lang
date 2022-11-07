@@ -19,13 +19,27 @@ public sealed Reference<T> : BaseVariable,
    }
 
    get T Value()
+      : info<"Returns the variable value">         
    {
       ^ value
    }
 
    set Value(T val)
+      : info<"Set the variable value">
    {
       value := val
    }
+
+   T cast()
+            : info<"Returns the variable value">
+      = value;
+
+   bool equal(T v)
+            : info<"Returns true if o is equal to the variable value; otherwise, false">
+      = value == v;
+
+//   string toPrintable()
+//            : info<"Returns the value string representation">
+//      => value;
 }
 
