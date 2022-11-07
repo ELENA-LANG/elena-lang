@@ -126,6 +126,20 @@ void writeClassSummaryHeader(TextFileWriter& writer)
    writer.writeTextLine("</TR>");
 }
 
+void writeSymbolSummaryHeader(TextFileWriter& writer)
+{
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+   writer.writeTextLine("<TABLE CLASS=\"typeSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<HEADER>");
+   writer.writeTextLine("Symbol Summary");
+   writer.writeTextLine("</HEADER>");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Symbol name</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Description</TH>");
+   writer.writeTextLine("</TR>");
+
+}
+
 void parseNs(IdentifierString& ns, ustr_t root, ustr_t fullName)
 {
    if (isWeakReference(fullName)) {
@@ -305,6 +319,14 @@ void writeClassName(TextFileWriter& writer, ApiClassInfo* info)
    }
 }
 
+void writeSymbolName(TextFileWriter& writer, ApiSymbolInfo* info)
+{
+   const char* descr = *info->shortDescr;
+   if (!emptystr(descr)) {
+      writer.writeText(descr);
+   }
+}
+
 void writeType(TextFileWriter& writer, ustr_t type, bool fullReference = false)
 {
    bool arrayMode = false;
@@ -381,6 +403,26 @@ void writeSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* b
    writer.writeTextLine("</TD>");
 }
 
+void writeSummaryTable(TextFileWriter& writer, ApiSymbolInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<TD CLASS=\"colFirst\">");
+
+   writer.writeText("<A HREF=\"");
+   writer.writeText(bodyFileName);
+   writer.writeText("#");
+   writeRefName(writer, (*info->name), false);
+   writer.writeText("\">");
+   writer.writeText(*info->name);
+   writer.writeTextLine("</A>");
+   writer.writeTextLine("</TD>");
+
+   writer.writeTextLine("<TD CLASS=\"colLast\">");
+   writer.writeTextLine("<DIV CLASS=\"block\">");
+   writer.writeText(*info->name);
+   writer.writeTextLine("</DIV>");
+   writer.writeTextLine("</TD>");
+}
+
 void writeClassBodyHeader(TextFileWriter& writer, ApiClassInfo* info, ustr_t moduleName)
 {
    writer.writeText("<A NAME=\"");
@@ -413,6 +455,43 @@ void writeClassBodyHeader(TextFileWriter& writer, ApiClassInfo* info, ustr_t mod
    //const char* descr = nullptr;
    writer.writeTextLine("<PRE STYLE=\"padding-top: 15px;\">");
    writeClassName(writer, info);
+   writer.writeTextLine("</PRE>");
+   writer.writeTextLine("<BR>");
+   writer.writeTextLine("</DIV>");
+}
+
+void writeSymbolBodyHeader(TextFileWriter& writer, ApiSymbolInfo* info, ustr_t moduleName)
+{
+   writer.writeText("<A NAME=\"");
+   writer.writeText(*info->name);
+   writer.writeTextLine("\">");
+   writer.writeTextLine("</A>");
+
+   writer.writeTextLine("<!-- ======== START OF SYMBOL DATA ======== -->");
+
+   writer.writeTextLine("<DIV CLASS=\"header\">");
+
+   writer.writeTextLine("<DIV CLASS=\"subTitle\">");
+   writer.writeText(moduleName);
+   writer.writeText("'");
+   writer.writeTextLine("</DIV>");
+
+   writer.writeText("<H2 title=\"");
+   writer.writeText(*info->title);
+   writer.writeText("\" class=\"title\">");
+   writer.writeText(*info->title);
+   writer.writeTextLine("</H2>");
+
+   writer.writeTextLine("</DIV>");
+
+   writer.writeTextLine("<DIV CLASS=\"contentContainer\">");
+
+   writer.writeTextLine("<DIV CLASS=\"description\">");
+   writer.writeTextLine("<BR>");
+   writer.writeTextLine("<HR>");
+   //const char* descr = nullptr;
+   writer.writeTextLine("<PRE STYLE=\"padding-top: 15px;\">");
+   writeSymbolName(writer, info);
    writer.writeTextLine("</PRE>");
    writer.writeTextLine("<BR>");
    writer.writeTextLine("</DIV>");
@@ -478,6 +557,22 @@ void writePropertyHeader(TextFileWriter& writer, ApiClassInfo* info, const char*
    writer.writeTextLine("</TR>");
 }
 
+void writeFieldHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== FIELD SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Field Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Field</TH>");
+   writer.writeTextLine("</TR>");
+}
+
 void writeConstructorHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
 {
    writer.writeTextLine("<!-- ========== CONSTRUCTOR SUMMARY =========== -->");
@@ -524,6 +619,22 @@ void writeExtensionsHeader(TextFileWriter& writer, ApiClassInfo* info, const cha
    writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
    writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Extension Method</TH>");
    writer.writeTextLine("</TR>");
+}
+
+void writeSymbolHeader(TextFileWriter& writer)
+{
+   writer.writeTextLine("<DIV CLASS=\"contentContainer\">");
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Symbol Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Name</TH>");
+   writer.writeTextLine("</TR>");
+
 }
 
 void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
@@ -593,6 +704,78 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
    writer.writeTextLine("</TD>");
 }
 
+void writeFieldFirstColumn(TextFileWriter& writer, ApiFieldInfo* info)
+{
+   writer.writeTextLine("<TD CLASS=\"colFirst\">");
+   writer.writeTextLine("<CODE>");
+   if (info->prefix.length() != 0) {
+      writer.writeText("<i>");
+      writer.writeText(*info->prefix);
+      writer.writeText("</i>");
+      writer.writeText("&nbsp;");
+   }
+   if (info->type.length() != 0) {
+      writeType(writer, *info->type);
+   }
+
+   writer.writeTextLine("</CODE></TD>");
+}
+
+void writeFieldSecondColumn(TextFileWriter& writer, ApiFieldInfo* info)
+{
+   writer.writeTextLine("<TD CLASS=\"colLast\">");
+   writer.writeText("<CODE>");
+
+   if (info->special)
+      writer.writeText("<i>");
+
+   writer.writeText(*info->name);
+
+   if (info->special)
+      writer.writeText("</i>");
+
+   writer.writeTextLine("</CODE>");
+   if (info->shortDescr.length() > 0) {
+      writer.writeTextLine("<div class=\"block\">");
+      writer.writeText(*info->shortDescr);
+      writer.writeTextLine("</div>");
+   }
+   writer.writeTextLine("</TD>");
+}
+
+
+void writeSymbolFirstColumn(TextFileWriter& writer, ApiSymbolInfo* info)
+{
+   writer.writeTextLine("<TD CLASS=\"colFirst\">");
+   writer.writeTextLine("<CODE>");
+   if (info->prefix.length() != 0) {
+      writer.writeText("<i>");
+      writer.writeText(*info->prefix);
+      writer.writeText("</i>");
+      writer.writeText("&nbsp;");
+   }
+   if (info->type.length() != 0) {
+      writeType(writer, *info->type);
+   }
+
+   writer.writeTextLine("</CODE></TD>");
+}
+
+void writeSymbolSecondColumn(TextFileWriter& writer, ApiSymbolInfo* info)
+{
+   writer.writeTextLine("<TD CLASS=\"colLast\">");
+   writer.writeText("<CODE>");
+
+   writer.writeText(*info->name);
+
+   writer.writeTextLine("</CODE>");
+   if (info->shortDescr.length() > 0) {
+      writer.writeTextLine("<div class=\"block\">");
+      writer.writeText(*info->shortDescr);
+      writer.writeTextLine("</div>");
+   }
+   writer.writeTextLine("</TD>");
+}
 void writeConstructorFooter(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
 {
    writer.writeTextLine("</TABLE>");
@@ -607,6 +790,18 @@ void writeClassMethodsFooter(TextFileWriter& writer, ApiClassInfo* info, const c
 
    writer.writeTextLine("</LI>");
    writer.writeTextLine("</UL>");
+}
+
+void writeSymbolFooter(TextFileWriter& writer)
+{
+   writer.writeTextLine("</TABLE>");
+
+   writer.writeTextLine("</LI>");
+   writer.writeTextLine("</UL>");
+
+   writer.writeTextLine("</DIV>");
+   writer.writeTextLine("<HR>");
+   writer.writeTextLine("</DIV>");
 }
 
 void writeClassBodyFooter(TextFileWriter& writer, ApiClassInfo* info, ustr_t moduleName)
@@ -679,10 +874,19 @@ ApiModuleInfo* DocGenerator :: findModule(ApiModuleInfoList& modules, ustr_t ns)
    return nullptr;
 }
 
-
 ApiClassInfo* DocGenerator :: findClass(ApiModuleInfo* module, ustr_t fullName)
 {
    for (auto it = module->classes.start(); !it.eof(); ++it) {
+      if ((*it)->fullName.compare(fullName)) {
+         return *it;
+      }
+   }
+   return nullptr;
+}
+
+ApiSymbolInfo* DocGenerator :: findSymbol(ApiModuleInfo* module, ustr_t fullName)
+{
+   for (auto it = module->symbols.start(); !it.eof(); ++it) {
       if ((*it)->fullName.compare(fullName)) {
          return *it;
       }
@@ -711,6 +915,23 @@ bool DocGenerator :: loadClassInfo(ref_t reference, ClassInfo& info, bool header
    MemoryReader vmtReader(section);
    // read VMT info
    info.load(&vmtReader, headerOnly);
+
+   return true;
+}
+
+bool DocGenerator :: loadSymbolInfo(ref_t reference, SymbolInfo& info)
+{
+   if (!reference)
+      return false;
+
+   auto section = _module->mapSection(reference | mskMetaSymbolInfoRef, true);
+   if (!section) {
+      return false;
+   }
+
+   MemoryReader vmtReader(section);
+   // read VMT info
+   info.load(&vmtReader);
 
    return true;
 }
@@ -947,11 +1168,41 @@ void DocGenerator :: loadExtensions(ApiClassInfo* apiClassInfo, ref_t reference,
    }
 }
 
+void DocGenerator :: loadFields(ApiClassInfo* apiClassInfo, ClassInfo& info)
+{
+   for (auto it = info.fields.start(); !it.eof(); ++it) {
+      auto fieldInfo = new ApiFieldInfo();
+
+      fieldInfo->name.copy(it.key());
+
+      ref_t typeRef = (*it).typeInfo.typeRef;
+      if (typeRef) {
+         switch (typeRef) {
+            case V_INT32:
+               fieldInfo->type.copy("__int[4]");
+               break;
+            default:
+               if (!isPrimitiveRef(typeRef)) {
+                  ustr_t typeName = _module->resolveReference(typeRef);
+
+                  loadType(fieldInfo->type, typeName, *_rootNs, apiClassInfo->templateBased, false);
+               }
+               break;
+         }
+
+      }
+
+      apiClassInfo->fields.add(fieldInfo);
+   }
+}
+
 void DocGenerator :: loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions)
 {
    ClassInfo info;
    if (loadClassInfo(reference, info, false)) {
       loadParents(apiClassInfo, info.header.parentRef);
+
+      loadFields(apiClassInfo, info);
 
       for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
          auto methodInfo = *m_it;
@@ -1104,6 +1355,31 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
          }
       }
       else if (_module->mapSection(reference | mskSymbolRef, true)) {
+         SymbolInfo symbolInfo;
+         loadSymbolInfo(reference, symbolInfo);
+
+         ApiClassInfo* classInfo = findClass(moduleInfo, *fullName);
+         // HOTFIX : skip the class symbol
+         if (classInfo)
+            return;
+
+         ApiSymbolInfo* apiSymbolInfo = findSymbol(moduleInfo, *fullName);
+         if (!apiSymbolInfo) {
+            apiSymbolInfo = new ApiSymbolInfo();
+
+            apiSymbolInfo->fullName.copy(*fullName);
+            apiSymbolInfo->name.copy(*properName);
+            apiSymbolInfo->title.copy(*properName);
+            apiSymbolInfo->prefix.copy(*prefix);
+
+            moduleInfo->symbols.add(apiSymbolInfo);
+
+            if (symbolInfo.typeRef) {
+               ustr_t typeName = _module->resolveReference(symbolInfo.typeRef);
+
+               loadType(apiSymbolInfo->type, typeName, *_rootNs, false, false);
+            }
+         }
       }
    }
 }
@@ -1141,6 +1417,25 @@ void DocGenerator :: generateMethodList(TextFileWriter& bodyWriter, ApiMethodInf
    }
 }
 
+void DocGenerator :: generateFieldList(TextFileWriter& bodyWriter, ApiFieldInfoList& list)
+{
+   bool alt = true;
+   for (auto it = list.start(); !it.eof(); ++it) {
+      if (alt) {
+         bodyWriter.writeTextLine("<TR CLASS=\"altColor\">");
+      }
+      else {
+         bodyWriter.writeTextLine("<TR CLASS=\"rowColor\">");
+      }
+      alt = !alt;
+
+      writeFieldFirstColumn(bodyWriter, *it);
+      writeFieldSecondColumn(bodyWriter, *it);
+
+      bodyWriter.writeTextLine("</TR>");
+   }
+}
+
 void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName)
 {
    IdentifierString moduleName;
@@ -1154,15 +1449,21 @@ void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWri
       writeParents(bodyWriter, classInfo, *_rootNs);
    }
 
-   if (classInfo->staticProperties.count() > 0) {
-      writeStaticPropertyHeader(bodyWriter, classInfo, *moduleName);
-      generateMethodList(bodyWriter, classInfo->staticProperties);
+   if (classInfo->fields.count() > 0) {
+      writeFieldHeader(bodyWriter, classInfo, *moduleName);
+      generateFieldList(bodyWriter, classInfo->fields);
       writeConstructorFooter(bodyWriter, classInfo, *moduleName);
    }
 
    if (classInfo->constructors.count() > 0) {
       writeConstructorHeader(bodyWriter, classInfo, *moduleName);
       generateMethodList(bodyWriter, classInfo->constructors);
+      writeConstructorFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   if (classInfo->staticProperties.count() > 0) {
+      writeStaticPropertyHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->staticProperties);
       writeConstructorFooter(bodyWriter, classInfo, *moduleName);
    }
 
@@ -1185,6 +1486,21 @@ void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWri
    }
 
    writeClassBodyFooter(bodyWriter, classInfo, *moduleName);
+}
+
+void DocGenerator :: generateSymbolDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiSymbolInfo* symbolInfo, ustr_t bodyName)
+{
+   IdentifierString moduleName;
+   parseNs(moduleName, *_rootNs, *symbolInfo->fullName);
+
+   writeSummaryTable(summaryWriter, symbolInfo, bodyName);
+
+   writeSymbolBodyHeader(bodyWriter, symbolInfo, *moduleName);
+
+   writeSymbolHeader(bodyWriter);
+   writeSymbolFirstColumn(bodyWriter, symbolInfo);
+   writeSymbolSecondColumn(bodyWriter, symbolInfo);
+   writeSymbolFooter(bodyWriter);
 }
 
 void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
@@ -1230,6 +1546,29 @@ void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
          alt = !alt;
 
          generateClassDoc(summaryWriter, bodyWriter, classInfo, *name);
+
+         summaryWriter.writeTextLine("</TR>");
+      }
+
+      writeClassSummaryFooter(summaryWriter);
+   }
+
+   if (moduleInfo->symbols.count() > 0) {
+      // symbols
+      writeSymbolSummaryHeader(summaryWriter);
+
+      bool alt = true;
+      for (auto symbol_it = moduleInfo->symbols.start(); !symbol_it.eof(); ++symbol_it) {
+         ApiSymbolInfo* symbolInfo = *symbol_it;
+         if (alt) {
+            summaryWriter.writeTextLine("<TR CLASS=\"altColor\">");
+         }
+         else {
+            summaryWriter.writeTextLine("<TR CLASS=\"rowColor\">");
+         }
+         alt = !alt;
+
+         generateSymbolDoc(summaryWriter, bodyWriter, symbolInfo, *name);
 
          summaryWriter.writeTextLine("</TR>");
       }

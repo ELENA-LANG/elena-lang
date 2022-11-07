@@ -51,6 +51,17 @@ namespace elena_lang
 
    typedef List<ApiMethodInfo*, freeobj> ApiMethodInfoList;
 
+   struct ApiFieldInfo
+   {
+      bool              special;
+      IdentifierString  prefix;
+      IdentifierString  name;
+      IdentifierString  shortDescr;
+      IdentifierString  type;
+   };
+
+   typedef List<ApiFieldInfo*, freeobj> ApiFieldInfoList;
+
    struct ApiClassInfo
    {
       bool              templateBased;
@@ -63,18 +74,30 @@ namespace elena_lang
 
       StringList        parents;
       ApiMethodInfoList methods;
+      ApiFieldInfoList  fields;
       ApiMethodInfoList constructors;
       ApiMethodInfoList properties;
       ApiMethodInfoList staticProperties;
       ApiMethodInfoList extensions;
 
       ApiClassInfo()
-         : parents(nullptr), methods(nullptr ),
+         : parents(nullptr), methods(nullptr ), fields(nullptr),
             constructors(nullptr), extensions(nullptr),
             properties(nullptr), staticProperties(nullptr)
       {
          
       }
+   };
+
+   struct ApiSymbolInfo
+   {
+      IdentifierString  prefix;
+      IdentifierString  fullName;
+      IdentifierString  name;
+      IdentifierString  shortDescr;
+      IdentifierString  title;
+
+      IdentifierString  type;
    };
 
    inline int sortApiClassInfo(ApiClassInfo* p, ApiClassInfo* n)
@@ -88,17 +111,30 @@ namespace elena_lang
       else return 1;
    }
 
+   inline int sortApiSymbolInfo(ApiSymbolInfo* p, ApiSymbolInfo* n)
+   {
+      if ((*p->name).greater((*n->name))) {
+         return -1;
+      }
+      else if ((*p->name).compare((*n->name))) {
+         return 0;
+      }
+      else return 1;
+   }
+
    typedef SortedList<ApiClassInfo*, sortApiClassInfo, freeobj> ApiClassInfoList;
+   typedef SortedList<ApiSymbolInfo*, sortApiSymbolInfo, freeobj> ApiSymbolInfoList;
 
    struct ApiModuleInfo
    {
       IdentifierString name;
       IdentifierString shortDescr;
 
-      ApiClassInfoList classes;
+      ApiClassInfoList  classes;
+      ApiSymbolInfoList symbols;
 
       ApiModuleInfo()
-         : classes(nullptr)
+         : classes(nullptr), symbols(nullptr)
       {
 
       }
@@ -127,17 +163,22 @@ namespace elena_lang
 
       ApiModuleInfo* findModule(ApiModuleInfoList& modules, ustr_t ns);
       ApiClassInfo* findClass(ApiModuleInfo* module, ustr_t name);
+      ApiSymbolInfo* findSymbol(ApiModuleInfo* module, ustr_t name);
 
       bool isExtension(ref_t reference);
       ref_t findExtensionTarget(ref_t reference);
 
+      void generateFieldList(TextFileWriter& bodyWriter, ApiFieldInfoList& list);
       void generateMethodList(TextFileWriter& bodyWriter, ApiMethodInfoList& list);
       void generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName);
+      void generateSymbolDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiSymbolInfo* symbolInfo, ustr_t bodyName);
       void generateModuleDoc(ApiModuleInfo* moduleInfo);
 
       bool loadClassInfo(ref_t reference, ClassInfo& info, bool headerOnly = true);
+      bool loadSymbolInfo(ref_t reference, SymbolInfo& info);
 
       void loadParents(ApiClassInfo* apiClassInfo, ref_t parentRef);
+      void loadFields(ApiClassInfo* apiClassInfo, ClassInfo& info);
       void loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateBased);
       void loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, 
          MemberType memberType, DescriptionMap* descriptions);

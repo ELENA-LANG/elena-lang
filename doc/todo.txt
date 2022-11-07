@@ -8,8 +8,8 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * ldoc : fields
     * ldoc : symbols
+    * ldoc : abstract class
 
     * elena : test setter / getter : strong typed / weak ones
 
