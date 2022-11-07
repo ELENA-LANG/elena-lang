@@ -930,6 +930,8 @@ void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& s
 
 void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
+   flushClassPostfixes(writer, scope, node);
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
@@ -1468,6 +1470,9 @@ void TemplateProssesor :: generateTemplate(SyntaxTreeWriter& writer, TemplateSco
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Attribute:
+            copyNode(writer, scope, current);
+            break;
+         case SyntaxKey::Parent:
             copyNode(writer, scope, current);
             break;
          case SyntaxKey::Field:

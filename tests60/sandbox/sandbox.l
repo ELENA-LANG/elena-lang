@@ -1,7 +1,12 @@
 A;
+B;
 
+public class XReference<T> : B
+{
+   test() {}
+}
 
 public program()
 {
-  Reference<A> ref;
+  XReference<A> ref;
 }

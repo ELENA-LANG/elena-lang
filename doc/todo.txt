@@ -8,14 +8,14 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * ldoc : set property : parameter
-
+    * elena : test setter / getter : strong typed / weak ones
     * elena : template method with a prefix
 
     * ldoc : symbols
 
     * ide - ask to save on close
     * ide - ctrl+up / ctrl+down
+    * ide - selecing empty line (show some margin)
 
     * all functionality for existing classes
 
