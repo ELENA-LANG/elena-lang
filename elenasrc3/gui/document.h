@@ -261,6 +261,8 @@ namespace elena_lang
       void moveLeft(bool selecting);
       void moveUp(bool selecting);
       void moveDown(bool selecting);
+      void movePageUp(bool selecting);
+      void movePageDown(bool selecting);
 
       void moveRightToken(bool selecting, bool trimWhitespace = false);
       void moveLeftToken(bool selecting);

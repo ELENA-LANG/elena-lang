@@ -182,7 +182,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public class <SPAN CLASS="typeNameLabel">BaseValue</SPAN></PRE>
+abstract public class <SPAN CLASS="typeNameLabel">BaseValue</SPAN><BR/>
+<I>a base value</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -211,6 +212,8 @@ system'BaseValue</LI>
 <TD CLASS="colLast">
 <CODE>less(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Returns true if the object value is less than o; otherwise, false;<br/>should be overridden</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -220,6 +223,8 @@ system'BaseValue</LI>
 <TD CLASS="colLast">
 <CODE>greater(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Returns true if the object value is greater than o; otherwise, false;<br/>by default sends less[2] to o with the object as an argument</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -229,6 +234,8 @@ system'BaseValue</LI>
 <TD CLASS="colLast">
 <CODE>notless(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Returns true if the object value is not less than o; otherwise, false;<br/>by default inverts the result of less[2] operation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -238,6 +245,30 @@ system'BaseValue</LI>
 <TD CLASS="colLast">
 <CODE>notgreater(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Returns true if the object value is not greater than o; otherwise, false;<br/>by default inverts the result of greater[2] operation</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN>)
+</CODE>
+<div class="block">
+Returns true if a value of var is equal to the object value; otherwise, false</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN>)
+</CODE>
+<div class="block">
+Returns true if the object value is less than a value of var; otherwise, false</div>
 </TD>
 </TR>
 <TR CLASS="altColor">

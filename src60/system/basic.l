@@ -3,17 +3,28 @@
 public abstract class BaseValue
    : info<"a base value">
 {
-//   bool equal(BaseVariable var)
-//      <= equal(*var);
+   bool equal(BaseVariable var)
+            : info<"Returns true if a value of var is equal to the object value; otherwise, false">
+      <= equal(*var);
 
-   abstract bool less(v);
+   bool less(BaseVariable var)
+            : info<"Returns true if the object value is less than a value of var; otherwise, false">
+      <= less(*var);
+
+   abstract bool less(v)
+            : info<"Returns true if the object value is less than o; otherwise, false;<br/>should be overridden">;
 
    bool greater(v)
+            : info<"Returns true if the object value is greater than o; otherwise, false;<br/>by default sends less[2] to o with the object as an argument">
       = v.less(self);
 
-   bool notless(v) = !(self.less(v));
+   bool notless(v) 
+            : info<"Returns true if the object value is not less than o; otherwise, false;<br/>by default inverts the result of less[2] operation">
+      = !(self.less(v));
 
-   bool notgreater(v) = !(self.greater(v));
+   bool notgreater(v) 
+            : info<"Returns true if the object value is not greater than o; otherwise, false;<br/>by default inverts the result of greater[2] operation">
+      = !(self.greater(v));
 }
 
 // --- BoolValue ---

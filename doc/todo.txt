@@ -8,14 +8,24 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * elena : * operator
-    * elena : - operator
+    * ide - page up / down
 
-    * api : BaseValue
-    * api functionality for existing classes
+    * api : BaseNumber, IntBaseNumber
+
+    * introducing longnumber
+    * basic operations for : longnumber
+    * realnumber
+    * basic operations for : realnumber
+    * comparision operations : short / byte / long operation
+    * conversion between basic types
+    * basic numbers
+
+    * rosetta sample : accumulator - x86, x86-64, i386, amd64, ppc64le, aarch64
 
     * ide - ask to save on close
     * ide - tab
+
+    * api functionality for existing classes
 
     * ide - add close button on tabbar
     * ide - fix errors
@@ -83,8 +93,6 @@ Backlog:
     * unit tests : exceptions
     * review code { int n := 3; } : extra assigning
     * call internal
-    * introducing longnumber
-    * basic operations for : longnumber
     * int, byte, short : bitwise operations
     * repeate-until statements
     * aarch64 : setting mask for size (createn, ...)
@@ -156,8 +164,6 @@ Backlog:
     * constant field must have assigning expression
     * class constant (should be a static variable / pure constant - no entry in VMT)
     * init_handler : call previous one if avialable
-    * comparision operations : short / byte / long operation
-    * conversion between basic types
     * call set properties
     * arithmetic operations
     * string operations

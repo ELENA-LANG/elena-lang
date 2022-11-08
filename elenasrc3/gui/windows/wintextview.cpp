@@ -470,6 +470,12 @@ bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
       case VK_END:
          _controller->moveCaretEnd(_model, kbShift, kbCtrl);
          break;
+      case VK_PRIOR:
+         _controller->movePageUp(_model, kbShift);
+         break;
+      case VK_NEXT:
+         _controller->movePageDown(_model, kbShift);
+         break;
       case VK_DELETE:
       {
          auto docView = _model->DocView();

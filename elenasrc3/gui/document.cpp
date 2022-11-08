@@ -597,6 +597,33 @@ void DocumentView :: moveToFrame(int column, int row, bool selecting)
    setCaret(_frame.column() + column, _frame.row() + row, selecting);
 }
 
+void DocumentView :: movePageDown(bool selecting)
+{
+   if (_caret.row() + _size.y > _text->getRowCount() - 1) {
+      setCaret(_caret.column(), _text->getRowCount() - 1, selecting);
+   }
+   else {
+      vscroll(_size.y);
+      if (status.frameChanged)
+         setCaret(_caret.column(), _caret.row() + _size.y, selecting);
+   }
+}
+
+void DocumentView :: movePageUp(bool selecting)
+{
+   if (_caret.row() == 0)
+      return;
+
+   if (_frame.row() == 0) {
+      setCaret(_caret.column(), 0, selecting);
+   }
+   else {
+      vscroll(-_size.y);
+      if (status.frameChanged)
+         setCaret(_caret.column(), _caret.row() - _size.y, selecting);
+   }
+}
+
 void DocumentView :: notifyOnChange()
 {
    for(auto it = _notifiers.start(); !it.eof(); ++it) {

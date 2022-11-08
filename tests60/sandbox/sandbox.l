@@ -1,21 +1,17 @@
-A
-{
-   val;
+function(acc)
+    = (n => acc.append:n);
 
-   constructor(val)
-   {
-      this val := val;
-   }
-
-   get Value()
-      = val;
-}
-
-
+accumulator(n)
+    = function(new Variable(n));
 
 public program()
 {
-   var a := new A(1);
-   
-   console.writeLine(*a);
+    var x := accumulator(1);
+    
+    x(5);
+    
+    var y := accumulator(3);
+    
+    console.write(x(2.3r))
 }
+

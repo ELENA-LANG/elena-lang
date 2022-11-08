@@ -252,3 +252,19 @@ void TextViewController :: moveCaretEnd(TextViewModelBase* model, bool kbShift, 
 
    model->onModelChanged();
 }
+
+void TextViewController :: movePageDown(TextViewModelBase* model, bool kbShift)
+{
+   auto docView = model->DocView();
+   docView->movePageDown(kbShift);
+
+   model->onModelChanged();
+}
+
+void TextViewController :: movePageUp(TextViewModelBase* model, bool kbShift)
+{
+   auto docView = model->DocView();
+   docView->movePageUp(kbShift);
+
+   model->onModelChanged();
+}

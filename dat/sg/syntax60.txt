@@ -341,6 +341,7 @@ I_R ::=
 SI_R ::=
 	identifier SI_R 
 	| reference SI_R 
+	| "=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION E_R;
 	| ")" SI_Rf
 	| O_R ")" ^EXPRESSION E_R;
 
