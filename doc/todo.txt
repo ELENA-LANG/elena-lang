@@ -8,16 +8,10 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * api : ref
-
-    * ide - show cursor coordinates
-    * ide - ask to save on close
-    * ide - ctrl+up / ctrl+down
-    * ide - selecing empty line (show some margin)
-
     * all : BaseValue
     * all functionality for existing classes
 
+    * ide - ask to save on close
     * ide - tab
 
     * ide - add close button on tabbar

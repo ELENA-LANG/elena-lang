@@ -41,5 +41,7 @@ public sealed Reference<T> : BaseVariable,
    string toPrintable()
             : info<"Returns the value string representation">
       => value;
+
+   dispatch() => value;
 }
 

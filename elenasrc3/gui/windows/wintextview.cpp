@@ -307,7 +307,11 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 
          width = canvas.TextWidth(style, buffer, length);
 
-         /*else */canvas.drawTextClipped(Rectangle(x, y, width + 1, lineHeight + 1), x, y,
+         if (length == 0 && reader.style == STYLE_SELECTION) {
+            canvas.drawTextClipped(Rectangle(x, y, style->avgCharWidth + 1, lineHeight + 1), x, y,
+               _T(" "), 1, style);
+         }
+         else canvas.drawTextClipped(Rectangle(x, y, width + 1, lineHeight + 1), x, y,
             buffer, length, style);
 
          x += width;
@@ -332,8 +336,6 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 
             writer.reset();
          } while (reader.readCurrentLine(writer, 0xFF));
-
-         docView->status.caretChanged = false;
       }
 
       locateCaret(clientRect.topLeft.x + marginWidth + _caret_x,

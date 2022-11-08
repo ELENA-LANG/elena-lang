@@ -556,6 +556,7 @@ void DocumentView :: moveFrameUp()
       if (_frame.row() + _size.y - 2 <= _caret.row()) {
          setCaret(_caret.column(), _frame.row() + _size.y - 3, false);
       }
+      else notifyOnChange();
    }
 }
 
@@ -566,6 +567,7 @@ void DocumentView :: moveFrameDown()
       if (_caret.row() < _frame.row()) {
          setCaret(_caret.column(), _frame.row(), false);
       }
+      else notifyOnChange();
    }
 }
 
@@ -600,6 +602,8 @@ void DocumentView :: notifyOnChange()
    for(auto it = _notifiers.start(); !it.eof(); ++it) {
       (*it)->onDocumentUpdate();
    }
+
+   status.caretChanged = false;
 }
 
 void DocumentView :: tabbing(text_c space, size_t count, bool indent)
