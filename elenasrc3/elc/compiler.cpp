@@ -4299,6 +4299,10 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
          return scope->buildins.not_message;
       case NOTLESS_OPERATOR_ID:
          return scope->buildins.notless_message;
+      case NEGATE_OPERATOR_ID:
+         return scope->buildins.negate_message;
+      case VALUE_OPERATOR_ID:
+         return scope->buildins.value_message;
       default:
          throw InternalError(errFatalError);
    }
@@ -5922,6 +5926,8 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::NotOperation:
       case SyntaxKey::NotEqualOperation:
       case SyntaxKey::NotLessOperation:
+      case SyntaxKey::NestedExpression:
+      case SyntaxKey::ValueOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::IndexerOperation:
@@ -7342,6 +7348,12 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.not_message =
       encodeMessage(moduleScope->module->mapAction(NOT_MESSAGE, 0, false),
          1, PROPERTY_MESSAGE);
+   moduleScope->buildins.negate_message =
+      encodeMessage(moduleScope->module->mapAction(NEGATE_MESSAGE, 0, false),
+         1, PROPERTY_MESSAGE);
+   moduleScope->buildins.value_message =
+         encodeMessage(moduleScope->module->mapAction(VALUE_MESSAGE, 0, false),
+            1, PROPERTY_MESSAGE);
    moduleScope->buildins.notequal_message =
       encodeMessage(moduleScope->module->mapAction(NOTEQUAL_MESSAGE, 0, false),
          2, 0);

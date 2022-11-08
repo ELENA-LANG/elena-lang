@@ -249,6 +249,11 @@ namespace elena_lang
    constexpr auto MUL_OPERATOR_ID         = 0x0010;
    constexpr auto DIV_OPERATOR_ID         = 0x0011;
    constexpr auto NOTLESS_OPERATOR_ID     = 0x0012;
+   constexpr auto GREATER_OPERATOR_ID     = 0x0013;
+   constexpr auto NOTGREATER_OPERATOR_ID  = 0x0014;
+   constexpr auto NEGATE_OPERATOR_ID      = 0x0016;
+   constexpr auto VALUE_OPERATOR_ID       = 0x0017;
+
    constexpr auto CLASS_OPERATOR_ID       = 0x003F;
    constexpr auto SET_INDEXER_OPERATOR_ID = 0x0201;
 

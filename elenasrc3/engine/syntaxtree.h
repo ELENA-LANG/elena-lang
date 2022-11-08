@@ -89,6 +89,8 @@ namespace elena_lang
       GreaterOperation        = 0x001853,
       NotGreaterOperation     = 0x001854,
       ExternOperation         = 0x001855,
+      NegateOperation         = 0x001856,
+      ValueOperation          = 0x001857,
       Postfix                 = 0x001060,
       TemplatePostfix         = 0x001061,
       MethodPostfix           = 0x001062,

@@ -324,7 +324,7 @@ struct BuiltinReferences
    mssg_t  add_message, sub_message, mul_message, div_message;
    mssg_t  if_message;
    mssg_t  equal_message;
-   mssg_t  not_message;
+   mssg_t  not_message, negate_message, value_message;
    mssg_t  notequal_message;
    mssg_t  less_message;
    mssg_t  notless_message;
@@ -346,7 +346,7 @@ struct BuiltinReferences
       add_message = sub_message = mul_message = div_message = 0;
       if_message = 0;
       equal_message = 0;
-      not_message = 0;
+      not_message = negate_message = value_message = 0;
       notequal_message = 0;
       less_message = 0;
       notless_message = 0;

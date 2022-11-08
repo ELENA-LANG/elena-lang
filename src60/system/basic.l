@@ -1,7 +1,11 @@
 
 // --- BaseValue ---
 public abstract class BaseValue
+   : info<"a base value">
 {
+//   bool equal(BaseVariable var)
+//      <= equal(*var);
+
    abstract bool less(v);
 
    bool greater(v)

@@ -8,8 +8,11 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * all : BaseValue
-    * all functionality for existing classes
+    * elena : * operator
+    * elena : - operator
+
+    * api : BaseValue
+    * api functionality for existing classes
 
     * ide - ask to save on close
     * ide - tab
@@ -143,7 +146,6 @@ Backlog:
     * CORE_ET_TABLE info should be thread safe
     * VEH_HANDLER should exclude the current frame if it was invoked from external code (callext - should 
       store the current frame in the extra variable, and clear it after the operation end)
-    * support "-" operator 
     * mark String.fromByteArray as internal one
     * conditional boxing of stacksafe arguments
     * createnr - optimization for 1,2,4,8 

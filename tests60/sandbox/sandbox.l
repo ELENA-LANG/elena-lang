@@ -7,8 +7,8 @@ A
       this val := val;
    }
 
-   dispatch()
-      => val;
+   get Value()
+      = val;
 }
 
 
@@ -17,7 +17,5 @@ public program()
 {
    var a := new A(1);
    
-   var b := a + 2;
-
-   console.writeLine(b);
+   console.writeLine(*a);
 }
