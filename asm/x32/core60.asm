@@ -727,6 +727,18 @@ inline %0A6h
 
 end
 
+// ; xrefreshsi i
+inline %0A7h
+
+end 
+
+// ; xrefreshsi 0
+inline %1A7h
+
+  mov esi, [esp+4]
+
+end 
+
 // ; peekfi
 inline %0A8h
 

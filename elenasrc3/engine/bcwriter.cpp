@@ -51,12 +51,18 @@ void openFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::OpenIN, reservedManaged, reservedUnmanaged);
 }
 
-void closeFrame(CommandTape& tape, BuildNode& node, TapeScope& scope)
+void closeFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
-   int reservedUnmanaged = scope.reservedN;
+   int reservedUnmanaged = tapeScope.reservedN;
 
    tape.setLabel();
    tape.write(ByteCode::CloseN, reservedUnmanaged);
+
+   if (node.arg.value) {
+      for (int i = 0; i < tapeScope.scope->minimalArgList; i++) {
+         tape.write(ByteCode::XRefreshSI, i);
+      }
+   }
 }
 
 void nilReference(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -303,11 +309,20 @@ void savingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SaveDP, node.arg.value);
 }
 
+void loadingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::LoadDP, node.arg.value);
+}
+
 void dispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    mssg_t message = node.findChild(BuildKey::Message).arg.reference;
-
-   tape.write(ByteCode::DispatchMR, message, node.arg.reference | mskConstArray);
+   if (message) {
+      // if it is a multi-method dispatcher
+      tape.write(ByteCode::DispatchMR, message, node.arg.reference | mskConstArray);
+   }
+   // otherwise it is generic dispatcher
+   else tape.write(ByteCode::Redirect);
 }
 
 void xdispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -666,7 +681,7 @@ ByteCodeWriter::Saver commands[] =
    assignSPField, getField, staticBegin, staticEnd, classOp, byteArrayOp, newArrayOp, swapSPField,
 
    mssgLiteral, accSwapSPField, redirectOp, shortArraySOp, wideLiteral, byteOp, shortOp, byteCondOp,
-   shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning, staticVarOp,
+   shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning, staticVarOp, loadingIndex,
 };
 
 // --- ByteCodeWriter ---

@@ -88,6 +88,7 @@ namespace elena_lang
       LocalReference       = 0x003B,
       RefParamAssigning    = 0x003C,
       StaticVar            = 0x003D,
+      LoadingIndex         = 0x003E,
 
       Import               = 0x0048,
       DictionaryOp         = 0x0049,

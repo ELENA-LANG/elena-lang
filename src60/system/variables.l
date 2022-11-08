@@ -34,12 +34,12 @@ public sealed Reference<T> : BaseVariable,
             : info<"Returns the variable value">
       = value;
 
-   bool equal(T v)
+   bool equal(o)
             : info<"Returns true if o is equal to the variable value; otherwise, false">
-      = value == v;
+      => value;
 
-//   string toPrintable()
-//            : info<"Returns the value string representation">
-//      => value;
+   string toPrintable()
+            : info<"Returns the value string representation">
+      => value;
 }
 

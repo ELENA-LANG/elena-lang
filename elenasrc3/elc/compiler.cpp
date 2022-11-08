@@ -6808,9 +6808,67 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    }
 }
 
-void Compiler :: compileDispatcher()
+void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node)
 {
-   
+   // new stack frame
+   writer.appendNode(BuildKey::OpenFrame);
+
+   // stack should contains current self reference
+   // the original message should be restored if it is a generic method
+   scope.selfLocal = codeScope.newLocal();
+   writer.appendNode(BuildKey::Assigning, scope.selfLocal);
+
+   ExprScope exprScope(&codeScope);
+
+   ObjectInfo mssgVar = declareTempStructure(exprScope, { sizeof(mssg_t)});
+   writer.appendNode(BuildKey::SavingIndex, mssgVar.reference);
+
+   ObjectInfo retVal = { };
+
+   SyntaxNode bodyNode = node.firstChild(SyntaxKey::ScopeMask);
+   switch (bodyNode.key) {
+   case SyntaxKey::Expression:
+      retVal = compileExpression(writer, exprScope, bodyNode, 0, EAttr::None);
+         break;
+      default:
+         scope.raiseError(errInvalidOperation, node);
+         break;
+   }
+
+   retVal = boxArgument(writer, exprScope, retVal, false, true, false);
+
+   writeObjectInfo(writer, exprScope, retVal);
+
+   writer.appendNode(BuildKey::LoadingIndex, mssgVar.reference);
+
+   exprScope.syncStack();
+
+   writer.appendNode(BuildKey::CloseFrame, -1);
+
+   writer.appendNode(BuildKey::DispatchingOp);
+}
+
+void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+{
+   CodeScope codeScope(&scope);
+
+   beginMethod(writer, scope, BuildKey::Method);
+
+   SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
+   switch (current.key) {
+      case SyntaxKey::Importing:
+         writer.appendNode(BuildKey::Import, current.arg.reference);
+         break;
+      case SyntaxKey::Redirect:
+         compileRedirectDispatcher(writer, scope, codeScope, current);
+         break;
+      default:
+         scope.raiseError(errInvalidOperation, node);
+         break;
+   }
+
+   codeScope.syncStack(&scope);
+   endMethod(writer, scope);
 }
 
 void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, 
@@ -6839,11 +6897,11 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
 #endif // FULL_OUTOUT_INFO
 
             // if it is a dispatch handler
-            /*if (methodScope.message == scope.moduleScope->buildins.dispatch_message) {
-               compileDispatcher();
-            }*/
+            if (methodScope.message == scope.moduleScope->buildins.dispatch_message) {
+               compileDispatcherMethod(writer, methodScope, current);
+            }
             // if it is an abstract one
-            /*else */if (methodScope.checkHint(MethodHint::Abstract)) {
+            else if (methodScope.checkHint(MethodHint::Abstract)) {
                compileAbstractMethod(writer, methodScope, current, scope.abstractMode);
             }
             // if it is an initializer
@@ -6882,7 +6940,8 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
 
       //scope.info.header.flags |= elWithCustomDispatcher;
 
-      compileDispatcher();
+      //compileDispatcher();
+      assert(false);
 
       //compileDispatcher(writer, SNode(), methodScope,
       //   lxClassMethod,

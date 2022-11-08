@@ -71,6 +71,7 @@ namespace elena_lang
       XFlushSI       = 0xA4,
       GetI           = 0xA5,
       AssignI        = 0xA6,
+      XRefreshSI     = 0xA7,
       PeekFI         = 0xA8,
       PeekSI         = 0xA9,
 

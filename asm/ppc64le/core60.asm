@@ -939,6 +939,25 @@ inline %0A6h
 
 end
 
+// ; xrefreshsi i
+inline %0A7h
+
+end 
+
+// ; xrefreshsi 0
+inline %1A7h
+
+  ld     r3, 0(r1)  
+
+end 
+
+// ; xrefreshsi 1
+inline %2A7h
+
+  ld     r4, 8(r1)
+
+end 
+
 // ; peekfi
 inline %0A8h
 

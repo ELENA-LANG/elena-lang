@@ -896,6 +896,26 @@ inline %0A6h
 
 end
 
+// ; xrefreshsi i
+inline %0A7h
+
+end 
+
+// ; xrefreshsi 0
+inline %1A7h
+
+  ldr     x0, [sp]
+
+end 
+
+// ; xrefreshsi 1
+inline %2A7h
+
+  add     x11, sp, 8
+  ldr     x1, [x11]
+
+end 
+
 // ; peekfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0A8h
