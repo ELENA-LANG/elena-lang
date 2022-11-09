@@ -90,7 +90,11 @@ namespace elena_lang
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
 
-      MaxDoubleOp    = 0xDF,
+      MaxDoubleOp    = 0xCF,
+
+      IAndDPN        = 0xD8,
+      IOrDPN         = 0xD9,
+      IXorDPN        = 0xDA,
 
       CopyDPN        = 0xE0,
       IAddDPN        = 0xE1,

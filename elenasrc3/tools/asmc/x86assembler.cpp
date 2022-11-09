@@ -1011,6 +1011,19 @@ bool X86Assembler :: compileAnd(X86Operand source, X86Operand target, MemoryWrit
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
       X86Helper::writeImm(writer, target);
    }
+   else if (source.isR32_M32() && target.isR32()) {
+      writer.writeByte(0x21);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR8_M8() && target.isR8()) {
+      writer.writeByte(0x20);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR16_M16() && target.isR16()) {
+      writer.writeByte(0x66);
+      writer.writeByte(0x21);
+      X86Helper::writeModRM(writer, target, source);
+   }
    else return false;
 
    return true;
@@ -1358,6 +1371,15 @@ bool X86Assembler :: compileOr(X86Operand source, X86Operand target, MemoryWrite
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 1 }, source);
       X86Helper::writeImm(writer, target);
    }
+   else if (source.isR8_M8() && target.isR8()) {
+      writer.writeByte(0x08);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR16_M16() && target.isR16()) {
+      writer.writeByte(0x66);
+      writer.writeByte(0x09);
+      X86Helper::writeModRM(writer, target, source);
+   }
    else return false;
 
    return true;
@@ -1513,6 +1535,19 @@ bool X86Assembler :: compileXor(X86Operand source, X86Operand target, MemoryWrit
    if (source.isR32() && target.isR32()) {
       writer.writeByte(0x33);
       X86Helper::writeModRM(writer, source, target);
+   }
+   else if (source.isR32_M32() && target.isR32()) {
+      writer.writeByte(0x31);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR8_M8() && target.isR8()) {
+      writer.writeByte(0x30);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR16_M16() && target.isR16()) {
+      writer.writeByte(0x66);
+      writer.writeByte(0x31);
+      X86Helper::writeModRM(writer, target, source);
    }
    else return false;
 
@@ -1997,6 +2032,11 @@ bool X86_64Assembler :: compileAnd(X86Operand source, X86Operand target, MemoryW
       writer.writeByte(0x23);
       X86Helper::writeModRM(writer, source, target);
    }
+   else if (source.isR64_M64() && target.isR64()) {
+      writer.writeByte(0x48);
+      writer.writeByte(0x21);
+      X86Helper::writeModRM(writer, target, source);
+   }
    else return X86Assembler::compileAnd(source, target, writer);
 
    return true;
@@ -2198,6 +2238,18 @@ bool X86_64Assembler :: compileNeg(X86Operand source, MemoryWriter& writer)
    return true;
 }
 
+bool X86_64Assembler :: compileOr(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isR64_M64() && target.isR64()) {
+      writer.writeByte(0x48);
+      writer.writeByte(0x09);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else return X86Assembler::compileOr(source, target, writer);
+
+   return true;
+}
+
 bool X86_64Assembler::compilePop(X86Operand source, MemoryWriter& writer)
 {
    if (source.isR64()) {
@@ -2291,6 +2343,11 @@ bool X86_64Assembler :: compileXor(X86Operand source, X86Operand target, MemoryW
       writer.writeByte(0x48);
       writer.writeByte(0x33);
       X86Helper::writeModRM(writer, source, target);
+   }
+   else if (source.isR64_M64() && target.isR64()) {
+      writer.writeByte(0x48);
+      writer.writeByte(0x31);
+      X86Helper::writeModRM(writer, target, source);
    }
    else return X86Assembler::compileXor(source, target, writer);
 

@@ -5928,6 +5928,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::NotLessOperation:
       case SyntaxKey::NestedExpression:
       case SyntaxKey::ValueOperation:
+      case SyntaxKey::BAndOperation:
+      case SyntaxKey::BOrOperation:
+      case SyntaxKey::BXorOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::IndexerOperation:

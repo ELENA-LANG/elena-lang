@@ -1167,6 +1167,174 @@ inline %2C9h
 
 end 
 
+// ; ianddpn
+inline %0D8h
+
+  addi    r19, r31, __arg16_1
+
+  lwz      r17, 0(r3)
+  lwz      r18, 0(r19)
+
+  and     r17, r17, r18  
+
+  stw     r17, 0(r19)
+
+end
+
+// ; ianddpn
+inline %1D8h
+
+  addi    r19, r31, __arg16_1
+
+  lbz     r17, 0(r3)
+  lbz     r18, 0(r19)
+
+  and     r17, r17, r18  
+
+  stb     r17, 0(r19)
+
+end
+
+// ; ianddpn
+inline %2D8h
+
+  addi    r19, r31, __arg16_1
+
+  lhz     r17, 0(r3)
+  lhz     r18, 0(r19)
+
+  and     r17, r17, r18  
+
+  sth     r17, 0(r19)
+
+end
+
+// ; ianddpn
+inline %4D8h
+
+  addi    r19, r31, __arg16_1
+
+  ld      r17, 0(r3)
+  ld      r18, 0(r19)
+
+  and     r17, r17, r18  
+
+  std     r17, 0(r19)
+
+end
+
+// ; iordpn
+inline %0D9h
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  or      r17, r17, r18  
+
+  stw     r17, 0(r19)
+
+end
+
+// ; iordpn
+inline %1D9h
+
+  addi    r19, r31, __arg16_1
+
+  lbz     r17, 0(r3)
+  lbz     r18, 0(r19)
+
+  or      r17, r17, r18  
+
+  stb     r17, 0(r19)
+
+end
+
+// ; iordpn
+inline %2D9h
+
+  addi    r19, r31, __arg16_1
+
+  lhz     r17, 0(r3)
+  lhz     r18, 0(r19)
+
+  or      r17, r17, r18  
+
+  sth     r17, 0(r19)
+
+end
+
+// ; iordpn
+inline %4D9h
+
+  addi    r19, r31, __arg16_1
+
+  ld      r17, 0(r3)
+  ld      r18, 0(r19)
+
+  or      r17, r17, r18  
+
+  std     r17, 0(r19)
+
+end
+
+// ; ixordpn
+inline %0DAh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  xor     r17, r17, r18  
+
+  stw     r17, 0(r19)
+
+end
+
+// ; ixordpn
+inline %1DAh
+
+  addi    r19, r31, __arg16_1
+
+  lbz     r17, 0(r3)
+  lbz     r18, 0(r19)
+
+  xor     r17, r17, r18  
+
+  stb     r17, 0(r19)
+
+end
+
+// ; ixordpn
+inline %2DAh
+
+  addi    r19, r31, __arg16_1
+
+  lhz     r17, 0(r3)
+  lhz     r18, 0(r19)
+
+  xor     r17, r17, r18  
+
+  sth     r17, 0(r19)
+
+end
+
+// ; ixordpn
+inline %4DAh
+
+  addi    r19, r31, __arg16_1
+
+  ld      r17, 0(r3)
+  ld      r18, 0(r19)
+
+  xor     r17, r17, r18  
+
+  std     r17, 0(r19)
+
+end
+
 // ; copydpn
 inline %0E0h
 

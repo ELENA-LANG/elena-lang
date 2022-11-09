@@ -173,40 +173,97 @@ public const false = BoolValue.false;
 
 // --- BaseNumber ---
 
-public abstract class BaseNumber : BaseValue
+public abstract class BaseNumber : BaseValue,
+   info<"a base numeric value">
 {
-   abstract add(o);
+   add(BaseVariable var)
+      <= add(*var);
 
-   abstract subtract(o);
+   subtract(BaseVariable var)
+      <= subtract(*var);
 
-   abstract multiply(o);
+   multiply(BaseVariable var)
+      <= multiply(*var);
 
-   abstract divide(o);
+   divide(BaseVariable var)
+      <= divide(*var);
+
+   abstract add(o)
+      : info<"Adds the value;<br/>should be overridden">;
+
+   abstract subtract(o)
+      : info<"Subtracts the value;<br/>should be overridden">;
+
+   abstract multiply(o)
+      : info<"Multiplies by the value;<br/>should be overridden">;
+
+   abstract divide(o)
+      : info<"Divides by the value;<br/>should be overridden">;
+
+   Negative
+         : info<"Returns the negative value of a number">
+      = 0 - self;
 }
 
 // --- IntBaseNumber ---
 
-public abstract class IntBaseNumber : BaseNumber
+public abstract class IntBaseNumber : BaseNumber,
+   info<"a base integer value">
 {
+   band(BaseVariable var)
+      <= band(*var);
+
+   bor(BaseVariable var)
+      <= bor(*var);
+
+   bxor(BaseVariable var)
+      <= bxor(*var);
+
+   abstract band(o)
+      : info<"Executes bitwise AND operation;<br/>should be overridden">;
+
+   abstract bor(o)
+      : info<"Executes bitwise OR operation;<br/>should be overridden">;
+
+   abstract bxor(o)
+      : info<"Executes bitwise XOR operation;<br/>should be overridden">;
+
+//   bool allMask(operand)
+//         : info<"Returns true if all the mask bits are set">
+//      = self.band:operand == operand;
+
+//   bool anyMask(operand)
+//         : info<"Returns true if any of the mask bits are set">
+//      = 0 != self.band:operand;
+
+   get abstract BInverted();
 }
 
 // --- ByteNumber ---
 
-public const struct ByteNumber : IntBaseNumber
+public const struct ByteNumber : /*IntBaseNumber,*/
+   info<"an unsigned 8 bit integer">
 {
    embeddable __int theValue[1];
 
    static byte MinValue
+            : info<"returns the minimal value (0)">
       = 0;
 
    static byte MaxValue
+            : info<"Returns the maxial value (255)">
       = 255;
 
    constructor()
+            : info<"Returns the default value">
       = 0;
 
    constructor(byte b)
+            : info<"Creates the object with a specified value">
       = b;
+
+//   constructor(int n)
+//      = n & 255;
 
    add(o)
      <= add(cast byte(o));
@@ -289,7 +346,7 @@ public const struct ByteNumber : IntBaseNumber
 
 // --- ShortNumber ---
 
-public const struct ShortNumber : IntBaseNumber
+public const struct ShortNumber //: IntBaseNumber
 {
    embeddable __int theValue[2];
 
@@ -392,7 +449,7 @@ public const struct ShortNumber : IntBaseNumber
 
 // --- IntNumber ---
 
-public const struct IntNumber : IntBaseNumber
+public const struct IntNumber //: IntBaseNumber
 {
    embeddable __int theValue[4];
 

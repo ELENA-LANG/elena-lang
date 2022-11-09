@@ -194,6 +194,7 @@ namespace elena_lang
       bool compileLea(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileMov(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileNeg(X86Operand source, MemoryWriter& writer) override;
+      bool compileOr(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compilePop(X86Operand source, MemoryWriter& writer) override;
       bool compilePush(X86Operand source, MemoryWriter& writer) override;
       bool compileShr(X86Operand source, X86Operand target, MemoryWriter& writer) override;

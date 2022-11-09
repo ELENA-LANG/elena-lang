@@ -91,7 +91,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public class <SPAN CLASS="typeNameLabel">BaseNumber</SPAN></PRE>
+abstract public class <SPAN CLASS="typeNameLabel">BaseNumber</SPAN><BR/>
+<I>a base numeric value</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -110,6 +111,28 @@ system'BaseNumber</LI>
 </UL>
 </LI>
 </UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Negative</CODE>
+<div class="block">
+Returns the negative value of a number</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <!-- ========== METHOD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
@@ -126,6 +149,8 @@ system'BaseNumber</LI>
 <TD CLASS="colLast">
 <CODE>add(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Adds the value;<br/>should be overridden</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -135,6 +160,8 @@ system'BaseNumber</LI>
 <TD CLASS="colLast">
 <CODE>subtract(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Subtracts the value;<br/>should be overridden</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -144,6 +171,8 @@ system'BaseNumber</LI>
 <TD CLASS="colLast">
 <CODE>multiply(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
+<div class="block">
+Multiplies by the value;<br/>should be overridden</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -152,6 +181,44 @@ system'BaseNumber</LI>
 <i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>divide(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Divides by the value;<br/>should be overridden</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>multiply(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>divide(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -974,25 +1041,7 @@ public class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="#BaseValue">'BaseValue</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#BaseNumber">'BaseNumber</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#IntBaseNumber">'IntBaseNumber</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
 system'ByteNumber</LI>
-</UL>
-</LI>
-</UL>
-</LI>
-</UL>
-</LI>
 </UL>
 </LI>
 </UL>
@@ -1973,7 +2022,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public class <SPAN CLASS="typeNameLabel">IntBaseNumber</SPAN></PRE>
+abstract public class <SPAN CLASS="typeNameLabel">IntBaseNumber</SPAN><BR/>
+<I>a base integer value</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1998,6 +2048,26 @@ system'IntBaseNumber</LI>
 </UL>
 </LI>
 </UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>BInverted</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <!-- ========== METHOD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
@@ -2006,6 +2076,66 @@ system'IntBaseNumber</LI>
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>band(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes bitwise AND operation;<br/>should be overridden</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>bor(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes bitwise OR operation;<br/>should be overridden</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>bxor(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Executes bitwise XOR operation;<br/>should be overridden</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>band(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>bor(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>bxor(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN>)
+</CODE>
+</TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -2043,25 +2173,7 @@ public class <SPAN CLASS="typeNameLabel">IntNumber</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="#BaseValue">'BaseValue</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#BaseNumber">'BaseNumber</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#IntBaseNumber">'IntBaseNumber</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
 system'IntNumber</LI>
-</UL>
-</LI>
-</UL>
-</LI>
-</UL>
-</LI>
 </UL>
 </LI>
 </UL>
@@ -2963,25 +3075,7 @@ public class <SPAN CLASS="typeNameLabel">ShortNumber</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="#BaseValue">'BaseValue</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#BaseNumber">'BaseNumber</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#IntBaseNumber">'IntBaseNumber</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
 system'ShortNumber</LI>
-</UL>
-</LI>
-</UL>
-</LI>
-</UL>
-</LI>
 </UL>
 </LI>
 </UL>

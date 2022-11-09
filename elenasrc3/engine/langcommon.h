@@ -253,6 +253,9 @@ namespace elena_lang
    constexpr auto NOTGREATER_OPERATOR_ID  = 0x0014;
    constexpr auto NEGATE_OPERATOR_ID      = 0x0016;
    constexpr auto VALUE_OPERATOR_ID       = 0x0017;
+   constexpr auto BAND_OPERATOR_ID        = 0x0018;
+   constexpr auto BOR_OPERATOR_ID         = 0x0019;
+   constexpr auto BXOR_OPERATOR_ID        = 0x001A;
 
    constexpr auto CLASS_OPERATOR_ID       = 0x003F;
    constexpr auto SET_INDEXER_OPERATOR_ID = 0x0201;

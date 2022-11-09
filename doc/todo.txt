@@ -8,9 +8,10 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * ide - page up / down
+    * int, byte, short : bitwise operations - strong
+    * int, byte, short : bitwise operations - weak
 
-    * api : BaseNumber, IntBaseNumber
+    * api : IntBaseNumber
 
     * introducing longnumber
     * basic operations for : longnumber
@@ -18,19 +19,27 @@ In development:
     * basic operations for : realnumber
     * comparision operations : short / byte / long operation
     * conversion between basic types
-    * basic numbers
+    * int to short -> negative
+    * short to int -> negative
+
+    * api : basic numbers
+
+    * ide different styles : use dark mode
 
     * rosetta sample : accumulator - x86, x86-64, i386, amd64, ppc64le, aarch64
 
+    * ide debugger - auto watch
     * ide - ask to save on close
     * ide - tab
+    * ide - close project
+    * ide - close single file project
+    * ide - closing old files on opening a project
 
     * api functionality for existing classes
 
     * ide - add close button on tabbar
     * ide - fix errors
     * ide - compile the project / file
-    * ide different styles : use dark mode
 
     * api doc - properties
     * api doc
@@ -73,8 +82,6 @@ Backlog:
     * uncomment ConsoleFactory type attributes
     * external operation : do not box the arguments
     * support constants in array size declaration (see lnx_console.l)
-    * int to short -> negative
-    * short to int -> negative
     * check why the struct is boxed (see INPUT_RECORD operations)
     * simplify code (see INPUT_RECORD operations)
     * prop template : weak
@@ -93,7 +100,6 @@ Backlog:
     * unit tests : exceptions
     * review code { int n := 3; } : extra assigning
     * call internal
-    * int, byte, short : bitwise operations
     * repeate-until statements
     * aarch64 : setting mask for size (createn, ...)
     * try-finally-catch

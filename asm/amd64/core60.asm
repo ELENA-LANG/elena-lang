@@ -964,6 +964,114 @@ inline %2C9h
 
 end 
 
+// ; ianddpn
+inline %0D8h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  and  dword ptr [rdi], eax
+
+end
+
+// ; ianddpn
+inline %1D8h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  and  byte ptr [rdi], al
+
+end
+
+// ; ianddpn
+inline %2D8h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  and  word ptr [rdi], ax
+
+end
+
+// ; ianddpn
+inline %4D8h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  and  [rdi], rax
+
+end
+
+// ; iordpn
+inline %0D9h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  or   dword ptr [rdi], eax
+
+end
+
+// ; iordpn
+inline %1D9h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  or   byte ptr [rdi], al
+
+end
+
+// ; iordpn
+inline %2D9h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  or   word ptr [rdi], ax
+
+end
+
+// ; iordpn
+inline %4D9h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  or   [rdi], rax
+
+end
+
+// ; ixordpn
+inline %0DAh
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  xor  dword ptr [rdi], eax
+
+end
+
+// ; ixordpn
+inline %1DAh
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  xor  byte ptr [rdi], al
+
+end
+
+// ; ixordpn
+inline %2DAh
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  xor  word ptr [rdi], ax
+
+end
+
+// ; ixordpn
+inline %4DAh
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  xor  [rdi], rax
+
+end
+
 // ; copydpn
 inline %0E0h
 
