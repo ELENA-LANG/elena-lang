@@ -58,6 +58,9 @@ conversionTests()
     int n := 1234;
     short w := n;
     Assert.ifTrue(w == 1234);
+    console.write(".");
+    string s := n.toString();
+    Assert.ifTrue(s == "1234");
     console.writeLine(".");
 }
 

@@ -6,10 +6,12 @@
 
 public program()
 {
-   int n := 2;
-   n := n & 1;
+   int n := 3;
+//   n := n & 2;
 //   n := n | 1;
 //   n := n ^ 1;
+
+   console.writeLine(n)
 
 //    var x := accumulator(1);
     

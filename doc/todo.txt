@@ -8,7 +8,11 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
+    * fix : calling toString extension
+    * fix : converting a number to string
+
     * int, byte, short : bitwise operations - strong
+
     * int, byte, short : bitwise operations - weak
 
     * api : IntBaseNumber
