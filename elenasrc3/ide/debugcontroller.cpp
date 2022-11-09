@@ -410,6 +410,9 @@ void DebugController :: onInitBreakpoint()
          debugDataPath.changeExtension(_T("dn"));
 
          FileReader reader(*debugDataPath, FileRBMode, FileEncoding::Raw, false);
+         if (!reader.isOpen())
+            return;
+
          char header[8];
          reader.read(header, 8);
          if (ustr_t(DEBUG_MODULE_SIGNATURE).compare(header, 5)) {
@@ -641,6 +644,13 @@ bool DebugController :: start(path_t programPath, path_t arguments, bool debugMo
    }
 
    return startThread();
+}
+
+void DebugController :: stop()
+{
+   if (_process->isStarted()) {
+      _process->setEvent(DEBUG_CLOSE);
+   }
 }
 
 void DebugController :: loadDebugSection(StreamReader& reader, bool starting)

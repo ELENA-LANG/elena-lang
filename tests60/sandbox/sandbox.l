@@ -1,3 +1,5 @@
+import extensions;
+
 //function(acc)
 //    = (n => acc.append:n);
 
@@ -7,11 +9,21 @@
 public program()
 {
    int n := 3;
+
+   if (n >= 0)
+   {
+       console.writeLine("-")
+   };   
+
+
 //   n := n & 2;
 //   n := n | 1;
 //   n := n ^ 1;
 
-   console.writeLine(n)
+//   var s := n.toString();
+//   console.writeLine(s);
+
+//   console.writeLine(n)
 
 //    var x := accumulator(1);
     

@@ -211,6 +211,13 @@ void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
    }
 }
 
+void ProjectController :: doDebugStop(ProjectModel& model)
+{
+   if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
+      _debugController.stop();
+   }
+}
+
 bool ProjectController :: compileProject(ProjectModel& model)
 {
    PathString appPath(model.paths.appPath);
@@ -585,6 +592,11 @@ path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
 void IDEController :: doDebugAction(IDEModel* model, DebugAction action)
 {
    projectController.doDebugAction(model->projectModel, action);
+}
+
+void IDEController :: doDebugStop(IDEModel* model)
+{
+   projectController.doDebugStop(model->projectModel);
 }
 
 void IDEController :: onCompilationStart(IDEModel* model)

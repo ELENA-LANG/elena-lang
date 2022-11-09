@@ -330,6 +330,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_DEBUG_STEPINTO:
          _controller->doDebugAction(_model, DebugAction::StepInto);
          break;
+      case IDM_DEBUG_STOP:
+         _controller->doDebugStop(_model);
+         break;
       case IDM_WINDOW_NEXT:
          _controller->doSelectNextWindow(_model);
          break;

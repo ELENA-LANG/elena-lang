@@ -76,6 +76,7 @@ namespace elena_lang
       bool doCompileProject(ProjectModel& model, DebugAction postponedAction);
 
       void doDebugAction(ProjectModel& model, DebugAction action);
+      void doDebugStop(ProjectModel& model);
 
       void setNotifier(NotifierBase* notifier)
       {
@@ -151,6 +152,7 @@ namespace elena_lang
 
       bool doCompileProject(DialogBase& dialog, IDEModel* model);
       void doDebugAction(IDEModel* model, DebugAction action);
+      void doDebugStop(IDEModel* model);
 
       void doSelectNextWindow(IDEModel* model);
       void doSelectPrevWindow(IDEModel* model);

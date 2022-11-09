@@ -242,6 +242,7 @@ namespace elena_lang
       void run();
       void stepOver();
       void stepInto();
+      void stop();
 
       virtual void clearDebugInfo()
       {

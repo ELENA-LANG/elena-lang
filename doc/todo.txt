@@ -8,7 +8,10 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * fix : calling toString extension
+    * ide : debugger - stop the process
+
+    * ide : debugger - step into the code - tracing
+
     * fix : converting a number to string
 
     * int, byte, short : bitwise operations - strong
@@ -28,6 +31,8 @@ In development:
 
     * api : basic numbers
 
+    * ide : disable / enable the menu items, based on the model
+    * ide : debugger - status - running / stopped
     * ide different styles : use dark mode
 
     * rosetta sample : accumulator - x86, x86-64, i386, amd64, ppc64le, aarch64

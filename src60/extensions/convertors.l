@@ -2,6 +2,6 @@
 
 public extension stringConvertor
 {
-   string toString(val)
-      = val.toPrintable();
+   string toString()
+      = self.toPrintable();
 }
