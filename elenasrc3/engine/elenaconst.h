@@ -122,6 +122,9 @@ namespace elena_lang
    constexpr auto SUB_MESSAGE             = "subtract";
    constexpr auto MUL_MESSAGE             = "multiply";
    constexpr auto DIV_MESSAGE             = "divide";
+   constexpr auto BAND_MESSAGE            = "band";
+   constexpr auto BOR_MESSAGE             = "bor";
+   constexpr auto BXOR_MESSAGE            = "bxor";
    constexpr auto IF_MESSAGE              = "if";
    constexpr auto EQUAL_MESSAGE           = "equal";
    constexpr auto NOT_MESSAGE             = "Inverted";

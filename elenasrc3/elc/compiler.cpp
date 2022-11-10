@@ -4285,6 +4285,12 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
          return scope->buildins.mul_message;
       case DIV_OPERATOR_ID:
          return scope->buildins.div_message;
+      case BAND_OPERATOR_ID:
+         return scope->buildins.band_message;
+      case BOR_OPERATOR_ID:
+         return scope->buildins.bor_message;
+      case BXOR_OPERATOR_ID:
+         return scope->buildins.bxor_message;
       case IF_OPERATOR_ID:
          return scope->buildins.if_message;
       case IF_ELSE_OPERATOR_ID:
@@ -4893,6 +4899,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 void Compiler :: addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey)
 {
    SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
+
    SyntaxNode row = terminal.findChild(SyntaxKey::Row);
    SyntaxNode col = terminal.findChild(SyntaxKey::Column);
    if (row != SyntaxKey::None) {
@@ -4972,10 +4979,6 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
    ArgumentsInfo arguments;
 
    SyntaxNode current = node.firstChild();
-   if (current == SyntaxKey::Object) {
-      addBreakpoint(writer, current, BuildKey::Breakpoint);
-   }
-
    ObjectInfo source = compileObject(writer, scope, current, EAttr::Parameter);
    if (source.mode != TargetMode::None)
       scope.raiseError(errInvalidOperation, node);
@@ -5981,16 +5984,40 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
    return retVal;
 }
 
+inline bool checkTerminalCoords(SyntaxNode node)
+{
+   SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
+
+   return terminal.existChild(SyntaxKey::Row);
+}
+
 inline SyntaxNode findObjectNode(SyntaxNode node)
 {
    if (node == SyntaxKey::CodeBlock) {
       // HOTFIX : to prevent double breakpoint
       return {};
    }
-   if (node != SyntaxKey::None && node != SyntaxKey::Object) {
-      return findObjectNode(node.firstChild());
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Object:
+            if (checkTerminalCoords(current))
+               return current;
+            break;
+         default:
+         {
+            SyntaxNode objectNode = findObjectNode(current);
+            if (objectNode != SyntaxKey::None)
+               return objectNode;
+
+            break;
+         }
+      }
+
+      current = current.nextNode();
    }
-   else return node;
+
+   return {};
 }
 
 ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
@@ -7341,6 +7368,15 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
          2, 0);
    moduleScope->buildins.div_message =
       encodeMessage(moduleScope->module->mapAction(DIV_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.band_message =
+      encodeMessage(moduleScope->module->mapAction(BAND_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.bor_message =
+      encodeMessage(moduleScope->module->mapAction(BOR_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.bxor_message =
+      encodeMessage(moduleScope->module->mapAction(BXOR_MESSAGE, 0, false),
          2, 0);
    moduleScope->buildins.if_message =
       encodeMessage(moduleScope->module->mapAction(IF_MESSAGE, 0, false),

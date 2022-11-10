@@ -228,20 +228,20 @@ public abstract class IntBaseNumber : BaseNumber,
    abstract bxor(o)
       : info<"Executes bitwise XOR operation;<br/>should be overridden">;
 
-//   bool allMask(operand)
-//         : info<"Returns true if all the mask bits are set">
-//      = self.band:operand == operand;
+   bool allMask(operand)
+         : info<"Returns true if all the mask bits are set">
+      = self.band:operand == operand;
 
-//   bool anyMask(operand)
-//         : info<"Returns true if any of the mask bits are set">
-//      = 0 != self.band:operand;
+   bool anyMask(operand)
+         : info<"Returns true if any of the mask bits are set">
+      = 0 != self.band:operand;
 
    get abstract BInverted();
 }
 
 // --- ByteNumber ---
 
-public const struct ByteNumber : /*IntBaseNumber,*/
+public const struct ByteNumber : /*Int*/BaseNumber,
    info<"an unsigned 8 bit integer">
 {
    embeddable __int theValue[1];
@@ -262,8 +262,9 @@ public const struct ByteNumber : /*IntBaseNumber,*/
             : info<"Creates the object with a specified value">
       = b;
 
-//   constructor(int n)
-//      = n & 255;
+   constructor(int n)
+            : info<"Creates the object with a specified value">
+      = n & 255;         
 
    add(o)
      <= add(cast byte(o));
@@ -314,34 +315,60 @@ public const struct ByteNumber : /*IntBaseNumber,*/
       = new IntNumber(theValue).divide(n);   
 
    bool equal(o)
-      <= equal(cast byte(o));
+   {
+/*      var n := cast byte(o) ?? nil;
+      (nil == n)
+          ? { ^ false }
+          : { ^ self.equal(n) }*/
+   }
 
    bool less(o)
       <= less(cast byte(o));
 
    bool equal(byte b)
+            : info<"Compares the value">
       = theValue == b;
 
    bool less(byte b)
       = theValue < b;
 
    bool equal(short s)
+            : info<"Compares the value">
       = new ShortNumber(theValue).equal(s);
 
    bool less(short s)
       = new ShortNumber(theValue).less(s);
 
    bool equal(int n)
+            : info<"Compares the value">
       = new IntNumber(theValue).equal(n);
 
    bool less(int n)
       = new IntNumber(theValue).less(n);
 
+   bool equal(real n)
+            : info<"Compares the value">
+      = new RealNumber(theValue).equal(n);
+
    short cast()
+            : info<"Returns the value as a short integer">
       = shortConvertor.convert(self);
 
    int cast()
+            : info<"returns the value as an integer">
       = intConvertor.convert(self);
+
+   uint cast()
+            : info<"returns the value as an unsigned integer">
+      = uintConvertor.convert(self);
+
+   long cast()
+            : info<"Returns the value as a long integer">
+      = longConvertor.convert(self);
+
+   real cast()
+            : info<"Returns the value as a real number">
+      = realConvertor.convert(self);
 }
 
 // --- ShortNumber ---
@@ -449,7 +476,7 @@ public const struct ShortNumber //: IntBaseNumber
 
 // --- IntNumber ---
 
-public const struct IntNumber //: IntBaseNumber
+public const struct IntNumber : /*Int*/BaseNumber
 {
    embeddable __int theValue[4];
 
@@ -555,6 +582,18 @@ public const struct IntNumber //: IntBaseNumber
    string toPrintable()
       = stringConvertor.convert(self, 10);
 }
+
+// --- UIntNumber ---
+
+public class UIntNumber;
+
+// --- LongNumber ---
+
+public class LongNumber;
+
+// --- RealNumber ---
+
+public class RealNumber;
 
 // --- CharValue ---
 

@@ -8,15 +8,6 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * ide : debugger - stop the process
-
-    * ide : debugger - step into the code - tracing
-
-    * fix : converting a number to string
-
-    * int, byte, short : bitwise operations - strong
-
-    * int, byte, short : bitwise operations - weak
 
     * api : IntBaseNumber
 
@@ -31,6 +22,8 @@ In development:
 
     * api : basic numbers
 
+    * ide : debugger - step into the code - tracing
+    * ide : debugger - step over the statement - tracing
     * ide : disable / enable the menu items, based on the model
     * ide : debugger - status - running / stopped
     * ide different styles : use dark mode

@@ -1032,7 +1032,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN><BR/>
+<I>an unsigned 8 bit integer</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1081,6 +1082,8 @@ system'ByteNumber</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Returns the default value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1090,6 +1093,8 @@ system'ByteNumber</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Creates the object with a specified value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1128,6 +1133,8 @@ system'ByteNumber</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>MinValue</CODE>
+<div class="block">
+returns the minimal value (0)</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1136,6 +1143,8 @@ system'ByteNumber</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>MaxValue</CODE>
+<div class="block">
+Returns the maxial value (255)</div>
 </TD>
 </TR>
 </TABLE>
@@ -2140,6 +2149,28 @@ Executes bitwise XOR operation;<br/>should be overridden</div>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allMask(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Returns true if all the mask bits are set</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>anyMask(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+<div class="block">
+Returns true if any of the mask bits are set</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntBaseNumber">IntBaseNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()
@@ -2173,7 +2204,19 @@ public class <SPAN CLASS="typeNameLabel">IntNumber</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
+<SPAN CLASS="memberNameLink"><A HREF="#BaseValue">'BaseValue</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#BaseNumber">'BaseNumber</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
 system'IntNumber</LI>
+</UL>
+</LI>
+</UL>
+</LI>
 </UL>
 </LI>
 </UL>

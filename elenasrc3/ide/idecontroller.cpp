@@ -635,12 +635,22 @@ void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBa
 
    WideMessage message;
    WideMessage fileStr, rowStr, colStr;
-   while (index < length) {
-      index = output.findSubStr(index, _T(": error "), length);
-      if (index == NOTFOUND_POS) {
-         index = output.findSubStr(index, _T(": warning "), length);
+   while (true) {
+      bool found = false;
+      while (index < length) {
+         if (output[index] == ':') {
+            if (output.compareSub(_T(": error "), index, 8)) {
+               found = true;
+               break;
+            }
+            else if (output.compareSub(_T(": warning "), index, 10)) {
+               found = true;
+               break;
+            }
+         }
+         index++;
       }
-      if (index == NOTFOUND_POS)
+      if (!found)
          break;
 
       pos_t errPos = index;
