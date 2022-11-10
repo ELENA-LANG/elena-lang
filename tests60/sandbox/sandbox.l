@@ -6,8 +6,25 @@ import extensions;
 //accumulator(n)
 //    = function(new Variable(n));
 
+A
+{
+   alt()
+   {
+      console.writeLine("alt")
+   }
+}
+
 public program()
 {
+   var a := new A();
+   a.test() \ alt();
+
+//      var n := cast byte(o) ?? nil;
+//      (nil == n)
+//          ? { ^ false }
+//          : { ^ self.equal(n) }
+
+
 //   console.writeLine(n)
 
 //    var x := accumulator(1);

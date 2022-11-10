@@ -593,7 +593,12 @@ public class LongNumber;
 
 // --- RealNumber ---
 
-public class RealNumber;
+public class RealNumber
+{
+   constructor(byte b)
+   {
+   }
+}
 
 // --- CharValue ---
 

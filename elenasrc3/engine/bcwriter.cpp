@@ -894,6 +894,35 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    tape.setLabel();
 }
 
+void ByteCodeWriter :: saveAlternate(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
+{
+   tape.newLabel();
+   tape.newLabel();
+
+   tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
+
+   BuildNode tryNode = node.findChild(BuildKey::Tape);
+   saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
+
+   // unhook
+   tape.write(ByteCode::Unhook);
+
+   // jump
+   tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+
+   // catchLabel:
+   tape.setLabel();
+
+   // unhook
+   tape.write(ByteCode::Unhook);
+
+   BuildNode catchNode = tryNode.nextNode(BuildKey::Tape);
+   saveTape(tape, catchNode, tapeScope, paths, tapeOptMode, false);
+
+   // eos:
+   tape.setLabel();
+}
+
 void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)
 {
    BuildNode current = node.firstChild();
@@ -946,6 +975,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::CatchOp:
             saveCatching(tape, current, tapeScope, paths, tapeOptMode);
+            break;
+         case BuildKey::AltOp:
+            saveAlternate(tape, current, tapeScope, paths, tapeOptMode);
             break;
          case BuildKey::ExternOp:
             saveExternOp(tape, current, tapeScope, paths, tapeOptMode);

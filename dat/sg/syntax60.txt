@@ -74,6 +74,7 @@ __define RESEND              7366;
 __define CATCH_OPERATION     7367;
 __define CATCH               7368;
 __define REDIRECT            7371;
+__define ALT_OPERATION       7372;
 
 START ::= 
         NEXT_DECLARATION;
@@ -325,7 +326,7 @@ RI_R ::=
         | I_L0_R
 	| I_L1_R
 	| RI_L2_R
-	| I_L3_R L3s L5s L6s L8e
+	| I_L3_R L3f
 	| I_L4_R
 	| I_L5_R
 	| I_L6_R
@@ -369,7 +370,7 @@ O_R  ::=
         | I_L0_R
 	| I_L1_R
 	| I_L2_R L3s L4s L5s L6s L7e
-	| I_L3_R L3s L4s L5s L6s L8e
+	| I_L3_R L3f
 	| I_L4_R L4s L5s
 	| I_L5_R L5s
 	| I_L6_R
@@ -465,6 +466,14 @@ I_L3_R ::=
 Ix_L0_R ::=
         "[" ^OBJECT EXPRESSION "]" ^INDEXER_OPERATION;
 
+L3f ::=
+        L3_R L3s L5s L6s L8e
+	| L5_R L5s L6s
+	| L6_R L6s
+	| L8_R
+	| L81_R
+	| eps;
+
 L3_R ::=
 	"." MESSAGE MESSAGE_R;
 
@@ -548,6 +557,9 @@ IL8_R ::=
 
 L8_R ::=
 	"\\"  CATCH ^CATCH_OPERATION;
+
+L81_R ::=
+	"\" CATCH ^ALT_OPERATION;
 
 L8e ::=
 	L8_R

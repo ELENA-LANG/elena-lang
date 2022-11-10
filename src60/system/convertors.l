@@ -47,6 +47,24 @@ public singleton intConvertor
    }
 }
 
+// --- uintConvertor ---
+
+public singleton uintConvertor
+{
+}
+
+// --- longConvertor ---
+
+public singleton longConvertor
+{
+}
+
+// --- realConvertor ---
+
+public singleton realConvertor
+{
+}
+
 // --- charConvertor ---
 
 public singleton charConvertor

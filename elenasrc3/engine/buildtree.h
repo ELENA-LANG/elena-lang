@@ -100,6 +100,7 @@ namespace elena_lang
       LoopOp               = 0x004F,
       CatchOp              = 0x0050,
       ExternOp             = 0x0051,
+      AltOp                = 0x0052,
 
       NestedClass          = 0x0080,
 

@@ -5376,6 +5376,54 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    return retVal;
 }
 
+ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, SyntaxNode messageNode)
+{
+   // NOTE : the operation target shouldn't be a primitive type
+   ObjectInfo source = validateObject(writer, scope, messageNode, target, 0, true, true);
+
+   mssg_t messageRef = mapMessage(scope, messageNode, false, false, false);
+   ArgumentsInfo arguments;
+
+   if (!test(messageRef, FUNCTION_MESSAGE)) {
+      arguments.add(source);
+   }
+
+   ref_t implicitSignatureRef = compileMessageArguments(writer, scope, messageNode, arguments, EAttr::NoPrimitives);
+
+   return compileMessageOperation(writer, scope, messageNode, source, messageRef,
+      implicitSignatureRef, arguments, EAttr::None);
+}
+
+ObjectInfo Compiler :: compileAltOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
+{
+   ObjectInfo ehLocal = declareTempStructure(scope, { (int)scope.moduleScope->ehTableEntrySize, false });
+
+   ObjectInfo target = {};
+   SyntaxNode current = node.firstChild();
+   if (current == SyntaxKey::MessageOperation) {
+      SyntaxNode objNode = current.firstChild();
+
+      target = compileObject(writer, scope, objNode, EAttr::Parameter);
+
+      writer.newNode(BuildKey::AltOp, ehLocal.argument);
+
+      writer.newNode(BuildKey::Tape);
+      compileMessageOperationR(writer, scope, target, objNode.nextNode());
+      writer.closeNode();
+   }
+   else scope.raiseError(errInvalidOperation, node);
+
+   writer.newNode(BuildKey::Tape);
+   SyntaxNode altNode = current.nextNode().firstChild();
+
+   compileMessageOperationR(writer, scope, target, altNode.firstChild());
+   writer.closeNode();
+
+   writer.closeNode();
+
+   return {};
+}
+
 ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
 {
    ObjectInfo ehLocal = declareTempStructure(scope, { (int)scope.moduleScope->ehTableEntrySize, false });
@@ -5392,23 +5440,7 @@ ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope&
    writer.closeNode();
 
    writer.newNode(BuildKey::Tape);
-
-   // NOTE : the operation target shouldn't be a primtive type
-   ObjectInfo source = validateObject(writer, scope, node, { ObjectKind::Object }, 0, true, true);
-
-   SyntaxNode messageNode = catchNode.firstChild().firstChild();
-   mssg_t messageRef = mapMessage(scope, messageNode, false, false, false);
-   ArgumentsInfo arguments;
-
-   if (!test(messageRef, FUNCTION_MESSAGE)) {
-      arguments.add(source);
-   }
-
-   ref_t implicitSignatureRef = compileMessageArguments(writer, scope, messageNode, arguments, EAttr::NoPrimitives);
-
-   compileMessageOperation(writer, scope, node, source, messageRef,
-      implicitSignatureRef, arguments, EAttr::None);
-
+   compileMessageOperationR(writer, scope, { ObjectKind::Object }, catchNode.firstChild().firstChild());
    writer.closeNode();
 
    writer.closeNode();
@@ -5952,6 +5984,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::CatchOperation:
          retVal = compileCatchOperation(writer, scope, current);
+         break;
+      case SyntaxKey::AltOperation:
+         retVal = compileAltOperation(writer, scope, current);
          break;
       case SyntaxKey::ReturnExpression:
          retVal = compileExpression(writer, scope, current.firstChild(), 0, mode);

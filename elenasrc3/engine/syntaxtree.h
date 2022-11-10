@@ -124,6 +124,7 @@ namespace elena_lang
       RedirectTryDispatch     = 0x001CC9,
       DirectResend            = 0x001CCA,
       Redirect                = 0x001CCB,
+      AltOperation            = 0x001CCC,
 
       Name                    = 0x000101,
       Namespace               = 0x000103,
