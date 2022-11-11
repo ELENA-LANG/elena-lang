@@ -54,6 +54,7 @@ __define VALUE_OPERATION     6231;
 __define BAND_OPERATION      6232;
 __define BOR_OPERATION       6233;
 __define BXOR_OPERATION      6234;
+__define BNOT_OPERATION      6235;
 __define MESSAGE_OPERATION   6337;
 __define PROPERTY_OPERATION  6340;
 __define EXPRESSION          6288;
@@ -208,6 +209,7 @@ ROOT_EXPRESSION ::=
         | string O_Re
         | wide O_Re
         | character O_Re
+        | "(" SUB_EXPRESSION
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION
@@ -215,6 +217,7 @@ ROOT_EXPRESSION ::=
 	| "!" SINGLE_EXPRESSION ^NOT_OPERATION
 	| "-" SINGLE_EXPRESSION ^NEGATE_OPERATION
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
+	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION
 	| "{" BLOCK ^CLOSURE;
 
 EXPRESSION ::=
@@ -231,6 +234,7 @@ EXPRESSION ::=
 	| "!" SINGLE_EXPRESSION ^NOT_OPERATION
 	| "-" SINGLE_EXPRESSION ^NEGATE_OPERATION
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
+	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION
 	| "{" BLOCK ^CLOSURE;
 
 SINGLE_EXPRESSION ::=
@@ -370,7 +374,7 @@ O_R  ::=
         NESTED_EXPRESSION ^NESTED N_R
         | I_L0_R
 	| I_L1_R
-	| I_L2_R L3s L4s L5s L6s L7e
+	| I_L2_R L2f
 	| I_L3_R L3f
 	| I_L4_R L4s L5s
 	| I_L5_R L5s
@@ -467,10 +471,21 @@ I_L3_R ::=
 Ix_L0_R ::=
         "[" ^OBJECT EXPRESSION "]" ^INDEXER_OPERATION;
 
+L2f ::=
+        L2_R L3s L5s L6s L8e
+	| L3_R L3s L5s L6s L8e
+	| L5_R L5s L6s
+	| L6_R L6s
+	| L7_R
+	| L8_R
+	| L81_R
+	| eps;
+
 L3f ::=
         L3_R L3s L5s L6s L8e
 	| L5_R L5s L6s
 	| L6_R L6s
+	| L7_R
 	| L8_R
 	| L81_R
 	| eps;

@@ -356,6 +356,20 @@ inline % 20h
 
 end
 
+// ; not
+inline % 21h
+
+   not    edx
+
+end
+
+// ; neg
+inline % 22h
+
+   neg    edx
+
+end
+
 // ; setr
 inline %80h
 
@@ -1020,6 +1034,49 @@ inline %4DAh
   mov  ecx, [esi]
   xor  [edi], ecx
   xor  [edi+4], eax
+
+end
+
+// ; inotdpn
+inline %0DBh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  not  eax 
+  mov  [edi], eax
+
+end
+
+// ; inotdpn 1
+inline %1DBh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  not  eax 
+  mov  byte ptr [edi], al
+
+end
+
+// ; inotdpn 2
+inline %2DBh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  not  eax 
+  mov  word ptr [edi], ax
+
+end
+
+// ; inotdpn 8
+inline %4DBh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi + 4]
+  mov  ecx, [esi]
+  not  eax 
+  not  ecx 
+  mov  [edi], ecx
+  mov  [edi+4], eax
 
 end
 

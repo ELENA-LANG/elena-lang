@@ -399,6 +399,21 @@ inline % 20h
 
 end
 
+// ; not
+inline % 21h
+
+   mvn    x9, x9
+
+end
+
+// ; neg
+inline % 22h
+
+   mov    x17, 0
+   sub    x9, x17, x9
+
+end
+
 // ; setr
 inline %80h
 
@@ -1326,6 +1341,58 @@ inline %4DAh
   ldr     x18, [x19]
 
   xor     x17, x17, x18  
+
+  str     x17, [x19]
+
+end
+
+// ; inotdpn
+inline %0DBh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x18, [x0]
+
+  mvn     x17, x18  
+
+  str     w17, [x19]
+
+end
+
+// ; inotdpn
+inline %1DBh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x18, [x0]
+
+  mvn     x17, x18  
+
+  strb    w17, [x19]
+
+end
+
+// ; inotdpn
+inline %2DBh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x18, [x0]
+
+  mvn     x17, x18  
+
+  strh    w17, [x19]
+
+end
+
+// ; inotdpn
+inline %4DBh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x18, [x0]
+
+  mvn     x17, x18  
 
   str     x17, [x19]
 

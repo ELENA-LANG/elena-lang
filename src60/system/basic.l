@@ -241,7 +241,7 @@ public abstract class IntBaseNumber : BaseNumber,
 
 // --- ByteNumber ---
 
-public const struct ByteNumber : /*Int*/BaseNumber,
+public const struct ByteNumber : IntBaseNumber,
    info<"an unsigned 8 bit integer">
 {
    embeddable __int theValue[1];
@@ -279,47 +279,91 @@ public const struct ByteNumber : /*Int*/BaseNumber,
      <= divide(cast byte(o));
 
    byte add(byte n)
+            : info<"Returns the sum">
       = theValue + n;   
 
    byte subtract(byte n)
+            : info<"Returns the difference">
       = theValue - n;   
 
    byte multiply(byte n)
+            : info<"Returns the product">
       = theValue * n;   
 
    byte divide(byte n)
+            : info<"Returns the result of integer division">
       = theValue / n;   
 
    short add(short n)
+            : info<"Returns the sum">
       = new ShortNumber(theValue).add(n);   
 
    short subtract(short n)
+            : info<"Returns the difference">
       = new ShortNumber(theValue).subtract(n);   
 
    short multiply(short n)
+            : info<"Returns the product">
       = new ShortNumber(theValue).multiply(n);   
 
    short divide(short n)
+            : info<"Returns the result of integer division">
       = new ShortNumber(theValue).divide(n);   
 
    int add(int n)
+            : info<"Returns the sum">
       = new IntNumber(theValue).add(n);   
 
    int subtract(int n)
+            : info<"Returns the difference">
       = new IntNumber(theValue).subtract(n);   
 
    int multiply(int n)
+            : info<"Returns the product">
       = new IntNumber(theValue).multiply(n);   
 
    int divide(int n)
+            : info<"Returns the result of integer division">
       = new IntNumber(theValue).divide(n);   
+
+   int add(long n)
+            : info<"Returns the sum">
+      = new LongNumber(theValue).add(n);   
+
+   int subtract(long n)
+            : info<"Returns the difference">
+      = new LongNumber(theValue).subtract(n);   
+
+   int multiply(long n)
+            : info<"Returns the product">
+      = new LongNumber(theValue).multiply(n);   
+
+   int divide(long n)
+            : info<"Returns the result of integer division">
+      = new LongNumber(theValue).divide(n);   
+
+   int add(real n)
+            : info<"Returns the sum">
+      = new RealNumber(theValue).add(n);   
+
+   int subtract(real n)
+            : info<"Returns the difference">
+      = new RealNumber(theValue).subtract(n);   
+
+   int multiply(real n)
+            : info<"Returns the product">
+      = new RealNumber(theValue).multiply(n);   
+
+   int divide(real n)
+            : info<"Returns the result of integer division">
+      = new RealNumber(theValue).divide(n);   
 
    bool equal(o)
    {
-/*      var n := cast byte(o) ?? nil;
+      var n := cast byte(o) ?? nil;
       (nil == n)
           ? { ^ false }
-          : { ^ self.equal(n) }*/
+          : { ^ self.equal(n) }
    }
 
    bool less(o)
@@ -344,11 +388,81 @@ public const struct ByteNumber : /*Int*/BaseNumber,
       = new IntNumber(theValue).equal(n);
 
    bool less(int n)
+            : info<"Compares the value">
       = new IntNumber(theValue).less(n);
+
+   bool equal(long n)
+            : info<"Compares the value">
+      = new LongNumber(self).equal(n);
+
+   bool less(long n)
+            : info<"Compares the value">
+      = new LongNumber(self).less(n);
 
    bool equal(real n)
             : info<"Compares the value">
       = new RealNumber(theValue).equal(n);
+
+   bool less(real n)
+            : info<"Compares the value">
+      = new RealNumber(theValue).less(n);
+
+   band(n)
+      <= band(cast byte(n));
+
+   bor(n)
+      <= bor(cast byte(n));
+
+   bxor(n)
+      <= bxor(cast byte(n));
+
+   byte band(byte n)
+            : info<"Returns the result of bitwise AND operation">
+      = theValue & n;
+
+   byte bor(byte n)
+            : info<"Returns the result of bitwise OR operation">
+      = theValue | n;
+
+   byte bxor(byte n)
+            : info<"Returns the result of bitwise XOR operation">
+      = theValue ^ n;
+
+   short band(short n)
+            : info<"Returns the result of bitwise AND operation">
+      = new ShortNumber(n).band(n);
+
+   short bor(short n)
+            : info<"Returns the result of bitwise OR operation">
+      = new ShortNumber(n).bor(n);
+
+   short bxor(short n)
+            : info<"Returns the result of bitwise XOR operation">
+      = new ShortNumber(n).bxor(n);
+
+   int band(int n)
+            : info<"Returns the result of bitwise AND operation">
+      = new IntNumber(n).band(n);
+
+   int bor(int n)
+            : info<"Returns the result of bitwise OR operation">
+      = new IntNumber(n).bor(n);
+
+   int bxor(int n)
+            : info<"Returns the result of bitwise XOR operation">
+      = new IntNumber(n).bxor(n);
+
+   long band(long n)
+            : info<"Returns the result of bitwise AND operation">
+      = new LongNumber(n).band(n);
+
+   long bor(long n)
+            : info<"Returns the result of bitwise OR operation">
+      = new LongNumber(n).bor(n);
+
+   long bxor(long n)
+            : info<"Returns the result of bitwise XOR operation">
+      = new LongNumber(n).bxor(n);
 
    short cast()
             : info<"Returns the value as a short integer">
@@ -369,6 +483,18 @@ public const struct ByteNumber : /*Int*/BaseNumber,
    real cast()
             : info<"Returns the value as a real number">
       = realConvertor.convert(self);
+
+   get byte BInverted()
+            : info<"bitwise inversion">
+      = ~theValue;
+
+   string toPrintable()
+            : info<"returns the literal presentation">
+      = stringConvertor.convert(self);
+
+   byte clone()
+            : info<"clones the value">
+      = new ByteNumber(self);
 }
 
 // --- ShortNumber ---
@@ -589,7 +715,12 @@ public class UIntNumber;
 
 // --- LongNumber ---
 
-public class LongNumber;
+public class LongNumber
+{
+   constructor(byte b)
+   {
+   }
+}
 
 // --- RealNumber ---
 

@@ -94,6 +94,7 @@ namespace elena_lang
       BAndOperation           = 0x001858,
       BOrOperation            = 0x001859,
       BXorOperation           = 0x00185A,
+      BNotOperation           = 0x00185B,
       Postfix                 = 0x001060,
       TemplatePostfix         = 0x001061,
       MethodPostfix           = 0x001062,

@@ -6,20 +6,19 @@ import extensions;
 //accumulator(n)
 //    = function(new Variable(n));
 
-A;
-
-public program()
+A
 {
-   var a := new A();
-   var o := a.get() ?? nil;
-
-//      var n := cast byte(o) ?? nil;
+   bool equal(o)
+   {
+      var n := cast byte(o) ?? nil;
 //      (nil == n)
 //          ? { ^ false }
 //          : { ^ self.equal(n) }
+   }
+}
 
-
-//   console.writeLine(n)
+public program()
+{
 
 //    var x := accumulator(1);
     

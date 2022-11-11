@@ -772,6 +772,14 @@ void X86Assembler :: compileNop(ScriptToken& tokenInfo, MemoryWriter& writer)
    read(tokenInfo);
 }
 
+void X86Assembler :: compileNot(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (!compileNot(sour, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void X86Assembler :: compilePop(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -1344,11 +1352,22 @@ bool X86Assembler :: compileMul(X86Operand source, MemoryWriter& writer)
    return true;
 }
 
-bool X86Assembler::compileNeg(X86Operand source, MemoryWriter& writer)
+bool X86Assembler :: compileNeg(X86Operand source, MemoryWriter& writer)
 {
    if (source.isR32_M32()) {
       writer.writeByte(0xF7);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 3 }, source);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileNot(X86Operand source, MemoryWriter& writer)
+{
+   if (source.isR32_M32()) {
+      writer.writeByte(0xF7);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 2 }, source);
    }
    else return false;
 
@@ -1716,6 +1735,9 @@ bool X86Assembler :: compileNOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    else if (tokenInfo.compare("nop")) {
       compileNop(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("not")) {
+      compileNot(tokenInfo, writer);
+   }
    else return false;
 
    return true;
@@ -2073,6 +2095,12 @@ bool X86_64Assembler :: compileCMovcc(X86Operand source, X86Operand target, Memo
       writer.writeByte(0x40 + (int)type);
       X86Helper::writeModRM(writer, source, target);
    }
+   else if (source.isR64() && target.isRX64()) {
+      writer.writeByte(0x4B);
+      writer.writeByte(0x0F);
+      writer.writeByte(0x40 + (int)type);
+      X86Helper::writeModRM(writer, source, target);
+   }
    else return X86Assembler::compileCMovcc(source, target, writer, type);
 
    return true;
@@ -2232,6 +2260,18 @@ bool X86_64Assembler :: compileNeg(X86Operand source, MemoryWriter& writer)
       writer.writeByte(0x48);
       writer.writeByte(0xF7);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 3 }, source);
+   }
+   else return X86Assembler::compileNeg(source, writer);
+
+   return true;
+}
+
+bool X86_64Assembler :: compileNot(X86Operand source, MemoryWriter& writer)
+{
+   if (source.isR64_M64()) {
+      writer.writeByte(0x48);
+      writer.writeByte(0xF7);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 2 }, source);
    }
    else return X86Assembler::compileNeg(source, writer);
 

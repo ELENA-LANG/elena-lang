@@ -440,6 +440,21 @@ inline % 20h
 
 end
 
+// ; not
+inline % 21h
+
+   not    r14, r14
+
+end
+
+// ; neg
+inline % 22h
+
+   mr     r16, 0
+   sub    r14, r16, r14
+
+end
+
 // ; setr
 inline %80h
 
@@ -1338,6 +1353,58 @@ inline %4DAh
   ld      r18, 0(r19)
 
   xor     r17, r17, r18  
+
+  std     r17, 0(r19)
+
+end
+
+// ; inotdpn
+inline %0DBh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+
+  not     r18, r17  
+
+  stw     r18, 0(r19)
+
+end
+
+// ; inotdpn
+inline %1DBh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r18, 0(r3)
+
+  not     r17, r18  
+
+  stb     r17, 0(r19)
+
+end
+
+// ; inotdpn
+inline %2DBh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r18, 0(r3)
+
+  not     r17, r18  
+
+  sth     r17, 0(r19)
+
+end
+
+// ; inotdpn
+inline %4DBh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r18, 0(r3)
+
+  not     r17, r18  
 
   std     r17, 0(r19)
 

@@ -366,6 +366,18 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void intSOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   switch (node.arg.value) {
+      case BNOT_OPERATOR_ID:
+         tape.write(ByteCode::INotDPN, targetOffset, 4);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
 void byteOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
@@ -400,6 +412,18 @@ void byteOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void byteSOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   switch (node.arg.value) {
+      case BNOT_OPERATOR_ID:
+         tape.write(ByteCode::INotDPN, targetOffset, 1);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
 void shortOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
@@ -428,6 +452,18 @@ void shortOp(CommandTape& tape, BuildNode& node, TapeScope&)
          break;
       case BXOR_OPERATOR_ID:
          tape.write(ByteCode::IXorDPN, targetOffset, 2);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
+void shortSOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   switch (node.arg.value) {
+      case BNOT_OPERATOR_ID:
+         tape.write(ByteCode::INotDPN, targetOffset, 2);
          break;
       default:
          throw InternalError(errFatalError);
@@ -612,6 +648,17 @@ void boolSOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SelEqRR, falseRef | mskVMTRef, trueRef | mskVMTRef);
 }
 
+void nilOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   switch (node.arg.value) {
+      case ISNIL_OPERATOR_ID:
+         tape.write(ByteCode::Coalesce);
+         break;
+      default:
+         break;
+   }
+}
+
 void assignSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    // !! temporally - assigni should be used instead
@@ -708,7 +755,9 @@ ByteCodeWriter::Saver commands[] =
    assignSPField, getField, staticBegin, staticEnd, classOp, byteArrayOp, newArrayOp, swapSPField,
 
    mssgLiteral, accSwapSPField, redirectOp, shortArraySOp, wideLiteral, byteOp, shortOp, byteCondOp,
-   shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning, staticVarOp, loadingIndex,
+   shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning, staticVarOp, loadingIndex, nilOp,
+
+   intSOp, byteSOp, shortSOp
 };
 
 // --- ByteCodeWriter ---

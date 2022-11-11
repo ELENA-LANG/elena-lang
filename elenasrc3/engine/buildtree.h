@@ -90,6 +90,9 @@ namespace elena_lang
       StaticVar            = 0x003D,
       LoadingIndex         = 0x003E,
       NilOp                = 0x003F,
+      IntSOp               = 0x0040,
+      ByteSOp              = 0x0041,
+      ShortSOp             = 0x0042,
 
       Import               = 0x0048,
       DictionaryOp         = 0x0049,

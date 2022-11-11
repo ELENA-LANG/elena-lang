@@ -78,6 +78,7 @@ namespace elena_lang
       virtual bool compileMov(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileMul(X86Operand source, MemoryWriter& writer);
       virtual bool compileNeg(X86Operand source, MemoryWriter& writer);
+      virtual bool compileNot(X86Operand source, MemoryWriter& writer);
       virtual bool compileOr(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compilePop(X86Operand source, MemoryWriter& writer);
       virtual bool compilePush(X86Operand source, MemoryWriter& writer);
@@ -110,6 +111,7 @@ namespace elena_lang
       void compileMul(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileNeg(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileNop(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileNot(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileOr(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compilePop(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compilePush(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -194,6 +196,7 @@ namespace elena_lang
       bool compileLea(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileMov(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileNeg(X86Operand source, MemoryWriter& writer) override;
+      bool compileNot(X86Operand source, MemoryWriter& writer) override;
       bool compileOr(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compilePop(X86Operand source, MemoryWriter& writer) override;
       bool compilePush(X86Operand source, MemoryWriter& writer) override;

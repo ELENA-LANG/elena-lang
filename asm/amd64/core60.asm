@@ -362,6 +362,20 @@ inline % 20h
 
 end
 
+// ; not
+inline % 21h
+
+   not    rdx
+
+end
+
+// ; neg
+inline % 22h
+
+   neg    rdx
+
+end
+
 // ; setr
 inline %80h
 
@@ -1077,6 +1091,46 @@ inline %4DAh
   lea  rdi, [rbp + __arg32_1]
   mov  rax, [r10]
   xor  [rdi], rax
+
+end
+
+// ; inotdpn
+inline %0DBh
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  not  rax
+  mov  dword ptr [rdi], eax
+
+end
+
+// ; inotdpn 1
+inline %1DBh
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  not  rax
+  mov  byte ptr [rdi], al
+
+end
+
+// ; inotdpn 2
+inline %2DBh
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  not  rax
+  mov  word ptr [rdi], ax
+
+end
+
+// ; inotdpn 8
+inline %4DBh
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [r10]
+  not  rax
+  mov  [rdi], rax
 
 end
 

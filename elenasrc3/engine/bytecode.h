@@ -38,6 +38,8 @@ namespace elena_lang
       Include        = 0x11,
 
       Coalesce       = 0x20,
+      Not            = 0x21,
+      Neg            = 0x22,
 
       MaxSingleOp    = 0x7F,
 
@@ -97,6 +99,7 @@ namespace elena_lang
       IAndDPN        = 0xD8,
       IOrDPN         = 0xD9,
       IXorDPN        = 0xDA,
+      INotDPN        = 0xDB,
 
       CopyDPN        = 0xE0,
       IAddDPN        = 0xE1,

@@ -68,6 +68,10 @@ ELENA byte codes (or ecodes)
 
    mov n:n                  - index := n
 
+   neg                      - index := -index; 
+
+   not                      - index := ~index; 
+
    peek r                   - acc <= [r] 
 
    save                     - [acc] := index
@@ -237,6 +241,10 @@ ELENA byte codes (or ecodes)
                               [dp[disp]] += temp;
                               n = 1,2,4,8 
  
+   iand dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] & temp;
+                              n = 1,2,4,8 
+ 
    idiv dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] /= temp;
                               n = 1,2,4,8  
@@ -246,10 +254,23 @@ ELENA byte codes (or ecodes)
                               n = 1,2,4,8  
 
 
+   inot dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] ^ temp;
+                              n = 1,2,4,8 
+ 
+   isub dp:disp, n          - temp : n << sp[0];
+   ior dp:disp, n           - temp : n << sp[0];
+                              [dp[disp]] | temp;
+                              n = 1,2,4,8 
+ 
    isub dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] -= temp;
                               n = 1,2,4,8  
 
+   ixor dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] ^ temp;
+                              n = 1,2,4,8 
+ 
    subn n                   - index := index - n
 
 

@@ -8,10 +8,6 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * bcwriter : nilop
-
-    * operator ??
-
     * api : ByteNumber
 
     * introducing longnumber
@@ -19,9 +15,6 @@ In development:
     * realnumber
     * basic operations for : realnumber
     * comparision operations : short / byte / long operation
-    * conversion between basic types
-    * int to short -> negative
-    * short to int -> negative
 
     * api : basic numbers
 
@@ -64,6 +57,8 @@ In development:
     * uncomment hello world
     * uncomment lnx_console.l code
     * unit tests : boolean operations
+    * int to short -> negative
+    * short to int -> negative
 
     * optimization : extra temporal variables
 

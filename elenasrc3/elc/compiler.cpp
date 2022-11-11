@@ -5378,20 +5378,37 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
 ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, SyntaxNode messageNode)
 {
-   // NOTE : the operation target shouldn't be a primitive type
-   ObjectInfo source = validateObject(writer, scope, messageNode, target, 0, true, true);
-
-   mssg_t messageRef = mapMessage(scope, messageNode, false, false, false);
    ArgumentsInfo arguments;
 
-   if (!test(messageRef, FUNCTION_MESSAGE)) {
-      arguments.add(source);
+   switch (target.mode) {
+      case TargetMode::Casting:
+         compileMessageArguments(writer, scope, messageNode, arguments, EAttr::NoPrimitives);
+         if (arguments.count() == 1) {
+            return convertObject(writer, scope, messageNode, arguments[0], retrieveStrongType(scope, target));
+         }
+         else scope.raiseError(errInvalidOperation, messageNode);
+         break;
+      default:
+         {
+            // NOTE : the operation target shouldn't be a primitive type
+            ObjectInfo source = validateObject(writer, scope, messageNode, target, 0, true, true);
+
+            mssg_t messageRef = mapMessage(scope, messageNode, false, false, false);
+
+            if (!test(messageRef, FUNCTION_MESSAGE)) {
+               arguments.add(source);
+            }
+
+            ref_t implicitSignatureRef = compileMessageArguments(writer, scope, messageNode, arguments, EAttr::NoPrimitives);
+
+            return compileMessageOperation(writer, scope, messageNode, source, messageRef,
+               implicitSignatureRef, arguments, EAttr::None);
+
+            break;
+         }
    }
 
-   ref_t implicitSignatureRef = compileMessageArguments(writer, scope, messageNode, arguments, EAttr::NoPrimitives);
-
-   return compileMessageOperation(writer, scope, messageNode, source, messageRef,
-      implicitSignatureRef, arguments, EAttr::None);
+   return {};
 }
 
 ObjectInfo Compiler :: compileAltOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
@@ -5453,10 +5470,10 @@ ObjectInfo Compiler :: compileIsNilOperation(BuildTreeWriter& writer, ExprScope&
    SyntaxNode altNode = current.nextNode();
    ObjectInfo roperand = compileExpression(writer, scope, altNode, 0, EAttr::Parameter);
 
-   writer.newNode(BuildKey::NilOp, ISNIL_OPERATOR_ID);
-   writeObjectInfo(writer, scope, loperand);
    writeObjectInfo(writer, scope, roperand);
-   writer.closeNode();
+   writer.appendNode(BuildKey::SavingInStack);
+   writeObjectInfo(writer, scope, loperand);
+   writer.appendNode(BuildKey::NilOp, ISNIL_OPERATOR_ID);
 
    return { ObjectKind::Object };
 
@@ -6004,6 +6021,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::BAndOperation:
       case SyntaxKey::BOrOperation:
       case SyntaxKey::BXorOperation:
+      case SyntaxKey::BNotOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::IndexerOperation:
