@@ -5424,6 +5424,44 @@ ObjectInfo Compiler :: compileAltOperation(BuildTreeWriter& writer, ExprScope& s
    return {};
 }
 
+ObjectInfo Compiler :: compileIsNilOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
+{
+   ObjectInfo ehLocal = declareTempStructure(scope, { (int)scope.moduleScope->ehTableEntrySize, false });
+
+   ObjectInfo loperand = {};
+   SyntaxNode current = node.firstChild();
+   if (current == SyntaxKey::MessageOperation) {
+      SyntaxNode objNode = current.firstChild();
+
+      loperand = compileObject(writer, scope, objNode, EAttr::Parameter);
+
+      writer.newNode(BuildKey::AltOp, ehLocal.argument);
+
+      writer.newNode(BuildKey::Tape);
+      compileMessageOperationR(writer, scope, loperand, objNode.nextNode());
+      writer.closeNode();
+
+      writer.newNode(BuildKey::Tape);
+      writer.appendNode(BuildKey::NilReference, 0);
+      writer.closeNode();
+
+      writer.closeNode();
+
+      loperand = saveToTempLocal(writer, scope, { ObjectKind::Object });
+   }
+
+   SyntaxNode altNode = current.nextNode();
+   ObjectInfo roperand = compileExpression(writer, scope, altNode, 0, EAttr::Parameter);
+
+   writer.newNode(BuildKey::NilOp, ISNIL_OPERATOR_ID);
+   writeObjectInfo(writer, scope, loperand);
+   writeObjectInfo(writer, scope, roperand);
+   writer.closeNode();
+
+   return { ObjectKind::Object };
+
+}
+
 ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
 {
    ObjectInfo ehLocal = declareTempStructure(scope, { (int)scope.moduleScope->ehTableEntrySize, false });
@@ -5987,6 +6025,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::AltOperation:
          retVal = compileAltOperation(writer, scope, current);
+         break;
+      case SyntaxKey::IsNilOperation:
+         retVal = compileIsNilOperation(writer, scope, current);
          break;
       case SyntaxKey::ReturnExpression:
          retVal = compileExpression(writer, scope, current.firstChild(), 0, mode);

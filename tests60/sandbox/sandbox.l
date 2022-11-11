@@ -6,18 +6,12 @@ import extensions;
 //accumulator(n)
 //    = function(new Variable(n));
 
-A
-{
-   alt()
-   {
-      console.writeLine("alt")
-   }
-}
+A;
 
 public program()
 {
    var a := new A();
-   a.test() \ alt();
+   var o := a.get() ?? nil;
 
 //      var n := cast byte(o) ?? nil;
 //      (nil == n)

@@ -348,6 +348,14 @@ inline % 11h
 
 end
 
+// ; coalesce
+inline % 20h
+
+   test   ebx, ebx
+   cmovz  ebx, esi
+
+end
+
 // ; setr
 inline %80h
 

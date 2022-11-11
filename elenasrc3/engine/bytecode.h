@@ -37,6 +37,8 @@ namespace elena_lang
       Exclude        = 0x10,
       Include        = 0x11,
 
+      Coalesce       = 0x20,
+
       MaxSingleOp    = 0x7F,
 
       SetR           = 0x80,

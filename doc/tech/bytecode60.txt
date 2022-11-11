@@ -168,6 +168,8 @@ ELENA byte codes (or ecodes)
 
    class                    - acc := acc.class
 
+   coalesce                 - acc := acc ?? sp[0]   (if acc is nil, get sp[0])
+
    copy n                   - sp[0] >> acc, n bytes
 
    copy dp:disp, n          - sp[0] >> temp, n bytes  

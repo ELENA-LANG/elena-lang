@@ -354,6 +354,14 @@ inline % 11h
 
 end
 
+// ; coalesce
+inline % 20h
+
+   test  rbx, rbx 
+   cmovz rbx, r10
+
+end
+
 // ; setr
 inline %80h
 

@@ -432,6 +432,14 @@ inline % 11h
 
 end
 
+// ; coalesce
+inline % 20h
+
+  cmpwi   r15,0
+  iseleq  r15, r3, r15
+
+end
+
 // ; setr
 inline %80h
 

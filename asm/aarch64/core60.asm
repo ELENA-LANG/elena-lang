@@ -391,6 +391,14 @@ inline % 11h
 
 end
 
+// ; coalesce
+inline % 20h
+
+  cmp     x10, #0
+  csel   x10, x0, x10, eq
+
+end
+
 // ; setr
 inline %80h
 
