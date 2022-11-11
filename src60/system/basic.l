@@ -484,6 +484,14 @@ public const struct ByteNumber : IntBaseNumber,
             : info<"Returns the value as a real number">
       = realConvertor.convert(self);
 
+   byte shiftLeft(int val)
+            : info<"shifts an integer value to the left by a specified number of bits">
+      = theValue $shl val;
+
+   byte shiftRight(int val)
+            : info<"shifts an integer value to the right by a specified number of bits">
+      = theValue $shr val;
+
    get byte BInverted()
             : info<"bitwise inversion">
       = ~theValue;
@@ -499,7 +507,7 @@ public const struct ByteNumber : IntBaseNumber,
 
 // --- ShortNumber ---
 
-public const struct ShortNumber : /*Int*/BaseNumber,
+public const struct ShortNumber : IntBaseNumber,
          info<"a signed 16 bit integer">
 {
    embeddable __int theValue[2];
@@ -749,24 +757,48 @@ public const struct ShortNumber : /*Int*/BaseNumber,
 
    string toPrintable()
       = stringConvertor.convert(self, 10);
+
+   short shiftLeft(int val)
+            : info<"shifts an integer value to the left by a specified number of bits">
+      = theValue $shl val;
+
+   short shiftRight(int val)
+            : info<"shifts an integer value to the right by a specified number of bits">
+      = theValue $shr val;
+
+   get short BInverted()
+            : info<"bitwise inversion">
+      = ~theValue;
+
+   short clone()
+            : info<"clones the value">
+      = new ShortNumber(self);
 }
 
 // --- IntNumber ---
 
-public const struct IntNumber : /*Int*/BaseNumber
+public const struct IntNumber : /*Int*/BaseNumber,
+   info<"A signed 32 bit integer">
 {
    embeddable __int theValue[4];
 
    static int MinValue
+            : info<"Creates the object with the minimal value">
       = -2147483648;
 
    static int MaxValue
+            : info<"Creates the object with the maximal value">
       = 2147483647;
 
    constructor()
       = 0;
 
    constructor(int n)
+            : info<"Creates the object with specified value">
+      = n;
+
+   constructor(uint n)
+            : info<"Creates the object with specified value">
       = n;
 
    constructor(byte b)
@@ -851,10 +883,24 @@ public const struct IntNumber : /*Int*/BaseNumber
       <= divide(new IntNumber(n));
 
    byte cast()
+            : info<"Returns the byte value">
       = byteConvertor.convert(self);
 
    short cast()
+            : info<"Returns the value as a short integer">
       = shortConvertor.convert(self);
+
+   long cast()
+            : info<"Returns the long integer">
+      = longConvertor.convert(self);
+
+   real cast()
+            : info<"Returns the real number">
+      = realConvertor.convert(self);
+
+   uint cast()
+            : info<"Returns the unsigned integer">
+      = new UIntNumber(self);
 
    string toPrintable()
       = stringConvertor.convert(self, 10);
@@ -862,7 +908,12 @@ public const struct IntNumber : /*Int*/BaseNumber
 
 // --- UIntNumber ---
 
-public class UIntNumber;
+public class UIntNumber
+{
+   constructor(int n)
+   {
+   }
+}
 
 // --- LongNumber ---
 
