@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 50;
+constexpr auto OperationLength = 56;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -94,6 +94,12 @@ constexpr Op Operations[OperationLength] =
    },
    {
       BNOT_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
+   },
+   {
+      SHL_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
    },
    {
       EQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG
@@ -147,6 +153,12 @@ constexpr Op Operations[OperationLength] =
       NOTEQUAL_OPERATOR_ID, BuildKey::ByteCondOp, V_INT8, V_INT8, 0, V_FLAG
    },
    {
+      SHL_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT32, 0, V_INT8
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT32, 0, V_INT8
+   },
+   {
       ADD_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
    },
    {
@@ -169,6 +181,12 @@ constexpr Op Operations[OperationLength] =
    },
    {
       BNOT_OPERATOR_ID, BuildKey::ShortSOp, V_INT16, 0, 0, V_INT16
+   },
+   {
+      SHL_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT32, 0, V_INT16
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT32, 0, V_INT16
    },
    {
       EQUAL_OPERATOR_ID, BuildKey::ShortCondOp, V_INT16, V_INT16, 0, V_FLAG

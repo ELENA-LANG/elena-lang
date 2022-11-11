@@ -1398,6 +1398,118 @@ inline %4DBh
 
 end
 
+// ; ishldpn
+inline %0DCh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  lsl     x18, x18, x17
+
+  str     w18, [x19]
+
+end
+
+// ; ishldpn
+inline %1DCh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  lsl     x18, x18, x17
+
+  strb    w18, [x19]
+
+end
+
+// ; ishldpn
+inline %2DCh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  lsl     x18, x18, x17
+
+  strh    w18, [x19]
+
+end
+
+// ; ishldpn
+inline %4DCh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldr     x18, [x19]
+
+  lsl     x18, x18, x17
+
+  str     x18, [x19]
+
+end
+
+// ; ishrdpn
+inline %0DDh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  lsr     x18, x18, x17
+
+  str     w18, [x19]
+
+end
+
+// ; ishrdpn
+inline %1DDh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  lsr     x18, x18, x17
+
+  strb    w18, [x19]
+
+end
+
+// ; ishrdpn
+inline %2DDh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  lsr     x18, x18, x17
+
+  strh    w18, [x19]
+
+end
+
+// ; ishrdpn
+inline %4DDh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldr     x18, [x19]
+
+  lsr     x18, x18, x17
+
+  str     x18, [x19]
+
+end
+
 // ; copydpn
 inline %0E0h
 

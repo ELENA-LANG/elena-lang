@@ -83,10 +83,13 @@ namespace elena_lang
       virtual bool compilePop(X86Operand source, MemoryWriter& writer);
       virtual bool compilePush(X86Operand source, MemoryWriter& writer);
       virtual bool compileRcr(X86Operand source, X86Operand target, MemoryWriter& writer);
+      virtual bool compileSar(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileSbb(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileSetcc(X86Operand source, X86JumpType type, MemoryWriter& writer);
       virtual bool compileShr(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileShl(X86Operand source, X86Operand target, MemoryWriter& writer);
+      virtual bool compileShld(X86Operand source, X86Operand target, X86Operand third, MemoryWriter& writer);
+      virtual bool compileShrd(X86Operand source, X86Operand target, X86Operand third, MemoryWriter& writer);
       virtual bool compileSub(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileTest(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileXor(X86Operand source, X86Operand target, MemoryWriter& writer);
@@ -118,10 +121,13 @@ namespace elena_lang
       void compileRcr(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileRep(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileRet(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileSar(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSbb(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSetcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type);
       void compileShr(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileShl(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileShld(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileShrd(ScriptToken& tokenInfo, MemoryWriter& writer);
       virtual void compileStos(ScriptToken& tokenInfo, MemoryWriter& writer)
       {
          compileStosd(tokenInfo, writer);

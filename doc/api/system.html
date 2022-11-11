@@ -1042,7 +1042,25 @@ public class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN><BR/>
 <LI>
 <UL CLASS="inheritance">
 <LI>
+<SPAN CLASS="memberNameLink"><A HREF="#BaseValue">'BaseValue</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#BaseNumber">'BaseNumber</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#IntBaseNumber">'IntBaseNumber</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
 system'ByteNumber</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+</LI>
 </UL>
 </LI>
 </UL>
@@ -1100,13 +1118,24 @@ Creates the object with a specified value</div>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Creates the object with a specified value</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;ByteNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
@@ -1150,6 +1179,28 @@ Returns the maxial value (255)</div>
 </TABLE>
 </LI>
 </UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>BInverted</CODE>
+<div class="block">
+bitwise inversion</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <!-- ========== METHOD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
@@ -1180,10 +1231,12 @@ Returns the maxial value (255)</div>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>add(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+<CODE>toPrintable()
 </CODE>
+<div class="block">
+returns the literal presentation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1191,7 +1244,7 @@ Returns the maxial value (255)</div>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>subtract(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+<CODE>add(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1200,7 +1253,7 @@ Returns the maxial value (255)</div>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>multiply(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+<CODE>subtract(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1209,7 +1262,43 @@ Returns the maxial value (255)</div>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
+<CODE>multiply(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
 <CODE>divide(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>band(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>bor(<SPAN CLASS="memberNameLink">arg1</SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>bxor(<SPAN CLASS="memberNameLink">arg1</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1220,6 +1309,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Returns the sum</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1229,6 +1320,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Returns the difference</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1238,6 +1331,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>multiply(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Returns the product</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1247,6 +1342,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>divide(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Returns the result of integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1256,6 +1353,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Returns the sum</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1265,6 +1364,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Returns the difference</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1274,6 +1375,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>multiply(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Returns the product</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1283,6 +1386,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>divide(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Returns the result of integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1292,6 +1397,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Returns the sum</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1301,6 +1408,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Returns the difference</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1310,6 +1419,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>multiply(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Returns the product</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1319,6 +1430,96 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>divide(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Returns the result of integer division</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the sum</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the difference</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>multiply(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the product</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>divide(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of integer division</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the sum</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the difference</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>multiply(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the product</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>divide(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1328,6 +1529,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Compares the value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1346,6 +1549,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Compares the value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1364,6 +1569,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Compares the value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1373,6 +1580,184 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
+<div class="block">
+Compares the value</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Compares the value</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Compares the value</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Compares the value</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Compares the value</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>band(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of bitwise AND operation</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>bor(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of bitwise OR operation</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>bxor(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of bitwise XOR operation</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>band(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of bitwise AND operation</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>bor(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of bitwise OR operation</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>bxor(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of bitwise XOR operation</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>band(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of bitwise AND operation</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>bor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of bitwise OR operation</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>bxor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of bitwise XOR operation</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>band(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of bitwise AND operation</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>bor(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of bitwise OR operation</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>bxor(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+</CODE>
+<div class="block">
+Returns the result of bitwise XOR operation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1382,6 +1767,8 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()
 </CODE>
+<div class="block">
+Returns the value as a short integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1391,6 +1778,52 @@ Returns the maxial value (255)</div>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()
 </CODE>
+<div class="block">
+returns the value as an integer</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()
+</CODE>
+<div class="block">
+returns the value as an unsigned integer</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()
+</CODE>
+<div class="block">
+Returns the value as a long integer</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()
+</CODE>
+<div class="block">
+Returns the value as a real number</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>clone()
+</CODE>
+<div class="block">
+clones the value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1500,7 +1933,7 @@ system'CharValue</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;CharValue&gt;</SPAN>)
+<CODE>prop:M(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1509,7 +1942,7 @@ system'CharValue</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;CharValue&gt;</SPAN>)
+<CODE>prop:M(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1918,6 +2351,64 @@ system'Func</LI>
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="Func1">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="Func1" class="title">Func1</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public class <SPAN CLASS="typeNameLabel">Func1</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'Func1</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>#invoke()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()
 </CODE>
@@ -2622,6 +3113,76 @@ system'IntNumber</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>mod(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="LongNumber">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="LongNumber" class="title">LongNumber</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">LongNumber</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'LongNumber</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()
 </CODE>
 </TD>
 </TR>
@@ -3755,20 +4316,20 @@ system'WideString</LI>
 </UL>
 <HR>
 </DIV>
-<A NAME="Func1">
+<A NAME="UIntNumber">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
 system'</DIV>
-<H2 title="Func1" class="title">Func1</H2>
+<H2 title="UIntNumber" class="title">UIntNumber</H2>
 </DIV>
 <DIV CLASS="contentContainer">
 <DIV CLASS="description">
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public class <SPAN CLASS="typeNameLabel">Func1</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">UIntNumber</SPAN></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -3777,7 +4338,7 @@ abstract public class <SPAN CLASS="typeNameLabel">Func1</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
-system'Func1</LI>
+system'UIntNumber</LI>
 </UL>
 </LI>
 </UL>
@@ -3793,16 +4354,77 @@ system'Func1</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>abstract </i>&nbsp;</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#invoke()
+<CODE><i>cast</i>()
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="RealNumber">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="RealNumber" class="title">RealNumber</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">RealNumber</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'RealNumber</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()
 </CODE>
@@ -4019,6 +4641,90 @@ system'intConvertor</LI>
 </TD>
 </TR>
 </TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="uintConvertor">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="uintConvertor" class="title">uintConvertor</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">uintConvertor</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'uintConvertor</LI>
+</UL>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="longConvertor">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="longConvertor" class="title">longConvertor</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">longConvertor</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'longConvertor</LI>
+</UL>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="realConvertor">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="realConvertor" class="title">realConvertor</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">realConvertor</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'realConvertor</LI>
+</UL>
 </LI>
 </UL>
 <HR>

@@ -257,6 +257,8 @@ namespace elena_lang
    constexpr auto BOR_OPERATOR_ID         = 0x0019;
    constexpr auto BXOR_OPERATOR_ID        = 0x001A;
    constexpr auto BNOT_OPERATOR_ID        = 0x001B;
+   constexpr auto SHL_OPERATOR_ID         = 0x001C;
+   constexpr auto SHR_OPERATOR_ID         = 0x001D;
 
    constexpr auto ISNIL_OPERATOR_ID       = 0x003E;
    constexpr auto CLASS_OPERATOR_ID       = 0x003F;

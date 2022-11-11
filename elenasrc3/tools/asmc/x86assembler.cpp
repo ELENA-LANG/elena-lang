@@ -821,6 +821,18 @@ void X86Assembler :: compileRet(ScriptToken& tokenInfo, MemoryWriter& writer)
    writer.writeByte(0xC3);
 }
 
+void X86Assembler :: compileSar(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileSar(sour, dest, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void X86Assembler :: compileSetcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type)
 {
    X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -841,7 +853,7 @@ void X86Assembler :: compileShr(ScriptToken& tokenInfo, MemoryWriter& writer)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
-void X86Assembler :: compileShl(ScriptToken& tokenInfo, MemoryWriter& writer)
+void X86Assembler::compileShl(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
 
@@ -851,6 +863,39 @@ void X86Assembler :: compileShl(ScriptToken& tokenInfo, MemoryWriter& writer)
 
    if (!compileShl(sour, dest, writer))
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileShld(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   checkComma(tokenInfo);
+
+   X86Operand third = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileShld(sour, dest, third, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileShrd(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   checkComma(tokenInfo);
+
+   X86Operand third = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileShrd(sour, dest, third, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+
 }
 
 void X86Assembler :: compileSbb(ScriptToken& tokenInfo, MemoryWriter& writer)
@@ -1094,6 +1139,11 @@ bool X86Assembler :: compileCmp(X86Operand source, X86Operand target, MemoryWrit
    else if (source.isR8_M8() && target.isR8()) {
       writer.writeByte(0x38);
       X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR8_M8() && target.type == X86OperandType::DB) {
+      writer.writeByte(0x80);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R8 + 7), source);
+      X86Helper::writeImm(writer, target);
    }
    else return false;
 
@@ -1443,6 +1493,22 @@ bool X86Assembler :: compileRcr(X86Operand source, X86Operand target, MemoryWrit
    return true;
 }
 
+bool X86Assembler :: compileSar(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isR32() && target.type == X86OperandType::DB) {
+      writer.writeByte(0xC1);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 7), source);
+      writer.writeByte(target.offset);
+   }
+   else if (source.isR32() && target.type == X86OperandType::CL) {
+      writer.writeByte(0xD3);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 7), source);
+   }
+   else return false;
+
+   return true;
+}
+
 bool X86Assembler :: compileSbb(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
    if (source.isR32_M32() && target.isR32()) {
@@ -1482,6 +1548,10 @@ bool X86Assembler :: compileShr(X86Operand source, X86Operand target, MemoryWrit
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 5), source);
       writer.writeByte(target.offset);
    }
+   else if (source.isR32() && target.type == X86OperandType::CL) {
+      writer.writeByte(0xD3);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 5), source);
+   }
    else return false;
 
    return true;
@@ -1493,6 +1563,44 @@ bool X86Assembler :: compileShl(X86Operand source, X86Operand target, MemoryWrit
       writer.writeByte(0xC1);
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
       writer.writeByte(target.offset);
+   }
+   else if (source.isR32() && target.type == X86OperandType::CL) {
+      writer.writeByte(0xD3);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileShld(X86Operand source, X86Operand target, X86Operand third, MemoryWriter& writer)
+{
+   if (source.isR32() && target.isR32() && third.type == X86OperandType::DB) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0xA4);
+      X86Helper::writeImm(writer, third);
+   }
+   else if (source.isR32() && target.isR32() && third.type == X86OperandType::CL) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0xA5);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileShrd(X86Operand source, X86Operand target, X86Operand third, MemoryWriter& writer)
+{
+   if (source.isR32() && target.isR32() && third.type == X86OperandType::DB) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0xAC);
+      X86Helper::writeImm(writer, third);
+   }
+   else if (source.isR32() && target.isR32() && third.type == X86OperandType::CL) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0xAD);
+      X86Helper::writeModRM(writer, target, source);
    }
    else return false;
 
@@ -1522,6 +1630,11 @@ bool X86Assembler :: compileSub(X86Operand source, X86Operand target, MemoryWrit
    else if (source.isR8_M8() && target.isR8()) {
       writer.writeByte(0x28);
       X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR8_M8() && target.type == X86OperandType::DB) {
+      writer.writeByte(0x80);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R8 + 5), source);
+      X86Helper::writeImm(writer, target);
    }
    else if (source.isR16_M16() && target.isR16()) {
       writer.writeByte(0x66);
@@ -1784,7 +1897,10 @@ bool X86Assembler::compileROpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 
 bool X86Assembler::compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   if (tokenInfo.compare("sbb")) {
+   if (tokenInfo.compare("sar")) {
+      compileSar(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("sbb")) {
       compileSbb(tokenInfo, writer);
    }
    else if (tokenInfo.compare("setnc")) {
@@ -1795,6 +1911,12 @@ bool X86Assembler::compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
    }
    else if (tokenInfo.compare("shl")) {
       compileShl(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("shld")) {
+      compileShld(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("shrd")) {
+      compileShrd(tokenInfo, writer);
    }
    else if (tokenInfo.compare("stos")) {
       compileStos(tokenInfo, writer);
@@ -2330,6 +2452,11 @@ bool X86_64Assembler :: compileShr(X86Operand source, X86Operand target, MemoryW
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 5), source);
       writer.writeByte(target.offset);
    }
+   else if (source.isR64() && target.type == X86OperandType::CL) {
+      writer.writeByte(0x48);
+      writer.writeByte(0xD3);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R64 + 5), source);
+   }
    else return X86Assembler::compileShr(source, target, writer);
 
    return true;
@@ -2342,6 +2469,11 @@ bool X86_64Assembler :: compileShl(X86Operand source, X86Operand target, MemoryW
       writer.writeByte(0xC1);
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
       writer.writeByte(target.offset);
+   }
+   else if (source.isR64() && target.type == X86OperandType::CL) {
+      writer.writeByte(0x48);
+      writer.writeByte(0xD3);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R64 + 4), source);
    }
    else return X86Assembler::compileShl(source, target, writer);
 

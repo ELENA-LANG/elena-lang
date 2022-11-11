@@ -6022,6 +6022,8 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::BOrOperation:
       case SyntaxKey::BXorOperation:
       case SyntaxKey::BNotOperation:
+      case SyntaxKey::ShlOperation:
+      case SyntaxKey::ShrOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::IndexerOperation:

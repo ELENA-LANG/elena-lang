@@ -100,6 +100,8 @@ namespace elena_lang
       IOrDPN         = 0xD9,
       IXorDPN        = 0xDA,
       INotDPN        = 0xDB,
+      IShlDPN        = 0xDC,
+      IShrDPN        = 0xDD,
 
       CopyDPN        = 0xE0,
       IAddDPN        = 0xE1,

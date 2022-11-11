@@ -1410,6 +1410,118 @@ inline %4DBh
 
 end
 
+// ; ishldpn
+inline %0DCh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  sld     r18, r18, r17
+
+  stw     r18, 0(r19)
+
+end
+
+// ; ishldpn 1
+inline %1DCh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  sld     r18, r18, r17
+
+  stb     r17, 0(r19)
+
+end
+
+// ; ishldpn
+inline %2DCh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  sld     r18, r18, r17
+
+  sth     r17, 0(r19)
+
+end
+
+// ; ishldpn
+inline %4DCh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  ld      r18, 0(r19)
+
+  sld     r18, r18, r17
+
+  std     r17, 0(r19)
+
+end
+
+// ; ishrdpn
+inline %0DDh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  srd     r18, r18, r17
+
+  stw     r18, 0(r19)
+
+end
+
+// ; ishrdpn 1
+inline %1DDh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  srd     r18, r18, r17
+
+  stb     r17, 0(r19)
+
+end
+
+// ; ishrdpn
+inline %2DDh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  srd     r18, r18, r17
+
+  sth     r17, 0(r19)
+
+end
+
+// ; ishrdpn
+inline %4DDh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  ld      r18, 0(r19)
+
+  srd     r18, r18, r17
+
+  std     r17, 0(r19)
+
+end
+
 // ; copydpn
 inline %0E0h
 

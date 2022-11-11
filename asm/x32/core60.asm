@@ -1080,6 +1080,149 @@ inline %4DBh
 
 end
 
+// ; ishldpn
+inline %0DCh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  shl  eax, cl
+  mov  [edi], eax
+
+end
+
+// ; ishldpn 1
+inline %1DCh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  shl  eax, cl
+  mov  byte ptr [edi], al
+
+end
+
+// ; ishldpn 2
+inline %2DCh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  shl  eax, cl
+  mov  word ptr [edi], ax
+
+end
+
+// ; ishldpn 8
+inline %4DCh
+
+  push edx
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  mov  edx, [edi+4]
+
+  cmp  cl, 40h 
+  jae  short lErr
+  cmp  cl, 20h
+  jae  short LL32
+  shld eax, edx, cl
+  shl  edx, cl
+  jmp  short lEnd
+
+LL32:
+  mov  edx, eax
+  xor  eax, eax
+  sub  cl, 20h
+  shl  eax, cl 
+  jmp  short lEnd
+  
+lErr:
+  xor  eax, eax
+  xor  edx, edx
+  jmp  short lEnd2
+
+lEnd:
+  mov  [edi], eax
+  mov  [edi+4], edx
+
+lEnd2:
+  pop   edx
+
+end
+
+// ; ishrdpn
+inline %0DDh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  shr  eax, cl
+  mov  [edi], eax
+
+end
+
+// ; ishrdpn 1
+inline %1DDh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  shr  eax, cl
+  mov  byte ptr [edi], al
+
+end
+
+// ; ishrdpn 2
+inline %2DDh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  shr  eax, cl
+  mov  word ptr [edi], ax
+
+end
+
+// ; ishrdpn 8
+inline %4DDh
+
+  push edx
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  mov  edx, [edi+4]
+
+  cmp  cl, 64
+  jae  short lErr
+
+  cmp  cl, 32
+  jae  short LR32
+  shrd eax, edx, cl
+  sar  edx, cl
+  jmp  short lEnd
+
+LR32:
+  mov  eax, edx
+  xor  edx, edx
+  sub  cl, 20h
+  shr  eax, cl 
+  jmp  short lEnd
+  
+lErr:
+  xor  eax, eax
+  xor  edx, edx
+  jmp  short lEnd2
+
+lEnd:
+  mov  [edi], eax
+  mov  [edi+4], edx
+
+lEnd2:
+  pop   edx
+
+end
+
 // ; copydpn
 inline %0E0h
 

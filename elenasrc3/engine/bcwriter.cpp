@@ -361,6 +361,12 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
       case BXOR_OPERATOR_ID:
          tape.write(ByteCode::IXorDPN, targetOffset, 4);
          break;
+      case SHL_OPERATOR_ID:
+         tape.write(ByteCode::IShlDPN, targetOffset, 4);
+         break;
+      case SHR_OPERATOR_ID:
+         tape.write(ByteCode::IShrDPN, targetOffset, 4);
+         break;
       default:
          throw InternalError(errFatalError);
    }
@@ -407,6 +413,12 @@ void byteOp(CommandTape& tape, BuildNode& node, TapeScope&)
       case BXOR_OPERATOR_ID:
          tape.write(ByteCode::IXorDPN, targetOffset, 1);
          break;
+      case SHL_OPERATOR_ID:
+         tape.write(ByteCode::IShlDPN, targetOffset, 1);
+         break;
+      case SHR_OPERATOR_ID:
+         tape.write(ByteCode::IShrDPN, targetOffset, 1);
+         break;
       default:
          throw InternalError(errFatalError);
    }
@@ -452,6 +464,12 @@ void shortOp(CommandTape& tape, BuildNode& node, TapeScope&)
          break;
       case BXOR_OPERATOR_ID:
          tape.write(ByteCode::IXorDPN, targetOffset, 2);
+         break;
+      case SHL_OPERATOR_ID:
+         tape.write(ByteCode::IShlDPN, targetOffset, 2);
+         break;
+      case SHR_OPERATOR_ID:
+         tape.write(ByteCode::IShrDPN, targetOffset, 2);
          break;
       default:
          throw InternalError(errFatalError);

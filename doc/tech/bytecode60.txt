@@ -253,16 +253,20 @@ ELENA byte codes (or ecodes)
                               [dp[disp]] *= temp;
                               n = 1,2,4,8  
 
-
    inot dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] ^ temp;
                               n = 1,2,4,8 
  
-   isub dp:disp, n          - temp : n << sp[0];
    ior dp:disp, n           - temp : n << sp[0];
                               [dp[disp]] | temp;
                               n = 1,2,4,8 
  
+   ishl dp:disp, n          - [dp[disp]] << index;
+                              n = 1,2,4,8  
+
+   ishr dp:disp, n          - [dp[disp]] >> index
+                              n = 1,2,4,8  
+
    isub dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] -= temp;
                               n = 1,2,4,8  
