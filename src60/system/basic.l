@@ -777,7 +777,7 @@ public const struct ShortNumber : IntBaseNumber,
 
 // --- IntNumber ---
 
-public const struct IntNumber : /*Int*/BaseNumber,
+public const struct IntNumber : IntBaseNumber,
    info<"A signed 32 bit integer">
 {
    embeddable __int theValue[4];
@@ -808,22 +808,46 @@ public const struct IntNumber : /*Int*/BaseNumber,
       = s;
 
    bool equal(o)
-      <= equal(cast int(o));
+   {
+      var n := cast int(o) ?? nil;
+      (nil == n)
+         ? { ^ false } : { ^ self.equal(n) }
+   }
 
    bool less(o)
       <= less(cast int(o));
 
    bool equal(byte b)
+            : info<"Compares the integer value">
       <= equal(new IntNumber(b));
 
+   bool equal(long n)
+            : info<"Compares the integer value">
+      = new LongNumber(theValue).equal(n);
+
+   bool equal(real n)
+            : info<"Compares the integer value">
+      = new RealNumber(theValue).equal(n);
+
    bool less(byte b)
+            : info<"Compares the integer value">
       <= less(new IntNumber(b));
 
    bool equal(short s)
+            : info<"Compares the integer value">
       <= equal(new IntNumber(s));
 
    bool less(short s)
+            : info<"Compares the integer value">
       <= less(new IntNumber(s));
+
+   bool less(long n)
+            : info<"Compares the integer value">
+      = new LongNumber(theValue).less(n);
+
+   bool less(real n)
+            : info<"Compares the integer value">
+      = new RealNumber(theValue).less(n);
 
    bool equal(int n)
       = theValue == n; 
@@ -847,40 +871,150 @@ public const struct IntNumber : /*Int*/BaseNumber,
      <= divide(cast int(o));
 
    int add(int n)
+            : info<"Returns the sum">
       = theValue + n;   
 
    int subtract(int n)
+            : info<"Returns the difference">
       = theValue - n;   
 
    int multiply(int n)
+            : info<"Returns the product">
       = theValue * n;   
 
    int divide(int n)
+            : info<"Returns the result of integer division">
       = theValue / n;   
 
    int add(byte n)
+            : info<"Returns the sum">
       <= add(new IntNumber(n));
 
    int subtract(byte n)
+            : info<"Returns the difference">
       <= subtract(new IntNumber(n));
 
    int multiply(byte n)
+            : info<"Returns the product">
       <= multiply(new IntNumber(n));
 
    int divide(byte n)
+            : info<"Returns the result of integer division">
       <= divide(new IntNumber(n));
 
    int add(short n)
+            : info<"Returns the sum">
       <= add(new IntNumber(n));
 
    int subtract(short n)
+            : info<"Returns the difference">
       <= subtract(new IntNumber(n));
 
    int multiply(short n)
+            : info<"Returns the product">
       <= multiply(new IntNumber(n));
 
    int divide(short n)
+            : info<"Returns the result of integer division">
       <= divide(new IntNumber(n));
+
+   long add(long n)
+            : info<"Returns the sum">
+      = new LongNumber(self).add(n);
+
+   long subtract(long n)
+            : info<"Returns the difference">
+      = new LongNumber(self).subtract(n);
+
+   long multiply(long n)
+            : info<"Returns the product">
+      = new LongNumber(self).multiply(n);
+
+   long divide(long n)
+            : info<"Returns the result of integer division">
+      = new LongNumber(self).divide(n);
+
+   real add(real n)
+            : info<"Returns the sum">
+      = new RealNumber(self).add(n);
+
+   real subtract(real n)
+            : info<"Returns the difference">
+      = new RealNumber(self).subtract(n);
+
+   real multiply(real n)
+            : info<"Returns the product">
+      = new RealNumber(self).multiply(n);
+
+   real divide(real n)
+            : info<"Returns the result of integer division">
+      = new RealNumber(self).divide(n);
+
+   band(n)
+      <= band(cast int(n));
+
+   bor(n)
+      <= bor(cast int(n));
+
+   bxor(n)
+      <= bxor(cast int(n));
+
+   band(BaseVariable v)
+      <= band(*v);
+
+   bor(BaseVariable v)
+      <= bor(*v);
+
+   bxor(BaseVariable v)
+      <= bxor(*v);
+
+   int band(int n)
+            : info<"Returns the result of bitwise AND operation">
+      = theValue & n;
+
+   int bor(int n)
+            : info<"Returns the result of bitwise OR operation">
+      = theValue | n;
+
+   int bxor(int n)
+            : info<"Returns the result of bitwise XOR operation">
+      = theValue ^ n;
+
+   int band(byte n)
+            : info<"Returns the result of bitwise AND operation">
+      <= band(new IntNumber(n));
+
+   int bor(byte n)
+            : info<"Returns the result of bitwise OR operation">
+      <= bor(new IntNumber(n));
+
+   int bxor(byte n)
+            : info<"Returns the result of bitwise XOR operation">
+      <= bxor(new IntNumber(n));
+
+   int band(short n)
+            : info<"Returns the result of bitwise AND operation">
+      <= band(new IntNumber(n));
+
+   int bor(short n)
+            : info<"Returns the result of bitwise OR operation">
+      <= bor(new IntNumber(n));
+
+   int bxor(short n)
+            : info<"Returns the result of bitwise XOR operation">
+      <= bxor(new IntNumber(n));
+
+   long band(long n)
+            : info<"Returns the result of bitwise AND operation">
+      = new LongNumber(self).band(n);
+
+   long bor(long n)
+            : info<"Returns the result of bitwise OR operation">
+      = new LongNumber(self).bor(n);
+
+   long bxor(long n)
+            : info<"Returns the result of bitwise XOR operation">
+      = new LongNumber(self).bxor(n);
 
    byte cast()
             : info<"Returns the byte value">
@@ -904,6 +1038,39 @@ public const struct IntNumber : /*Int*/BaseNumber,
 
    string toPrintable()
       = stringConvertor.convert(self, 10);
+
+   int clone()
+            : info<"Clones the value">
+      = new IntNumber(theValue);
+
+   int shiftLeft(int val)
+      = theValue $shl val;
+   
+   int shiftRight(int val)
+      = theValue $shr val;
+
+   get int BInverted()
+            : info<"Bitwise inversion">
+      = ~theValue;
+
+//   get int Negative()
+//      = -theValue;
+
+   bool allMask(int operand)
+         : info<"Returns true if all the mask bits are set">
+   {
+      int v := operand & theValue;
+        
+      ^ v == operand
+   }
+        
+   bool anyMask(int operand)
+         : info<"Returns true if any of the mask bits are set">
+   {
+      int v := operand & theValue;
+        
+      ^ v != 0
+   }        
 }
 
 // --- UIntNumber ---
