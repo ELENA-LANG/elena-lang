@@ -2210,6 +2210,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
    }
    else unnamedMessage = true;
 
+   bool constantConversion = false;
    bool weakSignature = true;
    bool variadicMode = false;
    pos_t paramCount = 0;
@@ -2263,6 +2264,13 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
             flags |= CONVERSION_MESSAGE;
 
             unnamedMessage = false;
+         }
+         else if (paramCount == 1 && !unnamedMessage && signature[0] == scope.moduleScope->buildins.literalReference) {
+            constantConversion = true;
+
+            actionStr.append(CONSTRUCTOR_MESSAGE);
+            flags |= FUNCTION_MESSAGE;
+            scope.info.hints |= (ref_t)MethodHint::Constructor;
          }
          else scope.raiseError(errIllegalMethod, node);
       }
@@ -2342,6 +2350,14 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
             signature, signatureLen);
          if (unnamedMessage || !scope.message)
             scope.raiseError(errIllegalMethod, node);
+      }
+
+      // if it is an explicit constant conversion
+      if (constantConversion) {
+         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+         addExtensionMessage(scope, scope.message, scope.getClassRef(), scope.message, 
+            scope.getClassVisibility() != Visibility::Public);
       }
    }
 }
@@ -4957,7 +4973,32 @@ ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& sco
 ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source,
    ref_t signRef, ArgumentsInfo& arguments)
 {
-   mssg_t messageRef = overwriteArgCount(scope.moduleScope->buildins.constructor_message, arguments.count_pos());
+   mssg_t messageRef = 0;
+   if (source.kind == ObjectKind::ConstantLiteral) {
+      IdentifierString valueStr(scope.module->resolveConstant(source.reference));
+      IdentifierString postfix;
+
+      postfix.append(valueStr[valueStr.length() - 1]);
+      valueStr.truncate(valueStr.length() - 1);
+
+      arguments.add({ ObjectKind::StringLiteral, 
+         { scope.moduleScope->buildins.literalReference }, scope.module->mapConstant(*valueStr) });
+
+      postfix.append(CONSTRUCTOR_MESSAGE);
+
+      ref_t signRef = scope.module->mapSignature(&scope.moduleScope->buildins.literalReference, 1, false);
+      mssg_t conversionMssg = encodeMessage(scope.module->mapAction(*postfix, signRef, false), 1, FUNCTION_MESSAGE);
+
+      NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+      auto constInfo = nsScope->extensions.get(conversionMssg);
+      if (constInfo.value1) {
+         messageRef = constInfo.value2;
+         source = mapClassSymbol(scope, constInfo.value1);
+      }
+      else scope.raiseError(errInvalidOperation, node);
+   }
+   else messageRef = overwriteArgCount(scope.moduleScope->buildins.constructor_message, arguments.count_pos());
+
    ObjectInfo retVal = compileMessageOperation(
       writer, scope, node, source, messageRef, signRef, arguments, EAttr::StrongResolved | EAttr::NoExtension);
 
@@ -5518,6 +5559,11 @@ ObjectInfo Compiler :: mapCharacterConstant(Scope& scope, SyntaxNode node)
    return { ObjectKind::CharacterLiteral, { V_WORD32 }, scope.module->mapConstant(node.identifier()) };
 }
 
+ObjectInfo Compiler :: mapConstant(Scope& scope, SyntaxNode node)
+{
+   return { ObjectKind::ConstantLiteral, { V_WORD32 }, scope.module->mapConstant(node.identifier()) };
+}
+
 inline ref_t mapIntConstant(Compiler::Scope& scope, int integer)
 {
    String<char, 20> s;
@@ -5692,6 +5738,11 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
 
             retVal = mapUIntConstant(scope, node, 16);
             break;
+         case SyntaxKey::constant:
+            invalid = invalidForNonIdentifier;
+
+            retVal = mapConstant(scope, node);
+            break;
          default:
             // to make compiler happy
             invalid = true;
@@ -5784,6 +5835,14 @@ ObjectInfo Compiler :: compileObject(BuildTreeWriter& writer, ExprScope& scope, 
    if (node == SyntaxKey::Object) {
       ObjectInfo retVal = mapObject(scope, node, mode);
       switch (retVal.kind) {
+         case ObjectKind::ConstantLiteral:
+         {
+            ArgumentsInfo arguments;
+            ref_t typeRef = scope.moduleScope->buildins.literalReference;
+            ref_t signRef = scope.module->mapSignature(&typeRef, 1, false);
+
+            return compileNewOp(writer, scope, node, retVal, signRef, arguments);
+         }
          case ObjectKind::Unknown:
             scope.raiseError(errUnknownObject, node.lastChild(SyntaxKey::TerminalMask));
             break;
@@ -6024,6 +6083,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::BNotOperation:
       case SyntaxKey::ShlOperation:
       case SyntaxKey::ShrOperation:
+      case SyntaxKey::NegateOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::IndexerOperation:

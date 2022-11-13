@@ -8,8 +8,9 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * api : ByteNumber. shift left / right
-    * api : ShortNumber
+    * 23u
+
+    * api : UIntNumber
 
     * introducing longnumber
     * basic operations for : longnumber
@@ -60,6 +61,7 @@ In development:
     * unit tests : boolean operations
     * int to short -> negative
     * short to int -> negative
+    * uint : test comparision (e.g 0 < 3000000u)
 
     * optimization : extra temporal variables
 

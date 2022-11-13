@@ -50,8 +50,16 @@ parse_key_t Parser :: resolveTerminal(SourceInfo& info)
          return _terminalKeys.integer;
       case dfaCharacter:
          return _terminalKeys.character;
-      case dfaHexInteger:
-         return _terminalKeys.hexinteger;
+      case dfaCustomNumber:
+      {
+         switch (info.symbol[info.symbol.length() - 1]) {
+            case 'h':
+               return _terminalKeys.hexinteger;
+            default:
+               return _terminalKeys.customnumber;
+         }
+         break;
+      }
       default:
          return _table.resolveSymbol(info.symbol);
    }   

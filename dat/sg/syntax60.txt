@@ -7,6 +7,7 @@ __define reference          12296;
 __define terminal           12297;
 __define character          12298;
 __define wide               12300;
+__define constant           12301;
 
 __define DECLARATION         5120;
 __define BLOCK               7184;
@@ -208,6 +209,7 @@ ROOT_EXPRESSION ::=
 	| reference O_Re
         | integer O_Re
         | hexinteger O_Re
+        | constant O_Re
         | string O_Re
         | wide O_Re
         | character O_Re
@@ -227,6 +229,7 @@ EXPRESSION ::=
 	| reference O_Re
         | integer O_Re
         | hexinteger O_Re
+        | constant O_Re
         | string O_Re
         | wide O_Re
         | character O_Re
@@ -244,6 +247,7 @@ SINGLE_EXPRESSION ::=
 	| reference ^OBJECT
         | integer ^OBJECT
         | hexinteger ^OBJECT
+        | constant ^OBJECT
         | string ^OBJECT
         | wide ^OBJECT
 	| "(" SUB_SINGLE_EXPRESSION;
@@ -253,6 +257,7 @@ SUB_EXPRESSION ::=
 	| reference O_Re ^EXPRESSION ")" E_R
         | integer O_Re ^EXPRESSION ")" E_R
         | hexinteger O_Re ^EXPRESSION ")" E_R
+        | constant O_Re ^EXPRESSION ")" E_R
         | string O_Re ^EXPRESSION ")" E_R
         | wide O_Re ^EXPRESSION ")" E_R
         | character O_Re ^EXPRESSION ")" E_R
@@ -266,6 +271,7 @@ SUB_SINGLE_EXPRESSION ::=
 	| reference O_Re ")"
         | integer O_Re ")"
         | hexinteger O_Re ")"
+        | constant O_Re ")"
         | string O_Re ")"
         | wide O_Re ")"
         | character O_Re ")"
@@ -292,12 +298,14 @@ L4_EXPRESSION ::=
         | hexinteger ^OBJECT
         | string ^OBJECT
         | wide ^OBJECT
+        | constant ^OBJECT
         | character ^OBJECT;
 
 L5_EXPRESSION ::=
         identifier I5_R
         | integer ^OBJECT L3s L4s
         | hexinteger ^OBJECT L3s L4s
+        | constant ^OBJECT L3s L4s
         | string ^OBJECT L3s L4s
         | wide ^OBJECT L3s L4s
         | character ^OBJECT L3s L4s;
@@ -306,6 +314,7 @@ L6_EXPRESSION ::=
         identifier I6_R
         | integer ^OBJECT
         | hexinteger ^OBJECT
+        | constant ^OBJECT
         | string ^OBJECT
         | wide ^OBJECT
         | character ^OBJECT;

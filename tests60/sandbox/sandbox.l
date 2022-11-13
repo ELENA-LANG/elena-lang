@@ -8,17 +8,21 @@ import extensions;
 
 A
 {
-   bool equal(o)
+   s;
+
+   cast w(string s)
    {
-      var n := cast byte(o) ?? nil;
-//      (nil == n)
-//          ? { ^ false }
-//          : { ^ self.equal(n) }
+      this s := s;
    }
+
+   string toPrintable()
+      = "A:" + s;
 }
 
 public program()
 {
+   var o := 2w;
+   console.writeLine(o);
 
 //    var x := accumulator(1);
     

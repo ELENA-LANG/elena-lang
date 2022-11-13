@@ -1053,8 +1053,8 @@ public const struct IntNumber : IntBaseNumber,
             : info<"Bitwise inversion">
       = ~theValue;
 
-//   get int Negative()
-//      = -theValue;
+   get int Negative()
+      = -theValue;
 
    bool allMask(int operand)
          : info<"Returns true if all the mask bits are set">
@@ -1075,11 +1075,323 @@ public const struct IntNumber : IntBaseNumber,
 
 // --- UIntNumber ---
 
-public class UIntNumber
+public sealed const struct UIntNumber : /*IntBaseNumber,*/
+   info<"A unsigned 32 bit integer">
 {
+   embeddable __int theValue[4];
+
+   constructor(byte b)
+   {
+      theValue := b;
+   }
+
+   constructor(short s)
+   {
+      theValue := s;
+   }
+
    constructor(int n)
    {
+      theValue := n
    }
+
+   constructor(uint n)
+   {
+      theValue := n
+   }
+
+   constructor()
+      = 0;
+
+   cast u(string s)
+   {
+      theValue := uintConvertor.convert(s);
+   }
+
+   cast H(string s)
+   {
+      theValue := uintConvertor.convert(s, 16);
+   }
+
+   static uint MinValue
+            : info<"Creates the object with the minimal value">
+      = 0;
+
+   static uint MaxValue
+            : info<"Creates the object with the maximal value">
+      = 0FFFFFFFFh;
+
+   string toPrintable()
+            : info<"Returns the literal presentation">
+      = stringConvertor.convert(self);
+
+   short cast()
+            : info<"Returns the value as a short integer">
+      = shortConvertor.convert(self);
+
+   byte cast()
+            : info<"Returns the byte value">
+      = byteConvertor.convert(self);
+
+   int cast()
+      = self;
+   
+   long cast()
+            : info<"Returns the long integer">
+      = new LongNumber(self);
+
+   real cast()
+            : info<"Returns the real number">
+      = new RealNumber(self);
+
+   bool equal(o)
+   {
+      var n := cast uint(o) ?? nil;
+      (nil == n)
+         ? { ^ false }
+         : { ^ self.equal(n) }
+   }
+
+   bool less(n)
+      <= less(cast uint(n));
+
+   bool equal(uint n)
+            : info<"Compares the value">
+      = theValue == n;
+
+   bool less(uint n)
+            : info<"Compares the value">
+      = theValue < n;
+
+   bool equal(int n)
+            : info<"Compares the value">
+      = theValue == n;
+
+   bool less(int n)
+            : info<"Compares the value">
+      <= less(cast uint(n));
+
+   bool equal(short n)
+            : info<"Compares the value">
+      = self.equal(new UIntNumber(n));
+
+   bool equal(byte n)
+            : info<"Compares the value">
+      = self.equal(new UIntNumber(n));
+
+   bool less(byte n)
+            : info<"Compares the value">
+      = self.less(new UIntNumber(n));
+
+   bool equal(long n)
+            : info<"Compares the value">
+      = new LongNumber(self).equal(m);
+
+   bool less(long n)
+            : info<"Compares the value">
+      = new LongNumber(self).less(m);
+
+   bool equal(real n)
+            : info<"Compares the value">
+      = new RealNumber(self).equal(m);
+
+   bool less(real n)
+            : info<"Compares the value">
+      = new RealNumber(self).less(m);
+
+   add(n)
+      <= add(cast uint(n));
+
+   subtract(n)
+      <= subtract(cast uint(n));
+
+   multiply(n)
+      <= multiply(cast uint(n));
+
+   divide(n)
+      <= divide(cast uint(n));
+
+   uint add(BaseVariable v)
+      <= add(*v);
+
+   uint subtract(BaseVariable v)
+      <= subtract(*v);
+
+   uint multiply(BaseVariable v)
+      <= multiply(*v);
+
+   uint divide(BaseVariable v)
+      <= divide(*v);
+
+   uint add(uint n)
+            : info<"Returns the sum">
+      = theValue + n;
+
+   uint subtract(uint n)
+            : info<"Returns the difference">
+      = theValue - n;
+
+   uint multiply(uint n)
+            : info<"Returns the product">
+      = theValue * n;
+
+   uint divide(uint n)
+            : info<"Returns the result of integer division">
+      = theValue / n;
+
+   int add(int n)
+            : info<"Returns the sum">
+      = theValue + n;
+
+   int subtract(int n)
+            : info<"Returns the difference">
+      = theValue - n;
+
+   int multiply(int n)
+            : info<"Returns the product">
+      = theValue * n;
+
+   int divide(int n)
+            : info<"Returns the result of integer division">
+      = theValue / n;
+
+   int add(byte n)
+            : info<"Returns the sum">
+      <= add(cast uint(n));
+
+   int subtract(byte n)
+            : info<"Returns the difference">
+      <= subtract(cast uint(n));
+
+   int multiply(byte n)
+            : info<"Returns the product">
+      <= multiply(cast uint(n));
+
+   int divide(byte n)
+            : info<"Returns the result of integer division">
+      <= divide(cast uint(n));
+
+   int add(short n)
+            : info<"Returns the sum">
+      <= add(cast uint(n));
+
+   int subtract(short n)
+            : info<"Returns the difference">
+      <= subtract(cast uint(n));
+
+   int multiply(short n)
+            : info<"Returns the product">
+      <= multiply(cast uint(n));
+
+   int divide(short n)
+            : info<"Returns the result of integer division">
+      <= divide(cast uint(n));
+
+   long add(long n)
+      = new LongNumber(n).add(n);
+
+   long subtract(long n)
+      = new LongNumber(n).subtract(n);
+
+   long multiply(long n)
+      = new LongNumber(n).multiply(n);
+
+   long divide(long n)
+      = new LongNumber(n).divide(n);
+
+   real add(real n)
+      = new RealNumber(n).add(n);
+
+   real subtract(real n)
+      = new RealNumber(n).subtract(n);
+
+   real multiply(real n)
+      = new RealNumber(n).multiply(n);
+
+   real divide(real n)
+      = new RealNumber(n).divide(n);
+
+   band(n)
+      <= band(cast uint(n));
+
+   bor(n)
+      <= bor(cast uint(n));
+
+   bxor(n)
+      <= bxor(cast uint(n));
+
+   uint band(uint n)
+            : info<"Returns the result of bitwise AND operation">
+      = theValue & n;
+
+   uint bor(uint n)
+            : info<"Returns the result of bitwise OR operation">
+      = theValue | n;
+
+   uint bxor(uint n)
+            : info<"Returns the result of bitwise XOR operation">
+      = theValue ^ n;
+
+   int band(int n)
+            : info<"Returns the result of bitwise AND operation">
+      = theValue & n;
+
+   int bor(int n)
+            : info<"Returns the result of bitwise OR operation">
+      = theValue | n;
+
+   int bxor(int n)
+            : info<"Returns the result of bitwise XOR operation">
+      = theValue ^ n;
+
+   uint band(short n)
+            : info<"Returns the result of bitwise AND operation">
+      <= band(cast uint(n));
+
+   uint bor(short n)
+            : info<"Returns the result of bitwise OR operation">
+      <= bor(cast uint(n));
+
+   uint bxor(short n)
+            : info<"Returns the result of bitwise XOR operation">
+      <= bxor(cast uint(n));
+
+   uint band(byte n)
+            : info<"Returns the result of bitwise AND operation">
+      <= band(cast uint(n));
+
+   uint bor(byte n)
+            : info<"Returns the result of bitwise OR operation">
+      <= bor(cast uint(n));
+
+   uint bxor(byte n)
+            : info<"Returns the result of bitwise XOR operation">
+      <= bxor(cast uint(n));
+
+   long band(long n)
+            : info<"Returns the result of bitwise AND operation">
+      = new LongNumber(n).band(n);
+
+   long bor(long n)
+            : info<"Returns the result of bitwise OR operation">
+      = new LongNumber(n).bor(n);
+
+   long bxor(long n)
+            : info<"Returns the result of bitwise XOR operation">
+      = new LongNumber(n).bxor(n);
+
+   uint shiftLeft(int val)
+      = theValue $shl val;
+
+   uint shiftRight(int val)
+      = theValue $shr val;
+   
+   get uint BInverted()
+            : info<"Bitwise inversion">
+      = ~theValue;
+
+   uint clone()
+      = new UIntNumber(self);
 }
 
 // --- LongNumber ---

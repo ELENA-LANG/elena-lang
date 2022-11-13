@@ -30,6 +30,7 @@ namespace elena_lang
       WideStringLiteral,
       CharacterLiteral,
       IntLiteral,
+      ConstantLiteral,
       MssgNameLiteral,
       MssgLiteral,
       Template,
@@ -643,6 +644,13 @@ namespace elena_lang
             return scope ? scope->reference : 0;
          }
 
+         Visibility getClassVisibility(bool ownerClass = true)
+         {
+            ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+
+            return scope ? scope->visibility : Visibility::Public;
+         }
+
          bool resolveAutoOutput(ref_t reference) override
          {
             if (info.outputRef == V_AUTO) {
@@ -1054,6 +1062,7 @@ namespace elena_lang
       ObjectInfo mapStringConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapWideStringConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapCharacterConstant(Scope& scope, SyntaxNode node);
+      ObjectInfo mapConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapIntConstant(Scope& scope, SyntaxNode node, int radix);
       ObjectInfo mapUIntConstant(Scope& scope, SyntaxNode node, int radix);
       ObjectInfo mapTerminal(Scope& scope, SyntaxNode node, TypeInfo typeInfo, ExpressionAttribute attrs);
