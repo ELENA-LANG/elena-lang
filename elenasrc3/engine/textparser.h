@@ -16,20 +16,20 @@ namespace elena_lang
    // --- ELENA DFA Constants ---
    constexpr char dfaMaxChar        = 127;
 
-   constexpr char dfaStart          = 'a';
-   constexpr char dfaIdentifier     = 'c';
-   constexpr char dfaOperator       = 'd';
-   constexpr char dfaInteger        = 'e';
-   constexpr char dfaQuote          = 'g';
-   constexpr char dfaHexInteger     = 'j';
-   constexpr char dfaReference      = 'm';
-   constexpr char dfaAltOperator    = 'q';
-   constexpr char dfaCharacter      = 's';
-   constexpr char dfaQuoteCode      = 'u';
-   constexpr char dfaSignStart      = 'w';
-   constexpr char dfaWideQuote      = 'x';
-   constexpr char dfaGrOperator     = 'y';
-   constexpr char dfaCustomNumber   = 'j';
+   constexpr char dfaStart          = 'A';
+   constexpr char dfaIdentifier     = 'C';
+   constexpr char dfaOperator       = 'D';
+   constexpr char dfaInteger        = 'E';
+   constexpr char dfaQuote          = 'G';
+   constexpr char dfaHexInteger     = 'J';
+   constexpr char dfaReference      = 'M';
+   constexpr char dfaAltOperator    = 'Q';
+   constexpr char dfaCharacter      = 'S';
+   constexpr char dfaQuoteCode      = 'U';
+   constexpr char dfaSignStart      = 'W';
+   constexpr char dfaWideQuote      = 'X';
+   constexpr char dfaGrOperator     = 'Y';
+   constexpr char dfaCustomNumber   = 'J';
 
    constexpr char dfaError          = '?';
    constexpr char dfaEOF            = '.';
