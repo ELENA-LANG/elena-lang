@@ -93,6 +93,10 @@ namespace elena_lang
       IntSOp               = 0x0040,
       ByteSOp              = 0x0041,
       ShortSOp             = 0x0042,
+      LongLiteral          = 0x0043,
+      LongOp               = 0x0044,
+      LongSOp              = 0x0045,
+      LongCondOp           = 0x0046,
 
       Import               = 0x0048,
       DictionaryOp         = 0x0049,

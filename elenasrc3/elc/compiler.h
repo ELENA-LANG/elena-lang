@@ -30,6 +30,7 @@ namespace elena_lang
       WideStringLiteral,
       CharacterLiteral,
       IntLiteral,
+      LongLiteral,
       ConstantLiteral,
       MssgNameLiteral,
       MssgLiteral,
@@ -1065,6 +1066,7 @@ namespace elena_lang
       ObjectInfo mapConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapIntConstant(Scope& scope, SyntaxNode node, int radix);
       ObjectInfo mapUIntConstant(Scope& scope, SyntaxNode node, int radix);
+      ObjectInfo mapLongConstant(Scope& scope, SyntaxNode node, int radix);
       ObjectInfo mapTerminal(Scope& scope, SyntaxNode node, TypeInfo typeInfo, ExpressionAttribute attrs);
       ObjectInfo mapMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef);
 

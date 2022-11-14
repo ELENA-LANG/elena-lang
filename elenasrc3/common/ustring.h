@@ -36,6 +36,8 @@ namespace elena_lang
 
       static int toInt(const char* s, int radix);
       static int toInt(const wide_c* s, int radix);
+      static long long toLong(const char* s, int radix);
+      static long long toLong(const wide_c* s, int radix);
 
       static unsigned int toUInt(const char* s, int radix);
    };
@@ -351,6 +353,55 @@ namespace elena_lang
 
          return true;
       }
+      static bool longToStr(unsigned long long n, T* s, int radix, size_t maxLength)
+      {
+         long long rem = 0;
+         size_t    pos = 0;
+         size_t    start = 0;
+
+         do
+         {
+            if (pos >= maxLength)
+               return false;
+
+            rem = n % radix;
+            n /= radix;
+            switch (rem) {
+               case 10:
+                  s[pos++] = 'a';
+                  break;
+               case 11:
+                  s[pos++] = 'b';
+                  break;
+               case 12:
+                  s[pos++] = 'c';
+                  break;
+               case 13:
+                  s[pos++] = 'd';
+                  break;
+               case 14:
+                  s[pos++] = 'e';
+                  break;
+               case 15:
+                  s[pos++] = 'f';
+                  break;
+               default:
+                  if (rem < 10) {
+                     s[pos++] = (T)(rem + 0x30);
+                  }
+            }
+         } while (n != 0);
+
+         s[pos] = 0;
+         pos--;
+         while (start < pos) {
+            T tmp = s[start];
+            s[start++] = s[pos];
+            s[pos--] = tmp;
+         }
+
+         return true;
+      }
 
       T& operator[](size_t index)
       {
@@ -406,6 +457,13 @@ namespace elena_lang
          size_t pos = getlength(_string);
 
          return uintToStr(value, _string + pos, radix, size - pos);
+      }
+
+      bool appendLong(long long value, int radix = 10)
+      {
+         size_t pos = getlength(_string);
+
+         return longToStr(value, _string + pos, radix, size - pos);
       }
 
       bool copy(const T* s)

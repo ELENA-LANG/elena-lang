@@ -36,6 +36,7 @@ namespace elena_lang
       globalreference         = 0x00300B,
       wide                    = 0x00300C,
       constant                = 0x00300D,
+      longinteger             = 0x00300E,
 
       // NOTE : low word should be unique for every key
       Declaration             = 0x001400,

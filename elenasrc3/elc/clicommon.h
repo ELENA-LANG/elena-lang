@@ -308,6 +308,7 @@ struct BuiltinReferences
 {
    ref_t   superReference;
    ref_t   intReference, shortReference, byteReference;
+   ref_t   longReference;
    ref_t   dwordReference;
    ref_t   literalReference;
    ref_t   wideReference;

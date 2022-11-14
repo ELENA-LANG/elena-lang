@@ -2637,6 +2637,11 @@ void JITCompiler32 :: writeInt32(MemoryWriter& writer, unsigned value)
    writer.writeDWord(value);
 }
 
+void JITCompiler32 :: writeInt64(MemoryWriter& writer, unsigned long long value)
+{
+   writer.writeQWord(value);
+}
+
 void JITCompiler32 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
    writer.writeString(value, value.length_pos() + 1);
@@ -2999,6 +3004,11 @@ void JITCompiler64 :: writeInt32(MemoryWriter& writer, unsigned value)
 {
    writer.writeDWord(value);
    writer.align(8, 0);
+}
+
+void JITCompiler64 :: writeInt64(MemoryWriter& writer, unsigned long long value)
+{
+   writer.writeQWord(value);
 }
 
 void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)

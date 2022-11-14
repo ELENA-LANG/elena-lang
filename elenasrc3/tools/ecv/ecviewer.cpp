@@ -208,6 +208,10 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
       case mskVMTRef:
          commandStr.append("class:");
          break;
+      case mskLongLiteralRef:
+         commandStr.append("longconst:");
+         referenceName = _module->resolveConstant(arg & ~mskAnyRef);
+         break;
       case mskIntLiteralRef:
          commandStr.append("intconst:");
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);

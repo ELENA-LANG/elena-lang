@@ -432,6 +432,78 @@ unsigned int StrConvertor :: toUInt(const char* s, int radix)
    return strtoul(s, nullptr, radix);
 }
 
+long long StrConvertor :: toLong(const char* s, int radix)
+{
+   long long number = 0;
+
+   bool negative = false;
+   if (s[0] == '-') {
+      negative = true;
+      s++;
+   }
+
+   char dump[10];
+   size_t length = getlength(s);
+   while (length > 9) {
+      memcpy(dump, (char*)s, 9);
+      dump[9] = 0;
+
+      long long temp = toUInt(dump, radix);
+      for (size_t i = 0; i < (length - 9); i++) {
+         temp *= radix;
+      }
+      number += temp;
+
+      length -= 9;
+      s += 9;
+   }
+   memcpy(dump, s, length);
+   dump[length] = 0;
+   long long temp = toUInt(dump, radix);
+   number += temp;
+
+   if (negative)
+      number = -number;
+
+   return number;
+}
+
+long long StrConvertor :: toLong(const wide_c* s, int radix)
+{
+   long long number = 0;
+
+   bool negative = false;
+   if (s[0] == '-') {
+      negative = true;
+      s++;
+   }
+
+   wide_c dump[10];
+   size_t length = getlength(s);
+   while (length > 9) {
+      memcpy(dump, (wide_c*)s, 18);
+      dump[9] = 0;
+
+      long long temp = toInt(dump, radix);
+      for (size_t i = 0; i < (length - 9); i++) {
+         temp *= radix;
+      }
+      number += temp;
+
+      length -= 9;
+      s += 9;
+   }
+   memcpy(dump, s, length * 2);
+   dump[length] = 0;
+   long long temp = toInt(dump, radix);
+   number += temp;
+
+   if (negative)
+      number = -number;
+
+   return number;
+}
+
 // --- internal functions ---
 
 bool inline util_compare(const char* s1, const char* s2)

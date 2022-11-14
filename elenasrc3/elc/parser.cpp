@@ -55,6 +55,8 @@ parse_key_t Parser :: resolveTerminal(SourceInfo& info)
          switch (info.symbol[info.symbol.length() - 1]) {
             case 'h':
                return _terminalKeys.hexinteger;
+            case 'l':
+               return _terminalKeys.longinteger;
             default:
                return _terminalKeys.customnumber;
          }

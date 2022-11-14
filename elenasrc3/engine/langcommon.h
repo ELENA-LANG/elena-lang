@@ -224,6 +224,7 @@ namespace elena_lang
    constexpr auto V_DECLARATION           = 0x80000014u;
    constexpr auto V_DECLATTRIBUTES        = 0x80000015u;
    constexpr auto V_ARGARRAY              = 0x80000016u;
+   constexpr auto V_INT64                 = 0x80000017u;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;

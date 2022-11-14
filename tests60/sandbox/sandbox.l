@@ -6,23 +6,12 @@ import extensions;
 //accumulator(n)
 //    = function(new Variable(n));
 
-A
-{
-   s;
-
-   cast w(string s)
-   {
-      this s := s;
-   }
-
-   string toPrintable()
-      = "A:" + s;
-}
-
 public program()
 {
-   var o := 2w;
-   console.writeLine(o);
+   long l := 23;
+   long l2 := 24;
+
+   long l3 := l + l2;
 
 //    var x := accumulator(1);
     

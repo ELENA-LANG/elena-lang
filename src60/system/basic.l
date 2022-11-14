@@ -1075,7 +1075,7 @@ public const struct IntNumber : IntBaseNumber,
 
 // --- UIntNumber ---
 
-public sealed const struct UIntNumber : /*IntBaseNumber,*/
+public sealed const struct UIntNumber : IntBaseNumber,
    info<"A unsigned 32 bit integer">
 {
    embeddable __int theValue[4];
@@ -1185,19 +1185,19 @@ public sealed const struct UIntNumber : /*IntBaseNumber,*/
 
    bool equal(long n)
             : info<"Compares the value">
-      = new LongNumber(self).equal(m);
+      = new LongNumber(self).equal(n);
 
    bool less(long n)
             : info<"Compares the value">
-      = new LongNumber(self).less(m);
+      = new LongNumber(self).less(n);
 
    bool equal(real n)
             : info<"Compares the value">
-      = new RealNumber(self).equal(m);
+      = new RealNumber(self).equal(n);
 
    bool less(real n)
             : info<"Compares the value">
-      = new RealNumber(self).less(m);
+      = new RealNumber(self).less(n);
 
    add(n)
       <= add(cast uint(n));
@@ -1396,11 +1396,253 @@ public sealed const struct UIntNumber : /*IntBaseNumber,*/
 
 // --- LongNumber ---
 
-public class LongNumber
+public sealed const struct LongNumber : IntBaseNumber,
+   info<"A signed 64 bit integer value">
 {
+   embeddable __int theValue[8];
+
+   static long MinValue
+            : info<"Returns the minimal value">
+      = -9223372036854775808l;
+
+   static long MaxValue
+            : info<"Returns the maximal value">
+      = 9223372036854775807l;
+
+   constructor()
+            : info<"Creates the object with a default value (0)">
+      = 0;
+
+   constructor(long n)
+            : info<"Creates the object with specified value">
+      = n;
+
+   construcot(int n)
+            : info<"Creates the object with specified value">
+      = longConvertor.convert(n);
+
+   construcot(uint n)
+            : info<"Creates the object with specified value">
+      = longConvertor.convert(n);
+
+   construcot(short n)
+            : info<"Creates the object with specified value">
+      = longConvertor.convert(n);
+
    constructor(byte b)
+            : info<"Creates the object with specified value">
+      = longConvertor.convert(b);
+
+   int cast()
+            : info<"Returns an integer value">
+      = intConvertor.convert(self);
+
+   uint cast()
+            : info<"Returns an integer value">
+      = uintConvertor.convert(self);
+
+   short cast()
+            : info<"Returns an integer value">
+      = shortConvertor.convert(self);
+
+   byte cast()
+            : info<"Returns an integer value">
+      = byteConvertor.convert(self);
+
+   real cast()
+            : info<"Returns a real value">
+      = realConvertor.convert(self);
+
+   bool equal(o)
    {
+      var n := cast long(o) ?? nil;
+      (nil == n)
+         ? { ^ false }
+         : { ^ self.equal(n) }
    }
+
+   bool less(o)
+      <= less(cast long(o));
+
+   bool equal(long n)
+            : info<"Compares the value">
+      = theValue == n;
+
+   bool less(long n)
+            : info<"Compares the value">
+      = theValue < n;
+
+   bool equal(byte b)
+      <= equal(cast long(b));
+
+   bool less(byte b)
+      <= less(cast long(b));
+
+   bool equal(short s)
+      <= equal(cast long(s));
+
+   bool less(short s)
+      <= less(cast long(s));
+
+   bool equal(int n)
+      <= equal(cast int(n));
+
+   bool less(int n)
+      <= less(cast long(n));
+
+   bool equal(real n)
+      = new RealNumber(self).equal(n);
+
+   bool less(real n)
+      = new RealNumber(self).less(n);
+
+   add(n)
+      <= add(cast long(n));
+
+   subtract(n)
+      <= subtract(cast long(n));
+
+   multiply(n)
+      <= multiply(cast long(n));
+
+   long add(long n)
+      = theValue + n;
+
+   long subtract(long n)
+      = theValue - n;
+
+   long multiply(long n)
+      = theValue * n;
+
+   long divide(long n)
+      = theValue / n;
+
+   long add(byte n)
+      <= add(cast long(n));
+
+   long subtract(byte n)
+      <= add(cast long(n));
+
+   long multiply(byte n)
+      <= add(cast long(n));
+
+   long divide(byte n)
+      <= add(cast long(n));
+
+   long add(short n)
+      <= add(cast long(n));
+
+   long subtract(short n)
+      <= add(cast long(n));
+
+   long multiply(short n)
+      <= add(cast long(n));
+
+   long divide(short n)
+      <= add(cast long(n));
+
+   long add(int n)
+      <= add(cast long(n));
+
+   long subtract(int n)
+      <= add(cast long(n));
+
+   long multiply(int n)
+      <= add(cast long(n));
+
+   long divide(int n)
+      <= add(cast long(n));
+
+   long add(uint n)
+      <= add(cast long(n));
+
+   long subtract(uint n)
+      <= add(cast long(n));
+
+   long multiply(uint n)
+      <= add(cast long(n));
+
+   long divide(uint n)
+      <= add(cast long(n));
+
+   real add(real n)
+      = new RealNumber(self).add(n);
+
+   real subtract(real n)
+      = new RealNumber(self).subtract(n);
+
+   real multiply(real n)
+      = new RealNumber(self).multiply(n);
+
+   real divide(real n)
+      = new RealNumber(self).divide(n);
+
+   band(n)
+      <= band(cast long(n));
+
+   bor(n)
+      <= band(cast long(n));
+
+   bxor(n)
+      <= band(cast long(n));
+
+   long band(long n)
+      = theValue & n;
+
+   long bor(long n)
+      = theValue | n;
+
+   long bxor(long n)
+      = theValue ^ n;
+
+   long band(byte n)
+      <= band(cast long(n));
+
+   long bor(byte n)
+      <= band(cast long(n));
+
+   long bxor(byte n)
+      <= band(cast long(n));
+
+   long band(short n)
+      <= band(cast long(n));
+
+   long bor(short n)
+      <= band(cast long(n));
+
+   long bxor(short n)
+      <= band(cast long(n));
+
+   long band(int n)
+      <= band(cast long(n));
+
+   long bor(int n)
+      <= band(cast long(n));
+
+   long bxor(int n)
+      <= band(cast long(n));
+
+   long band(uint n)
+      <= band(cast long(n));
+
+   long bor(uint n)
+      <= band(cast long(n));
+
+   long bxor(uint n)
+      <= band(cast long(n));
+
+   get long BInverted()
+            : info<"Bitwise inversion">
+      = ~theValue;
+
+   get long Negative()
+      = -theValue;
+
+   string toPrintable()
+      = stringConvertor.convert(self);
+
+   long clone()
+      = new LongNumber(theValue);
 }
 
 // --- RealNumber ---

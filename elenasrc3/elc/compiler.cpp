@@ -3108,6 +3108,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          writer.appendNode(BuildKey::Value, info.extra);
          writer.closeNode();
          break;
+      case ObjectKind::LongLiteral:
+         writer.appendNode(BuildKey::LongLiteral, info.reference);
+         break;
       case ObjectKind::StringLiteral:
          writer.appendNode(BuildKey::StringLiteral, info.reference);
          break;
@@ -3203,6 +3206,8 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
          return scope.moduleScope->buildins.shortReference;
       case V_INT32:
          return scope.moduleScope->buildins.intReference;
+      case V_INT64:
+         return scope.moduleScope->buildins.longReference;
       case V_WORD32:
          return scope.moduleScope->buildins.dwordReference;
       case V_STRING:
@@ -4028,6 +4033,9 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                case 4:
                   attrs.typeInfo.typeRef = V_INT32;
                   break;
+               case 8:
+                  attrs.typeInfo.typeRef = V_INT64;
+                  break;
                default:
                   valid = false;
                   break;
@@ -4441,6 +4449,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
          case BuildKey::IntCondOp:
          case BuildKey::ByteCondOp:
          case BuildKey::ShortCondOp:
+         case BuildKey::LongCondOp:
             writer.appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);
             writer.appendNode(BuildKey::FalseConst, scope.moduleScope->branchingInfo.falseRef);
             break;
@@ -5574,6 +5583,16 @@ inline ref_t mapIntConstant(Compiler::Scope& scope, int integer)
    return scope.moduleScope->module->mapConstant(s.str());
 }
 
+inline ref_t mapLongConstant(Compiler::Scope& scope, long long integer)
+{
+   String<char, 40> s;
+
+   // convert back to string as a decimal integer
+   s.appendLong(integer, 16);
+
+   return scope.moduleScope->module->mapConstant(s.str());
+}
+
 inline ref_t mapUIntConstant(Compiler::Scope& scope, int integer)
 {
    String<char, 20> s;
@@ -5602,7 +5621,16 @@ ObjectInfo Compiler :: mapUIntConstant(Scope& scope, SyntaxNode node, int radix)
    return { ObjectKind::IntLiteral, { V_INT32 }, ::mapUIntConstant(scope, integer), integer };
 }
 
-ObjectInfo Compiler::mapMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef)
+ObjectInfo Compiler :: mapLongConstant(Scope& scope, SyntaxNode node, int radix)
+{
+   long long integer = StrConvertor::toLong(node.identifier(), radix);
+   if (errno == ERANGE)
+      scope.raiseError(errInvalidIntNumber, node);
+
+   return { ObjectKind::LongLiteral, { V_INT32 }, ::mapLongConstant(scope, integer)};
+}
+
+ObjectInfo Compiler :: mapMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef)
 {
    pos_t argCount = 0;
 
@@ -5737,6 +5765,11 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
             invalid = invalidForNonIdentifier;
 
             retVal = mapUIntConstant(scope, node, 16);
+            break;
+         case SyntaxKey::longinteger:
+            invalid = invalidForNonIdentifier;
+
+            retVal = mapLongConstant(scope, node, 10);
             break;
          case SyntaxKey::constant:
             invalid = invalidForNonIdentifier;
@@ -7485,6 +7518,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
    moduleScope->buildins.intReference = safeMapReference(moduleScope, forwardResolver, INTLITERAL_FORWARD);
+   moduleScope->buildins.longReference = safeMapReference(moduleScope, forwardResolver, LONGLITERAL_FORWARD);
    moduleScope->buildins.shortReference = safeMapReference(moduleScope, forwardResolver, INT16LITERAL_FORWARD);
    moduleScope->buildins.byteReference = safeMapReference(moduleScope, forwardResolver, INT8LITERAL_FORWARD);
    moduleScope->buildins.literalReference = safeMapReference(moduleScope, forwardResolver, LITERAL_FORWARD);

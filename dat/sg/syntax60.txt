@@ -8,6 +8,7 @@ __define terminal           12297;
 __define character          12298;
 __define wide               12300;
 __define constant           12301;
+__define long               12302;
 
 __define DECLARATION         5120;
 __define BLOCK               7184;
@@ -208,6 +209,7 @@ ROOT_EXPRESSION ::=
         identifier RI_R
 	| reference O_Re
         | integer O_Re
+        | long O_Re
         | hexinteger O_Re
         | constant O_Re
         | string O_Re
@@ -228,6 +230,7 @@ EXPRESSION ::=
         identifier I_R
 	| reference O_Re
         | integer O_Re
+        | long O_Re
         | hexinteger O_Re
         | constant O_Re
         | string O_Re
@@ -246,6 +249,7 @@ SINGLE_EXPRESSION ::=
         identifier ^OBJECT
 	| reference ^OBJECT
         | integer ^OBJECT
+        | long ^OBJECT
         | hexinteger ^OBJECT
         | constant ^OBJECT
         | string ^OBJECT
@@ -256,6 +260,7 @@ SUB_EXPRESSION ::=
 	identifier SI_R
 	| reference O_Re ^EXPRESSION ")" E_R
         | integer O_Re ^EXPRESSION ")" E_R
+        | long O_Re ^EXPRESSION ")" E_R
         | hexinteger O_Re ^EXPRESSION ")" E_R
         | constant O_Re ^EXPRESSION ")" E_R
         | string O_Re ^EXPRESSION ")" E_R
@@ -270,6 +275,7 @@ SUB_SINGLE_EXPRESSION ::=
 	identifier SSI_R
 	| reference O_Re ")"
         | integer O_Re ")"
+        | long O_Re ")"
         | hexinteger O_Re ")"
         | constant O_Re ")"
         | string O_Re ")"
@@ -295,6 +301,7 @@ MESSAGE_PARAMETER ::=
 L4_EXPRESSION ::=
         identifier I4_R
         | integer ^OBJECT
+        | long ^OBJECT
         | hexinteger ^OBJECT
         | string ^OBJECT
         | wide ^OBJECT
@@ -304,6 +311,7 @@ L4_EXPRESSION ::=
 L5_EXPRESSION ::=
         identifier I5_R
         | integer ^OBJECT L3s L4s
+        | long ^OBJECT L3s L4s
         | hexinteger ^OBJECT L3s L4s
         | constant ^OBJECT L3s L4s
         | string ^OBJECT L3s L4s
@@ -313,6 +321,7 @@ L5_EXPRESSION ::=
 L6_EXPRESSION ::=
         identifier I6_R
         | integer ^OBJECT
+        | long ^OBJECT
         | hexinteger ^OBJECT
         | constant ^OBJECT
         | string ^OBJECT
