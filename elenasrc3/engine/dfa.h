@@ -3,7 +3,7 @@
 //
 //		This header contains DFA tables
 //
-//                                              (C)2005-2021, by Alexei Rakov
+//                                                  (C)2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DFA_H

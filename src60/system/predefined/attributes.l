@@ -52,6 +52,7 @@
 
 /// primitive types
 #let attributesSymbols["__string"]    := 80000801h;
+#let attributesSymbols["__float"]     := 80000802h;
 #let attributesSymbols["__int"]       := 80000803h;
 //#let attributesSymbols["__meta"]      := 80000804h;
 #let attributesSymbols["__word"]      := 80000805h;

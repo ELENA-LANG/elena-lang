@@ -4061,6 +4061,16 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                   break;
             }
             break;
+         case V_FLOATBINARY:
+            switch (attrs.size) {
+               case 8:
+                  attrs.typeInfo.typeRef = V_FLOAT64;
+                  break;
+               default:
+                  valid = false;
+                  break;
+            }
+         break;
          default:
             valid = false;
             break;

@@ -1631,6 +1631,12 @@ public sealed const struct LongNumber : IntBaseNumber,
    long bxor(uint n)
       <= band(cast long(n));
 
+   long shiftLeft(int val)
+      = theValue $shl val;
+   
+   long shiftRight(int val)
+      = theValue $shr val;
+
    get long BInverted()
             : info<"Bitwise inversion">
       = ~theValue;
@@ -1647,8 +1653,11 @@ public sealed const struct LongNumber : IntBaseNumber,
 
 // --- RealNumber ---
 
-public class RealNumber
+public sealed const struct RealNumber : /*BaseNumber, */
+      info<"A 64bit float numeric value">
 {
+   embeddable __float theValue[8];
+
    constructor(byte b)
    {
    }

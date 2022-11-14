@@ -624,12 +624,12 @@ void longOp(CommandTape& tape, BuildNode& node, TapeScope&)
       case BXOR_OPERATOR_ID:
          tape.write(ByteCode::IXorDPN, targetOffset, 8);
          break;
-      //case SHL_OPERATOR_ID:
-      //   tape.write(ByteCode::IShlDPN, targetOffset, 8);
-      //   break;
-      //case SHR_OPERATOR_ID:
-      //   tape.write(ByteCode::IShrDPN, targetOffset, 8);
-      //   break;
+      case SHL_OPERATOR_ID:
+         tape.write(ByteCode::IShlDPN, targetOffset, 8);
+         break;
+      case SHR_OPERATOR_ID:
+         tape.write(ByteCode::IShrDPN, targetOffset, 8);
+         break;
       default:
          throw InternalError(errFatalError);
    }

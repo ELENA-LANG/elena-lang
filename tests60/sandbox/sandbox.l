@@ -8,10 +8,8 @@ import extensions;
 
 public program()
 {
-   long l := 23;
-   long l2 := 24;
-
-   long l3 := l + l2;
+   real r := 17.3;
+//   real r := 17.3r;
 
 //    var x := accumulator(1);
     

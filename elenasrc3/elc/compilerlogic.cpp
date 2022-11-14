@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 67;
+constexpr auto OperationLength = 69;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -139,6 +139,12 @@ constexpr Op Operations[OperationLength] =
    },
    {
       BXOR_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, V_INT64
+   },
+   {
+      SHL_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT32, 0, V_INT64
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT32, 0, V_INT64
    },
    {
       BNOT_OPERATOR_ID, BuildKey::LongSOp, V_INT64, 0, 0, V_INT64
@@ -428,6 +434,7 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_INTBINARY:
       case V_WORDBINARY:
       case V_MSSGBINARY:
+      case V_FLOATBINARY:
          attrs.typeInfo.typeRef = attribute;
          break;
       case V_STRINGOBJ:

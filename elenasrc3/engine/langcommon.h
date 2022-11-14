@@ -194,6 +194,7 @@ namespace elena_lang
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;
+   constexpr auto V_FLOATBINARY           = 0x80000802u;
    constexpr auto V_INTBINARY             = 0x80000803u;
    //constexpr auto V_DECLOBJ               = 0x80000804u;
    constexpr auto V_WORDBINARY            = 0x80000805u;
@@ -225,6 +226,7 @@ namespace elena_lang
    constexpr auto V_DECLATTRIBUTES        = 0x80000015u;
    constexpr auto V_ARGARRAY              = 0x80000016u;
    constexpr auto V_INT64                 = 0x80000017u;
+   constexpr auto V_FLOAT64               = 0x80000018u;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;
