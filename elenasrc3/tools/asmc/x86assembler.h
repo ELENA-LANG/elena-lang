@@ -51,6 +51,8 @@ namespace elena_lang
       X86Operand readDispOperand(ScriptToken& tokenInfo, X86OperandType prefix, ustr_t errorMessage);
       X86Operand readPtrOperand(ScriptToken& tokenInfo, X86OperandType prefix, ustr_t errorMessage);
 
+      int readStReg(ScriptToken& tokenInfo);
+
       virtual X86Operand compileCodeOperand(ScriptToken& tokenInfo, ustr_t errorMessage);
       virtual X86Operand compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, ref_t dataMask);
       virtual X86Operand compileMDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage);
@@ -66,6 +68,15 @@ namespace elena_lang
       virtual bool compileCmp(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileCMovcc(X86Operand source, X86Operand target, MemoryWriter& writer, X86JumpType type);
       virtual bool compileDiv(X86Operand source, MemoryWriter& writer);
+      virtual bool compileFadd(X86Operand source, MemoryWriter& writer);
+      virtual bool compileFcomip(X86Operand source, X86Operand target, MemoryWriter& writer);
+      virtual bool compileFdiv(X86Operand source, MemoryWriter& writer);
+      virtual bool compileFild(X86Operand source, MemoryWriter& writer);
+      virtual bool compileFisub(X86Operand source, MemoryWriter& writer);
+      virtual bool compileFld(X86Operand source, MemoryWriter& writer);
+      virtual bool compileFmul(X86Operand source, MemoryWriter& writer);
+      virtual bool compileFstp(X86Operand source, MemoryWriter& writer);
+      virtual bool compileFsub(X86Operand source, MemoryWriter& writer);
       virtual bool compileIDiv(X86Operand source, MemoryWriter& writer);
       virtual bool compileIMul(X86Operand source, MemoryWriter& writer);
       virtual bool compileIMul(X86Operand source, X86Operand target, MemoryWriter& writer);
@@ -104,6 +115,15 @@ namespace elena_lang
       void compileCMovcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type);
       void compileCWDE(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDiv(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFadd(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFcomip(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFdiv(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFild(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFisub(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFld(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFmul(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFstp(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFsub(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileIDiv(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileIMul(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type, LabelScope& labelScope);
@@ -147,6 +167,7 @@ namespace elena_lang
       bool compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
       bool compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;

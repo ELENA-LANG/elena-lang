@@ -827,7 +827,7 @@ inline %0C1h
   xor    edx, edx
   fcomip st, st(1)
   sete   dl
-  fstp  st(0)
+  fstp   st(0)
 
 end
 
@@ -952,7 +952,7 @@ inline %0D1h
   lea  edi, [ebp + __arg32_1]
 
   fild  dword ptr [edi]
-  fisub qword ptr [esi] 
+  fsub  qword ptr [esi] 
   fstp  qword ptr [edi]
 
 end
@@ -963,7 +963,7 @@ inline %0D2h
   lea  edi, [ebp + __arg32_1]
 
   fild  dword ptr [edi]
-  fimul qword ptr [esi] 
+  fmul  qword ptr [esi] 
   fstp  qword ptr [edi]
 
 end

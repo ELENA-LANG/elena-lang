@@ -20,6 +20,8 @@ namespace elena_lang
       Unknown    = 0,
       None       = 0,
 
+      ST         = 0x00000001,
+
       DD         = 0x00100005,
       DB         = 0x00200005,
       DW         = 0x00400005,
@@ -105,6 +107,7 @@ namespace elena_lang
 
       JB    = 0x02,
       JAE   = 0x03,
+      JE    = 0x04,
       JZ    = 0x04,
       JNZ   = 0x05,
       JBE   = 0x06,

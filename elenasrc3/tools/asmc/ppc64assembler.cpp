@@ -1558,6 +1558,11 @@ bool PPC64Assembler :: compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    return true;
 }
 
+bool PPC64Assembler::compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   return false;
+}
+
 bool PPC64Assembler :: compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    if (tokenInfo.compare("iseleq")) {

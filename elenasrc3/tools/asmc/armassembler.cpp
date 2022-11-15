@@ -1895,8 +1895,12 @@ bool Arm64Assembler :: compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    return false;
 }
 
-
 bool Arm64Assembler :: compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   return false;
+}
+
+bool Arm64Assembler :: compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    return false;
 }

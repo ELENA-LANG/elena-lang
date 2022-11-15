@@ -125,6 +125,7 @@ namespace elena_lang
       bool compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
       bool compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;

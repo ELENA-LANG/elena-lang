@@ -93,6 +93,12 @@ X86Operand X86Assembler :: defineRegister(ustr_t token)
    else if (token.compare("ecx")) {
       return X86Operand(X86OperandType::ECX);
    }
+   else if (token.compare("dl")) {
+      return X86Operand(X86OperandType::DL);
+   }
+   else if (token.compare("dx")) {
+      return X86Operand(X86OperandType::DX);
+   }
    else if (token.compare("edx")) {
       return X86Operand(X86OperandType::EDX);
    }
@@ -346,6 +352,21 @@ X86Operand X86Assembler :: readPtrOperand(ScriptToken& tokenInfo, X86OperandType
    }
 }
 
+int X86Assembler :: readStReg(ScriptToken& tokenInfo)
+{
+   read(tokenInfo);
+   if (tokenInfo.compare("(")) {
+      int index = readInteger(tokenInfo);
+
+      read(tokenInfo, ")", ASM_BRACKETCLOSE_EXPECTED);
+      read(tokenInfo);
+
+      return index;
+   }
+   else return 0;
+}
+
+
 X86Operand X86Assembler :: compileCodeOperand(ScriptToken& tokenInfo, ustr_t errorMessage)
 {
    X86Operand operand;
@@ -456,6 +477,10 @@ X86Operand X86Assembler :: compileOperand(ScriptToken& tokenInfo, ustr_t errorMe
 
          read(tokenInfo);
       }
+   }
+   else if (tokenInfo.compare("st")) {
+      operand.type = X86OperandType::ST;
+      operand.offset = readStReg(tokenInfo);
    }
    else {
       operand = defineOperand(tokenInfo, X86OperandType::DD, errorMessage);
@@ -616,6 +641,98 @@ void X86Assembler :: compileDiv(ScriptToken& tokenInfo, MemoryWriter& writer)
    X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
 
    if (!compileDiv(sour, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileFadd(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, nullptr);
+
+   bool valid = compileFadd(sour, writer);
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileFcomip(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileFcomip(sour, dest, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileFdiv(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, nullptr);
+
+   bool valid = compileFdiv(sour, writer);
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileFild(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, nullptr);
+
+   bool valid = compileFild(sour, writer);
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileFld(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, nullptr);
+
+   bool valid = compileFld(sour, writer);
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileFmul(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, nullptr);
+
+   bool valid = compileFmul(sour, writer);
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileFstp(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, nullptr);
+
+   bool valid = compileFstp(sour, writer);
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileFisub(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, nullptr);
+
+   bool valid = compileFisub(sour, writer);
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileFsub(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, nullptr);
+
+   bool valid = compileFsub(sour, writer);
+
+   if (!valid)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
@@ -1167,6 +1284,114 @@ bool X86Assembler :: compileDiv(X86Operand source, MemoryWriter& writer)
    if (source.isR32_M32()) {
       writer.writeByte(0xF7);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 6 }, source);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileFadd(X86Operand source, MemoryWriter& writer)
+{
+   if (source.isM64()) {
+      writer.writeByte(0xDC);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 0 }, source);
+   }
+   else return false;
+
+   return true;
+
+}
+
+bool X86Assembler :: compileFcomip(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.type == X86OperandType::ST && source.offset == 0 && target.type == X86OperandType::ST) {
+      writer.writeByte(0xDF);
+      writer.writeByte(0xF0 + target.offset);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileFdiv(X86Operand source, MemoryWriter& writer)
+{
+   if (source.isM64()) {
+      writer.writeByte(0xDC);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 6 }, source);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileFild(X86Operand source, MemoryWriter& writer)
+{
+   if (source.isM32()) {
+      writer.writeByte(0xDB);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 0 }, source);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileFisub(X86Operand source, MemoryWriter& writer)
+{
+   if (source.isM32()) {
+      writer.writeByte(0xDA);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 4 }, source);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileFld(X86Operand source, MemoryWriter& writer)
+{
+   if (source.type == X86OperandType::ST) {
+      writer.writeByte(0xD9);
+      writer.writeByte(0xC0 + source.offset);
+   }
+   else if (source.isM64()) {
+      writer.writeByte(0xDD);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 0 }, source);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileFmul(X86Operand source, MemoryWriter& writer)
+{
+   if (source.isM64()) {
+      writer.writeByte(0xDC);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 1 }, source);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileFstp(X86Operand source, MemoryWriter& writer)
+{
+   if (source.type == X86OperandType::ST) {
+      writer.writeByte(0xDD);
+      writer.writeByte(0xD8 + source.offset);
+   }
+   else if (source.isM64()) {
+      writer.writeByte(0xDD);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 3 }, source);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileFsub(X86Operand source, MemoryWriter& writer)
+{
+   if (source.isM64()) {
+      writer.writeByte(0xDC);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 4 }, source);
    }
    else return false;
 
@@ -1765,9 +1990,43 @@ bool X86Assembler :: compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    return true;
 }
 
-bool X86Assembler::compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool X86Assembler :: compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    return false;
+}
+
+bool X86Assembler :: compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   if (tokenInfo.compare("fadd")) {
+      compileFadd(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fdiv")) {
+      compileFdiv(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fld")) {
+      compileFld(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fcomip")) {
+      compileFcomip(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fild")) {
+      compileFild(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fisub")) {
+      compileFisub(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fmul")) {
+      compileFmul(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fstp")) {
+      compileFstp(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fsub")) {
+      compileFsub(tokenInfo, writer);
+   }
+   else return false;
+
+   return true;
 }
 
 bool X86Assembler :: compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
@@ -1902,6 +2161,9 @@ bool X86Assembler::compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
    }
    else if (tokenInfo.compare("sbb")) {
       compileSbb(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("sete")) {
+      compileSetcc(tokenInfo, writer, X86JumpType::JE);
    }
    else if (tokenInfo.compare("setnc")) {
       compileSetcc(tokenInfo, writer, X86JumpType::JAE);
