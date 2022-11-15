@@ -54,10 +54,10 @@ CodeGenerator _codeGenerators[256] =
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadROp, loadNop, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
+   loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
    loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop, loadNop, loadNop,
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, compileHookDPR, loadNewOp,
@@ -89,7 +89,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 95;
+constexpr size_t bcCommandNumber = 100;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -110,7 +110,8 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::XCmpDP, ByteCode::NAddDPN, ByteCode::AddN, ByteCode::SubN, ByteCode::SetFP,
    ByteCode::AssignI, ByteCode::BLoad, ByteCode::WLoad, ByteCode::Include, ByteCode::Exclude,
    ByteCode::XRefreshSI, ByteCode::IAndDPN, ByteCode::IOrDPN, ByteCode::IXorDPN, ByteCode::Coalesce,
-   ByteCode::Not, ByteCode::Neg, ByteCode::INotDPN, ByteCode::IShlDPN, ByteCode::IShrDPN
+   ByteCode::Not, ByteCode::Neg, ByteCode::INotDPN, ByteCode::IShlDPN, ByteCode::IShrDPN,
+   ByteCode::FAddDPN, ByteCode::FSubDPN, ByteCode::FMulDPN, ByteCode::FDivDPN, ByteCode::FCmpN
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -2642,6 +2643,11 @@ void JITCompiler32 :: writeInt64(MemoryWriter& writer, unsigned long long value)
    writer.writeQWord(value);
 }
 
+void JITCompiler32 :: writeFloat64(MemoryWriter& writer, double number)
+{
+   writer.write(&number, 8);
+}
+
 void JITCompiler32 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
    writer.writeString(value, value.length_pos() + 1);
@@ -3009,6 +3015,11 @@ void JITCompiler64 :: writeInt32(MemoryWriter& writer, unsigned value)
 void JITCompiler64 :: writeInt64(MemoryWriter& writer, unsigned long long value)
 {
    writer.writeQWord(value);
+}
+
+void JITCompiler64 :: writeFloat64(MemoryWriter& writer, double number)
+{
+   writer.write(&number, 8);
 }
 
 void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)

@@ -34,6 +34,8 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
          return _numberReferences.get(referenceName);
       case mskLongLiteralRef:
          return _longNumberReferences.get(referenceName);
+      case mskRealLiteralRef:
+         return _realNumberReferences.get(referenceName);
       case mskLiteralRef:
          return _literalReferences.get(referenceName);
       case mskWideLiteralRef:
@@ -75,6 +77,9 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
          break;
       case mskLongLiteralRef:
          _longNumberReferences.add(referenceName, address);
+         break;
+      case mskRealLiteralRef:
+         _realNumberReferences.add(referenceName, address);
          break;
       case mskCharacterRef:
          _characterReferences.add(referenceName, address);

@@ -262,6 +262,11 @@ void longLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskLongLiteralRef);
 }
 
+void realLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskRealLiteralRef);
+}
+
 void mssgLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskMssgLiteralRef);
@@ -335,6 +340,31 @@ void xdispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
    mssg_t message = node.findChild(BuildKey::Message).arg.reference;
 
    tape.write(ByteCode::XDispatchMR, message, node.arg.reference | mskConstArray);
+}
+
+void realOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   tape.write(ByteCode::CopyDPN, targetOffset, 4);
+   tape.write(ByteCode::XMovSISI, 0, 1);
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+         tape.write(ByteCode::FAddDPN, targetOffset, 8);
+         break;
+      case SUB_OPERATOR_ID:
+         tape.write(ByteCode::FSubDPN, targetOffset, 8);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(ByteCode::FMulDPN, targetOffset, 8);
+         break;
+      case DIV_OPERATOR_ID:
+         tape.write(ByteCode::FDivDPN, targetOffset, 8);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
 }
 
 void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -491,6 +521,39 @@ void shortSOp(CommandTape& tape, BuildNode& node, TapeScope&)
       default:
          throw InternalError(errFatalError);
    }
+}
+
+void realCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::FCmpN, 4);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case LESS_OPERATOR_ID:
+         opCode = ByteCode::SelLtRR;
+         break;
+      case EQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
 }
 
 void intCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -865,7 +928,8 @@ ByteCodeWriter::Saver commands[] =
    mssgLiteral, accSwapSPField, redirectOp, shortArraySOp, wideLiteral, byteOp, shortOp, byteCondOp,
    shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning, staticVarOp, loadingIndex, nilOp,
 
-   intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp,
+   intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
+   realOp,
 };
 
 // --- ByteCodeWriter ---

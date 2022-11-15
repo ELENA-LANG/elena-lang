@@ -48,6 +48,9 @@ parse_key_t Parser :: resolveTerminal(SourceInfo& info)
          return _terminalKeys.eof;
       case dfaInteger:
          return _terminalKeys.integer;
+      case dfaGenericReal:
+      case dfaReal:
+         return _terminalKeys.real;
       case dfaCharacter:
          return _terminalKeys.character;
       case dfaCustomNumber:

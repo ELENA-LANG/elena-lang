@@ -8,6 +8,7 @@
 // --------------------------------------------------------------------------
 #include "document.h"
 #include "guieditor.h"
+#include <tchar.h>
 
 using namespace elena_lang;
 

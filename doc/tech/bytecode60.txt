@@ -237,6 +237,22 @@ ELENA byte codes (or ecodes)
  
    andn n                   - index := index & n
  
+   fadd dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] += temp;
+                              n = 8 
+ 
+   fdiv dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] /= temp;
+                              n = 8  
+
+   fmul dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] *= temp;
+                              n = 8  
+
+   fsub dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] -= temp;
+                              n = 8  
+
    iadd dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] += temp;
                               n = 1,2,4,8 
@@ -297,6 +313,12 @@ ELENA byte codes (or ecodes)
                               COMP.LT := (index < n);
 
    cmpr r                   - COMP.EQ := (acc == r);
+
+   fcmp n                   - temp1 : n << acc;
+                              temp2 : n << sp[0];
+                              COMP.EQ := (temp2 == temp1);
+                              COMP.LT := (temp2 < temp1);
+                              n = 8 
 
    icmp n                   - temp1 : n << acc;
                               temp2 : n << sp[0];

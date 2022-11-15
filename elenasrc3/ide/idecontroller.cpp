@@ -4,6 +4,8 @@
 //                                             (C)2005-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include <tchar.h>
+
 #include "idecontroller.h"
 #include "eng/messages.h"
 

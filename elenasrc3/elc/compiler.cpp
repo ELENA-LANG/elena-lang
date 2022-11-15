@@ -3108,6 +3108,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          writer.appendNode(BuildKey::Value, info.extra);
          writer.closeNode();
          break;
+      case ObjectKind::Float64Literal:
+         writer.appendNode(BuildKey::RealLiteral, info.reference);
+         break;
       case ObjectKind::LongLiteral:
          writer.appendNode(BuildKey::LongLiteral, info.reference);
          break;
@@ -3208,6 +3211,8 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
          return scope.moduleScope->buildins.intReference;
       case V_INT64:
          return scope.moduleScope->buildins.longReference;
+      case V_FLOAT64:
+         return scope.moduleScope->buildins.realReference;
       case V_WORD32:
          return scope.moduleScope->buildins.dwordReference;
       case V_STRING:
@@ -5613,6 +5618,16 @@ inline ref_t mapUIntConstant(Compiler::Scope& scope, int integer)
    return scope.moduleScope->module->mapConstant(s.str());
 }
 
+inline ref_t mapFloat64Const(Compiler::Scope& scope, double val)
+{
+   String<char, 30> s;
+
+   // convert back to string as a decimal integer
+   s.appendDouble(val);
+
+   return scope.moduleScope->module->mapConstant(s.str());
+}
+
 ObjectInfo Compiler :: mapIntConstant(Scope& scope, SyntaxNode node, int radix)
 {
    int integer = StrConvertor::toInt(node.identifier(), radix);
@@ -5638,6 +5653,24 @@ ObjectInfo Compiler :: mapLongConstant(Scope& scope, SyntaxNode node, int radix)
       scope.raiseError(errInvalidIntNumber, node);
 
    return { ObjectKind::LongLiteral, { V_INT32 }, ::mapLongConstant(scope, integer)};
+}
+
+ObjectInfo Compiler :: mapFloat64Constant(Scope& scope, SyntaxNode node)
+{
+   double real = 0;
+
+   ustr_t val = node.identifier();
+   if (val.endsWith("r")) {
+      String<char, 50> tmp(val);
+      tmp.truncate(tmp.length() - 1);
+
+      real = StrConvertor::toDouble(tmp.str());
+   }
+   else real = StrConvertor::toDouble(node.identifier());
+   if (errno == ERANGE)
+      scope.raiseError(errInvalidIntNumber, node);
+
+   return { ObjectKind::Float64Literal, { V_FLOAT64 }, ::mapFloat64Const(scope, real) };
 }
 
 ObjectInfo Compiler :: mapMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef)
@@ -5780,6 +5813,11 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
             invalid = invalidForNonIdentifier;
 
             retVal = mapLongConstant(scope, node, 10);
+            break;
+         case SyntaxKey::real:
+            invalid = invalidForNonIdentifier;
+
+            retVal = mapFloat64Constant(scope, node);
             break;
          case SyntaxKey::constant:
             invalid = invalidForNonIdentifier;
@@ -7529,6 +7567,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
    moduleScope->buildins.intReference = safeMapReference(moduleScope, forwardResolver, INTLITERAL_FORWARD);
    moduleScope->buildins.longReference = safeMapReference(moduleScope, forwardResolver, LONGLITERAL_FORWARD);
+   moduleScope->buildins.realReference = safeMapReference(moduleScope, forwardResolver, REALLITERAL_FORWARD);
    moduleScope->buildins.shortReference = safeMapReference(moduleScope, forwardResolver, INT16LITERAL_FORWARD);
    moduleScope->buildins.byteReference = safeMapReference(moduleScope, forwardResolver, INT8LITERAL_FORWARD);
    moduleScope->buildins.literalReference = safeMapReference(moduleScope, forwardResolver, LITERAL_FORWARD);

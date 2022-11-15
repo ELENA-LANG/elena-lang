@@ -136,7 +136,7 @@ namespace elena_lang
          int notifyMessage) = 0;
 
       virtual bool insertNewLine(TextViewModelBase* model) = 0;
-      virtual bool insertChar(TextViewModelBase* model, char ch) = 0;
+      virtual bool insertChar(TextViewModelBase* model, text_c ch) = 0;
       virtual bool eraseChar(TextViewModelBase* model, bool moveback) = 0;
 
       virtual void undo(TextViewModelBase* model) = 0;

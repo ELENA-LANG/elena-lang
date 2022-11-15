@@ -16,6 +16,7 @@
 #include "Resource.h"
 
 #include <shlwapi.h>
+#include <tchar.h>
 
 using namespace elena_lang;
 

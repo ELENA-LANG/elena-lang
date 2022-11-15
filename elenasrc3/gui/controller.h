@@ -59,7 +59,7 @@ namespace elena_lang
          int notifyMessage) override;
 
       bool insertNewLine(TextViewModelBase* model) override;
-      bool insertChar(TextViewModelBase* model, char ch) override;
+      bool insertChar(TextViewModelBase* model, text_c ch) override;
       bool eraseChar(TextViewModelBase* model, bool moveback) override;
 
       void indent(TextViewModelBase* model) override;

@@ -504,6 +504,63 @@ long long StrConvertor :: toLong(const wide_c* s, int radix)
    return number;
 }
 
+double StrConvertor :: toDouble(const char* s)
+{
+   // !!HOTFIX : to recognize nan
+   if (strcmp(s, "nan") == 0) {
+      return NAN;
+   }
+   else if (strcmp(s, "-inf") == 0) {
+      return -INFINITY;
+   }
+   else if (strcmp(s, "+inf") == 0) {
+      return INFINITY;
+   }
+   else return atof(s);
+}
+
+double StrConvertor::toDouble(const wide_c* s)
+{
+   size_t destLen = 30;
+   char temp[30];
+   StrConvertor::copy(temp, s, getlength(s), destLen);
+   temp[destLen] = 0;
+
+   return toDouble(temp);
+}
+
+char* StrConvertor :: toString(double value, int precision, char* s, size_t destLength)
+{
+   // !!HOTFIX : to recognize nan
+   if (value != value) {
+      StrConvertor::copy(s, "nan", 3, destLength);
+      s[destLength] = 0;
+   }
+   else if (isinf(value)) {
+      if (value == -INFINITY) {
+         StrConvertor::copy(s, "-inf", 4, destLength);
+      }
+      else StrConvertor::copy(s, "+inf", 4, destLength);
+
+      s[destLength] = 0;
+   }
+   else _gcvt(value, precision, s);
+
+   return s;
+}
+
+wchar_t* StrConvertor :: toString(double value, int precision, wchar_t* s, size_t destLength)
+{
+   char tmp[25];
+   gcvt(value, precision, tmp);
+
+   for (size_t i = 0; i <= getlength(tmp); i++) {
+      s[i] = tmp[i];
+   }
+
+   return s;
+}
+
 // --- internal functions ---
 
 bool inline util_compare(const char* s1, const char* s2)

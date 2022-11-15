@@ -139,7 +139,7 @@ bool TextViewController :: insertNewLine(TextViewModelBase* model)
    return false;
 }
 
-bool TextViewController :: insertChar(TextViewModelBase* model, char ch)
+bool TextViewController :: insertChar(TextViewModelBase* model, text_c ch)
 {
    auto docView = model->DocView();
    if (!docView->status.readOnly && ch >= 0x20) {

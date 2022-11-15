@@ -509,6 +509,7 @@ pos_t Text :: getRowLength(int row)
 
       return bookmark.length_pos();
    }
+   else return 0;
 }
 
 void Text :: validateBookmark(TextBookmark& bookmark)
@@ -519,7 +520,7 @@ void Text :: validateBookmark(TextBookmark& bookmark)
    }
 }
 
-void Text :: copyLineTo(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_t length, bool stopOnEOL)
+void Text :: copyLineTo(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_t length_pos, bool stopOnEOL)
 {
    validateBookmark(bookmark);
 
@@ -535,6 +536,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_
    }
 
    int col = bookmark._column;
+   size_t length = length_pos;
    while (length > 0) {
       size_t offset = bookmark._offset;
       size_t count = (*bookmark._page).used - offset;
@@ -559,7 +561,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_
             size_t chLen = TextBookmark::charLength(line, i);
             if (chLen > 1) {
                if (i + chLen < count) {
-                  writer.write(&line[i], chLen);
+                  writer.write(&line[i], (pos_t)chLen);
                   i += (chLen - 1);
                }
                else break;

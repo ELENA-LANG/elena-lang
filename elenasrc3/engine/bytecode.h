@@ -87,6 +87,7 @@ namespace elena_lang
       JumpVI         = 0xB5,
 
       CmpR           = 0xC0,
+      FCmpN          = 0xC1,
       ICmpN          = 0xC2,
       TstFlag        = 0xC3,
       TstN           = 0xC4,
@@ -95,6 +96,11 @@ namespace elena_lang
       CmpSI          = 0xC9,
 
       MaxDoubleOp    = 0xCF,
+
+      FAddDPN        = 0xD0,
+      FSubDPN        = 0xD1,
+      FMulDPN        = 0xD2,
+      FDivDPN        = 0xD3,
 
       IAndDPN        = 0xD8,
       IOrDPN         = 0xD9,

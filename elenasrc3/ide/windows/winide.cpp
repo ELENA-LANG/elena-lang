@@ -4,7 +4,12 @@
 //                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include <tchar.h>
+
 #include "windows/winide.h"
+
+#include "eng/messages.h"
+
 #include "windows/wintabbar.h"
 #include "windows/wintreeview.h"
 

@@ -4,6 +4,8 @@
 //                                             (C)2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include <tchar.h>
+
 #include "winmessagelog.h"
 
 using namespace elena_lang;

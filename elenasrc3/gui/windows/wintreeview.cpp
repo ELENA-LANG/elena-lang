@@ -7,6 +7,8 @@
 #include "idecommon.h"
 #include "wintreeview.h"
 
+#include <tchar.h>
+
 using namespace elena_lang;
 
 // --- TreeView ---

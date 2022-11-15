@@ -38,8 +38,13 @@ namespace elena_lang
       static int toInt(const wide_c* s, int radix);
       static long long toLong(const char* s, int radix);
       static long long toLong(const wide_c* s, int radix);
+      static double toDouble(const char* s);
+      static double toDouble(const wide_c* s);
 
       static unsigned int toUInt(const char* s, int radix);
+
+      static char* toString(double value, int precision, char* s, size_t destLength);
+      static wchar_t* toString(double value, int precision, wchar_t* s, size_t destLength);
    };
 
    // --- StrUtil ---
@@ -401,6 +406,13 @@ namespace elena_lang
          }
 
          return true;
+      }
+
+      void appendDouble(double value)
+      {
+         size_t pos = getlength(_string);
+
+         StrConvertor::toString(value, 10, _string + pos, size - pos);
       }
 
       T& operator[](size_t index)

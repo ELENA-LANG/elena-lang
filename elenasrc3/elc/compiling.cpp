@@ -244,6 +244,7 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, pat
          SyntaxTree::toParseKey(SyntaxKey::integer),
          SyntaxTree::toParseKey(SyntaxKey::hexinteger),
          SyntaxTree::toParseKey(SyntaxKey::longinteger),
+         SyntaxTree::toParseKey(SyntaxKey::real),
          SyntaxTree::toParseKey(SyntaxKey::constant));
 
       _parser = new Parser(&syntax, terminals, _presenter);

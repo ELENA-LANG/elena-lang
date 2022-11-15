@@ -21,7 +21,7 @@ namespace elena_lang
       AddressMap     _symbolReferences;
       AddressMap     _exportReferences;
       AddressMap     _constReferences, _numberReferences, _literalReferences, _characterReferences;
-      AddressMap     _longNumberReferences;
+      AddressMap     _longNumberReferences, _realNumberReferences;
       AddressMap     _wideReferences;
       AddressMap     _mssgReferences;
       AddressMap     _dataReferences;
@@ -60,6 +60,7 @@ namespace elena_lang
          _literalReferences(INVALID_ADDR),
          _characterReferences(INVALID_ADDR),
          _longNumberReferences(INVALID_ADDR),
+         _realNumberReferences(INVALID_ADDR),
          _wideReferences(INVALID_ADDR),
          _mssgReferences(INVALID_ADDR),
          _dataReferences(INVALID_ADDR),

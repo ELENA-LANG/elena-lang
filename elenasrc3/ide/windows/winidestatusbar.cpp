@@ -4,6 +4,8 @@
 //                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include <tchar.h>
+
 #include "windows/winidestatusbar.h"
 
 using namespace elena_lang;

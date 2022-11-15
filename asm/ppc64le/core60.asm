@@ -1058,13 +1058,23 @@ inline %1C0h
 
 end 
 
+// ; fcmpn 8
+inline %0C1h
+
+  lfd      r17, 0(r3)
+  lfd      r18, 0(r15)
+
+  cmp      r17, r18
+
+end
+
 // ; icmpn 4
 inline %0C2h
 
-  lwz      r17, 0(r3)
-  lwz      r18, 0(r15)
+  lwz      f17, 0(r3)
+  lwz      f18, 0(r15)
 
-  cmp      r17, r18
+  fcmp     f17, f18
 
 end
 
@@ -1189,6 +1199,62 @@ inline %2C9h
   cmp     r15, r4
 
 end 
+
+// ; faddndp
+inline %0D0h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  lfd     f18, 0(r19)
+
+  fadd    f17, f17, f18  
+
+  stfd    f17, 0(r19)
+
+end
+
+// ; fsubndp
+inline %0D1h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  lfd     f18, 0(r19)
+
+  fsub    f17, f17, f18  
+
+  stfd    f17, 0(r19)
+
+end
+
+// ; fmulndp
+inline %0D2h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  lfd     f18, 0(r19)
+
+  fmul    f17, f17, f18  
+
+  stfd    f17, 0(r19)
+
+end
+
+// ; fdivndp
+inline %0D3h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  lfd     f18, 0(r19)
+
+  fdiv    f18, f18, f17  
+
+  stfd    f18, 0(r19)
+
+end
 
 // ; ianddpn
 inline %0D8h

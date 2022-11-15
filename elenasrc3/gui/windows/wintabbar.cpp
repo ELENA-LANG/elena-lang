@@ -8,6 +8,8 @@
 #include "wintabbar.h"
 #include "wincanvas.h"
 
+#include <tchar.h>
+
 using namespace elena_lang;
 
 // --- CustomTabBar ---

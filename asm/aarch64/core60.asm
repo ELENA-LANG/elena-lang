@@ -1027,6 +1027,16 @@ inline %1C0h
 
 end 
 
+// ; fcmpn 8
+inline %0C1h
+
+  ldr     d17, [x0]
+  ldr     d18, [x10]
+
+  fcmp    d17, d18
+
+end
+
 // ; icmpn 4
 inline %0C2h
 
@@ -1177,6 +1187,62 @@ inline %2C9h
   cmp     x10, x11
 
 end 
+
+// ; faddndp
+inline %0D0h
+
+  add     x19, x29, __arg12_1
+
+  ldr     d17, [x0]
+  ldr     d18, [x19]
+
+  fadd    d17, d17, d18  
+
+  str     d17, [x19]
+
+end
+
+// ; fsubndp
+inline %0D1h
+
+  add     x19, x29, __arg12_1
+
+  ldr     d17, [x0]
+  ldr     d18, [x19]
+
+  fsub    d17, d18, d17  
+
+  str     d17, [x19]
+
+end
+
+// ; fmulndp
+inline %0D2h
+
+  add     x19, x29, __arg12_1
+
+  ldr     d17, [x0]
+  ldr     d18, [x19]
+
+  fmul    d17, d17, d18  
+
+  str     d17, [x19]
+
+end
+
+// ; fdivndp
+inline %0D3h
+
+  add     x19, x29, __arg12_1
+
+  ldr     d17, [x0]
+  ldr     d18, [x19]
+
+  fdiv    d18, d18, d17    // ; sp[0] / temp
+
+  str     d18, [x19]
+
+end
 
 // ; ianddpn
 inline %0D8h

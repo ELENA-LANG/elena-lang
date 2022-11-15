@@ -30,6 +30,9 @@ namespace elena_lang
    constexpr char dfaWideQuote      = 'X';
    constexpr char dfaGrOperator     = 'Y';
    constexpr char dfaCustomNumber   = 'J';
+   constexpr char dfaDotStart       = 'Z';
+   constexpr char dfaGenericReal    = '[';
+   constexpr char dfaReal           = '_';
 
    constexpr char dfaError          = '?';
    constexpr char dfaEOF            = '.';
@@ -37,7 +40,6 @@ namespace elena_lang
    constexpr char dfaMinusLookahead = '-';  // indicates that if minus is preceeded by the operator it may be part of the digit
    constexpr char dfaDotLookahead   = '$';
    constexpr char dfaBack           = '!';
-
 
    // --- LineInfo ---
    struct LineInfo

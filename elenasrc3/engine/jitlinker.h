@@ -55,6 +55,7 @@ namespace elena_lang
       {
          ustr_t intLiteralClass;
          ustr_t longLiteralClass;
+         ustr_t realLiteralClass;
          ustr_t literalClass;
          ustr_t wideLiteralClass;
          ustr_t characterClass;
@@ -226,6 +227,7 @@ namespace elena_lang
 
          _constantSettings.intLiteralClass = forwardResolver->resolveForward(INTLITERAL_FORWARD);
          _constantSettings.longLiteralClass = forwardResolver->resolveForward(LONGLITERAL_FORWARD);
+         _constantSettings.realLiteralClass = forwardResolver->resolveForward(REALLITERAL_FORWARD);
          _constantSettings.literalClass = forwardResolver->resolveForward(LITERAL_FORWARD);
          _constantSettings.wideLiteralClass = forwardResolver->resolveForward(WIDELITERAL_FORWARD);
          _constantSettings.characterClass = forwardResolver->resolveForward(CHAR_FORWARD);

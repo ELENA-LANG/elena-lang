@@ -1658,6 +1658,18 @@ public sealed const struct RealNumber : /*BaseNumber, */
 {
    embeddable __float theValue[8];
 
+   static real MinValue
+            : info<"Returns the minimal value">
+      = -1.7976931348623157e+308r;
+
+   static real MaxValue
+            : info<"Returns the maximal value">
+      = 1.7976931348623157e+308r;
+
+//    static real NegativeInfinity 
+//            : info<"Returns the negative infinity">
+//        = -1.0 / 0.0;   
+
    constructor(byte b)
    {
    }

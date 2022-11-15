@@ -11,6 +11,8 @@
 #include "debugcontroller.h"
 #include "module.h"
 
+#include <tchar.h>
+
 using namespace elena_lang;
 
 // --- LibraryProvider ---

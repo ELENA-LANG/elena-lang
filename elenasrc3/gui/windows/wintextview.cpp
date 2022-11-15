@@ -6,6 +6,8 @@
 
 #include "wintextview.h"
 
+#include <tchar.h>
+
 using namespace elena_lang;
 
 inline bool isKeyDown(int key)

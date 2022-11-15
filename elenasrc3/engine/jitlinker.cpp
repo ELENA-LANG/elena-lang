@@ -1054,6 +1054,11 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          size = 8;
          structMode = true;
          break;
+      case mskRealLiteralRef:
+         vmtReferenceInfo.referenceName = _constantSettings.realLiteralClass;
+         size = 8;
+         structMode = true;
+         break;
       case mskLiteralRef:
          vmtReferenceInfo.referenceName = _constantSettings.literalClass;
          size = value.length_pos() + 1;
@@ -1104,6 +1109,9 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          break;
       case mskLongLiteralRef:
          _compiler->writeInt64(writer, StrConvertor::toLong(value, 16));
+         break;
+      case mskRealLiteralRef:
+         _compiler->writeFloat64(writer, StrConvertor::toDouble(value));
          break;
       case mskCharacterRef:
          _compiler->writeChar32(writer, value);
@@ -1233,6 +1241,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
             break;
          case mskIntLiteralRef:
          case mskLongLiteralRef:
+         case mskRealLiteralRef:
          case mskLiteralRef:
          case mskWideLiteralRef:
          case mskCharacterRef:

@@ -77,7 +77,8 @@ namespace elena_lang
    constexpr auto SYSTEM_FORWARD          = "$system_entry";   // the system entry
    constexpr auto SUPER_FORWARD           = "$super";          // the common class predecessor
    constexpr auto INTLITERAL_FORWARD      = "$int";            // the int literal
-   constexpr auto LONGLITERAL_FORWARD     = "$long";            // the int literal
+   constexpr auto LONGLITERAL_FORWARD     = "$long";           // the long literal
+   constexpr auto REALLITERAL_FORWARD     = "$real";           // the real literal
    constexpr auto INT8LITERAL_FORWARD     = "$byte";           // the int literal
    constexpr auto INT16LITERAL_FORWARD    = "$short";          // the int literal
    constexpr auto LITERAL_FORWARD         = "$string";         // the string literal
@@ -273,6 +274,7 @@ namespace elena_lang
    constexpr ref_t mskWideLiteralRef      = 0x1E000000u;   // reference to wide literal constant
    constexpr ref_t mskStringMapRef        = 0x1F000000u;
    constexpr ref_t mskLongLiteralRef      = 0x20000000u;
+   constexpr ref_t mskRealLiteralRef      = 0x21000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

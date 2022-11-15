@@ -819,6 +819,18 @@ inline %1C0h
 
 end 
 
+// ; fcmpn 8
+inline %0C1h
+
+  fld    qword ptr [esi]
+  fld    qword ptr [ebx]
+  xor    edx, edx
+  fcomip st, st(1)
+  sete   dl
+  fstp  st(0)
+
+end
+
 // ; icmpn 4
 inline %0C2h
 
@@ -922,6 +934,50 @@ inline %1C9h
   cmp  ebx, esi
 
 end 
+
+// ; faddndp
+inline %0D0h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fild  dword ptr [edi]
+  fadd  qword ptr [esi] 
+  fstp  qword ptr [edi]
+
+end
+
+// ; fsubndp
+inline %0D1h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fild  dword ptr [edi]
+  fisub qword ptr [esi] 
+  fstp  qword ptr [edi]
+
+end
+
+// ; fmulndp
+inline %0D2h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fild  dword ptr [edi]
+  fimul qword ptr [esi] 
+  fstp  qword ptr [edi]
+
+end
+
+// ; fdivndp
+inline %0D3h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fild  dword ptr [edi]
+  fdiv  qword ptr [esi] 
+  fstp  qword ptr [edi]
+
+end
 
 // ; ianddpn
 inline %0D8h

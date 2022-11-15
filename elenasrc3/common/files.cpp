@@ -22,9 +22,9 @@ using namespace elena_lang;
 #include <windows.h>
 #include <direct.h>
 
-#define NEW_LINE "\n"
-
 #else
+
+#define NEW_LINE "\n"
 
 #define file_open fopen
 
