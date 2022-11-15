@@ -1330,6 +1330,10 @@ bool X86Assembler :: compileFild(X86Operand source, MemoryWriter& writer)
       writer.writeByte(0xDB);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 0 }, source);
    }
+   else if (source.isM64()) {
+      writer.writeByte(0xDF);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 5 }, source);
+   }
    else return false;
 
    return true;

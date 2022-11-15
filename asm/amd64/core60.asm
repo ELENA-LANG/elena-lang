@@ -1003,7 +1003,7 @@ inline %0D0h
 
   lea  rdi, [rbp + __arg32_1]
 
-  fild  qword ptr [rdi]
+  fld   qword ptr [rdi]
   fadd  qword ptr [rsi] 
   fstp  qword ptr [rdi]
 
@@ -1015,7 +1015,7 @@ inline %0D1h
   lea  rdi, [rbp + __arg32_1]
 
   fild  qword ptr [rdi]
-  fisub qword ptr [rsi] 
+  fsub  qword ptr [rsi] 
   fstp  qword ptr [rdi]
 
 end
@@ -1025,8 +1025,8 @@ inline %0D2h
 
   lea  rdi, [rbp + __arg32_1]
 
-  fild  qword ptr [rdi]
-  fimul qword ptr [rsi] 
+  fld   qword ptr [rdi]
+  fmul  qword ptr [rsi] 
   fstp  qword ptr [rdi]
 
 end
@@ -1036,7 +1036,7 @@ inline %0D3h
 
   lea  rdi, [rbp + __arg32_1]
 
-  fild  qword ptr [rdi]
+  fld   qword ptr [rdi]
   fdiv  qword ptr [rsi] 
   fstp  qword ptr [rdi]
 

@@ -940,7 +940,7 @@ inline %0D0h
 
   lea  edi, [ebp + __arg32_1]
 
-  fild  dword ptr [edi]
+  fld   qword ptr [edi]
   fadd  qword ptr [esi] 
   fstp  qword ptr [edi]
 
@@ -951,7 +951,7 @@ inline %0D1h
 
   lea  edi, [ebp + __arg32_1]
 
-  fild  dword ptr [edi]
+  fld   qword ptr [edi]
   fsub  qword ptr [esi] 
   fstp  qword ptr [edi]
 
@@ -962,7 +962,7 @@ inline %0D2h
 
   lea  edi, [ebp + __arg32_1]
 
-  fild  dword ptr [edi]
+  fld   qword ptr [edi]
   fmul  qword ptr [esi] 
   fstp  qword ptr [edi]
 
@@ -973,7 +973,7 @@ inline %0D3h
 
   lea  edi, [ebp + __arg32_1]
 
-  fild  dword ptr [edi]
+  fld   qword ptr [edi]
   fdiv  qword ptr [esi] 
   fstp  qword ptr [edi]
 
