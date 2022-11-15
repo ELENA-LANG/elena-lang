@@ -929,7 +929,7 @@ ByteCodeWriter::Saver commands[] =
    shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning, staticVarOp, loadingIndex, nilOp,
 
    intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
-   realOp,
+   realOp, realCondOp,
 };
 
 // --- ByteCodeWriter ---
