@@ -18,6 +18,8 @@
 namespace elena_lang
 {
 
+constexpr int MAX_WARNINGS = 200;
+
 // --- PresenterBase ----
 
 class PresenterBase
@@ -608,6 +610,7 @@ class ErrorProcessor : public ErrorProcessorBase
 {
    PresenterBase* _presenter;
    int            _warningMasks;
+   int            _numberOfWarnings;
 
    static SyntaxNode findTerminal(SyntaxNode node)
    {
@@ -679,13 +682,20 @@ public:
       if (!test(_warningMasks, level))
          return;
 
-      printTerminalInfo(code, pathArg, node);
+      if (_numberOfWarnings < MAX_WARNINGS) {
+         _numberOfWarnings++;
+
+         printTerminalInfo(code, pathArg, node);
+      }
    }
+
+   bool hasWarnings() { return _numberOfWarnings > 0; }
 
    ErrorProcessor(PresenterBase* presenter)
    {
       _presenter = presenter;
       _warningMasks = WARNING_MASK_2;
+      _numberOfWarnings = 0;
    }
 };
 

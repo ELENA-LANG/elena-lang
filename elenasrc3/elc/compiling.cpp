@@ -559,7 +559,8 @@ int CompilingProcess :: build(ProjectBase& project,
       PlatformType targetType = project.TargetType();
 
       // Project Greetings
-      _presenter->print(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()), getTargetTypeName(targetType));
+      _presenter->print(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()), 
+         getTargetTypeName(targetType));
 
       // Cleaning up
       _presenter->print(ELC_CLEANING);
@@ -580,7 +581,7 @@ int CompilingProcess :: build(ProjectBase& project,
             break;
       }
 
-      return 0;
+      return _errorProcessor->hasWarnings() ? -1 : 0;
    }
    //catch (LinkerException e)
    //{

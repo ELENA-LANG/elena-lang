@@ -4465,6 +4465,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
          case BuildKey::ByteCondOp:
          case BuildKey::ShortCondOp:
          case BuildKey::LongCondOp:
+         case BuildKey::RealCondOp:
             writer.appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);
             writer.appendNode(BuildKey::FalseConst, scope.moduleScope->branchingInfo.falseRef);
             break;

@@ -30,7 +30,6 @@ static LRESULT CALLBACK hookProcMouse(int nCode, WPARAM wParam, LPARAM lParam)
    return ::CallNextHookEx(hookMouse, nCode, wParam, lParam);
 }
 
-
 // --- Splitter ---
 
 Splitter :: Splitter(NotifierBase* notifier, int notifyCode, ControlBase* client, bool vertical)

@@ -8,11 +8,6 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * real constant
-    * realnumber
-    * basic operations for : realnumber
-
-    * api : basic numbers
     * tests : arithmetic operations with int
     * tests : arithmetic operations with long
     * tests : arithmetic operations with real

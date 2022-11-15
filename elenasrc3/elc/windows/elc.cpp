@@ -228,7 +228,7 @@ int main()
 
       if (argc < 2) {
          Presenter::getInstance().print(ELC_HELP_INFO);
-         return -3;
+         return -2;
       }
 
       for (int i = 1; i < argc; i++) {
@@ -259,7 +259,7 @@ int main()
             PathString path(argv[i]);
 
             if (!project.loadProject(*path)) {
-               return -1;
+               return -2;
             }
          }
          else {

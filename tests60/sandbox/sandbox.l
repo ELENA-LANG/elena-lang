@@ -8,8 +8,6 @@ import extensions;
 
 public program()
 {
-   real r := -1.0 / 0.0;
-
 //    var x := accumulator(1);
     
 //    x(5);

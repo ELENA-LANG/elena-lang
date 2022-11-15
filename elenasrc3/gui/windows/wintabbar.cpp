@@ -303,5 +303,8 @@ void TabBar :: refresh()
 
       current++;
    }
+
+   if (_current)
+      _current->refresh();
 }
 
