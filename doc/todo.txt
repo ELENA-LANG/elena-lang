@@ -8,7 +8,11 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
+    * ide : debugger - fine-tuning
+    * ide : debugger - step into the code - tracing
     * ide : debugger - step over the statement - tracing
+    * ide : debugger - step into / over / stop / run / compile
+    * ide : debugger - on debugging / debugger stopped
 
     * fixing conversion routines
 
@@ -31,7 +35,6 @@ In development:
 
     * ide different styles : use dark mode
 
-    * ide : debugger - step into the code - tracing
     * ide : disable / enable the menu items, based on the model
     * ide : debugger - status - running / stopped
 
@@ -125,7 +128,6 @@ Backlog:
     * optimization : fields should be aligned to 4 / 8 and the copy operation should take this into account,
       except for special type of structs - packed one
     * ide : fix errors with font size / switching to error list / clear high light on click
-    * ide status : on debugging / debugger stopped
     * debuggrt : watch
     * ide : cursor coordinates
     * ide : react on mouse
@@ -135,7 +137,6 @@ Backlog:
     * project - load - project
     * project - compile - project
     * ide : remember last open project
-    * debugger - step into / over / stop / run / compile
     * debugger - auto watch
     * editor - status bar : col, row, ins / ovr
     * editor - modified doc mark, 
@@ -312,7 +313,6 @@ Backlog:
 
     + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
     - compileRootExpression - we probably could move the code here from compileExpression for topexpression
-    - debugger fine-tuning
 
     + support output redirecting
     + debugger : stack allocated int value 

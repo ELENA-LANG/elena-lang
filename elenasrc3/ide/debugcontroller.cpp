@@ -167,7 +167,6 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
 
          reader.read(&info, sizeof(DebugLineInfo));
          switch (info.symbol) {
-            case DebugSymbol::Statement:
             case DebugSymbol::Procedure:
                level++;
                break;
