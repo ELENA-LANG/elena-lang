@@ -11,8 +11,9 @@
 
 namespace elena_lang
 {
-   constexpr auto MAXIMIZED_SETTINGS = "configuration/settings/maximized";
-   constexpr auto FONTSIZE_SETTINGS = "configuration/settings/font_size";
+   constexpr auto MAXIMIZED_SETTINGS   = "configuration/settings/maximized";
+   constexpr auto FONTSIZE_SETTINGS    = "configuration/settings/font_size";
+   constexpr auto SCHEME_SETTINGS      = "configuration/settings/scheme";
 
    constexpr auto RECENTFILES_SETTINGS = "configuration/recent_files/*";
 

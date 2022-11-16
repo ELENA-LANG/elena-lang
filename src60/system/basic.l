@@ -342,19 +342,19 @@ public const struct ByteNumber : IntBaseNumber,
             : info<"Returns the result of integer division">
       = new LongNumber(theValue).divide(n);   
 
-   int add(real n)
+   real add(real n)
             : info<"Returns the sum">
       = new RealNumber(theValue).add(n);   
 
-   int subtract(real n)
+   real subtract(real n)
             : info<"Returns the difference">
       = new RealNumber(theValue).subtract(n);   
 
-   int multiply(real n)
+   real multiply(real n)
             : info<"Returns the product">
       = new RealNumber(theValue).multiply(n);   
 
-   int divide(real n)
+   real divide(real n)
             : info<"Returns the result of integer division">
       = new RealNumber(theValue).divide(n);   
 
@@ -362,8 +362,9 @@ public const struct ByteNumber : IntBaseNumber,
    {
       var n := cast byte(o) ?? nil;
       (nil == n)
-          ? { ^ false }
-          : { ^ self.equal(n) }
+          ? { ^ false };
+
+      ^ self.equal(n)
    }
 
    bool less(o)
@@ -498,7 +499,7 @@ public const struct ByteNumber : IntBaseNumber,
 
    string toPrintable()
             : info<"returns the literal presentation">
-      = stringConvertor.convert(self);
+      = stringConvertor.convert(self, 10);
 
    byte clone()
             : info<"clones the value">
@@ -631,8 +632,9 @@ public const struct ShortNumber : IntBaseNumber,
    {
       var n := cast short(o) ?? nil;
       (nil == n)
-         ? { ^ false }
-         : { ^ self.equal(n) }
+         ? { ^ false };
+
+      ^ self.equal(n)
    }
 
    band(n)
@@ -811,7 +813,9 @@ public const struct IntNumber : IntBaseNumber,
    {
       var n := cast int(o) ?? nil;
       (nil == n)
-         ? { ^ false } : { ^ self.equal(n) }
+         ? { ^ false };
+
+      ^ self.equal(n)
    }
 
    bool less(o)
@@ -1123,7 +1127,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    string toPrintable()
             : info<"Returns the literal presentation">
-      = stringConvertor.convert(self);
+      = stringConvertor.convert(self, 10);
 
    short cast()
             : info<"Returns the value as a short integer">
@@ -1148,8 +1152,9 @@ public sealed const struct UIntNumber : IntBaseNumber,
    {
       var n := cast uint(o) ?? nil;
       (nil == n)
-         ? { ^ false }
-         : { ^ self.equal(n) }
+         ? { ^ false };
+
+      ^ self.equal(n)
    }
 
    bool less(n)

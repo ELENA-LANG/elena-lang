@@ -290,31 +290,28 @@ DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, us
 DebugLineInfo* DebugInfoProvider :: getNextStep(DebugLineInfo* step, bool stepOverMode)
 {
    DebugLineInfo* next = step;
-   /*if (stepOverMode) {
+   if (stepOverMode) {
       int level = 1;
       while (level > 0) {
          next = &next[1];
          switch (next->symbol) {
-            case dsVirtualBlock:
+            case DebugSymbol::Statement:
                level++;
                break;
-            case dsVirtualEnd:
+            case DebugSymbol::EndOfStatement:
                level--;
                break;
-            case dsEnd:
-               return nullptr;
-            case dsEOP:
+            case DebugSymbol::End:
                level = 0;
                break;
             default:
                break;
          }
-
       }
    }
-   else*/ next = &next[1];
+   else next = &next[1];
 
-   while (next->symbol  != DebugSymbol::Breakpoint) {
+   while (next->symbol != DebugSymbol::Breakpoint) {
       if (next->symbol == DebugSymbol::End)
          return nullptr;
 
@@ -598,11 +595,27 @@ void DebugController :: stepOver()
       return;
 
    if (!_started) {
-      
+      if (_provider.getDebugInfoPtr() == 0 && _provider.getEntryPoint() != 0) {
+         _process->setBreakpoint(_provider.getEntryPoint(), false);
+         _postponed.setStepMode();
+      }
+      _started = true;
    }
    else {
-
+      DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState());
+      DebugLineInfo* nextStep = _provider.getNextStep(lineInfo, true);
+      if (nextStep) {
+         if (nextStep && nextStep->addresses.step.address == lineInfo->addresses.step.address) {
+            _process->setStepMode();
+            return;
+         }
+         else _process->setBreakpoint(nextStep->addresses.step.address, true);
+      }
+      // else set step mode
+      else _process->setStepMode();
    }
+
+   _process->setEvent(DEBUG_RESUME);
 }
 
 bool DebugController :: startThread()

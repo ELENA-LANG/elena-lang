@@ -72,6 +72,7 @@ namespace elena_lang
          return _currentView;
       }
 
+      virtual void beforeDocumentSelect(int index) = 0;
       virtual void afterDocumentSelect(int index) = 0;
 
       virtual void onModelChanged() = 0;
@@ -156,6 +157,8 @@ namespace elena_lang
       virtual void moveCaretEnd(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void movePageUp(TextViewModelBase* model, bool kbShift) = 0;
       virtual void movePageDown(TextViewModelBase* model, bool kbShift) = 0;
+
+      virtual void moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift) = 0;
    };
 
 }

@@ -366,7 +366,7 @@ void DocumentView :: setCaret(int column, int row, bool selecting)
       frame.y = caret.y;
    }
    else if (frame.y + _size.y - 1 <= caret.y) {
-      frame.y = caret.y - _size.y + 2;
+      frame.y = caret.y - _size.y + 3;
    }
 
    if (_frame.getCaret() != frame) {

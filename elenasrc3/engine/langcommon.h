@@ -104,6 +104,8 @@ namespace elena_lang
    constexpr auto wrnUnknownModule           = 413;
    constexpr auto wrnTypeInherited           = 420;
    constexpr auto wrnDuplicateInclude        = 425;
+   constexpr auto wrnUnknownTypecast         = 426;
+   constexpr auto wrnUnsupportedOperator     = 427;
 
    constexpr auto wrnSyntaxFileNotFound      = 500;
    constexpr auto wrnInvalidConfig           = 501;

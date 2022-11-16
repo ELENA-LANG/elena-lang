@@ -80,6 +80,7 @@ namespace elena_lang
       void moveCaretEnd(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void movePageDown(TextViewModelBase* model, bool kbShift) override;
       void movePageUp(TextViewModelBase* model, bool kbShift) override;
+      void moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift) override;
 
       TextViewController(TextViewSettings& settings)
       {

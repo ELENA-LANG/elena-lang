@@ -268,3 +268,10 @@ void TextViewController :: movePageUp(TextViewModelBase* model, bool kbShift)
 
    model->onModelChanged();
 }
+
+void TextViewController :: moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift)
+{
+   model->DocView()->moveToFrame(col, row, kbShift);
+
+   model->onModelChanged();
+}

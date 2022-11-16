@@ -127,6 +127,7 @@ namespace elena_lang
    constexpr auto BAND_MESSAGE            = "band";
    constexpr auto BOR_MESSAGE             = "bor";
    constexpr auto BXOR_MESSAGE            = "bxor";
+   constexpr auto REFER_MESSAGE           = "at";
    constexpr auto IF_MESSAGE              = "if";
    constexpr auto EQUAL_MESSAGE           = "equal";
    constexpr auto NOT_MESSAGE             = "Inverted";
@@ -211,12 +212,13 @@ namespace elena_lang
    {
       None           = 0x0000,
 
-      Symbol,
-      Class,
-      Procedure,
-      Statement,
-      Breakpoint,
-      End
+      Symbol         = 0x0011,
+      Class          = 0x0012,
+      Procedure      = 0x0013,
+      Statement      = 0x0014,
+      Breakpoint     = 0x0020,
+      End            = 0x0040,
+      EndOfStatement = 0x0041,
    };
 
    // --- ClassAttribute ---

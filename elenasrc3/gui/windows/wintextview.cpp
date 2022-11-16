@@ -428,7 +428,7 @@ void TextViewWindow :: onButtonDown(Point point, bool kbShift)
    bool margin = false;
    mouseToScreen(point, col, row, margin);
 
-   _model->DocView()->moveToFrame(col, row, kbShift);
+   _controller->moveToFrame(_model, col, row, kbShift);
 
    captureMouse();
 }

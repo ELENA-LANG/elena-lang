@@ -20,6 +20,8 @@ namespace elena_lang
       int errorRow;
 
    public:
+      void beforeDocumentSelect(int index) override;
+
       void onModelChanged() override;
 
       void setTraceLine(int row, bool withCursor);

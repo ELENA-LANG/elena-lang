@@ -8,6 +8,18 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
+    * ide : debugger - step over the statement - tracing
+
+    * fixing conversion routines
+
+    * indexing
+    * string : indexing bytes
+    * string : indexing chars
+
+    * uintConvertor.convert<string,int>
+
+    * api : resolve all warnings
+
     * tests : arithmetic operations with int
     * tests : arithmetic operations with long
     * tests : arithmetic operations with real
@@ -17,11 +29,11 @@ In development:
     * longTests, realTests
     * rosetta sample : accumulator - x86, x86-64, i386, amd64, ppc64le, aarch64
 
+    * ide different styles : use dark mode
+
     * ide : debugger - step into the code - tracing
-    * ide : debugger - step over the statement - tracing
     * ide : disable / enable the menu items, based on the model
     * ide : debugger - status - running / stopped
-    * ide different styles : use dark mode
 
     * api functionality for existing classes
 
@@ -41,6 +53,8 @@ In development:
 
     * ide debugger
 
+    * conversion : byte / short / int / long => real
+
     * boolean operators : &&, ||, ^^ - strong implementation
     * boolean operators : &&, ||, ^^ - weak implementation
     * variadic call in compile-time
@@ -58,6 +72,11 @@ In development:
     * short to int -> negative
     * uint : test comparision (e.g 0 < 3000000u)
     * comparision operations : short / byte / long operation
+
+
+    * ldoc : show conversions in the separate section
+
+    * retest #2, #3, #4, #5, #7, , #8, #9, #10
 
     * optimization : extra temporal variables
 
@@ -160,7 +179,7 @@ Backlog:
     * VEH_HANDLER should exclude the current frame if it was invoked from external code (callext - should 
       store the current frame in the extra variable, and clear it after the operation end)
     * mark String.fromByteArray as internal one
-    * conditional boxing of stacksafe arguments
+    * conditional boxing of stacksafe arguments / self
     * createnr - optimization for 1,2,4,8 
     * simplify - isCompatible - could we get rid of special cases for V_FLAG?
     * optimization: it should be possible to convert int liteal directly to v_int8 / v_int16 / v_int64,

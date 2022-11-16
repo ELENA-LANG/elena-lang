@@ -23,7 +23,7 @@ public const struct String //: BaseValue
     constructor allocate(int size)
         = new byte[](size + 1);
 
-    /*internal */constructor fromByteArray(int index, int size, byte[] buffer)
+    internal constructor fromByteArray(int index, int size, byte[] buffer)
         <= allocate(size)
     {
        PrimitiveOperations.copy(theArray, index, size, buffer);

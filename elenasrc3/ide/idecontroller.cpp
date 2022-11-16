@@ -389,6 +389,7 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
    if (config.load(path, FileEncoding::UTF8)) {
       model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
       model->sourceViewModel.fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);
+      model->sourceViewModel.schemeIndex = loadSetting(config, SCHEME_SETTINGS, 1);
 
       loadRecentFiles(config, RECENTFILES_SETTINGS, model->projectModel.lastOpenFiles);
 

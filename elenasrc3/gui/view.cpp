@@ -215,6 +215,8 @@ bool TextViewModel :: selectDocumentView(ustr_t name)
    int index = 1;
    for (auto it = _documents.start(); !it.eof(); ++it) {
       if ((*it)->name.compare(name)) {
+         beforeDocumentSelect(index);
+
          _currentView = (*it)->documentView;
          _currentView->status.frameChanged = true;
 

@@ -237,7 +237,7 @@ void openStatement(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 
 void closeStatement(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
-   DebugLineInfo symbolInfo = { DebugSymbol::End };
+   DebugLineInfo symbolInfo = { DebugSymbol::EndOfStatement };
    tapeScope.scope->debug->write(&symbolInfo, sizeof(DebugLineInfo));
 }
 

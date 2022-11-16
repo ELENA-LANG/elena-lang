@@ -4316,6 +4316,8 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
 mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId)
 {
    switch (operatorId) {
+      case INDEX_OPERATOR_ID:
+         return scope->buildins.refer_message;
       case ADD_OPERATOR_ID:
          return scope->buildins.add_message;
       case SUB_OPERATOR_ID:
@@ -4844,7 +4846,13 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
          SyntaxNode messageNode = node.findChild(SyntaxKey::Message);
          if (messageNode == SyntaxKey::None) {
-            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownFunction, node);
+            if (test(message, CONVERSION_MESSAGE)) {
+               scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownTypecast, node);
+            }
+            else if (message == scope.moduleScope->buildins.refer_message) {
+               scope.raiseWarning(WARNING_LEVEL_1, wrnUnsupportedOperator, node);
+            }
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownFunction, node);
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, messageNode);
       }
@@ -6833,6 +6841,11 @@ mssg_t Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& inv
    privateScope.message = byRefHandler | STATIC_MESSAGE;
    privateScope.info.hints |= (ref_t)MethodHint::Private;
    privateScope.info.hints |= (ref_t)MethodHint::Sealed;
+
+   // HOTFIX : mark it as stacksafe if required
+   if (_logic->isEmbeddableStruct(classScope->info))
+      privateScope.info.hints |= (ref_t)MethodHint::Stacksafe;
+
    privateScope.byRefReturnMode = true;
 
    classScope->info.methods.add(privateScope.message, privateScope.info);
@@ -7617,6 +7630,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
          2, 0);
    moduleScope->buildins.bxor_message =
       encodeMessage(moduleScope->module->mapAction(BXOR_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.refer_message =
+      encodeMessage(moduleScope->module->mapAction(REFER_MESSAGE, 0, false),
          2, 0);
    moduleScope->buildins.if_message =
       encodeMessage(moduleScope->module->mapAction(IF_MESSAGE, 0, false),
