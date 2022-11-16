@@ -252,6 +252,14 @@ void addingBreakpoint(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::Breakpoint);
 }
 
+void addVirtualBreakpoint(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   DebugLineInfo symbolInfo = { DebugSymbol::VirtualBreakpoint };
+   tapeScope.scope->debug->write(&symbolInfo, sizeof(DebugLineInfo));
+
+   tape.write(ByteCode::Breakpoint);
+}
+
 void intLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskIntLiteralRef);
@@ -929,7 +937,7 @@ ByteCodeWriter::Saver commands[] =
    shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning, staticVarOp, loadingIndex, nilOp,
 
    intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
-   realOp, realCondOp,
+   realOp, realCondOp, addVirtualBreakpoint,
 };
 
 // --- ByteCodeWriter ---

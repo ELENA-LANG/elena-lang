@@ -181,14 +181,15 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
                //   ((DebugLineInfo*)current)->addresses.symbol.nameRef = mapDebugPTR32(stringReader.Address());
                //}
             case DebugSymbol::Breakpoint:
+            case DebugSymbol::VirtualBreakpoint:
             {
                addr_t stepAddress = 0;
                addressReader.read(&stepAddress, sizeof(addr_t));
 
                ((DebugLineInfo*)current)->addresses.step.address = stepAddress;
                // virtual end of expression should be stepped over automatically by debugger
-               //if (info.symbol != dsVirtualEnd)
-               process->addStep(stepAddress, (void*)current);
+               if (info.symbol != DebugSymbol::VirtualBreakpoint)
+                  process->addStep(stepAddress, (void*)current);
 
                break;
             }
@@ -286,6 +287,11 @@ DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, us
    else return nullptr;
 }
 
+DebugSymbol operator & (const DebugSymbol& l, const DebugSymbol& r)
+{
+   return (DebugSymbol)((ref_t)l & (ref_t)r);
+}
+
 DebugLineInfo* DebugInfoProvider :: getNextStep(DebugLineInfo* step, bool stepOverMode)
 {
    DebugLineInfo* next = step;
@@ -310,7 +316,7 @@ DebugLineInfo* DebugInfoProvider :: getNextStep(DebugLineInfo* step, bool stepOv
    }
    else next = &next[1];
 
-   while (next->symbol != DebugSymbol::Breakpoint) {
+   while ((next->symbol & DebugSymbol::DebugMask) != DebugSymbol::Breakpoint) {
       if (next->symbol == DebugSymbol::End)
          return nullptr;
 

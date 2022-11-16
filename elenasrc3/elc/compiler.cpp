@@ -6301,6 +6301,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    }
 
    writer.appendNode(BuildKey::EndStatement);
+   writer.appendNode(BuildKey::VirtualBreakoint);
 
    writer.appendNode(BuildKey::goingToEOP);
 
@@ -6396,6 +6397,8 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
       boxArgument(writer, exprScope, retVal, false, true, false));
 
    writer.appendNode(BuildKey::EndStatement);
+
+   writer.appendNode(BuildKey::VirtualBreakoint);
 
    exprScope.syncStack();
 
