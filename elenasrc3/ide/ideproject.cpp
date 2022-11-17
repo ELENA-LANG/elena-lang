@@ -19,6 +19,10 @@ ProjectModel :: ProjectModel(IDEStatus* status)
 
    this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60\\");      // !! temporal
    this->paths.librarySourceRoot.copy("C:\\Alex\\ELENA\\src60\\");// !! temporal
+
+   // !!NOTE : make sure the path separator should tail the path
+   if (this->paths.librarySourceRoot[this->paths.librarySourceRoot.length() - 1] != PATH_SEPARATOR)
+      this->paths.librarySourceRoot.append(PATH_SEPARATOR);
 }
 
 path_t ProjectModel::getOutputPath()

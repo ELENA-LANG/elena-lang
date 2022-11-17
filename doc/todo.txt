@@ -8,11 +8,9 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * ide : debugger - fine-tuning
-    * ide : debugger - step into the code - tracing
-    * ide : debugger - step over the statement - tracing
-    * ide : debugger - step into / over / stop / run / compile
-    * ide : debugger - on debugging / debugger stopped
+    * ide : tab - provide namespace
+
+    * ide debugger : debugging 
 
     * fixing conversion routines
 
@@ -40,6 +38,8 @@ In development:
 
     * api functionality for existing classes
 
+    * ide : debugger - step into / over / stop / run / compile
+    * ide : debugger - on debugging / debugger stopped
     * ide debugger - auto watch
     * ide - ask to save on close
     * ide - tab

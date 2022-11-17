@@ -53,6 +53,8 @@ namespace elena_lang
 
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
 
+      void retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& retVal);
+
       bool onDebugAction(ProjectModel& model, DebugAction action);
       bool isOutaged(bool noWarning);
 
@@ -69,7 +71,7 @@ namespace elena_lang
 
       path_t getSourceByIndex(ProjectModel& model, int index);
 
-      void defineSourceName(path_t path, IdentifierString& retVal);
+      void defineSourceName(ProjectModel* model, path_t path, ReferenceName& retVal);
 
       void defineFullPath(ProjectModel& model, ustr_t ns, path_t path, PathString& fullPath);
 
@@ -108,7 +110,7 @@ namespace elena_lang
    {
       NotifierBase*           _notifier;
 
-      bool openFile(SourceViewModel* model, path_t sourceFile);
+      bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile);
       bool openProject(IDEModel* model, path_t projectFile);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);

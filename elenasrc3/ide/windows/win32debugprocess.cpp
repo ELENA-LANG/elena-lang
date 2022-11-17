@@ -318,7 +318,7 @@ bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cm
    STARTUPINFO         si;
    PathString          currentPath;
 
-   currentPath.copySubPath(exePath);
+   currentPath.copySubPath(exePath, false);
 
    memset(&si, 0, sizeof(si));
 

@@ -116,15 +116,48 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
    }
 }
 
-void ProjectController :: defineSourceName(path_t path, IdentifierString& retVal)
+void ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& name)
+{
+   size_t projectPathLen = model->projectPath.length();
+
+   PathString path;
+   path.copySubPath(sourcePath, true);
+
+   if (!model->projectPath.empty() && (*path).compareSub(*model->projectPath, 0, projectPathLen)) {
+      name.copy(model->getPackage());
+      if (path.length() > projectPathLen) {
+         name.pathToName(*path + projectPathLen);
+      }
+   }
+   else {
+      path_t rootPath = *model->paths.librarySourceRoot;
+      size_t rootPathLen = rootPath.length();
+
+      if (!rootPath.empty() && PathUtil::compare(sourcePath, rootPath, rootPathLen)) {
+         name.pathToName(sourcePath + rootPathLen);
+      }
+      else {
+         FileNameString fileName(sourcePath);
+         IdentifierString tmp(*fileName);
+
+         name.copy(*tmp);
+      }
+   }
+}
+
+void ProjectController :: defineSourceName(ProjectModel* model, path_t path, ReferenceName& retVal)
 {
    if (path.empty()) {
       retVal.copy("undefined");
    }
    else {
-      IdentifierString fileName(path + path.findLast(PATH_SEPARATOR) + 1);
+      //_ELENA_::ReferenceNs module;
+      retrieveSourceName(model, path, retVal);
+      retVal.append(':');
 
-      retVal.append(*fileName);
+      FileNameString fileName(path, true);
+      IdentifierString tmp(*fileName);
+      retVal.append(*tmp);
    }
 }
 
@@ -304,7 +337,8 @@ void ProjectController :: openProject(ProjectModel& model, path_t projectFile)
 
    model.name.copy(*name);
    model.projectFile.copy(*src);
-   model.projectPath.copySubPath(projectFile);
+   model.projectPath.copySubPath(projectFile, true);
+
    model.singleSourceProject = false;
 
    ConfigFile projectConfig;
@@ -333,8 +367,9 @@ void ProjectController :: openSingleFileProject(ProjectModel& model, path_t sing
    model.sources.clear();
 
    model.name.copy(*name);
-   model.projectPath.copySubPath(singleProjectFile);
-   model.outputPath.copySubPath(singleProjectFile);
+   model.projectPath.copySubPath(singleProjectFile, true);
+   
+   model.outputPath.copySubPath(singleProjectFile, false);
    model.singleSourceProject = true;
 
    model.sources.add((*src).clone());
@@ -412,30 +447,30 @@ bool IDEController :: selectSource(ProjectModel* model, SourceViewModel* sourceM
    PathString fullPath;
    projectController.defineFullPath(*model, ns, sourcePath, fullPath);
 
-   return openFile(sourceModel, *fullPath);
+   return openFile(sourceModel, model, *fullPath);
 }
 
 void IDEController :: doNewFile(IDEModel* model)
 {
-   IdentifierString sourceNameStr;
-   projectController.defineSourceName(nullptr, sourceNameStr);
+   ReferenceName sourceNameStr;
+   projectController.defineSourceName(&model->projectModel, nullptr, sourceNameStr);
 
    sourceController.newSource(&model->sourceViewModel, *sourceNameStr, true);
 }
 
 bool IDEController :: openFile(IDEModel* model, path_t sourceFile)
 {
-   if (openFile(&model->sourceViewModel, sourceFile)) {
-      if (model->projectModel.name.empty()) {
-         projectController.openSingleFileProject(model->projectModel, sourceFile);
-      }
+   if (model->projectModel.name.empty()) {
+      projectController.openSingleFileProject(model->projectModel, sourceFile);
+   }
 
+   if (openFile(&model->sourceViewModel, &model->projectModel, sourceFile)) {
       return true;
    }
    else return false;
 }
 
-bool IDEController :: openFile(SourceViewModel* model, path_t sourceFile)
+bool IDEController :: openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile)
 {
    ustr_t sourceName = model->getDocumentNameByPath(sourceFile);
    if (!sourceName.empty()) {
@@ -444,8 +479,8 @@ bool IDEController :: openFile(SourceViewModel* model, path_t sourceFile)
       return true;
    }
    else {
-      IdentifierString sourceNameStr;
-      projectController.defineSourceName(sourceFile, sourceNameStr);
+      ReferenceName sourceNameStr;
+      projectController.defineSourceName(projectModel, sourceFile, sourceNameStr);
 
       sourceName = *sourceNameStr;
    }
@@ -495,8 +530,8 @@ bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveA
       if (!dialog.saveFile(_T("l"), path))
          return false;
 
-      IdentifierString sourceNameStr;
-      projectController.defineSourceName(*path, sourceNameStr);
+      ReferenceName sourceNameStr;
+      projectController.defineSourceName(&model->projectModel, *path, sourceNameStr);
 
       sourceController.renameSource(&model->sourceViewModel, nullptr, *sourceNameStr, *path);
 
