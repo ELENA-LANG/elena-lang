@@ -8,12 +8,6 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * ide : tab - provide namespace
-
-    * ide debugger : debugging 
-
-    * fixing conversion routines
-
     * indexing
     * string : indexing bytes
     * string : indexing chars
@@ -97,7 +91,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
-    * calling internal method
+    * two breakpoints in row
     * calling protected method
     * exception tests : methodnotfound, nilreference
     * uncomment ConsoleFactory type attributes

@@ -1416,7 +1416,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
          if (index == NOTFOUND_POS)
             scope.raiseError(errDupInternalMethod, node);
 
-         publicMessage = overwriteAction(message, scope.module->mapAction(name + index + 2, 0, false));
+         publicMessage = overwriteAction(message, scope.module->mapAction(name + index + 2, signRef, false));
       }
 
       if (MethodScope::checkHint(methodInfo, MethodHint::Protected)) {
@@ -1590,7 +1590,18 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
       methodInfo = *m_it;
 
    if (!found || methodInfo.inherited) {
-      injectVirtualMultimethod(classNode, methodType, scope, info, multiMethod, methodInfo.inherited, methodInfo.outputRef);
+      Visibility visibility = Visibility::Public;
+      if (MethodScope::checkHint(methodInfo, MethodHint::Internal)) {
+         visibility = Visibility::Internal;
+      }
+      else if (MethodScope::checkHint(methodInfo, MethodHint::Protected)) {
+         visibility = Visibility::Protected;
+      }
+      else if (MethodScope::checkHint(methodInfo, MethodHint::Private)) {
+         visibility = Visibility::Private;
+      }
+
+      injectVirtualMultimethod(classNode, methodType, scope, info, multiMethod, methodInfo.inherited, methodInfo.outputRef, visibility);
 
       // COMPILER MAGIC : injecting try-multi-method dispather
       if (_logic->isTryDispatchAllowed(scope, multiMethod)) {
@@ -1660,14 +1671,20 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
             //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
             current.appendChild(SyntaxKey::Multimethod, multiMethod);
 
+            ref_t hints = (ref_t)MethodHint::Multimethod;
+            if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_INTERNAL))
+               hints |= (ref_t)MethodHint::Internal;
+            if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_PROTECTED))
+               hints |= (ref_t)MethodHint::Protected;
+
             // mark weak message as a multi-method
             auto m_it = scope.info.methods.getIt(multiMethod);
             if (!m_it.eof()) {
-               (*m_it).hints |= (ref_t)MethodHint::Multimethod;
+               (*m_it).hints |= hints;
             }
             else {
                MethodInfo info = {};
-               info.hints |= (ref_t)MethodHint::Multimethod;
+               info.hints |= hints;
                info.hints |= (ref_t)MethodHint::Predefined;
                info.inherited = true;
 
@@ -4585,7 +4602,7 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
 
    SyntaxNode classNode = classWriter.CurrentNode();
    injectVirtualMultimethod(classNode, SyntaxKey::Method, genericMessage | FUNCTION_MESSAGE, genericMessage, 
-      0, outputRef);
+      0, outputRef, Visibility::Public);
 
    classWriter.closeNode();
    classWriter.closeNode();
@@ -4802,6 +4819,12 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
             break;
          case Visibility::Protected:
             if (isSelfCall(target) || target.kind == ObjectKind::SuperLocal) {
+               message = result.message;
+            }
+            else found = false;
+            break;
+         case Visibility::Internal:
+            if (scope.moduleScope->isInternalOp(targetRef)) {
                message = result.message;
             }
             else found = false;
@@ -7765,10 +7788,22 @@ void Compiler :: compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildT
    writer.closeNode();
 }
 
-inline SyntaxNode newVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message)
+inline SyntaxNode newVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, Visibility visibility)
 {
+   ref_t hints = (ref_t)MethodHint::Multimethod;
+   switch (visibility) {
+      case Visibility::Protected:
+         hints |= (ref_t)MethodHint::Protected;
+         break;
+      case Visibility::Internal:
+         hints |= (ref_t)MethodHint::Internal;
+         break;
+      default:
+         break;
+   }
+
    SyntaxNode methodNode = classNode.appendChild(methodType, message);
-   methodNode.appendChild(SyntaxKey::Hints, (ref_t)MethodHint::Multimethod);
+   methodNode.appendChild(SyntaxKey::Hints, hints);
 
    return methodNode;
 }
@@ -7802,7 +7837,7 @@ void Compiler :: injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey 
 }
 
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
-   ClassInfo& info, mssg_t message, bool inherited, ref_t outputRef)
+   ClassInfo& info, mssg_t message, bool inherited, ref_t outputRef, Visibility visibility)
 {
    mssg_t resendMessage = message;
    ref_t  resendTarget = 0;
@@ -7833,13 +7868,13 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
       resendMessage = encodeMessage(signRef, argCount, flags);
    }
 
-   injectVirtualMultimethod(classNode, methodType, message, resendMessage, resendTarget, outputRef);
+   injectVirtualMultimethod(classNode, methodType, message, resendMessage, resendTarget, outputRef, visibility);
 }
 
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message,
-   mssg_t resendMessage, ref_t resendTarget, ref_t outputRef)
+   mssg_t resendMessage, ref_t resendTarget, ref_t outputRef, Visibility visibility)
 {
-   SyntaxNode methodNode = newVirtualMultimethod(classNode, methodType, message);
+   SyntaxNode methodNode = newVirtualMultimethod(classNode, methodType, message, visibility);
    methodNode.appendChild(SyntaxKey::Autogenerated, -1); // -1 indicates autogenerated multi-method
 
    if (outputRef)

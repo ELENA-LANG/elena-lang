@@ -1285,27 +1285,24 @@ void CompilerLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* 
    }
 }
 
-inline mssg_t resolveNonpublic(mssg_t weakMessage, ClassInfo& info, bool selfCall)
+inline mssg_t resolveNonpublic(mssg_t weakMessage, ClassInfo& info, bool selfCall, bool isInternalOp)
 {
    ref_t nonpublicMessage = 0;
    if (selfCall && !test(weakMessage, STATIC_MESSAGE) && info.methods.exist(weakMessage | STATIC_MESSAGE)) {
       nonpublicMessage = weakMessage | STATIC_MESSAGE;
    }
-
-   //mssg_t protectedMessage = info.attributes.get({ message, ClassAttribute::ProtectedAlias });
-   //if (protectedMessage) {
-   //   if (checkMethod(info, protectedMessage, result)) {
-   //      result.visibility = Visibility::Protected;
-   //      return true;
-   //   }
-   //}
-   //mssg_t internalMessage = info.attributes.get({ message, ClassAttribute::InternalAlias });
-   //if (internalMessage) {
-   //   if (checkMethod(info, internalMessage, result)) {
-   //      result.visibility = Visibility::Internal;
-   //      return true;
-   //   }
-   //}
+   else {
+      mssg_t protectedMessage = info.attributes.get({ weakMessage, ClassAttribute::ProtectedAlias });
+      if (protectedMessage && selfCall) {
+         nonpublicMessage = protectedMessage;
+      }
+      else {
+         mssg_t internalMessage = info.attributes.get({ weakMessage, ClassAttribute::InternalAlias });
+         if (internalMessage && isInternalOp) {
+            nonpublicMessage = internalMessage;
+         }
+      }
+   }
 
    return nonpublicMessage;
 }
@@ -1322,7 +1319,7 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
          stackSafeAttr |= 1;
 
       // check if it is non public message
-      mssg_t nonPublicMultiMessage = resolveNonpublic(weakMessage, info, selfCall);
+      mssg_t nonPublicMultiMessage = resolveNonpublic(weakMessage, info, selfCall, scope.isInternalOp(targetRef));
       if (nonPublicMultiMessage != 0) {
          mssg_t resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
          if (!resolved) {

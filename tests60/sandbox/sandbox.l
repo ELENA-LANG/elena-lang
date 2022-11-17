@@ -6,18 +6,36 @@ import extensions;
 //accumulator(n)
 //    = function(new Variable(n));
 
-conversionTests()
+singleton Tester
 {
-    console.write("conversionTests");
-    int n := 1234;
-    string s := n.toString();
-    Assert.ifTrue(s == "1234");
-    console.writeLine(".");
+   internal test(byte[] buffer)
+   {
+      console.writeLine(buffer[0]);
+      console.writeLine(buffer[1]);
+   }
 }
+
+//conversionTests()
+//{
+//    console.write("conversionTests");
+//    int n := 1234;
+//    string s := n.toString();
+//    Assert.ifTrue(s == "1234");
+//    console.writeLine(".");
+//}
 
 public program()
 {
-   conversionTests()
+   byte b1 := 10;
+   byte b2 := 20;
+
+   byte tmp[3];
+   tmp[0] := b1;
+   tmp[1] := b2;
+
+   Tester.test(tmp);
+
+//   conversionTests()
 
 //   string s := "abc";
 

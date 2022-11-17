@@ -612,7 +612,6 @@ void DebugController :: stepOver()
       if (nextStep) {
          if (nextStep && nextStep->addresses.step.address == lineInfo->addresses.step.address) {
             _process->setStepMode();
-            return;
          }
          else _process->setBreakpoint(nextStep->addresses.step.address, true);
       }
