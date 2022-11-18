@@ -1601,7 +1601,12 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
          visibility = Visibility::Private;
       }
 
-      injectVirtualMultimethod(classNode, methodType, scope, info, multiMethod, methodInfo.inherited, methodInfo.outputRef, visibility);
+      bool inherited = methodInfo.inherited;
+      // HOTFIX : predefined is not inherited one
+      if (MethodScope::checkHint(methodInfo, MethodHint::Predefined))
+         inherited = false;
+
+      injectVirtualMultimethod(classNode, methodType, scope, info, multiMethod, inherited, methodInfo.outputRef, visibility);
 
       // COMPILER MAGIC : injecting try-multi-method dispather
       if (_logic->isTryDispatchAllowed(scope, multiMethod)) {
@@ -6679,17 +6684,17 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
       if (classScope.extensionDispatcher) {
          writer.appendNode(BuildKey::Argument, 0);
 
-         writer.newNode(BuildKey::ResendOp);
+         writer.newNode(BuildKey::RedirectOp);
          writer.closeNode();
       }
       else if (node.arg.reference) {
-         writer.appendNode(BuildKey::ResendOp, node.arg.reference);
+         writer.appendNode(BuildKey::RedirectOp, node.arg.reference);
       }
       else {
          SyntaxNode targetNode = node.findChild(SyntaxKey::Target);
          assert(targetNode != SyntaxKey::None);
 
-         writer.newNode(BuildKey::DirectCallOp, message);
+         writer.newNode(BuildKey::DirectResendOp, message);
          writer.appendNode(BuildKey::Type, targetNode.arg.reference);
          writer.closeNode();
       }

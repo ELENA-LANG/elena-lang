@@ -29,6 +29,8 @@ public class Exception
 // --- CriticalException ---
 public class CriticalException : Exception
 {
+   constructor new()
+      <= super new("Critical exception");
 }
 
 // --- CriticalException ---

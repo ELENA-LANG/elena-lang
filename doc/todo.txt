@@ -8,7 +8,8 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * ide : opening project - defining namespace
+    * multi method : new one
+    * multi method : inherited
 
     * char to string
 
