@@ -7,6 +7,7 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
+#include "elena.h"
 #include "idecommon.h"
 
 namespace elena_lang
@@ -36,18 +37,22 @@ namespace elena_lang
          PathString compilerPath;
       } paths;
 
-      bool           singleSourceProject;
-      bool           autoRecompile;
-      PathString     name;
-      PathString     projectFile;
-      PathString     projectPath;
-      PathString     outputPath;
-      ProjectPaths   sources;
+      bool              singleSourceProject;
+      bool              autoRecompile;
+      PathString        name;
+      PathString        projectFile;
+      PathString        projectPath;
+      PathString        outputPath;
 
-      ProjectPaths   lastOpenFiles;
+      IdentifierString  package;
+
+      ProjectPaths      sources;
+
+      ProjectPaths      lastOpenFiles;
 
       ustr_t getTarget();
       ustr_t getArguments();
+
       ustr_t getPackage();
 
       path_t getOutputPath();

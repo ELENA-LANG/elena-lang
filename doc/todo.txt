@@ -8,7 +8,10 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * indexing
+    * ide : opening project - defining namespace
+
+    * char to string
+
     * string : indexing bytes
     * string : indexing chars
 

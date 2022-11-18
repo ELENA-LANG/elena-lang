@@ -343,7 +343,13 @@ void ProjectController :: openProject(ProjectModel& model, path_t projectFile)
 
    ConfigFile projectConfig;
    if (projectConfig.load(projectFile, FileEncoding::UTF8)) {
+      DynamicString<char> value;
+
       ConfigFile::Node root = projectConfig.selectRootNode();
+
+      ConfigFile::Node nsNode = projectConfig.selectNode(NAMESPACE_CATEGORY);
+      nsNode.readContent(value);
+      model.package.copy(value.str());
 
       // select platform configuration
       ConfigFile::Node platformRoot = projectConfig.selectNode<ustr_t>(PLATFORM_CATEGORY, key, [](ustr_t key, ConfigFile::Node& node)
@@ -373,6 +379,9 @@ void ProjectController :: openSingleFileProject(ProjectModel& model, path_t sing
    model.singleSourceProject = true;
 
    model.sources.add((*src).clone());
+
+   IdentifierString tmp(*name);
+   model.package.copy(*tmp);
 
    if (_notifier)
       _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);

@@ -16,50 +16,53 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 
 public const struct String //: BaseValue
 {
-    __string byte[] theArray;
+   __string byte[] theArray;
 
-    string toPrintable() = self;
+   string toPrintable() = self;
 
-    constructor allocate(int size)
-        = new byte[](size + 1);
+   constructor allocate(int size)
+      = new byte[](size + 1);
 
-    internal constructor fromByteArray(int index, int size, byte[] buffer)
-        <= allocate(size)
-    {
-       PrimitiveOperations.copy(theArray, index, size, buffer);
+   internal constructor fromByteArray(int index, int size, byte[] buffer)
+      <= allocate(size)
+   {
+      PrimitiveOperations.copy(theArray, index, size, buffer);
 
-       // add tailing zero
-       byte z := 0;
-       theArray[size] := z;
-    }
+      // add tailing zero
+      byte z := 0;
+      theArray[size] := z;
+   }
 
-    int Length
-    {
-        /// Reads the literal length into an output parameter
-        get()
-        {
-           int l := $len theArray;
-           l := l - 1;
+   int Length
+   {
+      /// Reads the literal length into an output parameter
+      get()
+      {
+         int l := $len theArray;
+         l := l - 1;
 
-           ^ l;
-        }
-    }
+         ^ l;
+      }
+   }
 
-    bool equal(string s) : external<system'core_routines'__str_equal>;
+   bool equal(string s) : external<system'core_routines'__str_equal>;
 
-    private copySubS(string dest, string sour, int index, int length) : external<system'core_routines'__str_copysubs>;
+   private copySubS(string dest, string sour, int index, int length) : external<system'core_routines'__str_copysubs>;
 
-    string add(string subs)
-    {
-       int l1 := self.Length;
-       int l2 := subs.Length;
-       string retVal := String.allocate(l1 + l2);
+   char at(int index)
+      = PrimitiveOperations.readChar(theArray, index);
 
-       self.copySubS(retVal, self, 0, l1);
-       self.copySubS(retVal, subs, l1, l2);    
+   string add(string subs)
+   {
+      int l1 := self.Length;
+      int l2 := subs.Length;
+      string retVal := String.allocate(l1 + l2);
 
-       ^ retVal
-    }
+      self.copySubS(retVal, self, 0, l1);
+      self.copySubS(retVal, subs, l1, l2);    
+
+      ^ retVal
+   }
 }
 
 // --- WideString ---

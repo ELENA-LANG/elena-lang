@@ -1890,9 +1890,19 @@ public const struct CharValue : BaseValue
    constructor load(int n)
       = charConvertor.convert(n);
 
+   get /*internal*/ int Value()
+   {
+      int val := intConvertor.convert(self);
+
+      ^ val
+   }
+
    bool equal(char val)
       = theValue == val;
 
    bool less(char val)
       = theValue < val;
+
+   string toPrintable()
+      = stringConvertor.convert(self);
 }

@@ -183,4 +183,14 @@ public singleton stringConvertor
 
       ^ self.convert(intValue, radix);
    }
+
+   string convert(char ch)
+   {
+      int value := ch.Value;
+
+      byte buffer[4];
+      int length := PrimitiveOperations.copyUTF32(buffer,0,value);
+
+      ^ String.fromByteArray(0, length, buffer);      
+   }
 }

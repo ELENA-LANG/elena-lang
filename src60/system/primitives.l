@@ -88,4 +88,85 @@ internal singleton PrimitiveOperations
 
       //InvalidOperaionException.raise()    
    }
+
+   int copyUTF32(byte[] dest, int index, int value)
+   {
+      int length := 0;
+      int n := value;
+
+      if (value < 080h)
+      {
+         byte b := n;
+
+         length := 1;
+         dest[index] := b;
+
+         ^ length
+      };
+      if (value < 0800h)
+      {
+         int n2 := value $shr 6;
+         n2 := n2 + 0C0h;
+
+         n := n & 03Fh;
+         n := n + 080h;
+         
+         byte b := n;
+         byte b2 := n2;
+
+         length := 2;
+         dest[index] := b2;         
+         dest[index + 1] := b;
+
+         ^ length
+      };
+      if (value < 10000h)
+      {
+         int n3 := value $shr 12;
+         n3 := n3 + 0E0h;
+
+         int n2 := value $shr 6;
+         n2 := n2 & 03Fh;
+         n2 := n2 + 080h;
+         
+         n := n & 03Fh;
+         n := n + 80h;
+
+         length := 3;
+         byte b3 := n3;
+         byte b2 := n2;
+         byte b := n;
+         dest[index] := b3;
+         dest[index + 1] := b2;
+         dest[index + 2] := b;
+
+         ^ length
+      };
+
+      int n4 := value $shr 18;
+      n4 := n4 & 0Fh;
+      n4 := n4 + 0F0h;
+
+      int n3 := value $shr 12;
+      n3 := n3 + 0E0h;
+
+      int n2 := value $shr 6;
+      n2 := n2 & 03Fh;
+      n2 := n2 + 080h;
+         
+      n := n & 03Fh;
+      n := n + 80h;
+
+      length := 4;
+      byte b4 := n4;
+      byte b3 := n3;
+      byte b2 := n2;
+      byte b := n;
+      dest[index] := b4;
+      dest[index + 1] := b3;
+      dest[index + 2] := b2;
+      dest[index + 3] := b;      
+      
+      ^ length;
+   }
 }

@@ -14,6 +14,7 @@
 namespace elena_lang
 {
    constexpr auto PLATFORM_CATEGORY                   = "configuration/platform";
+   constexpr auto NAMESPACE_CATEGORY                  = "configuration/project/namespace";
    constexpr auto MODULE_CATEGORY                     = "files/*";
 
    constexpr auto WIN_X86_KEY                         = "Win_x86";

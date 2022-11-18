@@ -37,11 +37,10 @@ ustr_t ProjectModel :: getTarget()
 
 ustr_t ProjectModel::getPackage()
 {
-   return "sandbox"; // !! temporal
-
+   return *package;
 }
 
-ustr_t ProjectModel::getArguments()
+ustr_t ProjectModel :: getArguments()
 {
    return nullptr; // !! temporal
 }
