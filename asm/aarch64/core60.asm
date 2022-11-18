@@ -414,6 +414,15 @@ inline % 22h
 
 end
 
+// ; bread
+inline %23h
+
+  add     x18, x10, x9
+  ldrsb   x17, [x18]
+  std     r17, [x10]
+
+end
+
 // ; setr
 inline %80h
 

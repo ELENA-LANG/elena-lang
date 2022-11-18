@@ -1462,8 +1462,10 @@ public sealed const struct LongNumber : IntBaseNumber,
    {
       var n := cast long(o) ?? nil;
       (nil == n)
-         ? { ^ false }
-         : { ^ self.equal(n) }
+         ? { ^ false };
+
+
+       ^ self.equal(n)
    }
 
    bool less(o)
@@ -1712,8 +1714,10 @@ public sealed const struct RealNumber : BaseNumber,
    {
       var n := cast real(o) ?? nil;
       (nil == n)
-         ? { ^ false }
-         : { ^ self.equal(n) }
+         ? { ^ false };
+
+
+       ^ self.equal(n)
    }
 
    bool less(n)

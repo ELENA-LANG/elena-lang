@@ -804,7 +804,7 @@ void byteArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
          tape.write(ByteCode::PeekSI, 1);
          tape.write(ByteCode::Load);
          tape.write(ByteCode::SetDP, targetOffset);
-         tape.write(ByteCode::ReadN, 1);
+         tape.write(ByteCode::BRead);
          break;
       default:
          throw InternalError(errFatalError);

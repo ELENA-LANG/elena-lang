@@ -40,6 +40,7 @@ namespace elena_lang
       Coalesce       = 0x20,
       Not            = 0x21,
       Neg            = 0x22,
+      BRead          = 0x23,
 
       MaxSingleOp    = 0x7F,
 

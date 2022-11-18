@@ -1604,6 +1604,10 @@ bool X86Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWrit
       writer.writeByte(0x88);
       X86Helper::writeModRM(writer, target, source);
    }
+   else if (source.isR8() && target.isR8_M8()) {
+      writer.writeByte(0x8A);
+      X86Helper::writeModRM(writer, source, target);
+   }
    else if (source.isM8() && target.isDB()) {
       writer.writeByte(0xC6);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 0 }, source);

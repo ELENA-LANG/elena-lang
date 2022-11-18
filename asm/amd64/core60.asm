@@ -376,6 +376,16 @@ inline % 22h
 
 end
 
+// ; bread
+inline %23h
+
+  mov  rsi, r10  
+  xor  rax, rax
+  mov  al, byte ptr [rsi+rdx]
+  mov  [rbx], rax
+
+end
+
 // ; setr
 inline %80h
 

@@ -455,6 +455,15 @@ inline % 22h
 
 end
 
+// ; bread
+inline %23h
+
+  add     r19, r3, r14
+  lbz     r17, 0(r19)
+  stb     r17, 0(r15)
+
+end
+
 // ; setr
 inline %80h
 

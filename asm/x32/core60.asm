@@ -370,6 +370,15 @@ inline % 22h
 
 end
 
+// ; bread
+inline %23h
+
+  xor  eax, eax
+  mov  al, byte ptr [esi+edx]
+  mov  dword ptr [ebx], eax
+
+end
+
 // ; setr
 inline %80h
 
