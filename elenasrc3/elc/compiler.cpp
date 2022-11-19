@@ -2323,7 +2323,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
             scope.raiseError(errIllegalMethod, node);
 
          // COMPILER MAGIC : if the message is marked as multiret - it turns into byref return handler
-         // NOTE : it should contain the sepcific return type
+         // NOTE : it should contain the specific return type
          // NOTE : if the return type is embeddable - it will be treated in different way (later in the code)
          if (!_logic->isEmbeddable(*scope.moduleScope, scope.info.outputRef)) {
             TypeInfo refType = { V_WRAPPER, scope.info.outputRef };
@@ -2333,6 +2333,8 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
 
             signature[signatureLen++] = resolvePrimitiveType(scope, refType, true);
             paramCount++;
+
+            scope.info.hints |= (ref_t)MethodHint::VirtualReturn;
          }
       }
 
@@ -7123,6 +7125,15 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
 
    if (methodScope.info.outputRef) {
       validateType(scope, methodScope.info.outputRef, current, false, false);
+
+      if (methodScope.checkHint(MethodHint::VirtualReturn)) {
+         TypeInfo refType = { V_WRAPPER, methodScope.info.outputRef };
+
+         int offset = methodScope.parameters.count() + 1u;
+         methodScope.parameters.add(RETVAL_ARG, { offset, refType, 0 });
+
+         methodScope.byRefReturnMode = true;
+      }
    }
 }
 

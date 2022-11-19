@@ -36,6 +36,8 @@ public class CriticalException : Exception
 // --- CriticalException ---
 public class NilReferenceException : Exception
 {
+   constructor new()
+      <= super new("Nil reference exception");
 }
 
 // --- CriticalException ---

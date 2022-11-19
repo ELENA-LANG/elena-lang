@@ -33,6 +33,7 @@ namespace elena_lang
       Constructor    = 0x00200400,
       Conversion     = 0x00200800,
       SetAccessor    = 0x00400000,
+      VirtualReturn  = 0x01000000,  // used for MutliRet with non-embeddable return type
       Constant       = 0x02000000,
       Protected      = 0x04000000,
       Private        = 0x08000000,
