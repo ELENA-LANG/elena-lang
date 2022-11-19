@@ -2663,9 +2663,13 @@ void JITCompiler32 :: writeWideLiteral(MemoryWriter& writer, wstr_t value)
 
 void JITCompiler32 :: writeChar32(MemoryWriter& writer, ustr_t value)
 {
-   size_t len = 1;
    unic_c ch = 0;
-   StrConvertor::copy(&ch, value, getlength(value), len);
+
+   QuoteString quote(value, value.length_pos());
+   if (quote.length() != 0) {
+      size_t len = 1;
+      StrConvertor::copy(&ch, quote.str(), quote.length(), len);
+   }
 
    writer.writeDWord(ch);
    writer.align(4, 0);
@@ -3037,9 +3041,13 @@ void JITCompiler64 :: writeWideLiteral(MemoryWriter& writer, wstr_t value)
 
 void JITCompiler64 :: writeChar32(MemoryWriter& writer, ustr_t value)
 {
-   size_t len = 1;
    unic_c ch = 0;
-   StrConvertor::copy(&ch, value, getlength(value), len);
+
+   QuoteString quote(value, value.length_pos());
+   if (quote.length() != 0) {
+      size_t len = 1;
+      StrConvertor::copy(&ch, quote.str(), quote.length(), len);
+   }
 
    writer.writeDWord(ch);
    writer.align(8, 0);

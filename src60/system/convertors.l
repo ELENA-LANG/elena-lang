@@ -32,6 +32,8 @@ public singleton shortConvertor
 
 public singleton intConvertor
 {
+   private convertChar(char ch, ref int retVal) : external<system'core_routines'__charToInt>;
+
    int convert(byte b)
    {
       int n := b;
@@ -44,6 +46,13 @@ public singleton intConvertor
       int n := s;
 
       ^ n;
+   }
+
+   int convert(char ch)
+   {
+      self.convertChar(ch, ref int retVal);
+
+      ^ retVal
    }
 }
 
