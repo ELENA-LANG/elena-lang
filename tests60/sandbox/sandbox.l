@@ -2,10 +2,13 @@ import extensions;
 
 A
 {
-   int get(int x)
+   int get()
       = 2;
 
-   multiret string get(int x)
+   multiret char get()
+      = $33;
+
+   multiret string get()
       = "str:2";
 }
 
@@ -18,11 +21,13 @@ A
 public program()
 {
    A a := new A();
-   int n := a.get(1);
-   string s := a.get(1);
+   int n := a.get();
+   string s := a.get();
+   char c := a.get();
 
    console.writeLine(n);
    console.writeLine(s);
+   console.writeLine(c);
 
 //   byte ch := 45;
 //   byte ch2 := 32;

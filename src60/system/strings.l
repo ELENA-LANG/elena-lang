@@ -52,8 +52,8 @@ public const struct String //: BaseValue
    char at(int index)
       = PrimitiveOperations.readChar(theArray, index);
 
-//   multiret byte at(int index)
-//      = theArray[index];
+   multiret byte at(int index)
+      = theArray[index];
 
    string add(string subs)
    {

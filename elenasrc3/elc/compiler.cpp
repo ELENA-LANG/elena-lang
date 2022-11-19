@@ -2324,18 +2324,15 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
 
          // COMPILER MAGIC : if the message is marked as multiret - it turns into byref return handler
          // NOTE : it should contain the specific return type
-         // NOTE : if the return type is embeddable - it will be treated in different way (later in the code)
-         if (!_logic->isEmbeddable(*scope.moduleScope, scope.info.outputRef)) {
-            TypeInfo refType = { V_WRAPPER, scope.info.outputRef };
+         TypeInfo refType = { V_WRAPPER, scope.info.outputRef };
 
-            int offset = scope.parameters.count() + 1u;
-            scope.parameters.add(RETVAL_ARG, { offset, refType, 0 });
+         int offset = scope.parameters.count() + 1u;
+         scope.parameters.add(RETVAL_ARG, { offset, refType, 0 });
 
-            signature[signatureLen++] = resolvePrimitiveType(scope, refType, true);
-            paramCount++;
+         signature[signatureLen++] = resolvePrimitiveType(scope, refType, true);
+         paramCount++;
 
-            scope.info.hints |= (ref_t)MethodHint::VirtualReturn;
-         }
+         scope.info.hints |= (ref_t)MethodHint::VirtualReturn;
       }
 
       if (scope.checkHint(MethodHint::Internal)) {
@@ -7129,8 +7126,15 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
       if (methodScope.checkHint(MethodHint::VirtualReturn)) {
          TypeInfo refType = { V_WRAPPER, methodScope.info.outputRef };
 
+         SizeInfo sizeInfo = {};
+         // add byref return arg
+         if (_logic->isEmbeddable(*scope.moduleScope, methodScope.info.outputRef)) {
+            auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, 
+               resolvePrimitiveType(scope, refType, false));
+         }
+
          int offset = methodScope.parameters.count() + 1u;
-         methodScope.parameters.add(RETVAL_ARG, { offset, refType, 0 });
+         methodScope.parameters.add(RETVAL_ARG, { offset, refType, sizeInfo.size });
 
          methodScope.byRefReturnMode = true;
       }
