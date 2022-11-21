@@ -5064,6 +5064,29 @@ ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& sco
    return {}; // !! temporal
 }
 
+ObjectInfo Compiler :: compileNativeConversion(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t operationKey)
+{
+   ObjectInfo retVal = {};
+
+   switch (operationKey) {
+      case INT32_64_CONVERSION:
+         retVal = allocateResult(scope, resolvePrimitiveType(scope, { V_INT64 }, false) );
+
+         writeObjectInfo(writer, scope, retVal);
+         writer.appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(writer, scope, source);
+
+         writer.appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      default:
+         scope.raiseError(errInvalidOperation, node);
+         break;
+   }
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source,
    ref_t signRef, ArgumentsInfo& arguments)
 {
@@ -6061,7 +6084,9 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
 
          return compileNewOp(writer, scope, node, mapClassSymbol(scope, targetRef),
             signRef, arguments);
-
+      }
+      else if (conversionRoutine.result == ConversionResult::NativeConversion) {
+         source = compileNativeConversion(writer, scope, node, source, conversionRoutine.operationKey);
       }
       else source = typecastObject(writer, scope, node, source, targetRef);
    }

@@ -379,6 +379,17 @@ inline %23h
 
 end
 
+// ; lsave
+inline %24h
+
+  mov  eax, edx
+  cdq
+  mov  [ebx + 4], edx
+  mov  [ebx], eax
+  mov  edx, eax
+
+end
+
 // ; setr
 inline %80h
 

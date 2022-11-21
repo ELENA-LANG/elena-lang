@@ -8,15 +8,17 @@ import extensions;
 
 public program()
 {
-   string s := "23";
-   byte b := s[0];
-//   byte b := s.at(0);
+   long n := 6;
 
-   console.writeLine(b);
+   byte b := n;
 
-//   string s := "23";
-//   console.writeLine(s.toInt());
+   console.writeLine(n);
 
+//    long n := 2l;
+//    long m := 3l;
+//    long k := 4l;
+                    
+//    Assert.ifTrue(2l + 3l * 4l == 14l);
 
 //    var x := accumulator(1);
     

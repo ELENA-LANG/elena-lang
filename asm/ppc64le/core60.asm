@@ -464,6 +464,13 @@ inline %23h
 
 end
 
+// ; lsave
+inline %24h
+
+  std     r14, 0(r15)
+
+end
+
 // ; setr
 inline %80h
 

@@ -1652,7 +1652,7 @@ public sealed const struct LongNumber : IntBaseNumber,
       = -theValue;
 
    string toPrintable()
-      = stringConvertor.convert(self);
+      = stringConvertor.convert(self, 10);
 
    long clone()
       = new LongNumber(theValue);

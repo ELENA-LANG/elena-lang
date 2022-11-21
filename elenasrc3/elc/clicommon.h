@@ -742,14 +742,19 @@ enum class ConversionResult
 {
    None = 0,
    BoxingRequired,
-   Conversion
+   Conversion,
+   NativeConversion
 };
 
 // --- ConversionRoutine ---
 struct ConversionRoutine
 {
    ConversionResult result;
-   mssg_t           conversionMssg;
+   union {
+      mssg_t conversionMssg;
+      ref_t  operationKey;
+   };
+   
    int              stackSafeAttrs;
 };
 

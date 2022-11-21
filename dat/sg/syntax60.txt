@@ -405,8 +405,8 @@ O_R  ::=
 	| I_L1_R
 	| I_L2_R L2f
 	| I_L3_R L3f
-	| I_L4_R L4s L5s
-	| I_L5_R L5s
+	| I_L4_R L4s L5s L6s
+	| I_L5_R L5s L6s
 	| I_L6_R
 	| I_L6a_R
 	| IL7_R

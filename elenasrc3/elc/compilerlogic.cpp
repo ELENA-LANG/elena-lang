@@ -1409,6 +1409,10 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& sc
 
       if (compatible)
          return { ConversionResult::BoxingRequired };
+
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT32 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT32_64_CONVERSION, 1 };
+      }
    }
 
    // COMPILE MAGIC : trying to typecast primitive array

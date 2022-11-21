@@ -4,7 +4,17 @@ public singleton byteConvertor
 {
    convert(int n, ref byte retVal) : external<system'core_routines'__intToByte>;
 
+   convert(long n, ref byte retVal) : external<system'core_routines'__longToByte>;
+
    byte convert(int n)
+   {
+      byte b;
+      self.convert(n, ref b);
+
+      ^ b;
+   }
+
+   byte convert(long n)
    {
       byte b;
       self.convert(n, ref b);
@@ -181,6 +191,44 @@ public singleton stringConvertor
          len := len + 1;
       };
       tmp := 48 + n;
+      buffer[index] := tmp;
+      len := len + 1;
+
+      if (value < 0) {
+        index := index - 1;
+        tmp := 45;
+        buffer[index] := tmp;
+        len := len + 1;
+      };
+
+      ^ String.fromByteArray(index, len, buffer);
+   }
+
+   string convert(long value, int radix)
+   {
+      long r := radix;
+      long n := value;
+      if (n < 0)
+      {
+         n := 0 - n;
+      };   
+
+      byte buffer[24];
+      byte tmp;
+      int len := 0;
+      int index := 11;
+      while (n >= r) {
+         int r := n.mod(r);
+         n := n / r;
+
+         tmp := r;
+         tmp := tmp + 48;
+         buffer[index] := tmp;
+         index := index - 1;
+         len := len + 1;
+      };
+      tmp := n;
+      tmp := tmp + 48;
       buffer[index] := tmp;
       len := len + 1;
 

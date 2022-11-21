@@ -423,6 +423,13 @@ inline %23h
 
 end
 
+// ; lsave
+inline %24h
+
+  str    x9, [x10]
+
+end
+
 // ; setr
 inline %80h
 

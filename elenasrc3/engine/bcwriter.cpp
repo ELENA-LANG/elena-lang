@@ -912,6 +912,19 @@ void refParamAssigning(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::XAssignI, 0);
 }
 
+void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   switch (node.arg.reference) {
+      case INT32_64_CONVERSION:
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::LSave);
+         break;
+      default:
+         break;
+   }
+}
+
 inline void includeFrame(CommandTape& tape)
 {
    tape.write(ByteCode::Include);
@@ -937,7 +950,7 @@ ByteCodeWriter::Saver commands[] =
    shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning, staticVarOp, loadingIndex, nilOp,
 
    intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
-   realOp, realCondOp, addVirtualBreakpoint,
+   realOp, realCondOp, addVirtualBreakpoint, conversionOp
 };
 
 // --- ByteCodeWriter ---

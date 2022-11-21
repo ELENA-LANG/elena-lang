@@ -5,11 +5,59 @@ import extensions;
 intTests()
 {
     console.write("intTests");
-    int n := 123;
-    Assert.ifTrue(n == 123);
+
+    int n := 2;
+    int m := 3;
+    int k := 4;
+                    
+    Assert.ifTrue(2 + 3 * 4 == 14);
+    Assert.ifTrue(n + m * k == 14);
     console.write(".");
-    n := n + 27;
-    Assert.ifTrue(n == 150);
+    Assert.ifFalse(n == m);
+    Assert.ifTrue(n == n);
+    Assert.ifTrue(n < m);
+    Assert.ifFalse(n > m);
+    Assert.ifTrue(n <= m);
+    Assert.ifTrue(n <= n);
+    Assert.ifTrue(n >= n);
+    Assert.ifFalse(n >= m);
+    console.writeLine(".");
+}
+
+// --- longTests ---
+
+longTests()
+{
+    console.write("longTests");
+
+    int n32 := 23456;
+    long n64 := n32;
+    Assert.ifTrue(n64 == 23456l);
+    console.write(".");
+
+    long n := 2l;
+    long m := 3l;
+    long k := 4l;
+                 
+    Assert.ifTrue(2l + 3l * 4l == 14l);
+    Assert.ifTrue(n + m * k == 14l);
+    console.write(".");
+
+    n := 2000000l;
+    m := 500000l;    
+    Assert.ifTrue(n * m == 1000000000000l);
+    console.write(".");
+
+    n := 12345678l;
+    m := 12345679l;
+    Assert.ifFalse(n == m);
+    Assert.ifTrue(n == n);
+    Assert.ifTrue(n < m);
+    Assert.ifFalse(n > m);
+    Assert.ifTrue(n <= m);
+    Assert.ifTrue(n <= n);
+    Assert.ifTrue(n >= n);
+    Assert.ifFalse(n >= m);
     console.writeLine(".");
 }
 

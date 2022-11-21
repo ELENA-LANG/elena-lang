@@ -41,6 +41,7 @@ namespace elena_lang
       Not            = 0x21,
       Neg            = 0x22,
       BRead          = 0x23,
+      LSave          = 0x24,
 
       MaxSingleOp    = 0x7F,
 

@@ -270,6 +270,9 @@ namespace elena_lang
    constexpr auto CLASS_OPERATOR_ID       = 0x003F;
    constexpr auto SET_INDEXER_OPERATOR_ID = 0x0201;
 
+   // === Conversion Routines ===
+   constexpr auto INT32_64_CONVERSION     = 0x001;
+
 }
 
 #endif
