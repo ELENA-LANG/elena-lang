@@ -61,6 +61,9 @@ conversionTests()
     console.write(".");
     string s := n.toString();
     Assert.ifTrue(s == "1234");
+    console.write(".");
+    int n2 := s.toInt();
+    Assert.ifTrue(n2 == n);
     console.writeLine(".");
 }
 

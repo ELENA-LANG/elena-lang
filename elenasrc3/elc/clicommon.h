@@ -331,8 +331,8 @@ struct BuiltinReferences
    mssg_t  equal_message;
    mssg_t  not_message, negate_message, value_message;
    mssg_t  notequal_message;
-   mssg_t  less_message;
-   mssg_t  notless_message;
+   mssg_t  less_message, greater_message;
+   mssg_t  notless_message, notgreater_message;
 
    BuiltinReferences()
    {
@@ -356,8 +356,8 @@ struct BuiltinReferences
       equal_message = 0;
       not_message = negate_message = value_message = 0;
       notequal_message = 0;
-      less_message = 0;
-      notless_message = 0;
+      greater_message = less_message = 0;
+      notgreater_message = notless_message = 0;
    }
 };
 

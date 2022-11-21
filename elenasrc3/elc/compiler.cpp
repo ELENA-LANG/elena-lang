@@ -79,6 +79,14 @@ inline ref_t getSignature(ModuleBase* module, mssg_t message)
    return signRef;
 }
 
+inline void addByRefRetVal(ArgumentsInfo& arguments, ObjectInfo& tempRetVal)
+{
+   if (tempRetVal.kind == ObjectKind::TempLocal) {
+      arguments.add({ ObjectKind::RefLocal, { V_WRAPPER, tempRetVal.typeInfo.typeRef }, tempRetVal.argument, tempRetVal.extra });
+   }
+   else arguments.add({ ObjectKind::TempLocalAddress, { V_WRAPPER, tempRetVal.typeInfo.typeRef }, tempRetVal.argument, tempRetVal.extra });
+}
+
 // --- Interpreter ---
 
 Interpreter :: Interpreter(ModuleScopeBase* scope, CompilerLogic* logic)
@@ -1671,7 +1679,10 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == methodKey) {
-         mssg_t multiMethod = defineMultimethod(scope, current.arg.reference, scope.extensionClassRef != 0);
+         bool withRetOverload = test(current.findChild(SyntaxKey::Hints).arg.reference, (ref_t)MethodHint::RetOverload);
+
+         // HOTFIX : methods with ret overload are special case and should not be  part of the overload list
+         mssg_t multiMethod = withRetOverload ? 0 : defineMultimethod(scope, current.arg.reference, scope.extensionClassRef != 0);
          if (multiMethod) {
             //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
             current.appendChild(SyntaxKey::Multimethod, multiMethod);
@@ -1703,7 +1714,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
          }
 
          if (methodKey != SyntaxKey::Constructor) {
-            mssg_t byRefMethod = defineByRefMethod(scope, current);
+            mssg_t byRefMethod = withRetOverload ? 0 : defineByRefMethod(scope, current);
             if (byRefMethod) {
                current.appendChild(SyntaxKey::ByRefRetMethod, byRefMethod);
 
@@ -2318,7 +2329,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
       if (variadicMode)
          flags |= VARIADIC_MESSAGE;
 
-      if (scope.checkHint(MethodHint::MutliRet)) {
+      if (scope.checkHint(MethodHint::RetOverload)) {
          if (!scope.info.outputRef || (weakSignature && paramCount > 0))
             scope.raiseError(errIllegalMethod, node);
 
@@ -4363,10 +4374,14 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
          return scope->buildins.notequal_message;
       case LESS_OPERATOR_ID:
          return scope->buildins.less_message;
+      case GREATER_OPERATOR_ID:
+         return scope->buildins.greater_message;
       case NOT_OPERATOR_ID:
          return scope->buildins.not_message;
       case NOTLESS_OPERATOR_ID:
          return scope->buildins.notless_message;
+      case NOTGREATER_OPERATOR_ID:
+         return scope->buildins.notgreater_message;
       case NEGATE_OPERATOR_ID:
          return scope->buildins.negate_message;
       case VALUE_OPERATOR_ID:
@@ -4406,7 +4421,7 @@ ObjectInfo Compiler :: allocateResult(ExprScope& scope, ref_t resultRef)
    return {}; // NOTE : should never be reached
 }
 
-ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, SyntaxNode rnode, int operatorId)
+ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, SyntaxNode rnode, int operatorId, ref_t expectedRef)
 {
    ObjectInfo retVal;
 
@@ -4513,9 +4528,28 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
          messageArguments.add(ioperand);
       }
 
-      ref_t signRef = scope.module->mapSignature(arguments, argLen, false);
+      // resolving a message signature (excluding a target)
+      for (pos_t i = 1; i < argLen; i++) {
+         if (isPrimitiveRef(arguments[i])) {
+            arguments[i - 1] = resolvePrimitiveType(scope, { arguments[i] }, false);
+         }
+         else arguments[i - 1] = arguments[i];
+      }
 
-      retVal = compileMessageOperation(writer, scope, node, loperand, message, 
+      ref_t signRef = argLen > 1 ? scope.module->mapSignature(arguments, argLen - 1, false) : 0;
+
+      mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, loperand), expectedRef, message, signRef);
+      if (byRefHandler) {
+         ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
+
+         addByRefRetVal(messageArguments, tempRetVal);
+
+         compileMessageOperation(writer, scope, node, loperand, byRefHandler,
+            signRef, messageArguments, EAttr::AlreadyResolved);
+
+         retVal = tempRetVal;
+      }
+      else retVal = compileMessageOperation(writer, scope, node, loperand, message, 
          signRef, messageArguments, EAttr::NoExtension);
    }
 
@@ -5065,14 +5099,6 @@ ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, S
    return retVal;
 }
 
-inline void addByRefRetVal(ArgumentsInfo& arguments, ObjectInfo& tempRetVal)
-{
-   if (tempRetVal.kind == ObjectKind::TempLocal) {
-      arguments.add({ ObjectKind::RefLocal, { V_WRAPPER, tempRetVal.typeInfo.typeRef }, tempRetVal.argument, tempRetVal.extra });
-   }
-   else arguments.add({ ObjectKind::TempLocalAddress, { V_WRAPPER, tempRetVal.typeInfo.typeRef }, tempRetVal.argument, tempRetVal.extra });
-}
-
 ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
    ref_t expectedRef, ExpressionAttribute attrs)
 {
@@ -5117,7 +5143,7 @@ mssg_t Compiler :: resolveByRefHandler(Scope& scope, ref_t targetRef, ref_t expe
    ref_t actionRef = 0, flags = 0;
    decodeMessage(weakMessage, actionRef, argCount, flags);
 
-   if (expectedRef != 0 && targetRef != 0) {
+   if (expectedRef != 0 && targetRef != 0 && signatureRef != 0) {
       ref_t dummySignRef = 0;
       ustr_t actionName = scope.module->resolveAction(actionRef, dummySignRef);
 
@@ -5341,7 +5367,7 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    return target;
 }
 
-ObjectInfo Compiler :: compileIndexerOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
+ObjectInfo Compiler :: compileIndexerOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef)
 {
    // HOTFIX : recognize fixed-array declaration
    SyntaxNode loperand = node.firstChild();
@@ -5358,10 +5384,10 @@ ObjectInfo Compiler :: compileIndexerOperation(BuildTreeWriter& writer, ExprScop
       }
    }
 
-   return compileOperation(writer, scope, node, operatorId);
+   return compileOperation(writer, scope, node, operatorId, expectedRef);
 }
 
-ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
+ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef)
 {
    SyntaxNode loperand = node.firstChild();
    SyntaxNode roperand = loperand.nextNode();
@@ -5369,12 +5395,12 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    if (operatorId == SET_OPERATOR_ID){
       // assign operation is a special case
       if (loperand == SyntaxKey::IndexerOperation) {
-         return compileOperation(writer, scope, loperand, roperand, SET_INDEXER_OPERATOR_ID);
+         return compileOperation(writer, scope, loperand, roperand, SET_INDEXER_OPERATOR_ID, expectedRef);
       }
       else return compileAssigning(writer, scope, loperand, roperand);
 
    }
-   else return compileOperation(writer, scope, loperand, roperand, operatorId);
+   else return compileOperation(writer, scope, loperand, roperand, operatorId, expectedRef);
 }
 
 inline SyntaxNode skipNestedExpression(SyntaxNode node)
@@ -6187,11 +6213,13 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::DivOperation:
       case SyntaxKey::LenOperation:
       case SyntaxKey::LessOperation:
+      case SyntaxKey::GreaterOperation:
       case SyntaxKey::NameOperation:
       case SyntaxKey::EqualOperation:
       case SyntaxKey::NotOperation:
       case SyntaxKey::NotEqualOperation:
       case SyntaxKey::NotLessOperation:
+      case SyntaxKey::NotGreaterOperation:
       case SyntaxKey::NestedExpression:
       case SyntaxKey::ValueOperation:
       case SyntaxKey::BAndOperation:
@@ -6201,10 +6229,10 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::ShlOperation:
       case SyntaxKey::ShrOperation:
       case SyntaxKey::NegateOperation:
-         retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
+         retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef);
          break;
       case SyntaxKey::IndexerOperation:
-         retVal = compileIndexerOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
+         retVal = compileIndexerOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef);
          break;
       case SyntaxKey::IfOperation:
       case SyntaxKey::IfNotOperation:
@@ -7129,7 +7157,7 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
          SizeInfo sizeInfo = {};
          // add byref return arg
          if (_logic->isEmbeddable(*scope.moduleScope, methodScope.info.outputRef)) {
-            auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, 
+            sizeInfo = _logic->defineStructSize(*scope.moduleScope, 
                resolvePrimitiveType(scope, refType, false));
          }
 
@@ -7703,6 +7731,12 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
          2, 0);
    moduleScope->buildins.notless_message =
       encodeMessage(moduleScope->module->mapAction(NOTLESS_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.greater_message =
+      encodeMessage(moduleScope->module->mapAction(GREATER_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.notgreater_message =
+      encodeMessage(moduleScope->module->mapAction(NOTGREATER_MESSAGE, 0, false),
          2, 0);
 
    // cache self variable

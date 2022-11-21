@@ -396,5 +396,5 @@ bool TextFileWriter :: write(const char* s, pos_t length)
 
 bool TextFileWriter :: writeNewLine()
 {
-   return write(NEW_LINE, getlength(NEW_LINE));
+   return write(NEW_LINE, getlength_pos(NEW_LINE));
 }

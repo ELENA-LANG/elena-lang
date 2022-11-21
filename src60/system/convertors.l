@@ -54,6 +54,24 @@ public singleton intConvertor
 
       ^ retVal
    }
+
+   int convert(string s, int radix)
+   {
+      int len := s.Length;
+      int val := 0;
+      for (int i := 0, i < len, i := i + 1) {
+         byte c := s[i];
+         int ch := c;
+         ch := ch - 48;
+         if (ch >= radix) {
+            ch := ch - 49;
+         };
+         val := val * radix;
+         val := val + ch;
+      };
+
+      ^ val
+   }
 }
 
 // --- uintConvertor ---
@@ -69,6 +87,20 @@ public singleton uintConvertor
 
    uint convert(string s, int radix)
    {
+      int len := s.Length;
+      uint val := 0;
+      for (int i := 0, i < len, i := i + 1) {
+         byte c := s[i];
+         int ch := c;
+         ch := ch - 48;
+         if (ch >= radix) {
+            ch := ch - 49;
+         };
+         val := val * radix;
+         val := val + ch;
+      };
+
+      ^ val
    }
 }
 

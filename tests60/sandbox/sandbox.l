@@ -1,17 +1,5 @@
 import extensions;
 
-A
-{
-   int get()
-      = 2;
-
-   multiret char get()
-      = $33;
-
-   multiret string get()
-      = "str:2";
-}
-
 //function(acc)
 //    = (n => acc.append:n);
 
@@ -20,26 +8,15 @@ A
 
 public program()
 {
-   A a := new A();
-   int n := a.get();
-   string s := a.get();
-   char c := a.get();
+   string s := "23";
+   byte b := s[0];
+//   byte b := s.at(0);
 
-   console.writeLine(n);
-   console.writeLine(s);
-   console.writeLine(c);
+   console.writeLine(b);
 
-//   byte ch := 45;
-//   byte ch2 := 32;
-//   byte tmp[4];
-//   tmp[0] := ch;
-//   tmp[1] := ch2;
-  
-//   string s := "abc";
+//   string s := "23";
+//   console.writeLine(s.toInt());
 
-//   var ch := s[2];
-
-//   console.writeLine(ch);
 
 //    var x := accumulator(1);
     

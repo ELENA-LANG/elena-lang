@@ -19,7 +19,7 @@
 #let attributesSymbols["const"]       := 80002001h;
 #let attributesSymbols["embeddable"]  := 80002002h;
 #let attributesSymbols["ref"]         := 80002003h;
-#let attributesSymbols["multiret"]    := 8000200Ah;
+#let attributesSymbols["retoverload"] := 8000200Ah;
 #let attributesSymbols["params"]      := 8000200Bh;
                                                  
 /// scope:

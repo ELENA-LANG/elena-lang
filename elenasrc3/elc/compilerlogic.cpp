@@ -528,8 +528,8 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_CONVERSION:
          hint = (ref_t)MethodHint::Conversion;
          return true;
-      case V_MULTIRET:
-         hint = (ref_t)MethodHint::MutliRet;
+      case V_OVERLOADRET:
+         hint = (ref_t)MethodHint::RetOverload;
          return true;
       case V_SEALED:
          hint = (ref_t)MethodHint::Sealed;
