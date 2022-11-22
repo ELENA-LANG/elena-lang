@@ -22,3 +22,17 @@ public extension intOp : IntNumber
       ^ retVal
    }    
 }
+
+// --- longOp ---
+
+public extension longOp : LongNumber
+{
+   long mod(long operand)
+   {
+      long retVal := self / operand * operand;
+
+      retVal := self - retVal;
+        
+      ^ retVal
+   }    
+}

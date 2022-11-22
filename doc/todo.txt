@@ -8,9 +8,17 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * int => long natively
+    * ide : disable / enable the menu items, based on the model
+    * ide : debugger - status - running / stopped
+    * ide : toggle sub window
+
+    * ide different styles : use dark mode
+
+    * ide debugger - auto watch
+    * ide debugger - step over if
 
     * tests : arithmetic operations with long
+    * long => int conversion
 
     * tests : arithmetic operations with real
     * tests : bitwise / shift operations with int
@@ -20,16 +28,12 @@ In development:
     * rosetta sample : accumulator - x86, x86-64, i386, amd64, ppc64le, aarch64
 
     * ide : double click - select word
-    * ide different styles : use dark mode
 
-    * ide : disable / enable the menu items, based on the model
-    * ide : debugger - status - running / stopped
 
     * api functionality for existing classes
 
     * ide : debugger - step into / over / stop / run / compile
     * ide : debugger - on debugging / debugger stopped
-    * ide debugger - auto watch
     * ide - ask to save on close
     * ide - tab
     * ide - close project

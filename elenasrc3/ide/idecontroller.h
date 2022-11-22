@@ -161,10 +161,11 @@ namespace elena_lang
 
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
-
       bool doExit();
 
       void init(IDEModel* model);
+
+      void onLayoutchange();
 
       IDEController(ProcessBase* outputProcess, DebugProcessBase* process, IDEModel* model,
          TextViewSettings& textViewSettings, PlatformType platform

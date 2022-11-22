@@ -240,7 +240,8 @@ end
 procedure __intToByte
 
   peek       sp:1
-  bload
+  load
+  and        n:0FFh
   peek       sp:2
   save
 
@@ -249,7 +250,8 @@ end
 procedure __longToByte
 
   peek       sp:1
-  bload
+  load
+  and        n:0FFh
   peek       sp:2
   save
 

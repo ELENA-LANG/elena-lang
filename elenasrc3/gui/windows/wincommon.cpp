@@ -162,7 +162,9 @@ LRESULT WindowBase :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
                return TRUE;
          }
          break;
-      //case WM_CLOSE:
+      case WM_CLOSE:
+         onClose();
+         break;
       default:
          // to make compiler happy
          break;

@@ -10,8 +10,9 @@
 
 #include "eng/messages.h"
 
-#include "windows/wintabbar.h"
 #include "windows/wintreeview.h"
+#include "windows/wintabbar.h"
+#include "windows/winmenu.h"
 
 #include <windows/Resource.h>
 
@@ -117,6 +118,8 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    this->_instance = instance;
    this->_controller = controller;
    this->_model = model;
+
+   _model->sourceViewModel.attachDocListener(this);
 }
 
 void IDEWindow :: onActivate()
@@ -184,6 +187,14 @@ void IDEWindow :: deleteText()
    _model->sourceViewModel.onModelChanged();
 }
 
+void IDEWindow :: openProjectView()
+{
+   GUIControlBase* resultBar = _children[_model->ideScheme.projectView];
+
+   resultBar->show();
+   _controller->onLayoutchange();
+}
+
 void IDEWindow :: openResultTab(int controlIndex)
 {
    TabBar* resultBar = (TabBar*)_children[_model->ideScheme.resultControl];
@@ -195,7 +206,16 @@ void IDEWindow :: openResultTab(int controlIndex)
 
    resultBar->show();
 
-   refresh();
+   _controller->onLayoutchange();
+}
+
+void IDEWindow :: toggleWindow(int child_id)
+{
+}
+
+void IDEWindow :: toggleTabBarWindow(int child_id)
+{
+   openResultTab(child_id);
 }
 
 void IDEWindow :: setChildFocus(int controlIndex)
@@ -230,6 +250,11 @@ void IDEWindow :: onErrorHighlight(int index)
 void IDEWindow :: onProjectViewSel(size_t index)
 {
    _controller->openProjectSourceByIndex(_model, index);
+}
+
+void IDEWindow :: onDebugWatch()
+{
+   
 }
 
 void IDEWindow :: onProjectChange()
@@ -281,6 +306,20 @@ void IDEWindow :: onProjectChange()
    }
 
    projectTree->expand(root);
+
+   openProjectView();
+}
+
+void IDEWindow :: onLayoutChange()
+{
+   onResize();
+
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+
+   menu->checkItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
+   menu->checkItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
+   menu->checkItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
+   menu->checkItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
 }
 
 bool IDEWindow :: onCommand(int command)
@@ -344,6 +383,18 @@ bool IDEWindow :: onCommand(int command)
       case IDM_WINDOW_PREVIOUS:
          _controller->doSelectPrevWindow(_model);
          break;
+      case IDM_VIEW_WATCH:
+         toggleTabBarWindow(_model->ideScheme.debugWatch);
+         break;
+      case IDM_VIEW_PROJECTVIEW:
+         toggleWindow(_model->ideScheme.projectView);
+         break;
+      case IDM_VIEW_OUTPUT:
+         toggleTabBarWindow(_model->ideScheme.compilerOutputControl);
+         break;
+      case IDM_VIEW_MESSAGES:
+         toggleTabBarWindow(_model->ideScheme.errorListControl);
+         break;
       default:
          return false;
    }
@@ -356,8 +407,14 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
    auto docView = _model->sourceViewModel.DocView();
 
    switch (hdr->extParam1) {
+      case NOTIFY_ONSTART:
+         _controller->init(_model);
+         break;
       case NOTIFY_SOURCEMODEL:
          docView->notifyOnChange();
+         break;
+      case NOTIFY_DEBUGWATCH:
+         onDebugWatch();
          break;
       case NOTIFY_PROJECTMODEL:
          onProjectChange();
@@ -368,12 +425,14 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
          break;
       case NOTIFY_CURRENTVIEW_SHOW:
          _children[_model->ideScheme.textFrameId]->show();
+         onResize();
          break;
       case NOTIFY_CURRENTVIEW_HIDE:
          _children[_model->ideScheme.textFrameId]->hide();
+         onResize();
          break;
       case NOTIFY_LAYOUT_CHANGED:
-         onResize();
+         onLayoutChange();
          break;
       default:
          break;
@@ -392,7 +451,7 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
          setChildFocus(_model->ideScheme.textFrameId);
          break;
       case NOTIFY_LAYOUT_CHANGED:
-         onResize();
+         onLayoutChange();
          break;
       case NOTIFY_COMPILATION_RESULT:
          onCompilationEnd(hdr->extParam2);
@@ -462,4 +521,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       default:
          break;
    }
+}
+
+void IDEWindow :: onDocumentUpdate()
+{
+   
 }

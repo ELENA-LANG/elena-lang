@@ -447,7 +447,14 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
 
 void IDEController :: init(IDEModel* model)
 {
+   if (model->projectModel.lastOpenFiles.count() > 0) {
+      path_t path = model->projectModel.lastOpenFiles.get(1);
+
+      openFile(model, path);
+   }
    model->changeStatus(IDEStatus::Ready);
+
+   onLayoutchange();
 }
 
 bool IDEController :: selectSource(ProjectModel* model, SourceViewModel* sourceModel,
@@ -775,4 +782,10 @@ bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
    }
 
    return false;
+}
+
+void IDEController::onLayoutchange()
+{
+   _notifier->notifyMessage(NOTIFY_LAYOUT_CHANGED);
+
 }

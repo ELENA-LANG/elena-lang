@@ -878,7 +878,7 @@ end
 // ; icmpn 8
 inline %4C2h
 
-  mov  eax, [esi]
+  mov  ecx, [esi]
   sub  ecx, [ebx]
   mov  eax, [esi+4]
   sbb  eax, [ebx+4]
@@ -1464,6 +1464,7 @@ inline %4E3h
   or   eax, ecx
   mov  ecx, [edx]     // DLO
   jnz  short lLong
+  mov  ecx, [edx]
   mov  eax, [esi]
   mul  ecx
   jmp  short lEnd

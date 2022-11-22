@@ -63,9 +63,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess);
 
    ideController.setNotifier(app);
-   ideController.init(&ideModel);
 
-   int retVal = app->run(ideWindow, ideModel.appMaximized, NOTIFY_PROJECTMODEL);
+   int retVal = app->run(ideWindow, ideModel.appMaximized, NOTIFY_ONSTART);
 
    delete app;
 

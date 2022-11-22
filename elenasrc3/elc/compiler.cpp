@@ -5737,7 +5737,7 @@ ObjectInfo Compiler :: mapLongConstant(Scope& scope, SyntaxNode node, int radix)
    if (errno == ERANGE)
       scope.raiseError(errInvalidIntNumber, node);
 
-   return { ObjectKind::LongLiteral, { V_INT32 }, ::mapLongConstant(scope, integer)};
+   return { ObjectKind::LongLiteral, { V_INT64 }, ::mapLongConstant(scope, integer)};
 }
 
 ObjectInfo Compiler :: mapFloat64Constant(Scope& scope, SyntaxNode node)

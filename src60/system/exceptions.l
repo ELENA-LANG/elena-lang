@@ -43,6 +43,8 @@ public class NilReferenceException : Exception
 // --- CriticalException ---
 public class DivisionByZeroException : Exception
 {
+   constructor new()
+      <= super new("Division by zero exception");
 }
 
 // --- CriticalException ---

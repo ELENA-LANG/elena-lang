@@ -20,15 +20,20 @@
 #define IDM_EDIT_PASTE              505
 #define IDM_EDIT_DELETE             506
 
-#define IDM_PROJECT_COMPILE         601
+#define IDM_VIEW_PROJECTVIEW        601 
+#define IDM_VIEW_OUTPUT             602
+#define IDM_VIEW_WATCH              603
+#define IDM_VIEW_MESSAGES           604
 
-#define IDM_DEBUG_RUN               701
-#define IDM_DEBUG_STEPOVER          702
-#define IDM_DEBUG_STEPINTO          703
-#define IDM_DEBUG_STOP              704
+#define IDM_PROJECT_COMPILE         701
 
-#define IDM_WINDOW_NEXT             801
-#define IDM_WINDOW_PREVIOUS         802
+#define IDM_DEBUG_RUN               801
+#define IDM_DEBUG_STEPOVER          802
+#define IDM_DEBUG_STEPINTO          803
+#define IDM_DEBUG_STOP              804
+
+#define IDM_WINDOW_NEXT             901
+#define IDM_WINDOW_PREVIOUS         902
 
 #define IDI_IDE                     107
 #define IDI_SMALL                   108
@@ -38,6 +43,7 @@
 #define IDC_VSPLITTER               112
 #define IDC_COMPILER_OUTPUT         113
 #define IDC_COMPILER_MESSAGES       114
+#define IDC_COMPILER_WATCH          115
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                  -1

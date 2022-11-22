@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x0027
+#define IDE_REVISION_NUMBER                           0x0028
 
 namespace elena_lang
 {
@@ -41,6 +41,8 @@ namespace elena_lang
    constexpr auto NOTIFY_START_COMPILATION            = 10;
    constexpr auto NOTIFY_PROJECTMODEL                 = 11;
    constexpr auto NOTIFY_PROJECTVIEW_SEL              = 12;
+   constexpr auto NOTIFY_DEBUGWATCH                   = 13;
+   constexpr auto NOTIFY_ONSTART                      = 14;
 
    // --- PathSettings ---
    struct PathSettings
@@ -110,6 +112,11 @@ namespace elena_lang
       virtual MessageLogInfo getMessage(int index) = 0;
 
       virtual void clearMessages() = 0;
+   };
+
+   class ContextBrowserBase
+   {
+      
    };
 
    // --- DebugControllerBase ---

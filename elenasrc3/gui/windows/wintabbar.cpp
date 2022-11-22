@@ -125,6 +125,9 @@ MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, 
 void MultiTabControl :: show()
 {
    ControlBase::show();
+   if (_child)
+      _child->show();
+
    refresh();
 }
 

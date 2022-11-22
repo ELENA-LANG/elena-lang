@@ -37,7 +37,7 @@ namespace elena_lang
    };
 
    // --- IDEWindow ---
-   class IDEWindow : public SDIWindow
+   class IDEWindow : public SDIWindow, public DocumentNotifier
    {
       Dialog         fileDialog;
       Dialog         projectDialog;
@@ -51,6 +51,8 @@ namespace elena_lang
       void onModelChange(ExtNMHDR* hdr);
       void onNotifyMessage(ExtNMHDR* hdr);
 
+      void onDebugWatch();
+
       void onDoubleClick(NMHDR* hdr);
 
       void onTabSelChanged(HWND wnd);
@@ -59,6 +61,7 @@ namespace elena_lang
       bool onCommand(int command) override;
       void onNotify(NMHDR* hdr) override;
       void onActivate() override;
+      void onLayoutChange();
 
       void onComilationStart();
       void onCompilationEnd(int exitCode);
@@ -67,6 +70,10 @@ namespace elena_lang
       void onProjectChange();
       void onProjectViewSel(size_t index);
 
+      void toggleTabBarWindow(int child_id);
+      void toggleWindow(int child_id);
+
+      void openProjectView();
       void openResultTab(int controlIndex);
       void setChildFocus(int controlIndex);
 
@@ -84,6 +91,8 @@ namespace elena_lang
       void deleteText();
 
    public:
+      void onDocumentUpdate() override;
+
       IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance);
    };
 

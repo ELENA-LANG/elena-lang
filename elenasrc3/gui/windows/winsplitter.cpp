@@ -58,7 +58,7 @@ HWND Splitter :: create(HINSTANCE instance, wstr_t className, ControlBase* owner
 {
    _handle = ::CreateWindowEx(
       0, className, _title,
-      WS_CHILD | WS_VISIBLE,
+      WS_CHILD,
       CW_USEDEFAULT, 0, 4, 4, owner->handle(), nullptr, instance, (LPVOID)this);
 
    _instance = instance;
@@ -87,6 +87,10 @@ bool Splitter :: visible()
 
 elena_lang::Rectangle Splitter :: getRectangle()
 {
+   if (!visible()) {
+      return {};
+   }
+
    auto rec = _client->getRectangle();
 
    if (!_vertical) {
@@ -97,6 +101,9 @@ elena_lang::Rectangle Splitter :: getRectangle()
 
 void Splitter :: setRectangle(elena_lang::Rectangle rec)
 {
+   if (!visible())
+      return;
+
    int width = rec.width();
    int height = rec.height();
 

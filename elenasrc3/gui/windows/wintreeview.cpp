@@ -30,7 +30,7 @@ TreeView :: ~TreeView()
 
 HWND TreeView :: createControl(HINSTANCE instance, ControlBase* owner)
 {
-   int styles = WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_HASLINES | TVS_HASBUTTONS | TVS_LINESATROOT;
+   int styles = WS_CHILD | WS_BORDER | TVS_HASLINES | TVS_HASBUTTONS | TVS_LINESATROOT;
    if (_persistentSelection)
       styles |= TVS_SHOWSELALWAYS;
 

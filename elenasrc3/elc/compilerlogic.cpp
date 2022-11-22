@@ -946,7 +946,7 @@ void CompilerLogic :: writeAttributeMapEntry(MemoryBase* section, ustr_t key, us
    MemoryWriter writer(section);
    writer.writeString(key);
    writer.writeDWord(2);
-   writer.writeDWord(value.length());
+   writer.writeDWord(value.length_pos());
    writer.writeString(value);
 }
 
@@ -1019,6 +1019,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
 
    switch (reference)
    {
+      case V_INT64:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = /*elDebugDWORD | */elStructureRole | elReadOnlyRole;
+         info.size = 8;
+         break;
       case V_INT32:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = /*elDebugDWORD | */elStructureRole | elReadOnlyRole;

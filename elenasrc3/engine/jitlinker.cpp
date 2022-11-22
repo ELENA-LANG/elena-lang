@@ -1210,6 +1210,7 @@ addr_t JITLinker :: resolve(ustr_t referenceName, ref_t sectionMask, bool silent
       case mskIntLiteralRef:
       case mskCharacterRef:
       case mskMssgLiteralRef:
+      case mskLongLiteralRef:
          return resolve({ nullptr, referenceName }, sectionMask, silentMode);
       default:
          ReferenceInfo referenceInfo = _loader->retrieveReferenceInfo(referenceName, _forwardResolver);

@@ -523,6 +523,7 @@ void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName
       }
 
       _notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
+      _notifier->notifyModelChange(NOTIFY_DEBUGWATCH);
    }
 }
 

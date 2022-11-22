@@ -216,9 +216,9 @@ public singleton stringConvertor
       byte buffer[24];
       byte tmp;
       int len := 0;
-      int index := 11;
+      int index := 23;
       while (n >= r) {
-         int r := n.mod(r);
+         long r := n.mod(r);
          n := n / r;
 
          tmp := r;
