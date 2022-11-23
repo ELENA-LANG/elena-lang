@@ -65,10 +65,10 @@ inline void formatCaption(WideMessage& retVal, ustr_t name, ustr_t className, ad
    else if (className.empty()) {
       retVal.appendUstr(" = <unknown>");
    }
-   else if (className[0] == '<') {
-      retVal.appendUstr(" = ");
-      retVal.appendUstr(className);
-   }
+   //else if (className[0] == '<') {
+   //   retVal.appendUstr(" = ");
+   //   retVal.appendUstr(className);
+   //}
    else {
       retVal.appendUstr(" = {");
       retVal.appendUstr(className);

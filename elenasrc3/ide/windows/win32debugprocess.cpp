@@ -624,6 +624,11 @@ void Win32DebugProcess :: addStep(addr_t address, void* state)
       maxAddress = address;
 }
 
+int Win32DebugProcess :: getDataOffset()
+{
+   return sizeof(addr_t);
+}
+
 void* Win32DebugProcess :: getState()
 {
    return _current ? _current->state : nullptr;
@@ -639,17 +644,14 @@ addr_t Win32DebugProcess :: getClassVMT(addr_t address)
    else return 0;
 }
 
-addr_t Win32DebugProcess :: getStackItemAddress(pos_t index, pos_t frameDisp)
+addr_t Win32DebugProcess :: getStackItemAddress(disp_t disp)
 {
-   if (frameDisp)
-      frameDisp += 4;
-
-   return getBP(_current->context) - index * 4 + frameDisp;
+   return getBP(_current->context) - disp;
 }
 
-addr_t Win32DebugProcess :: getStackItem(pos_t index, pos_t frameDisp)
+addr_t Win32DebugProcess :: getStackItem(int index)
 {
-   return getMemoryPtr(getStackItemAddress(index, frameDisp));
+   return getMemoryPtr(getStackItemAddress(index * sizeof(addr_t)));
 }
 
 addr_t Win32DebugProcess :: getMemoryPtr(addr_t address)
@@ -669,6 +671,16 @@ unsigned Win32DebugProcess :: getDWORD(addr_t address)
 
    if (_current->readDump(address, (char*)&dword, 4)) {
       return dword;
+   }
+   else return 0;
+}
+
+unsigned long long Win32DebugProcess :: getQWORD(addr_t address)
+{
+   unsigned long long qword = 0;
+
+   if (_current->readDump(address, (char*)&qword, 8)) {
+      return qword;
    }
    else return 0;
 }

@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x0029
+#define IDE_REVISION_NUMBER                           0x002A
 
 namespace elena_lang
 {
@@ -136,8 +136,11 @@ namespace elena_lang
 
    public:
       virtual void* addOrUpdate(WatchContext* root, ustr_t name, ustr_t className);
+      virtual void addOrUpdateDWORD(WatchContext* root, ustr_t name, int value);
+      virtual void addOrUpdateQWORD(WatchContext* root, ustr_t name, long long value);
 
       virtual void populateDWORD(WatchContext* root, unsigned int value);
+      virtual void populateQWORD(WatchContext* root, unsigned long long value);
    };
 
    // --- DebugControllerBase ---
@@ -191,18 +194,21 @@ namespace elena_lang
 
       virtual void initHook() = 0;
 
+      virtual int getDataOffset() = 0;
+
       virtual addr_t getBaseAddress() = 0;
       virtual void* getState() = 0;
 
       virtual addr_t getMemoryPtr(addr_t address) = 0;
 
-      virtual addr_t getStackItem(pos_t index, pos_t frameDisp) = 0;
-      virtual addr_t getStackItemAddress(pos_t index, pos_t disp) = 0;
+      virtual addr_t getStackItem(int index) = 0;
+      virtual addr_t getStackItemAddress(disp_t disp) = 0;
 
       virtual addr_t getClassVMT(addr_t address) = 0;
       virtual ref_t getClassFlags(addr_t vmtAddress) = 0;
 
       virtual unsigned int getDWORD(addr_t address) = 0;
+      virtual unsigned long long getQWORD(addr_t address) = 0;
 
       virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
 

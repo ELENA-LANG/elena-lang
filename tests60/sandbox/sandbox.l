@@ -8,12 +8,13 @@ import extensions;
 
 public program()
 {
-   int n := 2;
-
-/*
       long r := 10l;
       long n := 34l;
 
+      long t := n.mod(r);
+
+
+/*
       byte buffer[24];
       byte tmp;
       int len := 0;
@@ -35,7 +36,6 @@ public program()
       buffer[index] := tmp;
       len := len + 1;
 */
-
 //   if (n < 100l) {
 //      console.writeLine(n);
 //   }   

@@ -165,6 +165,7 @@ namespace elena_lang
 
    constexpr ref_t elDebugMask            = 0x001F0000;
    constexpr ref_t elDebugDWORD           = 0x00010000;
+   constexpr ref_t elDebugQWORD           = 0x00020000;
 
    // --- LoadResult enum ---
    enum class LoadResult

@@ -263,6 +263,8 @@ void IDEWindow :: onProjectViewSel(size_t index)
 
 void IDEWindow :: onDebugWatch()
 {
+   openResultTab(_model->ideScheme.debugWatch);
+
    ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
 
    _controller->refreshDebugContext(contextBrowser, _model);

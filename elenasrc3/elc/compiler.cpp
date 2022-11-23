@@ -6549,8 +6549,25 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
          }
       }
 
-      BuildNode varNode = node.appendChild(BuildKey::Variable, it.key());
-      varNode.appendChild(BuildKey::Index, localInfo.offset);
+      if (localInfo.size > 0) {
+         if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.intReference) {
+            BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
+         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.longReference) {
+            BuildNode varNode = node.appendChild(BuildKey::LongVariableAddress, it.key());
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
+         else {
+            // !! temporal stub
+            BuildNode varNode = node.appendChild(BuildKey::Variable, it.key());
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
+      }
+      else {
+         BuildNode varNode = node.appendChild(BuildKey::Variable, it.key());
+         varNode.appendChild(BuildKey::Index, localInfo.offset);
+      }
    }
 }
 
