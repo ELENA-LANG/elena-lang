@@ -67,7 +67,7 @@ namespace elena_lang
          bool tapeOptMode);
       void saveExternOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths,
          bool tapeOptMode);
-      void saveVariableInfo(CommandTape& tape, BuildNode node);
+      void saveVariableInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
 
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
          ReferenceMap& paths, bool tapeOptMode);

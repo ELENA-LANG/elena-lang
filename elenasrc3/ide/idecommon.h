@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x0028
+#define IDE_REVISION_NUMBER                           0x0029
 
 namespace elena_lang
 {
@@ -43,6 +43,7 @@ namespace elena_lang
    constexpr auto NOTIFY_PROJECTVIEW_SEL              = 12;
    constexpr auto NOTIFY_DEBUGWATCH                   = 13;
    constexpr auto NOTIFY_ONSTART                      = 14;
+   constexpr auto NOTIFY_REFRESH                      = 15;
 
    // --- PathSettings ---
    struct PathSettings
@@ -114,9 +115,29 @@ namespace elena_lang
       virtual void clearMessages() = 0;
    };
 
+   // --- ContextBrowserBase ---
+
+   struct WatchContext
+   {
+      void*   root;
+      addr_t  address;
+      int     level;
+   };
+
    class ContextBrowserBase
    {
-      
+   protected:
+      virtual void* findWatchNodeStartingWith(WatchContext* root, ustr_t name) = 0;
+      virtual void editWatchNode(void* item, ustr_t name, ustr_t className, addr_t address) = 0;
+      virtual void* addWatchNode(void* parentItem, ustr_t name, ustr_t className, addr_t address) = 0;
+
+      virtual void clearNode(void* item) = 0;
+      virtual void populateNode(void* item, ustr_t value) = 0;
+
+   public:
+      virtual void* addOrUpdate(WatchContext* root, ustr_t name, ustr_t className);
+
+      virtual void populateDWORD(WatchContext* root, unsigned int value);
    };
 
    // --- DebugControllerBase ---
@@ -172,6 +193,16 @@ namespace elena_lang
 
       virtual addr_t getBaseAddress() = 0;
       virtual void* getState() = 0;
+
+      virtual addr_t getMemoryPtr(addr_t address) = 0;
+
+      virtual addr_t getStackItem(pos_t index, pos_t frameDisp) = 0;
+      virtual addr_t getStackItemAddress(pos_t index, pos_t disp) = 0;
+
+      virtual addr_t getClassVMT(addr_t address) = 0;
+      virtual ref_t getClassFlags(addr_t vmtAddress) = 0;
+
+      virtual unsigned int getDWORD(addr_t address) = 0;
 
       virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
 

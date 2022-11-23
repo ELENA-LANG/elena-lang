@@ -8,6 +8,9 @@ import extensions;
 
 public program()
 {
+   int n := 2;
+
+/*
       long r := 10l;
       long n := 34l;
 
@@ -31,7 +34,7 @@ public program()
       tmp := tmp + 48;
       buffer[index] := tmp;
       len := len + 1;
-
+*/
 
 //   if (n < 100l) {
 //      console.writeLine(n);

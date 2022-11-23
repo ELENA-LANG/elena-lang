@@ -861,8 +861,16 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
 
    if (isWrapper(info)) {
       auto inner = *info.fields.start();
-      if (inner.typeInfo.typeRef == V_MESSAGE)
-         info.header.flags |= elMessage;
+      switch (inner.typeInfo.typeRef) {
+         case V_INT32:
+            info.header.flags |= elDebugDWORD;
+            break;
+         case V_MESSAGE:
+            info.header.flags |= elMessage;
+            break;
+         default:
+            break;
+      }
    }
 }
 
@@ -1026,7 +1034,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          break;
       case V_INT32:
          info.header.parentRef = scope.buildins.superReference;
-         info.header.flags = /*elDebugDWORD | */elStructureRole | elReadOnlyRole;
+         info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
          info.size = 4;
          break;
       case V_INT8:

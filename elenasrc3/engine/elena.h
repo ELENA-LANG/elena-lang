@@ -503,6 +503,15 @@ namespace elena_lang
    public:
       wstr_t operator*() const { return wstr_t(_string); }
 
+      void appendUstr(const char* s)
+      {
+         size_t len = length();
+
+         size_t subLen = MESSAGE_LEN - length();
+         StrConvertor::copy(_string + len, s, getlength(s), subLen);
+         _string[len + subLen] = 0;
+      }
+
       WideMessage()
       {
          _string[0] = 0;
@@ -521,6 +530,30 @@ namespace elena_lang
          StrConvertor::copy(_string + len, s2, getlength(s2), len2);
 
          _string[len + len2] = 0;
+      }
+      WideMessage(const char* s1, const char* s2, const char* s3)
+      {
+         size_t len = MESSAGE_LEN;
+         size_t len2 = MESSAGE_LEN;
+         size_t len3 = MESSAGE_LEN;
+         StrConvertor::copy(_string, s1, getlength(s1), len);
+         StrConvertor::copy(_string + len, s2, getlength(s2), len2);
+         StrConvertor::copy(_string + len + len2, s3, getlength(s3), len3);
+
+         _string[len + len2 + len3] = 0;
+      }
+      WideMessage(const char* s1, const char* s2, const char* s3, const char* s4)
+      {
+         size_t len = MESSAGE_LEN;
+         size_t len2 = MESSAGE_LEN;
+         size_t len3 = MESSAGE_LEN;
+         size_t len4 = MESSAGE_LEN;
+         StrConvertor::copy(_string, s1, getlength(s1), len);
+         StrConvertor::copy(_string + len, s2, getlength(s2), len2);
+         StrConvertor::copy(_string + len + len2, s3, getlength(s3), len3);
+         StrConvertor::copy(_string + len + len2 + len3, s4, getlength(s4), len4);
+
+         _string[len + len2 + len3 + len4] = 0;
       }
       WideMessage(const wide_c* s)
       {
@@ -899,10 +932,10 @@ namespace elena_lang
       int         col, row/*, length*/;
       union
       {
-         struct Source { pos_t nameRef; } source;
-         struct Module { pos_t nameRef; int flags; } classSource;
+         struct Source { addr_t nameRef; } source;
+         struct Module { addr_t nameRef; int flags; } classSource;
          struct Step { addr_t address; } step;
-      //   struct Local { pos_t nameRef; int level; } local;
+         struct Local { addr_t nameRef; int offset; } local;
       //   struct Field { pos_t nameRef; int size; } field;
       //   struct Offset { pos_t disp; } offset;
       } addresses;

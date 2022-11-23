@@ -163,6 +163,9 @@ namespace elena_lang
    constexpr ref_t elMessage              = 0x00200000;
    constexpr ref_t elWithVariadics        = 0x00400000;
 
+   constexpr ref_t elDebugMask            = 0x001F0000;
+   constexpr ref_t elDebugDWORD           = 0x00010000;
+
    // --- LoadResult enum ---
    enum class LoadResult
    {
@@ -223,6 +226,11 @@ namespace elena_lang
       VirtualBreakpoint    = 0x0021,
       End                  = 0x0040,
       EndOfStatement       = 0x0041,
+
+      Local                = 0x0100,
+      LocalAddress         = 0x0101,
+      IntLocalAddress      = 0x0102,
+      LongLocalAddress     = 0x0103,
    };
 
    // --- ClassAttribute ---

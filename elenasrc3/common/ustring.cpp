@@ -951,6 +951,19 @@ void StrUtil :: insert(char* s, size_t pos, size_t length, const char* subs)
    s[totalLen + length] = 0;
 }
 
+void StrUtil :: insert(wide_c* s, size_t pos, size_t length, const wide_c* subs)
+{
+   size_t totalLen = getlength(s);
+
+   for (size_t i = totalLen; i > pos; i--) {
+      s[i + length - 1] = s[i - 1];
+   }
+
+   memmove(s + pos, subs, length << 1);
+
+   s[totalLen + length] = 0;
+}
+
 size_t StrUtil :: findChar(const char* s, char ch, size_t length, size_t defaultValue)
 {
    return util_find(s, ch, length, defaultValue);

@@ -50,6 +50,7 @@ namespace elena_lang
       ProcessBase*            _outputProcess;
       DebugController         _debugController;
       NotifierBase*           _notifier;
+      WatchContext            _autoWatch;
 
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
 
@@ -80,6 +81,8 @@ namespace elena_lang
       void doDebugAction(ProjectModel& model, DebugAction action);
       void doDebugStop(ProjectModel& model);
 
+      void refreshDebugContext(ContextBrowserBase* contextBrowser);
+
       void setNotifier(NotifierBase* notifier)
       {
          _notifier = notifier;
@@ -98,7 +101,8 @@ namespace elena_lang
 
       ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController, PlatformType platform)
-         : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController)
+         : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
+           _autoWatch({ nullptr, 0, 0 }) 
       {
          _notifier = nullptr;
          _platform = platform;
@@ -155,6 +159,8 @@ namespace elena_lang
       bool doCompileProject(DialogBase& dialog, IDEModel* model);
       void doDebugAction(IDEModel* model, DebugAction action);
       void doDebugStop(IDEModel* model);
+
+      void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
 
       void doSelectNextWindow(IDEModel* model);
       void doSelectPrevWindow(IDEModel* model);

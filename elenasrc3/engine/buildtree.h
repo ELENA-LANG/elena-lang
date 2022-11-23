@@ -118,6 +118,10 @@ namespace elena_lang
       NestedClass          = 0x0080,
 
       VariableInfo         = 0x0090,
+      Variable             = 0x0091,
+      VariableAddress      = 0x0092,
+      IntVariableAddress   = 0x0093,
+      LongVariableAddress  = 0x0094,
 
       BinaryArray          = 0x00A0,
 

@@ -219,6 +219,15 @@ namespace elena_lang
       addr_t getBaseAddress() override;
       void* getState() override;
 
+      ref_t getClassFlags(addr_t vmtAddress) override;
+
+      addr_t getClassVMT(addr_t address) override;
+      addr_t getStackItem(pos_t index, pos_t disp) override;
+      addr_t getStackItemAddress(pos_t index, pos_t disp) override;
+
+      addr_t getMemoryPtr(addr_t address) override;
+      unsigned getDWORD(addr_t address) override;
+
       void setBreakpoint(addr_t address, bool withStackLevelControl) override;
 
       void addStep(addr_t address, void* current) override;

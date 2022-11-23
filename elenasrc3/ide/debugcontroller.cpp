@@ -173,13 +173,13 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::End:
                level--;
                break;
-               //else if (info.symbol == dsField || (info.symbol & ~dsTypeMask) == dsLocal || info.symbol == dsFieldInfo)
-               //{
-               //   // replace field name reference with the name
-               //   stringReader.seek(info.addresses.symbol.nameRef);
+            case DebugSymbol::Local:
+            case DebugSymbol::LocalAddress:
+               // replace field name reference with the name
+               stringReader.seek(info.addresses.local.nameRef);
 
-               //   ((DebugLineInfo*)current)->addresses.symbol.nameRef = mapDebugPTR32(stringReader.Address());
-               //}
+               ((DebugLineInfo*)current)->addresses.local.nameRef = (addr_t)stringReader.address();
+               break;
             case DebugSymbol::Breakpoint:
             case DebugSymbol::VirtualBreakpoint:
             {
@@ -324,6 +324,31 @@ DebugLineInfo* DebugInfoProvider :: getNextStep(DebugLineInfo* step, bool stepOv
    }
 
    return next;
+}
+
+DebugLineInfo* DebugInfoProvider :: seekClassInfo(addr_t address, IdentifierString& className, addr_t vmtAddress, ref_t flags)
+{
+   if (!vmtAddress)
+      return nullptr;
+
+   addr_t position = _classes.get(vmtAddress);
+   ModuleBase* module = getDebugModule(position);
+   MemoryBase* section = (module != nullptr) ? module->mapSection(DEBUG_LINEINFO_ID, true) : nullptr;
+   if (position != 0 && section != nullptr) {
+      // to resolve class name we need offset in the section rather then the real address
+      ref_t ref = (ref_t)(position - (addr_t)section->get(0));
+
+      ustr_t name = module->resolveReference(ref);
+      if (isWeakReference(name)) {
+         className.copy(module->name());
+         className.append(name);
+      }
+      else className.copy(name);
+
+      return (DebugLineInfo*)position;
+   }
+
+   return nullptr;
 }
 
 // --- DebugController ---
@@ -687,4 +712,69 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    }
    // otherwise continue
    else _process->setEvent(DEBUG_RESUME);
+}
+
+void DebugController :: readObject(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
+{
+   if (address != 0) {
+      // read class VMT address if not provided
+      addr_t vmtAddress = _process->getClassVMT(address);
+      ref_t flags = vmtAddress ? _process->getClassFlags(vmtAddress) : 0;
+
+      IdentifierString className;
+      DebugLineInfo* info = _provider.seekClassInfo(address, className, vmtAddress, flags);
+
+      WatchContext context = { nullptr, address, level };
+      context.root = watch->addOrUpdate(&context, name, *className);
+
+      readContext(watch, &context);
+   }
+   else {
+      WatchContext context = { nullptr, 0, level };
+      context.root = watch->addOrUpdate(&context, name, nullptr);
+   }
+}
+
+void DebugController :: readContext(ContextBrowserBase* watch, WatchContext* context)
+{
+   if (_process->isStarted() && context->level > 0) {
+      addr_t vmtAddress = _process->getClassVMT(context->address);
+      ref_t flags = vmtAddress ? _process->getClassFlags(vmtAddress) : 0;
+
+      IdentifierString className;
+      DebugLineInfo* info = _provider.seekClassInfo(context->address, className, vmtAddress, flags);
+
+      int type = flags & elDebugMask;
+      switch (type) {
+         case elDebugDWORD:
+            watch->populateDWORD(context, _process->getDWORD(context->address));
+            break;
+         default:
+            break;
+      }
+   }
+      
+}
+
+void DebugController :: readAutoContext(ContextBrowserBase* watch, int level)
+{
+   if (_process->isStarted()) {
+      DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState());
+      if (lineInfo == nullptr)
+         return;
+
+      int index = 0;
+      while (lineInfo[index].symbol != DebugSymbol::Procedure) {
+         switch (lineInfo[index].symbol) {
+            case DebugSymbol::Local:
+               readObject(watch, _process->getStackItem(lineInfo[index].addresses.local.offset, 0),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            default:
+               break;
+         }
+
+         index--;
+      }
+   }
 }

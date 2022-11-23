@@ -57,6 +57,7 @@ namespace elena_lang
 
       void onTabSelChanged(HWND wnd);
       void onTreeSelChanged(HWND wnd);
+      void onChildRefresh(int controlId);
 
       bool onCommand(int command) override;
       void onNotify(NMHDR* hdr) override;

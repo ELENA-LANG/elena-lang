@@ -6549,6 +6549,8 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
          }
       }
 
+      BuildNode varNode = node.appendChild(BuildKey::Variable, it.key());
+      varNode.appendChild(BuildKey::Index, localInfo.offset);
    }
 }
 

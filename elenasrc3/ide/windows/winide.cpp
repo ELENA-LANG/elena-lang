@@ -152,6 +152,8 @@ void IDEWindow::closeFile()
 void IDEWindow :: openProject()
 {
    _controller->doOpenProject(projectDialog, _model);
+
+   _controller->onLayoutchange();
 }
 
 void IDEWindow :: exit()
@@ -211,11 +213,18 @@ void IDEWindow :: openResultTab(int controlIndex)
 
 void IDEWindow :: toggleWindow(int child_id)
 {
+   if (child_id == _model->ideScheme.projectView) {
+      if (_children[_model->ideScheme.projectView]->visible()) {
+         openProject();
+      }
+   }
 }
 
 void IDEWindow :: toggleTabBarWindow(int child_id)
 {
-   openResultTab(child_id);
+   if (!_children[child_id]->visible()) {
+      openResultTab(child_id);
+   }
 }
 
 void IDEWindow :: setChildFocus(int controlIndex)
@@ -254,7 +263,9 @@ void IDEWindow :: onProjectViewSel(size_t index)
 
 void IDEWindow :: onDebugWatch()
 {
-   
+   ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
+
+   _controller->refreshDebugContext(contextBrowser, _model);
 }
 
 void IDEWindow :: onProjectChange()
@@ -465,6 +476,9 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
       case NOTIFY_PROJECTVIEW_SEL:
          onProjectViewSel(hdr->extParam2);
          break;
+      case NOTIFY_REFRESH:
+         onChildRefresh(hdr->extParam2);
+         break;
       default:
          break;
    }
@@ -498,6 +512,11 @@ void IDEWindow :: onDoubleClick(NMHDR* hdr)
          break;
       }
    }
+}
+
+void IDEWindow :: onChildRefresh(int controlId)
+{
+   _children[controlId]->refresh();
 }
 
 void IDEWindow :: onNotify(NMHDR* hdr)

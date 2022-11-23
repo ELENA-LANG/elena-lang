@@ -85,6 +85,8 @@ namespace elena_lang
       }
       DebugLineInfo* getNextStep(DebugLineInfo* step, bool stepOverMode);
 
+      DebugLineInfo* seekClassInfo(addr_t address, IdentifierString& className, addr_t vmtAddress, ref_t flags);
+
       void clear()
       {
          _entryPoint = 0;
@@ -229,6 +231,8 @@ namespace elena_lang
       void onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath);
       void onStop();
 
+      void readObject(ContextBrowserBase* watch, addr_t address, ustr_t name, int level);
+
    public:
       bool isStarted() const
       {
@@ -243,6 +247,9 @@ namespace elena_lang
       void stepOver();
       void stepInto();
       void stop();
+
+      void readAutoContext(ContextBrowserBase* watch, int level);
+      void readContext(ContextBrowserBase* watch, WatchContext* context);
 
       virtual void clearDebugInfo()
       {

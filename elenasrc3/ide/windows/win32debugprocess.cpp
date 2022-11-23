@@ -8,6 +8,8 @@
 #include "elena.h"
 //---------------------------------------------------------------------------
 #include "windows/win32debugprocess.h"
+
+#include "core.h"
 #include "windows/pehelper.h"
 
 using namespace elena_lang;
@@ -15,6 +17,9 @@ using namespace elena_lang;
 #ifdef _M_IX86
 
 typedef unsigned long SIZE_T;
+
+constexpr auto elVMTFlagOffset = elVMTFlagOffset32;
+constexpr auto elObjectOffset = elObjectOffset32;
 
 inline addr_t getIP(CONTEXT& context)
 {
@@ -34,6 +39,9 @@ inline void setIP(CONTEXT& context, addr_t address)
 #elif _M_X64
 
 typedef size_t SIZE_T;
+
+constexpr auto elVMTFlagOffset = elVMTFlagOffset64;
+constexpr auto elObjectOffset = elObjectOffset64;
 
 inline void setIP(CONTEXT& context, addr_t address)
 {
@@ -619,4 +627,58 @@ void Win32DebugProcess :: addStep(addr_t address, void* state)
 void* Win32DebugProcess :: getState()
 {
    return _current ? _current->state : nullptr;
+}
+
+addr_t Win32DebugProcess :: getClassVMT(addr_t address)
+{
+   addr_t ptr = 0;
+
+   if (_current->readDump(address - elObjectOffset, (char*)&ptr, sizeof(addr_t))) {
+      return ptr;
+   }
+   else return 0;
+}
+
+addr_t Win32DebugProcess :: getStackItemAddress(pos_t index, pos_t frameDisp)
+{
+   if (frameDisp)
+      frameDisp += 4;
+
+   return getBP(_current->context) - index * 4 + frameDisp;
+}
+
+addr_t Win32DebugProcess :: getStackItem(pos_t index, pos_t frameDisp)
+{
+   return getMemoryPtr(getStackItemAddress(index, frameDisp));
+}
+
+addr_t Win32DebugProcess :: getMemoryPtr(addr_t address)
+{
+   addr_t retPtr = 0;
+
+   if (_current->readDump(address, (char*)&retPtr, sizeof(addr_t))) {
+      return retPtr;
+   }
+   else return 0;
+
+}
+
+unsigned Win32DebugProcess :: getDWORD(addr_t address)
+{
+   unsigned int dword = 0;
+
+   if (_current->readDump(address, (char*)&dword, 4)) {
+      return dword;
+   }
+   else return 0;
+}
+
+ref_t Win32DebugProcess :: getClassFlags(addr_t vmtAddress)
+{
+   ref_t flags = 0;
+   if (_current->readDump(vmtAddress - elVMTFlagOffset, (char*)&flags, sizeof(flags))) {
+      return flags;
+   }
+   else return 0;
+
 }

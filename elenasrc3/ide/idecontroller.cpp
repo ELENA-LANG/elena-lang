@@ -395,6 +395,11 @@ path_t ProjectController :: getSourceByIndex(ProjectModel& model, int index)
    return model.sources.get(index + 1);
 }
 
+void ProjectController :: refreshDebugContext(ContextBrowserBase* contextBrowser)
+{
+   _debugController.readAutoContext(contextBrowser, 3);
+}
+
 // --- IDEController ---
 
 inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
@@ -784,8 +789,14 @@ bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
    return false;
 }
 
-void IDEController::onLayoutchange()
+void IDEController :: onLayoutchange()
 {
    _notifier->notifyMessage(NOTIFY_LAYOUT_CHANGED);
+}
 
+void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model)
+{
+   projectController.refreshDebugContext(contextBrowser);
+
+   _notifier->notifyMessage(NOTIFY_REFRESH, model->ideScheme.debugWatch);
 }

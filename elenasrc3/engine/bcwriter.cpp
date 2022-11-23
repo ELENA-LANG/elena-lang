@@ -1165,7 +1165,18 @@ void ByteCodeWriter :: saveAlternate(CommandTape& tape, BuildNode node, TapeScop
    tape.setLabel();
 }
 
-void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)
+inline void saveDebugSymbol(DebugSymbol symbol, int offset, ustr_t name, TapeScope& tapeScope)
+{
+   DebugLineInfo info = { symbol };
+   info.addresses.local.offset = offset;
+   info.addresses.local.nameRef = tapeScope.scope->debugStrings->position();
+
+   tapeScope.scope->debugStrings->writeString(name);
+
+   tapeScope.scope->debug->write(&info, sizeof(info));
+}
+
+void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope)
 {
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
@@ -1173,6 +1184,18 @@ void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node)
          case BuildKey::BinaryArray:
             // setting size
             tape.write(ByteCode::NSaveDPN, current.arg.value + 4, current.findChild(BuildKey::Size).arg.value);
+            break;
+         case BuildKey::Variable:
+            saveDebugSymbol(DebugSymbol::Local, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
+         case BuildKey::VariableAddress:
+            saveDebugSymbol(DebugSymbol::LocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
+         case BuildKey::IntVariableAddress:
+            saveDebugSymbol(DebugSymbol::IntLocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
+         case BuildKey::LongVariableAddress:
+            saveDebugSymbol(DebugSymbol::LongLocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
             break;
          default:
             break;
@@ -1199,7 +1222,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
       switch (current.key) {
          case BuildKey::VariableInfo:
             // declaring variables / setting array size
-            saveVariableInfo(tape, current);
+            saveVariableInfo(tape, current, tapeScope);
             break;
          case BuildKey::Import:
             tape.write(ByteCode::ImportOn);

@@ -14,7 +14,19 @@ namespace elena_lang
 {
    class ContextBrowser : public TreeView, public ContextBrowserBase
    {
+      TreeViewItem _rootItem;
+
+      void* findWatchNodeStartingWith(WatchContext* root, ustr_t name) override;
+
+      void* addWatchNode(void* parentItem, ustr_t name, ustr_t className, addr_t address) override;
+      void editWatchNode(void* item, ustr_t name, ustr_t className, addr_t address) override;
+
+      void clearNode(void* item) override;
+      void populateNode(void* item, ustr_t value) override;
+
    public:
+      HWND createControl(HINSTANCE instance, ControlBase* owner) override;
+
       ContextBrowser(int width, int height, NotifierBase* notifier);
    };
 }
