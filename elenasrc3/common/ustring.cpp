@@ -444,18 +444,18 @@ long long StrConvertor :: toLong(const char* s, int radix)
 
    char dump[10];
    size_t length = getlength(s);
-   while (length > 9) {
-      memcpy(dump, (char*)s, 9);
-      dump[9] = 0;
+   while (length > 8) {
+      memcpy(dump, (char*)s, 8);
+      dump[8] = 0;
 
       long long temp = toUInt(dump, radix);
-      for (size_t i = 0; i < (length - 9); i++) {
+      for (size_t i = 0; i < (length - 8); i++) {
          temp *= radix;
       }
       number += temp;
 
-      length -= 9;
-      s += 9;
+      length -= 8;
+      s += 8;
    }
    memcpy(dump, s, length);
    dump[length] = 0;

@@ -135,6 +135,8 @@ namespace elena_lang
       virtual void populateNode(void* item, ustr_t value) = 0;
 
    public:
+      virtual void expandRootNode() = 0;
+
       virtual void* addOrUpdate(WatchContext* root, ustr_t name, ustr_t className);
       virtual void addOrUpdateDWORD(WatchContext* root, ustr_t name, int value);
       virtual void addOrUpdateQWORD(WatchContext* root, ustr_t name, long long value);

@@ -121,3 +121,8 @@ void ContextBrowser :: populateNode(void* item, ustr_t value)
    }
 
 }
+
+void ContextBrowser::expandRootNode()
+{
+   expand(_rootItem);
+}

@@ -43,6 +43,7 @@ public singleton shortConvertor
 public singleton intConvertor
 {
    private convertChar(char ch, ref int retVal) : external<system'core_routines'__charToInt>;
+   private convertLong(long l, ref int retVal) : external<system'core_routines'__longToInt>;
 
    int convert(byte b)
    {
@@ -63,6 +64,14 @@ public singleton intConvertor
       self.convertChar(ch, ref int retVal);
 
       ^ retVal
+   }
+
+   int convert(long l)
+   {
+      int n;
+      self.convertLong(l, ref n);
+
+      ^ n;
    }
 
    int convert(string s, int radix)
@@ -218,10 +227,10 @@ public singleton stringConvertor
       int len := 0;
       int index := 23;
       while (n >= r) {
-         long r := n.mod(r);
+         long rest := n.mod(r);
          n := n / r;
 
-         tmp := r;
+         tmp := rest;
          tmp := tmp + 48;
          buffer[index] := tmp;
          index := index - 1;

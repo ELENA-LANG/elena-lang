@@ -268,6 +268,8 @@ void IDEWindow :: onDebugWatch()
    ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
 
    _controller->refreshDebugContext(contextBrowser, _model);
+
+   contextBrowser->expandRootNode();
 }
 
 void IDEWindow :: onProjectChange()

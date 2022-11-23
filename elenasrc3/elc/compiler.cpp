@@ -5733,7 +5733,17 @@ ObjectInfo Compiler :: mapUIntConstant(Scope& scope, SyntaxNode node, int radix)
 
 ObjectInfo Compiler :: mapLongConstant(Scope& scope, SyntaxNode node, int radix)
 {
-   long long integer = StrConvertor::toLong(node.identifier(), radix);
+   long long integer = 0;
+
+   ustr_t val = node.identifier();
+   if (val.endsWith("l")) {
+      String<char, 50> tmp(val);
+      tmp.truncate(tmp.length() - 1);
+
+      integer = StrConvertor::toLong(tmp.str(), radix);
+   }
+   else integer = StrConvertor::toLong(node.identifier(), radix);
+
    if (errno == ERANGE)
       scope.raiseError(errInvalidIntNumber, node);
 
@@ -6551,6 +6561,10 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
 
       if (localInfo.size > 0) {
          if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.intReference) {
+            BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
+         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.byteReference) {
             BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);
          }

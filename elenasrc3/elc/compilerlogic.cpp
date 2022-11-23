@@ -863,6 +863,7 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
       auto inner = *info.fields.start();
       switch (inner.typeInfo.typeRef) {
          case V_INT32:
+         case V_INT8:
             info.header.flags |= elDebugDWORD;
             break;
          case V_INT64:

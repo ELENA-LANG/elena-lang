@@ -27,6 +27,8 @@ namespace elena_lang
    public:
       HWND createControl(HINSTANCE instance, ControlBase* owner) override;
 
+      void expandRootNode() override;
+
       ContextBrowser(int width, int height, NotifierBase* notifier);
    };
 }

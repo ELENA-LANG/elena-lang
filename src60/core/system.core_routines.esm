@@ -275,6 +275,15 @@ procedure __charToInt
 
 end
 
+procedure __longToInt
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
 procedure __intToShort
 
   peek       sp:1
