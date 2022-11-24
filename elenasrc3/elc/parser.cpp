@@ -50,6 +50,7 @@ parse_key_t Parser :: resolveTerminal(SourceInfo& info)
          return _terminalKeys.integer;
       case dfaGenericReal:
       case dfaReal:
+      case dfaRealPostfix:
          return _terminalKeys.real;
       case dfaCharacter:
          return _terminalKeys.character;

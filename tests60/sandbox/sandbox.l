@@ -8,7 +8,7 @@ import extensions;
 
 public program()
 {
-   real n := 2.1;
+   real n := 1e32;
 //    real m := 3.2;
 
    console.writeLine(n);

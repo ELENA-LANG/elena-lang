@@ -32,7 +32,8 @@ namespace elena_lang
    constexpr char dfaCustomNumber   = 'J';
    constexpr char dfaDotStart       = 'Z';
    constexpr char dfaGenericReal    = '[';
-   constexpr char dfaReal           = '_';
+   constexpr char dfaReal           = ']';
+   constexpr char dfaRealPostfix    = '_';
 
    constexpr char dfaError          = '?';
    constexpr char dfaEOF            = '.';

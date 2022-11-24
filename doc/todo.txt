@@ -8,12 +8,11 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * real constant : 1.0e7
-    * real constant : 1e-5
     * real constant : 1e32
     * assignment operators : +=, -=, *=, /=	 
-    * boolean operators : && || 
-    * boolean operators : && || - native operations
+    + support s += s2 operation;
+    * boolean operators : &&, ||, ^^ - strong implementation
+    * boolean operators : &&, ||, ^^ - weak implementation
 
     * native real to int conversion
     * native int to real conversion
@@ -52,8 +51,6 @@ In development:
 
     * conversion : byte / short / int / long => real
 
-    * boolean operators : &&, ||, ^^ - strong implementation
-    * boolean operators : &&, ||, ^^ - weak implementation
     * variadic call in compile-time
     * variadic dispatcher
     * variadic call in run-time
@@ -288,7 +285,6 @@ Backlog:
     * #206 : interpreter sample - x86, x86-64
 
     - migrate the rest of system'io module
-    + support s += s2 operation;
 
     * #386 : writeRef32Hi, writeRef32Hi - for non virtual mode - should offset the address to be correctly mapped to opcode
 
