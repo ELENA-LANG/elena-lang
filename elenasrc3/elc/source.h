@@ -40,7 +40,7 @@ namespace elena_lang
       void resolveSignAmbiguity(SourceInfo& info)
       {
          // if it is not preceeded by an operator
-         if (!_operatorMode) {
+         if (IsOperator(info.state)) {
             info.state = dfaOperator;
          }
          // otherwise check if it could be part of numeric constant

@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 76;
+constexpr auto OperationLength = 96;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -82,6 +82,18 @@ constexpr Op Operations[OperationLength] =
    },
    {
       DIV_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
+   },
+   {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, 0
    },
    {
       BAND_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
@@ -132,6 +144,18 @@ constexpr Op Operations[OperationLength] =
       DIV_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, V_INT64
    },
    {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, 0
+   },
+   {
       BAND_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, V_INT64
    },
    {
@@ -166,6 +190,19 @@ constexpr Op Operations[OperationLength] =
    },
    {
       MUL_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
+   },
+
+   {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, 0
    },
    {
       BAND_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
@@ -210,6 +247,18 @@ constexpr Op Operations[OperationLength] =
       DIV_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
    },
    {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, 0
+   },
+   {
       BAND_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
    },
    {
@@ -247,6 +296,18 @@ constexpr Op Operations[OperationLength] =
    },
    {
       DIV_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, 0
    },
    {
       EQUAL_OPERATOR_ID, BuildKey::RealCondOp, V_FLOAT64, V_FLOAT64, 0, V_FLAG

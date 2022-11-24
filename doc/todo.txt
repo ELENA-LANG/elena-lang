@@ -8,9 +8,6 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * real constant : 1e32
-    * assignment operators : +=, -=, *=, /=	 
-    + support s += s2 operation;
     * boolean operators : &&, ||, ^^ - strong implementation
     * boolean operators : &&, ||, ^^ - weak implementation
 

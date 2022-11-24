@@ -4421,6 +4421,38 @@ ObjectInfo Compiler :: allocateResult(ExprScope& scope, ref_t resultRef)
    return {}; // NOTE : should never be reached
 }
 
+ObjectInfo Compiler :: compileWeakOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ref_t* arguments, pos_t argLen,
+   ObjectInfo& loperand, ArgumentsInfo& messageArguments, mssg_t message, ref_t expectedRef)
+{
+   ObjectInfo retVal =  {};
+
+   // resolving a message signature (excluding a target)
+   for (pos_t i = 1; i < argLen; i++) {
+      if (isPrimitiveRef(arguments[i])) {
+         arguments[i - 1] = resolvePrimitiveType(scope, { arguments[i] }, false);
+      }
+      else arguments[i - 1] = arguments[i];
+   }
+
+   ref_t signRef = argLen > 1 ? scope.module->mapSignature(arguments, argLen - 1, false) : 0;
+
+   mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, loperand), expectedRef, message, signRef);
+   if (byRefHandler) {
+      ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
+
+      addByRefRetVal(messageArguments, tempRetVal);
+
+      compileMessageOperation(writer, scope, node, loperand, byRefHandler,
+         signRef, messageArguments, EAttr::AlreadyResolved);
+
+      retVal = tempRetVal;
+   }
+   else retVal = compileMessageOperation(writer, scope, node, loperand, message,
+      signRef, messageArguments, EAttr::NoExtension);
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, SyntaxNode rnode, int operatorId, ref_t expectedRef)
 {
    ObjectInfo retVal;
@@ -4528,29 +4560,8 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
          messageArguments.add(ioperand);
       }
 
-      // resolving a message signature (excluding a target)
-      for (pos_t i = 1; i < argLen; i++) {
-         if (isPrimitiveRef(arguments[i])) {
-            arguments[i - 1] = resolvePrimitiveType(scope, { arguments[i] }, false);
-         }
-         else arguments[i - 1] = arguments[i];
-      }
-
-      ref_t signRef = argLen > 1 ? scope.module->mapSignature(arguments, argLen - 1, false) : 0;
-
-      mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, loperand), expectedRef, message, signRef);
-      if (byRefHandler) {
-         ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
-
-         addByRefRetVal(messageArguments, tempRetVal);
-
-         compileMessageOperation(writer, scope, node, loperand, byRefHandler,
-            signRef, messageArguments, EAttr::AlreadyResolved);
-
-         retVal = tempRetVal;
-      }
-      else retVal = compileMessageOperation(writer, scope, node, loperand, message, 
-         signRef, messageArguments, EAttr::NoExtension);
+      retVal = compileWeakOperation(writer, scope, node, arguments, argLen, loperand, 
+         messageArguments, message, expectedRef);
    }
 
    return retVal;
@@ -5410,6 +5421,70 @@ ObjectInfo Compiler :: compileIndexerOperation(BuildTreeWriter& writer, ExprScop
    return compileOperation(writer, scope, node, operatorId, expectedRef);
 }
 
+ObjectInfo Compiler :: compileAssignOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
+   int operatorId, ref_t expectedRef)
+{
+   SyntaxNode lnode = node.firstChild();
+   SyntaxNode rnode = lnode.nextNode();
+
+   ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter);
+   ObjectInfo roperand = compileExpression(writer, scope, rnode, 0, EAttr::Parameter);
+
+   ref_t      arguments[2] = {};
+   arguments[0] = loperand.typeInfo.typeRef;
+   arguments[1] = roperand.typeInfo.typeRef;
+
+   ref_t dummy = 0;
+   BuildKey op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, 2, dummy);
+   if (op != BuildKey::None) {
+      // box argument locally if required
+      loperand = boxArgumentLocally(writer, scope, loperand, true);
+      roperand = boxArgumentLocally(writer, scope, roperand, true);
+
+      writeObjectInfo(writer, scope, roperand);
+      writer.appendNode(BuildKey::SavingInStack, 0);
+
+      writer.newNode(op, operatorId);
+      writer.appendNode(BuildKey::Index, loperand.argument);
+      writer.closeNode();
+
+      scope.reserveArgs(2);
+   }
+   else {
+      switch (operatorId) {
+         case ADD_ASSIGN_OPERATOR_ID:
+            operatorId = ADD_OPERATOR_ID;
+            break;
+         case SUB_ASSIGN_OPERATOR_ID:
+            operatorId = SUB_OPERATOR_ID;
+            break;
+         case MUL_ASSIGN_OPERATOR_ID:
+            operatorId = MUL_OPERATOR_ID;
+            break;
+         case DIV_ASSIGN_OPERATOR_ID:
+            operatorId = DIV_OPERATOR_ID;
+            break;
+         default:
+            break;
+      }
+
+      mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
+      ArgumentsInfo messageArguments;
+      messageArguments.add(loperand);
+
+      if (roperand.kind != ObjectKind::Unknown)
+         messageArguments.add(roperand);
+
+      ObjectInfo opVal = compileWeakOperation(writer, scope, node, arguments, 2, loperand,
+         messageArguments, message, expectedRef);
+
+      if(!compileAssigningOp(writer, scope, loperand, opVal))
+         scope.raiseError(errInvalidOperation, node);
+   }
+
+   return loperand;
+}
+
 ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef)
 {
    SyntaxNode loperand = node.firstChild();
@@ -6241,7 +6316,6 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          retVal = compilePropertyOperation(writer, scope, current, targetRef, mode);
          break;
       case SyntaxKey::AssignOperation:
-      //case SyntaxKey::AddAssignOperation:
       case SyntaxKey::AddOperation:
       case SyntaxKey::SubOperation:
       case SyntaxKey::MulOperation:
@@ -6265,6 +6339,12 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::ShrOperation:
       case SyntaxKey::NegateOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef);
+         break;
+      case SyntaxKey::AddAssignOperation:
+      case SyntaxKey::SubAssignOperation:
+      case SyntaxKey::MulAssignOperation:
+      case SyntaxKey::DivAssignOperation:
+         retVal = compileAssignOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef);
          break;
       case SyntaxKey::IndexerOperation:
          retVal = compileIndexerOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef);

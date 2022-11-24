@@ -21,6 +21,14 @@ intTests()
     Assert.ifTrue(n <= n);
     Assert.ifTrue(n >= n);
     Assert.ifFalse(n >= m);
+    console.write(".");
+
+    int i := 1;
+    i += 2;
+    i -= 2;
+    i *= 2;
+    i /= 2;    
+    Assert.ifTrue(i == 1);
     console.writeLine(".");
 }
 

@@ -36,6 +36,19 @@ inline bool testMask(BuildKey key, BuildKey mask)
    return (key & mask) == mask;
 }
 
+inline bool isAssignOp(int operatorId)
+{
+   switch (operatorId) {
+      case ADD_ASSIGN_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
 void openFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    if (tapeScope.classMode) {
@@ -354,20 +367,27 @@ void realOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.findChild(BuildKey::Index).arg.value;
-   tape.write(ByteCode::CopyDPN, targetOffset, 8);
-   tape.write(ByteCode::XMovSISI, 0, 1);
+
+   if (!isAssignOp(node.arg.value)) {
+      tape.write(ByteCode::CopyDPN, targetOffset, 8);
+      tape.write(ByteCode::XMovSISI, 0, 1);
+   }
 
    switch (node.arg.value) {
       case ADD_OPERATOR_ID:
+      case ADD_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::FAddDPN, targetOffset, 8);
          break;
       case SUB_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::FSubDPN, targetOffset, 8);
          break;
       case MUL_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::FMulDPN, targetOffset, 8);
          break;
       case DIV_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::FDivDPN, targetOffset, 8);
          break;
       default:
@@ -379,20 +399,27 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.findChild(BuildKey::Index).arg.value;
-   tape.write(ByteCode::CopyDPN, targetOffset, 4);
-   tape.write(ByteCode::XMovSISI, 0, 1);
+
+   if (!isAssignOp(node.arg.value)) {
+      tape.write(ByteCode::CopyDPN, targetOffset, 4);
+      tape.write(ByteCode::XMovSISI, 0, 1);
+   }
 
    switch (node.arg.value) {
       case ADD_OPERATOR_ID:
+      case ADD_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::IAddDPN, targetOffset, 4);
          break;
       case SUB_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::ISubDPN, targetOffset, 4);
          break;
       case MUL_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::IMulDPN, targetOffset, 4);
          break;
       case DIV_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::IDivDPN, targetOffset, 4);
          break;
       case BAND_OPERATOR_ID:
@@ -431,20 +458,27 @@ void byteOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.findChild(BuildKey::Index).arg.value;
-   tape.write(ByteCode::CopyDPN, targetOffset, 1);
-   tape.write(ByteCode::XMovSISI, 0, 1);
+
+   if (!isAssignOp(node.arg.value)) {
+      tape.write(ByteCode::CopyDPN, targetOffset, 1);
+      tape.write(ByteCode::XMovSISI, 0, 1);
+   }
 
    switch (node.arg.value) {
       case ADD_OPERATOR_ID:
+      case ADD_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::IAddDPN, targetOffset, 1);
          break;
       case SUB_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::ISubDPN, targetOffset, 1);
          break;
       case MUL_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::IMulDPN, targetOffset, 1);
          break;
       case DIV_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::IDivDPN, targetOffset, 1);
          break;
       case BAND_OPERATOR_ID:
@@ -483,20 +517,27 @@ void shortOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.findChild(BuildKey::Index).arg.value;
-   tape.write(ByteCode::CopyDPN, targetOffset, 2);
-   tape.write(ByteCode::XMovSISI, 0, 1);
+
+   if (!isAssignOp(node.arg.value)) {
+      tape.write(ByteCode::CopyDPN, targetOffset, 2);
+      tape.write(ByteCode::XMovSISI, 0, 1);
+   }
 
    switch (node.arg.value) {
       case ADD_OPERATOR_ID:
+      case ADD_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::IAddDPN, targetOffset, 2);
          break;
       case SUB_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::ISubDPN, targetOffset, 2);
          break;
       case MUL_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::IMulDPN, targetOffset, 2);
          break;
       case DIV_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::IDivDPN, targetOffset, 2);
          break;
       case BAND_OPERATOR_ID:
@@ -670,20 +711,27 @@ void longOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.findChild(BuildKey::Index).arg.value;
-   tape.write(ByteCode::CopyDPN, targetOffset, 8);
-   tape.write(ByteCode::XMovSISI, 0, 1);
+
+   if (!isAssignOp(node.arg.value)) {
+      tape.write(ByteCode::CopyDPN, targetOffset, 8);
+      tape.write(ByteCode::XMovSISI, 0, 1);
+   }
 
    switch (node.arg.value) {
       case ADD_OPERATOR_ID:
+      case ADD_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::IAddDPN, targetOffset, 8);
          break;
       case SUB_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::ISubDPN, targetOffset, 8);
          break;
       case MUL_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::IMulDPN, targetOffset, 8);
          break;
       case DIV_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
          tape.write(ByteCode::IDivDPN, targetOffset, 8);
          break;
       case BAND_OPERATOR_ID:

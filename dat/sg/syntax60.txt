@@ -60,6 +60,9 @@ __define BXOR_OPERATION      6234;
 __define BNOT_OPERATION      6235;
 __define SHL_OPERATION       6236;
 __define SHR_OPERATION       6237;
+__define SUB_ASSIGNMENT      6238;
+__define MUL_ASSIGNMENT      6239;
+__define DIV_ASSIGNMENT      6240;
 __define MESSAGE_OPERATION   6337;
 __define PROPERTY_OPERATION  6340;
 __define EXPRESSION          6288;
@@ -71,9 +74,9 @@ __define L6_EXPRESSION       6293;
 __define T_EXPRESSION        6294;
 __define L4_EXPRESSION       6295;
 __define NT_EXPRESSION       6296;
-__define POSTFIX             4192;
-__define TEMPLATE_POSTFIX    4193;
-__define METHOD_POSTFIX      4194;
+__define POSTFIX             4200;
+__define TEMPLATE_POSTFIX    4201;
+__define METHOD_POSTFIX      4202;
 __define TEMPLATE_ARG        4208;
 __define DIMENSION           5233;
 __define RESEND              7366;
@@ -476,7 +479,10 @@ N_R ::=
 
 I_L0_R ::=
         "[" ^OBJECT EXPRESSION "]" ^INDEXER_OPERATION INDEXER_R
-        | "+=" ^OBJECT EXPRESSION ^ADDITION_ASSIGNMENT;
+        | "+=" ^OBJECT EXPRESSION ^ADDITION_ASSIGNMENT
+        | "-=" ^OBJECT EXPRESSION ^SUB_ASSIGNMENT
+        | "*=" ^OBJECT EXPRESSION ^MUL_ASSIGNMENT
+        | "/=" ^OBJECT EXPRESSION ^DIV_ASSIGNMENT;
 
 I_L1_R ::=
         ":=" ^OBJECT EXPRESSION ^ASSIGN_OPERATION;
@@ -674,9 +680,6 @@ TEMPLATE_BRACKETS ::=
 TEMPLATE_ARGS ::=
 	"," TEMPLATE_ARG TEMPLATE_ARGS
 	|  ">";
-
-ADDITION_ASSIGNMENT ::=
-        "+=";
 
 DECLARATION_END ::=
 	";";

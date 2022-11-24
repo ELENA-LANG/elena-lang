@@ -265,6 +265,9 @@ namespace elena_lang
    constexpr auto BNOT_OPERATOR_ID        = 0x001B;
    constexpr auto SHL_OPERATOR_ID         = 0x001C;
    constexpr auto SHR_OPERATOR_ID         = 0x001D;
+   constexpr auto SUB_ASSIGN_OPERATOR_ID  = 0x001E;
+   constexpr auto MUL_ASSIGN_OPERATOR_ID  = 0x001F;
+   constexpr auto DIV_ASSIGN_OPERATOR_ID  = 0x0020;
 
    constexpr auto ISNIL_OPERATOR_ID       = 0x003E;
    constexpr auto CLASS_OPERATOR_ID       = 0x003F;
