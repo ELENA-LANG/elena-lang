@@ -1126,6 +1126,34 @@ void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScop
    }
 }
 
+void ByteCodeWriter::saveShortCircuitOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
+{
+   int endLabel = tape.newLabel();
+
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   BuildNode lnode = node.findChild(BuildKey::Tape);
+   BuildNode rnode = lnode.nextNode();
+
+   saveTape(tape, lnode, tapeScope, paths, tapeOptMode, false);
+
+   switch (node.arg.reference) {
+      case AND_OPERATOR_ID:
+         tape.write(ByteCode::CmpR, falseRef);
+         break;
+      case OR_OPERATOR_ID:
+         tape.write(ByteCode::CmpR, trueRef);
+         break;
+   }
+
+   tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
+
+   saveTape(tape, rnode, tapeScope, paths, tapeOptMode, false);
+
+   tape.setLabel();
+}
+
 void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
    ReferenceMap& paths, bool tapeOptMode)
 {
@@ -1297,6 +1325,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::ExternOp:
             saveExternOp(tape, current, tapeScope, paths, tapeOptMode);
+            break;
+         case BuildKey::ShortCircuitOp:
+            saveShortCircuitOp(tape, current, tapeScope, paths, tapeOptMode);
             break;
          default:
             _commands[(int)current.key](tape, current, tapeScope);

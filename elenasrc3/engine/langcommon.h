@@ -268,6 +268,9 @@ namespace elena_lang
    constexpr auto SUB_ASSIGN_OPERATOR_ID  = 0x001E;
    constexpr auto MUL_ASSIGN_OPERATOR_ID  = 0x001F;
    constexpr auto DIV_ASSIGN_OPERATOR_ID  = 0x0020;
+   constexpr auto AND_OPERATOR_ID         = 0x0021;
+   constexpr auto OR_OPERATOR_ID          = 0x0022;
+   constexpr auto XOR_OPERATOR_ID         = 0x0023;
 
    constexpr auto ISNIL_OPERATOR_ID       = 0x003E;
    constexpr auto CLASS_OPERATOR_ID       = 0x003F;

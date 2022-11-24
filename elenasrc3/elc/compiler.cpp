@@ -5421,6 +5421,29 @@ ObjectInfo Compiler :: compileIndexerOperation(BuildTreeWriter& writer, ExprScop
    return compileOperation(writer, scope, node, operatorId, expectedRef);
 }
 
+ObjectInfo Compiler :: compileBoolOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
+{
+   SyntaxNode lnode = node.firstChild();
+   SyntaxNode rnode = lnode.nextNode();
+
+   writer.newNode(BuildKey::ShortCircuitOp, operatorId);
+
+   writer.appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);
+   writer.appendNode(BuildKey::FalseConst, scope.moduleScope->branchingInfo.falseRef);
+
+   writer.newNode(BuildKey::Tape);
+   compileExpression(writer, scope, lnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None);
+   writer.closeNode();
+
+   writer.newNode(BuildKey::Tape);
+   compileExpression(writer, scope, rnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None);
+   writer.closeNode();
+
+   writer.closeNode();
+
+   return { ObjectKind::Object, { scope.moduleScope->branchingInfo.typeRef }, 0 };
+}
+
 ObjectInfo Compiler :: compileAssignOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
    int operatorId, ref_t expectedRef)
 {
@@ -6345,6 +6368,13 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::MulAssignOperation:
       case SyntaxKey::DivAssignOperation:
          retVal = compileAssignOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef);
+         break;
+      case SyntaxKey::AndOperation:
+      case SyntaxKey::OrOperation:
+         retVal = compileBoolOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS);
+         if (targetRef)
+            typecastObject(writer, scope, current, retVal, targetRef);
+
          break;
       case SyntaxKey::IndexerOperation:
          retVal = compileIndexerOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef);

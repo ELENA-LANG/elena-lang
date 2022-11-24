@@ -1061,6 +1061,7 @@ namespace elena_lang
          int operatorId, ref_t expectedRef);
       ObjectInfo compileAssignOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
          int operatorId, ref_t expectedRef);
+      ObjectInfo compileBoolOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
       ObjectInfo compileIndexerOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef);
       ObjectInfo compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef);
       ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);

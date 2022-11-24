@@ -114,6 +114,7 @@ namespace elena_lang
       CatchOp              = 0x0060,
       ExternOp             = 0x0061,
       AltOp                = 0x0062,
+      ShortCircuitOp       = 0x0063,
 
       NestedClass          = 0x0080,
 

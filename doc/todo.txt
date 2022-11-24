@@ -8,9 +8,6 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * boolean operators : &&, ||, ^^ - strong implementation
-    * boolean operators : &&, ||, ^^ - weak implementation
-
     * native real to int conversion
     * native int to real conversion
 
@@ -63,6 +60,7 @@ In development:
     * short to int -> negative
     * uint : test comparision (e.g 0 < 3000000u)
     * comparision operations : short / byte / long operation
+    * boolean operators : &&, ||, ^^ - weak implementation
 
     * ide different styles : use dark mode
 
