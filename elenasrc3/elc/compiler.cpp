@@ -6572,6 +6572,10 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
             BuildNode varNode = node.appendChild(BuildKey::LongVariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);
          }
+         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.realReference) {
+            BuildNode varNode = node.appendChild(BuildKey::RealVariableAddress, it.key());
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
          else {
             // !! temporal stub
             BuildNode varNode = node.appendChild(BuildKey::Variable, it.key());

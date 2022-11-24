@@ -230,6 +230,7 @@ namespace elena_lang
       addr_t getMemoryPtr(addr_t address) override;
       unsigned getDWORD(addr_t address) override;
       unsigned long long getQWORD(addr_t address) override;
+      double getFLOAT64(addr_t address) override;
 
       void setBreakpoint(addr_t address, bool withStackLevelControl) override;
 

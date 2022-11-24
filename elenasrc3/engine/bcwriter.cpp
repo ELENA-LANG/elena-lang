@@ -354,7 +354,7 @@ void realOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.findChild(BuildKey::Index).arg.value;
-   tape.write(ByteCode::CopyDPN, targetOffset, 4);
+   tape.write(ByteCode::CopyDPN, targetOffset, 8);
    tape.write(ByteCode::XMovSISI, 0, 1);
 
    switch (node.arg.value) {
@@ -1196,6 +1196,9 @@ void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node, TapeS
             break;
          case BuildKey::LongVariableAddress:
             saveDebugSymbol(DebugSymbol::LongLocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
+         case BuildKey::RealVariableAddress:
+            saveDebugSymbol(DebugSymbol::RealLocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
             break;
          default:
             break;

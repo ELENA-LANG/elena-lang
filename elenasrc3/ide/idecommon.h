@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x002A
+#define IDE_REVISION_NUMBER                           0x002B
 
 namespace elena_lang
 {
@@ -140,9 +140,11 @@ namespace elena_lang
       virtual void* addOrUpdate(WatchContext* root, ustr_t name, ustr_t className);
       virtual void addOrUpdateDWORD(WatchContext* root, ustr_t name, int value);
       virtual void addOrUpdateQWORD(WatchContext* root, ustr_t name, long long value);
+      virtual void addOrUpdateFLOAT64(WatchContext* root, ustr_t name, double value);
 
       virtual void populateDWORD(WatchContext* root, unsigned int value);
       virtual void populateQWORD(WatchContext* root, unsigned long long value);
+      virtual void populateFLOAT64(WatchContext* root, double value);
    };
 
    // --- DebugControllerBase ---
@@ -211,6 +213,7 @@ namespace elena_lang
 
       virtual unsigned int getDWORD(addr_t address) = 0;
       virtual unsigned long long getQWORD(addr_t address) = 0;
+      virtual double getFLOAT64(addr_t address) = 0;
 
       virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
 

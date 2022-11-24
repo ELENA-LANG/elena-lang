@@ -61,6 +61,32 @@ longTests()
     console.writeLine(".");
 }
 
+// --- realTests ---
+
+realTests()
+{
+    console.write("realTests");
+
+    real n := 2.0;
+    real m := 3.0;
+    real k := 4.0;
+
+    Assert.ifTrue(n + m * k == 14.0);
+    console.write(".");
+    
+    Assert.ifFalse(n == m);            
+    Assert.ifTrue(n != m);            
+    Assert.ifTrue(n < k);            
+    Assert.ifFalse(n > m);            
+    Assert.ifFalse(n >= k);            
+    Assert.ifFalse(n >= m);            
+    Assert.ifTrue(n >= n);            
+    Assert.ifTrue(n <= n);            
+    Assert.ifTrue(n < m);            
+    Assert.ifTrue(m > n);            
+    console.writeLine(".");
+}
+
 // --- gcTests ---
 
 gcTests()

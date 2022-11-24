@@ -116,6 +116,7 @@ namespace elena_lang
       void compileCWDE(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDiv(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFadd(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFinit(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFcomip(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFdiv(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFild(ScriptToken& tokenInfo, MemoryWriter& writer);

@@ -177,6 +177,7 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::LocalAddress:
             case DebugSymbol::IntLocalAddress:
             case DebugSymbol::LongLocalAddress:
+            case DebugSymbol::RealLocalAddress:
                // replace field name reference with the name
                stringReader.seek(info.addresses.local.nameRef);
 
@@ -757,6 +758,16 @@ void DebugController::readLongLocal(ContextBrowserBase* watch, addr_t address, u
    }
 }
 
+void DebugController :: readRealLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      double value = _process->getFLOAT64(address);
+
+      WatchContext context = { nullptr, address, level - 1 };
+      watch->addOrUpdateFLOAT64(&context, name, value);
+   }
+}
+
 void DebugController :: readContext(ContextBrowserBase* watch, WatchContext* context)
 {
    if (_process->isStarted() && context->level > 0) {
@@ -807,6 +818,11 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level)
                break;
             case DebugSymbol::LongLocalAddress:
                readLongLocal(watch,
+                  _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::RealLocalAddress:
+               readRealLocal(watch,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;

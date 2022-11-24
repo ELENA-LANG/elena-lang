@@ -8,10 +8,25 @@ import extensions;
 
 public program()
 {
-    long l := 20l;
-    int n := l; 
+   real n := 2.1;
+//    real m := 3.2;
 
-    console.writeLine(n);
+   console.writeLine(n);
+   
+//   real r := n + m;
+//   console.writeLine(r);
+  
+//    console.writeLine(n == m);            
+
+//    Assert.ifTrue(n != m);            
+//    Assert.ifTrue(n < k);            
+//    Assert.ifFalse(n > m);            
+//    Assert.ifFalse(n >= k);            
+//    Assert.ifFalse(n >= m);            
+//    Assert.ifTrue(n >= n);            
+//    Assert.ifTrue(n <= n);            
+//    Assert.ifTrue(n < m);            
+//    Assert.ifTrue(m > n);            
 
 
 

@@ -869,6 +869,9 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
          case V_INT64:
             info.header.flags |= elDebugQWORD;
             break;
+         case V_FLOAT64:
+            info.header.flags |= elDebugFLOAT64;
+            break;
          case V_MESSAGE:
             info.header.flags |= elMessage;
             break;
@@ -1034,6 +1037,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
       case V_INT64:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugQWORD | elStructureRole | elReadOnlyRole;
+         info.size = 8;
+         break;
+      case V_FLOAT64:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugFLOAT64 | elStructureRole | elReadOnlyRole;
          info.size = 8;
          break;
       case V_INT32:

@@ -22,7 +22,7 @@ void* ContextBrowserBase :: addOrUpdate(WatchContext* context, ustr_t variableNa
    return item;
 }
 
-void ContextBrowserBase::addOrUpdateDWORD(WatchContext* context, ustr_t variableName, int value)
+void ContextBrowserBase :: addOrUpdateDWORD(WatchContext* context, ustr_t variableName, int value)
 {
    void* item = findWatchNodeStartingWith(context, variableName);
    if (item != nullptr) {
@@ -70,6 +70,29 @@ void ContextBrowserBase :: populateQWORD(WatchContext* context, unsigned long lo
       number.append('h');
    }
    else*/ number.appendLong(value);
+
+   clearNode(context->root);
+   populateNode(context->root, number.str());
+
+}
+
+void ContextBrowserBase :: addOrUpdateFLOAT64(WatchContext* context, ustr_t variableName, double value)
+{
+   void* item = findWatchNodeStartingWith(context, variableName);
+   if (item != nullptr) {
+      editWatchNode(item, variableName, "<double>", context->address);
+   }
+   else item = addWatchNode(context->root, variableName, "<double>", context->address);
+
+   WatchContext dwordContext = { item };
+
+   populateFLOAT64(&dwordContext, value);
+}
+
+void ContextBrowserBase :: populateFLOAT64(WatchContext* context, double value)
+{
+   String<char, 40> number;
+   number.appendDouble(value);
 
    clearNode(context->root);
    populateNode(context->root, number.str());

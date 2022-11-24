@@ -8,7 +8,18 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
+    * real constant : 1.0e7
+    * real constant : 1e-5
+    * real constant : 1e32
+    * assignment operators : +=, -=, *=, /=	 
+    * boolean operators : && || 
+    * boolean operators : && || - native operations
+
+    * native real to int conversion
+    * native int to real conversion
+
     * tests : arithmetic operations with real
+
     * tests : bitwise / shift operations with int
     * tests : bitwise / shift operations with long
 

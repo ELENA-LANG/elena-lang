@@ -1838,6 +1838,8 @@ end
 // ; openheaderin
 inline %0F2h
 
+  finit
+
   push ebp
   xor  eax, eax
   mov  ebp, esp

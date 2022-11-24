@@ -4,6 +4,7 @@ public program()
 
    intTests();
    longTests();
+   realTests();
    gcTests();
    assignTests();
    boxingTests();

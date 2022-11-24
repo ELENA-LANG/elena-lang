@@ -685,6 +685,17 @@ unsigned long long Win32DebugProcess :: getQWORD(addr_t address)
    else return 0;
 }
 
+double Win32DebugProcess :: getFLOAT64(addr_t address)
+{
+   double number = 0;
+
+   if (_current->readDump(address, (char*)&number, 8)) {
+      return number;
+   }
+   else return 0;
+
+}
+
 ref_t Win32DebugProcess :: getClassFlags(addr_t vmtAddress)
 {
    ref_t flags = 0;

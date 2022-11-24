@@ -166,6 +166,7 @@ namespace elena_lang
    constexpr ref_t elDebugMask            = 0x001F0000;
    constexpr ref_t elDebugDWORD           = 0x00010000;
    constexpr ref_t elDebugQWORD           = 0x00020000;
+   constexpr ref_t elDebugFLOAT64         = 0x00030000;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -232,6 +233,7 @@ namespace elena_lang
       LocalAddress         = 0x0101,
       IntLocalAddress      = 0x0102,
       LongLocalAddress     = 0x0103,
+      RealLocalAddress     = 0x0104,
    };
 
    // --- ClassAttribute ---

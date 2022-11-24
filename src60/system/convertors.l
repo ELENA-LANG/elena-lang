@@ -282,6 +282,104 @@ public singleton stringConvertor
       ^ self.convert(intValue, radix);
    }
 
+   private writeInteger(byte[] buffer, int value, ref int index, ref int length)
+   {
+      int i := index;
+      int len := length;
+
+      int decimalPart := value;
+      byte tmp := 0;
+      while (decimalPart >= 10) {
+         int r := decimalPart.mod(10);
+         decimalPart := decimalPart / 10;
+
+         tmp := 48 + r;
+         buffer[index] := tmp;
+         index := index - 1;
+         len := len + 1;
+      };
+      tmp := 48 + decimalPart;
+      buffer[index] := tmp;
+      index := index - 1;
+      len := len + 1;
+
+      index := i;
+      length := len;
+   }
+
+   private writeByte(byte[] buffer, byte b, ref int index, ref int length)
+   {
+      int i := index;
+      int len := length;
+
+      buffer[index] := b;
+      index := index - 1;
+      len := len + 1;
+
+      index := i;
+      length := len;
+   }
+
+   string convert(real value)
+   {
+      real r := value;
+
+      bool negative := false;
+      if (r < 0.0) {
+         negative := true;
+         r := 0.0 - r;
+      };
+
+      PrimitiveOperations.splitReal(r, ref int integerPart, ref int decimalPart, ref int exponent);
+
+      byte buffer[40];
+      int length := 0;
+      int index := 39;
+      byte tmp := 0;
+
+      // write exponent part
+      if (exponent < 0) {
+         exponent := -exponent;
+
+         self.writeInteger(buffer, exponent, ref index, ref length);
+
+         // -
+         tmp := 45;
+         self.writeByte(buffer, tmp, ref index, ref length);
+
+         // e
+         tmp := 101;
+         self.writeByte(buffer, tmp, ref index, ref length);
+      };
+      if (exponent > 0) {
+         self.writeInteger(buffer, exponent, ref index, ref length);
+
+         // e
+         tmp := 101;
+         self.writeByte(buffer, tmp, ref index, ref length);
+      };
+
+      // write decimal part
+      self.writeInteger(buffer, decimalPart, ref index, ref length);
+
+      // decimal sign    
+      tmp := 46;  
+      buffer[index] := tmp;
+      index := index - 1;
+      length := length + 1;
+
+      // write integer part
+      self.writeInteger(buffer, integerPart, ref index, ref length);
+
+      // sign
+      if (negative) {
+         tmp := 45;
+         self.writeByte(buffer, tmp, ref index, ref length); 
+      };
+
+      ^ String.fromByteArray(index, length, buffer);      
+   }
+
    string convert(char ch)
    {
       int value := ch.Value;

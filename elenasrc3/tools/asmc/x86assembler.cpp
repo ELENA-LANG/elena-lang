@@ -676,6 +676,14 @@ void X86Assembler :: compileFdiv(ScriptToken& tokenInfo, MemoryWriter& writer)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void X86Assembler::compileFinit(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   read(tokenInfo);
+
+   writer.writeByte(0x9B);
+   writer.writeWord(0xE3DB);
+}
+
 void X86Assembler :: compileFild(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    X86Operand sour = compileOperand(tokenInfo, nullptr);
@@ -2010,6 +2018,9 @@ bool X86Assembler :: compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
    else if (tokenInfo.compare("fdiv")) {
       compileFdiv(tokenInfo, writer);
+   }
+   if (tokenInfo.compare("finit")) {
+      compileFinit(tokenInfo, writer);
    }
    else if (tokenInfo.compare("fld")) {
       compileFld(tokenInfo, writer);
