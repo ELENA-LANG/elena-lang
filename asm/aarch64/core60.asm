@@ -430,6 +430,14 @@ inline %24h
 
 end
 
+// ; fsave
+inline %24h
+
+  scvtf   d17, x9
+  str     d17, [x10]
+
+end
+
 // ; setr
 inline %80h
 
@@ -801,6 +809,16 @@ inline %97h
 
   mov     x18, __n16_1   // ; temporally
   cmp     x9, x18
+
+end
+
+// ; ftruncdp
+inline %098h
+
+  add     x19, x29, __arg12_1
+  ldr     d18, [x19]
+  fcvtzs  x18, d18
+  std     x18, [x0]
 
 end
 

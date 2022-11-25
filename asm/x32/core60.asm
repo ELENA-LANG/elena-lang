@@ -390,6 +390,16 @@ inline %24h
 
 end
 
+// ; fsave
+inline %25h
+
+  push edx
+  fild [esp]
+  fistp [ebx]
+  add  esp, 4
+
+end
+
 // ; setr
 inline %80h
 
@@ -692,6 +702,15 @@ end
 inline %097h
 
   cmp  edx, __n_1
+
+end
+
+// ; ftrunc dp
+inline %098h
+
+  lea   edi, [ebp + __arg32_1]
+  fld   qword ptr [edi]
+  fistp dword ptr [ebx]
 
 end
 

@@ -968,6 +968,11 @@ void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
          tape.write(ByteCode::PeekSI, 0);
          tape.write(ByteCode::LSave);
          break;
+      case INT32_FLOAT64_CONVERSION:
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::FSave);
+         break;
       default:
          break;
    }

@@ -62,6 +62,10 @@ ELENA byte codes (or ecodes)
 
    loadv                    - index.action := [acc].action
 
+   lsave                    - long:[acc] := index
+
+   fsave                    - double:[acc] := index
+
    mov env                  - %SYSTEM_ENV => index 
 
    mov mssg:m               - index := m
@@ -256,6 +260,9 @@ ELENA byte codes (or ecodes)
    fsub dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] -= temp;
                               n = 8  
+
+   ftrunc dp:disp           - temp double d << sp[0];
+                              dp[disp] := integer:trunc(d)
 
    iadd dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] += temp;

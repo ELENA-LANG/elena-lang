@@ -724,6 +724,16 @@ void X86Assembler :: compileFstp(ScriptToken& tokenInfo, MemoryWriter& writer)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void X86Assembler :: compileFistp(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, nullptr);
+
+   bool valid = compileFistp(sour, writer);
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void X86Assembler :: compileFisub(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    X86Operand sour = compileOperand(tokenInfo, nullptr);
@@ -1341,6 +1351,21 @@ bool X86Assembler :: compileFild(X86Operand source, MemoryWriter& writer)
    else if (source.isM64()) {
       writer.writeByte(0xDF);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 5 }, source);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileFistp(X86Operand source, MemoryWriter& writer)
+{
+   if (source.isM32()) {
+      writer.writeByte(0xDB);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 3 }, source);
+   }
+   else if (source.isM64()) {
+      writer.writeByte(0xDF);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 7 }, source);
    }
    else return false;
 
@@ -2016,23 +2041,26 @@ bool X86Assembler :: compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    if (tokenInfo.compare("fadd")) {
       compileFadd(tokenInfo, writer);
    }
-   else if (tokenInfo.compare("fdiv")) {
-      compileFdiv(tokenInfo, writer);
-   }
-   if (tokenInfo.compare("finit")) {
-      compileFinit(tokenInfo, writer);
-   }
-   else if (tokenInfo.compare("fld")) {
-      compileFld(tokenInfo, writer);
-   }
    else if (tokenInfo.compare("fcomip")) {
       compileFcomip(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fdiv")) {
+      compileFdiv(tokenInfo, writer);
    }
    else if (tokenInfo.compare("fild")) {
       compileFild(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("finit")) {
+      compileFinit(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fistp")) {
+      compileFistp(tokenInfo, writer);
+   }
    else if (tokenInfo.compare("fisub")) {
       compileFisub(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fld")) {
+      compileFld(tokenInfo, writer);
    }
    else if (tokenInfo.compare("fmul")) {
       compileFmul(tokenInfo, writer);

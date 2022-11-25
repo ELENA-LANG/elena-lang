@@ -1,4 +1,4 @@
-
+8
 // ; --- Predefined References  --
 define INVOKER              10001h
 define GC_ALLOC	            10002h
@@ -471,6 +471,16 @@ inline %24h
 
 end
 
+// ; fsave
+inline %24h
+
+  std     r14, 0(r1) 
+  lfd     f17, 0(r1) 
+  fcfid   f17, f17
+  stfd    f17, 0(r15)
+
+end
+
 // ; setr
 inline %80h
 
@@ -871,6 +881,19 @@ inline %97h
   li       r18, __n16_1
 
   cmp      r14, r18
+
+end
+
+// ; ftruncdp
+inline %098h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  friz    f17, f17
+  sfd     f17, 0(r1) 
+  ld      r17, 0(r1) 
+  std     r17, 0(r3)
 
 end
 

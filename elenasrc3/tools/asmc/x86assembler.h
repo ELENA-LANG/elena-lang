@@ -72,6 +72,7 @@ namespace elena_lang
       virtual bool compileFcomip(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileFdiv(X86Operand source, MemoryWriter& writer);
       virtual bool compileFild(X86Operand source, MemoryWriter& writer);
+      virtual bool compileFistp(X86Operand source, MemoryWriter& writer);
       virtual bool compileFisub(X86Operand source, MemoryWriter& writer);
       virtual bool compileFld(X86Operand source, MemoryWriter& writer);
       virtual bool compileFmul(X86Operand source, MemoryWriter& writer);
@@ -120,6 +121,7 @@ namespace elena_lang
       void compileFcomip(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFdiv(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFild(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFistp(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFisub(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFld(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFmul(ScriptToken& tokenInfo, MemoryWriter& writer);

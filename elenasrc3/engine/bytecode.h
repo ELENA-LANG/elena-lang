@@ -42,6 +42,7 @@ namespace elena_lang
       Neg            = 0x22,
       BRead          = 0x23,
       LSave          = 0x24,
+      FSave          = 0x25,
 
       MaxSingleOp    = 0x7F,
 
@@ -69,6 +70,7 @@ namespace elena_lang
       ReadN          = 0x95,
       WriteN         = 0x96,
       CmpN           = 0x97,
+      FTruncDP       = 0x98,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,

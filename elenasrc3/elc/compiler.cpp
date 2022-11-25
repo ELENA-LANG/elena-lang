@@ -5090,6 +5090,16 @@ ObjectInfo Compiler :: compileNativeConversion(BuildTreeWriter& writer, ExprScop
 
          writer.appendNode(BuildKey::ConversionOp, operationKey);
          break;
+      case INT32_FLOAT64_CONVERSION:
+         retVal = allocateResult(scope, resolvePrimitiveType(scope, { V_FLOAT64 }, false));
+
+         writeObjectInfo(writer, scope, retVal);
+         writer.appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(writer, scope, source);
+
+         writer.appendNode(BuildKey::ConversionOp, operationKey);
+         break;
       default:
          scope.raiseError(errInvalidOperation, node);
          break;

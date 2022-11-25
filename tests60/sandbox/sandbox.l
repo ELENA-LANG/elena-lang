@@ -8,16 +8,10 @@ import extensions;
 
 public program()
 {
-    int i := 1;
-//    i += 2;
-    i -= 2;
-//    i *= 2;
-//    i /= 2;    
-
-//   real n := 2.1;
+   real n := 2.1;
 //    real m := 3.2;
 
-//   console.writeLine(n);
+   console.writeLine(n);
    
 //   real r := n + m;
 //   console.writeLine(r);

@@ -397,6 +397,16 @@ inline %24h
 
 end
 
+// ; fsave
+inline %25h
+
+  push rdx
+  fild dword ptr [rsp]
+  fistp dword ptr [rbx]
+  add  rsp, 8
+
+end
+
 // ; setr
 inline %80h
 
@@ -713,6 +723,15 @@ end
 inline %097h
 
   cmp  edx, __n_1
+
+end
+
+// ; ftrunc dp
+inline %098h
+
+  lea   rdi, [rbp + __arg32_1]
+  fld   qword ptr [rdi]
+  fistp dword ptr [rbx]
 
 end
 
