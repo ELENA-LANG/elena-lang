@@ -730,8 +730,43 @@ end
 inline %098h
 
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rdi]
-  fistp dword ptr [rbx]
+  fld   qword ptr [rbx]
+  fistp dword ptr [rdi]
+
+end
+
+// ; ftrunc dp
+inline %099h
+
+  lea   rdi, [rbp + __arg32_1]
+
+  mov   ecx, 0
+  fld   qword ptr [rsi]
+
+  push  rcx                // reserve space on stack
+  fstcw word ptr [rsp]     // get current control word
+  mov   rdx, [rsp]
+  or    dx,0c00h           // code it for truncating
+  push  rdx
+  fldcw word ptr [rsp]    // change rounding code of FPU to truncate
+
+  frndint                  // truncate the number
+  pop   rdx                // remove modified CW from CPU stack
+  fldcw word ptr [rsp]     // load back the former control word
+  pop   rdx                // clean CPU stack
+      
+  fstsw ax                 // retrieve exception flags from FPU
+  shr   al,1               // test for invalid operation
+  jc    short labErr       // clean-up and return error
+
+labSave:
+  fstp  qword ptr [rdi]    // store result
+  jmp   short labEnd
+  
+labErr:
+  ffree st(1)
+  
+labEnd:
 
 end
 

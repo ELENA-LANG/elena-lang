@@ -189,11 +189,19 @@ void IDEWindow :: deleteText()
    _model->sourceViewModel.onModelChanged();
 }
 
+void IDEWindow :: commentText()
+{
+   wchar_t str[3] = _T("//");
+
+   _controller->sourceController.insertBlockText(_model->viewModel(), str, 2);
+   _model->sourceViewModel.onModelChanged();
+}
+
 void IDEWindow :: openProjectView()
 {
-   GUIControlBase* resultBar = _children[_model->ideScheme.projectView];
+   GUIControlBase* projectView = _children[_model->ideScheme.projectView];
 
-   resultBar->show();
+   projectView->show();
    _controller->onLayoutchange();
 }
 
@@ -376,6 +384,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_EDIT_DELETE:
          deleteText();
+         break;
+      case IDM_EDIT_COMMENT:
+         commentText();
          break;
       case IDM_PROJECT_COMPILE:
          _controller->doCompileProject(projectDialog, _model);

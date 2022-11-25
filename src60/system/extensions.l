@@ -36,3 +36,15 @@ public extension longOp : LongNumber
       ^ retVal
    }    
 }
+
+// --- realOp ---
+
+public extension realOp : RealNumber
+{
+   get real Integer()
+   {
+      PrimitiveRealOperations.trunc(self, ref real retVal);
+
+      ^ retVal
+   }
+}

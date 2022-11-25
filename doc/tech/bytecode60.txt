@@ -139,6 +139,8 @@ ELENA byte codes (or ecodes)
 
    mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
 
+   nconvf dp:disp           - double:acc >> int:dp[disp]
+
    nadd dp:disp, n          - [dp[disp]] += n;
  
    nsave dp:disp, i         - dp[disp] := i
@@ -261,8 +263,8 @@ ELENA byte codes (or ecodes)
                               [dp[disp]] -= temp;
                               n = 8  
 
-   ftrunc dp:disp           - temp double d << sp[0];
-                              dp[disp] := integer:trunc(d)
+   ftrunc dp:disp           - double:tmp << sp[0];
+                              double:dp[disp] := trunc(tmp)
 
    iadd dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] += temp;

@@ -8,10 +8,16 @@ import extensions;
 
 public program()
 {
-   real n := 2.1;
+//      int n := 2;
+//      if (n == 2 && n == 3) {
+//         console.writeLine("!!");
+//      }
+
+
+//   real n := 2.1;
 //    real m := 3.2;
 
-   console.writeLine(n);
+//   console.writeLine(n);
    
 //   real r := n + m;
 //   console.writeLine(r);

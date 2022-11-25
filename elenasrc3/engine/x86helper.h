@@ -165,6 +165,10 @@ namespace elena_lang
       {
          return test(type, X86OperandType::R8) || test(type, X86OperandType::M8);
       }
+      bool isM16() const
+      {
+         return test(type, X86OperandType::M16);
+      }
       bool isR16() const
       {
          return test(type, X86OperandType::R16);

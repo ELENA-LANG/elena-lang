@@ -44,6 +44,8 @@ Splitter :: Splitter(NotifierBase* notifier, int notifyCode, ControlBase* client
 {
    _minWidth = 4;
    _minHeight = 4;
+
+   _cursor = _vertical ? CURSOR_SIZEWE : CURSOR_SIZENS;
 }
 
 void Splitter :: registerSplitterWindow(HINSTANCE hInstance, wstr_t className, bool vertical)
@@ -168,6 +170,13 @@ void Splitter :: onMove()
       }
       _srcPos = destPos;
    }
+}
+
+bool Splitter :: onSetCursor()
+{
+   setCursor(_cursor);
+
+   return true;
 }
 
 LRESULT Splitter :: proceed(UINT message, WPARAM wParam, LPARAM lParam)

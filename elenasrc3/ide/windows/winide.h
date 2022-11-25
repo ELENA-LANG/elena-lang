@@ -90,6 +90,7 @@ namespace elena_lang
       bool copyToClipboard();
       void pasteFromClipboard();
       void deleteText();
+      void commentText();
 
    public:
       void onDocumentUpdate() override;

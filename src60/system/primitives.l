@@ -169,81 +169,86 @@ internal singleton PrimitiveOperations
       
       ^ length;
    }
+}
+
+internal singleton PrimitiveRealOperations
+{
+   trunc(real r, ref real retVal) : external<system'core_routines'__realTrunc>;
 
    int normalizeFloat(ref real value)
    {
-//      real positiveExpThreshold := 1.0e7;
-//      real negativeExpThreshold := 1e-5;
+      real positiveExpThreshold := 1.0e7;
+      real negativeExpThreshold := 1e-5;
       int exponent := 0;
       
-//      if (value >= positiveExpThreshold) {
-//         if (value >= 1e256) {
-//            value /= 1e256;
-//            exponent += 256;
-//         };
-//         if (value >= 1e128) {
-//            value /= 1e128;
-//            exponent += 128;
-//         };
-//         if (value >= 1e64) {
-//            value /= 1e64;
-//            exponent += 64;
-//         };
-//         if (value >= 1e32) {
-//            value /= 1e32;
-//            exponent += 32;
-//         };
-//         if (value >= 1e16) {
-//            value /= 1e16;
-//            exponent += 16;
-//         };
-//         if (value >= 1e8) {
-//            value /= 1e8;
-//            exponent += 8;
-//         };
-//         if (value >= 1e4) {
-//            value /= 1e4;
-//            exponent += 4;
-//         };
-//         if (value >= 1e2) {
-//            value /= 1e2;
-//            exponent += 2;
-//         };
-//         if (value >= 1e1) {
-//            value /= 1e1;
-//            exponent += 1;
-//         };
-//      };
+      if (value >= positiveExpThreshold) {
+         if (value >= 1e256) {
+            value /= 1e256;
+            exponent += 256;
+         };
+         if (value >= 1e128) {
+            value /= 1e128;
+            exponent += 128;
+         };
+         if (value >= 1e64) {
+            value /= 1e64;
+            exponent += 64;
+         };
+         if (value >= 1e32) {
+            value /= 1e32;
+            exponent += 32;
+         };
+         if (value >= 1e16) {
+            value /= 1e16;
+            exponent += 16;
+         };
+         if (value >= 1e8) {
+            value /= 1e8;
+            exponent += 8;
+         };
+         if (value >= 1e4) {
+            value /= 1e4;
+            exponent += 4;
+         };
+         if (value >= 1e2) {
+            value /= 1e2;
+            exponent += 2;
+         };
+         if (value >= 1e1) {
+            value /= 1e1;
+            exponent += 1;
+         };
+      };
 
-//      if (value > 0 && value <= negativeExpThreshold) {
-//         if (value < 1e-255) {
-//            value *= 1e256;
-//            exponent -= 256;
-//         };
-//         if (value < 1e-127) {
-//            value *= 1e128;
-//            exponent -= 128;
-//         };
-//         if (value < 1e-63) {
-//            value *= 1e64;
-//            exponent -= 64;
-//         };
-//         if (value < 1e-31) {
-//            value *= 1e32;
-//            exponent -= 32;
-//         };
-//         if (value < 1e-15) {
-//            value *= 1e16;
-//            exponent -= 16;
-//         };
-//         if (value < 1e-7) {
-//            value *= 1e8;
-//            exponent -= 8;
-//         };
-//         if (value < 1e-3) {
+      if (value > 0 && value <= negativeExpThreshold) {
+         if (value < 1e-255) {
+            value *= 1e256;
+            exponent -= 256;
+         };
+         if (value < 1e-127) {
+            value *= 1e128;
+            exponent -= 128;
+         };
+         if (value < 1e-63) {
+            value *= 1e64;
+            exponent -= 64;
+         };
+         if (value < 1e-31) {
+            value *= 1e32;
+            exponent -= 32;
+         };
+         if (value < 1e-15) {
+            value *= 1e16;
+            exponent -= 16;
+         };
+         if (value < 1e-7) {
+            value *= 1e8;
+            exponent -= 8;
+         };
+         if (value < 1e-3) {
 //            value *= 1e4;
-//            exponent -= 4;
-//         };
+  //          exponent -= 4;
+         };
 //         if (value < 1e-1) {
 //            value *= 1e2;
 //            exponent -= 2;
@@ -252,7 +257,7 @@ internal singleton PrimitiveOperations
 //            value *= 1e1;
 //            exponent -= 1;
 //         };
-//      };
+      };
 
       ^ exponent;
    }
@@ -261,16 +266,16 @@ internal singleton PrimitiveOperations
    {  
       real r := value;
 
-      int e := PrimitiveOperations.normalizeFloat(ref r);
+      int e := PrimitiveRealOperations.normalizeFloat(ref r);
 
-      int intPart := value;
+      real remainder := value.Integer;
+      int intPart := intConvertor.convert(remainder);
 
-      real remainder := intPart;
       remainder := value - remainder;
 
-//      remainder := remainder * 1.0e9;
+      remainder := remainder * 1.0e9;
       
-      int decPart := remainder;
+      int decPart := intConvertor.convert(remainder);
 
       // rounding
       real tmp := decPart;
@@ -280,10 +285,10 @@ internal singleton PrimitiveOperations
          if (decPart >= 1000000000) {
             decPart := 0;
             intPart := intPart + 1;
-//            if (e != 0 && intPart >= 10) {
-//               e := e + 1;
-//               intPart := 1;
-//            }
+            if (e != 0 && intPart >= 10) {
+               e := e + 1;
+               intPart := 1;
+            }
          }
       };
 

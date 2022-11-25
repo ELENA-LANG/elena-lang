@@ -1145,10 +1145,10 @@ void ByteCodeWriter::saveShortCircuitOp(CommandTape& tape, BuildNode node, TapeS
 
    switch (node.arg.reference) {
       case AND_OPERATOR_ID:
-         tape.write(ByteCode::CmpR, falseRef);
+         tape.write(ByteCode::CmpR, falseRef | mskVMTRef);
          break;
       case OR_OPERATOR_ID:
-         tape.write(ByteCode::CmpR, trueRef);
+         tape.write(ByteCode::CmpR, trueRef | mskVMTRef);
          break;
    }
 

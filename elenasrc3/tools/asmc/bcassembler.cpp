@@ -160,6 +160,9 @@ int ByteCodeAssembler :: readN(ScriptToken& tokenInfo, ReferenceMap& constants, 
          if (constants.exist(*platformConstant)) {
             return constants.get(*platformConstant);
          }
+         else if (constants.exist(*tokenInfo.token)) {
+            return constants.get(*tokenInfo.token);
+         }
          else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
       }
    }
@@ -841,6 +844,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::SetDP:
          case ByteCode::LoadDP:
          case ByteCode::XCmpDP:
+         case ByteCode::FTruncDP:
             return compileDDisp(tokenInfo, writer, opCommand, dataLocals, true);
          case ByteCode::TstM:
          case ByteCode::MovM:
@@ -867,6 +871,8 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::SubN:
          case ByteCode::CmpN:
             return compileOpN(tokenInfo, writer, opCommand, constants, false);
+         case ByteCode::Copy:
+            return compileOpN(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::CallVI:
          case ByteCode::JumpVI:
             return compileOpI(tokenInfo, writer, opCommand, false);

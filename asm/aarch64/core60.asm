@@ -812,13 +812,23 @@ inline %97h
 
 end
 
-// ; ftruncdp
+// ; nconfdp
 inline %098h
 
   add     x19, x29, __arg12_1
-  ldr     d18, [x19]
+  ldr     d18, [x10]
   fcvtzs  x18, d18
-  std     x18, [x0]
+  std     x18, [x19]
+
+end
+
+// ; ftruncdp
+inline %099h
+
+  add     x19, x29, __arg12_1
+  ldr     d18, [x0]
+  frintz  d18, d18
+  str     d18, [x19]
 
 end
 

@@ -1,3 +1,4 @@
+
 __define eof                 8195;
 __define identifier         12292;
 __define integer            12293;
@@ -63,17 +64,20 @@ __define SHR_OPERATION       6237;
 __define SUB_ASSIGNMENT      6238;
 __define MUL_ASSIGNMENT      6239;
 __define DIV_ASSIGNMENT      6240;
+__define AND_OPERATION       6241;
+__define OR_OPERATION        6242;
 __define MESSAGE_OPERATION   6337;
 __define PROPERTY_OPERATION  6340;
 __define EXPRESSION          6288;
 __define L5_EXPRESSION       6289;
 __define SINGLE_EXPRESSION   6290;
-__define L7_EXPRESSION       6291;
+__define L8_EXPRESSION       6291;
 __define ROOT_EXPRESSION     6292;
 __define L6_EXPRESSION       6293;
 __define T_EXPRESSION        6294;
 __define L4_EXPRESSION       6295;
 __define NT_EXPRESSION       6296;
+__define L7_EXPRESSION       6297;
 __define POSTFIX             4200;
 __define TEMPLATE_POSTFIX    4201;
 __define METHOD_POSTFIX      4202;
@@ -341,6 +345,17 @@ L6_EXPRESSION ::=
         | character ^OBJECT;
 
 L7_EXPRESSION ::=
+        identifier I7_R
+        | integer ^OBJECT
+        | long ^OBJECT
+        | real ^OBJECT
+        | hexinteger ^OBJECT
+        | constant ^OBJECT
+        | string ^OBJECT
+        | wide ^OBJECT
+        | character ^OBJECT;
+
+L8_EXPRESSION ::=
 	"{" BLOCK ^ CLOSURE
 	| SINGLE_EXPRESSION;
 
@@ -366,10 +381,10 @@ RI_R ::=
 	| I_L3_R L3f
 	| I_L4_R
 	| I_L5_R
-	| I_L6_R
+	| I_L6_R L7e
 	| I_L6a_R
-	| IL7_R
 	| IL8_R
+	| IL9_R
 	| T_EXPRESSION T_EXPRESSIONS ^ TEMPLATE_BLOCK
         | eps ^OBJECT; 
 
@@ -410,17 +425,17 @@ O_R  ::=
 	| I_L3_R L3f
 	| I_L4_R L4s L5s L6s
 	| I_L5_R L5s L6s
-	| I_L6_R
+	| I_L6_R L7e
 	| I_L6a_R
-	| IL7_R
 	| IL8_R
+	| IL9_R
 	| DYNAMIC_DIMENSION ^OBJECT ^ARRAY_TYPE TEMPLATE_R; 
 
 E_R ::=
 	L4_R
 	| L5_R
-	| L7_R
 	| L8_R
+	| L9_R
 	| eps;
 
 TEMPLATE_R ::=
@@ -474,6 +489,18 @@ O6_Re ::=
 O6_R ::=
 	I_L3_R L3s L4s;
 
+I7_R ::=
+        identifier I7_R
+	| O7_Re;
+
+O7_Re ::=
+	O7_R
+        | eps ^OBJECT; 
+
+O7_R ::=
+	I_L3_R L3s L4s L5s L6s
+	| I_L6_R;
+
 N_R ::=
 	eps;
 
@@ -507,22 +534,22 @@ Ix_L0_R ::=
         "[" ^OBJECT EXPRESSION "]" ^INDEXER_OPERATION;
 
 L2f ::=
-        L2_R L3s L5s L6s L8e
-	| L3_R L3s L5s L6s L8e
+        L2_R L3s L5s L6s L9e
+	| L3_R L3s L5s L6s L9e
 	| L5_R L5s L6s
 	| L6_R L6s
-	| L7_R
 	| L8_R
-	| L81_R
+	| L9_R
+	| L91_R
 	| eps;
 
 L3f ::=
-        L3_R L3s L5s L6s L8e
+        L3_R L3s L5s L6s L9e
 	| L5_R L5s L6s
 	| L6_R L6s
-	| L7_R
 	| L8_R
-	| L81_R
+	| L9_R
+	| L91_R
 	| eps;
 
 L3_R ::=
@@ -591,35 +618,47 @@ I_L6a_OPT ::=
 	">" ^ TEMPLATE_TYPE TEMPLATE_R
 	| eps ^ LESS_OPERATION;
 
+I_L7_R ::=
+	"&&" ^OBJECT L7_EXPRESSION ^AND_OPERATION
+	| "||" ^OBJECT L7_EXPRESSION ^OR_OPERATION;
+
+L7_R ::=
+	"&&" L7_EXPRESSION ^AND_OPERATION
+	| "||" L7_EXPRESSION ^OR_OPERATION;
+
 L7e ::=
 	L7_R
 	| eps;
 
-IL7_R ::=
-	"?" ^OBJECT L7_EXPRESSION L7_IF_R
-	| "!" ^OBJECT L7_EXPRESSION ^ELSE_OPERATION;
-
-L7_R ::=
-	"?" L7_EXPRESSION L7_IF_R
-	| "!" L7_EXPRESSION ^ELSE_OPERATION;
-
-L7_IF_R ::=
-	eps ^IF_OPERATION
-	| ":" L7_EXPRESSION ^IF_ELSE_OPERATION;
+L8e ::=
+	L8_R
+	| eps;
 
 IL8_R ::=
+	"?" ^OBJECT L8_EXPRESSION L8_IF_R
+	| "!" ^OBJECT L8_EXPRESSION ^ELSE_OPERATION;
+
+L8_R ::=
+	"?" L8_EXPRESSION L8_IF_R
+	| "!" L8_EXPRESSION ^ELSE_OPERATION;
+
+L8_IF_R ::=
+	eps ^IF_OPERATION
+	| ":" L8_EXPRESSION ^IF_ELSE_OPERATION;
+
+IL9_R ::=
 	"\\" ^OBJECT CATCH ^CATCH_OPERATION
 	| "??" ^OBJECT SINGLE_EXPRESSION ^ISNIL_OPERATION;
 
-L8_R ::=
+L9_R ::=
 	"\\"  CATCH ^CATCH_OPERATION
 	| "??" SINGLE_EXPRESSION ^ISNIL_OPERATION;
 
-L81_R ::=
+L91_R ::=
 	"\" CATCH ^ALT_OPERATION;
 
-L8e ::=
-	L8_R
+L9e ::=
+	L9_R
 	| eps;
 
 INDEXER_R ::=

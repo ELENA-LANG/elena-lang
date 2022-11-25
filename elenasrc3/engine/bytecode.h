@@ -70,7 +70,8 @@ namespace elena_lang
       ReadN          = 0x95,
       WriteN         = 0x96,
       CmpN           = 0x97,
-      FTruncDP       = 0x98,
+      NConvFDP       = 0x98,
+      FTruncDP       = 0x99,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,

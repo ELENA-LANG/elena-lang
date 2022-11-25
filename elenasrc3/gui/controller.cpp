@@ -181,6 +181,16 @@ void TextViewController :: deleteText(TextViewModelBase* model)
    }
 }
 
+void TextViewController :: insertBlockText(TextViewModelBase* model, const text_t s, size_t length)
+{
+   auto docView = model->DocView();
+   if (!docView->status.readOnly) {
+      docView->blockInserting(s, length);
+
+      onTextChanged(model, docView);
+   }
+}
+
 void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
    auto docView = model->DocView();

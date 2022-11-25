@@ -634,6 +634,40 @@ void DocumentView :: notifyOnChange()
    status.caretChanged = false;
 }
 
+void DocumentView :: blockInserting(text_t subs, size_t length)
+{
+   _text->validateBookmark(_caret);
+
+   if (_selection < 0) {
+      _caret.moveOn(_selection);
+      _selection = abs(_selection);
+   }
+   TextBookmark end = _caret;
+
+   end.moveOn(_selection);
+
+   // if only part of the line was selected just insert tab
+   int lastRow = end.row();
+   if (lastRow == _caret.row()) {
+      _text->insertLine(_caret, subs, length);
+   }
+   else {
+      setCaret(0, _caret.row(), true);
+
+      if (end.column() == 0)
+         lastRow--;
+
+      TextBookmark start = _caret;
+      while (start.row() <= lastRow) {
+         _text->insertLine(start, subs, length);
+
+         if (!start.moveTo(0, start.row() + 1))
+            break;
+      }
+   }
+
+}
+
 void DocumentView :: tabbing(text_c space, size_t count, bool indent)
 {
    _text->validateBookmark(_caret);

@@ -276,6 +276,7 @@ namespace elena_lang
       void moveToFrame(int column, int row, bool selecting);
 
       virtual void tabbing(text_c space, size_t count, bool indent);
+      virtual void blockInserting(text_t subs, size_t length);
 
       void insertNewLine();
       void insertChar(text_c ch)

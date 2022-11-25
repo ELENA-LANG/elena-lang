@@ -705,12 +705,47 @@ inline %097h
 
 end
 
-// ; ftrunc dp
+// ; nconf dp
 inline %098h
 
   lea   edi, [ebp + __arg32_1]
-  fld   qword ptr [edi]
-  fistp dword ptr [ebx]
+  fld   qword ptr [ebx]
+  fistp dword ptr [edi]
+
+end
+
+// ; ftrunc dp
+inline %099h
+
+  lea   edi, [ebp + __arg32_1]
+
+  mov   ecx, 0
+  fld   qword ptr [esi]
+
+  push  ecx                // reserve space on stack
+  fstcw word ptr [esp]     // get current control word
+  mov   edx, [esp]
+  or    dx,0c00h           // code it for truncating
+  push  edx
+  fldcw word ptr [esp]    // change rounding code of FPU to truncate
+
+  frndint                  // truncate the number
+  pop   edx                // remove modified CW from CPU stack
+  fldcw word ptr [esp]     // load back the former control word
+  pop   edx                // clean CPU stack
+      
+  fstsw ax                 // retrieve exception flags from FPU
+  shr   al,1               // test for invalid operation
+  jc    short labErr       // clean-up and return error
+
+labSave:
+  fstp  qword ptr [edi]    // store result
+  jmp   short labEnd
+  
+labErr:
+  ffree st(1)
+  
+labEnd:
 
 end
 

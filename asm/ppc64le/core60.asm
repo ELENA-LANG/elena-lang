@@ -884,16 +884,27 @@ inline %97h
 
 end
 
-// ; ftruncdp
+// ; nconfdp
 inline %098h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r15)
+  friz    f17, f17
+  sfd     f17, 0(r1) 
+  ld      r17, 0(r1) 
+  std     r17, 0(r19)
+
+end
+
+// ; ftruncdp
+inline %099h
 
   addi    r19, r31, __arg16_1
 
   lfd     f17, 0(r3)
   friz    f17, f17
-  sfd     f17, 0(r1) 
-  ld      r17, 0(r1) 
-  std     r17, 0(r3)
+  sfd     f17, 0(r19)
 
 end
 

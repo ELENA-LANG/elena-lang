@@ -44,6 +44,7 @@ public singleton intConvertor
 {
    private convertChar(char ch, ref int retVal) : external<system'core_routines'__charToInt>;
    private convertLong(long l, ref int retVal) : external<system'core_routines'__longToInt>;
+   private convertReal(real l, ref int retVal) : external<system'core_routines'__realToInt>;
 
    int convert(byte b)
    {
@@ -73,6 +74,13 @@ public singleton intConvertor
 
       ^ n;
    }
+
+   int convert(real r)
+   {
+      self.convertReal(r, ref int n);
+
+      ^ n
+   }   
 
    int convert(string s, int radix)
    {
@@ -330,7 +338,7 @@ public singleton stringConvertor
          r := 0.0 - r;
       };
 
-      PrimitiveOperations.splitReal(r, ref int integerPart, ref int decimalPart, ref int exponent);
+      PrimitiveRealOperations.splitReal(r, ref int integerPart, ref int decimalPart, ref int exponent);
 
       byte buffer[40];
       int length := 0;
