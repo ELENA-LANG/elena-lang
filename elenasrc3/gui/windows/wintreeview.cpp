@@ -161,3 +161,8 @@ void TreeView :: clear(TreeViewItem parent)
       item = next;
    }
 }
+
+void TreeView :: remove(TreeViewItem item)
+{
+   TreeView_DeleteItem(_handle, item);
+}

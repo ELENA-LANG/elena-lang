@@ -5581,6 +5581,10 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    ObjectInfo roperand = { ObjectKind::Closure, { V_CLOSURE }, 0 };
    ObjectInfo roperand2 = {};
 
+   // HOTFIX : to allow correct step over the branching statement 
+   writer.appendNode(BuildKey::EndStatement);
+   writer.appendNode(BuildKey::VirtualBreakoint);
+
    BuildKey   op = BuildKey::None;
 
    size_t     argLen = 2;
@@ -5630,6 +5634,9 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
       retVal = compileMessageOperation(writer, scope, node, loperand, message, signRef, messageArguments, 
          EAttr::NoExtension);
    }
+
+   // HOTFIX : to compenstate the closed statement above
+   writer.appendNode(BuildKey::OpenStatement);
 
    return retVal;
 }

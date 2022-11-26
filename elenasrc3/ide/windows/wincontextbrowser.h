@@ -29,6 +29,8 @@ namespace elena_lang
 
       void expandRootNode() override;
 
+      void removeUnused(WatchItems& refreshedItems) override;
+
       ContextBrowser(int width, int height, NotifierBase* notifier);
    };
 }

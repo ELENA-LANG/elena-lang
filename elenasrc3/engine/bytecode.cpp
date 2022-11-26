@@ -674,6 +674,9 @@ void CommandTape :: saveTo(MemoryWriter* writer)
          case ByteCode::ImportOff:
             importMode = false;
             break;
+         //case ByteCode::BreakLabel:
+         //   // nop in command tape is ignored (used in replacement patterns)
+         //   break;
          case ByteCode::Label:
             fixJumps(writer->Memory(), writer->position(), fwdJumps, command.arg1);
             labels.add(command.arg1, writer->position());

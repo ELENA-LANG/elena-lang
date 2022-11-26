@@ -258,6 +258,7 @@ namespace elena_lang
       MemoryIteratorBase& operator =(const MemoryIteratorBase& it)
       {
          this->_current = it._current;
+         this->_buffer = it._buffer;
 
          return *this;
       }
@@ -2208,6 +2209,14 @@ namespace elena_lang
       pos_t count_pos() const
       {
          return (pos_t)_length;
+      }
+
+      T get(int index) const
+      {
+         if (index < cacheSize) {
+            return _cached[index];
+         }
+         else return _allocated[index - cacheSize];
       }
 
       void add(T item)

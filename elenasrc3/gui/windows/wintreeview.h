@@ -47,6 +47,7 @@ namespace elena_lang
       TreeViewItem insertTo(TreeViewItem parent, const wchar_t* caption, size_t param, bool isNode);
 
       void clear(TreeViewItem item);
+      void remove(TreeViewItem item);
 
       TreeView(int width, int height, NotifierBase* notifier, int notificationId, 
          bool persistentSelection, bool enableIcons = false, int iconId = 0);

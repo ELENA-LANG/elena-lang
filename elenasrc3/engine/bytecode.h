@@ -148,6 +148,7 @@ namespace elena_lang
 
       None           = 0x1000,
       Label          = 0x1001,
+//      BreakLabel     = 0x1011,  // meta command, breaking the optimization rules
       ImportOn       = 0x1002,
       ImportOff      = 0x1003,
    };

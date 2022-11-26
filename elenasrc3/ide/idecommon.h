@@ -124,6 +124,8 @@ namespace elena_lang
       int     level;
    };
 
+   typedef CachedList<void*, 20> WatchItems;
+
    class ContextBrowserBase
    {
    protected:
@@ -138,9 +140,11 @@ namespace elena_lang
       virtual void expandRootNode() = 0;
 
       virtual void* addOrUpdate(WatchContext* root, ustr_t name, ustr_t className);
-      virtual void addOrUpdateDWORD(WatchContext* root, ustr_t name, int value);
-      virtual void addOrUpdateQWORD(WatchContext* root, ustr_t name, long long value);
-      virtual void addOrUpdateFLOAT64(WatchContext* root, ustr_t name, double value);
+      virtual void* addOrUpdateDWORD(WatchContext* root, ustr_t name, int value);
+      virtual void* addOrUpdateQWORD(WatchContext* root, ustr_t name, long long value);
+      virtual void* addOrUpdateFLOAT64(WatchContext* root, ustr_t name, double value);
+
+      virtual void removeUnused(WatchItems& refreshedItems) = 0;
 
       virtual void populateDWORD(WatchContext* root, unsigned int value);
       virtual void populateQWORD(WatchContext* root, unsigned long long value);

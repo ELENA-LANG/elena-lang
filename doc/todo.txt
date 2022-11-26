@@ -8,8 +8,7 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * ide : block comment
-
+    * tests : real to string
     * tests : arithmetic operations with real
 
     * tests : bitwise / shift operations with int
@@ -39,7 +38,6 @@ In development:
     * api doc - properties
     * api doc
 
-    * ide debugger - step over if
     * ide debugger
 
     * conversion : byte / short / int / long => real

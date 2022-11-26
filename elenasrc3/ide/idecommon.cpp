@@ -22,7 +22,7 @@ void* ContextBrowserBase :: addOrUpdate(WatchContext* context, ustr_t variableNa
    return item;
 }
 
-void ContextBrowserBase :: addOrUpdateDWORD(WatchContext* context, ustr_t variableName, int value)
+void* ContextBrowserBase :: addOrUpdateDWORD(WatchContext* context, ustr_t variableName, int value)
 {
    void* item = findWatchNodeStartingWith(context, variableName);
    if (item != nullptr) {
@@ -33,6 +33,8 @@ void ContextBrowserBase :: addOrUpdateDWORD(WatchContext* context, ustr_t variab
    WatchContext dwordContext = { item };
 
    populateDWORD(&dwordContext, value);
+
+   return item;
 }
 
 void ContextBrowserBase :: populateDWORD(WatchContext* context, unsigned value)
@@ -49,7 +51,7 @@ void ContextBrowserBase :: populateDWORD(WatchContext* context, unsigned value)
 
 }
 
-void ContextBrowserBase :: addOrUpdateQWORD(WatchContext* context, ustr_t variableName, long long value)
+void* ContextBrowserBase :: addOrUpdateQWORD(WatchContext* context, ustr_t variableName, long long value)
 {
    void* item = findWatchNodeStartingWith(context, variableName);
    if (item != nullptr) {
@@ -60,6 +62,8 @@ void ContextBrowserBase :: addOrUpdateQWORD(WatchContext* context, ustr_t variab
    WatchContext dwordContext = { item };
 
    populateQWORD(&dwordContext, value);
+
+   return item;
 }
 
 void ContextBrowserBase :: populateQWORD(WatchContext* context, unsigned long long value)
@@ -73,10 +77,9 @@ void ContextBrowserBase :: populateQWORD(WatchContext* context, unsigned long lo
 
    clearNode(context->root);
    populateNode(context->root, number.str());
-
 }
 
-void ContextBrowserBase :: addOrUpdateFLOAT64(WatchContext* context, ustr_t variableName, double value)
+void* ContextBrowserBase :: addOrUpdateFLOAT64(WatchContext* context, ustr_t variableName, double value)
 {
    void* item = findWatchNodeStartingWith(context, variableName);
    if (item != nullptr) {
@@ -87,6 +90,8 @@ void ContextBrowserBase :: addOrUpdateFLOAT64(WatchContext* context, ustr_t vari
    WatchContext dwordContext = { item };
 
    populateFLOAT64(&dwordContext, value);
+
+   return item;
 }
 
 void ContextBrowserBase :: populateFLOAT64(WatchContext* context, double value)
@@ -96,5 +101,4 @@ void ContextBrowserBase :: populateFLOAT64(WatchContext* context, double value)
 
    clearNode(context->root);
    populateNode(context->root, number.str());
-
 }

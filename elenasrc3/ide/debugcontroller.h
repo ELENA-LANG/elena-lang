@@ -231,10 +231,10 @@ namespace elena_lang
       void onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath);
       void onStop();
 
-      void readObject(ContextBrowserBase* watch, addr_t address, ustr_t name, int level);
-      void readIntLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level);
-      void readLongLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level);
-      void readRealLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level);
+      void* readObject(ContextBrowserBase* watch, addr_t address, ustr_t name, int level);
+      void* readIntLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level);
+      void* readLongLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level);
+      void* readRealLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level);
 
    public:
       bool isStarted() const
@@ -251,7 +251,7 @@ namespace elena_lang
       void stepInto();
       void stop();
 
-      void readAutoContext(ContextBrowserBase* watch, int level);
+      void readAutoContext(ContextBrowserBase* watch, int level, WatchItems* refreshedItems);
       void readContext(ContextBrowserBase* watch, WatchContext* context);
 
       virtual void clearDebugInfo()

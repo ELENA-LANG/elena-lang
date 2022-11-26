@@ -8,10 +8,15 @@ import extensions;
 
 public program()
 {
-//      int n := 2;
-//      if (n == 2 && n == 3) {
-//         console.writeLine("!!");
-//      }
+   int n := 2;
+   if (n != 2) {
+      console.writeLine("n != 2");
+      console.writeLine("!");
+   };
+   if (n == 2) {
+      console.writeLine("n == 2");
+      console.writeLine("!");
+   };
 
 
 //   real n := 2.1;

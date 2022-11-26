@@ -717,7 +717,7 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    else _process->setEvent(DEBUG_RESUME);
 }
 
-void DebugController :: readObject(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
+void* DebugController :: readObject(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
 {
    if (address != 0) {
       // read class VMT address if not provided
@@ -731,41 +731,48 @@ void DebugController :: readObject(ContextBrowserBase* watch, addr_t address, us
       context.root = watch->addOrUpdate(&context, name, *className);
 
       readContext(watch, &context);
+
+      return context.root;
    }
    else {
       WatchContext context = { nullptr, 0, level };
       context.root = watch->addOrUpdate(&context, name, nullptr);
+
+      return context.root;
    }
 }
 
-void DebugController :: readIntLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
+void* DebugController :: readIntLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
       int value = _process->getDWORD(address);
 
       WatchContext context = { nullptr, address, level - 1 };
-      watch->addOrUpdateDWORD(&context, name, value);
+      return watch->addOrUpdateDWORD(&context, name, value);
    }
+   else return nullptr;
 }
 
-void DebugController::readLongLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
+void* DebugController::readLongLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
       long long value = _process->getQWORD(address);
 
       WatchContext context = { nullptr, address, level - 1 };
-      watch->addOrUpdateQWORD(&context, name, value);
+      return watch->addOrUpdateQWORD(&context, name, value);
    }
+   else return nullptr;
 }
 
-void DebugController :: readRealLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
+void* DebugController :: readRealLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
       double value = _process->getFLOAT64(address);
 
       WatchContext context = { nullptr, address, level - 1 };
-      watch->addOrUpdateFLOAT64(&context, name, value);
+      return watch->addOrUpdateFLOAT64(&context, name, value);
    }
+   else return nullptr;
 }
 
 void DebugController :: readContext(ContextBrowserBase* watch, WatchContext* context)
@@ -797,7 +804,7 @@ inline int getFPOffset(int argument, int argOffset)
    return (argument - (argument < 0 ? argOffset : 0));
 }
 
-void DebugController :: readAutoContext(ContextBrowserBase* watch, int level)
+void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, WatchItems* refreshedItems)
 {
    if (_process->isStarted()) {
       DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState());
@@ -806,29 +813,33 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level)
 
       int index = 0;
       while (lineInfo[index].symbol != DebugSymbol::Procedure) {
+         void* item = nullptr;
          switch (lineInfo[index].symbol) {
             case DebugSymbol::Local:
-               readObject(watch, _process->getStackItem(lineInfo[index].addresses.local.offset),
+               item = readObject(watch, _process->getStackItem(lineInfo[index].addresses.local.offset),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::IntLocalAddress:
-               readIntLocal(watch, 
+               item = readIntLocal(watch,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::LongLocalAddress:
-               readLongLocal(watch,
+               item = readLongLocal(watch,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::RealLocalAddress:
-               readRealLocal(watch,
+               item = readRealLocal(watch,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             default:
                break;
          }
+
+         if (item)
+            refreshedItems->add(item);
 
          index--;
       }

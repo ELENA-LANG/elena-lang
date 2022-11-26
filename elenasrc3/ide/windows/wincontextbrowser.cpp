@@ -126,3 +126,24 @@ void ContextBrowser::expandRootNode()
 {
    expand(_rootItem);
 }
+
+void ContextBrowser::removeUnused(WatchItems& refreshedItems)
+{
+   TreeViewItem current = getChild(_rootItem);
+   while (current != nullptr) {
+      bool found = false;
+      for (int i = 0; i < refreshedItems.count_pos(); i++) {
+         if (refreshedItems.get(i) == current) {
+            found = true;
+            break;
+         }
+      }
+      if (!found) {
+         TreeViewItem unused = current;
+         current = getNext(current);
+
+         remove(unused);
+      }
+      else current = getNext(current);
+   }
+}

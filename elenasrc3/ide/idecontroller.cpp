@@ -397,7 +397,11 @@ path_t ProjectController :: getSourceByIndex(ProjectModel& model, int index)
 
 void ProjectController :: refreshDebugContext(ContextBrowserBase* contextBrowser)
 {
-   _debugController.readAutoContext(contextBrowser, 3);
+   WatchItems refreshedItems;
+
+   _debugController.readAutoContext(contextBrowser, 3, &refreshedItems);
+
+   contextBrowser->removeUnused(refreshedItems);
 }
 
 // --- IDEController ---

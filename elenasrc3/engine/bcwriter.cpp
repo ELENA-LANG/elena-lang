@@ -1152,6 +1152,7 @@ void ByteCodeWriter::saveShortCircuitOp(CommandTape& tape, BuildNode node, TapeS
          break;
    }
 
+//   tape.write(ByteCode::BreakLabel); // !! temporally, to prevent if-optimization
    tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
 
    saveTape(tape, rnode, tapeScope, paths, tapeOptMode, false);
