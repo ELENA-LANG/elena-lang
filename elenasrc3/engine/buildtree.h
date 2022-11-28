@@ -125,7 +125,10 @@ namespace elena_lang
       LongVariableAddress  = 0x0094,
       RealVariableAddress  = 0x0095,
 
-      BinaryArray          = 0x00A0,
+      ParameterInfo        = 0x00A0,
+      Parameter            = 0x00A1,
+
+      BinaryArray          = 0x00B0,
 
       Value                = 0x8001,
       Reserved             = 0x8002,      // reserved managed

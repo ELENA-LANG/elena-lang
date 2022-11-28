@@ -937,7 +937,7 @@ namespace elena_lang
          struct Step { addr_t address; } step;
          struct Local { addr_t nameRef; int offset; } local;
       //   struct Field { pos_t nameRef; int size; } field;
-      //   struct Offset { pos_t disp; } offset;
+         struct Offset { pos_t disp; } offset;
       } addresses;
 
       DebugLineInfo()

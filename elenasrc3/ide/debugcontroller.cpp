@@ -178,6 +178,7 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::IntLocalAddress:
             case DebugSymbol::LongLocalAddress:
             case DebugSymbol::RealLocalAddress:
+            case DebugSymbol::Parameter:
                // replace field name reference with the name
                stringReader.seek(info.addresses.local.nameRef);
 
@@ -804,6 +805,14 @@ inline int getFPOffset(int argument, int argOffset)
    return (argument - (argument < 0 ? argOffset : 0));
 }
 
+inline int getFrameDisp(DebugLineInfo& frameInfo, disp_t offset)
+{
+   if (frameInfo.symbol == DebugSymbol::FrameInfo && frameInfo.addresses.offset.disp != 0) {
+      return frameInfo.addresses.offset.disp + offset;
+   }
+   else return 0;
+}
+
 void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, WatchItems* refreshedItems)
 {
    if (_process->isStarted()) {
@@ -834,6 +843,11 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
+            case DebugSymbol::Parameter:
+               item = readObject(watch,
+                  _process->getStackItem(
+                     lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
             default:
                break;
          }

@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x002C
+#define IDE_REVISION_NUMBER                           0x002D
 
 namespace elena_lang
 {
@@ -209,7 +209,7 @@ namespace elena_lang
 
       virtual addr_t getMemoryPtr(addr_t address) = 0;
 
-      virtual addr_t getStackItem(int index) = 0;
+      virtual addr_t getStackItem(int index, disp_t offset = 0) = 0;
       virtual addr_t getStackItemAddress(disp_t disp) = 0;
 
       virtual addr_t getClassVMT(addr_t address) = 0;

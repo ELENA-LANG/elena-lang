@@ -8,6 +8,10 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
+    * debugger : parameters
+
+    * debugger : implement F4 - go to
+
     * tests : real to string
     * tests : arithmetic operations with real
 

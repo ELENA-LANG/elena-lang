@@ -649,9 +649,9 @@ addr_t Win32DebugProcess :: getStackItemAddress(disp_t disp)
    return getBP(_current->context) - disp;
 }
 
-addr_t Win32DebugProcess :: getStackItem(int index)
+addr_t Win32DebugProcess :: getStackItem(int index, disp_t offset)
 {
-   return getMemoryPtr(getStackItemAddress(index * sizeof(addr_t)));
+   return getMemoryPtr(getStackItemAddress(index * sizeof(addr_t) + offset));
 }
 
 addr_t Win32DebugProcess :: getMemoryPtr(addr_t address)

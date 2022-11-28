@@ -1290,6 +1290,36 @@ void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node, TapeS
    }
 }
 
+inline void saveParameterDebugSymbol(DebugSymbol symbol, int offset, ustr_t name, TapeScope& tapeScope)
+{
+   DebugLineInfo info = { symbol };
+   info.addresses.local.offset = offset;
+   info.addresses.local.nameRef = tapeScope.scope->debugStrings->position();
+   tapeScope.scope->debug->write(&info, sizeof(info));
+
+   tapeScope.scope->debugStrings->writeString(name);
+
+   DebugLineInfo frameInfo = { DebugSymbol::FrameInfo };
+   frameInfo.addresses.offset.disp = tapeScope.reservedN;
+   tapeScope.scope->debug->write(&frameInfo, sizeof(frameInfo));
+}
+
+void ByteCodeWriter :: saveParameterInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope)
+{
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      switch (current.key) {
+         case BuildKey::Parameter:
+            saveParameterDebugSymbol(DebugSymbol::Parameter, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
+      default:
+         break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void ByteCodeWriter :: saveExternOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
 {
    excludeFrame(tape);
@@ -1308,6 +1338,10 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
          case BuildKey::VariableInfo:
             // declaring variables / setting array size
             saveVariableInfo(tape, current, tapeScope);
+            break;
+         case BuildKey::ParameterInfo:
+            // declaring variables / setting array size
+            saveParameterInfo(tape, current, tapeScope);
             break;
          case BuildKey::Import:
             tape.write(ByteCode::ImportOn);

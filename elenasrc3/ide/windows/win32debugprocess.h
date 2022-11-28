@@ -224,7 +224,7 @@ namespace elena_lang
       ref_t getClassFlags(addr_t vmtAddress) override;
 
       addr_t getClassVMT(addr_t address) override;
-      addr_t getStackItem(int index) override;
+      addr_t getStackItem(int index, disp_t offset = 0) override;
       addr_t getStackItemAddress(disp_t disp) override;
 
       addr_t getMemoryPtr(addr_t address) override;

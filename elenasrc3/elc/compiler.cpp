@@ -7138,6 +7138,24 @@ void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope
    writer.appendNode(BuildKey::CloseFrame);
 }
 
+void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& scope)
+{
+   writer.newNode(BuildKey::ParameterInfo);
+
+   writer.newNode(BuildKey::Parameter, "self");
+   writer.appendNode(BuildKey::Index, scope.selfLocal);
+   writer.closeNode();
+
+   int prefix = scope.functionMode ? 0 : -1;
+   for (auto it = scope.parameters.start(); !it.eof(); ++it) {
+      writer.newNode(BuildKey::Parameter, it.key());
+      writer.appendNode(BuildKey::Index, prefix - (*it).offset);
+      writer.closeNode();
+   }
+
+   writer.closeNode();
+}
+
 void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
    CodeScope codeScope(&scope);
@@ -7151,6 +7169,8 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
    }
    else {
       beginMethod(writer, scope, BuildKey::Method);
+
+      writeParameterDebugInfo(writer, scope);
 
       CodeScope codeScope(&scope);
 

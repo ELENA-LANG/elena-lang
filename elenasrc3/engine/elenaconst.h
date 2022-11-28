@@ -234,6 +234,10 @@ namespace elena_lang
       IntLocalAddress      = 0x0102,
       LongLocalAddress     = 0x0103,
       RealLocalAddress     = 0x0104,
+            
+      Parameter            = 0x0200,
+
+      FrameInfo            = 0x0300,
    };
 
    // --- ClassAttribute ---
