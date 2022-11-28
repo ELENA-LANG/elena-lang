@@ -315,17 +315,17 @@ addr_t DebugInfoProvider :: findNearestAddress(ModuleBase* module, ustr_t path, 
          if (procPath.compare(path)) {
             skipping = false;
          }
-         else if (info[i].symbol == DebugSymbol::End) {
-            skipping = true;
-         }
-         else if ((info[i].symbol & DebugSymbol::DebugMask) != DebugSymbol::Breakpoint) {
-            if (_abs(nearestRow - row) > _abs(info[i].row - row)) {
-               nearestRow = info[i].row;
+      }
+      else if (info[i].symbol == DebugSymbol::End) {
+         skipping = true;
+      }
+      else if ((info[i].symbol & DebugSymbol::DebugMask) == DebugSymbol::Breakpoint) {
+         if (_abs(nearestRow - row) > _abs(info[i].row - row)) {
+            nearestRow = info[i].row;
 
-               address = info[i].addresses.step.address;
-               if (info[i].row == row)
-                  break;
-            }
+            address = info[i].addresses.step.address;
+            if (info[i].row == row)
+               break;
          }
       }
    }
@@ -547,9 +547,9 @@ void DebugController :: onInitBreakpoint()
 
          _process->setEvent(DEBUG_RESUME);
       }
-      //else if (_postponed.gotoMode) {
-      //   runToCursor(_postponed.source, _postponed.path.c_str(), _postponed.col, _postponed.row);
-      //}
+      else if (_postponed.gotoMode) {
+         runToCursor(*_postponed.source, *_postponed.path, _postponed.row);
+      }
       // otherwise continue
       else run();
    }
@@ -649,16 +649,20 @@ void DebugController :: runToCursor(ustr_t ns, ustr_t path, int row)
    if (_running || !_process->isStarted())
       return;
 
-   //if (_provider.getDebugInfoPtr() == 0 && _provider.getEntryPoint() != 0) {
-   //   _process->setBreakpoint(_provider.getEntryPoint(), false);
-   //   _postponed.clear();
-   //}
-
-   ModuleBase* currentModule = _provider.resolveModule(ns);
-   if (currentModule != nullptr) {
-      addr_t address = _provider.findNearestAddress(currentModule, path, row);
-      if (address != INVALID_ADDR) {
-         _process->setBreakpoint(address, false);
+   if (!_started) {
+      if (_provider.getDebugInfoPtr() == 0 && _provider.getEntryPoint() != 0) {
+         _process->setBreakpoint(_provider.getEntryPoint(), false);
+         _postponed.setGotoMode(0, row, ns, path);
+      }
+      _started = true;
+   }
+   else {
+      ModuleBase* currentModule = _provider.resolveModule(ns);
+      if (currentModule != nullptr) {
+         addr_t address = _provider.findNearestAddress(currentModule, path, row);
+         if (address != INVALID_ADDR) {
+            _process->setBreakpoint(address, false);
+         }
       }
    }
 

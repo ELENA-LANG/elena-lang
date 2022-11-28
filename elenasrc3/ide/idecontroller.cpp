@@ -116,7 +116,9 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
    }
 }
 
-void ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& name)
+
+
+path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& name)
 {
    size_t projectPathLen = model->projectPath.length();
 
@@ -128,6 +130,7 @@ void ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourceP
       if (path.length() > projectPathLen) {
          name.pathToName(*path + projectPathLen);
       }
+      return sourcePath + projectPathLen;
    }
    else {
       path_t rootPath = *model->paths.librarySourceRoot;
@@ -135,6 +138,8 @@ void ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourceP
 
       if (!rootPath.empty() && PathUtil::compare(sourcePath, rootPath, rootPathLen)) {
          name.pathToName(sourcePath + rootPathLen);
+
+         return sourcePath + rootPathLen;
       }
       else {
          FileNameString fileName(sourcePath);
@@ -143,6 +148,8 @@ void ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourceP
          name.copy(*tmp);
       }
    }
+
+   return sourcePath;
 }
 
 void ProjectController :: defineSourceName(ProjectModel* model, path_t path, ReferenceName& retVal)
@@ -225,8 +232,6 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
    return true;
 }
 
-
-
 void ProjectController :: doDebugAction(ProjectModel& model, SourceViewModel& sourceModel , DebugAction action)
 {
    if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
@@ -265,7 +270,7 @@ void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sour
       path_t currentPath = sourceModel.getDocumentPath(currentSource);
 
       ReferenceName ns;
-      retrieveSourceName(&model, currentPath, ns);
+      currentPath = retrieveSourceName(&model, currentPath, ns);
 
       IdentifierString pathStr(currentPath);
       _debugController.runToCursor(*ns, *pathStr, currentDoc->getCaret().y);

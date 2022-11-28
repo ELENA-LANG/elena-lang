@@ -55,7 +55,7 @@ namespace elena_lang
 
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
 
-      void retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& retVal);
+      path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& retVal);
 
       bool onDebugAction(ProjectModel& model, DebugAction action);
       bool isOutaged(bool noWarning);

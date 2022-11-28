@@ -174,7 +174,7 @@ namespace elena_lang
          bool             gotoMode;
          int              col, row;
          IdentifierString source;
-         PathString       path;
+         IdentifierString path;
 
          void clear()
          {
@@ -190,7 +190,7 @@ namespace elena_lang
             stepMode = true;
          }
 
-         void setGotoMode(int col, int row, ustr_t source, path_t path)
+         void setGotoMode(int col, int row, ustr_t source, ustr_t path)
          {
             clear();
             this->gotoMode = true;
