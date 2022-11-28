@@ -78,6 +78,10 @@ namespace elena_lang
 
       bool load(StreamReader& reader, bool setEntryAddress, DebugProcessBase* process);
 
+      ModuleBase* resolveModule(ustr_t ns);
+
+      addr_t findNearestAddress(ModuleBase* module, ustr_t path, int row);
+
       DebugLineInfo* seekDebugLineInfo(addr_t lineInfoAddress, ustr_t& moduleName, ustr_t& sourcePath);
       DebugLineInfo* seekDebugLineInfo(size_t lineInfoAddress)
       {
@@ -250,6 +254,7 @@ namespace elena_lang
       void stepOver();
       void stepInto();
       void stop();
+      void runToCursor(ustr_t name, ustr_t path, int row);
 
       void readAutoContext(ContextBrowserBase* watch, int level, WatchItems* refreshedItems);
       void readContext(ContextBrowserBase* watch, WatchContext* context);

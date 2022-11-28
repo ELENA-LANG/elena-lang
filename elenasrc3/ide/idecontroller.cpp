@@ -225,7 +225,9 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
    return true;
 }
 
-void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
+
+
+void ProjectController :: doDebugAction(ProjectModel& model, SourceViewModel& sourceModel , DebugAction action)
 {
    if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
       if (onDebugAction(model, action)) {
@@ -239,6 +241,9 @@ void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
             case DebugAction::StepOver:
                _debugController.stepOver();
                break;
+            case DebugAction::RunTo:
+               runToCursor(model, sourceModel);
+               break;
             default:
                break;
          }
@@ -250,6 +255,20 @@ void ProjectController :: doDebugStop(ProjectModel& model)
 {
    if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
       _debugController.stop();
+   }
+}
+void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sourceModel)
+{
+   auto currentDoc = sourceModel.DocView();
+   if (currentDoc != nullptr) {
+      ustr_t currentSource = sourceModel.getDocumentName(-1);
+      path_t currentPath = sourceModel.getDocumentPath(currentSource);
+
+      ReferenceName ns;
+      retrieveSourceName(&model, currentPath, ns);
+
+      IdentifierString pathStr(currentPath);
+      _debugController.runToCursor(*ns, *pathStr, currentDoc->getCaret().y);
    }
 }
 
@@ -654,7 +673,7 @@ path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
 
 void IDEController :: doDebugAction(IDEModel* model, DebugAction action)
 {
-   projectController.doDebugAction(model->projectModel, action);
+   projectController.doDebugAction(model->projectModel, model->sourceViewModel, action);
 }
 
 void IDEController :: doDebugStop(IDEModel* model)

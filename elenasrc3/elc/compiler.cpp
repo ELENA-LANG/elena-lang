@@ -7142,14 +7142,34 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& s
 {
    writer.newNode(BuildKey::ParameterInfo);
 
-   writer.newNode(BuildKey::Parameter, "self");
-   writer.appendNode(BuildKey::Index, scope.selfLocal);
-   writer.closeNode();
+   if (!scope.functionMode) {
+      writer.newNode(BuildKey::Parameter, "self");
+      writer.appendNode(BuildKey::Index, -1);
+      writer.closeNode();
+   }
 
    int prefix = scope.functionMode ? 0 : -1;
    for (auto it = scope.parameters.start(); !it.eof(); ++it) {
-      writer.newNode(BuildKey::Parameter, it.key());
-      writer.appendNode(BuildKey::Index, prefix - (*it).offset);
+      auto paramInfo = *it;
+
+      if (paramInfo.size > 0) {
+         if (paramInfo.typeInfo.typeRef == scope.moduleScope->buildins.intReference) {
+            writer.newNode(BuildKey::IntParameterAddress, it.key());
+         }
+         else if (paramInfo.typeInfo.typeRef == scope.moduleScope->buildins.longReference) {
+            writer.newNode(BuildKey::LongParameterAddress, it.key());
+         }
+         else if (paramInfo.typeInfo.typeRef == scope.moduleScope->buildins.realReference) {
+            writer.newNode(BuildKey::RealParameterAddress, it.key());
+         }
+         else {
+            // !! temporal stub
+            writer.newNode(BuildKey::Parameter, it.key());
+         }
+      }
+      else writer.newNode(BuildKey::Parameter, it.key());
+
+      writer.appendNode(BuildKey::Index, prefix - paramInfo.offset);
       writer.closeNode();
    }
 

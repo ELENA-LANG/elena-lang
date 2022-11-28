@@ -39,7 +39,8 @@ namespace elena_lang
       None,
       Run,
       StepInto,
-      StepOver
+      StepOver,
+      RunTo
    };
 
    // --- ProjectController ---
@@ -78,9 +79,10 @@ namespace elena_lang
 
       bool doCompileProject(ProjectModel& model, DebugAction postponedAction);
 
-      void doDebugAction(ProjectModel& model, DebugAction action);
+      void doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
       void doDebugStop(ProjectModel& model);
 
+      void runToCursor(ProjectModel& model, SourceViewModel& sourceModel);
       void refreshDebugContext(ContextBrowserBase* contextBrowser);
 
       void setNotifier(NotifierBase* notifier)

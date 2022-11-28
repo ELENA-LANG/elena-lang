@@ -127,6 +127,9 @@ namespace elena_lang
 
       ParameterInfo        = 0x00A0,
       Parameter            = 0x00A1,
+      IntParameterAddress  = 0x00A2,
+      LongParameterAddress = 0x00A3,
+      RealParameterAddress = 0x00A4,
 
       BinaryArray          = 0x00B0,
 

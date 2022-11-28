@@ -15,6 +15,11 @@
 
 using namespace elena_lang;
 
+DebugSymbol operator & (const DebugSymbol& l, const DebugSymbol& r)
+{
+   return (DebugSymbol)((ref_t)l & (ref_t)r);
+}
+
 // --- LibraryProvider ---
 
 inline bool isSymbolReference(ustr_t name)
@@ -179,6 +184,9 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::LongLocalAddress:
             case DebugSymbol::RealLocalAddress:
             case DebugSymbol::Parameter:
+            case DebugSymbol::IntParameterAddress:
+            case DebugSymbol::RealParameterAddress:
+            case DebugSymbol::LongParameterAddress:
                // replace field name reference with the name
                stringReader.seek(info.addresses.local.nameRef);
 
@@ -268,6 +276,62 @@ ModuleBase* DebugInfoProvider :: getDebugModule(addr_t address)
    return nullptr;
 }
 
+ModuleBase* DebugInfoProvider :: resolveModule(ustr_t ns)
+{
+   ModuleMap::Iterator it = _modules.start();
+   while (!it.eof()) {
+      auto name = (*it)->name();
+
+      if (NamespaceString::isIncluded(name, ns)) {
+         IdentifierString virtualRef(ns + name.length_pos());
+         while (true) {
+            virtualRef.append('\'');
+            virtualRef.append(NAMESPACE_REF);
+            if ((*it)->mapReference(*virtualRef, true))
+               return *it;
+
+            break;
+         }
+      }
+      ++it;
+   }
+   return nullptr;
+}
+
+addr_t DebugInfoProvider :: findNearestAddress(ModuleBase* module, ustr_t path, int row)
+{
+   MemoryBase* lineInfos = module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true);
+   MemoryBase* strings = module->mapSection(DEBUG_STRINGS_ID | mskDataRef, true);
+
+   DebugLineInfo* info = (DebugLineInfo*)lineInfos->get(sizeof(pos_t));
+   size_t count = lineInfos->length() / sizeof(DebugLineInfo);
+
+   addr_t address = INVALID_ADDR;
+   int nearestRow = 0;
+   bool skipping = true;
+   for (size_t i = 0; i < count; i++) {
+      if (info[i].symbol == DebugSymbol::Procedure) {
+         ustr_t procPath = (const char*)strings->get(info[i].addresses.source.nameRef);
+         if (procPath.compare(path)) {
+            skipping = false;
+         }
+         else if (info[i].symbol == DebugSymbol::End) {
+            skipping = true;
+         }
+         else if ((info[i].symbol & DebugSymbol::DebugMask) != DebugSymbol::Breakpoint) {
+            if (_abs(nearestRow - row) > _abs(info[i].row - row)) {
+               nearestRow = info[i].row;
+
+               address = info[i].addresses.step.address;
+               if (info[i].row == row)
+                  break;
+            }
+         }
+      }
+   }
+   return address;
+}
+
 DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, ustr_t& moduleName, ustr_t& sourcePath)
 {
    ModuleBase* module = getDebugModule(lineInfoAddress);
@@ -289,11 +353,6 @@ DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, us
       return (DebugLineInfo*)lineInfoAddress;
    }
    else return nullptr;
-}
-
-DebugSymbol operator & (const DebugSymbol& l, const DebugSymbol& r)
-{
-   return (DebugSymbol)((ref_t)l & (ref_t)r);
 }
 
 DebugLineInfo* DebugInfoProvider :: getNextStep(DebugLineInfo* step, bool stepOverMode)
@@ -585,6 +644,27 @@ void DebugController :: run()
    _process->activate();
 }
 
+void DebugController :: runToCursor(ustr_t ns, ustr_t path, int row)
+{
+   if (_running || !_process->isStarted())
+      return;
+
+   //if (_provider.getDebugInfoPtr() == 0 && _provider.getEntryPoint() != 0) {
+   //   _process->setBreakpoint(_provider.getEntryPoint(), false);
+   //   _postponed.clear();
+   //}
+
+   ModuleBase* currentModule = _provider.resolveModule(ns);
+   if (currentModule != nullptr) {
+      addr_t address = _provider.findNearestAddress(currentModule, path, row);
+      if (address != INVALID_ADDR) {
+         _process->setBreakpoint(address, false);
+      }
+   }
+
+   _process->setEvent(DEBUG_RESUME);
+}
+
 void DebugController :: stepInto()
 {
    if (_running || !_process->isStarted())
@@ -793,6 +873,9 @@ void DebugController :: readContext(ContextBrowserBase* watch, WatchContext* con
          case elDebugQWORD:
             watch->populateQWORD(context, _process->getQWORD(context->address));
             break;
+         case elDebugFLOAT64:
+            watch->populateFLOAT64(context, _process->getFLOAT64(context->address));
+            break;
          default:
             break;
       }
@@ -848,6 +931,25 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                   _process->getStackItem(
                      lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+            case DebugSymbol::IntParameterAddress:
+               item = readIntLocal(watch,
+                  _process->getStackItem(
+                     lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
+                     (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::LongParameterAddress:
+               item = readLongLocal(watch,
+                  _process->getStackItem(
+                     lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
+                     (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::RealParameterAddress:
+               item = readRealLocal(watch,
+                  _process->getStackItem(
+                     lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
+                     (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+
             default:
                break;
          }

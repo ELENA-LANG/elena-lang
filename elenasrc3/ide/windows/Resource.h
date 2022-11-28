@@ -31,7 +31,8 @@
 #define IDM_DEBUG_RUN               801
 #define IDM_DEBUG_STEPOVER          802
 #define IDM_DEBUG_STEPINTO          803
-#define IDM_DEBUG_STOP              804
+#define IDM_DEBUG_RUNTO             804
+#define IDM_DEBUG_STOP              805
 
 #define IDM_WINDOW_NEXT             901
 #define IDM_WINDOW_PREVIOUS         902

@@ -1312,7 +1312,16 @@ void ByteCodeWriter :: saveParameterInfo(CommandTape& tape, BuildNode node, Tape
          case BuildKey::Parameter:
             saveParameterDebugSymbol(DebugSymbol::Parameter, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
             break;
-      default:
+         case BuildKey::IntParameterAddress:
+            saveParameterDebugSymbol(DebugSymbol::IntParameterAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
+         case BuildKey::LongParameterAddress:
+            saveParameterDebugSymbol(DebugSymbol::LongParameterAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
+         case BuildKey::RealParameterAddress:
+            saveParameterDebugSymbol(DebugSymbol::RealParameterAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
+         default:
          break;
       }
 

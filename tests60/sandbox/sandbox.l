@@ -8,19 +8,14 @@ import extensions;
 
 singleton Tester
 {
-   test(arg)
+   test(real arg)
    {
-      int n := 2;
-
       ^ arg
    }
 }
 
-
 public program()
 {
-   var o := self;
-
    real n := 2.1;
 //    real m := 3.2;
 
@@ -54,4 +49,5 @@ public program()
     
 //    console.write(x(2.3r))
 }
+
 
