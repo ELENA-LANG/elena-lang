@@ -395,7 +395,7 @@ inline %25h
 
   push edx
   fild [esp]
-  fistp [ebx]
+  fstp qword ptr [ebx]
   add  esp, 4
 
 end

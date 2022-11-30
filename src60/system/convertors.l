@@ -151,6 +151,13 @@ public singleton realConvertor
    {
       real r := b
    }
+
+   real convert(int n)
+   {
+      real r := n;
+
+      ^ r
+   }
 }
 
 // --- charConvertor ---

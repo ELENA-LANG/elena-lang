@@ -402,7 +402,7 @@ inline %25h
 
   push rdx
   fild dword ptr [rsp]
-  fistp dword ptr [rbx]
+  fstp qword ptr [rbx]
   add  rsp, 8
 
 end

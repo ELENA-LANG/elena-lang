@@ -6,20 +6,14 @@ import extensions;
 //accumulator(n)
 //    = function(new Variable(n));
 
-singleton Tester
-{
-   test(ref real arg)
-   {
-      arg := 23.0;
-   }
-}
-
 public program()
 {
-//   real n := 2.1;
-//    real m := 3.2;
+   real r := 2;
 
-   Tester.test(ref real n);
+   real remainder := r.Integer;
+
+   real n := 2.1;
+//    real m := 3.2;
 
    console.writeLine(n);
    

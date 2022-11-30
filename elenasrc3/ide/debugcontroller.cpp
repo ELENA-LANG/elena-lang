@@ -865,6 +865,7 @@ void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, add
       WatchContext context = { parent, address };
       void* item = watch->addOrUpdate(&context, name, *classNameStr);
 
+      context.root = item;
       if (level > 0) {
          int type = flags & elDebugMask;
          switch (type) {
