@@ -852,6 +852,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::LoadDP:
          case ByteCode::XCmpDP:
          case ByteCode::FTruncDP:
+         case ByteCode::NConvFDP:
             return compileDDisp(tokenInfo, writer, opCommand, dataLocals, true);
          case ByteCode::TstM:
          case ByteCode::MovM:

@@ -8,10 +8,6 @@ import extensions;
 
 public program()
 {
-   real r := 2;
-
-   real remainder := r.Integer;
-
    real n := 2.1;
 //    real m := 3.2;
 

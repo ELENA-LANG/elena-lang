@@ -306,12 +306,22 @@ procedure __longToInt
 
 end
 
-procedure __realToInt
+procedure __realToInt (self, r,retVal)
 
-//  peek       sp:1
-//  load
-//  peek       sp:2
-//  save
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp]
+
+  peek       fp:r
+  nconf      dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:retVal
+  copy       4
+
+  close      []
 
 end
 

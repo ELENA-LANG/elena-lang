@@ -929,7 +929,7 @@ void* DebugController :: readRealLocal(ContextBrowserBase* watch, void* parent, 
 
 void DebugController :: readFields(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info)
 {
-   if (level <= 0)
+   if (level <= 0 || info == nullptr)
       return;
 
    size_t index = 1;
