@@ -50,6 +50,7 @@ namespace elena_lang
 
       void openSymbolDebugInfo(Scope& scope, ustr_t symbolName);
       void openClassDebugInfo(Scope& scope, ustr_t className, ref_t flags);
+      void saveFieldDebugInfo(Scope& scope, ClassInfo& info);
       void openMethodDebugInfo(Scope& scope, pos_t sourcePath);
       void endDebugInfo(Scope& scope);
 

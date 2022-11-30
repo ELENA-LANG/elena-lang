@@ -121,7 +121,6 @@ namespace elena_lang
    {
       void*   root;
       addr_t  address;
-      int     level;
    };
 
    typedef CachedList<void*, 20> WatchItems;
@@ -211,6 +210,9 @@ namespace elena_lang
 
       virtual addr_t getStackItem(int index, disp_t offset = 0) = 0;
       virtual addr_t getStackItemAddress(disp_t disp) = 0;
+
+      virtual addr_t getField(addr_t address, int index) = 0;
+      virtual addr_t getFieldAddress(addr_t address, disp_t disp) = 0;
 
       virtual addr_t getClassVMT(addr_t address) = 0;
       virtual ref_t getClassFlags(addr_t vmtAddress) = 0;

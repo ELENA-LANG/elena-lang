@@ -104,7 +104,7 @@ namespace elena_lang
       ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController, PlatformType platform)
          : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
-           _autoWatch({ nullptr, 0, 0 }) 
+           _autoWatch({ nullptr, 0 }) 
       {
          _notifier = nullptr;
          _platform = platform;

@@ -705,3 +705,15 @@ ref_t Win32DebugProcess :: getClassFlags(addr_t vmtAddress)
    else return 0;
 
 }
+
+addr_t Win32DebugProcess :: getField(addr_t address, int index)
+{
+   disp_t offset = index * sizeof(addr_t);
+
+   return getMemoryPtr(address + offset);
+}
+
+addr_t Win32DebugProcess :: getFieldAddress(addr_t address, disp_t disp)
+{
+   return address + disp;
+}

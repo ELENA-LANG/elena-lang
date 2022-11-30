@@ -8,18 +8,18 @@ import extensions;
 
 singleton Tester
 {
-   test(real arg)
+   test(ref real arg)
    {
-      ^ arg
+      arg := 23.0;
    }
 }
 
 public program()
 {
-   real n := 2.1;
+//   real n := 2.1;
 //    real m := 3.2;
 
-   Tester.test(n);
+   Tester.test(ref real n);
 
    console.writeLine(n);
    

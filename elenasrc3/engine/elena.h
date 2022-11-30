@@ -936,7 +936,7 @@ namespace elena_lang
          struct Module { addr_t nameRef; int flags; } classSource;
          struct Step { addr_t address; } step;
          struct Local { addr_t nameRef; int offset; } local;
-      //   struct Field { pos_t nameRef; int size; } field;
+         struct Field { addr_t nameRef; int offset; } field;
          struct Offset { pos_t disp; } offset;
       } addresses;
 

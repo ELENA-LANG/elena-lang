@@ -229,6 +229,9 @@ namespace elena_lang
       End                  = 0x0040,
       EndOfStatement       = 0x0041,
 
+      Field                = 0x0050,
+      FieldAddress         = 0x0051,
+
       Local                = 0x0100,
       LocalAddress         = 0x0101,
       IntLocalAddress      = 0x0102,
@@ -239,8 +242,10 @@ namespace elena_lang
       IntParameterAddress  = 0x0202,
       LongParameterAddress = 0x0203,
       RealParameterAddress = 0x0204,
+      ParameterAddress     = 0x0205,
 
-      FrameInfo            = 0x0300,
+      FrameInfo            = 0x0301,
+      ClassInfo            = 0x0302,
    };
 
    // --- ClassAttribute ---

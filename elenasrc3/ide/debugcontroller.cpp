@@ -121,6 +121,37 @@ ModuleBase* DebugInfoProvider :: loadDebugModule(ustr_t reference)
    return module;
 }
 
+addr_t DebugInfoProvider :: getClassAddress(ustr_t name)
+{
+   addr_t address = _classNames.get(name);
+   if (address == INVALID_ADDR) {
+      if (name.findStr(TEMPLATE_PREFIX_NS) != NOTFOUND_POS) {
+         pos_t index = name.findLast('\'');
+         name = name + index + 1;
+
+         // bad luck : we have to go through the list
+         ustr_t resolvedName = _classNames.retrieve<ustr_t>(name, name,
+            [](ustr_t arg, ustr_t ref, addr_t)
+            {
+               pos_t index = ref.findLast('\'');
+               if (index != NOTFOUND_POS) {
+                  ustr_t currentName = ref + index + 1;
+
+                  return currentName.compare(arg);
+               }
+               return false;
+            }
+         );
+
+         if (!resolvedName.empty()) {
+            address = _classNames.get(resolvedName);
+         }
+      }
+   }
+
+   return address;
+}
+
 bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressReader, DebugProcessBase* process)
 {
    bool isClass = true;
@@ -187,10 +218,19 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::IntParameterAddress:
             case DebugSymbol::RealParameterAddress:
             case DebugSymbol::LongParameterAddress:
+            case DebugSymbol::ParameterAddress:
                // replace field name reference with the name
                stringReader.seek(info.addresses.local.nameRef);
 
                ((DebugLineInfo*)current)->addresses.local.nameRef = (addr_t)stringReader.address();
+               break;
+            case DebugSymbol::Field:
+            case DebugSymbol::FieldAddress:
+            case DebugSymbol::ClassInfo:
+               // replace field name reference with the name
+               stringReader.seek(info.addresses.source.nameRef);
+
+               ((DebugLineInfo*)current)->addresses.source.nameRef = (addr_t)stringReader.address();
                break;
             case DebugSymbol::Breakpoint:
             case DebugSymbol::VirtualBreakpoint:
@@ -391,7 +431,7 @@ DebugLineInfo* DebugInfoProvider :: getNextStep(DebugLineInfo* step, bool stepOv
 
 DebugLineInfo* DebugInfoProvider :: seekClassInfo(addr_t address, IdentifierString& className, addr_t vmtAddress, ref_t flags)
 {
-   if (!vmtAddress)
+   if (!vmtAddress || vmtAddress == INVALID_ADDR)
       return nullptr;
 
    addr_t position = _classes.get(vmtAddress);
@@ -802,89 +842,128 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    else _process->setEvent(DEBUG_RESUME);
 }
 
-void* DebugController :: readObject(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
+void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className)
 {
    if (address != 0) {
       // read class VMT address if not provided
+      IdentifierString classNameStr;
+      addr_t vmtAddress = 0;
+      ref_t flags = 0;
+      if (emptystr(className)) {
+         vmtAddress = _process->getClassVMT(address);
+         flags = vmtAddress ? _process->getClassFlags(vmtAddress) : 0;
+      }
+      else {
+         classNameStr.copy(className);
+
+         vmtAddress = _provider.getClassAddress(className);
+         flags = _process->getClassFlags(vmtAddress);
+      }
+
+      DebugLineInfo* info = _provider.seekClassInfo(address, classNameStr, vmtAddress, flags);
+
+      WatchContext context = { parent, address };
+      void* item = watch->addOrUpdate(&context, name, *classNameStr);
+
+      if (level > 0) {
+         int type = flags & elDebugMask;
+         switch (type) {
+            case elDebugDWORD:
+               watch->populateDWORD(&context, _process->getDWORD(address));
+               break;
+            case elDebugQWORD:
+               watch->populateQWORD(&context, _process->getQWORD(address));
+               break;
+            case elDebugFLOAT64:
+               watch->populateFLOAT64(&context, _process->getFLOAT64(address));
+               break;
+            default:
+               readFields(watch, item, address, level, info);
+               break;
+         }
+      }
+
+      return item;
+   }
+   else {
+      WatchContext context = { parent, 0 };
+      void* item = watch->addOrUpdate(&context, name, nullptr);
+
+      return item;
+   }
+}
+
+void* DebugController :: readIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      int value = _process->getDWORD(address);
+
+      WatchContext context = { parent, address };
+      return watch->addOrUpdateDWORD(&context, name, value);
+   }
+   else return nullptr;
+}
+
+void* DebugController :: readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      long long value = _process->getQWORD(address);
+
+      WatchContext context = { parent, address };
+      return watch->addOrUpdateQWORD(&context, name, value);
+   }
+   else return nullptr;
+}
+
+void* DebugController :: readRealLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      double value = _process->getFLOAT64(address);
+
+      WatchContext context = { parent, address };
+      return watch->addOrUpdateFLOAT64(&context, name, value);
+   }
+   else return nullptr;
+}
+
+void DebugController :: readFields(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info)
+{
+   if (level <= 0)
+      return;
+
+   size_t index = 1;
+   while (info[index].symbol == DebugSymbol::Field || info[index].symbol == DebugSymbol::FieldAddress) {
+      ustr_t name = (const char*)info[index].addresses.field.nameRef;
+      addr_t fieldAddress = 0;
+      ustr_t className = nullptr;
+      if (info[index].symbol == DebugSymbol::Field) {
+         fieldAddress = _process->getField(address, info[index].addresses.field.offset);
+      }
+      else {
+         fieldAddress = _process->getFieldAddress(address, info[index].addresses.field.offset);
+      }
+      index++;
+      if (info[index].symbol == DebugSymbol::ClassInfo) {
+         className = (const char*)info[index].addresses.source.nameRef;
+
+         index++;
+      }
+
+      readObject(watch, parent, fieldAddress, name, level - 1, className);
+   }
+}
+
+void DebugController :: readContext(ContextBrowserBase* watch, void* parentItem, addr_t address, int level)
+{
+   if (_process->isStarted() && level > 0) {
       addr_t vmtAddress = _process->getClassVMT(address);
       ref_t flags = vmtAddress ? _process->getClassFlags(vmtAddress) : 0;
 
       IdentifierString className;
       DebugLineInfo* info = _provider.seekClassInfo(address, className, vmtAddress, flags);
 
-      WatchContext context = { nullptr, address, level };
-      context.root = watch->addOrUpdate(&context, name, *className);
-
-      readContext(watch, &context);
-
-      return context.root;
+      readFields(watch, parentItem, address, level, info);
    }
-   else {
-      WatchContext context = { nullptr, 0, level };
-      context.root = watch->addOrUpdate(&context, name, nullptr);
-
-      return context.root;
-   }
-}
-
-void* DebugController :: readIntLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
-{
-   if (level > 0) {
-      int value = _process->getDWORD(address);
-
-      WatchContext context = { nullptr, address, level - 1 };
-      return watch->addOrUpdateDWORD(&context, name, value);
-   }
-   else return nullptr;
-}
-
-void* DebugController::readLongLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
-{
-   if (level > 0) {
-      long long value = _process->getQWORD(address);
-
-      WatchContext context = { nullptr, address, level - 1 };
-      return watch->addOrUpdateQWORD(&context, name, value);
-   }
-   else return nullptr;
-}
-
-void* DebugController :: readRealLocal(ContextBrowserBase* watch, addr_t address, ustr_t name, int level)
-{
-   if (level > 0) {
-      double value = _process->getFLOAT64(address);
-
-      WatchContext context = { nullptr, address, level - 1 };
-      return watch->addOrUpdateFLOAT64(&context, name, value);
-   }
-   else return nullptr;
-}
-
-void DebugController :: readContext(ContextBrowserBase* watch, WatchContext* context)
-{
-   if (_process->isStarted() && context->level > 0) {
-      addr_t vmtAddress = _process->getClassVMT(context->address);
-      ref_t flags = vmtAddress ? _process->getClassFlags(vmtAddress) : 0;
-
-      IdentifierString className;
-      DebugLineInfo* info = _provider.seekClassInfo(context->address, className, vmtAddress, flags);
-
-      int type = flags & elDebugMask;
-      switch (type) {
-         case elDebugDWORD:
-            watch->populateDWORD(context, _process->getDWORD(context->address));
-            break;
-         case elDebugQWORD:
-            watch->populateQWORD(context, _process->getQWORD(context->address));
-            break;
-         case elDebugFLOAT64:
-            watch->populateFLOAT64(context, _process->getFLOAT64(context->address));
-            break;
-         default:
-            break;
-      }
-   }
-      
 }
 
 inline int getFPOffset(int argument, int argOffset)
@@ -900,6 +979,14 @@ inline int getFrameDisp(DebugLineInfo& frameInfo, disp_t offset)
    else return 0;
 }
 
+inline const char* getClassInfo(DebugLineInfo& frameInfo)
+{
+   if (frameInfo.symbol == DebugSymbol::ClassInfo) {
+      return (const char*)frameInfo.addresses.source.nameRef;
+   }
+   else return nullptr;
+}
+
 void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, WatchItems* refreshedItems)
 {
    if (_process->isStarted()) {
@@ -912,48 +999,55 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
          void* item = nullptr;
          switch (lineInfo[index].symbol) {
             case DebugSymbol::Local:
-               item = readObject(watch, _process->getStackItem(lineInfo[index].addresses.local.offset),
+               item = readObject(watch, nullptr, _process->getStackItem(lineInfo[index].addresses.local.offset),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::IntLocalAddress:
-               item = readIntLocal(watch,
+               item = readIntLocal(watch, nullptr,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::LongLocalAddress:
-               item = readLongLocal(watch,
+               item = readLongLocal(watch, nullptr,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::RealLocalAddress:
-               item = readRealLocal(watch,
+               item = readRealLocal(watch, nullptr,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::Parameter:
-               item = readObject(watch,
+               item = readObject(watch, nullptr,
                   _process->getStackItem(
                      lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
             case DebugSymbol::IntParameterAddress:
-               item = readIntLocal(watch,
+               item = readIntLocal(watch, nullptr,
                   _process->getStackItem(
                      lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
                      (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::LongParameterAddress:
-               item = readLongLocal(watch,
+               item = readLongLocal(watch, nullptr,
                   _process->getStackItem(
                      lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
                      (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::RealParameterAddress:
-               item = readRealLocal(watch,
+               item = readRealLocal(watch, nullptr,
                   _process->getStackItem(
                      lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
                      (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
-
+            case DebugSymbol::ParameterAddress:
+               item = readObject(watch, nullptr,
+                  _process->getStackItem(
+                     lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1, 
+                  getClassInfo(lineInfo[index + 2]));
+               break;
             default:
                break;
          }

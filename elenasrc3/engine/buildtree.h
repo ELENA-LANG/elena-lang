@@ -130,6 +130,7 @@ namespace elena_lang
       IntParameterAddress  = 0x00A2,
       LongParameterAddress = 0x00A3,
       RealParameterAddress = 0x00A4,
+      ParameterAddress     = 0x00A5,
 
       BinaryArray          = 0x00B0,
 
@@ -147,6 +148,7 @@ namespace elena_lang
       TrueConst            = 0x800C,
       FalseConst           = 0x800D,
       Path                 = 0x800E,
+      ClassName            = 0x800F,
 
       //MetaDictionary    = 0x0022,
       //MetaArray         = 0x1023,

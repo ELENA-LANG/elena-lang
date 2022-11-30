@@ -227,6 +227,9 @@ namespace elena_lang
       addr_t getStackItem(int index, disp_t offset = 0) override;
       addr_t getStackItemAddress(disp_t disp) override;
 
+      addr_t getField(addr_t address, int index) override;
+      addr_t getFieldAddress(addr_t address, disp_t disp) override;
+
       addr_t getMemoryPtr(addr_t address) override;
       unsigned getDWORD(addr_t address) override;
       unsigned long long getQWORD(addr_t address) override;

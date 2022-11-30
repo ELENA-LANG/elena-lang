@@ -1061,6 +1061,38 @@ void ByteCodeWriter :: openClassDebugInfo(Scope& scope, ustr_t className, ref_t 
    scope.debug->write(&symbolInfo, sizeof(DebugLineInfo));
 }
 
+void ByteCodeWriter :: saveFieldDebugInfo(Scope& scope, ClassInfo& info)
+{
+   bool isStruct = test(info.header.flags, elStructureRole);
+
+   for (auto it = info.fields.start(); !it.eof(); ++it) {
+      DebugLineInfo fieldInfo = { isStruct ? DebugSymbol::FieldAddress : DebugSymbol::Field };
+      fieldInfo.addresses.field.nameRef = scope.debugStrings->position();
+      fieldInfo.addresses.field.offset = (*it).offset;
+
+      scope.debugStrings->writeString(it.key());
+      scope.debug->write(&fieldInfo, sizeof(DebugLineInfo));
+
+      ref_t typeRef = (*it).typeInfo.typeRef;
+      if (typeRef) {
+         DebugLineInfo classInfo = { DebugSymbol::ClassInfo };
+
+         classInfo.addresses.source.nameRef = scope.debugStrings->position();
+         if (!isPrimitiveRef(typeRef)) {
+            ustr_t typeName = scope.moduleScope->module->resolveReference(typeRef);
+            if (isWeakReference(typeName)) {
+               IdentifierString fullName(scope.moduleScope->module->name());
+               fullName.append(typeName);
+
+               scope.debugStrings->writeString(*fullName);
+            }
+            else scope.debugStrings->writeString(typeName);
+         }
+         scope.debug->write(&classInfo, sizeof(DebugLineInfo));
+      }
+   }
+}
+
 void ByteCodeWriter :: openMethodDebugInfo(Scope& scope, pos_t sourcePathRef)
 {
    DebugLineInfo symbolInfo = { DebugSymbol::Procedure };
@@ -1290,7 +1322,7 @@ void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node, TapeS
    }
 }
 
-inline void saveParameterDebugSymbol(DebugSymbol symbol, int offset, ustr_t name, TapeScope& tapeScope)
+inline void saveParameterDebugSymbol(DebugSymbol symbol, int offset, ustr_t name, TapeScope& tapeScope, ustr_t className = nullptr)
 {
    DebugLineInfo info = { symbol };
    info.addresses.local.offset = offset;
@@ -1302,6 +1334,13 @@ inline void saveParameterDebugSymbol(DebugSymbol symbol, int offset, ustr_t name
    DebugLineInfo frameInfo = { DebugSymbol::FrameInfo };
    frameInfo.addresses.offset.disp = tapeScope.reservedN;
    tapeScope.scope->debug->write(&frameInfo, sizeof(frameInfo));
+
+   if (!emptystr(className)) {
+      DebugLineInfo classInfo = { DebugSymbol::ClassInfo };
+      classInfo.addresses.source.nameRef= tapeScope.scope->debugStrings->position();
+      tapeScope.scope->debug->write(&classInfo, sizeof(classInfo));
+      tapeScope.scope->debugStrings->writeString(className);
+   }
 }
 
 void ByteCodeWriter :: saveParameterInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope)
@@ -1321,8 +1360,12 @@ void ByteCodeWriter :: saveParameterInfo(CommandTape& tape, BuildNode node, Tape
          case BuildKey::RealParameterAddress:
             saveParameterDebugSymbol(DebugSymbol::RealParameterAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
             break;
+         case BuildKey::ParameterAddress:
+            saveParameterDebugSymbol(DebugSymbol::ParameterAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(),
+               tapeScope, current.findChild(BuildKey::ClassName).identifier());
+            break;
          default:
-         break;
+            break;
       }
 
       current = current.nextNode();
@@ -1534,6 +1577,7 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
       scope.debugStrings = &debugStringWriter;
 
       openClassDebugInfo(scope, moduleScope->module->resolveReference(node.arg.reference & ~mskAnyRef), info.header.flags);
+      saveFieldDebugInfo(scope, info);
       saveVMT(node, scope, sourcePath, paths, tapeOptMode);
       endDebugInfo(scope);
    }

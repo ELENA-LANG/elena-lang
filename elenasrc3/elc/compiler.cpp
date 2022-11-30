@@ -7163,8 +7163,20 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& s
             writer.newNode(BuildKey::RealParameterAddress, it.key());
          }
          else {
-            // !! temporal stub
-            writer.newNode(BuildKey::Parameter, it.key());
+            writer.newNode(BuildKey::ParameterAddress, it.key());
+
+            ref_t classRef = paramInfo.typeInfo.typeRef;
+            if (isPrimitiveRef(classRef))
+               classRef = resolvePrimitiveType(scope, paramInfo.typeInfo, true);
+
+            ustr_t className = scope.moduleScope->module->resolveReference(classRef);
+            if (isWeakReference(className)) {
+               IdentifierString fullName(scope.module->name());
+               fullName.append(className);
+
+               writer.appendNode(BuildKey::ClassName, *fullName);
+            }
+            else writer.appendNode(BuildKey::ClassName, className);
          }
       }
       else writer.newNode(BuildKey::Parameter, it.key());
