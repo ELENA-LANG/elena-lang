@@ -165,9 +165,9 @@ namespace elena_lang
       bool compileR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileRR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileCloseOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
-         ReferenceMap& dataLocals, ReferenceMap& constants);
+         int dataSize, ReferenceMap& constants);
       bool compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
-         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
+         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, int& dataSize);
       bool compileCallExt(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
 
@@ -175,7 +175,7 @@ namespace elena_lang
          ByteCodeLabelHelper& lh);
 
       bool compileByteCode(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper& lh,
-         ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
+         ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, int& dataSize);
 
       void compileConstant(ScriptToken& tokenInfo, ReferenceMap& constants);
       void compileProcedure(ScriptToken& tokenInfo, ref_t mask, ReferenceMap& constants);
