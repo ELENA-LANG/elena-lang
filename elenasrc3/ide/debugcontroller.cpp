@@ -214,6 +214,7 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::IntLocalAddress:
             case DebugSymbol::LongLocalAddress:
             case DebugSymbol::RealLocalAddress:
+            case DebugSymbol::ByteArrayAddress:
             case DebugSymbol::Parameter:
             case DebugSymbol::IntParameterAddress:
             case DebugSymbol::RealParameterAddress:
@@ -894,6 +895,31 @@ void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, add
    }
 }
 
+void* DebugController :: readByteArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      size_t length = _min(_process->getArrayLength(address), 100);
+
+      WatchContext context = { parent, address };
+      void* item = watch->addOrUpdate(&context, name, "<bytearray>");
+
+      IdentifierString value;
+      for (size_t i = 0; i < length; i++) {
+         unsigned char b = _process->getBYTE(address + i);
+
+         value.copy("[");
+         value.appendInt(i);
+         value.append("]");
+
+         WatchContext context = { item, address + i };
+         watch->addOrUpdateBYTE(&context, *value, b);
+      }
+
+      return item;
+   }
+   else return nullptr;
+}
+
 void* DebugController :: readIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
@@ -1005,6 +1031,11 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                break;
             case DebugSymbol::IntLocalAddress:
                item = readIntLocal(watch, nullptr,
+                  _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::ByteArrayAddress:
+               item = readByteArrayLocal(watch, nullptr,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;

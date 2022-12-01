@@ -8,6 +8,8 @@ import extensions;
 
 public program()
 {
+   byte tmp[10];
+
    real n := 2.1;
 //    real m := 3.2;
 

@@ -37,6 +37,21 @@ void* ContextBrowserBase :: addOrUpdateDWORD(WatchContext* context, ustr_t varia
    return item;
 }
 
+void* ContextBrowserBase :: addOrUpdateBYTE(WatchContext* context, ustr_t variableName, int value)
+{
+   void* item = findWatchNodeStartingWith(context, variableName);
+   if (item != nullptr) {
+      editWatchNode(item, variableName, "<byte>", context->address);
+   }
+   else item = addWatchNode(context->root, variableName, "<byte>", context->address);
+
+   WatchContext dwordContext = { item };
+
+   populateDWORD(&dwordContext, value);
+
+   return item;
+}
+
 void ContextBrowserBase :: populateDWORD(WatchContext* context, unsigned value)
 {
    String<char, 20> number;

@@ -309,13 +309,13 @@ public singleton stringConvertor
          decimalPart := decimalPart / 10;
 
          tmp := 48 + r;
-         buffer[index] := tmp;
-         index := index - 1;
+         buffer[i] := tmp;
+         i := i - 1;
          len := len + 1;
       };
       tmp := 48 + decimalPart;
-      buffer[index] := tmp;
-      index := index - 1;
+      buffer[i] := tmp;
+      i := i - 1;
       len := len + 1;
 
       index := i;
@@ -327,8 +327,8 @@ public singleton stringConvertor
       int i := index;
       int len := length;
 
-      buffer[index] := b;
-      index := index - 1;
+      buffer[i] := b;
+      i := i - 1;
       len := len + 1;
 
       index := i;

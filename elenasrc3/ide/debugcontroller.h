@@ -243,6 +243,7 @@ namespace elena_lang
       void* readIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readRealLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
+      void* readByteArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
 
    public:
       bool isStarted() const

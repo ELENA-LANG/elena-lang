@@ -1308,6 +1308,9 @@ void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node, TapeS
          case BuildKey::IntVariableAddress:
             saveDebugSymbol(DebugSymbol::IntLocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
             break;
+         case BuildKey::ByteArrayAddress:
+            saveDebugSymbol(DebugSymbol::ByteArrayAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
          case BuildKey::LongVariableAddress:
             saveDebugSymbol(DebugSymbol::LongLocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
             break;

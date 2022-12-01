@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x002E
+#define IDE_REVISION_NUMBER                           0x002F
 
 namespace elena_lang
 {
@@ -139,6 +139,7 @@ namespace elena_lang
       virtual void expandRootNode() = 0;
 
       virtual void* addOrUpdate(WatchContext* root, ustr_t name, ustr_t className);
+      virtual void* addOrUpdateBYTE(WatchContext* root, ustr_t name, int value);
       virtual void* addOrUpdateDWORD(WatchContext* root, ustr_t name, int value);
       virtual void* addOrUpdateQWORD(WatchContext* root, ustr_t name, long long value);
       virtual void* addOrUpdateFLOAT64(WatchContext* root, ustr_t name, double value);
@@ -217,6 +218,9 @@ namespace elena_lang
       virtual addr_t getClassVMT(addr_t address) = 0;
       virtual ref_t getClassFlags(addr_t vmtAddress) = 0;
 
+      virtual size_t getArrayLength(addr_t address) = 0;
+
+      virtual char getBYTE(addr_t address) = 0;
       virtual unsigned int getDWORD(addr_t address) = 0;
       virtual unsigned long long getQWORD(addr_t address) = 0;
       virtual double getFLOAT64(addr_t address) = 0;

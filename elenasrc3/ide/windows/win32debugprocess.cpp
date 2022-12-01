@@ -17,6 +17,7 @@ using namespace elena_lang;
 #ifdef _M_IX86
 
 typedef unsigned long SIZE_T;
+typedef VMTHeader32 VMTHeader;
 
 constexpr auto elVMTFlagOffset = elVMTFlagOffset32;
 constexpr auto elObjectOffset = elObjectOffset32;
@@ -39,6 +40,7 @@ inline void setIP(CONTEXT& context, addr_t address)
 #elif _M_X64
 
 typedef size_t SIZE_T;
+typedef VMTHeader64 VMTHeader;
 
 constexpr auto elVMTFlagOffset = elVMTFlagOffset64;
 constexpr auto elObjectOffset = elObjectOffset64;
@@ -675,6 +677,16 @@ unsigned Win32DebugProcess :: getDWORD(addr_t address)
    else return 0;
 }
 
+char Win32DebugProcess::getBYTE(addr_t address)
+{
+   char b = 0;
+
+   if (_current->readDump(address, (char*)&b, 1)) {
+      return b;
+   }
+   else return 0;
+}
+
 unsigned long long Win32DebugProcess :: getQWORD(addr_t address)
 {
    unsigned long long qword = 0;
@@ -716,4 +728,15 @@ addr_t Win32DebugProcess :: getField(addr_t address, int index)
 addr_t Win32DebugProcess :: getFieldAddress(addr_t address, disp_t disp)
 {
    return address + disp;
+}
+
+size_t Win32DebugProcess :: getArrayLength(addr_t address)
+{
+   VMTHeader header;
+   if (readDump(address - sizeof(header), (char*)&header, sizeof(header))) {
+      return header.count;
+   }
+
+   size_t len = 0;
+   
 }

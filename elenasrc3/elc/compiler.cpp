@@ -6675,19 +6675,30 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
 {
    for (auto it = codeScope.locals.start(); !it.eof(); ++it) {
       auto localInfo = *it;
+      bool embeddableArray = false;
       if (localInfo.typeInfo.typeRef) {
          ref_t typeRef = localInfo.typeInfo.typeRef;
+
          if (localInfo.typeInfo.isPrimitive() && localInfo.typeInfo.elementRef)
             typeRef = resolvePrimitiveType(codeScope, localInfo.typeInfo, false);
 
-         if (_logic->isEmbeddableArray(*codeScope.moduleScope, typeRef)) {
+         embeddableArray = _logic->isEmbeddableArray(*codeScope.moduleScope, typeRef);
+         if (embeddableArray) {
             node.appendChild(BuildKey::BinaryArray, localInfo.offset)
                .appendChild(BuildKey::Size, localInfo.size);
          }
       }
 
       if (localInfo.size > 0) {
-         if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.intReference) {
+         if (embeddableArray) {
+            if (_logic->isCompatible(*codeScope.moduleScope, 
+               { codeScope.moduleScope->buildins.byteReference }, { localInfo.typeInfo.elementRef }, false)) 
+            {
+               BuildNode varNode = node.appendChild(BuildKey::ByteArrayAddress, it.key());
+               varNode.appendChild(BuildKey::Index, localInfo.offset);
+            }
+         }
+         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.intReference) {
             BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);
          }
