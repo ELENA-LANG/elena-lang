@@ -17,7 +17,12 @@ ProjectModel :: ProjectModel(IDEStatus* status)
 
    this->autoRecompile = /*true*/false;// !! temporal
 
+#ifdef _M_IX86
    this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60\\");      // !! temporal
+#else
+   this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60_64\\");      // !! temporal
+#endif
+
    this->paths.librarySourceRoot.copy("C:\\Alex\\ELENA\\src60\\");// !! temporal
 
    // !!NOTE : make sure the path separator should tail the path

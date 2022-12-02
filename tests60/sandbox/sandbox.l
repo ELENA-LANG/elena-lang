@@ -8,13 +8,13 @@ import extensions;
 
 public program()
 {
-   real n := 2.1;
-//   real m := 3.2;
+    real n := 2.0;
+//    real m := 3.0;
+//    real k := 4.0;
 
-   console.writeLine(n);
-   
-//   real r := n + m;
-//   console.writeLine(r);
+    console.writeLine(n);
+
+//    Assert.ifTrue(n + m * k == 14.0);
   
 //    console.writeLine(n == m);            
 

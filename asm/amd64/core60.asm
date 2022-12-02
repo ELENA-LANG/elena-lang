@@ -955,6 +955,7 @@ end
 // ; fcmpn 8
 inline %0C1h
 
+  mov    rsi, r10
   xor    eax, eax
   fld    qword ptr [rbx]
   mov    ecx, 1
@@ -1078,6 +1079,7 @@ end
 // ; faddndp
 inline %0D0h
 
+  mov  rsi, r10
   lea  rdi, [rbp + __arg32_1]
 
   fld   qword ptr [rdi]
@@ -1089,6 +1091,7 @@ end
 // ; fsubndp
 inline %0D1h
 
+  mov  rsi, r10
   lea  rdi, [rbp + __arg32_1]
 
   fild  qword ptr [rdi]
@@ -1100,6 +1103,7 @@ end
 // ; fmulndp
 inline %0D2h
 
+  mov  rsi, r10
   lea  rdi, [rbp + __arg32_1]
 
   fld   qword ptr [rdi]
@@ -1111,6 +1115,7 @@ end
 // ; fdivndp
 inline %0D3h
 
+  mov  rsi, r10
   lea  rdi, [rbp + __arg32_1]
 
   fld   qword ptr [rdi]

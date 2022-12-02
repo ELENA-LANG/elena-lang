@@ -8,7 +8,7 @@ In development:
         / ide debugger (ELENA 6.0 alpha) 
         / api documentation / ide project managment (ELENA 6.0 beta) ===
 
-    * tests : arithmetic operations with real
+    * tests : arithmetic operations with real for amd64
 
     * tests : bitwise / shift operations with int
     * tests : bitwise / shift operations with long
