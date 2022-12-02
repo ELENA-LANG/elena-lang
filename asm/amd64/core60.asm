@@ -955,12 +955,14 @@ end
 // ; fcmpn 8
 inline %0C1h
 
-  fld    qword ptr [rsi]
+  xor    eax, eax
   fld    qword ptr [rbx]
-  xor    edx, edx
+  mov    ecx, 1
+  fld    qword ptr [rsi]
   fcomip st, st(1)
-  sete   dl
-  fstp  st(0)
+  setae  al
+  fstp   st(0)
+  cmp    eax, ecx
 
 end
 

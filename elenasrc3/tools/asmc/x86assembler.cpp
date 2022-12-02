@@ -2332,6 +2332,9 @@ bool X86Assembler::compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
    else if (tokenInfo.compare("sbb")) {
       compileSbb(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("setae")) {
+      compileSetcc(tokenInfo, writer, X86JumpType::JAE);
+   }
    else if (tokenInfo.compare("sete")) {
       compileSetcc(tokenInfo, writer, X86JumpType::JE);
    }

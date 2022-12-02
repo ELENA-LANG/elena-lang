@@ -335,6 +335,20 @@ public singleton stringConvertor
       length := len;
    }
 
+   private int skipTrailingZerros(int value)
+   {
+      int n := value;
+      while (n != 0) {
+         int r := n.mod(10);
+         if (r != 0) {
+            ^ n;
+         };
+         n := n / 10;            
+      };
+
+      ^ n;
+   }
+   
    string convert(real value)
    {
       real r := value;
@@ -375,6 +389,7 @@ public singleton stringConvertor
       };
 
       // write decimal part
+      decimalPart := self.skipTrailingZerros(decimalPart);
       self.writeInteger(buffer, decimalPart, ref index, ref length);
 
       // decimal sign    
@@ -392,7 +407,7 @@ public singleton stringConvertor
          self.writeByte(buffer, tmp, ref index, ref length); 
       };
 
-      ^ String.fromByteArray(index, length, buffer);      
+      ^ String.fromByteArray(index + 1, length, buffer);      
    }
 
    string convert(char ch)

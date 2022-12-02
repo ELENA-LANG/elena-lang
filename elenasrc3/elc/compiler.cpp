@@ -12,7 +12,7 @@
 
 #include "bytecode.h"
 
-//#define FULL_OUTOUT_INFO 1
+#define FULL_OUTOUT_INFO 1
 
 using namespace elena_lang;
 
@@ -1718,7 +1718,8 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
             if (byRefMethod) {
                current.appendChild(SyntaxKey::ByRefRetMethod, byRefMethod);
 
-               if (retrieveMethod(implicitMultimethods, byRefMethod) == 0) {
+               // HOTFIX : do not need to generate byref stub for the private method, it will be added later in the code
+               if (!test(current.arg.reference, STATIC_MESSAGE) && retrieveMethod(implicitMultimethods, byRefMethod) == 0) {
                   implicitMultimethods.add({ byRefMethod, VirtualType::EmbeddableWrapper });
                   thirdPassRequired = true;
                }
