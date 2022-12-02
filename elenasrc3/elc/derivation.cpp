@@ -1091,7 +1091,7 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
          case DeclarationType::Class:
             writer.CurrentNode().setKey(SyntaxKey::Class);
 
-            flushClass(writer, scope, node, node.existChild(SyntaxKey::CodeBlock));
+            flushClass(writer, scope, node, node.existChild(SyntaxKey::CodeBlock, SyntaxKey::ReturnExpression));
             break;
          default:
             break;

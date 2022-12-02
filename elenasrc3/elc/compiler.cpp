@@ -87,6 +87,34 @@ inline void addByRefRetVal(ArgumentsInfo& arguments, ObjectInfo& tempRetVal)
    else arguments.add({ ObjectKind::TempLocalAddress, { V_WRAPPER, tempRetVal.typeInfo.typeRef }, tempRetVal.argument, tempRetVal.extra });
 }
 
+void declareTemplateParameters(ModuleBase* module, TemplateTypeList& typeList,
+   SyntaxTree& dummyTree, List<SyntaxNode>& parameters)
+{
+   SyntaxTreeWriter dummyWriter(dummyTree);
+   dummyWriter.newNode(SyntaxKey::Root);
+
+   for (size_t i = 0; i < typeList.count(); i++) {
+      ref_t elementRef = typeList[i];
+
+      dummyWriter.newNode(SyntaxKey::TemplateArg, elementRef);
+
+      parameters.add(dummyWriter.CurrentNode());
+
+      dummyWriter.newNode(SyntaxKey::Type);
+
+      ustr_t referenceName = module->resolveReference(elementRef);
+      if (isWeakReference(referenceName)) {
+         dummyWriter.appendNode(SyntaxKey::reference, referenceName);
+      }
+      else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
+
+      dummyWriter.closeNode();
+      dummyWriter.closeNode();
+   }
+
+   dummyWriter.closeNode();
+}
+
 // --- Interpreter ---
 
 Interpreter :: Interpreter(ModuleScopeBase* scope, CompilerLogic* logic)
@@ -1101,19 +1129,22 @@ mssg_t Compiler :: mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionNa
    return encodeMessage(actionRef, argCount, flags);
 }
 
-ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix)
+ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
+   ustr_t prefix, bool skipLoading)
 {
    SyntaxNode identNode = node.firstChild(SyntaxKey::TerminalMask);
 
    IdentifierString templateName;
 
-   SyntaxNode current = node.firstChild();
-   while (current.key != SyntaxKey::None) {
-      if (current.key == SyntaxKey::TemplateArg) {
-         parameters.add(current);
-      }
+   if (!skipLoading) {
+      SyntaxNode current = node.firstChild();
+      while (current.key != SyntaxKey::None) {
+         if (current.key == SyntaxKey::TemplateArg) {
+            parameters.add(current);
+         }
 
-      current = current.nextNode();
+         current = current.nextNode();
+      }
    }
 
    templateName.append(prefix);
@@ -1136,10 +1167,16 @@ ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<
 
 bool Compiler :: importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
 {
+   TemplateTypeList typeList;
+   declareTemplateAttributes(scope, node, typeList, true, false);
+
+   // HOTFIX : generate a temporal template to pass the type
+   SyntaxTree dummyTree;
    List<SyntaxNode> parameters({});
+   declareTemplateParameters(scope.module, typeList, dummyTree, parameters);
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   ref_t templateRef = retrieveTemplate(*ns, node, parameters, nullptr);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, nullptr, true);
    if (!templateRef)
       return false;
 
@@ -1154,7 +1191,7 @@ bool Compiler :: importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t post
    List<SyntaxNode> parameters({});
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix, false);
    if (!templateRef)
       return false;
 
@@ -1194,7 +1231,7 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
    writer.closeNode();
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix, false);
    if (!templateRef)
       return false;
 
@@ -3725,9 +3762,9 @@ ref_t Compiler :: mapTemplateType(Scope& scope, SyntaxNode node)
 }
 
 void Compiler :: declareTemplateAttributes(Scope& scope, SyntaxNode node, 
-   TemplateTypeList& parameters, bool declarationMode)
+   TemplateTypeList& parameters, bool declarationMode, bool objectMode)
 {
-   SyntaxNode current = node.nextNode();
+   SyntaxNode current = objectMode ? node.nextNode() : node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::TemplateArg) {
          ref_t typeRef = resolveStrongTypeAttribute(scope, current, declarationMode);
@@ -3759,40 +3796,10 @@ ObjectInfo Compiler :: defineArrayType(Scope& scope, ObjectInfo info)
    return info;
 }
 
-void declareTemplateParameters(ModuleBase* module, TemplateTypeList& typeList,
-   SyntaxTree& dummyTree, List<SyntaxNode>& parameters)
-{
-   SyntaxTreeWriter dummyWriter(dummyTree);
-   dummyWriter.newNode(SyntaxKey::Root);
-
-   for (size_t i = 0; i < typeList.count(); i++) {
-      ref_t elementRef = typeList[i];
-
-      dummyWriter.newNode(SyntaxKey::TemplateArg, elementRef);
-
-      parameters.add(dummyWriter.CurrentNode());
-
-      dummyWriter.newNode(SyntaxKey::Type);
-
-      ustr_t referenceName = module->resolveReference(elementRef);
-      if (isWeakReference(referenceName)) {
-         dummyWriter.appendNode(SyntaxKey::reference, referenceName);
-      }
-      else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
-
-      dummyWriter.closeNode();
-      dummyWriter.closeNode();
-   }
-
-   dummyWriter.closeNode();
-
-
-}
-
 ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode)
 {
    TemplateTypeList typeList;
-   declareTemplateAttributes(scope, node, typeList, declarationMode);
+   declareTemplateAttributes(scope, node, typeList, declarationMode, true);
 
    // HOTFIX : generate a temporal template to pass the type
    SyntaxTree dummyTree;
@@ -4914,11 +4921,16 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          else scope.raiseError(errUnknownMessage, node.findChild(SyntaxKey::Message));
       }
       else {
+         bool weakTarget = targetRef == scope.moduleScope->buildins.superReference;
+
          // treat it as a weak reference
          targetRef = 0;
 
          SyntaxNode messageNode = node.findChild(SyntaxKey::Message);
-         if (messageNode == SyntaxKey::None) {
+         if (weakTarget/* || ignoreWarning*/) {
+            // ignore warning for super class / type-less one
+         }
+         else if (messageNode == SyntaxKey::None) {
             if (test(message, CONVERSION_MESSAGE)) {
                scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownTypecast, node);
             }

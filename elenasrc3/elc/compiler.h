@@ -872,7 +872,7 @@ namespace elena_lang
       mssg_t defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode);
 
       void declareTemplateAttributes(Scope& scope, SyntaxNode node, TemplateTypeList& parameters, 
-         bool declarationMode);
+         bool declarationMode, bool objectMode);
 
       ObjectInfo defineArrayType(Scope& scope, ObjectInfo info);
       ref_t defineArrayType(Scope& scope, ref_t elementRef);
@@ -898,7 +898,8 @@ namespace elena_lang
 
       bool resolveAutoType(ExprScope& scope, ObjectInfo source, ObjectInfo& target);
 
-      ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, ustr_t prefix); 
+      ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
+         ustr_t prefix, bool skipLoading);
 
       mssg_t resolveByRefHandler(Scope& scope, ref_t targetRef, ref_t expectedRef, mssg_t weakMessage, ref_t& signatureRef);
       mssg_t resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectInfo target, ExprScope& scope, mssg_t weakMessage,

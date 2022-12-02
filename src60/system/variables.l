@@ -45,3 +45,37 @@ public sealed Reference<T> : BaseVariable,
    dispatch() => value;
 }
 
+public class Variable : BaseVariable, Reference<object>,
+   info<"A generic variable.<br/>Extends an assigned value">
+{
+   constructor()
+         : info<"Creates the empty variable">
+   {
+   }
+
+   constructor(value)
+         : info<"Creates the variable">
+   {
+      this value := value
+   }
+
+   append(val)
+   {
+      if (value == nil) {
+         value := val
+      }
+      else {
+         value += val;
+      }
+   }
+
+   reduce(val)
+   {
+      if (value == nil) {
+         value := val
+      }
+      else {
+         value -= val;
+      }
+   }
+}
