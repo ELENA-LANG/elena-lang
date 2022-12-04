@@ -572,6 +572,36 @@ void shortSOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+
+void nilCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   // NOTE : sp[0] - loperand
+   tape.write(ByteCode::CmpR, 0);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case EQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+   default:
+      assert(false);
+      break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
 void realCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    bool inverted = false;
@@ -1010,7 +1040,7 @@ ByteCodeWriter::Saver commands[] =
    shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning, staticVarOp, loadingIndex, nilOp,
 
    intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
-   realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend
+   realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp
 };
 
 // --- ByteCodeWriter ---
@@ -1439,7 +1469,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
       }
    
-      current = current.nextNode();
+         current = current.nextNode();
    }
 }
 

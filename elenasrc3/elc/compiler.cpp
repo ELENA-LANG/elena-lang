@@ -4508,7 +4508,15 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
          outputRef = loperand.typeInfo.elementRef;
       }
 
-      if (outputRef && _logic->isEmbeddable(*scope.moduleScope, outputRef))
+      if (op == BuildKey::NilCondOp) {
+         // NOTE : the nil operation need only one (not nil) operand
+         if (loperand.typeInfo.typeRef == V_NIL) {
+            loperand = roperand;
+         }
+
+         rnode = {};
+      }
+      else if (outputRef && _logic->isEmbeddable(*scope.moduleScope, outputRef))
          needToAlloc = true;
 
       if (needToAlloc) {
@@ -4545,6 +4553,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
          case BuildKey::ShortCondOp:
          case BuildKey::LongCondOp:
          case BuildKey::RealCondOp:
+         case BuildKey::NilCondOp:
             writer.appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);
             writer.appendNode(BuildKey::FalseConst, scope.moduleScope->branchingInfo.falseRef);
             break;

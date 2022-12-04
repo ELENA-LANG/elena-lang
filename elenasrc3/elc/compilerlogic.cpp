@@ -50,9 +50,21 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 96;
+constexpr auto OperationLength = 100;
 constexpr Op Operations[OperationLength] =
 {
+   {
+      EQUAL_OPERATOR_ID, BuildKey::NilCondOp, V_NIL, V_OBJECT, 0, V_FLAG
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::NilCondOp, V_OBJECT, V_NIL, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::NilCondOp, V_NIL, V_OBJECT, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::NilCondOp, V_OBJECT, V_NIL, 0, V_FLAG
+   },
    {
       SET_INDEXER_OPERATOR_ID, BuildKey::DictionaryOp, V_DICTIONARY, V_INT32, V_STRING, V_OBJECT
    },
