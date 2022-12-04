@@ -1118,7 +1118,8 @@ namespace elena_lang
       ObjectInfo compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
       ObjectInfo compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode);
 
-      void beginMethod(BuildTreeWriter& writer, MethodScope& scope, BuildKey scopeKey);
+      void beginMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, BuildKey scopeKey, 
+         bool withDebugInfo);
       void endMethod(BuildTreeWriter& writer, MethodScope& scope);
 
       void compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, 

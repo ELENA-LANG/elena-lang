@@ -373,11 +373,11 @@ addr_t DebugInfoProvider :: findNearestAddress(ModuleBase* module, ustr_t path, 
    return address;
 }
 
-DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, ustr_t& moduleName, ustr_t& sourcePath)
+DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, IdentifierString& moduleName, ustr_t& sourcePath)
 {
    ModuleBase* module = getDebugModule(lineInfoAddress);
    if (module) {
-      moduleName = module->name();
+      moduleName.copy(module->name());
 
       DebugLineInfo* current = (DebugLineInfo*)lineInfoAddress;
       while (current->symbol != DebugSymbol::Procedure)
@@ -386,8 +386,14 @@ DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, us
       if (current->addresses.source.nameRef != INVALID_POS) {
          MemoryBase* section = module->mapSection(DEBUG_STRINGS_ID, true);
 
-         if (section != NULL) {
+         if (section != nullptr) {
             sourcePath = (const char*)section->get(current->addresses.source.nameRef);
+
+            if (sourcePath.find('\'') != NOTFOUND_POS) {
+               pos_t index = sourcePath.find('\'');
+               moduleName.copy(sourcePath, index);
+               sourcePath = sourcePath + index + 1;
+            }
          }
       }
 
@@ -606,7 +612,7 @@ void DebugController :: processStep()
          return;
       }
 
-      ustr_t moduleName = nullptr;
+      IdentifierString moduleName;
       ustr_t sourcePath = nullptr;
       DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState(), moduleName, sourcePath);
       /*if (lineInfo->symbol == dsAssemblyStep) {
@@ -621,7 +627,7 @@ void DebugController :: processStep()
          stepInto();
          //}
       }
-      else */onCurrentStep(lineInfo, moduleName, sourcePath);
+      else */onCurrentStep(lineInfo, *moduleName, sourcePath);
    }
    //if (_debugger.Context()->checkFailed) {
    //   _listener->onCheckPoint(_T("Operation failed"));

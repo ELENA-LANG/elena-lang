@@ -2209,6 +2209,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
          case SyntaxKey::ResendDispatch:
          case SyntaxKey::Redirect:
          case SyntaxKey::identifier:
+         case SyntaxKey::SourcePath:
             break;
          case SyntaxKey::WithoutBody:
             withoutBody = true;
@@ -6668,10 +6669,20 @@ void Compiler :: compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope)
    writer.closeNode();
 }
 
-void Compiler :: beginMethod(BuildTreeWriter& writer, MethodScope& scope, BuildKey scopeKey)
+void Compiler :: beginMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, BuildKey scopeKey, bool withDebugInfo)
 {
    writer.newNode(scopeKey, scope.message);
-   writer.newNode(BuildKey::Tape);
+
+   if (withDebugInfo) {
+      SyntaxNode pathNode = node.findChild(SyntaxKey::SourcePath);
+      if (pathNode != SyntaxKey::None)
+         writer.appendNode(BuildKey::Path, pathNode.identifier());
+
+      writer.newNode(BuildKey::Tape);
+
+      writeParameterDebugInfo(writer, scope);
+   }
+   else writer.newNode(BuildKey::Tape);
 }
 
 void Compiler :: endMethod(BuildTreeWriter& writer, MethodScope& scope)
@@ -6861,7 +6872,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
 
 void Compiler :: compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode)
 {
-   beginMethod(writer, scope, BuildKey::Method);
+   beginMethod(writer, scope, classNode, BuildKey::Method, false);
 
    CodeScope codeScope(&scope);
 
@@ -7218,15 +7229,13 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
    if (scope.info.byRefHandler) {
       mssg_t privateImplementation = compileByRefHandler(writer, scope, node, scope.info.byRefHandler);
 
-      beginMethod(writer, scope, BuildKey::Method);
+      beginMethod(writer, scope, node, BuildKey::Method, false);
       compileByRefHandlerInvoker(writer, scope, codeScope, privateImplementation, scope.info.outputRef);
       codeScope.syncStack(&scope);
       endMethod(writer, scope);
    }
    else {
-      beginMethod(writer, scope, BuildKey::Method);
-
-      writeParameterDebugInfo(writer, scope);
+      beginMethod(writer, scope, node, BuildKey::Method, true);
 
       CodeScope codeScope(&scope);
 
@@ -7329,7 +7338,7 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
       defConstrMssg = defConstrMssg | STATIC_MESSAGE;
    }
 
-   beginMethod(writer, scope, BuildKey::Method);
+   beginMethod(writer, scope, node, BuildKey::Method, true);
 
    CodeScope codeScope(&scope);
    ref_t classFlags = codeScope.getClassFlags();
@@ -7436,6 +7445,8 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
 
 void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node)
 {
+   writer.appendNode(BuildKey::DispatchingOp);
+
    // new stack frame
    writer.appendNode(BuildKey::OpenFrame);
 
@@ -7466,6 +7477,7 @@ void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope&
    writeObjectInfo(writer, exprScope, retVal);
 
    writer.appendNode(BuildKey::LoadingIndex, mssgVar.reference);
+   writer.appendNode(BuildKey::RedirectOp);
 
    exprScope.syncStack();
 
@@ -7478,7 +7490,7 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
 {
    CodeScope codeScope(&scope);
 
-   beginMethod(writer, scope, BuildKey::Method);
+   beginMethod(writer, scope, node, BuildKey::Method, false);
 
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
    switch (current.key) {
@@ -7626,7 +7638,7 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
 
 void Compiler :: compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
-   beginMethod(writer, scope, BuildKey::Method);
+   beginMethod(writer, scope, node, BuildKey::Method, false);
 
    CodeScope codeScope(&scope);
 
@@ -7788,7 +7800,11 @@ void Compiler :: compileClass(BuildTreeWriter& writer, ClassScope& scope, Syntax
 void Compiler :: compileClassClass(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope,
    SyntaxNode node)
 {
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(classClassScope, Scope::ScopeLevel::Namespace);
+
    writer.newNode(BuildKey::Class, classClassScope.reference);
+   writer.appendNode(BuildKey::Path, *ns->sourcePath);
+
    compileClassVMT(writer, classClassScope, scope, node);
    writer.closeNode();
 }

@@ -689,6 +689,17 @@ void SyntaxTreeBuilder :: flushClosure(SyntaxTreeWriter& writer, Scope& scope, S
 
 void SyntaxTreeBuilder :: flushMethod(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
+   if (scope.type != ScopeType::Unknown) {
+      ustr_t path = retrievePath(writer.CurrentNode());
+      if (!path.empty()) {
+         IdentifierString pathStr(_moduleScope->module->name());
+         pathStr.append('\'');
+         pathStr.append(path);
+
+         writer.appendNode(SyntaxKey::SourcePath, *pathStr);
+      }
+   }
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {

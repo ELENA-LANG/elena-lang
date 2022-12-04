@@ -46,7 +46,7 @@ namespace elena_lang
       const Saver*       _commands;
       LibraryLoaderBase* _loader;
 
-      pos_t savePath(BuildNode node, SectionScopeBase* moduleScope, ReferenceMap& paths);
+      pos_t savePath(BuildNode node, Scope& scope, ReferenceMap& paths);
 
       void openSymbolDebugInfo(Scope& scope, ustr_t symbolName);
       void openClassDebugInfo(Scope& scope, ustr_t className, ref_t flags);
@@ -76,7 +76,8 @@ namespace elena_lang
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
          ReferenceMap& paths, bool tapeOptMode);
 
-      void saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths, bool tapeOptMode);
+      void saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths, 
+         bool tapeOptMode);
 
       void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
          ReferenceMap& paths, bool tapeOptMode);

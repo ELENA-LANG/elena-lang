@@ -84,7 +84,7 @@ namespace elena_lang
 
       addr_t findNearestAddress(ModuleBase* module, ustr_t path, int row);
 
-      DebugLineInfo* seekDebugLineInfo(addr_t lineInfoAddress, ustr_t& moduleName, ustr_t& sourcePath);
+      DebugLineInfo* seekDebugLineInfo(addr_t lineInfoAddress, IdentifierString& moduleName, ustr_t& sourcePath);
       DebugLineInfo* seekDebugLineInfo(size_t lineInfoAddress)
       {
          return (DebugLineInfo*)lineInfoAddress;

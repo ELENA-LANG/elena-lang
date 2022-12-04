@@ -102,6 +102,7 @@ namespace elena_lang
       RealCondOp           = 0x0049,
       VirtualBreakoint     = 0x004A,
       ConversionOp         = 0x004B,
+      SemictResendOp       = 0x004C,
 
       Import               = 0x0058,
       DictionaryOp         = 0x0059,
