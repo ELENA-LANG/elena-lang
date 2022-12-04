@@ -999,9 +999,115 @@ void Compiler::ExprScope :: syncStack()
 // --- Compiler::InlineClassScope ---
 
 Compiler::InlineClassScope :: InlineClassScope(ExprScope* owner, ref_t reference)
-   : ClassScope(owner, reference, Visibility::Internal)
+   : ClassScope(owner, reference, Visibility::Internal),
+      outers({})
 {
-   
+}
+
+inline void mapNewField(ClassInfo::FieldMap& fields, ustr_t name, FieldInfo info)
+{
+   if (!fields.exist(name)) {
+      fields.add(name, info);
+   }
+}
+
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
+{
+   Outer ownerVar = outers.get(*moduleScope->selfVar);
+   // if owner reference is not yet mapped, add it
+   if (ownerVar.outerObject.kind == ObjectKind::Unknown) {
+      ownerVar.reference = info.fields.count();
+
+      ownerVar.outerObject = parent->mapIdentifier(*moduleScope->selfVar, false, EAttr::None);
+      if (ownerVar.outerObject.kind == ObjectKind::Unknown) {
+         // HOTFIX : if it is a singleton nested class
+         ownerVar.outerObject = { ObjectKind::SelfLocal, {}, 1 };
+      }
+      else if (ownerVar.outerObject.kind == ObjectKind::SelfLocal) {
+         ownerVar.outerObject.typeInfo.typeRef = ((ExprScope*)parent)->getClassRef(false);
+      }
+
+      outers.add(*moduleScope->selfVar, ownerVar);
+      mapNewField(info.fields, *moduleScope->selfVar, FieldInfo{ (int)ownerVar.reference, ownerVar.outerObject.typeInfo });
+   }
+
+   return ownerVar;
+}
+
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapOwner()
+{
+   Outer ownerVar = outers.get(OWNER_VAR);
+   if (ownerVar.outerObject.kind == ObjectKind::Unknown) {
+      ownerVar.outerObject = parent->mapIdentifier(OWNER_VAR, false, EAttr::None);
+      if (ownerVar.outerObject.kind != ObjectKind::Unknown) {
+         ownerVar.reference = info.fields.count();
+
+         outers.add(OWNER_VAR, ownerVar);
+         mapNewField(info.fields, OWNER_VAR, FieldInfo{ (int)ownerVar.reference, ownerVar.outerObject.typeInfo });
+      }
+      else return mapSelf();
+   }
+
+   return ownerVar;
+}
+
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapParent()
+{
+   Outer parentVar = outers.get(PARENT_VAR);
+   if (parentVar.outerObject.kind == ObjectKind::Unknown) {
+      parentVar.reference = info.fields.count();
+      ExprScope* exprScope = Scope::getScope<ExprScope>(*parent, ScopeLevel::Expr);
+      if (exprScope) {
+         parentVar.outerObject = exprScope->mapSelf();
+      }
+      else parentVar = mapOwner();
+
+      outers.add(PARENT_VAR, parentVar);
+      mapNewField(info.fields, PARENT_VAR, FieldInfo{ (int)parentVar.reference, parentVar.outerObject.typeInfo });
+   }
+
+   return parentVar;
+}
+
+ObjectInfo Compiler::InlineClassScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
+{
+   Outer outer = outers.get(identifier);
+   if (outer.reference != INVALID_REF) {
+      return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference };
+   }
+   else {
+      outer.outerObject = parent->mapIdentifier(identifier, referenceOne, attr);
+      switch (outer.outerObject.kind) {
+         case ObjectKind::Field:
+         case ObjectKind::ReadOnlyField:
+         {
+            // handle outer fields in a special way: save only self
+            Outer owner = mapParent();
+
+            return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.outerObject.reference };
+         }
+         case ObjectKind::Param:
+         case ObjectKind::Local:
+         case ObjectKind::Outer:
+         case ObjectKind::OuterField:
+         case ObjectKind::SuperLocal:
+         case ObjectKind::SelfLocal:
+         case ObjectKind::LocalAddress:
+         case ObjectKind::FieldAddress:
+         case ObjectKind::ReadOnlyFieldAddress:
+         {
+            // map if the object is outer one
+            outer.reference = info.fields.count();
+
+            outers.add(identifier, outer);
+            mapNewField(info.fields, identifier, FieldInfo{ (int)outer.reference, outer.outerObject.typeInfo });
+
+            return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference };
+         }
+         default:
+            return outer.outerObject;
+      }
+   }
 }
 
 // --- Compiler ---
@@ -3233,9 +3339,14 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          writer.appendNode(BuildKey::LocalAddress, info.reference);
          break;
       case ObjectKind::Field:
+      case ObjectKind::Outer:
          writeObjectInfo(writer, scope, scope.mapSelf());
          writer.appendNode(BuildKey::Field, info.reference);
          break;
+      //case ObjectKind::OuterField:
+      //   writeObjectInfo(writer, scope, scope.mapSelf());
+      //   writer.appendNode(BuildKey::Field, info.reference);
+      //   break;
       case ObjectKind::StaticConstField:
          writeObjectInfo(writer, scope, scope.mapSelf());
          writer.appendNode(BuildKey::ClassOp, CLASS_OPERATOR_ID);
@@ -6242,7 +6353,7 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
    return source;
 }
 
-ObjectInfo Compiler :: compileNestedExpression(InlineClassScope& scope, EAttr mode)
+ObjectInfo Compiler :: compileNestedExpression(BuildTreeWriter& writer, InlineClassScope& scope, ExprScope& ownerScope, EAttr mode)
 {
    ref_t nestedRef = scope.reference;
 
@@ -6252,10 +6363,57 @@ ObjectInfo Compiler :: compileNestedExpression(InlineClassScope& scope, EAttr mo
       return retVal;
    }
    else {
-      throw InternalError(errFatalError); // !! temporal
-   }
+      ObjectInfo retVal = { ObjectKind::Object, { nestedRef }, 0 };
 
-   return {  };
+      ArgumentsInfo list;
+      // first pass : box an argument if required
+      for (auto it = scope.outers.start(); !it.eof(); ++it) {
+         ObjectInfo arg = (*it).outerObject;
+
+         arg = boxArgument(writer, ownerScope, arg, false, false, false);
+         switch (arg.kind) {
+            case ObjectKind::Field:
+            case ObjectKind::ReadOnlyField:
+            case ObjectKind::Outer:
+            case ObjectKind::OuterField:
+               arg = saveToTempLocal(writer, ownerScope, arg);
+               break;
+            default:
+               break;
+         }
+
+         list.add(arg);
+      }
+
+      writer.newNode(BuildKey::CreatingClass, scope.info.fields.count());
+      writer.appendNode(BuildKey::Type, nestedRef);
+      writer.closeNode();
+
+      // second pass : fill members
+      int argIndex = 0;
+      for (auto it = scope.outers.start(); !it.eof(); ++it) {
+         ObjectInfo arg = list[argIndex];
+
+         auto fieldInfo = scope.info.fields.get(it.key());
+
+         switch (arg.kind) {
+            case ObjectKind::Local:
+            case ObjectKind::TempLocal:
+            case ObjectKind::Param:
+               writer.appendNode(BuildKey::AssignLocalToStack, arg.reference);
+               writer.appendNode(BuildKey::SetImmediateField, fieldInfo.offset);
+               break;
+            default:
+               // NOTE : should neve be hit
+               assert(false);
+               break;
+         }
+
+         argIndex++;
+      }
+
+      return retVal;
+   }
 }
 
 ref_t Compiler :: mapNested(ExprScope& ownerScope, ExpressionAttribute mode)
@@ -6296,7 +6454,7 @@ ObjectInfo Compiler :: compileClosure(BuildTreeWriter& writer, ExprScope& ownerS
 
    compileClosureClass(writer, scope, node);
 
-   return compileNestedExpression(scope, mode);
+   return compileNestedExpression(writer, scope, ownerScope, mode);
 }
 
 ObjectInfo Compiler :: compileNested(BuildTreeWriter& writer, ExprScope& ownerScope, SyntaxNode node, ExpressionAttribute mode)
@@ -6314,7 +6472,7 @@ ObjectInfo Compiler :: compileNested(BuildTreeWriter& writer, ExprScope& ownerSc
 
    compileNestedClass(writer, scope, node, parentInfo.typeRef);
 
-   return compileNestedExpression(scope, mode);
+   return compileNestedExpression(writer, scope, ownerScope, mode);
 }
 
 ObjectInfo Compiler :: compileLoopExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 

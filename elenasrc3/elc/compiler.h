@@ -63,6 +63,8 @@ namespace elena_lang
       FieldAddress,
       ReadOnlyField,
       Field,
+      Outer,
+      OuterField,
       Closure,
       Extension,
       ConstantRole,
@@ -828,6 +830,24 @@ namespace elena_lang
 
       struct InlineClassScope : ClassScope
       {
+         struct Outer
+         {
+            ref_t       reference;
+            bool        presaved;
+            ObjectInfo  outerObject;
+
+            Outer()
+               : reference(INVALID_REF), presaved(false), outerObject({})
+            {
+            }
+         };
+
+         Map<ustr_t, Outer, allocUStr, freeUStr> outers;
+
+         Outer mapParent();
+         Outer mapOwner();
+         Outer mapSelf();
+
          Scope* getScope(ScopeLevel level) override
          {
             if (level == ScopeLevel::Class) {
@@ -835,6 +855,8 @@ namespace elena_lang
             }
             else return Scope::getScope(level);
          }
+
+         ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
 
          InlineClassScope(ExprScope* owner, ref_t reference);
       };
@@ -1102,7 +1124,7 @@ namespace elena_lang
          ExpressionAttribute mode);
       ObjectInfo compileRootExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
       ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
-      ObjectInfo compileNestedExpression(InlineClassScope& scope, ExpressionAttribute mode);
+      ObjectInfo compileNestedExpression(BuildTreeWriter& writer, InlineClassScope& scope, ExprScope& ownerScope, ExpressionAttribute mode);
 
       void compileMultidispatch(BuildTreeWriter& writer, CodeScope& codeScope, ClassScope& classcope, 
          SyntaxNode node, bool implicitMode);

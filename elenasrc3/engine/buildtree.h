@@ -104,6 +104,8 @@ namespace elena_lang
       ConversionOp         = 0x004B,
       SemictResendOp       = 0x004C,
       NilCondOp            = 0x004D,
+      AssignLocalToStack   = 0x004E,
+      SetImmediateField    = 0x004F,
 
       Import               = 0x0058,
       DictionaryOp         = 0x0059,

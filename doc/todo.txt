@@ -214,6 +214,7 @@ Backlog:
     * warn if multiret method is correct : there should exist a main handler
     * optimization : duplicate nops??
     * class constants
+    * mt : note on creating closure - lock GC
 
     * editor - do we need checkmode? it seems like not
 

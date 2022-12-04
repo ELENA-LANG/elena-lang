@@ -194,6 +194,13 @@ void copyingToAcc(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::Copy, n);
 }
 
+void assignToStack(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int n = node.findChild(BuildKey::Index).arg.value;
+
+   tape.write(ByteCode::MovSIFI, n, node.arg.value);
+}
+
 void copyingAccField(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int n = node.findChild(BuildKey::Size).arg.value;
@@ -997,6 +1004,11 @@ void refParamAssigning(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::XAssignI, 0);
 }
 
+void assignImmediateAccField(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::XAssignI, node.arg.value);
+}
+
 void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    switch (node.arg.reference) {
@@ -1040,7 +1052,7 @@ ByteCodeWriter::Saver commands[] =
    shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning, staticVarOp, loadingIndex, nilOp,
 
    intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
-   realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp
+   realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField
 };
 
 // --- ByteCodeWriter ---

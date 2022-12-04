@@ -73,6 +73,8 @@ namespace elena_lang
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 
    constexpr auto RETVAL_ARG              = "$retVal";
+   constexpr auto PARENT_VAR              = "$parent";
+   constexpr auto OWNER_VAR               = "$owner";
 
    constexpr auto SYSTEM_FORWARD          = "$system_entry";   // the system entry
    constexpr auto SUPER_FORWARD           = "$super";          // the common class predecessor
