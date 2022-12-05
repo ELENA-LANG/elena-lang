@@ -14,6 +14,8 @@ In development:
     ! rosetta code examples
     ! elena vm
 
+    * gc - system_tests - why full collect happends so often
+
     * api : provide field descriptions
     * api : provide parameter names
     * ide : double click - select word
