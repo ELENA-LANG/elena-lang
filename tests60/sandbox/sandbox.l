@@ -2,12 +2,16 @@ import extensions;
 
 public program()
 {
+    console.write("stringTests");
     string s := "abc";
+
+    Assert.ifTrue(s == "abc");
+    console.write(".");
     string s2 := "de";
     var s3 := s + s2;
 
-    console.writeLine(s3);
-    console.writeLine(s3 == "abcde");
+    Assert.ifTrue(s3 == "abcde");
+    console.writeLine(".");
 }
 
 
