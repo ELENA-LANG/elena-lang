@@ -102,6 +102,8 @@ inline % GC_ALLOC
 labYGCollect:
   // ; save registers
   sub  rcx, rax
+  push r10
+  push r11
   push rbp
 
   // ; lock frame
@@ -165,6 +167,8 @@ labYGNextFrame:
   mov  rsp, rbp 
   pop  rcx
   pop  rbp
+  pop  r11
+  pop  r10
 
   ret
 
