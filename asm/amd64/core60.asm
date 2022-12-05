@@ -726,7 +726,7 @@ inline %097h
 
 end
 
-// ; ftrunc dp
+// ; nconf dp
 inline %098h
 
   lea   rdi, [rbp + __arg32_1]
@@ -738,6 +738,7 @@ end
 // ; ftrunc dp
 inline %099h
 
+  mov   rsi, r10
   lea   rdi, [rbp + __arg32_1]
 
   mov   ecx, 0
@@ -961,7 +962,8 @@ inline %0C1h
   mov    ecx, 1
   fld    qword ptr [rsi]
   fcomip st, st(1)
-  setae  al
+  sete   al
+  seta   ah
   fstp   st(0)
   cmp    eax, ecx
 
@@ -1094,7 +1096,7 @@ inline %0D1h
   mov  rsi, r10
   lea  rdi, [rbp + __arg32_1]
 
-  fild  qword ptr [rdi]
+  fld   qword ptr [rdi]
   fsub  qword ptr [rsi] 
   fstp  qword ptr [rdi]
 

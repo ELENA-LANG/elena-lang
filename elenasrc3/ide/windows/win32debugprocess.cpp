@@ -737,6 +737,5 @@ size_t Win32DebugProcess :: getArrayLength(addr_t address)
       return header.count;
    }
 
-   size_t len = 0;
-   
+   return 0;
 }

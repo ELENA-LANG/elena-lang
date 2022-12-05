@@ -126,14 +126,14 @@ addr_t DebugInfoProvider :: getClassAddress(ustr_t name)
    addr_t address = _classNames.get(name);
    if (address == INVALID_ADDR) {
       if (name.findStr(TEMPLATE_PREFIX_NS) != NOTFOUND_POS) {
-         pos_t index = name.findLast('\'');
+         size_t index = name.findLast('\'');
          name = name + index + 1;
 
          // bad luck : we have to go through the list
          ustr_t resolvedName = _classNames.retrieve<ustr_t>(name, name,
             [](ustr_t arg, ustr_t ref, addr_t)
             {
-               pos_t index = ref.findLast('\'');
+               size_t index = ref.findLast('\'');
                if (index != NOTFOUND_POS) {
                   ustr_t currentName = ref + index + 1;
 
@@ -390,7 +390,7 @@ DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, Id
             sourcePath = (const char*)section->get(current->addresses.source.nameRef);
 
             if (sourcePath.find('\'') != NOTFOUND_POS) {
-               pos_t index = sourcePath.find('\'');
+               size_t index = sourcePath.find('\'');
                moduleName.copy(sourcePath, index);
                sourcePath = sourcePath + index + 1;
             }
@@ -1004,7 +1004,7 @@ inline int getFPOffset(int argument, int argOffset)
    return (argument - (argument < 0 ? argOffset : 0));
 }
 
-inline int getFrameDisp(DebugLineInfo& frameInfo, disp_t offset)
+inline disp_t getFrameDisp(DebugLineInfo& frameInfo, disp_t offset)
 {
    if (frameInfo.symbol == DebugSymbol::FrameInfo && frameInfo.addresses.offset.disp != 0) {
       return frameInfo.addresses.offset.disp + offset;

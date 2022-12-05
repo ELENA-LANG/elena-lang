@@ -717,8 +717,8 @@ void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBa
    log->clearMessages();
 
    // parse output for errors
-   pos_t length = output.length_pos();
-   pos_t index = 0;
+   size_t length = output.length();
+   size_t index = 0;
 
    WideMessage message;
    WideMessage fileStr, rowStr, colStr;
@@ -740,10 +740,10 @@ void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBa
       if (!found)
          break;
 
-      pos_t errPos = index;
-      pos_t rowPos = NOTFOUND_POS;
-      pos_t colPos = NOTFOUND_POS;
-      pos_t bolPos = 0;
+      size_t errPos = index;
+      size_t rowPos = NOTFOUND_POS;
+      size_t colPos = NOTFOUND_POS;
+      size_t bolPos = 0;
 
       index--;
       while (index >= 0) {

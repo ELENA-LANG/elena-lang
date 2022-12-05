@@ -901,7 +901,8 @@ inline %0C1h
   mov    ecx, 1
   fld    qword ptr [esi]
   fcomip st, st(1)
-  setae  al
+  sete   al
+  seta   ah
   fstp   st(0)
   cmp    eax, ecx
 

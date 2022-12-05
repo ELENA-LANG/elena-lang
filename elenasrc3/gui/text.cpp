@@ -621,7 +621,7 @@ void Text :: copyLineToX(TextBookmark& bookmark, TextWriter<text_c>& writer, pos
             if (chLen > 1) {
                if (i + chLen < count) {
                   writer.write(&line[i], chLen);
-                  i += (chLen - 1);
+                  i += ((pos_t)chLen - 1);
                }
                else break;
             }
