@@ -24,6 +24,7 @@
 #include "common.h"
 // --------------------------------------------------------------------------
 #include "ustring.h"
+#include <math.h>
 
 using namespace elena_lang;
 
