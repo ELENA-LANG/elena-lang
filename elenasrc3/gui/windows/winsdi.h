@@ -147,6 +147,13 @@ namespace elena_lang
 
       void close();
 
+      void refresh() override
+      {
+         WindowBase::refresh();
+
+         onResize();
+      }
+
       SDIWindow(wstr_t title)
          : WindowBase(title, 800, 600)
       {

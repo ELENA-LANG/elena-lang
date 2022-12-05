@@ -47,6 +47,8 @@ void ControlBase :: setRectangle(Rectangle rect)
    _rect = { x, y, width, height };
 
    int r = ::MoveWindow(_handle, x, y, width, height, TRUE);
+
+   refresh();
 }
 
 void ControlBase :: setFocus()

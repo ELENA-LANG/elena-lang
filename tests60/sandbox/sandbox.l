@@ -1,20 +1,11 @@
 import extensions;
 
-function(acc)
-    = (n => acc.append:n);
-
-accumulator(n)
-    = function(new Variable(n));
-
 public program()
 {
-    var x := accumulator(1);
-    
-    x(5);
-    
-    var y := accumulator(3);
-    
-    console.write(x(2.3r))
+//   int n := 4;
+//   real r := n + 2.3;
+
+   console.writeLine(2.3);
 }
 
 

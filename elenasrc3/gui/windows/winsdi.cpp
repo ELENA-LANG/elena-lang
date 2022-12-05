@@ -338,7 +338,7 @@ void LayoutManager :: resizeTo(Rectangle area)
       _center->setRectangle({ x, y, totalWidth, totalHeight });
 
       _center->refresh();
-   }      
+   }
 }
 
 // --- SDIWindow ---

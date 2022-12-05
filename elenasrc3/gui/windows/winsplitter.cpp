@@ -154,6 +154,8 @@ void Splitter :: onButtonUp()
    }
    ::SetCapture(nullptr);
    _mouseCaptured = false;
+
+   refresh();
 }
 
 void Splitter :: onMove()
