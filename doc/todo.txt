@@ -5,10 +5,10 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 11 : all functionality for existing classes 
-    * rosetta sample : accumulator - x86-64, i386, amd64, ppc64le, aarch64
+    * rosetta sample : accumulator - i386, amd64, ppc64le, aarch64
 
     === Iteration 12 ===
-    ! api functionality for existing classes
+    ! api functionality for existing classes : system'CharValue
     ! regression tests : all github issues
     ! examples
     ! rosetta code examples

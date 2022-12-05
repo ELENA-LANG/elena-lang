@@ -130,7 +130,7 @@ inline void createDir(const char* path)
 bool PathUtil::recreatePath(path_t path)
 {
    PathString dirPath;
-   dirPath.copySubPath(path);
+   dirPath.copySubPath(path, false);
 
    if (!dirPath.empty()) {
       if (checkDir(dirPath.str(), 0) != 0) {
