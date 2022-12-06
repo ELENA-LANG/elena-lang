@@ -5,9 +5,7 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 11 : all functionality for existing classes 
-    * linux amd64 gc_alloc - save sp[0] / sp[1]
-
-    * rosetta sample : accumulator - amd64, ppc64le, aarch64
+    * rosetta sample : accumulator - ppc64le, aarch64
 
     === Iteration 12 ===
     ! api functionality for existing classes : system'CharValue

@@ -1,4 +1,3 @@
-8
 // ; --- Predefined References  --
 define INVOKER              10001h
 define GC_ALLOC	            10002h
@@ -443,15 +442,14 @@ end
 // ; not
 inline % 21h
 
-   not    r14, r14
+   nand    r14, r14, r14
 
 end
 
 // ; neg
 inline % 22h
 
-   mr     r16, 0
-   sub    r14, r16, r14
+   neg    r14, r14
 
 end
 
@@ -472,7 +470,7 @@ inline %24h
 end
 
 // ; fsave
-inline %24h
+inline %25h
 
   std     r14, 0(r1) 
   lfd     f17, 0(r1) 
@@ -891,7 +889,7 @@ inline %098h
 
   lfd     f17, 0(r15)
   friz    f17, f17
-  sfd     f17, 0(r1) 
+  stfd    f17, 0(r1) 
   ld      r17, 0(r1) 
   std     r17, 0(r19)
 
@@ -904,7 +902,7 @@ inline %099h
 
   lfd     f17, 0(r3)
   friz    f17, f17
-  sfd     f17, 0(r19)
+  stfd    f17, 0(r19)
 
 end
 
@@ -1111,20 +1109,20 @@ end
 // ; fcmpn 8
 inline %0C1h
 
-  lfd      r17, 0(r3)
-  lfd      r18, 0(r15)
+  lfd      f17, 0(r3)
+  lfd      f18, 0(r15)
 
-  cmp      r17, r18
+  fcmpu    f17, f18
 
 end
 
 // ; icmpn 4
 inline %0C2h
 
-  lwz      f17, 0(r3)
-  lwz      f18, 0(r15)
+  lwz      r17, 0(r3)
+  lwz      r18, 0(r15)
 
-  fcmp     f17, f18
+  cmp      r17, r18
 
 end
 
@@ -1481,7 +1479,7 @@ inline %0DBh
 
   lwz     r17, 0(r3)
 
-  not     r18, r17  
+  nand    r18, r17, r17
 
   stw     r18, 0(r19)
 
@@ -1494,7 +1492,7 @@ inline %1DBh
 
   lwz     r18, 0(r3)
 
-  not     r17, r18  
+  nand    r17, r18, r18
 
   stb     r17, 0(r19)
 
@@ -1507,7 +1505,7 @@ inline %2DBh
 
   lwz     r18, 0(r3)
 
-  not     r17, r18  
+  nand    r17, r18, r18
 
   sth     r17, 0(r19)
 
@@ -1520,7 +1518,7 @@ inline %4DBh
 
   lwz     r18, 0(r3)
 
-  not     r17, r18  
+  nand    r17, r18, r18
 
   std     r17, 0(r19)
 
