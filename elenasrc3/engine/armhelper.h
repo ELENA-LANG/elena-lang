@@ -216,6 +216,13 @@ namespace elena_lang
             | (imms << 10) | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
       }
 
+      static unsigned int makeOpcode2(int sf, int op, int op2, int op3, ARMOperandType rm, int op4, int op5,
+         ARMOperandType rn, ARMOperandType rd)
+      {
+         return (sf << 31) | (op << 30) | (op2 << 29) | (op3 << 21) | (((unsigned int)rm & 0x1F) << 16) | (op4 << 12)
+            | (op5 << 10) | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
       static unsigned int makeOpcode(int sf, int op, int op2, int op3, ARMOperandType rm, int op4, int o1,
          ARMOperandType rn, ARMOperandType rd)
       {

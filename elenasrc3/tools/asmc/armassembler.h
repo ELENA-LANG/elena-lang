@@ -49,16 +49,23 @@ namespace elena_lang
       virtual bool compileADRP(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand imm, MemoryWriter& writer);
       virtual bool compileCSEL(ARMOperand rd, ARMOperand rn, ARMOperand rm, JumpType cond, MemoryWriter& writer);
       virtual bool compileCSINC(ARMOperand rd, ARMOperand rn, ARMOperand rm, JumpType cond, MemoryWriter& writer);
+      virtual bool compileEORShifted(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry,
+         int shift, int ampount, MemoryWriter& writer);
       virtual bool compileFADD(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
       virtual bool compileFCMP(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
+      virtual bool compileFDIV(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
       virtual bool compileFCVTZS(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
+      virtual bool compileFMUL(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
       virtual bool compileFRINTZ(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
+      virtual bool compileFSUB(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
       virtual bool compileLDP(ARMOperand rt, ARMOperand rx, ARMOperand n1, ARMOperand n2, MemoryWriter& writer);
       virtual bool compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer);
       virtual bool compileLDRB(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer);
       virtual bool compileLDRSB(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer);
       virtual bool compileLDRSW(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer);
       virtual bool compileLDRSH(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer);
+      virtual bool compileLSLV(ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
+      virtual bool compileLSRV(ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
       virtual bool compileMOVZ(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rn, MemoryWriter& writer);
       virtual bool compileMOVK(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rn, int lsl, MemoryWriter& writer);
       virtual bool compileMADD(ARMOperand rd, ARMOperand rn, ARMOperand rm, ARMOperand ra, MemoryWriter& writer);
@@ -98,10 +105,14 @@ namespace elena_lang
       void compileCSEL(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCSINC(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileEOR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFADD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFCMP(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFCVTZS(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFDIV(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFMUL(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFRINTZ(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFSUB(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLDP(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLDR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLDRB(ScriptToken& tokenInfo, MemoryWriter& writer);

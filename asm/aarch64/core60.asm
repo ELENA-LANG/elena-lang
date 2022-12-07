@@ -1352,7 +1352,7 @@ inline %0D9h
   ldrsw   x17, [x0]
   ldrsw   x18, [x19]
 
-  or      x17, x17, x18  
+  orr     x17, x17, x18  
 
   str     w17, [x19]
 
@@ -1366,7 +1366,7 @@ inline %1D9h
   ldrsb   x17, [x0]
   ldrsb   x18, [x19]
 
-  or      x17, x17, x18  
+  orr     x17, x17, x18  
 
   strb    w17, [x19]
 
@@ -1380,7 +1380,7 @@ inline %2D9h
   ldrsh   x17, [x0]
   ldrsh   x18, [x19]
 
-  or      x17, x17, x18  
+  orr     x17, x17, x18  
 
   strh    w17, [x19]
 
@@ -1394,7 +1394,7 @@ inline %4D9h
   ldr     x17, [x0]
   ldr     x18, [x19]
 
-  or      x17, x17, x18  
+  orr     x17, x17, x18  
 
   str     x17, [x19]
 
@@ -1408,7 +1408,7 @@ inline %0DAh
   ldrsw   x17, [x0]
   ldrsw   x18, [x19]
 
-  xor     x17, x17, x18  
+  eor     x17, x17, x18  
 
   str     w17, [x19]
 
@@ -1422,7 +1422,7 @@ inline %1DAh
   ldrsb   x17, [x0]
   ldrsb   x18, [x19]
 
-  xor     x17, x17, x18  
+  eor     x17, x17, x18  
 
   strb    w17, [x19]
 
@@ -1436,7 +1436,7 @@ inline %2DAh
   ldrsh   x17, [x0]
   ldrsh   x18, [x19]
 
-  xor     x17, x17, x18  
+  eor     x17, x17, x18  
 
   strh    w17, [x19]
 
@@ -1450,7 +1450,7 @@ inline %4DAh
   ldr     x17, [x0]
   ldr     x18, [x19]
 
-  xor     x17, x17, x18  
+  eor     x17, x17, x18  
 
   str     x17, [x19]
 
