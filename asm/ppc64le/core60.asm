@@ -889,8 +889,8 @@ inline %098h
 
   lfd     f17, 0(r15)
   friz    f17, f17
-  fctiw   f17, f18
-  stfd    f17, 0(r19) 
+  fctiw   f18, f17
+  stfd    f18, 0(r19) 
 
 // stfiwx
 
