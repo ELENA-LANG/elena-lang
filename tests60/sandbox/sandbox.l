@@ -1,8 +1,13 @@
 import extensions;
 
+function(acc)
+    = (n => acc.append:n);
+
 public program()
 {
-   var n := new Variable(2);
+   var x := function(2);
 
-   console.writeLine(n); 
+//   var n := new Variable(2);
+
+//   console.writeLine(n); 
 }
