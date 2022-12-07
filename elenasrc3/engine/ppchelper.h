@@ -166,6 +166,13 @@ namespace elena_lang
             | (((unsigned int)rb & 0x1F) << 11) | (((unsigned int)bc & 0x1F) << 6) | (xo << 1) | 0;
       }
 
+      static unsigned int makeACommand(unsigned int opcode, PPCOperandType rt, PPCOperandType ra, PPCOperandType rb,
+         int xo)
+      {
+         return (opcode << 26) | (((unsigned int)rt & 0x1F) << 21) | (((unsigned int)ra & 0x1F) << 16)
+            | (((unsigned int)rb & 0x1F) << 6) | (xo << 1) | 0;
+      }
+
       static unsigned int makeXCommand(unsigned int opcode, PPCOperandType rt, PPCOperandType ra, PPCOperandType rb,
          int xo, int rc)
       {

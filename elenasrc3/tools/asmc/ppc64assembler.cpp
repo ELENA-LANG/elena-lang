@@ -1135,7 +1135,7 @@ void PPC64Assembler :: compileFMUL(ScriptToken& tokenInfo, MemoryWriter& writer)
 
    if (rt.isFPR() && ra.isFPR() && rb.isFPR()) {
       writer.writeDWord(PPCHelper::makeACommand(63, rt.type, ra.type,
-         rb.type, 0, 25));
+         rb.type, 25));
    }
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
