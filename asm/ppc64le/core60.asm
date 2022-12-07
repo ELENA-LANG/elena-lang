@@ -1271,7 +1271,7 @@ inline %0D1h
   lfd     f17, 0(r3)
   lfd     f18, 0(r19)
 
-  fsub    f17, f17, f18  
+  fsub    f17, f18, f17
 
   stfd    f17, 0(r19)
 
