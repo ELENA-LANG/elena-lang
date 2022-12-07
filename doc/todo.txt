@@ -5,7 +5,7 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 11 : all functionality for existing classes 
-    * rosetta sample : accumulator - ppc64le, aarch64
+    * rosetta sample : accumulator - aarch64
 
     === Iteration 12 ===
     ! api functionality for existing classes : system'CharValue

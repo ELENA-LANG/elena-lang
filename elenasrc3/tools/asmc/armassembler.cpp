@@ -293,6 +293,96 @@ ARMOperand Arm64Assembler :: defineRegister(ScriptToken& tokenInfo)
    else if (tokenInfo.compare("sp")) {
       return { ARMOperandType::SP };
    }
+   else if (tokenInfo.compare("d0")) {
+      return { ARMOperandType::D0 };
+   }
+   else if (tokenInfo.compare("d1")) {
+      return { ARMOperandType::D1 };
+   }
+   else if (tokenInfo.compare("d2")) {
+      return { ARMOperandType::D2 };
+   }
+   else if (tokenInfo.compare("d3")) {
+      return { ARMOperandType::D3 };
+   }
+   else if (tokenInfo.compare("d4")) {
+      return { ARMOperandType::D4 };
+   }
+   else if (tokenInfo.compare("d5")) {
+      return { ARMOperandType::D5 };
+   }
+   else if (tokenInfo.compare("d6")) {
+      return { ARMOperandType::D6 };
+   }
+   else if (tokenInfo.compare("d7")) {
+      return { ARMOperandType::D7 };
+   }
+   else if (tokenInfo.compare("d8")) {
+      return { ARMOperandType::D8 };
+   }
+   else if (tokenInfo.compare("d9")) {
+      return { ARMOperandType::D9 };
+   }
+   else if (tokenInfo.compare("d10")) {
+      return { ARMOperandType::D10 };
+   }
+   else if (tokenInfo.compare("d11")) {
+      return { ARMOperandType::D11 };
+   }
+   else if (tokenInfo.compare("d12")) {
+      return { ARMOperandType::D12 };
+   }
+   else if (tokenInfo.compare("d13")) {
+      return { ARMOperandType::D13 };
+   }
+   else if (tokenInfo.compare("d14")) {
+      return { ARMOperandType::D14 };
+   }
+   else if (tokenInfo.compare("d15")) {
+      return { ARMOperandType::D15 };
+   }
+   else if (tokenInfo.compare("d16")) {
+      return { ARMOperandType::D16 };
+   }
+   else if (tokenInfo.compare("d17")) {
+      return { ARMOperandType::D17 };
+   }
+   else if (tokenInfo.compare("d18")) {
+      return { ARMOperandType::D18 };
+   }
+   else if (tokenInfo.compare("d19")) {
+      return { ARMOperandType::D19 };
+   }
+   else if (tokenInfo.compare("d20")) {
+      return { ARMOperandType::D20 };
+   }
+   else if (tokenInfo.compare("d21")) {
+      return { ARMOperandType::D21 };
+   }
+   else if (tokenInfo.compare("d22")) {
+      return { ARMOperandType::D22 };
+   }
+   else if (tokenInfo.compare("d23")) {
+      return { ARMOperandType::D23 };
+   }
+   else if (tokenInfo.compare("d24")) {
+      return { ARMOperandType::D24 };
+   }
+   else if (tokenInfo.compare("d25")) {
+      return { ARMOperandType::D25 };
+   }
+   else if (tokenInfo.compare("d26")) {
+      return { ARMOperandType::D26 };
+   }
+   else if (tokenInfo.compare("d27")) {
+      return { ARMOperandType::D27 };
+   }
+   else if (tokenInfo.compare("d28")) {
+      return { ARMOperandType::D28 };
+   }
+   else if (tokenInfo.compare("d29")) {
+      return { ARMOperandType::D29 };
+   }
    else return { ARMOperandType::None };
 }
 
@@ -756,6 +846,50 @@ bool Arm64Assembler :: compileCSINC(ARMOperand rd, ARMOperand rn, ARMOperand rm,
    return true;
 }
 
+bool Arm64Assembler::compileFADD(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, 
+   MemoryWriter& writer)
+{
+   if (rd.isDR() && rn.isDR() && rm.isDR()) {
+      writer.writeDWord(ARMHelper::makeFTypeOpcode(0, 0x1E, 1, 1, rm.type, 1, 2, rn.type, rd.type));
+   }
+   else return false;
+
+   return true;
+}
+
+bool Arm64Assembler :: compileFCMP(ARMOperand rn, ARMOperand rm, MemoryWriter& writer)
+{
+   if (rn.isDR() && rm.isDR()) {
+      writer.writeDWord(ARMHelper::makeFTypeOpcode(0, 0x1E, 1, 1, rm.type, 0, 8, rn.type,
+         0));
+   }
+   else return false;
+
+   return true;
+}
+
+bool Arm64Assembler ::compileFCVTZS(ARMOperand rd, ARMOperand rn, MemoryWriter& writer)
+{
+   if (rd.isXR() && rn.isDR()) {
+      writer.writeDWord(ARMHelper::makeRModeOpcode(1, 0, 0x1E, 1, 0, 3, 0, 
+         rn.type, rd.type));
+   }
+   else return false;
+
+   return true;
+}
+
+bool Arm64Assembler :: compileFRINTZ(ARMOperand rd, ARMOperand rn, MemoryWriter& writer)
+{
+   if (rd.isDR() && rn.isDR()) {
+      writer.writeDWord(ARMHelper::makeRMode2Opcode(0, 0, 0x1E, 1, 1, 1, 3, 0x10,
+         rn.type, rd.type));
+   }
+   else return false;
+
+   return true;
+}
+
 bool Arm64Assembler::compileLDP(ARMOperand rt1, ARMOperand rt2, ARMOperand n1, ARMOperand n2, MemoryWriter& writer)
 {
    if (rt1.isXR() && rt2.isXR() && n1.isPostindex() && n2.type == ARMOperandType::Imm) {
@@ -794,6 +928,9 @@ bool Arm64Assembler :: compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
 
       if (ptr.reference)
          writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
+   }
+   else if (rt.isDR() && ptr.isPostindex()) {
+      writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 1, 0, 1, 0, ptr.imm, 1, ptr.type, rt.type));
    }
    else return false;
 
@@ -929,6 +1066,17 @@ bool Arm64Assembler :: compileORRShifted(ScriptToken& tokenInfo, ARMOperand rd, 
    int shift, int amount, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && rm.isXR()) {
+      writer.writeDWord(ARMHelper::makeImm6ShiftOpcode(1, 0, 1, 0xA, shift, 1, amount, rm.type, rn.type, rd.type));
+   }
+   else return false;
+
+   return true;
+}
+
+bool Arm64Assembler::compileORNShifted(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm,
+   int shift, int amount, MemoryWriter& writer)
+{
+   if (rd.isXR() && rn.isXR() && rm.isXR()) {
       writer.writeDWord(ARMHelper::makeImm6ShiftOpcode(1, 0, 1, 0xA, shift, amount, rm.type, rn.type, rd.type));
    }
    else return false;
@@ -950,6 +1098,16 @@ bool Arm64Assembler :: compileSBFM(ARMOperand rd, ARMOperand rn, int immr, int i
 {
    if (rn.isXR() && rd.isXR()) {
       writer.writeDWord(ARMHelper::makeOpcodeImmRS(1, 0, 0x26, 1, immr, imms, rn.type, rd.type));
+   }
+   else return false;
+
+   return true;
+}
+
+bool Arm64Assembler :: compileSCVTF(ARMOperand rd, ARMOperand rn, MemoryWriter& writer)
+{
+   if (rd.isDR() && rn.isXR()) {
+      writer.writeDWord(ARMHelper::makeRModeOpcode(1, 0, 0x1E, 1, 1, 0, 2, rn.type, rd.type));
    }
    else return false;
 
@@ -1039,6 +1197,9 @@ bool Arm64Assembler :: compileSTR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
    }
    else if (rt.isWR() && ptr.isPostindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(2, 7, 0, 0, 0, 0, ptr.imm, 1, ptr.type, rt.type));
+   }
+   else if (rt.isDR() && ptr.isPostindex()) {
+      writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 1, 0, 0, 0, ptr.imm, 1, ptr.type, rt.type));
    }
    else return false;
 
@@ -1306,6 +1467,69 @@ void Arm64Assembler :: compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void Arm64Assembler :: compileFADD(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rm = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   bool isValid = compileFADD(tokenInfo, rd, rn, rm, writer);
+
+   if (!isValid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void Arm64Assembler :: compileFCMP(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   bool valid = compileFCMP(rd, rn, writer);
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void Arm64Assembler :: compileFCVTZS(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   bool valid = false;
+   if (rd.isXR() && rn.isDR()) {
+      valid = compileFCVTZS(rd, rn, writer);
+   }
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void Arm64Assembler :: compileFRINTZ(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   bool valid = compileFRINTZ(rd, rn, writer);
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void Arm64Assembler :: compileLDP(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    ARMOperand rt1 = readOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -1531,6 +1755,23 @@ void Arm64Assembler :: compileMOV(ScriptToken& tokenInfo, MemoryWriter& writer)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void Arm64Assembler :: compileMVN(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   bool valid = false;
+   if (rd.isXR() && rn.isXR()) {
+      valid = compileORNShifted(tokenInfo, rd, { ARMOperandType::XZR }, rn, 0, 0, writer);
+   }
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void Arm64Assembler :: compileMOVZ(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -1627,6 +1868,19 @@ void Arm64Assembler :: compileORR(ScriptToken& tokenInfo, MemoryWriter& writer)
 
    if (!isValid)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void Arm64Assembler :: compileSCVTF(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   if (!compileSCVTF(rd, rn, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+
 }
 
 void Arm64Assembler :: compileSDIV(ScriptToken& tokenInfo, MemoryWriter& writer)
@@ -1902,7 +2156,21 @@ bool Arm64Assembler :: compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
 
 bool Arm64Assembler :: compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   return false;
+   if (tokenInfo.compare("fadd")) {
+      compileFADD(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fcmp")) {
+      compileFCMP(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fcvtzs")) {
+      compileFCVTZS(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("frintz")) {
+      compileFRINTZ(tokenInfo, writer);
+   }
+   else return false;
+
+   return true;
 }
 
 bool Arm64Assembler :: compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
@@ -1960,6 +2228,9 @@ bool Arm64Assembler::compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    else if (tokenInfo.compare("mul")) {
       compileMUL(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("mvn")) {
+      compileMVN(tokenInfo, writer);
+   }
    else return false;
 
    return true;
@@ -2002,7 +2273,10 @@ bool Arm64Assembler::compileROpCode(ScriptToken& tokenInfo, MemoryWriter& writer
 
 bool Arm64Assembler::compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   if (tokenInfo.compare("sdiv")) {
+   if (tokenInfo.compare("scvtf")) {
+      compileSCVTF(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("sdiv")) {
       compileSDIV(tokenInfo, writer);
    }
    else if (tokenInfo.compare("stp")) {

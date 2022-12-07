@@ -419,7 +419,7 @@ inline %23h
 
   add     x18, x10, x9
   ldrsb   x17, [x18]
-  std     r17, [x10]
+  str     x17, [x10]
 
 end
 
@@ -431,7 +431,7 @@ inline %24h
 end
 
 // ; fsave
-inline %24h
+inline %25h
 
   scvtf   d17, x9
   str     d17, [x10]
@@ -818,7 +818,7 @@ inline %098h
   add     x19, x29, __arg12_1
   ldr     d18, [x10]
   fcvtzs  x18, d18
-  std     x18, [x19]
+  str     x18, [x19]
 
 end
 
