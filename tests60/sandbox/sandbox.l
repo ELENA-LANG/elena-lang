@@ -5,11 +5,8 @@ function(acc)
 
 public program()
 {
-//   var x := function(new Variable(2));
-//   x(1);
-
-   var n := new Variable(2);
-   n.append(3);
+   var x := function(new Variable(2));
+   var n := x(1);
 
    console.writeLine(n); 
 }
