@@ -1468,11 +1468,10 @@ void elena_lang :: loadNewOp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(scope->compiler->calcTotalSize(n));
+            writer->writeDWord(scope->compiler->calcTotalSize(scope->command.arg1));
             break;
          case ARG16_1:
-            printf("%x\n", scope->compiler->calcTotalSize(n));
-            scope->compiler->writeImm16(writer, (short)scope->compiler->calcTotalSize(n), 0);
+            scope->compiler->writeImm16(writer, (short)scope->compiler->calcTotalSize(scope->command.arg1), 0);
             break;
          case NARG_1:
             writer->writeDWord(n);
