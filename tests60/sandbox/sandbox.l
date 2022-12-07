@@ -2,7 +2,7 @@ import extensions;
 
 public program()
 {
-   real r := 3.2;
+   var n := new Variable(2);
 
-   console.writeLine(r);
+   console.writeLine(n); 
 }
