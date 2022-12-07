@@ -2,10 +2,13 @@ import extensions;
 
 public program()
 {
-   real r := 3.3;
-   real r2 := 1.0;
+   real r := 3.2;
 
-   r := r - r2;
+   real remainder := r.Integer;
 
-   console.writeLine(r);
+   remainder := r - remainder;
+
+   //remainder := remainder * 1.0e9;
+
+   console.writeLine(remainder);
 }
