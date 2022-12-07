@@ -1,12 +1,8 @@
 import extensions;
 
-function(acc)
-    = (n => acc.append:n);
-
 public program()
 {
-   var x := function(new Variable(2));
-   var n := x(1);
+   var r := realConvertor.convert(2);
 
-   console.writeLine(n); 
+   console.writeLine(r); 
 }
