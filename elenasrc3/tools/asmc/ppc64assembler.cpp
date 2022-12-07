@@ -946,7 +946,7 @@ void PPC64Assembler :: compileFCFID(ScriptToken& tokenInfo, MemoryWriter& writer
 
    if (frt.isFPR() && frb.isFPR()) {
       writer.writeDWord(PPCHelper::makeXCommand(63, frt.type, 
-         frb.type, 143, 0));
+         frb.type, 846, 0));
    }
 }
 
