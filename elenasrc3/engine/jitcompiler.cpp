@@ -1367,6 +1367,12 @@ void elena_lang::loadStackIndexFrameIndexOp(JITCompilerScope* scope)
          case ARG32_2:
             writer->writeDWord(arg2);
             break;
+         case ARG16_2:
+            scope->compiler->writeImm16(writer, arg2, 0);
+            break;
+         case ARG12_2:
+            scope->compiler->writeImm12(writer, arg2, 0);
+            break;
          default:
             writeCoreReference(scope, entries->reference, entries->offset, code);
             break;
@@ -1465,6 +1471,7 @@ void elena_lang :: loadNewOp(JITCompilerScope* scope)
             writer->writeDWord(scope->compiler->calcTotalSize(n));
             break;
          case ARG16_1:
+            printf("%x\n", scope->compiler->calcTotalSize(n));
             scope->compiler->writeImm16(writer, (short)scope->compiler->calcTotalSize(n), 0);
             break;
          case NARG_1:
