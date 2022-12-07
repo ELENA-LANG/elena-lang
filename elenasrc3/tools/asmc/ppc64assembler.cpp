@@ -986,6 +986,20 @@ void PPC64Assembler :: compileFCMPU(ScriptToken& tokenInfo, MemoryWriter& writer
    compileFCMPU(tokenInfo, 0, ra, rb, writer);
 }
 
+void PPC64Assembler :: compileFCTIW(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand ra = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand rb = readRegister(tokenInfo, ASM_INVALID_TARGET);
+
+   if (ra.isFPR() && rb.isFPR()) {
+      writer.writeDWord(PPCHelper::makeXCommand(63, ra.type, rb.type, 943, 0));
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void PPC64Assembler ::compileCMPWI(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand ra = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -1861,6 +1875,9 @@ bool PPC64Assembler::compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
    else if (tokenInfo.compare("fcmpu")) {
       compileFCMPU(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fctiw")) {
+      compileFCTIW(tokenInfo, writer);
    }
    else if (tokenInfo.compare("fdiv")) {
       compileFDIV(tokenInfo, writer);
