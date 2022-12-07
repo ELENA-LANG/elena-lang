@@ -2,7 +2,8 @@ import extensions;
 
 public program()
 {
-   var r := realConvertor.convert(2);
+   int n := 2;
+   real r := n;
 
    console.writeLine(r); 
 }
