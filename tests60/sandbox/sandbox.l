@@ -2,8 +2,9 @@ import extensions;
 
 public program()
 {
-   console.writeLine(234);
+   real r := 2.0;
 
-   real n := 2.0;
-   console.writeLine(n)
+   int n := intConvertor.convert(r);
+   console.writeLine(n);
+
 }
