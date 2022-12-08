@@ -288,7 +288,7 @@ namespace elena_lang
 
       static unsigned int makeRModeOpcode(int sf, int opc, int op, int ftype, int op2, int rmode, int opcode, ARMOperandType rn, ARMOperandType rd)
       {
-         return (sf << 31) | (opc << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | (rmode << 19) | (opcode << 21)
+         return (sf << 31) | (opc << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | (rmode << 19) | (opcode << 16)
             | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
       }
 
