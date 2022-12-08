@@ -816,9 +816,9 @@ end
 inline %098h
 
   add      x19, x29, __arg12_1
-  ldr      d18, [x10]
-  frint64z d18, d18
-  fcvtzs   x18, d18
+  ldr      d0, [x10]
+  frintx   d0, d0
+  fcvtzs   x18, d0
   str      x18, [x19]
 
 end
