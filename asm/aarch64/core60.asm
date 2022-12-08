@@ -815,11 +815,11 @@ end
 // ; nconfdp
 inline %098h
 
-  add     x19, x29, __arg12_1
-  ldr     d18, [x10]
-  frintz  d18, d18
-  fcvtzs  x18, d18
-  str     x18, [x19]
+  add      x19, x29, __arg12_1
+  ldr      d18, [x10]
+  frint32z d18, d18
+  fcvtzs   x18, d18
+  str      x18, [x19]
 
 end
 
