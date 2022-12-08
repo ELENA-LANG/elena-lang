@@ -2,7 +2,9 @@ import extensions;
 
 public program()
 {
-   real r := 2.0;
+   int n := 2;
+//   real r := 2.0;
 
-   console.writeLine(r); 
+   console.writeLine(n); 
+//   console.writeLine(r); 
 }
