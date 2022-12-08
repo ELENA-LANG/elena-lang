@@ -934,6 +934,17 @@ bool Arm64Assembler :: compileFRINT32Z(ARMOperand rd, ARMOperand rn, MemoryWrite
    return true;
 }
 
+bool Arm64Assembler :: compileFRINT64Z(ARMOperand rd, ARMOperand rn, MemoryWriter& writer)
+{
+   if (rd.isDR() && rn.isDR()) {
+      writer.writeDWord(ARMHelper::makeRMode3Opcode(0, 0, 0x1E, 1, 1, 4, 2, 0x10,
+         rn.type, rd.type));
+   }
+   else return false;
+
+   return true;
+}
+
 bool Arm64Assembler :: compileFSUB(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm,
    MemoryWriter& writer)
 {
@@ -1674,6 +1685,20 @@ void Arm64Assembler :: compileFRINT32Z(ScriptToken& tokenInfo, MemoryWriter& wri
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void Arm64Assembler :: compileFRINT64Z(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   bool valid = compileFRINT64Z(rd, rn, writer);
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void Arm64Assembler :: compileFSUB(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -2349,6 +2374,9 @@ bool Arm64Assembler :: compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    }
    else if (tokenInfo.compare("frint32z")) {
       compileFRINT32Z(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("frint64z")) {
+      compileFRINT64Z(tokenInfo, writer);
    }
    else if (tokenInfo.compare("fsub")) {
       compileFSUB(tokenInfo, writer);
