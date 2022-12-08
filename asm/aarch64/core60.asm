@@ -417,7 +417,7 @@ end
 // ; bread
 inline %23h
 
-  add     x18, x10, x9
+  add     x18, x0, x9
   ldrsb   x17, [x18]
   str     x17, [x10]
 
