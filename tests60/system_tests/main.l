@@ -12,7 +12,6 @@ public program()
    stringTests();
    shortTests();
    conversionTests();
-   //gcTests()
 
    console.writeLine("--- Passed ---")
 }
