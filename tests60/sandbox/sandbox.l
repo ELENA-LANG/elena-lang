@@ -1,11 +1,21 @@
 import extensions;
 
-function(acc)
-    = (n => acc.append:n);
+// --- stringTests ---
+stringTests()
+{
+    console.write("stringTests");
+    string s := "abc";
+
+    Assert.ifTrue(s == "abc");
+    console.write(".");
+    string s2 := "de";
+    var s3 := s + s2;
+
+    Assert.ifTrue(s3 == "abcde");
+    console.writeLine(".");
+}
 
 public program()
 {
-   var v := function(new Variable(2));
-
-   console.writeLine(v(2)); 
+   stringTests();
 }
