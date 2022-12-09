@@ -18,6 +18,8 @@
 namespace elena_lang
 {
 
+constexpr int MAX_WARNINGS = 200;
+
 // --- PresenterBase ----
 
 class PresenterBase
@@ -308,6 +310,7 @@ struct BuiltinReferences
 {
    ref_t   superReference;
    ref_t   intReference, shortReference, byteReference;
+   ref_t   longReference, realReference;
    ref_t   dwordReference;
    ref_t   literalReference;
    ref_t   wideReference;
@@ -318,21 +321,25 @@ struct BuiltinReferences
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
+   mssg_t  protected_constructor_message;
    mssg_t  invoke_message;
    mssg_t  init_message;
    mssg_t  add_message, sub_message, mul_message, div_message;
+   mssg_t  band_message, bor_message, bxor_message;
+   mssg_t  refer_message;
    mssg_t  if_message;
    mssg_t  equal_message;
-   mssg_t  not_message;
+   mssg_t  not_message, negate_message, value_message;
    mssg_t  notequal_message;
-   mssg_t  less_message;
-   mssg_t  notless_message;
+   mssg_t  less_message, greater_message;
+   mssg_t  notless_message, notgreater_message;
 
    BuiltinReferences()
    {
       superReference = intReference = 0;
       shortReference = byteReference = 0;
       dwordReference = 0;
+      longReference = realReference = 0;
       literalReference = wideReference = 0;
       messageReference = 0;
       wrapperTemplateReference = 0;
@@ -340,14 +347,17 @@ struct BuiltinReferences
       closureTemplateReference = 0;
 
       dispatch_message = constructor_message = 0;
+      protected_constructor_message = 0;
       invoke_message = init_message = 0;
       add_message = sub_message = mul_message = div_message = 0;
+      band_message = bor_message = bxor_message = 0;
+      refer_message = 0;
       if_message = 0;
       equal_message = 0;
-      not_message = 0;
+      not_message = negate_message = value_message = 0;
       notequal_message = 0;
-      less_message = 0;
-      notless_message = 0;
+      greater_message = less_message = 0;
+      notgreater_message = notless_message = 0;
    }
 };
 
@@ -398,6 +408,19 @@ public:
    virtual bool isStandardOne() = 0;
 
    virtual bool isDeclared(ref_t reference) = 0;
+
+   virtual bool isInternalOp(ref_t reference)
+   {
+      ustr_t referenceName = resolveFullName(reference);
+      if (isWeakReference(referenceName)) {
+         return true;
+      }
+      else {
+         auto refInfo = getModule(referenceName, true);
+
+         return refInfo.module == module;
+      }
+   }
 
    virtual ref_t mapAnonymous(ustr_t prefix = nullptr) = 0;
 
@@ -483,6 +506,7 @@ enum class ExpressionAttribute : pos64_t
    ProbeMode         = 0x00000200000,
    AlreadyResolved   = 0x00000400000,
    InitializerScope  = 0x00000800000,
+   Superior          = 0x10000000000,
    Lookahead         = 0x20000000000,
    NoDebugInfo       = 0x40000000000,
    NoExtension       = 0x80000000000,
@@ -601,6 +625,7 @@ class ErrorProcessor : public ErrorProcessorBase
 {
    PresenterBase* _presenter;
    int            _warningMasks;
+   int            _numberOfWarnings;
 
    static SyntaxNode findTerminal(SyntaxNode node)
    {
@@ -672,13 +697,20 @@ public:
       if (!test(_warningMasks, level))
          return;
 
-      printTerminalInfo(code, pathArg, node);
+      if (_numberOfWarnings < MAX_WARNINGS) {
+         _numberOfWarnings++;
+
+         printTerminalInfo(code, pathArg, node);
+      }
    }
+
+   bool hasWarnings() { return _numberOfWarnings > 0; }
 
    ErrorProcessor(PresenterBase* presenter)
    {
       _presenter = presenter;
       _warningMasks = WARNING_MASK_2;
+      _numberOfWarnings = 0;
    }
 };
 
@@ -710,14 +742,19 @@ enum class ConversionResult
 {
    None = 0,
    BoxingRequired,
-   Conversion
+   Conversion,
+   NativeConversion
 };
 
 // --- ConversionRoutine ---
 struct ConversionRoutine
 {
    ConversionResult result;
-   mssg_t           conversionMssg;
+   union {
+      mssg_t conversionMssg;
+      ref_t  operationKey;
+   };
+   
    int              stackSafeAttrs;
 };
 

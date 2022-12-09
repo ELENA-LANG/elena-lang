@@ -49,6 +49,8 @@ EXTERN_DLL_EXPORT void ExitLA(int retVal)
 
 EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size)
 {
+//   printf("CollectGCLA %llx %llx\n", (long long)roots, size);
+
    return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size);
 }
 

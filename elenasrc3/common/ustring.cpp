@@ -24,6 +24,7 @@
 #include "common.h"
 // --------------------------------------------------------------------------
 #include "ustring.h"
+#include <math.h>
 
 using namespace elena_lang;
 
@@ -432,12 +433,147 @@ unsigned int StrConvertor :: toUInt(const char* s, int radix)
    return strtoul(s, nullptr, radix);
 }
 
+long long StrConvertor :: toLong(const char* s, int radix)
+{
+   long long number = 0;
+
+   bool negative = false;
+   if (s[0] == '-') {
+      negative = true;
+      s++;
+   }
+
+   char dump[10];
+   size_t length = getlength(s);
+   while (length > 8) {
+      memcpy(dump, (char*)s, 8);
+      dump[8] = 0;
+
+      long long temp = toUInt(dump, radix);
+      for (size_t i = 0; i < (length - 8); i++) {
+         temp *= radix;
+      }
+      number += temp;
+
+      length -= 8;
+      s += 8;
+   }
+   memcpy(dump, s, length);
+   dump[length] = 0;
+   long long temp = toUInt(dump, radix);
+   number += temp;
+
+   if (negative)
+      number = -number;
+
+   return number;
+}
+
+long long StrConvertor :: toLong(const wide_c* s, int radix)
+{
+   long long number = 0;
+
+   bool negative = false;
+   if (s[0] == '-') {
+      negative = true;
+      s++;
+   }
+
+   wide_c dump[10];
+   size_t length = getlength(s);
+   while (length > 9) {
+      memcpy(dump, (wide_c*)s, 18);
+      dump[9] = 0;
+
+      long long temp = toInt(dump, radix);
+      for (size_t i = 0; i < (length - 9); i++) {
+         temp *= radix;
+      }
+      number += temp;
+
+      length -= 9;
+      s += 9;
+   }
+   memcpy(dump, s, length * 2);
+   dump[length] = 0;
+   long long temp = toInt(dump, radix);
+   number += temp;
+
+   if (negative)
+      number = -number;
+
+   return number;
+}
+
+double StrConvertor :: toDouble(const char* s)
+{
+   // !!HOTFIX : to recognize nan
+   if (strcmp(s, "nan") == 0) {
+      return NAN;
+   }
+   else if (strcmp(s, "-inf") == 0) {
+      return -INFINITY;
+   }
+   else if (strcmp(s, "+inf") == 0) {
+      return INFINITY;
+   }
+   else return atof(s);
+}
+
+double StrConvertor::toDouble(const wide_c* s)
+{
+   size_t destLen = 30;
+   char temp[30];
+   StrConvertor::copy(temp, s, getlength(s), destLen);
+   temp[destLen] = 0;
+
+   return toDouble(temp);
+}
+
+char* StrConvertor :: toString(double value, int precision, char* s, size_t destLength)
+{
+   // !!HOTFIX : to recognize nan
+   if (value != value) {
+      StrConvertor::copy(s, "nan", 3, destLength);
+      s[destLength] = 0;
+   }
+   else if (isinf(value)) {
+      if (value == -INFINITY) {
+         StrConvertor::copy(s, "-inf", 4, destLength);
+      }
+      else StrConvertor::copy(s, "+inf", 4, destLength);
+
+      s[destLength] = 0;
+   }
+   else _gcvt(value, precision, s);
+
+   return s;
+}
+
+wchar_t* StrConvertor :: toString(double value, int precision, wchar_t* s, size_t destLength)
+{
+   char tmp[25];
+   gcvt(value, precision, tmp);
+
+   for (size_t i = 0; i <= getlength(tmp); i++) {
+      s[i] = tmp[i];
+   }
+
+   return s;
+}
+
 // --- internal functions ---
 
 bool inline util_compare(const char* s1, const char* s2)
 {
    if (s1 && s2) return (strcmp(s1, s2) == 0);
    else return (s1 == s2);
+}
+
+bool inline util_greater(const char* s1, const char* s2)
+{
+   if (s1 && s2) return (strcmp(s1, s2) > 0);
+   else return false;
 }
 
 bool inline util_compare(const char* s1, const char* s2, size_t length)
@@ -816,6 +952,19 @@ void StrUtil :: insert(char* s, size_t pos, size_t length, const char* subs)
    s[totalLen + length] = 0;
 }
 
+void StrUtil :: insert(wide_c* s, size_t pos, size_t length, const wide_c* subs)
+{
+   size_t totalLen = getlength(s);
+
+   for (size_t i = totalLen; i > pos; i--) {
+      s[i + length - 1] = s[i - 1];
+   }
+
+   memmove(s + pos, subs, length << 1);
+
+   s[totalLen + length] = 0;
+}
+
 size_t StrUtil :: findChar(const char* s, char ch, size_t length, size_t defaultValue)
 {
    return util_find(s, ch, length, defaultValue);
@@ -926,6 +1075,11 @@ bool ustr_t :: compare(const char* s) const
 bool ustr_t::compare(const char* s, size_t length) const
 {
    return util_compare(_string, s, length);
+}
+
+bool ustr_t::greater(const char* s) const
+{
+   return util_greater(_string, s);
 }
 
 bool ustr_t::compareSub(const char* s, size_t index, size_t length) const

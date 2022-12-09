@@ -39,9 +39,12 @@ namespace elena_lang
       ControlBase* createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, int notifyCode);
       ControlBase* createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier);
       ControlBase* createErrorList(ControlBase* owner, NotifierBase* notifier);
-      ControlBase* createProjectView(ControlBase* owner);
+      ControlBase* createProjectView(ControlBase* owner, NotifierBase* notifier);
+      ControlBase* createDebugBrowser(ControlBase* owner, NotifierBase* notifier);
+      GUIControlBase* createMenu(ControlBase* owner);
 
-      void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, int projectView);
+      void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
+         int projectView, int contextBrowser, int menu);
 
    public:
       GUIApp* createApp() override;

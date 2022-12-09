@@ -4,6 +4,8 @@
 //                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include <tchar.h>
+
 #include "windows/winidestatusbar.h"
 
 using namespace elena_lang;
@@ -52,5 +54,16 @@ void IDEStatusBar :: onIDEChange()
 
 void IDEStatusBar :: onDocumentUpdate()
 {
+   auto docView = _model->viewModel()->DocView();
+   if (docView && docView->status.caretChanged) {
+      auto caret = docView->getCaret();
 
+      String<text_c, 30> line;
+      line.append(_T("Ln "));
+      line.appendInt(caret.y + 1);
+      line.append(_T(" Col "));
+      line.appendInt(caret.x + 1);
+
+      setText(1, line.str());
+   }
 }

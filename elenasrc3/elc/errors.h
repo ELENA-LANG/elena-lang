@@ -79,6 +79,8 @@ namespace elena_lang
    constexpr auto wrnMsgUnknownModule        = "%s(%d:%d): warning 413: Unknown module '%s'\n";
    constexpr auto wrnMsgTypeInherited        = "%s(%d:%d): warning 420: Type attribute is inherited\n";
    constexpr auto wrnMsgDuplicateInclude     = "%s(%d:%d): warning 425: '%s': duplicate inclusion\n";
+   constexpr auto wrnMsgUnknownTypecast      = "%s(%d:%d): warning 426: typecasting routine cannot be found\n";
+   constexpr auto wrnMsgUnsupportedOperator  = "%s(%d:%d): warning 427: operator handler is not defined for %s\n";
 
    constexpr auto wrnMsgSyntaxFileNotFound   = "warning 500: cannot open syntax file '%s'\n";
    constexpr auto wrnMsgInvalidConfig        = "warning 501: invalid or unknown config file %s\n";

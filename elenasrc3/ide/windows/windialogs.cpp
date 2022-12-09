@@ -4,6 +4,8 @@
 //                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include <tchar.h>
+
 #include "windialogs.h"
 #include "eng/messages.h"
 
@@ -23,6 +25,7 @@ int MsgBox :: showQuestion(HWND owner, const wchar_t* message)
 
 // --- FileDialog ---
 
+const wchar_t* Dialog::ProjectFilter = _T("ELENA Project file\0*.prj\0All types\0*.*\0\0");
 const wchar_t* Dialog::SourceFilter = _T("ELENA source file\0*.l\0All types\0*.*\0\0");
 
 Dialog :: Dialog(HINSTANCE instance, WindowBase* owner, const wchar_t* filter, const wchar_t* caption,
@@ -54,6 +57,18 @@ Dialog :: Dialog(HINSTANCE instance, WindowBase* owner, const wchar_t* filter, c
    _fileName[0] = 0;
 
    _owner = owner;
+}
+
+bool Dialog :: openFile(PathString& path)
+{
+   _struct.Flags = _defaultFlags;
+   if (::GetOpenFileName(&_struct)) {
+      path.copy(_fileName);
+      path.lower();
+
+      return true;
+   }
+   else return false;
 }
 
 bool Dialog :: openFiles(List<path_t, freepath>& files)

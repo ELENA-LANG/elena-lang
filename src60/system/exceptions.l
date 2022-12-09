@@ -29,16 +29,22 @@ public class Exception
 // --- CriticalException ---
 public class CriticalException : Exception
 {
+   constructor new()
+      <= super new("Critical exception");
 }
 
 // --- CriticalException ---
 public class NilReferenceException : Exception
 {
+   constructor new()
+      <= super new("Nil reference exception");
 }
 
 // --- CriticalException ---
 public class DivisionByZeroException : Exception
 {
+   constructor new()
+      <= super new("Division by zero exception");
 }
 
 // --- CriticalException ---

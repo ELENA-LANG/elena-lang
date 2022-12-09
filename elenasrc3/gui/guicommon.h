@@ -13,12 +13,6 @@ namespace elena_lang
 {
 #ifdef _MSC_VER
 
-#ifndef _T
-
-#define _T(x) L ## x
-
-#endif // _T
-
    typedef wide_c  text_c;
    typedef wide_c* text_t;
    typedef wstr_t  text_str;

@@ -20,7 +20,7 @@ const char* _fnOpcodes[256] =
    "incude", "exclude", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "coalesce", "not", "neg", "bread", "lsave", "fsave", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -42,19 +42,19 @@ const char* _fnOpcodes[256] =
    "mov mssg", "mov n", "load dp", "xcmp dp", "sub n", "add n", "set fp", OPCODE_UNKNOWN,
 
    "copy", "close", "alloc", "free", "and n", "read", "write", "cmp n",
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "nconf dp", "ftrunc dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "save dp", "store fp", "save sp", "store sp", "xflush sp", "get", "assign", OPCODE_UNKNOWN,
+   "save dp", "store fp", "save sp", "store sp", "xflush sp", "get", "assign", "xrefresh sp",
    "peek fp", "peek sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "call", "call vt", "jump", "jeq", "jne", "jump vt", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "cmp", OPCODE_UNKNOWN, "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "cmp", "fcmp", "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", "xnewn",
    "nadd dp", OPCODE_UNKNOWN, "xwrite offs", "xcopy offs", "vjump mssg", "jump mssg", "seleq", "sellt",
@@ -126,11 +126,16 @@ void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase
    if (test(flags, FUNCTION_MESSAGE))
       messageName.append("function:");
 
-   if (test(flags, PROPERTY_MESSAGE))
-      messageName.append("prop:");
-
-   if (test(flags, VARIADIC_MESSAGE))
-      messageName.append("params:");
+   switch (flags & PREFIX_MESSAGE_MASK) {
+      case PROPERTY_MESSAGE:
+         messageName.append("prop:");
+         break;
+      case VARIADIC_MESSAGE:
+         messageName.append("params:");
+         break;
+      default:
+         break;
+   }
 
    messageName.append(actionName);
    if (len > 0) {
@@ -669,6 +674,9 @@ void CommandTape :: saveTo(MemoryWriter* writer)
          case ByteCode::ImportOff:
             importMode = false;
             break;
+         //case ByteCode::BreakLabel:
+         //   // nop in command tape is ignored (used in replacement patterns)
+         //   break;
          case ByteCode::Label:
             fixJumps(writer->Memory(), writer->position(), fwdJumps, command.arg1);
             labels.add(command.arg1, writer->position());

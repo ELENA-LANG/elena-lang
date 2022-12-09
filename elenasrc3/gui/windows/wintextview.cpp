@@ -6,6 +6,8 @@
 
 #include "wintextview.h"
 
+#include <tchar.h>
+
 using namespace elena_lang;
 
 inline bool isKeyDown(int key)
@@ -113,7 +115,7 @@ void TextViewWindow :: resizeDocument()
 
 void TextViewWindow :: mouseToScreen(Point point, int& col, int& row, bool& margin)
 {
-   Rectangle rect = getRectangle();
+   Rectangle rect = getClientRectangle();
    auto defaultStyle = _styles->getStyle(STYLE_DEFAULT);
    int marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
    int offset = defaultStyle->avgCharWidth / 2;
@@ -307,7 +309,11 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 
          width = canvas.TextWidth(style, buffer, length);
 
-         /*else */canvas.drawTextClipped(Rectangle(x, y, width + 1, lineHeight + 1), x, y,
+         if (length == 0 && reader.style == STYLE_SELECTION) {
+            canvas.drawTextClipped(Rectangle(x, y, style->avgCharWidth + 1, lineHeight + 1), x, y,
+               _T(" "), 1, style);
+         }
+         else canvas.drawTextClipped(Rectangle(x, y, width + 1, lineHeight + 1), x, y,
             buffer, length, style);
 
          x += width;
@@ -332,8 +338,6 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 
             writer.reset();
          } while (reader.readCurrentLine(writer, 0xFF));
-
-         docView->status.caretChanged = false;
       }
 
       locateCaret(clientRect.topLeft.x + marginWidth + _caret_x,
@@ -424,7 +428,7 @@ void TextViewWindow :: onButtonDown(Point point, bool kbShift)
    bool margin = false;
    mouseToScreen(point, col, row, margin);
 
-   _model->DocView()->moveToFrame(col, row, kbShift);
+   _controller->moveToFrame(_model, col, row, kbShift);
 
    captureMouse();
 }
@@ -432,6 +436,19 @@ void TextViewWindow :: onButtonDown(Point point, bool kbShift)
 void TextViewWindow :: onButtonUp()
 {
    releaseMouse();
+}
+
+void TextViewWindow :: onMouseMove(short wheelDelta, bool kbCtrl)
+{
+   auto docView = _model->DocView();
+
+   int offset = (wheelDelta > 0) ? -1 : 1;
+   if (kbCtrl) {
+      offset *= docView->getSize().y;
+   }
+   docView->vscroll(offset);
+
+   onDocumentUpdate();
 }
 
 bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
@@ -454,6 +471,12 @@ bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
          break;
       case VK_END:
          _controller->moveCaretEnd(_model, kbShift, kbCtrl);
+         break;
+      case VK_PRIOR:
+         _controller->movePageUp(_model, kbShift);
+         break;
+      case VK_NEXT:
+         _controller->movePageDown(_model, kbShift);
          break;
       case VK_DELETE:
       {
@@ -514,6 +537,9 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
          return 0;
       case WM_LBUTTONUP:
          onButtonUp();
+         return 0;
+      case WM_MOUSEWHEEL:
+         onMouseMove(HIWORD(wParam), (wParam & MK_CONTROL) != 0);
          return 0;
       case WM_KEYDOWN:
          if (onKeyDown((int)wParam, isKeyDown(VK_SHIFT), isKeyDown(VK_CONTROL))) {

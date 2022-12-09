@@ -8,6 +8,7 @@
 // --------------------------------------------------------------------------
 #include "document.h"
 #include "guieditor.h"
+#include <tchar.h>
 
 using namespace elena_lang;
 
@@ -38,6 +39,7 @@ LexicalFormatter :: ~LexicalFormatter()
 void LexicalFormatter :: format()
 {
    _indexes.clear();
+   _lexical.clear();
 
    MemoryWriter  indexWriter(&_indexes);
    MemoryWriter  writer(&_lexical);
@@ -49,7 +51,7 @@ void LexicalFormatter :: format()
 
    TextBookmarkReader reader(_text);
 
-   indexWriter.writeSize(0);
+   indexWriter.writePos(0);
    _formatter->start(info);
    pos_t        style = info.style;
    while (true) {
@@ -364,7 +366,7 @@ void DocumentView :: setCaret(int column, int row, bool selecting)
       frame.y = caret.y;
    }
    else if (frame.y + _size.y - 1 <= caret.y) {
-      frame.y = caret.y - _size.y + 2;
+      frame.y = caret.y - _size.y + 3;
    }
 
    if (_frame.getCaret() != frame) {
@@ -555,6 +557,7 @@ void DocumentView :: moveFrameUp()
       if (_frame.row() + _size.y - 2 <= _caret.row()) {
          setCaret(_caret.column(), _frame.row() + _size.y - 3, false);
       }
+      else notifyOnChange();
    }
 }
 
@@ -565,6 +568,7 @@ void DocumentView :: moveFrameDown()
       if (_caret.row() < _frame.row()) {
          setCaret(_caret.column(), _frame.row(), false);
       }
+      else notifyOnChange();
    }
 }
 
@@ -594,11 +598,74 @@ void DocumentView :: moveToFrame(int column, int row, bool selecting)
    setCaret(_frame.column() + column, _frame.row() + row, selecting);
 }
 
+void DocumentView :: movePageDown(bool selecting)
+{
+   if (_caret.row() + _size.y > _text->getRowCount() - 1) {
+      setCaret(_caret.column(), _text->getRowCount() - 1, selecting);
+   }
+   else {
+      vscroll(_size.y);
+      if (status.frameChanged)
+         setCaret(_caret.column(), _caret.row() + _size.y, selecting);
+   }
+}
+
+void DocumentView :: movePageUp(bool selecting)
+{
+   if (_caret.row() == 0)
+      return;
+
+   if (_frame.row() == 0) {
+      setCaret(_caret.column(), 0, selecting);
+   }
+   else {
+      vscroll(-_size.y);
+      if (status.frameChanged)
+         setCaret(_caret.column(), _caret.row() - _size.y, selecting);
+   }
+}
+
 void DocumentView :: notifyOnChange()
 {
    for(auto it = _notifiers.start(); !it.eof(); ++it) {
       (*it)->onDocumentUpdate();
    }
+
+   status.caretChanged = false;
+}
+
+void DocumentView :: blockInserting(text_t subs, size_t length)
+{
+   _text->validateBookmark(_caret);
+
+   if (_selection < 0) {
+      _caret.moveOn(_selection);
+      _selection = abs(_selection);
+   }
+   TextBookmark end = _caret;
+
+   end.moveOn(_selection);
+
+   // if only part of the line was selected just insert tab
+   int lastRow = end.row();
+   if (lastRow == _caret.row()) {
+      _text->insertLine(_caret, subs, length);
+   }
+   else {
+      setCaret(0, _caret.row(), true);
+
+      if (end.column() == 0)
+         lastRow--;
+
+      TextBookmark start = _caret;
+      while (start.row() <= lastRow) {
+         _text->insertLine(start, subs, length);
+
+         if (!start.moveTo(0, start.row() + 1))
+            break;
+      }
+   }
+
 }
 
 void DocumentView :: tabbing(text_c space, size_t count, bool indent)

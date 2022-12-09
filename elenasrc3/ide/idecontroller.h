@@ -10,6 +10,7 @@
 #include "controller.h"
 #include "debugcontroller.h"
 #include "ideproject.h"
+#include "config.h"
 
 namespace elena_lang
 {
@@ -38,15 +39,23 @@ namespace elena_lang
       None,
       Run,
       StepInto,
-      StepOver
+      StepOver,
+      RunTo
    };
 
    // --- ProjectController ---
    class ProjectController : public NotifierBase
    {
+      PlatformType            _platform;
+
       ProcessBase*            _outputProcess;
       DebugController         _debugController;
       NotifierBase*           _notifier;
+      WatchContext            _autoWatch;
+
+      void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
+
+      path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& retVal);
 
       bool onDebugAction(ProjectModel& model, DebugAction action);
       bool isOutaged(bool noWarning);
@@ -55,20 +64,26 @@ namespace elena_lang
 
       bool isIncluded(ProjectModel& model, ustr_t ns);
 
-      bool compile();
-
+      bool compileProject(ProjectModel& model);
       bool compileSingleFile(ProjectModel& model);
 
    public:
       void openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
+      void openProject(ProjectModel& model, path_t projectFile);
 
-      void defineSourceName(path_t path, IdentifierString& retVal);
+      path_t getSourceByIndex(ProjectModel& model, int index);
+
+      void defineSourceName(ProjectModel* model, path_t path, ReferenceName& retVal);
 
       void defineFullPath(ProjectModel& model, ustr_t ns, path_t path, PathString& fullPath);
 
       bool doCompileProject(ProjectModel& model, DebugAction postponedAction);
 
-      void doDebugAction(ProjectModel& model, DebugAction action);
+      void doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
+      void doDebugStop(ProjectModel& model);
+
+      void runToCursor(ProjectModel& model, SourceViewModel& sourceModel);
+      void refreshDebugContext(ContextBrowserBase* contextBrowser);
 
       void setNotifier(NotifierBase* notifier)
       {
@@ -87,10 +102,12 @@ namespace elena_lang
       }
 
       ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
-         DebugSourceController* sourceController)
-         : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController)
+         DebugSourceController* sourceController, PlatformType platform)
+         : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
+           _autoWatch({ nullptr, 0 }) 
       {
          _notifier = nullptr;
+         _platform = platform;
       }
    };
 
@@ -99,7 +116,8 @@ namespace elena_lang
    {
       NotifierBase*           _notifier;
 
-      bool openFile(SourceViewModel* model, path_t sourceFile);
+      bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile);
+      bool openProject(IDEModel* model, path_t projectFile);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
 
@@ -125,6 +143,7 @@ namespace elena_lang
       path_t retrieveSingleProjectFile(IDEModel* model);
 
       bool openFile(IDEModel* model, path_t sourceFile);
+      bool openProjectSourceByIndex(IDEModel* model, int index);
 
       bool selectSource(ProjectModel* model, SourceViewModel* sourceModel,
          ustr_t moduleName, path_t sourcePath);
@@ -135,24 +154,33 @@ namespace elena_lang
       void doOpenFile(DialogBase& dialog, IDEModel* model);
       bool doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
       bool doCloseFile(DialogBase& dialog, IDEModel* model);
+      bool doOpenProject(DialogBase& dialog, IDEModel* model);
+      bool doCloseProject();
       bool doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode);
 
       bool doCompileProject(DialogBase& dialog, IDEModel* model);
       void doDebugAction(IDEModel* model, DebugAction action);
+      void doDebugStop(IDEModel* model);
+
+      void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
+
+      void doSelectNextWindow(IDEModel* model);
+      void doSelectPrevWindow(IDEModel* model);
 
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
-
       bool doExit();
 
       void init(IDEModel* model);
 
+      void onLayoutchange();
+
       IDEController(ProcessBase* outputProcess, DebugProcessBase* process, IDEModel* model,
-         TextViewSettings& textViewSettings
+         TextViewSettings& textViewSettings, PlatformType platform
       ) :
          sourceController(textViewSettings),
          projectController(outputProcess, process, &model->projectModel, &model->sourceViewModel,
-            this)
+            this, platform)
       {
          _notifier = nullptr;
          defaultEncoding = FileEncoding::UTF8;

@@ -689,6 +689,17 @@ void SyntaxTreeBuilder :: flushClosure(SyntaxTreeWriter& writer, Scope& scope, S
 
 void SyntaxTreeBuilder :: flushMethod(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
+   if (scope.type != ScopeType::Unknown) {
+      ustr_t path = retrievePath(writer.CurrentNode());
+      if (!path.empty()) {
+         IdentifierString pathStr(_moduleScope->module->name());
+         pathStr.append('\'');
+         pathStr.append(path);
+
+         writer.appendNode(SyntaxKey::SourcePath, *pathStr);
+      }
+   }
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
@@ -698,6 +709,7 @@ void SyntaxTreeBuilder :: flushMethod(SyntaxTreeWriter& writer, Scope& scope, Sy
          case SyntaxKey::CodeBlock:
          case SyntaxKey::WithoutBody:
          case SyntaxKey::ReturnExpression:
+         case SyntaxKey::Redirect:
             flushMethodCode(writer, scope, current);
             break;
          case SyntaxKey::ResendDispatch:
@@ -770,6 +782,7 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
       case SyntaxKey::WithoutBody:
       case SyntaxKey::ReturnExpression:
       case SyntaxKey::ResendDispatch:
+      case SyntaxKey::Redirect:
          writer.CurrentNode().setKey(SyntaxKey::Method);
          flushMethod(writer, scope, node);
          break;
@@ -849,7 +862,7 @@ void SyntaxTreeBuilder :: flushTemplateCode(SyntaxTreeWriter& writer, Scope& sco
             flushDictionary(writer, current);
             break;
          case SyntaxKey::EOP:
-            flushNode(writer, scope, current);
+            //flushNode(writer, scope, current);
             break;
          default:
             if (SyntaxTree::testSuperKey(current.key, SyntaxKey::Expression)) {
@@ -930,6 +943,8 @@ void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& s
 
 void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
+   flushClassPostfixes(writer, scope, node);
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
@@ -1087,7 +1102,7 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
          case DeclarationType::Class:
             writer.CurrentNode().setKey(SyntaxKey::Class);
 
-            flushClass(writer, scope, node, node.existChild(SyntaxKey::CodeBlock));
+            flushClass(writer, scope, node, node.existChild(SyntaxKey::CodeBlock, SyntaxKey::ReturnExpression));
             break;
          default:
             break;
@@ -1413,17 +1428,60 @@ void TemplateProssesor :: copyMethod(SyntaxTreeWriter& writer, TemplateScope& sc
    writer.newNode(node.key);
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      //switch (current.key) {
+      switch (current.key) {
+         case SyntaxKey::InlineTemplate:
+            copyTemplatePostfix(writer, scope, current);
+            break;
          //case SyntaxKey::TemplateArgParameter:
          //{
          //   SyntaxNode nodeToInject = scope.argValues.get(current.arg.value);
          //   copyNode(writer, scope, nodeToInject);
          //   break;
          //}
-         //default:
+         default:
             copyNode(writer, scope, current);
-            //break;
-      //}
+            break;
+      }
+
+      current = current.nextNode();
+   }
+   writer.closeNode();
+}
+
+void TemplateProssesor :: copyParent(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)
+{
+   writer.newNode(node.key);
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::TemplatePostfix:
+            copyTemplatePostfix(writer, scope, current);
+            break;
+         default:
+            copyNode(writer, scope, current);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+   writer.closeNode();
+}
+
+void TemplateProssesor :: copyTemplatePostfix(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)
+{
+   writer.newNode(node.key);
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::TemplateArg:
+            writer.newNode(current.key);
+            copyChildren(writer, scope, current);
+            writer.closeNode();
+            break;
+         default:
+            copyNode(writer, scope, current);
+            break;
+      }
 
       current = current.nextNode();
    }
@@ -1469,6 +1527,9 @@ void TemplateProssesor :: generateTemplate(SyntaxTreeWriter& writer, TemplateSco
       switch (current.key) {
          case SyntaxKey::Attribute:
             copyNode(writer, scope, current);
+            break;
+         case SyntaxKey::Parent:
+            copyParent(writer, scope, current);
             break;
          case SyntaxKey::Field:
             copyField(writer, scope, current);

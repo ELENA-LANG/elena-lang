@@ -27,6 +27,18 @@ inline int createDir(const wchar_t* path)
    return _wmkdir(path);
 }
 
+bool PathUtil :: compare(path_t s1, path_t s2, size_t length)
+{
+   for (size_t i = 0; i < length; i++) {
+      path_c ch1 = StrUtil::lower(s1[i]);
+      path_c ch2 = StrUtil::lower(s2[i]);
+
+      if (ch1 != ch2)
+         return false;
+   }
+   return true;
+}
+
 bool PathUtil::compare(path_t path1, path_t path2)
 {
    size_t l1 = path1.length();
@@ -49,7 +61,7 @@ bool PathUtil::compare(path_t path1, path_t path2)
 bool PathUtil :: recreatePath(/*path_t root, */path_t path)
 {
    PathString dirPath;
-   dirPath.copySubPath(path);
+   dirPath.copySubPath(path, false);
 
    if (!dirPath.empty()) {
       if (checkDir(dirPath.str(), 0) != 0) {
@@ -118,7 +130,7 @@ inline void createDir(const char* path)
 bool PathUtil::recreatePath(path_t path)
 {
    PathString dirPath;
-   dirPath.copySubPath(path);
+   dirPath.copySubPath(path, false);
 
    if (!dirPath.empty()) {
       if (checkDir(dirPath.str(), 0) != 0) {

@@ -37,6 +37,13 @@ namespace elena_lang
       Exclude        = 0x10,
       Include        = 0x11,
 
+      Coalesce       = 0x20,
+      Not            = 0x21,
+      Neg            = 0x22,
+      BRead          = 0x23,
+      LSave          = 0x24,
+      FSave          = 0x25,
+
       MaxSingleOp    = 0x7F,
 
       SetR           = 0x80,
@@ -63,6 +70,8 @@ namespace elena_lang
       ReadN          = 0x95,
       WriteN         = 0x96,
       CmpN           = 0x97,
+      NConvFDP       = 0x98,
+      FTruncDP       = 0x99,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,
@@ -71,6 +80,7 @@ namespace elena_lang
       XFlushSI       = 0xA4,
       GetI           = 0xA5,
       AssignI        = 0xA6,
+      XRefreshSI     = 0xA7,
       PeekFI         = 0xA8,
       PeekSI         = 0xA9,
 
@@ -82,6 +92,7 @@ namespace elena_lang
       JumpVI         = 0xB5,
 
       CmpR           = 0xC0,
+      FCmpN          = 0xC1,
       ICmpN          = 0xC2,
       TstFlag        = 0xC3,
       TstN           = 0xC4,
@@ -89,7 +100,19 @@ namespace elena_lang
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
 
-      MaxDoubleOp    = 0xDF,
+      MaxDoubleOp    = 0xCF,
+
+      FAddDPN        = 0xD0,
+      FSubDPN        = 0xD1,
+      FMulDPN        = 0xD2,
+      FDivDPN        = 0xD3,
+
+      IAndDPN        = 0xD8,
+      IOrDPN         = 0xD9,
+      IXorDPN        = 0xDA,
+      INotDPN        = 0xDB,
+      IShlDPN        = 0xDC,
+      IShrDPN        = 0xDD,
 
       CopyDPN        = 0xE0,
       IAddDPN        = 0xE1,
@@ -125,6 +148,7 @@ namespace elena_lang
 
       None           = 0x1000,
       Label          = 0x1001,
+//      BreakLabel     = 0x1011,  // meta command, breaking the optimization rules
       ImportOn       = 0x1002,
       ImportOff      = 0x1003,
    };

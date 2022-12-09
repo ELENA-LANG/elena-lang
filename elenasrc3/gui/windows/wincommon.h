@@ -29,8 +29,8 @@ namespace elena_lang
    constexpr int CURSOR_SIZEWE   = 2;
    constexpr int CURSOR_SIZENS   = 3;
 
-   constexpr int NMHDR_Message   = 0x101;
-   constexpr int NMHDR_Model     = 0x102;
+   constexpr int NMHDR_Message      = 0x101;
+   constexpr int NMHDR_Model        = 0x102;
 
    // --- ExtNMHDR ---
    struct ExtNMHDR
@@ -147,6 +147,7 @@ namespace elena_lang
 
       virtual void onResize() {}
       virtual bool onSetCursor() { return false; }
+      virtual void onClose() {}
 
       virtual void setCursor(int type);
 

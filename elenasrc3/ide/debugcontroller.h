@@ -76,14 +76,22 @@ namespace elena_lang
          _debugInfoPtr = debugInfoPtr;
       }
 
+      addr_t getClassAddress(ustr_t name);
+
       bool load(StreamReader& reader, bool setEntryAddress, DebugProcessBase* process);
 
-      DebugLineInfo* seekDebugLineInfo(addr_t lineInfoAddress, ustr_t& moduleName, ustr_t& sourcePath);
+      ModuleBase* resolveModule(ustr_t ns);
+
+      addr_t findNearestAddress(ModuleBase* module, ustr_t path, int row);
+
+      DebugLineInfo* seekDebugLineInfo(addr_t lineInfoAddress, IdentifierString& moduleName, ustr_t& sourcePath);
       DebugLineInfo* seekDebugLineInfo(size_t lineInfoAddress)
       {
          return (DebugLineInfo*)lineInfoAddress;
       }
       DebugLineInfo* getNextStep(DebugLineInfo* step, bool stepOverMode);
+
+      DebugLineInfo* seekClassInfo(addr_t address, IdentifierString& className, addr_t vmtAddress, ref_t flags);
 
       void clear()
       {
@@ -168,7 +176,7 @@ namespace elena_lang
          bool             gotoMode;
          int              col, row;
          IdentifierString source;
-         PathString       path;
+         IdentifierString path;
 
          void clear()
          {
@@ -184,7 +192,7 @@ namespace elena_lang
             stepMode = true;
          }
 
-         void setGotoMode(int col, int row, ustr_t source, path_t path)
+         void setGotoMode(int col, int row, ustr_t source, ustr_t path)
          {
             clear();
             this->gotoMode = true;
@@ -229,6 +237,14 @@ namespace elena_lang
       void onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath);
       void onStop();
 
+      void readFields(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info);
+
+      void* readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className = nullptr);
+      void* readIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
+      void* readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
+      void* readRealLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
+      void* readByteArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
+
    public:
       bool isStarted() const
       {
@@ -242,6 +258,11 @@ namespace elena_lang
       void run();
       void stepOver();
       void stepInto();
+      void stop();
+      void runToCursor(ustr_t name, ustr_t path, int row);
+
+      void readAutoContext(ContextBrowserBase* watch, int level, WatchItems* refreshedItems);
+      void readContext(ContextBrowserBase* watch, void* parentItem, addr_t address, int level);
 
       virtual void clearDebugInfo()
       {

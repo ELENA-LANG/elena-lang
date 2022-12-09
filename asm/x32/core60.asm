@@ -348,6 +348,58 @@ inline % 11h
 
 end
 
+// ; coalesce
+inline % 20h
+
+   test   ebx, ebx
+   cmovz  ebx, esi
+
+end
+
+// ; not
+inline % 21h
+
+   not    edx
+
+end
+
+// ; neg
+inline % 22h
+
+   neg    edx
+
+end
+
+// ; bread
+inline %23h
+
+  xor  eax, eax
+  mov  al, byte ptr [esi+edx]
+  mov  dword ptr [ebx], eax
+
+end
+
+// ; lsave
+inline %24h
+
+  mov  eax, edx
+  cdq
+  mov  [ebx + 4], edx
+  mov  [ebx], eax
+  mov  edx, eax
+
+end
+
+// ; fsave
+inline %25h
+
+  push edx
+  fild [esp]
+  fstp qword ptr [ebx]
+  add  esp, 4
+
+end
+
 // ; setr
 inline %80h
 
@@ -653,6 +705,50 @@ inline %097h
 
 end
 
+// ; nconf dp
+inline %098h
+
+  lea   edi, [ebp + __arg32_1]
+  fld   qword ptr [ebx]
+  fistp dword ptr [edi]
+
+end
+
+// ; ftrunc dp
+inline %099h
+
+  lea   edi, [ebp + __arg32_1]
+
+  mov   ecx, 0
+  fld   qword ptr [esi]
+
+  push  ecx                // reserve space on stack
+  fstcw word ptr [esp]     // get current control word
+  mov   edx, [esp]
+  or    dx,0c00h           // code it for truncating
+  push  edx
+  fldcw word ptr [esp]    // change rounding code of FPU to truncate
+
+  frndint                  // truncate the number
+  pop   edx                // remove modified CW from CPU stack
+  fldcw word ptr [esp]     // load back the former control word
+  pop   edx                // clean CPU stack
+      
+  fstsw ax                 // retrieve exception flags from FPU
+  shr   al,1               // test for invalid operation
+  jc    short labErr       // clean-up and return error
+
+labSave:
+  fstp  qword ptr [edi]    // store result
+  jmp   short labEnd
+  
+labErr:
+  ffree st(1)
+  
+labEnd:
+
+end
+
 // ; saveddisp
 inline %0A0h
 
@@ -727,6 +823,18 @@ inline %0A6h
 
 end
 
+// ; xrefreshsi i
+inline %0A7h
+
+end 
+
+// ; xrefreshsi 0
+inline %1A7h
+
+  mov esi, [esp+4]
+
+end 
+
 // ; peekfi
 inline %0A8h
 
@@ -785,6 +893,21 @@ inline %1C0h
 
 end 
 
+// ; fcmpn 8
+inline %0C1h
+
+  xor    eax, eax
+  fld    qword ptr [ebx]
+  mov    ecx, 1
+  fld    qword ptr [esi]
+  fcomip st, st(1)
+  sete   al
+  seta   ah
+  fstp   st(0)
+  cmp    eax, ecx
+
+end
+
 // ; icmpn 4
 inline %0C2h
 
@@ -812,7 +935,7 @@ end
 // ; icmpn 8
 inline %4C2h
 
-  mov  eax, [esi]
+  mov  ecx, [esi]
   sub  ecx, [ebx]
   mov  eax, [esi+4]
   sbb  eax, [ebx+4]
@@ -888,6 +1011,350 @@ inline %1C9h
   cmp  ebx, esi
 
 end 
+
+// ; faddndp
+inline %0D0h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fld   qword ptr [edi]
+  fadd  qword ptr [esi] 
+  fstp  qword ptr [edi]
+
+end
+
+// ; fsubndp
+inline %0D1h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fld   qword ptr [edi]
+  fsub  qword ptr [esi] 
+  fstp  qword ptr [edi]
+
+end
+
+// ; fmulndp
+inline %0D2h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fld   qword ptr [edi]
+  fmul  qword ptr [esi] 
+  fstp  qword ptr [edi]
+
+end
+
+// ; fdivndp
+inline %0D3h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fld   qword ptr [edi]
+  fdiv  qword ptr [esi] 
+  fstp  qword ptr [edi]
+
+end
+
+// ; ianddpn
+inline %0D8h
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  and  [edi], eax
+
+end
+
+// ; ianddpn
+inline %1D8h
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  and  byte ptr [edi], al
+
+end
+
+// ; ianddpn
+inline %2D8h
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  and  word ptr [edi], ax
+
+end
+
+// ; ianddpn
+inline %4D8h
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi + 4]
+  mov  ecx, [esi]
+  and  [edi], ecx
+  and  [edi+4], eax
+
+end
+
+// ; iordpn
+inline %0D9h
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  or   [edi], eax
+
+end
+
+// ; iordpn
+inline %1D9h
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  or   byte ptr [edi], al
+
+end
+
+// ; iordpn
+inline %2D9h
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  or   word ptr [edi], ax
+
+end
+
+// ; iordpn
+inline %4D9h
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi + 4]
+  mov  ecx, [esi]
+  or   [edi], ecx
+  or   [edi+4], eax
+
+end
+
+// ; ixordpn
+inline %0DAh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  xor  [edi], eax
+
+end
+
+// ; ixordpn
+inline %1DAh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  xor  byte ptr [edi], al
+
+end
+
+// ; ixordpn
+inline %2DAh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  xor  word ptr [edi], ax
+
+end
+
+// ; ixordpn
+inline %4DAh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi + 4]
+  mov  ecx, [esi]
+  xor  [edi], ecx
+  xor  [edi+4], eax
+
+end
+
+// ; inotdpn
+inline %0DBh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  not  eax 
+  mov  [edi], eax
+
+end
+
+// ; inotdpn 1
+inline %1DBh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  not  eax 
+  mov  byte ptr [edi], al
+
+end
+
+// ; inotdpn 2
+inline %2DBh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi]
+  not  eax 
+  mov  word ptr [edi], ax
+
+end
+
+// ; inotdpn 8
+inline %4DBh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, [esi + 4]
+  mov  ecx, [esi]
+  not  eax 
+  not  ecx 
+  mov  [edi], ecx
+  mov  [edi+4], eax
+
+end
+
+// ; ishldpn
+inline %0DCh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  shl  eax, cl
+  mov  [edi], eax
+
+end
+
+// ; ishldpn 1
+inline %1DCh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  shl  eax, cl
+  mov  byte ptr [edi], al
+
+end
+
+// ; ishldpn 2
+inline %2DCh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  shl  eax, cl
+  mov  word ptr [edi], ax
+
+end
+
+// ; ishldpn 8
+inline %4DCh
+
+  push edx
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  mov  edx, [edi+4]
+
+  cmp  cl, 40h 
+  jae  short lErr
+  cmp  cl, 20h
+  jae  short LL32
+  shld eax, edx, cl
+  shl  edx, cl
+  jmp  short lEnd
+
+LL32:
+  mov  edx, eax
+  xor  eax, eax
+  sub  cl, 20h
+  shl  eax, cl 
+  jmp  short lEnd
+  
+lErr:
+  xor  eax, eax
+  xor  edx, edx
+  jmp  short lEnd2
+
+lEnd:
+  mov  [edi], eax
+  mov  [edi+4], edx
+
+lEnd2:
+  pop   edx
+
+end
+
+// ; ishrdpn
+inline %0DDh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  shr  eax, cl
+  mov  [edi], eax
+
+end
+
+// ; ishrdpn 1
+inline %1DDh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  shr  eax, cl
+  mov  byte ptr [edi], al
+
+end
+
+// ; ishrdpn 2
+inline %2DDh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  shr  eax, cl
+  mov  word ptr [edi], ax
+
+end
+
+// ; ishrdpn 8
+inline %4DDh
+
+  push edx
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, [esi]
+  mov  eax, [edi]
+  mov  edx, [edi+4]
+
+  cmp  cl, 64
+  jae  short lErr
+
+  cmp  cl, 32
+  jae  short LR32
+  shrd eax, edx, cl
+  sar  edx, cl
+  jmp  short lEnd
+
+LR32:
+  mov  eax, edx
+  xor  edx, edx
+  sub  cl, 20h
+  shr  eax, cl 
+  jmp  short lEnd
+  
+lErr:
+  xor  eax, eax
+  xor  edx, edx
+  jmp  short lEnd2
+
+lEnd:
+  mov  [edi], eax
+  mov  [edi+4], edx
+
+lEnd2:
+  pop   edx
+
+end
 
 // ; copydpn
 inline %0E0h
@@ -1054,6 +1521,7 @@ inline %4E3h
   or   eax, ecx
   mov  ecx, [edx]     // DLO
   jnz  short lLong
+  mov  ecx, [edx]
   mov  eax, [esi]
   mul  ecx
   jmp  short lEnd
@@ -1426,6 +1894,8 @@ end
 
 // ; openheaderin
 inline %0F2h
+
+  finit
 
   push ebp
   xor  eax, eax

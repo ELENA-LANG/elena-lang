@@ -15,13 +15,19 @@ ProjectModel :: ProjectModel(IDEStatus* status)
 {
    this->status = status;
 
-   this->singleSourceProject = true;
    this->autoRecompile = /*true*/false;// !! temporal
-   this->projectPath.copy("C:\\Alex\\ELENA\\tests60\\sandbox\\"); // !! temporal
-   this->outputPath.copy("C:\\Alex\\ELENA\\tests60\\sandbox\\");  // !! temporal
 
+#ifdef _M_IX86
    this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60\\");      // !! temporal
+#else
+   this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60_64\\");      // !! temporal
+#endif
+
    this->paths.librarySourceRoot.copy("C:\\Alex\\ELENA\\src60\\");// !! temporal
+
+   // !!NOTE : make sure the path separator should tail the path
+   if (this->paths.librarySourceRoot[this->paths.librarySourceRoot.length() - 1] != PATH_SEPARATOR)
+      this->paths.librarySourceRoot.append(PATH_SEPARATOR);
 }
 
 path_t ProjectModel::getOutputPath()
@@ -36,11 +42,10 @@ ustr_t ProjectModel :: getTarget()
 
 ustr_t ProjectModel::getPackage()
 {
-   return "sandbox"; // !! temporal
-
+   return *package;
 }
 
-ustr_t ProjectModel::getArguments()
+ustr_t ProjectModel :: getArguments()
 {
    return nullptr; // !! temporal
 }

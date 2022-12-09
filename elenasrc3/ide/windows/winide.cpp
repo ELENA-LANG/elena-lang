@@ -4,9 +4,15 @@
 //                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include <tchar.h>
+
 #include "windows/winide.h"
-#include "windows/wintabbar.h"
+
+#include "eng/messages.h"
+
 #include "windows/wintreeview.h"
+#include "windows/wintabbar.h"
+#include "windows/winmenu.h"
 
 #include <windows/Resource.h>
 
@@ -99,15 +105,21 @@ void Clipboard :: pasteFromClipboard(DocumentView* docView)
 
 IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance) : 
    SDIWindow(title), 
-   dialog(instance, 
+   fileDialog(instance,
       this, Dialog::SourceFilter, 
       OPEN_FILE_CAPTION, 
+      *model->projectModel.paths.lastPath),
+   projectDialog(instance,
+      this, Dialog::ProjectFilter,
+      OPEN_PROJECT_CAPTION,
       *model->projectModel.paths.lastPath),
    clipboard(this)
 {
    this->_instance = instance;
    this->_controller = controller;
    this->_model = model;
+
+   _model->sourceViewModel.attachDocListener(this);
 }
 
 void IDEWindow :: onActivate()
@@ -124,17 +136,24 @@ void IDEWindow :: newFile()
 
 void IDEWindow :: openFile()
 {
-   _controller->doOpenFile(dialog, _model);
+   _controller->doOpenFile(fileDialog, _model);
 }
 
 void IDEWindow :: saveFile()
 {
-   _controller->doSaveFile(dialog, _model, false, true);
+   _controller->doSaveFile(fileDialog, _model, false, true);
 }
 
 void IDEWindow::closeFile()
 {
-   _controller->doCloseFile(dialog, _model);
+   _controller->doCloseFile(fileDialog, _model);
+}
+
+void IDEWindow :: openProject()
+{
+   _controller->doOpenProject(projectDialog, _model);
+
+   _controller->onLayoutchange();
 }
 
 void IDEWindow :: exit()
@@ -170,6 +189,22 @@ void IDEWindow :: deleteText()
    _model->sourceViewModel.onModelChanged();
 }
 
+void IDEWindow :: commentText()
+{
+   wchar_t str[3] = _T("//");
+
+   _controller->sourceController.insertBlockText(_model->viewModel(), str, 2);
+   _model->sourceViewModel.onModelChanged();
+}
+
+void IDEWindow :: openProjectView()
+{
+   GUIControlBase* projectView = _children[_model->ideScheme.projectView];
+
+   projectView->show();
+   _controller->onLayoutchange();
+}
+
 void IDEWindow :: openResultTab(int controlIndex)
 {
    TabBar* resultBar = (TabBar*)_children[_model->ideScheme.resultControl];
@@ -181,7 +216,23 @@ void IDEWindow :: openResultTab(int controlIndex)
 
    resultBar->show();
 
-   refresh();
+   _controller->onLayoutchange();
+}
+
+void IDEWindow :: toggleWindow(int child_id)
+{
+   if (child_id == _model->ideScheme.projectView) {
+      if (_children[_model->ideScheme.projectView]->visible()) {
+         openProject();
+      }
+   }
+}
+
+void IDEWindow :: toggleTabBarWindow(int child_id)
+{
+   if (!_children[child_id]->visible()) {
+      openResultTab(child_id);
+   }
 }
 
 void IDEWindow :: setChildFocus(int controlIndex)
@@ -211,6 +262,22 @@ void IDEWindow :: onErrorHighlight(int index)
    auto messageInfo = resultBar->getMessage(index);
 
    _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
+}
+
+void IDEWindow :: onProjectViewSel(size_t index)
+{
+   _controller->openProjectSourceByIndex(_model, index);
+}
+
+void IDEWindow :: onDebugWatch()
+{
+   openResultTab(_model->ideScheme.debugWatch);
+
+   ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
+
+   _controller->refreshDebugContext(contextBrowser, _model);
+
+   contextBrowser->expandRootNode();
 }
 
 void IDEWindow :: onProjectChange()
@@ -262,6 +329,20 @@ void IDEWindow :: onProjectChange()
    }
 
    projectTree->expand(root);
+
+   openProjectView();
+}
+
+void IDEWindow :: onLayoutChange()
+{
+   onResize();
+
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+
+   menu->checkItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
+   menu->checkItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
+   menu->checkItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
+   menu->checkItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
 }
 
 bool IDEWindow :: onCommand(int command)
@@ -272,6 +353,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_FILE_OPEN:
          openFile();
+         break;
+      case IDM_PROJECT_OPEN:
+         openProject();
          break;
       case IDM_FILE_SAVE:
          saveFile();
@@ -301,8 +385,11 @@ bool IDEWindow :: onCommand(int command)
       case IDM_EDIT_DELETE:
          deleteText();
          break;
+      case IDM_EDIT_COMMENT:
+         commentText();
+         break;
       case IDM_PROJECT_COMPILE:
-         _controller->doCompileProject(dialog, _model);
+         _controller->doCompileProject(projectDialog, _model);
          break;
       case IDM_DEBUG_RUN:
          _controller->doDebugAction(_model, DebugAction::Run);
@@ -312,6 +399,30 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_DEBUG_STEPINTO:
          _controller->doDebugAction(_model, DebugAction::StepInto);
+         break;
+      case IDM_DEBUG_RUNTO:
+         _controller->doDebugAction(_model, DebugAction::RunTo);
+         break;
+      case IDM_DEBUG_STOP:
+         _controller->doDebugStop(_model);
+         break;
+      case IDM_WINDOW_NEXT:
+         _controller->doSelectNextWindow(_model);
+         break;
+      case IDM_WINDOW_PREVIOUS:
+         _controller->doSelectPrevWindow(_model);
+         break;
+      case IDM_VIEW_WATCH:
+         toggleTabBarWindow(_model->ideScheme.debugWatch);
+         break;
+      case IDM_VIEW_PROJECTVIEW:
+         toggleWindow(_model->ideScheme.projectView);
+         break;
+      case IDM_VIEW_OUTPUT:
+         toggleTabBarWindow(_model->ideScheme.compilerOutputControl);
+         break;
+      case IDM_VIEW_MESSAGES:
+         toggleTabBarWindow(_model->ideScheme.errorListControl);
          break;
       default:
          return false;
@@ -325,8 +436,14 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
    auto docView = _model->sourceViewModel.DocView();
 
    switch (hdr->extParam1) {
+      case NOTIFY_ONSTART:
+         _controller->init(_model);
+         break;
       case NOTIFY_SOURCEMODEL:
          docView->notifyOnChange();
+         break;
+      case NOTIFY_DEBUGWATCH:
+         onDebugWatch();
          break;
       case NOTIFY_PROJECTMODEL:
          onProjectChange();
@@ -337,12 +454,14 @@ void IDEWindow :: onModelChange(ExtNMHDR* hdr)
          break;
       case NOTIFY_CURRENTVIEW_SHOW:
          _children[_model->ideScheme.textFrameId]->show();
+         onResize();
          break;
       case NOTIFY_CURRENTVIEW_HIDE:
          _children[_model->ideScheme.textFrameId]->hide();
+         onResize();
          break;
       case NOTIFY_LAYOUT_CHANGED:
-         onResize();
+         onLayoutChange();
          break;
       default:
          break;
@@ -361,7 +480,7 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
          setChildFocus(_model->ideScheme.textFrameId);
          break;
       case NOTIFY_LAYOUT_CHANGED:
-         onResize();
+         onLayoutChange();
          break;
       case NOTIFY_COMPILATION_RESULT:
          onCompilationEnd(hdr->extParam2);
@@ -372,12 +491,28 @@ void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
       case NOTIFY_START_COMPILATION:
          onComilationStart();
          break;
+      case NOTIFY_PROJECTVIEW_SEL:
+         onProjectViewSel(hdr->extParam2);
+         break;
+      case NOTIFY_REFRESH:
+         onChildRefresh(hdr->extParam2);
+         break;
       default:
          break;
    }
 }
 
 void IDEWindow :: onTabSelChanged(HWND wnd)
+{
+   for (size_t i = 0; i < _childCounter; i++) {
+      if (_children[i]->checkHandle(wnd)) {
+         ((ControlBase*)_children[i])->onSelChanged();
+         break;
+      }
+   }
+}
+
+void IDEWindow :: onTreeSelChanged(HWND wnd)
 {
    for (size_t i = 0; i < _childCounter; i++) {
       if (_children[i]->checkHandle(wnd)) {
@@ -397,6 +532,11 @@ void IDEWindow :: onDoubleClick(NMHDR* hdr)
    }
 }
 
+void IDEWindow :: onChildRefresh(int controlId)
+{
+   _children[controlId]->refresh();
+}
+
 void IDEWindow :: onNotify(NMHDR* hdr)
 {
    switch (hdr->code) {
@@ -412,7 +552,15 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case NMHDR_Message:
          onNotifyMessage((ExtNMHDR*)hdr);
          break;
+      case TVN_SELCHANGED:
+         onTreeSelChanged(hdr->hwndFrom);
+         break;
       default:
          break;
    }
+}
+
+void IDEWindow :: onDocumentUpdate()
+{
+   
 }

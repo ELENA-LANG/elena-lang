@@ -13,6 +13,7 @@ define ex_struct_size64              32;
 define page_size32                   16;
 define page_size64                   32;
 
+define __realSize                     8;
 
 define err_ret          -1;
 
@@ -43,6 +44,13 @@ procedure __object_equal
   peek        sp:0
   cmp         sp:1
   seleq       class:"system'BoolValue#true", class:"system'BoolValue#false"
+
+end
+
+procedure __object_class
+
+  peek        sp:0
+  class
 
 end
 
@@ -240,12 +248,80 @@ procedure __intToByte
 
 end
 
+procedure __realTrunc (self, r1, r2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  peek       fp:r1
+  store      sp:0
+
+  ftrunc     dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r2
+  copy       __realSize
+
+  close      []
+
+end
+
+procedure __longToByte
+
+  peek       sp:1
+  load
+  and        n:0FFh
+  peek       sp:2
+  save
+
+end
+
 procedure __intToChar
 
   peek       sp:1
   load
   peek       sp:2
   save
+
+end
+
+procedure __charToInt
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
+procedure __longToInt
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
+procedure __realToInt (self, r,retVal)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp]
+
+  peek       fp:r
+  nconf      dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:retVal
+  copy       4
+
+  close      []
 
 end
 

@@ -46,10 +46,11 @@ namespace elena_lang
       const Saver*       _commands;
       LibraryLoaderBase* _loader;
 
-      pos_t savePath(BuildNode node, SectionScopeBase* moduleScope, ReferenceMap& paths);
+      pos_t savePath(BuildNode node, Scope& scope, ReferenceMap& paths);
 
       void openSymbolDebugInfo(Scope& scope, ustr_t symbolName);
       void openClassDebugInfo(Scope& scope, ustr_t className, ref_t flags);
+      void saveFieldDebugInfo(Scope& scope, ClassInfo& info);
       void openMethodDebugInfo(Scope& scope, pos_t sourcePath);
       void endDebugInfo(Scope& scope);
 
@@ -63,14 +64,20 @@ namespace elena_lang
          bool tapeOptMode);
       void saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, 
          bool tapeOptMode);
+      void saveAlternate(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths,
+         bool tapeOptMode);
       void saveExternOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths,
          bool tapeOptMode);
-      void saveVariableInfo(CommandTape& tape, BuildNode node);
+      void saveShortCircuitOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths,
+         bool tapeOptMode);
+      void saveVariableInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
+      void saveParameterInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
 
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
          ReferenceMap& paths, bool tapeOptMode);
 
-      void saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths, bool tapeOptMode);
+      void saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths, 
+         bool tapeOptMode);
 
       void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
          ReferenceMap& paths, bool tapeOptMode);

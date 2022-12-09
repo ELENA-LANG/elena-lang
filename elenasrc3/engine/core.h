@@ -24,6 +24,8 @@ namespace elena_lang
    constexpr int  elObjectSizeMask32         = 0xFFFFFF;
    constexpr int  elSizeCeil32               = 0x0FFFFC;
 
+   constexpr int  elVMTFlagOffset32          = 0x0C;
+
    // --- 64bit ELENA Object constants ---
    constexpr int  gcPageSize64               = 0x0020;                // a heap page size constant
    constexpr auto gcPageSizeOrder64          = 5;
@@ -37,6 +39,8 @@ namespace elena_lang
    constexpr int  elStructMask64             = 0x40000000;
    constexpr int  elObjectSizeMask64         = 0x7FFFFFFF;
    constexpr int  elSizeCeil64               = 0x3FFFFFF8;
+
+   constexpr int  elVMTFlagOffset64          = 0x18;
 
    // --- ELENA CORE built-in routines
    constexpr ref_t INVOKER                   = 0x10001;

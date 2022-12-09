@@ -17,6 +17,16 @@
 
 using namespace elena_lang;
 
+#ifdef _M_IX86
+
+constexpr auto CURRENT_PLATFORM = PlatformType::Win_x86;
+
+#elif _M_X64
+
+constexpr auto CURRENT_PLATFORM = PlatformType::Win_x86_64;
+
+#endif
+
 typedef Win32DebugProcess    DebugProcess;
 
 // Forward declarations of functions included in this code module:
@@ -41,7 +51,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    IDEModel          ideModel;
    Win32Process      outputProcess(50);
    DebugProcess      debugProcess;
-   IDEController     ideController(&outputProcess, &debugProcess, &ideModel, textViewSettings);
+   IDEController     ideController(&outputProcess, &debugProcess, &ideModel, 
+                        textViewSettings, CURRENT_PLATFORM);
    IDEFactory        factory(hInstance, &ideModel, &ideController, guiSettings);
 
    PathString configPath(ideModel.projectModel.paths.appPath);
@@ -52,9 +63,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess);
 
    ideController.setNotifier(app);
-   ideController.init(&ideModel);
 
-   int retVal = app->run(ideWindow, ideModel.appMaximized, NOTIFY_PROJECTMODEL);
+   int retVal = app->run(ideWindow, ideModel.appMaximized, NOTIFY_ONSTART);
 
    delete app;
 

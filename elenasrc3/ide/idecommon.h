@@ -8,12 +8,22 @@
 #define IDECOMMON_H
 
 #include "guicommon.h"
-#include "eng/messages.h"
 
-#define IDE_REVISION_NUMBER                           0x001E
+#define IDE_REVISION_NUMBER                           0x0030
 
 namespace elena_lang
 {
+   constexpr auto PLATFORM_CATEGORY                   = "configuration/platform";
+   constexpr auto NAMESPACE_CATEGORY                  = "configuration/project/namespace";
+   constexpr auto MODULE_CATEGORY                     = "files/*";
+
+   constexpr auto WIN_X86_KEY                         = "Win_x86";
+   constexpr auto WIN_X86_64_KEY                      = "Win_x64";
+   constexpr auto LINUX_X86_KEY                       = "Linux_I386";
+   constexpr auto LINUX_X86_64_KEY                    = "Linux_AMD64";
+   constexpr auto LINUX_PPC64le_KEY                   = "Linux_PPC64le";
+   constexpr auto LINUX_ARM64_KEY                     = "Linux_ARM64";
+
    constexpr auto ERROR_RUN_NEED_TARGET               = 0x0001;
    constexpr auto ERROR_DEBUG_FILE_NOT_FOUND_COMPILE  = 0x0002;
    constexpr auto ERROR_RUN_NEED_RECOMPILE            = 0x0003;
@@ -30,6 +40,10 @@ namespace elena_lang
    constexpr auto NOTIFY_ACTIVATE_EDITFRAME           = 9;
    constexpr auto NOTIFY_START_COMPILATION            = 10;
    constexpr auto NOTIFY_PROJECTMODEL                 = 11;
+   constexpr auto NOTIFY_PROJECTVIEW_SEL              = 12;
+   constexpr auto NOTIFY_DEBUGWATCH                   = 13;
+   constexpr auto NOTIFY_ONSTART                      = 14;
+   constexpr auto NOTIFY_REFRESH                      = 15;
 
    // --- PathSettings ---
    struct PathSettings
@@ -101,6 +115,42 @@ namespace elena_lang
       virtual void clearMessages() = 0;
    };
 
+   // --- ContextBrowserBase ---
+
+   struct WatchContext
+   {
+      void*   root;
+      addr_t  address;
+   };
+
+   typedef CachedList<void*, 20> WatchItems;
+
+   class ContextBrowserBase
+   {
+   protected:
+      virtual void* findWatchNodeStartingWith(WatchContext* root, ustr_t name) = 0;
+      virtual void editWatchNode(void* item, ustr_t name, ustr_t className, addr_t address) = 0;
+      virtual void* addWatchNode(void* parentItem, ustr_t name, ustr_t className, addr_t address) = 0;
+
+      virtual void clearNode(void* item) = 0;
+      virtual void populateNode(void* item, ustr_t value) = 0;
+
+   public:
+      virtual void expandRootNode() = 0;
+
+      virtual void* addOrUpdate(WatchContext* root, ustr_t name, ustr_t className);
+      virtual void* addOrUpdateBYTE(WatchContext* root, ustr_t name, int value);
+      virtual void* addOrUpdateDWORD(WatchContext* root, ustr_t name, int value);
+      virtual void* addOrUpdateQWORD(WatchContext* root, ustr_t name, long long value);
+      virtual void* addOrUpdateFLOAT64(WatchContext* root, ustr_t name, double value);
+
+      virtual void removeUnused(WatchItems& refreshedItems) = 0;
+
+      virtual void populateDWORD(WatchContext* root, unsigned int value);
+      virtual void populateQWORD(WatchContext* root, unsigned long long value);
+      virtual void populateFLOAT64(WatchContext* root, double value);
+   };
+
    // --- DebugControllerBase ---
    constexpr auto DEBUG_CLOSE = 0;
    constexpr auto DEBUG_SUSPEND = 1;
@@ -152,8 +202,28 @@ namespace elena_lang
 
       virtual void initHook() = 0;
 
+      virtual int getDataOffset() = 0;
+
       virtual addr_t getBaseAddress() = 0;
       virtual void* getState() = 0;
+
+      virtual addr_t getMemoryPtr(addr_t address) = 0;
+
+      virtual addr_t getStackItem(int index, disp_t offset = 0) = 0;
+      virtual addr_t getStackItemAddress(disp_t disp) = 0;
+
+      virtual addr_t getField(addr_t address, int index) = 0;
+      virtual addr_t getFieldAddress(addr_t address, disp_t disp) = 0;
+
+      virtual addr_t getClassVMT(addr_t address) = 0;
+      virtual ref_t getClassFlags(addr_t vmtAddress) = 0;
+
+      virtual size_t getArrayLength(addr_t address) = 0;
+
+      virtual char getBYTE(addr_t address) = 0;
+      virtual unsigned int getDWORD(addr_t address) = 0;
+      virtual unsigned long long getQWORD(addr_t address) = 0;
+      virtual double getFLOAT64(addr_t address) = 0;
 
       virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
 

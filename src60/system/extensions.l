@@ -4,6 +4,9 @@ public extension objectOp
 {
    string __getClassName()   
       = __className;
+
+   __getClass() : external<system'core_routines'__object_class>,
+                  info<"Returns the object class">;
 }
 
 // --- intOp ---
@@ -18,4 +21,30 @@ public extension intOp : IntNumber
         
       ^ retVal
    }    
+}
+
+// --- longOp ---
+
+public extension longOp : LongNumber
+{
+   long mod(long operand)
+   {
+      long retVal := self / operand * operand;
+
+      retVal := self - retVal;
+        
+      ^ retVal
+   }    
+}
+
+// --- realOp ---
+
+public extension realOp : RealNumber
+{
+   get real Integer()
+   {
+      PrimitiveRealOperations.trunc(self, ref real retVal);
+
+      ^ retVal
+   }
 }

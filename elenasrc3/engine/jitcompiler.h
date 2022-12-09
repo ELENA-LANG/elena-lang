@@ -240,6 +240,8 @@ namespace elena_lang
       void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) override;
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
+      void writeInt64(MemoryWriter& writer, unsigned long long value) override;
+      void writeFloat64(MemoryWriter& writer, double value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
       void writeWideLiteral(MemoryWriter& writer, wstr_t value) override;
       void writeChar32(MemoryWriter& writer, ustr_t value) override;
@@ -301,6 +303,8 @@ namespace elena_lang
       void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) override;
 
       void writeInt32(MemoryWriter& writer, unsigned value) override;
+      void writeInt64(MemoryWriter& writer, unsigned long long value) override;
+      void writeFloat64(MemoryWriter& writer, double value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
       void writeWideLiteral(MemoryWriter& writer, wstr_t value) override;
       void writeChar32(MemoryWriter& writer, ustr_t value) override;

@@ -13,6 +13,8 @@
 
 #include <ctype.h>
 
+#define _gcvt gcvt
+
 #endif // __GNUG__
 
 #if !defined(_max)

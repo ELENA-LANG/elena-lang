@@ -1,18 +1,22 @@
+
 __define eof                 8195;
 __define identifier         12292;
 __define integer            12293;
 __define string             12294;
 __define hexinteger         12295;
 __define reference          12296;
-__define terminal           12297;
+__defineterminal "}"        12297;
 __define character          12298;
 __define wide               12300;
+__define constant           12301;
+__define long               12302;
+__define real               12303;
 
 __define DECLARATION         5120;
 __define BLOCK               7184;
 __define NO_BODY             7185;
 __define TEMPLATE_BLOCK      4104;
-__define PARAMETER 	     4106;
+__define PARAMETER           4106;
 __define END_OF_BLOCK        4107;
 __define DICTIONARY          4128;
 __define META_STATEMENT      4129;
@@ -49,25 +53,42 @@ __define NOTLESS_OPERATION   6226;
 __define GREATER_OPERATION   6227;
 __define NOTGREATER_OPERATION 6228;
 __define EXTERN_OPERATION    6229;
+__define NEGATE_OPERATION    6230;
+__define VALUE_OPERATION     6231;
+__define BAND_OPERATION      6232;
+__define BOR_OPERATION       6233;
+__define BXOR_OPERATION      6234;
+__define BNOT_OPERATION      6235;
+__define SHL_OPERATION       6236;
+__define SHR_OPERATION       6237;
+__define SUB_ASSIGNMENT      6238;
+__define MUL_ASSIGNMENT      6239;
+__define DIV_ASSIGNMENT      6240;
+__define AND_OPERATION       6241;
+__define OR_OPERATION        6242;
 __define MESSAGE_OPERATION   6337;
 __define PROPERTY_OPERATION  6340;
 __define EXPRESSION          6288;
 __define L5_EXPRESSION       6289;
 __define SINGLE_EXPRESSION   6290;
-__define L7_EXPRESSION       6291;
+__define L8_EXPRESSION       6291;
 __define ROOT_EXPRESSION     6292;
 __define L6_EXPRESSION       6293;
 __define T_EXPRESSION        6294;
 __define L4_EXPRESSION       6295;
 __define NT_EXPRESSION       6296;
-__define POSTFIX             4192;
-__define TEMPLATE_POSTFIX    4193;
-__define METHOD_POSTFIX      4194;
+__define L7_EXPRESSION       6297;
+__define POSTFIX             4200;
+__define TEMPLATE_POSTFIX    4201;
+__define METHOD_POSTFIX      4202;
 __define TEMPLATE_ARG        4208;
 __define DIMENSION           5233;
 __define RESEND              7366;
 __define CATCH_OPERATION     7367;
 __define CATCH               7368;
+__define REDIRECT            7371;
+__define ALT_OPERATION       7372;
+__define ISNIL_OPERATION     7373;
 
 START ::= 
         NEXT_DECLARATION;
@@ -146,6 +167,7 @@ METHOD_BODY ::=
 	"{" BLOCK
 	| "=" RET_EXPRESSION DECLARATION_END
 	| "<=" RESEND RESEND_OPT
+	| "=>" REDIRECT DECLARATION_END
 	| NO_BODY;
 
 RESEND_OPT ::=
@@ -195,22 +217,32 @@ ROOT_EXPRESSION ::=
         identifier RI_R
 	| reference O_Re
         | integer O_Re
+        | long O_Re
+        | real O_Re
         | hexinteger O_Re
+        | constant O_Re
         | string O_Re
         | wide O_Re
         | character O_Re
+        | "(" SUB_EXPRESSION
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
 	| "!" SINGLE_EXPRESSION ^NOT_OPERATION
+	| "-" SINGLE_EXPRESSION ^NEGATE_OPERATION
+	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
+	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION
 	| "{" BLOCK ^CLOSURE;
 
 EXPRESSION ::=
         identifier I_R
 	| reference O_Re
         | integer O_Re
+        | long O_Re
+        | real O_Re
         | hexinteger O_Re
+        | constant O_Re
         | string O_Re
         | wide O_Re
         | character O_Re
@@ -218,13 +250,19 @@ EXPRESSION ::=
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
 	| "!" SINGLE_EXPRESSION ^NOT_OPERATION
+	| "-" SINGLE_EXPRESSION ^NEGATE_OPERATION
+	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
+	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION
 	| "{" BLOCK ^CLOSURE;
 
 SINGLE_EXPRESSION ::=
         identifier ^OBJECT
 	| reference ^OBJECT
         | integer ^OBJECT
+        | long ^OBJECT
+        | real ^OBJECT
         | hexinteger ^OBJECT
+        | constant ^OBJECT
         | string ^OBJECT
         | wide ^OBJECT
 	| "(" SUB_SINGLE_EXPRESSION;
@@ -233,7 +271,10 @@ SUB_EXPRESSION ::=
 	identifier SI_R
 	| reference O_Re ^EXPRESSION ")" E_R
         | integer O_Re ^EXPRESSION ")" E_R
+        | long O_Re ^EXPRESSION ")" E_R
+        | real O_Re ^EXPRESSION ")" E_R
         | hexinteger O_Re ^EXPRESSION ")" E_R
+        | constant O_Re ^EXPRESSION ")" E_R
         | string O_Re ^EXPRESSION ")" E_R
         | wide O_Re ^EXPRESSION ")" E_R
         | character O_Re ^EXPRESSION ")" E_R
@@ -246,7 +287,10 @@ SUB_SINGLE_EXPRESSION ::=
 	identifier SSI_R
 	| reference O_Re ")"
         | integer O_Re ")"
+        | long O_Re ")"
+        | real O_Re ")"
         | hexinteger O_Re ")"
+        | constant O_Re ")"
         | string O_Re ")"
         | wide O_Re ")"
         | character O_Re ")"
@@ -270,28 +314,48 @@ MESSAGE_PARAMETER ::=
 L4_EXPRESSION ::=
         identifier I4_R
         | integer ^OBJECT
+        | long ^OBJECT
+        | real ^OBJECT
         | hexinteger ^OBJECT
         | string ^OBJECT
         | wide ^OBJECT
+        | constant ^OBJECT
         | character ^OBJECT;
 
 L5_EXPRESSION ::=
         identifier I5_R
         | integer ^OBJECT L3s L4s
+        | long ^OBJECT L3s L4s
+        | real ^OBJECT L3s L4s
         | hexinteger ^OBJECT L3s L4s
+        | constant ^OBJECT L3s L4s
         | string ^OBJECT L3s L4s
         | wide ^OBJECT L3s L4s
         | character ^OBJECT L3s L4s;
 
 L6_EXPRESSION ::=
-        identifier ^OBJECT
+        identifier I6_R
         | integer ^OBJECT
+        | long ^OBJECT
+        | real ^OBJECT
         | hexinteger ^OBJECT
+        | constant ^OBJECT
         | string ^OBJECT
         | wide ^OBJECT
         | character ^OBJECT;
 
 L7_EXPRESSION ::=
+        identifier I7_R
+        | integer ^OBJECT
+        | long ^OBJECT
+        | real ^OBJECT
+        | hexinteger ^OBJECT
+        | constant ^OBJECT
+        | string ^OBJECT
+        | wide ^OBJECT
+        | character ^OBJECT;
+
+L8_EXPRESSION ::=
 	"{" BLOCK ^ CLOSURE
 	| SINGLE_EXPRESSION;
 
@@ -314,13 +378,13 @@ RI_R ::=
         | I_L0_R
 	| I_L1_R
 	| RI_L2_R
-	| I_L3_R L3s L8e
+	| I_L3_R L3f
 	| I_L4_R
 	| I_L5_R
-	| I_L6_R
+	| I_L6_R L7e
 	| I_L6a_R
-	| IL7_R
 	| IL8_R
+	| IL9_R
 	| T_EXPRESSION T_EXPRESSIONS ^ TEMPLATE_BLOCK
         | eps ^OBJECT; 
 
@@ -333,6 +397,7 @@ I_R ::=
 SI_R ::=
 	identifier SI_R 
 	| reference SI_R 
+	| "=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION E_R;
 	| ")" SI_Rf
 	| O_R ")" ^EXPRESSION E_R;
 
@@ -356,21 +421,21 @@ O_R  ::=
         NESTED_EXPRESSION ^NESTED N_R
         | I_L0_R
 	| I_L1_R
-	| I_L2_R L3s L4s L5s L7e
-	| I_L3_R L3s L4s L5s L8e
-	| I_L4_R L4s L5s
-	| I_L5_R L5s
-	| I_L6_R
+	| I_L2_R L2f
+	| I_L3_R L3f
+	| I_L4_R L4s L5s L6s
+	| I_L5_R L5s L6s
+	| I_L6_R L7e
 	| I_L6a_R
-	| IL7_R
 	| IL8_R
+	| IL9_R
 	| DYNAMIC_DIMENSION ^OBJECT ^ARRAY_TYPE TEMPLATE_R; 
 
 E_R ::=
 	L4_R
 	| L5_R
-	| L7_R
 	| L8_R
+	| L9_R
 	| eps;
 
 TEMPLATE_R ::=
@@ -383,6 +448,9 @@ VAR_R ::=
 
 RESEND ::= 
 	identifier RESEND_F;
+
+REDIRECT ::= 
+	EXPRESSION;
 
 RESEND_F ::=
 	identifier MESSAGE_R
@@ -409,12 +477,39 @@ O5_R ::=
 	| I_L3_R L3s L4s
 	| I_L4_R L4s;
 
+I6_R ::=
+        identifier I6_R
+	| TEMPLATE_BRACKETS ^ TEMPLATE_TYPE
+	| O6_Re;
+
+O6_Re ::=
+	O6_R
+        | eps ^OBJECT; 
+
+O6_R ::=
+	I_L3_R L3s L4s;
+
+I7_R ::=
+        identifier I7_R
+	| O7_Re;
+
+O7_Re ::=
+	O7_R
+        | eps ^OBJECT; 
+
+O7_R ::=
+	I_L3_R L3s L4s L5s L6s
+	| I_L6_R;
+
 N_R ::=
 	eps;
 
 I_L0_R ::=
         "[" ^OBJECT EXPRESSION "]" ^INDEXER_OPERATION INDEXER_R
-        | "+=" ^OBJECT EXPRESSION ^ADDITION_ASSIGNMENT;
+        | "+=" ^OBJECT EXPRESSION ^ADDITION_ASSIGNMENT
+        | "-=" ^OBJECT EXPRESSION ^SUB_ASSIGNMENT
+        | "*=" ^OBJECT EXPRESSION ^MUL_ASSIGNMENT
+        | "/=" ^OBJECT EXPRESSION ^DIV_ASSIGNMENT;
 
 I_L1_R ::=
         ":=" ^OBJECT EXPRESSION ^ASSIGN_OPERATION;
@@ -438,6 +533,25 @@ I_L3_R ::=
 Ix_L0_R ::=
         "[" ^OBJECT EXPRESSION "]" ^INDEXER_OPERATION;
 
+L2f ::=
+        L2_R L3s L5s L6s L9e
+	| L3_R L3s L5s L6s L9e
+	| L5_R L5s L6s
+	| L6_R L6s
+	| L8_R
+	| L9_R
+	| L91_R
+	| eps;
+
+L3f ::=
+        L3_R L3s L5s L6s L9e
+	| L5_R L5s L6s
+	| L6_R L6s
+	| L8_R
+	| L9_R
+	| L91_R
+	| eps;
+
 L3_R ::=
 	"." MESSAGE MESSAGE_R;
 
@@ -447,11 +561,21 @@ L3s ::=
 
 I_L4_R ::=
 	"*" ^OBJECT L4_EXPRESSION ^MUL_OPERATION
-	| "/" ^OBJECT L4_EXPRESSION ^DIV_OPERATION;
+	| "/" ^OBJECT L4_EXPRESSION ^DIV_OPERATION
+	| "&" ^OBJECT L4_EXPRESSION ^BAND_OPERATION
+	| "|" ^OBJECT L4_EXPRESSION ^BOR_OPERATION
+	| "^" ^OBJECT L4_EXPRESSION ^BXOR_OPERATION
+	| "$shl" ^OBJECT L4_EXPRESSION ^SHL_OPERATION
+	| "$shr" ^OBJECT L4_EXPRESSION ^SHR_OPERATION;
 
 L4_R ::=
 	"*" L4_EXPRESSION ^MUL_OPERATION
-	| "/" L4_EXPRESSION ^DIV_OPERATION ;
+	| "/" L4_EXPRESSION ^DIV_OPERATION
+	| "&" L4_EXPRESSION ^BAND_OPERATION
+	| "|" L4_EXPRESSION ^BOR_OPERATION
+	| "^" L4_EXPRESSION ^BXOR_OPERATION
+	| "$shl" ^OBJECT L4_EXPRESSION ^SHL_OPERATION
+	| "$shr" ^OBJECT L4_EXPRESSION ^SHR_OPERATION;
 
 L4s ::=
 	L4_R L4s
@@ -476,6 +600,17 @@ I_L6_R ::=
 	| ">" ^OBJECT L6_EXPRESSION ^GREATER_OPERATION
 	| "<=" ^OBJECT L6_EXPRESSION ^NOTGREATER_OPERATION;
 
+L6_R ::=
+	"==" L6_EXPRESSION ^EQUAL_OPERATION
+	| "!=" L6_EXPRESSION ^NOTEQUAL_OPERATION
+	| ">=" L6_EXPRESSION ^NOTLESS_OPERATION
+	| ">" L6_EXPRESSION ^GREATER_OPERATION
+	| "<=" L6_EXPRESSION ^NOTGREATER_OPERATION;
+
+L6s ::=
+	L6_R L6s
+	| eps;
+
 I_L6a_R ::=
 	"<" ^OBJECT L6_EXPRESSION I_L6a_OPT;
 
@@ -483,30 +618,47 @@ I_L6a_OPT ::=
 	">" ^ TEMPLATE_TYPE TEMPLATE_R
 	| eps ^ LESS_OPERATION;
 
+I_L7_R ::=
+	"&&" ^OBJECT L7_EXPRESSION ^AND_OPERATION
+	| "||" ^OBJECT L7_EXPRESSION ^OR_OPERATION;
+
+L7_R ::=
+	"&&" L7_EXPRESSION ^AND_OPERATION
+	| "||" L7_EXPRESSION ^OR_OPERATION;
+
 L7e ::=
 	L7_R
 	| eps;
 
-IL7_R ::=
-	"?" ^OBJECT L7_EXPRESSION L7_IF_R
-	| "!" ^OBJECT L7_EXPRESSION ^ELSE_OPERATION;
-
-L7_R ::=
-	"?" L7_EXPRESSION L7_IF_R
-	| "!" L7_EXPRESSION ^ELSE_OPERATION;
-
-L7_IF_R ::=
-	eps ^IF_OPERATION
-	| ":" L7_EXPRESSION ^IF_ELSE_OPERATION;
-
-IL8_R ::=
-	"\\" ^OBJECT CATCH ^CATCH_OPERATION;
-
-L8_R ::=
-	"\\"  CATCH ^CATCH_OPERATION;
-
 L8e ::=
 	L8_R
+	| eps;
+
+IL8_R ::=
+	"?" ^OBJECT L8_EXPRESSION L8_IF_R
+	| "!" ^OBJECT L8_EXPRESSION ^ELSE_OPERATION;
+
+L8_R ::=
+	"?" L8_EXPRESSION L8_IF_R
+	| "!" L8_EXPRESSION ^ELSE_OPERATION;
+
+L8_IF_R ::=
+	eps ^IF_OPERATION
+	| ":" L8_EXPRESSION ^IF_ELSE_OPERATION;
+
+IL9_R ::=
+	"\\" ^OBJECT CATCH ^CATCH_OPERATION
+	| "??" ^OBJECT SINGLE_EXPRESSION ^ISNIL_OPERATION;
+
+L9_R ::=
+	"\\"  CATCH ^CATCH_OPERATION
+	| "??" SINGLE_EXPRESSION ^ISNIL_OPERATION;
+
+L91_R ::=
+	"\" CATCH ^ALT_OPERATION;
+
+L9e ::=
+	L9_R
 	| eps;
 
 INDEXER_R ::=
@@ -515,7 +667,7 @@ INDEXER_R ::=
 
 MESSAGE_R ::=
 	"(" MESSAGE_PARAMETERS ")" ^ MESSAGE_OPERATION
-	| ":" SINGLE_EXPRESSION
+	| ":" SINGLE_EXPRESSION ^ MESSAGE_OPERATION
 	| eps ^PROPERTY_OPERATION;
 
 MESSAGE_PARAMETERS ::=
@@ -567,9 +719,6 @@ TEMPLATE_BRACKETS ::=
 TEMPLATE_ARGS ::=
 	"," TEMPLATE_ARG TEMPLATE_ARGS
 	|  ">";
-
-ADDITION_ASSIGNMENT ::=
-        "+=";
 
 DECLARATION_END ::=
 	";";

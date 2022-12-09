@@ -19,7 +19,7 @@
 #let attributesSymbols["const"]       := 80002001h;
 #let attributesSymbols["embeddable"]  := 80002002h;
 #let attributesSymbols["ref"]         := 80002003h;
-#let attributesSymbols["multiret"]    := 8000200Ah;
+#let attributesSymbols["retoverload"] := 8000200Ah;
 #let attributesSymbols["params"]      := 8000200Bh;
                                                  
 /// scope:
@@ -52,6 +52,7 @@
 
 /// primitive types
 #let attributesSymbols["__string"]    := 80000801h;
+#let attributesSymbols["__float"]     := 80000802h;
 #let attributesSymbols["__int"]       := 80000803h;
 //#let attributesSymbols["__meta"]      := 80000804h;
 #let attributesSymbols["__word"]      := 80000805h;

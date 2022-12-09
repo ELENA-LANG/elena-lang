@@ -4,28 +4,42 @@ In development:
 
   [development]
     ### EPOCH: elena 6.0 - redux ###
-    === Iteration 11 : all functionality for existing classes 
-        / ide debugger (ELENA 6.0 alpha) 
-        / api documentation / ide project managment (ELENA 6.0 beta) ===
+    === Iteration 12 ===
 
-    * ide open project
-    * ide select file in the project
-    * ide - goto mouse
+
+    ! api functionality for existing classes : system'CharValue
+    ! regression tests : all github issues
+    ! examples
+    ! rosetta code examples
+    ! elena vm
+
+    * gc - system_tests - why full collect happends so often
+    * aarch64 gc: system_tests fails in gc routine
+
+    * api : provide field descriptions
+    * api : provide parameter names
+    * ide : double click - select word
+    * ide : disable / enable the menu items, based on the model
+    * ide : debugger - status - running / stopped
+
+    * ide : debugger - step into / over / stop / run / compile
+    * ide : debugger - on debugging / debugger stopped
     * ide - ask to save on close
-    * ide - scroll with mouse wheel
     * ide - tab
-
-    * api doc
+    * ide - close project
+    * ide - close single file project
+    * ide - closing old files on opening a project
 
     * ide - add close button on tabbar
     * ide - fix errors
     * ide - compile the project / file
-    * ide different styles : use dark mode
 
-    * ide compile project
+    * api doc - properties
+    * api doc
 
-    * all functionality for existing classes
     * ide debugger
+
+    * conversion : byte / short / int / long => real
 
     * variadic call in compile-time
     * variadic dispatcher
@@ -33,15 +47,24 @@ In development:
     * printLine extensions
     * toPrintable should return both wide and string
     * unit tests : arithmetic operations
-    * unit tests : boolean operations
 
     * showing call stack
     * uncomment hello world
     * uncomment lnx_console.l code
+    * unit tests : boolean operations
+    * int to short -> negative
+    * short to int -> negative
+    * uint : test comparision (e.g 0 < 3000000u)
+    * comparision operations : short / byte / long operation
+    * boolean operators : &&, ||, ^^ - weak implementation
+
+    * ide different styles : use dark mode
+
+    * ldoc : show conversions in the separate section
+
+    * retest #2, #3, #4, #5, #7, , #8, #9, #10
 
     * optimization : extra temporal variables
-
-    === Iteration 12 : intsum / realsum, all system tests for existing classes ===
 
 ------                                                           
 Backlog:
@@ -53,14 +76,13 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
-    * calling internal method
+    * intnumber.cast<'integer> - should returns itself without boxing
+    * two breakpoints in row
     * calling protected method
     * exception tests : methodnotfound, nilreference
     * uncomment ConsoleFactory type attributes
     * external operation : do not box the arguments
     * support constants in array size declaration (see lnx_console.l)
-    * int to short -> negative
-    * short to int -> negative
     * check why the struct is boxed (see INPUT_RECORD operations)
     * simplify code (see INPUT_RECORD operations)
     * prop template : weak
@@ -79,10 +101,6 @@ Backlog:
     * unit tests : exceptions
     * review code { int n := 3; } : extra assigning
     * call internal
-    * introducing longnumber
-    * basic operations for : longnumber
-    * int, byte, short : bitwise operations
-    * boolean operators : &&, ||, ^^ - weak implementation
     * repeate-until statements
     * aarch64 : setting mask for size (createn, ...)
     * try-finally-catch
@@ -90,7 +108,6 @@ Backlog:
     * optimization : fields should be aligned to 4 / 8 and the copy operation should take this into account,
       except for special type of structs - packed one
     * ide : fix errors with font size / switching to error list / clear high light on click
-    * ide status : on debugging / debugger stopped
     * debuggrt : watch
     * ide : cursor coordinates
     * ide : react on mouse
@@ -100,7 +117,6 @@ Backlog:
     * project - load - project
     * project - compile - project
     * ide : remember last open project
-    * debugger - step into / over / stop / run / compile
     * debugger - auto watch
     * editor - status bar : col, row, ins / ovr
     * editor - modified doc mark, 
@@ -121,7 +137,6 @@ Backlog:
     * linux ide : compile project
     * editor - edit text
     * editor - correctly destroy tabbar / frame / view
-    * boolean operators : &&, ||, ^^ - strong implementation
     * introducing read number
     * script module template
     * hello world sample
@@ -144,9 +159,8 @@ Backlog:
     * CORE_ET_TABLE info should be thread safe
     * VEH_HANDLER should exclude the current frame if it was invoked from external code (callext - should 
       store the current frame in the extra variable, and clear it after the operation end)
-    * support "-" operator 
     * mark String.fromByteArray as internal one
-    * conditional boxing of stacksafe arguments
+    * conditional boxing of stacksafe arguments / self
     * createnr - optimization for 1,2,4,8 
     * simplify - isCompatible - could we get rid of special cases for V_FLAG?
     * optimization: it should be possible to convert int liteal directly to v_int8 / v_int16 / v_int64,
@@ -155,8 +169,6 @@ Backlog:
     * constant field must have assigning expression
     * class constant (should be a static variable / pure constant - no entry in VMT)
     * init_handler : call previous one if avialable
-    * comparision operations : short / byte / long operation
-    * conversion between basic types
     * call set properties
     * arithmetic operations
     * string operations
@@ -168,7 +180,6 @@ Backlog:
     * compile time method dispatching
     * generating template extensions
     * if statements with single statement
-    * protected constructor
     * ide - open file - namespace should be added
     * do load self for expression with ret statement
     * byte / short should support plus / minus operator
@@ -205,6 +216,7 @@ Backlog:
     * warn if multiret method is correct : there should exist a main handler
     * optimization : duplicate nops??
     * class constants
+    * mt : note on creating closure - lock GC
 
     * editor - do we need checkmode? it seems like not
 
@@ -245,7 +257,6 @@ Backlog:
     * hello world vm client sample
     * support preloaded symbols
     * redux : add output convertion for the method without the explicit return statement
-    * redux : protected constructor
 
     * optimization : openheader / open - there should be an optimized version for n < 4 - with reserved raw stack
     * fix : for ppc64 / arm64 - there should be alternative version to deal with args more than 9 / 12 / 16 bits
@@ -262,7 +273,6 @@ Backlog:
     * #206 : interpreter sample - x86, x86-64
 
     - migrate the rest of system'io module
-    + support s += s2 operation;
 
     * #386 : writeRef32Hi, writeRef32Hi - for non virtual mode - should offset the address to be correctly mapped to opcode
 
@@ -283,7 +293,6 @@ Backlog:
 
     + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
     - compileRootExpression - we probably could move the code here from compileExpression for topexpression
-    - debugger fine-tuning
 
     + support output redirecting
     + debugger : stack allocated int value 

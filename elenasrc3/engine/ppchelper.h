@@ -52,6 +52,41 @@ namespace elena_lang
       GPR31    = 0x011F,
 
       GPR      = 0x0100,
+
+      FPR0     = 0x0200,
+      FPR1     = 0x0201,
+      FPR2     = 0x0202,
+      FPR3     = 0x0203,
+      FPR4     = 0x0204,
+      FPR5     = 0x0205,
+      FPR6     = 0x0206,
+      FPR7     = 0x0207,
+      FPR8     = 0x0208,
+      FPR9     = 0x0209,
+      FPR10    = 0x020A,
+      FPR11    = 0x020B,
+      FPR12    = 0x020C,
+      FPR13    = 0x020D,
+      FPR14    = 0x020E,
+      FPR15    = 0x020F,
+      FPR16    = 0x0210,
+      FPR17    = 0x0211,
+      FPR18    = 0x0212,
+      FPR19    = 0x0213,
+      FPR20    = 0x0214,
+      FPR21    = 0x0215,
+      FPR22    = 0x0216,
+      FPR23    = 0x0217,
+      FPR24    = 0x0218,
+      FPR25    = 0x0219,
+      FPR26    = 0x021A,
+      FPR27    = 0x021B,
+      FPR28    = 0x021C,
+      FPR29    = 0x021D,
+      FPR30    = 0x021E,
+      FPR31    = 0x021F,
+
+      FPR      = 0x0200,
    };
 
    inline bool test(PPCOperandType type, PPCOperandType mask)
@@ -68,6 +103,11 @@ namespace elena_lang
       bool isGPR()
       {
          return test(type, PPCOperandType::GPR);
+      }
+
+      bool isFPR()
+      {
+         return test(type, PPCOperandType::FPR);
       }
 
       bool isRX()
@@ -126,10 +166,23 @@ namespace elena_lang
             | (((unsigned int)rb & 0x1F) << 11) | (((unsigned int)bc & 0x1F) << 6) | (xo << 1) | 0;
       }
 
+      static unsigned int makeACommand(unsigned int opcode, PPCOperandType rt, PPCOperandType ra, PPCOperandType rb,
+         int xo)
+      {
+         return (opcode << 26) | (((unsigned int)rt & 0x1F) << 21) | (((unsigned int)ra & 0x1F) << 16)
+            | (((unsigned int)rb & 0x1F) << 6) | (xo << 1) | 0;
+      }
+
       static unsigned int makeXCommand(unsigned int opcode, PPCOperandType rt, PPCOperandType ra, PPCOperandType rb,
          int xo, int rc)
       {
          return (opcode << 26) | (((unsigned int)rt & 0x1F) << 21) | (((unsigned int)ra & 0x1F) << 16)
+            | (((unsigned int)rb & 0x1F) << 11) | (xo << 1) | rc;
+      }
+      static unsigned int makeXCommand(unsigned int opcode, PPCOperandType rt, PPCOperandType rb,
+         int xo, int rc)
+      {
+         return (opcode << 26) | (((unsigned int)rt & 0x1F) << 21)
             | (((unsigned int)rb & 0x1F) << 11) | (xo << 1) | rc;
       }
 

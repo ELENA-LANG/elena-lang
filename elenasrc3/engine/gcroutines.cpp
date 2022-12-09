@@ -451,7 +451,7 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
 
          //*(char*)(table->gc_header + ((allocated - table->gc_start) >> page_size_order)) = 1;
 
-         return (void*)allocated;
+         return (void*)getObjectPtr(allocated);
       }
       else {
          uintptr_t allocated = table->gc_yg_current;

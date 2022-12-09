@@ -1049,6 +1049,16 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          size = 4;
          structMode = true;
          break;
+      case mskLongLiteralRef:
+         vmtReferenceInfo.referenceName = _constantSettings.longLiteralClass;
+         size = 8;
+         structMode = true;
+         break;
+      case mskRealLiteralRef:
+         vmtReferenceInfo.referenceName = _constantSettings.realLiteralClass;
+         size = 8;
+         structMode = true;
+         break;
       case mskLiteralRef:
          vmtReferenceInfo.referenceName = _constantSettings.literalClass;
          size = value.length_pos() + 1;
@@ -1096,6 +1106,12 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
    switch (sectionMask) {
       case mskIntLiteralRef:
          _compiler->writeInt32(writer, StrConvertor::toUInt(value, 16));
+         break;
+      case mskLongLiteralRef:
+         _compiler->writeInt64(writer, StrConvertor::toLong(value, 16));
+         break;
+      case mskRealLiteralRef:
+         _compiler->writeFloat64(writer, StrConvertor::toDouble(value));
          break;
       case mskCharacterRef:
          _compiler->writeChar32(writer, value);
@@ -1152,10 +1168,10 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
    // dispatch message should be the next one - to make sure it is always
    // the first entry in the class VMT
    resolveWeakAction(DISPATCH_MESSAGE);
-   //// protected default constructor message should be the second
-   //// NOTE : protected constructor action can be used only for default constructor due to current implementation
-   //// (we have to guarantee that default constructor is always the second one)
-   //resolveWeakAction(CONSTRUCTOR_MESSAGE2);
+   // protected default constructor message should be the second
+   // NOTE : protected constructor action can be used only for default constructor due to current implementation
+   // (we have to guarantee that default constructor is always the second one)
+   resolveWeakAction(CONSTRUCTOR_MESSAGE2);
    // constructor message should be the third
    resolveWeakAction(CONSTRUCTOR_MESSAGE);
 
@@ -1194,6 +1210,8 @@ addr_t JITLinker :: resolve(ustr_t referenceName, ref_t sectionMask, bool silent
       case mskIntLiteralRef:
       case mskCharacterRef:
       case mskMssgLiteralRef:
+      case mskLongLiteralRef:
+      case mskRealLiteralRef:
          return resolve({ nullptr, referenceName }, sectionMask, silentMode);
       default:
          ReferenceInfo referenceInfo = _loader->retrieveReferenceInfo(referenceName, _forwardResolver);
@@ -1224,6 +1242,8 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
                _loader->getSection(referenceInfo, sectionMask, silentMode));
             break;
          case mskIntLiteralRef:
+         case mskLongLiteralRef:
+         case mskRealLiteralRef:
          case mskLiteralRef:
          case mskWideLiteralRef:
          case mskCharacterRef:

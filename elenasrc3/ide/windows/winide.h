@@ -37,9 +37,10 @@ namespace elena_lang
    };
 
    // --- IDEWindow ---
-   class IDEWindow : public SDIWindow
+   class IDEWindow : public SDIWindow, public DocumentNotifier
    {
-      Dialog         dialog;
+      Dialog         fileDialog;
+      Dialog         projectDialog;
       Clipboard      clipboard;
 
       HINSTANCE      _instance;
@@ -50,20 +51,30 @@ namespace elena_lang
       void onModelChange(ExtNMHDR* hdr);
       void onNotifyMessage(ExtNMHDR* hdr);
 
+      void onDebugWatch();
+
       void onDoubleClick(NMHDR* hdr);
 
       void onTabSelChanged(HWND wnd);
+      void onTreeSelChanged(HWND wnd);
+      void onChildRefresh(int controlId);
 
       bool onCommand(int command) override;
       void onNotify(NMHDR* hdr) override;
       void onActivate() override;
+      void onLayoutChange();
 
       void onComilationStart();
       void onCompilationEnd(int exitCode);
       void onErrorHighlight(int index);
 
       void onProjectChange();
+      void onProjectViewSel(size_t index);
 
+      void toggleTabBarWindow(int child_id);
+      void toggleWindow(int child_id);
+
+      void openProjectView();
       void openResultTab(int controlIndex);
       void setChildFocus(int controlIndex);
 
@@ -71,6 +82,7 @@ namespace elena_lang
       void openFile();
       void saveFile();
       void closeFile();
+      void openProject();
       void exit();
 
       void undo();
@@ -78,8 +90,11 @@ namespace elena_lang
       bool copyToClipboard();
       void pasteFromClipboard();
       void deleteText();
+      void commentText();
 
    public:
+      void onDocumentUpdate() override;
+
       IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance);
    };
 

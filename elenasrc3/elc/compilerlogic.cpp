@@ -50,9 +50,21 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 38;
+constexpr auto OperationLength = 100;
 constexpr Op Operations[OperationLength] =
 {
+   {
+      EQUAL_OPERATOR_ID, BuildKey::NilCondOp, V_NIL, V_OBJECT, 0, V_FLAG
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::NilCondOp, V_OBJECT, V_NIL, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::NilCondOp, V_NIL, V_OBJECT, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::NilCondOp, V_OBJECT, V_NIL, 0, V_FLAG
+   },
    {
       SET_INDEXER_OPERATOR_ID, BuildKey::DictionaryOp, V_DICTIONARY, V_INT32, V_STRING, V_OBJECT
    },
@@ -84,6 +96,36 @@ constexpr Op Operations[OperationLength] =
       DIV_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
    },
    {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, 0
+   },
+   {
+      BAND_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
+   },
+   {
+      BOR_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
+   },
+   {
+      BXOR_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
+   },
+   {
+      BNOT_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
+   },
+   {
+      SHL_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
+   },
+   {
       EQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG
    },
    {
@@ -102,6 +144,57 @@ constexpr Op Operations[OperationLength] =
       NOTEQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG
    },
    {
+      ADD_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, V_INT64
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, V_INT64
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, V_INT64
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, V_INT64
+   },
+   {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, 0
+   },
+   {
+      BAND_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, V_INT64
+   },
+   {
+      BOR_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, V_INT64
+   },
+   {
+      BXOR_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, V_INT64
+   },
+   {
+      SHL_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT32, 0, V_INT64
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT32, 0, V_INT64
+   },
+   {
+      BNOT_OPERATOR_ID, BuildKey::LongSOp, V_INT64, 0, 0, V_INT64
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::LongCondOp, V_INT64, V_INT64, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::LongCondOp, V_INT64, V_INT64, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::LongCondOp, V_INT64, V_INT64, 0, V_FLAG
+   },
+   {
       ADD_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
    },
    {
@@ -109,6 +202,31 @@ constexpr Op Operations[OperationLength] =
    },
    {
       MUL_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
+   },
+
+   {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, 0
+   },
+   {
+      BAND_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
+   },
+   {
+      BOR_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
+   },
+   {
+      BXOR_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
+   },
+   {
+      BNOT_OPERATOR_ID, BuildKey::ByteSOp, V_INT8, 0, 0, V_INT8
    },
    {
       DIV_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
@@ -123,6 +241,12 @@ constexpr Op Operations[OperationLength] =
       NOTEQUAL_OPERATOR_ID, BuildKey::ByteCondOp, V_INT8, V_INT8, 0, V_FLAG
    },
    {
+      SHL_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT32, 0, V_INT8
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT32, 0, V_INT8
+   },
+   {
       ADD_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
    },
    {
@@ -135,6 +259,36 @@ constexpr Op Operations[OperationLength] =
       DIV_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
    },
    {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, 0
+   },
+   {
+      BAND_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+   },
+   {
+      BOR_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+   },
+   {
+      BXOR_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+   },
+   {
+      BNOT_OPERATOR_ID, BuildKey::ShortSOp, V_INT16, 0, 0, V_INT16
+   },
+   {
+      SHL_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT32, 0, V_INT16
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT32, 0, V_INT16
+   },
+   {
       EQUAL_OPERATOR_ID, BuildKey::ShortCondOp, V_INT16, V_INT16, 0, V_FLAG
    },
    {
@@ -144,9 +298,43 @@ constexpr Op Operations[OperationLength] =
       NOTEQUAL_OPERATOR_ID, BuildKey::ShortCondOp, V_INT16, V_INT16, 0, V_FLAG
    },
    {
+      ADD_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, 0
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::RealCondOp, V_FLOAT64, V_FLOAT64, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::RealCondOp, V_FLOAT64, V_FLOAT64, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::RealCondOp, V_FLOAT64, V_FLOAT64, 0, V_FLAG
+   },
+   {
       NOT_OPERATOR_ID, BuildKey::BoolSOp, V_FLAG, 0, 0, V_FLAG
    },
    {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
       INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT32, 0, V_INT8
    },
    {
@@ -341,6 +529,7 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_INTBINARY:
       case V_WORDBINARY:
       case V_MSSGBINARY:
+      case V_FLOATBINARY:
          attrs.typeInfo.typeRef = attribute;
          break;
       case V_STRINGOBJ:
@@ -412,8 +601,8 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_CONVERSION:
          hint = (ref_t)MethodHint::Conversion;
          return true;
-      case V_MULTIRET:
-         hint = (ref_t)MethodHint::MutliRet;
+      case V_OVERLOADRET:
+         hint = (ref_t)MethodHint::RetOverload;
          return true;
       case V_SEALED:
          hint = (ref_t)MethodHint::Sealed;
@@ -477,9 +666,12 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_EXTERN:
          attrs |= ExpressionAttribute::Extern;
          return true;
-      case V_NEWOP:
-         attrs |= ExpressionAttribute::NewOp;
-         return true;
+   case V_NEWOP:
+         if (ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::Parameter)) {
+            attrs |= ExpressionAttribute::NewOp;
+            return true;
+         }
+         return false;
       case V_CONVERSION:
          attrs |= ExpressionAttribute::CastOp;
          return true;
@@ -494,6 +686,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
          return true;
       case V_MEMBER:
          attrs |= ExpressionAttribute::Member;
+         return true;
+      case V_SUPERIOR:
+         attrs |= ExpressionAttribute::Superior;
          return true;
       default:
          return false;
@@ -739,8 +934,23 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
 
    if (isWrapper(info)) {
       auto inner = *info.fields.start();
-      if (inner.typeInfo.typeRef == V_MESSAGE)
-         info.header.flags |= elMessage;
+      switch (inner.typeInfo.typeRef) {
+         case V_INT32:
+         case V_INT8:
+            info.header.flags |= elDebugDWORD;
+            break;
+         case V_INT64:
+            info.header.flags |= elDebugQWORD;
+            break;
+         case V_FLOAT64:
+            info.header.flags |= elDebugFLOAT64;
+            break;
+         case V_MESSAGE:
+            info.header.flags |= elMessage;
+            break;
+         default:
+            break;
+      }
    }
 }
 
@@ -824,7 +1034,7 @@ void CompilerLogic :: writeAttributeMapEntry(MemoryBase* section, ustr_t key, us
    MemoryWriter writer(section);
    writer.writeString(key);
    writer.writeDWord(2);
-   writer.writeDWord(value.length());
+   writer.writeDWord(value.length_pos());
    writer.writeString(value);
 }
 
@@ -897,14 +1107,24 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
 
    switch (reference)
    {
+      case V_INT64:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugQWORD | elStructureRole | elReadOnlyRole;
+         info.size = 8;
+         break;
+      case V_FLOAT64:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugFLOAT64 | elStructureRole | elReadOnlyRole;
+         info.size = 8;
+         break;
       case V_INT32:
          info.header.parentRef = scope.buildins.superReference;
-         info.header.flags = /*elDebugDWORD | */elStructureRole | elReadOnlyRole;
+         info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
          info.size = 4;
          break;
       case V_INT8:
          info.header.parentRef = scope.buildins.superReference;
-         info.header.flags = /*elDebugDWORD | */elStructureRole | elReadOnlyRole;
+         info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
          info.size = 1;
          break;
       case V_INT8ARRAY:
@@ -1164,27 +1384,24 @@ void CompilerLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* 
    }
 }
 
-inline mssg_t resolveNonpublic(mssg_t weakMessage, ClassInfo& info, bool selfCall)
+inline mssg_t resolveNonpublic(mssg_t weakMessage, ClassInfo& info, bool selfCall, bool isInternalOp)
 {
    ref_t nonpublicMessage = 0;
    if (selfCall && !test(weakMessage, STATIC_MESSAGE) && info.methods.exist(weakMessage | STATIC_MESSAGE)) {
       nonpublicMessage = weakMessage | STATIC_MESSAGE;
    }
-
-   //mssg_t protectedMessage = info.attributes.get({ message, ClassAttribute::ProtectedAlias });
-   //if (protectedMessage) {
-   //   if (checkMethod(info, protectedMessage, result)) {
-   //      result.visibility = Visibility::Protected;
-   //      return true;
-   //   }
-   //}
-   //mssg_t internalMessage = info.attributes.get({ message, ClassAttribute::InternalAlias });
-   //if (internalMessage) {
-   //   if (checkMethod(info, internalMessage, result)) {
-   //      result.visibility = Visibility::Internal;
-   //      return true;
-   //   }
-   //}
+   else {
+      mssg_t protectedMessage = info.attributes.get({ weakMessage, ClassAttribute::ProtectedAlias });
+      if (protectedMessage && selfCall) {
+         nonpublicMessage = protectedMessage;
+      }
+      else {
+         mssg_t internalMessage = info.attributes.get({ weakMessage, ClassAttribute::InternalAlias });
+         if (internalMessage && isInternalOp) {
+            nonpublicMessage = internalMessage;
+         }
+      }
+   }
 
    return nonpublicMessage;
 }
@@ -1201,7 +1418,7 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
          stackSafeAttr |= 1;
 
       // check if it is non public message
-      mssg_t nonPublicMultiMessage = resolveNonpublic(weakMessage, info, selfCall);
+      mssg_t nonPublicMultiMessage = resolveNonpublic(weakMessage, info, selfCall, scope.isInternalOp(targetRef));
       if (nonPublicMultiMessage != 0) {
          mssg_t resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
          if (!resolved) {
@@ -1290,6 +1507,13 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& sc
 
       if (compatible)
          return { ConversionResult::BoxingRequired };
+
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT32 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT32_64_CONVERSION, 1 };
+      }
+      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_INT32 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT32_FLOAT64_CONVERSION, 1 };
+      }
    }
 
    // COMPILE MAGIC : trying to typecast primitive array
