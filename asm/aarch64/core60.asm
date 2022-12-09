@@ -2307,7 +2307,7 @@ end
 // ; movsifi sp:0, fp:i2
 inline %1F3h
 
-  add     x12, x29, __arg12_1
+  add     x12, x29, __arg12_2
   ldr     x0, [x12]
 
 end
@@ -2315,7 +2315,7 @@ end
 // ; movsifi sp:1, fp:i2
 inline %2F3h
 
-  add     x12, x29, __arg12_1
+  add     x12, x29, __arg12_2
   ldr     x1, [x12]
 
 end
