@@ -5,21 +5,24 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 12 ===
-    * elena vm : creating a stub project (similar to elenart both linux / windows)
-    * regression tests (1 - 30)
+    * api functionality for existing classes : system'CharValue
+    * api : provide parameter names
+    * ide : double click - select word
+    * elena vm : implement elenavmmachine
+
 
     ! api functionality for existing classes : system'CharValue
-    ! regression tests : all github issues (> 30)
+    ! regression tests : all github issues (> 52)
     ! examples
     ! rosetta code examples
     ! elena vm
 
     * gc - system_tests - why full collect happends so often
     * aarch64 gc: system_tests fails in gc routine
+    * #15 : return double / long from external function
+    * #47 : Evaluating an expression in a symbol
 
     * api : provide field descriptions
-    * api : provide parameter names
-    * ide : double click - select word
     * ide : disable / enable the menu items, based on the model
     * ide : debugger - status - running / stopped
 
