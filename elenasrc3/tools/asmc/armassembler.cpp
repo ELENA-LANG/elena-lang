@@ -1736,7 +1736,7 @@ void Arm64Assembler :: compileFSUB(ScriptToken& tokenInfo, MemoryWriter& writer)
 
    ARMOperand rm = readOperand(tokenInfo, ASM_INVALID_TARGET);
 
-   bool isValid = compileFADD(tokenInfo, rd, rn, rm, writer);
+   bool isValid = compileFSUB(tokenInfo, rd, rn, rm, writer);
 
    if (!isValid)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
