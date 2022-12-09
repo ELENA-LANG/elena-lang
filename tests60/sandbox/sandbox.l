@@ -2,8 +2,10 @@ import extensions;
 
 public program()
 {
-   real r2 := 2.2;
-   real r := r2.Integer;
+   real r1 := 2.2;
+   real r2 := 2.0;
 
-   console.writeLine(r); 
+   real r3 := r1-r2;
+
+   console.writeLine(r3); 
 }
