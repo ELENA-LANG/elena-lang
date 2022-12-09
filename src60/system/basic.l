@@ -1870,32 +1870,67 @@ public sealed const struct RealNumber : BaseNumber,
 
 // --- CharValue ---
 
-public const struct CharValue : BaseValue
+public const struct CharValue : BaseValue,
+   info<"An UTF-32 character symbol">
 {
    embeddable __word theValue[4];
 
    static char MinValue
+            : info<"Returns the minimal possible character value (0)">
       = $0;
 
    static char MaxValue
+            : info<"Returns the maximal possible character value (010FFFFh)">
 //      = $010FFFFh;
       = $1114111;
 
    constructor()
+            : info<"Creates the object with a default value (0)">
       = $0;
 
    constructor(char value)
+            : info<"Creates the object with specified value">
       = value;
 
    constructor load(int n)
+            : info<"Creates the object with specified numeric value">
       = charConvertor.convert(n);
 
-   get /*internal*/ int Value()
+   get internal int Value()
    {
       int val := intConvertor.convert(self);
 
       ^ val
    }
+
+   get int Length()
+         : info<"Retuns the number of bytes to represent the symbol in UTF-8"> 
+   {
+      int len := PrimitiveOperations.getCharLength(theValue);
+      
+      ^ len
+   }
+
+   get int WideLength()
+         : info<"Retuns the number of bytes to represent the symbol in UTF-16"> 
+   {
+      int len := PrimitiveOperations.getCharWideLength(theValue);
+      
+      ^ len
+   }
+
+   bool equal(o)
+   {
+      var ch := cast char(o) ?? nil;
+      if (ch == nil) {
+         ^ false
+      };
+
+      ^ self.equal(ch)
+   }
+
+   bool less(o)
+      <= less(cast char(o));
 
    bool equal(char val)
       = theValue == val;
@@ -1903,6 +1938,55 @@ public const struct CharValue : BaseValue
    bool less(char val)
       = theValue < val;
 
+   bool equal(int n)
+      = theValue == n;
+
+   bool equal(string s)
+   {
+      int sLen := s.Length;
+      int chLen := self.Length;
+      
+      if (sLen == chLen)
+      {
+         char ch := s[0];
+
+         ^ self == ch    
+      };
+
+      ^ false
+   }
+
+   bool equal(wide s)
+   {
+      int sLen := s.Length;
+      int chLen := self.WideLength;
+      
+      if (sLen == chLen)
+      {
+         char ch := s[0];
+
+         ^ self == ch    
+      };
+
+      ^ false
+   }
+
+   bool less(string s)
+         => cast string(s);
+
+   bool less(wide s)
+         => cast wide(s);
+
+   char clone()
+            : info<"Clones the value">
+      = new CharValue(self);
+
    string toPrintable()
       = stringConvertor.convert(self);
+
+   string cast()
+      = stringConvertor.convert(self); 
+
+   wide cast()
+      = wideConvertor.convert(self); 
 }

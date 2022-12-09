@@ -4,18 +4,19 @@ In development:
 
   [development]
     ### EPOCH: elena 6.0 - redux ###
-    === Iteration 12 ===
-    * api functionality for existing classes : system'CharValue
+    === Iteration 13 ===
     * api : provide parameter names
     * ide : double click - select word
+    * generic handler
     * elena vm : implement elenavmmachine
-
+    * api functionality for existing classes : system'NilValue
 
     ! api functionality for existing classes : system'CharValue
     ! regression tests : all github issues (> 52)
-    ! examples
+    ! examples : intsum / realsum / words
     ! rosetta code examples
     ! elena vm
+    ! elena vm : helloworld sample x86 / x86-64
 
     * gc - system_tests - why full collect happends so often
     * aarch64 gc: system_tests fails in gc routine
@@ -66,9 +67,11 @@ In development:
 
     * ldoc : show conversions in the separate section
 
-    * retest #2, #3, #4, #5, #7, , #8, #9, #10
-
     * optimization : extra temporal variables
+
+    === Iteration 14 ===
+    ! examples : pi, bsort, textfile, binary, replace, goods
+    ! elena vm : helloworld sample Linux x86 / x86-64 / ppc64le / aarch64
 
 ------                                                           
 Backlog:

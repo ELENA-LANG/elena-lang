@@ -9,6 +9,34 @@ internal singleton PrimitiveOperations
       }
    }
 
+   int getCharLength(int code)
+   {
+      if (code < 80h)
+      {
+         ^ 1
+      };
+      if (code < 800h)
+      {
+         ^ 2
+      };
+      if (code < 10000h)
+      {
+         ^ 3
+      };
+
+      ^ 4
+   }
+
+   int getCharWideLength(int code)
+   {
+      if (code < 0D800h)
+      {
+         ^ 2
+      };
+
+      ^ 4
+   }
+
    char readChar(byte[] sour, int index)
    {
       int ch := sour[index];

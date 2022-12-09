@@ -420,3 +420,9 @@ public singleton stringConvertor
       ^ String.fromByteArray(0, length, buffer);      
    }
 }
+
+// --- wideConvertor ---
+
+public singleton wideConvertor
+{
+}
