@@ -156,6 +156,7 @@ namespace elena_lang
       PresenterBase*   _presenter;
       LibraryProvider* _provider;
       ModuleBase*      _module;
+      MemoryBase*      _parameterNames;
       IdentifierString _rootNs;
       bool             _publicOnly;
 
@@ -174,6 +175,8 @@ namespace elena_lang
       void generateSymbolDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiSymbolInfo* symbolInfo, ustr_t bodyName);
       void generateModuleDoc(ApiModuleInfo* moduleInfo);
 
+      void loadMetaSections();
+
       bool loadClassInfo(ref_t reference, ClassInfo& info, bool headerOnly = true);
       bool loadSymbolInfo(ref_t reference, SymbolInfo& info);
 
@@ -182,7 +185,7 @@ namespace elena_lang
       void loadFields(ApiClassInfo* apiClassInfo, ClassInfo& info);
       void loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateBased);
       void loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, 
-         MemberType memberType, DescriptionMap* descriptions);
+         MemberType memberType, DescriptionMap* descriptions, ClassInfo& classInfo);
 
       void loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions);
       void loadConstructors(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions);
@@ -206,6 +209,7 @@ namespace elena_lang
          _presenter = presenter;
          _provider = provider;
          _module = nullptr;
+         _parameterNames = nullptr;
          _publicOnly = true;
       }
       virtual ~DocGenerator() = default;

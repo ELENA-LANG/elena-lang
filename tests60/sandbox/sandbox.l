@@ -1,5 +1,11 @@
 import extensions;
 
+A
+{
+   test(int n, int l)
+      = n + l;
+}
+
 // --- intTests ---
 
 intTests()

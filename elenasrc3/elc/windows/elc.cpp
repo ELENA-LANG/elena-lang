@@ -248,6 +248,11 @@ int main()
                      project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
                   }
                   break;
+               case 'x':
+                  if (argv[i][2] == 'p') {
+                     project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
+                  }
+                  break;
                case 'r':
                   cleanMode = true;
                   break;

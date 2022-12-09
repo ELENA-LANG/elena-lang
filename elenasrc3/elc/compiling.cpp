@@ -432,6 +432,9 @@ void CompilingProcess :: configurate(ProjectBase& project)
 
    int optMode = project.IntSetting(ProjectOption::OptimizationMode, optMiddle);
    _compiler->setOptimizationMode(optMode);
+
+   bool withMethodParamInfo = project.BoolSetting(ProjectOption::GenerateParamNameInfo, true);
+   _compiler->setMethodParamInfo(withMethodParamInfo);
 }
 
 void CompilingProcess :: compile(ProjectBase& project,

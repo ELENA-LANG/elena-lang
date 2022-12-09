@@ -1123,6 +1123,7 @@ Compiler :: Compiler(
 
    _optMode = false;
    _tapeOptMode = false;
+   _withMethodParamInfo = false;
 }
 
 inline ref_t resolveDictionaryMask(TypeInfo typeInfo)
@@ -1606,6 +1607,34 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
       scope.info.header.flags |= elWithVariadics;
 }
 
+pos_t Compiler :: saveMetaInfo(ModuleBase* module, ustr_t value, ustr_t postfix)
+{
+   IdentifierString sectionName(META_PREFIX, postfix);
+
+   MemoryBase* section = module->mapSection(module->mapReference(*sectionName, false) | mskLiteralListRef, false);
+   MemoryWriter writer(section);
+
+   pos_t position = writer.position();
+   writer.writeString(value);
+
+   return position;
+}
+
+void Compiler :: generateParamNameInfo(ClassScope& scope, SyntaxNode node, mssg_t message)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Parameter) {
+         ustr_t paramName = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+
+         ClassAttributeKey key = { message, ClassAttribute::ParameterName };
+         scope.info.attributes.add(key, saveMetaInfo(scope.module, paramName, PARAMETER_NAMES));
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed)
 {
    mssg_t message = node.arg.reference;
@@ -1617,6 +1646,8 @@ void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node, b
       methodInfo = *methodIt;
 
    generateMethodAttributes(scope, node, methodInfo, scope.abstractBasedMode);
+   if (_withMethodParamInfo)
+      generateParamNameInfo(scope, node, message);
 
    // check if there is no duplicate method
    if (existing && !methodInfo.inherited) {

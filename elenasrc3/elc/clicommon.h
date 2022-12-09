@@ -199,6 +199,7 @@ enum class ProjectOption
    DebugMode,
    MappingOutputMode,
    OptimizationMode,
+   GenerateParamNameInfo,
 
    Prolog,
    Epilog,

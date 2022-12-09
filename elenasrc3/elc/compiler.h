@@ -868,6 +868,7 @@ namespace elena_lang
 
       bool                   _optMode;
       bool                   _tapeOptMode;
+      bool                   _withMethodParamInfo;
 
       bool reloadMetaData(ModuleScopeBase* moduleScope, ustr_t name);
 
@@ -875,6 +876,8 @@ namespace elena_lang
       void loadExtensions(NamespaceScope& ns, bool internalOne);
 
       void saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN);
+
+      pos_t saveMetaInfo(ModuleBase* module, ustr_t value, ustr_t postfix);
 
       ref_t mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, Visibility visibility);
       mssg_t mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef, 
@@ -973,6 +976,7 @@ namespace elena_lang
       void declareFieldMetaInfos(ClassScope& scope, SyntaxNode node);
 
       void generateClassFlags(ClassScope& scope, ref_t declaredFlags);
+      void generateParamNameInfo(ClassScope& scope, SyntaxNode node, mssg_t message);
       void generateMethodAttributes(ClassScope& scope, SyntaxNode node, 
          MethodInfo& methodInfo, bool abstractBased);
       void generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed);
@@ -1206,6 +1210,11 @@ namespace elena_lang
       {
          _optMode = optMode != 0;
          _tapeOptMode = optMode > optLow;
+      }
+
+      void setMethodParamInfo(bool flag)
+      {
+         _withMethodParamInfo = flag;
       }
 
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver);

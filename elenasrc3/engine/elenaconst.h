@@ -112,6 +112,7 @@ namespace elena_lang
    constexpr auto CLASSCLASS_POSTFIX      = "#class";
    constexpr auto CONST_POSTFIX           = "#const";
    constexpr auto STATICFIELD_POSTFIX     = "#static";
+   constexpr auto PARAMETER_NAMES         = "parameter_names";
 
    // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";
@@ -265,7 +266,8 @@ namespace elena_lang
       InternalAlias     = 0xA02,
       OverloadList      = 0x903,
       ConstantMethod    = 0x904,
-      ExtensionRef      = 0x105,  
+      ExtensionRef      = 0x105,
+      ParameterName     = 0x806,
    };
 
    // === Reference constants ====
