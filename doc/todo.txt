@@ -5,10 +5,11 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 12 ===
-
+    * elena vm : creating a stub project (similar to elenart both linux / windows)
+    * regression tests (1 - 30)
 
     ! api functionality for existing classes : system'CharValue
-    ! regression tests : all github issues
+    ! regression tests : all github issues (> 30)
     ! examples
     ! rosetta code examples
     ! elena vm

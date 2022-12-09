@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ecv", "tools\ecv\vs\ecv.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ldoc", "tools\ldoc\vs\ldoc.vcxproj", "{D1AED700-DF42-451A-B46C-3B1E077A279B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenavm", "elenavm\vs\elenavm.vcxproj", "{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -81,6 +83,14 @@ Global
 		{D1AED700-DF42-451A-B46C-3B1E077A279B}.Release|x64.Build.0 = Release|x64
 		{D1AED700-DF42-451A-B46C-3B1E077A279B}.Release|x86.ActiveCfg = Release|Win32
 		{D1AED700-DF42-451A-B46C-3B1E077A279B}.Release|x86.Build.0 = Release|Win32
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Debug|x64.ActiveCfg = Debug|x64
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Debug|x64.Build.0 = Debug|x64
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Debug|x86.ActiveCfg = Debug|Win32
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Debug|x86.Build.0 = Debug|Win32
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Release|x64.ActiveCfg = Release|x64
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Release|x64.Build.0 = Release|x64
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Release|x86.ActiveCfg = Release|Win32
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
