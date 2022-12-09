@@ -7,10 +7,39 @@
 //---------------------------------------------------------------------------
 
 #include "ldoc.h"
+
+#include "bytecode.h"
+#include "langcommon.h"
 #include "ldocconst.h"
 #include "module.h"
 
+constexpr auto ByRefPrefix = "'$auto'system@Reference#1&";
+constexpr auto ArrayPrefix = "'$auto'system@Array#1&";
+
 using namespace elena_lang;
+
+constexpr auto DESCRIPTION_SECTION = "'meta$descriptions";
+
+inline bool isTemplateBased(ustr_t reference)
+{
+   for (size_t i = 0; i < getlength(reference); i++) {
+      if (reference[i] == '#' && reference[i + 1] >= '0' && reference[i + 1] <= '9')
+         return true;
+   }
+
+   return false;
+}
+
+void writeNs(TextFileWriter& writer, ustr_t ns)
+{
+   for (int i = 0; i < getlength(ns); i++)
+   {
+      if (ns[i] == '\'') {
+         writer.writeChar('-');
+      }
+      else writer.writeChar(ns[i]);
+   }
+}
 
 void writeNs(IdentifierString& name, ApiModuleInfo* info)
 {
@@ -29,7 +58,7 @@ void writeHeader(TextFileWriter& writer, const char* package, const char* packag
    writer.writeTextLine("<HTML>");
    writer.writeTextLine("<HEAD>");
    writer.writeTextLine("<TITLE>");
-   writer.writeTextLine(TITLE);
+   writer.writeText(TITLE);
    writer.writeTextLine(package);
    writer.writeTextLine("</TITLE>");
    writer.writeTextLine("<meta name=\"collection\" content=\"api\">");
@@ -97,6 +126,135 @@ void writeClassSummaryHeader(TextFileWriter& writer)
    writer.writeTextLine("</TR>");
 }
 
+void writeSymbolSummaryHeader(TextFileWriter& writer)
+{
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+   writer.writeTextLine("<TABLE CLASS=\"typeSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<HEADER>");
+   writer.writeTextLine("Symbol Summary");
+   writer.writeTextLine("</HEADER>");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Symbol name</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Description</TH>");
+   writer.writeTextLine("</TR>");
+
+}
+
+void parseNs(IdentifierString& ns, ustr_t root, ustr_t fullName)
+{
+   if (isWeakReference(fullName)) {
+      ns.copy(root);
+   }
+
+   size_t ltIndex = fullName.findStr("&lt;");
+   size_t last = 0;
+   for (size_t i = 0; i < getlength(fullName); i++) {
+      if (fullName[i] == '\'') {
+         last = i;
+      }
+      else if (fullName[i] == '#' || (fullName[i] == '&' && i == ltIndex))
+         break;
+   }
+
+   ns.append(fullName, last);
+}
+
+void parseTemplateType(IdentifierString& line, int index, bool argMode)
+{
+   IdentifierString temp(line);
+
+   line.truncate(0);
+
+   int last = index;
+   bool first = true;
+   bool noCurlybrackets = false;
+   if (argMode && (*temp).startsWith(ByRefPrefix)) {
+      // HOTFIX : recognize byref argument
+
+      temp.cut(0, getlength(ByRefPrefix));
+
+      line.append("ref ");
+      noCurlybrackets = true;
+   }
+   else if (argMode && (*temp).startsWith(ArrayPrefix)) {
+      // HOTFIX : recognize byref argument
+
+      temp.cut(0, getlength(ArrayPrefix));
+
+      line.append("arrayof ");
+      noCurlybrackets = true;
+   }
+
+   for (int i = index; i < temp.length(); i++) {
+      if (temp[i] == '@') {
+         temp[i] = '\'';
+      }
+      else if (temp[i] == '#') {
+         line.append((*temp) + last + 1, i - last - 1);
+      }
+      else if (temp[i] == '&') {
+         if (first) {
+            last = i;
+            line.append("&lt;");
+            first = false;
+         }
+         else {
+            line.append((*temp) + last + 1, i - last - 1);
+            line.append(',');
+            last = i;
+         }
+      }
+   }
+
+   if (noCurlybrackets) {
+      line.append(*temp);
+   }
+   else {
+      line.append((*temp) + last + 1);
+      line.append("&gt;");
+   }
+}
+
+void parseTemplateName(IdentifierString& line)
+{
+   IdentifierString temp(*line);
+
+   line.clear();
+
+   int last = 0;
+   bool first = true;
+   for (size_t i = 0; i < temp.length(); i++) {
+      if (temp[i] == '@') {
+         if (!first)
+            temp[i] = '\'';
+         last = i;
+      }
+      else if (temp[i] == '#') {
+         line.append((*temp) + last + 1, i - last - 1);
+      }
+      else if (temp[i] == '&') {
+         if (first) {
+            line.append("&lt;");
+            first = false;
+         }
+         else {
+            line.append((*temp) + last + 1, i - last - 1);
+            line.append(',');
+         }
+      }
+   }
+
+   line.append((*temp) + last + 1);
+   line.append("&gt;");
+}
+
+void parseTemplateName(ReferenceProperName& name)
+{
+   IdentifierString temp(*name);
+   parseTemplateName(temp);
+   name.copy(*temp);
+}
+
 void writeRefName(TextFileWriter& writer, ustr_t name, bool allowResolvedTemplates)
 {
    int paramIndex = 1;
@@ -146,19 +304,85 @@ void writeRefName(TextFileWriter& writer, ustr_t name, bool allowResolvedTemplat
 
 void writeClassName(TextFileWriter& writer, ApiClassInfo* info)
 {
+   if (info->prefix.length() > 0) {
+      writer.writeText(*info->prefix);
+   }
+
+   writer.writeText("<SPAN CLASS=\"typeNameLabel\">");
+   writer.writeText(*info->name);
+   writer.writeText("</SPAN>");
+
+   const char* descr = *info->shortDescr;
+   if (!emptystr(descr)) {
+      writer.writeTextLine("<BR/>");
+      writer.writeText("<I>");
+      writer.writeText(descr);
+      writer.writeText("</I>");
+   }
+}
+
+void writeSymbolName(TextFileWriter& writer, ApiSymbolInfo* info)
+{
    const char* descr = *info->shortDescr;
    if (!emptystr(descr)) {
       writer.writeText(descr);
    }
-   else {
-      if (info->prefix.length() > 0) {
-         writer.writeText(*info->prefix);
+}
+
+void writeType(TextFileWriter& writer, ustr_t type, bool fullReference = false)
+{
+   bool arrayMode = false;
+   if (type.startsWith("params ")) {
+      writer.writeText("<I>params</I>&nbsp;");
+      type = type + 7;
+   }
+   else if (type.startsWith("ref ")) {
+      writer.writeText("<I>ref</I>&nbsp;");
+      type = type + 4;
+   }
+   else if (type.startsWith("arrayof ")) {
+      type = type + 8;
+      arrayMode = true;
+   }
+
+   writer.writeText("<SPAN CLASS=\"memberNameLink\">");
+   if (type.find('\'') != NOTFOUND_POS) {
+      writer.writeText("<A HREF=\"");
+
+      pos_t index = type.findStr("&lt;");
+      NamespaceString ns(type);
+      if (index != NOTFOUND_POS) {
+         for (pos_t i = index; i >= 0; i--) {
+            if (type[i] == '\'') {
+               ns.copy(type, i);
+               break;
+            }
+         }
       }
 
-      writer.writeText("<SPAN CLASS=\"typeNameLabel\">");
-      writer.writeText(*info->fullName);
-      writer.writeText("</SPAN>");
+      if (emptystr(*ns)) {
+         writer.writeText("#");
+      }
+      else {
+         writeNs(writer, *ns);
+         writer.writeText(".html#");
+      }
+      writeRefName(writer, type + ns.length() + 1, false);
+
+      writer.writeText("\">");
+      if (fullReference) {
+         writer.writeText(type);
+      }
+      else writer.writeText(type + ns.length() + 1);
+
+      writer.writeText("</A>");
    }
+   else writer.writeText(type);
+
+   if (arrayMode)
+      writer.writeText("<I>[]</I>");
+
+   writer.writeText("</SPAN>");
 }
 
 void writeSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
@@ -168,9 +392,9 @@ void writeSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* b
    writer.writeText("<A HREF=\"");
    writer.writeText(bodyFileName);
    writer.writeText("#");
-   writeRefName(writer, *info->fullName, false);
+   writeRefName(writer, *info->name, false);
    writer.writeText("\">");
-   writer.writeText(*info->fullName);
+   writer.writeText(*info->name);
    writer.writeTextLine("</A>");
    writer.writeTextLine("</TD>");
 
@@ -179,6 +403,414 @@ void writeSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* b
    writeClassName(writer, info);
    writer.writeTextLine("</DIV>");
    writer.writeTextLine("</TD>");
+}
+
+void writeSummaryTable(TextFileWriter& writer, ApiSymbolInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<TD CLASS=\"colFirst\">");
+
+   writer.writeText("<A HREF=\"");
+   writer.writeText(bodyFileName);
+   writer.writeText("#");
+   writeRefName(writer, (*info->name), false);
+   writer.writeText("\">");
+   writer.writeText(*info->name);
+   writer.writeTextLine("</A>");
+   writer.writeTextLine("</TD>");
+
+   writer.writeTextLine("<TD CLASS=\"colLast\">");
+   writer.writeTextLine("<DIV CLASS=\"block\">");
+   writer.writeText(*info->name);
+   writer.writeTextLine("</DIV>");
+   writer.writeTextLine("</TD>");
+}
+
+void writeClassBodyHeader(TextFileWriter& writer, ApiClassInfo* info, ustr_t moduleName)
+{
+   writer.writeText("<A NAME=\"");
+   writer.writeText(*info->name);
+   writer.writeTextLine("\">");
+   writer.writeTextLine("</A>");
+
+   writer.writeTextLine("<!-- ======== START OF CLASS DATA ======== -->");
+
+   writer.writeTextLine("<DIV CLASS=\"header\">");
+
+   writer.writeTextLine("<DIV CLASS=\"subTitle\">");
+   writer.writeText(moduleName);
+   writer.writeText("'");
+   writer.writeTextLine("</DIV>");
+
+   writer.writeText("<H2 title=\"");
+   writer.writeText(*info->title);
+   writer.writeText("\" class=\"title\">");
+   writer.writeText(*info->title);
+   writer.writeTextLine("</H2>");
+
+   writer.writeTextLine("</DIV>");
+
+   writer.writeTextLine("<DIV CLASS=\"contentContainer\">");
+
+   writer.writeTextLine("<DIV CLASS=\"description\">");
+   writer.writeTextLine("<BR>");
+   writer.writeTextLine("<HR>");
+   //const char* descr = nullptr;
+   writer.writeTextLine("<PRE STYLE=\"padding-top: 15px;\">");
+   writeClassName(writer, info);
+   writer.writeTextLine("</PRE>");
+   writer.writeTextLine("<BR>");
+   writer.writeTextLine("</DIV>");
+}
+
+void writeSymbolBodyHeader(TextFileWriter& writer, ApiSymbolInfo* info, ustr_t moduleName)
+{
+   writer.writeText("<A NAME=\"");
+   writer.writeText(*info->name);
+   writer.writeTextLine("\">");
+   writer.writeTextLine("</A>");
+
+   writer.writeTextLine("<!-- ======== START OF SYMBOL DATA ======== -->");
+
+   writer.writeTextLine("<DIV CLASS=\"header\">");
+
+   writer.writeTextLine("<DIV CLASS=\"subTitle\">");
+   writer.writeText(moduleName);
+   writer.writeText("'");
+   writer.writeTextLine("</DIV>");
+
+   writer.writeText("<H2 title=\"");
+   writer.writeText(*info->title);
+   writer.writeText("\" class=\"title\">");
+   writer.writeText(*info->title);
+   writer.writeTextLine("</H2>");
+
+   writer.writeTextLine("</DIV>");
+
+   writer.writeTextLine("<DIV CLASS=\"contentContainer\">");
+
+   writer.writeTextLine("<DIV CLASS=\"description\">");
+   writer.writeTextLine("<BR>");
+   writer.writeTextLine("<HR>");
+   //const char* descr = nullptr;
+   writer.writeTextLine("<PRE STYLE=\"padding-top: 15px;\">");
+   writeSymbolName(writer, info);
+   writer.writeTextLine("</PRE>");
+   writer.writeTextLine("<BR>");
+   writer.writeTextLine("</DIV>");
+}
+
+void writeParent(TextFileWriter& writer, StringList::Iterator& it, ApiClassInfo* info)
+{
+   writer.writeTextLine("<UL CLASS=\"inheritance\">");
+   writer.writeTextLine("<LI>");
+
+   if (!it.eof()) {
+      writeType(writer, (*it), true);
+      writer.writeTextLine("</LI>");
+
+      it++;
+      writer.writeTextLine("<LI>");
+      writeParent(writer, it, info);
+   }
+   else {
+      writer.writeText(*info->fullName);
+   }
+
+   writer.writeTextLine("</LI>");
+
+   writer.writeTextLine("</UL>");
+}
+
+void writeParents(TextFileWriter& writer, ApiClassInfo* info, ustr_t moduleName)
+{
+   auto it = info->parents.start();
+   writeParent(writer, it, info);
+}
+
+void writeClassMethodsHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== METHOD SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Method Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Method</TH>");
+   writer.writeTextLine("</TR>");
+}
+
+void writePropertyHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== PROPERTY SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Property Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Property</TH>");
+   writer.writeTextLine("</TR>");
+}
+
+void writeFieldHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== FIELD SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Field Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Field</TH>");
+   writer.writeTextLine("</TR>");
+}
+
+void writeConstructorHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== CONSTRUCTOR SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Constructor / Static Method Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Constructor / Static Method</TH>");
+   writer.writeTextLine("</TR>");
+}
+
+void writeStaticPropertyHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== STATIC PROPERTY SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Static Property Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Static Property</TH>");
+   writer.writeTextLine("</TR>");
+}
+
+void writeExtensionsHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== EXTENSION SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Extension Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Extension Method</TH>");
+   writer.writeTextLine("</TR>");
+}
+
+void writeSymbolHeader(TextFileWriter& writer)
+{
+   writer.writeTextLine("<DIV CLASS=\"contentContainer\">");
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Symbol Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Name</TH>");
+   writer.writeTextLine("</TR>");
+
+}
+
+void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
+{
+   writer.writeTextLine("<TD CLASS=\"colFirst\">");
+   writer.writeTextLine("<CODE>");
+   if (info->prefix.length() != 0) {
+      writer.writeText("<i>");
+      writer.writeText(*info->prefix);
+      writer.writeText("</i>");
+      writer.writeText("&nbsp;");
+   }
+   if (info->outputType.length() != 0) {
+      writeType(writer, *info->outputType);
+   }
+
+   writer.writeTextLine("</CODE></TD>");
+}
+
+void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
+{
+   writer.writeTextLine("<TD CLASS=\"colLast\">");
+   writer.writeText("<CODE>");
+
+   if (info->special)
+      writer.writeText("<i>");
+   
+   writer.writeText(*info->name);
+
+   if (info->special)
+      writer.writeText("</i>");
+
+   if (info->property && info->params.count() == 0) {
+      
+   }
+   else {
+      writer.writeText("(");
+
+      bool first = true;
+      auto it = info->params.start();
+      auto name_it = info->paramNames.start();
+      while (!it.eof()) {
+         if (!first) {
+            writer.writeText(", ");
+         }
+         else first = false;
+
+         writeType(writer, *it);
+         if (!name_it.eof()) {
+            writer.writeText(" ");
+            writer.writeText(*name_it);
+            ++name_it;
+         }
+
+         ++it;
+      }
+
+      writer.writeTextLine(")");
+   }
+
+   writer.writeTextLine("</CODE>");
+   if (info->shortDescr.length() > 0) {
+      writer.writeTextLine("<div class=\"block\">");
+      writer.writeText(*info->shortDescr);
+      writer.writeTextLine("</div>");
+   }
+   writer.writeTextLine("</TD>");
+}
+
+void writeFieldFirstColumn(TextFileWriter& writer, ApiFieldInfo* info)
+{
+   writer.writeTextLine("<TD CLASS=\"colFirst\">");
+   writer.writeTextLine("<CODE>");
+   if (info->prefix.length() != 0) {
+      writer.writeText("<i>");
+      writer.writeText(*info->prefix);
+      writer.writeText("</i>");
+      writer.writeText("&nbsp;");
+   }
+   if (info->type.length() != 0) {
+      writeType(writer, *info->type);
+   }
+
+   writer.writeTextLine("</CODE></TD>");
+}
+
+void writeFieldSecondColumn(TextFileWriter& writer, ApiFieldInfo* info)
+{
+   writer.writeTextLine("<TD CLASS=\"colLast\">");
+   writer.writeText("<CODE>");
+
+   if (info->special)
+      writer.writeText("<i>");
+
+   writer.writeText(*info->name);
+
+   if (info->special)
+      writer.writeText("</i>");
+
+   writer.writeTextLine("</CODE>");
+   if (info->shortDescr.length() > 0) {
+      writer.writeTextLine("<div class=\"block\">");
+      writer.writeText(*info->shortDescr);
+      writer.writeTextLine("</div>");
+   }
+   writer.writeTextLine("</TD>");
+}
+
+
+void writeSymbolFirstColumn(TextFileWriter& writer, ApiSymbolInfo* info)
+{
+   writer.writeTextLine("<TD CLASS=\"colFirst\">");
+   writer.writeTextLine("<CODE>");
+   if (info->prefix.length() != 0) {
+      writer.writeText("<i>");
+      writer.writeText(*info->prefix);
+      writer.writeText("</i>");
+      writer.writeText("&nbsp;");
+   }
+   if (info->type.length() != 0) {
+      writeType(writer, *info->type);
+   }
+
+   writer.writeTextLine("</CODE></TD>");
+}
+
+void writeSymbolSecondColumn(TextFileWriter& writer, ApiSymbolInfo* info)
+{
+   writer.writeTextLine("<TD CLASS=\"colLast\">");
+   writer.writeText("<CODE>");
+
+   writer.writeText(*info->name);
+
+   writer.writeTextLine("</CODE>");
+   if (info->shortDescr.length() > 0) {
+      writer.writeTextLine("<div class=\"block\">");
+      writer.writeText(*info->shortDescr);
+      writer.writeTextLine("</div>");
+   }
+   writer.writeTextLine("</TD>");
+}
+void writeConstructorFooter(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("</TABLE>");
+
+   writer.writeTextLine("</LI>");
+   writer.writeTextLine("</UL>");
+}
+
+void writeClassMethodsFooter(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("</TABLE>");
+
+   writer.writeTextLine("</LI>");
+   writer.writeTextLine("</UL>");
+}
+
+void writeSymbolFooter(TextFileWriter& writer)
+{
+   writer.writeTextLine("</TABLE>");
+
+   writer.writeTextLine("</LI>");
+   writer.writeTextLine("</UL>");
+
+   writer.writeTextLine("</DIV>");
+   writer.writeTextLine("<HR>");
+   writer.writeTextLine("</DIV>");
+}
+
+void writeClassBodyFooter(TextFileWriter& writer, ApiClassInfo* info, ustr_t moduleName)
+{
+   writer.writeTextLine("<HR>");
+
+   writer.writeTextLine("</DIV>");
 }
 
 void writeClassSummaryFooter(TextFileWriter& writer)
@@ -244,7 +876,6 @@ ApiModuleInfo* DocGenerator :: findModule(ApiModuleInfoList& modules, ustr_t ns)
    return nullptr;
 }
 
-
 ApiClassInfo* DocGenerator :: findClass(ApiModuleInfo* module, ustr_t fullName)
 {
    for (auto it = module->classes.start(); !it.eof(); ++it) {
@@ -255,27 +886,402 @@ ApiClassInfo* DocGenerator :: findClass(ApiModuleInfo* module, ustr_t fullName)
    return nullptr;
 }
 
+ApiSymbolInfo* DocGenerator :: findSymbol(ApiModuleInfo* module, ustr_t fullName)
+{
+   for (auto it = module->symbols.start(); !it.eof(); ++it) {
+      if ((*it)->fullName.compare(fullName)) {
+         return *it;
+      }
+   }
+   return nullptr;
+}
+
+bool DocGenerator :: loadClassInfo(ref_t reference, ClassInfo& info, bool headerOnly)
+{
+   if (!reference)
+      return false;
+
+   auto section = _module->mapSection(reference | mskMetaClassInfoRef, true);
+   if (!section) {
+      ustr_t refName = _module->resolveReference(reference);
+      if (isTemplateWeakReference(refName)) {
+         ref_t resolvedReference = _module->mapReference(refName + getlength(TEMPLATE_PREFIX_NS) - 1);
+
+         section = _module->mapSection(resolvedReference | mskMetaClassInfoRef, true);
+         if (!mskMetaClassInfoRef)
+            return false;
+      }
+      else return false;
+   }
+
+   MemoryReader vmtReader(section);
+   // read VMT info
+   info.load(&vmtReader, headerOnly);
+
+   return true;
+}
+
+bool DocGenerator :: loadSymbolInfo(ref_t reference, SymbolInfo& info)
+{
+   if (!reference)
+      return false;
+
+   auto section = _module->mapSection(reference | mskMetaSymbolInfoRef, true);
+   if (!section) {
+      return false;
+   }
+
+   MemoryReader vmtReader(section);
+   // read VMT info
+   info.load(&vmtReader);
+
+   return true;
+}
+
+void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
+{
+   if (!reference)
+      return;
+
+   // read VMT info
+   ClassInfo info;
+   if (loadClassInfo(reference, info, false)) {
+      loadParents(apiClassInfo, info.header.parentRef);
+   }
+
+   ustr_t name = _module->resolveReference(reference);
+   apiClassInfo->parents.add(name.clone());
+}
+
+void validateTemplateType(IdentifierString& type, bool templateBased, bool argMode)
+{
+   if (templateBased) {
+      if (isTemplateBased(*type)) {
+         if (isTemplateWeakReference(*type))
+            type.cut(0, 6);
+
+         parseTemplateName(type);
+      }
+      else if ((*type).findStr("$private'T") != NOTFOUND_POS) {
+         size_t index = (*type).findLast('\'');
+         type.cut(0, index + 1);
+      }
+   }
+   else if (isTemplateWeakReference(*type)) {
+      NamespaceString ns(*type);
+
+      parseTemplateType(type, ns.length(), argMode);
+   }
+}
+
+void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateBased, bool argMode)
+{
+   if (isTemplateWeakReference(line)) {
+      type.copy(line);
+   }
+   else if (line[0] == '\'') {
+      type.copy(rootNs);
+      type.append(line);
+   }
+   else type.copy(line);
+
+   validateTemplateType(type, templateBased, argMode);
+}
+
+void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateBased)
+{
+   bool skipOne = apiMethodInfo->extensionOne;
+
+   ustr_t name = *apiMethodInfo->name;
+   if (name.startsWith("static:")) {
+      apiMethodInfo->name.cut(0, 7);
+      name += 7;
+   }
+
+   size_t sign_index = name.find('<');
+   if (sign_index != NOTFOUND_POS) {
+      if (!apiMethodInfo->cast) {
+         IdentifierString param;
+         IdentifierString type;
+         for (size_t i = sign_index + 1; i < name.length(); i++) {
+            if (name[i] == ',' || name[i] == '>') {
+               if (skipOne) {
+                  skipOne = false;
+               }
+               else {
+                  loadType(type, *param, *_rootNs, templateBased, true);
+
+                  //if (info->withVargs && info->name[i] == '>') {
+                  //   type.append("[]");
+
+                  //   type.insert("params ", 0);
+                  //}
+
+                  apiMethodInfo->params.add((*type).clone());
+               }
+               param.clear();
+               type.clear();
+            }
+            else param.append(name[i]);
+         }
+      }
+
+      apiMethodInfo->name.truncate(sign_index);
+   }
+   else {
+      size_t arg_index = name.find('[');
+      if (arg_index != NOTFOUND_POS) {
+         String<char, 10> temp;
+         temp.copy(name + arg_index + 1, name.length() - arg_index - 2);
+         int argCount = temp.toUInt(10);
+         for (int i = 1; i < argCount; i++) {
+            IdentifierString argName("arg");
+            argName.appendInt(i);
+
+            apiMethodInfo->params.add((*argName).clone());
+         }
+
+         apiMethodInfo->name.truncate(arg_index);
+      }
+   }
+}
+
+void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, 
+   MemberType memberType, DescriptionMap* descriptions)
+{
+   auto apiMethodInfo = new ApiMethodInfo();
+   apiMethodInfo->extensionOne = memberType == MemberType::Extension;
+
+   bool functionMode = false;
+   if (ByteCodeUtil::resolveMessageName(apiMethodInfo->name, _module, message)) {
+      if (descriptions) {
+         ustr_t descr = descriptions->get(*apiMethodInfo->name);
+         if (descr)
+            apiMethodInfo->shortDescr.copy(descr);
+      }
+
+      if ((*apiMethodInfo->name).startsWith(DISPATCH_MESSAGE)) {
+         apiMethodInfo->special = true;
+         apiMethodInfo->name.copy("dispatch");
+      }
+      else if ((*apiMethodInfo->name).findStr(CONSTRUCTOR_MESSAGE) != NOTFOUND_POS) {
+         if (test(message, STATIC_MESSAGE))
+            apiMethodInfo->prefix.append("private ");
+
+         if ((*apiMethodInfo->name).startsWith("static:"))
+            apiMethodInfo->name.cut(0, 7);
+
+         if ((*apiMethodInfo->name).startsWith("function:"))
+            apiMethodInfo->name.cut(0, 9);
+
+         apiMethodInfo->name.cut(0, 1);
+         apiMethodInfo->special = true;
+
+         loadMethodName(apiMethodInfo, apiClassInfo->templateBased);
+         if (methodInfo.outputRef) {
+            ustr_t outputType = _module->resolveReference(methodInfo.outputRef);
+
+            loadType(apiMethodInfo->outputType, outputType, *_rootNs, apiClassInfo->templateBased, false);
+         }
+      }
+      else {
+         if ((*apiMethodInfo->name).startsWith("function:")) {
+            apiMethodInfo->name.cut(0, 9);
+            if (memberType != MemberType::Extension)
+               functionMode = true;
+         }
+         if ((*apiMethodInfo->name).startsWith("prop:")) {
+            apiMethodInfo->name.cut(0, 5);
+            apiMethodInfo->property = true;
+            if (getArgCount(message) > 1) {
+               apiMethodInfo->prefix.append("set ");
+            }
+            else apiMethodInfo->prefix.append("get ");
+         }
+         if ((*apiMethodInfo->name).startsWith("#cast")) {
+            apiMethodInfo->name.cut(0, 1);
+            apiMethodInfo->special = true;
+            apiMethodInfo->cast = true;
+         }
+
+         if (test(methodInfo.hints, (ref_t)MethodHint::Predefined))
+            apiMethodInfo->prefix.append("predefined ");
+
+         if (test(methodInfo.hints, (ref_t)MethodHint::Abstract))
+            apiMethodInfo->prefix.append("abstract ");
+
+         if (test(message, STATIC_MESSAGE))
+            apiMethodInfo->prefix.append("private ");
+
+
+         loadMethodName(apiMethodInfo, apiClassInfo->templateBased);
+         if (methodInfo.outputRef) {
+            ustr_t outputType = _module->resolveReference(methodInfo.outputRef);
+
+            loadType(apiMethodInfo->outputType, outputType, *_rootNs, apiClassInfo->templateBased, false);
+         }
+      }
+
+      if (!test(methodInfo.hints, (ref_t)MethodHint::Autogenerated)) {
+         if (memberType == MemberType::ClassClass) {
+            if (apiMethodInfo->property) {
+               apiClassInfo->staticProperties.add(apiMethodInfo);
+            }
+            else apiClassInfo->constructors.add(apiMethodInfo);
+         }
+         else if (memberType == MemberType::Extension) {
+            if (apiMethodInfo->property)
+               apiMethodInfo->prefix.append("property ");
+
+            apiClassInfo->extensions.add(apiMethodInfo);
+         }
+         else if (apiMethodInfo->property) {
+            apiClassInfo->properties.add(apiMethodInfo);
+         }
+         else apiClassInfo->methods.add(apiMethodInfo);
+      }
+      else freeobj(apiMethodInfo);
+   }
+}
+
+void DocGenerator :: loadConstructors(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions)
+{
+   ClassInfo info;
+   if (loadClassInfo(reference, info, false)) {
+      for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
+         auto methodInfo = *m_it;
+         if (!methodInfo.inherited) {
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::ClassClass, descriptions);
+         }
+      }
+   }
+}
+
+void DocGenerator :: loadExtensions(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions)
+{
+   ClassInfo info;
+   if (loadClassInfo(reference, info, false)) {
+      for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
+         auto methodInfo = *m_it;
+         if (!methodInfo.inherited) {
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Extension, descriptions);
+         }
+      }
+   }
+}
+
+void DocGenerator :: loadFields(ApiClassInfo* apiClassInfo, ClassInfo& info)
+{
+   for (auto it = info.fields.start(); !it.eof(); ++it) {
+      auto fieldInfo = new ApiFieldInfo();
+
+      fieldInfo->name.copy(it.key());
+
+      ref_t typeRef = (*it).typeInfo.typeRef;
+      if (typeRef) {
+         switch (typeRef) {
+            case V_INT32:
+               fieldInfo->type.copy("__int[4]");
+               break;
+            default:
+               if (!isPrimitiveRef(typeRef)) {
+                  ustr_t typeName = _module->resolveReference(typeRef);
+
+                  loadType(fieldInfo->type, typeName, *_rootNs, apiClassInfo->templateBased, false);
+               }
+               break;
+         }
+
+      }
+
+      apiClassInfo->fields.add(fieldInfo);
+   }
+}
+
+void DocGenerator :: loadClassMembers(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions)
+{
+   ClassInfo info;
+   if (loadClassInfo(reference, info, false)) {
+      loadParents(apiClassInfo, info.header.parentRef);
+
+      loadFields(apiClassInfo, info);
+
+      for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
+         auto methodInfo = *m_it;
+         if (!methodInfo.inherited) {
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Normal, descriptions);
+         }
+      }
+   }
+}
+
+bool DocGenerator :: isExtension(ref_t reference)
+{
+   ClassInfo info;
+   if (loadClassInfo(reference, info, true)) {
+      return test(info.header.flags, elExtension);
+   }
+   else return false;
+}
+
+ref_t DocGenerator :: findExtensionTarget(ref_t reference)
+{
+   ClassInfo info;
+   if (loadClassInfo(reference, info, false)) {
+      ref_t targetRef = info.attributes.get({ 0, ClassAttribute::ExtensionRef });
+
+      return targetRef;
+   }
+   else return 0;
+}
+
+void DocGenerator :: loadClassPrefixes(ApiClassInfo* apiClassInfo, ref_t reference)
+{
+   ClassInfo info;
+   if (loadClassInfo(reference, info, true)) {
+      if (test(info.header.flags, elAbstract)) {
+         apiClassInfo->prefix.insert("abstract ", 0);
+      }
+   }
+}
+
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 {
    auto referenceName = _module->resolveReference(reference);
    if (isWeakReference(referenceName)) {
-      NamespaceString prefix("public");
+      IdentifierString prefix("public ");
       if (referenceName.startsWith(INTERNAL_PREFIX)) {
          if (_publicOnly)
             return;
 
          referenceName += getlength(INTERNAL_PREFIX);
-         prefix.copy("intern");
+         prefix.copy("intern ");
       }
       else if (referenceName.startsWith(PRIVATE_PREFIX)) {
          if (_publicOnly)
             return;
 
          referenceName += getlength(PRIVATE_PREFIX);
-         prefix.copy("private");
+         prefix.copy("private ");
       }
       else if (referenceName.startsWith(TEMPLATE_PREFIX)) {
          return;
+      }
+
+      ref_t classClassRef = 0;
+      ref_t extensionRef = 0;
+      if (referenceName.endsWith(CLASSCLASS_POSTFIX)) {
+         classClassRef = reference;
+         IdentifierString name(referenceName);
+         name.truncate(name.length() - getlength(CLASSCLASS_POSTFIX));
+
+         reference = _module->mapReference(*name, true);
+         referenceName = _module->resolveReference(reference);
+      }
+      else if (isExtension(reference)) {
+         extensionRef = reference;
+         reference = findExtensionTarget(extensionRef);
+         referenceName = _module->resolveReference(reference);
       }
 
       NamespaceString ns(*_rootNs, referenceName);
@@ -292,17 +1298,102 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       }
 
       if (_module->mapSection(reference | mskVMTRef, true)) {
+         bool templateBased = false;
+         if (isTemplateBased(referenceName)) {
+            if (referenceName.findStr("$private@T1") != NOTFOUND_POS) {
+               templateBased = true;
+
+               parseTemplateName(properName);
+
+               fullName.copy(*_rootNs);
+               fullName.combine(*properName);
+            }
+            else return;
+
+            prefix.append("template ");
+         }
+         else prefix.append("class ");
+
          ApiClassInfo* info = findClass(moduleInfo, *fullName);
          if (!info) {
             info = new ApiClassInfo();
 
-            moduleInfo->classes.add(info);
-         }
+            info->fullName.copy(*fullName);
+            info->name.copy(*properName);
+            info->title.copy(*properName);
+            info->prefix.copy(*prefix);
 
-         info->fullName.copy(*fullName);
-         info->prefix.copy(*prefix);
+            loadClassPrefixes(info, reference);
+
+            moduleInfo->classes.add(info);
+
+            ustr_t descr = _classDescriptions.get(referenceName);
+            if (!descr.empty())
+               info->shortDescr.copy(descr);
+         }
+         if (templateBased)
+            info->templateBased = true;
+
+         if (classClassRef != 0) {
+            DescriptionMap descriptions(nullptr);
+            IdentifierString descrName("$");
+            descrName.append(referenceName);
+            descrName.replaceAll('\'', ' @', 0);
+            descrName.insert(DESCRIPTION_SECTION, 0);
+
+            loadDescriptions(_module->mapReference(*descrName), descriptions);
+
+            loadConstructors(info, classClassRef, &descriptions);
+         }
+         else if (extensionRef != 0) {
+            DescriptionMap descriptions(nullptr);
+            IdentifierString descrName("$");
+            descrName.append(_module->resolveReference(extensionRef));
+            descrName.replaceAll('\'', ' @', 0);
+            descrName.insert(DESCRIPTION_SECTION, 0);
+
+            loadDescriptions(_module->mapReference(*descrName), descriptions);
+
+            loadExtensions(info, extensionRef, &descriptions);
+         }
+         else {
+            DescriptionMap descriptions(nullptr);
+            IdentifierString descrName("$");
+            descrName.append(referenceName);
+            descrName.replaceAll('\'', ' @', 0);
+            descrName.insert(DESCRIPTION_SECTION, 0);
+
+            loadDescriptions(_module->mapReference(*descrName), descriptions);
+
+            loadClassMembers(info, reference, &descriptions);
+         }
       }
       else if (_module->mapSection(reference | mskSymbolRef, true)) {
+         SymbolInfo symbolInfo;
+         loadSymbolInfo(reference, symbolInfo);
+
+         ApiClassInfo* classInfo = findClass(moduleInfo, *fullName);
+         // HOTFIX : skip the class symbol
+         if (classInfo)
+            return;
+
+         ApiSymbolInfo* apiSymbolInfo = findSymbol(moduleInfo, *fullName);
+         if (!apiSymbolInfo) {
+            apiSymbolInfo = new ApiSymbolInfo();
+
+            apiSymbolInfo->fullName.copy(*fullName);
+            apiSymbolInfo->name.copy(*properName);
+            apiSymbolInfo->title.copy(*properName);
+            apiSymbolInfo->prefix.copy(*prefix);
+
+            moduleInfo->symbols.add(apiSymbolInfo);
+
+            if (symbolInfo.typeRef) {
+               ustr_t typeName = _module->resolveReference(symbolInfo.typeRef);
+
+               loadType(apiSymbolInfo->type, typeName, *_rootNs, false, false);
+            }
+         }
       }
    }
 }
@@ -321,9 +1412,109 @@ void DocGenerator :: loadNestedModules(ApiModuleInfoList& modules)
       });
 }
 
-void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t name)
+void DocGenerator :: generateMethodList(TextFileWriter& bodyWriter, ApiMethodInfoList& list)
 {
-   writeSummaryTable(summaryWriter, classInfo, name);
+   bool alt = true;
+   for (auto it = list.start(); !it.eof(); ++it) {
+      if (alt) {
+         bodyWriter.writeTextLine("<TR CLASS=\"altColor\">");
+      }
+      else {
+         bodyWriter.writeTextLine("<TR CLASS=\"rowColor\">");
+      }
+      alt = !alt;
+
+      writeFirstColumn(bodyWriter, *it);
+      writeSecondColumn(bodyWriter, *it);
+
+      bodyWriter.writeTextLine("</TR>");
+   }
+}
+
+void DocGenerator :: generateFieldList(TextFileWriter& bodyWriter, ApiFieldInfoList& list)
+{
+   bool alt = true;
+   for (auto it = list.start(); !it.eof(); ++it) {
+      if (alt) {
+         bodyWriter.writeTextLine("<TR CLASS=\"altColor\">");
+      }
+      else {
+         bodyWriter.writeTextLine("<TR CLASS=\"rowColor\">");
+      }
+      alt = !alt;
+
+      writeFieldFirstColumn(bodyWriter, *it);
+      writeFieldSecondColumn(bodyWriter, *it);
+
+      bodyWriter.writeTextLine("</TR>");
+   }
+}
+
+void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName)
+{
+   IdentifierString moduleName;
+   parseNs(moduleName, *_rootNs, *classInfo->fullName);
+
+   writeSummaryTable(summaryWriter, classInfo, bodyName);
+
+   writeClassBodyHeader(bodyWriter, classInfo, *moduleName);
+
+   if (classInfo->parents.count() > 0) {
+      writeParents(bodyWriter, classInfo, *_rootNs);
+   }
+
+   if (classInfo->fields.count() > 0) {
+      writeFieldHeader(bodyWriter, classInfo, *moduleName);
+      generateFieldList(bodyWriter, classInfo->fields);
+      writeConstructorFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   if (classInfo->constructors.count() > 0) {
+      writeConstructorHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->constructors);
+      writeConstructorFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   if (classInfo->staticProperties.count() > 0) {
+      writeStaticPropertyHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->staticProperties);
+      writeConstructorFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   if (classInfo->properties.count() > 0) {
+      writePropertyHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->properties);
+      writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   if (classInfo->methods.count() > 0) {
+      writeClassMethodsHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->methods);
+      writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   if (classInfo->extensions.count() > 0) {
+      writeExtensionsHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->extensions);
+      writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   writeClassBodyFooter(bodyWriter, classInfo, *moduleName);
+}
+
+void DocGenerator :: generateSymbolDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiSymbolInfo* symbolInfo, ustr_t bodyName)
+{
+   IdentifierString moduleName;
+   parseNs(moduleName, *_rootNs, *symbolInfo->fullName);
+
+   writeSummaryTable(summaryWriter, symbolInfo, bodyName);
+
+   writeSymbolBodyHeader(bodyWriter, symbolInfo, *moduleName);
+
+   writeSymbolHeader(bodyWriter);
+   writeSymbolFirstColumn(bodyWriter, symbolInfo);
+   writeSymbolSecondColumn(bodyWriter, symbolInfo);
+   writeSymbolFooter(bodyWriter);
 }
 
 void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
@@ -376,10 +1567,62 @@ void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
       writeClassSummaryFooter(summaryWriter);
    }
 
+   if (moduleInfo->symbols.count() > 0) {
+      // symbols
+      writeSymbolSummaryHeader(summaryWriter);
+
+      bool alt = true;
+      for (auto symbol_it = moduleInfo->symbols.start(); !symbol_it.eof(); ++symbol_it) {
+         ApiSymbolInfo* symbolInfo = *symbol_it;
+         if (alt) {
+            summaryWriter.writeTextLine("<TR CLASS=\"altColor\">");
+         }
+         else {
+            summaryWriter.writeTextLine("<TR CLASS=\"rowColor\">");
+         }
+         alt = !alt;
+
+         generateSymbolDoc(summaryWriter, bodyWriter, symbolInfo, *name);
+
+         summaryWriter.writeTextLine("</TR>");
+      }
+
+      writeClassSummaryFooter(summaryWriter);
+   }
+
    writeSummaryFooter(summaryWriter);
 
    writeFooter(summaryWriter, nullptr);
    writeFooter(bodyWriter, *summaryname);
+}
+
+void DocGenerator :: loadDescriptions(ref_t descrRef, DescriptionMap& map)
+{
+   auto section = _module->mapSection(descrRef | mskStringMapRef, true);
+   if (section != nullptr) {
+      IdentifierString key;
+      IdentifierString value;
+      MemoryReader reader(section);
+      while (!reader.eof()) {
+         reader.readString(key);
+         int type = reader.getDWord();
+
+         if (type == 2) {
+            reader.getDWord();
+
+            reader.readString(value);
+
+            map.add(*key, (*value).clone());
+         }
+      }
+   }
+}
+
+void DocGenerator :: loadDescriptions()
+{
+   ref_t descrRef = _module->mapReference(DESCRIPTION_SECTION, true);
+
+   loadDescriptions(descrRef, _classDescriptions);
 }
 
 bool DocGenerator :: load(path_t path)
@@ -410,6 +1653,8 @@ bool DocGenerator :: loadByName(ustr_t name)
 
 void DocGenerator :: generate()
 {
+   loadDescriptions();
+
    ApiModuleInfoList modules(nullptr);
    loadNestedModules(modules);
 

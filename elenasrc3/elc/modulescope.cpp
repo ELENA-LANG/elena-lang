@@ -528,6 +528,9 @@ void ModuleScope :: newNamespace(ustr_t ns)
    virtualRef.append(NAMESPACE_REF);
 
    module->mapReference(*virtualRef, false);
+   if (debugModule)
+      // HOTFIX : save the namespace in the debug module as well
+      debugModule->mapReference(*virtualRef, false);
 
    if (!ns.empty())
       saveListMember(NAMESPACES_SECTION, ns);

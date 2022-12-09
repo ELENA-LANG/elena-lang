@@ -8,6 +8,8 @@
 #include "wintabbar.h"
 #include "wincanvas.h"
 
+#include <tchar.h>
+
 using namespace elena_lang;
 
 // --- CustomTabBar ---
@@ -123,6 +125,9 @@ MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, 
 void MultiTabControl :: show()
 {
    ControlBase::show();
+   if (_child)
+      _child->show();
+
    refresh();
 }
 
@@ -301,5 +306,8 @@ void TabBar :: refresh()
 
       current++;
    }
+
+   if (_current)
+      _current->refresh();
 }
 

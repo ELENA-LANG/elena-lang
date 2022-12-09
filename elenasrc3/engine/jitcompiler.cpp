@@ -24,7 +24,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -46,19 +46,19 @@ CodeGenerator _codeGenerators[256] =
    loadMOp, loadNOp, loadFrameDispOp, loadFrameDispOp, loadNOp, loadNOp, loadFrameIndexOp, loadNop,
 
    loadNOp, compileClose, loadIndexOp, loadIndexOp, loadNOp, loadNOp, loadNOp, loadNOp,
-   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadFrameDispOp, loadFrameDispOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadFieldIndexOp, loadFieldIndexOp, loadNop,
+   loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadFieldIndexOp, loadFieldIndexOp, loadStackIndexOp,
    loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadROp, loadNop, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
+   loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
    loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
-   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop, loadNop, loadNop,
+   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, compileHookDPR, loadNewOp,
    loadDPNOp, loadNop, loadONOp, loadONOp, loadVMTROp, loadMROp, loadRROp, loadRROp,
@@ -89,7 +89,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 85;
+constexpr size_t bcCommandNumber = 105;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -108,7 +108,11 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::XSwapSI, ByteCode::JumpVI, ByteCode::TstN, ByteCode::LoadV, ByteCode::XCmp,
    ByteCode::SwapSI, ByteCode::TstM, ByteCode::XCopyON, ByteCode::XWriteON, ByteCode::LoadDP,
    ByteCode::XCmpDP, ByteCode::NAddDPN, ByteCode::AddN, ByteCode::SubN, ByteCode::SetFP,
-   ByteCode::AssignI, ByteCode::BLoad, ByteCode::WLoad, ByteCode::Include, ByteCode::Exclude
+   ByteCode::AssignI, ByteCode::BLoad, ByteCode::WLoad, ByteCode::Include, ByteCode::Exclude,
+   ByteCode::XRefreshSI, ByteCode::IAndDPN, ByteCode::IOrDPN, ByteCode::IXorDPN, ByteCode::Coalesce,
+   ByteCode::Not, ByteCode::Neg, ByteCode::INotDPN, ByteCode::IShlDPN, ByteCode::IShrDPN,
+   ByteCode::FAddDPN, ByteCode::FSubDPN, ByteCode::FMulDPN, ByteCode::FDivDPN, ByteCode::FCmpN,
+   ByteCode::BRead, ByteCode::LSave, ByteCode::FSave, ByteCode::FTruncDP, ByteCode::NConvFDP,
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -1363,6 +1367,12 @@ void elena_lang::loadStackIndexFrameIndexOp(JITCompilerScope* scope)
          case ARG32_2:
             writer->writeDWord(arg2);
             break;
+         case ARG16_2:
+            scope->compiler->writeImm16(writer, arg2, 0);
+            break;
+         case ARG12_2:
+            scope->compiler->writeImm12(writer, arg2, 0);
+            break;
          default:
             writeCoreReference(scope, entries->reference, entries->offset, code);
             break;
@@ -1458,10 +1468,10 @@ void elena_lang :: loadNewOp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            writer->writeDWord(scope->compiler->calcTotalSize(n));
+            writer->writeDWord(scope->compiler->calcTotalSize(scope->command.arg1));
             break;
          case ARG16_1:
-            scope->compiler->writeImm16(writer, (short)scope->compiler->calcTotalSize(n), 0);
+            scope->compiler->writeImm16(writer, (short)scope->compiler->calcTotalSize(scope->command.arg1), 0);
             break;
          case NARG_1:
             writer->writeDWord(n);
@@ -2083,6 +2093,8 @@ void elena_lang::compileClose(JITCompilerScope* scope)
    if (scope->command.arg1 > 0)
       scope->command.arg1 += scope->constants->dataHeader;
 
+   scope->stackOffset = scope->constants->unframedOffset;
+
    loadNOp(scope);
 }
 
@@ -2545,7 +2557,7 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
    for (auto it = staticValues.start(); !it.eof(); ++it) {
       vmtWriter.seek(position - sizeof(VMTHeader32) + it.key() * 4);
       if (virtualMode) {
-         vmtWriter.writeDReference(*it | mskRef32, 0);
+         vmtWriter.writeDReference((ref_t)*it | mskRef32, 0);
       }
       else vmtWriter.writeDWord((pos_t)*it);
    }
@@ -2633,6 +2645,16 @@ void JITCompiler32 :: writeInt32(MemoryWriter& writer, unsigned value)
    writer.writeDWord(value);
 }
 
+void JITCompiler32 :: writeInt64(MemoryWriter& writer, unsigned long long value)
+{
+   writer.writeQWord(value);
+}
+
+void JITCompiler32 :: writeFloat64(MemoryWriter& writer, double number)
+{
+   writer.write(&number, 8);
+}
+
 void JITCompiler32 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
    writer.writeString(value, value.length_pos() + 1);
@@ -2647,9 +2669,13 @@ void JITCompiler32 :: writeWideLiteral(MemoryWriter& writer, wstr_t value)
 
 void JITCompiler32 :: writeChar32(MemoryWriter& writer, ustr_t value)
 {
-   size_t len = 1;
    unic_c ch = 0;
-   StrConvertor::copy(&ch, value, getlength(value), len);
+
+   QuoteString quote(value, value.length_pos());
+   if (quote.length() != 0) {
+      size_t len = 1;
+      StrConvertor::copy(&ch, quote.str(), quote.length(), len);
+   }
 
    writer.writeDWord(ch);
    writer.align(4, 0);
@@ -2890,7 +2916,7 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
    for (auto it = staticValues.start(); !it.eof(); ++it) {
       vmtWriter.seek(position - sizeof(VMTHeader64) + it.key() * 8);
       if (virtualMode) {
-         vmtWriter.writeQReference(*it | mskRef64, 0);
+         vmtWriter.writeQReference((ref_t)*it | mskRef64, 0);
       }
       else vmtWriter.writeQWord(*it);
    }
@@ -2997,6 +3023,16 @@ void JITCompiler64 :: writeInt32(MemoryWriter& writer, unsigned value)
    writer.align(8, 0);
 }
 
+void JITCompiler64 :: writeInt64(MemoryWriter& writer, unsigned long long value)
+{
+   writer.writeQWord(value);
+}
+
+void JITCompiler64 :: writeFloat64(MemoryWriter& writer, double number)
+{
+   writer.write(&number, 8);
+}
+
 void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
    writer.writeString(value, value.length_pos() + 1);
@@ -3011,9 +3047,13 @@ void JITCompiler64 :: writeWideLiteral(MemoryWriter& writer, wstr_t value)
 
 void JITCompiler64 :: writeChar32(MemoryWriter& writer, ustr_t value)
 {
-   size_t len = 1;
    unic_c ch = 0;
-   StrConvertor::copy(&ch, value, getlength(value), len);
+
+   QuoteString quote(value, value.length_pos());
+   if (quote.length() != 0) {
+      size_t len = 1;
+      StrConvertor::copy(&ch, quote.str(), quote.length(), len);
+   }
 
    writer.writeDWord(ch);
    writer.align(8, 0);

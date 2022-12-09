@@ -216,8 +216,27 @@ namespace elena_lang
 
       bool startThread(DebugControllerBase* controller) override;
 
+      int getDataOffset() override;
+
       addr_t getBaseAddress() override;
       void* getState() override;
+
+      ref_t getClassFlags(addr_t vmtAddress) override;
+
+      addr_t getClassVMT(addr_t address) override;
+      addr_t getStackItem(int index, disp_t offset = 0) override;
+      addr_t getStackItemAddress(disp_t disp) override;
+
+      addr_t getField(addr_t address, int index) override;
+      addr_t getFieldAddress(addr_t address, disp_t disp) override;
+
+      addr_t getMemoryPtr(addr_t address) override;
+      char getBYTE(addr_t address) override;
+      unsigned getDWORD(addr_t address) override;
+      unsigned long long getQWORD(addr_t address) override;
+      double getFLOAT64(addr_t address) override;
+
+      size_t getArrayLength(addr_t address) override;
 
       void setBreakpoint(addr_t address, bool withStackLevelControl) override;
 

@@ -8,6 +8,8 @@
 #include "elena.h"
 //---------------------------------------------------------------------------
 #include "windows/win32debugprocess.h"
+
+#include "core.h"
 #include "windows/pehelper.h"
 
 using namespace elena_lang;
@@ -15,6 +17,10 @@ using namespace elena_lang;
 #ifdef _M_IX86
 
 typedef unsigned long SIZE_T;
+typedef VMTHeader32 VMTHeader;
+
+constexpr auto elVMTFlagOffset = elVMTFlagOffset32;
+constexpr auto elObjectOffset = elObjectOffset32;
 
 inline addr_t getIP(CONTEXT& context)
 {
@@ -34,6 +40,10 @@ inline void setIP(CONTEXT& context, addr_t address)
 #elif _M_X64
 
 typedef size_t SIZE_T;
+typedef VMTHeader64 VMTHeader;
+
+constexpr auto elVMTFlagOffset = elVMTFlagOffset64;
+constexpr auto elObjectOffset = elObjectOffset64;
 
 inline void setIP(CONTEXT& context, addr_t address)
 {
@@ -318,7 +328,7 @@ bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cm
    STARTUPINFO         si;
    PathString          currentPath;
 
-   currentPath.copySubPath(exePath);
+   currentPath.copySubPath(exePath, false);
 
    memset(&si, 0, sizeof(si));
 
@@ -616,7 +626,116 @@ void Win32DebugProcess :: addStep(addr_t address, void* state)
       maxAddress = address;
 }
 
+int Win32DebugProcess :: getDataOffset()
+{
+   return sizeof(addr_t);
+}
+
 void* Win32DebugProcess :: getState()
 {
    return _current ? _current->state : nullptr;
+}
+
+addr_t Win32DebugProcess :: getClassVMT(addr_t address)
+{
+   addr_t ptr = 0;
+
+   if (_current->readDump(address - elObjectOffset, (char*)&ptr, sizeof(addr_t))) {
+      return ptr;
+   }
+   else return 0;
+}
+
+addr_t Win32DebugProcess :: getStackItemAddress(disp_t disp)
+{
+   return getBP(_current->context) - disp;
+}
+
+addr_t Win32DebugProcess :: getStackItem(int index, disp_t offset)
+{
+   return getMemoryPtr(getStackItemAddress(index * sizeof(addr_t) + offset));
+}
+
+addr_t Win32DebugProcess :: getMemoryPtr(addr_t address)
+{
+   addr_t retPtr = 0;
+
+   if (_current->readDump(address, (char*)&retPtr, sizeof(addr_t))) {
+      return retPtr;
+   }
+   else return 0;
+
+}
+
+unsigned Win32DebugProcess :: getDWORD(addr_t address)
+{
+   unsigned int dword = 0;
+
+   if (_current->readDump(address, (char*)&dword, 4)) {
+      return dword;
+   }
+   else return 0;
+}
+
+char Win32DebugProcess::getBYTE(addr_t address)
+{
+   char b = 0;
+
+   if (_current->readDump(address, (char*)&b, 1)) {
+      return b;
+   }
+   else return 0;
+}
+
+unsigned long long Win32DebugProcess :: getQWORD(addr_t address)
+{
+   unsigned long long qword = 0;
+
+   if (_current->readDump(address, (char*)&qword, 8)) {
+      return qword;
+   }
+   else return 0;
+}
+
+double Win32DebugProcess :: getFLOAT64(addr_t address)
+{
+   double number = 0;
+
+   if (_current->readDump(address, (char*)&number, 8)) {
+      return number;
+   }
+   else return 0;
+
+}
+
+ref_t Win32DebugProcess :: getClassFlags(addr_t vmtAddress)
+{
+   ref_t flags = 0;
+   if (_current->readDump(vmtAddress - elVMTFlagOffset, (char*)&flags, sizeof(flags))) {
+      return flags;
+   }
+   else return 0;
+
+}
+
+addr_t Win32DebugProcess :: getField(addr_t address, int index)
+{
+   disp_t offset = index * sizeof(addr_t);
+
+   return getMemoryPtr(address + offset);
+}
+
+addr_t Win32DebugProcess :: getFieldAddress(addr_t address, disp_t disp)
+{
+   return address + disp;
+}
+
+size_t Win32DebugProcess :: getArrayLength(addr_t address)
+{
+   VMTHeader header;
+   if (readDump(address - sizeof(header), (char*)&header, sizeof(header))) {
+      return header.count;
+   }
+
+   return 0;
 }

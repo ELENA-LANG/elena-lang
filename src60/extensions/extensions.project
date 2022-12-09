@@ -25,6 +25,7 @@
   </project>
   <files>
      <module>
+        <include>convertors.l</include>
         <include>tests.l</include>
      </module>
   </files>

@@ -30,7 +30,6 @@ static LRESULT CALLBACK hookProcMouse(int nCode, WPARAM wParam, LPARAM lParam)
    return ::CallNextHookEx(hookMouse, nCode, wParam, lParam);
 }
 
-
 // --- Splitter ---
 
 Splitter :: Splitter(NotifierBase* notifier, int notifyCode, ControlBase* client, bool vertical)
@@ -45,6 +44,8 @@ Splitter :: Splitter(NotifierBase* notifier, int notifyCode, ControlBase* client
 {
    _minWidth = 4;
    _minHeight = 4;
+
+   _cursor = _vertical ? CURSOR_SIZEWE : CURSOR_SIZENS;
 }
 
 void Splitter :: registerSplitterWindow(HINSTANCE hInstance, wstr_t className, bool vertical)
@@ -59,7 +60,7 @@ HWND Splitter :: create(HINSTANCE instance, wstr_t className, ControlBase* owner
 {
    _handle = ::CreateWindowEx(
       0, className, _title,
-      WS_CHILD | WS_VISIBLE,
+      WS_CHILD,
       CW_USEDEFAULT, 0, 4, 4, owner->handle(), nullptr, instance, (LPVOID)this);
 
    _instance = instance;
@@ -88,6 +89,10 @@ bool Splitter :: visible()
 
 elena_lang::Rectangle Splitter :: getRectangle()
 {
+   if (!visible()) {
+      return {};
+   }
+
    auto rec = _client->getRectangle();
 
    if (!_vertical) {
@@ -98,6 +103,9 @@ elena_lang::Rectangle Splitter :: getRectangle()
 
 void Splitter :: setRectangle(elena_lang::Rectangle rec)
 {
+   if (!visible())
+      return;
+
    int width = rec.width();
    int height = rec.height();
 
@@ -146,6 +154,8 @@ void Splitter :: onButtonUp()
    }
    ::SetCapture(nullptr);
    _mouseCaptured = false;
+
+   refresh();
 }
 
 void Splitter :: onMove()
@@ -162,6 +172,13 @@ void Splitter :: onMove()
       }
       _srcPos = destPos;
    }
+}
+
+bool Splitter :: onSetCursor()
+{
+   setCursor(_cursor);
+
+   return true;
 }
 
 LRESULT Splitter :: proceed(UINT message, WPARAM wParam, LPARAM lParam)

@@ -338,7 +338,7 @@ void LayoutManager :: resizeTo(Rectangle area)
       _center->setRectangle({ x, y, totalWidth, totalHeight });
 
       _center->refresh();
-   }      
+   }
 }
 
 // --- SDIWindow ---
@@ -382,10 +382,23 @@ void SDIWindow :: onNotify(NMHDR* hdr)
    
 }
 
+void SDIWindow :: onResizing(RECT* rect)
+{
+   if (rect->right - rect->left < _minWidth) {
+      rect->right = rect->left + _minWidth;
+   }
+   if (rect->bottom - rect->top < _minHeight) {
+      rect->bottom = rect->top + _minHeight;
+   }
+}
+
 LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
    {
+      case WM_SIZING:
+         onResizing((RECT*)lParam);
+         return TRUE;
       case WM_SIZE:
          if (wParam != SIZE_MINIMIZED) {
             onResize();
@@ -419,8 +432,17 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
       case WM_NOTIFY:
          onNotify((NMHDR*)lParam);
          return 0;
-      default:
-         return DefWindowProc(_handle, message, wParam, lParam);
+      case WM_GETMINMAXINFO:
+      {
+         MINMAXINFO* minMax = (MINMAXINFO*)lParam;
+
+         minMax->ptMinTrackSize.y = 100;
+         minMax->ptMinTrackSize.x = 500;
+
+         return FALSE;
+      }
+   default:
+         return WindowBase::proceed(message, wParam, lParam);
    }
    return 0;
 
@@ -446,4 +468,11 @@ void SDIWindow :: close()
 //      (_controls[i])->draw(hdc);
 //   }
 //}
+
+bool SDIWindow :: onSetCursor()
+{
+   setCursor(CURSOR_ARROW);
+
+   return true;
+}
 

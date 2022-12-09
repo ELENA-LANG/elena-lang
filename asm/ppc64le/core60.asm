@@ -1,4 +1,3 @@
-
 // ; --- Predefined References  --
 define INVOKER              10001h
 define GC_ALLOC	            10002h
@@ -432,6 +431,54 @@ inline % 11h
 
 end
 
+// ; coalesce
+inline % 20h
+
+  cmpwi   r15,0
+  iseleq  r15, r3, r15
+
+end
+
+// ; not
+inline % 21h
+
+   nand    r14, r14, r14
+
+end
+
+// ; neg
+inline % 22h
+
+   neg    r14, r14
+
+end
+
+// ; bread
+inline %23h
+
+  add     r19, r3, r14
+  lbz     r17, 0(r19)
+  stb     r17, 0(r15)
+
+end
+
+// ; lsave
+inline %24h
+
+  std     r14, 0(r15)
+
+end
+
+// ; fsave
+inline %25h
+
+  std     r14, 0(r1) 
+  lfd     f17, 0(r1) 
+  fcfid   f17, f17
+  stfd    f17, 0(r15)
+
+end
+
 // ; setr
 inline %80h
 
@@ -835,6 +882,31 @@ inline %97h
 
 end
 
+// ; nconfdp
+inline %098h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r15)
+  friz    f17, f17
+  fctiw   f18, f17
+  stfd    f18, 0(r19) 
+
+// stfiwx
+
+end
+
+// ; ftruncdp
+inline %099h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  friz    f17, f17
+  stfd    f17, 0(r19)
+
+end
+
 // ; saveddisp
 inline %0A0h
 
@@ -939,6 +1011,25 @@ inline %0A6h
 
 end
 
+// ; xrefreshsi i
+inline %0A7h
+
+end 
+
+// ; xrefreshsi 0
+inline %1A7h
+
+  ld     r3, 0(r1)  
+
+end 
+
+// ; xrefreshsi 1
+inline %2A7h
+
+  ld     r4, 8(r1)
+
+end 
+
 // ; peekfi
 inline %0A8h
 
@@ -1015,6 +1106,16 @@ inline %1C0h
   cmp     r15, r16
 
 end 
+
+// ; fcmpn 8
+inline %0C1h
+
+  lfd      f17, 0(r3)
+  lfd      f18, 0(r15)
+
+  fcmpu    f17, f18
+
+end
 
 // ; icmpn 4
 inline %0C2h
@@ -1147,6 +1248,394 @@ inline %2C9h
   cmp     r15, r4
 
 end 
+
+// ; faddndp
+inline %0D0h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  lfd     f18, 0(r19)
+
+  fadd    f17, f17, f18  
+
+  stfd    f17, 0(r19)
+
+end
+
+// ; fsubndp
+inline %0D1h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  lfd     f18, 0(r19)
+
+  fsub    f17, f18, f17
+
+  stfd    f17, 0(r19)
+
+end
+
+// ; fmulndp
+inline %0D2h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  lfd     f18, 0(r19)
+
+  fmul    f17, f17, f18  
+
+  stfd    f17, 0(r19)
+
+end
+
+// ; fdivndp
+inline %0D3h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  lfd     f18, 0(r19)
+
+  fdiv    f18, f18, f17  
+
+  stfd    f18, 0(r19)
+
+end
+
+// ; ianddpn
+inline %0D8h
+
+  addi    r19, r31, __arg16_1
+
+  lwz      r17, 0(r3)
+  lwz      r18, 0(r19)
+
+  and     r17, r17, r18  
+
+  stw     r17, 0(r19)
+
+end
+
+// ; ianddpn
+inline %1D8h
+
+  addi    r19, r31, __arg16_1
+
+  lbz     r17, 0(r3)
+  lbz     r18, 0(r19)
+
+  and     r17, r17, r18  
+
+  stb     r17, 0(r19)
+
+end
+
+// ; ianddpn
+inline %2D8h
+
+  addi    r19, r31, __arg16_1
+
+  lhz     r17, 0(r3)
+  lhz     r18, 0(r19)
+
+  and     r17, r17, r18  
+
+  sth     r17, 0(r19)
+
+end
+
+// ; ianddpn
+inline %4D8h
+
+  addi    r19, r31, __arg16_1
+
+  ld      r17, 0(r3)
+  ld      r18, 0(r19)
+
+  and     r17, r17, r18  
+
+  std     r17, 0(r19)
+
+end
+
+// ; iordpn
+inline %0D9h
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  or      r17, r17, r18  
+
+  stw     r17, 0(r19)
+
+end
+
+// ; iordpn
+inline %1D9h
+
+  addi    r19, r31, __arg16_1
+
+  lbz     r17, 0(r3)
+  lbz     r18, 0(r19)
+
+  or      r17, r17, r18  
+
+  stb     r17, 0(r19)
+
+end
+
+// ; iordpn
+inline %2D9h
+
+  addi    r19, r31, __arg16_1
+
+  lhz     r17, 0(r3)
+  lhz     r18, 0(r19)
+
+  or      r17, r17, r18  
+
+  sth     r17, 0(r19)
+
+end
+
+// ; iordpn
+inline %4D9h
+
+  addi    r19, r31, __arg16_1
+
+  ld      r17, 0(r3)
+  ld      r18, 0(r19)
+
+  or      r17, r17, r18  
+
+  std     r17, 0(r19)
+
+end
+
+// ; ixordpn
+inline %0DAh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  xor     r17, r17, r18  
+
+  stw     r17, 0(r19)
+
+end
+
+// ; ixordpn
+inline %1DAh
+
+  addi    r19, r31, __arg16_1
+
+  lbz     r17, 0(r3)
+  lbz     r18, 0(r19)
+
+  xor     r17, r17, r18  
+
+  stb     r17, 0(r19)
+
+end
+
+// ; ixordpn
+inline %2DAh
+
+  addi    r19, r31, __arg16_1
+
+  lhz     r17, 0(r3)
+  lhz     r18, 0(r19)
+
+  xor     r17, r17, r18  
+
+  sth     r17, 0(r19)
+
+end
+
+// ; ixordpn
+inline %4DAh
+
+  addi    r19, r31, __arg16_1
+
+  ld      r17, 0(r3)
+  ld      r18, 0(r19)
+
+  xor     r17, r17, r18  
+
+  std     r17, 0(r19)
+
+end
+
+// ; inotdpn
+inline %0DBh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+
+  nand    r18, r17, r17
+
+  stw     r18, 0(r19)
+
+end
+
+// ; inotdpn
+inline %1DBh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r18, 0(r3)
+
+  nand    r17, r18, r18
+
+  stb     r17, 0(r19)
+
+end
+
+// ; inotdpn
+inline %2DBh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r18, 0(r3)
+
+  nand    r17, r18, r18
+
+  sth     r17, 0(r19)
+
+end
+
+// ; inotdpn
+inline %4DBh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r18, 0(r3)
+
+  nand    r17, r18, r18
+
+  std     r17, 0(r19)
+
+end
+
+// ; ishldpn
+inline %0DCh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  sld     r18, r18, r17
+
+  stw     r18, 0(r19)
+
+end
+
+// ; ishldpn 1
+inline %1DCh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  sld     r18, r18, r17
+
+  stb     r17, 0(r19)
+
+end
+
+// ; ishldpn
+inline %2DCh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  sld     r18, r18, r17
+
+  sth     r17, 0(r19)
+
+end
+
+// ; ishldpn
+inline %4DCh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  ld      r18, 0(r19)
+
+  sld     r18, r18, r17
+
+  std     r17, 0(r19)
+
+end
+
+// ; ishrdpn
+inline %0DDh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  srd     r18, r18, r17
+
+  stw     r18, 0(r19)
+
+end
+
+// ; ishrdpn 1
+inline %1DDh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  srd     r18, r18, r17
+
+  stb     r17, 0(r19)
+
+end
+
+// ; ishrdpn
+inline %2DDh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  srd     r18, r18, r17
+
+  sth     r17, 0(r19)
+
+end
+
+// ; ishrdpn
+inline %4DDh
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  ld      r18, 0(r19)
+
+  srd     r18, r18, r17
+
+  std     r17, 0(r19)
+
+end
 
 // ; copydpn
 inline %0E0h

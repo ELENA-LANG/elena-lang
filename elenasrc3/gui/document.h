@@ -261,6 +261,8 @@ namespace elena_lang
       void moveLeft(bool selecting);
       void moveUp(bool selecting);
       void moveDown(bool selecting);
+      void movePageUp(bool selecting);
+      void movePageDown(bool selecting);
 
       void moveRightToken(bool selecting, bool trimWhitespace = false);
       void moveLeftToken(bool selecting);
@@ -274,6 +276,7 @@ namespace elena_lang
       void moveToFrame(int column, int row, bool selecting);
 
       virtual void tabbing(text_c space, size_t count, bool indent);
+      virtual void blockInserting(text_t subs, size_t length);
 
       void insertNewLine();
       void insertChar(text_c ch)

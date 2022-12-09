@@ -235,7 +235,9 @@ namespace elena_lang
       void copyChildren(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyMethod(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyParent(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyClassMembers(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyTemplatePostfix(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
 
       void copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode rootNode, TemplateScope& scope);
 

@@ -123,9 +123,11 @@ namespace elena_lang
 
       void onResize() override;
       virtual void onActivate();
+      virtual void onResizing(RECT* rect);
       void onDrawItem(DRAWITEMSTRUCT* item) override;
       virtual bool onCommand(int command) { return false; }
       virtual void onNotify(NMHDR* hdr);
+      bool onSetCursor() override;
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 
@@ -144,6 +146,13 @@ namespace elena_lang
       void setLayout(int center, int top, int bottom, int right, int left);
 
       void close();
+
+      void refresh() override
+      {
+         WindowBase::refresh();
+
+         onResize();
+      }
 
       SDIWindow(wstr_t title)
          : WindowBase(title, 800, 600)

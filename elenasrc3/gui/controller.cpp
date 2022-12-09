@@ -35,6 +35,28 @@ bool TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, p
    return true;
 }
 
+void TextViewController :: selectNextDocument(TextViewModelBase* model)
+{
+   int currentIndex = model->getDocumentIndex(model->getDocumentName(-1));
+   if (currentIndex == model->getDocumentCount()) {
+      currentIndex = 1;
+   }
+   else currentIndex++;
+
+   model->selectDocumentViewByIndex(currentIndex);
+}
+
+void TextViewController :: selectPreviousDocument(TextViewModelBase* model)
+{
+   int currentIndex = model->getDocumentIndex(model->getDocumentName(-1));
+   if (currentIndex == 1) {
+      currentIndex = model->getDocumentCount();
+   }
+   else currentIndex--;
+
+   model->selectDocumentViewByIndex(currentIndex);
+}
+
 void TextViewController :: selectDocument(TextViewModelBase* model, ustr_t name)
 {
    model->selectDocumentView(name);
@@ -117,7 +139,7 @@ bool TextViewController :: insertNewLine(TextViewModelBase* model)
    return false;
 }
 
-bool TextViewController :: insertChar(TextViewModelBase* model, char ch)
+bool TextViewController :: insertChar(TextViewModelBase* model, text_c ch)
 {
    auto docView = model->DocView();
    if (!docView->status.readOnly && ch >= 0x20) {
@@ -154,6 +176,16 @@ void TextViewController :: deleteText(TextViewModelBase* model)
    auto docView = model->DocView();
    if (!docView->status.readOnly) {
       docView->eraseSelection();
+
+      onTextChanged(model, docView);
+   }
+}
+
+void TextViewController :: insertBlockText(TextViewModelBase* model, const text_t s, size_t length)
+{
+   auto docView = model->DocView();
+   if (!docView->status.readOnly) {
+      docView->blockInserting(s, length);
 
       onTextChanged(model, docView);
    }
@@ -227,6 +259,29 @@ void TextViewController :: moveCaretEnd(TextViewModelBase* model, bool kbShift, 
       docView->moveEnd(kbShift);
    }
    else docView->moveLast(kbShift);
+
+   model->onModelChanged();
+}
+
+void TextViewController :: movePageDown(TextViewModelBase* model, bool kbShift)
+{
+   auto docView = model->DocView();
+   docView->movePageDown(kbShift);
+
+   model->onModelChanged();
+}
+
+void TextViewController :: movePageUp(TextViewModelBase* model, bool kbShift)
+{
+   auto docView = model->DocView();
+   docView->movePageUp(kbShift);
+
+   model->onModelChanged();
+}
+
+void TextViewController :: moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift)
+{
+   model->DocView()->moveToFrame(col, row, kbShift);
 
    model->onModelChanged();
 }

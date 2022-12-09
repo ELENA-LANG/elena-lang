@@ -16,6 +16,12 @@ SourceViewModel :: SourceViewModel()
    traceRow = errorRow = -1;
 }
 
+void SourceViewModel :: beforeDocumentSelect(int index)
+{
+   if (errorRow != -1)
+      clearErrorLine();
+}
+
 void SourceViewModel :: setTraceLine(int row, bool withCursor)
 {
    if (traceRow != -1) {

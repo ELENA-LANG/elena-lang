@@ -391,6 +391,53 @@ inline % 11h
 
 end
 
+// ; coalesce
+inline % 20h
+
+  cmp     x10, #0
+  csel   x10, x0, x10, eq
+
+end
+
+// ; not
+inline % 21h
+
+   mvn    x9, x9
+
+end
+
+// ; neg
+inline % 22h
+
+   mov    x17, 0
+   sub    x9, x17, x9
+
+end
+
+// ; bread
+inline %23h
+
+  add     x18, x0, x9
+  ldrsb   x17, [x18]
+  str     x17, [x10]
+
+end
+
+// ; lsave
+inline %24h
+
+  str    x9, [x10]
+
+end
+
+// ; fsave
+inline %25h
+
+  scvtf   d17, x9
+  str     d17, [x10]
+
+end
+
 // ; setr
 inline %80h
 
@@ -765,6 +812,27 @@ inline %97h
 
 end
 
+// ; nconfdp
+inline %098h
+
+  add      x19, x29, __arg12_1
+  ldr      d0, [x10]
+  frintx   d0, d0
+  fcvtzs   x18, d0
+  str      x18, [x19]
+
+end
+
+// ; ftruncdp
+inline %099h
+
+  add     x19, x29, __arg12_1
+  ldr     d18, [x0]
+  frintz  d18, d18
+  str     d18, [x19]
+
+end
+
 // ; saveddisp
 inline %0A0h
 
@@ -896,6 +964,26 @@ inline %0A6h
 
 end
 
+// ; xrefreshsi i
+inline %0A7h
+
+end 
+
+// ; xrefreshsi 0
+inline %1A7h
+
+  ldr     x0, [sp]
+
+end 
+
+// ; xrefreshsi 1
+inline %2A7h
+
+  add     x11, sp, 8
+  ldr     x1, [x11]
+
+end 
+
 // ; peekfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0A8h
@@ -983,6 +1071,16 @@ inline %1C0h
   cmp     x10, x11
 
 end 
+
+// ; fcmpn 8
+inline %0C1h
+
+  ldr     d17, [x0]
+  ldr     d18, [x10]
+
+  fcmp    d17, d18
+
+end
 
 // ; icmpn 4
 inline %0C2h
@@ -1134,6 +1232,394 @@ inline %2C9h
   cmp     x10, x11
 
 end 
+
+// ; faddndp
+inline %0D0h
+
+  add     x19, x29, __arg12_1
+
+  ldr     d17, [x0]
+  ldr     d18, [x19]
+
+  fadd    d17, d17, d18  
+
+  str     d17, [x19]
+
+end
+
+// ; fsubndp
+inline %0D1h
+
+  add     x19, x29, __arg12_1
+
+  ldr     d17, [x0]
+  ldr     d18, [x19]
+
+  fsub    d17, d18, d17  
+
+  str     d17, [x19]
+
+end
+
+// ; fmulndp
+inline %0D2h
+
+  add     x19, x29, __arg12_1
+
+  ldr     d17, [x0]
+  ldr     d18, [x19]
+
+  fmul    d17, d17, d18  
+
+  str     d17, [x19]
+
+end
+
+// ; fdivndp
+inline %0D3h
+
+  add     x19, x29, __arg12_1
+
+  ldr     d17, [x0]
+  ldr     d18, [x19]
+
+  fdiv    d18, d18, d17    // ; sp[0] / temp
+
+  str     d18, [x19]
+
+end
+
+// ; ianddpn
+inline %0D8h
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  and     x17, x17, x18  
+
+  str     w17, [x19]
+
+end
+
+// ; ianddpn
+inline %1D8h
+
+  add     x19, x29, __arg12_1
+
+  ldrsb   x17, [x0]
+  ldrsb   x18, [x19]
+
+  and     x17, x17, x18  
+
+  strb    w17, [x19]
+
+end
+
+// ; ianddpn
+inline %2D8h
+
+  add     x19, x29, __arg12_1
+
+  ldrsh   x17, [x0]
+  ldrsh   x18, [x19]
+
+  and     x17, x17, x18  
+
+  strh    w17, [x19]
+
+end
+
+// ; ianddpn
+inline %4D8h
+
+  add     x19, x29, __arg12_1
+
+  ldr     x17, [x0]
+  ldr     x18, [x19]
+
+  and     x17, x17, x18  
+
+  str     x17, [x19]
+
+end
+
+// ; iordpn
+inline %0D9h
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  orr     x17, x17, x18  
+
+  str     w17, [x19]
+
+end
+
+// ; iordpn
+inline %1D9h
+
+  add     x19, x29, __arg12_1
+
+  ldrsb   x17, [x0]
+  ldrsb   x18, [x19]
+
+  orr     x17, x17, x18  
+
+  strb    w17, [x19]
+
+end
+
+// ; iordpn
+inline %2D9h
+
+  add     x19, x29, __arg12_1
+
+  ldrsh   x17, [x0]
+  ldrsh   x18, [x19]
+
+  orr     x17, x17, x18  
+
+  strh    w17, [x19]
+
+end
+
+// ; iordpn
+inline %4D9h
+
+  add     x19, x29, __arg12_1
+
+  ldr     x17, [x0]
+  ldr     x18, [x19]
+
+  orr     x17, x17, x18  
+
+  str     x17, [x19]
+
+end
+
+// ; ixordpn
+inline %0DAh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  eor     x17, x17, x18  
+
+  str     w17, [x19]
+
+end
+
+// ; ixordpn
+inline %1DAh
+
+  add     x19, x29, __arg12_1
+
+  ldrsb   x17, [x0]
+  ldrsb   x18, [x19]
+
+  eor     x17, x17, x18  
+
+  strb    w17, [x19]
+
+end
+
+// ; ixordpn
+inline %2DAh
+
+  add     x19, x29, __arg12_1
+
+  ldrsh   x17, [x0]
+  ldrsh   x18, [x19]
+
+  eor     x17, x17, x18  
+
+  strh    w17, [x19]
+
+end
+
+// ; ixordpn
+inline %4DAh
+
+  add     x19, x29, __arg12_1
+
+  ldr     x17, [x0]
+  ldr     x18, [x19]
+
+  eor     x17, x17, x18  
+
+  str     x17, [x19]
+
+end
+
+// ; inotdpn
+inline %0DBh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x18, [x0]
+
+  mvn     x17, x18  
+
+  str     w17, [x19]
+
+end
+
+// ; inotdpn
+inline %1DBh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x18, [x0]
+
+  mvn     x17, x18  
+
+  strb    w17, [x19]
+
+end
+
+// ; inotdpn
+inline %2DBh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x18, [x0]
+
+  mvn     x17, x18  
+
+  strh    w17, [x19]
+
+end
+
+// ; inotdpn
+inline %4DBh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x18, [x0]
+
+  mvn     x17, x18  
+
+  str     x17, [x19]
+
+end
+
+// ; ishldpn
+inline %0DCh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  lsl     x18, x18, x17
+
+  str     w18, [x19]
+
+end
+
+// ; ishldpn
+inline %1DCh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  lsl     x18, x18, x17
+
+  strb    w18, [x19]
+
+end
+
+// ; ishldpn
+inline %2DCh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  lsl     x18, x18, x17
+
+  strh    w18, [x19]
+
+end
+
+// ; ishldpn
+inline %4DCh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldr     x18, [x19]
+
+  lsl     x18, x18, x17
+
+  str     x18, [x19]
+
+end
+
+// ; ishrdpn
+inline %0DDh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  lsr     x18, x18, x17
+
+  str     w18, [x19]
+
+end
+
+// ; ishrdpn
+inline %1DDh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  lsr     x18, x18, x17
+
+  strb    w18, [x19]
+
+end
+
+// ; ishrdpn
+inline %2DDh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  lsr     x18, x18, x17
+
+  strh    w18, [x19]
+
+end
+
+// ; ishrdpn
+inline %4DDh
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldr     x18, [x19]
+
+  lsr     x18, x18, x17
+
+  str     x18, [x19]
+
+end
 
 // ; copydpn
 inline %0E0h
@@ -1821,7 +2307,7 @@ end
 // ; movsifi sp:0, fp:i2
 inline %1F3h
 
-  add     x12, x29, __arg12_1
+  add     x12, x29, __arg12_2
   ldr     x0, [x12]
 
 end
@@ -1829,7 +2315,7 @@ end
 // ; movsifi sp:1, fp:i2
 inline %2F3h
 
-  add     x12, x29, __arg12_1
+  add     x12, x29, __arg12_2
   ldr     x1, [x12]
 
 end

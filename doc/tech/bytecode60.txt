@@ -62,11 +62,19 @@ ELENA byte codes (or ecodes)
 
    loadv                    - index.action := [acc].action
 
+   lsave                    - long:[acc] := index
+
+   fsave                    - double:[acc] := index
+
    mov env                  - %SYSTEM_ENV => index 
 
    mov mssg:m               - index := m
 
    mov n:n                  - index := n
+
+   neg                      - index := -index; 
+
+   not                      - index := ~index; 
 
    peek r                   - acc <= [r] 
 
@@ -74,7 +82,7 @@ ELENA byte codes (or ecodes)
 
    seleq r1, r2             - acc <= COMP.EQ ? r1 : r2
 
-   sellt r1, r2             - acc <= COMP.EQ ? r1 : r2
+   sellt r1, r2             - acc <= COMP.LE ? r1 : r2
 
    set {prefix}:r           - r => acc
 
@@ -131,6 +139,8 @@ ELENA byte codes (or ecodes)
 
    mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
 
+   nconvf dp:disp           - double:acc >> int:dp[disp]
+
    nadd dp:disp, n          - [dp[disp]] += n;
  
    nsave dp:disp, i         - dp[disp] := i
@@ -149,6 +159,8 @@ ELENA byte codes (or ecodes)
 
    swap sp:i                - acc <=> sp[i]
 
+   xpeek sp:i               - cached_sp[i] := sp[i];
+
    xflush sp:i              - sp[i] := cached_sp[i];
 
    xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
@@ -162,9 +174,13 @@ ELENA byte codes (or ecodes)
 
  Object operations:
  ------------------
+   bread                    - byte:sp[0][index*n] >> int:acc, 
+
    bwrite n                 - sp[0][index] := byte:n
 
    class                    - acc := acc.class
+
+   coalesce                 - acc := acc ?? sp[0]   (if acc is nil, get sp[0])
 
    copy n                   - sp[0] >> acc, n bytes
 
@@ -198,6 +214,8 @@ ELENA byte codes (or ecodes)
    redirect                 - search acc::VMT for the message in index;
                               if found jumps to it; binary search is used ; index, acc presaved
 
+   wread                    - word:sp[0][index*n] >> int:acc, 
+
    write n                  - sp[0][index*n] << acc, n bytes
 
    xcopy disp, n            - sp[0] >> temp, n bytes;
@@ -229,8 +247,31 @@ ELENA byte codes (or ecodes)
  
    andn n                   - index := index & n
  
+   fadd dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] += temp;
+                              n = 8 
+ 
+   fdiv dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] /= temp;
+                              n = 8  
+
+   fmul dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] *= temp;
+                              n = 8  
+
+   fsub dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] -= temp;
+                              n = 8  
+
+   ftrunc dp:disp           - double:tmp << sp[0];
+                              double:dp[disp] := trunc(tmp)
+
    iadd dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] += temp;
+                              n = 1,2,4,8 
+ 
+   iand dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] & temp;
                               n = 1,2,4,8 
  
    idiv dp:disp, n          - temp : n << sp[0];
@@ -241,11 +282,28 @@ ELENA byte codes (or ecodes)
                               [dp[disp]] *= temp;
                               n = 1,2,4,8  
 
+   inot dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] ^ temp;
+                              n = 1,2,4,8 
+ 
+   ior dp:disp, n           - temp : n << sp[0];
+                              [dp[disp]] | temp;
+                              n = 1,2,4,8 
+ 
+   ishl dp:disp, n          - [dp[disp]] << index;
+                              n = 1,2,4,8  
+
+   ishr dp:disp, n          - [dp[disp]] >> index
+                              n = 1,2,4,8  
 
    isub dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] -= temp;
                               n = 1,2,4,8  
 
+   ixor dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] ^ temp;
+                              n = 1,2,4,8 
+ 
    subn n                   - index := index - n
 
 
@@ -268,6 +326,12 @@ ELENA byte codes (or ecodes)
                               COMP.LT := (index < n);
 
    cmpr r                   - COMP.EQ := (acc == r);
+
+   fcmp n                   - temp1 : n << acc;
+                              temp2 : n << sp[0];
+                              COMP.EQ := (temp2 == temp1);
+                              COMP.LT := (temp2 < temp1);
+                              n = 8 
 
    icmp n                   - temp1 : n << acc;
                               temp2 : n << sp[0];

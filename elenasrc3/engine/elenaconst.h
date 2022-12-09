@@ -73,10 +73,14 @@ namespace elena_lang
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 
    constexpr auto RETVAL_ARG              = "$retVal";
+   constexpr auto PARENT_VAR              = "$parent";
+   constexpr auto OWNER_VAR               = "$owner";
 
    constexpr auto SYSTEM_FORWARD          = "$system_entry";   // the system entry
    constexpr auto SUPER_FORWARD           = "$super";          // the common class predecessor
    constexpr auto INTLITERAL_FORWARD      = "$int";            // the int literal
+   constexpr auto LONGLITERAL_FORWARD     = "$long";           // the long literal
+   constexpr auto REALLITERAL_FORWARD     = "$real";           // the real literal
    constexpr auto INT8LITERAL_FORWARD     = "$byte";           // the int literal
    constexpr auto INT16LITERAL_FORWARD    = "$short";          // the int literal
    constexpr auto LITERAL_FORWARD         = "$string";         // the string literal
@@ -112,6 +116,7 @@ namespace elena_lang
    // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";
    constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
+   constexpr auto CONSTRUCTOR_MESSAGE2    = "#constructor2";   // protected constructor
    constexpr auto CAST_MESSAGE            = "#cast";
    constexpr auto INVOKE_MESSAGE          = "#invoke";
    constexpr auto TRY_INVOKE_MESSAGE      = "#try_invoke";
@@ -121,12 +126,20 @@ namespace elena_lang
    constexpr auto SUB_MESSAGE             = "subtract";
    constexpr auto MUL_MESSAGE             = "multiply";
    constexpr auto DIV_MESSAGE             = "divide";
+   constexpr auto BAND_MESSAGE            = "band";
+   constexpr auto BOR_MESSAGE             = "bor";
+   constexpr auto BXOR_MESSAGE            = "bxor";
+   constexpr auto REFER_MESSAGE           = "at";
    constexpr auto IF_MESSAGE              = "if";
    constexpr auto EQUAL_MESSAGE           = "equal";
    constexpr auto NOT_MESSAGE             = "Inverted";
+   constexpr auto NEGATE_MESSAGE          = "Negative";
+   constexpr auto VALUE_MESSAGE           = "Value";
    constexpr auto NOTEQUAL_MESSAGE        = "notequal";
    constexpr auto LESS_MESSAGE            = "less";
    constexpr auto NOTLESS_MESSAGE         = "notless";
+   constexpr auto GREATER_MESSAGE         = "greater";
+   constexpr auto NOTGREATER_MESSAGE      = "notgreater";
 
    // --- constant string lengths ---
    constexpr auto TEMPLATE_PREFIX_NS_LEN = 7;
@@ -151,6 +164,11 @@ namespace elena_lang
    constexpr ref_t elExtension            = 0x0000110C;
    constexpr ref_t elMessage              = 0x00200000;
    constexpr ref_t elWithVariadics        = 0x00400000;
+
+   constexpr ref_t elDebugMask            = 0x001F0000;
+   constexpr ref_t elDebugDWORD           = 0x00010000;
+   constexpr ref_t elDebugQWORD           = 0x00020000;
+   constexpr ref_t elDebugFLOAT64         = 0x00030000;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -201,14 +219,36 @@ namespace elena_lang
    // --- ELENA Debug symbol constants ---
    enum class DebugSymbol
    {
-      None           = 0x0000,
+      DebugMask            = 0xFFF0,    
+      None                 = 0x0000,
 
-      Symbol,
-      Class,
-      Procedure,
-      Statement,
-      Breakpoint,
-      End
+      Symbol               = 0x0011,
+      Class                = 0x0012,
+      Procedure            = 0x0013,
+      Statement            = 0x0014,
+      Breakpoint           = 0x0020,
+      VirtualBreakpoint    = 0x0021,
+      End                  = 0x0040,
+      EndOfStatement       = 0x0041,
+
+      Field                = 0x0050,
+      FieldAddress         = 0x0051,
+
+      Local                = 0x0100,
+      LocalAddress         = 0x0101,
+      IntLocalAddress      = 0x0102,
+      LongLocalAddress     = 0x0103,
+      RealLocalAddress     = 0x0104,
+      ByteArrayAddress     = 0x0105,
+            
+      Parameter            = 0x0200,
+      IntParameterAddress  = 0x0202,
+      LongParameterAddress = 0x0203,
+      RealParameterAddress = 0x0204,
+      ParameterAddress     = 0x0205,
+
+      FrameInfo            = 0x0301,
+      ClassInfo            = 0x0302,
    };
 
    // --- ClassAttribute ---
@@ -265,6 +305,8 @@ namespace elena_lang
    constexpr ref_t mskLabelRef            = 0x1D000000u;
    constexpr ref_t mskWideLiteralRef      = 0x1E000000u;   // reference to wide literal constant
    constexpr ref_t mskStringMapRef        = 0x1F000000u;
+   constexpr ref_t mskLongLiteralRef      = 0x20000000u;
+   constexpr ref_t mskRealLiteralRef      = 0x21000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

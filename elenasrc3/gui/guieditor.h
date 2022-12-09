@@ -72,6 +72,7 @@ namespace elena_lang
          return _currentView;
       }
 
+      virtual void beforeDocumentSelect(int index) = 0;
       virtual void afterDocumentSelect(int index) = 0;
 
       virtual void onModelChanged() = 0;
@@ -136,7 +137,7 @@ namespace elena_lang
          int notifyMessage) = 0;
 
       virtual bool insertNewLine(TextViewModelBase* model) = 0;
-      virtual bool insertChar(TextViewModelBase* model, char ch) = 0;
+      virtual bool insertChar(TextViewModelBase* model, text_c ch) = 0;
       virtual bool eraseChar(TextViewModelBase* model, bool moveback) = 0;
 
       virtual void undo(TextViewModelBase* model) = 0;
@@ -144,6 +145,7 @@ namespace elena_lang
 
       virtual void indent(TextViewModelBase* model) = 0;
       virtual void deleteText(TextViewModelBase* model) = 0;
+      virtual void insertBlockText(TextViewModelBase* model, const text_t s, size_t length) = 0;
 
       virtual bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) = 0;
       virtual void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) = 0;
@@ -154,6 +156,10 @@ namespace elena_lang
       virtual void moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretHome(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretEnd(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
+      virtual void movePageUp(TextViewModelBase* model, bool kbShift) = 0;
+      virtual void movePageDown(TextViewModelBase* model, bool kbShift) = 0;
+
+      virtual void moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift) = 0;
    };
 
 }

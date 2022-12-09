@@ -47,6 +47,8 @@ void ControlBase :: setRectangle(Rectangle rect)
    _rect = { x, y, width, height };
 
    int r = ::MoveWindow(_handle, x, y, width, height, TRUE);
+
+   refresh();
 }
 
 void ControlBase :: setFocus()
@@ -162,7 +164,9 @@ LRESULT WindowBase :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
                return TRUE;
          }
          break;
-      //case WM_CLOSE:
+      case WM_CLOSE:
+         onClose();
+         break;
       default:
          // to make compiler happy
          break;

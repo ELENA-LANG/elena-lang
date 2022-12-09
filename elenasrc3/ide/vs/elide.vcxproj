@@ -191,6 +191,7 @@
     <ClInclude Include="..\..\gui\windows\wincanvas.h" />
     <ClInclude Include="..\..\gui\windows\wincommon.h" />
     <ClInclude Include="..\..\gui\windows\winlistview.h" />
+    <ClInclude Include="..\..\gui\windows\winmenu.h" />
     <ClInclude Include="..\..\gui\windows\winsdi.h" />
     <ClInclude Include="..\..\gui\windows\winsplitter.h" />
     <ClInclude Include="..\..\gui\windows\winstatusbar.h" />
@@ -211,6 +212,7 @@
     <ClInclude Include="..\windows\factory.h" />
     <ClInclude Include="..\windows\Resource.h" />
     <ClInclude Include="..\windows\win32controller.h" />
+    <ClInclude Include="..\windows\wincontextbrowser.h" />
     <ClInclude Include="..\windows\windialogs.h" />
     <ClInclude Include="..\windows\winide.h" />
     <ClInclude Include="..\windows\win32debugprocess.h" />
@@ -235,6 +237,7 @@
     <ClCompile Include="..\..\gui\windows\wincanvas.cpp" />
     <ClCompile Include="..\..\gui\windows\wincommon.cpp" />
     <ClCompile Include="..\..\gui\windows\winlistview.cpp" />
+    <ClCompile Include="..\..\gui\windows\winmenu.cpp" />
     <ClCompile Include="..\..\gui\windows\winsdi.cpp" />
     <ClCompile Include="..\..\gui\windows\winsplitter.cpp" />
     <ClCompile Include="..\..\gui\windows\winstatusbar.cpp" />
@@ -254,6 +257,7 @@
     <ClCompile Include="..\windows\factory.cpp" />
     <ClCompile Include="..\windows\main.cpp" />
     <ClCompile Include="..\windows\win32controller.cpp" />
+    <ClCompile Include="..\windows\wincontextbrowser.cpp" />
     <ClCompile Include="..\windows\windialogs.cpp" />
     <ClCompile Include="..\windows\winide.cpp" />
     <ClCompile Include="..\windows\win32debugprocess.cpp" />

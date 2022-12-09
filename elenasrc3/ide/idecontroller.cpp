@@ -1,14 +1,35 @@
-//---------------------------------------------------------------------------
+﻿//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller implementation File
 //                                             (C)2005-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include <tchar.h>
+
 #include "idecontroller.h"
 #include "eng/messages.h"
-#include "config.h"
 
 using namespace elena_lang;
+
+inline ustr_t getPlatformName(PlatformType type)
+{
+   switch (type) {
+      case PlatformType::Win_x86:
+         return WIN_X86_KEY;
+      case PlatformType::Win_x86_64:
+         return WIN_X86_64_KEY;
+      case PlatformType::Linux_x86:
+         return LINUX_X86_KEY;
+      case PlatformType::Linux_x86_64:
+         return LINUX_X86_64_KEY;
+      case PlatformType::Linux_PPC64le:
+         return LINUX_PPC64le_KEY;
+      case PlatformType::Linux_ARM64:
+         return LINUX_ARM64_KEY;
+      default:
+         return nullptr;
+   }
+}
 
 // --- SourceViewController ---
 
@@ -95,15 +116,55 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
    }
 }
 
-void ProjectController :: defineSourceName(path_t path, IdentifierString& retVal)
+
+
+path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& name)
+{
+   size_t projectPathLen = model->projectPath.length();
+
+   PathString path;
+   path.copySubPath(sourcePath, true);
+
+   if (!model->projectPath.empty() && (*path).compareSub(*model->projectPath, 0, projectPathLen)) {
+      name.copy(model->getPackage());
+      if (path.length() > projectPathLen) {
+         name.pathToName(*path + projectPathLen);
+      }
+      return sourcePath + projectPathLen;
+   }
+   else {
+      path_t rootPath = *model->paths.librarySourceRoot;
+      size_t rootPathLen = rootPath.length();
+
+      if (!rootPath.empty() && PathUtil::compare(sourcePath, rootPath, rootPathLen)) {
+         name.pathToName(sourcePath + rootPathLen);
+
+         return sourcePath + rootPathLen;
+      }
+      else {
+         FileNameString fileName(sourcePath);
+         IdentifierString tmp(*fileName);
+
+         name.copy(*tmp);
+      }
+   }
+
+   return sourcePath;
+}
+
+void ProjectController :: defineSourceName(ProjectModel* model, path_t path, ReferenceName& retVal)
 {
    if (path.empty()) {
       retVal.copy("undefined");
    }
    else {
-      IdentifierString fileName(path + path.findLast(PATH_SEPARATOR) + 1);
+      //_ELENA_::ReferenceNs module;
+      retrieveSourceName(model, path, retVal);
+      retVal.append(':');
 
-      retVal.append(*fileName);
+      FileNameString fileName(path, true);
+      IdentifierString tmp(*fileName);
+      retVal.append(*tmp);
    }
 }
 
@@ -171,7 +232,7 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
    return true;
 }
 
-void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
+void ProjectController :: doDebugAction(ProjectModel& model, SourceViewModel& sourceModel , DebugAction action)
 {
    if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
       if (onDebugAction(model, action)) {
@@ -185,6 +246,9 @@ void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
             case DebugAction::StepOver:
                _debugController.stepOver();
                break;
+            case DebugAction::RunTo:
+               runToCursor(model, sourceModel);
+               break;
             default:
                break;
          }
@@ -192,11 +256,40 @@ void ProjectController :: doDebugAction(ProjectModel& model, DebugAction action)
    }
 }
 
-bool ProjectController :: compile()
+void ProjectController :: doDebugStop(ProjectModel& model)
 {
+   if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
+      _debugController.stop();
+   }
+}
+void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sourceModel)
+{
+   auto currentDoc = sourceModel.DocView();
+   if (currentDoc != nullptr) {
+      ustr_t currentSource = sourceModel.getDocumentName(-1);
+      path_t currentPath = sourceModel.getDocumentPath(currentSource);
 
+      ReferenceName ns;
+      currentPath = retrieveSourceName(&model, currentPath, ns);
 
-   return true;
+      IdentifierString pathStr(currentPath);
+      _debugController.runToCursor(*ns, *pathStr, currentDoc->getCaret().y);
+   }
+}
+
+bool ProjectController :: compileProject(ProjectModel& model)
+{
+   PathString appPath(model.paths.appPath);
+   appPath.combine(*model.paths.compilerPath);
+
+   PathString cmdLine(*model.paths.compilerPath);
+   cmdLine.append(" ");
+   cmdLine.append(*model.projectFile);
+
+   PathString curDir;
+   curDir.append(*model.projectPath);
+
+   return _outputProcess->start(*appPath, *cmdLine, *model.projectPath, true);
 }
 
 bool ProjectController :: compileSingleFile(ProjectModel& model)
@@ -218,10 +311,82 @@ bool ProjectController :: compileSingleFile(ProjectModel& model)
 
 bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction postponedAction)
 {
-   if (model.sources.count() > 0) {
+   if (model.singleSourceProject) {
       return compileSingleFile(model);
    }
+   else if (!model.name.empty()) {
+      return compileProject(model);
+   }
    else return false;   
+}
+
+void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node configRoot)
+{
+   // load source files
+   DynamicString<char> subNs;
+   DynamicString<char> path;
+
+   ConfigFile::Collection modules;
+   if (config.select(configRoot, MODULE_CATEGORY, modules)) {
+      for (auto m_it = modules.start(); !m_it.eof(); ++m_it) {
+         ConfigFile::Node moduleNode = *m_it;
+
+         if (!moduleNode.readAttribute("name", subNs)) {
+            subNs.clear();
+         }
+
+         ConfigFile::Collection files;
+         if (config.select(moduleNode, "*", files)) {
+            for (auto it = files.start(); !it.eof(); ++it) {
+               // add source file
+               ConfigFile::Node node = *it;
+               node.readContent(path);
+
+               PathString filePath(path.str());
+               model.sources.add((*filePath).clone());
+            }
+         }
+      }
+   }
+}
+
+void ProjectController :: openProject(ProjectModel& model, path_t projectFile)
+{
+   ustr_t key = getPlatformName(_platform);
+
+   FileNameString src(projectFile, true);
+   FileNameString name(projectFile);
+
+   model.sources.clear();
+
+   model.name.copy(*name);
+   model.projectFile.copy(*src);
+   model.projectPath.copySubPath(projectFile, true);
+
+   model.singleSourceProject = false;
+
+   ConfigFile projectConfig;
+   if (projectConfig.load(projectFile, FileEncoding::UTF8)) {
+      DynamicString<char> value;
+
+      ConfigFile::Node root = projectConfig.selectRootNode();
+
+      ConfigFile::Node nsNode = projectConfig.selectNode(NAMESPACE_CATEGORY);
+      nsNode.readContent(value);
+      model.package.copy(value.str());
+
+      // select platform configuration
+      ConfigFile::Node platformRoot = projectConfig.selectNode<ustr_t>(PLATFORM_CATEGORY, key, [](ustr_t key, ConfigFile::Node& node)
+         {
+            return node.compareAttribute("key", key);
+         });
+
+      loadConfig(model, projectConfig, root);
+      loadConfig(model, projectConfig, platformRoot);
+   }
+
+   if (_notifier)
+      _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
 }
 
 void ProjectController :: openSingleFileProject(ProjectModel& model, path_t singleProjectFile)
@@ -232,12 +397,35 @@ void ProjectController :: openSingleFileProject(ProjectModel& model, path_t sing
    model.sources.clear();
 
    model.name.copy(*name);
-   model.projectPath.copySubPath(singleProjectFile);
+   model.projectPath.copySubPath(singleProjectFile, true);
+   
+   model.outputPath.copySubPath(singleProjectFile, false);
+   model.singleSourceProject = true;
 
    model.sources.add((*src).clone());
 
+   IdentifierString tmp(*name);
+   model.package.copy(*tmp);
+
    if (_notifier)
       _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
+}
+
+path_t ProjectController :: getSourceByIndex(ProjectModel& model, int index)
+{
+   if (index < 0)
+      return nullptr;
+
+   return model.sources.get(index + 1);
+}
+
+void ProjectController :: refreshDebugContext(ContextBrowserBase* contextBrowser)
+{
+   WatchItems refreshedItems;
+
+   _debugController.readAutoContext(contextBrowser, 3, &refreshedItems);
+
+   contextBrowser->removeUnused(refreshedItems);
 }
 
 // --- IDEController ---
@@ -278,6 +466,7 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
    if (config.load(path, FileEncoding::UTF8)) {
       model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
       model->sourceViewModel.fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);
+      model->sourceViewModel.schemeIndex = loadSetting(config, SCHEME_SETTINGS, 1);
 
       loadRecentFiles(config, RECENTFILES_SETTINGS, model->projectModel.lastOpenFiles);
 
@@ -291,7 +480,14 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
 
 void IDEController :: init(IDEModel* model)
 {
+   if (model->projectModel.lastOpenFiles.count() > 0) {
+      path_t path = model->projectModel.lastOpenFiles.get(1);
+
+      openFile(model, path);
+   }
    model->changeStatus(IDEStatus::Ready);
+
+   onLayoutchange();
 }
 
 bool IDEController :: selectSource(ProjectModel* model, SourceViewModel* sourceModel,
@@ -300,30 +496,30 @@ bool IDEController :: selectSource(ProjectModel* model, SourceViewModel* sourceM
    PathString fullPath;
    projectController.defineFullPath(*model, ns, sourcePath, fullPath);
 
-   return openFile(sourceModel, *fullPath);
+   return openFile(sourceModel, model, *fullPath);
 }
 
 void IDEController :: doNewFile(IDEModel* model)
 {
-   IdentifierString sourceNameStr;
-   projectController.defineSourceName(nullptr, sourceNameStr);
+   ReferenceName sourceNameStr;
+   projectController.defineSourceName(&model->projectModel, nullptr, sourceNameStr);
 
    sourceController.newSource(&model->sourceViewModel, *sourceNameStr, true);
 }
 
 bool IDEController :: openFile(IDEModel* model, path_t sourceFile)
 {
-   if (openFile(&model->sourceViewModel, sourceFile)) {
-      if (model->projectModel.singleSourceProject) {
-         projectController.openSingleFileProject(model->projectModel, sourceFile);
-      }
+   if (model->projectModel.name.empty()) {
+      projectController.openSingleFileProject(model->projectModel, sourceFile);
+   }
 
+   if (openFile(&model->sourceViewModel, &model->projectModel, sourceFile)) {
       return true;
    }
    else return false;
 }
 
-bool IDEController :: openFile(SourceViewModel* model, path_t sourceFile)
+bool IDEController :: openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile)
 {
    ustr_t sourceName = model->getDocumentNameByPath(sourceFile);
    if (!sourceName.empty()) {
@@ -332,14 +528,32 @@ bool IDEController :: openFile(SourceViewModel* model, path_t sourceFile)
       return true;
    }
    else {
-      IdentifierString sourceNameStr;
-      projectController.defineSourceName(sourceFile, sourceNameStr);
+      ReferenceName sourceNameStr;
+      projectController.defineSourceName(projectModel, sourceFile, sourceNameStr);
 
       sourceName = *sourceNameStr;
    }
 
    return sourceController.openSource(model, sourceName, sourceFile, 
       defaultEncoding, true);
+}
+
+bool IDEController :: openProjectSourceByIndex(IDEModel* model, int index)
+{
+   path_t sourcePath = projectController.getSourceByIndex(model->projectModel, index);
+   if (!sourcePath.empty()) {
+      PathString fullPath(*model->projectModel.projectPath, sourcePath);
+
+      return openFile(model, *fullPath);
+   }
+   else return false;
+}
+
+bool IDEController :: openProject(IDEModel* model, path_t projectFile)
+{
+   projectController.openProject(model->projectModel, projectFile);
+
+   return false;
 }
 
 void IDEController :: doOpenFile(DialogBase& dialog, IDEModel* model)
@@ -365,8 +579,8 @@ bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveA
       if (!dialog.saveFile(_T("l"), path))
          return false;
 
-      IdentifierString sourceNameStr;
-      projectController.defineSourceName(*path, sourceNameStr);
+      ReferenceName sourceNameStr;
+      projectController.defineSourceName(&model->projectModel, *path, sourceNameStr);
 
       sourceController.renameSource(&model->sourceViewModel, nullptr, *sourceNameStr, *path);
 
@@ -379,6 +593,21 @@ bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveA
    return true;
 }
 
+bool IDEController :: doOpenProject(DialogBase& dialog, IDEModel* model)
+{
+   PathString path;
+   if (dialog.openFile(path)) {
+      //if (!doCloseProject())
+      //   return false;
+
+      if (openProject(model, *path)) {
+         return true;
+      }
+   }
+
+   return false;
+}
+
 bool IDEController :: doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode)
 {
    // !! temporal
@@ -386,6 +615,11 @@ bool IDEController :: doSaveProject(DialogBase& dialog, IDEModel* model, bool fo
       return false;
 
    return true;
+}
+
+bool IDEController :: doCloseProject()
+{
+   return false;
 }
 
 bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
@@ -424,6 +658,16 @@ bool IDEController :: doExit()
    return true;
 }
 
+void IDEController :: doSelectNextWindow(IDEModel* model)
+{
+   sourceController.selectNextDocument(&model->sourceViewModel);
+}
+
+void IDEController :: doSelectPrevWindow(IDEModel* model)
+{
+   sourceController.selectPreviousDocument(&model->sourceViewModel);
+}
+
 path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
 {
    if (model->projectModel.sources.count() != 0) {
@@ -434,7 +678,12 @@ path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
 
 void IDEController :: doDebugAction(IDEModel* model, DebugAction action)
 {
-   projectController.doDebugAction(model->projectModel, action);
+   projectController.doDebugAction(model->projectModel, model->sourceViewModel, action);
+}
+
+void IDEController :: doDebugStop(IDEModel* model)
+{
+   projectController.doDebugStop(model->projectModel);
 }
 
 void IDEController :: onCompilationStart(IDEModel* model)
@@ -468,23 +717,33 @@ void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBa
    log->clearMessages();
 
    // parse output for errors
-   pos_t length = output.length_pos();
-   pos_t index = 0;
+   size_t length = output.length();
+   size_t index = 0;
 
    WideMessage message;
    WideMessage fileStr, rowStr, colStr;
-   while (index < length) {
-      index = output.findSubStr(index, _T(": error "), length);
-      if (index == NOTFOUND_POS) {
-         index = output.findSubStr(index, _T(": warning "), length);
+   while (true) {
+      bool found = false;
+      while (index < length) {
+         if (output[index] == ':') {
+            if (output.compareSub(_T(": error "), index, 8)) {
+               found = true;
+               break;
+            }
+            else if (output.compareSub(_T(": warning "), index, 10)) {
+               found = true;
+               break;
+            }
+         }
+         index++;
       }
-      if (index == NOTFOUND_POS)
+      if (!found)
          break;
 
-      pos_t errPos = index;
-      pos_t rowPos = NOTFOUND_POS;
-      pos_t colPos = NOTFOUND_POS;
-      pos_t bolPos = 0;
+      size_t errPos = index;
+      size_t rowPos = NOTFOUND_POS;
+      size_t colPos = NOTFOUND_POS;
+      size_t bolPos = 0;
 
       index--;
       while (index >= 0) {
@@ -556,4 +815,16 @@ bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
    }
 
    return false;
+}
+
+void IDEController :: onLayoutchange()
+{
+   _notifier->notifyMessage(NOTIFY_LAYOUT_CHANGED);
+}
+
+void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model)
+{
+   projectController.refreshDebugContext(contextBrowser);
+
+   _notifier->notifyMessage(NOTIFY_REFRESH, model->ideScheme.debugWatch);
 }

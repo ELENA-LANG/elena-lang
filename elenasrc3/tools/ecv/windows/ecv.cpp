@@ -107,7 +107,7 @@ void getAppPath(PathString& appPath)
 
    ::GetModuleFileName(NULL, path, MAX_PATH);
 
-   appPath.copySubPath(path);
+   appPath.copySubPath(path, false);
    appPath.lower();
 }
 

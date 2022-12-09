@@ -24,9 +24,12 @@ namespace elena_lang
       POINT         _srcPos;
       bool          _mouseCaptured;
 
+      int           _cursor;
+
       void onButtonDown(Point point, bool kbShift);
       void onButtonUp();
       void onMove();
+      bool onSetCursor() override;
 
       void shiftOn(int delta);
 

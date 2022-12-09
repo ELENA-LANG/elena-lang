@@ -21,6 +21,7 @@ namespace elena_lang
          Yes, No, Cancel
       };
 
+      virtual bool openFile(PathString& path) = 0;
       virtual bool openFiles(List<path_t, freepath>& files) = 0;
       virtual bool saveFile(path_t ext, PathString& path) = 0;
 
@@ -49,6 +50,8 @@ namespace elena_lang
       bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
          FileEncoding encoding, int notifyMessage) override;
       void selectDocument(TextViewModelBase* model, ustr_t name) override;
+      void selectNextDocument(TextViewModelBase* model);
+      void selectPreviousDocument(TextViewModelBase* model);
       void closeDocument(TextViewModelBase* model, ustr_t name, 
          int notifyMessage) override;
 
@@ -56,7 +59,7 @@ namespace elena_lang
          int notifyMessage) override;
 
       bool insertNewLine(TextViewModelBase* model) override;
-      bool insertChar(TextViewModelBase* model, char ch) override;
+      bool insertChar(TextViewModelBase* model, text_c ch) override;
       bool eraseChar(TextViewModelBase* model, bool moveback) override;
 
       void indent(TextViewModelBase* model) override;
@@ -65,6 +68,7 @@ namespace elena_lang
       void redo(TextViewModelBase* model) override;
 
       void deleteText(TextViewModelBase* model) override;
+      void insertBlockText(TextViewModelBase* model, const text_t s, size_t length) override;
 
       bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
       void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
@@ -75,6 +79,9 @@ namespace elena_lang
       void moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void moveCaretHome(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void moveCaretEnd(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
+      void movePageDown(TextViewModelBase* model, bool kbShift) override;
+      void movePageUp(TextViewModelBase* model, bool kbShift) override;
+      void moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift) override;
 
       TextViewController(TextViewSettings& settings)
       {

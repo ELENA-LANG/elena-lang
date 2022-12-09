@@ -446,7 +446,7 @@ void Project :: loadDefaultConfig()
 bool Project :: loadConfig(path_t path, bool mainConfig)
 {
    PathString configPath;
-   configPath.copySubPath(path);
+   configPath.copySubPath(path, false);
 
    ConfigFile config;
    if (config.load(path, _encoding)) {
