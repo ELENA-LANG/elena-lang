@@ -83,6 +83,8 @@ namespace elena_lang
       void movePageUp(TextViewModelBase* model, bool kbShift) override;
       void moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift) override;
 
+      void selectWord(TextViewModelBase* model) override;
+
       TextViewController(TextViewSettings& settings)
       {
          _settings = settings;

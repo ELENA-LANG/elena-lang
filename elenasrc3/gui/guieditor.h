@@ -150,6 +150,8 @@ namespace elena_lang
       virtual bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) = 0;
       virtual void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) = 0;
 
+      virtual void selectWord(TextViewModelBase* model) = 0;
+
       virtual void moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;
       virtual void moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl) = 0;

@@ -215,6 +215,14 @@ void TextViewController :: moveCaretLeft(TextViewModelBase* model, bool kbShift,
    model->onModelChanged();
 }
 
+void TextViewController :: selectWord(TextViewModelBase* model)
+{
+   auto docView = model->DocView();
+
+   docView->moveLeftToken(false);
+   docView->moveRightToken(true, true);
+}
+
 void TextViewController :: moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
    auto docView = model->DocView();

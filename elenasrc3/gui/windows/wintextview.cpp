@@ -433,6 +433,11 @@ void TextViewWindow :: onButtonDown(Point point, bool kbShift)
    captureMouse();
 }
 
+void TextViewWindow :: onDoubleClick(NMHDR*)
+{
+   _controller->selectWord(_model);
+}
+
 void TextViewWindow :: onButtonUp()
 {
    releaseMouse();
@@ -537,6 +542,9 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
          return 0;
       case WM_LBUTTONUP:
          onButtonUp();
+         return 0;
+      case WM_LBUTTONDBLCLK:
+         onDoubleClick(nullptr);
          return 0;
       case WM_MOUSEWHEEL:
          onMouseMove(HIWORD(wParam), (wParam & MK_CONTROL) != 0);
