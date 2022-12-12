@@ -486,7 +486,7 @@ void CompilingProcess :: link(ProjectBase& project, LinkerBase& linker)
    if (project.BoolSetting(ProjectOption::MappingOutputMode))
       addressMapper = new AddressMapper(_presenter);
 
-   TargetImage code(&project, &_libraryProvider, _jitCompilerFactory,
+   TargetImage code(project.SystemTarget(), &project, &_libraryProvider, _jitCompilerFactory,
       imageInfo, addressMapper);
 
    auto result = linker.run(project, code);

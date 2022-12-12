@@ -296,6 +296,14 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 
       return arg;
    }
+   else if (tokenInfo.compare("constarray")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      arg.type = Operand::Type::R;
+      arg.reference = readReference(tokenInfo) | mskConstArray;
+
+      return arg;
+   }
    else if (tokenInfo.compare("procedure")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 

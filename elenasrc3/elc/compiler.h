@@ -581,6 +581,7 @@ namespace elena_lang
          LocalMap     parameters;
 
          int          selfLocal;
+         int          messageLocalAddress;
 
          MethodInfo   info;
          pos_t        reserved1;             // defines managed frame size
@@ -640,6 +641,11 @@ namespace elena_lang
 
          bool checkType(MethodHint type);
          static bool checkType(MethodInfo& methodInfo, MethodHint type);
+
+         bool isGeneric()
+         {
+            return checkHint(MethodHint::Generic);
+         }
 
          ref_t getClassRef(bool ownerClass = true)
          {

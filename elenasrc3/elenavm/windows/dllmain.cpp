@@ -1,15 +1,19 @@
 #include "elena.h"
-#include "vmcommon.h"
+#include "elenavmmachine.h"
 // --------------------------------------------------------------------------------
 #include <windows.h>
 
 using namespace elena_lang;
 
+static ELENAVMMachine* machine = nullptr;
+
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
 void init()
 {
+   machine = new ELENAVMMachine();
 }
+
 
 // --- API export ---
 

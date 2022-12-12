@@ -739,6 +739,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent) :
    message(0),
    parameters({}),
    selfLocal(0),
+   messageLocalAddress(0),
    reserved1(0),
    reserved2(0),
    reservedArgs(parent->moduleScope->minimalArgList),
@@ -7010,6 +7011,11 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
    // the original message should be restored if it is a generic method
    scope.selfLocal = codeScope.newLocal();
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
+
+   if (scope.isGeneric()) {
+      //scope.messageLocalAddress = codeScope.allocLocalAddress(sizeof(mssg_t));
+      //writer.appendNode(BuildKey::SavingIndex, scope.messageLocalAddress);
+   }
 
    ObjectInfo retVal = { };
 

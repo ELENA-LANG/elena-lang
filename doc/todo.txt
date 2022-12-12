@@ -5,9 +5,11 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
+    * new opcode : xredirect
     * generic handler
-    * elena vm : implement elenavmmachine
     * api functionality for existing classes : system'NilValue
+    * ide : disable / enable the menu items, based on the model
+    * elena vm : implement elenavmmachine - loading vm tape
 
     ! api functionality for existing classes : system'CharValue
     ! regression tests : all github issues (> 52)
@@ -22,9 +24,9 @@ In development:
     * #47 : Evaluating an expression in a symbol
 
     * api : provide field descriptions
-    * ide : disable / enable the menu items, based on the model
     * ide : debugger - status - running / stopped
 
+    * ide - review on change events : after editor change / debug step
     * ide : debugger - step into / over / stop / run / compile
     * ide : debugger - on debugging / debugger stopped
     * ide - ask to save on close

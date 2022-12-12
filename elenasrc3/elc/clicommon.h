@@ -262,6 +262,7 @@ public:
    virtual FileIteratorBase* allocPrimitiveIterator() = 0;
    virtual FileIteratorBase* allocPackageIterator() = 0;
 
+   virtual PlatformType SystemTarget() = 0;
    virtual PlatformType TargetType() = 0;
    virtual PlatformType Platform() = 0;
    virtual ustr_t ProjectName() = 0;

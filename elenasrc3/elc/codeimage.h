@@ -35,9 +35,12 @@ namespace elena_lang
    // --- TargetImage ---
    class TargetImage : public ReferenceMapper, public ImageProvider
    {
+      PlatformType       _systemTarget;
+
       pos_t              _entryPoint;
       pos_t              _debugEntryPoint;
 
+      void createVMTape(MemoryWriter& rdataWriter);
       void prepareImage(ustr_t ns);
 
    public:
@@ -53,7 +56,7 @@ namespace elena_lang
          return _debugEntryPoint & ~mskAnyRef;
       }
 
-      TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loader, 
+      TargetImage(PlatformType systemTarget, ForwardResolverBase* resolver, LibraryLoaderBase* loader,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType),
          TargetImageInfo imageInfo, AddressMapperBase* addressMapper);
    };

@@ -37,6 +37,7 @@ namespace elena_lang
 
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE         = "ELENA.";          // the stand alone image
+   constexpr auto ELENA_VM_SIGNITURE      = "VM.ELENA.";       // the stand alone image
    constexpr auto MODULE_SIGNATURE        = "ELENA.0601";      // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED.06";
 
@@ -69,6 +70,7 @@ namespace elena_lang
    constexpr auto ATTRIBUTES_MAP          = "$forwards'meta$attributes";
    constexpr auto OPERATION_MAP           = "$forwards'meta$statementTemplates";
    constexpr auto ALIASES_MAP             = "$forwards'meta$aliasTypes";
+   constexpr auto VM_TAPE                 = "$elena'meta$startUpTape";
 
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 

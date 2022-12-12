@@ -396,3 +396,23 @@ symbol sta_start
   close       []
 
 end
+
+symbol vm_sta_start
+
+  open header [arg1],[envptr,ex_struct:ex_struct_size]
+  
+  xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
+
+  mov         env
+  save        dp:envptr
+  set         dp:envptr
+  store       fp:arg1
+
+  call extern:InitializeVMSTLA (
+     *arg1, 
+     constarray:"$forwards'meta$startUpTape",
+     procedure:"system'core_routines'critical_exception_handler")
+
+  close       []
+
+end

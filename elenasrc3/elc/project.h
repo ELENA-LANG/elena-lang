@@ -158,6 +158,7 @@ namespace elena_lang
       ustr_t resolveKey(ProjectOption category, ProjectOption item, ustr_t key);
 
    public:
+      PlatformType SystemTarget() override;
       PlatformType Platform() override;
       PlatformType TargetType() override;
 

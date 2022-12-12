@@ -22,6 +22,7 @@ namespace elena_lang
       Dispatcher     = 0x00000007,
 
       Function       = 0x00000080,
+      Generic        = 0x00000100,
       RetOverload    = 0x00000200,
       Multimethod    = 0x00001000,
       Static         = 0x00004000,
@@ -279,6 +280,11 @@ namespace elena_lang
    // === Conversion Routines ===
    constexpr auto INT32_64_CONVERSION        = 0x001;
    constexpr auto INT32_FLOAT64_CONVERSION   = 0x002;
+
+   // === VM Command ===
+   constexpr auto VM_STR_COMMAND_MASK        = 0x100;
+
+   constexpr auto VM_LOAD                    = 0x101;
 }
 
 #endif

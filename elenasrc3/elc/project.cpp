@@ -115,6 +115,11 @@ ustr_t Project :: resolveKey(ProjectOption category, ProjectOption item, ustr_t 
    return current == item ? current.findChild(ProjectOption::Value).identifier() : nullptr;
 }
 
+PlatformType Project :: SystemTarget()
+{
+   return _platform & PlatformType::TargetMask;
+}
+
 PlatformType Project :: Platform()
 {
    return _platform & PlatformType::PlatformMask;

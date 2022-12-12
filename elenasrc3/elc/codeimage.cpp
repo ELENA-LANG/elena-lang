@@ -19,10 +19,12 @@ AddressMap::Iterator TargetImage :: externals()
    return _exportReferences.start();
 }
 
-TargetImage :: TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loader,
+TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resolver, LibraryLoaderBase* loader,
    JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType),
    TargetImageInfo imageInfo, AddressMapperBase* addressMapper)
 {
+   _systemTarget = systemTarget;
+
    JITCompilerBase* compiler = jitCompilerFactory(loader, imageInfo.type);
 
    JITLinkerSettings settings = 
@@ -62,6 +64,21 @@ TargetImage :: TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loa
    freeobj(compiler);
 }
 
+inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command, ustr_t arg)
+{
+   rdataWriter.writeDWord(command);
+   rdataWriter.writeString(arg);
+}
+
+void TargetImage :: createVMTape(MemoryWriter& rdataWriter)
+{
+   addr_t tapeRef = rdataWriter.position();
+
+   mapReference(ReferenceInfo{ VM_TAPE }, tapeRef, mskConstArray);
+
+   addVMTapeEntry(rdataWriter, VM_LOAD, PROGRAM_ENTRY);
+}
+
 void TargetImage :: prepareImage(ustr_t ns)
 {
    MemoryWriter rdataWriter(getRDataSection());
@@ -71,7 +88,15 @@ void TargetImage :: prepareImage(ustr_t ns)
    rdataWriter.write(&envPtr, sizeof(addr_t));
 
    // put a signature
-   rdataWriter.write(ELENA_SIGNITURE, getlength_pos(ELENA_SIGNITURE));
+   switch (_systemTarget) {
+      case PlatformType::VMClient:
+         rdataWriter.write(ELENA_VM_SIGNITURE, getlength_pos(ELENA_VM_SIGNITURE));
+         break;
+      default:
+         rdataWriter.write(ELENA_SIGNITURE, getlength_pos(ELENA_SIGNITURE));
+         break;
+   }
+   
 
    String<char, 4> number;
    number.appendInt(ENGINE_MAJOR_VERSION);
@@ -88,4 +113,7 @@ void TargetImage :: prepareImage(ustr_t ns)
    MemoryWriter debugWriter(getTargetDebugSection());
    debugWriter.writeString(ns);
 
+   if (_systemTarget == PlatformType::VMClient) {
+      createVMTape(rdataWriter);
+   }
 }
