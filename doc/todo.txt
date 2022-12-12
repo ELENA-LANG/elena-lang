@@ -6,9 +6,11 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
     * new opcode : xredirect
+
     * generic handler
     * api functionality for existing classes : system'NilValue
     * ide : disable / enable the menu items, based on the model
+    * elena vm : call vm entry point
     * elena vm : implement elenavmmachine - loading vm tape
 
     ! api functionality for existing classes : system'CharValue

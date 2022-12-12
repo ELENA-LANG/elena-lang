@@ -90,6 +90,7 @@ namespace elena_lang
       Jeq            = 0xB3,
       Jne            = 0xB4,
       JumpVI         = 0xB5,
+      XRedirectM     = 0xB6,
 
       CmpR           = 0xC0,
       FCmpN          = 0xC1,
@@ -282,6 +283,7 @@ namespace elena_lang
             case ByteCode::DispatchMR:
             case ByteCode::XDispatchMR:
             case ByteCode::TstM:
+            case ByteCode::XRedirectM:
                return true;
             default:
                return false;

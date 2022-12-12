@@ -51,7 +51,7 @@ CodeGenerator _codeGenerators[256] =
    loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadFieldIndexOp, loadFieldIndexOp, loadStackIndexOp,
    loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadNop, loadNop,
+   loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadMOp, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
@@ -89,7 +89,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 105;
+constexpr size_t bcCommandNumber = 106;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -113,6 +113,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::Not, ByteCode::Neg, ByteCode::INotDPN, ByteCode::IShlDPN, ByteCode::IShrDPN,
    ByteCode::FAddDPN, ByteCode::FSubDPN, ByteCode::FMulDPN, ByteCode::FDivDPN, ByteCode::FCmpN,
    ByteCode::BRead, ByteCode::LSave, ByteCode::FSave, ByteCode::FTruncDP, ByteCode::NConvFDP,
+   ByteCode::XRedirectM
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,

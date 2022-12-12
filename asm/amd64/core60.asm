@@ -937,6 +937,45 @@ inline % 0B5h
 
 end
 
+// ; redirect
+inline % 0B6h // (rbx - object, rdx - message, r10 - arg0, r11 - arg1)
+
+  mov  r15, rdx
+  mov  r14, [rbx - elVMTOffset]
+  xor  ecx, ecx
+
+  and  edx, ARG_MASK
+  mov  eax, __arg32_1
+  and  ecx, ~ARG_MASK
+  or   edx, ecx
+  mov  rsi, qword ptr[r14 - elVMTSizeOffset]
+
+labSplit:
+  test esi, esi
+  jz   short labEnd
+
+labStart:
+  shr   esi, 1
+  lea   r13, [rsi*2]
+  setnc cl
+  cmp   rdx, [r14+r13*8]
+  je    short labFound
+  lea   r8, [r14+r13*8]
+  jb    short labSplit
+  lea   r14, [r8+16]
+  sub   esi, ecx
+  jmp   labSplit
+  nop
+  nop
+labFound:
+  mov   rdx, r15
+  jmp   [r14+r13*8+8]
+
+labEnd:
+  mov   rdx, r15
+                               
+end
+
 // ; cmpr r
 inline %0C0h
 

@@ -879,6 +879,44 @@ inline %0B5h
 
 end
 
+// ; redirect
+inline % 0B6h // (ebx - object, edx - message, esi - arg0, edi - arg1)
+
+  mov   [esp+4], esi                      // ; saving arg0
+  xor   ecx, ecx
+  push  edx 
+  mov   edi, [ebx - elVMTOffset]
+  mov   eax, __arg32_1
+  and   edx, ARG_MASK
+  and   eax, ~ARG_MASK
+  mov   esi, [edi - elVMTSizeOffset]
+  or    edx, eax
+
+labSplit:
+  test  esi, esi
+  jz    short labEnd
+
+labStart:
+  shr   esi, 1
+  setnc cl
+  cmp   edx, [edi+esi*8]
+  je    short labFound
+  lea   eax, [edi+esi*8]
+  jb    short labSplit
+  lea   edi, [eax+8]
+  sub   esi, ecx
+  jmp   short labSplit
+labFound:
+  pop   edx 
+  mov   eax, [edi+esi*8+4]
+  mov   esi, [esp+4]
+  jmp   eax
+
+labEnd:
+  pop   edx 
+                                                                
+end
+
 // ; cmpr r
 inline %0C0h
 

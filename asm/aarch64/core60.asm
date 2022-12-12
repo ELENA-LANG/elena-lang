@@ -1055,6 +1055,56 @@ inline %0B5h
 
 end
 
+// ; redirect
+inline % 0B6h //; (r15 - object, r14 - message)
+
+  mov     x20, x9
+  sub     x14, x10, elVMTOffset              
+  ldr     x11, [x14]              //; edi
+  mov     x12, #0                 //; ecx
+  sub     x15, x11, elVMTSizeOffset
+  ldr     x13, [x15]              //; esi
+
+  movz    x14,  __arg32lo_1
+  movk    x14,  __arg32hi_1, lsl #16
+  and     x9, x9, ARG_MASK
+  movz    x16,  ~ARG_MASK
+  movk    x16,  #0FFFFh, lsl #16
+  and     x14, x14, x16
+  orr     x9, x9, x14
+
+labSplit:
+  cmp     x13, #0 
+  beq     labEnd
+
+labStart:
+  tst     x13, #1
+  lsr     x13, x13, #1
+  cset    x12, eq
+
+  lsl     x14, x13, #4
+  add     x14, x14, x11 
+
+  ldr     x15, [x14]         //; edx
+  cmp     x9, x15
+  beq     labFound
+  add     x14, x14, #16
+  ble     labSplit
+  mov     x11, x14
+  sub     x13, x13, x12
+  b       labSplit
+
+labFound:
+  mov     x9, x20
+  add     x14, x14, #8 
+  ldr     x15, [x14] 
+  br      x15
+
+labEnd:
+  mov     x9, x20
+                               
+end
+
 // ; cmpr
 inline %0C0h
 
