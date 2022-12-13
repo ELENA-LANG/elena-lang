@@ -844,3 +844,13 @@ void DocumentView :: save(path_t path)
 
    status.modifiedMode = false;
 }
+
+bool DocumentView :: canRedo()
+{
+   return !_undoBuffer.eof();
+}
+
+bool DocumentView :: canUndo()
+{
+   return !_undoBuffer.bof();
+}

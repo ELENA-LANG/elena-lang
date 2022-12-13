@@ -45,6 +45,20 @@ public sealed Reference<T> : BaseVariable,
    dispatch() => value;
 }
 
+public class BaseExtender
+{
+   object object;
+
+   bool equal(o)
+      => object;
+
+   string toPrintable()
+      => object;
+
+   dispatch()
+      => object;
+}
+
 public class Variable : BaseVariable, Reference<object>,
    info<"A generic variable.<br/>Extends an assigned value">
 {
@@ -77,5 +91,23 @@ public class Variable : BaseVariable, Reference<object>,
       else {
          value -= val;
       }
+   }
+
+   multiplyBy(val)
+   {
+      if (value == nil) {
+         system'InvalidOperationException.raise()
+      };
+
+      value *= val
+   }
+
+   divideBy(val)
+   {
+      if (value == nil) {
+         system'InvalidOperationException.raise()
+      };
+
+      value /= val
    }
 }

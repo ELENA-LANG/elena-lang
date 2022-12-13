@@ -136,6 +136,8 @@ void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase
       default:
          break;
    }
+   if (test(flags, CONVERSION_MESSAGE))
+      messageName.append("typecast:");
 
    messageName.append(actionName);
    if (len > 0) {
@@ -197,6 +199,10 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
       flags |= VARIADIC_MESSAGE;
       messageName += getlength("params:");
    }
+   if (messageName.startsWith("typecast:")) {
+      flags |= CONVERSION_MESSAGE;
+      messageName += getlength("typecast:");
+   }
 
    IdentifierString actionName;
    size_t paramIndex = messageName.find('[');
@@ -232,9 +238,6 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
 
       actionName.truncate(index);
    }
-
-   if ((*actionName).compare(CAST_MESSAGE))
-      flags |= CONVERSION_MESSAGE;
 
    actionRef = module->mapAction(*actionName, signature, readOnlyMode);
    if (actionRef == 0) {

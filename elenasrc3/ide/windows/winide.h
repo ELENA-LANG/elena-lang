@@ -39,6 +39,17 @@ namespace elena_lang
    // --- IDEWindow ---
    class IDEWindow : public SDIWindow, public DocumentNotifier
    {
+      struct IDESttus
+      {
+         bool hasDocument;
+         bool hasProject;
+         bool running;
+         bool hasSelection;
+         bool canUndo;
+         bool canRedo;
+      };
+
+
       Dialog         fileDialog;
       Dialog         projectDialog;
       Clipboard      clipboard;
@@ -47,6 +58,8 @@ namespace elena_lang
 
       IDEModel*      _model;
       IDEController* _controller;
+
+      IDESttus       _ideStatus;
 
       void onModelChange(ExtNMHDR* hdr);
       void onNotifyMessage(ExtNMHDR* hdr);
@@ -91,6 +104,8 @@ namespace elena_lang
       void pasteFromClipboard();
       void deleteText();
       void commentText();
+
+      void onIDEViewUpdate(bool forced);
 
    public:
       void onDocumentUpdate() override;

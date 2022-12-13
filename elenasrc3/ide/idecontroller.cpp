@@ -359,6 +359,7 @@ void ProjectController :: openProject(ProjectModel& model, path_t projectFile)
 
    model.sources.clear();
 
+   model.empty = false;
    model.name.copy(*name);
    model.projectFile.copy(*src);
    model.projectPath.copySubPath(projectFile, true);
@@ -396,6 +397,7 @@ void ProjectController :: openSingleFileProject(ProjectModel& model, path_t sing
 
    model.sources.clear();
 
+   model.empty = false;
    model.name.copy(*name);
    model.projectPath.copySubPath(singleProjectFile, true);
    
@@ -689,6 +691,7 @@ void IDEController :: doDebugStop(IDEModel* model)
 void IDEController :: onCompilationStart(IDEModel* model)
 {
    model->status = IDEStatus::Busy;
+   model->projectModel.running = true;
 
    model->onIDEChange();
 
@@ -699,6 +702,7 @@ void IDEController :: onCompilationStart(IDEModel* model)
 void IDEController :: onCompilationStop(IDEModel* model)
 {
    model->status = IDEStatus::Ready;
+   model->projectModel.running = false;
 
    model->onIDEChange();
 }
@@ -706,6 +710,7 @@ void IDEController :: onCompilationStop(IDEModel* model)
 void IDEController :: onCompilationBreak(IDEModel* model)
 {
    model->status = IDEStatus::Ready;
+   model->projectModel.running = false;
 
    model->onIDEChange();
 }

@@ -64,7 +64,6 @@ public:
 
    bool            appMaximized;
 
-
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
    void attachListener(IDEListener* listener);

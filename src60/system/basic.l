@@ -1990,3 +1990,65 @@ public const struct CharValue : BaseValue,
    wide cast()
       = wideConvertor.convert(self); 
 }
+
+// --- nil constant ---
+
+public singleton nilValue
+   : info<"A nil value">
+{
+   bool equal(object)
+      : info<"Returns true if the specified object is nil.">
+   {
+      if (nil == object)
+      {
+         ^ true
+      };
+
+      if (super.equal:object)
+      {
+         ^ true
+      };
+
+      ^ false
+   }
+
+   cast generic() 
+            : info<"Returns nil<br/>Any typecasting message will be handled and nil value returned">
+      = nil;
+}
+
+// --- KeyValue ---
+
+public sealed class KeyValue
+   : info<"A key - object pair<br/>Extends the object with a key property">
+{
+   object key;
+   object value;
+
+   constructor new(key, value)
+      : info<"Creates a new object">
+   {
+      this key := key;
+      this value := value
+   }
+
+   Key : info<"Returns the key">
+      = key;
+
+   Value : info<"Returns the value">
+      = value;
+
+   set Value(value)
+   {
+      this value := value
+   }
+
+   bool equal(o)
+      => object;
+
+   string toPrintable()
+      => object;
+
+   dispatch() : info<"Redirects the incoming messages to the object">
+     => object;
+}

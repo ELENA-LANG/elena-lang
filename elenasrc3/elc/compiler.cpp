@@ -2471,10 +2471,20 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          else scope.raiseError(errIllegalMethod, node);
       }
       else if (scope.checkHint(MethodHint::Conversion)) {
-         if (paramCount == 0 && unnamedMessage && scope.info.outputRef) {
-            ref_t signatureRef = scope.moduleScope->module->mapSignature(&scope.info.outputRef, 1, false);
-            actionRef = scope.moduleScope->module->mapAction(CAST_MESSAGE, signatureRef, false);
-            flags |= CONVERSION_MESSAGE;
+         if (paramCount == 0 && unnamedMessage) {
+            if (scope.checkHint(MethodHint::Generic) && scope.checkHint(MethodHint::Generic)) {
+               if (signatureLen > 0 || !unnamedMessage || scope.checkHint(MethodHint::Function))
+                  scope.raiseError(errInvalidHint, node);
+
+               actionStr.copy(GENERIC_PREFIX);
+               flags |= CONVERSION_MESSAGE;
+            }
+            else if (scope.info.outputRef) {
+               ref_t signatureRef = scope.moduleScope->module->mapSignature(&scope.info.outputRef, 1, false);
+               actionRef = scope.moduleScope->module->mapAction(CAST_MESSAGE, signatureRef, false);
+               flags |= CONVERSION_MESSAGE;
+            }
+            else scope.raiseError(errIllegalMethod, node);
 
             unnamedMessage = false;
          }

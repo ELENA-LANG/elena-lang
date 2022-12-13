@@ -12,7 +12,7 @@ define VOIDPTR              2000Eh
 
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
-define ARG_MASK               01Fh
+define ARG_MASK               05Fh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -879,7 +879,7 @@ inline %0B5h
 
 end
 
-// ; redirect
+// ; xredirect
 inline % 0B6h // (ebx - object, edx - message, esi - arg0, edi - arg1)
 
   mov   [esp+4], esi                      // ; saving arg0

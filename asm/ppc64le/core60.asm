@@ -12,7 +12,7 @@ define VOIDPTR              2000Eh
 
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
-define ARG_MASK               01Fh
+define ARG_MASK               05Fh
 
 // ; TOC TABLE OFFSETS
 define toc_import            0000h

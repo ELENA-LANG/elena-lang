@@ -239,6 +239,9 @@ namespace elena_lang
       bool hasSelection() const { return (_selection != 0); }
       disp_t getSelectionLength();
 
+      virtual bool canUndo();
+      virtual bool canRedo();
+
       TextBookmark getCaretBookmark() { return _caret; }
 
       Point getFrame() const { return _frame.getCaret(); }
