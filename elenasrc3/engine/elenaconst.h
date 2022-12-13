@@ -114,6 +114,7 @@ namespace elena_lang
    constexpr auto CLASSCLASS_POSTFIX      = "#class";
    constexpr auto CONST_POSTFIX           = "#const";
    constexpr auto STATICFIELD_POSTFIX     = "#static";
+   constexpr auto GENERIC_PREFIX          = "#generic";
    constexpr auto PARAMETER_NAMES         = "parameter_names";
 
    // --- ELENA verb messages ---
@@ -167,6 +168,8 @@ namespace elena_lang
    constexpr ref_t elExtension            = 0x0000110C;
    constexpr ref_t elMessage              = 0x00200000;
    constexpr ref_t elWithVariadics        = 0x00400000;
+   constexpr ref_t elWithCustomDispatcher = 0x00800000;
+   constexpr ref_t elWithGenerics         = 0x02000000;
 
    constexpr ref_t elDebugMask            = 0x001F0000;
    constexpr ref_t elDebugDWORD           = 0x00010000;

@@ -370,6 +370,13 @@ void xdispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::XDispatchMR, message, node.arg.reference | mskConstArray);
 }
 
+void genericDispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   mssg_t message = node.findChild(BuildKey::Message).arg.reference;
+
+   tape.write(ByteCode::XRedirectM, message);
+}
+
 void realOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
@@ -1052,7 +1059,9 @@ ByteCodeWriter::Saver commands[] =
    shortCondOp, copyingAccField, copyingToAccField, localReference, refParamAssigning, staticVarOp, loadingIndex, nilOp,
 
    intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
-   realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField
+   realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
+
+   genericDispatchOp
 };
 
 // --- ByteCodeWriter ---

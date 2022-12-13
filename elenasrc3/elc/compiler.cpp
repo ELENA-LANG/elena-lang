@@ -1606,6 +1606,9 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
 
    if (isOpenArg(message))
       scope.info.header.flags |= elWithVariadics;
+
+   if (MethodScope::checkHint(methodInfo, MethodHint::Generic))
+      scope.info.header.flags |= elWithGenerics;
 }
 
 pos_t Compiler :: saveMetaInfo(ModuleBase* module, ustr_t value, ustr_t postfix)
@@ -2488,6 +2491,13 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          actionStr.copy(CONSTRUCTOR_MESSAGE);
          unnamedMessage = false;
          flags |= FUNCTION_MESSAGE;
+      }
+      else if (scope.checkHint(MethodHint::Generic) && scope.checkHint(MethodHint::Generic)) {
+         if (signatureLen > 0 || !unnamedMessage || scope.checkHint(MethodHint::Function))
+            scope.raiseError(errInvalidHint, node);
+
+         actionStr.copy(GENERIC_PREFIX);
+         unnamedMessage = false;
       }
       else if (scope.checkHint(MethodHint::Function)) {
          if (!unnamedMessage)
@@ -7013,8 +7023,8 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
    if (scope.isGeneric()) {
-      //scope.messageLocalAddress = codeScope.allocLocalAddress(sizeof(mssg_t));
-      //writer.appendNode(BuildKey::SavingIndex, scope.messageLocalAddress);
+      scope.messageLocalAddress = codeScope.allocLocalAddress(sizeof(mssg_t));
+      writer.appendNode(BuildKey::SavingIndex, scope.messageLocalAddress);
    }
 
    ObjectInfo retVal = { };
@@ -7647,9 +7657,16 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    }
 }
 
-void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node)
+void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node,
+   bool withGenerics)
 {
    writer.appendNode(BuildKey::DispatchingOp);
+   if (withGenerics) {
+      writer.newNode(BuildKey::GenericDispatchingOp);
+      writer.appendNode(BuildKey::Message,
+         encodeMessage(scope.module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
+      writer.closeNode();
+   }
 
    // new stack frame
    writer.appendNode(BuildKey::OpenFrame);
@@ -7690,23 +7707,44 @@ void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope&
    writer.appendNode(BuildKey::DispatchingOp);
 }
 
-void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withGenerics)
 {
    CodeScope codeScope(&scope);
 
    beginMethod(writer, scope, node, BuildKey::Method, false);
 
-   SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
-   switch (current.key) {
-      case SyntaxKey::Importing:
-         writer.appendNode(BuildKey::Import, current.arg.reference);
-         break;
-      case SyntaxKey::Redirect:
-         compileRedirectDispatcher(writer, scope, codeScope, current);
-         break;
-      default:
-         scope.raiseError(errInvalidOperation, node);
-         break;
+   if (node != SyntaxKey::None) {
+      // if it is an explicit dispatcher
+      SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
+      switch (current.key) {
+         case SyntaxKey::Importing:
+            writer.appendNode(BuildKey::Import, current.arg.reference);
+            break;
+         case SyntaxKey::Redirect:
+            compileRedirectDispatcher(writer, scope, codeScope, current, withGenerics);
+            break;
+         default:
+            scope.raiseError(errInvalidOperation, node);
+            break;
+      }
+   }
+   else {
+      // if it is an implicit dispatcher
+      if (withGenerics) {
+         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+         writer.appendNode(BuildKey::DispatchingOp);
+         writer.newNode(BuildKey::GenericDispatchingOp);
+         writer.appendNode(BuildKey::Message, 
+            encodeMessage(scope.module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
+         writer.closeNode();
+
+         writer.newNode(BuildKey::DirectResendOp, scope.moduleScope->buildins.dispatch_message);
+         writer.appendNode(BuildKey::Type, classScope->info.header.parentRef);
+         writer.closeNode();
+
+         writer.appendNode(BuildKey::RedirectOp);
+      }
    }
 
    codeScope.syncStack(&scope);
@@ -7740,7 +7778,8 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
 
             // if it is a dispatch handler
             if (methodScope.message == scope.moduleScope->buildins.dispatch_message) {
-               compileDispatcherMethod(writer, methodScope, current);
+               compileDispatcherMethod(writer, methodScope, current,
+                  test(scope.info.header.flags, elWithGenerics));
             }
             // if it is an abstract one
             else if (methodScope.checkHint(MethodHint::Abstract)) {
@@ -7772,23 +7811,29 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
    }
 
    // if the VMT conatains newly defined generic / variadic handlers, overrides default one
-   if (testany(scope.info.header.flags, /*elWithGenerics | */elWithVariadics)
+   if (testany(scope.info.header.flags, elWithGenerics | elWithVariadics)
       && scope.info.methods.get(scope.moduleScope->buildins.dispatch_message).inherited)
    {
-      //MethodScope methodScope(&scope);
-      //methodScope.message = scope.moduleScope->dispatch_message;
+      MethodScope methodScope(&scope);
+      methodScope.message = scope.moduleScope->buildins.dispatch_message;
 
-      //scope.include(methodScope.message);
+      auto methodIt = scope.info.methods.getIt(methodScope.message);
+      if (!methodIt.eof()) {
+         methodScope.info = *methodIt;
 
-      //scope.info.header.flags |= elWithCustomDispatcher;
+         methodScope.info.inherited = false;
 
-      //compileDispatcher();
-      assert(false);
+         *methodIt = methodScope.info;
+      }
+      else {
+         methodScope.info.hints |= (ref_t)MethodHint::Dispatcher;
+         scope.info.methods.add(methodScope.message, methodScope.info);
+      }
 
-      //compileDispatcher(writer, SNode(), methodScope,
-      //   lxClassMethod,
-      //   test(scope.info.header.flags, elWithGenerics),
-      //   test(scope.info.header.flags, elWithVariadics));
+      scope.info.header.flags |= elWithCustomDispatcher;
+
+      compileDispatcherMethod(writer, methodScope, {}, 
+         test(scope.info.header.flags, elWithGenerics));
 
       // overwrite the class info
       scope.save();

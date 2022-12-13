@@ -106,6 +106,7 @@ namespace elena_lang
       NilCondOp            = 0x004D,
       AssignLocalToStack   = 0x004E,
       SetImmediateField    = 0x004F,
+      GenericDispatchingOp = 0x0050,
 
       Import               = 0x0058,
       DictionaryOp         = 0x0059,

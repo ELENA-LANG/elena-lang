@@ -33,6 +33,7 @@
 #let attributesSymbols["method"]      := 80001008h;
 #let attributesSymbols["field"]       := 80001009h;
 #let attributesSymbols["nonstructural"] := 8000100Ah;
+#let attributesSymbols["generic"]     := 8000100Bh;
 #let attributesSymbols["function"]    := 8000100Ch;
 #let attributesSymbols["var"]         := 8000100Dh;
 #let attributesSymbols["this"]        := 8000100Eh;

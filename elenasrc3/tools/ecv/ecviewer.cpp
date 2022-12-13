@@ -354,6 +354,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::MovM:
          case ByteCode::TstM:
+         case ByteCode::XRedirectM:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
             break;

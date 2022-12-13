@@ -607,6 +607,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_SEALED:
          hint = (ref_t)MethodHint::Sealed;
          return true;
+      case V_GENERIC:
+         hint = (ref_t)MethodHint::Sealed | (ref_t)MethodHint::Generic;
+         return true;
       default:
          return false;
    }
@@ -623,6 +626,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
       case V_CONSTRUCTOR:
       case V_FUNCTION:
       case V_CONVERSION:
+      case V_GENERIC:
          return validateMethodAttribute(attribute, hint, dummy);
       default:
          return false;
