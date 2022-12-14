@@ -14,17 +14,6 @@
 
 namespace elena_lang
 {
-   // --- PresenterBase ---
-   class PresenterBase
-   {
-   public:
-      virtual void print(ustr_t message) = 0;
-      virtual void print(ustr_t message, ustr_t arg) = 0;
-      virtual void printPath(ustr_t message, path_t arg) = 0;
-
-      virtual ~PresenterBase() = default;
-   };
-
    typedef List<ustr_t, freeUStr>       StringList;
 
    struct ApiMethodInfo

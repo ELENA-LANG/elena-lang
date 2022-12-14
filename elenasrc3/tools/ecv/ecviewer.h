@@ -15,8 +15,8 @@
 
 namespace elena_lang
 {
-   // --- PresenterBase ---
-   class PresenterBase
+   // --- ConsoleHelperBase ---
+   class ConsoleHelperBase
    {
    public:
       virtual void setOutputMode(ustr_t arg) = 0;
@@ -27,19 +27,19 @@ namespace elena_lang
       virtual void print(ustr_t message, ustr_t arg) = 0;
       virtual void printPath(ustr_t message, path_t arg) = 0;
 
-      virtual ~PresenterBase() = default;
+      virtual ~ConsoleHelperBase() = default;
    };
 
    // --- ByteCodeViewer ---
    class ByteCodeViewer
    {
-      PresenterBase*   _presenter;
-      LibraryProvider* _provider;
-      ModuleBase*      _module;
-      int              _pageSize;
-      bool             _noPaging;
-      bool             _pathMode;
-      bool             _showBytecodes;
+      ConsoleHelperBase* _presenter;
+      LibraryProvider*   _provider;
+      ModuleBase*        _module;
+      int                _pageSize;
+      bool               _noPaging;
+      bool               _pathMode;
+      bool               _showBytecodes;
 
       MemoryBase* findProcedureCode(ustr_t referenceName);
       MemoryBase* findSymbolCode(ustr_t referenceName);
@@ -100,7 +100,7 @@ namespace elena_lang
 
       void runSession();
 
-      ByteCodeViewer(LibraryProvider* provider, PresenterBase* presenter, int pageSize)
+      ByteCodeViewer(LibraryProvider* provider, ConsoleHelperBase* presenter, int pageSize)
       {
          _presenter = presenter;
          _provider = provider;

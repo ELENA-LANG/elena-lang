@@ -11,6 +11,7 @@
 #include "config.h"
 #include "ldocconst.h"
 #include "ldoc.h"
+#include "windows/presenter.h"
 
 using namespace elena_lang;
 
@@ -26,27 +27,13 @@ constexpr auto PLATFORM_KEY = "Win_x64";
 
 #endif
 
-class Presenter : public PresenterBase
+class Presenter : public WinConsolePresenter
 {
 public:
-   void print(ustr_t message) override
+   ustr_t getMessage(int code) override
    {
-      WideMessage wmssg(message);
-      wprintf(L"%s", wmssg.str());
-   }
-
-   void print(ustr_t message, ustr_t arg) override
-   {
-      WideMessage wmssg(message);
-      WideMessage warg(arg);
-
-      wprintf(wmssg.str(), warg.str());
-   }
-
-   void printPath(ustr_t message, path_t arg) override
-   {
-      WideMessage wmssg(message);
-      wprintf(wmssg.str(), arg.str());
+      // !! temporal : mot used
+      return nullptr;
    }
 
    Presenter()
