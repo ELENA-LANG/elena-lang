@@ -248,6 +248,7 @@ namespace elena_lang
       void writeMessage(MemoryWriter& writer, mssg_t value) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
       void writeVariable(MemoryWriter& writer) override;
+      void writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
 
       void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
 
@@ -311,6 +312,7 @@ namespace elena_lang
       void writeMessage(MemoryWriter& writer, mssg_t value) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
       void writeVariable(MemoryWriter& writer) override;
+      void writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
 
       void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
 

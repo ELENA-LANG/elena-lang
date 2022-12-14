@@ -11,7 +11,6 @@
 
 namespace elena_lang
 {
-
    // --- MemoryDump ---
 
    class MemoryDump : public MemoryBase
@@ -96,6 +95,36 @@ namespace elena_lang
          freestr((char*)_buffer);
       }
    };
+
+   // --- ByteArray ---
+   class ByteArray : public MemoryBase
+   {
+      char* _bytes;
+      pos_t _length;
+
+   public:
+      pos_t length() const override
+      {
+         return _length;
+      }
+
+      void* get(pos_t position) const override;
+
+      bool write(pos_t position, const void* s, pos_t length) override;
+
+      bool read(pos_t position, void* s, pos_t length) override;
+
+      bool insert(pos_t position, const void* s, pos_t length) override;
+
+      void trim(pos_t position) override;
+
+      ByteArray(void* bytes, pos_t length)
+      {
+         _bytes = (char*)bytes;
+         _length = length;
+      }
+   };
+
 }
 
 #endif // DUMP_H

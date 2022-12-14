@@ -70,6 +70,8 @@ namespace elena_lang
    constexpr auto ATTRIBUTES_MAP          = "$forwards'meta$attributes";
    constexpr auto OPERATION_MAP           = "$forwards'meta$statementTemplates";
    constexpr auto ALIASES_MAP             = "$forwards'meta$aliasTypes";
+   constexpr auto STARTUP_LIST            = "$forwards'meta$startUpSymbols";
+
    constexpr auto VM_TAPE                 = "$elena'meta$startUpTape";
 
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
@@ -191,7 +193,7 @@ namespace elena_lang
 
       // masks
       PlatformMask   = 0x000FF,
-      TargetTypeMask = 0xFFF00,
+      TargetTypeMask = 0xFF000,
 
       Win_x86        = 0x00011,
       Win_x86_64     = 0x00012,

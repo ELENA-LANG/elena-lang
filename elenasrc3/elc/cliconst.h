@@ -11,7 +11,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x016F
+   #define ELC_REVISION_NUMBER               0x0170
 
    // --- Information messages ---
    constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2022 by Aleksey Rakov\n";
@@ -37,6 +37,7 @@ namespace elena_lang
    constexpr auto LINUX_ARM64_KEY            = "Linux_ARM64";
    constexpr auto LIBRARY_KEY                = "Library";
    constexpr auto CONSOLE_KEY                = "STA Console";
+   constexpr auto VM_CONSOLE_KEY             = "VM STA Console";
 
    constexpr auto CONFIG_ROOT                = "configuration";
    constexpr auto PLATFORM_CATEGORY          = "configuration/platform";
@@ -87,15 +88,27 @@ namespace elena_lang
       }
    }
 
-   inline ustr_t getTargetTypeName(PlatformType type)
+   inline ustr_t getTargetTypeName(PlatformType type, PlatformType system)
    {
-      switch (type) {
-         case PlatformType::Console:
-            return CONSOLE_KEY;
-         case PlatformType::Library:
-            return LIBRARY_KEY;
-         default:
-            return "undefined";
+      if (system == PlatformType::VMClient) {
+         switch (type) {
+            case PlatformType::Console:
+               return VM_CONSOLE_KEY;
+            case PlatformType::Library:
+               return LIBRARY_KEY;
+            default:
+               return "undefined";
+         }
+      }
+      else {
+         switch (type) {
+            case PlatformType::Console:
+               return CONSOLE_KEY;
+            case PlatformType::Library:
+               return LIBRARY_KEY;
+            default:
+               return "undefined";
+         }
       }
    }
 }

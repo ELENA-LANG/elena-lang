@@ -28,9 +28,9 @@ EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entryList, voi
 
 #ifdef DEBUG_OUTPUT
    printf("InitializeSTA.6 %x,%x\n", (int)env, (int)criricalHandler);
-#endif
 
    fflush(stdout);
+#endif
 
    __routineProvider.InitExceptionHandling(env, criricalHandler);
 

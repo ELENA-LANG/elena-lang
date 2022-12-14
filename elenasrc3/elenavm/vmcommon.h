@@ -9,11 +9,12 @@
 #ifndef VMCOMMON_H
 #define VMCOMMON_H
 
-#include "elenamachine.h"
+#define ELENAVM_REVISION_NUMBER        0x0003
 
 namespace elena_lang
 {
-   
+
+
 }
 
 #endif

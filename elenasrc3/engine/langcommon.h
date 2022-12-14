@@ -125,6 +125,10 @@ namespace elena_lang
    constexpr auto infoCurrentClass           = 703;
    constexpr auto infoAbstractMetod          = 704;
 
+   constexpr auto errVMBroken                = 800;
+   constexpr auto errVMNotInitialized        = 801;
+   constexpr auto errVMNotExecuted           = 802;
+
    constexpr auto errFatalError       = -1;
    constexpr auto errFatalLinker      = -2;
    constexpr auto errCorruptedVMT     = -4;
@@ -239,53 +243,57 @@ namespace elena_lang
    constexpr auto V_SUPER_VAR             = 0x80000083u;
 
    // === Operators ===
-   constexpr auto OPERATOR_MAKS           = 0x1840;
-   constexpr auto INDEX_OPERATOR_ID       = 0x0001;
-   constexpr auto SET_OPERATOR_ID         = 0x0002;
-   constexpr auto ADD_ASSIGN_OPERATOR_ID  = 0x0003;
-   constexpr auto ADD_OPERATOR_ID         = 0x0004;
-   constexpr auto SUB_OPERATOR_ID         = 0x0005;
-   constexpr auto LEN_OPERATOR_ID         = 0x0006;
-   constexpr auto IF_OPERATOR_ID          = 0x0007;
-   constexpr auto LESS_OPERATOR_ID        = 0x0008;
-   constexpr auto NAME_OPERATOR_ID        = 0x0009;
-   constexpr auto EQUAL_OPERATOR_ID       = 0x000A;
-   constexpr auto NOT_OPERATOR_ID         = 0x000B;
-   constexpr auto NOTEQUAL_OPERATOR_ID    = 0x000C;
-   constexpr auto ELSE_OPERATOR_ID        = 0x000E;
-   constexpr auto IF_ELSE_OPERATOR_ID     = 0x000F;
-   constexpr auto MUL_OPERATOR_ID         = 0x0010;
-   constexpr auto DIV_OPERATOR_ID         = 0x0011;
-   constexpr auto NOTLESS_OPERATOR_ID     = 0x0012;
-   constexpr auto GREATER_OPERATOR_ID     = 0x0013;
-   constexpr auto NOTGREATER_OPERATOR_ID  = 0x0014;
-   constexpr auto NEGATE_OPERATOR_ID      = 0x0016;
-   constexpr auto VALUE_OPERATOR_ID       = 0x0017;
-   constexpr auto BAND_OPERATOR_ID        = 0x0018;
-   constexpr auto BOR_OPERATOR_ID         = 0x0019;
-   constexpr auto BXOR_OPERATOR_ID        = 0x001A;
-   constexpr auto BNOT_OPERATOR_ID        = 0x001B;
-   constexpr auto SHL_OPERATOR_ID         = 0x001C;
-   constexpr auto SHR_OPERATOR_ID         = 0x001D;
-   constexpr auto SUB_ASSIGN_OPERATOR_ID  = 0x001E;
-   constexpr auto MUL_ASSIGN_OPERATOR_ID  = 0x001F;
-   constexpr auto DIV_ASSIGN_OPERATOR_ID  = 0x0020;
-   constexpr auto AND_OPERATOR_ID         = 0x0021;
-   constexpr auto OR_OPERATOR_ID          = 0x0022;
-   constexpr auto XOR_OPERATOR_ID         = 0x0023;
+   constexpr auto OPERATOR_MAKS              = 0x1840;
+   constexpr auto INDEX_OPERATOR_ID          = 0x0001;
+   constexpr auto SET_OPERATOR_ID            = 0x0002;
+   constexpr auto ADD_ASSIGN_OPERATOR_ID     = 0x0003;
+   constexpr auto ADD_OPERATOR_ID            = 0x0004;
+   constexpr auto SUB_OPERATOR_ID            = 0x0005;
+   constexpr auto LEN_OPERATOR_ID            = 0x0006;
+   constexpr auto IF_OPERATOR_ID             = 0x0007;
+   constexpr auto LESS_OPERATOR_ID           = 0x0008;
+   constexpr auto NAME_OPERATOR_ID           = 0x0009;
+   constexpr auto EQUAL_OPERATOR_ID          = 0x000A;
+   constexpr auto NOT_OPERATOR_ID            = 0x000B;
+   constexpr auto NOTEQUAL_OPERATOR_ID       = 0x000C;
+   constexpr auto ELSE_OPERATOR_ID           = 0x000E;
+   constexpr auto IF_ELSE_OPERATOR_ID        = 0x000F;
+   constexpr auto MUL_OPERATOR_ID            = 0x0010;
+   constexpr auto DIV_OPERATOR_ID            = 0x0011;
+   constexpr auto NOTLESS_OPERATOR_ID        = 0x0012;
+   constexpr auto GREATER_OPERATOR_ID        = 0x0013;
+   constexpr auto NOTGREATER_OPERATOR_ID     = 0x0014;
+   constexpr auto NEGATE_OPERATOR_ID         = 0x0016;
+   constexpr auto VALUE_OPERATOR_ID          = 0x0017;
+   constexpr auto BAND_OPERATOR_ID           = 0x0018;
+   constexpr auto BOR_OPERATOR_ID            = 0x0019;
+   constexpr auto BXOR_OPERATOR_ID           = 0x001A;
+   constexpr auto BNOT_OPERATOR_ID           = 0x001B;
+   constexpr auto SHL_OPERATOR_ID            = 0x001C;
+   constexpr auto SHR_OPERATOR_ID            = 0x001D;
+   constexpr auto SUB_ASSIGN_OPERATOR_ID     = 0x001E;
+   constexpr auto MUL_ASSIGN_OPERATOR_ID     = 0x001F;
+   constexpr auto DIV_ASSIGN_OPERATOR_ID     = 0x0020;
+   constexpr auto AND_OPERATOR_ID            = 0x0021;
+   constexpr auto OR_OPERATOR_ID             = 0x0022;
+   constexpr auto XOR_OPERATOR_ID            = 0x0023;
 
-   constexpr auto ISNIL_OPERATOR_ID       = 0x003E;
-   constexpr auto CLASS_OPERATOR_ID       = 0x003F;
-   constexpr auto SET_INDEXER_OPERATOR_ID = 0x0201;
+   constexpr auto ISNIL_OPERATOR_ID          = 0x003E;
+   constexpr auto CLASS_OPERATOR_ID          = 0x003F;
+   constexpr auto SET_INDEXER_OPERATOR_ID    = 0x0201;
 
    // === Conversion Routines ===
    constexpr auto INT32_64_CONVERSION        = 0x001;
    constexpr auto INT32_FLOAT64_CONVERSION   = 0x002;
 
    // === VM Command ===
-   constexpr auto VM_STR_COMMAND_MASK        = 0x100;
+   constexpr pos_t VM_STR_COMMAND_MASK       = 0x100;
 
-   constexpr auto VM_LOAD                    = 0x101;
+   constexpr pos_t VM_ENDOFTAPE              = 0x001;
+   constexpr pos_t VM_LOADARRAY              = 0x102;
+   constexpr pos_t VM_SETNAMESPACE           = 0x103;
+   constexpr pos_t VM_SETPACKAGEPATH         = 0x104;
+   constexpr pos_t VM_INIT                   = 0x005;
 }
 
 #endif

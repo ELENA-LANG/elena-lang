@@ -964,10 +964,11 @@ addr_t JITLinker :: resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectio
 
 inline ReferenceInfo retrieveConstantVMT(SectionInfo info)
 {
-   for (auto it = RelocationMap::Iterator(info.section->getReferences()); !it.eof(); ++it)
-   {
-      if ((*it) == (pos_t)-4) {
-         return { info.module, info.module->resolveReference(it.key()) };
+   if (info.module) {
+      for (auto it = RelocationMap::Iterator(info.section->getReferences()); !it.eof(); ++it) {
+         if ((*it) == (pos_t)-4) {
+            return { info.module, info.module->resolveReference(it.key()) };
+         }
       }
    }
 
@@ -1012,6 +1013,49 @@ addr_t JITLinker :: resolveConstantArray(ReferenceInfo referenceInfo, ref_t sect
    fixReferences(references, image);
 
    return vaddress;
+}
+
+addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo sectionInfo, ref_t sectionMask)
+{
+   // get target image & resolve virtual address
+   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   ReferenceInfo  vmtReferenceInfo;
+   VAddressMap    references({ 0, nullptr, 0, 0 });
+
+   vmtReferenceInfo = retrieveConstantVMT(sectionInfo);
+
+   int size = sectionInfo.section->length();
+
+   // get constant VMT reference
+   addr_t vmtVAddress = INVALID_ADDR;
+   if (!vmtReferenceInfo.referenceName.empty()) {
+      vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
+   }
+
+   // allocate object header
+   _compiler->allocateHeader(writer, vmtVAddress, size, true, _virtualMode);
+   addr_t vaddress = calculateVAddress(writer, mskRDataRef);
+
+   _mapper->mapReference(referenceInfo, vaddress, sectionMask);
+
+   JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
+   _compiler->writeDump(&helper, writer, &sectionInfo);
+
+   fixReferences(references, image);
+
+   return vaddress;
+}
+
+addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode)
+{
+   // resolve constant value
+   SectionInfo sectionInfo = _loader->getSection(referenceInfo, sectionMask, silentMode);
+   if (!sectionInfo.section)
+      return 0;
+
+   return resolveConstantDump(referenceInfo, sectionInfo, sectionMask);
 }
 
 addr_t JITLinker :: resolveName(ReferenceInfo referenceInfo, bool onlyPath)
@@ -1214,9 +1258,11 @@ addr_t JITLinker :: resolve(ustr_t referenceName, ref_t sectionMask, bool silent
       case mskRealLiteralRef:
          return resolve({ nullptr, referenceName }, sectionMask, silentMode);
       default:
+      {
          ReferenceInfo referenceInfo = _loader->retrieveReferenceInfo(referenceName, _forwardResolver);
 
          return resolve(referenceInfo, sectionMask, silentMode);
+      }
    }
 }
 
@@ -1263,4 +1309,9 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
       throw JITUnresolvedException(referenceInfo);
 
    return address; // !! temporal
+}
+
+addr_t JITLinker :: resolveTape(ustr_t referenceName, MemoryBase* tape)
+{
+   return resolveConstantDump({ referenceName }, { tape }, mskConstant);
 }

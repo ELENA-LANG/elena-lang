@@ -1,4 +1,5 @@
 #include "elenaconst.h"
+#include "vmcommon.h"
 
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
@@ -14,8 +15,6 @@
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
-
-#define ELENAVM_REVISION_NUMBER        0x0002
 
 #define STRINGIZE2(s) #s
 #define STRINGIZE(s) STRINGIZE2(s)

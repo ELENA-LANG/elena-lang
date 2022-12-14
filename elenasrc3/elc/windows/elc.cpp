@@ -6,7 +6,6 @@
 //                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#include <cstdarg>
 #include <windows.h>
 
 #include "elena.h"
@@ -26,6 +25,7 @@
 
 #include "messages.h"
 #include "constants.h"
+#include "windows/presenter.h"
 
 using namespace elena_lang;
 
@@ -63,22 +63,15 @@ typedef Win64NtImageFormatter     WinImageFormatter;
 
 #endif
 
-void print(const wchar_t* wstr, ...)
+// --- Presenter ---
+
+class Presenter : public WinConsolePresenter
 {
-   va_list argptr;
-   va_start(argptr, wstr);
+private:
+   Presenter() = default;
 
-   vwprintf(wstr, argptr);
-   va_end(argptr);
-   printf("\n");
-
-   fflush(stdout);
-}
-
-class Presenter : public PresenterBase
-{
 public:
-   ustr_t getMessage(int code)
+   ustr_t getMessage(int code) override
    {
       for (size_t i = 0; i < MessageLength; i++) {
          if (Messages[i].value1 == code)
@@ -95,80 +88,6 @@ public:
       return instance;
    }
 
-   void print(ustr_t msg, ustr_t arg) override
-   {
-      WideMessage wstr(msg);
-      WideMessage warg(arg);
-
-      ::print(wstr.str(), warg.str());
-   }
-   void print(ustr_t msg, ustr_t arg1, ustr_t arg2) override
-   {
-      WideMessage wstr(msg);
-      WideMessage warg1(arg1);
-      WideMessage warg2(arg2);
-
-      ::print(wstr.str(), warg1.str(), warg2.str());
-   }
-   void print(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr_t arg3) override
-   {
-      WideMessage wstr(msg);
-      WideMessage warg1(arg1);
-      WideMessage warg2(arg2);
-      WideMessage warg3(arg3);
-
-      ::print(wstr.str(), warg1.str(), warg2.str(), warg3.str());
-   }
-   void print(ustr_t msg, int arg1, int arg2, int arg3) override
-   {
-      WideMessage wstr(msg);
-
-      ::print(wstr.str(), arg1, arg2, arg3);
-   }
-   void printPath(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) override
-   {
-      WideMessage wstr(msg);
-      WideMessage warg4(arg4);
-
-      ::print(wstr.str(), arg1.str(), arg2, arg3, warg4.str());
-   }
-   void print(ustr_t msg, int arg1) override
-   {
-      WideMessage wstr(msg);
-
-      ::print(wstr.str(), arg1);
-   }
-   void print(ustr_t msg, int arg1, int arg2) override
-   {
-      WideMessage wstr(msg);
-
-      ::print(wstr.str(), arg1, arg2);
-   }
-   void printPath(ustr_t msg, path_t arg) override
-   {
-      WideMessage wstr(msg);
-
-      ::print(wstr.str(), arg.str());
-   }
-   void print(ustr_t msg) override
-   {
-      WideMessage wstr(msg);
-
-      ::print(wstr.str());
-   }
-   void print(ustr_t msg, ustr_t path, int col, int row, ustr_t s) override
-   {
-      WideMessage wstr(msg);
-      WideMessage wpath(path);
-      WideMessage ws(s);
-
-      ::print(wstr.str(), wpath.str(), row, col, ws.str());
-   }
-
-private:
-   Presenter() = default;
-
-public:
    Presenter(Presenter const&) = delete;
    void operator=(Presenter const&) = delete;
 
@@ -253,6 +172,13 @@ int main()
                      project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
                   }
                   break;
+               case 't':
+               {
+                  IdentifierString configName(argv[i] + 2);
+
+                  project.loadConfigByName(*appPath, *configName, true);
+                  break;
+               }
                case 'r':
                   cleanMode = true;
                   break;

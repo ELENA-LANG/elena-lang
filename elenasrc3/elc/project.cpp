@@ -370,6 +370,22 @@ void Project :: copySetting(ConfigFile& config, ConfigFile::Node& configRoot, us
    }
 }
 
+bool Project :: loadConfigByName(path_t configPath, ustr_t name, bool markAsLoaded)
+{
+   path_t relativePath = PathSetting(ProjectOption::Templates, name);
+   if (!relativePath.empty()) {
+      PathString baseConfigPath(configPath, relativePath);
+
+      if (loadConfig(*baseConfigPath, false)) {
+         if (markAsLoaded)
+            _loaded = true;
+
+         return true;
+      }
+   }
+   return false;
+}
+
 void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node& root)
 {
    if (!root.isNotFound()) {
@@ -380,12 +396,7 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
          DynamicString<char> key;
          baseConfig.readContent(key);
 
-         path_t relativePath = PathSetting(ProjectOption::Templates, key.str());
-         if (!relativePath.empty()) {
-            PathString baseConfigPath(configPath, relativePath);
-
-            loadConfig(*baseConfigPath, false);
-         }
+         loadConfigByName(configPath, key.str(), false);
       }
 
       loadSetting(config, root, NAMESPACE_KEY, _defaultNs);

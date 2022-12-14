@@ -563,7 +563,7 @@ int CompilingProcess :: build(ProjectBase& project,
 
       // Project Greetings
       _presenter->print(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()), 
-         getTargetTypeName(targetType));
+         getTargetTypeName(targetType, project.SystemTarget()));
 
       // Cleaning up
       _presenter->print(ELC_CLEANING);

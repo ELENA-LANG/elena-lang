@@ -42,6 +42,15 @@ namespace elena_lang
       ModuleBase* resolveIndirectWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
 
    public:
+      ustr_t Namespace() override
+      {
+         return *_namespace;
+      }
+      path_t RootPath() override
+      {
+         return *_rootPath;
+      }
+
       void setOutputPath(path_t path)
       {
          _outputPath.copy(path);

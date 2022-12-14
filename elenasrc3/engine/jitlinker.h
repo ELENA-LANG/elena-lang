@@ -183,11 +183,14 @@ namespace elena_lang
 
       mssg_t parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
 
+      addr_t resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo sectionInfo, ref_t sectionMask);
+
       addr_t resolveVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo);
       addr_t resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
       addr_t resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
       addr_t resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask);
       addr_t resolveConstantArray(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
+      addr_t resolveConstantDump(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
       addr_t resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sectionMask);
       addr_t resolveName(ReferenceInfo referenceInfo, bool onlyPath);
 
@@ -200,6 +203,8 @@ namespace elena_lang
       addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
 
    public:
+      addr_t resolveTape(ustr_t referenceName, MemoryBase* tape);
+
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 
       void prepare(JITCompilerBase* compiler);

@@ -75,6 +75,17 @@ namespace elena_lang
       }
    };
 
+   // --- ELENAMachine ---
+   class ELENAMachine
+   {
+   public:
+      int execute(SystemEnv* env, SymbolList* entryList);
+
+      ELENAMachine() = default;
+
+      virtual ~ELENAMachine() = default;
+   };
+
    // --- SystemRoutineProvider ---
    static class SystemRoutineProvider
    {

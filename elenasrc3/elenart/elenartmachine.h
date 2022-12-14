@@ -12,7 +12,7 @@
 namespace elena_lang
 {
    // --- ELENARTMachine ---
-   class ELENARTMachine
+   class ELENARTMachine : public ELENAMachine
    {
       void* mdata;
 

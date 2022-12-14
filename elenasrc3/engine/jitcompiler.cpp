@@ -2712,6 +2712,13 @@ void JITCompiler32 :: writeVariable(MemoryWriter& writer)
    writer.writeDWord(0);
 }
 
+void JITCompiler32 :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo)
+{
+   writer.write(sectionInfo->section->get(0), sectionInfo->section->length());
+
+   writer.align(4, 0);
+}
+
 void JITCompiler32 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode)
 {
    void* env = _preloaded.get(SYSTEM_ENV);
@@ -3105,4 +3112,11 @@ void JITCompiler64 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, 
    else {
       *(int64_t*)env = staticCounter;
    }
+}
+
+void JITCompiler64 :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo)
+{
+   writer.write(sectionInfo->section->get(0), sectionInfo->section->length());
+
+   writer.align(8, 0);
 }

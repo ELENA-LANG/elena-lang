@@ -264,6 +264,12 @@ namespace elena_lang
          section = nullptr;
          reference = 0;
       }
+      SectionInfo(MemoryBase* section)
+      {
+         this->module = nullptr;
+         this->section = section;
+         this->reference = 0;
+      }
    };
 
    struct ClassSectionInfo
@@ -308,6 +314,9 @@ namespace elena_lang
    class LibraryLoaderBase
    {
    public:
+      virtual ustr_t Namespace() = 0;
+      virtual path_t RootPath() = 0;
+
       virtual ReferenceInfo retrieveReferenceInfo(ModuleBase* module, ref_t reference, ref_t mask,
          ForwardResolverBase* forwardResolver) = 0;
       virtual ReferenceInfo retrieveReferenceInfo(ustr_t referenceName,
@@ -466,6 +475,7 @@ namespace elena_lang
       virtual void writeWideLiteral(MemoryWriter& writer, wstr_t value) = 0;
       virtual void writeChar32(MemoryWriter& writer, ustr_t value) = 0;
       virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
+      virtual void writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
       virtual void writeVariable(MemoryWriter& writer) = 0;
       virtual void writeMessage(MemoryWriter& writer, mssg_t message) = 0;
 
@@ -495,6 +505,26 @@ namespace elena_lang
       virtual void addSymbol(addr_t vaddress, addr_t position) = 0;
 
       virtual ~AddressMapperBase() = default;
+   };
+
+   // --- PresenterBase ----
+   class PresenterBase
+   {
+   public:
+      virtual ustr_t getMessage(int code) = 0;
+
+      virtual void print(ustr_t msg) = 0;
+      virtual void print(ustr_t msg, ustr_t arg) = 0;
+      virtual void print(ustr_t msg, ustr_t arg1, ustr_t arg2) = 0;
+      virtual void print(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr_t arg3) = 0;
+      virtual void print(ustr_t msg, int arg1) = 0;
+      virtual void print(ustr_t msg, int arg1, int arg2) = 0;
+      virtual void print(ustr_t msg, int arg1, int arg2, int arg3) = 0;
+      virtual void print(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
+      virtual void printPath(ustr_t msg, path_t arg) = 0;
+      virtual void printPath(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
+
+      virtual ~PresenterBase() = default;
    };
 
    // --- WideMessage ---

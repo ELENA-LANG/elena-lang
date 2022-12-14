@@ -47,6 +47,13 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
 
    linker.prepare(compiler);
 
+   if (_systemTarget == PlatformType::VMClient) {
+      MemoryDump tape;
+      createVMTape(&tape, loader->Namespace(), loader->RootPath());
+
+      linker.resolveTape(VM_TAPE, &tape);
+   }
+
    // resolve the program entry
    ustr_t entryName = resolver->resolveForward(SYSTEM_FORWARD);
    _entryPoint = entryName.empty() ? INVALID_POS : (pos_t)linker.resolve(entryName, mskSymbolRef, true);
@@ -70,13 +77,27 @@ inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command, ustr_t arg)
    rdataWriter.writeString(arg);
 }
 
-void TargetImage :: createVMTape(MemoryWriter& rdataWriter)
+inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command, path_t arg)
 {
-   addr_t tapeRef = rdataWriter.position();
+   IdentifierString ustrArg(arg);
 
-   mapReference(ReferenceInfo{ VM_TAPE }, tapeRef, mskConstArray);
+   rdataWriter.writeDWord(command);
+   rdataWriter.writeString(*ustrArg);
+}
 
-   addVMTapeEntry(rdataWriter, VM_LOAD, PROGRAM_ENTRY);
+inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command)
+{
+   rdataWriter.writeDWord(command);
+}
+
+void TargetImage :: createVMTape(MemoryBase* tape, ustr_t ns, path_t path)
+{
+   MemoryWriter tapeWriter(tape);
+
+   addVMTapeEntry(tapeWriter, VM_SETNAMESPACE, ns);
+   addVMTapeEntry(tapeWriter, VM_SETPACKAGEPATH, path);
+   addVMTapeEntry(tapeWriter, VM_INIT);
+   addVMTapeEntry(tapeWriter, VM_ENDOFTAPE);
 }
 
 void TargetImage :: prepareImage(ustr_t ns)
@@ -96,7 +117,6 @@ void TargetImage :: prepareImage(ustr_t ns)
          rdataWriter.write(ELENA_SIGNITURE, getlength_pos(ELENA_SIGNITURE));
          break;
    }
-   
 
    String<char, 4> number;
    number.appendInt(ENGINE_MAJOR_VERSION);
@@ -112,8 +132,4 @@ void TargetImage :: prepareImage(ustr_t ns)
    // save root namespace
    MemoryWriter debugWriter(getTargetDebugSection());
    debugWriter.writeString(ns);
-
-   if (_systemTarget == PlatformType::VMClient) {
-      createVMTape(rdataWriter);
-   }
 }

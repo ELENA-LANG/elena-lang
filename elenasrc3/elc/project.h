@@ -217,6 +217,8 @@ namespace elena_lang
 
       void addSource(ustr_t ns, path_t path);
 
+      bool loadConfigByName(path_t configPath, ustr_t name, bool markAsLoaded);
+
       bool loadConfig(path_t path, bool mainConfig);
 
       bool loadProject(path_t path);
