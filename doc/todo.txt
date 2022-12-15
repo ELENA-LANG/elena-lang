@@ -5,11 +5,10 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * elena vm : call vm entry point
-    * elena vm : implement elenavmmachine - loading vm tape
-    * ldoc : fixing
     * api functionality for existing classes : system'byteConvertor
     * ide : disable / enable the menu items, based on the model
+    * elena vm : implement elenavmmachine - loading vm tape
+    * ldoc : fixing
 
     ! api functionality for existing classes : system
     ! regression tests : all github issues (> 52)

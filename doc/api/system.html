@@ -23,20 +23,20 @@ ELENA&nbsp;Standard&nbsp;Library<br>6.0
 </STRONG>
 </DIV>
 </DIV>
-<A NAME="$inline1">
+<A NAME="BaseExtender">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
 system'</DIV>
-<H2 title="$inline1" class="title">$inline1</H2>
+<H2 title="BaseExtender" class="title">BaseExtender</H2>
 </DIV>
 <DIV CLASS="contentContainer">
 <DIV CLASS="description">
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">$inline1</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">BaseExtender</SPAN></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -45,14 +45,28 @@ public class <SPAN CLASS="typeNameLabel">$inline1</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Func#2&system@Exception&system@Object">'$auto'system@Func#2&system@Exception&system@Object</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'$inline1</LI>
+system'BaseExtender</LI>
 </UL>
 </LI>
 </UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>object</CODE>
+</TD>
+</TR>
+</TABLE>
 </LI>
 </UL>
 <!-- ========== METHOD SUMMARY =========== -->
@@ -67,9 +81,36 @@ system'$inline1</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#invoke(<SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN>)
+<CODE>equal(<SPAN CLASS="memberNameLink">arg1</SPAN> o)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toPrintable()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseExtender">BaseExtender</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseExtender">BaseExtender</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -125,7 +166,7 @@ system'BaseNumber</LI>
 <CODE>
 <i>get </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Negative</CODE>
+<CODE>typecast:Negative</CODE>
 <div class="block">
 Returns the negative value of a number</div>
 </TD>
@@ -227,7 +268,7 @@ Divides by the value;<br/>should be overridden</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BaseNumber">BaseNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseNumber">BaseNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -343,7 +384,7 @@ Returns true if the object value is less than a value of var; otherwise, false</
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BaseValue">BaseValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseValue">BaseValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -393,7 +434,7 @@ system'BaseVariable</LI>
 <CODE>
 <i>get abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Value</CODE>
+<CODE>typecast:Value</CODE>
 <div class="block">
 Returns the variable value;<br/>should be overridden</div>
 </TD>
@@ -403,7 +444,7 @@ Returns the variable value;<br/>should be overridden</div>
 <CODE>
 <i>set abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Value(<SPAN CLASS="memberNameLink">arg1</SPAN> o)
+<CODE>typecast:Value(<SPAN CLASS="memberNameLink">arg1</SPAN> o)
 </CODE>
 <div class="block">
 Set the variable value;<br/>should be overridden</div>
@@ -426,7 +467,7 @@ Set the variable value;<br/>should be overridden</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -497,7 +538,7 @@ system'BoolValue</LI>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MinValue</CODE>
+<CODE>typecast:MinValue</CODE>
 <div class="block">
 Returns the default value</div>
 </TD>
@@ -507,7 +548,7 @@ Returns the default value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>true</CODE>
+<CODE>typecast:true</CODE>
 <div class="block">
 Returns true value</div>
 </TD>
@@ -517,7 +558,7 @@ Returns true value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>false</CODE>
+<CODE>typecast:false</CODE>
 <div class="block">
 Returns false value.</div>
 </TD>
@@ -539,7 +580,7 @@ Returns false value.</div>
 <CODE>
 <i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Inverted</CODE>
+<CODE>typecast:Inverted</CODE>
 <div class="block">
 Inverts the value;<br/>has to be implemented</div>
 </TD>
@@ -658,7 +699,7 @@ Executes logical XOR operation;<br/>has to be implemented</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -713,7 +754,7 @@ system'BoolValue#false</LI>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Inverted</CODE>
+<CODE>typecast:Inverted</CODE>
 <div class="block">
 Always returns true</div>
 </TD>
@@ -889,7 +930,7 @@ system'BoolValue#true</LI>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Inverted</CODE>
+<CODE>typecast:Inverted</CODE>
 <div class="block">
 Always returns false.</div>
 </TD>
@@ -1131,7 +1172,7 @@ Creates the object with a specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;ByteNumber&gt;</SPAN>)
+<CODE>prop:typecast:M(<SPAN CLASS="memberNameLink">Reference&lt;ByteNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1140,7 +1181,7 @@ Creates the object with a specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;ByteNumber&gt;</SPAN>)
+<CODE>prop:typecast:M(<SPAN CLASS="memberNameLink">Reference&lt;ByteNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1161,7 +1202,7 @@ Creates the object with a specified value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MinValue</CODE>
+<CODE>typecast:MinValue</CODE>
 <div class="block">
 returns the minimal value (0)</div>
 </TD>
@@ -1171,7 +1212,7 @@ returns the minimal value (0)</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MaxValue</CODE>
+<CODE>typecast:MaxValue</CODE>
 <div class="block">
 Returns the maxial value (255)</div>
 </TD>
@@ -1193,7 +1234,7 @@ Returns the maxial value (255)</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>BInverted</CODE>
+<CODE>typecast:BInverted</CODE>
 <div class="block">
 bitwise inversion</div>
 </TD>
@@ -1765,7 +1806,7 @@ Returns the result of bitwise XOR operation</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the value as a short integer</div>
@@ -1776,7 +1817,7 @@ Returns the value as a short integer</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 <div class="block">
 returns the value as an integer</div>
@@ -1787,7 +1828,7 @@ returns the value as an integer</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN>)
 </CODE>
 <div class="block">
 returns the value as an unsigned integer</div>
@@ -1798,7 +1839,7 @@ returns the value as an unsigned integer</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the value as a long integer</div>
@@ -1809,7 +1850,7 @@ Returns the value as a long integer</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the value as a real number</div>
@@ -1853,7 +1894,7 @@ clones the value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1962,7 +2003,7 @@ Creates the object with specified numeric value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;CharValue&gt;</SPAN>)
+<CODE>prop:typecast:M(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1971,7 +2012,7 @@ Creates the object with specified numeric value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;CharValue&gt;</SPAN>)
+<CODE>prop:typecast:M(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1992,7 +2033,7 @@ Creates the object with specified numeric value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MinValue</CODE>
+<CODE>typecast:MinValue</CODE>
 <div class="block">
 Returns the minimal possible character value (0)</div>
 </TD>
@@ -2002,7 +2043,7 @@ Returns the minimal possible character value (0)</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MaxValue</CODE>
+<CODE>typecast:MaxValue</CODE>
 <div class="block">
 Returns the maximal possible character value (010FFFFh)</div>
 </TD>
@@ -2024,7 +2065,7 @@ Returns the maximal possible character value (010FFFFh)</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>system$$Value</CODE>
+<CODE>typecast:system$$Value</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2032,7 +2073,7 @@ Returns the maximal possible character value (010FFFFh)</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Length</CODE>
+<CODE>typecast:Length</CODE>
 <div class="block">
 Retuns the number of bytes to represent the symbol in UTF-8</div>
 </TD>
@@ -2042,7 +2083,7 @@ Retuns the number of bytes to represent the symbol in UTF-8</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>WideLength</CODE>
+<CODE>typecast:WideLength</CODE>
 <div class="block">
 Retuns the number of bytes to represent the symbol in UTF-16</div>
 </TD>
@@ -2165,7 +2206,7 @@ Clones the value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2174,7 +2215,7 @@ Clones the value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2183,7 +2224,7 @@ Clones the value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2192,7 +2233,7 @@ Clones the value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:system(<SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>prop:typecast:system(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2201,7 +2242,7 @@ Clones the value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop(<SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>prop:typecast(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2210,7 +2251,7 @@ Clones the value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:Wid(<SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>prop:typecast:Wid(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2306,7 +2347,7 @@ system'CriticalException</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#CriticalException">CriticalException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#CriticalException">CriticalException</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2402,7 +2443,7 @@ system'DivisionByZeroException</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#DivisionByZeroException">DivisionByZeroException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#DivisionByZeroException">DivisionByZeroException</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2537,7 +2578,7 @@ system'Exception</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2595,7 +2636,7 @@ system'Func</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2653,7 +2694,7 @@ system'Func1</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2743,7 +2784,7 @@ system'Handle</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2805,7 +2846,7 @@ system'IntBaseNumber</LI>
 <CODE>
 <i>get abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>BInverted</CODE>
+<CODE>typecast:BInverted</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2907,7 +2948,7 @@ Returns true if any of the mask bits are set</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntBaseNumber">IntBaseNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntBaseNumber">IntBaseNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3044,7 +3085,7 @@ Creates the object with specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>prop:typecast:M(<SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3053,7 +3094,7 @@ Creates the object with specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>prop:typecast:M(<SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3074,7 +3115,7 @@ Creates the object with specified value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MinValue</CODE>
+<CODE>typecast:MinValue</CODE>
 <div class="block">
 Creates the object with the minimal value</div>
 </TD>
@@ -3084,7 +3125,7 @@ Creates the object with the minimal value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MaxValue</CODE>
+<CODE>typecast:MaxValue</CODE>
 <div class="block">
 Creates the object with the maximal value</div>
 </TD>
@@ -3106,7 +3147,7 @@ Creates the object with the maximal value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Negative</CODE>
+<CODE>typecast:Negative</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3114,7 +3155,7 @@ Creates the object with the maximal value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>BInverted</CODE>
+<CODE>typecast:BInverted</CODE>
 <div class="block">
 Bitwise inversion</div>
 </TD>
@@ -3720,7 +3761,7 @@ Returns the result of bitwise XOR operation</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the byte value</div>
@@ -3731,7 +3772,7 @@ Returns the byte value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the value as a short integer</div>
@@ -3742,7 +3783,7 @@ Returns the value as a short integer</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the long integer</div>
@@ -3753,7 +3794,7 @@ Returns the long integer</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the real number</div>
@@ -3764,7 +3805,7 @@ Returns the real number</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the unsigned integer</div>
@@ -3826,7 +3867,7 @@ Returns true if any of the mask bits are set</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3848,6 +3889,177 @@ Returns true if any of the mask bits are set</div>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>mod(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> operand)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="KeyValue">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="KeyValue" class="title">KeyValue</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">KeyValue</SPAN><BR/>
+<I>A key - object pair<br/>Extends the object with a key property</I></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'KeyValue</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>key</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>value</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#KeyValue">KeyValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink">arg1</SPAN> key, <SPAN CLASS="memberNameLink">arg2</SPAN> value)
+</CODE>
+<div class="block">
+Creates a new object</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>typecast:Key</CODE>
+<div class="block">
+Returns the key</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>typecast:Value</CODE>
+<div class="block">
+Returns the value</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>typecast:Value(<SPAN CLASS="memberNameLink">arg1</SPAN> value)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink">arg1</SPAN> o)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toPrintable()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+<div class="block">
+Redirects the incoming messages to the object</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#KeyValue">KeyValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#KeyValue">KeyValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3968,7 +4180,7 @@ Creates the object with specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;LongNumber&gt;</SPAN>)
+<CODE>prop:typecast:M(<SPAN CLASS="memberNameLink">Reference&lt;LongNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3977,7 +4189,7 @@ Creates the object with specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;LongNumber&gt;</SPAN>)
+<CODE>prop:typecast:M(<SPAN CLASS="memberNameLink">Reference&lt;LongNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -3998,7 +4210,7 @@ Creates the object with specified value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MinValue</CODE>
+<CODE>typecast:MinValue</CODE>
 <div class="block">
 Returns the minimal value</div>
 </TD>
@@ -4008,7 +4220,7 @@ Returns the minimal value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MaxValue</CODE>
+<CODE>typecast:MaxValue</CODE>
 <div class="block">
 Returns the maximal value</div>
 </TD>
@@ -4030,7 +4242,7 @@ Returns the maximal value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Negative</CODE>
+<CODE>typecast:Negative</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -4038,7 +4250,7 @@ Returns the maximal value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>BInverted</CODE>
+<CODE>typecast:BInverted</CODE>
 <div class="block">
 Bitwise inversion</div>
 </TD>
@@ -4174,7 +4386,7 @@ Creates the object with specified value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns an integer value</div>
@@ -4185,7 +4397,7 @@ Returns an integer value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns an integer value</div>
@@ -4196,7 +4408,7 @@ Returns an integer value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns an integer value</div>
@@ -4207,7 +4419,7 @@ Returns an integer value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns an integer value</div>
@@ -4218,7 +4430,7 @@ Returns an integer value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns a real value</div>
@@ -4701,7 +4913,7 @@ Compares the value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -4809,7 +5021,7 @@ system'Message</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -4905,7 +5117,7 @@ system'MethodNotFoundException</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#MethodNotFoundException">MethodNotFoundException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#MethodNotFoundException">MethodNotFoundException</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -5001,7 +5213,7 @@ system'NilReferenceException</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#NilReferenceException">NilReferenceException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#NilReferenceException">NilReferenceException</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -5284,7 +5496,7 @@ system'OutOfMemoryException</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#OutOfMemoryException">OutOfMemoryException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#OutOfMemoryException">OutOfMemoryException</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -5437,7 +5649,7 @@ Creates the object with specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;RealNumber&gt;</SPAN>)
+<CODE>prop:typecast:M(<SPAN CLASS="memberNameLink">Reference&lt;RealNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -5446,7 +5658,7 @@ Creates the object with specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;RealNumber&gt;</SPAN>)
+<CODE>prop:typecast:M(<SPAN CLASS="memberNameLink">Reference&lt;RealNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -5455,7 +5667,7 @@ Creates the object with specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:NegativeI(<SPAN CLASS="memberNameLink">Reference&lt;RealNumber&gt;</SPAN>)
+<CODE>prop:typecast:NegativeI(<SPAN CLASS="memberNameLink">Reference&lt;RealNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -5464,7 +5676,7 @@ Creates the object with specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:PositiveI(<SPAN CLASS="memberNameLink">Reference&lt;RealNumber&gt;</SPAN>)
+<CODE>prop:typecast:PositiveI(<SPAN CLASS="memberNameLink">Reference&lt;RealNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -5473,7 +5685,7 @@ Creates the object with specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>p(<SPAN CLASS="memberNameLink">Reference&lt;RealNumber&gt;</SPAN>)
+<CODE>prop:typec(<SPAN CLASS="memberNameLink">Reference&lt;RealNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -5494,7 +5706,7 @@ Creates the object with specified value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MinValue</CODE>
+<CODE>typecast:MinValue</CODE>
 <div class="block">
 Returns the minimal value</div>
 </TD>
@@ -5504,7 +5716,7 @@ Returns the minimal value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MaxValue</CODE>
+<CODE>typecast:MaxValue</CODE>
 <div class="block">
 Returns the maximal value</div>
 </TD>
@@ -5514,7 +5726,7 @@ Returns the maximal value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>NegativeInfinity</CODE>
+<CODE>typecast:NegativeInfinity</CODE>
 <div class="block">
 Returns the negative infinity</div>
 </TD>
@@ -5524,7 +5736,7 @@ Returns the negative infinity</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>PositiveInfinity</CODE>
+<CODE>typecast:PositiveInfinity</CODE>
 <div class="block">
 Returns the positive infinity</div>
 </TD>
@@ -5534,7 +5746,7 @@ Returns the positive infinity</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>NaN</CODE>
+<CODE>typecast:NaN</CODE>
 <div class="block">
 Returns the positive infinity</div>
 </TD>
@@ -5556,7 +5768,7 @@ Returns the positive infinity</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Negative</CODE>
+<CODE>typecast:Negative</CODE>
 <div class="block">
 Negates the value</div>
 </TD>
@@ -5984,7 +6196,7 @@ Clones the value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -6005,7 +6217,7 @@ Clones the value</div>
 <CODE>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Integer</CODE>
+<CODE>typecast:Integer</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -6134,7 +6346,7 @@ creates the object with specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;ShortNumber&gt;</SPAN>)
+<CODE>prop:typecast:M(<SPAN CLASS="memberNameLink">Reference&lt;ShortNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -6143,7 +6355,7 @@ creates the object with specified value</div>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;ShortNumber&gt;</SPAN>)
+<CODE>prop:typecast:M(<SPAN CLASS="memberNameLink">Reference&lt;ShortNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -6164,7 +6376,7 @@ creates the object with specified value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MinValue</CODE>
+<CODE>typecast:MinValue</CODE>
 <div class="block">
 Returns the minimal value (-32768)</div>
 </TD>
@@ -6174,7 +6386,7 @@ Returns the minimal value (-32768)</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MaxValue</CODE>
+<CODE>typecast:MaxValue</CODE>
 <div class="block">
 Returns the maxial value (32767)</div>
 </TD>
@@ -6196,7 +6408,7 @@ Returns the maxial value (32767)</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>BInverted</CODE>
+<CODE>typecast:BInverted</CODE>
 <div class="block">
 bitwise inversion</div>
 </TD>
@@ -6770,7 +6982,7 @@ compares the value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the byte value</div>
@@ -6781,7 +6993,7 @@ Returns the byte value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the integer value</div>
@@ -6792,7 +7004,7 @@ Returns the integer value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the unsigned integer value</div>
@@ -6803,7 +7015,7 @@ Returns the unsigned integer value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the long integer value</div>
@@ -6814,7 +7026,7 @@ Returns the long integer value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the real number value</div>
@@ -6858,7 +7070,7 @@ clones the value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -6957,7 +7169,7 @@ system'String</LI>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Length</CODE>
+<CODE>typecast:Length</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -7031,7 +7243,7 @@ system'String</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -7040,7 +7252,7 @@ system'String</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop(<SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>prop:typecast(<SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -7118,7 +7330,7 @@ system'WideString</LI>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Length</CODE>
+<CODE>typecast:Length</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -7138,7 +7350,7 @@ system'WideString</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -7147,7 +7359,7 @@ system'WideString</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop(<SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>prop:typecast(<SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -7298,7 +7510,7 @@ system'UIntNumber</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;UIntNumber&gt;</SPAN>)
+<CODE>prop:typecast:M(<SPAN CLASS="memberNameLink">Reference&lt;UIntNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -7307,7 +7519,7 @@ system'UIntNumber</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>prop:M(<SPAN CLASS="memberNameLink">Reference&lt;UIntNumber&gt;</SPAN>)
+<CODE>prop:typecast:M(<SPAN CLASS="memberNameLink">Reference&lt;UIntNumber&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -7328,7 +7540,7 @@ system'UIntNumber</LI>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MinValue</CODE>
+<CODE>typecast:MinValue</CODE>
 <div class="block">
 Creates the object with the minimal value</div>
 </TD>
@@ -7338,7 +7550,7 @@ Creates the object with the minimal value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MaxValue</CODE>
+<CODE>typecast:MaxValue</CODE>
 <div class="block">
 Creates the object with the maximal value</div>
 </TD>
@@ -7360,7 +7572,7 @@ Creates the object with the maximal value</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>BInverted</CODE>
+<CODE>typecast:BInverted</CODE>
 <div class="block">
 Bitwise inversion</div>
 </TD>
@@ -7510,7 +7722,7 @@ Returns the literal presentation</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the value as a short integer</div>
@@ -7521,7 +7733,7 @@ Returns the value as a short integer</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the byte value</div>
@@ -7532,7 +7744,7 @@ Returns the byte value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -7541,7 +7753,7 @@ Returns the byte value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the long integer</div>
@@ -7552,7 +7764,7 @@ Returns the long integer</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the real number</div>
@@ -8124,7 +8336,7 @@ Returns the result of bitwise XOR operation</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8268,6 +8480,78 @@ Returns the result of bitwise XOR operation</div>
 </UL>
 <HR>
 </DIV>
+<A NAME="nilValue">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="nilValue" class="title">nilValue</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">nilValue</SPAN><BR/>
+<I>A nil value</I></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'nilValue</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink">arg1</SPAN> o)
+</CODE>
+<div class="block">
+Returns true if the specified object is nil.</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>typecast:#generic()
+</CODE>
+<div class="block">
+Returns nil<br/>Any typecasting message will be handled and nil value returned</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="Variable">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -8380,7 +8664,7 @@ Initializes a variable</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Value</CODE>
+<CODE>typecast:Value</CODE>
 <div class="block">
 Returns the variable value</div>
 </TD>
@@ -8390,7 +8674,7 @@ Returns the variable value</div>
 <CODE>
 <i>set </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Value(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
+<CODE>typecast:Value(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
 </CODE>
 <div class="block">
 Set the variable value</div>
@@ -8460,9 +8744,27 @@ Returns the value string representation</div>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>multiplyBy(<SPAN CLASS="memberNameLink">arg1</SPAN> val)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>divideBy(<SPAN CLASS="memberNameLink">arg1</SPAN> val)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
 </CODE>
 <div class="block">
 Returns the variable value</div>
@@ -8473,7 +8775,7 @@ Returns the variable value</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Variable">Variable</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink"><A HREF="system.html#Variable">Variable</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8522,7 +8824,7 @@ system'byteConvertor</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink">Reference&lt;ByteNumber&gt;</SPAN> retVal)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -8531,7 +8833,7 @@ system'byteConvertor</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n, <SPAN CLASS="memberNameLink">Reference&lt;ByteNumber&gt;</SPAN> retVal)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -8558,7 +8860,7 @@ system'byteConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;ByteNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8567,7 +8869,7 @@ system'byteConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;ByteNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8616,7 +8918,7 @@ system'shortConvertor</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink">Reference&lt;ShortNumber&gt;</SPAN> retVal)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -8634,7 +8936,7 @@ system'shortConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;ShortNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8683,7 +8985,7 @@ system'intConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>conv(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN> retVal)
+<CODE>conv(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -8692,7 +8994,7 @@ system'intConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>conv(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> l, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN> retVal)
+<CODE>conv(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> l, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -8701,7 +9003,7 @@ system'intConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>conv(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> l, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN> retVal)
+<CODE>conv(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> l, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -8764,7 +9066,7 @@ system'intConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8773,7 +9075,7 @@ system'intConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8782,7 +9084,7 @@ system'intConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8791,7 +9093,7 @@ system'intConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8800,7 +9102,7 @@ system'intConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8809,7 +9111,7 @@ system'intConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8876,7 +9178,7 @@ system'uintConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;UIntNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8885,7 +9187,7 @@ system'uintConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;UIntNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -8943,7 +9245,7 @@ system'longConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;LongNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -9010,7 +9312,7 @@ system'realConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;RealNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -9019,7 +9321,7 @@ system'realConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;RealNumber&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -9068,7 +9370,7 @@ system'charConvertor</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink">Reference&lt;CharValue&gt;</SPAN> retVal)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -9095,7 +9397,7 @@ system'charConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;CharValue&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -9104,7 +9406,7 @@ system'charConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;CharValue&gt;</SPAN>)
+<CODE>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -9198,7 +9500,7 @@ system'stringConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink">Array&lt;ByteNumber&gt;</SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN> index, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN> length)
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A><I>[]</I></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -9207,7 +9509,7 @@ system'stringConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>wr(<SPAN CLASS="memberNameLink">Array&lt;ByteNumber&gt;</SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN> index, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN> length)
+<CODE>wr(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A><I>[]</I></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -9243,7 +9545,7 @@ system'stringConvertor</LI>
 <CODE>
 <i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>skipTrailin(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink">Reference&lt;IntNumber&gt;</SPAN>)
+<CODE>skipTrailin(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -9370,7 +9672,7 @@ Initializes a variable</div>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink">T1</SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Value</CODE>
+<CODE>typecast:Value</CODE>
 <div class="block">
 Returns the variable value</div>
 </TD>
@@ -9380,7 +9682,7 @@ Returns the variable value</div>
 <CODE>
 <i>set </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Value(<SPAN CLASS="memberNameLink">T1</SPAN> val)
+<CODE>typecast:Value(<SPAN CLASS="memberNameLink">T1</SPAN> val)
 </CODE>
 <div class="block">
 Set the variable value</div>
@@ -9434,7 +9736,7 @@ Returns the value string representation</div>
 <CODE>
 <SPAN CLASS="memberNameLink">T1</SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink">T1</SPAN>)
 </CODE>
 <div class="block">
 Returns the variable value</div>
@@ -9445,7 +9747,7 @@ Returns the variable value</div>
 <CODE>
 <SPAN CLASS="memberNameLink">Reference&lt;T1&gt;</SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE>typecast:#cast(<SPAN CLASS="memberNameLink">Reference&lt;T1&gt;</SPAN>)
 </CODE>
 </TD>
 </TR>

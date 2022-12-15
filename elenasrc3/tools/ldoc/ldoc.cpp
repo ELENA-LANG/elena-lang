@@ -1258,6 +1258,7 @@ void DocGenerator :: loadClassPrefixes(ApiClassInfo* apiClassInfo, ref_t referen
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 {
    auto referenceName = _module->resolveReference(reference);
+
    if (isWeakReference(referenceName)) {
       IdentifierString prefix("public ");
       if (referenceName.startsWith(INTERNAL_PREFIX)) {
@@ -1298,6 +1299,10 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 
       ReferenceProperName properName(referenceName);
       ReferenceName fullName(*_rootNs, *properName);
+
+      // HOTFIX : skip internal class
+      if (properName[0] == '$')
+         return;
 
       ApiModuleInfo* moduleInfo = findModule(modules, *ns);
       if (!moduleInfo) {

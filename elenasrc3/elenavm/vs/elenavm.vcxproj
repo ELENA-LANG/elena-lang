@@ -187,6 +187,7 @@
     <ClInclude Include="..\..\engine\windows\presenter.h" />
     <ClInclude Include="..\..\engine\x86compiler.h" />
     <ClInclude Include="..\..\engine\x86helper.h" />
+    <ClInclude Include="..\..\engine\x86_64compiler.h" />
     <ClInclude Include="..\elenavmmachine.h" />
     <ClInclude Include="..\vmcommon.h" />
     <ClInclude Include="resource.h" />
@@ -213,13 +214,24 @@
     <ClCompile Include="..\..\engine\windows\pehelper.cpp" />
     <ClCompile Include="..\..\engine\windows\presenter.cpp" />
     <ClCompile Include="..\..\engine\windows\winroutines.cpp" />
-    <ClCompile Include="..\..\engine\x86compiler.cpp" />
+    <ClCompile Include="..\..\engine\x86compiler.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\engine\x86helper.cpp" />
     <ClCompile Include="..\..\engine\x86\x86routines.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\engine\x86_64compiler.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\elenavmmachine.cpp" />
     <ClCompile Include="..\windows\dllmain.cpp" />
