@@ -315,7 +315,6 @@ namespace elena_lang
    {
    public:
       virtual ustr_t Namespace() = 0;
-      virtual path_t RootPath() = 0;
 
       virtual ReferenceInfo retrieveReferenceInfo(ModuleBase* module, ref_t reference, ref_t mask,
          ForwardResolverBase* forwardResolver) = 0;

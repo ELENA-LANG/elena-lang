@@ -8,6 +8,40 @@
 
 using namespace elena_lang;
 
+#ifdef _M_IX86
+
+#include "x86compiler.h"
+
+constexpr auto CURRENT_PLATFORM = PlatformType::Win_x86;
+
+JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platform)
+{
+   switch (platform) {
+      case PlatformType::Win_x86:
+         return new X86JITCompiler();
+      default:
+         return nullptr;
+   }
+}
+
+#elif _M_X64
+
+#include "x86_64compiler.h"
+
+constexpr auto CURRENT_PLATFORM = PlatformType::Win_x86_64;
+
+JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platform)
+{
+   switch (platform) {
+      case PlatformType::Win_x86_64:
+         return new X86_64JITCompiler();
+      default:
+         return nullptr;
+   }
+}
+
+#endif
+
 static ELENAVMMachine* machine = nullptr;
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
@@ -41,7 +75,7 @@ public:
 
 void init()
 {
-   machine = new ELENAVMMachine(&Presenter::getInstance());
+   machine = new ELENAVMMachine(&Presenter::getInstance(), CURRENT_PLATFORM, createJITCompiler);
 }
 
 void printError(int errCode)

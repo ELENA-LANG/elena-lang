@@ -178,11 +178,15 @@
     <ClInclude Include="..\..\engine\bytecode.h" />
     <ClInclude Include="..\..\engine\core.h" />
     <ClInclude Include="..\..\engine\elenamachine.h" />
+    <ClInclude Include="..\..\engine\jitcompiler.h" />
+    <ClInclude Include="..\..\engine\jitlinker.h" />
     <ClInclude Include="..\..\engine\libman.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\windows\pehelper.h" />
     <ClInclude Include="..\..\engine\windows\presenter.h" />
+    <ClInclude Include="..\..\engine\x86compiler.h" />
+    <ClInclude Include="..\..\engine\x86helper.h" />
     <ClInclude Include="..\elenavmmachine.h" />
     <ClInclude Include="..\vmcommon.h" />
     <ClInclude Include="resource.h" />
@@ -201,12 +205,16 @@
     <ClCompile Include="..\..\engine\bytecode.cpp" />
     <ClCompile Include="..\..\engine\elenamachine.cpp" />
     <ClCompile Include="..\..\engine\gcroutines.cpp" />
+    <ClCompile Include="..\..\engine\jitcompiler.cpp" />
+    <ClCompile Include="..\..\engine\jitlinker.cpp" />
     <ClCompile Include="..\..\engine\libman.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\windows\pehelper.cpp" />
     <ClCompile Include="..\..\engine\windows\presenter.cpp" />
     <ClCompile Include="..\..\engine\windows\winroutines.cpp" />
+    <ClCompile Include="..\..\engine\x86compiler.cpp" />
+    <ClCompile Include="..\..\engine\x86helper.cpp" />
     <ClCompile Include="..\..\engine\x86\x86routines.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>

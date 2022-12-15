@@ -49,7 +49,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
 
    if (_systemTarget == PlatformType::VMClient) {
       MemoryDump tape;
-      createVMTape(&tape, loader->Namespace(), loader->RootPath());
+      createVMTape(&tape, loader->Namespace());
 
       linker.resolveTape(VM_TAPE, &tape);
    }
@@ -90,12 +90,11 @@ inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command)
    rdataWriter.writeDWord(command);
 }
 
-void TargetImage :: createVMTape(MemoryBase* tape, ustr_t ns, path_t path)
+void TargetImage :: createVMTape(MemoryBase* tape, ustr_t ns)
 {
    MemoryWriter tapeWriter(tape);
 
    addVMTapeEntry(tapeWriter, VM_SETNAMESPACE, ns);
-   addVMTapeEntry(tapeWriter, VM_SETPACKAGEPATH, path);
    addVMTapeEntry(tapeWriter, VM_INIT);
    addVMTapeEntry(tapeWriter, VM_ENDOFTAPE);
 }

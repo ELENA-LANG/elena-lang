@@ -46,10 +46,6 @@ namespace elena_lang
       {
          return *_namespace;
       }
-      path_t RootPath() override
-      {
-         return *_rootPath;
-      }
 
       void setOutputPath(path_t path)
       {
