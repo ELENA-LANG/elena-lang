@@ -591,10 +591,11 @@ void IDEWindow :: onIDEViewUpdate(bool forced)
 
          menu->enableMenuItemById(IDM_EDIT_CUT, status.hasDocument);
          menu->enableMenuItemById(IDM_EDIT_COPY, status.hasDocument);
-         menu->enableMenuItemById(IDM_EDIT_PASTE, status.hasDocument);
          menu->enableMenuItemById(IDM_EDIT_DELETE, status.hasDocument);
          menu->enableMenuItemById(IDM_EDIT_COMMENT, status.hasDocument);
       }
+
+      menu->enableMenuItemById(IDM_EDIT_PASTE, status.hasDocument);
    }
 
    if (forced || status.hasProject != _ideStatus.hasProject) {

@@ -15,46 +15,6 @@ using namespace elena_lang;
 
 // --- ELENARTMachine::ReferenceMapper ---
 
-void ELENAVMMachine::ReferenceMapper :: addLazyReference(LazyReferenceInfo info)
-{
-   throw InternalError(errVMBroken);
-}
-
-List<LazyReferenceInfo>::Iterator ELENAVMMachine::ReferenceMapper :: lazyReferences()
-{
-   throw InternalError(errVMBroken);
-}
-
-void ELENAVMMachine::ReferenceMapper :: mapAction(ustr_t actionName, ref_t actionRef, ref_t signRef)
-{
-   throw InternalError(errVMBroken);
-}
-
-ustr_t ELENAVMMachine::ReferenceMapper :: retrieveAction(ref_t actionRef, ref_t& signRef)
-{
-   throw InternalError(errVMBroken);
-}
-
-void ELENAVMMachine::ReferenceMapper :: mapReference(ReferenceInfo referenceInfo, addr_t address, ref_t sectionMask)
-{
-   throw InternalError(errVMBroken);
-}
-
-ustr_t ELENAVMMachine::ReferenceMapper :: retrieveReference(addr_t address, ref_t sectionMask)
-{
-   throw InternalError(errVMBroken);
-}
-
-addr_t ELENAVMMachine::ReferenceMapper :: resolveReference(ReferenceInfo referenceInfo, ref_t sectionMask)
-{
-   throw InternalError(errVMBroken);
-}
-
-ref_t ELENAVMMachine::ReferenceMapper :: resolveAction(ustr_t actionName, ref_t signRef)
-{
-   throw InternalError(errVMBroken);
-}
-
 // --- ELENARTMachine::Configuration ---
 
 void ELENAVMMachine::Configuration :: addForward(ustr_t forward, ustr_t referenceName)
@@ -69,7 +29,8 @@ ustr_t ELENAVMMachine::Configuration :: resolveExternal(ustr_t forward)
 
 ustr_t ELENAVMMachine::Configuration :: resolveForward(ustr_t forward)
 {
-   throw InternalError(errVMBroken);
+   // !! temporal
+   return nullptr;
 }
 
 ustr_t ELENAVMMachine::Configuration :: resolveWinApi(ustr_t forward)
@@ -192,61 +153,6 @@ void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, void* criricalHandle
 void ELENAVMMachine :: Exit(int exitCode)
 {
    __routineProvider.Exit(exitCode);
-}
-
-Section* ELENAVMMachine::getDataSection()
-{
-   throw InternalError(errVMBroken);
-}
-
-addr_t ELENAVMMachine::getDebugEntryPoint()
-{
-   throw InternalError(errVMBroken);
-}
-
-addr_t ELENAVMMachine::getEntryPoint()
-{
-   throw InternalError(errVMBroken);
-}
-
-Section* ELENAVMMachine::getImportSection()
-{
-   throw InternalError(errVMBroken);
-}
-
-Section* ELENAVMMachine::getMBDataSection()
-{
-   throw InternalError(errVMBroken);
-}
-
-Section* ELENAVMMachine::getMDataSection()
-{
-   throw InternalError(errVMBroken);
-}
-
-Section* ELENAVMMachine::getRDataSection()
-{
-   throw InternalError(errVMBroken);
-}
-
-Section* ELENAVMMachine::getStatSection()
-{
-   throw InternalError(errVMBroken);
-}
-
-Section* ELENAVMMachine::getTargetDebugSection()
-{
-   throw InternalError(errVMBroken);
-}
-
-Section* ELENAVMMachine::getTargetSection(ref_t targetMask)
-{
-   throw InternalError(errVMBroken);
-}
-
-Section* ELENAVMMachine::getTextSection()
-{
-   throw InternalError(errVMBroken);
 }
 
 AddressMap::Iterator ELENAVMMachine::externals()

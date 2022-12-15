@@ -1,8 +1,8 @@
 #include "elena.h"
-#include "elenavmmachine.h"
 // --------------------------------------------------------------------------------
 #include "langcommon.h"
 #include "windows/presenter.h"
+#include "windows/elenawinvmachine.h"
 
 #include <windows.h>
 
@@ -75,7 +75,7 @@ public:
 
 void init()
 {
-   machine = new ELENAVMMachine(&Presenter::getInstance(), CURRENT_PLATFORM, createJITCompiler);
+   machine = new ELENAWinVMMachine(&Presenter::getInstance(), CURRENT_PLATFORM, createJITCompiler);
 }
 
 void printError(int errCode)

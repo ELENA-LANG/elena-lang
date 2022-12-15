@@ -4,9 +4,45 @@ public singleton byteConvertor
 {
    convert(int n, ref byte retVal) : external<system'core_routines'__intToByte>;
 
+   convert(uint n, ref byte retVal) : external<system'core_routines'__uintToByte>;
+
+   convert(short n, ref byte retVal) : external<system'core_routines'__shortToByte>;
+
    convert(long n, ref byte retVal) : external<system'core_routines'__longToByte>;
 
+   byte convert(o)
+      = cast byte(o);
+
+   byte convert(BaseVariable v)
+      <= convert(*v);
+
+   byte convert(byte b)
+      = b;
+
+   byte convert(short s)
+   {
+      byte b;
+      self.convert(s, ref b);
+
+      ^ b;      
+   }
+
+   byte convert(char ch)
+   {
+      int n := ch;
+
+      ^ self.convert(n);
+   }
+
    byte convert(int n)
+   {
+      byte b;
+      self.convert(n, ref b);
+
+      ^ b;
+   }
+
+   byte convert(uint n)
    {
       byte b;
       self.convert(n, ref b);
@@ -21,6 +57,27 @@ public singleton byteConvertor
 
       ^ b;
    }
+
+   byte convert(real r)
+   {
+      int n := intConvertor.convert(r);
+
+      ^ self.convert(n);
+   }
+
+   byte convert(string s, int radix)
+   {
+      int n := intConvertor.convert(s, radix);
+
+      ^ self.convert(n);
+   }
+
+   byte convert(wide s, int radix)
+   {
+      int n := intConvertor.convert(s, radix);
+
+      ^ self.convert(n);
+   }
 }
 
 // --- shortConvertor ---
@@ -29,12 +86,73 @@ public singleton shortConvertor
 {
    convert(int n, ref short retVal) : external<system'core_routines'__intToShort>;
 
+   convert(uint n, ref short retVal) : external<system'core_routines'__uintToShort>;
+
+   convert(byte b, ref short retVal) : external<system'core_routines'__byteToShort>;
+
+   short convert(o)
+      = cast short(o);
+
+   short convert(BaseVariable v)
+      <= convert(*v);
+
+   short convert(byte b)
+   {
+      short s;
+      self.convert(b, ref s);
+
+      ^ s;
+   }   
+
    short convert(int n)
    {
-      short b;
-      self.convert(n, ref b);
+      short s;
+      self.convert(n, ref s);
 
-      ^ b;
+      ^ s;
+   }
+
+   short convert(uint n)
+   {
+      short s;
+      self.convert(n, ref s);
+
+      ^ s;
+   }
+
+   short convert(long l)
+   {
+      int n := intConvertor.convert(l);
+
+      ^ self.convert(n)
+   }
+
+   short convert(real r)
+   {
+      int n := intConvertor.convert(r);
+
+      ^ self.convert(n)
+   }
+
+   short convert(char ch)
+   {
+      int n := intConvertor.convert(ch);
+
+      ^ self.convert(n)
+   }
+
+   short convert(string s, int radix)
+   {
+      int n := intConvertor.convert(s, radix);
+
+      ^ self.convert(n)
+   }
+
+   short convert(wide s, int radix)
+   {
+      int n := intConvertor.convert(s, radix);
+
+      ^ self.convert(n)
    }
 }
 
@@ -45,6 +163,12 @@ public singleton intConvertor
    private convertChar(char ch, ref int retVal) : external<system'core_routines'__charToInt>;
    private convertLong(long l, ref int retVal) : external<system'core_routines'__longToInt>;
    private convertReal(real l, ref int retVal) : external<system'core_routines'__realToInt>;
+
+   int convert(o)
+      = cast int(o);
+
+   int convert(BaseVariable v)
+      <= convert(*v);
 
    int convert(byte b)
    {
@@ -99,6 +223,27 @@ public singleton intConvertor
 
       ^ val
    }
+
+   int convert(wide s, int radix)
+   {
+      int len := s.Length;
+      int val := 0;
+      for (int i := 0, i < len, i := i + 1) {
+         short c := s[i];
+         int ch := c;
+         ch := ch - 48;
+         if (ch >= radix) {
+            ch := ch - 49;
+         };
+         val := val * radix;
+         val := val + ch;
+      };
+
+      ^ val
+   }
+
+   int convert(uint n)
+      = new IntNumber(n);
 }
 
 // --- uintConvertor ---

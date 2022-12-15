@@ -11,6 +11,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 #include "jitlinker.h" 
+#include "codescope.h" 
 
 namespace elena_lang
 {
@@ -21,24 +22,24 @@ namespace elena_lang
    class ELENAVMMachine : public ELENAMachine, public ImageProviderBase
    {
    public:
-      class ReferenceMapper : public ReferenceMapperBase
+      class VMReferenceMapper : public ReferenceMapper
       {
       public:
-         void addLazyReference(LazyReferenceInfo info) override;
+         //void addLazyReference(LazyReferenceInfo info) override;
 
-         List<LazyReferenceInfo>::Iterator lazyReferences() override;
+         //List<LazyReferenceInfo>::Iterator lazyReferences() override;
 
-         void mapAction(ustr_t actionName, ref_t actionRef, ref_t signRef) override;
+         //void mapAction(ustr_t actionName, ref_t actionRef, ref_t signRef) override;
 
-         void mapReference(ReferenceInfo referenceInfo, addr_t address, ref_t sectionMask) override;
+         //void mapReference(ReferenceInfo referenceInfo, addr_t address, ref_t sectionMask) override;
 
-         ref_t resolveAction(ustr_t actionName, ref_t signRef) override;
+         //ref_t resolveAction(ustr_t actionName, ref_t signRef) override;
 
-         addr_t resolveReference(ReferenceInfo referenceInfo, ref_t sectionMask) override;
+         //addr_t resolveReference(ReferenceInfo referenceInfo, ref_t sectionMask) override;
 
-         ustr_t retrieveAction(ref_t actionRef, ref_t& signRef) override;
+         //ustr_t retrieveAction(ref_t actionRef, ref_t& signRef) override;
 
-         ustr_t retrieveReference(addr_t address, ref_t sectionMask) override;
+         //ustr_t retrieveReference(addr_t address, ref_t sectionMask) override;
       };
 
       class Configuration : public ForwardResolverBase
@@ -82,19 +83,6 @@ namespace elena_lang
       void init(JITLinker& jitLinker);
 
       AddressMap::Iterator externals() override;
-
-      Section* getDataSection() override;
-      Section* getImportSection() override;
-      Section* getMBDataSection() override;
-      Section* getMDataSection() override;
-      Section* getRDataSection() override;
-      Section* getStatSection() override;
-      Section* getTargetDebugSection() override;
-      Section* getTargetSection(ref_t targetMask) override;
-      Section* getTextSection() override;
-
-      addr_t getDebugEntryPoint() override;
-      addr_t getEntryPoint() override;
 
    public:
       void startSTA(SystemEnv* env, void* tape, void* criricalHandler);

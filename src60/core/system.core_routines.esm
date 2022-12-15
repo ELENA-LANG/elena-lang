@@ -248,6 +248,26 @@ procedure __intToByte
 
 end
 
+procedure __uintToByte
+
+  peek       sp:1
+  load
+  and        n:0FFh
+  peek       sp:2
+  save
+
+end
+
+procedure __shortToByte
+
+  peek       sp:1
+  load
+  and        n:0FFh
+  peek       sp:2
+  save
+
+end
+
 procedure __realTrunc (self, r1, r2)
 
   xflush     sp:0
@@ -326,6 +346,26 @@ procedure __realToInt (self, r,retVal)
 end
 
 procedure __intToShort
+
+  peek       sp:1
+  load
+  and        n:0FFFFh
+  peek       sp:2
+  save
+
+end
+
+procedure __uintToShort
+
+  peek       sp:1
+  load
+  and        n:0FFFFh
+  peek       sp:2
+  save
+
+end
+
+procedure __byteToShort
 
   peek       sp:1
   load

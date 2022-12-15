@@ -176,6 +176,7 @@
     <ClInclude Include="..\..\common\paths.h" />
     <ClInclude Include="..\..\common\ustring.h" />
     <ClInclude Include="..\..\engine\bytecode.h" />
+    <ClInclude Include="..\..\engine\codescope.h" />
     <ClInclude Include="..\..\engine\core.h" />
     <ClInclude Include="..\..\engine\elenamachine.h" />
     <ClInclude Include="..\..\engine\jitcompiler.h" />
@@ -190,6 +191,8 @@
     <ClInclude Include="..\..\engine\x86_64compiler.h" />
     <ClInclude Include="..\elenavmmachine.h" />
     <ClInclude Include="..\vmcommon.h" />
+    <ClInclude Include="..\windows\elenawinvmachine.h" />
+    <ClInclude Include="..\windows\winprocess.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -204,6 +207,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\engine\bytecode.cpp" />
+    <ClCompile Include="..\..\engine\codescope.cpp" />
     <ClCompile Include="..\..\engine\elenamachine.cpp" />
     <ClCompile Include="..\..\engine\gcroutines.cpp" />
     <ClCompile Include="..\..\engine\jitcompiler.cpp" />
@@ -235,6 +239,8 @@
     </ClCompile>
     <ClCompile Include="..\elenavmmachine.cpp" />
     <ClCompile Include="..\windows\dllmain.cpp" />
+    <ClCompile Include="..\windows\elenawinvmachine.cpp" />
+    <ClCompile Include="..\windows\winprocess.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="elenavm.rc" />

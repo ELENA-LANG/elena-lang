@@ -5,10 +5,10 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * api functionality for existing classes : system'byteConvertor
-    * ide : disable / enable the menu items, based on the model
     * elena vm : implement elenavmmachine - loading vm tape
     * ldoc : fixing
+    * api functionality for existing classes : system'uintConvertor
+    * ide - ask to save on close
 
     ! api functionality for existing classes : system
     ! regression tests : all github issues (> 52)
@@ -28,7 +28,6 @@ In development:
     * ide - review on change events : after editor change / debug step
     * ide : debugger - step into / over / stop / run / compile
     * ide : debugger - on debugging / debugger stopped
-    * ide - ask to save on close
     * ide - tab
     * ide - close project
     * ide - close single file project
