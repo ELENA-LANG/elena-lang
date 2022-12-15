@@ -638,7 +638,7 @@ ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, VAddress
 
    ref_t resolvedSignature = _mapper->resolveAction(*signatureName, 0) & ~SIGNATURE_MASK;
    if (resolvedSignature == 0) {
-      Section* messageBody = _imageProvider->getMBDataSection();
+      MemoryBase* messageBody = _imageProvider->getMBDataSection();
       MemoryWriter writer(messageBody);
 
       resolvedSignature = writer.position();
@@ -1229,7 +1229,7 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
 void JITLinker :: complete(JITCompilerBase* compiler)
 {
    // fix message body references
-   Section* mbSection = _imageProvider->getMBDataSection();
+   MemoryBase* mbSection = _imageProvider->getMBDataSection();
    VAddressMap mbReferences({});
    _mapper->forEachLazyReference<VAddressMap*>(&mbReferences, [](VAddressMap* mbReferences, LazyReferenceInfo info)
    {

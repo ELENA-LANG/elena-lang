@@ -8,22 +8,26 @@
 #define ELENAWINVMMACHINE_H
 
 #include "elenavmmachine.h"
+#include "windows/winsection.h"
 
 namespace elena_lang
 {
 
 class ELENAWinVMMachine : public ELENAVMMachine
 {
+   WinImageSection _text, _mdata, _mbdata, _rdata, _data, _stat, _debug;
+
 public:
-   Section* getDataSection() override;
-   Section* getImportSection() override;
-   Section* getMBDataSection() override;
-   Section* getMDataSection() override;
-   Section* getRDataSection() override;
-   Section* getStatSection() override;
-   Section* getTargetDebugSection() override;
-   Section* getTargetSection(ref_t targetMask) override;
-   Section* getTextSection() override;
+   MemoryBase* getDataSection() override;
+   MemoryBase* getImportSection() override;
+   MemoryBase* getMBDataSection() override;
+   MemoryBase* getMDataSection() override;
+   MemoryBase* getRDataSection() override;
+   MemoryBase* getStatSection() override;
+   MemoryBase* getTargetDebugSection() override;
+   MemoryBase* getTextSection() override;
+
+   MemoryBase* getTargetSection(ref_t targetMask) override;
 
    addr_t getDebugEntryPoint() override;
    addr_t getEntryPoint() override;
@@ -35,4 +39,3 @@ public:
 }
 
 #endif
-

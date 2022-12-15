@@ -192,7 +192,7 @@
     <ClInclude Include="..\elenavmmachine.h" />
     <ClInclude Include="..\vmcommon.h" />
     <ClInclude Include="..\windows\elenawinvmachine.h" />
-    <ClInclude Include="..\windows\winprocess.h" />
+    <ClInclude Include="..\windows\winsection.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -240,7 +240,7 @@
     <ClCompile Include="..\elenavmmachine.cpp" />
     <ClCompile Include="..\windows\dllmain.cpp" />
     <ClCompile Include="..\windows\elenawinvmachine.cpp" />
-    <ClCompile Include="..\windows\winprocess.cpp" />
+    <ClCompile Include="..\windows\winsection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="elenavm.rc" />

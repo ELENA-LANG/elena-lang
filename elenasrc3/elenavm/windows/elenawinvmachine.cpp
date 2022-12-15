@@ -18,7 +18,7 @@ ELENAWinVMMachine :: ELENAWinVMMachine(PresenterBase* presenter, PlatformType pl
    
 }
 
-Section* ELENAWinVMMachine::getDataSection()
+MemoryBase* ELENAWinVMMachine::getDataSection()
 {
    throw InternalError(errVMBroken);
 }
@@ -33,42 +33,42 @@ addr_t ELENAWinVMMachine::getEntryPoint()
    throw InternalError(errVMBroken);
 }
 
-Section* ELENAWinVMMachine::getImportSection()
+MemoryBase* ELENAWinVMMachine::getImportSection()
 {
    throw InternalError(errVMBroken);
 }
 
-Section* ELENAWinVMMachine::getMBDataSection()
+MemoryBase* ELENAWinVMMachine::getMBDataSection()
 {
    throw InternalError(errVMBroken);
 }
 
-Section* ELENAWinVMMachine::getMDataSection()
+MemoryBase* ELENAWinVMMachine::getMDataSection()
 {
    throw InternalError(errVMBroken);
 }
 
-Section* ELENAWinVMMachine::getRDataSection()
+MemoryBase* ELENAWinVMMachine::getRDataSection()
 {
    throw InternalError(errVMBroken);
 }
 
-Section* ELENAWinVMMachine::getStatSection()
+MemoryBase* ELENAWinVMMachine::getStatSection()
 {
    throw InternalError(errVMBroken);
 }
 
-Section* ELENAWinVMMachine::getTargetDebugSection()
+MemoryBase* ELENAWinVMMachine::getTargetDebugSection()
 {
    throw InternalError(errVMBroken);
 }
 
-Section* ELENAWinVMMachine::getTargetSection(ref_t targetMask)
+MemoryBase* ELENAWinVMMachine::getTargetSection(ref_t targetMask)
 {
    throw InternalError(errVMBroken);
 }
 
-Section* ELENAWinVMMachine::getTextSection()
+MemoryBase* ELENAWinVMMachine::getTextSection()
 {
    throw InternalError(errVMBroken);
 }

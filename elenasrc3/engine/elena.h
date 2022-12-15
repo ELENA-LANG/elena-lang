@@ -159,16 +159,16 @@ namespace elena_lang
    public:
       virtual AddressMap::Iterator externals() = 0;
 
-      virtual Section* getTextSection() = 0;
-      virtual Section* getRDataSection() = 0;
-      virtual Section* getMDataSection() = 0;
-      virtual Section* getMBDataSection() = 0;
-      virtual Section* getImportSection() = 0;
-      virtual Section* getDataSection() = 0;
-      virtual Section* getStatSection() = 0;
+      virtual MemoryBase* getTextSection() = 0;
+      virtual MemoryBase* getRDataSection() = 0;
+      virtual MemoryBase* getMDataSection() = 0;
+      virtual MemoryBase* getMBDataSection() = 0;
+      virtual MemoryBase* getImportSection() = 0;
+      virtual MemoryBase* getDataSection() = 0;
+      virtual MemoryBase* getStatSection() = 0;
 
-      virtual Section* getTargetSection(ref_t targetMask) = 0;
-      virtual Section* getTargetDebugSection() = 0;
+      virtual MemoryBase* getTargetSection(ref_t targetMask) = 0;
+      virtual MemoryBase* getTargetDebugSection() = 0;
 
       virtual addr_t getEntryPoint() = 0;
       virtual addr_t getDebugEntryPoint() = 0;

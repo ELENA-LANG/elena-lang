@@ -77,8 +77,8 @@ struct ImageSectionHeader
 
 struct ImageItem
 {
-   Section* section;
-   bool     isAligned;
+   MemoryBase* section;
+   bool        isAligned;
 };
 
 struct ImageSections
