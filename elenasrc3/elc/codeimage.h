@@ -40,7 +40,7 @@ namespace elena_lang
       pos_t              _entryPoint;
       pos_t              _debugEntryPoint;
 
-      void createVMTape(MemoryBase* tape, ustr_t ns);
+      void createVMTape(MemoryBase* tape, ustr_t ns, ForwardResolverBase* resolver);
       void prepareImage(ustr_t ns);
 
    public:

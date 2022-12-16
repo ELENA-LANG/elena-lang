@@ -87,31 +87,15 @@ namespace elena_lang
       Section _debug;
 
    public:
-      Section* getTextSection() override;
-      Section* getRDataSection() override;
-      Section* getImportSection() override;
-      Section* getDataSection() override;
-      Section* getStatSection() override;
-      Section* getMDataSection() override;
-      Section* getMBDataSection() override;
+      MemoryBase* getTextSection() override;
+      MemoryBase* getRDataSection() override;
+      MemoryBase* getImportSection() override;
+      MemoryBase* getDataSection() override;
+      MemoryBase* getStatSection() override;
+      MemoryBase* getMDataSection() override;
+      MemoryBase* getMBDataSection() override;
 
-      Section* getTargetDebugSection() override;
-
-      Section* getTargetSection(ref_t targetMask) override
-      {
-         switch (targetMask) {
-            case mskCodeRef:
-               return getTextSection();
-            case mskRDataRef:
-               return getRDataSection();
-            case mskDataRef:
-               return getDataSection();
-            case mskStatDataRef:
-               return getStatSection();
-            default:
-               return nullptr;
-         }
-      }
+      MemoryBase* getTargetDebugSection() override;
 
       ImageProvider() :
          _text(), _mdata(), _mbdata(), _rdata(),

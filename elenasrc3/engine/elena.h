@@ -167,7 +167,22 @@ namespace elena_lang
       virtual MemoryBase* getDataSection() = 0;
       virtual MemoryBase* getStatSection() = 0;
 
-      virtual MemoryBase* getTargetSection(ref_t targetMask) = 0;
+      virtual MemoryBase* getTargetSection(ref_t targetMask)
+      {
+         switch (targetMask) {
+            case mskCodeRef:
+               return getTextSection();
+            case mskRDataRef:
+               return getRDataSection();
+            case mskDataRef:
+               return getDataSection();
+            case mskStatDataRef:
+               return getStatSection();
+            default:
+               return nullptr;
+         }
+      }
+
       virtual MemoryBase* getTargetDebugSection() = 0;
 
       virtual addr_t getEntryPoint() = 0;
@@ -249,6 +264,8 @@ namespace elena_lang
       virtual ustr_t resolveForward(ustr_t forward) = 0;
       virtual ustr_t resolveExternal(ustr_t forward) = 0;
       virtual ustr_t resolveWinApi(ustr_t forward) = 0;
+
+      virtual void forEachForward(void* arg, void(*feedback)(void* arg, ustr_t key, ustr_t value)) = 0;
    };
 
    // --- ModuleLoaderBase ---

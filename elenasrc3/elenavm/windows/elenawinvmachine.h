@@ -13,9 +13,17 @@
 namespace elena_lang
 {
 
+constexpr auto TEXT_MAX_SIZE     = 0x500000;
+constexpr auto RDATA_MAX_SIZE    = 0x500000;
+constexpr auto DATA_MAX_SIZE     = 0x001000;
+constexpr auto STAT_MAX_SIZE     = 0x010000;
+constexpr auto MDATA_MAX_SIZE    = 0x100000;
+constexpr auto MBDATA_MAX_SIZE   = 0x100000;
+constexpr auto DEBUG_MAX_SIZE    = 0x500000;
+
 class ELENAWinVMMachine : public ELENAVMMachine
 {
-   WinImageSection _text, _mdata, _mbdata, _rdata, _data, _stat, _debug;
+   WinImageSection _text, _rdata, _data, _stat, _mdata, _mbdata, _debug;
 
 public:
    MemoryBase* getDataSection() override;
@@ -26,8 +34,6 @@ public:
    MemoryBase* getStatSection() override;
    MemoryBase* getTargetDebugSection() override;
    MemoryBase* getTextSection() override;
-
-   MemoryBase* getTargetSection(ref_t targetMask) override;
 
    addr_t getDebugEntryPoint() override;
    addr_t getEntryPoint() override;

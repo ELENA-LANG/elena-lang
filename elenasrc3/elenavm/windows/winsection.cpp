@@ -13,32 +13,100 @@ using namespace elena_lang;
 
 // --- WinImageSection ---
 
-void* WinImageSection::get(pos_t position) const
+WinImageSection :: WinImageSection(pos_t size, bool writeAccess, bool executeAccess, pos_t allocated)
 {
-   throw InternalError(errVMBroken);
+   _size = size;
+   _allocated = _used = 0;
+
+   _section = ::VirtualAlloc(nullptr, size, MEM_RESERVE, getProtectedMode(writeAccess, executeAccess));
+   ::GetSystemInfo(&_sysInfo);
+
+   if (allocated != 0)
+      allocate(allocated);
 }
 
-bool WinImageSection::insert(pos_t position, const void* s, pos_t length)
+int WinImageSection :: getProtectedMode(bool writeAccess, bool executeAccess)
 {
-   throw InternalError(errVMBroken);
+   int mode = PAGE_READONLY;
+   if (executeAccess) {
+      mode = writeAccess ? PAGE_EXECUTE_READWRITE : PAGE_EXECUTE_READ;
+   }
+   else if (writeAccess) {
+      mode = PAGE_EXECUTE_READ;
+   }
+
+   return mode;
 }
 
-pos_t WinImageSection::length() const
+bool WinImageSection :: allocate(pos_t size)
 {
-   throw InternalError(errVMBroken);
+   if (_allocated + size > _size)
+      return false;
+
+   size_t blockSize = align(size, _sysInfo.dwPageSize);
+
+   LPVOID retVal = ::VirtualAlloc((LPVOID)((uintptr_t)_section + _allocated), blockSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+   if (retVal == nullptr)
+      return false;
+
+   _allocated += blockSize;
+
+   return true;
 }
 
-bool WinImageSection::read(pos_t position, void* s, pos_t length)
+void* WinImageSection :: get(pos_t position) const
 {
-   throw InternalError(errVMBroken);
+   return (void*)((uintptr_t)_section + position);
 }
 
-void WinImageSection::trim(pos_t position)
+bool WinImageSection :: insert(pos_t position, const void* s, pos_t length)
 {
-   throw InternalError(errVMBroken);
+   if (_allocated - _used < length) {
+      if (!allocate(length))
+         return false;
+   }
+
+   memmove((LPVOID)((uintptr_t)_section + position + length), (LPVOID)((uintptr_t)_section + position), _used - position - length);
+   memcpy((LPVOID)((uintptr_t)_section + position), s, length);
+
+   return true;
 }
 
-bool WinImageSection::write(pos_t position, const void* s, pos_t length)
+pos_t WinImageSection :: length() const
 {
-   throw InternalError(errVMBroken);
+   return _used;
+}
+
+bool WinImageSection :: read(pos_t position, void* s, pos_t length)
+{
+   if (position < _used && _used >= position + length) {
+      memcpy(s, (LPVOID)((uintptr_t)_section + position), length);
+
+      return true;
+   }
+   else return false;
+}
+
+void WinImageSection :: trim(pos_t size)
+{
+   _used = size;
+}
+
+bool WinImageSection :: write(pos_t position, const void* s, pos_t length)
+{
+   size_t newSize = position + length;
+
+   // check if the operation insert data to the end
+   if (newSize > _used) {
+      if (newSize > _allocated) {
+         if (!allocate(length))
+            return false;
+      }
+
+      _used = newSize;
+   }
+
+   memcpy((LPVOID)((size_t)_section + position), s, length);
+
+   return true;
 }

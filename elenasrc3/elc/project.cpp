@@ -256,7 +256,7 @@ void Project :: loadSetting(ConfigFile& config, ConfigFile::Node& configRoot, us
    }
 }
 
-void Project::loadTargetType(ConfigFile& config, ConfigFile::Node& root)
+void Project :: loadTargetType(ConfigFile& config, ConfigFile::Node& root)
 {
    // read target type; merge it with platform if required
    ConfigFile::Node targetType = config.selectNode(root, PLATFORMTYPE_KEY);
@@ -518,5 +518,13 @@ void Project :: prepare()
       PathString path(*_projectPath, _projectName.str());
 
       addPathSetting(ProjectOption::TargetPath, *path);
+   }
+}
+
+void Project :: forEachForward(void* arg, void (* feedback)(void* arg, ustr_t key, ustr_t value))
+{
+   // list forwards
+   for (auto f_it = _forwards.start(); !f_it.eof(); ++f_it) {
+      feedback(arg, f_it.key(), *f_it);
    }
 }

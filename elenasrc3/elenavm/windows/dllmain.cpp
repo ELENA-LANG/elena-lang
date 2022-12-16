@@ -91,7 +91,7 @@ void printError(int errCode)
          printf("ELENAVM: not initialized");
          break;
       default:
-         printf("ELENAVM: Unknown error %x\n", errCode);
+         printf("ELENAVM: Unknown error %n\n", errCode);
          break;
    }
 }

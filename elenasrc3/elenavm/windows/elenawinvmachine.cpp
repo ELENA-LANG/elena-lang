@@ -13,14 +13,15 @@ using namespace elena_lang;
 
 ELENAWinVMMachine :: ELENAWinVMMachine(PresenterBase* presenter, PlatformType platform, 
    JITCompilerBase*(* jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
-      : ELENAVMMachine(presenter, platform, jitCompilerFactory)
+      : ELENAVMMachine(presenter, platform, jitCompilerFactory),
+         _text(TEXT_MAX_SIZE, false, true),
+         _rdata(RDATA_MAX_SIZE, false, false),
+         _data(DATA_MAX_SIZE, true, false),
+         _stat(STAT_MAX_SIZE, true, false),
+         _mdata(MDATA_MAX_SIZE, false, false),
+         _mbdata(MBDATA_MAX_SIZE, false, false),
+         _debug(DEBUG_MAX_SIZE, true, false)
 {
-   
-}
-
-MemoryBase* ELENAWinVMMachine::getDataSection()
-{
-   throw InternalError(errVMBroken);
 }
 
 addr_t ELENAWinVMMachine::getDebugEntryPoint()
@@ -38,37 +39,37 @@ MemoryBase* ELENAWinVMMachine::getImportSection()
    throw InternalError(errVMBroken);
 }
 
-MemoryBase* ELENAWinVMMachine::getMBDataSection()
+MemoryBase* ELENAWinVMMachine :: getMBDataSection()
 {
-   throw InternalError(errVMBroken);
+   return &_mbdata;
 }
 
-MemoryBase* ELENAWinVMMachine::getMDataSection()
+MemoryBase* ELENAWinVMMachine :: getDataSection()
 {
-   throw InternalError(errVMBroken);
+   return &_data;
 }
 
-MemoryBase* ELENAWinVMMachine::getRDataSection()
+MemoryBase* ELENAWinVMMachine :: getMDataSection()
 {
-   throw InternalError(errVMBroken);
+   return &_mdata;
 }
 
-MemoryBase* ELENAWinVMMachine::getStatSection()
+MemoryBase* ELENAWinVMMachine :: getRDataSection()
 {
-   throw InternalError(errVMBroken);
+   return &_rdata;
 }
 
-MemoryBase* ELENAWinVMMachine::getTargetDebugSection()
+MemoryBase* ELENAWinVMMachine :: getStatSection()
 {
-   throw InternalError(errVMBroken);
+   return &_stat;
 }
 
-MemoryBase* ELENAWinVMMachine::getTargetSection(ref_t targetMask)
+MemoryBase* ELENAWinVMMachine :: getTargetDebugSection()
 {
-   throw InternalError(errVMBroken);
+   return &_debug;
 }
 
-MemoryBase* ELENAWinVMMachine::getTextSection()
+MemoryBase* ELENAWinVMMachine :: getTextSection()
 {
-   throw InternalError(errVMBroken);
+   return &_text;
 }

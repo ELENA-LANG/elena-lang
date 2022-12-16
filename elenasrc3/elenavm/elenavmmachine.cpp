@@ -81,20 +81,20 @@ void* ELENAVMMachine :: evaluateVMTape(MemoryReader& reader)
          strArg = reader.getString(nullptr);
 
       switch (command) {
-         case VM_SETNAMESPACE:
+         case VM_SETNAMESPACE_CMD:
             _libraryProvider.setNamespace(strArg);
             break;
-         case VM_SETPACKAGEPATH:
+         case VM_SETPACKAGEPATH_CMD:
          {
             PathString pathArg(strArg);
 
             _libraryProvider.setRootPath(*pathArg);
             break;
          }
-         case VM_INIT:
+         case VM_INIT_CMD:
             init(jitLinker);
             break;
-         case VM_ENDOFTAPE:
+         case VM_ENDOFTAPE_CMD:
             eop = true;
             break;
          default:

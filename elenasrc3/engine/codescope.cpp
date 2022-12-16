@@ -185,42 +185,42 @@ void ReferenceMapper :: addLazyReference(LazyReferenceInfo info)
 
 // --- ImageProvider ---
 
-Section* ImageProvider :: getTextSection()
+MemoryBase* ImageProvider :: getTextSection()
 {
    return &_text;
 }
 
-Section* ImageProvider :: getMDataSection()
+MemoryBase* ImageProvider :: getMDataSection()
 {
    return &_mdata;
 }
 
-Section* ImageProvider :: getRDataSection()
+MemoryBase* ImageProvider :: getRDataSection()
 {
    return &_rdata;
 }
 
-Section* ImageProvider :: getImportSection()
+MemoryBase* ImageProvider :: getImportSection()
 {
    return &_import;
 }
 
-Section* ImageProvider :: getDataSection()
+MemoryBase* ImageProvider :: getDataSection()
 {
    return &_data;
 }
 
-Section* ImageProvider::getStatSection()
+MemoryBase* ImageProvider::getStatSection()
 {
    return &_stat;
 }
 
-Section* ImageProvider :: getMBDataSection()
+MemoryBase* ImageProvider :: getMBDataSection()
 {
    return &_mbdata;
 }
 
-Section* ImageProvider :: getTargetDebugSection()
+MemoryBase* ImageProvider :: getTargetDebugSection()
 {
    return &_debug;
 }
