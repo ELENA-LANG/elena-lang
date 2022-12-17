@@ -193,6 +193,7 @@
     <ClInclude Include="..\..\engine\x86compiler.h" />
     <ClInclude Include="..\..\engine\x86helper.h" />
     <ClInclude Include="..\..\engine\x86_64compiler.h" />
+    <ClInclude Include="..\..\engine\xmlprojectbase.h" />
     <ClInclude Include="..\elenavmmachine.h" />
     <ClInclude Include="..\vmcommon.h" />
     <ClInclude Include="..\windows\elenawinvmachine.h" />
@@ -220,7 +221,6 @@
     <ClCompile Include="..\..\engine\jitlinker.cpp" />
     <ClCompile Include="..\..\engine\libman.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
-    <ClCompile Include="..\..\engine\projectbase.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\windows\pehelper.cpp" />
     <ClCompile Include="..\..\engine\windows\presenter.cpp" />
@@ -244,6 +244,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\engine\xmlprojectbase.cpp" />
     <ClCompile Include="..\elenavmmachine.cpp" />
     <ClCompile Include="..\windows\dllmain.cpp" />
     <ClCompile Include="..\windows\elenawinvmachine.cpp" />

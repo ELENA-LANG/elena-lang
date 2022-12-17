@@ -48,7 +48,7 @@ static ELENAVMMachine* machine = nullptr;
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
-void loadDLLPath(PathString rootPath, HMODULE hModule)
+void loadDLLPath(PathString& rootPath, HMODULE hModule)
 {
    TCHAR path[MAX_PATH + 1];
 
@@ -107,7 +107,7 @@ void printError(int errCode)
          printf("ELENAVM: not initialized");
          break;
       default:
-         printf("ELENAVM: Unknown error %n\n", errCode);
+         printf("ELENAVM: Unknown error %d\n", errCode);
          break;
    }
 }

@@ -242,35 +242,6 @@ void Project :: loadTargetType(ConfigFile& config, ConfigFile::Node& root)
    }
 }
 
-void Project :: loadPathCollection(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath,
-                                   ProjectOption collectionKey, path_t configPath)
-{
-   DynamicString<char> path;
-
-   ConfigFile::Collection collection;
-   if(config.select(configRoot, xpath, collection)) {
-      auto collectionNode = _root.findChild(collectionKey);
-      if (collectionNode == ProjectOption::None)
-         collectionNode = _root.appendChild(collectionKey);
-
-      for (auto it = collection.start(); !it.eof(); ++it) {
-         ConfigFile::Node node = *it;
-
-         ProjectNode fileNode = collectionNode.appendChild(ProjectOption::FileKey, _paths.count() + 1);
-
-         // read the key
-         if (node.readAttribute("key", path)) {
-            fileNode.appendChild(ProjectOption::Key, path.str());
-         }
-
-         // read the path
-         node.readContent(path);
-         PathString filePath(configPath, path.str());
-         _paths.add((*filePath).clone());
-      }
-   }
-}
-
 void Project::loadKeyCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath, ProjectOption collectionKey,
    ProjectOption itemKey, ustr_t prefix)
 {

@@ -21,21 +21,25 @@ using namespace elena_lang;
 class ELENAVMConfiguration : public XmlProjectBase
 {
 protected:
-   void loadConfig(ConfigFile::Node root)
+   void loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node root)
    {
-      
+      loadPathCollection(config, root, PRIMITIVE_CATEGORY,
+         ProjectOption::Primitives, configPath);
    }
 
    bool loadConfig(path_t path)
    {
       ConfigFile config;
       if (config.load(path, FileEncoding::UTF8)) {
+         PathString configPath;
+         configPath.copySubPath(path, false);
+
          ConfigFile::Node root = config.selectRootNode();
          // select platform configuration
          ConfigFile::Node platformRoot = getPlatformRoot(config, _platform);
 
-         loadConfig(root);
-         loadConfig(platformRoot);
+         loadConfig(config, *configPath, root);
+         loadConfig(config, *configPath, platformRoot);
 
          return true;
       }
@@ -87,6 +91,24 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _presenter = presenter;
 
    _configuration = new ELENAVMConfiguration(platform, configPath);
+
+   _settings.autoLoadMode = _configuration->BoolSetting(ProjectOption::ClassSymbolAutoLoad);
+
+   imageInfo.codeAlignment,
+      imageInfo.coreSettings,
+      true,
+      imageInfo.autoClassSymbol
+
+
+
+   
+
+   _settings.codeAlignment = _codeAlignment;
+   imageInfo.autoClassSymbol = project.BoolSetting(ProjectOption::ClassSymbolAutoLoad);
+   imageInfo.coreSettings.mgSize = project.IntSetting(ProjectOption::GCMGSize, _defaultCoreSettings.mgSize);
+   imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);
+   imageInfo.ns = project.StringSetting(ProjectOption::Namespace);
+
 
    _compiler = jitCompilerFactory(&_libraryProvider, platform);
 }

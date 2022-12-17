@@ -34,9 +34,6 @@ namespace elena_lang
 
       void loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot);
 
-      void loadPathCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath, 
-         ProjectOption collectionKey, path_t configPath);
-
       void loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
 
       void loadKeyCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath,
