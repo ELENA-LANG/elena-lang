@@ -9,6 +9,8 @@
 #ifndef CLICONST
 #define CLICONST
 
+#include "langcommon.h"
+
 namespace elena_lang
 {
    #define ELC_REVISION_NUMBER               0x0172
@@ -28,65 +30,9 @@ namespace elena_lang
 
    constexpr auto ELC_HELP_INFO              = "elena-cli {source-file+}";
 
-   // --- Configuration xpaths ---
-   constexpr auto WIN_X86_KEY                = "Win_x86";
-   constexpr auto WIN_X86_64_KEY             = "Win_x64";
-   constexpr auto LINUX_X86_KEY              = "Linux_I386";
-   constexpr auto LINUX_X86_64_KEY           = "Linux_AMD64";
-   constexpr auto LINUX_PPC64le_KEY          = "Linux_PPC64le";
-   constexpr auto LINUX_ARM64_KEY            = "Linux_ARM64";
-   constexpr auto LIBRARY_KEY                = "Library";
-   constexpr auto CONSOLE_KEY                = "STA Console";
-   constexpr auto VM_CONSOLE_KEY             = "VM STA Console";
-
-   constexpr auto CONFIG_ROOT                = "configuration";
-   constexpr auto PLATFORM_CATEGORY          = "configuration/platform";
-   constexpr auto TEMPLATE_CATEGORY          = "templates/*";
-   constexpr auto PRIMITIVE_CATEGORY         = "primitives/*";
-   constexpr auto FORWARD_CATEGORY           = "forwards/*";
-   constexpr auto EXTERNAL_CATEGORY          = "externals/*";
-   constexpr auto WINAPI_CATEGORY            = "winapi/*";
-   constexpr auto REFERENCE_CATEGORY         = "references/*";
-   constexpr auto MODULE_CATEGORY            = "files/*";
-   constexpr auto FILE_CATEGORY              = "include/*";
-
-   constexpr auto LIB_PATH                   = "project/libpath";
-   constexpr auto OUTPUT_PATH                = "project/output";
-   constexpr auto TARGET_PATH                = "project/executable";
-   constexpr auto PROJECT_TEMPLATE           = "project/template";
-   constexpr auto NAMESPACE_KEY              = "project/namespace";
-   constexpr auto DEBUGMODE_PATH             = "project/debuginfo";
-   constexpr auto FILE_PROLOG                = "project/prolog";
-   constexpr auto FILE_EPILOG                = "project/epilog";
-
-   constexpr auto PLATFORMTYPE_KEY           = "system/platform";
-
-   constexpr auto MGSIZE_PATH                = "linker/mgsize";
-   constexpr auto YGSIZE_PATH                = "linker/ygsize";
-
    constexpr auto SYNTAX_FILE                = "syntax60.dat";
 
    constexpr auto VA_ALIGNMENT               = 0x08;
-
-   inline ustr_t getPlatformName(PlatformType type)
-   {
-      switch (type) {
-         case PlatformType::Win_x86:
-            return WIN_X86_KEY;
-         case PlatformType::Win_x86_64:
-            return WIN_X86_64_KEY;
-         case PlatformType::Linux_x86:
-            return LINUX_X86_KEY;
-         case PlatformType::Linux_x86_64:
-            return LINUX_X86_64_KEY;
-         case PlatformType::Linux_PPC64le:
-            return LINUX_PPC64le_KEY;
-         case PlatformType::Linux_ARM64:
-            return LINUX_ARM64_KEY;
-         default:
-            return nullptr;
-      }
-   }
 
    inline ustr_t getTargetTypeName(PlatformType type, PlatformType system)
    {

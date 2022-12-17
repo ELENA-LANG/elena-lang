@@ -390,7 +390,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
    buildSyntaxTree(moduleScope, syntaxTree, false);
 }
 
-void CompilingProcess :: configurate(ProjectBase& project)
+void CompilingProcess :: configurate(Project& project)
 {
    project.prepare();
 
@@ -470,7 +470,7 @@ void CompilingProcess :: compile(ProjectBase& project,
    _presenter->print(ELC_SUCCESSFUL_COMPILATION);
 }
 
-void CompilingProcess :: link(ProjectBase& project, LinkerBase& linker)
+void CompilingProcess :: link(Project& project, LinkerBase& linker)
 {
    _presenter->print(ELC_LINKING);
 
@@ -539,7 +539,7 @@ void CompilingProcess :: cleanUp(ProjectBase& project)
    }
 }
 
-int CompilingProcess :: clean(ProjectBase& project)
+int CompilingProcess :: clean(Project& project)
 {
    configurate(project);
 
@@ -548,7 +548,7 @@ int CompilingProcess :: clean(ProjectBase& project)
    return 0;
 }
 
-int CompilingProcess :: build(ProjectBase& project,
+int CompilingProcess :: build(Project& project,
    LinkerBase& linker,
    pos_t defaultStackAlignment,
    pos_t defaultRawStackAlignment,

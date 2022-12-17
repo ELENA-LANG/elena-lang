@@ -14,6 +14,7 @@
 #include "compiler.h"
 #include "parser.h"
 #include "derivation.h"
+#include "project.h"
 
 namespace elena_lang
 {
@@ -88,24 +89,24 @@ namespace elena_lang
          int minimalArgList,
          bool withDebug);
 
-      void configurate(ProjectBase& project);
+      void configurate(Project& project);
       void cleanUp(ProjectBase& project);
       void compile(ProjectBase& project, 
          pos_t defaultStackAlignment, 
          pos_t defaultRawStackAlignment,
          pos_t defaultEHTableEntrySize,
          int minimalArgList);
-      void link(ProjectBase& project, LinkerBase& linker);
+      void link(Project& project, LinkerBase& linker);
 
    public:
       void greeting();
-      int build(ProjectBase& project, 
+      int build(Project& project, 
          LinkerBase& linker, 
          pos_t defaultStackAlignment, 
          pos_t defaultRawStackAlignment,
          pos_t defaultEHTableEntrySize,
          int minimalArgList);
-      int clean(ProjectBase& project);
+      int clean(Project& project);
 
       CompilingProcess(PathString& appPath, path_t prologName, path_t epilogName,
          PresenterBase* presenter, ErrorProcessor* errorProcessor,

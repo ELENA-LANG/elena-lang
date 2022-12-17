@@ -8,6 +8,8 @@
 
 using namespace elena_lang;
 
+constexpr auto CONFIG_FILE = "elenavm60.cfg";
+
 #ifdef _M_IX86
 
 #include "x86compiler.h"
@@ -46,6 +48,16 @@ static ELENAVMMachine* machine = nullptr;
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
+void loadDLLPath(PathString rootPath, HMODULE hModule)
+{
+   TCHAR path[MAX_PATH + 1];
+
+   ::GetModuleFileName(hModule, path, MAX_PATH);
+
+   rootPath.copySubPath(path, true);
+   rootPath.lower();
+}
+
 // --- Presenter ---
 
 class Presenter : public WinConsolePresenter
@@ -73,9 +85,13 @@ public:
    ~Presenter() override = default;
 };
 
-void init()
+void init(HMODULE hModule)
 {
-   machine = new ELENAWinVMMachine(&Presenter::getInstance(), CURRENT_PLATFORM, createJITCompiler);
+   PathString rootPath;
+   loadDLLPath(rootPath, hModule);
+   rootPath.combine(CONFIG_FILE);
+
+   machine = new ELENAWinVMMachine(*rootPath, &Presenter::getInstance(), CURRENT_PLATFORM, createJITCompiler);
 }
 
 void printError(int errCode)
@@ -149,7 +165,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     switch (ul_reason_for_call)
     {
        case DLL_PROCESS_ATTACH:
-          init();
+          init(hModule);
           break;
        case DLL_THREAD_ATTACH:
        case DLL_THREAD_DETACH:

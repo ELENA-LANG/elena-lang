@@ -11,6 +11,7 @@
 #include "config.h"
 #include "ldocconst.h"
 #include "ldoc.h"
+#include "langcommon.h"
 #include "windows/presenter.h"
 
 using namespace elena_lang;

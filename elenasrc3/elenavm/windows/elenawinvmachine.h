@@ -38,7 +38,7 @@ public:
    addr_t getDebugEntryPoint() override;
    addr_t getEntryPoint() override;
 
-   ELENAWinVMMachine(PresenterBase* presenter, PlatformType platform,
+   ELENAWinVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
       JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType));
 };
 

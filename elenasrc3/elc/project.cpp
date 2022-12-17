@@ -43,7 +43,6 @@ path_t Project :: PathSetting(ProjectOption option, ustr_t key) const
 
 path_t Project :: PathSetting(ProjectOption option) const
 {
-   int fileIndex = 0;
    switch (option) {
       case ProjectOption::BasePath:
          return *_basePath;
@@ -52,13 +51,10 @@ path_t Project :: PathSetting(ProjectOption option) const
       case ProjectOption::TargetPath:
       case ProjectOption::OutputPath:
       case ProjectOption::LibPath:
-         fileIndex = _root.findChild(option).arg.value;
-         break;
+         return XmlProjectBase::PathSetting(option);
       default:
          return nullptr;
    }
-
-   return _paths.get(fileIndex);
 }
 
 ustr_t Project :: StringSetting(ProjectOption option) const
@@ -67,21 +63,8 @@ ustr_t Project :: StringSetting(ProjectOption option) const
       case ProjectOption::Namespace:
          return *_defaultNs;
       default:
-      {
-         ProjectNode node = _root.findChild(option);
-
-         return node.identifier();
-      }
+         return XmlProjectBase::StringSetting(option);
    }
-}
-
-bool Project :: BoolSetting(ProjectOption option, bool defValue) const
-{
-   ustr_t val = StringSetting(option);
-   if (val.empty())
-      return defValue;
-
-   return val == "-1";
 }
 
 void Project :: addBoolSetting(ProjectOption option, bool value)
@@ -95,17 +78,6 @@ void Project :: addIntSetting(ProjectOption option, int value)
    valStr.appendInt(value);
 
    _root.appendChild(option, valStr.str());
-}
-
-int Project :: IntSetting(ProjectOption option, int defValue) const
-{
-   ustr_t val = StringSetting(option);
-   if (!val.empty()) {
-      int intValue = StrConvertor::toInt(val, 10);
-
-      return intValue;
-   }
-   else return defValue;
 }
 
 ustr_t Project :: resolveKey(ProjectOption category, ProjectOption item, ustr_t key)
@@ -125,7 +97,7 @@ PlatformType Project :: Platform()
    return _platform & PlatformType::PlatformMask;
 }
 
-PlatformType Project::TargetType()
+PlatformType Project :: TargetType()
 {
    return _platform & PlatformType::TargetTypeMask;
 }
@@ -432,15 +404,8 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
 
 void Project :: loadConfig(ConfigFile& config, path_t configPath)
 {
-   ustr_t key = getPlatformName(_platform);
-
    ConfigFile::Node root = config.selectRootNode();
-
-   // select platform configuration
-   ConfigFile::Node platformRoot = config.selectNode<ustr_t>(PLATFORM_CATEGORY, key, [](ustr_t key, ConfigFile::Node& node)
-   {
-      return node.compareAttribute("key", key);
-   });
+   ConfigFile::Node platformRoot = getPlatformRoot(config, _platform);
 
    // load common project settings
    loadConfig(config, configPath, root);

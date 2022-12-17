@@ -42,34 +42,15 @@ namespace elena_lang
          //ustr_t retrieveReference(addr_t address, ref_t sectionMask) override;
       };
 
-      class Configuration : public ForwardResolverBase
-      {
-      public:
-         JITLinkerSettings settings;
-         PlatformType      platform;
-
-         void addForward(ustr_t forward, ustr_t referenceName) override;
-
-         ustr_t resolveExternal(ustr_t forward) override;
-
-         ustr_t resolveForward(ustr_t forward) override;
-
-         ustr_t resolveWinApi(ustr_t forward) override;
-
-         Configuration(PlatformType platform)
-            : platform(platform)
-         {
-            
-         }
-      };
-
    private:
-      bool              _initialized;
-      LibraryProvider   _libraryProvider;
-      PresenterBase*    _presenter;
-      ReferenceMapper   _mapper;
-      Configuration     _configuration;
-      JITCompilerBase*  _compiler;
+      bool                 _initialized;
+      LibraryProvider      _libraryProvider;
+      PresenterBase*       _presenter;
+      ReferenceMapper      _mapper;
+      JITLinkerSettings    _settings;
+
+      ForwardResolverBase* _configuration;
+      JITCompilerBase*     _compiler;
 
       int interprete(SystemEnv* env, void* tape, pos_t size, void* criricalHandler);
 
@@ -89,10 +70,12 @@ namespace elena_lang
 
       void Exit(int exitCode);
 
-      ELENAVMMachine(PresenterBase* presenter, PlatformType platform, 
+      ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform, 
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType));
       virtual ~ELENAVMMachine()
       {
+         freeobj(_configuration);
+         freeobj(_compiler);
       }
    };
 }
