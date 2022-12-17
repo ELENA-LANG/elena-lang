@@ -11,9 +11,10 @@
 
 using namespace elena_lang;
 
-ELENAWinVMMachine :: ELENAWinVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform, 
+ELENAWinVMMachine :: ELENAWinVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
+   int codeAlignment, JITSettings gcSettings,
    JITCompilerBase*(* jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
-      : ELENAVMMachine(configPath, presenter, platform, jitCompilerFactory),
+      : ELENAVMMachine(configPath, presenter, platform, codeAlignment, gcSettings, jitCompilerFactory),
          _text(TEXT_MAX_SIZE, false, true),
          _rdata(RDATA_MAX_SIZE, false, false),
          _data(DATA_MAX_SIZE, true, false),

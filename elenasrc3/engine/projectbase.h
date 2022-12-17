@@ -11,7 +11,6 @@
 
 #include "elena.h"
 #include "config.h"
-#include "tree.h"
 
 namespace elena_lang
 {

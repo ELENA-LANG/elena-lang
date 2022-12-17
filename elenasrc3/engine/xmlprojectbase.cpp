@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------
 
 #include "xmlprojectbase.h"
+#include "langcommon.h"
 
 using namespace elena_lang;
 
@@ -46,7 +47,7 @@ int XmlProjectBase::IntSetting(ProjectOption option, int defValue) const
    else return defValue;
 }
 
-XmlProjectBase::XmlProjectBase(PlatformType platform)
+XmlProjectBase :: XmlProjectBase(PlatformType platform)
    : _paths(nullptr), _forwards(nullptr)
 {
    _platform = platform;
@@ -57,7 +58,7 @@ XmlProjectBase::XmlProjectBase(PlatformType platform)
    _root = writer.CurrentNode();
 }
 
-ConfigFile::Node XmlProjectBase::getPlatformRoot(ConfigFile& config, PlatformType platform)
+ConfigFile::Node XmlProjectBase :: getPlatformRoot(ConfigFile& config, PlatformType platform)
 {
    ustr_t key = getPlatformName(platform);
 
@@ -70,7 +71,7 @@ ConfigFile::Node XmlProjectBase::getPlatformRoot(ConfigFile& config, PlatformTyp
    return platformRoot;
 }
 
-void XmlProjectBase::loadPathCollection(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath,
+void XmlProjectBase :: loadPathCollection(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath,
    ProjectOption collectionKey, path_t configPath)
 {
    DynamicString<char> path;

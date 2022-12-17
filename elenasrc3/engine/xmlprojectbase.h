@@ -10,6 +10,7 @@
 #define XMLPROJECTBASE_H
 
 #include "projectbase.h"
+#include "tree.h"
 
 namespace elena_lang
 {

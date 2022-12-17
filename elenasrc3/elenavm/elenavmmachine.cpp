@@ -10,7 +10,7 @@
 #include "langcommon.h"
 #include "vmcommon.h"
 #include "jitlinker.h"
-#include "projectbase.h"
+#include "xmlprojectbase.h"
 
 using namespace elena_lang;
 
@@ -84,7 +84,8 @@ public:
 
 // --- ELENARTMachine ---
 
-ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
+ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform, 
+   int codeAlignment, JITSettings gcSettings,
    JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
 {
    _initialized = false;
@@ -93,22 +94,25 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _configuration = new ELENAVMConfiguration(platform, configPath);
 
    _settings.autoLoadMode = _configuration->BoolSetting(ProjectOption::ClassSymbolAutoLoad);
+   _settings.virtualMode = false;
+   _settings.alignment = codeAlignment;
+   _settings.jitSettings.mgSize = _configuration->IntSetting(ProjectOption::GCMGSize, gcSettings.mgSize);
+   _settings.jitSettings.ygSize = _configuration->IntSetting(ProjectOption::GCYGSize, gcSettings.ygSize);
 
-   imageInfo.codeAlignment,
-      imageInfo.coreSettings,
-      true,
-      imageInfo.autoClassSymbol
+   // load primitives
+   auto path_it = _configuration->allocPrimitiveIterator();
+   while (!path_it->eof()) {
+      IdentifierString key;
+      path_it->loadKey(key);
 
+      if ((*key).compare(CORE_ALIAS)) {
+         _libraryProvider.addCorePath(**path_it);
+      }
+      else _libraryProvider.addPrimitivePath(*key, **path_it);
 
-
-   
-
-   _settings.codeAlignment = _codeAlignment;
-   imageInfo.autoClassSymbol = project.BoolSetting(ProjectOption::ClassSymbolAutoLoad);
-   imageInfo.coreSettings.mgSize = project.IntSetting(ProjectOption::GCMGSize, _defaultCoreSettings.mgSize);
-   imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);
-   imageInfo.ns = project.StringSetting(ProjectOption::Namespace);
-
+      ++(*path_it);
+   }
+   freeobj(path_it);
 
    _compiler = jitCompilerFactory(&_libraryProvider, platform);
 }
@@ -192,10 +196,10 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, void* c
 
    void* entryList = evaluateVMTape(reader);
 
-   resumeVM(env, criricalHandler);
-
    if (!entryList)
       throw InternalError(errVMNotExecuted);
+
+   resumeVM(env, criricalHandler);
 
    return execute(env, (SymbolList*)entryList);
 }

@@ -7,11 +7,11 @@
 #ifndef ELENAVMMACHINE_H
 #define ELENAVMMACHINE_H
 
-#include "vmcommon.h"
 #include "libman.h"
 #include "elenamachine.h"
 #include "jitlinker.h" 
 #include "codescope.h" 
+#include "projectbase.h"
 
 namespace elena_lang
 {
@@ -49,7 +49,7 @@ namespace elena_lang
       ReferenceMapper      _mapper;
       JITLinkerSettings    _settings;
 
-      ForwardResolverBase* _configuration;
+      ProjectBase*         _configuration;
       JITCompilerBase*     _compiler;
 
       int interprete(SystemEnv* env, void* tape, pos_t size, void* criricalHandler);
@@ -70,7 +70,8 @@ namespace elena_lang
 
       void Exit(int exitCode);
 
-      ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform, 
+      ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
+         int codeAlignment, JITSettings gcSettings,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType));
       virtual ~ELENAVMMachine()
       {

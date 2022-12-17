@@ -10,7 +10,7 @@
 #define PROJECT_H
 
 #include "clicommon.h"
-#include "config.h"
+#include "xmlprojectbase.h"
 
 namespace elena_lang
 {
