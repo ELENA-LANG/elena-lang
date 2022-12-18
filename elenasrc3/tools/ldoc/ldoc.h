@@ -28,11 +28,11 @@ namespace elena_lang
       bool              property;
       bool              cast;
 
-      StringList        params;
+      StringList        paramTypes;
       StringList        paramNames;
 
       ApiMethodInfo()
-         : extensionOne(false), params(nullptr), paramNames(nullptr)
+         : extensionOne(false), paramTypes(nullptr), paramNames(nullptr)
       {
          cast = property = special = false;
       }

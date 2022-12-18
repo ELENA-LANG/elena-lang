@@ -1626,12 +1626,16 @@ pos_t Compiler :: saveMetaInfo(ModuleBase* module, ustr_t value, ustr_t postfix)
 
 void Compiler :: generateParamNameInfo(ClassScope& scope, SyntaxNode node, mssg_t message)
 {
+   ClassAttributeKey key = { message, ClassAttribute::ParameterName };
+
+   while (scope.info.attributes.exist(key))
+      scope.info.attributes.exclude(key);
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Parameter) {
          ustr_t paramName = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
 
-         ClassAttributeKey key = { message, ClassAttribute::ParameterName };
          scope.info.attributes.add(key, saveMetaInfo(scope.module, paramName, PARAMETER_NAMES));
       }
 
