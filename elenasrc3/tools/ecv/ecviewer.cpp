@@ -805,10 +805,10 @@ void ByteCodeViewer :: listMembers()
          auto referenceName = module->resolveReference(reference);
          if (isWeakReference(referenceName)) {
             if (module->mapSection(reference | mskVMTRef, true)) {
-               ((PresenterBase*)arg)->print("class %s\n", referenceName.str());
+               ((ConsoleHelperBase*)arg)->print("class %s\n", referenceName.str());
             }
             else if (module->mapSection(reference | mskSymbolRef, true)) {
-               ((PresenterBase*)arg)->print("symbol %s\n", referenceName.str());
+               ((ConsoleHelperBase*)arg)->print("symbol %s\n", referenceName.str());
             }
          }
       });

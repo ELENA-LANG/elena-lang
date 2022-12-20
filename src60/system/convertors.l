@@ -250,6 +250,12 @@ public singleton intConvertor
 
 public singleton uintConvertor
 {
+   uint convert(o)
+      = cast uint(o);
+
+   uint convert(int n)
+      = new UIntNumber(n);
+
    uint convert(byte b)
    {
       uint n := b;
@@ -257,7 +263,32 @@ public singleton uintConvertor
       ^ n;
    }
 
+   uint convert(long l)
+   {
+      int n := intConvertor.convert(l);
+
+      ^ self.convert(n);
+   }
+
    uint convert(string s, int radix)
+   {
+      int len := s.Length;
+      uint val := 0;
+      for (int i := 0, i < len, i := i + 1) {
+         byte c := s[i];
+         int ch := c;
+         ch := ch - 48;
+         if (ch >= radix) {
+            ch := ch - 49;
+         };
+         val := val * radix;
+         val := val + ch;
+      };
+
+      ^ val
+   }
+
+   uint convert(wide s, int radix)
    {
       int len := s.Length;
       uint val := 0;
@@ -280,25 +311,177 @@ public singleton uintConvertor
 
 public singleton longConvertor
 {
+   long convert(o)
+      = cast long(o);
+
+   long convert(BaseVariable v)
+      <= convert(*v);
+
+   long convert(long l)
+      = l;
+
    long convert(byte b)
    {
       long l := b;
 
       ^ l
    }
+
+   long convert(short s)
+   {
+      long l := s;
+
+      ^ l
+   }
+
+   long convert(int n)
+   {
+      long l := n;
+
+      ^ l
+   }
+
+   long convert(uint n)
+   {
+      long l := n;
+
+      ^ l
+   }
+
+   long convert(real r)
+   {
+      // !! temporal implementation
+      int n := intConvertor.convert(r);
+
+      long l := n;
+
+      ^ l
+   }
+
+   long convert(char ch)
+   {
+      int n := intConvertor.convert(ch);
+
+      long l := n;
+
+      ^ l
+   }
+
+   long convert(string s, int radix)
+   {
+      int len := s.Length;
+      long val := 0;
+      for (int i := 0, i < len, i := i + 1) {
+         byte c := s[i];
+         int ch := c;
+         ch := ch - 48;
+         if (ch >= radix) {
+            ch := ch - 49;
+         };
+         val := val * radix;
+         val := val + ch;
+      };
+
+      ^ val
+   }
+
+   long convert(wide s, int radix)
+   {
+      int len := s.Length;
+      long val := 0;
+      for (int i := 0, i < len, i := i + 1) {
+         byte c := s[i];
+         int ch := c;
+         ch := ch - 48;
+         if (ch >= radix) {
+            ch := ch - 49;
+         };
+         val := val * radix;
+         val := val + ch;
+      };
+
+      ^ val
+   }
+
 }
 
 // --- realConvertor ---
 
 public singleton realConvertor
 {
+   real convert(o)
+      = cast real(o);
+
+   real convert(real r)
+      = r;
+
+   real convert(BaseVariable v)
+      <= convert(*v);
+
+   real convert(string s)
+   {
+      string intPartStr := nil;
+      string decimalPartStr := nil;
+
+      int index := s.indexOf(0, $46);
+      if (index != -1) {
+         intPartStr := s.Substring(0, index);
+         decimalPartStr := s.SubString(index + 1);
+      }
+      else {
+         intPartStr := s;
+      };
+
+      int intPart := intConvertor.convert(intPartStr, 10);
+      real r := intPart;
+
+      if (decimalPartStr != nil) {
+         real frac := intConvertor.convert(decimalPartStr, 10);
+         for (int i := 0, i < decimalPartStr.Length, i += 1) {
+            frac := frac * 0.1;
+         };
+
+         r += frac;
+      };
+
+      ^ r
+   }
+
+   real convert(wide w)
+      <= convert(stringConvertor.convert(w));
+
    real convert(byte b)
    {
       real r := b
+
+      ^ r;
+   }
+
+   real convert(short s)
+   {
+      real r := s;
+
+      ^ r
    }
 
    real convert(int n)
    {
+      real r := n;
+
+      ^ r
+   }
+
+   real convert(uint n)
+   {
+      real r := n;
+
+      ^ r
+   }
+
+   real convert(long l)
+   {
+      int n := intConvertor.convert(l);
+
       real r := n;
 
       ^ r
