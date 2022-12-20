@@ -624,40 +624,57 @@ bool IDEController :: doCloseProject()
    return false;
 }
 
+bool IDEController :: closeFile(DialogBase& dialog, IDEModel* model, ustr_t current)
+{
+   auto docView = model->sourceViewModel.DocView();
+   if (docView->status.unnamed) {
+      if (!doSaveFile(dialog, model, false, true))
+         return false;
+   }
+   else if (docView->status.modifiedMode) {
+      path_t path = model->sourceViewModel.getDocumentPath(current);
+
+      auto result = dialog.question(
+         QUESTION_SAVE_FILECHANGES, path);
+
+      if (result == DialogBase::Answer::Cancel) {
+         return false;
+      }
+      else if (result == DialogBase::Answer::Yes) {
+         if (!doSaveFile(dialog, model, false, true))
+            return false;
+      }
+   }
+
+   sourceController.closeSource(&model->sourceViewModel, current, true);
+
+   return true;
+}
+
 bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
 {
    auto docView = model->sourceViewModel.DocView();
    if (docView) {
-      ustr_t current = model->sourceViewModel.getDocumentName(-1);
-
-      if (docView->status.unnamed) {
-         doSaveFile(dialog, model, false, true);
-      }
-      else if (docView->status.modifiedMode) {
-         path_t path = model->sourceViewModel.getDocumentPath(current);
-
-         auto result = dialog.question(
-            QUESTION_SAVE_FILECHANGES, path);
-
-         if (result == DialogBase::Answer::Cancel) {
-            return false;
-         }
-         else if (result == DialogBase::Answer::Yes) {
-            if (!doSaveFile(dialog, model, false, true))
-               return false;
-         }
-      }
-
-      sourceController.closeSource(&model->sourceViewModel, current, true);
-
-      return true;
+      return closeFile(dialog, model, model->sourceViewModel.getDocumentName(-1));
    }
    return false;
 }
 
-bool IDEController :: doExit()
+bool IDEController :: doCloseAll(DialogBase& dialog, IDEModel* model)
 {
+   while (model->sourceViewModel.getDocumentCount() > 0) {
+      ustr_t current = model->sourceViewModel.getDocumentName(0);
+
+      if (!closeFile(dialog, model, current))
+         return false;
+   }
+
    return true;
+}
+
+bool IDEController :: doExit(DialogBase& dialog, IDEModel* model)
+{
+   return doCloseAll(dialog, model);
 }
 
 void IDEController :: doSelectNextWindow(IDEModel* model)
@@ -832,4 +849,11 @@ void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, ID
    projectController.refreshDebugContext(contextBrowser);
 
    _notifier->notifyMessage(NOTIFY_REFRESH, model->ideScheme.debugWatch);
+}
+
+bool IDEController :: onClose(DialogBase& dialog, IDEModel* model)
+{
+   bool result = doCloseAll(dialog, model);
+
+   return result;
 }

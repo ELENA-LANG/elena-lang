@@ -5,10 +5,10 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * ide - ask to save on close
     * elena vm : implement elenavmmachine - starting a program
     * ldoc : fixing
     * api functionality for existing classes : system'Enumerator
+    * ide - review on change events : after editor change / debug step
 
     ! api functionality for existing classes : system
     ! regression tests : all github issues (> 52)
@@ -25,7 +25,6 @@ In development:
     * api : provide field descriptions
     * ide : debugger - status - running / stopped
 
-    * ide - review on change events : after editor change / debug step
     * ide : debugger - step into / over / stop / run / compile
     * ide : debugger - on debugging / debugger stopped
     * ide - tab

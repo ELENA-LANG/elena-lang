@@ -119,6 +119,8 @@ namespace elena_lang
       bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile);
       bool openProject(IDEModel* model, path_t projectFile);
 
+      bool closeFile(DialogBase& dialog, IDEModel* model, ustr_t current);
+
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
 
       void onCompilationStart(IDEModel* model);
@@ -154,6 +156,7 @@ namespace elena_lang
       void doOpenFile(DialogBase& dialog, IDEModel* model);
       bool doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
       bool doCloseFile(DialogBase& dialog, IDEModel* model);
+      bool doCloseAll(DialogBase& dialog, IDEModel* model);
       bool doOpenProject(DialogBase& dialog, IDEModel* model);
       bool doCloseProject();
       bool doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode);
@@ -169,7 +172,9 @@ namespace elena_lang
 
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
-      bool doExit();
+      bool doExit(DialogBase& dialog, IDEModel* model);
+
+      bool onClose(DialogBase& dialog, IDEModel* model);
 
       void init(IDEModel* model);
 

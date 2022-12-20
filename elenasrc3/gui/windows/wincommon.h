@@ -147,7 +147,7 @@ namespace elena_lang
 
       virtual void onResize() {}
       virtual bool onSetCursor() { return false; }
-      virtual void onClose() {}
+      virtual bool onClose();
 
       virtual void setCursor(int type);
 

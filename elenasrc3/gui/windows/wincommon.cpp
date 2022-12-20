@@ -166,12 +166,19 @@ LRESULT WindowBase :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
          break;
       case WM_CLOSE:
          onClose();
-         break;
+         return 0;
       default:
          // to make compiler happy
          break;
    }
    return ::DefWindowProc(_handle, message, wParam, lParam);
+}
+
+bool WindowBase::onClose()
+{
+   ::DestroyWindow(_handle);
+
+   return true;
 }
 
 // --- WindowApp ---

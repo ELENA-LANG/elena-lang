@@ -145,7 +145,7 @@ void IDEWindow :: saveFile()
    _controller->doSaveFile(fileDialog, _model, false, true);
 }
 
-void IDEWindow::closeFile()
+void IDEWindow :: closeFile()
 {
    _controller->doCloseFile(fileDialog, _model);
 }
@@ -159,7 +159,7 @@ void IDEWindow :: openProject()
 
 void IDEWindow :: exit()
 {
-   if(_controller->doExit()) {
+   if(_controller->doExit(fileDialog, _model)) {
       close();
    }
 }
@@ -631,4 +631,12 @@ void IDEWindow :: onIDEViewUpdate(bool forced)
 void IDEWindow :: onDocumentUpdate()
 {
    onIDEViewUpdate(false);
+}
+
+bool IDEWindow :: onClose()
+{
+   if (!_controller->onClose(fileDialog, _model))
+      return false;
+
+   return WindowBase::onClose();
 }
