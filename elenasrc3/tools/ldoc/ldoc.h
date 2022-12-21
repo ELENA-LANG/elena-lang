@@ -65,13 +65,14 @@ namespace elena_lang
       ApiMethodInfoList methods;
       ApiFieldInfoList  fields;
       ApiMethodInfoList constructors;
+      ApiMethodInfoList convertors;
       ApiMethodInfoList properties;
       ApiMethodInfoList staticProperties;
       ApiMethodInfoList extensions;
 
       ApiClassInfo()
          : parents(nullptr), methods(nullptr ), fields(nullptr),
-            constructors(nullptr), extensions(nullptr),
+            constructors(nullptr), convertors(nullptr), extensions(nullptr),
             properties(nullptr), staticProperties(nullptr)
       {
          

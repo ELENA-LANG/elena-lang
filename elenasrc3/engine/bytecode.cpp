@@ -133,11 +133,12 @@ void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase
       case VARIADIC_MESSAGE:
          messageName.append("params:");
          break;
+      case CONVERSION_MESSAGE:
+         messageName.append("typecast:");
+         break;
       default:
          break;
    }
-   if (test(flags, CONVERSION_MESSAGE))
-      messageName.append("typecast:");
 
    messageName.append(actionName);
    if (len > 0) {

@@ -559,6 +559,22 @@ void writePropertyHeader(TextFileWriter& writer, ApiClassInfo* info, const char*
    writer.writeTextLine("</TR>");
 }
 
+void writeConversionHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== PROPERTY SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Conversion Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Conversion Method</TH>");
+   writer.writeTextLine("</TR>");
+}
+
 void writeFieldHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
 {
    writer.writeTextLine("<!-- ========== FIELD SUMMARY =========== -->");
@@ -669,7 +685,7 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
    if (info->special)
       writer.writeText("</i>");
 
-   if (info->property && info->paramNames.count() == 0) {
+   if ((info->property && info->paramNames.count() == 0) || info->cast) {
       
    }
    else {
@@ -1103,8 +1119,8 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
             }
             else apiMethodInfo->prefix.append("get ");
          }
-         if ((*apiMethodInfo->name).startsWith("#cast")) {
-            apiMethodInfo->name.cut(0, 1);
+         if ((*apiMethodInfo->name).startsWith("typecast:#cast")) {
+            apiMethodInfo->name.cut(0, 10);
             apiMethodInfo->special = true;
             apiMethodInfo->cast = true;
          }
@@ -1158,6 +1174,9 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          }
          else if (apiMethodInfo->property) {
             apiClassInfo->properties.add(apiMethodInfo);
+         }
+         else if (apiMethodInfo->cast) {
+            apiClassInfo->convertors.add(apiMethodInfo);
          }
          else apiClassInfo->methods.add(apiMethodInfo);
       }
@@ -1510,6 +1529,12 @@ void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWri
    if (classInfo->properties.count() > 0) {
       writePropertyHeader(bodyWriter, classInfo, *moduleName);
       generateMethodList(bodyWriter, classInfo->properties);
+      writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   if (classInfo->convertors.count() > 0) {
+      writeConversionHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->convertors);
       writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
    }
 
