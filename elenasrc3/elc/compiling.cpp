@@ -394,37 +394,7 @@ void CompilingProcess :: configurate(Project& project)
 {
    project.prepare();
 
-   // load primitives
-   auto path_it = project.allocPrimitiveIterator();
-   while (!path_it->eof()) {
-      IdentifierString key;
-      path_it->loadKey(key);
-
-      if ((*key).compare(CORE_ALIAS)) {
-         _libraryProvider.addCorePath(**path_it);
-      }
-      else _libraryProvider.addPrimitivePath(*key, **path_it);
-
-      ++(*path_it);
-   }
-   freeobj(path_it);
-
-   // load packages
-   auto package_it = project.allocPackageIterator();
-   while (!package_it->eof()) {
-      IdentifierString key;
-      package_it->loadKey(key);
-
-      _libraryProvider.addPackage(*key, **package_it);
-
-      ++(*package_it);
-   }
-   freeobj(package_it);
-
-   // set output paths
-   path_t libPath = project.PathSetting(ProjectOption::LibPath);
-   if (!libPath.empty())
-      _libraryProvider.setRootPath(libPath);
+   project.initLoader(_libraryProvider);
 
    _libraryProvider.setOutputPath(project.PathSetting(ProjectOption::OutputPath));
    _libraryProvider.setNamespace(project.Namespace());

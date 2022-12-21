@@ -198,25 +198,6 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
    }
 }
 
-void Project :: loadPathSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, 
-                                ProjectOption key, path_t configPath)
-{
-   auto configNode = config.selectNode(configRoot, xpath);
-   if (!configNode.isNotFound()) {
-      DynamicString<char> path;
-      configNode.readContent(path);
-
-      ProjectNode node = _root.findChild(key);
-      if (node == ProjectOption::None) {
-         _root.appendChild(key, _paths.count() + 1);
-      }
-      else node.setArgumentValue(_paths.count() + 1);
-
-      PathString filePath(configPath, path.str());
-      _paths.add((*filePath).clone());
-   }
-}
-
 void Project :: loadSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, IdentifierString& value)
 {
    auto configNode = config.selectNode(configRoot, xpath);

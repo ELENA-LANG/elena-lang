@@ -14,7 +14,7 @@
 namespace elena_lang
 {
    // --- LibraryProvider ---
-   class LibraryProvider : public LibraryLoaderBase
+   class LibraryProvider : public LibraryLoaderBase, public LibraryProviderBase
    {
       typedef Map<ustr_t, path_t, allocUStr, freeUStr, freepath> PathMap;
       typedef List<LibraryLoaderListenerBase*> Listeners;
@@ -51,7 +51,7 @@ namespace elena_lang
       {
          _outputPath.copy(path);
       }
-      void setRootPath(path_t path)
+      void setRootPath(path_t path) override
       {
          _rootPath.copy(path);
       }
@@ -60,9 +60,9 @@ namespace elena_lang
          _namespace.copy(ns);
       }
 
-      void addCorePath(path_t path);
-      void addPrimitivePath(ustr_t alias, path_t path);
-      void addPackage(ustr_t ns, path_t path);
+      void addCorePath(path_t path) override;
+      void addPrimitivePath(ustr_t alias, path_t path) override;
+      void addPackage(ustr_t ns, path_t path) override;
 
       void resolvePath(ustr_t ns, PathString& path) override;
 

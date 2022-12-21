@@ -51,6 +51,7 @@ namespace elena_lang
    // --- JITLinker ---
    class JITLinker
    {
+   public:
       struct ConstantSettings
       {
          ustr_t intLiteralClass;
@@ -142,6 +143,7 @@ namespace elena_lang
          JITLinkerReferenceHelper(JITLinker* owner, ModuleBase* module, VAddressMap* references);
       };
 
+   private:
       ReferenceMapperBase*  _mapper;
       LibraryLoaderBase*    _loader;
       ForwardResolverBase*  _forwardResolver;
@@ -204,6 +206,7 @@ namespace elena_lang
 
    public:
       addr_t resolveTape(ustr_t referenceName, MemoryBase* tape);
+      addr_t resolveTemporalByteCode(ReferenceHelperBase& helper, MemoryDump& tapeSymbol);
 
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 

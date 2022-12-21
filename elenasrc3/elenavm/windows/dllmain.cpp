@@ -117,6 +117,18 @@ void printError(int errCode)
    }
 }
 
+void printError(int errCode, ustr_t arg)
+{
+   switch (errCode) {
+      case errVMReferenceNotFound:
+         printf("ELENAVM: Cannot load reference %s\n", arg.str());
+         break;
+      default:
+         printf("ELENAVM: Unknown error %d\n", errCode);
+         break;
+   }
+}
+
 // --- API export ---
 
 EXTERN_DLL_EXPORT void InitializeVMSTLA(SystemEnv* env, void* tape, void* criricalHandler)
@@ -135,6 +147,12 @@ EXTERN_DLL_EXPORT void InitializeVMSTLA(SystemEnv* env, void* tape, void* criric
    catch (InternalError err)
    {
       printError(err.messageCode);
+      retVal = -1;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      printError(errVMReferenceNotFound, e.referenceInfo.referenceName);
+
       retVal = -1;
    }
    catch (...)

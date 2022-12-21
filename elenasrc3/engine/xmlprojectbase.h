@@ -123,6 +123,9 @@ namespace elena_lang
       void loadPathCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath,
          ProjectOption collectionKey, path_t configPath);
 
+      void loadPathSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath,
+         ProjectOption key, path_t configPath);
+
    public:
       ustr_t StringSetting(ProjectOption option) const override;
       path_t PathSetting(ProjectOption option) const override;

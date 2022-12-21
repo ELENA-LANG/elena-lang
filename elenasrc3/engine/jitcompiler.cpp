@@ -2567,7 +2567,7 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
 }
 
 pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName,
-   ref_t weakActionRef, ref_t signature)
+   ref_t weakActionRef, ref_t signature, bool virtualMode)
 {
    pos_t actionRef = messageWriter.position() >> 3;
 
@@ -2579,13 +2579,19 @@ pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
 
    // signature or action name for weak message
    if (signature) {
-      messageWriter.writeDReference(mskMBDataRef32 | signature, 0u);
+      if (!virtualMode) {
+         messageWriter.writeDWord((unsigned int)messageBodyWriter.Memory()->get(signature));
+      }
+      else messageWriter.writeDReference(mskMBDataRef32 | signature, 0u);
    }
    else if (actionName.empty()) {
       messageWriter.writeRef(0u);
    }
    else {
-      messageWriter.writeDReference(mskMBDataRef32 | messageBodyWriter.position(), 0u);
+      if (!virtualMode) {
+         messageWriter.writeDWord((unsigned int)messageBodyWriter.Memory()->get(messageBodyWriter.position()));
+      }
+      else messageWriter.writeDReference(mskMBDataRef32 | messageBodyWriter.position(), 0u);
 
       messageBodyWriter.writeString(actionName, actionName.length_pos() + 1);
       messageBodyWriter.align(4, 0);
@@ -2933,7 +2939,7 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
 }
 
 pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName,
-   ref_t weakActionRef, ref_t signature)
+   ref_t weakActionRef, ref_t signature, bool virtualMode)
 {
    pos_t actionRef = messageWriter.position() >> 4;
 
@@ -2945,13 +2951,19 @@ pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
 
    // signature or action name for weak message
    if (signature) {
-      messageWriter.writeQReference(mskMBDataRef64 | signature, 0u);
+      if (!virtualMode) {
+         messageWriter.writeQWord((intptr_t)messageBodyWriter.Memory()->get(signature));
+      }
+      else messageWriter.writeQReference(mskMBDataRef64 | signature, 0u);
    }
    else if (actionName.empty()) {
       messageWriter.writeRef64(0u);
    }
    else {
-      messageWriter.writeQReference(mskMBDataRef64 | messageBodyWriter.position(), 0u);
+      if (!virtualMode) {
+         messageWriter.writeQWord((intptr_t)messageBodyWriter.Memory()->get(messageBodyWriter.position()));
+      }
+      else messageWriter.writeQReference(mskMBDataRef64 | messageBodyWriter.position(), 0u);
 
       messageBodyWriter.writeString(actionName, actionName.length_pos() + 1);
       messageBodyWriter.align(8, 0);

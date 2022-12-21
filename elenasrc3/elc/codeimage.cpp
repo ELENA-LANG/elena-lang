@@ -113,6 +113,8 @@ void TargetImage :: createVMTape(MemoryBase* tape, ustr_t ns, ForwardResolverBas
    //});
 
    addVMTapeEntry(tapeWriter, VM_INIT_CMD);
+   addVMTapeEntry(tapeWriter, VM_LOADSYMBOLARRAY_CMD, 
+      resolver->resolveForward(STARTUP_LIST + getlength(FORWARD_PREFIX_NS)));
    addVMTapeEntry(tapeWriter, VM_ENDOFTAPE_CMD);
 }
 

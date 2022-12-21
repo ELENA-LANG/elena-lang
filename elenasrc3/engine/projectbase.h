@@ -128,6 +128,41 @@ namespace elena_lang
       virtual bool BoolSetting(ProjectOption option, bool defValue = false) const = 0;
       virtual int IntSetting(ProjectOption option, int defValue = 0) const = 0;
 
+      virtual void initLoader(LibraryProviderBase& libraryProvider)
+      {
+         // load primitives
+         auto path_it = allocPrimitiveIterator();
+         while (!path_it->eof()) {
+            IdentifierString key;
+            path_it->loadKey(key);
+
+            if ((*key).compare(CORE_ALIAS)) {
+               libraryProvider.addCorePath(**path_it);
+            }
+            else libraryProvider.addPrimitivePath(*key, **path_it);
+
+            ++(*path_it);
+         }
+         freeobj(path_it);
+
+         // load packages
+         auto package_it = allocPackageIterator();
+         while (!package_it->eof()) {
+            IdentifierString key;
+            package_it->loadKey(key);
+
+            libraryProvider.addPackage(*key, **package_it);
+
+            ++(*package_it);
+         }
+         freeobj(package_it);
+
+         // set output paths
+         path_t libPath = PathSetting(ProjectOption::LibPath);
+         if (!libPath.empty())
+            libraryProvider.setRootPath(libPath);
+      }
+
       virtual ~ProjectBase() = default;
    };
 }

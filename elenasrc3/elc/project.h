@@ -39,9 +39,6 @@ namespace elena_lang
       void loadKeyCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath,
          ProjectOption collectionKey, ProjectOption itemKey, ustr_t prefix);
 
-      void loadPathSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, 
-         ProjectOption key, path_t configPath);
-
       void loadSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, IdentifierString& value);
 
       void copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key, bool exclusiveMode = false);

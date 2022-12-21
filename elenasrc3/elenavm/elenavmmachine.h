@@ -57,11 +57,15 @@ namespace elena_lang
       void onNewCode();
 
       void stopVM();
-      void* evaluateVMTape(MemoryReader& reader);
+
+      void configurateVM(MemoryReader& reader, JITLinker& jitLinker);
+      void compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker);
 
       void resumeVM(SystemEnv* env, void* criricalHandler);
 
       void init(JITLinker& jitLinker);
+
+      void loadSymbolArrayList(void* addr);
 
       AddressMap::Iterator externals() override;
 
@@ -81,4 +85,4 @@ namespace elena_lang
    };
 }
 
-#endif
+#endif   

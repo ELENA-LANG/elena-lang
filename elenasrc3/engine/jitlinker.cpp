@@ -257,22 +257,6 @@ void JITLinker::JITLinkerReferenceHelper :: writeSectionReference(MemoryBase* im
             break;
       }
    }
-   //else if (constArrayMode && currentMask == mskMessage) {
-   //   (*image)[imageOffset] = parseMessage(sectionInfo.module->resolveReference(currentRef));
-   //}
-   //else if (constArrayMode && currentMask == mskMessageName) {
-   //   (*image)[imageOffset] = parseAction(sectionInfo.module->resolveReference(currentRef));
-   //}
-   //else {
-   //   lvaddr_t refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
-
-   //   if (*it == -4) {
-   //      // resolve the constant vmt reference
-   //      vmtVAddress = refVAddress;
-   //   }
-   //   else resolveReference(image, imageOffset, refVAddress, currentMask, _virtualMode);
-   //}
-
 }
 
 void JITLinker::JITLinkerReferenceHelper :: writeVMTMethodReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp, mssg_t message,
@@ -608,7 +592,7 @@ ref_t JITLinker :: createAction(ustr_t actionName, ref_t weakActionRef, ref_t si
    MemoryWriter mbdataWriter(_imageProvider->getMBDataSection());
 
    ref_t actionRef = _compiler->addActionEntry(mdataWriter, mbdataWriter, 
-      actionName, weakActionRef, signature);
+      actionName, weakActionRef, signature, _virtualMode);
 
    if (!actionName.empty())
       _mapper->mapAction(actionName, actionRef, signature);
@@ -1314,4 +1298,19 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
 addr_t JITLinker :: resolveTape(ustr_t referenceName, MemoryBase* tape)
 {
    return resolveConstantDump({ referenceName }, { tape }, mskConstant);
+}
+
+addr_t JITLinker :: resolveTemporalByteCode(ReferenceHelperBase& helper, MemoryDump& tapeSymbol)
+{
+   MemoryReader reader(&tapeSymbol);
+
+   MemoryBase* image = _imageProvider->getTargetSection(mskCodeRef);
+
+   // map dynamic code
+   MemoryWriter writer(image);
+   addr_t vaddress = calculateVAddress(writer, mskCodeRef);
+
+   _compiler->compileProcedure(&helper, reader, writer, nullptr);
+
+   return vaddress;
 }

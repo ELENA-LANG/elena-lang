@@ -11,6 +11,7 @@
 #include "vmcommon.h"
 #include "jitlinker.h"
 #include "xmlprojectbase.h"
+#include "bytecode.h"
 
 using namespace elena_lang;
 
@@ -25,6 +26,10 @@ protected:
    {
       loadPathCollection(config, root, PRIMITIVE_CATEGORY,
          ProjectOption::Primitives, configPath);
+      loadPathCollection(config, root, REFERENCE_CATEGORY,
+         ProjectOption::References, configPath);
+
+      loadPathSetting(config, root, LIB_PATH, ProjectOption::LibPath, configPath);
    }
 
    bool loadConfig(path_t path)
@@ -99,20 +104,8 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _settings.jitSettings.mgSize = _configuration->IntSetting(ProjectOption::GCMGSize, gcSettings.mgSize);
    _settings.jitSettings.ygSize = _configuration->IntSetting(ProjectOption::GCYGSize, gcSettings.ygSize);
 
-   // load primitives
-   auto path_it = _configuration->allocPrimitiveIterator();
-   while (!path_it->eof()) {
-      IdentifierString key;
-      path_it->loadKey(key);
-
-      if ((*key).compare(CORE_ALIAS)) {
-         _libraryProvider.addCorePath(**path_it);
-      }
-      else _libraryProvider.addPrimitivePath(*key, **path_it);
-
-      ++(*path_it);
-   }
-   freeobj(path_it);
+   // configurate the loader
+   _configuration->initLoader(_libraryProvider);
 
    _compiler = jitCompilerFactory(&_libraryProvider, platform);
 }
@@ -132,15 +125,11 @@ void ELENAVMMachine :: stopVM()
    
 }
 
-void* ELENAVMMachine :: evaluateVMTape(MemoryReader& reader)
+void ELENAVMMachine :: configurateVM(MemoryReader& reader, JITLinker& jitLinker)
 {
-   void* retVal = nullptr;
-
-   JITLinker jitLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this), 
-      &_settings, nullptr);
-
    pos_t  command = 0;
    ustr_t strArg = nullptr;
+
    bool eop = false;
    while (!eop) {
       command = reader.getDWord();
@@ -160,16 +149,48 @@ void* ELENAVMMachine :: evaluateVMTape(MemoryReader& reader)
          }
          case VM_INIT_CMD:
             init(jitLinker);
-            break;
-         case VM_ENDOFTAPE_CMD:
             eop = true;
             break;
          default:
             break;
       }
    }
+}
 
-   return retVal;
+void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker)
+{
+   MemoryWriter writer(&tapeSymbol);
+
+   pos_t  command = 0;
+   ustr_t strArg = nullptr;
+
+   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
+
+   bool eop = false;
+   while (!eop) {
+      command = reader.getDWord();
+      if (test(command, VM_STR_COMMAND_MASK))
+         strArg = reader.getString(nullptr);
+
+      switch (command) {
+         case VM_ENDOFTAPE_CMD:
+            eop = true;
+            break;
+         case VM_LOADSYMBOLARRAY_CMD:
+         {
+            addr_t address = jitLinker.resolve(strArg, mskTypeListRef, true);
+            if (address == INVALID_ADDR)
+               throw JITUnresolvedException(ReferenceInfo { strArg });
+
+            loadSymbolArrayList((void*)address);
+            break;
+         }
+         default:
+            break;
+      }
+   }
+
+   ByteCodeUtil::write(writer, ByteCode::CloseN);
 }
 
 void ELENAVMMachine :: onNewCode()
@@ -194,14 +215,27 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, void* c
 
    stopVM();
 
-   void* entryList = evaluateVMTape(reader);
+   JITLinker jitLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
+      &_settings, nullptr);
 
-   if (!entryList)
-      throw InternalError(errVMNotExecuted);
+   MemoryDump tapeSymbol;
+   JITLinker::JITLinkerReferenceHelper helper(&jitLinker, nullptr, nullptr);
+
+   configurateVM(reader, jitLinker);
+   compileVMTape(reader, tapeSymbol, jitLinker);
+
+   SymbolList list;
+
+   list.length = sizeof(intptr_t);
+   list.entries[0].address = (void*)jitLinker.resolveTemporalByteCode(helper, tapeSymbol);
 
    resumeVM(env, criricalHandler);
 
-   return execute(env, (SymbolList*)entryList);
+   return execute(env, &list);
+}
+
+void ELENAVMMachine :: loadSymbolArrayList(void* address)
+{
 }
 
 void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, void* criricalHandler)
