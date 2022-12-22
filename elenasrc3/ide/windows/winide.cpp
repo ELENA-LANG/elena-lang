@@ -563,6 +563,13 @@ void IDEWindow :: onNotify(NMHDR* hdr)
    }
 }
 
+void IDEWindow :: onDebuggerUpdate(bool running)
+{
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+
+   menu->enableMenuItemById(IDM_DEBUG_STOP, running);
+}
+
 void IDEWindow :: onIDEViewUpdate(bool forced)
 {
    auto doc = _model->viewModel()->DocView();
@@ -572,7 +579,7 @@ void IDEWindow :: onIDEViewUpdate(bool forced)
    {
       doc != nullptr,
       !_model->projectModel.empty,
-      _model->projectModel.running
+      _controller->projectController.isStarted()
    };
 
    if (doc != nullptr) {
@@ -607,7 +614,7 @@ void IDEWindow :: onIDEViewUpdate(bool forced)
    }
 
    if (forced || status.running != _ideStatus.running) {
-      menu->enableMenuItemById(IDM_DEBUG_STOP, status.running);
+      onDebuggerUpdate(status.running);
    }
 
    if (forced || status.hasDocument) {
@@ -625,7 +632,6 @@ void IDEWindow :: onIDEViewUpdate(bool forced)
    }
 
    _ideStatus = status;
-
 }
 
 void IDEWindow :: onDocumentUpdate()

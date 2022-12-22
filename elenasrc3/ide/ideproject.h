@@ -40,7 +40,7 @@ namespace elena_lang
       bool              singleSourceProject;
       bool              autoRecompile;
       bool              empty;
-      bool              running;
+      bool              started;
       PathString        name;
       PathString        projectFile;
       PathString        projectPath;

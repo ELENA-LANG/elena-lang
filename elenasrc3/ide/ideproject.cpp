@@ -18,7 +18,7 @@ ProjectModel :: ProjectModel(IDEStatus* status)
    this->autoRecompile = /*true*/false;// !! temporal
 
    this->empty = true;
-   this->running = false;
+   this->started = false;
 
 #ifdef _M_IX86
    this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60\\");      // !! temporal

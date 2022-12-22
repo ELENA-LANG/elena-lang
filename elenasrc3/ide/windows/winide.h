@@ -107,6 +107,7 @@ namespace elena_lang
       void commentText();
 
       void onIDEViewUpdate(bool forced);
+      void onDebuggerUpdate(bool running);
 
    public:
       void onDocumentUpdate() override;

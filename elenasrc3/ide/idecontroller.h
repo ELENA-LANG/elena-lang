@@ -68,6 +68,11 @@ namespace elena_lang
       bool compileSingleFile(ProjectModel& model);
 
    public:
+      bool isStarted()
+      {
+         return _debugController.isStarted();
+      }
+
       void openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
       void openProject(ProjectModel& model, path_t projectFile);
 

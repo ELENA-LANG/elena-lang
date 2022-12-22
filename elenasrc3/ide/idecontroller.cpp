@@ -708,7 +708,6 @@ void IDEController :: doDebugStop(IDEModel* model)
 void IDEController :: onCompilationStart(IDEModel* model)
 {
    model->status = IDEStatus::Busy;
-   model->projectModel.running = true;
 
    model->onIDEChange();
 
@@ -719,7 +718,6 @@ void IDEController :: onCompilationStart(IDEModel* model)
 void IDEController :: onCompilationStop(IDEModel* model)
 {
    model->status = IDEStatus::Ready;
-   model->projectModel.running = false;
 
    model->onIDEChange();
 }
@@ -727,7 +725,6 @@ void IDEController :: onCompilationStop(IDEModel* model)
 void IDEController :: onCompilationBreak(IDEModel* model)
 {
    model->status = IDEStatus::Ready;
-   model->projectModel.running = false;
 
    model->onIDEChange();
 }

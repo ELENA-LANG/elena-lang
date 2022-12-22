@@ -5,7 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * ide - stop execution is disabled on running project
     * check why typecasting the template based class
     * api functionality for existing classes : system'Enumerator<T>
     * elena vm : implement elenavmmachine - starting a program
