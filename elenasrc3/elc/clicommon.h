@@ -292,6 +292,8 @@ public:
    virtual ref_t resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
    virtual ref_t resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs) = 0;
 
+   virtual ref_t resolveWeakTemplateReferenceID(ref_t reference) = 0;
+
    virtual SectionInfo getSection(ustr_t referenceName, ref_t mask, bool silentMode) = 0;
 
    virtual ModuleInfo getModule(ustr_t referenceName, bool silentMode) = 0;

@@ -1543,6 +1543,7 @@ void TemplateProssesor :: generateTemplate(SyntaxTreeWriter& writer, TemplateSco
       ustr_t fullName = scope.moduleScope->resolveFullName(scope.targetRef);
 
       writer.newNode(SyntaxKey::Class, INVALID_REF);
+      writer.appendNode(SyntaxKey::Attribute, V_TEMPLATEBASED);
       writer.appendNode(SyntaxKey::Name, scope.moduleScope->mapFullReference(fullName, true));
    }
 

@@ -186,6 +186,20 @@ ref_t ModuleScope :: resolveImportedIdentifier(ustr_t identifier, IdentifierList
    return reference;
 }
 
+ref_t ModuleScope :: resolveWeakTemplateReferenceID(ref_t reference)
+{
+   ustr_t referenceName = module->resolveReference(reference);
+   if (isTemplateWeakReference(referenceName)) {
+      ustr_t resolvedTemplateReferenceName = resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN);
+
+      if (NamespaceString::compareNs(resolvedTemplateReferenceName, module->name())) {
+         return module->mapReference(resolvedTemplateReferenceName + getlength(module->name()));
+      }
+      else return module->mapReference(resolvedTemplateReferenceName);
+   }
+   else return reference;
+}
+
 ustr_t ModuleScope :: resolveWeakTemplateReference(ustr_t referenceName)
 {
    ustr_t resolvedName = forwardResolver->resolveForward(referenceName);

@@ -50,6 +50,7 @@ public:
    ref_t resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs) override;
 
    ustr_t resolveWeakTemplateReference(ustr_t referenceName);
+   ref_t resolveWeakTemplateReferenceID(ref_t reference) override;
 
    ustr_t resolveFullName(ref_t reference) override
    {

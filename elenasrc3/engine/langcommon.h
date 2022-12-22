@@ -201,6 +201,7 @@ namespace elena_lang
    constexpr auto V_INLINE                = 0x80001025u;
    constexpr auto V_PROBEMODE             = 0x80001026u;
    constexpr auto V_TEMPLATE              = 0x80001027u;
+   constexpr auto V_TEMPLATEBASED         = 0x80001028u;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;

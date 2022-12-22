@@ -511,6 +511,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_NONESTRUCT:
          flags = elNonStructureRole;
          break;
+      case V_TEMPLATEBASED:
+         flags = elTemplatebased;
+         break;
       case 0:
          // ignore idle
          break;
@@ -1254,6 +1257,15 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
          ClassInfo info;
          if (sourceInfo.isPrimitive() || !defineClassInfo(scope, info, sourceInfo.typeRef))
             return false;
+
+         if (test(info.header.flags, elTemplatebased) && !isPrimitiveRef(targetInfo.typeRef)) {
+            // HOTFIX : resolve weak reference before checking compability
+            targetInfo.typeRef = scope.resolveWeakTemplateReferenceID(targetInfo.typeRef);
+            info.header.parentRef = scope.resolveWeakTemplateReferenceID(info.header.parentRef);
+            if (targetInfo == sourceInfo) {
+               return true;
+            }
+         }
 
          // if it is a structure wrapper
          if (targetInfo.isPrimitive() && test(info.header.flags, elWrapper)) {
