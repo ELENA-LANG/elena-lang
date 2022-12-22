@@ -601,6 +601,15 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elStructureWrapper)) {
       printLineAndCount("@flag ", "elStructureWrapper", row, pageSize);
    }
+   if (test(flags, elWithCustomDispatcher)) {
+      printLineAndCount("@flag ", "elWithCustomDispatcher", row, pageSize);
+   }
+   if (test(flags, elWithGenerics)) {
+      printLineAndCount("@flag ", "elWithGenerics", row, pageSize);
+   }
+   if (test(flags, elWithVariadics)) {
+      printLineAndCount("@flag ", "elWithVariadics", row, pageSize);
+   }
    if (test(flags, elWrapper)) {
       printLineAndCount("@flag ", "elWrapper", row, pageSize);
    }

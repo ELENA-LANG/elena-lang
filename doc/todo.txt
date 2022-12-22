@@ -5,17 +5,21 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * api functionality for existing classes : system'Enumerator : enumerables.l
-    * ide - review on change events : after editor change / debug step
+    * ide - stop execution is disabled on running project
+    * check why typecasting the template based class
+    * api functionality for existing classes : system'Enumerator<T>
     * elena vm : implement elenavmmachine - starting a program
     * ldoc : fixing
+    * ide : remember last open project / files
+    * ide : open the last opened file on the ide start
+    * ide - review on change events : after editor change / debug step
 
     ! api functionality for existing classes : system
     ! regression tests : all github issues (> 52)
     ! examples : intsum / realsum / words
-    ! rosetta code examples
+    ! rosetta code examples : two
     ! elena vm
-    ! elena vm : helloworld sample x86 / x86-64
+    ! elena vm : helloworld sample x86
 
     * gc - system_tests - why full collect happends so often
     * aarch64 gc: system_tests fails in gc routine
@@ -69,7 +73,17 @@ In development:
 
     === Iteration 14 ===
     ! examples : pi, bsort, textfile, binary, replace, goods
-    ! elena vm : helloworld sample Linux x86 / x86-64 / ppc64le / aarch64
+    ! elena sm : x86
+    ! script samples : x86
+
+    === Iteration 15 ===
+    ! ide : vm console
+    ! sm : generate some basic templates from vm console - hello world sample
+
+    === Iteration 16 ===
+    ! sm : generate advances templates from vm console
+    ! elena vm : helloworld sample Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
+    ! elena sm : script samples Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
 
 ------                                                           
 Backlog:
@@ -81,6 +95,8 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * template arg in template arg support : field, method type, method arg, variable, expression
+    * refactor resolveTypeAttribute - too complicated and part of it could be no longer actual
     * native support for long to real
     * native support for real to long
     * migrate realOpController : math operations
@@ -124,16 +140,13 @@ Backlog:
     * ide : react on mouse
     * ide : new menu option : open output
     * ide : recent files
-    * ide : remember last open file
     * project - load - project
     * project - compile - project
-    * ide : remember last open project
     * debugger - auto watch
     * editor - status bar : col, row, ins / ovr
     * editor - modified doc mark, 
     * editor - black theme
     * editor - highlightning
-    * ide : open the last opened file on the ide start
     * editor - open project
     * editor - enable / disable menu commands
     * linux sdi - menu

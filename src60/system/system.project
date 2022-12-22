@@ -41,6 +41,7 @@
         <include>variables.l</include>
         <include>extensions.l</include>
         <include>primitives.l</include>
+        <include>enumerables.l</include>
         <include>strings.l</include>
         <include>messaging.l</include>
         <include>closures.l</include>

@@ -2298,6 +2298,7 @@ void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
          case SyntaxKey::Name:
          case SyntaxKey::Type:
          case SyntaxKey::ArrayType:
+         case SyntaxKey::TemplateType:
          case SyntaxKey::Attribute:
          case SyntaxKey::Dimension:
          case SyntaxKey::EOP:
@@ -3540,6 +3541,7 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Type:
+         case SyntaxKey::TemplateType:
             // if it is a type attribute
             typeInfo = resolveTypeAttribute(scope, current, declarationMode, false);
             break;
@@ -3905,28 +3907,15 @@ ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxK
    }
 }
 
-ref_t Compiler :: mapTemplateType(Scope& scope, SyntaxNode node)
+ref_t Compiler :: mapTemplateType(Scope& scope, SyntaxNode terminal, pos_t paramCounter)
 {
-   int paramCounter = 0;
-   SyntaxNode current = node.nextNode();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::TemplateArg:
-            paramCounter++;
-         default:
-            break;
-      }
-
-      current = current.nextNode();
-   }
-
    IdentifierString templateName;
-   templateName.append(node.identifier());
+   templateName.append(terminal.identifier());
    templateName.append('#');
    templateName.appendInt(paramCounter);
 
    // NOTE : check it in declararion mode - we need only reference
-   return resolveTypeIdentifier(scope, *templateName, node.key, true, false);
+   return resolveTypeIdentifier(scope, *templateName, terminal.key, true, false);
 }
 
 void Compiler :: declareTemplateAttributes(Scope& scope, SyntaxNode node, 
@@ -3967,14 +3956,16 @@ ObjectInfo Compiler :: defineArrayType(Scope& scope, ObjectInfo info)
 ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode)
 {
    TemplateTypeList typeList;
-   declareTemplateAttributes(scope, node, typeList, declarationMode, true);
+   declareTemplateAttributes(scope, node, typeList, declarationMode, node != SyntaxKey::TemplateType);
 
    // HOTFIX : generate a temporal template to pass the type
    SyntaxTree dummyTree;
    List<SyntaxNode> parameters({});
    declareTemplateParameters(scope.module, typeList, dummyTree, parameters);
 
-   ref_t templateRef = mapTemplateType(scope, node);
+   SyntaxNode terminalNode = node != SyntaxKey::TemplateType ? node : node.firstChild(SyntaxKey::TerminalMask);
+
+   ref_t templateRef = mapTemplateType(scope, terminalNode, parameters.count());
    if (!templateRef)
       scope.raiseError(errInvalidHint, node);
 
@@ -4130,6 +4121,9 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
       }
       else typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
    }
+   else if (node == SyntaxKey::TemplateType) {
+      typeInfo.typeRef = resolveTypeTemplate(scope, node, declarationMode);
+   }
    else if (node == SyntaxKey::TemplateArg) {
       typeInfo = resolveTypeAttribute(scope, node.firstChild(), declarationMode, allowRole);
    }
@@ -4197,6 +4191,7 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
                scope.raiseError(errInvalidHint, current);
             break;
          case SyntaxKey::Type:
+         case SyntaxKey::TemplateType:
             if (!attrs.typeInfo.typeRef) {
                attrs.typeInfo = resolveTypeAttribute(scope, current, true, false);
             }

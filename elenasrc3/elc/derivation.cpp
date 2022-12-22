@@ -462,14 +462,38 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
    SyntaxNode current = node.firstChild();
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current != nameNode) {
-      bool allowType = nameNode.key == SyntaxKey::None || current.nextNode() == nameNode;
+      SyntaxNode nextNode = current.nextNode();
+      if (nextNode == SyntaxKey::TemplateArg) {
+         writer.newNode(SyntaxKey::TemplateType);
 
-      if (current == SyntaxKey::ArrayType) {
-         flushTypeAttribute(writer, scope, current, attributeCategory, allowType);
+         SyntaxKey parameterKey;
+         ref_t parameterIndex = 0;
+         if (current == SyntaxKey::identifier && scope.isParameter(current, parameterKey, parameterIndex)) {
+            writer.newNode(parameterKey, parameterIndex);
+            flushIdentifier(writer, current, scope.ignoreTerminalInfo);
+            writer.closeNode();
+         }
+         else flushNode(writer, scope, current);
+
+         current = nextNode;
+         while (current == SyntaxKey::TemplateArg) {
+            flushTypeAttribute(writer, scope, current, attributeCategory, true);
+
+            current = current.nextNode();
+         }
+
+         writer.closeNode();
       }
-      else flushAttribute(writer, scope, current, attributeCategory, allowType);
+      else {
+         bool allowType = nameNode.key == SyntaxKey::None || nextNode == nameNode;
 
-      current = current.nextNode();
+         if (current == SyntaxKey::ArrayType) {
+            flushTypeAttribute(writer, scope, current, attributeCategory, allowType);
+         }
+         else flushAttribute(writer, scope, current, attributeCategory, allowType);
+
+         current = current.nextNode();
+      }
    }
 
    if (!typeDescriptor && nameNode != SyntaxKey::None) {
