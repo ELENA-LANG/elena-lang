@@ -34,5 +34,77 @@ public interface Enumerator<T>
 
    abstract Enumerator cast();
 
-//   Enumerator<T> enumerator() = self;
+   Enumerator<T> enumerator() = self;
+}
+
+// --- Enumerable ---
+
+public abstract Enumerable
+{
+   abstract Enumerator enumerator();
+}
+
+public abstract Enumerable<T>
+{
+   abstract Enumerator<T> enumerator();
+}
+
+// --- Indexer ---
+
+public interface Indexer
+{
+   get abstract bool Available();
+
+   get abstract Value();
+
+   set abstract Value(value);
+
+   abstract int Index
+   {
+      get();
+
+      set(value);
+   }
+
+   abstract appendIndex(int index);
+
+   abstract int Length
+   {
+      get();
+   }
+}
+
+public interface Indexer<T>
+{
+   get abstract bool Available();
+
+   get abstract T Value();
+
+   set abstract Value(T value);
+
+   abstract int Index
+   {
+      get();
+
+      set(value);
+   }
+
+   abstract appendIndex(int index);
+
+   abstract int Length
+   {
+      get();
+   }
+}
+
+// --- Indexable ---
+
+public abstract Indexable
+{
+   abstract Indexer indexer();
+}
+
+public abstract Indexable<T>
+{
+   abstract Indexer<T> indexer();
 }

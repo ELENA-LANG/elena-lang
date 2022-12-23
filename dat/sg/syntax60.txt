@@ -408,7 +408,7 @@ SI_R ::=
 SI_Rf ::=
 	"=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE
         | "{" ^ PARAMETER BLOCK ^CLOSURE
-	| eps ^EXPRESSION E_R;
+	| eps ^OBJECT ^EXPRESSION E_R;
 
 SSI_R ::=
 	identifier SSI_R
