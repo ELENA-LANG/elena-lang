@@ -41,15 +41,15 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l | (unsigned int)r);
 }
 
-inline void testNodes(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      testNodes(current);
-
-      current = current.nextNode();
-   }
-}
+//inline void testNodes(SyntaxNode node)
+//{
+//   SyntaxNode current = node.firstChild();
+//   while (current != SyntaxKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
 inline bool isSelfCall(ObjectInfo target)
 {
@@ -3923,7 +3923,7 @@ void Compiler :: declareTemplateAttributes(Scope& scope, SyntaxNode node,
 {
    SyntaxNode current = objectMode ? node.nextNode() : node.firstChild();
    while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::TemplateArg) {
+      if (current == SyntaxKey::TemplateArg || current == SyntaxKey::Type) {
          ref_t typeRef = resolveStrongTypeAttribute(scope, current, declarationMode);
 
          parameters.add(typeRef);
@@ -4137,7 +4137,7 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
    }
    else {
       SyntaxNode current = node.firstChild();
-      if (current == SyntaxKey::Object) {
+      if (current == SyntaxKey::Object || current == SyntaxKey::Type) {
          typeInfo = resolveTypeAttribute(scope, current, declarationMode, allowRole);
       }
       else {
@@ -7917,8 +7917,6 @@ void Compiler :: compileClosureMethod(BuildTreeWriter& writer, MethodScope& scop
 
 void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
 {
-   testNodes(node);
-
    ref_t parentRef = scope.info.header.parentRef;
 
    writer.newNode(BuildKey::NestedClass, scope.reference);
