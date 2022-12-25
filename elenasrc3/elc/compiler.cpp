@@ -41,15 +41,15 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l | (unsigned int)r);
 }
 
-//inline void testNodes(SyntaxNode node)
-//{
-//   SyntaxNode current = node.firstChild();
-//   while (current != SyntaxKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 inline bool isSelfCall(ObjectInfo target)
 {
@@ -7917,6 +7917,8 @@ void Compiler :: compileClosureMethod(BuildTreeWriter& writer, MethodScope& scop
 
 void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
 {
+   testNodes(node);
+
    ref_t parentRef = scope.info.header.parentRef;
 
    writer.newNode(BuildKey::NestedClass, scope.reference);

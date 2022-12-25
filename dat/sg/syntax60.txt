@@ -401,9 +401,17 @@ I_R ::=
 SI_R ::=
 	identifier SI_R 
 	| reference SI_R 
-	| "=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION E_R;
+	| "," ^ PARAMETER CI_R ^CLOSURE ^EXPRESSION E_R
+	| "=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION E_R
 	| ")" SI_Rf
 	| O_R ")" ^EXPRESSION E_R;
+
+CI_R ::=
+	PARAMETER NEXT_PARAMETER CI_Rf;
+
+CI_Rf ::=
+	"=>" RET_EXPRESSION ")"
+	| ")" "{" BLOCK;
 
 SI_Rf ::=
 	"=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE

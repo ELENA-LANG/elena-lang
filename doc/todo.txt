@@ -5,7 +5,10 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * api functionality for existing classes : system'Enumerator<T>
+    * support (x,y => x+y)
+    * uncomment Fun<T,TResult> template method
+
+    * api functionality for existing classes : system'Func<T1,T2,TResult>
     * elena vm : implement elenavmmachine - starting a program
     * ldoc : fixing
     * ide : remember last open project / files
@@ -19,6 +22,30 @@ In development:
     ! elena vm
     ! elena vm : helloworld sample x86
 
+    === Iteration 14 ===
+    ! examples : pi, bsort, textfile, binary, replace, goods
+    ! elena sm : x86
+    ! script samples : x86
+
+    === Iteration 15 ===
+    ! ide : vm console
+    ! sm : generate some basic templates from vm console - hello world sample
+
+    === Iteration 16 ===
+    ! sm : generate advances templates from vm console
+    ! elena vm : helloworld sample Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
+    ! elena sm : script samples Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
+
+------                                                           
+Backlog:
+------   
+    --- output redux ---
+    --- elena redux ---
+    --- ide redux ---
+    --- docs / tutorials ---
+    --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
+
+    --- elena redux ---
     * gc - system_tests - why full collect happends so often
     * aarch64 gc: system_tests fails in gc routine
     * #15 : return double / long from external function
@@ -68,31 +95,7 @@ In development:
     * ldoc : show conversions in the separate section
 
     * optimization : extra temporal variables
-
-    === Iteration 14 ===
-    ! examples : pi, bsort, textfile, binary, replace, goods
-    ! elena sm : x86
-    ! script samples : x86
-
-    === Iteration 15 ===
-    ! ide : vm console
-    ! sm : generate some basic templates from vm console - hello world sample
-
-    === Iteration 16 ===
-    ! sm : generate advances templates from vm console
-    ! elena vm : helloworld sample Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
-    ! elena sm : script samples Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
-
-------                                                           
-Backlog:
-------   
-    --- output redux ---
-    --- elena redux ---
-    --- ide redux ---
-    --- docs / tutorials ---
-    --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
-
-    --- elena redux ---
+    * ide : highlight openning / closing brackets
     * api60 : Indexer2D?
     * template arg in template arg support : field, method type, method arg, variable, expression
     * refactor resolveTypeAttribute - too complicated and part of it could be no longer actual
