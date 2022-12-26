@@ -60,13 +60,13 @@ void ELENARTMachine :: Exit(int exitCode)
    __routineProvider.Exit(exitCode);
 }
 
-void ELENARTMachine :: startSTA(SystemEnv* env, SymbolList* entryList)
+void ELENARTMachine :: startSTA(SystemEnv* env, void* entry)
 {
    // setting up system
    __routineProvider.InitSTA(env);
 
    // executing the program
-   int retVal = execute(env, entryList);
+   int retVal = execute(env, entry);
 
    // winding down system
    Exit(retVal);

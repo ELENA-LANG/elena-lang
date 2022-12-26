@@ -417,6 +417,35 @@ procedure default_exception_handler
 
 end
 
+procedure startUpSymbols
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[i,len]
+
+  nsave      dp:i, 0
+
+  set        marray:"$forwards'meta$startUpSymbols"
+
+  load
+  save       dp:len
+
+labNext:
+  nadd       dp:i, 1
+
+  load       dp:i
+  xget
+  xcall
+
+  load       dp:len
+  xcmp       dp:i
+  jne        labNext
+
+  close      []
+
+end
+
 symbol sta_start
 
   open header [arg1],[envptr,ex_struct:ex_struct_size]
@@ -430,7 +459,7 @@ symbol sta_start
 
   call extern:InitializeSTLA (
      *arg1, 
-     marray:"$forwards'meta$startUpSymbols",
+     procedure:"system'core_routines'startUpSymbols",
      procedure:"system'core_routines'critical_exception_handler")
 
   close       []

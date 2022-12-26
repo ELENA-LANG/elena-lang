@@ -52,8 +52,6 @@ namespace elena_lang
 
       path_t PathSetting(ProjectOption option, ustr_t key) const;
 
-      ustr_t resolveKey(ProjectOption category, ProjectOption item, ustr_t key);
-
    public:
       PlatformType SystemTarget();
       PlatformType Platform();
@@ -72,11 +70,7 @@ namespace elena_lang
       ustr_t StringSetting(ProjectOption option) const override;
       path_t PathSetting(ProjectOption option) const override;
 
-      ustr_t resolveForward(ustr_t weakReference) override;
       ustr_t resolveExternal(ustr_t forward) override;
-      ustr_t resolveWinApi(ustr_t forward) override;
-
-      void addForward(ustr_t forward, ustr_t referenceName) override;
 
       void addBoolSetting(ProjectOption option, bool value);
       void addIntSetting(ProjectOption option, int value);

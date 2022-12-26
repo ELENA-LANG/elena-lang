@@ -119,3 +119,26 @@ void XmlProjectBase :: loadPathSetting(ConfigFile& config, ConfigFile::Node& con
    }
 }
 
+ustr_t XmlProjectBase :: resolveKey(ProjectOption category, ProjectOption item, ustr_t key)
+{
+   ProjectNode current = ProjectTree::gotoChild(_root.findChild(category), item, key);
+
+   return current == item ? current.findChild(ProjectOption::Value).identifier() : nullptr;
+}
+
+ustr_t XmlProjectBase :: resolveForward(ustr_t forward)
+{
+   return _forwards.get(forward);
+}
+
+ustr_t XmlProjectBase :: resolveWinApi(ustr_t dllAlias)
+{
+   return resolveKey(ProjectOption::Winapis, ProjectOption::Winapi, dllAlias);
+}
+
+void XmlProjectBase :: addForward(ustr_t forward, ustr_t referenceName)
+{
+   freeUStr(_forwards.exclude(forward));
+
+   _forwards.add(forward, referenceName.clone());
+}

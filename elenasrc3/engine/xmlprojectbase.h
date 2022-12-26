@@ -126,7 +126,14 @@ namespace elena_lang
       void loadPathSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath,
          ProjectOption key, path_t configPath);
 
+      ustr_t resolveKey(ProjectOption category, ProjectOption item, ustr_t key);
+
    public:
+      void addForward(ustr_t forward, ustr_t referenceName) override;
+
+      ustr_t resolveForward(ustr_t weakReference) override;
+      ustr_t resolveWinApi(ustr_t forward) override;
+
       ustr_t StringSetting(ProjectOption option) const override;
       path_t PathSetting(ProjectOption option) const override;
       bool BoolSetting(ProjectOption option, bool defValue = false) const override;

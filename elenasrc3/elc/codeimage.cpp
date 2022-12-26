@@ -49,7 +49,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
 
    if (_systemTarget == PlatformType::VMClient) {
       MemoryDump tape;
-      createVMTape(&tape, loader->Namespace(), resolver);
+      createVMTape(&tape, loader->Namespace(), loader->OutputPath(), resolver);
 
       linker.resolveTape(VM_TAPE, &tape);
    }
@@ -101,16 +101,19 @@ inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command)
    rdataWriter.writeDWord(command);
 }
 
-void TargetImage :: createVMTape(MemoryBase* tape, ustr_t ns, ForwardResolverBase* resolver)
+void TargetImage :: createVMTape(MemoryBase* tape, ustr_t ns, path_t nsPath, ForwardResolverBase* resolver)
 {
    MemoryWriter tapeWriter(tape);
 
    addVMTapeEntry(tapeWriter, VM_SETNAMESPACE_CMD, ns);
 
-   //resolver->forEachForward(&tapeWriter, [](void* arg, ustr_t key, ustr_t value) 
-   //{
-   //   addVMTapeEntry(*(MemoryWriter*)arg, VM_FORWARD_CMD, key, value);
-   //});
+   resolver->forEachForward(&tapeWriter, [](void* arg, ustr_t key, ustr_t value) 
+   {
+      addVMTapeEntry(*(MemoryWriter*)arg, VM_FORWARD_CMD, key, value);
+   });
+
+   IdentifierString nsPathStr(nsPath);
+   addVMTapeEntry(tapeWriter, VM_PACKAGE_CMD, ns, *nsPathStr);
 
    addVMTapeEntry(tapeWriter, VM_INIT_CMD);
    addVMTapeEntry(tapeWriter, VM_LOADSYMBOLARRAY_CMD, 

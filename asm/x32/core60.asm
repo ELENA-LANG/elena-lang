@@ -400,6 +400,20 @@ inline %25h
 
 end
 
+// ; xget
+inline %02Eh
+
+  mov  ebx, [ebx + edx*4]
+
+end
+
+// ; xcall
+inline %02Fh
+
+  call ebx
+
+end
+
 // ; setr
 inline %80h
 

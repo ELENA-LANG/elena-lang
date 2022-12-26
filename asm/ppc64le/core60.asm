@@ -479,6 +479,23 @@ inline %25h
 
 end
 
+// ; xget
+inline %02Eh
+
+  sldi    r22, r14, 3
+  add     r22, r22, r15
+  ld      r15, 0(r16)
+
+end
+
+// ; xcall
+inline %02Fh
+
+  mtctr    r15            // ; put code address into ctr
+  bctrl                   // ; and call it
+
+end
+
 // ; setr
 inline %80h
 

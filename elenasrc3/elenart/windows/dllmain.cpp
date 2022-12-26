@@ -22,7 +22,7 @@ void init()
 
 // --- API export ---
 
-EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)
+EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entry, void* criricalHandler)
 {
    systemEnv = env;
 
@@ -34,7 +34,7 @@ EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entryList, voi
 
    __routineProvider.InitExceptionHandling(env, criricalHandler);
 
-   machine->startSTA(env, entryList);
+   machine->startSTA(env, entry);
 }
 
 EXTERN_DLL_EXPORT void ExitLA(int retVal)

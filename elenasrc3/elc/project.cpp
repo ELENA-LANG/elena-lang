@@ -80,13 +80,6 @@ void Project :: addIntSetting(ProjectOption option, int value)
    _root.appendChild(option, valStr.str());
 }
 
-ustr_t Project :: resolveKey(ProjectOption category, ProjectOption item, ustr_t key)
-{
-   ProjectNode current = ProjectTree::gotoChild(_root.findChild(category), item, key);
-
-   return current == item ? current.findChild(ProjectOption::Value).identifier() : nullptr;
-}
-
 PlatformType Project :: SystemTarget()
 {
    return _platform & PlatformType::TargetMask;
@@ -102,26 +95,9 @@ PlatformType Project :: TargetType()
    return _platform & PlatformType::TargetTypeMask;
 }
 
-ustr_t Project :: resolveForward(ustr_t forward)
-{
-   return _forwards.get(forward);
-}
-
 ustr_t Project::resolveExternal(ustr_t dllAlias)
 {
    return resolveKey(ProjectOption::Externals, ProjectOption::External, dllAlias);
-}
-
-ustr_t Project :: resolveWinApi(ustr_t dllAlias)
-{
-   return resolveKey(ProjectOption::Winapis, ProjectOption::Winapi, dllAlias);
-}
-
-void Project :: addForward(ustr_t forward, ustr_t referenceName)
-{
-   freeUStr(_forwards.exclude(forward));
-
-   _forwards.add(forward, referenceName.clone());
 }
 
 void Project :: addSource(ustr_t ns, path_t path)

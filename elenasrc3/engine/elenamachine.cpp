@@ -59,24 +59,23 @@ void SystemRoutineProvider :: InitSTA(SystemEnv* env)
 
 // --- ELENAMachine ---
 
-int ELENAMachine :: execute(SystemEnv* env, SymbolList* entryList)
+int ELENAMachine :: execute(SystemEnv* env, void* symbolListEntry)
 {
    Entry entry;
    entry.address = env->bc_invoker;
 
    // executing the program
-   int retVal = 0;
-   for (size_t i = 0; i < entryList->length; i += sizeof(intptr_t)) {
-      try
-      {
-         retVal = entry.evaluate(entryList->entries[i].address, 0);
-      }
-      catch (InternalError&)
-      {
-         //_instance->printInfo("EAbortException");
 
-         retVal = -1;
-      }
+   int retVal = 0;
+   try
+   {
+      retVal = entry.evaluate(symbolListEntry, 0);
+   }
+   catch (InternalError&)
+   {
+      //_instance->printInfo("EAbortException");
+
+      retVal = -1;
    }
 
    return retVal;

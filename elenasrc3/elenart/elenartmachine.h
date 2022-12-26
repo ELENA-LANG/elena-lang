@@ -19,7 +19,7 @@ namespace elena_lang
       void Exit(int exitCode);
 
    public:
-      void startSTA(SystemEnv* env, SymbolList* entryList);
+      void startSTA(SystemEnv* env, void* entry);
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
       size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);

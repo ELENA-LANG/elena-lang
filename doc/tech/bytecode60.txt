@@ -97,6 +97,8 @@ ELENA byte codes (or ecodes)
    xassign i                - acc[i] := sp[0];
                               direct operation
 
+   xget                     - acc[index] => acc
+
 
  Call operations:
  ----------------
@@ -106,11 +108,11 @@ ELENA byte codes (or ecodes)
    call symbol:r            - calls the procedure;
                               acc contains the result
 
-   call vt:i                - call acc::VMT[i] method;
-                              acc contains the result
-
    call mssg:m, r           - calls directly the method resolved by JIT by r and m
                               acc contains the result 
+
+   call vt:i                - call acc::VMT[i] method;
+                              acc contains the result
 
    jump mssg:m, r           - jumps directly the method resolved by JIT by r and m
                               acc contains the result 
@@ -123,6 +125,8 @@ ELENA byte codes (or ecodes)
  
    vjump mssg:m, r          - jumps via table the method resolved by JIT by r and m
                               acc contains the result 
+
+   xcall                    - calls the procedure in acc;
  
 
  Stack operations:

@@ -120,6 +120,13 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
 
       mask = mskProcedureRef;
    }
+   else if (tokenInfo.compare("marray")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      _reader.read(tokenInfo);
+
+      mask = mskTypeListRef;
+   }
 
    if (tokenInfo.state == dfaQuote) {
       if (constantMode) {

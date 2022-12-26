@@ -79,7 +79,7 @@ namespace elena_lang
    class ELENAMachine
    {
    public:
-      int execute(SystemEnv* env, SymbolList* entryList);
+      int execute(SystemEnv* env, void* symbolListEntry);
 
       ELENAMachine() = default;
 

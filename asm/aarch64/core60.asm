@@ -438,6 +438,22 @@ inline %25h
 
 end
 
+// ; xget
+inline %02Eh
+
+  lsl     x14, x9, #3
+  add     x17, x10, x14
+  ldr     x10, [x17]
+
+end
+
+// ; xcall
+inline %02Fh
+
+  blr     x10
+
+end
+
 // ; setr
 inline %80h
 

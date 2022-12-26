@@ -53,20 +53,9 @@ protected:
    }
 
 public:
-   void addForward(ustr_t forward, ustr_t referenceName)
-   {
-      throw InternalError(errVMBroken);
-   }
-
    ustr_t resolveExternal(ustr_t forward)
    {
       throw InternalError(errVMBroken);
-   }
-
-   ustr_t resolveForward(ustr_t forward)
-   {
-      // !! temporal
-      return nullptr;
    }
 
    ustr_t resolveWinApi(ustr_t forward)
@@ -125,6 +114,29 @@ void ELENAVMMachine :: stopVM()
    
 }
 
+void ELENAVMMachine :: addForward(ustr_t forwardLine)
+{
+   pos_t index = forwardLine.find('=');
+   if (index != NOTFOUND_POS) {
+      ustr_t fullReference = forwardLine + index + 1;
+
+      IdentifierString fwd(forwardLine, index);
+
+      _configuration->addForward(*fwd, fullReference);
+   }
+}
+
+void ELENAVMMachine :: addPackage(ustr_t packageLine)
+{
+   pos_t index = packageLine.find('=');
+   if (index != NOTFOUND_POS) {
+      PathString path(packageLine + index + 1);
+      IdentifierString ns(packageLine, index);
+
+      _libraryProvider.addPackage(*ns, *path);
+   }
+}
+
 void ELENAVMMachine :: configurateVM(MemoryReader& reader, JITLinker& jitLinker)
 {
    pos_t  command = 0;
@@ -147,6 +159,12 @@ void ELENAVMMachine :: configurateVM(MemoryReader& reader, JITLinker& jitLinker)
             _libraryProvider.setRootPath(*pathArg);
             break;
          }
+         case VM_FORWARD_CMD:
+            addForward(strArg);
+            break;
+         case VM_PACKAGE_CMD:
+            addPackage(strArg);
+            break;
          case VM_INIT_CMD:
             init(jitLinker);
             eop = true;
@@ -182,7 +200,7 @@ void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
             if (address == INVALID_ADDR)
                throw JITUnresolvedException(ReferenceInfo { strArg });
 
-            loadSymbolArrayList((void*)address);
+            loadSymbolArrayList(writer, (void*)address);
             break;
          }
          default:
@@ -234,8 +252,12 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, void* c
    return execute(env, &list);
 }
 
-void ELENAVMMachine :: loadSymbolArrayList(void* address)
+void ELENAVMMachine :: loadSymbolArrayList(MemoryWriter& writer, void* address)
 {
+   SymbolList* list = (SymbolList*)address;
+   for (size_t i = 0; i < list->length; i++) {
+      
+   }
 }
 
 void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, void* criricalHandler)

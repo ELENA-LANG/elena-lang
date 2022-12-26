@@ -43,6 +43,8 @@ namespace elena_lang
       BRead          = 0x23,
       LSave          = 0x24,
       FSave          = 0x25,
+      XGet           = 0x2E,
+      XCall          = 0x2F,
 
       MaxSingleOp    = 0x7F,
 

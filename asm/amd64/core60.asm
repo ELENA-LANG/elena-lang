@@ -407,6 +407,20 @@ inline %25h
 
 end
 
+// ; xget
+inline %02Eh
+
+  mov  rbx, [rbx + rdx*8]
+
+end
+
+// ; xcall
+inline %02Fh
+
+  call rbx
+
+end
+
 // ; setr
 inline %80h
 

@@ -47,6 +47,11 @@ namespace elena_lang
          return *_namespace;
       }
 
+      path_t OutputPath() override
+      {
+         return *_outputPath;
+      }
+
       void setOutputPath(path_t path)
       {
          _outputPath.copy(path);

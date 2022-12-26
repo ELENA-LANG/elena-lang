@@ -21,27 +21,6 @@ namespace elena_lang
    // --- ELENARTMachine ---
    class ELENAVMMachine : public ELENAMachine, public ImageProviderBase
    {
-   public:
-      class VMReferenceMapper : public ReferenceMapper
-      {
-      public:
-         //void addLazyReference(LazyReferenceInfo info) override;
-
-         //List<LazyReferenceInfo>::Iterator lazyReferences() override;
-
-         //void mapAction(ustr_t actionName, ref_t actionRef, ref_t signRef) override;
-
-         //void mapReference(ReferenceInfo referenceInfo, addr_t address, ref_t sectionMask) override;
-
-         //ref_t resolveAction(ustr_t actionName, ref_t signRef) override;
-
-         //addr_t resolveReference(ReferenceInfo referenceInfo, ref_t sectionMask) override;
-
-         //ustr_t retrieveAction(ref_t actionRef, ref_t& signRef) override;
-
-         //ustr_t retrieveReference(addr_t address, ref_t sectionMask) override;
-      };
-
    private:
       bool                 _initialized;
       LibraryProvider      _libraryProvider;
@@ -51,6 +30,9 @@ namespace elena_lang
 
       ProjectBase*         _configuration;
       JITCompilerBase*     _compiler;
+
+      void addForward(ustr_t forwardLine);
+      void addPackage(ustr_t packageLine);
 
       int interprete(SystemEnv* env, void* tape, pos_t size, void* criricalHandler);
 
@@ -65,7 +47,7 @@ namespace elena_lang
 
       void init(JITLinker& jitLinker);
 
-      void loadSymbolArrayList(void* addr);
+      void loadSymbolArrayList(MemoryWriter& writer, void* addr);
 
       AddressMap::Iterator externals() override;
 
