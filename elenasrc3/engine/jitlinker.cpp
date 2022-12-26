@@ -1300,8 +1300,11 @@ addr_t JITLinker :: resolveTape(ustr_t referenceName, MemoryBase* tape)
    return resolveConstantDump({ referenceName }, { tape }, mskConstant);
 }
 
-addr_t JITLinker :: resolveTemporalByteCode(ReferenceHelperBase& helper, MemoryDump& tapeSymbol)
+addr_t JITLinker :: resolveTemporalByteCode(MemoryDump& tapeSymbol, ModuleBase* module)
 {
+   VAddressMap references(VAddressInfo(0, nullptr, 0, 0));
+   JITLinkerReferenceHelper helper(this, module, &references);
+
    MemoryReader reader(&tapeSymbol);
 
    MemoryBase* image = _imageProvider->getTargetSection(mskCodeRef);
@@ -1311,6 +1314,8 @@ addr_t JITLinker :: resolveTemporalByteCode(ReferenceHelperBase& helper, MemoryD
    addr_t vaddress = calculateVAddress(writer, mskCodeRef);
 
    _compiler->compileProcedure(&helper, reader, writer, nullptr);
+
+   fixReferences(references, image);
 
    return vaddress;
 }

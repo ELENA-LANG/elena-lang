@@ -292,7 +292,7 @@ namespace elena_lang
    constexpr pos_t VM_STR_COMMAND_MASK       = 0x100;
 
    constexpr pos_t VM_ENDOFTAPE_CMD          = 0x001;
-   constexpr pos_t VM_LOADSYMBOLARRAY_CMD    = 0x102;
+   constexpr pos_t VM_CALLSYMBOL_CMD         = 0x102;
    constexpr pos_t VM_SETNAMESPACE_CMD       = 0x103;
    constexpr pos_t VM_SETPACKAGEPATH_CMD     = 0x104;
    constexpr pos_t VM_INIT_CMD               = 0x005;

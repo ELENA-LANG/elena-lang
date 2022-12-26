@@ -71,6 +71,7 @@ namespace elena_lang
    constexpr auto OPERATION_MAP           = "$forwards'meta$statementTemplates";
    constexpr auto ALIASES_MAP             = "$forwards'meta$aliasTypes";
    constexpr auto STARTUP_LIST            = "$forwards'meta$startUpSymbols";
+   constexpr auto STARTUP_ENTRY           = "$forwards'startUpSymbols";
 
    constexpr auto VM_TAPE                 = "$elena'meta$startUpTape";
 

@@ -12,6 +12,7 @@
 #include "jitlinker.h"
 #include "xmlprojectbase.h"
 #include "bytecode.h"
+#include "module.h"
 
 using namespace elena_lang;
 
@@ -175,9 +176,12 @@ void ELENAVMMachine :: configurateVM(MemoryReader& reader, JITLinker& jitLinker)
    }
 }
 
-void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker)
+void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, ModuleBase* dummyModule)
 {
    MemoryWriter writer(&tapeSymbol);
+
+   pos_t sizePlaceholder = writer.position();
+   writer.writePos(0);
 
    pos_t  command = 0;
    ustr_t strArg = nullptr;
@@ -194,21 +198,21 @@ void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
          case VM_ENDOFTAPE_CMD:
             eop = true;
             break;
-         case VM_LOADSYMBOLARRAY_CMD:
-         {
-            addr_t address = jitLinker.resolve(strArg, mskTypeListRef, true);
-            if (address == INVALID_ADDR)
-               throw JITUnresolvedException(ReferenceInfo { strArg });
-
-            loadSymbolArrayList(writer, (void*)address);
+         case VM_CALLSYMBOL_CMD:
+            ByteCodeUtil::write(writer, ByteCode::CallR,
+               dummyModule->mapReference(strArg) | mskProcedureRef);
             break;
-         }
          default:
             break;
       }
    }
 
    ByteCodeUtil::write(writer, ByteCode::CloseN);
+
+   pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
+
+   writer.seek(sizePlaceholder);
+   writer.writePos(size);
 }
 
 void ELENAVMMachine :: onNewCode()
@@ -236,28 +240,21 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, void* c
    JITLinker jitLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
       &_settings, nullptr);
 
+   Module* dummyModule = new Module();
    MemoryDump tapeSymbol;
-   JITLinker::JITLinkerReferenceHelper helper(&jitLinker, nullptr, nullptr);
 
    configurateVM(reader, jitLinker);
-   compileVMTape(reader, tapeSymbol, jitLinker);
+   compileVMTape(reader, tapeSymbol, jitLinker, dummyModule);
 
    SymbolList list;
 
-   list.length = sizeof(intptr_t);
-   list.entries[0].address = (void*)jitLinker.resolveTemporalByteCode(helper, tapeSymbol);
+   void* address = (void*)jitLinker.resolveTemporalByteCode(tapeSymbol, dummyModule);
 
    resumeVM(env, criricalHandler);
 
-   return execute(env, &list);
-}
+   freeobj(dummyModule);
 
-void ELENAVMMachine :: loadSymbolArrayList(MemoryWriter& writer, void* address)
-{
-   SymbolList* list = (SymbolList*)address;
-   for (size_t i = 0; i < list->length; i++) {
-      
-   }
+   return execute(env, address);
 }
 
 void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, void* criricalHandler)

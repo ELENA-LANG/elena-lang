@@ -206,7 +206,7 @@ namespace elena_lang
 
    public:
       addr_t resolveTape(ustr_t referenceName, MemoryBase* tape);
-      addr_t resolveTemporalByteCode(ReferenceHelperBase& helper, MemoryDump& tapeSymbol);
+      addr_t resolveTemporalByteCode(MemoryDump& tapeSymbol, ModuleBase* module);
 
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 
