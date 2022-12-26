@@ -5,12 +5,13 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * elena vm : implement elenavmmachine - starting a program
-    * ldoc : fixing
+    * ldoc : fixing #invoke
     * ide : remember last open project / files
     * api functionality for existing classes : BaseLazyExpression
     * ide : open the last opened file on the ide start
     * ide - review on change events : after editor change / debug step
+    * elena vm : implement elenavmmachine - debug a program
+    * ldoc : fixing
 
     ! api functionality for existing classes : system
     ! regression tests : all github issues (> 52)

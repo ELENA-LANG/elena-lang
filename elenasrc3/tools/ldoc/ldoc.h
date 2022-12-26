@@ -27,6 +27,7 @@ namespace elena_lang
       bool              special;
       bool              property;
       bool              cast;
+      bool              function;
 
       StringList        paramTypes;
       StringList        paramNames;
@@ -34,7 +35,7 @@ namespace elena_lang
       ApiMethodInfo()
          : extensionOne(false), paramTypes(nullptr), paramNames(nullptr)
       {
-         cast = property = special = false;
+         function = cast = property = special = false;
       }
    };
 

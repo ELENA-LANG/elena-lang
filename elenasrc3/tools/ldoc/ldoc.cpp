@@ -679,8 +679,11 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
 
    if (info->special)
       writer.writeText("<i>");
-   
-   writer.writeText(*info->name);
+
+   if (info->function) {
+      writer.writeText("function");
+   }
+   else writer.writeText(*info->name);
 
    if (info->special)
       writer.writeText("</i>");
@@ -1073,7 +1076,6 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
    auto apiMethodInfo = new ApiMethodInfo();
    apiMethodInfo->extensionOne = memberType == MemberType::Extension;
 
-   bool functionMode = false;
    if (ByteCodeUtil::resolveMessageName(apiMethodInfo->name, _module, message)) {
       if (descriptions) {
          ustr_t descr = descriptions->get(*apiMethodInfo->name);
@@ -1109,7 +1111,7 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          if ((*apiMethodInfo->name).startsWith("function:")) {
             apiMethodInfo->name.cut(0, 9);
             if (memberType != MemberType::Extension)
-               functionMode = true;
+               apiMethodInfo->function = true;
          }
          if ((*apiMethodInfo->name).startsWith("prop:")) {
             apiMethodInfo->name.cut(0, 5);
