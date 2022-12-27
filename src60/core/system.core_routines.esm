@@ -443,6 +443,7 @@ labNext:
   jne        labNext
 
   close      []
+  quit
 
 end
 

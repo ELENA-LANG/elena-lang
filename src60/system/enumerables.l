@@ -108,3 +108,20 @@ public abstract Indexable<T>
 {
    abstract Indexer<T> indexer();
 }
+
+// --- BaseEnumerator<type> ---
+
+public abstract class BaseEnumerator<T> : Enumerator<T>
+{
+    Reference<int> index;
+    int            length;
+
+//    bool next()
+//    {
+//        theIndex.append(1);
+//        
+//        ^ (cast int(theIndex)) < theLength
+//    }
+//    
+//    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+}

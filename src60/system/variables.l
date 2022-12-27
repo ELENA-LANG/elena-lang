@@ -111,3 +111,24 @@ public class Variable : BaseVariable, Reference<object>,
       value /= val
    }
 }
+
+// --- intRefOp ---
+
+//public extension intRefOp : Reference<int>
+//{
+//    append(int n)
+//    {
+//        int v := *self;
+//        v := v + n;
+        
+//        self.Value := v
+//    }
+    
+//    reduce(int n)
+//    {
+//        int v := *self;
+//        v := v - n;
+        
+//        self.Value := v
+//    }
+//}

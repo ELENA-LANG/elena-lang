@@ -382,7 +382,7 @@ RI_R ::=
         | I_L0_R
 	| I_L1_R
 	| RI_L2_R
-	| I_L3_R L3f
+	| RI_L3_R
 	| I_L4_R
 	| I_L5_R
 	| I_L6_R L7e
@@ -538,6 +538,13 @@ RI_L2_R ::=
 RI_L2_OPT ::=
 	T_EXPRESSION T_EXPRESSIONS ^ TEMPLATE_BLOCK
 	| eps ^ MESSAGE_OPERATION;
+
+RI_L3_R ::=
+        "." ^OBJECT MESSAGE RI_L3f;
+
+RI_L3f ::=
+	":=" EXPRESSION ^PROPERTY_OPERATION
+	| MESSAGE_R L3f;
 
 I_L3_R ::=
 	"." ^OBJECT MESSAGE MESSAGE_R;
