@@ -139,6 +139,7 @@ namespace elena_lang
       ProjectController    projectController;
 
       bool loadConfig(IDEModel* model, path_t configPath);
+      void saveConfig(IDEModel* model, path_t configPath);
 
       void setNotifier(NotifierBase* notifier)
       {

@@ -462,8 +462,29 @@ inline void loadRecentFiles(ConfigFile& config, ustr_t xpath, ProjectPaths& path
    }
 }
 
+inline void saveSetting(ConfigFile& config, ustr_t xpath, int value)
+{
+   String<char, 15> number;
+   number.appendInt(value);
+
+   config.appendSetting(xpath, number.str());
+}
+
+inline void saveRecentFiles(ConfigFile& config, ustr_t xpath, ProjectPaths& paths)
+{
+   for (int index = paths.count(); index > 0; index--) {
+      path_t path = paths.get(index);
+
+      IdentifierString pathStr(path);
+
+      config.appendSetting(xpath, *pathStr);
+   }
+}
+
 bool IDEController :: loadConfig(IDEModel* model, path_t path)
 {
+   model->projectModel.paths.configPath.copy(path);
+
    ConfigFile config;
    if (config.load(path, FileEncoding::UTF8)) {
       model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
@@ -478,6 +499,19 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
       return false;
    }
 
+}
+
+void IDEController :: saveConfig(IDEModel* model, path_t configPath)
+{
+   ConfigFile config(ROOT_NODE);
+
+   saveSetting(config, MAXIMIZED_SETTINGS, model->appMaximized);
+   saveSetting(config, FONTSIZE_SETTINGS, model->sourceViewModel.fontSize);
+   saveSetting(config, SCHEME_SETTINGS, model->sourceViewModel.schemeIndex);
+
+   saveRecentFiles(config, RECENTFILE_SETTINGS, model->projectModel.lastOpenFiles);
+
+   config.save(*model->projectModel.paths.configPath, FileEncoding::UTF8);
 }
 
 void IDEController :: init(IDEModel* model)
@@ -564,7 +598,11 @@ void IDEController :: doOpenFile(DialogBase& dialog, IDEModel* model)
    if (dialog.openFiles(files)) {
       for (auto it = files.start(); !it.eof(); ++it) {
          if(openFile(model, *it)) {
-            
+            while (model->projectModel.lastOpenFiles.count() >= 10)
+               model->projectModel.lastOpenFiles.cut(
+                  model->projectModel.lastOpenFiles.get(model->projectModel.lastOpenFiles.count()));
+
+            model->projectModel.lastOpenFiles.insert((*it).clone());
          }
       }
    }
@@ -674,7 +712,7 @@ bool IDEController :: doCloseAll(DialogBase& dialog, IDEModel* model)
 
 bool IDEController :: doExit(DialogBase& dialog, IDEModel* model)
 {
-   return doCloseAll(dialog, model);
+   return true;
 }
 
 void IDEController :: doSelectNextWindow(IDEModel* model)
@@ -851,6 +889,9 @@ void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, ID
 bool IDEController :: onClose(DialogBase& dialog, IDEModel* model)
 {
    bool result = doCloseAll(dialog, model);
+   if (result) {
+      saveConfig(model, *model->projectModel.paths.configPath);
+   }
 
    return result;
 }

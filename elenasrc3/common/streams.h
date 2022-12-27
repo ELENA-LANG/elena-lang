@@ -220,6 +220,8 @@ namespace elena_lang
    template<class T> class TextWriter
    {
    public:
+      virtual bool isOpen() const = 0;
+
       virtual pos_t position() const = 0;
 
       virtual bool write(const T* s, pos_t length) = 0;
@@ -246,7 +248,7 @@ namespace elena_lang
       bool fillText(const T* s, pos_t length, pos_t count)
       {
          while (count > 0) {
-            if (write(s, length))
+            if (!write(s, length))
                return false;
 
             count--;
@@ -551,6 +553,8 @@ namespace elena_lang
       pos_t _offset;
 
    public:
+      bool isOpen() const override { return _text != nullptr; }
+
       pos_t position() const override { return _offset; }
 
       bool seek(pos_t position)

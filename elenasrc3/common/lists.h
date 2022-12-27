@@ -640,6 +640,11 @@ namespace elena_lang
          _list.addToTale(item);
       }
 
+      void insert(T item)
+      {
+         _list.addToTop(item);
+      }
+
       T peek() const
       {
          return _list.peek();
