@@ -2190,7 +2190,7 @@ void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode baseNode, b
             if (!importInlineTemplate(scope, current, INLINE_PREFIX, baseNode.parentNode())) {
                parentNode = baseNode;
 
-               parentRef = resolveStrongTypeAttribute(scope, current.firstChild(), false);
+               parentRef = resolveStrongTypeAttribute(scope, current.firstChild(), extensionMode);
             }
          }
          else {
@@ -2203,7 +2203,7 @@ void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode baseNode, b
       else if (!parentRef) {
          parentNode = baseNode;
 
-         parentRef = resolveStrongTypeAttribute(scope, baseNode.firstChild(), false);
+         parentRef = resolveStrongTypeAttribute(scope, baseNode.firstChild(), extensionMode);
       }
       else scope.raiseError(errInvalidSyntax, baseNode);
 
@@ -5348,7 +5348,7 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
    mssg_t messageRef = mapMessage(scope, current, true, 
       source.kind == ObjectKind::Extension, false);
 
-   ref_t implicitSignatureRef = 0;
+   ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);;
    mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, source), expectedRef, messageRef, implicitSignatureRef);
    if (byRefHandler) {
       ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
