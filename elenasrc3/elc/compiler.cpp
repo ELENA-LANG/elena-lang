@@ -7667,7 +7667,11 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    declareVMTMessage(methodScope, current, false, false);
 
    if (methodScope.info.outputRef) {
-      validateType(scope, methodScope.info.outputRef, current, false, false);
+      SyntaxNode typeNode = current.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType);
+      if (typeNode != SyntaxKey::None) {
+         resolveTypeAttribute(scope, typeNode, false, false);
+      }
+      else validateType(scope, methodScope.info.outputRef, current, false, false);
 
       if (methodScope.checkHint(MethodHint::VirtualReturn)) {
          TypeInfo refType = { V_WRAPPER, methodScope.info.outputRef };

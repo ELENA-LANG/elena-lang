@@ -173,7 +173,7 @@ public abstract class BaseIndexer : Indexer
 
 // --- Range ---
 
-public sealed class Range //: Enumerable<int>
+public sealed class Range : Enumerable<int>
 {
    int start;
    int end;
