@@ -1,23 +1,27 @@
 import extensions;
 
-public extension intRefOp : Reference<int>
+interface B
 {
-    append(int n)
-    {
-        int v := *self;
-        v := v + n;
-        
-        self.Value := v
-    }
+   abstract callMe();
+}
+
+A
+{
+   callMe()
+   {
+      console.writeLine("Call Me")
+   }   
+
+   B getB() = B { embeddable dispatch() => self; };
 }
    
 public program()
 {
-   var r := new Reference<int>(0);
+//   var a := new A();
 
-   r.Value := 2;
-   r.append(1);
-   console.writeLine(r.Value)
+//   B b := a.getB();
 
-//   console.writeLine("Hello");
+//   b.callMe()
+
+   console.writeLine("Hello");
 }

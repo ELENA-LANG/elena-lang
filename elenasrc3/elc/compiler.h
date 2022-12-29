@@ -65,6 +65,7 @@ namespace elena_lang
       Field,
       Outer,
       OuterField,
+      OuterSelf,
       Closure,
       Extension,
       ConstantRole,
@@ -142,6 +143,14 @@ namespace elena_lang
          this->typeInfo = typeInfo;
          this->argument = value;
          this->extra = 0;
+         mode = TargetMode::None;
+      }
+      ObjectInfo(ObjectKind kind, TypeInfo typeInfo, ref_t reference, ref_t extra)
+      {
+         this->kind = kind;
+         this->typeInfo = typeInfo;
+         this->reference = reference;
+         this->extra = extra;
          mode = TargetMode::None;
       }
       ObjectInfo(ObjectKind kind, TypeInfo typeInfo, ref_t reference, int extra)
@@ -590,6 +599,8 @@ namespace elena_lang
 
          bool         functionMode;
          bool         closureMode;
+         bool         nestedMode;
+         bool         targetSelfMode;
          bool         constructorMode;
          bool         isEmbeddable;
          bool         byRefReturnMode;
@@ -619,7 +630,8 @@ namespace elena_lang
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
          ObjectInfo mapParameter(ustr_t identifier, ExpressionAttribute attr);
-         ObjectInfo mapSelf(bool memberMode = false);
+         ObjectInfo mapSelf(bool memberMode = true);
+         ObjectInfo mapSuper();
 
          bool isPrivate() const
          {
@@ -1209,6 +1221,10 @@ namespace elena_lang
       void injectDefaultConstructor(ClassScope& scope, SyntaxNode node, bool protectedOne);
 
       void injectVariableInfo(BuildNode node, CodeScope& codeScope);
+
+      void injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t parentRef);
+
+      void injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, SyntaxKey key, ustr_t arg);
 
       void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
          mssg_t messageRef, MethodHint type) override;

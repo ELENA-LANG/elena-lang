@@ -613,6 +613,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_GENERIC:
          hint = (ref_t)MethodHint::Sealed | (ref_t)MethodHint::Generic;
          return true;
+      case V_EMBEDDABLE:
+         hint = (ref_t)MethodHint::Embeddable;
+         return true;
       default:
          return false;
    }
@@ -693,6 +696,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
          return true;
       case V_MEMBER:
          attrs |= ExpressionAttribute::Member;
+         return true;
+      case V_WEAK:
+         attrs |= ExpressionAttribute::Weak;
          return true;
       case V_SUPERIOR:
          attrs |= ExpressionAttribute::Superior;
@@ -1739,4 +1745,19 @@ bool CompilerLogic :: isValidType(ModuleScopeBase& scope, ref_t classReference, 
       return ignoreUndeclared;
 
    return isValidType(info, allowRole);
+}
+
+void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods)
+{
+   ClassInfo info;
+   scope.loadClassInfo(info, parentRef);
+   for (auto it = info.methods.start(); !it.eof(); ++it) {
+      auto mssg = it.key();
+      auto methodInfo = *it;
+
+      if (test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
+         methods.add(mssg);
+      }
+   }
+
 }

@@ -50,6 +50,7 @@
 #let attributesSymbols["inline"]      := 80001025h;
 #let attributesSymbols["__probe"]     := 80001026h;
 #let attributesSymbols["template"]    := 80001027h;
+#let attributesSymbols["weak"]        := 80001029h;
 
 /// primitive types
 #let attributesSymbols["__string"]    := 80000801h;

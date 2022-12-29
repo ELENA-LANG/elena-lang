@@ -24,6 +24,8 @@ namespace elena_lang
       bool        stackSafe;
    };
 
+   typedef CachedList<mssg_t, 10> VirtualMethods;
+
    // --- CompilerLogic ---
    class CompilerLogic
    {
@@ -143,6 +145,8 @@ namespace elena_lang
 
       bool isValidType(ClassInfo& info, bool allowRole);
       bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole);
+
+      void generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods);
 
       static CompilerLogic* getInstance()
       {

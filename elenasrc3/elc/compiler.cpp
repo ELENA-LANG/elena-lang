@@ -745,6 +745,8 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent) :
    reservedArgs(parent->moduleScope->minimalArgList),
    functionMode(false),
    closureMode(false),
+   nestedMode(false),
+   targetSelfMode(false),
    constructorMode(false),
    isEmbeddable(false),
    byRefReturnMode(false),
@@ -764,10 +766,13 @@ bool Compiler::MethodScope :: checkType(MethodInfo& methodInfo, MethodHint type)
 
 ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode)
 {
-   if (!memberMode && isExtension) {
-      ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
+   if (!memberMode) {
+      if (isExtension) {
+         ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
 
-      return { ObjectKind::Param, { classScope->extensionClassRef }, -1 };
+         return { ObjectKind::Param, { classScope->extensionClassRef }, -1 };
+      }
+      else return { ObjectKind::Param, { }, -1 };
    }
    else if (selfLocal != 0) {
       if (isEmbeddable) {
@@ -776,6 +781,13 @@ ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode)
       else return { ObjectKind::SelfLocal, { getClassRef(false) }, (ref_t)selfLocal };
    }
    else return {};
+}
+
+ObjectInfo Compiler::MethodScope :: mapSuper()
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
+
+   return { ObjectKind::SuperLocal, { classScope->info.header.parentRef }, selfLocal };
 }
 
 ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier, ExpressionAttribute attr)
@@ -804,17 +816,26 @@ ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier, ExpressionAt
 
 ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
 {
-   auto paramInfo = mapParameter(identifier, attr);
-   if (paramInfo.kind != ObjectKind::Unknown) {
-      return paramInfo;
-   }
-   else if (moduleScope->selfVar.compare(identifier)) {
-      return mapSelf();
-   }
-   else if (moduleScope->superVar.compare(identifier)) {
-      ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
-
-      return { ObjectKind::SuperLocal, { classScope->info.header.parentRef }, selfLocal };
+   if (!referenceOne) {
+      auto paramInfo = mapParameter(identifier, attr);
+      if (paramInfo.kind != ObjectKind::Unknown) {
+         return paramInfo;
+      }
+      else if (moduleScope->selfVar.compare(identifier)) {
+         if (functionMode || closureMode || nestedMode) {
+            return parent->mapIdentifier(OWNER_VAR, false, attr);
+         }
+         else if (EAttrs::test(attr, EAttr::Weak)) {
+            return mapSelf(false);
+         }
+         else return mapSelf();
+      }
+      else if (moduleScope->superVar.compare(identifier)) {
+         if (functionMode || closureMode || nestedMode) {
+            return parent->mapIdentifier(identifier, false, attr);
+         }
+         else return mapSuper();
+      }
    }
 
    if (constructorMode)
@@ -954,7 +975,7 @@ ObjectInfo Compiler::ExprScope :: mapMember(ustr_t identifier)
 {
    MethodScope* methodScope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
    if (methodScope != nullptr && moduleScope->selfVar.compare(identifier)) {
-      return methodScope->mapSelf(true);
+      return methodScope->mapSelf();
    }
 
    ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
@@ -1072,41 +1093,52 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapParent()
 
 ObjectInfo Compiler::InlineClassScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
 {
-   Outer outer = outers.get(identifier);
-   if (outer.reference != INVALID_REF) {
-      return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference };
+   if (identifier.compare(OWNER_VAR)) {
+      Outer owner = mapOwner();
+
+      return { ObjectKind::OuterSelf, owner.outerObject.typeInfo, owner.reference };
    }
    else {
-      outer.outerObject = parent->mapIdentifier(identifier, referenceOne, attr);
-      switch (outer.outerObject.kind) {
-         case ObjectKind::Field:
-         case ObjectKind::ReadOnlyField:
-         {
-            // handle outer fields in a special way: save only self
-            Outer owner = mapParent();
+      Outer outer = outers.get(identifier);
+      if (outer.reference != INVALID_REF) {
+         return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference, outer.outerObject.reference };
+      }
+      else {
+         outer.outerObject = parent->mapIdentifier(identifier, referenceOne, attr);
+         switch (outer.outerObject.kind) {
+            case ObjectKind::Field:
+            case ObjectKind::ReadOnlyField:
+            {
+               // handle outer fields in a special way: save only self
+               Outer owner = mapParent();
 
-            return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.outerObject.reference };
+               return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.reference, outer.outerObject.reference };
+            }
+            case ObjectKind::Param:
+            case ObjectKind::Local:
+            case ObjectKind::Outer:
+            case ObjectKind::OuterField:
+            case ObjectKind::OuterSelf:
+            case ObjectKind::SuperLocal:
+            case ObjectKind::SelfLocal:
+            case ObjectKind::LocalAddress:
+            case ObjectKind::FieldAddress:
+            case ObjectKind::ReadOnlyFieldAddress:
+            {
+               // map if the object is outer one
+               outer.reference = info.fields.count();
+
+               outers.add(identifier, outer);
+               mapNewField(info.fields, identifier, FieldInfo{ (int)outer.reference, outer.outerObject.typeInfo });
+
+               if (outer.outerObject.kind == ObjectKind::OuterSelf) {
+                  return { ObjectKind::OuterSelf, outer.outerObject.typeInfo, outer.reference };
+               }
+               else return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference };
+            }
+            default:
+               return outer.outerObject;
          }
-         case ObjectKind::Param:
-         case ObjectKind::Local:
-         case ObjectKind::Outer:
-         case ObjectKind::OuterField:
-         case ObjectKind::SuperLocal:
-         case ObjectKind::SelfLocal:
-         case ObjectKind::LocalAddress:
-         case ObjectKind::FieldAddress:
-         case ObjectKind::ReadOnlyFieldAddress:
-         {
-            // map if the object is outer one
-            outer.reference = info.fields.count();
-
-            outers.add(identifier, outer);
-            mapNewField(info.fields, identifier, FieldInfo{ (int)outer.reference, outer.outerObject.typeInfo });
-
-            return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference };
-         }
-         default:
-            return outer.outerObject;
       }
    }
 }
@@ -2343,26 +2375,11 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
          case SyntaxKey::MetaDictionary:
             declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Method);
             break;
-         case SyntaxKey::Name:
-         case SyntaxKey::Attribute:
-         case SyntaxKey::CodeBlock:
-         case SyntaxKey::ReturnExpression:
-         case SyntaxKey::Parameter:
-         case SyntaxKey::Type:
-         case SyntaxKey::ArrayType:
-         case SyntaxKey::TemplateType:
-         case SyntaxKey::EOP:
-         case SyntaxKey::ResendDispatch:
-         case SyntaxKey::Redirect:
-         case SyntaxKey::identifier:
-         case SyntaxKey::SourcePath:
-            break;
          case SyntaxKey::WithoutBody:
             withoutBody = true;
             noBodyNode = current;
             break;
          default:
-            scope.raiseError(errInvalidSyntax, node);
             break;
       }
 
@@ -3397,6 +3414,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          break;
       case ObjectKind::Field:
       case ObjectKind::Outer:
+      case ObjectKind::OuterSelf:
          writeObjectInfo(writer, scope, scope.mapSelf());
          writer.appendNode(BuildKey::Field, info.reference);
          break;
@@ -7376,7 +7394,7 @@ void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope
 
    ObjectInfo tempRetVal = declareTempLocal(scope, targetRef, false);
 
-   ObjectInfo target = methodScope.mapSelf(true);
+   ObjectInfo target = methodScope.mapSelf();
    arguments.add(target);
    for (auto it = methodScope.parameters.start(); !it.eof(); ++it) {
       arguments.add(methodScope.mapParameter(it.key(), EAttr::None));
@@ -7642,6 +7660,7 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
    methodScope.isEmbeddable = methodScope.checkHint(MethodHint::Stacksafe);
    methodScope.isExtension = methodScope.checkHint(MethodHint::Extension);
+   methodScope.nestedMode = scope.getScope(Scope::ScopeLevel::OwnerClass) != &scope;
 
    declareVMTMessage(methodScope, current, false, false);
 
@@ -7995,6 +8014,67 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
    scope.save();
 }
 
+bool isEmbeddableDispatcher(ModuleScopeBase* moduleScope, SyntaxNode current)
+{
+   SyntaxNode attr = current.firstChild();
+   bool embeddable = false;
+   bool implicit = true;
+   while (attr != SyntaxKey::None) {
+      if (attr == SyntaxKey::Attribute) {
+         switch (attr.arg.reference) {
+            case V_EMBEDDABLE:
+               embeddable = true;
+               break;
+            case V_METHOD:
+            case V_CONSTRUCTOR:
+            case V_DISPATCHER:
+               implicit = false;
+               break;
+         }
+      }
+      else if (attr == SyntaxKey::Name && embeddable && implicit) {
+         if (moduleScope->attributes.get(attr.firstChild(SyntaxKey::TerminalMask).identifier()) == V_DISPATCHER) {
+            return true;
+         }
+         else break;
+      }
+
+      attr = attr.nextNode();
+   }
+
+   return false;
+}
+
+void Compiler :: injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t parentRef)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Method && current.existChild(SyntaxKey::Redirect)) {
+         if (isEmbeddableDispatcher(scope.moduleScope, current)) {
+            SyntaxNode exprNode = current.findChild(SyntaxKey::Redirect).findChild(SyntaxKey::Expression);
+            SyntaxNode objNode = exprNode.firstChild();
+            if (objNode.nextNode() != SyntaxKey::None)
+               scope.raiseError(errInvalidSyntax, node);
+            SyntaxNode terminalNode = objNode.firstChild();
+
+            VirtualMethods virtualMethods;
+            _logic->generateVirtualDispatchMethod(*scope.moduleScope, parentRef, virtualMethods);
+
+            for (pos_t i = 0; i < virtualMethods.count_pos(); i++) {
+               injectVirtualDispatchMethod(scope, node, virtualMethods.get(i), terminalNode.key, terminalNode.identifier());
+            }
+
+            // interface class should no have a custom dispatcher
+            current.setKey(SyntaxKey::Idle);
+
+            return;
+         }
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef)
 {
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
@@ -8004,6 +8084,12 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
 
    ref_t dummy = 0;
    declareClassAttributes(scope, {}, dummy);
+
+   if (scope.abstractBasedMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher))
+   {
+      // COMPILER MAGIC : inject interface implementation if dispatch method available
+      injectInterfaceDispatch(scope, node, scope.info.header.parentRef);
+   }
 
    bool withConstructors = false;
    bool withDefaultConstructor = false;
@@ -8579,4 +8665,48 @@ void Compiler :: generateOverloadListMember(ModuleScopeBase& scope, ref_t listRe
             break;
       }
    }
+}
+
+void Compiler :: injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, SyntaxKey key, ustr_t arg)
+{
+   SyntaxNode methodNode = classNode.appendChild(SyntaxKey::Method, message);
+   methodNode.appendChild(SyntaxKey::Autogenerated, -1); // -1 indicates autogenerated multi-method
+
+   ref_t actionRef = getAction(message);
+   ref_t signRef = 0;
+   ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
+
+   if (signRef) {
+      ref_t signatures[ARG_COUNT];
+      size_t len = scope.module->resolveSignature(signRef, signatures);
+
+      String<char, 10> arg;
+      for (size_t i = 0; i < len; i++) {
+         arg.copy("$");
+         arg.appendInt(i);
+
+         SyntaxNode param = methodNode.appendChild(SyntaxKey::Parameter);
+         param.appendChild(SyntaxKey::Type, signatures[i]);
+         SyntaxNode nameParam = param.appendChild(SyntaxKey::Name);
+         nameParam.appendChild(SyntaxKey::identifier, arg.str());
+      }
+   }
+   else {
+      pos_t len = getArgCount(message);
+      String<char, 10> arg;
+      for (pos_t i = 1; i < len; i++) {
+         arg.copy("$");
+         arg.appendInt(i);
+
+         SyntaxNode param = methodNode.appendChild(SyntaxKey::Parameter);
+         SyntaxNode nameParam = param.appendChild(SyntaxKey::Name);
+         nameParam.appendChild(SyntaxKey::identifier, arg.str());
+      }
+   }
+
+   SyntaxNode body = methodNode.appendChild(SyntaxKey::Redirect);
+   body
+      .appendChild(SyntaxKey::Expression)
+      .appendChild(SyntaxKey::Object)
+      .appendChild(key, arg);
 }

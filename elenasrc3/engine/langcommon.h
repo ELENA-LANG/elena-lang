@@ -21,6 +21,7 @@ namespace elena_lang
       Virtual        = 0x00000005,
       Dispatcher     = 0x00000007,
 
+      Embeddable     = 0x00000040,
       Function       = 0x00000080,
       Generic        = 0x00000100,
       RetOverload    = 0x00000200,
@@ -171,7 +172,7 @@ namespace elena_lang
    constexpr auto V_WRAPPER               = 0x80002003u;
    constexpr auto V_OVERLOADRET           = 0x8000200Au;
    constexpr auto V_VARIADIC              = 0x8000200Bu;
-
+   
    /// scope:
    constexpr auto V_CLASS                 = 0x80001001u;
    constexpr auto V_STRUCT                = 0x80001002u;
@@ -202,6 +203,7 @@ namespace elena_lang
    constexpr auto V_PROBEMODE             = 0x80001026u;
    constexpr auto V_TEMPLATE              = 0x80001027u;
    constexpr auto V_TEMPLATEBASED         = 0x80001028u;
+   constexpr auto V_WEAK                  = 0x80001029u;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;

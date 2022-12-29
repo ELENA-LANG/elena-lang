@@ -113,15 +113,17 @@ public abstract Indexable<T>
 
 public abstract class BaseEnumerator<T> : Enumerator<T>
 {
-    Reference<int> index;
-    int            length;
+   Reference<int> index;
+   int            length;
 
-//    bool next()
-//    {
-//        theIndex.append(1);
-//        
-//        ^ (cast int(theIndex)) < theLength
-//    }
-//    
+   bool next()
+   {
+      index.append(1);
+        
+      int n := *index;  
+
+        ^ n < length
+   }
+    
 //    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
 }
