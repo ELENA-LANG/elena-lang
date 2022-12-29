@@ -17,11 +17,11 @@ A
    
 public program()
 {
-//   var a := new A();
+   A a := new A();
 
-//   B b := a.getB();
+   B b := a.getB();
 
-//   b.callMe()
+   b.callMe()
 
-   console.writeLine("Hello");
+//   console.writeLine("Hello");
 }
