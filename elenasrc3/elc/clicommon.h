@@ -365,6 +365,7 @@ enum class ExpressionAttribute : pos64_t
    ProbeMode         = 0x00000200000,
    AlreadyResolved   = 0x00000400000,
    InitializerScope  = 0x00000800000,
+   NestedDecl        = 0x00001000000,
    Superior          = 0x10000000000,
    Lookahead         = 0x20000000000,
    NoDebugInfo       = 0x40000000000,

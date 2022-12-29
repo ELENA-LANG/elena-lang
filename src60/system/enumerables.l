@@ -125,5 +125,124 @@ public abstract class BaseEnumerator<T> : Enumerator<T>
         ^ n < length
    }
     
-//    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+}
+
+// --- BaseIndexer ---
+
+public abstract class BaseIndexer : Indexer
+{
+   Reference<int> index;
+   int            length;
+    
+   get bool Available()
+   {
+      int n := *index;
+
+      ^ n < length;
+   }
+
+   int Index
+   {
+      /// Reads the current i-index into an output parameter
+      get()
+      {
+         ^ *index
+      }
+        
+      /// Sets the i-index by specified value
+      set(value)
+      { 
+         index.Value := value
+      }
+   }    
+    
+   appendIndex(int disp)
+   { 
+      index.append(disp)
+   }
+    
+   int Length
+   {
+      get()
+      {
+         ^ length
+      }
+   }
+}
+
+// --- Range ---
+
+public sealed class Range //: Enumerable<int>
+{
+   int start;
+   int end;
+    
+   constructor(int start, int count)
+   {
+      this start := start;
+      this end := start + count
+   }
+    
+   constructor new(int start, int count)
+   {
+      this start := start;
+      this end := start + count
+   }
+    
+   constructor for(int start, int end)
+      <= new(start, end - start);
+    
+   int Length
+   {
+      get()
+      {
+         int l := end - start;
+            
+         ^ l
+      }
+   }
+    
+   Enumerator<int> enumerator() = new IntRangeEnumerator(start, end);
+    
+   Enumerable cast() = new Enumerable { Enumerator enumerator() => self; };
+}
+
+// --- IntRangeEnumerator --
+
+class IntRangeEnumerator : Enumerator<int>
+{
+   Reference<int> index;
+   int start;
+   int end;
+
+   constructor(int start, int end)
+   {
+      this start := start;
+      this end := end;
+      
+      self.reset();
+   }
+
+   get int Value() = *index;
+            
+   bool next()
+      : info<"Returns false if the index out of range">
+   {
+      index.append(1);
+
+      int n := *index;
+
+      ^ n < end
+   }
+    
+   reset()
+      : info<"Sets the i-index by specified value">
+   {
+      index.Value := start - 1;
+   } 
+    
+   Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+    
+   enumerable() = new Range(start, end - start);
 }

@@ -822,7 +822,7 @@ ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool refere
          return paramInfo;
       }
       else if (moduleScope->selfVar.compare(identifier)) {
-         if (functionMode || closureMode || nestedMode) {
+         if ((functionMode && !constructorMode) || closureMode || nestedMode) {
             return parent->mapIdentifier(OWNER_VAR, false, attr);
          }
          else if (EAttrs::test(attr, EAttr::Weak)) {
@@ -1559,7 +1559,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
 {
    mssg_t message = node.arg.reference;
 
-   if (abstractBased) {
+   if (abstractBased || scope.abstractMode) {
       methodInfo.hints &= ~((ref_t)MethodHint::Abstract);
    }
 
@@ -6531,11 +6531,11 @@ ObjectInfo Compiler :: compileClosure(BuildTreeWriter& writer, ExprScope& ownerS
 ObjectInfo Compiler :: compileNested(BuildTreeWriter& writer, ExprScope& ownerScope, SyntaxNode node, ExpressionAttribute mode)
 {
    TypeInfo parentInfo = { ownerScope.moduleScope->buildins.superReference };
-   EAttrs nestedMode = {};
+   EAttrs nestedMode = { EAttr::NestedDecl };  
    declareExpressionAttributes(ownerScope, node, parentInfo, nestedMode);
 
    // allow only new and type attrobutes
-   if (nestedMode.attrs != EAttr::None && nestedMode.attrs != EAttr::NewOp && nestedMode.attrs != EAttr::NewVariable)
+   if (nestedMode.attrs != EAttr::None && !EAttrs::test(nestedMode.attrs, EAttr::NewOp) && !EAttrs::test(nestedMode.attrs, EAttr::NewVariable))
       ownerScope.raiseError(errInvalidOperation, node);
 
    ref_t nestedRef = mapNested(ownerScope, mode);
