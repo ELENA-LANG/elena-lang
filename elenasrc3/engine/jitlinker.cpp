@@ -376,6 +376,11 @@ mssg_t JITLinker::JITLinkerReferenceHelper :: importMessage(mssg_t message, Modu
    return _owner->createMessage(module, message, *_references);
 }
 
+void JITLinker::JITLinkerReferenceHelper :: resolveLabel(MemoryWriter& writer, ref_t mask, pos_t position)
+{
+   _owner->_compiler->resolveLabelAddress(&writer, mask, position, _owner->_virtualMode);
+}
+
 // --- JITLinker ---
 
 addr_t JITLinker :: getVMTAddress(ModuleBase* module, ref_t reference, VAddressMap& references)

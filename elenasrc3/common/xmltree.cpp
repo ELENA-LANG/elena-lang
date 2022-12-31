@@ -298,8 +298,10 @@ bool XmlTree::save(path_t path, FileEncoding encoding, bool withBOM, bool format
 
          writer.writeChar(_content[i]);
       }
+
+      return true;
    }
-   else writer.write(_content.str(), _content.length());
+   else return writer.write(_content.str(), _content.length_pos());
 }
 
 size_t XmlTree :: resolve(ustr_t xpath)

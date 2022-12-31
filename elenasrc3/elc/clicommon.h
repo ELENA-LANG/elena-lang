@@ -507,10 +507,12 @@ class ErrorProcessor : public ErrorProcessorBase
    void printTerminalInfo(int code, ustr_t pathArg, SyntaxNode node)
    {
       SyntaxNode terminal = findTerminal(node);
-      SyntaxNode col = terminal.findChild(SyntaxKey::Column);
-      SyntaxNode row = terminal.findChild(SyntaxKey::Row);
+      if (terminal != SyntaxKey::None) {
+         SyntaxNode col = terminal.findChild(SyntaxKey::Column);
+         SyntaxNode row = terminal.findChild(SyntaxKey::Row);
 
-      _presenter->print(_presenter->getMessage(code), pathArg, col.arg.value, row.arg.value, terminal.identifier());
+         _presenter->print(_presenter->getMessage(code), pathArg, col.arg.value, row.arg.value, terminal.identifier());
+      }
    }
 
 public:

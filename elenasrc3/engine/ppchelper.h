@@ -260,7 +260,7 @@ namespace elena_lang
          writer.writeDWord(PPCHelper::makeBCommand(16, bo, bi, bd >> 2, aa, lk));
       }
 
-      bool fixLabel(pos_t label, MemoryWriter& writer) override
+      bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override
       {
          for (auto it = jumps.getIt(label); !it.eof(); ++it) {
             if (it.key() == label) {
@@ -278,30 +278,7 @@ namespace elena_lang
          for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
             auto info = *a_it;
 
-            pos_t offset = writer.position();
-
-            switch (info.mask) {
-               case mskXDisp32Hi:
-               case mskDisp32Hi:
-               {
-                  offset = getHiAdjusted(offset);
-
-                  PPCHelper::fixBCommand(writer.Memory()->get(info.position), offset);
-                  writer.Memory()->addReference(mskCodeXDisp32Hi, info.position);
-                  break;
-               }
-               case mskXDisp32Lo:
-               case mskDisp32Lo:
-               {
-                  offset &= 0xFFFF;
-
-                  PPCHelper::fixBCommand(writer.Memory()->get(info.position), offset);
-                  writer.Memory()->addReference(mskCodeXDisp32Lo, info.position);
-                  break;
-               }
-            default:
-               break;
-            }
+            rh->resolveLabel(writer, info.mask, info.position);
          }
 
          return true;

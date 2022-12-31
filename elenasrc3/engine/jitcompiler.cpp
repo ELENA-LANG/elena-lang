@@ -236,10 +236,10 @@ void elena_lang :: loadNop(JITCompilerScope* scope)
    // fix the label if it exists
    pos_t position = scope->tapeReader->position() - 1;
    if (scope->lh->checkLabel(position)) {
-      scope->lh->fixLabel(position, *scope->codeWriter);
+      scope->lh->fixLabel(position, *scope->codeWriter, scope->helper);
    }
    // or add the label
-   else scope->lh->setLabel(position, *scope->codeWriter);
+   else scope->lh->setLabel(position, *scope->codeWriter, scope->helper);
 }
 
 void elena_lang :: loadLOp(JITCompilerScope* scope)
@@ -2346,6 +2346,22 @@ void JITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcR
    pos_t endPos = bcReader.position() + codeSize;
 
    compileTape(helper, bcReader, endPos, codeWriter, lh);
+}
+
+void JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode)
+{
+   switch (mask) {
+      case mskRef32:
+         MemoryBase::writeDWord(writer->Memory(), position, writer->position());
+         writer->Memory()->addReference(mskCodeRef32, position);
+         break;
+      case mskRef64:
+         MemoryBase::writeDWord(writer->Memory(), position, writer->position());
+         writer->Memory()->addReference(mskCodeRef64, position);
+         break;
+      default:
+         break;
+   }
 }
 
 // --- JITCompiler32 ---

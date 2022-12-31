@@ -418,7 +418,7 @@ namespace elena_lang
       }
 
       void fixJumps(pos_t position, int size, MemoryWriter& writer);
-      bool fixLabel(pos_t label, MemoryWriter& writer) override;
+      bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override;
 
       void writeShortJmpForward(pos_t label, MemoryWriter& writer);
       void writeJmpForward(pos_t label, MemoryWriter& writer);

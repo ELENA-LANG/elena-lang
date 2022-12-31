@@ -24,7 +24,7 @@ namespace elena_lang
       bool        stackSafe;
    };
 
-   typedef CachedList<mssg_t, 10> VirtualMethods;
+   typedef CachedList<Pair<mssg_t, ref_t>, 10> VirtualMethods;
 
    // --- CompilerLogic ---
    class CompilerLogic

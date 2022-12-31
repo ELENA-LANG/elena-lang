@@ -13,7 +13,7 @@ using namespace elena_lang;
 
 // --- ByteCodeAssembler::ByteCodeLabelHelper ---
 
-bool ByteCodeAssembler::ByteCodeLabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
+bool ByteCodeAssembler::ByteCodeLabelHelper :: fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase*)
 {
    MemoryBase* memory = writer.Memory();
 
@@ -938,7 +938,7 @@ bool ByteCodeAssembler :: declareLabel(ustr_t label, ScriptToken& tokenInfo, Mem
    if (labelScope.checkDeclaredLabel(label))
       throw SyntaxError(ASM_LABEL_EXISTS, tokenInfo.lineInfo);
 
-   labelScope.fixLabel(labelScope.getLabel(label), writer);
+   labelScope.fixLabel(labelScope.getLabel(label), writer, nullptr);
 
    labelScope.declareLabel(label, writer);
 

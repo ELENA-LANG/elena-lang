@@ -2,5 +2,8 @@ import extensions;
 
 public program()
 {
-   console.writeLine("Hello");
+      2.fail()
+   
+
+//   console.writeLine("Hello");
 }

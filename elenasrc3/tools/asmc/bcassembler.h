@@ -26,7 +26,7 @@ namespace elena_lang
          ReferenceMap      labelNames;
          Map<pos_t, bool>  declaredLabels;
 
-         bool fixLabel(pos_t label, MemoryWriter& writer) override;
+         bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override;
 
          void writeJumpBack(pos_t label, MemoryWriter& writer) override {}
          void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override {}
@@ -58,7 +58,7 @@ namespace elena_lang
 
             declaredLabels.add(labelNames.get(labelName), true);
 
-            return setLabel(label, writer);
+            return setLabel(label, writer, nullptr);
          }
 
          void registerJump(ustr_t labelName, MemoryWriter& writer);

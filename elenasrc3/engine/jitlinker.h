@@ -140,6 +140,8 @@ namespace elena_lang
             return _owner->calculateVAddress(writer, addressMask);
          }
 
+         void resolveLabel(MemoryWriter& writer, ref_t mask, pos_t position) override;
+
          JITLinkerReferenceHelper(JITLinker* owner, ModuleBase* module, VAddressMap* references);
       };
 

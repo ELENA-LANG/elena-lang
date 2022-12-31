@@ -5,12 +5,11 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * api functionality for existing classes : BaseEnumerator
-    * test for embeddable self / arg
     * elena vm : implement elenavmmachine - debug a program
     * ide - close the project / open single project file
     * ldoc : fixing
     * ide : open the last opened file on the ide start
+    * api functionality for existing classes : Array<T>
     * ide : remember last open project
     * ide - review on change events : after editor change / debug step
  

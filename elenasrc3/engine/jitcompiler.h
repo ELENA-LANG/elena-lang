@@ -184,6 +184,8 @@ namespace elena_lang
          writer->writeDWord(value);
       }
 
+      void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) override;
+
       JITCompiler()
          : _inlines{}, _preloaded(nullptr)
       {

@@ -32,6 +32,8 @@ namespace elena_lang
       void writeImm12(MemoryWriter* writer, int value, int type) override;
       void writeImm16(MemoryWriter* writer, int value, int type) override;
 
+      void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) override;
+
       void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) override;
 
       void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 

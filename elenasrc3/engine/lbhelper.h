@@ -59,11 +59,11 @@ namespace elena_lang
          jumps.add(label, { writer.position() });
       }
 
-      bool setLabel(pos_t label, MemoryWriter& writer) override
+      bool setLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override
       {
          labels.add(label, writer.position());
 
-         return fixLabel(label, writer);
+         return fixLabel(label, writer, rh);
       }
 
       void writeLabelAddress(pos_t label, MemoryWriter& writer, ref_t mask) override

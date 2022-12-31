@@ -1758,7 +1758,7 @@ void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_
       auto methodInfo = *it;
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
-         methods.add(mssg);
+         methods.add({ mssg, methodInfo.outputRef });
       }
    }
 

@@ -430,6 +430,8 @@ namespace elena_lang
          ref_t addressMask) = 0;
 
       virtual mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) = 0;
+
+      virtual void resolveLabel(MemoryWriter& writer, ref_t mask, pos_t position) = 0;
    };
 
    // --- JITSettings ---
@@ -444,9 +446,9 @@ namespace elena_lang
    {
       virtual bool checkLabel(pos_t label) = 0;
 
-      virtual bool setLabel(pos_t label, MemoryWriter& writer) = 0;  
+      virtual bool setLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) = 0;
 
-      virtual bool fixLabel(pos_t label, MemoryWriter& writer) = 0;
+      virtual bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) = 0;
 
       virtual void writeJumpBack(pos_t label, MemoryWriter& writer) = 0;
       virtual void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
@@ -519,6 +521,8 @@ namespace elena_lang
       virtual void writeImm16(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm16Hi(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm32(MemoryWriter* writer, int value) = 0;
+
+      virtual void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) = 0;
 
       virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) = 0;
 

@@ -65,7 +65,7 @@ namespace elena_lang
 
          declaredLabels.add(labelNames.get(labelName), true);
 
-         return helper->setLabel(label, writer);
+         return helper->setLabel(label, writer, nullptr);
       }
 
       int resolveLabel(ustr_t label, MemoryWriter& writer)

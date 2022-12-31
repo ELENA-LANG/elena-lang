@@ -634,7 +634,7 @@ namespace elena_lang
 
       void insert(const T* s, size_t index)
       {
-         pos_t length = getlength(s);
+         pos_t length = getlength_pos(s);
          if (_size <= length) {
             create(length + 1);
          }

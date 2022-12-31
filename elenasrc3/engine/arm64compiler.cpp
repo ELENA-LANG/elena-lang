@@ -199,3 +199,33 @@ void ARM64JITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader
 
    alignCode(codeWriter, 0x08, true);
 }
+
+void ARM64JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode)
+{
+   pos_t offset = writer.position();
+   switch (info.mask) {
+      case mskRef32Hi:
+      {
+         offset >>= 16;
+
+         MemoryBase::maskDWord(writer.Memory(), info.position, (offset & 0xFFFF) << 5);
+         writer.Memory()->addReference(mskCodeRef32Hi, info.position);
+
+         break;
+      }
+      case mskRef32Lo:
+      {
+         offset &= 0xFFFF;
+
+         MemoryBase::maskDWord(writer.Memory(), info.position, (offset & 0xFFFF) << 5);
+         writer.Memory()->addReference(mskCodeRef32Lo, info.position);
+
+         break;
+      }
+      default:
+         JITCompiler::resolveLabelAddress(writer, mask, position, virtualMode);
+         break;
+   }
+}
+
+]

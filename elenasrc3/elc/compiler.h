@@ -119,6 +119,7 @@ namespace elena_lang
          kind = ObjectKind::Unknown;
          typeInfo = {};
          reference = 0;
+         extra = 0;
          mode = TargetMode::None;
       }
       ObjectInfo(ObjectKind kind)
@@ -1224,7 +1225,7 @@ namespace elena_lang
 
       void injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t parentRef);
 
-      void injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, SyntaxKey key, ustr_t arg);
+      void injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg);
 
       void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
          mssg_t messageRef, MethodHint type) override;
