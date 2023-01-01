@@ -157,6 +157,13 @@ void IDEWindow :: openProject()
    _controller->onLayoutchange();
 }
 
+void IDEWindow :: closeProject()
+{
+   _controller->doCloseProject(projectDialog, _model);
+
+   _controller->onLayoutchange();
+}
+
 void IDEWindow :: exit()
 {
    if(_controller->doExit(fileDialog, _model)) {
@@ -365,6 +372,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_FILE_CLOSE:
          closeFile();
+         break;
+      case IDM_PROJECT_CLOSE:
+         closeProject();
          break;
       case IDM_FILE_EXIT:
          exit();

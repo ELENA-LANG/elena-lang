@@ -186,6 +186,8 @@ namespace elena_lang
 
       void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) override;
 
+      void populatePreloaded(uintptr_t env, uintptr_t eh_table, uintptr_t gc_table) override;
+
       JITCompiler()
          : _inlines{}, _preloaded(nullptr)
       {

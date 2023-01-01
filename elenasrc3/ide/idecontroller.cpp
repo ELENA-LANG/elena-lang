@@ -76,7 +76,7 @@ void SourceViewController :: closeSource(TextViewModelBase* model, ustr_t name, 
 
       if (autoSelect && !model->empty) {
          if (index == count) {
-            selectDocument(model, model->getDocumentName(count - 1));
+            selectDocument(model, model->getDocumentName(count));
          }
          else selectDocument(model, model->getDocumentName(index));
       }
@@ -390,6 +390,21 @@ void ProjectController :: openProject(ProjectModel& model, path_t projectFile)
       _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
 }
 
+void ProjectController :: closeProject(ProjectModel& model)
+{
+   model.empty = true;
+   model.name.clear();
+   model.projectFile.clear();
+   model.projectPath.clear();
+
+   model.singleSourceProject = false;
+
+   model.sources.clear();
+
+   if (_notifier)
+      _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
+}
+
 void ProjectController :: openSingleFileProject(ProjectModel& model, path_t singleProjectFile)
 {
    FileNameString src(singleProjectFile, true);
@@ -648,6 +663,7 @@ bool IDEController :: doOpenProject(DialogBase& dialog, IDEModel* model)
    return false;
 }
 
+
 bool IDEController :: doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode)
 {
    // !! temporal
@@ -657,9 +673,14 @@ bool IDEController :: doSaveProject(DialogBase& dialog, IDEModel* model, bool fo
    return true;
 }
 
-bool IDEController :: doCloseProject()
+bool IDEController :: doCloseProject(DialogBase& dialog, IDEModel* model)
 {
-   return false;
+   if (doCloseAll(dialog, model)) {
+      projectController.closeProject(model->projectModel);
+
+      return true;
+   }
+   else return false;
 }
 
 bool IDEController :: closeFile(DialogBase& dialog, IDEModel* model, ustr_t current)
@@ -701,7 +722,7 @@ bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
 bool IDEController :: doCloseAll(DialogBase& dialog, IDEModel* model)
 {
    while (model->sourceViewModel.getDocumentCount() > 0) {
-      ustr_t current = model->sourceViewModel.getDocumentName(0);
+      ustr_t current = model->sourceViewModel.getDocumentName(1);
 
       if (!closeFile(dialog, model, current))
          return false;

@@ -75,6 +75,7 @@ namespace elena_lang
 
       void openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
       void openProject(ProjectModel& model, path_t projectFile);
+      void closeProject(ProjectModel& model);
 
       path_t getSourceByIndex(ProjectModel& model, int index);
 
@@ -164,7 +165,7 @@ namespace elena_lang
       bool doCloseFile(DialogBase& dialog, IDEModel* model);
       bool doCloseAll(DialogBase& dialog, IDEModel* model);
       bool doOpenProject(DialogBase& dialog, IDEModel* model);
-      bool doCloseProject();
+      bool doCloseProject(DialogBase& dialog, IDEModel* model);
       bool doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode);
 
       bool doCompileProject(DialogBase& dialog, IDEModel* model);

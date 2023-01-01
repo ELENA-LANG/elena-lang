@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x0036
+#define IDE_REVISION_NUMBER                           0x0037
 
 namespace elena_lang
 {

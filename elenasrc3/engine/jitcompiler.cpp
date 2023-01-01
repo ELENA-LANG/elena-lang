@@ -2300,6 +2300,13 @@ void JITCompiler :: prepare(
    }
 }
 
+void JITCompiler :: populatePreloaded(uintptr_t env, uintptr_t eh_table, uintptr_t gc_table)
+{
+   _preloaded.add(SYSTEM_ENV, (void*)env);
+   _preloaded.add(CORE_THREAD_TABLE, (void*)eh_table);
+   _preloaded.add(CORE_GC_TABLE, (void*)gc_table);
+}
+
 CodeGenerator* JITCompiler :: codeGenerators()
 {
    return _codeGenerators;
@@ -2350,17 +2357,35 @@ void JITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcR
 
 void JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode)
 {
-   switch (mask) {
-      case mskRef32:
-         MemoryBase::writeDWord(writer->Memory(), position, writer->position());
-         writer->Memory()->addReference(mskCodeRef32, position);
-         break;
-      case mskRef64:
-         MemoryBase::writeDWord(writer->Memory(), position, writer->position());
-         writer->Memory()->addReference(mskCodeRef64, position);
-         break;
-      default:
-         break;
+   if (virtualMode) {
+      switch (mask) {
+         case mskRef32:
+            MemoryBase::writeDWord(writer->Memory(), position, writer->position());
+            writer->Memory()->addReference(mskCodeRef32, position);
+            break;
+         case mskRef64:
+            MemoryBase::writeDWord(writer->Memory(), position, writer->position());
+            writer->Memory()->addReference(mskCodeRef64, position);
+            break;
+         default:
+            break;
+      }
+   }
+   else {
+      switch (mask) {
+         case mskRef32:
+            MemoryBase::writeDWord(writer->Memory(), position, (uintptr_t)writer->Memory()-> get(writer->position()));
+            writer->Memory()->addReference(mskCodeRef32, position);
+            break;
+         //case mskRef64:
+         //   MemoryBase::writeDWord(writer->Memory(), position, writer->position());
+         //   writer->Memory()->addReference(mskCodeRef64, position);
+         //   break;
+         default:
+            // !! temporally
+            assert(false);
+            break;
+      }
    }
 }
 

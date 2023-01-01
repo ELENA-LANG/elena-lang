@@ -100,10 +100,12 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _compiler = jitCompilerFactory(&_libraryProvider, platform);
 }
 
-void ELENAVMMachine :: init(JITLinker& linker)
+void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* env)
 {
    _presenter->print(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
    _presenter->print(ELENAVM_INITIALIZING);
+
+   _compiler->populatePreloaded((uintptr_t)env, (uintptr_t)env->eh_table, (uintptr_t)env->gc_table);
 
    linker.prepare(_compiler);
 
@@ -138,7 +140,7 @@ void ELENAVMMachine :: addPackage(ustr_t packageLine)
    }
 }
 
-void ELENAVMMachine :: configurateVM(MemoryReader& reader, JITLinker& jitLinker)
+void ELENAVMMachine :: configurateVM(MemoryReader& reader, JITLinker& jitLinker, SystemEnv* env)
 {
    pos_t  command = 0;
    ustr_t strArg = nullptr;
@@ -167,7 +169,7 @@ void ELENAVMMachine :: configurateVM(MemoryReader& reader, JITLinker& jitLinker)
             addPackage(strArg);
             break;
          case VM_INIT_CMD:
-            init(jitLinker);
+            init(jitLinker, env);
             eop = true;
             break;
          default:
@@ -243,7 +245,7 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, void* c
    Module* dummyModule = new Module();
    MemoryDump tapeSymbol;
 
-   configurateVM(reader, jitLinker);
+   configurateVM(reader, jitLinker, env);
    compileVMTape(reader, tapeSymbol, jitLinker, dummyModule);
 
    SymbolList list;

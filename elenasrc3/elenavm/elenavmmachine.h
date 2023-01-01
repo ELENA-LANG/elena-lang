@@ -40,13 +40,13 @@ namespace elena_lang
 
       void stopVM();
 
-      void configurateVM(MemoryReader& reader, JITLinker& jitLinker);
+      void configurateVM(MemoryReader& reader, JITLinker& jitLinker, SystemEnv* env);
       void compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, 
          ModuleBase* dummyModule);
 
       void resumeVM(SystemEnv* env, void* criricalHandler);
 
-      void init(JITLinker& jitLinker);
+      void init(JITLinker& jitLinker, SystemEnv* env);
 
       AddressMap::Iterator externals() override;
 
