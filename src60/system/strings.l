@@ -2,7 +2,10 @@
 
 public sealed Array<T> //: Indexable<T>
 {
-    embeddable __string T[] theArray;
+   embeddable __string T[] array;
+
+   constructor allocate(int length)
+      = new T[](length);   
 }
 
 // --- Variadic Array template ---

@@ -6139,6 +6139,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    }
    else if (newOp || castOp) {
       switch (node.key) {
+         case SyntaxKey::Type:
          case SyntaxKey::identifier:
          case SyntaxKey::reference:
          {
@@ -6260,9 +6261,30 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    return retVal;
 }
 
+inline SyntaxNode retrieveTerminalOrType(SyntaxNode node)
+{
+   if (test((unsigned int)node.key, (unsigned int)SyntaxKey::TerminalMask))
+      return node;
+
+   SyntaxNode current = node.firstChild();
+   SyntaxNode last = {};
+   while (current != SyntaxKey::None) {
+      if (test((unsigned int)current.key, (unsigned int)SyntaxKey::TerminalMask)) {
+         last = current;
+      }
+      else if (current == SyntaxKey::Type) {
+         last = current;
+      }
+
+      current = current.nextNode();
+   }
+
+   return last;
+}
+
 ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
 {
-   SyntaxNode terminalNode = node == SyntaxKey::identifier ? node : node.lastChild(SyntaxKey::TerminalMask);
+   SyntaxNode terminalNode = retrieveTerminalOrType(node);
 
    TypeInfo declaredTypeInfo = {};
    declareExpressionAttributes(scope, node, declaredTypeInfo, mode);

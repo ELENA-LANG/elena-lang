@@ -44,7 +44,7 @@ namespace elena_lang
             return type == ScopeType::PropertyTemplate;
          }
 
-         bool isParameter(SyntaxNode node, SyntaxKey& parameterKey, ref_t& parameterIndex)
+         bool isParameter(SyntaxNode node, SyntaxKey& parameterKey, ref_t& parameterIndex, bool allowType)
          {
             switch (type) {
                case ScopeType::InlineTemplate:
@@ -78,6 +78,17 @@ namespace elena_lang
                   }
                   return false;
                }
+               case ScopeType::ClassTemplate:
+                  if (allowType) {
+                     ref_t index = arguments.get(node.identifier());
+                     if (index > 0) {
+                        parameterKey = SyntaxKey::TemplateArgParameter;
+                        parameterIndex = index + nestedLevel;
+
+                        return true;
+                     }
+                  }
+                  return false;
                default:
                   return false;
             }
@@ -140,7 +151,7 @@ namespace elena_lang
       void flushMethod(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMethodMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
+      bool flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
          bool allowType);
       void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
          bool allowType);
