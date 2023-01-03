@@ -233,6 +233,8 @@ Pair<parse_key_t, parse_key_t> ParserTable :: generate()
                }
             }
             else {
+               ref_t k = rule.key();
+               auto s =  resolveKey(k >> 8);
                if (!copySubSet(_syntax, _table, rule.key(), tableKey(l_symbol, *it)))
                   return { *it, l_symbol };
             }

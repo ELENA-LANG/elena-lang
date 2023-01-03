@@ -859,6 +859,11 @@ namespace elena_lang
          else return _defaultItem;
       }
 
+      pos_t count() const
+      {
+         return _list.count();
+      }
+
       Stack(T defItem)
          : _list(defItem)
       {

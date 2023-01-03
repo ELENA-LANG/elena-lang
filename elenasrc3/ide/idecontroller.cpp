@@ -859,7 +859,9 @@ void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBa
 
 void IDEController :: highlightError(IDEModel* model, int row, int column, path_t path)
 {
-   openFile(model, path);
+   PathString fullPath(*model->projectModel.projectPath, path);
+
+   openFile(model, *fullPath);
 
    model->viewModel()->setErrorLine(row, column, true);
 

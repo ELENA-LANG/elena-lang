@@ -1,16 +1,10 @@
 import extensions;
 
-public sealed XArray<T> //: Indexable<T>
-{
-   embeddable __string T[] array;
-
-   constructor allocate(int length)
-      = new T[](length);   
-}
-
 public program()
 {
-   XArray<int> r;
+   program;
 
-   console.writeLine("Hello");
+//   var s := new Reference<int>(2);
+
+//   this s.Value := 2
 }

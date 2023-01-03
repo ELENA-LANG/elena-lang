@@ -6,6 +6,31 @@ public sealed Array<T> //: Indexable<T>
 
    constructor allocate(int length)
       = new T[](length);   
+
+   constructor copy(T[] array, int index, int length)
+      <= allocate(length)
+   {
+      for(int i := 0 , i < length, i += 1)
+      {
+         this array[i] := array[i + index]
+      }
+   }
+
+//   Enumerator<T> enumerator() = new BaseEnumerator<T>
+//   {
+//      this index := -1;
+        
+//      this length := self.Length;
+        
+//      get T Value() = self.at(this index.Value);
+        
+//      enumerable() = self;
+        
+//      reset()
+//      {
+  //       this index.Value := -1
+//      }
+//   };
 }
 
 // --- Variadic Array template ---
