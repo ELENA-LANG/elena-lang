@@ -5,12 +5,10 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * ide : remember last open project
     * api functionality for existing classes : String
     * elena vm : implement elenavmmachine - debug a program
-    * ide - review on change events : after editor change / debug step
-    * ide - api in menu
-    * ide : open the last opened file on the ide start
+    * ide : message - on success / warning / errors
+    * ide - close all / close all but active
  
     ! api functionality for existing classes : system
     ! regression tests : all github issues (> 52)
@@ -43,17 +41,18 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * ide : open the last opened file on the ide start
+    * ide : remember last open project
+    * ide - review on change events : after editor change / debug step
     * vmclient : the executable must contain only the most basic functionality
     * api : migrate VariadicArray, Matrix<T>, BitArray, BitArray32, IntMatrix, RealMatrix
     * elena : allow to initialize class in-place
-    * ide - close all / close all but active
     * ide - disable close if no files are open
     * ide - disable close project if the project is closed
     * vm : on stop : unprotected / remove executable flags, on start - reverse the action
     * test for self : nestedFieldsTest
     * test three type of self : self, this self, weak self
     * api : support lazy-load expressions
-    * ide : message - onm success / warning / errors
     * gc - system_tests - why full collect happends so often
     * aarch64 gc: system_tests fails in gc routine
     * #15 : return double / long from external function
@@ -73,7 +72,6 @@ Backlog:
     * ide - fix errors
     * ide - compile the project / file
 
-    * api doc - properties
     * api doc
 
     * ide debugger
@@ -173,8 +171,6 @@ Backlog:
     * editor - correctly destroy tabbar / frame / view
     * introducing read number
     * script module template
-    * hello world sample
-    * api documentation
     * include opcode : add snop command for multi-thread mode
     * x86, x86-64, i386, amd64, ppc64le, arm64 : fibonacci - recursive
     * embeddable method - do not box self

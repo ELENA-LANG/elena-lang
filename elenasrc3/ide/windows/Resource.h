@@ -38,6 +38,8 @@
 #define IDM_WINDOW_NEXT             901
 #define IDM_WINDOW_PREVIOUS         902
 
+#define IDM_HELP_API               1001
+
 #define IDI_IDE                     107
 #define IDI_SMALL                   108
 #define IDC_IDE                     109

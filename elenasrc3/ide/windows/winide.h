@@ -107,6 +107,8 @@ namespace elena_lang
       void deleteText();
       void commentText();
 
+      void openHelp();
+
       void onIDEViewUpdate(bool forced);
       void onDebuggerUpdate(bool running);
 

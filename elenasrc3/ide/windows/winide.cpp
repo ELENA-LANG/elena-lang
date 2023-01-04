@@ -437,6 +437,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_VIEW_MESSAGES:
          toggleTabBarWindow(_model->ideScheme.errorListControl);
          break;
+      case IDM_HELP_API:
+         openHelp();
+         break;
       default:
          return false;
    }
@@ -655,4 +658,12 @@ bool IDEWindow :: onClose()
       return false;
 
    return WindowBase::onClose();
+}
+
+void IDEWindow :: openHelp()
+{
+   PathString apiPath(_model->projectModel.paths.appPath);
+   apiPath.combine(_T("..\\doc\\api\\index.html"));
+
+   ShellExecute(NULL, _T("open"), *apiPath, nullptr, nullptr, SW_SHOW);
 }
