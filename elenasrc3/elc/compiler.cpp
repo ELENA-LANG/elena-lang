@@ -3824,6 +3824,7 @@ void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, Type
                scope.raiseError(errInvalidHint, current);
             break;
          case SyntaxKey::Type:
+         case SyntaxKey::TemplateType:
             if (!EAttrs::test(mode.attrs, EAttr::NoTypeAllowed)) {
                mode |= ExpressionAttribute::NewVariable;
                typeInfo = resolveTypeAttribute(scope, current, false, false);
@@ -4158,7 +4159,7 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
    }
    else {
       SyntaxNode current = node.firstChild();
-      if (current == SyntaxKey::Object || current == SyntaxKey::Type) {
+      if (current == SyntaxKey::Object || current == SyntaxKey::Type || current == SyntaxKey::TemplateType) {
          typeInfo = resolveTypeAttribute(scope, current, declarationMode, allowRole);
       }
       else {

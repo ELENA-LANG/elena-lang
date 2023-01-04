@@ -124,6 +124,7 @@ namespace elena_lang
       void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
+      void flushL6AsTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushIdentifier(SyntaxTreeWriter& writer, SyntaxNode identNode, bool ignoreTerminalInfo);
       void flushTemplateCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushTemplateArgDescr(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
@@ -154,10 +155,12 @@ namespace elena_lang
       bool flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
          bool allowType);
       void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
-         bool allowType);
+         bool allowType, bool onlyChildren = false);
       void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool ignorePostfix);
       void flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushParent(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushParentTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
       void flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool withNameNode = true, 
          bool typeDescriptor = false);

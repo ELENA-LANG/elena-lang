@@ -13,15 +13,15 @@
 
 using namespace elena_lang;
 
-inline void testNodes(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      testNodes(current);
-
-      current = current.nextNode();
-   }
-}
+//inline void testNodes(SyntaxNode node)
+//{
+//   SyntaxNode current = node.firstChild();
+//   while (current != SyntaxKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
 inline bool testNodeMask(SyntaxKey key, SyntaxKey mask)
 {
@@ -201,6 +201,24 @@ void SyntaxTreeBuilder :: flushIdentifier(SyntaxTreeWriter& writer, SyntaxNode i
    writer.closeNode();
 }
 
+void SyntaxTreeBuilder :: flushL6AsTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   writer.newNode(SyntaxKey::TemplateArg);
+
+   SyntaxNode current = node.firstChild();
+
+   ref_t attributeCategory = V_CATEGORY_MAX;
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Object) {
+         flushTypeAttribute(writer, scope, current, attributeCategory, true, true);
+      }
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+}
+
 void SyntaxTreeBuilder :: flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
    SyntaxNode objNode = node.findChild(SyntaxKey::Object);
@@ -229,9 +247,7 @@ void SyntaxTreeBuilder :: flushTemplateType(SyntaxTreeWriter& writer, Scope& sco
    current = argNode;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::L6Expression) {
-         writer.newNode(SyntaxKey::TemplateArg);
-         flushCollection(writer, scope, current);
-         writer.closeNode();
+         flushL6AsTemplateArg(writer, scope, current);
       }
 
       current = current.nextNode();
@@ -369,6 +385,11 @@ void SyntaxTreeBuilder :: flushNested(SyntaxTreeWriter& writer, Scope& scope, Sy
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::NestedExpression) {
          flushClass(writer, scope, current, false);
+      }
+      else if (current == SyntaxKey::TemplateType) {
+         writer.newNode(SyntaxKey::TemplateType);
+         flushTemplateType(writer, scope, current);
+         writer.closeNode();
       }
       else flushAttribute(writer, scope, current, attributeCategory, true);
 
@@ -548,9 +569,10 @@ bool SyntaxTreeBuilder :: flushAttribute(SyntaxTreeWriter& writer, Scope& scope,
 }
 
 void SyntaxTreeBuilder :: flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, 
-   ref_t& previusCategory, bool allowType)
+   ref_t& previusCategory, bool allowType, bool onlyChildren)
 {
-   writer.newNode(node.key);
+   if (!onlyChildren)
+      writer.newNode(node.key);
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -562,7 +584,8 @@ void SyntaxTreeBuilder :: flushTypeAttribute(SyntaxTreeWriter& writer, Scope& sc
       current = current.nextNode();
    }
 
-   writer.closeNode();
+   if (!onlyChildren)
+      writer.closeNode();
 }
 
 void SyntaxTreeBuilder :: flushTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool allowType)
@@ -574,7 +597,16 @@ void SyntaxTreeBuilder :: flushTemplateArg(SyntaxTreeWriter& writer, Scope& scop
 
       ref_t attributeCategory = V_CATEGORY_MAX;
       while (current != SyntaxKey::None) {
-         flushAttribute(writer, scope, current, attributeCategory, true);
+         switch (current.key) {
+            case SyntaxKey::identifier:
+            case SyntaxKey::reference:
+            case SyntaxKey::globalreference:
+               flushAttribute(writer, scope, current, attributeCategory, true);
+               break;
+            default:
+               flushNode(writer, scope, current);
+               break;
+         }
 
          current = current.nextNode();
       }
@@ -632,21 +664,49 @@ void SyntaxTreeBuilder :: flushClassMemberPostfixes(SyntaxTreeWriter& writer, Sc
    }
 }
 
+void SyntaxTreeBuilder :: flushParentTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   writer.newNode(node.key);
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::TemplateArg) {
+         flushTemplateArg(writer, scope, current, true);
+      }
+      else flushNode(writer, scope, current);
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+}
+
+void SyntaxTreeBuilder :: flushParent(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   ref_t attributeCategory = V_CATEGORY_MAX;
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::TemplatePostfix) {
+         flushParentTemplate(writer, scope, current);
+      }
+      else if (testNodeMask(current.key, SyntaxKey::TerminalMask)) {
+         flushAttribute(writer, scope, current, attributeCategory, current.nextNode() == SyntaxKey::None);
+      }
+      else flushNode(writer, scope, current);
+
+      current = current.nextNode();
+   }
+}
+
 void SyntaxTreeBuilder :: flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current.key == SyntaxKey::Postfix) {
-         if (current == SyntaxKey::TemplatePostfix) {
-            throw InternalError(errFatalError);
-            //flushTemplageExpression(scope, current, SyntaxKey::InlineTemplate, false);
-         }
-         else {
-            writer.newNode(SyntaxKey::Parent);
-            flushCollection(writer, scope, current);
-            writer.closeNode();
-         }
-         
+         writer.newNode(SyntaxKey::Parent);
+         flushParent(writer, scope, current);
+         writer.closeNode();
       }
 
       current = current.nextNode();
@@ -971,14 +1031,19 @@ void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& s
 
 void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
+   // load arguments
+   SyntaxNode current = node.findChild(SyntaxKey::TemplateArg);
+   while (current == SyntaxKey::TemplateArg) {
+      flushTemplateArgDescr(writer, scope, current);
+
+      current = current.nextNode();
+   }
+
    flushClassPostfixes(writer, scope, node);
 
-   SyntaxNode current = node.firstChild();
+   current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-         case SyntaxKey::TemplateArg:
-            flushTemplateArgDescr(writer, scope, current);
-            break;
          case SyntaxKey::CodeBlock:
             flushNode(writer, scope, current);
             break;

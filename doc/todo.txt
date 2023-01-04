@@ -5,8 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * refactor syntax
-
     * api functionality for existing classes : Array<T>
     * elena vm : external routines
     * elena vm : implement elenavmmachine - debug a program
