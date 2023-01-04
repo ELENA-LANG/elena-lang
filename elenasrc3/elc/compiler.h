@@ -1203,10 +1203,10 @@ namespace elena_lang
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
          ClassInfo& info, mssg_t multiMethod);
       void injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
-         ClassInfo& info, mssg_t multiMethod);
+         ref_t targetRef, ClassInfo& info, mssg_t multiMethod);
 
       void injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
-         ClassInfo& info, VirtualMethodList& implicitMultimethods);
+         ref_t targetRef, ClassInfo& info, VirtualMethodList& implicitMultimethods);
 
       void injectInitializer(SyntaxNode classNode, SyntaxKey methodType, mssg_t message);
 

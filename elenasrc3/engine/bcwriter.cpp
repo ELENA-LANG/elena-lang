@@ -907,12 +907,16 @@ void directResend(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
 
+   assert(targetRef != 0);
+
    tape.write(ByteCode::JumpMR, node.arg.reference, targetRef | mskVMTRef);
 }
 
 void semiDirectResend(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
+
+   assert(targetRef != 0);
 
    tape.write(ByteCode::VJumpMR, node.arg.reference, targetRef | mskVMTRef);
 }

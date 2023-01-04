@@ -1839,8 +1839,8 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
    }
 }
 
-void Compiler :: injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, ClassInfo& info,
-   VirtualMethodList& implicitMultimethods)
+void Compiler :: injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
+   ref_t targetRef, ClassInfo& info, VirtualMethodList& implicitMultimethods)
 {
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.eof(); ++it) {
@@ -1850,7 +1850,7 @@ void Compiler :: injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType
             injectVirtualMultimethod(classNode, methodType, scope, info, methodInfo.value1);
             break;
          case VirtualType::EmbeddableWrapper:
-            injectVirtualEmbeddableWrapper(classNode, methodType, scope, info, methodInfo.value1);
+            injectVirtualEmbeddableWrapper(classNode, methodType, scope, targetRef, info, methodInfo.value1);
             break;
          default:
             break;
@@ -1958,7 +1958,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
 
    //COMPILER MAGIC : if strong signature is declared - the compiler should contain the virtual multi method
    if (implicitMultimethods.count() > 0) {
-      injectVirtualMethods(node, methodKey, *scope.moduleScope, scope.info, implicitMultimethods);
+      injectVirtualMethods(node, methodKey, *scope.moduleScope, scope.reference, scope.info, implicitMultimethods);
    }
 
    // third pass - do not include overwritten template-based methods
@@ -7334,6 +7334,8 @@ void Compiler :: compileDirectResendCode(BuildTreeWriter& writer, CodeScope& cod
 
    SyntaxNode targetNode = node.findChild(SyntaxKey::Target);
    ref_t disptachTarget = targetNode.arg.reference;
+   if (!disptachTarget)
+      assert(false);
 
    writer.newNode(BuildKey::DirectResendOp, dispatchMessage);
    writer.appendNode(BuildKey::Type, disptachTarget);
@@ -8532,7 +8534,7 @@ inline SyntaxNode newVirtualMethod(SyntaxNode classNode, SyntaxKey methodType, m
 }
 
 void Compiler :: injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
-   ClassInfo& info, mssg_t message)
+   ref_t targetRef, ClassInfo& info, mssg_t message)
 {
    MethodInfo methodInfo = {};
 
@@ -8548,7 +8550,7 @@ void Compiler :: injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey 
       mssg_t resendMessage = message | STATIC_MESSAGE;
 
       SyntaxNode resendOp = methodNode.appendChild(SyntaxKey::DirectResend, resendMessage);
-      resendOp.appendChild(SyntaxKey::Target, classNode.arg.reference);
+      resendOp.appendChild(SyntaxKey::Target, targetRef);
    }
 }
 
