@@ -5,10 +5,10 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * api functionality for existing classes : Array<T>
     * elena vm : external routines
     * elena vm : implement elenavmmachine - debug a program
     * ide : remember last open project
+    * api functionality for existing classes : String
     * ide - review on change events : after editor change / debug step
     * ide - api in menu
     * ide : open the last opened file on the ide start
@@ -44,6 +44,8 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * api : migrate VariadicArray, Matrix<T>, BitArray, BitArray32, IntMatrix, RealMatrix
+    * elena : allow to initialize class in-place
     * ide - close all / close all but active
     * ide - disable close if no files are open
     * ide - disable close project if the project is closed

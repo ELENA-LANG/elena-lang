@@ -1,6 +1,6 @@
 // --- Array template ---
 
-public sealed Array<T> //: Indexable<T>
+public sealed Array<T> : Indexable<T>
 {
    embeddable __string T[] array;
 
@@ -16,21 +16,48 @@ public sealed Array<T> //: Indexable<T>
       }
    }
 
-//   Enumerator<T> enumerator() = new BaseEnumerator<T>
-//   {
-//      this index := -1;
+   Enumerator<T> enumerator() = new BaseEnumerator<T>
+   {
+      this index := -1;
         
-//      this length := self.Length;
+      this length := self.Length;
         
-//      get T Value() = self.at(this index.Value);
+      get T Value() = self.at(this index.Value);
         
-//      enumerable() = self;
+      enumerable() = self;
         
-//      reset()
-//      {
-  //       this index.Value := -1
-//      }
-//   };
+      reset()
+      {
+         this index.Value := -1
+      }
+   };
+
+   Enumerable cast() = new Enumerable{ Enumerator enumerator() => self; };
+
+   Indexer<T> indexer() = new BaseIndexer<T>
+   {
+      this index := 0;
+        
+      this length := self.Length;
+        
+      get T Value()
+         = self.at(this index);
+            
+      set Value(T o)
+      {
+         self.setAt(this index, o)
+      }
+   };   
+
+   int Length
+   {
+      get()
+      {
+         int len := $len array;
+            
+         ^ len
+      }
+   }
 }
 
 // --- Variadic Array template ---

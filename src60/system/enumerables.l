@@ -95,6 +95,8 @@ public interface Indexer<T>
    {
       get();
    }
+
+   abstract Indexer cast();
 }
 
 // --- Indexable ---
@@ -122,10 +124,49 @@ public abstract class BaseEnumerator<T> : Enumerator<T>
         
       int n := *index;  
 
-        ^ n < length
+      ^ n < length
    }
     
-    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+   Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+}
+
+public abstract BaseIndexer<T> : Indexer<T>
+{
+   Reference<int> index;
+   int length;
+    
+   /// Returns false if the index out of range
+   bool Available = index.Value < length;
+
+   int Index
+   {    
+      /// Reads the current i-index into an output parameter
+      get()
+      {
+         ^ *index
+      }    
+        
+      /// Sets the i-index by specified value
+      set(index)
+      {
+         this index.Value := index;
+      }
+   } 
+    
+   appendIndex(int offs)
+   { 
+      index.append(offs);
+   }     
+    
+   int Length
+   {
+      get()
+      {
+         ^ length;
+      }
+   }
+    
+   Indexer cast() = new Indexer { embeddable dispatch() => self; };
 }
 
 // --- BaseIndexer ---

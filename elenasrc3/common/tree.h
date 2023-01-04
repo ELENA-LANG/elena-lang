@@ -589,6 +589,11 @@ namespace elena_lang
          return gotoChild(node, key, value) == key;
       }
 
+      static bool ifChildExists(Node node, Key key, ref_t value)
+      {
+         return gotoChild(node, key, value) == key;
+      }
+
       static int countChild(Node node, Key key)
       {
          int counter = 0;

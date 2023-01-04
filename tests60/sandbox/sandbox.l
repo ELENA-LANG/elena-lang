@@ -1,25 +1,14 @@
 import extensions;
 
-class B<T>
+A
 {
-   T value;
-
-   T get() = value;
-}
-
-class A<T> : B<T>
-{
-   set(T t)
+   get = new XYZ<int>
    {
-      value := t
-   }
+      get() = 2;
+   };
 }
 
 public program()
 {
-   A<int> a;
-
-//   var s := new Reference<int>(2);
-
-//   this s.Value := 2
+   console.writeLine("Test from ELENAVM")
 }

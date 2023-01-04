@@ -3986,7 +3986,7 @@ ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declar
 
    ref_t templateRef = mapTemplateType(scope, terminalNode, parameters.count());
    if (!templateRef)
-      scope.raiseError(errInvalidHint, node);
+      scope.raiseError(errUnknownClass, terminalNode);
 
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
@@ -4444,14 +4444,15 @@ bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::AssignOperation) {
          found = true;
-         ObjectInfo target = mapObject(scope, current, EAttr::None);
+         SyntaxNode lnode = current.findChild(SyntaxKey::Object);
+         ObjectInfo target = mapObject(scope, lnode, EAttr::None);
          switch (target.kind) {
             case ObjectKind::Field:
                evalulated = false;
                break;
             case ObjectKind::ClassConstant:
                if (target.reference == INVALID_REF) {
-                  if(evalClassConstant(current.firstChild(SyntaxKey::TerminalMask).identifier(),
+                  if(evalClassConstant(lnode.firstChild(SyntaxKey::TerminalMask).identifier(),
                      scope, current.firstChild(SyntaxKey::ScopeMask), target))
                   {
                      current.setKey(SyntaxKey::Idle);

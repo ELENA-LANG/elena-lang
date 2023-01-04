@@ -892,12 +892,20 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
       }
       case SyntaxKey::InitExpression:
       {
-         SyntaxNode nameNode = writer.CurrentNode().findChild(SyntaxKey::Name);
+         bool isInitizializer = SyntaxTree::ifChildExists(writer.CurrentNode(), SyntaxKey::Attribute, V_MEMBER);
 
-         writer.CurrentNode().setKey(SyntaxKey::Field);
+         SyntaxNode nameNode = writer.CurrentNode().findChild(SyntaxKey::Name);
+         // HOTFIX : if it is an initializer, ignore field
+         writer.CurrentNode().setKey(isInitizializer ? SyntaxKey::Idle : SyntaxKey::Field);
          writer.closeNode();
+
          writer.newNode(SyntaxKey::AssignOperation);
+         writer.newNode(SyntaxKey::Object);
+         if (isInitizializer)
+            writer.appendNode(SyntaxKey::Attribute, V_MEMBER);
          flushCollection(writer, scope, nameNode);
+         writer.closeNode();
+
          flushExpression(writer, scope, node.findChild(SyntaxKey::InitExpression).firstChild());
          break;
       }
