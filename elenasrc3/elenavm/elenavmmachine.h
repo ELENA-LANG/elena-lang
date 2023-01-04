@@ -19,17 +19,21 @@ namespace elena_lang
    constexpr auto ELENAVM_INITIALIZING    = "Initializing...";
 
    // --- ELENARTMachine ---
-   class ELENAVMMachine : public ELENAMachine, public ImageProviderBase
+   class ELENAVMMachine : public ELENAMachine, public ImageProviderBase, public ExternalMapper
    {
-   private:
+   protected:
       bool                 _initialized;
       LibraryProvider      _libraryProvider;
       PresenterBase*       _presenter;
       ReferenceMapper      _mapper;
       JITLinkerSettings    _settings;
 
+      path_t               _rootPath;
+
       ProjectBase*         _configuration;
       JITCompilerBase*     _compiler;
+
+      virtual addr_t resolveExternal(ustr_t dll, ustr_t function) = 0;
 
       void addForward(ustr_t forwardLine);
       void addPackage(ustr_t packageLine);
@@ -51,6 +55,8 @@ namespace elena_lang
       AddressMap::Iterator externals() override;
 
    public:
+      addr_t resolveExternal(ustr_t reference) override;
+
       void startSTA(SystemEnv* env, void* tape, void* criricalHandler);
 
       void Exit(int exitCode);

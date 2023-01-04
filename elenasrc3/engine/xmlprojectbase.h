@@ -120,6 +120,9 @@ namespace elena_lang
 
       ConfigFile::Node getPlatformRoot(ConfigFile& config, PlatformType platform);
 
+      void loadKeyCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath,
+         ProjectOption collectionKey, ProjectOption itemKey, ustr_t prefix);
+
       void loadPathCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath,
          ProjectOption collectionKey, path_t configPath);
 
@@ -133,6 +136,7 @@ namespace elena_lang
 
       ustr_t resolveForward(ustr_t weakReference) override;
       ustr_t resolveWinApi(ustr_t forward) override;
+      ustr_t resolveExternal(ustr_t forward) override;
 
       ustr_t StringSetting(ProjectOption option) const override;
       path_t PathSetting(ProjectOption option) const override;

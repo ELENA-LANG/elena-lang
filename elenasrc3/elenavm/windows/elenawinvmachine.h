@@ -25,6 +25,8 @@ class ELENAWinVMMachine : public ELENAVMMachine
 {
    WinImageSection _text, _rdata, _data, _stat, _mdata, _mbdata, _debug;
 
+   bool exportFunction(path_t rootPath, size_t position, path_t dllName, ustr_t funName);
+
 public:
    MemoryBase* getDataSection() override;
    MemoryBase* getImportSection() override;
@@ -37,6 +39,8 @@ public:
 
    addr_t getDebugEntryPoint() override;
    addr_t getEntryPoint() override;
+
+   addr_t resolveExternal(ustr_t dll, ustr_t function) override;
 
    ELENAWinVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
       int codeAlignment, JITSettings gcSettings,

@@ -36,9 +36,6 @@ namespace elena_lang
 
       void loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
 
-      void loadKeyCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath,
-         ProjectOption collectionKey, ProjectOption itemKey, ustr_t prefix);
-
       void loadSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, IdentifierString& value);
 
       void copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key, bool exclusiveMode = false);
@@ -69,8 +66,6 @@ namespace elena_lang
 
       ustr_t StringSetting(ProjectOption option) const override;
       path_t PathSetting(ProjectOption option) const override;
-
-      ustr_t resolveExternal(ustr_t forward) override;
 
       void addBoolSetting(ProjectOption option, bool value);
       void addIntSetting(ProjectOption option, int value);

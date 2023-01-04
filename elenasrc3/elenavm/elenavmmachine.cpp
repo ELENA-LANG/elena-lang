@@ -31,6 +31,9 @@ protected:
          ProjectOption::References, configPath);
 
       loadPathSetting(config, root, LIB_PATH, ProjectOption::LibPath, configPath);
+
+      loadKeyCollection(config, root, EXTERNAL_CATEGORY,
+         ProjectOption::Externals, ProjectOption::External, nullptr);
    }
 
    bool loadConfig(path_t path)
@@ -54,11 +57,6 @@ protected:
    }
 
 public:
-   ustr_t resolveExternal(ustr_t forward)
-   {
-      throw InternalError(errVMBroken);
-   }
-
    ustr_t resolveWinApi(ustr_t forward)
    {
       throw InternalError(errVMBroken);
@@ -82,6 +80,7 @@ public:
 ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform, 
    int codeAlignment, JITSettings gcSettings,
    JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
+      : _mapper(this), _rootPath(configPath)
 {
    _initialized = false;
    _presenter = presenter;
@@ -280,4 +279,20 @@ void ELENAVMMachine :: Exit(int exitCode)
 AddressMap::Iterator ELENAVMMachine::externals()
 {
    throw InternalError(errVMBroken);
+}
+
+addr_t ELENAVMMachine :: resolveExternal(ustr_t referenceName)
+{
+   size_t index = referenceName.findLast('.');
+   IdentifierString dll(referenceName, index);
+   ustr_t functionName = referenceName + index + 1;
+
+   if ((*dll).compare(RT_FORWARD)) {
+      ustr_t resolvedName = _configuration->resolveExternal(*dll);
+      if (!resolvedName.empty()) {
+         dll.copy(resolvedName);
+      }
+   }
+
+   return resolveExternal(*dll, functionName);
 }

@@ -17,7 +17,12 @@ addr_t ReferenceMapper :: resolveExternal(ustr_t referenceName)
 {
    addr_t address = _exportReferences.get(referenceName);
    if (address == INVALID_ADDR) {
-      address = (_exportReferences.count() + 1) | mskImportRef;
+      if (_externalMapper) {
+         address = _externalMapper->resolveExternal(referenceName);
+
+         assert(address != INVALID_ADDR);
+      }
+      else address = (_exportReferences.count() + 1) | mskImportRef;
 
       _exportReferences.add(referenceName, address);
    }

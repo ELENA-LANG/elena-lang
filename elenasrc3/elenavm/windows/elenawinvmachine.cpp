@@ -11,6 +11,8 @@
 
 using namespace elena_lang;
 
+constexpr auto VA_ALIGNMENT = 0x08;
+
 ELENAWinVMMachine :: ELENAWinVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
    int codeAlignment, JITSettings gcSettings,
    JITCompilerBase*(* jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
@@ -73,4 +75,38 @@ MemoryBase* ELENAWinVMMachine :: getTargetDebugSection()
 MemoryBase* ELENAWinVMMachine :: getTextSection()
 {
    return &_text;
+}
+
+bool ELENAWinVMMachine :: exportFunction(path_t rootPath, size_t position, path_t dllName, ustr_t funName)
+{
+   HMODULE handle = ::LoadLibrary(dllName);
+   // if dll is not found, use root path
+   if (handle == nullptr) {
+      PathString dllPath(rootPath);
+      dllPath.combine(dllName);
+
+      handle = ::LoadLibrary(*dllPath);
+   }
+
+   String<char, 200> lpFunName(funName);
+   addr_t address = (addr_t)::GetProcAddress(handle, lpFunName.str());
+   if (address == 0)
+      return false;
+
+   return _data.write(position, &address, sizeof(address));
+}
+
+addr_t ELENAWinVMMachine :: resolveExternal(ustr_t dll, ustr_t function)
+{
+   // align memory
+   MemoryWriter writer(&_data);
+   _compiler->alignCode(writer, VA_ALIGNMENT, false);
+
+   pos_t reference = _data.length();
+
+   PathString dllPath(dll);
+   if (!exportFunction(_rootPath, reference, *dllPath, function))
+      return INVALID_ADDR;
+
+   return (addr_t)_data.get(reference);
 }

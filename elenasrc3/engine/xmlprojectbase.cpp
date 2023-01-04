@@ -119,6 +119,41 @@ void XmlProjectBase :: loadPathSetting(ConfigFile& config, ConfigFile::Node& con
    }
 }
 
+void XmlProjectBase :: loadKeyCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath, ProjectOption collectionKey,
+   ProjectOption itemKey, ustr_t prefix)
+{
+   DynamicString<char> key, value;
+
+   ConfigFile::Collection collection;
+   if (config.select(root, xpath, collection)) {
+      auto collectionNode = _root.findChild(collectionKey);
+      if (collectionNode == ProjectOption::None)
+         collectionNode = _root.appendChild(collectionKey);
+
+      for (auto it = collection.start(); !it.eof(); ++it) {
+         ConfigFile::Node node = *it;
+
+         if (node.readAttribute("key", key)) {
+            node.readContent(value);
+
+            ProjectNode keyNode = ProjectTree::gotoChild(collectionNode, itemKey, key.str());
+            if (keyNode == ProjectOption::None) {
+               if (!prefix.empty())
+                  key.insert(prefix, 0);
+
+               keyNode = collectionNode.appendChild(itemKey, key.str());
+            }
+
+            ProjectNode valueNode = keyNode.findChild(ProjectOption::Value);
+            if (valueNode == ProjectOption::None) {
+               keyNode.appendChild(ProjectOption::Value, value.str());
+            }
+            else keyNode.setStrArgument(value.str());
+         }
+      }
+   }
+}
+
 ustr_t XmlProjectBase :: resolveKey(ProjectOption category, ProjectOption item, ustr_t key)
 {
    ProjectNode current = ProjectTree::gotoChild(_root.findChild(category), item, key);
@@ -134,6 +169,11 @@ ustr_t XmlProjectBase :: resolveForward(ustr_t forward)
 ustr_t XmlProjectBase :: resolveWinApi(ustr_t dllAlias)
 {
    return resolveKey(ProjectOption::Winapis, ProjectOption::Winapi, dllAlias);
+}
+
+ustr_t XmlProjectBase :: resolveExternal(ustr_t dllAlias)
+{
+   return resolveKey(ProjectOption::Externals, ProjectOption::External, dllAlias);
 }
 
 void XmlProjectBase :: addForward(ustr_t forward, ustr_t referenceName)

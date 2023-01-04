@@ -12,25 +12,34 @@
 
 namespace elena_lang
 {
+   // --- ExternaöMapper ---
+   class ExternalMapper
+   {
+   public:
+      virtual addr_t resolveExternal(ustr_t reference) = 0;
+   };
+
    // --- ReferenceMapper ---
    class ReferenceMapper : public ReferenceMapperBase
    {
    protected:
       typedef List<LazyReferenceInfo> LazyReferences;
 
-      AddressMap     _symbolReferences;
-      AddressMap     _exportReferences;
-      AddressMap     _constReferences, _numberReferences, _literalReferences, _characterReferences;
-      AddressMap     _longNumberReferences, _realNumberReferences;
-      AddressMap     _wideReferences;
-      AddressMap     _mssgReferences;
-      AddressMap     _dataReferences;
-      AddressMap     _statReferences;
+      AddressMap      _symbolReferences;
+      AddressMap      _exportReferences;
+      AddressMap      _constReferences, _numberReferences, _literalReferences, _characterReferences;
+      AddressMap      _longNumberReferences, _realNumberReferences;
+      AddressMap      _wideReferences;
+      AddressMap      _mssgReferences;
+      AddressMap      _dataReferences;
+      AddressMap      _statReferences;
 
-      ReferenceMap   _actionNames;
-      ActionMap      _actions;
+      ReferenceMap    _actionNames;
+      ActionMap       _actions;
 
-      LazyReferences _lazyReferences;
+      LazyReferences  _lazyReferences;
+
+      ExternalMapper* _externalMapper;
 
       addr_t resolveExternal(ustr_t referenceName);
       addr_t resolveReference(ustr_t referenceName, ref_t sectionMask);
@@ -52,7 +61,7 @@ namespace elena_lang
 
       void addLazyReference(LazyReferenceInfo info) override;
 
-      ReferenceMapper() : 
+      ReferenceMapper(ExternalMapper* externalMapper = nullptr) :
          _symbolReferences(INVALID_ADDR), 
          _exportReferences(INVALID_ADDR), 
          _constReferences(INVALID_ADDR),
@@ -67,7 +76,8 @@ namespace elena_lang
          _statReferences(INVALID_ADDR),
          _actionNames(0),
          _actions(0),
-         _lazyReferences({})
+         _lazyReferences({}),
+         _externalMapper(externalMapper)
       {
          
       }
