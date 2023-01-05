@@ -1282,7 +1282,12 @@ namespace elena_lang
       {
          writer->writePos(map.count());
          for (auto it = map.start(); !it.eof(); ++it) {
-            writer->writeString(it.key());
+            ustr_t key = it.key();
+            if (key.empty()) {
+               writer->writeChar(0);
+            }
+            else writer->writeString(key);
+
             writer->write(&(*it), sizeof(T));
          }
       }

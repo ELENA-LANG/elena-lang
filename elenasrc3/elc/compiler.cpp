@@ -1534,7 +1534,10 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
       case ObjectKind::StringLiteral:
       {
          ustr_t value = module->resolveConstant(retVal.reference);
-         dataWriter.writeString(value, value.length_pos() + 1);
+         if (emptystr(value)) {
+            dataWriter.writeChar(0);
+         }
+         else dataWriter.writeString(value, value.length_pos() + 1);
 
          retVal.typeInfo = { scope.moduleScope->buildins.literalReference };
          break;

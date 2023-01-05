@@ -64,14 +64,18 @@ public sealed Array<T> : Indexable<T>
 
 public sealed nonstructural VariadicArray<T> //: Indexable<T>
 {
-    embeddable __string T[] theArray;
+    embeddable __string T[] array;
 }
 
 // --- String ---
 
-public const struct String //: BaseValue
+public const struct String : //BaseValue
+   info<"A UTF-8 literal value">   
 {
-   __string byte[] theArray;
+   __string byte[] array;
+
+    const static string MinValue
+        = "";
 
    string toPrintable() = self;
 
@@ -81,11 +85,11 @@ public const struct String //: BaseValue
    internal constructor fromByteArray(int index, int size, byte[] buffer)
       <= allocate(size)
    {
-      PrimitiveOperations.copy(theArray, index, size, buffer);
+      PrimitiveOperations.copy(array, index, size, buffer);
 
       // add tailing zero
       byte z := 0;
-      theArray[size] := z;
+      array[size] := z;
    }
 
    int Length
@@ -93,7 +97,7 @@ public const struct String //: BaseValue
       /// Reads the literal length into an output parameter
       get()
       {
-         int l := $len theArray;
+         int l := $len array;
          l := l - 1;
 
          ^ l;
@@ -105,10 +109,10 @@ public const struct String //: BaseValue
    private copySubS(string dest, string sour, int index, int length) : external<system'core_routines'__str_copysubs>;
 
    char at(int index)
-      = PrimitiveOperations.readChar(theArray, index);
+      = PrimitiveOperations.readChar(array, index);
 
    retoverload byte at(int index)
-      = theArray[index];
+      = array[index];
 
    string add(string subs)
    {

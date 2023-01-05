@@ -2705,7 +2705,10 @@ void JITCompiler32 :: writeFloat64(MemoryWriter& writer, double number)
 
 void JITCompiler32 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
-   writer.writeString(value, value.length_pos() + 1);
+   if (emptystr(value)) {
+      writer.writeChar(0);
+   }
+   else writer.writeString(value, value.length_pos() + 1);
    writer.align(4, 0);
 }
 
@@ -3096,7 +3099,11 @@ void JITCompiler64 :: writeFloat64(MemoryWriter& writer, double number)
 
 void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
-   writer.writeString(value, value.length_pos() + 1);
+   if (emptystr(value)) {
+      writer.writeChar(0);
+   }
+   else writer.writeString(value, value.length_pos() + 1);
+   
    writer.align(8, 0);
 }
 
