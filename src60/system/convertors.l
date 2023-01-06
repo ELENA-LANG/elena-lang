@@ -754,3 +754,46 @@ public singleton stringConvertor
 public singleton wideConvertor
 {
 }
+
+// --- byteArrayConvertor ---
+
+public singleton byteArrayConvertor
+{
+   int convert(byte[] dest, int destIndex, int length, wide sour)
+   {
+      int i := 0;
+      int j := 0;
+      while (i < length) {
+         char ch := sour[i];
+         int chVal := ch.Value;
+         
+         int length := PrimitiveOperations.copyUTF32(dest,j,chVal);
+         
+         j += length;
+         i += ch.Length;
+      }
+   }   
+}
+
+
+// --- shortArrayConvertor ---
+
+public singleton shortArrayConvertor
+{
+   int convert(short[] dest, int destIndex, int length, string sour)
+   {
+      int i := 0;
+      int j := 0;
+      while (i < length) {
+         char ch := sour[i];
+         int chVal := ch.Value;
+         
+         int length := PrimitiveOperations.copyUTF32(dest, j, chVal);
+         
+         j += length;
+         i += ch.Length;
+      };
+
+      ^ j
+   }   
+}

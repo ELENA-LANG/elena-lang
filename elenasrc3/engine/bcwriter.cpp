@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code compiler class implementation.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -949,6 +949,34 @@ void binaryArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void shortArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   switch (node.arg.value) {
+      case SET_INDEXER_OPERATOR_ID:
+         // load
+         // peek sp:1
+         // write n:1
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::WriteN, 2);
+         break;
+      case INDEX_OPERATOR_ID:
+         // peek sp:1
+         // load
+         // setdp index
+         // read n:1
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::SetDP, targetOffset);
+         tape.write(ByteCode::ReadN, 2);
+         break;
+   default:
+      throw InternalError(errFatalError);
+   }
+}
+
 void directResend(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
@@ -1111,7 +1139,7 @@ ByteCodeWriter::Saver commands[] =
    intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
    realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
 
-   genericDispatchOp, bynaryArraySOp, binaryArrayOp
+   genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp
 };
 
 // --- ByteCodeWriter ---

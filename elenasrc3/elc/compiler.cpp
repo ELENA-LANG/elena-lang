@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "compiler.h"
@@ -3486,6 +3486,7 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
       case V_WRAPPER:
          return resolveWrapperTemplate(scope, typeInfo.elementRef, declarationMode);
       case V_INT8ARRAY:
+      case V_INT16ARRAY:
       case V_BINARYARRAY:
          return resolveArrayTemplate(scope, typeInfo.elementRef, declarationMode);
       case V_NIL:

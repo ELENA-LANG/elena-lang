@@ -117,11 +117,11 @@ public const struct String : //BaseValue
       <= copy(s.Length, s);
 
    /// Creates the copy of a subarray        
-//   constructor copy(int index, int length, char[] array)
-//      <= allocate(PrimitiveOperations.calcSubStringLength(index, length, array))
-//   {
-//        extern elenart.core_scopychars(self, index, length, array);
-//   }
+   constructor copy(int index, int length, char[] charArray)
+      <= allocate(PrimitiveOperations.calcSubStringLength(index, length, charArray))
+   {
+      PrimitiveOperations.copy(this array, index, length, charArray);
+   }
 
    internal constructor fromByteArray(int index, int size, byte[] buffer)
       <= allocate(size)
@@ -131,6 +131,40 @@ public const struct String : //BaseValue
       // add tailing zero
       byte z := 0;
       array[size] := z;
+   }
+
+   wide cast()
+   {
+      int        i := 0;
+      int        m := 0;
+      int        page := 0;
+      int        l := self.Length;
+      short buffer[256];            
+      if (l < 256)
+      {
+         m := shortArrayConvertor.convert(buffer, 0, l, self);
+
+         ^ WideString.fromShortArray(0, m, buffer)
+      };
+
+      wide retVal := WideString.MinValue;
+      while(l > 0)
+      {
+         page := l;
+         if (page > 256)
+         {
+            page := 256
+         };
+
+         m := shortArrayConvertor.convert(buffer, 0, l, self.Substring(i,page));
+
+         retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
+
+         i := i + page;
+         l := l - page
+      };
+        
+      ^ retVal      
    }
 
    int Length

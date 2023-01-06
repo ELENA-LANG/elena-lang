@@ -9,6 +9,20 @@ internal singleton PrimitiveOperations
       }
    }
 
+   copy(byte[] dest, int index, int size, char[] sour)
+   {
+      int j := 0;
+      for (int i := 0, i < size, i := i + 1) {
+         char ch := sour[index + 1];   
+         int chVal := ch.Value;
+         int chLen := ch.Length;
+         
+         PrimitiveOperations.copyUTF32(dest, j, chVal);
+         
+         j += chLen;
+      }
+   }
+
    int getCharLength(int code)
    {
       if (code < 80h)

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class implementation.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 103;
+constexpr auto OperationLength = 105;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -346,10 +346,17 @@ constexpr Op Operations[OperationLength] =
       LEN_OPERATOR_ID, BuildKey::ShortArraySOp, V_INT16ARRAY, 0, 0, V_INT32
    },
    {
-      SET_INDEXER_OPERATOR_ID, BuildKey::BinaryArrayOp, V_BINARYARRAY, V_ELEMENT, V_INT32, 0
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_INT32, 0, V_INT16
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_INT16, V_INT32, 0
    },
    {
       INDEX_OPERATOR_ID, BuildKey::BinaryArrayOp, V_BINARYARRAY, V_INT32, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::BinaryArrayOp, V_BINARYARRAY, V_ELEMENT, V_INT32, 0
    },
    {
       LEN_OPERATOR_ID, BuildKey::BinaryArraySOp, V_BINARYARRAY, 0, 0, V_INT32
@@ -1154,6 +1161,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
          info.size = -1;
+         break;
+      case V_INT16ARRAY:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
+         info.size = -2;
          break;
       case V_BINARYARRAY:
          info.header.parentRef = scope.buildins.superReference;

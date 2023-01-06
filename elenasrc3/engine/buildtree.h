@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Byte code Build Tree classes
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BUILDTREE_H
@@ -109,6 +109,7 @@ namespace elena_lang
       GenericDispatchingOp = 0x0050,
       BinaryArraySOp       = 0x0051,
       BinaryArrayOp        = 0x0052,
+      ShortArrayOp         = 0x0053,
 
       Import               = 0x0058,
       DictionaryOp         = 0x0059,
