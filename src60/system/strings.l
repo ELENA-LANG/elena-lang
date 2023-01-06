@@ -82,6 +82,47 @@ public const struct String : //BaseValue
    constructor allocate(int size)
       = new byte[](size + 1);
 
+    /// Creates the literal string with specified length and copies the parameter value
+   constructor copy(int size, string s)
+      <= allocate(size)
+   {
+      PrimitiveStringOperations.copy(array, 0, size, s);
+
+      // add tailing zero
+      byte z := 0;
+      array[size] := z;
+   }
+
+   /// Creates the literal string with specified length fills with specified character value        
+   constructor fill(int size, char ch)
+      <= allocate(ch.Length * size)
+   {
+      byte buffer[4];
+      int chVal := ch.Value;
+      int  length := ch.Length;
+      PrimitiveOperations.copyUTF32(buffer, 0, length);
+        
+      int offs := 0;
+      for (int i := 0, i < size, i := i + 1)
+      {
+         for (int j := 0, j < length, j := j + 1) {
+            array[offs] := buffer[j];
+            offs := offs + 1;
+         }
+      }
+   }
+
+   /// Creates the literal string copy              
+   constructor copy(string s)
+      <= copy(s.Length, s);
+
+   /// Creates the copy of a subarray        
+//   constructor copy(int index, int length, char[] array)
+//      <= allocate(PrimitiveOperations.calcSubStringLength(index, length, array))
+//   {
+//        extern elenart.core_scopychars(self, index, length, array);
+//   }
+
    internal constructor fromByteArray(int index, int size, byte[] buffer)
       <= allocate(size)
    {

@@ -875,6 +875,23 @@ void shortArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void bynaryArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   int size = node.findChild(BuildKey::Size).arg.value;
+
+   switch (node.arg.value) {
+      case LEN_OPERATOR_ID:
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::NLen, size);
+         tape.write(ByteCode::SaveDP, targetOffset, 4);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
 void byteArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int targetOffset = node.findChild(BuildKey::Index).arg.value;
@@ -897,6 +914,35 @@ void byteArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
          tape.write(ByteCode::Load);
          tape.write(ByteCode::SetDP, targetOffset);
          tape.write(ByteCode::BRead);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
+void binaryArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   int size = node.findChild(BuildKey::Size).arg.value;
+
+   switch (node.arg.value) {
+      case SET_INDEXER_OPERATOR_ID:
+         // load
+         // peek sp:1
+         // write n:1
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::WriteN, size);
+         break;
+      case INDEX_OPERATOR_ID:
+         // peek sp:1
+         // load
+         // setdp index
+         // read n:1
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::SetDP, targetOffset);
+         tape.write(ByteCode::ReadN, size);
          break;
       default:
          throw InternalError(errFatalError);
@@ -1065,7 +1111,7 @@ ByteCodeWriter::Saver commands[] =
    intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
    realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
 
-   genericDispatchOp
+   genericDispatchOp, bynaryArraySOp, binaryArrayOp
 };
 
 // --- ByteCodeWriter ---

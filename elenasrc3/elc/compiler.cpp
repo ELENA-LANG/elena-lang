@@ -3486,6 +3486,7 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
       case V_WRAPPER:
          return resolveWrapperTemplate(scope, typeInfo.elementRef, declarationMode);
       case V_INT8ARRAY:
+      case V_BINARYARRAY:
          return resolveArrayTemplate(scope, typeInfo.elementRef, declarationMode);
       case V_NIL:
          return scope.moduleScope->buildins.superReference;
@@ -4680,6 +4681,9 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter);
 
       arguments[argLen++] = retrieveType(scope, roperand);
+      if (arguments[0] == V_BINARYARRAY && arguments[1] == loperand.typeInfo.elementRef)
+         // HOTFIX : for the generic binary array, recognize the element type
+         arguments[1] = V_ELEMENT;
    }
 
    if (inode != SyntaxKey::None) {
@@ -4735,6 +4739,9 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       }
 
       switch (op) {
+         case BuildKey::BinaryArraySOp:
+            writer.appendNode(BuildKey::Size, _logic->defineStructSize(*scope.moduleScope, loperand.typeInfo.elementRef).size);
+            break;
          case BuildKey::BoolSOp:
          case BuildKey::IntCondOp:
          case BuildKey::ByteCondOp:
@@ -5264,12 +5271,15 @@ ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& sco
          if (conversionRoutine.result == ConversionResult::BoxingRequired) {
             source.typeInfo = { targetRef };
          }
+         assert(conversionRoutine.result != ConversionResult::None);
       }
 
       assert(arguments.count() == 1); // !! temporally - only one argument is supported
 
       writeObjectInfo(writer, scope, arguments[0]);
       writer.appendNode(BuildKey::SavingInStack, 0);
+
+      assert(!source.typeInfo.isPrimitive());
 
       writer.newNode(operationKey, source.typeInfo.typeRef);
 

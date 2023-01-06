@@ -107,6 +107,8 @@ namespace elena_lang
       AssignLocalToStack   = 0x004E,
       SetImmediateField    = 0x004F,
       GenericDispatchingOp = 0x0050,
+      BinaryArraySOp       = 0x0051,
+      BinaryArrayOp        = 0x0052,
 
       Import               = 0x0058,
       DictionaryOp         = 0x0059,

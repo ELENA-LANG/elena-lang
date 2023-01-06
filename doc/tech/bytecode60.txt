@@ -180,8 +180,6 @@ ELENA byte codes (or ecodes)
  ------------------
    bread                    - byte:sp[0][index*n] >> int:acc, 
 
-   bwrite n                 - sp[0][index] := byte:n
-
    class                    - acc := acc.class
 
    coalesce                 - acc := acc ?? sp[0]   (if acc is nil, get sp[0])

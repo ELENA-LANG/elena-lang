@@ -375,6 +375,45 @@ procedure __byteToShort
 
 end
 
+procedure __copySubStr (dest, index, len, sour)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[i1,i2,tmp]
+
+  peek       fp:index
+  load
+  save       dp:i1
+  nsave      dp:i2, 0
+
+  peek       fp:dest
+  store      sp:1
+
+  peek       fp:sour
+  store      sp:0
+
+labNext:
+  set        dp:tmp
+  load       dp:i1
+  bread
+  xswap      sp:1
+  load       dp:i2
+  write      1
+  xswap      sp:1
+
+  nadd       dp:i1, 1
+  nadd       dp:i2, 1
+
+  peek       fp:len
+  load       
+  xcmp       dp:i2
+  jne        labNext
+
+  close      []
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION
