@@ -246,6 +246,10 @@ ELENA byte codes (or ecodes)
  
    jne  label               - jump if COMP.EQ == 0
  
+   jlt  label               - jump if COMP.LT == 1
+ 
+   jge  label               - jump if COMP.LT == 0
+
 
  Arithmeric operations:
  ----------------------

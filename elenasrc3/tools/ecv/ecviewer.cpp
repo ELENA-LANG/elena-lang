@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ecviewer.h"
@@ -361,6 +361,8 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::Jump:
          case ByteCode::Jeq:
          case ByteCode::Jne:
+         case ByteCode::Jlt:
+         case ByteCode::Jge:
             addLabel(command.arg1 + commandPosition + 5, commandStr, labels);
             break;
          default:

@@ -37,6 +37,12 @@ namespace elena_lang
          void writeJneBack(pos_t label, MemoryWriter& writer) override {}
          void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
 
+         void writeJltBack(pos_t label, MemoryWriter& writer) override {}
+         void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
+
+         void writeJgeBack(pos_t label, MemoryWriter& writer) override {}
+         void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
+
          ref_t getLabel(ustr_t labelName)
          {
             return labelNames.get(labelName);

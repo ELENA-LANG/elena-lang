@@ -3,7 +3,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                                (C)2021-2022, by Aleksey Rakov
+//                                                (C)2021-2023, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #ifndef BYTECODE_H
@@ -93,6 +93,8 @@ namespace elena_lang
       Jne            = 0xB4,
       JumpVI         = 0xB5,
       XRedirectM     = 0xB6,
+      Jlt            = 0xB7,
+      Jge            = 0xB8,
 
       CmpR           = 0xC0,
       FCmpN          = 0xC1,

@@ -74,10 +74,8 @@ public const struct String : //BaseValue
 {
    __string byte[] array;
 
-    const static string MinValue
-        = "";
-
-   string toPrintable() = self;
+   const static string MinValue
+      = "";
 
    constructor allocate(int size)
       = new byte[](size + 1);
@@ -133,6 +131,8 @@ public const struct String : //BaseValue
       array[size] := z;
    }
 
+   string toPrintable() = self;
+
    wide cast()
    {
       int        i := 0;
@@ -167,6 +167,8 @@ public const struct String : //BaseValue
       ^ retVal      
    }
 
+   Enumerable<char> cast() = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
+
    int Length
    {
       /// Reads the literal length into an output parameter
@@ -180,6 +182,18 @@ public const struct String : //BaseValue
    }
 
    bool equal(string s) : external<system'core_routines'__str_equal>;
+
+//   bool less(string s) : external<system'core_routines'__str_less>;
+
+   bool equal(o)
+   {
+      var s := cast string(o) ?? nil;
+      (nil == s)
+         ? { ^ false } : { ^ self.equal(s) }      
+   }
+
+   bool less(o)
+      <= less(cast string(o));
 
    private copySubS(string dest, string sour, int index, int length) : external<system'core_routines'__str_copysubs>;
 

@@ -47,8 +47,8 @@ const char* _fnOpcodes[256] =
    "save dp", "store fp", "save sp", "store sp", "xflush sp", "get", "assign", "xrefresh sp",
    "peek fp", "peek sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
+   "jge", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "cmp", "fcmp", "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -294,24 +294,8 @@ inline bool removeIdleJump(ByteCodeIterator it)
          case ByteCode::Jump:
          case ByteCode::Jne:
          case ByteCode::Jeq:
-         //case bcIfR:
-         //case bcElseR:
-         //case bcElseD:
-         //case bcIf:
-         //case bcIfCount:
-         //case bcElse:
-         //case bcNotLess:
-         //case bcNotGreater:
-         //case bcIfN:
-         //case bcElseN:
-         //case bcLessN:
-         //case bcNotLessN:
-         //case bcGreaterN:
-         //case bcNotGreaterN:
-         //   //case bcIfM:
-         //   //case bcElseM:
-         //   //case bcNext:
-         //case bcIfHeap:
+         case ByteCode::Jlt:
+         case ByteCode::Jge:
          case ByteCode::JumpMR:
          case ByteCode::VJumpMR:
          case ByteCode::JumpVI:
@@ -423,25 +407,8 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
                blocks.add(index + 1, 0);
             case ByteCode::Jeq:
             case ByteCode::Jne:
-            //case bcIfR:
-            //case bcElseR:
-            //case bcElseD:
-            //case bcIf:
-            //case bcIfCount:
-            //case bcElse:
-            //case bcNotLess:
-            //case bcNotGreater:
-            //case bcIfN:
-            //case bcElseN:
-            //case bcLessN:
-            //case bcNotLessN:
-            //case bcGreaterN:
-            //case bcNotGreaterN:
-               //            case bcIfM:
-               //            case bcElseM:
-               //            case bcNext:
-            //case bcAddress:
-            //case bcIfHeap:
+            case ByteCode::Jlt:
+            case ByteCode::Jge:
                // remove the label from idle list
                idleLabels.exclude(command.arg1);
 
@@ -692,6 +659,8 @@ void CommandTape :: saveTo(MemoryWriter* writer)
          case ByteCode::Jump:
          case ByteCode::Jeq:
          case ByteCode::Jne:
+         case ByteCode::Jlt:
+         case ByteCode::Jge:
             writer->writeByte((char)command.code);
             if (!importMode) {
                // if forward jump, it should be resolved later
