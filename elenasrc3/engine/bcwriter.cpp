@@ -1112,6 +1112,12 @@ void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void breakOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::SetR, 0);
+   tape.write(ByteCode::Jump, PseudoArg::CurrentLabel);
+}
+
 inline void includeFrame(CommandTape& tape)
 {
    tape.write(ByteCode::Include);
@@ -1139,7 +1145,7 @@ ByteCodeWriter::Saver commands[] =
    intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
    realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
 
-   genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp
+   genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp
 };
 
 // --- ByteCodeWriter ---

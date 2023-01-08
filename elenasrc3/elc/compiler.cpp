@@ -5740,6 +5740,21 @@ ObjectInfo Compiler :: compileAssignOperation(BuildTreeWriter& writer, ExprScope
    return loperand;
 }
 
+ObjectInfo Compiler :: compileSpecialOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef)
+{
+   ObjectInfo retVal = {};
+   switch (operatorId) {
+      case BREAK_OPERATOR_ID:
+         writer.appendNode(BuildKey::BreakOp);
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef)
 {
    SyntaxNode loperand = node.firstChild();
@@ -6672,6 +6687,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::ShrOperation:
       case SyntaxKey::NegateOperation:
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef);
+         break;
+      case SyntaxKey::BreakOperation:
+         retVal = compileSpecialOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef);
          break;
       case SyntaxKey::AddAssignOperation:
       case SyntaxKey::SubAssignOperation:

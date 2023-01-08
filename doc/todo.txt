@@ -5,6 +5,8 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
+    * || operator
+
     * api functionality for existing classes : String
     * elena vm : implement elenavmmachine - debug a program
     * ldoc : internal properties
@@ -456,7 +458,7 @@ Backlog:
     * [Inverted syntax]
     * [ Compiler/code generator ]
     * [ Brace expansion ]
-    * [ loop - break / continue - see Apply a digital filter]
+    * [ loop - continue - see Apply a digital filter]
     * [ optimization s.Length ]
     * [ debugger : step over fine tuning if (false) {} else {} ]
     * [ debugger : fine-tuning stepOver - stepInto ] 

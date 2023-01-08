@@ -205,7 +205,7 @@ procedure __str_less (s1, s2)
   nlen       1
   set        dp:s_len
   xcmp
-  jne        labNotEqual
+  jne        labNotLess
 
   sub        n:1
 
@@ -240,11 +240,11 @@ labCheck:
   xswap      sp:1
   jump       labCheck
 
-labNotLess:
+labLoopEnd:
   set        class:"system'BoolValue#true"
   jump       labEnd
 
-labNotEqual:
+labNotLess:
    set       class:"system'BoolValue#false"
 
 labEnd:

@@ -354,4 +354,36 @@ internal singleton PrimitiveRealOperations
 internal singleton PrimitiveStringOperations
 {
    copy(byte[] dest, int index, int size, string sour) : external<system'core_routines'__copySubStr>;
+
+   int indexOf(string s, string subs, int index, int length)
+   {
+      int sLen := s.Length;
+      if (sLen < length)
+      {
+         ^ -1
+      };
+
+      sLen -= length;
+      int i := 0;
+      while (i < sLen) {
+         bool isEqual := true;
+         int j := 0;         
+         while (j < length) {
+            char ch1 := subs[i + j];
+            char ch2 := subs[j];
+            int len1 := ch2.Length;
+            int len2 := ch2.Length;
+            if (len1 != len2 || ch1 != ch2) {
+               isEqual := false;
+               $break
+            };
+            j += len2;
+         };
+         if (isEqual) {
+            ^ i
+         }
+      };
+
+      ^ -1
+   }
 }

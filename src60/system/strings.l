@@ -183,7 +183,19 @@ public const struct String : //BaseValue
 
    bool equal(string s) : external<system'core_routines'__str_equal>;
 
-//   bool less(string s) : external<system'core_routines'__str_less>;
+   bool equal(wide s)
+      = cast wide(self).equal(s);
+
+   bool equal(char ch)
+      <= equal(cast string(ch));
+
+   bool less(string s) : external<system'core_routines'__str_less>;
+
+   bool less(wide s)
+      = cast wide(self).less(s);
+
+   bool less(char ch)
+      <= less(cast string(ch));
 
    bool equal(o)
    {
@@ -203,7 +215,14 @@ public const struct String : //BaseValue
    retoverload byte at(int index)
       = array[index];
 
+   string add(o)
+      <= add(cast string(o));
+
+   string add(BaseVariable v)
+      <= add(*v);
+
    string add(string subs)
+      : info<"Concatinates the values">
    {
       int l1 := self.Length;
       int l2 := subs.Length;
@@ -214,6 +233,16 @@ public const struct String : //BaseValue
 
       ^ retVal
    }
+
+   int indexOf(int index, string literal)
+      : info<"Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1">   
+   {
+      int sublen := literal.Length;
+      int retVal := PrimitiveStringOperations.indexOf(self, literal, index, sublen);
+        
+      ^ retVal
+   }
+
 }
 
 // --- WideString ---

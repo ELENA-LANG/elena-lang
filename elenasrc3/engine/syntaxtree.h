@@ -3,7 +3,7 @@
 //
 //		This file contains Syntax Tree class declaration
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SYNTAXTREE_H
@@ -106,6 +106,7 @@ namespace elena_lang
       AndOperation            = 0x001861,
       OrOperation             = 0x001862,
       XorOperation            = 0x001863,
+      BreakOperation          = 0x001864,
       Postfix                 = 0x001068,
       TemplatePostfix         = 0x001069,
       MethodPostfix           = 0x00106A,

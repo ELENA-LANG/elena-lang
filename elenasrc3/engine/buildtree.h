@@ -110,6 +110,7 @@ namespace elena_lang
       BinaryArraySOp       = 0x0051,
       BinaryArrayOp        = 0x0052,
       ShortArrayOp         = 0x0053,
+      BreakOp              = 0x0054,
 
       Import               = 0x0058,
       DictionaryOp         = 0x0059,
