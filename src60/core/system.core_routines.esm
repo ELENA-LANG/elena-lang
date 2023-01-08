@@ -300,6 +300,63 @@ labNext:
 
 end
 
+procedure __str_xcopysubs (self, s1, s2, index1, len, index2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[i1,i2,tmp,cnt]
+
+  peek       fp:len
+  load
+  save       dp:cnt
+
+  peek       fp:index1
+  store      sp:0
+  copy       dp:i1, 4
+
+  peek       fp:index2
+  store      sp:0
+  copy       dp:i2, 4
+
+  peek       fp:s1
+  store      sp:1
+
+  peek       fp:s2
+  store      sp:0
+
+labNext:
+  set        dp:tmp
+  load       dp:i2
+  read       1
+  add        n:1
+  save       dp:i2
+
+  xswap      sp:1
+  load       dp:i1
+  write      1
+  add        n:1
+  save       dp:i1
+  xswap      sp:1
+  nadd       dp:i1, 1
+
+  load       dp:cnt
+  sub        n:1   
+  save       dp:cnt
+  cmp        n:0
+  jne        labNext
+
+  nsave      dp:tmp, 0
+
+  xswap      sp:1
+  set        dp:tmp
+  load       dp:i1
+  write      1
+
+  close      []
+
+end
+
 procedure __intToByte
 
   peek       sp:1

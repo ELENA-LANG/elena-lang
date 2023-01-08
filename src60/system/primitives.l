@@ -386,4 +386,49 @@ internal singleton PrimitiveStringOperations
 
       ^ -1
    }
+
+   int indexOf(string s, char ch, int index, int length)
+   {
+      int i := 0;
+      while (i < length) {
+         char ch2 := s[index + i];
+         if (ch == ch2)
+         {
+            ^ i
+         };
+
+         int len1 := ch2.Length;
+         i += len1;
+      };
+
+      ^ -1
+   }
+
+   int save(char[] dest, string s, int index, int length)
+   {
+      int i := 0;
+      int j := 0;
+      while (i < length) {
+         char ch := s[index + i];
+
+         dest[j] := ch;
+
+         int len := ch.Length;
+         i += len;
+      };
+      
+      ^ j
+   }
+
+   save(byte[] dest, byte[] sour, int index, int length)
+   {
+      int i := 0;
+      while (i < length) {
+         byte b := sour[index + i];
+
+         dest[i] := b;
+
+         i += 1;
+      };
+   }
 }

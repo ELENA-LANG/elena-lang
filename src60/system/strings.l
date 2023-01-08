@@ -69,7 +69,7 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 
 // --- String ---
 
-public const struct String : //BaseValue
+public const struct String : BaseValue, 
    info<"A UTF-8 literal value">   
 {
    __string byte[] array;
@@ -208,6 +208,7 @@ public const struct String : //BaseValue
       <= less(cast string(o));
 
    private copySubS(string dest, string sour, int index, int length) : external<system'core_routines'__str_copysubs>;
+   private copySubS(string dest, string sour, int index, int length, int sourIndex) : external<system'core_routines'__str_xcopysubs>;
 
    char at(int index)
       = PrimitiveOperations.readChar(array, index);
@@ -243,6 +244,82 @@ public const struct String : //BaseValue
       ^ retVal
    }
 
+   int indexOf(int index, char ch)
+   {
+      int sublen := self.Length;
+      int retVal := PrimitiveStringOperations.indexOf(self, ch, index, sublen);
+        
+      ^ retVal
+   }
+
+   string insert(int index, string s)
+      : info<"Inserts the substring into and returns the new one">
+   {
+      int l1 := self.Length;
+      int l2 := s.Length;
+      string retVal := String.allocate(l1 + l2);
+
+      self.copySubS(retVal, self, 0, index);
+      self.copySubS(retVal, s, index, l2);    
+      self.copySubS(retVal, self, index + l2, l1 - index, index);
+    
+      ^ retVal;
+   }
+
+   string insert(int index, char ch)
+      = self.insert(index, cast string(ch));
+
+   string delete(int index, int length)
+      : info<"Deletes the substring from the object and returns the new one">
+   {
+      int len1 := self.Length;
+      int sindex := index + length;
+      string retVal := String.allocate(len1-length);
+
+      self.copySubS(retVal, self, 0, index);
+      self.copySubS(retVal, self, sindex, len1 - length, index);
+    
+      ^ retVal;         
+   }
+
+   string Substring(int index, int length)
+      : info<"Returns the substring">
+   {
+      ^ String.fromByteArray(array, index, length);
+   }
+
+   int save(int index, char[] buffer, int length)
+      = PrimitiveStringOperations.save(buffer, self, index, length);
+
+   internal saveToByteArray(int index, byte[] buffer, int length)
+      = PrimitiveStringOperations.save(buffer, this array, index, length);
+
+   Enumerator<char> enumerator()
+         : info<"Returns the string enumerator">
+      = new StringEnumerator(self);
+
+   Indexer<char> indexer() = new StringIndexer(self);
+    
+   /// Clones the value
+   string clone() = String.copy(self);
+}
+
+// --- StringEnumerator ---
+
+class StringEnumerator
+{
+   constructor(string a)
+   {
+   }
+}
+
+// --- StringIndexer ---
+
+class StringIndexer
+{
+   constructor(string a)
+   {
+   }
 }
 
 // --- WideString ---

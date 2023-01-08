@@ -5,12 +5,10 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * || operator
-
-    * api functionality for existing classes : String
     * elena vm : implement elenavmmachine - debug a program
     * ldoc : internal properties
     * ide : message - on success / warning / errors
+    * api functionality for existing classes : StringEnumerator
     * ide - close all / close all but active
  
     ! api functionality for existing classes : system
