@@ -391,6 +391,8 @@ namespace elena_lang
    constexpr ref_t mskMDataRef64          = 0xC6000000u;
    constexpr ref_t mskMDataRef32Hi        = 0x26000000u;
    constexpr ref_t mskMDataRef32Lo        = 0xA6000000u;
+   constexpr ref_t mskMDataDisp32Hi       = 0x66000000u;
+   constexpr ref_t mskMDataDisp32Lo       = 0xE6000000u;
 
    constexpr ref_t mskStatDataRef32       = 0x87000000u;
    constexpr ref_t mskStatDataRelRef32    = 0x47000000u;

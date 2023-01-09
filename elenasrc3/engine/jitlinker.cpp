@@ -381,6 +381,15 @@ void JITLinker::JITLinkerReferenceHelper :: resolveLabel(MemoryWriter& writer, r
    _owner->_compiler->resolveLabelAddress(&writer, mask, position, _owner->_virtualMode);
 }
 
+addr_t JITLinker::JITLinkerReferenceHelper :: resolveMDataVAddress()
+{
+   if (_owner->_virtualMode) {
+      // for the virtual mode, zero should be returned - indicating the start of the section
+      return 0;
+   }
+   return (addr_t)_owner->_imageProvider->getMDataSection()->get(0);
+}
+
 // --- JITLinker ---
 
 addr_t JITLinker :: getVMTAddress(ModuleBase* module, ref_t reference, VAddressMap& references)

@@ -431,6 +431,8 @@ namespace elena_lang
 
       virtual mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) = 0;
 
+      virtual addr_t resolveMDataVAddress() = 0;
+
       virtual void resolveLabel(MemoryWriter& writer, ref_t mask, pos_t position) = 0;
    };
 

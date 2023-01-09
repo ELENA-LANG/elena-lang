@@ -225,6 +225,47 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
    }
 }
 
+void elena_lang :: writeMDataReference(JITCompilerScope* scope, ref_t mask,
+   pos_t disp, void* code, ModuleBase* module)
+{
+   // references should be already preloaded - except the import one
+   switch (mask) {
+      case mskMDataRef32:
+         scope->helper->writeVAddress32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveMDataVAddress(),
+            *(pos_t*)((char*)code + disp), mask);
+         break;
+      case mskMDataRef64:
+         scope->helper->writeVAddress64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveMDataVAddress(),
+            *(pos_t*)((char*)code + disp), mask);
+         break;
+      case mskMDataRef32Lo:
+         scope->helper->writeVAddress32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveMDataVAddress(),
+            0, mask);
+         break;
+      case mskMDataRef32Hi:
+         scope->helper->writeVAddress32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveMDataVAddress(),
+            0, mask);
+         break;
+      case mskMDataDisp32Hi:
+         scope->helper->writeDisp32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveMDataVAddress(),
+            *(pos_t*)((char*)code + disp), mask);
+         break;
+      case mskMDataDisp32Lo:
+         scope->helper->writeDisp32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveMDataVAddress(),
+            *(pos_t*)((char*)code + disp), mask);
+         break;
+      default:
+         // to make compiler happy
+         break;
+   }
+}
+
 inline int getFPOffset(int argument, int argOffset)
 {
    return -(argument - (argument < 0 ? argOffset : 0));
@@ -2240,6 +2281,9 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
             break;
          case NARG12_2:
             scope->compiler->writeImm12(writer, startArg, 0);
+            break;
+         case mskMDataRef32:
+            writeMDataReference(scope, entries->reference, entries->offset, code);
             break;
          default:
             writeCoreReference(scope, entries->reference, entries->offset, code);

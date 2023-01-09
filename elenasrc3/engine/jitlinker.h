@@ -135,6 +135,8 @@ namespace elena_lang
 
          mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) override;
 
+         addr_t resolveMDataVAddress() override;
+
          addr_t calculateVAddress(MemoryWriter& writer, ref_t addressMask) override
          {
             return _owner->calculateVAddress(writer, addressMask);
