@@ -139,7 +139,7 @@ void ELENAVMMachine :: addPackage(ustr_t packageLine)
    }
 }
 
-void ELENAVMMachine :: configurateVM(MemoryReader& reader, JITLinker& jitLinker, SystemEnv* env)
+bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
 {
    pos_t  command = 0;
    ustr_t strArg = nullptr;
@@ -168,13 +168,14 @@ void ELENAVMMachine :: configurateVM(MemoryReader& reader, JITLinker& jitLinker,
             addPackage(strArg);
             break;
          case VM_INIT_CMD:
-            init(jitLinker, env);
             eop = true;
             break;
          default:
             break;
       }
    }
+
+   return true;
 }
 
 void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, ModuleBase* dummyModule)
@@ -209,6 +210,7 @@ void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
    }
 
    ByteCodeUtil::write(writer, ByteCode::CloseN);
+   ByteCodeUtil::write(writer, ByteCode::Quit);
 
    pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
 
@@ -238,22 +240,28 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, void* c
 
    stopVM();
 
-   JITLinker jitLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
-      &_settings, nullptr);
+   JITLinker* jitLinker = nullptr;
 
    Module* dummyModule = new Module();
    MemoryDump tapeSymbol;
 
-   configurateVM(reader, jitLinker, env);
-   compileVMTape(reader, tapeSymbol, jitLinker, dummyModule);
+   if (configurateVM(reader, env)) {
+      jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
+         &_settings, nullptr);
+
+      init(*jitLinker, env);
+   }
+
+   compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule);
 
    SymbolList list;
 
-   void* address = (void*)jitLinker.resolveTemporalByteCode(tapeSymbol, dummyModule);
+   void* address = (void*)jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
    resumeVM(env, criricalHandler);
 
    freeobj(dummyModule);
+   freeobj(jitLinker);
 
    return execute(env, address);
 }
