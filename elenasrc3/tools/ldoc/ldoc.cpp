@@ -1127,6 +1127,14 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
             apiMethodInfo->cast = true;
          }
 
+         if (test(methodInfo.hints, (ref_t)MethodHint::Internal)) {
+            pos_t index = (*apiMethodInfo->name).findStr("$$");
+            if (index != NOTFOUND_POS)
+               apiMethodInfo->name.cut(0, index + 2);
+
+            apiMethodInfo->prefix.append("internal ");
+         }
+
          if (test(methodInfo.hints, (ref_t)MethodHint::Predefined))
             apiMethodInfo->prefix.append("predefined ");
 
