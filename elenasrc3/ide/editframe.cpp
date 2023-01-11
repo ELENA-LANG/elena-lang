@@ -65,9 +65,9 @@ void SourceViewModel::clearErrorLine()
    }
    errorRow = -1;
 }
-
-void SourceViewModel :: onModelChanged()
-{
-   if (errorRow != -1)
-      clearErrorLine();
-}
+//
+//void SourceViewModel :: onModelChanged()
+//{
+//   if (errorRow != -1)
+//      clearErrorLine();
+//}

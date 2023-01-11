@@ -61,8 +61,9 @@ namespace elena_lang
 
       IDESttus       _ideStatus;
 
-      void onModelChange(ExtNMHDR* hdr);
-      void onNotifyMessage(ExtNMHDR* hdr);
+      void onStatusChange(StatusNMHDR* rec);
+      //void onModelChange(ExtNMHDR* hdr);
+      //void onNotifyMessage(ExtNMHDR* hdr);
 
       void onDebugWatch();
 
@@ -72,23 +73,25 @@ namespace elena_lang
       void onTreeSelChanged(HWND wnd);
       void onChildRefresh(int controlId);
 
+      void onLayoutChange(NotificationStatus status);
+      void onIDEChange(NotificationStatus status);
+
       bool onCommand(int command) override;
       void onNotify(NMHDR* hdr) override;
       void onActivate() override;
-      void onLayoutChange();
       bool onClose() override;
 
       void onComilationStart();
       void onCompilationEnd(int exitCode);
       void onErrorHighlight(int index);
 
-      void onProjectChange();
+      void onProjectChange(bool empty);
       void onProjectViewSel(size_t index);
 
       void toggleTabBarWindow(int child_id);
       void toggleWindow(int child_id);
 
-      void openProjectView();
+      void toggleProjectView(bool open);
       void openResultTab(int controlIndex);
       void setChildFocus(int controlIndex);
 

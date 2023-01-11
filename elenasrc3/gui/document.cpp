@@ -250,7 +250,7 @@ void DocumentView :: onInsert(size_t position, size_t length, text_t line)
    }
 
    status.modifiedMode = true;
-   status.frameChanged = true;
+   //status.frameChanged = true;
 }
 
 void DocumentView :: onUpdate(size_t position)
@@ -264,7 +264,7 @@ void DocumentView :: onUpdate(size_t position)
    }
 
    status.modifiedMode = true;
-   status.frameChanged = true;
+   //status.frameChanged = true;
 }
 
 void DocumentView :: onErase(size_t position, size_t length, text_t line)
@@ -278,7 +278,7 @@ void DocumentView :: onErase(size_t position, size_t length, text_t line)
    }
 
    status.modifiedMode = true;
-   status.frameChanged = true;
+   //status.frameChanged = true;
 }
 
 disp_t DocumentView :: getSelectionLength()
@@ -372,7 +372,7 @@ void DocumentView :: setCaret(int column, int row, bool selecting)
    if (_frame.getCaret() != frame) {
       _text->validateBookmark(_frame);
       _frame.moveTo(frame.x, frame.y);
-      status.frameChanged = true;
+      //status.frameChanged = true;
    }
    if (selecting) {
       _selection += position - _caret.position();
@@ -400,7 +400,7 @@ void DocumentView :: hscroll(int displacement)
 
    if (_frame.getCaret() != frame) {
       _frame.moveTo(frame.x, frame.y);
-      status.frameChanged = true;
+      //status.frameChanged = true;
    }
 }
 
@@ -417,7 +417,7 @@ void DocumentView :: vscroll(int displacement)
    if (_frame.getCaret() != frame) {
       _text->validateBookmark(_frame);
       _frame.moveTo(frame.x, frame.y);
-      status.frameChanged = true;
+      //status.frameChanged = true;
    }
 }
 
@@ -553,23 +553,23 @@ void DocumentView :: moveRightToken(bool selecting, bool trimWhitespace)
 void DocumentView :: moveFrameUp()
 {
    vscroll(-1);
-   if (status.frameChanged) {
-      if (_frame.row() + _size.y - 2 <= _caret.row()) {
-         setCaret(_caret.column(), _frame.row() + _size.y - 3, false);
-      }
-      else notifyOnChange();
-   }
+   //if (status.frameChanged) {
+   //   if (_frame.row() + _size.y - 2 <= _caret.row()) {
+   //      setCaret(_caret.column(), _frame.row() + _size.y - 3, false);
+   //   }
+   //   else notifyOnChange();
+   //}
 }
 
 void DocumentView :: moveFrameDown()
 {
    vscroll(1);
-   if (status.frameChanged) {
-      if (_caret.row() < _frame.row()) {
-         setCaret(_caret.column(), _frame.row(), false);
-      }
-      else notifyOnChange();
-   }
+   //if (status.frameChanged) {
+   //   if (_caret.row() < _frame.row()) {
+   //      setCaret(_caret.column(), _frame.row(), false);
+   //   }
+   //   else notifyOnChange();
+   //}
 }
 
 void DocumentView :: moveFirst(bool selecting)
@@ -605,8 +605,8 @@ void DocumentView :: movePageDown(bool selecting)
    }
    else {
       vscroll(_size.y);
-      if (status.frameChanged)
-         setCaret(_caret.column(), _caret.row() + _size.y, selecting);
+      //if (status.frameChanged)
+      //   setCaret(_caret.column(), _caret.row() + _size.y, selecting);
    }
 }
 
@@ -620,8 +620,8 @@ void DocumentView :: movePageUp(bool selecting)
    }
    else {
       vscroll(-_size.y);
-      if (status.frameChanged)
-         setCaret(_caret.column(), _caret.row() - _size.y, selecting);
+      //if (status.frameChanged)
+      //   setCaret(_caret.column(), _caret.row() - _size.y, selecting);
    }
 }
 

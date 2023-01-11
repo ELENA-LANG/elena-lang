@@ -225,5 +225,5 @@ void Splitter :: shiftOn(int delta)
 
    setRectangle({rec.topLeft.x, rec.topLeft.y, width, height});
 
-   _notifier->notifyMessage(_notifyCode);
+   //_notifier->notifyMessage(_notifyCode);
 }

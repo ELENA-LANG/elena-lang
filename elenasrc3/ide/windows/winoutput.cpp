@@ -129,5 +129,5 @@ CompilerOutput :: CompilerOutput(NotifierBase* notifier, int completionCode)
 
 void CompilerOutput :: afterExecution(int exitCode)
 {
-   _notifier->notifyMessage(_completionCode, exitCode);
+   //_notifier->notifyMessage(_completionCode, exitCode);
 }

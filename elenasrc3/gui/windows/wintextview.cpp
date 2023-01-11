@@ -572,10 +572,10 @@ void TextViewWindow :: onDocumentUpdate()
 {
    auto docView = _model->DocView();
 
-   if (docView && docView->status.isViewChanged()) {
-      _cached = false;
-      _caret_x = 0;
-   }
+   //if (docView && docView->status.isViewChanged()) {
+   //   _cached = false;
+   //   _caret_x = 0;
+   //}
 
    update();
 }

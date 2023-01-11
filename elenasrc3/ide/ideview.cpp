@@ -14,19 +14,19 @@ void IDEModel :: changeStatus(IDEStatus status)
 {
    this->status = status;
 
-   onIDEChange();
+ //  onIDEChange();
 }
 
 void IDEModel :: attachListener(IDEListener* listener)
 {
    listeners.add(listener);
 
-   listener->onIDEChange();
+   //listener->onIDEChange();
 }
 
-void IDEModel :: onIDEChange()
-{
-   for (auto it = listeners.start(); !it.eof(); ++it) {
-      (*it)->onIDEChange();
-   }
-}
+//void IDEModel :: onIDEChange()
+//{
+//   for (auto it = listeners.start(); !it.eof(); ++it) {
+//      (*it)->onIDEChange();
+//   }
+//}

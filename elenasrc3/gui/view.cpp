@@ -5,6 +5,8 @@
 //---------------------------------------------------------------------------
 
 #include "view.h"
+
+#include "idecommon.h"
 #include "sourceformatter.h"
 
 using namespace elena_lang;
@@ -57,7 +59,7 @@ void TextViewModel :: attachListener(TextViewListener* listener)
    for (auto it = _documents.start(); !it.eof(); ++it) {
       index++;
 
-      listener->onDocumentNew(index, 0);
+      listener->onDocumentNew(index);
       if ((*it)->documentView == _currentView)
          selected = index;
    }
@@ -84,10 +86,10 @@ void TextViewModel :: removeDocListener(DocumentNotifier* listener)
    _docListeners.cut(listener);
 }
 
-void TextViewModel :: onDocumentNew(int index, int notifyMessage)
+void TextViewModel :: onDocumentNew(int index)
 {
    for (auto it = _listeners.start(); !it.eof(); ++it) {
-      (*it)->onDocumentNew(index, notifyMessage);
+      (*it)->onDocumentNew(index);
    }
 }
 
@@ -98,38 +100,38 @@ void TextViewModel :: onDocumentSelect(int index)
    }
 }
 
-void TextViewModel :: afterDocumentSelect(int index)
-{
-   for (auto it = _listeners.start(); !it.eof(); ++it) {
-      (*it)->afterDocumentSelect(index);
-   }
-}
-
-void TextViewModel :: onDocumentRename(int index)
-{
-   for (auto it = _listeners.start(); !it.eof(); ++it) {
-      (*it)->onDocumentRename(index);
-   }
-}
-
-void TextViewModel :: onModelChanged()
-{
-   
-}
-
-void TextViewModel :: onModelModeChanged(int index)
-{
-   DocumentView* view = nullptr;
-   if (index == -1) {
-      index = getCurrentIndex();
-      view = _currentView;
-   }
-   else view = getDocumentByIndex(index);
-
-   for (auto it = _listeners.start(); !it.eof(); ++it) {
-      (*it)->onDocumentModeChanged(index, view->status.modifiedMode);
-   }
-}
+//void TextViewModel :: afterDocumentSelect(int index)
+//{
+//   for (auto it = _listeners.start(); !it.eof(); ++it) {
+//      (*it)->afterDocumentSelect(index);
+//   }
+//}
+//
+//void TextViewModel :: onDocumentRename(int index)
+//{
+//   for (auto it = _listeners.start(); !it.eof(); ++it) {
+//      (*it)->onDocumentRename(index);
+//   }
+//}
+//
+//void TextViewModel :: onModelChanged()
+//{
+//   
+//}
+//
+//void TextViewModel :: onModelModeChanged(int index)
+//{
+//   DocumentView* view = nullptr;
+//   if (index == -1) {
+//      index = getCurrentIndex();
+//      view = _currentView;
+//   }
+//   else view = getDocumentByIndex(index);
+//
+//   for (auto it = _listeners.start(); !it.eof(); ++it) {
+//      (*it)->onDocumentModeChanged(index, view->status.modifiedMode);
+//   }
+//}
 
 void TextViewModel :: beforeDocumentClose(int index)
 {
@@ -138,14 +140,14 @@ void TextViewModel :: beforeDocumentClose(int index)
    }
 }
 
-void TextViewModel :: onDocumentClose(int index, int notifyMessage)
+void TextViewModel :: onDocumentClose(int index)
 {
    for (auto it = _listeners.start(); !it.eof(); ++it) {
-      (*it)->onDocumentClose(index, notifyMessage);
+      (*it)->onDocumentClose(index);
    }
 }
 
-void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path, int notifyMessage)
+void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path)
 {
    empty = false;
 
@@ -157,7 +159,7 @@ void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path, int 
       docView->attachNotifier(*it);
    }
 
-   onDocumentNew(_documents.count(), notifyMessage);
+   onDocumentNew(_documents.count());
 }
 
 void TextViewModel :: renameDocumentView(ustr_t oldName, ustr_t newName, path_t path)
@@ -177,11 +179,12 @@ void TextViewModel :: renameDocumentView(ustr_t oldName, ustr_t newName, path_t 
       info->path = path.clone();
    }
 
-   onDocumentRename(index);
+   //onDocumentRename(index);
 }
 
-void TextViewModel :: closeDocumentView(ustr_t name, int notifyMessage)
+bool TextViewModel :: closeDocumentView(ustr_t name)
 {
+   bool closed = false;
    int index = getDocumentIndex(name);
    if (index >= 0) {
       beforeDocumentClose(index);
@@ -190,12 +193,17 @@ void TextViewModel :: closeDocumentView(ustr_t name, int notifyMessage)
 
       _documents.cut(info);
 
-      empty = _documents.count() == 0;
+      closed = true;
    }
 
    clearDocumentView();
 
-   onDocumentClose(index, notifyMessage);
+   if (closed) {
+      onDocumentClose(index);
+
+      return true;
+   }
+   else return false;
 }
 
 void TextViewModel :: clearDocumentView()
@@ -213,12 +221,13 @@ bool TextViewModel :: selectDocumentViewByIndex(int index)
 bool TextViewModel :: selectDocumentView(ustr_t name)
 {
    int index = 1;
+   bool selected = false;
    for (auto it = _documents.start(); !it.eof(); ++it) {
       if ((*it)->name.compare(name)) {
          beforeDocumentSelect(index);
 
          _currentView = (*it)->documentView;
-         _currentView->status.frameChanged = true;
+         selected = true;
 
          onDocumentSelect(index);
          break;
@@ -227,9 +236,9 @@ bool TextViewModel :: selectDocumentView(ustr_t name)
       index++;
    }
 
-   afterDocumentSelect(index);
+   //afterDocumentSelect(index);
 
-   return _currentView != nullptr;
+   return selected;
 }
 
 ustr_t TextViewModel :: getDocumentName(int index)

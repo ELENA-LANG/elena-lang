@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE common classes header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECOMMON_H
@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x0037
+#define IDE_REVISION_NUMBER                           0x0038
 
 namespace elena_lang
 {
@@ -29,21 +29,32 @@ namespace elena_lang
    constexpr auto ERROR_RUN_NEED_RECOMPILE            = 0x0003;
 
    // --- Notification codes ---
-   constexpr auto NOTIFY_SOURCEMODEL                  = 1;
-   constexpr auto NOTIFY_CURRENTVIEW_CHANGED          = 2;
-   constexpr auto NOTIFY_CURRENTVIEW_SHOW             = 3;
-   constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
-   constexpr auto NOTIFY_LAYOUT_CHANGED               = 5;
-   constexpr auto NOTIFY_SHOW_RESULT                  = 6;
-   constexpr auto NOTIFY_COMPILATION_RESULT           = 7;
-   constexpr auto NOTIFY_ERROR_HIGHLIGHT_ROW          = 8;
-   constexpr auto NOTIFY_ACTIVATE_EDITFRAME           = 9;
-   constexpr auto NOTIFY_START_COMPILATION            = 10;
-   constexpr auto NOTIFY_PROJECTMODEL                 = 11;
-   constexpr auto NOTIFY_PROJECTVIEW_SEL              = 12;
-   constexpr auto NOTIFY_DEBUGWATCH                   = 13;
-   constexpr auto NOTIFY_ONSTART                      = 14;
-   constexpr auto NOTIFY_REFRESH                      = 15;
+   //constexpr auto NOTIFY_SOURCEMODEL                  = 1;
+   //constexpr auto NOTIFY_CURRENTVIEW_CHANGED          = 2;
+   //constexpr auto NOTIFY_CURRENTVIEW_SHOW             = 3;
+   //constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
+   //constexpr auto NOTIFY_LAYOUT_CHANGED               = 5;
+   //constexpr auto NOTIFY_SHOW_RESULT                  = 6;
+   //constexpr auto NOTIFY_COMPILATION_RESULT           = 7;
+   //constexpr auto NOTIFY_ERROR_HIGHLIGHT_ROW          = 8;
+   //constexpr auto NOTIFY_ACTIVATE_EDITFRAME           = 9;
+   //constexpr auto NOTIFY_START_COMPILATION            = 10;
+   //constexpr auto NOTIFY_PROJECTMODEL                 = 11;
+   //constexpr auto NOTIFY_PROJECTVIEW_SEL              = 12;
+   //constexpr auto NOTIFY_DEBUGWATCH                   = 13;
+   constexpr int NOTIFY_IDE_CHANGE                    = 13;
+   constexpr int NOTIFY_ONSTART                       = 14;
+   //constexpr auto NOTIFY_REFRESH                      = 15;
+
+   // --- Notification statuses ---
+   constexpr NotificationStatus IDE_ONSTART              = -1;
+   constexpr NotificationStatus NONE_CHANGED             = 0x00000;
+
+   constexpr NotificationStatus IDE_LAYOUT_CHANGED       = 0x00001;
+   constexpr NotificationStatus IDE_STATUS_CHANGED       = 0x00002;
+   constexpr NotificationStatus FRAME_CHANGED            = 0x00004;
+   constexpr NotificationStatus PROJECT_CHANGED          = 0x00008;
+   constexpr NotificationStatus FRAME_VISIBILITY_CHANGED = 0x00010;
 
    // --- PathSettings ---
    struct PathSettings
@@ -54,7 +65,7 @@ namespace elena_lang
    // --- IDEStatus ---
    enum class IDEStatus
    {
-      None            = 0,
+      Empty            = 0,
       Ready           = 1,
       Busy            = 2,
       AutoRecompiling = 3,

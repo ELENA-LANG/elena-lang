@@ -48,12 +48,11 @@ namespace elena_lang
       //void onFrameChange() override;
 
       bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
-         FileEncoding encoding, int notifyMessage) override;
-      void selectDocument(TextViewModelBase* model, ustr_t name) override;
+         FileEncoding encoding) override;
+      bool selectDocument(TextViewModelBase* model, ustr_t name, NotificationStatus& status) override;
       void selectNextDocument(TextViewModelBase* model);
       void selectPreviousDocument(TextViewModelBase* model);
-      void closeDocument(TextViewModelBase* model, ustr_t name, 
-         int notifyMessage) override;
+      void closeDocument(TextViewModelBase* model, ustr_t name, NotificationStatus& status) override;
 
       void newDocument(TextViewModelBase* model, ustr_t name, 
          int notifyMessage) override;

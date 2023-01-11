@@ -63,9 +63,9 @@ HWND TreeView :: createControl(HINSTANCE instance, ControlBase* owner)
 
 void TreeView :: onSelChanged()
 {
-   size_t param = getParam(getCurrent());
+   //size_t param = getParam(getCurrent());
 
-   _notifier->notifyMessage(_notificationId, param);
+   //_notifier->notifyMessage(_notificationId, param);
 }
 
 size_t TreeView :: getParam(TreeViewItem item)

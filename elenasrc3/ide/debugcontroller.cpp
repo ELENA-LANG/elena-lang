@@ -464,7 +464,7 @@ DebugLineInfo* DebugInfoProvider :: seekClassInfo(addr_t address, IdentifierStri
 // --- DebugController ---
 
 DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model, 
-   SourceViewModel* sourceModel, NotifierBase* notifier, DebugSourceController* sourceController)
+   SourceViewModel* sourceModel, /*NotifierBase* notifier, */DebugSourceController* sourceController)
    : _provider(model)
 {
    _started = false;
@@ -472,7 +472,7 @@ DebugController :: DebugController(DebugProcessBase* process, ProjectModel* mode
    _running = false;
    _sourceModel = sourceModel;
    _model = model;
-   _notifier = notifier;
+   //_notifier = notifier;
    _currentModule = nullptr;
    _currentPath = nullptr;
    _sourceController = sourceController;
@@ -641,38 +641,38 @@ void DebugController :: processStep()
 
 void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath)
 {
-   bool found = true;
-   if (lineInfo) {
-      _sourceModel->clearTraceLine();
+   //bool found = true;
+   //if (lineInfo) {
+   //   _sourceModel->clearTraceLine();
 
-      if (!moduleName.compare(_currentModule) || !sourcePath.compare(_currentPath)) {
-         _currentModule = moduleName;
-         _currentPath = sourcePath;
+   //   if (!moduleName.compare(_currentModule) || !sourcePath.compare(_currentPath)) {
+   //      _currentModule = moduleName;
+   //      _currentPath = sourcePath;
 
-         PathString path(sourcePath);
-         found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
-      }
+   //      PathString path(sourcePath);
+   //      found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
+   //   }
 
-      if (found) {
-         _sourceModel->setTraceLine(lineInfo->row, true);
-      }
+   //   if (found) {
+   //      _sourceModel->setTraceLine(lineInfo->row, true);
+   //   }
 
-      _notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
-      _notifier->notifyModelChange(NOTIFY_DEBUGWATCH);
-   }
+   //   _notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
+   //   _notifier->notifyModelChange(NOTIFY_DEBUGWATCH);
+   //}
 }
 
 void DebugController :: onStop()
 {
-   _started = false;
-   _process->reset();
-   _provider.clear();
+   //_started = false;
+   //_process->reset();
+   //_provider.clear();
 
-   _currentModule = nullptr;
-   _currentPath = nullptr;
+   //_currentModule = nullptr;
+   //_currentPath = nullptr;
 
-   _sourceModel->clearTraceLine();
-   _notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
+   //_sourceModel->clearTraceLine();
+   //_notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
 }
 
 void DebugController :: run()

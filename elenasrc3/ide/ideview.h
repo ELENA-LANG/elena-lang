@@ -45,7 +45,7 @@ struct IDEScheme
 class IDEListener
 {
 public:
-   virtual void onIDEChange() = 0;
+//   virtual void onIDEChange() = 0;
 };
 
 typedef List<IDEListener*> IDEListenerListeners;
@@ -70,12 +70,12 @@ public:
 
    void changeStatus(IDEStatus status);
 
-   void onIDEChange();
+   //void onIDEChange();
 
    IDEModel()
       : listeners(nullptr), projectModel(&status)
    {
-      status = IDEStatus::None;
+      status = IDEStatus::Empty;
       appMaximized = false;
    }
 };

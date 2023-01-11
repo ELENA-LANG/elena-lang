@@ -80,12 +80,12 @@ void CustomTabBar :: addTab(int index, wstr_t name, void* param)
 
 void CustomTabBar :: selectTab(int index)
 {
-   int previous = (int)::SendMessage(_handle, TCM_SETCURSEL, index, 0);
-   if (_notSelected || previous != index) {
-      _notifier->notifyModelChange(NOTIFY_CURRENTVIEW_CHANGED, index);
+   //int previous = (int)::SendMessage(_handle, TCM_SETCURSEL, index, 0);
+   //if (_notSelected || previous != index) {
+   //   _notifier->notifyModelChange(NOTIFY_CURRENTVIEW_CHANGED, index);
 
-      _notSelected = false;
-   }
+   //   _notSelected = false;
+   //}
 }
 
 void CustomTabBar :: renameTab(int index, wstr_t title)

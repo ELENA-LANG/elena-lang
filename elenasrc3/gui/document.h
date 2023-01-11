@@ -130,7 +130,7 @@ namespace elena_lang
       {
          bool caretChanged;
          bool maxColChanged;
-         bool frameChanged;
+         //bool frameChanged;
          bool selelectionChanged;
          bool formatterChanged;
          bool readOnly;
@@ -138,43 +138,43 @@ namespace elena_lang
          bool unnamed;
          bool overwriteMode;
 
-         bool oldModified;
-         bool oldOvewrite;
+         //bool oldModified;
+         //bool oldOvewrite;
 
          int  rowDifference;
 
-         bool isModeChanged()
-         {
-            bool changed = (modifiedMode != oldModified) || (overwriteMode != oldOvewrite);
+         //bool isModeChanged()
+         //{
+         //   bool changed = (modifiedMode != oldModified) || (overwriteMode != oldOvewrite);
 
-            oldModified = modifiedMode;
-            oldOvewrite = overwriteMode;
+         //   oldModified = modifiedMode;
+         //   oldOvewrite = overwriteMode;
 
-            return changed;
-         }
+         //   return changed;
+         //}
 
-         bool isViewChanged(bool reset = true)
-         {
-            bool flag = formatterChanged | frameChanged | selelectionChanged;
+         //bool isViewChanged(bool reset = true)
+         //{
+         //   bool flag = formatterChanged | frameChanged | selelectionChanged;
 
-            if (reset)
-               formatterChanged = frameChanged = selelectionChanged = false;
+         //   if (reset)
+         //      formatterChanged = frameChanged = selelectionChanged = false;
 
-            return flag;
-         }
+         //   return flag;
+         //}
 
          void reset()
          {
             caretChanged = false;
             maxColChanged = false;
-            frameChanged = false;
-            oldModified = modifiedMode = false;
+            //frameChanged = false;
+            /*oldModified = */modifiedMode = false;
             selelectionChanged = false;
             formatterChanged = false;
             readOnly = false;
             unnamed = false;
             overwriteMode = false;
-            oldOvewrite = true;     // to trigger mode change
+            //oldOvewrite = true;     // to trigger mode change
 
             rowDifference = 0;
          }

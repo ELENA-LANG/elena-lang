@@ -154,14 +154,14 @@ void IDEWindow :: openProject()
 {
    _controller->doOpenProject(projectDialog, _model);
 
-   _controller->onLayoutchange();
+   //_controller->onLayoutchange();
 }
 
 void IDEWindow :: closeProject()
 {
    _controller->doCloseProject(projectDialog, _model);
 
-   _controller->onLayoutchange();
+   //_controller->onLayoutchange();
 }
 
 void IDEWindow :: exit()
@@ -193,24 +193,26 @@ void IDEWindow :: pasteFromClipboard()
 
 void IDEWindow :: deleteText()
 {
-   _controller->sourceController.deleteText(_model->viewModel());
-   _model->sourceViewModel.onModelChanged();
+   //_controller->sourceController.deleteText(_model->viewModel());
+   //_model->sourceViewModel.onModelChanged();
 }
 
 void IDEWindow :: commentText()
 {
-   wchar_t str[3] = _T("//");
+   //wchar_t str[3] = _T("//");
 
-   _controller->sourceController.insertBlockText(_model->viewModel(), str, 2);
-   _model->sourceViewModel.onModelChanged();
+   //_controller->sourceController.insertBlockText(_model->viewModel(), str, 2);
+   //_model->sourceViewModel.onModelChanged();
 }
 
-void IDEWindow :: openProjectView()
+void IDEWindow :: toggleProjectView(bool open)
 {
    GUIControlBase* projectView = _children[_model->ideScheme.projectView];
 
-   projectView->show();
-   _controller->onLayoutchange();
+   if (open) {
+      projectView->show();
+   }
+   else projectView->hide();
 }
 
 void IDEWindow :: openResultTab(int controlIndex)
@@ -224,15 +226,16 @@ void IDEWindow :: openResultTab(int controlIndex)
 
    resultBar->show();
 
-   _controller->onLayoutchange();
+   //_controller->onLayoutchange();
 }
 
 void IDEWindow :: toggleWindow(int child_id)
 {
    if (child_id == _model->ideScheme.projectView) {
-      if (_children[_model->ideScheme.projectView]->visible()) {
+      if (!_children[_model->ideScheme.projectView]->visible()) {
          openProject();
       }
+      else closeProject();
    }
 }
 
@@ -288,71 +291,93 @@ void IDEWindow :: onDebugWatch()
    contextBrowser->expandRootNode();
 }
 
-void IDEWindow :: onProjectChange()
+void IDEWindow :: onProjectChange(bool empty)
 {
    TreeView* projectTree = dynamic_cast<TreeView*>(_children[_model->ideScheme.projectView]);
 
    projectTree->clear(nullptr);
-   TreeViewItem root = projectTree->insertTo(nullptr, *_model->projectModel.name, -1, true);
 
-   PathString diskCriteria(":\\");
+   if (!empty) {
+      TreeViewItem root = projectTree->insertTo(nullptr, *_model->projectModel.name, -1, true);
 
-   int srcIndex = 0;
-   wchar_t buffer[IDENTIFIER_LEN + 1];
-   for(auto it = _model->projectModel.sources.start(); !it.eof(); ++it) {
-      path_t src = *it;
-      size_t src_len = src.length_pos();
+      PathString diskCriteria(":\\");
 
-      // remove the disk name
-      size_t index = src.findStr(*diskCriteria);
-      if (index != NOTFOUND_POS) {
-         src = src + index + 2;
-      }
+      int srcIndex = 0;
+      wchar_t buffer[IDENTIFIER_LEN + 1];
+      for (auto it = _model->projectModel.sources.start(); !it.eof(); ++it) {
+         path_t src = *it;
+         size_t src_len = src.length_pos();
 
-      TreeViewItem parent = root;
-      size_t start = 0;
-      while (start < src_len) {
-         size_t end = src.findSub(start, PATH_SEPARATOR, src_len);
-         PathString name;
-         name.append(src + start, end - start);
+         // remove the disk name
+         size_t index = src.findStr(*diskCriteria);
+         if (index != NOTFOUND_POS) {
+            src = src + index + 2;
+         }
 
-         TreeViewItem current = projectTree->getChild(parent);
-         while (current != nullptr) {
-            size_t len = projectTree->readCaption(current, buffer, IDENTIFIER_LEN);
-            if (!(*name).compareSub(buffer, 0, len)) {
-               current = projectTree->getNext(current);
+         TreeViewItem parent = root;
+         size_t start = 0;
+         while (start < src_len) {
+            size_t end = src.findSub(start, PATH_SEPARATOR, src_len);
+            PathString name;
+            name.append(src + start, end - start);
+
+            TreeViewItem current = projectTree->getChild(parent);
+            while (current != nullptr) {
+               size_t len = projectTree->readCaption(current, buffer, IDENTIFIER_LEN);
+               if (!(*name).compareSub(buffer, 0, len)) {
+                  current = projectTree->getNext(current);
+               }
+               else break;
             }
-            else break;
+
+            if (current == nullptr) {
+               current = projectTree->insertTo(parent, *name, end == src_len ? srcIndex : NOTFOUND_POS, end != src_len ? true : false);
+            }
+            parent = current;
+
+            start = end + 1;
          }
 
-         if (current == nullptr) {
-            current = projectTree->insertTo(parent, *name, end == src_len ? srcIndex : NOTFOUND_POS, end != src_len ? true : false);
-         }
-         parent = current;
-
-         start = end + 1;
+         srcIndex++;
       }
 
-      srcIndex++;
+      projectTree->expand(root);
    }
 
-   projectTree->expand(root);
-
-   openProjectView();
+   toggleProjectView(!empty);
 }
 
-void IDEWindow :: onLayoutChange()
+void IDEWindow :: onLayoutChange(NotificationStatus status)
 {
+   if (test(status, FRAME_VISIBILITY_CHANGED)) {
+      if (_model->sourceViewModel.getDocumentCount() != 0) {
+         _children[_model->ideScheme.textFrameId]->show();
+      }
+      else _children[_model->ideScheme.textFrameId]->hide();
+   }
+   if (test(status, PROJECT_CHANGED)) {
+      onProjectChange(_model->projectModel.empty);
+   }
+
    onResize();
+}
 
-   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+void IDEWindow :: onIDEChange(NotificationStatus status)
+{
+   if (test(status, IDE_LAYOUT_CHANGED)) {
+      onLayoutChange(status);
+   }
 
-   menu->checkItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
-   menu->checkItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
-   menu->checkItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
-   menu->checkItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
+   //onResize();
 
-   onIDEViewUpdate(true);
+   //MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+
+   //menu->checkItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
+   //menu->checkItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
+   //menu->checkItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
+   //menu->checkItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
+
+   //onIDEViewUpdate(true);
 }
 
 bool IDEWindow :: onCommand(int command)
@@ -447,76 +472,87 @@ bool IDEWindow :: onCommand(int command)
    return true;
 }
 
-void IDEWindow :: onModelChange(ExtNMHDR* hdr)
+void IDEWindow :: onStatusChange(StatusNMHDR* rec)
 {
-   auto docView = _model->sourceViewModel.DocView();
-
-   switch (hdr->extParam1) {
+   switch (rec->code) {
       case NOTIFY_ONSTART:
          _controller->init(_model);
          break;
-      case NOTIFY_SOURCEMODEL:
-         docView->notifyOnChange();
-         break;
-      case NOTIFY_DEBUGWATCH:
-         onDebugWatch();
-         break;
-      case NOTIFY_PROJECTMODEL:
-         onProjectChange();
-         break;
-      case NOTIFY_CURRENTVIEW_CHANGED:
-         _model->sourceViewModel.afterDocumentSelect(hdr->extParam1);
-         _model->sourceViewModel.onModelChanged();
-         break;
-      case NOTIFY_CURRENTVIEW_SHOW:
-         _children[_model->ideScheme.textFrameId]->show();
-         onResize();
-         break;
-      case NOTIFY_CURRENTVIEW_HIDE:
-         _children[_model->ideScheme.textFrameId]->hide();
-         onResize();
-         break;
-      case NOTIFY_LAYOUT_CHANGED:
-         onLayoutChange();
-         break;
-      default:
-         break;
-   }   
-}
-
-void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
-{
-   auto docView = _model->sourceViewModel.DocView();
-
-   switch (hdr->extParam1) {
-      case NOTIFY_SHOW_RESULT:
-         openResultTab(hdr->extParam2);
-         break;
-      case NOTIFY_ACTIVATE_EDITFRAME:
-         setChildFocus(_model->ideScheme.textFrameId);
-         break;
-      case NOTIFY_LAYOUT_CHANGED:
-         onLayoutChange();
-         break;
-      case NOTIFY_COMPILATION_RESULT:
-         onCompilationEnd(hdr->extParam2);
-         break;
-      case NOTIFY_ERROR_HIGHLIGHT_ROW:
-         onErrorHighlight(hdr->extParam2);
-         break;
-      case NOTIFY_START_COMPILATION:
-         onComilationStart();
-         break;
-      case NOTIFY_PROJECTVIEW_SEL:
-         onProjectViewSel(hdr->extParam2);
-         break;
-      case NOTIFY_REFRESH:
-         onChildRefresh(hdr->extParam2);
+      case NOTIFY_IDE_CHANGE:
+         onIDEChange(rec->status);
          break;
       default:
          break;
    }
 }
+
+//void IDEWindow :: onModelChange(ExtNMHDR* hdr)
+//{
+   //auto docView = _model->sourceViewModel.DocView();
+
+   //switch (hdr->extParam1) {
+   //   case NOTIFY_ONSTART:
+   //      
+   //      break;
+   //   case NOTIFY_SOURCEMODEL:
+   //      docView->notifyOnChange();
+   //      break;
+   //   case NOTIFY_DEBUGWATCH:
+   //      onDebugWatch();
+   //      break;
+   //   case NOTIFY_CURRENTVIEW_CHANGED:
+   //      _model->sourceViewModel.afterDocumentSelect(hdr->extParam1);
+   //      _model->sourceViewModel.onModelChanged();
+   //      break;
+   //   case NOTIFY_CURRENTVIEW_SHOW:
+   //      _children[_model->ideScheme.textFrameId]->show();
+   //      onResize();
+   //      break;
+   //   case NOTIFY_CURRENTVIEW_HIDE:
+   //      _children[_model->ideScheme.textFrameId]->hide();
+   //      onResize();
+   //      break;
+   //   case NOTIFY_LAYOUT_CHANGED:
+   //      onLayoutChange();
+   //      break;
+   //   default:
+   //      break;
+   //}   
+//}
+
+//void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
+//{
+   //auto docView = _model->sourceViewModel.DocView();
+
+   //switch (hdr->extParam1) {
+   //   case NOTIFY_SHOW_RESULT:
+   //      openResultTab(hdr->extParam2);
+   //      break;
+   //   case NOTIFY_ACTIVATE_EDITFRAME:
+   //      setChildFocus(_model->ideScheme.textFrameId);
+   //      break;
+   //   case NOTIFY_LAYOUT_CHANGED:
+   //      onLayoutChange();
+   //      break;
+   //   case NOTIFY_COMPILATION_RESULT:
+   //      onCompilationEnd(hdr->extParam2);
+   //      break;
+   //   case NOTIFY_ERROR_HIGHLIGHT_ROW:
+   //      onErrorHighlight(hdr->extParam2);
+   //      break;
+   //   case NOTIFY_START_COMPILATION:
+   //      onComilationStart();
+   //      break;
+   //   case NOTIFY_PROJECTVIEW_SEL:
+   //      onProjectViewSel(hdr->extParam2);
+   //      break;
+   //   case NOTIFY_REFRESH:
+   //      onChildRefresh(hdr->extParam2);
+   //      break;
+   //   default:
+   //      break;
+   //}
+//}
 
 void IDEWindow :: onTabSelChanged(HWND wnd)
 {
@@ -556,21 +592,21 @@ void IDEWindow :: onChildRefresh(int controlId)
 void IDEWindow :: onNotify(NMHDR* hdr)
 {
    switch (hdr->code) {
-      case NMHDR_Model:
-         onModelChange((ExtNMHDR*)hdr);
+      case STATUS_NOTIFICATION:
+         onStatusChange((StatusNMHDR*)hdr);
          break;
-      case TCN_SELCHANGE:
-         onTabSelChanged(hdr->hwndFrom);
-         break;
-      case NM_DBLCLK:
-         onDoubleClick(hdr);
-         break;
-      case NMHDR_Message:
-         onNotifyMessage((ExtNMHDR*)hdr);
-         break;
-      case TVN_SELCHANGED:
-         onTreeSelChanged(hdr->hwndFrom);
-         break;
+   //   case TCN_SELCHANGE:
+   //      onTabSelChanged(hdr->hwndFrom);
+   //      break;
+   //   case NM_DBLCLK:
+   //      onDoubleClick(hdr);
+   //      break;
+   //   case NMHDR_Message:
+   //      onNotifyMessage((ExtNMHDR*)hdr);
+   //      break;
+   //   case TVN_SELCHANGED:
+   //      onTreeSelChanged(hdr->hwndFrom);
+   //      break;
       default:
          break;
    }

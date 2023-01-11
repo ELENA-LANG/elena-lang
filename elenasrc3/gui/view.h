@@ -49,25 +49,24 @@ namespace elena_lang
       int getCurrentIndex();
       int getDocumentIndex(ustr_t name);
 
-      void onDocumentNew(int index, int notifyMessage);
+      void onDocumentNew(int index);
       void onDocumentSelect(int index);
-      void onDocumentRename(int index);
+      //void onDocumentRename(int index);
 
       void beforeDocumentClose(int index);
-      void onDocumentClose(int index, int notifyMessage);
+      void onDocumentClose(int index);
 
    public:
-      void afterDocumentSelect(int index) override;
+      //void afterDocumentSelect(int index) override;
 
-      void onModelChanged() override;
-      void onModelModeChanged(int index) override;
+      //void onTextViewChanged() override;
 
       void attachListener(TextViewListener* listener) override;
 
       void attachDocListener(DocumentNotifier* listener) override;
       void removeDocListener(DocumentNotifier* listener) override;
 
-      void addDocumentView(ustr_t name, Text* text, path_t path, int notifyMessage) override;
+      void addDocumentView(ustr_t name, Text* text, path_t path) override;
       void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) override;
 
       ustr_t getDocumentName(int index) override;
@@ -81,7 +80,7 @@ namespace elena_lang
       bool selectDocumentView(ustr_t name) override;
       bool selectDocumentViewByIndex(int index) override;
 
-      void closeDocumentView(ustr_t name, int notifyMessage) override;
+      bool closeDocumentView(ustr_t name) override;
 
       pos_t getDocumentCount() override
       {

@@ -19,11 +19,8 @@ TextViewFrame :: TextViewFrame(NotifierBase* notifier, bool withAbovescore, Cont
    model->attachListener(this);
 }
 
-void TextViewFrame :: onDocumentNew(int index, int notifyMessage)
+void TextViewFrame :: onDocumentNew(int index)
 {
-   if (notifyMessage)
-      _notifier->notifyModelChange(notifyMessage, 0);
-
    WideMessage title(_model->getDocumentName(index));
 
    addTabView(*title, nullptr);
@@ -34,53 +31,50 @@ void TextViewFrame :: onDocumentSelect(int index)
    selectTab(index - 1);
 }
 
-void TextViewFrame :: afterDocumentSelect(int index)
-{
-   _child->show();
-   _child->refresh();
-}
+//void TextViewFrame :: afterDocumentSelect(int index)
+//{
+//   _child->show();
+//   _child->refresh();
+//}
 
 void TextViewFrame :: beforeDocumentClose(int index)
 {
 
 }
 
-void TextViewFrame :: onDocumentClose(int index, int notifyMessage)
+void TextViewFrame :: onDocumentClose(int index)
 {
    eraseTabView(index - 1);
 
    _child->hide();
-
-   if (notifyMessage)
-      _notifier->notifyModelChange(notifyMessage, 0);
 }
 
-void TextViewFrame :: onDocumentRename(int index)
-{
-   WideMessage title(_model->getDocumentName(index));
-
-   renameTabView(index - 1, *title);
-}
-
-void TextViewFrame :: onDocumentModeChanged(int index, bool modifiedMode)
-{
-   WideMessage title(_model->getDocumentName(index), modifiedMode ? "*" : "");
-
-   renameTabView(index - 1, *title);
-}
-
-void TextViewFrame :: onSelChanged()
-{
-   int index = getCurrentIndex();
-   if (index >= 0) {
-      _model->selectDocumentViewByIndex(index + 1);
-
-      afterDocumentSelect(index + 1);
-   }
-   else {
-      _child->hide();
-      _notSelected = true;
-
-      _model->clearDocumentView();
-   }
-}
+//void TextViewFrame :: onDocumentRename(int index)
+//{
+//   WideMessage title(_model->getDocumentName(index));
+//
+//   renameTabView(index - 1, *title);
+//}
+//
+//void TextViewFrame :: onDocumentModeChanged(int index, bool modifiedMode)
+//{
+//   WideMessage title(_model->getDocumentName(index), modifiedMode ? "*" : "");
+//
+//   renameTabView(index - 1, *title);
+//}
+//
+//void TextViewFrame :: onSelChanged()
+//{
+//   int index = getCurrentIndex();
+//   if (index >= 0) {
+//      _model->selectDocumentViewByIndex(index + 1);
+//
+//      afterDocumentSelect(index + 1);
+//   }
+//   else {
+//      _child->hide();
+//      _notSelected = true;
+//
+//      _model->clearDocumentView();
+//   }
+//}

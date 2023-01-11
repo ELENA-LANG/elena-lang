@@ -22,7 +22,7 @@ namespace elena_lang
    public:
       void beforeDocumentSelect(int index) override;
 
-      void onModelChanged() override;
+      //void onTextViewChanged() override;
 
       void setTraceLine(int row, bool withCursor);
       void clearTraceLine();

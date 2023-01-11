@@ -184,7 +184,7 @@ ControlBase* IDEFactory :: createSplitter(WindowBase* owner, ControlBase* client
 
 ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier)
 {
-   CompilerOutput* output = new CompilerOutput(notifier, NOTIFY_COMPILATION_RESULT);
+   CompilerOutput* output = new CompilerOutput(notifier, /*NOTIFY_COMPILATION_RESULT*/0);
 
    output->createControl(_instance, owner);
 
@@ -195,7 +195,7 @@ ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase*
 
 ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* notifier)
 {
-   MessageLog* log = new MessageLog(notifier, NOTIFY_ERROR_HIGHLIGHT_ROW);
+   MessageLog* log = new MessageLog(notifier, /*NOTIFY_ERROR_HIGHLIGHT_ROW*/0);
    log->createControl(_instance, owner);
 
    return log;
@@ -203,7 +203,7 @@ ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* not
 
 ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* notifier)
 {
-   TreeView* projectView = new TreeView(300, 50, notifier, NOTIFY_PROJECTVIEW_SEL, true);
+   TreeView* projectView = new TreeView(300, 50, notifier, /*NOTIFY_PROJECTVIEW_SEL*/0, true);
    projectView->createControl(_instance, owner);
 
    return projectView;
@@ -280,14 +280,14 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[bottomBox] = vb;
    children[tabBar] = createTabBar(sdi, notifier);
    children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier, 
-      NOTIFY_LAYOUT_CHANGED);
+      /*NOTIFY_LAYOUT_CHANGED*/0);
    children[statusBarIndex] = createStatusbar(sdi);
    children[compilerOutput] = createCompilerOutput((ControlBase*)children[tabBar], outputProcess, notifier);
    children[errorList] = createErrorList((ControlBase*)children[tabBar], notifier);
    children[browser] = createDebugBrowser((ControlBase*)children[tabBar], notifier);
    children[projectView] = createProjectView(sdi, notifier);
    children[hsplitter] = createSplitter(sdi, (ControlBase*)children[projectView], true, notifier,
-      NOTIFY_LAYOUT_CHANGED);
+      /*NOTIFY_LAYOUT_CHANGED*/0);
    children[menu] = createMenu(sdi);
 
    vb->append(children[vsplitter]);

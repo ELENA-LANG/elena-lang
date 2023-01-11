@@ -61,6 +61,6 @@ void MessageLog :: clearMessages()
 
 void MessageLog :: onItemDblClick(int index)
 {
-   if (index >= 0)
-      _notifier->notifyMessage(_highlightCode, index);
+   //if (index >= 0)
+   //   _notifier->notifyMessage(_highlightCode, index);
 }

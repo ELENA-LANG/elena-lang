@@ -24,21 +24,20 @@
 namespace elena_lang
 {
    // --- Cursor types ---
-   constexpr int CURSOR_TEXT     = 0;
-   constexpr int CURSOR_ARROW    = 1;
-   constexpr int CURSOR_SIZEWE   = 2;
-   constexpr int CURSOR_SIZENS   = 3;
+   constexpr int CURSOR_TEXT           = 0;
+   constexpr int CURSOR_ARROW          = 1;
+   constexpr int CURSOR_SIZEWE         = 2;
+   constexpr int CURSOR_SIZENS         = 3;
 
-   constexpr int NMHDR_Message      = 0x101;
-   constexpr int NMHDR_Model        = 0x102;
+   constexpr int STATUS_NOTIFICATION   = 0x101;
+   //constexpr int NMHDR_Model        = 0x102;
 
    // --- ExtNMHDR ---
-   struct ExtNMHDR
+   struct StatusNMHDR
    {
-      NMHDR nmhrd;
-      int   extParam1;
-      int   extParam2;
-      int   extParam3;
+      NMHDR              nmhrd;
+      int                code;
+      NotificationStatus status;
    };
 
    // --- Color ---
@@ -175,10 +174,9 @@ namespace elena_lang
       bool initInstance(WindowBase* mainWindow, int cmdShow);
 
    public:
-      int run(GUIControlBase* mainWindow, bool maximized, int notificationId) override;
+      int run(GUIControlBase* mainWindow, bool maximized, int notificationId, NotificationStatus notificationStatus) override;
 
-      void notifyMessage(int messageCode, int arg1 = 0, int arg2 = 0) override;
-      void notifyModelChange(int modelCode, int arg) override;
+      void notify(int messageCode, NotificationStatus status) override;
 
       WindowApp(HINSTANCE instance, wstr_t accelerators)
       {
