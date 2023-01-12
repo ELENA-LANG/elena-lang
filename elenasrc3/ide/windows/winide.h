@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Window Header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINIDE_H
@@ -31,13 +31,13 @@ namespace elena_lang
 
    public:
       bool copyToClipboard(DocumentView* docView) override;
-      void pasteFromClipboard(DocumentView* docView) override;
+      void pasteFromClipboard(DocumentChangeStatus& status, DocumentView* docView) override;
 
       Clipboard(ControlBase* owner);
    };
 
    // --- IDEWindow ---
-   class IDEWindow : public SDIWindow, public DocumentNotifier
+   class IDEWindow : public SDIWindow
    {
       struct IDESttus
       {
@@ -116,8 +116,6 @@ namespace elena_lang
       void onDebuggerUpdate(bool running);
 
    public:
-      void onDocumentUpdate() override;
-
       IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance);
    };
 

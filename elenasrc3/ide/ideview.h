@@ -66,7 +66,7 @@ public:
 
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
-   void attachListener(IDEListener* listener);
+   //void attachListener(IDEListener* listener);
 
    void changeStatus(IDEStatus status);
 

@@ -24,44 +24,58 @@ void SourceViewModel :: beforeDocumentSelect(int index)
 
 void SourceViewModel :: setTraceLine(int row, bool withCursor)
 {
+   DocumentChangeStatus status = {};
+
    if (traceRow != -1) {
-      _currentView->removeMarker(traceRow, STYLE_TRACE_LINE);
+      _currentView->removeMarker(traceRow, STYLE_TRACE_LINE, status);
    }
 
-   _currentView->addMarker(row, STYLE_TRACE_LINE, false);
+   _currentView->addMarker(row, STYLE_TRACE_LINE, false, status);
    if (withCursor)
-      _currentView->setCaret(0, row - 1, false);
+      _currentView->setCaret({ 0, row - 1 }, false, status);
 
    traceRow = row;
+
+   _currentView->notifyOnChange(status);
 }
 
 void SourceViewModel :: clearTraceLine()
 {
+   DocumentChangeStatus status = {};
+
    if (traceRow != -1) {
-      _currentView->removeMarker(traceRow, STYLE_TRACE_LINE);
+      _currentView->removeMarker(traceRow, STYLE_TRACE_LINE, status);
    }
    traceRow = -1;
+
+   _currentView->notifyOnChange(status);
 }
 
 void SourceViewModel :: setErrorLine(int row, int column, bool withCursor)
 {
+   DocumentChangeStatus status = {};
+
    if (errorRow != -1) {
-      _currentView->removeMarker(errorRow, STYLE_ERROR_LINE);
+      _currentView->removeMarker(errorRow, STYLE_ERROR_LINE, status);
    }
 
-   _currentView->addMarker(row, STYLE_ERROR_LINE, true);
+   _currentView->addMarker(row, STYLE_ERROR_LINE, true, status);
    if (withCursor)
-      _currentView->setCaret(column - 1, row - 1, false);
+      _currentView->setCaret({ column - 1, row - 1 }, false, status);
 
    errorRow = row;
 
+   _currentView->notifyOnChange(status);
 }
-void SourceViewModel::clearErrorLine()
-{
-   if (errorRow != -1) {
-      _currentView->removeMarker(errorRow, STYLE_ERROR_LINE);
 
-      _currentView->notifyOnChange();
+void SourceViewModel :: clearErrorLine()
+{
+   DocumentChangeStatus status = {};
+
+   if (errorRow != -1) {
+      _currentView->removeMarker(errorRow, STYLE_ERROR_LINE, status);
+
+      _currentView->notifyOnChange(status);
    }
    errorRow = -1;
 }

@@ -644,7 +644,7 @@ bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveA
    if (!docView)
       return false;
 
-   if (docView->status.unnamed || saveAsMode) {
+   if (docView->isUnnamed() || saveAsMode) {
       PathString path;
       if (!dialog.saveFile(_T("l"), path))
          return false;
@@ -701,11 +701,11 @@ bool IDEController :: doCloseProject(DialogBase& dialog, IDEModel* model)
 bool IDEController :: closeFile(DialogBase& dialog, IDEModel* model, ustr_t current, NotificationStatus& status)
 {
    auto docView = model->sourceViewModel.DocView();
-   if (docView->status.unnamed) {
+   if (docView->isUnnamed()) {
       if (!doSaveFile(dialog, model, false, true))
          return false;
    }
-   else if (docView->status.modifiedMode) {
+   else if (docView->isModified()) {
       path_t path = model->sourceViewModel.getDocumentPath(current);
 
       auto result = dialog.question(

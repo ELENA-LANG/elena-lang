@@ -30,8 +30,7 @@ namespace elena_lang
 
    // --- Notification codes ---
    //constexpr auto NOTIFY_SOURCEMODEL                  = 1;
-   //constexpr auto NOTIFY_CURRENTVIEW_CHANGED          = 2;
-   //constexpr auto NOTIFY_CURRENTVIEW_SHOW             = 3;
+   constexpr auto NOTIFY_CURRENTVIEW_CHANGED             = 2;
    //constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
    //constexpr auto NOTIFY_LAYOUT_CHANGED               = 5;
    //constexpr auto NOTIFY_SHOW_RESULT                  = 6;
@@ -41,9 +40,9 @@ namespace elena_lang
    //constexpr auto NOTIFY_START_COMPILATION            = 10;
    //constexpr auto NOTIFY_PROJECTMODEL                 = 11;
    //constexpr auto NOTIFY_PROJECTVIEW_SEL              = 12;
-   //constexpr auto NOTIFY_DEBUGWATCH                   = 13;
-   constexpr int NOTIFY_IDE_CHANGE                    = 13;
-   constexpr int NOTIFY_ONSTART                       = 14;
+   constexpr int NOTIFY_DEBUG_CHANGE                     = 12;
+   constexpr int NOTIFY_IDE_CHANGE                       = 13;
+   constexpr int NOTIFY_ONSTART                          = 14;
    //constexpr auto NOTIFY_REFRESH                      = 15;
 
    // --- Notification statuses ---
@@ -55,6 +54,8 @@ namespace elena_lang
    constexpr NotificationStatus FRAME_CHANGED            = 0x00004;
    constexpr NotificationStatus PROJECT_CHANGED          = 0x00008;
    constexpr NotificationStatus FRAME_VISIBILITY_CHANGED = 0x00010;
+   constexpr NotificationStatus DEBUGWATCH_CHANGED       = 0x00020;
+   constexpr NotificationStatus DOCVIEW_CHANGED          = 0x00040;
 
    // --- PathSettings ---
    struct PathSettings

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Window Implementation File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -86,13 +86,13 @@ bool Clipboard :: copyToClipboard(DocumentView* docView)
    return false;
 }
 
-void Clipboard :: pasteFromClipboard(DocumentView* docView)
+void Clipboard :: pasteFromClipboard(DocumentChangeStatus& status, DocumentView* docView)
 {
    if (begin()) {
       HGLOBAL buffer = get();
       wchar_t* text = allocateBuffer(buffer);
       if (!emptystr(text)) {
-         docView->insertLine(text, getlength(text));
+         docView->insertLine(status, text, getlength(text));
 
          freeBuffer(buffer);
       }
@@ -119,8 +119,6 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    this->_controller = controller;
    this->_model = model;
    this->_ideStatus = {};
-
-   _model->sourceViewModel.attachDocListener(this);
 }
 
 void IDEWindow :: onActivate()
@@ -359,6 +357,12 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
       onProjectChange(_model->projectModel.empty);
    }
 
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+   menu->checkItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
+   menu->checkItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
+   menu->checkItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
+   menu->checkItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
+
    onResize();
 }
 
@@ -369,13 +373,6 @@ void IDEWindow :: onIDEChange(NotificationStatus status)
    }
 
    //onResize();
-
-   //MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-
-   //menu->checkItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
-   //menu->checkItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
-   //menu->checkItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
-   //menu->checkItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
 
    //onIDEViewUpdate(true);
 }
@@ -681,11 +678,6 @@ void IDEWindow :: onIDEViewUpdate(bool forced)
    }
 
    _ideStatus = status;
-}
-
-void IDEWindow :: onDocumentUpdate()
-{
-   onIDEViewUpdate(false);
 }
 
 bool IDEWindow :: onClose()

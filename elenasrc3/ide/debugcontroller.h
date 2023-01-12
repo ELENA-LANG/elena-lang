@@ -276,7 +276,7 @@ namespace elena_lang
       }
 
       DebugController(DebugProcessBase* process, ProjectModel* model, 
-         SourceViewModel* sourceModel, /*NotifierBase* notifier, */DebugSourceController* sourceController);
+         SourceViewModel* sourceModel, NotifierBase* notifier, DebugSourceController* sourceController);
    };
    
 }

@@ -17,12 +17,12 @@ void IDEModel :: changeStatus(IDEStatus status)
  //  onIDEChange();
 }
 
-void IDEModel :: attachListener(IDEListener* listener)
-{
-   listeners.add(listener);
-
-   //listener->onIDEChange();
-}
+//void IDEModel :: attachListener(IDEListener* listener)
+//{
+//   listeners.add(listener);
+//
+//   //listener->onIDEChange();
+//}
 
 //void IDEModel :: onIDEChange()
 //{

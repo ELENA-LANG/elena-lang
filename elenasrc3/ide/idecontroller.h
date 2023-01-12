@@ -44,13 +44,13 @@ namespace elena_lang
    };
 
    // --- ProjectController ---
-   class ProjectController //: public NotifierBase
+   class ProjectController : public NotifierBase
    {
       PlatformType            _platform;
 
       ProcessBase*            _outputProcess;
       DebugController         _debugController;
-      //NotifierBase*           _notifier;
+      NotifierBase*           _notifier;
       WatchContext            _autoWatch;
 
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
@@ -91,20 +91,20 @@ namespace elena_lang
       void runToCursor(ProjectModel& model, SourceViewModel& sourceModel);
       void refreshDebugContext(ContextBrowserBase* contextBrowser);
 
-      //void setNotifier(NotifierBase* notifier)
-      //{
-      //   _notifier = notifier;
-      //}
+      void setNotifier(NotifierBase* notifier)
+      {
+         _notifier = notifier;
+      }
 
-      //void notify(int id, NotificationStatus status) override
-      //{
-      //   if (_notifier)
-      //      _notifier->notify(id, status);
-      //}
+      void notify(int id, NotificationStatus status) override
+      {
+         if (_notifier)
+            _notifier->notify(id, status);
+      }
 
       ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController, PlatformType platform)
-         : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, /*this, */sourceController),
+         : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
            _autoWatch({ nullptr, 0 }) 
       {
          //_notifier = nullptr;
@@ -142,7 +142,7 @@ namespace elena_lang
       {
          _notifier = notifier;
 
-         //projectController.setNotifier(notifier);
+         projectController.setNotifier(notifier);
       }
 
       path_t retrieveSingleProjectFile(IDEModel* model);

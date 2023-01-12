@@ -292,6 +292,6 @@ path_t TextViewModel :: getDocumentPath(ustr_t name)
 void TextViewModel :: resize(Point size)
 {
    for (auto it = _documents.start(); !it.eof(); ++it) {
-      (*it)->documentView->resize(size);
+      (*it)->documentView->setSize(size);
    }
 }

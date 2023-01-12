@@ -1,6 +1,6 @@
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI Controller implementation File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "controller.h"
@@ -76,68 +76,81 @@ void TextViewController :: closeDocument(TextViewModelBase* model, ustr_t name, 
 
 void TextViewController :: indent(TextViewModelBase* model)
 {
+   DocumentChangeStatus status = {};
    auto docView = model->DocView();
 
    if (_settings.tabUsing) {
-      docView->tabbing('\t', 1, true);
+      docView->tabbing(status, '\t', 1, true);
    }
    else {
       if (!docView->hasSelection()) {
          int shift = calcTabShift(docView->getCaret().x, _settings.tabSize);
-         docView->insertChar(' ', shift);
+         docView->insertChar(status, ' ', shift);
       }
-      else docView->tabbing(' ', _settings.tabSize, true);
+      else docView->tabbing(status, ' ', _settings.tabSize, true);
    }
+
+   notifyOnChange(docView, status);
 }
 
 void TextViewController :: undo(TextViewModelBase* model)
 {
+   DocumentChangeStatus status = {};
    auto docView = model->DocView();
 
-   docView->undo();
+   docView->undo(status);
+
+   notifyOnChange(docView, status);
 }
 
 void TextViewController :: redo(TextViewModelBase* model)
 {
+   DocumentChangeStatus status = {};
    auto docView = model->DocView();
 
-   docView->redo();
+   docView->redo(status);
+
+   notifyOnChange(docView, status);
 }
 
 bool TextViewController :: copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard)
 {
    auto docView = model->DocView();
    if (docView->hasSelection()) {
-      return clipboard->copyToClipboard(docView);
+      if (clipboard->copyToClipboard(docView)) {
+         notifyOnClipboardOperation(clipboard);
+      }
    }
    else return false;
 }
 
-void TextViewController :: onTextChanged(TextViewModelBase* model, DocumentView* view)
-{
+//void TextViewController :: onTextChanged(TextViewModelBase* model, DocumentView* view)
+//{
    //if (view->status.isModeChanged()) {
    //   //model->onModelModeChanged(-1);
    //}
-}
+//}
 
 void TextViewController :: pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard)
 {
+   DocumentChangeStatus status = {};
    auto docView = model->DocView();
-   if (!docView->status.readOnly) {
-      clipboard->pasteFromClipboard(docView);
+   if (!docView->isReadOnly()) {
+      clipboard->pasteFromClipboard(status, docView);
 
-      onTextChanged(model, docView);
+      notifyOnChange(docView, status);
    }
 }
 
 bool TextViewController :: insertNewLine(TextViewModelBase* model)
 {
+   DocumentChangeStatus status = {};
    auto docView = model->DocView();
-   if (!docView->status.readOnly) {
-      docView->eraseSelection();
-      docView->insertNewLine();
+   if (!docView->isReadOnly()) {
+      docView->eraseSelection(status);
+      docView->insertNewLine(status);
 
-      onTextChanged(model, docView);
+      notifyOnChange(docView, status);
 
       return true;
    }
@@ -147,12 +160,13 @@ bool TextViewController :: insertNewLine(TextViewModelBase* model)
 
 bool TextViewController :: insertChar(TextViewModelBase* model, text_c ch)
 {
+   DocumentChangeStatus status = {};
    auto docView = model->DocView();
-   if (!docView->status.readOnly && ch >= 0x20) {
-      docView->eraseSelection();
-      docView->insertChar(ch);
+   if (!docView->isReadOnly() && ch >= 0x20) {
+      docView->eraseSelection(status);
+      docView->insertChar(status, ch);
 
-      onTextChanged(model, docView);
+      notifyOnChange(docView, status);
 
       return true;
    }
@@ -162,14 +176,15 @@ bool TextViewController :: insertChar(TextViewModelBase* model, text_c ch)
 
 bool TextViewController :: eraseChar(TextViewModelBase* model, bool moveback)
 {
+   DocumentChangeStatus status = {};
    auto docView = model->DocView();
-   if (!docView->status.readOnly) {
+   if (!docView->isReadOnly()) {
       if (docView->hasSelection()) {
-         docView->eraseSelection();
+         docView->eraseSelection(status);
       }
-      else docView->eraseChar(moveback);
+      else docView->eraseChar(status, moveback);
 
-      onTextChanged(model, docView);
+      notifyOnChange(docView, status);
 
       return true;
    }
@@ -179,123 +194,170 @@ bool TextViewController :: eraseChar(TextViewModelBase* model, bool moveback)
 
 void TextViewController :: deleteText(TextViewModelBase* model)
 {
+   DocumentChangeStatus status = {};
    auto docView = model->DocView();
-   if (!docView->status.readOnly) {
-      docView->eraseSelection();
-
-      onTextChanged(model, docView);
+   if (!docView->isReadOnly()) {
+      docView->eraseSelection(status);
    }
+
+   notifyOnChange(docView, status);
 }
 
 void TextViewController :: insertBlockText(TextViewModelBase* model, const text_t s, size_t length)
 {
+   DocumentChangeStatus status = {};
    auto docView = model->DocView();
-   if (!docView->status.readOnly) {
-      docView->blockInserting(s, length);
-
-      onTextChanged(model, docView);
+   if (!docView->isReadOnly()) {
+      docView->blockInserting(status, s, length);
    }
+
+   notifyOnChange(docView, status);
 }
 
 void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
-   //auto docView = model->DocView();
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
 
-   //if (kbCtrl) {
-   //   docView->moveFrameDown();
-   //}
-   //else docView->moveDown(kbShift);
+   if (kbCtrl) {
+      docView->moveFrameDown(status);
+   }
+   else docView->moveDown(status, kbShift);
 
-   //model->onModelChanged();
+   notifyOnChange(docView, status);
 }
 
 void TextViewController :: moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
-   //auto docView = model->DocView();
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
 
-   //if (kbCtrl) {
-   //   docView->moveLeftToken(kbShift);
-   //}
-   //else docView->moveLeft(kbShift);
+   if (kbCtrl) {
+      docView->moveLeftToken(status, kbShift);
+   }
+   else docView->moveLeft(status, kbShift);
 
-   //model->onModelChanged();
+   notifyOnChange(docView, status);
 }
 
 void TextViewController :: selectWord(TextViewModelBase* model)
 {
+   DocumentChangeStatus status = {};
    auto docView = model->DocView();
 
-   docView->moveLeftToken(false);
-   docView->moveRightToken(true, true);
+   docView->moveLeftToken(status, false);
+   docView->moveRightToken(status, true, true);
+
+   notifyOnChange(docView, status);
+}
+
+void TextViewController :: notifyOnChange(DocumentView* docView, DocumentChangeStatus& changeStatus)
+{
+   docView->notifyOnChange(changeStatus);
+
+   //NotificationStatus status = NONE_CHANGED;
+   //if (changeStatus.)
+
+   //_notifier->notify(NOTIFY_CURRENTVIEW_CHANGED, status);
+}
+
+void TextViewController :: notifyOnClipboardOperation(ClipboardBase* clipboard)
+{
+   
 }
 
 void TextViewController :: moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
-   //auto docView = model->DocView();
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
 
-   //if (kbCtrl) {
-   //   docView->moveRightToken(kbShift);
-   //}
-   //else docView->moveRight(kbShift);
+   if (kbCtrl) {
+      docView->moveRightToken(status, kbShift);
+   }
+   else docView->moveRight(status, kbShift);
 
-   //model->onModelChanged();
+   notifyOnChange(docView, status);
 }
 
 void TextViewController :: moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
-   //auto docView = model->DocView();
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
 
-   //if (!kbCtrl) {
-   //   docView->moveUp(kbShift);
-   //}
-   //else docView->moveFrameUp();
+   if (!kbCtrl) {
+      docView->moveUp(status, kbShift);
+   }
+   else docView->moveFrameUp(status);
 
-   //model->onModelChanged();
+   notifyOnChange(docView, status);
 }
 
 void TextViewController :: moveCaretHome(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
-   //auto docView = model->DocView();
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
 
-   //if (kbCtrl) {
-   //   docView->moveFirst(kbShift);
-   //}
-   //else docView->moveHome(kbShift);
+   if (kbCtrl) {
+      docView->moveFirst(status, kbShift);
+   }
+   else docView->moveHome(status, kbShift);
 
-   //model->onModelChanged();
+   notifyOnChange(docView, status);
 }
 
 void TextViewController :: moveCaretEnd(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
-   //auto docView = model->DocView();
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
 
-   //if (kbCtrl) {
-   //   docView->moveEnd(kbShift);
-   //}
-   //else docView->moveLast(kbShift);
+   if (kbCtrl) {
+      docView->moveEnd(status, kbShift);
+   }
+   else docView->moveLast(status, kbShift);
 
-   //model->onModelChanged();
+   notifyOnChange(docView, status);
 }
 
 void TextViewController :: movePageDown(TextViewModelBase* model, bool kbShift)
 {
-   //auto docView = model->DocView();
-   //docView->movePageDown(kbShift);
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
 
-   //model->onModelChanged();
+   docView->movePageDown(status, kbShift);
+
+   notifyOnChange(docView, status);
 }
 
 void TextViewController :: movePageUp(TextViewModelBase* model, bool kbShift)
 {
-   //auto docView = model->DocView();
-   //docView->movePageUp(kbShift);
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
 
-   //model->onModelChanged();
+   docView->movePageUp(status, kbShift);
+
+   notifyOnChange(docView, status);
 }
 
 void TextViewController :: moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift)
 {
-   //model->DocView()->moveToFrame(col, row, kbShift);
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
 
-   //model->onModelChanged();
+   docView->moveToFrame(status, col, row, kbShift);
+
+   notifyOnChange(docView, status);
+}
+
+void TextViewController :: resizeModel(TextViewModelBase* model, Point size)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+
+   if(docView->getSize() != size) {
+      model->resize(size);
+
+      status.frameChanged = true;
+   }
+
+   notifyOnChange(docView, status);
 }

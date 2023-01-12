@@ -14,7 +14,7 @@ namespace elena_lang
 {
    // --- IDEStatusBar ---
 
-   class IDEStatusBar : public StatusBar, DocumentNotifier, IDEListener
+   class IDEStatusBar : public StatusBar, IDEListener
    {
       IDEModel* _model;
       bool      _pendingIDESettings;
@@ -23,8 +23,6 @@ namespace elena_lang
 
    public:
       void setRectangle(Rectangle rec) override;
-
-      void onDocumentUpdate() override;
 
       IDEStatusBar(IDEModel* model);
    };
