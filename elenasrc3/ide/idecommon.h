@@ -39,7 +39,8 @@ namespace elena_lang
    //constexpr auto NOTIFY_ACTIVATE_EDITFRAME           = 9;
    //constexpr auto NOTIFY_START_COMPILATION            = 10;
    //constexpr auto NOTIFY_PROJECTMODEL                 = 11;
-   //constexpr auto NOTIFY_PROJECTVIEW_SEL              = 12;
+   constexpr int NOTIFY_TEXTFRAME_SEL                    = 10;
+   constexpr int NOTIFY_PROJECTVIEW_SEL                  = 11;
    constexpr int NOTIFY_DEBUG_CHANGE                     = 12;
    constexpr int NOTIFY_IDE_CHANGE                       = 13;
    constexpr int NOTIFY_ONSTART                          = 14;

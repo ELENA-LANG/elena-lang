@@ -16,6 +16,7 @@ namespace elena_lang
    {
    protected:
       NotifierBase*  _notifier;
+      int            _selNotificationId;
 
       bool           _withAbovescore;
       bool           _notSelected;

@@ -11,9 +11,10 @@ using namespace elena_lang;
 
 // --- TextViewFrame ---
 
-TextViewFrame :: TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model)
+TextViewFrame :: TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, int selNotificationId)
    : MultiTabControl(notifier, withAbovescore, view)
 {
+   _selNotificationId = selNotificationId;
    _model = model;
 
    model->attachListener(this);
@@ -62,19 +63,19 @@ void TextViewFrame :: onDocumentClose(int index)
 //
 //   renameTabView(index - 1, *title);
 //}
-//
-//void TextViewFrame :: onSelChanged()
-//{
-//   int index = getCurrentIndex();
-//   if (index >= 0) {
-//      _model->selectDocumentViewByIndex(index + 1);
-//
-//      afterDocumentSelect(index + 1);
-//   }
-//   else {
-//      _child->hide();
-//      _notSelected = true;
-//
-//      _model->clearDocumentView();
-//   }
-//}
+
+void TextViewFrame :: onSelChanged()
+{
+   //int index = getCurrentIndex();
+   //if (index >= 0) {
+   //   _model->selectDocumentViewByIndex(index + 1);
+
+   //   afterDocumentSelect(index + 1);
+   //}
+   //else {
+   //   _child->hide();
+   //   _notSelected = true;
+
+   //   _model->clearDocumentView();
+   //}
+}

@@ -144,7 +144,7 @@ ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* no
 
    // initialize UI components
    TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_controller->sourceController, &_styles);
-   TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, view, _model->viewModel());
+   TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, view, _model->viewModel(), NOTIFY_TEXTFRAME_SEL);
 
    view->create(_instance, szTextView, owner);
    frame->createControl(_instance, owner);
@@ -203,7 +203,7 @@ ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* not
 
 ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* notifier)
 {
-   TreeView* projectView = new TreeView(300, 50, notifier, /*NOTIFY_PROJECTVIEW_SEL*/0, true);
+   TreeView* projectView = new TreeView(300, 50, notifier, NOTIFY_PROJECTVIEW_SEL, true);
    projectView->createControl(_instance, owner);
 
    return projectView;

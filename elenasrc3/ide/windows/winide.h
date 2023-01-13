@@ -62,6 +62,7 @@ namespace elena_lang
       IDESttus       _ideStatus;
 
       void onStatusChange(StatusNMHDR* rec);
+      void onSelection(SelectionNMHDR* rec);
       //void onModelChange(ExtNMHDR* hdr);
       //void onNotifyMessage(ExtNMHDR* hdr);
 
@@ -75,6 +76,7 @@ namespace elena_lang
 
       void onLayoutChange(NotificationStatus status);
       void onIDEChange(NotificationStatus status);
+      void onTextFrameChange(NotificationStatus status);
 
       bool onCommand(int command) override;
       void onNotify(NMHDR* hdr) override;

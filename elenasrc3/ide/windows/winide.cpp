@@ -364,10 +364,24 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    onResize();
 }
 
+void IDEWindow :: onTextFrameChange(NotificationStatus status)
+{
+   DocumentChangeStatus changeStatus = { test(status, FRAME_CHANGED) };
+
+   if (_model->sourceViewModel.DocView())
+      _model->sourceViewModel.DocView()->notifyOnChange(changeStatus);
+
+   _children[_model->ideScheme.textFrameId]->refresh();
+}
+
 void IDEWindow :: onIDEChange(NotificationStatus status)
 {
    if (test(status, IDE_LAYOUT_CHANGED)) {
       onLayoutChange(status);
+   }
+
+   if (test(status, FRAME_CHANGED)) {
+      onTextFrameChange(status);
    }
 
    //onResize();
@@ -495,10 +509,6 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
    //   case NOTIFY_DEBUGWATCH:
    //      onDebugWatch();
    //      break;
-   //   case NOTIFY_CURRENTVIEW_CHANGED:
-   //      _model->sourceViewModel.afterDocumentSelect(hdr->extParam1);
-   //      _model->sourceViewModel.onModelChanged();
-   //      break;
    //   case NOTIFY_CURRENTVIEW_SHOW:
    //      _children[_model->ideScheme.textFrameId]->show();
    //      onResize();
@@ -538,9 +548,6 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
    //   case NOTIFY_START_COMPILATION:
    //      onComilationStart();
    //      break;
-   //   case NOTIFY_PROJECTVIEW_SEL:
-   //      onProjectViewSel(hdr->extParam2);
-   //      break;
    //   case NOTIFY_REFRESH:
    //      onChildRefresh(hdr->extParam2);
    //      break;
@@ -579,6 +586,20 @@ void IDEWindow :: onDoubleClick(NMHDR* hdr)
    }
 }
 
+void IDEWindow :: onSelection(SelectionNMHDR* rec)
+{
+   switch (rec->code) {
+      case NOTIFY_PROJECTVIEW_SEL:
+         onProjectViewSel(rec->param);
+         break;
+      case NOTIFY_TEXTFRAME_SEL:
+         onTextFrameChange(FRAME_CHANGED);
+         break;
+      default:
+         break;
+   }
+}
+
 void IDEWindow :: onChildRefresh(int controlId)
 {
    _children[controlId]->refresh();
@@ -590,18 +611,21 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case STATUS_NOTIFICATION:
          onStatusChange((StatusNMHDR*)hdr);
          break;
-   //   case TCN_SELCHANGE:
-   //      onTabSelChanged(hdr->hwndFrom);
-   //      break;
+      case STATUS_SELECTION:
+         onSelection((SelectionNMHDR*)hdr);
+         break;
+      case TCN_SELCHANGE:
+         onTabSelChanged(hdr->hwndFrom);
+         break;
    //   case NM_DBLCLK:
    //      onDoubleClick(hdr);
    //      break;
    //   case NMHDR_Message:
    //      onNotifyMessage((ExtNMHDR*)hdr);
    //      break;
-   //   case TVN_SELCHANGED:
-   //      onTreeSelChanged(hdr->hwndFrom);
-   //      break;
+      case TVN_SELCHANGED:
+         onTreeSelChanged(hdr->hwndFrom);
+         break;
       default:
          break;
    }

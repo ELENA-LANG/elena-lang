@@ -209,6 +209,18 @@ void WindowApp :: notify(int messageCode, NotificationStatus status)
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
+void WindowApp :: notifySelection(int messageCode, size_t param)
+{
+   SelectionNMHDR notification;
+
+   notification.nmhrd.code = STATUS_SELECTION;
+   notification.nmhrd.hwndFrom = _hwnd;
+   notification.code = messageCode;
+   notification.param = param;
+
+   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
+}
+
 int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, int notificationId, NotificationStatus notificationStatus)
 {
    // Perform application initialization:

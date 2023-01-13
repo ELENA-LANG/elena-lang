@@ -123,6 +123,17 @@ namespace elena_lang
       {
          reset();
       }
+      DocumentChangeStatus(bool dirty)
+      {
+         if (dirty) {
+            caretChanged = true;
+            maxColChanged = true;
+            frameChanged = true;
+            selelectionChanged = true;
+            textChanged = true;
+         }
+         else reset();
+      }
    };
 
    // --- DocumentNotifier ---

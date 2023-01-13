@@ -27,9 +27,9 @@ namespace elena_lang
       void beforeDocumentClose(int index) override;
       void onDocumentClose(int index) override;
 
-      //void onSelChanged() override;
+      void onSelChanged() override;
 
-      TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model);
+      TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, int selNotificationId);
    };
 
 }

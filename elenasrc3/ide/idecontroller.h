@@ -101,6 +101,11 @@ namespace elena_lang
          if (_notifier)
             _notifier->notify(id, status);
       }
+      void notifySelection(int id, size_t param) override
+      {
+         if (_notifier)
+            _notifier->notifySelection(id, param);
+      }
 
       ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController, PlatformType platform)
