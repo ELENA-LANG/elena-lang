@@ -99,7 +99,7 @@ namespace elena_lang
 
       bool isViewChanged(bool reset = true)
       {
-         bool flag = formatterChanged | frameChanged | selelectionChanged;
+         bool flag = formatterChanged | frameChanged | selelectionChanged | textChanged;
 
          if (reset)
             formatterChanged = frameChanged = selelectionChanged = false;

@@ -74,8 +74,8 @@ namespace elena_lang
       }
 
       NotificationStatus openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
-      void openProject(ProjectModel& model, path_t projectFile);
-      void closeProject(ProjectModel& model);
+      NotificationStatus openProject(ProjectModel& model, path_t projectFile);
+      NotificationStatus closeProject(ProjectModel& model);
 
       path_t getSourceByIndex(ProjectModel& model, int index);
 
@@ -119,9 +119,11 @@ namespace elena_lang
 
       bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile, NotificationStatus& status);
       bool openFile(IDEModel* model, path_t sourceFile, NotificationStatus& status);
-      bool openProject(IDEModel* model, path_t projectFile);
+      bool openProject(IDEModel* model, path_t projectFile, NotificationStatus& status);
+      bool closeProject(DialogBase& dialog, IDEModel* model, NotificationStatus& status);
 
       bool closeFile(DialogBase& dialog, IDEModel* model, ustr_t current, NotificationStatus& status);
+      bool closeAll(DialogBase& dialog, IDEModel* model, NotificationStatus& status);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
 
@@ -148,7 +150,7 @@ namespace elena_lang
       path_t retrieveSingleProjectFile(IDEModel* model);
 
       //bool openFile(IDEModel* model, path_t sourceFile);
-      bool openProjectSourceByIndex(IDEModel* model, int index);
+      bool doOpenProjectSourceByIndex(IDEModel* model, int index);
 
       bool selectSource(ProjectModel* model, SourceViewModel* sourceModel,
          ustr_t moduleName, path_t sourcePath);

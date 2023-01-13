@@ -151,8 +151,6 @@ void IDEWindow :: closeFile()
 void IDEWindow :: openProject()
 {
    _controller->doOpenProject(projectDialog, _model);
-
-   //_controller->onLayoutchange();
 }
 
 void IDEWindow :: closeProject()
@@ -275,7 +273,7 @@ void IDEWindow :: onErrorHighlight(int index)
 
 void IDEWindow :: onProjectViewSel(size_t index)
 {
-   _controller->openProjectSourceByIndex(_model, index);
+   _controller->doOpenProjectSourceByIndex(_model, index);
 }
 
 void IDEWindow :: onDebugWatch()

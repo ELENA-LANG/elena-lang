@@ -199,6 +199,8 @@ bool TextViewModel :: closeDocumentView(ustr_t name)
    clearDocumentView();
 
    if (closed) {
+      empty = _documents.count() == 0;
+
       onDocumentClose(index);
 
       return true;

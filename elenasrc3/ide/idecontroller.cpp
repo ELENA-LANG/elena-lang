@@ -356,59 +356,57 @@ void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, Co
    }
 }
 
-void ProjectController :: openProject(ProjectModel& model, path_t projectFile)
+NotificationStatus ProjectController :: openProject(ProjectModel& model, path_t projectFile)
 {
-   //ustr_t key = getPlatformName(_platform);
+   ustr_t key = getPlatformName(_platform);
 
-   //FileNameString src(projectFile, true);
-   //FileNameString name(projectFile);
+   FileNameString src(projectFile, true);
+   FileNameString name(projectFile);
 
-   //model.sources.clear();
+   model.sources.clear();
 
-   //model.empty = false;
-   //model.name.copy(*name);
-   //model.projectFile.copy(*src);
-   //model.projectPath.copySubPath(projectFile, true);
+   model.empty = false;
+   model.name.copy(*name);
+   model.projectFile.copy(*src);
+   model.projectPath.copySubPath(projectFile, true);
 
-   //model.singleSourceProject = false;
+   model.singleSourceProject = false;
 
-   //ConfigFile projectConfig;
-   //if (projectConfig.load(projectFile, FileEncoding::UTF8)) {
-   //   DynamicString<char> value;
+   ConfigFile projectConfig;
+   if (projectConfig.load(projectFile, FileEncoding::UTF8)) {
+      DynamicString<char> value;
 
-   //   ConfigFile::Node root = projectConfig.selectRootNode();
+      ConfigFile::Node root = projectConfig.selectRootNode();
 
-   //   ConfigFile::Node nsNode = projectConfig.selectNode(NAMESPACE_CATEGORY);
-   //   nsNode.readContent(value);
-   //   model.package.copy(value.str());
+      ConfigFile::Node nsNode = projectConfig.selectNode(NAMESPACE_CATEGORY);
+      nsNode.readContent(value);
+      model.package.copy(value.str());
 
-   //   // select platform configuration
-   //   ConfigFile::Node platformRoot = projectConfig.selectNode<ustr_t>(PLATFORM_CATEGORY, key, [](ustr_t key, ConfigFile::Node& node)
-   //      {
-   //         return node.compareAttribute("key", key);
-   //      });
+      // select platform configuration
+      ConfigFile::Node platformRoot = projectConfig.selectNode<ustr_t>(PLATFORM_CATEGORY, key, [](ustr_t key, ConfigFile::Node& node)
+         {
+            return node.compareAttribute("key", key);
+         });
 
-   //   loadConfig(model, projectConfig, root);
-   //   loadConfig(model, projectConfig, platformRoot);
-   //}
+      loadConfig(model, projectConfig, root);
+      loadConfig(model, projectConfig, platformRoot);
+   }
 
-   //if (_notifier)
-   //   _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
+   return PROJECT_CHANGED;
 }
 
-void ProjectController :: closeProject(ProjectModel& model)
+NotificationStatus ProjectController :: closeProject(ProjectModel& model)
 {
-   //model.empty = true;
-   //model.name.clear();
-   //model.projectFile.clear();
-   //model.projectPath.clear();
+   model.empty = true;
+   model.name.clear();
+   model.projectFile.clear();
+   model.projectPath.clear();
 
-   //model.singleSourceProject = false;
+   model.singleSourceProject = false;
 
-   //model.sources.clear();
+   model.sources.clear();
 
-   //if (_notifier)
-   //   _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
+   return PROJECT_CHANGED;
 }
 
 NotificationStatus ProjectController :: openSingleFileProject(ProjectModel& model, path_t singleProjectFile)
@@ -604,22 +602,28 @@ bool IDEController :: openFile(SourceViewModel* model, ProjectModel* projectMode
    return retVal;
 }
 
-bool IDEController :: openProjectSourceByIndex(IDEModel* model, int index)
+bool IDEController :: doOpenProjectSourceByIndex(IDEModel* model, int index)
 {
+   NotificationStatus status = NONE_CHANGED;
+
    path_t sourcePath = projectController.getSourceByIndex(model->projectModel, index);
    if (!sourcePath.empty()) {
       PathString fullPath(*model->projectModel.projectPath, sourcePath);
 
-      //return openFile(model, *fullPath);
+      if(openFile(model, *fullPath, status)) {
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
+         return true;
+      }
    }
    return false;
 }
 
-bool IDEController :: openProject(IDEModel* model, path_t projectFile)
+bool IDEController :: openProject(IDEModel* model, path_t projectFile, NotificationStatus& status)
 {
-   projectController.openProject(model->projectModel, projectFile);
+   status |= projectController.openProject(model->projectModel, projectFile);
 
-   return false;
+   return true;
 }
 
 void IDEController :: doOpenFile(DialogBase& dialog, IDEModel* model)
@@ -665,12 +669,20 @@ bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveA
 
 bool IDEController :: doOpenProject(DialogBase& dialog, IDEModel* model)
 {
+   NotificationStatus status = NONE_CHANGED;
+
    PathString path;
    if (dialog.openFile(path)) {
-      //if (!doCloseProject())
-      //   return false;
+      if (!closeProject(dialog, model, status))
+         return false;
 
-      if (openProject(model, *path)) {
+      if (openProject(model, *path, status)) {
+         model->changeStatus(IDEStatus::Ready);
+         status |= IDE_LAYOUT_CHANGED;
+
+         if (status != NONE_CHANGED)
+            _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
          return true;
       }
    }
@@ -688,10 +700,27 @@ bool IDEController :: doSaveProject(DialogBase& dialog, IDEModel* model, bool fo
    return true;
 }
 
+bool IDEController :: closeProject(DialogBase& dialog, IDEModel* model, NotificationStatus& status)
+{
+   if (closeAll(dialog, model, status)) {
+      status |= projectController.closeProject(model->projectModel);
+
+      return true;
+   }
+   else return false;
+}
+
 bool IDEController :: doCloseProject(DialogBase& dialog, IDEModel* model)
 {
-   if (doCloseAll(dialog, model)) {
-      projectController.closeProject(model->projectModel);
+   NotificationStatus status = NONE_CHANGED;
+
+   if (closeAll(dialog, model, status)) {
+      status |= projectController.closeProject(model->projectModel);
+      model->changeStatus(IDEStatus::Empty);
+      status |= IDE_LAYOUT_CHANGED;
+
+      if (status != NONE_CHANGED)
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
 
       return true;
    }
@@ -739,9 +768,8 @@ bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
    return false;
 }
 
-bool IDEController :: doCloseAll(DialogBase& dialog, IDEModel* model)
+bool IDEController :: closeAll(DialogBase& dialog, IDEModel* model, NotificationStatus& status)
 {
-   NotificationStatus status = NONE_CHANGED;
    while (model->sourceViewModel.getDocumentCount() > 0) {
       ustr_t current = model->sourceViewModel.getDocumentName(1);
 
@@ -750,6 +778,19 @@ bool IDEController :: doCloseAll(DialogBase& dialog, IDEModel* model)
    }
 
    return true;
+}
+
+bool IDEController :: doCloseAll(DialogBase& dialog, IDEModel* model)
+{
+   NotificationStatus status = NONE_CHANGED;
+   if (closeAll(dialog, model, status)) {
+      if (status != NONE_CHANGED)
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
+      return true;
+   }
+
+   return false;
 }
 
 bool IDEController :: doExit(DialogBase& dialog, IDEModel* model)
