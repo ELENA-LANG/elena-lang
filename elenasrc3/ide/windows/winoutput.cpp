@@ -119,15 +119,15 @@ wchar_t* ProcessOutput :: getValue()
 
 // --- CompilerOutput ---
 
-CompilerOutput :: CompilerOutput(NotifierBase* notifier, int completionCode)
+CompilerOutput :: CompilerOutput(NotifierBase* notifier, int notificationId)
    : ProcessOutput(true),
    _notifier(notifier),
-   _completionCode(completionCode)
+   _notificationId(notificationId)
 {
 
 }
 
 void CompilerOutput :: afterExecution(int exitCode)
 {
-   //_notifier->notifyMessage(_completionCode, exitCode);
+   _notifier->notifyCompletion(_notificationId, exitCode);
 }

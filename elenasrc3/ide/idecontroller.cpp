@@ -693,9 +693,9 @@ bool IDEController :: doOpenProject(DialogBase& dialog, IDEModel* model)
 
 bool IDEController :: doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode)
 {
-   // !! temporal
-   if (!doSaveFile(dialog, model, false, forcedMode))
-      return false;
+   //// !! temporal
+   //if (!doSaveFile(dialog, model, false, forcedMode))
+   //   return false;
 
    return true;
 }
@@ -828,95 +828,93 @@ void IDEController :: doDebugStop(IDEModel* model)
 
 void IDEController :: onCompilationStart(IDEModel* model)
 {
-   //model->status = IDEStatus::Busy;
+   model->status = IDEStatus::Compiling;
 
-   //model->onIDEChange();
-
-   //_notifier->notifyMessage(NOTIFY_START_COMPILATION);
-   //_notifier->notifyMessage(NOTIFY_SHOW_RESULT, model->ideScheme.compilerOutputControl);
+   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
+   _notifier->notifySelection(NOTIFY_SHOW_RESULT, model->ideScheme.compilerOutputControl);
 }
 
 void IDEController :: onCompilationStop(IDEModel* model)
 {
-   //model->status = IDEStatus::Ready;
+   model->status = IDEStatus::Ready;
 
-   //model->onIDEChange();
+   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
 }
 
 void IDEController :: onCompilationBreak(IDEModel* model)
 {
-   //model->status = IDEStatus::Ready;
+   model->status = IDEStatus::Broken;
 
-   //model->onIDEChange();
+   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
 }
 
 void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBase* log)
 {
-   //_notifier->notifyMessage(NOTIFY_SHOW_RESULT, model->ideScheme.errorListControl);
+   _notifier->notifySelection(NOTIFY_SHOW_RESULT, model->ideScheme.errorListControl);
 
-   //log->clearMessages();
+   log->clearMessages();
 
-   //// parse output for errors
-   //size_t length = output.length();
-   //size_t index = 0;
+   // parse output for errors
+   size_t length = output.length();
+   size_t index = 0;
 
-   //WideMessage message;
-   //WideMessage fileStr, rowStr, colStr;
-   //while (true) {
-   //   bool found = false;
-   //   while (index < length) {
-   //      if (output[index] == ':') {
-   //         if (output.compareSub(_T(": error "), index, 8)) {
-   //            found = true;
-   //            break;
-   //         }
-   //         else if (output.compareSub(_T(": warning "), index, 10)) {
-   //            found = true;
-   //            break;
-   //         }
-   //      }
-   //      index++;
-   //   }
-   //   if (!found)
-   //      break;
+   WideMessage message;
+   WideMessage fileStr, rowStr, colStr;
+   while (true) {
+      bool found = false;
+      while (index < length) {
+         if (output[index] == ':') {
+            if (output.compareSub(_T(": error "), index, 8)) {
+               found = true;
+               break;
+            }
+            else if (output.compareSub(_T(": warning "), index, 10)) {
+               found = true;
+               break;
+            }
+         }
+         index++;
+      }
+      if (!found)
+         break;
 
-   //   size_t errPos = index;
-   //   size_t rowPos = NOTFOUND_POS;
-   //   size_t colPos = NOTFOUND_POS;
-   //   size_t bolPos = 0;
+      size_t errPos = index;
+      size_t rowPos = NOTFOUND_POS;
+      size_t colPos = NOTFOUND_POS;
+      size_t bolPos = 0;
 
-   //   index--;
-   //   while (index >= 0) {
-   //      if (output[index] == '(') {
-   //         rowPos = index + 1;
-   //      }
-   //      else if (output[index] == ':' && colPos == NOTFOUND_POS) {
-   //         colPos = index + 1;
-   //      }
-   //      else if (output[index] == '\n') {
-   //         bolPos = index;
-   //         break;
-   //      }
+      index--;
+      while (index >= 0) {
+         if (output[index] == '(') {
+            rowPos = index + 1;
+         }
+         else if (output[index] == ':' && colPos == NOTFOUND_POS) {
+            colPos = index + 1;
+         }
+         else if (output[index] == '\n') {
+            bolPos = index;
+            break;
+         }
 
-   //      index--;
-   //   }
-   //   index = output.findSub(errPos, '\n');
-   //   message.copy(output.str() + errPos + 2, index - errPos - 3);
-   //   if (rowPos != NOTFOUND_POS) {
-   //      fileStr.copy(output.str() + bolPos + 1, rowPos - bolPos - 2);
-   //      if (colPos != NOTFOUND_POS) {
-   //         rowStr.copy(output.str() + rowPos, colPos - rowPos - 1);
-   //         colStr.copy(output.str() + colPos, errPos - colPos - 1);
-   //      }
-   //   }
-   //   else {
-   //      fileStr.clear();
-   //      colStr.clear();
-   //      rowStr.clear();
-   //   }
-   //   
-   //   log->addMessage(*message, *fileStr, *rowStr, *colStr);
-   //}
+         index--;
+      }
+      index = output.findSub(errPos, '\n');
+      message.copy(output.str() + errPos + 2, index - errPos - 3);
+      if (rowPos != NOTFOUND_POS) {
+         fileStr.copy(output.str() + bolPos + 1, rowPos - bolPos - 2);
+         if (colPos != NOTFOUND_POS) {
+            rowStr.copy(output.str() + rowPos, colPos - rowPos - 1);
+            colStr.copy(output.str() + colPos, errPos - colPos - 1);
+         }
+      }
+      else {
+         fileStr.clear();
+         colStr.clear();
+         rowStr.clear();
+      }
+      
+      log->addMessage(*message, *fileStr, *rowStr, *colStr);
+   }
 }
 
 void IDEController :: highlightError(IDEModel* model, int row, int column, path_t path)
@@ -934,9 +932,15 @@ void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode,
    text_str output, ErrorLogBase* log)
 {
    if (exitCode == 0) {
-
+      model->status = IDEStatus::CompiledSuccessfully;
    }
    else {
+      if (exitCode == -1) {
+         model->status = IDEStatus::CompiledWithWarnings;
+      }
+      else model->status = IDEStatus::CompiledWithErrors;
+      _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
+
       displayErrors(model, output, log);
    }
 }
@@ -951,14 +955,7 @@ bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
       return false;
    }
 
-   if (projectController.doCompileProject(model->projectModel, DebugAction::None)) 
-   {
-      onCompilationStop(model);
-
-      return true;
-   }
-
-   return false;
+   return projectController.doCompileProject(model->projectModel, DebugAction::None);
 }
 
 void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model)

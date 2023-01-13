@@ -17,14 +17,17 @@ namespace elena_lang
    class IDEStatusBar : public StatusBar, DocumentNotifier
    {
       IDEModel* _model;
+      IDEStatus _status;
       bool      _pendingIDESettings;
-
-      //void onIDEChange();
 
       void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
 
+      void setIDEStatus(IDEStatus status);
+
    public:
       void setRectangle(Rectangle rec) override;
+
+      void refresh() override;
 
       IDEStatusBar(IDEModel* model);
    };

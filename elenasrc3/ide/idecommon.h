@@ -33,12 +33,12 @@ namespace elena_lang
    constexpr auto NOTIFY_CURRENTVIEW_CHANGED             = 2;
    //constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
    //constexpr auto NOTIFY_LAYOUT_CHANGED               = 5;
-   //constexpr auto NOTIFY_SHOW_RESULT                  = 6;
-   //constexpr auto NOTIFY_COMPILATION_RESULT           = 7;
    //constexpr auto NOTIFY_ERROR_HIGHLIGHT_ROW          = 8;
    //constexpr auto NOTIFY_ACTIVATE_EDITFRAME           = 9;
    //constexpr auto NOTIFY_START_COMPILATION            = 10;
    //constexpr auto NOTIFY_PROJECTMODEL                 = 11;
+   constexpr int NOTIFY_COMPILATION_RESULT               = 8;
+   constexpr int NOTIFY_SHOW_RESULT                      = 9;
    constexpr int NOTIFY_TEXTFRAME_SEL                    = 10;
    constexpr int NOTIFY_PROJECTVIEW_SEL                  = 11;
    constexpr int NOTIFY_DEBUG_CHANGE                     = 12;
@@ -57,6 +57,7 @@ namespace elena_lang
    constexpr NotificationStatus FRAME_VISIBILITY_CHANGED = 0x00010;
    constexpr NotificationStatus DEBUGWATCH_CHANGED       = 0x00020;
    constexpr NotificationStatus DOCVIEW_CHANGED          = 0x00040;
+   constexpr NotificationStatus OUTPUT_SHOWN             = 0x00080;
 
    // --- PathSettings ---
    struct PathSettings
@@ -67,10 +68,15 @@ namespace elena_lang
    // --- IDEStatus ---
    enum class IDEStatus
    {
-      Empty            = 0,
-      Ready           = 1,
-      Busy            = 2,
-      AutoRecompiling = 3,
+      Empty                = 0,
+      Ready                = 1,
+      Busy                 = 2,
+      AutoRecompiling      = 3,
+      Compiling            = 4,
+      CompiledSuccessfully = 5,
+      CompiledWithWarnings = 6,
+      CompiledWithErrors   = 7,
+      Broken               = 8,
    };
 
    inline bool testIDEStatus(IDEStatus value, IDEStatus mask)

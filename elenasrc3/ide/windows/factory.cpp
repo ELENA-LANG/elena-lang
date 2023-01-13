@@ -184,7 +184,7 @@ ControlBase* IDEFactory :: createSplitter(WindowBase* owner, ControlBase* client
 
 ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier)
 {
-   CompilerOutput* output = new CompilerOutput(notifier, /*NOTIFY_COMPILATION_RESULT*/0);
+   CompilerOutput* output = new CompilerOutput(notifier, NOTIFY_COMPILATION_RESULT);
 
    output->createControl(_instance, owner);
 
@@ -226,7 +226,7 @@ GUIControlBase* IDEFactory :: createMenu(ControlBase* owner)
 }
 
 void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
-   int projectView, int contextBrowser, int menu)
+   int projectView, int contextBrowser, int menu, int statusBar)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_MESSAGES, szErrorList, MAX_LOADSTRING);
@@ -239,6 +239,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
    _model->ideScheme.projectView = projectView;
    _model->ideScheme.debugWatch = contextBrowser;
    _model->ideScheme.menu = menu;
+   _model->ideScheme.statusBar = statusBar;
 
    _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
    _model->ideScheme.captions.add(errorList, szErrorList);
@@ -296,7 +297,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, -1, bottomBox, -1, hsplitter);
 
-   initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu);
+   initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex);
 
    return sdi;
 }

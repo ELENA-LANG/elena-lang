@@ -20,6 +20,8 @@ IDEStatusBar :: IDEStatusBar(IDEModel* model)
 {
    _model->sourceViewModel.attachDocListener(this);
 
+   setIDEStatus(IDEStatus::Empty);
+
    //_pendingIDESettings = true;
 }
 
@@ -50,26 +52,48 @@ void IDEStatusBar :: setRectangle(Rectangle rec)
    //}
 }
 
-//void IDEStatusBar :: onIDEChange()
-//{
-//   switch (_model->status) {
-//      case IDEStatus::Ready:
-//         setText(0, _T(" Ready"));
-//         break;
-//      case IDEStatus::Busy:
-//         setText(0, _T(" Busy"));
-//         break;
-//      case IDEStatus::AutoRecompiling:
-//         setText(0, _T(" Recompiling..."));
-//         break;
-//      default:
-//         break;
-//   }
-//}
+void IDEStatusBar :: setIDEStatus(IDEStatus status)
+{
+   _status = status;
 
-//void IDEStatusBar :: onDocumentUpdate()
-//{
-//   auto docView = _model->viewModel()->DocView();
-//   if (docView && docView->status.caretChanged) {
-//   }
-//}
+   switch (_model->status) {
+      case IDEStatus::Empty:
+         setText(0, _T(" Please open a new project or a file"));
+         break;
+      case IDEStatus::Ready:
+         setText(0, _T(" Ready"));
+         break;
+      case IDEStatus::Compiling:
+         setText(0, _T(" Compiling..."));
+         break;
+      case IDEStatus::Busy:
+         setText(0, _T(" Busy"));
+         break;
+      case IDEStatus::AutoRecompiling:
+         setText(0, _T(" Recompiling..."));
+         break;
+      case IDEStatus::CompiledSuccessfully:
+         setText(0, _T(" Successfully compiled"));
+         break;
+      case IDEStatus::CompiledWithErrors:
+         setText(0, _T(" Compiled with errors"));
+         break;
+      case IDEStatus::CompiledWithWarnings:
+         setText(0, _T(" Compiled with warnings"));
+         break;
+      case IDEStatus::Broken:
+         setText(0, _T(" The process was broken"));
+         break;
+      default:
+         break;
+   }
+}
+
+void IDEStatusBar :: refresh()
+{
+   if (_status != _model->status) {
+      setIDEStatus(_model->status);
+   }
+
+   ControlBase::refresh();
+}

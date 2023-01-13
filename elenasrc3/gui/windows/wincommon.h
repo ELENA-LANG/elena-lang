@@ -32,6 +32,7 @@ namespace elena_lang
    // --- Notification types ---
    constexpr int STATUS_NOTIFICATION   = 0x101;
    constexpr int STATUS_SELECTION      = 0x102;
+   constexpr int STATUS_COMPLETION     = 0x103;
    //constexpr int NMHDR_Model        = 0x102;
 
    // --- ExtNMHDR ---
@@ -47,6 +48,13 @@ namespace elena_lang
       NMHDR              nmhrd;
       int                code;
       size_t             param;
+   };
+
+   struct CompletionNMHDR
+   {
+      NMHDR              nmhrd;
+      int                code;
+      int                param;
    };
 
    // --- Color ---
@@ -187,6 +195,7 @@ namespace elena_lang
 
       void notify(int messageCode, NotificationStatus status) override;
       void notifySelection(int id, size_t param) override;
+      void notifyCompletion(int id, int param) override;
 
       WindowApp(HINSTANCE instance, wstr_t accelerators)
       {

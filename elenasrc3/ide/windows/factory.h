@@ -44,7 +44,7 @@ namespace elena_lang
       GUIControlBase* createMenu(ControlBase* owner);
 
       void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
-         int projectView, int contextBrowser, int menu);
+         int projectView, int contextBrowser, int menu, int statusBar);
 
    public:
       GUIApp* createApp() override;

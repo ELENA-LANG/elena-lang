@@ -5,21 +5,14 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * ide : status
     * ide : compile the project; message - on success / warning / errors
+    * ide : debugger - status - running / stopped
 
     * ide : refresh screen after comment the block
     * ide : tab - should be updated only once after inserting all tabs
     * ide - review on change events : after editor change / debug step
-    * ide : debugger - status - running / stopped
     * ide : cursor coordinates
     * ide : show success, error, warning after the compilation
-
-    * ide refactoring : there mut be events for changing any model: 
-      onIDEChange, onProjectChange, onSourceViewModel, onDebuggerChange
-
-
-    * ide refactoring : any change should be propogated with onModelChange, the model change : onidechange
 
     * api functionality for existing classes : StringEnumerator
     * ide - close all / close all but active
@@ -58,6 +51,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * ide : output is not properly refreshed
     * ide : toolbar
     * ide : fix blicking on tab selecting (especially on opening a new project)
     * ide : find

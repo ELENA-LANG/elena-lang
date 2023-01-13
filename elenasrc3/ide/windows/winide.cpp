@@ -119,7 +119,6 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    this->_instance = instance;
    this->_controller = controller;
    this->_model = model;
-   this->_ideStatus = {};
 
    model->sourceViewModel.attachDocListener(this);
 }
@@ -225,7 +224,7 @@ void IDEWindow :: openResultTab(int controlIndex)
 
    resultBar->show();
 
-   //_controller->onLayoutchange();
+   onLayoutChange(IDE_LAYOUT_CHANGED);
 }
 
 void IDEWindow :: toggleWindow(int child_id)
@@ -413,6 +412,10 @@ void IDEWindow :: onIDEChange(NotificationStatus status)
       onTextFrameChange(status);
    }
 
+   if (test(status, IDE_STATUS_CHANGED)) {
+      _children[_model->ideScheme.statusBar]->refresh();
+   }
+
    //onResize();
 
    //onIDEViewUpdate(true);
@@ -559,17 +562,11 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
    //auto docView = _model->sourceViewModel.DocView();
 
    //switch (hdr->extParam1) {
-   //   case NOTIFY_SHOW_RESULT:
-   //      openResultTab(hdr->extParam2);
-   //      break;
    //   case NOTIFY_ACTIVATE_EDITFRAME:
    //      setChildFocus(_model->ideScheme.textFrameId);
    //      break;
    //   case NOTIFY_LAYOUT_CHANGED:
    //      onLayoutChange();
-   //      break;
-   //   case NOTIFY_COMPILATION_RESULT:
-   //      onCompilationEnd(hdr->extParam2);
    //      break;
    //   case NOTIFY_ERROR_HIGHLIGHT_ROW:
    //      onErrorHighlight(hdr->extParam2);
@@ -624,6 +621,20 @@ void IDEWindow :: onSelection(SelectionNMHDR* rec)
       case NOTIFY_TEXTFRAME_SEL:
          onTextFrameChange(FRAME_CHANGED);
          break;
+      case NOTIFY_SHOW_RESULT:
+         openResultTab((int)rec->param);
+         break;
+      default:
+         break;
+   }
+}
+
+void IDEWindow :: onComplition(CompletionNMHDR* rec)
+{
+   switch (rec->code) {
+      case NOTIFY_COMPILATION_RESULT:
+         onCompilationEnd(rec->param);
+         break;
       default:
          break;
    }
@@ -642,6 +653,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          break;
       case STATUS_SELECTION:
          onSelection((SelectionNMHDR*)hdr);
+         break;
+      case STATUS_COMPLETION:
+         onComplition((CompletionNMHDR*)hdr);
          break;
       case TCN_SELCHANGE:
          onTabSelChanged(hdr->hwndFrom);

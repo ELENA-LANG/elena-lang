@@ -24,6 +24,7 @@ struct IDEScheme
    int               projectView;
    int               debugWatch;
    int               menu;
+   int               statusBar;
 
    Map<int, text_t>  captions;
 
@@ -35,6 +36,7 @@ struct IDEScheme
       projectView(-1),
       debugWatch(-1),
       menu(-1),
+      statusBar(-1),
       captions(nullptr)
    {
    }

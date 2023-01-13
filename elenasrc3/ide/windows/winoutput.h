@@ -41,12 +41,12 @@ namespace elena_lang
    class CompilerOutput : public ProcessOutput
    {
       NotifierBase* _notifier;
-      int           _completionCode;
+      int           _notificationId;
 
       void afterExecution(int exitCode) override;
 
    public:
-      CompilerOutput(NotifierBase* notifier, int completionCode);
+      CompilerOutput(NotifierBase* notifier, int notificationId);
    };
 }
 
