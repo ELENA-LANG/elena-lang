@@ -49,7 +49,7 @@ namespace elena_lang
       virtual void onDocumentSelect(int index) = 0;
       virtual void onDocumentNew(int index) = 0;
       //virtual void onDocumentRename(int index) = 0;
-      //virtual void onDocumentModeChanged(int index, bool modifiedMode) = 0;
+      virtual void onDocumentModeChanged(int index, bool modifiedMode) = 0;
 
       virtual void beforeDocumentClose(int index) = 0;
       virtual void onDocumentClose(int index) = 0;
@@ -123,8 +123,6 @@ namespace elena_lang
    class TextViewControllerBase
    {
    public:
-      //virtual void onFrameChange() = 0;
-
       virtual void newDocument(TextViewModelBase* model, ustr_t name, 
          int notifyMessage) = 0;
       virtual bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 

@@ -622,3 +622,10 @@ void TextViewWindow :: onScroll(int bar, int type)
 //   ControlBase::refresh();
 //
 //}
+
+void TextViewWindow :: hide()
+{
+   ControlBase::hide();
+
+   _cached = false;
+}

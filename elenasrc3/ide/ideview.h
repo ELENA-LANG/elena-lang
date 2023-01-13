@@ -42,18 +42,18 @@ struct IDEScheme
 
 // --- IDEListener ---
 
-class IDEListener
-{
-public:
+//class IDEListener
+//{
+//public:
 //   virtual void onIDEChange() = 0;
-};
+//};
 
-typedef List<IDEListener*> IDEListenerListeners;
+//typedef List<IDEListener*> IDEListenerListeners;
 
 // --- IDEModel ---
 class IDEModel
 {
-   IDEListenerListeners listeners;
+//   IDEListenerListeners listeners;
 
 public:
    IDEStatus       status;
@@ -73,7 +73,7 @@ public:
    //void onIDEChange();
 
    IDEModel()
-      : listeners(nullptr), projectModel(&status)
+      : /*listeners(nullptr), */projectModel(&status)
    {
       status = IDEStatus::Empty;
       appMaximized = false;

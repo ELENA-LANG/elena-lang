@@ -41,6 +41,7 @@ namespace elena_lang
    class TextViewModel : public TextViewModelBase
    {
    protected:
+      Point             _size;
       DocumentViewList  _documents;
 
       TextViewListeners _listeners;

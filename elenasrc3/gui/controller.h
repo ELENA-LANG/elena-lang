@@ -48,8 +48,6 @@ namespace elena_lang
       void notifyOnClipboardOperation(ClipboardBase* clipboard);
 
    public:
-      //void onFrameChange() override;
-
       bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
          FileEncoding encoding) override;
       bool selectDocument(TextViewModelBase* model, ustr_t name, NotificationStatus& status) override;

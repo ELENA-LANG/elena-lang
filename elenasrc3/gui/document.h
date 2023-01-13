@@ -94,15 +94,14 @@ namespace elena_lang
       bool maxColChanged;
       bool frameChanged;
       bool selelectionChanged;
+      bool hasSelection;
       bool formatterChanged;
       bool textChanged;
+      bool modifiedChanged;
 
-      bool isViewChanged(bool reset = true)
+      bool isViewChanged()
       {
-         bool flag = formatterChanged | frameChanged | selelectionChanged | textChanged;
-
-         if (reset)
-            formatterChanged = frameChanged = selelectionChanged = false;
+         bool flag = formatterChanged | frameChanged | hasSelection | textChanged | selelectionChanged;
 
          return flag;
       }
@@ -112,8 +111,9 @@ namespace elena_lang
          caretChanged = false;
          maxColChanged = false;
          frameChanged = false;
-         /*oldModified = false;*/
+         modifiedChanged = false;
          selelectionChanged = false;
+         hasSelection = false;
          formatterChanged = false;
          //oldOvewrite = true;     // to trigger mode change
          textChanged = false;
@@ -125,6 +125,7 @@ namespace elena_lang
       }
       DocumentChangeStatus(bool dirty)
       {
+         reset();
          if (dirty) {
             caretChanged = true;
             maxColChanged = true;
@@ -132,7 +133,6 @@ namespace elena_lang
             selelectionChanged = true;
             textChanged = true;
          }
-         else reset();
       }
    };
 
@@ -183,7 +183,8 @@ namespace elena_lang
 
          int  rowDifference;
 
-         //bool oldModified;
+         bool oldModified;
+         bool oldSelected;
          //bool oldOvewrite;
 
          //bool isModeChanged()
@@ -202,6 +203,7 @@ namespace elena_lang
             readOnly = false;
             unnamed = false;
             overwriteMode = false;
+            oldSelected = oldModified = false;
 
             rowDifference = 0;
          }

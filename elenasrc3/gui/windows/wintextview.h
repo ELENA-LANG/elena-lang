@@ -139,6 +139,8 @@ namespace elena_lang
    public:
       void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
 
+      void hide() override;
+
       //void refresh() override;
 
       static void registerTextViewWindow(HINSTANCE hInstance, wstr_t className);

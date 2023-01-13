@@ -378,12 +378,10 @@ void DocumentView :: setCaret(int column, int row, bool selecting, DocumentChang
    }
    if (selecting) {
       _selection += position - _caret.position();
-      changeStatus.selelectionChanged = true;
+
+      changeStatus.hasSelection = _selection != 0;
    }
    else {
-      if (_selection != 0)
-         changeStatus.selelectionChanged = true;
-
       _selection = 0;
    }
 
@@ -430,6 +428,8 @@ void DocumentView :: moveLeft(DocumentChangeStatus& changeStatus, bool selecting
       _caret.moveOn(-1);
 
       _selection += position - _caret.position();
+
+      changeStatus.hasSelection = _selection != 0;
    }
    else _caret.moveOn(-1);
 
@@ -443,6 +443,8 @@ void DocumentView :: moveRight(DocumentChangeStatus& changeStatus, bool selectin
       _caret.moveOn(1);
 
       _selection += position - _caret.position();
+
+      changeStatus.hasSelection = _selection != 0;
    }
    else _caret.moveOn(1);
 
@@ -508,6 +510,8 @@ void DocumentView :: moveLeftToken(DocumentChangeStatus& changeStatus, bool sele
    }
    if (selecting) {
       _selection += position - _caret.position();
+
+      changeStatus.hasSelection = _selection != 0;
    }
    setCaret(_caret.getCaret(), selecting, changeStatus);
 }
@@ -548,6 +552,8 @@ void DocumentView :: moveRightToken(DocumentChangeStatus& changeStatus, bool sel
    }
    if (selecting) {
       _selection += position - _caret.position();
+
+      changeStatus.hasSelection = _selection != 0;
    }
    setCaret(_caret.getCaret(), selecting, changeStatus);
 }
@@ -627,6 +633,16 @@ void DocumentView :: movePageUp(DocumentChangeStatus& changeStatus, bool selecti
 
 void DocumentView :: notifyOnChange(DocumentChangeStatus& changeStatus)
 {
+   if (status.oldModified != status.modifiedMode) {
+      changeStatus.modifiedChanged = true;
+      status.oldModified = status.modifiedMode;
+   }
+   bool isSelected = changeStatus.hasSelection;
+   if (isSelected != status.oldSelected) {
+      changeStatus.selelectionChanged = true;
+      status.oldSelected = isSelected;
+   }
+
    for(auto it = _notifiers.start(); !it.eof(); ++it) {
       (*it)->onDocumentUpdate(changeStatus);
    }
@@ -820,7 +836,6 @@ bool DocumentView :: eraseSelection(DocumentChangeStatus& changeStatus)
    }
    _text->eraseLine(_caret, _selection);
    _selection = 0;
-   changeStatus.selelectionChanged = true;
    changeStatus.textChanged = true;
 
    return true;
@@ -855,6 +870,9 @@ void DocumentView :: save(path_t path)
    _text->save(path);
 
    status.modifiedMode = false;
+
+   DocumentChangeStatus changeStatus = {};
+   notifyOnChange(changeStatus);
 }
 
 bool DocumentView :: canRedo()

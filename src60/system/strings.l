@@ -308,8 +308,17 @@ public const struct String : BaseValue,
 
 class StringEnumerator
 {
+   string         literal;
+   Reference<int> index;
+   Reference<int> diff;
+   char           char;  
+
    constructor(string a)
    {
+      literal := s;
+      index := -1;
+      diff := 1;
+      char := $0;
    }
 }
 

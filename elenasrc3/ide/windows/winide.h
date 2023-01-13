@@ -37,7 +37,7 @@ namespace elena_lang
    };
 
    // --- IDEWindow ---
-   class IDEWindow : public SDIWindow
+   class IDEWindow : public SDIWindow, DocumentNotifier
    {
       struct IDESttus
       {
@@ -116,6 +116,7 @@ namespace elena_lang
 
       void onIDEViewUpdate(bool forced);
       void onDebuggerUpdate(bool running);
+      void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
 
    public:
       IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance);

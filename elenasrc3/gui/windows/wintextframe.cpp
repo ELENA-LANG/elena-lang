@@ -56,26 +56,30 @@ void TextViewFrame :: onDocumentClose(int index)
 //
 //   renameTabView(index - 1, *title);
 //}
-//
-//void TextViewFrame :: onDocumentModeChanged(int index, bool modifiedMode)
-//{
-//   WideMessage title(_model->getDocumentName(index), modifiedMode ? "*" : "");
-//
-//   renameTabView(index - 1, *title);
-//}
+
+void TextViewFrame :: onDocumentModeChanged(int index, bool modifiedMode)
+{
+   WideMessage title(_model->getDocumentName(index), modifiedMode ? "*" : "");
+
+   if (index == -1)
+      index = getCurrentIndex() + 1;
+
+   renameTabView(index - 1, *title);
+}
 
 void TextViewFrame :: onSelChanged()
 {
-   //int index = getCurrentIndex();
-   //if (index >= 0) {
-   //   _model->selectDocumentViewByIndex(index + 1);
+   int index = getCurrentIndex();
+   if (index >= 0) {
+      _model->selectDocumentViewByIndex(index + 1);
 
-   //   afterDocumentSelect(index + 1);
-   //}
-   //else {
-   //   _child->hide();
-   //   _notSelected = true;
+      if (_selNotificationId)
+         _notifier->notifySelection(_selNotificationId, index);
+   }
+   else {
+      _child->hide();
+      _notSelected = true;
 
-   //   _model->clearDocumentView();
-   //}
+      _model->clearDocumentView();
+   }
 }

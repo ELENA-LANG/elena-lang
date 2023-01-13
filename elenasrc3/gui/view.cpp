@@ -152,6 +152,7 @@ void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path)
    empty = false;
 
    auto docView = new DocumentView(text, SourceFormatter::getInstance());
+   docView->setSize(_size);
 
    _documents.add(new DocumentViewScope(name, path, docView));
 
@@ -293,6 +294,8 @@ path_t TextViewModel :: getDocumentPath(ustr_t name)
 
 void TextViewModel :: resize(Point size)
 {
+   _size = size;
+
    for (auto it = _documents.start(); !it.eof(); ++it) {
       (*it)->documentView->setSize(size);
    }

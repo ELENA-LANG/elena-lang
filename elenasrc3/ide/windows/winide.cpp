@@ -13,6 +13,7 @@
 #include "windows/wintreeview.h"
 #include "windows/wintabbar.h"
 #include "windows/winmenu.h"
+#include "windows/wintextframe.h"
 
 #include <windows/Resource.h>
 
@@ -119,6 +120,8 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    this->_controller = controller;
    this->_model = model;
    this->_ideStatus = {};
+
+   model->sourceViewModel.attachDocListener(this);
 }
 
 void IDEWindow :: onActivate()
@@ -341,12 +344,24 @@ void IDEWindow :: onProjectChange(bool empty)
    }
 
    toggleProjectView(!empty);
+
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+   menu->enableMenuItemById(IDM_PROJECT_CLOSE, !empty);
+
+   menu->enableMenuItemById(IDM_PROJECT_COMPILE, !empty);
+   menu->enableMenuItemById(IDM_DEBUG_RUN, !empty);
+   menu->enableMenuItemById(IDM_DEBUG_STEPINTO, !empty);
+   menu->enableMenuItemById(IDM_DEBUG_STEPOVER, !empty);
+   menu->enableMenuItemById(IDM_DEBUG_RUNTO, !empty);
+   menu->enableMenuItemById(IDM_DEBUG_STOP, !empty);
 }
 
 void IDEWindow :: onLayoutChange(NotificationStatus status)
 {
+   bool empty = _model->sourceViewModel.getDocumentCount() == 0;
+
    if (test(status, FRAME_VISIBILITY_CHANGED)) {
-      if (_model->sourceViewModel.getDocumentCount() != 0) {
+      if (!empty) {
          _children[_model->ideScheme.textFrameId]->show();
       }
       else _children[_model->ideScheme.textFrameId]->hide();
@@ -360,6 +375,20 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    menu->checkItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
    menu->checkItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
    menu->checkItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
+
+   menu->enableMenuItemById(IDM_FILE_SAVE, !empty);
+   menu->enableMenuItemById(IDM_FILE_CLOSE, !empty);
+
+   if (empty) {
+      menu->enableMenuItemById(IDM_EDIT_UNDO, false);
+      menu->enableMenuItemById(IDM_EDIT_REDO, false);
+      
+      menu->enableMenuItemById(IDM_EDIT_CUT, false);
+      menu->enableMenuItemById(IDM_EDIT_COPY, false);
+      menu->enableMenuItemById(IDM_EDIT_PASTE, false);
+      menu->enableMenuItemById(IDM_EDIT_DELETE, false);
+      menu->enableMenuItemById(IDM_EDIT_COMMENT, false);
+   }
 
    onResize();
 }
@@ -638,69 +667,55 @@ void IDEWindow :: onDebuggerUpdate(bool running)
    menu->enableMenuItemById(IDM_DEBUG_STOP, running);
 }
 
-void IDEWindow :: onIDEViewUpdate(bool forced)
-{
-   auto doc = _model->viewModel()->DocView();
-   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-
-   IDESttus status =
-   {
-      doc != nullptr,
-      !_model->projectModel.empty,
-      _controller->projectController.isStarted()
-   };
-
-   if (doc != nullptr) {
-      status.canUndo = doc->canUndo();
-      status.canRedo = doc->canRedo();
-      status.hasSelection = doc->hasSelection();
-   }
-
-   if (forced || status.hasDocument != _ideStatus.hasDocument) {
-      menu->enableMenuItemById(IDM_FILE_SAVE, status.hasDocument);
-      menu->enableMenuItemById(IDM_FILE_CLOSE, status.hasDocument);
-
-      if (!status.hasDocument) {
-         menu->enableMenuItemById(IDM_EDIT_UNDO, status.hasDocument);
-         menu->enableMenuItemById(IDM_EDIT_REDO, status.hasDocument);
-
-         menu->enableMenuItemById(IDM_EDIT_CUT, status.hasDocument);
-         menu->enableMenuItemById(IDM_EDIT_COPY, status.hasDocument);
-         menu->enableMenuItemById(IDM_EDIT_DELETE, status.hasDocument);
-         menu->enableMenuItemById(IDM_EDIT_COMMENT, status.hasDocument);
-      }
-
-      menu->enableMenuItemById(IDM_EDIT_PASTE, status.hasDocument);
-   }
-
-   if (forced || status.hasProject != _ideStatus.hasProject) {
-      menu->enableMenuItemById(IDM_PROJECT_COMPILE, status.hasProject);
-      menu->enableMenuItemById(IDM_DEBUG_RUN, status.hasProject);
-      menu->enableMenuItemById(IDM_DEBUG_STEPINTO, status.hasProject);
-      menu->enableMenuItemById(IDM_DEBUG_STEPOVER, status.hasProject);
-      menu->enableMenuItemById(IDM_DEBUG_RUNTO, status.hasProject);
-   }
-
-   if (forced || status.running != _ideStatus.running) {
-      onDebuggerUpdate(status.running);
-   }
-
-   if (forced || status.hasDocument) {
-      if (status.hasSelection != _ideStatus.hasSelection) {
-         menu->enableMenuItemById(IDM_EDIT_COPY, status.hasProject);
-         menu->enableMenuItemById(IDM_EDIT_CUT, status.hasProject);
-         menu->enableMenuItemById(IDM_EDIT_COMMENT, status.hasProject);
-      }
-      if (status.canUndo != _ideStatus.canUndo) {
-         menu->enableMenuItemById(IDM_EDIT_UNDO, status.canUndo);
-      }
-      if (status.canRedo != _ideStatus.canRedo) {
-         menu->enableMenuItemById(IDM_EDIT_REDO, status.canRedo);
-      }
-   }
-
-   _ideStatus = status;
-}
+//void IDEWindow :: onIDEViewUpdate(bool forced)
+//{
+//   auto doc = _model->viewModel()->DocView();
+//   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+//
+//   IDESttus status =
+//   {
+//      doc != nullptr,
+//      !_model->projectModel.empty,
+//      _controller->projectController.isStarted()
+//   };
+//
+//   if (doc != nullptr) {
+//      status.canUndo = doc->canUndo();
+//      status.canRedo = doc->canRedo();
+//      status.hasSelection = doc->hasSelection();
+//   }
+//
+//   if (forced || status.hasDocument != _ideStatus.hasDocument) {
+//      menu->enableMenuItemById(IDM_FILE_SAVE, status.hasDocument);
+//      menu->enableMenuItemById(IDM_FILE_CLOSE, status.hasDocument);
+//
+//      if (!status.hasDocument) {
+//         menu->enableMenuItemById(IDM_EDIT_UNDO, status.hasDocument);
+//         menu->enableMenuItemById(IDM_EDIT_REDO, status.hasDocument);
+//
+//         menu->enableMenuItemById(IDM_EDIT_CUT, status.hasDocument);
+//         menu->enableMenuItemById(IDM_EDIT_COPY, status.hasDocument);
+//         menu->enableMenuItemById(IDM_EDIT_DELETE, status.hasDocument);
+//         menu->enableMenuItemById(IDM_EDIT_COMMENT, status.hasDocument);
+//      }
+//
+//      menu->enableMenuItemById(IDM_EDIT_PASTE, status.hasDocument);
+//   }
+//
+//   if (forced || status.hasProject != _ideStatus.hasProject) {
+//      menu->enableMenuItemById(IDM_PROJECT_COMPILE, status.hasProject);
+//      menu->enableMenuItemById(IDM_DEBUG_RUN, status.hasProject);
+//      menu->enableMenuItemById(IDM_DEBUG_STEPINTO, status.hasProject);
+//      menu->enableMenuItemById(IDM_DEBUG_STEPOVER, status.hasProject);
+//      menu->enableMenuItemById(IDM_DEBUG_RUNTO, status.hasProject);
+//   }
+//
+//   if (forced || status.running != _ideStatus.running) {
+//      onDebuggerUpdate(status.running);
+//   }
+//
+//   _ideStatus = status;
+//}
 
 bool IDEWindow :: onClose()
 {
@@ -716,4 +731,30 @@ void IDEWindow :: openHelp()
    apiPath.combine(_T("..\\doc\\api\\index.html"));
 
    ShellExecute(NULL, _T("open"), *apiPath, nullptr, nullptr, SW_SHOW);
+}
+
+void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
+{
+   auto docInfo = _model->sourceViewModel.DocView();
+
+   if (changeStatus.modifiedChanged) {
+      ((TextViewFrame*)_children[_model->ideScheme.textFrameId])->onDocumentModeChanged(-1, docInfo->isModified());
+   }
+
+   if (changeStatus.selelectionChanged) {
+      MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+
+      bool isSelected = docInfo->hasSelection();
+
+      menu->enableMenuItemById(IDM_EDIT_COPY, isSelected);
+      menu->enableMenuItemById(IDM_EDIT_CUT, isSelected);
+      menu->enableMenuItemById(IDM_EDIT_COMMENT, isSelected);
+      menu->enableMenuItemById(IDM_EDIT_DELETE, isSelected);
+   }
+   if (changeStatus.textChanged) {
+      MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+
+      menu->enableMenuItemById(IDM_EDIT_UNDO, docInfo->canUndo());
+      menu->enableMenuItemById(IDM_EDIT_REDO, docInfo->canRedo());
+   }
 }
