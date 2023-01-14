@@ -44,7 +44,7 @@ namespace elena_lang
 
       //void onTextChanged(TextViewModelBase* model, DocumentView* view);
 
-      void notifyOnChange(DocumentView* docView, DocumentChangeStatus& status);
+      void notifyOnChange(TextViewModelBase* model, DocumentChangeStatus& status);
       void notifyOnClipboardOperation(ClipboardBase* clipboard);
 
    public:

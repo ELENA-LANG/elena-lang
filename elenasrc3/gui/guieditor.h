@@ -75,8 +75,6 @@ namespace elena_lang
       virtual void beforeDocumentSelect(int index) = 0;
       //virtual void afterDocumentSelect(int index) = 0;
 
-      //virtual void onTextViewChanged() = 0;
-
       virtual void attachListener(TextViewListener* listener) = 0;
 
       virtual void attachDocListener(DocumentNotifier* listener) = 0;
@@ -103,6 +101,11 @@ namespace elena_lang
       virtual pos_t getDocumentCount() = 0;
 
       virtual void resize(Point size) = 0;
+
+      virtual void notifyOnChange(DocumentChangeStatus& status)
+      {
+         _currentView->notifyOnChange(status);
+      }
 
       bool isAssigned() const
       {

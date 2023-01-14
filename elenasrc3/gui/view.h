@@ -60,8 +60,6 @@ namespace elena_lang
    public:
       //void afterDocumentSelect(int index) override;
 
-      //void onTextViewChanged() override;
-
       void attachListener(TextViewListener* listener) override;
 
       void attachDocListener(DocumentNotifier* listener) override;

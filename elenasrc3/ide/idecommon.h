@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x0039
+#define IDE_REVISION_NUMBER                           0x003A
 
 namespace elena_lang
 {
@@ -33,10 +33,10 @@ namespace elena_lang
    constexpr auto NOTIFY_CURRENTVIEW_CHANGED             = 2;
    //constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
    //constexpr auto NOTIFY_LAYOUT_CHANGED               = 5;
-   //constexpr auto NOTIFY_ERROR_HIGHLIGHT_ROW          = 8;
    //constexpr auto NOTIFY_ACTIVATE_EDITFRAME           = 9;
    //constexpr auto NOTIFY_START_COMPILATION            = 10;
    //constexpr auto NOTIFY_PROJECTMODEL                 = 11;
+   constexpr int NOTIFY_ERROR_SEL                        = 7;
    constexpr int NOTIFY_COMPILATION_RESULT               = 8;
    constexpr int NOTIFY_SHOW_RESULT                      = 9;
    constexpr int NOTIFY_TEXTFRAME_SEL                    = 10;

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     SourceViewModel implementation File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "editframe.h"
@@ -79,9 +79,19 @@ void SourceViewModel :: clearErrorLine()
    }
    errorRow = -1;
 }
-//
-//void SourceViewModel :: onModelChanged()
-//{
-//   if (errorRow != -1)
-//      clearErrorLine();
-//}
+
+void SourceViewModel :: notifyOnChange(DocumentChangeStatus& status)
+{
+   if (errorRow != -1 && (status.textChanged || status.caretChanged)) {
+      clearErrorLine();
+      status.formatterChanged = true;
+   }
+         
+   TextViewModel::notifyOnChange(status);
+}
+
+void SourceViewModel::clearDocumentView()
+{
+   TextViewModel::clearDocumentView();
+   errorRow = -1;
+}

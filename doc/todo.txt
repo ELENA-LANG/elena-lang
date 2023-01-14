@@ -5,16 +5,12 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * ide : compile the project; message - on success / warning / errors
     * ide : debugger - status - running / stopped
 
     * ide : refresh screen after comment the block
-    * ide : tab - should be updated only once after inserting all tabs
-    * ide - review on change events : after editor change / debug step
-    * ide : cursor coordinates
-    * ide : show success, error, warning after the compilation
+    * ide : change status to ready when writing / selecting files
 
-    * api functionality for existing classes : StringEnumerator
+    * api functionality for existing classes : WideString
     * ide - close all / close all but active
     * elena vm : helloworld sample x86
     * ldoc : recognize template based type - for the method output

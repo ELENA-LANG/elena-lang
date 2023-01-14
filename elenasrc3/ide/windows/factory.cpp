@@ -195,7 +195,7 @@ ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase*
 
 ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* notifier)
 {
-   MessageLog* log = new MessageLog(notifier, /*NOTIFY_ERROR_HIGHLIGHT_ROW*/0);
+   MessageLog* log = new MessageLog(notifier, NOTIFY_ERROR_SEL);
    log->createControl(_instance, owner);
 
    return log;

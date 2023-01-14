@@ -306,29 +306,127 @@ public const struct String : BaseValue,
 
 // --- StringEnumerator ---
 
-class StringEnumerator
+class StringEnumerator : Enumerator<char>
 {
    string         literal;
    Reference<int> index;
    Reference<int> diff;
    char           char;  
 
-   constructor(string a)
+   constructor(string s)
    {
       literal := s;
       index := -1;
       diff := 1;
       char := $0;
    }
+
+   reset()
+   {
+      index.Value := -1;
+      diff.Value := 1
+   }
+
+   bool next()
+   {
+      int len := literal.Length;
+        
+      index.append(*diff);
+        
+      int i := *index;
+      if (i < len)
+      {
+         char := literal[i];
+                
+         diff.Value := char.Length;
+                
+         ^ true
+      };
+
+      diff.Value := 0;
+      char := $0;
+
+      ^ false
+   }
+
+   Enumerator cast() = new Enumerator
+   {
+      embeddable dispatch() => self;
+   };
+   
+   enumerable() = literal;
+
+   char Value = char;
 }
 
 // --- StringIndexer ---
 
-class StringIndexer
+class StringIndexer : Indexer<char>
 {
-   constructor(string a)
+   string         literal;
+   Reference<int> index;
+
+   constructor(string s)
    {
+      literal := s;
+      index := 0;
    }
+
+   get bool Available()
+   {
+      int len := literal.Length;
+      int val := *index;
+        
+      ^ val < len
+   }
+   
+   get char Value()
+   {
+      int val := *index;
+      char ch := literal[val];
+
+      ^ ch
+   }
+   
+   set Value(char ch)
+   {
+      system'NotSupportedException.raise()
+   }
+
+   int Index
+   {
+      /// Reads the current index and saves it into an output parameter
+      get()
+      {
+         int retVal := *index;
+            
+         ^ retVal
+      }
+        
+      /// Sets the index by specified value
+      set(val)
+      {
+         index.Value := val
+      }
+   }
+   
+   appendIndex(int val)
+   {
+      index.append(val)
+   }
+    
+   int Length
+   {
+      /// Reads the length to the output parameter    
+      get()
+      {
+         int retVal := literal.Length;
+            
+         ^ retVal
+      }
+   }
+        
+   Indexer cast() = new Indexer{ embeddable dispatch() => self; };   
 }
 
 // --- WideString ---

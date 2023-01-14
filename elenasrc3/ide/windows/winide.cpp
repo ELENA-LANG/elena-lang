@@ -388,6 +388,7 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
       menu->enableMenuItemById(IDM_EDIT_DELETE, false);
       menu->enableMenuItemById(IDM_EDIT_COMMENT, false);
    }
+   else menu->enableMenuItemById(IDM_EDIT_PASTE, true);
 
    onResize();
 }
@@ -568,9 +569,6 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
    //   case NOTIFY_LAYOUT_CHANGED:
    //      onLayoutChange();
    //      break;
-   //   case NOTIFY_ERROR_HIGHLIGHT_ROW:
-   //      onErrorHighlight(hdr->extParam2);
-   //      break;
    //   case NOTIFY_START_COMPILATION:
    //      onComilationStart();
    //      break;
@@ -624,6 +622,9 @@ void IDEWindow :: onSelection(SelectionNMHDR* rec)
       case NOTIFY_SHOW_RESULT:
          openResultTab((int)rec->param);
          break;
+      case NOTIFY_ERROR_SEL:
+         onErrorHighlight((int)rec->param);
+         break;
       default:
          break;
    }
@@ -660,12 +661,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case TCN_SELCHANGE:
          onTabSelChanged(hdr->hwndFrom);
          break;
-   //   case NM_DBLCLK:
-   //      onDoubleClick(hdr);
-   //      break;
-   //   case NMHDR_Message:
-   //      onNotifyMessage((ExtNMHDR*)hdr);
-   //      break;
+      case NM_DBLCLK:
+         onDoubleClick(hdr);
+         break;
       case TVN_SELCHANGED:
          onTreeSelChanged(hdr->hwndFrom);
          break;

@@ -90,7 +90,7 @@ void TextViewController :: indent(TextViewModelBase* model)
       else docView->tabbing(status, ' ', _settings.tabSize, true);
    }
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: undo(TextViewModelBase* model)
@@ -100,7 +100,7 @@ void TextViewController :: undo(TextViewModelBase* model)
 
    docView->undo(status);
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: redo(TextViewModelBase* model)
@@ -110,7 +110,7 @@ void TextViewController :: redo(TextViewModelBase* model)
 
    docView->redo(status);
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 bool TextViewController :: copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard)
@@ -138,7 +138,7 @@ void TextViewController :: pasteFromClipboard(TextViewModelBase* model, Clipboar
    if (!docView->isReadOnly()) {
       clipboard->pasteFromClipboard(status, docView);
 
-      notifyOnChange(docView, status);
+      notifyOnChange(model, status);
    }
 }
 
@@ -150,7 +150,7 @@ bool TextViewController :: insertNewLine(TextViewModelBase* model)
       docView->eraseSelection(status);
       docView->insertNewLine(status);
 
-      notifyOnChange(docView, status);
+      notifyOnChange(model, status);
 
       return true;
    }
@@ -166,7 +166,7 @@ bool TextViewController :: insertChar(TextViewModelBase* model, text_c ch)
       docView->eraseSelection(status);
       docView->insertChar(status, ch);
 
-      notifyOnChange(docView, status);
+      notifyOnChange(model, status);
 
       return true;
    }
@@ -184,7 +184,7 @@ bool TextViewController :: eraseChar(TextViewModelBase* model, bool moveback)
       }
       else docView->eraseChar(status, moveback);
 
-      notifyOnChange(docView, status);
+      notifyOnChange(model, status);
 
       return true;
    }
@@ -200,7 +200,7 @@ void TextViewController :: deleteText(TextViewModelBase* model)
       docView->eraseSelection(status);
    }
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: insertBlockText(TextViewModelBase* model, const text_t s, size_t length)
@@ -211,7 +211,7 @@ void TextViewController :: insertBlockText(TextViewModelBase* model, const text_
       docView->blockInserting(status, s, length);
    }
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -224,7 +224,7 @@ void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift,
    }
    else docView->moveDown(status, kbShift);
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -237,7 +237,7 @@ void TextViewController :: moveCaretLeft(TextViewModelBase* model, bool kbShift,
    }
    else docView->moveLeft(status, kbShift);
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: selectWord(TextViewModelBase* model)
@@ -248,17 +248,12 @@ void TextViewController :: selectWord(TextViewModelBase* model)
    docView->moveLeftToken(status, false);
    docView->moveRightToken(status, true, true);
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
-void TextViewController :: notifyOnChange(DocumentView* docView, DocumentChangeStatus& changeStatus)
+void TextViewController :: notifyOnChange(TextViewModelBase* model, DocumentChangeStatus& changeStatus)
 {
-   docView->notifyOnChange(changeStatus);
-
-   //NotificationStatus status = NONE_CHANGED;
-   //if (changeStatus.)
-
-   //_notifier->notify(NOTIFY_CURRENTVIEW_CHANGED, status);
+   model->notifyOnChange(changeStatus);
 }
 
 void TextViewController :: notifyOnClipboardOperation(ClipboardBase* clipboard)
@@ -276,7 +271,7 @@ void TextViewController :: moveCaretRight(TextViewModelBase* model, bool kbShift
    }
    else docView->moveRight(status, kbShift);
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -289,7 +284,7 @@ void TextViewController :: moveCaretUp(TextViewModelBase* model, bool kbShift, b
    }
    else docView->moveFrameUp(status);
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: moveCaretHome(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -302,7 +297,7 @@ void TextViewController :: moveCaretHome(TextViewModelBase* model, bool kbShift,
    }
    else docView->moveHome(status, kbShift);
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: moveCaretEnd(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -315,7 +310,7 @@ void TextViewController :: moveCaretEnd(TextViewModelBase* model, bool kbShift, 
    }
    else docView->moveLast(status, kbShift);
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: movePageDown(TextViewModelBase* model, bool kbShift)
@@ -325,7 +320,7 @@ void TextViewController :: movePageDown(TextViewModelBase* model, bool kbShift)
 
    docView->movePageDown(status, kbShift);
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: movePageUp(TextViewModelBase* model, bool kbShift)
@@ -335,7 +330,7 @@ void TextViewController :: movePageUp(TextViewModelBase* model, bool kbShift)
 
    docView->movePageUp(status, kbShift);
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift)
@@ -345,7 +340,7 @@ void TextViewController :: moveToFrame(TextViewModelBase* model, int col, int ro
 
    docView->moveToFrame(status, col, row, kbShift);
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }
 
 void TextViewController :: resizeModel(TextViewModelBase* model, Point size)
@@ -359,5 +354,5 @@ void TextViewController :: resizeModel(TextViewModelBase* model, Point size)
       status.frameChanged = true;
    }
 
-   notifyOnChange(docView, status);
+   notifyOnChange(model, status);
 }

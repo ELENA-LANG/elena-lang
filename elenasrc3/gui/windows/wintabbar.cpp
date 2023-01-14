@@ -295,7 +295,7 @@ void TabBar :: setRectangle(Rectangle rec)
    }
 }
 
-void TabBar :: refresh()
+void TabBar :: showCurrentTab()
 {
    int index = getCurrentIndex();
    int current = 0;
@@ -308,7 +308,10 @@ void TabBar :: refresh()
 
       current++;
    }
+}
 
+void TabBar :: refresh()
+{
    if (_current)
       _current->refresh();
 }

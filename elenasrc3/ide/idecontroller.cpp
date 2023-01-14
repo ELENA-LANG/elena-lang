@@ -122,8 +122,6 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
    }
 }
 
-
-
 path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& name)
 {
    size_t projectPathLen = model->projectPath.length();
@@ -919,13 +917,14 @@ void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBa
 
 void IDEController :: highlightError(IDEModel* model, int row, int column, path_t path)
 {
-   //PathString fullPath(*model->projectModel.projectPath, path);
+   PathString fullPath(*model->projectModel.projectPath, path);
 
-   //openFile(model, *fullPath);
+   NotificationStatus status = NONE_CHANGED;
+   openFile(model, *fullPath, status);
 
-   //model->viewModel()->setErrorLine(row, column, true);
+   model->viewModel()->setErrorLine(row, column, true);
 
-   //_notifier->notifyMessage(NOTIFY_ACTIVATE_EDITFRAME);
+   _notifier->notify(NOTIFY_IDE_CHANGE, status);
 }
 
 void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode, 
