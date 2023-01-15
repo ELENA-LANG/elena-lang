@@ -74,6 +74,7 @@ namespace elena_lang
       void onComilationStart();
       void onCompilationEnd(int exitCode);
       void onErrorHighlight(int index);
+      void onDebugResult(int code);
 
       void onProjectChange(bool empty);
       void onProjectViewSel(size_t index);
@@ -103,7 +104,7 @@ namespace elena_lang
       void openHelp();
 
       void onIDEViewUpdate(bool forced);
-      void onDebuggerUpdate(bool running);
+      void onDebuggerUpdate(StatusNMHDR* rec);
       void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
 
    public:

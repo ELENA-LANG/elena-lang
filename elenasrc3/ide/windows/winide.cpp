@@ -417,6 +417,9 @@ void IDEWindow :: onIDEChange(NotificationStatus status)
       _children[_model->ideScheme.statusBar]->refresh();
    }
 
+   if (test(status, IDE_COMPILATION_STARTED))
+      onComilationStart();
+
    //onResize();
 
    //onIDEViewUpdate(true);
@@ -523,6 +526,9 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
       case NOTIFY_IDE_CHANGE:
          onIDEChange(rec->status);
          break;
+      case NOTIFY_DEBUG_CHANGE:
+         onDebuggerUpdate(rec);
+         break;
       default:
          break;
    }
@@ -568,9 +574,6 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
    //      break;
    //   case NOTIFY_LAYOUT_CHANGED:
    //      onLayoutChange();
-   //      break;
-   //   case NOTIFY_START_COMPILATION:
-   //      onComilationStart();
    //      break;
    //   case NOTIFY_REFRESH:
    //      onChildRefresh(hdr->extParam2);
@@ -630,11 +633,30 @@ void IDEWindow :: onSelection(SelectionNMHDR* rec)
    }
 }
 
+void IDEWindow :: onDebugResult(int code)
+{
+   switch (code) {
+      case DEBUGGER_STOPPED:
+      {
+         _controller->onDebuggerStop(_model);
+
+         MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+         menu->enableMenuItemById(IDM_DEBUG_STOP, true);
+         break;
+      }
+      default:
+         break;
+   }
+}
+
 void IDEWindow :: onComplition(CompletionNMHDR* rec)
 {
    switch (rec->code) {
       case NOTIFY_COMPILATION_RESULT:
          onCompilationEnd(rec->param);
+         break;
+      case NOTIFY_DEBUGGER_RESULT:
+         onDebugResult(rec->param);
          break;
       default:
          break;
@@ -672,11 +694,18 @@ void IDEWindow :: onNotify(NMHDR* hdr)
    }
 }
 
-void IDEWindow :: onDebuggerUpdate(bool running)
+void IDEWindow :: onDebuggerUpdate(StatusNMHDR* rec)
 {
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
 
-   menu->enableMenuItemById(IDM_DEBUG_STOP, running);
+   menu->enableMenuItemById(IDM_DEBUG_STOP, true);
+
+   if (test(rec->status, DEBUGWATCH_CHANGED)) {
+      onDebugWatch();
+   }
+   if (test(rec->status, FRAME_CHANGED)) {
+      onTextFrameChange(rec->status);
+   }
 }
 
 //void IDEWindow :: onIDEViewUpdate(bool forced)

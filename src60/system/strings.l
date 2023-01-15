@@ -304,6 +304,8 @@ public const struct String : BaseValue,
    string clone() = String.copy(self);
 }
 
+//public const string emptyString = String.MinValue;
+
 // --- StringEnumerator ---
 
 class StringEnumerator : Enumerator<char>
@@ -434,6 +436,8 @@ class StringIndexer : Indexer<char>
 public const struct WideString //: BaseValue
 {
     __string short[] theArray;
+
+
 
     int Length
     {

@@ -412,6 +412,8 @@ namespace elena_lang
          ResolvedMap      extensionDispatchers;
 //         ExtensionMap     declaredExtensions;
 
+         Map<ref_t, int>  intConstants;
+
          Visibility       defaultVisibility;
 
          ErrorProcessor*  errorProcessor;
@@ -433,6 +435,7 @@ namespace elena_lang
 
          ObjectInfo defineObjectInfo(ref_t reference, ExpressionAttribute mode, bool checkMode);
          ObjectInfo definePredefined(ref_t reference, ExpressionAttribute mode);
+         ObjectInfo defineConstant(SymbolInfo info);
 
          ref_t resolveImplicitIdentifier(ustr_t name, bool referenceOne, bool innnerMost);
 
@@ -443,13 +446,19 @@ namespace elena_lang
          ObjectInfo mapWeakReference(ustr_t identifier, bool directResolved);
          ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode) override;
 
+         void defineIntConstant(ref_t reference, int value)
+         {
+            intConstants.add(reference, value);
+         }
+
          NamespaceScope(ModuleScopeBase* moduleScope, ErrorProcessor* errorProcessor, CompilerLogic* compilerLogic) :
             Scope(nullptr),
             forwards(0),
             importedNs(nullptr),
             extensions({}),
             extensionTargets(INVALID_REF),
-            extensionDispatchers(INVALID_REF)
+            extensionDispatchers(INVALID_REF),
+            intConstants(0)
             //declaredExtensions({})
          {
             this->moduleScope = moduleScope;

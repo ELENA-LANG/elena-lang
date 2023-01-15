@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller header File
-//                                             (C)2005-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECONTROLLER_H
@@ -188,6 +188,8 @@ namespace elena_lang
 
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
+      void onDebuggerStop(IDEModel* model);
+
       bool doExit(DialogBase& dialog, IDEModel* model);
 
       bool onClose(DialogBase& dialog, IDEModel* model);

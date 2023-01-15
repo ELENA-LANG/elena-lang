@@ -27,6 +27,7 @@ namespace elena_lang
    constexpr auto ERROR_RUN_NEED_TARGET               = 0x0001;
    constexpr auto ERROR_DEBUG_FILE_NOT_FOUND_COMPILE  = 0x0002;
    constexpr auto ERROR_RUN_NEED_RECOMPILE            = 0x0003;
+   constexpr auto DEBUGGER_STOPPED                    = 0x0004;
 
    // --- Notification codes ---
    //constexpr auto NOTIFY_SOURCEMODEL                  = 1;
@@ -36,6 +37,7 @@ namespace elena_lang
    //constexpr auto NOTIFY_ACTIVATE_EDITFRAME           = 9;
    //constexpr auto NOTIFY_START_COMPILATION            = 10;
    //constexpr auto NOTIFY_PROJECTMODEL                 = 11;
+   constexpr int NOTIFY_DEBUGGER_RESULT                  = 6;
    constexpr int NOTIFY_ERROR_SEL                        = 7;
    constexpr int NOTIFY_COMPILATION_RESULT               = 8;
    constexpr int NOTIFY_SHOW_RESULT                      = 9;
@@ -56,7 +58,7 @@ namespace elena_lang
    constexpr NotificationStatus PROJECT_CHANGED          = 0x00008;
    constexpr NotificationStatus FRAME_VISIBILITY_CHANGED = 0x00010;
    constexpr NotificationStatus DEBUGWATCH_CHANGED       = 0x00020;
-   constexpr NotificationStatus DOCVIEW_CHANGED          = 0x00040;
+   constexpr NotificationStatus IDE_COMPILATION_STARTED  = 0x00040;
    constexpr NotificationStatus OUTPUT_SHOWN             = 0x00080;
 
    // --- PathSettings ---
@@ -77,6 +79,7 @@ namespace elena_lang
       CompiledWithWarnings = 6,
       CompiledWithErrors   = 7,
       Broken               = 8,
+      DebuggerStopped      = 9,
    };
 
    inline bool testIDEStatus(IDEStatus value, IDEStatus mask)

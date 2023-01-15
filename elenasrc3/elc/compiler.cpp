@@ -293,7 +293,8 @@ Compiler::NamespaceScope :: NamespaceScope(NamespaceScope* parent) :
    importedNs(nullptr),
    extensions({}),
    extensionTargets(INVALID_REF),
-   extensionDispatchers(INVALID_REF)
+   extensionDispatchers(INVALID_REF),
+   intConstants(0)
    //declaredExtensions({})
 {
    nsName.copy(*parent->nsName);
@@ -331,6 +332,15 @@ void Compiler::NamespaceScope :: raiseError(int message, SyntaxNode terminal)
 void Compiler::NamespaceScope::raiseWarning(int level, int message, SyntaxNode terminal)
 {
    errorProcessor->raiseTerminalWarning(level, message, *sourcePath, terminal);
+}
+
+ObjectInfo Compiler::NamespaceScope :: defineConstant(SymbolInfo info)
+{
+   if (info.typeRef == moduleScope->buildins.intReference && intConstants.exist(info.valueRef)) {
+      int value = intConstants.get(info.valueRef);
+
+      return { ObjectKind::IntLiteral, { V_INT32 }, info.valueRef, value };
+   }
 }
 
 ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, ExpressionAttribute mode, bool checkMode)
@@ -412,6 +422,8 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, Express
                   switch (symbolInfo.symbolType) {
                      case SymbolType::Singleton:
                         return defineObjectInfo(symbolInfo.valueRef, mode, true);
+                     case SymbolType::Constant:
+                        return defineConstant(symbolInfo);
                      default:
                         break;
                   }
@@ -1519,6 +1531,7 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
       case ObjectKind::Singleton:
          return retVal.reference;
       case ObjectKind::StringLiteral:
+      case ObjectKind::IntLiteral:
          break;
       default:
          return 0;
@@ -1529,6 +1542,7 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
    if (!constRef)
       constRef = scope.moduleScope->mapAnonymous("const");
 
+   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
    MemoryWriter dataWriter(module->mapSection(constRef | mskConstant, false));
    switch (retVal.kind) {
       case ObjectKind::StringLiteral:
@@ -1540,6 +1554,15 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
          else dataWriter.writeString(value, value.length_pos() + 1);
 
          retVal.typeInfo = { scope.moduleScope->buildins.literalReference };
+         break;
+      }
+      case ObjectKind::IntLiteral:
+      {
+         nsScope->defineIntConstant(retVal.reference, retVal.extra);
+
+         dataWriter.writeDWord(retVal.extra);
+
+         retVal.typeInfo = { scope.moduleScope->buildins.intReference };
          break;
       }
       default:
@@ -3515,6 +3538,13 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node)
 
    if (constant) {
       scope.info.symbolType = SymbolType::Constant;
+
+      Interpreter interpreter(scope.moduleScope, _logic);
+      ObjectInfo operand = evalExpression(interpreter, scope, node.findChild(SyntaxKey::GetExpression).firstChild());
+      if (operand.kind == ObjectKind::IntLiteral) {
+         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+         nsScope->defineIntConstant(operand.reference, operand.extra);
+      }
    }
 }
 
@@ -6883,6 +6913,7 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
             scope.info.typeRef = retrieveStrongType(scope, retVal);
             break;
          case ObjectKind::StringLiteral:
+         case ObjectKind::IntLiteral:
             scope.info.symbolType = SymbolType::Constant;
             scope.info.valueRef = retVal.reference;
             scope.info.typeRef = retrieveStrongType(scope, retVal);

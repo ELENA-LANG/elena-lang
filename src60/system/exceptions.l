@@ -60,3 +60,14 @@ public class MethodNotFoundException : Exception
    {
    }
 }
+
+public class NotSupportedException : Exception
+{
+   /// Creates the exception
+   constructor new()
+      <= new("Operation is not supported");
+        
+   /// Creates the exception
+   constructor new(string message)
+      <= new(message);
+}

@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //    its helpers
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -657,21 +657,20 @@ void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName
          _sourceModel->setTraceLine(lineInfo->row, true);
       }
 
-      _notifier->notify(NOTIFY_DEBUG_CHANGE, DEBUGWATCH_CHANGED | DOCVIEW_CHANGED);
+      _notifier->notify(NOTIFY_DEBUG_CHANGE, DEBUGWATCH_CHANGED | FRAME_CHANGED);
    }
 }
 
 void DebugController :: onStop()
 {
-   //_started = false;
-   //_process->reset();
-   //_provider.clear();
+   _started = false;
+   _process->reset();
+   _provider.clear();
 
-   //_currentModule = nullptr;
-   //_currentPath = nullptr;
+   _currentModule = nullptr;
+   _currentPath = nullptr;
 
-   //_sourceModel->clearTraceLine();
-   //_notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
+   _notifier->notifyCompletion(NOTIFY_DEBUGGER_RESULT, DEBUGGER_STOPPED);
 }
 
 void DebugController :: run()

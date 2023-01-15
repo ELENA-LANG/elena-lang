@@ -174,41 +174,41 @@ void ProjectController :: defineSourceName(ProjectModel* model, path_t path, Ref
 
 bool ProjectController :: startDebugger(ProjectModel& model)
 {
-   //ustr_t target = model.getTarget();
-   //ustr_t arguments = model.getArguments();
+   ustr_t target = model.getTarget();
+   ustr_t arguments = model.getArguments();
 
-   //if (!target.empty()) {
-   //   PathString exePath(*model.projectPath, target);
+   if (!target.empty()) {
+      PathString exePath(*model.projectPath, target);
 
-   //   // provide the whole command line including the executable path and name
-   //   PathString commandLine(exePath);
-   //   commandLine.append(_T(" "));
-   //   commandLine.append(arguments);
+      // provide the whole command line including the executable path and name
+      PathString commandLine(exePath);
+      commandLine.append(_T(" "));
+      commandLine.append(arguments);
 
-   //   bool debugMode = model.getDebugMode();
-   //   if (debugMode) {
-   //      if (!_debugController.start(exePath.str(), commandLine.str(), debugMode/*, _breakpoints */)) {
-   //         notifyMessage(ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
+      bool debugMode = model.getDebugMode();
+      if (debugMode) {
+         if (!_debugController.start(exePath.str(), commandLine.str(), debugMode/*, _breakpoints */)) {
+            notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
 
-   //         return false;
-   //      }
+            return false;
+         }
 
-   //   }
-   //   else {
-   //      if (!_debugController.start(exePath.str(), commandLine.str(), false/*, _breakpoints */)) {
-   //         notifyMessage(ERROR_RUN_NEED_RECOMPILE);
+      }
+      else {
+         if (!_debugController.start(exePath.str(), commandLine.str(), false/*, _breakpoints */)) {
+            notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_RECOMPILE);
 
-   //         return false;
-   //      }
-   //   }
+            return false;
+         }
+      }
 
-   //   return true;
-   //}
-   //else {
-   //   notifyMessage(ERROR_RUN_NEED_TARGET);
+      return true;
+   }
+   else {
+      notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_TARGET);
 
       return false;
-//   }
+   }
 }
 
 bool ProjectController :: isOutaged(bool noWarning)
@@ -548,11 +548,15 @@ void IDEController :: init(IDEModel* model)
 bool IDEController :: selectSource(ProjectModel* model, SourceViewModel* sourceModel,
    ustr_t ns, path_t sourcePath)
 {
-   //PathString fullPath;
-   //projectController.defineFullPath(*model, ns, sourcePath, fullPath);
+   PathString fullPath;
+   projectController.defineFullPath(*model, ns, sourcePath, fullPath);
 
-   //return openFile(sourceModel, model, *fullPath);
+   NotificationStatus status = NONE_CHANGED;
+   if (openFile(sourceModel, model, *fullPath, status)) {
+      _notifier->notify(NOTIFY_IDE_CHANGE, status);
 
+      return true;
+   }
    return false;
 }
 
@@ -828,7 +832,7 @@ void IDEController :: onCompilationStart(IDEModel* model)
 {
    model->status = IDEStatus::Compiling;
 
-   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
+   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED | IDE_COMPILATION_STARTED);
    _notifier->notifySelection(NOTIFY_SHOW_RESULT, model->ideScheme.compilerOutputControl);
 }
 
@@ -932,6 +936,8 @@ void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode,
 {
    if (exitCode == 0) {
       model->status = IDEStatus::CompiledSuccessfully;
+
+      _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
    }
    else {
       if (exitCode == -1) {
@@ -972,4 +978,12 @@ bool IDEController :: onClose(DialogBase& dialog, IDEModel* model)
    }
 
    return result;
+}
+
+void IDEController :: onDebuggerStop(IDEModel* model)
+{
+   model->sourceViewModel.clearTraceLine();
+
+   model->status = IDEStatus::DebuggerStopped;
+   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED | FRAME_CHANGED);
 }
