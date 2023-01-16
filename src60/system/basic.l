@@ -35,7 +35,7 @@ public interface BoolValue
 
    static bool MinValue
                   : info<"Returns the default value">
-      = false;
+      = BoolValue.false;
 
    abstract if(trueAction)
                   : info<"Executes trueAction if the value is true;<br/>has to be implemented">;

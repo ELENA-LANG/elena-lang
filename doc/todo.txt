@@ -5,14 +5,11 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * elena : recognize const static method - returns directly
-    * elena : emptyString
+    * api functionality for existing classes : WideString
 
     * ide : splitter
     * ide : refresh screen after comment the block
     * ide : change status to ready when writing / selecting files
-
-    * api functionality for existing classes : WideString
     * ide - close all / close all but active
     * elena vm : helloworld sample x86
     * ldoc : recognize template based type - for the method output
@@ -220,7 +217,6 @@ Backlog:
     * operator names should be configurable
     * optimize String.prop:Length[1]
     * replace xassign with assign for the field assignment
-    * use constant symbols directly
     * compile time method dispatching
     * generating template extensions
     * if statements with single statement
@@ -228,8 +224,6 @@ Backlog:
     * do load self for expression with ret statement
     * byte / short should support plus / minus operator
     * copydpn : optimization (by 4, 8, and if less then 8)
-    * true / false symbol - replace symbol call with constant reference
-    * optimization: resolve const static properties directly
     * if virtual multi-method handler is overridden - redirect to the parent one
     * verifyMultimethods implements
     * explicit multimethod

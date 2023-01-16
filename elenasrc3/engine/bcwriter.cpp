@@ -315,6 +315,11 @@ void charLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskCharacterRef);
 }
 
+void constant(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskConstant);
+}
+
 void goingToEOP(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    //gotoEnd(tape, baFirstLabel);
@@ -1145,7 +1150,7 @@ ByteCodeWriter::Saver commands[] =
    intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
    realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
 
-   genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp
+   genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant
 };
 
 // --- ByteCodeWriter ---

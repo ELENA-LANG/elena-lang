@@ -2832,7 +2832,7 @@ void JITCompiler32 :: writeVariable(MemoryWriter& writer)
    writer.writeDWord(0);
 }
 
-void JITCompiler32 :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo)
+void JITCompiler32 :: writeDump(MemoryWriter& writer, SectionInfo* sectionInfo)
 {
    writer.write(sectionInfo->section->get(0), sectionInfo->section->length());
 
@@ -3244,7 +3244,7 @@ void JITCompiler64 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, 
    }
 }
 
-void JITCompiler64 :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo)
+void JITCompiler64 :: writeDump(MemoryWriter& writer, SectionInfo* sectionInfo)
 {
    writer.write(sectionInfo->section->get(0), sectionInfo->section->length());
 

@@ -1038,8 +1038,7 @@ addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo
 
    _mapper->mapReference(referenceInfo, vaddress, sectionMask);
 
-   JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
-   _compiler->writeDump(&helper, writer, &sectionInfo);
+   _compiler->writeDump(writer, &sectionInfo);
 
    fixReferences(references, image);
 
@@ -1293,6 +1292,9 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
          case mskCharacterRef:
          case mskMssgLiteralRef:
             address = resolveConstant(referenceInfo, sectionMask);
+            break;
+         case mskConstant:
+            address = resolveConstantDump(referenceInfo, sectionMask, false);
             break;
          case mskConstArray:
             address = resolveConstantArray(referenceInfo, sectionMask, silentMode);

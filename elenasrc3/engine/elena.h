@@ -513,7 +513,7 @@ namespace elena_lang
       virtual void writeWideLiteral(MemoryWriter& writer, wstr_t value) = 0;
       virtual void writeChar32(MemoryWriter& writer, ustr_t value) = 0;
       virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
-      virtual void writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
+      virtual void writeDump(MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
       virtual void writeVariable(MemoryWriter& writer) = 0;
       virtual void writeMessage(MemoryWriter& writer, mssg_t message) = 0;
 

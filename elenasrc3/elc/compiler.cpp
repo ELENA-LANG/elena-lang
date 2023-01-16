@@ -341,6 +341,7 @@ ObjectInfo Compiler::NamespaceScope :: defineConstant(SymbolInfo info)
 
       return { ObjectKind::IntLiteral, { V_INT32 }, info.valueRef, value };
    }
+   return { ObjectKind::Constant, { info.typeRef }, info.valueRef };
 }
 
 ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, ExpressionAttribute mode, bool checkMode)
@@ -423,7 +424,11 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, Express
                      case SymbolType::Singleton:
                         return defineObjectInfo(symbolInfo.valueRef, mode, true);
                      case SymbolType::Constant:
-                        return defineConstant(symbolInfo);
+                        if (symbolInfo.valueRef) {
+                           // HOTFIX : ingore declared but not defined constant
+                           return defineConstant(symbolInfo);
+                        }
+                        break;
                      default:
                         break;
                   }
@@ -1529,6 +1534,7 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
    // check if the constant can be resolved immediately
    switch (retVal.kind) {
       case ObjectKind::Singleton:
+      case ObjectKind::Constant:
          return retVal.reference;
       case ObjectKind::StringLiteral:
       case ObjectKind::IntLiteral:
@@ -1919,7 +1925,8 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == methodKey) {
-         bool withRetOverload = test(current.findChild(SyntaxKey::Hints).arg.reference, (ref_t)MethodHint::RetOverload);
+         ref_t hints = current.findChild(SyntaxKey::Hints).arg.reference;
+         bool withRetOverload = test(hints, (ref_t)MethodHint::RetOverload);
 
          // HOTFIX : methods with ret overload are special case and should not be  part of the overload list
          mssg_t multiMethod = withRetOverload ? 0 : defineMultimethod(scope, current.arg.reference, scope.extensionClassRef != 0);
@@ -1953,7 +1960,8 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
             }
          }
 
-         if (methodKey != SyntaxKey::Constructor) {
+         if (methodKey != SyntaxKey::Constructor && !test(hints, (ref_t)MethodHint::Constant)) {
+            // HOTFIX : do not generate byref handler for methods returning constant value
             mssg_t byRefMethod = withRetOverload ? 0 : defineByRefMethod(scope, current);
             if (byRefMethod) {
                current.appendChild(SyntaxKey::ByRefRetMethod, byRefMethod);
@@ -3079,7 +3087,7 @@ void Compiler :: declareNamespace(NamespaceScope& ns, SyntaxNode node, bool igno
    }
 }
 
-ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id)
+ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors)
 {
    ObjectInfo loperand = {};
    ObjectInfo roperand = {};
@@ -3149,13 +3157,46 @@ ObjectInfo Compiler :: evalObject(Interpreter& interpreter, Scope& scope, Syntax
    return mapTerminal(scope, terminalNode, declaredTypeInfo, mode.attrs);
 }
 
-ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool resolveMode)
+ObjectInfo Compiler :: evalPropertyOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors)
+{
+   SyntaxNode lnode = node.firstChild();
+
+   ObjectInfo loperand = evalObject(interpreter, scope, lnode);
+   mssg_t message = mapMessage(scope, node.findChild(SyntaxKey::Message), true, false, false);
+
+   switch (loperand.kind) {
+      case ObjectKind::Class:
+      {
+         CheckMethodResult result = {};
+         bool found = _logic->resolveCallType(*scope.moduleScope, retrieveStrongType(scope, loperand), message, result);
+         if (result.constRef) {
+            NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+            return nsScope->defineObjectInfo(result.constRef, EAttr::None, true);
+         }
+         break;
+      }
+      default:
+         if (ignoreErrors) {
+            return {};
+         }
+         else scope.raiseError(errCannotEval, node);
+         break;
+   }
+
+   if (ignoreErrors) {
+      return {};
+   }
+   else scope.raiseError(errCannotEval, node);
+}
+
+ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors, bool resolveMode)
 {
    ObjectInfo retVal = {};
 
    switch (node.key) {
       case SyntaxKey::Expression:
-         retVal = evalExpression(interpreter, scope, node.firstChild(SyntaxKey::DeclarationMask), resolveMode);
+         retVal = evalExpression(interpreter, scope, node.firstChild(SyntaxKey::DeclarationMask), ignoreErrors, resolveMode);
          break;
       case SyntaxKey::AssignOperation:
       case SyntaxKey::AddAssignOperation:
@@ -3165,8 +3206,14 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
       case SyntaxKey::Object:
          retVal = evalObject(interpreter, scope, node);
          break;
+      case SyntaxKey::PropertyOperation:
+         retVal = evalPropertyOperation(interpreter, scope, node, ignoreErrors);
+         break;
       default:
-         scope.raiseError(errCannotEval, node);
+         if (ignoreErrors) {
+            return {};
+         }
+         else scope.raiseError(errCannotEval, node);
          break;
    }
 
@@ -3420,6 +3467,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::ConstantRole:
          writer.appendNode(BuildKey::ClassReference, info.reference);
          break;
+      case ObjectKind::Constant:
+         writer.appendNode(BuildKey::ConstantReference, info.reference);
+         break;
       case ObjectKind::Param:
       case ObjectKind::SelfLocal:
       case ObjectKind::SuperLocal:
@@ -3540,7 +3590,7 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node)
       scope.info.symbolType = SymbolType::Constant;
 
       Interpreter interpreter(scope.moduleScope, _logic);
-      ObjectInfo operand = evalExpression(interpreter, scope, node.findChild(SyntaxKey::GetExpression).firstChild());
+      ObjectInfo operand = evalExpression(interpreter, scope, node.findChild(SyntaxKey::GetExpression).firstChild(), true);
       if (operand.kind == ObjectKind::IntLiteral) {
          NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
          nsScope->defineIntConstant(operand.reference, operand.extra);
@@ -4444,7 +4494,7 @@ bool Compiler :: evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNo
    Interpreter interpreter(scope.moduleScope, _logic);
    MetaScope metaScope(&scope, Scope::ScopeLevel::Class);
 
-   ObjectInfo retVal = evalExpression(interpreter, metaScope, node, false);
+   ObjectInfo retVal = evalExpression(interpreter, metaScope, node, false, false);
    bool setIndex = false;
    switch (retVal.kind) {
       case ObjectKind::SelfName:
@@ -4811,7 +4861,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    return retVal;
 }
 
-mssg_t Compiler :: mapMessage(ExprScope& scope, SyntaxNode current, bool propertyMode, 
+mssg_t Compiler :: mapMessage(Scope& scope, SyntaxNode current, bool propertyMode, 
    bool extensionMode, bool probeMode)
 {
    ref_t flags = propertyMode ? PROPERTY_MESSAGE : 0;
@@ -6914,6 +6964,11 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
             break;
          case ObjectKind::StringLiteral:
          case ObjectKind::IntLiteral:
+            scope.info.symbolType = SymbolType::Constant;
+            scope.info.valueRef = retVal.reference;
+            scope.info.typeRef = retrieveStrongType(scope, retVal);
+            break;
+         case ObjectKind::Constant:
             scope.info.symbolType = SymbolType::Constant;
             scope.info.valueRef = retVal.reference;
             scope.info.typeRef = retrieveStrongType(scope, retVal);

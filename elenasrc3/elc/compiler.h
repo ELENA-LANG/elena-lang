@@ -70,6 +70,7 @@ namespace elena_lang
       Extension,
       ConstantRole,
       ClassConstant,
+      Constant,
       SelfName,
       MethodName,
       FieldName,
@@ -910,7 +911,7 @@ namespace elena_lang
       ref_t mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, Visibility visibility);
       mssg_t mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef, 
          ref_t flags, ref_t* signature, size_t signatureLen);
-      mssg_t mapMessage(ExprScope& scope, SyntaxNode node, bool propertyMode, bool extensionMode, bool probeMode);
+      mssg_t mapMessage(Scope& scope, SyntaxNode node, bool propertyMode, bool extensionMode, bool probeMode);
 
       ExternalInfo mapExternal(Scope& scope, SyntaxNode node);
       ObjectInfo mapClassSymbol(Scope& scope, ref_t classRef);
@@ -1056,9 +1057,10 @@ namespace elena_lang
 
       void declareExtension(ClassScope& scope, mssg_t message, bool internalOne);
 
-      ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id);
-      ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool resolveMode = true);
+      ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
+      ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors = false, bool resolveMode = true);
       ObjectInfo evalObject(Interpreter& interpreter, Scope& scope, SyntaxNode node);
+      ObjectInfo evalPropertyOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
 
       void evalStatement(MetaScope& scope, SyntaxNode node);
 
