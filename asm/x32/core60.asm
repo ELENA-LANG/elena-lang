@@ -400,6 +400,15 @@ inline %25h
 
 end
 
+// ; wread
+inline %26h
+
+  xor  eax, eax
+  mov  ax, word ptr [esi+edx]
+  mov  dword ptr [ebx], eax
+
+end
+
 // ; xget
 inline %02Eh
 

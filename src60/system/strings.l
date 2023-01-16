@@ -308,7 +308,7 @@ public const string emptyString = String.MinValue;
 
 // --- StringEnumerator ---
 
-class StringEnumerator : Enumerator<char>
+sealed class StringEnumerator : Enumerator<char>
 {
    string         literal;
    Reference<int> index;
@@ -363,7 +363,7 @@ class StringEnumerator : Enumerator<char>
 
 // --- StringIndexer ---
 
-class StringIndexer : Indexer<char>
+sealed class StringIndexer : Indexer<char>
 {
    string         literal;
    Reference<int> index;
@@ -433,21 +433,249 @@ class StringIndexer : Indexer<char>
 
 // --- WideString ---
 
-public const struct WideString //: BaseValue
+public const struct WideString : BaseValue
 {
-    __string short[] theArray;
+   __string short[] array;
 
+   const static wide MinValue
+      = ""w;
 
+   constructor allocate(int size)
+      = new short[](size + 1);
 
-    int Length
-    {
-        /// Reads the literal length into an output parameter
-        get()
-        {
-           int l := $len theArray;
-           l := l - 1;
+   constructor copy(int size, wide s)
+      <= allocate(size)
+   {
+      PrimitiveWideStringOperations.copy(array, 0, size, s);
 
-           ^ l;
-        }
-    }
+      // add tailing zero
+      short z := 0;
+      array[size] := z;
+   }
+
+   /// Creates the literal string with specified length fills with specified character value        
+   constructor fill(int size, char ch)
+      <= allocate(ch.Length * size)
+   {
+      short buffer[4];
+      int chVal := ch.Value;
+      int  length := ch.Length;
+      PrimitiveOperations.copyUTF32(buffer, 0, length);
+        
+      int offs := 0;
+      for (int i := 0, i < size, i := i + 1)
+      {
+         for (int j := 0, j < length, j := j + 1) {
+            array[offs] := buffer[j];
+            offs := offs + 1;
+         }
+      }
+   }
+
+   /// Creates the literal string copy              
+   constructor copy(wide s)
+      <= copy(s.Length, s);
+
+   /// Creates the copy of a subarray        
+   constructor copy(int index, int length, char[] charArray)
+      <= allocate(PrimitiveOperations.calcSubWideStringLength(index, length, charArray))
+   {
+      PrimitiveOperations.copy(this array, index, length, charArray);
+   }
+
+   internal constructor fromShortArray(int index, int size, short[] buffer)
+      <= allocate(size)
+   {
+      PrimitiveOperations.copy(array, index, size, buffer);
+
+      // add tailing zero
+      short z := 0;
+      array[size] := z;
+   }
+
+   string cast()
+   {
+      int        i := 0;
+      int        m := 0;
+      int        page := 0;
+      int        l := self.Length;
+      byte buffer[256];            
+      if (l < 128)
+      {
+         m := byteArrayConvertor.convert(buffer, 0, l, self);
+
+         ^ String.fromByteArray(0, m, buffer)
+      };
+
+      string retVal := String.MinValue;
+      while(l > 0)
+      {
+         page := l;
+         if (page > 256)
+         {
+            page := 256
+         };
+
+         m := byteArrayConvertor.convert(buffer, 0, l, self.Substring(i,page));
+
+         retVal := retVal.add(String.fromByteArray(0, m, buffer));
+
+         i := i + page;
+         l := l - page
+      };
+        
+      ^ retVal      
+   }
+
+   Enumerable<char> cast() = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
+
+   string toPrintable() = self;
+
+   bool equal(o)
+   {
+      var s := cast wide(o) ?? nil;
+      (nil == s)
+         ? { ^ false } : { ^ self.equal(s) }
+   }
+   
+   bool less(o)
+      <= less(cast wide(o));
+
+   bool equal(wide s) : external<system'core_routines'__wstr_equal>;
+
+   bool less(wide s) : external<system'core_routines'__wstr_less>;
+
+   bool equal(char ch)
+      <= equal(cast wide(ch));
+
+   bool less(char ch)
+      <= less(cast wide(ch));
+
+   char at(int index)
+      = PrimitiveOperations.readChar(array, index);
+
+   retoverload short at(int index)
+      = array[index];
+
+   wide add(o)
+      <= add(cast wide(o));
+
+   wide add(BaseVariable v)
+      <= add(*v);
+
+   wide add(wide subs)
+      : info<"Concatinates the values">
+   {
+      int l1 := self.Length;
+      int l2 := subs.Length;
+      string retVal := WideString.allocate(l1 + l2);
+
+      self.copySubS(retVal, self, 0, l1);
+      self.copySubS(retVal, subs, l1, l2);    
+
+      ^ retVal
+   }
+
+   int indexOf(int index, wide literal)
+      : info<"Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1">   
+   {
+      int sublen := literal.Length;
+      int retVal := PrimitiveWideStringOperations.indexOf(self, literal, index, sublen);
+        
+      ^ retVal
+   }
+
+   int indexOf(int index, char ch)
+   {
+      int sublen := self.Length;
+      int retVal := PrimitiveWideStringOperations.indexOf(self, ch, index, sublen);
+        
+      ^ retVal
+   }
+
+   wide insert(int index, wide s)
+      : info<"Inserts the substring into and returns the new one">
+   {
+      int l1 := self.Length;
+      int l2 := s.Length;
+      string retVal := WideString.allocate(l1 + l2);
+
+      self.copySubS(retVal, self, 0, index);
+      self.copySubS(retVal, s, index, l2);    
+      self.copySubS(retVal, self, index + l2, l1 - index, index);
+    
+      ^ retVal;
+   }
+
+   wide insert(int index, char ch)
+      = self.insert(index, cast wide(ch));
+
+   string delete(int index, int length)
+      : info<"Deletes the substring from the object and returns the new one">
+   {
+      int len1 := self.Length;
+      int sindex := index + length;
+      string retVal := WideString.allocate(len1-length);
+
+      self.copySubS(retVal, self, 0, index);
+      self.copySubS(retVal, self, sindex, len1 - length, index);
+    
+      ^ retVal;         
+   }
+
+   string Substring(int index, int length)
+      : info<"Returns the substring">
+   {
+      ^ String.fromByteArray(array, index, length);
+   }
+
+   int save(int index, char[] buffer, int length)
+      = PrimitiveWideStringOperations.save(buffer, self, index, length);
+
+   internal saveToShortArray(int index, short[] buffer, int length)
+      = PrimitiveWideStringOperations.save(buffer, this array, index, length);
+
+   Enumerator<char> enumerator()
+         : info<"Returns the string enumerator">
+      = new WideStringEnumerator(self);
+
+   Indexer<char> indexer() = new WideStringIndexer(self);
+    
+   /// Clones the value
+   wide clone() = WideString.copy(self);
+
+   int Length
+   {
+      /// Reads the literal length into an output parameter
+      get()
+      {
+         int l := $len array;
+         l := l - 1;
+
+         ^ l;
+      }
+   }
+}
+
+// --- emptyWideString ---
+
+/// An empty wide literal value
+public const wide emptyWideString = WideString.MinValue;
+
+// --- WideStringEnumerator ---
+
+sealed class WideStringEnumerator
+{
+   constructor(wide s)
+   {
+   }
+}
+
+// --- WideStringIndexer ---
+
+sealed class WideStringIndexer
+{
+   constructor(wide s)
+   {
+   }
 }

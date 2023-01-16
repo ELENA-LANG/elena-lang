@@ -407,6 +407,16 @@ inline %25h
 
 end
 
+// ; wread
+inline %26h
+
+  mov  rsi, r10  
+  xor  rax, rax
+  mov  ax, word ptr [rsi+rdx]
+  mov  [rbx], rax
+
+end
+
 // ; xget
 inline %02Eh
 

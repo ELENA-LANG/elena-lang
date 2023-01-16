@@ -243,7 +243,7 @@ ROOT_EXPRESSION ::=
 		| ISNIL ^OBJECT SINGLE_EXPRESSION ^ISNIL_OPERATION
 		| eps ^OBJECT
 	}
-	| { string | integer | hexinteger } { 
+	| { string | integer | hexinteger | wide } { 
 		L0 ^OBJECT L0_R 
 		| L3 ^OBJECT MESSAGE MESSAGE_R
 		| L4_O_OP
@@ -283,7 +283,7 @@ EXPRESSION ::=
 		| ISNIL ^OBJECT SINGLE_EXPRESSION ^ISNIL_OPERATION
 		| NESTED_EXPRESSION ^NESTED
 		| eps ^OBJECT }
-	| { string | integer | hexinteger | long | real | character } { 
+	| { string | integer | hexinteger | long | real | character | wide } { 
 		L0 ^OBJECT L0_R 
 		| L3 ^OBJECT L3_R L6_OP?
 		| L4_O_OP

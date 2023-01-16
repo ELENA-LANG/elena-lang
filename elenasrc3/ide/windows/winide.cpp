@@ -191,7 +191,7 @@ void IDEWindow :: pasteFromClipboard()
 
 void IDEWindow :: deleteText()
 {
-   //_controller->sourceController.deleteText(_model->viewModel());
+   _controller->sourceController.deleteText(_model->viewModel());
    //_model->sourceViewModel.onModelChanged();
 }
 
@@ -576,7 +576,7 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
    //      onLayoutChange();
    //      break;
    //   case NOTIFY_REFRESH:
-   //      onChildRefresh(hdr->extParam2);
+   //      
    //      break;
    //   default:
    //      break;
@@ -627,6 +627,9 @@ void IDEWindow :: onSelection(SelectionNMHDR* rec)
          break;
       case NOTIFY_ERROR_SEL:
          onErrorHighlight((int)rec->param);
+         break;
+      case NOTIFY_REFRESH:
+         onChildRefresh((int)rec->param);
          break;
       default:
          break;

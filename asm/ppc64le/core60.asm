@@ -479,6 +479,15 @@ inline %25h
 
 end
 
+// ; wread
+inline %23h
+
+  add     r19, r3, r14
+  lwz     r17, 0(r19)
+  stw     r17, 0(r15)
+
+end
+
 // ; xget
 inline %02Eh
 

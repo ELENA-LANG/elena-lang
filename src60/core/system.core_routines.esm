@@ -357,6 +357,130 @@ labNext:
 
 end
 
+procedure __wstr_equal (s1, s2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[s_len,index,ch,ch2]
+
+  peek       fp:s1
+  nlen       2
+  save       dp:s_len
+
+  peek       fp:s2
+  nlen       2
+  set        dp:s_len
+  xcmp
+  jne        labNotEqual
+
+  sub        n:1
+
+  nsave      dp:index, 0
+
+  peek       fp:s1
+  store      sp:0
+  peek       fp:s2
+  store      sp:1
+
+labCheck:
+  load       dp:index
+  xcmp       dp:s_len
+  jeq        labLoopEnd
+
+  nsave      dp:ch, 0
+  nsave      dp:ch2, 0
+
+  set        dp:ch
+  read       2
+
+  xswap      sp:1
+
+  set        dp:ch2
+  read       2
+
+  load
+  xcmp       dp:ch 
+  jne        labNotEqual
+
+  nadd       dp:index, 1
+  xswap      sp:1
+  jump       labCheck
+
+labLoopEnd:
+  set        class:"system'BoolValue#true"
+  jump       labEnd
+
+labNotEqual:
+   set       class:"system'BoolValue#false"
+
+labEnd:
+  close      []
+
+end
+
+procedure __wstr_less (s1, s2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[s_len,index,ch,ch2]
+
+  peek       fp:s1
+  nlen       2
+  save       dp:s_len
+
+  peek       fp:s2
+  nlen       2
+  set        dp:s_len
+  xcmp
+  jne        labNotLess
+
+  sub        n:1
+
+  nsave      dp:index, 0
+
+  peek       fp:s1
+  store      sp:0
+  peek       fp:s2
+  store      sp:1
+
+labCheck:
+  load       dp:index
+  xcmp       dp:s_len
+  jeq        labLoopEnd
+
+  nsave      dp:ch, 0
+  nsave      dp:ch2, 0
+
+  set        dp:ch
+  read       2
+
+  xswap      sp:1
+
+  set        dp:ch2
+  read       2
+
+  load
+  xcmp       dp:ch 
+  jge        labNotLess
+
+  nadd       dp:index, 1
+  xswap      sp:1
+  jump       labCheck
+
+labLoopEnd:
+  set        class:"system'BoolValue#true"
+  jump       labEnd
+
+labNotLess:
+   set       class:"system'BoolValue#false"
+
+labEnd:
+  close      []
+
+end
+
 procedure __intToByte
 
   peek       sp:1
@@ -519,6 +643,45 @@ labNext:
   xswap      sp:1
   load       dp:i2
   write      1
+  xswap      sp:1
+
+  nadd       dp:i1, 1
+  nadd       dp:i2, 1
+
+  peek       fp:len
+  load       
+  xcmp       dp:i2
+  jne        labNext
+
+  close      []
+
+end
+
+procedure __copySubWStr (dest, index, len, sour)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[i1,i2,tmp]
+
+  peek       fp:index
+  load
+  save       dp:i1
+  nsave      dp:i2, 0
+
+  peek       fp:dest
+  store      sp:1
+
+  peek       fp:sour
+  store      sp:0
+
+labNext:
+  set        dp:tmp
+  load       dp:i1
+  wread
+  xswap      sp:1
+  load       dp:i2
+  write      2
   xswap      sp:1
 
   nadd       dp:i1, 1

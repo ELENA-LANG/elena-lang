@@ -432,3 +432,85 @@ internal singleton PrimitiveStringOperations
       };
    }
 }
+
+internal singleton PrimitiveWideStringOperations
+{
+   copy(short[] dest, int index, int size, wide sour) : external<system'core_routines'__copySubWStr>;
+
+   int indexOf(wide s, wide subs, int index, int length)
+   {
+      int sLen := s.Length;
+      if (sLen < length)
+      {
+         ^ -1
+      };
+
+      sLen -= length;
+      int i := 0;
+      while (i < sLen) {
+         bool isEqual := true;
+         int j := 0;         
+         while (j < length) {
+            char ch1 := subs[i + j];
+            char ch2 := subs[j];
+            int len1 := ch2.Length;
+            int len2 := ch2.Length;
+            if (len1 != len2 || ch1 != ch2) {
+               isEqual := false;
+               $break
+            };
+            j += len2;
+         };
+         if (isEqual) {
+            ^ i
+         }
+      };
+
+      ^ -1
+   }
+
+   int indexOf(wide s, char ch, int index, int length)
+   {
+      int i := 0;
+      while (i < length) {
+         char ch2 := s[index + i];
+         if (ch == ch2)
+         {
+            ^ i
+         };
+
+         int len1 := ch2.Length;
+         i += len1;
+      };
+
+      ^ -1
+   }
+
+   int save(char[] dest, wide s, int index, int length)
+   {
+      int i := 0;
+      int j := 0;
+      while (i < length) {
+         char ch := s[index + i];
+
+         dest[j] := ch;
+
+         int len := ch.Length;
+         i += len;
+      };
+      
+      ^ j
+   }
+
+   save(short[] dest, short[] sour, int index, int length)
+   {
+      int i := 0;
+      while (i < length) {
+         short b := sour[index + i];
+
+         dest[i] := b;
+
+         i += 1;
+      };
+   }
+}

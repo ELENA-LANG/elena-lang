@@ -46,7 +46,7 @@ namespace elena_lang
    constexpr int NOTIFY_DEBUG_CHANGE                     = 12;
    constexpr int NOTIFY_IDE_CHANGE                       = 13;
    constexpr int NOTIFY_ONSTART                          = 14;
-   //constexpr auto NOTIFY_REFRESH                      = 15;
+   constexpr int NOTIFY_REFRESH                          = 15;
 
    // --- Notification statuses ---
    constexpr NotificationStatus IDE_ONSTART              = -1;

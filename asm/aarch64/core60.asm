@@ -438,6 +438,15 @@ inline %25h
 
 end
 
+// ; wread
+inline %26h
+
+  add     x18, x0, x9
+  ldrsw   x17, [x18]
+  str     x17, [x10]
+
+end
+
 // ; xget
 inline %02Eh
 

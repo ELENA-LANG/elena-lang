@@ -1537,6 +1537,7 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
       case ObjectKind::Constant:
          return retVal.reference;
       case ObjectKind::StringLiteral:
+      case ObjectKind::WideStringLiteral:
       case ObjectKind::IntLiteral:
          break;
       default:
@@ -1560,6 +1561,19 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
          else dataWriter.writeString(value, value.length_pos() + 1);
 
          retVal.typeInfo = { scope.moduleScope->buildins.literalReference };
+         break;
+      }
+      case ObjectKind::WideStringLiteral:
+      {
+         ustr_t value = module->resolveConstant(retVal.reference);
+         if (!emptystr(value)) {
+            WideMessage wideValue(value);
+
+            dataWriter.writeWideString(*wideValue, wideValue.length_pos() + 1);
+         }
+         else dataWriter.writeWord(0);
+
+         retVal.typeInfo = { scope.moduleScope->buildins.wideReference };
          break;
       }
       case ObjectKind::IntLiteral:

@@ -965,9 +965,9 @@ bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
 
 void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model)
 {
-   //projectController.refreshDebugContext(contextBrowser);
+   projectController.refreshDebugContext(contextBrowser);
 
-   //_notifier->notifyMessage(NOTIFY_REFRESH, model->ideScheme.debugWatch);
+   _notifier->notifySelection(NOTIFY_REFRESH, model->ideScheme.debugWatch);
 }
 
 bool IDEController :: onClose(DialogBase& dialog, IDEModel* model)

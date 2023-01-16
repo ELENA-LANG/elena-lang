@@ -1723,6 +1723,11 @@ bool X86Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWrit
       writer.writeByte(0x89);
       X86Helper::writeModRM(writer, target, source);
    }
+   else if (source.isR16() && target.isR16_M16()) {
+      writer.writeByte(0x66);
+      writer.writeByte(0x8B);
+      X86Helper::writeModRM(writer, source, target);
+   }
    else if (source.isR8_M8() && target.isR8()) {
       writer.writeByte(0x88);
       X86Helper::writeModRM(writer, target, source);
