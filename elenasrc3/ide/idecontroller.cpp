@@ -928,7 +928,7 @@ void IDEController :: highlightError(IDEModel* model, int row, int column, path_
 
    model->viewModel()->setErrorLine(row, column, true);
 
-   _notifier->notify(NOTIFY_IDE_CHANGE, status);
+   _notifier->notify(NOTIFY_IDE_CHANGE, status | FRAME_ACTIVATE);
 }
 
 void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode, 

@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x003A
+#define IDE_REVISION_NUMBER                           0x003C
 
 namespace elena_lang
 {
@@ -60,6 +60,7 @@ namespace elena_lang
    constexpr NotificationStatus DEBUGWATCH_CHANGED       = 0x00020;
    constexpr NotificationStatus IDE_COMPILATION_STARTED  = 0x00040;
    constexpr NotificationStatus OUTPUT_SHOWN             = 0x00080;
+   constexpr NotificationStatus FRAME_ACTIVATE           = 0x00100;
 
    // --- PathSettings ---
    struct PathSettings

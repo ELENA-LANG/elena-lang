@@ -481,6 +481,15 @@ public:
 
 class CLIException : public ExceptionBase {};
 
+enum class WarningLevel
+{
+   None,
+   Level0,
+   Level1,
+   Level2,
+   Level3
+};
+
 class ErrorProcessor : public ErrorProcessorBase
 {
    PresenterBase* _presenter;
@@ -567,6 +576,26 @@ public:
    }
 
    bool hasWarnings() { return _numberOfWarnings > 0; }
+
+   void setWarningLevel(WarningLevel level)
+   {
+      switch (level) {
+         case WarningLevel::Level0:
+            _warningMasks = WARNING_MASK_0;
+            break;
+         case WarningLevel::Level1:
+            _warningMasks = WARNING_MASK_1;
+            break;
+         case WarningLevel::Level2:
+            _warningMasks = WARNING_MASK_2;
+            break;
+         case WarningLevel::Level3:
+            _warningMasks = WARNING_MASK_3;
+            break;
+         default:
+            break;
+      }
+   }
 
    ErrorProcessor(PresenterBase* presenter)
    {

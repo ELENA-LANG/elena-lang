@@ -167,6 +167,20 @@ int main()
                      project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
                   }
                   break;
+               case 'w':
+                  if (argv[i][2] == '0') {
+                     errorProcessor.setWarningLevel(WarningLevel::Level0);
+                  }
+                  else if (argv[i][2] == '1') {
+                     errorProcessor.setWarningLevel(WarningLevel::Level1);
+                  }
+                  else if (argv[i][2] == '2') {
+                     errorProcessor.setWarningLevel(WarningLevel::Level2);
+                  }
+                  else if (argv[i][2] == '3') {
+                     errorProcessor.setWarningLevel(WarningLevel::Level3);
+                  }
+                  break;
                case 'x':
                   if (argv[i][2] == 'p') {
                      project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');

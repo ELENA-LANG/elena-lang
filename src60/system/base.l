@@ -1,13 +1,13 @@
 // --- base inline templates ---
 
-inline external<routine>()
+inline external<routine>
 {
    #include intern routine;
 }
 
 // --- class meta info ---
 
-public inline info<descr>()
+public inline info<descr>
 {
    #new super string descriptions;
 
@@ -16,7 +16,7 @@ public inline info<descr>()
 
 // --- prop ---
 
-public field prop<name, T>
+public field prop(name)<T>
 {
    get T name()
    {

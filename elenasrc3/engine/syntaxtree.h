@@ -140,6 +140,7 @@ namespace elena_lang
       Redirect                = 0x001CCB,
       AltOperation            = 0x001CCC,
       IsNilOperation          = 0x001CCD,
+      Prefix                  = 0x0010CE,
 
       Name                    = 0x000101,
       Namespace               = 0x000103,

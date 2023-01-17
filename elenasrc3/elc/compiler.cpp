@@ -12,7 +12,7 @@
 
 #include "bytecode.h"
 
-//#define FULL_OUTOUT_INFO 1
+#define FULL_OUTOUT_INFO 1
 
 using namespace elena_lang;
 
@@ -41,15 +41,15 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l | (unsigned int)r);
 }
 
-//inline void testNodes(SyntaxNode node)
-//{
-//   SyntaxNode current = node.firstChild();
-//   while (current != SyntaxKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 inline bool isSelfCall(ObjectInfo target)
 {
@@ -3579,6 +3579,7 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
       case V_NIL:
          return scope.moduleScope->buildins.superReference;
       case V_ARGARRAY:
+      case V_OBJARRAY:
          return resolveArrayTemplate(scope, typeInfo.elementRef, declarationMode);
       default:
          throw InternalError(errFatalError);
@@ -4204,73 +4205,100 @@ ref_t Compiler :: resolveArrayTemplate(Scope& scope, ref_t elementRef, bool decl
 TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, bool& variadicArg, 
    bool declarationMode, bool allowRole)
 {
-   ref_t elementRef = 0;
+   // !! do we need it at all, resolveTypeAttribute should be used instead
+   assert(false);
 
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::Attribute:
-            if (!_logic->validateTypeScopeAttribute(current.arg.reference, variadicArg))
-               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-            break;
-         case SyntaxKey::Type:
-            elementRef = resolveStrongTypeAttribute(scope, current, declarationMode);
-            break;
-         default:
-            elementRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
-            break;
-      }
+   //ref_t elementRef = 0;
 
-      current = current.nextNode();
-   }
+   //SyntaxNode current = node.firstChild();
+   //while (current != SyntaxKey::None) {
+   //   switch (current.key) {
+   //      case SyntaxKey::Attribute:
+   //         if (!_logic->validateTypeScopeAttribute(current.arg.reference, variadicArg))
+   //            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+   //         break;
+   //      case SyntaxKey::Type:
+   //         elementRef = resolveStrongTypeAttribute(scope, current, declarationMode);
+   //         break;
+   //      default:
+   //         elementRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
+   //         break;
+   //   }
 
-   if (node == SyntaxKey::ArrayType) {
-      return { defineArrayType(scope, elementRef), elementRef };
-   }
-   else return {};
+   //   current = current.nextNode();
+   //}
+
+   //if (node == SyntaxKey::ArrayType) {
+   //   return { defineArrayType(scope, elementRef), elementRef };
+   //}
+   /*else */return {};
 }
 
 TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole)
 {
    TypeInfo typeInfo = {};
-   if (node == SyntaxKey::Type && node.arg.reference)
-      return { node.arg.reference };
-
-   if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
-      if (node.nextNode() == SyntaxKey::TemplateArg) {
-         typeInfo.typeRef = resolveTypeTemplate(scope, node, declarationMode);
-      }
-      else typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
-   }
-   else if (node == SyntaxKey::TemplateType) {
-      typeInfo.typeRef = resolveTypeTemplate(scope, node, declarationMode);
-   }
-   else if (node == SyntaxKey::TemplateArg) {
-      typeInfo = resolveTypeAttribute(scope, node.firstChild(), declarationMode, allowRole);
-   }
-   else if (node == SyntaxKey::ArrayType) {
-      bool variadicOne = false;
-
-      typeInfo = resolveTypeScope(scope, node, variadicOne, declarationMode, allowRole);
-
-      if (variadicOne)
-         scope.raiseError(errInvalidOperation, node);
-   }
-   else {
-      SyntaxNode current = node.firstChild();
-      if (current == SyntaxKey::Object || current == SyntaxKey::Type || current == SyntaxKey::TemplateType) {
-         typeInfo = resolveTypeAttribute(scope, current, declarationMode, allowRole);
-      }
-      else {
-         SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
-
-         if (terminal.nextNode() == SyntaxKey::TemplateArg) {
-            typeInfo.typeRef = resolveTypeTemplate(scope, terminal, declarationMode);
+   switch (node.key) {
+      case SyntaxKey::TemplateArg:
+         typeInfo = resolveTypeAttribute(scope, node.firstChild(), declarationMode, allowRole);
+         break;
+      case SyntaxKey::Type:
+      {
+         SyntaxNode current = node.firstChild();
+         if (SyntaxTree::test(current.key, SyntaxKey::TerminalMask)) {
+            typeInfo.typeRef = resolveTypeIdentifier(scope, current.identifier(), current.key, declarationMode, allowRole);
          }
-         else typeInfo.typeRef = resolveTypeIdentifier(scope,
-            terminal.identifier(), terminal.key, declarationMode, allowRole);
+         else assert(false);
+         break;
       }
+      case SyntaxKey::TemplateType:
+         typeInfo.typeRef = resolveTypeTemplate(scope, node, declarationMode);
+         break;
+      default:
+         //if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
+         //   typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
+         //}
+         /*else */assert(false);
+         break;
    }
+
+   //if (node == SyntaxKey::Type && node.arg.reference)
+   //   return { node.arg.reference };
+
+   //if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
+   //   if (node.nextNode() == SyntaxKey::TemplateArg) {
+   //      typeInfo.typeRef = resolveTypeTemplate(scope, node, declarationMode);
+   //   }
+   //   else typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
+   //}
+   //else if (node == SyntaxKey::TemplateType) {
+   //   typeInfo.typeRef = resolveTypeTemplate(scope, node, declarationMode);
+   //}
+   //else if (node == SyntaxKey::TemplateArg) {
+   //   typeInfo = resolveTypeAttribute(scope, node.firstChild(), declarationMode, allowRole);
+   //}
+   //else if (node == SyntaxKey::ArrayType) {
+   //   bool variadicOne = false;
+
+   //   typeInfo = resolveTypeScope(scope, node, variadicOne, declarationMode, allowRole);
+
+   //   if (variadicOne)
+   //      scope.raiseError(errInvalidOperation, node);
+   //}
+   //else {
+   //   SyntaxNode current = node.firstChild();
+   //   if (current == SyntaxKey::Object || current == SyntaxKey::Type || current == SyntaxKey::TemplateType) {
+   //      typeInfo = resolveTypeAttribute(scope, current, declarationMode, allowRole);
+   //   }
+   //   else {
+   //      SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
+
+   //      if (terminal.nextNode() == SyntaxKey::TemplateArg) {
+   //         typeInfo.typeRef = resolveTypeTemplate(scope, terminal, declarationMode);
+   //      }
+   //      else typeInfo.typeRef = resolveTypeIdentifier(scope,
+   //         terminal.identifier(), terminal.key, declarationMode, allowRole);
+   //   }
+   //}
 
    validateType(scope, typeInfo.typeRef, node, declarationMode, allowRole);
 
@@ -5368,6 +5396,7 @@ ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& sco
          }
          assert(conversionRoutine.result != ConversionResult::None);
       }
+      else source.typeInfo = { sourceRef };
 
       assert(arguments.count() == 1); // !! temporally - only one argument is supported
 
@@ -5703,6 +5732,8 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
 
 ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand)
 {
+   testNodes(loperand);
+
    ObjectInfo target = mapObject(scope, loperand, EAttr::None);
    ObjectInfo exprVal = {};
 

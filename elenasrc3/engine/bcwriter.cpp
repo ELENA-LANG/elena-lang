@@ -897,6 +897,17 @@ void bynaryArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void objArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   switch (node.arg.value) {
+      case LEN_OPERATOR_ID:
+
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
 void byteArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int targetOffset = node.findChild(BuildKey::Index).arg.value;
@@ -1150,7 +1161,7 @@ ByteCodeWriter::Saver commands[] =
    intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
    realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
 
-   genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant
+   genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp
 };
 
 // --- ByteCodeWriter ---

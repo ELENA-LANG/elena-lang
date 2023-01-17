@@ -171,9 +171,10 @@ ControlBase* IDEFactory :: createTabBar(WindowBase* owner, NotifierBase* notifie
    return tabBar;
 }
 
-ControlBase* IDEFactory :: createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, int notifyCode)
+ControlBase* IDEFactory :: createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, 
+   int notifyCode, NotificationStatus notifyStatus)
 {
-   Splitter* splitter = new Splitter(notifier, notifyCode, client, vertical);
+   Splitter* splitter = new Splitter(notifier, notifyCode, notifyStatus, client, vertical);
 
    splitter->create(_instance, 
       vertical ? szVSplitter : szHSplitter,
@@ -281,14 +282,14 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[bottomBox] = vb;
    children[tabBar] = createTabBar(sdi, notifier);
    children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier, 
-      /*NOTIFY_LAYOUT_CHANGED*/0);
+      NOTIFY_IDE_CHANGE, IDE_LAYOUT_CHANGED);
    children[statusBarIndex] = createStatusbar(sdi);
    children[compilerOutput] = createCompilerOutput((ControlBase*)children[tabBar], outputProcess, notifier);
    children[errorList] = createErrorList((ControlBase*)children[tabBar], notifier);
    children[browser] = createDebugBrowser((ControlBase*)children[tabBar], notifier);
    children[projectView] = createProjectView(sdi, notifier);
    children[hsplitter] = createSplitter(sdi, (ControlBase*)children[projectView], true, notifier,
-      /*NOTIFY_LAYOUT_CHANGED*/0);
+      NOTIFY_IDE_CHANGE, IDE_LAYOUT_CHANGED);
    children[menu] = createMenu(sdi);
 
    vb->append(children[vsplitter]);

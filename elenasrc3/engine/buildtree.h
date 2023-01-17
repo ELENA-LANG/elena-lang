@@ -112,10 +112,10 @@ namespace elena_lang
       ShortArrayOp         = 0x0053,
       BreakOp              = 0x0054,
       ConstantReference    = 0x0055,
+      ObjArrayOp           = 0x0056,
 
       Import               = 0x0058,
       DictionaryOp         = 0x0059,
-      ObjArrayOp           = 0x005A,
       ObjOp                = 0x005B,
       AttrDictionaryOp     = 0x005C,
       DeclOp               = 0x005D,

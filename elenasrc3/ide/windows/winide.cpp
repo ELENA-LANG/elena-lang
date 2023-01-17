@@ -192,15 +192,13 @@ void IDEWindow :: pasteFromClipboard()
 void IDEWindow :: deleteText()
 {
    _controller->sourceController.deleteText(_model->viewModel());
-   //_model->sourceViewModel.onModelChanged();
 }
 
 void IDEWindow :: commentText()
 {
-   //wchar_t str[3] = _T("//");
+   wchar_t str[3] = _T("//");
 
-   //_controller->sourceController.insertBlockText(_model->viewModel(), str, 2);
-   //_model->sourceViewModel.onModelChanged();
+   _controller->sourceController.insertBlockText(_model->viewModel(), str, 2);
 }
 
 void IDEWindow :: toggleProjectView(bool open)
@@ -420,7 +418,9 @@ void IDEWindow :: onIDEChange(NotificationStatus status)
    if (test(status, IDE_COMPILATION_STARTED))
       onComilationStart();
 
-   //onResize();
+   if (test(status, FRAME_ACTIVATE)) {
+      onActivate();
+   }
 
    //onIDEViewUpdate(true);
 }

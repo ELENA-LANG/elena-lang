@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef FACTORY_H
@@ -36,7 +36,8 @@ namespace elena_lang
       ControlBase* createTextControl(WindowBase* owner, NotifierBase* notifier);
       ControlBase* createStatusbar(WindowBase* owner);
       ControlBase* createTabBar(WindowBase* owner, NotifierBase* notifier);
-      ControlBase* createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, int notifyCode);
+      ControlBase* createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, 
+         int notifyCode, NotificationStatus status);
       ControlBase* createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier);
       ControlBase* createErrorList(ControlBase* owner, NotifierBase* notifier);
       ControlBase* createProjectView(ControlBase* owner, NotifierBase* notifier);

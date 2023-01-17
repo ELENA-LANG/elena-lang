@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 105;
+constexpr auto OperationLength = 106;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -369,6 +369,9 @@ constexpr Op Operations[OperationLength] =
    },
    {
       IF_ELSE_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, V_CLOSURE, V_CLOSURE
+   },
+   {
+      LEN_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, 0, 0, V_INT32
    },
 };
 
@@ -1171,6 +1174,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
          info.size = -1;
+         break;
+      case V_OBJARRAY:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = /*elDebugArray | */elDynamicRole;
+         info.size = 0;
          break;
       default:
          if (reference != 0) {

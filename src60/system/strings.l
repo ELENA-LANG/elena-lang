@@ -664,18 +664,297 @@ public const wide emptyWideString = WideString.MinValue;
 
 // --- WideStringEnumerator ---
 
-sealed class WideStringEnumerator
+sealed class WideStringEnumerator : Enumerator<char>
 {
+   wide           literal;
+   Reference<int> index;
+   Reference<int> diff;
+   char           char;  
+
    constructor(wide s)
    {
+      literal := s;
+      index := -1;
+      diff := 1;
+      char := $0;
    }
+
+   reset()
+   {
+      index.Value := -1;
+      diff.Value := 1
+   }
+
+   bool next()
+   {
+      int len := literal.Length;
+        
+      index.append(*diff);
+        
+      int i := *index;
+      if (i < len)
+      {
+         char := literal[i];
+                
+         diff.Value := char.Length;
+                
+         ^ true
+      };
+
+      diff.Value := 0;
+      char := $0;
+
+      ^ false
+   }
+
+   Enumerator cast() = new Enumerator
+   {
+      embeddable dispatch() => self;
+   };
+   
+   enumerable() = literal;
+
+   char Value = char;
 }
 
 // --- WideStringIndexer ---
 
-sealed class WideStringIndexer
+sealed class WideStringIndexer : Indexer<char>
 {
+   wide           literal;
+   Reference<int> index;
+
    constructor(wide s)
    {
+      literal := s;
+      index := 0;
    }
+
+   get bool Available()
+   {
+      int len := literal.Length;
+      int val := *index;
+        
+      ^ val < len
+   }
+   
+   get char Value()
+   {
+      int val := *index;
+      char ch := literal[val];
+
+      ^ ch
+   }
+   
+   set Value(char ch)
+   {
+      system'NotSupportedException.raise()
+   }
+
+   int Index
+   {
+      /// Reads the current index and saves it into an output parameter
+      get()
+      {
+         int retVal := *index;
+            
+         ^ retVal
+      }
+        
+      /// Sets the index by specified value
+      set(val)
+      {
+         index.Value := val
+      }
+   }
+   
+   appendIndex(int val)
+   {
+      index.append(val)
+   }
+    
+   int Length
+   {
+      /// Reads the length to the output parameter    
+      get()
+      {
+         int retVal := literal.Length;
+            
+         ^ retVal
+      }
+   }
+        
+   Indexer cast() = new Indexer{ embeddable dispatch() => self; };   
+}
+
+public sealed class Variant
+   : info<"A basic type variant class">
+{
+    object value;
+    
+    constructor(object)
+    {
+        value := object
+    }
+    
+    /// Tries to convert the value to a byte number
+    byte cast()
+        = byteConvertor.convert(value);
+
+    /// Tries to convert the value to a short integer number
+    short cast()
+        = shortConvertor.convert(value);
+
+    /// Tries to convert the value to a character
+    char cast()
+        = charConvertor.convert(value);
+
+    /// Tries to convert the literal value to the integer number
+    int cast()
+        = intConvertor.convert(value);
+
+    /// Tries to convert the literal value to the long integer number
+    long cast()
+        = longConvertor.convert(value);
+
+    /// Tries to convert the literal value to the real number
+    real cast()
+        = realConvertor.convert(value);
+
+    /// Returns a literal value
+    string cast()
+        = stringConvertor.convert(value);
+    
+    /// Returns a wide literal value
+    wide cast()
+        = wideConvertor.convert(value);
+
+    string toPrintable()
+        => value;
+
+    private castValueTo(target)
+        = new{
+            castTo(o)
+                = o.toPrintable();
+            
+            castTo(BaseVariable v)
+                = self.castValueTo(v.Value);
+            
+            castTo(int val)
+                = cast int(self);
+                
+            castTo(byte val)
+                = cast byte(self);
+                
+            castTo(short val)
+                = cast short(self);
+                
+            castTo(long val)
+                = cast long(self);
+                
+            castTo(real val)
+                = cast real(self);
+                
+            castTo(string val)
+                = cast string(self);
+                
+            castTo(wide val)
+                = cast wide(self);
+        }.castTo(target);
+
+    saveTo(target)
+    {
+        target.Value := self.castValueTo(target.Value);
+        
+        ^ target
+    }
+
+    add(p)
+        = p.add(self.castValueTo(p));
+
+    subtract(p)
+        = self.castValueTo(p).subtract(p);
+
+    multiply(p)
+        = self.castValueTo(p).multiply(p);
+
+    divide(p)
+        = self.castValueTo(p).divide(p);
+
+    bool equal(p)
+        = self.castValueTo(p).equal(p);
+}
+
+// --- Array ---
+
+public sealed Array //: Indexable
+{
+    __string object[] array;
+    
+    /// Creates an empty array
+//    constructor MinValue
+//        = new object[](0);
+    
+    /// Creates the array with the specified length
+//    constructor allocate(int len)
+//        = new object[](len);
+
+//    /// Creates a copy of the provided sub array
+//    constructor copy(int index, int length, Array array)
+//        <= allocate(length)
+//    {
+//        intern system'core_routines'__array.copy(self, index, length, array)
+//    }
+//        
+//    /// Concatinates the arrays    
+//    add(Array a)
+//    {
+//        int length1 := self.Length;
+//        int length2 := a.Length;
+//        
+//        auto retVal := Array.allocate(length1 + length2);
+//
+//        for (int i:=0, i < length1, i += 1) {
+//            retVal[i] := theArray[i]
+//        };
+//
+//        for (int i:=0, i < length2, i += 1) {
+//            retVal[length1 + i] := a[i]
+//        };
+//            
+//        ^ retVal
+//    }
+//
+//    int Length
+//    {
+//        /// Reads the array length into an output parameter
+//        get()
+//        {
+//            intern system'core_routines'__array.readLengthTo(self, ref int retVal);
+//            
+//            ^ retVal
+//        }
+//    }
+//
+//    /// Sets the specified array member
+//    setAt(int n, object o)
+//    {
+//        theArray[n] := o
+//    }
+//
+//    /// Returns the specified array member
+//    object at(int n)
+//        = theArray[n];
+// 
+//    /// Returns the array enumerator
+//    Enumerator enumerator() = new ArrayEnumerator(self);
+//
+//    /// Returns the array indexer
+//    Indexer indexer() = new ArrayIndexer(self);
+//
+//    object[] Value = theArray;
+//
+//    /// Clones the array
+//    Array clone()
+//        = Array.copy(0, self.Length, self);
 }

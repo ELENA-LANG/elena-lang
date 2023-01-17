@@ -3,21 +3,21 @@
 // --- super object ---
 
 public class Object
-   : info<"a common ancestor">
+   : info("a common ancestor")
 {
    const string __className := $name __decl;
 
    constructor() 
-      : info<"Creates the object">
+      : info("Creates the object")
    {
    }
 
    bool equal(o)
-               : info<"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references.">
+               : info("Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references.")
       = self.equalReference(o);
 
    bool notequal(o)
-               : info<"Returns true if the specified object is not equal to the current object; otherwise, false. By default it inverts the result of equal[2].">
+               : info("Returns true if the specified object is not equal to the current object; otherwise, false. By default it inverts the result of equal[2].")
       = !(self.equal(o));
 
    // virtual method declarations : forcing the output type                            
@@ -27,10 +27,10 @@ public class Object
    predefined bool notgreater(o);
 
    string toPrintable() 
-               : info<"Returns the string representation. By default it returns the class name.">
+               : info("Returns the string representation. By default it returns the class name.")
       = __className;
 
-   dispatch() : external<system'core_routines'__object_dispatcher>, info<"Implements a message dispatching in VMT">;
+   dispatch() : external<system'core_routines'__object_dispatcher>, info("Implements a message dispatching in VMT");
 }
 
 // --- basic extensions ---
@@ -38,17 +38,17 @@ public class Object
 public extension commonOp
 {
    back(o)
-            : info<"Returns the parameter">
+            : info("Returns the parameter")
       = o;
 
    bool equalReference(o) : external<system'core_routines'__object_equal>;
 
    then(Func f)
-            : info<"Executes the parameter function">
+            : info("Executes the parameter function")
       = f();
 
    then(Func1 f)
-            : info<"Executes the parameter function and pass itself as a parameter">
+            : info("Executes the parameter function and pass itself as a parameter")
       = f(self);
 }
 
