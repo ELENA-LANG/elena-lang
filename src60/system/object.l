@@ -30,7 +30,7 @@ public class Object
                : info("Returns the string representation. By default it returns the class name.")
       = __className;
 
-   dispatch() : external<system'core_routines'__object_dispatcher>, info("Implements a message dispatching in VMT");
+   dispatch() : external(system'core_routines'__object_dispatcher), info("Implements a message dispatching in VMT");
 }
 
 // --- basic extensions ---
@@ -41,7 +41,7 @@ public extension commonOp
             : info("Returns the parameter")
       = o;
 
-   bool equalReference(o) : external<system'core_routines'__object_equal>;
+   bool equalReference(o) : external(system'core_routines'__object_equal);
 
    then(Func f)
             : info("Executes the parameter function")

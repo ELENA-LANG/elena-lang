@@ -157,7 +157,7 @@ namespace elena_lang
       void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
          bool allowType, bool onlyChildren = false);
       void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool ignorePostfix);
+      void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node/*, bool ignorePostfix*/);
       void flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushParent(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushParentTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);

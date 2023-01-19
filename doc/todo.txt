@@ -55,6 +55,7 @@ Backlog:
     * templates with parameters: template can have attribute values in the brackets after the main body
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
       as well, to pass the name there (currently it passed over template args which is not 100% correct)
+    * do:while : both statement are matched : do{ a } while(b) and do{ a } while{ b } which is not correct?
     * constant array
     * ide : uncomment
     * ide debugger : show string / widestring

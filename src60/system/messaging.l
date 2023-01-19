@@ -12,5 +12,5 @@ public sealed const struct Message //: BaseValue
       ^ String.fromByteArray(0, len, buffer);
    }
 
-   dispatch() : external<system'core_routines'__message_dispatcher>;
+   dispatch() : external(system'core_routines'__message_dispatcher);
 }

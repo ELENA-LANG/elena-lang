@@ -5,8 +5,8 @@ public extension objectOp
    string __getClassName()   
       = __className;
 
-   __getClass() : external<system'core_routines'__object_class>,
-                  info<"Returns the object class">;
+   __getClass() : external(system'core_routines'__object_class),
+                  info("Returns the object class");
 }
 
 // --- intOp ---

@@ -2,13 +2,13 @@
 
 public singleton byteConvertor
 {
-   convert(int n, ref byte retVal) : external<system'core_routines'__intToByte>;
+   convert(int n, ref byte retVal) : external(system'core_routines'__intToByte);
 
-   convert(uint n, ref byte retVal) : external<system'core_routines'__uintToByte>;
+   convert(uint n, ref byte retVal) : external(system'core_routines'__uintToByte);
 
-   convert(short n, ref byte retVal) : external<system'core_routines'__shortToByte>;
+   convert(short n, ref byte retVal) : external(system'core_routines'__shortToByte);
 
-   convert(long n, ref byte retVal) : external<system'core_routines'__longToByte>;
+   convert(long n, ref byte retVal) : external(system'core_routines'__longToByte);
 
    byte convert(o)
       = cast byte(o);
@@ -84,11 +84,11 @@ public singleton byteConvertor
 
 public singleton shortConvertor
 {
-   convert(int n, ref short retVal) : external<system'core_routines'__intToShort>;
+   convert(int n, ref short retVal) : external(system'core_routines'__intToShort);
 
-   convert(uint n, ref short retVal) : external<system'core_routines'__uintToShort>;
+   convert(uint n, ref short retVal) : external(system'core_routines'__uintToShort);
 
-   convert(byte b, ref short retVal) : external<system'core_routines'__byteToShort>;
+   convert(byte b, ref short retVal) : external(system'core_routines'__byteToShort);
 
    short convert(o)
       = cast short(o);
@@ -160,9 +160,9 @@ public singleton shortConvertor
 
 public singleton intConvertor
 {
-   private convertChar(char ch, ref int retVal) : external<system'core_routines'__charToInt>;
-   private convertLong(long l, ref int retVal) : external<system'core_routines'__longToInt>;
-   private convertReal(real l, ref int retVal) : external<system'core_routines'__realToInt>;
+   private convertChar(char ch, ref int retVal) : external(system'core_routines'__charToInt);
+   private convertLong(long l, ref int retVal) : external(system'core_routines'__longToInt);
+   private convertReal(real l, ref int retVal) : external(system'core_routines'__realToInt);
 
    int convert(o)
       = cast int(o);
@@ -492,7 +492,7 @@ public singleton realConvertor
 
 public singleton charConvertor
 {
-   convert(int n, ref char retVal) : external<system'core_routines'__intToChar>;
+   convert(int n, ref char retVal) : external(system'core_routines'__intToChar);
 
    char convert(int n)
    {

@@ -134,8 +134,8 @@ void SyntaxTreeBuilder :: parseStatement(SyntaxTreeWriter& writer, Scope& scope,
             arguments.add(writer.CurrentNode().firstChild());
             writer.closeNode();
             break;
-         case SyntaxKey::TExpression:
          case SyntaxKey::NTExpression:
+         case SyntaxKey::TExpression:
             // unpacking the statement body
             //flushExpression();
             writer.newNode(SyntaxKey::Idle);
@@ -657,16 +657,21 @@ void SyntaxTreeBuilder :: flushTemplageExpression(SyntaxTreeWriter& writer, Scop
    writer.closeNode();
 }
 
-void SyntaxTreeBuilder :: flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool ignorePostfix)
+void SyntaxTreeBuilder :: flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node/*, bool ignorePostfix*/)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      if (current.key == SyntaxKey::MethodPostfix || (current.key == SyntaxKey::Postfix && !ignorePostfix)) {
+      if (/*current.key == SyntaxKey::MethodPostfix || (*/current.key == SyntaxKey::Postfix/* && !ignorePostfix)*/) {
          SyntaxNode child = current.firstChild();
-         if (child == SyntaxKey::TemplatePostfix) {
+         if (child == SyntaxKey::InlinePostfix) {
             flushTemplageExpression(writer, scope, child, SyntaxKey::InlineTemplate, false);
          }
-         else flushTemplageExpression(writer, scope, current, SyntaxKey::InlineImplicitTemplate, false);
+         else _errorProcessor->raiseTerminalError(errInvalidOperation, retrievePath(node), node);
+
+         //if (child == SyntaxKey::TemplatePostfix) {
+         //   
+         //}
+         //else flushTemplageExpression(writer, scope, current, SyntaxKey::InlineImplicitTemplate, false);
       }
 
       current = current.nextNode();
@@ -874,7 +879,7 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
 
    if (!functionMode) {
       flushDescriptor(writer,  scope, node);
-      flushClassMemberPostfixes(writer, scope, node, false);
+      flushClassMemberPostfixes(writer, scope, node/*, false*/);
    }
    else writer.appendNode(SyntaxKey::Attribute, V_FUNCTION);
 
@@ -1028,8 +1033,8 @@ void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& s
    scope.type = ScopeType::InlineTemplate;
    scope.ignoreTerminalInfo = true;
 
-   flushInlineTemplatePostfixes(writer, scope, node);
-   flushClassMemberPostfixes(writer, scope, node, true);
+   //flushInlineTemplatePostfixes(writer, scope, node);
+   flushClassMemberPostfixes(writer, scope, node/*, true*/);
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -1509,7 +1514,7 @@ void TemplateProssesor :: importTemplate(MemoryBase* templateSection,
 void TemplateProssesor :: importInlineTemplate(MemoryBase* templateSection,
    SyntaxNode target, List<SyntaxNode>& parameters)
 {
-   importTemplate(Type::Inline, templateSection, target, &parameters, nullptr);
+   importTemplate(Type::Inline, templateSection, target, nullptr, &parameters);
 }
 
 void TemplateProssesor :: importInlinePropertyTemplate(MemoryBase* templateSection,

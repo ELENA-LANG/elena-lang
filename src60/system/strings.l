@@ -70,7 +70,7 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 // --- String ---
 
 public const struct String : BaseValue, 
-   info<"A UTF-8 literal value">   
+   info("A UTF-8 literal value")
 {
    __string byte[] array;
 
@@ -181,7 +181,7 @@ public const struct String : BaseValue,
       }
    }
 
-   bool equal(string s) : external<system'core_routines'__str_equal>;
+   bool equal(string s) : external(system'core_routines'__str_equal);
 
    bool equal(wide s)
       = cast wide(self).equal(s);
@@ -189,7 +189,7 @@ public const struct String : BaseValue,
    bool equal(char ch)
       <= equal(cast string(ch));
 
-   bool less(string s) : external<system'core_routines'__str_less>;
+   bool less(string s) : external(system'core_routines'__str_less);
 
    bool less(wide s)
       = cast wide(self).less(s);
@@ -207,8 +207,8 @@ public const struct String : BaseValue,
    bool less(o)
       <= less(cast string(o));
 
-   private copySubS(string dest, string sour, int index, int length) : external<system'core_routines'__str_copysubs>;
-   private copySubS(string dest, string sour, int index, int length, int sourIndex) : external<system'core_routines'__str_xcopysubs>;
+   private copySubS(string dest, string sour, int index, int length) : external(system'core_routines'__str_copysubs);
+   private copySubS(string dest, string sour, int index, int length, int sourIndex) : external(system'core_routines'__str_xcopysubs);
 
    char at(int index)
       = PrimitiveOperations.readChar(array, index);
@@ -223,7 +223,7 @@ public const struct String : BaseValue,
       <= add(*v);
 
    string add(string subs)
-      : info<"Concatinates the values">
+      : info("Concatinates the values")
    {
       int l1 := self.Length;
       int l2 := subs.Length;
@@ -236,7 +236,7 @@ public const struct String : BaseValue,
    }
 
    int indexOf(int index, string literal)
-      : info<"Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1">   
+      : info("Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1")
    {
       int sublen := literal.Length;
       int retVal := PrimitiveStringOperations.indexOf(self, literal, index, sublen);
@@ -253,7 +253,7 @@ public const struct String : BaseValue,
    }
 
    string insert(int index, string s)
-      : info<"Inserts the substring into and returns the new one">
+      : info("Inserts the substring into and returns the new one")
    {
       int l1 := self.Length;
       int l2 := s.Length;
@@ -270,7 +270,7 @@ public const struct String : BaseValue,
       = self.insert(index, cast string(ch));
 
    string delete(int index, int length)
-      : info<"Deletes the substring from the object and returns the new one">
+      : info("Deletes the substring from the object and returns the new one")
    {
       int len1 := self.Length;
       int sindex := index + length;
@@ -283,7 +283,7 @@ public const struct String : BaseValue,
    }
 
    string Substring(int index, int length)
-      : info<"Returns the substring">
+      : info("Returns the substring")
    {
       ^ String.fromByteArray(array, index, length);
    }
@@ -295,7 +295,7 @@ public const struct String : BaseValue,
       = PrimitiveStringOperations.save(buffer, this array, index, length);
 
    Enumerator<char> enumerator()
-         : info<"Returns the string enumerator">
+         : info("Returns the string enumerator")
       = new StringEnumerator(self);
 
    Indexer<char> indexer() = new StringIndexer(self);
@@ -541,9 +541,9 @@ public const struct WideString : BaseValue
    bool less(o)
       <= less(cast wide(o));
 
-   bool equal(wide s) : external<system'core_routines'__wstr_equal>;
+   bool equal(wide s) : external(system'core_routines'__wstr_equal);
 
-   bool less(wide s) : external<system'core_routines'__wstr_less>;
+   bool less(wide s) : external(system'core_routines'__wstr_less);
 
    bool equal(char ch)
       <= equal(cast wide(ch));
@@ -564,7 +564,7 @@ public const struct WideString : BaseValue
       <= add(*v);
 
    wide add(wide subs)
-      : info<"Concatinates the values">
+      : info("Concatinates the values")
    {
       int l1 := self.Length;
       int l2 := subs.Length;
@@ -577,7 +577,7 @@ public const struct WideString : BaseValue
    }
 
    int indexOf(int index, wide literal)
-      : info<"Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1">   
+      : info("Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1")   
    {
       int sublen := literal.Length;
       int retVal := PrimitiveWideStringOperations.indexOf(self, literal, index, sublen);
@@ -594,7 +594,7 @@ public const struct WideString : BaseValue
    }
 
    wide insert(int index, wide s)
-      : info<"Inserts the substring into and returns the new one">
+      : info("Inserts the substring into and returns the new one")
    {
       int l1 := self.Length;
       int l2 := s.Length;
@@ -611,7 +611,7 @@ public const struct WideString : BaseValue
       = self.insert(index, cast wide(ch));
 
    string delete(int index, int length)
-      : info<"Deletes the substring from the object and returns the new one">
+      : info("Deletes the substring from the object and returns the new one")
    {
       int len1 := self.Length;
       int sindex := index + length;
@@ -624,7 +624,7 @@ public const struct WideString : BaseValue
    }
 
    string Substring(int index, int length)
-      : info<"Returns the substring">
+      : info("Returns the substring")
    {
       ^ String.fromByteArray(array, index, length);
    }
@@ -636,7 +636,7 @@ public const struct WideString : BaseValue
       = PrimitiveWideStringOperations.save(buffer, this array, index, length);
 
    Enumerator<char> enumerator()
-         : info<"Returns the string enumerator">
+         : info("Returns the string enumerator")
       = new WideStringEnumerator(self);
 
    Indexer<char> indexer() = new WideStringIndexer(self);
@@ -788,7 +788,7 @@ sealed class WideStringIndexer : Indexer<char>
 }
 
 public sealed class Variant
-   : info<"A basic type variant class">
+   : info("A basic type variant class")
 {
     object value;
     

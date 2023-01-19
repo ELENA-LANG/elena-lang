@@ -39,7 +39,7 @@ public template until<expr>(loopBody) : __included(statementTemplates)
 
 // --- do:until ---
 
-public template do::until<cond_expr>(loop_body) : __included(statementTemplates)
+public template do::until(loop_body, cond_expr) : __included(statementTemplates)
 {
    loop_body;
 

@@ -953,7 +953,7 @@ namespace elena_lang
       bool resolveAutoType(ExprScope& scope, ObjectInfo source, ObjectInfo& target);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
-         ustr_t prefix, bool skipLoading);
+         ustr_t prefix, SyntaxKey argKey);
 
       mssg_t resolveByRefHandler(Scope& scope, ref_t targetRef, ref_t expectedRef, mssg_t weakMessage, ref_t& signatureRef);
       mssg_t resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectInfo target, ExprScope& scope, mssg_t weakMessage,

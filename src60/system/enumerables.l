@@ -3,19 +3,19 @@
 // --- Enumerator ---
 
 public interface Enumerator
-   : info<"An enumerator prototype">
+   : info("An enumerator prototype")
 {
    get abstract Value()
-      : info<"Returns the current object">;
+      : info("Returns the current object");
 
    abstract bool next()
-      : info<"Goes to the next enumeration member and returns true if it is not the last member">;
+      : info("Goes to the next enumeration member and returns true if it is not the last member");
 
    abstract reset()
-      : info<"Resets the enumerator">;
+      : info("Resets the enumerator");
 
    abstract enumerable()
-      : info<"returns the enumerator owner">;
+      : info("returns the enumerator owner");
 
    Enumerator enumerator() = self;
 }
@@ -268,7 +268,7 @@ class IntRangeEnumerator : Enumerator<int>
    get int Value() = *index;
             
    bool next()
-      : info<"Returns false if the index out of range">
+      : info("Returns false if the index out of range")
    {
       index.append(1);
 
@@ -278,7 +278,7 @@ class IntRangeEnumerator : Enumerator<int>
    }
     
    reset()
-      : info<"Sets the i-index by specified value">
+      : info("Sets the i-index by specified value")
    {
       index.Value := start - 1;
    } 

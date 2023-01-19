@@ -226,7 +226,7 @@ internal singleton PrimitiveOperations
 
 internal singleton PrimitiveRealOperations
 {
-   trunc(real r, ref real retVal) : external<system'core_routines'__realTrunc>;
+   trunc(real r, ref real retVal) : external(system'core_routines'__realTrunc);
 
    int normalizeFloat(ref real value)
    {
@@ -353,7 +353,7 @@ internal singleton PrimitiveRealOperations
 
 internal singleton PrimitiveStringOperations
 {
-   copy(byte[] dest, int index, int size, string sour) : external<system'core_routines'__copySubStr>;
+   copy(byte[] dest, int index, int size, string sour) : external(system'core_routines'__copySubStr);
 
    int indexOf(string s, string subs, int index, int length)
    {
@@ -435,7 +435,7 @@ internal singleton PrimitiveStringOperations
 
 internal singleton PrimitiveWideStringOperations
 {
-   copy(short[] dest, int index, int size, wide sour) : external<system'core_routines'__copySubWStr>;
+   copy(short[] dest, int index, int size, wide sour) : external(system'core_routines'__copySubWStr);
 
    int indexOf(wide s, wide subs, int index, int length)
    {

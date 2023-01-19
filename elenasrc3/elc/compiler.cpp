@@ -1287,16 +1287,16 @@ mssg_t Compiler :: mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionNa
 }
 
 ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
-   ustr_t prefix, bool skipLoading)
+   ustr_t prefix, SyntaxKey argKey)
 {
    SyntaxNode identNode = node.firstChild(SyntaxKey::TerminalMask);
 
    IdentifierString templateName;
 
-   if (!skipLoading) {
+   if (argKey != SyntaxKey::None) {
       SyntaxNode current = node.firstChild();
       while (current.key != SyntaxKey::None) {
-         if (current.key == SyntaxKey::TemplateArg) {
+         if (current.key == argKey) {
             parameters.add(current);
          }
 
@@ -1333,7 +1333,7 @@ bool Compiler :: importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target
    declareTemplateParameters(scope.module, typeList, dummyTree, parameters);
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   ref_t templateRef = retrieveTemplate(*ns, node, parameters, nullptr, true);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, nullptr, SyntaxKey::None);
    if (!templateRef)
       return false;
 
@@ -1348,7 +1348,7 @@ bool Compiler :: importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t post
    List<SyntaxNode> parameters({});
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix, false);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix, SyntaxKey::Expression);
    if (!templateRef)
       return false;
 
@@ -1388,7 +1388,7 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
    writer.closeNode();
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix, false);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix, SyntaxKey::TemplateArg);
    if (!templateRef)
       return false;
 
@@ -3837,8 +3837,6 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
 
    int argCount = SyntaxTree::countChild(node, SyntaxKey::TemplateArg);
    int paramCount = SyntaxTree::countChild(node, SyntaxKey::Parameter);
-   postfix.append('#');
-   postfix.appendInt(paramCount);  
 
    switch (scope.type) {
       case TemplateType::Inline:
@@ -3848,13 +3846,22 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
          break;
       case TemplateType::Statement:
          postfix.append('#');
-         postfix.appendInt(paramCount);
+         postfix.appendInt(argCount);
          break;
       default:
          break;
    }
 
+   postfix.append('#');
+   postfix.appendInt(paramCount);
+
    SyntaxNode name = node.findChild(SyntaxKey::Name);
+   if (name.nextNode() == SyntaxKey::ComplexName) {
+      SyntaxNode secondName = name.nextNode();
+      postfix.insert(secondName.firstChild().identifier(), 0);
+      postfix.insert(":", 0);
+   }
+
    scope.reference = mapNewTerminal(scope, *prefix, name, *postfix, scope.visibility);
    if (scope.module->mapSection(scope.reference | mskSyntaxTreeRef, true))
       scope.raiseError(errDuplicatedDictionary, name.firstChild(SyntaxKey::TerminalMask));

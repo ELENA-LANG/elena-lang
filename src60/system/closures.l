@@ -1,6 +1,6 @@
 // --- base functions ---
 public interface Func
-   : info<"A base action">
+   : info("A base action")
 {
    abstract function();
 
@@ -29,7 +29,7 @@ public interface Func1
    abstract function(arg1);
 
    run(Enumerator en)
-         : info<"Executes the function for every enumeration item">
+         : info("Executes the function for every enumeration item")
    {
       while (en.next())
       {
@@ -60,7 +60,7 @@ public interface Func<T,TResult>
       = (x => self(x));
 
    run(Enumerator<T> en)
-         : info<"Executes the function for every enumeration item">
+         : info("Executes the function for every enumeration item")
    {
       while (en.next())
       {
