@@ -16,7 +16,7 @@ public inline info<descr>
 
 // --- prop ---
 
-public field prop(name)<T>
+public field prop<name, T>
 {
    get T name()
    {

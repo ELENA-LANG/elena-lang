@@ -90,7 +90,8 @@ __define CATCH               7368;
 __define REDIRECT            7371;
 __define ALT_OPERATION       7372;
 __define ISNIL_OPERATION     7373;
-__define PREFIX_NAME 	     4302;
+__define COMPLEX_NAME 	     4302;
+__define INLINE              4303;
 
 START ::= 
 	{ DECLARATION | META_DECLARATION }+ eof
@@ -107,7 +108,7 @@ DECLARATION ::=
 
 IR_DECLARATION ::=
 	{ TEMPLATE_BRACKETS identifier? | DYNAMIC_DIMENSION ^ARRAY_TYPE identifier } { POSTFIXES NESTED_SCOPE | SCOPE }
-	| "&" ^ PREFIX_NAME identifier TEMPLATE_BRACKETS? METHOD_SCOPE
+	| "::" COMPLEX_NAME TEMPLATE_BRACKETS? METHOD_SCOPE
 	| POSTFIXES NESTED_SCOPE
 	| SCOPE;
 
@@ -124,7 +125,8 @@ INCLUDE_STATEMENT ::=
 	{ identifier | reference }+;
 
 NESTED_SCOPE ::=
-	"{" { DECLARATION | META_DECLARATION }* END_OF_BLOCK;
+	"{" { DECLARATION | META_DECLARATION }* END_OF_BLOCK
+	| "=" GET_EXPRESSION DECLARATION_END;
 
 SCOPE ::=
         "=" GET_EXPRESSION DECLARATION_END
@@ -517,19 +519,22 @@ MESSAGE ::=
 
 POSTFIX ::=
 	identifier { 
-		TEMPLATE_BRACKETS ^ TEMPLATE_TYPE ^ TEMPLATE_POSTFIX 
- 		| "(" PARAMETER { "," PARAMETER }* ")"
+		TEMPLATE_BRACKETS ^ TEMPLATE_TYPE 
+ 		| "(" MESSAGE_PARAMETER { "," MESSAGE_PARAMETER }* ")" ^ INLINE
 		| eps };
 
 METHOD_POSTFIX ::=
 	identifier { 
 		TEMPLATE_BRACKETS ^ TEMPLATE_POSTFIX 
-		| "(" PARAMETER { "," PARAMETER }* ")"
+		| "(" MESSAGE_PARAMETER { "," MESSAGE_PARAMETER }* ")"
 		| eps };
 
 DIMENSION ::=
         integer
         | hexinteger;	
+
+COMPLEX_NAME ::=
+	identifier;
 
 DYNAMIC_DIMENSION ::=
 	"[]";

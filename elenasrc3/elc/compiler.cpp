@@ -41,15 +41,15 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l | (unsigned int)r);
 }
 
-inline void testNodes(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      testNodes(current);
-
-      current = current.nextNode();
-   }
-}
+//inline void testNodes(SyntaxNode node)
+//{
+//   SyntaxNode current = node.firstChild();
+//   while (current != SyntaxKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
 inline bool isSelfCall(ObjectInfo target)
 {
@@ -3838,12 +3838,12 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
    int argCount = SyntaxTree::countChild(node, SyntaxKey::TemplateArg);
    int paramCount = SyntaxTree::countChild(node, SyntaxKey::Parameter);
    postfix.append('#');
-   postfix.appendInt(argCount);  
+   postfix.appendInt(paramCount);  
 
    switch (scope.type) {
       case TemplateType::Inline:
          prefix.append(INLINE_PREFIX);
-         if (paramCount > 0)
+         if (argCount > 0)
             scope.raiseError(errInvalidSyntax, node);
          break;
       case TemplateType::Statement:
@@ -5732,8 +5732,6 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
 
 ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand)
 {
-   testNodes(loperand);
-
    ObjectInfo target = mapObject(scope, loperand, EAttr::None);
    ObjectInfo exprVal = {};
 

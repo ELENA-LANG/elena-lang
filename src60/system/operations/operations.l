@@ -4,42 +4,42 @@
 
 // --- if ---
 
-public if<expr>(truePart) : __included(statementTemplates)
+public template if<expr>(truePart) : __included(statementTemplates)
 {
    cast bool(expr) ? { truePart }
 }
 
 // --- if:else ---
 
-public if&else<expr>(truePart,falsePart) : __included(statementTemplates)
+public template if::else<expr>(truePart,falsePart) : __included(statementTemplates)
 {
    cast bool(expr) ? { truePart } : { falsePart }
 }
 
 // --- ifnot ---
 
-public ifnot<expr>(falsePart) : __included(statementTemplates)
+public template ifnot<expr>(falsePart) : __included(statementTemplates)
 {
    cast bool(expr) ! { falsePart }
 }
 
 // --- while ---
 
-public while<expr>(loopBody) : __included(statementTemplates)
+public template while<expr>(loopBody) : __included(statementTemplates)
 {
    $rep cast bool(expr) ? { loopBody }
 }
 
 // --- until ---
 
-public until<expr>(loopBody) : __included(statementTemplates)
+public template until<expr>(loopBody) : __included(statementTemplates)
 {
    $rep cast bool(expr) ! { loopBody }
 }
 
 // --- do:until ---
 
-public do&until(loop_body,cond_expr) : __included(statementTemplates)
+public template do::until<cond_expr>(loop_body) : __included(statementTemplates)
 {
    loop_body;
 
@@ -48,7 +48,7 @@ public do&until(loop_body,cond_expr) : __included(statementTemplates)
 
 // --- for ---
 
-public for<initExpr,condExpr,stepExpr>(loopBody) : __included(statementTemplates)
+public template for<initExpr,condExpr,stepExpr>(loopBody) : __included(statementTemplates)
 {
    initExpr;
 
@@ -57,7 +57,7 @@ public for<initExpr,condExpr,stepExpr>(loopBody) : __included(statementTemplates
 
 // --- try:catch ---
 
-public try&catch(try_block,catch_block) : __included(statementTemplates)
+public template try::catch(try_block,catch_block) : __included(statementTemplates)
 {
    try_block \\ on(catch_block);
 }
