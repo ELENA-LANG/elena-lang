@@ -12,7 +12,7 @@
 
 #include "bytecode.h"
 
-#define FULL_OUTOUT_INFO 1
+//#define FULL_OUTOUT_INFO 1
 
 using namespace elena_lang;
 
@@ -1297,7 +1297,11 @@ ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<
       SyntaxNode current = node.firstChild();
       while (current.key != SyntaxKey::None) {
          if (current.key == argKey) {
-            parameters.add(current);
+            // !! refactoring needed
+            if (argKey == SyntaxKey::Expression) {
+               parameters.add(current.firstChild());
+            }
+            else parameters.add(current);
          }
 
          current = current.nextNode();
@@ -2257,37 +2261,48 @@ void Compiler :: declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNo
 
 }
 
-void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode baseNode, bool extensionMode)
+void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode node, bool extensionMode)
 {
    ref_t parentRef = 0;
 
    // analizing class postfixes : if it is a parrent, template or inline template
    SyntaxNode parentNode = {};
-   while (baseNode == SyntaxKey::Parent) {
-      SyntaxNode current = baseNode.firstChild();
-      if (current == SyntaxKey::TemplatePostfix) {
-         if (!parentRef) {
-            if (!importInlineTemplate(scope, current, INLINE_PREFIX, baseNode.parentNode())) {
-               parentNode = baseNode;
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::InlineTemplate:
+            if (!importInlineTemplate(scope, current, INLINE_PREFIX, node))
+               scope.raiseError(errInvalidOperation, current);
+            break;
+         case SyntaxKey::Parent:
+         {
+            SyntaxNode child = current.firstChild();
+            if (child == SyntaxKey::TemplateType) {
+               if (!parentRef) {
+                  parentNode = current;
 
-               parentRef = resolveStrongTypeAttribute(scope, current.firstChild(), extensionMode);
+                  parentRef = resolveStrongTypeAttribute(scope, child, extensionMode);
+               }
+               else if (!importTemplate(scope, child, node))
+                  scope.raiseError(errUnknownTemplate, current);
             }
-         }
-         else {
-            if (!importInlineTemplate(scope, current, INLINE_PREFIX, baseNode.parentNode())) {
-               if (!importTemplate(scope, current, baseNode.parentNode()))
-                  scope.raiseError(errUnknownTemplate, baseNode);
+            else if (!parentRef) {
+               parentRef = resolveStrongTypeAttribute(scope, child, extensionMode);
             }
+            else scope.raiseError(errInvalidSyntax, current);
+
+            break;
          }
+         default:
+            break;
       }
-      else if (!parentRef) {
-         parentNode = baseNode;
+      //else if (!parentRef) {
+      //   parentNode = baseNode;
 
-         parentRef = resolveStrongTypeAttribute(scope, baseNode.firstChild(), extensionMode);
-      }
-      else scope.raiseError(errInvalidSyntax, baseNode);
+      //   parentRef = resolveStrongTypeAttribute(scope, baseNode.firstChild(), extensionMode);
+      //}
 
-      baseNode = baseNode.nextNode();
+      current = current.nextNode();
    }
 
    if (scope.info.header.parentRef == scope.reference) {
@@ -2311,7 +2326,11 @@ void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode baseNode, b
 
 void Compiler :: importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode)
 {
-   ObjectInfo retVal = mapObject(scope, node, EAttr::NoTypeAllowed);
+   Interpreter interpreter(scope.moduleScope, _logic);
+
+   ObjectInfo retVal = evalObject(interpreter, scope, node);
+
+   //ObjectInfo retVal = mapObject(scope, node, EAttr::NoTypeAllowed);
    switch (retVal.kind) {
       case ObjectKind::InternalProcedure:
          importNode.setArgumentReference(retVal.reference);
@@ -2358,7 +2377,7 @@ void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
                   scope.raiseError(errUnknownTemplate, node);
             }
             break;
-         case SyntaxKey::InlineImplicitTemplate:
+         case SyntaxKey::InlinePropertyTemplate:
             if (!importPropertyTemplate(scope, current, INLINE_PROPERTY_PREFIX, 
                node))
             {
@@ -2408,7 +2427,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
          case SyntaxKey::IncludeStatement:
             if (withoutBody) {
                noBodyNode.setKey(SyntaxKey::Importing);
-               importCode(scope, current, noBodyNode);
+               importCode(scope, current.firstChild(), noBodyNode);
             }
             else scope.raiseError(errInvalidSyntax, node);
 
@@ -2845,7 +2864,7 @@ void Compiler :: declareFieldMetaInfos(ClassScope& scope, SyntaxNode node)
 void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
 {
    bool extensionDeclaration = isExtensionDeclaration(node);
-   resolveClassPostfixes(scope, node.findChild(SyntaxKey::Parent), extensionDeclaration/*, lxParent*/ );
+   resolveClassPostfixes(scope, node, extensionDeclaration/*, lxParent*/ );
 
    ref_t declaredFlags = 0;
    declareClassAttributes(scope, node, declaredFlags);
@@ -4049,7 +4068,7 @@ void Compiler :: declareTemplateAttributes(Scope& scope, SyntaxNode node,
 {
    SyntaxNode current = objectMode ? node.nextNode() : node.firstChild();
    while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::TemplateArg || current == SyntaxKey::Type) {
+      if (current == SyntaxKey::TemplateArg || current == SyntaxKey::Type || current == SyntaxKey::TemplateType) {
          ref_t typeRef = resolveStrongTypeAttribute(scope, current, declarationMode);
 
          parameters.add(typeRef);
@@ -4212,33 +4231,30 @@ ref_t Compiler :: resolveArrayTemplate(Scope& scope, ref_t elementRef, bool decl
 TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, bool& variadicArg, 
    bool declarationMode, bool allowRole)
 {
-   // !! do we need it at all, resolveTypeAttribute should be used instead
-   assert(false);
+   ref_t elementRef = 0;
 
-   //ref_t elementRef = 0;
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Attribute:
+            if (!_logic->validateTypeScopeAttribute(current.arg.reference, variadicArg))
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            break;
+         case SyntaxKey::Type:
+            elementRef = resolveStrongTypeAttribute(scope, current, declarationMode);
+            break;
+         default:
+            elementRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
+            break;
+      }
 
-   //SyntaxNode current = node.firstChild();
-   //while (current != SyntaxKey::None) {
-   //   switch (current.key) {
-   //      case SyntaxKey::Attribute:
-   //         if (!_logic->validateTypeScopeAttribute(current.arg.reference, variadicArg))
-   //            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-   //         break;
-   //      case SyntaxKey::Type:
-   //         elementRef = resolveStrongTypeAttribute(scope, current, declarationMode);
-   //         break;
-   //      default:
-   //         elementRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
-   //         break;
-   //   }
+      current = current.nextNode();
+   }
 
-   //   current = current.nextNode();
-   //}
-
-   //if (node == SyntaxKey::ArrayType) {
-   //   return { defineArrayType(scope, elementRef), elementRef };
-   //}
-   /*else */return {};
+   if (node == SyntaxKey::ArrayType) {
+      return { defineArrayType(scope, elementRef), elementRef };
+   }
+   else return {};
 }
 
 TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole)
@@ -4250,9 +4266,20 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
          break;
       case SyntaxKey::Type:
       {
+         if (node.arg.reference)
+            return { node.arg.reference };
+
          SyntaxNode current = node.firstChild();
-         if (SyntaxTree::test(current.key, SyntaxKey::TerminalMask)) {
-            typeInfo.typeRef = resolveTypeIdentifier(scope, current.identifier(), current.key, declarationMode, allowRole);
+         if (current == SyntaxKey::Type) {
+            // !! should be refactored
+            typeInfo = resolveTypeAttribute(scope, current, declarationMode, allowRole);
+         }
+         else if (SyntaxTree::test(current.key, SyntaxKey::TerminalMask)) {
+            if (current.nextNode() == SyntaxKey::TemplateArg) {
+               // !! should be refactored : TemplateType should be used instead
+               typeInfo.typeRef = resolveTypeTemplate(scope, current, declarationMode);
+            }
+            else typeInfo.typeRef = resolveTypeIdentifier(scope, current.identifier(), current.key, declarationMode, allowRole);
          }
          else assert(false);
          break;
@@ -4261,15 +4288,13 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
          typeInfo.typeRef = resolveTypeTemplate(scope, node, declarationMode);
          break;
       default:
-         //if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
-         //   typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
-         //}
-         /*else */assert(false);
+         if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
+            typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
+         }
+         else assert(false);
          break;
    }
 
-   //if (node == SyntaxKey::Type && node.arg.reference)
-   //   return { node.arg.reference };
 
    //if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
    //   if (node.nextNode() == SyntaxKey::TemplateArg) {

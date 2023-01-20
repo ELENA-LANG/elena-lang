@@ -131,7 +131,7 @@ namespace elena_lang
       void flushParameterArgDescr(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool allowType);
       void flushTemplageExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxKey type, bool allowType);
-      void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool exprMode = true);
       void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMessage(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushResend(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);

@@ -56,7 +56,7 @@ namespace elena_lang
       Field                   = 0x00100C,
       Import                  = 0x00100D,
       PredefinedMethod        = 0x00100E,
-      InlineImplicitTemplate  = 0x00100F,
+      InlinePropertyTemplate  = 0x00100F,
       CodeBlock               = 0x001C10,
       WithoutBody             = 0x001C11,
       Importing               = 0x001C12,

@@ -121,7 +121,7 @@ RELOAD_STATEMENT ::=
 	identifier;
 
 INCLUDE_STATEMENT ::=
-	{ identifier | reference }+;
+	{ identifier | reference }+ ^ OBJECT;
 
 NESTED_SCOPE ::=
 	"{" { DECLARATION | META_DECLARATION }* END_OF_BLOCK
@@ -518,7 +518,7 @@ POSTFIX ::=
 	identifier { 
 		TEMPLATE_BRACKETS ^ TEMPLATE_TYPE 
  		| "(" MESSAGE_PARAMETER { "," MESSAGE_PARAMETER }* ")" ^ INLINE
-		| eps ^ INLINE };
+		| eps };
 
 DIMENSION ::=
         integer
