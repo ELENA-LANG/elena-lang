@@ -923,25 +923,28 @@ public sealed class Variant
 
 // --- Array ---
 
-public sealed Array //: Indexable
+public sealed Array : Indexable
 {
     __string object[] array;
     
     /// Creates an empty array
-//    constructor MinValue
-//        = new object[](0);
+    constructor MinValue
+        = new object[](0);
     
     /// Creates the array with the specified length
-//    constructor allocate(int len)
-//        = new object[](len);
+    constructor allocate(int len)
+        = new object[](len);
 
-//    /// Creates a copy of the provided sub array
-//    constructor copy(int index, int length, Array array)
-//        <= allocate(length)
-//    {
-//        intern system'core_routines'__array.copy(self, index, length, array)
-//    }
-//        
+    /// Creates a copy of the provided sub array
+    constructor copy(int index, int length, Array array)
+        <= allocate(length)
+    {
+      for(int i := 0 , i < length, i += 1)
+      {
+         this array[i] := array[i + index]
+      }
+    }
+        
 //    /// Concatinates the arrays    
 //    add(Array a)
 //    {
@@ -960,37 +963,54 @@ public sealed Array //: Indexable
 //            
 //        ^ retVal
 //    }
-//
-//    int Length
-//    {
-//        /// Reads the array length into an output parameter
-//        get()
-//        {
-//            intern system'core_routines'__array.readLengthTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
-//
-//    /// Sets the specified array member
-//    setAt(int n, object o)
-//    {
-//        theArray[n] := o
-//    }
-//
-//    /// Returns the specified array member
-//    object at(int n)
-//        = theArray[n];
-// 
-//    /// Returns the array enumerator
-//    Enumerator enumerator() = new ArrayEnumerator(self);
-//
-//    /// Returns the array indexer
-//    Indexer indexer() = new ArrayIndexer(self);
-//
+
+   int Length
+   {
+      get()
+      {
+         int len := $len array;
+            
+         ^ len
+      }
+   }
+
+    /// Sets the specified array member
+    setAt(int n, object o)
+    {
+        array[n] := o
+    }
+
+    /// Returns the specified array member
+    object at(int n)
+        = array[n];
+ 
+    /// Returns the array enumerator
+    Enumerator enumerator() = new ArrayEnumerator(self);
+
+    /// Returns the array indexer
+    Indexer indexer() = new ArrayIndexer(self);
+
 //    object[] Value = theArray;
-//
-//    /// Clones the array
-//    Array clone()
-//        = Array.copy(0, self.Length, self);
+
+    /// Clones the array
+    Array clone()
+        = Array.copy(0, self.Length, self);
+}
+
+// --- ArrrayEnumerator ---
+
+public sealed ArrayEnumerator
+{
+   constructor(Array arr)
+   {
+   }
+}
+
+// --- ArrayIndexer ---
+
+public sealed ArrayIndexer
+{
+   constructor(Array arr)
+   {
+   }
 }

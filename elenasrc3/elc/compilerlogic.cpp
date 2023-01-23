@@ -1285,8 +1285,8 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
 
 bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, bool ignoreNils)
 {
-   //if ((!targetRef || targetRef == scope.buildins.superReference) && !isPrimitiveRef(sourceRef))
-   //   return true;
+   if ((!targetInfo.typeRef || targetInfo.typeRef == scope.buildins.superReference) && !sourceInfo.isPrimitive())
+      return true;
 
    switch (sourceInfo.typeRef) {
       case V_NIL:

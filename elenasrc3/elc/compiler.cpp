@@ -4826,11 +4826,10 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter);
 
       arguments[argLen++] = retrieveType(scope, roperand);
-      if ((arguments[0] == V_BINARYARRAY || arguments[0] == V_OBJARRAY) 
-         && arguments[1] == loperand.typeInfo.elementRef && operatorId == SET_INDEXER_OPERATOR_ID)
-      {
-         // HOTFIX : for the generic binary array, recognize the element type
-         arguments[1] = V_ELEMENT;
+      if ((arguments[0] == V_BINARYARRAY || arguments[0] == V_OBJARRAY) && operatorId == SET_INDEXER_OPERATOR_ID) {
+         if (_logic->isCompatible(*scope.moduleScope, { loperand.typeInfo.elementRef }, { arguments[1] }, false)) 
+            // HOTFIX : for the generic binary array, recognize the element type
+            arguments[1] = V_ELEMENT;
       }
    }
 
