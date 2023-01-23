@@ -9,6 +9,7 @@
 #include "compiler.h"
 #include "langcommon.h"
 #include <errno.h>
+#include <utility>
 
 #include "bytecode.h"
 
@@ -59,6 +60,20 @@ inline bool isSelfCall(ObjectInfo target)
          //case okOuterSelf:
       //case okClassSelf:
       //case okInternalSelf:
+         return true;
+      default:
+         return false;
+   }
+}
+
+inline bool isPrimitiveArrRef(ref_t reference)
+{
+   switch (reference) {
+      case V_OBJARRAY:
+      case V_INT32ARRAY:
+      case V_INT16ARRAY:
+      case V_INT8ARRAY:
+      case V_BINARYARRAY:
          return true;
       default:
          return false;
@@ -3593,6 +3608,7 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
          return resolveWrapperTemplate(scope, typeInfo.elementRef, declarationMode);
       case V_INT8ARRAY:
       case V_INT16ARRAY:
+      case V_INT32ARRAY:
       case V_BINARYARRAY:
          return resolveArrayTemplate(scope, typeInfo.elementRef, declarationMode);
       case V_NIL:
@@ -3951,6 +3967,7 @@ void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, Type
             break;
          case SyntaxKey::Type:
          case SyntaxKey::TemplateType:
+         case SyntaxKey::ArrayType:
             if (!EAttrs::test(mode.attrs, EAttr::NoTypeAllowed)) {
                mode |= ExpressionAttribute::NewVariable;
                typeInfo = resolveTypeAttribute(scope, current, false, false);
@@ -4098,10 +4115,10 @@ ObjectInfo Compiler :: defineArrayType(Scope& scope, ObjectInfo info)
    return info;
 }
 
-ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode)
+ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode, bool objectMode)
 {
    TemplateTypeList typeList;
-   declareTemplateAttributes(scope, node, typeList, declarationMode, node != SyntaxKey::TemplateType);
+   declareTemplateAttributes(scope, node, typeList, declarationMode, objectMode);
 
    // HOTFIX : generate a temporal template to pass the type
    SyntaxTree dummyTree;
@@ -4243,8 +4260,12 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, bool& varia
          case SyntaxKey::Type:
             elementRef = resolveStrongTypeAttribute(scope, current, declarationMode);
             break;
+         case SyntaxKey::identifier:
+         case  SyntaxKey::reference:
+            elementRef = resolveTypeIdentifier(scope, current.identifier(), node.key, declarationMode, allowRole);
+            break;
          default:
-            elementRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
+            assert(false);
             break;
       }
 
@@ -4270,10 +4291,20 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
             return { node.arg.reference };
 
          SyntaxNode current = node.firstChild();
-         if (current == SyntaxKey::Type) {
+         if (current == SyntaxKey::Type || current == SyntaxKey::ArrayType) {
             // !! should be refactored
             typeInfo = resolveTypeAttribute(scope, current, declarationMode, allowRole);
          }
+         //else if (current == SyntaxKey::Object) {
+         //   assert(false);
+
+         //   // NOTE : template type is declared inside object nodem dur to current syntax grammar
+         //   SyntaxNode objNode = current.firstChild();
+         //   if (objNode == SyntaxKey::TemplateType) {
+         //      typeInfo.typeRef = resolveTypeTemplate(scope, objNode, declarationMode, true);
+         //   }
+         //   else typeInfo = resolveTypeAttribute(scope, current, declarationMode, allowRole);
+         //}
          else if (SyntaxTree::test(current.key, SyntaxKey::TerminalMask)) {
             if (current.nextNode() == SyntaxKey::TemplateArg) {
                // !! should be refactored : TemplateType should be used instead
@@ -4287,6 +4318,16 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
       case SyntaxKey::TemplateType:
          typeInfo.typeRef = resolveTypeTemplate(scope, node, declarationMode);
          break;
+      case SyntaxKey::ArrayType:
+      {
+         bool variadicOne = false;
+
+         typeInfo = resolveTypeScope(scope, node, variadicOne, declarationMode, allowRole);
+
+         if (variadicOne)
+            scope.raiseError(errInvalidOperation, node);
+         break;
+      }
       default:
          if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
             typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
@@ -4294,43 +4335,6 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
          else assert(false);
          break;
    }
-
-
-   //if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
-   //   if (node.nextNode() == SyntaxKey::TemplateArg) {
-   //      typeInfo.typeRef = resolveTypeTemplate(scope, node, declarationMode);
-   //   }
-   //   else typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
-   //}
-   //else if (node == SyntaxKey::TemplateType) {
-   //   typeInfo.typeRef = resolveTypeTemplate(scope, node, declarationMode);
-   //}
-   //else if (node == SyntaxKey::TemplateArg) {
-   //   typeInfo = resolveTypeAttribute(scope, node.firstChild(), declarationMode, allowRole);
-   //}
-   //else if (node == SyntaxKey::ArrayType) {
-   //   bool variadicOne = false;
-
-   //   typeInfo = resolveTypeScope(scope, node, variadicOne, declarationMode, allowRole);
-
-   //   if (variadicOne)
-   //      scope.raiseError(errInvalidOperation, node);
-   //}
-   //else {
-   //   SyntaxNode current = node.firstChild();
-   //   if (current == SyntaxKey::Object || current == SyntaxKey::Type || current == SyntaxKey::TemplateType) {
-   //      typeInfo = resolveTypeAttribute(scope, current, declarationMode, allowRole);
-   //   }
-   //   else {
-   //      SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
-
-   //      if (terminal.nextNode() == SyntaxKey::TemplateArg) {
-   //         typeInfo.typeRef = resolveTypeTemplate(scope, terminal, declarationMode);
-   //      }
-   //      else typeInfo.typeRef = resolveTypeIdentifier(scope,
-   //         terminal.identifier(), terminal.key, declarationMode, allowRole);
-   //   }
-   //}
 
    validateType(scope, typeInfo.typeRef, node, declarationMode, allowRole);
 
@@ -4836,9 +4840,12 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter);
 
       arguments[argLen++] = retrieveType(scope, roperand);
-      if (arguments[0] == V_BINARYARRAY && arguments[1] == loperand.typeInfo.elementRef)
+      if ((arguments[0] == V_BINARYARRAY || arguments[0] == V_OBJARRAY) 
+         && arguments[1] == loperand.typeInfo.elementRef && operatorId == SET_INDEXER_OPERATOR_ID)
+      {
          // HOTFIX : for the generic binary array, recognize the element type
          arguments[1] = V_ELEMENT;
+      }
    }
 
    if (inode != SyntaxKey::None) {
@@ -6325,13 +6332,15 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    }
    else if (newOp || castOp) {
       switch (node.key) {
-         case SyntaxKey::Type:
+         case SyntaxKey::ArrayType:
          case SyntaxKey::identifier:
          case SyntaxKey::reference:
          {
             TypeInfo typeInfo = resolveTypeAttribute(scope, node, false, false);
 
             retVal = { ObjectKind::Class, typeInfo, 0u, newOp ? TargetMode::Creating : TargetMode::Casting };
+            if (isPrimitiveArrRef(retVal.typeInfo.typeRef) && newOp)
+               retVal.mode = TargetMode::CreatingArray;
             break;
          }
          default:
@@ -6437,9 +6446,10 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    if (invalid)
       scope.raiseError(errInvalidOperation, node);
 
-   if (declaredTypeInfo.typeRef == V_OBJARRAY) {
-      retVal = defineArrayType(scope, retVal);
-   }
+//   if (declaredTypeInfo.typeRef == V_OBJARRAY) {
+  //    assert(false);
+   //   retVal = defineArrayType(scope, retVal);
+   //}
 
    if (probeMode)
       retVal.mode = TargetMode::Probe;
@@ -6458,7 +6468,7 @@ inline SyntaxNode retrieveTerminalOrType(SyntaxNode node)
       if (test((unsigned int)current.key, (unsigned int)SyntaxKey::TerminalMask)) {
          last = current;
       }
-      else if (current == SyntaxKey::Type) {
+      else if (current == SyntaxKey::ArrayType || current == SyntaxKey::Type) {
          last = current;
       }
 

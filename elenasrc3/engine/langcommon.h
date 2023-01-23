@@ -240,6 +240,7 @@ namespace elena_lang
    constexpr auto V_ARGARRAY              = 0x80000016u;
    constexpr auto V_INT64                 = 0x80000017u;
    constexpr auto V_FLOAT64               = 0x80000018u;
+   constexpr auto V_INT32ARRAY            = 0x80000019u;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;

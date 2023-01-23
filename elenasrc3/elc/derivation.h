@@ -153,7 +153,7 @@ namespace elena_lang
       void flushMethodMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       bool flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
-         bool allowType);
+         bool allowType, bool arrayMode);
       void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
          bool allowType, bool onlyChildren = false);
       void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);

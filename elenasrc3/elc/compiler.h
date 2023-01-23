@@ -936,7 +936,7 @@ namespace elena_lang
       ref_t resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool declarationMode);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
          bool declarationMode, bool allowRole);
-      ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode);
+      ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode, bool objectMode = false);
 
       ref_t resolveTemplate(Scope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode);
       ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);

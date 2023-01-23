@@ -40,15 +40,20 @@ public class NilReferenceException : Exception
       <= super new("Nil reference exception");
 }
 
-// --- CriticalException ---
+// --- DivisionByZeroException ---
 public class DivisionByZeroException : Exception
 {
    constructor new()
       <= super new("Division by zero exception");
 }
 
-// --- CriticalException ---
+// --- OutOfMemoryException ---
 public class OutOfMemoryException : Exception
+{
+}
+
+// --- InvalidArgumentException ---
+public class InvalidArgumentException : Exception
 {
 }
 

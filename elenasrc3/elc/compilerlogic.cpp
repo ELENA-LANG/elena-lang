@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 106;
+constexpr auto OperationLength = 111;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -353,6 +353,16 @@ constexpr Op Operations[OperationLength] =
       SET_INDEXER_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_INT16, V_INT32, 0
    },
    {
+      LEN_OPERATOR_ID, BuildKey::IntArraySOp, V_INT32ARRAY, 0, 0, V_INT32
+   },
+   {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::IntArrayOp, V_INT32ARRAY, V_INT32, 0, V_INT32
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::IntArrayOp, V_INT32ARRAY, V_INT32, V_INT32, 0
+   },
+   {
       INDEX_OPERATOR_ID, BuildKey::BinaryArrayOp, V_BINARYARRAY, V_INT32, 0, V_ELEMENT
    },
    {
@@ -371,7 +381,13 @@ constexpr Op Operations[OperationLength] =
       IF_ELSE_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, V_CLOSURE, V_CLOSURE
    },
    {
-      LEN_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, 0, 0, V_INT32
+      LEN_OPERATOR_ID, BuildKey::ObjArraySOp, V_OBJARRAY, 0, 0, V_INT32
+   },
+   {
+      INDEX_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, V_INT32, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, V_ELEMENT, V_INT32, 0
    },
 };
 
@@ -1170,6 +1186,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
          info.size = -2;
          break;
+      case V_INT32ARRAY:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
+         info.size = -4;
+         break;
       case V_BINARYARRAY:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
@@ -1243,6 +1264,9 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
 
       if (isCompatible(scope, { V_INT16 }, { elementRef }, true) && info.size == 2)
          return V_INT16ARRAY;
+
+      if (isCompatible(scope, { V_INT32 }, { elementRef }, true) && info.size == 4)
+         return V_INT32ARRAY;
 
       //if (isCompatible(scope, V_INT32, elementRef, true)) {
       //   switch (info.size) {

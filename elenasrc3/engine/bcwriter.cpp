@@ -897,11 +897,46 @@ void bynaryArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-void objArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
+void objArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
    switch (node.arg.value) {
       case LEN_OPERATOR_ID:
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::Len);
+         tape.write(ByteCode::SaveDP, targetOffset, 4);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
 
+void objArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   assert(false);
+
+   switch (node.arg.value) {
+      case SET_INDEXER_OPERATOR_ID:
+         //// load
+         //// peek sp:1
+         //// write 1
+         //tape.write(ByteCode::Load);
+         //tape.write(ByteCode::PeekSI, 1);
+         //tape.write(ByteCode::WriteN, 1);
+         break;
+      case INDEX_OPERATOR_ID:
+         //// peek sp:1
+         //// load
+         //// setdp index
+         //// read 1
+         //tape.write(ByteCode::PeekSI, 1);
+         //tape.write(ByteCode::Load);
+         //tape.write(ByteCode::SetDP, targetOffset);
+         //tape.write(ByteCode::BRead);
          break;
       default:
          throw InternalError(errFatalError);
@@ -990,6 +1025,50 @@ void shortArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
          break;
    default:
       throw InternalError(errFatalError);
+   }
+}
+
+void intArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   switch (node.arg.value) {
+      case LEN_OPERATOR_ID:
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::NLen, 4);
+         tape.write(ByteCode::SaveDP, targetOffset, 4);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
+void intArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   switch (node.arg.value) {
+      case SET_INDEXER_OPERATOR_ID:
+         // load
+         // peek sp:1
+         // write n:1
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::WriteN, 4);
+         break;
+      case INDEX_OPERATOR_ID:
+         // peek sp:1
+         // load
+         // setdp index
+         // read n:1
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::SetDP, targetOffset);
+         tape.write(ByteCode::ReadN, 4);
+         break;
+      default:
+         throw InternalError(errFatalError);
    }
 }
 
@@ -1161,7 +1240,8 @@ ByteCodeWriter::Saver commands[] =
    intSOp, byteSOp, shortSOp, longLiteral, longOp, longSOp, longCondOp, realLiteral,
    realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
 
-   genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp
+   genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
+   intArraySOp, objArraySOp
 };
 
 // --- ByteCodeWriter ---

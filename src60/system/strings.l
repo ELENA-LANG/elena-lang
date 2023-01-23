@@ -49,6 +49,42 @@ public sealed Array<T> : Indexable<T>
       }
    };   
 
+   T at(int n)
+   {
+      if (n < 0)
+         { system'InvalidArgumentException.raise() };
+        
+      int len := $len array;
+
+      if (n < len)
+      { 
+         ^ array[n] 
+      }
+      else
+      {
+         system'InvalidArgumentException.raise();
+            
+         ^ nil // !! never reached
+      }
+   }
+
+   setAt(int n, T item)
+   {
+      if (n < 0)
+         { system'InvalidArgumentException.raise() };
+        
+      int len := $len array;
+
+      if (n < len)
+      {
+          array[n] := item
+      }
+      else
+      {
+         system'InvalidArgumentException.raise()
+      }
+   }
+
    int Length
    {
       get()
