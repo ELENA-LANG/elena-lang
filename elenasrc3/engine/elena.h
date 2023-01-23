@@ -1049,7 +1049,7 @@ namespace elena_lang
    {
       Symbol = 0,
       Singleton,
-      Constant
+      Constant,
    };
 
    struct SymbolInfo

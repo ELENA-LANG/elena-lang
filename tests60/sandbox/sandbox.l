@@ -19,33 +19,33 @@ public sealed class XCallStack
 
       this stack := stack;
    }
-/*
-   string toPrintable()
-      : info("Generates the call stack literal representation")
-   {
-      byte    buffer[512];
-      int     bufferLength := 0; 
-      pointer address;
-      string  callStackText := emptyString;
-      int     length := stack.length;
-      for (int i := 0, i < length, i += 1) {
-         address := stack[i];
-
-         bufferLength := extern elenart.LoadAddressInfoLM(address, buffer, 512);
-         if (bufferLength > 0) {
-            callStackText := callStackText + String.fromByteArray(0, bufferLength, buffer).add(newLine)
-         }
-      };
-
-      ^ callStackText
-   }*/
+   
+      string toPrintable()
+         : info("Generates the call stack literal representation")
+      {
+         byte    buffer[512];
+         int     bufferLength := 0; 
+         pointer address;
+         string  callStackText := emptyString;
+         int     length := stack.length;
+         for (int i := 0, i < length, i += 1) {
+            address := stack[i];
+   
+            bufferLength := extern elenart.LoadAddressInfoLM(address, buffer, 512);
+            if (bufferLength > 0) {
+               callStackText := callStackText + String.fromByteArray(0, bufferLength, buffer).add(newLineConstant)
+            }
+         };
+   
+         ^ callStackText
+      }
 }
 
 public program()
 {
-   //var s := new XCallStack();
+   var s := new XCallStack();
 
-   var s := newLine
+   console.writeLine(s)
 
    //console.writeLine("Test from ELENAVM")
 }

@@ -2081,10 +2081,6 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
       }
       else if (!test(scope.info.header.flags, elStructureRole)) {
          typeInfo.typeRef = resolveArrayTemplate(scope, attrs.typeInfo.typeRef, true);
-
-      //   typeInfo = resolvePrimitiveArray(scope,
-      //      scope.moduleScope->arrayTemplateReference,
-      //      classRef, false);
       }
       else scope.raiseError(errIllegalField, node);
 
@@ -7060,7 +7056,7 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
          case ObjectKind::StringLiteral:
          case ObjectKind::IntLiteral:
             scope.info.symbolType = SymbolType::Constant;
-            scope.info.valueRef = retVal.reference;
+            scope.info.valueRef = constRef;
             scope.info.typeRef = retrieveStrongType(scope, retVal);
             break;
          case ObjectKind::Constant:
