@@ -21,7 +21,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, compileBreakpoint, loadNop, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, loadOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadOp, loadOp, loadOp, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadNop,
@@ -43,7 +43,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadROp, loadFrameDispOp, loadLenOp, loadIndexOp, loadROp, loadROp, loadStackIndexOp, loadStackIndexOp,
-   loadMOp, loadNOp, loadFrameDispOp, loadFrameDispOp, loadNOp, loadNOp, loadFrameIndexOp, loadNop,
+   loadMOp, loadNOp, loadFrameDispOp, loadFrameDispOp, loadNOp, loadNOp, loadFrameIndexOp, loadROp,
 
    loadNOp, compileClose, loadIndexOp, loadIndexOp, loadNOp, loadNOp, loadNOp, loadNOp,
    loadFrameDispOp, loadFrameDispOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -89,7 +89,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 109;
+constexpr size_t bcCommandNumber = 111;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -113,7 +113,8 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::Not, ByteCode::Neg, ByteCode::INotDPN, ByteCode::IShlDPN, ByteCode::IShrDPN,
    ByteCode::FAddDPN, ByteCode::FSubDPN, ByteCode::FMulDPN, ByteCode::FDivDPN, ByteCode::FCmpN,
    ByteCode::BRead, ByteCode::LSave, ByteCode::FSave, ByteCode::FTruncDP, ByteCode::NConvFDP,
-   ByteCode::XRedirectM, ByteCode::XCall, ByteCode::XGet, ByteCode::WRead
+   ByteCode::XRedirectM, ByteCode::XCall, ByteCode::XGet, ByteCode::WRead, ByteCode::Assign,
+   ByteCode::CreateR
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,

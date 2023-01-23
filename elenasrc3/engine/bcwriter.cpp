@@ -917,26 +917,22 @@ void objArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int targetOffset = node.findChild(BuildKey::Index).arg.value;
 
-   assert(false);
-
    switch (node.arg.value) {
       case SET_INDEXER_OPERATOR_ID:
-         //// load
-         //// peek sp:1
-         //// write 1
-         //tape.write(ByteCode::Load);
-         //tape.write(ByteCode::PeekSI, 1);
-         //tape.write(ByteCode::WriteN, 1);
+         // load
+         // peek sp:1
+         // assign
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::Assign);
          break;
       case INDEX_OPERATOR_ID:
-         //// peek sp:1
-         //// load
-         //// setdp index
-         //// read 1
-         //tape.write(ByteCode::PeekSI, 1);
-         //tape.write(ByteCode::Load);
-         //tape.write(ByteCode::SetDP, targetOffset);
-         //tape.write(ByteCode::BRead);
+         // peek sp:1
+         // load
+         // xget
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::XGet);
          break;
       default:
          throw InternalError(errFatalError);
@@ -1168,10 +1164,13 @@ void newArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    ref_t typeRef = node.arg.reference;
    int n = node.findChild(BuildKey::Size).arg.value;
-
-   assert(n < 0);
-
-   tape.write(ByteCode::CreateNR, -n, typeRef | mskVMTRef);
+   if (n < 0) {
+      tape.write(ByteCode::CreateNR, -n, typeRef | mskVMTRef);
+   }
+   else if (n == 0) {
+      tape.write(ByteCode::CreateR, typeRef | mskVMTRef);
+   }
+   else assert(false);
 }
 
 void refParamAssigning(CommandTape& tape, BuildNode& node, TapeScope&)

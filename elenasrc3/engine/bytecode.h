@@ -36,6 +36,7 @@ namespace elena_lang
 
       Exclude        = 0x10,
       Include        = 0x11,
+      Assign         = 0x12,
 
       Coalesce       = 0x20,
       Not            = 0x21,
@@ -64,6 +65,7 @@ namespace elena_lang
       SubN           = 0x8C,
       AddN           = 0x8D,
       SetFP          = 0x8E,
+      CreateR        = 0x8F,
 
       Copy           = 0x90,
       CloseN         = 0x91,
@@ -144,7 +146,6 @@ namespace elena_lang
       NewNR          = 0xF5,
       XMovSISI       = 0xF6,
       CreateNR       = 0xF7,
-      CreateR        = 0xF8,
       XStoreFIR      = 0xF9,
       XDispatchMR    = 0xFA,
       DispatchMR     = 0xFB,

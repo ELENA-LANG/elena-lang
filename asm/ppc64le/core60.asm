@@ -431,6 +431,28 @@ inline % 11h
 
 end
 
+// ; assign
+inline %12h
+
+  sldi    r16, r14, 3
+  add     r16, r16, r15
+
+  // calculate write-barrier address
+  ld      r19, toc_gctable(r2)
+
+  ld      r17, gc_start(r19)
+  ld      r18, gc_header(r19)
+
+  subf    r19, r17, r15
+  srdi    r19, r19, page_size_order
+
+  std     r3, 0(r16)
+  li      r20, 1
+  add     r18, r18, r19
+  stb     r20, 0(r18)
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -724,6 +746,29 @@ inline %08Eh
   add     r15, r31, r16
 
 end 
+
+// ; create r
+inline %08Fh
+
+  ld      r12, 0(r3)
+  sldi    r12, r12, 3
+  addi    r12, r12, page_ceil
+  andi.   r18, r12, page_mask
+
+  ld      r12, toc_alloc(r2)
+  mtctr   r12            
+  bctrl                   
+
+  ld      r12, 0(r3)
+  sldi    r18, r12, 3
+
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, __disp32hi_1
+  addi    r17, r17, __disp32lo_1
+  std     r18, -elSizeOffset(r15)
+  std     r17, -elVMTOffset(r15)
+
+end
 
 // ; copy
 inline %90h

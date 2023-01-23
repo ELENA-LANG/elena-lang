@@ -66,20 +66,6 @@ inline bool isSelfCall(ObjectInfo target)
    }
 }
 
-inline bool isPrimitiveArrRef(ref_t reference)
-{
-   switch (reference) {
-      case V_OBJARRAY:
-      case V_INT32ARRAY:
-      case V_INT16ARRAY:
-      case V_INT8ARRAY:
-      case V_BINARYARRAY:
-         return true;
-      default:
-         return false;
-   }
-}
-
 inline ref_t getSignature(ModuleBase* module, mssg_t message)
 {
    pos_t argCount = 0;
@@ -6339,7 +6325,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
             TypeInfo typeInfo = resolveTypeAttribute(scope, node, false, false);
 
             retVal = { ObjectKind::Class, typeInfo, 0u, newOp ? TargetMode::Creating : TargetMode::Casting };
-            if (isPrimitiveArrRef(retVal.typeInfo.typeRef) && newOp)
+            if (CompilerLogic::isPrimitiveArrRef(retVal.typeInfo.typeRef) && newOp)
                retVal.mode = TargetMode::CreatingArray;
             break;
          }

@@ -146,6 +146,20 @@ namespace elena_lang
       bool isValidType(ClassInfo& info, bool allowRole);
       bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole);
 
+      static bool isPrimitiveArrRef(ref_t reference)
+      {
+         switch (reference) {
+            case V_OBJARRAY:
+            case V_INT32ARRAY:
+            case V_INT16ARRAY:
+            case V_INT8ARRAY:
+            case V_BINARYARRAY:
+               return true;
+            default:
+               return false;
+         }
+      }
+
       void generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods);
 
       static CompilerLogic* getInstance()

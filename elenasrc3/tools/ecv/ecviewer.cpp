@@ -275,6 +275,12 @@ void ByteCodeViewer :: addArg(arg_t arg, IdentifierString& commandStr)
    commandStr.appendInt(arg);
 }
 
+void ByteCodeViewer :: addIArg(arg_t arg, IdentifierString& commandStr)
+{
+   commandStr.append("i:");
+   commandStr.appendInt(arg);
+}
+
 void ByteCodeViewer :: addSecondArg(arg_t arg, IdentifierString& commandStr)
 {
    commandStr.append(", ");
@@ -364,6 +370,9 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::Jlt:
          case ByteCode::Jge:
             addLabel(command.arg1 + commandPosition + 5, commandStr, labels);
+            break;
+         case ByteCode::AssignI:
+            addIArg(command.arg1, commandStr);
             break;
          default:
             addArg(command.arg1, commandStr);

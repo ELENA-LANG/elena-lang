@@ -354,6 +354,20 @@ inline % 11h
 
 end
 
+// ; assign
+inline %12h
+
+  mov  rax, rbx
+
+  // calculate write-barrier address
+  mov  rcx, [data : %CORE_GC_TABLE + gc_header]
+  sub  rax, [data : %CORE_GC_TABLE + gc_start]
+  shr  rax, page_size_order
+  mov  [rbx + rdx*8], r10
+  mov  byte ptr [rax + rcx], 1  
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -625,6 +639,25 @@ inline %8Eh
   lea  rbx, qword ptr [rbp + __arg32_1]
 
 end 
+
+// ; creater r
+inline %08Fh
+
+  mov  rax, [r10]
+  mov  ecx, page_ceil
+  shl  eax, 2
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOC
+
+  mov  rcx, [r10]
+  shl  ecx, 2
+
+  mov  rax, __ptr64_1
+  mov  [rbx - elSizeOffset], rcx
+  mov  [rbx - elVMTOffset], rax
+
+end
 
 // ; copy
 inline %90h

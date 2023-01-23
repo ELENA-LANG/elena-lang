@@ -880,6 +880,8 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::TstM:
          case ByteCode::MovM:
             return compileOpM(tokenInfo, writer, opCommand, false);
+         case ByteCode::AssignI:
+            return compileOpI(tokenInfo, writer, opCommand, false);
          case ByteCode::XHookDPR:
             return compileDDispR(tokenInfo, writer, opCommand, dataLocals, true);
          case ByteCode::CallMR:

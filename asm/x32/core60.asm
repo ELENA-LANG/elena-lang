@@ -348,6 +348,20 @@ inline % 11h
 
 end
 
+// ; assign
+inline %12h
+
+  mov  eax, ebx
+  mov  [ebx + edx*4], esi
+  // calculate write-barrier address
+  sub  eax, [data : %CORE_GC_TABLE + gc_start]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_header]
+  shr  eax, page_size_order
+  mov  byte ptr [eax + ecx], 1  	
+
+end
+
+
 // ; coalesce
 inline % 20h
 
@@ -598,6 +612,24 @@ inline %08Eh
   lea  ebx, [ebp + __arg32_1]
 
 end 
+
+// ; creater r
+inline %08Fh
+
+  mov  eax, [esi]
+  mov  ecx, page_ceil
+  shl  eax, 2
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOC
+
+  mov  ecx, [esi]
+  shl  ecx, 2
+  mov  eax, __ptr32_1
+  mov  [ebx - elVMTOffset], eax
+  mov  [ebx - elSizeOffset], ecx
+
+end
 
 // ; copy
 inline %90h

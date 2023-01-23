@@ -391,6 +391,31 @@ inline % 11h
 
 end
 
+// ; assign
+inline %12h
+
+  lsl     x11, x19, 3
+  add     x11, x11, x10
+
+  // calculate write-barrier address
+  movz    x12, data_ptr32lo : %CORE_GC_TABLE
+  movk    x12, data_ptr32hi : %CORE_GC_TABLE, lsl #16
+
+  add     x13, x12, gc_start
+  add     x15, x12, gc_header
+  ldr     x14, [x13]
+  sub     x14, x10, x14
+  ldr     x15, [x15]
+
+  lsr     x14, x14, page_size_order
+  add     x14, x15, x14
+  mov     x12, 1
+  strb    w12, [x14]
+
+  str     x0, [x11]
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -677,6 +702,30 @@ inline %58Eh
   add     x10, x29, __arg12_1
 
 end 
+
+// ; create r
+inline %08Fh
+
+  ldr     w19, [x0]
+  sld     x19, x19, 3
+
+  add     x19, x19, page_ceil
+  and     x11, x19, page_mask
+
+  movz    x17,  code_ptr32lo : %GC_ALLOC
+  movk    x17,  code_ptr32hi : %GC_ALLOC, lsl #16
+  blr     x17
+
+  ldr     w19, [x0]
+  sld     x18, x19, 3
+
+  movz    x19,  __ptr32lo_1
+  movk    x19,  __ptr32hi_1, lsl #16
+  sub     x20, x10, elVMTOffset
+  str     x19, [x20]
+  str     w18, [x20, #12]!
+
+end
 
 // ; copy
 inline %90h
@@ -2508,6 +2557,9 @@ inline %0F7h
   mul     x18, x19, x18
 
   // ; adding mask
+  movz    x19, struct_mask_lo
+  movk    x19, struct_mask_hi, lsl #16
+  or      r18, r18, r19
 
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16

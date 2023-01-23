@@ -1598,7 +1598,7 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& sc
    }
 
    // COMPILE MAGIC : trying to typecast primitive array
-   if (isEmbeddableArray(scope, sourceInfo.typeRef) && test(info.header.flags, elDynamicRole)) {
+   if (isPrimitiveArrRef(sourceInfo.typeRef) && test(info.header.flags, elDynamicRole)) {
       auto inner = *info.fields.start();
 
       bool compatible = isCompatible(scope, { inner.typeInfo.elementRef }, { sourceInfo.elementRef }, false);

@@ -24,6 +24,7 @@ In development:
     ! elena sm : x86
     ! script samples : x86
     ! elena vm : x86-64
+    * optimization single dispatching
 
     === Iteration 15 ===
     ! ide : vm console
@@ -235,7 +236,6 @@ Backlog:
     * bcwriter : openFrame - should flush only used arguments (e.g. for test[1] - only one xflush)
     * dispatch opcode : optimize for 1,2,3,4 arguments
     * optimization sealed dispatching
-    * optimization single dispatching
     * private method dispatching
     * optimization xstore sp:0, 0 and xstore sp:1, 0 - should be replaced with xor operation
     * no need to store an argument for the function (constructor)

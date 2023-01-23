@@ -3,7 +3,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                                (C)2021-2022, by Aleksey Rakov
+//                                                (C)2021-2023, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #include "bytecode.h"
@@ -17,7 +17,7 @@ const char* _fnOpcodes[256] =
    "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
    "class", "save", "throw", "unhook", "loadv", "xcmp", "bload", "wload",
 
-   "incude", "exclude", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "incude", "exclude", "assign", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", OPCODE_UNKNOWN,
@@ -39,12 +39,12 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "set", "set dp", "nlen", "xassign", "peek", "store", "xswap sp", "swap sp",
-   "mov mssg", "mov n", "load dp", "xcmp dp", "sub n", "add n", "set fp", OPCODE_UNKNOWN,
+   "mov mssg", "mov n", "load dp", "xcmp dp", "sub n", "add n", "set fp", "create",
 
    "copy", "close", "alloc", "free", "and n", "read", "write", "cmp n",
    "nconf dp", "ftrunc dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "save dp", "store fp", "save sp", "store sp", "xflush sp", "get", "assign", "xrefresh sp",
+   "save dp", "store fp", "save sp", "store sp", "xflush sp", "get", "assign i", "xrefresh sp",
    "peek fp", "peek sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
@@ -60,7 +60,7 @@ const char* _fnOpcodes[256] =
    "nadd dp", OPCODE_UNKNOWN, "xwrite offs", "xcopy offs", "vjump mssg", "jump mssg", "seleq", "sellt",
 
    "open", "xstore sp", "open header", "mov sp", "new", "newn", "xmov sp", "createn",
-   "create", "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
+   OPCODE_UNKNOWN, "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
 };
 
 // --- Auxiliary  ---
