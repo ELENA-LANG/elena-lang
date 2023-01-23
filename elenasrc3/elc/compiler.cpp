@@ -4729,6 +4729,8 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
          return scope->buildins.negate_message;
       case VALUE_OPERATOR_ID:
          return scope->buildins.value_message;
+      case SET_INDEXER_OPERATOR_ID:
+         return scope->buildins.set_refer_message;
       default:
          throw InternalError(errFatalError);
    }
@@ -8560,6 +8562,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.refer_message =
       encodeMessage(moduleScope->module->mapAction(REFER_MESSAGE, 0, false),
          2, 0);
+   moduleScope->buildins.set_refer_message =
+      encodeMessage(moduleScope->module->mapAction(SET_REFER_MESSAGE, 0, false),
+         3, 0);
    moduleScope->buildins.if_message =
       encodeMessage(moduleScope->module->mapAction(IF_MESSAGE, 0, false),
          2, 0);

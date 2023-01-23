@@ -999,18 +999,108 @@ public sealed Array : Indexable
 
 // --- ArrrayEnumerator ---
 
-public sealed ArrayEnumerator
+public sealed ArrayEnumerator : Enumerator
 {
+   Array          array;
+   Reference<int> index;
+
    constructor(Array arr)
    {
+      array := arr;
+      index := -1;
    }
+
+   reset()
+   {
+      index.Value := -1;
+   }
+
+   bool next()
+   {
+      int len := array.Length;
+        
+      index.append(1);
+        
+      int i := *index;
+      if (i < len)
+      {
+         ^ true;
+      };
+
+      ^ false
+   }
+
+   Value
+      = array[*index];
+
+   enumerable() = array;
 }
 
 // --- ArrayIndexer ---
 
-public sealed ArrayIndexer
+public sealed ArrayIndexer : Indexer
 {
+   Array          array;
+   Reference<int> index;
+
    constructor(Array arr)
    {
+      array := arr;
+      index := 0;
+   }
+
+   get bool Available()
+   {
+      int len := array.Length;
+      int val := *index;
+        
+      ^ val < len
+   }
+   
+   get Value()
+   {
+      int val := *index;
+
+      ^ array[val];
+   }
+   
+   set Value(o)
+   {
+      int val := *index;
+
+      array[val] := o;      
+   }
+
+   int Index
+   {
+      /// Reads the current index and saves it into an output parameter
+      get()
+      {
+         int retVal := *index;
+            
+         ^ retVal
+      }
+        
+      /// Sets the index by specified value
+      set(val)
+      {
+         index.Value := val
+      }
+   }
+   
+   appendIndex(int val)
+   {
+      index.append(val)
+   }
+    
+   int Length
+   {
+      /// Reads the length to the output parameter    
+      get()
+      {
+         int retVal := array.Length;
+            
+         ^ retVal
+      }
    }
 }

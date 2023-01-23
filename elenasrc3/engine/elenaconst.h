@@ -137,6 +137,7 @@ namespace elena_lang
    constexpr auto BOR_MESSAGE             = "bor";
    constexpr auto BXOR_MESSAGE            = "bxor";
    constexpr auto REFER_MESSAGE           = "at";
+   constexpr auto SET_REFER_MESSAGE       = "setAt";
    constexpr auto IF_MESSAGE              = "if";
    constexpr auto EQUAL_MESSAGE           = "equal";
    constexpr auto NOT_MESSAGE             = "Inverted";
