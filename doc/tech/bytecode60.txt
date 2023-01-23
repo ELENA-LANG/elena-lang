@@ -70,6 +70,8 @@ ELENA byte codes (or ecodes)
 
    mov env                  - %SYSTEM_ENV => index 
 
+   mov frm                  - %CURRENT_FRAME => index 
+
    mov mssg:m               - index := m
 
    mov n:n                  - index := n

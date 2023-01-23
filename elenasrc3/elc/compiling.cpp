@@ -370,6 +370,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
    pos_t rawStackAlingment,
    pos_t ehTableEntrySize,
    int minimalArgList,
+   int ptrSize,
    bool withDebug)
 {
    ModuleScope moduleScope(
@@ -377,7 +378,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
       forwardResolver,
       _libraryProvider.createModule(module_it.name()),
       withDebug ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
-      stackAlingment, rawStackAlingment, ehTableEntrySize, minimalArgList);
+      stackAlingment, rawStackAlingment, ehTableEntrySize, minimalArgList, ptrSize);
 
    _compiler->prepare(&moduleScope, forwardResolver);
 
@@ -430,6 +431,7 @@ void CompilingProcess :: compile(ProjectBase& project,
          project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
          project.IntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
          minimalArgList,
+         sizeof(uintptr_t),
          project.BoolSetting(ProjectOption::DebugMode, true));
 
       ++(*module_it);

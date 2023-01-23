@@ -37,6 +37,7 @@ namespace elena_lang
       Exclude        = 0x10,
       Include        = 0x11,
       Assign         = 0x12,
+      MovFrm         = 0x13,
 
       Coalesce       = 0x20,
       Not            = 0x21,

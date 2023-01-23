@@ -377,6 +377,7 @@ namespace elena_lang
       virtual ref_t importReference(ModuleBase* referenceModule, ustr_t referenceName) = 0;
       virtual ref_t importReference(ModuleBase* referenceModule, ref_t reference) = 0;
       virtual ref_t importConstant(ModuleBase* referenceModule, ref_t reference) = 0;
+      virtual ref_t importExternal(ModuleBase* referenceModule, ref_t reference) = 0;
       virtual ref_t importMessageConstant(ModuleBase* referenceModule, ref_t reference) = 0;
 
       SectionScopeBase()

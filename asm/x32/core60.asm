@@ -361,6 +361,12 @@ inline %12h
 
 end
 
+// ; movfrm
+inline %13h
+
+  mov  edx, ebp
+
+end
 
 // ; coalesce
 inline % 20h

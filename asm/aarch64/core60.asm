@@ -416,6 +416,13 @@ inline %12h
 
 end
 
+// ; movfrm
+inline %13h
+
+  mov  x9, x29
+
+end
+
 // ; coalesce
 inline % 20h
 

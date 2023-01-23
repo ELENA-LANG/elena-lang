@@ -5,7 +5,11 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * api functionality for existing classes : ArrayEnumerator
+    * api functionality for existing classes : system'CallStack
+    * exceptions : showing call stack
+    + ide 64 : call stack
+    * call internal
+    * calling protected method
 
     * ide : open file
     * ide : fix closing several tabs (starting from the last one)
@@ -49,6 +53,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * api porting : UnsafePointer
     * elena : nullable
     * templates with parameters: template can have attribute values in the brackets after the main body
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
@@ -109,7 +114,6 @@ Backlog:
     * toPrintable should return both wide and string
     * unit tests : arithmetic operations
 
-    * showing call stack
     * uncomment hello world
     * uncomment lnx_console.l code
     * unit tests : boolean operations
@@ -135,7 +139,6 @@ Backlog:
     * string to real : support e notation
     * intnumber.cast<'integer> - should returns itself without boxing
     * two breakpoints in row
-    * calling protected method
     * exception tests : methodnotfound, nilreference
     * uncomment ConsoleFactory type attributes
     * external operation : do not box the arguments
@@ -152,7 +155,6 @@ Backlog:
     * unit tests : looping
     * unit tests : exceptions
     * review code { int n := 3; } : extra assigning
-    * call internal
     * repeate-until statements
     * aarch64 : setting mask for size (createn, ...)
     * try-finally-catch
@@ -371,7 +373,6 @@ Backlog:
     + * operator with object wrapper - sould be pass direct value, so no need for dispatcin in ref interface
       e.g: theIndex.append(cast int(theDiff)); - should be written theIndex.append(*theDiff); and the stack-allocated
      object should be passed as is
-    + ide 64 : call stack
     + QuckSorting : optimize the code - built-in branching should be used 
     + extension with primitive arrays - no need to box
     + new attribute - constant operation - do indicate that the class itself is not changed

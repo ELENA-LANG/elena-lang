@@ -453,6 +453,13 @@ inline %12h
 
 end
 
+// ; movfrm
+inline %13h
+
+  mr  r14, r31
+
+end
+
 // ; coalesce
 inline % 20h
 

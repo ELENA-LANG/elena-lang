@@ -59,6 +59,11 @@ EXTERN_DLL_EXPORT size_t LoadMessageNameLA(size_t message, char* buffer, size_t 
    return machine->loadMessageName((mssg_t)message, buffer, length);
 }
 
+EXTERN_DLL_EXPORT size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length)
+{
+   return __routineProvider.LoadCallStack(framePtr, list, length);
+}
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved

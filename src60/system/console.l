@@ -17,7 +17,7 @@ sealed class Console
    writeLine(s)
    {
       writer.write(s.toPrintable());
-      writer.write(newLine);
+      writer.write(newLineConstant);
    }
 
     char readChar()

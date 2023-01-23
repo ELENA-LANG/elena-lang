@@ -62,5 +62,6 @@
 #let attributesSymbols["mssg"]        := 80000806h;
 #let attributesSymbols["__symbol"]    := 80000808h;
 #let attributesSymbols["__mssg"]      := 80000809h;
+#let attributesSymbols["__ptr"]       := 8000080Ah;
 
 #reload attributesSymbols;

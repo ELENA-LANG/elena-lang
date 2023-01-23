@@ -101,6 +101,8 @@ namespace elena_lang
 
       static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size);
 
+      static size_t LoadCallStack(uintptr_t framePtr, uintptr_t* list, size_t length);
+
       static void Init(SystemEnv* env, SystemSettings settings);
       static void InitExceptionHandling(SystemEnv* env, void* criticalHandler);
       static void InitCriticalStruct(uintptr_t criticalDispatcher);

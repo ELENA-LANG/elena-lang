@@ -87,6 +87,7 @@ namespace elena_lang
          pos_t rawStackAlingment,
          pos_t ehTableEntrySize,
          int minimalArgList,
+         int ptrSize,
          bool withDebug);
 
       void configurate(Project& project);

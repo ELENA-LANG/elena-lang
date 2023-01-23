@@ -36,11 +36,11 @@
         <include>messaging.l</include>
         <include>closures.l</include>
         <include>convertors.l</include>
+        <include>win_basic.l</include>
         <include>exceptions.l</include>
         <include>console.l</include>
         <include>app.l</include>
         <include>win_strings.l</include>
-        <include>win_basic.l</include>
         <include>template_tests.l</include>
         <include>text\encoding.l</include>
         <include>io\win_console.l</include>

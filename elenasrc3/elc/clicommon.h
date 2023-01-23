@@ -257,6 +257,7 @@ public:
    pos_t                stackAlingment, rawStackAlingment;
    pos_t                ehTableEntrySize;
    int                  minimalArgList;
+   int                  ptrSize;
 
    bool                 tapeOptMode;
 
@@ -319,6 +320,7 @@ public:
       pos_t rawStackAlingment,
       pos_t ehTableEntrySize,
       int minimalArgList,
+      int ptrSize,
       bool tapeOptMode
    ) :
       predefined(0),
@@ -333,6 +335,7 @@ public:
       this->rawStackAlingment = rawStackAlingment;
       this->ehTableEntrySize = ehTableEntrySize;
       this->minimalArgList = minimalArgList;
+      this->ptrSize = ptrSize;
       this->tapeOptMode = tapeOptMode;
    }
 };

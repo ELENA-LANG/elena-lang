@@ -2076,8 +2076,15 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
    ref_t flags = scope.info.header.flags;
 
    if (sizeHint == -1) {
-      if (singleField) {
+      if (singleField && attrs.inlineArray) {
          scope.info.header.flags |= elDynamicRole;
+      }
+      else if (!test(scope.info.header.flags, elStructureRole)) {
+         typeInfo.typeRef = resolveArrayTemplate(scope, attrs.typeInfo.typeRef, true);
+
+      //   typeInfo = resolvePrimitiveArray(scope,
+      //      scope.moduleScope->arrayTemplateReference,
+      //      classRef, false);
       }
       else scope.raiseError(errIllegalField, node);
 
@@ -4449,14 +4456,30 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                   valid = false;
                   break;
             }
-         break;
+            break;
+         case V_POINTER:
+            switch (attrs.size) {
+               case 4:
+                  attrs.typeInfo.typeRef = V_PTR32;
+                  break;
+               case 8:
+                  attrs.typeInfo.typeRef = V_PTR64;
+                  break;
+               case 0:
+                  attrs.size = scope.moduleScope->ptrSize;
+                  break;
+               default:
+                  valid = false;
+                  break;
+            }
+            break;
          default:
             valid = false;
             break;
       }
 
       if (!valid)
-         scope.raiseError(errInvalidHint, node);
+         scope.raiseError(errInvalidHint, node.findChild(SyntaxKey::Name));
    }
 }
 
@@ -7812,7 +7835,7 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    if (current == SyntaxKey::ResendDispatch || current == SyntaxKey::RedirectDispatch) {
       // do not create a frame for resend operation
    }
-   else if (isDefConvConstructor) {
+   else if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
       // new stack frame
       writer.appendNode(BuildKey::OpenFrame);
       newFrame = true;

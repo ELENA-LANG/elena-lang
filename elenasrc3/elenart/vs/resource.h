@@ -15,14 +15,15 @@
 #endif
 #endif
 
-#define ELENART_REVISION_NUMBER        0x0010
+#define ELENART_REVISION_NUMBER        0x0011
 
 #define STRINGIZE2(s) #s
 #define STRINGIZE(s) STRINGIZE2(s)
  
 #define VER_FILE_VERSION_STR        STRINGIZE(ENGINE_MAJOR_VERSION)        \
                                     "." STRINGIZE(ENGINE_MINOR_VERSION)    \
-                                    ".0.0" 
+                                    "." STRINGIZE(ELENART_REVISION_NUMBER)     \
+                                    ".0" 
 
 #define VER_PRODUCT_VERSION_STR     STRINGIZE(ENGINE_MAJOR_VERSION)        \
                                     "." STRINGIZE(ENGINE_MINOR_VERSION)    \

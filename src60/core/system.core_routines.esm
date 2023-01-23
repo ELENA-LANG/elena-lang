@@ -696,6 +696,27 @@ labNext:
 
 end
 
+procedure __loadCallStack (self, buffer, length, retVal)
+
+  open       (3),[b],[l,ptr]
+
+  peek       fp:length
+  load
+  save       dp:l
+  peek       fp:buffer
+  store      fp:b
+
+  mov        frm
+  save       dp:ptr
+
+  call extern:LoadCallStackLA(*ptr, b, *l)
+  peek       fp:retVal
+  save
+
+  close      []
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION

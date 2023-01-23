@@ -57,6 +57,31 @@ void SystemRoutineProvider :: InitSTA(SystemEnv* env)
    Init(env, settings);
 }
 
+inline uintptr_t getContent(uintptr_t ptr)
+{
+   return *(uintptr_t*)ptr;
+}
+
+size_t SystemRoutineProvider :: LoadCallStack(uintptr_t framePtr, uintptr_t* list, size_t totalLength)
+{
+   size_t length = 0;
+   uintptr_t current = framePtr;
+   while (length < totalLength) {
+      uintptr_t retAddress = getContent(current + sizeof(uintptr_t));
+      if (getContent(current) != 0) {
+         list[length++] = retAddress;
+
+         current = getContent(current);
+      }
+      else if (retAddress) {
+         current = retAddress;
+      }
+      else break;
+   }
+
+   return length;
+}
+
 // --- ELENAMachine ---
 
 int ELENAMachine :: execute(SystemEnv* env, void* symbolListEntry)

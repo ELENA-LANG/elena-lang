@@ -368,6 +368,13 @@ inline %12h
 
 end
 
+// ; movfrm
+inline %13h
+
+  mov  rdx, rbp
+
+end
+
 // ; coalesce
 inline % 20h
 

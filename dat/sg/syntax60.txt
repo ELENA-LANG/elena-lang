@@ -339,7 +339,7 @@ L4_EXPRESSION ::=
 
 L5_EXPRESSION ::=
 	identifier { 
-		L3 ^OBJECT MESSAGE MESSAGE_R
+		L3 ^OBJECT MESSAGE MESSAGE_R L3_OP*
 		| L4_O_OP
 		| eps ^OBJECT }
 	| { integer | hexinteger | string | long } { 

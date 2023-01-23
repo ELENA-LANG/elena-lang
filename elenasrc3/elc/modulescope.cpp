@@ -3,7 +3,7 @@
 //
 //		This file contains Module scope class implementation.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "modulescope.h"
@@ -266,6 +266,13 @@ ref_t ModuleScope :: importReference(ModuleBase* referenceModule, ustr_t referen
       else return module->mapReference(referenceName);
    }
    else return 0;
+}
+
+ref_t ModuleScope :: importExternal(ModuleBase* referenceModule, ref_t reference)
+{
+   ustr_t refName = referenceModule->resolveReference(reference);
+
+   return module->mapReference(refName);
 }
 
 ref_t ModuleScope :: importConstant(ModuleBase* referenceModule, ref_t reference)
