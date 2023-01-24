@@ -42,7 +42,7 @@ const char* _fnOpcodes[256] =
    "mov mssg", "mov n", "load dp", "xcmp dp", "sub n", "add n", "set fp", "create",
 
    "copy", "close", "alloc", "free", "and n", "read", "write", "cmp n",
-   "nconf dp", "ftrunc dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "nconf dp", "ftrunc dp", "dcopy", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "save dp", "store fp", "save sp", "store sp", "xflush sp", "get", "assign i", "xrefresh sp",
    "peek fp", "peek sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -57,7 +57,7 @@ const char* _fnOpcodes[256] =
    "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", "xnewn",
-   "nadd dp", OPCODE_UNKNOWN, "xwrite offs", "xcopy offs", "vjump mssg", "jump mssg", "seleq", "sellt",
+   "nadd dp", "dcopy dp", "xwrite offs", "xcopy offs", "vjump mssg", "jump mssg", "seleq", "sellt",
 
    "open", "xstore sp", "open header", "mov sp", "new", "newn", "xmov sp", "createn",
    OPCODE_UNKNOWN, "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN

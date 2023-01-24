@@ -184,7 +184,6 @@ void copyingLocal(CommandTape& tape, BuildNode& node, TapeScope&)
          tape.write(ByteCode::CopyDPN, node.arg.value, n);
          break;
    }
-
 }
 
 void copyingToAcc(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -192,6 +191,13 @@ void copyingToAcc(CommandTape& tape, BuildNode& node, TapeScope&)
    int n = node.findChild(BuildKey::Size).arg.value;
 
    tape.write(ByteCode::Copy, n);
+}
+
+void copyingLocalArr(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int n = node.findChild(BuildKey::Size).arg.value;
+
+   tape.write(ByteCode::DCopy, n);
 }
 
 void assignToStack(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -1240,7 +1246,7 @@ ByteCodeWriter::Saver commands[] =
    realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
 
    genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
-   intArraySOp, objArraySOp
+   intArraySOp, objArraySOp, copyingLocalArr
 };
 
 // --- ByteCodeWriter ---

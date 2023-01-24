@@ -914,6 +914,26 @@ inline %099h
 
 end
 
+// ; dcopy
+inline %9Ah
+
+  mov     x11, __n16_1
+  mul     x11, x11, x9
+  mov     x12, x0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; saveddisp
 inline %0A0h
 
@@ -2086,6 +2106,26 @@ inline %0E8h
   ldr     w20, [x19]
   add     x20, x20, x18
   str     w20, [x19]
+
+end
+
+// ; dcopydpn
+inline %0E9h
+
+  mov     x11, __n16_2
+  mov     x12, x0
+  mul     x11, x11, x9
+  add     x13, x29, __arg12_1
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
+  b       labLoop
+
+labEnd:
 
 end
 

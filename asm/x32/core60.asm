@@ -810,6 +810,17 @@ labEnd:
 
 end
 
+// ; dcopy
+inline %9Ah
+
+  mov  ecx, __n_1 
+  imul ecx, edx
+  mov  edi, ebx
+  rep  movsb
+  sub  esi, __n_1          // ; to set back ESI register
+
+end
+
 // ; saveddisp
 inline %0A0h
 
@@ -1825,6 +1836,18 @@ inline %0E8h
 
   mov  eax, __n_2
   add  [ebp+__arg32_1], eax
+
+end
+
+// ; dcopydpn
+inline %0E9h
+
+  mov  eax, esi
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, __n_2
+  imul ecx, edx
+  rep  movsb
+  mov  esi, eax
 
 end
 

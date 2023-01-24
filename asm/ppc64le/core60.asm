@@ -985,6 +985,28 @@ inline %099h
 
 end
 
+// ; dcopy
+inline %9Ah
+
+  li      r16, __n16_1
+  mr      r19, r3
+  mul     r16, r16, r14
+  mr      r18, r15
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  ld      r17, 0(r19)
+  addi    r16, r16, -1
+  stb     r17, 0(r18)
+  addi    r18, r18, 1
+  addi    r19, r19, 1
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; saveddisp
 inline %0A0h
 
@@ -2103,6 +2125,28 @@ inline %0E8h
   lwz     r18, 0(r19)
   add     r18, r18, r17
   stw     r18, 0(r19)
+
+end
+
+// ; dcopydpn
+inline %0E9h
+
+  li      r16, __n16_2
+  addi    r18, r31, __arg16_1
+  mul     r16, r16, r14
+  mr      r19, r3
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  ld      r17, 0(r19)
+  addi    r16, r16, -1
+  stb     r17, 0(r18)
+  addi    r18, r18, 1
+  addi    r19, r19, 1
+  b       labLoop
+
+labEnd:
 
 end
 

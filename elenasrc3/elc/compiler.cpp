@@ -3326,6 +3326,14 @@ inline void copyObjectToAcc(BuildTreeWriter& writer, ClassInfo& info, int offset
    writer.closeNode();
 }
 
+// NOTE : index should contain the size
+inline void copyArray(BuildTreeWriter& writer, int size)
+{
+   writer.newNode(BuildKey::CopyingArr);
+   writer.appendNode(BuildKey::Size, size);
+   writer.closeNode();
+}
+
 ObjectInfo Compiler :: boxRefArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef)
 {
    ref_t typeRef = targetRef;
@@ -3358,14 +3366,51 @@ ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& sc
    ClassInfo argInfo;
    _logic->defineClassInfo(*scope.moduleScope, argInfo, typeRef, false, true);
 
-   createObject(writer, argInfo, typeRef);
-   writer.appendNode(BuildKey::Assigning, tempLocal.argument);
+   ObjectInfo lenLocal = {};
+   bool isArray = _logic->isEmbeddableArray(argInfo);
+   if (isArray) {
+      int elementSize = -(int)argInfo.size;
 
-   writeObjectInfo(writer, scope, info);
-   writer.appendNode(BuildKey::SavingInStack, 0);
-   writeObjectInfo(writer, scope, tempLocal);
+      // get the length
+      lenLocal = declareTempLocal(scope, V_INT32, false);
 
-   copyObjectToAcc(writer, argInfo, tempLocal.reference);
+      writeObjectInfo(writer, scope, info);
+      writer.appendNode(BuildKey::SavingInStack, 0);
+      writer.newNode(BuildKey::BinaryArraySOp, LEN_OPERATOR_ID);
+      writer.appendNode(BuildKey::Index, lenLocal.argument);
+      writer.appendNode(BuildKey::Size, elementSize);
+      writer.closeNode();
+
+      // allocate the object
+      writeObjectInfo(writer, scope, lenLocal);
+      writer.appendNode(BuildKey::SavingInStack, 0);
+
+      writer.newNode(BuildKey::NewArrayOp, typeRef);
+      writer.appendNode(BuildKey::Size, argInfo.size);
+      writer.closeNode();
+
+      writer.appendNode(BuildKey::Assigning, tempLocal.argument);
+
+      writeObjectInfo(writer, scope, info);
+      writer.appendNode(BuildKey::SavingInStack, 0);
+
+      writer.appendNode(BuildKey::LoadingIndex, lenLocal.reference);
+
+      writeObjectInfo(writer, scope, tempLocal);
+
+      copyArray(writer, elementSize);
+   }
+   else {
+      createObject(writer, argInfo, typeRef);
+
+      writer.appendNode(BuildKey::Assigning, tempLocal.argument);
+
+      writeObjectInfo(writer, scope, info);
+      writer.appendNode(BuildKey::SavingInStack, 0);
+      writeObjectInfo(writer, scope, tempLocal);
+
+      copyObjectToAcc(writer, argInfo, tempLocal.reference);
+   }
 
    if (!_logic->isReadOnly(argInfo))
       tempLocal.mode = TargetMode::UnboxingRequired;
@@ -4544,6 +4589,10 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
    //bool binaryArray = false;
    if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.typeInfo.typeRef))
       scope.raiseError(errUnknownVariableType, terminal);
+
+   if (variable.typeInfo.typeRef == V_BINARYARRAY)
+      // HOTFIX : recognize binary array actual size 
+      localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.typeInfo.elementRef).size;
 
    if (_logic->isEmbeddableArray(localInfo) && size != 0) {
       //binaryArray = true;

@@ -202,6 +202,11 @@ ELENA byte codes (or ecodes)
                               size * temp;
                               out: acc contains the class instance, index - undefined
 
+   dcopy n                  - sp[0] >> acc, n*index bytes
+
+   dcopy dp:disp, n         - sp[0] >> temp, n*index bytes  
+                              temp >> dp[disp];
+                              
    dispatch m, r            - search in message table r the message in index and provided parameter list; 
                               if found jumps to it;
 

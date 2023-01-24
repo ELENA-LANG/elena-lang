@@ -46,7 +46,7 @@ CodeGenerator _codeGenerators[256] =
    loadMOp, loadNOp, loadFrameDispOp, loadFrameDispOp, loadNOp, loadNOp, loadFrameIndexOp, loadROp,
 
    loadNOp, compileClose, loadIndexOp, loadIndexOp, loadNOp, loadNOp, loadNOp, loadNOp,
-   loadFrameDispOp, loadFrameDispOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadFrameDispOp, loadFrameDispOp, loadNOp, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadFieldIndexOp, loadFieldIndexOp, loadStackIndexOp,
    loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -61,7 +61,7 @@ CodeGenerator _codeGenerators[256] =
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, compileHookDPR, loadNewOp,
-   loadDPNOp, loadNop, loadONOp, loadONOp, loadVMTROp, loadMROp, loadRROp, loadRROp,
+   loadDPNOp, loadDPNOp, loadONOp, loadONOp, loadVMTROp, loadMROp, loadRROp, loadRROp,
 
    compileOpen, loadStackIndexROp, compileOpen, loadStackIndexFrameIndexOp, loadNewOp, loadNewNOp, loadStackIndexIndexOp, loadCreateNOp,
    loadNop, loadFrameIndexROp, compileDispatchMR, compileDispatchMR, loadVMTROp, loadMROp, loadCallOp, loadNop,
@@ -89,7 +89,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 112;
+constexpr size_t bcCommandNumber = 114;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -114,7 +114,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::FAddDPN, ByteCode::FSubDPN, ByteCode::FMulDPN, ByteCode::FDivDPN, ByteCode::FCmpN,
    ByteCode::BRead, ByteCode::LSave, ByteCode::FSave, ByteCode::FTruncDP, ByteCode::NConvFDP,
    ByteCode::XRedirectM, ByteCode::XCall, ByteCode::XGet, ByteCode::WRead, ByteCode::Assign,
-   ByteCode::CreateR, ByteCode::MovFrm
+   ByteCode::CreateR, ByteCode::MovFrm, ByteCode::DCopyDPN, ByteCode::DCopy
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,

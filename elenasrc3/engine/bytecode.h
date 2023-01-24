@@ -78,6 +78,7 @@ namespace elena_lang
       CmpN           = 0x97,
       NConvFDP       = 0x98,
       FTruncDP       = 0x99,
+      DCopy          = 0x9A,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,
@@ -132,6 +133,7 @@ namespace elena_lang
       XHookDPR       = 0xE6,
       XNewNR         = 0xE7,
       NAddDPN        = 0xE8,
+      DCopyDPN       = 0xE9,
       XWriteON       = 0xEA,
       XCopyON        = 0xEB,
       VJumpMR        = 0xEC,

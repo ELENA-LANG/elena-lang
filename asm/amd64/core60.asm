@@ -835,6 +835,17 @@ labEnd:
 
 end
 
+// ; dcopy
+inline %9Ah
+
+  mov  rsi, r10
+  mov  ecx, __n_1 
+  imul ecx, edx
+  mov  rdi, rbx
+  rep  movsb
+
+end
+
 // ; saveddisp
 inline %0A0h
 
@@ -1703,6 +1714,18 @@ inline %0E8h
   add  dword ptr [rbp+__arg32_1], eax
 
 end
+
+// ; dcopydpn
+inline %0E9h
+
+  mov  rsi, r10
+  lea  rdi, [rbp + __arg32_1]
+  mov  ecx, __n_2
+  imul ecx, edx
+  rep  movsb
+
+end
+
 
 // ; xwriteon
 inline %0EAh

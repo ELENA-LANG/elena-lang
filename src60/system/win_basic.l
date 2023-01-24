@@ -45,7 +45,7 @@ public sealed class CallStack
       for (int i := 0, i < length, i += 1) {
          address := stack[i];
 
-         bufferLength := extern elenart.LoadAddressInfoLM(address, buffer, 512);
+         bufferLength := extern LoadAddressInfoLM(address, buffer, 512);
          if (bufferLength > 0) {
             callStackText := callStackText + String.fromByteArray(0, bufferLength, buffer).add(newLineConstant)
          }
