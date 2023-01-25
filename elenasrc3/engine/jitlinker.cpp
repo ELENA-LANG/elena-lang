@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class implementation.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -965,7 +965,7 @@ inline ReferenceInfo retrieveConstantVMT(SectionInfo info)
    if (info.module) {
       for (auto it = RelocationMap::Iterator(info.section->getReferences()); !it.eof(); ++it) {
          if ((*it) == (pos_t)-4) {
-            return { info.module, info.module->resolveReference(it.key()) };
+            return { info.module, info.module->resolveReference(it.key() & ~mskAnyRef) };
          }
       }
    }
