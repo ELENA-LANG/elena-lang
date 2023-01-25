@@ -334,16 +334,20 @@ void SyntaxTreeBuilder :: flushObject(SyntaxTreeWriter& writer, Scope& scope, Sy
 
    SyntaxNode current = node.firstChild();
    if (current == SyntaxKey::TemplateType) {
+      writer.newNode(SyntaxKey::TemplateType);
       if (current.nextNode() == SyntaxKey::identifier) {
          SyntaxNode identNode = node.lastChild(SyntaxKey::TerminalMask);
-
-         writer.newNode(SyntaxKey::TemplateType);
+         
          flushTemplateType(writer, scope, current);
          writer.closeNode();
 
          flushNode(writer, scope, identNode);
       }
-      else flushTemplateType(writer, scope, current);
+      else {
+         flushTemplateType(writer, scope, current);
+
+         writer.closeNode();
+      }
    }
    else if (current == SyntaxKey::ArrayType) {
       if (current.nextNode() == SyntaxKey::identifier) {

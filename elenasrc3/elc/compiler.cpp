@@ -6418,6 +6418,12 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    }
    else {
       switch (node.key) {
+         case SyntaxKey::TemplateType:
+            TypeInfo typeInfo = resolveTypeAttribute(scope, node, false, false);
+            retVal = { ObjectKind::Class, typeInfo, 0u };
+
+            retVal = mapClassSymbol(scope, retrieveStrongType(scope, retVal));
+            break;
          case SyntaxKey::identifier:
          case SyntaxKey::reference:
             if (variableMode) {
@@ -6523,7 +6529,7 @@ inline SyntaxNode retrieveTerminalOrType(SyntaxNode node)
       if (test((unsigned int)current.key, (unsigned int)SyntaxKey::TerminalMask)) {
          last = current;
       }
-      else if (current == SyntaxKey::ArrayType || current == SyntaxKey::Type) {
+      else if (current == SyntaxKey::ArrayType || current == SyntaxKey::Type || current == SyntaxKey::TemplateType) {
          last = current;
       }
 

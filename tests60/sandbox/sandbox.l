@@ -7,7 +7,6 @@ public program()
    var a := Array<int>.copy(tmp, 0, 4);
 
 
-
 //   var s := new CallStack();
 
 //   console.writeLine(s)
