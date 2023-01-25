@@ -2,10 +2,9 @@ import extensions;
 
 public program()
 {
-   int tmp[4];
+   var s := emptyString;
 
-   var a := Array<int>.copy(tmp, 0, 4);
-
+   console.writeLine(s)
 
 //   var s := new CallStack();
 
