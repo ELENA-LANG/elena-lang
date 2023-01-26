@@ -42,7 +42,7 @@ public sealed class CallStack
       pointer address;
       string  callStackText := emptyString;
       int     length := stack.Length;
-      for (int i := 0, i < length, i += 1) {
+      for (int i := 1, i < length, i += 1) {
          address := stack[i];
 
          bufferLength := extern LoadAddressInfoLM(address, buffer, 512);

@@ -262,6 +262,10 @@ public const struct String : BaseValue,
       : info("Concatinates the values")
    {
       int l1 := self.Length;
+      if (l1 == 0) {
+         ^ subs
+      };
+
       int l2 := subs.Length;
       string retVal := String.allocate(l1 + l2);
 

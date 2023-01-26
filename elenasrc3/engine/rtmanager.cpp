@@ -24,6 +24,8 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
    addr_t tempAddr = 0;
    reader.read(&tempAddr, sizeof(tempAddr));
 
+   ustr_t ns = reader.getString(DEFAULT_STR);
+
    // search through debug section until the ret point is inside two consecutive steps within the same object
    int index = 0;
    bool found = false;

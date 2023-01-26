@@ -6,7 +6,10 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
     * exceptions : showing call stack
+    * fix 64 bit version
+
     * api functionality for existing classes : system'CallStack
+
     * call internal
     * calling protected method
 

@@ -80,8 +80,8 @@ bool ELENARTMachine :: loadDebugSection()
       return false;
    }
    else {
-      char header[5];
-      reader.read(header, 5);
+      char header[8];
+      reader.read(header, 8);
       if (!ustr_t(DEBUG_MODULE_SIGNATURE).compare(header, 5)) {
          // clear the path to indicate invalid debug data
          _debugFilePath.clear();
