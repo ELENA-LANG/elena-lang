@@ -5,9 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * exceptions : showing call stack
-    * fix 64 bit version
-
     * api functionality for existing classes : system'CallStack
 
     * call internal
@@ -20,8 +17,8 @@ In development:
     * ide - close all / close all but active
     * ldoc : recognize template based type - for the method output
     * ldoc : private properties / methods should not be displayed
-    + ide 64 : call stack
  
+    * x86-64 call stack
     ! api functionality for existing classes : system
     ! regression tests : all github issues (> 52)
     ! examples : intsum / realsum / words

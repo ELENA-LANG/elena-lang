@@ -427,6 +427,9 @@ XmlNode XmlTree :: selectNode(ustr_t xpath)
 
 XmlNode XmlTree :: selectNode(XmlNode& node, ustr_t xpath)
 {
+   if (node.isNotFound())
+      return node;
+
    size_t length = xpath.length();
    size_t end = xpath.findLast('/', length);
 
