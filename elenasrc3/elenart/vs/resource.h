@@ -1,4 +1,5 @@
 #include "elenaconst.h"
+#include "rtcommon.h"
 
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
@@ -14,8 +15,6 @@
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
-
-#define ELENART_REVISION_NUMBER        0x0012
 
 #define STRINGIZE2(s) #s
 #define STRINGIZE(s) STRINGIZE2(s)

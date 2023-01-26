@@ -148,6 +148,7 @@ namespace elena_lang
       LongParameterAddress = 0x00A3,
       RealParameterAddress = 0x00A4,
       ParameterAddress     = 0x00A5,
+      MethodName           = 0x00A6,
 
       BinaryArray          = 0x00B0,
 

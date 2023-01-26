@@ -25,13 +25,12 @@ In development:
     ! rosetta code examples : two
 
     === Iteration 14 ===
-    ! new features : expression patters, DI
-    ! unit tests via postfix pattern
+    ! api functionality for existing classes : rest of system
+    ! api functionality for existing classes : externals
     ! examples : pi, bsort, textfile, binary, replace, goods
     ! elena sm : x86
     ! script samples : x86
     ! elena vm : x86-64
-    * optimization single dispatching
 
     === Iteration 15 ===
     ! ide : vm console
@@ -54,6 +53,10 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * new features : expression patters, DI
+    * unit tests via postfix pattern
+    * optimization single dispatching
+    * ide debugger : callstack
     * api porting : UnsafePointer
     * elena : nullable
     * templates with parameters: template can have attribute values in the brackets after the main body

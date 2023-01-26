@@ -7217,6 +7217,8 @@ void Compiler :: beginMethod(BuildTreeWriter& writer, MethodScope& scope, Syntax
       writer.newNode(BuildKey::Tape);
 
       writeParameterDebugInfo(writer, scope);
+      writeMessageInfo(writer, scope);
+
    }
    else writer.newNode(BuildKey::Tape);
 }
@@ -7732,6 +7734,14 @@ void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope
    scope.syncStack();
 
    writer.appendNode(BuildKey::CloseFrame);
+}
+
+void Compiler :: writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope)
+{
+   IdentifierString methodName;
+   ByteCodeUtil::resolveMessageName(methodName, scope.module, scope.message);
+
+   writer.appendNode(BuildKey::MethodName, *methodName);
 }
 
 void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& scope)

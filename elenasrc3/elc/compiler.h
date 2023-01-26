@@ -1078,6 +1078,7 @@ namespace elena_lang
          ArgumentsInfo& arguments, ExpressionAttribute mode);
 
       void writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& scope);
+      void writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope);
 
       ObjectInfo boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
       ObjectInfo boxRefArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);

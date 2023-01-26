@@ -72,6 +72,7 @@ namespace elena_lang
          bool tapeOptMode);
       void saveVariableInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
       void saveParameterInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
+      void saveMethodInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
 
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
          ReferenceMap& paths, bool tapeOptMode);

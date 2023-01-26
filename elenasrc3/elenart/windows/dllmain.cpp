@@ -9,15 +9,53 @@
 
 using namespace elena_lang;
 
+#ifdef _M_IX86
+
+constexpr auto CURRENT_PLATFORM = PlatformType::Win_x86;
+
+#elif _M_X64
+
+constexpr auto CURRENT_PLATFORM = PlatformType::Win_x86_64;
+
+#endif
+
+constexpr auto CONFIG_FILE = "elenart60.cfg";
+
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
 static ELENARTMachine* machine = nullptr;
 static SystemEnv* systemEnv = nullptr;
 
-void init()
+void loadModulePath(HMODULE hModule, PathString& rootPath, bool includeName)
 {
+   wchar_t path[MAX_PATH + 1];
+
+   ::GetModuleFileName(hModule, path, MAX_PATH);
+
+   if (includeName) {
+      rootPath.copy(path);
+   }
+   else rootPath.copySubPath(path, false);
+
+   rootPath.lower();
+}
+
+void init(HMODULE hModule)
+{
+   // get DLL path
+   PathString rootPath;
+   loadModulePath(hModule, rootPath, false);
+
+   // get EXE path
+   PathString execPath;
+   loadModulePath(0, execPath, true);
+
+   PathString configPath(CONFIG_FILE);
+
    // !! temporal : hard-coded constants
-   machine = new ELENARTMachine(__routineProvider.RetrieveMDataPtr((void*)IMAGE_BASE, 0x1000000));
+   machine = new ELENARTMachine(
+      *rootPath, *execPath, *configPath, CURRENT_PLATFORM,
+      __routineProvider.RetrieveMDataPtr((void*)IMAGE_BASE, 0x1000000));
 }
 
 // --- API export ---
@@ -66,7 +104,7 @@ EXTERN_DLL_EXPORT size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, si
 
 EXTERN_DLL_EXPORT size_t LoadAddressInfoLM(size_t retPoint, char* lineInfo, size_t length)
 {
-   return 0;
+   return machine->loadAddressInfo(retPoint, lineInfo, length);
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,
@@ -77,7 +115,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     switch (ul_reason_for_call)
     {
        case DLL_PROCESS_ATTACH:
-          init();
+          init(hModule);
           break;
        case DLL_THREAD_ATTACH:
        case DLL_THREAD_DETACH:

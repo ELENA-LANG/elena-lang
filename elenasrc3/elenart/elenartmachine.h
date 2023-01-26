@@ -8,13 +8,28 @@
 #define ELENARTMACHINE_H
 
 #include "rtcommon.h"
+#include "libman.h"
+#include "config.h"
 
 namespace elena_lang
 {
    // --- ELENARTMachine ---
    class ELENARTMachine : public ELENAMachine
    {
-      void* mdata;
+      PathString        _execPath;
+      PathString        _debugFilePath;
+
+      PlatformType      _platform;
+      LibraryProvider   _libraryProvider;
+
+      MemoryDump        _debugSection;
+
+      void*             _mdata;
+
+      void loadConfig(path_t path);
+      void loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node root);
+
+      bool loadDebugSection();
 
       void Exit(int exitCode);
 
@@ -23,8 +38,9 @@ namespace elena_lang
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
       size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
+      size_t loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length);
 
-      ELENARTMachine(void* mdata);
+      ELENARTMachine(path_t dllRootPath, path_t execPath, path_t configFile, PlatformType platform, void* mdata);
 
       virtual ~ELENARTMachine()
       {

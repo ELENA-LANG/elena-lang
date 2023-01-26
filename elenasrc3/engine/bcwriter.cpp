@@ -1624,6 +1624,15 @@ void ByteCodeWriter :: saveParameterInfo(CommandTape& tape, BuildNode node, Tape
    }
 }
 
+void ByteCodeWriter :: saveMethodInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope)
+{
+   DebugLineInfo methodInfo = { DebugSymbol::MessageInfo };
+   methodInfo.addresses.source.nameRef = tapeScope.scope->debugStrings->position();
+
+   tapeScope.scope->debugStrings->writeString(node.identifier());
+   tapeScope.scope->debug->write(&methodInfo, sizeof(DebugLineInfo));
+}
+
 void ByteCodeWriter :: saveExternOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
 {
    excludeFrame(tape);
@@ -1646,6 +1655,10 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
          case BuildKey::ParameterInfo:
             // declaring variables / setting array size
             saveParameterInfo(tape, current, tapeScope);
+            break;
+         case BuildKey::MethodName:
+            // declaring variables / setting array size
+            saveMethodInfo(tape, current, tapeScope);
             break;
          case BuildKey::Import:
             tape.write(ByteCode::ImportOn);

@@ -24,20 +24,21 @@ namespace elena_lang
       IdentifierString  _namespace;
 
       PathMap           _binaryPaths, _packagePaths;
-      ModuleMap         _binaries, _modules;
+      ModuleMap         _binaries, _modules, _debugModules;
 
       Listeners         _listeners;
 
-      void nameToPath(ustr_t moduleName, PathString& path);
+      void nameToPath(ustr_t moduleName, PathString& path, ustr_t extension);
 
       bool loadCore(LoadResult& result);
       ModuleBase* loadModule(ustr_t name, LoadResult& result, bool readOnly);
+      ModuleBase* loadDebugModule(ustr_t name, LoadResult& result);
 
       void onModuleLoad(ModuleBase* module);
 
       ustr_t resolveTemplateWeakReference(ustr_t referenceName, ForwardResolverBase* forwardResolver);
 
-      ModuleBase* resolveModule(ustr_t referenceName, ref_t& reference, bool silentMode);
+      ModuleBase* resolveModule(ustr_t referenceName, ref_t& reference, bool silentMode, bool debugModule);
       ModuleBase* resolveWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
       ModuleBase* resolveIndirectWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
 
@@ -72,6 +73,7 @@ namespace elena_lang
       void resolvePath(ustr_t ns, PathString& path) override;
 
       ModuleInfo getModule(ReferenceInfo referenceInfo, bool silentMode) override;
+      ModuleInfo getDebugModule(ReferenceInfo referenceInfo, bool silentMode) override;
 
       ModuleInfo getWeakModule(ustr_t weakReferenceName, bool silentMode) override;
 

@@ -263,6 +263,7 @@ namespace elena_lang
 
       FrameInfo            = 0x0301,
       ClassInfo            = 0x0302,
+      MessageInfo          = 0x0303,
    };
 
    // --- ClassAttribute ---
