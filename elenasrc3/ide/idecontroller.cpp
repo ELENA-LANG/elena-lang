@@ -218,7 +218,7 @@ bool ProjectController :: isOutaged(bool noWarning)
 
 bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
 {
-   if (testIDEStatus(model.getStatus(), IDEStatus::Busy))
+   if (model.getStatus() == IDEStatus::Busy)
       return false;
 
    if (!_debugController.isStarted()) {
@@ -238,7 +238,7 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
 
 void ProjectController :: doDebugAction(ProjectModel& model, SourceViewModel& sourceModel , DebugAction action)
 {
-   if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
+   if (model.getStatus() != IDEStatus::Busy) {
       if (onDebugAction(model, action)) {
          switch (action) {
             case DebugAction::Run:
@@ -262,7 +262,7 @@ void ProjectController :: doDebugAction(ProjectModel& model, SourceViewModel& so
 
 void ProjectController :: doDebugStop(ProjectModel& model)
 {
-   if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
+   if (model.getStatus() != IDEStatus::Busy) {
       _debugController.stop();
    }
 }

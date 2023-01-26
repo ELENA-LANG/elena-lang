@@ -215,6 +215,8 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::LongLocalAddress:
             case DebugSymbol::RealLocalAddress:
             case DebugSymbol::ByteArrayAddress:
+            case DebugSymbol::ShortArrayAddress:
+            case DebugSymbol::IntArrayAddress:
             case DebugSymbol::Parameter:
             case DebugSymbol::IntParameterAddress:
             case DebugSymbol::RealParameterAddress:
@@ -883,6 +885,9 @@ void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, add
             case elDebugFLOAT64:
                watch->populateFLOAT64(&context, _process->getFLOAT64(address));
                break;
+            case elDebugDWORDS:
+               readIntArrayLocal(watch, item, address, "content", level);
+               break;
             default:
                readFields(watch, item, address, level, info);
                break;
@@ -917,6 +922,56 @@ void* DebugController :: readByteArrayLocal(ContextBrowserBase* watch, void* par
 
          WatchContext context = { item, address + i };
          watch->addOrUpdateBYTE(&context, *value, b);
+      }
+
+      return item;
+   }
+   else return nullptr;
+}
+
+void* DebugController :: readShortArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      size_t length = _min(_process->getArrayLength(address) >> 1, 100);
+
+      WatchContext context = { parent, address };
+      void* item = watch->addOrUpdate(&context, name, "<shortarray>");
+
+      IdentifierString value;
+      for (size_t i = 0; i < length; i++) {
+         unsigned short b = _process->getWORD(address + i * 2);
+
+         value.copy("[");
+         value.appendInt(i);
+         value.append("]");
+
+         WatchContext context = { item, address + i * 2};
+         watch->addOrUpdateWORD(&context, *value, b);
+      }
+
+      return item;
+   }
+   else return nullptr;
+}
+
+void* DebugController :: readIntArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      size_t length = _min(_process->getArrayLength(address) >> 2, 100);
+
+      WatchContext context = { parent, address };
+      void* item = watch->addOrUpdate(&context, name, "<intarray>");
+
+      IdentifierString value;
+      for (size_t i = 0; i < length; i++) {
+         unsigned int b = _process->getDWORD(address + i * 4);
+
+         value.copy("[");
+         value.appendInt(i);
+         value.append("]");
+
+         WatchContext context = { item, address + i * 4};
+         watch->addOrUpdateDWORD(&context, *value, b);
       }
 
       return item;
@@ -1040,6 +1095,16 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                break;
             case DebugSymbol::ByteArrayAddress:
                item = readByteArrayLocal(watch, nullptr,
+                  _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::ShortArrayAddress:
+               item = readShortArrayLocal(watch, nullptr,
+                  _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::IntArrayAddress:
+               item = readIntArrayLocal(watch, nullptr,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;

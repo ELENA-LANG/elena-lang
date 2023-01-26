@@ -624,6 +624,24 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elWrapper)) {
       printLineAndCount("@flag ", "elWrapper", row, pageSize);
    }
+
+   ref_t debugFlag = flags & elDebugMask;
+   switch (debugFlag) {
+      case elDebugDWORD:
+         printLineAndCount("@flag ", "elDebugDWORD", row, pageSize);
+         break;
+      case elDebugFLOAT64:
+         printLineAndCount("@flag ", "elDebugFLOAT64", row, pageSize);
+         break;
+      case elDebugQWORD:
+         printLineAndCount("@flag ", "elDebugQWORD", row, pageSize);
+         break;
+      case elDebugDWORDS:
+         printLineAndCount("@flag ", "elDebugDWORDS", row, pageSize);
+         break;
+      default:
+         break;
+   }
 }
 
 void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
@@ -639,6 +657,9 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
          switch (fieldInfo.typeInfo.typeRef) {
             case V_INT32:
                line.append(" of __int[4]");
+               break;
+            case V_PTR32:
+               line.append(" of __ptr[4]");
                break;
             case V_INT8:
                line.append(" of __int[1]");

@@ -9,7 +9,7 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x003C
+#define IDE_REVISION_NUMBER                           0x003D
 
 namespace elena_lang
 {
@@ -163,12 +163,14 @@ namespace elena_lang
 
       virtual void* addOrUpdate(WatchContext* root, ustr_t name, ustr_t className);
       virtual void* addOrUpdateBYTE(WatchContext* root, ustr_t name, int value);
+      virtual void* addOrUpdateWORD(WatchContext* root, ustr_t name, short value);
       virtual void* addOrUpdateDWORD(WatchContext* root, ustr_t name, int value);
       virtual void* addOrUpdateQWORD(WatchContext* root, ustr_t name, long long value);
       virtual void* addOrUpdateFLOAT64(WatchContext* root, ustr_t name, double value);
 
       virtual void removeUnused(WatchItems& refreshedItems) = 0;
 
+      virtual void populateWORD(WatchContext* root, unsigned short value);
       virtual void populateDWORD(WatchContext* root, unsigned int value);
       virtual void populateQWORD(WatchContext* root, unsigned long long value);
       virtual void populateFLOAT64(WatchContext* root, double value);
@@ -244,6 +246,7 @@ namespace elena_lang
       virtual size_t getArrayLength(addr_t address) = 0;
 
       virtual char getBYTE(addr_t address) = 0;
+      virtual unsigned short getWORD(addr_t address) = 0;
       virtual unsigned int getDWORD(addr_t address) = 0;
       virtual unsigned long long getQWORD(addr_t address) = 0;
       virtual double getFLOAT64(addr_t address) = 0;

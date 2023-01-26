@@ -16,11 +16,13 @@ using namespace elena_lang;
 
 #ifdef _M_IX86
 
-typedef unsigned long SIZE_T;
-typedef VMTHeader32 VMTHeader;
+typedef unsigned long   SIZE_T;
+typedef VMTHeader32     VMTHeader;
+typedef ObjectPage32    ObjectHeader;
 
-constexpr auto elVMTFlagOffset = elVMTFlagOffset32;
-constexpr auto elObjectOffset = elObjectOffset32;
+constexpr auto elVMTFlagOffset   = elVMTFlagOffset32;
+constexpr auto elObjectOffset    = elObjectOffset32;
+constexpr auto elStructMask      = elStructMask32;
 
 inline addr_t getIP(CONTEXT& context)
 {
@@ -39,11 +41,13 @@ inline void setIP(CONTEXT& context, addr_t address)
 
 #elif _M_X64
 
-typedef size_t SIZE_T;
-typedef VMTHeader64 VMTHeader;
+typedef size_t          SIZE_T;
+typedef VMTHeader64     VMTHeader;
+typedef ObjectPage64    ObjectHeader;
 
-constexpr auto elVMTFlagOffset = elVMTFlagOffset64;
-constexpr auto elObjectOffset = elObjectOffset64;
+constexpr auto elVMTFlagOffset   = elVMTFlagOffset64;
+constexpr auto elObjectOffset    = elObjectOffset64;
+constexpr auto elStructMask      = elStructMask64;
 
 inline void setIP(CONTEXT& context, addr_t address)
 {
@@ -667,7 +671,17 @@ addr_t Win32DebugProcess :: getMemoryPtr(addr_t address)
 
 }
 
-unsigned Win32DebugProcess :: getDWORD(addr_t address)
+unsigned short Win32DebugProcess :: getWORD(addr_t address)
+{
+   unsigned short word = 0;
+
+   if (_current->readDump(address, (char*)&word, 2)) {
+      return word;
+   }
+   else return 0;
+}
+
+unsigned Win32DebugProcess::getDWORD(addr_t address)
 {
    unsigned int dword = 0;
 
@@ -732,9 +746,9 @@ addr_t Win32DebugProcess :: getFieldAddress(addr_t address, disp_t disp)
 
 size_t Win32DebugProcess :: getArrayLength(addr_t address)
 {
-   VMTHeader header;
-   if (readDump(address - sizeof(header), (char*)&header, sizeof(header))) {
-      return header.count;
+   ObjectHeader header;
+   if (readDump(address - elObjectOffset, (char*)&header, elObjectOffset)) {
+      return header.size & ~elStructMask;
    }
 
    return 0;

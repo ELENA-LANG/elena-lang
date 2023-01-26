@@ -401,7 +401,7 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
          return !isPrimitiveRef(source.typeRef);
       case V_INT32:
          return source.typeRef == V_INT8 || source.typeRef == V_INT16
-            || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE;
+            || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32;
       case V_FLAG:
          return isCompatible(scope, { scope.branchingInfo.typeRef }, source, true);
       case V_WORD32:
@@ -982,14 +982,26 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
    if (test(info.header.flags, elExtension))
       info.header.flags |= elSealed;
 
-   if (isWrapper(info)) {
+   if (isEmbeddableArray(info)) {
+      auto inner = *info.fields.start();
+      switch (inner.typeInfo.typeRef) {
+         case V_INT32ARRAY:
+            info.header.flags |= elDebugDWORDS;
+            break;
+         default:
+            break;
+      }
+   }
+   else if (isWrapper(info)) {
       auto inner = *info.fields.start();
       switch (inner.typeInfo.typeRef) {
          case V_INT32:
          case V_INT8:
+         case V_PTR32:
             info.header.flags |= elDebugDWORD;
             break;
          case V_INT64:
+         case V_PTR64:
             info.header.flags |= elDebugQWORD;
             break;
          case V_FLOAT64:
@@ -997,6 +1009,9 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
             break;
          case V_MESSAGE:
             info.header.flags |= elMessage;
+            break;
+         case V_INT32ARRAY:
+            info.header.flags |= elDebugDWORDS;
             break;
          default:
             break;
@@ -1189,7 +1204,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          break;
       case V_INT32ARRAY:
          info.header.parentRef = scope.buildins.superReference;
-         info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
+         info.header.flags = elDebugDWORDS | elStructureRole | elDynamicRole | elWrapper;
          info.size = -4;
          break;
       case V_BINARYARRAY:

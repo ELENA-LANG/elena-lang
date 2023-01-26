@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the DebugController class and its helpers header
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DEBUGCONTROLLER_H
@@ -244,6 +244,8 @@ namespace elena_lang
       void* readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readRealLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readByteArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
+      void* readShortArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
+      void* readIntArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
 
    public:
       bool isStarted() const

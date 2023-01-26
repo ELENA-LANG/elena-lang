@@ -139,6 +139,8 @@ namespace elena_lang
       LongVariableAddress  = 0x0094,
       RealVariableAddress  = 0x0095,
       ByteArrayAddress     = 0x0096,
+      ShortArrayAddress    = 0x0097,
+      IntArrayAddress      = 0x0098,
 
       ParameterInfo        = 0x00A0,
       Parameter            = 0x00A1,

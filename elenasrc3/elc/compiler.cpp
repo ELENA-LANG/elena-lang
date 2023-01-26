@@ -4508,6 +4508,13 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                   break;
                case 0:
                   attrs.size = scope.moduleScope->ptrSize;
+                  if (attrs.size == 4) {
+                     attrs.typeInfo.typeRef = V_PTR32;
+                  }
+                  else if (attrs.size == 8) {
+                     attrs.typeInfo.typeRef = V_PTR64;
+                  }
+                  else assert(false);
                   break;
                default:
                   valid = false;
@@ -7245,9 +7252,21 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
       if (localInfo.size > 0) {
          if (embeddableArray) {
             if (_logic->isCompatible(*codeScope.moduleScope, 
-               { codeScope.moduleScope->buildins.byteReference }, { localInfo.typeInfo.elementRef }, false)) 
+               { V_INT8 }, { localInfo.typeInfo.elementRef }, false))
             {
                BuildNode varNode = node.appendChild(BuildKey::ByteArrayAddress, it.key());
+               varNode.appendChild(BuildKey::Index, localInfo.offset);
+            }
+            else if (_logic->isCompatible(*codeScope.moduleScope,
+               { V_INT16 }, { localInfo.typeInfo.elementRef }, false))
+            {
+               BuildNode varNode = node.appendChild(BuildKey::ShortArrayAddress, it.key());
+               varNode.appendChild(BuildKey::Index, localInfo.offset);
+            }
+            else if (_logic->isCompatible(*codeScope.moduleScope,
+               { V_INT32 }, { localInfo.typeInfo.elementRef }, false))
+            {
+               BuildNode varNode = node.appendChild(BuildKey::IntArrayAddress, it.key());
                varNode.appendChild(BuildKey::Index, localInfo.offset);
             }
          }
@@ -7265,6 +7284,12 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
          }
          else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.realReference) {
             BuildNode varNode = node.appendChild(BuildKey::RealVariableAddress, it.key());
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
+         else if (_logic->isCompatible(*codeScope.moduleScope,
+            { V_INT32 }, { localInfo.typeInfo.typeRef }, false))
+         {
+            BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);
          }
          else {

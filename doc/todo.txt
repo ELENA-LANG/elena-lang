@@ -5,18 +5,19 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * api functionality for existing classes : system'CallStack
     * exceptions : showing call stack
-    + ide 64 : call stack
+    * api functionality for existing classes : system'CallStack
     * call internal
     * calling protected method
 
+    * ide debugger : show string / widestring
     * ide : open file
     * ide : fix closing several tabs (starting from the last one)
     * ide : change status to ready when writing / selecting files
     * ide - close all / close all but active
     * ldoc : recognize template based type - for the method output
     * ldoc : private properties / methods should not be displayed
+    + ide 64 : call stack
  
     ! api functionality for existing classes : system
     ! regression tests : all github issues (> 52)
@@ -61,7 +62,6 @@ Backlog:
     * do:while : both statement are matched : do{ a } while(b) and do{ a } while{ b } which is not correct?
     * constant array
     * ide : uncomment
-    * ide debugger : show string / widestring
     * ide : error messages if the debug process failed
     * ide : set focus on activate / after opening a file
     * ide : compile the project and select an error line - part of the windows is covered with other window
@@ -161,13 +161,11 @@ Backlog:
     * optimization : fields should be aligned to 4 / 8 and the copy operation should take this into account,
       except for special type of structs - packed one
     * ide : fix errors with font size / switching to error list / clear high light on click
-    * debuggrt : watch
     * ide : react on mouse
     * ide : new menu option : open output
     * ide : recent files
     * project - load - project
     * project - compile - project
-    * debugger - auto watch
     * editor - status bar : col, row, ins / ovr
     * editor - modified doc mark, 
     * editor - black theme
