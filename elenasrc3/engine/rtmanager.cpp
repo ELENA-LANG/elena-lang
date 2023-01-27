@@ -167,7 +167,9 @@ size_t RTManager :: retriveAddressInfo(LibraryLoaderBase& provider, addr_t retAd
 
 void RTManager :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
 {
-   ref_t actionPtr = MemoryBase::getDWord(msection, subjectRef * sizeof(uintptr_t) * 2);
+   pos_t mtableOffset = MemoryBase::getDWord(msection, 0);
+
+   ref_t actionPtr = MemoryBase::getDWord(msection, mtableOffset + subjectRef * sizeof(uintptr_t) * 2);
    if (!actionPtr) {
       addr_t namePtr = 0;
       msection->read(subjectRef * sizeof(uintptr_t) * 2 + sizeof(uintptr_t), &namePtr, sizeof(addr_t));

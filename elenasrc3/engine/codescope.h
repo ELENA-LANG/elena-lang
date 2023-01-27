@@ -88,6 +88,7 @@ namespace elena_lang
    {
    protected:
       Section _text;
+      Section _adata;
       Section _mdata;
       Section _mbdata;
       Section _rdata;
@@ -102,13 +103,14 @@ namespace elena_lang
       MemoryBase* getImportSection() override;
       MemoryBase* getDataSection() override;
       MemoryBase* getStatSection() override;
+      MemoryBase* getADataSection() override;
       MemoryBase* getMDataSection() override;
       MemoryBase* getMBDataSection() override;
 
       MemoryBase* getTargetDebugSection() override;
 
       ImageProvider() :
-         _text(), _mdata(), _mbdata(), _rdata(),
+         _text(), _mdata(), _adata(), _mbdata(), _rdata(),
          _import(), _data(), _stat(), _debug()
       {
       }

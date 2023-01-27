@@ -60,6 +60,7 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
 
    Section* text = provider.getTextSection();
    Section* rdata = provider.getRDataSection();
+   Section* adata = provider.getADataSection();
    Section* mdata = provider.getMDataSection();
    Section* mbdata = provider.getMBDataSection();
    Section* import = provider.getImportSection();
@@ -86,23 +87,29 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    // NOTE : due to loader requirement, adjust offset
    sectionOffset += (fileOffset & (sectionAlignment - 1));
 
-   map.dataSize = mdata->length();
-   map.mdata = sectionOffset;
+   // adata & mdata
+   map.dataSize = adata->length();
+   map.adata = sectionOffset;
+
+   map.dataSize += mdata->length();
+   map.mdata = map.adata + adata->length();
 
    map.dataSize += mbdata->length();
    map.mbdata = map.mdata + mdata->length();
 
-   fileSize = sectionSize = align(mdata->length() + mbdata->length(), fileAlignment);
+   fileSize = sectionSize = align(adata->length() + mdata->length() + mbdata->length(), fileAlignment);
 
+   // rdata
    map.dataSize += rdata->length();
-   map.rdata = map.mdata + fileSize;
+   map.rdata = map.adata + fileSize;
 
    fileSize += align(rdata->length(), fileAlignment);
    sectionSize += align(rdata->length(), fileAlignment);
 
-   sections.headers.add(ImageSectionHeader::get(nullptr, map.mdata, ImageSectionHeader::SectionType::RData,
+   sections.headers.add(ImageSectionHeader::get(nullptr, map.adata, ImageSectionHeader::SectionType::RData,
       sectionSize, fileSize));
 
+   sections.items.add(sections.headers.count(), { adata, false });
    sections.items.add(sections.headers.count(), { mdata, false });
    sections.items.add(sections.headers.count(), { mbdata, true });
    sections.items.add(sections.headers.count(), { rdata, true });
@@ -150,6 +157,7 @@ void ElfImageFormatter :: fixImage(ImageProviderBase& provider, AddressSpace& ma
    fixSection(provider.getTextSection(), map);
    fixSection(provider.getRDataSection(), map);
    fixSection(provider.getDataSection(), map);
+   fixSection(provider.getADataSection(), map);
    fixSection(provider.getMDataSection(), map);
    fixSection(provider.getMBDataSection(), map);
    fixImportSection(provider.getImportSection(), map);

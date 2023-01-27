@@ -1203,6 +1203,11 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
    VAddressMap references(VAddressInfo(0, nullptr, 0, 0));
    JITLinkerReferenceHelper helper(this, nullptr, &references);
 
+   // --- attribute table ---
+   // allocate the place for section size place-holder
+   MemoryBase* aSection = _imageProvider->getADataSection();
+   MemoryBase::writeDWord(aSection, 0, 0);
+
    // --- message tables ---
    // should start with empty entry
    createAction(nullptr, 0u, 0u);
@@ -1225,6 +1230,11 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
 
 void JITLinker :: complete(JITCompilerBase* compiler)
 {
+   // fix attribute image - specify the attribute size
+   MemoryBase* aSection = _imageProvider->getADataSection();
+   pos_t size = aSection->length() - sizeof(pos_t);
+   MemoryBase::writeDWord(aSection, 0, size);
+
    // fix message body references
    MemoryBase* mbSection = _imageProvider->getMBDataSection();
    VAddressMap mbReferences({});

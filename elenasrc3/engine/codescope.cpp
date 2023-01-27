@@ -195,6 +195,11 @@ MemoryBase* ImageProvider :: getTextSection()
    return &_text;
 }
 
+MemoryBase* ImageProvider :: getADataSection()
+{
+   return &_adata;
+}
+
 MemoryBase* ImageProvider :: getMDataSection()
 {
    return &_mdata;

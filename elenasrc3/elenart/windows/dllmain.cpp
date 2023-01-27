@@ -107,6 +107,11 @@ EXTERN_DLL_EXPORT size_t LoadAddressInfoLM(size_t retPoint, char* lineInfo, size
    return machine->loadAddressInfo(retPoint, lineInfo, length);
 }
 
+EXTERN_DLL_EXPORT addr_t LoadSymbolByStringLA(const char* symbolName)
+{
+   return machine->loadSymbol(symbolName);
+}
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved

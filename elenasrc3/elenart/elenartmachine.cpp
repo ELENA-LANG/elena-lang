@@ -97,6 +97,11 @@ bool ELENARTMachine :: loadDebugSection()
    }
 }
 
+addr_t ELENARTMachine :: loadSymbol(ustr_t name)
+{
+   return 0;
+}
+
 void ELENARTMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
 {
    ImageSection msection(_mdata, 0x1000000);

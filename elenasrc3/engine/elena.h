@@ -161,6 +161,7 @@ namespace elena_lang
 
       virtual MemoryBase* getTextSection() = 0;
       virtual MemoryBase* getRDataSection() = 0;
+      virtual MemoryBase* getADataSection() = 0;   // NOTE : adata should contains at least 4 bytes (zero value)
       virtual MemoryBase* getMDataSection() = 0;
       virtual MemoryBase* getMBDataSection() = 0;
       virtual MemoryBase* getImportSection() = 0;

@@ -58,6 +58,7 @@ void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    pos_t sectionAlignment, pos_t fileAlignment)
 {
    MemoryBase* text = provider.getTextSection();
+   MemoryBase* adata = provider.getADataSection();
    MemoryBase* mdata = provider.getMDataSection();
    MemoryBase* mbdata = provider.getMBDataSection();
    MemoryBase* rdata = provider.getRDataSection();
@@ -84,18 +85,21 @@ void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
 
    offset = align(offset + size, sectionAlignment);
 
-   // --- mdata ---
-   size = mdata->length();
-   map.mdata = offset;
+   // --- adata & mdata ---
+   map.adata = offset;
+   size = adata->length();
+   map.mdata = offset + size;
+   size += mdata->length();
    map.mbdata = offset + size;
    size += mbdata->length();
    map.dataSize += align(size, fileAlignment);
 
-   sections.headers.add(ImageSectionHeader::get(MDATA_SECTION, map.mdata, 
+   sections.headers.add(ImageSectionHeader::get(MDATA_SECTION, map.adata, 
       ImageSectionHeader::SectionType::RData,
       align(size, sectionAlignment),
       align(size, fileAlignment)));
 
+   sections.items.add(sections.items.count() + 1, { adata, false });
    sections.items.add(sections.items.count() + 1, { mdata, false });
    sections.items.add(sections.items.count() + 1, { mbdata, true });
 
@@ -157,6 +161,7 @@ void WinNtImageFormatter :: fixImage(ImageProviderBase& provider, AddressSpace& 
 {
    fixSection(provider.getTextSection(), map);
    fixSection(provider.getRDataSection(), map);
+   fixSection(provider.getADataSection(), map);
    fixSection(provider.getMDataSection(), map);
    fixSection(provider.getMBDataSection(), map);
    fixImportSection(provider.getImportSection(), map);

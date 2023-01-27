@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Windows VM Implementation
 //
-//                                              (C)2022, by Aleksey Rakov
+//                                             (C)2022-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -21,6 +21,7 @@ ELENAWinVMMachine :: ELENAWinVMMachine(path_t configPath, PresenterBase* present
          _rdata(RDATA_MAX_SIZE, false, false),
          _data(DATA_MAX_SIZE, true, false),
          _stat(STAT_MAX_SIZE, true, false),
+         _adata(ADATA_MAX_SIZE, false, false),
          _mdata(MDATA_MAX_SIZE, false, false),
          _mbdata(MBDATA_MAX_SIZE, false, false),
          _debug(DEBUG_MAX_SIZE, true, false)
@@ -50,6 +51,11 @@ MemoryBase* ELENAWinVMMachine :: getMBDataSection()
 MemoryBase* ELENAWinVMMachine :: getDataSection()
 {
    return &_data;
+}
+
+MemoryBase* ELENAWinVMMachine :: getADataSection()
+{
+   return &_adata;
 }
 
 MemoryBase* ELENAWinVMMachine :: getMDataSection()

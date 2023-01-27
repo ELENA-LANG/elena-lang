@@ -76,3 +76,7 @@ public class NotSupportedException : Exception
    constructor new(string message)
       <= new(message);
 }
+
+public class SymbolLoaderException
+{
+}

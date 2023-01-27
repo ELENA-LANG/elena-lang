@@ -40,6 +40,8 @@ namespace elena_lang
       size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
       size_t loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length);
 
+      addr_t loadSymbol(ustr_t name);
+
       ELENARTMachine(path_t dllRootPath, path_t execPath, path_t configFile, PlatformType platform, void* mdata);
 
       virtual ~ELENARTMachine()
