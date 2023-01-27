@@ -717,6 +717,48 @@ procedure __loadCallStack (self, buffer, length, retVal)
 
 end
 
+procedure __symbol_load (self, s)
+
+  open       (2),[]
+
+  call extern:LoadSymbolByStringLA(s, self)
+  cmp  n:0
+  jne  labExit
+
+  peek       fp:s
+  store      sp:1
+
+  set        class : "system'SymbolLoaderException"
+  store      sp:0
+
+  set        mssgconst : "new[2]"
+  throw
+
+labExit:
+  peek       fp:self
+  save
+
+  close      []
+
+end
+
+procedure __symbol_copy
+
+  peek       sp:2
+  load
+  peek       sp:1
+  save
+
+end
+
+procedure __symbol_dispatcher
+
+  redirect
+  get        i:0
+  jump       vt:0
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION

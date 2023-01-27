@@ -278,7 +278,7 @@ bool ByteCodeAssembler :: writeArg(MemoryWriter& writer, Operand& arg, int index
    return true;
 }
 
-ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInfo, ReferenceMap& locals, 
+ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInfo, ReferenceMap& parameters, ReferenceMap& locals,
    ReferenceMap& dataLocals, ReferenceMap& constants)
 {
    Operand arg;
@@ -327,6 +327,12 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 
       return arg;
    }
+   else if (parameters.exist(*tokenInfo.token)) {
+      arg.type = Operand::Type::Variable;
+      arg.reference = locals.get(*tokenInfo.token);
+
+      return arg;
+   }
    else if (locals.exist(*tokenInfo.token)) {
       arg.type = Operand::Type::Variable;
       arg.reference = locals.get(*tokenInfo.token);
@@ -363,7 +369,7 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 }
 
 void ByteCodeAssembler :: compileArgList(ScriptToken& tokenInfo, List<Operand>& operands,
-   ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants)
+   ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants)
 {
    int counter = 0;
    while (!tokenInfo.compare(")")) {
@@ -376,7 +382,7 @@ void ByteCodeAssembler :: compileArgList(ScriptToken& tokenInfo, List<Operand>& 
          else throw SyntaxError(ASM_COMMA_EXPECTED, tokenInfo.lineInfo);
       }
 
-      Operand arg = compileArg(tokenInfo, locals, dataLocals, constants);
+      Operand arg = compileArg(tokenInfo, parameters, locals, dataLocals, constants);
       operands.add(arg);
 
       read(tokenInfo);
@@ -556,7 +562,7 @@ bool ByteCodeAssembler :: compileOpII(ScriptToken& tokenInfo, MemoryWriter& writ
    return true;
 }
 
-int ByteCodeAssembler :: readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants, 
+int ByteCodeAssembler :: readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants,
    int factor, bool allowSize)
 {
    int offset = factor;
@@ -580,7 +586,7 @@ int ByteCodeAssembler :: readArgList(ScriptToken& tokenInfo, ReferenceMap& local
       if (allowSize) {
          if (allowSize && tokenInfo.compare(":")) {
             read(tokenInfo);
-            auto arg = compileArg(tokenInfo, locals, locals, constants);
+            auto arg = compileArg(tokenInfo, locals, locals, locals, constants);
             if (arg.type == Operand::Type::Value) {
                offset -= arg.reference;
                size += arg.reference;
@@ -687,7 +693,7 @@ bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& wr
 }
 
 bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& writer,
-   ByteCommand& command, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants)
+   ByteCommand& command, ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants)
 {
    IdentifierString functionName;
    if (tokenInfo.compare(":")) {
@@ -711,7 +717,7 @@ bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& w
       List<Operand> args(Operand::Default());
 
       read(tokenInfo);
-      compileArgList(tokenInfo, args, locals, dataLocals, constants);
+      compileArgList(tokenInfo, args, parameters, locals, dataLocals, constants);
 
       int stackSize = 0;
       if (args.count() > 0) {
@@ -852,7 +858,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
    if (!ByteCodeUtil::isSingleOp(opCommand.code)) {
       switch (opCommand.code) {
          case ByteCode::CallExtR:
-            return compileCallExt(tokenInfo, writer, opCommand, locals, dataLocals, constants);
+            return compileCallExt(tokenInfo, writer, opCommand, parameters, locals, dataLocals, constants);
          case ByteCode::OpenIN:
          case ByteCode::OpenHeaderIN:
             return compileOpenOp(tokenInfo, writer, opCommand, locals, dataLocals, constants, dataSize);
@@ -881,6 +887,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::MovM:
             return compileOpM(tokenInfo, writer, opCommand, false);
          case ByteCode::AssignI:
+         case ByteCode::GetI:
             return compileOpI(tokenInfo, writer, opCommand, false);
          case ByteCode::XHookDPR:
             return compileDDispR(tokenInfo, writer, opCommand, dataLocals, true);

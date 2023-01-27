@@ -134,17 +134,17 @@ namespace elena_lang
 
       void readParameterList(ScriptToken& tokenInfo, ReferenceMap& parameters);
 
-      int readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants, 
+      int readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants,
          int factor, bool allowSize);
 
       bool writeArg(MemoryWriter& writer, Operand& arg, int index);
 
       bool declareLabel(ustr_t label, ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper& labelScope);
 
-      Operand compileArg(ScriptToken& tokenInfo, ReferenceMap& locals, 
+      Operand compileArg(ScriptToken& tokenInfo, ReferenceMap& parameters, ReferenceMap& locals,
          ReferenceMap& dataLocals, ReferenceMap& constants);
       void compileArgList(ScriptToken& tokenInfo, List<Operand>& operands, 
-         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
+         ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
 
       bool compileDDisp(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
         ReferenceMap& dataLocals, bool skipRead);
@@ -175,7 +175,7 @@ namespace elena_lang
       bool compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, int& dataSize);
       bool compileCallExt(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
-         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
+         ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
 
       bool compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ByteCodeLabelHelper& lh);
