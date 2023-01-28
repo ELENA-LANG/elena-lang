@@ -1232,7 +1232,7 @@ void JITLinker :: complete(JITCompilerBase* compiler)
 {
    // fix attribute image - specify the attribute size
    MemoryBase* aSection = _imageProvider->getADataSection();
-   pos_t size = aSection->length() - sizeof(pos_t);
+   pos_t size = aSection->length();
    MemoryBase::writeDWord(aSection, 0, size);
 
    // fix message body references

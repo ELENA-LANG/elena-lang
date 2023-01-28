@@ -172,7 +172,7 @@ void RTManager :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef
    ref_t actionPtr = MemoryBase::getDWord(msection, mtableOffset + subjectRef * sizeof(uintptr_t) * 2);
    if (!actionPtr) {
       addr_t namePtr = 0;
-      msection->read(subjectRef * sizeof(uintptr_t) * 2 + sizeof(uintptr_t), &namePtr, sizeof(addr_t));
+      msection->read(mtableOffset + subjectRef * sizeof(uintptr_t) * 2 + sizeof(uintptr_t), &namePtr, sizeof(addr_t));
 
       MemoryReader reader(msection);
       reader.seek((pos_t)(namePtr - (addr_t)msection->get(0)));

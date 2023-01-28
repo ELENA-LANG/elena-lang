@@ -2,7 +2,9 @@ import extensions;
 
 public program()
 {
-   2.fail();
+   var a := new Object();
+
+   a.fail();
 
 //   var s := new Symbol("system'console");
 

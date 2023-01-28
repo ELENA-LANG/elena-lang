@@ -832,7 +832,7 @@ namespace elena_lang
          {
             MethodScope* scope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
             if (scope) {
-               return scope->mapSelf();
+               return scope->mapSelf(!scope->isExtension);
             }
             else return {};
          }
