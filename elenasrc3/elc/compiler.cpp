@@ -2902,6 +2902,9 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
       validateSuperClass(scope, node);
    }
 
+   if (scope.visibility == Visibility::Public)
+      scope.info.attributes.add({ 0, ClassAttribute::RuntimeLoadable }, INVALID_REF);
+
    // save declaration
    scope.save();
 
@@ -4490,6 +4493,16 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                default:
                   valid = false;
                   break;
+            }
+            break;
+         case V_SUBJBINARY:
+            switch (attrs.size) {
+            case 4:
+               attrs.typeInfo.typeRef = V_MESSAGENAME;
+               break;
+            default:
+               valid = false;
+               break;
             }
             break;
          case V_FLOATBINARY:

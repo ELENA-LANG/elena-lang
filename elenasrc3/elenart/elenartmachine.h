@@ -31,6 +31,8 @@ namespace elena_lang
 
       bool loadDebugSection();
 
+      ref_t loadSubject(ustr_t actionName);
+
       addr_t retrieveGlobalAttribute(int attribute, ustr_t name);
 
       void Exit(int exitCode);
@@ -43,6 +45,9 @@ namespace elena_lang
       size_t loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length);
 
       addr_t loadSymbol(ustr_t name);
+      addr_t loadClassReference(ustr_t name);
+
+      mssg_t loadMessage(ustr_t messageName);
 
       ELENARTMachine(path_t dllRootPath, path_t execPath, path_t configFile, PlatformType platform, void* mdata);
 

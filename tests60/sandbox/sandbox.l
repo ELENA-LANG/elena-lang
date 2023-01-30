@@ -1,5 +1,7 @@
 import extensions;
 
+public class A {}
+
 public program()
 {
    var s := new Symbol("system'console");

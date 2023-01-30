@@ -460,6 +460,17 @@ inline %13h
 
 end
 
+// ; loads
+inline % 14h
+
+  ld      r22, 0(r15)
+  ld      r24, toc_mdata(r2)
+  srdi    r22, r22, ACTION_ORDER
+  add     r24, r24, r22
+  ld      r14, 0(r24)  
+
+end
+
 // ; coalesce
 inline % 20h
 

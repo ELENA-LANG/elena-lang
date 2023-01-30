@@ -165,11 +165,13 @@ size_t RTManager :: retriveAddressInfo(LibraryLoaderBase& provider, addr_t retAd
    return 0;
 }
 
+constexpr pos_t MessageEntryLen = sizeof(uintptr_t) * 2;
+
 void RTManager :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
 {
    pos_t mtableOffset = MemoryBase::getDWord(msection, 0);
 
-   ref_t actionPtr = MemoryBase::getDWord(msection, mtableOffset + subjectRef * sizeof(uintptr_t) * 2);
+   ref_t actionPtr = MemoryBase::getDWord(msection, mtableOffset + subjectRef * MessageEntryLen);
    if (!actionPtr) {
       addr_t namePtr = 0;
       msection->read(mtableOffset + subjectRef * sizeof(uintptr_t) * 2 + sizeof(uintptr_t), &namePtr, sizeof(addr_t));
@@ -180,6 +182,29 @@ void RTManager :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef
       reader.readString(actionName);
    }
    else loadSubjectName(actionName, actionPtr);
+}
+
+ref_t RTManager :: loadSubject(ustr_t actionName)
+{
+   pos_t mtableOffset = MemoryBase::getDWord(msection, 0);
+
+   MemoryReader reader(msection);
+   IdentifierString messageName;
+   for (ref_t subjectRef = 1; true; subjectRef++) {
+      if (MemoryBase::getDWord(msection, mtableOffset + subjectRef * MessageEntryLen) == 0) {
+         pos_t namePtr = MemoryBase::getDWord(msection, mtableOffset + subjectRef * MessageEntryLen + sizeof(uintptr_t));
+         if (!namePtr)
+            break;
+
+         reader.seek(mtableOffset + namePtr);
+         reader.readString(messageName);
+         if (messageName.compare(actionName)) {
+            return subjectRef;
+         }
+      }
+   }
+
+   return 0;
 }
 
 addr_t RTManager :: retrieveGlobalAttribute(int attribute, ustr_t name)

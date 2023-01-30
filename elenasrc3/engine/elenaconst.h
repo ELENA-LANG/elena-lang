@@ -282,7 +282,8 @@ namespace elena_lang
       ConstantMethod    = 0x904,
       ExtensionRef      = 0x105,
       ParameterName     = 0x806,
-   };
+      RuntimeLoadable   = 0x007,
+   }; 
 
    // === Reference constants ====
    constexpr ref_t mskAnyRef              = 0xFF000000u;

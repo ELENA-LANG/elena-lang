@@ -203,6 +203,7 @@ namespace elena_lang
       void resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader& vmtReader, FieldAddressMap& staticValues);
 
       void resolveSymbolAttributes(ReferenceInfo referenceInfo, addr_t vaddress, SectionInfo sectionInfo);
+      void resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress);
 
       pos_t createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);

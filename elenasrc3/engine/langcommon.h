@@ -212,6 +212,7 @@ namespace elena_lang
    //constexpr auto V_DECLOBJ               = 0x80000804u;
    constexpr auto V_WORDBINARY            = 0x80000805u;
    constexpr auto V_MSSGNAME              = 0x80000806u;
+   constexpr auto V_SUBJBINARY            = 0x80000807u;
    constexpr auto V_SYMBOL                = 0x80000808u;
    constexpr auto V_MSSGBINARY            = 0x80000809u;
    constexpr auto V_POINTER               = 0x8000080Au;
@@ -297,6 +298,7 @@ namespace elena_lang
 
    // === Global Attributes ===
    constexpr auto GA_SYMBOL_NAME             = 0x0001;
+   constexpr auto GA_CLASS_NAME              = 0x0002;
 
    // === VM Command ===
    constexpr pos_t VM_STR_COMMAND_MASK       = 0x100;

@@ -566,6 +566,7 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_INTBINARY:
       case V_WORDBINARY:
       case V_MSSGBINARY:
+      case V_SUBJBINARY:
       case V_FLOATBINARY:
       case V_POINTER:
          attrs.typeInfo.typeRef = attribute;

@@ -33,3 +33,20 @@ public sealed const struct Symbol
 
    dispatch() : external(system'core_routines'__symbol_dispatcher);
 }
+
+// --- ClassReference ---
+
+public sealed const struct ClassReference
+{
+   __ptr pointer;
+
+   private load(string name) : external(system'core_routines'__classref_load);
+  
+   constructor(string name)
+      : info("Loads a symbol")
+   {
+      self.load(name);
+   }
+   
+   dispatch() : external(system'core_routines'__classref_dispatcher);
+}

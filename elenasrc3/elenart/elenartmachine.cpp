@@ -110,6 +110,11 @@ addr_t ELENARTMachine :: loadSymbol(ustr_t name)
    return retrieveGlobalAttribute(GA_SYMBOL_NAME, name);
 }
 
+addr_t ELENARTMachine :: loadClassReference(ustr_t name)
+{
+   return retrieveGlobalAttribute(GA_CLASS_NAME, name);
+}
+
 void ELENARTMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
 {
    ImageSection msection(_mdata, 0x1000000);
@@ -136,6 +141,29 @@ size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t le
 //   printf("loadMessageName %s\n", buffer);
 
    return length;
+}
+
+ref_t ELENARTMachine :: loadSubject(ustr_t actionName)
+{
+   ImageSection msection(_mdata, 0x1000000);
+   RTManager rtmanager(&msection, nullptr);
+
+   return rtmanager.loadSubject(actionName);
+}
+
+mssg_t ELENARTMachine :: loadMessage(ustr_t messageName)
+{
+   pos_t argCount = 0;
+   ref_t flags = 0;
+
+   IdentifierString actionName;
+   ByteCodeUtil::parseMessageName(messageName, actionName, flags, argCount);
+
+   ref_t actionRef = loadSubject(*actionName);
+   if (!actionRef)
+      return 0;
+
+   return encodeMessage(actionRef, argCount, flags);
 }
 
 size_t ELENARTMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length)

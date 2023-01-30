@@ -423,6 +423,18 @@ inline %13h
 
 end
 
+// ; loads
+inline % 14h
+
+  ldr     x22, [x10]
+  movz    x24,  mdata_ptr32lo : #0               //;--
+  movk    x24,  mdata_ptr32hi : #0, lsl #16
+  lsr     x22, x22, # ACTION_ORDER
+  add     x22, x22, x24 
+  ldr     x9, [x22]
+
+end
+
 // ; coalesce
 inline % 20h
 

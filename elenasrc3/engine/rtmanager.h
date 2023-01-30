@@ -20,6 +20,8 @@ namespace elena_lang
       bool readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider, ustr_t& symbol, ustr_t& method, ustr_t& path, int& row);
 
    public:
+      ref_t loadSubject(ustr_t actionName);
+
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
 
       size_t retriveAddressInfo(LibraryLoaderBase& provider, addr_t retAddress, char* buffer, size_t length);

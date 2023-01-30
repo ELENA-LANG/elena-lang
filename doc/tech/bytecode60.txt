@@ -64,6 +64,8 @@ ELENA byte codes (or ecodes)
 
    loadv                    - index.action := [acc].action
 
+   loads                    - index := [acc].action
+
    lsave                    - long:[acc] := index
 
    fsave                    - double:[acc] := index

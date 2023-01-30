@@ -375,6 +375,16 @@ inline %13h
 
 end
 
+// ; loads
+inline % 14h
+
+  mov   edx, dword ptr [rbx]
+  shr   edx, ACTION_ORDER
+  mov   rax, mdata : %0
+  mov   edx, dword ptr [rax + rdx]
+
+end
+
 // ; coalesce
 inline % 20h
 

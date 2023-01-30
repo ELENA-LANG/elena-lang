@@ -17,7 +17,7 @@ const char* _fnOpcodes[256] =
    "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
    "class", "save", "throw", "unhook", "loadv", "xcmp", "bload", "wload",
 
-   "incude", "exclude", "assign", "mov frm", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "incude", "exclude", "assign", "mov frm", "loads", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", OPCODE_UNKNOWN,
@@ -179,11 +179,8 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    return true;
 }
 
-mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode)
+void ByteCodeUtil :: parseMessageName(ustr_t messageName, IdentifierString& actionName, ref_t& flags, pos_t& argCount)
 {
-   pos_t argCount = 0;
-   ref_t actionRef = 0, flags = 0;
-
    if (messageName.startsWith("static:")) {
       flags |= STATIC_MESSAGE;
       messageName += getlength("static:");
@@ -205,7 +202,6 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
       messageName += getlength("typecast:");
    }
 
-   IdentifierString actionName;
    size_t paramIndex = messageName.find('[');
    if (paramIndex != NOTFOUND_POS) {
       actionName.copy(messageName, paramIndex);
@@ -218,6 +214,15 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
    if (actionName.compare(INVOKE_MESSAGE)) {
       flags |= FUNCTION_MESSAGE;
    }
+}
+
+mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode)
+{
+   pos_t argCount = 0;
+   ref_t actionRef = 0, flags = 0;
+
+   IdentifierString actionName;
+   parseMessageName(messageName, actionName, flags, argCount);
 
    ref_t signature = 0;
    size_t index = (*actionName).find('<');

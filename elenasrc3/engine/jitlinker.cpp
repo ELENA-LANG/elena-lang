@@ -810,11 +810,35 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
       FieldAddressMap staticValues(INVALID_REF);
       resolveStaticFields(referenceInfo, vmtReader, staticValues);
 
+      resolveClassGlobalAttributes(referenceInfo, vmtReader, vaddress);
+
       // update VMT
       _compiler->updateVMTHeader(vmtWriter, parentAddress, classClassAddress, header.flags, header.count, staticValues, _virtualMode);
    }
 
    return vaddress;
+}
+
+void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress)
+{
+   pos_t attrCount = vmtReader.getPos();
+   while (attrCount > 0) {
+      ClassAttribute attr = (ClassAttribute)vmtReader.getDWord();
+      switch (attr) {
+         case ClassAttribute::RuntimeLoadable:
+            if (referenceInfo.isRelative()) {
+               IdentifierString fullName(referenceInfo.module->name(), referenceInfo.referenceName);
+
+               createGlobalAttribute(GA_CLASS_NAME, *fullName, vaddress);
+            }
+            else createGlobalAttribute(GA_CLASS_NAME, referenceInfo.referenceName, vaddress);
+            break;
+         default:
+            break;
+      }
+
+      attrCount -= sizeof(unsigned int);
+   }
 }
 
 addr_t JITLinker :: resolveVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo)

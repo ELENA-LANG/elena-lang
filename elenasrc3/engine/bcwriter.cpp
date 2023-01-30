@@ -1860,6 +1860,14 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
    vmtSection->write(classPosition - 4, &size, sizeof(size));
 
    ClassInfo::saveStaticFields(&vmtWriter, info.statics);
+
+   if (!testany(info.header.flags, elClassClass | elAbstract) 
+      && info.attributes.exist({0, ClassAttribute::RuntimeLoadable})) 
+   {
+      vmtWriter.writePos(sizeof(unsigned int));
+      vmtWriter.writeDWord((unsigned int)ClassAttribute::RuntimeLoadable);
+   }
+   else vmtWriter.writePos(0);
 }
 
 void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope, 

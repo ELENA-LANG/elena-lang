@@ -775,6 +775,78 @@ procedure __symbol_dispatcher
 
 end
 
+procedure __classref_load (self, s)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  call extern:LoadClassByStringLA(s)
+  cmp  n:0
+  jne  labExit
+
+  peek       fp:s
+  store      sp:1
+
+  set        class : "system'TypeLoaderException"
+  store      sp:0
+
+  set        mssgconst : "new[2]"
+  throw
+
+labExit:
+  peek       fp:self
+  save
+
+  close      []
+
+end
+
+
+procedure __classref_dispatcher
+
+  redirect
+
+  get        i:0
+  jump       vt:0
+
+end
+
+procedure __message_load (self, s)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  call extern:LoadMessageLA(s)
+  cmp  n:0
+  jne  labExit
+
+  set        class : "system'InvalidArgumentException"
+  store      sp:0
+
+  set        mssgconst : "new[1]"
+  throw
+
+labExit:
+  peek       fp:self
+  save
+
+  close      []
+
+end
+
+procedure __mssgname_load(self, m)
+
+  peek      fp:m
+  loads
+  peek      fp:self
+  save
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION

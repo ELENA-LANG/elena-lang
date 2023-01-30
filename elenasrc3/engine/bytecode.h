@@ -38,6 +38,7 @@ namespace elena_lang
       Include        = 0x11,
       Assign         = 0x12,
       MovFrm         = 0x13,
+      LoadS          = 0x14,
 
       Coalesce       = 0x20,
       Not            = 0x21,
@@ -380,6 +381,8 @@ namespace elena_lang
       static void formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
          ref_t* references, size_t len, pos_t argCount, ref_t flags);
       static bool resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message);
+
+      static void parseMessageName(ustr_t messageName, IdentifierString& actionName, ref_t& flags, pos_t& argCount);
 
       static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
    };

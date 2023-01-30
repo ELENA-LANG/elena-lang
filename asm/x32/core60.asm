@@ -368,6 +368,16 @@ inline %13h
 
 end
 
+// ; loads
+inline % 14h
+
+  mov   edx, [ebx]
+  shr   edx, ACTION_ORDER
+  mov   eax, mdata : %0
+  mov   edx, [eax + edx]
+
+end
+
 // ; coalesce
 inline % 20h
 
