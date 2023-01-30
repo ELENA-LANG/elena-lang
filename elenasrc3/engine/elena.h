@@ -274,18 +274,27 @@ namespace elena_lang
    {
       ModuleBase* module;
       MemoryBase* section;
+      MemoryBase* metaSection;
       ref_t       reference;
 
       SectionInfo()
       {
          module = nullptr;
-         section = nullptr;
+         section = metaSection = nullptr;
          reference = 0;
       }
       SectionInfo(MemoryBase* section)
       {
          this->module = nullptr;
          this->section = section;
+         this->metaSection = nullptr;
+         this->reference = 0;
+      }
+      SectionInfo(MemoryBase* section, MemoryBase* mataSection)
+      {
+         this->module = nullptr;
+         this->section = section;
+         this->metaSection = metaSection;
          this->reference = 0;
       }
    };
@@ -342,7 +351,7 @@ namespace elena_lang
          ForwardResolverBase* forwardResolver) = 0;
 
       virtual SectionInfo getCoreSection(ref_t reference, bool silentMode) = 0;
-      virtual SectionInfo getSection(ReferenceInfo referenceInfo, ref_t mask, bool silentMode) = 0;
+      virtual SectionInfo getSection(ReferenceInfo referenceInfo, ref_t mask, ref_t metaMask, bool silentMode) = 0;
       virtual ClassSectionInfo getClassSections(ReferenceInfo referenceInfo, ref_t vmtMask, ref_t codeMask, 
          bool silentMode) = 0;
 
@@ -532,6 +541,8 @@ namespace elena_lang
       virtual void writeImm16(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm16Hi(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm32(MemoryWriter* writer, int value) = 0;
+
+      virtual void writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode) = 0;
 
       virtual void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) = 0;
 
@@ -1059,12 +1070,28 @@ namespace elena_lang
       SymbolType symbolType;
       ref_t      valueRef;
       ref_t      typeRef;
+      bool       loadableInRuntime;
+
+      SymbolInfo()
+      {
+         symbolType = SymbolType::Symbol;
+         valueRef = typeRef = 0;
+         loadableInRuntime = false;
+      }
+      SymbolInfo(SymbolType symbolType, ref_t valueRef, ref_t typeRef, bool loadableInRuntime)
+      {
+         this->symbolType = symbolType;
+         this->valueRef = valueRef;
+         this->typeRef = typeRef;
+         this->loadableInRuntime = loadableInRuntime;
+      }
 
       void load(StreamReader* reader)
       {
          symbolType = (SymbolType)reader->getDWord();
          valueRef = reader->getRef();
          typeRef = reader->getRef();
+         loadableInRuntime = reader->getBool();
       }
 
       void save(StreamWriter* writer)
@@ -1072,6 +1099,7 @@ namespace elena_lang
          writer->writeDWord((unsigned int)symbolType);
          writer->writeRef(valueRef);
          writer->writeRef(typeRef);
+         writer->writeBool(loadableInRuntime);
       }
    };
 

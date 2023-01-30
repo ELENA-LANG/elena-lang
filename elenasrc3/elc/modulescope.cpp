@@ -304,9 +304,9 @@ SectionInfo ModuleScope :: getSection(ustr_t referenceName, ref_t mask, bool sil
    }
 
    if (isWeakReference(referenceName)) {
-      return loader->getSection(ReferenceInfo(module, referenceName), mask, silentMode);
+      return loader->getSection(ReferenceInfo(module, referenceName), mask, 0, silentMode);
    }
-   else return loader->getSection(ReferenceInfo(referenceName), mask, silentMode);
+   else return loader->getSection(ReferenceInfo(referenceName), mask, 0, silentMode);
 }
 
 MemoryBase* ModuleScope :: mapSection(ref_t reference, bool existing)

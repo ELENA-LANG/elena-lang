@@ -78,7 +78,7 @@ namespace elena_lang
       ModuleInfo getWeakModule(ustr_t weakReferenceName, bool silentMode) override;
 
       SectionInfo getCoreSection(ref_t reference, bool silentMode) override;
-      SectionInfo getSection(ReferenceInfo referenceInfo, ref_t mask, bool silentMode) override;
+      SectionInfo getSection(ReferenceInfo referenceInfo, ref_t mask, ref_t metaMask, bool silentMode) override;
       ClassSectionInfo getClassSections(ReferenceInfo referenceInfo, ref_t vmtMask, ref_t codeMask, 
          bool silentMode) override;
 

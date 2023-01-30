@@ -258,6 +258,8 @@ namespace elena_lang
       void writeVariable(MemoryWriter& writer) override;
       void writeDump(MemoryWriter& writer, SectionInfo* sectionInfo) override;
 
+      void writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode) override;
+
       void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
 
       JITCompiler32()
@@ -321,6 +323,8 @@ namespace elena_lang
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
       void writeVariable(MemoryWriter& writer) override;
       void writeDump(MemoryWriter& writer, SectionInfo* sectionInfo) override;
+
+      void writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode) override;
 
       void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
 

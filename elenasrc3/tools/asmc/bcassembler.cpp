@@ -329,7 +329,7 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
    }
    else if (parameters.exist(*tokenInfo.token)) {
       arg.type = Operand::Type::Variable;
-      arg.reference = locals.get(*tokenInfo.token);
+      arg.reference = parameters.get(*tokenInfo.token);
 
       return arg;
    }
@@ -875,6 +875,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::CmpSI:
          case ByteCode::XFlushSI:
          case ByteCode::XSwapSI:
+         case ByteCode::XRefreshSI:
             return compileOpStackI(tokenInfo, writer, opCommand, true);
          case ByteCode::SaveDP:
          case ByteCode::SetDP:

@@ -24,6 +24,8 @@ namespace elena_lang
 
       size_t retriveAddressInfo(LibraryLoaderBase& provider, addr_t retAddress, char* buffer, size_t length);
 
+      addr_t retrieveGlobalAttribute(int attribute, ustr_t name);
+
       RTManager(MemoryBase* msection, MemoryBase* dbgsection);
    };
 

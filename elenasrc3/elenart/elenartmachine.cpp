@@ -97,9 +97,17 @@ bool ELENARTMachine :: loadDebugSection()
    }
 }
 
+addr_t ELENARTMachine :: retrieveGlobalAttribute(int attribute, ustr_t name)
+{
+   ImageSection msection(_mdata, 0x1000000);
+   RTManager rtmanager(&msection, nullptr);
+
+   return rtmanager.retrieveGlobalAttribute(attribute, name);
+}
+
 addr_t ELENARTMachine :: loadSymbol(ustr_t name)
 {
-   return 0;
+   return retrieveGlobalAttribute(GA_SYMBOL_NAME, name);
 }
 
 void ELENARTMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)

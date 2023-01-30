@@ -295,6 +295,9 @@ namespace elena_lang
    constexpr auto INT32_64_CONVERSION        = 0x001;
    constexpr auto INT32_FLOAT64_CONVERSION   = 0x002;
 
+   // === Global Attributes ===
+   constexpr auto GA_SYMBOL_NAME             = 0x0001;
+
    // === VM Command ===
    constexpr pos_t VM_STR_COMMAND_MASK       = 0x100;
 

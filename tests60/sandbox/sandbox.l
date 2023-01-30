@@ -2,13 +2,9 @@ import extensions;
 
 public program()
 {
-   var a := new Object();
+   var s := new Symbol("system'console");
 
-   a.fail();
-
-//   var s := new Symbol("system'console");
-
-//   s.writeLine("hello from dynamic symbol")
+   s.writeLine("hello from dynamic symbol")
 
    //var s := new CallStack();
 

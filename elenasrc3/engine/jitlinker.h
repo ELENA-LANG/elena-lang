@@ -202,9 +202,13 @@ namespace elena_lang
 
       void resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader& vmtReader, FieldAddressMap& staticValues);
 
+      void resolveSymbolAttributes(ReferenceInfo referenceInfo, addr_t vaddress, SectionInfo sectionInfo);
+
       pos_t createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       void endNativeDebugInfo(pos_t position);
+
+      void createGlobalAttribute(int category, ustr_t value, addr_t address);
 
       addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
 

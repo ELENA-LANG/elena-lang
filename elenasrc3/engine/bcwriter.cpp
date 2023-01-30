@@ -1356,9 +1356,9 @@ void ByteCodeWriter :: importTree(CommandTape& tape, BuildNode node, Scope& scop
    ustr_t referenceName = scope.moduleScope->resolveFullName(node.arg.reference);
    SectionInfo importInfo;
    if (isWeakReference(referenceName)) {
-      importInfo = _loader->getSection(ReferenceInfo(scope.moduleScope->module, referenceName), mskProcedureRef, false);
+      importInfo = _loader->getSection(ReferenceInfo(scope.moduleScope->module, referenceName), mskProcedureRef, 0, false);
    }
-   else importInfo = _loader->getSection(ReferenceInfo(referenceName), mskProcedureRef, false);
+   else importInfo = _loader->getSection(ReferenceInfo(referenceName), mskProcedureRef, 0, false);
 
    tape.import(importInfo.module, importInfo.section, true, scope.moduleScope);
 }

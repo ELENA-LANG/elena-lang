@@ -900,6 +900,28 @@ void JITLinker :: endNativeDebugInfo(pos_t position)
    debug->write(position, &size, sizeof(size));
 }
 
+void JITLinker :: createGlobalAttribute(int category, ustr_t value, addr_t address)
+{
+   MemoryWriter writer(_imageProvider->getADataSection());
+   _compiler->writeAttribute(writer, category, value, address, _virtualMode);
+}
+
+void JITLinker :: resolveSymbolAttributes(ReferenceInfo referenceInfo, addr_t vaddress, SectionInfo sectionInfo)
+{
+   MemoryReader reader(sectionInfo.metaSection);
+   SymbolInfo info;
+   info.load(&reader);
+
+   if (info.loadableInRuntime) {
+      if (referenceInfo.isRelative()) {
+         IdentifierString refName(referenceInfo.module->name(), referenceInfo.referenceName);
+
+         createGlobalAttribute(GA_SYMBOL_NAME, *refName, vaddress);
+      }
+      else createGlobalAttribute(GA_SYMBOL_NAME, referenceInfo.referenceName, vaddress);
+   }
+}
+
 addr_t JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo)
 {
    if (sectionInfo.section == nullptr)
@@ -932,6 +954,9 @@ addr_t JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t se
 
    // fix not loaded references
    fixReferences(references, image);
+
+   if (sectionInfo.metaSection)
+      resolveSymbolAttributes(referenceInfo, vaddress, sectionInfo);
 
    return vaddress;
 }
@@ -985,7 +1010,7 @@ addr_t JITLinker :: resolveConstantArray(ReferenceInfo referenceInfo, ref_t sect
    bool structMode = false;
 
    // resolve constant value
-   SectionInfo sectionInfo = _loader->getSection(referenceInfo, sectionMask, silentMode);
+   SectionInfo sectionInfo = _loader->getSection(referenceInfo, sectionMask, 0, silentMode);
    if (!sectionInfo.section)
       return 0;
 
@@ -1048,7 +1073,7 @@ addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo
 addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode)
 {
    // resolve constant value
-   SectionInfo sectionInfo = _loader->getSection(referenceInfo, sectionMask, silentMode);
+   SectionInfo sectionInfo = _loader->getSection(referenceInfo, sectionMask, 0, silentMode);
    if (!sectionInfo.section)
       return 0;
 
@@ -1281,7 +1306,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
          case mskSymbolRef:
          case mskProcedureRef:
             address = resolveBytecodeSection(referenceInfo, sectionMask, 
-               _loader->getSection(referenceInfo, sectionMask, silentMode));
+               _loader->getSection(referenceInfo, sectionMask, mskMetaSymbolInfoRef, silentMode));
             break;
          case mskVMTRef:
             address = resolveVMTSection(referenceInfo, 
@@ -1292,7 +1317,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
             break;
          case mskTypeListRef:
             address = resolveMetaSection(referenceInfo, sectionMask, 
-               _loader->getSection(referenceInfo, sectionMask, silentMode));
+               _loader->getSection(referenceInfo, sectionMask, 0, silentMode));
             break;
          case mskIntLiteralRef:
          case mskLongLiteralRef:

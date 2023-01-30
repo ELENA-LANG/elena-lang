@@ -719,9 +719,12 @@ end
 
 procedure __symbol_load (self, s)
 
+  xflush     sp:0
+  xflush     sp:1
+
   open       (2),[]
 
-  call extern:LoadSymbolByStringLA(s, self)
+  call extern:LoadSymbolByStringLA(s)
   cmp  n:0
   jne  labExit
 
@@ -754,7 +757,20 @@ end
 procedure __symbol_dispatcher
 
   redirect
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp]
+  save       dp:tmp
   get        i:0
+  xcall
+  load       dp:tmp
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
   jump       vt:0
 
 end

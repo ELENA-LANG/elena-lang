@@ -167,7 +167,7 @@ ELENA byte codes (or ecodes)
 
    swap sp:i                - acc <=> sp[i]
 
-   xpeek sp:i               - cached_sp[i] := sp[i];
+   xrefresh sp:i            - cached_sp[i] := sp[i];
 
    xflush sp:i              - sp[i] := cached_sp[i];
 

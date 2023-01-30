@@ -1598,7 +1598,7 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
    dataWriter.Memory()->addReference(typeRef | mskVMTRef, (pos_t)-4);
 
    // save constant meta info
-   SymbolInfo constantInfo = { SymbolType::Constant, constRef, typeRef };
+   SymbolInfo constantInfo = { SymbolType::Constant, constRef, typeRef, false };
    MemoryWriter metaWriter(module->mapSection(constRef | mskMetaSymbolInfoRef, false));
    constantInfo.save(&metaWriter);
 
@@ -3668,6 +3668,10 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node)
       }
 
       current = current.nextNode();
+   }
+
+   if (scope.visibility == Visibility::Public) {
+      scope.info.loadableInRuntime = true;
    }
 
    if (constant) {

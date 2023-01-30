@@ -31,6 +31,8 @@ namespace elena_lang
 
       bool loadDebugSection();
 
+      addr_t retrieveGlobalAttribute(int attribute, ustr_t name);
+
       void Exit(int exitCode);
 
    public:

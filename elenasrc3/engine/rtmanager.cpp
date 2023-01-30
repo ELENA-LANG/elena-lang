@@ -181,3 +181,30 @@ void RTManager :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef
    }
    else loadSubjectName(actionName, actionPtr);
 }
+
+addr_t RTManager :: retrieveGlobalAttribute(int attribute, ustr_t name)
+{
+   IdentifierString currentName;
+   pos_t size = MemoryBase::getDWord(msection, 0);
+
+   MemoryReader reader(msection, 4);
+   pos_t pos = reader.position();
+   while (reader.position() < size) {
+      int current = reader.getDWord();
+      pos_t offset = reader.getDWord() + sizeof(addr_t);
+      if (current == attribute) {
+         reader.readString(currentName);
+         if (currentName.compare(name)) {
+            addr_t address = 0;
+            reader.read(&address, sizeof(address));
+
+            return address;
+         }
+      }
+
+      pos += offset;
+      reader.seek(pos);
+   }
+
+   return 0;
+}

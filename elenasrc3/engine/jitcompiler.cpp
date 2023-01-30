@@ -2857,6 +2857,18 @@ void JITCompiler32 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, 
    }
 }
 
+void JITCompiler32 :: writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode)
+{
+   writer.writeDWord(category);
+   writer.writeDWord(getlength(value) + 9);
+   writer.writeString(value);
+
+   if (virtualMode) {
+      writer.writeDReference(address | mskRef32, 0);
+   }
+   else writer.writeDWord(address);
+}
+
 // --- JITCompiler64 ---
 
 inline void insertVMTEntry64(VMTEntry64* entries, pos_t count, pos_t index)
@@ -3250,4 +3262,16 @@ void JITCompiler64 :: writeDump(MemoryWriter& writer, SectionInfo* sectionInfo)
    writer.write(sectionInfo->section->get(0), sectionInfo->section->length());
 
    writer.align(8, 0);
+}
+
+void JITCompiler64 :: writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode)
+{
+   writer.writeDWord(category);
+   writer.writeDWord(getlength(value) + 9);
+   writer.writeString(value);
+
+   if (virtualMode) {
+      writer.writeQReference((ref_t)address | mskRef64, 0);
+   }
+   else writer.writeQWord(address);
 }

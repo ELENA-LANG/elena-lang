@@ -112,6 +112,13 @@ EXTERN_DLL_EXPORT addr_t LoadSymbolByStringLA(const char* symbolName)
    return machine->loadSymbol(symbolName);
 }
 
+EXTERN_DLL_EXPORT addr_t LoadSymbolByString2LA(const char* ns, const char* symbolName)
+{
+   ReferenceName fullName(ns, symbolName);
+
+   return machine->loadSymbol(*fullName);
+}
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved

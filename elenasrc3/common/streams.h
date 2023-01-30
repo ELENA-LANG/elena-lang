@@ -110,6 +110,10 @@ namespace elena_lang
       {
          return read(&retVal, sizeof(ref_t));
       }
+      bool readBool(bool& retVal)
+      {
+         return read(&retVal, sizeof(bool));
+      }
       bool readRef64(ref64_t& retVal)
       {
          return read(&retVal, sizeof(ref64_t));
@@ -162,6 +166,14 @@ namespace elena_lang
             return retVal;
          }
          else return 0ull;
+      }
+      bool getBool()
+      {
+         bool retVal = false;
+         if (readBool(retVal)) {
+            return retVal;
+         }
+         else return false;
       }
 
       template<class T, size_t size> bool readString(String<T, size>& s)
@@ -303,6 +315,10 @@ namespace elena_lang
       bool writePos(pos_t value)
       {
          return write(&value, sizeof(pos_t));
+      }
+      bool writeBool(bool value)
+      {
+         return write(&value, sizeof(bool));
       }
       bool writeRef64(ref64_t value)
       {

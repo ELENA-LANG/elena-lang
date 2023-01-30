@@ -5,6 +5,8 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
+    * resolving symbols in run-time : symbol meta-attribute
+
     * test Symbol
 
     * api functionality for existing classes : system'Symbol
@@ -52,6 +54,8 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * global attributes : maybe it should contain the string reference, instead of the string itself
+      (data duplication : many class names are already stored)
     * internal / protected conversion : should it be supported (see system'Symbol conversion from pointer)?
     * call internal
     * calling protected method

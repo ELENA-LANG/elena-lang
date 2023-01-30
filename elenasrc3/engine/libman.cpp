@@ -378,14 +378,16 @@ SectionInfo LibraryProvider :: getCoreSection(ref_t reference, bool silentMode)
    return info;
 }
 
-SectionInfo LibraryProvider :: getSection(ReferenceInfo referenceInfo, ref_t mask, bool silentMode)
+SectionInfo LibraryProvider :: getSection(ReferenceInfo referenceInfo, ref_t codeMask, ref_t metaMask, bool silentMode)
 {
-   SectionInfo info;
+   SectionInfo info = {};
 
    ModuleInfo moduleInfo = getModule(referenceInfo, silentMode);
    if (moduleInfo.module && moduleInfo.reference) {
       info.module = moduleInfo.module;
-      info.section = moduleInfo.module->mapSection(moduleInfo.reference | mask, true);
+      info.section = moduleInfo.module->mapSection(moduleInfo.reference | codeMask, true);
+      if (metaMask)
+         info.metaSection = moduleInfo.module->mapSection(moduleInfo.reference | metaMask, true);
       info.reference = moduleInfo.reference;
    }
 
