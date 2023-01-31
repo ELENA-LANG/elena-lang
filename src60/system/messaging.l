@@ -39,4 +39,6 @@ public sealed const struct MessageName
    {
       self.loadMessageName(mssg);
    }
+
+   dispatch() : external(system'core_routines'__mssgname_dispatcher);
 }

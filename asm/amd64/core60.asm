@@ -2178,6 +2178,8 @@ labNextBaseClass:
   and  rbx, rbx
   jnz  labNextOverloadlist
 
+  mov  edx, __arg32_1
+
 end
 
 // ; dispatchmr
@@ -2237,6 +2239,8 @@ labNextBaseClass:
   mov  rbx, [r13 + r9 * 2] // ; message from overload list
   and  rbx, rbx
   jnz  labNextOverloadlist
+
+  mov  edx, __arg32_1
 
 end
 

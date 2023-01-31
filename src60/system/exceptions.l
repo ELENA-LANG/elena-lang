@@ -1,11 +1,13 @@
 // --- Exception ---
 public class Exception
 {
-   string message;
+   string    message;
+   CallStack callStack;
 
    constructor new(string message)
    {
-      this message := message
+      this message := message;
+      this callStack := new CallStack();
    }
 
    constructor new()
@@ -20,10 +22,12 @@ public class Exception
 
    string toPrintable()
    {
-      string retVal := message/*.add($10"Call stack:"$10).add(theCallstack.toPrintable())*/;
+      string retVal := message.add($10"Call stack:"$10).add(callStack.toPrintable());
         
       ^ retVal
    }
+
+   string Message = message;
 }
 
 // --- CriticalException ---
@@ -79,4 +83,15 @@ public class NotSupportedException : Exception
 
 public class SymbolLoaderException
 {
+}
+
+// --- InvalidOperationException ---
+
+public class InvalidOperationException : Exception
+{
+   constructor new() : info("Creates the exception")
+      <= new("Invalid operation");
+
+   constructor new(string message) : info("Creates the exception")
+      <= new(message);
 }

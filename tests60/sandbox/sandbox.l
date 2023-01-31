@@ -1,20 +1,16 @@
-import extensions;
+function(acc)
+    = (n => acc.append:n);
 
-public class A {}
+accumulator(n)
+    = function(new Variable(n));
 
 public program()
 {
-   var s := new Symbol("system'console");
-
-   s.writeLine("hello from dynamic symbol")
-
-   //var s := new CallStack();
-
-   //console.writeLine(s)
-
-   //console.writeLine("Test from ELENAVM")
+    var x := accumulator(1);
+    
+    x(5);
+    
+    var y := accumulator(3);
+    
+    console.write(x(2.3r))
 }
-
-
-
-

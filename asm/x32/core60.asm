@@ -2263,6 +2263,7 @@ labNextBaseClass:
 
   pop  ebx
   mov  esi, [esp+4]                      // ; restore arg0
+  mov  edx, __arg32_1
 
 end
 
@@ -2323,6 +2324,7 @@ labNextBaseClass:
 
   pop  ebx
   mov  esi, [esp+4]                      // ; restore arg0
+  mov  edx, __arg32_1
 
 end
 

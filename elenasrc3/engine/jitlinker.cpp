@@ -1279,11 +1279,6 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
 
 void JITLinker :: complete(JITCompilerBase* compiler)
 {
-   // fix attribute image - specify the attribute size
-   MemoryBase* aSection = _imageProvider->getADataSection();
-   pos_t size = aSection->length();
-   MemoryBase::writeDWord(aSection, 0, size);
-
    // fix message body references
    MemoryBase* mbSection = _imageProvider->getMBDataSection();
    VAddressMap mbReferences({});
@@ -1301,6 +1296,13 @@ void JITLinker :: complete(JITCompilerBase* compiler)
       _virtualMode);
 
    fixReferences(mbReferences, mbSection);
+
+   // fix attribute image - specify the attribute size
+   MemoryBase* aSection = _imageProvider->getADataSection();
+   MemoryWriter aWriter(aSection);
+   aWriter.align(8, 0);
+   aWriter.seek(0);
+   aWriter.writePos(aSection->length());
 }
 
 addr_t JITLinker :: resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode)

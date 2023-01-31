@@ -847,6 +847,40 @@ procedure __mssgname_load(self, m)
 
 end
 
+procedure __mssgname_dispatcher
+
+  tstn        FUNCTION_MESSAGE
+  jeq         labDefault
+
+  loadv
+  xcmp
+  jne         labDefault
+
+  peek        sp:0
+  jump        vt:0
+
+labDefault:
+
+  redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION
