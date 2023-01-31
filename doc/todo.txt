@@ -5,11 +5,12 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * sandbox : calling $inline1 should be direct
+    * switch statement
+    * variadic extensions
 
-    * rosetta code : accumulator
+    * rosetta code examples : accermann
 
-    * rosetta code examples : 10
+    * rosetta code examples : 9
     * examples : intsum / realsum / words
 
     * ide debugger : show string / widestring
@@ -50,6 +51,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * elena-cli : specify the output path
     * elena : nested classes should not be loadable at runtime
     * x86-64 call stack
     * system'MessageName : port / test functionality

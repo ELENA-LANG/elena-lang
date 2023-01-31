@@ -167,6 +167,16 @@ int main()
                      project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
                   }
                   break;
+               case 'r':
+                  cleanMode = true;
+                  break;
+               case 't':
+               {
+                  IdentifierString configName(argv[i] + 2);
+
+                  project.loadConfigByName(*appPath, *configName, true);
+                  break;
+               }
                case 'w':
                   if (argv[i][2] == '0') {
                      errorProcessor.setWarningLevel(WarningLevel::Level0);
@@ -185,16 +195,6 @@ int main()
                   if (argv[i][2] == 'p') {
                      project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
                   }
-                  break;
-               case 't':
-               {
-                  IdentifierString configName(argv[i] + 2);
-
-                  project.loadConfigByName(*appPath, *configName, true);
-                  break;
-               }
-               case 'r':
-                  cleanMode = true;
                   break;
                default:
                   break;

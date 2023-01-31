@@ -7513,7 +7513,7 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
       if (classScope.extensionDispatcher) {
          writer.appendNode(BuildKey::Argument, 0);
 
-         writer.newNode(BuildKey::RedirectOp);
+         writer.newNode(BuildKey::RedirectOp, node.arg.reference);
          writer.closeNode();
       }
       else if (node.arg.reference) {
@@ -8827,7 +8827,7 @@ void Compiler :: compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildT
 
 inline SyntaxNode newVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, Visibility visibility)
 {
-   ref_t hints = (ref_t)MethodHint::Multimethod;
+   ref_t hints = (ref_t)MethodHint::Multimethod | (ref_t)MethodHint::Normal;
    switch (visibility) {
       case Visibility::Protected:
          hints |= (ref_t)MethodHint::Protected;
