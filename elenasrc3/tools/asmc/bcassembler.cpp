@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Byte-code assembler
 //		classes.
-//                                            (C)2021-2022, by Aleksey Rakov
+//                                            (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "bcassembler.h"
@@ -95,6 +95,9 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
       _reader.read(tokenInfo);
 
       mask = mskRDataRef;
+   }
+   else if (tokenInfo.compare("nil")) {
+      return 0;
    }
    else if (tokenInfo.compare("class")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
@@ -869,6 +872,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::StoreFI:
          case ByteCode::CmpFI:
          case ByteCode::PeekFI:
+         case ByteCode::SetFP:
             return compileOpFrameI(tokenInfo, writer, opCommand, parameters, locals, true);
          case ByteCode::PeekSI:
          case ByteCode::StoreSI:
@@ -924,6 +928,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::Jump:
             return compileJcc(tokenInfo, writer, opCommand, lh);
          case ByteCode::SetR:
+         case ByteCode::CmpR:
             return compileR(tokenInfo, writer, opCommand, true);
          case ByteCode::XNewNR:
             return compileNR(tokenInfo, writer, opCommand, constants, true);

@@ -803,7 +803,6 @@ labExit:
 
 end
 
-
 procedure __classref_dispatcher
 
   redirect
@@ -878,6 +877,34 @@ labDefault:
 
   set        mssgconst : "new[3]"
   throw
+
+end
+
+procedure __varg_readLength(varg, retVal)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp]
+
+  nsave      dp:tmp, -1
+
+  set        fp:varg
+  store      sp:0
+
+labNext:
+  nadd       dp:tmp, 1
+  peek       sp:0
+  load       dp:tmp
+  xget
+  cmp        nil
+  jne        labNext
+
+  load       dp:tmp
+  peek       fp:retVal
+  save
+
+  close      []
 
 end
 

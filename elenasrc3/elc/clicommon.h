@@ -174,6 +174,7 @@ struct BuiltinReferences
    ref_t   messageReference;
    ref_t   wrapperTemplateReference;
    ref_t   arrayTemplateReference;
+   ref_t   argArrayTemplateReference;
    ref_t   closureTemplateReference;
 
    mssg_t  dispatch_message;
@@ -200,7 +201,7 @@ struct BuiltinReferences
       literalReference = wideReference = 0;
       messageReference = 0;
       wrapperTemplateReference = 0;
-      arrayTemplateReference = 0;
+      arrayTemplateReference = argArrayTemplateReference = 0;
       closureTemplateReference = 0;
 
       dispatch_message = constructor_message = 0;
@@ -636,6 +637,7 @@ enum class ConversionResult
 {
    None = 0,
    BoxingRequired,
+   VariadicBoxingRequired,
    Conversion,
    NativeConversion
 };

@@ -1622,6 +1622,14 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& sc
       if (compatible)
          return { ConversionResult::BoxingRequired };
    }
+   // COMPILE MAGIC : trying to typecast variadic array
+   else if (sourceInfo.typeRef == V_ARGARRAY && test(info.header.flags, elDynamicRole)) {
+      auto inner = *info.fields.start();
+
+      bool compatible = isCompatible(scope, { inner.typeInfo.elementRef }, { sourceInfo.elementRef }, false);
+      if (compatible)
+         return { ConversionResult::VariadicBoxingRequired };
+   }
 
    // if there is a implicit conversion routine
    if (!sourceInfo.isPrimitive()) {

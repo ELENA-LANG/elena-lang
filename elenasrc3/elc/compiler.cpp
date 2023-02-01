@@ -3651,6 +3651,7 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
       case V_NIL:
          return scope.moduleScope->buildins.superReference;
       case V_ARGARRAY:
+         return resolveArgArrayTemplate(scope, typeInfo.elementRef, declarationMode);
       case V_OBJARRAY:
          return resolveArrayTemplate(scope, typeInfo.elementRef, declarationMode);
       default:
@@ -3758,11 +3759,8 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
       typeInfo.typeRef = V_WRAPPER;
    }
    else if (variadicArg) {
-      if (typeInfo.typeRef != V_OBJARRAY)
+      if (typeInfo.typeRef != V_ARGARRAY)
          scope.raiseError(errInvalidOperation, node);
-
-      typeInfo.elementRef = typeInfo.elementRef;
-      typeInfo.typeRef = V_ARGARRAY;
    }
 }
 
@@ -4286,6 +4284,11 @@ ref_t Compiler :: resolveArrayTemplate(Scope& scope, ref_t elementRef, bool decl
    return resolveTemplate(scope, scope.moduleScope->buildins.arrayTemplateReference, elementRef, declarationMode);
 }
 
+ref_t Compiler :: resolveArgArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode)
+{
+   return resolveTemplate(scope, scope.moduleScope->buildins.argArrayTemplateReference, elementRef, declarationMode);
+}
+
 TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, bool& variadicArg, 
    bool declarationMode, bool allowRole)
 {
@@ -4314,7 +4317,10 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, bool& varia
    }
 
    if (node == SyntaxKey::ArrayType) {
-      return { defineArrayType(scope, elementRef), elementRef };
+      if (variadicArg) {
+         return { V_ARGARRAY, elementRef };
+      }
+      else return { defineArrayType(scope, elementRef), elementRef };
    }
    else return {};
 }
@@ -6737,6 +6743,17 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
                return boxArgument(writer, scope, source, false, true, false, targetRef);
          }
       }
+      else if (conversionRoutine.result == ConversionResult::VariadicBoxingRequired) {
+         switch (source.kind) {
+            case ObjectKind::Param:
+               source.typeInfo.typeRef = targetRef;
+               break;
+            default:
+               assert(false);
+               break;
+         }
+
+      }
       else if (conversionRoutine.result == ConversionResult::Conversion) {
          ArgumentsInfo arguments;
          arguments.add(source);
@@ -8719,6 +8736,8 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.messageReference = safeMapReference(moduleScope, forwardResolver, MESSAGE_FORWARD);
    moduleScope->buildins.wrapperTemplateReference = safeMapReference(moduleScope, forwardResolver, WRAPPER_FORWARD);
    moduleScope->buildins.arrayTemplateReference = safeMapReference(moduleScope, forwardResolver, ARRAY_FORWARD);
+   moduleScope->buildins.argArrayTemplateReference = safeMapReference(moduleScope, forwardResolver, VARIADIC_ARRAY_FORWARD);
+
    moduleScope->buildins.closureTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, CLOSURE_FORWARD);
    moduleScope->buildins.dwordReference = safeMapReference(moduleScope, forwardResolver, DWORD_FORWARD);
 

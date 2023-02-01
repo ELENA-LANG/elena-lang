@@ -942,6 +942,7 @@ namespace elena_lang
       ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);
       ref_t resolveWrapperTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
       ref_t resolveArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
+      ref_t resolveArgArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 
       int resolveSize(Scope& scope, SyntaxNode node);
       TypeInfo resolveTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, 

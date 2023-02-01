@@ -1,6 +1,6 @@
 // --- base inline templates ---
 
-inline external(routine)
+public inline external(routine)
 {
    #include intern routine;
 }

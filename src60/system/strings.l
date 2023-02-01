@@ -100,7 +100,19 @@ public sealed Array<T> : Indexable<T>
 
 public sealed nonstructural VariadicArray<T> //: Indexable<T>
 {
-    embeddable __string T[] array;
+   embeddable __string T[] array;
+
+   private readArgLength(ref int retVal) : external(system'core_routines'__varg_readLength);
+
+   int Length
+   {
+      get()
+      {
+         self.readArgLength(ref int len);
+            
+         ^ len
+      }
+   }   
 }
 
 // --- String ---
