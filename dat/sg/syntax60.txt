@@ -79,6 +79,9 @@ __define T_EXPRESSION        6294;
 __define L4_EXPRESSION       6295;
 __define NT_EXPRESSION       6296;
 __define L7_EXPRESSION       6297;
+__define SWITCH_OPTION 	     6353;
+__define SWITCH_LAST_OPTION  6354;
+__define SWITCH_CODE 	     6355;
 __define POSTFIX             4200;
 __define TEMPLATE_POSTFIX    4201;
 __define TEMPLATE_ARG        4208;
@@ -89,6 +92,7 @@ __define CATCH               7368;
 __define REDIRECT            7371;
 __define ALT_OPERATION       7372;
 __define ISNIL_OPERATION     7373;
+__define SWITCH_OPERATION    7376;
 __define COMPLEX_NAME 	     4302;
 __define INLINE              4303;
 
@@ -216,6 +220,7 @@ ROOT_EXPRESSION ::=
 				ASSIGN ASSIGN_R 
 				| eps }
 			| eps ^LESS_OPERATION }
+		| "=>" ^OBJECT { SWITCH_OPTION+ SWITCH_LAST_OPTION? } ^SWITCH_OPERATION
 		| identifier+ {
 			L0 ^OBJECT L0_R L1_OP?
 			| ASSIGN ^OBJECT ASSIGN_R
@@ -518,6 +523,16 @@ PARAMETER ::=
 
 MESSAGE ::=
 	identifier;
+
+SWITCH_OPTION ::=
+	identifier ^ OBJECT SWITCH_CODE
+	| integer ^ OBJECT SWITCH_CODE;
+
+SWITCH_LAST_OPTION ::=
+	":" SWITCH_CODE;
+
+SWITCH_CODE ::=
+	"{" BLOCK;
 
 POSTFIX ::=
 	identifier { 

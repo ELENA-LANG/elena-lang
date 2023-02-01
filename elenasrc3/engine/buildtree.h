@@ -129,6 +129,9 @@ namespace elena_lang
       ExternOp             = 0x0068,
       AltOp                = 0x0069,
       ShortCircuitOp       = 0x006A,
+      Switching            = 0x006B,
+      SwitchOption         = 0x006C,
+      ElseOption           = 0x006D,
 
       NestedClass          = 0x0080,
 

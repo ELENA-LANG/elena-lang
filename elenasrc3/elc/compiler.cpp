@@ -4890,53 +4890,41 @@ ObjectInfo Compiler :: compileWeakOperation(BuildTreeWriter& writer, ExprScope& 
    return retVal;
 }
 
-ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, SyntaxNode rnode, int operatorId, ref_t expectedRef)
+ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ArgumentsInfo& messageArguments,
+   int operatorId, ref_t expectedRef)
 {
-   ObjectInfo retVal;
-
-   SyntaxNode lnode = node;
-   SyntaxNode inode;
-
-   if (operatorId == SET_INDEXER_OPERATOR_ID) {
-      lnode = node.firstChild();
-      inode = lnode.nextNode();
-   }
-
-   BuildKey   op = BuildKey::None;
-   ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter);
-   ObjectInfo roperand = {};
-   ObjectInfo ioperand = {};
+   ObjectInfo loperand = messageArguments[0];
 
    pos_t      argLen = 1;
    ref_t      arguments[3] = {};
    arguments[0] = loperand.typeInfo.typeRef;
-
-   // HOTFIX : typecast the right-hand expression if required
-   if (rnode != SyntaxKey::None) {
-      ref_t rTargetRef = 0;
-      if (operatorId == SET_OPERATOR_ID)
-         rTargetRef = retrieveType(scope, loperand);
-
-      roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter);
-
-      arguments[argLen++] = retrieveType(scope, roperand);
-      if ((arguments[0] == V_BINARYARRAY || arguments[0] == V_OBJARRAY) && operatorId == SET_INDEXER_OPERATOR_ID) {
-         if (_logic->isCompatible(*scope.moduleScope, { loperand.typeInfo.elementRef }, { arguments[1] }, false)) 
-            // HOTFIX : for the generic binary array, recognize the element type
-            arguments[1] = V_ELEMENT;
-      }
+   if (messageArguments.count() > 1) {
+      arguments[argLen++] = retrieveType(scope, messageArguments[1]);
+   }
+   if (messageArguments.count() > 2) {
+      arguments[argLen++] = retrieveType(scope, messageArguments[2]);
    }
 
-   if (inode != SyntaxKey::None) {
-      ioperand = compileExpression(writer, scope, inode, 0, EAttr::Parameter);
-      arguments[argLen++] = retrieveType(scope, ioperand);
+   if ((arguments[0] == V_BINARYARRAY || arguments[0] == V_OBJARRAY) && operatorId == SET_INDEXER_OPERATOR_ID) {
+      if (_logic->isCompatible(*scope.moduleScope, { loperand.typeInfo.elementRef }, { arguments[1] }, false))
+         // HOTFIX : for the generic binary array, recognize the element type
+         arguments[1] = V_ELEMENT;
    }
 
    ref_t outputRef = 0;
    bool  needToAlloc = false;
-   op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, outputRef);
+   BuildKey op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, outputRef);
 
+   ObjectInfo retVal = {};
    if (op != BuildKey::None) {
+      ObjectInfo roperand = {};
+      ObjectInfo ioperand = {};
+
+      if (messageArguments.count() > 1)
+         roperand = messageArguments[1];
+      if (messageArguments.count() > 2)
+         ioperand = messageArguments[2];
+
       if (outputRef == V_ELEMENT) {
          outputRef = loperand.typeInfo.elementRef;
       }
@@ -4947,7 +4935,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
             loperand = roperand;
          }
 
-         rnode = {};
+         roperand = {};
       }
       else if (outputRef && _logic->isEmbeddable(*scope.moduleScope, outputRef))
          needToAlloc = true;
@@ -4964,12 +4952,12 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       writeObjectInfo(writer, scope, loperand);
       writer.appendNode(BuildKey::SavingInStack, 0);
 
-      if (rnode != SyntaxKey::None) {
+      if (roperand.kind != ObjectKind::Unknown) {
          writeObjectInfo(writer, scope, roperand);
          writer.appendNode(BuildKey::SavingInStack, 1);
       }
 
-      if (inode != SyntaxKey::None)
+      if (ioperand.kind != ObjectKind::Unknown)
          writeObjectInfo(writer, scope, ioperand);
 
       writer.newNode(op, operatorId);
@@ -5003,22 +4991,54 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    }
    else {
       mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
-      ArgumentsInfo messageArguments;
-      messageArguments.add(loperand);
-
-      if (roperand.kind != ObjectKind::Unknown)
-         messageArguments.add(roperand);
-
-      if (ioperand.kind != ObjectKind::Unknown) {
+      if (messageArguments.count() > 2) {
          overwriteArgCount(message, 3);
-         messageArguments.add(ioperand);
       }
 
-      retVal = compileWeakOperation(writer, scope, node, arguments, argLen, loperand, 
+      retVal = compileWeakOperation(writer, scope, node, arguments, argLen, loperand,
          messageArguments, message, expectedRef);
    }
 
    return retVal;
+}
+
+ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, SyntaxNode rnode,
+   int operatorId, ref_t expectedRef)
+{
+   ObjectInfo retVal;
+
+   SyntaxNode lnode = node;
+   SyntaxNode inode;
+
+   if (operatorId == SET_INDEXER_OPERATOR_ID) {
+      lnode = node.firstChild();
+      inode = lnode.nextNode();
+   }
+
+   BuildKey   op = BuildKey::None;
+   ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter);
+   ObjectInfo roperand = {};
+   ObjectInfo ioperand = {};
+
+   ArgumentsInfo arguments;
+   arguments.add(loperand);
+
+   // HOTFIX : typecast the right-hand expression if required
+   if (rnode != SyntaxKey::None) {
+      ref_t rTargetRef = 0;
+      if (operatorId == SET_OPERATOR_ID)
+         rTargetRef = retrieveType(scope, loperand);
+
+      roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter);
+
+      arguments.add(roperand);
+   }
+
+   if (inode != SyntaxKey::None) {
+      arguments.add(compileExpression(writer, scope, inode, 0, EAttr::Parameter));
+   }
+
+   return compileOperation(writer, scope, node, arguments, operatorId, expectedRef);
 }
 
 mssg_t Compiler :: mapMessage(Scope& scope, SyntaxNode current, bool propertyMode, 
@@ -6040,35 +6060,24 @@ ObjectInfo Compiler :: compileSubCode(BuildTreeWriter& writer, ExprScope& scope,
    return { ObjectKind::Object };
 }
 
-ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
+ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo loperand, SyntaxNode node, SyntaxNode rnode, SyntaxNode r2node, int operatorId)
 {
    ObjectInfo retVal = {};
-
-   SyntaxNode lnode = node.firstChild();
-   SyntaxNode rnode = skipNestedExpression(lnode.nextNode());
-   SyntaxNode r2node = {};
-   if (operatorId == IF_ELSE_OPERATOR_ID)
-      r2node = rnode.nextNode();
+   BuildKey   op = BuildKey::None;
 
    if (rnode.existChild(SyntaxKey::ClosureBlock))
       rnode = rnode.findChild(SyntaxKey::ClosureBlock);
    if (r2node.existChild(SyntaxKey::ClosureBlock))
       r2node = r2node.findChild(SyntaxKey::ClosureBlock);
 
-   ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter);
    ObjectInfo roperand = { ObjectKind::Closure, { V_CLOSURE }, 0 };
    ObjectInfo roperand2 = {};
-
-   // HOTFIX : to allow correct step over the branching statement 
-   writer.appendNode(BuildKey::EndStatement);
-   writer.appendNode(BuildKey::VirtualBreakoint);
-
-   BuildKey   op = BuildKey::None;
 
    size_t     argLen = 2;
    ref_t      arguments[3];
    arguments[0] = retrieveType(scope, loperand);
    arguments[1] = retrieveType(scope, roperand);
+
    if (r2node != SyntaxKey::None) {
       roperand2 = { ObjectKind::Closure, { V_CLOSURE }, 0 };
 
@@ -6109,7 +6118,7 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
       ref_t signRef = scope.module->mapSignature(arguments, argLen, false);
 
-      retVal = compileMessageOperation(writer, scope, node, loperand, message, signRef, messageArguments, 
+      retVal = compileMessageOperation(writer, scope, node, loperand, message, signRef, messageArguments,
          EAttr::NoExtension);
    }
 
@@ -6117,6 +6126,23 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    writer.appendNode(BuildKey::OpenStatement);
 
    return retVal;
+}
+
+ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
+{
+   SyntaxNode lnode = node.firstChild();
+   SyntaxNode rnode = skipNestedExpression(lnode.nextNode());
+   SyntaxNode r2node = {};
+   if (operatorId == IF_ELSE_OPERATOR_ID)
+      r2node = rnode.nextNode();
+
+   ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter);
+
+   // HOTFIX : to allow correct step over the branching statement 
+   writer.appendNode(BuildKey::EndStatement);
+   writer.appendNode(BuildKey::VirtualBreakoint);
+
+   return compileBranchingOperation(writer, scope, loperand, node, rnode, r2node, operatorId);
 }
 
 ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, SyntaxNode messageNode)
@@ -6897,6 +6923,53 @@ ObjectInfo Compiler :: validateObject(BuildTreeWriter& writer, ExprScope& scope,
    return retVal;
 }
 
+void Compiler :: compileSwitchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
+{
+   Interpreter interpreter(scope.moduleScope, _logic);
+   ArgumentsInfo arguments;
+
+   SyntaxNode current = node.firstChild();
+
+   ObjectInfo loperand = compileObject(writer, scope, current, EAttr::Parameter);
+
+   writer.newNode(BuildKey::Switching);
+
+   current = current.nextNode();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::SwitchOption:
+         {
+            SyntaxNode optionNode = current.firstChild();
+
+            writer.newNode(BuildKey::SwitchOption);
+
+            int operator_id = EQUAL_OPERATOR_ID;
+            ObjectInfo value = evalExpression(interpreter, scope, optionNode);
+            arguments.clear();
+            arguments.add(loperand);
+            arguments.add(value);
+            ObjectInfo retVal = compileOperation(writer, scope, node, arguments, operator_id, 0);
+            compileBranchingOperation(writer, scope, retVal, {}, optionNode.nextNode(), {}, IF_OPERATOR_ID);
+
+            writer.closeNode();
+            break;
+         }
+         case SyntaxKey::SwitchLastOption:
+            writer.newNode(BuildKey::ElseOption);
+            compileSubCode(writer, scope, current.firstChild(), EAttr::None);
+            writer.closeNode();
+            break;
+         default:
+            assert(false);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+}
+
 ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
    ref_t targetRef, ExpressionAttribute mode)
 {
@@ -6994,6 +7067,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::CodeBlock:
          compileSubCode(writer, scope, current, mode);
+         break;
+      case SyntaxKey::SwitchOperation:
+         compileSwitchOperation(writer, scope, current);
          break;
       case SyntaxKey::None:
          assert(false);

@@ -2295,6 +2295,13 @@ namespace elena_lang
          _length++;
       }
 
+      void clear()
+      {
+         freeobj(_allocated);
+         _allocated = nullptr;
+         _allocatedSize = _length = 0;
+      }
+
       CachedList()
       {
          _allocated = nullptr;

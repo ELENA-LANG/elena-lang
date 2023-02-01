@@ -142,6 +142,10 @@ namespace elena_lang
       IsNilOperation          = 0x001CCD,
       ComplexName             = 0x0010CE,
       InlinePostfix           = 0x0010CF,
+      SwitchOperation         = 0x001CD0,
+      SwitchOption            = 0x0018D1,
+      SwitchLastOption        = 0x0018D2,
+      SwitchCode              = 0x0018D3,
 
       Name                    = 0x000101,
       Namespace               = 0x000103,

@@ -1493,6 +1493,40 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    tape.setLabel();
 }
 
+void ByteCodeWriter :: saveSwitchOption(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
+{
+   tape.newLabel();
+
+   // NOTE : loopMode is set to true due to current implementation, so the branching will use an existing label
+   saveTape(tape, node, tapeScope, paths, tapeOptMode, true);
+
+   tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+
+   tape.setLabel();
+}
+
+void ByteCodeWriter :: saveSwitching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
+{
+   tape.newLabel();
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      switch (current.key) {
+         case BuildKey::SwitchOption:
+            saveSwitchOption(tape, current, tapeScope, paths, tapeOptMode);
+            break;
+         case BuildKey::ElseOption:
+            saveTape(tape, current, tapeScope, paths, tapeOptMode);
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   tape.setLabel();
+}
+
 void ByteCodeWriter :: saveAlternate(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
 {
    tape.newLabel();
@@ -1680,6 +1714,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
          case BuildKey::AltOp:
             saveAlternate(tape, current, tapeScope, paths, tapeOptMode);
             break;
+         case BuildKey::Switching:
+            saveSwitching(tape, current, tapeScope, paths, tapeOptMode);
+            break;
          case BuildKey::ExternOp:
             saveExternOp(tape, current, tapeScope, paths, tapeOptMode);
             break;
@@ -1694,7 +1731,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
       }
    
-         current = current.nextNode();
+      current = current.nextNode();
    }
 }
 
