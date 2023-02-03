@@ -20,8 +20,9 @@ singleton Ops
 
 public program()
 {
-   var o := Ops.sum(1);
+//   var o := Ops.sum(1);
 //   console.writeLine(Ops.sum(1,2,3).toPrintable());
+     console.writeLine(Ops.sum(1,2,3));
 
 //   console.printLine(Ops.sum(1));
 //   console.printLine(Ops.sum(1,2));

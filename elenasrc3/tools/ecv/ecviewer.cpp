@@ -612,6 +612,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elStructureWrapper)) {
       printLineAndCount("@flag ", "elStructureWrapper", row, pageSize);
    }
+   if (test(flags, elTemplatebased)) {
+      printLineAndCount("@flag ", "elTemplatebased", row, pageSize);
+   }
    if (test(flags, elWithCustomDispatcher)) {
       printLineAndCount("@flag ", "elWithCustomDispatcher", row, pageSize);
    }

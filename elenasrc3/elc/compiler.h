@@ -44,6 +44,7 @@ namespace elena_lang
       Singleton,
       InternalProcedure,
       Param,
+      VArgParam,
       ParamAddress,
       ByRefParam,
       ByRefParamAddress,
@@ -909,7 +910,7 @@ namespace elena_lang
       pos_t saveMetaInfo(ModuleBase* module, ustr_t value, ustr_t postfix);
 
       ref_t mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, Visibility visibility);
-      mssg_t mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef, 
+      mssg_t mapMethodName(MethodScope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef,
          ref_t flags, ref_t* signature, size_t signatureLen);
       mssg_t mapMessage(Scope& scope, SyntaxNode node, bool propertyMode, bool extensionMode, bool probeMode);
 
@@ -960,6 +961,7 @@ namespace elena_lang
       mssg_t resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectInfo target, ExprScope& scope, mssg_t weakMessage,
          ref_t implicitSignatureRef, bool ignoreExtensions, ref_t& resolvedExtensionRef, int& stackSafeAttr);
       mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
+      mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
 
       bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool& isProtectedDefConst);
 
@@ -1195,7 +1197,7 @@ namespace elena_lang
       mssg_t compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node, mssg_t byRefHandler);
 
       void compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, 
-         bool withGenerics);
+         bool withGenerics, bool withOpenArgGenerics);
       void compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode);
       void compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);

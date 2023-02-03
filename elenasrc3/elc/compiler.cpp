@@ -822,6 +822,9 @@ ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier, ExpressionAt
          }
          else return { ObjectKind::ParamAddress, local.typeInfo, prefix - local.offset };
       }
+      else if (local.typeInfo.typeRef == V_ARGARRAY) {
+         return { ObjectKind::VArgParam, local.typeInfo, prefix - local.offset };
+      }
       else {
          if (byRef) {
             return { ObjectKind::ByRefParam, { local.typeInfo.elementRef }, prefix - local.offset };
@@ -1265,9 +1268,16 @@ ref_t Compiler :: mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNod
    else throw InternalError(errFatalError);
 }
 
-mssg_t Compiler :: mapMethodName(Scope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef,
+mssg_t Compiler :: mapMethodName(MethodScope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef,
    ref_t flags, ref_t* signature, size_t signatureLen)
 {
+   if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
+      paramCount = 1;
+      // HOTFIX : extension is a special case - target should be included as well for variadic function
+      if (scope.isExtension && test(flags, FUNCTION_MESSAGE))
+         paramCount++;
+   }
+
    if (actionRef != 0) {
       // HOTFIX : if the action was already resolved - do nothing
    }
@@ -2482,16 +2492,22 @@ void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool w
    if (paramCount >= ARG_COUNT || variadicMode)
       scope.raiseError(errTooManyParameters, current);
 
-   if (paramTypeInfo.typeRef == V_ARGARRAY)
+   if (paramTypeInfo.typeRef == V_ARGARRAY) {
+      // to indicate open argument list
       variadicMode = true;
 
-   if (paramTypeInfo.isPrimitive()) {
+      if (isPrimitiveRef(paramTypeInfo.elementRef)) {
+         signature[signatureLen++] = resolvePrimitiveType(scope, { paramTypeInfo.elementRef }, declarationMode);
+      }
+      else signature[signatureLen++] = paramTypeInfo.elementRef;
+   }
+   else if (paramTypeInfo.isPrimitive()) {
       // primitive arguments should be replaced with wrapper classes
       signature[signatureLen++] = resolvePrimitiveType(scope, paramTypeInfo, declarationMode);
    }
    else signature[signatureLen++] = paramTypeInfo.typeRef;
 
-   if (signature[signatureLen - 1])
+   if (signature[signatureLen - 1] && !variadicMode)
       sizeInfo = _logic->defineStructSize(*scope.moduleScope, signature[signatureLen - 1]);
 
    scope.parameters.add(terminal, Parameter(index, paramTypeInfo, sizeInfo.size));
@@ -3565,6 +3581,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::SelfBoxableLocal:
       case ObjectKind::ByRefParamAddress:
          writer.appendNode(BuildKey::Local, info.reference);
+         break;
+      case ObjectKind::VArgParam:
+         writer.appendNode(BuildKey::LocalReference, info.reference);
          break;
       case ObjectKind::LocalReference:
          writer.appendNode(BuildKey::LocalReference, info.reference);
@@ -5268,6 +5287,19 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& me
    return 0;
 }
 
+mssg_t Compiler :: resolveVariadicMessage(Scope& scope, mssg_t message)
+{
+   pos_t argCount = 0;
+   ref_t actionRef = 0, flags = 0, dummy = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   ustr_t actionName = scope.module->resolveAction(actionRef, dummy);
+
+   int argMultuCount = test(message, FUNCTION_MESSAGE) ? 1 : 2;
+
+   return encodeMessage(scope.module->mapAction(actionName, 0, false), argMultuCount, flags | VARIADIC_MESSAGE);
+}
+
 mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectInfo target, ExprScope& scope, mssg_t weakMessage,
    ref_t implicitSignatureRef, bool ignoreExtensions, ref_t& resolvedExtensionRef, int& stackSafeAttr)
 {
@@ -5283,6 +5315,21 @@ mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectIn
 
       // if the object handles the compile-time resolved message - use it
       return resolvedMessage;
+   }
+
+   // check if the object handles the variadic message
+   if (targetRef) {
+      resolvedStackSafeAttr = 0;
+      resolvedMessage = _logic->resolveMultimethod(*scope.moduleScope,
+         resolveVariadicMessage(scope, weakMessage),
+         targetRef, implicitSignatureRef, resolvedStackSafeAttr, isSelfCall(target));
+
+      if (resolvedMessage != 0) {
+         stackSafeAttr = resolvedStackSafeAttr;
+
+         // if the object handles the compile-time resolved variadic message - use it
+         return resolvedMessage;
+      }
    }
 
    if (!ignoreExtensions) {
@@ -6745,7 +6792,7 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
       }
       else if (conversionRoutine.result == ConversionResult::VariadicBoxingRequired) {
          switch (source.kind) {
-            case ObjectKind::Param:
+            case ObjectKind::VArgParam:
                source.typeInfo.typeRef = targetRef;
                break;
             default:
@@ -8179,7 +8226,8 @@ void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope&
    writer.appendNode(BuildKey::DispatchingOp);
 }
 
-void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withGenerics)
+void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node,
+   bool withGenerics, bool withOpenArgGenerics)
 {
    CodeScope codeScope(&scope);
 
@@ -8205,6 +8253,10 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
       if (withGenerics) {
          ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
 
+         // !! temporally
+         if (withOpenArgGenerics)
+            scope.raiseError(errInvalidOperation, node);
+
          writer.appendNode(BuildKey::DispatchingOp);
          writer.newNode(BuildKey::GenericDispatchingOp);
          writer.appendNode(BuildKey::Message, 
@@ -8215,7 +8267,24 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
          writer.appendNode(BuildKey::Type, classScope->info.header.parentRef);
          writer.closeNode();
 
+         // !! do we need it?
          writer.appendNode(BuildKey::RedirectOp);
+      }
+      // if it is open arg generic without redirect statement
+      else if (withOpenArgGenerics) {
+         // HOTFIX : an extension is a special case of a variadic function and a target should be included
+         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+         pos_t argCount = !scope.isExtension && test(scope.message, FUNCTION_MESSAGE) ? 1 : 2;
+
+         writer.appendNode(BuildKey::DispatchingOp);
+         writer.newNode(BuildKey::GenericDispatchingOp);
+         writer.appendNode(BuildKey::Message,
+            encodeMessage(getAction(scope.moduleScope->buildins.dispatch_message), argCount, VARIADIC_MESSAGE));
+         writer.closeNode();
+
+         writer.newNode(BuildKey::DirectResendOp, scope.moduleScope->buildins.dispatch_message);
+         writer.appendNode(BuildKey::Type, classScope->info.header.parentRef);
+         writer.closeNode();
       }
    }
 
@@ -8251,7 +8320,8 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
             // if it is a dispatch handler
             if (methodScope.message == scope.moduleScope->buildins.dispatch_message) {
                compileDispatcherMethod(writer, methodScope, current,
-                  test(scope.info.header.flags, elWithGenerics));
+                  test(scope.info.header.flags, elWithGenerics),
+                  test(scope.info.header.flags, elWithVariadics));
             }
             // if it is an abstract one
             else if (methodScope.checkHint(MethodHint::Abstract)) {
@@ -8305,7 +8375,8 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
       scope.info.header.flags |= elWithCustomDispatcher;
 
       compileDispatcherMethod(writer, methodScope, {}, 
-         test(scope.info.header.flags, elWithGenerics));
+         test(scope.info.header.flags, elWithGenerics),
+         test(scope.info.header.flags, elWithVariadics));
 
       // overwrite the class info
       scope.save();

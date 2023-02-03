@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPILERLOGIC_H
@@ -22,6 +22,7 @@ namespace elena_lang
       ref_t       constRef;
       Visibility  visibility;
       bool        stackSafe;
+      bool        withVariadicDispatcher;
    };
 
    typedef CachedList<Pair<mssg_t, ref_t>, 10> VirtualMethods;

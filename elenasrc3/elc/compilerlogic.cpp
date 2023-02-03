@@ -528,25 +528,25 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
          flags |= elReadOnlyRole;
          return true;
       case V_SINGLETON:
-         flags = elRole | elSealed | elStateless;
+         flags |= elRole | elSealed | elStateless;
          break;
       case V_LIMITED:
-         flags = (elClosed | elAbstract | elNoCustomDispatcher);
+         flags |= (elClosed | elAbstract | elNoCustomDispatcher);
          break;
       case V_ABSTRACT:
-         flags = elAbstract;
+         flags |= elAbstract;
          break;
       case V_SEALED:
-         flags = elSealed;
+         flags |= elSealed;
          break;
       case V_EXTENSION:
-         flags = elExtension;
+         flags |= elExtension;
          break;
       case V_NONESTRUCT:
-         flags = elNonStructureRole;
+         flags |= elNonStructureRole;
          break;
       case V_TEMPLATEBASED:
-         flags = elTemplatebased;
+         flags |= elTemplatebased;
          break;
       case 0:
          // ignore idle
@@ -1677,6 +1677,10 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
          result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });
+      }
+
+      if (testany(info.header.flags, elWithVariadics)) {
+         result.withVariadicDispatcher = true;
       }
 
       return true;
