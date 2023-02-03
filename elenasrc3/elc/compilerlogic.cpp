@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 111;
+constexpr auto OperationLength = 112;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -388,6 +388,9 @@ constexpr Op Operations[OperationLength] =
    },
    {
       SET_INDEXER_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, V_ELEMENT, V_INT32, 0
+   },
+   {
+      INDEX_OPERATOR_ID, BuildKey::ObjArrayOp, V_ARGARRAY, V_INT32, 0, V_ELEMENT
    },
 };
 

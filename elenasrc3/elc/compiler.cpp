@@ -4962,7 +4962,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
 
          roperand = {};
       }
-      else if (outputRef && _logic->isEmbeddable(*scope.moduleScope, outputRef))
+      else if (op != BuildKey::ObjArrayOp && outputRef && _logic->isEmbeddable(*scope.moduleScope, outputRef))
          needToAlloc = true;
 
       if (needToAlloc) {
@@ -5489,6 +5489,11 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
          arguments[i] = arg;
          argMask <<= 1;
+      }
+
+      if (isOpenArg(message)) {
+         arguments.add({ ObjectKind::Nil });
+         counter++;
       }
 
       for (unsigned int i = counter; i > 0; i--) {

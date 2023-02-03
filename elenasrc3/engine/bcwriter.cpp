@@ -938,6 +938,7 @@ void objArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
          // xget
          tape.write(ByteCode::PeekSI, 1);
          tape.write(ByteCode::Load);
+         tape.write(ByteCode::PeekSI, 0);
          tape.write(ByteCode::XGet);
          break;
       default:
