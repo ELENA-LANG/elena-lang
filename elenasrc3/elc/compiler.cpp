@@ -2796,7 +2796,8 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
          case SyntaxKey::Method:
          {
             MethodScope methodScope(&scope);
-            declareMethodAttributes(methodScope, current, scope.extensionClassRef != 0);
+            methodScope.isExtension = scope.extensionClassRef != 0;
+            declareMethodAttributes(methodScope, current, methodScope.isExtension);
 
             if (!current.arg.reference) {
                // NOTE : an extension method must be strong-resolved
@@ -5348,6 +5349,17 @@ mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectIn
          resolvedExtensionRef = extensionRef;
 
          return resolvedMessage;
+      }
+
+      // check if the extension handles the variadic message
+      mssg_t variadicMessage = resolveVariadicMessage(scope, weakMessage);
+
+      extensionRef = mapExtension(writer, scope, variadicMessage, implicitSignatureRef, target);
+      if (extensionRef != 0) {
+         // if there is an extension to handle the compile-time resolved message - use it
+         resolvedExtensionRef = extensionRef;
+
+         return variadicMessage;
       }
    }
 

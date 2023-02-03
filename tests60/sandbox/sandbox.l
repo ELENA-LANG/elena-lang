@@ -1,24 +1,18 @@
-
-singleton Ops
+extension op
 {
-    sum(int l, params int[] args)
-    {
-        int sum := l;
-        int len := args.Length;
-        for (int i := 0, i < len, i += 1)
-        {
-            sum := sum + args[i]
-        };
-        
-        ^ sum
-    }
+   printLine(params object[] list)
+   {
+      int len := list.Length;
+      for(int i := 0, i < len, i := i + 1)
+      {
+         object obj := list[i];
+            
+         self.write(obj.toPrintable())
+      }
+   }
 }
 
 public program()
 {
-     console.writeLine(Ops.sum(1));
-     console.writeLine(Ops.sum(1,2));
-     console.writeLine(Ops.sum(1,2,3));
-     console.writeLine(Ops.sum(1,2,3,4));
-     console.writeLine(Ops.sum(1,2,3,4,5));
+   console.printLine(1,"+",2,"=",1+2);
 }
