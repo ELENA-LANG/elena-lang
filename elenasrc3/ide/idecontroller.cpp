@@ -630,18 +630,22 @@ bool IDEController :: openProject(IDEModel* model, path_t projectFile, Notificat
 
 void IDEController :: doOpenFile(DialogBase& dialog, IDEModel* model)
 {
-   //List<path_t, freepath> files(nullptr);
-   //if (dialog.openFiles(files)) {
-   //   for (auto it = files.start(); !it.eof(); ++it) {
-   //      if(openFile(model, *it)) {
-   //         while (model->projectModel.lastOpenFiles.count() >= 10)
-   //            model->projectModel.lastOpenFiles.cut(
-   //               model->projectModel.lastOpenFiles.get(model->projectModel.lastOpenFiles.count()));
+   NotificationStatus status = {};
 
-   //         model->projectModel.lastOpenFiles.insert((*it).clone());
-   //      }
-   //   }
-   //}
+   List<path_t, freepath> files(nullptr);
+   if (dialog.openFiles(files)) {
+      for (auto it = files.start(); !it.eof(); ++it) {
+         if(openFile(model, *it, status)) {
+            while (model->projectModel.lastOpenFiles.count() >= 10)
+               model->projectModel.lastOpenFiles.cut(
+                  model->projectModel.lastOpenFiles.get(model->projectModel.lastOpenFiles.count()));
+
+            model->projectModel.lastOpenFiles.insert((*it).clone());
+         }
+      }
+
+      _notifier->notify(NOTIFY_IDE_CHANGE, status);
+   }
 }
 
 bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave)

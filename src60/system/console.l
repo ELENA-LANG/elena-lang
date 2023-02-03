@@ -20,12 +20,17 @@ sealed class Console
       writer.write(newLineConstant);
    }
 
-    char readChar()
-    {
-        char retVal := reader.read();
+   writeLine()
+   {
+      writer.write(newLineConstant);
+   }
+
+   char readChar()
+   {
+      char retVal := reader.read();
         
-        ^ retVal
-    }
+      ^ retVal
+   }
 }
 
 public static console = new Console(io'stdConsoleReader, io'stdConsoleWriter);
