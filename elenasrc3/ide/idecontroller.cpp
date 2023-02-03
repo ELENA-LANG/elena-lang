@@ -404,6 +404,9 @@ NotificationStatus ProjectController :: closeProject(ProjectModel& model)
 
    model.sources.clear();
 
+   model.package.clear();
+   model.target.clear();
+
    return PROJECT_CHANGED;
 }
 
@@ -425,6 +428,8 @@ NotificationStatus ProjectController :: openSingleFileProject(ProjectModel& mode
 
    IdentifierString tmp(*name);
    model.package.copy(*tmp);
+   model.target.copy(*tmp);
+   model.target.append(".exe");
 
    return PROJECT_CHANGED;
 }

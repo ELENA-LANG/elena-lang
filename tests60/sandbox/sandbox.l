@@ -1,7 +1,14 @@
 import extensions;
 
+A
+{
+   int x : prop;
+}
+
 public program()
 {
-   var n := -2;
-   console.printLine(n-1);
+   var a := new A();
+   a.x := 2;
+
+   console.printLine("a.x=", a.x);
 }

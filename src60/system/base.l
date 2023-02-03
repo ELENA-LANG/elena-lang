@@ -22,4 +22,9 @@ public field prop<name, T>
    {
       ^ name
    }
+
+   set name(T value)
+   {
+      name := value
+   }
 }

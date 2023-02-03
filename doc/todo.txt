@@ -5,9 +5,11 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * rosetta code examples : accermann
+    * prop template
 
-    * rosetta code examples : 9
+    * rosetta code examples : addfield
+
+    * rosetta code examples : 8
     * examples : intsum / realsum / words
 
     * ide debugger : show string / widestring
@@ -52,6 +54,7 @@ Backlog:
     * ldoc : all symbols should be in alphabetic order
     * ldoc : consoleOp extension should be visible
     * debugger watch: variadic argument list
+    * callstack : fix the call stack list, it looks some points are not included
     * call semidirect method
     * external inline template should be private / internal. Currently it is not possible because
       it cannot be resolved by template generation

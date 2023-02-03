@@ -50,6 +50,7 @@ namespace elena_lang
       PathString        outputPath;
 
       IdentifierString  package;
+      IdentifierString  target;
 
       ProjectPaths      sources;
 

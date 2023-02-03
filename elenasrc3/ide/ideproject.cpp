@@ -40,7 +40,7 @@ path_t ProjectModel :: getOutputPath()
 
 ustr_t ProjectModel :: getTarget()
 {
-   return "sandbox.exe"; // !! temporal
+   return *target;
 }
 
 ustr_t ProjectModel::getPackage()
