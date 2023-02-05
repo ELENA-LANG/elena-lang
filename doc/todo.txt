@@ -5,11 +5,9 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * prop template
+    * rosetta code examples : anonymrec
 
-    * rosetta code examples : addfield
-
-    * rosetta code examples : 8
+    * rosetta code examples : 7
     * examples : intsum / realsum / words
 
     * ide debugger : show string / widestring

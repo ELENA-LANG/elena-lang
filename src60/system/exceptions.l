@@ -20,6 +20,11 @@ public class Exception
 
    raise() : external(system'core_routines'__exception_raise);
 
+   sealed static raise()
+   {
+       weak self.new().raise()
+   }
+
    string toPrintable()
    {
       string retVal := message.add($10"Call stack:"$10).add(callStack.toPrintable());

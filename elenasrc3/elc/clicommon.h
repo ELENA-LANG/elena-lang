@@ -263,6 +263,7 @@ public:
    bool                 tapeOptMode;
 
    Map<ref_t, SizeInfo> cachedSizes;
+   Map<ref_t, ref_t>    cachedClassReferences;
 
    virtual bool isStandardOne() = 0;
 
@@ -328,7 +329,8 @@ public:
       attributes(0),
       aliases(0),
       operations(0),
-      cachedSizes({})
+      cachedSizes({}),
+      cachedClassReferences(0)
    {
       this->module = module;
       this->debugModule = debugModule;

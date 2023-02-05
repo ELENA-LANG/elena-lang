@@ -1044,7 +1044,7 @@ namespace elena_lang
       void declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor);
 
       void declareSymbol(SymbolScope& scope, SyntaxNode node);
-      void declareClassClass(ClassScope& classClassScope, SyntaxNode node);
+      void declareClassClass(ClassScope& classClassScope, SyntaxNode node, ref_t parentRef);
       void declareClass(ClassScope& scope, SyntaxNode node);
 
       void declareNamespace(NamespaceScope& ns, SyntaxNode node, bool ignoreImport = false, 
@@ -1054,6 +1054,8 @@ namespace elena_lang
 
       void declareModuleIdentifiers(ModuleScopeBase* moduleScope, SyntaxNode node);
       void declareModule(ModuleScopeBase* moduleScope, SyntaxNode node);
+
+      void inheritStaticMethods(ClassScope& scope, SyntaxNode classNode);
 
       void addExtensionMessage(Scope& scope, mssg_t message, ref_t extRef, mssg_t strongMessage, 
          bool internalOne);
@@ -1247,6 +1249,8 @@ namespace elena_lang
       void injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t parentRef);
 
       void injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg);
+
+      void injectInheritedStaticMethod(SyntaxNode node, SyntaxKey methodType, ref_t reference, mssg_t message, ref_t outputRef);
 
       void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
          mssg_t messageRef, MethodHint type) override;

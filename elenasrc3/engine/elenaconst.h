@@ -283,6 +283,7 @@ namespace elena_lang
       ExtensionRef      = 0x105,
       ParameterName     = 0x806,
       RuntimeLoadable   = 0x007,
+      SealedStatic      = 0x908,
    }; 
 
    // === Reference constants ====

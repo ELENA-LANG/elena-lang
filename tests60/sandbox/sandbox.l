@@ -2,13 +2,29 @@ import extensions;
 
 A
 {
-   int x : prop;
+   constructor new() 
+   {
+      console.writeLine("A");
+   }
+
+   sealed static raise()
+   {
+      weak self.new()
+   }
 }
+
+B : A
+{
+   constructor new() 
+   {
+      console.writeLine("B");
+   }
+}
+
 
 public program()
 {
-   var a := new A();
-   a.x := 2;
+   var a := A.raise();
+   var b := B.raise();
 
-   console.printLine("a.x=", a.x);
 }
