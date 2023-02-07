@@ -134,6 +134,8 @@ ELENA byte codes (or ecodes)
 
    xcall                    - calls the procedure in acc;
  
+   xjump                    - jumps to the procedure in acc;
+ 
 
  Stack operations:
  -----------------                                           

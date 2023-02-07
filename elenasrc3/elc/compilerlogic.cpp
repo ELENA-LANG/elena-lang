@@ -572,6 +572,7 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_SUBJBINARY:
       case V_FLOATBINARY:
       case V_POINTER:
+      case V_EXTMESSAGE:
          attrs.typeInfo.typeRef = attribute;
          break;
       case V_STRINGOBJ:
@@ -749,25 +750,31 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
    }
 }
 
-bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, bool& byRefArg, bool& variadicArg)
+bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, TypeAttributes& attributes)
 {
    switch (attrValue) {
       case V_WRAPPER:
-         byRefArg = true;
+         attributes.byRefOne = true;
          return true;
       case V_VARIADIC:
-         variadicArg = true;
+         attributes.variadicOne = true;
          return true;
       default:
          return false;
    }
 }
 
-bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, bool& variadicArg)
+bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, TypeAttributes& attributes)
 {
    switch (attrValue) {
       case V_VARIADIC:
-         variadicArg = true;
+         attributes.variadicOne = true;
+         return true;
+      case V_VARIABLE:
+         attributes.variableOne = true;
+         return true;
+      case V_MSSGNAME:
+         attributes.mssgNameLiteral = true;
          return true;
       default:
          return false;

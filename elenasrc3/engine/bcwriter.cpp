@@ -306,6 +306,11 @@ void mssgLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskMssgLiteralRef);
 }
 
+void extMssgLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskExtMssgLiteralRef);
+}
+
 void stringLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskLiteralRef);
@@ -1247,7 +1252,7 @@ ByteCodeWriter::Saver commands[] =
    realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
 
    genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
-   intArraySOp, objArraySOp, copyingLocalArr
+   intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral
 };
 
 // --- ByteCodeWriter ---

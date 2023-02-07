@@ -25,6 +25,19 @@ namespace elena_lang
       bool        withVariadicDispatcher;
    };
 
+   struct TypeAttributes
+   {
+      bool variadicOne;
+      bool variableOne;
+      bool byRefOne;
+      bool mssgNameLiteral;
+
+      bool isNonempty() const
+      {
+         return variableOne || variadicOne || byRefOne || mssgNameLiteral;
+      }
+   };
+
    typedef CachedList<Pair<mssg_t, ref_t>, 10> VirtualMethods;
 
    // --- CompilerLogic ---
@@ -62,8 +75,8 @@ namespace elena_lang
       bool validateImplicitMethodAttribute(ref_t attribute, ref_t& hint);
       bool validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo, bool& superMode);
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
-      bool validateArgumentAttribute(ref_t attrValue, bool& byRefArg, bool& variadicArg);
-      bool validateTypeScopeAttribute(ref_t attrValue, bool& variadicArg);
+      bool validateArgumentAttribute(ref_t attrValue, TypeAttributes& attributes);
+      bool validateTypeScopeAttribute(ref_t attrValue, TypeAttributes& attributes);
       bool validateResendAttribute(ref_t attrValue, bool& superMode);
 
       bool validateAutoType(ModuleScopeBase& scope, ref_t& reference);

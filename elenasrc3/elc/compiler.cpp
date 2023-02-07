@@ -408,8 +408,12 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, Express
          if (checkMode) {
             ClassInfo classInfo;
             if (moduleScope->loadClassInfo(classInfo, reference, true) != 0) {
+               // if it is an extension
+               if (test(classInfo.header.flags, elExtension)) {
+                  return { ObjectKind::Extension, { reference }, reference };
+               }
                // if it is a stateless symbol
-               if (test(classInfo.header.flags, elStateless)) {
+               else if (test(classInfo.header.flags, elStateless)) {
                   return { ObjectKind::Singleton, { reference }, reference };
                }
                // if it is a normal class
@@ -1339,8 +1343,12 @@ ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<
 
 bool Compiler :: importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
 {
+   TypeAttributes attributes = {};
+
    TemplateTypeList typeList;
-   declareTemplateAttributes(scope, node, typeList, true, false);
+   declareTemplateAttributes(scope, node, typeList, attributes, true, false);
+   if (attributes.isNonempty())
+      scope.raiseError(errInvalidOperation, node);
 
    // HOTFIX : generate a temporal template to pass the type
    SyntaxTree dummyTree;
@@ -2298,13 +2306,13 @@ void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode node, bool 
                if (!parentRef) {
                   parentNode = current;
 
-                  parentRef = resolveStrongTypeAttribute(scope, child, extensionMode);
+                  parentRef = resolveStrongTypeAttribute(scope, child, extensionMode, false);
                }
                else if (!importTemplate(scope, child, node))
                   scope.raiseError(errUnknownTemplate, current);
             }
             else if (!parentRef) {
-               parentRef = resolveStrongTypeAttribute(scope, child, extensionMode);
+               parentRef = resolveStrongTypeAttribute(scope, child, extensionMode, false);
             }
             else scope.raiseError(errInvalidSyntax, current);
 
@@ -3598,6 +3606,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::MssgLiteral:
          writer.appendNode(BuildKey::MssgLiteral, info.reference);
          break;
+      case ObjectKind::ExtMssgLiteral:
+         writer.appendNode(BuildKey::ExtMssgLiteral, info.reference);
+         break;
          //case ObjectKind::MetaDictionary:
       //   writer.appendNode(BuildKey::MetaDictionary, info.reference);
       //   break;
@@ -3797,21 +3808,20 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
    bool declarationMode)
 {
    SyntaxNode current = node.firstChild();
-   bool byRefArg = false;
-   bool variadicArg = false;
+   TypeAttributes attributes = { false, false, false };
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Type:
          case SyntaxKey::TemplateType:
             // if it is a type attribute
-            typeInfo = resolveTypeAttribute(scope, current, declarationMode, false);
+            typeInfo = resolveTypeAttribute(scope, current, attributes, declarationMode, false);
             break;
          case SyntaxKey::ArrayType:
             // if it is a type attribute
-            typeInfo = resolveTypeScope(scope, current, variadicArg, declarationMode, false);
+            typeInfo = resolveTypeScope(scope, current, attributes, declarationMode, false);
             break;
          case SyntaxKey::Attribute:
-            if (!_logic->validateArgumentAttribute(current.arg.reference, byRefArg, variadicArg))
+            if (!_logic->validateArgumentAttribute(current.arg.reference, attributes))
                scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
             break;
          default:
@@ -3820,14 +3830,16 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
 
       current = current.nextNode();
    }
-   if (byRefArg) {
+   if (attributes.byRefOne) {
       typeInfo.elementRef = typeInfo.typeRef;
       typeInfo.typeRef = V_WRAPPER;
    }
-   else if (variadicArg) {
+   else if (attributes.variadicOne) {
       if (typeInfo.typeRef != V_ARGARRAY)
          scope.raiseError(errInvalidOperation, node);
    }
+   if (attributes.variableOne)
+      scope.raiseError(errInvalidOperation, node);
 }
 
 void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode)
@@ -3862,7 +3874,7 @@ void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bo
          case SyntaxKey::TemplateType:
          case SyntaxKey::ArrayType:
             // if it is a type attribute
-            scope.info.outputRef = resolveStrongTypeAttribute(scope, current, true);
+            scope.info.outputRef = resolveStrongTypeAttribute(scope, current, true, false);
             break;
          case SyntaxKey::Name:
          {
@@ -4049,8 +4061,9 @@ void Compiler :: declareDictionaryAttributes(Scope& scope, SyntaxNode node, Type
          }
       }
       else if (current == SyntaxKey::Type) {
-         TypeInfo dictTypeInfo = resolveTypeAttribute(scope, current, true, false);
-         if (_logic->isCompatible(*scope.moduleScope, dictTypeInfo, { V_STRING }, true)) {
+         TypeAttributes typeAttributes = {};
+         TypeInfo dictTypeInfo = resolveTypeAttribute(scope, current, typeAttributes, true, false);
+         if (!typeAttributes.isNonempty() && _logic->isCompatible(*scope.moduleScope, dictTypeInfo, { V_STRING }, true)) {
             typeInfo.typeRef = V_DICTIONARY;
             typeInfo.elementRef = V_STRING;
          }
@@ -4074,8 +4087,19 @@ void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, Type
          case SyntaxKey::TemplateType:
          case SyntaxKey::ArrayType:
             if (!EAttrs::test(mode.attrs, EAttr::NoTypeAllowed)) {
-               mode |= ExpressionAttribute::NewVariable;
-               typeInfo = resolveTypeAttribute(scope, current, false, false);
+               TypeAttributes attributes = {};
+               typeInfo = resolveTypeAttribute(scope, current, attributes, false, false);
+
+               if (attributes.mssgNameLiteral) {
+                  mode |= ExpressionAttribute::MssgNameLiteral;
+               }
+               else {
+                  if (!attributes.variableOne) {
+                     if (attributes.isNonempty())
+                        scope.raiseError(errInvalidHint, current);
+                  }
+                  mode |= ExpressionAttribute::NewVariable;
+               }
             }
             else scope.raiseError(errInvalidHint, current);
             break;
@@ -4186,14 +4210,26 @@ ref_t Compiler :: mapTemplateType(Scope& scope, SyntaxNode terminal, pos_t param
 }
 
 void Compiler :: declareTemplateAttributes(Scope& scope, SyntaxNode node, 
-   TemplateTypeList& parameters, bool declarationMode, bool objectMode)
+   TemplateTypeList& parameters, TypeAttributes& attributes, bool declarationMode, bool objectMode)
 {
    SyntaxNode current = objectMode ? node.nextNode() : node.firstChild();
    while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::TemplateArg || current == SyntaxKey::Type || current == SyntaxKey::TemplateType) {
-         ref_t typeRef = resolveStrongTypeAttribute(scope, current, declarationMode);
+      switch (current.key) {
+         case SyntaxKey::Attribute:
+            if (!_logic->validateTypeScopeAttribute(current.arg.reference, attributes))
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            break;
+         case SyntaxKey::TemplateArg:
+         case SyntaxKey::Type:
+         case SyntaxKey::TemplateType:
+         {
+            ref_t typeRef = resolveStrongTypeAttribute(scope, current, declarationMode, attributes.mssgNameLiteral);
+            parameters.add(typeRef);
 
-         parameters.add(typeRef);
+            break;
+         }
+         default:
+            break;
       }
 
       current = current.nextNode();
@@ -4220,26 +4256,34 @@ ObjectInfo Compiler :: defineArrayType(Scope& scope, ObjectInfo info)
    return info;
 }
 
-ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode, bool objectMode)
+ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node,
+   TypeAttributes& attributes, bool declarationMode, bool objectMode)
 {
    TemplateTypeList typeList;
-   declareTemplateAttributes(scope, node, typeList, declarationMode, objectMode);
-
-   // HOTFIX : generate a temporal template to pass the type
-   SyntaxTree dummyTree;
-   List<SyntaxNode> parameters({});
-   declareTemplateParameters(scope.module, typeList, dummyTree, parameters);
+   declareTemplateAttributes(scope, node, typeList, attributes, declarationMode, objectMode);
 
    SyntaxNode terminalNode = node != SyntaxKey::TemplateType ? node : node.firstChild(SyntaxKey::TerminalMask);
+   if (attributes.mssgNameLiteral) {
+      if (typeList.count() != 1)
+         scope.raiseError(errInvalidOperation, node);
 
-   ref_t templateRef = mapTemplateType(scope, terminalNode, parameters.count());
-   if (!templateRef)
-      scope.raiseError(errUnknownClass, terminalNode);
+      return typeList.get(0);
+   }
+   else {
+      // HOTFIX : generate a temporal template to pass the type
+      SyntaxTree dummyTree;
+      List<SyntaxNode> parameters({});
+      declareTemplateParameters(scope.module, typeList, dummyTree, parameters);
 
-   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+      ref_t templateRef = mapTemplateType(scope, terminalNode, parameters.count());
+      if (!templateRef)
+         scope.raiseError(errUnknownClass, terminalNode);
 
-   return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
-      templateRef, parameters, declarationMode);
+      NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+      return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
+         templateRef, parameters, declarationMode);
+   }
 }
 
 ref_t Compiler :: resolveTemplate(Scope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode)
@@ -4355,7 +4399,7 @@ ref_t Compiler :: resolveArgArrayTemplate(Scope& scope, ref_t elementRef, bool d
    return resolveTemplate(scope, scope.moduleScope->buildins.argArrayTemplateReference, elementRef, declarationMode);
 }
 
-TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, bool& variadicArg, 
+TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
    bool declarationMode, bool allowRole)
 {
    ref_t elementRef = 0;
@@ -4364,11 +4408,11 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, bool& varia
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Attribute:
-            if (!_logic->validateTypeScopeAttribute(current.arg.reference, variadicArg))
+            if (!_logic->validateTypeScopeAttribute(current.arg.reference, attributes))
                scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
             break;
          case SyntaxKey::Type:
-            elementRef = resolveStrongTypeAttribute(scope, current, declarationMode);
+            elementRef = resolveStrongTypeAttribute(scope, current, declarationMode, false);
             break;
          case SyntaxKey::identifier:
          case  SyntaxKey::reference:
@@ -4383,7 +4427,7 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, bool& varia
    }
 
    if (node == SyntaxKey::ArrayType) {
-      if (variadicArg) {
+      if (attributes.variadicOne) {
          return { V_ARGARRAY, elementRef };
       }
       else return { defineArrayType(scope, elementRef), elementRef };
@@ -4391,12 +4435,13 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, bool& varia
    else return {};
 }
 
-TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole)
+TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
+   bool declarationMode, bool allowRole)
 {
    TypeInfo typeInfo = {};
    switch (node.key) {
       case SyntaxKey::TemplateArg:
-         typeInfo = resolveTypeAttribute(scope, node.firstChild(), declarationMode, allowRole);
+         typeInfo = resolveTypeAttribute(scope, node.firstChild(), attributes, declarationMode, allowRole);
          break;
       case SyntaxKey::Type:
       {
@@ -4406,7 +4451,7 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
          SyntaxNode current = node.firstChild();
          if (current == SyntaxKey::Type || current == SyntaxKey::ArrayType) {
             // !! should be refactored
-            typeInfo = resolveTypeAttribute(scope, current, declarationMode, allowRole);
+            typeInfo = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole);
          }
          //else if (current == SyntaxKey::Object) {
          //   assert(false);
@@ -4421,7 +4466,7 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
          else if (SyntaxTree::test(current.key, SyntaxKey::TerminalMask)) {
             if (current.nextNode() == SyntaxKey::TemplateArg) {
                // !! should be refactored : TemplateType should be used instead
-               typeInfo.typeRef = resolveTypeTemplate(scope, current, declarationMode);
+               typeInfo.typeRef = resolveTypeTemplate(scope, current, attributes, declarationMode);
             }
             else typeInfo.typeRef = resolveTypeIdentifier(scope, current.identifier(), current.key, declarationMode, allowRole);
          }
@@ -4429,15 +4474,13 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
          break;
       }
       case SyntaxKey::TemplateType:
-         typeInfo.typeRef = resolveTypeTemplate(scope, node, declarationMode);
+         typeInfo.typeRef = resolveTypeTemplate(scope, node, attributes, declarationMode);
          break;
       case SyntaxKey::ArrayType:
       {
-         bool variadicOne = false;
+         typeInfo = resolveTypeScope(scope, node, attributes, declarationMode, allowRole);
 
-         typeInfo = resolveTypeScope(scope, node, variadicOne, declarationMode, allowRole);
-
-         if (variadicOne)
+         if (attributes.variadicOne)
             scope.raiseError(errInvalidOperation, node);
          break;
       }
@@ -4449,14 +4492,17 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, bool de
          break;
    }
 
-   validateType(scope, typeInfo.typeRef, node, declarationMode, allowRole);
+   validateType(scope, typeInfo.typeRef, node, declarationMode, allowRole || attributes.mssgNameLiteral);
 
    return typeInfo;
 }
 
-ref_t Compiler :: resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode)
+ref_t Compiler :: resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole)
 {
-   TypeInfo typeInfo = resolveTypeAttribute(scope, node, declarationMode, false);
+   TypeAttributes typeAttributes = {};
+   TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, declarationMode, allowRole);
+   if (typeAttributes.isNonempty())
+      scope.raiseError(errInvalidOperation, node);
 
    if (isPrimitiveRef(typeInfo.typeRef)) {
       return resolvePrimitiveType(scope, typeInfo, declarationMode);
@@ -4491,7 +4537,11 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
          case SyntaxKey::Type:
          case SyntaxKey::TemplateType:
             if (!attrs.typeInfo.typeRef) {
-               attrs.typeInfo = resolveTypeAttribute(scope, current, true, false);
+               TypeAttributes typeAttributes = {};
+
+               attrs.typeInfo = resolveTypeAttribute(scope, current, typeAttributes, true, false);
+               if (typeAttributes.isNonempty())
+                  scope.raiseError(errInvalidHint, current);
             }
             else scope.raiseError(errInvalidHint, current);
             break;
@@ -4557,6 +4607,22 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                   break;
             }
             break;
+         case V_EXTMESSAGE:
+            switch (scope.moduleScope->ptrSize) {
+               case 4:
+                  attrs.typeInfo.typeRef = V_EXTMESSAGE64;
+                  attrs.size = 8;
+                  break;
+               case 8:
+                  attrs.typeInfo.typeRef = V_EXTMESSAGE128;
+                  attrs.size = 16;
+                  break;
+               default:
+                  valid = false;
+                  break;
+            }
+            break;
+         case V_SUBJBINARY:
          case V_MSSGBINARY:
             switch (attrs.size) {
                case 4:
@@ -4567,14 +4633,13 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                   break;
             }
             break;
-         case V_SUBJBINARY:
             switch (attrs.size) {
-            case 4:
-               attrs.typeInfo.typeRef = V_MESSAGENAME;
-               break;
-            default:
-               valid = false;
-               break;
+               case 4:
+                  attrs.typeInfo.typeRef = V_MESSAGENAME;
+                  break;
+               default:
+                  valid = false;
+                  break;
             }
             break;
          case V_FLOATBINARY:
@@ -6033,6 +6098,9 @@ ObjectInfo Compiler :: compileIndexerOperation(BuildTreeWriter& writer, ExprScop
       else if (info.kind == ObjectKind::MssgLiteral) {
          return mapMessageConstant(scope, node, info.reference);
       }
+      else if (info.kind == ObjectKind::ExtMssgLiteral) {
+         return mapExtMessageConstant(scope, node, info.reference, info.typeInfo.elementRef);
+      }
    }
 
    return compileOperation(writer, scope, node, operatorId, expectedRef);
@@ -6531,8 +6599,55 @@ ObjectInfo Compiler :: mapMessageConstant(Scope& scope, SyntaxNode node, ref_t a
    ByteCodeUtil::resolveMessageName(messageName, scope.module, message);
 
    ref_t constRef = scope.module->mapConstant(*messageName);
-
    return { ObjectKind::MssgLiteral, { V_MESSAGE }, constRef };
+}
+
+
+ObjectInfo Compiler :: mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef, ref_t extension)
+{
+   pos_t argCount = 0;
+
+   Interpreter interpreter(scope.moduleScope, _logic);
+   ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression));
+   switch (retVal.kind) {
+   case ObjectKind::IntLiteral:
+      argCount = retVal.extra;
+      break;
+   default:
+      scope.raiseError(errCannotEval, node);
+      break;
+   }
+
+   mssg_t message = encodeMessage(actionRef, argCount, 0);
+   IdentifierString messageName;
+   ByteCodeUtil::resolveMessageName(messageName, scope.module, message);
+
+   size_t index = (*messageName).find('[');
+   assert(index != NOTFOUND_POS); // !! temporal
+
+   ustr_t extRefName = scope.moduleScope->resolveFullName(extension);
+   messageName.insert(">", index);
+   messageName.insert(extRefName, index);
+   if (isWeakReference(extRefName)) {
+      messageName.insert(scope.module->name(), index);
+   }
+   messageName.insert("<", index);
+
+   ref_t constRef = scope.module->mapConstant(*messageName);
+
+   ref_t constType = V_EXTMESSAGE64;
+   switch (scope.moduleScope->ptrSize) {
+      case 4:
+         constType = V_EXTMESSAGE64;
+         break;
+      case 8:
+         constType = V_EXTMESSAGE128;
+         break;
+      default:
+         break;
+   }
+
+   return { ObjectKind::ExtMssgLiteral, { constType, extension }, constRef };
 }
 
 ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, EAttr attrs)
@@ -6565,7 +6680,8 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
          case SyntaxKey::identifier:
          case SyntaxKey::reference:
          {
-            TypeInfo typeInfo = resolveTypeAttribute(scope, node, false, false);
+            TypeAttributes typeAttributes = {};
+            TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, false, false);
 
             retVal = { ObjectKind::Class, typeInfo, 0u, newOp ? TargetMode::Creating : TargetMode::Casting };
             if (CompilerLogic::isPrimitiveArrRef(retVal.typeInfo.typeRef) && newOp)
@@ -6593,11 +6709,14 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    else {
       switch (node.key) {
          case SyntaxKey::TemplateType:
-            TypeInfo typeInfo = resolveTypeAttribute(scope, node, false, false);
+         {
+            TypeAttributes typeAttributes = {};
+            TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, false, false);
             retVal = { ObjectKind::Class, typeInfo, 0u };
 
             retVal = mapClassSymbol(scope, retrieveStrongType(scope, retVal));
             break;
+         }
          case SyntaxKey::identifier:
          case SyntaxKey::reference:
             if (variableMode) {
@@ -6724,10 +6843,17 @@ ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
          return { ObjectKind::NewVariable, declaredTypeInfo, 0, 0 };
       }
       else if (mode.test(EAttr::MssgNameLiteral)) {
-         return { ObjectKind::MssgLiteral, { V_MESSAGE },
+         if (declaredTypeInfo.typeRef) {
+            SyntaxNode actionTerminal = terminalNode.findChild(SyntaxKey::identifier);
+            if (actionTerminal != SyntaxKey::None) {
+               return { ObjectKind::ExtMssgLiteral, { V_MESSAGE, declaredTypeInfo.typeRef },
+                  scope.module->mapAction(actionTerminal.identifier(), 0, false) };
+            }
+         }
+         else return { ObjectKind::MssgLiteral, { V_MESSAGE },
             scope.module->mapAction(terminalNode.identifier(), 0, false) };
       }
-      else return {};
+      return {};
    }
 
    if (terminalNode.nextNode() == SyntaxKey::TemplateArg && !EAttrs::test(mode.attrs, ExpressionAttribute::NewOp)) {
@@ -8225,7 +8351,10 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    if (methodScope.info.outputRef) {
       SyntaxNode typeNode = current.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType);
       if (typeNode != SyntaxKey::None) {
-         resolveTypeAttribute(scope, typeNode, false, false);
+         TypeAttributes typeAttributes = {};
+         resolveTypeAttribute(scope, typeNode, typeAttributes, false, false);
+         if (typeAttributes.isNonempty())
+            scope.raiseError(errInvalidOperation, typeNode);
       }
       else validateType(scope, methodScope.info.outputRef, current, false, false);
 

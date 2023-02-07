@@ -147,6 +147,8 @@ namespace elena_lang
          Map<ref_t, pos_t>& positions, bool declareMode);
 
    public:
+      void allocateBody(MemoryWriter& writer, int size) override;
+
       bool isWithDebugInfo() override
       {
          // in the current implementation, debug info (i.e. debug section)
@@ -223,6 +225,11 @@ namespace elena_lang
          LabelHelperBase* lh,
          JITSettings settings) override;
 
+      int getExtMessageSize() override
+      {
+         return 8;
+      }
+
       void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) override;
 
       pos_t getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed) override;
@@ -254,6 +261,7 @@ namespace elena_lang
       void writeWideLiteral(MemoryWriter& writer, wstr_t value) override;
       void writeChar32(MemoryWriter& writer, ustr_t value) override;
       void writeMessage(MemoryWriter& writer, mssg_t value) override;
+      void writeExtMessage(MemoryWriter& writer, Pair<mssg_t, addr_t> extensionInfo, bool virtualMode) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
       void writeVariable(MemoryWriter& writer) override;
       void writeDump(MemoryWriter& writer, SectionInfo* sectionInfo) override;
@@ -292,6 +300,11 @@ namespace elena_lang
 
       pos_t getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed) override;
 
+      int getExtMessageSize() override
+      {
+         return 16;
+      }
+
       pos_t getVMTLength(void* targetVMT) override;
       addr_t findMethodAddress(void* entries, mssg_t message) override;
       pos_t findMethodOffset(void* entries, mssg_t message) override;
@@ -320,6 +333,7 @@ namespace elena_lang
       void writeWideLiteral(MemoryWriter& writer, wstr_t value) override;
       void writeChar32(MemoryWriter& writer, ustr_t value) override;
       void writeMessage(MemoryWriter& writer, mssg_t value) override;
+      void writeExtMessage(MemoryWriter& writer, Pair<mssg_t, addr_t> extensionInfo, bool virtualMode) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
       void writeVariable(MemoryWriter& writer) override;
       void writeDump(MemoryWriter& writer, SectionInfo* sectionInfo) override;

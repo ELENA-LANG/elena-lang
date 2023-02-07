@@ -6,6 +6,8 @@ public extension stringConvertOp
       = self.toPrintable();
 }
 
+// --- intConvertOp ---
+
 public extension intConvertOp
 {
    int toInt()
@@ -14,3 +16,4 @@ public extension intConvertOp
    int toInt(int radix)
      = intConvertor.convert(self, radix);
 }
+

@@ -128,6 +128,40 @@ labDefault:
 
 end
 
+procedure __ext_message_dispatcher
+
+  tstn        FUNCTION_MESSAGE
+  jeq         labDefault
+
+  loadv
+  xcmp
+  jne         labDefault
+
+  get         i:1
+  xjump
+
+labDefault:
+
+  redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
 procedure __str_equal (s1, s2)
 
   xflush     sp:0

@@ -24,7 +24,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadNop,
+   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadOp, loadOp,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -89,7 +89,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 115;
+constexpr size_t bcCommandNumber = 116;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -115,6 +115,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::BRead, ByteCode::LSave, ByteCode::FSave, ByteCode::FTruncDP, ByteCode::NConvFDP,
    ByteCode::XRedirectM, ByteCode::XCall, ByteCode::XGet, ByteCode::WRead, ByteCode::Assign,
    ByteCode::CreateR, ByteCode::MovFrm, ByteCode::DCopyDPN, ByteCode::DCopy, ByteCode::LoadS,
+   ByteCode::XJump
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -2460,6 +2461,12 @@ void JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t 
    }
 }
 
+void JITCompiler :: allocateBody(MemoryWriter& writer, int size)
+{
+   for (int i = 0; i < size; i++)
+      writer.writeByte(0);
+}
+
 // --- JITCompiler32 ---
 
 inline void insertVMTEntry32(VMTEntry32* entries, pos_t count, pos_t index)
@@ -2806,6 +2813,15 @@ void JITCompiler32 :: writeChar32(MemoryWriter& writer, ustr_t value)
 void JITCompiler32 :: writeMessage(MemoryWriter& writer, mssg_t message)
 {
    writer.writeDWord(message);
+}
+
+void JITCompiler32 :: writeExtMessage(MemoryWriter& writer, Pair<mssg_t, addr_t> extensionInfo, bool virtualMode)
+{
+   writer.writeDWord(extensionInfo.value1);
+   if (!virtualMode) {
+      writer.writeDWord((unsigned int)extensionInfo.value2);
+   }
+   else writer.writeDReference(mskCodeRef32, (ref_t)extensionInfo.value2);
 }
 
 void JITCompiler32 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo)
@@ -3215,6 +3231,15 @@ void JITCompiler64 :: writeMessage(MemoryWriter& writer, mssg_t value)
    writer.writeQWord(value);
 }
 
+void JITCompiler64 :: writeExtMessage(MemoryWriter& writer, Pair<mssg_t, addr_t> extensionInfo, bool virtualMode)
+{
+   writer.writeQWord(extensionInfo.value1);
+   if (!virtualMode) {
+      writer.writeQWord(extensionInfo.value2);
+   }
+   else writer.writeQReference(mskCodeRef64, (ref_t)extensionInfo.value2);
+}
+
 void JITCompiler64 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo)
 {
    MemoryBase* section = sectionInfo->section;
@@ -3271,7 +3296,7 @@ void JITCompiler64 :: writeAttribute(MemoryWriter& writer, int category, ustr_t 
    writer.writeString(value);
 
    if (virtualMode) {
-      writer.writeQReference((ref_t)address | mskRef64, 0);
+      writer.writeQReference((ref_t)address | mskCodeRef64, 0);
    }
    else writer.writeQWord(address);
 }

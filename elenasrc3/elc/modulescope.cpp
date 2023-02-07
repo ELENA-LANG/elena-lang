@@ -297,6 +297,25 @@ ref_t ModuleScope :: importMessageConstant(ModuleBase* referenceModule, ref_t re
    return module->mapConstant(value);
 }
 
+ref_t ModuleScope :: importExtMessageConstant(ModuleBase* referenceModule, ref_t reference)
+{
+   if (!reference)
+      return 0;
+
+   ustr_t value = referenceModule->resolveConstant(reference);
+
+   size_t index = value.find('<');
+   assert(index != NOTFOUND_POS);
+   size_t endIndex = value.findSub(index, '>');
+
+   IdentifierString messageName(value);
+   messageName.cut(index, endIndex - index + 1);
+
+   ByteCodeUtil::resolveMessage(*messageName, module, false);
+
+   return module->mapConstant(value);
+}
+
 SectionInfo ModuleScope :: getSection(ustr_t referenceName, ref_t mask, bool silentMode)
 {
    if (isForwardReference(referenceName)) {

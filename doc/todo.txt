@@ -5,6 +5,8 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
+    * extension message literal
+
     * rosetta code examples : aplusb
 
     * rosetta code examples : 6
@@ -48,6 +50,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * ldoc : extensions - no extensions
     * ldoc : symbol should return the type and it should be possible to see its api
     * ldoc : all symbols should be in alphabetic order
     * ldoc : consoleOp extension should be visible

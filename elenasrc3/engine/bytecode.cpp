@@ -20,7 +20,7 @@ const char* _fnOpcodes[256] =
    "incude", "exclude", "assign", "mov frm", "loads", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", OPCODE_UNKNOWN,
+   "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xget", "xcall",
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -260,6 +260,9 @@ void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* targe
       switch (mask) {
          case mskMssgLiteralRef:
             command.arg1 = target->importMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
+            break;
+         case mskExtMssgLiteralRef:
+            command.arg1 = target->importExtMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
             break;
          case mskExternalRef:
             command.arg1 = target->importExternal(importer, command.arg1 & ~mskAnyRef) | mask;

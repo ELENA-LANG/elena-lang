@@ -439,6 +439,13 @@ inline %26h
 
 end
 
+// ; xjump
+inline %027h
+
+  jmp ebx
+
+end
+
 // ; xget
 inline %02Eh
 

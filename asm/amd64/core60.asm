@@ -448,6 +448,13 @@ inline %26h
 
 end
 
+// ; xjump
+inline %027h
+
+  jmp rbx
+
+end
+
 // ; xget
 inline %02Eh
 

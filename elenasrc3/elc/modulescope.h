@@ -35,6 +35,7 @@ public:
    ref_t importReferenceWithMask(ModuleBase* referenceModule, ref_t reference);
    ref_t importConstant(ModuleBase* referenceModule, ref_t reference);
    ref_t importMessageConstant(ModuleBase* referenceModule, ref_t reference);
+   ref_t importExtMessageConstant(ModuleBase* referenceModule, ref_t reference) override;
    ref_t importExternal(ModuleBase* referenceModule, ref_t reference) override;
 
    ref_t mapAnonymous(ustr_t prefix) override;

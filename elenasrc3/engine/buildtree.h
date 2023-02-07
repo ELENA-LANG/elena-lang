@@ -117,6 +117,7 @@ namespace elena_lang
       IntArraySOp          = 0x0058,
       ObjArraySOp          = 0x0059,
       CopyingArr           = 0x005A,
+      ExtMssgLiteral       = 0x005B,
 
       Import               = 0x0060,
       DictionaryOp         = 0x0061,

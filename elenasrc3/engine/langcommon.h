@@ -216,6 +216,7 @@ namespace elena_lang
    constexpr auto V_SYMBOL                = 0x80000808u;
    constexpr auto V_MSSGBINARY            = 0x80000809u;
    constexpr auto V_POINTER               = 0x8000080Au;
+   constexpr auto V_EXTMESSAGE            = 0x8000080Bu;
 
    /// primitive types
    constexpr auto V_STRING                = 0x80000001u;
@@ -245,6 +246,8 @@ namespace elena_lang
    constexpr auto V_INT32ARRAY            = 0x80000019u;
    constexpr auto V_PTR32                 = 0x8000001Au;
    constexpr auto V_PTR64                 = 0x8000001Bu;
+   constexpr auto V_EXTMESSAGE64          = 0x8000001Cu;
+   constexpr auto V_EXTMESSAGE128         = 0x8000001Du;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;

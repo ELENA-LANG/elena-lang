@@ -390,6 +390,7 @@ namespace elena_lang
       virtual ref_t importConstant(ModuleBase* referenceModule, ref_t reference) = 0;
       virtual ref_t importExternal(ModuleBase* referenceModule, ref_t reference) = 0;
       virtual ref_t importMessageConstant(ModuleBase* referenceModule, ref_t reference) = 0;
+      virtual ref_t importExtMessageConstant(ModuleBase* referenceModule, ref_t reference) = 0;
 
       SectionScopeBase()
       {
@@ -495,6 +496,8 @@ namespace elena_lang
 
       virtual bool isWithDebugInfo() = 0;
 
+      virtual int getExtMessageSize() = 0;
+
       virtual void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) = 0;
 
       virtual void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
@@ -518,6 +521,7 @@ namespace elena_lang
 
       virtual void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
          bool structMode, bool virtualMode) = 0;
+      virtual void allocateBody(MemoryWriter& writer, int size) = 0;
       virtual void writeInt32(MemoryWriter& writer, unsigned int value) = 0;
       virtual void writeInt64(MemoryWriter& writer, unsigned long long value) = 0;
       virtual void writeFloat64(MemoryWriter& writer, double value) = 0;
@@ -528,6 +532,7 @@ namespace elena_lang
       virtual void writeDump(MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
       virtual void writeVariable(MemoryWriter& writer) = 0;
       virtual void writeMessage(MemoryWriter& writer, mssg_t message) = 0;
+      virtual void writeExtMessage(MemoryWriter& writer, Pair<mssg_t, addr_t> extensionInfo, bool virtualMode) = 0;
 
       virtual void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) = 0;
       virtual void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) = 0;

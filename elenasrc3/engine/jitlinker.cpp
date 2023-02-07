@@ -487,6 +487,7 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             break;
          }
          case mskMssgLiteralRef:
+         case mskExtMssgLiteralRef:
             vaddress = resolve({ info.module, info.module->resolveConstant(currentRef) }, currentMask, false);
             break;
          //case mskNameLiteralRef:
@@ -1127,6 +1128,32 @@ mssg_t JITLinker :: parseMessageLiteral(ustr_t messageLiteral, ModuleBase* modul
    return createMessage(module, message, references);
 }
 
+Pair<mssg_t, addr_t> JITLinker :: parseExtMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references)
+{
+   Pair<mssg_t, addr_t> retVal = {};
+
+   IdentifierString messageName(messageLiteral);
+   IdentifierString extensionReferenceName;
+
+   size_t index = messageLiteral.find('<');
+   assert(index != NOTFOUND_POS);
+   size_t endIndex = messageLiteral.findSub(index, '>');
+
+   extensionReferenceName.copy(messageLiteral + index + 1, endIndex - index - 1);
+   messageName.cut(index, endIndex - index + 1);
+
+   //vextAddress = resolve(*extensionReferenceName, mskVMTRef, false);
+
+   retVal.value1 = createMessage(module, ByteCodeUtil::resolveMessage(*messageName, module, true), references);
+   // HOTFIX : extension message should be a function one
+   retVal.value1 |= FUNCTION_MESSAGE;
+
+   addr_t vmtExtVAddress = resolve(*extensionReferenceName, mskVMTRef, false);
+   retVal.value2 = getVMTMethodAddress(vmtExtVAddress, retVal.value1);;
+
+   return retVal;
+}
+
 addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask)
 {
    ReferenceInfo vmtReferenceInfo = referenceInfo;
@@ -1169,6 +1196,11 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          size = 4;
          structMode = true;
          break;
+      case mskExtMssgLiteralRef:
+         vmtReferenceInfo.referenceName = _constantSettings.extMessageClass;
+         size = _compiler->getExtMessageSize();
+         structMode = true;
+         break;
       default:
          break;
    }
@@ -1209,6 +1241,17 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
       case mskMssgLiteralRef:
          _compiler->writeMessage(writer, parseMessageLiteral(value, referenceInfo.module, messageReferences));
          break;
+      case mskExtMssgLiteralRef:
+      {
+         pos_t position = writer.position();
+         _compiler->allocateBody(writer, size);
+         writer.seek(position);
+
+         auto extensionInfo = parseExtMessageLiteral(value, referenceInfo.module, messageReferences);
+
+         _compiler->writeExtMessage(writer, extensionInfo, _virtualMode);
+         break;
+      }
       case mskLiteralRef:
          _compiler->writeLiteral(writer, value);
          break;
@@ -1352,6 +1395,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
          case mskWideLiteralRef:
          case mskCharacterRef:
          case mskMssgLiteralRef:
+         case mskExtMssgLiteralRef:
             address = resolveConstant(referenceInfo, sectionMask);
             break;
          case mskConstant:

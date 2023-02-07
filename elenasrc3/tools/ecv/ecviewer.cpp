@@ -188,6 +188,7 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
    ref_t mask = arg & mskAnyRef;
    switch (mask) {
       case mskMssgLiteralRef:
+      case mskExtMssgLiteralRef:
          referenceName = arg ? _module->resolveConstant(arg & ~mskAnyRef) : nullptr;
          break;
       default:
@@ -239,6 +240,7 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
          commandStr.append("procedure:");
          break;
       case mskMssgLiteralRef:
+      case mskExtMssgLiteralRef:
          commandStr.append("mssgconst:");
          break;
       default:

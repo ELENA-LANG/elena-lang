@@ -28,6 +28,20 @@ public sealed const struct Message
    dispatch() : external(system'core_routines'__message_dispatcher);
 }
 
+public sealed const struct ExtensionMessage
+   : info("An extended message constant")
+{
+   embeddable __ext_mssg value;
+    
+//    [info:"Compares the values"]
+//    bool equal(ExtensionMessage ext_mssg)
+//        = theValue == ext_mssg;
+
+   dispatch() : info("Dequalifies incoming messages if they are equal to its value and redirects to the target"), 
+                  external(system'core_routines'__ext_message_dispatcher);
+}
+
+
 // --- MessageName ---
 public sealed const struct MessageName
 {
@@ -42,3 +56,4 @@ public sealed const struct MessageName
 
    dispatch() : external(system'core_routines'__mssgname_dispatcher);
 }
+

@@ -1,30 +1,21 @@
+//import system'routines;
 import extensions;
 
-A
-{
-   constructor new() 
-   {
-      console.writeLine("A");
-   }
-
-   sealed static raise()
-   {
-      weak self.new()
-   }
-}
-
-B : A
-{
-   constructor new() 
-   {
-      console.writeLine("B");
-   }
-}
-
+//public program()
+//{
+//    console.printLine(console.readLine()
+//                              .split()
+//                              .selectBy(mssgconst toInt<convertorOp>[1])
+//                              .summarize())
+//}
 
 public program()
 {
-   var a := A.raise();
-   var b := B.raise();
+   var m := mssgconst toInt<intConvertOp>[1];
+   var n := m("2");
 
+//    var A := Integer.new();
+//    var B := Integer.new();
+ 
+//    console.loadLine(A,B).printLine(A + B)
 }

@@ -35,6 +35,7 @@ namespace elena_lang
       ConstantLiteral,
       MssgNameLiteral,
       MssgLiteral,
+      ExtMssgLiteral,
       Template,
       Nil,
       Symbol,
@@ -923,11 +924,11 @@ namespace elena_lang
 
       ref_t mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& resolvedMessage, ref_t implicitSignatureRef,
          ObjectInfo object);
-
+         
       mssg_t defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode);
 
       void declareTemplateAttributes(Scope& scope, SyntaxNode node, TemplateTypeList& parameters, 
-         bool declarationMode, bool objectMode);
+         TypeAttributes& attributes, bool declarationMode, bool objectMode);
 
       ObjectInfo defineArrayType(Scope& scope, ObjectInfo info);
       ref_t defineArrayType(Scope& scope, ref_t elementRef);
@@ -937,7 +938,8 @@ namespace elena_lang
       ref_t resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool declarationMode);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
          bool declarationMode, bool allowRole);
-      ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node, bool declarationMode, bool objectMode = false);
+      ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node,
+         TypeAttributes& attributes, bool declarationMode, bool objectMode = false);
 
       ref_t resolveTemplate(Scope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode);
       ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);
@@ -946,11 +948,11 @@ namespace elena_lang
       ref_t resolveArgArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 
       int resolveSize(Scope& scope, SyntaxNode node);
-      TypeInfo resolveTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, 
-         bool allowRole);
-      TypeInfo resolveTypeScope(Scope& scope, SyntaxNode node, bool& variadicArg, 
+      TypeInfo resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
          bool declarationMode, bool allowRole);
-      ref_t resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode);
+      TypeInfo resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
+         bool declarationMode, bool allowRole);
+      ref_t resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole);
 
       bool resolveAutoType(ExprScope& scope, ObjectInfo source, ObjectInfo& target);
 
@@ -1150,6 +1152,7 @@ namespace elena_lang
       ObjectInfo mapFloat64Constant(Scope& scope, SyntaxNode node);
       ObjectInfo mapTerminal(Scope& scope, SyntaxNode node, TypeInfo typeInfo, ExpressionAttribute attrs);
       ObjectInfo mapMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef);
+      ObjectInfo mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef, ref_t extension);
 
       ObjectInfo mapObject(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
 
