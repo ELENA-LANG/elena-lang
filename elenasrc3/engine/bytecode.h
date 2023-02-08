@@ -158,11 +158,14 @@ namespace elena_lang
       CallMR         = 0xFD,
       CallExtR       = 0xFE,
 
-      None           = 0x1000,
       Label          = 0x1001,
 //      BreakLabel     = 0x1011,  // meta command, breaking the optimization rules
-      ImportOn       = 0x1002,
-      ImportOff      = 0x1003,
+
+      ImportOn       = 0x2002,
+      ImportOff      = 0x2003,
+
+      Match          = 0x8FFE,  // used in optimization engine
+      None           = 0x8FFF,  // used in optimization engine
    };
 
    enum class PseudoArg
@@ -392,6 +395,27 @@ namespace elena_lang
    struct ByteCodePattern
    {
       ByteCode        code;
+
+      bool operator ==(ByteCode code) const
+      {
+         return (this->code == code);
+      }
+
+      bool operator !=(ByteCode code) const
+      {
+         return (this->code != code);
+      }
+
+      bool operator ==(ByteCodePattern pattern)
+      {
+         return (code == pattern.code/* && argumentType == pattern.argumentType && argument == pattern.argument*/);
+      }
+
+      bool operator !=(ByteCodePattern pattern)
+      {
+         return !(*this == pattern);
+      }
+
    };
 
    // --- ByteCodeTransformer ---

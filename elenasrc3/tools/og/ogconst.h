@@ -19,6 +19,8 @@ namespace elena_lang
    constexpr auto OG_HELP                = "og-cli <optimization_file>\n";
 
    constexpr auto OG_FATAL               = "a fatal error\n";
+   constexpr auto OG_INVALID_OPCODE      = "(%d, %d): Invalid token\n";
+
    constexpr auto OG_FILENOTEXIST        = "error:file not found\n";
    constexpr auto OG_INVALID_RULE        = "error(%d:%d) : invalid rule structure\n";
 }

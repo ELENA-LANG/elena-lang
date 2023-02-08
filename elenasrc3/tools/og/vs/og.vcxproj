@@ -167,9 +167,22 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\common\dump.cpp" />
+    <ClCompile Include="..\..\..\common\files.cpp" />
+    <ClCompile Include="..\..\..\common\ustring.cpp" />
+    <ClCompile Include="..\..\..\engine\bytecode.cpp" />
+    <ClCompile Include="..\..\..\engine\scriptreader.cpp" />
     <ClCompile Include="..\og.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\common\common.h" />
+    <ClInclude Include="..\..\..\common\dump.h" />
+    <ClInclude Include="..\..\..\common\files.h" />
+    <ClInclude Include="..\..\..\common\lists.h" />
+    <ClInclude Include="..\..\..\common\streams.h" />
+    <ClInclude Include="..\..\..\common\ustring.h" />
+    <ClInclude Include="..\..\..\engine\bytecode.h" />
+    <ClInclude Include="..\..\..\engine\scriptreader.h" />
     <ClInclude Include="..\ogconst.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

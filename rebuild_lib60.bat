@@ -5,6 +5,13 @@ if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 
 move dat\sg\syntax60.dat bin
 
+bin\og-cli dat\og\rules.txt
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+@echo on
+
+move dat\og\rules.dat bin
+
 bin\asm-cli -x86 asm\x32\core60.asm bin\x32
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError

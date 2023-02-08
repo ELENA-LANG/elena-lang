@@ -2348,11 +2348,340 @@ namespace elena_lang
       MemoryDump _buffer;
 
    public:
+      struct Node
+      {
+         T     value;
+         pos_t parent;
+         pos_t firstChildLink;
+
+         Node(T defValue)
+         {
+            value = defValue;
+            parent = firstChildLink = 0;
+         }
+         Node(T value, pos_t parent)
+         {
+            this->value = value;
+            this->parent = parent;
+            this->firstChildLink = 0;
+         }
+      };
+
+      struct ChildLink
+      {
+         pos_t node;
+         pos_t nextChildLink;
+
+         ChildLink()
+         {
+            node = nextChildLink = 0;
+         }
+         ChildLink(pos_t node, pos_t nextChildLink)
+         {
+            this->node = node;
+            this->nextChildLink = nextChildLink;
+         }
+      };
+
+      Node getNode(pos_t position)
+      {
+         Node node = { _defValue };
+         _buffer.read(position, &node, sizeof(Node));
+
+         return node;
+      }
+
+      pos_t getNextLink(pos_t linkPosition)
+      {
+         ChildLink link;
+         _buffer.read(linkPosition, &link, sizeof(ChildLink));
+
+         return link.nextChildLink;
+      }
+
+      pos_t getLinkNodePosition(pos_t linkPosition)
+      {
+         if (linkPosition != 0) {
+            ChildLink link = {};
+            _buffer.read(linkPosition, &link, sizeof(ChildLink));
+
+            return link.node;
+         }
+         else return 0;
+      }
+
+      pos_t addRootNode(T item)
+      {
+         pos_t position = _buffer.length();
+         Node node = { item, INVALID_POS };
+
+         _buffer.write(position, &node, sizeof(node));
+
+         return position;
+      }
+
+      pos_t addNode(pos_t parent, T value)
+      {
+         // add new node
+         pos_t position = _buffer.length();
+         Node node(value, parent);
+         _buffer.write(position, &node, sizeof(Node));
+
+         addChildLink(parent, position);
+
+         return position;
+      }
+
+      void addChildLink(pos_t parent, pos_t child)
+      {
+         // add new child link
+         pos_t linkPosition = _buffer.length();
+         ChildLink link = { child, 0 };
+         _buffer.write(linkPosition, &link, sizeof(ChildLink));
+
+         // update parent
+         Node parentNode = { _defValue };
+         _buffer.read(parent, &parentNode, sizeof(Node));
+
+         if (parentNode.firstChildLink == 0) {
+            parentNode.firstChildLink = linkPosition;
+
+            _buffer.write(parent, &parentNode, sizeof(Node));
+         }
+         else {
+            ChildLink link = { 0, parentNode.firstChildLink };
+            pos_t position = parentNode.firstChildLink;
+            do {
+               position = link.nextChildLink;
+
+               _buffer.read(position, &link, sizeof(ChildLink));
+            } while (link.nextChildLink != 0);
+
+            link.nextChildLink = linkPosition;
+            _buffer.write(position, &link, sizeof(ChildLink));
+         }
+      }
+
+      void save(StreamWriter* writer)
+      {
+         writer->writePos(_buffer.length());
+
+         MemoryReader reader(&_buffer);
+         writer->copyFrom(&reader, _buffer.length());
+      }
+
       MemoryTrie(T defValue)
       {
          _defValue = defValue;
       }
       ~MemoryTrie() = default;
+   };
+
+   // --- MemoryTrieNode ---
+   template <class T> class MemoryTrieNode
+   {
+      pos_t          _position;
+      MemoryTrie<T>* _trie;
+
+   public:
+      typedef typename MemoryTrie<T>::Node Node;
+
+      struct ChildEnumerator
+      {
+         friend class MemoryTrieNode;
+
+      private:
+         MemoryTrie<T>* _trie;
+         pos_t          _linkPosition;
+
+         ChildEnumerator(MemoryTrie<T>* trie, pos_t linkPosition)
+         {
+            _trie = trie;
+            _linkPosition = linkPosition;
+         }
+
+      public:
+         bool eof()
+         {
+            return (_linkPosition == 0);
+         }
+
+         MemoryTrieNode Node()
+         {
+            pos_t position = _trie->getLinkNodePosition(_linkPosition);
+
+            return MemoryTrieNode(_trie, position);
+         }
+
+         ChildEnumerator& operator ++()
+         {
+            _linkPosition = _trie->getNextLink(_linkPosition);
+
+            return *this;
+         }
+         ChildEnumerator operator ++(int)
+         {
+            ChildEnumerator tmp = *this;
+            ++* this;
+
+            return tmp;
+         }
+
+         ChildEnumerator()
+         {
+            _linkPosition = 0;
+         }
+      };
+
+      bool operator ==(MemoryTrieNode& node) const
+      {
+         return (this->_position == node._position);
+      }
+
+      bool operator !=(MemoryTrieNode& node) const
+      {
+         return (this->_position != node._position);
+      }
+
+      pos_t Position() { return _position; }
+
+      T Value()
+      {
+         Node node = _trie->getNode(_position);
+
+         return node.value;
+      }
+
+      ChildEnumerator Children()
+      {
+         Node node = _trie->getNode(_position);
+
+         return ChildEnumerator(_trie, node.firstChildLink);
+      }
+
+      ChildEnumerator find(T value)
+      {
+         ChildEnumerator children = Children();
+         while (!children.eof() && children.Node().Value() != value)
+            ++children;
+
+         return children;
+      }
+
+      void link(MemoryTrieNode& node)
+      {
+         _trie->addChildLink(_position, node.Position());
+      }
+
+      MemoryTrieNode()
+      {
+         _trie = nullptr;
+         _position = 0;
+      }
+      MemoryTrieNode(MemoryTrie<T>* trie)
+      {
+         _trie = trie;
+         _position = 0;
+      }
+      MemoryTrieNode(MemoryTrie<T>* trie, pos_t position)
+      {
+         _trie = trie;
+         _position = position;
+      }
+   };
+
+   // --- MemoryTrieBuilder ---
+   template <class T> struct MemoryTrieBuilder
+   {
+   public:
+      MemoryTrie<T> trie;
+
+      typedef typename MemoryTrieNode<T>::ChildEnumerator ChildEnumerator;
+
+      void addRoot(T item)
+      {
+         trie.addRootNode(item);
+      }
+
+      pos_t find(pos_t position, T item)
+      {
+         MemoryTrieNode<T> node(&trie, position);
+
+         auto children_it = node.Children();
+         while (children_it.eof()) {
+            auto child = children_it.Node();
+            if (child.Value() == item)
+               return child.Position();
+
+            ++children_it;
+         }
+
+         return 0;
+      }
+
+      pos_t add(pos_t parentPosition, T item)
+      {
+         pos_t position = find(parentPosition, item);
+         if (position == 0) {
+            position = trie.addNode(parentPosition, item);
+         }
+         return position;
+      }
+
+      void scanTrie(MemoryTrieNode<T>& current, ChildEnumerator nodes, MemoryTrieNode<T>& failedNode, bool(*isTerminal)(T))
+      {
+         while (!nodes.eof()) {
+            auto child = nodes.Node();
+            if (!isTerminal(child.Value())/*child.Value() != terminalNode*/ && child.Position() != current.Position()) {
+               if (current.Value() == child.Value()) {
+                  auto next = current.Children();
+                  while (!next.eof()) {
+                     auto node = next.Node();
+                     scanTrie(node, child.Children(), child, isTerminal);
+
+                     ++next;
+                  }
+               }
+               else if (failedNode.Position() != 0) {
+                  auto it = failedNode.find(current.Value());
+                  if (it.eof()) {
+                     failedNode.link(current);
+                  }
+               }
+
+               // skip terminator
+               if (/*child.Value() != terminalNode*/!isTerminal(child.Value())) // !! useless condition?
+                  scanTrie(current, child.Children(), failedNode, isTerminal);
+            }
+
+            ++nodes;
+         }
+      }
+
+      void prepare(bool(*isTerminal)(T))
+      {
+         MemoryTrieNode<T> emptyNode;
+         MemoryTrieNode<T> node(&trie);
+
+         auto children = node.Children();
+         while (!children.eof()) {
+            auto node = children.Node();
+            scanTrie(node, node.Children(), emptyNode, isTerminal);
+
+            ++children;
+         }
+      }
+
+      void save(StreamWriter* writer)
+      {
+         trie.save(writer);
+      }
+
+      MemoryTrieBuilder(T defValue)
+         : trie(defValue)
+      {
+
+      }
    };
 
    // --- shift routine ---
