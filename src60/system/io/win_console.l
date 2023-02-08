@@ -1,5 +1,7 @@
 namespace io
 {
+   import system'text;
+
    struct KEY_EVENT_RECORD
    {
       int   bKeyDown : prop;
@@ -19,19 +21,75 @@ namespace io
 
    singleton ConsoleFactory
    {
-      get /*handle*/ OutputHandle()
+      get handle OutputHandle()
       {
          handle h := extern KERNEL32.GetStdHandle(0FFFFFFF5h);
 
          ^ h;
       }
 
-      get /*handle*/ InputHandle()
+      get handle InputHandle()
       {
          handle h := extern KERNEL32.GetStdHandle(0FFFFFFF6h);
 
          ^ h;
       }
+
+      newWriter()
+      {
+         //^ new ConsoleFileWriter(ConsoleFactory.OutputHandle)
+
+         ^ new ConsoleWriter(ConsoleFactory.OutputHandle)
+      }
+
+      newReader()
+         = new ConsoleReader(ConsoleFactory.InputHandle);
+   }
+
+   sealed class ConsoleFileWriter
+   {
+      handle h;
+
+      private write(byte[] buffer, int length)
+      {
+         int written := 0;
+         extern KERNEL32.WriteFile
+            (h, buffer, length, ref written, 0)
+      }
+
+      constructor(handle h)
+      {
+         this h := h
+      }
+
+      write(string literal)
+      {
+         byte buffer[256];
+         int length := literal.Length;
+         int index := 0;
+         int buf_len := 256;
+         int subs_len := 256;
+         while (length > 0)
+         {
+            buf_len := 256;
+
+            if (length < 128)
+            {
+               subs_len := length
+            }
+            else
+            {
+               subs_len := 128
+            };
+
+            OEMEncoder.toByteArray(literal, index, ref subs_len, buffer, 0, ref buf_len);
+
+            self.write(buffer, buf_len);
+
+            index += subs_len;
+            length -= subs_len
+         }
+      }      
    }
 
    public class ConsoleWriter
@@ -76,7 +134,7 @@ namespace io
          {
             extern
             {
-                    extern KERNEL32.ReadConsoleInputW(h, dump, 1, ref numberRead);
+               extern KERNEL32.ReadConsoleInputW(h, dump, 1, ref numberRead);
             };
 
             eventType := dump.eventType;
@@ -101,6 +159,6 @@ namespace io
       }
    }
 
-   public stdConsoleWriter = new ConsoleWriter(ConsoleFactory.OutputHandle);
-   public stdConsoleReader = new ConsoleReader(ConsoleFactory.InputHandle);
+   public stdConsoleWriter = ConsoleFactory.newWriter();
+   public stdConsoleReader = ConsoleFactory.newReader();
 }

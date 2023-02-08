@@ -166,8 +166,6 @@ ref_t ModuleScope :: resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Vis
 
 ref_t ModuleScope :: resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs)
 {
-   ref_t reference = 0;
-
    auto it = importedNs->start();
    while (!it.eof()) {
       ReferenceName fullName(*it, identifier);
@@ -177,13 +175,13 @@ ref_t ModuleScope :: resolveImportedIdentifier(ustr_t identifier, IdentifierList
          if (sectionInfo.module != module) {
             return module->mapReference(*fullName, false);
          }
-         else return reference;
+         else return sectionInfo.reference;
       }
 
       ++it;
    }
 
-   return reference;
+   return 0;
 }
 
 ref_t ModuleScope :: resolveWeakTemplateReferenceID(ref_t reference)

@@ -1,9 +1,35 @@
+// --- IConsoleReader ---
+
+public interface IConsoleReader
+{
+    abstract string readLine();
+    
+//    abstract wide readWideLine();
+    
+    abstract char read();
+    
+//    get abstract bool KeyAvailable();
+}
+
+// --- IConsoleWriter ---
+
+public interface IConsoleWriter
+{
+    abstract write(wide s);
+    abstract write(string s);
+    abstract writeLine(wide s);
+    abstract writeLine(string s);
+    abstract writeLine();
+    
+//    abstract refresh();
+}
+
 sealed class Console
 {
-   field reader;
-   field writer;
+   /*IConsoleReader*/object reader;
+   /*IConsoleWriter*/object writer;
 
-   constructor(reader, writer)
+   constructor(/*IConsoleReader*/ reader, /*IConsoleWriter*/ writer)
    {
       this reader := reader;
       this writer := writer;

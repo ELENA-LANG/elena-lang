@@ -3,7 +3,7 @@
 //
 //              This header contains various ELENA Engine list templates
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LISTS_H
@@ -2338,6 +2338,21 @@ namespace elena_lang
          _position = 0;
       }
       ~MemoryList() = default;
+   };
+
+   // --- MemoryTrie ---
+   template <class T> class MemoryTrie
+   {
+   private:
+      T          _defValue;
+      MemoryDump _buffer;
+
+   public:
+      MemoryTrie(T defValue)
+      {
+         _defValue = defValue;
+      }
+      ~MemoryTrie() = default;
    };
 
    // --- shift routine ---

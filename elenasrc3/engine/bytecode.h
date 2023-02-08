@@ -388,6 +388,27 @@ namespace elena_lang
       static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
    };
 
+   // --- ByteCodePattern ---
+   struct ByteCodePattern
+   {
+      ByteCode        code;
+   };
+
+   // --- ByteCodeTransformer ---
+   struct ByteCodeTransformer
+   {
+      typedef MemoryTrie<ByteCodePattern>     MemoryByteTrie;
+
+      MemoryByteTrie trie;
+      bool           loaded;
+
+      ByteCodeTransformer()
+         : trie({ ByteCode::None })
+      {
+         loaded = false;
+      }
+   };
+
 }
 
 #endif

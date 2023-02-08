@@ -183,11 +183,11 @@ public interface Func5
 {
    abstract function(param1, param2, param3, param4, param5);
 
-   sealed run(object param1, object param2, object param3, Enumerator en)
+   sealed run(object param1, object param2, object param3, object param4, Enumerator en)
    {
       while (en.next())
       {
-         self(param1, param2, param3, *en)
+         self(param1, param2, param3, param4, *en)
       }
    }
 

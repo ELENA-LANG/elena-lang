@@ -3,7 +3,7 @@
 //
 //		This file contains the compiling processor body
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -258,6 +258,12 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, pat
 
       _parser = nullptr;
       _compiler = nullptr;
+   }
+
+   PathString bcRulesPath(*appPath, BCRULES_FILE);
+   FileReader bcRuleReader(*bcRulesPath, FileRBMode, FileEncoding::Raw, false);
+   if (bcRuleReader.isOpen()) {
+      _bcRules.load(bcRuleReader, bcRuleReader.length());
    }
 }
 

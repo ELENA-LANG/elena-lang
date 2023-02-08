@@ -1,5 +1,6 @@
 //import system'routines;
 import extensions;
+import system'text;
 
 //public program()
 //{
@@ -9,10 +10,35 @@ import extensions;
 //                              .summarize())
 //}
 
+singleton Test
+{
+   test(short[] tmp)
+   {
+      tmp[1] := 2;
+   }
+}
+
 public program()
 {
-   var m := mssgconst toInt<intConvertOp>[1];
-   var n := m("2");
+   short tmp[3];
+   tmp[0] := cast short(0);
+//   tmp[1] := 1;
+//   tmp[2] := 2;
+//   Test.test(tmp);
+
+
+
+//   char ch := $89;
+//   byte tmp[4];
+//   OEMEncoder.convertChar(ch, tmp, 0, ref int len);
+   
+
+//   console.writeLine("Hello there");
+
+//   var s := console.readLine();
+
+//   console.printLine(s);
+
 
 //    var A := Integer.new();
 //    var B := Integer.new();

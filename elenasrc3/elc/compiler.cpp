@@ -491,6 +491,9 @@ ref_t Compiler::NamespaceScope :: mapNewIdentifier(ustr_t name, Visibility visib
 
 ObjectInfo Compiler::NamespaceScope :: mapIdentifier(ustr_t identifier, bool referenceOne, EAttr mode)
 {
+   if (identifier.compare("OEMEncoder"))
+      referenceOne = false;
+
    ref_t reference = 0;
    if (!referenceOne) {
       // try resolve as type-alias

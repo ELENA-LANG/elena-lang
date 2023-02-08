@@ -5,7 +5,27 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * extension message literal
+    * byte code optimization rules
+
+    * two breakpoints in row :
+        - replace two breakpoint with a one
+
+    * debugger : step over not works for the sandbox code
+    * debugger : display parameter array content
+    * debugger : display charvalue value
+    * array of shorts : assign with int literal
+
+    * WinEncoder
+    * OEMEncoder
+    * test OEMEncoder : convertChar, convertToChar, convertFrom, convertTo, toByteArray
+
+
+    * test ConsoleFileWriter
+    * print german text
+
+    * support output redirect
+
+    * migrate console, consoleReader, consoleWriter
 
     * rosetta code examples : aplusb
 
@@ -50,6 +70,8 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * elena : (see system'text'Encoder, it should be possible to pass byref argument further)
+    * console symbol should be strong one
     * ldoc : extensions - no extensions
     * ldoc : symbol should return the type and it should be possible to see its api
     * ldoc : all symbols should be in alphabetic order
@@ -126,7 +148,6 @@ Backlog:
     * conversion : byte / short / int / long => real
 
     * variadic call in run-time
-    * printLine extensions
     * toPrintable should return both wide and string
     * unit tests : arithmetic operations
 
@@ -154,7 +175,6 @@ Backlog:
     * intRefOp & realRefOp ?
     * string to real : support e notation
     * intnumber.cast<'integer> - should returns itself without boxing
-    * two breakpoints in row
     * exception tests : methodnotfound, nilreference
     * uncomment ConsoleFactory type attributes
     * external operation : do not box the arguments

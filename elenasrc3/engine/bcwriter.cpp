@@ -1766,10 +1766,27 @@ void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope,
    else saveProcedure(node, scope, false, INVALID_POS, paths, tapeOptMode);
 }
 
+bool ByteCodeWriter :: applyRules(CommandTape& tape)
+{
+   return false;
+}
+
 void ByteCodeWriter :: optimizeTape(CommandTape& tape)
 {
-   // optimize unused and idle jumps
-   while (CommandTape::optimizeJumps(tape));
+   bool modified = true;
+   while (modified) {
+      modified = false;
+
+      // optimize unused and idle jumps
+      while (CommandTape::optimizeJumps(tape)) {
+         modified = true;
+      }
+
+      // optimize byte codes using optimization rules
+      while (applyRules(tape)) {
+         modified = true;
+      }
+   }
 }
 
 void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 

@@ -3,7 +3,7 @@
 //
 //		This file contains the compiling processor header
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPLING_H
@@ -63,6 +63,8 @@ namespace elena_lang
       JITCompilerBase*(*_jitCompilerFactory)(LibraryLoaderBase*, PlatformType);
 
       TemplateGenerator   _templateGenerator;
+
+      MemoryDump          _bcRules;
 
       void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode);
 

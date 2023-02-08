@@ -662,7 +662,7 @@ public const struct WideString : BaseValue
    wide insert(int index, char ch)
       = self.insert(index, cast wide(ch));
 
-   string delete(int index, int length)
+   wide delete(int index, int length)
       : info("Deletes the substring from the object and returns the new one")
    {
       int len1 := self.Length;

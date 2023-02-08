@@ -51,7 +51,7 @@ internal singleton PrimitiveOperations
       ^ 4
    }
 
-   char readChar(byte[] sour, int index)
+   int readUTF32(byte[] sour, int index)
    {
       int ch := sour[index];
       if (ch < 80h)
@@ -129,6 +129,32 @@ internal singleton PrimitiveOperations
       }
 
       //InvalidOperaionException.raise()    
+   }
+
+   int readUTF32(short[] sour, int index)
+   {
+      int ch := sour[index];
+      if (ch > 0DBFFh)
+      {
+         InvalidOperationException.raise()
+      };
+
+      if (ch < 0D800h)
+      {
+         ^ ch
+      };
+
+      int ch2 := ch $shl 10;
+      int ch3 := sour[index + 1];
+      if (ch3 > 0DBFFh)
+      {
+         InvalidOperationException.raise()
+      };
+      ch += ch3;
+
+      ch -= 35FDC00h;
+
+      ^ ch
    }
 
    int calcSubStringLength(int index, int length, char[] array)
@@ -221,6 +247,31 @@ internal singleton PrimitiveOperations
       dest[index + 3] := b;      
       
       ^ length;
+   }
+
+   int copyUTF32(short[] dest, int index, int value)
+   {
+      int length := 0;
+      int n := value;
+      if (n < 010000h) {
+         short s := shortConvertor.convert(n); 
+         
+         dest[index] := s;
+
+         ^ 1
+      };
+      
+      int n2 := n $shr 10;
+      n2 += 0D7C0h;
+      short tmp := shortConvertor.convert(n2); 
+      dest[index] := tmp;
+      
+      n := n & 03FFh;
+      n += 0DC00h;
+      tmp := shortConvertor.convert(n); 
+      dest[index] := tmp;
+
+      ^ 2;   
    }
 }
 
