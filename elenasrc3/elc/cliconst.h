@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x01A9
+   #define ELC_REVISION_NUMBER               0x01AA
 
    // --- Information messages ---
    constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2023 by Aleksey Rakov\n";
@@ -31,7 +31,8 @@ namespace elena_lang
    constexpr auto ELC_HELP_INFO              = "elena-cli {source-file+}";
 
    constexpr auto SYNTAX_FILE                = "syntax60.dat";
-   constexpr auto BCRULES_FILE               = "bcrules.dat";
+   constexpr auto BC_RULES_FILE              = "bc_rules.dat";
+   constexpr auto BT_RULES_FILE              = "bt_rules.dat";
 
    constexpr auto VA_ALIGNMENT               = 0x08;
 

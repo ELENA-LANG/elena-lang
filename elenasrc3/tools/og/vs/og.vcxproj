@@ -181,6 +181,7 @@
     <ClInclude Include="..\..\..\common\lists.h" />
     <ClInclude Include="..\..\..\common\streams.h" />
     <ClInclude Include="..\..\..\common\ustring.h" />
+    <ClInclude Include="..\..\..\engine\buildtree.h" />
     <ClInclude Include="..\..\..\engine\bytecode.h" />
     <ClInclude Include="..\..\..\engine\scriptreader.h" />
     <ClInclude Include="..\ogconst.h" />

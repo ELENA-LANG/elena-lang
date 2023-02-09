@@ -2203,6 +2203,83 @@ namespace elena_lang
       size_t _allocatedSize;
 
    public:
+      class CachedListIterator
+      {
+         friend class CachedList;
+
+         CachedList* owner;
+         int         index;
+
+         CachedListIterator(CachedList* owner)
+         {
+            this->owner = owner;
+            this->index = 0;
+         }
+      public:
+         bool operator ==(const CachedListIterator& it)
+         {
+            return index == it.index;
+         }
+         bool operator !=(const CachedListIterator& it)
+         {
+            return index != it.index;
+         }
+
+         CachedListIterator& operator =(const CachedListIterator& it)
+         {
+            this->owner = it.owner;
+            this->index = it.index;
+
+            return *this;
+         }
+
+         CachedListIterator& operator ++()
+         {
+            index++;
+
+            return *this;
+         }
+         CachedListIterator operator ++(int)
+         {
+            CachedListIterator tmp = *this;
+            ++* this;
+
+            return tmp;
+         }
+         CachedListIterator& operator--()
+         {
+            index--;
+
+            return *this;
+         }
+         CachedListIterator operator--(int)
+         {
+            CachedListIterator tmp = *this;
+            --* this;
+
+            return tmp;
+         }
+
+         T& operator*()
+         {
+            T item = owner->get(index);
+
+            return item;
+         }
+
+         bool eof()
+         {
+            return index == owner->count_pos();
+         }
+      };
+
+      typedef CachedListIterator Iterator;
+
+      Iterator start()
+      {
+         return { this };
+      }
+
       T& operator[](size_t index)
       {
          if (index < cacheSize) {
@@ -2470,6 +2547,15 @@ namespace elena_lang
          writer->copyFrom(&reader, _buffer.length());
       }
 
+      void load(StreamReader* reader)
+      {
+         pos_t length = reader->getPos();
+         _buffer.reserve(length);
+
+         MemoryWriter writer(&_buffer);
+         writer.copyFrom(reader, length);
+      }
+
       MemoryTrie(T defValue)
       {
          _defValue = defValue;
@@ -2608,7 +2694,7 @@ namespace elena_lang
          MemoryTrieNode<T> node(&trie, position);
 
          auto children_it = node.Children();
-         while (children_it.eof()) {
+         while (!children_it.eof()) {
             auto child = children_it.Node();
             if (child.Value() == item)
                return child.Position();

@@ -1255,6 +1255,11 @@ ByteCodeWriter::Saver commands[] =
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral
 };
 
+ByteCodeWriter::Transformer transformers[] =
+{
+   nullptr
+};
+
 // --- ByteCodeWriter ---
 
 ByteCodeWriter :: ByteCodeWriter(LibraryLoaderBase* loader)
@@ -1768,6 +1773,9 @@ void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope,
 
 bool ByteCodeWriter :: applyRules(CommandTape& tape)
 {
+   if (!_bcTransformer.loaded)
+      return false;
+
    return false;
 }
 
@@ -1789,9 +1797,70 @@ void ByteCodeWriter :: optimizeTape(CommandTape& tape)
    }
 }
 
+bool ByteCodeWriter :: matchTriePatterns(BuildNode node)
+{
+   BuildPatterns matchedOnes;
+   BuildPatterns nextOnes;
+
+   BuildPatterns* matched = &matchedOnes;
+   BuildPatterns* followers = &nextOnes;
+   bool           reversed = false;
+
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      matched->add({ &_btTransformer.trie });
+      followers->clear();
+
+      for (auto it = matched->start(); !it.eof(); ++it) {
+         auto pattern = *it;
+
+         for (auto child_it = pattern.Children(); !child_it.eof(); ++child_it) {
+            auto currentPattern = child_it.Node();
+            auto currentPatternValue = currentPattern.Value();
+            if (currentPatternValue.match(current)) {
+               if (currentPatternValue.type == BuildKey::PatternId && transformers[currentPatternValue.argument]())
+                  return true;
+
+               followers->add(currentPattern);
+            }
+         }
+      }
+
+      if (reversed) {
+         reversed = false;
+         followers = &nextOnes;
+         matched = &matchedOnes;
+      }
+      else {
+         reversed = true;
+         matched = &nextOnes;
+         followers = &matchedOnes;
+      }
+
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
+void ByteCodeWriter :: optimizeBuildTree(BuildNode node)
+{
+   if (!_btTransformer.loaded)
+      return;
+
+   bool applied = true;
+   while (applied) {
+      applied = false;
+
+      applied = matchTriePatterns(node);
+   }
+}
+
 void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
    ReferenceMap& paths, bool tapeOptMode)
 {
+   optimizeBuildTree(node.findChild(BuildKey::Tape));
+
    if (scope.moduleScope->debugModule)
       openMethodDebugInfo(scope, sourcePathRef);
 
@@ -1952,4 +2021,12 @@ void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope,
 
       current = current.nextNode();
    }
+}
+
+void ByteCodeWriter :: loadBuildTreeRules(MemoryDump* dump)
+{
+   MemoryReader reader(dump);
+
+   _btTransformer.trie.load(&reader);
+   _btTransformer.loaded = true;
 }

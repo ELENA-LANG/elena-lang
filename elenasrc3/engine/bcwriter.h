@@ -41,9 +41,11 @@ namespace elena_lang
       };
 
       typedef void(*Saver)(CommandTape& tape, BuildNode& node, TapeScope& scope);
+      typedef bool(*Transformer)();
 
    private:
-      ByteCodeTransformer _transformer;
+      ByteCodeTransformer  _bcTransformer;
+      BuildTreeTransformer _btTransformer;
 
       const Saver*        _commands;
       LibraryLoaderBase*  _loader;
@@ -95,7 +97,12 @@ namespace elena_lang
 
       void optimizeTape(CommandTape& tape);
 
+      bool matchTriePatterns(BuildNode node);
+      void optimizeBuildTree(BuildNode node);
+
    public:
+      void loadBuildTreeRules(MemoryDump* dump);
+
       void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList, bool tapeOptMode);
 
       ByteCodeWriter(LibraryLoaderBase* loader);

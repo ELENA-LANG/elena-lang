@@ -20,12 +20,12 @@ namespace elena_lang
 
       CollectionMask       = 0x1000,
 
-      Root                 = 0x1000,
-      Symbol               = 0x1001,
-      Class                = 0x1002,
-      Method               = 0x1003,
-      Tape                 = 0x1004,
-      AbstractMethod       = 0x1005,
+      Root                 = 0x1001,
+      Symbol               = 0x1002,
+      Class                = 0x1003,
+      Method               = 0x1004,
+      Tape                 = 0x1005,
+      AbstractMethod       = 0x1006,
 
       OpenFrame            = 0x0001,
       CloseFrame           = 0x0002,
@@ -172,12 +172,15 @@ namespace elena_lang
       Path                 = 0x800E,
       ClassName            = 0x800F,
 
+      PatternId            = 0x9001, // used for build code optimization
+
       //MetaDictionary    = 0x0022,
       //MetaArray         = 0x1023,
    };
 
-   // --- BuildTree ---
+   typedef Map<ustr_t, BuildKey, allocUStr, freeUStr> BuildKeyMap;
 
+   // --- BuildTree ---
    class BuildTree : public Tree<BuildKey, BuildKey::None>
    {
    public:
@@ -193,11 +196,69 @@ namespace elena_lang
 
          return counter;
       }
+
+      static void loadBuildKeyMap(BuildKeyMap& map)
+      {
+         map.add("breakpoint", BuildKey::Breakpoint);
+      }
    };
 
    // --- BuildTreeWriter ---
    typedef Tree<BuildKey, BuildKey::None>::Writer BuildTreeWriter;
    typedef Tree<BuildKey, BuildKey::None>::Node   BuildNode;
+
+   // --- BuildKeyPattern ---
+   struct BuildKeyPattern
+   {
+      BuildKey type;
+
+      int      argument;
+
+      bool operator ==(BuildKey type) const
+      {
+         return (this->type == type);
+      }
+
+      bool operator !=(BuildKey type) const
+      {
+         return (this->type != type);
+      }
+
+      bool operator ==(BuildKeyPattern pattern)
+      {
+         return (type == pattern.type && argument == pattern.argument);
+      }
+
+      bool operator !=(BuildKeyPattern pattern)
+      {
+         return !(*this == pattern);
+      }
+
+      bool match(BuildNode node)
+      {
+         return node.key == type;
+      }
+   };
+
+   typedef MemoryTrieBuilder<BuildKeyPattern>            BuildCodeTrie;
+   typedef MemoryTrieNode<BuildKeyPattern>               BuildCodeTrieNode;
+   typedef CachedList<BuildCodeTrieNode, 10>             BuildPatterns;
+
+   // --- BuildTreeTransformer ---
+   struct BuildTreeTransformer
+   {
+      typedef MemoryTrie<BuildKeyPattern>     MemoryBuildCodeTrie;
+
+      MemoryBuildCodeTrie  trie;
+      bool                 loaded;
+
+      BuildTreeTransformer()
+         : trie({ BuildKey::None })
+      {
+         loaded = false;
+      }
+   };
+
 
 }
 

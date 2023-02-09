@@ -4,6 +4,7 @@
 //                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include "buildtree.h"
 #include "elena.h"
 #include "bytecode.h"
 #include "ogconst.h"
@@ -21,7 +22,7 @@ constexpr auto DEFAULT_ENCODING = FileEncoding::UTF8;
 
 #endif
 
-typedef MemoryTrieBuilder<ByteCodePattern>  ByteCodeTrieBuilder;
+typedef MemoryTrieBuilder<ByteCodePattern>         ByteCodeTrieBuilder;
 
 bool isMatchNode(ByteCodePattern pattern)
 {
@@ -105,6 +106,73 @@ int parseRuleSet(FileEncoding encoding, path_t path)
    return 0;
 }
 
+BuildKeyPattern decodeBuildPattern(BuildKeyMap& dictionary, ScriptReader& reader, ScriptToken& token)
+{
+   BuildKeyPattern pattern = { dictionary.get(token.token.str())};
+   if (pattern.type == BuildKey::None)
+      throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
+
+   reader.read(token);
+
+   return pattern;
+}
+
+void parseBuildCodeRule(BuildCodeTrie& trie, BuildKeyMap& dictionary, ScriptReader& reader, ScriptToken& token)
+{
+   BuildKeyPattern pattern = decodeBuildPattern(dictionary, reader, token);
+
+   pos_t position = trie.add(0, pattern);
+
+   while (!token.compare("=")) {
+      position = trie.add(position, decodeBuildPattern(dictionary, reader, token));
+   }
+
+   if (token.compare("=")) {
+      reader.read(token);
+
+      int patternId = token.token.toInt();
+      if (!patternId)
+         throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
+
+      trie.add(position, { BuildKey::PatternId, patternId });
+   }
+
+   if (token.compare(";"))
+      throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
+
+   reader.read(token);
+}
+
+int parseSourceRules(FileEncoding encoding, path_t path)
+{
+   BuildKeyMap dictionary({ BuildKey::None });
+   BuildTree::loadBuildKeyMap(dictionary);
+
+   BuildCodeTrie       trie({ BuildKey::None });
+
+   TextFileReader source(path.str(), encoding, false);
+   ScriptReader reader(4, &source);
+   ScriptToken  token;
+
+   trie.addRoot({ BuildKey::Root });
+
+   // generate tree
+   while (reader.read(token)) {
+      parseBuildCodeRule(trie, dictionary, reader, token);
+   }
+
+   // save the result
+   PathString outputFile(path);
+   outputFile.changeExtension("dat");
+
+   FileWriter file(*outputFile, FileEncoding::Raw, false);
+   trie.save(&file);
+
+   printf("\nSuccessfully created\n");
+
+   return 0;
+}
+
 int main(int argc, char* argv[])
 {
    int retVal = 0;
@@ -115,6 +183,10 @@ int main(int argc, char* argv[])
       if (argc == 2) {
          PathString path(argv[1]);
          retVal = parseRuleSet(DEFAULT_ENCODING, *path);
+      }
+      else if (argc == 3 && argv[1][0] == '-' && argv[1][1] == 's') {
+         PathString path(argv[2]);
+         retVal = parseSourceRules(DEFAULT_ENCODING, *path);
       }
       else {
          printf(OG_HELP);

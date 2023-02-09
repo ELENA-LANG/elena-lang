@@ -65,6 +65,7 @@ namespace elena_lang
       TemplateGenerator   _templateGenerator;
 
       MemoryDump          _bcRules;
+      MemoryDump          _btRules;
 
       void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode);
 

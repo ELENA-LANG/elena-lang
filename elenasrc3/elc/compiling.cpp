@@ -260,10 +260,16 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, pat
       _compiler = nullptr;
    }
 
-   PathString bcRulesPath(*appPath, BCRULES_FILE);
+   PathString bcRulesPath(*appPath, BC_RULES_FILE);
    FileReader bcRuleReader(*bcRulesPath, FileRBMode, FileEncoding::Raw, false);
    if (bcRuleReader.isOpen()) {
       _bcRules.load(bcRuleReader, bcRuleReader.length());
+   }
+
+   PathString btRulesPath(*appPath, BT_RULES_FILE);
+   FileReader btRuleReader(*btRulesPath, FileRBMode, FileEncoding::Raw, false);
+   if (btRuleReader.isOpen()) {
+      _btRules.load(btRuleReader, btRuleReader.length());
    }
 }
 
@@ -350,6 +356,9 @@ void CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree&
 void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode)
 {
    ByteCodeWriter bcWriter(&_libraryProvider);
+   if (_btRules.length() > 0)
+      bcWriter.loadBuildTreeRules(&_btRules);
+
    bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList, moduleScope.tapeOptMode);
 
    if (savingMode) {
