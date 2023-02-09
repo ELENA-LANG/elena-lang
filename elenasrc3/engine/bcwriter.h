@@ -41,7 +41,7 @@ namespace elena_lang
       };
 
       typedef void(*Saver)(CommandTape& tape, BuildNode& node, TapeScope& scope);
-      typedef bool(*Transformer)();
+      typedef bool(*Transformer)(BuildNode lastNode);
 
    private:
       ByteCodeTransformer  _bcTransformer;

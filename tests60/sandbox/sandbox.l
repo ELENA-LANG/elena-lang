@@ -10,21 +10,14 @@ import system'text;
 //                              .summarize())
 //}
 
-singleton Test
-{
-   test(short[] tmp)
-   {
-      tmp[1] := 2;
-   }
-}
-
 public program()
 {
+   char ch := $89;
+
+   var c := ch;
+
    short tmp[3];
-   tmp[0] := cast short(0);
-//   tmp[1] := 1;
-//   tmp[2] := 2;
-//   Test.test(tmp);
+   tmp[0] := 1;
 
 
 

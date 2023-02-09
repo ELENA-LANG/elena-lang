@@ -255,12 +255,15 @@ namespace elena_lang
       ByteArrayAddress     = 0x0105,
       ShortArrayAddress    = 0x0106,
       IntArrayAddress      = 0x0107,
-            
+
       Parameter            = 0x0200,
       IntParameterAddress  = 0x0202,
       LongParameterAddress = 0x0203,
       RealParameterAddress = 0x0204,
       ParameterAddress     = 0x0205,
+      ByteArrayParameter   = 0x0206,
+      ShortArrayParameter  = 0x0207,
+      IntArrayParameter    = 0x0208,
 
       FrameInfo            = 0x0301,
       ClassInfo            = 0x0302,

@@ -114,6 +114,18 @@ BuildKeyPattern decodeBuildPattern(BuildKeyMap& dictionary, ScriptReader& reader
 
    reader.read(token);
 
+   if (token.compare("=")) {
+      reader.read(token);
+
+      int patternId = token.token.toInt();
+      if (!patternId)
+         throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
+
+      pattern.pattternId = patternId;
+
+      reader.read(token);
+   }
+
    return pattern;
 }
 
@@ -123,22 +135,9 @@ void parseBuildCodeRule(BuildCodeTrie& trie, BuildKeyMap& dictionary, ScriptRead
 
    pos_t position = trie.add(0, pattern);
 
-   while (!token.compare("=")) {
+   while (!token.compare(";")) {
       position = trie.add(position, decodeBuildPattern(dictionary, reader, token));
    }
-
-   if (token.compare("=")) {
-      reader.read(token);
-
-      int patternId = token.token.toInt();
-      if (!patternId)
-         throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
-
-      trie.add(position, { BuildKey::PatternId, patternId });
-   }
-
-   if (token.compare(";"))
-      throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
 
    reader.read(token);
 }

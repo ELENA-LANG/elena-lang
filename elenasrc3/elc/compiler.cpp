@@ -8142,6 +8142,18 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& s
             else writer.appendNode(BuildKey::ClassName, className);
          }
       }
+      else if (paramInfo.size < 0) {
+         if (paramInfo.typeInfo.typeRef == V_INT16ARRAY) {
+            writer.newNode(BuildKey::ShortArrayParameter, it.key());
+         }
+         else if (paramInfo.typeInfo.typeRef == V_INT8ARRAY) {
+            writer.newNode(BuildKey::ByteArrayParameter, it.key());
+         }
+         else if (paramInfo.typeInfo.typeRef == V_INT32ARRAY) {
+            writer.newNode(BuildKey::IntArrayParameter, it.key());
+         }
+         else writer.newNode(BuildKey::Parameter, it.key()); // !! temporal
+      }
       else writer.newNode(BuildKey::Parameter, it.key());
 
       writer.appendNode(BuildKey::Index, prefix - paramInfo.offset);

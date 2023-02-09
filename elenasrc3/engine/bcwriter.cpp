@@ -1255,9 +1255,32 @@ ByteCodeWriter::Saver commands[] =
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral
 };
 
+inline bool duplicateBreakpoints(BuildNode lastNode)
+{
+   BuildNode prevNode = lastNode.prevNode();
+   while (prevNode != BuildKey::Breakpoint) {
+      switch (prevNode.key) {
+         case BuildKey::OpenStatement:
+         case BuildKey::EndStatement:
+            prevNode.setKey(BuildKey::Idle);
+            break;
+         default:
+            break;
+      }
+      prevNode = prevNode.prevNode();
+   }
+   if (prevNode == BuildKey::Breakpoint) {
+      prevNode.setKey(BuildKey::Idle);
+
+      return true;
+   }
+
+   return false;
+}
+
 ByteCodeWriter::Transformer transformers[] =
 {
-   nullptr
+   nullptr, duplicateBreakpoints
 };
 
 // --- ByteCodeWriter ---
@@ -1661,6 +1684,15 @@ void ByteCodeWriter :: saveParameterInfo(CommandTape& tape, BuildNode node, Tape
             saveParameterDebugSymbol(DebugSymbol::ParameterAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(),
                tapeScope, current.findChild(BuildKey::ClassName).identifier());
             break;
+         case BuildKey::ByteArrayParameter:
+            saveDebugSymbol(DebugSymbol::ByteArrayParameter, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
+         case BuildKey::ShortArrayParameter:
+            saveDebugSymbol(DebugSymbol::ShortArrayParameter, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
+         case BuildKey::IntArrayParameter:
+            saveDebugSymbol(DebugSymbol::IntArrayParameter, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
          default:
             break;
       }
@@ -1735,6 +1767,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             saveShortCircuitOp(tape, current, tapeScope, paths, tapeOptMode);
             break;
          case BuildKey::Path:
+         case BuildKey::Idle:
             // ignore path node
             break;
          default:
@@ -1797,6 +1830,35 @@ void ByteCodeWriter :: optimizeTape(CommandTape& tape)
    }
 }
 
+inline bool isNonOperational(BuildKey key)
+{
+   switch (key) {
+      case BuildKey::OpenStatement:
+      case BuildKey::EndStatement:
+         // NOTE : to simplify the patterns, ignore open / end statement commands
+         return true;
+      default:
+         return (key > BuildKey::MaxOperationalKey);
+   }
+}
+
+inline bool isNested(BuildKey key)
+{
+   switch (key) {
+      case BuildKey::LoopOp:
+      case BuildKey::CatchOp:
+      case BuildKey::AltOp:
+      case BuildKey::Switching:
+      case BuildKey::ExternOp:
+      case BuildKey::ShortCircuitOp:
+      case BuildKey::BranchOp:
+      case BuildKey::Tape:
+         return true;
+      default:
+         return false;
+   }
+}
+
 bool ByteCodeWriter :: matchTriePatterns(BuildNode node)
 {
    BuildPatterns matchedOnes;
@@ -1808,6 +1870,18 @@ bool ByteCodeWriter :: matchTriePatterns(BuildNode node)
 
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
+      if (isNested(current.key)) {
+         // NOTE : analize nested command
+         if (matchTriePatterns(current))
+            return true;
+      }
+      if (isNonOperational(current.key)) {
+         // NOTE : ignore non-operational commands)
+         current = current.nextNode();
+
+         continue;
+      }
+
       matched->add({ &_btTransformer.trie });
       followers->clear();
 
@@ -1817,8 +1891,9 @@ bool ByteCodeWriter :: matchTriePatterns(BuildNode node)
          for (auto child_it = pattern.Children(); !child_it.eof(); ++child_it) {
             auto currentPattern = child_it.Node();
             auto currentPatternValue = currentPattern.Value();
+
             if (currentPatternValue.match(current)) {
-               if (currentPatternValue.type == BuildKey::PatternId && transformers[currentPatternValue.argument]())
+               if (currentPatternValue.pattternId && transformers[currentPatternValue.pattternId](current))
                   return true;
 
                followers->add(currentPattern);

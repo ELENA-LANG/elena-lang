@@ -222,6 +222,9 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::RealParameterAddress:
             case DebugSymbol::LongParameterAddress:
             case DebugSymbol::ParameterAddress:
+            case DebugSymbol::ByteArrayParameter:
+            case DebugSymbol::ShortArrayParameter:
+            case DebugSymbol::IntArrayParameter:
                // replace field name reference with the name
                stringReader.seek(info.addresses.local.nameRef);
 
@@ -1098,14 +1101,32 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
+            case DebugSymbol::ByteArrayParameter:
+               item = readByteArrayLocal(watch, nullptr,
+                  _process->getStackItem(
+                     lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
             case DebugSymbol::ShortArrayAddress:
                item = readShortArrayLocal(watch, nullptr,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
+            case DebugSymbol::ShortArrayParameter:
+               item = readShortArrayLocal(watch, nullptr,
+                  _process->getStackItem(
+                     lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
             case DebugSymbol::IntArrayAddress:
                item = readIntArrayLocal(watch, nullptr,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::IntArrayParameter:
+               item = readIntArrayLocal(watch, nullptr,
+                  _process->getStackItem(
+                     lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::LongLocalAddress:

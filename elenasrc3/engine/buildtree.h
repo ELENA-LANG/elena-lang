@@ -119,6 +119,8 @@ namespace elena_lang
       CopyingArr           = 0x005A,
       ExtMssgLiteral       = 0x005B,
 
+      MaxOperationalKey    = 0x005B,
+
       Import               = 0x0060,
       DictionaryOp         = 0x0061,
       ObjOp                = 0x0062,
@@ -153,6 +155,9 @@ namespace elena_lang
       RealParameterAddress = 0x00A4,
       ParameterAddress     = 0x00A5,
       MethodName           = 0x00A6,
+      ShortArrayParameter  = 0x00A7,
+      ByteArrayParameter   = 0x00A8,
+      IntArrayParameter    = 0x00A9,
 
       BinaryArray          = 0x00B0,
 
@@ -172,7 +177,7 @@ namespace elena_lang
       Path                 = 0x800E,
       ClassName            = 0x800F,
 
-      PatternId            = 0x9001, // used for build code optimization
+      Idle                 = 0x8FFF,
 
       //MetaDictionary    = 0x0022,
       //MetaArray         = 0x1023,
@@ -213,6 +218,7 @@ namespace elena_lang
       BuildKey type;
 
       int      argument;
+      int      pattternId;
 
       bool operator ==(BuildKey type) const
       {
