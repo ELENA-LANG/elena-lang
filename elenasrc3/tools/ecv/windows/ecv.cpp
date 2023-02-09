@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                              (C)2021-2022, by Aleksey Rakov
+//                                              (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <windows.h>

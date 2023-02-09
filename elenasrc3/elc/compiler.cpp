@@ -491,9 +491,6 @@ ref_t Compiler::NamespaceScope :: mapNewIdentifier(ustr_t name, Visibility visib
 
 ObjectInfo Compiler::NamespaceScope :: mapIdentifier(ustr_t identifier, bool referenceOne, EAttr mode)
 {
-   if (identifier.compare("OEMEncoder"))
-      referenceOne = false;
-
    ref_t reference = 0;
    if (!referenceOne) {
       // try resolve as type-alias
@@ -4096,6 +4093,9 @@ void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, Type
                if (attributes.mssgNameLiteral) {
                   mode |= ExpressionAttribute::MssgNameLiteral;
                }
+               else if (attributes.newOp) {
+                  mode |= ExpressionAttribute::NewOp;
+               }
                else {
                   if (!attributes.variableOne) {
                      if (attributes.isNonempty())
@@ -6679,7 +6679,9 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    }
    else if (newOp || castOp) {
       switch (node.key) {
+         case SyntaxKey::TemplateType:
          case SyntaxKey::ArrayType:
+         case SyntaxKey::Type:
          case SyntaxKey::identifier:
          case SyntaxKey::reference:
          {

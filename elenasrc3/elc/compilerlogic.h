@@ -31,10 +31,11 @@ namespace elena_lang
       bool variableOne;
       bool byRefOne;
       bool mssgNameLiteral;
+      bool newOp;
 
       bool isNonempty() const
       {
-         return variableOne || variadicOne || byRefOne || mssgNameLiteral;
+         return variableOne || variadicOne || byRefOne || mssgNameLiteral || newOp;
       }
    };
 

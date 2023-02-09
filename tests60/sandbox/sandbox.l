@@ -10,14 +10,32 @@ import system'text;
 //                              .summarize())
 //}
 
+class A<T>
+{
+   T target;
+
+   constructor()
+   {
+   }
+
+   set(T t)
+   {
+      target := t;
+   }
+   set(t)
+      <= set(cast T(t));
+}
+
 public program()
 {
-   char ch := $89;
+   var b := 2;
 
-   var c := ch;
+   var a := new A<short>();
+   a.set(2);
 
-   short tmp[3];
-   tmp[0] := 1;
+
+//   short tmp[3];
+//   tmp[0] := 1;
 
 
 

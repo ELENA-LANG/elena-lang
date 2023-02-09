@@ -776,6 +776,9 @@ bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, TypeAttributes
       case V_MSSGNAME:
          attributes.mssgNameLiteral = true;
          return true;
+      case V_NEWOP:
+         attributes.newOp = true;
+         return true;
       default:
          return false;
    }
@@ -1009,6 +1012,8 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
          case V_INT32:
          case V_INT8:
          case V_PTR32:
+         case V_WORD32:
+         case V_INT16:
             info.header.flags |= elDebugDWORD;
             break;
          case V_INT64:
