@@ -644,6 +644,12 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
       case elDebugDWORDS:
          printLineAndCount("@flag ", "elDebugDWORDS", row, pageSize);
          break;
+      case elDebugLiteral:
+         printLineAndCount("@flag ", "elDebugLiteral", row, pageSize);
+         break;
+      case elDebugWideLiteral:
+         printLineAndCount("@flag ", "elDebugWideLiteral", row, pageSize);
+         break;
       default:
          break;
    }

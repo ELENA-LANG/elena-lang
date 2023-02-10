@@ -95,6 +95,20 @@ void ContextBrowserBase :: populateDWORD(WatchContext* context, unsigned value)
 
 }
 
+void ContextBrowserBase :: populateString(WatchContext* context, const char* value)
+{
+   clearNode(context->root);
+   populateNode(context->root, value);
+}
+
+void ContextBrowserBase::populateWideString(WatchContext* context, const wide_c* value)
+{
+   clearNode(context->root);
+
+   IdentifierString s(value);
+   populateNode(context->root, *s);
+}
+
 void* ContextBrowserBase :: addOrUpdateQWORD(WatchContext* context, ustr_t variableName, long long value)
 {
    void* item = findWatchNodeStartingWith(context, variableName);

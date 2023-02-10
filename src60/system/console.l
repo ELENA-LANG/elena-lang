@@ -57,6 +57,10 @@ sealed class Console
         
       ^ retVal
    }
+
+   string readLine()
+            : info("Reads the next line of characters from the standard input stream.")
+      = reader.readLine();   
 }
 
 public static console = new Console(io'stdConsoleReader, io'stdConsoleWriter);

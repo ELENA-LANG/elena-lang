@@ -2251,7 +2251,7 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
    if (customDispatcher)
       scope.raiseError(errDispatcherInInterface, node.findChild(SyntaxKey::Name));
 
-   _logic->tweakClassFlags(scope.reference, scope.info, scope.isClassClass());
+   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, scope.isClassClass());
 
    // generate operation list if required
    _logic->injectOverloadList(this, *scope.moduleScope, scope.info, scope.reference);
@@ -8761,7 +8761,7 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
 
    // set flags once again
    // NOTE : it should be called after the code compilation to take into consideration outer fields
-   _logic->tweakClassFlags(scope.reference, scope.info, scope.isClassClass());
+   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, scope.isClassClass());
 
    writer.closeNode();
 
@@ -8867,7 +8867,7 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
 
    // set flags once again
    // NOTE : it should be called after the code compilation to take into consideration outer fields
-   _logic->tweakClassFlags(scope.reference, scope.info, scope.isClassClass());
+   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, scope.isClassClass());
 
    // NOTE : compile once again only auto generated methods
    compileVMT(writer, scope, node, true, false);

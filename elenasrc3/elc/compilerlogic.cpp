@@ -974,7 +974,7 @@ bool CompilerLogic :: isMultiMethod(ClassInfo& info, MethodInfo& methodInfo)
    return test(methodInfo.hints, (ref_t)MethodHint::Multimethod);
 }
 
-void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool classClassMode)
+void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, ClassInfo& info, bool classClassMode)
 {
    if (classClassMode) {
       // class class is always stateless and final
@@ -995,6 +995,21 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
 
    if (test(info.header.flags, elExtension))
       info.header.flags |= elSealed;
+
+   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
+      if (classRef == scope.buildins.literalReference) {
+         // recognize string constant
+         if (info.size == -1) {
+            info.header.flags |= elDebugLiteral;
+         }
+      }
+      else if (classRef == scope.buildins.wideReference) {
+         // recognize wide string constant
+         if (info.size == -2) {
+            info.header.flags |= elDebugWideLiteral;
+         }
+      }
+   }
 
    if (isEmbeddableArray(info)) {
       auto inner = *info.fields.start();

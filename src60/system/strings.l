@@ -538,7 +538,7 @@ public const struct WideString : BaseValue
       PrimitiveOperations.copy(this array, index, length, charArray);
    }
 
-   internal constructor fromShortArray(int index, int size, short[] buffer)
+   /*internal*/ constructor fromShortArray(int index, int size, short[] buffer)
       <= allocate(size)
    {
       PrimitiveOperations.copy(array, index, size, buffer);

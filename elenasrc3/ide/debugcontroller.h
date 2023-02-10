@@ -14,6 +14,8 @@
 
 namespace elena_lang
 {
+   constexpr auto DEBUG_MAX_STR_LENGTH = 260;
+
    // --- DebugSourceController ---
    class DebugSourceController
    {

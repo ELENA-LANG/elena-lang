@@ -108,7 +108,7 @@ namespace elena_lang
 
       bool isValidOp(int operatorId, const int* validOperators, size_t len);
 
-      void tweakClassFlags(ref_t classRef, ClassInfo& info, bool classClassMode);
+      void tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
       void tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef);
 
       bool validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_t message);

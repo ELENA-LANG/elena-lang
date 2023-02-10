@@ -12,7 +12,6 @@ In development:
     * rosetta code examples : 6
     * examples : intsum / realsum / words
 
-    * ide debugger : show string / widestring
     * ide : open file
     * ide : fix closing several tabs (starting from the last one)
     * ide : change status to ready when writing / selecting files
@@ -50,6 +49,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * system'io'read[3] : uncomment code
     * system'console : reader and writer should be strongly-typed : IConsoleReader, IConsoleWriter
     * test : print german text
     * optimization : WinEncoder.convertChar (do not use the intermediate buffer)

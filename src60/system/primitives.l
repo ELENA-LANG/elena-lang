@@ -23,6 +23,13 @@ internal singleton PrimitiveOperations
       }
    }
 
+   copy(short[] dest, int index, int size, short[] sour)
+   {
+      for (int i := 0, i < size, i := i + 1) {
+         dest[i] := sour[index + i];
+      }
+   }
+
    int getCharLength(int code)
    {
       if (code < 80h)

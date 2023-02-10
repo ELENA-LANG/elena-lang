@@ -888,6 +888,24 @@ void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, add
             case elDebugFLOAT64:
                watch->populateFLOAT64(&context, _process->getFLOAT64(address));
                break;
+            case elDebugLiteral:
+            {
+               char value[DEBUG_MAX_STR_LENGTH + 1];
+               size_t length = _min(_process->getArrayLength(address), DEBUG_MAX_STR_LENGTH);
+               _process->readDump(address, value, length);
+               value[length] = 0;
+               watch->populateString(&context, value);
+               break;
+            }
+            case elDebugWideLiteral:
+            {
+               wide_c value[DEBUG_MAX_STR_LENGTH + 1];
+               size_t length = _min(_process->getArrayLength(address), DEBUG_MAX_STR_LENGTH) >> 1;
+               _process->readDump(address, (char*)value, length << 1);
+               value[length] = 0;
+               watch->populateWideString(&context, value);
+               break;
+            }
             case elDebugDWORDS:
                readIntArrayLocal(watch, item, address, "content", level);
                break;
