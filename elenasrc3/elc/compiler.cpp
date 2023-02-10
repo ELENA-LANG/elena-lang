@@ -5141,6 +5141,15 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
       if (messageArguments.count() > 2) {
          overwriteArgCount(message, 3);
+
+         // HOTFIX : index argument should be the second one
+         ObjectInfo tmp = messageArguments[1];
+         messageArguments[1] = messageArguments[2];
+         messageArguments[2] = tmp;
+
+         ref_t tmpRef = arguments[1];
+         arguments[1] = arguments[2];
+         arguments[2] = tmpRef;
       }
 
       retVal = compileWeakOperation(writer, scope, node, arguments, argLen, loperand,
@@ -5974,6 +5983,7 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
    bool stackSafe = false;
    bool fieldMode = false;
    bool accMode = false;
+   bool lenRequired = false;
    
    switch (target.kind) {
       case ObjectKind::Local:
@@ -5996,9 +6006,17 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
       case ObjectKind::TempLocalAddress:
       case ObjectKind::LocalAddress:
          scope.markAsAssigned(target);
-         operationType = BuildKey::Copying;
-         operand = target.reference;
          size = _logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
+         if (size > 0) {
+            operationType = BuildKey::Copying;
+            operand = target.reference;
+         }
+         else {
+            lenRequired = true;
+            accMode = true;
+            operationType = BuildKey::CopyingArr;
+            size = -size;
+         }
          stackSafe = true;
          break;
       case ObjectKind::Field:
@@ -6047,6 +6065,9 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
       writeObjectInfo(writer, scope, scope.mapSelf());
    }
    else if (accMode) {
+      if(lenRequired)
+         writer.appendNode(BuildKey::LoadingBinaryLen, size);
+
       writer.appendNode(BuildKey::SavingInStack, 0);
       writeObjectInfo(writer, scope, target);
    }

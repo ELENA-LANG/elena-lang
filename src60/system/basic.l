@@ -1873,7 +1873,7 @@ public sealed const struct RealNumber : BaseNumber,
 public const struct CharValue : BaseValue,
    info("An UTF-32 character symbol")
 {
-   embeddable __word theValue[4];
+   embeddable __word _value[4];
 
    static char MinValue
             : info("Returns the minimal possible character value (0)")
@@ -1906,7 +1906,8 @@ public const struct CharValue : BaseValue,
    get int Length()
          : info("Retuns the number of bytes to represent the symbol in UTF-8") 
    {
-      int len := PrimitiveOperations.getCharLength(theValue);
+      int val := _value;
+      int len := PrimitiveOperations.getCharLength(val);
       
       ^ len
    }
@@ -1914,7 +1915,7 @@ public const struct CharValue : BaseValue,
    get int WideLength()
          : info("Retuns the number of bytes to represent the symbol in UTF-16") 
    {
-      int len := PrimitiveOperations.getCharWideLength(theValue);
+      int len := PrimitiveOperations.getCharWideLength(_value);
       
       ^ len
    }
@@ -1933,13 +1934,13 @@ public const struct CharValue : BaseValue,
       <= less(cast char(o));
 
    bool equal(char val)
-      = theValue == val;
+      = _value == val;
 
    bool less(char val)
-      = theValue < val;
+      = _value < val;
 
    bool equal(int n)
-      = theValue == n;
+      = _value == n;
 
    bool equal(string s)
    {

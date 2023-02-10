@@ -262,7 +262,7 @@ public const struct String : BaseValue,
    private copySubS(string dest, string sour, int index, int length, int sourIndex) : external(system'core_routines'__str_xcopysubs);
 
    char at(int index)
-      = PrimitiveOperations.readChar(array, index);
+      = PrimitiveOperations.readUTF32(array, index);
 
    retoverload byte at(int index)
       = array[index];
@@ -607,7 +607,7 @@ public const struct WideString : BaseValue
       <= less(cast wide(ch));
 
    char at(int index)
-      = PrimitiveOperations.readChar(array, index);
+      = PrimitiveOperations.readUTF32(array, index);
 
    retoverload short at(int index)
       = array[index];

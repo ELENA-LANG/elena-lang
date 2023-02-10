@@ -832,9 +832,10 @@ inline %9Ah
 
   mov  ecx, __n_1 
   imul ecx, edx
+  mov  eax, esi
   mov  edi, ebx
   rep  movsb
-  sub  esi, __n_1          // ; to set back ESI register
+  mov  esi, eax
 
 end
 

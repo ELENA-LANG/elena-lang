@@ -14,6 +14,7 @@ namespace text
 
       convertChar(char ch, byte[] byteArray, int index, ref int length)
       {
+         byte buffer[4];
          short tmp[4];
          int chValue := ch.Value;
    
@@ -22,7 +23,11 @@ namespace text
          int retVal := extern KERNEL32.WideCharToMultiByte(
             codePage, 0,
             tmp,
-            tmpLen, byteArray, length, 0, 0);
+            tmpLen, buffer, length, 0, 0);
+
+         for (int i := 0, i < retVal, i += 1) {
+            byteArray[index + i] := buffer[i]
+         };
 
          length := retVal;
       }

@@ -22,7 +22,7 @@ namespace text
          outputLen := j - i;
       }
 
-      convertTo(char[] chars, int index, ref int len, byte[] output, int outputIndex, ref int outputLen)
+      convertTo(char[] chars, int index, int len, byte[] output, int outputIndex, ref int outputLen)
       {
          int j := outputIndex;
          for (int i := 0, i < len, i += 1) {

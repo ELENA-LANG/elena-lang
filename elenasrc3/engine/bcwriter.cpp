@@ -1224,6 +1224,11 @@ void breakOp(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::Jump, PseudoArg::CurrentLabel);
 }
 
+void loadingBynaryLen(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::NLen, node.arg.value);
+}
+
 inline void includeFrame(CommandTape& tape)
 {
    tape.write(ByteCode::Include);
@@ -1252,7 +1257,7 @@ ByteCodeWriter::Saver commands[] =
    realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
 
    genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
-   intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral
+   intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

@@ -118,6 +118,7 @@ namespace elena_lang
       ObjArraySOp          = 0x0059,
       CopyingArr           = 0x005A,
       ExtMssgLiteral       = 0x005B,
+      LoadingBinaryLen     = 0x005C,
 
       MaxOperationalKey    = 0x005B,
 

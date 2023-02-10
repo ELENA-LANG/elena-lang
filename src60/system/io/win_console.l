@@ -2,6 +2,8 @@ namespace io
 {
    import system'text;
 
+   const int FILE_TYPE_CHAR = 2;
+
    struct KEY_EVENT_RECORD
    {
       int   bKeyDown : prop;
@@ -37,9 +39,14 @@ namespace io
 
       newWriter()
       {
-         //^ new ConsoleFileWriter(ConsoleFactory.OutputHandle)
-
-         ^ new ConsoleWriter(ConsoleFactory.OutputHandle)
+         handle h := ConsoleFactory.OutputHandle;
+         int    dwMode := extern KERNEL32.GetFileType(h);
+         if (dwMode == FILE_TYPE_CHAR) {
+            ^ new ConsoleWriter(h)
+         }
+         else {
+            ^ new ConsoleFileWriter(h)            
+         }
       }
 
       newReader()
