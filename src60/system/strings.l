@@ -538,7 +538,7 @@ public const struct WideString : BaseValue
       PrimitiveOperations.copy(this array, index, length, charArray);
    }
 
-   /*internal*/ constructor fromShortArray(int index, int size, short[] buffer)
+   internal constructor fromShortArray(int index, int size, short[] buffer)
       <= allocate(size)
    {
       PrimitiveOperations.copy(array, index, size, buffer);
@@ -622,6 +622,10 @@ public const struct WideString : BaseValue
       : info("Concatinates the values")
    {
       int l1 := self.Length;
+      if (l1 == 0) {
+         ^ subs
+      };
+
       int l2 := subs.Length;
       string retVal := WideString.allocate(l1 + l2);
 

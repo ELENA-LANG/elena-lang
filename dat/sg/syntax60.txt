@@ -364,7 +364,7 @@ L5_EXPRESSION ::=
 		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP*
 		| L4_O_OP
 		| eps ^OBJECT }
-	| { integer | hexinteger | string | long } { 
+	| { integer | hexinteger | string | wide | long } { 
 		L4_O_OP
 		| eps ^OBJECT }
 	| "(" SUB_EXPRESSION;
