@@ -100,3 +100,15 @@ public class InvalidOperationException : Exception
    constructor new(string message) : info("Creates the exception")
       <= new(message);
 }
+
+// --- OutOfRangeException ---
+public class OutOfRangeException : Exception
+{
+   /// Creates the exception
+   constructor new()
+      <= new("An index is out of range");
+
+   /// Creates the exception
+   constructor new(string message)
+      <= new(message);
+}

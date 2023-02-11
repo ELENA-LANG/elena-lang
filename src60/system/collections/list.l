@@ -1,0 +1,309 @@
+namespace collections
+{
+   public sealed class ArrayList : Indexable
+   {
+      Array          _array;
+      Reference<int> _length;
+      Reference<int> _capacity;
+
+      constructor()
+      {
+         _length := 0;
+         _capacity := 0;
+      }
+
+      constructor allocate(int capacity)
+      {
+         _capacity := capacity;
+         _array := Array.allocate(capacity);
+      }
+
+      constructor allocate()
+         <= allocate(32);
+
+      constructor load(Array a)
+         <= fromArray(a, a.Length);
+
+      constructor load(o)
+      {
+         Enumerator e := o.enumerator();
+         while (e.next())
+         {
+            self.append(*e)
+         }
+      }
+
+      /// Creates the list
+      internal constructor fromArray(Array array, int length)
+      {
+         int capacity := array.Length;
+
+         _capacity := capacity;
+         _length := length;
+
+         _array := array.clone()
+      }
+
+      int Length
+      {
+         /// Reads the number of list item to the output parameter
+         get()
+         {
+            int retVal := *_length;
+
+            ^ retVal
+         }
+      }
+
+      /// Returns the object at the specified position
+      at(int index)
+      {
+         int len := *_length;
+         ifnot (len > index)
+            { OutOfRangeException.raise() };
+
+         ^ _array[index]
+      }      
+
+      /// Returns the object at the specified position
+      setAt(int index, object o)
+      {
+         int len := *_length;
+         ifnot (len > index)
+            { OutOfRangeException.raise() };
+
+         _array.setAt(index, o)
+      }
+
+      private expand()
+      {
+         int cap := *_capacity;
+         int len := *_length;
+         if (cap <= len)
+         {
+            _capacity.append(32);
+
+            cap := *_capacity;
+            Array newArray := Array.allocate(cap);
+            for(int i := 0, i < len, i := i + 1)
+            {
+               newArray[i] := _array[i];
+            };
+
+            _array := newArray
+         }
+      }
+
+      /// Appends a new object to the end of the list
+      append(item)
+      {
+         self.expand();
+
+         int len := *_length;
+         _array[len] := item;
+
+         _length.append(1)
+      }
+
+      appendRange(subarray)
+      {
+         if (nil != subarray)
+         {
+            int len := subarray.Length;
+            for(int i := 0, i < len, i += 1)
+            {
+               self.append(subarray.at(i))
+            }
+         }
+      }
+
+      appendRange(Indexable indexable)
+      {
+         if (nil != indexable)
+         {
+            Indexer it := indexable.indexer();
+
+            while (it.Available)
+            {       
+               self.append(*it);
+
+               it.appendIndex(1)
+            }
+         }
+      }
+
+      /// Inserts a new object to the specified position
+      insert(int index, object object)
+      {
+         if (index >= *_length)
+            { OutOfRangeException.raise() };
+
+         self.expand();
+
+         int i := *_length;
+         while (i > index)
+         {
+            _array[i] := _array[i - 1];
+
+            i := i - 1
+         };
+
+         _array[i] := object
+      }    
+
+      /// Removes an object at the specified position
+      remove(int index)
+      {
+         if (index >= *_length)
+            { OutOfRangeException.raise() };
+  
+         _length.reduce(1);
+
+         int i := index;
+         int len := *_length;
+         while (i < len)
+         {
+            _array.setAt(i, _array.at(i + 1));
+
+            i := i + 1
+         }
+      }
+
+      removeAt(n)
+         <= remove(cast int(n));
+
+      /// Clears the list
+      clear()
+      {
+         _length.Value := 0
+      }
+
+      trim(int pos)
+      {
+         if (pos > *_length)
+            { OutOfRangeException.raise() };
+
+         _length.Value := pos
+      }
+
+      /// Returns the list enumerator
+      Enumerator enumerator() = new ArrayListEnumerator(self);
+
+      /// Returns the list indexer
+      Indexer indexer() = new ArrayListIndexer(self);
+
+      /// Returns a list copy
+      ArrayList clone()
+         = ArrayList.fromArray(_array, *_length);
+
+      Array cast()
+         = Array.copy(0, *_length, _array);
+
+      get Array Value()
+         = Array.copy(0, *_length, _array);
+   }
+
+   // --- ArrayListEnumerator ---
+    
+   /// A list enumerator
+   class ArrayListEnumerator : Enumerator
+   {
+      ArrayList      _list;
+      Reference<int> _index;
+
+      /// Creates a list indexer
+      constructor(ArrayList list)
+      {
+         _list := list;
+         _index := -1
+      }
+
+      /// Returns the current object
+      get Value() = _list.at(*_index);
+        
+      /// Resets the enumerator
+      reset()
+      {
+         _index.Value := -1
+      }
+    
+      /// Goes to the next enumeration member and returns true if it is not the last member
+      bool next()
+      {
+         _index.append(1);
+            
+         int len := _list.Length;            
+
+         ^ len > *_index
+      }
+        
+      enumerable() = _list;
+   }
+
+    // --- ArrayListIndexer ---
+    
+    /// A list indexer
+   public class ArrayListIndexer : Indexer
+   {
+      ArrayList      _list;
+      Reference<int> _index;
+
+      /// Creates a list indexer
+      constructor(ArrayList list)
+      {
+         _list := list;
+         _index := 0
+      }
+
+      /// Returns false if the index out of range
+      get bool Available()
+      {
+         int length := _list.Length;
+            
+         ^ length > *_index
+      }
+    
+      /// Returns the current member
+      get Value()
+      {
+         ^ _list.at(*_index)
+      }
+        
+      /// Sets the current member
+      set Value(o)
+      {
+         _list.setAt(*_index, o)
+      }
+        
+      int Index
+      {
+         /// Reads the current index into an output parameter
+         get()
+         {
+            ^ *_index
+         }
+            
+         /// Sets the index by specified value
+         set(n)
+         {
+            _index.Value := n
+         }
+      }
+        
+      appendIndex(int n)
+      { 
+         _index.append(n)
+      } 
+        
+      int Length
+      {
+         get()
+         {
+            int retVal := _list.Length;
+                
+            ^ retVal
+         }
+      }
+
+   }
+}

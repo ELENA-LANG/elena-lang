@@ -205,7 +205,10 @@ NT_EXPRESSION ::=
 ROOT_EXPRESSION ::=
         identifier {
 		L1a_O_OP
-		| L0 ^OBJECT L0_R L1_OP?
+		| L0 ^OBJECT L0_R { 
+			L1_OP 
+			| L3_OP 
+			| eps }
 		| ASSIGN ^OBJECT ASSIGN_R
 		| L2 ^OBJECT MESSAGE_PARAMETERS? ")" {
 			T_EXPRESSION { identifier NT_EXPRESSION }? ^ TEMPLATE_BLOCK
@@ -375,7 +378,8 @@ L6_EXPRESSION ::=
 		| L2 ^OBJECT L2_R
 		| L3 ^OBJECT MESSAGE MESSAGE_R
 		| eps ^OBJECT }
-	| { integer | hexinteger | real | long | string } ^OBJECT;
+	| { integer | hexinteger | real | long | string } ^OBJECT
+	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION;
 
 L7_EXPRESSION ::=
 	identifier { 

@@ -53,8 +53,12 @@
         <include>app.l</include>
         <include>lnx_strings.l</include>
         <include>template_tests.l</include>
+        <include>collections/list.l</include>
         <include>text/encoding.l</include>
         <include>io/lnx_console.l</include>
+     </module>
+     <module name="routines">
+       <include>routines/enumerables.l</include>
      </module>
   </files>
 </configuration>
