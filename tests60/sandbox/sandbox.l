@@ -13,47 +13,9 @@ import extensions;
 
 public program()
 {
-   var a := new ArrayList();
-   a.append(1);
+   var a := Integer.new();
 
-//   string line := "1 2";
-
-//   Array params := line.splitBy($32);
-//   char ch := $32;
-
-//      ArrayList list := new ArrayList();
-//      int       start := 0;
-//      int       index := 0;
-//      int       chLen := ch.Length;
-
-//      while (index >= 0)
-//      {
-//         index := line.indexOf(start, ch);
-//         if (-1 != index)
-//         {
-//            list.append(line.Substring(start,index - start));
-//            start := index + chLen
-//         }
-//         else
-//         {
-//            list.append(line.Substring(start))
-//         }
-//      };
-
-//      ^ list
-
-
-
-
-
-      
-
-//      int len := args.Length;
-//      for(int i := 0, i < len, i := i + 1)
-//      {
-//         params[i].convertTo(args[i]);
-//      };
-
+   "2".convertTo(a);
 
 //    var A := Integer.new();
 //    var B := Integer.new();

@@ -1,3 +1,11 @@
+// --- convertOp ---
+
+public extension convertOp
+{
+   convertTo(target)
+      = new Variant(self).saveTo(target);   
+}
+
 // --- stringConvertor ---
 
 public extension stringConvertOp

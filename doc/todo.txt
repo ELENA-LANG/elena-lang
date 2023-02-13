@@ -5,7 +5,8 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * debugger : display array of object
+    * debugger : step over symbol
+    * debugger : stepping in the loop (for)
 
     * rosetta code examples : aplusb
 
