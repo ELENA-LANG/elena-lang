@@ -17,6 +17,7 @@
      <module>
         <include>convertors.l</include>
         <include>console.l</include>
+        <include>basic.l</include>
         <include>tests.l</include>
      </module>
   </files>

@@ -9,12 +9,14 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x003F
+#define IDE_REVISION_NUMBER                           0x0040
 
 namespace elena_lang
 {
    constexpr auto PLATFORM_CATEGORY                   = "configuration/platform";
    constexpr auto NAMESPACE_CATEGORY                  = "configuration/project/namespace";
+
+   constexpr auto TARGET_SUB_CATEGORY                 = "project/executable";
    constexpr auto MODULE_CATEGORY                     = "files/*";
 
    constexpr auto WIN_X86_KEY                         = "Win_x86";

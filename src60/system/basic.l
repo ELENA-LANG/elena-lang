@@ -264,7 +264,7 @@ public const struct ByteNumber : IntBaseNumber,
 
    constructor(int n)
             : info("Creates the object with a specified value")
-      = n & 255;         
+      = byteConvertor.convert(n);
 
    add(o)
      <= add(cast byte(o));

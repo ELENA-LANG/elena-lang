@@ -1013,7 +1013,7 @@ namespace elena_lang
       void generateParamNameInfo(ClassScope& scope, SyntaxNode node, mssg_t message);
       void generateMethodAttributes(ClassScope& scope, SyntaxNode node, 
          MethodInfo& methodInfo, bool abstractBased);
-      void generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed);
+      void generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed, bool hideDuplicate);
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed);
       void generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool singleField);
       void generateClassStaticField(ClassScope& scope, SyntaxNode node, bool isConst, TypeInfo typeInfo);
@@ -1276,6 +1276,8 @@ namespace elena_lang
 
       void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode,
          mssg_t message, ustr_t retVar, ref_t classRef) override;
+
+      ref_t resolvePrimitiveType(ModuleScopeBase& scope, TypeInfo typeInfo) override;
 
       Compiler(
          ErrorProcessor* errorProcessor, 

@@ -326,6 +326,15 @@ bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction post
 
 void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node configRoot)
 {
+   // load settings
+   DynamicString<char> value;
+   auto targetOption = config.selectNode(configRoot, TARGET_SUB_CATEGORY);
+   if (!targetOption.isNotFound()) {
+      targetOption.readContent(value);
+
+      model.target.copy(value.str());
+   }
+
    // load source files
    DynamicString<char> subNs;
    DynamicString<char> path;
@@ -406,6 +415,7 @@ NotificationStatus ProjectController :: closeProject(ProjectModel& model)
 
    model.package.clear();
    model.target.clear();
+   model.outputPath.clear();
 
    return PROJECT_CHANGED;
 }
