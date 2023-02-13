@@ -117,7 +117,12 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
    }
    else {
       fullPath.copy(*model.paths.librarySourceRoot);
-      fullPath.combine(ns);
+      // HOTFIX : ignore sub ns
+      size_t index = ns.find('\'');
+      if (index != NOTFOUND_POS) {
+         fullPath.combine(ns, index);
+      }
+      else fullPath.combine(ns);
       fullPath.combine(path);
    }
 }

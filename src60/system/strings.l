@@ -340,7 +340,7 @@ public const struct String : BaseValue,
    string Substring(int index, int length)
       : info("Returns the substring")
    {
-      ^ String.fromByteArray(array, index, length);
+      ^ String.fromByteArray(index, length, array);
    }
 
    int save(int index, char[] buffer, int length)

@@ -874,8 +874,9 @@ pos_t JITLinker :: createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr
       }
       ReferenceProperName properName(referenceInfo.referenceName);
 
-      name.append("'#");
+      name.append("'");
       name.append(*properName);
+      name.append("#sym");
 
       writer.writeString(*name);
    }
@@ -883,7 +884,8 @@ pos_t JITLinker :: createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr
       NamespaceString ns(referenceInfo.referenceName);
       ReferenceProperName properName(referenceInfo.referenceName);
 
-      IdentifierString name(*ns, "'#", *properName);
+      IdentifierString name(*ns, "'", *properName);
+      name.append("#sym");
       writer.writeString(*name);
    }
 

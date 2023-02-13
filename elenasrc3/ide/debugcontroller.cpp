@@ -24,11 +24,7 @@ DebugSymbol operator & (const DebugSymbol& l, const DebugSymbol& r)
 
 inline bool isSymbolReference(ustr_t name)
 {
-   size_t pos = name.findLast('\'');
-   if (pos != NOTFOUND_POS) {
-      return name[pos + 1] == '#';
-   }
-   else return false;
+   return name.endsWith("#sym");
 }
 
 inline ref_t mapModuleReference(ModuleBase* module, ustr_t referenceName, bool existing)
@@ -95,6 +91,7 @@ ModuleBase* DebugInfoProvider :: loadDebugModule(ustr_t reference)
          LoadResult result = module->load(reader);
          if (result == LoadResult::Successful) {
             ustr_t relativeName = reference.str() + module->name().length();
+
             if (relativeName[0] == '#')
                relativeName = relativeName + 1;
 
@@ -155,6 +152,10 @@ addr_t DebugInfoProvider :: getClassAddress(ustr_t name)
 bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressReader, DebugProcessBase* process)
 {
    bool isClass = true;
+   if (reference.findStr("stringListOp") != NOTFOUND_POS)
+      isClass = true;
+
+   //bool isClass = true;
    ModuleBase* module = nullptr;
    // if symbol
    if (isSymbolReference(reference)) {
@@ -163,11 +164,7 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
    }
    else module = loadDebugModule(reference);
 
-   pos_t position = 0;
-   /*if (reference.find('@') != NOTFOUND_POS && reference.find('#', 0) > 0) {
-      position = (module != NULL) ? mapModuleReference(module, reference + reference.find('\'', 0), true) : 0;
-   }
-   else */position = (module != nullptr) ? mapModuleReference(module, reference, true) : 0;
+   pos_t position = (module != nullptr) ? mapModuleReference(module, reference, true) : 0;
    if (position != 0) {
       // place reader on the next after symbol record
       MemoryReader reader(module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true), position);

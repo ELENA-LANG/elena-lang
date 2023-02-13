@@ -8354,7 +8354,7 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    else scope.raiseError(errIllegalConstructor, node);
 
    if (current == SyntaxKey::RedirectDispatch) {
-      compileConstructorDispatchCode(writer, codeScope, classClassScope, node);
+      compileConstructorDispatchCode(writer, codeScope, classClassScope, current);
    }
    else {
       if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {

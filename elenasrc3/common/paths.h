@@ -178,10 +178,19 @@ namespace elena_lang
          PathString pathStr(path);
          combine(*pathStr);
       }
+      void combine(ustr_t path, size_t index)
+      {
+         PathString pathStr(path, index);
+         combine(*pathStr);
+      }
 
       PathString(ustr_t path)
       {
          copy(path);
+      }
+      PathString(ustr_t path, size_t index)
+      {
+         copy(path, index);
       }
       PathString(path_t root, ustr_t path)
       {

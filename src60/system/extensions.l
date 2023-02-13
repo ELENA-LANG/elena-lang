@@ -69,3 +69,23 @@ public extension intRefOp : Reference<int>
         self.Value := v
     }
 }
+
+// --- stringOp ---
+
+public extension stringOp : String
+{
+   string Substring(int index)
+   {
+      int len := self.Length;
+      if (len > index)
+      {
+         len := len - index;
+            
+         ^ self.Substring(index, len)
+      }
+      else
+      {
+         ^ emptyString
+      }        
+   }           
+}
