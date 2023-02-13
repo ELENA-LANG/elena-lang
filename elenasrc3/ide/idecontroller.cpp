@@ -461,7 +461,7 @@ void ProjectController :: refreshDebugContext(ContextBrowserBase* contextBrowser
 {
    WatchItems refreshedItems;
 
-   _debugController.readAutoContext(contextBrowser, 3, &refreshedItems);
+   _debugController.readAutoContext(contextBrowser, 4, &refreshedItems);
 
    contextBrowser->removeUnused(refreshedItems);
 }

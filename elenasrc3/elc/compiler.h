@@ -972,7 +972,7 @@ namespace elena_lang
       bool importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
       void importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode);
 
-      void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs);
+      void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool declarationMode);
 
       int allocateLocalAddress(CodeScope* codeScope, int size, bool binaryArray);
 
@@ -1220,6 +1220,8 @@ namespace elena_lang
       void compileClassClass(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node);
 
       void compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, SyntaxNode node);
+
+      void validateClassFields(ClassScope& scope, SyntaxNode node);
 
       void validateScope(ModuleScopeBase* moduleScope);
       void validateSuperClass(ClassScope& scope, SyntaxNode node);

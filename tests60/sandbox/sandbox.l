@@ -11,15 +11,14 @@ import extensions;
 //                              .summarize())
 //}
 
-test() {}
-
 public program()
 {
-   test();
+   var a := new ArrayList();
+   a.append(1);
 
-   string line := "1 2";
+//   string line := "1 2";
 
-   Array params := line.splitBy($32);
+//   Array params := line.splitBy($32);
 //   char ch := $32;
 
 //      ArrayList list := new ArrayList();

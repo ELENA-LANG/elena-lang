@@ -4539,7 +4539,7 @@ int Compiler :: resolveSize(Scope& scope, SyntaxNode node)
    }
 }
 
-void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)
+void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool declarationMode)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -4553,7 +4553,7 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
             if (!attrs.typeInfo.typeRef) {
                TypeAttributes typeAttributes = {};
 
-               attrs.typeInfo = resolveTypeAttribute(scope, current, typeAttributes, true, false);
+               attrs.typeInfo = resolveTypeAttribute(scope, current, typeAttributes, declarationMode, false);
                if (typeAttributes.isNonempty())
                   scope.raiseError(errInvalidHint, current);
             }
@@ -4572,7 +4572,7 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
             if (!attrs.size) {
                attrs.size = -1;
 
-               readFieldAttributes(scope, current, attrs);
+               readFieldAttributes(scope, current, attrs, declarationMode);
             }
             else scope.raiseError(errInvalidHint, current);
             break;
@@ -4586,7 +4586,7 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
 
 void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)
 {
-   readFieldAttributes(scope, node, attrs);
+   readFieldAttributes(scope, node, attrs, true);
 
    //HOTFIX : recognize raw data
    if (attrs.typeInfo.isPrimitive()) {
@@ -8888,6 +8888,24 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
    scope.save();
 }
 
+void Compiler :: validateClassFields(ClassScope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Field) {
+         ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+
+         auto it = scope.info.fields.get(name);
+         if (it.offset != -1) {
+            FieldAttributes attrs = {};
+            readFieldAttributes(scope, current, attrs, false);
+         }
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: compileClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
 {
 #ifdef FULL_OUTOUT_INFO
@@ -8897,6 +8915,11 @@ void Compiler :: compileClass(BuildTreeWriter& writer, ClassScope& scope, Syntax
 #endif // FULL_OUTOUT_INFO
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+   // validate field types
+   if (scope.info.fields.count() > 0 || scope.info.statics.count() > 0) {
+      validateClassFields(scope, node);
+   }
 
    writer.newNode(BuildKey::Class, scope.reference);
    writer.appendNode(BuildKey::Path, *ns->sourcePath);

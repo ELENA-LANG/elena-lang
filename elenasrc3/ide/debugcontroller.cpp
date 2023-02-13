@@ -903,6 +903,9 @@ void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, add
                watch->populateWideString(&context, value);
                break;
             }
+            case elDebugArray:
+               readObjectArray(watch, item, address, level, info);
+               break;
             case elDebugDWORDS:
                readIntArrayLocal(watch, item, address, "content", level);
                break;
@@ -1028,6 +1031,24 @@ void* DebugController :: readRealLocal(ContextBrowserBase* watch, void* parent, 
       return watch->addOrUpdateFLOAT64(&context, name, value);
    }
    else return nullptr;
+}
+
+void DebugController :: readObjectArray(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info)
+{
+   if (level <= 0)
+      return;
+
+   size_t length = _min(_process->getArrayLength(address) / sizeof(addr_t), 100);
+   IdentifierString value;
+   for (size_t i = 0; i < length; i++) {
+      addr_t itemAddress = _process->getField(address, i * sizeof(addr_t));
+
+      value.copy("[");
+      value.appendInt(i);
+      value.append("]");
+
+      readObject(watch, parent, itemAddress, *value, level - 1, nullptr);
+   }
 }
 
 void DebugController :: readFields(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info)

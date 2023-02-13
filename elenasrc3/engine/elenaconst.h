@@ -184,6 +184,7 @@ namespace elena_lang
    constexpr ref_t elDebugDWORDS          = 0x00040000;
    constexpr ref_t elDebugLiteral         = 0x00050000;
    constexpr ref_t elDebugWideLiteral     = 0x00060000;
+   constexpr ref_t elDebugArray           = 0x00070000;
 
    // --- LoadResult enum ---
    enum class LoadResult

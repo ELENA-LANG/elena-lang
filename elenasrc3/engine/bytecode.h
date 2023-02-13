@@ -315,6 +315,7 @@ namespace elena_lang
          case ByteCode::SelLtRR:
          case ByteCode::PeekR:
          case ByteCode::StoreR:
+         case ByteCode::CreateR:
             return true;
          default:
             return false;
@@ -338,6 +339,7 @@ namespace elena_lang
             case ByteCode::SelEqRR:
             case ByteCode::SelLtRR:
             case ByteCode::XHookDPR:
+            case ByteCode::CreateNR:
                return true;
             default:
                return false;

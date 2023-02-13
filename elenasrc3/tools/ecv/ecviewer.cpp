@@ -358,6 +358,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::CmpR:
          case ByteCode::PeekR:
          case ByteCode::StoreR:
+         case ByteCode::CreateR:
             addRArg(command.arg1, commandStr);
             break;
          case ByteCode::MovM:
@@ -649,6 +650,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
          break;
       case elDebugWideLiteral:
          printLineAndCount("@flag ", "elDebugWideLiteral", row, pageSize);
+         break;
+      case elDebugArray:
+         printLineAndCount("@flag ", "elDebugArray", row, pageSize);
          break;
       default:
          break;

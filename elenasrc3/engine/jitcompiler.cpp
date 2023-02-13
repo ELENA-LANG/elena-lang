@@ -901,10 +901,9 @@ void elena_lang :: loadROp(JITCompilerScope* scope)
             break;
          }
          default:
-            // to make compiler happy
+            writeCoreReference(scope, entries->reference, entries->offset, code);
             break;
       }
-      //else writeCoreReference();
 
       entries++;
       count--;

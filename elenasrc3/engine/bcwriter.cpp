@@ -934,7 +934,8 @@ void objArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
          // peek sp:1
          // assign
          tape.write(ByteCode::Load);
-         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::XMovSISI, 0, 1);
          tape.write(ByteCode::Assign);
          break;
       case INDEX_OPERATOR_ID:

@@ -996,21 +996,26 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
    if (test(info.header.flags, elExtension))
       info.header.flags |= elSealed;
 
-   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
-      if (classRef == scope.buildins.literalReference) {
-         // recognize string constant
-         if (info.size == -1) {
-            info.header.flags |= elDebugLiteral;
+   if (test(info.header.flags, elDynamicRole)) {
+      if (test(info.header.flags, elStructureRole)) {
+         if (classRef == scope.buildins.literalReference) {
+            // recognize string constant
+            if (info.size == -1) {
+               info.header.flags |= elDebugLiteral;
+            }
+         }
+         else if (classRef == scope.buildins.wideReference) {
+            // recognize wide string constant
+            if (info.size == -2) {
+               info.header.flags |= elDebugWideLiteral;
+            }
          }
       }
-      else if (classRef == scope.buildins.wideReference) {
-         // recognize wide string constant
-         if (info.size == -2) {
-            info.header.flags |= elDebugWideLiteral;
-         }
+      else {
+         info.header.flags |= elDebugArray;
       }
    }
-
+   
    if (isEmbeddableArray(info)) {
       auto inner = *info.fields.start();
       switch (inner.typeInfo.typeRef) {
