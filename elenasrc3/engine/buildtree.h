@@ -121,6 +121,7 @@ namespace elena_lang
       LoadingBinaryLen     = 0x005C,
       UnboxMessage         = 0x005D,
       LoadingSubject       = 0x005E,
+      peekArgument         = 0x005F,
 
       MaxOperationalKey    = 0x005E,
 

@@ -1234,25 +1234,33 @@ void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    // mlen
    // add    n:1
    // dalloc
+   // sub    n:1
    // xassignsp
    // alloc  i:1
    // store  sp:0
    // set    fp:arg
+   // swap   sp:0
    // dtrans
+   // swap   sp:0
    // set    r:0
+   // swap   sp:0
    // assign
    // free   i:1
 
    tape.write(ByteCode::MLen);
    tape.write(ByteCode::AddN, 1);
    tape.write(ByteCode::DAlloc);
+   tape.write(ByteCode::SubN, 1);
    tape.write(ByteCode::XAssignSP);
    tape.write(ByteCode::AllocI, 1);
    tape.write(ByteCode::StoreSI, 0);
    tape.write(ByteCode::SetFP, node.arg.value);
+   tape.write(ByteCode::SwapSI);
    tape.write(ByteCode::DTrans);
+   tape.write(ByteCode::SwapSI);
    tape.write(ByteCode::SetR);
-   tape.write(ByteCode::Assign);
+   tape.write(ByteCode::SwapSI);
+   tape.write(ByteCode::XAssign);
    tape.write(ByteCode::FreeI, 1);
 }
 
@@ -1266,6 +1274,16 @@ void loadingSubject(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::MovM, node.arg.value);
    tape.write(ByteCode::SetDP, index);
    tape.write(ByteCode::LoadV);
+
+   if ((node.arg.value & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
+      // or n:VARIADIC_MESSAGE
+      tape.write(ByteCode::OrN, VARIADIC_MESSAGE);
+   }
+}
+
+void peekArgument(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::PeekSI, node.arg.value);
 }
 
 inline void includeFrame(CommandTape& tape)
@@ -1296,7 +1314,7 @@ ByteCodeWriter::Saver commands[] =
    realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
 
    genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
-   intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject
+   intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

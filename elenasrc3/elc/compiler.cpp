@@ -7761,7 +7761,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
    if (scope.isGeneric()) {
-      scope.messageLocalAddress = codeScope.allocLocalAddress(sizeof(mssg_t));
+      scope.messageLocalAddress = allocateLocalAddress(&codeScope, sizeof(mssg_t), false);
       writer.appendNode(BuildKey::SavingIndex, scope.messageLocalAddress);
    }
 
@@ -8526,6 +8526,8 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
       }
       // if it is open arg generic without redirect statement
       else if (withOpenArgGenerics) {
+         ExprScope exprScope(&codeScope);
+
          // HOTFIX : an extension is a special case of a variadic function and a target should be included
          ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
          pos_t argCount = !scope.isExtension && test(scope.message, FUNCTION_MESSAGE) ? 1 : 2;
@@ -8534,8 +8536,10 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
 
          // open frame
          writer.appendNode(BuildKey::OpenFrame);
+         // save the target
+         ObjectInfo tempTarget = saveToTempLocal(writer, exprScope, { ObjectKind::Object });
          // save incoming message
-         scope.messageLocalAddress = codeScope.allocLocalAddress(sizeof(mssg_t));
+         scope.messageLocalAddress =  allocateLocalAddress(&codeScope, sizeof(mssg_t), false);
          writer.appendNode(BuildKey::SavingIndex, scope.messageLocalAddress);
          // unbox argument list
          writer.appendNode(BuildKey::UnboxMessage, -1);
@@ -8544,10 +8548,14 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
             encodeMessage(getAction(scope.moduleScope->buildins.dispatch_message), argCount, VARIADIC_MESSAGE));
          writer.appendNode(BuildKey::Index, scope.messageLocalAddress);
          writer.closeNode();
+         // select the target
+         writeObjectInfo(writer, exprScope, tempTarget);
          // call the message
          writer.appendNode(BuildKey::ResendOp);
          // close frame
          writer.appendNode(BuildKey::CloseFrame);
+
+         exprScope.syncStack();
       }
    }
 

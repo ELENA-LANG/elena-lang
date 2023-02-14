@@ -43,6 +43,7 @@ namespace elena_lang
       DAlloc         = 0x16,
       XAssignSP      = 0x17,
       DTrans         = 0x18,
+      XAssign        = 0x19,
 
       Coalesce       = 0x20,
       Not            = 0x21,
@@ -85,6 +86,7 @@ namespace elena_lang
       NConvFDP       = 0x98,
       FTruncDP       = 0x99,
       DCopy          = 0x9A,
+      OrN            = 0x9B,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,

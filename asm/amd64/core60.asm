@@ -421,6 +421,13 @@ inline %18h
 
 end
 
+// ; xassign
+inline %19h
+
+  mov  [rbx + rdx*8], r10
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -896,6 +903,13 @@ inline %9Ah
   imul ecx, edx
   mov  rdi, rbx
   rep  movsb
+
+end
+
+// ; orn
+inline %9Bh
+
+  or  edx, __n_1
 
 end
 

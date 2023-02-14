@@ -230,6 +230,7 @@ labFound:
   jmp   eax
 
 labEnd:
+  mov   esi, [esp+4]
                                                                 
 end
 
@@ -413,6 +414,13 @@ inline %18h
   mov  edi, ebx
   rep  movsd
   mov  esi, eax
+
+end
+
+// ; xassign
+inline %19h
+
+  mov  [ebx + edx*4], esi
 
 end
 
@@ -874,6 +882,13 @@ inline %9Ah
   mov  edi, ebx
   rep  movsb
   mov  esi, eax
+
+end
+
+// ; orn
+inline %9Bh
+
+  or  edx, __n_1
 
 end
 

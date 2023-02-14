@@ -102,6 +102,9 @@ ELENA byte codes (or ecodes)
 
    wload                    - index := word([acc])
 
+   xassign                  - acc[index] := sp[0];
+                              direct operation
+
    xassign i                - acc[i] := sp[0];
                               direct operation
 
@@ -342,6 +345,8 @@ ELENA byte codes (or ecodes)
    ixor dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] ^ temp;
                               n = 1,2,4,8 
+ 
+   orn n                    - index := index | n
  
    subn n                   - index := index - n
 
