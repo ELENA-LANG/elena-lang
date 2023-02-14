@@ -119,8 +119,10 @@ namespace elena_lang
       CopyingArr           = 0x005A,
       ExtMssgLiteral       = 0x005B,
       LoadingBinaryLen     = 0x005C,
+      UnboxMessage         = 0x005D,
+      LoadingSubject       = 0x005E,
 
-      MaxOperationalKey    = 0x005B,
+      MaxOperationalKey    = 0x005E,
 
       Import               = 0x0060,
       DictionaryOp         = 0x0061,

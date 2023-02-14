@@ -7780,6 +7780,11 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
             scope.constructorMode ? 
                mapClassSymbol(scope, scope.getClassRef()) : scope.mapSelf(), 
             bodyNode);
+
+         if (codeScope.isByRefHandler() && retVal.kind != ObjectKind::Unknown) {
+            ExprScope exprScope(&codeScope);
+            compileAssigningOp(writer, exprScope, codeScope.mapByRefReturnArg(), retVal);
+         }
          break;
       case SyntaxKey::Redirect:
          retVal = compileRedirect(writer, codeScope, bodyNode);
@@ -8526,14 +8531,23 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
          pos_t argCount = !scope.isExtension && test(scope.message, FUNCTION_MESSAGE) ? 1 : 2;
 
          writer.appendNode(BuildKey::DispatchingOp);
-         writer.newNode(BuildKey::GenericDispatchingOp);
-         writer.appendNode(BuildKey::Message,
-            encodeMessage(getAction(scope.moduleScope->buildins.dispatch_message), argCount, VARIADIC_MESSAGE));
-         writer.closeNode();
 
-         writer.newNode(BuildKey::DirectResendOp, scope.moduleScope->buildins.dispatch_message);
-         writer.appendNode(BuildKey::Type, classScope->info.header.parentRef);
+         // open frame
+         writer.appendNode(BuildKey::OpenFrame);
+         // save incoming message
+         scope.messageLocalAddress = codeScope.allocLocalAddress(sizeof(mssg_t));
+         writer.appendNode(BuildKey::SavingIndex, scope.messageLocalAddress);
+         // unbox argument list
+         writer.appendNode(BuildKey::UnboxMessage, -1);
+         // change incoming message to variadic multi-method
+         writer.newNode(BuildKey::LoadingSubject, 
+            encodeMessage(getAction(scope.moduleScope->buildins.dispatch_message), argCount, VARIADIC_MESSAGE));
+         writer.appendNode(BuildKey::Index, scope.messageLocalAddress);
          writer.closeNode();
+         // call the message
+         writer.appendNode(BuildKey::ResendOp);
+         // close frame
+         writer.appendNode(BuildKey::CloseFrame);
       }
    }
 

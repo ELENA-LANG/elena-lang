@@ -602,7 +602,6 @@ void shortSOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-
 void nilCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    bool inverted = false;
@@ -1230,6 +1229,45 @@ void loadingBynaryLen(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::NLen, node.arg.value);
 }
 
+void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // mlen
+   // add    n:1
+   // dalloc
+   // xassignsp
+   // alloc  i:1
+   // store  sp:0
+   // set    fp:arg
+   // dtrans
+   // set    r:0
+   // assign
+   // free   i:1
+
+   tape.write(ByteCode::MLen);
+   tape.write(ByteCode::AddN, 1);
+   tape.write(ByteCode::DAlloc);
+   tape.write(ByteCode::XAssignSP);
+   tape.write(ByteCode::AllocI, 1);
+   tape.write(ByteCode::StoreSI, 0);
+   tape.write(ByteCode::SetFP, node.arg.value);
+   tape.write(ByteCode::DTrans);
+   tape.write(ByteCode::SetR);
+   tape.write(ByteCode::Assign);
+   tape.write(ByteCode::FreeI, 1);
+}
+
+void loadingSubject(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int index = node.findChild(BuildKey::Index).arg.value;
+
+   // mov mmsg:arg
+   // set dp:index
+   // loadv
+   tape.write(ByteCode::MovM, node.arg.value);
+   tape.write(ByteCode::SetDP, index);
+   tape.write(ByteCode::LoadV);
+}
+
 inline void includeFrame(CommandTape& tape)
 {
    tape.write(ByteCode::Include);
@@ -1258,7 +1296,7 @@ ByteCodeWriter::Saver commands[] =
    realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
 
    genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
-   intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen
+   intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

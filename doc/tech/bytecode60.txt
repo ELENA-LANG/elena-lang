@@ -76,6 +76,8 @@ ELENA byte codes (or ecodes)
 
    mov mssg:m               - index := m
 
+   mov arg:n                - index.{argCount}{flags} := n
+
    mov n:n                  - index := n
 
    neg                      - index := -index; 
@@ -104,6 +106,8 @@ ELENA byte codes (or ecodes)
                               direct operation
 
    xget                     - acc[index] => acc
+
+   xassignsp                - sp => acc
 
 
  Call operations:
@@ -140,6 +144,9 @@ ELENA byte codes (or ecodes)
  Stack operations:
  -----------------                                           
    alloc i                  - sp += i ; reserve and fill with zeros; 
+                              new sp value is aligned to 2 in x86-64 mode
+
+   dalloc                   - sp += index ; reserve and fill with zeros; 
                               new sp value is aligned to 2 in x86-64 mode
 
    free i                   - sp -= i ; release the stack; 
@@ -214,8 +221,13 @@ ELENA byte codes (or ecodes)
    dispatch m, r            - search in message table r the message in index and provided parameter list; 
                               if found jumps to it;
 
+   dtrans                   - sp[0] >> acc, index ptrs
+
    len                      - index := acc.length;
                               returns the object length
+
+   mlen                     - index := index.argCount;
+                              returns the argument counter
 
    new i, {prefix}:r        - create the object with the specified
                               number of fields;

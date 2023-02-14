@@ -224,6 +224,9 @@ public singleton intConvertor
       ^ val
    }
 
+   int convert(string s)
+      <= convert(s, 10);
+
    int convert(wide s, int radix)
    {
       int len := s.Length;
@@ -241,6 +244,9 @@ public singleton intConvertor
 
       ^ val
    }
+
+   int convert(wide s)
+      <= convert(s, 10);
 
    int convert(uint n)
       = new IntNumber(n);

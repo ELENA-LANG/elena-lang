@@ -1752,6 +1752,12 @@ void X86Assembler :: compileMovsb(ScriptToken& tokenInfo, MemoryWriter& writer)
    read(tokenInfo);
 }
 
+void X86Assembler::compileMovsd(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   writer.writeByte(0xA5);
+   read(tokenInfo);
+}
+
 bool X86Assembler :: compileMul(X86Operand source, MemoryWriter& writer)
 {
    if (source.isR32_M32()) {
@@ -2265,6 +2271,9 @@ bool X86Assembler :: compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
    else if (tokenInfo.compare("movsb")) {
       compileMovsb(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("movsd")) {
+      compileMovsd(tokenInfo, writer);
    }
    else if (tokenInfo.compare("mul")) {
       compileMul(tokenInfo, writer);
@@ -2986,4 +2995,19 @@ bool X86_64Assembler :: compileTest(X86Operand source, X86Operand target, Memory
    else return X86Assembler::compileTest(source, target, writer);
 
    return true;
+}
+
+void X86_64Assembler::compileMovsq(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   writer.writeByte(0x48);
+   writer.writeByte(0xA5);
+   read(tokenInfo);
+}
+
+bool X86_64Assembler :: compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   if (tokenInfo.compare("movsq")) {
+      compileMovsq(tokenInfo, writer);
+   }
+   else X86Assembler::compileMOpCode(tokenInfo, writer);
 }

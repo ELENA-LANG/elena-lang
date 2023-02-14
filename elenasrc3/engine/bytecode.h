@@ -39,6 +39,10 @@ namespace elena_lang
       Assign         = 0x12,
       MovFrm         = 0x13,
       LoadS          = 0x14,
+      MLen           = 0x15,
+      DAlloc         = 0x16,
+      XAssignSP      = 0x17,
+      DTrans         = 0x18,
 
       Coalesce       = 0x20,
       Not            = 0x21,

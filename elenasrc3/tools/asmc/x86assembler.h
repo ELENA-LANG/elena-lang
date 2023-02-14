@@ -143,6 +143,7 @@ namespace elena_lang
       void compileLea(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMov(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMovsb(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileMovsd(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMul(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileNeg(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileNop(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -245,10 +246,13 @@ namespace elena_lang
       bool compileTest(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileXor(X86Operand source, X86Operand target, MemoryWriter& writer) override;
 
+      bool compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+
       void compileStos(ScriptToken& tokenInfo, MemoryWriter& writer) override
       {
          compileStosq(tokenInfo, writer);
       }
+      void compileMovsq(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileStosq(ScriptToken& tokenInfo, MemoryWriter& writer);
 
    public:

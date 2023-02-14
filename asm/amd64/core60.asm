@@ -15,6 +15,7 @@ define VOIDPTR              2000Eh
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
 define ARG_MASK               05Fh
+define ARG_COUNT_MASK         01Fh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -382,6 +383,41 @@ inline % 14h
   shr   edx, ACTION_ORDER
   mov   rax, mdata : %0
   mov   edx, dword ptr [rax + rdx]
+
+end
+// ; mlen
+inline % 15h
+
+  and   edx, ARG_COUNT_MASK
+
+end
+
+// ; dalloc
+inline %16h
+
+  lea  rax, [rdx*4]
+  sub  rsp, rax
+  mov  rcx, rdx
+  xor  rax, rax
+  mov  rdi, rsp
+  rep  stos
+
+end
+
+// ; xassignsp
+inline % 17h
+
+  mov   rbx, rsp
+
+end
+
+// ; dtrans
+inline %18h
+
+  mov  rsi, r10
+  mov  rcx, rdx
+  mov  rdi, rbx
+  rep  movsq
 
 end
 
