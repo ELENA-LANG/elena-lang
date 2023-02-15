@@ -122,6 +122,7 @@ namespace elena_lang
       UnboxMessage         = 0x005D,
       LoadingSubject       = 0x005E,
       peekArgument         = 0x005F,
+      TerminatorReference  = 0x0060,
 
       MaxOperationalKey    = 0x005E,
 

@@ -3621,6 +3621,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::Nil:
          writer.appendNode(BuildKey::NilReference, 0);
          break;
+      case ObjectKind::Terminator:
+         writer.appendNode(BuildKey::TerminatorReference, 0);
+         break;
       case ObjectKind::Symbol:
          writer.appendNode(BuildKey::SymbolCall, info.reference);
          break;

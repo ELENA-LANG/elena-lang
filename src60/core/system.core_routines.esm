@@ -931,7 +931,7 @@ labNext:
   peek       sp:0
   load       dp:tmp
   xget
-  cmp        nil
+  cmp        terminator
   jne        labNext
 
   load       dp:tmp

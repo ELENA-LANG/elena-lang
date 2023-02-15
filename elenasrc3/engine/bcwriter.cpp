@@ -83,6 +83,11 @@ void nilReference(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SetR, 0);
 }
 
+void terminatorReference(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::SetR, -1);
+}
+
 void symbolCall(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::CallR, node.arg.reference | mskSymbolRef);
@@ -1242,7 +1247,7 @@ void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    // swap   sp:0
    // dtrans
    // swap   sp:0
-   // set    r:0
+   // set    r:-1
    // swap   sp:0
    // assign
    // free   i:1
@@ -1258,7 +1263,7 @@ void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SwapSI);
    tape.write(ByteCode::DTrans);
    tape.write(ByteCode::SwapSI);
-   tape.write(ByteCode::SetR);
+   tape.write(ByteCode::SetR, -1);
    tape.write(ByteCode::SwapSI);
    tape.write(ByteCode::XAssign);
    tape.write(ByteCode::FreeI, 1);
@@ -1314,7 +1319,9 @@ ByteCodeWriter::Saver commands[] =
    realOp, realCondOp, addVirtualBreakpoint, conversionOp, semiDirectResend, nilCondOp, assignToStack, assignImmediateAccField,
 
    genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
-   intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument
+   intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
+
+   terminatorReference
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

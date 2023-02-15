@@ -354,6 +354,9 @@ void* elena_lang :: retrieveCode(JITCompilerScope* scope)
       case 4:
          code = scope->compiler->_inlines[5][scope->code()];
          break;
+      case -1:
+         code = scope->compiler->_inlines[6][scope->code()];
+         break;
       default:
          code = scope->compiler->_inlines[0][scope->code()];
          break;
@@ -2225,7 +2228,11 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = scope->compiler->_inlines[0][scope->code()];
+   void* code = nullptr;
+   if ((scope->command.arg1 & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
+      code = scope->compiler->_inlines[5][scope->code()];
+   }
+   else code = scope->compiler->_inlines[0][scope->code()];
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));

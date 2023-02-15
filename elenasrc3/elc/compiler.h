@@ -38,6 +38,7 @@ namespace elena_lang
       ExtMssgLiteral,
       Template,
       Nil,
+      Terminator,
       Symbol,
       Class,
       Method,
