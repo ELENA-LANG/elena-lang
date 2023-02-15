@@ -8474,13 +8474,11 @@ void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope&
    writeObjectInfo(writer, exprScope, retVal);
 
    writer.appendNode(BuildKey::LoadingIndex, mssgVar.reference);
-   writer.appendNode(BuildKey::RedirectOp);
 
    exprScope.syncStack();
 
    writer.appendNode(BuildKey::CloseFrame, -1);
-
-   writer.appendNode(BuildKey::DispatchingOp);
+   writer.appendNode(BuildKey::RedirectOp);
 }
 
 void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node,
