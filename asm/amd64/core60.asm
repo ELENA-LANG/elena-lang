@@ -1142,6 +1142,14 @@ inline %1C0h
 
 end 
 
+// ; cmpr -1
+inline %6C0h
+
+  mov  rax, -1
+  cmp  rbx, rax
+
+end 
+
 // ; fcmpn 8
 inline %0C1h
 
@@ -2294,8 +2302,8 @@ labNextParam:
 
 labMatching:
   mov    rdi, r14
-  mov    rdi, [rdi + 8]
-  test   rdi, rdi
+  lea    rdi, [rdi + 8]
+  cmp    [rdi], 0
   cmovnz r14, rdi
 
   mov  rdi, [rax + rcx * 8]
@@ -2437,8 +2445,8 @@ labNextParam:
 
 labMatching:
   mov    rdi, r14
-  mov    rdi, [rdi + 8]
-  test   rdi, rdi
+  lea    rdi, [rdi + 8]
+  cmp    [rdi], 0
   cmovnz r14, rdi
 
   mov  rdi, [rax + rcx * 8]

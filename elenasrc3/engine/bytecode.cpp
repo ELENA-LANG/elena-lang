@@ -256,20 +256,23 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
 void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* target, ModuleBase* importer)
 {
    if (isRCommand(command.code)) {
-      ref_t mask = command.arg1 & mskAnyRef;
-      switch (mask) {
-         case mskMssgLiteralRef:
-            command.arg1 = target->importMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
-            break;
-         case mskExtMssgLiteralRef:
-            command.arg1 = target->importExtMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
-            break;
-         case mskExternalRef:
-            command.arg1 = target->importExternal(importer, command.arg1 & ~mskAnyRef) | mask;
-            break;
-         default:
-            command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
-            break;
+      // HOTFIX : ignore -1
+      if (command.arg1 != -1) {
+         ref_t mask = command.arg1 & mskAnyRef;
+         switch (mask) {
+            case mskMssgLiteralRef:
+               command.arg1 = target->importMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
+               break;
+            case mskExtMssgLiteralRef:
+               command.arg1 = target->importExtMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
+               break;
+            case mskExternalRef:
+               command.arg1 = target->importExternal(importer, command.arg1 & ~mskAnyRef) | mask;
+               break;
+            default:
+               command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
+               break;
+         }
       }      
    }
    else if (isMCommand(command.code)) {

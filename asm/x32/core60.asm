@@ -1082,6 +1082,13 @@ inline %1C0h
 
 end 
 
+// ; cmpr -1
+inline %6C0h
+
+  cmp  ebx, -1
+
+end 
+
 // ; fcmpn 8
 inline %0C1h
 
@@ -2340,11 +2347,11 @@ end
 // ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 5FAh
 
+  lea  eax, [esp + __n_2]
   xor  ecx, ecx
   push ecx
   push ecx
   mov  [esp+4], esi                      // ; saving arg0
-  lea  eax, [esp + __n_2]
   push ebx
   mov  ebx, eax 
 
@@ -2383,8 +2390,8 @@ labNextParam:
 
 labMatching:
   mov    esi, [esp+8]
-  mov    edi, [esi+4]
-  test   edi, edi
+  lea    edi, [esi+4]
+  cmp    [edi], 0
   cmovnz esi, edi
   mov    [esp+8], esi
 
@@ -2397,6 +2404,7 @@ labMatching:
 
   mov  edi, [edi - elVMTOffset]
   mov  esi, [esp+8]
+  mov  esi, [esi]
 
 labNextBaseClass:
   cmp  esi, edi
@@ -2483,10 +2491,10 @@ end
 inline % 5FBh
 
   xor  ecx, ecx
+  lea  eax, [esp + __n_2]
   push ecx
   push ecx
   mov  [esp+4], esi                      // ; saving arg0
-  lea  eax, [esp + __n_2]
   push ebx
   mov  ebx, eax 
 
@@ -2526,8 +2534,8 @@ labNextParam:
 
 labMatching:
   mov    esi, [esp+8]
-  mov    edi, [esi+4]
-  test   edi, edi
+  lea    edi, [esi+4]
+  cmp    [edi], 0
   cmovnz esi, edi
   mov    [esp+8], esi
 
@@ -2540,6 +2548,7 @@ labMatching:
 
   mov  edi, [edi - elVMTOffset]
   mov  esi, [esp+8]
+  mov  esi, [esi]
 
 labNextBaseClass:
   cmp  esi, edi

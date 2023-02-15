@@ -5,9 +5,8 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * variadic dispatch opcode : x86-64, ppc64le, aarch64
-
     * variadic call in run-time
+
     * variadic call in compile-time
 
     * rosetta code examples : aplusb
@@ -21,6 +20,7 @@ In development:
     * dtrans opcode : ppc64le, aarch64
     * new opcode xassign : ppc64le, aarch64
     * orn dispatch opcode : ppc64le, aarch64
+    * variadic dispatch opcode : ppc64le, aarch64
 
     * testing all examples : win x86, win x86_64, linux i386, linux amd64, linux ppc64le, linux aarch64
 

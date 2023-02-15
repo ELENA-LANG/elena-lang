@@ -1267,6 +1267,8 @@ void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SwapSI);
    tape.write(ByteCode::XAssign);
    tape.write(ByteCode::FreeI, 1);
+   tape.write(ByteCode::XRefreshSI, 0);
+   tape.write(ByteCode::XRefreshSI, 1);
 }
 
 void loadingSubject(CommandTape& tape, BuildNode& node, TapeScope&)
