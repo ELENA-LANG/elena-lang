@@ -2260,9 +2260,10 @@ inline % 5FAh
   xor  edx, edx
 
   mov  rbx, rax
+  mov  r9, -1
 labCountParam:
   lea  rbx, [rbx+8]
-  cmp  [rbx], -1
+  cmp  [rbx], r9
   lea  rcx, [rcx+1]
   jnz  short labCountParam
   mov  r15, rcx
@@ -2401,9 +2402,10 @@ inline % 5FBh
   xor  edx, edx
 
   mov  rbx, rax
+  mov  r9, -1
 labCountParam:
   lea  rbx, [rbx+8]
-  cmp  [rbx], -1
+  cmp  [rbx], r9
   lea  rcx, [rcx+1]
   jnz  short labCountParam
   mov  r15, rcx
