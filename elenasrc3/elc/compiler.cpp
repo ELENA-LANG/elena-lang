@@ -1140,6 +1140,7 @@ ObjectInfo Compiler::InlineClassScope :: mapIdentifier(ustr_t identifier, bool r
                return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.reference, outer.outerObject.reference };
             }
             case ObjectKind::Param:
+            case ObjectKind::ParamAddress:
             case ObjectKind::Local:
             case ObjectKind::Outer:
             case ObjectKind::OuterField:
