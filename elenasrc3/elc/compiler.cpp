@@ -5649,7 +5649,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       }
 
       if (isOpenArg(message)) {
-         arguments.add({ ObjectKind::Nil });
+         arguments.add({ ObjectKind::Terminator });
          counter++;
       }
 

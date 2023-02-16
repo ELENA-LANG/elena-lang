@@ -1185,7 +1185,7 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          break;
       case mskWideLiteralRef:
          vmtReferenceInfo.referenceName = _constantSettings.wideLiteralClass;
-         size = value.length_pos() + 1;
+         size = (value.length_pos() + 1) << 1;
          structMode = true;
          break;
       case mskCharacterRef:

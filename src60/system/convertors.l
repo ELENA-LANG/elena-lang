@@ -777,7 +777,9 @@ public singleton byteArrayConvertor
          
          j += length;
          i += ch.Length;
-      }
+      };
+
+      ^ j
    }   
 }
 
