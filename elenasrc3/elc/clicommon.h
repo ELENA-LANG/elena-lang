@@ -171,7 +171,7 @@ struct BuiltinReferences
    ref_t   dwordReference;
    ref_t   literalReference;
    ref_t   wideReference;
-   ref_t   messageReference;
+   ref_t   messageReference, extMessageReference;
    ref_t   wrapperTemplateReference;
    ref_t   arrayTemplateReference;
    ref_t   argArrayTemplateReference;
@@ -199,7 +199,7 @@ struct BuiltinReferences
       dwordReference = 0;
       longReference = realReference = 0;
       literalReference = wideReference = 0;
-      messageReference = 0;
+      messageReference = extMessageReference = 0;
       wrapperTemplateReference = 0;
       arrayTemplateReference = argArrayTemplateReference = 0;
       closureTemplateReference = 0;

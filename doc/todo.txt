@@ -18,6 +18,7 @@ In development:
     * orn dispatch opcode : ppc64le, aarch64
     * variadic dispatch opcode : ppc64le, aarch64
 
+    * testing all rosetta examples : win x86, win x86_64, linux i386, linux amd64, linux ppc64le, linux aarch64
     * testing all examples : win x86, win x86_64, linux i386, linux amd64, linux ppc64le, linux aarch64
 
     * ide : open file
