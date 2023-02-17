@@ -1058,6 +1058,18 @@ inline void mapNewField(ClassInfo::FieldMap& fields, ustr_t name, FieldInfo info
    }
 }
 
+ObjectInfo Compiler::InlineClassScope :: mapMember(ustr_t identifier)
+{
+   if (moduleScope->selfVar.compare(identifier)) {
+      auto outer = mapSelf();
+
+      return { ObjectKind::OuterSelf, outer.outerObject.typeInfo, outer.reference };
+   }
+
+   return mapField(identifier, EAttr::None);
+}
+
+
 Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 {
    Outer ownerVar = outers.get(*moduleScope->selfVar);
@@ -7098,11 +7110,6 @@ ObjectInfo Compiler :: compileNestedExpression(BuildTreeWriter& writer, InlineCl
       writer.appendNode(BuildKey::Type, nestedRef);
       writer.closeNode();
 
-      // call init handler if available
-      if (scope.info.methods.exist(scope.moduleScope->buildins.init_message)) {
-         compileInlineInitializing(writer, scope, {});
-      }
-
       // second pass : fill members
       int argIndex = 0;
       for (auto it = scope.outers.start(); !it.eof(); ++it) {
@@ -7125,6 +7132,11 @@ ObjectInfo Compiler :: compileNestedExpression(BuildTreeWriter& writer, InlineCl
          }
 
          argIndex++;
+      }
+
+      // call init handler if is available
+      if (scope.info.methods.exist(scope.moduleScope->buildins.init_message)) {
+         compileInlineInitializing(writer, scope, {});
       }
 
       return retVal;
@@ -8182,6 +8194,8 @@ mssg_t Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& inv
       privateScope.info.hints |= (ref_t)MethodHint::Stacksafe;
 
    privateScope.byRefReturnMode = true;
+   privateScope.nestedMode = invokerScope.nestedMode;
+   privateScope.functionMode = invokerScope.functionMode;
 
    classScope->info.methods.add(privateScope.message, privateScope.info);
    classScope->save();

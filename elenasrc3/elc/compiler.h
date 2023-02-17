@@ -880,10 +880,7 @@ namespace elena_lang
          Outer mapOwner();
          Outer mapSelf();
 
-         ObjectInfo mapMember(ustr_t identifier)
-         {
-            return mapField(identifier, ExpressionAttribute::None);
-         }
+         ObjectInfo mapMember(ustr_t identifier) override;
 
          Scope* getScope(ScopeLevel level) override
          {
