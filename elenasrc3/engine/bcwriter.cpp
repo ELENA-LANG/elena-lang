@@ -1085,6 +1085,14 @@ void intArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void copyingItem(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   tape.write(ByteCode::MovN, targetOffset);
+   tape.write(ByteCode::WriteN, node.arg.value);
+}
+
 void directResend(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
@@ -1323,7 +1331,7 @@ ByteCodeWriter::Saver commands[] =
    genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
 
-   terminatorReference
+   terminatorReference, copyingItem
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

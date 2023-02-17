@@ -123,8 +123,9 @@ namespace elena_lang
       LoadingSubject       = 0x005E,
       peekArgument         = 0x005F,
       TerminatorReference  = 0x0060,
+      CopyingItem          = 0x0061,
 
-      MaxOperationalKey    = 0x0060,
+      MaxOperationalKey    = 0x0061,
 
       Import               = 0x0070,
       DictionaryOp         = 0x0071,

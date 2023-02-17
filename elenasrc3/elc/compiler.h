@@ -880,6 +880,11 @@ namespace elena_lang
          Outer mapOwner();
          Outer mapSelf();
 
+         ObjectInfo mapMember(ustr_t identifier)
+         {
+            return mapField(identifier, ExpressionAttribute::None);
+         }
+
          Scope* getScope(ScopeLevel level) override
          {
             if (level == ScopeLevel::Class) {
@@ -1088,6 +1093,8 @@ namespace elena_lang
       void writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& scope);
       void writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope);
 
+      void compileInlineInitializing(BuildTreeWriter& writer, ClassScope& classScope, SyntaxNode node);
+
       ObjectInfo boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
       ObjectInfo boxRefArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
       ObjectInfo boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
@@ -1215,6 +1222,8 @@ namespace elena_lang
          bool exclusiveMode = false, bool ignoreAutoMultimethod = false);
       void compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node);
 
+      ObjectInfo compileCollection(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
+
       void compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, SyntaxNode node);
       void compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope);
       void compileClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);
@@ -1257,6 +1266,8 @@ namespace elena_lang
       void injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg);
 
       void injectInheritedStaticMethod(SyntaxNode node, SyntaxKey methodType, ref_t reference, mssg_t message, ref_t outputRef);
+
+      ref_t callInitMethod(BuildTreeWriter& writer, SyntaxNode node, ExprScope& exprScope, ClassInfo& info, ref_t reference);
 
       void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
          mssg_t messageRef, MethodHint type) override;

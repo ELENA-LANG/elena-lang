@@ -124,6 +124,7 @@ namespace elena_lang
       L4Expression            = 0x001897,
       NTExpression            = 0x001898,
       L7Expression            = 0x001899,
+      L3SingleExpression      = 0x00189A,
       TemplateExpression      = 0x0018A0,
       FieldInitializer        = 0x0018B0,
       Message                 = 0x0010C0,
@@ -146,6 +147,8 @@ namespace elena_lang
       SwitchOption            = 0x0018D1,
       SwitchLastOption        = 0x0018D2,
       SwitchCode              = 0x0018D3,
+      CollectionExpression    = 0x0018D4,
+
 
       Name                    = 0x000101,
       Namespace               = 0x000103,

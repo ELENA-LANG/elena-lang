@@ -12,6 +12,7 @@ public program()
    stringTests();
    shortTests();
    conversionTests();
+   inlineAssignmentTests();
 
    console.writeLine("--- Passed ---")
 }

@@ -303,3 +303,54 @@ byRefTests()
    Assert.ifTrue(s2 == "hello");
    console.writeLine(".");
 }
+
+// --- inlineAssignmentTests ---
+InlineAssignTesterBase
+{
+   x := 1;
+
+   y := 2;
+
+   validate()
+   {
+      Assert.ifTrue(x == 1);
+      Assert.ifTrue(y == 2);
+   }
+}
+
+InlineAssignTesterChild : InlineAssignTesterBase
+{
+}  
+
+class InlineAssignTester2Base
+{
+   field x;
+   field y; 
+
+   validate()
+   {
+      Assert.ifTrue(x == 1);
+      Assert.ifTrue(y == 2);
+   }
+}
+
+inlineAssignmentTests()
+{
+   console.write("inlineAssignmentTests");
+   var b := new InlineAssignTesterBase();
+   b.validate();
+   console.write(".");
+   var c := new InlineAssignTesterChild();
+   c.validate();
+   console.write(".");
+   var child := new InlineAssignTester2Base
+   {
+      this x := 1;
+      this y := 2;
+
+      newMethod() {}
+   };
+
+   child.validate();
+   console.writeLine(".");
+}

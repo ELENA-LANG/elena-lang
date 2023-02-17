@@ -79,8 +79,8 @@ public extension enumerableOp
    forEach(Func1 f)
       = f.run(cast Enumerator(self.enumerator()));
 
-//   forEach(fn)
-//      = self.forEach:(n){ fn(n) };
+   forEach(fn)
+      = self.forEach:(n){ fn(n) };
 
    selectBy(selector)
       = Selector.new(selector, cast Enumerator(self.enumerator()));

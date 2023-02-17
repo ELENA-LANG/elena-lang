@@ -72,29 +72,31 @@ __define PROPERTY_OPERATION  6340;
 __define EXPRESSION          6288;
 __define L5_EXPRESSION       6289;
 __define SINGLE_EXPRESSION   6290;
-__define L8_EXPRESSION       6291;
-__define ROOT_EXPRESSION     6292;
-__define L6_EXPRESSION       6293;
-__define T_EXPRESSION        6294;
-__define L4_EXPRESSION       6295;
-__define NT_EXPRESSION       6296;
-__define L7_EXPRESSION       6297;
-__define SWITCH_OPTION 	     6353;
-__define SWITCH_LAST_OPTION  6354;
-__define SWITCH_CODE 	     6355;
-__define POSTFIX             4200;
-__define TEMPLATE_POSTFIX    4201;
-__define TEMPLATE_ARG        4208;
-__define DIMENSION           5233;
-__define RESEND              7366;
-__define CATCH_OPERATION     7367;
-__define CATCH               7368;
-__define REDIRECT            7371;
-__define ALT_OPERATION       7372;
-__define ISNIL_OPERATION     7373;
-__define SWITCH_OPERATION    7376;
-__define COMPLEX_NAME 	     4302;
-__define INLINE              4303;
+__define L8_EXPRESSION         6291;
+__define ROOT_EXPRESSION       6292;
+__define L6_EXPRESSION         6293;
+__define T_EXPRESSION          6294;
+__define L4_EXPRESSION         6295;
+__define NT_EXPRESSION         6296;
+__define L7_EXPRESSION         6297;
+__define L3_SINGLE_EXPRESSION  6298;
+__define SWITCH_OPTION 	       6353;
+__define SWITCH_LAST_OPTION    6354;
+__define SWITCH_CODE 	       6355;
+__define COLLECTION_EXPRESSION 6356;
+__define POSTFIX               4200;
+__define TEMPLATE_POSTFIX      4201;
+__define TEMPLATE_ARG          4208;
+__define DIMENSION             5233;
+__define RESEND                7366;
+__define CATCH_OPERATION       7367;
+__define CATCH                 7368;
+__define REDIRECT              7371;
+__define ALT_OPERATION         7372;
+__define ISNIL_OPERATION       7373;
+__define SWITCH_OPERATION      7376;
+__define COMPLEX_NAME 	       4302;
+__define INLINE                4303;
 
 START ::= 
 	{ DECLARATION | META_DECLARATION }+ eof
@@ -179,7 +181,7 @@ STATEMENT ::=
 	| "#new" DICTIONARY;
 
 RESEND ::=
-	identifier+ MESSAGE_R;
+	identifier+ RESEND_R;
 
 REDIRECT ::= 
 	EXPRESSION;
@@ -230,7 +232,8 @@ ROOT_EXPRESSION ::=
 			| L2 ^OBJECT L2_R L3_OP? L8_OP?
 			| DYNAMIC_DIMENSION ^ARRAY_TYPE {
 				identifier ^OBJECT ASSIGN ASSIGN_R
-				| L2 ^OBJECT L2_R }
+				| L2 ^OBJECT L2_R
+				| "{" ^OBJECT COLLECTION "}" ^ COLLECTION_EXPRESSION L3_OP* }
 			| L3 ^OBJECT MESSAGE {
 				L3_R L3_OP*
 				| ASSIGN EXPRESSION ^PROPERTY_OPERATION 
@@ -286,7 +289,9 @@ ROOT_EXPRESSION ::=
 EXPRESSION ::=
 	{ identifier | reference }+ { 
 		L0 ^OBJECT L0_R { L1_OP | L3_OP | eps }
-		| DYNAMIC_DIMENSION ^ARRAY_TYPE L2 ^OBJECT L2_R
+		| DYNAMIC_DIMENSION ^ARRAY_TYPE { 
+			"{" ^OBJECT COLLECTION "}" ^ COLLECTION_EXPRESSION
+			| L2 ^OBJECT L2_R }
 		| ASSIGN ^OBJECT ASSIGN_R
 		| L1a_O_OP
 		| L2 ^OBJECT L2_R L3_OP* L5_OP* { L8_OP | L9_OP }?
@@ -372,6 +377,24 @@ L5_EXPRESSION ::=
 		| eps ^OBJECT }
 	| "(" SUB_EXPRESSION;
 
+L3_SINGLE_EXPRESSION ::=
+	{ identifier | integer | string } ^OBJECT
+	| "(" SUB_L3_SINGLE_EXPRESSION;
+
+SUB_L3_SINGLE_EXPRESSION ::=
+	identifier { 
+		L2 ^OBJECT L2_R L3_OP? ")"
+		| L3 ^OBJECT MESSAGE MESSAGE_R L6_OP? ")"
+		| L4_O_OP ")"
+                | L5_O_OP ")"
+		| EQUAL ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION ")"
+		| NOTEQUAL ^OBJECT L6_EXPRESSION ^NOTEQUAL_OPERATION ")"
+		| ")" {
+			"{" ^ PARAMETER BLOCK ^CLOSURE
+			| eps ^OBJECT
+		}
+	};
+
 L6_EXPRESSION ::=
 	identifier+ { 
 		L0 ^OBJECT L0_R
@@ -454,10 +477,14 @@ L2_OP ::=
 
 L3_R ::=
 	"(" MESSAGE_PARAMETERS? ")" ^ MESSAGE_OPERATION
-	| ":" SINGLE_EXPRESSION ^ MESSAGE_OPERATION;
+	| ":" L3_SINGLE_EXPRESSION ^ MESSAGE_OPERATION;
 
 MESSAGE_R ::=
 	L3_R
+	| eps ^PROPERTY_OPERATION;
+
+RESEND_R ::=
+	"(" MESSAGE_PARAMETERS? ")" ^ MESSAGE_OPERATION
 	| eps ^PROPERTY_OPERATION;
 
 L3_OP ::=
@@ -554,6 +581,9 @@ SWITCH_LAST_OPTION ::=
 
 SWITCH_CODE ::=
 	"{" BLOCK;
+
+COLLECTION ::=
+	EXPRESSION { "," EXPRESSION }+ ;
 
 POSTFIX ::=
 	identifier { 

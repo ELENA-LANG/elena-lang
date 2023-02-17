@@ -1720,6 +1720,10 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          result.withVariadicDispatcher = true;
       }
 
+      if (test(methodInfo.hints, (ref_t)MethodHint::Initializer)) {
+         result.kind = (ref_t)MethodHint::Sealed;
+      }
+
       return true;
    }
    else return false;
