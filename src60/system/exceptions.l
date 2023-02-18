@@ -64,6 +64,11 @@ public class OutOfMemoryException : Exception
 // --- InvalidArgumentException ---
 public class InvalidArgumentException : Exception
 {
+   constructor new() : info("Creates the exception")
+      <= new("Invalid argument");
+
+   constructor new(string message) : info("Creates the exception")
+      <= new(message);
 }
 
 // --- MethodNotFoundException ---

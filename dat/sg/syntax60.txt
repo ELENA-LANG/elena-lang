@@ -363,7 +363,9 @@ SINGLE_EXPRESSION ::=
 	| "(" SUB_SINGLE_EXPRESSION;
 
 L4_EXPRESSION ::=
-	identifier ^OBJECT
+	identifier {
+		L3 ^OBJECT MESSAGE MESSAGE_R L3_OP*
+		| eps ^OBJECT }
 	| { integer | hexinteger | real | long } ^OBJECT;
 
 L5_EXPRESSION ::=
@@ -402,17 +404,21 @@ L6_EXPRESSION ::=
 		| L2 ^OBJECT L2_R
 		| L3 ^OBJECT MESSAGE MESSAGE_R
 		| eps ^OBJECT }
-	| { integer | hexinteger | real | long | string } ^OBJECT
+	| { integer | hexinteger | real | long | string | character } ^OBJECT
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION;
 
 L7_EXPRESSION ::=
 	identifier { 
-		NOTGREATER ^OBJECT L6_EXPRESSION ^NOTGREATER_OPERATION
+		L3 ^OBJECT MESSAGE MESSAGE_R L6_OP?
+		| NOTGREATER ^OBJECT L6_EXPRESSION ^NOTGREATER_OPERATION
 		| NOTLESS ^OBJECT L6_EXPRESSION ^NOTLESS_OPERATION
 		| NOTEQUAL ^OBJECT L6_EXPRESSION ^NOTEQUAL_OPERATION
 		| LESS ^OBJECT L6_EXPRESSION ^LESS_OPERATION
+		| GREATER ^OBJECT L6_EXPRESSION ^GREATER_OPERATION
 		| eps ^OBJECT }
-	| { integer | hexinteger } ^OBJECT;
+	| { integer | hexinteger } { 
+		L3 ^OBJECT MESSAGE MESSAGE_R
+		| eps ^OBJECT };
 
 L8_EXPRESSION ::=
 	"{" BLOCK ^ CLOSURE
@@ -575,7 +581,7 @@ MESSAGE ::=
 
 SWITCH_OPTION ::=
 	identifier ^ OBJECT SWITCH_CODE
-	| integer ^ OBJECT SWITCH_CODE;
+	| { integer | character } ^ OBJECT SWITCH_CODE;
 
 SWITCH_LAST_OPTION ::=
 	":" SWITCH_CODE;

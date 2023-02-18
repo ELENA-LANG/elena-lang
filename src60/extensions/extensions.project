@@ -29,6 +29,7 @@
         <include>console.l</include>
         <include>basic.l</include>
         <include>tests.l</include>
+        <include>text/strings.l</include>
      </module>
   </files>
 </configuration>

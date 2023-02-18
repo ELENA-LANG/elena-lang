@@ -28,3 +28,14 @@ public field prop<name, T>
       name := value
    }
 }
+
+// --- rprop ---
+
+public field rprop<name, T>
+{
+   get T name()
+   {
+      ^ name
+   }
+}
+
