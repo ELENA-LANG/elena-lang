@@ -5,9 +5,9 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * rosetta code examples : applycallback
+    * rosetta code examples : arithmeticint
 
-    * rosetta code examples : 5
+    * rosetta code examples : 4
     * examples : intsum / realsum / words
 
     * mlen opcode : ppc64le, aarch64

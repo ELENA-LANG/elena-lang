@@ -1,3 +1,6 @@
+/// Get two integers from the user, and then output the sum, difference, product, 
+/// integer quotient and remainder of those numbers. 
+
 import system'math;
 import extensions;
 

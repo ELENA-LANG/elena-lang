@@ -20,7 +20,14 @@ public extension intOp : IntNumber
       retVal := self - retVal;
         
       ^ retVal
-   }    
+   }
+
+   int mod(o)
+   {
+      int retVal := self.mod(cast int(o));
+        
+      ^ retVal
+   }
 }
 
 // --- longOp ---

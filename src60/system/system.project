@@ -54,6 +54,7 @@
         <include>lnx_strings.l</include>
         <include>template_tests.l</include>
         <include>collections/list.l</include>
+        <include>math/math.l</include>
         <include>text/encoding.l</include>
         <include>io/lnx_console.l</include>
      </module>

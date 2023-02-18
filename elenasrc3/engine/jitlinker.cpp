@@ -1027,6 +1027,9 @@ inline ReferenceInfo retrieveConstantVMT(SectionInfo info)
 
 addr_t JITLinker :: resolveConstantArray(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode)
 {
+   if (referenceInfo.referenceName.compare("'mod$inline0"))
+      silentMode |= false;
+
    VAddressMap references({ 0, nullptr, 0, 0 });
    ReferenceInfo vmtReferenceInfo;
 

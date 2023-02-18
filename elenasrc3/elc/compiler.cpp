@@ -9617,7 +9617,7 @@ void Compiler :: generateOverloadListMember(ModuleScopeBase& scope, ref_t listRe
       metaWriter.writeDWord(0);
    }
    else {
-      metaWriter.insertDWord(0, 0);
+      metaWriter.insertDWord(0, messageRef);
       metaWriter.insertDWord(0, messageRef);
       metaWriter.Memory()->addReference(0, 0);
       switch (type) {

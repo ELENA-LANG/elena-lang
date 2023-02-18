@@ -44,6 +44,7 @@
         <include>win_strings.l</include>
         <include>template_tests.l</include>
         <include>collections\list.l</include>
+        <include>math\math.l</include>
         <include>text\encoding.l</include>
         <include>text\win_encoding.l</include>
         <include>io\win_console.l</include>
