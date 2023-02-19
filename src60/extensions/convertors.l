@@ -25,3 +25,9 @@ public extension intConvertOp
      = intConvertor.convert(self, radix);
 }
 
+// --- realConvertOp ---
+public extension realConvertOp
+{
+   real toReal()
+      = realConvertor.convert(self);
+}

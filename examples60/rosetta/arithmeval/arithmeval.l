@@ -10,7 +10,7 @@ class Token
 {
    object _value;
     
-   rprop int Level;
+   int Level : rprop;
     
    constructor new(int level)
    {
@@ -30,9 +30,9 @@ class Token
 
 class Node
 {
-   prop object Left;
-   prop object Right;
-   rprop int Level;
+   object Left  : prop;
+   object Right : prop;
+   int Level    : rprop;
 
    constructor new(int level)
    {
@@ -45,7 +45,7 @@ class Node
 class SummaryNode : Node
 {
    constructor new(int level)
-      <= new(level + 1);
+      <= super new(level + 1);
     
    Number = Left.Number + Right.Number;
 }
@@ -55,7 +55,7 @@ class SummaryNode : Node
 class DifferenceNode : Node
 {
    constructor new(int level)
-      <= new(level + 1);
+      <= super new(level + 1);
     
    Number = Left.Number - Right.Number;
 }
@@ -65,7 +65,7 @@ class DifferenceNode : Node
 class ProductNode : Node
 {
    constructor new(int level)
-      <= new(level + 2);
+      <= super new(level + 2);
     
    Number = Left.Number * Right.Number;
 }
@@ -75,7 +75,7 @@ class ProductNode : Node
 class FractionNode : Node
 {
    constructor new(int level)
-      <= new(level + 2);
+      <= super new(level + 2);
     
    Number = Left.Number / Right.Number;
 }
@@ -84,8 +84,8 @@ class FractionNode : Node
 
 class Expression
 {
-   rprop int Level;
-   prop object Top;
+   int Level  :rprop;
+   object Top :prop;
     
    constructor new(int level)
    {
@@ -113,10 +113,10 @@ singleton operatorState
    {
       ch =>
          $40 {      // (
-            ^ __target.newBracket().gotoStarting()  
+            ^ weak self.newBracket().gotoStarting()  
          }
          : {
-            ^ __target.newToken().append(ch).gotoToken()
+            ^ weak self.newToken().append(ch).gotoToken()
          }
    }
 }
@@ -127,22 +127,22 @@ singleton tokenState
    {
       ch =>
          $41 {      // )
-            ^ __target.closeBracket().gotoToken()
+            ^ weak self.closeBracket().gotoToken()
          }
          $42 {      // *
-            ^ __target.newProduct().gotoOperator()
+            ^ weak self.newProduct().gotoOperator()
          }
          $43 {      // +
-            ^ __target.newSummary().gotoOperator()
+            ^ weak self.newSummary().gotoOperator()
          }
          $45 {      // -
-            ^ __target.newDifference().gotoOperator()
+            ^ weak self.newDifference().gotoOperator()
          }
          $47 {      // /
-            ^ __target.newFraction().gotoOperator()
+            ^ weak self.newFraction().gotoOperator()
          }
          : {
-            ^ __target.append:ch
+            ^ weak self.append:ch
          }
    }
 }    
@@ -153,13 +153,13 @@ singleton startState
    {
       ch =>
          $40 {      // (
-            ^ __target.newBracket().gotoStarting()
+            ^ weak self.newBracket().gotoStarting()
          }
          $45 { // -
-            ^ __target.newToken().append("0").newDifference().gotoOperator()
+            ^ weak self.newToken().append("0").newDifference().gotoOperator()
          }
          : {
-            ^ __target.newToken().append:ch.gotoToken()
+            ^ weak self.newToken().append:ch.gotoToken()
          }
    }
 }    
@@ -176,190 +176,192 @@ class Scope
     
    constructor new(parser)
    {
-        theState := startState;
-        theLevel := 0;
-        theExpression := Expression.new(0);
-        theParser := parser
+      _state := startState;
+      _level := 0;
+      _expression := Expression.new(0);
+      _parser := parser
    }
                                        
    newToken()
    {
-        theToken := theParser.appendToken(theExpression, theLevel)
+      _token := _parser.appendToken(_expression, _level)
    }                                                
     
    newSummary()
    {
-        theToken := nil;
+      _token := nil;
         
-        theParser.appendSummary(theExpression, theLevel)
+      _parser.appendSummary(_expression, _level)
    }                                                
     
    newDifference()
    {
-        theToken := nil;
+      _token := nil;
         
-        theParser.appendDifference(theExpression, theLevel)
+      _parser.appendDifference(_expression, _level)
    }                                                
       
    newProduct()
    {
-        theToken := nil;
+      _token := nil;
         
-        theParser.appendProduct(theExpression, theLevel)
+      _parser.appendProduct(_expression, _level)
    }                                                
     
    newFraction()
    {
-        theToken := nil;
+      _token := nil;
         
-        theParser.appendFraction(theExpression, theLevel)
+      _parser.appendFraction(_expression, _level)
    }                                                
 
    newBracket()
    {
-        theToken := nil;
+      _token := nil;
         
-        theLevel := theLevel + 10;
+      _level := _level + 10;
         
-        theParser.appendSubexpression(theExpression, theLevel)
+      _parser.appendSubexpression(_expression, _level)
    }            
 
    closeBracket()
    {
-        if (theLevel < 10)
-            { InvalidArgumentException.new:"Invalid expression".raise() };
+      if (_level < 10)
+         { InvalidArgumentException.new:"Invalid expression".raise() };
         
-        theLevel := theLevel - 10
+      _level := _level - 10
    }            
                                     
    append(ch)
    {
-        if(ch >= $48 && ch < $58)
-        { 
-            theToken.append:ch 
-        }
-        else
-        { 
-            InvalidArgumentException.new:"Invalid expression".raise()
-        }
+      if(ch >= $48 && ch < $58)
+      { 
+         _token.append:ch 
+      }
+      else
+      { 
+         InvalidArgumentException.new:"Invalid expression".raise()
+      }
    }
             
    append(string s)
    {
-        s.forEach:(ch){ self.append:ch }
+      s.forEach:(ch){ self.append:ch }
    }
                                                          
    gotoStarting()
    {
-        theState := startState
+      _state := startState
    }
                                                                   
    gotoToken()
    {
-        theState := tokenState
+      _state := tokenState
    }
                                                                   
    gotoOperator()
    {
-        theState := operatorState
+      _state := operatorState
    }
     
-   get Number() => theExpression;
+   get Number() => _expression;
     
-   dispatch() => theState;
+   dispatch() => _state;
 }
 
 // ---- Parser ----
 
 class Parser
 {
-    appendToken(object expression, int level)
-    {
-        var token := Token.new(level);
+   appendToken(object expression, int level)
+   {
+      var token := Token.new(level);
         
-        expression.Top := self.append(expression.Top, token);
+      expression.Top := self.append(expression.Top, token);
         
-        ^ token
-    }
+      ^ token
+   }
 
-    appendSummary(object expression, int level)
-    {
-        expression.Top := self.append(expression.Top, SummaryNode.new(level))
-    }
+   appendSummary(object expression, int level)
+   {
+      var t := expression.Top;
 
-    appendDifference(object expression, int level)
-    {
-        expression.Top := self.append(expression.Top, DifferenceNode.new(level))
-    }
+      expression.Top := self.append(/*expression.Top*/t, SummaryNode.new(level))
+   }
 
-    appendProduct(object expression, int level)
-    {
-        expression.Top := self.append(expression.Top, ProductNode.new(level))
-    }
+   appendDifference(object expression, int level)
+   {
+      expression.Top := self.append(expression.Top, DifferenceNode.new(level))
+   }
 
-    appendFraction(object expression, int level)
-    {
-        expression.Top := self.append(expression.Top, FractionNode.new(level))
-    }
+   appendProduct(object expression, int level)
+   {
+      expression.Top := self.append(expression.Top, ProductNode.new(level))
+   }
 
-    appendSubexpression(object expression, int level)
-    {
-        expression.Top := self.append(expression.Top, Expression.new(level))
-    }
+   appendFraction(object expression, int level)
+   {
+      expression.Top := self.append(expression.Top, FractionNode.new(level))
+   }
 
-    append(object lastNode, object newNode)
-    {
-        if(nil == lastNode)
-            { ^ newNode };
+   appendSubexpression(object expression, int level)
+   {
+      expression.Top := self.append(expression.Top, Expression.new(level))
+   }
+
+   append(object lastNode, object newNode)
+   {
+      if(nil == lastNode)
+         { ^ newNode };
         
-        if (newNode.Level <= lastNode.Level)
-            { newNode.Left := lastNode; ^ newNode };
+      if (newNode.Level <= lastNode.Level)
+         { newNode.Left := lastNode; ^ newNode };
             
-        var parent := lastNode;
-        var current := lastNode.Right;
-        while (nil != current && newNode.Level > current.Level)
-            { parent := current; current := current.Right };
+      var parent := lastNode;
+      var current := lastNode.Right;
+      while (nil != current && newNode.Level > current.Level)
+         { parent := current; current := current.Right };
         
-        if (nil == current)
-        { 
-            parent.Right := newNode 
-        }
-        else
-        { 
-            newNode.Left := current; parent.Right := newNode 
-        };
+      if (nil == current)
+      { 
+         parent.Right := newNode 
+      }
+      else
+      { 
+         newNode.Left := current; parent.Right := newNode 
+      };
             
-        ^ lastNode
-    }
+      ^ lastNode
+   }
     
-    run(text)
-    {
-        var scope := Scope.new(self);
+   run(text)
+   {
+      var scope := Scope.new(self);
 
-        text.forEach:(ch){ scope.eval:ch };
+      text.forEach:(ch){ scope.eval:ch };
 
-        ^ scope.Number
-    }
+      ^ scope.Number
+   }
 }
 
 public program()
 {
-    var text := new StringWriter();
-    var parser := new Parser();
+   var text := new StringWriter();
+   var parser := new Parser();
 
-    while (console.readLine().saveTo(text).Length > 0)
-    {
-        try
-        {
-            console.printLine("=",parser.run:text)
-        }
-        catch(Exception e)
-        {
-            console.writeLine(e.Printable)
+   while (console.readLine().writeTo(text).Length > 0)
+   {
+      try
+      {
+         console.printLine("=",parser.run:text)
+      }
+      catch(Exception e)
+      {
+         console.writeLine(e.toPrintable())
             
-            //console.writeLine:"Invalid Expression"
-        };
+         //console.writeLine:"Invalid Expression"
+      };
         
-        text.clear()
-    }
+      text.clear()
+   }
 }

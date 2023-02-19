@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x01BA
+   #define ELC_REVISION_NUMBER               0x01BB
 
    // --- Information messages ---
    constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2023 by Aleksey Rakov\n";

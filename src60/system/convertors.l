@@ -432,7 +432,7 @@ public singleton realConvertor
       int index := s.indexOf(0, $46);
       if (index != -1) {
          intPartStr := s.Substring(0, index);
-         decimalPartStr := s.SubString(index + 1);
+         decimalPartStr := s.Substring(index + 1);
       }
       else {
          intPartStr := s;

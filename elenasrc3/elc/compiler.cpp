@@ -789,15 +789,15 @@ bool Compiler::MethodScope :: checkType(MethodInfo& methodInfo, MethodHint type)
 ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode)
 {
    if (!memberMode) {
+      return { ObjectKind::Param, { }, -1 };
+   }
+   else if (selfLocal != 0) {
       if (isExtension) {
          ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
 
          return { ObjectKind::Param, { classScope->extensionClassRef }, -1 };
       }
-      else return { ObjectKind::Param, { }, -1 };
-   }
-   else if (selfLocal != 0) {
-      if (isEmbeddable) {
+      else if (isEmbeddable) {
          return { ObjectKind::SelfBoxableLocal, { getClassRef(false) }, (ref_t)selfLocal };
       }
       else return { ObjectKind::SelfLocal, { getClassRef(false) }, (ref_t)selfLocal };
@@ -847,11 +847,11 @@ ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool refere
          return paramInfo;
       }
       else if (moduleScope->selfVar.compare(identifier)) {
-         if ((functionMode && !constructorMode) || closureMode || nestedMode) {
-            return parent->mapIdentifier(OWNER_VAR, false, attr);
-         }
-         else if (EAttrs::test(attr, EAttr::Weak)) {
+         if (EAttrs::test(attr, EAttr::Weak)) {
             return mapSelf(false);
+         }
+         else if ((functionMode && !constructorMode) || closureMode || nestedMode) {
+            return parent->mapIdentifier(OWNER_VAR, false, attr);
          }
          else return mapSelf();
       }
@@ -1068,7 +1068,6 @@ ObjectInfo Compiler::InlineClassScope :: mapMember(ustr_t identifier)
 
    return mapField(identifier, EAttr::None);
 }
-
 
 Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 {

@@ -68,7 +68,7 @@ public class InvalidArgumentException : Exception
       <= new("Invalid argument");
 
    constructor new(string message) : info("Creates the exception")
-      <= new(message);
+      <= super new(message);
 }
 
 // --- MethodNotFoundException ---
@@ -88,7 +88,7 @@ public class NotSupportedException : Exception
         
    /// Creates the exception
    constructor new(string message)
-      <= new(message);
+      <= super new(message);
 }
 
 public class SymbolLoaderException
@@ -103,7 +103,7 @@ public class InvalidOperationException : Exception
       <= new("Invalid operation");
 
    constructor new(string message) : info("Creates the exception")
-      <= new(message);
+      <= super new(message);
 }
 
 // --- OutOfRangeException ---
@@ -115,5 +115,5 @@ public class OutOfRangeException : Exception
 
    /// Creates the exception
    constructor new(string message)
-      <= new(message);
+      <= super new(message);
 }

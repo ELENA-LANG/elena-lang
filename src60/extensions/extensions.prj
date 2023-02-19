@@ -15,6 +15,7 @@
   </project>
   <files>
      <module>
+        <include>control.l</include>
         <include>convertors.l</include>
         <include>console.l</include>
         <include>basic.l</include>
