@@ -5,7 +5,7 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * alt operator
+    * embeddable interface : byRefHandler
 
     * rosetta code examples : arraymode
     * examples : intsum / realsum / words

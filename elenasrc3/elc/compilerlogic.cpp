@@ -656,6 +656,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_EMBEDDABLE:
          hint = (ref_t)MethodHint::Embeddable;
          return true;
+      case V_INTERFACE_DISPATCHER:
+         hint = (ref_t)MethodHint::InterfaceDispatcher;
+         return true;
       default:
          return false;
    }

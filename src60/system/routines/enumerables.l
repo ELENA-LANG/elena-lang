@@ -96,3 +96,14 @@ public extension enumerableOp
       = self.summarize(new Variable());
 
 }
+
+// --- indexableOp ---
+
+public extension indexableOp
+{
+   sort(Func2 compareFunc)
+   {
+      QuickSorting.sort(new IndexerSortingAgent(self), compareFunc);
+   }
+
+}

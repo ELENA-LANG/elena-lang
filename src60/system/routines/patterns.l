@@ -1,7 +1,5 @@
 import system;
 
-
-
 // --- Selecting ---
 
 public class Selector : Enumerator

@@ -1,20 +1,12 @@
 import system'collections;
 import extensions;
-
-extension op
-{
-   bool safeEqualX(o)
-      = self.equal:o \ back:false;
-}
+import system'routines;
 
 public program()
 {
-   var o := new Object();
+   var a := new int[] { 3, 4, 1 };
 
-   var b := o.safeEqualX(2);
+   var r := a.sort:(p,n => p < n);
 
-//   var countMap := Dictionary.new(0);
-//   countMap[1] := 11;
-
-//   var n := countMap[1];
+   console.printLine(r.asEnumerable())
 }

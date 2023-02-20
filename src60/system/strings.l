@@ -88,6 +88,9 @@ public sealed Array<T> : Indexable<T>
    setAt(n, item)
       <= setAt(cast int(n), cast T(item));
 
+   at(n)
+      <= at(cast int(n));
+
    int Length
    {
       get()

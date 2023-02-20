@@ -8329,7 +8329,7 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& s
 void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
    CodeScope codeScope(&scope);
-   if (scope.info.byRefHandler) {
+   if (scope.info.byRefHandler && !scope.checkHint(MethodHint::InterfaceDispatcher)) {
       mssg_t privateImplementation = compileByRefHandler(writer, scope, node, scope.info.byRefHandler);
 
       beginMethod(writer, scope, node, BuildKey::Method, false);
@@ -9652,6 +9652,8 @@ void Compiler :: generateOverloadListMember(ModuleScopeBase& scope, ref_t listRe
 void Compiler :: injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg)
 {
    SyntaxNode methodNode = classNode.appendChild(SyntaxKey::Method, message);
+   // HOTFIX : indicating virtual interface dispatcher, to ignore byref handler optimization
+   methodNode.appendChild(SyntaxKey::Attribute, V_INTERFACE_DISPATCHER);
 
    if (outputRef)
       methodNode.appendChild(SyntaxKey::Type, outputRef);
