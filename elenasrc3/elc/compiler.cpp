@@ -4779,6 +4779,11 @@ void Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
       }
       else scope.raiseError(errInvalidHint, terminal);
    }
+   else if (_logic->isPrimitiveArrRef(variable.typeInfo.typeRef)) {
+      // if it is an array reference
+      variable.typeInfo.typeRef = resolvePrimitiveType(scope, variable.typeInfo, false);
+      variable.typeInfo.elementRef = 0;
+   }
 
    ClassInfo localInfo;
    //bool binaryArray = false;
@@ -6466,7 +6471,7 @@ ObjectInfo Compiler :: compileAltOperation(BuildTreeWriter& writer, ExprScope& s
 
    writer.closeNode();
 
-   return {};
+   return { ObjectKind::Object };
 }
 
 ObjectInfo Compiler :: compileIsNilOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
@@ -7753,7 +7758,7 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
             typeRef = resolvePrimitiveType(codeScope, localInfo.typeInfo, false);
 
          embeddableArray = _logic->isEmbeddableArray(*codeScope.moduleScope, typeRef);
-         if (embeddableArray) {
+         if (embeddableArray && localInfo.size > 0) {
             node.appendChild(BuildKey::BinaryArray, localInfo.offset)
                .appendChild(BuildKey::Size, localInfo.size);
          }

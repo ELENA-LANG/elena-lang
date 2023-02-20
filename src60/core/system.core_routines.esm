@@ -585,6 +585,15 @@ procedure __intToChar
 
 end
 
+procedure __intHash (self,n,r)
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
 procedure __charToInt
 
   peek       sp:1

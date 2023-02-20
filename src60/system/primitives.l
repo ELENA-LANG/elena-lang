@@ -575,3 +575,17 @@ internal singleton PrimitiveWideStringOperations
       };
    }
 }
+
+// --- PrimitiveIntOperations ---
+
+internal singleton PrimitiveIntOperations
+{
+   private hash(int n, ref int retVal) : external(system'core_routines'__intHash);
+
+   int getHashcode(int n)
+   {
+      self.hash(n, ref int retVal);
+
+      ^ retVal
+   }
+}

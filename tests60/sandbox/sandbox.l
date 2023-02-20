@@ -1,9 +1,20 @@
-import system'text;
+import system'collections;
 import extensions;
+
+extension op
+{
+   bool safeEqualX(o)
+      = self.equal:o \ back:false;
+}
 
 public program()
 {
-   var a := new object[] {1,2,3};
+   var o := new Object();
 
-   console.printLine(a.asEnumerable());
+   var b := o.safeEqualX(2);
+
+//   var countMap := Dictionary.new(0);
+//   countMap[1] := 11;
+
+//   var n := countMap[1];
 }

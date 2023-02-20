@@ -7,12 +7,26 @@ public extension objectOp
 
    __getClass() : external(system'core_routines'__object_class),
                   info("Returns the object class");
+
+   bool safeEqual(o)
+      = self.equal:o \ back:false;
 }
 
 // --- intOp ---
 
 public extension intOp : IntNumber
 {
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int retVal := PrimitiveIntOperations.getHashcode(self);
+
+         ^ retVal
+      }
+   }
+
    int mod(int operand)
    {
       int retVal := self / operand * operand;
