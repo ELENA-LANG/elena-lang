@@ -5069,6 +5069,18 @@ ObjectInfo Compiler :: compileWeakOperation(BuildTreeWriter& writer, ExprScope& 
    return retVal;
 }
 
+inline bool isPrimitiveArray(ref_t typeRef)
+{
+   switch (typeRef) {
+      case V_BINARYARRAY:
+      case V_OBJARRAY:
+      case V_INT32ARRAY:
+         return true;
+      default:
+         return false;
+   }
+}
+
 ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ArgumentsInfo& messageArguments,
    int operatorId, ref_t expectedRef)
 {
@@ -5084,8 +5096,8 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       arguments[argLen++] = retrieveType(scope, messageArguments[2]);
    }
 
-   if ((arguments[0] == V_BINARYARRAY || arguments[0] == V_OBJARRAY) && operatorId == SET_INDEXER_OPERATOR_ID) {
-      if (_logic->isCompatible(*scope.moduleScope, { loperand.typeInfo.elementRef }, { arguments[1] }, false))
+   if (operatorId == SET_INDEXER_OPERATOR_ID && isPrimitiveArray(arguments[0])) {
+      if (_logic->isCompatible(*scope.moduleScope, { arguments[1] }, { loperand.typeInfo.elementRef }, false))
          // HOTFIX : for the generic binary array, recognize the element type
          arguments[1] = V_ELEMENT;
    }

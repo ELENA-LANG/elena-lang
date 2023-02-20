@@ -343,8 +343,8 @@ public const struct String : BaseValue,
       ^ String.fromByteArray(index, length, array);
    }
 
-   int save(int index, char[] buffer, int length)
-      = PrimitiveStringOperations.save(buffer, self, index, length);
+   int save(int index, int length, char[] buffer, int destIndex)
+      = PrimitiveStringOperations.save(buffer, self, index, length, destIndex);
 
    internal saveToByteArray(int index, byte[] buffer, int length)
       = PrimitiveStringOperations.save(buffer, this array, index, length);
@@ -688,8 +688,8 @@ public const struct WideString : BaseValue
       ^ String.fromByteArray(array, index, length);
    }
 
-   int save(int index, char[] buffer, int length)
-      = PrimitiveWideStringOperations.save(buffer, self, index, length);
+   int save(int index, char[] buffer, int length, int destIndex)
+      = PrimitiveWideStringOperations.save(buffer, self, index, length, destIndex);
 
    internal saveToShortArray(int index, short[] buffer, int length)
       = PrimitiveWideStringOperations.save(buffer, this array, index, length);

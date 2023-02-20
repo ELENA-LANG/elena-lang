@@ -357,10 +357,10 @@ constexpr Op Operations[OperationLength] =
    },
    {
       // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
-      INDEX_OPERATOR_ID, BuildKey::IntArrayOp, V_INT32ARRAY, V_INT32, 0, V_INT32
+      INDEX_OPERATOR_ID, BuildKey::IntArrayOp, V_INT32ARRAY, V_INT32, 0, V_ELEMENT
    },
    {
-      SET_INDEXER_OPERATOR_ID, BuildKey::IntArrayOp, V_INT32ARRAY, V_INT32, V_INT32, 0
+      SET_INDEXER_OPERATOR_ID, BuildKey::IntArrayOp, V_INT32ARRAY, V_ELEMENT, V_INT32, 0
    },
    {
       INDEX_OPERATOR_ID, BuildKey::BinaryArrayOp, V_BINARYARRAY, V_INT32, 0, V_ELEMENT
@@ -710,13 +710,14 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_INTERN:
          attrs |= ExpressionAttribute::Intern;
          return true;
+      case V_AUTO:
       case V_VARIABLE:
          attrs |= ExpressionAttribute::NewVariable;
          return true;
       case V_EXTERN:
          attrs |= ExpressionAttribute::Extern;
          return true;
-   case V_NEWOP:
+      case V_NEWOP:
          if (ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::Parameter)
             || ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::NestedDecl))
          {

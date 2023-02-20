@@ -143,7 +143,8 @@ namespace elena_lang
       void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
-      void copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool includeType);
+      void copyType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
       void flushSubScopeMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxNode headerNode);
       void flushSubScope(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxNode headerNode);

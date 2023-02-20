@@ -856,11 +856,42 @@ void SyntaxTreeBuilder :: flushMethod(SyntaxTreeWriter& writer, Scope& scope, Sy
    }
 }
 
-void SyntaxTreeBuilder :: copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+inline bool isTypeRelated(SyntaxNode current)
+{
+   return current.key == SyntaxKey::Type || current.key == SyntaxKey::ArrayType || current.key == SyntaxKey::TemplateType;
+}
+
+bool ifTypeRelatedExists(SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      flushNode(writer, scope, current);
+      if (isTypeRelated(node))
+         return true;
+
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
+void SyntaxTreeBuilder :: copyType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (isTypeRelated(current)) {
+         flushNode(writer, scope, current);
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void SyntaxTreeBuilder :: copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool includeType)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (!isTypeRelated(current) || includeType)
+         flushNode(writer, scope, current);
 
       current = current.nextNode();
    }
@@ -873,15 +904,29 @@ void SyntaxTreeBuilder :: flushSubScopeMember(SyntaxTreeWriter& writer, Scope& s
       case SyntaxKey::CodeBlock:
       case SyntaxKey::WithoutBody:
       case SyntaxKey::ReturnExpression:
+      {
          writer.newNode(SyntaxKey::Method);
-
          flushDescriptor(writer, scope, node, true, true);
-         copyHeader(writer, scope, headerNode);
+         // COMPILER MAGIC : recognize property type - if the accessor-method has a parameter - header type should be copied into the parameter
+
+         SyntaxNode paramNode = node.findChild(SyntaxKey::Parameter);
+         copyHeader(writer, scope, headerNode, paramNode == SyntaxKey::None);
 
          flushMethod(writer, scope, node);
 
+         if (paramNode != SyntaxKey::None) {
+            // COMPILER MAGIC : recognize property type - if the accessor-method has a parameter - header type should be copied into the parameter
+            SyntaxNode targetParamNode = writer.CurrentNode().findChild(SyntaxKey::Parameter);
+            if (!ifTypeRelatedExists(targetParamNode)) {
+               SyntaxTreeWriter paramWriter(targetParamNode);
+
+               copyType(paramWriter, scope, headerNode);
+            }
+         }
+
          writer.closeNode();
          break;
+      }
       default:
          break;
    }

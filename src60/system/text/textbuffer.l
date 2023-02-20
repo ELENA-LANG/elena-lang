@@ -101,7 +101,7 @@ namespace text
          {
             self.reserve(length);
                 
-            s.save(*_length, _buffer, ref length);
+            length := s.save(0, length, _buffer, *_length);
                 
             _length.append(length)
          }

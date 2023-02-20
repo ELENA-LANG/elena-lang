@@ -26,29 +26,29 @@ singleton stringExConvertor
 //      ^ output
 //   }
 
-//   string convert(Enumerator en)
-//   {
-//      auto output := new TextBuilder();
-//      while(en.next())
-//      {
-//         output.write((*en).toString());
-//         output.write:",";
-//      };
-//
-//      int length := output.Length;
-//      if (0 < length)
-//         { output.Length := -1 + length };
-//        
-//      ^ output
-//   }
+   string convert(Enumerator en)
+   {
+      auto output := new TextBuilder();
+      while(en.next())
+      {
+         output.write((*en).toString());
+         output.write:",";
+      };
+
+      int length := output.Length;
+      if (0 < length)
+         { output.Length := -1 + length };
+        
+      ^ output
+   }
 
 //    string convert(Date val) = val.toPrintable();
 //        
 //    string convert(Timespan val) = val.toPrintable();
 
-//    string convert(Enumerable o)
-//        <= convert(o.enumerator());
-//
+    string convert(Enumerable o)
+        <= convert(o.enumerator());
+
 //    string convert(Indexable o)
 //        <= convert(o.indexer());
 

@@ -562,6 +562,9 @@ public singleton stringConvertor
       ^ String.fromByteArray(index, len, buffer);
    }
 
+   string convert(int value)
+      <= convert(value, 10);
+
    string convert(long value, int radix)
    {
       long r := radix;
@@ -753,6 +756,9 @@ public singleton stringConvertor
 
       ^ String.fromByteArray(0, length, buffer);      
    }
+
+   string convert(o)
+      = o.toPrintable();
 }
 
 // --- wideConvertor ---

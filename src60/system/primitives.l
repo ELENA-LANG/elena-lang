@@ -13,7 +13,7 @@ internal singleton PrimitiveOperations
    {
       int j := 0;
       for (int i := 0, i < size, i := i + 1) {
-         char ch := sour[index + 1];   
+         char ch := sour[index + i];
          int chVal := ch.Value;
          int chLen := ch.Length;
          
@@ -462,19 +462,22 @@ internal singleton PrimitiveStringOperations
       ^ -1
    }
 
-   int save(char[] dest, string s, int index, int length)
+   int save(char[] dest, string s, int sourIndex, int sourLength, int destIndex)
    {
       int i := 0;
-      int j := 0;
-      while (i < length) {
-         char ch := s[index + i];
+      int j := destIndex;
+      while (i < sourLength) {
+         char ch := s[sourIndex + i];
 
          dest[j] := ch;
 
          int len := ch.Length;
          i += len;
+         j += 1;
       };
       
+      j := j - destIndex;
+
       ^ j
    }
 
