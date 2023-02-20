@@ -97,6 +97,28 @@ public sealed Array<T> : Indexable<T>
          ^ len
       }
    }
+
+   T[] add(T[] a)
+      <= add(a, a.Length);
+                              
+   T[] add(T[] a, int length)
+   {
+      int length1 := self.Length;
+      int length2 := length;
+        
+      auto retVal := new T[](length1 + length2);
+
+      for (int i:=0, i < length1, i += 1) {
+         retVal[i] := array[i]
+      };
+
+      for (int i:=0, i < length2, i += 1) {
+         retVal[length1 + i] := a[i]
+      };
+            
+      ^ retVal
+   }
+   
 }
 
 // --- Variadic Array template ---

@@ -5,11 +5,7 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * set property : the argument should has type
-
-    * rosetta code examples : arithmmean
-
-    * rosetta code examples : 2
+    * rosetta code examples : arraymode
     * examples : intsum / realsum / words
 
     * mlen opcode : ppc64le, aarch64
