@@ -37,6 +37,14 @@ public template until<expr>(loopBody) : __included(statementTemplates)
    $rep cast bool(expr) ! { loopBody }
 }
 
+public template until<step_expr, cond_expr>(loop_body) : __included(statementTemplates)
+{
+    step_expr;
+    
+    $rep cast bool(cond_expr) ! { loop_body; __ignore_duplicates step_expr }
+}
+
+
 // --- do:until ---
 
 public template do::until(loop_body, cond_expr) : __included(statementTemplates)

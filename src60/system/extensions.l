@@ -131,4 +131,18 @@ public extension stringOp : String
          ^ retVal
       }
    }
+
+   bool isEmpty()
+   {
+      int len := self.Length;
+        
+      ^ len == 0;
+   }
+        
+   bool isNonempty()
+   {
+      int len := self.Length;
+        
+      ^ len != 0;
+   }
 }

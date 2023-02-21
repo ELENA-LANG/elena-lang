@@ -1,5 +1,8 @@
 #new attributesSymbols;
 
+/// modificator:
+#let attributesSymbols["__ignore_duplicates"] :=  80006001h;
+
 /// scope_accessors:
 #let attributesSymbols["get"]         := 80005001h;
 #let attributesSymbols["set"]         := 80005002h;

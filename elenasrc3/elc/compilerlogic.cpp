@@ -749,6 +749,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_SUPERIOR:
          attrs |= ExpressionAttribute::Superior;
          return true;
+      case V_IGNOREDUPLICATE:
+         attrs |= ExpressionAttribute::IgnoreDuplicate;
+         return true;
       default:
          return false;
    }

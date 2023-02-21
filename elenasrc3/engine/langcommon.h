@@ -152,6 +152,9 @@ namespace elena_lang
    constexpr auto V_CATEGORY_MASK         = 0x7FFFFF00u;
    constexpr auto V_CATEGORY_MAX          = 0x0000F000u;
 
+   /// modificator
+   constexpr auto V_IGNOREDUPLICATE       = 0x80006001u;
+
    /// accessors:
    constexpr auto V_GETACCESSOR           = 0x80005001u;
    constexpr auto V_SETACCESSOR           = 0x80005002u;

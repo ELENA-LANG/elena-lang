@@ -1023,7 +1023,7 @@ namespace elena_lang
       void generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField);
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
-      void declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo);
+      bool declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate);
 
       ObjectInfo declareTempStructure(ExprScope& scope, SizeInfo sizeInfo);
 
@@ -1122,7 +1122,8 @@ namespace elena_lang
          ref_t targetRef, ExpressionAttribute attrs);
 
       bool compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, ObjectInfo source);
-      ObjectInfo compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, SyntaxNode roperand);
+      ObjectInfo compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, 
+         SyntaxNode roperand, ExpressionAttribute mode);
 
       ObjectInfo compileMessageOperationR(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, SyntaxNode node);
 
@@ -1137,9 +1138,11 @@ namespace elena_lang
          int operatorId, ref_t expectedRef);
       ObjectInfo compileBoolOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
       ObjectInfo compileIndexerOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef);
-      ObjectInfo compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef);
+      ObjectInfo compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId,
+         ref_t expectedRef, ExpressionAttribute mode);
       ObjectInfo compileSpecialOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef);
-      ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo loperand, SyntaxNode node, SyntaxNode rnode, SyntaxNode r2node, int operatorId);
+      ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo loperand, SyntaxNode node, SyntaxNode rnode,
+         SyntaxNode r2node, int operatorId);
       ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId);
       ObjectInfo compileCatchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
       ObjectInfo compileAltOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
@@ -1175,7 +1178,7 @@ namespace elena_lang
       ObjectInfo compileExternExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
          ExpressionAttribute mode);
       ObjectInfo compileSubCode(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
-         ExpressionAttribute mode);
+         ExpressionAttribute mode, bool withoutNewScope = false);
       ObjectInfo compileRootExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
       ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
       ObjectInfo compileNestedExpression(BuildTreeWriter& writer, InlineClassScope& scope, ExprScope& ownerScope, ExpressionAttribute mode);

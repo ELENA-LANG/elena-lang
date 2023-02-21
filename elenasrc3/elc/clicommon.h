@@ -362,6 +362,7 @@ enum class ExpressionAttribute : pos64_t
    RootSymbol        = 0x00000000800,
    Root              = 0x00000001000,
    CastOp            = 0x00000002000,
+   IgnoreDuplicate   = 0x00000004000,
    RefOp             = 0x00000008000,
    NoPrimitives      = 0x00000010000,
    MssgLiteral       = 0x00000020000,
