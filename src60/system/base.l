@@ -39,3 +39,10 @@ public field rprop<name, T>
    }
 }
 
+public interface<T>
+{
+   T cast() = new T
+   {
+      embeddable dispatch() => self;
+   };
+}

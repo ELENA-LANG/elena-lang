@@ -98,6 +98,12 @@ public extension enumerableOp
    summarize()
       = self.summarize(new Variable());
 
+    seekFor(val)
+        = (x => val.equal(x)).retrieve(cast Enumerator(self.enumerator()));
+
+    bool ifExists(val)
+        = nil != self.seekFor(val);
+
    get FirstMember()
    {
       auto en := cast Enumerator(self.enumerator());

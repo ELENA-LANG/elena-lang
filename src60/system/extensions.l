@@ -10,6 +10,20 @@ public extension objectOp
 
    bool safeEqual(o)
       = self.equal:o \ back:false;
+
+   bool isEmpty()
+   {
+      int len := self.Length;
+        
+      ^ len == 0;
+   }
+        
+   bool isNonempty()
+   {
+      int len := self.Length;
+        
+      ^ len != 0;
+   }
 }
 
 // --- intOp ---
@@ -144,5 +158,22 @@ public extension stringOp : String
       int len := self.Length;
         
       ^ len != 0;
+   }
+}
+
+// --- charOp ---
+
+public extension charOp : char
+{
+   bool isWhitespace()
+   {
+      self =>
+         $9  { ^ true }
+         $32 { ^ true }
+         $10 { ^ true }
+         $13 { ^ true }
+         $12 { ^ true };
+            
+      ^ false
    }
 }
