@@ -59,3 +59,40 @@ public class Summing : BasePattern
    function(param) { _result.append(param) }
 }
 
+// --- Filtering ---
+
+public class Filter : Enumerator
+{
+    Func1      _filter;
+    Enumerator _enumerator;
+
+    constructor new(Func1 selector, Enumerator enumerator)
+    {
+        _filter := selector;
+        _enumerator := enumerator
+    }
+    
+    constructor new(ExtensionMessage extension, Enumerator enumerator)
+    {
+        _filter := (x => extension(x));
+        _enumerator := enumerator
+    }
+    
+    get Value() = *_enumerator;
+    
+    bool next()
+    {
+        while (_enumerator.next())
+        {
+            if (_filter(*_enumerator))
+                { ^ true }
+        };
+        
+        ^ false
+    }
+    
+    reset () => _enumerator;
+    
+    enumerable() => _enumerator;
+}
+

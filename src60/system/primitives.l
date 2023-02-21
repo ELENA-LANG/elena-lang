@@ -407,6 +407,15 @@ internal singleton PrimitiveRealOperations
       decimalPart := decPart;
       exponent := e;
    }
+
+   private hash(real r, ref int retVal) : external(system'core_routines'__realHash);
+
+   int getHashcode(real r)
+   {
+      self.hash(r, ref int retVal);
+
+      ^ retVal
+   }
 }
 
 internal singleton PrimitiveStringOperations
@@ -491,6 +500,15 @@ internal singleton PrimitiveStringOperations
 
          i += 1;
       };
+   }
+
+   private hash(string s, ref int retVal) : external(system'core_routines'__strHash);
+
+   int getHashcode(string s)
+   {
+      self.hash(s, ref int retVal);
+
+      ^ retVal
    }
 }
 

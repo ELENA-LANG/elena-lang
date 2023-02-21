@@ -82,6 +82,9 @@ public extension enumerableOp
    forEach(fn)
       = self.forEach:(n){ fn(n) };
 
+   filterBy(Func1 selector)
+      = Filter.new(selector, cast Enumerator(self.enumerator()));
+
    selectBy(selector)
       = Selector.new(selector, cast Enumerator(self.enumerator()));
 
@@ -95,6 +98,19 @@ public extension enumerableOp
    summarize()
       = self.summarize(new Variable());
 
+   get FirstMember()
+   {
+      auto en := cast Enumerator(self.enumerator());
+
+      if (en.next()) 
+      {
+         ^ *en
+      }
+      else
+      {
+         ^ nil
+      }
+   }
 }
 
 // --- indexableOp ---

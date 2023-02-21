@@ -594,6 +594,25 @@ procedure __intHash (self,n,r)
 
 end
 
+procedure __realHash (self,n,r)
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
+procedure __strHash (self,s,r)
+
+  peek       sp:1
+  load
+  and        n:255 
+  peek       sp:2
+  save
+
+end
+
 procedure __charToInt
 
   peek       sp:1

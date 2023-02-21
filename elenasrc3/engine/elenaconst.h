@@ -140,6 +140,7 @@ namespace elena_lang
    constexpr auto REFER_MESSAGE           = "at";
    constexpr auto SET_REFER_MESSAGE       = "setAt";
    constexpr auto IF_MESSAGE              = "if";
+   constexpr auto IIF_MESSAGE             = "iif";
    constexpr auto EQUAL_MESSAGE           = "equal";
    constexpr auto NOT_MESSAGE             = "Inverted";
    constexpr auto NEGATE_MESSAGE          = "Negative";

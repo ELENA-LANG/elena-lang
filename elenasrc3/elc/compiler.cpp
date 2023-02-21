@@ -6329,13 +6329,18 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    ObjectInfo retVal = {};
    BuildKey   op = BuildKey::None;
 
-   if (rnode.existChild(SyntaxKey::ClosureBlock))
+   ObjectInfo roperand = {};
+   ObjectInfo roperand2 = {};
+   if (rnode.existChild(SyntaxKey::ClosureBlock)) {
       rnode = rnode.findChild(SyntaxKey::ClosureBlock);
-   if (r2node.existChild(SyntaxKey::ClosureBlock))
+
+      roperand = { ObjectKind::Closure, { V_CLOSURE }, 0 };
+   }
+   if (r2node.existChild(SyntaxKey::ClosureBlock)) {
       r2node = r2node.findChild(SyntaxKey::ClosureBlock);
 
-   ObjectInfo roperand = { ObjectKind::Closure, { V_CLOSURE }, 0 };
-   ObjectInfo roperand2 = {};
+      roperand2 = { ObjectKind::Closure, { V_CLOSURE }, 0 };
+   }
 
    size_t     argLen = 2;
    ref_t      arguments[3];
@@ -6343,8 +6348,6 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    arguments[1] = retrieveType(scope, roperand);
 
    if (r2node != SyntaxKey::None) {
-      roperand2 = { ObjectKind::Closure, { V_CLOSURE }, 0 };
-
       argLen++;
       arguments[2] = retrieveType(scope, roperand2);
    }
@@ -6369,9 +6372,19 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
       writer.closeNode();
    }
    else {
-      mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
+      mssg_t message = 0;
+      if (rnode != SyntaxKey::ClosureBlock && r2node != SyntaxKey::None) {
+         message = scope.moduleScope->buildins.iif_message;
 
-      roperand = compileClosure(writer, scope, rnode, EAttr::None);
+         roperand = compileExpression(writer, scope, rnode, 0, EAttr::Parameter);
+         roperand2 = compileExpression(writer, scope, r2node, 0, EAttr::Parameter);
+      }
+      else {
+         message = resolveOperatorMessage(scope.moduleScope, operatorId);
+
+         roperand = compileClosure(writer, scope, rnode, EAttr::None);
+         roperand2 = compileClosure(writer, scope, r2node, EAttr::None);
+      }
 
       ArgumentsInfo messageArguments;
       messageArguments.add(loperand);
@@ -6395,7 +6408,7 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
 {
    SyntaxNode lnode = node.firstChild();
-   SyntaxNode rnode = skipNestedExpression(lnode.nextNode());
+   SyntaxNode rnode = /*skipNestedExpression(*/lnode.nextNode()/*)*/;
    SyntaxNode r2node = {};
    if (operatorId == IF_ELSE_OPERATOR_ID)
       r2node = rnode.nextNode();
@@ -8613,8 +8626,8 @@ void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope&
 
    SyntaxNode bodyNode = node.firstChild(SyntaxKey::ScopeMask);
    switch (bodyNode.key) {
-   case SyntaxKey::Expression:
-      retVal = compileExpression(writer, exprScope, bodyNode, 0, EAttr::None);
+      case SyntaxKey::Expression:
+         retVal = compileExpression(writer, exprScope, bodyNode, 0, EAttr::None);
          break;
       default:
          scope.raiseError(errInvalidOperation, node);
@@ -9309,6 +9322,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.if_message =
       encodeMessage(moduleScope->module->mapAction(IF_MESSAGE, 0, false),
          2, 0);
+   moduleScope->buildins.iif_message =
+      encodeMessage(moduleScope->module->mapAction(IIF_MESSAGE, 0, false),
+         3, 0);
    moduleScope->buildins.equal_message =
       encodeMessage(moduleScope->module->mapAction(EQUAL_MESSAGE, 0, false),
          2, 0);

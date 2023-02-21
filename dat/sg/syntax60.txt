@@ -318,6 +318,7 @@ EXPRESSION ::=
 			| eps ^LESS_OPERATION }
 		| TRY ^OBJECT TRY_R
 		| ISNIL ^OBJECT SINGLE_EXPRESSION ^ISNIL_OPERATION
+		| IF ^OBJECT IF_R
 		| NESTED_EXPRESSION ^NESTED L3_OP*
 		| eps ^OBJECT }
 	| { string | integer | hexinteger | long | real | character | wide } { 

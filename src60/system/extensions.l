@@ -62,6 +62,17 @@ public extension longOp : LongNumber
 
 public extension realOp : RealNumber
 {
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int retVal := PrimitiveRealOperations.getHashcode(self);
+
+         ^ retVal
+      }
+   }
+
    get real Integer()
    {
       PrimitiveRealOperations.trunc(self, ref real retVal);
@@ -108,5 +119,16 @@ public extension stringOp : String
       {
          ^ emptyString
       }        
-   }           
+   }
+
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int retVal := PrimitiveStringOperations.getHashcode(self);
+
+         ^ retVal
+      }
+   }
 }

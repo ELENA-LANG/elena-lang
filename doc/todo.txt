@@ -5,9 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * embeddable interface : byRefHandler
-
-    * rosetta code examples : arraymode
     * examples : intsum / realsum / words
 
     * mlen opcode : ppc64le, aarch64
@@ -59,6 +56,8 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * implement correct string hash function
+    * implement iif operator : a ? b : c
     * show the signature for the typecast message if possible
     * warn on resending to itself (e.g. for constructor)
     * allocate constant array directly if possible

@@ -2045,11 +2045,11 @@ public sealed class KeyValue
    }
 
    bool equal(o)
-      => object;
+      => value;
 
    string toPrintable()
-      => object;
+      => value;
 
    dispatch() : info("Redirects the incoming messages to the object")
-     => object;
+     => value;
 }
