@@ -117,3 +117,13 @@ public class OutOfRangeException : Exception
    constructor new(string message)
       <= super new(message);
 }
+
+// --- AbortException ---
+
+public class AbortException : Exception,
+         info("An abort exception ")
+{
+   /// Creates the exception
+   constructor new()
+      <= super new("The process terminated");
+}

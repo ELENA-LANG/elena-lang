@@ -1,0 +1,16 @@
+<configuration>
+  <project>
+     <namespace>helloworld</namespace>
+     <template>console</template>
+     <executable>realsum</executable>
+  </project>
+  <files>
+     <module>
+        <include>sum.l</include>
+     </module>
+  </files>
+  <forwards>
+     <forward key="prompt">sum'RealSamplePrompt</forward>
+     <forward key="number">extensions'Real</forward>
+  </forwards>
+</configuration>
