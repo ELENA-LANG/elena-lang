@@ -720,13 +720,13 @@ inline %08Fh
 
   mov  rax, [r10]
   mov  ecx, page_ceil
-  shl  eax, 2
+  shl  eax, 3
   add  ecx, eax
   and  ecx, page_mask 
   call %GC_ALLOC
 
   mov  rcx, [r10]
-  shl  ecx, 2
+  shl  ecx, 3
 
   mov  rax, __ptr64_1
   mov  [rbx - elSizeOffset], rcx

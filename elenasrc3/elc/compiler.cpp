@@ -3755,6 +3755,7 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
       case V_MESSAGE:
          return scope.moduleScope->buildins.messageReference;
       case V_EXTMESSAGE64:
+      case V_EXTMESSAGE128:
          return scope.moduleScope->buildins.extMessageReference;
       case V_FLAG:
          return scope.moduleScope->branchingInfo.typeRef;
