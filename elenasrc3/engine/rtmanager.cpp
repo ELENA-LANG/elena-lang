@@ -49,7 +49,7 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
 
          previous = current;
          index++;
-         size -= 4;
+         size -= sizeof(current);
       }
    }
 

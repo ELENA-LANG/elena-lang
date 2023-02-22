@@ -5,9 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * x86-64 call stack
-    * win x86-64 : callstack
-
     * mlen opcode : ppc64le, aarch64
     * dalloc opcode : ppc64le, aarch64
     * xassignsp opcode : ppc64le, aarch64
@@ -16,7 +13,7 @@ In development:
     * orn dispatch opcode : ppc64le, aarch64
     * variadic dispatch opcode : ppc64le, aarch64
 
-    * test call stack : win x86_64, linux i386, linux amd64, linux ppc64le, linux aarch64
+    * test call stack : linux i386, linux amd64, linux ppc64le, linux aarch64
     * testing all rosetta examples : win x86, win x86_64, linux i386, linux amd64, linux ppc64le, linux aarch64
     * testing all examples : win x86, win x86_64, linux i386, linux amd64, linux ppc64le, linux aarch64
 
