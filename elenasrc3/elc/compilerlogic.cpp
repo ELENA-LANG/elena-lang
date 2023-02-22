@@ -405,6 +405,8 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
       case V_INT32:
          return source.typeRef == V_INT8 || source.typeRef == V_INT16
             || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32;
+      case V_INT64:
+         return source.typeRef == V_PTR64;
       case V_FLAG:
          return isCompatible(scope, { scope.branchingInfo.typeRef }, source, true);
       case V_WORD32:
@@ -1216,6 +1218,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
    switch (reference)
    {
       case V_INT64:
+      case V_PTR64:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugQWORD | elStructureRole | elReadOnlyRole;
          info.size = 8;
@@ -1226,6 +1229,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.size = 8;
          break;
       case V_INT32:
+      case V_PTR32:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
          info.size = 4;

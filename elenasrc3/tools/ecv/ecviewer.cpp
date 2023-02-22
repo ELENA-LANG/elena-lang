@@ -676,6 +676,9 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
             case V_PTR32:
                line.append(" of __ptr[4]");
                break;
+            case V_PTR64:
+               line.append(" of __ptr[8]");
+               break;
             case V_INT8:
                line.append(" of __int[1]");
                break;

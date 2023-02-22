@@ -760,6 +760,9 @@ end
 
 procedure __loadCallStack (self, buffer, length, retVal)
 
+  xflush     sp:0
+  xflush     sp:1
+
   open       (3),[b],[l,ptr]
 
   peek       fp:length

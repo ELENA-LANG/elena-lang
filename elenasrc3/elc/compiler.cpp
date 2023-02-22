@@ -4956,6 +4956,19 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
 
    writer.appendNode(BuildKey::Allocating, align(count, scope.moduleScope->stackAlingment));
 
+   ref_t intArgType = 0;
+   switch (scope.moduleScope->ptrSize) {
+      case 4:
+         intArgType = V_INT32;
+         break;
+      case 8:
+         intArgType = V_INT64;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
    for (pos_t i = count; i > 0; i--) {
       ObjectInfo arg = boxArgumentLocally(writer, scope, arguments[i - 1], true);
 
@@ -4965,8 +4978,14 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
             writer.appendNode(BuildKey::SavingNInStack, i - 1);
             break;
          default:
-            if (_logic->isCompatible(*scope.moduleScope, { V_INT32 },
+            if (_logic->isCompatible(*scope.moduleScope, { intArgType },
                arg.typeInfo, true)) 
+            {
+               writer.appendNode(BuildKey::SavingNInStack, i - 1);
+            }
+            // NOTE : it is a duplicate for 32 bit target, but is required for 64 bit one
+            else if (_logic->isCompatible(*scope.moduleScope, { V_INT32 },
+               arg.typeInfo, true))
             {
                writer.appendNode(BuildKey::SavingNInStack, i - 1);
             }
@@ -5188,6 +5207,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
 
       switch (op) {
          case BuildKey::BinaryArraySOp:
+         case BuildKey::BinaryArrayOp:
             writer.appendNode(BuildKey::Size, _logic->defineStructSize(*scope.moduleScope, loperand.typeInfo.elementRef).size);
             break;
          case BuildKey::BoolSOp:
