@@ -3167,6 +3167,15 @@ void Compiler :: loadExtensions(NamespaceScope& ns, bool internalOne)
    importExtensions(ns, *fullName);
 }
 
+void Compiler :: copyParentNamespaceExtensions(NamespaceScope& source, NamespaceScope& target)
+{
+   for (auto it = source.extensions.start(); !it.eof(); it++) {
+      auto ext = *it;
+
+      target.extensions.add(it.key(), { ext.value1, ext.value2 });
+   }
+}
+
 void Compiler :: declareNamespace(NamespaceScope& ns, SyntaxNode node, bool ignoreImport, bool ignoreExtensions)
 {
    if (!ignoreExtensions) {
@@ -6355,6 +6364,10 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
       roperand = { ObjectKind::Closure, { V_CLOSURE }, 0 };
    }
+   else if (rnode == SyntaxKey::SwitchCode) {
+      roperand = { ObjectKind::Closure, { V_CLOSURE }, 0 };
+   }
+
    if (r2node.existChild(SyntaxKey::ClosureBlock)) {
       r2node = r2node.findChild(SyntaxKey::ClosureBlock);
 
@@ -9179,6 +9192,7 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
          {
             NamespaceScope namespaceScope(&ns);
             declareNamespace(namespaceScope, current, false, false);
+            copyParentNamespaceExtensions(ns, namespaceScope);
 
             compileNamespace(writer, namespaceScope, current);
             break;

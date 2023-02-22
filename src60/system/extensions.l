@@ -163,7 +163,7 @@ public extension stringOp : String
 
 // --- charOp ---
 
-public extension charOp : char
+public extension charOp : CharValue
 {
    bool isWhitespace()
    {

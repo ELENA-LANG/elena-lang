@@ -1057,6 +1057,8 @@ namespace elena_lang
       void declareMembers(NamespaceScope& ns, SyntaxNode node);
       void declareMemberIdentifiers(NamespaceScope& ns, SyntaxNode node);
 
+      void copyParentNamespaceExtensions(NamespaceScope& source, NamespaceScope& target);
+
       void declareModuleIdentifiers(ModuleScopeBase* moduleScope, SyntaxNode node);
       void declareModule(ModuleScopeBase* moduleScope, SyntaxNode node);
 

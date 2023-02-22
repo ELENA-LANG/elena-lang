@@ -1,6 +1,14 @@
 import system;
 import system'collections;
 
+// === actions ===
+
+public ifOrdered
+    = (f,l => f < l);
+
+public ifDecrescent
+    = (f,l => f > l);
+
 public extension stringListOp : String
 {
    Array split()
@@ -128,4 +136,6 @@ public extension indexableOp
       QuickSorting.sort(new IndexerSortingAgent(self), compareFunc);
    }
 
+   ascendant()
+      = self.clone().sort(ifOrdered);
 }
