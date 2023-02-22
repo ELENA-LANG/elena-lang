@@ -49,6 +49,7 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
 #endif
 
 static ELENAVMMachine* machine = nullptr;
+static SystemEnv* systemEnv = nullptr;
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
@@ -133,6 +134,8 @@ void printError(int errCode, ustr_t arg)
 
 EXTERN_DLL_EXPORT void InitializeVMSTLA(SystemEnv* env, void* tape, void* criricalHandler)
 {
+   systemEnv = env;
+
 #ifdef DEBUG_OUTPUT
    printf("InitializeVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);
 
@@ -166,18 +169,54 @@ EXTERN_DLL_EXPORT void InitializeVMSTLA(SystemEnv* env, void* tape, void* criric
 
 EXTERN_DLL_EXPORT void ExitLA(int retVal)
 {
+   if (retVal) {
+      printf("Aborted:%x\n", retVal);
+      fflush(stdout);
+   }
+
+   machine->Exit(retVal);
 }
 
 EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size)
 {
-   // !! temporal
-   return nullptr;
+   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size);
 }
 
 EXTERN_DLL_EXPORT size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
 {
-   // !! temporal
-   return 0;
+   return machine->loadMessageName((mssg_t)message, buffer, length);
+}
+
+EXTERN_DLL_EXPORT size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length)
+{
+   return __routineProvider.LoadCallStack(framePtr, list, length);
+}
+
+EXTERN_DLL_EXPORT size_t LoadAddressInfoLM(size_t retPoint, char* lineInfo, size_t length)
+{
+   return machine->loadAddressInfo(retPoint, lineInfo, length);
+}
+
+EXTERN_DLL_EXPORT addr_t LoadSymbolByStringLA(const char* symbolName)
+{
+   return machine->loadSymbol(symbolName);
+}
+
+EXTERN_DLL_EXPORT addr_t LoadClassByStringLA(const char* symbolName)
+{
+   return machine->loadClassReference(symbolName);
+}
+
+EXTERN_DLL_EXPORT addr_t LoadSymbolByString2LA(const char* ns, const char* symbolName)
+{
+   ReferenceName fullName(ns, symbolName);
+
+   return machine->loadSymbol(*fullName);
+}
+
+EXTERN_DLL_EXPORT mssg_t LoadMessageLA(const char* messageName)
+{
+   return machine->loadMessage(messageName);
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,

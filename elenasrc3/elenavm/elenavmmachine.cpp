@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM declaration
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -304,3 +304,53 @@ addr_t ELENAVMMachine :: resolveExternal(ustr_t referenceName)
 
    return resolveExternal(*dll, functionName);
 }
+
+void ELENAVMMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
+{
+   
+}
+
+size_t ELENAVMMachine :: loadMessageName(mssg_t message, char* buffer, size_t length)
+{
+   //ref_t actionRef, flags;
+   //pos_t argCount = 0;
+   //decodeMessage(message, actionRef, argCount, flags);
+
+   //IdentifierString actionName;
+   //loadSubjectName(actionName, actionRef);
+
+   //IdentifierString messageName;
+   //ByteCodeUtil::formatMessageName(messageName, nullptr, *actionName, nullptr, 0, argCount, flags);
+
+   //StrConvertor::copy(buffer, *messageName, messageName.length(), length);
+
+   //return length;
+
+   // !! temporal
+   return 0;
+}
+
+size_t ELENAVMMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length)
+{
+   // !! temporal
+   return 0;
+}
+
+addr_t ELENAVMMachine::loadClassReference(ustr_t name)
+{
+   // !! temporal
+   return 0;
+}
+
+mssg_t ELENAVMMachine::loadMessage(ustr_t messageName)
+{
+   // !! temporal
+   return 0;
+}
+
+addr_t ELENAVMMachine::loadSymbol(ustr_t name)
+{
+   // !! temporal
+   return 0;
+}
+

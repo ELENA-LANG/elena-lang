@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM declaration
 //
-//                                              (C)2022, by Aleksey Rakov
+//                                             (C)2022-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENAVMMACHINE_H
@@ -54,10 +54,20 @@ namespace elena_lang
 
       AddressMap::Iterator externals() override;
 
+      void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
+
    public:
       addr_t resolveExternal(ustr_t reference) override;
 
       void startSTA(SystemEnv* env, void* tape, void* criricalHandler);
+
+      size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
+      size_t loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length);
+
+      addr_t loadSymbol(ustr_t name);
+      addr_t loadClassReference(ustr_t name);
+
+      mssg_t loadMessage(ustr_t messageName);
 
       void Exit(int exitCode);
 
