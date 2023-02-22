@@ -356,9 +356,11 @@ bool Project :: loadProject(path_t path)
    }
 }
 
-void Project::setProjectPath(path_t path)
+void Project :: setBasePath(path_t path)
 {
    _projectPath.copy(path);
+
+   addPathSetting(ProjectOption::OutputPath, path);
 }
 
 void Project :: prepare()

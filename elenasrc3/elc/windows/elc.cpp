@@ -178,7 +178,7 @@ int main()
                   break;
                }
                case 'p':
-                  project.setProjectPath(argv[i] + 2);
+                  project.setBasePath(argv[i] + 2);
                   break;
                case 'w':
                   if (argv[i][2] == '0') {

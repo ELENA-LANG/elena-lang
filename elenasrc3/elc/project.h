@@ -70,7 +70,8 @@ namespace elena_lang
       void addBoolSetting(ProjectOption option, bool value);
       void addIntSetting(ProjectOption option, int value);
 
-      void setProjectPath(path_t path);
+      // NOTE : set the project and output path for the single file project
+      void setBasePath(path_t path);
 
       void forEachForward(void* arg, void(* feedback)(void* arg, ustr_t key, ustr_t value)) override;
 

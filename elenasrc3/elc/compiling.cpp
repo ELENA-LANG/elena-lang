@@ -362,7 +362,7 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList, moduleScope.tapeOptMode);
 
    if (savingMode) {
-      _libraryProvider.saveModule(moduleScope.module);
+      _libraryProvider.saveModule( moduleScope.module);
       _libraryProvider.saveDebugModule(moduleScope.debugModule);
    }
 }
@@ -412,7 +412,7 @@ void CompilingProcess :: configurate(Project& project)
 
    project.initLoader(_libraryProvider);
 
-   _libraryProvider.setOutputPath(project.PathSetting(ProjectOption::OutputPath));
+   _libraryProvider.setOutputPath(project.PathSetting(ProjectOption::ProjectPath));
    _libraryProvider.setNamespace(project.Namespace());
    _libraryProvider.addPackage(project.Namespace(), project.PathSetting(ProjectOption::OutputPath));
 

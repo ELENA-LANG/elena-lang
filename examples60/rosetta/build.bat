@@ -1,4 +1,4 @@
-..\..\bin\elena-cli -paccermann accermann.l
+..\..\bin\elena-cli -packermann ackermann.l
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
