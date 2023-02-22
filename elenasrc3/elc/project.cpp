@@ -373,6 +373,13 @@ void Project :: prepare()
    if (_defaultNs.empty())
       _defaultNs.copy(*_projectName);
 
+   path_t outputPath = PathSetting(ProjectOption::OutputPath);
+   if (emptystr(outputPath)) {
+      PathString outputPath(_projectPath);
+
+      addPathSetting(ProjectOption::OutputPath, *outputPath);
+   }
+
    path_t target = PathSetting(ProjectOption::TargetPath);
    if (target.empty()) {
       PathString path(*_projectPath, _projectName.str());
