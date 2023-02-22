@@ -70,6 +70,8 @@ namespace elena_lang
       void addBoolSetting(ProjectOption option, bool value);
       void addIntSetting(ProjectOption option, int value);
 
+      void setProjectPath(path_t path);
+
       void forEachForward(void* arg, void(* feedback)(void* arg, ustr_t key, ustr_t value)) override;
 
       void addSource(ustr_t ns, path_t path);

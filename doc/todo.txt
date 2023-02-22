@@ -84,7 +84,6 @@ Backlog:
     * call semidirect method
     * external inline template should be private / internal. Currently it is not possible because
       it cannot be resolved by template generation
-    * elena-cli : specify the output path
     * elena : nested classes should not be loadable at runtime
     * system'MessageName : port / test functionality
     * global attributes : maybe it should contain the string reference, instead of the string itself

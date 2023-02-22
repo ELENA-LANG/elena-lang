@@ -177,6 +177,9 @@ int main()
                   project.loadConfigByName(*appPath, *configName, true);
                   break;
                }
+               case 'p':
+                  project.setProjectPath(argv[i] + 2);
+                  break;
                case 'w':
                   if (argv[i][2] == '0') {
                      errorProcessor.setWarningLevel(WarningLevel::Level0);
@@ -210,7 +213,6 @@ int main()
          else {
             FileNameString fileName(argv[i]);
             IdentifierString ns(*fileName);
-
             project.addSource(*ns, argv[i]);
          }
       }
