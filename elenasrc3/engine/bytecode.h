@@ -250,9 +250,25 @@ namespace elena_lang
          else write(ByteCode::Label, labels.pop());
       }
 
+      // to resolve possible conflicts the predefined labels should be negative
+      void setPredefinedLabel(int label)
+      {
+         write(ByteCode::Label, label);
+      }
+
       void releaseLabel()
       {
          labels.pop();
+      }
+
+      int exchangeFirstsLabel(int newLabel)
+      {
+         auto it = labels.end();
+
+         int oldLabel = *it;
+         *it = newLabel;
+
+         return oldLabel;
       }
 
       void write(ByteCode code);

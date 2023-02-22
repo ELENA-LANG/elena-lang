@@ -146,7 +146,7 @@ void directCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::CallMR, node.arg.reference, targetRef | mskVMTRef);
 }
 
-void exit(CommandTape& tape, BuildNode& node, TapeScope&)
+void exit(CommandTape& tape, BuildNode& node, TapeScope& scope)
 {
    tape.write(ByteCode::Quit);
 }
@@ -1566,10 +1566,13 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
 void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
    ReferenceMap& paths, bool tapeOptMode)
 {
-   tape.newLabel();
-   tape.newLabel();
+   int retLabel = tape.newLabel();                 // declare ret-end-label
+   tape.newLabel();                                // declare end-label  
+   tape.newLabel();                                // declare alternative-label
 
    tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
+
+   retLabel = tape.exchangeFirstsLabel(retLabel);
 
    BuildNode tryNode = node.findChild(BuildKey::Tape);
    saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
@@ -1579,6 +1582,16 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
 
    // jump
    tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+
+   // === exit redirect block ===
+   // restore the original ret label and return the overridden one
+   retLabel = tape.exchangeFirstsLabel(retLabel);
+   // ret-end-label:
+   tape.setPredefinedLabel(retLabel);
+   // unhook
+   tape.write(ByteCode::Unhook);
+   tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
+   // ===========================
 
    // catchLabel:
    tape.setLabel();
@@ -1604,6 +1617,8 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
 
    // eos:
    tape.setLabel();
+
+   tape.releaseLabel(); // release ret-end-label
 }
 
 void ByteCodeWriter :: saveSwitchOption(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
