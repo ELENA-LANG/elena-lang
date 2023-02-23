@@ -87,7 +87,9 @@
 		<Unit filename="../../engine/linux/lnxroutines.cpp" />
 		<Unit filename="../elenartmachine.cpp" />
 		<Unit filename="../elenartmachine.h" />
+		<Unit filename="../linux/elenart.h" />
 		<Unit filename="../linux/main.cpp" />
+		<Unit filename="../rtcommon.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

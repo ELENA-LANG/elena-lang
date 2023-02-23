@@ -10,11 +10,15 @@
 #include "elenamachine.h"
 
 #if __GNUG__
+
  #define DLL_PUBLIC __attribute__ ((visibility ("default")))
  #define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+
 #else
+
  #define DLL_PUBLIC
  #define DLL_LOCAL
+
 #endif
 
 extern "C"
