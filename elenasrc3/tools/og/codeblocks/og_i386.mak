@@ -28,7 +28,7 @@ OBJDIR_RELEASE = ../../../temp/sg-cli/
 DEP_RELEASE = 
 OUT_RELEASE = ../../../../bin/sg-cli
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/parsertable.o $(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/og.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/og.o
 
 
 all: release
@@ -57,11 +57,11 @@ $(OBJDIR_RELEASE)/__/__/__/common/files.o: ../../../common/files.cpp
 $(OBJDIR_RELEASE)/__/__/__/common/ustring.o: ../../../common/ustring.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/ustring.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o
 
-$(OBJDIR_RELEASE)/__/__/__/engine/parsertable.o: ../../../engine/parsertable.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/parsertable.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/parsertable.o
-
 $(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o: ../../../engine/scriptreader.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/scriptreader.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o
+
+$(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o: ../../../engine/bytecode.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/bytecode.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o
 
 $(OBJDIR_RELEASE)/__/og.o  : ../og.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../og.cpp -o $(OBJDIR_RELEASE)/__/og.o
