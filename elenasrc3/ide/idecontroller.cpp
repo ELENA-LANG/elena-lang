@@ -56,8 +56,11 @@ bool SourceViewController :: openSource(TextViewModelBase* model, ustr_t caption
       if (empty)
          status |= FRAME_VISIBILITY_CHANGED;
 
-      if (autoSelect)
-         selectDocument(model, caption, status);
+      if (autoSelect) {
+         int index = model->getDocumentIndex(caption);
+
+         selectDocument(model, index, status);
+      }
 
       return true;
    }
@@ -69,30 +72,31 @@ void SourceViewController :: renameSource(TextViewModelBase* model, ustr_t oldNa
    model->renameDocumentView(oldName, newName, newSourcePath);
 }
 
-void SourceViewController :: closeSource(TextViewModelBase* model, ustr_t name, bool autoSelect, NotificationStatus& status)
+void SourceViewController :: closeSource(TextViewModelBase* model, int index, bool autoSelect, NotificationStatus& status)
 {
-   int index = model->getDocumentIndex(name);
-   if (index != -1) {
+   if (index > 0) {
       int count = model->getDocumentCount();
 
-      closeDocument(model, name, status);
+      closeDocument(model, index, status);
 
       if (autoSelect && !model->empty) {
          if (index == count) {
-            selectDocument(model, model->getDocumentName(count), status);
+            selectDocument(model, count - 1, status);
          }
-         else selectDocument(model, model->getDocumentName(index), status);
+         else selectDocument(model, index, status);
       }
-      else if (count == 1) {
-         status |= FRAME_VISIBILITY_CHANGED;
-      }
+
+      status |= IDE_LAYOUT_CHANGED;
+      status |= FRAME_VISIBILITY_CHANGED;
    }
 }
 
 void SourceViewController :: saveSource(TextViewModelBase* model, ustr_t name)
 {
-   auto docInfo = model->getDocument(name);
-   path_t path = model->getDocumentPath(name);
+   int index = model->getDocumentIndex(name);
+
+   auto docInfo = model->getDocument(index);
+   path_t path = model->getDocumentPath(index);
 
    if (docInfo) {
       docInfo->save(path);
@@ -275,8 +279,9 @@ void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sour
 {
    auto currentDoc = sourceModel.DocView();
    if (currentDoc != nullptr) {
-      ustr_t currentSource = sourceModel.getDocumentName(-1);
-      path_t currentPath = sourceModel.getDocumentPath(currentSource);
+      int index = sourceModel.getCurrentIndex();
+      ustr_t currentSource = sourceModel.getDocumentName(index);
+      path_t currentPath = sourceModel.getDocumentPath(index);
 
       ReferenceName ns;
       currentPath = retrieveSourceName(&model, currentPath, ns);
@@ -605,8 +610,10 @@ bool IDEController :: openFile(IDEModel* model, path_t sourceFile, NotificationS
 bool IDEController :: openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile, NotificationStatus& status)
 {
    ustr_t sourceName = model->getDocumentNameByPath(sourceFile);
-   if (!sourceName.empty()) {
-      return sourceController.selectDocument(model, sourceName, status);
+   int index = sourceName.empty() ? 0 : model->getDocumentIndex(sourceName);
+
+   if (index > 0) {
+      return sourceController.selectDocument(model, index, status);
    }
    else {
       ReferenceName sourceNameStr;
@@ -753,15 +760,15 @@ bool IDEController :: doCloseProject(DialogBase& dialog, IDEModel* model)
    else return false;
 }
 
-bool IDEController :: closeFile(DialogBase& dialog, IDEModel* model, ustr_t current, NotificationStatus& status)
+bool IDEController :: closeFile(DialogBase& dialog, IDEModel* model, int index, NotificationStatus& status)
 {
-   auto docView = model->sourceViewModel.DocView();
+   auto docView = model->sourceViewModel.getDocument(index);
    if (docView->isUnnamed()) {
       if (!doSaveFile(dialog, model, false, true))
          return false;
    }
    else if (docView->isModified()) {
-      path_t path = model->sourceViewModel.getDocumentPath(current);
+      path_t path = model->sourceViewModel.getDocumentPath(index);
 
       auto result = dialog.question(
          QUESTION_SAVE_FILECHANGES, path);
@@ -775,7 +782,7 @@ bool IDEController :: closeFile(DialogBase& dialog, IDEModel* model, ustr_t curr
       }
    }
 
-   sourceController.closeSource(&model->sourceViewModel, current, true, status);
+   sourceController.closeSource(&model->sourceViewModel, index, true, status);
 
    return true;
 }
@@ -786,10 +793,13 @@ bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
    if (docView) {
       NotificationStatus status = NONE_CHANGED;
 
-      bool retVal = closeFile(dialog, model, model->sourceViewModel.getDocumentName(-1), status);
+      int index = model->sourceViewModel.getCurrentIndex();
+      if (index > 0) {
+         bool retVal = closeFile(dialog, model, index, status);
 
-      if (status != NONE_CHANGED)
-         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+         if (status != NONE_CHANGED)
+            _notifier->notify(NOTIFY_IDE_CHANGE, status);
+      }
    }
    return false;
 }
@@ -797,9 +807,7 @@ bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
 bool IDEController :: closeAll(DialogBase& dialog, IDEModel* model, NotificationStatus& status)
 {
    while (model->sourceViewModel.getDocumentCount() > 0) {
-      ustr_t current = model->sourceViewModel.getDocumentName(1);
-
-      if (!closeFile(dialog, model, current, status))
+      if (!closeFile(dialog, model, 1, status))
          return false;
    }
 

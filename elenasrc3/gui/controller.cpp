@@ -44,7 +44,7 @@ void TextViewController :: selectNextDocument(TextViewModelBase* model)
    }
    else currentIndex++;
 
-   model->selectDocumentViewByIndex(currentIndex);
+   model->selectDocumentView(currentIndex);
 }
 
 void TextViewController :: selectPreviousDocument(TextViewModelBase* model)
@@ -55,12 +55,12 @@ void TextViewController :: selectPreviousDocument(TextViewModelBase* model)
    }
    else currentIndex--;
 
-   model->selectDocumentViewByIndex(currentIndex);
+   model->selectDocumentView(currentIndex);
 }
 
-bool TextViewController :: selectDocument(TextViewModelBase* model, ustr_t name, NotificationStatus& status)
+bool TextViewController :: selectDocument(TextViewModelBase* model, int index, NotificationStatus& status)
 {
-   if (model->selectDocumentView(name)) {
+   if (model->selectDocumentView(index)) {
       status |= FRAME_CHANGED;
 
       return true;
@@ -68,9 +68,9 @@ bool TextViewController :: selectDocument(TextViewModelBase* model, ustr_t name,
    return false;
 }
 
-void TextViewController :: closeDocument(TextViewModelBase* model, ustr_t name, NotificationStatus& status)
+void TextViewController :: closeDocument(TextViewModelBase* model, int index, NotificationStatus& status)
 {
-   if (model->closeDocumentView(name))
+   if (model->closeDocumentView(index))
       status |= FRAME_CHANGED;
 }
 

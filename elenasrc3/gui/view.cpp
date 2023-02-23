@@ -31,7 +31,7 @@ int TextViewModel :: getCurrentIndex()
          return index;
    }
 
-   return -1;
+   return 0;
 }
 
 int TextViewModel :: getDocumentIndex(ustr_t name)
@@ -183,11 +183,10 @@ void TextViewModel :: renameDocumentView(ustr_t oldName, ustr_t newName, path_t 
    //onDocumentRename(index);
 }
 
-bool TextViewModel :: closeDocumentView(ustr_t name)
+bool TextViewModel :: closeDocumentView(int index)
 {
    bool closed = false;
-   int index = getDocumentIndex(name);
-   if (index >= 0) {
+   if (index > 0) {
       beforeDocumentClose(index);
 
       auto info = _documents.get(index);
@@ -214,32 +213,24 @@ void TextViewModel :: clearDocumentView()
    _currentView = nullptr;
 }
 
-bool TextViewModel :: selectDocumentViewByIndex(int index)
+bool TextViewModel :: selectDocumentView(int index)
 {
-   ustr_t name = getDocumentName(index);
+   if (_documents.count() == 0)
+      return false;
 
-   return selectDocumentView(name);
-}
+   if (index > _documents.count())
+      index = _documents.count();
 
-bool TextViewModel :: selectDocumentView(ustr_t name)
-{
-   int index = 1;
    bool selected = false;
-   for (auto it = _documents.start(); !it.eof(); ++it) {
-      if ((*it)->name.compare(name)) {
-         beforeDocumentSelect(index);
 
-         _currentView = (*it)->documentView;
-         selected = true;
+   auto scope = _documents.get(index);
+   if (scope->documentView) {
+      _currentView = scope->documentView;
 
-         onDocumentSelect(index);
-         break;
-      }
+      selected = true;
 
-      index++;
+      onDocumentSelect(index);
    }
-
-   //afterDocumentSelect(index);
 
    return selected;
 }
@@ -267,26 +258,15 @@ ustr_t TextViewModel :: getDocumentNameByPath(path_t path)
    return info ? info->name : nullptr;
 }
 
-DocumentView* TextViewModel :: getDocument(ustr_t name)
-{
-   int index = getDocumentIndex(name);
-
-   auto info = _documents.get(index);
-
-   return info ? info->documentView : nullptr;
-}
-
-DocumentView* TextViewModel :: getDocumentByIndex(int index)
+DocumentView* TextViewModel :: getDocument(int index)
 {
    auto info = _documents.get(index);
 
    return info ? info->documentView : nullptr;
 }
 
-path_t TextViewModel :: getDocumentPath(ustr_t name)
+path_t TextViewModel :: getDocumentPath(int index)
 {
-   int index = getDocumentIndex(name);
-
    auto info = _documents.get(index);
 
    return info ? info->path : nullptr;

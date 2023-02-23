@@ -7,6 +7,7 @@ In development:
     === Iteration 13 ===
     * fix arithmeval
 
+    * test nil reference excepption : linux i386, linux amd64, linux ppc64le, linux aarch64
     * test call stack : linux i386, linux amd64, linux ppc64le, linux aarch64
     * testing all rosetta examples : win x86_64, linux i386, linux amd64, linux ppc64le, linux aarch64
     * testing all examples : linux i386, linux amd64, linux ppc64le, linux aarch64
@@ -23,7 +24,6 @@ In development:
     * variadic dispatch opcode : ppc64le, aarch64
 
     * ide : open file
-    * ide : fix closing several tabs (starting from the last one)
     * ide : change status to ready when writing / selecting files
     * ide - close all / close all but active
     * ldoc : recognize template based type - for the method output

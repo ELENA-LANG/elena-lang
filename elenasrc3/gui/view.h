@@ -47,9 +47,6 @@ namespace elena_lang
       TextViewListeners _listeners;
       DocumentNotifiers _docListeners;
 
-      int getCurrentIndex();
-      int getDocumentIndex(ustr_t name);
-
       void onDocumentNew(int index);
       void onDocumentSelect(int index);
       //void onDocumentRename(int index);
@@ -68,18 +65,19 @@ namespace elena_lang
       void addDocumentView(ustr_t name, Text* text, path_t path) override;
       void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) override;
 
+      int getCurrentIndex();
+      int getDocumentIndex(ustr_t name) override;
+
       ustr_t getDocumentName(int index) override;
       ustr_t getDocumentNameByPath(path_t path) override;
 
-      DocumentView* getDocumentByIndex(int index) override;
-      DocumentView* getDocument(ustr_t name) override;
-      path_t getDocumentPath(ustr_t name) override;
+      DocumentView* getDocument(int index) override;
+      path_t getDocumentPath(int index) override;
 
       void clearDocumentView() override;
-      bool selectDocumentView(ustr_t name) override;
-      bool selectDocumentViewByIndex(int index) override;
+      bool selectDocumentView(int index) override;
 
-      bool closeDocumentView(ustr_t name) override;
+      bool closeDocumentView(int index) override;
 
       pos_t getDocumentCount() override
       {

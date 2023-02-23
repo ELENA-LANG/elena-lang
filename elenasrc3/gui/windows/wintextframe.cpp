@@ -71,7 +71,7 @@ void TextViewFrame :: onSelChanged()
 {
    int index = getCurrentIndex();
    if (index >= 0) {
-      _model->selectDocumentViewByIndex(index + 1);
+      _model->selectDocumentView(index + 1);
 
       if (_selNotificationId)
          _notifier->notifySelection(_selNotificationId, index);

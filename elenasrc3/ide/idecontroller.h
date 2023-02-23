@@ -21,7 +21,7 @@ namespace elena_lang
       void newSource(TextViewModelBase* model, ustr_t name, bool autoSelect);
       bool openSource(TextViewModelBase* model, ustr_t name, path_t sourcePath,
          FileEncoding encoding, bool autoSelect, NotificationStatus& status);
-      void closeSource(TextViewModelBase* model, ustr_t name, bool autoSelect, NotificationStatus& status);
+      void closeSource(TextViewModelBase* model, int index, bool autoSelect, NotificationStatus& status);
 
       void renameSource(TextViewModelBase* model, ustr_t oldName, ustr_t newName, path_t newSourcePath);
 
@@ -133,7 +133,7 @@ namespace elena_lang
       bool openProject(IDEModel* model, path_t projectFile, NotificationStatus& status);
       bool closeProject(DialogBase& dialog, IDEModel* model, NotificationStatus& status);
 
-      bool closeFile(DialogBase& dialog, IDEModel* model, ustr_t current, NotificationStatus& status);
+      bool closeFile(DialogBase& dialog, IDEModel* model, int index, NotificationStatus& status);
       bool closeAll(DialogBase& dialog, IDEModel* model, NotificationStatus& status);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);

@@ -348,16 +348,16 @@ public program()
 {
    var parser := new Parser();
 
-      try
-      {
+//      try
+//      {
          console.printLine("=",parser.run:"2")
-      }
-      catch(Exception e)
-      {
-         console.writeLine(e.toPrintable())
+//      }
+//      catch(Exception e)
+//      {
+//         console.writeLine(e.toPrintable())
             
          //console.writeLine:"Invalid Expression"
-      };
+//      };
         
 }
 

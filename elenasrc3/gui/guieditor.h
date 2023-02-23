@@ -83,21 +83,16 @@ namespace elena_lang
       virtual void addDocumentView(ustr_t name, Text* text, path_t path) = 0;
       virtual void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) = 0;
 
-      virtual void clearDocumentView() = 0;
-      virtual bool selectDocumentView(ustr_t name) = 0;
-      virtual bool selectDocumentViewByIndex(int index) = 0;
+      virtual bool selectDocumentView(int index) = 0;
+      virtual bool closeDocumentView(int index) = 0;
 
-      virtual bool closeDocumentView(ustr_t name) = 0;
+      virtual void clearDocumentView() = 0;
 
       virtual ustr_t getDocumentName(int index) = 0;
       virtual ustr_t getDocumentNameByPath(path_t path) = 0;
-
-      virtual DocumentView* getDocumentByIndex(int index) = 0;
-      virtual DocumentView* getDocument(ustr_t name) = 0;
-      virtual path_t getDocumentPath(ustr_t name) = 0;
-
+      virtual DocumentView* getDocument(int index) = 0;
+      virtual path_t getDocumentPath(int index) = 0;
       virtual int getDocumentIndex(ustr_t name) = 0;
-
       virtual pos_t getDocumentCount() = 0;
 
       virtual void resize(Point size) = 0;
@@ -131,9 +126,9 @@ namespace elena_lang
       virtual bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
          FileEncoding encoding) = 0;
 
-      virtual bool selectDocument(TextViewModelBase* model, ustr_t name, NotificationStatus& status) = 0;
+      virtual bool selectDocument(TextViewModelBase* model, int index, NotificationStatus& status) = 0;
 
-      virtual void closeDocument(TextViewModelBase* model, ustr_t name, NotificationStatus& status) = 0;
+      virtual void closeDocument(TextViewModelBase* model, int index, NotificationStatus& status) = 0;
 
       virtual bool insertNewLine(TextViewModelBase* model) = 0;
       virtual bool insertChar(TextViewModelBase* model, text_c ch) = 0;
