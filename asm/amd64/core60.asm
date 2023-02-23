@@ -2251,6 +2251,7 @@ labNextBaseClass:
   and  rbx, rbx
   jnz  labNextOverloadlist
 
+  mov  rbx, r8
   mov  edx, __arg32_1
 
 end
@@ -2331,6 +2332,7 @@ labNextBaseClass:
   and  rbx, rbx
   jnz  labNextOverloadlist
 
+  mov  rbx, r8
   mov  edx, __arg32_1
 
 end
@@ -2393,6 +2395,7 @@ labNextBaseClass:
   and  rbx, rbx
   jnz  labNextOverloadlist
 
+  mov  rbx, r8
   mov  edx, __arg32_1
 
 end
@@ -2474,6 +2477,7 @@ labNextBaseClass:
   and  rbx, rbx
   jnz  labNextOverloadlist
 
+  mov  rbx, r8
   mov  edx, __arg32_1
 
 end

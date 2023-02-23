@@ -269,6 +269,7 @@ namespace elena_lang
       void writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode) override;
 
       void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
+      void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) override;
 
       JITCompiler32()
          : JITCompiler()
@@ -341,6 +342,7 @@ namespace elena_lang
       void writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode) override;
 
       void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
+      void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) override;
 
       JITCompiler64()
          : JITCompiler()

@@ -2876,7 +2876,24 @@ void JITCompiler32 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, 
 #endif
    }
    else {
-      *(int64_t*)env = staticCounter;
+      *(int*)env = staticCounter;
+   }
+}
+
+void JITCompiler32 :: updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode)
+{
+   void* voidObj = _preloaded.get(VOIDOBJ);
+   if (virtualMode) {
+#if defined _M_X64 || __x86_64__ || __PPC64__ || __aarch64__
+      int64_t tmp = (int64_t)voidObj;
+
+      rdata->addReference(superAddress | mskRef32, static_cast<ref_t>(tmp) & ~mskAnyRef);
+#else
+      rdata->addReference(superAddress | mskRef32, (pos_t)voidObj & ~mskAnyRef);
+#endif
+   }
+   else {
+      *(addr_t*)voidObj = superAddress;
    }
 }
 
@@ -3286,6 +3303,17 @@ void JITCompiler64 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, 
    }
    else {
       *(int64_t*)env = staticCounter;
+   }
+}
+
+void JITCompiler64 :: updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode)
+{
+   void* voidObj = _preloaded.get(VOIDOBJ);
+   if (virtualMode) {
+      rdata->addReference(superAddress | mskRef64, (int64_t)voidObj & ~mskAnyRef);
+   }
+   else {
+      *(addr_t*)voidObj = superAddress;
    }
 }
 

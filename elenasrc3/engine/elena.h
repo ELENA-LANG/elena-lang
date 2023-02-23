@@ -554,6 +554,7 @@ namespace elena_lang
       virtual void populatePreloaded(uintptr_t env, uintptr_t eh_table, uintptr_t gc_table) = 0;
 
       virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) = 0;
+      virtual void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) = 0;
 
       virtual ~JITCompilerBase() = default;
    };

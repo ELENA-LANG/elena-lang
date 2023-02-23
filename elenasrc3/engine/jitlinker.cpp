@@ -1325,8 +1325,12 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
    fixReferences(references, _imageProvider->getTextSection());
 }
 
-void JITLinker :: complete(JITCompilerBase* compiler)
+void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
 {
+   // set voidobj
+   addr_t superAddr = resolve(superClass, mskVMTRef, true);
+   compiler->updateVoidObject(_imageProvider->getRDataSection(), superAddr, _virtualMode);
+
    // fix message body references
    MemoryBase* mbSection = _imageProvider->getMBDataSection();
    VAddressMap mbReferences({});

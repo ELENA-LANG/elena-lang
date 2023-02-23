@@ -222,7 +222,7 @@ namespace elena_lang
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 
       void prepare(JITCompilerBase* compiler);
-      void complete(JITCompilerBase* compiler);
+      void complete(JITCompilerBase* compiler, ustr_t superClass);
 
       JITLinker(ReferenceMapperBase* mapper, 
          LibraryLoaderBase* loader, ForwardResolverBase* forwardResolver,

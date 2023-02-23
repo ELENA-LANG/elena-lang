@@ -66,7 +66,8 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
       _debugEntryPoint = _entryPoint;
    }
 
-   linker.complete(compiler);
+   ustr_t superClass = resolver->resolveForward(SUPER_FORWARD);
+   linker.complete(compiler, superClass);
 
    freeobj(compiler);
 }
