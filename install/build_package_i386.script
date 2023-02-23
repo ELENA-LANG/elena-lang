@@ -39,7 +39,7 @@ fi
 #   exit 1
 # fi
 
-../bin/elena-og -s ../dat/og/bt_rules.txt
+../bin/og-cli -s ../dat/og/bt_rules.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
