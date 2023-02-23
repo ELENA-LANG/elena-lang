@@ -27,7 +27,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
 
    JITCompilerBase* compiler = jitCompilerFactory(loader, imageInfo.type);
 
-   JITLinkerSettings settings = 
+   JITLinkerSettings settings =
    {
       imageInfo.codeAlignment,
       imageInfo.coreSettings,
@@ -36,9 +36,9 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
    };
 
    JITLinker linker(
-      dynamic_cast<ReferenceMapperBase*>(this), 
+      dynamic_cast<ReferenceMapperBase*>(this),
       loader, resolver,
-      dynamic_cast<ImageProviderBase*>(this), 
+      dynamic_cast<ImageProviderBase*>(this),
       &settings,
       addressMapper);
 
@@ -89,6 +89,8 @@ inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command, ustr_t key,
    rdataWriter.writeString(*arg);
 }
 
+#ifdef _MSC_VER
+
 inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command, path_t arg)
 {
    IdentifierString ustrArg(arg);
@@ -96,6 +98,8 @@ inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command, path_t arg)
    rdataWriter.writeDWord(command);
    rdataWriter.writeString(*ustrArg);
 }
+
+#endif
 
 inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command)
 {
@@ -108,7 +112,7 @@ void TargetImage :: createVMTape(MemoryBase* tape, ustr_t ns, path_t nsPath, For
 
    addVMTapeEntry(tapeWriter, VM_SETNAMESPACE_CMD, ns);
 
-   resolver->forEachForward(&tapeWriter, [](void* arg, ustr_t key, ustr_t value) 
+   resolver->forEachForward(&tapeWriter, [](void* arg, ustr_t key, ustr_t value)
    {
       addVMTapeEntry(*(MemoryWriter*)arg, VM_FORWARD_CMD, key, value);
    });

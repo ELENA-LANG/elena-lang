@@ -58,14 +58,14 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    pos_t fileOffset = 0, sectionOffset = 0;
    pos_t sectionSize = 0, fileSize = 0;
 
-   Section* text = provider.getTextSection();
-   Section* rdata = provider.getRDataSection();
-   Section* adata = provider.getADataSection();
-   Section* mdata = provider.getMDataSection();
-   Section* mbdata = provider.getMBDataSection();
-   Section* import = provider.getImportSection();
-   Section* data = provider.getDataSection();
-   Section* stat = provider.getStatSection();
+   MemoryBase* text = provider.getTextSection();
+   MemoryBase* rdata = provider.getRDataSection();
+   MemoryBase* adata = provider.getADataSection();
+   MemoryBase* mdata = provider.getMDataSection();
+   MemoryBase* mbdata = provider.getMBDataSection();
+   MemoryBase* import = provider.getImportSection();
+   MemoryBase* data = provider.getDataSection();
+   MemoryBase* stat = provider.getStatSection();
 
    // === address space mapping ===
 
@@ -186,9 +186,9 @@ void Elf32ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 {
    pos_t count = fillImportTable(provider.externals(), elfData);
 
-   Section* code = provider.getTextSection();
-   Section* data = provider.getDataSection();
-   Section* import = provider.getImportSection();
+   MemoryBase* code = provider.getTextSection();
+   MemoryBase* data = provider.getDataSection();
+   MemoryBase* import = provider.getImportSection();
 
    MemoryWriter dynamicWriter(data);
    dynamicWriter.align(FILE_ALIGNMENT, 0);
@@ -325,14 +325,16 @@ int ElfI386ImageFormatter :: getRelocationType()
    return R_386_JMP_SLOT;
 }
 
-void ElfI386ImageFormatter :: fixSection(Section* section, AddressSpace& map)
+void ElfI386ImageFormatter :: fixSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, relocate);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocate);
 }
 
-void ElfI386ImageFormatter :: fixImportSection(Section* section, AddressSpace& map)
+void ElfI386ImageFormatter :: fixImportSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, relocateElfImport);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocateElfImport);
 }
 
 void ElfI386ImageFormatter :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference, pos_t)
@@ -366,9 +368,9 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 {
    pos_t count = fillImportTable(provider.externals(), elfData);
 
-   Section* code = provider.getTextSection();
-   Section* data = provider.getDataSection();
-   Section* import = provider.getImportSection();
+   MemoryBase* code = provider.getTextSection();
+   MemoryBase* data = provider.getDataSection();
+   MemoryBase* import = provider.getImportSection();
 
    MemoryWriter dynamicWriter(data);
    dynamicWriter.align(FILE_ALIGNMENT, 0);
@@ -508,14 +510,16 @@ int ElfAmd64ImageFormatter:: getRelocationType()
    return R_X86_64_JUMP_SLOT;
 }
 
-void ElfAmd64ImageFormatter :: fixSection(Section* section, AddressSpace& map)
+void ElfAmd64ImageFormatter :: fixSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, relocate64);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocate64);
 }
 
-void ElfAmd64ImageFormatter :: fixImportSection(Section* section, AddressSpace& map)
+void ElfAmd64ImageFormatter :: fixImportSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, relocateElf64Import);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocateElf64Import);
 }
 
 void ElfAmd64ImageFormatter :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference, pos_t)

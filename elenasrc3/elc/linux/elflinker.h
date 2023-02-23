@@ -47,7 +47,7 @@ namespace elena_lang
       virtual void writePHTable(ElfExecutableImage& image, FileWriter* file, unsigned short ph_num) = 0;
       virtual void writeInterpreter(FileWriter* file) = 0;
 
-      void writeSection(FileWriter* file, Section* section);
+      void writeSection(FileWriter* file, MemoryBase* section);
       void writeSegments(ElfExecutableImage& image, FileWriter* file);
 
       bool createExecutable(ElfExecutableImage& image, path_t exePath);

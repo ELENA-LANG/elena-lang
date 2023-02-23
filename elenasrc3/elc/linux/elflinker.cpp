@@ -22,7 +22,7 @@ unsigned short ElfLinker :: calcPHLength(ElfExecutableImage& image)
    return image.imageSections.headers.count() + 3; // sections + HDR + interpreter + dynamic
 }
 
-void ElfLinker :: writeSection(FileWriter* file, Section* section)
+void ElfLinker :: writeSection(FileWriter* file, MemoryBase* section)
 {
    if (section != nullptr) {
       MemoryReader reader(section);
@@ -73,7 +73,7 @@ bool ElfLinker :: createDebugFile(ImageProviderBase& provider, ElfExecutableImag
    if (!debugWriter.isOpen())
       return false;
 
-   Section* debug = provider.getTargetDebugSection();
+   MemoryBase* debug = provider.getTargetDebugSection();
 
    // signature
    debugWriter.write(DEBUG_MODULE_SIGNATURE, getlength_pos(DEBUG_MODULE_SIGNATURE));
