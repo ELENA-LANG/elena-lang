@@ -25,7 +25,6 @@ In development:
     * ide : change status to ready when writing / selecting files
     * ide - close all / close all but active
     * ldoc : recognize template based type - for the method output
-    * ldoc : private properties / methods should not be displayed 
 
     === Iteration 14 ===
     ! api functionality for existing classes : rest of system
