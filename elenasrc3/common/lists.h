@@ -2262,9 +2262,7 @@ namespace elena_lang
 
          T& operator*()
          {
-            T item = owner->get(index);
-
-            return item;
+            return owner->get(index);
          }
 
          bool eof()
@@ -2298,7 +2296,7 @@ namespace elena_lang
          return (pos_t)_length;
       }
 
-      T get(int index) const
+      T& get(int index)
       {
          if (index < cacheSize) {
             return _cached[index];
