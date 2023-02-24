@@ -87,7 +87,7 @@ CompilingProcess::TemplateGenerator :: TemplateGenerator(CompilingProcess* proce
 {
 }
 
-bool CompilingProcess::TemplateGenerator :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+bool CompilingProcess::TemplateGenerator :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
    SyntaxNode target, List<SyntaxNode>& parameters)
 {
    auto sectionInfo = moduleScope.getSection(
@@ -115,7 +115,7 @@ bool CompilingProcess::TemplateGenerator :: importPropertyTemplate(ModuleScopeBa
    return true;
 }
 
-bool CompilingProcess::TemplateGenerator :: importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+bool CompilingProcess::TemplateGenerator :: importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
    SyntaxNode target, List<SyntaxNode>& parameters)
 {
    auto sectionInfo = moduleScope.getSection(
@@ -129,7 +129,7 @@ bool CompilingProcess::TemplateGenerator :: importInlineTemplate(ModuleScopeBase
    return true;
 }
 
-bool CompilingProcess::TemplateGenerator :: importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+bool CompilingProcess::TemplateGenerator :: importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
    SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
 {
    auto sectionInfo = moduleScope.getSection(
@@ -179,7 +179,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
 
    if (declarationMode) {
       bool dummy = false;
-      generatedReference = generateTemplateName(moduleScope, ns, Visibility::Public, templateRef, 
+      generatedReference = generateTemplateName(moduleScope, ns, Visibility::Public, templateRef,
          parameters, dummy);
    }
    else {
@@ -199,7 +199,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       writer.newNode(SyntaxKey::Root);
       writer.newNode(SyntaxKey::Namespace, ns);
 
-      _processor.generateClassTemplate(&moduleScope, generatedReference, writer, 
+      _processor.generateClassTemplate(&moduleScope, generatedReference, writer,
          sectionInfo.section, parameters);
 
       writer.closeNode();
@@ -294,7 +294,7 @@ void CompilingProcess :: parseFileTemlate(ustr_t prolog, path_t name,
 }
 
 void CompilingProcess :: parseFile(path_t projectPath,
-   FileIteratorBase& file_it, 
+   FileIteratorBase& file_it,
    SyntaxWriterBase* syntaxWriter)
 {
    // save the path to the current source
@@ -328,8 +328,8 @@ void CompilingProcess :: parseFile(path_t projectPath,
 
 void CompilingProcess :: parseModule(path_t projectPath,
    ustr_t fileProlog, ustr_t fileEpilog,
-   ModuleIteratorBase& module_it, 
-   SyntaxTreeBuilder& builder, 
+   ModuleIteratorBase& module_it,
+   SyntaxTreeBuilder& builder,
    ModuleScopeBase& moduleScope)
 {
    auto& file_it = module_it.files();
@@ -397,7 +397,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
 
    _compiler->prepare(&moduleScope, forwardResolver);
 
-   SyntaxTreeBuilder builder(syntaxTree, _errorProcessor, 
+   SyntaxTreeBuilder builder(syntaxTree, _errorProcessor,
       &moduleScope, &_templateGenerator);
    parseModule(projectPath, fileProlog, fileEpilog, module_it, builder, moduleScope);
 
@@ -549,7 +549,7 @@ int CompilingProcess :: build(Project& project,
       PlatformType targetType = project.TargetType();
 
       // Project Greetings
-      _presenter->print(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()), 
+      _presenter->print(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()),
          getTargetTypeName(targetType, project.SystemTarget()));
 
       // Cleaning up
