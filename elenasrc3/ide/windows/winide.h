@@ -90,6 +90,7 @@ namespace elena_lang
       void openFile();
       void saveFile();
       void closeFile();
+      void closeAll();
       void openProject();
       void closeProject();
       void exit();

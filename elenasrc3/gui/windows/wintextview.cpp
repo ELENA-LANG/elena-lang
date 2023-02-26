@@ -615,13 +615,14 @@ void TextViewWindow :: onScroll(int bar, int type)
    onDocumentUpdate(status);
 
 }
-//
-//void TextViewWindow :: refresh()
-//{
-//   //onDocumentUpdate();
-//   ControlBase::refresh();
-//
-//}
+
+void TextViewWindow :: refresh()
+{
+   //_cached = false;
+   //_caret_x = 0;
+
+   ::InvalidateRect(_handle, nullptr, true);
+}
 
 void TextViewWindow :: hide()
 {

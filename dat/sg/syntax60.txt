@@ -376,7 +376,8 @@ L4_EXPRESSION ::=
 	identifier {
 		L3 ^OBJECT MESSAGE MESSAGE_R L3_OP*
 		| eps ^OBJECT }
-	| { integer | hexinteger | real | long } ^OBJECT;
+	| { integer | hexinteger | real | long } ^OBJECT
+	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION;
 
 L5_EXPRESSION ::=
 	identifier { 

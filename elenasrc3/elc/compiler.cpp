@@ -2144,11 +2144,21 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
    else if (typeInfo.typeRef)
       sizeInfo = _logic->defineStructSize(*scope.moduleScope, typeInfo.typeRef);
 
+   if (attrs.fieldArray) {
+      if (attrs.size > 0) {
+         sizeInfo.size *= attrs.size;
+
+         typeInfo.elementRef = typeInfo.typeRef;
+         typeInfo.typeRef = _logic->definePrimitiveArray(*scope.moduleScope, typeInfo.elementRef, true);
+      }
+      else scope.raiseError(errIllegalField, node);
+   }
+
    if (test(flags, elWrapper) && scope.info.fields.count() > 0) {
       // wrapper may have only one field
       scope.raiseError(errIllegalField, node);
    }
-   else if (embeddable/* && !fieldArray*/) {
+   else if (embeddable && !attrs.fieldArray) {
       if (!singleField || scope.info.fields.count() > 0)
          scope.raiseError(errIllegalField, node);
 
@@ -3527,13 +3537,38 @@ inline bool isBoxingRequired(ObjectInfo info)
       case ObjectKind::ParamAddress:
       case ObjectKind::ByRefParamAddress:
       case ObjectKind::SelfBoxableLocal:
+      case ObjectKind::FieldAddress:
          return true;
       default:
          return false;
    }
 }
 
-ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool boxInPlace)
+int Compiler :: defineFieldSize(Scope& scope, ObjectInfo info)
+{
+   int size = 0;
+
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+   auto f_it = classScope->info.fields.start();
+   while (!f_it.eof()) {
+      auto fieldInfo = *f_it;
+      if (fieldInfo.offset == info.reference)
+         break;
+
+      ++f_it;
+   }
+
+   ++f_it;
+   if (!f_it.eof()) {
+      auto nextFieldInfo = *f_it;
+      size = nextFieldInfo.offset - info.reference;
+   }
+   else size = classScope->info.size - info.reference;
+
+   return size;
+}
+
+ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool stackSafe)
 {
    switch (info.kind) {
       case ObjectKind::ReadOnlyFieldAddress:
@@ -3546,7 +3581,26 @@ ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& sc
          }
          else {
             // allocating temporal variable
-            ObjectInfo tempLocal = declareTempLocal(scope, info.typeInfo.typeRef, false);
+            ObjectInfo tempLocal = {};
+            bool fixedArray = false;
+            int fixedSize = 0;
+            if ((info.typeInfo.isPrimitive() && _logic->isPrimitiveArrRef(info.typeInfo.typeRef))
+               || _logic->isEmbeddableArray(*scope.moduleScope, info.typeInfo.typeRef))
+            {
+               fixedSize = defineFieldSize(scope, info);
+
+               tempLocal = declareTempStructure(scope, { fixedSize });
+               tempLocal.typeInfo = info.typeInfo;
+
+               fixedArray = true;
+            }
+            else tempLocal = declareTempLocal(scope, info.typeInfo.typeRef, false);
+
+            if (stackSafe) {
+               tempLocal.mode = TargetMode::LocalUnboxingRequired;
+
+               scope.tempLocals.add({ info.kind, info.reference }, tempLocal);
+            }
 
             writeObjectInfo(writer, scope, tempLocal);
             writer.appendNode(BuildKey::SavingInStack, 0);
@@ -3556,7 +3610,34 @@ ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& sc
             writer.appendNode(BuildKey::Size, tempLocal.extra);
             writer.closeNode();
 
-            return tempLocal;
+            if (!stackSafe) {
+               ObjectInfo dynamicTempLocal = {};
+               if (fixedArray) {
+                  ref_t typeRef = info.typeInfo.isPrimitive() ? resolvePrimitiveType(scope, info.typeInfo, false) : info.typeInfo.typeRef;
+
+                  dynamicTempLocal = declareTempLocal(scope, typeRef, true);
+
+                  writer.newNode(BuildKey::CreatingStruct, fixedSize);
+                  writer.appendNode(BuildKey::Type, typeRef);
+                  writer.closeNode();
+
+                  writer.appendNode(BuildKey::Assigning, dynamicTempLocal.argument);
+
+                  writeObjectInfo(writer, scope, tempLocal);
+                  writer.appendNode(BuildKey::SavingInStack, 0);
+                  writeObjectInfo(writer, scope, dynamicTempLocal);
+
+                  writer.newNode(BuildKey::CopyingToAcc, tempLocal.reference);
+                  writer.appendNode(BuildKey::Size, fixedSize);
+                  writer.closeNode();
+
+                  dynamicTempLocal.mode = TargetMode::UnboxingRequired;
+               }
+               else dynamicTempLocal = boxArgument(writer, scope, tempLocal, false, true, false);
+
+               scope.tempLocals.add({ info.kind, info.reference }, dynamicTempLocal);
+            }
+            else return tempLocal;
          }
       default:
          return info;
@@ -3568,7 +3649,7 @@ ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, Ob
 {
    ObjectInfo retVal = { ObjectKind::Unknown };
 
-   info = boxArgumentLocally(writer, scope, info, boxInPlace);
+   info = boxArgumentLocally(writer, scope, info, stackSafe);
 
    if (!stackSafe && isBoxingRequired(info)) {
       ObjectKey key = { info.kind, info.reference };
@@ -4332,6 +4413,9 @@ ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node,
 
 ref_t Compiler :: resolveTemplate(Scope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode)
 {
+   if (isPrimitiveRef(elementRef))
+      elementRef = resolvePrimitiveType(*scope.moduleScope, { elementRef });
+
    TemplateTypeList typeList;
    typeList.add(elementRef);
 
@@ -4590,11 +4674,12 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
             else scope.raiseError(errInvalidHint, current);
             break;
          case SyntaxKey::Dimension:
-            if (!attrs.size && attrs.typeInfo.typeRef) {
+            if (!attrs.size && attrs.typeInfo.typeRef && !attrs.inlineArray) {
                if (current.arg.value) {
                   attrs.size = current.arg.value;
                }
                else attrs.size = resolveSize(scope, current.firstChild(SyntaxKey::TerminalMask));
+               attrs.fieldArray = true;
             }
             else scope.raiseError(errInvalidHint, current);
             break;
@@ -4626,15 +4711,19 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
             switch (attrs.size) {
                case 1:
                   attrs.typeInfo.typeRef = V_INT8;
+                  attrs.fieldArray = false;
                   break;
                case 2:
                   attrs.typeInfo.typeRef = V_INT16;
+                  attrs.fieldArray = false;
                   break;
                case 4:
                   attrs.typeInfo.typeRef = V_INT32;
+                  attrs.fieldArray = false;
                   break;
                case 8:
                   attrs.typeInfo.typeRef = V_INT64;
+                  attrs.fieldArray = false;
                   break;
                default:
                   valid = false;
@@ -4645,6 +4734,7 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
             switch (attrs.size) {
                case 4:
                   attrs.typeInfo.typeRef = V_WORD32;
+                  attrs.fieldArray = false;
                   break;
                default:
                   valid = false;
@@ -4656,10 +4746,12 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                case 4:
                   attrs.typeInfo.typeRef = V_EXTMESSAGE64;
                   attrs.size = 8;
+                  attrs.fieldArray = false;
                   break;
                case 8:
                   attrs.typeInfo.typeRef = V_EXTMESSAGE128;
                   attrs.size = 16;
+                  attrs.fieldArray = false;
                   break;
                default:
                   valid = false;
@@ -4671,6 +4763,7 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
             switch (attrs.size) {
                case 4:
                   attrs.typeInfo.typeRef = V_MESSAGE;
+                  attrs.fieldArray = false;
                   break;
                default:
                   valid = false;
@@ -4680,6 +4773,7 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
             switch (attrs.size) {
                case 4:
                   attrs.typeInfo.typeRef = V_MESSAGENAME;
+                  attrs.fieldArray = false;
                   break;
                default:
                   valid = false;
@@ -4690,6 +4784,7 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
             switch (attrs.size) {
                case 8:
                   attrs.typeInfo.typeRef = V_FLOAT64;
+                  attrs.fieldArray = false;
                   break;
                default:
                   valid = false;
@@ -4700,11 +4795,14 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
             switch (attrs.size) {
                case 4:
                   attrs.typeInfo.typeRef = V_PTR32;
+                  attrs.fieldArray = false;
                   break;
                case 8:
                   attrs.typeInfo.typeRef = V_PTR64;
+                  attrs.fieldArray = false;
                   break;
                case 0:
+                  attrs.fieldArray = false;
                   attrs.size = scope.moduleScope->ptrSize;
                   if (attrs.size == 4) {
                      attrs.typeInfo.typeRef = V_PTR32;
@@ -5227,6 +5325,8 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
 
       writer.closeNode();
 
+      retVal = unboxArguments(writer, scope, retVal);
+
       scope.reserveArgs(argLen);
    }
    else {
@@ -5240,6 +5340,9 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
          messageArguments[2] = tmp;
 
          ref_t tmpRef = arguments[1];
+         if (tmpRef == V_ELEMENT)
+            tmpRef = loperand.typeInfo.elementRef;
+
          arguments[1] = arguments[2];
          arguments[2] = tmpRef;
       }
@@ -5590,6 +5693,64 @@ mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectIn
    return weakMessage;
 }
 
+void Compiler :: unboxArgumentLocaly(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo temp, ObjectKey key)
+{
+   if ((temp.typeInfo.isPrimitive() && _logic->isPrimitiveArrRef(temp.typeInfo.typeRef))
+      || _logic->isEmbeddableArray(*scope.moduleScope, temp.typeInfo.typeRef))
+   {
+      int size = defineFieldSize(scope, { key.value1, temp.typeInfo, key.value2 });
+
+      compileAssigningOp(writer, scope, { key.value1, temp.typeInfo, key.value2, size }, temp);
+   }
+   else compileAssigningOp(writer, scope, { key.value1, temp.typeInfo, key.value2 }, temp);
+}
+
+ObjectInfo Compiler :: unboxArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo retVal)
+{
+   // unbox the arguments if required
+   bool resultSaved = false;
+   for (auto it = scope.tempLocals.start(); !it.eof(); ++it) {
+      ObjectInfo temp = *it;
+
+      if (temp.mode == TargetMode::UnboxingRequired || temp.mode == TargetMode::RefUnboxingRequired) {
+         if (!resultSaved) {
+            // presave the result
+            ObjectInfo tempResult = declareTempLocal(scope, retVal.typeInfo.typeRef, false);
+            compileAssigningOp(writer, scope, tempResult, retVal);
+            retVal = tempResult;
+
+            resultSaved = true;
+         }
+
+         // unbox the temporal variable
+         auto key = it.key();
+         if (temp.mode == TargetMode::RefUnboxingRequired) {
+            temp.kind = ObjectKind::Local;
+
+            compileAssigningOp(writer, scope, { ObjectKind::Local, temp.typeInfo, key.value2 }, temp);
+         }
+         else if (key.value1 == ObjectKind::RefLocal) {
+            writeObjectInfo(writer, scope, temp);
+            writer.appendNode(BuildKey::Field);
+            compileAssigningOp(writer, scope,
+               { ObjectKind::Local, temp.typeInfo, key.value2 },
+               { ObjectKind::Object, temp.typeInfo, 0 });
+         }
+         else if (key.value1 == ObjectKind::FieldAddress) {
+            unboxArgumentLocaly(writer, scope, temp, key);
+         }
+         else compileAssigningOp(writer, scope, { key.value1, temp.typeInfo, key.value2 }, temp);
+      }
+      else if (temp.mode == TargetMode::LocalUnboxingRequired) {
+         auto key = it.key();
+
+         unboxArgumentLocaly(writer, scope, temp, key);
+      }
+   }
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target,
    mssg_t weakMessage, ref_t implicitSignatureRef, ArgumentsInfo& arguments, ExpressionAttributes mode)
 {
@@ -5750,38 +5911,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
       writer.closeNode();
 
-      // unbox the arguments if required
-      bool resultSaved = false;
-      for (auto it = scope.tempLocals.start(); !it.eof(); ++it) {
-         ObjectInfo temp = *it;
-
-         if (temp.mode == TargetMode::UnboxingRequired || temp.mode == TargetMode::RefUnboxingRequired) {
-            if (!resultSaved) {
-               // presave the result
-               ObjectInfo tempResult = declareTempLocal(scope, retVal.typeInfo.typeRef);
-               compileAssigningOp(writer, scope, tempResult, retVal);
-               retVal = tempResult;
-
-               resultSaved = true;
-            }
-
-            // unbox the temporal variable
-            auto key = it.key();
-            if (temp.mode == TargetMode::RefUnboxingRequired) {
-               temp.kind = ObjectKind::Local;
-
-               compileAssigningOp(writer, scope, { ObjectKind::Local, temp.typeInfo, key.value2 }, temp);
-            }
-            else if (key.value1 == ObjectKind::RefLocal) {
-               writeObjectInfo(writer, scope, temp);
-               writer.appendNode(BuildKey::Field);
-               compileAssigningOp(writer, scope,
-                  { ObjectKind::Local, temp.typeInfo, key.value2 },
-                  { ObjectKind::Object, temp.typeInfo, 0 });
-            }
-            else compileAssigningOp(writer, scope, { key.value1, temp.typeInfo, key.value2 }, temp);
-         }
-      }
+      retVal = unboxArguments(writer, scope, retVal);
    }
 
    scope.reserveArgs(arguments.count_pos());
@@ -6127,7 +6257,12 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
          else operationType = BuildKey::CopyingToAcc;
          operand = target.reference;
          size = _logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
+         if (size < 0) {
+            size = target.extra;
+         }
          stackSafe = true;
+
+         assert(size > 0);
 
          break;
          // NOTE : it should be the last condition

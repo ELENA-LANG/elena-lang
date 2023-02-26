@@ -141,7 +141,7 @@ namespace elena_lang
 
       void hide() override;
 
-      //void refresh() override;
+      void refresh() override;
 
       static void registerTextViewWindow(HINSTANCE hInstance, wstr_t className);
 

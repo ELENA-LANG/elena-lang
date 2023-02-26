@@ -435,6 +435,7 @@ struct FieldAttributes
    bool     isStatic;
    bool     isEmbeddable;
    bool     inlineArray;
+   bool     fieldArray;
 };
 
 // --- CompilerBase ---

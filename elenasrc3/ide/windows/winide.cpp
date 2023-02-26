@@ -150,6 +150,11 @@ void IDEWindow :: closeFile()
    _controller->doCloseFile(fileDialog, _model);
 }
 
+void IDEWindow :: closeAll()
+{
+   _controller->doCloseAll(fileDialog, _model);
+}
+
 void IDEWindow :: openProject()
 {
    _controller->doOpenProject(projectDialog, _model);
@@ -389,6 +394,9 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    else menu->enableMenuItemById(IDM_EDIT_PASTE, true);
 
    onResize();
+
+   if (!empty)
+      _children[_model->ideScheme.textFrameId]->refresh();
 }
 
 void IDEWindow :: onTextFrameChange(NotificationStatus status)
@@ -442,6 +450,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_FILE_CLOSE:
          closeFile();
+         break;
+      case IDM_FILE_CLOSEALL:
+         closeAll();
          break;
       case IDM_PROJECT_CLOSE:
          closeProject();

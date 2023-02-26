@@ -92,7 +92,8 @@ namespace elena_lang
       Creating,
       Casting,
       UnboxingRequired,
-      RefUnboxingRequired
+      RefUnboxingRequired,
+      LocalUnboxingRequired,
    };
 
    struct ObjectInfo
@@ -933,6 +934,8 @@ namespace elena_lang
       void declareTemplateAttributes(Scope& scope, SyntaxNode node, TemplateTypeList& parameters, 
          TypeAttributes& attributes, bool declarationMode, bool objectMode);
 
+      int defineFieldSize(Scope& scope, ObjectInfo info);
+
       ObjectInfo defineArrayType(Scope& scope, ObjectInfo info);
       ref_t defineArrayType(Scope& scope, ref_t elementRef);
 
@@ -1098,7 +1101,10 @@ namespace elena_lang
       ObjectInfo boxRefArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
       ObjectInfo boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
          bool stackSafe, bool boxInPlace, bool allowingRefArg, ref_t targetRef = 0);
-      ObjectInfo boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool boxInPlace);
+      ObjectInfo boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool stackSafe);
+
+      ObjectInfo unboxArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo retVal);
+      void unboxArgumentLocaly(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo tempLocal, ObjectKey targetKey);
 
       ObjectInfo saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object);
       ObjectInfo declareTempLocal(ExprScope& scope, ref_t typeRef, bool dynamicOnly = true);
