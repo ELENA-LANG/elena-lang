@@ -5,10 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * linux : consolereader
-    * linux : consolewriter
-    * linux : callstack
-
     * test nil reference exception : x86, x86-64, linux i386, linux amd64, linux ppc64le, linux aarch64
     * test call stack : x86, x86-64, linux i386, linux amd64, linux ppc64le, linux aarch64
     * testing all rosetta examples : x86, x86-64, linux i386, linux amd64, linux ppc64le, linux aarch64
