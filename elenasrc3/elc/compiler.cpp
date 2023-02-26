@@ -5712,7 +5712,9 @@ ObjectInfo Compiler :: unboxArguments(BuildTreeWriter& writer, ExprScope& scope,
    for (auto it = scope.tempLocals.start(); !it.eof(); ++it) {
       ObjectInfo temp = *it;
 
-      if (temp.mode == TargetMode::UnboxingRequired || temp.mode == TargetMode::RefUnboxingRequired) {
+      if (temp.mode == TargetMode::UnboxingRequired || temp.mode == TargetMode::RefUnboxingRequired
+         || temp.mode == TargetMode::LocalUnboxingRequired)
+      {
          if (!resultSaved) {
             // presave the result
             ObjectInfo tempResult = declareTempLocal(scope, retVal.typeInfo.typeRef, false);
@@ -5724,7 +5726,10 @@ ObjectInfo Compiler :: unboxArguments(BuildTreeWriter& writer, ExprScope& scope,
 
          // unbox the temporal variable
          auto key = it.key();
-         if (temp.mode == TargetMode::RefUnboxingRequired) {
+         if (temp.mode == TargetMode::LocalUnboxingRequired) {
+            unboxArgumentLocaly(writer, scope, temp, key);
+         }
+         else if (temp.mode == TargetMode::RefUnboxingRequired) {
             temp.kind = ObjectKind::Local;
 
             compileAssigningOp(writer, scope, { ObjectKind::Local, temp.typeInfo, key.value2 }, temp);
@@ -5740,11 +5745,6 @@ ObjectInfo Compiler :: unboxArguments(BuildTreeWriter& writer, ExprScope& scope,
             unboxArgumentLocaly(writer, scope, temp, key);
          }
          else compileAssigningOp(writer, scope, { key.value1, temp.typeInfo, key.value2 }, temp);
-      }
-      else if (temp.mode == TargetMode::LocalUnboxingRequired) {
-         auto key = it.key();
-
-         unboxArgumentLocaly(writer, scope, temp, key);
       }
    }
 

@@ -217,6 +217,34 @@ struct BoxingStruct
    }
 }
 
+struct BoxingFixedArrayStruct
+{
+   int  x;
+   byte tmp[10];
+
+   set(int n, int v)
+   {
+      tmp[n] := v;
+   }
+
+   set(int n, byte v)
+   {
+      tmp[n] := v;
+   }
+
+   test(int n, int v)
+   {
+      Assert.ifTrue(tmp[n] == v);
+   }
+
+   test(int n, byte d)
+   {
+      byte s := tmp[n];
+
+      Assert.ifTrue(s == d);
+   }
+}
+
 singleton BoxingProber
 {
    check(int n)
@@ -256,6 +284,16 @@ boxingTests()
    var p := BoxingProber;
    p.set(st2);
    st2.test(3,4);
+   console.write(".");
+
+   BoxingFixedArrayStruct x := new BoxingFixedArrayStruct();
+   byte b := 2;
+   x.set(0,1);
+   x.set(1,b);
+
+   x.test(0,1);
+   x.test(1,b);
+
    console.writeLine(".");
 }
 

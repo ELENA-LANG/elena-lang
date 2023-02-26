@@ -211,6 +211,7 @@ ROOT_EXPRESSION ::=
 			L1_OP 
 			| L3_OP 
 			| L5_OP
+			| L6_OP
 			| eps }
 		| ASSIGN ^OBJECT ASSIGN_R
 		| L2 ^OBJECT MESSAGE_PARAMETERS? ")" {
@@ -292,7 +293,7 @@ ROOT_EXPRESSION ::=
 
 EXPRESSION ::=
 	{ identifier | reference }+ { 
-		L0 ^OBJECT L0_R { L1_OP | L3_OP | L5_OP | eps }
+		L0 ^OBJECT L0_R { L1_OP | L3_OP | L5_OP | L6_OP | eps }
 		| DYNAMIC_DIMENSION ^ARRAY_TYPE { 
 			"{" ^OBJECT COLLECTION "}" ^ COLLECTION_EXPRESSION
 			| L2 ^OBJECT L2_R }

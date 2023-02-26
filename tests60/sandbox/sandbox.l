@@ -74,30 +74,38 @@
 
 import extensions;
 
-struct R
-{
-   int x;
-   byte cc[10];
 
-   set()
+struct BoxingFixedArrayStruct
+{
+   int  x;
+   byte tmp[10];
+
+   set(int n, int v)
    {
-//      cc[0] := 1;
-      cc[1] := 2;
-//      cc[2] := 3;
+      tmp[n] := v;
    }
 
-   test()
+   set(int n, byte v)
    {
-      byte r := cc[1];
-      Assert.ifTrue(r == 2);
+      tmp[n] := v;
+   }
+
+   test(int n, int v)
+   {
+      Assert.ifTrue(tmp[n] == v);
+   }
+
+   test(int n, byte d)
+   {
+      byte s := tmp[n];
+
+      Assert.ifTrue(s == d);
    }
 }
 
+
 public program()
 {
-   R r := new R();
-   r.set();
-   r.test();
 
 //   var o := new Object();
 //   o.fail()
