@@ -1230,6 +1230,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          break;
       case V_INT32:
       case V_PTR32:
+      case V_WORD32:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
          info.size = 4;
