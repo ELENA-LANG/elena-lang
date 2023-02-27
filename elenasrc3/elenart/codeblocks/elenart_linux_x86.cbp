@@ -82,8 +82,12 @@
 			<Add directory="../../engine" />
 			<Add directory="../../common" />
 		</Compiler>
+		<Unit filename="../../common/paths.cpp" />
+		<Unit filename="../../common/paths.h" />
 		<Unit filename="../../engine/elenamachine.cpp" />
 		<Unit filename="../../engine/elenamachine.h" />
+		<Unit filename="../../engine/libman.cpp" />
+		<Unit filename="../../engine/libman.h" />
 		<Unit filename="../../engine/linux/lnxroutines.cpp" />
 		<Unit filename="../elenartmachine.cpp" />
 		<Unit filename="../elenartmachine.h" />
