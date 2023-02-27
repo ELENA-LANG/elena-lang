@@ -28,10 +28,10 @@ extern "C"
    DLL_PUBLIC size_t LoadMessageNameLA(size_t message, char* buffer, size_t length);
    DLL_PUBLIC size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length);
    DLL_PUBLIC size_t LoadAddressInfoLM(size_t retPoint, char* lineInfo, size_t length);
-   DLL_PUBLIC addr_t LoadSymbolByStringLA(const char* symbolName);
-   DLL_PUBLIC addr_t LoadClassByStringLA(const char* symbolName);
-   DLL_PUBLIC addr_t LoadSymbolByString2LA(const char* ns, const char* symbolName);
-   DLL_PUBLIC mssg_t LoadMessageLA(const char* messageName);
+   DLL_PUBLIC elena_lang::addr_t LoadSymbolByStringLA(const char* symbolName);
+   DLL_PUBLIC elena_lang::addr_t LoadClassByStringLA(const char* symbolName);
+   DLL_PUBLIC elena_lang::addr_t LoadSymbolByString2LA(const char* ns, const char* symbolName);
+   DLL_PUBLIC elena_lang::mssg_t LoadMessageLA(const char* messageName);
    DLL_PUBLIC void ExitLA(int retVal);
 }
 
