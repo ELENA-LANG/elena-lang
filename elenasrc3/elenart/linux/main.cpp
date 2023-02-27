@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -88,10 +88,42 @@ size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
    return machine->loadMessageName((mssg_t)message, buffer, length);
 }
 
+size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length)
+{
+   return __routineProvider.LoadCallStack(framePtr, list, length);
+}
+
+size_t LoadAddressInfoLM(size_t retPoint, char* lineInfo, size_t length)
+{
+   return machine->loadAddressInfo(retPoint, lineInfo, length);
+}
+
+addr_t LoadSymbolByStringLA(const char* symbolName)
+{
+   return machine->loadSymbol(symbolName);
+}
+
+addr_t LoadClassByStringLA(const char* symbolName)
+{
+   return machine->loadClassReference(symbolName);
+}
+
+addr_t LoadSymbolByString2LA(const char* ns, const char* symbolName)
+{
+   ReferenceName fullName(ns, symbolName);
+
+   return machine->loadSymbol(*fullName);
+}
+
+mssg_t LoadMessageLA(const char* messageName)
+{
+   return machine->loadMessage(messageName);
+}
+
 void ExitLA(int retVal)
 {
    if (retVal) {
-      printf("Aborted:%x\n", retVal);
+      printf("\nAborted:%x\n", retVal);
       fflush(stdout);
    }
    __routineProvider.Exit(retVal);
