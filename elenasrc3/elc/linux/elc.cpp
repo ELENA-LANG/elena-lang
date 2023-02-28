@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the Linux command-line compiler
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -244,8 +244,48 @@ int main(int argc, char* argv[])
                case 'm':
                   project.addBoolSetting(ProjectOption::MappingOutputMode, true);
                   break;
+               case 'o':
+                  if (argv[i][2] == '0') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optNone);
+                  }
+                  else if (argv[i][2] == '1') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optLow);
+                  }
+                  else if (argv[i][2] == '2') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
+                  }
+                  break;
                case 'r':
                   cleanMode = true;
+                  break;
+               case 't':
+               {
+                  IdentifierString configName(argv[i] + 2);
+
+                  project.loadConfigByName(*appPath, *configName, true);
+                  break;
+               }
+               case 'p':
+                  project.setBasePath(argv[i] + 2);
+                  break;
+               case 'w':
+                  if (argv[i][2] == '0') {
+                     errorProcessor.setWarningLevel(WarningLevel::Level0);
+                  }
+                  else if (argv[i][2] == '1') {
+                     errorProcessor.setWarningLevel(WarningLevel::Level1);
+                  }
+                  else if (argv[i][2] == '2') {
+                     errorProcessor.setWarningLevel(WarningLevel::Level2);
+                  }
+                  else if (argv[i][2] == '3') {
+                     errorProcessor.setWarningLevel(WarningLevel::Level3);
+                  }
+                  break;
+               case 'x':
+                  if (argv[i][2] == 'p') {
+                     project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
+                  }
                   break;
                default:
                   break;
