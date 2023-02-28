@@ -1,22 +1,22 @@
 <configuration>
   <platform key="Linux_I386">
      <system>
-        <platform>4129</platform>
+        <executable>helloworld</executable>
      </system>
   </platform>
   <platform key="Linux_AMD64">
      <system>
-        <platform>4130</platform>
+        <executable>helloworld64</executable>
      </system>
   </platform>
   <platform key="Linux_PPC64le">
      <system>
-        <platform>4133</platform>
+        <executable>helloworld64</executable>
      </system>
   </platform>
   <platform key="Linux_ARM64">
      <system>
-        <platform>4132</platform>
+        <executable>helloworld64</executable>
      </system>
   </platform>
   <project>

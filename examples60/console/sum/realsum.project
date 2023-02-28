@@ -1,8 +1,28 @@
 <configuration>
+<configuration>
+  <platform key="Linux_I386">
+     <system>
+        <executable>realsum</executable>
+     </system>
+  </platform>
+  <platform key="Linux_AMD64">
+     <system>
+        <executable>realsum64</executable>
+     </system>
+  </platform>
+  <platform key="Linux_PPC64le">
+     <system>
+        <executable>realsum64</executable>
+     </system>
+  </platform>
+  <platform key="Linux_ARM64">
+     <system>
+        <executable>realsum64</executable>
+     </system>
+  </platform>
   <project>
-     <namespace>helloworld</namespace>
+     <namespace>sum</namespace>
      <template>console</template>
-     <executable>realsum</executable>
   </project>
   <files>
      <module>
