@@ -1,5 +1,4 @@
 <configuration>
-<configuration>
   <platform key="Linux_I386">
      <system>
         <executable>realsum</executable>
