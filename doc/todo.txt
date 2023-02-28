@@ -7,7 +7,7 @@ In development:
     === Iteration 13 ===
     * test nil reference exception : linux i386, linux amd64, linux ppc64le, linux aarch64
     * test call stack : linux i386, linux amd64, linux ppc64le, linux aarch64
-    * testing all rosetta examples : linux i386, linux amd64, linux ppc64le, linux aarch64
+    * testing all rosetta examples : linux amd64, linux ppc64le, linux aarch64
     * testing all examples : linux amd64, linux ppc64le, linux aarch64
 
     * make install package : i386, amd64, ppc64le, arm64
