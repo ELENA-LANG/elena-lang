@@ -3794,7 +3794,10 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
 ref_t Compiler :: retrieveStrongType(Scope& scope, ObjectInfo info)
 {
    if (info.typeInfo.isPrimitive()) {
-      return resolvePrimitiveType(scope, info.typeInfo, false);
+      if (info.typeInfo.typeRef == V_AUTO) {
+         return info.typeInfo.typeRef;
+      }
+      else return resolvePrimitiveType(scope, info.typeInfo, false);
    }
    else return info.typeInfo.typeRef;
 }
@@ -4205,6 +4208,10 @@ void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, Type
          case SyntaxKey::Attribute:
             if (!_logic->validateExpressionAttribute(current.arg.reference, mode))
                scope.raiseError(errInvalidHint, current);
+
+            if (current.arg.reference == V_AUTO)
+               typeInfo = { V_AUTO  };
+
             break;
          case SyntaxKey::Type:
          case SyntaxKey::TemplateType:
@@ -5494,7 +5501,7 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
 }
 
 ref_t Compiler :: compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current,
-   ArgumentsInfo& arguments, EAttr mode)
+   ArgumentsInfo& arguments, ref_t expectedSignRef, EAttr mode)
 {
    EAttr paramMode = EAttr::Parameter;
    if (EAttrs::testAndExclude(mode, EAttr::NoPrimitives))
@@ -5505,10 +5512,16 @@ ref_t Compiler :: compileMessageArguments(BuildTreeWriter& writer, ExprScope& sc
    ref_t signatureLen = 0;
    ref_t superReference = scope.moduleScope->buildins.superReference;
 
+   if (expectedSignRef)
+      scope.module->resolveSignature(expectedSignRef, signatures);
+
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Expression) {
-         auto argInfo = compileExpression(writer, scope, current, 0,
+         // try to recognize the message signature
+         // NOTE : signatures[signatureLen] contains expected parameter type if expectedSignRef is provided
+         auto argInfo = compileExpression(writer, scope, current, signatures[signatureLen],
             paramMode);
+
          ref_t argRef = retrieveStrongType(scope, argInfo);
          if (signatureLen >= ARG_COUNT) {
             signatureLen++;
@@ -6070,7 +6083,14 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
    mssg_t messageRef = mapMessage(scope, current, true,
       source.kind == ObjectKind::Extension, false);
 
-   ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);;
+   mssg_t resolvedMessage = _logic->resolveSingleDispatch(*scope.moduleScope,
+      retrieveType(scope, source), messageRef);
+
+   ref_t expectedSignRef = 0;
+   if (resolvedMessage)
+      scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
+
+   ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, expectedSignRef, EAttr::NoPrimitives);;
    mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, source), expectedRef, messageRef, implicitSignatureRef);
    if (byRefHandler) {
       ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
@@ -6126,27 +6146,27 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    switch (source.mode) {
       case TargetMode::External:
       case TargetMode::WinApi:
-         compileMessageArguments(writer, scope, current, arguments, EAttr::None);
+         compileMessageArguments(writer, scope, current, arguments, 0, EAttr::None);
 
          retVal = compileExternalOp(writer, scope, source.reference, source.mode == TargetMode::WinApi, arguments);
          break;
       case TargetMode::CreatingArray:
       {
-         compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);
+         compileMessageArguments(writer, scope, current, arguments, 0, EAttr::NoPrimitives);
 
          retVal = compileNewArrayOp(writer, scope, source, expectedRef, arguments);
          break;
       }
       case TargetMode::Creating:
       {
-         ref_t signRef = compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);
+         ref_t signRef = compileMessageArguments(writer, scope, current, arguments, 0, EAttr::NoPrimitives);
 
          retVal = compileNewOp(writer, scope, node, mapClassSymbol(scope,
             retrieveStrongType(scope, source)), signRef, arguments);
          break;
       }
       case TargetMode::Casting:
-         compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);
+         compileMessageArguments(writer, scope, current, arguments, 0, EAttr::NoPrimitives);
          if (arguments.count() == 1) {
             retVal = convertObject(writer, scope, current, arguments[0], retrieveStrongType(scope, source));
          }
@@ -6164,7 +6184,14 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          if (!test(messageRef, FUNCTION_MESSAGE))
             arguments.add(source);
 
-         ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);
+         mssg_t resolvedMessage = _logic->resolveSingleDispatch(*scope.moduleScope,
+            retrieveType(scope, source), messageRef);
+
+         ref_t expectedSignRef = 0;
+         if (resolvedMessage)
+            scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
+
+         ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, expectedSignRef, EAttr::NoPrimitives);
 
          mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, source), expectedRef, messageRef, implicitSignatureRef);
          if (byRefHandler) {
@@ -6189,7 +6216,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
 bool Compiler :: resolveAutoType(ExprScope& scope, ObjectInfo source, ObjectInfo& target)
 {
-   ref_t sourceRef = retrieveStrongType(scope, target);
+   ref_t sourceRef = retrieveStrongType(scope, source);
 
    if (!_logic->validateAutoType(*scope.moduleScope, sourceRef))
       return false;
@@ -6323,7 +6350,7 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
 
       if (resolveAutoType(scope, exprVal, target)) {
          targetRef = retrieveStrongType(scope, exprVal);
-         target.reference = targetRef;
+         target.typeInfo.typeRef = targetRef;
       }
       else scope.raiseError(errInvalidOperation, roperand.parentNode());
    }
@@ -6617,7 +6644,7 @@ ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprSco
 
    switch (target.mode) {
       case TargetMode::Casting:
-         compileMessageArguments(writer, scope, messageNode, arguments, EAttr::NoPrimitives);
+         compileMessageArguments(writer, scope, messageNode, arguments, 0, EAttr::NoPrimitives);
          if (arguments.count() == 1) {
             return convertObject(writer, scope, messageNode, arguments[0], retrieveStrongType(scope, target));
          }
@@ -6630,11 +6657,18 @@ ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprSco
 
             mssg_t messageRef = mapMessage(scope, messageNode, false, false, false);
 
+            mssg_t resolvedMessage = _logic->resolveSingleDispatch(*scope.moduleScope,
+               retrieveType(scope, source), messageRef);
+
+            ref_t expectedSignRef = 0;
+            if (resolvedMessage)
+               scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
+
             if (!test(messageRef, FUNCTION_MESSAGE)) {
                arguments.add(source);
             }
 
-            ref_t implicitSignatureRef = compileMessageArguments(writer, scope, messageNode, arguments, EAttr::NoPrimitives);
+            ref_t implicitSignatureRef = compileMessageArguments(writer, scope, messageNode, arguments, expectedSignRef, EAttr::NoPrimitives);
 
             return compileMessageOperation(writer, scope, messageNode, source, messageRef,
                implicitSignatureRef, arguments, EAttr::None);
@@ -8226,6 +8260,7 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
    writer.newNode(op, opRef);
    writer.appendNode(BuildKey::Message, message);
    writer.closeNode();
+
    if (implicitMode) {
       // if it is an implicit mode (auto generated multi-method)
       if (classScope.extensionDispatcher) {
@@ -8312,10 +8347,17 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
 
       mssg_t messageRef = mapMessage(scope, current, false, false, false);
 
+      mssg_t resolvedMessage = _logic->resolveSingleDispatch(*scope.moduleScope,
+         retrieveType(scope, source), messageRef);
+
+      ref_t expectedSignRef = 0;
+      if (resolvedMessage)
+         scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
+
       if (!test(messageRef, FUNCTION_MESSAGE))
          arguments.add(source);
 
-      ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, EAttr::NoPrimitives);
+      ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, expectedSignRef, EAttr::NoPrimitives);
 
       retVal = compileMessageOperation(writer, scope, node, target, messageRef,
          implicitSignatureRef, arguments, EAttr::None);
@@ -9709,6 +9751,93 @@ void Compiler :: injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey 
    }
 }
 
+inline bool isSingleDispatch(SyntaxNode node, SyntaxKey methodType, mssg_t message, mssg_t& targetMessage)
+{
+   // !! currently constructor is not supporting single dispatch operation
+   if (methodType == SyntaxKey::Constructor)
+      return false;
+
+   mssg_t foundMessage = 0;
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == methodType) {
+         mssg_t multiMethod = current.findChild(SyntaxKey::Multimethod).arg.reference;
+         if (multiMethod == message) {
+            if (foundMessage) {
+               return false;
+            }
+            else foundMessage = current.arg.reference;
+         }
+      }
+
+      current = current.nextNode();
+   }
+
+   if (foundMessage) {
+      targetMessage = foundMessage;
+
+      return true;
+   }
+   else return false;
+}
+
+bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
+   mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility )
+{
+   ref_t actionRef = getAction(resendMessage);
+   ref_t signRef = 0;
+   ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
+
+   ref_t signArgs[ARG_COUNT];
+   size_t signLen = scope.module->resolveSignature(signRef, signArgs);
+   // HOTFIX : make sure it has at least one strong-typed argument
+   bool strongOne = false;
+   for (size_t i = 0; i < signLen; i++) {
+      if (signArgs[i] != scope.buildins.superReference) {
+         strongOne = true;
+         break;
+      }
+   }
+
+   // HOTFIX : the weak argument list should not be type-casted
+   // to avoid dispatching to the same method
+   if (!strongOne)
+      return false;
+
+   SyntaxNode methodNode = newVirtualMultimethod(classNode, methodType, message, visibility);
+   methodNode.appendChild(SyntaxKey::Autogenerated, -1); // -1 indicates autogenerated multi-method
+
+   if (outputRef)
+      methodNode.appendChild(SyntaxKey::OutputType, outputRef);
+
+   SyntaxNode resendExpr = methodNode.appendChild(SyntaxKey::ResendDispatch);
+   SyntaxNode operationNode = resendExpr.appendChild(SyntaxKey::MessageOperation);
+   operationNode.appendChild(SyntaxKey::Message).appendChild(SyntaxKey::identifier, actionName);
+
+   String<char, 10> arg;
+   for (size_t i = 0; i < signLen; i++) {
+      arg.copy("$");
+      arg.appendInt((int)i);
+
+      SyntaxNode param = methodNode.appendChild(SyntaxKey::Parameter);
+      SyntaxNode nameParam = param.appendChild(SyntaxKey::Name);
+      nameParam.appendChild(SyntaxKey::identifier, arg.str());
+
+      if (signArgs[i] != scope.buildins.superReference) {
+         SyntaxNode castNode = operationNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::MessageOperation);
+         SyntaxNode castObject = castNode.appendChild(SyntaxKey::Object);
+         castObject.appendChild(SyntaxKey::Attribute, V_CONVERSION);
+         castObject.appendChild(SyntaxKey::Type, signArgs[i]);
+         castNode.appendChild(SyntaxKey::Message);
+         castNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
+      }
+      else operationNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
+   }
+
+   return true;
+}
+
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
    ClassInfo& info, mssg_t message, bool inherited, ref_t outputRef, Visibility visibility)
 {
@@ -9719,29 +9848,43 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
    pos_t argCount;
    decodeMessage(message, actionRef, argCount, flags);
 
-   if (inherited) {
-      // if virtual multi-method handler is overridden
-      // redirect to the parent one
-      resendTarget = info.header.parentRef;
+   info.attributes.exclude({ message, ClassAttribute::SingleDispatch });
+
+   // try to resolve an argument list in run-time if it is only a single dispatch and argument list is not weak
+   // !! temporally do not support variadic arguments
+   if (isSingleDispatch(classNode, methodType, message, resendMessage) && ((message & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE) &&
+      injectVirtualStrongTypedMultimethod(classNode, methodType, scope, message, resendMessage, outputRef, visibility))
+   {
+      // mark the message as a signle dispatcher if the class is sealed / closed
+      // and default multi-method was not explicitly declared
+      if (test(info.header.flags, elClosed) && !inherited)
+         info.attributes.add({ message, ClassAttribute::SingleDispatch }, resendMessage);
    }
    else {
-      ref_t dummy = 0;
-      ustr_t actionName = scope.module->resolveAction(actionRef, dummy);
-
-      ref_t signatureLen = 0;
-      ref_t signatures[ARG_COUNT];
-
-      pos_t firstArg = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
-      for (pos_t i = firstArg; i < argCount; i++) {
-         signatures[signatureLen++] = scope.buildins.superReference;
+      if (inherited) {
+         // if virtual multi-method handler is overridden
+         // redirect to the parent one
+         resendTarget = info.header.parentRef;
       }
-      ref_t signRef = scope.module->mapAction(actionName,
-         scope.module->mapSignature(signatures, signatureLen, false), false);
+      else {
+         ref_t dummy = 0;
+         ustr_t actionName = scope.module->resolveAction(actionRef, dummy);
 
-      resendMessage = encodeMessage(signRef, argCount, flags);
+         ref_t signatureLen = 0;
+         ref_t signatures[ARG_COUNT];
+
+         pos_t firstArg = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
+         for (pos_t i = firstArg; i < argCount; i++) {
+            signatures[signatureLen++] = scope.buildins.superReference;
+         }
+         ref_t signRef = scope.module->mapAction(actionName,
+            scope.module->mapSignature(signatures, signatureLen, false), false);
+
+         resendMessage = encodeMessage(signRef, argCount, flags);
+      }
+
+      injectVirtualMultimethod(classNode, methodType, message, resendMessage, resendTarget, outputRef, visibility);
    }
-
-   injectVirtualMultimethod(classNode, methodType, message, resendMessage, resendTarget, outputRef, visibility);
 }
 
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message,

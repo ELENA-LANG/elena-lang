@@ -392,3 +392,59 @@ inlineAssignmentTests()
    child.validate();
    console.writeLine(".");
 }
+
+class DispatchType
+{
+   _content;
+
+   constructor(content)
+   {
+      _content := content;
+   }
+
+   get()
+      = _content;
+}
+
+
+class DispatchTypeCompatible
+{
+   _dummy;
+   _content;
+
+   constructor(content)
+   {
+      _content := content;
+   }   
+
+   DispatchType cast()
+      = new DispatchType(_content);
+}
+
+sealed class SingleDispatcher
+{
+   check(DispatchType arg)
+   {
+      ^ arg.get();
+   }   
+}
+
+public singleDispatchTest()
+{
+   console.write("singleDispatchTest");
+
+   var weakDispatcher := new SingleDispatcher();
+
+   auto arg1 := new DispatchType(1);
+   auto arg2 := new DispatchTypeCompatible(2);
+
+   Assert.ifTrue(weakDispatcher.check(arg1) == 1);
+   Assert.ifTrue(weakDispatcher.check(arg2) == 2);
+   console.write(".");
+
+   auto dispatcher := new SingleDispatcher();
+
+   Assert.ifTrue(dispatcher.check(arg1) == 1);
+   Assert.ifTrue(dispatcher.check(arg2) == 2);
+   console.writeLine(".");
+}

@@ -292,6 +292,7 @@ namespace elena_lang
       ParameterName     = 0x806,
       RuntimeLoadable   = 0x007,
       SealedStatic      = 0x908,
+      SingleDispatch    = 0xA09,
    }; 
 
    // === Reference constants ====

@@ -1090,7 +1090,7 @@ namespace elena_lang
          ref_t outputRef);
 
       ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, 
-         ArgumentsInfo& arguments, ExpressionAttribute mode);
+         ArgumentsInfo& arguments, ref_t expectedSignRef, ExpressionAttribute mode);
 
       void writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& scope);
       void writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope);
@@ -1255,6 +1255,9 @@ namespace elena_lang
          ref_t targetRef, ClassInfo& info, VirtualMethodList& implicitMultimethods);
 
       void injectInitializer(SyntaxNode classNode, SyntaxKey methodType, mssg_t message);
+
+      bool injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
+         mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility);
 
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
          ClassInfo& classInfo, mssg_t message, bool inherited, ref_t outputRef, Visibility visibility);

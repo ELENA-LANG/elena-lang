@@ -149,6 +149,8 @@ namespace elena_lang
       bool resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
          CheckMethodResult& result);
 
+      mssg_t resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage);
+
       void injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef);
       void injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, 
          mssg_t message, ClassInfo::MethodMap& methods, ClassAttributes& attributes,

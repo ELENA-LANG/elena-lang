@@ -5,13 +5,10 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * boxing missing
-    * optimization single dispatching
-
     * test nil reference exception : linux i386, linux amd64, linux ppc64le, linux aarch64
     * test call stack : linux i386, linux amd64, linux ppc64le, linux aarch64
-    * testing all rosetta examples : linux i386, linux amd64, linux ppc64le, linux aarch64
-    * testing all examples : linux i386, linux amd64, linux ppc64le, linux aarch64
+    * testing all rosetta examples : x86, x86-64, linux i386, linux amd64, linux ppc64le, linux aarch64
+    * testing all examples : x86, x86-64, linux i386, linux amd64, linux ppc64le, linux aarch64
 
     * make install package : i386, amd64, ppc64le, arm64
     * inno setup : x86, x86-64
@@ -58,6 +55,9 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * support single dispatch for constructors
+    * test cases : nil dispatcher, multi dispatch, private method dispatching
+    * optimization single dispatching
     * boxable self (structs) - do not box the self return
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * redesign : for 64 bit:object size offset should be 8, instead of 4
@@ -258,7 +258,6 @@ Backlog:
     * operator names should be configurable
     * optimize String.prop:Length[1]
     * replace xassign with assign for the field assignment
-    * compile time method dispatching
     * generating template extensions
     * if statements with single statement
     * ide - open file - namespace should be added
@@ -271,18 +270,15 @@ Backlog:
     * call interface method
     * compiler - constructor - fill newly created object with zerros
     * compiler - if the method has no call operarion, no need to set arg length
-    * dispatching a message in compile-time when it is possible
     * bcwriter : openFrame - should flush only used arguments (e.g. for test[1] - only one xflush)
     * dispatch opcode : optimize for 1,2,3,4 arguments
     * optimization sealed dispatching
-    * private method dispatching
     * optimization xstore sp:0, 0 and xstore sp:1, 0 - should be replaced with xor operation
     * no need to store an argument for the function (constructor)
     * nested class cannot have static methods
     * ppc64 optimization : use store multiple for alloc / open opcodes - for filling the stack with zeros
     * optimization : xstore sp:1, r:0 - should be replaced with direct assinging 0 to register
     * generic extension - should the output type be set? 
-    * support single dispatch
     * use direct reference for - BoolValue#true.Inverted
     * equal native bool operation
     * ppc64le : r2 should be saved in the stack for the optimization

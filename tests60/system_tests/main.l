@@ -13,6 +13,7 @@ public program()
    shortTests();
    conversionTests();
    inlineAssignmentTests();
+   singleDispatchTest();
 
    console.writeLine("--- Passed ---")
 }

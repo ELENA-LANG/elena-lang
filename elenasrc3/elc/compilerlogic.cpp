@@ -1265,6 +1265,8 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.flags = /*elDebugArray | */elDynamicRole;
          info.size = 0;
          break;
+      case V_AUTO:
+         break;
       default:
          if (reference != 0) {
             if (!scope.loadClassInfo(info, reference, headerOnly, fieldsOnly))
@@ -1900,5 +1902,18 @@ void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_
          methods.add({ mssg, methodInfo.outputRef });
       }
    }
+
+}
+
+mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage)
+{
+   if (!reference)
+      return 0;
+
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference)) {
+      return info.attributes.get({ weakMessage, ClassAttribute::SingleDispatch });
+   }
+   else return 0;
 
 }
