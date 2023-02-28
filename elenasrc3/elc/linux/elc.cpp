@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       Project          project(*dataPath, CURRENT_PLATFORM, &Presenter::getInstance());
       LinuxLinker      linker(&errorProcessor, &LinuxImageFormatter::getInstance(&project));
-      CompilingProcess process(dataPath, "<prolog>", "<epilog>", 
+      CompilingProcess process(dataPath, "<prolog>", "<epilog>",
          &Presenter::getInstance(), &errorProcessor,
          VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
@@ -262,7 +262,7 @@ int main(int argc, char* argv[])
                {
                   IdentifierString configName(argv[i] + 2);
 
-                  project.loadConfigByName(*appPath, *configName, true);
+                  project.loadConfigByName(*dataPath, *configName, true);
                   break;
                }
                case 'p':
