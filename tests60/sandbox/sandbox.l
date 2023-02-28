@@ -39,23 +39,23 @@
 
 public program()
 {
-         termios savedState;   
+//         termios savedState;   
          termios newState;
 
-         extern libc.tcgetattr(STDIN_FILENO, savedState);
+//         extern libc.tcgetattr(STDIN_FILENO, savedState);
 
-         newState := savedState;
+//         newState := savedState;
 
          /* disable canonical input and disable echo.  set minimal input to 1. */
-         newState.LFlag := newState.LFlag & ~(ECHO | ICANON);
+//         newState.LFlag := newState.LFlag & ~(ECHO | ICANON);
          newState[VMIN] := 1;
 
-         extern libc.tcsetattr(STDIN_FILENO, TCSANOW, newState);
+//         extern libc.tcsetattr(STDIN_FILENO, TCSANOW, newState);
 
-         int ch := extern libc.getchar();      /* block (withot spinning) until we get a keypress */
+//         int ch := extern libc.getchar();      /* block (withot spinning) until we get a keypress */
 
             /* restore the saved state */
-         extern libc.tcsetattr(STDIN_FILENO, TCSANOW, savedState);
+//         extern libc.tcsetattr(STDIN_FILENO, TCSANOW, savedState);
 
 
 //   console.readChar();
