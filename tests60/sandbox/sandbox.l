@@ -1,6 +1,9 @@
 
 public program()
 {
-   var o := new Object();
-   o.fail()
+    var o := nil;
+    o.call()
+
+//   var o := new Object();
+//   o.fail()
 }

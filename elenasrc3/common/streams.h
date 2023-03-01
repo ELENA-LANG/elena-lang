@@ -448,6 +448,7 @@ namespace elena_lang
          _memory = memory;
          _position = position;
       }
+      virtual ~MemoryReader() = default;
    };
 
    // --- MemoryWriter ---

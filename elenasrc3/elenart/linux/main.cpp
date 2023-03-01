@@ -35,6 +35,8 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 
 #endif // defined
 
+//#define DEBUG_OUTPUT 1
+
 static ELENARTMachine* machine = nullptr;
 static SystemEnv* systemEnv = nullptr;
 
@@ -78,7 +80,7 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
 
 void* CollectGCLA(void* roots, size_t size)
 {
-//   printf("CollectGCLA %llx %llx\n", (long long)roots, size);
+   //printf("CollectGCLA %llx %llx\n", (long long)roots, size);
 
    return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size);
 }
