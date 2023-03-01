@@ -47,7 +47,7 @@ ELENA is a general-purpose language with late binding. It is multi-paradigm, com
 
 To acquire the source code clone the git repository:
 
-    git clone git://github.com/ELENA-LANG/elena-lang.git
+    git clone https://github.com/ELENA-LANG/elena-lang.git
 
 ### Windows:
 
