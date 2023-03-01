@@ -196,6 +196,14 @@ inline int _abs(int x)
    return (x ^ (x >> 31)) - (x >> 31);
 }
 
+// --- ptrToUInt32 ---
+
+inline unsigned int ptrToUInt32(void* ptr)
+{
+   uintptr_t ptrVal = (uintptr_t)ptr;
+
+   return static_cast<unsigned int>(ptrVal);
+}
 
 } // _ELENA_
 

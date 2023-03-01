@@ -2706,7 +2706,7 @@ pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
    // signature or action name for weak message
    if (signature) {
       if (!virtualMode) {
-         messageWriter.writeDWord((unsigned int)messageBodyWriter.Memory()->get(signature));
+         messageWriter.writeDWord(ptrToUInt32(messageBodyWriter.Memory()->get(signature)));
       }
       else messageWriter.writeDReference(mskMBDataRef32 | signature, 0u);
    }
@@ -2715,7 +2715,7 @@ pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
    }
    else {
       if (!virtualMode) {
-         messageWriter.writeDWord((unsigned int)messageBodyWriter.Memory()->get(messageBodyWriter.position()));
+         messageWriter.writeDWord(ptrToUInt32(messageBodyWriter.Memory()->get(messageBodyWriter.position())));
       }
       else messageWriter.writeDReference(mskMBDataRef32 | messageBodyWriter.position(), 0u);
 
@@ -3226,7 +3226,7 @@ void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)
       writer.writeChar(0);
    }
    else writer.writeString(value, value.length_pos() + 1);
-   
+
    writer.align(8, 0);
 }
 
