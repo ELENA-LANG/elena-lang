@@ -7,8 +7,10 @@ In development:
     === Iteration 13 ===
     * testing all rosetta examples : linux amd64, linux ppc64le, linux aarch64
     * testing all examples : linux amd64, linux ppc64le, linux aarch64
+    * test nil reference exception : linux i386, linux amd64, linux ppc64le, linux aarch64
+    * test call stack : linux amd64, linux ppc64le, linux aarch64
 
-    * make install package : i386, amd64, ppc64le, arm64
+    * make install package : amd64, ppc64le, arm64
     * inno setup : x86, x86-64
 
     * mlen opcode : ppc64le, aarch64
@@ -31,8 +33,6 @@ In development:
     ! script samples : x86
     ! elena vm : x86-64
     ! regression tests : github issues
-    * test nil reference exception : linux i386, linux amd64, linux ppc64le, linux aarch64
-    * test call stack : linux amd64, linux ppc64le, linux aarch64
 
     === Iteration 15 ===
     ! ide : vm console
