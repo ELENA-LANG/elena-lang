@@ -109,7 +109,7 @@ void ElfLinker :: prepareElfImage(ImageProviderBase& provider, ElfExecutableImag
 
 LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider)
 {
-   bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode);
+   bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true);
    ElfExecutableImage image(withDebugMode);
 
    image.addressMap.entryPoint = (pos_t)provider.getEntryPoint();

@@ -48,7 +48,7 @@ public sealed class CallStack
          bufferLength := extern LoadAddressInfoLM(address, buffer, 512);
          if (bufferLength > 0) {
             callStackText := callStackText + String.fromByteArray(0, bufferLength, buffer).add(newLineConstant)
-         }
+         };
       };
 
       ^ callStackText

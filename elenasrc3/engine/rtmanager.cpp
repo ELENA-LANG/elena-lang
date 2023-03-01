@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 
 #include "rtmanager.h"
+#include "streams.h"
 
 using namespace elena_lang;
 
@@ -13,7 +14,7 @@ using namespace elena_lang;
 RTManager :: RTManager(MemoryBase* msection, MemoryBase* dbgsection)
    : msection(msection), dbgsection(dbgsection)
 {
-   
+
 }
 
 bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider, ustr_t& symbol, ustr_t& method, ustr_t& path, int& row)
@@ -31,25 +32,30 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
    bool found = false;
    while (!reader.eof() && !found) {
       // read reference
-      symbol = reader.getString(DEFAULT_STR);
+      ustr_t current_symbol = reader.getString(DEFAULT_STR);
+      if (current_symbol.empty())
+         break;
 
       // define the next record position
       pos_t size = reader.getPos() - 4;
       index = 0;
       addr_t previous = 0;
       addr_t current = 0;
-      while (size > 0) {
-         reader.read(&current, sizeof(current));
+      while (size != 0) {
+         if(!reader.read(&current, sizeof(current)))
+            break;
 
          if (retAddress == current || (previous != 0 && previous < retAddress && current >= retAddress)) {
             found = true;
+            symbol = current_symbol;
 
             break;
          }
 
          previous = current;
          index++;
-         size -= sizeof(current);
+
+         size -= (size < sizeof(current)) ? size : sizeof(current);
       }
    }
 
