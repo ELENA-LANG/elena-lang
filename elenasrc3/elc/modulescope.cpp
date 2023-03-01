@@ -143,7 +143,9 @@ ExternalInfo ModuleScope :: mapExternal(ustr_t dllAlias, ustr_t functionName)
    if (!emptystr(dllName)) {
       type = ExternalType::WinApi;
    }
-   else dllName = forwardResolver->resolveExternal(dllAlias);
+   else if (!dllAlias.compare(RT_FORWARD)) {
+      dllName = forwardResolver->resolveExternal(dllAlias);
+   }
    if (dllName.empty())
       dllName = dllAlias;
 
