@@ -136,6 +136,14 @@ echo compiling lib60 files
    echo .
  fi
 
+ echo "Do you wish to create a package?"
+ select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) break;;
+        No ) exit;;
+    esac
+ done
+
  mkdir -p ./$RELEASE/etc/elena/
  mkdir -p ./$RELEASE/etc/elena/templates/
  mkdir -p ./$RELEASE/usr/share/elena/

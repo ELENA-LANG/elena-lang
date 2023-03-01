@@ -33,8 +33,6 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
    while (!reader.eof() && !found) {
       // read reference
       ustr_t current_symbol = reader.getString(DEFAULT_STR);
-      if (current_symbol.empty())
-         break;
 
       // define the next record position
       pos_t size = reader.getPos() - 4;

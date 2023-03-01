@@ -75,8 +75,9 @@ bool ElfLinker :: createDebugFile(ImageProviderBase& provider, ElfExecutableImag
 
    MemoryBase* debug = provider.getTargetDebugSection();
 
-   // signature
+   // signature - first 8 bytes
    debugWriter.write(DEBUG_MODULE_SIGNATURE, getlength_pos(DEBUG_MODULE_SIGNATURE));
+   debugWriter.align(8);
 
    // save entry point
    addr_t entryPoint = image.addressMap.code + image.addressMap.imageBase + provider.getDebugEntryPoint();
