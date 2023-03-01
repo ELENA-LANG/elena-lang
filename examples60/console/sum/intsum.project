@@ -1,23 +1,23 @@
 <configuration>
   <platform key="Linux_I386">
-     <system>
+     <project>
         <executable>intsum</executable>
-     </system>
+     </project>
   </platform>
   <platform key="Linux_AMD64">
-     <system>
+     <project>
         <executable>intsum64</executable>
-     </system>
+     </project>
   </platform>
   <platform key="Linux_PPC64le">
-     <system>
+     <project>
         <executable>intsum64</executable>
-     </system>
+     </project>
   </platform>
   <platform key="Linux_ARM64">
-     <system>
+     <project>
         <executable>intsum64</executable>
-     </system>
+     </project>
   </platform>
   <project>
      <namespace>sum</namespace>
