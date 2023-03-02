@@ -271,7 +271,11 @@ inline void FixObject(GCTable* table, GCRoot* roots, size_t start, size_t end)
    while (size > 0) {
       // ; check if it valid reference
       if (*ptr >= start && *ptr < end) {
-         if ((uintptr_t)ptr == 0x000000000014fb28)
+
+         uintptr_t t = *ptr;
+
+         // !! temporal
+         if ((uintptr_t)ptr == 0x000000000014c660)
             size |= 0;
 
          ObjectPage* pagePtr = getObjectPage(*ptr);
@@ -336,7 +340,8 @@ inline void FullCollect(GCTable* table, GCRoot* roots)
       int object_size = ((mgPtr->size + page_ceil) & page_align_mask);
 
       if (mgPtr->size < 0) {
-         if ((uintptr_t)mgPtr == 0x0000000008a64000)
+         // temporal
+         if (((uintptr_t)mgPtr & 0xFFFF) == 0x1b10)
             mg_end |= 0;
 
          *(uintptr_t*)mappings = getObjectPtr((uintptr_t)newPtr);
@@ -359,6 +364,10 @@ inline void FullCollect(GCTable* table, GCRoot* roots)
       int object_size = ((ygPtr->size + page_ceil) & page_align_mask);
 
       if (ygPtr->size < 0) {
+         // temporal
+         if (((uintptr_t)ygPtr & 0xFFFF) == 0x1b10)
+            mg_end |= 0;
+
          // ; copy page
          MoveObject(object_size, newPtr, ygPtr);
 

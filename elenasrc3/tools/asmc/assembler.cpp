@@ -425,8 +425,10 @@ void AssemblerBase :: declareConstant(ScriptToken& tokenInfo)
 
    int value = readInteger(tokenInfo);
 
-   if (!constants.add(*constName, value, true))
+   if (constants.exist(*constName))
       throw SyntaxError(ASM_DUPLICATECONST, tokenInfo.lineInfo);
+
+   constants.add(*constName, value);
 }
 
 void AssemblerBase :: compile()

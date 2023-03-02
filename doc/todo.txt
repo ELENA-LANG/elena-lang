@@ -5,8 +5,10 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
+    * fix ackermann for 64 bit : windows & linux
+    
     * testing all rosetta examples : linux amd64, linux ppc64le, linux aarch64
-    * testing all examples : linux amd64, linux ppc64le, linux aarch64
+    * testing all examples : linux ppc64le, linux aarch64
     * test nil reference exception : linux amd64, linux ppc64le, linux aarch64
     * test call stack : linux amd64, linux ppc64le, linux aarch64
 
