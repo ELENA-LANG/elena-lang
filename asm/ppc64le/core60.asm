@@ -1001,7 +1001,7 @@ inline %9Ah
 
   li      r16, __n16_1
   mr      r19, r3
-  mul     r16, r16, r14
+  mulld   r16, r16, r14
   mr      r18, r15
 
 labLoop:
@@ -2144,7 +2144,7 @@ inline %0E9h
 
   li      r16, __n16_2
   addi    r18, r31, __arg16_1
-  mul     r16, r16, r14
+  mulld   r16, r16, r14
   mr      r19, r3
 
 labLoop:
