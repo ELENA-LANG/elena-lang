@@ -44,6 +44,7 @@ namespace elena_lang
       XAssignSP      = 0x17,
       DTrans         = 0x18,
       XAssign        = 0x19,
+      LLoad          = 0x1A,
 
       Coalesce       = 0x20,
       Not            = 0x21,
@@ -98,6 +99,8 @@ namespace elena_lang
       XRefreshSI     = 0xA7,
       PeekFI         = 0xA8,
       PeekSI         = 0xA9,
+      LSaveDP        = 0xAA,
+      LSaveSI        = 0xAB,
 
       CallR          = 0xB0,
       CallVI         = 0xB1,

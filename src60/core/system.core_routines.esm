@@ -13,6 +13,10 @@ define ex_struct_size64              32;
 define page_size32                   16;
 define page_size64                   32;
 
+define ptr_size32                     4;
+define ptr_size64                     8;
+
+
 define __realSize                     8;
 
 define err_ret          -1;
@@ -777,9 +781,9 @@ procedure __loadCallStack (self, buffer, length, retVal)
   store      fp:b
 
   mov        frm
-  save       dp:ptr
+  $save      dp:ptr        // ; NOTE for 64bit it should be lsave dp
 
-  call extern:LoadCallStackLA(*ptr, b, *l)
+  call extern:LoadCallStackLA(*$ptr, b, *l) // ; NOTE for 64bit ptr should be treated as long
   peek       fp:retVal
   save
 

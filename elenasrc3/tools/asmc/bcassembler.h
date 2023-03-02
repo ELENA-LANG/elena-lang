@@ -95,6 +95,7 @@ namespace elena_lang
          Type  type;
          ref_t reference;
          bool  byVal;
+         bool  byVal64;
 
          static Operand Default()
          {
@@ -107,7 +108,7 @@ namespace elena_lang
          {
             type = Type::None;
             reference = 0;
-            byVal = false;
+            byVal = byVal64 = false;
          }
       };
 

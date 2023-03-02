@@ -248,7 +248,13 @@ bool ByteCodeAssembler :: writeArg(MemoryWriter& writer, Operand& arg, int index
          break;
       case Operand::Type::DataVariable:
          ByteCodeUtil::write(writer, ByteCode::SetDP, arg.reference);
-         if (arg.byVal) {
+         if (arg.byVal64) {
+            // load
+            // save sp:index
+            ByteCodeUtil::write(writer, ByteCode::LLoad);
+            ByteCodeUtil::write(writer, ByteCode::LSaveSI, index);
+         }
+         else if (arg.byVal) {
             // load
             // save sp:index
             ByteCodeUtil::write(writer, ByteCode::Load);
@@ -260,7 +266,15 @@ bool ByteCodeAssembler :: writeArg(MemoryWriter& writer, Operand& arg, int index
          }
          break;
       case Operand::Type::Variable:
-         if (arg.byVal) {
+         if (arg.byVal64) {
+            // peek fp:arg.reference
+            // load
+            // save sp:index
+            ByteCodeUtil::write(writer, ByteCode::PeekFI, arg.reference);
+            ByteCodeUtil::write(writer, ByteCode::LLoad);
+            ByteCodeUtil::write(writer, ByteCode::LSaveSI, index);
+         }
+         else if (arg.byVal) {
             // peek fp:arg.reference
             // load
             // save sp:index
@@ -289,7 +303,19 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 {
    Operand arg;
    if (tokenInfo.compare("*")) {
+      read(tokenInfo);
+
       arg.byVal = true;
+   }
+   if (tokenInfo.compare("$")) {
+      if(arg.byVal) {
+         if (_mode64) {
+            arg.byVal64 = true;
+            arg.byVal = false;
+         }
+      }
+      else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+
       read(tokenInfo);
    }
 
@@ -840,6 +866,17 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
    ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, int& dataSize)
 {
    IdentifierString command(*tokenInfo.token);
+
+   if (tokenInfo.compare("$")) {
+      read(tokenInfo);
+
+      command.copy(*tokenInfo.token);
+
+      if (_mode64) {
+         command.insert("l", 0);
+      }
+   }
+
    size_t timePos = command.length();
 
    read(tokenInfo);
@@ -885,6 +922,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::XRefreshSI:
             return compileOpStackI(tokenInfo, writer, opCommand, true);
          case ByteCode::SaveDP:
+         case ByteCode::LSaveDP:
          case ByteCode::SetDP:
          case ByteCode::LoadDP:
          case ByteCode::XCmpDP:

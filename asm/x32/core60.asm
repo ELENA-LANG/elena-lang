@@ -424,6 +424,14 @@ inline %19h
 
 end
 
+// ; lload
+inline %1Ah
+
+  mov  eax, dword ptr [ebx]
+  mov  edx, dword ptr [ebx]
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -900,7 +908,7 @@ inline %9Bh
 
 end
 
-// ; saveddisp
+// ; savedp
 inline %0A0h
 
   mov  [ebp + __arg32_1], edx
@@ -1004,6 +1012,24 @@ end
 inline %1A9h
 
   mov ebx, esi
+
+end 
+
+// ; lsavedp
+inline %0AAh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  [edi], eax
+  mov  [edi + 4], edx
+
+end
+
+// ; lsavesi
+inline %0ABh
+
+  lea  edi, [esp + __arg32_1]
+  mov [edi], eax
+  mov [edi+4], edx
 
 end 
 

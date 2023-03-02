@@ -60,6 +60,8 @@ ELENA byte codes (or ecodes)
 
    get i                    - acc[i] => acc
 
+   lload                    - long:index := long:[acc] 
+
    load                     - index := [acc] 
 
    loadv                    - index.action := [acc].action
@@ -71,8 +73,10 @@ ELENA byte codes (or ecodes)
    fsave                    - double:[acc] := index
 
    mov env                  - %SYSTEM_ENV => index 
+                              NOTE: for 64 bit, to save it correctly lsave and lsavedp should be used
 
-   mov frm                  - %CURRENT_FRAME => index 
+   mov frm                  - %CURRENT_FRAME => index;
+                              NOTE: for 64 bit, to save it correctly lsave and lsavedp should be used
 
    mov mssg:m               - index := m
 
@@ -158,6 +162,10 @@ ELENA byte codes (or ecodes)
    load fp:i                - index := fp[i]
 
    load dp:disp             - index := dp[disp]
+
+   lsave dp:disp            - dp[disp]  := long:index
+
+   lsave sp:disp            - sp[disp]  := long:index
 
    mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
 

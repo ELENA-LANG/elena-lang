@@ -428,6 +428,13 @@ inline %19h
 
 end
 
+// ; lload
+inline %1Ah
+
+  mov  rdx, [rbx]
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -463,11 +470,7 @@ end
 // ; lsave
 inline %24h
 
-  mov  eax, edx
-  cdq
-  mov  dword ptr [rbx + 4], edx
-  mov  dword ptr [rbx], eax
-  mov  edx, eax
+  mov  qword ptr [rbx], rdx
 
 end
 
@@ -921,7 +924,7 @@ inline %9Bh
 
 end
 
-// ; saveddisp
+// ; savedp
 inline %0A0h
 
   mov  dword ptr[rbp + __arg32_1], edx
@@ -938,7 +941,8 @@ end
 // ; savesi
 inline %0A2h
 
-  mov dword ptr [rsp + __arg32_1], edx
+  mov eax, edx
+  mov [rsp + __arg32_1], rax
 
 end 
 
@@ -1061,6 +1065,34 @@ end
 inline %2A9h
 
   mov rbx, r11
+
+end 
+
+// ; lsavedp
+inline %0AAh
+
+  mov  [rbp + __arg32_1], rdx
+
+end
+
+// ; lsavesi
+inline %0ABh
+
+  mov qword ptr [rsp + __arg32_1], rdx
+
+end 
+
+// ; lsavesi 0
+inline %1ABh
+
+  mov r10, rdx
+
+end 
+
+// ; lsavesi 1
+inline %2ABh
+
+  mov r11, rdx
 
 end 
 

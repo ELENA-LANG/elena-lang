@@ -19,6 +19,9 @@ In development:
     * dtrans opcode : ppc64le, aarch64
     * new opcode xassign : ppc64le, aarch64
     * orn dispatch opcode : ppc64le, aarch64
+    * lsavedp opcode : ppc64le, aarch64
+    * lsavesi opcode : ppc64le, aarch64
+    * lload opcode : x86-64, ppc64le, aarch64
     * variadic dispatch opcode : ppc64le, aarch64
 
     * ide - close all / close all but active
