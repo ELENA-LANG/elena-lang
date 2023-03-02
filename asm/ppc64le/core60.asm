@@ -520,7 +520,7 @@ inline %25h
 end
 
 // ; wread
-inline %23h
+inline %26h
 
   add     r19, r3, r14
   lwz     r17, 0(r19)
