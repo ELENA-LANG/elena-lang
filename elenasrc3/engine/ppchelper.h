@@ -238,7 +238,7 @@ namespace elena_lang
    // --- PPCLabelHelper ---
    struct PPCLabelHelper : LabelHelper
    {
-      short getHiAdjusted(disp_t n)
+      static short getHiAdjusted(disp_t n)
       {
          // HOTFIX : if the DWORD LO is over 0x7FFF - adjust DWORD HI (by adding 1) to be properly combined in the following code:
          //     addis   r16, r16, __xdisp32hi_1
