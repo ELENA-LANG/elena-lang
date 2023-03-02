@@ -175,11 +175,11 @@ void PPC64leJITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask,
 {
    pos_t offset = writer->position();
 
-   switch (info.mask) {
+   switch (mask) {
       case mskXDisp32Hi:
       case mskDisp32Hi:
       {
-         offset = getHiAdjusted(offset);
+         offset = PPCLabelHelper::getHiAdjusted(offset);
 
          PPCHelper::fixBCommand(writer->Memory()->get(info.position), offset);
          writer->Memory()->addReference(mskCodeXDisp32Hi, info.position);
