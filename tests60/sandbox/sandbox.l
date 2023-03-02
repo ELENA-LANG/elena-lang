@@ -8,13 +8,13 @@ public program()
 //   var o := new Object();
 //   o.fail()
 
-//      try
-//      {
+      try
+      {
          InvalidArgumentException.raise()
-//      }
-//      catch(Exception e)
-//      {
-//         console.printLine:"failed"
-//      }
+      }
+      catch(Exception e)
+      {
+         console.printLine:"failed"
+      }
 
 }
