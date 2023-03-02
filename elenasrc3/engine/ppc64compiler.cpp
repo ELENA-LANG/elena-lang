@@ -173,7 +173,7 @@ void PPC64leJITCompiler:: prepare(
 
 void PPC64leJITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode)
 {
-   pos_t offset = writer.position();
+   pos_t offset = writer->position();
 
    switch (info.mask) {
       case mskXDisp32Hi:
@@ -181,8 +181,8 @@ void PPC64leJITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask,
       {
          offset = getHiAdjusted(offset);
 
-         PPCHelper::fixBCommand(writer.Memory()->get(info.position), offset);
-         writer.Memory()->addReference(mskCodeXDisp32Hi, info.position);
+         PPCHelper::fixBCommand(writer->Memory()->get(info.position), offset);
+         writer->Memory()->addReference(mskCodeXDisp32Hi, info.position);
          break;
       }
       case mskXDisp32Lo:
@@ -190,8 +190,8 @@ void PPC64leJITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask,
       {
          offset &= 0xFFFF;
 
-         PPCHelper::fixBCommand(writer.Memory()->get(info.position), offset);
-         writer.Memory()->addReference(mskCodeXDisp32Lo, info.position);
+         PPCHelper::fixBCommand(writer->Memory()->get(info.position), offset);
+         writer->Memory()->addReference(mskCodeXDisp32Lo, info.position);
          break;
       }
       default:

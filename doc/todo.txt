@@ -5,14 +5,12 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * fix ackermann for 64 bit : windows & linux
-    
-    * testing all rosetta examples : linux amd64, linux ppc64le, linux aarch64
+    * testing all rosetta examples : linux ppc64le, linux aarch64
     * testing all examples : linux ppc64le, linux aarch64
-    * test nil reference exception : linux amd64, linux ppc64le, linux aarch64
-    * test call stack : linux amd64, linux ppc64le, linux aarch64
+    * test nil reference exception : linux ppc64le, linux aarch64
+    * test call stack : linux ppc64le, linux aarch64
 
-    * make install package : amd64, ppc64le, arm64
+    * make install package : ppc64le, arm64
     * inno setup : x86, x86-64
 
     * mlen opcode : ppc64le, aarch64
