@@ -20,9 +20,9 @@ void ElfPPC64leImageFormatter :: fillElfData(ImageProviderBase& provider, ElfDat
 {
    pos_t count = fillImportTable(provider.externals(), elfData);
 
-   Section* code = provider.getTextSection();
-   Section* data = provider.getDataSection();
-   Section* import = provider.getImportSection();
+   MemoryBase* code = provider.getTextSection();
+   MemoryBase* data = provider.getDataSection();
+   MemoryBase* import = provider.getImportSection();
 
    MemoryWriter dynamicWriter(data);
    dynamicWriter.align(fileAlignment, 0);
