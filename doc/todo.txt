@@ -33,6 +33,7 @@ In development:
     ! script samples : x86
     ! elena vm : x86-64
     ! regression tests : github issues
+    * create github action workflow to build the project
 
     === Iteration 15 ===
     ! ide : vm console
