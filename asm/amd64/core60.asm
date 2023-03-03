@@ -395,7 +395,10 @@ end
 // ; dalloc
 inline %16h
 
-  lea  rax, [rdx*4]
+  lea  rax, [rdx*8]
+  add  eax, 8
+  and  eax, 0FFFFFFF0h
+
   sub  rsp, rax
   mov  rcx, rdx
   xor  rax, rax

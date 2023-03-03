@@ -13,6 +13,7 @@ define VOIDPTR              2000Eh
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
 define ARG_MASK               05Fh
+define ARG_COUNT_MASK         01Fh
 
 // ; TOC TABLE OFFSETS
 define toc_import            0000h
@@ -468,6 +469,82 @@ inline % 14h
   srdi    r22, r22, ACTION_ORDER
   add     r24, r24, r22
   ld      r14, 0(r24)  
+
+end
+
+// ; mlen
+inline % 15h
+
+  andi.   r14, r14, ARG_COUNT_MASK
+
+end
+
+// ; dalloc
+inline % 16h
+
+  sldi    r16, r14, 3
+
+  addi    r16, r16, 8     // ; rounding to 10h
+  srdi    r16, r14, 4
+  sldi    r16, r14, 4
+
+  sub     r1, r1,  r16   // ; allocate stack
+  li      r17, 0
+  mr      r18, r1 
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -8
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; xassignsp
+inline % 17h
+
+  mr      r15, r1
+
+end
+
+// ; dtrans
+inline %18h
+
+  mr      r16, r14
+  mr      r19, r3
+  mr      r18, r15
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  ld      r17, 0(r19)
+  addi    r16, r16, -1
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  addi    r19, r19, 8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; xassign
+inline %19h
+
+  sldi    r16, r14, 3
+  add     r16, r16, r15
+  std     r3, 0(r16)
+
+end
+
+// ; lload
+inline %1Ah
+
+  ld      r14, 0(r15)
 
 end
 
@@ -1018,10 +1095,17 @@ labEnd:
 
 end
 
+// ; orn
+inline %9Bh
+
+  ori     r14, r14, __n16_1
+
+end
+
 // ; saveddisp
 inline %0A0h
 
-  std     r14, __arg16_1(r31)  // ; save frame pointer
+  stw     w14, __arg16_1(r31)  // ; save frame pointer
 
 end
 
@@ -1166,6 +1250,34 @@ end
 inline %2A9h
 
   mr      r15, r4
+
+end 
+
+// ; lsavedp
+inline %0AAh
+
+  std     r14, __arg16_1(r31)  // ; save frame pointer
+
+end
+
+// ; lsavesi
+inline %0ABh
+
+  std     r14, __arg16_1(r1)  
+
+end 
+
+// ; savesi 0
+inline %1ABh
+
+  mr      r3, r14
+
+end 
+
+// ; savesi 1
+inline %2ABh
+
+  mr      r4, r14
 
 end 
 
