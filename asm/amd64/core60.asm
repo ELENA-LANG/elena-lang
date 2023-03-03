@@ -2298,11 +2298,12 @@ inline % 5FAh
   mov  r8,  rbx
   mov  [rsp+8], r10                      // ; saving arg0
   lea  rax, [rsp + __n_2]
-  mov  [rsp+16], r11                     // ; saving arg0
+  mov  [rsp+16], r11                     // ; saving arg1
 
   mov  rsi, __ptr64_2
   xor  edx, edx
 
+  // ; count the number of args
   mov  rbx, rax
   mov  r9, -1
 labCountParam:
