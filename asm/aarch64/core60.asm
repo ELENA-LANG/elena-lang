@@ -522,6 +522,14 @@ inline %180h
 
 end 
 
+// ; setr -1
+inline %680h
+
+  mov     x10, #0
+  sub     x10, x10, #1
+
+end 
+
 // ; setdp
 inline %81h
 

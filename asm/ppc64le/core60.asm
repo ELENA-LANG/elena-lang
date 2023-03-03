@@ -646,6 +646,14 @@ inline %180h
 
 end 
 
+// ; setr -1
+inline %680h
+
+  li      r15, 0
+  addi    r15, r15, -1
+
+end 
+
 // ; setdp
 inline %81h
 
