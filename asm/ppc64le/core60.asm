@@ -1113,7 +1113,7 @@ end
 // ; savedp
 inline %0A0h
 
-  sth     r14, __arg16_1(r31)  // ; save frame pointer
+  stw     r14, __arg16_1(r31)  // ; save frame pointer
 
 end
 
