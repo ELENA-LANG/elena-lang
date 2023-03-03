@@ -1235,10 +1235,19 @@ inline %0C0h
 
 end 
 
-// ; cmpr
+// ; cmpr 0
 inline %1C0h
 
   mov     x11, #0
+  cmp     x10, x11
+
+end 
+
+// ; cmpr -1
+inline %6C0h
+
+  mov     x11, #0
+  sub     x11, x11, #1
   cmp     x10, x11
 
 end 

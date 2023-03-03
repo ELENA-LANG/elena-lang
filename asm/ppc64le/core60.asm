@@ -1388,10 +1388,19 @@ inline %0C0h
 
 end 
 
-// ; cmpr
+// ; cmpr 0
 inline %1C0h
 
   li      r16, 0
+  cmp     r15, r16
+
+end 
+
+// ; cmpr 1
+inline %6C0h
+
+  li      r16, 0
+  addi    r16, r16, -1
   cmp     r15, r16
 
 end 
