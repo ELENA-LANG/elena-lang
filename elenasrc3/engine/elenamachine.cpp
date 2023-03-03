@@ -90,9 +90,6 @@ int ELENAMachine :: execute(SystemEnv* env, void* symbolListEntry)
    entry.address = env->bc_invoker;
 
    // executing the program
-   // !! temporal
-   printf("ELENAMachine :: execute\n");
-   fflush(stdout);
 
    int retVal = 0;
    try

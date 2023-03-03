@@ -618,7 +618,7 @@ inline %02Eh
 
   sldi    r22, r14, 3
   add     r22, r22, r15
-  ld      r15, 0(r16)
+  ld      r15, 0(r22)
 
 end
 
@@ -809,7 +809,7 @@ inline %89h
 
 end
 
-// ; setdp
+// ; loaddp
 inline %8Ah
 
   addi    r16, r31, __arg16_1
