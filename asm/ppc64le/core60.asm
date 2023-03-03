@@ -605,6 +605,14 @@ inline %26h
 
 end
 
+// ; xjump
+inline %027h
+
+  mtctr    r15            // ; put code address into ctr
+  bctr                    // ; and jump to it
+
+end
+
 // ; xget
 inline %02Eh
 
