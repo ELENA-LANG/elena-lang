@@ -11,6 +11,8 @@ extension op
         var countMap := Dictionary.new(0);
         self.forEach:(item)
         {
+            console.writeLine(item);
+
             countMap[item] := countMap[item] + 1
         };
     
