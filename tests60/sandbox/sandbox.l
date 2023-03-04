@@ -11,14 +11,12 @@ public program()
   int  chLen := 0;
 
   ch := _literal[current];
-  console.printLine(ch);
+  console./*printLine*/writeLine(ch);
   chLen := ch.Length;
-  console.writeLine(chLen);
   current := current + chLen;
-  console.writeLine(current);
 
   ch := _literal[current];
-  console.printLine(ch);
+  console./*printLine*/writeLine(ch);
   chLen := ch.Length;
   current := current + chLen;
 
