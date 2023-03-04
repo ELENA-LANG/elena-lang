@@ -30,8 +30,12 @@ extension op
 public program()
 {
    var array3 := new object[]{3, 1/*, "blue", 2, 7.5r, 5, "green", "red", 5, 2, "blue", "white"*/};
+   array3.forEach:(item)
+        {
+            console.writeLine(item);
+        };
     
-   var m := array3.Mode;
+//   var m := array3.Mode;
 
 //   console 
 //      .printLine("mode of (",array3.asEnumerable(),") is (",array3.Mode,")")
