@@ -8,7 +8,7 @@ public program()
 
   int current := 0;
   char ch := $0;
-  int  chLen := 0;
+//  int  chLen := 0;
 
   ch := _literal[current];
   console.printLine(ch);
