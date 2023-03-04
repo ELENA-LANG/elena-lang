@@ -13,7 +13,9 @@ public program()
   ch := _literal[current];
   console.printLine(ch);
   chLen := ch.Length;
+  console.writeLine(chLen);
   current := current + chLen;
+  console.writeLine(current);
 
   ch := _literal[current];
   console.printLine(ch);
