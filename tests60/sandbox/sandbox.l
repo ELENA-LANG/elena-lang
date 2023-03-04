@@ -6,34 +6,21 @@ public program()
 {
   string _literal := "a b";
 
-  int current := 0;
-  char ch := $0;
-//  int  chLen := 0;
-
-  ch := _literal[current];
-  console.printLine(ch);
-//  chLen := ch.Length;
-//  current := current + chLen;
-
-  ch := _literal[current];
-  console.printLine(ch);
-//  chLen := ch.Length;
-//  current := current + chLen;
 
 //            chLen := ch.Length;
 //            current := current + chLen;
 
 
-//         int  len := _literal.Length;
-//         int  current := 0;
-//         char ch := $0;
-//         int  chLen := 0;
+         int  len := _literal.Length;
+         int  current := 0;
+         char ch := $0;
+         int  chLen := 0;
             
-//         while (current < len)
-//         {
-//            ch := _literal[current];
+         while (current < len)
+         {
+            ch := _literal[current];
   
-//            console.printLine(ch);
+            console.printLine(ch);
               
 //            if (_dfa.proceed(ch))
 //            {
@@ -47,11 +34,9 @@ public program()
 //                  { _buffer.write(ch) }
 //            };
                     
-//            chLen := ch.Length;
-//            current := current + chLen;
-
-//            console.printLine(chLen);
-//         };
+            chLen := ch.Length;
+            current := current + chLen;
+         };
 
 //    var o := nil;
 //    o.call()
