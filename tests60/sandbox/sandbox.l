@@ -7,7 +7,7 @@ public program()
 {
    var countMap := Dictionary.new(0);
    countMap[2.1] := countMap[2.1] + 1;
-   console.writeLine(countMap[2.1]);
+   console.writeLine(countMap[2.2]);
 
 //   var n := 2;
 //   var s := "blue";
