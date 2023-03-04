@@ -1,42 +1,17 @@
 import extensions;
 //import extensions'routines;
-import system'routines;
+//import system'routines;
+import system'collections;
 
 public program()
 {
-  string _literal := "a b";
+   var countMap := Dictionary.new(0);
+   countMap["a"] := countMap["a"] + 1;
 
+//   var n := 2;
+//   var s := "blue";
 
-//            chLen := ch.Length;
-//            current := current + chLen;
-
-
-         int  len := _literal.Length;
-         int  current := 0;
-         char ch := $0;
-         int  chLen := 0;
-            
-         while (current < len)
-         {
-            ch := _literal[current];
-  
-            console.printLine(ch);
-              
-//            if (_dfa.proceed(ch))
-//            {
-//               _index.Value := current;
-//                    
-//               ^ true
-//            }
-//            else
-//            {
-//               ifnot (_dfa.isWhitespace())
-//                  { _buffer.write(ch) }
-//            };
-                    
-            chLen := ch.Length;
-            current := current + chLen;
-         };
+//   console.writeLine(n == s);
 
 //    var o := nil;
 //    o.call()

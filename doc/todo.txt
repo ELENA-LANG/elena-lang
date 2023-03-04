@@ -6,7 +6,7 @@ In development:
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
     * testing all rosetta examples : linux ppc64le, linux aarch64
-    * testing all examples : linux ppc64le, linux aarch64
+    * testing all examples : linux aarch64
     * test nil reference exception : linux ppc64le, linux aarch64
     * test call stack : linux ppc64le, linux aarch64
 
