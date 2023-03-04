@@ -6,8 +6,8 @@ import system'collections;
 public program()
 {
    var countMap := Dictionary.new(0);
-   countMap["a"] := countMap["a"] + 1;
-   console.writeLine(countMap["a"]);
+   countMap[2.1] := countMap[2.1] + 1;
+   console.writeLine(countMap[2.1]);
 
 //   var n := 2;
 //   var s := "blue";
