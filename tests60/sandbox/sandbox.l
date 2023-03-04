@@ -1,9 +1,10 @@
 import extensions;
-import extensions'routines;
+//import extensions'routines;
+import system'routines;
 
 public program()
 {
-   "a b".forEachWord:(x => console.writeLine(x));
+   "a b".forEach:(x => console.writeLine(x));
 
 //    var o := nil;
 //    o.call()
