@@ -1,12 +1,9 @@
 import extensions;
+import extensions'routines;
 
 public program()
 {
-   char ch := $32;
-   console.writeLine(ch.isWhitespace());
-
-//isWhitespace
-
+   "a b".forEachWord:(x => console.writeLine(x));
 
 //    var o := nil;
 //    o.call()

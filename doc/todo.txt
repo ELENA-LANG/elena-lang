@@ -36,19 +36,26 @@ In development:
     ! elena sm : x86
     ! script samples : x86
     ! elena vm : x86-64
-    ! regression tests : github issues
+    ! x86 : multi-threading
+    ! x86 : gui
     * create github action workflow to build the project
 
     === Iteration 15 ===
     ! ide : vm console
     ! sm : generate some basic templates from vm console - hello world sample
     ! elena vm : ppc64
+    ! regression tests : github issues
+    ! i386 : multi-threading
+    ! x86-64 : multi-threading
+    ! x86-64 : gui
 
     === Iteration 16 ===
     ! sm : generate advances templates from vm console
     ! elena vm : helloworld sample Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
     ! elena sm : script samples Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
     ! elena vm : aarch64
+    ! ppc64le : multi-threading
+    ! ppc64le : gui
 
 ------                                                           
 Backlog:
@@ -60,6 +67,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * async programming
     * rename movfrm to xmovfp
     * elena-lc : raise an error if the file in the project does not exist
     * support single dispatch for constructors
