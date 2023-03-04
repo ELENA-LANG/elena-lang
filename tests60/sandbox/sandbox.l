@@ -32,7 +32,7 @@ public program()
             chLen := ch.Length;
             current := current + chLen;
 
-            console.printLine(chLen);
+//            console.printLine(chLen);
          };
 
 //    var o := nil;
