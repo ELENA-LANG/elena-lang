@@ -12,13 +12,13 @@ public program()
 
   ch := _literal[current];
   console.printLine(ch);
-  chLen := ch.Length;
-  current := current + chLen;
+//  chLen := ch.Length;
+//  current := current + chLen;
 
   ch := _literal[current];
   console.printLine(ch);
-  chLen := ch.Length;
-  current := current + chLen;
+//  chLen := ch.Length;
+//  current := current + chLen;
 
 //            chLen := ch.Length;
 //            current := current + chLen;
