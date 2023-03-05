@@ -2951,6 +2951,7 @@ labMatching:
   ld      r20, toc_rdata(r2)
   addis   r20, r20, rdata_disp32hi : %VOIDPTR
   addi    r20, r20, rdata_disp32lo : %VOIDPTR
+  addi    r20, elObjectOffset
 //;  test  rdi, rdi                                              
   cmpwi   r18,0
 
@@ -3081,6 +3082,7 @@ labMatching:
   ld      r20, toc_rdata(r2)
   addis   r20, r20, rdata_disp32hi : %VOIDPTR
   addi    r20, r20, rdata_disp32lo : %VOIDPTR
+  addi    r20, elObjectOffset
 //;  test  rdi, rdi                                              
   cmpwi   r18,0
 
@@ -3192,6 +3194,7 @@ labMatching:
   ld      r20, toc_rdata(r2)
   addis   r20, r20, rdata_disp32hi : %VOIDPTR
   addi    r20, r20, rdata_disp32lo : %VOIDPTR
+  addi    r20, elObjectOffset
 //;  test  rdi, rdi                                              
   cmpwi   r18,0
 
@@ -3324,6 +3327,7 @@ labMatching:
   ld      r20, toc_rdata(r2)
   addis   r20, r20, rdata_disp32hi : %VOIDPTR
   addi    r20, r20, rdata_disp32lo : %VOIDPTR
+  addi    r20, elObjectOffset
 //;  test  rdi, rdi                                              
   cmpwi   r18,0
 

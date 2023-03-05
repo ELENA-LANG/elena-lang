@@ -2729,6 +2729,7 @@ labMatching:
 //;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   movz    x20,  rdata_ptr32hi : %VOIDPTR
   movk    x20,  rdata_ptr32hi : %VOIDPTR, lsl #16
+  add     x20, x20, elObjectOffset
 
 //;  test  rdi, rdi                                              
   cmp     x18, #0
@@ -2853,6 +2854,7 @@ labMatching:
 //;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   movz    x20,  rdata_ptr32hi : %VOIDPTR
   movk    x20,  rdata_ptr32hi : %VOIDPTR, lsl #16
+  add     x20, x20, elObjectOffset
 
 //;  test  rdi, rdi                                              
   cmp     x18, #0

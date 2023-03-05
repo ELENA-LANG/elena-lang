@@ -3310,8 +3310,6 @@ void JITCompiler64 :: updateVoidObject(MemoryBase* rdata, addr_t superAddress, b
 {
    void* voidObj = _preloaded.get(VOIDOBJ);
    if (virtualMode) {
-      printf("updateVoidObject %llx %llx\n", (long long)voidObj, superAddress);
-
       rdata->addReference(superAddress | mskRef64, (int64_t)voidObj & ~mskAnyRef);
    }
    else {
