@@ -2210,6 +2210,17 @@ inline %0E5h
 
   add     x19, x29, __arg12_1
   mov     x18, __n16_2
+  sxth    x18, x18
+  str     w18, [x19]
+
+end
+
+// ; nsavedpn (n > 0FFFFh)
+inline %01E5h
+
+  add     x19, x29, __arg12_1
+  movz    x18,  __n16_2
+  movk    x18,  __n16hi_2, lsl #16
   str     w18, [x19]
 
 end

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: ARM64
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ARM64COMPILER_H
@@ -43,7 +43,9 @@ namespace elena_lang
 
       ARM64JITCompiler()
          : JITCompiler64()
-      {         
+      {
+         _constants.mediumForm = 0xFFF;
+         _constants.extendedForm = 0xFFFF;
       }
    };
 

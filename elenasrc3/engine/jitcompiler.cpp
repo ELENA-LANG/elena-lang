@@ -60,7 +60,7 @@ CodeGenerator _codeGenerators[256] =
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop, loadNop, loadNop,
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop,
 
-   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, compileHookDPR, loadNewOp,
+   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp2, compileHookDPR, loadNewOp,
    loadDPNOp, loadDPNOp, loadONOp, loadONOp, loadVMTROp, loadMROp, loadRROp, loadRROp,
 
    compileOpen, loadStackIndexROp, compileOpen, loadStackIndexFrameIndexOp, loadNewOp, loadNewNOp, loadStackIndexIndexOp, loadCreateNOp,
@@ -1805,7 +1805,7 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
    writer->seekEOF();
 }
 
-inline void* elena_lang::retrieveICode(JITCompilerScope* scope, int arg)
+inline void* elena_lang::retrieveICode(JITCompilerScope* scope, unsigned int arg)
 {
    switch (arg) {
       case 1:
@@ -1829,6 +1829,11 @@ inline void* elena_lang :: retrieveRCode(JITCompilerScope* scope, int arg)
       default:
          return scope->compiler->_inlines[0][scope->code()];
    }
+}
+
+inline int retrieveNOpIndex(int arg, unsigned extendedForm, int baseIndex)
+{
+   return abs(arg) > extendedForm ? baseIndex + 1 : baseIndex;
 }
 
 void elena_lang::loadDPNOp(JITCompilerScope* scope)
@@ -1870,6 +1875,9 @@ void elena_lang::loadDPNOp(JITCompilerScope* scope)
          case NARG16_2:
             scope->compiler->writeImm16(writer, scope->command.arg2, 0);
             break;
+         case NARG16HI_2:
+            scope->compiler->writeImm16Hi(writer, scope->command.arg2, 0);
+            break;
          case NARG12_2:
             scope->compiler->writeImm12(writer, scope->command.arg2, 0);
             break;
@@ -1885,7 +1893,66 @@ void elena_lang::loadDPNOp(JITCompilerScope* scope)
    writer->seekEOF();
 }
 
-void elena_lang::loadONOp(JITCompilerScope* scope)
+void elena_lang::loadDPNOp2(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   int index = retrieveNOpIndex(scope->command.arg2, scope->constants->extendedForm, 0);
+
+   void* code = scope->compiler->_inlines[index][scope->code()];
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case ARG32_1:
+            writer->writeDWord(getFPOffset(scope->command.arg1, scope->constants->dataOffset));
+            break;
+         case ARG16_1:
+            writer->writeWord(getFPOffset(scope->command.arg1, scope->constants->dataOffset));
+            break;
+         case ARG12_1:
+            scope->compiler->writeImm12(writer, getFPOffset(scope->command.arg1,
+               scope->constants->dataOffset), 0);
+            break;
+         case ARG9_1:
+            scope->compiler->writeImm9(writer, getFPOffset(scope->command.arg1,
+               scope->constants->dataOffset), 0);
+            break;
+         case NARG_2:
+            scope->compiler->writeImm32(writer, scope->command.arg2);
+            break;
+         case NARG16_2:
+            scope->compiler->writeImm16(writer, scope->command.arg2, 0);
+            break;
+         case NARG16HI_2:
+            scope->compiler->writeImm16Hi(writer, scope->command.arg2, 0);
+            break;
+         case NARG12_2:
+            scope->compiler->writeImm12(writer, scope->command.arg2, 0);
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
+      //else writeCoreReference();
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
+void elena_lang :: loadONOp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
