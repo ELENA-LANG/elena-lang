@@ -209,7 +209,7 @@ void ARM64JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, p
          offset >>= 16;
 
          MemoryBase::maskDWord(writer->Memory(), position, (offset & 0xFFFF) << 5);
-         writer.Memory()->addReference(mskCodeRef32Hi, position);
+         writer->Memory()->addReference(mskCodeRef32Hi, position);
 
          break;
       }
