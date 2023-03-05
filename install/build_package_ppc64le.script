@@ -38,7 +38,7 @@ fi
 #   exit 1
 # fi
 
-../bin/og-cli -s ../dat/og/bt_rules.txt
+../bin/og64-cli -s ../dat/og/bt_rules.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
