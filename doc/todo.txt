@@ -5,12 +5,12 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 13 ===
-    * testing all rosetta examples : linux ppc64le, linux aarch64
+    * testing all rosetta examples : linux aarch64
     * testing all examples : linux aarch64
-    * test nil reference exception : linux ppc64le, linux aarch64
-    * test call stack : linux ppc64le, linux aarch64
+    * test nil reference exception : linux aarch64
+    * test call stack : linux aarch64
 
-    * make install package : ppc64le, arm64
+    * make install package : arm64
     * inno setup : x86, x86-64
 
     * mlen opcode : aarch64
