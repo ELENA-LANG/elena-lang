@@ -37,18 +37,18 @@ fi
 #   echo "Failure" >&2
 #   exit 1
 # fi
-#
-# ../bin/elena-og s ../dat/og/source_rules.txt
-# ret=$?
-# if [ $ret -eq 0 ]
-# then
-#   echo .
-# else
-#   echo "Failure" >&2
-#   exit 1
-# fi
-#
-# cp ../dat/og/*.dat /usr/share/elena/
+
+../bin/og-cli -s ../dat/og/bt_rules.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+cp ../dat/og/*.dat /usr/share/elena/
 cp ../dat/sg/syntax60.dat /usr/share/elena
 
 echo compiling assembly files
