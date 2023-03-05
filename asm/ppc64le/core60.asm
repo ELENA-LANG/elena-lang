@@ -784,12 +784,12 @@ inline %87h
 
 end
 
-// ; xswapsi 0
+// ; swapsi 0
 inline %187h
 
   mr      r16, r15
   mr      r15, r3
-  mr      r5, r16
+  mr      r3, r16
 
 end
 
