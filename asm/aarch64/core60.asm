@@ -801,7 +801,7 @@ inline %8Dh
 
 end
 
-// ; setfp
+// ; peekfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %08Eh
 
@@ -2652,6 +2652,33 @@ end
 inline %2F3h
 
   add     x12, x29, __arg12_2
+  ldr     x1, [x12]
+
+end
+
+// ; movsifi
+inline %5F3h
+
+  sub     x12, x29, __arg12_1_inv
+  add     x13, sp, __arg12_2
+
+  ldr     x11, [x12]
+  str     x11, [x13]
+
+end
+
+// ; movsifi sp:0, fp:i2
+inline %6F3h
+
+  sub     x12, x29, -__arg12_2
+  ldr     x0, [x12]
+
+end
+
+// ; movsifi sp:1, fp:i2
+inline %7F3h
+
+  sub     x12, x29, -__arg12_2
   ldr     x1, [x12]
 
 end

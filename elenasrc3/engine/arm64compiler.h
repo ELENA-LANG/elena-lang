@@ -46,6 +46,7 @@ namespace elena_lang
       {
          _constants.mediumForm = 0xFFF;
          _constants.extendedForm = 0xFFFF;
+         _constants.noNegative = true; // affects frame operations
       }
    };
 

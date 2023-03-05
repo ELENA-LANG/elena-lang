@@ -35,6 +35,8 @@ namespace elena_lang
       // used for RISC CPUs to deal with "big" arguments
       int          mediumForm;
       int          extendedForm;
+      // for ARM negative offsets should have a special treatment
+      bool         noNegative;
    };
 
    struct JITCompilerScope
@@ -208,6 +210,7 @@ namespace elena_lang
          _constants.alignmentVA = 8;
          _constants.unframedOffset = 0;
          _constants.mediumForm = _constants.extendedForm = 0xFFFFFFFF;
+         _constants.noNegative = false;
       }
    };
 

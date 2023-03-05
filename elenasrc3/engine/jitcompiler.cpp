@@ -335,6 +335,28 @@ void elena_lang :: loadOp(JITCompilerScope* scope)
    loadCode(scope, scope->compiler->_inlines[0][scope->code()], nullptr);
 }
 
+inline int retrieveFrameOpIndex(int frameIndex, bool noNegative)
+{
+   return (noNegative && frameIndex < 0) ? 5 : 0;
+}
+
+inline int retrieveStackOpIndex(int stackIndex, int baseIndex)
+{
+   int index = 0;
+   switch(stackIndex) {
+      case 0:
+         index = baseIndex + 1;
+         break;
+      case 1:
+         index = baseIndex + 2;
+         break;
+      default:
+         break;
+   }
+
+   return index;
+}
+
 void* elena_lang :: retrieveCode(JITCompilerScope* scope)
 {
    void* code = nullptr;
@@ -1390,7 +1412,10 @@ void elena_lang::loadStackIndexFrameIndexOp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = retrieveCode(scope);
+   int index = retrieveFrameOpIndex(scope->command.arg2, scope->constants->noNegative);
+   index = retrieveStackOpIndex(scope->command.arg1, index);
+
+   void* code = scope->compiler->_inlines[index][scope->code()];;
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
@@ -1419,6 +1444,9 @@ void elena_lang::loadStackIndexFrameIndexOp(JITCompilerScope* scope)
             break;
          case ARG12_2:
             scope->compiler->writeImm12(writer, arg2, 0);
+            break;
+         case INV_ARG12_2:
+            scope->compiler->writeImm12(writer, -arg2, 0);
             break;
          default:
             writeCoreReference(scope, entries->reference, entries->offset, code);

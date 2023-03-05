@@ -284,6 +284,9 @@ bool AssemblerBase :: getIntConstant(ScriptToken& tokenInfo, int& offset, ref_t&
          else if (reference == ARG12_1) {
             reference = INV_ARG12_1;
          }
+         else if (reference == ARG12_2) {
+            reference = INV_ARG12_2;
+         }
          else return false;
       }
       else return false;
