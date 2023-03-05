@@ -485,8 +485,8 @@ inline % 16h
   sldi    r16, r14, 3
 
   addi    r16, r16, 8     // ; rounding to 10h
-  srdi    r16, r14, 4
-  sldi    r16, r14, 4
+  srdi    r16, r16, 4
+  sldi    r16, r16, 4
 
   sub     r1, r1,  r16   // ; allocate stack
   li      r17, 0

@@ -385,6 +385,7 @@ inline % 14h
   mov   edx, dword ptr [rax + rdx]
 
 end
+
 // ; mlen
 inline % 15h
 

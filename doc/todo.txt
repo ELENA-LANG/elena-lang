@@ -13,18 +13,6 @@ In development:
     * make install package : arm64
     * inno setup : x86, x86-64
 
-    * mlen opcode : aarch64
-    * dalloc opcode : aarch64
-    * xassignsp opcode : aarch64
-    * dtrans opcode : aarch64
-    * new opcode xassign : aarch64
-    * orn dispatch opcode : aarch64
-    * lsavedp opcode : aarch64
-    * lsavesi opcode : aarch64
-    * lload opcode : aarch64
-    * variadic dispatch opcode : aarch64
-    * XJump : ppc64le, arm64
-
     * ide - close all / close all but active
     * ide : change status to ready when writing / selecting files
     * ldoc : recognize template based type - for the method output
