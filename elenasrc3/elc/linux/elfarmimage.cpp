@@ -158,13 +158,13 @@ int ElfARM64ImageFormatter :: getRelocationType()
    return R_AARCH64_JUMP_SLOT;
 }
 
-void ElfARM64ImageFormatter:: fixSection(MemoryWriter* section, AddressSpace& map)
+void ElfARM64ImageFormatter:: fixSection(MemoryBase* section, AddressSpace& map)
 {
    // !! temporally
    dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, arm64relocate);
 }
 
-void ElfARM64ImageFormatter :: fixImportSection(MemoryWriter* section, AddressSpace& map)
+void ElfARM64ImageFormatter :: fixImportSection(MemoryBase* section, AddressSpace& map)
 {
    // !! temporally
    dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, arm64relocateElf64Import);
