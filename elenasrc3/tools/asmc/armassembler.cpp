@@ -1163,7 +1163,7 @@ bool Arm64Assembler :: compileORRShifted(ScriptToken& tokenInfo, ARMOperand rd, 
    int shift, int amount, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && rm.isXR()) {
-      writer.writeDWord(ARMHelper::makeImm6ShiftOpcode(1, 0, 1, 0xA, shift, 1, amount, rm.type, rn.type, rd.type));
+      writer.writeDWord(ARMHelper::makeImm6ShiftOpcode(1, 0, 1, 0xA, shift, 0, amount, rm.type, rn.type, rd.type));
    }
    else return false;
 
