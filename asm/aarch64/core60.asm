@@ -48,6 +48,10 @@ define page_ceil               2Fh
 define page_mask        0FFFFFFE0h
 define struct_mask_inv     7FFFFFh
 
+define struct_mask       40000000h
+define struct_mask_lo        0000h
+define struct_mask_hi        4000h
+
 // ; --- System Core Preloaded Routines --
 
 structure % CORE_TOC
@@ -734,7 +738,7 @@ end
 inline %08Fh
 
   ldr     w19, [x0]
-  sld     x19, x19, 3
+  lsl     x19, x19, #3
 
   add     x19, x19, page_ceil
   and     x11, x19, page_mask
@@ -744,7 +748,7 @@ inline %08Fh
   blr     x17
 
   ldr     w19, [x0]
-  sld     x18, x19, 3
+  lsl     x18, x19, #3
 
   movz    x19,  __ptr32lo_1
   movk    x19,  __ptr32hi_1, lsl #16
@@ -2635,7 +2639,7 @@ inline %0F7h
   // ; adding mask
   movz    x19, struct_mask_lo
   movk    x19, struct_mask_hi, lsl #16
-  or      r18, r18, r19
+  orr     x18, x18, x19
 
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16
