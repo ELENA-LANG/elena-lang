@@ -20,9 +20,9 @@ void ElfARM64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData&
 {
    pos_t count = fillImportTable(provider.externals(), elfData);
 
-   Section* code = provider.getTextSection();
-   Section* data = provider.getDataSection();
-   Section* import = provider.getImportSection();
+   MemoryBase* code = provider.getTextSection();
+   MemoryBase* data = provider.getDataSection();
+   MemoryBase* import = provider.getImportSection();
 
    MemoryWriter dynamicWriter(data);
    dynamicWriter.align(fileAlignment, 0);
@@ -158,14 +158,16 @@ int ElfARM64ImageFormatter :: getRelocationType()
    return R_AARCH64_JUMP_SLOT;
 }
 
-void ElfARM64ImageFormatter:: fixSection(Section* section, AddressSpace& map)
+void ElfARM64ImageFormatter:: fixSection(MemoryWriter* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, arm64relocate);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, arm64relocate);
 }
 
-void ElfARM64ImageFormatter :: fixImportSection(Section* section, AddressSpace& map)
+void ElfARM64ImageFormatter :: fixImportSection(MemoryWriter* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, arm64relocateElf64Import);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, arm64relocateElf64Import);
 }
 
 void ElfARM64ImageFormatter :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference, pos_t)
