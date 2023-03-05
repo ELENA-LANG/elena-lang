@@ -772,7 +772,7 @@ end
 inline %8Ah
 
   add     x11, x29, __arg12_1
-  ldr     w9,  [x11]
+  ldrsw   x9,  [x11]
 
 end 
 
