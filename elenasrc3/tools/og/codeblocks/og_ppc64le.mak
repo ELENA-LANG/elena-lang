@@ -24,9 +24,9 @@ RCFLAGS_RELEASE = $(RCFLAGS)
 LIBDIR_RELEASE = $(LIBDIR)
 LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE = $(LDFLAGS) -s
-OBJDIR_RELEASE = ../../../temp/sg64-cli/
+OBJDIR_RELEASE = ../../../temp/og64-cli/
 DEP_RELEASE = 
-OUT_RELEASE = ../../../../bin/sg64-cli
+OUT_RELEASE = ../../../../bin/og64-cli
 
 OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/og.o
 
