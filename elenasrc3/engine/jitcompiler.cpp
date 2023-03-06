@@ -1424,7 +1424,7 @@ void elena_lang::loadStackIndexFrameIndexOp(JITCompilerScope* scope)
    writer->write(code, length);
 
    arg_t arg1 = scope->stackOffset + scope->command.arg1;
-   arg_t arg2 = getFPOffset(scope->command.arg2 << scope->constants->indexPower, scope->frameOffset);
+   int arg2 = getFPOffset(scope->command.arg2 << scope->constants->indexPower, scope->frameOffset);
 
    // resolve section references
    pos_t count = *(pos_t*)((char*)code + length);
