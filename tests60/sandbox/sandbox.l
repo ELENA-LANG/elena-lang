@@ -5,11 +5,16 @@ import system'routines;
 
 public program()
 {
-   var list := new ArrayList();
-   list.append("a");
-
-   var item := list[0];
+   var arr := Array.allocate(1);
+   arr[0] := "a";
+   var item := arr[0];
    console.writeLine(item);
+
+//   var list := new ArrayList();
+//   list.append("a");
+
+//   var item := list[0];
+//   console.writeLine(item);
 
 //   var en := list.enumerator();
 //   en.next();
