@@ -399,7 +399,7 @@ end
 // ; assign
 inline %12h
 
-  lsl     x11, x19, 3
+  lsl     x11, x9, 3
   add     x11, x11, x10
 
   // calculate write-barrier address
