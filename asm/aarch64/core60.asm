@@ -2659,7 +2659,7 @@ end
 // ; movsifi
 inline %5F3h
 
-  sub     x12, x29, __arg12_1_inv
+  sub     x12, x29, -__arg12_1
   add     x13, sp, __arg12_2
 
   ldr     x11, [x12]

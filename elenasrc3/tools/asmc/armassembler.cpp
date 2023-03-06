@@ -649,6 +649,7 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
       case NARG16_1:
       case NARG16_2:
       case INV_ARG12_1:
+      case INV_ARG12_2:
       case ARG16_1:
       case ARG16_2:
       case ARG9_1:
