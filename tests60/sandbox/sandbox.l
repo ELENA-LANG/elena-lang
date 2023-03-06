@@ -1,10 +1,15 @@
 import extensions;
-import extensions'routines;
+
+import system'collections;
+import system'routines;
 
 public program()
 {
-   var text := "a b b a";
-   text.forEachWord:(x){ console.writeLine(x) };
+   var list := new ArrayList();
+   list.append("a");
+
+   console.writeLine(list.ifExists("a"));
+
 
 
 //    var o := nil;
