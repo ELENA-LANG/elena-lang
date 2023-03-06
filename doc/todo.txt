@@ -14,6 +14,10 @@ In development:
     ! x86 : multi-threading
     ! x86 : gui
     * elenasm : creating dll
+    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
+    * Using a script engine to parse the expression - https://www.reddit.com/r/elena_lang/comments/bo4d34/using_a_script_engine_to_parse_the_expression/
+    * Dynamic programming in ELENA : bf loop - https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
+    * ELENA Script Engine : compiling JavaScript file - https://www.reddit.com/r/elena_lang/comments/6h6nyz/elena_script_engine_compiling_javascript_file/
     * ide - close all / close all but active
     * ide : change status to ready when writing / selecting files
     * ldoc : recognize template based type - for the method output

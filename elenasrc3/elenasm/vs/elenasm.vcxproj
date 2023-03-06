@@ -171,10 +171,12 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\scriptmachine.h" />
     <ClInclude Include="..\smcommon.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\scriptmachine.cpp" />
     <ClCompile Include="..\windows\dllmain.cpp" />
   </ItemGroup>
   <ItemGroup>
