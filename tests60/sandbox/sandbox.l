@@ -8,7 +8,9 @@ public program()
    var list := new ArrayList();
    list.append("a");
 
-   console.writeLine(list.ifExists("a"));
+   list.forEach:(x => console.writeLine(x));
+
+//   console.writeLine(list.ifExists("a"));
 
 
 
