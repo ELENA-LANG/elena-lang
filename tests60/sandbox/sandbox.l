@@ -8,7 +8,11 @@ public program()
    var list := new ArrayList();
    list.append("a");
 
-   list.forEach:(x => console.writeLine(x));
+   var en := list.enumerator();
+   en.next();
+   console.writeLine(*en);
+
+//   list.forEach:(x => console.writeLine(x));
 
 //   console.writeLine(list.ifExists("a"));
 
