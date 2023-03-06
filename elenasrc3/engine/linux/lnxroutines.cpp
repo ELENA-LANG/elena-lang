@@ -65,7 +65,7 @@ void SystemRoutineProvider :: Exit(int exitCode)
    ::exit(exitCode);
 }
 
-#if __i386__
+#if defined(__i386__)
 
 static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 {

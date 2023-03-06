@@ -13,6 +13,10 @@ define ex_struct_size64              32;
 define page_size32                   16;
 define page_size64                   32;
 
+define ptr_size32                     4;
+define ptr_size64                     8;
+
+
 define __realSize                     8;
 
 define err_ret          -1;
@@ -90,7 +94,12 @@ end
 
 procedure __exception_raise
 
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
   throw
+  close      []
 
 end
 
@@ -105,6 +114,40 @@ procedure __message_dispatcher
 
   peek        sp:0
   jump        vt:0
+
+labDefault:
+
+  redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
+procedure __ext_message_dispatcher
+
+  tstn        FUNCTION_MESSAGE
+  jeq         labDefault
+
+  loadv
+  xcmp
+  jne         labDefault
+
+  get         i:1
+  xjump
 
 labDefault:
 
@@ -190,6 +233,68 @@ labEnd:
 
 end
 
+procedure __str_less (s1, s2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[s_len,index,ch,ch2]
+
+  peek       fp:s1
+  nlen       1
+  save       dp:s_len
+
+  peek       fp:s2
+  nlen       1
+  set        dp:s_len
+  xcmp
+  jne        labNotLess
+
+  sub        n:1
+
+  nsave      dp:index, 0
+
+  peek       fp:s1
+  store      sp:0
+  peek       fp:s2
+  store      sp:1
+
+labCheck:
+  load       dp:index
+  xcmp       dp:s_len
+  jeq        labLoopEnd
+
+  nsave      dp:ch, 0
+  nsave      dp:ch2, 0
+
+  set        dp:ch
+  read       1
+
+  xswap      sp:1
+
+  set        dp:ch2
+  read       1
+
+  load
+  xcmp       dp:ch 
+  jge        labNotLess
+
+  nadd       dp:index, 1
+  xswap      sp:1
+  jump       labCheck
+
+labLoopEnd:
+  set        class:"system'BoolValue#true"
+  jump       labEnd
+
+labNotLess:
+   set       class:"system'BoolValue#false"
+
+labEnd:
+  close      []
+
+end
+
 procedure __str_copysubs (self, s1, s2, index, len)
 
   xflush     sp:0
@@ -238,7 +343,208 @@ labNext:
 
 end
 
+procedure __str_xcopysubs (self, s1, s2, index1, len, index2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[i1,i2,tmp,cnt]
+
+  peek       fp:len
+  load
+  save       dp:cnt
+
+  peek       fp:index1
+  store      sp:0
+  copy       dp:i1, 4
+
+  peek       fp:index2
+  store      sp:0
+  copy       dp:i2, 4
+
+  peek       fp:s1
+  store      sp:1
+
+  peek       fp:s2
+  store      sp:0
+
+labNext:
+  set        dp:tmp
+  load       dp:i2
+  read       1
+  add        n:1
+  save       dp:i2
+
+  xswap      sp:1
+  load       dp:i1
+  write      1
+  add        n:1
+  save       dp:i1
+  xswap      sp:1
+  nadd       dp:i1, 1
+
+  load       dp:cnt
+  sub        n:1   
+  save       dp:cnt
+  cmp        n:0
+  jne        labNext
+
+  nsave      dp:tmp, 0
+
+  xswap      sp:1
+  set        dp:tmp
+  load       dp:i1
+  write      1
+
+  close      []
+
+end
+
+procedure __wstr_equal (s1, s2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[s_len,index,ch,ch2]
+
+  peek       fp:s1
+  nlen       2
+  save       dp:s_len
+
+  peek       fp:s2
+  nlen       2
+  set        dp:s_len
+  xcmp
+  jne        labNotEqual
+
+  sub        n:1
+
+  nsave      dp:index, 0
+
+  peek       fp:s1
+  store      sp:0
+  peek       fp:s2
+  store      sp:1
+
+labCheck:
+  load       dp:index
+  xcmp       dp:s_len
+  jeq        labLoopEnd
+
+  nsave      dp:ch, 0
+  nsave      dp:ch2, 0
+
+  set        dp:ch
+  read       2
+
+  xswap      sp:1
+
+  set        dp:ch2
+  read       2
+
+  load
+  xcmp       dp:ch 
+  jne        labNotEqual
+
+  nadd       dp:index, 1
+  xswap      sp:1
+  jump       labCheck
+
+labLoopEnd:
+  set        class:"system'BoolValue#true"
+  jump       labEnd
+
+labNotEqual:
+   set       class:"system'BoolValue#false"
+
+labEnd:
+  close      []
+
+end
+
+procedure __wstr_less (s1, s2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[s_len,index,ch,ch2]
+
+  peek       fp:s1
+  nlen       2
+  save       dp:s_len
+
+  peek       fp:s2
+  nlen       2
+  set        dp:s_len
+  xcmp
+  jne        labNotLess
+
+  sub        n:1
+
+  nsave      dp:index, 0
+
+  peek       fp:s1
+  store      sp:0
+  peek       fp:s2
+  store      sp:1
+
+labCheck:
+  load       dp:index
+  xcmp       dp:s_len
+  jeq        labLoopEnd
+
+  nsave      dp:ch, 0
+  nsave      dp:ch2, 0
+
+  set        dp:ch
+  read       2
+
+  xswap      sp:1
+
+  set        dp:ch2
+  read       2
+
+  load
+  xcmp       dp:ch 
+  jge        labNotLess
+
+  nadd       dp:index, 1
+  xswap      sp:1
+  jump       labCheck
+
+labLoopEnd:
+  set        class:"system'BoolValue#true"
+  jump       labEnd
+
+labNotLess:
+   set       class:"system'BoolValue#false"
+
+labEnd:
+  close      []
+
+end
+
 procedure __intToByte
+
+  peek       sp:1
+  load
+  and        n:0FFh
+  peek       sp:2
+  save
+
+end
+
+procedure __uintToByte
+
+  peek       sp:1
+  load
+  and        n:0FFh
+  peek       sp:2
+  save
+
+end
+
+procedure __shortToByte
 
   peek       sp:1
   load
@@ -283,6 +589,34 @@ procedure __intToChar
 
   peek       sp:1
   load
+  peek       sp:2
+  save
+
+end
+
+procedure __intHash (self,n,r)
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
+procedure __realHash (self,n,r)
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
+procedure __strHash (self,s,r)
+
+  peek       sp:1
+  load
+  and        n:255 
   peek       sp:2
   save
 
@@ -335,6 +669,319 @@ procedure __intToShort
 
 end
 
+procedure __uintToShort
+
+  peek       sp:1
+  load
+  and        n:0FFFFh
+  peek       sp:2
+  save
+
+end
+
+procedure __byteToShort
+
+  peek       sp:1
+  load
+  and        n:0FFFFh
+  peek       sp:2
+  save
+
+end
+
+procedure __copySubStr (dest, index, len, sour)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[i1,i2,tmp]
+
+  peek       fp:index
+  load
+  save       dp:i1
+  nsave      dp:i2, 0
+
+  peek       fp:dest
+  store      sp:1
+
+  peek       fp:sour
+  store      sp:0
+
+labNext:
+  set        dp:tmp
+  load       dp:i1
+  bread
+  xswap      sp:1
+  load       dp:i2
+  write      1
+  xswap      sp:1
+
+  nadd       dp:i1, 1
+  nadd       dp:i2, 1
+
+  peek       fp:len
+  load       
+  xcmp       dp:i2
+  jne        labNext
+
+  close      []
+
+end
+
+procedure __copySubWStr (dest, index, len, sour)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[i1,i2,tmp]
+
+  peek       fp:index
+  load
+  save       dp:i1
+  nsave      dp:i2, 0
+
+  peek       fp:dest
+  store      sp:1
+
+  peek       fp:sour
+  store      sp:0
+
+labNext:
+  set        dp:tmp
+  load       dp:i1
+  wread
+  xswap      sp:1
+  load       dp:i2
+  write      2
+  xswap      sp:1
+
+  nadd       dp:i1, 1
+  nadd       dp:i2, 1
+
+  peek       fp:len
+  load       
+  xcmp       dp:i2
+  jne        labNext
+
+  close      []
+
+end
+
+procedure __loadCallStack (self, buffer, length, retVal)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (3),[b],[l,ptr]
+
+  peek       fp:length
+  load
+  save       dp:l
+  peek       fp:buffer
+  store      fp:b
+
+  mov        frm
+  $save      dp:ptr        // ; NOTE for 64bit it should be lsave dp
+
+  call extern:LoadCallStackLA(*$ptr, b, *l) // ; NOTE for 64bit ptr should be treated as long
+  peek       fp:retVal
+  save
+
+  close      []
+
+end
+
+procedure __symbol_load (self, s)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  call extern:LoadSymbolByStringLA(s)
+  cmp  n:0
+  jne  labExit
+
+  peek       fp:s
+  store      sp:1
+
+  set        class : "system'SymbolLoaderException"
+  store      sp:0
+
+  set        mssgconst : "new[2]"
+  throw
+
+labExit:
+  peek       fp:self
+  save
+
+  close      []
+
+end
+
+procedure __symbol_copy
+
+  peek       sp:2
+  load
+  peek       sp:1
+  save
+
+end
+
+procedure __symbol_dispatcher
+
+  redirect
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp]
+  save       dp:tmp
+  get        i:0
+  xcall
+  load       dp:tmp
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  jump       vt:0
+
+end
+
+procedure __classref_load (self, s)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  call extern:LoadClassByStringLA(s)
+  cmp  n:0
+  jne  labExit
+
+  peek       fp:s
+  store      sp:1
+
+  set        class : "system'TypeLoaderException"
+  store      sp:0
+
+  set        mssgconst : "new[2]"
+  throw
+
+labExit:
+  peek       fp:self
+  save
+
+  close      []
+
+end
+
+procedure __classref_dispatcher
+
+  redirect
+
+  get        i:0
+  jump       vt:0
+
+end
+
+procedure __message_load (self, s)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  call extern:LoadMessageLA(s)
+  cmp  n:0
+  jne  labExit
+
+  set        class : "system'InvalidArgumentException"
+  store      sp:0
+
+  set        mssgconst : "new[1]"
+  throw
+
+labExit:
+  peek       fp:self
+  save
+
+  close      []
+
+end
+
+procedure __mssgname_load(self, m)
+
+  peek      fp:m
+  loads
+  peek      fp:self
+  save
+
+end
+
+procedure __mssgname_dispatcher
+
+  tstn        FUNCTION_MESSAGE
+  jeq         labDefault
+
+  loadv
+  xcmp
+  jne         labDefault
+
+  peek        sp:0
+  jump        vt:0
+
+labDefault:
+
+  redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
+procedure __varg_readLength(varg, retVal)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp]
+
+  nsave      dp:tmp, -1
+
+  peek       fp:varg
+  store      sp:0
+
+labNext:
+  nadd       dp:tmp, 1
+  peek       sp:0
+  load       dp:tmp
+  xget
+  cmp        terminator
+  jne        labNext
+
+  load       dp:tmp
+  peek       fp:retVal
+  save
+
+  close      []
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION
@@ -377,6 +1024,36 @@ procedure default_exception_handler
 
 end
 
+procedure startUpSymbols
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[i,len]
+
+  nsave      dp:i, 0
+
+  set        marray:"$forwards'meta$startUpSymbols"
+
+  load
+  save       dp:len
+
+labNext:
+  nadd       dp:i, 1
+
+  load       dp:i
+  xget
+  xcall
+
+  load       dp:len
+  xcmp       dp:i
+  jne        labNext
+
+  close      []
+  quit
+
+end
+
 symbol sta_start
 
   open header [arg1],[envptr,ex_struct:ex_struct_size]
@@ -390,7 +1067,27 @@ symbol sta_start
 
   call extern:InitializeSTLA (
      *arg1, 
-     marray:"$forwards'meta$startUpSymbols",
+     procedure:"system'core_routines'startUpSymbols",
+     procedure:"system'core_routines'critical_exception_handler")
+
+  close       []
+
+end
+
+symbol vm_sta_start
+
+  open header [arg1],[envptr,ex_struct:ex_struct_size]
+  
+  xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
+
+  mov         env
+  save        dp:envptr
+  set         dp:envptr
+  store       fp:arg1
+
+  call extern:InitializeVMSTLA (
+     *arg1, 
+     constdump:"$elena'meta$startUpTape",
      procedure:"system'core_routines'critical_exception_handler")
 
   close       []

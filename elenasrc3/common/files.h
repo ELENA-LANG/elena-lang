@@ -147,13 +147,13 @@ namespace elena_lang
    };
 
    // --- TextFileWriter ---
-   class TextFileWriter : public  TextWriter<char>
+   class TextFileWriter : public TextWriter<char>
    {
       File         _file;
       FileEncoding _encoding;
 
    public:
-      //bool isOpen() const override { return _file.isOpen(); }
+      bool isOpen() const override { return _file.isOpen(); }
 
       pos_t position() const override { return _file.position(); }
 

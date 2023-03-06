@@ -82,12 +82,29 @@
 			<Add directory="../../engine" />
 			<Add directory="../../common" />
 		</Compiler>
+		<Unit filename="../../common/dump.cpp" />
+		<Unit filename="../../common/dump.h" />
+		<Unit filename="../../common/files.cpp" />
+		<Unit filename="../../common/files.h" />
+		<Unit filename="../../common/paths.cpp" />
+		<Unit filename="../../common/paths.h" />
+		<Unit filename="../../common/streams.h" />
+		<Unit filename="../../common/xmltree.cpp" />
+		<Unit filename="../../common/xmltree.h" />
 		<Unit filename="../../engine/elenamachine.cpp" />
 		<Unit filename="../../engine/elenamachine.h" />
+		<Unit filename="../../engine/libman.cpp" />
+		<Unit filename="../../engine/libman.h" />
+		<Unit filename="../../engine/linux/elfhelper.cpp" />
+		<Unit filename="../../engine/linux/elfhelper.h" />
 		<Unit filename="../../engine/linux/lnxroutines.cpp" />
+		<Unit filename="../../engine/rtmanager.cpp" />
+		<Unit filename="../../engine/rtmanager.h" />
 		<Unit filename="../elenartmachine.cpp" />
 		<Unit filename="../elenartmachine.h" />
+		<Unit filename="../linux/elenart.h" />
 		<Unit filename="../linux/main.cpp" />
+		<Unit filename="../rtcommon.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

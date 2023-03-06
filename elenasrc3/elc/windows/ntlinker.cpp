@@ -100,7 +100,7 @@ void WinNtLinker :: writeSections(WinNtExecutableImage& image, FileWriter& file)
 
    // write data
    for (auto it = image.imageSections.items.start(); !it.eof(); ++it) {
-      Section* section = (*it).section;
+      MemoryBase* section = (*it).section;
 
       MemoryReader reader(section);
       file.copyFrom(&reader, section->length());
@@ -139,7 +139,7 @@ bool WinNtLinker :: createDebugFile(ImageProviderBase& provider, WinNtExecutable
    if (!debugWriter.isOpen())
       return false;
 
-   Section* debug = provider.getTargetDebugSection();
+   MemoryBase* debug = provider.getTargetDebugSection();
 
    // signature - first 8 bytes
    debugWriter.write(DEBUG_MODULE_SIGNATURE, getlength_pos(DEBUG_MODULE_SIGNATURE));

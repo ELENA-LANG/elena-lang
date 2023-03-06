@@ -11,7 +11,7 @@ define CORE_ET_TABLE        2000Bh
 // ; --- GC TABLE OFFSETS ---
 define gc_header             0000h
 define gc_start              0008h
-define gc_yg_current         0010h
+define gc_yg_start           0010h
 define gc_yg_current         0018h
 define gc_yg_end             0020h
 define gc_mg_start           0038h
@@ -77,8 +77,6 @@ end
 procedure % VEH_HANDLER
 
   mov  r10, rdx
-  push rbp
-  mov  rbp, rsp
   mov  rdx, rax   // ; set exception code
   mov  rax, [data : % CORE_ET_TABLE]
   jmp  rax

@@ -13,18 +13,19 @@ namespace elena_lang
 {
    class Splitter : public WindowBase
    {
-      HINSTANCE     _instance;
+      HINSTANCE            _instance;
 
-      NotifierBase* _notifier;
-      int           _notifyCode;
+      NotifierBase*        _notifier;
+      int                  _notifyCode;
+      NotificationStatus   _notifyStatus;
 
-      ControlBase*  _client;
-      bool          _vertical;
+      ControlBase*         _client;
+      bool                 _vertical;
 
-      POINT         _srcPos;
-      bool          _mouseCaptured;
+      POINT                _srcPos;
+      bool                 _mouseCaptured;
 
-      int           _cursor;
+      int                  _cursor;
 
       void onButtonDown(Point point, bool kbShift);
       void onButtonUp();
@@ -47,7 +48,7 @@ namespace elena_lang
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 
-      Splitter(NotifierBase* notifier, int notifyCode, ControlBase* client, bool vertical);
+      Splitter(NotifierBase* notifier, int notifyCode, NotificationStatus notifyStatus , ControlBase* client, bool vertical);
    };
 }
 

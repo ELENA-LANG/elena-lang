@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class implementation
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "config.h"
@@ -50,6 +50,13 @@ ConfigFile::Node ConfigFile :: selectNode(Node& node, ustr_t xpath)
    return Node(_tree.selectNode(node.xmlNode, xpath));
 }
 
+void ConfigFile :: appendSetting(ustr_t xpath, ustr_t value)
+{
+   XmlNode node = _tree.insertNode(xpath);
+
+   node.setContent(value);
+}
+
 bool ConfigFile :: load(path_t path, FileEncoding encoding)
 {
    try
@@ -63,4 +70,9 @@ bool ConfigFile :: load(path_t path, FileEncoding encoding)
    }
 
    return false;
+}
+
+bool ConfigFile :: save(path_t path, FileEncoding encoding)
+{
+   return _tree.save(path, encoding, false, true);
 }

@@ -19,17 +19,17 @@ namespace elena_lang
       TextViewModel* _model;
 
    public:
-      void onDocumentNew(int index, int notifyMessage) override;
+      void onDocumentNew(int index) override;
       void onDocumentSelect(int index) override;
-      void afterDocumentSelect(int index) override;
-      void onDocumentRename(int index) override;
+      //void afterDocumentSelect(int index) override;
+      //void onDocumentRename(int index) override;
       void onDocumentModeChanged(int index, bool modifiedMode) override;
       void beforeDocumentClose(int index) override;
-      void onDocumentClose(int index, int notifyMessage) override;
+      void onDocumentClose(int index) override;
 
       void onSelChanged() override;
 
-      TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model);
+      TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, int selNotificationId);
    };
 
 }

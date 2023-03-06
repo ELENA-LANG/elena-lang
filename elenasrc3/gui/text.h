@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class header
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef TEXT_H
@@ -406,8 +406,8 @@ namespace elena_lang
       void onInsert(size_t position, size_t length, text_t line) override;
       void onErase(size_t position, size_t length, text_t line) override;
 
-      void undo(Text* text, TextBookmark& caret);
-      void redo(Text* text, TextBookmark& caret);
+      bool undo(Text* text, TextBookmark& caret);
+      bool redo(Text* text, TextBookmark& caret);
 
       TextHistory(pos_t capacity);
       virtual ~TextHistory() = default;

@@ -12,7 +12,8 @@ define VOIDPTR              2000Eh
 
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
-define ARG_MASK               01Fh
+define ARG_MASK               05Fh
+define ARG_COUNT_MASK         01Fh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -229,6 +230,7 @@ labFound:
   jmp   eax
 
 labEnd:
+  mov   esi, [esp+4]
                                                                 
 end
 
@@ -348,6 +350,88 @@ inline % 11h
 
 end
 
+// ; assign
+inline %12h
+
+  mov  eax, ebx
+  mov  [ebx + edx*4], esi
+  // calculate write-barrier address
+  sub  eax, [data : %CORE_GC_TABLE + gc_start]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_header]
+  shr  eax, page_size_order
+  mov  byte ptr [eax + ecx], 1  	
+
+end
+
+// ; movfrm
+inline %13h
+
+  mov  edx, ebp
+
+end
+
+// ; loads
+inline % 14h
+
+  mov   edx, [ebx]
+  shr   edx, ACTION_ORDER
+  mov   eax, mdata : %0
+  mov   edx, [eax + edx]
+
+end
+
+// ; mlen
+inline % 15h
+
+  and   edx, ARG_COUNT_MASK
+
+end
+
+// ; dalloc
+inline %16h
+
+  lea  eax, [edx*4]
+  sub  esp, eax
+  mov  ecx, edx
+  xor  eax, eax
+  mov  edi, esp
+  rep  stos
+
+end
+
+// ; xassignsp
+inline % 17h
+
+  mov   ebx, esp
+
+end
+
+// ; dtrans
+inline %18h
+
+  mov  eax, esi
+  mov  ecx, edx
+  mov  edi, ebx
+  rep  movsd
+  mov  esi, eax
+
+end
+
+// ; xassign
+inline %19h
+
+  mov  [ebx + edx*4], esi
+
+end
+
+// ; lload
+inline %1Ah
+
+  mov  eax, dword ptr [ebx]
+  mov  edx, dword ptr [ebx]
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -400,6 +484,36 @@ inline %25h
 
 end
 
+// ; wread
+inline %26h
+
+  xor  eax, eax
+  mov  ax, word ptr [esi+edx]
+  mov  dword ptr [ebx], eax
+
+end
+
+// ; xjump
+inline %027h
+
+  jmp ebx
+
+end
+
+// ; xget
+inline %02Eh
+
+  mov  ebx, [ebx + edx*4]
+
+end
+
+// ; xcall
+inline %02Fh
+
+  call ebx
+
+end
+
 // ; setr
 inline %80h
 
@@ -411,6 +525,14 @@ end
 inline %180h
 
   xor  ebx, ebx
+
+end 
+
+// ; setr -1
+inline %680h
+
+  xor  ebx, ebx
+  dec  ebx
 
 end 
 
@@ -575,6 +697,24 @@ inline %08Eh
   lea  ebx, [ebp + __arg32_1]
 
 end 
+
+// ; creater r
+inline %08Fh
+
+  mov  eax, [esi]
+  mov  ecx, page_ceil
+  shl  eax, 2
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOC
+
+  mov  ecx, [esi]
+  shl  ecx, 2
+  mov  eax, __ptr32_1
+  mov  [ebx - elVMTOffset], eax
+  mov  [ebx - elSizeOffset], ecx
+
+end
 
 // ; copy
 inline %90h
@@ -749,7 +889,26 @@ labEnd:
 
 end
 
-// ; saveddisp
+// ; dcopy
+inline %9Ah
+
+  mov  ecx, __n_1 
+  imul ecx, edx
+  mov  eax, esi
+  mov  edi, ebx
+  rep  movsb
+  mov  esi, eax
+
+end
+
+// ; orn
+inline %9Bh
+
+  or  edx, __n_1
+
+end
+
+// ; savedp
 inline %0A0h
 
   mov  [ebp + __arg32_1], edx
@@ -856,6 +1015,24 @@ inline %1A9h
 
 end 
 
+// ; lsavedp
+inline %0AAh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  [edi], eax
+  mov  [edi + 4], edx
+
+end
+
+// ; lsavesi
+inline %0ABh
+
+  lea  edi, [esp + __arg32_1]
+  mov [edi], eax
+  mov [edi+4], edx
+
+end 
+
 // ; callr
 inline %0B0h
 
@@ -879,6 +1056,44 @@ inline %0B5h
 
 end
 
+// ; xredirect
+inline % 0B6h // (ebx - object, edx - message, esi - arg0, edi - arg1)
+
+  mov   [esp+4], esi                      // ; saving arg0
+  xor   ecx, ecx
+  push  edx 
+  mov   edi, [ebx - elVMTOffset]
+  mov   eax, __arg32_1
+  and   edx, ARG_MASK
+  and   eax, ~ARG_MASK
+  mov   esi, [edi - elVMTSizeOffset]
+  or    edx, eax
+
+labSplit:
+  test  esi, esi
+  jz    short labEnd
+
+labStart:
+  shr   esi, 1
+  setnc cl
+  cmp   edx, [edi+esi*8]
+  je    short labFound
+  lea   eax, [edi+esi*8]
+  jb    short labSplit
+  lea   edi, [eax+8]
+  sub   esi, ecx
+  jmp   short labSplit
+labFound:
+  pop   edx 
+  mov   eax, [edi+esi*8+4]
+  mov   esi, [esp+4]
+  jmp   eax
+
+labEnd:
+  pop   edx 
+                                                                
+end
+
 // ; cmpr r
 inline %0C0h
 
@@ -890,6 +1105,13 @@ end
 inline %1C0h
 
   cmp  ebx, 0
+
+end 
+
+// ; cmpr -1
+inline %6C0h
+
+  cmp  ebx, -1
 
 end 
 
@@ -1729,6 +1951,18 @@ inline %0E8h
 
 end
 
+// ; dcopydpn
+inline %0E9h
+
+  mov  eax, esi
+  lea  edi, [ebp + __arg32_1]
+  mov  ecx, __n_2
+  imul ecx, edx
+  rep  movsb
+  mov  esi, eax
+
+end
+
 // ; xwriteon
 inline %0EAh
 
@@ -2131,6 +2365,89 @@ labNextBaseClass:
 
   pop  ebx
   mov  esi, [esp+4]                      // ; restore arg0
+  mov  edx, __arg32_1
+
+end
+
+// ; dispatchmr
+// ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 5FAh
+
+  lea  eax, [esp + __n_2]
+  xor  ecx, ecx
+  push ecx
+  push ecx
+  mov  [esp+4], esi                      // ; saving arg0
+  push ebx
+  mov  ebx, eax 
+
+labCountParam:
+  lea  ebx, [ebx+4]
+  cmp  [ebx], -1
+  lea  ecx, [ecx+1]
+  jnz  short labCountParam
+  mov  [esp+4], ecx 
+
+  mov  esi, __ptr32_2
+  xor  edx, edx
+  mov  ebx, [esi] // ; message from overload list
+
+labNextOverloadlist:
+  shr  ebx, ACTION_ORDER
+  mov  edi, mdata : %0
+  mov  ebx, [edi + ebx * 8 + 4]
+  xor  ecx, ecx
+
+  lea  ebx, [ebx - 4]
+  mov  [esp+8], ebx
+
+labNextParam:
+  add  ecx, 1
+  cmp  ecx, [esp+4]
+  jnz  short labMatching
+
+  mov  esi, __ptr32_2
+  pop  ebx
+  mov  eax, [esi + edx * 8 + 4]
+  add  esp, 8
+  mov  edx, [esi + edx * 8]
+  mov  esi, [esp+4]                      // ; restore arg0
+  jmp  eax
+
+labMatching:
+  mov    esi, [esp+8]
+  lea    edi, [esi+4]
+  cmp    [edi], 0
+  cmovnz esi, edi
+  mov    [esp+8], esi
+
+  mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
+  test  edi, edi
+  cmovz edi, esi
+
+  mov  edi, [edi - elVMTOffset]
+  mov  esi, [esp+8]
+  mov  esi, [esi]
+
+labNextBaseClass:
+  cmp  esi, edi
+  jz   labNextParam
+  mov  edi, [edi - elPackageOffset]
+  and  edi, edi
+  jnz  short labNextBaseClass
+
+  mov  esi, __ptr32_2
+  add  edx, 1
+  mov  ebx, [esi + edx * 8] // ; message from overload list
+  and  ebx, ebx
+  jnz  labNextOverloadlist
+
+  pop  ebx
+  mov  esi, [esp+4]                      // ; restore arg0
+  mov  edx, __arg32_1
 
 end
 
@@ -2191,6 +2508,90 @@ labNextBaseClass:
 
   pop  ebx
   mov  esi, [esp+4]                      // ; restore arg0
+  mov  edx, __arg32_1
+
+end
+
+// ; dispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 5FBh
+
+  xor  ecx, ecx
+  lea  eax, [esp + __n_2]
+  push ecx
+  push ecx
+  mov  [esp+4], esi                      // ; saving arg0
+  push ebx
+  mov  ebx, eax 
+
+labCountParam:
+  lea  ebx, [ebx+4]
+  cmp  [ebx], -1
+  lea  ecx, [ecx+1]
+  jnz  short labCountParam
+  mov  [esp+4], ecx 
+
+  mov  esi, __ptr32_2
+  xor  edx, edx
+  mov  ebx, [esi] // ; message from overload list
+
+labNextOverloadlist:
+  shr  ebx, ACTION_ORDER
+  mov  edi, mdata : %0
+  mov  ebx, [edi + ebx * 8 + 4]
+  xor  ecx, ecx
+
+  lea  ebx, [ebx - 4]
+  mov  [esp+8], ebx
+
+labNextParam:
+  add  ecx, 1
+  cmp  ecx, [esp+4]
+  jnz  short labMatching
+
+  mov  esi, __ptr32_2
+  pop  ebx
+  mov  eax, [esi + edx * 8 + 4]
+  add  esp, 8
+  mov  edx, [esi + edx * 8]
+  mov  ecx, [ebx - elVMTOffset]
+  mov  esi, [esp+4]                      // ; restore arg0
+  jmp  [ecx + eax + 4]
+
+labMatching:
+  mov    esi, [esp+8]
+  lea    edi, [esi+4]
+  cmp    [edi], 0
+  cmovnz esi, edi
+  mov    [esp+8], esi
+
+  mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
+  test  edi, edi
+  cmovz edi, esi
+
+  mov  edi, [edi - elVMTOffset]
+  mov  esi, [esp+8]
+  mov  esi, [esi]
+
+labNextBaseClass:
+  cmp  esi, edi
+  jz   labNextParam
+  mov  edi, [edi - elPackageOffset]
+  and  edi, edi
+  jnz  short labNextBaseClass
+
+  mov  esi, __ptr32_2
+  add  edx, 1
+  mov  ebx, [esi + edx * 8] // ; message from overload list
+  and  ebx, ebx
+  jnz  labNextOverloadlist
+
+  pop  ebx
+  mov  esi, [esp+4]                      // ; restore arg0
+  mov  edx, __arg32_1
 
 end
 

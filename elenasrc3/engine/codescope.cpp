@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image loader class implementations
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -17,7 +17,12 @@ addr_t ReferenceMapper :: resolveExternal(ustr_t referenceName)
 {
    addr_t address = _exportReferences.get(referenceName);
    if (address == INVALID_ADDR) {
-      address = (_exportReferences.count() + 1) | mskImportRef;
+      if (_externalMapper) {
+         address = _externalMapper->resolveExternal(referenceName);
+
+         assert(address != INVALID_ADDR);
+      }
+      else address = (_exportReferences.count() + 1) | mskImportRef;
 
       _exportReferences.add(referenceName, address);
    }
@@ -44,6 +49,7 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
          return _characterReferences.get(referenceName);
       case mskTypeListRef:
       case mskConstArray:
+      case mskConstant:
          return _constReferences.get(referenceName);
       case mskExternalRef:
          return resolveExternal(referenceName);
@@ -53,6 +59,7 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
       case mskStaticVariable:
          return _statReferences.get(referenceName);
       case mskMssgLiteralRef:
+      case mskExtMssgLiteralRef:
          return _mssgReferences.get(referenceName);
       default:
          return INVALID_ADDR;
@@ -86,9 +93,11 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
          break;
       case mskTypeListRef:
       case mskConstArray:
+      case mskConstant:
          _constReferences.add(referenceName, address);
          break;
       case mskMssgLiteralRef:
+      case mskExtMssgLiteralRef:
          _mssgReferences.add(referenceName, address);
          break;
       case mskVMTRef:
@@ -183,42 +192,47 @@ void ReferenceMapper :: addLazyReference(LazyReferenceInfo info)
 
 // --- ImageProvider ---
 
-Section* ImageProvider :: getTextSection()
+MemoryBase* ImageProvider :: getTextSection()
 {
    return &_text;
 }
 
-Section* ImageProvider :: getMDataSection()
+MemoryBase* ImageProvider :: getADataSection()
+{
+   return &_adata;
+}
+
+MemoryBase* ImageProvider :: getMDataSection()
 {
    return &_mdata;
 }
 
-Section* ImageProvider :: getRDataSection()
+MemoryBase* ImageProvider :: getRDataSection()
 {
    return &_rdata;
 }
 
-Section* ImageProvider :: getImportSection()
+MemoryBase* ImageProvider :: getImportSection()
 {
    return &_import;
 }
 
-Section* ImageProvider :: getDataSection()
+MemoryBase* ImageProvider :: getDataSection()
 {
    return &_data;
 }
 
-Section* ImageProvider::getStatSection()
+MemoryBase* ImageProvider::getStatSection()
 {
    return &_stat;
 }
 
-Section* ImageProvider :: getMBDataSection()
+MemoryBase* ImageProvider :: getMBDataSection()
 {
    return &_mbdata;
 }
 
-Section* ImageProvider :: getTargetDebugSection()
+MemoryBase* ImageProvider :: getTargetDebugSection()
 {
    return &_debug;
 }

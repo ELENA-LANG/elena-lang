@@ -41,47 +41,43 @@ namespace elena_lang
    class TextViewModel : public TextViewModelBase
    {
    protected:
+      Point             _size;
       DocumentViewList  _documents;
 
       TextViewListeners _listeners;
       DocumentNotifiers _docListeners;
 
-      int getCurrentIndex();
-      int getDocumentIndex(ustr_t name);
-
-      void onDocumentNew(int index, int notifyMessage);
+      void onDocumentNew(int index);
       void onDocumentSelect(int index);
-      void onDocumentRename(int index);
+      //void onDocumentRename(int index);
 
       void beforeDocumentClose(int index);
-      void onDocumentClose(int index, int notifyMessage);
+      void onDocumentClose(int index);
 
    public:
-      void afterDocumentSelect(int index) override;
-
-      void onModelChanged() override;
-      void onModelModeChanged(int index) override;
+      //void afterDocumentSelect(int index) override;
 
       void attachListener(TextViewListener* listener) override;
 
       void attachDocListener(DocumentNotifier* listener) override;
       void removeDocListener(DocumentNotifier* listener) override;
 
-      void addDocumentView(ustr_t name, Text* text, path_t path, int notifyMessage) override;
+      void addDocumentView(ustr_t name, Text* text, path_t path) override;
       void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) override;
+
+      int getCurrentIndex();
+      int getDocumentIndex(ustr_t name) override;
 
       ustr_t getDocumentName(int index) override;
       ustr_t getDocumentNameByPath(path_t path) override;
 
-      DocumentView* getDocumentByIndex(int index) override;
-      DocumentView* getDocument(ustr_t name) override;
-      path_t getDocumentPath(ustr_t name) override;
+      DocumentView* getDocument(int index) override;
+      path_t getDocumentPath(int index) override;
 
       void clearDocumentView() override;
-      bool selectDocumentView(ustr_t name) override;
-      bool selectDocumentViewByIndex(int index) override;
+      bool selectDocumentView(int index) override;
 
-      void closeDocumentView(ustr_t name, int notifyMessage) override;
+      bool closeDocumentView(int index) override;
 
       pos_t getDocumentCount() override
       {

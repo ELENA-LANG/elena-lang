@@ -3,7 +3,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                                (C)2021-2022, by Aleksey Rakov
+//                                                (C)2021-2023, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #include "bytecode.h"
@@ -17,14 +17,11 @@ const char* _fnOpcodes[256] =
    "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
    "class", "save", "throw", "unhook", "loadv", "xcmp", "bload", "wload",
 
-   "incude", "exclude", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "incude", "exclude", "assign", "mov frm", "loads", "mlen", "dalloc", "xassignsp",
+   "dtrans", "xassign", "lload", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "coalesce", "not", "neg", "bread", "lsave", "fsave", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xget", "xcall",
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -38,17 +35,20 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "set", "set dp", "nlen", "xassign", "peek", "store", "xswap sp", "swap sp",
-   "mov mssg", "mov n", "load dp", "xcmp dp", "sub n", "add n", "set fp", OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+
+   "set", "set dp", "nlen", "xassign i", "peek", "store", "xswap sp", "swap sp",
+   "mov mssg", "mov n", "load dp", "xcmp dp", "sub n", "add n", "set fp", "create",
 
    "copy", "close", "alloc", "free", "and n", "read", "write", "cmp n",
-   "nconf dp", "ftrunc dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "nconf dp", "ftrunc dp", "dcopy", "or n", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "save dp", "store fp", "save sp", "store sp", "xflush sp", "get", "assign", "xrefresh sp",
-   "peek fp", "peek sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "save dp", "store fp", "save sp", "store sp", "xflush sp", "get i", "assign i", "xrefresh sp",
+   "peek fp", "peek sp", "lsave dp", "lsave sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "call", "call vt", "jump", "jeq", "jne", "jump vt", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
+   "jge", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "cmp", "fcmp", "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -57,10 +57,10 @@ const char* _fnOpcodes[256] =
    "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", "xnewn",
-   "nadd dp", OPCODE_UNKNOWN, "xwrite offs", "xcopy offs", "vjump mssg", "jump mssg", "seleq", "sellt",
+   "nadd dp", "dcopy dp", "xwrite offs", "xcopy offs", "vjump mssg", "jump mssg", "seleq", "sellt",
 
    "open", "xstore sp", "open header", "mov sp", "new", "newn", "xmov sp", "createn",
-   "create", "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
+   OPCODE_UNKNOWN, "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
 };
 
 // --- Auxiliary  ---
@@ -133,6 +133,9 @@ void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase
       case VARIADIC_MESSAGE:
          messageName.append("params:");
          break;
+      case CONVERSION_MESSAGE:
+         messageName.append("typecast:");
+         break;
       default:
          break;
    }
@@ -176,11 +179,8 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    return true;
 }
 
-mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode)
+void ByteCodeUtil :: parseMessageName(ustr_t messageName, IdentifierString& actionName, ref_t& flags, pos_t& argCount)
 {
-   pos_t argCount = 0;
-   ref_t actionRef = 0, flags = 0;
-
    if (messageName.startsWith("static:")) {
       flags |= STATIC_MESSAGE;
       messageName += getlength("static:");
@@ -197,8 +197,11 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
       flags |= VARIADIC_MESSAGE;
       messageName += getlength("params:");
    }
+   if (messageName.startsWith("typecast:")) {
+      flags |= CONVERSION_MESSAGE;
+      messageName += getlength("typecast:");
+   }
 
-   IdentifierString actionName;
    size_t paramIndex = messageName.find('[');
    if (paramIndex != NOTFOUND_POS) {
       actionName.copy(messageName, paramIndex);
@@ -211,6 +214,15 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
    if (actionName.compare(INVOKE_MESSAGE)) {
       flags |= FUNCTION_MESSAGE;
    }
+}
+
+mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode)
+{
+   pos_t argCount = 0;
+   ref_t actionRef = 0, flags = 0;
+
+   IdentifierString actionName;
+   parseMessageName(messageName, actionName, flags, argCount);
 
    ref_t signature = 0;
    size_t index = (*actionName).find('<');
@@ -233,9 +245,6 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
       actionName.truncate(index);
    }
 
-   if ((*actionName).compare(CAST_MESSAGE))
-      flags |= CONVERSION_MESSAGE;
-
    actionRef = module->mapAction(*actionName, signature, readOnlyMode);
    if (actionRef == 0) {
       return 0;
@@ -247,14 +256,23 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
 void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* target, ModuleBase* importer)
 {
    if (isRCommand(command.code)) {
-      ref_t mask = command.arg1 & mskAnyRef;
-      switch (mask) {
-         case mskMssgLiteralRef:
-            command.arg1 = target->importMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
-            break;
-         default:
-            command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
-            break;
+      // HOTFIX : ignore -1
+      if (command.arg1 != -1) {
+         ref_t mask = command.arg1 & mskAnyRef;
+         switch (mask) {
+            case mskMssgLiteralRef:
+               command.arg1 = target->importMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
+               break;
+            case mskExtMssgLiteralRef:
+               command.arg1 = target->importExtMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
+               break;
+            case mskExternalRef:
+               command.arg1 = target->importExternal(importer, command.arg1 & ~mskAnyRef) | mask;
+               break;
+            default:
+               command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
+               break;
+         }
       }      
    }
    else if (isMCommand(command.code)) {
@@ -290,24 +308,8 @@ inline bool removeIdleJump(ByteCodeIterator it)
          case ByteCode::Jump:
          case ByteCode::Jne:
          case ByteCode::Jeq:
-         //case bcIfR:
-         //case bcElseR:
-         //case bcElseD:
-         //case bcIf:
-         //case bcIfCount:
-         //case bcElse:
-         //case bcNotLess:
-         //case bcNotGreater:
-         //case bcIfN:
-         //case bcElseN:
-         //case bcLessN:
-         //case bcNotLessN:
-         //case bcGreaterN:
-         //case bcNotGreaterN:
-         //   //case bcIfM:
-         //   //case bcElseM:
-         //   //case bcNext:
-         //case bcIfHeap:
+         case ByteCode::Jlt:
+         case ByteCode::Jge:
          case ByteCode::JumpMR:
          case ByteCode::VJumpMR:
          case ByteCode::JumpVI:
@@ -419,25 +421,8 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
                blocks.add(index + 1, 0);
             case ByteCode::Jeq:
             case ByteCode::Jne:
-            //case bcIfR:
-            //case bcElseR:
-            //case bcElseD:
-            //case bcIf:
-            //case bcIfCount:
-            //case bcElse:
-            //case bcNotLess:
-            //case bcNotGreater:
-            //case bcIfN:
-            //case bcElseN:
-            //case bcLessN:
-            //case bcNotLessN:
-            //case bcGreaterN:
-            //case bcNotGreaterN:
-               //            case bcIfM:
-               //            case bcElseM:
-               //            case bcNext:
-            //case bcAddress:
-            //case bcIfHeap:
+            case ByteCode::Jlt:
+            case ByteCode::Jge:
                // remove the label from idle list
                idleLabels.exclude(command.arg1);
 
@@ -688,6 +673,8 @@ void CommandTape :: saveTo(MemoryWriter* writer)
          case ByteCode::Jump:
          case ByteCode::Jeq:
          case ByteCode::Jne:
+         case ByteCode::Jlt:
+         case ByteCode::Jge:
             writer->writeByte((char)command.code);
             if (!importMode) {
                // if forward jump, it should be resolved later

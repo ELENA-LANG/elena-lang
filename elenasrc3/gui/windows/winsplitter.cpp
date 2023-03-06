@@ -32,11 +32,12 @@ static LRESULT CALLBACK hookProcMouse(int nCode, WPARAM wParam, LPARAM lParam)
 
 // --- Splitter ---
 
-Splitter :: Splitter(NotifierBase* notifier, int notifyCode, ControlBase* client, bool vertical)
+Splitter :: Splitter(NotifierBase* notifier, int notifyCode, NotificationStatus notifyStatus, ControlBase* client, bool vertical)
    : WindowBase(nullptr, 800, 4),
    _instance(nullptr),
    _notifier(notifier),
    _notifyCode(notifyCode),
+   _notifyStatus(notifyStatus),
    _client(client),
    _vertical(vertical), 
    _srcPos({}),
@@ -225,5 +226,5 @@ void Splitter :: shiftOn(int delta)
 
    setRectangle({rec.topLeft.x, rec.topLeft.y, width, height});
 
-   _notifier->notifyMessage(_notifyCode);
+   _notifier->notify(_notifyCode, _notifyStatus);
 }

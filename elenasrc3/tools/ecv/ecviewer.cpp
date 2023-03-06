@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ecviewer.h"
@@ -188,6 +188,7 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
    ref_t mask = arg & mskAnyRef;
    switch (mask) {
       case mskMssgLiteralRef:
+      case mskExtMssgLiteralRef:
          referenceName = arg ? _module->resolveConstant(arg & ~mskAnyRef) : nullptr;
          break;
       default:
@@ -239,6 +240,7 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
          commandStr.append("procedure:");
          break;
       case mskMssgLiteralRef:
+      case mskExtMssgLiteralRef:
          commandStr.append("mssgconst:");
          break;
       default:
@@ -272,6 +274,12 @@ void ByteCodeViewer :: addSecondRArg(arg_t arg, IdentifierString& commandStr, Li
 void ByteCodeViewer :: addArg(arg_t arg, IdentifierString& commandStr)
 {
    commandStr.append(":");
+   commandStr.appendInt(arg);
+}
+
+void ByteCodeViewer :: addIArg(arg_t arg, IdentifierString& commandStr)
+{
+   commandStr.append("i:");
    commandStr.appendInt(arg);
 }
 
@@ -350,17 +358,24 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::CmpR:
          case ByteCode::PeekR:
          case ByteCode::StoreR:
+         case ByteCode::CreateR:
             addRArg(command.arg1, commandStr);
             break;
          case ByteCode::MovM:
          case ByteCode::TstM:
+         case ByteCode::XRedirectM:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
             break;
          case ByteCode::Jump:
          case ByteCode::Jeq:
          case ByteCode::Jne:
+         case ByteCode::Jlt:
+         case ByteCode::Jge:
             addLabel(command.arg1 + commandPosition + 5, commandStr, labels);
+            break;
+         case ByteCode::AssignI:
+            addIArg(command.arg1, commandStr);
             break;
          default:
             addArg(command.arg1, commandStr);
@@ -600,8 +615,47 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elStructureWrapper)) {
       printLineAndCount("@flag ", "elStructureWrapper", row, pageSize);
    }
+   if (test(flags, elTemplatebased)) {
+      printLineAndCount("@flag ", "elTemplatebased", row, pageSize);
+   }
+   if (test(flags, elWithCustomDispatcher)) {
+      printLineAndCount("@flag ", "elWithCustomDispatcher", row, pageSize);
+   }
+   if (test(flags, elWithGenerics)) {
+      printLineAndCount("@flag ", "elWithGenerics", row, pageSize);
+   }
+   if (test(flags, elWithVariadics)) {
+      printLineAndCount("@flag ", "elWithVariadics", row, pageSize);
+   }
    if (test(flags, elWrapper)) {
       printLineAndCount("@flag ", "elWrapper", row, pageSize);
+   }
+
+   ref_t debugFlag = flags & elDebugMask;
+   switch (debugFlag) {
+      case elDebugDWORD:
+         printLineAndCount("@flag ", "elDebugDWORD", row, pageSize);
+         break;
+      case elDebugFLOAT64:
+         printLineAndCount("@flag ", "elDebugFLOAT64", row, pageSize);
+         break;
+      case elDebugQWORD:
+         printLineAndCount("@flag ", "elDebugQWORD", row, pageSize);
+         break;
+      case elDebugDWORDS:
+         printLineAndCount("@flag ", "elDebugDWORDS", row, pageSize);
+         break;
+      case elDebugLiteral:
+         printLineAndCount("@flag ", "elDebugLiteral", row, pageSize);
+         break;
+      case elDebugWideLiteral:
+         printLineAndCount("@flag ", "elDebugWideLiteral", row, pageSize);
+         break;
+      case elDebugArray:
+         printLineAndCount("@flag ", "elDebugArray", row, pageSize);
+         break;
+      default:
+         break;
    }
 }
 
@@ -619,8 +673,17 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
             case V_INT32:
                line.append(" of __int[4]");
                break;
+            case V_PTR32:
+               line.append(" of __ptr[4]");
+               break;
+            case V_PTR64:
+               line.append(" of __ptr[8]");
+               break;
             case V_INT8:
                line.append(" of __int[1]");
+               break;
+            case V_WORD32:
+               line.append(" of __word[4]");
                break;
          }
       }
@@ -804,10 +867,10 @@ void ByteCodeViewer :: listMembers()
          auto referenceName = module->resolveReference(reference);
          if (isWeakReference(referenceName)) {
             if (module->mapSection(reference | mskVMTRef, true)) {
-               ((PresenterBase*)arg)->print("class %s\n", referenceName.str());
+               ((ConsoleHelperBase*)arg)->print("class %s\n", referenceName.str());
             }
             else if (module->mapSection(reference | mskSymbolRef, true)) {
-               ((PresenterBase*)arg)->print("symbol %s\n", referenceName.str());
+               ((ConsoleHelperBase*)arg)->print("symbol %s\n", referenceName.str());
             }
          }
       });

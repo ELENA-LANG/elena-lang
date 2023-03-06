@@ -3,7 +3,7 @@
 //
 //		This file contains CPU native helpers
 //		Supported platforms: PPC64
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PPCHELPER_H
@@ -238,7 +238,7 @@ namespace elena_lang
    // --- PPCLabelHelper ---
    struct PPCLabelHelper : LabelHelper
    {
-      short getHiAdjusted(disp_t n)
+      static short getHiAdjusted(disp_t n)
       {
          // HOTFIX : if the DWORD LO is over 0x7FFF - adjust DWORD HI (by adding 1) to be properly combined in the following code:
          //     addis   r16, r16, __xdisp32hi_1
@@ -260,7 +260,7 @@ namespace elena_lang
          writer.writeDWord(PPCHelper::makeBCommand(16, bo, bi, bd >> 2, aa, lk));
       }
 
-      bool fixLabel(pos_t label, MemoryWriter& writer) override
+      bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override
       {
          for (auto it = jumps.getIt(label); !it.eof(); ++it) {
             if (it.key() == label) {
@@ -278,30 +278,7 @@ namespace elena_lang
          for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
             auto info = *a_it;
 
-            pos_t offset = writer.position();
-
-            switch (info.mask) {
-               case mskXDisp32Hi:
-               case mskDisp32Hi:
-               {
-                  offset = getHiAdjusted(offset);
-
-                  PPCHelper::fixBCommand(writer.Memory()->get(info.position), offset);
-                  writer.Memory()->addReference(mskCodeXDisp32Hi, info.position);
-                  break;
-               }
-               case mskXDisp32Lo:
-               case mskDisp32Lo:
-               {
-                  offset &= 0xFFFF;
-
-                  PPCHelper::fixBCommand(writer.Memory()->get(info.position), offset);
-                  writer.Memory()->addReference(mskCodeXDisp32Lo, info.position);
-                  break;
-               }
-            default:
-               break;
-            }
+            rh->resolveLabel(writer, info.mask, info.position);
          }
 
          return true;
@@ -353,6 +330,38 @@ namespace elena_lang
             throw InternalError(-1);
 
          writeBCxx(4, 2, offset, 0, 0, writer);
+      }
+
+      void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBCxx(12, 0, 0, 0, 0, writer);
+      }
+
+      void writeJltBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0xFFFF)
+            throw InternalError(-1);
+
+         writeBCxx(12, 0, offset, 0, 0, writer);
+      }
+
+      void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBCxx(4, 0, 0, 0, 0, writer);
+      }
+
+      void writeJgeBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0xFFFF)
+            throw InternalError(-1);
+
+         writeBCxx(4, 0, offset, 0, 0, writer);
       }
    };
 

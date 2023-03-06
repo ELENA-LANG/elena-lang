@@ -171,6 +171,10 @@ bool AssemblerBase :: getArgReference(ScriptToken& tokenInfo, int& offset, ref_t
       reference = NARG16HI_1;
       offset = 0;
    }
+   else if (tokenInfo.compare(N16HI_ARGUMENT2)) {
+      reference = NARG16HI_2;
+      offset = 0;
+   }
    else if (tokenInfo.compare(N16LO_ARGUMENT1)) {
       reference = NARG16LO_1;
       offset = 0;
@@ -279,6 +283,9 @@ bool AssemblerBase :: getIntConstant(ScriptToken& tokenInfo, int& offset, ref_t&
          }
          else if (reference == ARG12_1) {
             reference = INV_ARG12_1;
+         }
+         else if (reference == ARG12_2) {
+            reference = INV_ARG12_2;
          }
          else return false;
       }
@@ -425,8 +432,10 @@ void AssemblerBase :: declareConstant(ScriptToken& tokenInfo)
 
    int value = readInteger(tokenInfo);
 
-   if (!constants.add(*constName, value, true))
+   if (constants.exist(*constName))
       throw SyntaxError(ASM_DUPLICATECONST, tokenInfo.lineInfo);
+
+   constants.add(*constName, value);
 }
 
 void AssemblerBase :: compile()

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class body
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "guicommon.h"
@@ -1209,10 +1209,10 @@ bool TextHistory :: eof() const
    else return false;
 }
 
-void TextHistory :: undo(Text* text, TextBookmark& caret)
+bool TextHistory :: undo(Text* text, TextBookmark& caret)
 {
    if (bof())
-      return;
+      return false;
 
    text->validateBookmark(caret);
 
@@ -1250,14 +1250,17 @@ void TextHistory :: undo(Text* text, TextBookmark& caret)
       // insert mode
       text->eraseLine(caret, length);
    }
+   
    _locking = false;
    _offset = reader.position();
+
+   return true;
 }
 
-void TextHistory :: redo(Text* text, TextBookmark& caret)
+bool TextHistory :: redo(Text* text, TextBookmark& caret)
 {
    if (eof())
-      return;
+      return true;
 
    text->validateBookmark(caret);
 
@@ -1291,4 +1294,6 @@ void TextHistory :: redo(Text* text, TextBookmark& caret)
    if (_offset == _buffer->length() && !_previous) {
       switchBuffer();
    }
+
+   return true;
 }

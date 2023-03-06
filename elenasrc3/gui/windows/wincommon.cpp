@@ -166,12 +166,19 @@ LRESULT WindowBase :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
          break;
       case WM_CLOSE:
          onClose();
-         break;
+         return 0;
       default:
          // to make compiler happy
          break;
    }
    return ::DefWindowProc(_handle, message, wParam, lParam);
+}
+
+bool WindowBase::onClose()
+{
+   ::DestroyWindow(_handle);
+
+   return true;
 }
 
 // --- WindowApp ---
@@ -190,33 +197,43 @@ bool WindowApp :: initInstance(WindowBase* mainWindow, int cmdShow)
    return TRUE;
 }
 
-void WindowApp :: notifyMessage(int messageCode, int arg1, int arg2)
+void WindowApp :: notify(int messageCode, NotificationStatus status)
 {
-   ExtNMHDR notification;
+   StatusNMHDR notification;
 
-   notification.nmhrd.code = NMHDR_Message;
+   notification.nmhrd.code = STATUS_NOTIFICATION;
    notification.nmhrd.hwndFrom = _hwnd;
-   notification.extParam1 = messageCode;
-   notification.extParam2 = arg1;
-   notification.extParam3 = arg2;
+   notification.code = messageCode;
+   notification.status = status;
 
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-void WindowApp :: notifyModelChange(int modelCode, int arg)
+void WindowApp :: notifySelection(int messageCode, size_t param)
 {
-   ExtNMHDR notification;
+   SelectionNMHDR notification;
 
-   notification.nmhrd.code = NMHDR_Model;
+   notification.nmhrd.code = STATUS_SELECTION;
    notification.nmhrd.hwndFrom = _hwnd;
-   notification.extParam1 = modelCode;
-   notification.extParam2 = arg;
-   notification.extParam3 = 0;
+   notification.code = messageCode;
+   notification.param = param;
 
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, int notificationId)
+void WindowApp::notifyCompletion(int messageCode, int param)
+{
+   CompletionNMHDR notification;
+
+   notification.nmhrd.code = STATUS_COMPLETION;
+   notification.nmhrd.hwndFrom = _hwnd;
+   notification.code = messageCode;
+   notification.param = param;
+
+   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
+}
+
+int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, int notificationId, NotificationStatus notificationStatus)
 {
    // Perform application initialization:
    if (!initInstance(dynamic_cast<WindowBase*>(mainWindow), maximized ? SW_MAXIMIZE : SW_SHOW))
@@ -225,7 +242,7 @@ int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, int notificatio
    }
 
    if (notificationId)
-      notifyModelChange(notificationId, 0);
+      notify(notificationId, notificationStatus);
 
    HACCEL hAccelTable = LoadAccelerators(_instance, _accelerators.str());
 

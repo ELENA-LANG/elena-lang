@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI Controller header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CONTOLLER_H
@@ -42,18 +42,18 @@ namespace elena_lang
    protected:
       TextViewSettings _settings;
 
-      void onTextChanged(TextViewModelBase* model, DocumentView* view);
+      //void onTextChanged(TextViewModelBase* model, DocumentView* view);
+
+      void notifyOnChange(TextViewModelBase* model, DocumentChangeStatus& status);
+      void notifyOnClipboardOperation(ClipboardBase* clipboard);
 
    public:
-      //void onFrameChange() override;
-
       bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
-         FileEncoding encoding, int notifyMessage) override;
-      void selectDocument(TextViewModelBase* model, ustr_t name) override;
+         FileEncoding encoding) override;
+      bool selectDocument(TextViewModelBase* model, int index, NotificationStatus& status) override;
       void selectNextDocument(TextViewModelBase* model);
       void selectPreviousDocument(TextViewModelBase* model);
-      void closeDocument(TextViewModelBase* model, ustr_t name, 
-         int notifyMessage) override;
+      void closeDocument(TextViewModelBase* model, int index, NotificationStatus& status) override;
 
       void newDocument(TextViewModelBase* model, ustr_t name, 
          int notifyMessage) override;
@@ -82,6 +82,10 @@ namespace elena_lang
       void movePageDown(TextViewModelBase* model, bool kbShift) override;
       void movePageUp(TextViewModelBase* model, bool kbShift) override;
       void moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift) override;
+
+      void selectWord(TextViewModelBase* model) override;
+
+      void resizeModel(TextViewModelBase* model, Point size) override;
 
       TextViewController(TextViewSettings& settings)
       {

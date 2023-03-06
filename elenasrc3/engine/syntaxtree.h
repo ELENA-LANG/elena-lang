@@ -3,7 +3,7 @@
 //
 //		This file contains Syntax Tree class declaration
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SYNTAXTREE_H
@@ -56,7 +56,7 @@ namespace elena_lang
       Field                   = 0x00100C,
       Import                  = 0x00100D,
       PredefinedMethod        = 0x00100E,
-      InlineImplicitTemplate  = 0x00100F,
+      InlinePropertyTemplate  = 0x00100F,
       CodeBlock               = 0x001C10,
       WithoutBody             = 0x001C11,
       Importing               = 0x001C12,
@@ -106,9 +106,10 @@ namespace elena_lang
       AndOperation            = 0x001861,
       OrOperation             = 0x001862,
       XorOperation            = 0x001863,
+      BreakOperation          = 0x001864,
       Postfix                 = 0x001068,
       TemplatePostfix         = 0x001069,
-      MethodPostfix           = 0x00106A,
+      //MethodPostfix           = 0x00106A,
       TemplateArg             = 0x001070,
       Dimension               = 0x001471,
       NestedBlock             = 0x001080,
@@ -123,6 +124,7 @@ namespace elena_lang
       L4Expression            = 0x001897,
       NTExpression            = 0x001898,
       L7Expression            = 0x001899,
+      L3SingleExpression      = 0x00189A,
       TemplateExpression      = 0x0018A0,
       FieldInitializer        = 0x0018B0,
       Message                 = 0x0010C0,
@@ -139,6 +141,14 @@ namespace elena_lang
       Redirect                = 0x001CCB,
       AltOperation            = 0x001CCC,
       IsNilOperation          = 0x001CCD,
+      ComplexName             = 0x0010CE,
+      InlinePostfix           = 0x0010CF,
+      SwitchOperation         = 0x001CD0,
+      SwitchOption            = 0x0018D1,
+      SwitchLastOption        = 0x0018D2,
+      SwitchCode              = 0x0018D3,
+      CollectionExpression    = 0x0018D4,
+
 
       Name                    = 0x000101,
       Namespace               = 0x000103,

@@ -119,3 +119,36 @@ void MemoryDump :: load(StreamReader& reader, pos_t length)
 
    _used += length;
 }
+
+// --- ByteArray ---
+
+void* ByteArray :: get(pos_t position) const
+{
+   return _bytes + position;
+}
+
+bool ByteArray :: write(pos_t position, const void* s, pos_t length)
+{
+   memcpy(_bytes + position, s, length);
+
+   return true;
+}
+
+bool ByteArray :: read(pos_t position, void* s, pos_t length)
+{
+   memcpy(s, _bytes + position, length);
+
+   return true;
+}
+
+bool ByteArray :: insert(pos_t position, const void* s, pos_t length)
+{
+   memmove(_bytes + position + length, _bytes + position, _length - position - length);
+   memcpy(_bytes + position, s, length);
+
+   return true;
+}
+
+void ByteArray :: trim(pos_t position)
+{
+}

@@ -57,13 +57,14 @@ pos_t WinNtImageFormatter :: fillImportTable(ImportTable& importTable, AddressMa
 void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections,
    pos_t sectionAlignment, pos_t fileAlignment)
 {
-   Section* text = provider.getTextSection();
-   Section* mdata = provider.getMDataSection();
-   Section* mbdata = provider.getMBDataSection();
-   Section* rdata = provider.getRDataSection();
-   Section* data = provider.getDataSection();
-   Section* stat = provider.getStatSection();
-   Section* import = provider.getImportSection();
+   MemoryBase* text = provider.getTextSection();
+   MemoryBase* adata = provider.getADataSection();
+   MemoryBase* mdata = provider.getMDataSection();
+   MemoryBase* mbdata = provider.getMBDataSection();
+   MemoryBase* rdata = provider.getRDataSection();
+   MemoryBase* data = provider.getDataSection();
+   MemoryBase* stat = provider.getStatSection();
+   MemoryBase* import = provider.getImportSection();
 
    pos_t    size = 0;
    pos_t    offset = 0x1000;
@@ -84,18 +85,21 @@ void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
 
    offset = align(offset + size, sectionAlignment);
 
-   // --- mdata ---
-   size = mdata->length();
-   map.mdata = offset;
+   // --- adata & mdata ---
+   map.adata = offset;
+   size = adata->length();
+   map.mdata = offset + size;
+   size += mdata->length();
    map.mbdata = offset + size;
    size += mbdata->length();
    map.dataSize += align(size, fileAlignment);
 
-   sections.headers.add(ImageSectionHeader::get(MDATA_SECTION, map.mdata, 
+   sections.headers.add(ImageSectionHeader::get(MDATA_SECTION, map.adata, 
       ImageSectionHeader::SectionType::RData,
       align(size, sectionAlignment),
       align(size, fileAlignment)));
 
+   sections.items.add(sections.items.count() + 1, { adata, false });
    sections.items.add(sections.items.count() + 1, { mdata, false });
    sections.items.add(sections.items.count() + 1, { mbdata, true });
 
@@ -157,6 +161,7 @@ void WinNtImageFormatter :: fixImage(ImageProviderBase& provider, AddressSpace& 
 {
    fixSection(provider.getTextSection(), map);
    fixSection(provider.getRDataSection(), map);
+   fixSection(provider.getADataSection(), map);
    fixSection(provider.getMDataSection(), map);
    fixSection(provider.getMBDataSection(), map);
    fixImportSection(provider.getImportSection(), map);
@@ -184,7 +189,7 @@ void Win32NtImageFormatter :: createImportSection(ImageProviderBase& provider, R
    ImportTable importTable(nullptr);
    pos_t count = fillImportTable(importTable, provider.externals());
 
-   Section* import = provider.getImportSection();
+   MemoryBase* import = provider.getImportSection();
 
    MemoryWriter writer(import);
 
@@ -226,14 +231,16 @@ void Win32NtImageFormatter :: createImportSection(ImageProviderBase& provider, R
    }
 }
 
-void Win32NtImageFormatter::fixSection(Section* section, AddressSpace& map)
+void Win32NtImageFormatter::fixSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, relocate);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocate);
 }
 
-void Win32NtImageFormatter::fixImportSection(Section* section, AddressSpace& map)
+void Win32NtImageFormatter::fixImportSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, relocateImport);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocateImport);
 }
 
 // --- Win64NtImageFormatter ---
@@ -243,7 +250,7 @@ void Win64NtImageFormatter :: createImportSection(ImageProviderBase& provider, R
    ImportTable importTable(nullptr);
    pos_t count = fillImportTable(importTable, provider.externals());
 
-   Section* import = provider.getImportSection();
+   MemoryBase* import = provider.getImportSection();
 
    MemoryWriter writer(import);
 
@@ -285,12 +292,14 @@ void Win64NtImageFormatter :: createImportSection(ImageProviderBase& provider, R
    }
 }
 
-void Win64NtImageFormatter::fixSection(Section* section, AddressSpace& map)
+void Win64NtImageFormatter::fixSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, relocate64);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocate64);
 }
 
-void Win64NtImageFormatter::fixImportSection(Section* section, AddressSpace& map)
+void Win64NtImageFormatter::fixImportSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, relocateImport);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocateImport);
 }

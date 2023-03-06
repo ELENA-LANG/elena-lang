@@ -441,7 +441,7 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 
          return FALSE;
       }
-   default:
+      default:
          return WindowBase::proceed(message, wParam, lParam);
    }
    return 0;

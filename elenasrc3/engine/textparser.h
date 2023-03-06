@@ -182,7 +182,7 @@ namespace elena_lang
    public:
       void step(T ch, char& state, char& terminateState)
       {
-         char c = ch > maxChar ? maxChar : (char)ch;
+         char c = (unsigned char)ch > maxChar ? maxChar : (char)ch;
 
          terminateState = _dfa[state - finalState][(unsigned char)c];
 

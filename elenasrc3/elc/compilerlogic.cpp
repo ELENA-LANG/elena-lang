@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class implementation.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 100;
+constexpr auto OperationLength = 112;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -203,7 +203,6 @@ constexpr Op Operations[OperationLength] =
    {
       MUL_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
    },
-
    {
       ADD_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, 0
    },
@@ -347,6 +346,32 @@ constexpr Op Operations[OperationLength] =
       LEN_OPERATOR_ID, BuildKey::ShortArraySOp, V_INT16ARRAY, 0, 0, V_INT32
    },
    {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_INT32, 0, V_INT16
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_INT16, V_INT32, 0
+   },
+   {
+      LEN_OPERATOR_ID, BuildKey::IntArraySOp, V_INT32ARRAY, 0, 0, V_INT32
+   },
+   {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::IntArrayOp, V_INT32ARRAY, V_INT32, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::IntArrayOp, V_INT32ARRAY, V_ELEMENT, V_INT32, 0
+   },
+   {
+      INDEX_OPERATOR_ID, BuildKey::BinaryArrayOp, V_BINARYARRAY, V_INT32, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::BinaryArrayOp, V_BINARYARRAY, V_ELEMENT, V_INT32, 0
+   },
+   {
+      LEN_OPERATOR_ID, BuildKey::BinaryArraySOp, V_BINARYARRAY, 0, 0, V_INT32
+   },
+   {
       IF_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, 0, V_CLOSURE
    },
    {
@@ -354,6 +379,18 @@ constexpr Op Operations[OperationLength] =
    },
    {
       IF_ELSE_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, V_CLOSURE, V_CLOSURE
+   },
+   {
+      LEN_OPERATOR_ID, BuildKey::ObjArraySOp, V_OBJARRAY, 0, 0, V_INT32
+   },
+   {
+      INDEX_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, V_INT32, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, V_ELEMENT, V_INT32, 0
+   },
+   {
+      INDEX_OPERATOR_ID, BuildKey::ObjArrayOp, V_ARGARRAY, V_INT32, 0, V_ELEMENT
    },
 };
 
@@ -367,7 +404,9 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
          return !isPrimitiveRef(source.typeRef);
       case V_INT32:
          return source.typeRef == V_INT8 || source.typeRef == V_INT16
-            || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE;
+            || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32;
+      case V_INT64:
+         return source.typeRef == V_PTR64;
       case V_FLAG:
          return isCompatible(scope, { scope.branchingInfo.typeRef }, source, true);
       case V_WORD32:
@@ -494,22 +533,25 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
          flags |= elReadOnlyRole;
          return true;
       case V_SINGLETON:
-         flags = elRole | elSealed | elStateless;
+         flags |= elRole | elSealed | elStateless;
          break;
       case V_LIMITED:
-         flags = (elClosed | elAbstract | elNoCustomDispatcher);
+         flags |= (elClosed | elAbstract | elNoCustomDispatcher);
          break;
       case V_ABSTRACT:
-         flags = elAbstract;
+         flags |= elAbstract;
          break;
       case V_SEALED:
-         flags = elSealed;
+         flags |= elSealed;
          break;
       case V_EXTENSION:
-         flags = elExtension;
+         flags |= elExtension;
          break;
       case V_NONESTRUCT:
-         flags = elNonStructureRole;
+         flags |= elNonStructureRole;
+         break;
+      case V_TEMPLATEBASED:
+         flags |= elTemplatebased;
          break;
       case 0:
          // ignore idle
@@ -529,7 +571,10 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_INTBINARY:
       case V_WORDBINARY:
       case V_MSSGBINARY:
+      case V_SUBJBINARY:
       case V_FLOATBINARY:
+      case V_POINTER:
+      case V_EXTMESSAGE:
          attrs.typeInfo.typeRef = attribute;
          break;
       case V_STRINGOBJ:
@@ -607,6 +652,15 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_SEALED:
          hint = (ref_t)MethodHint::Sealed;
          return true;
+      case V_GENERIC:
+         hint = (ref_t)MethodHint::Sealed | (ref_t)MethodHint::Generic;
+         return true;
+      case V_EMBEDDABLE:
+         hint = (ref_t)MethodHint::Embeddable;
+         return true;
+      case V_INTERFACE_DISPATCHER:
+         hint = (ref_t)MethodHint::InterfaceDispatcher;
+         return true;
       default:
          return false;
    }
@@ -623,6 +677,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
       case V_CONSTRUCTOR:
       case V_FUNCTION:
       case V_CONVERSION:
+      case V_GENERIC:
          return validateMethodAttribute(attribute, hint, dummy);
       default:
          return false;
@@ -660,14 +715,17 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_INTERN:
          attrs |= ExpressionAttribute::Intern;
          return true;
+      case V_AUTO:
       case V_VARIABLE:
          attrs |= ExpressionAttribute::NewVariable;
          return true;
       case V_EXTERN:
          attrs |= ExpressionAttribute::Extern;
          return true;
-   case V_NEWOP:
-         if (ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::Parameter)) {
+      case V_NEWOP:
+         if (ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::Parameter)
+            || ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::NestedDecl))
+         {
             attrs |= ExpressionAttribute::NewOp;
             return true;
          }
@@ -687,33 +745,48 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_MEMBER:
          attrs |= ExpressionAttribute::Member;
          return true;
+      case V_WEAK:
+         attrs |= ExpressionAttribute::Weak;
+         return true;
       case V_SUPERIOR:
          attrs |= ExpressionAttribute::Superior;
          return true;
+      case V_IGNOREDUPLICATE:
+         attrs |= ExpressionAttribute::IgnoreDuplicate;
+         return true;
       default:
          return false;
    }
 }
 
-bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, bool& byRefArg, bool& variadicArg)
+bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, TypeAttributes& attributes)
 {
    switch (attrValue) {
       case V_WRAPPER:
-         byRefArg = true;
+         attributes.byRefOne = true;
          return true;
       case V_VARIADIC:
-         variadicArg = true;
+         attributes.variadicOne = true;
          return true;
       default:
          return false;
    }
 }
 
-bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, bool& variadicArg)
+bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, TypeAttributes& attributes)
 {
    switch (attrValue) {
       case V_VARIADIC:
-         variadicArg = true;
+         attributes.variadicOne = true;
+         return true;
+      case V_VARIABLE:
+         attributes.variableOne = true;
+         return true;
+      case V_MSSGNAME:
+         attributes.mssgNameLiteral = true;
+         return true;
+      case V_NEWOP:
+         attributes.newOp = true;
          return true;
       default:
          return false;
@@ -910,7 +983,7 @@ bool CompilerLogic :: isMultiMethod(ClassInfo& info, MethodInfo& methodInfo)
    return test(methodInfo.hints, (ref_t)MethodHint::Multimethod);
 }
 
-void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool classClassMode)
+void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, ClassInfo& info, bool classClassMode)
 {
    if (classClassMode) {
       // class class is always stateless and final
@@ -932,14 +1005,48 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
    if (test(info.header.flags, elExtension))
       info.header.flags |= elSealed;
 
-   if (isWrapper(info)) {
+   if (test(info.header.flags, elDynamicRole)) {
+      if (test(info.header.flags, elStructureRole)) {
+         if (classRef == scope.buildins.literalReference) {
+            // recognize string constant
+            if (info.size == -1) {
+               info.header.flags |= elDebugLiteral;
+            }
+         }
+         else if (classRef == scope.buildins.wideReference) {
+            // recognize wide string constant
+            if (info.size == -2) {
+               info.header.flags |= elDebugWideLiteral;
+            }
+         }
+      }
+      else {
+         info.header.flags |= elDebugArray;
+      }
+   }
+   
+   if (isEmbeddableArray(info)) {
+      auto inner = *info.fields.start();
+      switch (inner.typeInfo.typeRef) {
+         case V_INT32ARRAY:
+            info.header.flags |= elDebugDWORDS;
+            break;
+         default:
+            break;
+      }
+   }
+   else if (isWrapper(info)) {
       auto inner = *info.fields.start();
       switch (inner.typeInfo.typeRef) {
          case V_INT32:
          case V_INT8:
+         case V_PTR32:
+         case V_WORD32:
+         case V_INT16:
             info.header.flags |= elDebugDWORD;
             break;
          case V_INT64:
+         case V_PTR64:
             info.header.flags |= elDebugQWORD;
             break;
          case V_FLOAT64:
@@ -947,6 +1054,9 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info, bool clas
             break;
          case V_MESSAGE:
             info.header.flags |= elMessage;
+            break;
+         case V_INT32ARRAY:
+            info.header.flags |= elDebugDWORDS;
             break;
          default:
             break;
@@ -1108,6 +1218,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
    switch (reference)
    {
       case V_INT64:
+      case V_PTR64:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugQWORD | elStructureRole | elReadOnlyRole;
          info.size = 8;
@@ -1118,6 +1229,8 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.size = 8;
          break;
       case V_INT32:
+      case V_PTR32:
+      case V_WORD32:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
          info.size = 4;
@@ -1131,6 +1244,28 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
          info.size = -1;
+         break;
+      case V_INT16ARRAY:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
+         info.size = -2;
+         break;
+      case V_INT32ARRAY:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugDWORDS | elStructureRole | elDynamicRole | elWrapper;
+         info.size = -4;
+         break;
+      case V_BINARYARRAY:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
+         info.size = -1;
+         break;
+      case V_OBJARRAY:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = /*elDebugArray | */elDynamicRole;
+         info.size = 0;
+         break;
+      case V_AUTO:
          break;
       default:
          if (reference != 0) {
@@ -1196,6 +1331,9 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
       if (isCompatible(scope, { V_INT16 }, { elementRef }, true) && info.size == 2)
          return V_INT16ARRAY;
 
+      if (isCompatible(scope, { V_INT32 }, { elementRef }, true) && info.size == 4)
+         return V_INT32ARRAY;
+
       //if (isCompatible(scope, V_INT32, elementRef, true)) {
       //   switch (info.size) {
       //      case 4:
@@ -1213,8 +1351,8 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
 
 bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, bool ignoreNils)
 {
-   //if ((!targetRef || targetRef == scope.buildins.superReference) && !isPrimitiveRef(sourceRef))
-   //   return true;
+   if ((!targetInfo.typeRef || targetInfo.typeRef == scope.buildins.superReference) && !sourceInfo.isPrimitive())
+      return true;
 
    switch (sourceInfo.typeRef) {
       case V_NIL:
@@ -1250,6 +1388,15 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
          ClassInfo info;
          if (sourceInfo.isPrimitive() || !defineClassInfo(scope, info, sourceInfo.typeRef))
             return false;
+
+         if (test(info.header.flags, elTemplatebased) && !isPrimitiveRef(targetInfo.typeRef)) {
+            // HOTFIX : resolve weak reference before checking compability
+            targetInfo.typeRef = scope.resolveWeakTemplateReferenceID(targetInfo.typeRef);
+            info.header.parentRef = scope.resolveWeakTemplateReferenceID(info.header.parentRef);
+            if (targetInfo == sourceInfo) {
+               return true;
+            }
+         }
 
          // if it is a structure wrapper
          if (targetInfo.isPrimitive() && test(info.header.flags, elWrapper)) {
@@ -1491,7 +1638,7 @@ ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t
    return 0;
 }
 
-ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, 
+ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ref_t targetRef,
    TypeInfo sourceInfo)
 {
    ClassInfo info;
@@ -1517,17 +1664,27 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(ModuleScopeBase& sc
    }
 
    // COMPILE MAGIC : trying to typecast primitive array
-   if (isEmbeddableArray(scope, sourceInfo.typeRef) && test(info.header.flags, elDynamicRole)) {
+   if (isPrimitiveArrRef(sourceInfo.typeRef) && test(info.header.flags, elDynamicRole)) {
       auto inner = *info.fields.start();
 
       bool compatible = isCompatible(scope, { inner.typeInfo.elementRef }, { sourceInfo.elementRef }, false);
       if (compatible)
          return { ConversionResult::BoxingRequired };
    }
+   // COMPILE MAGIC : trying to typecast variadic array
+   else if (sourceInfo.typeRef == V_ARGARRAY && test(info.header.flags, elDynamicRole)) {
+      auto inner = *info.fields.start();
+
+      bool compatible = isCompatible(scope, { inner.typeInfo.elementRef }, { sourceInfo.elementRef }, false);
+      if (compatible)
+         return { ConversionResult::VariadicBoxingRequired };
+   }
 
    // if there is a implicit conversion routine
-   if (!sourceInfo.isPrimitive()) {
-      ref_t signRef = scope.module->mapSignature(&sourceInfo.typeRef, 1, false);
+   if (!isPrimitiveRef(targetRef)) {
+      ref_t sourceRef = sourceInfo.isPrimitive() ? compiler->resolvePrimitiveType(scope, sourceInfo) : sourceInfo.typeRef;
+
+      ref_t signRef = scope.module->mapSignature(&sourceRef, 1, false);
       int stackSafeAttrs = 0;
       mssg_t messageRef = retrieveImplicitConstructor(scope, targetRef, signRef, 1, stackSafeAttrs);
       if (messageRef)
@@ -1571,6 +1728,14 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
          result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });
+      }
+
+      if (testany(info.header.flags, elWithVariadics)) {
+         result.withVariadicDispatcher = true;
+      }
+
+      if (test(methodInfo.hints, (ref_t)MethodHint::Initializer)) {
+         result.kind = (ref_t)MethodHint::Sealed;
       }
 
       return true;
@@ -1723,4 +1888,32 @@ bool CompilerLogic :: isValidType(ModuleScopeBase& scope, ref_t classReference, 
       return ignoreUndeclared;
 
    return isValidType(info, allowRole);
+}
+
+void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods)
+{
+   ClassInfo info;
+   scope.loadClassInfo(info, parentRef);
+   for (auto it = info.methods.start(); !it.eof(); ++it) {
+      auto mssg = it.key();
+      auto methodInfo = *it;
+
+      if (test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
+         methods.add({ mssg, methodInfo.outputRef });
+      }
+   }
+
+}
+
+mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage)
+{
+   if (!reference)
+      return 0;
+
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference)) {
+      return info.attributes.get({ weakMessage, ClassAttribute::SingleDispatch });
+   }
+   else return 0;
+
 }

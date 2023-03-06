@@ -649,6 +649,7 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
       case NARG16_1:
       case NARG16_2:
       case INV_ARG12_1:
+      case INV_ARG12_2:
       case ARG16_1:
       case ARG16_2:
       case ARG9_1:
@@ -656,6 +657,7 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
       case ARG32LO_1:
       case NARG16HI_1:
       case NARG16LO_1:
+      case NARG16HI_2:
          writer.Memory()->addReference(reference, writer.position() - 4);
          break;
       case PTR32HI_1:
@@ -1163,7 +1165,7 @@ bool Arm64Assembler :: compileORRShifted(ScriptToken& tokenInfo, ARMOperand rd, 
    int shift, int amount, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && rm.isXR()) {
-      writer.writeDWord(ARMHelper::makeImm6ShiftOpcode(1, 0, 1, 0xA, shift, 1, amount, rm.type, rn.type, rd.type));
+      writer.writeDWord(ARMHelper::makeImm6ShiftOpcode(1, 0, 1, 0xA, shift, 0, amount, rm.type, rn.type, rd.type));
    }
    else return false;
 

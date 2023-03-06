@@ -4,67 +4,40 @@ In development:
 
   [development]
     ### EPOCH: elena 6.0 - redux ###
-    === Iteration 12 ===
+    === Iteration 13 ===
+    * inno setup : x86, x86-64
 
+    * ide - close all / close all but active
+    * ide : change status to ready when writing / selecting files
+    * ldoc : recognize template based type - for the method output
 
-    ! api functionality for existing classes : system'CharValue
-    ! regression tests : all github issues
-    ! examples
-    ! rosetta code examples
-    ! elena vm
+    === Iteration 14 ===
+    ! api functionality for existing classes : rest of system
+    ! api functionality for existing classes : externals
+    ! examples : pi, bsort, textfile, binary, replace, goods
+    ! elena sm : x86
+    ! script samples : x86
+    ! elena vm : x86-64
+    ! x86 : multi-threading
+    ! x86 : gui
+    * create github action workflow to build the project
 
-    * gc - system_tests - why full collect happends so often
-    * aarch64 gc: system_tests fails in gc routine
+    === Iteration 15 ===
+    ! ide : vm console
+    ! sm : generate some basic templates from vm console - hello world sample
+    ! elena vm : ppc64
+    ! regression tests : github issues
+    ! i386 : multi-threading
+    ! x86-64 : multi-threading
+    ! x86-64 : gui
 
-    * api : provide field descriptions
-    * api : provide parameter names
-    * ide : double click - select word
-    * ide : disable / enable the menu items, based on the model
-    * ide : debugger - status - running / stopped
-
-    * ide : debugger - step into / over / stop / run / compile
-    * ide : debugger - on debugging / debugger stopped
-    * ide - ask to save on close
-    * ide - tab
-    * ide - close project
-    * ide - close single file project
-    * ide - closing old files on opening a project
-
-    * ide - add close button on tabbar
-    * ide - fix errors
-    * ide - compile the project / file
-
-    * api doc - properties
-    * api doc
-
-    * ide debugger
-
-    * conversion : byte / short / int / long => real
-
-    * variadic call in compile-time
-    * variadic dispatcher
-    * variadic call in run-time
-    * printLine extensions
-    * toPrintable should return both wide and string
-    * unit tests : arithmetic operations
-
-    * showing call stack
-    * uncomment hello world
-    * uncomment lnx_console.l code
-    * unit tests : boolean operations
-    * int to short -> negative
-    * short to int -> negative
-    * uint : test comparision (e.g 0 < 3000000u)
-    * comparision operations : short / byte / long operation
-    * boolean operators : &&, ||, ^^ - weak implementation
-
-    * ide different styles : use dark mode
-
-    * ldoc : show conversions in the separate section
-
-    * retest #2, #3, #4, #5, #7, , #8, #9, #10
-
-    * optimization : extra temporal variables
+    === Iteration 16 ===
+    ! sm : generate advances templates from vm console
+    ! elena vm : helloworld sample Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
+    ! elena sm : script samples Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
+    ! elena vm : aarch64
+    ! ppc64le : multi-threading
+    ! ppc64le : gui
 
 ------                                                           
 Backlog:
@@ -76,9 +49,133 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
-    * intnumber.cast<'integer> - should returns itself without boxing
-    * two breakpoints in row
+    * arm : uncomment loadv opcode : using and imm
+    * arm / ppc : supporting indexes bigger than arg12 or arg16
+    * async programming
+    * rename movfrm to xmovfp
+    * elena-lc : raise an error if the file in the project does not exist
+    * support single dispatch for constructors
+    * test cases : nil dispatcher, multi dispatch, private method dispatching
+    * optimization single dispatching
+    * boxable self (structs) - do not box the self return
+    * automatical conversion of int literal to int8, int16 and int64 if possible
+    * redesign : for 64 bit:object size offset should be 8, instead of 4
+    * elenavm : implementing dll api
+    * conversion to int - raise an error if not valid
+    * implement correct string,real,byte,short,long hash functions
+    * implement iif operator : a ? b : c
+    * show the signature for the typecast message if possible
+    * warn on resending to itself (e.g. for constructor)
+    * allocate constant array directly if possible
+    * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
+    * dispatch optimization : for 1,2,3 args
+    * debugger : step over symbol
+    * debugger : stepping in the loop (for)
+    * system'String.Substring<'IntNumber,'IntNumber>[3] - why the parameters are boxed?
+    * system'io'read[3] : uncomment code
+    * system'console : reader and writer should be strongly-typed : IConsoleReader, IConsoleWriter
+    * test : print german text
+    * optimization : WinEncoder.convertChar (do not use the intermediate buffer)
+    * elena : (see system'text'Encoder, it should be possible to pass byref argument further)
+    * console symbol should be strong one
+    * ldoc : extensions - no extensions
+    * ldoc : symbol should return the type and it should be possible to see its api
+    * ldoc : all symbols should be in alphabetic order
+    * ldoc : consoleOp extension should be visible
+    * debugger watch: variadic argument list
+    * callstack : fix the call stack list, it looks some points are not included
+    * call semidirect method
+    * external inline template should be private / internal. Currently it is not possible because
+      it cannot be resolved by template generation
+    * elena : nested classes should not be loadable at runtime
+    * system'MessageName : port / test functionality
+    * global attributes : maybe it should contain the string reference, instead of the string itself
+      (data duplication : many class names are already stored) or every record should be aligned to 4/8
+    * internal / protected conversion : should it be supported (see system'Symbol conversion from pointer)?
+    * call internal
     * calling protected method
+    * new features : expression patters, DI
+    * unit tests via postfix pattern
+    * ide debugger : callstack
+    * system porting : UnsafePointer, characterController, caseStringOp, caseWideOp
+    * elena : nullable
+    * templates with parameters: template can have attribute values in the brackets after the main body
+      e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
+      as well, to pass the name there (currently it passed over template args which is not 100% correct)
+    * do:while : both statement are matched : do{ a } while(b) and do{ a } while{ b } which is not correct?
+    * ide : uncomment
+    * ide : error messages if the debug process failed
+    * ide : set focus on activate / after opening a file
+    * ide : compile the project and select an error line - part of the windows is covered with other window
+    * ide : output is not properly refreshed
+    * ide : toolbar
+    * ide : fix blicking on tab selecting (especially on opening a new project)
+    * ide : find
+    * ide : replace
+    * ide : replace all
+    * ide : open the last opened file on the ide start
+    * ide : remember last open project
+    * vmclient : the executable must contain only the most basic functionality
+    * api : migrate VariadicArray, Matrix<T>, BitArray, BitArray32, IntMatrix, RealMatrix
+    * elena : allow to initialize class in-place
+    * ide - disable close if no files are open
+    * ide - disable close project if the project is closed
+    * vm : on stop : unprotected / remove executable flags, on start - reverse the action
+    * test for self : nestedFieldsTest
+    * test three type of self : self, this self, weak self
+    * api : support lazy-load expressions
+    * gc - system_tests - why full collect happends so often
+    * aarch64 gc: system_tests fails in gc routine
+    * #15 : return double / long from external function
+    * #47 : Evaluating an expression in a symbol
+
+    * api : provide field descriptions
+
+    * ide : debugger - step into / over / stop / run / compile
+    * ide : debugger - on debugging / debugger stopped
+    * ide - tab
+    * ide - close project
+    * ide - close single file project
+    * ide - closing old files on opening a project
+    * ide - documentview must be part of the view, rather than the model
+
+    * ide - add close button on tabbar
+    * ide - fix errors
+    * ide - compile the project / file
+
+    * api doc
+
+    * ide debugger
+
+    * conversion : byte / short / int / long => real
+
+    * toPrintable should return both wide and string
+    * unit tests : arithmetic operations
+
+    * uncomment hello world
+    * uncomment lnx_console.l code
+    * unit tests : boolean operations
+    * int to short -> negative
+    * short to int -> negative
+    * uint : test comparision (e.g 0 < 3000000u)
+    * comparision operations : short / byte / long operation
+    * boolean operators : &&, ||, ^^ - weak implementation
+
+    * ide different styles : use dark mode
+    * ide toolbar
+
+    * ldoc : show conversions in the separate section
+
+    * optimization : extra temporal variables
+    * ide : highlight openning / closing brackets
+    * api60 : Indexer2D?
+    * native support for long to real
+    * native support for real to long
+    * migrate realOpController : math operations
+    * pi & e constants
+    * intRefOp & realRefOp ?
+    * string to real : support e notation
+    * intnumber.cast<'integer> - should returns itself without boxing
     * exception tests : methodnotfound, nilreference
     * uncomment ConsoleFactory type attributes
     * external operation : do not box the arguments
@@ -88,19 +185,12 @@ Backlog:
     * prop template : weak
     * generate default constructor if there is an initializer
     * do not box when stack-allocated self is returned from the stack-safe method
-    * basic types : short, widestring
-    * string <-> wide
-    * info attribute
-    * generate api documentations
     * new opcode - creater
-    * template based array
-    * boxing stack allocated array to the template one
     * tests : mg->yg collecting - x86, x86-64, i386, amd64, ppc64le, arm64
     * unit tests : branching
     * unit tests : looping
     * unit tests : exceptions
     * review code { int n := 3; } : extra assigning
-    * call internal
     * repeate-until statements
     * aarch64 : setting mask for size (createn, ...)
     * try-finally-catch
@@ -108,21 +198,15 @@ Backlog:
     * optimization : fields should be aligned to 4 / 8 and the copy operation should take this into account,
       except for special type of structs - packed one
     * ide : fix errors with font size / switching to error list / clear high light on click
-    * debuggrt : watch
-    * ide : cursor coordinates
     * ide : react on mouse
     * ide : new menu option : open output
     * ide : recent files
-    * ide : remember last open file
     * project - load - project
     * project - compile - project
-    * ide : remember last open project
-    * debugger - auto watch
     * editor - status bar : col, row, ins / ovr
     * editor - modified doc mark, 
     * editor - black theme
     * editor - highlightning
-    * ide : open the last opened file on the ide start
     * editor - open project
     * editor - enable / disable menu commands
     * linux sdi - menu
@@ -139,8 +223,6 @@ Backlog:
     * editor - correctly destroy tabbar / frame / view
     * introducing read number
     * script module template
-    * hello world sample
-    * api documentation
     * include opcode : add snop command for multi-thread mode
     * x86, x86-64, i386, amd64, ppc64le, arm64 : fibonacci - recursive
     * embeddable method - do not box self
@@ -152,7 +234,6 @@ Backlog:
     * numberic constant should be implicitly converted to byte / short / long / real
     * closure should be sealed
     * jumping - aligning the target to 4 / 8
-    * ide : show success, error, warning after the compilation
     * ide : display outputing in the real time
     * fix the following code : writeDisp32Hi, writeDisp32Low, writeXDisp32Hi, writeXDisp32Low in
       vm mode - correct base should be used;       
@@ -176,35 +257,27 @@ Backlog:
     * operator names should be configurable
     * optimize String.prop:Length[1]
     * replace xassign with assign for the field assignment
-    * use constant symbols directly
-    * compile time method dispatching
     * generating template extensions
     * if statements with single statement
     * ide - open file - namespace should be added
     * do load self for expression with ret statement
     * byte / short should support plus / minus operator
     * copydpn : optimization (by 4, 8, and if less then 8)
-    * true / false symbol - replace symbol call with constant reference
-    * optimization: resolve const static properties directly
     * if virtual multi-method handler is overridden - redirect to the parent one
     * verifyMultimethods implements
     * explicit multimethod
     * call interface method
     * compiler - constructor - fill newly created object with zerros
     * compiler - if the method has no call operarion, no need to set arg length
-    * dispatching a message in compile-time when it is possible
     * bcwriter : openFrame - should flush only used arguments (e.g. for test[1] - only one xflush)
     * dispatch opcode : optimize for 1,2,3,4 arguments
     * optimization sealed dispatching
-    * optimization single dispatching
-    * private method dispatching
     * optimization xstore sp:0, 0 and xstore sp:1, 0 - should be replaced with xor operation
     * no need to store an argument for the function (constructor)
     * nested class cannot have static methods
     * ppc64 optimization : use store multiple for alloc / open opcodes - for filling the stack with zeros
     * optimization : xstore sp:1, r:0 - should be replaced with direct assinging 0 to register
     * generic extension - should the output type be set? 
-    * support single dispatch
     * use direct reference for - BoolValue#true.Inverted
     * equal native bool operation
     * ppc64le : r2 should be saved in the stack for the optimization
@@ -330,7 +403,6 @@ Backlog:
     + * operator with object wrapper - sould be pass direct value, so no need for dispatcin in ref interface
       e.g: theIndex.append(cast int(theDiff)); - should be written theIndex.append(*theDiff); and the stack-allocated
      object should be passed as is
-    + ide 64 : call stack
     + QuckSorting : optimize the code - built-in branching should be used 
     + extension with primitive arrays - no need to box
     + new attribute - constant operation - do indicate that the class itself is not changed
@@ -418,7 +490,7 @@ Backlog:
     * [Inverted syntax]
     * [ Compiler/code generator ]
     * [ Brace expansion ]
-    * [ loop - break / continue - see Apply a digital filter]
+    * [ loop - continue - see Apply a digital filter]
     * [ optimization s.Length ]
     * [ debugger : step over fine tuning if (false) {} else {} ]
     * [ debugger : fine-tuning stepOver - stepInto ] 

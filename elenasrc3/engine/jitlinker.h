@@ -51,6 +51,7 @@ namespace elena_lang
    // --- JITLinker ---
    class JITLinker
    {
+   public:
       struct ConstantSettings
       {
          ustr_t intLiteralClass;
@@ -60,6 +61,7 @@ namespace elena_lang
          ustr_t wideLiteralClass;
          ustr_t characterClass;
          ustr_t messageClass;
+         ustr_t extMessageClass;
       };
 
       struct VAddressInfo
@@ -134,14 +136,19 @@ namespace elena_lang
 
          mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) override;
 
+         addr_t resolveMDataVAddress() override;
+
          addr_t calculateVAddress(MemoryWriter& writer, ref_t addressMask) override
          {
             return _owner->calculateVAddress(writer, addressMask);
          }
 
+         void resolveLabel(MemoryWriter& writer, ref_t mask, pos_t position) override;
+
          JITLinkerReferenceHelper(JITLinker* owner, ModuleBase* module, VAddressMap* references);
       };
 
+   private:
       ReferenceMapperBase*  _mapper;
       LibraryLoaderBase*    _loader;
       ForwardResolverBase*  _forwardResolver;
@@ -182,28 +189,40 @@ namespace elena_lang
       mssg_t createMessage(ModuleBase* module, mssg_t message, VAddressMap& references);
 
       mssg_t parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
+      Pair<mssg_t, addr_t> parseExtMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
+
+      addr_t resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo sectionInfo, ref_t sectionMask);
 
       addr_t resolveVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo);
       addr_t resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
       addr_t resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
       addr_t resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask);
       addr_t resolveConstantArray(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
+      addr_t resolveConstantDump(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
       addr_t resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sectionMask);
       addr_t resolveName(ReferenceInfo referenceInfo, bool onlyPath);
 
       void resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader& vmtReader, FieldAddressMap& staticValues);
 
+      void resolveSymbolAttributes(ReferenceInfo referenceInfo, addr_t vaddress, SectionInfo sectionInfo);
+      void resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress);
+
       pos_t createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       void endNativeDebugInfo(pos_t position);
 
+      void createGlobalAttribute(int category, ustr_t value, addr_t address);
+
       addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
 
    public:
+      addr_t resolveTape(ustr_t referenceName, MemoryBase* tape);
+      addr_t resolveTemporalByteCode(MemoryDump& tapeSymbol, ModuleBase* module);
+
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 
       void prepare(JITCompilerBase* compiler);
-      void complete(JITCompilerBase* compiler);
+      void complete(JITCompilerBase* compiler, ustr_t superClass);
 
       JITLinker(ReferenceMapperBase* mapper, 
          LibraryLoaderBase* loader, ForwardResolverBase* forwardResolver,
@@ -232,6 +251,7 @@ namespace elena_lang
          _constantSettings.wideLiteralClass = forwardResolver->resolveForward(WIDELITERAL_FORWARD);
          _constantSettings.characterClass = forwardResolver->resolveForward(CHAR_FORWARD);
          _constantSettings.messageClass = forwardResolver->resolveForward(MESSAGE_FORWARD);
+         _constantSettings.extMessageClass = forwardResolver->resolveForward(EXT_MESSAGE_FORWARD);
       }
    };
 

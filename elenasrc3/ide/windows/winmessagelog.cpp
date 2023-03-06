@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Message Log Implementation File
-//                                             (C)2022, by Aleksey Rakov
+//                                             (C)2022-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -61,5 +61,6 @@ void MessageLog :: clearMessages()
 
 void MessageLog :: onItemDblClick(int index)
 {
-   _notifier->notifyMessage(_highlightCode, index);
+   if (index >= 0)
+      _notifier->notifySelection(_highlightCode, index);
 }

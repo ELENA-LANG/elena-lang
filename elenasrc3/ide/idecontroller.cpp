@@ -37,28 +37,34 @@ void SourceViewController :: newSource(TextViewModelBase* model, ustr_t caption,
 {
 //   IdentifierString tabName("unnamed");
 
-   newDocument(model, caption, model->empty ? NOTIFY_CURRENTVIEW_SHOW : 0);
+   //newDocument(model, caption, model->empty ? NOTIFY_CURRENTVIEW_SHOW : 0);
 
-   if (autoSelect) {
-      selectDocument(model, caption);
+   //if (autoSelect) {
+   //   selectDocument(model, caption);
 
-      model->DocView()->status.unnamed = true;
-      model->DocView()->status.modifiedMode = true;
-   }
+   //   model->DocView()->status.unnamed = true;
+   //   model->DocView()->status.modifiedMode = true;
+   //}
 }
 
 bool SourceViewController :: openSource(TextViewModelBase* model, ustr_t caption, path_t sourcePath, 
-   FileEncoding encoding, bool autoSelect)
+   FileEncoding encoding, bool autoSelect, NotificationStatus& status)
 {
-   if (openDocument(model, caption, sourcePath, encoding,
-      model->empty ? NOTIFY_CURRENTVIEW_SHOW : 0))
-   {
-      if (autoSelect)
-         selectDocument(model, caption);
+   bool empty = model->empty;
+
+   if (openDocument(model, caption, sourcePath, encoding)) {
+      if (empty)
+         status |= FRAME_VISIBILITY_CHANGED;
+
+      if (autoSelect) {
+         int index = model->getDocumentIndex(caption);
+
+         selectDocument(model, index, status);
+      }
 
       return true;
    }
-   else return false;
+   return false;
 }
 
 void SourceViewController :: renameSource(TextViewModelBase* model, ustr_t oldName, ustr_t newName, path_t newSourcePath)
@@ -66,32 +72,36 @@ void SourceViewController :: renameSource(TextViewModelBase* model, ustr_t oldNa
    model->renameDocumentView(oldName, newName, newSourcePath);
 }
 
-void SourceViewController :: closeSource(TextViewModelBase* model, ustr_t name, bool autoSelect)
+void SourceViewController :: closeSource(TextViewModelBase* model, int index, bool autoSelect, NotificationStatus& status)
 {
-   int index = model->getDocumentIndex(name);
-   if (index != -1) {
+   if (index > 0) {
       int count = model->getDocumentCount();
 
-      closeDocument(model, name, count == 1 ? NOTIFY_CURRENTVIEW_HIDE : 0);
+      closeDocument(model, index, status);
 
       if (autoSelect && !model->empty) {
          if (index == count) {
-            selectDocument(model, model->getDocumentName(count - 1));
+            selectDocument(model, count - 1, status);
          }
-         else selectDocument(model, model->getDocumentName(index));
+         else selectDocument(model, index, status);
       }
+
+      status |= IDE_LAYOUT_CHANGED;
+      status |= FRAME_VISIBILITY_CHANGED;
    }
 }
 
 void SourceViewController :: saveSource(TextViewModelBase* model, ustr_t name)
 {
-   auto docInfo = model->getDocument(name);
-   path_t path = model->getDocumentPath(name);
+   int index = model->getDocumentIndex(name);
+
+   auto docInfo = model->getDocument(index);
+   path_t path = model->getDocumentPath(index);
 
    if (docInfo) {
       docInfo->save(path);
 
-      model->onModelModeChanged(model->getDocumentIndex(name));
+      //model->onModelModeChanged(model->getDocumentIndex(name));
    }
 }
 
@@ -111,12 +121,15 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
    }
    else {
       fullPath.copy(*model.paths.librarySourceRoot);
-      fullPath.combine(ns);
+      // HOTFIX : ignore sub ns
+      size_t index = ns.find('\'');
+      if (index != NOTFOUND_POS) {
+         fullPath.combine(ns, index);
+      }
+      else fullPath.combine(ns);
       fullPath.combine(path);
    }
 }
-
-
 
 path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& name)
 {
@@ -184,7 +197,7 @@ bool ProjectController :: startDebugger(ProjectModel& model)
       bool debugMode = model.getDebugMode();
       if (debugMode) {
          if (!_debugController.start(exePath.str(), commandLine.str(), debugMode/*, _breakpoints */)) {
-            notifyMessage(ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
+            notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
 
             return false;
          }
@@ -192,7 +205,7 @@ bool ProjectController :: startDebugger(ProjectModel& model)
       }
       else {
          if (!_debugController.start(exePath.str(), commandLine.str(), false/*, _breakpoints */)) {
-            notifyMessage(ERROR_RUN_NEED_RECOMPILE);
+            notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_RECOMPILE);
 
             return false;
          }
@@ -201,7 +214,7 @@ bool ProjectController :: startDebugger(ProjectModel& model)
       return true;
    }
    else {
-      notifyMessage(ERROR_RUN_NEED_TARGET);
+      notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_TARGET);
 
       return false;
    }
@@ -214,7 +227,7 @@ bool ProjectController :: isOutaged(bool noWarning)
 
 bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
 {
-   if (testIDEStatus(model.getStatus(), IDEStatus::Busy))
+   if (model.getStatus() == IDEStatus::Busy)
       return false;
 
    if (!_debugController.isStarted()) {
@@ -234,7 +247,7 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
 
 void ProjectController :: doDebugAction(ProjectModel& model, SourceViewModel& sourceModel , DebugAction action)
 {
-   if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
+   if (model.getStatus() != IDEStatus::Busy) {
       if (onDebugAction(model, action)) {
          switch (action) {
             case DebugAction::Run:
@@ -258,7 +271,7 @@ void ProjectController :: doDebugAction(ProjectModel& model, SourceViewModel& so
 
 void ProjectController :: doDebugStop(ProjectModel& model)
 {
-   if (!testIDEStatus(model.getStatus(), IDEStatus::Busy)) {
+   if (model.getStatus() != IDEStatus::Busy) {
       _debugController.stop();
    }
 }
@@ -266,8 +279,9 @@ void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sour
 {
    auto currentDoc = sourceModel.DocView();
    if (currentDoc != nullptr) {
-      ustr_t currentSource = sourceModel.getDocumentName(-1);
-      path_t currentPath = sourceModel.getDocumentPath(currentSource);
+      int index = sourceModel.getCurrentIndex();
+      ustr_t currentSource = sourceModel.getDocumentName(index);
+      path_t currentPath = sourceModel.getDocumentPath(index);
 
       ReferenceName ns;
       currentPath = retrieveSourceName(&model, currentPath, ns);
@@ -322,6 +336,15 @@ bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction post
 
 void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node configRoot)
 {
+   // load settings
+   DynamicString<char> value;
+   auto targetOption = config.selectNode(configRoot, TARGET_SUB_CATEGORY);
+   if (!targetOption.isNotFound()) {
+      targetOption.readContent(value);
+
+      model.target.copy(value.str());
+   }
+
    // load source files
    DynamicString<char> subNs;
    DynamicString<char> path;
@@ -350,7 +373,7 @@ void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, Co
    }
 }
 
-void ProjectController :: openProject(ProjectModel& model, path_t projectFile)
+NotificationStatus ProjectController :: openProject(ProjectModel& model, path_t projectFile)
 {
    ustr_t key = getPlatformName(_platform);
 
@@ -359,6 +382,7 @@ void ProjectController :: openProject(ProjectModel& model, path_t projectFile)
 
    model.sources.clear();
 
+   model.empty = false;
    model.name.copy(*name);
    model.projectFile.copy(*src);
    model.projectPath.copySubPath(projectFile, true);
@@ -385,17 +409,35 @@ void ProjectController :: openProject(ProjectModel& model, path_t projectFile)
       loadConfig(model, projectConfig, platformRoot);
    }
 
-   if (_notifier)
-      _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
+   return PROJECT_CHANGED;
 }
 
-void ProjectController :: openSingleFileProject(ProjectModel& model, path_t singleProjectFile)
+NotificationStatus ProjectController :: closeProject(ProjectModel& model)
+{
+   model.empty = true;
+   model.name.clear();
+   model.projectFile.clear();
+   model.projectPath.clear();
+
+   model.singleSourceProject = false;
+
+   model.sources.clear();
+
+   model.package.clear();
+   model.target.clear();
+   model.outputPath.clear();
+
+   return PROJECT_CHANGED;
+}
+
+NotificationStatus ProjectController :: openSingleFileProject(ProjectModel& model, path_t singleProjectFile)
 {
    FileNameString src(singleProjectFile, true);
    FileNameString name(singleProjectFile);
 
    model.sources.clear();
 
+   model.empty = false;
    model.name.copy(*name);
    model.projectPath.copySubPath(singleProjectFile, true);
    
@@ -406,9 +448,10 @@ void ProjectController :: openSingleFileProject(ProjectModel& model, path_t sing
 
    IdentifierString tmp(*name);
    model.package.copy(*tmp);
+   model.target.copy(*tmp);
+   model.target.append(".exe");
 
-   if (_notifier)
-      _notifier->notifyModelChange(NOTIFY_PROJECTMODEL);
+   return PROJECT_CHANGED;
 }
 
 path_t ProjectController :: getSourceByIndex(ProjectModel& model, int index)
@@ -423,7 +466,7 @@ void ProjectController :: refreshDebugContext(ContextBrowserBase* contextBrowser
 {
    WatchItems refreshedItems;
 
-   _debugController.readAutoContext(contextBrowser, 3, &refreshedItems);
+   _debugController.readAutoContext(contextBrowser, 4, &refreshedItems);
 
    contextBrowser->removeUnused(refreshedItems);
 }
@@ -460,8 +503,29 @@ inline void loadRecentFiles(ConfigFile& config, ustr_t xpath, ProjectPaths& path
    }
 }
 
+inline void saveSetting(ConfigFile& config, ustr_t xpath, int value)
+{
+   String<char, 15> number;
+   number.appendInt(value);
+
+   config.appendSetting(xpath, number.str());
+}
+
+inline void saveRecentFiles(ConfigFile& config, ustr_t xpath, ProjectPaths& paths)
+{
+   for (int index = paths.count(); index > 0; index--) {
+      path_t path = paths.get(index);
+
+      IdentifierString pathStr(path);
+
+      config.appendSetting(xpath, *pathStr);
+   }
+}
+
 bool IDEController :: loadConfig(IDEModel* model, path_t path)
 {
+   model->projectModel.paths.configPath.copy(path);
+
    ConfigFile config;
    if (config.load(path, FileEncoding::UTF8)) {
       model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
@@ -478,16 +542,32 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
 
 }
 
+void IDEController :: saveConfig(IDEModel* model, path_t configPath)
+{
+   ConfigFile config(ROOT_NODE);
+
+   saveSetting(config, MAXIMIZED_SETTINGS, model->appMaximized);
+   saveSetting(config, FONTSIZE_SETTINGS, model->sourceViewModel.fontSize);
+   saveSetting(config, SCHEME_SETTINGS, model->sourceViewModel.schemeIndex);
+
+   saveRecentFiles(config, RECENTFILE_SETTINGS, model->projectModel.lastOpenFiles);
+
+   config.save(*model->projectModel.paths.configPath, FileEncoding::UTF8);
+}
+
 void IDEController :: init(IDEModel* model)
 {
+   NotificationStatus status = IDE_STATUS_CHANGED;
+
    if (model->projectModel.lastOpenFiles.count() > 0) {
       path_t path = model->projectModel.lastOpenFiles.get(1);
 
-      openFile(model, path);
+      if (openFile(model, path, status)) {
+         model->changeStatus(IDEStatus::Ready);
+      }
    }
-   model->changeStatus(IDEStatus::Ready);
-
-   onLayoutchange();
+   
+   _notifier->notify(NOTIFY_IDE_CHANGE, status);
 }
 
 bool IDEController :: selectSource(ProjectModel* model, SourceViewModel* sourceModel,
@@ -496,7 +576,13 @@ bool IDEController :: selectSource(ProjectModel* model, SourceViewModel* sourceM
    PathString fullPath;
    projectController.defineFullPath(*model, ns, sourcePath, fullPath);
 
-   return openFile(sourceModel, model, *fullPath);
+   NotificationStatus status = NONE_CHANGED;
+   if (openFile(sourceModel, model, *fullPath, status)) {
+      _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
+      return true;
+   }
+   return false;
 }
 
 void IDEController :: doNewFile(IDEModel* model)
@@ -507,25 +593,27 @@ void IDEController :: doNewFile(IDEModel* model)
    sourceController.newSource(&model->sourceViewModel, *sourceNameStr, true);
 }
 
-bool IDEController :: openFile(IDEModel* model, path_t sourceFile)
+//bool IDEController :: openFile(IDEModel* model, path_t sourceFile)
+//{
+//   
+//}
+
+bool IDEController :: openFile(IDEModel* model, path_t sourceFile, NotificationStatus& status)
 {
    if (model->projectModel.name.empty()) {
-      projectController.openSingleFileProject(model->projectModel, sourceFile);
+      status |= projectController.openSingleFileProject(model->projectModel, sourceFile);
    }
 
-   if (openFile(&model->sourceViewModel, &model->projectModel, sourceFile)) {
-      return true;
-   }
-   else return false;
+   return openFile(&model->sourceViewModel, &model->projectModel, sourceFile, status);
 }
 
-bool IDEController :: openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile)
+bool IDEController :: openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile, NotificationStatus& status)
 {
    ustr_t sourceName = model->getDocumentNameByPath(sourceFile);
-   if (!sourceName.empty()) {
-      sourceController.selectDocument(model, sourceName);
+   int index = sourceName.empty() ? 0 : model->getDocumentIndex(sourceName);
 
-      return true;
+   if (index > 0) {
+      return sourceController.selectDocument(model, index, status);
    }
    else {
       ReferenceName sourceNameStr;
@@ -534,37 +622,56 @@ bool IDEController :: openFile(SourceViewModel* model, ProjectModel* projectMode
       sourceName = *sourceNameStr;
    }
 
-   return sourceController.openSource(model, sourceName, sourceFile, 
-      defaultEncoding, true);
+   bool retVal = sourceController.openSource(model, sourceName, sourceFile,
+      defaultEncoding, true, status);
+
+   if (test(status, FRAME_VISIBILITY_CHANGED))
+      status |= IDE_LAYOUT_CHANGED;
+
+   return retVal;
 }
 
-bool IDEController :: openProjectSourceByIndex(IDEModel* model, int index)
+bool IDEController :: doOpenProjectSourceByIndex(IDEModel* model, int index)
 {
+   NotificationStatus status = NONE_CHANGED;
+
    path_t sourcePath = projectController.getSourceByIndex(model->projectModel, index);
    if (!sourcePath.empty()) {
       PathString fullPath(*model->projectModel.projectPath, sourcePath);
 
-      return openFile(model, *fullPath);
+      if(openFile(model, *fullPath, status)) {
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
+         return true;
+      }
    }
-   else return false;
+   return false;
 }
 
-bool IDEController :: openProject(IDEModel* model, path_t projectFile)
+bool IDEController :: openProject(IDEModel* model, path_t projectFile, NotificationStatus& status)
 {
-   projectController.openProject(model->projectModel, projectFile);
+   status |= projectController.openProject(model->projectModel, projectFile);
 
-   return false;
+   return true;
 }
 
 void IDEController :: doOpenFile(DialogBase& dialog, IDEModel* model)
 {
+   NotificationStatus status = {};
+
    List<path_t, freepath> files(nullptr);
    if (dialog.openFiles(files)) {
       for (auto it = files.start(); !it.eof(); ++it) {
-         if(openFile(model, *it)) {
-            
+         if(openFile(model, *it, status)) {
+            while (model->projectModel.lastOpenFiles.count() >= 10)
+               model->projectModel.lastOpenFiles.cut(
+                  model->projectModel.lastOpenFiles.get(model->projectModel.lastOpenFiles.count()));
+
+            model->projectModel.lastOpenFiles.insert((*it).clone());
          }
       }
+
+      _notifier->notify(NOTIFY_IDE_CHANGE, status);
    }
 }
 
@@ -574,7 +681,7 @@ bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveA
    if (!docView)
       return false;
 
-   if (docView->status.unnamed || saveAsMode) {
+   if (docView->isUnnamed() || saveAsMode) {
       PathString path;
       if (!dialog.saveFile(_T("l"), path))
          return false;
@@ -595,12 +702,20 @@ bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveA
 
 bool IDEController :: doOpenProject(DialogBase& dialog, IDEModel* model)
 {
+   NotificationStatus status = NONE_CHANGED;
+
    PathString path;
    if (dialog.openFile(path)) {
-      //if (!doCloseProject())
-      //   return false;
+      if (!closeProject(dialog, model, status))
+         return false;
 
-      if (openProject(model, *path)) {
+      if (openProject(model, *path, status)) {
+         model->changeStatus(IDEStatus::Ready);
+         status |= IDE_LAYOUT_CHANGED;
+
+         if (status != NONE_CHANGED)
+            _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
          return true;
       }
    }
@@ -608,52 +723,111 @@ bool IDEController :: doOpenProject(DialogBase& dialog, IDEModel* model)
    return false;
 }
 
+
 bool IDEController :: doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode)
 {
-   // !! temporal
-   if (!doSaveFile(dialog, model, false, forcedMode))
-      return false;
+   //// !! temporal
+   //if (!doSaveFile(dialog, model, false, forcedMode))
+   //   return false;
 
    return true;
 }
 
-bool IDEController :: doCloseProject()
+bool IDEController :: closeProject(DialogBase& dialog, IDEModel* model, NotificationStatus& status)
 {
-   return false;
+   if (closeAll(dialog, model, status)) {
+      status |= projectController.closeProject(model->projectModel);
+
+      return true;
+   }
+   else return false;
+}
+
+bool IDEController :: doCloseProject(DialogBase& dialog, IDEModel* model)
+{
+   NotificationStatus status = NONE_CHANGED;
+
+   if (closeAll(dialog, model, status)) {
+      status |= projectController.closeProject(model->projectModel);
+      model->changeStatus(IDEStatus::Empty);
+      status |= IDE_LAYOUT_CHANGED;
+
+      if (status != NONE_CHANGED)
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
+      return true;
+   }
+   else return false;
+}
+
+bool IDEController :: closeFile(DialogBase& dialog, IDEModel* model, int index, NotificationStatus& status)
+{
+   auto docView = model->sourceViewModel.getDocument(index);
+   if (docView->isUnnamed()) {
+      if (!doSaveFile(dialog, model, false, true))
+         return false;
+   }
+   else if (docView->isModified()) {
+      path_t path = model->sourceViewModel.getDocumentPath(index);
+
+      auto result = dialog.question(
+         QUESTION_SAVE_FILECHANGES, path);
+
+      if (result == DialogBase::Answer::Cancel) {
+         return false;
+      }
+      else if (result == DialogBase::Answer::Yes) {
+         if (!doSaveFile(dialog, model, false, true))
+            return false;
+      }
+   }
+
+   sourceController.closeSource(&model->sourceViewModel, index, true, status);
+
+   return true;
 }
 
 bool IDEController :: doCloseFile(DialogBase& dialog, IDEModel* model)
 {
    auto docView = model->sourceViewModel.DocView();
    if (docView) {
-      ustr_t current = model->sourceViewModel.getDocumentName(-1);
+      NotificationStatus status = NONE_CHANGED;
 
-      if (docView->status.unnamed) {
-         doSaveFile(dialog, model, false, true);
+      int index = model->sourceViewModel.getCurrentIndex();
+      if (index > 0) {
+         bool retVal = closeFile(dialog, model, index, status);
+
+         if (status != NONE_CHANGED)
+            _notifier->notify(NOTIFY_IDE_CHANGE, status);
       }
-      else if (docView->status.modifiedMode) {
-         path_t path = model->sourceViewModel.getDocumentPath(current);
-
-         auto result = dialog.question(
-            QUESTION_SAVE_FILECHANGES, path);
-
-         if (result == DialogBase::Answer::Cancel) {
-            return false;
-         }
-         else if (result == DialogBase::Answer::Yes) {
-            if (!doSaveFile(dialog, model, false, true))
-               return false;
-         }
-      }
-
-      sourceController.closeSource(&model->sourceViewModel, current, true);
-
-      return true;
    }
    return false;
 }
 
-bool IDEController :: doExit()
+bool IDEController :: closeAll(DialogBase& dialog, IDEModel* model, NotificationStatus& status)
+{
+   while (model->sourceViewModel.getDocumentCount() > 0) {
+      if (!closeFile(dialog, model, 1, status))
+         return false;
+   }
+
+   return true;
+}
+
+bool IDEController :: doCloseAll(DialogBase& dialog, IDEModel* model)
+{
+   NotificationStatus status = NONE_CHANGED;
+   if (closeAll(dialog, model, status)) {
+      if (status != NONE_CHANGED)
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
+      return true;
+   }
+
+   return false;
+}
+
+bool IDEController :: doExit(DialogBase& dialog, IDEModel* model)
 {
    return true;
 }
@@ -688,31 +862,29 @@ void IDEController :: doDebugStop(IDEModel* model)
 
 void IDEController :: onCompilationStart(IDEModel* model)
 {
-   model->status = IDEStatus::Busy;
+   model->status = IDEStatus::Compiling;
 
-   model->onIDEChange();
-
-   _notifier->notifyMessage(NOTIFY_START_COMPILATION);
-   _notifier->notifyMessage(NOTIFY_SHOW_RESULT, model->ideScheme.compilerOutputControl);
+   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED | IDE_COMPILATION_STARTED);
+   _notifier->notifySelection(NOTIFY_SHOW_RESULT, model->ideScheme.compilerOutputControl);
 }
 
 void IDEController :: onCompilationStop(IDEModel* model)
 {
    model->status = IDEStatus::Ready;
 
-   model->onIDEChange();
+   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
 }
 
 void IDEController :: onCompilationBreak(IDEModel* model)
 {
-   model->status = IDEStatus::Ready;
+   model->status = IDEStatus::Broken;
 
-   model->onIDEChange();
+   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
 }
 
 void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBase* log)
 {
-   _notifier->notifyMessage(NOTIFY_SHOW_RESULT, model->ideScheme.errorListControl);
+   _notifier->notifySelection(NOTIFY_SHOW_RESULT, model->ideScheme.errorListControl);
 
    log->clearMessages();
 
@@ -781,20 +953,33 @@ void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBa
 
 void IDEController :: highlightError(IDEModel* model, int row, int column, path_t path)
 {
-   openFile(model, path);
+   PathString fullPath(*model->projectModel.projectPath, path);
+
+   NotificationStatus status = NONE_CHANGED;
+   openFile(model, *fullPath, status);
 
    model->viewModel()->setErrorLine(row, column, true);
 
-   _notifier->notifyMessage(NOTIFY_ACTIVATE_EDITFRAME);
+   _notifier->notify(NOTIFY_IDE_CHANGE, status | FRAME_ACTIVATE);
 }
 
 void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode, 
    text_str output, ErrorLogBase* log)
 {
    if (exitCode == 0) {
+      model->status = IDEStatus::CompiledSuccessfully;
 
+      _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
    }
-   else displayErrors(model, output, log);
+   else {
+      if (exitCode == -1) {
+         model->status = IDEStatus::CompiledWithWarnings;
+      }
+      else model->status = IDEStatus::CompiledWithErrors;
+      _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
+
+      displayErrors(model, output, log);
+   }
 }
 
 bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
@@ -807,24 +992,30 @@ bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
       return false;
    }
 
-   if (projectController.doCompileProject(model->projectModel, DebugAction::None)) 
-   {
-      onCompilationStop(model);
-
-      return true;
-   }
-
-   return false;
-}
-
-void IDEController :: onLayoutchange()
-{
-   _notifier->notifyMessage(NOTIFY_LAYOUT_CHANGED);
+   return projectController.doCompileProject(model->projectModel, DebugAction::None);
 }
 
 void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model)
 {
    projectController.refreshDebugContext(contextBrowser);
 
-   _notifier->notifyMessage(NOTIFY_REFRESH, model->ideScheme.debugWatch);
+   _notifier->notifySelection(NOTIFY_REFRESH, model->ideScheme.debugWatch);
+}
+
+bool IDEController :: onClose(DialogBase& dialog, IDEModel* model)
+{
+   bool result = doCloseAll(dialog, model);
+   if (result) {
+      saveConfig(model, *model->projectModel.paths.configPath);
+   }
+
+   return result;
+}
+
+void IDEController :: onDebuggerStop(IDEModel* model)
+{
+   model->sourceViewModel.clearTraceLine();
+
+   model->status = IDEStatus::DebuggerStopped;
+   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED | FRAME_CHANGED);
 }

@@ -559,6 +559,22 @@ void writePropertyHeader(TextFileWriter& writer, ApiClassInfo* info, const char*
    writer.writeTextLine("</TR>");
 }
 
+void writeConversionHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== PROPERTY SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Conversion Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Conversion Method</TH>");
+   writer.writeTextLine("</TR>");
+}
+
 void writeFieldHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
 {
    writer.writeTextLine("<!-- ========== FIELD SUMMARY =========== -->");
@@ -663,35 +679,39 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
 
    if (info->special)
       writer.writeText("<i>");
-   
-   writer.writeText(*info->name);
+
+   if (info->function) {
+      writer.writeText("function");
+   }
+   else writer.writeText(*info->name);
 
    if (info->special)
       writer.writeText("</i>");
 
-   if (info->property && info->params.count() == 0) {
-      
+   if ((info->property && info->paramNames.count() == 0) || info->cast) {
+      writer.writeText("()");
    }
    else {
       writer.writeText("(");
 
       bool first = true;
-      auto it = info->params.start();
+      auto it = info->paramTypes.start();
       auto name_it = info->paramNames.start();
-      while (!it.eof()) {
+      while (!name_it.eof()) {
          if (!first) {
             writer.writeText(", ");
          }
          else first = false;
 
-         writeType(writer, *it);
-         if (!name_it.eof()) {
+         if (!it.eof()) {
+            writeType(writer, *it);
             writer.writeText(" ");
             writer.writeText(*name_it);
-            ++name_it;
+            ++it;
          }
+         else writer.writeText(*name_it);
 
-         ++it;
+         ++name_it;
       }
 
       writer.writeTextLine(")");
@@ -1003,6 +1023,7 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateB
       if (!apiMethodInfo->cast) {
          IdentifierString param;
          IdentifierString type;
+         int argIndex = 1;
          for (size_t i = sign_index + 1; i < name.length(); i++) {
             if (name[i] == ',' || name[i] == '>') {
                if (skipOne) {
@@ -1017,7 +1038,10 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateB
                   //   type.insert("params ", 0);
                   //}
 
-                  apiMethodInfo->params.add((*type).clone());
+                  IdentifierString argName("arg");
+                  argName.appendInt(argIndex++);
+                  apiMethodInfo->paramNames.add((*argName).clone());
+                  apiMethodInfo->paramTypes.add((*type).clone());
                }
                param.clear();
                type.clear();
@@ -1038,7 +1062,7 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateB
             IdentifierString argName("arg");
             argName.appendInt(i);
 
-            apiMethodInfo->params.add((*argName).clone());
+            apiMethodInfo->paramNames.add((*argName).clone());
          }
 
          apiMethodInfo->name.truncate(arg_index);
@@ -1047,12 +1071,13 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateB
 }
 
 void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, 
-   MemberType memberType, DescriptionMap* descriptions)
+   MemberType memberType, DescriptionMap* descriptions, ClassInfo& classInfo)
 {
+
+
    auto apiMethodInfo = new ApiMethodInfo();
    apiMethodInfo->extensionOne = memberType == MemberType::Extension;
 
-   bool functionMode = false;
    if (ByteCodeUtil::resolveMessageName(apiMethodInfo->name, _module, message)) {
       if (descriptions) {
          ustr_t descr = descriptions->get(*apiMethodInfo->name);
@@ -1088,7 +1113,7 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          if ((*apiMethodInfo->name).startsWith("function:")) {
             apiMethodInfo->name.cut(0, 9);
             if (memberType != MemberType::Extension)
-               functionMode = true;
+               apiMethodInfo->function = true;
          }
          if ((*apiMethodInfo->name).startsWith("prop:")) {
             apiMethodInfo->name.cut(0, 5);
@@ -1098,10 +1123,18 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
             }
             else apiMethodInfo->prefix.append("get ");
          }
-         if ((*apiMethodInfo->name).startsWith("#cast")) {
-            apiMethodInfo->name.cut(0, 1);
+         if ((*apiMethodInfo->name).startsWith("typecast:#cast")) {
+            apiMethodInfo->name.cut(0, 10);
             apiMethodInfo->special = true;
             apiMethodInfo->cast = true;
+         }
+
+         if (test(methodInfo.hints, (ref_t)MethodHint::Internal)) {
+            pos_t index = (*apiMethodInfo->name).findStr("$$");
+            if (index != NOTFOUND_POS)
+               apiMethodInfo->name.cut(0, index + 2);
+
+            apiMethodInfo->prefix.append("internal ");
          }
 
          if (test(methodInfo.hints, (ref_t)MethodHint::Predefined))
@@ -1113,7 +1146,6 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          if (test(message, STATIC_MESSAGE))
             apiMethodInfo->prefix.append("private ");
 
-
          loadMethodName(apiMethodInfo, apiClassInfo->templateBased);
          if (methodInfo.outputRef) {
             ustr_t outputType = _module->resolveReference(methodInfo.outputRef);
@@ -1122,7 +1154,25 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          }
       }
 
-      if (!test(methodInfo.hints, (ref_t)MethodHint::Autogenerated)) {
+      if (!test(methodInfo.hints, (ref_t)MethodHint::Autogenerated) 
+         && (!_publicOnly || !test(methodInfo.hints, (ref_t)MethodHint::Private)))
+      {
+         bool first = true;
+         for (auto attr_it = classInfo.attributes.start(); !attr_it.eof(); ++attr_it) {
+            auto key = attr_it.key();
+
+            if (key.value2 == ClassAttribute::ParameterName && key.value1 == message) {
+               if (first) {
+                  first = false;
+                  apiMethodInfo->paramNames.clear();
+               }
+
+               MemoryReader reader(_parameterNames, *attr_it);
+
+               apiMethodInfo->paramNames.add(reader.getString(nullptr).clone());
+            }
+         }
+
          if (memberType == MemberType::ClassClass) {
             if (apiMethodInfo->property) {
                apiClassInfo->staticProperties.add(apiMethodInfo);
@@ -1138,6 +1188,9 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          else if (apiMethodInfo->property) {
             apiClassInfo->properties.add(apiMethodInfo);
          }
+         else if (apiMethodInfo->cast) {
+            apiClassInfo->convertors.add(apiMethodInfo);
+         }
          else apiClassInfo->methods.add(apiMethodInfo);
       }
       else freeobj(apiMethodInfo);
@@ -1151,7 +1204,7 @@ void DocGenerator :: loadConstructors(ApiClassInfo* apiClassInfo, ref_t referenc
       for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
          auto methodInfo = *m_it;
          if (!methodInfo.inherited) {
-            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::ClassClass, descriptions);
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::ClassClass, descriptions, info);
          }
       }
    }
@@ -1164,7 +1217,7 @@ void DocGenerator :: loadExtensions(ApiClassInfo* apiClassInfo, ref_t reference,
       for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
          auto methodInfo = *m_it;
          if (!methodInfo.inherited) {
-            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Extension, descriptions);
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Extension, descriptions, info);
          }
       }
    }
@@ -1209,7 +1262,7 @@ void DocGenerator :: loadClassMembers(ApiClassInfo* apiClassInfo, ref_t referenc
       for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
          auto methodInfo = *m_it;
          if (!methodInfo.inherited) {
-            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Normal, descriptions);
+            loadClassMethod(apiClassInfo, m_it.key(), methodInfo, MemberType::Normal, descriptions, info);
          }
       }
    }
@@ -1248,6 +1301,7 @@ void DocGenerator :: loadClassPrefixes(ApiClassInfo* apiClassInfo, ref_t referen
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 {
    auto referenceName = _module->resolveReference(reference);
+
    if (isWeakReference(referenceName)) {
       IdentifierString prefix("public ");
       if (referenceName.startsWith(INTERNAL_PREFIX)) {
@@ -1288,6 +1342,10 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 
       ReferenceProperName properName(referenceName);
       ReferenceName fullName(*_rootNs, *properName);
+
+      // HOTFIX : skip internal class
+      if (properName[0] == '$')
+         return;
 
       ApiModuleInfo* moduleInfo = findModule(modules, *ns);
       if (!moduleInfo) {
@@ -1487,6 +1545,12 @@ void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWri
       writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
    }
 
+   if (classInfo->convertors.count() > 0) {
+      writeConversionHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->convertors);
+      writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
+   }
+
    if (classInfo->methods.count() > 0) {
       writeClassMethodsHeader(bodyWriter, classInfo, *moduleName);
       generateMethodList(bodyWriter, classInfo->methods);
@@ -1625,6 +1689,16 @@ void DocGenerator :: loadDescriptions()
    loadDescriptions(descrRef, _classDescriptions);
 }
 
+void DocGenerator :: loadMetaSections()
+{
+   IdentifierString sectionName(META_PREFIX, PARAMETER_NAMES);
+
+   ref_t paramNameRef = _module->mapReference(*sectionName, true);
+   if (paramNameRef) {
+      _parameterNames = _module->mapSection(paramNameRef | mskLiteralListRef, true);
+   }
+}
+
 bool DocGenerator :: load(path_t path)
 {
    FileNameString fileName(path);
@@ -1637,6 +1711,8 @@ bool DocGenerator :: load(path_t path)
    auto retVal = static_cast<Module*>(_module)->load(reader);
 
    if (retVal == LoadResult::Successful) {
+      loadMetaSections();
+
       return true;
    }
    else return false;
@@ -1648,7 +1724,12 @@ bool DocGenerator :: loadByName(ustr_t name)
 
    _rootNs.copy(name);
 
-   return _module != nullptr;
+   if (_module) {
+      loadMetaSections();
+
+      return true;
+   }
+   else return false;
 }
 
 void DocGenerator :: generate()

@@ -9,7 +9,56 @@ internal singleton PrimitiveOperations
       }
    }
 
-   char readChar(byte[] sour, int index)
+   copy(byte[] dest, int index, int size, char[] sour)
+   {
+      int j := 0;
+      for (int i := 0, i < size, i := i + 1) {
+         char ch := sour[index + i];
+         int chVal := ch.Value;
+         int chLen := ch.Length;
+         
+         PrimitiveOperations.copyUTF32(dest, j, chVal);
+         
+         j += chLen;
+      }
+   }
+
+   copy(short[] dest, int index, int size, short[] sour)
+   {
+      for (int i := 0, i < size, i := i + 1) {
+         dest[i] := sour[index + i];
+      }
+   }
+
+   int getCharLength(int code)
+   {
+      if (code < 80h)
+      {
+         ^ 1
+      };
+      if (code < 800h)
+      {
+         ^ 2
+      };
+      if (code < 10000h)
+      {
+         ^ 3
+      };
+
+      ^ 4
+   }
+
+   int getCharWideLength(int code)
+   {
+      if (code < 0D800h)
+      {
+         ^ 2
+      };
+
+      ^ 4
+   }
+
+   int readUTF32(byte[] sour, int index)
    {
       int ch := sour[index];
       if (ch < 80h)
@@ -87,6 +136,43 @@ internal singleton PrimitiveOperations
       }
 
       //InvalidOperaionException.raise()    
+   }
+
+   int readUTF32(short[] sour, int index)
+   {
+      int ch := sour[index];
+      if (ch > 0DBFFh)
+      {
+         InvalidOperationException.raise()
+      };
+
+      if (ch < 0D800h)
+      {
+         ^ ch
+      };
+
+      int ch2 := ch $shl 10;
+      int ch3 := sour[index + 1];
+      if (ch3 > 0DBFFh)
+      {
+         InvalidOperationException.raise()
+      };
+      ch += ch3;
+
+      ch -= 35FDC00h;
+
+      ^ ch
+   }
+
+   int calcSubStringLength(int index, int length, char[] array)
+   {
+      int subStrLength := 0;
+      for(int i := 0, i < length, i += 1)
+      {
+         subStrLength += array[i].Length;
+      };
+
+      ^ subStrLength;
    }
 
    int copyUTF32(byte[] dest, int index, int value)
@@ -169,11 +255,36 @@ internal singleton PrimitiveOperations
       
       ^ length;
    }
+
+   int copyUTF32(short[] dest, int index, int value)
+   {
+      int length := 0;
+      int n := value;
+      if (n < 010000h) {
+         short s := shortConvertor.convert(n); 
+         
+         dest[index] := s;
+
+         ^ 1
+      };
+      
+      int n2 := n $shr 10;
+      n2 += 0D7C0h;
+      short tmp := shortConvertor.convert(n2); 
+      dest[index] := tmp;
+      
+      n := n & 03FFh;
+      n += 0DC00h;
+      tmp := shortConvertor.convert(n); 
+      dest[index] := tmp;
+
+      ^ 2;   
+   }
 }
 
 internal singleton PrimitiveRealOperations
 {
-   trunc(real r, ref real retVal) : external<system'core_routines'__realTrunc>;
+   trunc(real r, ref real retVal) : external(system'core_routines'__realTrunc);
 
    int normalizeFloat(ref real value)
    {
@@ -295,5 +406,204 @@ internal singleton PrimitiveRealOperations
       integerPart := intPart;
       decimalPart := decPart;
       exponent := e;
+   }
+
+   private hash(real r, ref int retVal) : external(system'core_routines'__realHash);
+
+   int getHashcode(real r)
+   {
+      self.hash(r, ref int retVal);
+
+      ^ retVal
+   }
+}
+
+internal singleton PrimitiveStringOperations
+{
+   copy(byte[] dest, int index, int size, string sour) : external(system'core_routines'__copySubStr);
+
+   int indexOf(string s, string subs, int index, int length)
+   {
+      int sLen := s.Length;
+      if (sLen < length)
+      {
+         ^ -1
+      };
+
+      sLen -= length;
+      int i := 0;
+      while (i < sLen) {
+         bool isEqual := true;
+         int j := 0;         
+         while (j < length) {
+            char ch1 := subs[i + j];
+            char ch2 := subs[j];
+            int len1 := ch2.Length;
+            int len2 := ch2.Length;
+            if (len1 != len2 || ch1 != ch2) {
+               isEqual := false;
+               $break
+            };
+            j += len2;
+         };
+         if (isEqual) {
+            ^ i
+         }
+      };
+
+      ^ -1
+   }
+
+   int indexOf(string s, char ch, int index, int length)
+   {
+      int i := 0;
+      while (i < length) {
+         char ch2 := s[index + i];
+         if (ch == ch2)
+         {
+            ^ i
+         };
+
+         int len1 := ch2.Length;
+         i += len1;
+      };
+
+      ^ -1
+   }
+
+   int save(char[] dest, string s, int sourIndex, int sourLength, int destIndex)
+   {
+      int i := 0;
+      int j := destIndex;
+      while (i < sourLength) {
+         char ch := s[sourIndex + i];
+
+         dest[j] := ch;
+
+         int len := ch.Length;
+         i += len;
+         j += 1;
+      };
+      
+      j := j - destIndex;
+
+      ^ j
+   }
+
+   save(byte[] dest, byte[] sour, int index, int length)
+   {
+      int i := 0;
+      while (i < length) {
+         byte b := sour[index + i];
+
+         dest[i] := b;
+
+         i += 1;
+      };
+   }
+
+   private hash(string s, ref int retVal) : external(system'core_routines'__strHash);
+
+   int getHashcode(string s)
+   {
+      self.hash(s, ref int retVal);
+
+      ^ retVal
+   }
+}
+
+internal singleton PrimitiveWideStringOperations
+{
+   copy(short[] dest, int index, int size, wide sour) : external(system'core_routines'__copySubWStr);
+
+   int indexOf(wide s, wide subs, int index, int length)
+   {
+      int sLen := s.Length;
+      if (sLen < length)
+      {
+         ^ -1
+      };
+
+      sLen -= length;
+      int i := 0;
+      while (i < sLen) {
+         bool isEqual := true;
+         int j := 0;         
+         while (j < length) {
+            char ch1 := subs[i + j];
+            char ch2 := subs[j];
+            int len1 := ch2.Length;
+            int len2 := ch2.Length;
+            if (len1 != len2 || ch1 != ch2) {
+               isEqual := false;
+               $break
+            };
+            j += len2;
+         };
+         if (isEqual) {
+            ^ i
+         }
+      };
+
+      ^ -1
+   }
+
+   int indexOf(wide s, char ch, int index, int length)
+   {
+      int i := 0;
+      while (i < length) {
+         char ch2 := s[index + i];
+         if (ch == ch2)
+         {
+            ^ i
+         };
+
+         int len1 := ch2.Length;
+         i += len1;
+      };
+
+      ^ -1
+   }
+
+   int save(char[] dest, wide s, int index, int length)
+   {
+      int i := 0;
+      int j := 0;
+      while (i < length) {
+         char ch := s[index + i];
+
+         dest[j] := ch;
+
+         int len := ch.Length;
+         i += len;
+      };
+      
+      ^ j
+   }
+
+   save(short[] dest, short[] sour, int index, int length)
+   {
+      int i := 0;
+      while (i < length) {
+         short b := sour[index + i];
+
+         dest[i] := b;
+
+         i += 1;
+      };
+   }
+}
+
+// --- PrimitiveIntOperations ---
+
+internal singleton PrimitiveIntOperations
+{
+   private hash(int n, ref int retVal) : external(system'core_routines'__intHash);
+
+   int getHashcode(int n)
+   {
+      self.hash(n, ref int retVal);
+
+      ^ retVal
    }
 }

@@ -3,7 +3,7 @@
 //
 //		This file contains the compiling processor body
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -87,7 +87,7 @@ CompilingProcess::TemplateGenerator :: TemplateGenerator(CompilingProcess* proce
 {
 }
 
-bool CompilingProcess::TemplateGenerator :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+bool CompilingProcess::TemplateGenerator :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
    SyntaxNode target, List<SyntaxNode>& parameters)
 {
    auto sectionInfo = moduleScope.getSection(
@@ -115,7 +115,7 @@ bool CompilingProcess::TemplateGenerator :: importPropertyTemplate(ModuleScopeBa
    return true;
 }
 
-bool CompilingProcess::TemplateGenerator :: importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+bool CompilingProcess::TemplateGenerator :: importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
    SyntaxNode target, List<SyntaxNode>& parameters)
 {
    auto sectionInfo = moduleScope.getSection(
@@ -129,7 +129,7 @@ bool CompilingProcess::TemplateGenerator :: importInlineTemplate(ModuleScopeBase
    return true;
 }
 
-bool CompilingProcess::TemplateGenerator :: importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+bool CompilingProcess::TemplateGenerator :: importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
    SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
 {
    auto sectionInfo = moduleScope.getSection(
@@ -179,7 +179,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
 
    if (declarationMode) {
       bool dummy = false;
-      generatedReference = generateTemplateName(moduleScope, ns, Visibility::Public, templateRef, 
+      generatedReference = generateTemplateName(moduleScope, ns, Visibility::Public, templateRef,
          parameters, dummy);
    }
    else {
@@ -199,7 +199,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       writer.newNode(SyntaxKey::Root);
       writer.newNode(SyntaxKey::Namespace, ns);
 
-      _processor.generateClassTemplate(&moduleScope, generatedReference, writer, 
+      _processor.generateClassTemplate(&moduleScope, generatedReference, writer,
          sectionInfo.section, parameters);
 
       writer.closeNode();
@@ -259,6 +259,18 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, pat
       _parser = nullptr;
       _compiler = nullptr;
    }
+
+   PathString bcRulesPath(*appPath, BC_RULES_FILE);
+   FileReader bcRuleReader(*bcRulesPath, FileRBMode, FileEncoding::Raw, false);
+   if (bcRuleReader.isOpen()) {
+      _bcRules.load(bcRuleReader, bcRuleReader.length());
+   }
+
+   PathString btRulesPath(*appPath, BT_RULES_FILE);
+   FileReader btRuleReader(*btRulesPath, FileRBMode, FileEncoding::Raw, false);
+   if (btRuleReader.isOpen()) {
+      _btRules.load(btRuleReader, btRuleReader.length());
+   }
 }
 
 void CompilingProcess :: parseFileTemlate(ustr_t prolog, path_t name,
@@ -282,7 +294,7 @@ void CompilingProcess :: parseFileTemlate(ustr_t prolog, path_t name,
 }
 
 void CompilingProcess :: parseFile(path_t projectPath,
-   FileIteratorBase& file_it, 
+   FileIteratorBase& file_it,
    SyntaxWriterBase* syntaxWriter)
 {
    // save the path to the current source
@@ -316,8 +328,8 @@ void CompilingProcess :: parseFile(path_t projectPath,
 
 void CompilingProcess :: parseModule(path_t projectPath,
    ustr_t fileProlog, ustr_t fileEpilog,
-   ModuleIteratorBase& module_it, 
-   SyntaxTreeBuilder& builder, 
+   ModuleIteratorBase& module_it,
+   SyntaxTreeBuilder& builder,
    ModuleScopeBase& moduleScope)
 {
    auto& file_it = module_it.files();
@@ -344,10 +356,13 @@ void CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree&
 void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode)
 {
    ByteCodeWriter bcWriter(&_libraryProvider);
+   if (_btRules.length() > 0)
+      bcWriter.loadBuildTreeRules(&_btRules);
+
    bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList, moduleScope.tapeOptMode);
 
    if (savingMode) {
-      _libraryProvider.saveModule(moduleScope.module);
+      _libraryProvider.saveModule( moduleScope.module);
       _libraryProvider.saveDebugModule(moduleScope.debugModule);
    }
 }
@@ -370,6 +385,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
    pos_t rawStackAlingment,
    pos_t ehTableEntrySize,
    int minimalArgList,
+   int ptrSize,
    bool withDebug)
 {
    ModuleScope moduleScope(
@@ -377,11 +393,11 @@ void CompilingProcess :: buildModule(path_t projectPath,
       forwardResolver,
       _libraryProvider.createModule(module_it.name()),
       withDebug ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
-      stackAlingment, rawStackAlingment, ehTableEntrySize, minimalArgList);
+      stackAlingment, rawStackAlingment, ehTableEntrySize, minimalArgList, ptrSize);
 
    _compiler->prepare(&moduleScope, forwardResolver);
 
-   SyntaxTreeBuilder builder(syntaxTree, _errorProcessor, 
+   SyntaxTreeBuilder builder(syntaxTree, _errorProcessor,
       &moduleScope, &_templateGenerator);
    parseModule(projectPath, fileProlog, fileEpilog, module_it, builder, moduleScope);
 
@@ -390,48 +406,21 @@ void CompilingProcess :: buildModule(path_t projectPath,
    buildSyntaxTree(moduleScope, syntaxTree, false);
 }
 
-void CompilingProcess :: configurate(ProjectBase& project)
+void CompilingProcess :: configurate(Project& project)
 {
    project.prepare();
 
-   // load primitives
-   auto path_it = project.allocPrimitiveIterator();
-   while (!path_it->eof()) {
-      IdentifierString key;
-      path_it->loadKey(key);
+   project.initLoader(_libraryProvider);
 
-      if ((*key).compare(CORE_ALIAS)) {
-         _libraryProvider.addCorePath(**path_it);
-      }
-      else _libraryProvider.addPrimitivePath(*key, **path_it);
-
-      ++(*path_it);
-   }
-   freeobj(path_it);
-
-   // load packages
-   auto package_it = project.allocPackageIterator();
-   while (!package_it->eof()) {
-      IdentifierString key;
-      package_it->loadKey(key);
-
-      _libraryProvider.addPackage(*key, **package_it);
-
-      ++(*package_it);
-   }
-   freeobj(package_it);
-
-   // set output paths
-   path_t libPath = project.PathSetting(ProjectOption::LibPath);
-   if (!libPath.empty())
-      _libraryProvider.setRootPath(libPath);
-
-   _libraryProvider.setOutputPath(project.PathSetting(ProjectOption::OutputPath));
+   _libraryProvider.setOutputPath(project.PathSetting(ProjectOption::ProjectPath));
    _libraryProvider.setNamespace(project.Namespace());
    _libraryProvider.addPackage(project.Namespace(), project.PathSetting(ProjectOption::OutputPath));
 
    int optMode = project.IntSetting(ProjectOption::OptimizationMode, optMiddle);
    _compiler->setOptimizationMode(optMode);
+
+   bool withMethodParamInfo = project.BoolSetting(ProjectOption::GenerateParamNameInfo, true);
+   _compiler->setMethodParamInfo(withMethodParamInfo);
 }
 
 void CompilingProcess :: compile(ProjectBase& project,
@@ -457,6 +446,7 @@ void CompilingProcess :: compile(ProjectBase& project,
          project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
          project.IntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
          minimalArgList,
+         sizeof(uintptr_t),
          project.BoolSetting(ProjectOption::DebugMode, true));
 
       ++(*module_it);
@@ -467,7 +457,7 @@ void CompilingProcess :: compile(ProjectBase& project,
    _presenter->print(ELC_SUCCESSFUL_COMPILATION);
 }
 
-void CompilingProcess :: link(ProjectBase& project, LinkerBase& linker)
+void CompilingProcess :: link(Project& project, LinkerBase& linker)
 {
    _presenter->print(ELC_LINKING);
 
@@ -483,7 +473,7 @@ void CompilingProcess :: link(ProjectBase& project, LinkerBase& linker)
    if (project.BoolSetting(ProjectOption::MappingOutputMode))
       addressMapper = new AddressMapper(_presenter);
 
-   TargetImage code(&project, &_libraryProvider, _jitCompilerFactory,
+   TargetImage code(project.SystemTarget(), &project, &_libraryProvider, _jitCompilerFactory,
       imageInfo, addressMapper);
 
    auto result = linker.run(project, code);
@@ -536,7 +526,7 @@ void CompilingProcess :: cleanUp(ProjectBase& project)
    }
 }
 
-int CompilingProcess :: clean(ProjectBase& project)
+int CompilingProcess :: clean(Project& project)
 {
    configurate(project);
 
@@ -545,7 +535,7 @@ int CompilingProcess :: clean(ProjectBase& project)
    return 0;
 }
 
-int CompilingProcess :: build(ProjectBase& project,
+int CompilingProcess :: build(Project& project,
    LinkerBase& linker,
    pos_t defaultStackAlignment,
    pos_t defaultRawStackAlignment,
@@ -559,8 +549,8 @@ int CompilingProcess :: build(ProjectBase& project,
       PlatformType targetType = project.TargetType();
 
       // Project Greetings
-      _presenter->print(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()), 
-         getTargetTypeName(targetType));
+      _presenter->print(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()),
+         getTargetTypeName(targetType, project.SystemTarget()));
 
       // Cleaning up
       _presenter->print(ELC_CLEANING);

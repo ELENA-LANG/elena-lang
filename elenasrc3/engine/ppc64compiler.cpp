@@ -171,7 +171,36 @@ void PPC64leJITCompiler:: prepare(
    JITCompiler64::prepare(loader, imageProvider, helper, &labelHelper, settings);
 }
 
-void PPC64leJITCompiler:: alignCode(MemoryWriter& writer, pos_t alignment, bool isText)
+void PPC64leJITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode)
+{
+   pos_t offset = writer->position();
+
+   switch (mask) {
+      case mskXDisp32Hi:
+      case mskDisp32Hi:
+      {
+         offset = PPCLabelHelper::getHiAdjusted(offset);
+
+         PPCHelper::fixBCommand(writer->Memory()->get(position), offset);
+         writer->Memory()->addReference(mskCodeXDisp32Hi, position);
+         break;
+      }
+      case mskXDisp32Lo:
+      case mskDisp32Lo:
+      {
+         offset &= 0xFFFF;
+
+         PPCHelper::fixBCommand(writer->Memory()->get(position), offset);
+         writer->Memory()->addReference(mskCodeXDisp32Lo, position);
+         break;
+      }
+      default:
+         JITCompiler::resolveLabelAddress(writer, mask, position, virtualMode);
+         break;
+   }
+}
+
+void PPC64leJITCompiler :: alignCode(MemoryWriter& writer, pos_t alignment, bool isText)
 {
    if (isText) {
       // should be aligned to 4 byte border
