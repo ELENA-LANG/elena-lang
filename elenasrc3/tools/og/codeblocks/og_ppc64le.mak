@@ -63,7 +63,7 @@ $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o: ../../../engine/bytecode.cpp
 $(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o: ../../../engine/scriptreader.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/scriptreader.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o
 
-$(OBJDIR_RELEASE)/__/sg.o  : ../og.cpp
+$(OBJDIR_RELEASE)/__/og.o  : ../og.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../og.cpp -o $(OBJDIR_RELEASE)/__/og.o
 
 clean_release: 
