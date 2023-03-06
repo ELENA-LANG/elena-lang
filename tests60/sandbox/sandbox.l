@@ -5,10 +5,9 @@ import system'routines;
 
 public program()
 {
-   var arr := Array.allocate(1);
-   arr[0] := "a";
-   var item := arr[0];
-   console.writeLine(item);
+   var s := "1 2";
+
+   s.split().forEach:(x => console.writeLine(x));
 
 //   var list := new ArrayList();
 //   list.append("a");
