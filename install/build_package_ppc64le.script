@@ -5,7 +5,7 @@ mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
 mkdir -p /usr/lib/elena/core/x32/
-mkdir -p /usr/lib/elena/core/amd64/
+mkdir -p /usr/lib/elena/core/ppc64le/
 mkdir -p /usr/lib/elena/lib60_64
 
 cp ../bin/libelenart60_64.so /usr/lib/elena/
@@ -146,7 +146,7 @@ fi
  mkdir -p ./$RELEASE/etc/elena/
  mkdir -p ./$RELEASE/etc/elena/templates/
  mkdir -p ./$RELEASE/usr/share/elena/
- mkdir -p ./$RELEASE/usr/lib/elena/core/amd64/
+ mkdir -p ./$RELEASE/usr/lib/elena/core/ppc64le/
  mkdir -p ./$RELEASE/usr/lib/elena/lib60_64/
  mkdir -p ./$RELEASE/usr/bin/
  mkdir -p ./$RELEASE/usr/elena-lang
@@ -184,7 +184,7 @@ fi
 
  echo compiling core
 
- cp /usr/lib/elena/core/amd64/*.bin ./$RELEASE/usr/lib/elena/core/amd64/
+ cp /usr/lib/elena/core/ppc64le/*.bin ./$RELEASE/usr/lib/elena/core/ppc64le/
 
  echo compiling lib60
 
