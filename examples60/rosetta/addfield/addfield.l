@@ -1,0 +1,25 @@
+import extensions;
+
+class Extender : BaseExtender
+{
+   object foo : prop;
+    
+   constructor(object)
+   {
+      this object := object
+   }
+}
+
+public program()
+{
+   var object := 234;
+  
+   // extending an object with a field
+   object := new Extender(object);
+
+   object.foo := "bar";
+
+   console.printLine(object,".foo=",object.foo);
+
+   console.readChar()
+}

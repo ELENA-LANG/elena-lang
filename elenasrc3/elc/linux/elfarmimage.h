@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive ELF Image class declaration
 //       supported platform: ARM64
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELFPPCIMAGE_H
@@ -29,8 +29,8 @@ namespace elena_lang
       void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference, pos_t disp) override;
       pos_t writePLTEntry(MemoryWriter& codeWriter, pos_t symbolIndex, ref_t gotReference, pos_t gofOffset, int entryIndex) override;
 
-      void fixSection(Section* section, AddressSpace& map) override;
-      void fixImportSection(Section* section, AddressSpace& map) override;
+      void fixSection(MemoryBase* section, AddressSpace& map) override;
+      void fixImportSection(MemoryBase* section, AddressSpace& map) override;
 
    public:
       static ElfARM64ImageFormatter& getInstance(ForwardResolverBase* resolver)

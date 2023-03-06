@@ -1,29 +1,38 @@
 // --- Exception ---
 public class Exception
 {
-   string message;
+   string    message;
+   CallStack callStack;
 
    constructor new(string message)
    {
-      this message := message
+      this message := message;
+      this callStack := new CallStack();
    }
 
    constructor new()
       <= new(self.__getClassName());
 
-   on(handler) : external<system'core_routines'__exception_handler>; 
+   on(handler) : external(system'core_routines'__exception_handler); 
 
    fallback(arg)
       <= raise();  
 
-   raise() : external<system'core_routines'__exception_raise>;
+   raise() : external(system'core_routines'__exception_raise);
+
+   sealed static raise()
+   {
+       weak self.new().raise()
+   }
 
    string toPrintable()
    {
-      string retVal := message/*.add($10"Call stack:"$10).add(theCallstack.toPrintable())*/;
+      string retVal := message.add($10"Call stack:"$10).add(callStack.toPrintable());
         
       ^ retVal
    }
+
+   string Message = message;
 }
 
 // --- CriticalException ---
@@ -40,16 +49,26 @@ public class NilReferenceException : Exception
       <= super new("Nil reference exception");
 }
 
-// --- CriticalException ---
+// --- DivisionByZeroException ---
 public class DivisionByZeroException : Exception
 {
    constructor new()
       <= super new("Division by zero exception");
 }
 
-// --- CriticalException ---
+// --- OutOfMemoryException ---
 public class OutOfMemoryException : Exception
 {
+}
+
+// --- InvalidArgumentException ---
+public class InvalidArgumentException : Exception
+{
+   constructor new() : info("Creates the exception")
+      <= new("Invalid argument");
+
+   constructor new(string message) : info("Creates the exception")
+      <= super new(message);
 }
 
 // --- MethodNotFoundException ---
@@ -59,4 +78,52 @@ public class MethodNotFoundException : Exception
       <= super new(target.__getClassName() + " : Method " + mssg.toPrintable() + " not found")
    {
    }
+}
+
+public class NotSupportedException : Exception
+{
+   /// Creates the exception
+   constructor new()
+      <= new("Operation is not supported");
+        
+   /// Creates the exception
+   constructor new(string message)
+      <= super new(message);
+}
+
+public class SymbolLoaderException
+{
+}
+
+// --- InvalidOperationException ---
+
+public class InvalidOperationException : Exception
+{
+   constructor new() : info("Creates the exception")
+      <= new("Invalid operation");
+
+   constructor new(string message) : info("Creates the exception")
+      <= super new(message);
+}
+
+// --- OutOfRangeException ---
+public class OutOfRangeException : Exception
+{
+   /// Creates the exception
+   constructor new()
+      <= new("An index is out of range");
+
+   /// Creates the exception
+   constructor new(string message)
+      <= super new(message);
+}
+
+// --- AbortException ---
+
+public class AbortException : Exception,
+         info("An abort exception ")
+{
+   /// Creates the exception
+   constructor new()
+      <= super new("The process terminated");
 }

@@ -217,6 +217,34 @@ struct BoxingStruct
    }
 }
 
+struct BoxingFixedArrayStruct
+{
+   int  x;
+   byte tmp[10];
+
+   set(int n, int v)
+   {
+      tmp[n] := v;
+   }
+
+   set(int n, byte v)
+   {
+      tmp[n] := v;
+   }
+
+   test(int n, int v)
+   {
+      Assert.ifTrue(tmp[n] == v);
+   }
+
+   test(int n, byte d)
+   {
+      byte s := tmp[n];
+
+      Assert.ifTrue(s == d);
+   }
+}
+
 singleton BoxingProber
 {
    check(int n)
@@ -256,6 +284,16 @@ boxingTests()
    var p := BoxingProber;
    p.set(st2);
    st2.test(3,4);
+   console.write(".");
+
+   BoxingFixedArrayStruct x := new BoxingFixedArrayStruct();
+   byte b := 2;
+   x.set(0,1);
+   x.set(1,b);
+
+   x.test(0,1);
+   x.test(1,b);
+
    console.writeLine(".");
 }
 
@@ -301,5 +339,112 @@ byRefTests()
    o.set(ref s2);
 
    Assert.ifTrue(s2 == "hello");
+   console.writeLine(".");
+}
+
+// --- inlineAssignmentTests ---
+InlineAssignTesterBase
+{
+   x := 1;
+
+   y := 2;
+
+   validate()
+   {
+      Assert.ifTrue(x == 1);
+      Assert.ifTrue(y == 2);
+   }
+}
+
+InlineAssignTesterChild : InlineAssignTesterBase
+{
+}  
+
+class InlineAssignTester2Base
+{
+   field x;
+   field y; 
+
+   validate()
+   {
+      Assert.ifTrue(x == 1);
+      Assert.ifTrue(y == 2);
+   }
+}
+
+inlineAssignmentTests()
+{
+   console.write("inlineAssignmentTests");
+   var b := new InlineAssignTesterBase();
+   b.validate();
+   console.write(".");
+   var c := new InlineAssignTesterChild();
+   c.validate();
+   console.write(".");
+   var child := new InlineAssignTester2Base
+   {
+      this x := 1;
+      this y := 2;
+
+      newMethod() {}
+   };
+
+   child.validate();
+   console.writeLine(".");
+}
+
+class DispatchType
+{
+   _content;
+
+   constructor(content)
+   {
+      _content := content;
+   }
+
+   get()
+      = _content;
+}
+
+
+class DispatchTypeCompatible
+{
+   _dummy;
+   _content;
+
+   constructor(content)
+   {
+      _content := content;
+   }   
+
+   DispatchType cast()
+      = new DispatchType(_content);
+}
+
+sealed class SingleDispatcher
+{
+   check(DispatchType arg)
+   {
+      ^ arg.get();
+   }   
+}
+
+public singleDispatchTest()
+{
+   console.write("singleDispatchTest");
+
+   var weakDispatcher := new SingleDispatcher();
+
+   auto arg1 := new DispatchType(1);
+   auto arg2 := new DispatchTypeCompatible(2);
+
+   Assert.ifTrue(weakDispatcher.check(arg1) == 1);
+   Assert.ifTrue(weakDispatcher.check(arg2) == 2);
+   console.write(".");
+
+   auto dispatcher := new SingleDispatcher();
+
+   Assert.ifTrue(dispatcher.check(arg1) == 1);
+   Assert.ifTrue(dispatcher.check(arg2) == 2);
    console.writeLine(".");
 }

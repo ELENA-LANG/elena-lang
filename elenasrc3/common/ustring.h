@@ -634,7 +634,17 @@ namespace elena_lang
 
       void insert(const T* s, size_t index)
       {
-         StrUtil::insert(_string, index, getlength(s), s);
+         pos_t length = getlength_pos(s);
+         if (_size <= length) {
+            create(length + 1);
+         }
+
+         StrUtil::insert(_string, index, length, s);
+      }
+
+      void cut(size_t index, size_t length)
+      {
+         StrUtil::move(_string + index, _string + index + length, getlength(_string) - index - length + 1);
       }
 
       int toInt(int radix = 10) const

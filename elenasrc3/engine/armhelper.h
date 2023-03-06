@@ -3,7 +3,7 @@
 //
 //		This file contains CPU native helpers
 //		Supported platforms: ARM64
-//                                            (C)2021-2022, by Aleksey Rakov
+//                                            (C)2021-2023, by Aleksey Rakov
 //                                            (C)2016, from The LLVM Compiler
 //---------------------------------------------------------------------------
 
@@ -498,7 +498,7 @@ namespace elena_lang
          writer.writeDWord(ARMHelper::makeBxxOpcode(0x2A, 0, imm >> 2, 0, cond));
       }
 
-      bool fixLabel(pos_t label, MemoryWriter& writer) override
+      bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override
       {
          for (auto it = jumps.getIt(label); !it.eof(); ++it) {
             if (it.key() == label) {
@@ -524,29 +524,7 @@ namespace elena_lang
          for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
             auto info = *a_it;
 
-            pos_t offset = writer.position();
-            switch (info.mask) {
-               case mskRef32Hi:
-               {
-                  offset >>= 16;
-
-                  MemoryBase::maskDWord(writer.Memory(), info.position, (offset & 0xFFFF) << 5);
-                  writer.Memory()->addReference(mskCodeRef32Hi, info.position);
-
-                  break;
-               }
-               case mskRef32Lo:
-               {
-                  offset &= 0xFFFF;
-
-                  MemoryBase::maskDWord(writer.Memory(), info.position, (offset & 0xFFFF) << 5);
-                  writer.Memory()->addReference(mskCodeRef32Lo, info.position);
-
-                  break;
-               }
-               default:
-                  break;
-            }
+            rh->resolveLabel(writer, info.mask, info.position);
          }
 
          return true;
@@ -598,6 +576,38 @@ namespace elena_lang
             throw InternalError(-1);
 
          writeBcc(offset, (int)JumpType::NE, writer);
+      }
+
+      void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBcc(0, (int)JumpType::LT, writer);
+      }
+
+      void writeJltBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0x3FFFF)
+            throw InternalError(-1);
+
+         writeBcc(offset, (int)JumpType::LT, writer);
+      }
+
+      void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBcc(0, (int)JumpType::GE, writer);
+      }
+
+      void writeJgeBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0x3FFFF)
+            throw InternalError(-1);
+
+         writeBcc(offset, (int)JumpType::GE, writer);
       }
    };
 }

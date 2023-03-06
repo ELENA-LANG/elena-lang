@@ -1,0 +1,25 @@
+<configuration>
+  <platform key="Win_x86">
+     <project>
+        <executable>realsum</executable>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <executable>realsum64</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>sum</namespace>
+     <template>console</template>
+  </project>
+  <files>
+     <module>
+        <include>sum.l</include>
+     </module>
+  </files>
+  <forwards>
+     <forward key="prompt">sum'RealSamplePrompt</forward>
+     <forward key="number">extensions'Real</forward>
+  </forwards>
+</configuration>

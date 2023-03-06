@@ -54,8 +54,6 @@ end
 procedure % VEH_HANDLER
 
   mov  r10, rdx
-  push rbp
-  mov  rbp, rsp
   mov  rdx, rax   // ; set exception code
   mov  rax, [data : % CORE_ET_TABLE]
   jmp  rax

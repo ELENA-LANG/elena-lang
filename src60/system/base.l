@@ -1,13 +1,13 @@
 // --- base inline templates ---
 
-inline external<routine>()
+public inline external(routine)
 {
    #include intern routine;
 }
 
 // --- class meta info ---
 
-public inline info<descr>()
+public inline info(descr)
 {
    #new super string descriptions;
 
@@ -22,4 +22,27 @@ public field prop<name, T>
    {
       ^ name
    }
+
+   set name(T value)
+   {
+      name := value
+   }
+}
+
+// --- rprop ---
+
+public field rprop<name, T>
+{
+   get T name()
+   {
+      ^ name
+   }
+}
+
+public interface<T>
+{
+   T cast() = new T
+   {
+      embeddable dispatch() => self;
+   };
 }

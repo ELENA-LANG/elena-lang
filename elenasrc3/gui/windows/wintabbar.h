@@ -16,6 +16,7 @@ namespace elena_lang
    {
    protected:
       NotifierBase*  _notifier;
+      int            _selNotificationId;
 
       bool           _withAbovescore;
       bool           _notSelected;
@@ -66,6 +67,7 @@ namespace elena_lang
       List<ControlBase*> _pages;
 
       void resizeTab(Rectangle* clientRect, ControlBase* control);
+      void showCurrentTab();
 
    public:
       HWND createControl(HINSTANCE instance, ControlBase* owner);
@@ -79,7 +81,7 @@ namespace elena_lang
 
       void onSelChanged() override
       {
-         refresh();
+         showCurrentTab();
       }
 
       void refresh() override;

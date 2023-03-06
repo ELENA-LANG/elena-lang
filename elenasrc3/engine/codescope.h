@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Image Loader class declarations
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CODESCOPE_H
@@ -12,25 +12,34 @@
 
 namespace elena_lang
 {
+   // --- ExternaöMapper ---
+   class ExternalMapper
+   {
+   public:
+      virtual addr_t resolveExternal(ustr_t reference) = 0;
+   };
+
    // --- ReferenceMapper ---
    class ReferenceMapper : public ReferenceMapperBase
    {
    protected:
       typedef List<LazyReferenceInfo> LazyReferences;
 
-      AddressMap     _symbolReferences;
-      AddressMap     _exportReferences;
-      AddressMap     _constReferences, _numberReferences, _literalReferences, _characterReferences;
-      AddressMap     _longNumberReferences, _realNumberReferences;
-      AddressMap     _wideReferences;
-      AddressMap     _mssgReferences;
-      AddressMap     _dataReferences;
-      AddressMap     _statReferences;
+      AddressMap      _symbolReferences;
+      AddressMap      _exportReferences;
+      AddressMap      _constReferences, _numberReferences, _literalReferences, _characterReferences;
+      AddressMap      _longNumberReferences, _realNumberReferences;
+      AddressMap      _wideReferences;
+      AddressMap      _mssgReferences;
+      AddressMap      _dataReferences;
+      AddressMap      _statReferences;
 
-      ReferenceMap   _actionNames;
-      ActionMap      _actions;
+      ReferenceMap    _actionNames;
+      ActionMap       _actions;
 
-      LazyReferences _lazyReferences;
+      LazyReferences  _lazyReferences;
+
+      ExternalMapper* _externalMapper;
 
       addr_t resolveExternal(ustr_t referenceName);
       addr_t resolveReference(ustr_t referenceName, ref_t sectionMask);
@@ -52,7 +61,7 @@ namespace elena_lang
 
       void addLazyReference(LazyReferenceInfo info) override;
 
-      ReferenceMapper() : 
+      ReferenceMapper(ExternalMapper* externalMapper = nullptr) :
          _symbolReferences(INVALID_ADDR), 
          _exportReferences(INVALID_ADDR), 
          _constReferences(INVALID_ADDR),
@@ -67,7 +76,8 @@ namespace elena_lang
          _statReferences(INVALID_ADDR),
          _actionNames(0),
          _actions(0),
-         _lazyReferences({})
+         _lazyReferences({}),
+         _externalMapper(externalMapper)
       {
          
       }
@@ -78,6 +88,7 @@ namespace elena_lang
    {
    protected:
       Section _text;
+      Section _adata;
       Section _mdata;
       Section _mbdata;
       Section _rdata;
@@ -87,34 +98,19 @@ namespace elena_lang
       Section _debug;
 
    public:
-      Section* getTextSection() override;
-      Section* getRDataSection() override;
-      Section* getImportSection() override;
-      Section* getDataSection() override;
-      Section* getStatSection() override;
-      Section* getMDataSection() override;
-      Section* getMBDataSection() override;
+      MemoryBase* getTextSection() override;
+      MemoryBase* getRDataSection() override;
+      MemoryBase* getImportSection() override;
+      MemoryBase* getDataSection() override;
+      MemoryBase* getStatSection() override;
+      MemoryBase* getADataSection() override;
+      MemoryBase* getMDataSection() override;
+      MemoryBase* getMBDataSection() override;
 
-      Section* getTargetDebugSection() override;
-
-      Section* getTargetSection(ref_t targetMask) override
-      {
-         switch (targetMask) {
-            case mskCodeRef:
-               return getTextSection();
-            case mskRDataRef:
-               return getRDataSection();
-            case mskDataRef:
-               return getDataSection();
-            case mskStatDataRef:
-               return getStatSection();
-            default:
-               return nullptr;
-         }
-      }
+      MemoryBase* getTargetDebugSection() override;
 
       ImageProvider() :
-         _text(), _mdata(), _mbdata(), _rdata(),
+         _text(), _mdata(), _adata(), _mbdata(), _rdata(),
          _import(), _data(), _stat(), _debug()
       {
       }

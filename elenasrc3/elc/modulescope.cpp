@@ -3,7 +3,7 @@
 //
 //		This file contains Module scope class implementation.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "modulescope.h"
@@ -143,7 +143,9 @@ ExternalInfo ModuleScope :: mapExternal(ustr_t dllAlias, ustr_t functionName)
    if (!emptystr(dllName)) {
       type = ExternalType::WinApi;
    }
-   else dllName = forwardResolver->resolveExternal(dllAlias);
+   else if (!dllAlias.compare(RT_FORWARD)) {
+      dllName = forwardResolver->resolveExternal(dllAlias);
+   }
    if (dllName.empty())
       dllName = dllAlias;
 
@@ -166,8 +168,6 @@ ref_t ModuleScope :: resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Vis
 
 ref_t ModuleScope :: resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs)
 {
-   ref_t reference = 0;
-
    auto it = importedNs->start();
    while (!it.eof()) {
       ReferenceName fullName(*it, identifier);
@@ -177,13 +177,27 @@ ref_t ModuleScope :: resolveImportedIdentifier(ustr_t identifier, IdentifierList
          if (sectionInfo.module != module) {
             return module->mapReference(*fullName, false);
          }
-         else return reference;
+         else return sectionInfo.reference;
       }
 
       ++it;
    }
 
-   return reference;
+   return 0;
+}
+
+ref_t ModuleScope :: resolveWeakTemplateReferenceID(ref_t reference)
+{
+   ustr_t referenceName = module->resolveReference(reference);
+   if (isTemplateWeakReference(referenceName)) {
+      ustr_t resolvedTemplateReferenceName = resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN);
+
+      if (NamespaceString::compareNs(resolvedTemplateReferenceName, module->name())) {
+         return module->mapReference(resolvedTemplateReferenceName + getlength(module->name()));
+      }
+      else return module->mapReference(resolvedTemplateReferenceName);
+   }
+   else return reference;
 }
 
 ustr_t ModuleScope :: resolveWeakTemplateReference(ustr_t referenceName)
@@ -254,6 +268,13 @@ ref_t ModuleScope :: importReference(ModuleBase* referenceModule, ustr_t referen
    else return 0;
 }
 
+ref_t ModuleScope :: importExternal(ModuleBase* referenceModule, ref_t reference)
+{
+   ustr_t refName = referenceModule->resolveReference(reference);
+
+   return module->mapReference(refName);
+}
+
 ref_t ModuleScope :: importConstant(ModuleBase* referenceModule, ref_t reference)
 {
    if (!reference)
@@ -276,6 +297,25 @@ ref_t ModuleScope :: importMessageConstant(ModuleBase* referenceModule, ref_t re
    return module->mapConstant(value);
 }
 
+ref_t ModuleScope :: importExtMessageConstant(ModuleBase* referenceModule, ref_t reference)
+{
+   if (!reference)
+      return 0;
+
+   ustr_t value = referenceModule->resolveConstant(reference);
+
+   size_t index = value.find('<');
+   assert(index != NOTFOUND_POS);
+   size_t endIndex = value.findSub(index, '>');
+
+   IdentifierString messageName(value);
+   messageName.cut(index, endIndex - index + 1);
+
+   ByteCodeUtil::resolveMessage(*messageName, module, false);
+
+   return module->mapConstant(value);
+}
+
 SectionInfo ModuleScope :: getSection(ustr_t referenceName, ref_t mask, bool silentMode)
 {
    if (isForwardReference(referenceName)) {
@@ -283,9 +323,9 @@ SectionInfo ModuleScope :: getSection(ustr_t referenceName, ref_t mask, bool sil
    }
 
    if (isWeakReference(referenceName)) {
-      return loader->getSection(ReferenceInfo(module, referenceName), mask, silentMode);
+      return loader->getSection(ReferenceInfo(module, referenceName), mask, 0, silentMode);
    }
-   else return loader->getSection(ReferenceInfo(referenceName), mask, silentMode);
+   else return loader->getSection(ReferenceInfo(referenceName), mask, 0, silentMode);
 }
 
 MemoryBase* ModuleScope :: mapSection(ref_t reference, bool existing)

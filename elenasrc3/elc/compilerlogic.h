@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPILERLOGIC_H
@@ -22,7 +22,24 @@ namespace elena_lang
       ref_t       constRef;
       Visibility  visibility;
       bool        stackSafe;
+      bool        withVariadicDispatcher;
    };
+
+   struct TypeAttributes
+   {
+      bool variadicOne;
+      bool variableOne;
+      bool byRefOne;
+      bool mssgNameLiteral;
+      bool newOp;
+
+      bool isNonempty() const
+      {
+         return variableOne || variadicOne || byRefOne || mssgNameLiteral || newOp;
+      }
+   };
+
+   typedef CachedList<Pair<mssg_t, ref_t>, 10> VirtualMethods;
 
    // --- CompilerLogic ---
    class CompilerLogic
@@ -59,8 +76,8 @@ namespace elena_lang
       bool validateImplicitMethodAttribute(ref_t attribute, ref_t& hint);
       bool validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo, bool& superMode);
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
-      bool validateArgumentAttribute(ref_t attrValue, bool& byRefArg, bool& variadicArg);
-      bool validateTypeScopeAttribute(ref_t attrValue, bool& variadicArg);
+      bool validateArgumentAttribute(ref_t attrValue, TypeAttributes& attributes);
+      bool validateTypeScopeAttribute(ref_t attrValue, TypeAttributes& attributes);
       bool validateResendAttribute(ref_t attrValue, bool& superMode);
 
       bool validateAutoType(ModuleScopeBase& scope, ref_t& reference);
@@ -91,7 +108,7 @@ namespace elena_lang
 
       bool isValidOp(int operatorId, const int* validOperators, size_t len);
 
-      void tweakClassFlags(ref_t classRef, ClassInfo& info, bool classClassMode);
+      void tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
       void tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef);
 
       bool validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_t message);
@@ -123,13 +140,16 @@ namespace elena_lang
       ref_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
          pos_t signLen, int& stackSafeAttrs);
 
-      ConversionRoutine retrieveConversionRoutine(ModuleScopeBase& scope, ref_t targetRef, TypeInfo sourceInfo);
+      ConversionRoutine retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ref_t targetRef, 
+         TypeInfo sourceInfo);
 
       bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
       bool checkMethod(ModuleScopeBase& scope, ref_t reference, mssg_t message, CheckMethodResult& result);
 
       bool resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
          CheckMethodResult& result);
+
+      mssg_t resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage);
 
       void injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef);
       void injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, 
@@ -143,6 +163,22 @@ namespace elena_lang
 
       bool isValidType(ClassInfo& info, bool allowRole);
       bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole);
+
+      static bool isPrimitiveArrRef(ref_t reference)
+      {
+         switch (reference) {
+            case V_OBJARRAY:
+            case V_INT32ARRAY:
+            case V_INT16ARRAY:
+            case V_INT8ARRAY:
+            case V_BINARYARRAY:
+               return true;
+            default:
+               return false;
+         }
+      }
+
+      void generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods);
 
       static CompilerLogic* getInstance()
       {

@@ -156,7 +156,7 @@ void X86LabelHelper :: fixJumps(pos_t position, int size, MemoryWriter& writer)
    }
 }
 
-bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
+bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh)
 {
    auto it = jumps.getIt(label);
 
@@ -178,20 +178,11 @@ bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
    }
 
    for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
+      assert(rh != nullptr);
+
       auto info = *a_it;
 
-      switch (info.mask) {
-         case mskRef32:
-            MemoryBase::writeDWord(writer.Memory(), info.position, writer.position());
-            writer.Memory()->addReference(mskCodeRef32, info.position);
-            break;
-         case mskRef64:
-            MemoryBase::writeDWord(writer.Memory(), info.position, writer.position());
-            writer.Memory()->addReference(mskCodeRef64, info.position);
-            break;
-         default:
-            break;
-      }
+      rh->resolveLabel(writer, info.mask, info.position);
    }
 
    return true;

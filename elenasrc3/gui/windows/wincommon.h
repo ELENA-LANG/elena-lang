@@ -24,21 +24,37 @@
 namespace elena_lang
 {
    // --- Cursor types ---
-   constexpr int CURSOR_TEXT     = 0;
-   constexpr int CURSOR_ARROW    = 1;
-   constexpr int CURSOR_SIZEWE   = 2;
-   constexpr int CURSOR_SIZENS   = 3;
+   constexpr int CURSOR_TEXT           = 0;
+   constexpr int CURSOR_ARROW          = 1;
+   constexpr int CURSOR_SIZEWE         = 2;
+   constexpr int CURSOR_SIZENS         = 3;
 
-   constexpr int NMHDR_Message      = 0x101;
-   constexpr int NMHDR_Model        = 0x102;
+   // --- Notification types ---
+   constexpr int STATUS_NOTIFICATION   = 0x101;
+   constexpr int STATUS_SELECTION      = 0x102;
+   constexpr int STATUS_COMPLETION     = 0x103;
+   //constexpr int NMHDR_Model        = 0x102;
 
    // --- ExtNMHDR ---
-   struct ExtNMHDR
+   struct StatusNMHDR
    {
-      NMHDR nmhrd;
-      int   extParam1;
-      int   extParam2;
-      int   extParam3;
+      NMHDR              nmhrd;
+      int                code;
+      NotificationStatus status;
+   };
+
+   struct SelectionNMHDR
+   {
+      NMHDR              nmhrd;
+      int                code;
+      size_t             param;
+   };
+
+   struct CompletionNMHDR
+   {
+      NMHDR              nmhrd;
+      int                code;
+      int                param;
    };
 
    // --- Color ---
@@ -147,7 +163,7 @@ namespace elena_lang
 
       virtual void onResize() {}
       virtual bool onSetCursor() { return false; }
-      virtual void onClose() {}
+      virtual bool onClose();
 
       virtual void setCursor(int type);
 
@@ -175,10 +191,11 @@ namespace elena_lang
       bool initInstance(WindowBase* mainWindow, int cmdShow);
 
    public:
-      int run(GUIControlBase* mainWindow, bool maximized, int notificationId) override;
+      int run(GUIControlBase* mainWindow, bool maximized, int notificationId, NotificationStatus notificationStatus) override;
 
-      void notifyMessage(int messageCode, int arg1 = 0, int arg2 = 0) override;
-      void notifyModelChange(int modelCode, int arg) override;
+      void notify(int messageCode, NotificationStatus status) override;
+      void notifySelection(int id, size_t param) override;
+      void notifyCompletion(int id, int param) override;
 
       WindowApp(HINSTANCE instance, wstr_t accelerators)
       {

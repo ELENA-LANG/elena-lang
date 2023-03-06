@@ -183,9 +183,11 @@
     <ClCompile Include="..\..\engine\parsertable.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\syntaxtree.cpp" />
+    <ClCompile Include="..\..\engine\windows\presenter.cpp" />
     <ClCompile Include="..\..\engine\x86compiler.cpp" />
     <ClCompile Include="..\..\engine\x86helper.cpp" />
     <ClCompile Include="..\..\engine\x86_64compiler.cpp" />
+    <ClCompile Include="..\..\engine\xmlprojectbase.cpp" />
     <ClCompile Include="..\compiler.cpp" />
     <ClCompile Include="..\compilerlogic.cpp" />
     <ClCompile Include="..\compiling.cpp" />
@@ -227,12 +229,15 @@
     <ClInclude Include="..\..\engine\libman.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\parsertable.h" />
+    <ClInclude Include="..\..\engine\projectbase.h" />
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\syntaxtree.h" />
+    <ClInclude Include="..\..\engine\windows\presenter.h" />
     <ClInclude Include="..\..\engine\x86compiler.h" />
     <ClInclude Include="..\..\engine\x86helper.h" />
     <ClInclude Include="..\..\engine\x86relocation.h" />
     <ClInclude Include="..\..\engine\x86_64compiler.h" />
+    <ClInclude Include="..\..\engine\xmlprojectbase.h" />
     <ClInclude Include="..\clicommon.h" />
     <ClInclude Include="..\cliconst.h" />
     <ClInclude Include="..\compiler.h" />

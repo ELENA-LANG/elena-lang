@@ -26,7 +26,7 @@ namespace elena_lang
          ReferenceMap      labelNames;
          Map<pos_t, bool>  declaredLabels;
 
-         bool fixLabel(pos_t label, MemoryWriter& writer) override;
+         bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override;
 
          void writeJumpBack(pos_t label, MemoryWriter& writer) override {}
          void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override {}
@@ -36,6 +36,12 @@ namespace elena_lang
 
          void writeJneBack(pos_t label, MemoryWriter& writer) override {}
          void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
+
+         void writeJltBack(pos_t label, MemoryWriter& writer) override {}
+         void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
+
+         void writeJgeBack(pos_t label, MemoryWriter& writer) override {}
+         void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
 
          ref_t getLabel(ustr_t labelName)
          {
@@ -58,7 +64,7 @@ namespace elena_lang
 
             declaredLabels.add(labelNames.get(labelName), true);
 
-            return setLabel(label, writer);
+            return setLabel(label, writer, nullptr);
          }
 
          void registerJump(ustr_t labelName, MemoryWriter& writer);
@@ -89,6 +95,7 @@ namespace elena_lang
          Type  type;
          ref_t reference;
          bool  byVal;
+         bool  byVal64;
 
          static Operand Default()
          {
@@ -101,7 +108,7 @@ namespace elena_lang
          {
             type = Type::None;
             reference = 0;
-            byVal = false;
+            byVal = byVal64 = false;
          }
       };
 
@@ -128,17 +135,17 @@ namespace elena_lang
 
       void readParameterList(ScriptToken& tokenInfo, ReferenceMap& parameters);
 
-      int readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants, 
+      int readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants,
          int factor, bool allowSize);
 
       bool writeArg(MemoryWriter& writer, Operand& arg, int index);
 
       bool declareLabel(ustr_t label, ScriptToken& tokenInfo, MemoryWriter& writer, ByteCodeLabelHelper& labelScope);
 
-      Operand compileArg(ScriptToken& tokenInfo, ReferenceMap& locals, 
+      Operand compileArg(ScriptToken& tokenInfo, ReferenceMap& parameters, ReferenceMap& locals,
          ReferenceMap& dataLocals, ReferenceMap& constants);
       void compileArgList(ScriptToken& tokenInfo, List<Operand>& operands, 
-         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
+         ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
 
       bool compileDDisp(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
         ReferenceMap& dataLocals, bool skipRead);
@@ -169,7 +176,7 @@ namespace elena_lang
       bool compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
          ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, int& dataSize);
       bool compileCallExt(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
-         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
+         ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
 
       bool compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ByteCodeLabelHelper& lh);

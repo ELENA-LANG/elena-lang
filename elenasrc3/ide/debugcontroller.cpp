@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //    its helpers
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -24,11 +24,7 @@ DebugSymbol operator & (const DebugSymbol& l, const DebugSymbol& r)
 
 inline bool isSymbolReference(ustr_t name)
 {
-   size_t pos = name.findLast('\'');
-   if (pos != NOTFOUND_POS) {
-      return name[pos + 1] == '#';
-   }
-   else return false;
+   return name.endsWith("#sym");
 }
 
 inline ref_t mapModuleReference(ModuleBase* module, ustr_t referenceName, bool existing)
@@ -95,6 +91,7 @@ ModuleBase* DebugInfoProvider :: loadDebugModule(ustr_t reference)
          LoadResult result = module->load(reader);
          if (result == LoadResult::Successful) {
             ustr_t relativeName = reference.str() + module->name().length();
+
             if (relativeName[0] == '#')
                relativeName = relativeName + 1;
 
@@ -155,6 +152,10 @@ addr_t DebugInfoProvider :: getClassAddress(ustr_t name)
 bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressReader, DebugProcessBase* process)
 {
    bool isClass = true;
+   if (reference.findStr("stringListOp") != NOTFOUND_POS)
+      isClass = true;
+
+   //bool isClass = true;
    ModuleBase* module = nullptr;
    // if symbol
    if (isSymbolReference(reference)) {
@@ -163,11 +164,7 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
    }
    else module = loadDebugModule(reference);
 
-   pos_t position = 0;
-   /*if (reference.find('@') != NOTFOUND_POS && reference.find('#', 0) > 0) {
-      position = (module != NULL) ? mapModuleReference(module, reference + reference.find('\'', 0), true) : 0;
-   }
-   else */position = (module != nullptr) ? mapModuleReference(module, reference, true) : 0;
+   pos_t position = (module != nullptr) ? mapModuleReference(module, reference, true) : 0;
    if (position != 0) {
       // place reader on the next after symbol record
       MemoryReader reader(module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true), position);
@@ -215,11 +212,16 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::LongLocalAddress:
             case DebugSymbol::RealLocalAddress:
             case DebugSymbol::ByteArrayAddress:
+            case DebugSymbol::ShortArrayAddress:
+            case DebugSymbol::IntArrayAddress:
             case DebugSymbol::Parameter:
             case DebugSymbol::IntParameterAddress:
             case DebugSymbol::RealParameterAddress:
             case DebugSymbol::LongParameterAddress:
             case DebugSymbol::ParameterAddress:
+            case DebugSymbol::ByteArrayParameter:
+            case DebugSymbol::ShortArrayParameter:
+            case DebugSymbol::IntArrayParameter:
                // replace field name reference with the name
                stringReader.seek(info.addresses.local.nameRef);
 
@@ -657,8 +659,7 @@ void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName
          _sourceModel->setTraceLine(lineInfo->row, true);
       }
 
-      _notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
-      _notifier->notifyModelChange(NOTIFY_DEBUGWATCH);
+      _notifier->notify(NOTIFY_DEBUG_CHANGE, DEBUGWATCH_CHANGED | FRAME_CHANGED);
    }
 }
 
@@ -671,8 +672,7 @@ void DebugController :: onStop()
    _currentModule = nullptr;
    _currentPath = nullptr;
 
-   _sourceModel->clearTraceLine();
-   _notifier->notifyModelChange(NOTIFY_SOURCEMODEL);
+   _notifier->notifyCompletion(NOTIFY_DEBUGGER_RESULT, DEBUGGER_STOPPED);
 }
 
 void DebugController :: run()
@@ -885,6 +885,30 @@ void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, add
             case elDebugFLOAT64:
                watch->populateFLOAT64(&context, _process->getFLOAT64(address));
                break;
+            case elDebugLiteral:
+            {
+               char value[DEBUG_MAX_STR_LENGTH + 1];
+               size_t length = _min(_process->getArrayLength(address), DEBUG_MAX_STR_LENGTH);
+               _process->readDump(address, value, length);
+               value[length] = 0;
+               watch->populateString(&context, value);
+               break;
+            }
+            case elDebugWideLiteral:
+            {
+               wide_c value[DEBUG_MAX_STR_LENGTH + 1];
+               size_t length = _min(_process->getArrayLength(address), DEBUG_MAX_STR_LENGTH) >> 1;
+               _process->readDump(address, (char*)value, length << 1);
+               value[length] = 0;
+               watch->populateWideString(&context, value);
+               break;
+            }
+            case elDebugArray:
+               readObjectArray(watch, item, address, level, info);
+               break;
+            case elDebugDWORDS:
+               readIntArrayLocal(watch, item, address, "content", level);
+               break;
             default:
                readFields(watch, item, address, level, info);
                break;
@@ -926,6 +950,56 @@ void* DebugController :: readByteArrayLocal(ContextBrowserBase* watch, void* par
    else return nullptr;
 }
 
+void* DebugController :: readShortArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      size_t length = _min(_process->getArrayLength(address) >> 1, 100);
+
+      WatchContext context = { parent, address };
+      void* item = watch->addOrUpdate(&context, name, "<shortarray>");
+
+      IdentifierString value;
+      for (size_t i = 0; i < length; i++) {
+         unsigned short b = _process->getWORD(address + i * 2);
+
+         value.copy("[");
+         value.appendInt(i);
+         value.append("]");
+
+         WatchContext context = { item, address + i * 2};
+         watch->addOrUpdateWORD(&context, *value, b);
+      }
+
+      return item;
+   }
+   else return nullptr;
+}
+
+void* DebugController :: readIntArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      size_t length = _min(_process->getArrayLength(address) >> 2, 100);
+
+      WatchContext context = { parent, address };
+      void* item = watch->addOrUpdate(&context, name, "<intarray>");
+
+      IdentifierString value;
+      for (size_t i = 0; i < length; i++) {
+         unsigned int b = _process->getDWORD(address + i * 4);
+
+         value.copy("[");
+         value.appendInt(i);
+         value.append("]");
+
+         WatchContext context = { item, address + i * 4};
+         watch->addOrUpdateDWORD(&context, *value, b);
+      }
+
+      return item;
+   }
+   else return nullptr;
+}
+
 void* DebugController :: readIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
@@ -957,6 +1031,24 @@ void* DebugController :: readRealLocal(ContextBrowserBase* watch, void* parent, 
       return watch->addOrUpdateFLOAT64(&context, name, value);
    }
    else return nullptr;
+}
+
+void DebugController :: readObjectArray(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info)
+{
+   if (level <= 0)
+      return;
+
+   size_t length = _min(_process->getArrayLength(address) / sizeof(addr_t), 100);
+   IdentifierString value;
+   for (size_t i = 0; i < length; i++) {
+      addr_t itemAddress = _process->getField(address, i);
+
+      value.copy("[");
+      value.appendInt(i);
+      value.append("]");
+
+      readObject(watch, parent, itemAddress, *value, level - 1, nullptr);
+   }
 }
 
 void DebugController :: readFields(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info)
@@ -1043,6 +1135,34 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
             case DebugSymbol::ByteArrayAddress:
                item = readByteArrayLocal(watch, nullptr,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::ByteArrayParameter:
+               item = readByteArrayLocal(watch, nullptr,
+                  _process->getStackItem(
+                     lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::ShortArrayAddress:
+               item = readShortArrayLocal(watch, nullptr,
+                  _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::ShortArrayParameter:
+               item = readShortArrayLocal(watch, nullptr,
+                  _process->getStackItem(
+                     lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::IntArrayAddress:
+               item = readIntArrayLocal(watch, nullptr,
+                  _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::IntArrayParameter:
+               item = readIntArrayLocal(watch, nullptr,
+                  _process->getStackItem(
+                     lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::LongLocalAddress:

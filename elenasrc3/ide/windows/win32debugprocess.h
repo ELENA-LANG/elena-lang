@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Win32 Debugger class and its helpers header
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WIN32DEBUGPROCESS_H
@@ -232,6 +232,7 @@ namespace elena_lang
 
       addr_t getMemoryPtr(addr_t address) override;
       char getBYTE(addr_t address) override;
+      unsigned short getWORD(addr_t address) override;
       unsigned getDWORD(addr_t address) override;
       unsigned long long getQWORD(addr_t address) override;
       double getFLOAT64(addr_t address) override;

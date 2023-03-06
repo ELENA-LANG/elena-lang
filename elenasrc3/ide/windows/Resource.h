@@ -11,7 +11,9 @@
 #define IDM_FILE_EXIT               403
 #define IDM_FILE_SAVE               404
 #define IDM_FILE_CLOSE              405
-#define IDM_PROJECT_OPEN            406
+#define IDM_FILE_CLOSEALL           406
+#define IDM_PROJECT_OPEN            407
+#define IDM_PROJECT_CLOSE           408
 
 #define IDM_EDIT_UNDO               501
 #define IDM_EDIT_REDO               502
@@ -36,6 +38,8 @@
 
 #define IDM_WINDOW_NEXT             901
 #define IDM_WINDOW_PREVIOUS         902
+
+#define IDM_HELP_API               1001
 
 #define IDI_IDE                     107
 #define IDI_SMALL                   108

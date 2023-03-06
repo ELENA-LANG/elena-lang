@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE common classes header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECOMMON_H
@@ -9,12 +9,14 @@
 
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x0030
+#define IDE_REVISION_NUMBER                           0x0044
 
 namespace elena_lang
 {
    constexpr auto PLATFORM_CATEGORY                   = "configuration/platform";
    constexpr auto NAMESPACE_CATEGORY                  = "configuration/project/namespace";
+
+   constexpr auto TARGET_SUB_CATEGORY                 = "project/executable";
    constexpr auto MODULE_CATEGORY                     = "files/*";
 
    constexpr auto WIN_X86_KEY                         = "Win_x86";
@@ -27,23 +29,40 @@ namespace elena_lang
    constexpr auto ERROR_RUN_NEED_TARGET               = 0x0001;
    constexpr auto ERROR_DEBUG_FILE_NOT_FOUND_COMPILE  = 0x0002;
    constexpr auto ERROR_RUN_NEED_RECOMPILE            = 0x0003;
+   constexpr auto DEBUGGER_STOPPED                    = 0x0004;
 
    // --- Notification codes ---
-   constexpr auto NOTIFY_SOURCEMODEL                  = 1;
-   constexpr auto NOTIFY_CURRENTVIEW_CHANGED          = 2;
-   constexpr auto NOTIFY_CURRENTVIEW_SHOW             = 3;
-   constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
-   constexpr auto NOTIFY_LAYOUT_CHANGED               = 5;
-   constexpr auto NOTIFY_SHOW_RESULT                  = 6;
-   constexpr auto NOTIFY_COMPILATION_RESULT           = 7;
-   constexpr auto NOTIFY_ERROR_HIGHLIGHT_ROW          = 8;
-   constexpr auto NOTIFY_ACTIVATE_EDITFRAME           = 9;
-   constexpr auto NOTIFY_START_COMPILATION            = 10;
-   constexpr auto NOTIFY_PROJECTMODEL                 = 11;
-   constexpr auto NOTIFY_PROJECTVIEW_SEL              = 12;
-   constexpr auto NOTIFY_DEBUGWATCH                   = 13;
-   constexpr auto NOTIFY_ONSTART                      = 14;
-   constexpr auto NOTIFY_REFRESH                      = 15;
+   //constexpr auto NOTIFY_SOURCEMODEL                  = 1;
+   constexpr auto NOTIFY_CURRENTVIEW_CHANGED             = 2;
+   //constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
+   //constexpr auto NOTIFY_LAYOUT_CHANGED               = 5;
+   //constexpr auto NOTIFY_ACTIVATE_EDITFRAME           = 9;
+   //constexpr auto NOTIFY_START_COMPILATION            = 10;
+   //constexpr auto NOTIFY_PROJECTMODEL                 = 11;
+   constexpr int NOTIFY_DEBUGGER_RESULT                  = 6;
+   constexpr int NOTIFY_ERROR_SEL                        = 7;
+   constexpr int NOTIFY_COMPILATION_RESULT               = 8;
+   constexpr int NOTIFY_SHOW_RESULT                      = 9;
+   constexpr int NOTIFY_TEXTFRAME_SEL                    = 10;
+   constexpr int NOTIFY_PROJECTVIEW_SEL                  = 11;
+   constexpr int NOTIFY_DEBUG_CHANGE                     = 12;
+   constexpr int NOTIFY_IDE_CHANGE                       = 13;
+   constexpr int NOTIFY_ONSTART                          = 14;
+   constexpr int NOTIFY_REFRESH                          = 15;
+
+   // --- Notification statuses ---
+   constexpr NotificationStatus IDE_ONSTART              = -1;
+   constexpr NotificationStatus NONE_CHANGED             = 0x00000;
+
+   constexpr NotificationStatus IDE_LAYOUT_CHANGED       = 0x00001;
+   constexpr NotificationStatus IDE_STATUS_CHANGED       = 0x00002;
+   constexpr NotificationStatus FRAME_CHANGED            = 0x00004;
+   constexpr NotificationStatus PROJECT_CHANGED          = 0x00008;
+   constexpr NotificationStatus FRAME_VISIBILITY_CHANGED = 0x00010;
+   constexpr NotificationStatus DEBUGWATCH_CHANGED       = 0x00020;
+   constexpr NotificationStatus IDE_COMPILATION_STARTED  = 0x00040;
+   constexpr NotificationStatus OUTPUT_SHOWN             = 0x00080;
+   constexpr NotificationStatus FRAME_ACTIVATE           = 0x00100;
 
    // --- PathSettings ---
    struct PathSettings
@@ -54,10 +73,16 @@ namespace elena_lang
    // --- IDEStatus ---
    enum class IDEStatus
    {
-      None            = 0,
-      Ready           = 1,
-      Busy            = 2,
-      AutoRecompiling = 3,
+      Empty                = 0,
+      Ready                = 1,
+      Busy                 = 2,
+      AutoRecompiling      = 3,
+      Compiling            = 4,
+      CompiledSuccessfully = 5,
+      CompiledWithWarnings = 6,
+      CompiledWithErrors   = 7,
+      Broken               = 8,
+      DebuggerStopped      = 9,
    };
 
    inline bool testIDEStatus(IDEStatus value, IDEStatus mask)
@@ -140,15 +165,19 @@ namespace elena_lang
 
       virtual void* addOrUpdate(WatchContext* root, ustr_t name, ustr_t className);
       virtual void* addOrUpdateBYTE(WatchContext* root, ustr_t name, int value);
+      virtual void* addOrUpdateWORD(WatchContext* root, ustr_t name, short value);
       virtual void* addOrUpdateDWORD(WatchContext* root, ustr_t name, int value);
       virtual void* addOrUpdateQWORD(WatchContext* root, ustr_t name, long long value);
       virtual void* addOrUpdateFLOAT64(WatchContext* root, ustr_t name, double value);
 
       virtual void removeUnused(WatchItems& refreshedItems) = 0;
 
+      virtual void populateWORD(WatchContext* root, unsigned short value);
       virtual void populateDWORD(WatchContext* root, unsigned int value);
       virtual void populateQWORD(WatchContext* root, unsigned long long value);
       virtual void populateFLOAT64(WatchContext* root, double value);
+      virtual void populateString(WatchContext* root, const char* value);
+      virtual void populateWideString(WatchContext* root, const wide_c* value);
    };
 
    // --- DebugControllerBase ---
@@ -221,6 +250,7 @@ namespace elena_lang
       virtual size_t getArrayLength(addr_t address) = 0;
 
       virtual char getBYTE(addr_t address) = 0;
+      virtual unsigned short getWORD(addr_t address) = 0;
       virtual unsigned int getDWORD(addr_t address) = 0;
       virtual unsigned long long getQWORD(addr_t address) = 0;
       virtual double getFLOAT64(addr_t address) = 0;

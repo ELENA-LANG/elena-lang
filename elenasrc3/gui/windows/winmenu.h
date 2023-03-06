@@ -34,6 +34,7 @@ namespace  elena_lang
       void refresh() override {}
 
       void checkItemById(int id, bool checked);
+      void enableMenuItemById(int id, bool enabled);
    };
 
    class RootMenu : public MenuBase

@@ -226,6 +226,14 @@ XmlTree :: XmlTree()
    _parent = this; // NOTE : due to current implementation - parent refers to the tree
 }
 
+XmlTree::XmlTree(ustr_t rootTag)
+{
+   _position = 0;
+   _parent = this; // NOTE : due to current implementation - parent refers to the tree
+
+   insert(_position, rootTag);
+}
+
 bool XmlTree :: load(path_t path, FileEncoding encoding)
 {
    TextFileReader reader(path, encoding, true);
@@ -237,6 +245,63 @@ bool XmlTree :: load(path_t path, FileEncoding encoding)
    reader.readAll(_content, buffer, 128);
 
    return true;
+}
+
+bool XmlTree::save(path_t path, FileEncoding encoding, bool withBOM, bool formatted)
+{
+   TextFileWriter writer(path, encoding, withBOM);
+   if (!writer.isOpen())
+      return false;
+
+   if (formatted) {
+      int indent = -4;
+      bool inlineMode = false;
+      bool openning = true;
+      bool ignoreWhitespace = true;
+      for (size_t i = 0; i < _content.length(); i++) {
+         if (_content[i] == '<') {
+            if (_content[i + 1] != '/') {
+               openning = true;
+               inlineMode = false;
+               indent += 4;
+               if (indent > 0) {
+                  writer.writeNewLine();
+                  writer.fillText(" ", 1, indent);
+               }
+            }
+            else {
+               openning = false;
+               if (!inlineMode) {
+                  writer.writeNewLine();
+                  writer.fillText(" ", 1, indent);
+               }
+               inlineMode = false;
+
+               indent -= 4;
+            }
+            ignoreWhitespace = false;
+         }
+         else if (_content[i] == '>') {
+            if (openning)
+               inlineMode = true;
+
+            ignoreWhitespace = true;
+         }
+         else if (isWhitespace(_content[i])) {
+            // ignore existing line breaks
+            if (ignoreWhitespace)
+               continue;
+         }
+         else if (inlineMode) {
+            ignoreWhitespace = false;
+         }
+
+         writer.writeChar(_content[i]);
+      }
+
+      return true;
+   }
+   else return writer.write(_content.str(), _content.length_pos());
 }
 
 size_t XmlTree :: resolve(ustr_t xpath)
@@ -288,6 +353,26 @@ size_t XmlTree :: resolveSubPath(ustr_t xpath, size_t& end)
    return position;
 }
 
+size_t XmlTree :: reproduceSubPath(ustr_t xpath, size_t& end)
+{
+   size_t length = xpath.length();
+   end = xpath.findLast('/', length);
+
+   size_t position = NOTFOUND_POS;
+   if (length > end) {
+      XPath subXPath(xpath.str(), end);
+
+      position = resolve(subXPath.str());
+
+      if (position == NOTFOUND_POS) {
+         auto subNode = insertNode(subXPath.str());
+
+         position = subNode.position();
+      }
+   }
+
+   return position;
+}
 
 bool XmlTree :: selectNodes(ustr_t xpath, XmlNodeList& nodes)
 {
@@ -342,6 +427,9 @@ XmlNode XmlTree :: selectNode(ustr_t xpath)
 
 XmlNode XmlTree :: selectNode(XmlNode& node, ustr_t xpath)
 {
+   if (node.isNotFound())
+      return node;
+
    size_t length = xpath.length();
    size_t end = xpath.findLast('/', length);
 
@@ -360,3 +448,40 @@ XmlNode XmlTree :: selectNode(XmlNode& node, ustr_t xpath)
 
    return lastNode.findChild(childTag.str());
  }
+
+size_t XmlTree :: insert(size_t position, ustr_t tag)
+{
+   _content.insert(">", position);
+   _content.insert(tag, position);
+   _content.insert("</", position);
+   _content.insert(">", position);
+   _content.insert(tag, position);
+   _content.insert("<", position);
+
+   return position;
+}
+
+XmlNode XmlTree :: insertNode(ustr_t xpath)
+{
+   size_t end = 0;
+   size_t position = reproduceSubPath(xpath, end);
+   if (position != NOTFOUND_POS) {
+      NodeTag tag;
+      size_t start = loadTag(getContent(), position, tag, nullptr);
+
+      XmlNode node(this, insert(start, xpath + end + 1));
+
+      return node;
+   }
+   else return {};
+}
+
+void XmlTree :: writeContent(size_t position, ustr_t value)
+{
+   NodeTag tag;
+   size_t start = loadTag(getContent(), position, tag, nullptr);
+   size_t end = parse(_content.str(), position, _content.length(), nullptr) - tag.length() - 3;
+
+   _content.cut(start, end - start);
+   _content.insert(value.str(), start);
+}

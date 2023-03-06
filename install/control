@@ -1,6 +1,6 @@
 Package: elena-lang
 Version: 6.0.1
-Architecture: i386
+Architecture: ppc64le
 Maintainer: Alex Rakov <arakov@yandex.ru>
 Depends: libc6 (>= 2.1)
 Section: elena-lang

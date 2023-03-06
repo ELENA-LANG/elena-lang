@@ -3,7 +3,7 @@
 //
 //		This file contains CPU native helpers
 //		Supported platforms: x86 / x86-64
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86HELPER_H
@@ -418,7 +418,7 @@ namespace elena_lang
       }
 
       void fixJumps(pos_t position, int size, MemoryWriter& writer);
-      bool fixLabel(pos_t label, MemoryWriter& writer) override;
+      bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override;
 
       void writeShortJmpForward(pos_t label, MemoryWriter& writer);
       void writeJmpForward(pos_t label, MemoryWriter& writer);
@@ -453,6 +453,26 @@ namespace elena_lang
       void writeJneBack(pos_t label, MemoryWriter& writer) override
       {
          writeJccBack(X86JumpType::JNZ, label, writer);
+      }
+
+      void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         writeJccForward(X86JumpType::JL, label, writer, byteCodeOffset);
+      }
+
+      void writeJltBack(pos_t label, MemoryWriter& writer) override
+      {
+         writeJccBack(X86JumpType::JL, label, writer);
+      }
+
+      void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         writeJccForward(X86JumpType::JGE, label, writer, byteCodeOffset);
+      }
+
+      void writeJgeBack(pos_t label, MemoryWriter& writer) override
+      {
+         writeJccBack(X86JumpType::JGE, label, writer);
       }
    };
 }

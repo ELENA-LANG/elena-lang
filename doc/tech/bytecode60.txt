@@ -12,7 +12,7 @@ ELENA byte codes (or ecodes)
    index  - data accumulator 
 
    x86    : fp - ebp, sp - esp, acc - ebx, index - edx, sp[0] - esi
-   x86_64 : fp - rbp, sp - rsp, acc - rbx, index - rdx, sp[0] - r10, sp[1] - rdx, r15 - presaved
+   x86_64 : fp - rbp, sp - rsp, acc - rbx, index - rdx, sp[0] - r10, sp[1] - r11, r15 - presaved
    arm64  : fp - x29, sp - x31, index - x9, acc - x10, sp[0] - x0, sp[1] - x1
    ppc64  : fp - r31, sp - r1, index - r14, acc - r15, sp[0] - r3, sp[1] - r4
 
@@ -52,23 +52,35 @@ ELENA byte codes (or ecodes)
  --------------------
    andn n                   - index := index & n
 
-   assign i                 - acc[i] := sp[0];
+   assign                   - acc[index] := sp[0]
+
+   assigni i                - acc[i] := sp[0];
 
    bload                    - index := byte([acc])
 
    get i                    - acc[i] => acc
 
+   lload                    - long:index := long:[acc] 
+
    load                     - index := [acc] 
 
    loadv                    - index.action := [acc].action
+
+   loads                    - index := [acc].action
 
    lsave                    - long:[acc] := index
 
    fsave                    - double:[acc] := index
 
    mov env                  - %SYSTEM_ENV => index 
+                              NOTE: for 64 bit, to save it correctly lsave and lsavedp should be used
+
+   mov frm                  - %CURRENT_FRAME => index;
+                              NOTE: for 64 bit, to save it correctly lsave and lsavedp should be used
 
    mov mssg:m               - index := m
+
+   mov arg:n                - index.{argCount}{flags} := n
 
    mov n:n                  - index := n
 
@@ -94,8 +106,15 @@ ELENA byte codes (or ecodes)
 
    wload                    - index := word([acc])
 
+   xassign                  - acc[index] := sp[0];
+                              direct operation
+
    xassign i                - acc[i] := sp[0];
                               direct operation
+
+   xget                     - acc[index] => acc
+
+   xassignsp                - sp => acc
 
 
  Call operations:
@@ -106,11 +125,11 @@ ELENA byte codes (or ecodes)
    call symbol:r            - calls the procedure;
                               acc contains the result
 
-   call vt:i                - call acc::VMT[i] method;
-                              acc contains the result
-
    call mssg:m, r           - calls directly the method resolved by JIT by r and m
                               acc contains the result 
+
+   call vt:i                - call acc::VMT[i] method;
+                              acc contains the result
 
    jump mssg:m, r           - jumps directly the method resolved by JIT by r and m
                               acc contains the result 
@@ -123,11 +142,18 @@ ELENA byte codes (or ecodes)
  
    vjump mssg:m, r          - jumps via table the method resolved by JIT by r and m
                               acc contains the result 
+
+   xcall                    - calls the procedure in acc;
+ 
+   xjump                    - jumps to the procedure in acc;
  
 
  Stack operations:
  -----------------                                           
    alloc i                  - sp += i ; reserve and fill with zeros; 
+                              new sp value is aligned to 2 in x86-64 mode
+
+   dalloc                   - sp += index ; reserve and fill with zeros; 
                               new sp value is aligned to 2 in x86-64 mode
 
    free i                   - sp -= i ; release the stack; 
@@ -136,6 +162,10 @@ ELENA byte codes (or ecodes)
    load fp:i                - index := fp[i]
 
    load dp:disp             - index := dp[disp]
+
+   lsave dp:disp            - dp[disp]  := long:index
+
+   lsave sp:disp            - sp[disp]  := long:index
 
    mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
 
@@ -159,7 +189,7 @@ ELENA byte codes (or ecodes)
 
    swap sp:i                - acc <=> sp[i]
 
-   xpeek sp:i               - cached_sp[i] := sp[i];
+   xrefresh sp:i            - cached_sp[i] := sp[i];
 
    xflush sp:i              - sp[i] := cached_sp[i];
 
@@ -176,8 +206,6 @@ ELENA byte codes (or ecodes)
  ------------------
    bread                    - byte:sp[0][index*n] >> int:acc, 
 
-   bwrite n                 - sp[0][index] := byte:n
-
    class                    - acc := acc.class
 
    coalesce                 - acc := acc ?? sp[0]   (if acc is nil, get sp[0])
@@ -187,16 +215,30 @@ ELENA byte codes (or ecodes)
    copy dp:disp, n          - sp[0] >> temp, n bytes  
                               temp >> dp[disp];
                               
+   create {prefix}:r        - create the object with the specified size;
+                              sp[0] >> temp;
+                              out: acc contains the class instance, index - undefined
+
    create n {prefix}:r      - create the object with the specified size;
                               sp[0] >> temp;
                               size * temp;
                               out: acc contains the class instance, index - undefined
 
+   dcopy n                  - sp[0] >> acc, n*index bytes
+
+   dcopy dp:disp, n         - sp[0] >> temp, n*index bytes  
+                              temp >> dp[disp];
+                              
    dispatch m, r            - search in message table r the message in index and provided parameter list; 
                               if found jumps to it;
 
+   dtrans                   - sp[0] >> acc, index ptrs
+
    len                      - index := acc.length;
                               returns the object length
+
+   mlen                     - index := index.argCount;
+                              returns the argument counter
 
    new i, {prefix}:r        - create the object with the specified
                               number of fields;
@@ -228,6 +270,10 @@ ELENA byte codes (or ecodes)
                               size; in : acc contains the reference to the stack space
                               out: acc contains the class instance, index - undefined
 
+   xredirect m              - search acc::VMT for the {m.action + index.argCount} in index;
+                              if found jumps to it; binary search is used ; index, acc presaved; 
+                              index is set the original valuze
+
    xwrite offs, n           - acc[disp] >> temp, n bytes;
                               temp >> sp[0];
 
@@ -240,6 +286,10 @@ ELENA byte codes (or ecodes)
  
    jne  label               - jump if COMP.EQ == 0
  
+   jlt  label               - jump if COMP.LT == 1
+ 
+   jge  label               - jump if COMP.LT == 0
+
 
  Arithmeric operations:
  ----------------------
@@ -303,6 +353,8 @@ ELENA byte codes (or ecodes)
    ixor dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] ^ temp;
                               n = 1,2,4,8 
+ 
+   orn n                    - index := index | n
  
    subn n                   - index := index - n
 

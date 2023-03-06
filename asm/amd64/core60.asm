@@ -14,7 +14,8 @@ define VOIDPTR              2000Eh
 
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
-define ARG_MASK               01Fh
+define ARG_MASK               05Fh
+define ARG_COUNT_MASK         01Fh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -29,7 +30,7 @@ define elPackageOffset       0020h
 // ; --- GC TABLE OFFSETS ---
 define gc_header             0000h
 define gc_start              0008h
-define gc_yg_current         0010h
+define gc_yg_start           0010h
 define gc_yg_current         0018h
 define gc_yg_end             0020h
 define gc_mg_start           0038h
@@ -354,6 +355,90 @@ inline % 11h
 
 end
 
+// ; assign
+inline %12h
+
+  mov  rax, rbx
+
+  // calculate write-barrier address
+  mov  rcx, [data : %CORE_GC_TABLE + gc_header]
+  sub  rax, [data : %CORE_GC_TABLE + gc_start]
+  shr  rax, page_size_order
+  mov  [rbx + rdx*8], r10
+  mov  byte ptr [rax + rcx], 1  
+
+end
+
+// ; movfrm
+inline %13h
+
+  mov  rdx, rbp
+
+end
+
+// ; loads
+inline % 14h
+
+  mov   edx, dword ptr [rbx]
+  shr   edx, ACTION_ORDER
+  mov   rax, mdata : %0
+  mov   edx, dword ptr [rax + rdx]
+
+end
+
+// ; mlen
+inline % 15h
+
+  and   edx, ARG_COUNT_MASK
+
+end
+
+// ; dalloc
+inline %16h
+
+  lea  rax, [rdx*8]
+  add  eax, 8
+  and  eax, 0FFFFFFF0h
+
+  sub  rsp, rax
+  mov  rcx, rdx
+  xor  rax, rax
+  mov  rdi, rsp
+  rep  stos
+
+end
+
+// ; xassignsp
+inline % 17h
+
+  mov   rbx, rsp
+
+end
+
+// ; dtrans
+inline %18h
+
+  mov  rsi, r10
+  mov  rcx, rdx
+  mov  rdi, rbx
+  rep  movsq
+
+end
+
+// ; xassign
+inline %19h
+
+  mov  [rbx + rdx*8], r10
+
+end
+
+// ; lload
+inline %1Ah
+
+  mov  rdx, [rbx]
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -389,11 +474,7 @@ end
 // ; lsave
 inline %24h
 
-  mov  eax, edx
-  cdq
-  mov  dword ptr [rbx + 4], edx
-  mov  dword ptr [rbx], eax
-  mov  edx, eax
+  mov  qword ptr [rbx], rdx
 
 end
 
@@ -404,6 +485,37 @@ inline %25h
   fild dword ptr [rsp]
   fstp qword ptr [rbx]
   add  rsp, 8
+
+end
+
+// ; wread
+inline %26h
+
+  mov  rsi, r10  
+  xor  rax, rax
+  mov  ax, word ptr [rsi+rdx]
+  mov  [rbx], rax
+
+end
+
+// ; xjump
+inline %027h
+
+  jmp rbx
+
+end
+
+// ; xget
+inline %02Eh
+
+  mov  rbx, [rbx + rdx*8]
+
+end
+
+// ; xcall
+inline %02Fh
+
+  call rbx
 
 end
 
@@ -418,6 +530,14 @@ end
 inline %180h
 
   xor  rbx, rbx
+
+end 
+
+// ; setr -1
+inline %680h
+
+  xor  rbx, rbx
+  sub  rbx, 1
 
 end 
 
@@ -602,6 +722,25 @@ inline %8Eh
 
 end 
 
+// ; creater r
+inline %08Fh
+
+  mov  rax, [r10]
+  mov  ecx, page_ceil
+  shl  eax, 3
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOC
+
+  mov  rcx, [r10]
+  shl  ecx, 3
+
+  mov  rax, __ptr64_1
+  mov  [rbx - elSizeOffset], rcx
+  mov  [rbx - elVMTOffset], rax
+
+end
+
 // ; copy
 inline %90h
 
@@ -771,7 +910,25 @@ labEnd:
 
 end
 
-// ; saveddisp
+// ; dcopy
+inline %9Ah
+
+  mov  rsi, r10
+  mov  ecx, __n_1 
+  imul ecx, edx
+  mov  rdi, rbx
+  rep  movsb
+
+end
+
+// ; orn
+inline %9Bh
+
+  or  edx, __n_1
+
+end
+
+// ; savedp
 inline %0A0h
 
   mov  dword ptr[rbp + __arg32_1], edx
@@ -788,7 +945,8 @@ end
 // ; savesi
 inline %0A2h
 
-  mov dword ptr [rsp + __arg32_1], edx
+  mov eax, edx
+  mov [rsp + __arg32_1], rax
 
 end 
 
@@ -914,6 +1072,34 @@ inline %2A9h
 
 end 
 
+// ; lsavedp
+inline %0AAh
+
+  mov  [rbp + __arg32_1], rdx
+
+end
+
+// ; lsavesi
+inline %0ABh
+
+  mov qword ptr [rsp + __arg32_1], rdx
+
+end 
+
+// ; lsavesi 0
+inline %1ABh
+
+  mov r10, rdx
+
+end 
+
+// ; lsavesi 1
+inline %2ABh
+
+  mov r11, rdx
+
+end 
+
 // ; callr
 inline %0B0h
 
@@ -937,6 +1123,45 @@ inline % 0B5h
 
 end
 
+// ; redirect
+inline % 0B6h // (rbx - object, rdx - message, r10 - arg0, r11 - arg1)
+
+  mov  r15, rdx
+  mov  r14, [rbx - elVMTOffset]
+  xor  ecx, ecx
+
+  and  edx, ARG_MASK
+  mov  eax, __arg32_1
+  and  ecx, ~ARG_MASK
+  or   edx, ecx
+  mov  rsi, qword ptr[r14 - elVMTSizeOffset]
+
+labSplit:
+  test esi, esi
+  jz   short labEnd
+
+labStart:
+  shr   esi, 1
+  lea   r13, [rsi*2]
+  setnc cl
+  cmp   rdx, [r14+r13*8]
+  je    short labFound
+  lea   r8, [r14+r13*8]
+  jb    short labSplit
+  lea   r14, [r8+16]
+  sub   esi, ecx
+  jmp   labSplit
+  nop
+  nop
+labFound:
+  mov   rdx, r15
+  jmp   [r14+r13*8+8]
+
+labEnd:
+  mov   rdx, r15
+                               
+end
+
 // ; cmpr r
 inline %0C0h
 
@@ -949,6 +1174,14 @@ end
 inline %1C0h
 
   mov  rax, 0
+  cmp  rbx, rax
+
+end 
+
+// ; cmpr -1
+inline %6C0h
+
+  mov  rax, -1
   cmp  rbx, rax
 
 end 
@@ -1601,6 +1834,18 @@ inline %0E8h
 
 end
 
+// ; dcopydpn
+inline %0E9h
+
+  mov  rsi, r10
+  lea  rdi, [rbp + __arg32_1]
+  mov  ecx, __n_2
+  imul ecx, edx
+  rep  movsb
+
+end
+
+
 // ; xwriteon
 inline %0EAh
 
@@ -2042,6 +2287,91 @@ labNextBaseClass:
   and  rbx, rbx
   jnz  labNextOverloadlist
 
+  mov  rbx, r8
+  mov  edx, __arg32_1
+
+end
+
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 5FAh
+
+  mov  r8,  rbx
+  mov  [rsp+8], r10                      // ; saving arg0
+  lea  rax, [rsp + __n_2]
+  mov  [rsp+16], r11                     // ; saving arg1
+
+  mov  rsi, __ptr64_2
+  xor  edx, edx
+
+  // ; count the number of args
+  mov  rbx, rax
+  mov  r9, -1
+labCountParam:
+  lea  rbx, [rbx+8]
+  cmp  [rbx], r9
+  lea  rcx, [rcx+1]
+  jnz  short labCountParam
+  mov  r15, rcx
+
+  mov  rbx, [rsi] // ; message from overload list
+
+labNextOverloadlist:
+  mov  r9, mdata : %0
+  shr  ebx, ACTION_ORDER
+  lea  r13, [rbx*8]
+  mov  r13, [r9 + r13 * 2 + 8]
+  xor  ecx, ecx
+  lea  rbx, [r13 - 8]
+
+  mov  r14, rbx
+
+labNextParam:
+  add  ecx, 1
+  cmp  rcx, r15
+  jnz  short labMatching
+
+  mov  r9, __ptr64_2
+  lea  r13, [rdx * 8]
+  mov  rbx, r8
+  mov  rax, [r9 + r13 * 2 + 8]
+  mov  rdx, [r9 + r13 * 2]
+  jmp  rax
+
+labMatching:
+  mov    rdi, r14
+  lea    rdi, [rdi + 8]
+  cmp    [rdi], 0
+  cmovnz r14, rdi
+
+  mov  rdi, [rax + rcx * 8]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+  test  rdi, rdi                                              
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, r14
+  mov  rsi, [rsi]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  add  edx, 1
+  mov  r13, __ptr64_2
+  lea  r9, [rdx * 8]
+  mov  rbx, [r13 + r9 * 2] // ; message from overload list
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+  mov  rbx, r8
+  mov  edx, __arg32_1
+
 end
 
 // ; dispatchmr
@@ -2101,6 +2431,91 @@ labNextBaseClass:
   mov  rbx, [r13 + r9 * 2] // ; message from overload list
   and  rbx, rbx
   jnz  labNextOverloadlist
+
+  mov  rbx, r8
+  mov  edx, __arg32_1
+
+end
+
+// ; dispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 5FBh
+
+  mov  r8,  rbx
+  mov  [rsp+8], r10                      // ; saving arg0
+  lea  rax, [rsp + __n_2]
+  mov  [rsp+16], r11                     // ; saving arg0
+
+  mov  rsi, __ptr64_2
+  xor  edx, edx
+
+  mov  rbx, rax
+  mov  r9, -1
+labCountParam:
+  lea  rbx, [rbx+8]
+  cmp  [rbx], r9
+  lea  rcx, [rcx+1]
+  jnz  short labCountParam
+  mov  r15, rcx
+
+  mov  rbx, [rsi] // ; message from overload list
+
+labNextOverloadlist:
+  mov  r9, mdata : %0
+  shr  ebx, ACTION_ORDER
+  lea  r13, [rbx*8]
+  mov  r13, [r9 + r13 * 2 + 8]
+  xor  ecx, ecx
+  lea  rbx, [r13 - 8]
+
+  mov  r14, rbx
+
+labNextParam:
+  add  ecx, 1
+  cmp  rcx, r15
+  jnz  short labMatching
+
+  mov  r9, __ptr64_2
+  lea  r13, [rdx * 8]
+  mov  rbx, r8
+  mov  rax, [r9 + r13 * 2 + 8] 
+  mov  rdx, [r9 + r13 * 2] 
+  mov  rcx, [rbx - elVMTOffset]
+  jmp  [rcx + rax + 8]
+
+labMatching:
+  mov    rdi, r14
+  lea    rdi, [rdi + 8]
+  cmp    [rdi], 0
+  cmovnz r14, rdi
+
+  mov  rdi, [rax + rcx * 8]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+  test  rdi, rdi                                              
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, r14
+  mov  rsi, [rsi]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  add  rdx, 1
+  mov  r13, __ptr64_2
+  lea  r9, [rdx * 8]
+  mov  rbx, [r13 + r9 * 2] // ; message from overload list
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+  mov  rbx, r8
+  mov  edx, __arg32_1
 
 end
 

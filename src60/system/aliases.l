@@ -12,7 +12,9 @@
 #let aliasTypes["real"]    := system'RealNumber;
 #let aliasTypes["char"]    := system'CharValue;
 #let aliasTypes["string"]  := system'String;
+#let aliasTypes["wide"]    := system'WideString;
 #let aliasTypes["message"] := system'Message;
 #let aliasTypes["handle"]  := system'Handle;
+#let aliasTypes["pointer"] := system'UnsafePointer;
 
 #reload aliasTypes;

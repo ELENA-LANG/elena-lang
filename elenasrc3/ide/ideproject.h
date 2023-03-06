@@ -12,11 +12,13 @@
 
 namespace elena_lang
 {
+   constexpr auto ROOT_NODE            = "configuration";
    constexpr auto MAXIMIZED_SETTINGS   = "configuration/settings/maximized";
    constexpr auto FONTSIZE_SETTINGS    = "configuration/settings/font_size";
    constexpr auto SCHEME_SETTINGS      = "configuration/settings/scheme";
 
    constexpr auto RECENTFILES_SETTINGS = "configuration/recent_files/*";
+   constexpr auto RECENTFILE_SETTINGS  = "configuration/recent_files/path";
 
    // --- Map types ---
    typedef List<path_t, freepath> ProjectPaths;
@@ -35,16 +37,20 @@ namespace elena_lang
          PathString librarySourceRoot;
          PathString appPath;
          PathString compilerPath;
+         PathString configPath;
       } paths;
 
       bool              singleSourceProject;
       bool              autoRecompile;
+      bool              empty;
+      bool              started;
       PathString        name;
       PathString        projectFile;
       PathString        projectPath;
       PathString        outputPath;
 
       IdentifierString  package;
+      IdentifierString  target;
 
       ProjectPaths      sources;
 

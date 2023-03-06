@@ -379,6 +379,19 @@ namespace elena_lang
             return current;
          }
 
+         Node findChild(Key key1, Key key2, Key key3) const
+         {
+            Node current = firstChild();
+            while (current != defKey) {
+               if (current == key1 || current == key2 || current == key3)
+                  return current;
+
+               current = current.nextNode();
+            }
+
+            return current;
+         }
+
          Node appendChild(Key key, ustr_t argument)
          {
             pos_t strPos = _tree->saveStrArgument(argument);
@@ -572,6 +585,11 @@ namespace elena_lang
       }
 
       static bool ifChildExists(Node node, Key key, int value)
+      {
+         return gotoChild(node, key, value) == key;
+      }
+
+      static bool ifChildExists(Node node, Key key, ref_t value)
       {
          return gotoChild(node, key, value) == key;
       }

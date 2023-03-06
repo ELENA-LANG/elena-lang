@@ -75,6 +75,17 @@ namespace elena_lang
       }
    };
 
+   // --- ELENAMachine ---
+   class ELENAMachine
+   {
+   public:
+      int execute(SystemEnv* env, void* symbolListEntry);
+
+      ELENAMachine() = default;
+
+      virtual ~ELENAMachine() = default;
+   };
+
    // --- SystemRoutineProvider ---
    static class SystemRoutineProvider
    {
@@ -89,6 +100,8 @@ namespace elena_lang
       static uintptr_t ExpandHeap(void* allocPtr, size_t newSize);
 
       static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size);
+
+      static size_t LoadCallStack(uintptr_t framePtr, uintptr_t* list, size_t length);
 
       static void Init(SystemEnv* env, SystemSettings settings);
       static void InitExceptionHandling(SystemEnv* env, void* criticalHandler);

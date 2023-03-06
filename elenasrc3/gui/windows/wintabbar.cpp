@@ -18,6 +18,7 @@ CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore, int wi
    : ControlBase(nullptr, 0, 0, width, height)
 {
    _notifier = notifier;
+   _selNotificationId = 0;
    _withAbovescore = withAbovescore;
    _notSelected = true;
 }
@@ -82,7 +83,8 @@ void CustomTabBar :: selectTab(int index)
 {
    int previous = (int)::SendMessage(_handle, TCM_SETCURSEL, index, 0);
    if (_notSelected || previous != index) {
-      _notifier->notifyModelChange(NOTIFY_CURRENTVIEW_CHANGED, index);
+      if (_selNotificationId)
+         _notifier->notifySelection(_selNotificationId, index);
 
       _notSelected = false;
    }
@@ -293,7 +295,7 @@ void TabBar :: setRectangle(Rectangle rec)
    }
 }
 
-void TabBar :: refresh()
+void TabBar :: showCurrentTab()
 {
    int index = getCurrentIndex();
    int current = 0;
@@ -306,7 +308,10 @@ void TabBar :: refresh()
 
       current++;
    }
+}
 
+void TabBar :: refresh()
+{
    if (_current)
       _current->refresh();
 }

@@ -14,7 +14,7 @@
 namespace elena_lang
 {
    // --- LibraryProvider ---
-   class LibraryProvider : public LibraryLoaderBase
+   class LibraryProvider : public LibraryLoaderBase, public LibraryProviderBase
    {
       typedef Map<ustr_t, path_t, allocUStr, freeUStr, freepath> PathMap;
       typedef List<LibraryLoaderListenerBase*> Listeners;
@@ -24,29 +24,40 @@ namespace elena_lang
       IdentifierString  _namespace;
 
       PathMap           _binaryPaths, _packagePaths;
-      ModuleMap         _binaries, _modules;
+      ModuleMap         _binaries, _modules, _debugModules;
 
       Listeners         _listeners;
 
-      void nameToPath(ustr_t moduleName, PathString& path);
+      void nameToPath(ustr_t moduleName, PathString& path, ustr_t extension);
 
       bool loadCore(LoadResult& result);
       ModuleBase* loadModule(ustr_t name, LoadResult& result, bool readOnly);
+      ModuleBase* loadDebugModule(ustr_t name, LoadResult& result);
 
       void onModuleLoad(ModuleBase* module);
 
       ustr_t resolveTemplateWeakReference(ustr_t referenceName, ForwardResolverBase* forwardResolver);
 
-      ModuleBase* resolveModule(ustr_t referenceName, ref_t& reference, bool silentMode);
+      ModuleBase* resolveModule(ustr_t referenceName, ref_t& reference, bool silentMode, bool debugModule);
       ModuleBase* resolveWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
       ModuleBase* resolveIndirectWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
 
    public:
+      ustr_t Namespace() override
+      {
+         return *_namespace;
+      }
+
+      path_t OutputPath() override
+      {
+         return *_outputPath;
+      }
+
       void setOutputPath(path_t path)
       {
          _outputPath.copy(path);
       }
-      void setRootPath(path_t path)
+      void setRootPath(path_t path) override
       {
          _rootPath.copy(path);
       }
@@ -55,18 +66,19 @@ namespace elena_lang
          _namespace.copy(ns);
       }
 
-      void addCorePath(path_t path);
-      void addPrimitivePath(ustr_t alias, path_t path);
-      void addPackage(ustr_t ns, path_t path);
+      void addCorePath(path_t path) override;
+      void addPrimitivePath(ustr_t alias, path_t path) override;
+      void addPackage(ustr_t ns, path_t path) override;
 
       void resolvePath(ustr_t ns, PathString& path) override;
 
       ModuleInfo getModule(ReferenceInfo referenceInfo, bool silentMode) override;
+      ModuleInfo getDebugModule(ReferenceInfo referenceInfo, bool silentMode) override;
 
       ModuleInfo getWeakModule(ustr_t weakReferenceName, bool silentMode) override;
 
       SectionInfo getCoreSection(ref_t reference, bool silentMode) override;
-      SectionInfo getSection(ReferenceInfo referenceInfo, ref_t mask, bool silentMode) override;
+      SectionInfo getSection(ReferenceInfo referenceInfo, ref_t mask, ref_t metaMask, bool silentMode) override;
       ClassSectionInfo getClassSections(ReferenceInfo referenceInfo, ref_t vmtMask, ref_t codeMask, 
          bool silentMode) override;
 

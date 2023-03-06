@@ -3,7 +3,7 @@
 //
 //		This file contains the base class implementing ELENA LibraryManager.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -42,18 +42,19 @@ LibraryProvider :: LibraryProvider()
       _packagePaths(nullptr),
       _binaries(nullptr),
       _modules(nullptr),
+      _debugModules(nullptr),
       _listeners(nullptr)
 {
 }
 
-void LibraryProvider :: nameToPath(ustr_t moduleName, PathString& path)
+void LibraryProvider :: nameToPath(ustr_t moduleName, PathString& path, ustr_t extension)
 {
    for (auto it = _packagePaths.start(); !it.eof(); ++it) {
       // if the module belongs to the package
       if (NamespaceString::isIncluded(it.key(), moduleName)) {
          path.copy(*it);
          ReferenceName::nameToPath(path, moduleName);
-         path.appendExtension("nl");
+         path.appendExtension(extension);
 
          return;
       }
@@ -62,7 +63,7 @@ void LibraryProvider :: nameToPath(ustr_t moduleName, PathString& path)
    // otherwise it is the global library module
    path.copy(*_rootPath);
    ReferenceName::nameToPath(path, moduleName);
-   path.appendExtension("nl");
+   path.appendExtension(extension);
 }
 
 bool LibraryProvider :: loadCore(LoadResult& result)
@@ -86,7 +87,7 @@ bool LibraryProvider :: loadCore(LoadResult& result)
 
 void LibraryProvider :: resolvePath(ustr_t moduleName, PathString& path)
 {
-   nameToPath(moduleName, path);
+   nameToPath(moduleName, path, "nl");
 }
 
 ModuleBase* LibraryProvider :: loadModule(ustr_t name, LoadResult& result, bool readOnly)
@@ -94,7 +95,7 @@ ModuleBase* LibraryProvider :: loadModule(ustr_t name, LoadResult& result, bool 
    ModuleBase* module = _modules.get(name);
    if (module == nullptr) {
       PathString path;
-      nameToPath(name, path);
+      nameToPath(name, path, "nl");
 
       FileReader reader(*path, FileRBMode, FileEncoding::Raw, false);
       if (!readOnly) {
@@ -111,6 +112,28 @@ ModuleBase* LibraryProvider :: loadModule(ustr_t name, LoadResult& result, bool 
       else _modules.add(name, module);
 
       onModuleLoad(module);
+   }
+   else result = LoadResult::Successful;
+
+   return module;
+}
+
+ModuleBase* LibraryProvider :: loadDebugModule(ustr_t name, LoadResult& result)
+{
+   ModuleBase* module = _debugModules.get(name);
+   if (!module) {
+      PathString path;
+      nameToPath(name, path, "dnl");
+
+      FileReader reader(*path, FileRBMode, FileEncoding::Raw, false);
+      module = new ROModule(reader, result);
+
+      if (result != LoadResult::Successful) {
+         delete module;
+
+         return nullptr;
+      }
+      else _debugModules.add(name, module);
    }
    else result = LoadResult::Successful;
 
@@ -171,7 +194,7 @@ ModuleBase* LibraryProvider :: loadModule(ustr_t name)
    else return nullptr;
 }
 
-ModuleBase* LibraryProvider :: resolveModule(ustr_t referenceName, ref_t& reference, bool silentMode)
+ModuleBase* LibraryProvider :: resolveModule(ustr_t referenceName, ref_t& reference, bool silentMode, bool debugModule)
 {
    if (referenceName.empty())
       return nullptr;
@@ -182,14 +205,14 @@ ModuleBase* LibraryProvider :: resolveModule(ustr_t referenceName, ref_t& refere
 
       ReferenceName resolvedName(*_namespace, *name);
 
-      return resolveModule(*resolvedName, reference, silentMode);
+      return resolveModule(*resolvedName, reference, silentMode, debugModule);
    }
 
    NamespaceString ns(referenceName);
    ModuleBase* module = nullptr;
    while (module == nullptr && !ns.empty()) {
       LoadResult result = LoadResult::NotFound;
-      module = loadModule(*ns, result, true);
+      module = debugModule ? loadDebugModule(*ns, result) : loadModule(*ns, result, true);
       if (result != LoadResult::Successful) {
          if (result == LoadResult::NotFound) {
 
@@ -299,7 +322,15 @@ ModuleInfo LibraryProvider :: getModule(ReferenceInfo referenceInfo, bool silent
       info.module = referenceInfo.module;
       info.reference = referenceInfo.module->mapReference(referenceInfo.referenceName, true);
    }
-   else info.module = resolveModule(referenceInfo.referenceName, info.reference, silentMode);
+   else info.module = resolveModule(referenceInfo.referenceName, info.reference, silentMode, false);
+
+   return info;
+}
+
+ModuleInfo LibraryProvider :: getDebugModule(ReferenceInfo referenceInfo, bool silentMode)
+{
+   ModuleInfo info = {};
+   info.module = resolveModule(referenceInfo.referenceName, info.reference, silentMode, true);
 
    return info;
 }
@@ -347,14 +378,16 @@ SectionInfo LibraryProvider :: getCoreSection(ref_t reference, bool silentMode)
    return info;
 }
 
-SectionInfo LibraryProvider :: getSection(ReferenceInfo referenceInfo, ref_t mask, bool silentMode)
+SectionInfo LibraryProvider :: getSection(ReferenceInfo referenceInfo, ref_t codeMask, ref_t metaMask, bool silentMode)
 {
-   SectionInfo info;
+   SectionInfo info = {};
 
    ModuleInfo moduleInfo = getModule(referenceInfo, silentMode);
    if (moduleInfo.module && moduleInfo.reference) {
       info.module = moduleInfo.module;
-      info.section = moduleInfo.module->mapSection(moduleInfo.reference | mask, true);
+      info.section = moduleInfo.module->mapSection(moduleInfo.reference | codeMask, true);
+      if (metaMask)
+         info.metaSection = moduleInfo.module->mapSection(moduleInfo.reference | metaMask, true);
       info.reference = moduleInfo.reference;
    }
 
@@ -450,7 +483,7 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ustr_t referenceName, For
 
    ReferenceInfo referenceInfo;
    ref_t reference = 0;
-   referenceInfo.module = resolveModule(referenceName, reference, true);
+   referenceInfo.module = resolveModule(referenceName, reference, true, false);
    if (referenceInfo.module) {
       referenceInfo.referenceName = referenceInfo.module->resolveReference(reference);
 
@@ -472,6 +505,8 @@ ModuleBase* LibraryProvider :: createDebugModule(ustr_t name)
 {
    auto module = new Module(name);
 
+   _debugModules.add(name, module);
+
    return module;
 }
 
@@ -480,7 +515,7 @@ bool LibraryProvider :: saveModule(ModuleBase* module)
    // resolving the module output path
    ustr_t name = module->name();
    PathString path;
-   nameToPath(name, path);
+   nameToPath(name, path, "nl");
 
    // re-creating path
    PathUtil::recreatePath(*path);
@@ -498,9 +533,7 @@ bool LibraryProvider::saveDebugModule(ModuleBase* module)
    // resolving the module output path
    ustr_t name = module->name();
    PathString path;
-   nameToPath(name, path);
-
-   path.changeExtension("dnl");
+   nameToPath(name, path, "dnl");
 
    // re-creating path
    PathUtil::recreatePath(*path);

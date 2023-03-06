@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller header File
-//                                             (C)2005-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECONTROLLER_H
@@ -20,8 +20,8 @@ namespace elena_lang
    public:
       void newSource(TextViewModelBase* model, ustr_t name, bool autoSelect);
       bool openSource(TextViewModelBase* model, ustr_t name, path_t sourcePath,
-         FileEncoding encoding, bool autoSelect);
-      void closeSource(TextViewModelBase* model, ustr_t name, bool autoSelect);
+         FileEncoding encoding, bool autoSelect, NotificationStatus& status);
+      void closeSource(TextViewModelBase* model, int index, bool autoSelect, NotificationStatus& status);
 
       void renameSource(TextViewModelBase* model, ustr_t oldName, ustr_t newName, path_t newSourcePath);
 
@@ -68,8 +68,14 @@ namespace elena_lang
       bool compileSingleFile(ProjectModel& model);
 
    public:
-      void openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
-      void openProject(ProjectModel& model, path_t projectFile);
+      bool isStarted()
+      {
+         return _debugController.isStarted();
+      }
+
+      NotificationStatus openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
+      NotificationStatus openProject(ProjectModel& model, path_t projectFile);
+      NotificationStatus closeProject(ProjectModel& model);
 
       path_t getSourceByIndex(ProjectModel& model, int index);
 
@@ -90,15 +96,21 @@ namespace elena_lang
          _notifier = notifier;
       }
 
-      void notifyMessage(int messageCode, int arg1 = 0, int arg2 = 0) override
+      void notify(int id, NotificationStatus status) override
       {
          if (_notifier)
-            _notifier->notifyMessage(messageCode, arg1);
+            _notifier->notify(id, status);
       }
-      void notifyModelChange(int modelCode, int arg) override
+      void notifySelection(int id, size_t param) override
       {
          if (_notifier)
-            _notifier->notifyModelChange(modelCode, arg);
+            _notifier->notifySelection(id, param);
+      }
+      void notifyCompletion(int id, int param) override
+      {
+         if (_notifier)
+            _notifier->notifyCompletion(id, param);
+
       }
 
       ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
@@ -106,7 +118,7 @@ namespace elena_lang
          : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
            _autoWatch({ nullptr, 0 }) 
       {
-         _notifier = nullptr;
+         //_notifier = nullptr;
          _platform = platform;
       }
    };
@@ -116,8 +128,13 @@ namespace elena_lang
    {
       NotifierBase*           _notifier;
 
-      bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile);
-      bool openProject(IDEModel* model, path_t projectFile);
+      bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile, NotificationStatus& status);
+      bool openFile(IDEModel* model, path_t sourceFile, NotificationStatus& status);
+      bool openProject(IDEModel* model, path_t projectFile, NotificationStatus& status);
+      bool closeProject(DialogBase& dialog, IDEModel* model, NotificationStatus& status);
+
+      bool closeFile(DialogBase& dialog, IDEModel* model, int index, NotificationStatus& status);
+      bool closeAll(DialogBase& dialog, IDEModel* model, NotificationStatus& status);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
 
@@ -132,6 +149,7 @@ namespace elena_lang
       ProjectController    projectController;
 
       bool loadConfig(IDEModel* model, path_t configPath);
+      void saveConfig(IDEModel* model, path_t configPath);
 
       void setNotifier(NotifierBase* notifier)
       {
@@ -142,8 +160,8 @@ namespace elena_lang
 
       path_t retrieveSingleProjectFile(IDEModel* model);
 
-      bool openFile(IDEModel* model, path_t sourceFile);
-      bool openProjectSourceByIndex(IDEModel* model, int index);
+      //bool openFile(IDEModel* model, path_t sourceFile);
+      bool doOpenProjectSourceByIndex(IDEModel* model, int index);
 
       bool selectSource(ProjectModel* model, SourceViewModel* sourceModel,
          ustr_t moduleName, path_t sourcePath);
@@ -154,8 +172,9 @@ namespace elena_lang
       void doOpenFile(DialogBase& dialog, IDEModel* model);
       bool doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
       bool doCloseFile(DialogBase& dialog, IDEModel* model);
+      bool doCloseAll(DialogBase& dialog, IDEModel* model);
       bool doOpenProject(DialogBase& dialog, IDEModel* model);
-      bool doCloseProject();
+      bool doCloseProject(DialogBase& dialog, IDEModel* model);
       bool doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode);
 
       bool doCompileProject(DialogBase& dialog, IDEModel* model);
@@ -169,11 +188,13 @@ namespace elena_lang
 
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
-      bool doExit();
+      void onDebuggerStop(IDEModel* model);
+
+      bool doExit(DialogBase& dialog, IDEModel* model);
+
+      bool onClose(DialogBase& dialog, IDEModel* model);
 
       void init(IDEModel* model);
-
-      void onLayoutchange();
 
       IDEController(ProcessBase* outputProcess, DebugProcessBase* process, IDEModel* model,
          TextViewSettings& textViewSettings, PlatformType platform

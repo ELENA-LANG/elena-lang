@@ -3,7 +3,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                                (C)2021-2022, by Aleksey Rakov
+//                                                (C)2021-2023, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #ifndef BYTECODE_H
@@ -36,6 +36,15 @@ namespace elena_lang
 
       Exclude        = 0x10,
       Include        = 0x11,
+      Assign         = 0x12,
+      MovFrm         = 0x13,
+      LoadS          = 0x14,
+      MLen           = 0x15,
+      DAlloc         = 0x16,
+      XAssignSP      = 0x17,
+      DTrans         = 0x18,
+      XAssign        = 0x19,
+      LLoad          = 0x1A,
 
       Coalesce       = 0x20,
       Not            = 0x21,
@@ -43,6 +52,10 @@ namespace elena_lang
       BRead          = 0x23,
       LSave          = 0x24,
       FSave          = 0x25,
+      WRead          = 0x26,
+      XJump          = 0x27,
+      XGet           = 0x2E,
+      XCall          = 0x2F,
 
       MaxSingleOp    = 0x7F,
 
@@ -61,6 +74,7 @@ namespace elena_lang
       SubN           = 0x8C,
       AddN           = 0x8D,
       SetFP          = 0x8E,
+      CreateR        = 0x8F,
 
       Copy           = 0x90,
       CloseN         = 0x91,
@@ -72,6 +86,8 @@ namespace elena_lang
       CmpN           = 0x97,
       NConvFDP       = 0x98,
       FTruncDP       = 0x99,
+      DCopy          = 0x9A,
+      OrN            = 0x9B,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,
@@ -83,6 +99,8 @@ namespace elena_lang
       XRefreshSI     = 0xA7,
       PeekFI         = 0xA8,
       PeekSI         = 0xA9,
+      LSaveDP        = 0xAA,
+      LSaveSI        = 0xAB,
 
       CallR          = 0xB0,
       CallVI         = 0xB1,
@@ -90,6 +108,9 @@ namespace elena_lang
       Jeq            = 0xB3,
       Jne            = 0xB4,
       JumpVI         = 0xB5,
+      XRedirectM     = 0xB6,
+      Jlt            = 0xB7,
+      Jge            = 0xB8,
 
       CmpR           = 0xC0,
       FCmpN          = 0xC1,
@@ -123,6 +144,7 @@ namespace elena_lang
       XHookDPR       = 0xE6,
       XNewNR         = 0xE7,
       NAddDPN        = 0xE8,
+      DCopyDPN       = 0xE9,
       XWriteON       = 0xEA,
       XCopyON        = 0xEB,
       VJumpMR        = 0xEC,
@@ -138,7 +160,6 @@ namespace elena_lang
       NewNR          = 0xF5,
       XMovSISI       = 0xF6,
       CreateNR       = 0xF7,
-      CreateR        = 0xF8,
       XStoreFIR      = 0xF9,
       XDispatchMR    = 0xFA,
       DispatchMR     = 0xFB,
@@ -146,11 +167,14 @@ namespace elena_lang
       CallMR         = 0xFD,
       CallExtR       = 0xFE,
 
-      None           = 0x1000,
       Label          = 0x1001,
 //      BreakLabel     = 0x1011,  // meta command, breaking the optimization rules
-      ImportOn       = 0x1002,
-      ImportOff      = 0x1003,
+
+      ImportOn       = 0x2002,
+      ImportOff      = 0x2003,
+
+      Match          = 0x8FFE,  // used in optimization engine
+      None           = 0x8FFF,  // used in optimization engine
    };
 
    enum class PseudoArg
@@ -229,9 +253,25 @@ namespace elena_lang
          else write(ByteCode::Label, labels.pop());
       }
 
+      // to resolve possible conflicts the predefined labels should be negative
+      void setPredefinedLabel(int label)
+      {
+         write(ByteCode::Label, label);
+      }
+
       void releaseLabel()
       {
          labels.pop();
+      }
+
+      int exchangeFirstsLabel(int newLabel)
+      {
+         auto it = labels.end();
+
+         int oldLabel = *it;
+         *it = newLabel;
+
+         return oldLabel;
       }
 
       void write(ByteCode code);
@@ -282,6 +322,7 @@ namespace elena_lang
             case ByteCode::DispatchMR:
             case ByteCode::XDispatchMR:
             case ByteCode::TstM:
+            case ByteCode::XRedirectM:
                return true;
             default:
                return false;
@@ -299,6 +340,7 @@ namespace elena_lang
          case ByteCode::SelLtRR:
          case ByteCode::PeekR:
          case ByteCode::StoreR:
+         case ByteCode::CreateR:
             return true;
          default:
             return false;
@@ -322,6 +364,7 @@ namespace elena_lang
             case ByteCode::SelEqRR:
             case ByteCode::SelLtRR:
             case ByteCode::XHookDPR:
+            case ByteCode::CreateNR:
                return true;
             default:
                return false;
@@ -370,7 +413,51 @@ namespace elena_lang
          ref_t* references, size_t len, pos_t argCount, ref_t flags);
       static bool resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message);
 
+      static void parseMessageName(ustr_t messageName, IdentifierString& actionName, ref_t& flags, pos_t& argCount);
+
       static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
+   };
+
+   // --- ByteCodePattern ---
+   struct ByteCodePattern
+   {
+      ByteCode        code;
+
+      bool operator ==(ByteCode code) const
+      {
+         return (this->code == code);
+      }
+
+      bool operator !=(ByteCode code) const
+      {
+         return (this->code != code);
+      }
+
+      bool operator ==(ByteCodePattern pattern)
+      {
+         return (code == pattern.code/* && argumentType == pattern.argumentType && argument == pattern.argument*/);
+      }
+
+      bool operator !=(ByteCodePattern pattern)
+      {
+         return !(*this == pattern);
+      }
+
+   };
+
+   // --- ByteCodeTransformer ---
+   struct ByteCodeTransformer
+   {
+      typedef MemoryTrie<ByteCodePattern>     MemoryByteTrie;
+
+      MemoryByteTrie trie;
+      bool           loaded;
+
+      ByteCodeTransformer()
+         : trie({ ByteCode::None })
+      {
+         loaded = false;
+      }
    };
 
 }

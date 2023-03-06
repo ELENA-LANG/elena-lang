@@ -3,7 +3,7 @@
 //
 //		This file contains Module scope class declaration.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef MODULESCOPE_H
@@ -35,6 +35,8 @@ public:
    ref_t importReferenceWithMask(ModuleBase* referenceModule, ref_t reference);
    ref_t importConstant(ModuleBase* referenceModule, ref_t reference);
    ref_t importMessageConstant(ModuleBase* referenceModule, ref_t reference);
+   ref_t importExtMessageConstant(ModuleBase* referenceModule, ref_t reference) override;
+   ref_t importExternal(ModuleBase* referenceModule, ref_t reference) override;
 
    ref_t mapAnonymous(ustr_t prefix) override;
 
@@ -50,6 +52,7 @@ public:
    ref_t resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs) override;
 
    ustr_t resolveWeakTemplateReference(ustr_t referenceName);
+   ref_t resolveWeakTemplateReferenceID(ref_t reference) override;
 
    ustr_t resolveFullName(ref_t reference) override
    {
@@ -93,8 +96,9 @@ public:
       pos_t stackAlingment,
       pos_t rawStackAlingment,
       pos_t ehTableEntrySize,
-      int minimalArgList)
-      : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, minimalArgList, false)
+      int minimalArgList,
+      int ptrSize)
+      : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, minimalArgList, ptrSize, false)
    {
       this->loader = loader;
       this->forwardResolver = forwardResolver;

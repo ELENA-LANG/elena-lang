@@ -17,6 +17,9 @@ ProjectModel :: ProjectModel(IDEStatus* status)
 
    this->autoRecompile = /*true*/false;// !! temporal
 
+   this->empty = true;
+   this->started = false;
+
 #ifdef _M_IX86
    this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60\\");      // !! temporal
 #else
@@ -30,14 +33,14 @@ ProjectModel :: ProjectModel(IDEStatus* status)
       this->paths.librarySourceRoot.append(PATH_SEPARATOR);
 }
 
-path_t ProjectModel::getOutputPath()
+path_t ProjectModel :: getOutputPath()
 {
    return *outputPath;
 }
 
 ustr_t ProjectModel :: getTarget()
 {
-   return "sandbox.exe"; // !! temporal
+   return *target;
 }
 
 ustr_t ProjectModel::getPackage()

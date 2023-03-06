@@ -24,6 +24,7 @@ struct IDEScheme
    int               projectView;
    int               debugWatch;
    int               menu;
+   int               statusBar;
 
    Map<int, text_t>  captions;
 
@@ -35,6 +36,7 @@ struct IDEScheme
       projectView(-1),
       debugWatch(-1),
       menu(-1),
+      statusBar(-1),
       captions(nullptr)
    {
    }
@@ -42,18 +44,18 @@ struct IDEScheme
 
 // --- IDEListener ---
 
-class IDEListener
-{
-public:
-   virtual void onIDEChange() = 0;
-};
+//class IDEListener
+//{
+//public:
+//   virtual void onIDEChange() = 0;
+//};
 
-typedef List<IDEListener*> IDEListenerListeners;
+//typedef List<IDEListener*> IDEListenerListeners;
 
 // --- IDEModel ---
 class IDEModel
 {
-   IDEListenerListeners listeners;
+//   IDEListenerListeners listeners;
 
 public:
    IDEStatus       status;
@@ -64,19 +66,18 @@ public:
 
    bool            appMaximized;
 
-
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
-   void attachListener(IDEListener* listener);
+   //void attachListener(IDEListener* listener);
 
    void changeStatus(IDEStatus status);
 
-   void onIDEChange();
+   //void onIDEChange();
 
    IDEModel()
-      : listeners(nullptr), projectModel(&status)
+      : /*listeners(nullptr), */projectModel(&status)
    {
-      status = IDEStatus::None;
+      status = IDEStatus::Empty;
       appMaximized = false;
    }
 };

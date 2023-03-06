@@ -110,6 +110,10 @@ namespace elena_lang
       {
          return read(&retVal, sizeof(ref_t));
       }
+      bool readBool(bool& retVal)
+      {
+         return read(&retVal, sizeof(bool));
+      }
       bool readRef64(ref64_t& retVal)
       {
          return read(&retVal, sizeof(ref64_t));
@@ -162,6 +166,14 @@ namespace elena_lang
             return retVal;
          }
          else return 0ull;
+      }
+      bool getBool()
+      {
+         bool retVal = false;
+         if (readBool(retVal)) {
+            return retVal;
+         }
+         else return false;
       }
 
       template<class T, size_t size> bool readString(String<T, size>& s)
@@ -220,6 +232,8 @@ namespace elena_lang
    template<class T> class TextWriter
    {
    public:
+      virtual bool isOpen() const = 0;
+
       virtual pos_t position() const = 0;
 
       virtual bool write(const T* s, pos_t length) = 0;
@@ -246,7 +260,7 @@ namespace elena_lang
       bool fillText(const T* s, pos_t length, pos_t count)
       {
          while (count > 0) {
-            if (write(s, length))
+            if (!write(s, length))
                return false;
 
             count--;
@@ -301,6 +315,10 @@ namespace elena_lang
       bool writePos(pos_t value)
       {
          return write(&value, sizeof(pos_t));
+      }
+      bool writeBool(bool value)
+      {
+         return write(&value, sizeof(bool));
       }
       bool writeRef64(ref64_t value)
       {
@@ -430,6 +448,7 @@ namespace elena_lang
          _memory = memory;
          _position = position;
       }
+      virtual ~MemoryReader() = default;
    };
 
    // --- MemoryWriter ---
@@ -551,6 +570,8 @@ namespace elena_lang
       pos_t _offset;
 
    public:
+      bool isOpen() const override { return _text != nullptr; }
+
       pos_t position() const override { return _offset; }
 
       bool seek(pos_t position)

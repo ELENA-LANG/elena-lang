@@ -37,6 +37,7 @@ namespace elena_lang
 
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE         = "ELENA.";          // the stand alone image
+   constexpr auto ELENA_VM_SIGNITURE      = "VM.ELENA.";       // the stand alone image
    constexpr auto MODULE_SIGNATURE        = "ELENA.0601";      // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED.06";
 
@@ -69,6 +70,10 @@ namespace elena_lang
    constexpr auto ATTRIBUTES_MAP          = "$forwards'meta$attributes";
    constexpr auto OPERATION_MAP           = "$forwards'meta$statementTemplates";
    constexpr auto ALIASES_MAP             = "$forwards'meta$aliasTypes";
+   constexpr auto STARTUP_LIST            = "$forwards'meta$startUpSymbols";
+   constexpr auto STARTUP_ENTRY           = "$forwards'startUpSymbols";
+
+   constexpr auto VM_TAPE                 = "$elena'meta$startUpTape";
 
    constexpr auto PROGRAM_ENTRY           = "$forwards'program";         // used by the linker to define the debug entry
 
@@ -93,6 +98,7 @@ namespace elena_lang
    constexpr auto ARRAY_FORWARD           = "$array";          // the array template
    constexpr auto VARIADIC_ARRAY_FORWARD  = "$varray";         // the array template 
    constexpr auto MESSAGE_FORWARD         = "$message";        // the message class
+   constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";    // the extension message class
    constexpr auto CLOSURE_FORWARD         = "$closure";        // the closure template class
    constexpr auto DWORD_FORWARD           = "$dword";          // the dword wrapper
 
@@ -112,6 +118,8 @@ namespace elena_lang
    constexpr auto CLASSCLASS_POSTFIX      = "#class";
    constexpr auto CONST_POSTFIX           = "#const";
    constexpr auto STATICFIELD_POSTFIX     = "#static";
+   constexpr auto GENERIC_PREFIX          = "#generic";
+   constexpr auto PARAMETER_NAMES         = "parameter_names";
 
    // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";
@@ -130,7 +138,9 @@ namespace elena_lang
    constexpr auto BOR_MESSAGE             = "bor";
    constexpr auto BXOR_MESSAGE            = "bxor";
    constexpr auto REFER_MESSAGE           = "at";
+   constexpr auto SET_REFER_MESSAGE       = "setAt";
    constexpr auto IF_MESSAGE              = "if";
+   constexpr auto IIF_MESSAGE             = "iif";
    constexpr auto EQUAL_MESSAGE           = "equal";
    constexpr auto NOT_MESSAGE             = "Inverted";
    constexpr auto NEGATE_MESSAGE          = "Negative";
@@ -164,11 +174,18 @@ namespace elena_lang
    constexpr ref_t elExtension            = 0x0000110C;
    constexpr ref_t elMessage              = 0x00200000;
    constexpr ref_t elWithVariadics        = 0x00400000;
+   constexpr ref_t elWithCustomDispatcher = 0x00800000;
+   constexpr ref_t elWithGenerics         = 0x02000000;
+   constexpr ref_t elTemplatebased        = 0x40000000;
 
    constexpr ref_t elDebugMask            = 0x001F0000;
    constexpr ref_t elDebugDWORD           = 0x00010000;
    constexpr ref_t elDebugQWORD           = 0x00020000;
    constexpr ref_t elDebugFLOAT64         = 0x00030000;
+   constexpr ref_t elDebugDWORDS          = 0x00040000;
+   constexpr ref_t elDebugLiteral         = 0x00050000;
+   constexpr ref_t elDebugWideLiteral     = 0x00060000;
+   constexpr ref_t elDebugArray           = 0x00070000;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -185,7 +202,7 @@ namespace elena_lang
 
       // masks
       PlatformMask   = 0x000FF,
-      TargetTypeMask = 0xFFF00,
+      TargetTypeMask = 0xFF000,
 
       Win_x86        = 0x00011,
       Win_x86_64     = 0x00012,
@@ -240,15 +257,21 @@ namespace elena_lang
       LongLocalAddress     = 0x0103,
       RealLocalAddress     = 0x0104,
       ByteArrayAddress     = 0x0105,
-            
+      ShortArrayAddress    = 0x0106,
+      IntArrayAddress      = 0x0107,
+
       Parameter            = 0x0200,
       IntParameterAddress  = 0x0202,
       LongParameterAddress = 0x0203,
       RealParameterAddress = 0x0204,
       ParameterAddress     = 0x0205,
+      ByteArrayParameter   = 0x0206,
+      ShortArrayParameter  = 0x0207,
+      IntArrayParameter    = 0x0208,
 
       FrameInfo            = 0x0301,
       ClassInfo            = 0x0302,
+      MessageInfo          = 0x0303,
    };
 
    // --- ClassAttribute ---
@@ -265,8 +288,12 @@ namespace elena_lang
       InternalAlias     = 0xA02,
       OverloadList      = 0x903,
       ConstantMethod    = 0x904,
-      ExtensionRef      = 0x105,  
-   };
+      ExtensionRef      = 0x105,
+      ParameterName     = 0x806,
+      RuntimeLoadable   = 0x007,
+      SealedStatic      = 0x908,
+      SingleDispatch    = 0xA09,
+   }; 
 
    // === Reference constants ====
    constexpr ref_t mskAnyRef              = 0xFF000000u;
@@ -307,6 +334,7 @@ namespace elena_lang
    constexpr ref_t mskStringMapRef        = 0x1F000000u;
    constexpr ref_t mskLongLiteralRef      = 0x20000000u;
    constexpr ref_t mskRealLiteralRef      = 0x21000000u;
+   constexpr ref_t mskExtMssgLiteralRef   = 0x22000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;
@@ -380,6 +408,8 @@ namespace elena_lang
    constexpr ref_t mskMDataRef64          = 0xC6000000u;
    constexpr ref_t mskMDataRef32Hi        = 0x26000000u;
    constexpr ref_t mskMDataRef32Lo        = 0xA6000000u;
+   constexpr ref_t mskMDataDisp32Hi       = 0x66000000u;
+   constexpr ref_t mskMDataDisp32Lo       = 0xE6000000u;
 
    constexpr ref_t mskStatDataRef32       = 0x87000000u;
    constexpr ref_t mskStatDataRelRef32    = 0x47000000u;
@@ -431,6 +461,8 @@ namespace elena_lang
    constexpr ref_t XDISP32LO_2            = 0x00000026u;
    constexpr ref_t NARG16HI_1             = 0x00000027u;
    constexpr ref_t NARG16LO_1             = 0x00000028u;
+   constexpr ref_t NARG16HI_2             = 0x00000029u;
+   constexpr ref_t INV_ARG12_2            = 0x0000002Au;
 
    // predefined debug module sections
    constexpr ref_t DEBUG_LINEINFO_ID      = -1;

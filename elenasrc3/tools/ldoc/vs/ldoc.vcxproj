@@ -177,6 +177,7 @@
     <ClCompile Include="..\..\..\engine\libman.cpp" />
     <ClCompile Include="..\..\..\engine\module.cpp" />
     <ClCompile Include="..\..\..\engine\section.cpp" />
+    <ClCompile Include="..\..\..\engine\windows\presenter.cpp" />
     <ClCompile Include="..\ldoc.cpp" />
     <ClCompile Include="..\windows\main.cpp" />
   </ItemGroup>
@@ -191,6 +192,7 @@
     <ClInclude Include="..\..\..\engine\libman.h" />
     <ClInclude Include="..\..\..\engine\module.h" />
     <ClInclude Include="..\..\..\engine\section.h" />
+    <ClInclude Include="..\..\..\engine\windows\presenter.h" />
     <ClInclude Include="..\ldocconst.h" />
     <ClInclude Include="..\ldoc.h" />
     <ClInclude Include="resource.h" />

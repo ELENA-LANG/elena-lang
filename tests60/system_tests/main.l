@@ -12,6 +12,8 @@ public program()
    stringTests();
    shortTests();
    conversionTests();
+   inlineAssignmentTests();
+   singleDispatchTest();
 
    console.writeLine("--- Passed ---")
 }

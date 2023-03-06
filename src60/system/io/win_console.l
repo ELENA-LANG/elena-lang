@@ -1,5 +1,9 @@
 namespace io
 {
+   import system'text;
+
+   const int FILE_TYPE_CHAR = 2;
+
    struct KEY_EVENT_RECORD
    {
       int   bKeyDown : prop;
@@ -19,19 +23,80 @@ namespace io
 
    singleton ConsoleFactory
    {
-      get /*handle*/ OutputHandle()
+      get handle OutputHandle()
       {
          handle h := extern KERNEL32.GetStdHandle(0FFFFFFF5h);
 
          ^ h;
       }
 
-      get /*handle*/ InputHandle()
+      get handle InputHandle()
       {
          handle h := extern KERNEL32.GetStdHandle(0FFFFFFF6h);
 
          ^ h;
       }
+
+      newWriter()
+      {
+         handle h := ConsoleFactory.OutputHandle;
+         int    dwMode := extern KERNEL32.GetFileType(h);
+         if (dwMode == FILE_TYPE_CHAR) {
+            ^ new ConsoleWriter(h)
+         }
+         else {
+            ^ new ConsoleFileWriter(h)            
+         }
+      }
+
+      newReader()
+         = new ConsoleReader(ConsoleFactory.InputHandle);
+   }
+
+   sealed class ConsoleFileWriter
+   {
+      handle h;
+
+      private write(byte[] buffer, int length)
+      {
+         int written := 0;
+         extern KERNEL32.WriteFile
+            (h, buffer, length, ref written, 0)
+      }
+
+      constructor(handle h)
+      {
+         this h := h
+      }
+
+      write(string literal)
+      {
+         byte buffer[256];
+         int length := literal.Length;
+         int index := 0;
+         int buf_len := 256;
+         int subs_len := 256;
+         while (length > 0)
+         {
+            buf_len := 256;
+
+            if (length < 128)
+            {
+               subs_len := length
+            }
+            else
+            {
+               subs_len := 128
+            };
+
+            OEMEncoder.toByteArray(literal, index, ref subs_len, buffer, 0, ref buf_len);
+
+            self.write(buffer, buf_len);
+
+            index += subs_len;
+            length -= subs_len
+         }
+      }      
    }
 
    public class ConsoleWriter
@@ -76,7 +141,7 @@ namespace io
          {
             extern
             {
-                    extern KERNEL32.ReadConsoleInputW(h, dump, 1, ref numberRead);
+               extern KERNEL32.ReadConsoleInputW(h, dump, 1, ref numberRead);
             };
 
             eventType := dump.eventType;
@@ -99,8 +164,51 @@ namespace io
     
          ^ system'text'UTF16Encoding.toChar(charCode)
       }
+
+      private read(short[] dump, ref int retVal)
+      {
+         int len := retVal;
+            
+         extern
+         {
+            extern KERNEL32.ReadConsoleW(h, dump, len, ref /*retVal*/len, 0)
+         };
+
+         retVal := len // !! temporal
+      }
+
+      wide readWideLine()
+      {
+         short dump[127];
+         int   len := 0;
+         wide  output := emptyWideString;
+
+         bool continue := true;
+         while (continue)
+         {
+            len := 127;
+            self.read(dump, ref len);
+
+            short sh := dump[len - 1];
+            if (sh == 0Ah)
+            {
+               len := len - 2;
+
+               continue := false
+            };
+
+            wide temp := WideString.fromShortArray(0, len, dump);
+
+            output := output + temp;
+         };
+
+         ^ output
+      }
+
+      string readLine()
+         = self.readWideLine();
    }
 
-   public stdConsoleWriter = new ConsoleWriter(ConsoleFactory.OutputHandle);
-   public stdConsoleReader = new ConsoleReader(ConsoleFactory.InputHandle);
+   public stdConsoleWriter = ConsoleFactory.newWriter();
+   public stdConsoleReader = ConsoleFactory.newReader();
 }

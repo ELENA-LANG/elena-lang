@@ -17,6 +17,13 @@ void MenuBase :: checkItemById(int id, bool checked)
    ::CheckMenuItem(_handle, id, flag);
 }
 
+void MenuBase :: enableMenuItemById(int id, bool enable)
+{
+   int flag = (enable ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)) | MF_BYCOMMAND;
+
+   ::EnableMenuItem(_handle, id, flag);
+}
+
 // --- RootMenu ---
 
 RootMenu :: RootMenu(HMENU hMenu)
