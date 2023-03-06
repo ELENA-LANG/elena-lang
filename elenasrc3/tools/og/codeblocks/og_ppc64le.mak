@@ -57,7 +57,7 @@ $(OBJDIR_RELEASE)/__/__/__/common/files.o: ../../../common/files.cpp
 $(OBJDIR_RELEASE)/__/__/__/common/ustring.o: ../../../common/ustring.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/ustring.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o
 
-$(OBJDIR_RELEASE)/__/__/__/engine/parsertable.o: ../../../engine/bytecode.cpp
+$(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o: ../../../engine/bytecode.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/bytecode.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o
 
 $(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o: ../../../engine/scriptreader.cpp
