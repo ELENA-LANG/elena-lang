@@ -133,7 +133,6 @@ fi
    echo .
  fi
 
-
  echo "Do you wish to create a package?"
  select yn in "Yes" "No"; do
     case $yn in
