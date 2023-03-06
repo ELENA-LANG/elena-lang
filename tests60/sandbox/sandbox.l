@@ -1,11 +1,10 @@
 import extensions;
+import extensions'routines;
 
 public program()
 {
-   var s := "abc";
-   var s2 := nil;
-   console.writeLine(s.equal(s2));
-
+   var text := "a b b a";
+   text.forEachWord:(x){ console.writeLine(x) };
 
 
 //    var o := nil;
