@@ -10,7 +10,7 @@ public program()
 
    var en := list.enumerator();
    en.next();
-//   console.writeLine(*en);
+   console.writeLine(*en);
 
 //   list.forEach:(x => console.writeLine(x));
 
