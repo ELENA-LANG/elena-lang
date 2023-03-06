@@ -342,7 +342,7 @@ end
 inline % 0Ch
 
   //;and     x9, x9, ARG_MASK
-  mov     x16, #ARG_MASK
+  mov     x16, ARG_MASK
   and     x9, x9, x16
 
   movz    x16,  ~ARG_MASK
