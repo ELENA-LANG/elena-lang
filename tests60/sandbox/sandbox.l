@@ -5,23 +5,12 @@ import system'routines;
 
 public program()
 {
-   var s := "1 2";
+//   var s := "1 2";
 
-   s.split().forEach:(x => console.writeLine(x));
+//   s.split().forEach:(x => console.writeLine(x));
 
-//   var list := new ArrayList();
-//   list.append("a");
-
-//   var item := list[0];
-//   console.writeLine(item);
-
-//   var en := list.enumerator();
-//   en.next();
-//   console.writeLine(*en);
-
-//   list.forEach:(x => console.writeLine(x));
-
-//   console.writeLine(list.ifExists("a"));
+   var f := mssgconst toInt<intConvertOp>[1];
+   console.writeLine(f("2"));
 
 
 
