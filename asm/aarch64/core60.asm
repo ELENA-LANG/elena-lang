@@ -2630,34 +2630,8 @@ labEnd:
 end 
 
 // ; movsifi
+// ; NOTE : arg1 < 0
 inline %0F3h
-
-  add     x12, x29, __arg12_1
-  add     x13, sp, __arg12_2
-
-  ldr     x11, [x12]
-  str     x11, [x13]
-
-end
-
-// ; movsifi sp:0, fp:i2
-inline %1F3h
-
-  add     x12, x29, __arg12_2
-  ldr     x0, [x12]
-
-end
-
-// ; movsifi sp:1, fp:i2
-inline %2F3h
-
-  add     x12, x29, __arg12_2
-  ldr     x1, [x12]
-
-end
-
-// ; movsifi
-inline %5F3h
 
   sub     x12, x29, -__arg12_1
   add     x13, sp, __arg12_2
@@ -2668,17 +2642,49 @@ inline %5F3h
 end
 
 // ; movsifi sp:0, fp:i2
-inline %6F3h
+// ; NOTE : arg1 < 0
+inline %1F3h
 
-  sub     x12, x29, -__arg12_2
+  sub     x12, x29, -__arg12_1
   ldr     x0, [x12]
 
 end
 
 // ; movsifi sp:1, fp:i2
+// ; NOTE : arg1 < 0
+inline %2F3h
+
+  sub     x12, x29, -__arg12_1
+  ldr     x1, [x12]
+
+end
+
+// ; movsifi
+// ; NOTE : arg1 > 0
+inline %5F3h
+
+  add     x12, x29, __arg12_1
+  add     x13, sp, __arg12_2
+
+  ldr     x11, [x12]
+  str     x11, [x13]
+
+end
+
+// ; movsifi sp:0, fp:i2
+// ; NOTE : arg1 > 0
+inline %6F3h
+
+  add     x12, x29, __arg12_2
+  ldr     x0, [x12]
+
+end
+
+// ; movsifi sp:1, fp:i2
+// ; NOTE : arg1 > 0
 inline %7F3h
 
-  sub     x12, x29, -__arg12_2
+  add     x12, x29, __arg12_2
   ldr     x1, [x12]
 
 end
