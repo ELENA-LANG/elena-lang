@@ -89,7 +89,7 @@ clean_i386: clean_elc_i386 clean_og_i386 clean_sg_i386 clean_asmc_i386 clean_ecv
 
 clean_amd64: clean_elc_amd64 clean_og_amd64 clean_sg_amd64 clean_asmc_amd64 clean_ecv_amd64 clean_elenart_amd64
 
-clean_ppc64le: clean_elc_ppc64leclean_og_ppc64le clean_sg_ppc64le clean_asmc_ppc64le clean_ecv_ppc64le clean_elenart_ppc64le
+clean_ppc64le: clean_elc_ppc64le clean_og_ppc64le clean_sg_ppc64le clean_asmc_ppc64le clean_ecv_ppc64le clean_elenart_ppc64le
 
 clean_arm64: clean_elc_arm64 clean_og_arm64 clean_sg_arm64 clean_asmc_arm64 clean_ecv_arm64 clean_elenart_arm64
 
