@@ -8,9 +8,12 @@ public program()
    var list := new ArrayList();
    list.append("a");
 
-   var en := list.enumerator();
-   en.next();
-   console.writeLine(*en);
+   var item := list[0];
+   console.writeLine(item);
+
+//   var en := list.enumerator();
+//   en.next();
+//   console.writeLine(*en);
 
 //   list.forEach:(x => console.writeLine(x));
 
