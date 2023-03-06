@@ -2,7 +2,11 @@ import extensions;
 
 public program()
 {
-    console.printLine("Hello");
+   var s := "abc";
+   var s2 := nil;
+   console.writeLine(s.equal(s2));
+
+
 
 //    var o := nil;
 //    o.call()
