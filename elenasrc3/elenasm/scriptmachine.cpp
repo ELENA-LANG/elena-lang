@@ -14,5 +14,10 @@ using namespace elena_lang;
 
 ScriptEngine :: ScriptEngine()
 {
-   
+   _lastId = 0;
+}
+
+int ScriptEngine :: newScope()
+{
+   return ++_lastId;
 }

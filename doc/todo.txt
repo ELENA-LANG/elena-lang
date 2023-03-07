@@ -7,22 +7,31 @@ In development:
     === Iteration 14 ===
     ! api functionality for existing classes : rest of system
     ! api functionality for existing classes : externals
-    ! examples : pi, bsort, textfile, binary, replace, goods
+    ! examples : all console, files examples
+    ! rosetta examples : 10
     ! elena sm : x86
     ! script samples : x86
     ! elena vm : x86-64
     ! x86 : multi-threading
-    ! x86 : gui
-    * elenasm : creating dll
+
+    * #568 : x86_64
+
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
     * Using a script engine to parse the expression - https://www.reddit.com/r/elena_lang/comments/bo4d34/using_a_script_engine_to_parse_the_expression/
     * Dynamic programming in ELENA : bf loop - https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
     * ELENA Script Engine : compiling JavaScript file - https://www.reddit.com/r/elena_lang/comments/6h6nyz/elena_script_engine_compiling_javascript_file/
+
+    * ldoc : recognize template based type - for the method output
+    * ide - select the text with a mouse
     * ide - close all / close all but active
     * ide : change status to ready when writing / selecting files
-    * ldoc : recognize template based type - for the method output
+
+    * elena : nullable
+    * elenavm : implementing dll api
+    * show the signature for the typecast message if possible
 
     === Iteration 15 ===
+    ! x86 : gui
     ! elena sm : x86-64
     ! ide : vm console
     ! sm : generate some basic templates from vm console - hello world sample
@@ -50,6 +59,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * optimization : double assigning for external op
     * create github action workflow to build the project
     * inno setup : x86, x86-64
     * arm : uncomment loadv opcode : using and imm
@@ -63,11 +73,9 @@ Backlog:
     * boxable self (structs) - do not box the self return
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * redesign : for 64 bit:object size offset should be 8, instead of 4
-    * elenavm : implementing dll api
     * conversion to int - raise an error if not valid
     * implement correct string,real,byte,short,long hash functions
     * implement iif operator : a ? b : c
-    * show the signature for the typecast message if possible
     * warn on resending to itself (e.g. for constructor)
     * allocate constant array directly if possible
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
@@ -101,7 +109,6 @@ Backlog:
     * unit tests via postfix pattern
     * ide debugger : callstack
     * system porting : UnsafePointer, characterController, caseStringOp, caseWideOp
-    * elena : nullable
     * templates with parameters: template can have attribute values in the brackets after the main body
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
       as well, to pass the name there (currently it passed over template args which is not 100% correct)
@@ -145,8 +152,6 @@ Backlog:
     * ide - add close button on tabbar
     * ide - fix errors
     * ide - compile the project / file
-
-    * api doc
 
     * ide debugger
 

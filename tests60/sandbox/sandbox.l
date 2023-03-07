@@ -1,6 +1,8 @@
-import extensions;
 
 public program()
 {
-   console.printLine("Hello");
+   pointer ptr := extern elenasm.InterpretScopeFile();
+
+//    auto engine := new extensions'scripting'ScriptEngine();
+//    engine.loadPath("grammar1.es");
 }

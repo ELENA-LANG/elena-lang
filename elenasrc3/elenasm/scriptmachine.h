@@ -12,8 +12,13 @@ namespace elena_lang
    // --- ScriptEngine ---
    class ScriptEngine
    {
+      int                _lastId;
+
    public:
+      int newScope();
+
       ScriptEngine();
+      ~ScriptEngine() = default;
    };
 
 }

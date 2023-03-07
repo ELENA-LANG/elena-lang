@@ -566,6 +566,7 @@ void DocumentView :: moveFrameUp(DocumentChangeStatus& changeStatus)
          setCaret(_caret.column(), _frame.row() + _size.y - 3, false, changeStatus);
       }
    }
+   changeStatus.hasSelection = _selection != 0;
 }
 
 void DocumentView :: moveFrameDown(DocumentChangeStatus& changeStatus)
@@ -576,6 +577,7 @@ void DocumentView :: moveFrameDown(DocumentChangeStatus& changeStatus)
          setCaret(_caret.column(), _frame.row(), false, changeStatus);
       }
    }
+   changeStatus.hasSelection = _selection != 0;
 }
 
 void DocumentView :: moveFirst(DocumentChangeStatus& changeStatus, bool selecting)

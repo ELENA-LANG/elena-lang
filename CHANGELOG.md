@@ -1,7 +1,4 @@
-## ELENA 6.0.2a
-- TOOLS
-  - ldoc : api doc generator
-
+## ELENA 6.0.2b
 
 ## ELENA 5.8
 *01.10.2021*

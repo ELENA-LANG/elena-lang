@@ -1,10 +1,11 @@
-                      ELENA Language Project V. 5.0
-                        (C)2005-2020  By Alex Rakov
+                      ELENA Language Project V. 6.0
+                        (C)2005-2023  By Alex Rakov
     
 The project includes ELENA documentation, standard library source code, 
 samples, command-line compiler, IDE.
 
-Currently Win32-x86 (Windows 7/8/10) / Linux-I386 (alpha) platforms are supported.
+Currently Win32-x86 / Win32-x86-64 / Linux-I386 / Linux-AMD64 / Linux AARCH64 /
+Linux PPC64le platforms are supported.
 
 For more information see at http://elenalang.sourceforge.net/
 

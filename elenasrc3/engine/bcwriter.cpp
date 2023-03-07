@@ -368,6 +368,11 @@ void savingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SaveDP, node.arg.value);
 }
 
+void savingLongIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::LSaveDP, node.arg.value);
+}
+
 void loadingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::LoadDP, node.arg.value);
@@ -1331,7 +1336,7 @@ ByteCodeWriter::Saver commands[] =
    genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
 
-   terminatorReference, copyingItem
+   terminatorReference, copyingItem, savingLongIndex
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

@@ -5057,18 +5057,20 @@ ExternalInfo Compiler :: mapExternal(Scope& scope, SyntaxNode node)
 }
 
 ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& scope, ref_t externalRef,
-   bool stdCall, ArgumentsInfo& arguments)
+   bool stdCall, ArgumentsInfo& arguments, ref_t expectedRef)
 {
    pos_t count = arguments.count_pos();
 
    writer.appendNode(BuildKey::Allocating, align(count, scope.moduleScope->stackAlingment));
 
+   TypeInfo retType = { V_INT32 };
    ref_t intArgType = 0;
    switch (scope.moduleScope->ptrSize) {
       case 4:
          intArgType = V_INT32;
          break;
       case 8:
+         retType = { V_INT64 };
          intArgType = V_INT64;
          break;
       default:
@@ -5110,7 +5112,15 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
    if (!stdCall)
       writer.appendNode(BuildKey::Freeing, align(count, scope.moduleScope->stackAlingment));
 
-   return { ObjectKind::Extern, { V_INT32 }, 0 };
+   if (_logic->isCompatible(*scope.moduleScope, retType, { expectedRef }, true)) {
+      retType = { expectedRef  };
+   }
+   else if (retType.typeRef == V_INT64 &&  _logic->isCompatible(*scope.moduleScope, { V_INT32 }, { expectedRef }, true)) {
+      // HOTFIX 64bit : allow to convert the external operation to int32
+      retType = { expectedRef };
+   }
+
+   return { ObjectKind::Extern, retType, 0 };
 }
 
 mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId)
@@ -5954,7 +5964,7 @@ ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& sco
    //if (!targetRef)
    //   targetRef = resolvePrimitiveReference(scope, source.type, source.element, false);
 
-   ref_t argumentRefs[ARG_COUNT];
+   ref_t argumentRefs[ARG_COUNT] = {};
    pos_t argLen = 0;
    for (pos_t i = 0; i < arguments.count(); i++) {
       argumentRefs[argLen++] = retrieveStrongType(scope, arguments[i]);
@@ -6148,7 +6158,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       case TargetMode::WinApi:
          compileMessageArguments(writer, scope, current, arguments, 0, EAttr::None);
 
-         retVal = compileExternalOp(writer, scope, source.reference, source.mode == TargetMode::WinApi, arguments);
+         retVal = compileExternalOp(writer, scope, source.reference, source.mode == TargetMode::WinApi, arguments, expectedRef);
          break;
       case TargetMode::CreatingArray:
       {
@@ -6559,7 +6569,7 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    }
 
    size_t     argLen = 2;
-   ref_t      arguments[3];
+   ref_t      arguments[3] = {};
    arguments[0] = retrieveType(scope, loperand);
    arguments[1] = retrieveType(scope, roperand);
 
@@ -7205,7 +7215,10 @@ ObjectInfo Compiler :: saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope
       auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, object.typeInfo.typeRef);
       int tempLocal = allocateLocalAddress(codeScope, sizeInfo.size, false);
 
-      writer.appendNode(BuildKey::SavingIndex, tempLocal);
+      if (sizeInfo.size == 8) {
+         writer.appendNode(BuildKey::SavingLongIndex, tempLocal);
+      }
+      else writer.appendNode(BuildKey::SavingIndex, tempLocal);
 
       return { ObjectKind::TempLocalAddress, object.typeInfo, (ref_t)tempLocal };
    }
@@ -9871,7 +9884,7 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
          ustr_t actionName = scope.module->resolveAction(actionRef, dummy);
 
          ref_t signatureLen = 0;
-         ref_t signatures[ARG_COUNT];
+         ref_t signatures[ARG_COUNT] = {};
 
          pos_t firstArg = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
          for (pos_t i = firstArg; i < argCount; i++) {

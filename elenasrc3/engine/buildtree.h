@@ -124,6 +124,7 @@ namespace elena_lang
       peekArgument         = 0x005F,
       TerminatorReference  = 0x0060,
       CopyingItem          = 0x0061,
+      SavingLongIndex      = 0x0062,
 
       MaxOperationalKey    = 0x0061,
 

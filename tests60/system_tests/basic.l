@@ -4,7 +4,7 @@ import extensions;
 
 intTests()
 {
-    console.write("intTests");
+    console.write("intTests:");
 
     int n := 2;
     int m := 3;
@@ -36,7 +36,7 @@ intTests()
 
 longTests()
 {
-    console.write("longTests");
+    console.write("longTests:");
 
     int n32 := 23456;
     long n64 := n32;
@@ -73,7 +73,7 @@ longTests()
 
 realTests()
 {
-    console.write("realTests");
+    console.write("realTests:");
 
     real r := 2.89787;
     Assert.ifFalse(r == 2.8);
@@ -112,7 +112,7 @@ realTests()
 
 gcTests()
 {
-   console.write("gcTests");
+   console.write("gcTests:");
    for (int i := 0, i < 100000, i := i + 1)
    {
       new IntNumber();
@@ -123,7 +123,7 @@ gcTests()
 // --- stringTests ---
 stringTests()
 {
-    console.write("stringTests");
+    console.write("stringTests:");
     string s := "abc";
 
     Assert.ifTrue(s == "abc");
@@ -139,7 +139,7 @@ stringTests()
 
 shortTests()
 {
-    console.write("shortTests");
+    console.write("shortTests:");
     short w := 1234;
     Assert.ifTrue(w == 1234);
     console.writeLine(".");
@@ -149,7 +149,7 @@ shortTests()
 
 conversionTests()
 {
-    console.write("conversionTests");
+    console.write("conversionTests:");
     int n := 1234;
     short w := n;
     Assert.ifTrue(w == 1234);
@@ -184,7 +184,7 @@ AssignTestClass
 
 assignTests()
 {
-   console.write("assignTests");
+   console.write("assignTests:");
    var o := new AssignTestClass(2,"test");
    o.test(2,"test");
 
@@ -260,7 +260,7 @@ singleton BoxingProber
 
 boxingTests()
 {
-   console.write("boxingTests");
+   console.write("boxingTests:");
 
    int n := 123;
 
@@ -314,7 +314,7 @@ singleton ByRefProber
 
 byRefTests()
 {
-   console.write("byRefTests");
+   console.write("byRefTests:");
 
    int n := 0;
    ByRefProber.set(ref n);
@@ -374,7 +374,7 @@ class InlineAssignTester2Base
 
 inlineAssignmentTests()
 {
-   console.write("inlineAssignmentTests");
+   console.write("inlineAssignmentTests:");
    var b := new InlineAssignTesterBase();
    b.validate();
    console.write(".");
@@ -431,7 +431,7 @@ sealed class SingleDispatcher
 
 public singleDispatchTest()
 {
-   console.write("singleDispatchTest");
+   console.write("singleDispatchTest:");
 
    var weakDispatcher := new SingleDispatcher();
 

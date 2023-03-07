@@ -1115,7 +1115,7 @@ namespace elena_lang
       bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
 
       ObjectInfo compileExternalOp(BuildTreeWriter& writer, ExprScope& scope, ref_t externalRef, bool stdCall, 
-         ArgumentsInfo& arguments);
+         ArgumentsInfo& arguments, ref_t expectedRef);
 
       ObjectInfo compileNewArrayOp(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments);
       ObjectInfo compileNewOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
