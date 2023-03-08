@@ -527,7 +527,7 @@ end
 // ; xlcmp
 inline % 1Ch
 
-  ld      x14, [x10]
+  ldr     x14, [x10]
   cmp     x9, x14
 
 end
