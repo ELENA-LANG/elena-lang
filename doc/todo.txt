@@ -68,7 +68,6 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
-    * dispatch static sealed method in run-time
     * optimization : double assigning for external op
     * create github action workflow to build the project
     * inno setup : x86, x86-64
@@ -671,7 +670,6 @@ Backlog:
                 * step over external / message / loop / if call?
                 * step over last statement (without terminator)
                 * watch message / subject info
-                * sealed static methods : multimethods
                 * uncomment validateUnresolved
                 * error by viewing translit sample
                 * port Linux IDE

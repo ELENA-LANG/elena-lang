@@ -1802,7 +1802,8 @@ void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node, b
          scope.raiseError(errClosedParent, node);
       }
 
-      if (existing && MethodScope::checkType(methodInfo, MethodHint::Sealed))
+      // HOTFIX : auto generated sealed static methods should be allowed
+      if (existing && MethodScope::checkType(methodInfo, MethodHint::Sealed) && !autoMultimethod)
          scope.raiseError(errClosedMethod, node);
 
       if (test(scope.info.header.flags, elExtension) && (privateOne || internalOne))
@@ -1998,6 +1999,8 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
                hints |= (ref_t)MethodHint::Internal;
             if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_PROTECTED))
                hints |= (ref_t)MethodHint::Protected;
+            if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_STATIC))
+               hints |= (ref_t)MethodHint::Static;
 
             // mark weak message as a multi-method
             auto m_it = scope.info.methods.getIt(multiMethod);
@@ -2902,6 +2905,7 @@ void Compiler :: inheritStaticMethods(ClassScope& scope, SyntaxNode classNode)
    // save the newly declared static methods
    for (auto it = scope.info.methods.start(); !it.eof(); ++it) {
       auto methodInfo = *it;
+      mssg_t key = it.key();
 
       if (!methodInfo.inherited && MethodScope::checkType(methodInfo, MethodHint::Sealed) &&
          MethodScope::checkHint(methodInfo, MethodHint::Static))
@@ -9719,7 +9723,8 @@ void Compiler :: compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildT
 
 inline SyntaxNode newVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, Visibility visibility)
 {
-   ref_t hints = (ref_t)MethodHint::Multimethod | (ref_t)MethodHint::Normal;
+   ref_t hints = (ref_t)MethodHint::Multimethod | (methodType == SyntaxKey::StaticMethod ? (ref_t)MethodHint::Sealed : (ref_t)MethodHint::Normal);
+
    switch (visibility) {
       case Visibility::Protected:
          hints |= (ref_t)MethodHint::Protected;
@@ -9869,9 +9874,9 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
    if (isSingleDispatch(classNode, methodType, message, resendMessage) && ((message & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE) &&
       injectVirtualStrongTypedMultimethod(classNode, methodType, scope, message, resendMessage, outputRef, visibility))
    {
-      // mark the message as a signle dispatcher if the class is sealed / closed
+      // mark the message as a signle dispatcher if the class is sealed / closed / class class
       // and default multi-method was not explicitly declared
-      if (test(info.header.flags, elClosed) && !inherited)
+      if (testany(info.header.flags, elClosed | elClassClass) && !inherited)
          info.attributes.add({ message, ClassAttribute::SingleDispatch }, resendMessage);
    }
    else {
