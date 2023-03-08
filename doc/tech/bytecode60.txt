@@ -153,6 +153,8 @@ ELENA byte codes (or ecodes)
    alloc i                  - sp += i ; reserve and fill with zeros; 
                               new sp value is aligned to 2 in x86-64 mode
 
+   convl                    - index => long:index
+
    dalloc                   - sp += index ; reserve and fill with zeros; 
                               new sp value is aligned to 2 in x86-64 mode
 
@@ -396,6 +398,10 @@ ELENA byte codes (or ecodes)
                               COMP.LT := (index < temp);
 
    xcmp  dp:i               - COMP.EQ := (index == dp[i]);
+
+   xlcmp                    - long:temp << long:acc[0];
+                              COMP.EQ := (long:index == long:temp);
+                              COMP.LT := (long:index < long:temp);
 
 
  Misc operations:

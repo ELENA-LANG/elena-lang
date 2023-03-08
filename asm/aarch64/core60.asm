@@ -517,6 +517,21 @@ inline %1Ah
 
 end
 
+// ; convl
+inline %1Bh
+
+  sxtw    x9, w9
+
+end
+
+// ; xlcmp
+inline % 1Ch
+
+  ld      x14, [x10]
+  cmp     x9, x14
+
+end
+
 // ; coalesce
 inline % 20h
 

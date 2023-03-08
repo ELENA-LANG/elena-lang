@@ -125,6 +125,7 @@ namespace elena_lang
       TerminatorReference  = 0x0060,
       CopyingItem          = 0x0061,
       SavingLongIndex      = 0x0062,
+      LongIntCondOp        = 0x0063,
 
       MaxOperationalKey    = 0x0061,
 

@@ -439,6 +439,20 @@ inline %1Ah
 
 end
 
+// ; convl
+inline %1Bh
+
+  movsxd rdx, edx
+
+end
+
+// ; xlcmp
+inline % 1Ch
+
+  cmp  rdx, [rbx]
+
+end
+
 // ; coalesce
 inline % 20h
 

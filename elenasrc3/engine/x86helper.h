@@ -112,6 +112,8 @@ namespace elena_lang
       JNZ   = 0x05,
       JBE   = 0x06,
       JA    = 0x07,
+      JS    = 0x08,
+      JNS   = 0x09,
       JL    = 0x0C,
       JGE   = 0x0D,
    };

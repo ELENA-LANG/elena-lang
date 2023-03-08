@@ -548,6 +548,21 @@ inline %1Ah
 
 end
 
+// ; convl
+inline %1Bh
+
+  extsw   r14, r14
+
+end
+
+// ; xlcmp
+inline % 1Ch
+
+  ld      r18, 0(r15)
+  cmp     r14, r18
+
+end
+
 // ; coalesce
 inline % 20h
 

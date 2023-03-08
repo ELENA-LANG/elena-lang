@@ -171,12 +171,26 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\common\dump.h" />
+    <ClInclude Include="..\..\common\files.h" />
+    <ClInclude Include="..\..\common\lists.h" />
+    <ClInclude Include="..\..\common\paths.h" />
+    <ClInclude Include="..\..\common\ustring.h" />
+    <ClInclude Include="..\..\engine\scriptreader.h" />
+    <ClInclude Include="..\..\engine\textparser.h" />
     <ClInclude Include="..\scriptmachine.h" />
+    <ClInclude Include="..\scriptparser.h" />
     <ClInclude Include="..\smcommon.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\common\dump.cpp" />
+    <ClCompile Include="..\..\common\files.cpp" />
+    <ClCompile Include="..\..\common\paths.cpp" />
+    <ClCompile Include="..\..\common\ustring.cpp" />
+    <ClCompile Include="..\..\engine\scriptreader.cpp" />
     <ClCompile Include="..\scriptmachine.cpp" />
+    <ClCompile Include="..\scriptparser.cpp" />
     <ClCompile Include="..\windows\dllmain.cpp" />
   </ItemGroup>
   <ItemGroup>

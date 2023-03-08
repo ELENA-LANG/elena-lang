@@ -868,6 +868,42 @@ void longCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
    else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
 }
 
+void longIntCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::Load);
+   tape.write(ByteCode::ConvL);
+   tape.write(ByteCode::PeekSI, 0);
+   tape.write(ByteCode::XLCmp, 8);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case LESS_OPERATOR_ID:
+         opCode = ByteCode::SelLtRR;
+         break;
+      case EQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
 void byteArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
@@ -1336,7 +1372,7 @@ ByteCodeWriter::Saver commands[] =
    genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
 
-   terminatorReference, copyingItem, savingLongIndex
+   terminatorReference, copyingItem, savingLongIndex, longIntCondOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

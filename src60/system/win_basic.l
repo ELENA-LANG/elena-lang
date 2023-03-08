@@ -15,6 +15,11 @@ public sealed const struct Handle
 public sealed const struct UnsafePointer
 {
    embeddable __ptr pointer;
+
+   bool isUnassigned()
+   {
+      ^ pointer == 0;
+   }
 }
 
 // --- CallStack ---

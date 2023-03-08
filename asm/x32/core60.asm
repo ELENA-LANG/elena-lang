@@ -428,7 +428,36 @@ end
 inline %1Ah
 
   mov  eax, dword ptr [ebx]
-  mov  edx, dword ptr [ebx]
+  mov  edx, dword ptr [ebx+4]
+
+end
+
+// ; convl
+inline % 1Bh
+
+  mov  eax, edx
+  cdq
+
+end
+
+// ; xlcmp
+inline % 1Ch
+
+  push  eax
+  push  edx
+
+  mov   edi, eax
+  xor   eax, eax
+  sub   edi, [ebx]
+  sbb   edx, [ebx+4]
+  sets  ah
+  or    edx, edi
+  setz  al 
+  mov   ecx, 1
+  cmp   eax, ecx
+
+  pop   edx
+  pop   eax
 
 end
 
@@ -466,11 +495,8 @@ end
 // ; lsave
 inline %24h
 
-  mov  eax, edx
-  cdq
   mov  [ebx + 4], edx
   mov  [ebx], eax
-  mov  edx, eax
 
 end
 
@@ -1157,10 +1183,16 @@ end
 // ; icmpn 8
 inline %4C2h
 
-  mov  ecx, [esi]
-  sub  ecx, [ebx]
-  mov  eax, [esi+4]
-  sbb  eax, [ebx+4]
+  xor   eax, eax
+  mov   edi, [esi]
+  sub   edi, [ebx]
+  mov   ecx, [esi+4]
+  sbb   ecx, [ebx+4]
+  sets  ah
+  or    ecx, edi
+  setz  al 
+  mov   ecx, 1
+  cmp   ecx, eax
 
 end
 

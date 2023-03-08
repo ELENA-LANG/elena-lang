@@ -65,6 +65,15 @@ namespace text
    }
 
    // --- UTF16Encoding ---
+   public singleton UTF8Encoding
+   {
+      string toString(int index, int size, byte[] buffer)
+      {
+         ^ String.fromByteArray(index, size, buffer);
+      }
+   }
+
+   // --- UTF16Encoding ---
    public singleton UTF16Encoding
    {
        char toChar(short w)

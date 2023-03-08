@@ -66,6 +66,37 @@ longTests()
     Assert.ifTrue(n <= n);
     Assert.ifTrue(n >= n);
     Assert.ifFalse(n >= m);
+
+    Assert.ifFalse(m == n);
+    Assert.ifTrue(m > n);
+    Assert.ifFalse(m < n);
+    console.write(".");
+
+    long l := 2l;
+    long l2 := -2l;
+    Assert.ifTrue(l == l);   
+    Assert.ifTrue(l2 == l2); 
+    Assert.ifFalse(l2 == l); 
+    Assert.ifFalse(l == l2); 
+    Assert.ifFalse(l < l2);  
+    Assert.ifTrue(l > l2);   
+    Assert.ifTrue(l2 < l);   
+    Assert.ifFalse(l2 > l);  
+    console.write(".");
+
+    n := 2;
+    int n2 := -2;
+
+    Assert.ifTrue(l == n);   // ; true
+    Assert.ifTrue(l2 == n2); // ; true
+    Assert.ifFalse(l == n2);  // ; false
+    Assert.ifFalse(l2 == n); // ; false
+
+    Assert.ifFalse(l < n2);  // ; false
+    Assert.ifFalse(l < n);  // ; false
+    Assert.ifTrue(l2 < n);  // ; true
+    Assert.ifFalse(l2 < n2);  // ; false
+
     console.writeLine(".");
 }
 

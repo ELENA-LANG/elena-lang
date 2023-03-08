@@ -45,6 +45,8 @@ namespace elena_lang
       DTrans         = 0x18,
       XAssign        = 0x19,
       LLoad          = 0x1A,
+      ConvL          = 0x1B,
+      XLCmp          = 0x1C,
 
       Coalesce       = 0x20,
       Not            = 0x21,

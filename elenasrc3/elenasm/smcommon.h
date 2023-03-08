@@ -9,11 +9,10 @@
 #ifndef RTCOMMON_H
 #define RTCOMMON_H
 
-namespace elena_lang
-{
-
 #define ELENASM_REVISION_NUMBER        0x0001
 
+namespace elena_lang
+{
 }
 
 #endif

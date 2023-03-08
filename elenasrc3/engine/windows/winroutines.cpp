@@ -96,11 +96,14 @@ LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 
          return EXCEPTION_CONTINUE_EXECUTION;
       default:
-         ExceptionInfo->ContextRecord->Edx = ExceptionInfo->ContextRecord->Eip;
-         ExceptionInfo->ContextRecord->Eax = ELENA_ERR_CRITICAL;
-         ExceptionInfo->ContextRecord->Eip = CriticalHandler;
+         if (ExceptionInfo->ExceptionRecord->ExceptionCode < 0xE0000000) {
+            ExceptionInfo->ContextRecord->Edx = ExceptionInfo->ContextRecord->Eip;
+            ExceptionInfo->ContextRecord->Eax = ELENA_ERR_CRITICAL;
+            ExceptionInfo->ContextRecord->Eip = CriticalHandler;
 
-         return EXCEPTION_CONTINUE_EXECUTION;
+            return EXCEPTION_CONTINUE_EXECUTION;
+         }
+         else return EXCEPTION_CONTINUE_SEARCH;
    }
 
    return EXCEPTION_CONTINUE_SEARCH;

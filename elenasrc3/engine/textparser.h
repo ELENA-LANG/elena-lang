@@ -58,6 +58,11 @@ namespace elena_lang
          position = 0;
          column = row = 0;
       }
+      LineInfo(pos_t defPosition)
+      {
+         position = defPosition;
+         column = row = 0;
+      }
    };
 
    // --- LineTooLong ---

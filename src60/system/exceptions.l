@@ -25,6 +25,11 @@ public class Exception
        weak self.new().raise()
    }
 
+   sealed static raise(string message)
+   {
+       weak self.new(message).raise()
+   }
+
    string toPrintable()
    {
       string retVal := message.add($10"Call stack:"$10).add(callStack.toPrintable());
