@@ -449,7 +449,7 @@ end
 // ; xlcmp
 inline % 1Ch
 
-  cmp  rdx, [rbx]
+  cmp  [rbx], rdx
 
 end
 

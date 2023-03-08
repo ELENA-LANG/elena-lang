@@ -14,8 +14,7 @@ In development:
     ! elena vm : x86-64
     ! x86 : multi-threading
 
-    * primitive comparision between long and int
-    * test long compare with int : x86, x86-64, i386, amd64, ppc64le, arm64
+    * test long compare with int : ppc64le, arm64
 
 
     * ScriptEngine : raise an error

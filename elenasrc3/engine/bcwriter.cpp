@@ -1259,6 +1259,7 @@ void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
    switch (node.arg.reference) {
       case INT32_64_CONVERSION:
          tape.write(ByteCode::Load);
+         tape.write(ByteCode::ConvL);
          tape.write(ByteCode::PeekSI, 0);
          tape.write(ByteCode::LSave);
          break;

@@ -40,7 +40,10 @@ longTests()
 
     int n32 := 23456;
     long n64 := n32;
+    int in32 := -23458;
+    long in64 := in32;
     Assert.ifTrue(n64 == 23456l);
+    Assert.ifTrue(in64 == -23458l);
     console.write(".");
 
     long n := 2l;
