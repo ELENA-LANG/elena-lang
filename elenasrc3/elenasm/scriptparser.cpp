@@ -23,7 +23,7 @@ ScriptEngineReader :: ScriptEngineReader(UStrReader* textReader, CoordMap* coord
 
 ScriptBookmark ScriptEngineReader :: read()
 {
-   ScriptBookmark bm;
+   ScriptBookmark bm = {};
 
    if (sourceReader.read(token)) {
       bm.offset = buffer.length();
@@ -42,7 +42,10 @@ ScriptBookmark ScriptEngineReader :: read()
          _eof = true;
       }
    }
-   else _eof = true;
+   else {
+      _eof = true;
+      bm.state = dfaEOF;
+   }
 
    MemoryWriter writer(&buffer);
    writer.writeString(*token.token);

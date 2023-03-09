@@ -108,7 +108,8 @@ namespace elena_lang
          }
       };
 
-      typedef MemoryHashTable<pos_t, Rule, syntaxRuleCF, cnCFHashSize, Map_StoreUInt, Map_GetUInt> SyntaxTable;
+      //typedef MemoryHashTable<pos_t, Rule, syntaxRuleCF, cnCFHashSize, Map_StoreUInt, Map_GetUInt> SyntaxTable;
+      typedef HashTable<pos_t, Rule, syntaxRuleCF, cnCFHashSize> SyntaxTable;
       typedef Queue<DerivationItem> DerivationQueue;
 
    protected:

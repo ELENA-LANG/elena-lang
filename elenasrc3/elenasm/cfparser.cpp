@@ -838,7 +838,7 @@ pos_t ScriptEngineCFParser :: buildDerivationTree(ScriptEngineReaderBase& reader
 
       DerivationItem current = predictions.pop();
       if (reader.eof()) {
-         if (current.ruleId == -1) {
+         if (current.ruleId == INVALID_POS) {
             return current.trace;
          }
          else throw SyntaxError("invalid syntax", bm.lineInfo);
@@ -848,7 +848,7 @@ pos_t ScriptEngineCFParser :: buildDerivationTree(ScriptEngineReaderBase& reader
       pos_t terminalOffset = writer.position();
       writer.write(&bm, sizeof(ScriptBookmark));
       while (current.ruleId != 0) {
-         if (current.ruleId == -1) {
+         if (current.ruleId == INVALID_POS) {
             return current.trace;
          }
 
