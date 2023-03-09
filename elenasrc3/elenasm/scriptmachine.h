@@ -42,7 +42,7 @@ namespace elena_lang
 
       void parseDirectives(ScriptEngineReaderBase& reader);
       void parseMetaScript(int id, ScriptEngineReaderBase& reader);
-      void parseScript();
+      void parseScript(int id, ScriptEngineReaderBase& reader);
 
       void* translate(int id, UStrReader* source);
 

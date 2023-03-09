@@ -11,8 +11,14 @@ using namespace elena_lang;
 // --- ScriptParser ---
 
 ScriptEngineReader :: ScriptEngineReader(UStrReader* textReader)
-   : sourceReader(4, textReader), token({}), eof(false), coordinates(nullptr)
+   : sourceReader(4, textReader), token({}), _eof(false), coordinates(nullptr)
 {
+}
+
+ScriptEngineReader :: ScriptEngineReader(UStrReader* textReader, CoordMap* coordinates)
+   : ScriptEngineReader(textReader)
+{
+   this->coordinates = coordinates;
 }
 
 ScriptBookmark ScriptEngineReader :: read()
@@ -33,10 +39,10 @@ ScriptBookmark ScriptEngineReader :: read()
       else bm.lineInfo = token.lineInfo;
 
       if (token.state == dfaEOF) {
-         eof = true;
+         _eof = true;
       }
    }
-   else eof = true;
+   else _eof = true;
 
    MemoryWriter writer(&buffer);
    writer.writeString(*token.token);

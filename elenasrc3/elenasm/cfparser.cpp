@@ -33,6 +33,9 @@ constexpr auto MULTI_MODE           = 9;
 constexpr auto EXCLUDE_MODE         = 10;
 constexpr auto CHARACTER_MODE       = 11;
 
+constexpr auto WITHFORWARD_MASK = 0x80000000;
+constexpr auto POSTFIXSAVE_MODE = 0x80000000;
+
 void saveReference(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log)
 {
    ScriptBookmark bm;
@@ -706,6 +709,159 @@ void ScriptEngineCFParser :: defineGrammarRuleMember(ScriptEngineReaderBase& rea
    else throw SyntaxError("invalid grammar rule", bm.lineInfo);
 }
 
+inline pos_t writeDerivationItem(MemoryWriter& writer, int key, int terminal, int trace, bool forwardMode)
+{
+   if (forwardMode)
+      key |= WITHFORWARD_MASK;
+
+   pos_t offset = writer.position();
+   writer.writeDWord(key);
+   writer.writeDWord(terminal);
+   writer.writeDWord(trace);
+
+   return offset;
+}
+
+inline pos_t writeTrailItem(MemoryWriter& writer, pos_t nonterminal, pos_t next)
+{
+   pos_t offset = writer.position();
+   writer.writeDWord(nonterminal);
+   writer.writeDWord(next);
+
+   return offset;
+}
+
+inline void readTailItemAndInsert(MemoryReader& reader, MemoryWriter& writer, ScriptEngineCFParser::DerivationQueue& queue, pos_t offset)
+{
+   pos_t nonterminal = reader.getDWord();
+   pos_t next = reader.getDWord();
+
+   while (nonterminal == 0) {
+      offset = writeDerivationItem(writer, 0, 0, offset, false);
+      if (next != (pos_t)-1) {
+         reader.seek(next);
+         nonterminal = reader.getDWord();
+         next = reader.getDWord();
+      }
+      else break;
+   }
+
+   if (next == -1) {
+      queue.insert({ INVALID_POS, offset, 0 });
+   }
+   else queue.insert({ nonterminal, offset, next });
+}
+
+inline void readTailItemAndPush(MemoryReader& reader, MemoryWriter& writer, ScriptEngineCFParser::DerivationQueue& queue, pos_t offset)
+{
+   pos_t nonterminal = reader.getDWord();
+   pos_t next = reader.getDWord();
+
+   while (nonterminal == 0) {
+      offset = writeDerivationItem(writer, 0, 0, offset, false);
+      if (next != -1) {
+         reader.seek(next);
+         nonterminal = reader.getDWord();
+         next = reader.getDWord();
+      }
+      else break;
+   }
+
+   if (next == -1) {
+      queue.push({ INVALID_POS, offset, 0 });
+   }
+   else queue.push({ nonterminal, offset, next });
+}
+
+void ScriptEngineCFParser :: predict(DerivationQueue& queue, DerivationItem item, ScriptEngineReaderBase& reader, ScriptBookmark& bm, pos_t terminalOffset, MemoryWriter& writer)
+{
+   //ustr_t keyName = _names.retrieve<ref_t>(DEFAULT_STR, item.ruleId, [](ref_t reference, ustr_t key, ref_t current)
+   //   {
+   //      return current == reference;
+   //   });
+
+   pos_t key = createKey(item.ruleId, 1);
+   Rule rule = _table.get(key);
+
+   while (rule.type != RuleType::None) {
+      int ruleType = rule.type & RuleType::TypeMask;
+
+      if (rule.apply(rule, bm, reader, this)) {
+         pos_t offset = writeDerivationItem(writer, key, terminalOffset, item.trace, testany(rule.type, RuleType::WithForward | RuleType::WithBookmark));
+         pos_t next = writeTrailItem(writer, 0, item.next);
+
+         if (ruleType == RuleType::Eps) {
+            MemoryReader nextReader(&_body, (pos_t)next);
+            readTailItemAndInsert(nextReader, writer, queue, offset);
+         }
+         else if (ruleType != RuleType::Normal) {
+            // if it is a chomksi form
+            if (ruleType == RuleType::Chomski) {
+               next = writeTrailItem(writer, rule.terminal, next);
+            }
+
+            queue.insert({ rule.nonterminal, offset, next });
+         }
+         else if (rule.nonterminal == 0) {
+            MemoryReader nextReader(&_body, (pos_t)next);
+            readTailItemAndPush(nextReader, writer, queue, offset);
+         }
+         else queue.push({ rule.nonterminal, offset, next });
+      }
+
+      rule = _table.get(++key);
+   }
+}
+
+pos_t ScriptEngineCFParser :: buildDerivationTree(ScriptEngineReaderBase& reader, ref_t startRuleId, MemoryWriter& writer)
+{
+   DerivationQueue predictions({});
+   predictions.push(DerivationItem(startRuleId, 0, -1));
+
+   ScriptBookmark bm;
+   while (predictions.count() > 0) {
+      //auto p_it = predictions.start();
+      //while (!p_it.Eof()) {
+      //   auto r = *p_it;
+
+      //   ident_t rName = retrieveKey(_names.start(), r.ruleId, DEFAULT_STR);
+      //   if (getlength(rName) != 0) {
+      //      printf("%s\n", rName.c_str());
+      //   }
+      //   else printf("?\n");
+
+      //   p_it++;
+      //}
+      //printf("\n");
+
+      predictions.push(DerivationItem(0));
+
+      DerivationItem current = predictions.pop();
+      if (reader.eof()) {
+         if (current.ruleId == -1) {
+            return current.trace;
+         }
+         else throw SyntaxError("invalid syntax", bm.lineInfo);
+      }
+
+      bm = reader.read();
+      pos_t terminalOffset = writer.position();
+      writer.write(&bm, sizeof(ScriptBookmark));
+      while (current.ruleId != 0) {
+         if (current.ruleId == -1) {
+            return current.trace;
+         }
+
+         predict(predictions, current, reader, bm, terminalOffset, writer);
+
+         current = predictions.pop();
+      }
+   }
+
+   throw SyntaxError("invalid syntax", bm.lineInfo);
+
+}
+
 void ScriptEngineCFParser :: defineGrammarRule(ScriptEngineReaderBase& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId)
 {
    // read: terminal [nonterminal] ;
@@ -793,7 +949,7 @@ bool ScriptEngineCFParser :: compareToken(ScriptEngineReaderBase& reader, Script
    return terminal.compare(ruleTerminal);
 }
 
-bool ScriptEngineCFParser::compareTokenWithAny(ScriptEngineReaderBase& reader, ScriptBookmark& bm, int rule)
+bool ScriptEngineCFParser :: compareTokenWithAny(ScriptEngineReaderBase& reader, ScriptBookmark& bm, int rule)
 {
    ustr_t terminal = reader.lookup(bm);
    ustr_t ruleTerminal = getBodyText(rule);
@@ -806,4 +962,177 @@ bool ScriptEngineCFParser::compareTokenWithAny(ScriptEngineReaderBase& reader, S
    } while (!emptystr(ruleTerminal));
 
    return false;
+}
+
+void ScriptEngineCFParser :: insertForwards(Stack<Pair<int, int>>& forwards, int level, ScriptEngineLog& log)
+{
+   int minLevel = INT_MAX;
+
+   auto it = forwards.start();
+   while (!it.eof()) {
+      auto f = *it;
+      if (f.value2 <= level)
+         break;
+
+      if (!f.value1) {
+         if (minLevel > f.value2)
+            minLevel = f.value2;
+      }
+      else if (f.value2 <= minLevel) {
+         log.write(getBodyText(f.value1));
+      }
+
+      ++it;
+   }
+}
+
+inline void clearPreviousForwards(Stack<Pair<int, int>>& forwards, int level)
+{
+   //if (forwards.peek().value2 < level)
+   //   return;
+
+   auto f = forwards.pop();
+   while (f.value1 || f.value2 != level)
+      f = forwards.pop();
+}
+
+void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase& scriptReader, ScriptEngineLog& log)
+{
+   if (offset == 0)
+      return;
+
+   Stack<Pair<int, int>> forwards(Pair<int, int>(0, -1));
+
+   MemoryReader reader(&_body, (pos_t)offset);
+   Stack<TraceItem> stack({ });
+   TraceItem item = {};
+   reader.read(&item, sizeof(TraceItem));
+   int level = 0;
+   while (true) {
+      if (!item.ruleKey) {
+         level++;
+      }
+      else level--;
+
+      // if forward declaration
+      if (test(item.ruleKey, WITHFORWARD_MASK)) {
+         //int key = (item.ruleKey & ~WITHFORWARD_MASK) >> 8;
+         //ident_t keyName = retrieveKey(_names.start(), key, DEFAULT_STR);
+
+         Rule rule = _table.get(item.ruleKey & ~WITHFORWARD_MASK);
+         if (test(rule.type, RuleType::WithBookmark)) {
+            forwards.push(Pair<int, int>(0, level));
+         }
+         else if (test(rule.type, RuleType::WithForward)) {
+            forwards.push(Pair<int, int>(rule.prefix1Ptr, level));
+         }
+      }
+      stack.push(item);
+
+      if (item.previous == 0)
+         break;
+
+      //    save into forwards
+
+      reader.seek(item.previous);
+      reader.read(&item, sizeof(TraceItem));
+   }
+
+   // NOTE: reset level to -1 to match the backward calculated levels 
+   level = -1;
+   Stack<pos_t> postfixes(0);
+   Stack<SaveToSign> functions(0);
+   while (stack.count() > 0) {
+      item = stack.pop();
+      if (item.ruleKey == 0) {
+         level--;
+
+         pos_t ptr = postfixes.pop();
+         if (ptr) {
+            if (test(ptr, POSTFIXSAVE_MODE)) {
+               ptr &= ~POSTFIXSAVE_MODE;
+
+               log.write(getBodyText(ptr));
+
+               auto saveTo = functions.pop();
+               int terminal = postfixes.pop();
+
+               saveTo(scriptReader, this, terminal, log);
+
+               ptr = postfixes.pop();
+            }
+            log.write(getBodyText(ptr));
+         }
+      }
+      else {
+         level++;
+
+         //for (int i = 0; i < level; i++)
+         //   printf(" ");
+
+         //ident_t keyName = retrieveKey(_names.start(), (item.ruleKey & ~WITHFORWARD_MASK) >> 8, DEFAULT_STR);
+         //printf("%s\n", keyName.c_str());
+
+         Rule rule = _table.get(item.ruleKey & ~WITHFORWARD_MASK);
+
+         if (test(rule.type, RuleType::WithBookmark)) {
+            clearPreviousForwards(forwards, level);
+
+            insertForwards(forwards, level, log);
+         }
+
+         if (rule.prefix1Ptr != 0) {
+            pos_t lineLen = 0;
+            if (!test(rule.type, RuleType::WithForward))
+               lineLen += log.write(getBodyText(rule.prefix1Ptr));
+
+            if (rule.saveTo != NULL)
+               rule.saveTo(scriptReader, this, item.terminal, log);
+
+            // HOTFIX: to prevent too long line
+            if (lineLen > 0) {
+               log.write('\n');
+            }
+            else log.write(' ');
+
+            log.write(getBodyText(rule.postfix1Ptr));
+         }
+
+         if (rule.postfix2Ptr) {
+            postfixes.push(rule.postfix2Ptr);
+
+            postfixes.push(item.terminal);
+            functions.push(rule.saveTo);
+            postfixes.push(rule.prefix2Ptr | POSTFIXSAVE_MODE);
+         }
+         else postfixes.push(rule.prefix2Ptr);
+      }
+
+   }
+   log.write((char)0);
+}
+
+void ScriptEngineCFParser :: parse(ScriptEngineReaderBase& reader, MemoryDump* output)
+{
+   //if (_symbolMode)
+   //   reader.switchDFA(dfaSymbolic);
+
+   ScriptEngineLog log;
+
+   ref_t startId = mapRuleId("start");
+   MemoryWriter writer(&_body);
+
+   pos_t trace = buildDerivationTree(reader, startId, writer);
+   if (!reader.eof()) {
+      ScriptBookmark bm = reader.read();
+      if (bm.state != dfaEOF)
+         throw SyntaxError("invalid syntax", bm.lineInfo);
+   }
+
+   generateOutput(trace, reader, log);
+
+   IdentifierTextReader logReader((const char*)log.getBody());
+   ScriptEngineReader scriptReader(&logReader, log.getCoordinateMap());
+
+   _baseParser->parse(scriptReader, output);
 }

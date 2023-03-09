@@ -175,6 +175,7 @@
     <ClInclude Include="..\..\common\files.h" />
     <ClInclude Include="..\..\common\lists.h" />
     <ClInclude Include="..\..\common\paths.h" />
+    <ClInclude Include="..\..\common\streams.h" />
     <ClInclude Include="..\..\common\ustring.h" />
     <ClInclude Include="..\..\engine\dfa.h" />
     <ClInclude Include="..\..\engine\scriptreader.h" />

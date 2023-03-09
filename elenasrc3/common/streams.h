@@ -664,6 +664,8 @@ namespace elena_lang
       }
    };
 
+   typedef StringTextReader<char> IdentifierTextReader;
+
 }
 
 #endif // STREAMS_H

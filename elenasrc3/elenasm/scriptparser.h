@@ -40,6 +40,8 @@ namespace elena_lang
    class ScriptEngineReaderBase
    {
    public:
+      virtual bool eof() = 0;
+
       virtual ScriptBookmark read() = 0;
 
       virtual ustr_t lookup(ScriptBookmark& bm) = 0;
@@ -54,11 +56,16 @@ namespace elena_lang
       ScriptReader sourceReader;
       MemoryDump   buffer;
       ScriptToken  token;
-      bool         eof;
+      bool         _eof;
 
       CoordMap*    coordinates;
 
    public:
+      bool eof() override
+      {
+         return _eof;
+      }
+
       ScriptBookmark read() override;
 
       ustr_t lookup(ScriptBookmark& bm) override;
@@ -66,6 +73,7 @@ namespace elena_lang
       bool compare(ustr_t value) override;
 
       ScriptEngineReader(UStrReader* textReader);
+      ScriptEngineReader(UStrReader* textReader, CoordMap* coordinates);
    };
 
    class ScriptEngineLog
@@ -77,6 +85,13 @@ namespace elena_lang
       void writeCoord(LineInfo lineInfo)
       {
          _coordinates.add(_log.length(), lineInfo);
+      }
+
+      void write(char ch)
+      {
+         MemoryWriter writer(&_log);
+
+         writer.writeChar(ch);
       }
 
       pos_t write(ustr_t token)
@@ -120,10 +135,21 @@ namespace elena_lang
          writeQuote(writer, token);
       }
 
+      void* getBody()
+      {
+         write((char)0);
+
+         return _log.get(0);
+      }
+
+      CoordMap* getCoordinateMap()
+      {
+         return &_coordinates;
+      }
+
       ScriptEngineLog()
          : _coordinates({ INVALID_POS })
       {
-         
       }
    };
 
@@ -133,7 +159,22 @@ namespace elena_lang
    public:
       virtual bool parseGrammarRule(ScriptEngineReaderBase& reader) = 0;
 
+      virtual void parse(ScriptEngineReaderBase& reader, MemoryDump* output) = 0;
+
       virtual ~ScriptEngineParserBase() = default;
+   };
+
+   // --- TapeWriter ---
+   class TapeWriter
+   {
+      MemoryDump* _tape;
+
+   public:
+      TapeWriter(MemoryDump* tape)
+      {
+         _tape = tape;
+      }
+      virtual ~TapeWriter() = default;
    };
 }
 

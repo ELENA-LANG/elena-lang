@@ -101,9 +101,11 @@ void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
    }
 }
 
-void ScriptEngine :: parseScript()
+void ScriptEngine :: parseScript(int id, ScriptEngineReaderBase& reader)
 {
-   
+   ScriptEngineParserBase* parser = getParser(id);
+
+   parser->parse(reader, &_tape);
 }
 
 void* ScriptEngine :: translate(int id, UStrReader* source)
@@ -116,7 +118,7 @@ void* ScriptEngine :: translate(int id, UStrReader* source)
       throw InvalidOperationError("Tape is not released");
 
    parseMetaScript(id, scriptReader);
-   parseScript();
+   parseScript(id, scriptReader);
 
    return _tape.get(offset);
 }

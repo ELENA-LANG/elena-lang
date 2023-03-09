@@ -19,7 +19,31 @@ namespace elena_lang
    public:
       bool parseGrammarRule(ScriptEngineReaderBase& reader) override;
 
+      void parse(ScriptEngineReaderBase& reader, MemoryDump* output) override;
+
       ScriptEngineTextParser()
+      {
+         _width = 0x50;
+      }
+   };
+
+   // --- ScriptEngineBuilder ---
+   class ScriptEngineBuilder : public ScriptEngineParserBase
+   {
+      int _width;
+
+      void saveToken(MemoryWriter& writer, ScriptEngineReaderBase& reader, ScriptBookmark bm);
+
+      void saveClass(MemoryWriter& writer, ScriptEngineReaderBase& reader, Stack<ScriptBookmark>& stack, int allocated,
+         int& maxAllocated, int& maxStackSize);
+      void flush(MemoryWriter& writer, ScriptEngineReaderBase& reader, Stack<ScriptBookmark>& stack);
+
+   public:
+      bool parseGrammarRule(ScriptEngineReaderBase& reader) override;
+
+      void parse(ScriptEngineReaderBase& reader, MemoryDump* output) override;
+
+      ScriptEngineBuilder()
       {
          _width = 0x50;
       }

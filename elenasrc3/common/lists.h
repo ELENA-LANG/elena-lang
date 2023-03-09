@@ -13,6 +13,7 @@
 namespace elena_lang
 {
    template <class T, void(*FreeT)(T) = nullptr> class BListBase;
+   template <class T, void(*FreeT)(T) = nullptr> class ListBase;
 
    // --- ItemBase ---
    template <class T> struct ItemBase
@@ -122,6 +123,7 @@ namespace elena_lang
       Item* _current;
 
       friend class BListBase<T>;
+      friend class ListBase<T>;
 
    public:
       bool operator ==(const ListIteratorBase& it)
@@ -385,7 +387,7 @@ namespace elena_lang
    };
 
    // --- ListBase ---
-   template <class T, void(*FreeT)(T) = nullptr> class ListBase
+   template <class T, void(*FreeT)(T)> class ListBase
    {
       typedef ItemBase<T> Item;
 
@@ -461,6 +463,22 @@ namespace elena_lang
             prev->next = new Item(item, prev->next);
          }
          else addToTale(item);
+      }
+
+      void insertBefore(Iterator& it, T item)
+      {
+         it._current->next = new Item(it._current->item, it._current->next);
+         it._current->item = item;
+
+         _count++;
+         ++it;
+      }
+
+      void insertAfter(Iterator& it, T item)
+      {
+         it._current->next = new Item(item, it._current->next);
+
+         _count++;
       }
 
       T cutTop()
@@ -578,20 +596,6 @@ namespace elena_lang
             _tale = item;
          }
          else _top = _tale = item;
-
-         _count++;
-      }
-
-      void insertAfter(Iterator it, T item)
-      {
-         Item* nextItem = it._current->next;
-
-         it._current->next = new Item(item, it._current, nextItem);
-
-         if (nextItem) {
-            nextItem->previous = it._current->next;
-         }
-         else _tale = it._current->next;
 
          _count++;
       }
@@ -841,6 +845,24 @@ namespace elena_lang
 
       T DefaultValue() const { return _list.DefaultValue(); }
 
+      Iterator get(int index)
+      {
+         Iterator it = start();
+         while (!it.eof() && index > 0) {
+            index--;
+            it++;
+         }
+         return it;
+      }
+
+      void insert(Iterator it, T item)
+      {
+         if (it.eof()) {
+            _list.addToTale(item);
+         }
+         else _list.insertAfter(it, item);
+      }
+
       void push(T item)
       {
          _list.addToTop(item);
@@ -882,6 +904,11 @@ namespace elena_lang
       pos_t count() const { return  _list.count(); }
 
       T DefaultValue() const { return _list.DefaultValue(); }
+
+      void insert(T item)
+      {
+         _list.addToTop(item);
+      }
 
       void push(T item)
       {
@@ -2161,7 +2188,7 @@ namespace elena_lang
       {
          Iterator it = getIt(key);
 
-         return it.Eof() ? _defaultItem : *it;
+         return it.eof() ? _defaultItem : *it;
       }
 
       bool exist(Key key) const

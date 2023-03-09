@@ -65,7 +65,51 @@ namespace elena_lang
          }
       };
 
+      struct DerivationItem
+      {
+         pos_t ruleId;
+         pos_t trace;    // derivation trace
+         pos_t next;     // tailing nonterminal
+
+         DerivationItem()
+         {
+            ruleId = 0;
+            trace = 0;
+            next = 0;
+         }
+         DerivationItem(pos_t ruleId)
+         {
+            this->ruleId = ruleId;
+            this->trace = 0;
+            this->next = 0;
+         }
+         DerivationItem(pos_t ruleId, pos_t trace, pos_t next)
+         {
+            this->ruleId = ruleId;
+            this->trace = trace;
+            this->next = next;
+         }
+      };
+
+      struct TraceItem
+      {
+         pos_t ruleKey;
+         pos_t terminal;
+         pos_t previous;
+
+         TraceItem()
+         {
+            ruleKey = terminal = previous = 0;
+         }
+         TraceItem(pos_t key)
+         {
+            ruleKey = key;
+            terminal = previous = 0;
+         }
+      };
+
       typedef MemoryHashTable<pos_t, Rule, syntaxRuleCF, cnCFHashSize, Map_StoreUInt, Map_GetUInt> SyntaxTable;
+      typedef Queue<DerivationItem> DerivationQueue;
 
    protected:
       ScriptEngineParserBase* _baseParser;
@@ -107,6 +151,12 @@ namespace elena_lang
 
       void addRule(int id, Rule& rule);
 
+      void predict(DerivationQueue& queue, DerivationItem item, ScriptEngineReaderBase& reader, ScriptBookmark& bm, pos_t terminalOffset, MemoryWriter& writer);
+      pos_t buildDerivationTree(ScriptEngineReaderBase& reader, ref_t startRuleId, MemoryWriter& writer);
+      void generateOutput(pos_t offset, ScriptEngineReaderBase& reader, ScriptEngineLog& log);
+
+      void insertForwards(Stack<Pair<int, int>>& forwards, int level, ScriptEngineLog& log);
+
    public:
       void readScriptBookmark(pos_t ptr, ScriptBookmark& bm);
 
@@ -114,6 +164,8 @@ namespace elena_lang
       bool compareTokenWithAny(ScriptEngineReaderBase& reader, ScriptBookmark& bm, int rule);
 
       bool parseGrammarRule(ScriptEngineReaderBase& reader) override;
+
+      void parse(ScriptEngineReaderBase& reader, MemoryDump* output) override;
 
       ScriptEngineCFParser(ScriptEngineParserBase* baseParser)
          : _table({}), _names(0)
