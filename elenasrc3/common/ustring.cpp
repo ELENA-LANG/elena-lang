@@ -3,7 +3,7 @@
 //
 //		This file contains String classes implementations
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //                                             (C)1994-2004, Unicode, Inc.
 //---------------------------------------------------------------------------
 
@@ -715,6 +715,11 @@ inline char* util_lower(char* s)
    return _strlwr(s);
 }
 
+inline char* util_upper(char* s)
+{
+   return _strupr(s);
+}
+
 inline char util_lower(char ch)
 {
    char s[2];
@@ -728,6 +733,11 @@ inline char util_lower(char ch)
 inline wchar_t* util_lower(wchar_t* s)
 {
    return _wcslwr(s);
+}
+
+inline wchar_t* util_upper(wchar_t* s)
+{
+   return _wcsupr(s);
 }
 
 inline wchar_t util_lower(wchar_t ch)
@@ -910,6 +920,35 @@ inline wchar_t util_lower(unsigned short ch)
    return tolower(ch); // !! temporal: currently only ascii symbols are handled
 }
 
+inline char* util_upper(char* s)
+{
+   while (*s) {
+      *s = toupper(*s); // !! temporal: currently only ascii symbols are handled
+
+      s++;
+   }
+   return s;
+}
+
+inline unsigned short* util_upper(unsigned short* s)
+{
+   while (*s) {
+      *s = toupper(*s); // !! temporal: currently only ascii symbols are handled
+      s++;
+   }
+   return s;
+}
+
+inline char util_upper(char ch)
+{
+   return toupper(ch);
+}
+
+inline wchar_t util_upper(unsigned short ch)
+{
+   return toupper(ch); // !! temporal: currently only ascii symbols are handled
+}
+
 #endif
 
 // --- StrUtil ---
@@ -988,6 +1027,16 @@ wide_c* StrUtil::lower(wide_c* s)
 wide_c StrUtil::lower(wide_c ch)
 {
    return util_lower(ch);
+}
+
+char* StrUtil :: upper(char* s)
+{
+   return util_upper(s);
+}
+
+wide_c* StrUtil :: upper(wide_c* s)
+{
+   return util_upper(s);
 }
 
 // --- StrFactory ---

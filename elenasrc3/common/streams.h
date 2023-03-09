@@ -58,7 +58,7 @@ namespace elena_lang
 
       virtual bool insert(pos_t position, const void* s, pos_t length) = 0;
 
-      virtual bool read(pos_t position, void* s, pos_t length) = 0;
+      virtual bool read(pos_t position, void* s, pos_t length) const = 0;
 
       virtual bool addReference(ref_t, pos_t)
       {

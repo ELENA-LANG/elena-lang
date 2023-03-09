@@ -68,11 +68,70 @@ namespace elena_lang
       ScriptEngineReader(UStrReader* textReader);
    };
 
+   class ScriptEngineLog
+   {
+      MemoryDump _log;
+      CoordMap   _coordinates;
+
+   public:
+      void writeCoord(LineInfo lineInfo)
+      {
+         _coordinates.add(_log.length(), lineInfo);
+      }
+
+      pos_t write(ustr_t token)
+      {
+         pos_t length = token.length_pos();
+         if (length > 0) {
+            MemoryWriter writer(&_log);
+
+            writer.writeString(token, length);
+         }
+
+         return length;
+      }
+
+      static void writeQuote(MemoryWriter& writer, ustr_t token)
+      {
+         writer.writeChar('\"');
+         size_t start = 0;
+         while (true) {
+            size_t quote_index = token.findSub(start, '"', NOTFOUND_POS);
+            if (quote_index != NOTFOUND_POS) {
+               writer.writeString(token.str() + start, (pos_t)(quote_index - start));
+               writer.writeChar('\"');
+               writer.writeChar('\"');
+               start = quote_index + 1;
+            }
+            else {
+               writer.writeString(token.str() + start, getlength(token) - (pos_t)start);
+
+               break;
+            }
+         }
+
+         writer.writeChar('\"');
+      }
+
+      void writeQuote(ustr_t token)
+      {
+         MemoryWriter writer(&_log);
+
+         writeQuote(writer, token);
+      }
+
+      ScriptEngineLog()
+         : _coordinates({ INVALID_POS })
+      {
+         
+      }
+   };
+
    // --- ScriptEngineParserBase ---
    class ScriptEngineParserBase
    {
    public:
-      virtual bool parseGrammarRule(ScriptEngineReader& reader) = 0;
+      virtual bool parseGrammarRule(ScriptEngineReaderBase& reader) = 0;
 
       virtual ~ScriptEngineParserBase() = default;
    };

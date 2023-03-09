@@ -58,3 +58,5 @@ ustr_t ScriptEngineReader :: lookup(ScriptBookmark& bm)
 
    return reader.getString(DEFAULT_STR);
 }
+
+// --- ScriptEngineLog ---

@@ -63,6 +63,8 @@ namespace elena_lang
       static void insert(char* s, size_t pos, size_t length, const char* subs);
       static void insert(wide_c* s, size_t pos, size_t length, const wide_c* subs);
 
+      static char* upper(char* s);
+      static wide_c* upper(wide_c* s);
       static char* lower(char* s);
       static wide_c* lower(wide_c* s);
       static char lower(char s);
@@ -407,6 +409,15 @@ namespace elena_lang
          }
 
          return true;
+      }
+
+      void appendHex(int n)
+      {
+         size_t pos = getlength(_string);
+
+         uintToStr(n, _string + pos, 16, size - pos);
+
+         StrUtil::upper(_string + pos);
       }
 
       void appendDouble(double value)

@@ -17,7 +17,7 @@ namespace elena_lang
       int _width;
 
    public:
-      bool parseGrammarRule(ScriptEngineReader& reader) override;
+      bool parseGrammarRule(ScriptEngineReaderBase& reader) override;
 
       ScriptEngineTextParser()
       {

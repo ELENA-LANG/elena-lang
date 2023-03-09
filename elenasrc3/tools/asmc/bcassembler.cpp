@@ -307,7 +307,9 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 
       arg.byVal = true;
    }
-   if (tokenInfo.compare("$")) {
+   if (tokenInfo.token[0] == '$') {
+      tokenInfo.token.cut(0, 1);
+
       if(arg.byVal) {
          if (_mode64) {
             arg.byVal64 = true;
@@ -315,8 +317,6 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
          }
       }
       else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
-
-      read(tokenInfo);
    }
 
    if (tokenInfo.compare("array")) {
@@ -867,10 +867,10 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
 {
    IdentifierString command(*tokenInfo.token);
 
-   if (tokenInfo.compare("$")) {
-      read(tokenInfo);
-
+   if (tokenInfo.token[0] == '$') {
       command.copy(*tokenInfo.token);
+
+      command.cut(0, 1);
 
       if (_mode64) {
          command.insert("l", 0);

@@ -12,7 +12,7 @@ using namespace elena_lang;
 
 // --- ScriptEngineTextParser ---
 
-bool ScriptEngineTextParser :: parseGrammarRule(ScriptEngineReader& reader)
+bool ScriptEngineTextParser :: parseGrammarRule(ScriptEngineReaderBase& reader)
 {
    return false;
 }

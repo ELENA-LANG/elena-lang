@@ -13,7 +13,9 @@ In development:
     ! elena vm : x86-64
     ! x86 : multi-threading
 
-    * ScriptEngine : raise an error
+    * introduce memoryhashmap instead of normal maps, replace all default maps with optimized ones
+
+    * ScriptEngine : parse grammar rule set
 
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
     * elena sm : x86
@@ -63,6 +65,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * replace all default maps with optimized ones (e.g. SyntaxHash, TableHash)
     * optimization : double assigning for external op
     * create github action workflow to build the project
     * inno setup : x86, x86-64
@@ -337,7 +340,6 @@ Backlog:
     * ide : styling source code
     * ide : font / size - to make it less blur
     * call a message / closure; debugger
-    * introduce memoryhashmap instead of normal maps, replace all default maps with optimized ones
     * hello world sample
     * hello world vm client sample
     * support preloaded symbols
