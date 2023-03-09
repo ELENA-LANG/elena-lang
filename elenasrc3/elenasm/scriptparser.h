@@ -119,7 +119,7 @@ namespace elena_lang
                start = quote_index + 1;
             }
             else {
-               writer.writeString(token.str() + start, getlength(token) - (pos_t)start);
+               writer.writeString(token.str() + start, getlength_pos(token) - (pos_t)start);
 
                break;
             }

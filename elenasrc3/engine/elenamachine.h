@@ -41,7 +41,7 @@ namespace elena_lang
          return nullptr;
       }
 
-      bool read(pos_t position, void* s, pos_t length) override
+      bool read(pos_t position, void* s, pos_t length) const override
       {
          if (position < _length && _length >= position + length) {
             memcpy(s, (unsigned char*)_section + position, length);

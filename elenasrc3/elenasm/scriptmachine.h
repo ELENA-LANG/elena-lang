@@ -50,6 +50,7 @@ namespace elena_lang
       int newScope();
 
       void* translate(int id, path_t path, FileEncoding encoding, bool autoDetect);
+      void* translate(int id, ustr_t script);
 
       void free(void* tape);
 

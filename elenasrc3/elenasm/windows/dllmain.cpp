@@ -39,7 +39,12 @@ EXTERN_DLL_EXPORT void* InterpretScopeFile(int scope_id, const char* pathStr, in
 {
    PathString path(pathStr);
 
-   return engine->translate(0, *path, (FileEncoding)encoding, autoDetect);
+   return engine->translate(scope_id, *path, (FileEncoding)encoding, autoDetect);
+}
+
+EXTERN_DLL_EXPORT void* InterpretScopeScript(int scope_id, ustr_t script)
+{
+   return engine->translate(scope_id, script);
 }
 
 EXTERN_DLL_EXPORT void Release(void* tape)

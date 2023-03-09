@@ -5,4 +5,6 @@ public program()
 {
     auto engine := new extensions'scripting'ScriptEngine();
     engine.loadPath("grammar1.es");
+
+    string derived := engine.loadScriptAsText("2+3");
 }

@@ -77,7 +77,7 @@ pos_t WinImageSection :: length() const
    return _used;
 }
 
-bool WinImageSection :: read(pos_t position, void* s, pos_t length)
+bool WinImageSection :: read(pos_t position, void* s, pos_t length) const
 {
    if (position < _used && _used >= position + length) {
       memcpy(s, (LPVOID)((uintptr_t)_section + position), length);

@@ -26,6 +26,22 @@ public sealed class ScriptEngine
             
       ^ UTF8Encoding.toString(0, length, buffer);
    }
+
+    
+   string evaluateScriptAsText(string script)
+   {
+      pointer tape := extern elenasm.InterpretScopeScript
+                            (_scopeId, script);
+            
+      if (tape.isUnassigned())
+         {   ScriptEngineException.raise(self.lastScriptError()) };
+
+      auto retVal := cast string(tape);    
+
+      extern elenasm.Release(tape);
+
+      ^ retVal
+   }
     
    private loadScriptFile(string path, int encoding, int autoDetect)
    {
@@ -37,6 +53,9 @@ public sealed class ScriptEngine
       
       extern elenasm.Release(ptr)
    }
+
+   string loadScriptAsText(string script)
+      <= evaluateScriptAsText(script);
 
    loadPath(string path)
    {

@@ -582,10 +582,32 @@ namespace elena_lang
 
       Iterator end() { return Iterator(_tale); }
 
-      BListBase()
+      void insertAfter(Iterator it, T item)
       {
-         _top = _tale = nullptr;
-         _count = 0;
+         Item* nextItem = it._current->next;
+
+         it._current->next = new Item(item, it._current, nextItem);
+
+         if (nextItem) {
+            nextItem->previous = it._current->next;
+         }
+         else _tale = it._current->next;
+
+         _count++;
+      }
+
+      void insertBefore(Iterator it, T item)
+      {
+         Item* previousItem = it._current->previous;
+
+         it._current->previous = new Item(item, previousItem, it._current);
+
+         if (previousItem) {
+            previousItem->next = it._current->previous;
+         }
+         else _top = it._current->previous;
+
+         _count++;
       }
 
       void add(T value)
@@ -613,6 +635,12 @@ namespace elena_lang
             _count--;
          }
          _top = _tale = nullptr;
+      }
+
+      BListBase()
+      {
+         _top = _tale = nullptr;
+         _count = 0;
       }
    };
 

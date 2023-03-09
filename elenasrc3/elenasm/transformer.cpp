@@ -30,7 +30,7 @@ void ScriptEngineTextParser :: parse(ScriptEngineReaderBase& reader, MemoryDump*
    while (!reader.eof()) {
       ustr_t s = reader.lookup(bm);
 
-      int s_len = getlength(s);
+      pos_t s_len = getlength_pos(s);
       if (bm.state == dfaQuote) {
          writer.writeChar('\"');
          writer.writeString(s, s_len);
@@ -55,7 +55,7 @@ void ScriptEngineTextParser :: parse(ScriptEngineReaderBase& reader, MemoryDump*
 void ScriptEngineBuilder :: saveToken(MemoryWriter& writer, ScriptEngineReaderBase& reader, ScriptBookmark bm)
 {
    ustr_t token = reader.lookup(bm);
-   pos_t len = getlength(token);
+   pos_t len = getlength_pos(token);
    writer.writeDWord(len);
    writer.writeString(token, len);
 }

@@ -123,6 +123,38 @@ void* ScriptEngine :: translate(int id, UStrReader* source)
    return _tape.get(offset);
 }
 
+void* ScriptEngine :: translate(int id, ustr_t script)
+{
+   try {
+      IdentifierTextReader reader(script);
+
+      return translate(id, &reader);
+   }
+   catch (SyntaxError& e) {
+      _lastError.copy("Invalid syntax at ");
+      _lastError.appendInt(e.lineInfo.row);
+      _lastError.append(':');
+      _lastError.appendInt(e.lineInfo.column);
+
+      return nullptr;
+   }
+   catch (InvalidChar& e) {
+      _lastError.copy("Invalid char at ");
+      _lastError.appendInt(e.lineInfo.row);
+      _lastError.append(':');
+      _lastError.appendInt(e.lineInfo.column);
+
+      return nullptr;
+   }
+   catch (InvalidOperationError& e) {
+      _lastError.copy("Invalid operation ");
+      _lastError.append(':');
+      _lastError.append(e.Error());
+
+      return nullptr;
+   }
+}
+
 void* ScriptEngine :: translate(int id, path_t path, FileEncoding encoding, bool autoDetect)
 {
    try {
@@ -171,7 +203,6 @@ void* ScriptEngine :: translate(int id, path_t path, FileEncoding encoding, bool
 
       return nullptr;
    }
-
 }
 
 void ScriptEngine :: free(void* tape)
