@@ -14,7 +14,9 @@ In development:
     ! x86 : multi-threading
 
     * ide : selection is unsync after the commenting the block
+    * UnsafePointer : string typecast
     * ScriptEngine : parse expression
+    * update api
 
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
     * elena sm : x86

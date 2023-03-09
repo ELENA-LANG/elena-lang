@@ -99,6 +99,7 @@ void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
          }
       }
    }
+   else reader.reset();
 }
 
 void ScriptEngine :: parseScript(int id, ScriptEngineReaderBase& reader)

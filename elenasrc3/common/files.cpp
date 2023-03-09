@@ -371,6 +371,11 @@ bool TextFileReader :: read(char* s, pos_t length)
    }
 }
 
+void TextFileReader :: reset()
+{
+   _file.rewind();
+}
+
 // --- TextFileWriter ---
 
 TextFileWriter :: TextFileWriter(path_t path, FileEncoding encoding, bool withBOM)

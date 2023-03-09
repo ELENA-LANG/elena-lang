@@ -47,6 +47,8 @@ namespace elena_lang
       virtual ustr_t lookup(ScriptBookmark& bm) = 0;
 
       virtual bool compare(ustr_t value) = 0;
+
+      virtual void reset() = 0;
    };
 
    // --- ScriptEngineReader ---
@@ -71,6 +73,8 @@ namespace elena_lang
       ustr_t lookup(ScriptBookmark& bm) override;
 
       bool compare(ustr_t value) override;
+
+      void reset() override;
 
       ScriptEngineReader(UStrReader* textReader);
       ScriptEngineReader(UStrReader* textReader, CoordMap* coordinates);

@@ -213,6 +213,8 @@ namespace elena_lang
 
       virtual pos_t position() const = 0;
 
+      virtual void reset() = 0;
+
       virtual bool read(char* s, pos_t length) = 0;
 
       template<class String> bool readAll(String& s, T* buffer, pos_t size = BLOCK_SIZE)
@@ -654,6 +656,11 @@ namespace elena_lang
             return true;
          }
          else return false;
+      }
+
+      void reset() override
+      {
+         _offset = 0;
       }
 
       StringTextReader(const T* string)

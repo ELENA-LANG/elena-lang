@@ -238,6 +238,17 @@ namespace elena_lang
          return terminateState;
       }
 
+      void reset()
+      {
+         _reader->reset();
+         _lineInfo = {};
+
+         if (!cacheLine()) {
+            _position = 0;
+            _line[0] = 0;
+         }
+      }
+
       TextParser(const char** dfa, int tabSize, TextReader<T>* reader)
       {
          _tabSize = tabSize;

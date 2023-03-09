@@ -68,4 +68,11 @@ ustr_t ScriptEngineReader :: lookup(ScriptBookmark& bm)
    return reader.getString(DEFAULT_STR);
 }
 
+void ScriptEngineReader :: reset()
+{
+   _eof = false;
+   sourceReader.resetReader();
+   buffer.clear();
+}
+
 // --- ScriptEngineLog ---
