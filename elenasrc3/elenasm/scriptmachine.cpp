@@ -154,6 +154,14 @@ void* ScriptEngine :: translate(int id, path_t path, FileEncoding encoding, bool
 
       return nullptr;
    }
+   catch (InvalidChar& e) {
+      _lastError.copy("Invalid char at ");
+      _lastError.appendInt(e.lineInfo.row);
+      _lastError.append(':');
+      _lastError.appendInt(e.lineInfo.column);
+
+      return nullptr;
+   }
    catch (InvalidOperationError& e) {
       _lastError.copy("Invalid operation ");
       _lastError.append(':');

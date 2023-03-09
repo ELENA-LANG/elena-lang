@@ -780,7 +780,7 @@ bool ScriptEngineCFParser :: parseGrammarRule(ScriptEngineReaderBase& reader)
    Rule rule;
    defineGrammarRule(reader, bm, rule, ruleId);
 
-   //addRule(ruleId, rule);
+   addRule(ruleId, rule);
 
    return true;
 }

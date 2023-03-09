@@ -59,6 +59,9 @@ namespace elena_lang
             terminal = nonterminal = 0;
             postfix1Ptr = prefix1Ptr = 0;
             postfix2Ptr = prefix2Ptr = 0;
+
+            apply = nullptr;
+            saveTo = nullptr;
          }
       };
 
