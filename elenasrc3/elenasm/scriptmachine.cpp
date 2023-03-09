@@ -8,15 +8,17 @@
 // --------------------------------------------------------------------------
 #include "scriptmachine.h"
 
+#include "cfparser.h"
 #include "scriptparser.h"
 #include "textparser.h"
+#include "transformer.h"
 
 using namespace elena_lang;
 
 // --- ScriptEngine ---
 
 ScriptEngine :: ScriptEngine(path_t rootPath)
-   : _rootPath(rootPath), _tape(16384)
+   : _rootPath(rootPath), _parsers(nullptr), _tape(16384)
 {
    _lastId = 0;
 }
@@ -26,8 +28,50 @@ int ScriptEngine :: newScope()
    return ++_lastId;
 }
 
-void ScriptEngine :: parseMetaScript(ScriptEngineReaderBase& reader)
+ScriptEngineParserBase* ScriptEngine :: newParser(int id, ParserType type)
 {
+   ScriptEngineParserBase* baseOne = _parsers.get(id);
+   ScriptEngineParserBase* newOne = nullptr;
+
+   if (baseOne && testany((int)type, (int)ParserType::BaseParseMask)) {
+      throw InvalidOperationError("This parser should be created first");
+   }
+
+   switch (type) {
+      case ParserType::Text:
+         newOne = new ScriptEngineTextParser();
+         break;
+      case ParserType::CF:
+         newOne = new ScriptEngineCFParser(baseOne);
+         break;
+      default:
+         throw InvalidOperationError("Unknown parser type");
+   }
+
+   _parsers.exclude(id);
+   _parsers.add(id, newOne);
+
+   return newOne;
+}
+
+ScriptEngineParserBase* ScriptEngine :: getParser(int id)
+{
+   ScriptEngineParserBase* parser = _parsers.get(id);
+   if (parser) {
+      return parser;
+   }
+   else throw InvalidOperationError("Scope is not created");
+}
+
+void ScriptEngine :: parseDirectives(ScriptEngineReaderBase& reader)
+{
+   return;
+}
+
+void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
+{
+   ScriptEngineParserBase* parser = nullptr;
+
    reader.read();
 
    if (reader.compare("[[")) {
@@ -36,9 +80,23 @@ void ScriptEngine :: parseMetaScript(ScriptEngineReaderBase& reader)
          if (reader.compare("#grammar")) {
             reader.read();
 
-            throw SyntaxError("unrecognized parser", bm.lineInfo);
+            if (reader.compare("cf")) {
+               parser = newParser(id, ParserType::CF);
+            }
+            else if (reader.compare("text")) {
+               parser = newParser(id, ParserType::Text);
+            }
+            else throw SyntaxError("unrecognized parser", bm.lineInfo);
          }
+         else {
+            if (!parser)
+               parser = getParser(id);
 
+            if (reader.compare("#define")) {
+               parser->parseGrammarRule(reader);
+            }
+            else parseDirectives(reader);
+         }
       }
    }
 }
@@ -57,7 +115,7 @@ void* ScriptEngine :: translate(int id, UStrReader* source)
    if (offset != 0)
       throw InvalidOperationError("Tape is not released");
 
-   parseMetaScript(scriptReader);
+   parseMetaScript(id, scriptReader);
    parseScript();
 
    return _tape.get(offset);

@@ -4,6 +4,8 @@ import system'text;
 
 public class ScriptEngineException : Exception
 {
+    constructor new(string message)
+        <= super new(message);   
 }
 
 // --- scriptEngine ---

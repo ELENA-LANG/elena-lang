@@ -9,20 +9,14 @@ In development:
     ! api functionality for existing classes : externals
     ! examples : all console, files examples
     ! rosetta examples : 10
-    ! elena sm : x86
     ! script samples : x86
     ! elena vm : x86-64
     ! x86 : multi-threading
 
-    * test long compare with int : ppc64le, arm64
-
-
     * ScriptEngine : raise an error
 
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
-    * Using a script engine to parse the expression - https://www.reddit.com/r/elena_lang/comments/bo4d34/using_a_script_engine_to_parse_the_expression/
-    * Dynamic programming in ELENA : bf loop - https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
-    * ELENA Script Engine : compiling JavaScript file - https://www.reddit.com/r/elena_lang/comments/6h6nyz/elena_script_engine_compiling_javascript_file/
+    * elena sm : x86
 
     * ldoc : recognize template based type - for the method output
     * ide - select the text with a mouse
@@ -47,6 +41,8 @@ In development:
     ! i386 : multi-threading
     ! x86-64 : multi-threading
     ! x86-64 : gui
+    * Dynamic programming in ELENA : bf loop - https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
+    * ELENA Script Engine : compiling JavaScript file - https://www.reddit.com/r/elena_lang/comments/6h6nyz/elena_script_engine_compiling_javascript_file/
 
     === Iteration 16 ===
     ! sm : generate advances templates from vm console

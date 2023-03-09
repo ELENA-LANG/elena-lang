@@ -11,18 +11,37 @@
 
 namespace elena_lang
 {
+   typedef Map<int, ScriptEngineParserBase*, nullptr, nullptr, freeobj> ParserMap;
+
    // --- ScriptEngine ---
    class ScriptEngine
    {
-      PathString         _rootPath;
+      enum class ParserType
+      {
+         BaseParseMask = 0x0F,
 
-      int                _lastId;
+         //ptVMBuild = 0x01,
+         //ptTree = 0x02,
+         CF = 0x10,
+         //ptTransform = 0x20,
+         Text = 0x30,
+         //ptBuild = 0x40
+      };
 
-      MemoryDump         _tape;
+      PathString        _rootPath;
 
-      String<char, 512>  _lastError;
+      int               _lastId;
+      ParserMap         _parsers;
 
-      void parseMetaScript(ScriptEngineReaderBase& reader);
+      MemoryDump        _tape;
+
+      String<char, 512> _lastError;
+
+      ScriptEngineParserBase* newParser(int id, ParserType type);
+      ScriptEngineParserBase* getParser(int id);
+
+      void parseDirectives(ScriptEngineReaderBase& reader);
+      void parseMetaScript(int id, ScriptEngineReaderBase& reader);
       void parseScript();
 
       void* translate(int id, UStrReader* source);

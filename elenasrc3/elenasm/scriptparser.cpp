@@ -48,3 +48,13 @@ bool ScriptEngineReader :: compare(ustr_t value)
 {
    return token.compare(value);
 }
+
+ustr_t ScriptEngineReader :: lookup(ScriptBookmark& bm)
+{
+   if (bm.offset == INVALID_POS)
+      return nullptr;
+
+   MemoryReader reader(&buffer, bm.offset);
+
+   return reader.getString(DEFAULT_STR);
+}

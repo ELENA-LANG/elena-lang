@@ -42,6 +42,8 @@ namespace elena_lang
    public:
       virtual ScriptBookmark read() = 0;
 
+      virtual ustr_t lookup(ScriptBookmark& bm) = 0;
+
       virtual bool compare(ustr_t value) = 0;
    };
 
@@ -59,9 +61,20 @@ namespace elena_lang
    public:
       ScriptBookmark read() override;
 
+      ustr_t lookup(ScriptBookmark& bm) override;
+
       bool compare(ustr_t value) override;
 
       ScriptEngineReader(UStrReader* textReader);
+   };
+
+   // --- ScriptEngineParserBase ---
+   class ScriptEngineParserBase
+   {
+   public:
+      virtual bool parseGrammarRule(ScriptEngineReader& reader) = 0;
+
+      virtual ~ScriptEngineParserBase() = default;
    };
 }
 

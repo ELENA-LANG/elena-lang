@@ -3,8 +3,6 @@ import extensions;
 
 public program()
 {
-
-
-//    auto engine := new extensions'scripting'ScriptEngine();
-//    engine.loadPath("grammar1.es");
+    auto engine := new extensions'scripting'ScriptEngine();
+    engine.loadPath("grammar1.es");
 }

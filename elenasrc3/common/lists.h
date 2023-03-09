@@ -1101,6 +1101,38 @@ namespace elena_lang
          return false;
       }
 
+      T exclude(Key key)
+      {
+         Item* tmp = nullptr;
+         if (!_top);
+         else if (_top->key == key) {
+            tmp = _top;
+            if (_top == _tale)
+               _tale = nullptr;
+            _top = _top->next;
+         }
+         else {
+            Item* cur = _top;
+            while (cur->next) {
+               if (cur->next->key == key) {
+                  if (cur->next == _tale)
+                     _tale = cur;
+
+                  tmp = cur->next;
+                  cur->next = tmp->next;
+                  break;
+               }
+               cur = cur->next;
+            }
+         }
+         if (tmp) {
+            _count--;
+
+            return tmp->item;
+         }
+         else return _defaultItem;
+      }
+
       void erase(Key key)
       {
          Item* tmp = nullptr;
