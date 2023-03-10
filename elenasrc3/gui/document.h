@@ -327,6 +327,7 @@ namespace elena_lang
       void insertLine(DocumentChangeStatus& changeStatus, text_t text, disp_t length);
 
       virtual void blockInserting(DocumentChangeStatus& changeStatus, text_t subs, size_t length);
+      virtual void blockDeleting(DocumentChangeStatus& changeStatus, text_t subs, size_t length);
 
       bool eraseSelection(DocumentChangeStatus& changeStatus);
       void eraseChar(DocumentChangeStatus& changeStatus, bool moveback);

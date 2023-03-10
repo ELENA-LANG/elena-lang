@@ -689,6 +689,40 @@ void DocumentView :: blockInserting(DocumentChangeStatus& changeStatus, text_t s
    changeStatus.hasSelection = _selection != 0;
 }
 
+void DocumentView :: blockDeleting(DocumentChangeStatus& changeStatus, text_t subs, size_t length)
+{
+   _text->validateBookmark(_caret);
+
+   disp_t selection = _selection;
+   _selection = 0;
+
+   changeStatus.hasSelection = _selection != 0;
+
+   if (selection < 0) {
+      _caret.moveOn(selection);
+      selection = -selection;
+   }
+   Point caret = _caret.getCaret();
+   TextBookmark end = _caret;
+   end.moveOn(selection);
+
+   text_c line[0x50];
+   if (length > 0x4F)
+      length = 0x4F;
+
+   while (caret.y <= end.row()) {
+      if (!_caret.moveTo(0, caret.y))
+         return;
+
+      _text->copyTo(_caret, line, length);
+      if (text_str(subs).compare(line)) {
+         for (size_t i = 0; i < length; i++)
+            eraseChar(changeStatus, false);
+      }
+      caret.y++;
+   }
+}
+
 void DocumentView :: tabbing(DocumentChangeStatus& changeStatus, text_c space, size_t count, bool indent)
 {
    _text->validateBookmark(_caret);

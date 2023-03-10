@@ -101,6 +101,7 @@ namespace elena_lang
       void pasteFromClipboard();
       void deleteText();
       void commentText();
+      void uncommentText();
 
       void openHelp();
 

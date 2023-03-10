@@ -13,7 +13,7 @@ In development:
     ! elena vm : x86-64
     ! x86 : multi-threading
 
-    * ide debugger : step over if-else-if
+    * hexadecimal character literal
 
     * ScriptEngine : parse expression
     * update api
@@ -124,7 +124,6 @@ Backlog:
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
       as well, to pass the name there (currently it passed over template args which is not 100% correct)
     * do:while : both statement are matched : do{ a } while(b) and do{ a } while{ b } which is not correct?
-    * ide : uncomment
     * ide : error messages if the debug process failed
     * ide : set focus on activate / after opening a file
     * ide : compile the project and select an error line - part of the windows is covered with other window
@@ -247,7 +246,6 @@ Backlog:
     * exclude embeddable return for auto field
     * generate abstract ebleddable
     * primitive operations : support all comparision operations (not only <, == and !=)
-    * hexadecimal character literal
     * uint, ushort, int8
     * numberic constant should be implicitly converted to byte / short / long / real
     * closure should be sealed
