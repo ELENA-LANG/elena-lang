@@ -8,15 +8,13 @@ In development:
     ! api functionality for existing classes : rest of system
     ! api functionality for existing classes : externals
     ! examples : all console, files examples
-    ! rosetta examples : 10
-    ! script samples : x86
-    ! elena vm : x86-64
     ! x86 : multi-threading
 
-    * update api
-
-    * ldoc : recognize template based type - for the method output
+    * rosetta examples : 10
+    * elena vm : x86-64
     * ide - select the text with a mouse
+    * ldoc : recognize template based type - for the method output
+
     * ide - close all / close all but active
     * ide : change status to ready when writing / selecting files
     * ide : selection block unsync after mouse click
