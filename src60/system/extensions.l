@@ -176,4 +176,32 @@ public extension charOp : CharValue
             
       ^ false
    }
+
+   bool isDigit()
+   {
+      int ch := intConvertor.convert(self);
+        
+      ^ (ch >= 30h) && (ch <= 39h)
+   }
+
+    
+   bool isLToken()
+   {
+      int ch := intConvertor.convert(self);
+        
+      if (ch >= 41h && ch <= 5Ah)
+         { ^ true };
+        
+      if (ch >= 61h && ch <= 7Ah)
+         { ^ true };
+        
+      if (ch >= 3ACh && ch <= 3CEh)
+         { ^ true };
+            
+      if (ch >= 400h && ch <= 42Fh)
+         { ^ true };
+            
+      ^ ch == 39
+   }
+
 }

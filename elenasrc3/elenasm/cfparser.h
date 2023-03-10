@@ -118,6 +118,8 @@ namespace elena_lang
       NameMap                 _names;
       MemoryDump              _body;
 
+      bool                    _symbolMode;
+
       ref_t mapRuleId(ustr_t name)
       {
          return mapKey(_names, name, _names.count() + 1);
@@ -172,6 +174,11 @@ namespace elena_lang
          : _table({}), _names(0)
       {
          _baseParser = baseParser;
+
+         // all body pointers should be greater than zero
+         MemoryBase::writeDWord(&_body, 0, 0);
+
+         _symbolMode = false;
       }
       virtual ~ScriptEngineCFParser()
       {

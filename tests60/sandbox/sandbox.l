@@ -54,7 +54,7 @@ buildTree(TokenEnumerator reader)
 {
     Node node := new Node();
     while (reader.next()) {
-        string token := reader.get();
+        string token := *reader;
         if (token == "(") {
             node.append(buildTree(reader));
         }
@@ -77,12 +77,12 @@ public program()
     auto engine := new extensions'scripting'ScriptEngine();
     engine.loadPath("grammar1.es");
     
-//    for(var line := console.write(">").readLine(), line != "")
-//    {
-        string derived := engine.loadScriptAsText(/*line*/"2+3");
+    for(var line := console.write(">").readLine(), line != "")
+    {
+        string derived := engine.loadScriptAsText(line);
         
         Node root := buildTree(new TokenEnumerator(derived, new ExpressionStatemachine()));
         
         console.printLine(derived,"=",root.eval());        
-//    };
+    };
 }

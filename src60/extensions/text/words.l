@@ -74,8 +74,8 @@ namespace text
          {
             if (ch == $22h)
             {
-               ifnot(theNewToken)
-                  { theNewToken := true; ^ true };
+               ifnot(_newToken)
+                  { _newToken := true; ^ true };
                     
                _quoteMode := true;
                _spaceMode := false;

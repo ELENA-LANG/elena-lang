@@ -6412,11 +6412,11 @@ ObjectInfo Compiler :: compileBoolOperation(BuildTreeWriter& writer, ExprScope& 
    writer.appendNode(BuildKey::FalseConst, scope.moduleScope->branchingInfo.falseRef);
 
    writer.newNode(BuildKey::Tape);
-   compileExpression(writer, scope, lnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None);
+   writeObjectInfo(writer, scope, compileExpression(writer, scope, lnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None));
    writer.closeNode();
 
    writer.newNode(BuildKey::Tape);
-   compileExpression(writer, scope, rnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None);
+   writeObjectInfo(writer, scope, compileExpression(writer, scope, rnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None));
    writer.closeNode();
 
    writer.closeNode();

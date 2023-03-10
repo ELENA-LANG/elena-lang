@@ -13,12 +13,7 @@ In development:
     ! elena vm : x86-64
     ! x86 : multi-threading
 
-    * hexadecimal character literal
-
-    * ScriptEngine : parse expression
     * update api
-
-    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
 
     * ldoc : recognize template based type - for the method output
     * ide - select the text with a mouse

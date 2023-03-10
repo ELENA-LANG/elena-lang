@@ -1067,11 +1067,17 @@ void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase
       else {
          level++;
 
-         //for (int i = 0; i < level; i++)
-         //   printf(" ");
+#ifdef TRACING_INFO
+         for (int i = 0; i < level; i++)
+            printf(" ");
 
-         //ident_t keyName = retrieveKey(_names.start(), (item.ruleKey & ~WITHFORWARD_MASK) >> 8, DEFAULT_STR);
-         //printf("%s\n", keyName.c_str());
+         ustr_t keyName = _names.retrieve<ref_t>(DEFAULT_STR, (item.ruleKey & ~WITHFORWARD_MASK) >> 8, [](ref_t reference, ustr_t key, ref_t current)
+            {
+               return current == reference;
+            });
+
+         printf("%s\n", keyName.str());
+#endif
 
          Rule rule = _table.get(item.ruleKey & ~WITHFORWARD_MASK);
 
