@@ -6595,6 +6595,7 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
       compileSubCode(writer, scope, rnode.firstChild(), EAttr::None);
       writer.closeNode();
       if (r2node != SyntaxKey::None) {
+         // NOTE : it should immediately follow if-block
          writer.newNode(BuildKey::Tape);
          compileSubCode(writer, scope, r2node.firstChild(), EAttr::None);
          writer.closeNode();
@@ -6651,6 +6652,8 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    writer.appendNode(BuildKey::VirtualBreakoint);
 
    return compileBranchingOperation(writer, scope, loperand, node, rnode, r2node, operatorId);
+
+   writer.appendNode(BuildKey::OpenStatement); // HOTFIX : to match the closing statement
 }
 
 ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, SyntaxNode messageNode)

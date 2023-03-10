@@ -13,6 +13,8 @@ In development:
     ! elena vm : x86-64
     ! x86 : multi-threading
 
+    * ide debugger : step over if-else-if
+
     * ScriptEngine : parse expression
     * update api
 

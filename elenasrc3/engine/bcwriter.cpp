@@ -283,7 +283,7 @@ void addingBreakpoint(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::Breakpoint);
 }
 
-void addVirtualBreakpoint(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void addVirtualBreakpoint(CommandTape& tape, BuildNode&, TapeScope& tapeScope)
 {
    DebugLineInfo symbolInfo = { DebugSymbol::VirtualBreakpoint };
    tapeScope.scope->debug->write(&symbolInfo, sizeof(DebugLineInfo));
@@ -1548,6 +1548,10 @@ void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScop
    saveTape(tape, tapeNode, tapeScope, paths, tapeOptMode);
 
    if (ifElseMode) {
+      // HOTFIX : inject virtual breakpoint to fine-tune a debugger
+      BuildNode idleNode = {};
+      addVirtualBreakpoint(tape, idleNode, tapeScope);
+
       tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
 
       tape.setLabel();
