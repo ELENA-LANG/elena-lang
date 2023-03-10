@@ -65,38 +65,39 @@ __define MUL_ASSIGNMENT      6239;
 __define DIV_ASSIGNMENT      6240;
 __define AND_OPERATION       6241;
 __define OR_OPERATION        6242;
-__define XOR_OPERATION       6243;
-__define BREAK_OPERATION     6244;
-__define MESSAGE_OPERATION   6337;
-__define PROPERTY_OPERATION  6340;
-__define EXPRESSION          6288;
-__define L5_EXPRESSION       6289;
-__define SINGLE_EXPRESSION   6290;
-__define L8_EXPRESSION         6291;
-__define ROOT_EXPRESSION       6292;
-__define L6_EXPRESSION         6293;
-__define T_EXPRESSION          6294;
-__define L4_EXPRESSION         6295;
-__define NT_EXPRESSION         6296;
-__define L7_EXPRESSION         6297;
-__define L3_SINGLE_EXPRESSION  6298;
-__define SWITCH_OPTION 	       6353;
-__define SWITCH_LAST_OPTION    6354;
-__define SWITCH_CODE 	       6355;
-__define COLLECTION_EXPRESSION 6356;
-__define POSTFIX               4200;
-__define TEMPLATE_POSTFIX      4201;
-__define TEMPLATE_ARG          4208;
-__define DIMENSION             5233;
-__define RESEND                7366;
-__define CATCH_OPERATION       7367;
-__define CATCH                 7368;
-__define REDIRECT              7371;
-__define ALT_OPERATION         7372;
-__define ISNIL_OPERATION       7373;
-__define SWITCH_OPERATION      7376;
-__define COMPLEX_NAME 	       4302;
-__define INLINE                4303;
+__define XOR_OPERATION          6243;
+__define BREAK_OPERATION        6244;
+__define MESSAGE_OPERATION      6337;
+__define PROPERTY_OPERATION     6340;
+__define EXPRESSION             6288;
+__define L5_EXPRESSION          6289;
+__define SINGLE_EXPRESSION      6290;
+__define L8_EXPRESSION          6291;
+__define ROOT_EXPRESSION        6292;
+__define L6_EXPRESSION          6293;
+__define T_EXPRESSION           6294;
+__define L4_EXPRESSION          6295;
+__define NT_EXPRESSION          6296;
+__define L7_EXPRESSION          6297;
+__define L3_SINGLE_EXPRESSION   6298;
+__define NESTED_ROOT_EXPRESSION 6299;
+__define SWITCH_OPTION 	        6353;
+__define SWITCH_LAST_OPTION     6354;
+__define SWITCH_CODE 	        6355;
+__define COLLECTION_EXPRESSION  6356;
+__define POSTFIX                4200;
+__define TEMPLATE_POSTFIX       4201;
+__define TEMPLATE_ARG           4208;
+__define DIMENSION              5233;
+__define RESEND                 7366;
+__define CATCH_OPERATION        7367;
+__define CATCH                  7368;
+__define REDIRECT               7371;
+__define ALT_OPERATION          7372;
+__define ISNIL_OPERATION        7373;
+__define SWITCH_OPERATION       7376;
+__define COMPLEX_NAME 	        4302;
+__define INLINE                 4303;
 
 START ::= 
 	{ DECLARATION | META_DECLARATION }+ eof
@@ -200,6 +201,7 @@ T_EXPRESSION ::=
 
 NT_EXPRESSION ::=
 	"{" BLOCK
+	| NESTED_ROOT_EXPRESSION
 	| "(" identifier+ ")" { 
 		"{" ^ PARAMETER BLOCK ^CLOSURE
 		| eps ^OBJECT ^EXPRESSION };
@@ -284,6 +286,92 @@ ROOT_EXPRESSION ::=
 		| ISNIL ^OBJECT SINGLE_EXPRESSION ^ISNIL_OPERATION
 		| eps ^OBJECT }
 	| "(" SUB_EXPRESSION L8_OP?
+	| "!" SINGLE_EXPRESSION ^NOT_OPERATION
+	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
+	| "$rep" EXPRESSION ^LOOP_OPERATION
+	| "$ext" EXPRESSION ^EXTERN_OPERATION
+	| "$break" ^BREAK_OPERATION;
+
+NESTED_ROOT_EXPRESSION ::=
+        identifier {
+		L1a_O_OP
+		| L0 ^OBJECT L0_R { 
+			L1_OP 
+			| L3_OP 
+			| L5_OP
+			| L6_OP
+			| eps }
+		| ASSIGN ^OBJECT ASSIGN_R
+		| L2 ^OBJECT MESSAGE_PARAMETERS? ")" {
+			T_EXPRESSION { identifier NT_EXPRESSION }? ^ TEMPLATE_BLOCK
+			| eps ^ MESSAGE_OPERATION }
+		| L3 ^OBJECT MESSAGE { 
+			L3_R { 
+				L3 L3_F
+				| L9_OP
+				| eps }
+			| ASSIGN EXPRESSION ^PROPERTY_OPERATION 
+			| eps ^PROPERTY_OPERATION }
+		| NOTLESS ^OBJECT L6_EXPRESSION ^NOTLESS_OPERATION
+		| LESS ^OBJECT L6_EXPRESSION { 
+			">" ^TEMPLATE_TYPE identifier ^OBJECT { 
+				ASSIGN ASSIGN_R 
+				| eps }
+			| eps ^LESS_OPERATION }
+		| "=>" ^OBJECT { SWITCH_OPTION+ SWITCH_LAST_OPTION? } ^SWITCH_OPERATION
+		| identifier+ {
+			L0 ^OBJECT L0_R L1_OP?
+			| ASSIGN ^OBJECT ASSIGN_R
+			| L2 ^OBJECT L2_R L3_OP? L8_OP?
+			| DYNAMIC_DIMENSION ^ARRAY_TYPE {
+				identifier ^OBJECT ASSIGN ASSIGN_R
+				| L2 ^OBJECT L2_R
+				| "{" ^OBJECT COLLECTION "}" ^ COLLECTION_EXPRESSION L3_OP* }
+			| L3 ^OBJECT MESSAGE {
+				L3_R L3_OP*
+				| ASSIGN EXPRESSION ^PROPERTY_OPERATION 
+				| eps ^PROPERTY_OPERATION }
+			| L4_O_OP
+                        | L5_O_OP
+			| EQUAL ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION
+			| NOTEQUAL ^OBJECT L6_EXPRESSION ^NOTEQUAL_OPERATION
+			| LESS ^OBJECT L6_EXPRESSION { 
+				">" ^TEMPLATE_TYPE identifier ^OBJECT { 
+					ASSIGN ASSIGN_R 
+					| eps }
+				| eps ^LESS_OPERATION }
+			| TRY ^OBJECT TRY_R
+			| ISNIL ^OBJECT SINGLE_EXPRESSION ^ISNIL_OPERATION
+			| eps ^OBJECT
+		}		
+		| TRY ^OBJECT TRY_R
+		| T_EXPRESSION { identifier NT_EXPRESSION }? ^ TEMPLATE_BLOCK
+		| eps ^OBJECT
+	}
+	| reference {
+		L0 ^OBJECT L0_R L1_OP
+		| ASSIGN ^OBJECT ASSIGN_R
+		| L2 ^OBJECT L2_R L3_OP? L8_OP?
+		| L3 ^OBJECT MESSAGE MESSAGE_R L6_OP?
+		| L4_O_OP
+                | L5_O_OP
+		| EQUAL ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION
+		| NOTEQUAL ^OBJECT L6_EXPRESSION ^NOTEQUAL_OPERATION
+		| TRY ^OBJECT TRY_R
+		| ISNIL ^OBJECT SINGLE_EXPRESSION ^ISNIL_OPERATION
+		| eps ^OBJECT
+	}
+	| { string | integer | hexinteger | wide } { 
+		L0 ^OBJECT L0_R 
+		| L3 ^OBJECT MESSAGE MESSAGE_R
+		| L4_O_OP
+                | L5_O_OP
+		| EQUAL ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION
+		| NOTEQUAL ^OBJECT L6_EXPRESSION ^NOTEQUAL_OPERATION
+		| TRY ^OBJECT TRY_R
+		| ISNIL ^OBJECT SINGLE_EXPRESSION ^ISNIL_OPERATION
+		| eps ^OBJECT }
 	| "!" SINGLE_EXPRESSION ^NOT_OPERATION
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
@@ -610,7 +698,7 @@ MESSAGE ::=
 
 SWITCH_OPTION ::=
 	identifier ^ OBJECT SWITCH_CODE
-	| { integer | character } ^ OBJECT SWITCH_CODE;
+	| { integer | character | string } ^ OBJECT SWITCH_CODE;
 
 SWITCH_LAST_OPTION ::=
 	":" SWITCH_CODE;

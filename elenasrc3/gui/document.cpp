@@ -685,6 +685,8 @@ void DocumentView :: blockInserting(DocumentChangeStatus& changeStatus, text_t s
             break;
       }
    }
+
+   changeStatus.hasSelection = _selection != 0;
 }
 
 void DocumentView :: tabbing(DocumentChangeStatus& changeStatus, text_c space, size_t count, bool indent)

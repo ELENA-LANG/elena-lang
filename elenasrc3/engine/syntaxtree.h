@@ -125,6 +125,7 @@ namespace elena_lang
       NTExpression            = 0x001898,
       L7Expression            = 0x001899,
       L3SingleExpression      = 0x00189A,
+      NestedRootExpression    = 0x00189B,
       TemplateExpression      = 0x0018A0,
       FieldInitializer        = 0x0018B0,
       Message                 = 0x0010C0,

@@ -20,6 +20,16 @@ public sealed const struct UnsafePointer
    {
       ^ pointer == 0;
    }
+
+   // unsafe code
+   string cast()
+   {
+      int  len := extern KERNEL32.lstrlenA(self);
+      string s := String.allocate(len);
+      extern KERNEL32.lstrcpyA(s, self);
+        
+      ^ s
+   }
 }
 
 // --- CallStack ---
