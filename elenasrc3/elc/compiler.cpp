@@ -9391,6 +9391,13 @@ void Compiler :: compileClass(BuildTreeWriter& writer, ClassScope& scope, Syntax
 void Compiler :: compileClassClass(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope,
    SyntaxNode node)
 {
+#ifdef FULL_OUTOUT_INFO
+   // info
+   ustr_t name = scope.module->resolveReference(scope.reference);
+   _errorProcessor->info(infoCurrentClass, name);
+#endif // FULL_OUTOUT_INFO
+
+
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(classClassScope, Scope::ScopeLevel::Namespace);
 
    writer.newNode(BuildKey::Class, classClassScope.reference);
