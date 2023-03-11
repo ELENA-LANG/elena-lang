@@ -4700,6 +4700,9 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
                attrs.size = -1;
 
                readFieldAttributes(scope, current, attrs, declarationMode);
+
+               if (attrs.typeInfo.isPrimitive())
+                  attrs.typeInfo = { resolvePrimitiveType(scope, attrs.typeInfo, declarationMode) };
             }
             else scope.raiseError(errInvalidHint, current);
             break;

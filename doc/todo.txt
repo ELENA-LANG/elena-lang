@@ -10,9 +10,6 @@ In development:
     ! examples : all console, files examples
     ! x86 : multi-threading
 
-    * redesign syntax to support expression new X<a,b>
-    * support template with several arguments
-
     * rosetta examples : associativearrays
     * rosetta examples : 8
     * review system & extensions warnings

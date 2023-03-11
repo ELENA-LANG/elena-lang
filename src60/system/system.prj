@@ -44,6 +44,8 @@
         <include>win_strings.l</include>
         <include>template_tests.l</include>
         <include>collections\list.l</include>
+        <include>collections\tuples.l</include>
+        <include>collections\maps.l</include>
         <include>math\math.l</include>
         <include>text\encoding.l</include>
         <include>text\win_encoding.l</include>

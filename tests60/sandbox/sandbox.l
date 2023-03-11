@@ -1,13 +1,21 @@
-//Pair<T1,T2>
-//{
-//   T1 x : prop;
-//   T2 y : prop;
-//}
+import system'collections;
+
+class A
+{
+   int[][] tmp;
+}
 
 public program()
 {
-//    auto p := new Pair<string, string>();
 
-//    p.x := "Hello";
-//    p.y := "World";
+//   var a := new A<A<int>>();
+
+//   var m := new Array<Tuple<int,int>>();
+
+//    auto map := new Map<string, string>();
+//    map["key"] := "foox";
+//    map["key"] := "foo";
+//    map["key2"]:= "foo2";
+//    map["key3"]:= "foo3";
+//    map["key4"]:= "foo4";
 }
