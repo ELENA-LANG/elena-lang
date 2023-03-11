@@ -10,7 +10,11 @@ In development:
     ! examples : all console, files examples
     ! x86 : multi-threading
 
-    * rosetta examples : 10
+    * redesign syntax to support expression new X<a,b>
+    * support template with several arguments
+
+    * rosetta examples : associativearrays
+    * rosetta examples : 8
     * elena vm : x86-64
     * ide - select the text with a mouse
     * ldoc : recognize template based type - for the method output
@@ -331,10 +335,7 @@ Backlog:
     * ide : save last open file / project
     * ide : project settings
     * ide : styling source code
-    * ide : font / size - to make it less blur
     * call a message / closure; debugger
-    * hello world sample
-    * hello world vm client sample
     * support preloaded symbols
     * redux : add output convertion for the method without the explicit return statement
 
@@ -363,12 +364,7 @@ Backlog:
 
     - test all samples - x86 / x86-64
     - op code refactoring
-    + ppc64le : simplest program
 
-    + compile console / files samples for linux i386
-    + compile lib50_64 for linux i386 / ppc64le
-    + compile console / files samples for linux amd64
-    + compile hellowordl for ppc64le
     - IDE : smart spaces
 
     + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2

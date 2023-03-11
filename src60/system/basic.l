@@ -20,11 +20,11 @@ public abstract class BaseValue
 
    bool notless(v) 
             : info("Returns true if the object value is not less than o; otherwise, false;<br/>by default inverts the result of less[2] operation")
-      = !(self.less(v));
+      = !self.less(v);
 
    bool notgreater(v) 
             : info("Returns true if the object value is not greater than o; otherwise, false;<br/>by default inverts the result of greater[2] operation")
-      = !(self.greater(v));
+      = !self.greater(v);
 }
 
 // --- BoolValue ---

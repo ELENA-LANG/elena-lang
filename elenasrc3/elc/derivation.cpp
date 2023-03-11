@@ -250,6 +250,9 @@ void SyntaxTreeBuilder :: flushTemplateType(SyntaxTreeWriter& writer, Scope& sco
          if (current == SyntaxKey::L6Expression) {
             flushL6AsTemplateArg(writer, scope, current);
          }
+         else if (current == SyntaxKey::TemplateArg) {
+            flushTemplateArg(writer, scope, current, true);
+         }
 
          current = current.nextNode();
       }

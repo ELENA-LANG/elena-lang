@@ -18,7 +18,7 @@ public class Object
 
    bool notequal(o)
                : info("Returns true if the specified object is not equal to the current object; otherwise, false. By default it inverts the result of equal[2].")
-      = !(self.equal(o));
+      = !self.equal(o);
 
    // virtual method declarations : forcing the output type                            
    predefined bool less(o);
