@@ -231,7 +231,7 @@ void SyntaxTreeBuilder :: flushTemplateType(SyntaxTreeWriter& writer, Scope& sco
       ref_t attributeCategory = V_CATEGORY_MAX;
       while (current != identNode) {
          bool allowType = current.nextNode() == identNode;
-         flushAttribute(writer, scope, current, attributeCategory, allowType, false);
+         flushAttribute(writer, scope, current, attributeCategory, allowType);
 
          current = current.nextNode();
       }
@@ -278,14 +278,19 @@ void SyntaxTreeBuilder :: flushTemplateType(SyntaxTreeWriter& writer, Scope& sco
    }
 }
 
-void SyntaxTreeBuilder :: flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, int nestLevel)
 {
    SyntaxNode current = node.firstChild();
 
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current != SyntaxKey::None) {
-      bool allowType = current.nextNode() == SyntaxKey::None;
-      flushAttribute(writer, scope, current, attributeCategory, allowType, true);
+      if (current == SyntaxKey::ArrayType) {
+         flushArrayType(writer, scope, current, nestLevel + 1);
+      }
+      else {
+         bool allowType = current.nextNode() == SyntaxKey::None;
+         flushAttribute(writer, scope, current, attributeCategory, allowType, nestLevel);
+      }
 
       current = current.nextNode();
    }
@@ -305,7 +310,7 @@ void SyntaxTreeBuilder :: flushResend(SyntaxTreeWriter& writer, Scope& scope, Sy
          ref_t attributeCategory = V_CATEGORY_MAX;
          SyntaxNode attrNode = current.firstChild();
          while (attrNode != identNode) {
-            flushAttribute(writer, scope, attrNode, attributeCategory, false, false);
+            flushAttribute(writer, scope, attrNode, attributeCategory, false);
 
             attrNode = attrNode.nextNode();
          }
@@ -370,7 +375,7 @@ void SyntaxTreeBuilder :: flushObject(SyntaxTreeWriter& writer, Scope& scope, Sy
       while (current != identNode) {
          bool allowType = current.nextNode() == identNode;
 
-         typeExpr = flushAttribute(writer, scope, current, attributeCategory, allowType, false);
+         typeExpr = flushAttribute(writer, scope, current, attributeCategory, allowType);
 
          current = current.nextNode();
       }
@@ -403,7 +408,7 @@ void SyntaxTreeBuilder :: flushNested(SyntaxTreeWriter& writer, Scope& scope, Sy
          flushTemplateType(writer, scope, current);
          writer.closeNode();
       }
-      else flushAttribute(writer, scope, current, attributeCategory, true, false);
+      else flushAttribute(writer, scope, current, attributeCategory, true);
 
       current = current.nextNode();
    }
@@ -522,7 +527,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
             //flushAttribute(writer, scope, current, attributeCategory, allowType, true);
             flushArrayType(writer, scope, current);
          }
-         else flushAttribute(writer, scope, current, attributeCategory, allowType, false);
+         else flushAttribute(writer, scope, current, attributeCategory, allowType);
 
          current = current.nextNode();
       }
@@ -553,7 +558,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
 }
 
 bool SyntaxTreeBuilder :: flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, 
-   ref_t& previusCategory, bool allowType, bool arrayMode)
+   ref_t& previusCategory, bool allowType, int arrayNestLevel)
 {
    bool typeExpr = false;
    ref_t attrRef = mapAttribute(node, allowType, previusCategory);
@@ -574,12 +579,16 @@ bool SyntaxTreeBuilder :: flushAttribute(SyntaxTreeWriter& writer, Scope& scope,
          }
       }
 
-      if (arrayMode) {
-         writer.newNode(SyntaxKey::ArrayType);
+      if (arrayNestLevel > 0) {
+         for (int i = 0; i < arrayNestLevel; i++)
+            writer.newNode(SyntaxKey::ArrayType);
+         
          writer.newNode(key, attrRef);
          flushNode(writer, scope, node);
          writer.closeNode();
-         writer.closeNode();
+
+         for (int i = 0; i < arrayNestLevel; i++)
+            writer.closeNode();
       }
       else {
          writer.newNode(key, attrRef);
@@ -601,9 +610,9 @@ void SyntaxTreeBuilder :: flushTypeAttribute(SyntaxTreeWriter& writer, Scope& sc
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::ArrayType) {
-         flushAttribute(writer, scope, current, previusCategory, allowType, true);
+         flushAttribute(writer, scope, current, previusCategory, allowType, 1);
       }
-      else flushAttribute(writer, scope, current, previusCategory, allowType, false);
+      else flushAttribute(writer, scope, current, previusCategory, allowType);
 
       current = current.nextNode();
    }
@@ -625,7 +634,7 @@ void SyntaxTreeBuilder :: flushTemplateArg(SyntaxTreeWriter& writer, Scope& scop
             case SyntaxKey::identifier:
             case SyntaxKey::reference:
             case SyntaxKey::globalreference:
-               flushAttribute(writer, scope, current, attributeCategory, true, false);
+               flushAttribute(writer, scope, current, attributeCategory, true);
                break;
             default:
                flushNode(writer, scope, current);
@@ -643,7 +652,7 @@ void SyntaxTreeBuilder :: flushTemplateArg(SyntaxTreeWriter& writer, Scope& scop
       bool dummy = false;
       while (current != nameNode) {
          bool allowType = current.nextNode() == nameNode;
-         flushAttribute(writer, scope, current, attributeCategory, allowType, false);
+         flushAttribute(writer, scope, current, attributeCategory, allowType);
 
          current = current.nextNode();
       }
@@ -731,7 +740,7 @@ void SyntaxTreeBuilder :: flushParent(SyntaxTreeWriter& writer, Scope& scope, Sy
          flushParentTemplate(writer, scope, current);
       }
       else if (testNodeMask(current.key, SyntaxKey::TerminalMask)) {
-         flushAttribute(writer, scope, current, attributeCategory, current.nextNode() == SyntaxKey::None, false);
+         flushAttribute(writer, scope, current, attributeCategory, current.nextNode() == SyntaxKey::None);
       }
       else if (current == SyntaxKey::TemplateType) {
          flushTemplateType(writer, scope, current, false);

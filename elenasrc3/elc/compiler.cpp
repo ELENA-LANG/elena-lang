@@ -4555,8 +4555,11 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
             elementRef = resolveStrongTypeAttribute(scope, current, declarationMode, false);
             break;
          case SyntaxKey::identifier:
-         case  SyntaxKey::reference:
+         case SyntaxKey::reference:
             elementRef = resolveTypeIdentifier(scope, current.identifier(), node.key, declarationMode, allowRole);
+            break;
+         case SyntaxKey::ArrayType:
+            elementRef = resolvePrimitiveType(scope, resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole), declarationMode);
             break;
          default:
             assert(false);

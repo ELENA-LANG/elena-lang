@@ -5,6 +5,15 @@ namespace collections
       int _hashMask;
 
       List<Tuple<TKey, TValue>> _list;
-//      int[][]                   _hashTable; 
+      int[][]                   _hashTable; 
+
+      private init(int capacity, int hashLength)
+      {
+         _hashMask := hashLength;
+            
+//         _hashTable := new int[][](hashLength);
+//         _list := new List<Tuple<TKey, TValue>>(capacity);
+      }
+      
    }
 }

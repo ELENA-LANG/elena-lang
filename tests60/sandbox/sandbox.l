@@ -1,12 +1,8 @@
 import system'collections;
 
-class A
-{
-   int[][] tmp;
-}
-
 public program()
 {
+   var hashTable := new int[][](10);
 
 //   var a := new A<A<int>>();
 

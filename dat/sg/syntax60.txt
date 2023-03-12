@@ -315,11 +315,11 @@ NESTED_ROOT_EXPRESSION ::=
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
 	| "$break" ^BREAK_OPERATION;
 
-EXPRESSION ::=
+EXPRESSION ::=                                           
         identifier { 
 		{ identifier | reference }+ { 
 			L0 ^OBJECT L0_R L1_OP?
-			| DYNAMIC_DIMENSION ^ARRAY_TYPE {
+			| { DYNAMIC_DIMENSION ^ARRAY_TYPE }+ {
 				L2 ^OBJECT L2_R 
 				| "{" ^OBJECT COLLECTION "}" ^ COLLECTION_EXPRESSION L3_OP* }
 			| ASSIGN ^OBJECT ASSIGN_R
