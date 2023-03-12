@@ -1,9 +1,19 @@
 import system'collections;
 
-A
+class X<T>
 {
-   List<Tuple<string/*, string*/>> _list;
+   static load()
+   {
+   }
+
+   clone()
+      = class X<T>.load();
 }
+
+//A
+//{
+//   List<Tuple<string/*, string*/>> _list;
+//}
 
 //   public sealed Map<TKey, TValue> //: Enumerable<Tuple<TKey, TValue>>
 //   {
@@ -14,7 +24,12 @@ A
 
 public program()
 {
-   var a := new A();
+   var o := new List<int>();
+
+//   var o := new X<int>();
+//   o.clone();
+
+//   var a := new A();
 
 //    auto map := new Map<string, string>();
 //    map["key"] := "foox";

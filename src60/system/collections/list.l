@@ -539,4 +539,247 @@ namespace collections
          _list.clear()
       }
    }
+
+   // --- List ---
+   public sealed List<T> : Enumerable<T>
+   {
+      T[]            _array;
+      Reference<int> _length;
+      Reference<int> _capacity;
+    
+      constructor(T[] a)
+      {
+         int len := a.Length;
+         int size := len / 32;
+         size := size + 1;
+         size := size * 32;
+            
+         _length := len;
+         _capacity := size;
+         _array := new T[](size);
+            
+         for(int i := 0, i < len, i += 1)
+         {
+            _array[i] := a[i]
+         }
+      }
+            
+      constructor(Enumerator<T> e)
+      {
+         _capacity := 16;
+         _length := 0;
+         _array := new T[](16);
+            
+         self.appendRange(e)        
+      }
+        
+      constructor(int capacity)
+      {
+         _capacity := capacity;
+         _length := 0;
+         _array := new T[](capacity);
+      }
+        
+      constructor()
+      {
+         _capacity := 16;
+         _length := 0;
+         _array := new T[](16);
+      }
+        
+      constructor load(T[] a, int index, int len)
+      {
+         int size := len / 32;
+         size := size + 1;
+         size := size * 32;
+            
+         _length := len;
+         _capacity := size;
+         _array := new T[](size);
+            
+         for(int i := 0, i < len, i += 1)
+         {
+            int j := i + index;
+                
+            _array[i] := a[j]
+         }
+      }
+            
+      int Length
+      {
+         get()
+         {
+            int retVal := *_length;
+                
+            ^ retVal
+         }        
+      }
+        
+      private expand()
+      {
+         int cap := *_capacity;
+         int len := *_length;
+            
+         if (cap <= len)
+         {
+            _capacity.append(32);
+            cap += 32;
+                
+            var T[] newArray := new T[](cap);
+    
+            for(int i := 0, i < len, i += 1)
+            {
+               //newArray[i] := theArray[i]
+               T tmp := _array[i];
+               newArray[i] := tmp
+            };
+                
+            _array := newArray
+         }
+      }
+        
+      /// Returns the object at the specified position
+      T at(int index)
+      {
+         int len := *_length;
+            
+         ifnot(index < len)
+            { OutOfRangeException.raise() };
+                
+         ^ _array[index]
+      }
+    
+      /// Returns the object at the specified position
+      setAt(int index, T object)
+      {
+         int len := *_length;
+            
+         ifnot(index < len)
+            { OutOfRangeException.raise() };
+            
+         _array[index] := object
+      }
+    
+      /// Appends a new object to the end of the list
+      append(T object)
+      {
+         self.expand();
+            
+         int index := *_length;
+         _array[index] := object;
+            
+         _length.append(1)
+      }
+    
+      append(object)
+         <= append(cast T(object));
+    
+      appendRange(Enumerator<T> e)
+      {
+         while(e.next())
+         {
+            self.append(*e)
+         }        
+      }
+    
+      insert(int index, T object)
+      {
+         _length.append(1);
+            
+         self.expand();
+            
+         int len := *_length;
+         for (int i := len, i > index, i -= 1)
+         {
+            _array[i] := _array[i - 1]
+         };
+            
+         _array[index] := object
+      }
+        
+      insert(T object)
+         <= insert(0, object);
+    
+      /// Removes an object at the specified position
+      remove(int index)
+      {
+         ifnot (index < *_length)
+            { OutOfRangeException.raise() };
+            
+         _length.reduce(1);
+            
+         int i := index;
+         int len := *_length;
+         while(i < len)
+         {
+            _array[i] := _array[i + 1];
+                
+            i := i + 1
+         }
+      }
+            
+      /// Returns the top object
+      T First = _array.at(0);
+        
+      /// Clears the list
+      clear()
+      {
+         _length.Value := 0        
+      }
+        
+      trim(int pos)
+      {
+         if (pos > *_length)
+            { OutOfRangeException.raise() };
+            
+         _length.Value := pos
+      }
+        
+      Enumerator<T> enumerator() = new BaseEnumerator<T>
+      {
+         this index := -1;
+            
+         this length := self.Length;
+            
+         get T Value() = self.at(this index.Value);
+            
+         enumerable() = self;
+            
+         reset()
+         {
+            this index.Value := -1
+         }
+      };
+    
+      Indexer<T> indexer() = new BaseIndexer<T>
+      {
+         this index := 0;
+            
+         this length := self.Length;
+            
+         get T Value()
+            = self.at(this index.Value);
+                
+         set Value(T o)
+         {
+            self.setAt(this index.Value, o)
+         }
+      };
+            
+      get T[] Value()
+      {
+         int len := *_length;
+         var T[] copy := new T[](len);
+            
+         for (int i := 0, i < len, i += 1)
+         {
+            copy[i] := _array[i]
+         };
+            
+         ^ copy
+      }
+    
+      clone()
+         = class List<T>.load(_array, 0, *_length);
+   }
 }
