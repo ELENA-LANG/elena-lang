@@ -11,9 +11,18 @@ namespace collections
       {
          _hashMask := hashLength;
             
-//         _hashTable := new int[][](hashLength);
-//         _list := new List<Tuple<TKey, TValue>>(capacity);
+         _hashTable := new int[][](hashLength);
+         _list := new List<Tuple<TKey, TValue>>(capacity);
+      }
+
+      constructor()
+      {
+         self.init(32,37)
       }
       
+      constructor(int capacity, int hashLength)
+      {
+         self.init(capacity,hashLength)
+      }      
    }
 }

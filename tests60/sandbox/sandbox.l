@@ -1,12 +1,20 @@
 import system'collections;
 
+A
+{
+   List<Tuple<string/*, string*/>> _list;
+}
+
+//   public sealed Map<TKey, TValue> //: Enumerable<Tuple<TKey, TValue>>
+//   {
+       
+//      List<Tuple<TKey, TValue>> _list;
+//   }
+
+
 public program()
 {
-   var hashTable := new int[][](10);
-
-//   var a := new A<A<int>>();
-
-//   var m := new Array<Tuple<int,int>>();
+   var a := new A();
 
 //    auto map := new Map<string, string>();
 //    map["key"] := "foox";
