@@ -41,6 +41,16 @@ public extension intOp : IntNumber
       }
    }
 
+   get int Absolute()
+   {
+      int n := self;
+    
+      if (n < 0)
+         { n := -n };
+    
+      ^ n
+   }
+
    int mod(int operand)
    {
       int retVal := self / operand * operand;

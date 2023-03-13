@@ -639,6 +639,9 @@ void SyntaxTreeBuilder :: flushTemplateArg(SyntaxTreeWriter& writer, Scope& scop
             case SyntaxKey::globalreference:
                flushAttribute(writer, scope, current, attributeCategory, true);
                break;
+            case SyntaxKey::TemplateType:
+               flushTemplateType(writer, scope, current, false);
+               break;
             default:
                flushNode(writer, scope, current);
                break;

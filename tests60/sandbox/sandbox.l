@@ -1,40 +1,17 @@
 import system'collections;
-
-class X<T>
-{
-   static load()
-   {
-   }
-
-   clone()
-      = class X<T>.load();
-}
-
-//A
-//{
-//   List<Tuple<string/*, string*/>> _list;
-//}
-
-//   public sealed Map<TKey, TValue> //: Enumerable<Tuple<TKey, TValue>>
-//   {
-       
-//      List<Tuple<TKey, TValue>> _list;
-//   }
-
+import system'routines;
+import extensions;
 
 public program()
 {
-   var o := new List<int>();
+    auto map := new Map<string, string>();
+    map["key"] := "foox";
+    map["key"] := "foo";
+    map["key2"]:= "foo2";
+    map["key3"]:= "foo3";
+    map["key4"]:= "foo4";
 
-//   var o := new X<int>();
-//   o.clone();
+    map.forEach:
+        (tuple){ console.printLine(tuple.Item1," : ",tuple.Item2) }
 
-//   var a := new A();
-
-//    auto map := new Map<string, string>();
-//    map["key"] := "foox";
-//    map["key"] := "foo";
-//    map["key2"]:= "foo2";
-//    map["key3"]:= "foo3";
-//    map["key4"]:= "foo4";
 }

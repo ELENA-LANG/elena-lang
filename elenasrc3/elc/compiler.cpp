@@ -42,15 +42,15 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l | (unsigned int)r);
 }
 
-//inline void testNodes(SyntaxNode node)
-//{
-//   SyntaxNode current = node.firstChild();
-//   while (current != SyntaxKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 inline bool isSelfCall(ObjectInfo target)
 {
@@ -4060,14 +4060,14 @@ void Compiler :: saveTemplate(TemplateScope& scope, SyntaxNode& node)
    SyntaxTree::saveNode(node, target);
 }
 
-void Compiler::saveNamespaceInfo(SyntaxNode node, NamespaceScope* nsScope, bool outerMost)
+void Compiler :: saveNamespaceInfo(SyntaxNode node, NamespaceScope* nsScope, bool outerMost)
 {
    if (outerMost)
       node.appendChild(SyntaxKey::SourcePath, *nsScope->sourcePath);
 
    IdentifierString nsFullName(nsScope->module->name());
    if (nsScope->nsName.length() > 0) {
-      nsFullName.copy("'");
+      nsFullName.append("'");
       nsFullName.append(*nsScope->nsName);
    }
    node.appendChild(SyntaxKey::Import)
@@ -4416,6 +4416,8 @@ ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node,
       if (!templateRef)
          scope.raiseError(errUnknownClass, terminalNode);
 
+      testNodes(node);
+
       NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
       return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
@@ -4596,6 +4598,9 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAtt
             // !! should be refactored
             typeInfo = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole);
          }
+         else if (current == SyntaxKey::TemplateType) {
+            typeInfo.typeRef = resolveTypeTemplate(scope, current, attributes, declarationMode);
+         }
          //else if (current == SyntaxKey::Object) {
          //   assert(false);
 
@@ -4706,6 +4711,12 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
 
                if (attrs.typeInfo.isPrimitive())
                   attrs.typeInfo = { resolvePrimitiveType(scope, attrs.typeInfo, declarationMode) };
+            }
+            else if (attrs.size == -1) {
+               // if it is a nested array
+
+               readFieldAttributes(scope, current, attrs, declarationMode);
+               attrs.typeInfo = { resolveArrayTemplate(scope, attrs.typeInfo.typeRef, declarationMode) };
             }
             else scope.raiseError(errInvalidHint, current);
             break;

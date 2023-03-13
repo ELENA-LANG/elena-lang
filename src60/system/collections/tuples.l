@@ -26,6 +26,11 @@ namespace collections
          Item2 := o2
       }
         
+      constructor(T1 o1)
+      {
+         Item1 := o1
+      }
+        
       T1 Item1 : prop;
       T2 Item2 : prop;
    }
