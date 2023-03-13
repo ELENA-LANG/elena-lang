@@ -82,6 +82,32 @@ size_t SystemRoutineProvider :: LoadCallStack(uintptr_t framePtr, uintptr_t* lis
    return length;
 }
 
+void SystemRoutineProvider :: InitRandomSeed(SeedStruct& seed, long long seedNumber)
+{
+   unsigned int low = (unsigned int)(seedNumber & 0xFFFFFFFF);
+   unsigned int hi = (unsigned int)(seedNumber >> 32);
+
+   seed.z1 = low;
+   seed.z2 = hi;
+   seed.z3 = low * (low & 0xFF);
+   seed.z3 = hi * (low & 0xFF00);
+}
+
+unsigned int SystemRoutineProvider :: GetRandomNumber(SeedStruct& seed)
+{
+   unsigned int b;
+   b = ((seed.z1 << 6) ^ seed.z1) >> 13;
+   seed.z1 = ((seed.z1 & 4294967294U) << 18) ^ b;
+   b = ((seed.z2 << 2) ^ seed.z2) >> 27;
+   seed.z2 = ((seed.z2 & 4294967288U) << 2) ^ b;
+   b = ((seed.z3 << 13) ^ seed.z3) >> 21;
+   seed.z3 = ((seed.z3 & 4294967280U) << 7) ^ b;
+   b = ((seed.z4 << 3) ^ seed.z4) >> 12;
+   seed.z4 = ((seed.z4 & 4294967168U) << 13) ^ b;
+
+   return (seed.z1 ^ seed.z2 ^ seed.z3 ^ seed.z4);
+}
+
 // --- ELENAMachine ---
 
 int ELENAMachine :: execute(SystemEnv* env, void* symbolListEntry)

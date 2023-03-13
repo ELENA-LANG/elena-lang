@@ -1,17 +1,11 @@
-import system'collections;
-import system'routines;
 import extensions;
 
 public program()
 {
-    auto map := new Map<string, string>();
-    map["key"] := "foox";
-    map["key"] := "foo";
-    map["key2"]:= "foo2";
-    map["key3"]:= "foo3";
-    map["key4"]:= "foo4";
+   for (int i := 0, i < 20, i += 1)
+   {
+      var r := randomGenerator.nextInt(20);
 
-    map.forEach:
-        (tuple){ console.printLine(tuple.Item1," : ",tuple.Item2) }
-
+      console.writeLine(r);
+   }
 }

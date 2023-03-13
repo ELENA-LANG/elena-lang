@@ -159,3 +159,18 @@ void SystemRoutineProvider :: InitCriticalStruct(uintptr_t criticalHandler)
 
    AddVectoredExceptionHandler(CALL_FIRST, ELENAVectoredHandler);
 }
+
+long long SystemRoutineProvider :: GenerateSeed()
+{
+   SYSTEMTIME st;
+   FILETIME ft;
+
+   GetSystemTime(&st);
+   SystemTimeToFileTime(&st, &ft);
+
+   long long seed = ft.dwHighDateTime;
+   seed <<= 32;
+   seed |= ft.dwLowDateTime;
+
+   return seed;
+}

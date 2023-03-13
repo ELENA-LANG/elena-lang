@@ -20,6 +20,7 @@
         <include>console.l</include>
         <include>basic.l</include>
         <include>tests.l</include>
+        <include>random.l</include>
         <include>text\strings.l</include>
         <include>text\words.l</include>
      </module>

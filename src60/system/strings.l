@@ -973,44 +973,44 @@ public sealed class Variant
 
 public sealed Array : Indexable
 {
-    __string object[] array;
+   __string object[] array;
     
-    /// Creates an empty array
-    constructor MinValue
-        = new object[](0);
+   /// Creates an empty array
+   constructor MinValue
+      = new object[](0);
     
-    /// Creates the array with the specified length
-    constructor allocate(int len)
-        = new object[](len);
+   /// Creates the array with the specified length
+   constructor allocate(int len)
+      = new object[](len);
 
     /// Creates a copy of the provided sub array
-    constructor copy(int index, int length, Array array)
-        <= allocate(length)
-    {
+   constructor copy(int index, int length, Array array)
+      <= allocate(length)
+   {
       for(int i := 0 , i < length, i += 1)
       {
          this array[i] := array[i + index]
       }
-    }
+   }
         
-//    /// Concatinates the arrays    
-//    add(Array a)
-//    {
-//        int length1 := self.Length;
-//        int length2 := a.Length;
-//        
-//        auto retVal := Array.allocate(length1 + length2);
-//
-//        for (int i:=0, i < length1, i += 1) {
-//            retVal[i] := theArray[i]
-//        };
-//
-//        for (int i:=0, i < length2, i += 1) {
-//            retVal[length1 + i] := a[i]
-//        };
-//            
-//        ^ retVal
-//    }
+   /// Concatinates the arrays    
+   add(Array a)
+   {
+      int length1 := self.Length;
+      int length2 := a.Length;
+        
+      auto retVal := Array.allocate(length1 + length2);
+
+      for (int i:=0, i < length1, i += 1) {
+         retVal[i] := array[i]
+      };
+
+      for (int i:=0, i < length2, i += 1) {
+         retVal[length1 + i] := a[i]
+      };
+            
+      ^ retVal
+   }
 
    int Length
    {

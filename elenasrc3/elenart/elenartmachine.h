@@ -49,11 +49,19 @@ namespace elena_lang
 
       mssg_t loadMessage(ustr_t messageName);
 
+      void initRandomSeed(SeedStruct& seed)
+      {
+         __routineProvider.InitRandomSeed(seed, __routineProvider.GenerateSeed());
+      }
+
+      unsigned int getRandomNumber(SeedStruct& seed)
+      {
+         return __routineProvider.GetRandomNumber(seed);
+      }
+
       ELENARTMachine(path_t dllRootPath, path_t execPath, path_t configFile, PlatformType platform, void* mdata);
 
-      virtual ~ELENARTMachine()
-      {
-      }
+      virtual ~ELENARTMachine() = default;
    };
 }
 

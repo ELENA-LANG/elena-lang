@@ -129,6 +129,16 @@ EXTERN_DLL_EXPORT mssg_t LoadMessageLA(const char* messageName)
    return machine->loadMessage(messageName);
 }
 
+EXTERN_DLL_EXPORT void GetRandomSeedLA(SeedStruct& seed)
+{
+   machine->initRandomSeed(seed);
+}
+
+EXTERN_DLL_EXPORT unsigned int GetRandomIntLA(SeedStruct& seed)
+{
+   return machine->getRandomNumber(seed);
+}
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved

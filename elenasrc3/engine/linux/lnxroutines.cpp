@@ -179,3 +179,13 @@ void SystemRoutineProvider :: InitCriticalStruct(uintptr_t criticalHandler)
    if (sigaction(SIGSEGV, &sa, NULL) == -1)
       throw InternalError(errAborted);
 }
+
+
+long long SystemRoutineProvider :: GenerateSeed()
+{
+   time_t t = time(nullptr)
+
+   long long seed = (long int)t;
+
+   return seed;
+}

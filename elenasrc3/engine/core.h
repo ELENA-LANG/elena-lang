@@ -198,6 +198,14 @@ namespace elena_lang
       }
    };
 
+   struct SeedStruct
+   {
+      int z1;
+      int z2;
+      int z3;
+      int z4;
+   };
+
 #pragma pack(pop)
 
 }

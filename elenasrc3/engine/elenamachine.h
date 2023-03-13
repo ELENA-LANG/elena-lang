@@ -108,6 +108,10 @@ namespace elena_lang
       static void InitCriticalStruct(uintptr_t criticalDispatcher);
       static void InitSTA(SystemEnv* env);
 
+      static long long GenerateSeed();
+      static void InitRandomSeed(SeedStruct& seed, long long seedNumber);
+      static unsigned int GetRandomNumber(SeedStruct& seed);
+
       static void RaiseError(int code);
 
       static void Exit(int exitCode);

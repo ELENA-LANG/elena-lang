@@ -5,18 +5,16 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 14 ===
-    ! api functionality for existing classes : rest of system
-    ! api functionality for existing classes : externals
     ! examples : all console, files examples
     ! x86 : multi-threading
 
-    * rosetta example : bestshuffle 
-    * rosetta examples : 7
+    * rosetta examples : bullscows, caesar, calendar, charmatch
     * review system & extensions warnings
 
     * elena vm : x86-64
     * ide - select the text with a mouse
     * ldoc : recognize template based type - for the method output
+    * ldoc : system'collections / system'routines
 
     * ide - close all / close all but active
     * ide : change status to ready when writing / selecting files
@@ -29,6 +27,8 @@ In development:
 
     === Iteration 15 ===
     ! x86 : gui
+    ! api functionality for existing classes : rest of system
+    ! api functionality for existing classes : externals
     ! elena sm : x86-64
     ! ide : vm console
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
@@ -56,6 +56,7 @@ In development:
     ! ppc64le : gui
     * templates with parameters: template can have attribute values in the brackets after the main body
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
+    * migrate: amb, anagram
 
 ------                                                           
 Backlog:
@@ -455,8 +456,6 @@ Backlog:
     * test : string insert / delete
     * test string / wide operations
     * fix chat sample
-
-    * linux : implement INIT_RND
 
     * test all samples
     * check all mtredirect commands (class, parent class)
