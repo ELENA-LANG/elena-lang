@@ -10,8 +10,8 @@ In development:
     ! examples : all console, files examples
     ! x86 : multi-threading
 
-    * rosetta examples : associativearrays
-    * rosetta examples : 8
+    * rosetta example : bestshuffle 
+    * rosetta examples : 7
     * review system & extensions warnings
 
     * elena vm : x86-64

@@ -131,6 +131,23 @@ public extension enumerableOp
 
 public extension indexableOp
 {
+   exchange(int i1, int i2)
+   {
+      Indexer indexer := self.indexer();
+        
+      indexer.Index := i1;
+        
+      var o1 := *indexer;
+        
+      indexer.Index := i2;
+      var o2 := *indexer;
+        
+      indexer.Value := o1;
+        
+      indexer.Index := i1;
+      indexer.Value := o2
+   }
+
    sort(Func2 compareFunc)
    {
       QuickSorting.sort(new IndexerSortingAgent(self), compareFunc);

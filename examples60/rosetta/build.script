@@ -107,3 +107,23 @@
  else
    echo .
  fi
+
+ ../../bin/elena-cli -passociativearrays associativearrays.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -pbestshuffle bestshuffle.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi

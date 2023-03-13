@@ -53,6 +53,16 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+..\..\bin\elena64-cli -passociativearrays associativearrays.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena64-cli -pbestshuffle bestshuffle.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 @echo off 
 goto:eof
 @echo on
