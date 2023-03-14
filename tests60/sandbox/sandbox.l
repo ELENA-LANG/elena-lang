@@ -1,11 +1,35 @@
 import extensions;
 
+A
+{
+   constructor()
+   {
+      console.writeLine("new A()");
+   }
+
+   do()
+   {
+      console.writeLine("A.do()");
+   }
+
+   invoke()
+   {
+      self.do();
+   }
+}
+
 public program()
 {
-   for (int i := 0, i < 20, i += 1)
-   {
-      var r := randomGenerator.nextInt(20);
+   var a := $lazy new A();
 
-      console.writeLine(r);
-   }
+   console.writeLine("a.invoke()");
+   a.invoke();
+
+//   var expr := $lazy console.write("Reading a number:").readLine().toInt();
+
+
+//    // the expression is invoked only when it is used
+//    var sum := expr + expr;
+    
+//    console.printLine("the result is ", sum);
 }

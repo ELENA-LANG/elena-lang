@@ -21,7 +21,7 @@ In development:
     * ide : selection block unsync after mouse click
     * ide : selection block unsync after comment (sometimes)
 
-    * elena : nullable
+    * elena : nullable - reviewing syntax
     * elenavm : implementing dll api
     * show the signature for the typecast message if possible
 
@@ -68,6 +68,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * elena : nullable
     * system'collections'Map - migrating rest of methods
     * if statements with single statement
     * replace all default maps with optimized ones (e.g. SyntaxHash, TableHash, SyntaxTable)
@@ -142,7 +143,6 @@ Backlog:
     * vm : on stop : unprotected / remove executable flags, on start - reverse the action
     * test for self : nestedFieldsTest
     * test three type of self : self, this self, weak self
-    * api : support lazy-load expressions
     * gc - system_tests - why full collect happends so often
     * #15 : return double / long from external function
     * #47 : Evaluating an expression in a symbol

@@ -3381,7 +3381,7 @@ inline %0FCh
   sub     x14, x10, elVMTOffset              
   ldr     x17, [x14]
   add     x17, x17, __arg12_1
-  ldr     x17, [x17]
+  ldr     x17, [x17, #8]
   blr     x17
 
 end

@@ -788,6 +788,8 @@ bool ByteCodeAssembler :: compileMR(ScriptToken& tokenInfo, MemoryWriter& writer
 
    ByteCodeUtil::write(writer, command.code, arg, arg2);
 
+   read(tokenInfo);
+
    return true;
 }
 
@@ -941,7 +943,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::VCallMR:
          case ByteCode::JumpMR:
          case ByteCode::VJumpMR:
-            return compileMR(tokenInfo, writer, opCommand, true);
+            return compileMR(tokenInfo, writer, opCommand, false);
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
             return compileRR(tokenInfo, writer, opCommand, true);

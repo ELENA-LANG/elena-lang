@@ -430,3 +430,12 @@ public interface Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,TResult>
    Func11 cast()
       = (a,b,c,d,e,f,g,h,i,j,k => self(a,b,c,d,e,f,g,h,i,j,k));
 }
+
+// --- BaseLazyExpression ---
+
+public abstract BaseLazyExpression
+{
+   abstract function();
+    
+   dispatch() : external(system'core_routines'__lazy_dispatcher);
+}

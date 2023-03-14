@@ -2536,8 +2536,9 @@ end
 // ; vcallmr
 inline % 0FCh
 
+  mov  ecx, __arg32_1
   mov  rax, [rbx - elVMTOffset]
-  call [rax + __arg32_1]
+  call [rax + rcx + 8]
 
 end
 

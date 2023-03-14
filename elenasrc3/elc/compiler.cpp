@@ -7759,6 +7759,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::ClosureBlock:
          retVal = compileClosure(writer, scope, current, mode);
          break;
+      case SyntaxKey::LazyOperation:
+         retVal = compileClosure(writer, scope, current, mode);
+         break;
       case SyntaxKey::CodeBlock:
          compileSubCode(writer, scope, current, mode, true);
          break;
@@ -9150,6 +9153,29 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
    }
 }
 
+void Compiler :: compileExpressionMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+{
+   beginMethod(writer, scope, node, BuildKey::Method, false);
+
+   CodeScope codeScope(&scope);
+
+   // new stack frame
+   writer.appendNode(BuildKey::OpenFrame);
+
+   // stack should contains current self reference
+   // the original message should be restored if it is a generic method
+   scope.selfLocal = codeScope.newLocal();
+   writer.appendNode(BuildKey::Assigning, scope.selfLocal);
+
+   compileRetExpression(writer, codeScope, node);
+
+   writer.appendNode(BuildKey::CloseFrame);
+
+   codeScope.syncStack(&scope);
+
+   endMethod(writer, scope);
+}
+
 void Compiler :: compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
    beginMethod(writer, scope, node, BuildKey::Method, false);
@@ -9173,6 +9199,7 @@ void Compiler :: compileClosureMethod(BuildTreeWriter& writer, MethodScope& scop
 
 void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
 {
+   bool lazyExpression = node == SyntaxKey::LazyOperation;
    ref_t parentRef = scope.info.header.parentRef;
 
    writer.newNode(BuildKey::NestedClass, scope.reference);
@@ -9182,24 +9209,32 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
 
    methodScope.functionMode = true;
 
-   mssg_t multiMethod = defineMultimethod(scope, methodScope.message, false);
+   mssg_t multiMethod = /*!lazyExpression && */defineMultimethod(scope, methodScope.message, false);
    if (multiMethod) {
       methodScope.info.multiMethod = multiMethod;
       methodScope.info.outputRef = V_AUTO;
    }
 
-   compileClosureMethod(writer, methodScope, node);
+   if (lazyExpression) {
+      compileExpressionMethod(writer, methodScope, node);
+   }
+   else {
+      compileClosureMethod(writer, methodScope, node);
 
-   // HOTFIX : inject an output type if required or used super class
-   if (methodScope.info.outputRef == V_AUTO) {
-      methodScope.info.outputRef = scope.moduleScope->buildins.superReference;
+      // HOTFIX : inject an output type if required or used super class
+      if (methodScope.info.outputRef == V_AUTO) {
+         methodScope.info.outputRef = scope.moduleScope->buildins.superReference;
+      }
    }
 
-   ref_t closureRef = resolveClosure(scope, methodScope.message, methodScope.info.outputRef);
-   if (closureRef) {
-      parentRef = closureRef;
+   if (!lazyExpression) {
+      ref_t closureRef = resolveClosure(scope, methodScope.message, methodScope.info.outputRef);
+      if (closureRef) {
+         parentRef = closureRef;
+      }
+      else throw InternalError(errClosureError);
    }
-   else throw InternalError(errClosureError);
+   else parentRef = scope.moduleScope->buildins.lazyExpressionReference;
 
    declareClassParent(parentRef, scope, node);
    generateClassFlags(scope, elNestedClass);
@@ -9564,6 +9599,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.argArrayTemplateReference = safeMapReference(moduleScope, forwardResolver, VARIADIC_ARRAY_FORWARD);
 
    moduleScope->buildins.closureTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, CLOSURE_FORWARD);
+   moduleScope->buildins.lazyExpressionReference = safeMapWeakReference(moduleScope, forwardResolver, LAZY_FORWARD);
    moduleScope->buildins.dwordReference = safeMapReference(moduleScope, forwardResolver, DWORD_FORWARD);
 
    moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);

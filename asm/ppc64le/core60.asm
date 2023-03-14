@@ -3390,6 +3390,7 @@ inline % 0FCh
 
   ld       r16, -elVMTOffset(r15)     
   ld       r17, __arg16_1(r16)
+  addi     r17, r17, 8
   mtctr    r17            // ; put code address into ctr
   bctrl                   // ; and call it
 

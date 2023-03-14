@@ -2630,8 +2630,9 @@ end
 // ; vcallmr
 inline %0FCh
 
+  mov  ecx, __arg32_1
   mov  eax, [ebx - elVMTOffset]
-  call [eax + __arg32_1]
+  call [eax + ecx + 4]
 
 end
 

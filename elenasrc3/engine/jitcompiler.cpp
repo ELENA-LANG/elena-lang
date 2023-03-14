@@ -1734,6 +1734,7 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+   ref_t arg2 = scope->command.arg2 & ~mskAnyRef;
 
    // simply copy correspondent inline code
    writer->write(code, length);
@@ -1746,38 +1747,38 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case PTR32_2:
-            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32);
             break;
          case RELPTR32_2:
-            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
                0, scope->helper->importMessage(scope->command.arg1), mskRelRef32);
             break;
          case DISP32HI_2:
-            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
                0, scope->helper->importMessage(scope->command.arg1), mskDisp32Hi);
             break;
          case DISP32LO_2:
-            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
                0, scope->helper->importMessage(scope->command.arg1), mskDisp32Lo);
             break;
          case XDISP32HI_2:
-            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
                0, scope->helper->importMessage(scope->command.arg1), mskXDisp32Hi);
             break;
          case XDISP32LO_2:
-            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
                0, scope->helper->importMessage(scope->command.arg1), mskXDisp32Lo);
             break;
          case PTR32HI_2:
          {
-            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Hi);
             break;
          }
          case PTR32LO_2:
          {
-            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
             break;
          }
@@ -1800,6 +1801,7 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+   ref_t arg2 = scope->command.arg2 & ~mskAnyRef;
 
    // simply copy correspondent inline code
    writer->write(code, length);
@@ -1812,15 +1814,15 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodOffset,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodOffset,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32);
             break;
          case ARG12_1:
-            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodOffset,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodOffset,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo12);
             break;
          case ARG16_1:
-            scope->compiler->writeVMTMethodArg(scope, scope->command.arg2 | mskVMTMethodOffset,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodOffset,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
             break;
          default:

@@ -1221,6 +1221,7 @@ namespace elena_lang
          bool withGenerics, bool withOpenArgGenerics);
       void compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode);
       void compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
+      void compileExpressionMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
       void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileConstructor(BuildTreeWriter& writer, MethodScope& scope, ClassScope& classClassScope, SyntaxNode node);

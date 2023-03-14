@@ -92,6 +92,24 @@ Lab00:
 
 end
 
+procedure __lazy_dispatcher
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2)[],[tmp]
+  save       dp:tmp
+  vcall      mssg:"function:#invoke[0]", class:"system'BaseLazyExpression"
+  load       dp:tmp  
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  jump       vt:0
+
+end
+
 procedure __exception_raise
 
   xflush     sp:0

@@ -107,6 +107,7 @@ namespace elena_lang
       OrOperation             = 0x001862,
       XorOperation            = 0x001863,
       BreakOperation          = 0x001864,
+      LazyOperation           = 0x001865,
       Postfix                 = 0x001068,
       TemplatePostfix         = 0x001069,
       //MethodPostfix           = 0x00106A,
@@ -149,7 +150,6 @@ namespace elena_lang
       SwitchLastOption        = 0x0018D2,
       SwitchCode              = 0x0018D3,
       CollectionExpression    = 0x0018D4,
-
 
       Name                    = 0x000101,
       Namespace               = 0x000103,

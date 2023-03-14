@@ -176,6 +176,7 @@ struct BuiltinReferences
    ref_t   arrayTemplateReference;
    ref_t   argArrayTemplateReference;
    ref_t   closureTemplateReference;
+   ref_t   lazyExpressionReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
@@ -202,7 +203,7 @@ struct BuiltinReferences
       messageReference = extMessageReference = 0;
       wrapperTemplateReference = 0;
       arrayTemplateReference = argArrayTemplateReference = 0;
-      closureTemplateReference = 0;
+      closureTemplateReference = lazyExpressionReference = 0;
 
       dispatch_message = constructor_message = 0;
       protected_constructor_message = 0;
