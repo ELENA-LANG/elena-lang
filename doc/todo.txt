@@ -8,6 +8,9 @@ In development:
     ! examples : all console, files examples
     ! x86 : multi-threading
 
+    * unboxing object
+    * unboxing stack allocated
+
     * rosetta examples : bullscows, caesar, calendar, charmatch
     * review system & extensions warnings
 
@@ -21,7 +24,8 @@ In development:
     * ide : selection block unsync after mouse click
     * ide : selection block unsync after comment (sometimes)
 
-    * elena : nullable - reviewing syntax
+    * prefix nullable / nable - allow to assign nil
+    * introduce Nullable structure
     * elenavm : implementing dll api
     * show the signature for the typecast message if possible
 

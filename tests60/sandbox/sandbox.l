@@ -1,35 +1,17 @@
 import extensions;
 
-A
-{
-   constructor()
-   {
-      console.writeLine("new A()");
-   }
-
-   do()
-   {
-      console.writeLine("A.do()");
-   }
-
-   invoke()
-   {
-      self.do();
-   }
-}
-
 public program()
 {
-   var a := $lazy new A();
+   /*int*/var ret := 0;
+   var o := new object();
+   try
+   {
+      o.fail()
+   }
+   catch(Exception ex)
+   {
+      ret := -1
+   };
+   console.writeLine(ret);
 
-   console.writeLine("a.invoke()");
-   a.invoke();
-
-//   var expr := $lazy console.write("Reading a number:").readLine().toInt();
-
-
-//    // the expression is invoked only when it is used
-//    var sum := expr + expr;
-    
-//    console.printLine("the result is ", sum);
 }
