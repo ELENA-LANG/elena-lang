@@ -175,6 +175,17 @@ internal singleton PrimitiveOperations
       ^ subStrLength;
    }
 
+   int calcSubWideStringLength(int index, int length, char[] array)
+   {
+      int subStrLength := 0;
+      for(int i := 0, i < length, i += 1)
+      {
+         subStrLength += array[i].WideLength;
+      };
+
+      ^ subStrLength;
+   }
+
    int copyUTF32(byte[] dest, int index, int value)
    {
       int length := 0;
@@ -578,6 +589,25 @@ internal singleton PrimitiveWideStringOperations
          i += len;
       };
       
+      ^ j
+   }
+
+   int save(char[] dest, wide s, int sourIndex, int sourLength, int destIndex)
+   {
+      int i := 0;
+      int j := destIndex;
+      while (i < sourLength) {
+         char ch := s[sourIndex + i];
+
+         dest[j] := ch;
+
+         int len := ch.Length;
+         i += len;
+         j += 1;
+      };
+      
+      j := j - destIndex;
+
       ^ j
    }
 

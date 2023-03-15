@@ -797,6 +797,9 @@ bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, TypeAttributes
       case V_NEWOP:
          attributes.newOp = true;
          return true;
+      case V_CLASS:
+         attributes.classOne = true;
+         return true;
       default:
          return false;
    }
@@ -1755,10 +1758,6 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });
       }
 
-      if (testany(info.header.flags, elWithVariadics)) {
-         result.withVariadicDispatcher = true;
-      }
-
       if (test(methodInfo.hints, (ref_t)MethodHint::Initializer)) {
          result.kind = (ref_t)MethodHint::Sealed;
       }
@@ -1772,6 +1771,12 @@ bool CompilerLogic :: checkMethod(ModuleScopeBase& scope, ref_t classRef, mssg_t
 {
    ClassInfo info;
    if (classRef && defineClassInfo(scope, info, classRef)) {
+      if (testany(info.header.flags, elWithVariadics)) {
+         result.withVariadicDispatcher = true;
+      }
+      else if (test(info.header.flags, elWithCustomDispatcher))
+         result.withCustomDispatcher = true;
+
       return checkMethod(info, message, result);
    }
    else return false;
@@ -1785,6 +1790,12 @@ bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, ms
 
    ClassInfo info;
    if (defineClassInfo(scope, info, classRef)) {
+      if (testany(info.header.flags, elWithVariadics)) {
+         result.withVariadicDispatcher = true;
+      }
+      else if (test(info.header.flags, elWithCustomDispatcher))
+         result.withCustomDispatcher = true;
+
       if (!checkMethod(info, message, result)) {
          if (checkMethod(info, message | STATIC_MESSAGE, result)) {
             result.visibility = Visibility::Private;

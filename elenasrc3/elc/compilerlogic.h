@@ -23,6 +23,7 @@ namespace elena_lang
       Visibility  visibility;
       bool        stackSafe;
       bool        withVariadicDispatcher;
+      bool        withCustomDispatcher;
    };
 
    struct TypeAttributes
@@ -32,6 +33,7 @@ namespace elena_lang
       bool byRefOne;
       bool mssgNameLiteral;
       bool newOp;
+      bool classOne;
 
       bool isNonempty() const
       {

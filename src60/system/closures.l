@@ -191,13 +191,13 @@ public interface Func5
       }
    }
 
-   sealed retrieve(object param1, object param2, object param3, Enumerator en)
+   sealed retrieve(object param1, object param2, object param3, object param4, Enumerator en)
    {
       while (en.next())
       {
          var item := *en;
 
-         if (self(param1, param2, param3, item))
+         if (self(param1, param2, param3, param4, item))
             { ^ item }
       };
 

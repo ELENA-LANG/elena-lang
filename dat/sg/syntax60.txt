@@ -245,7 +245,9 @@ ROOT_EXPRESSION ::=
 		| L4_O_OP L4_OP*
 		| L5_O_OP 
 		| LESS ^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^TEMPLATE_TYPE
-			identifier ^OBJECT
+			{ 
+				L3 ^OBJECT MESSAGE L3_R
+				| identifier ^OBJECT }
 		| L7_O_OP
 		| TRY ^OBJECT TRY_R
 		| T_EXPRESSION { identifier NT_EXPRESSION }? ^ TEMPLATE_BLOCK

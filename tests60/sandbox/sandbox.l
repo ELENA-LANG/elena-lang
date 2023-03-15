@@ -1,8 +1,18 @@
 import extensions;
 
+class A
+{
+   field target;
+
+   constructor(o)
+   {
+      target := o
+   }
+}
+
 public program()
 {
-   var randomNumbers := new int[]{1,2,3,4,5,6,7,8,9};
+   auto o := new A(2);
 
-   var numbers := randomNumbers.Subarray(0, 4);
+   var r := o.add(2);
 }

@@ -87,7 +87,7 @@ namespace text
                 
             var char[] newBuffer := new char[](newLength);
                 
-            newBuffer.write(0, bufferLength, _buffer);
+            Array<char>.copy(newBuffer, _buffer, 0, bufferLength);
                 
             _buffer := newBuffer
          }

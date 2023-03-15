@@ -8,13 +8,13 @@ In development:
     ! examples : all console, files examples
     ! x86 : multi-threading
 
-    * rosetta examples : charmatch
-    * review system & extensions warnings
     * ide : selection block unsync after comment (sometimes)
     * elena vm : x86-64
 
     * ide - select the text with a mouse
     * rosetta examples : charmatch, calendar
+    * review extensions warnings
+    * review system warnings
 
     * ldoc : recognize template based type - for the method output
     * ldoc : system'collections / system'routines

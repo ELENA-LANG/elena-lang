@@ -16,6 +16,14 @@ public sealed Array<T> : Indexable<T>
       }
    }
 
+   static copy(Array<T> target, Array<T> source, int index, int length)
+   {      
+      for(int i := 0 , i < length, i += 1)
+      {
+         target[i] := source[i + index]
+      }
+   }
+
    Enumerator<T> enumerator() = new BaseEnumerator<T>
    {
       this index := -1;
@@ -285,9 +293,11 @@ public const struct String : BaseValue,
 
    bool equal(o)
    {
-      var s := cast string(o) ?? nil;
+      auto s := cast string(o) ?? nil;
       (nil == s)
-         ? { ^ false } : { ^ self.equal(s) }      
+         ? { ^ false };
+
+      ^ self.equal(s)
    }
 
    bool less(o)
@@ -621,11 +631,17 @@ public const struct WideString : BaseValue
 
    string toPrintable() = self;
 
+
+   private copySubS(wide dest, wide sour, int index, int length) : external(system'core_routines'__wstr_copysubs);
+   private copySubS(wide dest, wide sour, int index, int length, int sourIndex) : external(system'core_routines'__wstr_xcopysubs);
+
    bool equal(o)
    {
-      var s := cast wide(o) ?? nil;
+      auto s := cast wide(o) ?? nil;
       (nil == s)
-         ? { ^ false } : { ^ self.equal(s) }
+         ? { ^ false };
+
+      ^ self.equal(s)
    }
    
    bool less(o)
@@ -723,7 +739,7 @@ public const struct WideString : BaseValue
       ^ String.fromByteArray(array, index, length);
    }
 
-   int save(int index, char[] buffer, int length, int destIndex)
+   int save(int index, int length, char[] buffer, int destIndex)
       = PrimitiveWideStringOperations.save(buffer, self, index, length, destIndex);
 
    internal saveToShortArray(int index, short[] buffer, int length)
@@ -932,7 +948,7 @@ public sealed class Variant
                 = o.toPrintable();
             
             castTo(BaseVariable v)
-                = self.castValueTo(v.Value);
+                = self.castValueTo(*v);
             
             castTo(int val)
                 = cast int(self);

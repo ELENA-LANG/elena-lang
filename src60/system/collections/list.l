@@ -424,7 +424,7 @@ namespace collections
          if (capacity == length)
          {
             auto newBacket := new int[](capacity + 5);
-            newBacket.write(0, capacity, backet);
+            Array<int>.copy(newBacket, backet, 0, capacity);
 
             backet := newBacket;
             _hashTable.setAt(hashCode, newBacket)

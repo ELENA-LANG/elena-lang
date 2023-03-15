@@ -299,7 +299,7 @@ public singleton uintConvertor
       int len := s.Length;
       uint val := 0;
       for (int i := 0, i < len, i := i + 1) {
-         byte c := s[i];
+         short c := s[i];
          int ch := c;
          ch := ch - 48;
          if (ch >= radix) {
@@ -396,7 +396,7 @@ public singleton longConvertor
       int len := s.Length;
       long val := 0;
       for (int i := 0, i < len, i := i + 1) {
-         byte c := s[i];
+         short c := s[i];
          int ch := c;
          ch := ch - 48;
          if (ch >= radix) {
@@ -765,6 +765,18 @@ public singleton stringConvertor
 
 public singleton wideConvertor
 {
+   string convert(char ch)
+   {
+      int value := ch.Value;
+
+      short buffer[2];
+      int length := PrimitiveOperations.copyUTF32(buffer,0,value);
+
+      ^ WideString.fromShortArray(0, length, buffer);      
+   }  
+
+   wide convert(o)
+      = o.toPrintable();
 }
 
 // --- byteArrayConvertor ---
@@ -788,7 +800,6 @@ public singleton byteArrayConvertor
       ^ j
    }   
 }
-
 
 // --- shortArrayConvertor ---
 

@@ -1760,6 +1760,11 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
 
    if (MethodScope::checkHint(methodInfo, MethodHint::Generic))
       scope.info.header.flags |= elWithGenerics;
+
+   // adjust objects with custom dispatch handler
+   if (message == scope.moduleScope->buildins.dispatch_message && scope.reference != scope.moduleScope->buildins.superReference) {
+      scope.info.header.flags |= elWithCustomDispatcher;
+   }
 }
 
 pos_t Compiler :: saveMetaInfo(ModuleBase* module, ustr_t value, ustr_t postfix)
@@ -6055,7 +6060,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          else scope.raiseError(errUnknownMessage, node.findChild(SyntaxKey::Message));
       }
       else {
-         bool weakTarget = targetRef == scope.moduleScope->buildins.superReference;
+         bool weakTarget = targetRef == scope.moduleScope->buildins.superReference || result.withCustomDispatcher;
 
          // treat it as a weak reference
          targetRef = 0;
@@ -9323,7 +9328,7 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
          test(scope.info.header.flags, elWithGenerics),
          test(scope.info.header.flags, elWithVariadics));
 
-      // overwrite the class info
+      // overwrite the class info if required
       scope.save();
    }
 
