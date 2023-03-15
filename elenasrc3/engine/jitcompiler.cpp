@@ -2392,6 +2392,9 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
          case mskMDataRef32:
             writeMDataReference(scope, entries->reference, entries->offset, code);
             break;
+         case mskMDataRef64:
+            writeMDataReference(scope, entries->reference, entries->offset, code);
+            break;
          default:
             writeCoreReference(scope, entries->reference, entries->offset, code);
             break;
@@ -2554,10 +2557,10 @@ void JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t 
             MemoryBase::writeDWord(writer->Memory(), position, (uintptr_t)writer->Memory()-> get(writer->position()));
             writer->Memory()->addReference(mskCodeRef32, position);
             break;
-         //case mskRef64:
-         //   MemoryBase::writeDWord(writer->Memory(), position, writer->position());
-         //   writer->Memory()->addReference(mskCodeRef64, position);
-         //   break;
+         case mskRef64:
+            MemoryBase::writeDWord(writer->Memory(), position, writer->position());
+            writer->Memory()->addReference(mskCodeRef64, position);
+            break;
          default:
             // !! temporally
             assert(false);
