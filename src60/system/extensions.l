@@ -169,6 +169,35 @@ public extension stringOp : String
         
       ^ len != 0;
    }
+
+
+   bool startingWith(string s)
+   {
+      int n := self.indexOf(0, s);
+        
+      ^ 0 == n
+   }
+        
+   bool endingWith(string s)
+   {
+      int l1 := self.Length;
+      int l2 := s.Length;
+
+      int n := self.indexOf(l1 - l2, s);
+        
+      ^ n != -1
+   }
+        
+   bool containing(string s)
+   {
+      int l1 := self.Length;
+      int l2 := s.Length;
+
+      int n := self.indexOf(0, s);
+        
+      ^ n != -1
+   }
+
 }
 
 // --- charOp ---
