@@ -292,11 +292,20 @@ system'Array</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> a)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
@@ -305,7 +314,7 @@ system'Array</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
@@ -314,10 +323,244 @@ system'Array</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>clone()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="Array&lt;T1&gt;">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="Array&lt;T1&gt;" class="title">Array&lt;T1&gt;</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public template <SPAN CLASS="typeNameLabel">Array&lt;T1&gt;</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexable&lt;T1&gt;">system'Indexable&lt;T1&gt;</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'Array&lt;T1&gt;</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>array</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;T1&gt;</A></SPAN> target, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;T1&gt;</A></SPAN> source, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink">Array&lt;T1&gt;</SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink">Array&lt;T1&gt;</SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;T1&gt;</A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable">Enumerable</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink">Array&lt;T1&gt;</SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer&lt;T1&gt;">Indexer&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexer()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(n)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(n, item)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink">T1</SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink">T1</SPAN> item)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;T1&gt;</A></SPAN> a)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;T1&gt;</A></SPAN> a, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>clone()
 </CODE>
@@ -380,7 +623,7 @@ system'ArrayEnumerator</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>index</CODE>
 </TD>
@@ -522,7 +765,7 @@ system'ArrayIndexer</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>index</CODE>
 </TD>
@@ -628,6 +871,109 @@ system'ArrayIndexer</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="BaseEnumerator&lt;T1&gt;">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="BaseEnumerator&lt;T1&gt;" class="title">BaseEnumerator&lt;T1&gt;</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public template <SPAN CLASS="typeNameLabel">BaseEnumerator&lt;T1&gt;</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">system'Enumerator&lt;T1&gt;</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'BaseEnumerator&lt;T1&gt;</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>index</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>length</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -787,7 +1133,7 @@ system'BaseIndexer</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>index</CODE>
 </TD>
@@ -863,6 +1209,232 @@ system'BaseIndexer</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> disp)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="BaseIndexer&lt;T1&gt;">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="BaseIndexer&lt;T1&gt;" class="title">BaseIndexer&lt;T1&gt;</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public template <SPAN CLASS="typeNameLabel">BaseIndexer&lt;T1&gt;</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer&lt;T1&gt;">system'Indexer&lt;T1&gt;</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'BaseIndexer&lt;T1&gt;</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>index</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>length</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Available()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Index()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> offs)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="BaseLazyExpression">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="BaseLazyExpression" class="title">BaseLazyExpression</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public class <SPAN CLASS="typeNameLabel">BaseLazyExpression</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'BaseLazyExpression</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseLazyExpression">BaseLazyExpression</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>function()
 </CODE>
 </TD>
 </TR>
@@ -2693,7 +3265,7 @@ system'CallStack</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'UnsafePointer&gt;</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-system.html#Array&lt;T1&gt;">Array&lt;system'UnsafePointer&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>stack</CODE>
 </TD>
@@ -3639,6 +4211,130 @@ returns the enumerator owner</div>
 </UL>
 <HR>
 </DIV>
+<A NAME="Enumerator&lt;T1&gt;">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="Enumerator&lt;T1&gt;" class="title">Enumerator&lt;T1&gt;</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public template <SPAN CLASS="typeNameLabel">Enumerator&lt;T1&gt;</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'Enumerator&lt;T1&gt;</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink">T1</SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink">Enumerator&lt;T1&gt;</SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>next()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>reset()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerable()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="Exception">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -4439,7 +5135,7 @@ system'Func5</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> param1, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> param2, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> param3, <SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN> en)
+<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> param1, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> param2, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> param3, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> param4, <SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN> en)
 </CODE>
 </TD>
 </TR>
@@ -4963,20 +5659,20 @@ system'Indexable</LI>
 </UL>
 <HR>
 </DIV>
-<A NAME="Indexer">
+<A NAME="Indexable&lt;T1&gt;">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
 system'</DIV>
-<H2 title="Indexer" class="title">Indexer</H2>
+<H2 title="Indexable&lt;T1&gt;" class="title">Indexable&lt;T1&gt;</H2>
 </DIV>
 <DIV CLASS="contentContainer">
 <DIV CLASS="description">
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public class <SPAN CLASS="typeNameLabel">Indexer</SPAN></PRE>
+abstract public template <SPAN CLASS="typeNameLabel">Indexable&lt;T1&gt;</SPAN></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -4985,7 +5681,76 @@ abstract public class <SPAN CLASS="typeNameLabel">Indexer</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
-system'Indexer</LI>
+system'Indexable&lt;T1&gt;</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink">Indexable&lt;T1&gt;</SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer&lt;T1&gt;">Indexer&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexer()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="Indexer&lt;T1&gt;">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="Indexer&lt;T1&gt;" class="title">Indexer&lt;T1&gt;</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public template <SPAN CLASS="typeNameLabel">Indexer&lt;T1&gt;</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'Indexer&lt;T1&gt;</LI>
 </UL>
 </LI>
 </UL>
@@ -5009,7 +5774,7 @@ system'Indexer</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get abstract </i>&nbsp;</CODE></TD>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink">T1</SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
 </TD>
@@ -5019,7 +5784,7 @@ system'Indexer</LI>
 <CODE>
 <i>set abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Value(value)
+<CODE>Value(<SPAN CLASS="memberNameLink">T1</SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -5063,7 +5828,15 @@ system'Indexer</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink">Indexer&lt;T1&gt;</SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
 </TD>
@@ -5087,181 +5860,6 @@ system'Indexer</LI>
 <TD CLASS="colLast">
 <CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<HR>
-</DIV>
-<A NAME="IntBaseNumber">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'</DIV>
-<H2 title="IntBaseNumber" class="title">IntBaseNumber</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-abstract public class <SPAN CLASS="typeNameLabel">IntBaseNumber</SPAN><BR/>
-<I>a base integer value</I></PRE>
-<BR>
-</DIV>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#BaseValue">'BaseValue</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#BaseNumber">'BaseNumber</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'IntBaseNumber</LI>
-</UL>
-</LI>
-</UL>
-</LI>
-</UL>
-</LI>
-</UL>
-<!-- ========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Property Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get abstract </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>BInverted()</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntBaseNumber">IntBaseNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>abstract </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>band(o)
-</CODE>
-<div class="block">
-Executes bitwise AND operation;<br/>should be overridden</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>abstract </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>bor(o)
-</CODE>
-<div class="block">
-Executes bitwise OR operation;<br/>should be overridden</div>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>abstract </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>bxor(o)
-</CODE>
-<div class="block">
-Executes bitwise XOR operation;<br/>should be overridden</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>band(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> var)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>bor(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> var)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>bxor(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> var)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>allMask(operand)
-</CODE>
-<div class="block">
-Returns true if all the mask bits are set</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>anyMask(operand)
-</CODE>
-<div class="block">
-Returns true if any of the mask bits are set</div>
 </TD>
 </TR>
 </TABLE>
@@ -6194,13 +6792,21 @@ Returns true if any of the mask bits are set</div>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+<i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Absolute()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>mod(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> operand)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
@@ -6439,188 +7045,6 @@ Creates the exception</div>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#InvalidOperationException">InvalidOperationException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<HR>
-</DIV>
-<A NAME="KeyValue">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'</DIV>
-<H2 title="KeyValue" class="title">KeyValue</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">KeyValue</SPAN><BR/>
-<I>A key - object pair<br/>Extends the object with a key property</I></PRE>
-<BR>
-</DIV>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'KeyValue</LI>
-</UL>
-</LI>
-</UL>
-<!-- ========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>key</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>value</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#KeyValue">KeyValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new(key, value)
-</CODE>
-<div class="block">
-Creates a new object</div>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Property Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Key()</CODE>
-<div class="block">
-Returns the key</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Value()</CODE>
-<div class="block">
-Returns the value</div>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Value(value)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#KeyValue">KeyValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>equal(o)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>toPrintable()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>dispatch</i>()
-</CODE>
-<div class="block">
-Redirects the incoming messages to the object</div>
 </TD>
 </TR>
 </TABLE>
@@ -7639,6 +8063,212 @@ system'Message</LI>
 </UL>
 <HR>
 </DIV>
+<A NAME="MethodNotFoundException">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="MethodNotFoundException" class="title">MethodNotFoundException</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">MethodNotFoundException</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Exception">'Exception</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'MethodNotFoundException</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>message</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CallStack">CallStack</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>callStack</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#MethodNotFoundException">MethodNotFoundException</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> target, <SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> mssg)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#MethodNotFoundException">MethodNotFoundException</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="NilReferenceException">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="NilReferenceException" class="title">NilReferenceException</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">NilReferenceException</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Exception">'Exception</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'NilReferenceException</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>message</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CallStack">CallStack</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>callStack</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#NilReferenceException">NilReferenceException</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#NilReferenceException">NilReferenceException</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="Object">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -7870,6 +8500,15 @@ Returns the object class</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Subarray(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -9522,7 +10161,7 @@ system'String</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink">Array&lt;CharValue&gt;</SPAN> charArray)
+<CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;CharValue&gt;</A></SPAN> charArray)
 </CODE>
 </TD>
 </TR>
@@ -9531,7 +10170,7 @@ system'String</LI>
 <CODE>
 <i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>fromByteArray(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> size, <SPAN CLASS="memberNameLink">Array&lt;ByteNumber&gt;</SPAN> buffer)
+<CODE>fromByteArray(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> size, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;ByteNumber&gt;</A></SPAN> buffer)
 </CODE>
 </TD>
 </TR>
@@ -9598,7 +10237,7 @@ system'String</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink">Enumerable&lt;CharValue&gt;</SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable&lt;T1&gt;">Enumerable&lt;CharValue&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
 </TD>
@@ -9818,7 +10457,7 @@ Returns the substring</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>save(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink">Array&lt;CharValue&gt;</SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destIndex)
+<CODE>save(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;CharValue&gt;</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destIndex)
 </CODE>
 </TD>
 </TR>
@@ -9827,14 +10466,14 @@ Returns the substring</div>
 <CODE>
 <i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>saveToByteArray(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink">Array&lt;ByteNumber&gt;</SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>saveToByteArray(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;ByteNumber&gt;</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink">Enumerator&lt;CharValue&gt;</SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;CharValue&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
@@ -9845,7 +10484,7 @@ Returns the string enumerator</div>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink">Indexer&lt;CharValue&gt;</SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer&lt;T1&gt;">Indexer&lt;CharValue&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
@@ -9904,6 +10543,33 @@ Returns the string enumerator</div>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>isNonempty()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>startingWith(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>endingWith(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>containing(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -10014,7 +10680,7 @@ system'WideString</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink">Array&lt;CharValue&gt;</SPAN> charArray)
+<CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;CharValue&gt;</A></SPAN> charArray)
 </CODE>
 </TD>
 </TR>
@@ -10023,7 +10689,7 @@ system'WideString</LI>
 <CODE>
 <i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>fromShortArray(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> size, <SPAN CLASS="memberNameLink">Array&lt;ShortNumber&gt;</SPAN> buffer)
+<CODE>fromShortArray(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> size, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;ShortNumber&gt;</A></SPAN> buffer)
 </CODE>
 </TD>
 </TR>
@@ -10090,7 +10756,7 @@ system'WideString</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink">Enumerable&lt;CharValue&gt;</SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable&lt;T1&gt;">Enumerable&lt;CharValue&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
 </TD>
@@ -10292,7 +10958,7 @@ Returns the substring</div>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>save(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink">Array&lt;CharValue&gt;</SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destIndex)
+<CODE>save(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;CharValue&gt;</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destIndex)
 </CODE>
 </TD>
 </TR>
@@ -10301,14 +10967,14 @@ Returns the substring</div>
 <CODE>
 <i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>saveToShortArray(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink">Array&lt;ShortNumber&gt;</SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>saveToShortArray(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;ShortNumber&gt;</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink">Enumerator&lt;CharValue&gt;</SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;CharValue&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
@@ -10319,7 +10985,7 @@ Returns the string enumerator</div>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink">Indexer&lt;CharValue&gt;</SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer&lt;T1&gt;">Indexer&lt;CharValue&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
@@ -10332,6 +10998,181 @@ Returns the string enumerator</div>
 <TD CLASS="colLast">
 <CODE>clone()
 </CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="IntBaseNumber">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="IntBaseNumber" class="title">IntBaseNumber</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public class <SPAN CLASS="typeNameLabel">IntBaseNumber</SPAN><BR/>
+<I>a base integer value</I></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#BaseValue">'BaseValue</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#BaseNumber">'BaseNumber</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'IntBaseNumber</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>BInverted()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntBaseNumber">IntBaseNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>band(o)
+</CODE>
+<div class="block">
+Executes bitwise AND operation;<br/>should be overridden</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>bor(o)
+</CODE>
+<div class="block">
+Executes bitwise OR operation;<br/>should be overridden</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>bxor(o)
+</CODE>
+<div class="block">
+Executes bitwise XOR operation;<br/>should be overridden</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>band(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> var)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>bor(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> var)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>bxor(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> var)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allMask(operand)
+</CODE>
+<div class="block">
+Returns true if all the mask bits are set</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>anyMask(operand)
+</CODE>
+<div class="block">
+Returns true if any of the mask bits are set</div>
 </TD>
 </TR>
 </TABLE>
@@ -11376,6 +12217,188 @@ Returns nil<br/>Any typecasting message will be handled and nil value returned</
 </UL>
 <HR>
 </DIV>
+<A NAME="KeyValue">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="KeyValue" class="title">KeyValue</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">KeyValue</SPAN><BR/>
+<I>A key - object pair<br/>Extends the object with a key property</I></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'KeyValue</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>key</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>value</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#KeyValue">KeyValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(key, value)
+</CODE>
+<div class="block">
+Creates a new object</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Key()</CODE>
+<div class="block">
+Returns the key</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value()</CODE>
+<div class="block">
+Returns the value</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value(value)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#KeyValue">KeyValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(o)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toPrintable()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+<div class="block">
+Redirects the incoming messages to the object</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="Variable">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -11533,6 +12556,137 @@ Creates the empty variable</div>
 </UL>
 <HR>
 </DIV>
+<A NAME="Indexer">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="Indexer" class="title">Indexer</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public class <SPAN CLASS="typeNameLabel">Indexer</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'Indexer</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Available()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value(value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Index()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="Range">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -11555,7 +12709,7 @@ public class <SPAN CLASS="typeNameLabel">Range</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="-$auto.html#system@Enumerable#1&system@IntNumber">'$auto'system@Enumerable#1&system@IntNumber</A></SPAN></LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable&lt;T1&gt;">system'Enumerable&lt;IntNumber&gt;</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
@@ -11692,7 +12846,7 @@ system'Range</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-system.html#Enumerator&lt;T1&gt;">Enumerator&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
@@ -12439,7 +13593,7 @@ system'byteConvertor</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> retVal)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#ByteNumber">ByteNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -12448,7 +13602,7 @@ system'byteConvertor</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> retVal)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#ByteNumber">ByteNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -12457,7 +13611,7 @@ system'byteConvertor</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> retVal)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> n, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#ByteNumber">ByteNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -12466,7 +13620,7 @@ system'byteConvertor</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> retVal)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#ByteNumber">ByteNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -12614,7 +13768,7 @@ system'shortConvertor</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> retVal)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#ShortNumber">ShortNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -12623,7 +13777,7 @@ system'shortConvertor</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> retVal)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#ShortNumber">ShortNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -12632,7 +13786,7 @@ system'shortConvertor</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> retVal)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#ShortNumber">ShortNumber</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -13273,7 +14427,7 @@ system'charConvertor</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> retVal)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#CharValue">CharValue</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -13447,6 +14601,36 @@ system'wideConvertor</LI>
 </UL>
 </LI>
 </UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(o)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <HR>
 </DIV>
 <A NAME="byteArrayConvertor">
@@ -13489,7 +14673,7 @@ system'byteArrayConvertor</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A><I>[]</I></SPAN> dest, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destIndex, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> sour)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system-arrayof system.html#ByteNumber">ByteNumber</A></SPAN> dest, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destIndex, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> sour)
 </CODE>
 </TD>
 </TR>
@@ -13538,7 +14722,7 @@ system'shortArrayConvertor</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A><I>[]</I></SPAN> dest, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destIndex, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> sour)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system-arrayof system.html#ShortNumber">ShortNumber</A></SPAN> dest, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destIndex, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> sour)
 </CODE>
 </TD>
 </TR>
@@ -13772,109 +14956,6 @@ system'Symbol</LI>
 </UL>
 <HR>
 </DIV>
-<A NAME="NilReferenceException">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'</DIV>
-<H2 title="NilReferenceException" class="title">NilReferenceException</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">NilReferenceException</SPAN></PRE>
-<BR>
-</DIV>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#Exception">'Exception</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'NilReferenceException</LI>
-</UL>
-</LI>
-</UL>
-</LI>
-</UL>
-<!-- ========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>message</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#CallStack">CallStack</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>callStack</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#NilReferenceException">NilReferenceException</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#NilReferenceException">NilReferenceException</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<HR>
-</DIV>
 <A NAME="OutOfMemoryException">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -13948,109 +15029,6 @@ system'OutOfMemoryException</LI>
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#OutOfMemoryException">OutOfMemoryException</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<HR>
-</DIV>
-<A NAME="MethodNotFoundException">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'</DIV>
-<H2 title="MethodNotFoundException" class="title">MethodNotFoundException</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">MethodNotFoundException</SPAN></PRE>
-<BR>
-</DIV>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#Exception">'Exception</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'MethodNotFoundException</LI>
-</UL>
-</LI>
-</UL>
-</LI>
-</UL>
-<!-- ========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>message</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#CallStack">CallStack</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>callStack</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#MethodNotFoundException">MethodNotFoundException</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> target, <SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> mssg)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#MethodNotFoundException">MethodNotFoundException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
 </TD>

@@ -958,6 +958,18 @@ bool DocGenerator :: loadSymbolInfo(ref_t reference, SymbolInfo& info)
    return true;
 }
 
+inline void readTemplateNs(IdentifierString& ns, ustr_t reference)
+{
+   size_t i = reference.find('#');
+
+   ns.copy(reference, i);
+
+   size_t j = (*ns).findLast('@');
+   ns.truncate(j + 1);
+
+   ns.replaceAll('@', '\'', 0);
+}
+
 void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
 {
    if (!reference)
@@ -970,7 +982,20 @@ void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
    }
 
    ustr_t name = _module->resolveReference(reference);
-   apiClassInfo->parents.add(name.clone());
+   if (isTemplateWeakReference(name)) {
+      IdentifierString type(name);
+      IdentifierString ns;
+
+      type.cut(0, 7);
+
+      readTemplateNs(ns, *type);
+
+      parseTemplateName(type);
+      type.insert(*ns, 0);
+
+      apiClassInfo->parents.add((*type).clone());
+   }
+   else apiClassInfo->parents.add(name.clone());
 }
 
 void validateTemplateType(IdentifierString& type, bool templateBased, bool argMode)
@@ -996,8 +1021,10 @@ void validateTemplateType(IdentifierString& type, bool templateBased, bool argMo
 
 void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateBased, bool argMode)
 {
+   bool nsExpected = false;
    if (isTemplateWeakReference(line)) {
       type.copy(line);
+      nsExpected = true;
    }
    else if (line[0] == '\'') {
       type.copy(rootNs);
@@ -1006,6 +1033,11 @@ void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateB
    else type.copy(line);
 
    validateTemplateType(type, templateBased, argMode);
+
+   if (nsExpected) {
+      type.insert("'", 0);
+      type.insert(rootNs, 0);
+   }
 }
 
 void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateBased)
@@ -1073,8 +1105,6 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateB
 void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, 
    MemberType memberType, DescriptionMap* descriptions, ClassInfo& classInfo)
 {
-
-
    auto apiMethodInfo = new ApiMethodInfo();
    apiMethodInfo->extensionOne = memberType == MemberType::Extension;
 

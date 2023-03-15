@@ -7,14 +7,10 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
-    * ldoc : recognize template based type - for the method output
-
     * rosetta examples : calendar
     * review extensions warnings
     * review system warnings
-
     * ldoc : system'collections / system'routines
-
     * ide : change status to ready when writing / selecting files
 
     * x86 : multi-threading - project type
