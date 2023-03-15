@@ -1986,10 +1986,19 @@ ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, Compiler
    size_t argumentLen = 0;
    ref_t parameters[ARG_COUNT] = { 0 };
    ref_t signatures[ARG_COUNT];
-   /*size_t signatureLen = */scope.module->resolveSignature(signatureRef, signatures);
+   scope.module->resolveSignature(signatureRef, signatures);
 
    // matching pattern with the provided signature
    size_t i = pattern.find('.') + 2;
+
+   // define an argument length
+   size_t argLenPos = pattern.findSub(0, '#', i, NOTFOUND_POS);
+   if (i != NOTFOUND_POS) {
+      String<char, 5> tmp;
+      tmp.copy(pattern + argLenPos + 1, i - argLenPos - 3);
+
+      argumentLen = tmp.toInt();
+   }
 
    IdentifierString templateName(pattern, i - 2);
    ref_t templateRef = scope.mapFullReference(*templateName, true);
@@ -2085,6 +2094,12 @@ ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, Compiler
       }
 
       signIndex++;
+   }
+
+   // check if it is assigned
+   for (size_t argI = 0; argI < argumentLen; argI++) {
+      if (!parameters[argI])
+         parameters[argI] = scope.buildins.superReference;
    }
 
    if (matched) {

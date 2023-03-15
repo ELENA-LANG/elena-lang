@@ -4120,8 +4120,7 @@ void Compiler :: registerExtensionTemplateMethod(TemplateScope& scope, SyntaxNod
    //            registerTemplateSignature(typeAttr, scope, signaturePattern);
    //         }
    //         else {
-               TypeAttributes typeAttributes = {};
-               ref_t classRef = resolvePrimitiveType(scope, resolveTypeAttribute(scope, current, typeAttributes, true, false), true);
+               ref_t classRef = resolveStrongTypeAttribute(scope, typeAttr, true, false);
 
                ustr_t className = scope.module->resolveReference(classRef);
                if (isWeakReference(className))
@@ -4733,7 +4732,7 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAtt
          //else if (current == SyntaxKey::Object) {
          //   assert(false);
 
-         //   // NOTE : template type is declared inside object nodem dur to current syntax grammar
+         //   // NOTE : template type is declared inside object node duee to current syntax grammar
          //   SyntaxNode objNode = current.firstChild();
          //   if (objNode == SyntaxKey::TemplateType) {
          //      typeInfo.typeRef = resolveTypeTemplate(scope, objNode, declarationMode, true);

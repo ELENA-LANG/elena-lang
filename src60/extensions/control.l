@@ -7,3 +7,15 @@ public extension flowOp
       target.write(self);
    }
 }
+
+// --- loopOp --
+
+public extension loopOp
+{
+   doWhile()
+   {
+      while (cast bool(self))
+      {
+      }
+   }
+}

@@ -69,6 +69,8 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * extension template should contain all its arguments in the signature
+    * support strong extension template arrayOp<T> : strong, weak
     * support autoloaded classes : should be automatically resolved when the module is loaded
       (flag elAutoLoaded)
     * support preloaded symbols : both static and dynamic

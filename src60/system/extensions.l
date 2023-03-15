@@ -215,3 +215,32 @@ public extension charOp : CharValue
    }
 
 }
+
+// --- arrayOp ---
+
+public extension weakArrayOp
+{
+    Array Subarray(int index, int length)
+    {
+        auto it := self.indexer();
+        it.Index := index;
+        
+        auto a := Array.allocate(length);
+        for (int i := 0, i < length, i += 1)
+        {
+            a[i] := *it;
+            
+            it.appendIndex(1)
+        };
+        
+        ^ a;
+    }
+}
+//
+//public extension arrayOp<T> : Array<T>
+//{
+//    T[] Subarray(int index, int length)
+//    {
+//        ^ new Array<T>(self, index, length)
+//    }
+//}
