@@ -476,7 +476,7 @@ void DocumentView :: moveLeftToken(DocumentChangeStatus& changeStatus, bool sele
 
    _caret.moveOn(-1);
 
-   while (_caret.column() > 0 || _caret.row() > 0) {
+   while (_caret.column() > 0) {
       if (_caret.column() == _caret.length_int())
          break;
 
@@ -525,7 +525,7 @@ void DocumentView :: moveRightToken(DocumentChangeStatus& changeStatus, bool sel
    bool newToken = false;
    bool operatorOne = false;
    bool first = true;
-   while (first || (pos_t)_caret.column() < _caret.position()) {
+   while (first || (pos_t)_caret.column() < _caret.length_pos()) {
       pos_t length = 0;
       text_t line = _text->getLine(_caret, length);
       if (length == 0)

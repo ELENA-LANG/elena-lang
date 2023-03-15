@@ -8,10 +8,8 @@ In development:
     ! examples : all console, files examples
     ! x86 : multi-threading
 
-    * ide : selection block unsync after comment (sometimes)
     * elena vm : x86-64
 
-    * ide - select the text with a mouse
     * rosetta examples : charmatch, calendar
     * review extensions warnings
     * review system warnings
@@ -28,6 +26,7 @@ In development:
     * elenavm : implementing dll api
     * show the signature for the typecast message if possible
     * ide : key combination doesn't work after closing the project
+    * ide : selection block unsync after comment (sometimes)
 
     === Iteration 15 ===
     ! x86 : gui
