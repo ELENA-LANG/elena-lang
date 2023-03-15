@@ -132,7 +132,7 @@ void printError(int errCode, ustr_t arg)
 
 // --- API export ---
 
-EXTERN_DLL_EXPORT void InitializeVMSTLA(SystemEnv* env, void* tape, void* criricalHandler)
+EXTERN_DLL_EXPORT void InitializeVMSTLA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
    systemEnv = env;
 
@@ -145,7 +145,7 @@ EXTERN_DLL_EXPORT void InitializeVMSTLA(SystemEnv* env, void* tape, void* criric
    int retVal = 0;
    try
    {
-      machine->startSTA(env, tape, criricalHandler);
+      machine->startSTA(env, tape, criricalHandlerReference);
    }
    catch (InternalError err)
    {

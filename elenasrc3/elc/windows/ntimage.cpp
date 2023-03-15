@@ -145,12 +145,14 @@ void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
 
    // --- stat ---
    size = stat->length();
-   map.stat = offset;
-   map.unintDataSize += align(size, fileAlignment);
+   if (size > 0) {
+      map.stat = offset;
+      map.unintDataSize += align(size, fileAlignment);
 
-   sections.headers.add(ImageSectionHeader::get(DATA_SECTION, map.stat,
-      ImageSectionHeader::SectionType::Data,
-      align(size, sectionAlignment), 0));
+      sections.headers.add(ImageSectionHeader::get(DATA_SECTION, map.stat,
+         ImageSectionHeader::SectionType::Data,
+         align(size, sectionAlignment), 0));
+   }
 
    offset = align(offset + size, sectionAlignment);
 

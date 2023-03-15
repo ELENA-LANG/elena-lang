@@ -339,6 +339,7 @@ namespace elena_lang
    constexpr ref_t mskLongLiteralRef      = 0x20000000u;
    constexpr ref_t mskRealLiteralRef      = 0x21000000u;
    constexpr ref_t mskExtMssgLiteralRef   = 0x22000000u;
+   constexpr ref_t mskPSTRRef             = 0x23000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

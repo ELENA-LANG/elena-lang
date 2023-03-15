@@ -61,13 +61,18 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
       throw JITUnresolvedException(ReferenceInfo(SYSTEM_FORWARD));
 
    // resolvethe debug entry
-   _debugEntryPoint = (pos_t)linker.resolve(PROGRAM_ENTRY, mskSymbolRef, true);
+   _debugEntryPoint = INVALID_ADDR;
+
+   if (_systemTarget != PlatformType::VMClient) {
+      _debugEntryPoint = (pos_t)linker.resolve(PROGRAM_ENTRY, mskSymbolRef, true);
+
+      ustr_t superClass = resolver->resolveForward(SUPER_FORWARD);
+      linker.complete(compiler, superClass);
+   }
+
    if (_debugEntryPoint == INVALID_ADDR) {
       _debugEntryPoint = _entryPoint;
    }
-
-   ustr_t superClass = resolver->resolveForward(SUPER_FORWARD);
-   linker.complete(compiler, superClass);
 
    freeobj(compiler);
 }

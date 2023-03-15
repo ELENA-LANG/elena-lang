@@ -1100,6 +1100,19 @@ addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo
    return vaddress;
 }
 
+addr_t JITLinker :: resolveRawConstant(ReferenceInfo referenceInfo)
+{
+   // get target image & resolve virtual address
+   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   addr_t vaddress = calculateVAddress(writer, mskRDataRef);
+
+   _compiler->writeLiteral(writer, referenceInfo.referenceName);
+
+   return vaddress;
+}
+
 addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode)
 {
    // resolve constant value
@@ -1412,6 +1425,9 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
             break;
          case mskConstArray:
             address = resolveConstantArray(referenceInfo, sectionMask, silentMode);
+            break;
+         case mskPSTRRef:
+            address = resolveRawConstant(referenceInfo);
             break;
          default:
             // to make compiler happy

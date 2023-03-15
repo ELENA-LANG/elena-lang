@@ -233,7 +233,7 @@ void ELENAVMMachine :: resumeVM(SystemEnv* env, void* criricalHandler)
    __routineProvider.InitExceptionHandling(env, criricalHandler);
 }
 
-int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, void* criricalHandler)
+int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference)
 {
    ByteArray      tapeArray(tape, size);
    MemoryReader   reader(&tapeArray);
@@ -252,13 +252,15 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, void* c
       init(*jitLinker, env);
    }
 
+   addr_t criricalHandler = jitLinker->resolve(criricalHandlerReference, mskProcedureRef, false);
+
    compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule);
 
    SymbolList list;
 
    void* address = (void*)jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
-   resumeVM(env, criricalHandler);
+   resumeVM(env, (void*)criricalHandler);
 
    freeobj(dummyModule);
    freeobj(jitLinker);
@@ -266,14 +268,14 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, void* c
    return execute(env, address);
 }
 
-void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, void* criricalHandler)
+void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
    // setting up system
    __routineProvider.InitSTA(env);
 
    int retVal = -1;
    if (tape != nullptr) {
-      retVal = interprete(env, tape, INVALID_POS, criricalHandler);
+      retVal = interprete(env, tape, INVALID_POS, criricalHandlerReference);
    }
 
    Exit(retVal);

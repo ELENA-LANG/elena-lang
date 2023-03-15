@@ -201,6 +201,7 @@ namespace elena_lang
       addr_t resolveConstantDump(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
       addr_t resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sectionMask);
       addr_t resolveName(ReferenceInfo referenceInfo, bool onlyPath);
+      addr_t resolveRawConstant(ReferenceInfo referenceInfo);
 
       void resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader& vmtReader, FieldAddressMap& staticValues);
 

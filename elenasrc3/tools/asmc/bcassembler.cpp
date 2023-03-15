@@ -133,6 +133,13 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
 
       mask = mskTypeListRef;
    }
+   else if (tokenInfo.compare("pstr")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      _reader.read(tokenInfo);
+
+      mask = mskPSTRRef;
+   }
 
    if (tokenInfo.state == dfaQuote) {
       if (constantMode) {
@@ -348,6 +355,14 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 
       arg.type = Operand::Type::R;
       arg.reference = readReference(tokenInfo) | mskConstant;
+
+      return arg;
+   }
+   else if (tokenInfo.compare("pstr")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      arg.type = Operand::Type::R;
+      arg.reference = readReference(tokenInfo) | mskPSTRRef;
 
       return arg;
    }
