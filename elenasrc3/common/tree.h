@@ -562,8 +562,8 @@ namespace elena_lang
       static Node gotoChild(Node node, Key key, int value)
       {
          Node current = node.findChild(key);
-         while (current == key) {
-            if (value == current.arg.value)
+         while (current != defKey) {
+            if ( current == key && value == current.arg.value)
                return current;
 
             current = current.nextNode();

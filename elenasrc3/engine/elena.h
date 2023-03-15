@@ -112,15 +112,16 @@ namespace elena_lang
    typedef Pair<ref_t, mssg_t>   ExtensionInfo;
 
    // --- Maps ---
-   typedef Map<ustr_t, ref_t, allocUStr, freeUStr>    ReferenceMap;
-   typedef Map<ref64_t, ref_t>                        ActionMap;
-   typedef Map<ustr_t, addr_t, allocUStr, freeUStr>   AddressMap;
-   typedef Map<mssg_t, ExtensionInfo>                 ExtensionMap;
-   typedef Map<ref_t, ref_t>                          ResolvedMap;
-   typedef Map<int, addr_t>                           FieldAddressMap;
+   typedef Map<ustr_t, ref_t, allocUStr, freeUStr>          ReferenceMap;
+   typedef Map<ref64_t, ref_t>                              ActionMap;
+   typedef Map<ustr_t, addr_t, allocUStr, freeUStr>         AddressMap;
+   typedef Map<mssg_t, ExtensionInfo>                       ExtensionMap;
+   typedef Map<mssg_t, ustr_t, nullptr, nullptr, freeUStr>  ExtensionTemplateMap;
+   typedef Map<ref_t, ref_t>                                ResolvedMap;
+   typedef Map<int, addr_t>                                 FieldAddressMap;
 
    // --- Maps ---
-   typedef List<ustr_t, freeUStr>                     IdentifierList;
+   typedef List<ustr_t, freeUStr>                           IdentifierList;
 
    // --- Tuples ---
 
@@ -668,6 +669,11 @@ namespace elena_lang
       bool compare(ustr_t s)
       {
          return s.compare(_string);
+      }
+
+      bool compare(ustr_t s, size_t index, size_t length)
+      {
+         return ustr_t(_string + index).compare(s, length);
       }
 
       ref_t toRef(int radix = 10) const

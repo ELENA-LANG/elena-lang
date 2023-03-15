@@ -25,6 +25,7 @@ namespace elena_lang
          InlineTemplate,
          ClassTemplate,
          PropertyTemplate,
+         ExtensionTemplate
       };
 
       struct Scope
@@ -37,7 +38,7 @@ namespace elena_lang
 
          bool withTypeParameters() const
          {
-            return type == ScopeType::ClassTemplate || type == ScopeType::PropertyTemplate;
+            return type == ScopeType::ClassTemplate || type == ScopeType::PropertyTemplate || type == ScopeType::ExtensionTemplate;
          }
          bool withNameParameters() const
          {
@@ -79,6 +80,7 @@ namespace elena_lang
                   return false;
                }
                case ScopeType::ClassTemplate:
+               case ScopeType::ExtensionTemplate:
                   if (allowType) {
                      ref_t index = arguments.get(node.identifier());
                      if (index > 0) {

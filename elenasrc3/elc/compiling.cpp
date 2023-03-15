@@ -173,7 +173,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
 }
 
 ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns,
-   ref_t templateRef, List<SyntaxNode>& parameters, bool declarationMode)
+   ref_t templateRef, List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList)
 {
    ref_t generatedReference = 0;
 
@@ -205,8 +205,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       writer.closeNode();
       writer.closeNode();
 
-      _process->buildSyntaxTree(moduleScope, &syntaxTree, true);
-
+      _process->buildSyntaxTree(moduleScope, &syntaxTree, true, outerExtensionList);
    }
 
    return generatedReference;
@@ -347,10 +346,11 @@ void CompilingProcess :: parseModule(path_t projectPath,
    }
 }
 
-void CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target)
+void CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target, 
+   ExtensionMap* outerExtensionList)
 {
-   _compiler->declare(&moduleScope, source);
-   _compiler->compile(&moduleScope, source, target);
+   _compiler->declare(&moduleScope, source, outerExtensionList);
+   _compiler->compile(&moduleScope, source, target, outerExtensionList);
 }
 
 void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode)
@@ -367,11 +367,12 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    }
 }
 
-void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode)
+void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
+   ExtensionMap* outerExtensionList)
 {
    // generating build tree
    BuildTree buildTree;
-   compileModule(moduleScope, *syntaxTree, buildTree);
+   compileModule(moduleScope, *syntaxTree, buildTree, outerExtensionList);
 
    // generating byte code
    generateModule(moduleScope, buildTree, !templateMode);
@@ -403,7 +404,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
 
    _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
 
-   buildSyntaxTree(moduleScope, syntaxTree, false);
+   buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
 }
 
 void CompilingProcess :: configurate(Project& project)

@@ -1191,7 +1191,17 @@ void CompilerLogic :: writeExtMessageEntry(MemoryBase* section, ref_t extRef, ms
    writer.writeRef(strongMessage);
 }
 
-bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* section, ExtensionMap& map, ModuleScopeBase* scope)
+void CompilerLogic :: writeExtMessageEntry(MemoryBase* section, mssg_t message, ustr_t pattern)
+{
+   MemoryWriter writer(section);
+   writer.writeRef(0);
+   writer.writeRef(message);
+   writer.writeRef(0);
+   writer.writeString(pattern);
+}
+
+bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* section, ExtensionMap& map, 
+   ExtensionTemplateMap& extensionTemplates, ModuleScopeBase* scope)
 {
    bool importMode = extModule != scope->module;
 
@@ -1200,7 +1210,7 @@ bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* sec
    MemoryReader reader(section);
    while (!reader.eof()) {
       ref_t extRef = reader.getRef();
-      if (importMode)
+      if (importMode && extRef)
          extRef = scope->importReference(extModule, extRef);
 
       mssg_t message = reader.getRef();
@@ -1208,10 +1218,16 @@ bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* sec
          message = scope->importMessage(extModule, message);
 
       mssg_t strongMessage = reader.getRef();
-      if (importMode)
+      if (importMode && strongMessage)
          strongMessage = scope->importMessage(extModule, strongMessage);
 
-      map.add(message, { extRef, strongMessage });
+      if (!extRef) {
+         // if it is an extension template
+         ustr_t pattern = reader.getString(DEFAULT_STR);
+
+         extensionTemplates.add(message, pattern.clone());
+      }
+      else map.add(message, { extRef, strongMessage });
    }
 
    return true;
@@ -1860,13 +1876,13 @@ ref_t paramFeedback(void* param, ref_t)
 #endif
 }
 
-void CompilerLogic::injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags,
+void CompilerLogic :: injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags,
    mssg_t message, ClassInfo::MethodMap& methods, ClassAttributes& attributes,
-   void* param, ref_t(*resolve)(void*, ref_t))
+   void* param, ref_t(*resolve)(void*, ref_t), ClassAttribute attribute)
 {
    ref_t listRef = generateOverloadList(compiler, scope, flags, methods, message, param, resolve);
 
-   ClassAttributeKey key = { message, ClassAttribute::OverloadList };
+   ClassAttributeKey key = { message, attribute };
    attributes.exclude(key);
    attributes.add(key, listRef);
 }
@@ -1880,7 +1896,7 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
          mssg_t message = it.key();
 
          injectMethodOverloadList(compiler, scope, info.header.flags, message, 
-            info.methods, info.attributes, (void*)classRef, paramFeedback);
+            info.methods, info.attributes, (void*)classRef, paramFeedback, ClassAttribute::OverloadList);
       }
    }
 }
@@ -1925,4 +1941,155 @@ mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t refe
    }
    else return 0;
 
+}
+
+inline size_t readSignatureMember(ustr_t signature, size_t index)
+{
+   int level = 0;
+   size_t len = getlength(signature);
+   for (size_t i = index; i < len; i++) {
+      if (signature[i] == '&') {
+         if (level == 0) {
+            return i;
+         }
+         else level--;
+      }
+      else if (signature[i] == '#') {
+         String<char, 5> tmp;
+         size_t numEnd = signature.findSub(i, '&', NOTFOUND_POS);
+         tmp.copy(signature.str() + i + 1, numEnd - i - 1);
+         level += tmp.toInt();
+      }
+   }
+
+   return len;
+}
+
+inline void decodeClassName(IdentifierString& signature)
+{
+   ustr_t ident = *signature;
+
+   if (ident.startsWith(TEMPLATE_PREFIX_NS_ENCODED)) {
+      // if it is encodeded weak reference - decode only the prefix
+      signature[0] = '\'';
+      signature[strlen(TEMPLATE_PREFIX_NS_ENCODED) - 1] = '\'';
+   }
+   else if (ident.startsWith(TEMPLATE_PREFIX_NS)) {
+      // if it is weak reference - do nothing
+   }
+   else signature.replaceAll('@', '\'', 0);
+}
+
+ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern, ref_t signatureRef, 
+   ustr_t ns, ExtensionMap* outerExtensionList)
+{
+   size_t argumentLen = 0;
+   ref_t parameters[ARG_COUNT] = { 0 };
+   ref_t signatures[ARG_COUNT];
+   /*size_t signatureLen = */scope.module->resolveSignature(signatureRef, signatures);
+
+   // matching pattern with the provided signature
+   size_t i = pattern.find('.') + 2;
+
+   IdentifierString templateName(pattern, i - 2);
+   ref_t templateRef = scope.mapFullReference(*templateName, true);
+
+   size_t len = getlength(pattern);
+   bool matched = true;
+   size_t signIndex = 0;
+   while (matched && i < len) {
+      if (pattern[i] == '{') {
+         size_t end = pattern.findSub(i, '}', 0);
+
+         String<char, 5> tmp;
+         tmp.copy(pattern + i + 1, end - i - 1);
+
+         size_t index = tmp.toInt(10);
+
+         parameters[index - 1] = signatures[signIndex];
+         if (argumentLen < index)
+            argumentLen = index;
+
+         i = end + 2;
+      }
+      else {
+         size_t end = pattern.findSub(i, '/', getlength(pattern));
+         IdentifierString argType;
+         argType.copy(pattern + i, end - i);
+
+         if ((*argType).find('{') != NOTFOUND_POS) {
+            ref_t argRef = signatures[signIndex];
+            // bad luck : if it is a template based argument
+            ustr_t signType;
+            while (argRef) {
+               // try to find the template based signature argument
+               signType = scope.module->resolveReference(argRef);
+               if (!isTemplateWeakReference(signType)) {
+                  ClassInfo info;
+                  defineClassInfo(scope, info, argRef, true);
+                  argRef = info.header.parentRef;
+               }
+               else break;
+            }
+
+            if (argRef) {
+               size_t argLen = argType.length();
+               size_t start = 0;
+               size_t argIndex = (*argType).find('{');
+               while (argIndex < argLen && matched) {
+                  if (argType.compare(signType, start, argIndex - start)) {
+                     size_t paramEnd = (*argType).findSub(argIndex, '}', 0);
+
+                     String<char, 5> tmp;
+                     tmp.copy(*argType + argIndex + 1, paramEnd - argIndex - 1);
+
+                     IdentifierString templateArg;
+                     size_t nextArg = readSignatureMember(signType, argIndex - start);
+                     templateArg.copy(signType + argIndex - start, nextArg - argIndex + start);
+                     decodeClassName(templateArg);
+
+                     signType = signType + nextArg + 1;
+
+                     size_t index = tmp.toInt();
+                     ref_t templateArgRef = scope.mapFullReference(*templateArg);
+                     if (!parameters[index - 1]) {
+                        parameters[index - 1] = templateArgRef;
+                     }
+                     else if (parameters[index - 1] != templateArgRef) {
+                        matched = false;
+                        break;
+                     }
+
+                     if (argumentLen < index)
+                        argumentLen = index;
+
+                     start = paramEnd + 2;
+                     argIndex = (*argType).findSub(start, '{', argLen);
+                  }
+                  else matched = false;
+               }
+
+               if (matched && start < argLen) {
+                  // validate the rest part
+                  matched = argType.compare(signType, start, argIndex - start);
+               }
+            }
+            else matched = false;
+         }
+         else {
+            ref_t argRef = scope.mapFullReference(*argType, true);
+            matched = isCompatible(scope, { argRef }, { signatures[signIndex] }, true);
+         }
+
+         i = end + 1;
+      }
+
+      signIndex++;
+   }
+
+   if (matched) {
+      return compiler->generateExtensionTemplate(scope, templateRef, argumentLen, parameters, ns, outerExtensionList);
+   }
+
+   return 0;
 }

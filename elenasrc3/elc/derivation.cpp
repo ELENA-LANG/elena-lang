@@ -1257,6 +1257,9 @@ SyntaxTreeBuilder::ScopeType SyntaxTreeBuilder :: defineTemplateType(SyntaxNode 
             case V_FIELD:
                type = ScopeType::PropertyTemplate;
                break;
+            case V_EXTENSION:
+               type = ScopeType::ExtensionTemplate;
+               break;
             default:
                break;
          }
@@ -1298,7 +1301,10 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
          case SyntaxKey::Declaration:
             scope.type = defineTemplateType(writer.CurrentNode());
 
-            writer.CurrentNode().setKey(SyntaxKey::Template);
+            if (scope.type == ScopeType::ExtensionTemplate) {
+               writer.CurrentNode().setKey(SyntaxKey::ExtensionTemplate);
+            }
+            else writer.CurrentNode().setKey(SyntaxKey::Template);
             flushTemplate(writer, scope, node);
             break;
          default:

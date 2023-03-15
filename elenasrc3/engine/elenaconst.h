@@ -42,36 +42,37 @@ namespace elena_lang
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED.06";
 
   // --- ELENA core module names ---
-   constexpr auto CORE_ALIAS              = "core";            // Core functionality
+   constexpr auto CORE_ALIAS                 = "core";            // Core functionality
 
    // --- ELENA predefined module names ---
-   constexpr auto BINARY_MODULE           = "$binary";
-   constexpr auto PREDEFINED_MODULE       = "system'predefined"; // NOTE : system'predefined module should preceed system one
-   constexpr auto OPERATIONS_MODULE       = "system'operations"; // NOTE : system'predefined module should preceed system one
-   constexpr auto STANDARD_MODULE         = "system";
+   constexpr auto BINARY_MODULE              = "$binary";
+   constexpr auto PREDEFINED_MODULE          = "system'predefined"; // NOTE : system'predefined module should preceed system one
+   constexpr auto OPERATIONS_MODULE          = "system'operations"; // NOTE : system'predefined module should preceed system one
+   constexpr auto STANDARD_MODULE            = "system";
 
    // --- ELENA special sections ---
-   constexpr auto NAMESPACES_SECTION      = "$namespaces";
-   constexpr auto IMPORTS_SECTION         = "$import";
-   constexpr auto EXTENSION_SECTION       = "#extensions";
+   constexpr auto NAMESPACES_SECTION         = "$namespaces";
+   constexpr auto IMPORTS_SECTION            = "$import";
+   constexpr auto EXTENSION_SECTION          = "#extensions";
 
-   constexpr auto NAMESPACE_REF           = "$namespace";
+   constexpr auto NAMESPACE_REF              = "$namespace";
 
    // --- ELENA standard weak namespace
-   constexpr auto RT_FORWARD              = "$rt";
-   constexpr auto ROOT_MODULE             = "$rootnamespace";  // The project namespace
+   constexpr auto RT_FORWARD                 = "$rt";
+   constexpr auto ROOT_MODULE                = "$rootnamespace";  // The project namespace
 
    // --- ELENA standard forwards
-   constexpr auto TEMPLATE_PREFIX_NS      = "'$auto'";
-   constexpr auto FORWARD_PREFIX_NS       = "$forwards'";
-   constexpr auto INLINE_CLASSNAME        = "$inline";          // nested class generic name
+   constexpr auto TEMPLATE_PREFIX_NS         = "'$auto'";
+   constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
+   constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
+   constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
 
-   constexpr auto PREDEFINED_MAP          = "$forwards'meta$predefined";
-   constexpr auto ATTRIBUTES_MAP          = "$forwards'meta$attributes";
-   constexpr auto OPERATION_MAP           = "$forwards'meta$statementTemplates";
-   constexpr auto ALIASES_MAP             = "$forwards'meta$aliasTypes";
-   constexpr auto STARTUP_LIST            = "$forwards'meta$startUpSymbols";
-   constexpr auto STARTUP_ENTRY           = "$forwards'startUpSymbols";
+   constexpr auto PREDEFINED_MAP             = "$forwards'meta$predefined";
+   constexpr auto ATTRIBUTES_MAP             = "$forwards'meta$attributes";
+   constexpr auto OPERATION_MAP              = "$forwards'meta$statementTemplates";
+   constexpr auto ALIASES_MAP                = "$forwards'meta$aliasTypes";
+   constexpr auto STARTUP_LIST               = "$forwards'meta$startUpSymbols";
+   constexpr auto STARTUP_ENTRY              = "$forwards'startUpSymbols";
 
    constexpr auto VM_TAPE                 = "$elena'meta$startUpTape";
 
@@ -163,6 +164,7 @@ namespace elena_lang
    constexpr ref_t elClosed               = 0x00000010;
    constexpr ref_t elSealed               = 0x00000038;
    constexpr ref_t elNestedClass          = 0x00000040;
+   constexpr ref_t elAutoLoaded           = 0x00000080;
    constexpr ref_t elRole                 = 0x00000100;
    constexpr ref_t elAbstract             = 0x00000200;
    constexpr ref_t elNoCustomDispatcher   = 0x00000400;
@@ -294,7 +296,8 @@ namespace elena_lang
       RuntimeLoadable   = 0x007,
       SealedStatic      = 0x908,
       SingleDispatch    = 0xA09,
-   }; 
+      ExtOverloadList   = 0x90A,
+   };
 
    // === Reference constants ====
    constexpr ref_t mskAnyRef              = 0xFF000000u;

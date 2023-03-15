@@ -454,6 +454,9 @@ public:
    virtual ref_t resolvePrimitiveType(ModuleScopeBase& scope, TypeInfo typeInfo)
       = 0;
 
+   virtual ref_t generateExtensionTemplate(ModuleScopeBase& scope, ref_t templateRef, size_t argumentLen,
+      ref_t* arguments, ustr_t ns, ExtensionMap* outerExtensionList) = 0;
+
    virtual ~CompilerBase() = default;
 
 };
@@ -464,7 +467,7 @@ class TemplateProssesorBase
 {
 public:
    virtual ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
-      List<SyntaxNode>& parameters, bool declarationMode) = 0;
+      List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList) = 0;
 
    virtual bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& parameters) = 0;

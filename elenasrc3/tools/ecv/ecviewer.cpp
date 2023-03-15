@@ -813,6 +813,12 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
          row++;
       }
 
+      if (test(info.header.flags, elExtension)) {
+         ref_t extensionRef = info.attributes.get({ 0, ClassAttribute::ExtensionRef });
+         if (extensionRef)
+            printLineAndCount("@target ", _module->resolveReference(extensionRef), row, _pageSize);
+      }
+
       printFlags(info.header.flags, row, _pageSize);
       printFields(info, row, _pageSize);
    }

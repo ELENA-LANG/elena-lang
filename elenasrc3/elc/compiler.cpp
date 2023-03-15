@@ -293,21 +293,21 @@ Compiler::NamespaceScope :: NamespaceScope(NamespaceScope* parent) :
    forwards(0),
    importedNs(nullptr),
    extensions({}),
+   extensionTemplates(nullptr),
    extensionTargets(INVALID_REF),
    extensionDispatchers(INVALID_REF),
+   declaredExtensions({}),
    intConstants(0)
-   //declaredExtensions({})
 {
    nsName.copy(*parent->nsName);
    sourcePath.copy(*parent->sourcePath);
    defaultVisibility = parent->defaultVisibility;
    errorProcessor = parent->errorProcessor;
+   outerExtensionList = parent->outerExtensionList;
 }
 
 void Compiler::NamespaceScope :: addExtension(mssg_t message, ref_t extRef, mssg_t strongMessage)
 {
-   //ns->declaredExtensions.add(message, { extRef, strongMessage });
-
    extensions.add(message, { extRef, strongMessage });
 }
 
@@ -3108,6 +3108,7 @@ void Compiler :: declareMembers(NamespaceScope& ns, SyntaxNode node)
             break;
          }
          case SyntaxKey::Template:
+         case SyntaxKey::ExtensionTemplate:
          {
             TemplateScope templateScope(&ns, 0, ns.defaultVisibility);
             declareTemplateClass(templateScope, current);
@@ -3194,7 +3195,7 @@ void Compiler :: importExtensions(NamespaceScope& ns, ustr_t importedNs)
 
    auto sectionInfo = ns.moduleScope->getSection(*sectionName, mskMetaExtensionRef, true);
    if (sectionInfo.module) {
-      _logic->readExtMessageEntry(sectionInfo.module, sectionInfo.section, ns.extensions, ns.moduleScope);
+      _logic->readExtMessageEntry(sectionInfo.module, sectionInfo.section, ns.extensions, ns.extensionTemplates, ns.moduleScope);
    }
 }
 
@@ -4087,9 +4088,76 @@ void Compiler :: declareTemplateAttributes(TemplateScope& scope, SyntaxNode node
    }
 }
 
+void Compiler :: registerExtensionTemplateMethod(TemplateScope& scope, SyntaxNode& node)
+{
+   IdentifierString messageName;
+   size_t argCount = 1;
+   ref_t flags = 0;
+   IdentifierString signaturePattern;
+   ustr_t extensionName = scope.module->resolveReference(scope.reference);
+   if (isWeakReference(extensionName)) {
+      signaturePattern.append(scope.module->name());
+   }
+   signaturePattern.append(extensionName);
+   signaturePattern.append('.');
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Name) {
+         messageName.copy(current.firstChild(SyntaxKey::TerminalMask).identifier());
+      }
+      else if (current == SyntaxKey::Parameter) {
+         argCount++;
+         signaturePattern.append('/');
+         SyntaxNode typeAttr = current.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateArgParameter);
+         if (typeAttr == SyntaxKey::TemplateArgParameter) {
+            signaturePattern.append('{');
+            signaturePattern.appendInt(typeAttr.arg.value);
+            signaturePattern.append('}');
+         }
+         else if (typeAttr != SyntaxKey::None) {
+   //         if (typeAttr == lxType && typeAttr.argument == V_TEMPLATE) {
+   //            registerTemplateSignature(typeAttr, scope, signaturePattern);
+   //         }
+   //         else {
+               TypeAttributes typeAttributes = {};
+               ref_t classRef = resolvePrimitiveType(scope, resolveTypeAttribute(scope, current, typeAttributes, true, false), true);
+
+               ustr_t className = scope.module->resolveReference(classRef);
+               if (isWeakReference(className))
+                  signaturePattern.append(scope.module->name());
+
+               signaturePattern.append(className);
+   //         }
+         }
+         else scope.raiseError(/*errNotApplicable*/errInvalidOperation, current);
+      }
+      current = current.nextNode();
+   }
+
+   mssg_t messageRef = encodeMessage(scope.module->mapAction(*messageName, 0, false), argCount, flags);
+
+   addExtensionTemplateMessage(scope, messageRef, *signaturePattern, false);
+}
+
+void Compiler :: registerExtensionTemplate(TemplateScope& scope, SyntaxNode& node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current !=  SyntaxKey::None) {
+      if (current == SyntaxKey::Method) {
+         registerExtensionTemplateMethod(scope, current);
+      }
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: saveTemplate(TemplateScope& scope, SyntaxNode& node)
 {
    MemoryBase* target = scope.module->mapSection(scope.reference | mskSyntaxTreeRef, false);
+
+   if (node == SyntaxKey::ExtensionTemplate) {
+      registerExtensionTemplate(scope, node);
+   }
 
    SyntaxTree::saveNode(node, target);
 }
@@ -4290,6 +4358,33 @@ void Compiler :: addExtensionMessage(Scope& scope, mssg_t message, ref_t extRef,
 {
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
+   if (ns->outerExtensionList != nullptr) {
+      // COMPILER MAGIC : if it is template extension compilation
+      ns->outerExtensionList->add(message, { extRef, strongMessage });
+   }
+   else {
+      IdentifierString sectionName(internalOne ? PRIVATE_PREFIX_NS : "'");
+      if (!ns->nsName.empty()) {
+         sectionName.append(*ns->nsName);
+         sectionName.append('\'');
+      }
+      sectionName.append(EXTENSION_SECTION);
+
+      MemoryBase* section = scope.module->mapSection(
+         scope.module->mapReference(*sectionName, false) | mskMetaExtensionRef, false);
+
+      _logic->writeExtMessageEntry(section, extRef, message, strongMessage);
+
+      ns->declaredExtensions.add(message, { extRef, strongMessage });
+   }
+
+   ns->addExtension(message, extRef, strongMessage);
+}
+
+void Compiler :: addExtensionTemplateMessage(Scope& scope, mssg_t message, ustr_t pattern, bool internalOne)
+{
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
    IdentifierString sectionName(internalOne ? PRIVATE_PREFIX_NS : "'");
    if (!ns->nsName.empty()) {
       sectionName.append(*ns->nsName);
@@ -4300,9 +4395,9 @@ void Compiler :: addExtensionMessage(Scope& scope, mssg_t message, ref_t extRef,
    MemoryBase* section = scope.module->mapSection(
       scope.module->mapReference(*sectionName, false) | mskMetaExtensionRef, false);
 
-   _logic->writeExtMessageEntry(section, extRef, message, strongMessage);
+   _logic->writeExtMessageEntry(section, message, pattern);
 
-   ns->addExtension(message, extRef, strongMessage);
+   ns->extensionTemplates.add(message, pattern.clone());
 }
 
 void Compiler :: declareExtension(ClassScope& scope, mssg_t message, bool internalOne)
@@ -4455,7 +4550,7 @@ ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node,
       NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
       return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
-         templateRef, parameters, declarationMode);
+         templateRef, parameters, declarationMode, nullptr);
    }
 }
 
@@ -4475,7 +4570,7 @@ ref_t Compiler :: resolveTemplate(Scope& scope, ref_t templateRef, ref_t element
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
    return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
-      templateRef, parameters, declarationMode);
+      templateRef, parameters, declarationMode, nullptr);
 }
 
 ref_t Compiler :: resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef)
@@ -4556,7 +4651,7 @@ ref_t Compiler :: resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outp
       NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
       return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
-         templateReference, parameters, false);
+         templateReference, parameters, false, nullptr);
    }
 }
 
@@ -5541,7 +5636,7 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
 
    _logic->injectMethodOverloadList(this, *scope.moduleScope,
       classScope.info.header.flags, genericMessage | FUNCTION_MESSAGE, methods,
-      classScope.info.attributes, &targets, targetResolver);
+      classScope.info.attributes, &targets, targetResolver, ClassAttribute::OverloadList);
 
    SyntaxTree classTree;
    SyntaxTreeWriter classWriter(classTree);
@@ -5624,6 +5719,17 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& me
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
    ref_t objectRef = retrieveStrongType(scope, object);
+   if (objectRef == 0) {
+      objectRef = scope.moduleScope->buildins.superReference;
+   }
+
+   if (implicitSignatureRef) {
+      // auto generate extension template for strong-typed signature
+      for (auto it = nsScope->extensionTemplates.getIt(message); !it.eof(); it = nsScope->extensionTemplates.nextIt(message, it)) {
+         _logic->resolveExtensionTemplate(*scope.moduleScope, this, *it,
+            implicitSignatureRef, *nsScope->nsName, nsScope->outerExtensionList ? nsScope->outerExtensionList : &nsScope->extensions);
+      }
+   }
 
    // check extensions
    auto it = nsScope->extensions.getIt(message);
@@ -5801,6 +5907,10 @@ void Compiler :: unboxOuterArgs(BuildTreeWriter& writer, ExprScope& scope, Argum
          ObjectInfo source = (*updatedOuterArgs)[++i];
 
          if (source.kind == ObjectKind::Local) {
+            closure.extra = info.reference;
+            compileAssigningOp(writer, scope, source, closure);
+         }
+         else if (source.kind == ObjectKind::LocalAddress) {
             closure.extra = info.reference;
             compileAssigningOp(writer, scope, source, closure);
          }
@@ -9622,6 +9732,12 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
 
       current = current.nextNode();
    }
+
+   if (ns.declaredExtensions.count() > 0) {
+      compileModuleExtensionDispatcher(writer, ns);
+
+      ns.declaredExtensions.clear();
+   }
 }
 
 inline ref_t safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
@@ -9826,12 +9942,12 @@ void Compiler :: validateSuperClass(ClassScope& scope, SyntaxNode node)
       scope.raiseError(errNoDispatcher, node);
 }
 
-void Compiler :: declareModuleIdentifiers(ModuleScopeBase* moduleScope, SyntaxNode node)
+void Compiler :: declareModuleIdentifiers(ModuleScopeBase* moduleScope, SyntaxNode node, ExtensionMap* outerExtensionList)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Namespace) {
-         NamespaceScope ns(moduleScope, _errorProcessor, _logic);
+         NamespaceScope ns(moduleScope, _errorProcessor, _logic, outerExtensionList);
 
          // declare namespace
          declareNamespace(ns, current, true, true);
@@ -9845,12 +9961,12 @@ void Compiler :: declareModuleIdentifiers(ModuleScopeBase* moduleScope, SyntaxNo
    }
 }
 
-void Compiler :: declareModule(ModuleScopeBase* moduleScope, SyntaxNode node)
+void Compiler :: declareModule(ModuleScopeBase* moduleScope, SyntaxNode node, ExtensionMap* outerExtensionList)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Namespace) {
-         NamespaceScope ns(moduleScope, _errorProcessor, _logic);
+         NamespaceScope ns(moduleScope, _errorProcessor, _logic, outerExtensionList);
 
          // declare namespace
          declareNamespace(ns, current, false, true);
@@ -9863,19 +9979,19 @@ void Compiler :: declareModule(ModuleScopeBase* moduleScope, SyntaxNode node)
    }
 }
 
-void Compiler :: declare(ModuleScopeBase* moduleScope, SyntaxTree& input)
+void Compiler :: declare(ModuleScopeBase* moduleScope, SyntaxTree& input, ExtensionMap* outerExtensionList)
 {
    validateScope(moduleScope);
 
    SyntaxNode root = input.readRoot();
    // declare all member identifiers
-   declareModuleIdentifiers(moduleScope, root);
+   declareModuleIdentifiers(moduleScope, root, outerExtensionList);
 
    // declare all members
-   declareModule(moduleScope, root);
+   declareModule(moduleScope, root, outerExtensionList);
 }
 
-void Compiler :: compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildTree& output)
+void Compiler :: compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildTree& output, ExtensionMap* outerExtensionList)
 {
    BuildTreeWriter writer(output);
    writer.newNode(BuildKey::Root);
@@ -9884,7 +10000,7 @@ void Compiler :: compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildT
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Namespace) {
-         NamespaceScope ns(moduleScope, _errorProcessor, _logic);
+         NamespaceScope ns(moduleScope, _errorProcessor, _logic, outerExtensionList);
          declareNamespace(ns, current);
 
          compileNamespace(writer, ns, current);
@@ -10253,4 +10369,95 @@ void Compiler :: injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode,
       .appendChild(SyntaxKey::Expression)
       .appendChild(SyntaxKey::Object)
       .appendChild(key, arg);
+}
+
+ref_t Compiler :: generateExtensionTemplate(ModuleScopeBase& scope, ref_t templateRef, size_t argumentLen, ref_t* arguments, 
+   ustr_t ns, ExtensionMap* outerExtensionList)
+{
+   TemplateTypeList typeList;
+   for (size_t i = 0; i < argumentLen; i++)
+      typeList.add(arguments[i]);
+
+   // HOTFIX : generate a temporal template to pass the type
+   SyntaxTree dummyTree;
+   List<SyntaxNode> parameters({});
+   declareTemplateParameters(scope.module, typeList, dummyTree, parameters);
+
+   return _templateProcessor->generateClassTemplate(scope, ns,
+      templateRef, parameters, false, outerExtensionList);
+}
+
+inline int retrieveIndex(List<mssg_t>& list, mssg_t multiMethod)
+{
+   return list.retrieveIndex<mssg_t>(multiMethod, [](mssg_t arg, ref_t current)
+      {
+         return current == arg;
+      });
+}
+
+void Compiler :: compileModuleExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope)
+{
+   List<mssg_t>         genericMethods(0);
+   ClassInfo::MethodMap methods({});
+   ResolvedMap          targets(0);
+
+   auto it = scope.declaredExtensions.start();
+   while (!it.eof()) {
+      auto extInfo = *it;
+      mssg_t genericMessage = it.key();
+
+      ustr_t refName = scope.module->resolveReference(extInfo.value1);
+      if (isWeakReference(refName)) {
+         if (NamespaceString::compareNs(refName, *scope.nsName)) {
+            // if the extension is declared in the module namespace
+            // add it to the list to be generated
+
+            if (retrieveIndex(genericMethods, genericMessage) == -1)
+               genericMethods.add(genericMessage);
+
+            methods.add(extInfo.value2, { false, 0, 0, genericMessage | FUNCTION_MESSAGE, 0 });
+            targets.add(extInfo.value2, extInfo.value1);
+         }
+      }
+
+      it++;
+   }
+
+   if (genericMethods.count() > 0) {
+      // if there are extension methods in the namespace
+      ref_t extRef = scope.moduleScope->mapAnonymous();
+      ClassScope classScope(&scope, extRef, Visibility::Private);
+      declareClassParent(classScope.info.header.parentRef, classScope, {});
+      classScope.extensionDispatcher = true;
+      classScope.info.header.classRef = classScope.reference;
+      classScope.extensionClassRef = scope.moduleScope->buildins.superReference;
+      generateClassFlags(classScope, elExtension | elSealed | elAutoLoaded);
+
+      SyntaxTree classTree;
+      SyntaxTreeWriter classWriter(classTree);
+
+      // build the class tree
+      classWriter.newNode(SyntaxKey::Root);
+      classWriter.newNode(SyntaxKey::Class, extRef);
+      SyntaxNode classNode = classWriter.CurrentNode();
+      classWriter.closeNode();
+      classWriter.closeNode();
+
+      for (auto g_it = genericMethods.start(); !g_it.eof(); ++g_it) {
+         mssg_t genericMessage = *g_it;
+ 
+         _logic->injectMethodOverloadList(this, *scope.moduleScope,
+            classScope.info.header.flags, genericMessage | FUNCTION_MESSAGE, methods,
+            classScope.info.attributes, &targets, targetResolver, ClassAttribute::ExtOverloadList);
+      }
+
+      classScope.save();
+
+      // compile the extension
+      SyntaxTree buffer;
+      SyntaxTreeWriter bufferWriter(buffer);
+
+      writer.newNode(BuildKey::Class, classScope.reference);
+      writer.closeNode();
+   }
 }

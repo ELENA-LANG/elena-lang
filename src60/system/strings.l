@@ -121,7 +121,17 @@ public sealed Array<T> : Indexable<T>
             
       ^ retVal
    }
-   
+                                 
+   T[] clone()
+   {
+      int len := self.Length;
+      T[] copy := new T[](len);
+      for(int i := 0, i < len, i+=1) {
+         copy[i] := array[i]
+      };
+        
+      ^ copy
+   }
 }
 
 // --- Variadic Array template ---
