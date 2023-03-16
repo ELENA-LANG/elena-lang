@@ -1,5 +1,8 @@
 namespace calendar
 {
+   const int DATE_SHORTDATE  = 00000001h;
+   const int DATE_LONGDATE   = 00000002h;
+    
    // --- SystemTime ---
    public sealed const struct SystemTime : BaseValue
    {
@@ -17,6 +20,29 @@ namespace calendar
 
       constructor(SystemTime value)
          = value;
+
+      internal constructor loadAsTimespan(int days, int hours, int minutes, int seconds)
+      {
+         long value := 0l;        
+         long n := hours;
+            
+         n := n * 36000000000l;
+         value := n;
+            
+         n := minutes;
+         n := n * 600000000l;            
+         value := value + n;
+            
+         n := seconds;
+         n := n * 10000000l;
+         value := value + n;
+    
+         n := days;
+         n := n * 864000000000l;
+         value := value + n;
+            
+         self.assign(value);         
+      }
 
       get long Value()
       {
@@ -53,6 +79,8 @@ namespace calendar
 
          ^ new SystemTime(n1)
       }
+
+      
    }
 
    // --- TimeStruct ---
@@ -216,5 +244,102 @@ namespace calendar
             _millisecond := n
          }
       }
+
+      readTo(ref SystemTime retVal)
+      {
+         SystemTime value := 0l;
+         extern KERNEL32.SystemTimeToFileTime(self, value);
+            
+         retVal := value
+      }
+          
+      private string dateToString(int flags)
+      {
+         byte buffer[127];
+    
+         int length := extern KERNEL32.GetDateFormat(
+            0, flags,self,0,buffer,255);
+                
+         if (length == 0)
+            { FormatException.new:"Invalid date".raise() };
+    
+         ^ String.fromByteArray(0, length - 1, buffer)
+      }
+    
+      private string timeToString(int flags)
+      {
+         byte buffer[127];
+    
+         int length := extern KERNEL32.GetTimeFormatW(
+            0,flags,self,0,buffer,255);
+                
+         if (length == 0)
+            { FormatException.new:"Invalid time".raise() };
+    
+         ^ String.fromByteArray(0, length - 1, buffer)
+      }
+          
+      private wide dateToWide(int flags)
+      {
+         short buffer[127];
+    
+         int length := extern KERNEL32.GetDateFormatW(
+            0, flags,self,0,buffer,255);
+                
+         if (length == 0)
+            { FormatException.new:"Invalid date".raise() };
+    
+         ^ WideString.fromShortArray(0, length - 1, buffer)
+      }
+    
+      private wide timeToWide(int flags)
+      {
+         short buffer[127];
+    
+         int length := extern KERNEL32.GetTimeFormatW(
+            0,flags,self,0,buffer,255);
+                
+         if (length == 0)
+            { FormatException.new:"Invalid time".raise() };
+    
+         ^ WideString.fromShortArray(0, length - 1, buffer)
+      }
+
+      wide toShortDate()
+         = self.dateToWide(DATE_SHORTDATE);
+
+      wide toShortTime()
+         = self.timeToWide(0);
+
+      retoverload string toShortDate()
+         = self.dateToString(DATE_SHORTDATE);
+
+      retoverload string toShortTime()
+         = self.timeToString(0);
+
    }
+
+   public singleton systemTimeFactory
+   {
+      SystemTime getUtcNow()
+      {
+         SystemTime time := 0l;        
+         extern KERNEL32.GetSystemTimeAsFileTime(time);
+            
+         ^ time
+      }
+        
+      SystemTime getNow()
+      {
+         SystemTime time := 0l;
+         SystemTime localTime := 0l;
+            
+         extern KERNEL32.GetSystemTimeAsFileTime(time);
+    
+         extern KERNEL32.FileTimeToLocalFileTime(time, localTime);
+            
+         ^ localTime
+      }
+   }
+   
 }

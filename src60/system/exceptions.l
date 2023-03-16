@@ -132,3 +132,14 @@ public class AbortException : Exception,
    constructor new()
       <= super new("The process terminated");
 }
+
+// --- FormatException ---
+
+public class FormatException : Exception
+{
+    constructor new()
+        <= new("A number is not in the correct format");
+        
+    constructor new(string message)
+        <= super new(message);
+}

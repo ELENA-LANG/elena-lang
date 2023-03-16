@@ -349,7 +349,7 @@ EXPRESSION ::=
 		| L2 ^OBJECT L2_R L9_OP?
 		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP* L4_OP* L5_OP* L6_OP? { L8_OP | L9_OP }?
 		| L4_O_OP L4_OP* L6_OP?
-		| L5_O_OP L6_OP?
+		| L5_O_OP L5_OP* L6_OP?
 		| L6_O_OP L7_OP*
 		| L7_O_OP
 		| TRY ^OBJECT TRY_R
@@ -481,7 +481,7 @@ L5_EXPRESSION ::=
 		| L0 ^OBJECT L0_R
 		| L2 ^OBJECT L2_R
 		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP*L4_OP*
-		| L4_O_OP
+		| L4_O_OP L4_OP*
 		| eps ^OBJECT }
 	| reference ^OBJECT 
 	| { string | integer | hexinteger | long | real | character | wide } ^OBJECT L4_OP*
