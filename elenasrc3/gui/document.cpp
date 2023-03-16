@@ -378,13 +378,12 @@ void DocumentView :: setCaret(int column, int row, bool selecting, DocumentChang
    }
    if (selecting) {
       _selection += position - _caret.position();
-
-      changeStatus.hasSelection = _selection != 0;
    }
    else {
       _selection = 0;
    }
 
+   changeStatus.selelectionChanged = true;
    changeStatus.caretChanged = true;
 }
 
@@ -429,7 +428,7 @@ void DocumentView :: moveLeft(DocumentChangeStatus& changeStatus, bool selecting
 
       _selection += position - _caret.position();
 
-      changeStatus.hasSelection = _selection != 0;
+      changeStatus.selelectionChanged = true;
    }
    else _caret.moveOn(-1);
 
@@ -439,12 +438,14 @@ void DocumentView :: moveLeft(DocumentChangeStatus& changeStatus, bool selecting
 void DocumentView :: moveRight(DocumentChangeStatus& changeStatus, bool selecting)
 {
    if (selecting) {
+      bool oldSelection = _selection != 0;
+
       pos_t position = _caret.position();
       _caret.moveOn(1);
 
       _selection += position - _caret.position();
 
-      changeStatus.hasSelection = _selection != 0;
+      changeStatus.selelectionChanged = true;
    }
    else _caret.moveOn(1);
 
@@ -511,7 +512,7 @@ void DocumentView :: moveLeftToken(DocumentChangeStatus& changeStatus, bool sele
    if (selecting) {
       _selection += position - _caret.position();
 
-      changeStatus.hasSelection = _selection != 0;
+      changeStatus.selelectionChanged = true;
    }
    setCaret(_caret.getCaret(), selecting, changeStatus);
 }
@@ -553,7 +554,7 @@ void DocumentView :: moveRightToken(DocumentChangeStatus& changeStatus, bool sel
    if (selecting) {
       _selection += position - _caret.position();
 
-      changeStatus.hasSelection = _selection != 0;
+      changeStatus.selelectionChanged = true;
    }
    setCaret(_caret.getCaret(), selecting, changeStatus);
 }
@@ -566,7 +567,6 @@ void DocumentView :: moveFrameUp(DocumentChangeStatus& changeStatus)
          setCaret(_caret.column(), _frame.row() + _size.y - 3, false, changeStatus);
       }
    }
-   changeStatus.hasSelection = _selection != 0;
 }
 
 void DocumentView :: moveFrameDown(DocumentChangeStatus& changeStatus)
@@ -577,7 +577,6 @@ void DocumentView :: moveFrameDown(DocumentChangeStatus& changeStatus)
          setCaret(_caret.column(), _frame.row(), false, changeStatus);
       }
    }
-   changeStatus.hasSelection = _selection != 0;
 }
 
 void DocumentView :: moveFirst(DocumentChangeStatus& changeStatus, bool selecting)
@@ -639,11 +638,6 @@ void DocumentView :: notifyOnChange(DocumentChangeStatus& changeStatus)
       changeStatus.modifiedChanged = true;
       status.oldModified = status.modifiedMode;
    }
-   bool isSelected = changeStatus.hasSelection;
-   if (isSelected != status.oldSelected) {
-      changeStatus.selelectionChanged = true;
-      status.oldSelected = isSelected;
-   }
 
    for(auto it = _notifiers.start(); !it.eof(); ++it) {
       (*it)->onDocumentUpdate(changeStatus);
@@ -685,8 +679,6 @@ void DocumentView :: blockInserting(DocumentChangeStatus& changeStatus, text_t s
             break;
       }
    }
-
-   changeStatus.hasSelection = _selection != 0;
 }
 
 void DocumentView :: blockDeleting(DocumentChangeStatus& changeStatus, text_t subs, size_t length)
@@ -695,8 +687,7 @@ void DocumentView :: blockDeleting(DocumentChangeStatus& changeStatus, text_t su
 
    disp_t selection = _selection;
    _selection = 0;
-
-   changeStatus.hasSelection = _selection != 0;
+   changeStatus.selelectionChanged = true;
 
    if (selection < 0) {
       _caret.moveOn(selection);
@@ -777,6 +768,8 @@ void DocumentView :: tabbing(DocumentChangeStatus& changeStatus, text_c space, s
             break;
       }
    }
+
+   changeStatus.selelectionChanged = true;
 }
 
 void DocumentView :: insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t count)
@@ -875,6 +868,7 @@ bool DocumentView :: eraseSelection(DocumentChangeStatus& changeStatus)
    _text->eraseLine(_caret, _selection);
    _selection = 0;
    changeStatus.textChanged = true;
+   changeStatus.selelectionChanged = true;
 
    return true;
 }

@@ -94,14 +94,13 @@ namespace elena_lang
       bool maxColChanged;
       bool frameChanged;
       bool selelectionChanged;
-      bool hasSelection;
       bool formatterChanged;
       bool textChanged;
       bool modifiedChanged;
 
       bool isViewChanged()
       {
-         bool flag = formatterChanged | frameChanged | hasSelection | textChanged | selelectionChanged;
+         bool flag = formatterChanged | frameChanged | textChanged | selelectionChanged;
 
          return flag;
       }
@@ -113,9 +112,7 @@ namespace elena_lang
          frameChanged = false;
          modifiedChanged = false;
          selelectionChanged = false;
-         hasSelection = false;
          formatterChanged = false;
-         //oldOvewrite = true;     // to trigger mode change
          textChanged = false;
       }
 

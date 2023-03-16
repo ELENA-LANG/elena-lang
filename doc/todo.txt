@@ -7,12 +7,6 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
-    * system'calendar : Date, TimeSpan
-
-    * multi-value return - #508
-
-    * ide : selection unsync on tab change
-
     * rosetta examples : calendar
     * review extensions warnings
     * review system warnings
@@ -23,7 +17,7 @@ In development:
     * x86 : multi-threading - new core
     * x86 : multi-threading - open another thread
 
-    * ide : selection block unsync after mouse click
+    * ide : selecting with a mouse
 
     * prefix nullable / nable - allow to assign nil
     * introduce Nullable structure
@@ -31,6 +25,7 @@ In development:
     * show the signature for the typecast message if possible
     * ide : key combination doesn't work after closing the project
     * ide : selection block unsync after comment (sometimes)
+    * #521 : create an example and close the ticket
 
     === Iteration 15 ===
     ! x86 : gui
@@ -68,6 +63,7 @@ In development:
     * templates with parameters: template can have attribute values in the brackets after the main body
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
     * migrate: amb, anagram
+    * multi-value return - #508
 
 ------                                                           
 Backlog:
@@ -80,6 +76,7 @@ Backlog:
 
     --- elena tutorials ---
     * overloading the method return, put it in the first page as a feature
+    * lazy expressions, put it in the first page as a feature
 
     --- elena redux ---
     * native conversion from short to int / byte to int
