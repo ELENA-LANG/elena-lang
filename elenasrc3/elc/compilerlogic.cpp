@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 115;
+constexpr auto OperationLength = 117;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -193,6 +193,12 @@ constexpr Op Operations[OperationLength] =
    },
    {
       NOTEQUAL_OPERATOR_ID, BuildKey::LongCondOp, V_INT64, V_INT64, 0, V_FLAG
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::LongCondOp, V_WORD64, V_WORD64, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::LongCondOp, V_WORD64, V_WORD64, 0, V_FLAG
    },
    {
       EQUAL_OPERATOR_ID, BuildKey::LongIntCondOp, V_INT64, V_INT32, 0, V_FLAG
@@ -415,11 +421,13 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
          return source.typeRef == V_INT8 || source.typeRef == V_INT16
             || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32;
       case V_INT64:
-         return source.typeRef == V_PTR64;
+         return source.typeRef == V_PTR64 || source.typeRef == V_WORD64;
       case V_FLAG:
          return isCompatible(scope, { scope.branchingInfo.typeRef }, source, true);
       case V_WORD32:
          return source.typeRef == V_INT32;
+      case V_WORD64:
+         return source.typeRef == V_INT64;
       default:
          return false;
    }
@@ -1059,6 +1067,7 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
             break;
          case V_INT64:
          case V_PTR64:
+         case V_WORD64:
             info.header.flags |= elDebugQWORD;
             break;
          case V_FLOAT64:
@@ -1247,6 +1256,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
    {
       case V_INT64:
       case V_PTR64:
+      case V_WORD64:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugQWORD | elStructureRole | elReadOnlyRole;
          info.size = 8;

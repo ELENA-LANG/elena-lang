@@ -3677,6 +3677,8 @@ ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& sc
                else dynamicTempLocal = boxArgument(writer, scope, tempLocal, false, true, false);
 
                scope.tempLocals.add({ info.kind, info.reference }, dynamicTempLocal);
+
+               return dynamicTempLocal;
             }
             else return tempLocal;
          }
@@ -4896,6 +4898,10 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
             switch (attrs.size) {
                case 4:
                   attrs.typeInfo.typeRef = V_WORD32;
+                  attrs.fieldArray = false;
+                  break;
+               case 8:
+                  attrs.typeInfo.typeRef = V_WORD64;
                   attrs.fieldArray = false;
                   break;
                default:

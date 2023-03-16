@@ -7,10 +7,13 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
+    * system'calendar : Date, TimeSpan
+    * ide : selection unsync on tab change
+
     * rosetta examples : calendar
     * review extensions warnings
     * review system warnings
-    * ldoc : system'collections / system'routines
+    * ldoc : system'collections (templates) / system'routines
     * ide : change status to ready when writing / selecting files
 
     * x86 : multi-threading - project type
@@ -73,6 +76,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena redux ---
+    * native conversion from short to int / byte to int
     * extension template should contain all its arguments in the signature
     * support strong extension template arrayOp<T> : strong, weak
     * support autoloaded classes : should be automatically resolved when the module is loaded

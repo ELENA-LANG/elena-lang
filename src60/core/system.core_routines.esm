@@ -1106,6 +1106,15 @@ labNext:
 
 end
 
+procedure __st_assign (self, s)
+
+  peek      sp:1
+  lload
+  peek      sp:0
+  lsave
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION

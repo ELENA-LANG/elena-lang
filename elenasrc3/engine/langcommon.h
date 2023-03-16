@@ -253,6 +253,7 @@ namespace elena_lang
    constexpr auto V_PTR64                 = 0x8000001Bu;
    constexpr auto V_EXTMESSAGE64          = 0x8000001Cu;
    constexpr auto V_EXTMESSAGE128         = 0x8000001Du;
+   constexpr auto V_WORD64                = 0x8000001Eu;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;

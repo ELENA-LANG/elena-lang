@@ -47,6 +47,8 @@
         <include>collections\tuples.l</include>
         <include>collections\maps.l</include>
         <include>math\math.l</include>
+        <include>calendar\win_datetime.l</include>
+        <include>calendar\dates.l</include>
         <include>text\encoding.l</include>
         <include>text\win_encoding.l</include>
         <include>text\textbuffer.l</include>
