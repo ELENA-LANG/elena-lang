@@ -4,6 +4,9 @@ const MonthNames = new string[]{"JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE
 
 public program()
 {
-   
+   var m := MonthNames;
+   var l := m.Length;
+
+   var s := m[0];
 }
   

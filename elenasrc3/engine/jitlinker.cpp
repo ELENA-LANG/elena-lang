@@ -741,6 +741,9 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
    if (referenceInfo.referenceName)
       printf("linking %s\n", referenceInfo.referenceName.str());
 
+   if (referenceInfo.referenceName.compare("'program"))
+      referenceInfo.module = referenceInfo.module;
+
 #endif // FULL_OUTOUT_INFO
 
    referenceInfo.module = sectionInfo.module;
@@ -1028,12 +1031,13 @@ addr_t JITLinker :: resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectio
    return vaddress;
 }
 
-inline ReferenceInfo retrieveConstantVMT(SectionInfo info)
+ReferenceInfo JITLinker :: retrieveConstantVMT(SectionInfo sectionInfo)
 {
-   if (info.module) {
-      for (auto it = RelocationMap::Iterator(info.section->getReferences()); !it.eof(); ++it) {
+   if (sectionInfo.module) {
+      for (auto it = RelocationMap::Iterator(sectionInfo.section->getReferences()); !it.eof(); ++it) {
          if ((*it) == (pos_t)-4) {
-            return { info.module, info.module->resolveReference(it.key() & ~mskAnyRef) };
+            return _loader->retrieveReferenceInfo(sectionInfo.module, it.key() & ~mskAnyRef, it.key() & mskAnyRef,
+               _forwardResolver);
          }
       }
    }
@@ -1043,15 +1047,8 @@ inline ReferenceInfo retrieveConstantVMT(SectionInfo info)
 
 addr_t JITLinker :: resolveConstantArray(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode)
 {
-   if (referenceInfo.referenceName.compare("'mod$inline0"))
-      silentMode |= false;
-
    VAddressMap references({ 0, nullptr, 0, 0 });
    ReferenceInfo vmtReferenceInfo;
-
-   // get target image & resolve virtual address
-   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
-   MemoryWriter writer(image);
 
    bool structMode = false;
 
@@ -1069,6 +1066,10 @@ addr_t JITLinker :: resolveConstantArray(ReferenceInfo referenceInfo, ref_t sect
    if (!vmtReferenceInfo.referenceName.empty()) {
       vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
    }
+
+   // get target image & resolve virtual address
+   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
 
    // allocate object header
    _compiler->allocateHeader(writer, vmtVAddress, size, structMode, _virtualMode);

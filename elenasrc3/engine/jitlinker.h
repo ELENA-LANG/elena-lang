@@ -212,6 +212,8 @@ namespace elena_lang
       pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       void endNativeDebugInfo(pos_t position);
 
+      ReferenceInfo retrieveConstantVMT(SectionInfo info);
+
       void createGlobalAttribute(int category, ustr_t value, addr_t address);
 
       addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
