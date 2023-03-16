@@ -178,7 +178,17 @@
    echo .
  fi
 
- ../../bin/elena-cli -charmatch charmatch.l
+ ../../bin/elena-cli -pcharmatch charmatch.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -pcalendar calendar.l
  ret=$?
  if [ $ret -eq -2 ]
  then
