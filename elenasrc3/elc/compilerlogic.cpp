@@ -739,9 +739,10 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_EXTERN:
          attrs |= ExpressionAttribute::Extern;
          return true;
-      case V_NEWOP:
+   case V_NEWOP:
          if (ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::Parameter)
-            || ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::NestedDecl))
+            || ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::NestedDecl)
+            || ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::Meta))
          {
             attrs |= ExpressionAttribute::NewOp;
             return true;

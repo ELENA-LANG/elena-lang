@@ -367,6 +367,11 @@ void SyntaxTreeBuilder :: flushObject(SyntaxTreeWriter& writer, Scope& scope, Sy
       }
       else flushArrayType(writer, scope, current);
    }
+   else if (current == SyntaxKey::Expression) {
+      //HOTFIX : expression cannot be inside an object
+      writer.CurrentNode().setKey(SyntaxKey::Expression);
+      flushExpressionCollection(writer, scope, current);
+   }
    else {
       SyntaxNode identNode = node.lastChild(SyntaxKey::TerminalMask);
 
@@ -465,16 +470,21 @@ void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope&
    }
 }
 
-void SyntaxTreeBuilder :: flushExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushExpressionCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
-   writer.newNode(node.key);
-
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       flushExpressionMember(writer, scope, current);
 
       current = current.nextNode();
    }
+}
+
+void SyntaxTreeBuilder :: flushExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   writer.newNode(node.key);
+
+   flushExpressionCollection(writer, scope, node);
 
    writer.closeNode();
 }

@@ -141,6 +141,7 @@ namespace elena_lang
       void flushNested(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushClosure(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushExpressionCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);

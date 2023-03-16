@@ -203,9 +203,7 @@ T_EXPRESSION ::=
 NT_EXPRESSION ::=
 	"{" BLOCK
 	| NESTED_ROOT_EXPRESSION
-	| "(" EXPRESSION ")" { 
-		"{" ^ PARAMETER BLOCK ^CLOSURE
-		| eps ^OBJECT ^EXPRESSION };
+	| "(" SUB_EXPRESSION;
 
 ROOT_EXPRESSION ::=
         identifier { 
@@ -370,9 +368,12 @@ EXPRESSION ::=
 
 SUB_EXPRESSION ::=
 	identifier { 
-		identifier {
-			| L2 ^OBJECT L2_R L3_OP* L5_OP* { L8_OP | L9_OP }? ")"
-			| ")" ^OBJECT }
+		identifier+ {
+			L2 ^OBJECT L2_R L3_OP* L5_OP* { L8_OP | L9_OP }? ")"
+			| ")" {
+				"{" ^ PARAMETER BLOCK ^CLOSURE ^EXPRESSION
+				| eps ^OBJECT ^EXPRESSION }
+		}
 		| L2 ^OBJECT L2_R L9_OP? ")"
 		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP* L4_OP* L6_OP? L9_OP? ")"
 		| L4_O_OP L4_OP* ")"

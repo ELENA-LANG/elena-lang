@@ -3338,12 +3338,7 @@ ObjectInfo Compiler :: evalObject(Interpreter& interpreter, Scope& scope, Syntax
 {
    EAttrs mode = ExpressionAttribute::Meta;
 
-   SyntaxNode terminalNode = node.lastChild(SyntaxKey::TerminalMask);
-
-   TypeInfo declaredTypeInfo = {};
-   declareExpressionAttributes(scope, node, declaredTypeInfo, mode);
-
-   return mapTerminal(scope, terminalNode, declaredTypeInfo, mode.attrs);
+   return mapObject(scope, node, mode);
 }
 
 ObjectInfo Compiler :: evalPropertyOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors)
@@ -3379,6 +3374,23 @@ ObjectInfo Compiler :: evalPropertyOperation(Interpreter& interpreter, Scope& sc
    return {};
 }
 
+ObjectInfo Compiler :: evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node)
+{
+   ObjectInfo typeInfo = evalObject(interpreter, scope, node.firstChild());
+
+
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+
+
+      current = current.nextNode();
+   }
+
+
+   return {}; // !! temporal
+}
+
 ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors, bool resolveMode)
 {
    ObjectInfo retVal = {};
@@ -3397,6 +3409,9 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
          break;
       case SyntaxKey::PropertyOperation:
          retVal = evalPropertyOperation(interpreter, scope, node, ignoreErrors);
+         break;
+      case SyntaxKey::CollectionExpression:
+         retVal = evalCollection(interpreter, scope, node);
          break;
       default:
          if (ignoreErrors) {
@@ -7003,6 +7018,8 @@ ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope&
    writer.closeNode();
 
    writer.newNode(BuildKey::Tape);
+   testNodes(catchNode);
+
    compileMessageOperationR(writer, scope, { ObjectKind::Object }, catchNode.firstChild().firstChild());
    writer.closeNode();
 
@@ -7816,8 +7833,34 @@ void Compiler :: compileSwitchOperation(BuildTreeWriter& writer, ExprScope& scop
    writer.closeNode();
 }
 
-ObjectInfo Compiler :: compileCollection(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
+inline bool isConstant(ObjectKind kind)
 {
+   switch (kind) {
+      case ObjectKind::IntLiteral:
+      case ObjectKind::Float64Literal:
+      case ObjectKind::LongLiteral:
+      case ObjectKind::StringLiteral:
+      case ObjectKind::WideStringLiteral:
+         return true;
+      default:
+         return false;
+   }
+}
+
+inline bool areConstants(ArgumentsInfo& args)
+{
+   for (size_t i = 0; i < args.count(); i++) {
+      if (!isConstant(args[i].kind))
+         return false;
+   }
+
+   return true;
+}
+
+ObjectInfo Compiler :: compileCollection(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute mode)
+{
+   bool constExpr = EAttrs::testAndExclude(mode, EAttr::ConstantExpr);
+
    SyntaxNode current = node.firstChild();
 
    ObjectInfo typeInfo = compileObject(writer, scope, node.firstChild(), EAttr::NestedDecl, nullptr);
@@ -7855,6 +7898,14 @@ ObjectInfo Compiler :: compileCollection(BuildTreeWriter& writer, ExprScope& sco
       }
 
       current = current.nextNode();
+   }
+
+   // check if the collection can be a constant
+   if (constExpr && areConstants(arguments)) {
+      Interpreter interpreter(scope.moduleScope, _logic);
+
+      ObjectInfo retVal = evalExpression(interpreter, scope, node);
+
    }
 
    bool structMode = false;
@@ -7998,7 +8049,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          compileSwitchOperation(writer, scope, current);
          break;
       case SyntaxKey::CollectionExpression:
-         retVal = compileCollection(writer, scope, current);
+         retVal = compileCollection(writer, scope, current, mode);
          break;
       case SyntaxKey::Type:
          scope.raiseError(errInvalidOperation, node);
@@ -8191,8 +8242,12 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
    addBreakpoint(writer, findObjectNode(bodyNode), BuildKey::Breakpoint);
 
    ExprScope exprScope(&scope);
+   EAttr mode = ExpressionAttribute::RootSymbol;
+   if (scope.info.symbolType == SymbolType::Constant)
+      mode = mode | ExpressionAttribute::ConstantExpr;
+
    ObjectInfo retVal = compileExpression(writer, exprScope,
-      bodyNode.firstChild(), 0, ExpressionAttribute::RootSymbol, nullptr);
+      bodyNode.firstChild(), 0, mode, nullptr);
 
    writeObjectInfo(writer, exprScope,
       boxArgument(writer, exprScope, retVal, false, true, false));
