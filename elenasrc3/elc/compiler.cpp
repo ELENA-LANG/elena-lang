@@ -143,6 +143,15 @@ void Interpreter :: addTypeListItem(ref_t dictionaryRef, ref_t symbolRef)
    _logic->writeArrayEntry(dictionary, symbolRef | mskSymbolRef);
 }
 
+void Interpreter :: addConstArrayItem(ref_t dictionaryRef, ref_t item, ref_t mask)
+{
+   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskConstArray, true);
+   if (!dictionary)
+      throw InternalError(errFatalError);
+
+   _logic->writeArrayEntry(dictionary, item | mask);
+}
+
 void Interpreter :: setTypeMapValue(ref_t dictionaryRef, ustr_t key, ref_t reference)
 {
    MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskTypeMapRef, true);
@@ -223,6 +232,27 @@ bool Interpreter :: evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args)
    }
 
    return false;
+}
+
+ObjectInfo Interpreter :: createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args)
+{
+   auto section = _scope->module->mapSection(arrayRef | mskConstArray, false);
+
+   for (size_t i = 0; i < args.count(); i++) {
+      auto arg = args[i];
+      switch (arg.kind) {
+         case ObjectKind::StringLiteral:
+            addConstArrayItem(arrayRef, arg.reference, mskLiteralRef);
+            break;
+         default:
+            assert(false);
+            break;
+      }
+   }
+
+   section->addReference(typeRef | mskVMTRef, (pos_t)-4);
+
+   return { ObjectKind::ConstArray, { typeRef }, arrayRef };
 }
 
 bool Interpreter :: evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args)
@@ -342,6 +372,9 @@ ObjectInfo Compiler::NamespaceScope :: defineConstant(SymbolInfo info)
 
       return { ObjectKind::IntLiteral, { V_INT32 }, info.valueRef, value };
    }
+   else if (info.symbolType == SymbolType::ConstantArray) {
+      return { ObjectKind::ConstArray, { info.typeRef }, info.valueRef, info.valueRef };
+   }
    return { ObjectKind::Constant, { info.typeRef }, info.valueRef };
 }
 
@@ -429,6 +462,7 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, Express
                      case SymbolType::Singleton:
                         return defineObjectInfo(symbolInfo.valueRef, mode, true);
                      case SymbolType::Constant:
+                     case SymbolType::ConstantArray:
                         if (symbolInfo.valueRef) {
                            // HOTFIX : ingore declared but not defined constant
                            return defineConstant(symbolInfo);
@@ -1607,6 +1641,7 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
    switch (retVal.kind) {
       case ObjectKind::Singleton:
       case ObjectKind::Constant:
+      case ObjectKind::ConstArray:
          return retVal.reference;
       case ObjectKind::StringLiteral:
       case ObjectKind::WideStringLiteral:
@@ -3376,19 +3411,50 @@ ObjectInfo Compiler :: evalPropertyOperation(Interpreter& interpreter, Scope& sc
 
 ObjectInfo Compiler :: evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node)
 {
-   ObjectInfo typeInfo = evalObject(interpreter, scope, node.firstChild());
-
-
-
    SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
+   ObjectInfo typeInfo = evalObject(interpreter, scope, current);
+   if (typeInfo.kind != ObjectKind::Class)
+      scope.raiseError(errInvalidOperation, node);
 
+   current = current.nextNode();
+
+   ref_t collectionTypeRef = retrieveStrongType(scope, typeInfo);
+
+   ClassInfo collectionInfo;
+   _logic->defineClassInfo(*scope.moduleScope, collectionInfo, collectionTypeRef, false, true);
+
+   if (!test(collectionInfo.header.flags, elDynamicRole))
+      scope.raiseError(errInvalidOperation, node);
+
+   // if the array was already created
+   if (node.arg.reference)
+      return { ObjectKind::ConstArray, { collectionTypeRef }, node.arg.reference };
+
+   auto fieldInfo = *(collectionInfo.fields.start());
+   ref_t elementTypeRef = retrieveStrongType(scope, { ObjectKind::Object, { fieldInfo.typeInfo.elementRef }, 0 });
+
+   auto sizeInfo = _logic->defineStructSize(collectionInfo);
+   ArgumentsInfo arguments;
+   EAttr paramMode = EAttr::Parameter;
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Expression) {
+         auto argInfo = evalExpression(interpreter, scope, current);
+         if (!_logic->isCompatible(*scope.moduleScope, { elementTypeRef }, argInfo.typeInfo, true))
+            return {};
+
+         arguments.add(argInfo);
+      }
 
       current = current.nextNode();
    }
 
+   ref_t nestedRef = mapConstantReference(scope);
+   if (!nestedRef)
+      nestedRef = scope.moduleScope->mapAnonymous();
 
-   return {}; // !! temporal
+   node.setArgumentReference(nestedRef);
+
+   return interpreter.createConstCollection(nestedRef, collectionTypeRef, arguments);
 }
 
 ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors, bool resolveMode)
@@ -3797,6 +3863,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          break;
       case ObjectKind::Constant:
          writer.appendNode(BuildKey::ConstantReference, info.reference);
+         break;
+      case ObjectKind::ConstArray:
+         writer.appendNode(BuildKey::ConstArrayReference, info.reference);
          break;
       case ObjectKind::Param:
       case ObjectKind::SelfLocal:
@@ -7680,6 +7749,20 @@ ObjectInfo Compiler :: compileNestedExpression(BuildTreeWriter& writer, InlineCl
    }
 }
 
+ref_t Compiler :: mapConstantReference(Scope& ownerScope)
+{
+   ref_t nestedRef = 0;
+   SymbolScope* owner = Scope::getScope<SymbolScope>(ownerScope, Scope::ScopeLevel::Symbol);
+   if (owner) {
+      nestedRef = owner->reference;
+   }
+
+   if (!nestedRef)
+      nestedRef = ownerScope.moduleScope->mapAnonymous();
+
+   return nestedRef;
+}
+
 ref_t Compiler :: mapNested(ExprScope& ownerScope, ExpressionAttribute mode)
 {
    ref_t nestedRef = 0;
@@ -7859,7 +7942,7 @@ inline bool areConstants(ArgumentsInfo& args)
 
 ObjectInfo Compiler :: compileCollection(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute mode)
 {
-   bool constExpr = EAttrs::testAndExclude(mode, EAttr::ConstantExpr);
+   bool constOne = EAttrs::testAndExclude(mode, EAttr::ConstantExpr);
 
    SyntaxNode current = node.firstChild();
 
@@ -7874,6 +7957,9 @@ ObjectInfo Compiler :: compileCollection(BuildTreeWriter& writer, ExprScope& sco
 
    if (!test(collectionInfo.header.flags, elDynamicRole))
       scope.raiseError(errInvalidOperation, node);
+
+   if (constOne && node.arg.reference)
+      return { ObjectKind::ConstArray, { collectionTypeRef }, node.arg.reference };
 
    auto fieldInfo = *(collectionInfo.fields.start());
    ref_t elementTypeRef = retrieveStrongType(scope, { ObjectKind::Object, { fieldInfo.typeInfo.elementRef }, 0 });
@@ -7898,14 +7984,6 @@ ObjectInfo Compiler :: compileCollection(BuildTreeWriter& writer, ExprScope& sco
       }
 
       current = current.nextNode();
-   }
-
-   // check if the collection can be a constant
-   if (constExpr && areConstants(arguments)) {
-      Interpreter interpreter(scope.moduleScope, _logic);
-
-      ObjectInfo retVal = evalExpression(interpreter, scope, node);
-
    }
 
    bool structMode = false;
@@ -8208,6 +8286,11 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
             break;
          case ObjectKind::Constant:
             scope.info.symbolType = SymbolType::Constant;
+            scope.info.valueRef = retVal.reference;
+            scope.info.typeRef = retrieveStrongType(scope, retVal);
+            break;
+         case ObjectKind::ConstArray:
+            scope.info.symbolType = SymbolType::ConstantArray;
             scope.info.valueRef = retVal.reference;
             scope.info.typeRef = retrieveStrongType(scope, retVal);
             break;

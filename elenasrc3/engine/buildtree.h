@@ -126,6 +126,7 @@ namespace elena_lang
       CopyingItem          = 0x0061,
       SavingLongIndex      = 0x0062,
       LongIntCondOp        = 0x0063,
+      ConstArrayReference  = 0x0064,
 
       MaxOperationalKey    = 0x0061,
 

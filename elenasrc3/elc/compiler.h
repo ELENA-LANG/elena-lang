@@ -74,6 +74,7 @@ namespace elena_lang
       ConstantRole,
       ClassConstant,
       Constant,
+      ConstArray,
       SelfName,
       MethodName,
       FieldName,
@@ -265,6 +266,7 @@ namespace elena_lang
       void setTypeMapValue(ref_t dictionaryRef, ustr_t key, ref_t reference);
 
       void addTypeListItem(ref_t dictionaryRef, ref_t symbolRef);
+      void addConstArrayItem(ref_t dictionaryRef, ref_t item, ref_t mask);
 
       bool evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args);
 
@@ -276,6 +278,8 @@ namespace elena_lang
       ObjectInfo mapWideStringConstant(ustr_t s);
 
       bool eval(BuildKey key, ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
+
+      ObjectInfo createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args);
 
       Interpreter(ModuleScopeBase* scope, CompilerLogic* logic);
    };
@@ -943,6 +947,7 @@ namespace elena_lang
       ObjectInfo mapClassSymbol(Scope& scope, ref_t classRef);
 
       ref_t mapNested(ExprScope& ownerScope, ExpressionAttribute mode);
+      ref_t mapConstantReference(Scope& scope);
 
       ref_t mapTemplateType(Scope& scope, SyntaxNode terminal, pos_t parameterCount);
 

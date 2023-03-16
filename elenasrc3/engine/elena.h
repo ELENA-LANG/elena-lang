@@ -1075,6 +1075,7 @@ namespace elena_lang
       Symbol = 0,
       Singleton,
       Constant,
+      ConstantArray,
    };
 
    struct SymbolInfo

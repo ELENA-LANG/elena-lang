@@ -257,6 +257,22 @@ void JITLinker::JITLinkerReferenceHelper :: writeSectionReference(MemoryBase* im
             break;
       }
    }
+   else {
+      addr_t vaddress = _owner->resolve(_owner->_loader->retrieveReferenceInfo(sectionInfo->module, currentRef, currentMask,
+         _owner->_forwardResolver), currentMask, false);
+
+      switch (addressMask & mskRefType) {
+         case mskRef32:
+            ::writeVAddress32(image, imageOffset, vaddress, 0, addressMask, _owner->_virtualMode);
+            break;
+         case mskRef64:
+            ::writeVAddress64(image, imageOffset, vaddress, 0, addressMask, _owner->_virtualMode);
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
+   }
 }
 
 void JITLinker::JITLinkerReferenceHelper :: writeVMTMethodReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp, mssg_t message,
