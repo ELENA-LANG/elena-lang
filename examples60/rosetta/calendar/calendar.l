@@ -11,24 +11,24 @@ const DayNames = new string[]{"MO", "TU", "WE", "TH", "FR", "SA", "SU"};
 
 class CalendarMonthPrinter
 {
-    Date        theDate;
-    TextBuilder theLine;
-    int         theMonth;
-    int         theYear;
-    ref<int>    theRow;
+    Date           _date;
+    TextBuilder    _line;
+    int            _month;
+    int            _year;
+    Reference<int> _row;
     
     constructor(year, month)
     {
-        theMonth := month;
-        theYear := year;
-        theLine := new TextBuilder();
-        theRow := 0;
+        _month := month;
+        _year := year;
+        _line := new TextBuilder();
+        _row := 0;
     }
 
     writeTitle()
     {
-        theRow.Value := 0;
-        theDate := Date.new(theYear, theMonth, 1);
+        _row.Value := 0;
+        _date := Date.new(_year, _month, 1);
         DayNames.forEach:(name)
             { theLine.print(" ",name) }
     }

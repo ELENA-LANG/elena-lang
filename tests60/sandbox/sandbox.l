@@ -1,27 +1,6 @@
 import extensions;
 
-   public sealed struct TimeStruct
-   {
-      short _year;
-      short _month;
-
-      int Month
-      {
-         get()
-         {
-            int val := _month;
-                
-            ^ val
-         }
-            
-//         set(value)
-//         {
-//            short n := value;
-//                    
-//            _month := n
-//         }
-      }
-}
+const MonthNames = new string[]{"JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"};
 
 public program()
 {
