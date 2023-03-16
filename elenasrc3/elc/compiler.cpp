@@ -149,7 +149,7 @@ void Interpreter :: addConstArrayItem(ref_t dictionaryRef, ref_t item, ref_t mas
    if (!dictionary)
       throw InternalError(errFatalError);
 
-   _logic->writeArrayEntry(dictionary, item | mask);
+   _logic->writeArrayReference(dictionary, item | mask);
 }
 
 void Interpreter :: setTypeMapValue(ref_t dictionaryRef, ustr_t key, ref_t reference)

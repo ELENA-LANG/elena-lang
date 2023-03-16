@@ -122,6 +122,7 @@ namespace elena_lang
       bool readAttributeMap(MemoryBase* section, ReferenceMap& map);
 
       void writeArrayEntry(MemoryBase* section, ref_t reference);
+      void writeArrayReference(MemoryBase* section, ref_t reference);
 
       void writeTypeMapEntry(MemoryBase* section, ustr_t key, ref_t reference);
       bool readTypeMap(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);

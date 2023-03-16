@@ -1193,6 +1193,12 @@ bool CompilerLogic :: readAttributeMap(MemoryBase* section, ReferenceMap& map)
 void CompilerLogic :: writeArrayEntry(MemoryBase* section, ref_t reference)
 {
    MemoryWriter writer(section);
+   writer.writeRef(reference);
+}
+
+void CompilerLogic :: writeArrayReference(MemoryBase* section, ref_t reference)
+{
+   MemoryWriter writer(section);
    writer.writeDReference(reference, 0);
 }
 
