@@ -1182,7 +1182,7 @@ ObjectInfo Compiler::InlineClassScope :: mapIdentifier(ustr_t identifier, bool r
                // handle outer fields in a special way: save only self
                Outer owner = mapParent();
 
-               return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.reference, outer.outerObject.reference };
+               return { ObjectKind::OuterField, outer.outerObject.typeInfo, owner.reference, outer.outerObject.reference };
             }
             case ObjectKind::Param:
             case ObjectKind::ParamAddress:
@@ -9231,10 +9231,12 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    if (methodScope.info.outputRef) {
       SyntaxNode typeNode = current.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType);
       if (typeNode != SyntaxKey::None) {
-         TypeAttributes typeAttributes = {};
-         resolveTypeAttribute(scope, typeNode, typeAttributes, false, false);
-         if (typeAttributes.isNonempty())
-            scope.raiseError(errInvalidOperation, typeNode);
+         resolveStrongTypeAttribute(scope, typeNode, false, false);
+
+         //TypeAttributes typeAttributes = {};
+         //resolveTypeAttribute(scope, typeNode, typeAttributes, false, false);
+         //if (typeAttributes.isNonempty())
+         //   scope.raiseError(errInvalidOperation, typeNode);
       }
       else validateType(scope, methodScope.info.outputRef, current, false, false);
 

@@ -1048,27 +1048,27 @@ public sealed Array : Indexable
       }
    }
 
-    /// Sets the specified array member
-    setAt(int n, object o)
-    {
-        array[n] := o
-    }
+   /// Sets the specified array member
+   setAt(int n, object o)
+   {
+      array[n] := o
+   }
 
-    /// Returns the specified array member
-    object at(int n)
-        = array[n];
+   /// Returns the specified array member
+   object at(int n)
+      = array[n];
  
-    /// Returns the array enumerator
-    Enumerator enumerator() = new ArrayEnumerator(self);
+   /// Returns the array enumerator
+   Enumerator enumerator() = new ArrayEnumerator(self);
 
-    /// Returns the array indexer
-    Indexer indexer() = new ArrayIndexer(self);
+   /// Returns the array indexer
+   Indexer indexer() = new ArrayIndexer(self);
 
-//    object[] Value = theArray;
+   object[] Value = array;
 
-    /// Clones the array
-    Array clone()
-        = Array.copy(0, self.Length, self);
+   /// Clones the array
+   Array clone()
+      = Array.copy(0, self.Length, self);
 }
 
 // --- ArrrayEnumerator ---

@@ -273,3 +273,38 @@ public extension weakArrayOp
 //        ^ new Array<T>(self, index, length)
 //    }
 //}
+
+// --- stringWeakOp ---
+public extension stringWeakOp
+{
+   fillString(s, int counter)
+   {
+      for (int i := 0, i < counter, i += 1)
+      {
+            self.write(s)
+      };
+            
+      ^ self
+   }
+
+   writePadding(line, char ch, int width)
+   {
+      int length := line.Length;        
+        
+      if (length < width)
+      {
+         int len := width - length;
+         int leftLen := len / 2;
+            
+         self.fillString(ch, leftLen);
+         self.write(line);
+         self.fillString(ch, len - leftLen)
+      }
+      else
+      { 
+         self.write(line)
+      };
+            
+      ^ self
+   }   
+}
