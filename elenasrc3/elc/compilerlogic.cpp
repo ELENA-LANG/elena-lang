@@ -936,6 +936,11 @@ bool CompilerLogic :: isEmbeddableArray(ModuleScopeBase& scope, ref_t reference)
    return false;
 }
 
+bool CompilerLogic :: isDynamic(ClassInfo& info)
+{
+   return test(info.header.flags, elDynamicRole | elWrapper);
+}
+
 bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
 {
    return test(info.header.flags, elDynamicRole | elStructureRole | elWrapper);

@@ -201,8 +201,10 @@ void copyingToAcc(CommandTape& tape, BuildNode& node, TapeScope&)
 void copyingLocalArr(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int n = node.findChild(BuildKey::Size).arg.value;
-
-   tape.write(ByteCode::DCopy, n);
+   if (n) {
+      tape.write(ByteCode::DCopy, n);
+   }
+   else tape.write(ByteCode::DTrans);
 }
 
 void assignToStack(CommandTape& tape, BuildNode& node, TapeScope&)

@@ -92,6 +92,7 @@ namespace elena_lang
       bool isAbstract(ClassInfo& info);
       bool isReadOnly(ClassInfo& info);
 
+      bool isDynamic(ClassInfo& info);
       bool isEmbeddableArray(ClassInfo& info);
       bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);
 

@@ -725,7 +725,7 @@ inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, Expressi
          fieldInfo.typeInfo, fieldInfo.offset };
    }
    else if (!ignoreFields && fieldInfo.offset == -2) {
-      return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1 };
+      return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1u, TargetMode::ArrayContent };
    }
    else {
       auto staticFieldInfo = info.statics.get(identifier);
@@ -3600,8 +3600,8 @@ ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& sc
    _logic->defineClassInfo(*scope.moduleScope, argInfo, typeRef, false, true);
 
    ObjectInfo lenLocal = {};
-   bool isArray = _logic->isEmbeddableArray(argInfo);
-   if (isArray) {
+   bool isBinaryArray = _logic->isEmbeddableArray(argInfo);
+   if (isBinaryArray) {
       int elementSize = -(int)argInfo.size;
 
       // get the length
@@ -3632,6 +3632,34 @@ ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& sc
       writeObjectInfo(writer, scope, tempLocal);
 
       copyArray(writer, elementSize);
+   }
+   else if (_logic->isDynamic(argInfo)) {
+      // get the length
+      lenLocal = declareTempLocal(scope, V_INT32, false);
+
+      writeObjectInfo(writer, scope, info);
+      writer.appendNode(BuildKey::SavingInStack, 0);
+      writer.newNode(BuildKey::ObjArraySOp, LEN_OPERATOR_ID);
+      writer.appendNode(BuildKey::Index, lenLocal.argument);
+      writer.closeNode();
+
+      // allocate the object
+      writeObjectInfo(writer, scope, lenLocal);
+      writer.appendNode(BuildKey::SavingInStack, 0);
+
+      writer.newNode(BuildKey::NewArrayOp, typeRef);
+      writer.closeNode();
+
+      writer.appendNode(BuildKey::Assigning, tempLocal.argument);
+
+      writeObjectInfo(writer, scope, info);
+      writer.appendNode(BuildKey::SavingInStack, 0);
+
+      writer.appendNode(BuildKey::LoadingIndex, lenLocal.reference);
+
+      writeObjectInfo(writer, scope, tempLocal);
+
+      copyArray(writer, 0);
    }
    else {
       createObject(writer, argInfo, typeRef);
@@ -7623,10 +7651,15 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
             case ObjectKind::MssgLiteral:
             case ObjectKind::CharacterLiteral:
             case ObjectKind::RefLocal:
+            case ObjectKind::SelfBoxableLocal:
                source.typeInfo.typeRef = targetRef;
                break;
-            default:
-               return boxArgument(writer, scope, source, false, true, false, targetRef);
+         default:
+               if (source.kind == ObjectKind::SelfLocal && source.mode == TargetMode::ArrayContent) {
+                  source.typeInfo.typeRef = targetRef;
+                  source.kind = ObjectKind::SelfBoxableLocal;
+               }
+               else return boxArgument(writer, scope, source, false, true, false, targetRef);
          }
       }
       else if (conversionRoutine.result == ConversionResult::VariadicBoxingRequired) {

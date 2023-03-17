@@ -98,6 +98,7 @@ namespace elena_lang
       UnboxingRequired,
       RefUnboxingRequired,
       LocalUnboxingRequired,
+      ArrayContent
    };
 
    struct ObjectInfo
