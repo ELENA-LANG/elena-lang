@@ -3898,10 +3898,11 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          writeObjectInfo(writer, scope, scope.mapSelf());
          writer.appendNode(BuildKey::Field, info.reference);
          break;
-      //case ObjectKind::OuterField:
-      //   writeObjectInfo(writer, scope, scope.mapSelf());
-      //   writer.appendNode(BuildKey::Field, info.reference);
-      //   break;
+      case ObjectKind::OuterField:
+         writeObjectInfo(writer, scope, scope.mapSelf());
+         writer.appendNode(BuildKey::Field, info.reference);
+         writer.appendNode(BuildKey::Field, info.extra);
+         break;
       case ObjectKind::StaticConstField:
          writeObjectInfo(writer, scope, scope.mapSelf());
          writer.appendNode(BuildKey::ClassOp, CLASS_OPERATOR_ID);

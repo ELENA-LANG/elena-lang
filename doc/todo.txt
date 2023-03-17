@@ -7,9 +7,8 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
-    * constant array of strings
-
     * rosetta examples : calendar
+    * ide : select all
 
     * review extensions warnings
     * review system warnings
@@ -27,7 +26,6 @@ In development:
     * elenavm : implementing dll api
     * show the signature for the typecast message if possible
     * ide : key combination doesn't work after closing the project
-    * ide : selection block unsync after comment (sometimes)
     * #521 : create an example and close the ticket
 
     === Iteration 15 ===

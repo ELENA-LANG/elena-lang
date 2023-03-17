@@ -30,7 +30,7 @@ class CalendarMonthPrinter
         _row.Value := 0;
         _date := Date.new(_year, _month, 1);
         DayNames.forEach:(name)
-            { theLine.print(" ",name) }
+            { _line.print(" ",name) }
     }
     
     writeLine()

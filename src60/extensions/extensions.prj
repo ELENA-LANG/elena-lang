@@ -26,6 +26,7 @@
      </module>
      <module name="routines">
        <include>routines\enumerating.l</include>
+       <include>routines\combinations.l</include>
      </module>
      <module name="scripting">
        <include>scripting\interpreter.l</include>
