@@ -222,7 +222,10 @@ ROOT_EXPRESSION ::=
 			| eps ^OBJECT }
 		| L0 ^OBJECT L0_R {
 			L1_OP
-			| L3_OP
+			| L3 MESSAGE {
+				L3_R L3_OP*
+				| ASSIGN EXPRESSION ^PROPERTY_OPERATION
+				| eps ^PROPERTY_OPERATION }
 			| eps }
 		| { DYNAMIC_DIMENSION ^ARRAY_TYPE }+ identifier ^OBJECT ASSIGN ASSIGN_R
 		| ASSIGN ^OBJECT ASSIGN_R
@@ -338,7 +341,7 @@ EXPRESSION ::=
 			| eps ^OBJECT }
 		| L0 ^OBJECT L0_R {
 			L1_OP
-			| L3_OP
+			| L3_OP L5_OP*
 			| L5_OP
 			| L6_OP
 			| eps }
@@ -374,6 +377,7 @@ SUB_EXPRESSION ::=
 				"{" ^ PARAMETER BLOCK ^CLOSURE ^EXPRESSION
 				| eps ^OBJECT ^EXPRESSION }
 		}
+		| L0 ^OBJECT L0_R L3_OP* L5_OP* ")"
 		| L2 ^OBJECT L2_R L9_OP? ")"
 		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP* L4_OP* L6_OP? L7_OP* L9_OP? ")"
 		| L4_O_OP L4_OP* ")"
@@ -422,6 +426,7 @@ SUB_L3_SINGLE_EXPRESSION ::=
 			L0 ^OBJECT L0_R ")"
 			| L2 ^OBJECT L2_R L3_OP* ")"
 			| NESTED_EXPRESSION ^NESTED L3_OP* ")"
+			| "=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
 			| ")" {
 				"{" ^ PARAMETER BLOCK ^CLOSURE
 				| eps ^OBJECT }
@@ -550,7 +555,7 @@ L7_EXPRESSION ::=
 		| eps ^OBJECT }
 	| reference ^OBJECT 
 	| { string | integer | hexinteger | long | real | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP?
-	| "(" SUB_EXPRESSION
+	| "(" SUB_EXPRESSION L6_OP?
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
 	| "!" L7_EXPRESSION ^NOT_OPERATION
 	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION

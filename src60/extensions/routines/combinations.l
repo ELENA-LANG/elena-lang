@@ -1,3 +1,5 @@
+import system'routines;
+
 // --- Strategy ---
 
 interface BaseStrategy
@@ -42,7 +44,7 @@ singleton sequentialNext : BaseStrategy
         
    at(Indexer[] indexers, int length)
    {
-      ^ Array.allocate(length).populate:(int i => indexers.at(i).get())
+      ^ Array.allocate(length).populate:(int i => indexers.at(i).Value)
    }
 }
 
@@ -81,7 +83,7 @@ singleton parallelNext : BaseStrategy
         
    at(Indexer[] indexers, int length)
    {
-      ^ Array.allocate(length).populate:(int i => indexers.at(i).get())
+      ^ Array.allocate(length).populate:(int i => indexers.at(i).Value)
    }
 }
 
@@ -107,7 +109,7 @@ singleton combinationNext : BaseStrategy
 
    at(Indexer[] indexers, int length)
    {
-      ^ Array.allocate(length).populate:(int i => indexers.at(i).get())
+      ^ Array.allocate(length).populate:(int i => indexers.at(i).Value)
    }
 
    BaseStrategy eval(Indexer[] indexers, int length)
@@ -164,15 +166,15 @@ public abstract class BaseRowEnumerator : Enumerator
 
    bool next()
    {
-      theStrategy := theStrategy.eval(theIndexers, theLength);
+      _strategy := _strategy.eval(_indexers, _length);
 
-      ^ theStrategy.Result
+      ^ _strategy.Result
    }
     
-   get()
-      = theStrategy.at(theIndexers, theLength);
+   get Value()
+      = _strategy.at(_indexers, _length);
         
-   enumerable() = theIndexers;
+   enumerable() = _indexers;
 }
 
 // --- SequentialEnumerator ---
@@ -181,12 +183,12 @@ public class SequentialEnumerator : BaseRowEnumerator
 {
    constructor new(object[] arguments)
    {
-      theLength := arguments.Length;
-      theIndexers := new Indexer[](theLength);
+      _length := arguments.Length;
+      _indexers := new Indexer[](_length);
         
-      for (int i := 0, i < theLength, i += 1)
+      for (int i := 0, i < _length, i += 1)
       {
-         theIndexers[i] := arguments[i].indexer()
+         _indexers[i] := arguments[i].indexer()
       };
         
       self.reset()
@@ -197,7 +199,7 @@ public class SequentialEnumerator : BaseRowEnumerator
 
    reset()
    {
-      theStrategy := sequentialStart;
+      _strategy := sequentialStart;
    }
 }
 
@@ -207,14 +209,14 @@ public class ParallelEnumerator : BaseRowEnumerator
 {
    constructor new(object[] arguments)
    {
-      theLength := arguments.Length;
-      theIndexers := new Indexer[](theLength);
+      _length := arguments.Length;
+      _indexers := new Indexer[](_length);
         
-      for (int i := 0, i < theLength, i += 1)
+      for (int i := 0, i < _length, i += 1)
       {
          Indexer it := arguments[i].indexer();
             
-         theIndexers[i] := /*arguments[i].indexer()*/it
+         _indexers[i] := /*arguments[i].indexer()*/it
       };
         
       self.reset()        
@@ -225,7 +227,7 @@ public class ParallelEnumerator : BaseRowEnumerator
         
    reset()
    {
-      theStrategy := parallelStart
+      _strategy := parallelStart
    }
 }
 
@@ -237,15 +239,15 @@ public class Combinator : BaseRowEnumerator
     
    constructor new(arguments)
    {
-      theLength := arguments.Length;
+      _length := arguments.Length;
         
-      theIndexers := new Indexer[](theLength);
+      _indexers := new Indexer[](_length);
         
-      for (int i := 0, i < theLength, i += 1)
+      for (int i := 0, i < _length, i += 1)
       {
          Indexer it := arguments[i].indexer();
             
-         theIndexers[i] := /*arguments[i].indexer()*/it
+         _indexers[i] := /*arguments[i].indexer()*/it
       };
         
       self.reset()
@@ -254,18 +256,18 @@ public class Combinator : BaseRowEnumerator
    constructor new(int subLength, set)
       <= new(Array.allocate(subLength).populate:(int n => set))
    {
-      theTotalLength := set.Length
+      _totalLength := set.Length
    }
     
    bool next()
    {
-      theStrategy := theStrategy.eval(theIndexers, theTotalLength);
+      _strategy := _strategy.eval(_indexers, _totalLength);
 
-      ^ theStrategy.Result
+      ^ _strategy.Result
    }
     
    reset()
    {
-      theStrategy := combinationStart
+      _strategy := combinationStart
    }
 }
