@@ -4208,6 +4208,58 @@ void Compiler :: declareTemplateAttributes(TemplateScope& scope, SyntaxNode node
    }
 }
 
+void Compiler :: registerTemplateSignature(TemplateScope& scope, SyntaxNode node, IdentifierString& signature)
+{
+   signature.append(TEMPLATE_PREFIX_NS);
+
+   size_t signIndex = signature.length();
+
+   IdentifierString templateName(node.firstChild(SyntaxKey::TerminalMask).identifier());
+   int paramCounter = SyntaxTree::countChild(node, SyntaxKey::TemplateArg);
+
+   templateName.append('#');
+   templateName.appendInt(paramCounter);
+
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   ref_t ref = ns->resolveImplicitIdentifier(*templateName, false, true);
+   ustr_t refName = scope.module->resolveReference(ref);
+   if (isWeakReference(refName))
+      signature.append(scope.module->name());
+
+   signature.append(refName);
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::TemplateArg) {
+         SyntaxNode argNode = current.firstChild();
+
+         if (argNode == SyntaxKey::Type) {
+            signature.append('&');
+            ref_t classRef = resolveStrongTypeAttribute(scope, argNode, false, false);
+            if (!classRef)
+               scope.raiseError(errUnknownClass, current);
+
+            ustr_t className = scope.module->resolveReference(classRef);
+            if (isWeakReference(className))
+               signature.append(scope.module->name());
+
+            signature.append(className);
+         }
+         else if (argNode == SyntaxKey::TemplateArgParameter) {
+            signature.append('&');
+            signature.append('{');
+            signature.appendInt(argNode.arg.value);
+            signature.append('}');
+         }
+         else assert(false);
+      }
+
+      current = current.nextNode();
+   }
+
+   signature.replaceAll('\'', '@', signIndex);
+}
+
 void Compiler :: registerExtensionTemplateMethod(TemplateScope& scope, SyntaxNode& node)
 {
    IdentifierString messageName;
@@ -4229,25 +4281,23 @@ void Compiler :: registerExtensionTemplateMethod(TemplateScope& scope, SyntaxNod
       else if (current == SyntaxKey::Parameter) {
          argCount++;
          signaturePattern.append('/');
-         SyntaxNode typeAttr = current.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateArgParameter);
+         SyntaxNode typeAttr = current.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateArgParameter, SyntaxKey::TemplateType);
          if (typeAttr == SyntaxKey::TemplateArgParameter) {
             signaturePattern.append('{');
             signaturePattern.appendInt(typeAttr.arg.value);
             signaturePattern.append('}');
          }
+         else if (typeAttr == SyntaxKey::TemplateType) {
+            registerTemplateSignature(scope, typeAttr, signaturePattern);
+         }
          else if (typeAttr != SyntaxKey::None) {
-   //         if (typeAttr == lxType && typeAttr.argument == V_TEMPLATE) {
-   //            registerTemplateSignature(typeAttr, scope, signaturePattern);
-   //         }
-   //         else {
-               ref_t classRef = resolveStrongTypeAttribute(scope, typeAttr, true, false);
+            ref_t classRef = resolveStrongTypeAttribute(scope, typeAttr, true, false);
 
-               ustr_t className = scope.module->resolveReference(classRef);
-               if (isWeakReference(className))
-                  signaturePattern.append(scope.module->name());
+            ustr_t className = scope.module->resolveReference(classRef);
+            if (isWeakReference(className))
+               signaturePattern.append(scope.module->name());
 
-               signaturePattern.append(className);
-   //         }
+            signaturePattern.append(className);
          }
          else scope.raiseError(/*errNotApplicable*/errInvalidOperation, current);
       }

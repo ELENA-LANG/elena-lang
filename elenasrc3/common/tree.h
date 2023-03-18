@@ -391,6 +391,18 @@ namespace elena_lang
 
             return current;
          }
+         Node findChild(Key key1, Key key2, Key key3, Key key4) const
+         {
+            Node current = firstChild();
+            while (current != defKey) {
+               if (current == key1 || current == key2 || current == key3 || current == key4)
+                  return current;
+
+               current = current.nextNode();
+            }
+
+            return current;
+         }
 
          Node appendChild(Key key, ustr_t argument)
          {

@@ -141,6 +141,25 @@ public extension enumerableOp
 
 // --- indexableOp ---
 
+public extension indexableOp<T>
+{
+   populate(Func<int,T> f)
+   {
+      Indexer it := self.indexer();
+
+      while (it.Available)
+      {
+         int i := it.Index;
+            
+         it.Value := f(i);
+            
+         it.appendIndex:1
+      };
+        
+      ^ self
+   }
+}
+
 public extension indexableOp
 {
    exchange(int i1, int i2)

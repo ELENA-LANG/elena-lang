@@ -169,7 +169,37 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
    }
    name.replaceAll('\'', '@', 0);
 
-   return moduleScope.mapTemplateIdentifier(ns, *name, visibility, alreadyDeclared);
+   return moduleScope.mapTemplateIdentifier(ns, *name, visibility, alreadyDeclared, false);
+}
+
+ref_t CompilingProcess::TemplateGenerator :: declareTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility, 
+   ref_t templateRef, List<SyntaxNode>& parameters)
+{
+   ModuleBase* module = moduleScope.module;
+
+   ustr_t templateName = module->resolveReference(templateRef);
+   IdentifierString name;
+   if (isWeakReference(templateName)) {
+      name.copy(module->name());
+      name.append(templateName);
+   }
+   else name.copy(templateName);
+
+   for (auto it = parameters.start(); !it.eof(); ++it) {
+      name.append("&");
+
+      ref_t typeRef = (*it).arg.reference;
+      ustr_t param = module->resolveReference(typeRef);
+      if (isWeakReference(param)) {
+         name.append(module->name());
+         name.append(param);
+      }
+      else name.append(param);
+   }
+   name.replaceAll('\'', '@', 0);
+
+   bool dummy = false;
+   return moduleScope.mapTemplateIdentifier(ns, *name, visibility, dummy, true);
 }
 
 ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns,
@@ -178,9 +208,8 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
    ref_t generatedReference = 0;
 
    if (declarationMode) {
-      bool dummy = false;
-      generatedReference = generateTemplateName(moduleScope, ns, Visibility::Public, templateRef,
-         parameters, dummy);
+      generatedReference = declareTemplateName(moduleScope, ns, Visibility::Public, templateRef,
+         parameters);
    }
    else {
       auto sectionInfo = moduleScope.getSection(

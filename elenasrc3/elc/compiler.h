@@ -1021,6 +1021,7 @@ namespace elena_lang
 
       void declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level);
 
+      void registerTemplateSignature(TemplateScope& scope, SyntaxNode node, IdentifierString& signature);
       void registerExtensionTemplateMethod(TemplateScope& scope, SyntaxNode& node);
       void registerExtensionTemplate(TemplateScope& scope, SyntaxNode& node);
 

@@ -27,7 +27,9 @@ namespace elena_lang
          CompilingProcess* _process;
          TemplateProssesor _processor;
 
-         ref_t generateTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility, 
+         ref_t declareTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility,
+            ref_t templateRef, List<SyntaxNode>& parameters);
+         ref_t generateTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility,
             ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared);
 
       public:

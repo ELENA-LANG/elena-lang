@@ -1,27 +1,24 @@
 import extensions;
-
-public sealed XArray
-{
-   __string object[] array;
-    
-   /// Creates the array with the specified length
-   constructor allocate(int len)
-      = new object[](len);
-
-   /// Sets the specified array member
-   setAt(int n, object o)
-   {
-      array[n] := o
-   }
-
-   object[] Value = array;
-}
+import extensions'routines;
+import system'routines;
 
 public program()
 {
-   var a := XArray.allocate(3);
-   a[0] := 1;
-   a[1] := 2;
+   var a := Array.allocate(3);
 
-   var o := a.Value;
+   var r := a.populate:(int i => i);
+
+   r.forEach:(x){ console.writeLine(x) };
+
+//            var r := Array.allocate(3);
+//            r[0] := "1";
+//            r[1] := "2";
+//            r[2] := "3";
+            
+//            ParallelEnumerator.new(r).forEach:(line)
+//            {
+//               console.writeLine(line);                  
+
+//                console.writeLine()
+//            }
 }
