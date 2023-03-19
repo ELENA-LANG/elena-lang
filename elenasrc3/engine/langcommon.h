@@ -304,6 +304,7 @@ namespace elena_lang
    // === Conversion Routines ===
    constexpr auto INT32_64_CONVERSION        = 0x001;
    constexpr auto INT32_FLOAT64_CONVERSION   = 0x002;
+   constexpr auto INT16_32_CONVERSION        = 0x003;
 
    // === Global Attributes ===
    constexpr auto GA_SYMBOL_NAME             = 0x0001;

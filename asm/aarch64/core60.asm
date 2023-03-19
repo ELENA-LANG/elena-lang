@@ -582,7 +582,8 @@ end
 // ; wread
 inline %26h
 
-  add     x18, x0, x9
+  lsl     x18, x9, #1
+  add     x18, x0, x18
   ldrsw   x17, [x18]
   str     x17, [x10]
 

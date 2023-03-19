@@ -418,8 +418,7 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
       case V_OBJECT:
          return !isPrimitiveRef(source.typeRef);
       case V_INT32:
-         return source.typeRef == V_INT8 || source.typeRef == V_INT16
-            || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32;
+         return source.typeRef == V_INT8 || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32;
       case V_INT64:
          return source.typeRef == V_PTR64 || source.typeRef == V_WORD64;
       case V_FLAG:
@@ -1710,6 +1709,9 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
       if (compatible)
          return { ConversionResult::BoxingRequired };
 
+      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_INT16 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT16_32_CONVERSION, 1 };
+      }
       if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT32 }, sourceInfo, false)) {
          return { ConversionResult::NativeConversion, INT32_64_CONVERSION, 1 };
       }

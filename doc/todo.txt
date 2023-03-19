@@ -7,9 +7,7 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
-    * gc test
-
-    * step over do-until
+    * selflocal should be passed as selfboxablelocal
 
     * rosetta examples : calendar
     * ide : select all

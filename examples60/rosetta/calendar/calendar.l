@@ -35,94 +35,94 @@ class CalendarMonthPrinter
     
     writeLine()
     {
-        theLine.clear();
+        _line.clear();
         
-        if (theDate.Month == theMonth)
+        if (_date.Month == _month)
         {
-            var dw := theDate.DayOfWeek;
+            var dw := _date.DayOfWeek;
             
-            theLine.writeCopies("   ",theDate.DayOfWeek == 0 ? 6 : (theDate.DayOfWeek - 1));
+            _line.writeCopies("   ",_date.DayOfWeek == 0 ? 6 : (_date.DayOfWeek - 1));
             
             do
             {
-                theLine.writePaddingLeft(theDate.Day.toPrintable(), $32, 3);
+                _line.writePaddingLeft(_date.Day.toPrintable(), $32, 3);
                 
-                theDate := theDate.addDays:1
+                _date := _date.addDays:1
             }
-            until(theDate.Month != theMonth || theDate.DayOfWeek == 1)
+            until(_date.Month != _month || _date.DayOfWeek == 1)
         };
         
-        int length := theLine.Length;
+        int length := _line.Length;
         if (length < 21)
-            { theLine.writeCopies(" ", 21 - length) };
+            { _line.writeCopies(" ", 21 - length) };
             
-        theRow.append(1)
+        _row.append(1)
     }
     
     indexer() = new Indexer
     {
-        bool Available = theRow < 7;
+        bool Available = _row < 7;
 
         int Index
         {
-            get() = theRow.Value;
+            get() = _row.Value;
             
             set(int index)
             {
-                if (index <= theRow)
+                if (index <= _row)
                     { self.writeTitle() };
                     
-                while (index > theRow)
+                while (index > _row)
                     { self.writeLine() }
             }
         }
 
         appendIndex(int index)
         {
-            this self.Index := theRow.Value + index
+            this self.Index := _row.Value + index
         }
         
         get int Length() { ^ 7 }
 
-        get() = self;
+        get Value() = self;
         
-        set(o) { NotSupportedException.raise() }
+        set Value(o) { NotSupportedException.raise() }
     };
     
     printTitleTo(output)
     {
-        output.writePadding(MonthNames[theMonth - 1], $32, 21)
+        output.writePadding(MonthNames[_month - 1], $32, 21)
     }
    
     printTo(output)
     {
-        output.write(theLine.Value)
+        output.write(_line.Value)
     }
 }
 
 class Calendar
 {
-    int theYear;
-    int theRowLength;
+    int _year;
+    int _rowLength;
     
     constructor new(int year)
     {
-        theYear := year;
-        theRowLength := 3
+        _year := year;
+        _rowLength := 3
     }
     
     printTo(output)
     {
-        output.writePadding("[SNOOPY]", $32, theRowLength * 25); 
+        output.writePadding("[SNOOPY]", $32, _rowLength * 25); 
         output.writeLine();
-        output.writePadding(theYear.toPrintable(), $32, theRowLength * 25); 
+        output.writePadding(_year.toPrintable(), $32, _rowLength * 25); 
         output.writeLine().writeLine();
         
-        var rowCount := 12 / theRowLength;
+        var rowCount := 12 / _rowLength;
         var months := Array.allocate(rowCount).populate:(i =>
-            Array.allocate(theRowLength) 
+            Array.allocate(_rowLength) 
                   .populate:(j =>
-                     new CalendarMonthPrinter(theYear, i * theRowLength + j + 1)));
+                     new CalendarMonthPrinter(_year, i * _rowLength + j + 1)));
         
         months.forEach:(row)
         {

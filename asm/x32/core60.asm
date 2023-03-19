@@ -589,7 +589,7 @@ end
 inline %26h
 
   xor  eax, eax
-  mov  ax, word ptr [esi+edx]
+  mov  ax, word ptr [esi+edx*2]
   mov  dword ptr [ebx], eax
 
 end

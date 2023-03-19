@@ -585,7 +585,7 @@ inline %26h
 
   mov  rsi, r10  
   xor  rax, rax
-  mov  ax, word ptr [rsi+rdx]
+  mov  ax, word ptr [rsi+rdx*2]
   mov  [rbx], rax
 
 end

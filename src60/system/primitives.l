@@ -52,10 +52,10 @@ internal singleton PrimitiveOperations
    {
       if (code < 0D800h)
       {
-         ^ 2
+         ^ 1
       };
 
-      ^ 4
+      ^ 2
    }
 
    int readUTF32(byte[] sour, int index)

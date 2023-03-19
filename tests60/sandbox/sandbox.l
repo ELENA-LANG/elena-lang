@@ -50,15 +50,52 @@ import system'runtime;
 //   gcTest_Test(c);
 //}
 
+   public sealed struct TimeStruct
+   {
+      short _year;
+      short _month;
+      short _dayOfWeek;
+      short _day;
+
+      constructor()
+      {
+         _year := 1;
+         _month := 2;
+         _dayOfWeek := 3;
+         _day := 4;
+      }
+
+      int Day
+      {
+         get()
+         {
+            int val := _day;
+                
+            ^ val
+         }
+      }
+      
+   }
+
 public program()
 {
-   var _line := new TextBuilder();
-   _line.clear();
-   _line.writeCopies("1111", 200);
-   _line.clear();
-   _line.writeCopies("1111", 400);
+   var x := new TimeStruct();
+   var d := x.Day;
+   GCManager.collectFull();
+   var d2 := x.Day;
 
-   console.writeLine(_line);
+//   var date := Date.new(2023,1,1);   
+//   console.writeLine(date.Day.toPrintable());
+//   GCManager.collectFull();
+//   console.writeLine(date.Day.toPrintable());
+
+//   var _line := new TextBuilder();
+//   _line.clear();
+//   _line.writeCopies("1111", 200);
+//   _line.clear();
+//   _line.writeCopies("1111", 400);
+
+//   console.writeLine(_line);
 
 //   var _date := Date.new(2023, 3, 6);
 //

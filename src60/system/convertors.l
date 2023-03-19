@@ -794,7 +794,7 @@ public singleton byteArrayConvertor
          int length := PrimitiveOperations.copyUTF32(dest,j,chVal);
          
          j += length;
-         i += ch.Length;
+         i += ch.WideLength;
       };
 
       ^ j

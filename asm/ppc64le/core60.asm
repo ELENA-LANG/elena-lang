@@ -614,7 +614,8 @@ end
 // ; wread
 inline %26h
 
-  add     r19, r3, r14
+  sldi    r19, r14, 1
+  add     r19, r3, r19
   lwz     r17, 0(r19)
   stw     r17, 0(r15)
 

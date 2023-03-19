@@ -1082,7 +1082,7 @@ void shortArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
          tape.write(ByteCode::PeekSI, 1);
          tape.write(ByteCode::Load);
          tape.write(ByteCode::SetDP, targetOffset);
-         tape.write(ByteCode::ReadN, 2);
+         tape.write(ByteCode::WRead);
          break;
    default:
       throw InternalError(errFatalError);
@@ -1264,6 +1264,11 @@ void assignImmediateAccField(CommandTape& tape, BuildNode& node, TapeScope&)
 void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    switch (node.arg.reference) {
+      case INT16_32_CONVERSION:
+         tape.write(ByteCode::WLoad);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::Save);
+         break;
       case INT32_64_CONVERSION:
          tape.write(ByteCode::Load);
          tape.write(ByteCode::ConvL);

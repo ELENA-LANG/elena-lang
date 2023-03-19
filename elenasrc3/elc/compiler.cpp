@@ -6383,6 +6383,18 @@ ObjectInfo Compiler :: compileNativeConversion(BuildTreeWriter& writer, ExprScop
    ObjectInfo retVal = {};
 
    switch (operationKey) {
+      case INT16_32_CONVERSION:
+         source = boxArgumentLocally(writer, scope, source, false);
+
+         retVal = allocateResult(scope, resolvePrimitiveType(scope, { V_INT32 }, false));
+
+         writeObjectInfo(writer, scope, retVal);
+         writer.appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(writer, scope, source);
+
+         writer.appendNode(BuildKey::ConversionOp, operationKey);
+         break;
       case INT32_64_CONVERSION:
          retVal = allocateResult(scope, resolvePrimitiveType(scope, { V_INT64 }, false) );
 
@@ -8969,6 +8981,7 @@ mssg_t Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& inv
    privateScope.byRefReturnMode = true;
    privateScope.nestedMode = invokerScope.nestedMode;
    privateScope.functionMode = invokerScope.functionMode;
+   privateScope.isEmbeddable = invokerScope.isEmbeddable;
 
    classScope->info.methods.add(privateScope.message, privateScope.info);
    classScope->save();
