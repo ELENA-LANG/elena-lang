@@ -169,7 +169,32 @@ public extension stringOp : String
         
       ^ len != 0;
    }
+    
+   string padLeft(int length)
+      = self.padLeft($32, length);
+    
+   string padLeft(char ch, int length)
+   {
+      int currentLength := self.Length;
+        
+      if (currentLength < length)
+         { ^ String.fill(length - currentLength, ch).add(self) };
+            
+      ^ self
+   }
+    
+   string padRight(int length)
+       = self.padRight($32, length);
+    
+   string padRight(char ch, int length)
+   {
+      int currentLength := self.Length;
 
+      if (currentLength < length)
+         { ^ self.add(String.fill(length - currentLength, ch)) };
+            
+      ^ self
+   }
 
    bool startingWith(string s)
    {
@@ -287,6 +312,9 @@ public extension stringWeakOp
       ^ self
    }
 
+   writeCopies(line, int counter)
+      = self.fillString(line, counter);
+
    writePadding(line, char ch, int width)
    {
       int length := line.Length;        
@@ -307,4 +335,23 @@ public extension stringWeakOp
             
       ^ self
    }   
+
+
+   writePaddingLeft(line, char ch, int width)
+   {
+      var paddedStr := line.padLeft(ch, width);
+
+      self.write(paddedStr);
+            
+      ^ self
+   }
+    
+   writePaddingRight(line, char ch, int width)
+   {
+      var paddedStr := line.padRight(ch, width);
+
+      self.write(paddedStr);
+            
+      ^ self
+   }
 }
