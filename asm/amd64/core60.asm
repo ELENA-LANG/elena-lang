@@ -4,6 +4,7 @@
 define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
+define GC_COLLECT	    10004h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -133,6 +134,83 @@ inline % GC_ALLOC
 labYGCollect:
   // ; save registers
   sub  rcx, rax
+  push r10
+  push r11
+  push rbp
+
+  // ; lock frame
+  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+
+  push rcx
+
+  // ; create set of roots
+  mov  rbp, rsp
+  xor  ecx, ecx
+  push rcx        // ; reserve place 
+  push rcx
+  push rcx
+
+  // ;   save static roots
+  mov  rax, rdata : %SYSTEM_ENV
+  mov  rsi, stat : %0
+  mov  ecx, dword ptr [rax]
+  shl  ecx, 3
+  push rsi
+  push rcx
+
+  // ;   collect frames
+  mov  rax, [data : %CORE_THREAD_TABLE + tt_stack_frame]  
+  mov  rcx, rax
+
+labYGNextFrame:
+  mov  rsi, rax
+  mov  rax, [rsi]
+  test rax, rax
+  jnz  short labYGNextFrame
+
+  push rcx
+  sub  rcx, rsi
+  neg  rcx
+  push rcx  
+
+  mov  rax, [rsi + 8]
+  test rax, rax
+  mov  rcx, rax
+  jnz  short labYGNextFrame
+
+  mov [rbp-8], rsp      // ; save position for roots
+
+  mov  rdx, [rbp]
+  mov  rcx, rsp
+
+  // ; restore frame to correctly display a call stack
+  mov  rax, rbp
+  mov  rbp, [rax+8]
+
+  // ; call GC routine
+  sub  rsp, 30h
+  mov  [rsp+28h], rax
+  call extern "$rt.CollectGCLA"
+
+  mov  rbp, [rsp+28h] 
+  add  rsp, 30h
+  mov  rbx, rax
+
+  mov  rsp, rbp 
+  pop  rcx
+  pop  rbp
+  pop  r11
+  pop  r10
+
+  ret
+
+end
+
+// ; --- GC_COLLECT ---
+// ; in: ecx - fullmode (0, 1)
+inline % GC_COLLECT
+
+  // ; save registers
   push r10
   push r11
   push rbp
@@ -1324,6 +1402,27 @@ inline %2C9h
   cmp rbx, r11
 
 end 
+
+// ; system
+inline %0CFh
+
+end
+
+// ; system minor collect
+inline %1CFh
+
+  xor  ecx, ecx
+  call %GC_COLLECT
+
+end
+
+// ; system full collect
+inline %2CFh
+
+  mov  ecx, 1
+  call %GC_COLLECT
+
+end
 
 // ; faddndp
 inline %0D0h

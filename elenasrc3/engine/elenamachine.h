@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common types
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENAMACHINE_H
@@ -99,7 +99,7 @@ namespace elena_lang
       static uintptr_t NewHeap(size_t totalSize, size_t committedSize);
       static uintptr_t ExpandHeap(void* allocPtr, size_t newSize);
 
-      static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size);
+      static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size, bool fullMode);
 
       static size_t LoadCallStack(uintptr_t framePtr, uintptr_t* list, size_t length);
 

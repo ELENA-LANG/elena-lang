@@ -68,5 +68,8 @@
        <include>routines/patterns.l</include>
        <include>routines/sorting.l</include>
      </module>
+     <module name="runtime">
+       <include>runtime/gc_routines.l</include>
+     </module>
   </files>
 </configuration>

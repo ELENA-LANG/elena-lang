@@ -2,6 +2,7 @@
 define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
+define GC_COLLECT	    10004h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -187,6 +188,80 @@ labYGNextFrame:
   push ebx
   push eax
   call extern "$rt.CollectGCLA"
+
+  mov  ebp, [esp+8] 
+  add  esp, 12
+  mov  ebx, eax
+
+  mov  esp, ebp 
+  pop  ecx 
+  pop  ebp
+  pop  esi
+  ret
+
+end
+
+// ; --- GC_COLLECT ---
+// ; in: ecx - fullmode (0, 1)
+inline % GC_COLLECT
+
+  // ; save registers
+  push esi
+  push ebp
+
+  // ; lock frame
+  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], esp
+
+  push ecx
+  
+  // ; create set of roots
+  mov  ebp, esp
+  xor  ecx, ecx
+  push ecx        // ; reserve place 
+  push ecx
+  push ecx
+
+  // ;   save static roots
+  mov  ecx, [rdata : %SYSTEM_ENV]
+  mov  esi, stat : %0
+  shl  ecx, 2
+  push esi
+  push ecx
+
+  // ;   collect frames
+  mov  eax, [data : %CORE_THREAD_TABLE + tt_stack_frame]  
+  mov  ecx, eax
+
+labYGNextFrame:
+  mov  esi, eax
+  mov  eax, [esi]
+  test eax, eax
+  jnz  short labYGNextFrame
+  
+  push ecx
+  sub  ecx, esi
+  neg  ecx
+  push ecx  
+  
+  mov  eax, [esi + 4]
+  test eax, eax
+  mov  ecx, eax
+  jnz  short labYGNextFrame
+
+  mov [ebp-4], esp      // ; save position for roots
+
+  mov  ebx, [ebp]
+  mov  eax, esp
+
+  // ; restore frame to correctly display a call stack
+  mov  edx, ebp
+  mov  ebp, [edx+4]
+
+  // ; call GC routine
+  push edx
+  push ebx
+  push eax
+  call extern "$rt.ForcedCollectGCLA"
 
   mov  ebp, [esp+8] 
   add  esp, 12
@@ -1265,6 +1340,27 @@ inline %1C9h
   cmp  ebx, esi
 
 end 
+
+// ; system
+inline %0CFh
+
+end
+
+// ; system minor collect
+inline %1CFh
+
+  xor  ecx, ecx
+  call %GC_COLLECT
+
+end
+
+// ; system full collect
+inline %2CFh
+
+  mov  ecx, 1
+  call %GC_COLLECT
+
+end
 
 // ; faddndp
 inline %0D0h

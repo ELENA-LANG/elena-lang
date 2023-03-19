@@ -89,7 +89,12 @@ EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size)
 {
 //   printf("CollectGCLA %llx %llx\n", (long long)roots, size);
 
-   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size);
+   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, false);
+}
+
+EXTERN_DLL_EXPORT void* ForcedCollectGCLA(void* roots, int fullMode)
+{
+   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, INVALID_SIZE, fullMode != 0);
 }
 
 EXTERN_DLL_EXPORT size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)

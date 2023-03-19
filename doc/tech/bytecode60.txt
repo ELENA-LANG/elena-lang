@@ -393,6 +393,10 @@ ELENA byte codes (or ecodes)
                               COMP.LT := (temp2 < temp1);
                               n = 1,2,4,8 
 
+   system n                 - invokes system command
+                              n = 1 -> forced minor collect;
+                              n = 2 -> forced major collect
+
    xcmp                     - temp << acc[0];
                               COMP.EQ := (index == temp);
                               COMP.LT := (index < temp);

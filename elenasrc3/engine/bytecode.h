@@ -123,6 +123,8 @@ namespace elena_lang
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
 
+      System         = 0xCF,
+
       MaxDoubleOp    = 0xCF,
 
       FAddDPN        = 0xD0,

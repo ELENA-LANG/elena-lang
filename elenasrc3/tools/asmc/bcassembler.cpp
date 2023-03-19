@@ -968,6 +968,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::NLen:
          case ByteCode::ReadN:
          case ByteCode::WriteN:
+         case ByteCode::System:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::AndN:
          case ByteCode::AddN:

@@ -42,15 +42,15 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l | (unsigned int)r);
 }
 
-inline void testNodes(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      testNodes(current);
-
-      current = current.nextNode();
-   }
-}
+//inline void testNodes(SyntaxNode node)
+//{
+//   SyntaxNode current = node.firstChild();
+//   while (current != SyntaxKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
 inline bool isSelfCall(ObjectInfo target)
 {
@@ -4714,8 +4714,6 @@ ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node,
       if (!templateRef)
          scope.raiseError(errUnknownClass, terminalNode);
 
-      testNodes(node);
-
       NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
       return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
@@ -7172,7 +7170,6 @@ ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope&
    writer.closeNode();
 
    writer.newNode(BuildKey::Tape);
-   testNodes(catchNode);
 
    compileMessageOperationR(writer, scope, { ObjectKind::Object }, catchNode.firstChild().firstChild());
    writer.closeNode();

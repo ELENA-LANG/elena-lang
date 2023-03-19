@@ -51,7 +51,7 @@ public template do::until(loop_body, cond_expr) : __included(statementTemplates)
 {
    loop_body;
 
-   $rep cast bool(cond_expr) ? { loop_body }
+   $rep cast bool(cond_expr) ! { loop_body }
 }
 
 // --- for ---

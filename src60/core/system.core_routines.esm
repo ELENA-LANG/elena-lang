@@ -1115,6 +1115,34 @@ procedure __st_assign (self, s)
 
 end
 
+procedure __gc_minor
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+  system     1
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+end
+
+procedure __gc_full
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+  system     2
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION

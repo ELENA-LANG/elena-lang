@@ -102,6 +102,7 @@ namespace elena_lang
       friend void* retrieveRCode(JITCompilerScope* scope, int arg);
 
       friend void loadOp(JITCompilerScope* scope);
+      friend void loadSysOp(JITCompilerScope* scope);
       friend void loadLOp(JITCompilerScope* scope);
       friend void loadIndexOp(JITCompilerScope* scope);
       friend void loadNOp(JITCompilerScope* scope);
@@ -372,6 +373,7 @@ namespace elena_lang
 
    void loadNop(JITCompilerScope*);
    void loadOp(JITCompilerScope* scope);
+   void loadSysOp(JITCompilerScope* scope);
    void loadLOp(JITCompilerScope* scope);
    void loadIndexOp(JITCompilerScope* scope);
    void loadNOp(JITCompilerScope* scope);

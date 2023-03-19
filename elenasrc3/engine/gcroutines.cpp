@@ -274,10 +274,6 @@ inline void FixObject(GCTable* table, GCRoot* roots, size_t start, size_t end)
 
          uintptr_t t = *ptr;
 
-         // !! temporal
-         if ((uintptr_t)ptr == 0x000000000014c660)
-            size |= 0;
-
          ObjectPage* pagePtr = getObjectPage(*ptr);
          uintptr_t mappings = table->gc_header + (((uintptr_t)pagePtr - table->gc_start) >> page_size_order_minus2);
 
@@ -340,10 +336,6 @@ inline void FullCollect(GCTable* table, GCRoot* roots)
       int object_size = ((mgPtr->size + page_ceil) & page_align_mask);
 
       if (mgPtr->size < 0) {
-         // temporal
-         if (((uintptr_t)mgPtr & 0xFFFF) == 0x1b10)
-            mg_end |= 0;
-
          *(uintptr_t*)mappings = getObjectPtr((uintptr_t)newPtr);
 
          // ; copy page
@@ -364,10 +356,6 @@ inline void FullCollect(GCTable* table, GCRoot* roots)
       int object_size = ((ygPtr->size + page_ceil) & page_align_mask);
 
       if (ygPtr->size < 0) {
-         // temporal
-         if (((uintptr_t)ygPtr & 0xFFFF) == 0x1b10)
-            mg_end |= 0;
-
          // ; copy page
          MoveObject(object_size, newPtr, ygPtr);
 
@@ -397,7 +385,7 @@ inline void FullCollect(GCTable* table, GCRoot* roots)
    memset((void*)table->gc_mg_wbar, 0, size);
 }
 
-void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t size)
+void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t size, bool fullMode)
 {
    //printf("GCRoutine %llx,%llx\n", (long long)roots, (long long)size);
 
@@ -425,7 +413,7 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
    table->gc_yg_end = table->gc_shadow_end;
    table->gc_shadow_end = tmp;
 
-   if (table->gc_yg_end - table->gc_yg_current < size) {
+   if ((table->gc_yg_end - table->gc_yg_current < size) || fullMode) {
       // ; expand MG if required to promote YG
       while (table->gc_end - table->gc_mg_current < table->gc_yg_current - table->gc_yg_start) {
          size_t inc = AlignHeapSize(heap_inc);
@@ -438,6 +426,9 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
       }
 
       FullCollect(table, roots);
+
+      if (size == INVALID_SIZE)
+         return nullptr;
 
       uintptr_t allocated = table->gc_yg_current;
       if (table->gc_yg_end - table->gc_yg_current < size) {

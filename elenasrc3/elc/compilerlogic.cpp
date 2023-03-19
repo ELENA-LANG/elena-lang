@@ -1290,6 +1290,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
          info.size = 1;
          break;
+      case V_INT16:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
+         info.size = 2;
+         break;
       case V_INT8ARRAY:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;

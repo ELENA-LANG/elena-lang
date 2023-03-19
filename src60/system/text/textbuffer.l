@@ -100,7 +100,7 @@ namespace text
          ifnot (0 == length)
          {
             self.reserve(length);
-                
+
             length := s.save(0, length, _buffer, *_length);
                 
             _length.append(length)
