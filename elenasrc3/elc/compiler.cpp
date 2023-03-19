@@ -5936,7 +5936,13 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& me
                resolvedMessage = extInfo.value2;
                resolvedExtRef = extInfo.value1;
             }
+            else if (_logic->isSignatureCompatible(*scope.moduleScope, resolvedMessage, extInfo.value2)) {
+               //NOTE : if the extension is more precise than the previous resolved one - use the new one  
+               resolvedMessage = extInfo.value2;
+               resolvedExtRef = extInfo.value1;
+            }
             else if (!_logic->isSignatureCompatible(*scope.moduleScope, extInfo.value2, resolvedMessage)) {
+               // if they are incompatible - use dynamic resolving
                resolvedMessage = 0;
                break;
             }
@@ -8278,10 +8284,10 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 {
    ExprScope scope(&codeScope);
 
-   //bool autoMode = false;
+   bool autoMode = false;
    ref_t outputRef = codeScope.getOutputRef();
    if (outputRef == V_AUTO) {
-      //autoMode = true;
+      autoMode = true;
       outputRef = 0;
    }
 

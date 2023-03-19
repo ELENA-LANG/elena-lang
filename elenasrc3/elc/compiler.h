@@ -714,6 +714,9 @@ namespace elena_lang
          bool resolveAutoOutput(ref_t reference) override
          {
             if (info.outputRef == V_AUTO) {
+               if (!reference)
+                  reference = moduleScope->buildins.superReference;
+
                info.outputRef = reference;
 
                return true;
