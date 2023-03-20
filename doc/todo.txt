@@ -7,21 +7,18 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
-    * selflocal should be passed as selfboxablelocal
-
-    * rosetta examples : calendar
-    * ide : select all
+    * x86 : multi-threading - new module, example - raising an error
+    * x86 : multi-threading - project type
+    * x86 : multi-threading - new core
+    * x86 : multi-threading - open another thread
 
     * review extensions warnings
     * review system warnings
     * ldoc : system'collections (templates) / system'routines
     * ide : change status to ready when writing / selecting files
 
-    * x86 : multi-threading - project type
-    * x86 : multi-threading - new core
-    * x86 : multi-threading - open another thread
-
     * ide : selecting with a mouse
+    * ide : new source
 
     * prefix nullable / nable - allow to assign nil
     * introduce Nullable structure
@@ -148,7 +145,6 @@ Backlog:
     * do:while : both statement are matched : do{ a } while(b) and do{ a } while{ b } which is not correct?
     * ide : error messages if the debug process failed
     * ide : set focus on activate / after opening a file
-    * ide : compile the project and select an error line - part of the windows is covered with other window
     * ide : output is not properly refreshed
     * ide : toolbar
     * ide : fix blicking on tab selecting (especially on opening a new project)

@@ -23,6 +23,7 @@
 #define IDM_EDIT_DELETE             506
 #define IDM_EDIT_COMMENT            507
 #define IDM_EDIT_UNCOMMENT          508
+#define IDM_EDIT_SELECTALL          509
 
 #define IDM_VIEW_PROJECTVIEW        601 
 #define IDM_VIEW_OUTPUT             602

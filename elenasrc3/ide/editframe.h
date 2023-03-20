@@ -15,10 +15,6 @@ namespace elena_lang
    // --- SourceViewModel ---
    class SourceViewModel : public TextViewModel
    {
-   protected:
-      int traceRow;
-      int errorRow;
-
    public:
       void beforeDocumentSelect(int index) override;
 

@@ -93,7 +93,7 @@ namespace elena_lang
       void closeAll();
       void openProject();
       void closeProject();
-      void exit();
+      void exit() override;
 
       void undo();
       void redo();
@@ -102,6 +102,7 @@ namespace elena_lang
       void deleteText();
       void commentText();
       void uncommentText();
+      void selectAll();
 
       void openHelp();
 

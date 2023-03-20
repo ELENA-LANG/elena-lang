@@ -1715,6 +1715,40 @@ namespace elena_lang
          return _defValue;
       }
 
+      T exclude(Key key, T value)
+      {
+         if (_top) {
+            pos_t currentOffset = _top;
+            pos_t previousOffset = -1;
+            while (currentOffset) {
+               Item* current = (Item*)_buffer.get(currentOffset);
+
+               if (current->readKey(&_buffer) == key && current->item == value) {
+                  if (previousOffset == INVALID_POS) {
+                     _top = current->nextOffset;
+                  }
+                  else {
+                     Item* previous = (Item*)_buffer.get(previousOffset);
+                     previous->nextOffset = current->nextOffset;
+                  }
+
+                  if (_tale == currentOffset)
+                     _tale = previousOffset;
+
+                  _count--;
+                  if (!_count)
+                     _top = _tale = 0;
+
+                  return current->item;
+               }
+
+               previousOffset = currentOffset;
+               currentOffset = current->nextOffset;
+            }
+         }
+         return _defValue;
+      }
+
       void clear()
       {
          _buffer.clear();
@@ -2731,6 +2765,14 @@ namespace elena_lang
    public:
       typedef CachedMemoryMapIterator Iterator;
 
+      pos_t count()
+      {
+         if (_cached) {
+            return (pos_t)_count;
+         }
+         else return _map.count();
+      }
+
       Iterator start()
       {
          if (_cached) {
@@ -2811,12 +2853,78 @@ namespace elena_lang
          else return _map.exclude(key);
       }
 
+      T exclude(Key key, T item)
+      {
+         if (_cached) {
+            for (size_t i = 0; i < _count; i++) {
+               if (_cache[i].key == key && _cache[i].item == item) {
+                  T item = _cache[i].item;
+
+                  for (size_t j = i + 1; j < _count; j++) {
+                     _cache[i] = _cache[j];
+                  }
+
+                  _count--;
+
+                  return item;
+               }
+            }
+            return _map.DefaultValue();
+         }
+         else return _map.exclude(key, item);
+      }
+
+      void erase(Key key)
+      {
+         T item = exclude(key);
+         if (item != _map.DefaultValue()) {
+            if (FreeT)
+               FreeT(item);
+         }
+      }
+
+      void erase(Key key, T item)
+      {
+         T itemToDelete = exclude(key, item);
+         if (itemToDelete != _map.DefaultValue()) {
+            if (FreeT)
+               FreeT(itemToDelete);
+         }
+      }
+
+      void clear()
+      {
+         _map.clear();
+
+         _cached = true;
+         _count = 0;
+      }
+
+      template<class ArgT> Key retrieve(Key defKey, ArgT arg, bool(*lambda)(ArgT arg, Key key, T item))
+      {
+         auto it = start();
+         while (!it.eof())
+         {
+            if (lambda(arg, it.key(), *it))
+               return it.key();
+
+            ++it;
+         }
+
+         return defKey;
+      }
+
       CachedMemoryMap(T defValue)
          : _map(defValue)
       {
          _cached = true;
          _count = 0;
       }
+      virtual ~CachedMemoryMap()
+      {
+         clear();
+      }
+
    };
 
    // --- CachedList ---

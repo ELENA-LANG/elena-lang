@@ -85,6 +85,7 @@ namespace elena_lang
       void moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift) override;
 
       void selectWord(TextViewModelBase* model) override;
+      void selectAll(TextViewModelBase* model) override;
 
       void resizeModel(TextViewModelBase* model, Point size) override;
 

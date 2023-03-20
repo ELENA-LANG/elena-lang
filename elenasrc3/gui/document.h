@@ -42,8 +42,12 @@ namespace elena_lang
       {
          return style == m.style;
       }
+      bool operator !=(const Marker& m)
+      {
+         return style != m.style;
+      }
    };
-   typedef Map<int, Marker>   MarkerList;
+   typedef CachedMemoryMap<int, Marker, 5>   MarkerList;
 
    // --- TextFormatterBase ---
    class TextFormatterBase
@@ -255,13 +259,31 @@ namespace elena_lang
       {
          _markers.add(row, { style });
 
-         //status.formatterChanged = true;
+         changeStatus.formatterChanged = true;
       }
       void removeMarker(int row, pos_t style, DocumentChangeStatus& changeStatus)
       {
          _markers.erase(row, { style });
 
-         //status.formatterChanged = true;
+         changeStatus.formatterChanged = true;
+      }
+      bool removeMarker(pos_t style, DocumentChangeStatus& changeStatus)
+      {
+         if (_markers.count() > 0) {
+            int row = _markers.retrieve<pos_t>(-1, style, [](pos_t arg, int key, Marker item)
+            {
+               return item.style == arg;
+            });
+
+            if (row != -1) {
+               _markers.erase(row, { style });
+
+               changeStatus.formatterChanged = true;
+               return true;
+            }
+         }
+
+         return false;
       }
 
       Point getFrame() const { return _frame.getCaret(); }

@@ -170,7 +170,7 @@ void IDEWindow :: closeProject()
 void IDEWindow :: exit()
 {
    if(_controller->doExit(fileDialog, _model)) {
-      close();
+      SDIWindow::exit();
    }
 }
 
@@ -211,6 +211,11 @@ void IDEWindow :: uncommentText()
    wchar_t str[3] = _T("//");
 
    _controller->sourceController.deleteBlockText(_model->viewModel(), str, 2);
+}
+
+void IDEWindow :: selectAll()
+{
+   _controller->sourceController.selectAll(_model->viewModel());
 }
 
 void IDEWindow :: toggleProjectView(bool open)
@@ -492,6 +497,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_EDIT_UNCOMMENT:
          uncommentText();
+         break;
+      case IDM_EDIT_SELECTALL:
+         selectAll();
          break;
       case IDM_PROJECT_COMPILE:
          _controller->doCompileProject(projectDialog, _model);

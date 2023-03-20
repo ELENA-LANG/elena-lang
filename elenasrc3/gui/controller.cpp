@@ -262,6 +262,17 @@ void TextViewController :: selectWord(TextViewModelBase* model)
    notifyOnChange(model, status);
 }
 
+void TextViewController::selectAll(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+
+   docView->moveHome(status, false);
+   docView->moveEnd(status, true);
+
+   notifyOnChange(model, status);
+}
+
 void TextViewController :: notifyOnChange(TextViewModelBase* model, DocumentChangeStatus& changeStatus)
 {
    model->notifyOnChange(changeStatus);
