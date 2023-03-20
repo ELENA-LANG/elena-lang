@@ -272,6 +272,10 @@ ELENA byte codes (or ecodes)
                               size; in : acc contains the reference to the stack space
                               out: acc contains the class instance, index - undefined
 
+   xcreate {prefix}:r       - create the object with the specified size in PERM;
+                              sp[0] >> temp;
+                              out: acc contains the class instance, index - undefined
+
    xredirect m              - search acc::VMT for the {m.action + index.argCount} in index;
                               if found jumps to it; binary search is used ; index, acc presaved; 
                               index is set the original valuze

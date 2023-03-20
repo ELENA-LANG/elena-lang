@@ -85,6 +85,11 @@ EXTERN_DLL_EXPORT void ExitLA(int retVal)
    __routineProvider.Exit(retVal);
 }
 
+EXTERN_DLL_EXPORT void* CollectPermGCLA(size_t size)
+{
+   return __routineProvider.GCRoutinePerm(systemEnv->gc_table, size);
+}
+
 EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size)
 {
 //   printf("CollectGCLA %llx %llx\n", (long long)roots, size);

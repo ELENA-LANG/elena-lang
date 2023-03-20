@@ -1,8 +1,13 @@
 import extensions;
 
-
 public program()
 {
-   var x := new TimeStruct();
+   var handle := Thread.assign(
+   {
+      console.writeLine("Hello from another thread");
+   });
+        
+   handle.start()
 
+   console.readKey();
 }

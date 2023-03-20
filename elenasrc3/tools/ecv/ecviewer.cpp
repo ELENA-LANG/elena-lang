@@ -359,6 +359,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::PeekR:
          case ByteCode::StoreR:
          case ByteCode::CreateR:
+         case ByteCode::XCreateR:
             addRArg(command.arg1, commandStr);
             break;
          case ByteCode::MovM:

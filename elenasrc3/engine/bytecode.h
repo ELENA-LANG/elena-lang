@@ -123,6 +123,7 @@ namespace elena_lang
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
 
+      XCreateR       = 0xCE,
       System         = 0xCF,
 
       MaxDoubleOp    = 0xCF,
@@ -345,6 +346,7 @@ namespace elena_lang
          case ByteCode::PeekR:
          case ByteCode::StoreR:
          case ByteCode::CreateR:
+         case ByteCode::XCreateR:
             return true;
          default:
             return false;

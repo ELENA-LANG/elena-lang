@@ -64,7 +64,7 @@ end
  
 structure % CORE_THREAD_TABLE
 
-  dq 0 // ; crtitical_handler      ; +x00   - pointer to ELENA exception handler
+  dq 0 // ; et_crtitical_handler   ; +x00   - pointer to ELENA exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
   dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
 
@@ -83,6 +83,10 @@ structure %CORE_GC_TABLE
   dq 0 // ; gc_mg_current         : +40h
   dq 0 // ; gc_end                : +48h
   dq 0 // ; gc_mg_wbar            : +50h
+
+  dq 0 // ; gc_perm_start         : +58h 
+  dq 0 // ; gc_perm_end           : +60h 
+  dq 0 // ; gc_perm_current       : +68h 
 
 end
 

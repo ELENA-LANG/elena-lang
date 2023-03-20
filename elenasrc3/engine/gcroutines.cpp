@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  GC System Routines
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -231,6 +231,29 @@ inline void CollectMG2YGRoots(GCTable* table, ObjectPage* &shadowPtr)
    }
 }
 
+inline void CollectPermYGRoots(GCTable* table, ObjectPage*& shadowPtr)
+{
+   GCRoot     currentRoot;
+
+   addr_t current = table->gc_perm_start;
+   addr_t end = table->gc_perm_current;
+   while (current < end) {
+      addr_t objectPtr = getObjectPtr(current);
+      ObjectPage* currentPage = getObjectPage(objectPtr);
+
+      currentRoot.size = currentPage->size;
+      currentRoot.stack_ptr_addr = objectPtr;
+
+      int object_size = ((currentPage->size + page_ceil) & page_align_mask);
+      if (currentRoot.size < struct_mask) {
+         // ; check if the object has fields
+         YGCollect(&currentRoot, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
+      }
+
+      current += object_size;
+   }
+}
+
 void MGCollect(GCRoot* root, size_t start, size_t end)
 {
    size_t* ptr = (size_t*)root->stack_ptr;
@@ -402,6 +425,10 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
    // ; collect mg -> yg roots
    CollectMG2YGRoots(table, shadowPtr);
 
+   // ; collect perm yg roots
+   if (table->gc_perm_current > table->gc_perm_current)
+      CollectPermYGRoots(table, shadowPtr);
+
    // ; save gc_yg_current to mark  objects
    table->gc_yg_current = (uintptr_t)shadowPtr;
 
@@ -470,4 +497,22 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
    }
 
    return nullptr;
+}
+
+void* SystemRoutineProvider :: GCRoutinePerm(GCTable* table, size_t size)
+{
+   if (table->gc_perm_current + size > table->gc_perm_end) {
+      size_t permSize = AlignHeapSize(size);
+
+      // allocate a perm space
+      ExpandPerm((void*)table->gc_perm_end, permSize);
+
+      table->gc_perm_end += permSize;
+   }
+
+   uintptr_t allocated = table->gc_perm_current;
+
+   table->gc_perm_current += size;
+
+   return (void*)getObjectPtr(allocated);
 }

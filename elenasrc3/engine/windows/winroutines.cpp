@@ -54,6 +54,14 @@ uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
    return !r ? 0 : (uintptr_t)allocPtr;
 }
 
+uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
+{
+   // allocate
+   LPVOID r = VirtualAlloc(allocPtr, newSize, MEM_COMMIT, PAGE_READWRITE);
+
+   return !r ? 0 : (uintptr_t)allocPtr;
+}
+
 void SystemRoutineProvider :: RaiseError(int code)
 {
    ::RaiseException(code, 0, 0, 0);

@@ -62,5 +62,9 @@
      <module name="runtime">
        <include>runtime\gc_routines.l</include>
      </module>
+     <module name="threading">
+       <include>threading\win32_handlers.l</include>
+       <include>threading\thread.l</include>
+     </module>
   </files>
 </configuration>

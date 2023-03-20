@@ -20,6 +20,7 @@ namespace elena_lang
       int      mg_committed_size;
       int      page_mask;
       int      page_size_order;
+      int      perm_total_size;
    };
 
    class ImageSection : public MemoryBase
@@ -98,8 +99,10 @@ namespace elena_lang
 
       static uintptr_t NewHeap(size_t totalSize, size_t committedSize);
       static uintptr_t ExpandHeap(void* allocPtr, size_t newSize);
+      static uintptr_t ExpandPerm(void* allocPtr, size_t newSize);
 
       static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size, bool fullMode);
+      static void* GCRoutinePerm(GCTable* table, size_t size);
 
       static size_t LoadCallStack(uintptr_t framePtr, uintptr_t* list, size_t length);
 

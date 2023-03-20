@@ -1006,9 +1006,11 @@ void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, ID
 
 bool IDEController :: onClose(DialogBase& dialog, IDEModel* model)
 {
+   PathString path(*model->projectModel.paths.configPath);
+
    bool result = doCloseAll(dialog, model);
    if (result) {
-      saveConfig(model, *model->projectModel.paths.configPath);
+      saveConfig(model, *path);
    }
 
    return result;

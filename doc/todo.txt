@@ -7,7 +7,12 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
+    * new opcode xcreater : x86, x86-64, ppc64le, arm64
+
+    * introduce perm
+
     * x86 : multi-threading - new module, example - raising an error
+
     * x86 : multi-threading - project type
     * x86 : multi-threading - new core
     * x86 : multi-threading - open another thread
@@ -19,6 +24,7 @@ In development:
 
     * ide : selecting with a mouse
     * ide : new source
+    * ide : on start : set focus inside the edit frame if available
 
     * prefix nullable / nable - allow to assign nil
     * introduce Nullable structure
@@ -75,6 +81,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena tutorials ---
+    * read an article about meta programming in Ruby, try to do similar
     * Func<T> / Func1 should use semi-direct call for the function invoke
     * overloading the method return, put it in the first page as a feature
     * lazy expressions, put it in the first page as a feature

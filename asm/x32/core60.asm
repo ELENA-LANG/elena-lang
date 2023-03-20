@@ -3,6 +3,7 @@ define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
+define GC_ALLOCPERM	    10005h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -83,6 +84,10 @@ structure %CORE_GC_TABLE
   dd 0 // ; gc_mg_current         : +20h
   dd 0 // ; gc_end                : +24h
   dd 0 // ; gc_mg_wbar            : +28h
+
+  dd 0 // ; gc_perm_start         : +2Ch 
+  dd 0 // ; gc_perm_end           : +30h 
+  dd 0 // ; gc_perm_current       : +34h 
 
 end
 
@@ -271,6 +276,36 @@ labYGNextFrame:
   pop  ecx 
   pop  ebp
   pop  esi
+  ret
+
+end
+
+// --- GC_ALLOCPERM ---
+// in: ecx - size ; out: ebx - created object
+procedure %GC_ALLOCPERM
+
+  mov  eax, [data : %CORE_GC_TABLE + gc_perm_current]
+  add  ecx, eax
+  cmp  ecx, [data : %CORE_GC_TABLE + gc_perm_end]
+  jae  short labPERMCollect
+  mov  [data : %CORE_GC_TABLE + gc_perm_current], ecx
+  lea  ebx, [eax + elObjectOffset]
+  ret
+
+labPERMCollect:
+  // ; save registers
+  sub  ecx, eax
+  push esi
+
+  // ; lock frame
+  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], esp
+
+  push ecx
+  call extern "$rt.CollectPermGCLA"
+  mov  ebx, eax
+  add  esp, 4
+  pop  esi
+
   ret
 
 end
@@ -1340,6 +1375,24 @@ inline %1C9h
   cmp  ebx, esi
 
 end 
+
+// ; xcreater r
+inline %0CEh
+
+  mov  eax, [esi]
+  mov  ecx, page_ceil
+  shl  eax, 2
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOCPERM
+
+  mov  ecx, [esi]
+  shl  ecx, 2
+  mov  eax, __ptr32_1
+  mov  [ebx - elVMTOffset], eax
+  mov  [ebx - elSizeOffset], ecx
+
+end
 
 // ; system
 inline %0CFh

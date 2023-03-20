@@ -47,6 +47,11 @@ void SystemRoutineProvider :: Init(SystemEnv* env, SystemSettings settings)
 
    // ; initialize wbar start
    env->gc_table->gc_mg_wbar = ((mg_ptr - env->gc_table->gc_start) >> settings.page_size_order) + env->gc_table->gc_header;
+
+   // ; initialize but not commit perm space
+   int perm_size = align(settings.perm_total_size, 128);
+   env->gc_table->gc_perm_start = env->gc_table->gc_perm_current = NewHeap(perm_size, 0);
+   env->gc_table->gc_perm_end = env->gc_table->gc_perm_start;
 }
 
 void SystemRoutineProvider :: InitSTA(SystemEnv* env)

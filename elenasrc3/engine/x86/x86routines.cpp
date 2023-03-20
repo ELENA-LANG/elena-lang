@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  x86 ELENA System Routines
 //
-//                                              (C)2022, by Aleksey Rakov
+//                                             (C)2022-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -24,4 +24,6 @@ void SystemRoutineProvider :: FillSettings(SystemEnv* env, SystemSettings& setti
 
    settings.page_mask = page_mask;
    settings.page_size_order = page_size_order;
+
+   settings.perm_total_size = 0x20000000;
 }

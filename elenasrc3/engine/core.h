@@ -47,6 +47,7 @@ namespace elena_lang
    constexpr ref_t GC_ALLOC                  = 0x10002;
    constexpr ref_t EXCEPTION_HANDLER         = 0x10003;
    constexpr ref_t GC_COLLECT                = 0x10004;
+   constexpr ref_t GC_ALLOCPERM              = 0x10005;
 
    constexpr ref_t CORE_TOC                  = 0x20001;
    constexpr ref_t SYSTEM_ENV                = 0x20002;
@@ -111,6 +112,10 @@ namespace elena_lang
       uintptr_t   gc_mg_current;
       uintptr_t   gc_end;
       uintptr_t   gc_mg_wbar;
+
+      uintptr_t   gc_perm_start;
+      uintptr_t   gc_perm_end;
+      uintptr_t   gc_perm_current;
    };
 
    // --- GCRoot ---

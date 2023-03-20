@@ -55,7 +55,7 @@ CodeGenerator _codeGenerators[256] =
    compileJge, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
-   loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadSysOp,
+   loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadNop, loadROp, loadSysOp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop, loadNop, loadNop,
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop,
@@ -82,14 +82,14 @@ constexpr ref_t coreConstants[coreConstantNumber] =
 };
 
 // preloaded gc routines
-constexpr int coreFunctionNumber = 4;
+constexpr int coreFunctionNumber = 5;
 constexpr ref_t coreFunctions[coreFunctionNumber] =
 {
-   INVOKER, GC_ALLOC, EXCEPTION_HANDLER, GC_COLLECT
+   INVOKER, GC_ALLOC, EXCEPTION_HANDLER, GC_COLLECT, GC_ALLOCPERM
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 128;
+constexpr size_t bcCommandNumber = 129;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -117,7 +117,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::CreateR, ByteCode::MovFrm, ByteCode::DCopyDPN, ByteCode::DCopy, ByteCode::LoadS,
    ByteCode::XJump, ByteCode::MLen, ByteCode::DAlloc, ByteCode::XAssignSP, ByteCode::DTrans,
    ByteCode::XAssign, ByteCode::OrN, ByteCode::LSaveDP, ByteCode::LLoad, ByteCode::LSaveSI,
-   ByteCode::ConvL, ByteCode::XLCmp, ByteCode::System,
+   ByteCode::ConvL, ByteCode::XLCmp, ByteCode::System, ByteCode::XCreateR,
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
