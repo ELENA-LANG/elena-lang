@@ -98,6 +98,8 @@ namespace elena_lang
 
       bool isEmbeddableStruct(ClassInfo& info);
 
+      bool isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference);
+      bool isEmbeddableAndReadOnly(ClassInfo& info);
       bool isEmbeddable(ModuleScopeBase& scope, ref_t reference);
       bool isEmbeddable(ClassInfo& info);
 

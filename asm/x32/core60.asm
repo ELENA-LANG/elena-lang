@@ -39,6 +39,9 @@ define gc_mg_start           001Ch
 define gc_mg_current         0020h
 define gc_end                0024h
 define gc_mg_wbar            0028h
+define gc_perm_start         002Ch 
+define gc_perm_end           0030h 
+define gc_perm_current       0034h 
 
 define et_current            0004h
 define tt_stack_frame        0008h
@@ -1044,6 +1047,14 @@ inline %9Bh
 
 end
 
+// ; muln
+inline %9Ch
+
+  mov  eax, __n_1
+  imul  edx, eax
+
+end
+
 // ; savedp
 inline %0A0h
 
@@ -1168,6 +1179,15 @@ inline %0ABh
   mov [edi+4], edx
 
 end 
+
+// ; lloaddp
+inline %0ACh
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, dword ptr [ebx]
+  mov  edx, dword ptr [ebx+4]
+
+end
 
 // ; callr
 inline %0B0h

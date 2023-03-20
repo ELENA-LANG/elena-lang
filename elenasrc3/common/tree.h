@@ -379,6 +379,18 @@ namespace elena_lang
             return current;
          }
 
+         Node findChild(Key key1, Key key2) const
+         {
+            Node current = firstChild();
+            while (current != defKey) {
+               if (current == key1 || current == key2)
+                  return current;
+
+               current = current.nextNode();
+            }
+
+            return current;
+         }
          Node findChild(Key key1, Key key2, Key key3) const
          {
             Node current = firstChild();

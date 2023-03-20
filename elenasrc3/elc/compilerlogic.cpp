@@ -969,6 +969,21 @@ bool CompilerLogic :: isEmbeddable(ClassInfo& info)
    else return isEmbeddableStruct(info);
 }
 
+bool CompilerLogic :: isEmbeddableAndReadOnly(ClassInfo& info)
+{
+   return isReadOnly(info) && isEmbeddable(info);
+}
+
+bool CompilerLogic :: isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference)
+{
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference, true)) {
+      return isEmbeddableAndReadOnly(info);
+   }
+
+   return false;
+}
+
 bool CompilerLogic :: isStacksafeArg(ClassInfo& info)
 {
    if (test(info.header.flags, elDynamicRole)) {

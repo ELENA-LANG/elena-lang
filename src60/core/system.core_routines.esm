@@ -1143,6 +1143,60 @@ procedure __gc_full
 
 end
 
+procedure __perm_vector_create
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  mov        n:10
+  xcreate    class:"system'runtime'PermVectorArray"
+
+  close      []
+
+end
+
+procedure __perm_array_set
+
+ peek       sp:1
+ load
+ peek       sp:1
+ swap       sp:0
+ xassign
+
+end
+
+procedure __perm_array_refer (self,index,retVal)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[ptr:ptr_size,ptr_index:8]
+
+  $load                   // ; get the 
+  $save      dp:ptr
+
+  // ; the code should support both for 32 and 64 bit mode
+  // ; so ptr_index has the maximal possible size
+  peek       fp:index
+  load
+  mul        n:ptr_size
+  convl
+  lsave      dp:ptr_index
+
+  set        dp:ptr_index
+  store      sp:0
+  iadd       dp:ptr, ptr_size
+
+  $load      dp:ptr
+  peek       fp:retVal
+  $save
+
+  close      []
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION

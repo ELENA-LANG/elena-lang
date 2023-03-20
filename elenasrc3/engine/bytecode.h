@@ -90,6 +90,7 @@ namespace elena_lang
       FTruncDP       = 0x99,
       DCopy          = 0x9A,
       OrN            = 0x9B,
+      MulN           = 0x9C,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,
@@ -103,6 +104,7 @@ namespace elena_lang
       PeekSI         = 0xA9,
       LSaveDP        = 0xAA,
       LSaveSI        = 0xAB,
+      LLoadDP        = 0xAC,
 
       CallR          = 0xB0,
       CallVI         = 0xB1,

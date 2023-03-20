@@ -398,6 +398,12 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 
       return arg;
    }
+   else if (tokenInfo.state == dfaInteger) {
+      arg.type = Operand::Type::Value;
+      arg.reference = tokenInfo.token.toInt();
+
+      return arg;
+   }
    else {
       IdentifierString platformConstant(*tokenInfo.token);
       if (_mode64) {
@@ -936,6 +942,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::CmpSI:
          case ByteCode::XFlushSI:
          case ByteCode::XSwapSI:
+         case ByteCode::SwapSI:
          case ByteCode::XRefreshSI:
             return compileOpStackI(tokenInfo, writer, opCommand, true);
          case ByteCode::SaveDP:
@@ -945,6 +952,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::XCmpDP:
          case ByteCode::FTruncDP:
          case ByteCode::NConvFDP:
+         case ByteCode::LLoadDP:
             return compileDDisp(tokenInfo, writer, opCommand, dataLocals, true);
          case ByteCode::TstM:
          case ByteCode::MovM:
@@ -963,17 +971,18 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::SelLtRR:
             return compileRR(tokenInfo, writer, opCommand, true);
          case ByteCode::ICmpN:
-         case ByteCode::MovN:
          case ByteCode::TstN:
          case ByteCode::NLen:
          case ByteCode::ReadN:
          case ByteCode::WriteN:
          case ByteCode::System:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
+         case ByteCode::MovN:
          case ByteCode::AndN:
          case ByteCode::AddN:
          case ByteCode::SubN:
          case ByteCode::CmpN:
+         case ByteCode::MulN:
             return compileOpN(tokenInfo, writer, opCommand, constants, false);
          case ByteCode::Copy:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
@@ -988,12 +997,14 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileJcc(tokenInfo, writer, opCommand, lh);
          case ByteCode::SetR:
          case ByteCode::CmpR:
+         case ByteCode::XCreateR:
             return compileR(tokenInfo, writer, opCommand, true);
          case ByteCode::XNewNR:
             return compileNR(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::NSaveDPN:
          case ByteCode::NAddDPN:
          case ByteCode::CopyDPN:
+         case ByteCode::IAddDPN:
             return compileDDispN(tokenInfo, writer, opCommand, dataLocals, constants, true);
          default:
             return false;

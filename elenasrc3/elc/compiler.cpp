@@ -1475,7 +1475,7 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
       writer.closeNode();
    }
    // add implicit type
-   SyntaxNode typeNode = target.findChild(SyntaxKey::Type);
+   SyntaxNode typeNode = target.findChild(SyntaxKey::Type, SyntaxKey::TemplateType);
    if (typeNode != SyntaxKey::None) {
       writer.newNode(SyntaxKey::TemplateArg);
       SyntaxTree::copyNode(writer, typeNode, true);
@@ -2023,7 +2023,8 @@ void Compiler :: injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType
 mssg_t Compiler :: defineByRefMethod(ClassScope& scope, SyntaxNode node)
 {
    ref_t outputRef = node.findChild(SyntaxKey::OutputType).arg.reference;
-   if (outputRef && _logic->isEmbeddable(*scope.moduleScope, outputRef)) {
+   // NOTE : the embedable type should be read-only, otherwise it is possible that the changes will be lost
+   if (outputRef && _logic->isEmbeddableAndReadOnly(*scope.moduleScope, outputRef)) {
       ref_t actionRef, flags;
       pos_t argCount;
       decodeMessage(node.arg.reference, actionRef, argCount, flags);
@@ -6510,7 +6511,7 @@ mssg_t Compiler :: resolveByRefHandler(Scope& scope, ref_t targetRef, ref_t expe
    ref_t actionRef = 0, flags = 0;
    decodeMessage(weakMessage, actionRef, argCount, flags);
 
-   if (expectedRef != 0 && targetRef != 0 && signatureRef != 0) {
+   if (expectedRef != 0 && targetRef != 0) {
       ref_t dummySignRef = 0;
       ustr_t actionName = scope.module->resolveAction(actionRef, dummySignRef);
 

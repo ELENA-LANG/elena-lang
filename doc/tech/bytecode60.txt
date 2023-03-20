@@ -161,6 +161,8 @@ ELENA byte codes (or ecodes)
    free i                   - sp -= i ; release the stack; 
                               new sp value is aligned to 2 in x86-64 mode
 
+   lload dp:disp            - long:index := dp[disp]
+
    load fp:i                - index := fp[i]
 
    load dp:disp             - index := dp[disp]
@@ -359,6 +361,8 @@ ELENA byte codes (or ecodes)
    ixor dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] ^ temp;
                               n = 1,2,4,8 
+
+   muln n                   - index := index * n
  
    orn n                    - index := index | n
  

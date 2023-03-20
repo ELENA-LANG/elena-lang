@@ -1,11 +1,14 @@
 import system;
+import system'runtime;
 
 // --- ThreadHandle ---
 public sealed struct ThreadHandle
 {
-   embeddable __word value[4];
+   Handle  _handle;
+   pointer _actionPtr;
 
    constructor(Func f)
    {
+      //_actionPTr := PermVectorTable.allocate(f);
    }
 }

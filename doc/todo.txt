@@ -7,9 +7,8 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
-    * new opcode xcreater : x86, x86-64, ppc64le, arm64
-
-    * introduce perm
+    * new class PermVectorArray
+    * new class PermVectorTable
 
     * x86 : multi-threading - new module, example - raising an error
 
@@ -32,6 +31,10 @@ In development:
     * show the signature for the typecast message if possible
     * ide : key combination doesn't work after closing the project
     * #521 : create an example and close the ticket
+
+    * new opcode xcreater : ppc64le, arm64
+    * new opcode muln : ppc64le, arm64
+    * new opcode lloaddp : ppc64le, arm64
 
     === Iteration 15 ===
     ! x86 : gui

@@ -70,6 +70,7 @@
      </module>
      <module name="runtime">
        <include>runtime/gc_routines.l</include>
+       <include>runtime/vectortable.l</include>
      </module>
   </files>
 </configuration>

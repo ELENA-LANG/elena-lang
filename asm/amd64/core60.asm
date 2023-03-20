@@ -5,6 +5,7 @@ define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
+define GC_ALLOCPERM	    10005h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -38,6 +39,9 @@ define gc_mg_start           0038h
 define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
+define gc_perm_start         0058h 
+define gc_perm_end           0060h 
+define gc_perm_current       0068h 
 
 define et_current            0008h
 define tt_stack_frame        0010h
@@ -280,6 +284,43 @@ labYGNextFrame:
   mov  rsp, rbp 
   pop  rcx
   pop  rbp
+  pop  r11
+  pop  r10
+
+  ret
+
+end
+
+// ; --- GC_ALLOCPERM ---
+// ; in: rcx - size ; out: ebx - created object
+// ; note for linux - there is a separate copy
+inline % GC_ALLOCPERM
+
+  mov  rax, [data : %CORE_GC_TABLE + gc_perm_current]
+  mov  r12, [data : %CORE_GC_TABLE + gc_perm_end]
+  add  rcx, rax
+  cmp  rcx, r12
+  jae  short labPERMCollect
+  mov  [data : %CORE_GC_TABLE + gc_perm_current], rcx
+  lea  rbx, [rax + elObjectOffset]
+  ret
+
+labPERMCollect:
+  // ; save registers
+  sub  rcx, rax
+  push r10
+  push r11
+
+  // ; lock frame
+  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+
+  // ; call GC routine
+  sub  rsp, 30h
+  mov  [rsp+28h], rcx
+  call extern "$rt.CollectPermGCLA"
+
+  add  rsp, 30h
+
   pop  r11
   pop  r10
 
@@ -1024,6 +1065,14 @@ inline %9Bh
 
 end
 
+// ; muln
+inline %9Ch
+
+  mov   eax, __n_1
+  imul  edx, eax
+
+end
+
 // ; savedp
 inline %0A0h
 
@@ -1195,6 +1244,14 @@ inline %2ABh
   mov r11, rdx
 
 end 
+
+// ; lloaddp
+inline %0ACh
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rdx, [rdi]
+
+end
 
 // ; callr
 inline %0B0h
@@ -1406,6 +1463,25 @@ inline %2C9h
   cmp rbx, r11
 
 end 
+
+// ; xcreater r
+inline %0CEh
+
+  mov  rax, [r10]
+  mov  ecx, page_ceil
+  shl  eax, 3
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOCPERM
+
+  mov  rcx, [r10]
+  shl  ecx, 3
+
+  mov  rax, __ptr64_1
+  mov  [rbx - elSizeOffset], rcx
+  mov  [rbx - elVMTOffset], rax
+
+end
 
 // ; system
 inline %0CFh
