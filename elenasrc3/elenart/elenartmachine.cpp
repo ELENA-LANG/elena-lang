@@ -193,3 +193,25 @@ void ELENARTMachine :: startSTA(SystemEnv* env, void* entry)
    // winding down system
    Exit(retVal);
 }
+
+int ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
+{
+   for (int i = 1; i < env->threadCounter; i++) {
+      if (!env->th_table[i].tt_argument)
+         return i;
+   }
+
+   return -1;
+}
+
+void* ELENARTMachine :: allocateThread(SystemEnv* env, void* arg, void* threadProc, int flags)
+{
+   int index = allocateThreadEntry(env);
+   if (index == -1)
+      return nullptr;
+
+   env->th_table[index].tt_argument = arg;
+
+   return __routineProvider.CreateThread(index, flags, threadProc);
+}
+

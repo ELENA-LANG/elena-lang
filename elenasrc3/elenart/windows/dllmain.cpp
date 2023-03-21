@@ -85,10 +85,10 @@ EXTERN_DLL_EXPORT void ExitLA(int retVal)
    __routineProvider.Exit(retVal);
 }
 
-EXTERN_DLL_EXPORT void* CreateThreadLA(void* arg, int flags)
+// NOTE : arg must be unique for every separate thread
+EXTERN_DLL_EXPORT void* CreateThreadLA(void* arg, void* threadProc, int flags)
 {
-   // !! temporal
-   return nullptr;
+   return machine->allocateThread(systemEnv, arg, threadProc, flags);
 }
 
 EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* criricalHandler, void* entryPoint, void* entryArg)

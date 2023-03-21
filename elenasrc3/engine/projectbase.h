@@ -55,6 +55,7 @@ namespace elena_lang
       GCMGSize,
       GCYGSize,
       EHTableEntrySize,
+      ThreadCounter,
 
       // flags
       DebugMode,

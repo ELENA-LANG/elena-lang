@@ -71,6 +71,7 @@ structure % CORE_THREAD_TABLE
   dd 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
   dd 0 // ; et_current             ; +x04   - pointer to the current exception struct
   dd 0 // ; tt_stack_frame         ; +x08   - pointer to the stack frame
+  dd 0 // ; tt_argument            ; +x0C   - pointer to the thread function
 
 end
  
@@ -104,6 +105,7 @@ structure %SYSTEM_ENV
   dd code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
+  // ; dd ThreadCounter
 
 end
 

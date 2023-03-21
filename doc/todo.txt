@@ -7,13 +7,11 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
-    * new opcode xloadarg : x86, x86-64, ppc64le, arm64
-
-    * x86 : multi-threading - new module, example - raising an error
-
     * x86 : multi-threading - project type
+
     * x86 : multi-threading - new core
     * x86 : multi-threading - open another thread
+    * x86 : multi-threading - example - print in another thread
 
     * review extensions warnings
     * review system warnings
@@ -34,6 +32,7 @@ In development:
     * new opcode xcreater : ppc64le, arm64
     * new opcode muln : ppc64le, arm64
     * new opcode lloaddp : ppc64le, arm64
+    * new opcode xloadarg : ppc64le, arm64
 
     === Iteration 15 ===
     ! x86 : gui

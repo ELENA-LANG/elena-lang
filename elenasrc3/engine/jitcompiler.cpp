@@ -71,6 +71,7 @@ CodeGenerator _codeGenerators[256] =
 constexpr int coreVariableNumber = 2;
 constexpr ref_t coreVariables[coreVariableNumber] =
 {
+   // NOTE: CORE_THREAD_TABLE should be the last one to allocate the correct number of entries
    CORE_GC_TABLE, CORE_THREAD_TABLE
 };
 
@@ -2465,13 +2466,18 @@ void JITCompiler :: loadCoreRoutines(
       dataScope, loader, coreVariableNumber, coreVariables,
       _preloaded, positions, _constants.inlineMask, declareMode);
 
+   // fill the required number of thread-table entries
+   if (settings.threadCounter > 1)
+      dataWriter.writeBytes(0, sizeof(ThreadTableEntry) * (settings.threadCounter - 1));
+
    // preload core constants
    JITCompilerScope rdataScope(helper, this, lh, &rdataWriter, nullptr, &_constants);
    loadPreloaded(rdataScope, loader, coreConstantNumber, coreConstants,
       _preloaded, positions, _constants.inlineMask, declareMode);
-   // NOTE : SYSTEM_ENV table is tailed with GCMGSize,GCYGSize,GCPERMSize,MaxThread
+   // NOTE : SYSTEM_ENV table is tailed with GCMGSize,GCYGSize,GCPERMSize,threadCounter
    rdataWriter.writeDWord(settings.mgSize);
    rdataWriter.writeDWord(settings.ygSize);
+   rdataWriter.writeDWord(settings.threadCounter);
 
    // preload core functions
    JITCompilerScope scope(helper, this, lh, &codeWriter, nullptr, &_constants);
@@ -2496,10 +2502,10 @@ void JITCompiler :: prepare(
    }
 }
 
-void JITCompiler :: populatePreloaded(uintptr_t env, uintptr_t eh_table, uintptr_t gc_table)
+void JITCompiler :: populatePreloaded(uintptr_t env, uintptr_t th_table, uintptr_t gc_table)
 {
    _preloaded.add(SYSTEM_ENV, (void*)env);
-   _preloaded.add(CORE_THREAD_TABLE, (void*)eh_table);
+   _preloaded.add(CORE_THREAD_TABLE, (void*)th_table);
    _preloaded.add(CORE_GC_TABLE, (void*)gc_table);
 }
 

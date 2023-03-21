@@ -497,6 +497,7 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker)
    imageInfo.autoClassSymbol = project.BoolSetting(ProjectOption::ClassSymbolAutoLoad);
    imageInfo.coreSettings.mgSize = project.IntSetting(ProjectOption::GCMGSize, _defaultCoreSettings.mgSize);
    imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);
+   imageInfo.coreSettings.threadCounter = project.IntSetting(ProjectOption::ThreadCounter, 1);
    imageInfo.ns = project.StringSetting(ProjectOption::Namespace);
 
    AddressMapper* addressMapper = nullptr;
@@ -591,6 +592,7 @@ int CompilingProcess :: build(Project& project,
       // generating target when required
       switch (targetType) {
          case PlatformType::Console:
+         case PlatformType::MTA_Console:
             link(project, linker);
             break;
          case PlatformType::Library:

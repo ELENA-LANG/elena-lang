@@ -92,6 +92,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _settings.alignment = codeAlignment;
    _settings.jitSettings.mgSize = _configuration->IntSetting(ProjectOption::GCMGSize, gcSettings.mgSize);
    _settings.jitSettings.ygSize = _configuration->IntSetting(ProjectOption::GCYGSize, gcSettings.ygSize);
+//   _settings.jitSettings.threadCounter = _configuration->IntSetting(ProjectOption::ThreadCounter, 1);
 
    // configurate the loader
    _configuration->initLoader(_libraryProvider);
@@ -104,7 +105,7 @@ void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* env)
    _presenter->print(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
    _presenter->print(ELENAVM_INITIALIZING);
 
-   _compiler->populatePreloaded((uintptr_t)env, (uintptr_t)env->eh_table, (uintptr_t)env->gc_table);
+   _compiler->populatePreloaded((uintptr_t)env, (uintptr_t)env->th_table, (uintptr_t)env->gc_table);
 
    linker.prepare(_compiler);
 

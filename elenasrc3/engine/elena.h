@@ -455,6 +455,7 @@ namespace elena_lang
    {
       pos_t    mgSize;
       pos_t    ygSize;
+      pos_t    threadCounter;
    };
 
    // --- LabelHelperBase ---

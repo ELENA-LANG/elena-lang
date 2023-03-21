@@ -160,6 +160,7 @@ namespace elena_lang
       uintptr_t        eh_critical;
       ExceptionStruct* eh_current;
       uintptr_t        tt_stack_frame;
+      void*            tt_argument;
    };
 
    // --- SystemEnv ---
@@ -167,11 +168,12 @@ namespace elena_lang
    {
       size_t            stat_counter;
       GCTable*          gc_table;
-      ThreadTableEntry* eh_table;
+      ThreadTableEntry* th_table;
       void*             bc_invoker;
       void*             veh_handler;
       pos_t             gc_mg_size;
       pos_t             gc_yg_size;
+      pos_t             threadCounter;
    };
 
    constexpr int SizeOfExceptionStruct32 = 0x10;

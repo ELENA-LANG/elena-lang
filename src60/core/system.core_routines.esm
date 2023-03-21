@@ -1206,6 +1206,7 @@ procedure __thread_create(self,arg,flags,ptr)
 
   call extern:CreateThreadLA (
      *arg, 
+     procedure:"system'core_routines'thread_start"
      *flags)
 
   peek       fp:ptr
@@ -1303,7 +1304,7 @@ procedure func_invoker(arg)
 
 end
 
-symbol thread_start
+procedure thread_start
 
   xloadarg    sp:1
 
@@ -1331,6 +1332,26 @@ symbol thread_start
 end
 
 symbol sta_start
+
+  open header [arg1],[envptr,ex_struct:ex_struct_size]
+  
+  xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
+
+  mov         env
+  save        dp:envptr
+  set         dp:envptr
+  store       fp:arg1
+
+  call extern:InitializeSTLA (
+     *arg1, 
+     procedure:"system'core_routines'startUpSymbols",
+     procedure:"system'core_routines'critical_exception_handler")
+
+  close       []
+
+end
+
+symbol mta_start
 
   open header [arg1],[envptr,ex_struct:ex_struct_size]
   

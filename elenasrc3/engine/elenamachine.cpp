@@ -15,7 +15,7 @@ using namespace elena_lang;
 void SystemRoutineProvider :: InitExceptionHandling(SystemEnv* env, void* criticalHandler)
 {
    // inti App criticaL handler
-   env->eh_table->eh_critical = (uintptr_t)criticalHandler;
+   env->th_table->eh_critical = (uintptr_t)criticalHandler;
 
    // inti OS criticaL handler
    InitCriticalStruct((uintptr_t)env->veh_handler);

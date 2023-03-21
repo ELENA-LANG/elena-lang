@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENACONST_H
@@ -235,6 +235,7 @@ namespace elena_lang
       // target types
       Library        = 0x00000,
       Console        = 0x01000,
+      MTA_Console    = 0x11000,
    };
 
    // --- ELENA Debug symbol constants ---

@@ -328,8 +328,10 @@ namespace elena_lang
    constexpr auto LINUX_X86_64_KEY = "Linux_AMD64";
    constexpr auto LINUX_PPC64le_KEY = "Linux_PPC64le";
    constexpr auto LINUX_ARM64_KEY = "Linux_ARM64";
+
    constexpr auto LIBRARY_KEY = "Library";
    constexpr auto CONSOLE_KEY = "STA Console";
+   constexpr auto MT_CONSOLE_KEY = "MTA Console";
    constexpr auto VM_CONSOLE_KEY = "VM STA Console";
 
    constexpr auto CONFIG_ROOT = "configuration";
@@ -360,20 +362,20 @@ namespace elena_lang
    inline ustr_t getPlatformName(PlatformType type)
    {
       switch (type) {
-      case PlatformType::Win_x86:
-         return WIN_X86_KEY;
-      case PlatformType::Win_x86_64:
-         return WIN_X86_64_KEY;
-      case PlatformType::Linux_x86:
-         return LINUX_X86_KEY;
-      case PlatformType::Linux_x86_64:
-         return LINUX_X86_64_KEY;
-      case PlatformType::Linux_PPC64le:
-         return LINUX_PPC64le_KEY;
-      case PlatformType::Linux_ARM64:
-         return LINUX_ARM64_KEY;
-      default:
-         return nullptr;
+         case PlatformType::Win_x86:
+            return WIN_X86_KEY;
+         case PlatformType::Win_x86_64:
+            return WIN_X86_64_KEY;
+         case PlatformType::Linux_x86:
+            return LINUX_X86_KEY;
+         case PlatformType::Linux_x86_64:
+            return LINUX_X86_64_KEY;
+         case PlatformType::Linux_PPC64le:
+            return LINUX_PPC64le_KEY;
+         case PlatformType::Linux_ARM64:
+            return LINUX_ARM64_KEY;
+         default:
+            return nullptr;
       }
    }
 
