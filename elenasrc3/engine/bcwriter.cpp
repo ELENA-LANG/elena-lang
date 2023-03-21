@@ -1355,6 +1355,11 @@ void peekArgument(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::PeekSI, node.arg.value);
 }
 
+void staticAssigning(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::StoreR, node.arg.value | mskStaticVariable);
+}
+
 inline void includeFrame(CommandTape& tape)
 {
    tape.write(ByteCode::Include);
@@ -1385,7 +1390,7 @@ ByteCodeWriter::Saver commands[] =
    genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
 
-   terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray
+   terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

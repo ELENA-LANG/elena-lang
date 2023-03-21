@@ -127,6 +127,7 @@ namespace elena_lang
       SavingLongIndex      = 0x0062,
       LongIntCondOp        = 0x0063,
       ConstArrayReference  = 0x0064,
+      StaticAssigning      = 0x0065,
 
       MaxOperationalKey    = 0x0061,
 

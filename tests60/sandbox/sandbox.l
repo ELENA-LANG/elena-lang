@@ -1,22 +1,26 @@
 import extensions;
 
-MyClass
+singleton Si
 {
-   Reference<int> R : prop;
+   static object field;
 
-   constructor()
+   set()
    {
-      R := 0;
+      field := 2;
+   }
+
+   print()
+   {
+      console.writeLine(field)
    }
 }
 
+
 public program()
 {
-   var r := new MyClass();
-   r.R.Value := 2;
+   Si.set();
 
-   console.writeLine(*r.R);
-
+   Si.print();
 
 //   var handle := Thread.assign(
 //   {

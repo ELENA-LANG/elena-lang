@@ -6673,6 +6673,11 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
          operand = target.reference;
          fieldMode = true;
          break;
+      case ObjectKind::StaticField:
+         scope.markAsAssigned(target);
+         operationType = BuildKey::StaticAssigning;
+         operand = target.reference;
+         break;
       case ObjectKind::FieldAddress:
          scope.markAsAssigned(target);
          fieldMode = true;
