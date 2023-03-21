@@ -197,6 +197,9 @@ ELENA byte codes (or ecodes)
 
    xflush sp:i              - sp[i] := cached_sp[i];
 
+   xloadarg sp:i            - load the argument passed from the external program;
+                              OS dependant; the size of arguments can be 4 / 8
+
    xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
 
    xstore fp:i, {prefix:}r  - sp[i] := r

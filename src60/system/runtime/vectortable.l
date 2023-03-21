@@ -87,12 +87,12 @@ public singleton PermVectorTable
       ^  false;
    }
 
-//   pointer allocate(object obj)
-//   {
-//      if (!self.isAvailable) {
-//         _chainItem := new PermVectorChain(_chainItem);
-//      };
-//
-//      pointer ptr := _chainItem.allocate(obj);
-//   }
+   pointer allocate(object obj)
+   {
+      if (!self.isAvailable) {
+         _chainItem := new PermVectorChain(_chainItem);
+      };
+
+      pointer ptr := _chainItem.allocate(obj);
+   }
 }

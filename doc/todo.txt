@@ -7,8 +7,7 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
-    * new class PermVectorArray
-    * new class PermVectorTable
+    * new opcode xloadarg : x86, x86-64, ppc64le, arm64
 
     * x86 : multi-threading - new module, example - raising an error
 
@@ -41,7 +40,7 @@ In development:
     ! api functionality for existing classes : rest of system
     ! api functionality for existing classes : externals
     ! elena sm : x86-64
-    ! ide : vm console
+    ! ide : vm console 
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
     ! sm : generate some basic templates from vm console - hello world sample
     ! elena sm : linux

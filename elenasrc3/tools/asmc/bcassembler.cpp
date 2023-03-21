@@ -944,6 +944,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::XSwapSI:
          case ByteCode::SwapSI:
          case ByteCode::XRefreshSI:
+         case ByteCode::XLoadArgSI:
             return compileOpStackI(tokenInfo, writer, opCommand, true);
          case ByteCode::SaveDP:
          case ByteCode::LSaveDP:

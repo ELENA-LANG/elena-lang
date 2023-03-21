@@ -1197,6 +1197,21 @@ procedure __perm_array_refer (self,index,retVal)
 
 end
 
+procedure __thread_create(self,arg,flags)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  call extern:CreateThreadLA (
+     *arg, 
+     *flags)
+
+  close      []
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION
@@ -1266,6 +1281,49 @@ labNext:
 
   close      []
   quit
+
+end
+
+procedure func_invoker(arg)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  peek       fp:arg
+  mov        mssg:"function:#invoke[1]" 
+  call       vt:0 
+
+  close      []
+  quit
+
+end
+
+symbol thread_start
+
+  xloadarg    sp:1
+
+  open header [arg1],[ptr,envptr,ex_struct:ex_struct_size]
+  
+  $save       dp:ptr
+
+  xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
+
+  mov         env
+  save        dp:envptr
+  set         dp:envptr
+  store       fp:arg1
+
+  call extern:StartThreadLA (
+     *arg1, 
+     procedure:"system'core_routines'critical_exception_handler",
+     procedure:"system'core_routines'func_invoker",
+     *ptr)
+
+  unhook
+
+  close       []
 
 end
 

@@ -1464,6 +1464,41 @@ inline %2C9h
 
 end 
 
+// ; xloadargsi
+inline %0CDh
+
+  mov rdx, [rsp + __arg32_1]
+
+end 
+
+// ; xloadarg si:1
+inline %1CDh
+
+  mov rdx, rdi
+
+end 
+
+// ; xloadarg si:2
+inline %2CDh
+
+  mov rdx, rsi
+
+end 
+
+// ; xloadarg si:3
+inline %3CDh
+
+ // ; mov rdi, rdi - idle operation
+
+end 
+
+// ; xloadarg si:4
+inline %4CDh
+
+  mov rdx, rcx
+
+end 
+
 // ; xcreater r
 inline %0CEh
 

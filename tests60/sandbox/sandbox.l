@@ -1,26 +1,23 @@
 import extensions;
 
-singleton Si
+public sealed const struct Handle
 {
-   static object field;
+   embeddable __ptr value;
 
-   set()
+   constructor(pointer ptr)
    {
-      field := 2;
+      value := ptr
    }
 
-   print()
+   bool isUnassigned()
    {
-      console.writeLine(field)
+      ^ value == 0;
    }
 }
 
 
 public program()
 {
-   Si.set();
-
-   Si.print();
 
 //   var handle := Thread.assign(
 //   {

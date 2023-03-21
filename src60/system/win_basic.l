@@ -2,11 +2,16 @@
 
 public sealed const struct Handle
 {
-   embeddable __word value[4];
+   embeddable __ptr value;
 
-   constructor(int intValue)
+   constructor(pointer ptr)
    {
-      value := intValue
+      value := ptr
+   }
+
+   bool isUnassigned()
+   {
+      ^ value == 0;
    }
 }
 

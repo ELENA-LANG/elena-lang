@@ -125,6 +125,7 @@ namespace elena_lang
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
 
+      XLoadArgSI     = 0xCD,
       XCreateR       = 0xCE,
       System         = 0xCF,
 

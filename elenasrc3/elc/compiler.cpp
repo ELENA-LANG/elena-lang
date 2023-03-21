@@ -4017,6 +4017,9 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
          return resolveArgArrayTemplate(scope, typeInfo.elementRef, declarationMode);
       case V_OBJARRAY:
          return resolveArrayTemplate(scope, typeInfo.elementRef, declarationMode);
+      case V_PTR32:
+      case V_PTR64:
+         return scope.moduleScope->buildins.pointerReference;
       default:
          throw InternalError(errFatalError);
    }
@@ -6755,6 +6758,9 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    SyntaxNode roperand, ExpressionAttribute mode)
 {
    ObjectInfo target = mapObject(scope, loperand, mode);
+   if (target.kind == ObjectKind::Unknown)
+      scope.raiseError(errUnknownObject, loperand.lastChild(SyntaxKey::TerminalMask));
+
    ObjectInfo exprVal = {};
 
    ref_t targetRef = retrieveStrongType(scope, target);
@@ -10085,6 +10091,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.closureTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, CLOSURE_FORWARD);
    moduleScope->buildins.lazyExpressionReference = safeMapWeakReference(moduleScope, forwardResolver, LAZY_FORWARD);
    moduleScope->buildins.dwordReference = safeMapReference(moduleScope, forwardResolver, DWORD_FORWARD);
+   moduleScope->buildins.pointerReference = safeMapReference(moduleScope, forwardResolver, PTR_FORWARD);
 
    moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);
    moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);

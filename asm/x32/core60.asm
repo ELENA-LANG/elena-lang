@@ -1396,6 +1396,13 @@ inline %1C9h
 
 end 
 
+// ; xloadargsi
+inline %0CDh
+
+  mov edx, [esp + __arg32_1]
+
+end 
+
 // ; xcreater r
 inline %0CEh
 

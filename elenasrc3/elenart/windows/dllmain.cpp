@@ -85,6 +85,25 @@ EXTERN_DLL_EXPORT void ExitLA(int retVal)
    __routineProvider.Exit(retVal);
 }
 
+EXTERN_DLL_EXPORT void* CreateThreadLA(void* arg, int flags)
+{
+   // !! temporal
+   return nullptr;
+}
+
+EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* criricalHandler, void* entryPoint, void* entryArg)
+{
+#ifdef DEBUG_OUTPUT
+   printf("StartThreadLA.6 %x,%x\n", (int)env, (int)criricalHandler);
+
+   fflush(stdout);
+#endif
+
+   __routineProvider.InitExceptionHandling(env, criricalHandler);
+
+   //machine->startThread(env, entryPoint, entryArg);
+}
+
 EXTERN_DLL_EXPORT void* CollectPermGCLA(size_t size)
 {
    return __routineProvider.GCRoutinePerm(systemEnv->gc_table, size);
