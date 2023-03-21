@@ -362,6 +362,7 @@ EXPRESSION ::=
 		| eps ^OBJECT }
 	| { string | integer | hexinteger | long | real | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP?
 	| "(" SUB_EXPRESSION L2_OP? L3_OP* L7_OP* L8_OP?
+	| "{" BLOCK ^CLOSURE
 	| "*" EXPRESSION ^VALUE_OPERATION
 	| "!" EXPRESSION ^NOT_OPERATION
 	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION

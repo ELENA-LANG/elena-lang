@@ -1151,7 +1151,7 @@ procedure __perm_vector_create
   open       (2),[]
 
   mov        n:10
-  xcreate    class:"system'runtime'PermVectorArray"
+  xcreate    class:"system'runtime'$private'PermVectorArray"
 
   close      []
 
@@ -1197,7 +1197,7 @@ procedure __perm_array_refer (self,index,retVal)
 
 end
 
-procedure __thread_create(self,arg,flags)
+procedure __thread_create(self,arg,flags,ptr)
 
   xflush     sp:0
   xflush     sp:1
@@ -1207,6 +1207,9 @@ procedure __thread_create(self,arg,flags)
   call extern:CreateThreadLA (
      *arg, 
      *flags)
+
+  peek       fp:ptr
+  $save
 
   close      []
 

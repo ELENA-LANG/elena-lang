@@ -14,6 +14,7 @@ public sealed struct ThreadHandle
       _actionPtr := PermVectorTable.allocate(f);
 
       _handle := self.createThreadHandle(_actionPtr, 4);
+
       if (_handle.isUnassigned()) {
          InvalidOperationException.raise();
       }

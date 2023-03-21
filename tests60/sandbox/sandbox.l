@@ -1,30 +1,14 @@
 import extensions;
-
-public sealed const struct Handle
-{
-   embeddable __ptr value;
-
-   constructor(pointer ptr)
-   {
-      value := ptr
-   }
-
-   bool isUnassigned()
-   {
-      ^ value == 0;
-   }
-}
-
+import system'threading;
 
 public program()
 {
+   var handle := Thread.assign(
+   {
+      console.writeLine("Hello from another thread");
+   });
+        
+   handle.start();
 
-//   var handle := Thread.assign(
-//   {
-//      console.writeLine("Hello from another thread");
-//   });
-//        
-//   handle.start()
-//
-//   console.readKey();
+   console.readKey();
 }
