@@ -1388,7 +1388,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       if (_module->mapSection(reference | mskVMTRef, true)) {
          bool templateBased = false;
          if (isTemplateBased(referenceName)) {
-            if (referenceName.findStr("$private@T1") != NOTFOUND_POS) {
+            if (referenceName.findStr("@T1") != NOTFOUND_POS && referenceName.findStr("$private")) {
                templateBased = true;
 
                parseTemplateName(properName);

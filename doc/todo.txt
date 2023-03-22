@@ -5,23 +5,15 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 14 ===
-    ! examples : all console, files examples
+    * examples : all console, files examples
 
-    * review extensions warnings
-    * review system warnings
-    * ldoc : system'collections (templates) / system'routines
+    * ldoc : system'routines
     * ide : change status to ready when writing / selecting files
 
     * ide : selecting with a mouse
     * ide : new source
     * ide : on start : set focus inside the edit frame if available
-
-    * prefix nullable / nable - allow to assign nil
-    * introduce Nullable structure
-    * elenavm : implementing dll api
-    * show the signature for the typecast message if possible
-    * ide : key combination doesn't work after closing the project
-    * #521 : create an example and close the ticket
+    * ldoc : get rid of BaseEnumerator<TupleTuple#2,T1,T2> and so on
 
     * new opcode xcreater : ppc64le, arm64
     * new opcode muln : ppc64le, arm64
@@ -53,6 +45,14 @@ In development:
     * by exiting thread (must be called on thread proc exit) - remove entry from table slots
     * for time being keep SINGLE_THREAD_CONTEXT empty, after the migrating it
       must be made empty 
+    * review extensions warnings
+    * review system warnings
+    * prefix nullable / nable - allow to assign nil
+    * introduce Nullable structure
+    * elenavm : implementing dll api
+    * show the signature for the typecast message if possible
+    * ide : key combination doesn't work after closing the project
+    * #521 : create an example and close the ticket
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop
