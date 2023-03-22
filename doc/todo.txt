@@ -7,6 +7,8 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
+    * allocating TLS for MTA
+
     * by starting new thread - adding a new entry
     * by exiting thread (must be called on thread proc exit)
     * on start of the thread assign the current tls to the slot

@@ -1482,3 +1482,20 @@ addr_t JITLinker :: resolveTemporalByteCode(MemoryDump& tapeSymbol, ModuleBase* 
 
    return vaddress;
 }
+
+addr_t JITLinker :: resolveTLSSection(JITCompilerBase* compiler)
+{
+   MemoryWriter tlsWriter(_imageProvider->getTLSSection());
+   compiler->allocateThreadContent(&tlsWriter);
+
+   MemoryBase* image = _imageProvider->getTargetSection(mskDataRef);
+   MemoryWriter writer(image);
+
+   // reserve space for TLS index
+   addr_t address = compiler->allocateVariable(writer, _virtualMode);
+
+   _compiler->populatePreloadedTLS(address);
+
+   return address;
+}
+

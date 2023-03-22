@@ -351,6 +351,7 @@ namespace elena_lang
    constexpr ref_t mskMBDataRef           = 0x05000000u;
    constexpr ref_t mskMDataRef            = 0x06000000u;
    constexpr ref_t mskStatDataRef         = 0x07000000u;
+   constexpr ref_t mskTLSRef              = 0x08000000u;
 
    // --- Address reference types ---
    // NOTE: Address reference types and Image reference types should not intersect
@@ -425,6 +426,8 @@ namespace elena_lang
    constexpr ref_t mskStatDataRef32Lo     = 0xA7000000u;
    constexpr ref_t mskStatXDisp32Hi       = 0x37000000u;
    constexpr ref_t mskStatXDisp32Lo       = 0x77000000u;
+
+   constexpr ref_t mskTLSRef32            = 0x88000000u;
 
    // --- Address predefined references ---
    constexpr ref_t INV_ARG                = 0x00000100u;

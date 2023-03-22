@@ -98,12 +98,15 @@ struct AddressSpace
    pos_t           headerSize;
    pos_t           codeSize, dataSize, unintDataSize, importSize;
    pos_t           imageSize;
+   pos_t           tlsSize;
 
    addr_t          imageBase;
    pos_t           code;
    pos_t           adata, mdata, mbdata, rdata;
    pos_t           data, stat;
    pos_t           import;
+   pos_t           tls;
+   pos_t           tlsDirectory;
 
    pos_t           entryPoint;
 
@@ -116,11 +119,14 @@ struct AddressSpace
       headerSize = codeSize = dataSize = 0;
       import = 0;
       unintDataSize = 0;
+      tlsSize = 0;
 
       importSize = imageSize = 0;
       imageBase = 0;
       code = adata = mdata = mbdata = rdata = 0;
       data = stat = 0;
+      tls = 0;
+      tlsDirectory = 0xFFFFFFFF;
 
       entryPoint = 0;
    }

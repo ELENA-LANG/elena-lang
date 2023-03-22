@@ -24,6 +24,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
    TargetImageInfo imageInfo, AddressMapperBase* addressMapper)
 {
    _systemTarget = systemTarget;
+   _tlsVariable = INVALID_ADDR;
 
    JITCompilerBase* compiler = jitCompilerFactory(loader, imageInfo.type);
 
@@ -46,6 +47,10 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
    prepareImage(imageInfo.ns);
 
    linker.prepare(compiler);
+
+   if (imageInfo.withTLS) {
+      _tlsVariable = linker.resolveTLSSection(compiler);
+   }
 
    if (_systemTarget == PlatformType::VMClient) {
       MemoryDump tape;

@@ -168,6 +168,7 @@ namespace elena_lang
       virtual MemoryBase* getImportSection() = 0;
       virtual MemoryBase* getDataSection() = 0;
       virtual MemoryBase* getStatSection() = 0;
+      virtual MemoryBase* getTLSSection() = 0;
 
       virtual MemoryBase* getTargetSection(ref_t targetMask)
       {
@@ -180,6 +181,8 @@ namespace elena_lang
                return getDataSection();
             case mskStatDataRef:
                return getStatSection();
+            case mskTLSRef:
+               return getTLSSection();
             default:
                return nullptr;
          }
@@ -189,6 +192,7 @@ namespace elena_lang
 
       virtual addr_t getEntryPoint() = 0;
       virtual addr_t getDebugEntryPoint() = 0;
+      virtual addr_t getTLSVariable() = 0;
 
       virtual ~ImageProviderBase() = default;
    };
@@ -554,9 +558,14 @@ namespace elena_lang
       virtual void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) = 0;
 
       virtual void populatePreloaded(uintptr_t env, uintptr_t eh_table, uintptr_t gc_table) = 0;
+      virtual void populatePreloadedTLS(uintptr_t tlsAddress) = 0;
 
       virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) = 0;
       virtual void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) = 0;
+
+      virtual addr_t allocateVariable(MemoryWriter& writer, bool virtualMode) = 0;
+
+      virtual void allocateThreadContent(MemoryWriter* tlsWriter) = 0;
 
       virtual ~JITCompilerBase() = default;
    };

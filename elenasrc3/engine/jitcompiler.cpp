@@ -2644,6 +2644,19 @@ void JITCompiler :: allocateBody(MemoryWriter& writer, int size)
       writer.writeByte(0);
 }
 
+void JITCompiler :: populatePreloadedTLS(uintptr_t tlsAddress)
+{
+   _preloaded.add(CORE_TLS_INDEX, (void*)tlsAddress);
+}
+
+void JITCompiler :: allocateThreadContent(MemoryWriter* tlsWriter)
+{
+   ThreadContent content = {};
+
+   // allocate tls section
+   tlsWriter->write(&content, (pos_t)sizeof(ThreadContent));
+}
+
 // --- JITCompiler32 ---
 
 inline void insertVMTEntry32(VMTEntry32* entries, pos_t count, pos_t index)
@@ -3079,6 +3092,17 @@ void JITCompiler32 :: writeAttribute(MemoryWriter& writer, int category, ustr_t 
    else writer.writeDWord(address);
 }
 
+addr_t JITCompiler32::allocateVariable(MemoryWriter& writer, bool virtualMode)
+{
+   pos_t position = writer.position();
+   writer.writeDWord(0);
+
+   if (virtualMode) {
+      return position;
+   }
+   else (addr_t)writer.Memory()->get(position);
+}
+
 // --- JITCompiler64 ---
 
 inline void insertVMTEntry64(VMTEntry64* entries, pos_t count, pos_t index)
@@ -3504,4 +3528,15 @@ void JITCompiler64 :: writeAttribute(MemoryWriter& writer, int category, ustr_t 
       writer.writeQReference((ref_t)address | mskCodeRef64, 0);
    }
    else writer.writeQWord(address);
+}
+
+addr_t JITCompiler64 :: allocateVariable(MemoryWriter& writer, bool virtualMode)
+{
+   pos_t position = writer.position();
+   writer.writeQWord(0);
+
+   if (virtualMode) {
+      return position;
+   }
+   else (addr_t)writer.Memory()->get(position);
 }

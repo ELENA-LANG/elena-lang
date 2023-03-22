@@ -28,6 +28,7 @@ namespace elena_lang
 
       virtual pos_t fillImportTable(ImportTable& importTable, AddressMap::Iterator it);
       virtual void createImportSection(ImageProviderBase& provider, RelocationMap& importMapping) = 0;
+      virtual void createTLSSection(ImageProviderBase& provider, AddressSpace& map) = 0;
 
       void mapImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections,
          pos_t sectionAlignment, pos_t fileAlignment);
@@ -51,6 +52,7 @@ namespace elena_lang
       }
 
       void createImportSection(ImageProviderBase& provider, RelocationMap& importMapping) override;
+      void createTLSSection(ImageProviderBase& provider, AddressSpace& map) override;
 
       void fixSection(MemoryBase* section, AddressSpace& map) override;
       void fixImportSection(MemoryBase* section, AddressSpace& map) override;
@@ -74,6 +76,7 @@ namespace elena_lang
       }
 
       void createImportSection(ImageProviderBase& provider, RelocationMap& importMapping) override;
+      void createTLSSection(ImageProviderBase& provider, AddressSpace& map) override;
 
       void fixSection(MemoryBase* section, AddressSpace& map) override;
       void fixImportSection(MemoryBase* section, AddressSpace& map) override;

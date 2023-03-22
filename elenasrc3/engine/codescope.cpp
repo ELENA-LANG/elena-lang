@@ -236,3 +236,8 @@ MemoryBase* ImageProvider :: getTargetDebugSection()
 {
    return &_debug;
 }
+
+MemoryBase* ImageProvider :: getTLSSection()
+{
+   return &_tls;
+}
