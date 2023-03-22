@@ -231,7 +231,7 @@ void ELENAVMMachine :: resumeVM(SystemEnv* env, void* criricalHandler)
 
    onNewCode();
 
-   __routineProvider.InitExceptionHandling(0, env, criricalHandler);
+   __routineProvider.InitSTAExceptionHandling(env, criricalHandler);
 }
 
 int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference)

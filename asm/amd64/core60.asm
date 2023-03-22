@@ -10,9 +10,10 @@ define GC_ALLOCPERM	    10005h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
-define CORE_SINGLE_CONTENT    2000Bh
+define CORE_SINGLE_CONTENT  2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
+define CORE_THREAD_TABLE    2000Fh
 
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
@@ -73,6 +74,12 @@ structure % CORE_SINGLE_CONTENT
   dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
 
 end
+ 
+structure % CORE_THREAD_TABLE
+
+  // ; dummy for STA
+
+end
 
 structure %CORE_GC_TABLE
 
@@ -100,10 +107,12 @@ structure %SYSTEM_ENV
   dq 0
   dq data : %CORE_GC_TABLE
   dq data : %CORE_SINGLE_CONTENT
+  dq 0
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
+  // ; dd ThreadCounter
 
 end
 

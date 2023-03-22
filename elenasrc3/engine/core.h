@@ -2,7 +2,7 @@
 //
 //		This file contains common ELENA Core constants
 //
-//                                              (C)2021-2022, by Aleksey Rakov
+//                                              (C)2021-2023, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #ifndef CORE_H
@@ -52,9 +52,10 @@ namespace elena_lang
    constexpr ref_t CORE_TOC                  = 0x20001;
    constexpr ref_t SYSTEM_ENV                = 0x20002;
    constexpr ref_t CORE_GC_TABLE             = 0x20003;
-   constexpr ref_t CORE_THREAD_TABLE         = 0x2000B;
+   constexpr ref_t CORE_SINGLE_CONTENT       = 0x2000B;
    constexpr ref_t VOIDOBJ                   = 0x2000D;
    constexpr ref_t VOIDPTR                   = 0x2000E;
+   constexpr ref_t CORE_THREAD_TABLE         = 0x2000F;
 
    // ELENA run-time exceptions
    constexpr int ELENA_ERR_CRITICAL          = 0x100;
@@ -154,13 +155,25 @@ namespace elena_lang
       uintptr_t core_catch_frame;
    };
 
-   // --- ThreadTableEntry ---
-   struct ThreadTableEntry
+   // --- ThreadContent ---
+   struct ThreadContent
    {
       uintptr_t        eh_critical;
       ExceptionStruct* eh_current;
       uintptr_t        tt_stack_frame;
-      void*            tt_argument;
+   };
+
+   // --- ThreadTable ---
+   struct ThreadSlot
+   {
+      void*          arg;
+      ThreadContent* content;
+   };
+
+   struct ThreadTable
+   {
+      size_t       counter;
+      ThreadSlot   slots[0x200]; // it is the maximal size, in reality it is depend on project settings
    };
 
    // --- SystemEnv ---
@@ -168,7 +181,8 @@ namespace elena_lang
    {
       size_t            stat_counter;
       GCTable*          gc_table;
-      ThreadTableEntry* th_table;
+      ThreadContent*    th_single_content;  // NOTE : used only for STA
+      ThreadTable*      th_table;           // NOTE : used only for MTA 
       void*             bc_invoker;
       void*             veh_handler;
       pos_t             gc_mg_size;

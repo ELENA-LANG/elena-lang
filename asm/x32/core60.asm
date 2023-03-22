@@ -11,6 +11,7 @@ define CORE_GC_TABLE   	    20003h
 define CORE_SINGLE_CONTENT  2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
+define CORE_THREAD_TABLE    2000Fh
 
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
@@ -71,10 +72,15 @@ structure % CORE_SINGLE_CONTENT
   dd 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
   dd 0 // ; et_current             ; +x04   - pointer to the current exception struct
   dd 0 // ; tt_stack_frame         ; +x08   - pointer to the stack frame
-  dd 0 // ; tt_argument            ; +x0C   - pointer to the thread function
 
 end
  
+structure % CORE_THREAD_TABLE
+
+  // ; dummy for STA
+
+end
+
 structure %CORE_GC_TABLE
 
   dd 0 // ; gc_header             : +00h
@@ -101,6 +107,7 @@ structure %SYSTEM_ENV
   dd 0
   dd data : %CORE_GC_TABLE
   dd data : %CORE_SINGLE_CONTENT
+  dd 0
   dd code : %INVOKER
   dd code : %VEH_HANDLER
   // ; dd GCMGSize

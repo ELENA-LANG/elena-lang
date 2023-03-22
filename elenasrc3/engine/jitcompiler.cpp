@@ -68,11 +68,11 @@ CodeGenerator _codeGenerators[256] =
 };
 
 // preloaded gc routines
-constexpr int coreVariableNumber = 2;
+constexpr int coreVariableNumber = 3;
 constexpr ref_t coreVariables[coreVariableNumber] =
 {
    // NOTE: CORE_THREAD_TABLE should be the last one to allocate the correct number of entries
-   CORE_GC_TABLE, CORE_THREAD_TABLE
+   CORE_GC_TABLE, CORE_SINGLE_CONTENT, CORE_THREAD_TABLE
 };
 
 constexpr int coreConstantNumber = 4;
@@ -2515,7 +2515,7 @@ void JITCompiler :: loadCoreRoutines(
 
    // fill the required number of thread-table entries
    if (settings.threadCounter > 1)
-      dataWriter.writeBytes(0, sizeof(ThreadTableEntry) * (settings.threadCounter - 1));
+      dataWriter.writeBytes(0, sizeof(ThreadSlot) * (settings.threadCounter - 1));
 
    // preload core constants
    JITCompilerScope rdataScope(helper, this, lh, &rdataWriter, nullptr, &_constants);

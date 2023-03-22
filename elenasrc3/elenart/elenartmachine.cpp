@@ -196,9 +196,12 @@ void ELENARTMachine :: startSTA(SystemEnv* env, void* entry)
 
 int ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
 {
-   for (int i = 1; i < env->threadCounter; i++) {
-      if (!env->th_table[i].tt_argument)
-         return i;
+   if (env->th_table->counter < env->threadCounter) {
+      int index = env->th_table->counter;
+
+      env->th_table->counter++;
+
+      return index;
    }
 
    return -1;
@@ -210,7 +213,7 @@ void* ELENARTMachine :: allocateThread(SystemEnv* env, void* arg, void* threadPr
    if (index == -1)
       return nullptr;
 
-   env->th_table[index].tt_argument = arg;
+   env->th_table->slots[index].arg = arg;
 
    return __routineProvider.CreateThread(index, flags, threadProc);
 }

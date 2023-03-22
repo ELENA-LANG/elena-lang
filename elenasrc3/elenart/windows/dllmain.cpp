@@ -70,7 +70,7 @@ EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entry, void* c
    fflush(stdout);
 #endif
 
-   __routineProvider.InitExceptionHandling(0, env, criricalHandler);
+   __routineProvider.InitSTAExceptionHandling(env, criricalHandler);
 
    machine->startSTA(env, entry);
 }
@@ -99,7 +99,7 @@ EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* criricalHandler, void
    fflush(stdout);
 #endif
 
-   __routineProvider.InitExceptionHandling(entryIndex, env, criricalHandler);
+   //__routineProvider.InitExceptionHandling(entryIndex, env, criricalHandler);
 
    //machine->startThread(env, entryPoint, entryArg);
 }
