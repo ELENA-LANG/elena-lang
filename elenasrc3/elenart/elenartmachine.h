@@ -39,6 +39,7 @@ namespace elena_lang
 
    public:
       void startSTA(SystemEnv* env, void* entry);
+      void startThread(SystemEnv* env, void* entryPoint, int index);
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
       size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);

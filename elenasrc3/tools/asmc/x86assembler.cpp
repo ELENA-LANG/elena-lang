@@ -482,6 +482,14 @@ X86Operand X86Assembler :: compileOperand(ScriptToken& tokenInfo, ustr_t errorMe
       operand.type = X86OperandType::ST;
       operand.offset = readStReg(tokenInfo);
    }
+   else if (tokenInfo.compare("fs")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+      operand = readPtrOperand(tokenInfo, X86OperandType::M32, errorMessage);
+      if (operand.prefix != SegmentPrefix::None) {
+         throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
+      }
+      else operand.prefix = SegmentPrefix::FS;
+   }
    else {
       operand = defineOperand(tokenInfo, X86OperandType::DD, errorMessage);
       if (operand.type != X86OperandType::Unknown) {
@@ -1706,6 +1714,10 @@ bool X86Assembler :: compileLea(X86Operand source, X86Operand target, MemoryWrit
 
 bool X86Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
+   if (target.prefix == SegmentPrefix::FS) {
+      writer.writeByte(0x64);
+   }
+
    if(source.type == X86OperandType::EAX && target.type == X86OperandType::Disp32) {
       writer.writeByte(0xA1);
       if (target.reference != 0) {

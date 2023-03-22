@@ -100,6 +100,12 @@ namespace elena_lang
       Factor8    = 0xC0000000
    };
 
+   enum class SegmentPrefix : unsigned int
+   {
+      None  = 0,
+      FS    = 0x64
+   };
+
    // --- X86JumpType ---
    enum class X86JumpType : unsigned int
    {
@@ -154,6 +160,7 @@ namespace elena_lang
       X86OperandType type;
       ref_t          reference;
       int            offset;
+      SegmentPrefix  prefix;
 
       bool isR8() const
       {
@@ -236,6 +243,7 @@ namespace elena_lang
          this->offset = 0;
          this->factorReg = this->ebpReg = false;
          this->accReg = false;
+         this->prefix = SegmentPrefix::None;
       }
       X86Operand(X86OperandType type)
       {
@@ -245,6 +253,7 @@ namespace elena_lang
          this->factorReg = false;
          this->ebpReg = (type == X86OperandType::EBP || this->type == X86OperandType::RBP);
          this->accReg = (type == X86OperandType::EAX || this->type == X86OperandType::RAX);
+         this->prefix = SegmentPrefix::None;
       }
    };
 

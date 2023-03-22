@@ -133,7 +133,7 @@ int ELENAMachine :: execute(SystemEnv* env, void* symbolListEntry)
    int retVal = 0;
    try
    {
-      retVal = entry.evaluate(symbolListEntry, 0);
+      retVal = entry.evaluate(symbolListEntry, nullptr);
    }
    catch (InternalError&)
    {
@@ -141,6 +141,16 @@ int ELENAMachine :: execute(SystemEnv* env, void* symbolListEntry)
 
       retVal = -1;
    }
+
+   return retVal;
+}
+
+int ELENAMachine::execute(SystemEnv* env, void* threadEntry, void* threadFunc)
+{
+   Entry entry;
+   entry.address = env->bc_invoker;
+
+   int retVal = entry.evaluate(threadEntry, threadFunc);
 
    return retVal;
 }

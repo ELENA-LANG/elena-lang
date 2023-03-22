@@ -218,3 +218,12 @@ void* ELENARTMachine :: allocateThread(SystemEnv* env, void* arg, void* threadPr
    return __routineProvider.CreateThread(index, flags, threadProc);
 }
 
+void ELENARTMachine :: startThread(SystemEnv* env, void* entry, int index)
+{
+   void* arg = env->th_table->slots[index].arg;
+   // executing the program
+   int retVal = execute(env, entry, arg);
+
+   // winding down thread
+   //ExitThread(retVal);
+}

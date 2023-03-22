@@ -107,7 +107,7 @@ EXTERN_DLL_EXPORT void* CreateThreadLA(void* arg, void* threadProc, int flags)
    return machine->allocateThread(systemEnv, arg, threadProc, flags);
 }
 
-EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* criricalHandler, void* entryPoint, int entryIndex)
+EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* criricalHandler, void* entryPoint, int index)
 {
 #ifdef DEBUG_OUTPUT
    printf("StartThreadLA.6 %x,%x\n", (int)env, (int)criricalHandler);
@@ -115,9 +115,9 @@ EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* criricalHandler, void
    fflush(stdout);
 #endif
 
-   //__routineProvider.InitExceptionHandling(entryIndex, env, criricalHandler);
+   __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
 
-   //machine->startThread(env, entryPoint, entryArg);
+   machine->startThread(env, entryPoint, index);
 }
 
 EXTERN_DLL_EXPORT void* CollectPermGCLA(size_t size)

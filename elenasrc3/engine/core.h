@@ -167,8 +167,8 @@ namespace elena_lang
    // --- ThreadTable ---
    struct ThreadSlot
    {
-      void*          arg;
       ThreadContent* content;
+      void*          arg;
    };
 
    struct ThreadTable
@@ -199,7 +199,7 @@ namespace elena_lang
    {
       union {
          void* address;
-         int  (*evaluate)(void*, int);
+         int  (*evaluate)(void*, void*);
       };
 
       Entry()

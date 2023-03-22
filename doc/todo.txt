@@ -7,22 +7,6 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
-    * allocating TLS for MTA
-
-    * by starting new thread - adding a new entry
-    * by exiting thread (must be called on thread proc exit)
-    * on start of the thread assign the current tls to the slot
-    * for time being keep SINGLE_THREAD_CONTEXT empty, after the migrating it
-      must be made empty 
-
-    * for MTA : THREAD_TABLE, sor STA : THREAD_TABLE - empty
-
-    * x86 : multi-threading - project type
-
-    * x86 : multi-threading - new core
-    * x86 : multi-threading - open another thread
-    * x86 : multi-threading - example - print in another thread
-
     * review extensions warnings
     * review system warnings
     * ldoc : system'collections (templates) / system'routines
@@ -66,6 +50,9 @@ In development:
     * Dynamic programming in ELENA : bf loop - https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
     * ELENA Script Engine : compiling JavaScript file - https://www.reddit.com/r/elena_lang/comments/6h6nyz/elena_script_engine_compiling_javascript_file/
     * method templates
+    * by exiting thread (must be called on thread proc exit) - remove entry from table slots
+    * for time being keep SINGLE_THREAD_CONTEXT empty, after the migrating it
+      must be made empty 
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop

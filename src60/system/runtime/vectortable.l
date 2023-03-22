@@ -94,5 +94,7 @@ public singleton PermVectorTable
       };
 
       pointer ptr := _chainItem.allocate(obj);
+
+      ^ ptr;
    }
 }

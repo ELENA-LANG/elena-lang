@@ -81,6 +81,7 @@ namespace elena_lang
    {
    public:
       int execute(SystemEnv* env, void* symbolListEntry);
+      int execute(SystemEnv* env, void* threadEntry, void* threadFunc);
 
       ELENAMachine() = default;
 

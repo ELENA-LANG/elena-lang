@@ -1148,9 +1148,11 @@ procedure __perm_vector_create
   xflush     sp:0
   xflush     sp:1
 
-  open       (2),[]
+  open       (2),[],[len]
 
-  mov        n:10
+  nsave      dp:len, 10
+  set        dp:len  
+  store      sp:0
   xcreate    class:"system'runtime'$private'PermVectorArray"
 
   close      []
@@ -1161,7 +1163,7 @@ procedure __perm_array_set
 
  peek       sp:1
  load
- peek       sp:1
+ peek       sp:2
  swap       sp:0
  xassign
 
@@ -1174,6 +1176,7 @@ procedure __perm_array_refer (self,index,retVal)
 
   open       (2),[],[ptr:ptr_size,ptr_index:8]
 
+  set        fp:self
   $load                   // ; get the 
   $save      dp:ptr
 
@@ -1296,7 +1299,8 @@ procedure func_invoker(arg)
   open       (2),[]
 
   peek       fp:arg
-  mov        mssg:"function:#invoke[1]" 
+  get        i:0
+  mov        mssg:"function:#invoke[0]" 
   call       vt:0 
 
   close      []
@@ -1308,11 +1312,13 @@ procedure thread_start
 
   xloadarg    sp:1
 
+  system      3
+
   open header [arg1],[ptr,envptr,ex_struct:ex_struct_size]
   
   $save       dp:ptr
 
-//  xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
+  xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
 
   mov         env
   save        dp:envptr
@@ -1325,7 +1331,7 @@ procedure thread_start
      procedure:"system'core_routines'func_invoker",
      *ptr)
 
-//  unhook
+  unhook
 
   close       []
   quit
@@ -1353,6 +1359,10 @@ symbol sta_start
 end
 
 symbol mta_start
+
+  // ; initialize TLS entry
+  mov         n:0
+  system      3
 
   open header [arg1],[envptr,ex_struct:ex_struct_size]
   
