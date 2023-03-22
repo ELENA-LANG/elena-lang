@@ -19,4 +19,10 @@ public sealed struct ThreadHandle
          InvalidOperationException.raise();
       }
    }
+
+   start()
+   {
+      extern KERNEL32.ResumeThread(_handle)
+   }
+
 }

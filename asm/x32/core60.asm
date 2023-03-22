@@ -8,7 +8,7 @@ define GC_ALLOCPERM	    10005h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE   	    20003h
-define CORE_THREAD_TABLE    2000Bh
+define CORE_SINGLE_CONTENT  2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
@@ -66,7 +66,7 @@ structure % CORE_TOC
 
 end
 
-structure % CORE_THREAD_TABLE
+structure % CORE_SINGLE_CONTENT
 
   dd 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
   dd 0 // ; et_current             ; +x04   - pointer to the current exception struct
@@ -100,7 +100,7 @@ structure %SYSTEM_ENV
 
   dd 0
   dd data : %CORE_GC_TABLE
-  dd data : %CORE_THREAD_TABLE
+  dd data : %CORE_SINGLE_CONTENT
   dd code : %INVOKER
   dd code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -146,7 +146,7 @@ labYGCollect:
   push ebp
 
   // ; lock frame
-  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], esp
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], esp
 
   push ecx
   
@@ -165,7 +165,7 @@ labYGCollect:
   push ecx
 
   // ;   collect frames
-  mov  eax, [data : %CORE_THREAD_TABLE + tt_stack_frame]  
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
   mov  ecx, eax
 
 labYGNextFrame:
@@ -220,7 +220,7 @@ inline % GC_COLLECT
   push ebp
 
   // ; lock frame
-  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], esp
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], esp
 
   push ecx
   
@@ -239,7 +239,7 @@ inline % GC_COLLECT
   push ecx
 
   // ;   collect frames
-  mov  eax, [data : %CORE_THREAD_TABLE + tt_stack_frame]  
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
   mov  ecx, eax
 
 labYGNextFrame:
@@ -303,7 +303,7 @@ labPERMCollect:
   push esi
 
   // ; lock frame
-  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], esp
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], esp
 
   push ecx
   call extern "$rt.CollectPermGCLA"
@@ -397,7 +397,7 @@ end
 // ; throw
 inline %0Ah
 
-  mov  eax, [data : %CORE_THREAD_TABLE + et_current]
+  mov  eax, [data : %CORE_SINGLE_CONTENT + et_current]
   jmp  [eax + es_catch_addr]
 
 end
@@ -405,13 +405,13 @@ end
 // ; unhook
 inline %0Bh
 
-  mov  edi, [data : %CORE_THREAD_TABLE + et_current]
+  mov  edi, [data : %CORE_SINGLE_CONTENT + et_current]
 
   mov  eax, [edi + es_prev_struct]
   mov  ebp, [edi + es_catch_frame]
   mov  esp, [edi + es_catch_level]
 
-  mov  [data : %CORE_THREAD_TABLE + et_current], eax
+  mov  [data : %CORE_SINGLE_CONTENT + et_current], eax
 
 end
 
@@ -454,7 +454,7 @@ end
 inline % 10h
                                                        
   push ebp     
-  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], esp
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], esp
 
 end
 
@@ -2131,14 +2131,14 @@ end
 inline %0E6h
 
   lea  edi, [ebp + __arg32_1]
-  mov  eax, [data : %CORE_THREAD_TABLE + et_current]
+  mov  eax, [data : %CORE_SINGLE_CONTENT + et_current]
 
   mov  [edi + es_prev_struct], eax
   mov  [edi + es_catch_frame], ebp
   mov  [edi + es_catch_level], esp
   mov  [edi + es_catch_addr], __ptr32_2
 
-  mov  [data : %CORE_THREAD_TABLE + et_current], edi
+  mov  [data : %CORE_SINGLE_CONTENT + et_current], edi
 
 end
 

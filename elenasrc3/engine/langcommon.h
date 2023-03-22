@@ -358,6 +358,7 @@ namespace elena_lang
 
    constexpr auto MGSIZE_PATH = "linker/mgsize";
    constexpr auto YGSIZE_PATH = "linker/ygsize";
+   constexpr auto THREAD_COUNTER = "linker/threadcounter";
 
    inline ustr_t getPlatformName(PlatformType type)
    {

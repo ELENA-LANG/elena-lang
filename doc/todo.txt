@@ -7,6 +7,17 @@ In development:
     === Iteration 14 ===
     ! examples : all console, files examples
 
+    * rename THREAD_TABLE -> SINGLE_THREAD_CONTEXT
+
+    * introduce new THREAD_TABLE - containers counter and list of slots
+    * by starting new thread - adding a new entry
+    * by exiting thread (must be called on thread proc exit)
+    * on start of the thread assign the current tls to the slot
+    * for time being keep SINGLE_THREAD_CONTEXT empty, after the migrating it
+      must be made empty 
+
+    * for MTA : THREAD_TABLE, sor STA : THREAD_TABLE - empty
+
     * x86 : multi-threading - project type
 
     * x86 : multi-threading - new core

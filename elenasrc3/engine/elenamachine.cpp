@@ -12,13 +12,15 @@ using namespace elena_lang;
 
 // --- SystemRoutineProvider ---
 
-void SystemRoutineProvider :: InitExceptionHandling(SystemEnv* env, void* criticalHandler)
+void SystemRoutineProvider :: InitExceptionHandling(int index, SystemEnv* env, void* criticalHandler)
 {
    // inti App criticaL handler
-   env->th_table->eh_critical = (uintptr_t)criticalHandler;
+   env->th_table[index].eh_critical = (uintptr_t)criticalHandler;
 
-   // inti OS criticaL handler
-   InitCriticalStruct((uintptr_t)env->veh_handler);
+   if (index == 0) {
+      // inti OS criticaL handler
+      InitCriticalStruct((uintptr_t)env->veh_handler);
+   }
 }
 
 void SystemRoutineProvider :: Init(SystemEnv* env, SystemSettings settings)

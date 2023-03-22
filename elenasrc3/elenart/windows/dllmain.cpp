@@ -70,7 +70,7 @@ EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entry, void* c
    fflush(stdout);
 #endif
 
-   __routineProvider.InitExceptionHandling(env, criricalHandler);
+   __routineProvider.InitExceptionHandling(0, env, criricalHandler);
 
    machine->startSTA(env, entry);
 }
@@ -91,7 +91,7 @@ EXTERN_DLL_EXPORT void* CreateThreadLA(void* arg, void* threadProc, int flags)
    return machine->allocateThread(systemEnv, arg, threadProc, flags);
 }
 
-EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* criricalHandler, void* entryPoint, void* entryArg)
+EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* criricalHandler, void* entryPoint, int entryIndex)
 {
 #ifdef DEBUG_OUTPUT
    printf("StartThreadLA.6 %x,%x\n", (int)env, (int)criricalHandler);
@@ -99,7 +99,7 @@ EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* criricalHandler, void
    fflush(stdout);
 #endif
 
-   __routineProvider.InitExceptionHandling(env, criricalHandler);
+   __routineProvider.InitExceptionHandling(entryIndex, env, criricalHandler);
 
    //machine->startThread(env, entryPoint, entryArg);
 }

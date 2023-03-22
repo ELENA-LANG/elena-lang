@@ -55,7 +55,7 @@ CodeGenerator _codeGenerators[256] =
    compileJge, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
-   loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadStackIndexOp, loadROp, loadSysOp,
+   loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadArgIndexOp, loadROp, loadSysOp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop, loadNop, loadNop,
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop,
@@ -605,7 +605,54 @@ void elena_lang :: loadFieldIndexOp(JITCompilerScope* scope)
    writer->seekEOF();
 }
 
-void elena_lang::loadStackIndexOp(JITCompilerScope* scope)
+void elena_lang :: loadArgIndexOp(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   void* code = retrieveCode(scope);
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   arg_t arg1 = scope->command.arg1;
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case ARG32_1:
+            writer->writeDWord(arg1 << scope->constants->indexPower);
+            break;
+         case NARG_1:
+            writer->writeDWord(arg1);
+            break;
+         case ARG16_1:
+            writer->writeWord((unsigned short)arg1 << scope->constants->indexPower);
+            break;
+         case INV_ARG16_1:
+            writer->writeWord((unsigned short)-(arg1 << scope->constants->indexPower));
+            break;
+         case ARG12_1:
+            scope->compiler->writeImm12(writer, arg1 << scope->constants->indexPower, 0);
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
+      //else writeCoreReference();
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
+void elena_lang :: loadStackIndexOp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 

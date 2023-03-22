@@ -10,5 +10,5 @@ public program()
         
    handle.start();
 
-   console.readKey();
+   console.readChar();
 }

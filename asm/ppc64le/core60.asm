@@ -6,7 +6,7 @@ define VEH_HANDLER          10003h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
-define CORE_THREAD_TABLE    2000Bh
+define CORE_SINGLE_CONTENT    2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
@@ -82,7 +82,7 @@ structure % CORE_TOC
 
 end
  
-structure % CORE_THREAD_TABLE
+structure % CORE_SINGLE_CONTENT
 
   dq 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
@@ -111,7 +111,7 @@ structure %SYSTEM_ENV
 
   dq 0  
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_THREAD_TABLE
+  dq data : %CORE_SINGLE_CONTENT
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -166,8 +166,8 @@ labYGCollect:
 
   // ; lock frame
   ld      r16, toc_data(r2)
-  addis   r16, r16, data_disp32hi : %CORE_THREAD_TABLE
-  addi    r16, r16, data_disp32lo : %CORE_THREAD_TABLE
+  addis   r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi    r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
   std     r1, tt_stack_frame(r16)
 
   std     r18, -08h(r1)  
@@ -344,8 +344,8 @@ end
 inline %0Ah
 
   ld      r16, toc_data(r2)
-  addis   r16, r16, data_disp32hi : %CORE_THREAD_TABLE
-  addi    r16, r16, data_disp32lo : %CORE_THREAD_TABLE
+  addis   r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi    r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
 
   ld      r17, et_current(r16)
   ld      r0, es_catch_addr(r17)
@@ -358,8 +358,8 @@ end
 inline %0Bh
 
   ld      r16, toc_data(r2)
-  addis   r16, r16, data_disp32hi : %CORE_THREAD_TABLE
-  addi    r16, r16, data_disp32lo : %CORE_THREAD_TABLE
+  addis   r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi    r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
 
   ld      r19, et_current(r16)
 
@@ -419,8 +419,8 @@ inline % 10h
   addi    r1, r1, -16    // ; allocate raw stack
 
   ld      r16, toc_data(r2)
-  addis   r16, r16, data_disp32hi : %CORE_THREAD_TABLE
-  addi    r16, r16, data_disp32lo : %CORE_THREAD_TABLE
+  addis   r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi    r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
   std     r1, tt_stack_frame(r16)
 
 end
@@ -2247,8 +2247,8 @@ inline %0E6h
   addi    r19, r31, __arg16_1
 
   ld      r14, toc_data(r2)
-  addis   r14, r14, data_disp32hi : %CORE_THREAD_TABLE
-  addi    r14, r14, data_disp32lo : %CORE_THREAD_TABLE
+  addis   r14, r14, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi    r14, r14, data_disp32lo : %CORE_SINGLE_CONTENT
 
   ld      r15, et_current(r14)
 

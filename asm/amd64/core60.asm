@@ -10,7 +10,7 @@ define GC_ALLOCPERM	    10005h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
-define CORE_THREAD_TABLE    2000Bh
+define CORE_SINGLE_CONTENT    2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
@@ -66,7 +66,7 @@ structure % CORE_TOC
 
 end
  
-structure % CORE_THREAD_TABLE
+structure % CORE_SINGLE_CONTENT
 
   dq 0 // ; et_crtitical_handler   ; +x00   - pointer to ELENA exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
@@ -99,7 +99,7 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_THREAD_TABLE
+  dq data : %CORE_SINGLE_CONTENT
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
@@ -147,7 +147,7 @@ labYGCollect:
   push rbp
 
   // ; lock frame
-  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
 
   push rcx
 
@@ -167,7 +167,7 @@ labYGCollect:
   push rcx
 
   // ;   collect frames
-  mov  rax, [data : %CORE_THREAD_TABLE + tt_stack_frame]  
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
   mov  rcx, rax
 
 labYGNextFrame:
@@ -224,7 +224,7 @@ inline % GC_COLLECT
   push rbp
 
   // ; lock frame
-  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
 
   push rcx
 
@@ -244,7 +244,7 @@ inline % GC_COLLECT
   push rcx
 
   // ;   collect frames
-  mov  rax, [data : %CORE_THREAD_TABLE + tt_stack_frame]  
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
   mov  rcx, rax
 
 labYGNextFrame:
@@ -312,7 +312,7 @@ labPERMCollect:
   push r11
 
   // ; lock frame
-  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
 
   // ; call GC routine
   sub  rsp, 30h
@@ -409,7 +409,7 @@ end
 // ; throw
 inline %0Ah
 
-  mov  rax, [data : %CORE_THREAD_TABLE + et_current]
+  mov  rax, [data : %CORE_SINGLE_CONTENT + et_current]
   jmp  [rax + es_catch_addr]
 
 end
@@ -417,13 +417,13 @@ end
 // ; unhook
 inline %0Bh
 
-  mov  rdi, [data : %CORE_THREAD_TABLE + et_current]
+  mov  rdi, [data : %CORE_SINGLE_CONTENT + et_current]
 
   mov  rax, [rdi + es_prev_struct]
   mov  rbp, [rdi + es_catch_frame]
   mov  rsp, [rdi + es_catch_level]
 
-  mov  [data : %CORE_THREAD_TABLE + et_current], rax
+  mov  [data : %CORE_SINGLE_CONTENT + et_current], rax
 
 end
 
@@ -467,7 +467,7 @@ inline % 10h
 
   push 0                                                     
   push rbp     
-  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
 
 end
 
@@ -2031,14 +2031,14 @@ inline %0E6h
 
   lea  rdi, [rbp + __arg32_1]
   mov  rcx, __ptr64_2
-  mov  rax, [data : %CORE_THREAD_TABLE + et_current]
+  mov  rax, [data : %CORE_SINGLE_CONTENT + et_current]
 
   mov  [rdi + es_prev_struct], rax
   mov  [rdi + es_catch_frame], rbp
   mov  [rdi + es_catch_level], rsp
   mov  [rdi + es_catch_addr], rcx
 
-  mov  [data : %CORE_THREAD_TABLE + et_current], rdi
+  mov  [data : %CORE_SINGLE_CONTENT + et_current], rdi
 
 end
 
