@@ -21,6 +21,14 @@ void SystemRoutineProvider :: InitSTAExceptionHandling(SystemEnv* env, void* cri
    InitCriticalStruct((uintptr_t)env->veh_handler);
 }
 
+void SystemRoutineProvider :: InitMTAExceptionHandling(SystemEnv* env, int index, void* criticalHandler)
+{
+   env->th_table->slots[index].content->eh_critical = (uintptr_t)criticalHandler;
+
+   if (index == 0)
+      InitCriticalStruct((uintptr_t)env->veh_handler);
+}
+
 void SystemRoutineProvider :: Init(SystemEnv* env, SystemSettings settings)
 {
    int page_mask = settings.page_mask;

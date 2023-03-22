@@ -37,8 +37,6 @@ namespace elena_lang
 
       void Exit(int exitCode);
 
-      int allocateThreadEntry(SystemEnv* env);
-
    public:
       void startSTA(SystemEnv* env, void* entry);
 
@@ -55,6 +53,8 @@ namespace elena_lang
       {
          __routineProvider.InitRandomSeed(seed, __routineProvider.GenerateSeed());
       }
+
+      int allocateThreadEntry(SystemEnv* env);
 
       void* allocateThread(SystemEnv* env, void* arg, void* threadProc, int flags);
 

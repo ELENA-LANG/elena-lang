@@ -2513,7 +2513,7 @@ void JITCompiler :: loadCoreRoutines(
       dataScope, loader, coreVariableNumber, coreVariables,
       _preloaded, positions, _constants.inlineMask, declareMode);
 
-   // fill the required number of thread-table entries
+   // fill the required number of thread-table slots
    if (settings.threadCounter > 1)
       dataWriter.writeBytes(0, sizeof(ThreadSlot) * (settings.threadCounter - 1));
 
@@ -2644,9 +2644,16 @@ void JITCompiler :: allocateBody(MemoryWriter& writer, int size)
       writer.writeByte(0);
 }
 
-void JITCompiler :: populatePreloadedTLS(uintptr_t tlsAddress)
+addr_t JITCompiler :: allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter& writer)
 {
-   _preloaded.add(CORE_TLS_INDEX, (void*)tlsAddress);
+   pos_t position = writer.position();
+   addr_t address = helper->calculateVAddress(writer, _constants.inlineMask);
+
+   allocateVariable(writer);
+
+   _preloaded.add(CORE_TLS_INDEX, (void*)address);
+
+   return position;
 }
 
 void JITCompiler :: allocateThreadContent(MemoryWriter* tlsWriter)
@@ -3092,15 +3099,9 @@ void JITCompiler32 :: writeAttribute(MemoryWriter& writer, int category, ustr_t 
    else writer.writeDWord(address);
 }
 
-addr_t JITCompiler32::allocateVariable(MemoryWriter& writer, bool virtualMode)
+void JITCompiler32 :: allocateVariable(MemoryWriter& writer)
 {
-   pos_t position = writer.position();
    writer.writeDWord(0);
-
-   if (virtualMode) {
-      return position;
-   }
-   else (addr_t)writer.Memory()->get(position);
 }
 
 // --- JITCompiler64 ---
@@ -3530,13 +3531,7 @@ void JITCompiler64 :: writeAttribute(MemoryWriter& writer, int category, ustr_t 
    else writer.writeQWord(address);
 }
 
-addr_t JITCompiler64 :: allocateVariable(MemoryWriter& writer, bool virtualMode)
+void JITCompiler64 :: allocateVariable(MemoryWriter& writer)
 {
-   pos_t position = writer.position();
    writer.writeQWord(0);
-
-   if (virtualMode) {
-      return position;
-   }
-   else (addr_t)writer.Memory()->get(position);
 }

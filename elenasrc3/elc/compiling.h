@@ -104,7 +104,7 @@ namespace elena_lang
          pos_t defaultRawStackAlignment,
          pos_t defaultEHTableEntrySize,
          int minimalArgList);
-      void link(Project& project, LinkerBase& linker);
+      void link(Project& project, LinkerBase& linker, bool withTLS);
 
    public:
       void greeting();

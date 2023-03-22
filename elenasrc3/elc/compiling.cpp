@@ -487,7 +487,7 @@ void CompilingProcess :: compile(ProjectBase& project,
    _presenter->print(ELC_SUCCESSFUL_COMPILATION);
 }
 
-void CompilingProcess :: link(Project& project, LinkerBase& linker)
+void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS)
 {
    _presenter->print(ELC_LINKING);
 
@@ -499,6 +499,7 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker)
    imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);
    imageInfo.coreSettings.threadCounter = project.IntSetting(ProjectOption::ThreadCounter, 1);
    imageInfo.ns = project.StringSetting(ProjectOption::Namespace);
+   imageInfo.withTLS = withTLS;
 
    AddressMapper* addressMapper = nullptr;
    if (project.BoolSetting(ProjectOption::MappingOutputMode))
@@ -592,8 +593,10 @@ int CompilingProcess :: build(Project& project,
       // generating target when required
       switch (targetType) {
          case PlatformType::Console:
+            link(project, linker, false);
+            break;
          case PlatformType::MTA_Console:
-            link(project, linker);
+            link(project, linker, true);
             break;
          case PlatformType::Library:
             //do nothing

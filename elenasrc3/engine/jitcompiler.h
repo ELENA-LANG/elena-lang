@@ -202,7 +202,8 @@ namespace elena_lang
       void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) override;
 
       void populatePreloaded(uintptr_t env, uintptr_t eh_table, uintptr_t gc_table) override;
-      void populatePreloadedTLS(uintptr_t tlsAddress) override;
+
+      addr_t allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter& writer) override;
 
       void allocateThreadContent(MemoryWriter* tlsWriter) override;
 
@@ -285,7 +286,7 @@ namespace elena_lang
       void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
       void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) override;
 
-      addr_t allocateVariable(MemoryWriter& writer, bool virtualMode) override;
+      void allocateVariable(MemoryWriter& writer) override;
 
       JITCompiler32()
          : JITCompiler()
@@ -360,7 +361,7 @@ namespace elena_lang
       void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
       void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) override;
 
-      addr_t allocateVariable(MemoryWriter& writer, bool virtualMode) override;
+      void allocateVariable(MemoryWriter& writer) override;
 
       JITCompiler64()
          : JITCompiler()

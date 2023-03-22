@@ -75,6 +75,22 @@ EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entry, void* c
    machine->startSTA(env, entry);
 }
 
+EXTERN_DLL_EXPORT void InitializeMTLA(SystemEnv* env, SymbolList* entry, void* criricalHandler)
+{
+   systemEnv = env;
+
+#ifdef DEBUG_OUTPUT
+   printf("InitializeSTA.6 %x,%x\n", (int)env, (int)criricalHandler);
+
+   fflush(stdout);
+#endif
+
+   int index = machine->allocateThreadEntry(env);
+   __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
+
+   machine->startSTA(env, entry);
+}
+
 EXTERN_DLL_EXPORT void ExitLA(int retVal)
 {
    if (retVal) {

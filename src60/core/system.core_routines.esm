@@ -1363,7 +1363,7 @@ symbol mta_start
   set         dp:envptr
   store       fp:arg1
 
-  call extern:InitializeSTLA (
+  call extern:InitializeMTLA (
      *arg1, 
      procedure:"system'core_routines'startUpSymbols",
      procedure:"system'core_routines'critical_exception_handler")

@@ -558,12 +558,13 @@ namespace elena_lang
       virtual void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) = 0;
 
       virtual void populatePreloaded(uintptr_t env, uintptr_t eh_table, uintptr_t gc_table) = 0;
-      virtual void populatePreloadedTLS(uintptr_t tlsAddress) = 0;
 
       virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) = 0;
       virtual void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) = 0;
 
-      virtual addr_t allocateVariable(MemoryWriter& writer, bool virtualMode) = 0;
+      virtual void allocateVariable(MemoryWriter& writer) = 0;
+
+      virtual addr_t allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter& writer) = 0;
 
       virtual void allocateThreadContent(MemoryWriter* tlsWriter) = 0;
 
