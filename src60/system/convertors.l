@@ -757,6 +757,12 @@ public singleton stringConvertor
       ^ String.fromByteArray(0, length, buffer);      
    }
 
+   string convert(BaseVariable v)
+      <= convert(*v);
+    
+   string convert(BaseVariable v, int radix)
+      <= convert(*v, radix);
+
    string convert(o)
       = o.toPrintable();
 }

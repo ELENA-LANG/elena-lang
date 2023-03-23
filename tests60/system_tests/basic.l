@@ -482,3 +482,30 @@ public singleDispatchTest()
    Assert.ifTrue(dispatcher.check(arg2) == 2);
    console.writeLine(".");
 }
+
+sealed class VariadicTester
+{
+    bool test1Passed := false;
+    
+    testTwoArgs(params int[] args)
+    {
+        int length := args.Length;
+
+        test1Passed := length == 2;
+    }
+
+    validate()
+    {
+       Assert.ifTrue(test1Passed);
+    }
+}
+
+variadicTest()
+{
+   console.write("variadicTest:");
+
+   auto strong := new VariadicTester();
+   strong.testTwoArgs(2,3);
+   strong.validate();
+   console.writeLine(".");
+}

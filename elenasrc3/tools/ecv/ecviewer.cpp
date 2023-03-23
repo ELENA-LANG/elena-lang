@@ -536,6 +536,14 @@ void ByteCodeViewer :: printByteCodes(MemoryBase* section, pos_t address, int in
    }
 }
 
+void ByteCodeViewer :: printMethodInfo(MethodInfo& info)
+{
+   IdentifierString flags("          @hints:");
+   flags.appendHex(info.hints);
+
+   printLine(*flags);
+}
+
 void ByteCodeViewer :: printSymbol(ustr_t name)
 {
    // find symbol section
@@ -776,6 +784,10 @@ void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
          }
 
          printLine(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)), *line);
+
+         if (_showMethodInfo)
+            printMethodInfo(methodInfo);
+
          printByteCodes(code, entry.codeOffset, 4, _pageSize);
          printLine("@end");
 
@@ -915,6 +927,10 @@ void ByteCodeViewer :: runSession()
             case 'b':
                _showBytecodes = !_showBytecodes;
                _presenter->print("Bytecode mode is %s", _showBytecodes ? "true" : "false");
+               break;
+            case 'h':
+               _showMethodInfo = !_showMethodInfo;
+               _presenter->print("Method hint mode is %s", _showMethodInfo ? "true" : "false");
                break;
             default:
                printHelp();
