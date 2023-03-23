@@ -28,6 +28,7 @@ namespace elena_lang
       bool              property;
       bool              cast;
       bool              function;
+      bool              variadic;
 
       StringList        paramTypes;
       StringList        paramNames;
@@ -36,6 +37,7 @@ namespace elena_lang
          : extensionOne(false), paramTypes(nullptr), paramNames(nullptr)
       {
          function = cast = property = special = false;
+         variadic = false;
       }
    };
 

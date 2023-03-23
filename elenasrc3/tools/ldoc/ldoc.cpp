@@ -707,17 +707,27 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
    else {
       writer.writeText("(");
 
+      bool last = false;
       bool first = true;
       auto it = info->paramTypes.start();
       auto name_it = info->paramNames.start();
       while (!name_it.eof()) {
+         last = name_it.last();
+
          if (!first) {
             writer.writeText(", ");
          }
          else first = false;
 
          if (!it.eof()) {
-            writeType(writer, *it);
+            if (last && info->variadic) {
+               writer.writeText("<i>params</i> ");
+               writeType(writer, *it);
+               writer.writeText("<i>[]</i>");
+            }
+            else {
+               writeType(writer, *it);
+            }
             writer.writeText(" ");
             writer.writeText(*name_it);
             ++it;
@@ -1165,6 +1175,10 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
                apiMethodInfo->prefix.append("set ");
             }
             else apiMethodInfo->prefix.append("get ");
+         }
+         if ((*apiMethodInfo->name).startsWith("params:")) {
+            apiMethodInfo->name.cut(0, 7);
+            apiMethodInfo->variadic = true;
          }
          if ((*apiMethodInfo->name).startsWith("typecast:#cast")) {
             apiMethodInfo->name.cut(0, 10);

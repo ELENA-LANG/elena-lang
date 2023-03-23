@@ -210,7 +210,14 @@ public singleton intConvertor
    {
       int len := s.Length;
       int val := 0;
-      for (int i := 0, i < len, i := i + 1) {
+      int start := 0;
+      bool inverted := false;
+      if (s[0]==$45) {
+         start := 1;
+         inverted := true;
+      };
+
+      for (int i := start, i < len, i := i + 1) {
          byte c := s[i];
          int ch := c;
          ch := ch - 48;
@@ -219,6 +226,10 @@ public singleton intConvertor
          };
          val := val * radix;
          val := val + ch;
+      };
+
+      if (inverted) {
+         val := -val;
       };
 
       ^ val

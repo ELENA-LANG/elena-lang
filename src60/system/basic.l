@@ -782,7 +782,7 @@ public const struct ShortNumber : IntBaseNumber,
 public const struct IntNumber : IntBaseNumber,
    info("A signed 32 bit integer")
 {
-   embeddable __int theValue[4];
+   embeddable __int _value[4];
 
    static int MinValue
             : info("Creates the object with the minimal value")
@@ -827,11 +827,11 @@ public const struct IntNumber : IntBaseNumber,
 
    bool equal(long n)
             : info("Compares the integer value")
-      = new LongNumber(theValue).equal(n);
+      = new LongNumber(_value).equal(n);
 
    bool equal(real n)
             : info("Compares the integer value")
-      = new RealNumber(theValue).equal(n);
+      = new RealNumber(_value).equal(n);
 
    bool less(byte b)
             : info("Compares the integer value")
@@ -847,20 +847,20 @@ public const struct IntNumber : IntBaseNumber,
 
    bool less(long n)
             : info("Compares the integer value")
-      = new LongNumber(theValue).less(n);
+      = new LongNumber(_value).less(n);
 
    bool less(real n)
             : info("Compares the integer value")
-      = new RealNumber(theValue).less(n);
+      = new RealNumber(_value).less(n);
 
    bool equal(int n)
-      = theValue == n; 
+      = _value == n; 
 
    bool notequal(int n)
-      = theValue != n;
+      = _value != n;
 
    bool less(int n)
-      = theValue < n;
+      = _value < n;
 
    add(o)
      <= add(cast int(o));
@@ -876,19 +876,19 @@ public const struct IntNumber : IntBaseNumber,
 
    int add(int n)
             : info("Returns the sum")
-      = theValue + n;   
+      = _value + n;   
 
    int subtract(int n)
             : info("Returns the difference")
-      = theValue - n;   
+      = _value - n;   
 
    int multiply(int n)
             : info("Returns the product")
-      = theValue * n;   
+      = _value * n;   
 
    int divide(int n)
             : info("Returns the result of integer division")
-      = theValue / n;   
+      = _value / n;   
 
    int add(byte n)
             : info("Returns the sum")
@@ -974,15 +974,15 @@ public const struct IntNumber : IntBaseNumber,
 
    int band(int n)
             : info("Returns the result of bitwise AND operation")
-      = theValue & n;
+      = _value & n;
 
    int bor(int n)
             : info("Returns the result of bitwise OR operation")
-      = theValue | n;
+      = _value | n;
 
    int bxor(int n)
             : info("Returns the result of bitwise XOR operation")
-      = theValue ^ n;
+      = _value ^ n;
 
    int band(byte n)
             : info("Returns the result of bitwise AND operation")
@@ -1045,25 +1045,26 @@ public const struct IntNumber : IntBaseNumber,
 
    int clone()
             : info("Clones the value")
-      = new IntNumber(theValue);
+      = new IntNumber(_value);
 
    int shiftLeft(int val)
-      = theValue $shl val;
+      = _value $shl val;
    
    int shiftRight(int val)
-      = theValue $shr val;
+      = _value $shr val;
 
    get int BInverted()
             : info("Bitwise inversion")
-      = ~theValue;
+      = ~_value;
 
    get int Negative()
-      = -theValue;
+//      = -_value;
+      = 0 - _value;
 
    bool allMask(int operand)
          : info("Returns true if all the mask bits are set")
    {
-      int v := operand & theValue;
+      int v := operand & _value;
         
       ^ v == operand
    }
@@ -1071,7 +1072,7 @@ public const struct IntNumber : IntBaseNumber,
    bool anyMask(int operand)
          : info("Returns true if any of the mask bits are set")
    {
-      int v := operand & theValue;
+      int v := operand & _value;
         
       ^ v != 0
    }        

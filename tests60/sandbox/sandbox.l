@@ -2,7 +2,5 @@ import extensions;
 
 public program()
 {
-   var s := "-2";
-   
-   console.printLine(s,"=",s.toInteger());
+   var n := "-2".toInt();
 }
