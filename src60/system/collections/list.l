@@ -540,6 +540,300 @@ namespace collections
       }
    }
 
+   // --- List ---    
+
+   sealed class ListItem
+   {
+      object   _content;
+      ListItem _next;
+        
+      /// Creates a new item
+      constructor new(object)
+      {
+         _content := object
+      }
+    
+      /// Returns the item object
+      get() = _content;
+                
+      /// Sets the item object
+      set(object)
+      {
+         _content := object
+      }
+    
+      ListItem NextItem
+      {
+         /// Returns the next item
+         get() = _next;
+          
+         /// Sets the next item  
+         set(next)
+         {
+            _next := next
+         }
+      }
+   }
+
+   public sealed class List : Enumerable,
+         info("A list of objects")
+   {
+      Reference<int> _count;
+      ListItem       _top;
+      ListItem       _last;
+    
+      /// Creates a list
+      constructor()
+      {
+         _count := 0
+      }
+    
+      constructor(Array l)
+      {
+         _count := 0;
+            
+         auto it := l.enumerator();
+         while (it.next())
+         {
+            self.append(*it)
+         }
+      }
+    
+      /// Returns the top item
+      internal ListItem TopItem = _top;
+    
+      append(object)
+      {
+         _count.append(1);
+         if(nil == _top)
+         {
+            _top := ListItem.new(object);
+            _last := _top
+         }
+         else
+         {
+            auto newItem := ListItem.new(object);
+                
+            _last.NextItem := newItem;
+            _last:= newItem
+         }
+      }
+    
+      insert(object)
+      {
+         _count.append(1);
+            
+         auto newItem := ListItem.new(object);
+         newItem.NextItem := _top;
+         _top := newItem
+      }
+        
+      /// Returns the list item at the specified position
+      internal ListItem getItemAt(int index)
+      {
+         int      currentIndex := index;
+         ListItem item := _top;
+            
+         while (currentIndex > 0)
+         {
+            item := item.NextItem;
+            if (nil == item)
+               { OutOfRangeException.raise() };
+                
+            currentIndex := currentIndex - 1
+         };
+            
+         ^ item
+      }
+    
+      /// Returns the object at the specified position
+      at(int index)
+         = self.getItemAt(index).get();
+    
+      /// Returns the object at the specified position
+      setAt(int index, object object)
+         = self.getItemAt(index).set(object);
+    
+      /// Inserts a new object to the specified position
+      insert(int index, object object)
+      {
+         if (index == 0)
+         { 
+            self.insert(object)
+         }
+         else {
+            auto newItem := ListItem.new(object);
+            auto prevItem := self.getItemAt(index);
+            newItem.NextItem := prevItem.NextItem;
+            prevItem.NextItem := newItem;
+         }
+      }
+    
+      /// Removes an object at the specified position
+      remove(int index)
+      {
+         if (nil == _top)
+            { OutOfRangeException.raise() };
+            
+         if (0 == index)
+         {
+            _top := _top.NextItem;
+            if (nil == _top)
+               { _last := nil }
+         }
+         else
+         {
+            ListItem previous := self.getItemAt(index - 1);
+            ListItem next := previous.NextItem;
+                
+            previous.NextItem := next.NextItem;
+                
+            if(next.equalReference(_last))
+               { _last := previous }
+         };
+                
+         _count.reduce(1)
+      }
+            
+      removeAt(index)
+         <= remove(cast int(index));
+    
+      int Length
+      {
+         /// Reads the number of list item to the output parameter
+         get()
+         {
+            int retVal := *_count; 
+                
+            ^ retVal
+         }
+      }
+        
+      /// Clears the list
+      clear() 
+      {
+         _count.Value := 0;
+            
+         _top := nil;
+         _last := nil;
+      }
+    
+      /// Returns the list enumerator
+      Enumerator enumerator() = new ListEnumerator(self);
+    
+      /// Returns the list indexer
+      Indexer indexer() = new ListIndexer(self);
+    
+      /// Clones the list
+      List clone() 
+      {
+         auto list := new List();
+            
+         ListItem item := _top;        
+         while (nil != item)
+         {
+            list.append(item.get());
+                
+            item := item.NextItem
+         };
+            
+         ^ list
+      }
+   }
+
+   // --- ListEnumerator ---
+   class ListEnumerator : Enumerator
+   {
+      List     _list;
+      ListItem _current;
+        
+      /// Creates a list enumerator
+      constructor(List list)
+      {
+         _list := list
+      }
+    
+      /// Returns the current object
+      get Value() = _current.get();
+        
+      /// Resets the enumerator
+      reset()
+      {
+         _current := nil
+      }
+    
+      /// Goes to the next enumeration member and returns true if it is not the last member
+      bool next()
+      {
+         if (nil == _current)
+         { 
+            _current := _list.TopItem 
+         }
+         else
+         { 
+            _current := _current.NextItem 
+         };
+                
+         ^ nil != _current
+      }
+        
+      enumerable() = _list;
+   }
+    
+   // --- ListIndexer ---
+    
+   /// A list indexer
+   class ListIndexer : Indexer
+   {
+      List           _list;
+      ListItem       _current;
+      Reference<int> _index;
+        
+      /// Creates a list indexer
+      constructor(List list)
+      {
+         _list := list;
+         _current := list.TopItem;
+         _index := 0;
+      }
+    
+      /// Returns false if the index out of range
+      get bool Available() = nil != _current;
+   
+      /// Returns the current member
+      get Value() = _current.get();
+        
+      /// Sets the current member
+      set Value(o)
+      {
+         _current.set(o)
+      }
+        
+      /// Reads the current index into an output parameter
+      get int Index()
+      {
+         ^ _index.Value
+      }
+        
+      set Index(int n)
+      {
+         _index.Value := n
+      }
+        
+      appendIndex(int offs)
+      {
+         int i := _index.Value;
+         i := i + offs;
+            
+         self.Index := i
+      }
+        
+      get int Length()
+      {
+         ^ _list.Length
+      }
+   }
+
    // --- List ---
    public sealed List<T> : Enumerable<T>
    {

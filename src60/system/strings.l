@@ -377,7 +377,7 @@ public const struct String : BaseValue,
       string retVal := String.allocate(len1-length);
 
       self.copySubS(retVal, self, 0, index);
-      self.copySubS(retVal, self, sindex, len1 - length, index);
+      self.copySubS(retVal, self, index, len1 - sindex, sindex);
     
       ^ retVal;         
    }

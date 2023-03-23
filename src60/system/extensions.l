@@ -223,6 +223,69 @@ public extension stringOp : String
       ^ n != -1
    }
 
+    
+   string trimLeft(char ch)
+   {
+      int  index := 0;
+      int  len := self.Length;
+      char current := $0;
+      int  chLen := ch.Length;
+        
+      while(index < len)
+      {
+         current := self[index];
+            
+         ifnot(current == ch)
+         { 
+            if (index == 0)
+            { 
+               ^ self 
+            }
+            else
+            { 
+               ^ self.delete(0, index) 
+            }
+         };
+            
+         index += chLen
+      };
+        
+      ^ emptyString
+   }
+    
+   string trimLeft()
+      = self.trimLeft($32);
+       
+   string trimRight(char ch)
+   {
+      int  len := self.Length;
+      int  index := len - 1;
+      int  prev := len;
+      char current := $0;
+      int  chLen := ch.Length;
+        
+      while (index >= 0)
+      {
+         current := self[index];
+            
+         ifnot (current == ch)
+            { ^ self.delete(prev,len - prev) };
+            
+         prev := index;
+         index -= chLen
+      };
+        
+      ^ emptyString
+   }
+    
+   string trimRight()
+      = self.trimRight($32);
+        
+   string trim(char ch)
+      = self.trimLeft(ch).trimRight(ch);
+    
+   string trim()
+      = self.trimLeft($32).trimRight($32);
 }
 
 // --- charOp ---
