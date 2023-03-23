@@ -220,6 +220,9 @@ ROOT_EXPRESSION ::=
 				| ASSIGN EXPRESSION ^PROPERTY_OPERATION
 				| eps ^PROPERTY_OPERATION }
 			| eps ^OBJECT }
+		| reference { 
+			L3 ^OBJECT MESSAGE L3_R 
+			| eps ^OBJECT }
 		| L0 ^OBJECT L0_R {
 			L1_OP
 			| L3 MESSAGE {

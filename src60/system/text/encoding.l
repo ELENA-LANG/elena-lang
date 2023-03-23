@@ -64,7 +64,7 @@ namespace text
 
    }
 
-   // --- UTF16Encoding ---
+   // --- UTF8Encoding ---
    public singleton UTF8Encoding
    {
       string toString(int index, int size, byte[] buffer)
@@ -84,4 +84,8 @@ namespace text
        }
    }
 
+   // --- UTF8Encoder ---
+   public sealed UTF8Encoder
+   {
+   }   
 }
