@@ -5,8 +5,7 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 14 ===
-    * ldoc : system'routines
-    * examples : datetime, goods, matrix
+    * examples : goods, datetime, matrix
     * ide : change status to ready when writing / selecting files
     * examples : pi, p2, random 
     * ide : selecting with a mouse

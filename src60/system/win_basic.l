@@ -35,6 +35,15 @@ public sealed const struct UnsafePointer
         
       ^ s
    }
+
+   wide cast()
+   {
+      int  len := extern KERNEL32.lstrlenW(self);
+      wide s := WideString.allocate(len);
+      extern KERNEL32.lstrcpyW(s, self);
+        
+      ^ s
+   }
 }
 
 // --- CallStack ---

@@ -21,6 +21,7 @@
         <include>basic.l</include>
         <include>tests.l</include>
         <include>random.l</include>
+        <include>win_args.l</include>
         <include>text\strings.l</include>
         <include>text\words.l</include>
      </module>

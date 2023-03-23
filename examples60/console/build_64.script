@@ -57,3 +57,13 @@
  else
    echo .
  fi
+
+ ../../bin/elena64-cli -pgoods goods.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi

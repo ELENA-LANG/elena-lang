@@ -1,5 +1,3 @@
-import extensions;
-
 singleton CommandLineFactory
 {
     wide load()
@@ -12,8 +10,3 @@ singleton CommandLineFactory
 
 public commandLine = 
     CommandLineFactory.load();
-
-public program()
-{
-   var s := commandLine;
-}

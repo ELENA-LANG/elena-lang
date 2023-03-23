@@ -104,7 +104,7 @@ namespace collections
          auto it := _list.enumerator();
          while (it.next())
          {
-            list.append(*it.Item2)
+            list.append((*it).Item2)
          };
             
          ^ list.Value

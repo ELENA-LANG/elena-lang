@@ -515,7 +515,7 @@ L3_F ::=
 L3_SINGLE_EXPRESSION ::=
 	identifier ^OBJECT
 	| reference ^OBJECT 
-	| { string | integer | hexinteger } ^OBJECT
+	| { string | integer | hexinteger | character } ^OBJECT
 	| "(" SUB_L3_SINGLE_EXPRESSION;
 
 L6_EXPRESSION ::=
