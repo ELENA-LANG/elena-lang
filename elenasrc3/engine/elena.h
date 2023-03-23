@@ -819,6 +819,7 @@ namespace elena_lang
          _string[index] = 0;
       }
 
+      NamespaceString() = default;
       NamespaceString(ustr_t rootNs, ustr_t referenceName)
       {
          copy(rootNs);

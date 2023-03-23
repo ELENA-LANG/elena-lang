@@ -37,3 +37,23 @@
  else
    echo .
  fi
+
+ ../../bin/elena64-cli -pbinary binary.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena64-cli -pbsort bsort.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi

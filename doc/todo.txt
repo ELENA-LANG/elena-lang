@@ -5,9 +5,11 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 14 ===
-    * test : variadic arguments
+    * input negative number
 
-    * examples : binary, bsort collatz
+    * examples : collatz
+    * ldoc : symbol should return the type and it should be possible to see its api (e.g. system'console)
+    * ldoc : support variadic argument list
     * ldoc : system'routines
     * examples : datetime, goods, matrix
     * ide : change status to ready when writing / selecting files
@@ -131,8 +133,6 @@ Backlog:
     * optimization : WinEncoder.convertChar (do not use the intermediate buffer)
     * elena : (see system'text'Encoder, it should be possible to pass byref argument further)
     * console symbol should be strong one
-    * ldoc : extensions - no extensions
-    * ldoc : symbol should return the type and it should be possible to see its api
     * ldoc : all symbols should be in alphabetic order
     * ldoc : consoleOp extension should be visible
     * debugger watch: variadic argument list
