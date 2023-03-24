@@ -24,6 +24,14 @@ public sealed Array<T> : Indexable<T>
       }
    }
 
+   static copyTo(Array<T> target, Array<T> source, int index, int length)
+   {      
+      for(int i := 0 , i < length, i += 1)
+      {
+         target[i + index] := source[i]
+      }
+   }
+
    static move(Array<T> target, int index, int length, int offset)
    {
       for (int i := 0, i < length, i += 1)

@@ -155,7 +155,7 @@ namespace text
             self.reserve(length);
     
             int bufIndex := *_length;
-            Array<char>.copy(_buffer, array, bufIndex, length);
+            Array<char>.copyTo(_buffer, array, bufIndex, length);
     
             _length.append(length)
          }
