@@ -7,6 +7,8 @@ namespace io
       constructor assign(string path)
       {
          _path := path
-      }      
+      }
+
+      TextReader textreader() = fileControl.newReader(_path);
    }
 }

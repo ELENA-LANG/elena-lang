@@ -187,4 +187,9 @@ namespace io
          _stream.close()
       }
    }
+
+   singleton fileControl
+   {
+      TextReader newReader(path) = TextStreamReader.new:path;
+   }
 }

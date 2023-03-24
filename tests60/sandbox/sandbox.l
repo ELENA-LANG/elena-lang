@@ -1,11 +1,23 @@
 import system'io;
 import system'text;
 import extensions;
+import extensions'routines;
 
 public program()
 {
-   var reader := TextStreamReader.new("sandbox.l");
+//   File.assign("sandbox.l").forEachLine:(line)
+//   {
+//      console.printLine(line);
+//   };
 
-   var line := reader.readLine();
-   var line2 := reader.readLine();
+   var f := TextStreamReader.new("sandbox.l");
+   var l1 := f.readLine();
+   console.printLine(l1);
+   var l2 := f.readLine();
+   console.printLine(l2);
+   var l3 := f.readLine();
+   console.printLine(l3);
+   var l4 := f.readLine();
+   console.printLine(l4);
+
 }
