@@ -46,6 +46,7 @@ namespace elena_lang
       Singleton,
       InternalProcedure,
       Param,
+      ParamReference,
       VArgParam,
       ParamAddress,
       ByRefParam,

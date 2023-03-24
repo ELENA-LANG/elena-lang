@@ -3680,7 +3680,7 @@ ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& sc
    return tempLocal;
 }
 
-inline bool isBoxingRequired(ObjectInfo info)
+inline bool isBoxingRequired(ObjectInfo info, bool allowByRefParam)
 {
    switch (info.kind) {
       case ObjectKind::LocalAddress:
@@ -3690,6 +3690,9 @@ inline bool isBoxingRequired(ObjectInfo info)
       case ObjectKind::SelfBoxableLocal:
       case ObjectKind::FieldAddress:
          return true;
+      case ObjectKind::ParamReference:
+         if (!allowByRefParam)
+            return true;
       default:
          return false;
    }
@@ -3804,7 +3807,7 @@ ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, Ob
 
    info = boxArgumentLocally(writer, scope, info, stackSafe);
 
-   if (!stackSafe && isBoxingRequired(info)) {
+   if (!stackSafe && isBoxingRequired(info, allowingRefArg)) {
       ObjectKey key = { info.kind, info.reference };
 
       if (!boxInPlace)
@@ -3903,6 +3906,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::Local:
       case ObjectKind::TempLocal:
       case ObjectKind::ParamAddress:
+      case ObjectKind::ParamReference:
       case ObjectKind::SelfBoxableLocal:
       case ObjectKind::ByRefParamAddress:
          writer.appendNode(BuildKey::Local, info.reference);
@@ -4828,6 +4832,9 @@ ref_t Compiler :: resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outp
 
 ref_t Compiler :: resolveWrapperTemplate(Scope& scope, ref_t elementRef, bool declarationMode)
 {
+   if (!elementRef)
+      elementRef = scope.moduleScope->buildins.superReference;
+
    return resolveTemplate(scope, scope.moduleScope->buildins.wrapperTemplateReference, elementRef, declarationMode);
 }
 
@@ -7488,6 +7495,17 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
                      retVal.kind = ObjectKind::RefLocal;
                      retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
                      break;
+                  case ObjectKind::ByRefParam:
+                     // allowing to pass by ref parameter directly
+                     retVal.kind = ObjectKind::ParamReference;
+                     retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                     break;
+                  case ObjectKind::ByRefParamAddress:
+                     // allowing to pass by ref parameter directly
+                     retVal.kind = ObjectKind::ParamAddress;
+                     retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                     //retVal.mode = TargetMode::UnboxingRequired;
+                     break;
                   default:
                      invalid = true;
                      break;
@@ -7724,14 +7742,16 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
          switch (source.kind) {
             case ObjectKind::TempLocalAddress:
             case ObjectKind::LocalAddress:
+            case ObjectKind::ParamAddress:
             case ObjectKind::IntLiteral:
             case ObjectKind::MssgLiteral:
             case ObjectKind::CharacterLiteral:
             case ObjectKind::RefLocal:
             case ObjectKind::SelfBoxableLocal:
+            case ObjectKind::ParamReference:
                source.typeInfo.typeRef = targetRef;
                break;
-         default:
+            default:
                if (source.kind == ObjectKind::SelfLocal && source.mode == TargetMode::ArrayContent) {
                   source.typeInfo.typeRef = targetRef;
                   source.kind = ObjectKind::SelfBoxableLocal;

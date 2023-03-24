@@ -5,9 +5,13 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 14 ===
-    * examples : goods, datetime, matrix
+    * rename StreamReader to TextStreamReader
+
+    * operations with files : open, read
+    * ldoc : recognize array of bytes, ref int (see system'text'Encoder)
+
+    * examples : goods, datetime
     * ide : change status to ready when writing / selecting files
-    * examples : pi, p2, random 
     * ide : selecting with a mouse
     * examples : replace, trans 
     * ide : new source
@@ -40,6 +44,7 @@ In development:
     ! elc : using custom grammar for parsing a source
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
+    * optimization : copy a sub array to another array
     * int32 : implement direct neg, not operations; use it directly for IntNumber
     * Dynamic programming in ELENA : bf loop - https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
     * ELENA Script Engine : compiling JavaScript file - https://www.reddit.com/r/elena_lang/comments/6h6nyz/elena_script_engine_compiling_javascript_file/
@@ -55,8 +60,10 @@ In development:
     * show the signature for the typecast message if possible
     * ide : key combination doesn't work after closing the project
     * #521 : create an example and close the ticket
-    * examples : collatz
+    * examples : collatz, matrix
+    * examples : pi, p2, random 
     * ldoc : symbol should return the type and it should be possible to see its api (e.g. system'console)
+    * rosetta samples : 20
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop
@@ -128,7 +135,6 @@ Backlog:
     * system'console : reader and writer should be strongly-typed : IConsoleReader, IConsoleWriter
     * test : print german text
     * optimization : WinEncoder.convertChar (do not use the intermediate buffer)
-    * elena : (see system'text'Encoder, it should be possible to pass byref argument further)
     * console symbol should be strong one
     * ldoc : all symbols should be in alphabetic order
     * ldoc : consoleOp extension should be visible

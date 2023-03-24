@@ -16,17 +16,17 @@ public class ReaderEnumerator : Enumerator
 
    constructor new(Stream stream, Encoder encoder)
    {
-      _reader := StreamReader.new(stream, encoder)
+      _reader := TextStreamReader.new(stream, encoder)
    }        
                         
    constructor load(string path)
    {
-      _reader := StreamReader.new(path)
+      _reader := TextStreamReader.new(path)
    }
     
    constructor load(string path, Encoder encoder)
    {
-      _reader := StreamReader.new(path, encoder)
+      _reader := TextStreamReader.new(path, encoder)
    }
     
    reset() 

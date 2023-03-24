@@ -24,6 +24,14 @@ public sealed Array<T> : Indexable<T>
       }
    }
 
+   static move(Array<T> target, int index, int length, int offset)
+   {
+      for (int i := 0, i < length, i += 1)
+      {
+         target[i] := target[i + offset]
+      }
+   }
+
    Enumerator<T> enumerator() = new BaseEnumerator<T>
    {
       this index := -1;

@@ -132,7 +132,7 @@ namespace io
    }
 
    // --- StreamReader ---
-   public class StreamReader : TextReader
+   public class TextStreamReader : TextReader
    {
       Stream  _stream;
       Encoder _encoder;
@@ -141,7 +141,7 @@ namespace io
       constructor new(Stream stream, Encoder encoder)
       {
          _output := new TextBuilder();
-         _newLineConstant := forward newLine;                
+         _newLineConstant := newLineConstant;                
          _newLineLength := _newLineConstant.Length;
             
          _stream := stream;
@@ -175,7 +175,7 @@ namespace io
          {
             int read := bufferLength;
     
-            //_encoder.convertFrom(0, ref bufferLength, buffer, output, ref length);
+            _encoder.convertFrom(buffer, 0, ref bufferLength, output, 0, ref length);
                 
             if(read > bufferLength)
                { _stream.reduceIndex(read - bufferLength) }

@@ -19,10 +19,10 @@ namespace text
             j += 1;
          };
 
-         outputLen := j - i;
+         outputLen := j - outputIndex;
       }
 
-      convertTo(char[] chars, int index, int len, byte[] output, int outputIndex, ref int outputLen)
+      convertTo(char[] chars, int index, ref int len, byte[] output, int outputIndex, ref int outputLen)
       {
          int j := outputIndex;
          for (int i := 0, i < len, i += 1) {
@@ -58,8 +58,7 @@ namespace text
 
          length := i - index;
 
-         self.convertTo(tmp, 0, j, output, outputIndex, /*ref outputLength*/ref int tmpLen);
-         outputLength := tmpLen;
+         self.convertTo(tmp, 0, j, output, outputIndex, ref outputLength);
       }
 
    }
@@ -85,7 +84,24 @@ namespace text
    }
 
    // --- UTF8Encoder ---
-   public sealed UTF8Encoder
+   public sealed singleton UTF8Encoder : Encoder
    {
+      convertChar(char ch, byte[] byteArray, int index, ref int length)
+      {
+         int value := ch;
+
+         length := PrimitiveOperations.copyUTF32(byteArray, index, value)
+      }
+
+      char convertToChar(byte[] byteArray, int index, ref int length)
+      {
+         int value := PrimitiveOperations.readUTF32(byteArray, index);
+
+         char ch := value;
+
+         length := ch.Length;
+
+         ^ ch
+      }
    }   
 }
