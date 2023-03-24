@@ -5837,9 +5837,14 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
    generateMethodDeclaration(classScope, classNode.findChild(SyntaxKey::Method), false, false);
    classScope.save();
 
-   writer.newNode(BuildKey::NestedClass, extRef);
-   compileVMT(writer, classScope, classNode);
-   writer.closeNode();
+   BuildNode node = writer.CurrentNode();
+   while (node != BuildKey::Root)
+      node = node.parentNode();
+
+   BuildTreeWriter nestedWriter(node);
+   nestedWriter.newNode(BuildKey::Class, extRef);
+   compileVMT(nestedWriter, classScope, classNode);
+   nestedWriter.closeNode();
 
    return extRef;
 }
