@@ -7,9 +7,9 @@ import extensions'text;
 public program()
 {
    var _bm := new StringBookmark();
-   _bm.append:"juice;12.20;water;20.30;";
+//   _bm.append:"juice;12.20;water;20.30;";
 
-//   _bm.find:";";
+   _bm.find:";";
    
 //   var name := new StringWriter();
          
