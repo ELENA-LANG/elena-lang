@@ -7,7 +7,7 @@ In development:
     === Iteration 14 ===
     * operations with files : open, read
 
-    * examples : goods, datetime
+    * examples : datetime
     * ide : change status to ready when writing / selecting files
     * ide : selecting with a mouse
     * examples : replace, trans 

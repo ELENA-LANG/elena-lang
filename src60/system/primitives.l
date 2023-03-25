@@ -442,12 +442,12 @@ internal singleton PrimitiveStringOperations
       };
 
       sLen -= length;
-      int i := 0;
+      int i := index;
       while (i < sLen) {
          bool isEqual := true;
          int j := 0;         
          while (j < length) {
-            char ch1 := subs[i + j];
+            char ch1 := s[i + j];
             char ch2 := subs[j];
             int len1 := ch2.Length;
             int len2 := ch2.Length;
@@ -459,7 +459,8 @@ internal singleton PrimitiveStringOperations
          };
          if (isEqual) {
             ^ i
-         }
+         };
+         i += 1;
       };
 
       ^ -1
