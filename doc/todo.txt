@@ -5,17 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 14 ===
-    * operations with files : open, read
-
-    * examples : datetime
-    * ide : change status to ready when writing / selecting files
-    * ide : selecting with a mouse
-    * examples : replace, trans 
-    * ide : new source
-    * examples : textdb, textfile 
-    * ide : on start : set focus inside the edit frame if available
-    * ldoc : get rid of BaseEnumerator<TupleTuple#2,T1,T2> and so on
-
     * new opcode xcreater : ppc64le, arm64
     * new opcode muln : ppc64le, arm64
     * new opcode lloaddp : ppc64le, arm64
@@ -61,6 +50,15 @@ In development:
     * examples : pi, p2, random 
     * ldoc : symbol should return the type and it should be possible to see its api (e.g. system'console)
     * rosetta samples : 20
+    * operator .\
+    * examples : datetime
+    * ide : change status to ready when writing / selecting files
+    * ide : selecting with a mouse
+    * examples : replace, trans 
+    * ide : new source
+    * examples : textdb, textfile 
+    * ide : on start : set focus inside the edit frame if available
+    * ldoc : get rid of BaseEnumerator<TupleTuple#2,T1,T2> and so on
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop

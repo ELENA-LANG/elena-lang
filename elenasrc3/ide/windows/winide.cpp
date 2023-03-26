@@ -284,8 +284,8 @@ void IDEWindow :: onErrorHighlight(int index)
    ErrorLogBase* resultBar = dynamic_cast<ErrorLogBase*>(_children[_model->ideScheme.errorListControl]);
 
    auto messageInfo = resultBar->getMessage(index);
-
-   _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
+   if (!messageInfo.path.empty())
+      _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
 }
 
 void IDEWindow :: onProjectViewSel(size_t index)

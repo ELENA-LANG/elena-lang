@@ -387,6 +387,11 @@ namespace calendar
     
       Date clone()
          = new Date(_value);
-
    }
+
+   // --- now ---    
+   public Date now = Date.Now;
+    
+   public Date utcNow = Date.UtcNow;
+
 }
