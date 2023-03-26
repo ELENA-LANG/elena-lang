@@ -546,10 +546,10 @@ public singleton stringConvertor
          n := 0 - n;
       };   
 
-      byte buffer[12];
+      byte buffer[36];
       byte tmp;
       int len := 0;
-      int index := 11;
+      int index := 35;
       while (n >= radix) {
          int r := n.mod(radix);
          n := n / radix;

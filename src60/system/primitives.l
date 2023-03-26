@@ -443,7 +443,7 @@ internal singleton PrimitiveStringOperations
 
       sLen -= length;
       int i := index;
-      while (i < sLen) {
+      while (i <= sLen) {
          bool isEqual := true;
          int j := 0;         
          while (j < length) {

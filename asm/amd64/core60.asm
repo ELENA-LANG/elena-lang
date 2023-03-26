@@ -1748,7 +1748,7 @@ end
 inline %0DCh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
   shl  eax, cl
   mov  dword ptr [rdi], eax
@@ -1759,7 +1759,7 @@ end
 inline %1DCh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
   shl  eax, cl
   mov  byte ptr [rdi], al
@@ -1770,7 +1770,7 @@ end
 inline %2DCh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
   shl  eax, cl
   mov  word ptr [rdi], ax
@@ -1781,7 +1781,7 @@ end
 inline %4DCh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  rax, [rdi]
   shl  rax, cl
   mov  [rdi], rax
@@ -1792,7 +1792,7 @@ end
 inline %0DDh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
   shr  eax, cl
   mov  dword ptr [rdi], eax
@@ -1803,7 +1803,7 @@ end
 inline %1DDh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
   shr  eax, cl
   mov  byte ptr [rdi], al
@@ -1814,7 +1814,7 @@ end
 inline %2DDh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
   shr  eax, cl
   mov  word ptr [rdi], ax
@@ -1825,7 +1825,7 @@ end
 inline %4DDh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  rax, [rdi]
   shr  rax, cl
   mov  [rdi], rax

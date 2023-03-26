@@ -372,7 +372,25 @@ EXPRESSION ::=
 	| "-" SINGLE_EXPRESSION ^NEGATE_OPERATION
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION
-	| "$lazy" SUB_SINGLE_EXPRESSION ^EXPRESSION ^LAZY_OPERATION;
+	| "$lazy" NESTED_SUB_EXPRESSION ^EXPRESSION ^LAZY_OPERATION;
+
+NESTED_SUB_EXPRESSION ::=
+	identifier { 
+		{ identifier }+ { 
+			L0 ^OBJECT L0_R L1_OP?
+			| ASSIGN ^OBJECT ASSIGN_R
+			| L2 ^OBJECT L2_R L3_OP* { L8_OP | L9_OP }?
+			| NESTED_EXPRESSION ^NESTED L3_OP*
+			| eps ^OBJECT }
+		| L0 ^OBJECT L0_R
+		| ASSIGN ^OBJECT ASSIGN_R
+		| L2 ^OBJECT L2_R L9_OP?  ")"
+		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP* L4_OP* L5_OP* L6_OP? L9_OP?
+		| L4_O_OP
+		| L5_O_OP
+		| eps ^OBJECT }
+	| reference ^OBJECT
+	| { string | integer | hexinteger | long | real | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP?;
 
 SUB_EXPRESSION ::=
 	identifier { 
