@@ -5,6 +5,9 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 14 ===
+    * test rosetta code samples : x86, x86-64, i386, amd64, ppc64le, arm64
+    * test samples : x86, x86-64, i386, amd64, ppc64le, arm64
+
     * new opcode xcreater : ppc64le, arm64
     * new opcode muln : ppc64le, arm64
     * new opcode lloaddp : ppc64le, arm64
@@ -30,8 +33,15 @@ In development:
     ! elc : using custom grammar for parsing a source
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
+
+    * redesign switch statement : it should be possible to use as an expression as well
+      (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
+       console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
+
+    * operator .\
     * optimization : copy a sub array to another array
     * int32 : implement direct neg, not operations; use it directly for IntNumber
+
     * Dynamic programming in ELENA : bf loop - https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
     * ELENA Script Engine : compiling JavaScript file - https://www.reddit.com/r/elena_lang/comments/6h6nyz/elena_script_engine_compiling_javascript_file/
     * method templates
@@ -50,7 +60,6 @@ In development:
     * examples : pi, p2, random 
     * ldoc : symbol should return the type and it should be possible to see its api (e.g. system'console)
     * rosetta samples : 20
-    * operator .\
     * examples : datetime
     * ide : change status to ready when writing / selecting files
     * ide : selecting with a mouse
