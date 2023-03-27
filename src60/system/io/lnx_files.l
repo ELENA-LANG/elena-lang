@@ -83,6 +83,11 @@ namespace io
                 ^ ret
 
          }
+
+         set(value)
+         {
+            NotSupportedException.raise()
+         }
       }
 
       close()
