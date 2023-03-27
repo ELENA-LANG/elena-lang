@@ -65,6 +65,7 @@
         <include>io/streamreader.l</include>
         <include>io/lnx_console.l</include>
         <include>io/files.l</include>
+        <include>io/lnx_files.l</include>
      </module>
      <module name="routines">
        <include>routines/enumerables.l</include>
