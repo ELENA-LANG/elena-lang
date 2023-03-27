@@ -7496,6 +7496,9 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
                   case ObjectKind::LocalAddress:
                      retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
                      break;
+                  case ObjectKind::ParamAddress:
+                     retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                     break;
                   case ObjectKind::Local:
                      retVal.kind = ObjectKind::RefLocal;
                      retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };

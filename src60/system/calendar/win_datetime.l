@@ -97,7 +97,7 @@ namespace calendar
 
       private init(SystemTime fileTime)
       {
-         extern KERNEL32.FileTimeToSystemTime(fileTime, self)
+         extern KERNEL32.FileTimeToSystemTime(ref fileTime, self)
       }
 
       embeddable constructor(SystemTime time)
@@ -248,7 +248,7 @@ namespace calendar
       readTo(ref SystemTime retVal)
       {
          SystemTime value := 0l;
-         extern KERNEL32.SystemTimeToFileTime(self, value);
+         extern KERNEL32.SystemTimeToFileTime(self, ref value);
             
          retVal := value
       }
@@ -324,7 +324,7 @@ namespace calendar
       SystemTime getUtcNow()
       {
          SystemTime time := 0l;        
-         extern KERNEL32.GetSystemTimeAsFileTime(time);
+         extern KERNEL32.GetSystemTimeAsFileTime(ref time);
             
          ^ time
       }
@@ -334,9 +334,9 @@ namespace calendar
          SystemTime time := 0l;
          SystemTime localTime := 0l;
             
-         extern KERNEL32.GetSystemTimeAsFileTime(time);
+         extern KERNEL32.GetSystemTimeAsFileTime(ref time);
     
-         extern KERNEL32.FileTimeToLocalFileTime(time, localTime);
+         extern KERNEL32.FileTimeToLocalFileTime(ref time, ref localTime);
             
          ^ localTime
       }

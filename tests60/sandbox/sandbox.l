@@ -1,13 +1,10 @@
-import extensions;
+import system'calendar;
 
 public program()
 {
-   var n := new Integer(2);
-   var m := new Integer(3);
+//   var d := Date.new(2023, 1, 1);
 
-   var r := n.shiftLeft(m);
-//   var r2 := n.shiftRight(m);
-
-   console.writeLine(r);
-//   console.writeLine(r2);
+         TimeStruct st;
+         SystemTime value := 0l;
+         extern KERNEL32.SystemTimeToFileTime(st, ref value);
 }

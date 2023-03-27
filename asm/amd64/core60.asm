@@ -1991,7 +1991,7 @@ inline %0E4h
 
   mov  rcx, [r10]
   mov  rax, [rbp+__arg32_1]
-  xor  edx, edx
+  cdq
   idiv ecx
   mov  dword ptr [rbp+__arg32_1], eax
 
@@ -2002,6 +2002,7 @@ inline %1E4h
 
   mov  rcx, [r10]
   mov  rax, [rbp+__arg32_1]
+  cdq
   idiv cl
   mov  byte ptr [rbp+__arg32_1], al
 
@@ -2012,6 +2013,7 @@ inline %2E4h
 
   mov  rcx, [r10]
   mov  rax, [rbp+__arg32_1]
+  cdq
   idiv cx
   mov  word ptr [rbp+__arg32_1], ax
 
