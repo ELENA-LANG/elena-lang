@@ -122,6 +122,18 @@ mssg_t LoadMessageLA(const char* messageName)
    return machine->loadMessage(messageName);
 }
 
+
+void GetRandomSeedLA(SeedStruct& seed)
+{
+   machine->initRandomSeed(seed);
+}
+
+unsigned int GetRandomIntLA(SeedStruct& seed)
+{
+   return machine->getRandomNumber(seed);
+}
+
+
 void ExitLA(int retVal)
 {
    if (retVal) {

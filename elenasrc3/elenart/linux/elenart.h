@@ -32,6 +32,8 @@ extern "C"
    DLL_PUBLIC elena_lang::addr_t LoadClassByStringLA(const char* symbolName);
    DLL_PUBLIC elena_lang::addr_t LoadSymbolByString2LA(const char* ns, const char* symbolName);
    DLL_PUBLIC elena_lang::mssg_t LoadMessageLA(const char* messageName);
+   DLL_PUBLIC unsigned int GetRandomIntLA(elena_lang::SeedStruct& seed);
+   DLL_PUBLIC void GetRandomSeedLA(SeedStruct& seed);
    DLL_PUBLIC void ExitLA(int retVal);
 }
 
