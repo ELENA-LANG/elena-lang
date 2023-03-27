@@ -13,6 +13,7 @@
 #include <sys/mman.h>
 #include <signal.h>
 #include <errno.h>
+#include <ctime>
 
 using namespace elena_lang;
 
@@ -183,7 +184,7 @@ void SystemRoutineProvider :: InitCriticalStruct(uintptr_t criticalHandler)
 
 long long SystemRoutineProvider :: GenerateSeed()
 {
-   time_t t = time(nullptr)
+   time_t t = time(nullptr);
 
    long long seed = (long int)t;
 

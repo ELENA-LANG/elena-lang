@@ -73,7 +73,7 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
    if (machine == nullptr)
       init();
 
-   __routineProvider.InitExceptionHandling(env, criricalHandler);
+   __routineProvider.InitSTAExceptionHandling(env, criricalHandler);
 
    machine->startSTA(env, entryList);
 }
@@ -82,7 +82,7 @@ void* CollectGCLA(void* roots, size_t size)
 {
    //printf("CollectGCLA %llx %llx\n", (long long)roots, size);
 
-   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size);
+   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, false);
 }
 
 size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
