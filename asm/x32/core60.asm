@@ -4,6 +4,7 @@ define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
 define GC_ALLOCPERM	    10005h
+define PREPARE	            10006h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -319,6 +320,10 @@ labPERMCollect:
   pop  esi
 
   ret
+
+end
+
+procedure %PREPARE
 
 end
 
