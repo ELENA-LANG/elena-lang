@@ -51,10 +51,26 @@ void getSelfPath(PathString& rootPath)
    /* handle error condition */
 }
 
+void loadArgList()
+{
+   char buff[FILENAME_MAX];
+   size_t len = ::readlink("/proc/self/cmdline", buff, sizeof(buff) - 1);
+
+   printf("loadArgList %x\n", len);
+
+   if (len > 0) {
+      printf("cmdLine %s\n", buff);
+   }
+
+   printf("loadArgList ended");
+}
+
 void init()
 {
    PathString execPath;
    getSelfPath(execPath);
+
+   loadArgList();
 
    machine = new ELENARTMachine(
       ROOT_PATH, *execPath, CONFIG_PATH, CURRENT_PLATFORM,

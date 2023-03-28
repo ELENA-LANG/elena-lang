@@ -50,8 +50,9 @@
         <include>dynamic.l</include>
         <include>exceptions.l</include>
         <include>console.l</include>
-        <include>app.l</include>
         <include>lnx_strings.l</include>
+        <include>app.l</include>
+        <include>lnx_app.l</include>
         <include>template_tests.l</include>
         <include>collections/list.l</include>
 	<include>collections/tuples.l</include>
