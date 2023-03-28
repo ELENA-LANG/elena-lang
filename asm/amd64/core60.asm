@@ -2028,6 +2028,7 @@ end
 inline %4E4h
 
   mov  rcx, [r10]
+  xor  rdx, rdx
   mov  rax, [rbp+__arg32_1]
   idiv rcx
   mov  [rbp+__arg32_1], rax
