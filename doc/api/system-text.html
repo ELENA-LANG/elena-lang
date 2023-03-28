@@ -110,7 +110,7 @@ system'text'Encoder</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>convertTo(<SPAN CLASS="memberNameLink"><A HREF="system-arrayof system.html#CharValue">CharValue</A></SPAN> chars, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len, <SPAN CLASS="memberNameLink"><A HREF="system-arrayof system.html#ByteNumber">ByteNumber</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> outputIndex, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#IntNumber">IntNumber</A></SPAN> outputLen)
+<CODE>convertTo(<SPAN CLASS="memberNameLink"><A HREF="system-arrayof system.html#CharValue">CharValue</A></SPAN> chars, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#IntNumber">IntNumber</A></SPAN> len, <SPAN CLASS="memberNameLink"><A HREF="system-arrayof system.html#ByteNumber">ByteNumber</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> outputIndex, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#IntNumber">IntNumber</A></SPAN> outputLen)
 </CODE>
 </TD>
 </TR>
@@ -365,6 +365,60 @@ system'text'TextBuilder</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system-arrayof system.html#CharValue">CharValue</A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexOf(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> position, <SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexOf(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexOf(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos, <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Substring(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>delete(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -460,6 +514,70 @@ system'text'UTF8Encoding</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>toString(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> size, <SPAN CLASS="memberNameLink"><A HREF="system-arrayof system.html#ByteNumber">ByteNumber</A></SPAN> buffer)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="UTF8Encoder">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'text'</DIV>
+<H2 title="UTF8Encoder" class="title">UTF8Encoder</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">UTF8Encoder</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="-text.html#Encoder">'text'Encoder</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'text'UTF8Encoder</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>convertChar(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch, <SPAN CLASS="memberNameLink"><A HREF="system-arrayof system.html#ByteNumber">ByteNumber</A></SPAN> byteArray, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convertToChar(<SPAN CLASS="memberNameLink"><A HREF="system-arrayof system.html#ByteNumber">ByteNumber</A></SPAN> byteArray, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-ref system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>

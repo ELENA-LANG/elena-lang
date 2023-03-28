@@ -1,9 +1,7 @@
+import system'calendar;
 import extensions;
 
 public program()
 {
-   var arr := program_arguments;
-
-   console.writeLine(arr[0]);
-   console.writeLine(arr[1]);
+   var dt := Date.new(2023, 1, 1);
 }
