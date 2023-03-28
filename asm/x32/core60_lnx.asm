@@ -51,7 +51,7 @@ end
 // ; ==== Overridden Command Set ==
 
 // ; system prepare
-inline %2CFh
+inline %4CFh
 
   mov  eax, esp
   push eax 
