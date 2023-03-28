@@ -2,13 +2,13 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="sg-cli" />
+		<Option title="og-cli" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug32">
-				<Option output="../../../../bin/sg-cli" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../../temp/sg-cli/" />
+				<Option output="../../../../bin/og-cli" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../temp/og-cli/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -21,8 +21,8 @@
 				</Linker>
 			</Target>
 			<Target title="Release32">
-				<Option output="../../../../bin/sg-cli" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../../temp/release/sg-cli/" />
+				<Option output="../../../../bin/og-cli" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../temp/release/og-cli/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -37,8 +37,8 @@
 				</Linker>
 			</Target>
 			<Target title="Debug64">
-				<Option output="../../../../bin/sg64-cli" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../../temp/sg64-cli/" />
+				<Option output="../../../../bin/og64-cli" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../temp/og64-cli/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option parameters="~/elena-lang/dat/sg/syntax60.txt" />
@@ -52,8 +52,8 @@
 				</Linker>
 			</Target>
 			<Target title="Release64">
-				<Option output="../../../../bin/sg64-cli" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../../temp/release/sg64-cli/" />
+				<Option output="../../../../bin/og64-cli" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../temp/release/og64-cli/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -80,12 +80,10 @@
 		<Unit filename="../../../common/files.h" />
 		<Unit filename="../../../common/ustring.cpp" />
 		<Unit filename="../../../common/ustring.h" />
-		<Unit filename="../../../engine/parsertable.cpp" />
-		<Unit filename="../../../engine/parsertable.h" />
 		<Unit filename="../../../engine/scriptreader.cpp" />
 		<Unit filename="../../../engine/scriptreader.h" />
-		<Unit filename="../sg.cpp" />
-		<Unit filename="../sgconst.h" />
+		<Unit filename="../og.cpp" />
+		<Unit filename="../ogconst.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

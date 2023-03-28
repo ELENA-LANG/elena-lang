@@ -5,10 +5,8 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 14 ===
-    * samples : goods, words
-
     * test rosetta code samples : amd64, ppc64le, arm64
-    * test samples : i386, amd64, ppc64le, arm64
+    * test samples : amd64, ppc64le, arm64
 
     * new opcode xcreater : ppc64le, arm64
     * new opcode muln : ppc64le, arm64
