@@ -51,20 +51,6 @@ void getSelfPath(PathString& rootPath)
    /* handle error condition */
 }
 
-void loadArgList()
-{
-   char buff[FILENAME_MAX];
-   size_t len = ::readlink("/proc/self/cmdline", buff, sizeof(buff) - 1);
-
-   printf("loadArgList %x\n", len);
-
-   if (len > 0) {
-      printf("cmdLine %s\n", buff);
-   }
-
-   printf("loadArgList ended");
-}
-
 void init()
 {
    PathString execPath;
@@ -77,9 +63,11 @@ void init()
       __routineProvider.RetrieveMDataPtr((void*)IMAGE_BASE, 0x1000000));
 }
 
-void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)
+void InitializeSTLA(char* cmdArgs, SystemEnv* env, SymbolList* entryList, void* criricalHandler)
 {
    systemEnv = env;
+
+   printf("InitializeSTLA %s\n", cmdArgs);
 
 #ifdef DEBUG_OUTPUT
    printf("InitializeSTA.6 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);

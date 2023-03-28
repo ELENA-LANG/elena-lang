@@ -1349,7 +1349,7 @@ procedure thread_start
 
 end
 
-symbol sta_start
+symbol sta_start (cmdarg)
 
   open header [arg1],[envptr,ex_struct:ex_struct_size]
   
@@ -1361,6 +1361,7 @@ symbol sta_start
   store       fp:arg1
 
   call extern:InitializeSTLA (
+     cmdarg,
      *arg1, 
      procedure:"system'core_routines'startUpSymbols",
      procedure:"system'core_routines'critical_exception_handler")
@@ -1369,7 +1370,7 @@ symbol sta_start
 
 end
 
-symbol mta_start
+symbol mta_start (cmdarg)
 
   // ; initialize TLS entry
   mov         n:0
@@ -1385,6 +1386,7 @@ symbol mta_start
   store       fp:arg1
 
   call extern:InitializeMTLA (
+     cmdarg,
      *arg1, 
      procedure:"system'core_routines'startUpSymbols",
      procedure:"system'core_routines'critical_exception_handler")
