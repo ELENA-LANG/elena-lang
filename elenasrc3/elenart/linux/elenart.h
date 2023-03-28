@@ -35,7 +35,7 @@ extern "C"
    DLL_PUBLIC elena_lang::mssg_t LoadMessageLA(const char* messageName);
    DLL_PUBLIC unsigned int GetRandomIntLA(elena_lang::SeedStruct& seed);
    DLL_PUBLIC void GetRandomSeedLA(elena_lang::SeedStruct& seed);
-   DLL_PUBLIC void PrepareLA(void* argv);
+   DLL_PUBLIC void PrepareLA(uintptr_t arg);
    DLL_PUBLIC void ExitLA(int retVal);
 }
 

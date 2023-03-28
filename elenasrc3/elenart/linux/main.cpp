@@ -135,29 +135,6 @@ unsigned int GetRandomIntLA(SeedStruct& seed)
    return machine->getRandomNumber(seed);
 }
 
-void testCmdArgs()
-{
-   char buffer[0x100];
-
-   int argc = GetArgCLA();
-
-   printf("loadCmdArgs %x", argc);
-
-   for (int i = 0; i < argc; i++) {
-      GetArgLA(i, buffer, 0x100);
-
-      printf("arg %s\n", buffer);
-   }
-}
-
-void PrepareLA(void* arg)
-{
-   __argc = (int*)__arg;
-   __argv = static_cast<uintptr_t>(arg) + sizeof(uintptr_t);
-
-   testCmdArgs();
-}
-
 int GetArgCLA()
 {
    return __argc;
@@ -165,8 +142,11 @@ int GetArgCLA()
 
 int GetArgLA(int index, char* buffer, int length)
 {
-   if (index <= 0)
+   if (index < 0 || index >= __argc) {
+      buffer[0] = 0;
+
       return 0;
+   }
 
    for (int i = 0; i < length; i++) {
       char tmp = __argv[index][i];
@@ -179,6 +159,12 @@ int GetArgLA(int index, char* buffer, int length)
    }
 
    return length;
+}
+
+void PrepareLA(uintptr_t arg)
+{
+   __argc = *(int*)arg;
+   __argv = (char**)(arg + sizeof(uintptr_t));
 }
 
 void ExitLA(int retVal)
