@@ -65,7 +65,7 @@ void init()
 
 int GetArgCLA()
 {
-   int* ptr = (int*)_Args;
+   int* ptr = (int*)__argv;
 
    return *ptr;
 }
@@ -75,7 +75,7 @@ int GetArgLA(int index, char* buffer, int length)
    if (index <= 0)
       return 0;
 
-   const char** args = (const char**)_Args;
+   const char** args = (const char**)__argv;
 
    for (int i = 0; i < length; i++) {
       char tmp = args[index][i];
@@ -92,7 +92,7 @@ int GetArgLA(int index, char* buffer, int length)
 
 void loadCmdArgs()
 {
-   char tmp[0x100];
+   char buffer[0x100];
 
    int argc = GetArgCLA();
 
