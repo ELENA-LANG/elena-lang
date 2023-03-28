@@ -40,7 +40,8 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 static ELENARTMachine* machine = nullptr;
 static SystemEnv* systemEnv = nullptr;
 
-static const char* _cmdArgs = nullptr;
+static int __argc = 0;
+static const char* __argv = nullptr;
 
 void getSelfPath(PathString& rootPath)
 {
@@ -63,27 +64,32 @@ void init()
       __routineProvider.RetrieveMDataPtr((void*)IMAGE_BASE, 0x1000000));
 }
 
-void loadCmdArgs(const char* cmdArgs)
+void loadCmdArgs(const char* cmdArgs, int argc)
 {
    List<const char*, nullptr> list(nullptr);
 
    size_t argLen = getlength(cmdArgs);
-   while (argLen > 0) {
-      printf("arg %s\n", cmdArgs);
+   while (argc > 0) {
+      printf("arg %x %s\n", argc, cmdArgs);
 
       list.add(ustr_t(cmdArgs).clone());
 
       cmdArgs = cmdArgs + argLen + 1;
+
+      argc--;
    }
 
 }
 
-void InitializeSTLA(const char* cmdArgs, SystemEnv* env, SymbolList* entryList, void* criricalHandler)
+void InitializeSTLA(int argc, const char* argv, SystemEnv* env, SymbolList* entryList, void* criricalHandler)
 {
    systemEnv = env;
 
-   _cmdArgs = cmdArgs;
-   loadCmdArgs(cmdArgs);
+   // load executable arguments
+   __argc = argc;
+   __argv = argv;
+
+   loadCmdArgs(__argv, __argc);
 
 #ifdef DEBUG_OUTPUT
    printf("InitializeSTA.6 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
