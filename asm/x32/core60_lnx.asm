@@ -53,6 +53,7 @@ procedure %PREPARE
 
   push eax 
   call extern "$rt.PrepareLA"
+  add  esp, 4
   ret
 
 end

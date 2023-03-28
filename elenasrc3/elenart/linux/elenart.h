@@ -36,6 +36,8 @@ extern "C"
    DLL_PUBLIC unsigned int GetRandomIntLA(elena_lang::SeedStruct& seed);
    DLL_PUBLIC void GetRandomSeedLA(elena_lang::SeedStruct& seed);
    DLL_PUBLIC void PrepareLA(uintptr_t arg);
+   DLL_PUBLIC int GetArgCLA();
+   DLL_PUBLIC int GetArgLA(int index, char* buffer, int length);
    DLL_PUBLIC void ExitLA(int retVal);
 }
 
