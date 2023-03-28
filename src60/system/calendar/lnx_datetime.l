@@ -23,6 +23,28 @@ namespace calendar
          tv_usec := tmp;
       }
 
+      internal constructor loadAsTimespan(int days, int hours, int minutes, int seconds)
+      {
+         int secs := 0;
+         int n := hours;
+            
+         n := n * 3600l;
+         secs := n;
+            
+         n := minutes;
+         n := n * 60;            
+         secs := secs + n;
+            
+         secs := secs + seconds;
+    
+         n := days;
+         n := n * 86400;
+         secs := secs + n;
+                            
+         tv_sec := secs;            
+         tv_usec := 0;
+      }
+
       constructor(SystemTime value)
          = value;
 
