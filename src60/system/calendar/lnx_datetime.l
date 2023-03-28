@@ -28,7 +28,7 @@ namespace calendar
          int secs := 0;
          int n := hours;
             
-         n := n * 3600l;
+         n := n * 3600;
          secs := n;
             
          n := minutes;
