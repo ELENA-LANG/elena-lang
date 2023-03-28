@@ -40,6 +40,8 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 static ELENARTMachine* machine = nullptr;
 static SystemEnv* systemEnv = nullptr;
 
+static const char* _cmdArgs = nullptr;
+
 void getSelfPath(PathString& rootPath)
 {
    char buff[FILENAME_MAX];
@@ -56,18 +58,32 @@ void init()
    PathString execPath;
    getSelfPath(execPath);
 
-   loadArgList();
-
    machine = new ELENARTMachine(
       ROOT_PATH, *execPath, CONFIG_PATH, CURRENT_PLATFORM,
       __routineProvider.RetrieveMDataPtr((void*)IMAGE_BASE, 0x1000000));
 }
 
-void InitializeSTLA(char* cmdArgs, SystemEnv* env, SymbolList* entryList, void* criricalHandler)
+void loadCmdArgs(const char* cmdArgs)
+{
+   List<const char*, nullptr> list(nullptr);
+
+   size_t argLen = getlength(cmdArgs);
+   while (argLen > 0) {
+      printf("arg %s\n", cmdArgs);
+
+      list.add(ustr_t(cmdArgs).clone());
+
+      cmdArgs = cmdArgs + argLen + 1;
+   }
+
+}
+
+void InitializeSTLA(const char* cmdArgs, SystemEnv* env, SymbolList* entryList, void* criricalHandler)
 {
    systemEnv = env;
 
-   printf("InitializeSTLA %s\n", cmdArgs);
+   _cmdArgs = cmdArgs;
+   loadCmdArgs(cmdArgs);
 
 #ifdef DEBUG_OUTPUT
    printf("InitializeSTA.6 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
@@ -126,7 +142,6 @@ mssg_t LoadMessageLA(const char* messageName)
    return machine->loadMessage(messageName);
 }
 
-
 void GetRandomSeedLA(SeedStruct& seed)
 {
    machine->initRandomSeed(seed);
@@ -136,7 +151,6 @@ unsigned int GetRandomIntLA(SeedStruct& seed)
 {
    return machine->getRandomNumber(seed);
 }
-
 
 void ExitLA(int retVal)
 {
