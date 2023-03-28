@@ -50,6 +50,15 @@ end
 
 // ; ==== Overridden Command Set ==
 
+// ; system prepare
+inline %2CFh
+
+  mov  eax, esp
+  push eax 
+  call extern "$rt.PrepareLA"
+
+end
+
 // ; openheaderin
 inline %0F2h
 

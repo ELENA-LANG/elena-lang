@@ -40,7 +40,8 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 static ELENARTMachine* machine = nullptr;
 static SystemEnv* systemEnv = nullptr;
 
-static void* __argv = nullptr;
+static int    __argc = 0;
+static char** __argv = nullptr;
 
 void getSelfPath(PathString& rootPath)
 {
@@ -63,56 +64,9 @@ void init()
       __routineProvider.RetrieveMDataPtr((void*)IMAGE_BASE, 0x1000000));
 }
 
-int GetArgCLA()
-{
-   int* ptr = (int*)__argv;
-
-   return *ptr;
-}
-
-int GetArgLA(int index, char* buffer, int length)
-{
-   if (index <= 0)
-      return 0;
-
-   const char** args = (const char**)__argv;
-
-   for (int i = 0; i < length; i++) {
-      char tmp = args[index][i];
-
-      buffer[i] = tmp;
-
-      if (!tmp) {
-         return i;
-      }
-   }
-
-   return length;
-}
-
-void loadCmdArgs()
-{
-   char buffer[0x100];
-
-   int argc = GetArgCLA();
-
-   printf("loadCmdArgs %x", argc);
-
-   for (int i = 0; i < argc; i++) {
-      GetArgLA(i, buffer, 0x100);
-
-      printf("arg %s\n", buffer);
-   }
-}
-
-void InitializeSTLA(void* argv, SystemEnv* env, SymbolList* entryList, void* criricalHandler)
+void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)
 {
    systemEnv = env;
-
-   // load executable arguments
-   __argv = argv;
-
-   loadCmdArgs();
 
 #ifdef DEBUG_OUTPUT
    printf("InitializeSTA.6 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
@@ -179,6 +133,52 @@ void GetRandomSeedLA(SeedStruct& seed)
 unsigned int GetRandomIntLA(SeedStruct& seed)
 {
    return machine->getRandomNumber(seed);
+}
+
+void testCmdArgs()
+{
+   char buffer[0x100];
+
+   int argc = GetArgCLA();
+
+   printf("loadCmdArgs %x", argc);
+
+   for (int i = 0; i < argc; i++) {
+      GetArgLA(i, buffer, 0x100);
+
+      printf("arg %s\n", buffer);
+   }
+}
+
+void PrepareLA(void* arg)
+{
+   __argc = (int*)__arg;
+   __argv = static_cast<uintptr_t>(arg) + sizeof(uintptr_t);
+
+   testCmdArgs();
+}
+
+int GetArgCLA()
+{
+   return __argc;
+}
+
+int GetArgLA(int index, char* buffer, int length)
+{
+   if (index <= 0)
+      return 0;
+
+   for (int i = 0; i < length; i++) {
+      char tmp = __argv[index][i];
+
+      buffer[i] = tmp;
+
+      if (!tmp) {
+         return i;
+      }
+   }
+
+   return length;
 }
 
 void ExitLA(int retVal)

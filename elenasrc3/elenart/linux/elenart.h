@@ -24,7 +24,7 @@
 
 extern "C"
 {
-   DLL_PUBLIC void InitializeSTLA(void* argv, elena_lang::SystemEnv* env, elena_lang::SymbolList* entryList, void* criricalHandler);
+   DLL_PUBLIC void InitializeSTLA(elena_lang::SystemEnv* env, elena_lang::SymbolList* entryList, void* criricalHandler);
    DLL_PUBLIC void* CollectGCLA(void* roots, size_t size);
    DLL_PUBLIC size_t LoadMessageNameLA(size_t message, char* buffer, size_t length);
    DLL_PUBLIC size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length);
@@ -35,6 +35,7 @@ extern "C"
    DLL_PUBLIC elena_lang::mssg_t LoadMessageLA(const char* messageName);
    DLL_PUBLIC unsigned int GetRandomIntLA(elena_lang::SeedStruct& seed);
    DLL_PUBLIC void GetRandomSeedLA(elena_lang::SeedStruct& seed);
+   DLL_PUBLIC void PrepareLA(void* argv);
    DLL_PUBLIC void ExitLA(int retVal);
 }
 

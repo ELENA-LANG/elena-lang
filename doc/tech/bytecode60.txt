@@ -408,6 +408,7 @@ ELENA byte codes (or ecodes)
                               n = 1 -> forced minor collect;
                               n = 2 -> forced major collect
                               n = 3 -> assign TLS entry to the THREAD_TABLE at index
+                              n = 4 -> prepare the program (should be the first command) 
 
    xcmp                     - temp << acc[0];
                               COMP.EQ := (index == temp);
