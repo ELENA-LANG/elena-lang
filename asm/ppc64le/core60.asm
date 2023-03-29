@@ -1759,8 +1759,6 @@ end
 // ; xloadargsi
 inline %0CDh
 
-  mov edx, [esp + __arg32_1]
-
   ld      r14, __arg16_1(r1)  
 
 end 
