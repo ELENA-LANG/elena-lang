@@ -1314,7 +1314,8 @@ end
 // ; muln
 inline %9Ch
 
-  mulld r14, r14, __n16_1
+  li      r16, __n16_1
+  mulld   r14, r14, r16
 
 end
 
