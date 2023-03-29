@@ -3,21 +3,33 @@
      <project>
         <output>/usr/lib/elena/lib60</output>
      </project>
+     <forwards>
+        <forward key="TMSize">system'calendar'TMSize32</forward>
+      </forwards>
   </platform>
   <platform key="Linux_AMD64">
      <project>
         <output>/usr/lib/elena/lib60_64</output>
      </project>
+     <forwards>
+        <forward key="TMSize">system'calendar'TMSize64</forward>
+      </forwards>
   </platform>
   <platform key="Linux_PPC64le">
      <project>
         <output>/usr/lib/elena/lib60_64</output>
      </project>
+     <forwards>
+        <forward key="TMSize">system'calendar'TMSize64</forward>
+      </forwards>
   </platform>
   <platform key="Linux_ARM64">
      <project>
         <output>/usr/lib/elena/lib60_64</output>
      </project>
+     <forwards>
+        <forward key="TMSize">system'calendar'TMSize64</forward>
+      </forwards>
   </platform>
   <project>
      <namespace>system</namespace>

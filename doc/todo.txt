@@ -70,6 +70,7 @@ In development:
     * examples : textdb, textfile 
     * ide : on start : set focus inside the edit frame if available
     * ldoc : get rid of BaseEnumerator<TupleTuple#2,T1,T2> and so on
+    * strong typed forward constant
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop

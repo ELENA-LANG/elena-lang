@@ -1,5 +1,8 @@
 namespace calendar
 {
+   const int TMSize32 = 44;
+   const int TMSize64 = 56;
+   
    // --- SystemTime ---
    public sealed const struct SystemTime : BaseValue
    {
@@ -299,9 +302,11 @@ namespace calendar
           
       private write(SystemTime time)
       {
+         int size = forward TMSize;
+
          pointer ptr := extern libc.localtime(time);
             
-         extern libc.memcpy(self, ptr, 44);
+         extern libc.memcpy(self, ptr, size);
             
          time.readMSec(ref int tmp);
          tm_usec := tmp
@@ -309,9 +314,11 @@ namespace calendar
 
       internal writeUTC(SystemTime time)
       {
+         int size = forward TMSize;
+
          pointer ptr := extern libc.gmtime(time);
             
-         extern libc.memcpy(self, ptr, 44);
+         extern libc.memcpy(self, ptr, size);
             
          time.readMSec(ref int tmp);
          tm_usec := tmp
