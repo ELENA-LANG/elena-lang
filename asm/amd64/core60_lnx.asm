@@ -175,13 +175,8 @@ end
 
 procedure %PREPARE
 
-  push  0
-  push  rdi
-  push  rsi
-
-  mov  rdi, rsp
+  mov  rdi, rax
   call extern "$rt.PrepareLA"
-  add  rsp, 24
   ret
 
 end
@@ -191,6 +186,7 @@ end
 // ; system prepare
 inline %4CFh
 
+  mov  rax, rsp
   call %PREPARE
 
 end
