@@ -4,7 +4,7 @@
         <output>/usr/lib/elena/lib60</output>
      </project>
      <files>
-        <include>calendar/lnx_datetime.l</include>
+        <include>calendar/lnx32_datetime.l</include>
      </files>
   </platform>
   <platform key="Linux_AMD64">
@@ -12,7 +12,7 @@
         <output>/usr/lib/elena/lib60_64</output>
      </project>
      <files>
-        <include>calendar/lnx_datetime.l</include>
+        <include>calendar/lnx64_datetime.l</include>
      </files>
   </platform>
   <platform key="Linux_PPC64le">
@@ -20,7 +20,7 @@
         <output>/usr/lib/elena/lib60_64</output>
      </project>
      <files>
-        <include>calendar/lnx_datetime.l</include>
+        <include>calendar/lnx64_datetime.l</include>
      </files>
   </platform>
   <platform key="Linux_ARM64">
@@ -28,7 +28,7 @@
         <output>/usr/lib/elena/lib60_64</output>
      </project>
      <files>
-        <include>calendar/lnx_datetime.l</include>
+        <include>calendar/lnx64_datetime.l</include>
      </files>
   </platform>
   <project>
