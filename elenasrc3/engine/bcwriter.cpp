@@ -365,6 +365,12 @@ void savingNInStack(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SaveSI, node.arg.value);
 }
 
+void savingLInStack(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::LLoad);
+   tape.write(ByteCode::LSaveSI, node.arg.value);
+}
+
 void extCallOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::CallExtR, node.arg.reference | mskExternalRef, node.findChild(BuildKey::Count).arg.value);
@@ -1390,7 +1396,7 @@ ByteCodeWriter::Saver commands[] =
    genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
 
-   terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning
+   terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

@@ -5397,13 +5397,16 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
 
    TypeInfo retType = { V_INT32 };
    ref_t intArgType = 0;
+   BuildKey intArgOp = BuildKey::None;
    switch (scope.moduleScope->ptrSize) {
       case 4:
          intArgType = V_INT32;
+         intArgOp = BuildKey::SavingNInStack;
          break;
       case 8:
          retType = { V_INT64 };
          intArgType = V_INT64;
+         intArgOp = BuildKey::SavingLInStack;
          break;
       default:
          assert(false);
@@ -5422,7 +5425,7 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
             if (_logic->isCompatible(*scope.moduleScope, { intArgType },
                arg.typeInfo, true))
             {
-               writer.appendNode(BuildKey::SavingNInStack, i - 1);
+               writer.appendNode(intArgOp, i - 1);
             }
             // NOTE : it is a duplicate for 32 bit target, but is required for 64 bit one
             else if (_logic->isCompatible(*scope.moduleScope, { V_INT32 },

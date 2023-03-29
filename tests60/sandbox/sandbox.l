@@ -3,7 +3,10 @@ import extensions;
 
 public program()
 {
-   var dt := now;
+         TimeStruct ts;
+         SystemTime time;
 
-   console.writeLine(dt)
+         pointer ptr/* := extern libc.localtime(time)*/;
+            
+         extern libc.memcpy(ts, ptr, 56);
 }

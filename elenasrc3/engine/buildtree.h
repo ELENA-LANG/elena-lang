@@ -128,8 +128,9 @@ namespace elena_lang
       LongIntCondOp        = 0x0063,
       ConstArrayReference  = 0x0064,
       StaticAssigning      = 0x0065,
+      SavingLInStack       = 0x0066,
 
-      MaxOperationalKey    = 0x0061,
+      MaxOperationalKey    = 0x0070,
 
       Import               = 0x0070,
       DictionaryOp         = 0x0071,
