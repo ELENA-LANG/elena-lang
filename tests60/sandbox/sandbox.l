@@ -1,12 +1,24 @@
-import system'calendar;
 import extensions;
 
 public program()
 {
-         TimeStruct ts;
-         SystemTime time;
+    long l := 2l;
+    long l2 := -2l;
+    int n := 2;
+    int n2 := -2;
 
-         pointer ptr/* := extern libc.localtime(time)*/;
-            
-         extern libc.memcpy(ts, ptr, 56);
+    Assert.ifTrue(l == n);   // ; true
+    Assert.ifTrue(l2 == n2); // ; true
+    console.writeLine(".");
+    Assert.ifFalse(l == n2);  // ; false
+    Assert.ifFalse(l2 == n); // ; false
+    console.writeLine(".");
+
+    Assert.ifFalse(l < n2);  // ; false
+    Assert.ifFalse(l < n);  // ; false
+    console.writeLine(".");
+    Assert.ifTrue(l2 < n);  // ; true
+    Assert.ifFalse(l2 < n2);  // ; false
+
+    console.writeLine(".");
 }
