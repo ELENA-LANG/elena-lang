@@ -80,6 +80,8 @@
 		<Unit filename="../../../common/files.h" />
 		<Unit filename="../../../common/ustring.cpp" />
 		<Unit filename="../../../common/ustring.h" />
+		<Unit filename="../../../engine/bytecode.cpp" />
+		<Unit filename="../../../engine/bytecode.h" />
 		<Unit filename="../../../engine/scriptreader.cpp" />
 		<Unit filename="../../../engine/scriptreader.h" />
 		<Unit filename="../og.cpp" />
