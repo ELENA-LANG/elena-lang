@@ -28,6 +28,7 @@ define toc_gctable           0020h
 define toc_alloc             0028h
 define toc_data              0030h
 define toc_stat              0038h
+define toc_allocperm         0040h
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -83,6 +84,7 @@ structure % CORE_TOC
   dq code   : %GC_ALLOC // ; address of alloc function
   dq data   : 0         // ; address of data section
   dq stat   : 0         // ; address of stat section
+  dq code   : %GC_ALLOCPERM // ; address of alloc function
 
 end
  
@@ -1309,6 +1311,13 @@ inline %9Bh
 
 end
 
+// ; muln
+inline %9Ch
+
+  mulld r14, r14, __n16_1
+
+end
+
 // ; savedp
 inline %0A0h
 
@@ -1487,6 +1496,14 @@ inline %2ABh
   mr      r4, r14
 
 end 
+
+// ; lloaddp
+inline %0ACh
+
+  addi    r16, r31, __arg16_1
+  ld      r14, 0(r16)
+
+end
 
 // ; callr
 inline %0B0h
@@ -1737,6 +1754,43 @@ inline %2C9h
   cmp     r15, r4
 
 end 
+
+// ; xloadargsi
+inline %0CDh
+
+  mov edx, [esp + __arg32_1]
+
+  ld      r14, __arg16_1(r1)  
+
+end 
+
+// ; xcreater r
+inline %0CEh
+
+  ld      r12, 0(r3)
+  sldi    r12, r12, 3
+  addi    r12, r12, page_ceil
+  andi.   r18, r12, page_mask
+
+  ld      r12, toc_allocperm(r2)
+  mtctr   r12            
+  bctrl                   
+
+  ld      r12, 0(r3)
+  sldi    r18, r12, 3
+
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, __disp32hi_1
+  addi    r17, r17, __disp32lo_1
+  std     r18, -elSizeOffset(r15)
+  std     r17, -elVMTOffset(r15)
+
+end
+
+// ; system
+inline %0CFh
+
+end
 
 // ; faddndp
 inline %0D0h

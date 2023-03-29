@@ -8,10 +8,10 @@ In development:
     * test rosetta code samples : ppc64le, arm64
     * test samples : ppc64le, arm64
 
-    * new opcode xcreater : ppc64le, arm64
-    * new opcode muln : ppc64le, arm64
-    * new opcode lloaddp : ppc64le, arm64
-    * new opcode xloadarg : ppc64le, arm64
+    * new opcode xcreater : arm64
+    * new opcode muln : arm64
+    * new opcode lloaddp : arm64
+    * new opcode xloadarg : arm64
 
     === Iteration 15 ===
     ! script and db samples
