@@ -3,6 +3,8 @@ define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
+define GC_ALLOCPERM	    10005h
+define PREPARE	            10006h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -363,6 +365,67 @@ labYGNextFrame:
 
 end
 
+// --- GC_ALLOCPERM ---
+procedure %GC_ALLOCPERM
+
+  ld      r19, toc_gctable(r2)
+  ld      r17, gc_yg_current(r19) 
+  ld      r16, gc_yg_end(r19) 
+  add     r18, r18, r17 
+  cmp     r18, r16
+  bge     labYGCollect
+  std     r18, gc_yg_current(r19) 
+  addi    r15, r17, elObjectOffset
+  blr
+
+labYGCollect:
+  // ; save registers
+  sub     r18, r18, r17 
+
+  mflr    r0
+  std     r31, -20h(r1)  // ; save frame pointer
+  std     r0,  -18h(r1)  // ; save return address
+  std     r3,  -10h(r1)
+  std     r4,  -08h(r1)
+
+  addi    r1, r1, -32    // ; allocate raw stack
+  mr      r31, r1        // ; set frame pointer
+
+  // ; lock frame
+  ld      r16, toc_data(r2)
+  addis   r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi    r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  std     r1, tt_stack_frame(r16)
+
+  ld      r12, toc_import(r2)
+  addis   r12, r12, import_disp32hi : "$rt.CollectPermGCLA"
+  addi    r12, r12, import_disp32lo : "$rt.CollectPermGCLA"
+  ld      r12,0(r12)
+
+  mtctr   r12            // ; put code address into ctr
+  bctrl                  // ; and call it
+
+  ld      r2, 40(r1)     // ; restoring toc pointer
+  ld      r31, 32(r1)    // ; restoring toc pointer
+
+  mr      r15, r3
+
+  mr      r1, r31              // ; restore stack pointer
+
+  ld      r31, 10h(r1)         // ; restore frame pointer
+  ld      r0,  18h(r1) 
+  ld      r3,  20h(r1)
+  ld      r4,  28h(r1)
+  addi    r1, r1, 48           // ; free raw stack
+
+  mtlr    r0
+  blr
+
+end
+
+procedure %PREPARE
+
+end
 
 // ; ==== Command Set ==
 
