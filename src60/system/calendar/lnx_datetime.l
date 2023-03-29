@@ -302,7 +302,7 @@ namespace calendar
           
       private write(SystemTime time)
       {
-         int size = forward TMSize;
+         int size := forward TMSize;
 
          pointer ptr := extern libc.localtime(time);
             
@@ -314,7 +314,7 @@ namespace calendar
 
       internal writeUTC(SystemTime time)
       {
-         int size = forward TMSize;
+         int size := forward TMSize;
 
          pointer ptr := extern libc.gmtime(time);
             
