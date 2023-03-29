@@ -1423,15 +1423,15 @@ public sealed const struct LongNumber : IntBaseNumber,
             : info("Creates the object with specified value")
       = n;
 
-   construcot(int n)
+   constructor(int n)
             : info("Creates the object with specified value")
       = longConvertor.convert(n);
 
-   construcot(uint n)
+   constructor(uint n)
             : info("Creates the object with specified value")
       = longConvertor.convert(n);
 
-   construcot(short n)
+   constructor(short n)
             : info("Creates the object with specified value")
       = longConvertor.convert(n);
 
