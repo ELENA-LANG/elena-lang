@@ -165,6 +165,9 @@ void PrepareLA(uintptr_t arg)
 {
    __argc = *(int*)arg;
    __argv = (char**)(arg + sizeof(uintptr_t));
+
+   printf("PrepareLA __argc %x\n", __argc);
+   printf("PrepareLA __argv[0] %s\n", __argv[0]);
 }
 
 void ExitLA(int retVal)
