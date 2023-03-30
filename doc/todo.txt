@@ -8,11 +8,6 @@ In development:
     * test rosetta code samples : arm64
     * test samples : arm64
 
-    * new opcode xcreater : arm64
-    * new opcode muln : arm64
-    * new opcode lloaddp : arm64
-    * new opcode xloadarg : arm64
-
     === Iteration 15 ===
     ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
     ! script and db samples

@@ -51,6 +51,9 @@ define gc_mg_start           0038h
 define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
+define gc_perm_start         0058h 
+define gc_perm_end           0060h 
+define gc_perm_current       0068h 
 
 define et_current            0008h
 define tt_stack_frame        0010h
@@ -116,6 +119,10 @@ structure %CORE_GC_TABLE
   dq 0 // ; gc_mg_current         : +40h
   dq 0 // ; gc_end                : +48h
   dq 0 // ; gc_mg_wbar            : +50h
+
+  dq 0 // ; gc_perm_start         : +58h 
+  dq 0 // ; gc_perm_end           : +60h 
+  dq 0 // ; gc_perm_current       : +68h 
 
 end
  
@@ -372,12 +379,12 @@ end
 procedure %GC_ALLOCPERM
 
   ld      r19, toc_gctable(r2)
-  ld      r17, gc_yg_current(r19) 
-  ld      r16, gc_yg_end(r19) 
+  ld      r17, gc_perm_current(r19) 
+  ld      r16, gc_perm_end(r19) 
   add     r18, r18, r17 
   cmp     r18, r16
   bge     labYGCollect
-  std     r18, gc_yg_current(r19) 
+  std     r18, gc_perm_current(r19) 
   addi    r15, r17, elObjectOffset
   blr
 
@@ -1790,6 +1797,20 @@ end
 inline %0CDh
 
   ld      r14, __arg16_1(r1)  
+
+end 
+
+// ; xloadargsi 0
+inline %1CDh
+
+  mr      r14, r3
+
+end 
+
+// ; xloadargsi 1
+inline %2CDh
+
+  mr      r14, r4
 
 end 
 
