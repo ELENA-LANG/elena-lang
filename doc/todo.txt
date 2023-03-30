@@ -5,7 +5,7 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 14 ===
-    * ppc64le : bullscows, goods
+    * ppc64le : bullscows
 
     * test rosetta code samples : arm64
     * test samples : arm64
