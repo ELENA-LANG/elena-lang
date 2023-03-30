@@ -163,7 +163,7 @@ int GetArgLA(int index, char* buffer, int length)
 
 void PrepareLA(uintptr_t arg)
 {
-   printf("PrepareLA arg %x\n", arg);
+   printf("PrepareLA arg %llx\n", arg);
 
    __argc = *(int*)arg;
    __argv = (char**)(arg + sizeof(uintptr_t));
