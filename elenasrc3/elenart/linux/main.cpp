@@ -169,7 +169,7 @@ void PrepareLA(uintptr_t arg)
 
 #if defined(__PPC64__)
 
-   uintptr_t argptr = *(*uintptr_t)(arg + sizeof(uintptr_t));
+   uintptr_t argptr = *(uintptr_t*)(arg + sizeof(uintptr_t));
    __argv = (char**)argptr;
 
 #else
