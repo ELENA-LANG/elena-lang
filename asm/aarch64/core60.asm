@@ -701,7 +701,7 @@ end
 inline % 1Ch
 
   ldr     x14, [x10]
-  cmp     x9, x14
+  cmp     x14, x9
 
 end
 
