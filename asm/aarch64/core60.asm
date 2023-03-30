@@ -395,7 +395,7 @@ procedure %PREPARE
   movz    x16,  import_ptr32lo : "$rt.PrepareLA"
   movk    x16,  import_ptr32hi : "$rt.PrepareLA", lsl #16
 
-  mr      x0, sp
+  mov     x0, sp
 
   ldr     x17, [x16]
   blr     x17
