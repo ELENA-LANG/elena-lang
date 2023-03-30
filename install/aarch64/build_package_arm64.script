@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=elena-6.0.2.ppc64le-linux
+RELEASE=elena-6.0.2.aarch64-linux
 
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
@@ -17,7 +17,7 @@ cp ../../bin/templates/*.config /etc/elena/templates/
 
 echo compiling data files
 
-../../bin/sg64-cli ../dat/sg/syntax60.txt
+../../bin/sg64-cli ../../dat/sg/syntax60.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -37,7 +37,7 @@ fi
 #   exit 1
 # fi
 
-../../bin/og64-cli -s ../dat/og/bt_rules.txt
+../../bin/og64-cli -s ../../dat/og/bt_rules.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -95,6 +95,7 @@ fi
  fi
 
  ../../bin/elena64-cli ../../src60/system/system.project
+ ret=$?
  if [ $ret -eq -2 ]
  then
    echo "Failure" >&2

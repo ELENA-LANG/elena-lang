@@ -4,7 +4,6 @@ RELEASE=elena-6.0.2.ppc64le-linux
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
-mkdir -p /usr/lib/elena/core/x32/
 mkdir -p /usr/lib/elena/core/ppc64le/
 mkdir -p /usr/lib/elena/lib60_64
 
