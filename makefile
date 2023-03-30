@@ -153,6 +153,9 @@ clean_elc_arm64:
 clean_sg_arm64: 
 	$(MAKE) -C elenasrc3/tools/sg/codeblocks clean -f sg_arm64.mak
 
+clean_og_arm64: 
+	$(MAKE) -C elenasrc3/tools/og/codeblocks clean -f og_arm64.mak
+
 clean_asmc_arm64: 
 	$(MAKE) -C elenasrc3/tools/asmc/codeblocks clean -f asmc_arm64.mak
 
