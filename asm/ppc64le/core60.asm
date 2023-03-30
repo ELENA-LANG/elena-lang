@@ -445,13 +445,14 @@ procedure %PREPARE
   addi    r12, r12, import_disp32lo : "$rt.PrepareLA"
   ld      r12,0(r12)
 
+  addi    r1, r1, -16    // ; allocate raw stack
   mtctr   r12            // ; put code address into ctr
   bctrl                  // ; and call it
 
-  addi    r1, r1, 16     // ; free raw stack
+  addi    r1, r1, 32     // ; free raw stack
 
-  ld      r2, 8h(r1)     // ; restore frame pointer
-  ld      r0, 10h(r1) 
+  ld      r2, 0(r1)     // ; restore frame pointer
+  ld      r0, 08h(r1) 
   addi    r1, r1, 16     // ; free raw stack
 
   mtlr    r0
