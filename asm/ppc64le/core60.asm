@@ -736,7 +736,7 @@ end
 inline % 1Ch
 
   ld      r18, 0(r15)
-  cmp     r14, r18
+  cmp     r18, r14
 
 end
 

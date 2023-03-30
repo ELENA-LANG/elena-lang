@@ -5,6 +5,8 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 14 ===
+    * convl, xlcmp
+
     * test rosetta code samples : ppc64le, arm64
     * test samples : ppc64le, arm64
 
@@ -14,6 +16,7 @@ In development:
     * new opcode xloadarg : arm64
 
     === Iteration 15 ===
+    ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
     ! script and db samples
     ! x86 : gui
     ! api functionality for existing classes : rest of system
