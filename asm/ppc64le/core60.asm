@@ -428,13 +428,17 @@ end
 
 procedure %PREPARE
 
-  mr      r3, r1
-
   mflr    r0
   std     r2,  -10h(r1)
   std     r0,  -08h(r1)
 
   addi    r1, r1, -16    // ; allocate raw stack
+
+  std     r4,  -08h(r1)
+  std     r3,  -10h(r1)
+  addi    r1, r1, -16    // ; allocate raw stack
+
+  mr      r3, r1
 
   ld      r12, toc_import(r2)
   addis   r12, r12, import_disp32hi : "$rt.PrepareLA"
@@ -444,9 +448,11 @@ procedure %PREPARE
   mtctr   r12            // ; put code address into ctr
   bctrl                  // ; and call it
 
-  ld      r2, 8h(r1)         // ; restore frame pointer
+  addi    r1, r1, 16     // ; free raw stack
+
+  ld      r2, 8h(r1)     // ; restore frame pointer
   ld      r0, 10h(r1) 
-  addi    r1, r1, 16           // ; free raw stack
+  addi    r1, r1, 16     // ; free raw stack
 
   mtlr    r0
   blr
