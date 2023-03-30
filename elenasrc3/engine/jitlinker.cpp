@@ -232,7 +232,7 @@ void JITLinker::JITLinkerReferenceHelper :: writeSectionReference(MemoryBase* im
          MemoryBase::getDWord(section, sectionOffset), *_references);
 
       pos_t offset = _owner->resolveVMTMethodOffset(sectionInfo->module, currentRef, message);
-      _owner->fixOffset(imageOffset, mskRef32, offset, image);
+      _owner->fixOffset(imageOffset, addressMask, offset, image);
    }
    else if (currentMask == mskVMTMethodAddress) {
       _owner->resolve(
@@ -461,6 +461,7 @@ void JITLinker :: fixOffset(pos_t position, ref_t offsetMask, int offset, Memory
 
    switch (offsetMask) {
       case mskRef32:
+      case mskRef64:
          _compiler->writeImm32(&writer, offset);
          break;
       case mskRef32Lo12:
