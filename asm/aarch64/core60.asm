@@ -3619,9 +3619,10 @@ end
 // ; vcallmr
 inline %0FCh
 
+  mov     x18, __arg16_1
   sub     x14, x10, elVMTOffset              
   ldr     x17, [x14]
-  add     x17, x17, __arg12_1
+  add     x17, x17, x18
   ldr     x17, [x17, #8]
   blr     x17
 
