@@ -29,6 +29,7 @@ define toc_alloc             0028h
 define toc_data              0030h
 define toc_stat              0038h
 define toc_allocperm         0040h
+define toc_prepare           0048h
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -71,20 +72,20 @@ define struct_mask       40000000h
 define struct_mask_lo        0000h
 define struct_mask_hi        4000h
 
-
 // ; --- System Core Preloaded Routines --
 
 structure % CORE_TOC
 
-  dq import : 0         // ; address of import section
-  dq rdata  : 0         // ; address of rdata section
-  dq mdata  : 0         // ; address of rdata section
-  dq code   : 0         // ; address of code section
+  dq import : 0             // ; address of import section
+  dq rdata  : 0             // ; address of rdata section
+  dq mdata  : 0             // ; address of rdata section
+  dq code   : 0             // ; address of code section
   dq data   : %CORE_GC_TABLE
-  dq code   : %GC_ALLOC // ; address of alloc function
-  dq data   : 0         // ; address of data section
-  dq stat   : 0         // ; address of stat section
+  dq code   : %GC_ALLOC     // ; address of alloc function
+  dq data   : 0             // ; address of data section
+  dq stat   : 0             // ; address of stat section
   dq code   : %GC_ALLOCPERM // ; address of alloc function
+  dq code   : %PREPARE      // ; address of alloc function
 
 end
  
@@ -426,6 +427,29 @@ labYGCollect:
 end
 
 procedure %PREPARE
+
+  mr      r3, r1
+
+  mflr    r0
+  std     r2,  -10h(r1)
+  std     r0,  -08h(r1)
+
+  addi    r1, r1, -16    // ; allocate raw stack
+
+  ld      r12, toc_import(r2)
+  addis   r12, r12, import_disp32hi : "$rt.PrepareLA"
+  addi    r12, r12, import_disp32lo : "$rt.PrepareLA"
+  ld      r12,0(r12)
+
+  mtctr   r12            // ; put code address into ctr
+  bctrl                  // ; and call it
+
+  ld      r2, 8h(r1)         // ; restore frame pointer
+  ld      r0, 10h(r1) 
+  addi    r1, r1, 16           // ; free raw stack
+
+  mtlr    r0
+  blr
 
 end
 
@@ -1788,6 +1812,15 @@ end
 
 // ; system
 inline %0CFh
+
+end
+
+// ; system 4
+inline %4CFh
+
+  ld      r12, toc_prepare(r2)
+  mtctr   r12            
+  bctrl                   
 
 end
 
