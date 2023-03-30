@@ -165,7 +165,7 @@ void PrepareLA(uintptr_t arg)
 {
    __argc = *(int*)arg;
 
-#if defined(__PPC64__)
+#if defined __PPC64__ || __aarch64__
 
    uintptr_t argptr = *(uintptr_t*)(arg + sizeof(uintptr_t));
    __argv = (char**)argptr;

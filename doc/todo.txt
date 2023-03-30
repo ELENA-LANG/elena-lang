@@ -5,9 +5,7 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 14 ===
-    * aarch64 : bullscows
-
-    * test samples : arm64
+    * aarch64 : goods, bullscows
 
     === Iteration 15 ===
     ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
