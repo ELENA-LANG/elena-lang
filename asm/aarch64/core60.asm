@@ -1791,6 +1791,11 @@ inline %0CEh
 
 end
 
+// ; system
+inline %0CFh
+
+end
+
 // ; faddndp
 inline %0D0h
 
