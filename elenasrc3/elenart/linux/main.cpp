@@ -166,10 +166,22 @@ void PrepareLA(uintptr_t arg)
    printf("PrepareLA arg %llx\n", arg);
 
    __argc = *(int*)arg;
+
+#if defined(__PPC64__)
+
+   uintptr_t argptr = *(*uintptr_t)(arg + sizeof(uintptr_t));
+   __argv = (char**)argptr;
+
+#else
+
    __argv = (char**)(arg + sizeof(uintptr_t));
 
+#endif
+
    printf("PrepareLA __argc %x\n", __argc);
-   printf("PrepareLA __argc %llx\n", __argv);
+   printf("PrepareLA __argc %s\n", __argv[0]);
+   if (__argc > 1)
+      printf("PrepareLA __argc %s\n", __argv[1]);
 }
 
 void ExitLA(int retVal)
