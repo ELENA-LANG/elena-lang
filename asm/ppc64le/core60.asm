@@ -1818,6 +1818,9 @@ end
 // ; system 4
 inline %4CFh
 
+  lis     r2, rdata32_hi : %CORE_TOC
+  addi    r2, r2, rdata32_lo : %CORE_TOC
+
   ld      r12, toc_prepare(r2)
   mtctr   r12            
   bctrl                   
