@@ -1755,7 +1755,7 @@ end
 // ; cmpsi 1
 inline %2C9h
 
-  mov     x10, x1
+  mov     x11, x1
   cmp     x10, x11
 
 end 
