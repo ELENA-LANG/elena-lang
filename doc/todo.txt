@@ -5,7 +5,7 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 14 ===
-    * aarch64 : bullscows
+    * release
 
     === Iteration 15 ===
     ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
@@ -64,6 +64,7 @@ In development:
     * ide : on start : set focus inside the edit frame if available
     * ldoc : get rid of BaseEnumerator<TupleTuple#2,T1,T2> and so on
     * strong typed forward constant
+    * arrange action for i386 / amd64 linux release
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop
